@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\GraphQL;
 
 use Psr\Container\ContainerInterface;
@@ -66,9 +65,7 @@ class TypeGenerator
 
     /**
      * @param string $annotatedObjectClassName the FQCN of an object with a Type annotation
-     * @param RecursiveTypeMapperInterface $recursiveTypeMapper
      * @throws \ReflectionException
-     * @return MutableObjectType
      */
     public function mapAnnotatedObject(string $annotatedObjectClassName, RecursiveTypeMapperInterface $recursiveTypeMapper): MutableObjectType
     {
@@ -97,8 +94,6 @@ class TypeGenerator
 
     /**
      * @param object $annotatedObject an object with a ExtendType annotation
-     * @param MutableObjectType $type
-     * @param RecursiveTypeMapperInterface $recursiveTypeMapper
      */
     public function extendAnnotatedObject($annotatedObject, MutableObjectType $type, RecursiveTypeMapperInterface $recursiveTypeMapper)
     {

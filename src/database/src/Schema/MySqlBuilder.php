@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Schema;
 
 use Hyperf\Database\Query\Processors\MySqlProcessor;
@@ -48,6 +47,21 @@ class MySqlBuilder extends Builder
         );
 
         return $this->connection->getPostProcessor()->processColumnListing($results);
+    }
+
+    /**
+     * Get the columns.
+     */
+    public function getColumns(): array
+    {
+        $results = $this->connection->select(
+            $this->grammar->compileColumns(),
+            [
+                $this->connection->getDatabaseName(),
+            ]
+        );
+
+        return $this->connection->getPostProcessor()->processColumns($results);
     }
 
     /**

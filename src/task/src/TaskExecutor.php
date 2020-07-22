@@ -5,15 +5,15 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Task;
 
 use Hyperf\Task\Exception\TaskException;
 use Hyperf\Task\Exception\TaskExecuteException;
+use Hyperf\Utils\Serializer\ExceptionNormalizer;
 use Swoole\Server;
 
 class TaskExecutor
@@ -29,13 +29,19 @@ class TaskExecutor
     protected $factory;
 
     /**
+     * @var ExceptionNormalizer
+     */
+    protected $normalizer;
+
+    /**
      * @var bool
      */
     protected $isTaskEnvironment = false;
 
-    public function __construct(ChannelFactory $factory)
+    public function __construct(ChannelFactory $factory, ExceptionNormalizer $normalizer)
     {
         $this->factory = $factory;
+        $this->normalizer = $normalizer;
     }
 
     public function setServer(Server $server): void
@@ -48,12 +54,27 @@ class TaskExecutor
 
     public function execute(Task $task, float $timeout = 10)
     {
+        if (! $this->server instanceof Server) {
+            throw new TaskExecuteException('The server does not support task.');
+        }
+
         $taskId = $this->server->task($task);
         if ($taskId === false) {
             throw new TaskExecuteException('Task execute failed.');
         }
 
-        return $this->factory->pop($taskId, $timeout);
+        $result = $this->factory->pop($taskId, $timeout);
+
+        if ($result instanceof Exception) {
+            $exception = $this->normalizer->denormalize($result->attributes, $result->class);
+            if ($exception instanceof \Throwable) {
+                throw $exception;
+            }
+
+            throw new TaskExecuteException(get_class($exception) . ' is not instance of Throwable.');
+        }
+
+        return $result;
     }
 
     public function isTaskEnvironment(): bool

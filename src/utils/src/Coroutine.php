@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils;
 
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -42,11 +41,23 @@ class Coroutine
 
     /**
      * Returns the parent coroutine ID.
-     * Returns -1 when running in non-coroutine context.
+     * Returns -1 when running in the top level coroutine.
+     * Returns null when running in non-coroutine context.
+     *
+     * @see https://github.com/swoole/swoole-src/pull/2669/files#diff-3bdf726b0ac53be7e274b60d59e6ec80R940
      */
-    public static function parentId(): int
+    public static function parentId(?int $coroutineId = null): ?int
     {
-        return SwooleCoroutine::getPcid();
+        if ($coroutineId) {
+            $cid = SwooleCoroutine::getPcid($coroutineId);
+        } else {
+            $cid = SwooleCoroutine::getPcid();
+        }
+        if ($cid === false) {
+            return null;
+        }
+
+        return $cid;
     }
 
     /**
@@ -64,10 +75,10 @@ class Coroutine
                     if ($container->has(StdoutLoggerInterface::class)) {
                         /* @var LoggerInterface $logger */
                         $logger = $container->get(StdoutLoggerInterface::class);
-                        /* @var FormatterInterface $formmater */
+                        /* @var FormatterInterface $formatter */
                         if ($container->has(FormatterInterface::class)) {
-                            $formmater = $container->get(FormatterInterface::class);
-                            $logger->warning($formmater->format($throwable));
+                            $formatter = $container->get(FormatterInterface::class);
+                            $logger->warning($formatter->format($throwable));
                         } else {
                             $logger->warning(sprintf('Uncaptured exception[%s] detected in %s::%d.', get_class($throwable), $throwable->getFile(), $throwable->getLine()));
                         }

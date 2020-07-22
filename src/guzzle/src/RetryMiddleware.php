@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Guzzle;
 
 use GuzzleHttp\Middleware;
@@ -31,12 +30,20 @@ class RetryMiddleware implements MiddlewareInterface
     public function getMiddleware(): callable
     {
         return Middleware::retry(function ($retries, RequestInterface $request, ResponseInterface $response = null) {
-            if ($response && $response->getStatusCode() !== 200 && $retries < $this->retries) {
+            if (! $this->isOk($response) && $retries < $this->retries) {
                 return true;
             }
             return false;
         }, function () {
             return $this->delay;
         });
+    }
+
+    /**
+     * Check the response status is correct.
+     */
+    protected function isOk(?ResponseInterface $response): bool
+    {
+        return $response && $response->getStatusCode() >= 200 && $response->getStatusCode() < 300;
     }
 }

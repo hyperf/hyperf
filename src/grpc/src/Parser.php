@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Grpc;
 
 use Google\Protobuf\Internal\Message;
@@ -69,7 +68,7 @@ class Parser
 
     /**
      * @param null|\swoole_http2_response $response
-     * @param $deserialize
+     * @param mixed $deserialize
      * @return \Grpc\StringifyAble[]|Message[]|\swoole_http2_response[]
      */
     public static function parseResponse($response, $deserialize): array
@@ -78,7 +77,9 @@ class Parser
             return ['No response', self::GRPC_ERROR_NO_RESPONSE, $response];
         }
         if ($response->statusCode !== 200) {
-            return ['Http status Error', $response->errCode ?: $response->statusCode, $response];
+            $message = $response->headers['grpc-message'] ?? 'Http status Error';
+            $code = $response->headers['grpc-status'] ?? ($response->errCode ?: $response->statusCode);
+            return [$message, (int) $code, $response];
         }
         $grpc_status = (int) ($response->headers['grpc-status'] ?? 0);
         if ($grpc_status !== 0) {

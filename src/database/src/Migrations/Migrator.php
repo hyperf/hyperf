@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Migrations;
 
 use Hyperf\Database\Connection;
@@ -471,7 +470,12 @@ class Migrator
 
         $callback = function () use ($migration, $method) {
             if (method_exists($migration, $method)) {
+                $defaultConnection = $this->resolver->getDefaultConnection();
+                $this->resolver->setDefaultConnection($migration->getConnection() ?: $this->connection);
+
                 $migration->{$method}();
+
+                $this->resolver->setDefaultConnection($defaultConnection);
             }
         };
 

@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\LoadBalancer;
 
 interface LoadBalancerInterface
@@ -20,10 +19,15 @@ interface LoadBalancerInterface
     public function select(array ...$parameters): Node;
 
     /**
-     * @param \Hyperf\LoadBalancer\Node[] $nodes
+     * @param Node[] $nodes
      * @return $this
      */
     public function setNodes(array $nodes);
+
+    /**
+     * @return Node[] $nodes
+     */
+    public function getNodes(): array;
 
     /**
      * Remove a node from the node list.

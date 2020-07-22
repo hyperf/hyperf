@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ModelCache;
 
 class Config
@@ -35,7 +34,7 @@ class Config
 
     /**
      * The lifetime of model cache.
-     * @var int
+     * @var \DateInterval|int
      */
     protected $ttl = 3600;
 
@@ -44,6 +43,12 @@ class Config
      * @var int
      */
     protected $emptyModelTtl = 60;
+
+    /**
+     * Whether to use default value when resolved from cache.
+     * @var bool
+     */
+    protected $useDefaultValue = false;
 
     /**
      * @var bool
@@ -72,6 +77,9 @@ class Config
         if (isset($values['empty_model_ttl'])) {
             $this->emptyModelTtl = $values['empty_model_ttl'];
         }
+        if (isset($values['use_default_value'])) {
+            $this->useDefaultValue = (bool) $values['use_default_value'];
+        }
     }
 
     public function getCacheKey(): string
@@ -82,6 +90,17 @@ class Config
     public function setCacheKey(string $cacheKey): Config
     {
         $this->cacheKey = $cacheKey;
+        return $this;
+    }
+
+    public function isUseDefaultValue(): bool
+    {
+        return $this->useDefaultValue;
+    }
+
+    public function setUseDefaultValue(bool $useDefaultValue): Config
+    {
+        $this->useDefaultValue = $useDefaultValue;
         return $this;
     }
 
@@ -96,30 +115,29 @@ class Config
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getPool(): string
     {
         return $this->pool;
     }
 
-    /**
-     * @param string $pool
-     * @return Config
-     */
     public function setPool(string $pool): Config
     {
         $this->pool = $pool;
         return $this;
     }
 
-    public function getTtl(): int
+    /**
+     * @return \DateInterval|int
+     */
+    public function getTtl()
     {
         return $this->ttl;
     }
 
-    public function setTtl(int $ttl): Config
+    /**
+     * @param \DateInterval|int $ttl
+     */
+    public function setTtl($ttl): Config
     {
         $this->ttl = $ttl;
         return $this;

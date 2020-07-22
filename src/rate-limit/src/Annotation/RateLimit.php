@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RateLimit\Annotation;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
@@ -23,22 +22,22 @@ class RateLimit extends AbstractAnnotation
     /**
      * @var int
      */
-    public $create = 1;
+    public $create;
 
     /**
      * @var int
      */
-    public $consume = 1;
+    public $consume;
 
     /**
      * @var int
      */
-    public $capacity = 2;
+    public $capacity;
 
     /**
-     * @var callable
+     * @var null|callable
      */
-    public $limitCallback = [];
+    public $limitCallback;
 
     /**
      * @var callable|string
@@ -48,5 +47,5 @@ class RateLimit extends AbstractAnnotation
     /**
      * @var int
      */
-    public $waitTimeout = 1;
+    public $waitTimeout;
 }

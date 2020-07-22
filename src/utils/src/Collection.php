@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils;
 
 use ArrayAccess;
@@ -114,6 +113,15 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
             throw new Exception("Property [{$key}] does not exist on this collection instance.");
         }
         return new HigherOrderCollectionProxy($this, $key);
+    }
+
+    /**
+     * @param mixed $items
+     */
+    public function fill($items = [])
+    {
+        $this->items = $this->getArrayableItems($items);
+        return $this;
     }
 
     /**
@@ -227,7 +235,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     public function mode($key = null)
     {
         if ($this->count() == 0) {
-            return;
+            return null;
         }
         $collection = isset($key) ? $this->pluck($key) : $this;
         $counts = new self();
@@ -557,8 +565,9 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Get a flattened array of the items in the collection.
+     * @param float|int $depth
      */
-    public function flatten(int $depth = INF): self
+    public function flatten($depth = INF): self
     {
         return new static(Arr::flatten($this->items, $depth));
     }
@@ -1017,8 +1026,9 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Get one or a specified number of items randomly from the collection.
      *
      * @throws \InvalidArgumentException
+     * @return mixed|self
      */
-    public function random(int $number = null): self
+    public function random(int $number = null)
     {
         if (is_null($number)) {
             return Arr::random($this->items);
@@ -1110,7 +1120,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
             return new static();
         }
         $groups = new static();
-        $groupSize = floor($this->count() / $numberOfGroups);
+        $groupSize = (int) floor($this->count() / $numberOfGroups);
         $remain = $this->count() % $numberOfGroups;
         $start = 0;
         for ($i = 0; $i < $numberOfGroups; ++$i) {
@@ -1346,7 +1356,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
                 return $value->jsonSerialize();
             }
             if ($value instanceof Jsonable) {
-                return json_decode($value->toJson(), true);
+                return json_decode($value->__toString(), true);
             }
             if ($value instanceof Arrayable) {
                 return $value->toArray();
@@ -1449,9 +1459,10 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Get an operator checker callback.
+     * @param mixed|string $operator
      * @param null|mixed $value
      */
-    protected function operatorForWhere(string $key, string $operator = null, $value = null): \Closure
+    protected function operatorForWhere(string $key, $operator = null, $value = null): \Closure
     {
         if (func_num_args() === 1) {
             $value = true;
@@ -1532,7 +1543,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
             return $items->toArray();
         }
         if ($items instanceof Jsonable) {
-            return json_decode($items->toJson(), true);
+            return json_decode($items->__toString(), true);
         }
         if ($items instanceof JsonSerializable) {
             return $items->jsonSerialize();

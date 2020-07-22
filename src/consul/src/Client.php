@@ -5,18 +5,16 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Consul;
 
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\TransferException;
 use Hyperf\Consul\Exception\ClientException;
 use Hyperf\Consul\Exception\ServerException;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -34,7 +32,7 @@ abstract class Client
     private $clientFactory;
 
     /**
-     * @var StdoutLoggerInterface
+     * @var LoggerInterface
      */
     private $logger;
 
@@ -46,6 +44,9 @@ abstract class Client
 
     protected function resolveOptions(array $options, array $availableOptions): array
     {
+        // Add key of ACL token to $availableOptions
+        $availableOptions[] = 'token';
+
         return array_intersect_key($options, array_flip($availableOptions));
     }
 

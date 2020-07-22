@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Pool\SimplePool;
 
 use Psr\Container\ContainerInterface;
@@ -59,6 +58,11 @@ class PoolFactory
         }
 
         return $this->pools[$name];
+    }
+
+    public function getPoolNames(): array
+    {
+        return array_keys($this->pools);
     }
 
     protected function hasConfig(string $name): bool

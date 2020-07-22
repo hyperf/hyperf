@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Guzzle\RingPHP;
 
 use GuzzleHttp\Ring\Core;
@@ -35,13 +34,12 @@ class PoolHandler extends CoroutineHandler
         $method = $request['http_method'] ?? 'GET';
         $scheme = $request['scheme'] ?? 'http';
         $ssl = $scheme === 'https';
-        $uri = $request['uri'] ?? '/';
         $body = $request['body'] ?? '';
         $effectiveUrl = Core::url($request);
         $params = parse_url($effectiveUrl);
         $host = $params['host'];
         if (! isset($params['port'])) {
-            $params['port'] = $ssl ? 443 : 80;
+            $params['port'] = $this->getPort($request, $ssl);
         }
         $port = $params['port'];
         $path = $params['path'] ?? '/';
@@ -73,13 +71,7 @@ class PoolHandler extends CoroutineHandler
             $ex = $this->checkStatusCode($client, $request);
             if ($ex !== true) {
                 $connection->close();
-                $connection->release();
-                return [
-                    'status' => null,
-                    'reason' => null,
-                    'headers' => [],
-                    'error' => $ex,
-                ];
+                return $this->getErrorResponse($ex, $btime, $effectiveUrl);
             }
 
             $response = $this->getResponse($client, $btime, $effectiveUrl);

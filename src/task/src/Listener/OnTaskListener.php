@@ -5,15 +5,15 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Task\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnTask;
+use Hyperf\Task\Exception;
 use Hyperf\Task\Finish;
 use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
@@ -48,19 +48,26 @@ class OnTaskListener implements ListenerInterface
             $executor = $this->container->get(TaskExecutor::class);
             $executor->setIsTaskEnvironment(true);
 
-            if (is_array($data->callback)) {
-                [$class, $method] = $data->callback;
-                if ($this->container->has($class)) {
-                    $obj = $this->container->get($class);
-                    $result = $obj->{$method}(...$data->arguments);
-                    $this->setResult($event, $result);
-                    return;
-                }
+            try {
+                $result = $this->call($data);
+                $this->setResult($event, $result);
+            } catch (\Throwable $throwable) {
+                $this->setResult($event, new Exception($this->container, $throwable));
             }
-
-            $result = call($data->callback, $data->arguments);
-            $this->setResult($event, $result);
         }
+    }
+
+    protected function call(Task $data)
+    {
+        if (is_array($data->callback)) {
+            [$class, $method] = $data->callback;
+            if ($this->container->has($class)) {
+                $obj = $this->container->get($class);
+                return $obj->{$method}(...$data->arguments);
+            }
+        }
+
+        return call($data->callback, $data->arguments);
     }
 
     protected function setResult(OnTask $event, $result)

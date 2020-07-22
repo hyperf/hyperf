@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Consul;
 
 class Catalog extends Client implements CatalogInterface
@@ -20,7 +19,7 @@ class Catalog extends Client implements CatalogInterface
             'body' => json_encode($node),
         ];
 
-        return $this->request('GET', '/v1/catalog/register', $params);
+        return $this->request('PUT', '/v1/catalog/register', $params);
     }
 
     public function deregister($node): ConsulResponse

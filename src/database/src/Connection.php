@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database;
 
 use Closure;
@@ -469,14 +468,11 @@ class Connection implements ConnectionInterface
 
     /**
      * Log a query in the connection's query log.
-     *
-     * @param string $query
-     * @param array $bindings
-     * @param null|float $time
+     * @param null|array|int|\Throwable $result
      */
-    public function logQuery($query, $bindings, $time = null)
+    public function logQuery(string $query, array $bindings, ?float $time = null, $result = null)
     {
-        $this->event(new QueryExecuted($query, $bindings, $time, $this));
+        $this->event(new QueryExecuted($query, $bindings, $time, $this, $result));
 
         if ($this->loggingQueries) {
             $this->queryLog[] = compact('query', 'bindings', 'time');
@@ -538,11 +534,17 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Is Doctrine available?
-     *
-     * @return bool
+     * Reset $recordsModified property to false.
      */
-    public function isDoctrineAvailable()
+    public function resetRecordsModified(): void
+    {
+        $this->recordsModified = false;
+    }
+
+    /**
+     * Is Doctrine available?
+     */
+    public function isDoctrineAvailable(): bool
     {
         return class_exists('Doctrine\DBAL\Connection');
     }
@@ -1017,11 +1019,9 @@ class Connection implements ConnectionInterface
     /**
      * Run a SQL statement and log its execution context.
      *
-     * @param string $query
-     * @param array $bindings
      * @throws QueryException
      */
-    protected function run($query, $bindings, Closure $callback)
+    protected function run(string $query, array $bindings, Closure $callback)
     {
         $this->reconnectIfMissingConnection();
 
@@ -1042,12 +1042,13 @@ class Connection implements ConnectionInterface
         }
 
         // Once we have run the query we will calculate the time that it took to run and
-        // then log the query, bindings, and execution time so we will report them on
+        // then log the query, bindings, result and execution time so we will report them on
         // the event that the developer needs them. We'll log time in milliseconds.
         $this->logQuery(
             $query,
             $bindings,
-            $this->getElapsedTime($start)
+            $this->getElapsedTime($start),
+            $result
         );
 
         return $result;
@@ -1085,11 +1086,8 @@ class Connection implements ConnectionInterface
 
     /**
      * Get the elapsed time since a given starting point.
-     *
-     * @param int $start
-     * @return float
      */
-    protected function getElapsedTime($start)
+    protected function getElapsedTime(float $start): float
     {
         return round((microtime(true) - $start) * 1000, 2);
     }

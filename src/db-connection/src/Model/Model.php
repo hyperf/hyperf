@@ -5,16 +5,15 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\DbConnection\Model;
 
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Model as BaseModel;
-use Hyperf\DbConnection\ConnectionResolver;
 use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -33,7 +32,7 @@ class Model extends BaseModel
     public function getConnection(): ConnectionInterface
     {
         $connectionName = $this->getConnectionName();
-        $resolver = $this->getContainer()->get(ConnectionResolver::class);
+        $resolver = $this->getContainer()->get(ConnectionResolverInterface::class);
         return $resolver->connection($connectionName);
     }
 

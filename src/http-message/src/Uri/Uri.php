@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpMessage\Uri;
 
 use Psr\Http\Message\UriInterface;
@@ -335,6 +334,7 @@ class Uri implements UriInterface
         $clone = clone $this;
         $clone->userInfo = $user;
         $clone->validateState();
+        return $this;
     }
 
     /**
@@ -368,8 +368,8 @@ class Uri implements UriInterface
      * A null value provided for the port is equivalent to removing the port
      * information.
      *
-     * @param null|int $port the port to use with the new instance; a null value
-     *                       removes the port information
+     * @param null|int|string $port the port to use with the new instance; a null value
+     *                              removes the port information
      * @throws \InvalidArgumentException for invalid ports
      * @return static a new instance with the specified port
      */
@@ -545,8 +545,6 @@ class Uri implements UriInterface
      * Whether the URI has the default port of the current scheme.
      * `Psr\Http\Message\UriInterface::getPort` may return null or the standard port. This method can be used
      * independently of the implementation.
-     *
-     * @return bool
      */
     public function isDefaultPort(): bool
     {
@@ -633,7 +631,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param null|int $port
+     * @param null|int|string $port
      * @throws \InvalidArgumentException if the port is invalid
      * @return null|int
      */
@@ -656,7 +654,7 @@ class Uri implements UriInterface
      */
     private function removeDefaultPort()
     {
-        if ($this->port !== null && self::isDefaultPort($this)) {
+        if ($this->port !== null && $this->isDefaultPort()) {
             $this->port = null;
         }
     }
@@ -708,7 +706,6 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param array $match
      * @return string
      */
     private function rawurlencodeMatchZero(array $match)

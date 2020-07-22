@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Cache\Cases;
 
 use Hyperf\Cache\CacheManager;
@@ -19,7 +18,9 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Pool\Channel;
+use Hyperf\Pool\LowFrequencyInterface;
 use Hyperf\Pool\PoolOption;
+use Hyperf\Redis\Frequency;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
@@ -81,6 +82,10 @@ class RedisDriverTest extends TestCase
 
         $redis = $container->get(\Redis::class);
         $this->assertSame(1, $redis->ttl('c:xxx'));
+
+        $dv = new \DateInterval('PT5S');
+        $driver->set('xxx', 'yyy', $dv);
+        $this->assertSame(5, $redis->ttl('c:xxx'));
     }
 
     public function testDelete()
@@ -112,7 +117,7 @@ class RedisDriverTest extends TestCase
             'redis' => [
                 'default' => [
                     'host' => 'localhost',
-                    'auth' => '910123',
+                    'auth' => null,
                     'port' => 6379,
                     'db' => 0,
                     'timeout' => 0.0,
@@ -138,6 +143,9 @@ class RedisDriverTest extends TestCase
             return new RedisDriver($container, $args['config']);
         });
         $container->shouldReceive('get')->with(PhpSerializerPacker::class)->andReturn(new PhpSerializerPacker());
+        $frequency = Mockery::mock(LowFrequencyInterface::class);
+        $frequency->shouldReceive('isLowFrequency')->andReturn(true);
+        $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn($frequency);
         $container->shouldReceive('make')->with(RedisPool::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($container) {
             return new RedisPool($container, $args['name']);
         });

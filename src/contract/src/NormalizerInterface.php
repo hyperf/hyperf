@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Contract;
 
 interface NormalizerInterface
@@ -18,7 +17,7 @@ interface NormalizerInterface
      * Normalizes an object into a set of arrays/scalars.
      *
      * @param mixed $object
-     * @return array|bool|float|int|string
+     * @return null|array|\ArrayObject|bool|float|int|string
      */
     public function normalize($object);
 
@@ -27,7 +26,7 @@ interface NormalizerInterface
      *
      * @param mixed $data Data to restore
      * @param string $class The expected class to instantiate
-     * @return object
+     * @return mixed|object
      */
-    public function denormalize($data, $class);
+    public function denormalize($data, string $class);
 }

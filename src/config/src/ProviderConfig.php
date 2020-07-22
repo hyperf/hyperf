@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Config;
 
 use Hyperf\Utils\Composer;
@@ -49,7 +48,7 @@ class ProviderConfig
     protected static function loadProviders(array $providers): array
     {
         $providerConfigs = [];
-        foreach ($providers ?? [] as $provider) {
+        foreach ($providers as $provider) {
             if (is_string($provider) && class_exists($provider) && method_exists($provider, '__invoke')) {
                 $providerConfigs[] = (new $provider())();
             }
@@ -60,6 +59,9 @@ class ProviderConfig
 
     protected static function merge(...$arrays): array
     {
+        if (empty($arrays)) {
+            return [];
+        }
         $result = array_merge_recursive(...$arrays);
         if (isset($result['dependencies'])) {
             $dependencies = array_column($arrays, 'dependencies');

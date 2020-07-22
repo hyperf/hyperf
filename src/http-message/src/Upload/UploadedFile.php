@@ -5,13 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpMessage\Upload;
 
+use Hyperf\HttpMessage\Stream\StandardStream;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
@@ -62,12 +62,10 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
     private $size;
 
     /**
-     * @param string $tmpFile
-     * @param null|int $size
-     * @param int $errorStatus
-     * @param null|string $clientFilename
-     * @param null|string $clientMediaType
+     * @var null|string
      */
+    private $mimeType;
+
     public function __construct(
         string $tmpFile,
         ?int $size,
@@ -96,6 +94,14 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
         $clientName = $this->getClientFilename();
         $segments = explode('.', $clientName);
         return end($segments) ?? null;
+    }
+
+    public function getMimeType(): string
+    {
+        if (is_string($this->mimeType)) {
+            return $this->mimeType;
+        }
+        return $this->mimeType = mime_content_type($this->tmpFile);
     }
 
     /**
@@ -134,7 +140,10 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
      */
     public function getStream()
     {
-        throw new \BadMethodCallException('Not implemented');
+        if ($this->moved) {
+            throw new \RuntimeException('uploaded file is moved');
+        }
+        return StandardStream::create(fopen($this->tmpFile, 'r+'));
     }
 
     /**
@@ -241,9 +250,6 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
         return $this->clientMediaType;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return [

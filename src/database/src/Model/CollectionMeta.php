@@ -5,17 +5,16 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Model;
 
-use Hyperf\Contract\CodeDegenerateInterface;
-use Hyperf\Contract\CodeGenerateInterface;
+use Hyperf\Contract\CompressInterface;
+use Hyperf\Contract\UnCompressInterface;
 
-class CollectionMeta implements CodeDegenerateInterface
+class CollectionMeta implements UnCompressInterface
 {
     /**
      * @var string
@@ -33,7 +32,7 @@ class CollectionMeta implements CodeDegenerateInterface
         $this->keys = $keys;
     }
 
-    public function degenerate(): CodeGenerateInterface
+    public function uncompress(): CompressInterface
     {
         if (is_null($this->class)) {
             return new Collection();

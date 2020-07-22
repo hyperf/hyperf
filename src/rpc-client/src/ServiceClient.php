@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RpcClient;
 
 use Hyperf\Contract\IdGeneratorInterface;
@@ -25,6 +24,11 @@ class ServiceClient extends AbstractServiceClient
      * @var MethodDefinitionCollectorInterface
      */
     protected $methodDefinitionCollector;
+
+    /**
+     * @var string
+     */
+    protected $serviceInterface;
 
     /**
      * @var NormalizerInterface
@@ -51,8 +55,9 @@ class ServiceClient extends AbstractServiceClient
             throw new RequestException('Invalid response.');
         }
 
-        if (isset($response['result'])) {
-            $type = $this->methodDefinitionCollector->getReturnType($this->serviceName, $method);
+        $response = $this->checkRequestIdAndTryAgain($response, $id);
+        if (array_key_exists('result', $response)) {
+            $type = $this->methodDefinitionCollector->getReturnType($this->serviceInterface, $method);
             return $this->normalizer->denormalize($response['result'], $type->getName());
         }
 
@@ -62,13 +67,13 @@ class ServiceClient extends AbstractServiceClient
             $class = Arr::get($error, 'data.class');
             $attributes = Arr::get($error, 'data.attributes', []);
             if (isset($class) && class_exists($class) && $e = $this->normalizer->denormalize($attributes, $class)) {
-                if ($e instanceof \Exception) {
+                if ($e instanceof \Throwable) {
                     throw $e;
                 }
             }
 
             // Throw RequestException when denormalize exception failed.
-            throw new RequestException($error['message'] ?? '', $error['code']);
+            throw new RequestException($error['message'] ?? '', $code, $error['data'] ?? []);
         }
 
         throw new RequestException('Invalid response.');
@@ -81,6 +86,8 @@ class ServiceClient extends AbstractServiceClient
 
     protected function setOptions(array $options): void
     {
+        $this->serviceInterface = $options['service_interface'] ?? $this->serviceName;
+
         if (isset($options['load_balancer'])) {
             $this->loadBalancer = $options['load_balancer'];
         }

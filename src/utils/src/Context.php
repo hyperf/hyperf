@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils;
 
 use Swoole\Coroutine as SwCoroutine;
@@ -65,13 +64,37 @@ class Context
      */
     public static function copy(int $fromCoroutineId, array $keys = []): void
     {
-        /**
-         * @var \ArrayObject
-         * @var \ArrayObject $current
-         */
+        /** @var \ArrayObject $from */
         $from = SwCoroutine::getContext($fromCoroutineId);
+        /** @var \ArrayObject $current */
         $current = SwCoroutine::getContext();
-        $current->exchangeArray($keys ? array_fill_keys($keys, $from->getArrayCopy()) : $from->getArrayCopy());
+        $current->exchangeArray($keys ? Arr::only($from->getArrayCopy(), $keys) : $from->getArrayCopy());
+    }
+
+    /**
+     * Retrieve the value and override it by closure.
+     */
+    public static function override(string $id, \Closure $closure)
+    {
+        $value = null;
+        if (self::has($id)) {
+            $value = self::get($id);
+        }
+        $value = $closure($value);
+        self::set($id, $value);
+        return $value;
+    }
+
+    /**
+     * Retrieve the value and store it if not exists.
+     * @param mixed $value
+     */
+    public static function getOrSet(string $id, $value)
+    {
+        if (! self::has($id)) {
+            return self::set($id, value($value));
+        }
+        return self::get($id);
     }
 
     public static function getContainer()

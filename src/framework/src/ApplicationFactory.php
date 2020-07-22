@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Framework;
 
 use Hyperf\Command\Annotation\Command;
@@ -34,12 +33,17 @@ class ApplicationFactory
         // Append commands that defined by annotation.
         $annotationCommands = [];
         if (class_exists(AnnotationCollector::class) && class_exists(Command::class)) {
-            $annotationCommands = AnnotationCollector::getClassByAnnotation(Command::class);
+            $annotationCommands = AnnotationCollector::getClassesByAnnotation(Command::class);
             $annotationCommands = array_keys($annotationCommands);
         }
 
         $commands = array_unique(array_merge($commands, $annotationCommands));
         $application = new Application();
+
+        if (isset($eventDispatcher) && class_exists(SymfonyEventDispatcher::class)) {
+            $application->setDispatcher(new SymfonyEventDispatcher($eventDispatcher));
+        }
+
         foreach ($commands as $command) {
             $application->add($container->get($command));
         }

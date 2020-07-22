@@ -5,26 +5,22 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Process\Listener;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ProcessInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Process\Annotation\Process;
 use Hyperf\Process\ProcessManager;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
 class BootProcessListener implements ListenerInterface
 {
     /**
@@ -50,6 +46,7 @@ class BootProcessListener implements ListenerInterface
     {
         return [
             BeforeMainServerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 
@@ -83,13 +80,13 @@ class BootProcessListener implements ListenerInterface
                 $instance = $process;
             }
             if ($instance instanceof ProcessInterface) {
-                $instance->isEnable() && $instance->bind($server);
+                $instance->isEnable($server) && $instance->bind($server);
             }
         }
     }
 
     private function getAnnotationProcesses()
     {
-        return AnnotationCollector::getClassByAnnotation(Process::class);
+        return AnnotationCollector::getClassesByAnnotation(Process::class);
     }
 }

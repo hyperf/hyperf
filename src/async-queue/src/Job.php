@@ -5,17 +5,16 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\AsyncQueue;
 
-use Hyperf\Contract\CodeDegenerateInterface;
-use Hyperf\Contract\CodeGenerateInterface;
+use Hyperf\Contract\CompressInterface;
+use Hyperf\Contract\UnCompressInterface;
 
-abstract class Job implements JobInterface, CodeGenerateInterface, CodeDegenerateInterface
+abstract class Job implements JobInterface, CompressInterface, UnCompressInterface
 {
     /**
      * @var int
@@ -28,13 +27,13 @@ abstract class Job implements JobInterface, CodeGenerateInterface, CodeDegenerat
     }
 
     /**
-     * @return JobInterface
+     * @return static
      */
-    public function degenerate(): CodeGenerateInterface
+    public function uncompress(): CompressInterface
     {
         foreach ($this as $key => $value) {
-            if ($value instanceof CodeDegenerateInterface) {
-                $this->{$key} = $value->degenerate();
+            if ($value instanceof UnCompressInterface) {
+                $this->{$key} = $value->uncompress();
             }
         }
 
@@ -42,13 +41,13 @@ abstract class Job implements JobInterface, CodeGenerateInterface, CodeDegenerat
     }
 
     /**
-     * @return JobInterface
+     * @return static
      */
-    public function generate(): CodeDegenerateInterface
+    public function compress(): UnCompressInterface
     {
         foreach ($this as $key => $value) {
-            if ($value instanceof CodeGenerateInterface) {
-                $this->{$key} = $value->generate();
+            if ($value instanceof CompressInterface) {
+                $this->{$key} = $value->compress();
             }
         }
 

@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Message\ProducerMessageInterface;
@@ -61,7 +60,7 @@ class Producer extends Builder
     private function injectMessageProperty(ProducerMessageInterface $producerMessage)
     {
         if (class_exists(AnnotationCollector::class)) {
-            /** @var \Hyperf\Amqp\Annotation\Producer $annotation */
+            /** @var null|\Hyperf\Amqp\Annotation\Producer $annotation */
             $annotation = AnnotationCollector::getClassAnnotation(get_class($producerMessage), Annotation\Producer::class);
             if ($annotation) {
                 $annotation->routingKey && $producerMessage->setRoutingKey($annotation->routingKey);

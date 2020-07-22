@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Cache\Listener;
 
 use Hyperf\Cache\CacheListenerCollector;
@@ -19,7 +18,7 @@ class DeleteListenerEvent extends DeleteEvent
 {
     public function __construct(string $listener, array $arguments)
     {
-        $config = CacheListenerCollector::get($listener, null);
+        $config = CacheListenerCollector::getListner($listener, null);
         if (! $config) {
             throw new CacheException(sprintf('listener %s is not defined.', $listener));
         }

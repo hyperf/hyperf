@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Cache\Driver;
 
 use Hyperf\Cache\Exception\InvalidArgumentException;
@@ -51,9 +50,10 @@ class RedisDriver extends Driver implements KeyCollectorInterface
 
     public function set($key, $value, $ttl = null)
     {
+        $seconds = $this->secondsUntil($ttl);
         $res = $this->packer->pack($value);
-        if ($ttl > 0) {
-            return $this->redis->set($this->getCacheKey($key), $res, $ttl);
+        if ($seconds > 0) {
+            return $this->redis->set($this->getCacheKey($key), $res, $seconds);
         }
 
         return $this->redis->set($this->getCacheKey($key), $res);
@@ -95,10 +95,10 @@ class RedisDriver extends Driver implements KeyCollectorInterface
             $cacheKeys[$this->getCacheKey($key)] = $this->packer->pack($value);
         }
 
-        $ttl = (int) $ttl;
-        if ($ttl > 0) {
+        $seconds = $this->secondsUntil($ttl);
+        if ($seconds > 0) {
             foreach ($cacheKeys as $key => $value) {
-                $this->redis->set($key, $value, $ttl);
+                $this->redis->set($key, $value, $seconds);
             }
 
             return true;
@@ -113,7 +113,7 @@ class RedisDriver extends Driver implements KeyCollectorInterface
             return $this->getCacheKey($key);
         }, $keys);
 
-        return $this->redis->del(...$cacheKeys);
+        return (bool) $this->redis->del(...$cacheKeys);
     }
 
     public function has($key)
@@ -125,8 +125,15 @@ class RedisDriver extends Driver implements KeyCollectorInterface
     {
         $iterator = null;
         $key = $prefix . '*';
-        while ($keys = $this->redis->scan($iterator, $this->getCacheKey($key), 10000)) {
-            $this->redis->del(...$keys);
+        while (true) {
+            $keys = $this->redis->scan($iterator, $this->getCacheKey($key), 10000);
+            if (! empty($keys)) {
+                $this->redis->del(...$keys);
+            }
+
+            if (empty($iterator)) {
+                break;
+            }
         }
 
         return true;

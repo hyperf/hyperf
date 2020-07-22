@@ -1,7 +1,3 @@
-branches:
-  only:
-    - master
-
 language: php
 
 sudo: required
@@ -9,20 +5,11 @@ sudo: required
 matrix:
   include:
     - php: 7.2
-      env: SW_VERSION="4.3.6"
-    - php: 7.2
-      env: SW_VERSION="4.4.3"
+      env: SW_VERSION="4.5.2"
     - php: 7.3
-      env: SW_VERSION="4.3.6"
-    - php: 7.3
-      env: SW_VERSION="4.4.3"
-    - php: master
-      env: SW_VERSION="4.3.6"
-    - php: master
-      env: SW_VERSION="4.4.3"
-
-  allow_failures:
-    - php: master
+      env: SW_VERSION="4.5.2"
+    - php: 7.4
+      env: SW_VERSION="4.5.2"
 
 services:
   - mysql
@@ -46,6 +33,8 @@ install:
 before_script:
   - cd $TRAVIS_BUILD_DIR
   - composer config -g process-timeout 900 && composer update
-  
+
 script:
-  - composer test
+  - composer analyse src
+  - composer test -- --exclude-group NonCoroutine
+  - vendor/bin/phpunit --group NonCoroutine

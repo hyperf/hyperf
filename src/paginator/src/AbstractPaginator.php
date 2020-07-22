@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Paginator;
 
 use ArrayIterator;
@@ -172,9 +171,8 @@ abstract class AbstractPaginator implements PaginatorInterface
      * Add a set of query string values to the paginator.
      *
      * @param null|array|string $key
-     * @return $this
      */
-    public function appends($key, ?string $value = null)
+    public function appends($key, ?string $value = null): self
     {
         if (is_null($key)) {
             return $this;
@@ -192,7 +190,10 @@ abstract class AbstractPaginator implements PaginatorInterface
      */
     public function loadMorph(string $relation, array $relations): self
     {
-        $this->getCollection()->loadMorph($relation, $relations);
+        $collection = $this->getCollection();
+        if (method_exists($collection, 'loadMorph')) {
+            $collection->loadMorph($relation, $relations);
+        }
 
         return $this;
     }

@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpMessage\Stream;
 
 use Psr\Http\Message\StreamInterface;
@@ -22,19 +21,23 @@ class SwooleStream implements StreamInterface
     protected $contents;
 
     /**
-     * @var string
+     * @var int
      */
     protected $size;
 
     /**
+     * @var bool
+     */
+    protected $writable;
+
+    /**
      * SwooleStream constructor.
-     *
-     * @param string $contents
      */
     public function __construct(string $contents = '')
     {
         $this->contents = $contents;
         $this->size = strlen($this->contents);
+        $this->writable = true;
     }
 
     /**
@@ -62,7 +65,7 @@ class SwooleStream implements StreamInterface
      */
     public function close()
     {
-        throw new \BadMethodCallException('Not implemented');
+        $this->detach();
     }
 
     /**
@@ -73,7 +76,11 @@ class SwooleStream implements StreamInterface
      */
     public function detach()
     {
-        throw new \BadMethodCallException('Not implemented');
+        $this->contents = '';
+        $this->size = 0;
+        $this->writable = false;
+
+        return null;
     }
 
     /**
@@ -97,7 +104,7 @@ class SwooleStream implements StreamInterface
      */
     public function tell()
     {
-        throw new \BadMethodCallException('Not implemented');
+        throw new \RuntimeException('Cannot determine the position of a SwooleStream');
     }
 
     /**
@@ -107,7 +114,7 @@ class SwooleStream implements StreamInterface
      */
     public function eof()
     {
-        throw new \BadMethodCallException('Not implemented');
+        return $this->getSize() === 0;
     }
 
     /**
@@ -117,7 +124,7 @@ class SwooleStream implements StreamInterface
      */
     public function isSeekable()
     {
-        throw new \BadMethodCallException('Not implemented');
+        return false;
     }
 
     /**
@@ -134,7 +141,7 @@ class SwooleStream implements StreamInterface
      */
     public function seek($offset, $whence = SEEK_SET)
     {
-        throw new \BadMethodCallException('Not implemented');
+        throw new \RuntimeException('Cannot seek a SwooleStream');
     }
 
     /**
@@ -148,7 +155,7 @@ class SwooleStream implements StreamInterface
      */
     public function rewind()
     {
-        throw new \BadMethodCallException('Not implemented');
+        $this->seek(0);
     }
 
     /**
@@ -158,7 +165,7 @@ class SwooleStream implements StreamInterface
      */
     public function isWritable()
     {
-        return false;
+        return $this->writable;
     }
 
     /**
@@ -170,7 +177,16 @@ class SwooleStream implements StreamInterface
      */
     public function write($string)
     {
-        throw new \BadMethodCallException('Not implemented');
+        if (! $this->writable) {
+            throw new \RuntimeException('Cannot write to a non-writable stream');
+        }
+
+        $size = strlen($string);
+
+        $this->contents .= $string;
+        $this->size += $size;
+
+        return $size;
     }
 
     /**
@@ -195,7 +211,17 @@ class SwooleStream implements StreamInterface
      */
     public function read($length)
     {
-        throw new \BadMethodCallException('Not implemented');
+        if ($length >= $this->getSize()) {
+            $result = $this->contents;
+            $this->contents = '';
+            $this->size = 0;
+        } else {
+            $result = substr($this->contents, 0, $length);
+            $this->contents = substr($this->contents, $length);
+            $this->size = $this->getSize() - $length;
+        }
+
+        return $result;
     }
 
     /**

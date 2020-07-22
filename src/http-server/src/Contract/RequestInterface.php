@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpServer\Contract;
 
 use Hyperf\HttpMessage\Upload\UploadedFile;
@@ -48,7 +47,7 @@ interface RequestInterface extends ServerRequestInterface
 
     /**
      * Determine if the $keys is exist in parameters.
-     * @return []array [found, not-found]
+     * @return array [found, not-found]
      */
     public function hasInput(array $keys): array;
 
@@ -64,6 +63,12 @@ interface RequestInterface extends ServerRequestInterface
      * @param mixed $default
      */
     public function header(string $key, $default = null);
+
+    /**
+     * Retrieve the data from route parameters.
+     * @param mixed $default
+     */
+    public function route(string $key, $default = null);
 
     /**
      * Returns the path being requested relative to the executed script.
@@ -158,9 +163,9 @@ interface RequestInterface extends ServerRequestInterface
      * Retrieve a file from the request.
      *
      * @param null|mixed $default
-     * @return null|\Hyperf\HttpMessage\Upload\UploadedFile
+     * @return null|UploadedFile|UploadedFile[]
      */
-    public function file(string $key, $default = null): ?UploadedFile;
+    public function file(string $key, $default = null);
 
     /**
      * Determine if the uploaded data contains a file.

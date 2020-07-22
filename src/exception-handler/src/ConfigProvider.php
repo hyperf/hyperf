@@ -5,15 +5,15 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ExceptionHandler;
 
 use Hyperf\ExceptionHandler\Formatter\DefaultFormatter;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
+use Hyperf\ExceptionHandler\Listener\ExceptionHandlerListener;
 
 class ConfigProvider
 {
@@ -23,11 +23,14 @@ class ConfigProvider
             'dependencies' => [
                 FormatterInterface::class => DefaultFormatter::class,
             ],
-            'commands' => [
+            'listeners' => [
+                ExceptionHandlerListener::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
         ];

@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Query\Grammars;
 
 use Hyperf\Database\Query\Builder;
@@ -62,6 +61,14 @@ class MySqlGrammar extends Grammar
         }
 
         return $sql;
+    }
+
+    /**
+     * Compile an insert ignore statement into SQL.
+     */
+    public function compileInsertOrIgnore(Builder $query, array $values): string
+    {
+        return substr_replace($this->compileInsert($query, $values), ' ignore', 6, 0);
     }
 
     /**

@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils;
 
 use Composer\Autoload\ClassLoader;
@@ -17,12 +16,12 @@ use Composer\Autoload\ClassLoader;
 class Composer
 {
     /**
-     * @var Collection
+     * @var null|Collection
      */
     private static $content;
 
     /**
-     * @var Collection
+     * @var null|Collection
      */
     private static $json;
 
@@ -42,6 +41,11 @@ class Composer
     private static $versions = [];
 
     /**
+     * @var null|ClassLoader
+     */
+    private static $classLoader;
+
+    /**
      * @throws \RuntimeException When composer.lock does not exist.
      */
     public static function getLockContent(): Collection
@@ -52,7 +56,9 @@ class Composer
                 throw new \RuntimeException('composer.lock not found.');
             }
             self::$content = collect(json_decode(file_get_contents($path), true));
-            foreach (self::$content->offsetGet('packages') ?? [] as $package) {
+            $packages = self::$content->offsetGet('packages') ?? [];
+            $packagesDev = self::$content->offsetGet('packages-dev') ?? [];
+            foreach (array_merge($packages, $packagesDev) as $package) {
                 $packageName = '';
                 foreach ($package ?? [] as $key => $value) {
                     if ($key === 'name') {
@@ -124,7 +130,16 @@ class Composer
 
     public static function getLoader(): ClassLoader
     {
-        return self::findLoader();
+        if (! self::$classLoader) {
+            self::$classLoader = self::findLoader();
+        }
+        return self::$classLoader;
+    }
+
+    public static function setLoader(ClassLoader $classLoader): ClassLoader
+    {
+        self::$classLoader = $classLoader;
+        return $classLoader;
     }
 
     private static function findLoader(): ClassLoader

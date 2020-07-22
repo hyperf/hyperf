@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Cache\Listener;
 
 use Hyperf\Cache\Annotation\Cacheable;
@@ -17,12 +16,8 @@ use Hyperf\Cache\AnnotationManager;
 use Hyperf\Cache\CacheManager;
 use Hyperf\Cache\Driver\DriverInterface;
 use Hyperf\Cache\Driver\KeyCollectorInterface;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 
-/**
- * @Listener
- */
 class DeleteListener implements ListenerInterface
 {
     /**
@@ -60,7 +55,7 @@ class DeleteListener implements ListenerInterface
         $driver = $this->manager->getDriver($group);
         $driver->delete($key);
 
-        if ($driver instanceof KeyCollectorInterface && $annotation instanceof Cacheable) {
+        if ($driver instanceof KeyCollectorInterface && $annotation instanceof Cacheable && $annotation->collect) {
             $driver->delKey($annotation->prefix . 'MEMBERS', $key);
         }
     }

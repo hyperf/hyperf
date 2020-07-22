@@ -5,15 +5,15 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Dispatcher;
 
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use function array_unique;
 use function is_string;
 use function sprintf;
@@ -31,7 +31,7 @@ abstract class AbstractRequestHandler
     protected $offset = 0;
 
     /**
-     * @var string
+     * @var MiddlewareInterface|object
      */
     protected $coreHandler;
 
@@ -42,8 +42,7 @@ abstract class AbstractRequestHandler
 
     /**
      * @param array $middlewares All middlewares to dispatch by dispatcher
-     * @param object $coreHandler The core middleware of dispatcher
-     * @param ContainerInterface $container
+     * @param MiddlewareInterface|object $coreHandler The core middleware of dispatcher
      */
     public function __construct(array $middlewares, $coreHandler, ContainerInterface $container)
     {
@@ -61,7 +60,7 @@ abstract class AbstractRequestHandler
             is_string($handler) && $handler = $this->container->get($handler);
         }
         if (! method_exists($handler, 'process')) {
-            throw new InvalidArgumentException(sprintf('Invalid middleware, it have to provide a process() method.'));
+            throw new InvalidArgumentException(sprintf('Invalid middleware, it has to provide a process() method.'));
         }
         return $handler->process($request, $this->next());
     }

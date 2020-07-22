@@ -5,16 +5,15 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Tracer;
 
 use GuzzleHttp\Client;
-use Zipkin\Tracing;
-use Zipkin\TracingBuilder;
+use Hyperf\Tracer\Listener\DbQueryExecutedListener;
+use OpenTracing\Tracer;
 
 class ConfigProvider
 {
@@ -22,16 +21,19 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                Tracing::class => \Hyperf\Tracer\Tracing::class,
-                TracingBuilder::class => TracingBuilderFactory::class,
+                Tracer::class => TracerFactory::class,
                 SwitchManager::class => SwitchManagerFactory::class,
+                SpanTagManager::class => SpanTagManagerFactory::class,
                 Client::class => Client::class,
             ],
-            'commands' => [
+            'listeners' => [
+                DbQueryExecutedListener::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             'publish' => [

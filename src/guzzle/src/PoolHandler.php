@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Guzzle;
 
 use GuzzleHttp\Promise\FulfilledPromise;
@@ -71,16 +70,18 @@ class PoolHandler extends CoroutineHandler
             if (! empty($settings)) {
                 $client->set($settings);
             }
+
+            $ms = microtime(true);
+
             $this->execute($client, $path);
 
             $ex = $this->checkStatusCode($client, $request);
             if ($ex !== true) {
                 $connection->close();
-                $connection->release();
                 return \GuzzleHttp\Promise\rejection_for($ex);
             }
 
-            $response = $this->getResponse($client);
+            $response = $this->getResponse($client, $request, $options, microtime(true) - $ms);
         } finally {
             $connection->release();
         }

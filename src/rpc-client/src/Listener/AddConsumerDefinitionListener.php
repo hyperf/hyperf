@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RpcClient\Listener;
 
 use Hyperf\Contract\ConfigInterface;
@@ -17,7 +16,6 @@ use Hyperf\Di\Container;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\RpcClient\ProxyFactory;
-use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
 
 class AddConsumerDefinitionListener implements ListenerInterface
@@ -60,16 +58,20 @@ class AddConsumerDefinitionListener implements ListenerInterface
                 if (! interface_exists($serviceClass)) {
                     continue;
                 }
+
+                $proxyClass = $serviceFactory->createProxy($serviceClass);
+
                 $definitions->addDefinition(
                     $consumer['id'] ?? $serviceClass,
-                    function (ContainerInterface $container) use ($serviceFactory, $consumer, $serviceClass) {
-                        $proxyClass = $serviceFactory->createProxy($serviceClass);
-
+                    function (ContainerInterface $container) use ($consumer, $serviceClass, $proxyClass) {
                         return new $proxyClass(
                             $container,
                             $consumer['name'],
                             $consumer['protocol'] ?? 'jsonrpc-http',
-                            Arr::only($consumer, ['load_balancer'])
+                            [
+                                'load_balancer' => $consumer['load_balancer'] ?? 'random',
+                                'service_interface' => $serviceClass,
+                            ]
                         );
                     }
                 );

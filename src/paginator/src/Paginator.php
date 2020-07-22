@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Paginator;
 
 use ArrayAccess;
@@ -61,6 +60,7 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
         if ($this->hasMorePages()) {
             return $this->url($this->currentPage() + 1);
         }
+        return null;
     }
 
     /**
@@ -129,7 +129,7 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
     /**
      * Get the current page for the request.
      */
-    protected function setCurrentPage(int $currentPage): int
+    protected function setCurrentPage(?int $currentPage): int
     {
         $currentPage = $currentPage ?: static::resolveCurrentPage();
 

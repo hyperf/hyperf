@@ -5,16 +5,16 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Cache\Driver;
 
 use Hyperf\Cache\Collector\FileStorage;
 use Hyperf\Cache\Exception\CacheException;
 use Hyperf\Cache\Exception\InvalidArgumentException;
+use Hyperf\Utils\Filesystem\Filesystem;
 use Psr\Container\ContainerInterface;
 
 class FileSystemDriver extends Driver
@@ -23,6 +23,11 @@ class FileSystemDriver extends Driver
      * @var string
      */
     protected $storePath = BASE_PATH . '/runtime/caches';
+
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
 
     public function __construct(ContainerInterface $container, array $config)
     {
@@ -33,11 +38,12 @@ class FileSystemDriver extends Driver
                 throw new CacheException('Has no permission to create cache directory!');
             }
         }
+        $this->filesystem = $container->get(Filesystem::class);
     }
 
     public function getCacheKey(string $key)
     {
-        return $this->storePath . DIRECTORY_SEPARATOR . $this->prefix . $key . 'cache';
+        return $this->getPrefix() . $key . '.cache';
     }
 
     public function get($key, $default = null)
@@ -48,7 +54,7 @@ class FileSystemDriver extends Driver
         }
 
         /** @var FileStorage $obj */
-        $obj = $this->packer->unpack(file_get_contents($file));
+        $obj = $this->packer->unpack($this->filesystem->get($file));
         if ($obj->isExpired()) {
             return $default;
         }
@@ -64,7 +70,7 @@ class FileSystemDriver extends Driver
         }
 
         /** @var FileStorage $obj */
-        $obj = $this->packer->unpack(file_get_contents($file));
+        $obj = $this->packer->unpack($this->filesystem->get($file));
         if ($obj->isExpired()) {
             return [false, $default];
         }
@@ -74,10 +80,11 @@ class FileSystemDriver extends Driver
 
     public function set($key, $value, $ttl = null)
     {
+        $seconds = $this->secondsUntil($ttl);
         $file = $this->getCacheKey($key);
-        $content = $this->packer->pack(new FileStorage($value, $ttl));
+        $content = $this->packer->pack(new FileStorage($value, $seconds));
 
-        $result = file_put_contents($file, $content, FILE_BINARY);
+        $result = $this->filesystem->put($file, $content);
 
         return (bool) $result;
     }
@@ -119,9 +126,9 @@ class FileSystemDriver extends Driver
         if (! is_array($values)) {
             throw new InvalidArgumentException('The values is invalid!');
         }
-
+        $seconds = $this->secondsUntil($ttl);
         foreach ($values as $key => $value) {
-            $this->set($key, $value, $ttl);
+            $this->set($key, $value, $seconds);
         }
 
         return true;
@@ -149,7 +156,7 @@ class FileSystemDriver extends Driver
 
     public function clearPrefix(string $prefix): bool
     {
-        $files = glob($this->storePath . $prefix . DIRECTORY_SEPARATOR . '*');
+        $files = glob($this->getPrefix() . $prefix . '*');
         foreach ($files as $file) {
             if (is_dir($file)) {
                 continue;
@@ -158,5 +165,10 @@ class FileSystemDriver extends Driver
         }
 
         return true;
+    }
+
+    protected function getPrefix()
+    {
+        return $this->storePath . DIRECTORY_SEPARATOR . $this->prefix;
     }
 }

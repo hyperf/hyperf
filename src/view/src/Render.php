@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\View;
 
 use Hyperf\Contract\ConfigInterface;
@@ -20,6 +19,7 @@ use Hyperf\Utils\Context;
 use Hyperf\View\Engine\EngineInterface;
 use Hyperf\View\Engine\SmartyEngine;
 use Hyperf\View\Exception\EngineNotFindException;
+use Hyperf\View\Exception\RenderException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -58,21 +58,33 @@ class Render implements RenderInterface
         $this->container = $container;
     }
 
-    public function render(string $template, array $data)
+    public function render(string $template, array $data = []): ResponseInterface
     {
-        switch ($this->mode) {
-            case Mode::SYNC:
-                /** @var EngineInterface $engine */
-                $engine = $this->container->get($this->engine);
-                $result = $engine->render($template, $data, $this->config);
-                break;
-            case Mode::TASK:
-            default:
-                $executor = $this->container->get(TaskExecutor::class);
-                $result = $executor->execute(new Task([$this->engine, 'render'], [$template, $data, $this->config]));
-        }
+        return $this->response()
+            ->withAddedHeader('content-type', 'text/html')
+            ->withBody(new SwooleStream($this->getContents($template, $data)));
+    }
 
-        return $this->response()->withAddedHeader('content-type', 'text/html')->withBody(new SwooleStream($result));
+    public function getContents(string $template, array $data = []): string
+    {
+        try {
+            switch ($this->mode) {
+                case Mode::SYNC:
+                    /** @var EngineInterface $engine */
+                    $engine = $this->container->get($this->engine);
+                    $result = $engine->render($template, $data, $this->config);
+                    break;
+                case Mode::TASK:
+                default:
+                    $executor = $this->container->get(TaskExecutor::class);
+                    $result = $executor->execute(new Task([$this->engine, 'render'], [$template, $data, $this->config]));
+                    break;
+            }
+
+            return $result;
+        } catch (\Throwable $throwable) {
+            throw new RenderException($throwable->getMessage(), $throwable->getCode(), $throwable);
+        }
     }
 
     protected function response(): ResponseInterface

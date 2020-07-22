@@ -5,20 +5,26 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\DbConnection\Stubs;
 
 use PDO;
 
 class PDOStatementStub extends \PDOStatement
 {
+    public $statement;
+
+    public function __construct($statement)
+    {
+        $this->statement = $statement;
+    }
+
     public function execute($input_parameters = null)
     {
-        return [];
+        return true;
     }
 
     public function fetch($fetch_style = null, $cursor_orientation = PDO::FETCH_ORI_NEXT, $cursor_offset = 0)

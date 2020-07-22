@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Events;
 
 use Hyperf\Database\ConnectionInterface;
@@ -52,19 +51,23 @@ class QueryExecuted
     public $connectionName;
 
     /**
-     * Create a new event instance.
+     * The result of query.
      *
-     * @param string $sql
-     * @param array $bindings
-     * @param null|float $time
-     * @param ConnectionInterface $connection
+     * @var null|array|int|\Throwable
      */
-    public function __construct($sql, $bindings, $time, $connection)
+    public $result;
+
+    /**
+     * Create a new event instance.
+     * @param null|array|int|\Throwable $result
+     */
+    public function __construct(string $sql, array $bindings, ?float $time, ConnectionInterface $connection, $result = null)
     {
         $this->sql = $sql;
         $this->time = $time;
         $this->bindings = $bindings;
         $this->connection = $connection;
         $this->connectionName = $connection->getName();
+        $this->result = $result;
     }
 }

@@ -5,22 +5,24 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Model;
 
-use Hyperf\Contract\CodeDegenerateInterface;
-use Hyperf\Contract\CodeGenerateInterface;
+use Hyperf\Contract\CompressInterface;
+use Hyperf\Contract\UnCompressInterface;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
+use Hyperf\Utils\Traits\Macroable;
 
-class Collection extends BaseCollection implements CodeGenerateInterface
+class Collection extends BaseCollection implements CompressInterface
 {
+    use Macroable;
+
     /**
      * Find a model in the collection by key.
      *
@@ -437,8 +439,9 @@ class Collection extends BaseCollection implements CodeGenerateInterface
 
     /**
      * Get a flattened array of the items in the collection.
+     * @param float|int $depth
      */
-    public function flatten(int $depth = INF): BaseCollection
+    public function flatten($depth = INF): BaseCollection
     {
         return $this->toBase()->flatten($depth);
     }
@@ -460,7 +463,7 @@ class Collection extends BaseCollection implements CodeGenerateInterface
         return $this->toBase()->pad($size, $value);
     }
 
-    public function generate(): CodeDegenerateInterface
+    public function compress(): UnCompressInterface
     {
         if ($this->isEmpty()) {
             return new CollectionMeta(null);

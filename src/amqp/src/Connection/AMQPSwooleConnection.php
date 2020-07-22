@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp\Connection;
 
 use PhpAmqpLib\Connection\AbstractConnection;
@@ -32,7 +31,11 @@ class AMQPSwooleConnection extends AbstractConnection
         bool $keepalive = false,
         int $heartbeat = 0
     ) {
-        $io = new SwooleIO($host, $port, $connectionTimeout, $readWriteTimeout, $context, $keepalive, $heartbeat);
+        if ($keepalive) {
+            $io = new KeepaliveIO($host, $port, $connectionTimeout, $readWriteTimeout, $context, $keepalive, $heartbeat);
+        } else {
+            $io = new SwooleIO($host, $port, $connectionTimeout, $readWriteTimeout, $context, $keepalive, $heartbeat);
+        }
 
         parent::__construct(
             $user,
@@ -44,7 +47,12 @@ class AMQPSwooleConnection extends AbstractConnection
             $locale,
             $io,
             $heartbeat,
-            $connectionTimeout
+            (int) $connectionTimeout
         );
+    }
+
+    public function getIO()
+    {
+        return $this->io;
     }
 }

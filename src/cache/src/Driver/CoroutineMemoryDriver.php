@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Cache\Driver;
 
 use Hyperf\Cache\Collector\CoroutineMemory;
@@ -52,6 +51,8 @@ class CoroutineMemoryDriver extends Driver implements KeyCollectorInterface
         foreach ($values as $key => $value) {
             $this->set($key, $values, $ttl);
         }
+
+        return true;
     }
 
     public function deleteMultiple($keys)
@@ -59,6 +60,8 @@ class CoroutineMemoryDriver extends Driver implements KeyCollectorInterface
         foreach ($keys as $key) {
             $this->delete($key);
         }
+
+        return true;
     }
 
     public function has($key)
@@ -106,6 +109,7 @@ class CoroutineMemoryDriver extends Driver implements KeyCollectorInterface
             }
         }
         $instance->put($collector, $result);
+        return true;
     }
 
     protected function getCollection()

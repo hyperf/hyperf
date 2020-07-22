@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpServer\Router;
 
 use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
@@ -30,7 +29,6 @@ use Hyperf\HttpServer\Annotation\PatchMapping;
 use Hyperf\HttpServer\Annotation\PostMapping;
 use Hyperf\HttpServer\Annotation\PutMapping;
 use Hyperf\HttpServer\Annotation\RequestMapping;
-use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\Utils\Str;
 use ReflectionMethod;
 
@@ -39,7 +37,7 @@ class DispatcherFactory
     protected $routes = [BASE_PATH . '/config/routes.php'];
 
     /**
-     * @var \FastRoute\RouteCollector[]
+     * @var RouteCollector[]
      */
     protected $routers = [];
 
@@ -118,7 +116,9 @@ class DispatcherFactory
         foreach ($methods as $method) {
             $path = $this->parsePath($prefix, $method);
             $methodName = $method->getName();
-            $router->addRoute($autoMethods, $path, [$className, $methodName, $annotation->server]);
+            if (substr($methodName, 0, 2) === '__') {
+                continue;
+            }
 
             $methodMiddlewares = $middlewares;
             // Handle method level middlewares.
@@ -127,16 +127,15 @@ class DispatcherFactory
                 $methodMiddlewares = array_unique($methodMiddlewares);
             }
 
-            // Register middlewares.
-            foreach ($autoMethods as $autoMethod) {
-                MiddlewareManager::addMiddlewares($annotation->server, $path, $autoMethod, $methodMiddlewares);
-            }
+            $router->addRoute($autoMethods, $path, [$className, $methodName], [
+                'middleware' => $methodMiddlewares,
+            ]);
+
             if (Str::endsWith($path, $defaultAction)) {
                 $path = Str::replaceLast($defaultAction, '', $path);
-                $router->addRoute($autoMethods, $path, [$className, $methodName, $annotation->server]);
-                foreach ($autoMethods as $autoMethod) {
-                    MiddlewareManager::addMiddlewares($annotation->server, $path, $autoMethod, $methodMiddlewares);
-                }
+                $router->addRoute($autoMethods, $path, [$className, $methodName], [
+                    'middleware' => $methodMiddlewares,
+                ]);
             }
         }
     }
@@ -177,19 +176,14 @@ class DispatcherFactory
                     }
                     $path = $mapping->path;
 
-                    if ($path[0] !== '/') {
+                    if ($path === '') {
+                        $path = $prefix;
+                    } elseif ($path[0] !== '/') {
                         $path = $prefix . '/' . $path;
                     }
-                    $router->addRoute($mapping->methods, $path, [
-                        $className,
-                        $methodName,
-                        $annotation->server,
+                    $router->addRoute($mapping->methods, $path, [$className, $methodName], [
+                        'middleware' => $methodMiddlewares,
                     ]);
-
-                    // Register middlewares.
-                    foreach ($mapping->methods as $mappingMethod) {
-                        MiddlewareManager::addMiddlewares($annotation->server, $path, $mappingMethod, $methodMiddlewares);
-                    }
                 }
             }
         }

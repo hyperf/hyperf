@@ -5,13 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpServer;
 
+use FastRoute\Dispatcher;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Contract\OnRequestInterface;
@@ -19,12 +19,16 @@ use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
+use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
+use Hyperf\HttpServer\Router\Dispatched;
+use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 use Throwable;
@@ -32,27 +36,7 @@ use Throwable;
 class Server implements OnRequestInterface, MiddlewareInitializerInterface
 {
     /**
-     * @var array
-     */
-    protected $middlewares;
-
-    /**
-     * @var string
-     */
-    protected $coreHandler;
-
-    /**
-     * @var MiddlewareInterface
-     */
-    protected $coreMiddleware;
-
-    /**
-     * @var array
-     */
-    protected $exceptionHandlers;
-
-    /**
-     * @var \Psr\Container\ContainerInterface
+     * @var ContainerInterface
      */
     protected $container;
 
@@ -62,52 +46,89 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     protected $dispatcher;
 
     /**
+     * @var ExceptionHandlerDispatcher
+     */
+    protected $exceptionHandlerDispatcher;
+
+    /**
+     * @var array
+     */
+    protected $middlewares;
+
+    /**
+     * @var CoreMiddlewareInterface
+     */
+    protected $coreMiddleware;
+
+    /**
+     * @var array
+     */
+    protected $exceptionHandlers;
+
+    /**
+     * @var Dispatcher
+     */
+    protected $routerDispatcher;
+
+    /**
+     * @var \Hyperf\HttpServer\ResponseEmitter
+     */
+    protected $responseEmitter;
+
+    /**
      * @var string
      */
     protected $serverName;
 
-    public function __construct(
-        string $serverName,
-        string $coreHandler,
-        ContainerInterface $container,
-        $dispatcher
-    ) {
-        $this->serverName = $serverName;
-        $this->coreHandler = $coreHandler;
+    public function __construct(ContainerInterface $container, HttpDispatcher $dispatcher, ExceptionHandlerDispatcher $exceptionHandlerDispatcher, ResponseEmitter $responseEmitter)
+    {
         $this->container = $container;
         $this->dispatcher = $dispatcher;
+        $this->exceptionHandlerDispatcher = $exceptionHandlerDispatcher;
+        $this->responseEmitter = $responseEmitter;
     }
 
     public function initCoreMiddleware(string $serverName): void
     {
         $this->serverName = $serverName;
         $this->coreMiddleware = $this->createCoreMiddleware();
+        $this->routerDispatcher = $this->createDispatcher($serverName);
 
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);
-        $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, [
-            HttpExceptionHandler::class,
-        ]);
+        $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, $this->getDefaultExceptionHandler());
     }
 
     public function onRequest(SwooleRequest $request, SwooleResponse $response): void
     {
         try {
+            CoordinatorManager::until(Constants::WORKER_START)->yield();
+
             [$psr7Request, $psr7Response] = $this->initRequestAndResponse($request, $response);
 
-            $middlewares = array_merge($this->middlewares, MiddlewareManager::get($this->serverName, $psr7Request->getUri()->getPath(), $psr7Request->getMethod()));
+            $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
+            /** @var Dispatched $dispatched */
+            $dispatched = $psr7Request->getAttribute(Dispatched::class);
+            $middlewares = $this->middlewares;
+            if ($dispatched->isFound()) {
+                $registedMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
+                $middlewares = array_merge($middlewares, $registedMiddlewares);
+            }
 
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
             // Delegate the exception to exception handler.
-            $exceptionHandlerDispatcher = $this->container->get(ExceptionHandlerDispatcher::class);
-            $psr7Response = $exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+            $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
             // Send the Response to client.
-            if (! isset($psr7Response) || ! $psr7Response instanceof Psr7Response) {
+            if (! isset($psr7Response)) {
                 return;
             }
-            $psr7Response->send();
+            if (! isset($psr7Request) || $psr7Request->getMethod() === 'HEAD') {
+                $this->responseEmitter->emit($psr7Response, $response, false);
+            } else {
+                $this->responseEmitter->emit($psr7Response, $response, true);
+            }
         }
     }
 
@@ -125,17 +146,29 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         return $this;
     }
 
-    protected function createCoreMiddleware(): MiddlewareInterface
+    protected function createDispatcher(string $serverName): Dispatcher
     {
-        $coreHandler = $this->coreHandler;
-        return new $coreHandler($this->container, $this->serverName);
+        $factory = $this->container->get(DispatcherFactory::class);
+        return $factory->getDispatcher($serverName);
+    }
+
+    protected function getDefaultExceptionHandler(): array
+    {
+        return [
+            HttpExceptionHandler::class,
+        ];
+    }
+
+    protected function createCoreMiddleware(): CoreMiddlewareInterface
+    {
+        return make(CoreMiddleware::class, [$this->container, $this->serverName]);
     }
 
     protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array
     {
         // Initialize PSR-7 Request and Response objects.
+        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
         Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
-        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response($response));
         return [$psr7Request, $psr7Response];
     }
 }

@@ -4,9 +4,9 @@ $header = <<<'EOF'
 This file is part of Hyperf.
 
 @link     https://www.hyperf.io
-@document https://doc.hyperf.io
+@document https://hyperf.wiki
 @contact  group@hyperf.io
-@license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+@license  https://github.com/hyperf/hyperf/blob/master/LICENSE
 EOF;
 
 return PhpCsFixer\Config::create()
@@ -51,9 +51,6 @@ return PhpCsFixer\Config::create()
             'comment_types' => [
             ],
         ],
-        'list_syntax' => [
-            'syntax' => 'short',
-        ],
         'yoda_style' => [
             'always_move_variable' => false,
             'equal' => false,
@@ -65,11 +62,13 @@ return PhpCsFixer\Config::create()
         'multiline_whitespace_before_semicolons' => [
             'strategy' => 'no_multi_line',
         ],
+        'constant_case' => [
+            'case' => 'lower',
+        ],
         'class_attributes_separation' => true,
         'combine_consecutive_unsets' => true,
         'declare_strict_types' => true,
         'linebreak_after_opening_tag' => true,
-        'lowercase_constants' => true,
         'lowercase_static_reference' => true,
         'no_useless_else' => true,
         'no_unused_imports' => true,
@@ -84,6 +83,7 @@ return PhpCsFixer\Config::create()
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()
+            ->exclude('bin')
             ->exclude('public')
             ->exclude('runtime')
             ->exclude('vendor')

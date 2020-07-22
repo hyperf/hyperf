@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Di\Definition;
 
 use Hyperf\Di\ReflectionManager;
@@ -20,11 +19,6 @@ class ObjectDefinition implements DefinitionInterface
      * @var MethodInjection
      */
     protected $constructorInjection;
-
-    /**
-     * @var PropertyInjection[]
-     */
-    protected $propertyInjections = [];
 
     /**
      * @var string
@@ -45,16 +39,6 @@ class ObjectDefinition implements DefinitionInterface
      * @var bool
      */
     private $instantiable = false;
-
-    /**
-     * @var bool
-     */
-    private $needProxy = false;
-
-    /**
-     * @var string
-     */
-    private $proxyClassName;
 
     public function __construct(string $name, string $className = null)
     {
@@ -127,44 +111,6 @@ class ObjectDefinition implements DefinitionInterface
             // Set
             $this->constructorInjection = $injection;
         }
-    }
-
-    /**
-     * @return PropertyInjection[]
-     */
-    public function getPropertyInjections(): array
-    {
-        return $this->propertyInjections;
-    }
-
-    public function addPropertyInjection(PropertyInjection $propertyInjection): void
-    {
-        $this->propertyInjections[$propertyInjection->getPropertyName()] = $propertyInjection;
-    }
-
-    public function getProxyClassName(): string
-    {
-        return $this->proxyClassName;
-    }
-
-    public function setProxyClassName(string $proxyClassName): self
-    {
-        $this->proxyClassName = $proxyClassName;
-        return $this;
-    }
-
-    /**
-     * Determine if the definition need to transfer to a proxy class.
-     */
-    public function isNeedProxy(): bool
-    {
-        return $this->needProxy;
-    }
-
-    public function setNeedProxy(bool $needProxy): self
-    {
-        $this->needProxy = $needProxy;
-        return $this;
     }
 
     private function updateStatusCache(): void

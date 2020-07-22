@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\AsyncQueue\Driver;
 
 use Hyperf\AsyncQueue\JobInterface;
@@ -20,12 +19,6 @@ interface DriverInterface
      * Push a job to queue.
      */
     public function push(JobInterface $job, int $delay = 0): bool;
-
-    /**
-     * Push a delay job to queue.
-     * @deprecated v1.1
-     */
-    public function delay(JobInterface $job, int $delay = 0): bool;
 
     /**
      * Delete a delay job to queue.
@@ -40,14 +33,14 @@ interface DriverInterface
     /**
      * Ack a job.
      *
-     * @param $data
+     * @param mixed $data
      */
     public function ack($data): bool;
 
     /**
      * Push a job to failed queue.
      *
-     * @param $data
+     * @param mixed $data
      */
     public function fail($data): bool;
 

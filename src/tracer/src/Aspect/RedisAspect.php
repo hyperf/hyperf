@@ -5,25 +5,28 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Tracer\Aspect;
 
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Redis\Redis;
+use Hyperf\Tracer\SpanStarter;
+use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use Hyperf\Tracer\Tracing;
+use OpenTracing\Tracer;
 
 /**
  * @Aspect
  */
 class RedisAspect implements AroundInterface
 {
+    use SpanStarter;
+
     /**
      * @var array
      */
@@ -38,19 +41,25 @@ class RedisAspect implements AroundInterface
     public $annotations = [];
 
     /**
-     * @var Tracing
+     * @var Tracer
      */
-    private $tracing;
+    private $tracer;
 
     /**
      * @var SwitchManager
      */
     private $switchManager;
 
-    public function __construct(Tracing $tracing, SwitchManager $switchManager)
+    /**
+     * @var SpanTagManager
+     */
+    private $spanTagManager;
+
+    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
     {
-        $this->tracing = $tracing;
+        $this->tracer = $tracer;
         $this->switchManager = $switchManager;
+        $this->spanTagManager = $spanTagManager;
     }
 
     /**
@@ -63,11 +72,10 @@ class RedisAspect implements AroundInterface
         }
 
         $arguments = $proceedingJoinPoint->arguments['keys'];
-        $span = $this->tracing->span('Redis' . '::' . $arguments['name']);
-        $span->start();
-        $span->tag('arguments', json_encode($arguments['arguments']));
+        $span = $this->startSpan('Redis' . '::' . $arguments['name']);
+        $span->setTag($this->spanTagManager->get('redis', 'arguments'), json_encode($arguments['arguments']));
         $result = $proceedingJoinPoint->process();
-        $span->tag('result', json_encode($result));
+        $span->setTag($this->spanTagManager->get('redis', 'result'), json_encode($result));
         $span->finish();
         return $result;
     }

@@ -5,14 +5,19 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Database;
 
+use Hyperf\Database\Connection;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
+use Hyperf\Database\Schema\Column;
+use Hyperf\Database\Schema\Grammars\MySqlGrammar;
+use Hyperf\Database\Schema\MySqlBuilder;
+use HyperfTest\Database\Stubs\ContainerStub;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -34,5 +39,21 @@ class MySqlProcessorTest extends TestCase
         }
 
         $this->assertEquals($expected, $processor->processColumnListing($listing));
+    }
+
+    public function testProcessColumns()
+    {
+        $container = ContainerStub::getContainer();
+
+        /** @var Connection $connection */
+        $connection = $container->get(ConnectionResolverInterface::class)->connection();
+        $connection->setSchemaGrammar(new MySqlGrammar());
+        $builder = new MySqlBuilder($connection);
+
+        $columns = $builder->getColumns();
+
+        $this->assertTrue(is_array($columns));
+        $this->assertTrue(count($columns) > 0);
+        $this->assertInstanceOf(Column::class, $columns[0]);
     }
 }

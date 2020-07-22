@@ -5,14 +5,14 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Contract\NormalizerInterface;
+use Hyperf\Rpc\Context;
 
 class NormalizeDataFormatter extends DataFormatter
 {
@@ -21,9 +21,11 @@ class NormalizeDataFormatter extends DataFormatter
      */
     private $normalizer;
 
-    public function __construct(NormalizerInterface $normalizer)
+    public function __construct(NormalizerInterface $normalizer, Context $context)
     {
         $this->normalizer = $normalizer;
+
+        parent::__construct($context);
     }
 
     public function formatRequest($data)
@@ -40,7 +42,7 @@ class NormalizeDataFormatter extends DataFormatter
 
     public function formatErrorResponse($data)
     {
-        if (isset($data[3]) && $data[3] instanceof \Exception) {
+        if (isset($data[3]) && $data[3] instanceof \Throwable) {
             $data[3] = [
                 'class' => get_class($data[3]),
                 'attributes' => $this->normalizer->normalize($data[3]),

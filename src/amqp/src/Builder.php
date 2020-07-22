@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Message\MessageInterface;
@@ -21,6 +20,10 @@ use Psr\Container\ContainerInterface;
 
 class Builder
 {
+    /**
+     * @deprecated v2.0
+     * @var string
+     */
     protected $name = 'default';
 
     /**
@@ -31,7 +34,7 @@ class Builder
     /**
      * @var PoolFactory
      */
-    private $poolFactory;
+    protected $poolFactory;
 
     public function __construct(ContainerInterface $container, PoolFactory $poolFactory)
     {
@@ -42,7 +45,7 @@ class Builder
     /**
      * @throws AMQPProtocolChannelException when the channel operation is failed
      */
-    public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
+    public function declare(MessageInterface $message, ?AMQPChannel $channel = null, bool $release = false): void
     {
         if (! $channel) {
             $pool = $this->getConnectionPool($message->getPoolName());
@@ -54,6 +57,10 @@ class Builder
         $builder = $message->getExchangeBuilder();
 
         $channel->exchange_declare($builder->getExchange(), $builder->getType(), $builder->isPassive(), $builder->isDurable(), $builder->isAutoDelete(), $builder->isInternal(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
+
+        if (isset($connection) && $release) {
+            $connection->release();
+        }
     }
 
     protected function getConnectionPool(string $poolName): AmqpConnectionPool

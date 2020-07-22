@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils\Serializer;
 
 use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
@@ -25,7 +24,7 @@ class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, Ca
         return get_class($this) === __CLASS__;
     }
 
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize($data, string $class, string $format = null, array $context = [])
     {
         switch ($class) {
             case 'int':
@@ -41,7 +40,7 @@ class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, Ca
         }
     }
 
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, $type, string $format = null)
     {
         return in_array($type, [
             'int',
@@ -49,15 +48,16 @@ class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, Ca
             'float',
             'bool',
             'mixed',
+            'array', // TODO: Symfony\Component\Serializer\Normalizer\ArrayDenormalizer not support array, so it denormalized in ScalarNormalizer.
         ]);
     }
 
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, string $format = null, array $context = [])
     {
         return $object;
     }
 
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, string $format = null)
     {
         return is_scalar($data);
     }

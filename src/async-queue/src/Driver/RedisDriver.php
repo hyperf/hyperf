@@ -5,19 +5,18 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\AsyncQueue\Driver;
 
 use Hyperf\AsyncQueue\Exception\InvalidQueueException;
 use Hyperf\AsyncQueue\JobInterface;
 use Hyperf\AsyncQueue\Message;
 use Hyperf\AsyncQueue\MessageInterface;
+use Hyperf\Redis\RedisFactory;
 use Psr\Container\ContainerInterface;
-use Redis;
 
 class RedisDriver extends Driver
 {
@@ -39,7 +38,7 @@ class RedisDriver extends Driver
 
     /**
      * Retry delay time.
-     * @var int
+     * @var array|int
      */
     protected $retrySeconds;
 
@@ -53,8 +52,7 @@ class RedisDriver extends Driver
     {
         parent::__construct($container, $config);
         $channel = $config['channel'] ?? 'queue';
-
-        $this->redis = $container->get(Redis::class);
+        $this->redis = $container->get(RedisFactory::class)->get($config['redis']['pool'] ?? 'default');
         $this->timeout = $config['timeout'] ?? 5;
         $this->retrySeconds = $config['retry_seconds'] ?? 10;
         $this->handleTimeout = $config['handle_timeout'] ?? 10;
@@ -64,7 +62,7 @@ class RedisDriver extends Driver
 
     public function push(JobInterface $job, int $delay = 0): bool
     {
-        $message = new Message($job);
+        $message = make(Message::class, [$job]);
         $data = $this->packer->pack($message);
 
         if ($delay === 0) {
@@ -74,23 +72,9 @@ class RedisDriver extends Driver
         return $this->redis->zAdd($this->channel->getDelayed(), time() + $delay, $data) > 0;
     }
 
-    /**
-     * @deprecated v1.1
-     */
-    public function delay(JobInterface $job, int $delay = 0): bool
-    {
-        if ($delay === 0) {
-            return $this->push($job);
-        }
-
-        $message = new Message($job);
-        $data = $this->packer->pack($message);
-        return $this->redis->zAdd($this->channel->getDelayed(), time() + $delay, $data) > 0;
-    }
-
     public function delete(JobInterface $job): bool
     {
-        $message = new Message($job);
+        $message = make(Message::class, [$job]);
         $data = $this->packer->pack($message);
 
         return (bool) $this->redis->zRem($this->channel->getDelayed(), $data);
@@ -171,12 +155,28 @@ class RedisDriver extends Driver
     protected function retry(MessageInterface $message): bool
     {
         $data = $this->packer->pack($message);
-        return $this->redis->zAdd($this->channel->getDelayed(), time() + $this->retrySeconds, $data) > 0;
+
+        $delay = time() + $this->getRetrySeconds($message->getAttempts());
+
+        return $this->redis->zAdd($this->channel->getDelayed(), $delay, $data) > 0;
+    }
+
+    protected function getRetrySeconds(int $attempts): int
+    {
+        if (! is_array($this->retrySeconds)) {
+            return $this->retrySeconds;
+        }
+
+        if (empty($this->retrySeconds)) {
+            return 10;
+        }
+
+        return $this->retrySeconds[$attempts - 1] ?? end($this->retrySeconds);
     }
 
     /**
      * Remove data from reserved queue.
-     * @param mixed $data
+     * @param string $data
      */
     protected function remove($data): bool
     {

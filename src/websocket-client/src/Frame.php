@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\WebSocketClient;
 
 use Swoole\WebSocket\Frame as SwFrame;
@@ -33,9 +32,9 @@ class Frame
 
     public function __construct(SwFrame $frame)
     {
-        foreach ($frame as $key => $val) {
-            $this->{$key} = $val;
-        }
+        $this->finish = $frame->finish;
+        $this->opcode = $frame->opcode;
+        $this->data = $frame->data;
     }
 
     public function __toString()

@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Crontab\Annotation;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
@@ -37,6 +36,26 @@ class Crontab extends AbstractAnnotation
      * @var string
      */
     public $rule;
+
+    /**
+     * @var bool
+     */
+    public $singleton;
+
+    /**
+     * @var string
+     */
+    public $mutexPool;
+
+    /**
+     * @var int
+     */
+    public $mutexExpires;
+
+    /**
+     * @var bool
+     */
+    public $onOneServer;
 
     /**
      * @var array|string

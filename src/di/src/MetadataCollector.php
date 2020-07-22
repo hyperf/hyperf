@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Di;
 
 use Hyperf\Utils\Arr;
@@ -48,6 +47,15 @@ abstract class MetadataCollector implements MetadataCollectorInterface
     public static function has(string $key): bool
     {
         return Arr::has(static::$container, $key);
+    }
+
+    public static function clear(?string $key = null): void
+    {
+        if ($key) {
+            Arr::forget(static::$container, [$key]);
+        } else {
+            static::$container = [];
+        }
     }
 
     /**

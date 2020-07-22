@@ -5,26 +5,20 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Config\Listener;
 
 use Hyperf\Config\Annotation\Value;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Definition\PropertyHandlerManager;
-use Hyperf\Di\Definition\PropertyInjection;
-use Hyperf\Event\Annotation\Listener;
+use Hyperf\Di\ReflectionManager;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\Utils\ApplicationContext;
 
-/**
- * @Listener
- */
 class RegisterPropertyHandlerListener implements ListenerInterface
 {
     /**
@@ -43,14 +37,13 @@ class RegisterPropertyHandlerListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        PropertyHandlerManager::register(Value::class, function (ObjectDefinition $definition, string $propertyName, $annotation) {
+        PropertyHandlerManager::register(Value::class, function ($object, $currentClassName, $targetClassName, $property, $annotation) {
             if ($annotation instanceof Value && ApplicationContext::hasContainer()) {
+                $reflectionProperty = ReflectionManager::reflectProperty($currentClassName, $property);
+                $reflectionProperty->setAccessible(true);
                 $key = $annotation->key;
-                $propertyInjection = new PropertyInjection($propertyName, function () use ($key) {
-                    $config = ApplicationContext::getContainer()->get(ConfigInterface::class);
-                    return $config->get($key, null);
-                });
-                $definition->addPropertyInjection($propertyInjection);
+                $config = ApplicationContext::getContainer()->get(ConfigInterface::class);
+                $reflectionProperty->setValue($object, $config->get($key, null));
             }
         });
     }

@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Migrations;
 
 use Closure;
@@ -35,8 +34,6 @@ class MigrationCreator
 
     /**
      * Create a new migration creator instance.
-     *
-     * @param Filesystem $files
      */
     public function __construct(Filesystem $files)
     {
@@ -50,7 +47,7 @@ class MigrationCreator
      */
     public function create(string $name, string $path, string $table = null, bool $create = false): string
     {
-        $this->ensureMigrationDoesntAlreadyExist($name);
+        $this->ensureMigrationDoesntAlreadyExist($name, $path);
 
         // First we will get the stub file for the migration, which serves as a type
         // of template for the migration. Once we have those we will populate the
@@ -103,8 +100,16 @@ class MigrationCreator
      *
      * @throws \InvalidArgumentException
      */
-    protected function ensureMigrationDoesntAlreadyExist(string $name)
+    protected function ensureMigrationDoesntAlreadyExist(string $name, ?string $migrationPath = null)
     {
+        if (! empty($migrationPath)) {
+            $migrationFiles = $this->files->glob($migrationPath . '/*.php');
+
+            foreach ($migrationFiles as $migrationFile) {
+                $this->files->requireOnce($migrationFile);
+            }
+        }
+
         if (class_exists($className = $this->getClassName($name))) {
             throw new InvalidArgumentException("A {$className} class already exists.");
         }

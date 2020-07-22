@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\WebSocketClient;
 
 use Hyperf\WebSocketClient\Exception\ConnectException;
@@ -35,6 +34,10 @@ class Client
         $host = $uri->getHost();
         $port = $uri->getPort();
         $ssl = $uri->getScheme() === 'wss';
+
+        if (empty($port)) {
+            $port = $ssl ? 443 : 80;
+        }
 
         $this->client = new Coroutine\Http\Client($host, $port, $ssl);
 
@@ -67,9 +70,15 @@ class Client
         return $ret;
     }
 
-    public function push(string $data, int $opcode = WEBSOCKET_OPCODE_TEXT, bool $finish = true): bool
+    /**
+     * @param bool|int $finish TODO: When swoole version >= 4.4.12, `finish` is SWOOLE_WEBSOCKET_FLAG_FIN or SWOOLE_WEBSOCKET_FLAG_COMPRESS
+     */
+    public function push(string $data, int $opcode = WEBSOCKET_OPCODE_TEXT, $finish = null): bool
     {
-        return $this->client->push($data, $opcode, $finish);
+        if (isset($finish)) {
+            return $this->client->push($data, $opcode, $finish);
+        }
+        return $this->client->push($data, $opcode);
     }
 
     public function close(): bool

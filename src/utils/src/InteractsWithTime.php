@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils;
 
 use Carbon\Carbon;
@@ -22,9 +21,8 @@ trait InteractsWithTime
      * Get the number of seconds until the given DateTime.
      *
      * @param \DateInterval|\DateTimeInterface|int $delay
-     * @return int
      */
-    protected function secondsUntil($delay)
+    protected function secondsUntil($delay): int
     {
         $delay = $this->parseDateInterval($delay);
 
@@ -37,9 +35,8 @@ trait InteractsWithTime
      * Get the "available at" UNIX timestamp.
      *
      * @param \DateInterval|\DateTimeInterface|int $delay
-     * @return int
      */
-    protected function availableAt($delay = 0)
+    protected function availableAt($delay = 0): int
     {
         $delay = $this->parseDateInterval($delay);
 
@@ -65,10 +62,8 @@ trait InteractsWithTime
 
     /**
      * Get the current system time as a UNIX timestamp.
-     *
-     * @return int
      */
-    protected function currentTime()
+    protected function currentTime(): int
     {
         return Carbon::now()->getTimestamp();
     }

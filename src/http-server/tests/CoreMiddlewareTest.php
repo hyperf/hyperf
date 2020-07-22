@@ -5,23 +5,32 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\HttpServer;
 
 use Hyperf\Contract\NormalizerInterface;
+use Hyperf\Di\ClosureDefinitionCollector;
+use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
+use Hyperf\Dispatcher\HttpRequestHandler;
+use Hyperf\HttpMessage\Server\Request;
+use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\CoreMiddleware;
+use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
+use Hyperf\HttpServer\Router\Handler;
+use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use HyperfTest\HttpServer\Stub\CoreMiddlewareStub;
 use HyperfTest\HttpServer\Stub\DemoController;
+use HyperfTest\HttpServer\Stub\SetHeaderMiddleware;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -97,6 +106,81 @@ class CoreMiddlewareTest extends TestCase
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertSame('This is a string', $response->getBody()->getContents());
         $this->assertSame('text/plain', $response->getHeaderLine('content-type'));
+
+        // Json encode failed
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Type is not supported');
+        $response = $reflectionMethod->invoke($middleware, ['id' => fopen(BASE_PATH . '/.gitignore', 'r+')], $request);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+    }
+
+    public function testDispatch()
+    {
+        $container = $this->getContainer();
+
+        $router = $container->get(DispatcherFactory::class)->getRouter('http');
+        $router->addRoute('GET', '/user', 'UserController::index');
+        $router->addRoute('GET', '/user/{id:\d+}', 'UserController::info');
+
+        $middleware = new CoreMiddleware($container, 'http');
+
+        $request = new Request('GET', new Uri('/user'));
+        $request = $middleware->dispatch($request);
+        $dispatched = $request->getAttribute(Dispatched::class);
+        $this->assertInstanceOf(Request::class, $request);
+        $this->assertInstanceOf(Dispatched::class, $dispatched);
+        $this->assertInstanceOf(Handler::class, $dispatched->handler);
+        $this->assertSame($dispatched, $request->getAttribute(Dispatched::class));
+        $this->assertSame('/user', $dispatched->handler->route);
+        $this->assertSame('UserController::index', $dispatched->handler->callback);
+        $this->assertTrue($dispatched->isFound());
+
+        $request = new Request('GET', new Uri('/user/123'));
+        $request = $middleware->dispatch($request);
+        $dispatched = $request->getAttribute(Dispatched::class);
+        $this->assertInstanceOf(Request::class, $request);
+        $this->assertInstanceOf(Dispatched::class, $dispatched);
+        $this->assertInstanceOf(Handler::class, $dispatched->handler);
+        $this->assertSame($dispatched, $request->getAttribute(Dispatched::class));
+        $this->assertSame('/user/{id:\d+}', $dispatched->handler->route);
+        $this->assertSame('UserController::info', $dispatched->handler->callback);
+        $this->assertTrue($dispatched->isFound());
+
+        $request = new Request('GET', new Uri('/users'));
+        $request = $middleware->dispatch($request);
+        $dispatched = $request->getAttribute(Dispatched::class);
+        $this->assertInstanceOf(Request::class, $request);
+        $this->assertInstanceOf(Dispatched::class, $dispatched);
+        $this->assertSame($dispatched, $request->getAttribute(Dispatched::class));
+        $this->assertFalse($dispatched->isFound());
+    }
+
+    public function testProcess()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(SetHeaderMiddleware::class)->andReturn(new SetHeaderMiddleware($id = uniqid()));
+
+        $router = $container->get(DispatcherFactory::class)->getRouter('http');
+        $router->addRoute('GET', '/request', function () {
+            return Context::get(ServerRequestInterface::class)->getHeaders();
+        });
+
+        $response = Mockery::mock(ResponseInterface::class);
+        $response->shouldReceive('withAddedHeader')->andReturn($response);
+        $response->shouldReceive('withBody')->with(Mockery::any())->andReturnUsing(function ($stream) use ($response, $id) {
+            $this->assertInstanceOf(SwooleStream::class, $stream);
+            /* @var SwooleStream $stream */
+            $this->assertSame(json_encode(['DEBUG' => [$id]]), $stream->getContents());
+            return $response;
+        });
+        $request = new Request('GET', new Uri('/request'));
+        Context::set(ResponseInterface::class, $response);
+        Context::set(ServerRequestInterface::class, $request);
+
+        $middleware = new CoreMiddleware($container, 'http');
+        $request = $middleware->dispatch($request);
+        $handler = new HttpRequestHandler([SetHeaderMiddleware::class], $middleware, $container);
+        $response = $handler->handle($request);
     }
 
     protected function getContainer()
@@ -105,6 +189,10 @@ class CoreMiddlewareTest extends TestCase
         $container->shouldReceive('get')->with(DispatcherFactory::class)->andReturn(new DispatcherFactory());
         $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)
             ->andReturn(new MethodDefinitionCollector());
+        $container->shouldReceive('has')->with(ClosureDefinitionCollectorInterface::class)
+            ->andReturn(false);
+        $container->shouldReceive('get')->with(ClosureDefinitionCollectorInterface::class)
+            ->andReturn(new ClosureDefinitionCollector());
         $container->shouldReceive('get')->with(NormalizerInterface::class)
             ->andReturn(new SimpleNormalizer());
         return $container;

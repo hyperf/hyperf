@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\JsonRpc;
 
 use Hyperf\JsonRpc\Listener\RegisterProtocolListener;
@@ -22,11 +21,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                TcpServer::class => TcpServerFactory::class,
-                HttpServer::class => HttpServerFactory::class,
                 DataFormatter::class => DataFormatterFactory::class,
-            ],
-            'commands' => [
             ],
             'listeners' => [
                 RegisterProtocolListener::class,
@@ -37,9 +32,11 @@ class ConfigProvider
                     return null;
                 }),
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
         ];

@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Utils;
 
 use HyperfTest\Utils\Exception\RetryException;
@@ -28,6 +27,17 @@ class FunctionTest extends TestCase
         }, [1]);
 
         $this->assertSame(2, $result);
+    }
+
+    public function testReturnOfGo()
+    {
+        $uniqid = uniqid();
+        $id = go(function () use (&$uniqid) {
+            $uniqid = 'Hyperf';
+        });
+
+        $this->assertTrue(is_int($id));
+        $this->assertSame('Hyperf', $uniqid);
     }
 
     public function testDataGet()
@@ -104,5 +114,10 @@ class FunctionTest extends TestCase
         } finally {
             $this->assertSame(1, $result);
         }
+    }
+
+    public function testSwooleHookFlags()
+    {
+        $this->assertSame(SWOOLE_HOOK_ALL, swoole_hook_flags());
     }
 }

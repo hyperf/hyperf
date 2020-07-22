@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\AsyncQueue\Process;
 
 use Hyperf\AsyncQueue\Driver\DriverFactory;
@@ -29,6 +28,11 @@ class ConsumerProcess extends AbstractProcess
      * @var DriverInterface
      */
     protected $driver;
+
+    /**
+     * @var array
+     */
+    protected $config;
 
     public function __construct(ContainerInterface $container)
     {
