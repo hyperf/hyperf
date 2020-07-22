@@ -4,6 +4,10 @@
 
 - [#2144](https://github.com/hyperf/hyperf/pull/2144) Added filed `$result` for `QueryExecuted`.
 
+## Fixed
+
+- [#2159](https://github.com/hyperf/hyperf/pull/2159) Fixed exception when `gen:migration` file exists
+
 # v2.0.3 - 2020-07-20
 
 ## Added

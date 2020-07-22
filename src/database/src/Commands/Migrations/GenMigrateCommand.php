@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Migrations;
 
-use Exception;
 use Hyperf\Database\Migrations\MigrationCreator;
 use Hyperf\Utils\Str;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Throwable;
 
 class GenMigrateCommand extends BaseCommand
 {
@@ -103,7 +103,7 @@ class GenMigrateCommand extends BaseCommand
                 $create
             ), PATHINFO_FILENAME);
             $this->info("<info>[INFO] Created Migration:</info> {$file}");
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->error("<error>[ERROR] Created Migration:</error> {$e->getMessage()}");
         }
     }
