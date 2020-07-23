@@ -112,11 +112,8 @@ class SessionMiddleware implements MiddlewareInterface
         $path = '/';
         $secure = strtolower($uri->getScheme()) === 'https';
         $httpOnly = true;
-        if ($this->config->has('session.options.domain')) {
-            $domain = $this->config->get('session.options.domain');
-        } else {
-            $domain = $uri->getHost();
-        }
+
+        $domain = $this->config->get('session.options.domain') ?? $uri->getHost();
 
         $cookie = new Cookie($session->getName(), $session->getId(), $this->getCookieExpirationDate(), $path, $domain, $secure, $httpOnly);
         if (! method_exists($response, 'withCookie')) {
