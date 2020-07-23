@@ -13,7 +13,7 @@
 
 ## Optimized
 
-- [#2043](https://github.com/hyperf/hyperf/pull/2043) Throw an exception when the scanner directories all does not exist.
+- [#2043](https://github.com/hyperf/hyperf/pull/2043) Throw an exception when the scanner directories all don't exist.
 
 # v2.0.3 - 2020-07-20
 
