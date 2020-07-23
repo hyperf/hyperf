@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -36,9 +36,26 @@ class Frequency implements FrequencyInterface, LowFrequencyInterface
      */
     protected $beginTime;
 
-    public function __construct()
+    /**
+     * @var int
+     */
+    protected $lowFrequencyTime;
+
+    /**
+     * @var int
+     */
+    protected $lowFrequencyInterval = 60;
+
+    /**
+     * @var null|Pool
+     */
+    protected $pool;
+
+    public function __construct(?Pool $pool = null)
     {
+        $this->pool = $pool;
         $this->beginTime = time();
+        $this->lowFrequencyTime = time();
     }
 
     public function hit(int $number = 1): bool
@@ -68,7 +85,12 @@ class Frequency implements FrequencyInterface, LowFrequencyInterface
 
     public function isLowFrequency(): bool
     {
-        return $this->frequency() < $this->lowFrequency;
+        $now = time();
+        if ($this->lowFrequencyTime + $this->lowFrequencyInterval < $now && $this->frequency() < $this->lowFrequency) {
+            $this->lowFrequencyTime = $now;
+            return true;
+        }
+        return false;
     }
 
     protected function flush(): void

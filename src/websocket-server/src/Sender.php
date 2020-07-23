@@ -5,19 +5,23 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\WebSocketServer;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Server\CoroutineServer;
 use Hyperf\WebSocketServer\Exception\InvalidMethodException;
 use Psr\Container\ContainerInterface;
+use Swoole\Http\Response;
 use Swoole\Server;
 
 /**
  * @method push(int $fd, $data, int $opcode = null, $finish = null)
+ * @method disconnect(int $fd, int $code = null, string $reason = null)
  */
 class Sender
 {
@@ -36,26 +40,50 @@ class Sender
      */
     protected $workerId;
 
+    /**
+     * @var Response[]
+     */
+    protected $responses = [];
+
+    /**
+     * @var bool
+     */
+    protected $isCoroutineServer = false;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
+        if ($config = $container->get(ConfigInterface::class)) {
+            $this->isCoroutineServer = $config->get('server.type') === CoroutineServer::class;
+        }
     }
 
     public function __call($name, $arguments)
     {
-        if (! $this->proxy($name, $arguments)) {
+        [$fd, $method] = $this->getFdAndMethodFromProxyMethod($name, $arguments);
+
+        if ($this->isCoroutineServer) {
+            if (isset($this->responses[$fd])) {
+                array_shift($arguments);
+                $this->responses[$fd]->{$method}(...$arguments);
+                $this->logger->debug("[WebSocket] Worker send to #{$fd}");
+            }
+            return;
+        }
+
+        if (! $this->proxy($fd, $method, $arguments)) {
             $this->sendPipeMessage($name, $arguments);
         }
     }
 
-    public function proxy(string $name, array $arguments): bool
+    public function proxy(int $fd, string $method, array $arguments): bool
     {
-        $fd = $this->getFdFromProxyMethod($name, $arguments);
-
         $result = $this->check($fd);
         if ($result) {
-            $this->getServer()->push(...$arguments);
+            /** @var \Swoole\WebSocket\Server $server */
+            $server = $this->getServer();
+            $server->{$method}(...$arguments);
             $this->logger->debug("[WebSocket] Worker.{$this->workerId} send to #{$fd}");
         }
 
@@ -78,13 +106,22 @@ class Sender
         return false;
     }
 
-    protected function getFdFromProxyMethod(string $method, array $arguments): int
+    public function setResponse(int $fd, ?Response $response): void
     {
-        if (! in_array($method, ['push', 'send', 'sendto'])) {
+        if ($response === null) {
+            unset($this->responses[$fd]);
+        } else {
+            $this->responses[$fd] = $response;
+        }
+    }
+
+    public function getFdAndMethodFromProxyMethod(string $method, array $arguments): array
+    {
+        if (! in_array($method, ['push', 'disconnect'])) {
             throw new InvalidMethodException(sprintf('Method [%s] is not allowed.', $method));
         }
 
-        return (int) $arguments[0];
+        return [(int) $arguments[0], $method];
     }
 
     protected function getServer(): Server

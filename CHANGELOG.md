@@ -1,5 +1,13 @@
 # v1.1.33 - TBD
 
+## Fixed
+
+- [#1917](https://github.com/hyperf/hyperf/pull/1917) Fixed bug that `Request::isXmlHttpRequest` does not work.
+
+## Optimized
+
+- [#1793](https://github.com/hyperf/hyperf/pull/1793) Socket.io server now only dispatch connect/disconnect events in onOpen and onClose. Also upgrade some class members from private to protected, so users can hack them.
+
 # v1.1.32 - 2020-05-21
 
 ## Fixed

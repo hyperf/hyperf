@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -45,6 +45,7 @@ class QueueLengthListener implements ListenerInterface
      */
     public function process(object $event)
     {
+        $value = 0;
         foreach ($this->level as $level => $value) {
             if ($event->length < $value) {
                 $message = sprintf('Queue lengh of %s is %d.', $event->key, $event->length);

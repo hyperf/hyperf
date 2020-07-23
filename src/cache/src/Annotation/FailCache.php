@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -34,7 +34,7 @@ class FailCache extends AbstractAnnotation
     public function collectMethod(string $className, ?string $target): void
     {
         if (isset($this->listener)) {
-            CacheListenerCollector::set($this->listener, [
+            CacheListenerCollector::setListener($this->listener, [
                 'className' => $className,
                 'method' => $target,
             ]);

@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -34,7 +34,7 @@ class ConsumerManager
     {
         $classes = AnnotationCollector::getClassByAnnotation(ConsumerAnnotation::class);
         /**
-         * @var string
+         * @var string $class
          * @var ConsumerAnnotation $annotation
          */
         foreach ($classes as $class => $annotation) {
@@ -87,7 +87,7 @@ class ConsumerManager
                 return $this->consumerMessage;
             }
 
-            public function isEnable(): bool
+            public function isEnable($server): bool
             {
                 return $this->consumerMessage->isEnable();
             }

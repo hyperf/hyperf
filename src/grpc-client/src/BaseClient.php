@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -64,7 +64,7 @@ class BaseClient
         if (! $this->initialized) {
             $this->init();
         }
-        return $this->getGrpcClient()->{$name};
+        return $this->_getGrpcClient()->{$name};
     }
 
     public function __call($name, $arguments)
@@ -72,43 +72,15 @@ class BaseClient
         if (! $this->initialized) {
             $this->init();
         }
-        return $this->getGrpcClient()->{$name}(...$arguments);
+        return $this->_getGrpcClient()->{$name}(...$arguments);
     }
 
-    public function start()
-    {
-        $client = $this->grpcClient;
-        return $client->isRunning() || $client->start();
-    }
-
-    public function getGrpcClient(): GrpcClient
+    public function _getGrpcClient(): GrpcClient
     {
         if (! $this->initialized) {
             $this->init();
         }
         return $this->grpcClient;
-    }
-
-    protected function init()
-    {
-        if (! empty($this->options['client'])) {
-            if (! ($this->options['client'] instanceof GrpcClient)) {
-                throw new InvalidArgumentException('Parameter client have to instanceof Hyperf\GrpcClient\GrpcClient');
-            }
-            $this->grpcClient = $this->options['client'];
-        } else {
-            $this->grpcClient = new GrpcClient(ApplicationContext::getContainer()->get(ChannelPool::class));
-            $this->grpcClient->set($this->hostname, $this->options);
-        }
-        if (! $this->start()) {
-            $message = sprintf(
-                'Grpc client start failed with error code %d when connect to %s',
-                $this->grpcClient->getErrCode(),
-                $this->hostname
-            );
-            throw new GrpcClientException($message, StatusCode::INTERNAL);
-        }
-        $this->initialized = true;
     }
 
     /**
@@ -121,7 +93,7 @@ class BaseClient
      * @throws GrpcClientException
      * @return array|\Google\Protobuf\Internal\Message[]|\swoole_http2_response[]
      */
-    protected function simpleRequest(
+    protected function _simpleRequest(
         string $method,
         Message $argument,
         $deserialize
@@ -147,7 +119,7 @@ class BaseClient
      *
      * @return ClientStreamingCall The active call object
      */
-    protected function clientStreamRequest(
+    protected function _clientStreamRequest(
         string $method,
         $deserialize
     ): ClientStreamingCall {
@@ -177,7 +149,35 @@ class BaseClient
         return $call;
     }
 
-    protected function buildRequest(string $method, Message $argument): Request
+    private function start()
+    {
+        $client = $this->grpcClient;
+        return $client->isRunning() || $client->start();
+    }
+
+    private function init()
+    {
+        if (! empty($this->options['client'])) {
+            if (! ($this->options['client'] instanceof GrpcClient)) {
+                throw new InvalidArgumentException('Parameter client have to instanceof Hyperf\GrpcClient\GrpcClient');
+            }
+            $this->grpcClient = $this->options['client'];
+        } else {
+            $this->grpcClient = new GrpcClient(ApplicationContext::getContainer()->get(ChannelPool::class));
+            $this->grpcClient->set($this->hostname, $this->options);
+        }
+        if (! $this->start()) {
+            $message = sprintf(
+                'Grpc client start failed with error code %d when connect to %s',
+                $this->grpcClient->getErrCode(),
+                $this->hostname
+            );
+            throw new GrpcClientException($message, StatusCode::INTERNAL);
+        }
+        $this->initialized = true;
+    }
+
+    private function buildRequest(string $method, Message $argument): Request
     {
         return new Request($method, $argument);
     }

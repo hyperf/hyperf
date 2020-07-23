@@ -5,13 +5,12 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\Devtool\Describe;
 
-use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\HttpServer\MiddlewareManager;
@@ -25,9 +24,6 @@ use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * @Command
- */
 class RoutesCommand extends HyperfCommand
 {
     /**
@@ -58,8 +54,6 @@ class RoutesCommand extends HyperfCommand
             $this->analyzeRouter($server, $router, $path),
             $this->output
         );
-
-        $this->output->success('success.');
     }
 
     protected function configure()

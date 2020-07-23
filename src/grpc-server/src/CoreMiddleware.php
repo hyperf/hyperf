@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -87,15 +87,12 @@ class CoreMiddleware extends HttpCoreMiddleware
     {
         if ($response instanceof Message) {
             $body = Parser::serializeMessage($response);
-            $response = $this->response()
+            return $this->response()
                 ->withAddedHeader('Content-Type', 'application/grpc')
                 ->withAddedHeader('trailer', 'grpc-status, grpc-message')
-                ->withBody(new SwooleStream($body));
-
-            $response->getSwooleResponse()->trailer('grpc-status', '0');
-            $response->getSwooleResponse()->trailer('grpc-message', '');
-
-            return $response;
+                ->withBody(new SwooleStream($body))
+                ->withTrailer('grpc-status', '0')
+                ->withTrailer('grpc-message', '');
         }
 
         if (is_string($response)) {
@@ -164,15 +161,12 @@ class CoreMiddleware extends HttpCoreMiddleware
      */
     protected function handleResponse(?Message $message, $httpStatus = 200, string $grpcStatus = '0', string $grpcMessage = ''): ResponseInterface
     {
-        $response = $this->response()->withStatus($httpStatus)
+        return $this->response()->withStatus($httpStatus)
             ->withBody(new SwooleStream(Parser::serializeMessage($message)))
             ->withAddedHeader('Server', 'Hyperf')
             ->withAddedHeader('Content-Type', 'application/grpc')
-            ->withAddedHeader('trailer', 'grpc-status, grpc-message');
-
-        $response->getSwooleResponse()->trailer('grpc-status', $grpcStatus);
-        $response->getSwooleResponse()->trailer('grpc-message', $grpcMessage);
-
-        return $response;
+            ->withAddedHeader('trailer', 'grpc-status, grpc-message')
+            ->withTrailer('grpc-status', $grpcStatus)
+            ->withTrailer('grpc-message', $grpcMessage);
     }
 }

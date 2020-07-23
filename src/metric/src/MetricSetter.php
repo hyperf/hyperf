@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -36,7 +36,6 @@ trait MetricSetter
     /**
      * Create an array of gauges.
      * @param array<string, string> $labels
-     * @param array<int, string> $names
      * @return GaugeInterface[]
      */
     private function factoryMetrics(array $labels, string ...$names): array

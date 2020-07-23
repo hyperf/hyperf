@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -39,22 +39,22 @@ class RedisAdapter implements AdapterInterface
     /**
      * @var NamespaceInterface
      */
-    private $nsp;
+    protected $nsp;
 
     /**
      * @var \Hyperf\Redis\Redis|Redis|RedisProxy
      */
-    private $redis;
+    protected $redis;
 
     /**
      * @var SidProviderInterface
      */
-    private $sidProvider;
+    protected $sidProvider;
 
     /**
      * @var Sender
      */
-    private $sender;
+    protected $sender;
 
     public function __construct(RedisFactory $redis, Sender $sender, NamespaceInterface $nsp, SidProviderInterface $sidProvider)
     {
@@ -142,11 +142,10 @@ class RedisAdapter implements AdapterInterface
     public function subscribe()
     {
         Coroutine::create(function () {
-            CoordinatorManager::get(Constants::ON_WORKER_START)->yield();
+            CoordinatorManager::until(Constants::ON_WORKER_START)->yield();
             retry(PHP_INT_MAX, function () {
-                $container = ApplicationContext::getContainer();
                 try {
-                    $sub = $container->get(Subscriber::class);
+                    $sub = make(Subscriber::class);
                     if ($sub) {
                         $this->mixSubscribe($sub);
                     } else {
@@ -154,6 +153,7 @@ class RedisAdapter implements AdapterInterface
                         $this->phpRedisSubscribe();
                     }
                 } catch (\Throwable $e) {
+                    $container = ApplicationContext::getContainer();
                     if ($container->has(StdoutLoggerInterface::class)) {
                         $logger = $container->get(StdoutLoggerInterface::class);
                         $logger->error($this->formatThrowable($e));
@@ -185,47 +185,18 @@ class RedisAdapter implements AdapterInterface
     protected function doBroadcast($packet, $opts)
     {
         $rooms = data_get($opts, 'rooms', []);
-        $except = data_get($opts, 'except', []);
-        $volatile = data_get($opts, 'flag.volatile', false);
-        $compress = data_get($opts, 'flag.compress', false);
-        $wsFlag = $this->guessFlags((bool) $compress);
-
         $pushed = [];
         if (! empty($rooms)) {
             foreach ($rooms as $room) {
                 $sids = $this->redis->sMembers($this->getRoomKey($room));
                 foreach ($sids as $sid) {
-                    $fd = $this->getFd($sid);
-                    if (in_array($sid, $except)) {
-                        continue;
-                    }
-                    if ($this->isLocal($sid)) {
-                        $this->sender->push(
-                            $fd,
-                            $packet,
-                            SWOOLE_WEBSOCKET_OPCODE_TEXT,
-                            $wsFlag
-                        );
-                        $pushed[$fd] = true;
-                    }
+                    $this->tryPush($sid, $packet, $pushed, $opts);
                 }
             }
         } else {
             $sids = $this->redis->sMembers($this->getStatKey());
-
             foreach ($sids as $sid) {
-                $fd = $this->getFd($sid);
-                if (in_array($sid, $except)) {
-                    continue;
-                }
-                if ($this->isLocal($sid)) {
-                    $this->sender->push(
-                        $fd,
-                        $packet,
-                        SWOOLE_WEBSOCKET_OPCODE_TEXT,
-                        $wsFlag
-                    );
-                }
+                $this->tryPush($sid, $packet, $pushed, $opts);
             }
         }
     }
@@ -278,17 +249,30 @@ class RedisAdapter implements AdapterInterface
         return $this->sidProvider->getFd($sid);
     }
 
+    private function tryPush(string $sid, string $packet, array &$pushed, array $opts): void
+    {
+        $compress = data_get($opts, 'flag.compress', false);
+        $wsFlag = $this->guessFlags((bool) $compress);
+        $except = data_get($opts, 'except', []);
+        $fd = $this->getFd($sid);
+        if (in_array($sid, $except)) {
+            return;
+        }
+        if ($this->isLocal($sid) && ! isset($pushed[$fd])) {
+            $this->sender->push(
+                $fd,
+                $packet,
+                SWOOLE_WEBSOCKET_OPCODE_TEXT,
+                $wsFlag
+            );
+            $pushed[$fd] = true;
+            $this->shouldClose($opts) && $this->close($fd);
+        }
+    }
+
     private function formatThrowable(\Throwable $throwable): string
     {
-        sprintf(
-            "%s:%s(%s) in %s:%s\nStack trace:\n%s",
-            get_class($throwable),
-            $throwable->getMessage(),
-            $throwable->getCode(),
-            $throwable->getFile(),
-            $throwable->getLine(),
-            $throwable->getTraceAsString()
-        );
+        return (string) $throwable;
     }
 
     private function phpRedisSubscribe()
@@ -309,11 +293,8 @@ class RedisAdapter implements AdapterInterface
     {
         $sub->subscribe($this->getChannelKey());
         $chan = $sub->channel();
-        if (! $chan) {
-            return;
-        }
         Coroutine::create(function () use ($sub) {
-            CoordinatorManager::get(Constants::ON_WORKER_EXIT)->yield();
+            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
             $sub->close();
         });
         while (true) {
@@ -330,5 +311,15 @@ class RedisAdapter implements AdapterInterface
                 $this->doBroadcast($packet, $opts);
             });
         }
+    }
+
+    private function shouldClose(array $opts)
+    {
+        return data_get($opts, 'flag.close', false);
+    }
+
+    private function close(int $fd)
+    {
+        $this->sender->disconnect($fd);
     }
 }

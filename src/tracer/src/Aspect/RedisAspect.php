@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -15,7 +15,6 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AroundInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Redis\Redis;
-use Hyperf\Redis\RedisProxy;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
@@ -34,7 +33,6 @@ class RedisAspect implements AroundInterface
     public $classes
         = [
             Redis::class . '::__call',
-            RedisProxy::class . '::__call',
         ];
 
     /**
