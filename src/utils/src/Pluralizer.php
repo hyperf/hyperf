@@ -5,13 +5,16 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\Utils;
 
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\CachedWordInflector;
+use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\Rules\English;
+use Doctrine\Inflector\RulesetInflector;
 
 class Pluralizer
 {
@@ -66,6 +69,11 @@ class Pluralizer
         ];
 
     /**
+     * @var null|Inflector
+     */
+    protected static $inflector;
+
+    /**
      * Get the plural form of an English word.
      *
      * @param string $value
@@ -78,7 +86,7 @@ class Pluralizer
             return $value;
         }
 
-        $plural = Inflector::pluralize($value);
+        $plural = static::getInflector()->pluralize($value);
 
         return static::matchCase($plural, $value);
     }
@@ -91,9 +99,33 @@ class Pluralizer
      */
     public static function singular($value)
     {
-        $singular = Inflector::singularize($value);
+        $singular = static::getInflector()->singularize($value);
 
         return static::matchCase($singular, $value);
+    }
+
+    public static function setInflector(?Inflector $inflector): void
+    {
+        static::$inflector = $inflector;
+    }
+
+    /**
+     * Get the inflector instance.
+     */
+    public static function getInflector(): Inflector
+    {
+        if (is_null(static::$inflector)) {
+            static::$inflector = new Inflector(
+                new CachedWordInflector(new RulesetInflector(
+                    English\Rules::getSingularRuleset()
+                )),
+                new CachedWordInflector(new RulesetInflector(
+                    English\Rules::getPluralRuleset()
+                ))
+            );
+        }
+
+        return static::$inflector;
     }
 
     /**

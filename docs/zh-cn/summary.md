@@ -72,6 +72,7 @@
   * [调用链追踪](zh-cn/tracer.md)
   * [服务监控](zh-cn/metric.md)
   * [服务重试](zh-cn/retry.md)
+  * [Nacos](zh-cn/nacos.md)
   
 * 消息队列
 
@@ -103,6 +104,7 @@
   * [重试](zh-cn/retry.md)
   * [信号处理器](zh-cn/signal.md)
   * [ReactiveX](zh-cn/reactive-x.md)
+  * [Watcher](zh-cn/watcher.md)
 
 * 应用部署
 

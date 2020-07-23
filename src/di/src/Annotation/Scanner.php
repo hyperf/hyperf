@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -134,7 +134,7 @@ class Scanner
         $this->clearRemovedClasses($collectors, $classes);
 
         foreach ($classes as $reflectionClass) {
-            if ($this->filesystem->lastModified($reflectionClass->getFileName()) > $lastCacheModified) {
+            if ($this->filesystem->lastModified($reflectionClass->getFileName()) >= $lastCacheModified) {
                 /** @var MetadataCollector $collector */
                 foreach ($collectors as $collector) {
                     $collector::clear($reflectionClass->getName());
@@ -244,15 +244,11 @@ class Scanner
         if (! $configDir) {
             return;
         }
-        $aspectsPath = $configDir . '/autoload/aspects.php';
-        $aspectsLastModified = file_exists($aspectsPath) ? $this->filesystem->lastModified($aspectsPath) : 0;
-        $baseConfigLastModified = $this->filesystem->lastModified($configDir . '/config.php');
-        if ($lastCacheModified > max($aspectsLastModified, $baseConfigLastModified)) {
-            return;
-        }
 
-        $aspects = file_exists($aspectsPath) ? require $aspectsPath : [];
-        $baseConfig = require $configDir . '/config.php';
+        $aspectsPath = $configDir . '/autoload/aspects.php';
+        $basePath = $configDir . '/config.php';
+        $aspects = file_exists($aspectsPath) ? include $aspectsPath : [];
+        $baseConfig = file_exists($basePath) ? include $basePath : [];
         $providerConfig = ProviderConfig::load();
         if (! isset($aspects) || ! is_array($aspects)) {
             $aspects = [];
@@ -265,6 +261,12 @@ class Scanner
         }
         $aspects = array_merge($providerConfig['aspects'], $baseConfig['aspects'], $aspects);
 
+        [$removed, $changed] = $this->getChangedAspects($aspects, $lastCacheModified);
+        // When the aspect removed from config, it should removed from AspectCollector.
+        foreach ($removed as $aspect) {
+            AspectCollector::clear($aspect);
+        }
+
         foreach ($aspects ?? [] as $key => $value) {
             if (is_numeric($key)) {
                 $aspect = $value;
@@ -273,6 +275,11 @@ class Scanner
                 $aspect = $key;
                 $priority = (int) $value;
             }
+
+            if (! in_array($aspect, $changed)) {
+                continue;
+            }
+
             // Create the aspect instance without invoking their constructor.
             $reflectionClass = BetterReflectionManager::reflectClass($aspect);
             $properties = $reflectionClass->getImmediateProperties(ReflectionProperty::IS_PUBLIC);
@@ -294,8 +301,48 @@ class Scanner
             // Priority
             $priority = $priority ?: ($instancePriority ?? null);
             // Save the metadata to AspectCollector
-            // TODO: When the aspect removed from config, it should removed from AspectCollector.
             AspectCollector::setAround($aspect, $classes, $annotations, $priority);
         }
+    }
+
+    protected function getChangedAspects(array $aspects, int $lastCacheModified): array
+    {
+        $path = BASE_PATH . '/runtime/container/aspects.cache';
+        $classes = [];
+        foreach ($aspects as $key => $value) {
+            if (is_numeric($key)) {
+                $classes[] = $value;
+            } else {
+                $classes[] = $key;
+            }
+        }
+
+        $data = [];
+        if ($this->filesystem->exists($path)) {
+            $data = unserialize($this->filesystem->get($path));
+        }
+
+        $this->putCache($path, serialize($classes));
+
+        $diff = array_diff($data, $classes);
+        $changed = array_diff($classes, $data);
+        $removed = [];
+        foreach ($diff as $item) {
+            $annotation = AnnotationCollector::getClassAnnotation($item, Aspect::class);
+            if (is_null($annotation)) {
+                $removed[] = $item;
+            }
+        }
+        foreach ($classes as $class) {
+            $file = $this->classloader->getComposerClassLoader()->findFile($class);
+            if ($lastCacheModified <= $this->filesystem->lastModified($file)) {
+                $changed[] = $class;
+            }
+        }
+
+        return [
+            array_values(array_unique($removed)),
+            array_values(array_unique($changed)),
+        ];
     }
 }

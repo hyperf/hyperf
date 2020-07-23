@@ -1,7 +1,7 @@
 Hyperf provides you with external configuration support for distributed systems, which is adapted by default:
 
-- [ctripcorp/apollo](https://github.com/ctripcorp/apollo) An open source project by Ctrip, by [hyper/config-apollo](https://github.com/hyperf/config-apollo) component Provide functional support.
-- Aliyun provides a free configuration center service [ACM (Application Config Manager)](https://help.aliyun.com/product/59604.html) by [hyper/config-aliyun-acm](https://github.com/hyperf/config-aliyun-acm) component provides feature support.
+- [ctripcorp/apollo](https://github.com/ctripcorp/apollo) An open source project by Ctrip, by [hyperf/config-apollo](https://github.com/hyperf/config-apollo) component Provide functional support.
+- Aliyun provides a free configuration center service [ACM (Application Config Manager)](https://help.aliyun.com/product/59604.html) by [hyperf/config-aliyun-acm](https://github.com/hyperf/config-aliyun-acm) component provides feature support.
 
 ## Why use the Configuration Center?
 
