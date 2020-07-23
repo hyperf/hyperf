@@ -4,6 +4,7 @@
 
 - [#2144](https://github.com/hyperf/hyperf/pull/2144) Added filed `$result` for `QueryExecuted`.
 - [#2158](https://github.com/hyperf/hyperf/pull/2158) Added route options to route handler.
+- [#2162](https://github.com/hyperf/hyperf/pull/2162) Added `Hyperf\Watcher\Driver\FindDriver` for `hyperf/watcher`.
 
 ## Fixed
 
