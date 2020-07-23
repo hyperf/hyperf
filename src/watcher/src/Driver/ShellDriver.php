@@ -31,7 +31,7 @@ class ShellDriver implements DriverInterface
 
     public function watch(Channel $channel): void
     {
-        $ms = $this->option->getScanInterval() > 0 ? $this->option->getScanInterval() : 2000;
+        $ms = $this->option->getScanInterval();
         Timer::tick($ms, function () use ($channel, $ms) {
             global $updateFiles;
             if (is_null($updateFiles)) {

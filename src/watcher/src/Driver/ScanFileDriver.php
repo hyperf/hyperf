@@ -46,7 +46,7 @@ class ScanFileDriver implements DriverInterface
 
     public function watch(Channel $channel): void
     {
-        $ms = $this->option->getScanInterval() > 0 ? $this->option->getScanInterval() : 2000;
+        $ms = $this->option->getScanInterval();
         Timer::tick($ms, function () use ($channel) {
             global $lastMD5;
             $files = [];
