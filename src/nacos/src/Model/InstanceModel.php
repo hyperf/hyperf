@@ -14,57 +14,57 @@ namespace Hyperf\Nacos\Model;
 class InstanceModel extends AbstractModel
 {
     /**
-     * @var string|null
+     * @var null|string
      */
     public $serviceName;
 
     /**
-     * @var string|null
+     * @var null|string
      */
     public $groupName;
 
     /**
-     * @var string|null
+     * @var null|string
      */
     public $ip;
 
     /**
-     * @var int|null
+     * @var null|int
      */
     public $port;
 
     /**
-     * @var string|null
+     * @var null|string
      */
     public $clusterName;
 
     /**
-     * @var string|null
+     * @var null|string
      */
     public $namespaceId;
 
     /**
-     * @var float|float|int|null
+     * @var null|float|float|int
      */
     public $weight;
 
     /**
-     * @var string|null
+     * @var null|string
      */
     public $metadata;
 
     /**
-     * @var bool|null
+     * @var null|bool
      */
     public $enabled;
 
     /**
-     * @var bool|null
+     * @var null|bool
      */
     public $ephemeral;
 
     /**
-     * @var bool|null
+     * @var null|bool
      */
     public $healthy;
 
