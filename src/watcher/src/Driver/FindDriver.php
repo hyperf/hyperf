@@ -24,9 +24,26 @@ class FindDriver implements DriverInterface
      */
     protected $option;
 
+    /**
+     * @var bool
+     */
+    protected $isDarwin;
+
     public function __construct(Option $option)
     {
         $this->option = $option;
+        $this->isDarwin = PHP_OS === 'Darwin';
+        if ($this->isDarwin) {
+            $ret = System::exec('which gfind');
+            if (empty($ret['output'])) {
+                throw new \InvalidArgumentException('gfind not exists. You can `brew install findutils` to install it.');
+            }
+        } else {
+            $ret = System::exec('which find');
+            if (empty($ret['output'])) {
+                throw new \InvalidArgumentException('find not exists.');
+            }
+        }
     }
 
     public function watch(Channel $channel): void
@@ -53,7 +70,7 @@ class FindDriver implements DriverInterface
     {
         $changedFiles = [];
         $dest = implode(' ', $targets);
-        $ret = System::exec('find ' . $dest . ' -mmin ' . $minutes . ' -type f -printf "%p %T+' . PHP_EOL . '"');
+        $ret = System::exec($this->getBin() . ' ' . $dest . ' -mmin ' . $minutes . ' -type f -printf "%p %T+' . PHP_EOL . '"');
         if ($ret['code'] === 0 && strlen($ret['output'])) {
             $stdout = $ret['output'];
 
@@ -78,6 +95,11 @@ class FindDriver implements DriverInterface
         }
 
         return [$fileModifyTimes, $changedFiles];
+    }
+
+    protected function getBin(): string
+    {
+        return $this->isDarwin ? 'gfind' : 'find';
     }
 
     protected function scan(array $fileModifyTimes, string $minutes): array
