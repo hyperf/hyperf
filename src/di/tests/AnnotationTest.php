@@ -55,16 +55,12 @@ class AnnotationTest extends TestCase
 
     public function testScanAnnotationsDirectoryNotExist()
     {
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub/']);
+        $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
+        $ref = new \ReflectionClass($scanner);
+        $method = $ref->getMethod('normalizeDir');
+        $method->setAccessible(true);
 
-        $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/', ['/not_exist']));
-        $reader = new AnnotationReader();
-
-        $scanner->collect($reader, $ref = BetterReflectionManager::reflectClass(Ignore::class));
-        try {
-            $scanner->scan();
-        } catch (\Exception $e) {
-            $this->assertSame(true, $e instanceof DirectoryNotExistException);
-        }
+        $this->expectException(DirectoryNotExistException::class);
+        $method->invokeArgs($scanner, [['/not_exists']]);
     }
 }
