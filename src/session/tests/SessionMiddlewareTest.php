@@ -62,6 +62,8 @@ class SessionMiddlewareTest extends TestCase
         $config->shouldReceive('has')->with('session.handler')->andReturn(true);
         $config->shouldReceive('get')->with('session.options.expire_on_close')->andReturn(1);
         $config->shouldReceive('get')->with('session.options.session_name', 'HYPERF_SESSION_ID')->andReturn('HYPERF_SESSION_ID');
+        $config->shouldReceive('has')->with('session.options.domain')->andReturn(false);
+
         $sessionManager = new SessionManager($container, $config);
         $middleware = new SessionMiddleware($sessionManager, $config);
         $response = $middleware->process($request, $requestHandler);
@@ -105,6 +107,8 @@ class SessionMiddlewareTest extends TestCase
         $config->shouldReceive('has')->with('session.handler')->andReturn(true);
         $config->shouldReceive('get')->with('session.options.expire_on_close')->andReturn(0);
         $config->shouldReceive('get')->with('session.options.session_name', 'HYPERF_SESSION_ID')->andReturn('HYPERF_SESSION_ID');
+        $config->shouldReceive('has')->with('session.options.domain')->andReturn(false);
+
         $sessionManager = new SessionManager($container, $config);
         $middleware = new SessionMiddleware($sessionManager, $config);
         $time = time();
@@ -148,6 +152,7 @@ class SessionMiddlewareTest extends TestCase
     {
         $config = Mockery::mock(ConfigInterface::class);
         $config->shouldReceive('get')->with('session.options.expire_on_close')->andReturn(0);
+        $config->shouldReceive('has')->with('session.options.domain')->andReturn(false);
         $middleware = new SessionMiddleware(Mockery::mock(SessionManager::class), $config);
         $ref = new ReflectionClass($middleware);
         $method = $ref->getMethod('addCookieToResponse');
