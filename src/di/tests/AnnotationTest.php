@@ -63,4 +63,14 @@ class AnnotationTest extends TestCase
         $this->expectException(DirectoryNotExistException::class);
         $method->invokeArgs($scanner, [['/not_exists']]);
     }
+
+    public function testScanAnnotationsDirectoryEmpty()
+    {
+        $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
+        $ref = new \ReflectionClass($scanner);
+        $method = $ref->getMethod('normalizeDir');
+        $method->setAccessible(true);
+
+        $this->assertSame([], $method->invokeArgs($scanner, [[]]));
+    }
 }

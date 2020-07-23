@@ -174,7 +174,7 @@ class Scanner
             }
         }
 
-        if (! $result) {
+        if ($paths && ! $result) {
             throw new DirectoryNotExistException('The scanned directory does not exist');
         }
 
