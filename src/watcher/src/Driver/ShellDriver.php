@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Watcher\Driver;
 
 use Hyperf\Utils\Str;
@@ -35,7 +34,9 @@ class ShellDriver implements DriverInterface
         $ms = $this->option->getScanInterval() > 0 ? $this->option->getScanInterval() : 2000;
         Timer::tick($ms, function () use ($channel, $ms) {
             global $updateFiles;
-            if (is_null($updateFiles)) $updateFiles = [];
+            if (is_null($updateFiles)) {
+                $updateFiles = [];
+            }
 
             $ret = $this->shellWatch($updateFiles, $ms);
             $updateFiles = $ret['update_files'];
@@ -58,7 +59,7 @@ class ShellDriver implements DriverInterface
         }, $dirs);
         $seconds = ceil(($ms + 1000) / 1000);
 
-        $minutes = sprintf("%.2f", $seconds / 60);
+        $minutes = sprintf('%.2f', $seconds / 60);
         // scan directory files
         $dest = implode(' ', $dirs);
         $ret = System::exec('find ' . $dest . ' -mmin ' . $minutes . ' -type f -printf "%p %T+' . PHP_EOL . '"');
@@ -75,10 +76,9 @@ class ShellDriver implements DriverInterface
                     if (Str::endsWith($pathName, $ext)) {
                         if (isset($updateFiles[$pathName]) && $updateFiles[$pathName] == $modifyTime) {
                             continue;
-                        } else {
-                            $updateFiles[$pathName] = $modifyTime;
-                            $pushFiles[] = $pathName;
                         }
+                        $updateFiles[$pathName] = $modifyTime;
+                        $pushFiles[] = $pathName;
                     }
                 }
             }
@@ -101,10 +101,9 @@ class ShellDriver implements DriverInterface
 
                     if (isset($updateFiles[$pathName]) && $updateFiles[$pathName] == $modifyTime) {
                         continue;
-                    } else {
-                        $updateFiles[$pathName] = $modifyTime;
-                        $pushFiles[] = $pathName;
                     }
+                    $updateFiles[$pathName] = $modifyTime;
+                    $pushFiles[] = $pathName;
                 }
             }
         }
