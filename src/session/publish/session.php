@@ -18,6 +18,6 @@ return [
         'path' => BASE_PATH . '/runtime/session',
         'gc_maxlifetime' => 1200,
         'session_name' => 'HYPERF_SESSION_ID',
-        // 'domain' => null,
+        'domain' => null,
     ],
 ];
