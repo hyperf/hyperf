@@ -70,26 +70,15 @@ use Symfony\Component\HttpFoundation\Request;
 $get = $this->request->getQueryParams();
 $post = $this->request->getParsedBody();
 $cookie = $this->request->getCookieParams();
-$uploadFiles = $request->getUploadedFiles() ?? [];
+$uploadFiles = $this->request->getUploadedFiles() ?? [];
 $server = $this->request->getServerParams();
 $xml = $this->request->getBody()->getContents();
 $files = [];
-// 拼接成php-fpm模式下的$_FILES数据
+/** @var \Hyperf\HttpMessage\Upload\UploadedFile $v */
 foreach ($uploadFiles as $k => $v) {
-    //return [
-    //            'name' => $this->getClientFilename(),
-    //            'type' => $this->getClientMediaType(),
-    //            'tmp_file' => $this->tmpFile,
-    //            'error' => $this->getError(),
-    //            'size' => $this->getSize(),
-    //        ];
-    //方式1
     $files[$k] = $v->toArray();
-    // 方式2
-//  $data = $v->toArray();
-//  $files[$k] = new \Symfony\Component\HttpFoundation\File\UploadedFile($data['tmp_file'], $data['name'], $data['type'], $data['error']);
 }
-$app['request'] = new Request($get,$post,[],$cookie,$files,$server,$xml);
+$app['request'] = new Request($get, $post, [], $cookie, $files, $server, $xml);
 
 // Do something...
 
