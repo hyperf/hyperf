@@ -131,3 +131,7 @@ return [
 - Hyperf\Database\Commands\Ast\ModelRewriteSoftDeletesVisitor
 
 此 `Visitor` 可以根据 `DELETED_AT` 常量判断该模型是否含有软删除字段，如果存在，则添加对应的 Trait `SoftDeletes`。
+
+- Hyperf\Database\Commands\Ast\ModelRewriteTimestampsVisitor
+
+此 `Visitor` 可以根据 `created_at` 和 `updated_at` 自动判断，是否启用默认记录 `创建和修改时间` 的功能。
