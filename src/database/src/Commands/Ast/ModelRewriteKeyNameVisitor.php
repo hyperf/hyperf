@@ -13,7 +13,7 @@ namespace Hyperf\Database\Commands\Ast;
 
 use Hyperf\Database\Commands\ModelData;
 use Hyperf\Database\Commands\ModelOption;
-use Hyperf\Database\Model\Model;
+use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
@@ -32,11 +32,6 @@ class ModelRewriteKeyNameVisitor extends NodeVisitorAbstract
     protected $data;
 
     /**
-     * @var Model
-     */
-    protected $class;
-
-    /**
      * @var bool
      */
     protected $hasPrimaryKey = false;
@@ -45,9 +40,6 @@ class ModelRewriteKeyNameVisitor extends NodeVisitorAbstract
     {
         $this->option = $option;
         $this->data = $data;
-
-        $class = $data->getClass();
-        $this->class = new $class();
     }
 
     public function leaveNode(Node $node)
@@ -83,8 +75,9 @@ class ModelRewriteKeyNameVisitor extends NodeVisitorAbstract
                 foreach ($class->stmts as $key => $node) {
                     if (isset($node->props, $node->props[0], $node->props[0]->name)
                         && $node->props[0]->name->toLowerString() === 'table') {
-                        $newNode = $this->rewritePrimaryKey();
-                        array_splice($class->stmts, $key, 0, [$newNode]);
+                        if ($newNode = $this->rewritePrimaryKey()) {
+                            array_splice($class->stmts, $key, 0, [$newNode]);
+                        }
                         return null;
                     }
                 }
@@ -99,6 +92,9 @@ class ModelRewriteKeyNameVisitor extends NodeVisitorAbstract
         }
 
         $primaryKey = $this->getKeyName();
+        if (! $primaryKey) {
+            return $node;
+        }
         if ($node) {
             $node->props[0]->default = new Node\Scalar\String_($primaryKey);
         } else {
@@ -109,18 +105,18 @@ class ModelRewriteKeyNameVisitor extends NodeVisitorAbstract
         return $node;
     }
 
-    protected function getKeyName(): string
+    protected function getKeyName(): ?string
     {
         $columns = Collection::make($this->data->getColumns());
         $column = $columns->where('column_key', 'PRI')->first();
 
-        return $column ? $column['column_name'] : $this->class->getKeyName();
+        return Arr::get($column, 'column_name');
     }
 
     protected function shouldRemovedPrimaryKey(): bool
     {
         $primaryKey = $this->getKeyName();
-        $ref = new \ReflectionClass(get_class($this->class));
+        $ref = new \ReflectionClass($this->data->getClass());
 
         if (! $ref->getParentClass()) {
             return false;
