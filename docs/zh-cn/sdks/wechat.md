@@ -94,7 +94,7 @@ $app['request'] = new Request($get, $post, [], $cookie, $files, $server, $xml);
 ```php
 $response = $app->server->serve();
 
-return $response->getBody()->getContents();
+return $response->getContent();
 ```
 
 ## 如何替换缓存

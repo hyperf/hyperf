@@ -6,6 +6,8 @@
 - [#2158](https://github.com/hyperf/hyperf/pull/2158) Added route options to route handler.
 - [#2162](https://github.com/hyperf/hyperf/pull/2162) Added `Hyperf\Watcher\Driver\FindDriver` for `hyperf/watcher`.
 - [#2169](https://github.com/hyperf/hyperf/pull/2169) Added `session.options.domain` for `hyperf/session` to change the domain which get from request.
+- [#2175](https://github.com/hyperf/hyperf/pull/2175) Added `ModelRewriteSoftDeletesVisitor` to insert or remove `SoftDeletes` based on `deleted_at` for Model.
+- [#2176](https://github.com/hyperf/hyperf/pull/2176) Added `ModelRewriteKeyInfoVisitor` to rewrite `$incrementing` `$primaryKey` and `$keyType` for Model.
 
 ## Fixed
 
@@ -13,7 +15,7 @@
 
 ## Optimized
 
-- [#2043](https://github.com/hyperf/hyperf/pull/2043) Throw an exception when the scanner directories all don't exist.
+- [#2043](https://github.com/hyperf/hyperf/pull/2043) Throw an exception when none of the scan directories exists.
 
 # v2.0.3 - 2020-07-20
 
