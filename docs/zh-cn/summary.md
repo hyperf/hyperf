@@ -52,6 +52,7 @@
   * [快速开始](zh-cn/db/quick-start.md)
   * [查询构造器](zh-cn/db/querybuilder.md)
   * [模型](zh-cn/db/model.md)
+  * [创建脚本](zh-cn/db/gen.md)
   * [模型关系](zh-cn/db/relationship.md)
   * [查询分页](zh-cn/db/paginator.md)
   * [模型事件](zh-cn/db/event.md)
