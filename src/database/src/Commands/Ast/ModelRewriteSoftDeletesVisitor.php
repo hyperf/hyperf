@@ -13,7 +13,6 @@ namespace Hyperf\Database\Commands\Ast;
 
 use Hyperf\Database\Commands\ModelData;
 use Hyperf\Database\Commands\ModelOption;
-use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\SoftDeletes;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Str;
@@ -23,8 +22,6 @@ use PhpParser\NodeVisitorAbstract;
 
 class ModelRewriteSoftDeletesVisitor extends NodeVisitorAbstract
 {
-    use SoftDeletes;
-
     /**
      * @var ModelOption
      */
@@ -34,11 +31,6 @@ class ModelRewriteSoftDeletesVisitor extends NodeVisitorAbstract
      * @var ModelData
      */
     protected $data;
-
-    /**
-     * @var Model
-     */
-    protected $class;
 
     /**
      * @var bool
@@ -59,9 +51,6 @@ class ModelRewriteSoftDeletesVisitor extends NodeVisitorAbstract
     {
         $this->option = $option;
         $this->data = $data;
-
-        $class = $data->getClass();
-        $this->class = new $class();
     }
 
     public function leaveNode(Node $node)
@@ -140,25 +129,20 @@ class ModelRewriteSoftDeletesVisitor extends NodeVisitorAbstract
 
     protected function useSoftDeletes(): bool
     {
-        $deletedAt = $this->getDeletedAtColumn();
-        if (method_exists($this->class, 'getDeletedAtColumn')) {
-            $deletedAt = $this->class->getDeletedAtColumn();
-        }
-
+        $model = $this->data->getClass();
+        $deletedAt = defined("{$model}::DELETED_AT") ? $model::DELETED_AT : 'deleted_at';
         return Collection::make($this->data->getColumns())->where('column_name', $deletedAt)->count() > 0;
     }
 
     protected function shouldRemovedSoftDeletes(): bool
     {
         $useSoftDeletes = $this->useSoftDeletes();
-        $ref = new \ReflectionClass(get_class($this->class));
+        $ref = new \ReflectionClass($this->data->getClass());
 
         if (! $ref->getParentClass()) {
             return false;
         }
 
-        $parentSoftDeletes = $ref->getParentClass()->hasMethod('getDeletedAtColumn') ?? null;
-
-        return $parentSoftDeletes === $useSoftDeletes;
+        return $useSoftDeletes == $ref->getParentClass()->hasMethod('getDeletedAtColumn');
     }
 }
