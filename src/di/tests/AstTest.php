@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -18,6 +18,7 @@ use HyperfTest\Di\Stub\Ast\Bar2;
 use HyperfTest\Di\Stub\Ast\Bar3;
 use HyperfTest\Di\Stub\Ast\BarAspect;
 use HyperfTest\Di\Stub\Ast\Foo;
+use HyperfTest\Di\Stub\Ast\FooTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -45,7 +46,7 @@ declare (strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -75,7 +76,7 @@ declare (strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -105,6 +106,7 @@ class Bar2 extends Bar
 
         AspectCollector::setAround($aspect, [
             Bar3::class,
+            FooTrait::class,
         ], []);
 
         $ast = new Ast();
@@ -117,7 +119,7 @@ declare (strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -141,5 +143,55 @@ class Bar3 extends Bar
         });
     }
 }', $code);
+
+        $code = $ast->proxy(FooTrait::class);
+        if (version_compare(PHP_VERSION, '7.3.0', '>=')) {
+            $this->assertSame('<?php
+
+declare (strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace HyperfTest\\Di\\Stub\\Ast;
+
+trait FooTrait
+{
+    use \\Hyperf\\Di\\Aop\\ProxyTrait;
+    public function getString() : string
+    {
+        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () {
+            return uniqid();
+        });
+    }
+}', $code);
+        } else {
+            $this->assertSame('<?php
+
+declare (strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace HyperfTest\\Di\\Stub\\Ast;
+
+trait FooTrait
+{
+    public function getString() : string
+    {
+        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () {
+            return uniqid();
+        });
+    }
+}', $code);
+        }
     }
 }

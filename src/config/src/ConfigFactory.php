@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -20,9 +20,8 @@ class ConfigFactory
     {
         $configPath = BASE_PATH . '/config/';
         $config = $this->readConfig($configPath . 'config.php');
-        $serverConfig = $this->readConfig($configPath . 'server.php');
         $autoloadConfig = $this->readPaths([BASE_PATH . '/config/autoload']);
-        $merged = array_merge_recursive(ProviderConfig::load(), $serverConfig, $config, ...$autoloadConfig);
+        $merged = array_merge_recursive(ProviderConfig::load(), $config, ...$autoloadConfig);
         return new Config($merged);
     }
 

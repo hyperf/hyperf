@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -26,13 +26,8 @@ trait PropertyHandlerTrait
         $reflectionClass = ReflectionManager::reflectClass($className);
         $properties = ReflectionManager::reflectPropertyNames($className);
 
-        // Inject the properties of parent class
-        $parentReflectionClass = $reflectionClass;
-        while ($parentReflectionClass = $parentReflectionClass->getParentClass()) {
-            $parentClassProperties = ReflectionManager::reflectPropertyNames($parentReflectionClass->getName());
-            $this->__handle($className, $parentReflectionClass->getName(), $propertyHandlers, $parentClassProperties);
-            $properties = array_diff($properties, $parentClassProperties);
-        }
+        // Inject the properties of current class
+        $handled = $this->__handle($className, $className, $propertyHandlers, $properties);
 
         // Inject the properties of traits
         $traitNames = $reflectionClass->getTraitNames();
@@ -40,15 +35,24 @@ trait PropertyHandlerTrait
             foreach ($traitNames ?? [] as $traitName) {
                 $traitProperties = ReflectionManager::reflectPropertyNames($traitName);
                 $this->__handle($className, $traitName, $propertyHandlers, $traitProperties);
-                $properties = array_diff($properties, $traitProperties);
             }
         }
-        // Inject the properties of current class
-        $this->__handle($className, $className, $propertyHandlers, $properties);
+
+        // Inject the properties of parent class
+        $parentReflectionClass = $reflectionClass;
+        while ($parentReflectionClass = $parentReflectionClass->getParentClass()) {
+            $parentClassProperties = ReflectionManager::reflectPropertyNames($parentReflectionClass->getName());
+            $parentClassProperties = array_diff($parentClassProperties, $handled);
+            $handled = array_merge(
+                $handled,
+                $this->__handle($className, $parentReflectionClass->getName(), $propertyHandlers, $parentClassProperties)
+            );
+        }
     }
 
     protected function __handle(string $currentClassName, string $targetClassName, array $propertyHandlers, array $properties)
     {
+        $handled = [];
         foreach ($properties as $propertyName) {
             $propertyMetadata = AnnotationCollector::getClassPropertyAnnotation($targetClassName, $propertyName);
             if (! $propertyMetadata) {
@@ -60,8 +64,11 @@ trait PropertyHandlerTrait
                     foreach ($callbacks as $callback) {
                         call($callback, [$this, $currentClassName, $targetClassName, $propertyName, $annotation]);
                     }
+                    $handled[] = $propertyName;
                 }
             }
         }
+
+        return $handled;
     }
 }

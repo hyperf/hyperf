@@ -204,3 +204,8 @@ public function index(RequestInterface $request)
 
 如果安装了 devtool 组件，可使用 `php bin/hyperf.php describe:routes` 命令获取路由列表信息，
 并且提供 path 可选项，方便获取单个路由信息，对应的命令 `php bin/hyperf.php describe:routes --path=/foo/bar`。
+
+## HTTP 异常
+
+在路由匹配不到路由时，如 `路由找不到(404)`、`请求方法不允许(405)` 等 HTTP 异常，Hyperf 会统一抛出一个 `Hyperf\HttpMessage\Exception\HttpException` 异常类的子类，您需要通过 ExceptionHandler 机制来管理这些异常并做对应的响应处理，默认情况下可以直接使用组件提供的 `Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler` 来进行异常捕获处理，注意这个异常处理器需要您自行配置到 `config/autoload/exceptions.php` 配置文件中去，并保障多个异常处理器之间的顺序链路是正确的。   
+当您需要对 `路由找不到(404)`、`请求方法不允许(405)` 等 HTTP 异常情况的响应进行自定义处理时，您可直接根据 `HttpExceptionHandler` 的代码实现您自己的异常处理器，并配置您自己的异常处理器。关于异常处理器的逻辑和使用说明，可具体查阅 [异常处理](zh-cn/exception-handler.md)

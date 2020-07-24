@@ -3,6 +3,12 @@
   * [專案介紹](zh-tw/README.md)
   * [線上交流](zh-tw/communication.md)
   * [捐獻及贊助](zh-tw/donate.md)
+  * [參與開發](zh-tw/contribute.md)
+  
+* 版本管理
+
+  * [版本計劃](zh-tw/release-planning.md)
+  * [版本說明](zh-tw/versions.md)
   * [版本更新記錄](zh-tw/changelog.md)
 
 * 快速入門
@@ -72,7 +78,7 @@
   * [Redis 非同步佇列](zh-tw/async-queue.md)
   * [AMQP](zh-tw/amqp.md)
   * [Nats](zh-tw/nats.md)
-  * [Nsq](zh-tw/nsq.md)
+  * [NSQ](zh-tw/nsq.md)
   
 * 其它元件
 
@@ -96,6 +102,7 @@
   * [Snowflake](zh-tw/snowflake.md)
   * [重試](zh-tw/retry.md)
   * [訊號處理器](zh-tw/signal.md)
+  * [ReactiveX](zh-tw/reactive-x.md)
 
 * 應用部署
 
@@ -118,3 +125,4 @@
 * 版本升級指南
   
   * [1.1 升級指南](zh-tw/upgrade/1.1.md)
+  * [2.0 升級指南](zh-tw/upgrade/2.0.md)

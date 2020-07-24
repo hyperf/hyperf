@@ -137,9 +137,217 @@ class Foo extends AbstractAnnotation
 - `public function collectMethod(string $className, ?string $target): void;` 当注解定义在类方法时被扫描时会触发该方法
 - `public function collectProperty(string $className, ?string $target): void` 当注解定义在类属性时被扫描时会触发该方法
 
+因为框架实现了注解收集器缓存功能，所以需要您将自定义收集器配置到 `annotations.scan.collectors` 中，这样框架才能自动缓存收集好的注解，在下次启动时进行复用。
+如果没有配置对应的收集器，就会导致自定义注解只有在首次启动 `server` 时生效，而再次启动时不会生效。
+
+```php
+<?php
+
+return [
+    // 注意在 config/autoload 文件下的配置文件则无 annotations 这一层
+    'annotations' => [
+        'scan' => [
+            'collectors' => [
+                CustomCollector::class,
+            ],
+        ],
+    ],
+];
+
+```
+
 ### 利用注解数据
 
 在没有自定义注解收集方法时，默认会将注解的元数据统一收集在 `Hyperf\Di\Annotation\AnnotationCollector` 类内，通过该类的静态方法可以方便的获取对应的元数据用于逻辑判断或实现。
+
+### ClassMap 功能
+
+框架提供了 `class_map` 配置，可以方便用户直接替换需要加载的类。
+
+比如以下我们实现一个可以自动复制协程上下文的功能：
+
+首先，我们实现一个用于复制上下文的 `Coroutine` 类。其中 `create()` 方法，可以将父类的上下文复制到子类当中。
+
+```php
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace App\Kernel\Context;
+
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
+use Hyperf\Utils;
+use Psr\Container\ContainerInterface;
+use Swoole\Coroutine as SwooleCoroutine;
+
+class Coroutine
+{
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * @var StdoutLoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @var null|FormatterInterface
+     */
+    protected $formatter;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+        $this->logger = $container->get(StdoutLoggerInterface::class);
+        if ($container->has(FormatterInterface::class)) {
+            $this->formatter = $container->get(FormatterInterface::class);
+        }
+    }
+
+    /**
+     * @return int Returns the coroutine ID of the coroutine just created.
+     *             Returns -1 when coroutine create failed.
+     */
+    public function create(callable $callable): int
+    {
+        $id = Utils\Coroutine::id();
+        $result = SwooleCoroutine::create(function () use ($callable, $id) {
+            try {
+                Utils\Context::copy($id);
+                call($callable);
+            } catch (Throwable $throwable) {
+                if ($this->formatter) {
+                    $this->logger->warning($this->formatter->format($throwable));
+                } else {
+                    $this->logger->warning((string) $throwable);
+                }
+            }
+        });
+        return is_int($result) ? $result : -1;
+    }
+}
+
+```
+
+然后，我们实现一个跟 `Hyperf\Utils\Coroutine` 一模一样的对象。其中 `create()` 方法替换成我们上述实现的方法。
+
+`app/Kernel/ClassMap/Coroutine.php`
+
+```php
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://doc.hyperf.io
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace Hyperf\Utils;
+
+use App\Kernel\Context\Coroutine as BCoroutine;
+use Swoole\Coroutine as SwooleCoroutine;
+use Hyperf\Utils\ApplicationContext;
+
+/**
+ * @method static void defer(callable $callable)
+ */
+class Coroutine
+{
+    public static function __callStatic($name, $arguments)
+    {
+        if (! method_exists(SwooleCoroutine::class, $name)) {
+            throw new \BadMethodCallException(sprintf('Call to undefined method %s.', $name));
+        }
+        return SwooleCoroutine::$name(...$arguments);
+    }
+
+    /**
+     * Returns the current coroutine ID.
+     * Returns -1 when running in non-coroutine context.
+     */
+    public static function id(): int
+    {
+        return SwooleCoroutine::getCid();
+    }
+
+    /**
+     * Returns the parent coroutine ID.
+     * Returns -1 when running in the top level coroutine.
+     * Returns null when running in non-coroutine context.
+     *
+     * @see https://github.com/swoole/swoole-src/pull/2669/files#diff-3bdf726b0ac53be7e274b60d59e6ec80R940
+     */
+    public static function parentId(?int $coroutineId = null): ?int
+    {
+        if ($coroutineId) {
+            $cid = SwooleCoroutine::getPcid($coroutineId);
+        } else {
+            $cid = SwooleCoroutine::getPcid();
+        }
+        if ($cid === false) {
+            return null;
+        }
+
+        return $cid;
+    }
+
+    /**
+     * @return int Returns the coroutine ID of the coroutine just created.
+     *             Returns -1 when coroutine create failed.
+     */
+    public static function create(callable $callable): int
+    {
+        return ApplicationContext::getContainer()->get(BCoroutine::class)->create($callable);
+    }
+
+    public static function inCoroutine(): bool
+    {
+        return Coroutine::id() > 0;
+    }
+}
+
+```
+
+然后配置一下 `class_map`，如下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Hyperf\Utils\Coroutine;
+
+return [
+    'scan' => [
+        'paths' => [
+            BASE_PATH . '/app',
+        ],
+        'ignore_annotations' => [
+            'mixin',
+        ],
+        'class_map' => [
+            // 需要映射的类名 => 类所在的文件地址
+            Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
+        ],
+    ],
+];
+
+```
+
+这样 `co()` 和 `parallel()` 等方法，就可以自动拿到父协程，上下文中的数据，比如 `Request`。
 
 ## IDE 注解插件
 

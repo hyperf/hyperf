@@ -6,27 +6,29 @@ Socket.io是一款非常流行的應用層實時通訊協議和框架，可以�
 composer require hyperf/socketio-server
 ```
 
-hyperf/socketio-server 是基於WebSocket實現的，請確保服務端已經添加了WebSocket服務配置。
+hyperf/socketio-server 元件是基於 WebSocket 實現的，請確保服務端已經添加了 `WebSocket 服務` 的配置。
 
 ```php
-        [
-            'name' => 'socket-io',
-            'type' => Server::SERVER_WEBSOCKET,
-            'host' => '0.0.0.0',
-            'port' => 9502,
-            'sock_type' => SWOOLE_SOCK_TCP,
-            'callbacks' => [
-                SwooleEvent::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
-                SwooleEvent::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
-                SwooleEvent::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
-            ],
-        ],
+// config/autoload/server.php
+[
+    'name' => 'socket-io',
+    'type' => Server::SERVER_WEBSOCKET,
+    'host' => '0.0.0.0',
+    'port' => 9502,
+    'sock_type' => SWOOLE_SOCK_TCP,
+    'callbacks' => [
+        SwooleEvent::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
+        SwooleEvent::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
+        SwooleEvent::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
+    ],
+],
 ```
 
 
 ## 快速開始
 
 ### 服務端
+
 ```php
 <?php
 
@@ -88,7 +90,7 @@ class WebSocketController extends BaseNamespace
 
 ### 客戶端
 
-由於服務端只實現了WebSocket通訊，所以客戶端要加上 `{transports:["websocket"]}` 。
+由於服務端只實現了 WebSocket 通訊，所以客戶端要加上 `{transports:["websocket"]}` 。
 
 ```html
 <script src="https://cdn.bootcss.com/socket.io/2.3.0/socket.io.js"></script>
@@ -107,52 +109,97 @@ class WebSocketController extends BaseNamespace
 
 ## API 清單
 
+### Socket API
+
+通過 SocketAPI 對目標 Socket 進行推送，或以目標 Socket 的身份在房間內發言。需要在事件回撥中使用。
+
 ```php
 <?php
-function onConnect(\Hyperf\SocketIOServer\Socket $socket){
+/**
+ * @Event("SomeEvent")
+ */
+function onSomeEvent(\Hyperf\SocketIOServer\Socket $socket){
 
   // sending to the client
+  // 向連線推送 hello 事件
   $socket->emit('hello', 'can you hear me?', 1, 2, 'abc');
 
   // sending to all clients except sender
+  // 向所有連線推送 broadcast 事件，但是不包括當前連線。
   $socket->broadcast->emit('broadcast', 'hello friends!');
 
   // sending to all clients in 'game' room except sender
+  // 向 game 房間內所有連線推送 nice game 事件，但是不包括當前連線。
   $socket->to('game')->emit('nice game', "let's play a game");
 
   // sending to all clients in 'game1' and/or in 'game2' room, except sender
+  // 向 game1 房間 和 game2 房間內所有連線取並集推送 nice game 事件，但是不包括當前連線。
   $socket->to('game1')->to('game2')->emit('nice game', "let's play a game (too)");
 
   // WARNING: `$socket->to($socket->getSid())->emit()` will NOT work, as it will send to everyone in the room
   // named `$socket->getSid()` but the sender. Please use the classic `$socket->emit()` instead.
+  // 注意：自己給自己推送的時候不要加to，因為$socket->to()總是排除自己。直接$socket->emit()就好了。
 
   // sending with acknowledgement
+  // 傳送資訊，並且等待並接收客戶端響應。
   $reply = $socket->emit('question', 'do you think so?')->reply();
 
   // sending without compression
+  // 無壓縮推送
   $socket->compress(false)->emit('uncompressed', "that's rough");
+}
+```
+### 全域性API
 
-  $io = \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
+直接從容器中獲取SocketIO單例。這個單例可向全域性廣播或指定房間、個人通訊。未指定名稱空間時，預設使用'/'空間。
 
-  // sending to all clients in 'game' room, including sender
-  $io->in('game')->emit('big-announcement', 'the game will start soon');
+```php
+<?php
+$io = \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
 
-  // sending to all clients in namespace 'myNamespace', including sender
-  $io->of('/myNamespace')->emit('bigger-announcement', 'the tournament will start soon');
+// sending to all clients in 'game' room, including sender
+// 向 game 房間內的所有連線推送 bigger-announcement 事件。
+$io->in('game')->emit('big-announcement', 'the game will start soon');
 
-  // sending to a specific room in a specific namespace, including sender
-  $io->of('/myNamespace')->to('room')->emit('event', 'message');
+// sending to all clients in namespace 'myNamespace', including sender
+// 向 /myNamespace 名稱空間下的所有連線推送 bigger-announcement 事件
+$io->of('/myNamespace')->emit('bigger-announcement', 'the tournament will start soon');
 
-  // sending to individual socketid (private message)
-  $io->to('socketId')->emit('hey', 'I just met you');
+// sending to a specific room in a specific namespace, including sender
+// 向 /myNamespace 名稱空間下的 room 房間所有連線推送 event 事件
+$io->of('/myNamespace')->to('room')->emit('event', 'message');
 
-  // sending to all clients on this node (when using multiple nodes)
-  $io->local->emit('hi', 'my lovely babies');
+// sending to individual socketid (private message)
+// 向 socketId 單點推送
+$io->to('socketId')->emit('hey', 'I just met you');
 
-  // sending to all connected clients
-  $io->emit('an event sent to all connected clients');
+// sending to all clients on this node (when using multiple nodes)
+// 向本機所有連線推送
+$io->local->emit('hi', 'my lovely babies');
 
-};
+// sending to all connected clients
+// 向所有連線推送
+$io->emit('an event sent to all connected clients');
+```
+
+### 名稱空間API
+
+和全域性API一樣，只不過已經限制了名稱空間。
+```php
+// 以下偽碼等價
+$foo->emit();
+$io->of('/foo')->emit();
+
+/**
+ * class內使用也等價
+ * @SocketIONamespace("/foo")
+ */
+class FooNamespace extends BaseNamespace {
+    public function onEvent(){
+        $this->emit(); 
+        $this->io->of('/foo')->emit();
+    }
+}
 ```
 
 ## 進階教程
@@ -186,13 +233,14 @@ return [
 ];
 ```
 
-> swoole 4.4.17 及以下版本只能讀取 http 建立好的Cookie，4.4.18 及以上版本可以在WebSocket握手時建立Cookie
+> Swoole 4.4.17 及以下版本只能讀取 HTTP 建立好的 Cookie，Swoole 4.4.18 及以上版本可以在 WebSocket 握手時建立 Cookie
 
 ### 調整房間介面卡
 
 預設的房間功能通過 Redis 介面卡實現，可以適應多程序乃至分散式場景。
 
 1. 可以替換為記憶體介面卡，只適用於單 worker 場景。
+
 ```php
 <?php
 // config/autoload/dependencies.php
@@ -202,6 +250,7 @@ return [
 ```
 
 2. 可以替換為空介面卡，不需要房間功能時可以降低消耗。
+
 ```php
 <?php
 // config/autoload/dependencies.php
@@ -288,3 +337,46 @@ class WebSocketController extends BaseNamespace
     }
 }
 ```
+
+## Auth 鑑權
+
+您可以通過使用中介軟體來攔截 WebSocket 握手，實現鑑權功能，如下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Middleware;
+
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+class WebSocketAuthMiddleware implements MiddlewareInterface
+{
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        // 虛擬碼，通過 isAuth 方法攔截握手請求並實現許可權檢查
+        if (! $this->isAuth($request)) {
+            return $this->container->get(\Hyperf\HttpServer\Contract\ResponseInterface::class)->raw('Forbidden');
+        }
+
+        return $handler->handle($request);
+    }
+}
+```
+
+並將上面的中介軟體配置到對應的 WebSocket Server 中去即可。

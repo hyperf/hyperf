@@ -63,17 +63,17 @@ use Swoole\WebSocket\Server as WebSocketServer;
 
 class WebSocketController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
-    public function onMessage(WebSocketServer $server, Frame $frame): void
+    public function onMessage($server, Frame $frame): void
     {
         $server->push($frame->fd, 'Recv: ' . $frame->data);
     }
 
-    public function onClose(Server $server, int $fd, int $reactorId): void
+    public function onClose($server, int $fd, int $reactorId): void
     {
         var_dump('closed');
     }
 
-    public function onOpen(WebSocketServer $server, Request $request): void
+    public function onOpen($server, Request $request): void
     {
         $server->push($request->fd, 'Opened');
     }
@@ -109,14 +109,38 @@ use Swoole\WebSocket\Server as WebSocketServer;
 
 class WebSocketController implements OnMessageInterface, OnOpenInterface
 {
-    public function onMessage(WebSocketServer $server, Frame $frame): void
+    public function onMessage($server, Frame $frame): void
     {
         $server->push($frame->fd, 'Username: ' . Context::get('username'));
     }
 
-    public function onOpen(WebSocketServer $server, Request $request): void
+    public function onOpen($server, Request $request): void
     {
         Context::set('username', $request->cookie['username']);
     }
+}
+```
+
+## 多 server 配置
+
+```
+# /etc/nginx/conf.d/ng_socketio.conf
+# 多個 ws server
+upstream io_nodes {
+    server ws1:9502;
+    server ws2:9502;
+}
+server {
+  listen 9502;
+  # server_name your.socket.io;
+  location / {
+    proxy_set_header Upgrade "websocket";
+    proxy_set_header Connection "upgrade";
+    # proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    # proxy_set_header Host $host;
+    # proxy_http_version 1.1;
+    # 轉發到多個 ws server
+    proxy_pass http://io_nodes;
+  }
 }
 ```

@@ -1,5 +1,110 @@
 # 版本更新記錄
 
+# v2.0 - 2020-06-22
+
+## 主要功能
+
+1. 重構 [hyperf/di](https://github.com/hyperf/di) 元件，特別是對 AOP 和註解的優化，在 2.0 版本，該元件使用了一個全新的載入機制來提供 AOP 功能的支援。
+    1. 對比 1.x 版本來說最顯著的一個一個功能就是現在你可以通過 AOP 功能切入任何方式例項化的一個類了，比如說，在 1.x 版本，你只能切入由 DI 容器建立的類，你無法切入一個由 `new` 關鍵詞例項化的類，但在 2.0 版本都可以生效了。不過仍有一些例外的情況，您仍無法切入那些在啟動階段用來提供 AOP 功能的類；
+    2. 在 1.x 版本，AOP 只能作用於普通的類，無法支援 `Final` 類，但在 2.0 版本您可以這麼做了；
+    3. 在 1.x 版本，您無法在當前類的建構函式中使用 `@Inject` 或 `@Value` 註解標記的類成員屬性的值，但在 2.0 版本里，您可以這麼做了；
+    4. 在 1.x 版本，只有通過 DI 容器建立的物件才能使 `@Inject` 和 `@Value` 註解的功能生效，通過 `new` 關鍵詞建立的物件無法生效，但在 2.0 版本，都可以生效了；
+    5. 在 1.x 版本，在使用註解時，您必須定義註解的名稱空間來指定使用的註解類，但在 2.0 版本下，您可以為任一註解提供一個別名，這樣在使用這個註解時可以直接使用別名而無需引入註解類的名稱空間。比如您可以直接在任意類屬性上標記 `@Inject` 註解而無需編寫 `use Hyperf\Di\Annotation\Inject;`；
+    6. 在 1.x 版本，建立的代理類是一個目標類的子類，這樣的實現機制會導致一些魔術常量獲得的值返回的是代理類子類的資訊，而不是目標類的資訊，但在 2.0 版本，代理類會與目標類保持一樣的類名和程式碼結構；
+    7. 在 1.x 版本，當代理類快取存在時則不會重新生成快取，就算原始碼發生了變化，這樣的機制有助於掃描耗時的提升，但與此同時，這也會導致開發階段的一些不便利，但在 2.0 版本，代理類快取會根據原始碼的變化而自動變化，這一改變會減少很多在開發階段的心智負擔；
+    8. 為 Aspect 類增加了 `priority` 優先順序屬性，現在您可以組織多個 Aspect 之間的順序了；
+    9. 在 1.x 版本，您只能通過 `@Aspect` 註解類定義一個 Aspect 類，但在 2.0 版本，您還可以通過配置檔案、ConfigProvider 來定義 Aspect 類；
+    10. 在 1.x 版本，您在使用到依賴懶載入功能時，必須註冊一個 `Hyperf\Di\Listener\LazyLoaderBootApplicationListener` 監聽器，但在 2.0 版本，您可以直接使用該功能而無需做任何的註冊動作；
+    11. 增加了 `annotations.scan.class_map` 配置項，通過該配置您可以將任意類替換成您自己的類，而使用時無需做任何的改變；
+    
+## 依賴庫更新
+
+- 將 `ext-swoole` 升級到了 `>=4.5`;
+- 將 `psr/event-dispatcher` 升級到了 `^1.0`;
+- 將 `monolog/monolog` 升級到了 `^2.0`;
+- 將 `phpstan/phpstan` 升級到了 `^0.12.18`;
+- 將 `vlucas/phpdotenv` 升級到了 `^4.0`;
+- 將 `symfony/finder` 升級到了 `^5.0`;
+- 將 `symfony/event-dispatcher` 升級到了 `^5.0`;
+- 將 `symfony/console` 升級到了 `^5.0`;
+- 將 `symfony/property-access` 升級到了 `^5.0`;
+- 將 `symfony/serializer` 升級到了 `^5.0`;
+- 將 `elasticsearch/elasticsearch` 升級到了 `^7.0`;
+
+## 類和方法的變更
+
+- 移除了 `Hyperf\Di\Aop\AstCollector`；
+- 移除了 `Hyperf\Di\Aop\ProxyClassNameVisitor`；
+- 移除了 `Hyperf\Di\Listener\LazyLoaderBootApplicationListener`；
+- 移除了 `Hyperf\Dispatcher\AbstractDispatcher` 類的 `dispatch(...$params)` 方法；
+- 移除了 hyperf/utils 元件中 ConfigProvider 中的 `Hyperf\Contract\NormalizerInterface => Hyperf\Utils\Serializer\SymfonyNormalizer` 關係；
+- 移除了 `Hyperf\Contract\OnOpenInterface`、`Hyperf\Contract\OnCloseInterface`、`Hyperf\Contract\OnMessageInterface`、`Hyperf\Contract\OnReceiveInterface` 介面中的 `$server` 引數的強型別宣告；
+
+## 新增
+
+- [#992](https://github.com/hyperf/hyperf/pull/992) 新增 [hyperf/reactive-x](https://github.com/hyperf/reactive-x) 元件；
+- [#1245](https://github.com/hyperf/hyperf/pull/1245) 為 `ExceptionHandler` 新增了註解的定義方式；
+- [#1245](https://github.com/hyperf/hyperf/pull/1245) `ExceptionHandler` 新增了 `priority` 優先順序屬性，通過配置檔案或註解方式均可定義優先順序；
+- [#1819](https://github.com/hyperf/hyperf/pull/1819) 新增 [hyperf/signal](https://github.com/hyperf/signal) 元件；
+- [#1844](https://github.com/hyperf/hyperf/pull/1844) 為 [hyperf/model-cache](https://github.com/hyperf/model-cache) 元件中的 `ttl` 屬性增加了 `\DateInterval` 型別的支援；
+- [#1855](https://github.com/hyperf/hyperf/pull/1855) 連線池新增了 `ConstantFrequency` 恆定頻率策略來釋放限制的連線；
+- [#1871](https://github.com/hyperf/hyperf/pull/1871) 為 Guzzle 增加 `sink` 選項支援；
+- [#1805](https://github.com/hyperf/hyperf/pull/1805) 新增 Coroutine Server 協程服務支援；
+  - 變更了 `Hyperf\Contract\ProcessInterface` 中的 `bind(Server $server)` 方法宣告為 `bind($server)`；
+  - 變更了 `Hyperf\Contract\ProcessInterface` 中的 `isEnable()` 方法宣告為 `isEnable($server)`；
+  - 配置中心、Crontab、服務監控、訊息佇列消費者現在可以通過協程模式來執行，且在使用協程服務模式時，也必須以協程模式來執行；
+  - `Hyperf\AsyncQueue\Environment` 的作用域改為當前協程內，而不是整個程序；
+  - 協程模式下不再支援 Task 機制；
+- [#1877](https://github.com/hyperf/hyperf/pull/1877) 在 PHP 8 下使用 `@Inject` 註解時支援通過成員屬性強型別宣告來替代 `@var` 宣告，如下所示：
+
+```
+class Example {
+    /**
+    * @Inject
+    */
+    private ExampleService $exampleService;
+}
+```
+
+- [#1890](https://github.com/hyperf/hyperf/pull/1890) 新增 `Hyperf\HttpServer\ResponseEmitter` 類來響應任意符合 PSR-7 標準的 Response 物件，同時抽象了 `Hyperf\Contract\ResponseEmitterInterface` 契約；
+- [#1890](https://github.com/hyperf/hyperf/pull/1890) 為 `Hyperf\HttpMessage\Server\Response` 類新增了 `getTrailers()` 和 `getTrailer(string $key)` 和 `withTrailer(string $key, $value)` 方法；
+- [#1920](https://github.com/hyperf/hyperf/pull/1920) 新增方法 `Hyperf\WebSocketServer\Sender::close(int $fd, bool $reset = null)`.
+
+## 修復
+
+- [#1825](https://github.com/hyperf/hyperf/pull/1825) 修復了 `StartServer::execute` 的 `TypeError`；
+- [#1854](https://github.com/hyperf/hyperf/pull/1854) 修復了在 filesystem 中使用 `Runtime::enableCoroutine()` 時，`is_resource` 不能工作的問題；
+- [#1900](https://github.com/hyperf/hyperf/pull/1900) 修復了 `Model` 中的 `asDecimal` 方法型別有可能錯誤的問題；
+- [#1917](https://github.com/hyperf/hyperf/pull/1917) 修復了 `Request::isXmlHttpRequest` 方法無法正常工作的問題；
+
+## 變更
+
+- [#705](https://github.com/hyperf/hyperf/pull/705) 統一了 HTTP 異常的處理方式，現在統一丟擲一個 `Hyperf\HttpMessage\Exception\HttpException` 依賴類來替代在 `Dispatcher` 中直接響應的方式，同時提供了 `Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler` 異常處理器來處理該類異常；
+- [#1846](https://github.com/hyperf/hyperf/pull/1846) 當您 require 了 `symfony/serializer` 庫，不再自動對映 `Hyperf\Contract\NormalizerInterface` 的實現類，您需要手動新增該對映關係，如下：
+
+```php
+use Hyperf\Utils\Serializer\SerializerFactory;
+use Hyperf\Utils\Serializer\Serializer;
+
+return [
+    Hyperf\Contract\NormalizerInterface::class => new SerializerFactory(Serializer::class),
+];
+```
+
+- [#1924](https://github.com/hyperf/hyperf/pull/1924) 重新命名 `Hyperf\GrpcClient\BaseClient` 內 `simpleRequest, getGrpcClient, clientStreamRequest` 方法名為 `_simpleRequest, _getGrpcClient, _clientStreamRequest`；
+
+## 移除
+
+- [#1890](https://github.com/hyperf/hyperf/pull/1890) Removed `Hyperf\Contract\Sendable` interface and all implementations of it.
+- [#1905](https://github.com/hyperf/hyperf/pull/1905) Removed config `config/server.php`, you can merge it into `config/config.php`.
+
+## 優化
+
+- [#1793](https://github.com/hyperf/hyperf/pull/1793) Socket.io 服務現在只在 onOpen and onClose 中觸發 connect/disconnect 事件，同時將一些類方法從 private 級別調整到了 protected 級別，以便使用者可以方便的重寫這些方法；
+- [#1848](https://github.com/hyperf/hyperf/pull/1848) 當 RPC 客戶端對應的 Contract 發生變更時，自動重寫生成對應的動態代理客戶端類；
+- [#1863](https://github.com/hyperf/hyperf/pull/1863) 為 async-queue 元件提供更加安全的停止機制；
+- [#1896](https://github.com/hyperf/hyperf/pull/1896) 當在 constants 元件中使用了同樣的 code 時，keys 會被合併起來；
+
 # v1.1.32 - 2020-05-21
 
 ## 修復
@@ -169,7 +274,7 @@
 
 ## 修復
 
-- [#1445](https://github.com/hyperf/hyperf/pull/1445) 修復命令 `describe:route` 缺失了帶引數的路由；
+- [#1445](https://github.com/hyperf/hyperf/pull/1445) 修復命令 `describe:routes` 缺失了帶引數的路由；
 - [#1449](https://github.com/hyperf/hyperf/pull/1449) 修復了高基數請求路徑的記憶體溢位的問題；
 - [#1454](https://github.com/hyperf/hyperf/pull/1454) 修復 Collection 的 `flatten()` 方法因為 `INF` 引數值為 `float` 型別導致無法使用的問題；
 - [#1458](https://github.com/hyperf/hyperf/pull/1458) 修復了 Guzzle 不支援 Elasticsearch 版本大於 7.0 的問題；

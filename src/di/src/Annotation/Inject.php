@@ -5,16 +5,15 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Di\BetterReflectionManager;
-use Hyperf\Di\Exception;
+use Hyperf\Di\Exception\AnnotationException;
 use Hyperf\Di\TypesFinderManager;
-use PhpDocReader\AnnotationException;
 use phpDocumentor\Reflection\Types\Object_;
 
 /**
@@ -63,16 +62,16 @@ class Inject extends AbstractAnnotation
             }
 
             if (empty($this->value)) {
-                throw new Exception\AnnotationException("The @Inject value is invalid for {$className}->{$target}");
+                throw new AnnotationException("The @Inject value is invalid for {$className}->{$target}");
             }
 
             if ($this->lazy) {
                 $this->value = 'HyperfLazy\\' . $this->value;
             }
             AnnotationCollector::collectProperty($className, $target, static::class, $this);
-        } catch (AnnotationException $e) {
+        } catch (AnnotationException $exception) {
             if ($this->required) {
-                throw $e;
+                throw $exception;
             }
             $this->value = '';
         }

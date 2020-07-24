@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -20,6 +20,9 @@ class ResponseEmitter implements ResponseEmitterInterface
 {
     public function emit(ResponseInterface $response, Response $swooleResponse, bool $withContent = true)
     {
+        if (strtolower($swooleResponse->header['Upgrade'] ?? '') === 'websocket') {
+            return;
+        }
         $this->buildSwooleResponse($swooleResponse, $response);
         $content = $response->getBody();
         if ($content instanceof FileInterface) {
@@ -79,7 +82,7 @@ class ResponseEmitter implements ResponseEmitterInterface
     {
         foreach ($methods as $method) {
             if (! method_exists($object, $method)) {
-                return true;
+                return false;
             }
         }
         return true;
