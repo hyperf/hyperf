@@ -49,7 +49,7 @@ class MySqlGrammar extends Grammar
      */
     public function compileColumnListing(): string
     {
-        return 'select `column_name`, `data_type`, `column_comment` from information_schema.columns where `table_schema` = ? and `table_name` = ? order by ORDINAL_POSITION';
+        return 'select `column_key`, `column_name`, `data_type`, `column_comment`, `extra` from information_schema.columns where `table_schema` = ? and `table_name` = ? order by ORDINAL_POSITION';
     }
 
     /**
