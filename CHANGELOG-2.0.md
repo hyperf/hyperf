@@ -186,18 +186,8 @@ class Example {
 
 - [#1825](https://github.com/hyperf/hyperf/pull/1825) Fixed `TypeError` for `StartServer::execute`.
 - [#1854](https://github.com/hyperf/hyperf/pull/1854) Fixed `is_resource` does not works when use `Runtime::enableCoroutine()` privately in filesystem.
-<<<<<<< HEAD
-- [#1900](https://github.com/hyperf/hyperf/pull/1900) Fixed caster decimal does not work.
-
-## Optimized
-
-- [#1848](https://github.com/hyperf/hyperf/pull/1848) Auto generate rpc client code when server start and the interface is changed.
-- [#1863](https://github.com/hyperf/hyperf/pull/1863) Support async-queue stop safely.
-- [#1896](https://github.com/hyperf/hyperf/pull/1896) Keys will be merged when different constants use the same code.
-=======
 - [#1900](https://github.com/hyperf/hyperf/pull/1900) Fixed caster decimal of Model does not work.
 - [#1917](https://github.com/hyperf/hyperf/pull/1917) Fixed `Request::isXmlHttpRequest` does not work.
->>>>>>> bbf8ae4793f671852bf35e528eba9506c33bd5d1
 
 ## Changed
 
