@@ -20,7 +20,7 @@ use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 
-class ModelRewriteKeyNameVisitor extends NodeVisitorAbstract
+class ModelRewriteKeyInfoVisitor extends NodeVisitorAbstract
 {
     /**
      * @var ModelOption
