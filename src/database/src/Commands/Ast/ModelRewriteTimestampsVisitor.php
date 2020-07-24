@@ -128,8 +128,6 @@ class ModelRewriteTimestampsVisitor extends NodeVisitorAbstract
             return false;
         }
 
-        $parentTimestamps = $ref->getParentClass()->getDefaultProperties()['timestamps'] ?? null;
-
-        return $parentTimestamps === $useTimestamps;
+        return $useTimestamps == ($ref->getParentClass()->getDefaultProperties()['timestamps'] ?? null);
     }
 }
