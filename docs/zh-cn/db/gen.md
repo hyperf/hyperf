@@ -126,5 +126,8 @@ return [
 
 - Hyperf\Database\Commands\Ast\ModelRewriteKeyInfoVisitor
 
-此 Visitor 可以根据数据库中主键，生成对应的 `$incrementing` `$primaryKey` 和 `$keyType`。
+此 `Visitor` 可以根据数据库中主键，生成对应的 `$incrementing` `$primaryKey` 和 `$keyType`。
 
+- Hyperf\Database\Commands\Ast\ModelRewriteSoftDeletesVisitor
+
+此 `Visitor` 可以根据 `DELETED_AT` 常量判断该模型是否含有软删除字段，如果存在，则添加对应的 Trait `SoftDeletes`。
