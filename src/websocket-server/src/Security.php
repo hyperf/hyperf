@@ -28,7 +28,7 @@ class Security
         return preg_match(self::PATTEN, $key) === 0 || strlen(base64_decode($key)) !== 16;
     }
 
-    public function handShakeHeaders(string $key): array
+    public function handshakeHeaders(string $key): array
     {
         return [
             'Upgrade' => 'websocket',

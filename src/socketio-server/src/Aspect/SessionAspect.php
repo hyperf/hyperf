@@ -43,6 +43,13 @@ class SessionAspect extends AbstractAspect
         $this->config = $config;
     }
 
+    /**
+     * process.
+     *
+     * @throws \Hyperf\Di\Exception\Exception
+     *
+     * @return mixed
+     */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         if (! $this->isSessionAvailable()) {
