@@ -235,18 +235,20 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
     public function onClose($server, int $fd, int $reactorId): void
     {
-        $this->logger->debug(sprintf('WebSocket: fd[%d] closed.', $fd));
-
         $fdObj = FdCollector::get($fd);
         if (! $fdObj) {
             return;
         }
+
+        $this->logger->debug(sprintf('WebSocket: fd[%d] closed.', $fd));
+
         Context::set(WsContext::FD, $fd);
         defer(function () use ($fd) {
             // Move those functions to defer, because onClose may throw exceptions
             FdCollector::del($fd);
             WsContext::release($fd);
         });
+
         $instance = $this->container->get($fdObj->class);
         if ($instance instanceof OnCloseInterface) {
             $instance->onClose($server, $fd, $reactorId);
