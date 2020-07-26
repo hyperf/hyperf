@@ -10,6 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 return [
+    // The nacos host info
     'host' => '127.0.0.1',
     'port' => 8848,
     // The service info.
@@ -36,6 +37,7 @@ return [
     'listener_config' => [
         // dataId, group, tenant, type, content
         //[
+        //    'tenant' => 'tenant', // corresponding with service.namespaceId
         //    'data_id' => 'hyperf-service-config',
         //    'group' => 'DEFAULT_GROUP',
         //],

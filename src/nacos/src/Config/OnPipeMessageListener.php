@@ -14,6 +14,7 @@ namespace Hyperf\Nacos\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
+use Hyperf\Process\Event\PipeMessage as UserProcessPipMessage;
 use Psr\Container\ContainerInterface;
 
 class OnPipeMessageListener implements ListenerInterface
@@ -35,6 +36,7 @@ class OnPipeMessageListener implements ListenerInterface
     {
         return [
             OnPipeMessage::class,
+            UserProcessPipMessage::class,
         ];
     }
 
