@@ -20,7 +20,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class SessionAspect extends AbstractAspect
 {
-    // 要切入的类，可以多个，亦可通过 :: 标识到具体的某个方法，通过 * 可以模糊匹配
     public $classes = [
         'Hyperf\SocketIOServer\SocketIO::onClose',
         'Hyperf\SocketIOServer\SocketIO::onOpen',
@@ -43,13 +42,6 @@ class SessionAspect extends AbstractAspect
         $this->config = $config;
     }
 
-    /**
-     * process.
-     *
-     * @throws \Hyperf\Di\Exception\Exception
-     *
-     * @return mixed
-     */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         if (! $this->isSessionAvailable()) {

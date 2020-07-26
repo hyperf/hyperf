@@ -17,6 +17,7 @@
 ## Optimized
 
 - [#2043](https://github.com/hyperf/hyperf/pull/2043) Throw an exception when none of the scan directories exists.
+- [#2182](https://github.com/hyperf/hyperf/pull/2182) Don't write debug message when the server is not websocket server.
 
 # v2.0.3 - 2020-07-20
 
