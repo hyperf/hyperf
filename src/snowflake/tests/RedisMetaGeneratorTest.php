@@ -143,7 +143,7 @@ class RedisMetaGeneratorTest extends TestCase
             'redis' => [
                 'snowflake' => [
                     'host' => 'localhost',
-                    'auth' => '910123',
+                    'auth' => null,
                     'port' => 6379,
                     'db' => 0,
                     'timeout' => 0.0,

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Session;
 
 use Carbon\Carbon;
+use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\HttpMessage\Cookie\Cookie;
@@ -62,6 +63,8 @@ class SessionMiddlewareTest extends TestCase
         $config->shouldReceive('has')->with('session.handler')->andReturn(true);
         $config->shouldReceive('get')->with('session.options.expire_on_close')->andReturn(1);
         $config->shouldReceive('get')->with('session.options.session_name', 'HYPERF_SESSION_ID')->andReturn('HYPERF_SESSION_ID');
+        $config->shouldReceive('get')->with('session.options.domain')->andReturn(null);
+
         $sessionManager = new SessionManager($container, $config);
         $middleware = new SessionMiddleware($sessionManager, $config);
         $response = $middleware->process($request, $requestHandler);
@@ -105,6 +108,8 @@ class SessionMiddlewareTest extends TestCase
         $config->shouldReceive('has')->with('session.handler')->andReturn(true);
         $config->shouldReceive('get')->with('session.options.expire_on_close')->andReturn(0);
         $config->shouldReceive('get')->with('session.options.session_name', 'HYPERF_SESSION_ID')->andReturn('HYPERF_SESSION_ID');
+        $config->shouldReceive('get')->with('session.options.domain')->andReturn(null);
+
         $sessionManager = new SessionManager($container, $config);
         $middleware = new SessionMiddleware($sessionManager, $config);
         $time = time();
@@ -115,6 +120,87 @@ class SessionMiddlewareTest extends TestCase
         /** @var Cookie $cookie */
         $cookie = $response->getCookies()['']['/'][$session->getName()];
         $this->assertSame($time + (5 * 60 * 60), $cookie->getExpiresTime());
+    }
+
+    public function testSessionOptionsDomain()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->with(SessionInterface::class)->andReturnTrue();
+
+        $config = new Config([
+            'session' => [
+                'handler' => FileHandler::class,
+                'options' => [
+                    'connection' => 'default',
+                    'path' => BASE_PATH . '/runtime/session',
+                    'gc_maxlifetime' => 1200,
+                    'session_name' => 'HYPERF_SESSION_ID',
+                ],
+            ],
+        ]);
+
+        $middleware = new SessionMiddleware(Mockery::mock(SessionManager::class), $config);
+        $ref = new ReflectionClass($middleware);
+        $method = $ref->getMethod('addCookieToResponse');
+        $method->setAccessible(true);
+
+        $request = new Request('GET', new Uri('http://hyperf.io'));
+        $session = new Session('test', Mockery::mock(\SessionHandlerInterface::class));
+        $response = new Response();
+        /** @var Response $response */
+        $response = $method->invokeArgs($middleware, [$request, $response, $session]);
+        $this->assertSame('hyperf.io', $response->getCookies()['hyperf.io']['/']['test']->getDomain());
+
+        $config = new Config([
+            'session' => [
+                'handler' => FileHandler::class,
+                'options' => [
+                    'connection' => 'default',
+                    'path' => BASE_PATH . '/runtime/session',
+                    'gc_maxlifetime' => 1200,
+                    'session_name' => 'HYPERF_SESSION_ID',
+                    'domain' => null,
+                ],
+            ],
+        ]);
+
+        $middleware = new SessionMiddleware(Mockery::mock(SessionManager::class), $config);
+        $ref = new ReflectionClass($middleware);
+        $method = $ref->getMethod('addCookieToResponse');
+        $method->setAccessible(true);
+
+        $request = new Request('GET', new Uri('http://hyperf.io'));
+        $session = new Session('test', Mockery::mock(\SessionHandlerInterface::class));
+        $response = new Response();
+        /** @var Response $response */
+        $response = $method->invokeArgs($middleware, [$request, $response, $session]);
+        $this->assertSame('hyperf.io', $response->getCookies()['hyperf.io']['/']['test']->getDomain());
+
+        $config = new Config([
+            'session' => [
+                'handler' => FileHandler::class,
+                'options' => [
+                    'connection' => 'default',
+                    'path' => BASE_PATH . '/runtime/session',
+                    'gc_maxlifetime' => 1200,
+                    'session_name' => 'HYPERF_SESSION_ID',
+                    'domain' => 'hyperf.wiki',
+                ],
+            ],
+        ]);
+
+        $middleware = new SessionMiddleware(Mockery::mock(SessionManager::class), $config);
+        $ref = new ReflectionClass($middleware);
+        $method = $ref->getMethod('addCookieToResponse');
+        $method->setAccessible(true);
+
+        $request = new Request('GET', new Uri('http://hyperf.io'));
+        $session = new Session('test', Mockery::mock(\SessionHandlerInterface::class));
+        $response = new Response();
+        /** @var Response $response */
+        $response = $method->invokeArgs($middleware, [$request, $response, $session]);
+        $this->assertFalse(isset($response->getCookies()['hyperf.io']));
+        $this->assertSame('hyperf.wiki', $response->getCookies()['hyperf.wiki']['/']['test']->getDomain());
     }
 
     public function testSessionStoreCurrentUrl()
@@ -148,6 +234,7 @@ class SessionMiddlewareTest extends TestCase
     {
         $config = Mockery::mock(ConfigInterface::class);
         $config->shouldReceive('get')->with('session.options.expire_on_close')->andReturn(0);
+        $config->shouldReceive('get')->with('session.options.domain')->andReturn(null);
         $middleware = new SessionMiddleware(Mockery::mock(SessionManager::class), $config);
         $ref = new ReflectionClass($middleware);
         $method = $ref->getMethod('addCookieToResponse');

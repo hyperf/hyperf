@@ -86,8 +86,8 @@ class Option
         return $this->ext;
     }
 
-    public function getScanInterval()
+    public function getScanInterval(): int
     {
-        return $this->scanInterval;
+        return $this->scanInterval > 0 ? $this->scanInterval : 2000;
     }
 }

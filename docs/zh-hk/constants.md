@@ -155,7 +155,7 @@ $message = ErrorCode::getMessage(ErrorCode::PARAMS_INVALID, 'user_id');
 composer require hyperf/translation
 ```
 
-相關配置詳見 [國際化](translation.md)
+相關配置詳見 [國際化](zh-hk/translation.md)
 
 ```php
 <?php
