@@ -1,5 +1,27 @@
 # 版本更新记录
 
+# v2.0.4 - 2020-07-27
+
+## Added
+
+- [#2144](https://github.com/hyperf/hyperf/pull/2144) 数据库查询事件 `Hyperf\Database\Events\QueryExecuted` 添加 `$result` 字段。
+- [#2158](https://github.com/hyperf/hyperf/pull/2158) 路由 `Hyperf\HttpServer\Router\Handler` 中，添加 `$options` 字段。
+- [#2162](https://github.com/hyperf/hyperf/pull/2162) 热更新组件添加 `Hyperf\Watcher\Driver\FindDriver`。
+- [#2169](https://github.com/hyperf/hyperf/pull/2169) `Session` 组件新增配置 `session.options.domain`，用于替换 `Request` 中获取的 `domain`。
+- [#2174](https://github.com/hyperf/hyperf/pull/2174) 模型生成器添加 `ModelRewriteTimestampsVisitor`，用于根据数据库字段 `created_at` 和 `updated_at`， 重写模型字段 `$timestamps`。
+- [#2175](https://github.com/hyperf/hyperf/pull/2175) 模型生成器添加 `ModelRewriteSoftDeletesVisitor`，用于根据数据库字段 `deleted_at`， 添加或者移除 `SoftDeletes`。
+- [#2176](https://github.com/hyperf/hyperf/pull/2176) 模型生成器添加 `ModelRewriteKeyInfoVisitor`，用于根据数据库主键，重写模型字段 `$incrementing` `$primaryKey` 和 `$keyType`。
+
+## Fixed
+
+- [#2149](https://github.com/hyperf/hyperf/pull/2149) 修复自定义进程运行过程中无法从 Nacos 正常更新配置的 BUG。
+- [#2159](https://github.com/hyperf/hyperf/pull/2159) 修复使用 `gen:migration` 时，由于文件已经存在导致的 `FATAL` 异常。
+
+## Optimized
+
+- [#2043](https://github.com/hyperf/hyperf/pull/2043) 当 `SCAN` 目录都不存在时，抛出更加友好的异常。
+- [#2182](https://github.com/hyperf/hyperf/pull/2182) 当使用 `WebSocket` 和 `Http` 服务且 `Http` 接口被访问时，不会记录 `WebSocket` 关闭连接的日志。
+
 # v2.0.3 - 2020-07-20
 
 ## 新增
