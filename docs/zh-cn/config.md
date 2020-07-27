@@ -160,10 +160,10 @@ private $config;
 然后，在类方法中如此使用：
 
 ```
-$host = $this->config->get("database.default.host");
+$host = $this->config->get("databases.default.host");
 ```
 
-即可获取到 `autoload/database.php` 文件中的 `default` 键下的 `host` 子键对应的值。
+即可获取到 `autoload/databases.php` 文件中的 `default` 键下的 `host` 子键对应的值。
 
 如果要获取 `config.php` 中的值，示例如下：
 
