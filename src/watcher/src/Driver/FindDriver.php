@@ -56,7 +56,7 @@ class FindDriver implements DriverInterface
             }
 
             $seconds = ceil(($ms + 1000) / 1000);
-            $minutes = sprintf('%.2f', $seconds / 60);
+            $minutes = sprintf('-%.2f', $seconds / 60);
 
             [$fileModifyTimes, $changedFiles] = $this->scan($fileModifyTimes, $minutes);
 
@@ -70,6 +70,10 @@ class FindDriver implements DriverInterface
     {
         $changedFiles = [];
         $dest = implode(' ', $targets);
+        /**
+         * In linux system, you can use command below
+         * find app -mmin -0.05 -type f -printf "%p %T+\n"
+         */
         $ret = System::exec($this->getBin() . ' ' . $dest . ' -mmin ' . $minutes . ' -type f -printf "%p %T+' . PHP_EOL . '"');
         if ($ret['code'] === 0 && strlen($ret['output'])) {
             $stdout = $ret['output'];
