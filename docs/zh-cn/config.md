@@ -145,6 +145,32 @@ Config 组件提供了三种方式获取配置，通过 `Hyperf\Config\Config` �
 $config->get($key，$default);
 ```
 
+以获取默认 `default` 数据库 `host` 属性为例，你可以这样做：
+
+首先，在类中如此定义属性：
+
+```php
+/**
+ * @Inject()
+ * @var ConfigInterface
+ */
+private $config;
+```
+
+然后，在类方法中如此使用：
+
+```
+$host = $this->config->get("database.default.host");
+```
+
+即可获取到 `autoload/database.php` 文件中的 `default` 键下的 `host` 子键对应的值。
+
+如果要获取 `config.php` 中的值，示例如下：
+
+```php
+$appName = $this->config->get('app_name','');
+```
+
 #### 通过 `@Value` 注解获取配置
 
 这种方式要求注解的应用对象必须是通过 [hyperf/di](https://github.com/hyperf/di) 组件创建的，注入实例的细节可查阅 [依赖注入](zh-cn/di.md) 章节，示例中我们假设 `IndexController` 就是一个已经定义好的 `Controller` 类，`Controller` 类一定是由 `DI` 容器创建出来的；   
