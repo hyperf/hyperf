@@ -32,11 +32,13 @@ composer require hyperf/constants
 
 ### 定義枚舉類
 
-通過 `gen:constants` 命令可以快速的生成一個枚舉類。
+通過 `gen:constant` 命令可以快速的生成一個枚舉類。
 
 ```bash
-php bin/hyperf.php gen:constants ErrorCode
+php bin/hyperf.php gen:constant ErrorCode
 ```
+
+!> 此生成命令僅在 [hyperf/constants](https://github.com/hyperf/constants) 組件版本大於等於 v2.0.1 版本時可用，小於此版本時請手動創建枚舉類。
 
 ```php
 <?php
