@@ -22,9 +22,8 @@ class Parser
      * Parse the given console command definition into an array.
      *
      * @throws \InvalidArgumentException
-     * @return array
      */
-    public static function parse(string $expression)
+    public static function parse(string $expression): array
     {
         $name = static::name($expression);
 
@@ -41,9 +40,8 @@ class Parser
      * Extract the name of the command from the expression.
      *
      * @throws \InvalidArgumentException
-     * @return string
      */
-    protected static function name(string $expression)
+    protected static function name(string $expression): string
     {
         if (! preg_match('/[^\s]+/', $expression, $matches)) {
             throw new InvalidArgumentException('Unable to determine command name from signature.');
@@ -54,10 +52,8 @@ class Parser
 
     /**
      * Extract all of the parameters from the tokens.
-     *
-     * @return array
      */
-    protected static function parameters(array $tokens)
+    protected static function parameters(array $tokens): array
     {
         $arguments = [];
 
@@ -76,10 +72,8 @@ class Parser
 
     /**
      * Parse an argument expression.
-     *
-     * @return \Symfony\Component\Console\Input\InputArgument
      */
-    protected static function parseArgument(string $token)
+    protected static function parseArgument(string $token): InputArgument
     {
         [$token, $description] = static::extractDescription($token);
 
@@ -101,10 +95,8 @@ class Parser
 
     /**
      * Parse an option expression.
-     *
-     * @return \Symfony\Component\Console\Input\InputOption
      */
-    protected static function parseOption(string $token)
+    protected static function parseOption(string $token): InputOption
     {
         [$token, $description] = static::extractDescription($token);
 
@@ -133,10 +125,8 @@ class Parser
 
     /**
      * Parse the token into its token and description segments.
-     *
-     * @return array
      */
-    protected static function extractDescription(string $token)
+    protected static function extractDescription(string $token): array
     {
         $parts = preg_split('/\s+:\s+/', trim($token), 2);
 
