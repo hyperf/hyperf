@@ -1,11 +1,122 @@
 # 版本更新記錄
 
+# v2.0.4 - 2020-07-27
+
+## Added
+
+- [#2144](https://github.com/hyperf/hyperf/pull/2144) 數據庫查詢事件 `Hyperf\Database\Events\QueryExecuted` 添加 `$result` 字段。
+- [#2158](https://github.com/hyperf/hyperf/pull/2158) 路由 `Hyperf\HttpServer\Router\Handler` 中，添加 `$options` 字段。
+- [#2162](https://github.com/hyperf/hyperf/pull/2162) 熱更新組件添加 `Hyperf\Watcher\Driver\FindDriver`。
+- [#2169](https://github.com/hyperf/hyperf/pull/2169) `Session` 組件新增配置 `session.options.domain`，用於替換 `Request` 中獲取的 `domain`。
+- [#2174](https://github.com/hyperf/hyperf/pull/2174) 模型生成器添加 `ModelRewriteTimestampsVisitor`，用於根據數據庫字段 `created_at` 和 `updated_at`， 重寫模型字段 `$timestamps`。
+- [#2175](https://github.com/hyperf/hyperf/pull/2175) 模型生成器添加 `ModelRewriteSoftDeletesVisitor`，用於根據數據庫字段 `deleted_at`， 添加或者移除 `SoftDeletes`。
+- [#2176](https://github.com/hyperf/hyperf/pull/2176) 模型生成器添加 `ModelRewriteKeyInfoVisitor`，用於根據數據庫主鍵，重寫模型字段 `$incrementing` `$primaryKey` 和 `$keyType`。
+
+## Fixed
+
+- [#2149](https://github.com/hyperf/hyperf/pull/2149) 修復自定義進程運行過程中無法從 Nacos 正常更新配置的 BUG。
+- [#2159](https://github.com/hyperf/hyperf/pull/2159) 修復使用 `gen:migration` 時，由於文件已經存在導致的 `FATAL` 異常。
+
+## Optimized
+
+- [#2043](https://github.com/hyperf/hyperf/pull/2043) 當 `SCAN` 目錄都不存在時，拋出更加友好的異常。
+- [#2182](https://github.com/hyperf/hyperf/pull/2182) 當使用 `WebSocket` 和 `Http` 服務且 `Http` 接口被訪問時，不會記錄 `WebSocket` 關閉連接的日誌。
+
+# v2.0.3 - 2020-07-20
+
+## 新增
+
+- [#1554](https://github.com/hyperf/hyperf/pull/1554) 新增 `hyperf/nacos` 組件。
+- [#2082](https://github.com/hyperf/hyperf/pull/2082) 監聽器 `Hyperf\Signal\Handler\WorkerStopHandler` 添加信號 `SIGINT` 監聽。
+- [#2097](https://github.com/hyperf/hyperf/pull/2097) `hyperf/filesystem` 新增 TencentCloud COS 支持.
+- [#2122](https://github.com/hyperf/hyperf/pull/2122) 添加 Trait `\Hyperf\Snowflake\Concern\HasSnowflake` 為模型自動生成雪花算法的主鍵。
+
+## 修復
+
+- [#2017](https://github.com/hyperf/hyperf/pull/2017) 修復 Prometheus 使用 redis 打點時，改變 label 會導致收集報錯的 BUG。
+- [#2117](https://github.com/hyperf/hyperf/pull/2117) 修復使用 `server:watch` 時，註解 `@Inject` 有時會失效的 BUG。
+- [#2123](https://github.com/hyperf/hyperf/pull/2123) 修復 `tracer` 會記錄兩次 `Redis 指令` 的 BUG。
+- [#2139](https://github.com/hyperf/hyperf/pull/2139) 修復 `ValidationMiddleware` 在 `WebSocket` 服務下使用會報錯的 BUG。
+- [#2140](https://github.com/hyperf/hyperf/pull/2140) 修復請求拋出異常時，`Session` 無法保存的 BUG。
+
+## 優化
+
+- [#2080](https://github.com/hyperf/hyperf/pull/2080) 方法 `Hyperf\Database\Model\Builder::paginate` 中參數 `$perPage` 的類型從 `int` 更改為 `?int`。
+- [#2110](https://github.com/hyperf/hyperf/pull/2110) 在使用 `hyperf/watcher` 時，會先檢查進程是否存在，如果不存在，才會發送 `SIGTERM` 信號。
+- [#2116](https://github.com/hyperf/hyperf/pull/2116) 優化組件 `hyperf/di` 的依賴。
+- [#2121](https://github.com/hyperf/hyperf/pull/2121) 在使用 `gen:model` 時，如果用户自定義了與數據庫字段一致的字段時，則會替換對應的 `@property`。
+- [#2129](https://github.com/hyperf/hyperf/pull/2129) 當 Response Json 格式化失敗時，會拋出更加友好的錯誤提示。
+
+# v2.0.2 - 2020-07-13
+
+## 修復
+
+- [#1898](https://github.com/hyperf/hyperf/pull/1898) 修復定時器規則 `$min-$max` 解析有誤的 BUG。
+- [#2037](https://github.com/hyperf/hyperf/pull/2037) 修復 TCP 服務，連接後共用一個協程，導致 DB 等連接池無法正常回收連接的 BUG。
+- [#2051](https://github.com/hyperf/hyperf/pull/2051) 修復 `CoroutineServer` 不會生成 `hyperf.pid` 的 BUG。
+- [#2055](https://github.com/hyperf/hyperf/pull/1695) 修復 `Guzzle` 在傳輸大數據包時會自動添加頭 `Expect: 100-Continue`，導致請求失敗的 BUG。
+- [#2059](https://github.com/hyperf/hyperf/pull/2059) 修復 `SocketIOServer` 中 `Redis` 重連失敗的 BUG。
+- [#2067](https://github.com/hyperf/hyperf/pull/2067) 修復 `hyperf/watcher` 組件 `Syntax` 錯誤會導致進程異常。
+- [#2085](https://github.com/hyperf/hyperf/pull/2085) 修復註解 `RetryFalsy` 會導致獲得正確的結果後，再次重試。
+- [#2089](https://github.com/hyperf/hyperf/pull/2089) 修復使用 `gen:command` 後，腳本必須要進行修改，才能被加載到的 BUG。
+- [#2093](https://github.com/hyperf/hyperf/pull/2093) 修復腳本 `vendor:publish` 沒有返回碼導致報錯的 BUG。
+
+## 新增
+
+- [#1860](https://github.com/hyperf/hyperf/pull/1860) 為 `Server` 添加默認的 `OnWorkerExit` 回調。
+- [#2042](https://github.com/hyperf/hyperf/pull/2042) 為熱更新組件，添加文件掃描驅動。
+- [#2054](https://github.com/hyperf/hyperf/pull/2054) 為模型緩存添加 `Eager Load` 功能。
+
+## 優化
+
+- [#2049](https://github.com/hyperf/hyperf/pull/2049) 優化熱更新組件的 Stdout 輸出。
+- [#2090](https://github.com/hyperf/hyperf/pull/2090) 為 `hyperf/session` 組件適配非 `Hyperf` 的 `Response`。
+
+## 變更
+
+- [#2031](https://github.com/hyperf/hyperf/pull/2031) 常量組件的錯誤碼只支持 `int` 和 `string`。
+- [#2065](https://github.com/hyperf/hyperf/pull/2065) `WebSocket` 消息發送器 `Hyperf\WebSocketServer\Sender` 支持 `push` 和 `disconnect`。
+- [#2100](https://github.com/hyperf/hyperf/pull/2100) 組件 `hyperf/utils` 更新依賴 `doctrine/inflector` 版本到 `^2.0`。
+
+## 移除
+
+- [#2065](https://github.com/hyperf/hyperf/pull/2065) 移除 `Hyperf\WebSocketServer\Sender` 對方法 `send` `sendto` 和 `close` 的支持，請使用 `push` 和 `disconnect`。
+
+# v2.0.1 - 2020-07-02
+
+## 新增
+
+- [#1934](https://github.com/hyperf/hyperf/pull/1934) 增加腳本 `gen:constant` 用於創建常量類。
+- [#1982](https://github.com/hyperf/hyperf/pull/1982) 添加熱更新組件，文件修改後自動收集註解，自動重啟。
+
+## 修復
+
+- [#1952](https://github.com/hyperf/hyperf/pull/1952) 修復數據庫遷移類存在時，也會生成同類名類，導致類名衝突的 BUG。
+- [#1960](https://github.com/hyperf/hyperf/pull/1960) 修復 `Hyperf\HttpServer\ResponseEmitter::isMethodsExists()` 判斷錯誤的 BUG。
+- [#1961](https://github.com/hyperf/hyperf/pull/1961) 修復因文件 `config/autoload/aspects.php` 不存在導致服務無法啟動的 BUG。
+- [#1964](https://github.com/hyperf/hyperf/pull/1964) 修復接口請求時，數據體為空會導致 `500` 錯誤的 BUG。
+- [#1965](https://github.com/hyperf/hyperf/pull/1965) 修復 `initRequestAndResponse` 失敗後，會導致請求狀態碼與實際不符的 BUG。
+- [#1968](https://github.com/hyperf/hyperf/pull/1968) 修復當修改 `aspects.php` 文件後，`Aspect` 無法安裝修改後的結果運行的 BUG。
+- [#1985](https://github.com/hyperf/hyperf/pull/1985) 修復註解全局配置不全為小寫時，會導致 `global_imports` 失敗的 BUG。
+- [#1990](https://github.com/hyperf/hyperf/pull/1990) 修復當父類存在與子類一樣的成員變量時， `@Inject` 無法正常使用的 BUG。
+- [#2019](https://github.com/hyperf/hyperf/pull/2019) 修復腳本 `gen:model` 因為使用了 `morphTo` 或 `where` 導致生成對應的 `@property` 失敗的 BUG。
+- [#2026](https://github.com/hyperf/hyperf/pull/2026) 修復當使用了魔術方法時，LazyLoad 代理生成有誤的 BUG。
+
+## 變更
+
+- [#1986](https://github.com/hyperf/hyperf/pull/1986) 當沒有設置正確的 `swoole.use_shortname` 變更腳本 `exit_code` 為 `SIGTERM`。
+
+## 優化
+
+- [#1959](https://github.com/hyperf/hyperf/pull/1959) 優化類 `ClassLoader` 可以更容易被用户繼承並修改。
+- [#2002](https://github.com/hyperf/hyperf/pull/2002) 當 `PHP` 版本大於等於 `7.3` 時，支持 `AOP` 切入 `Trait`。
+
 # v2.0 - 2020-06-22
 
 ## 主要功能
 
 1. 重構 [hyperf/di](https://github.com/hyperf/di) 組件，特別是對 AOP 和註解的優化，在 2.0 版本，該組件使用了一個全新的加載機制來提供 AOP 功能的支持。
-    1. 對比 1.x 版本來説最顯著的一個一個功能就是現在你可以通過 AOP 功能切入任何方式實例化的一個類了，比如説，在 1.x 版本，你只能切入由 DI 容器創建的類，你無法切入一個由 `new` 關鍵詞實例化的類，但在 2.0 版本都可以生效了。不過仍有一些例外的情況，您仍無法切入那些在啟動階段用來提供 AOP 功能的類；
+    1. 對比 1.x 版本來説最顯著的一個功能就是現在你可以通過 AOP 功能切入任何方式實例化的一個類了，比如説，在 1.x 版本，你只能切入由 DI 容器創建的類，你無法切入一個由 `new` 關鍵詞實例化的類，但在 2.0 版本都可以生效了。不過仍有一些例外的情況，您仍無法切入那些在啟動階段用來提供 AOP 功能的類；
     2. 在 1.x 版本，AOP 只能作用於普通的類，無法支持 `Final` 類，但在 2.0 版本您可以這麼做了；
     3. 在 1.x 版本，您無法在當前類的構造函數中使用 `@Inject` 或 `@Value` 註解標記的類成員屬性的值，但在 2.0 版本里，您可以這麼做了；
     4. 在 1.x 版本，只有通過 DI 容器創建的對象才能使 `@Inject` 和 `@Value` 註解的功能生效，通過 `new` 關鍵詞創建的對象無法生效，但在 2.0 版本，都可以生效了；
@@ -136,12 +247,12 @@ return [
 
 ## 修復
 
-- [#1696](https://github.com/hyperf/hyperf/pull/1696) 修復方法 `Context::copy` 傳入字段 `keys` 後無法正常使用的BUG。
-- [#1708](https://github.com/hyperf/hyperf/pull/1708) [#1718](https://github.com/hyperf/hyperf/pull/1718) 修復 `hyperf/socketio-server` 組件內存溢出等BUG。
+- [#1696](https://github.com/hyperf/hyperf/pull/1696) 修復方法 `Context::copy` 傳入字段 `keys` 後無法正常使用的 BUG。
+- [#1708](https://github.com/hyperf/hyperf/pull/1708) [#1718](https://github.com/hyperf/hyperf/pull/1718) 修復 `hyperf/socketio-server` 組件內存溢出等 BUG。
 
 ## 優化
 
-- [#1710](https://github.com/hyperf/hyperf/pull/1710) MAC系統下不再使用 `cli_set_process_title` 方法設置進程名。
+- [#1710](https://github.com/hyperf/hyperf/pull/1710) MAC 系統下不再使用 `cli_set_process_title` 方法設置進程名。
 
 # v1.1.30 - 2020-05-07
 
@@ -170,11 +281,11 @@ return [
 
 ## 修復
 
-- [#1639](https://github.com/hyperf/hyperf/pull/1639) 修復 `rpc-client` 會從 `consul` 中獲取到不健康節點的BUG。
-- [#1641](https://github.com/hyperf/hyperf/pull/1641) 修復 `rpc-client` 獲取到的結果為 `null` 時，會拋出 `RequestException` 的BUG。
-- [#1641](https://github.com/hyperf/hyperf/pull/1641) 修復 `rpc-server` 中 `jsonrpc-tcp-length-check` 協議，無法在 `consul` 中添加心跳檢查的BUG。
-- [#1650](https://github.com/hyperf/hyperf/pull/1650) 修復腳本 `describe:routes` 列表展示有誤的BUG。
-- [#1655](https://github.com/hyperf/hyperf/pull/1655) 修復 `MysqlProcessor::processColumns` 無法在 `MySQL Server 8.0` 版本中正常工作的BUG。
+- [#1639](https://github.com/hyperf/hyperf/pull/1639) 修復 `rpc-client` 會從 `consul` 中獲取到不健康節點的 BUG。
+- [#1641](https://github.com/hyperf/hyperf/pull/1641) 修復 `rpc-client` 獲取到的結果為 `null` 時，會拋出 `RequestException` 的 BUG。
+- [#1641](https://github.com/hyperf/hyperf/pull/1641) 修復 `rpc-server` 中 `jsonrpc-tcp-length-check` 協議，無法在 `consul` 中添加心跳檢查的 BUG。
+- [#1650](https://github.com/hyperf/hyperf/pull/1650) 修復腳本 `describe:routes` 列表展示有誤的 BUG。
+- [#1655](https://github.com/hyperf/hyperf/pull/1655) 修復 `MysqlProcessor::processColumns` 無法在 `MySQL Server 8.0` 版本中正常工作的 BUG。
 
 ## 優化 
 

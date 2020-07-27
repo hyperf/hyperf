@@ -144,3 +144,54 @@ server {
   }
 }
 ```
+
+## 訊息傳送器
+
+當我們想在 `HTTP` 服務中，關閉 `WebSocket` 連線時，可以直接使用 `Hyperf\WebSocketServer\Sender`。
+
+`Sender` 會判斷 `fd` 是否被當前 `Worker` 所持有，如果是，則會直接傳送資料，如果不是，則會通過 `PipeMessage` 傳送給除自己外的所有 `Worker`，然後由其他 `Worker` 進行判斷，
+如果是自己持有的 `fd`，就會發送對應資料到客戶端。
+
+`Sender` 支援 `push` 和 `disconnect` 兩個 `API`，如下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\WebSocketServer\Sender;
+
+/**
+ * @AutoController
+ */
+class ServerController
+{
+    /**
+     * @Inject
+     * @var Sender
+     */
+    protected $sender;
+
+    public function close(int $fd)
+    {
+        go(function () use ($fd) {
+            sleep(1);
+            $this->sender->disconnect($fd);
+        });
+
+        return '';
+    }
+
+    public function send(int $fd)
+    {
+        $this->sender->push($fd, 'Hello World.');
+
+        return '';
+    }
+}
+
+```
