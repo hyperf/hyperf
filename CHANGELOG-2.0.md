@@ -1,5 +1,9 @@
 # v2.0.5 - TBD
 
+## Optimized
+
+- [#2193](https://github.com/hyperf/hyperf/pull/2193) Optimized the scan accuracy for `Hyperf\Watcher\Driver\FindDriver`.
+
 # v2.0.4 - 2020-07-27
 
 ## Added
