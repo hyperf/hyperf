@@ -14,6 +14,7 @@ namespace Hyperf\HttpServer\Router;
 use FastRoute\DataGenerator;
 use FastRoute\RouteParser;
 use Hyperf\HttpServer\MiddlewareManager;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class RouteCollector
 {
@@ -43,10 +44,16 @@ class RouteCollector
     protected $currentGroupOptions = [];
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
+
+    /**
      * Constructs a route collector.
      */
-    public function __construct(RouteParser $routeParser, DataGenerator $dataGenerator, string $server = 'http')
+    public function __construct(EventDispatcherInterface $dispatcher, RouteParser $routeParser, DataGenerator $dataGenerator, string $server = 'http')
     {
+        $this->dispatcher = $dispatcher;
         $this->routeParser = $routeParser;
         $this->dataGenerator = $dataGenerator;
         $this->currentGroupPrefix = '';

@@ -80,7 +80,11 @@ class DispatcherFactory
 
         $parser = new Std();
         $generator = new DataGenerator();
-        return $this->routers[$serverName] = new RouteCollector($parser, $generator, $serverName);
+        return $this->routers[$serverName] = make(RouteCollector::class, [
+            'routeParser' => $parser,
+            'dataGenerator' => $generator,
+            'server' => $serverName,
+        ]);
     }
 
     protected function initAnnotationRoute(array $collector): void

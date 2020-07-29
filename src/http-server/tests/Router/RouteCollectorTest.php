@@ -18,6 +18,7 @@ use Hyperf\HttpServer\Router\RouteCollector;
 use HyperfTest\HttpServer\Stub\RouteCollectorStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
@@ -35,7 +36,7 @@ class RouteCollectorTest extends TestCase
     {
         $parser = new Std();
         $generator = new DataGenerator();
-        $collector = new RouteCollector($parser, $generator);
+        $collector = new RouteCollector($this->getDispatcher(), $parser, $generator);
 
         $collector->get('/', 'Handler::Get');
         $collector->post('/', 'Handler::Post');
@@ -55,7 +56,7 @@ class RouteCollectorTest extends TestCase
     {
         $parser = new Std();
         $generator = new DataGenerator();
-        $collector = new RouteCollector($parser, $generator);
+        $collector = new RouteCollector($this->getDispatcher(), $parser, $generator);
 
         $collector->get('/', 'Handler::Get', [
             'middleware' => ['GetMiddleware'],
@@ -91,7 +92,7 @@ class RouteCollectorTest extends TestCase
     {
         $parser = new Std();
         $generator = new DataGenerator();
-        $collector = new RouteCollector($parser, $generator, 'test');
+        $collector = new RouteCollector($this->getDispatcher(), $parser, $generator, 'test');
 
         $collector->addGroup('/api', function ($collector) {
             $collector->get('/', 'Handler::ApiGet', [
@@ -109,7 +110,7 @@ class RouteCollectorTest extends TestCase
     {
         $parser = new Std();
         $generator = new DataGenerator();
-        $collector = new RouteCollectorStub($parser, $generator, 'test');
+        $collector = new RouteCollectorStub($this->getDispatcher(), $parser, $generator, 'test');
 
         $origin = [
             'middleware' => ['A', 'B'],
@@ -120,5 +121,10 @@ class RouteCollectorTest extends TestCase
 
         $res = $collector->mergeOptions($origin, $options);
         $this->assertSame(['A', 'B', 'C', 'B'], $res['middleware']);
+    }
+
+    protected function getDispatcher()
+    {
+        return Mockery::mock(EventDispatcherInterface::class);
     }
 }

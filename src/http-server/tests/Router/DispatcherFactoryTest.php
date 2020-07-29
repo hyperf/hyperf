@@ -11,10 +11,15 @@ declare(strict_types=1);
  */
 namespace HyperfTest\HttpServer\Router;
 
+use Hyperf\Contract\ContainerInterface;
 use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\HttpServer\Router\RouteCollector;
+use Hyperf\Utils\ApplicationContext;
 use HyperfTest\HttpServer\Stub\DemoController;
 use HyperfTest\HttpServer\Stub\DispatcherFactory;
+use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
@@ -22,6 +27,11 @@ use PHPUnit\Framework\TestCase;
  */
 class DispatcherFactoryTest extends TestCase
 {
+    protected function tearDown()
+    {
+        Mockery::close();
+    }
+
     public function testGetPrefix()
     {
         $factory = new DispatcherFactory();
@@ -35,6 +45,7 @@ class DispatcherFactoryTest extends TestCase
 
     public function testRemoveMagicMethods()
     {
+        $this->getContainer();
         $factory = new DispatcherFactory();
         $annotation = new AutoController(['prefix' => 'test']);
         $factory->handleAutoController(DemoController::class, $annotation);
@@ -48,5 +59,17 @@ class DispatcherFactoryTest extends TestCase
             $this->assertFalse(in_array('/test/__construct', array_keys($items)));
             $this->assertFalse(in_array('/test/__return', array_keys($items)));
         }
+    }
+
+    protected function getContainer()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('make')->with(RouteCollector::class)->withAnyArgs()->andReturnUsing(function ($_, $params) {
+            $dispatcher = Mockery::mock(EventDispatcherInterface::class);
+            return new RouteCollector($dispatcher, ...array_values($params));
+        });
+
+        ApplicationContext::setContainer($container);
+        return $container;
     }
 }

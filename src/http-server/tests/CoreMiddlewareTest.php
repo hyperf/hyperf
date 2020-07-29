@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\HttpServer;
 
+use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\ClosureDefinitionCollector;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
@@ -24,6 +25,8 @@ use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
+use Hyperf\HttpServer\Router\RouteCollector;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
@@ -33,7 +36,7 @@ use HyperfTest\HttpServer\Stub\DemoController;
 use HyperfTest\HttpServer\Stub\SetHeaderMiddleware;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionMethod;
@@ -195,6 +198,12 @@ class CoreMiddlewareTest extends TestCase
             ->andReturn(new ClosureDefinitionCollector());
         $container->shouldReceive('get')->with(NormalizerInterface::class)
             ->andReturn(new SimpleNormalizer());
+        $container->shouldReceive('make')->with(RouteCollector::class)->withAnyArgs()->andReturnUsing(function ($_, $params) {
+            $dispatcher = Mockery::mock(EventDispatcherInterface::class);
+            return new RouteCollector($dispatcher, ...array_values($params));
+        });
+
+        ApplicationContext::setContainer($container);
         return $container;
     }
 }
