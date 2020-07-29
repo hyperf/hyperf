@@ -90,9 +90,9 @@ $ php bin/hyperf.php start
 [INFO] HTTP Server listening at 0.0.0.0:9501
 ```
 
-!> 当我们同时监听了 HTTP Server 的 9501 端口和 WebSocket Server 的 9502 端口时， WebSocket Client 可以通过 9501 和 9502 两个端口连接 WebSocket Server，即连接`ws://0.0.0.0:9502`和`ws://0.0.0.0:9502`都可以成功。
+!> 当我们同时监听了 HTTP Server 的 9501 端口和 WebSocket Server 的 9502 端口时， WebSocket Client 可以通过 9501 和 9502 两个端口连接 WebSocket Server，即连接 `ws://0.0.0.0:9502` 和 `ws://0.0.0.0:9502` 都可以成功。
 
-因为 Swoole\WebSocket\Server 继承自 Swoole\Http\Server，可以使用 HTTP 触发所有 WebSocket 的推送，了解详情可查看 [Swoole文档](https://wiki.swoole.com/#/websocket_server?id=websocketserver) onRequest 回调部分。
+因为 Swoole\WebSocket\Server 继承自 Swoole\Http\Server，可以使用 HTTP 触发所有 WebSocket 的推送，了解详情可查看 [Swoole 文档](https://wiki.swoole.com/#/websocket_server?id=websocketserver) onRequest 回调部分。
 
 如需关闭，可以修改 `config/autoload/server.php` 文件给 `http` 服务中增加 `open_websocket_protocol` 配置项。
 
