@@ -70,10 +70,6 @@ class FindDriver implements DriverInterface
     {
         $changedFiles = [];
         $dest = implode(' ', $targets);
-        /**
-         * In linux system, you can use command below
-         * find app -mmin -0.05 -type f -printf "%p %T+\n"
-         */
         $ret = System::exec($this->getBin() . ' ' . $dest . ' -mmin ' . $minutes . ' -type f -printf "%p %T+' . PHP_EOL . '"');
         if ($ret['code'] === 0 && strlen($ret['output'])) {
             $stdout = $ret['output'];
