@@ -388,10 +388,11 @@ if (! function_exists('getter')) {
 if (! function_exists('parallel')) {
     /**
      * @param callable[] $callables
+     * @param int $concurrent if $concurrent is equal to 0, that means unlimit
      */
-    function parallel(array $callables)
+    function parallel(array $callables, int $concurrent = 0)
     {
-        $parallel = new Parallel();
+        $parallel = new Parallel($concurrent);
         foreach ($callables as $key => $callable) {
             $parallel->add($callable, $key);
         }
