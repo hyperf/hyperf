@@ -14,6 +14,7 @@ namespace Hyperf\HttpServer\Router;
 use FastRoute\DataGenerator;
 use FastRoute\RouteParser;
 use Hyperf\HttpServer\MiddlewareManager;
+use Hyperf\HttpServer\RouteNameManager;
 
 class RouteCollector
 {
@@ -72,6 +73,7 @@ class RouteCollector
                 $this->dataGenerator->addRoute($method, $routeData, new Handler($handler, $route, $options));
                 MiddlewareManager::addMiddlewares($this->server, $route, $method, $options['middleware'] ?? []);
             }
+            RouteNameManager::addName($this->server, $route, $method, $options['name'] ?? '');
         }
     }
 

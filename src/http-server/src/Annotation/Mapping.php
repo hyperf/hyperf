@@ -19,11 +19,14 @@ abstract class Mapping extends AbstractAnnotation
 
     public $path;
 
+    public $name;
+
     public function __construct($value = null)
     {
         if (isset($value['path'])) {
             $this->path = $value['path'];
         }
+        $this->name = $value['name'] ?? '';
         $this->bindMainProperty('path', $value);
     }
 }

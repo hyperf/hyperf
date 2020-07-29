@@ -127,10 +127,12 @@ class DispatcherFactory
                 $methodMiddlewares = array_unique($methodMiddlewares);
             }
 
+            $exps = explode('\\',$className);
+            $namePrefix = str_replace( 'controller', '', strtolower( end( $exps ) ) );
             $router->addRoute($autoMethods, $path, [$className, $methodName], [
                 'middleware' => $methodMiddlewares,
+                'name' => $namePrefix.'.'.strtolower($methodName)
             ]);
-
             if (Str::endsWith($path, $defaultAction)) {
                 $path = Str::replaceLast($defaultAction, '', $path);
                 $router->addRoute($autoMethods, $path, [$className, $methodName], [
@@ -183,6 +185,7 @@ class DispatcherFactory
                     }
                     $router->addRoute($mapping->methods, $path, [$className, $methodName], [
                         'middleware' => $methodMiddlewares,
+                        'name' => $mapping->name
                     ]);
                 }
             }

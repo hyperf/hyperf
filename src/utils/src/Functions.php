@@ -17,6 +17,9 @@ use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\HigherOrderTapProxy;
 use Hyperf\Utils\Parallel;
 use Hyperf\Utils\Str;
+use Hyperf\HttpServer\RouteNameManager;
+use Hyperf\HttpServer\Router\DispatcherFactory;
+use FastRoute\RouteParser\Std as RouteParser;
 
 if (! function_exists('value')) {
     /**
@@ -446,5 +449,66 @@ if (! function_exists('swoole_hook_flags')) {
     function swoole_hook_flags(): int
     {
         return defined('SWOOLE_HOOK_FLAGS') ? SWOOLE_HOOK_FLAGS : SWOOLE_HOOK_ALL;
+    }
+}
+
+if (! function_exists('route') ){
+    /**
+     * get route url by route name
+     * @param  string $name   [route name]
+     * @param  array  $params [route param]
+     * @param  string $server [server name]
+     * @return string         [route url]
+     */
+    function route(string $name, array $params=[], string $server='http'){
+
+        $route = RouteNameManager::getByName($server,$name);
+
+        if( ! $route ) {
+            throw new \RuntimeException("route name {$name} does not exist ");
+        }
+
+        $url = '';
+        $parseData = (new RouteParser)->parse($route['path']);
+        $must = $parseData[0];
+        $optional = isset($parseData[1]) ? array_slice($parseData[1],count($parseData[0])) : [];
+
+        foreach( $must as $item ){
+            if( is_array($item) ){
+                if( ! isset( $params[$item[0]] ) ){
+                    throw new \RuntimeException("The [{$item[0]}] parameter of routing [{$name}] is lost");
+                }
+                $item = $params[$item[0]];
+            }
+            $url .= $item;
+        }
+
+        foreach( $optional as $key => $item ){
+            // item '/'
+            if( ! is_array($item) ){
+                $url .= $item;
+                continue;
+            }
+            // item 拼接参数
+            if( isset( $params[$item[0]] ) ){
+                $url .= $params[$item[0]];
+                continue;
+            }
+            // 上次循环拼接的多余的 '/' 移除
+            if( $optional[$key-1] == '/' ){
+                $url = substr($url, 0, strlen($url)-1);
+                break;
+            }
+
+        }
+        return $url;
+        // $factory = ApplicationContext::getContainer()->get(DispatcherFactory::class);
+        // $router = $factory->getDispatcher($server);
+        // $routeInfo = $router->dispatch($route['method'],$url);
+        //
+        // if( FastRoute\Dispatcher::FOUND === $routeInfo[0] ){
+        //     return $url;
+        // }
+        // throw new \RuntimeException("Route is invalid.");
     }
 }

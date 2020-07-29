@@ -14,6 +14,7 @@ namespace Hyperf\Devtool\Describe;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\HttpServer\MiddlewareManager;
+use Hyperf\HttpServer\RouteNameManager;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
 use Hyperf\HttpServer\Router\RouteCollector;
@@ -106,7 +107,7 @@ class RoutesCommand extends HyperfCommand
             // method,uri,name,action,middleware
             $registedMiddlewares = MiddlewareManager::get($serverName, $uri, $method);
             $middlewares = $this->config->get('middlewares.' . $serverName, []);
-
+            $name = RouteNameManager::getByRoute($serverName, $uri, $method);
             $middlewares = array_merge($middlewares, $registedMiddlewares);
             $data[$unique] = [
                 'server' => $serverName,
@@ -114,6 +115,7 @@ class RoutesCommand extends HyperfCommand
                 'uri' => $uri,
                 'action' => $action,
                 'middleware' => implode(PHP_EOL, array_unique($middlewares)),
+                'name' => $name
             ];
         }
     }
@@ -129,7 +131,7 @@ class RoutesCommand extends HyperfCommand
         $rows = array_slice($rows, 0, count($rows) - 1);
         $table = new Table($output);
         $table
-            ->setHeaders(['Server', 'Method', 'URI', 'Action', 'Middleware'])
+            ->setHeaders(['Server', 'Method', 'URI', 'Action', 'Middleware','Name'])
             ->setRows($rows);
         $table->render();
     }
