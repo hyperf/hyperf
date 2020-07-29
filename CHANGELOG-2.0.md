@@ -1,5 +1,9 @@
 # v2.0.5 - TBD
 
+## Added
+
+- [#2204](https://github.com/hyperf/hyperf/pull/2204) Added `$concurrent` for function `parallel`.
+
 ## Optimized
 
 - [#2193](https://github.com/hyperf/hyperf/pull/2193) Optimized the scan accuracy for `Hyperf\Watcher\Driver\FindDriver`.
