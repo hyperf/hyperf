@@ -257,12 +257,18 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
      */
     protected function deferOnOpen(SwooleRequest $request, string $class, $server)
     {
-        defer(function () use ($request, $class, $server) {
+        $onOpen = function () use ($request, $class, $server) {
             $instance = $this->container->get($class);
             if ($instance instanceof OnOpenInterface) {
                 $instance->onOpen($server, $request);
             }
-        });
+        };
+
+        if ($server instanceof SwooleResponse) {
+            $onOpen();
+        } else {
+            defer($onOpen);
+        }
     }
 
     /**
