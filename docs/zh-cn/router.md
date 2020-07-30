@@ -209,3 +209,71 @@ public function index(RequestInterface $request)
 
 在路由匹配不到路由时，如 `路由找不到(404)`、`请求方法不允许(405)` 等 HTTP 异常，Hyperf 会统一抛出一个 `Hyperf\HttpMessage\Exception\HttpException` 异常类的子类，您需要通过 ExceptionHandler 机制来管理这些异常并做对应的响应处理，默认情况下可以直接使用组件提供的 `Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler` 来进行异常捕获处理，注意这个异常处理器需要您自行配置到 `config/autoload/exceptions.php` 配置文件中去，并保障多个异常处理器之间的顺序链路是正确的。   
 当您需要对 `路由找不到(404)`、`请求方法不允许(405)` 等 HTTP 异常情况的响应进行自定义处理时，您可直接根据 `HttpExceptionHandler` 的代码实现您自己的异常处理器，并配置您自己的异常处理器。关于异常处理器的逻辑和使用说明，可具体查阅 [异常处理](zh-cn/exception-handler.md)
+
+## 路由别名
+
+### 安装
+
+```bash
+composer require hyperf/http-server-route
+```
+
+### 使用
+
+路由文件中设置别名，需要在 `$options` 中添加 `name` 字段。
+
+```php
+Router::get('/user/{id:\d+}', 'App\Controller\UserController::info', ['name' => 'user.info']);
+```
+
+如果使用 `@Controller` 注解，需要在 `Mapping` 中添加对应的 `option` 选项。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use Hyperf\HttpServer\Annotation\GetMapping;
+
+/**
+ * @Controller(prefix="user")
+ */
+class UserController
+{
+    /**
+     * @GetMapping(path="data", options={"name": "user.data"})
+     */
+    public function data()
+    {
+
+    }
+}
+
+```
+
+根据路由别名获取路径
+
+```php
+<?php
+
+use function Hyperf\HttpServerRoute\route;
+
+$path = route('user.info', ['id' => 123]); // "user/123"
+$path = route('user.data'); // "user/data"
+```
+
+获取当前 Request 的路由别名
+
+```php
+<?php
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\HttpServerRoute\RouteContext;
+
+$container = ApplicationContext::getContainer();
+$context = $container->get(RouteContext::class);
+var_dump($context->getRouteName());
+
+```
+
