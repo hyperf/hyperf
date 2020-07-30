@@ -179,15 +179,14 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
                     [$onCloseCallbackClass, $onCloseCallbackMethod] = $callbacks[SwooleEvent::ON_CLOSE];
                     $onCloseCallbackInstance = $this->container->get($onCloseCallbackClass);
+
+                    defer(function () use ($onCloseCallbackInstance, $onCloseCallbackMethod, $response, $fd) {
+                        $onCloseCallbackInstance->{$onCloseCallbackMethod}($response, $fd, 0);
+                    });
+
                     while (true) {
                         $frame = $response->recv();
-                        if ($frame === false) {
-                            // When close the connection by server-side, the $frame is false.
-                            break;
-                        }
-                        if ($frame instanceof CloseFrame || $frame === '') {
-                            // The connection is closed.
-                            $onCloseCallbackInstance->{$onCloseCallbackMethod}($response, $fd, 0);
+                        if ($frame === false || $frame instanceof CloseFrame || $frame === '') {
                             break;
                         }
                         $onMessageCallbackInstance->{$onMessageCallbackMethod}($response, $frame);
