@@ -6,7 +6,7 @@
 
 ## Fixed
 
-- [#2214](https://github.com/hyperf/hyperf/pull/2214) Fixed websocket server close event won't be executed when the server side close connection.
+- [#2214](https://github.com/hyperf/hyperf/pull/2214) Fixed bug that close event won't be executed when close the connection by websocket server.
 
 ## Optimized
 
