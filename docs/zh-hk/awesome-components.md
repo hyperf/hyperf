@@ -5,7 +5,7 @@
 
 ## 如何提交我的組件？
 
-如果您開發的協程組件適配了 Hyperf，那麼您可以直接對 [hyperf/hyperf](https://github.com/hyperf/hyperf) 項目的 `master` 分支發起您的 `Pull Request`，也就是更改當前頁`(./doc/zh/awesome-components.md)`。
+如果您開發的協程組件適配了 Hyperf，那麼您可以直接對 [hyperf/hyperf](https://github.com/hyperf/hyperf) 項目的 `master` 分支發起您的 `Pull Request`，也就是更改當前頁`(zh-cn/awesome-components.md)`。
 
 ## 如何適配 Hyperf ?
 
@@ -34,6 +34,7 @@
 
 - [hyperf/database](https://github.com/hyperf/database) Hyperf 官方提供的基於 Eloquent 衍生的數據庫 ORM，可複用於其它框架
 - [hyperf/model](https://github.com/hyperf/model) Hyperf 官方提供的基於 [hyperf/database](https://github.com/hyperf/database) 組件的自動模型緩存組件 
+- [reasno/fastmongo](https://github.com/Reasno/fastmongo) 基於 `hyperf/gotask` 實現的協程化 `MongoDB` 客户端
 
 ## 依賴注入容器
 
@@ -104,6 +105,7 @@
 - [mix-php/swoolefor](https://github.com/mix-php/swoolefor) 一個由 Mixphp 實現的通用熱更新組件
 - [buexplain/go-watch](https://github.com/buexplain/go-watch) 一個基於 Go 語言實現的通用熱更新組件
 - [remy/nodemon](https://github.com/remy/nodemon) 一個基於 node.js 實現的通用熱更新組件
+- [hyperf/watcher](zh-hk/watcher.md) 適配於 `Hyperf 2.0` 的熱更新組件
 
 > Warning: 請勿於生產環境使用 `熱更新/熱重載` 功能
 
@@ -117,12 +119,13 @@
 
 - [mabu233/sdebug](https://github.com/mabu233/sdebug) 用於協助開發與調試，`xdebug`的協程改造版
 - [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 通過 `WebSocket` 實時觀測異常錯誤的開發調試組件
+- [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支持與 laravel 類似的多 env 配置文件功能，通過 `APP_ENV=testing` 可以加載 `.env.testing` 配置覆蓋默認的 `.env`
 
 ## 權限認證
 
 - [donjan-deng/hyperf-permission](https://github.com/donjan-deng/hyperf-permission) 基於 [spatie/laravel-permission](https://github.com/spatie/laravel-permission) 開發的適配 Hyperf 的權限組件
 - [fx/hyperf-http-auth](https://github.com/nfangxu/hyperf-http-auth) 根據 laravel 中的 auth 組件改寫的, 適配 hyperf 框架
-- [96qbhy/hyperf-auth](https://github.com/qbhy/hyperf-auth) 參考 laravel 的 auth 組件設計，支持 jwt 和 session驅動，更輕巧更好用
+- [96qbhy/hyperf-auth](https://github.com/qbhy/hyperf-auth) 參考 laravel 的 auth 組件設計，支持 jwt 和 session 驅動，更輕巧更好用
 
 ## 第三方 SDK
 

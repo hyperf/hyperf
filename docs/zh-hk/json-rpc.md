@@ -357,7 +357,7 @@ return [
 
 ### 返回 PHP 對象
 
-當框架導入 `symfony/serialize (^5.0)` 和 `symfony/property-access (^5.0)` 後，並在 `dependencies.php` 中配置一下映射關係
+當框架導入 `symfony/serializer (^5.0)` 和 `symfony/property-access (^5.0)` 後，並在 `dependencies.php` 中配置一下映射關係
 
 ```php
 use Hyperf\Utils\Serializer\SerializerFactory;

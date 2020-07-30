@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -91,6 +91,22 @@ class ServerRequestTest extends TestCase
         $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/xml; charset=utf-8');
         $request->shouldReceive('getBody')->andReturn(new SwooleStream('xxxx'));
         $this->assertSame([], RequestStub::normalizeParsedBody($json, $request));
+    }
+
+    public function testNormalizeEmptyBody()
+    {
+        $this->getContainer();
+
+        $json = ['name' => 'Hyperf'];
+        $request = Mockery::mock(RequestInterface::class);
+        $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/json; charset=utf-8');
+        $request->shouldReceive('getBody')->andReturn(new SwooleStream(''));
+        $this->assertSame($json, RequestStub::normalizeParsedBody($json, $request));
+
+        $request = Mockery::mock(RequestInterface::class);
+        $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/json; charset=utf-8');
+        $request->shouldReceive('getBody')->andReturn(new SwooleStream(''));
+        $this->assertSame([], RequestStub::normalizeParsedBody([], $request));
     }
 
     public function testNormalizeParsedBodyInvalidContentType()

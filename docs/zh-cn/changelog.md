@@ -1,5 +1,221 @@
 # 版本更新记录
 
+# v2.0.4 - 2020-07-27
+
+## Added
+
+- [#2144](https://github.com/hyperf/hyperf/pull/2144) 数据库查询事件 `Hyperf\Database\Events\QueryExecuted` 添加 `$result` 字段。
+- [#2158](https://github.com/hyperf/hyperf/pull/2158) 路由 `Hyperf\HttpServer\Router\Handler` 中，添加 `$options` 字段。
+- [#2162](https://github.com/hyperf/hyperf/pull/2162) 热更新组件添加 `Hyperf\Watcher\Driver\FindDriver`。
+- [#2169](https://github.com/hyperf/hyperf/pull/2169) `Session` 组件新增配置 `session.options.domain`，用于替换 `Request` 中获取的 `domain`。
+- [#2174](https://github.com/hyperf/hyperf/pull/2174) 模型生成器添加 `ModelRewriteTimestampsVisitor`，用于根据数据库字段 `created_at` 和 `updated_at`， 重写模型字段 `$timestamps`。
+- [#2175](https://github.com/hyperf/hyperf/pull/2175) 模型生成器添加 `ModelRewriteSoftDeletesVisitor`，用于根据数据库字段 `deleted_at`， 添加或者移除 `SoftDeletes`。
+- [#2176](https://github.com/hyperf/hyperf/pull/2176) 模型生成器添加 `ModelRewriteKeyInfoVisitor`，用于根据数据库主键，重写模型字段 `$incrementing` `$primaryKey` 和 `$keyType`。
+
+## Fixed
+
+- [#2149](https://github.com/hyperf/hyperf/pull/2149) 修复自定义进程运行过程中无法从 Nacos 正常更新配置的 BUG。
+- [#2159](https://github.com/hyperf/hyperf/pull/2159) 修复使用 `gen:migration` 时，由于文件已经存在导致的 `FATAL` 异常。
+
+## Optimized
+
+- [#2043](https://github.com/hyperf/hyperf/pull/2043) 当 `SCAN` 目录都不存在时，抛出更加友好的异常。
+- [#2182](https://github.com/hyperf/hyperf/pull/2182) 当使用 `WebSocket` 和 `Http` 服务且 `Http` 接口被访问时，不会记录 `WebSocket` 关闭连接的日志。
+
+# v2.0.3 - 2020-07-20
+
+## 新增
+
+- [#1554](https://github.com/hyperf/hyperf/pull/1554) 新增 `hyperf/nacos` 组件。
+- [#2082](https://github.com/hyperf/hyperf/pull/2082) 监听器 `Hyperf\Signal\Handler\WorkerStopHandler` 添加信号 `SIGINT` 监听。
+- [#2097](https://github.com/hyperf/hyperf/pull/2097) `hyperf/filesystem` 新增 TencentCloud COS 支持.
+- [#2122](https://github.com/hyperf/hyperf/pull/2122) 添加 Trait `\Hyperf\Snowflake\Concern\HasSnowflake` 为模型自动生成雪花算法的主键。
+
+## 修复
+
+- [#2017](https://github.com/hyperf/hyperf/pull/2017) 修复 Prometheus 使用 redis 打点时，改变 label 会导致收集报错的 BUG。
+- [#2117](https://github.com/hyperf/hyperf/pull/2117) 修复使用 `server:watch` 时，注解 `@Inject` 有时会失效的 BUG。
+- [#2123](https://github.com/hyperf/hyperf/pull/2123) 修复 `tracer` 会记录两次 `Redis 指令` 的 BUG。
+- [#2139](https://github.com/hyperf/hyperf/pull/2139) 修复 `ValidationMiddleware` 在 `WebSocket` 服务下使用会报错的 BUG。
+- [#2140](https://github.com/hyperf/hyperf/pull/2140) 修复请求抛出异常时，`Session` 无法保存的 BUG。
+
+## 优化
+
+- [#2080](https://github.com/hyperf/hyperf/pull/2080) 方法 `Hyperf\Database\Model\Builder::paginate` 中参数 `$perPage` 的类型从 `int` 更改为 `?int`。
+- [#2110](https://github.com/hyperf/hyperf/pull/2110) 在使用 `hyperf/watcher` 时，会先检查进程是否存在，如果不存在，才会发送 `SIGTERM` 信号。
+- [#2116](https://github.com/hyperf/hyperf/pull/2116) 优化组件 `hyperf/di` 的依赖。
+- [#2121](https://github.com/hyperf/hyperf/pull/2121) 在使用 `gen:model` 时，如果用户自定义了与数据库字段一致的字段时，则会替换对应的 `@property`。
+- [#2129](https://github.com/hyperf/hyperf/pull/2129) 当 Response Json 格式化失败时，会抛出更加友好的错误提示。
+
+# v2.0.2 - 2020-07-13
+
+## 修复
+
+- [#1898](https://github.com/hyperf/hyperf/pull/1898) 修复定时器规则 `$min-$max` 解析有误的 BUG。
+- [#2037](https://github.com/hyperf/hyperf/pull/2037) 修复 TCP 服务，连接后共用一个协程，导致 DB 等连接池无法正常回收连接的 BUG。
+- [#2051](https://github.com/hyperf/hyperf/pull/2051) 修复 `CoroutineServer` 不会生成 `hyperf.pid` 的 BUG。
+- [#2055](https://github.com/hyperf/hyperf/pull/1695) 修复 `Guzzle` 在传输大数据包时会自动添加头 `Expect: 100-Continue`，导致请求失败的 BUG。
+- [#2059](https://github.com/hyperf/hyperf/pull/2059) 修复 `SocketIOServer` 中 `Redis` 重连失败的 BUG。
+- [#2067](https://github.com/hyperf/hyperf/pull/2067) 修复 `hyperf/watcher` 组件 `Syntax` 错误会导致进程异常。
+- [#2085](https://github.com/hyperf/hyperf/pull/2085) 修复注解 `RetryFalsy` 会导致获得正确的结果后，再次重试。
+- [#2089](https://github.com/hyperf/hyperf/pull/2089) 修复使用 `gen:command` 后，脚本必须要进行修改，才能被加载到的 BUG。
+- [#2093](https://github.com/hyperf/hyperf/pull/2093) 修复脚本 `vendor:publish` 没有返回码导致报错的 BUG。
+
+## 新增
+
+- [#1860](https://github.com/hyperf/hyperf/pull/1860) 为 `Server` 添加默认的 `OnWorkerExit` 回调。
+- [#2042](https://github.com/hyperf/hyperf/pull/2042) 为热更新组件，添加文件扫描驱动。
+- [#2054](https://github.com/hyperf/hyperf/pull/2054) 为模型缓存添加 `Eager Load` 功能。
+
+## 优化
+
+- [#2049](https://github.com/hyperf/hyperf/pull/2049) 优化热更新组件的 Stdout 输出。
+- [#2090](https://github.com/hyperf/hyperf/pull/2090) 为 `hyperf/session` 组件适配非 `Hyperf` 的 `Response`。
+
+## 变更
+
+- [#2031](https://github.com/hyperf/hyperf/pull/2031) 常量组件的错误码只支持 `int` 和 `string`。
+- [#2065](https://github.com/hyperf/hyperf/pull/2065) `WebSocket` 消息发送器 `Hyperf\WebSocketServer\Sender` 支持 `push` 和 `disconnect`。
+- [#2100](https://github.com/hyperf/hyperf/pull/2100) 组件 `hyperf/utils` 更新依赖 `doctrine/inflector` 版本到 `^2.0`。
+
+## 移除
+
+- [#2065](https://github.com/hyperf/hyperf/pull/2065) 移除 `Hyperf\WebSocketServer\Sender` 对方法 `send` `sendto` 和 `close` 的支持，请使用 `push` 和 `disconnect`。
+
+# v2.0.1 - 2020-07-02
+
+## 新增
+
+- [#1934](https://github.com/hyperf/hyperf/pull/1934) 增加脚本 `gen:constant` 用于创建常量类。
+- [#1982](https://github.com/hyperf/hyperf/pull/1982) 添加热更新组件，文件修改后自动收集注解，自动重启。
+
+## 修复
+
+- [#1952](https://github.com/hyperf/hyperf/pull/1952) 修复数据库迁移类存在时，也会生成同类名类，导致类名冲突的 BUG。
+- [#1960](https://github.com/hyperf/hyperf/pull/1960) 修复 `Hyperf\HttpServer\ResponseEmitter::isMethodsExists()` 判断错误的 BUG。
+- [#1961](https://github.com/hyperf/hyperf/pull/1961) 修复因文件 `config/autoload/aspects.php` 不存在导致服务无法启动的 BUG。
+- [#1964](https://github.com/hyperf/hyperf/pull/1964) 修复接口请求时，数据体为空会导致 `500` 错误的 BUG。
+- [#1965](https://github.com/hyperf/hyperf/pull/1965) 修复 `initRequestAndResponse` 失败后，会导致请求状态码与实际不符的 BUG。
+- [#1968](https://github.com/hyperf/hyperf/pull/1968) 修复当修改 `aspects.php` 文件后，`Aspect` 无法安装修改后的结果运行的 BUG。
+- [#1985](https://github.com/hyperf/hyperf/pull/1985) 修复注解全局配置不全为小写时，会导致 `global_imports` 失败的 BUG。
+- [#1990](https://github.com/hyperf/hyperf/pull/1990) 修复当父类存在与子类一样的成员变量时， `@Inject` 无法正常使用的 BUG。
+- [#2019](https://github.com/hyperf/hyperf/pull/2019) 修复脚本 `gen:model` 因为使用了 `morphTo` 或 `where` 导致生成对应的 `@property` 失败的 BUG。
+- [#2026](https://github.com/hyperf/hyperf/pull/2026) 修复当使用了魔术方法时，LazyLoad 代理生成有误的 BUG。
+
+## 变更
+
+- [#1986](https://github.com/hyperf/hyperf/pull/1986) 当没有设置正确的 `swoole.use_shortname` 变更脚本 `exit_code` 为 `SIGTERM`。
+
+## 优化
+
+- [#1959](https://github.com/hyperf/hyperf/pull/1959) 优化类 `ClassLoader` 可以更容易被用户继承并修改。
+- [#2002](https://github.com/hyperf/hyperf/pull/2002) 当 `PHP` 版本大于等于 `7.3` 时，支持 `AOP` 切入 `Trait`。
+
+# v2.0 - 2020-06-22
+
+## 主要功能
+
+1. 重构 [hyperf/di](https://github.com/hyperf/di) 组件，特别是对 AOP 和注解的优化，在 2.0 版本，该组件使用了一个全新的加载机制来提供 AOP 功能的支持。
+    1. 对比 1.x 版本来说最显著的一个功能就是现在你可以通过 AOP 功能切入任何方式实例化的一个类了，比如说，在 1.x 版本，你只能切入由 DI 容器创建的类，你无法切入一个由 `new` 关键词实例化的类，但在 2.0 版本都可以生效了。不过仍有一些例外的情况，您仍无法切入那些在启动阶段用来提供 AOP 功能的类；
+    2. 在 1.x 版本，AOP 只能作用于普通的类，无法支持 `Final` 类，但在 2.0 版本您可以这么做了；
+    3. 在 1.x 版本，您无法在当前类的构造函数中使用 `@Inject` 或 `@Value` 注解标记的类成员属性的值，但在 2.0 版本里，您可以这么做了；
+    4. 在 1.x 版本，只有通过 DI 容器创建的对象才能使 `@Inject` 和 `@Value` 注解的功能生效，通过 `new` 关键词创建的对象无法生效，但在 2.0 版本，都可以生效了；
+    5. 在 1.x 版本，在使用注解时，您必须定义注解的命名空间来指定使用的注解类，但在 2.0 版本下，您可以为任一注解提供一个别名，这样在使用这个注解时可以直接使用别名而无需引入注解类的命名空间。比如您可以直接在任意类属性上标记 `@Inject` 注解而无需编写 `use Hyperf\Di\Annotation\Inject;`；
+    6. 在 1.x 版本，创建的代理类是一个目标类的子类，这样的实现机制会导致一些魔术常量获得的值返回的是代理类子类的信息，而不是目标类的信息，但在 2.0 版本，代理类会与目标类保持一样的类名和代码结构；
+    7. 在 1.x 版本，当代理类缓存存在时则不会重新生成缓存，就算源代码发生了变化，这样的机制有助于扫描耗时的提升，但与此同时，这也会导致开发阶段的一些不便利，但在 2.0 版本，代理类缓存会根据源代码的变化而自动变化，这一改变会减少很多在开发阶段的心智负担；
+    8. 为 Aspect 类增加了 `priority` 优先级属性，现在您可以组织多个 Aspect 之间的顺序了；
+    9. 在 1.x 版本，您只能通过 `@Aspect` 注解类定义一个 Aspect 类，但在 2.0 版本，您还可以通过配置文件、ConfigProvider 来定义 Aspect 类；
+    10. 在 1.x 版本，您在使用到依赖懒加载功能时，必须注册一个 `Hyperf\Di\Listener\LazyLoaderBootApplicationListener` 监听器，但在 2.0 版本，您可以直接使用该功能而无需做任何的注册动作；
+    11. 增加了 `annotations.scan.class_map` 配置项，通过该配置您可以将任意类替换成您自己的类，而使用时无需做任何的改变；
+    
+## 依赖库更新
+
+- 将 `ext-swoole` 升级到了 `>=4.5`;
+- 将 `psr/event-dispatcher` 升级到了 `^1.0`;
+- 将 `monolog/monolog` 升级到了 `^2.0`;
+- 将 `phpstan/phpstan` 升级到了 `^0.12.18`;
+- 将 `vlucas/phpdotenv` 升级到了 `^4.0`;
+- 将 `symfony/finder` 升级到了 `^5.0`;
+- 将 `symfony/event-dispatcher` 升级到了 `^5.0`;
+- 将 `symfony/console` 升级到了 `^5.0`;
+- 将 `symfony/property-access` 升级到了 `^5.0`;
+- 将 `symfony/serializer` 升级到了 `^5.0`;
+- 将 `elasticsearch/elasticsearch` 升级到了 `^7.0`;
+
+## 类和方法的变更
+
+- 移除了 `Hyperf\Di\Aop\AstCollector`；
+- 移除了 `Hyperf\Di\Aop\ProxyClassNameVisitor`；
+- 移除了 `Hyperf\Di\Listener\LazyLoaderBootApplicationListener`；
+- 移除了 `Hyperf\Dispatcher\AbstractDispatcher` 类的 `dispatch(...$params)` 方法；
+- 移除了 hyperf/utils 组件中 ConfigProvider 中的 `Hyperf\Contract\NormalizerInterface => Hyperf\Utils\Serializer\SymfonyNormalizer` 关系；
+- 移除了 `Hyperf\Contract\OnOpenInterface`、`Hyperf\Contract\OnCloseInterface`、`Hyperf\Contract\OnMessageInterface`、`Hyperf\Contract\OnReceiveInterface` 接口中的 `$server` 参数的强类型声明；
+
+## 新增
+
+- [#992](https://github.com/hyperf/hyperf/pull/992) 新增 [hyperf/reactive-x](https://github.com/hyperf/reactive-x) 组件；
+- [#1245](https://github.com/hyperf/hyperf/pull/1245) 为 `ExceptionHandler` 新增了注解的定义方式；
+- [#1245](https://github.com/hyperf/hyperf/pull/1245) `ExceptionHandler` 新增了 `priority` 优先级属性，通过配置文件或注解方式均可定义优先级；
+- [#1819](https://github.com/hyperf/hyperf/pull/1819) 新增 [hyperf/signal](https://github.com/hyperf/signal) 组件；
+- [#1844](https://github.com/hyperf/hyperf/pull/1844) 为 [hyperf/model-cache](https://github.com/hyperf/model-cache) 组件中的 `ttl` 属性增加了 `\DateInterval` 类型的支持；
+- [#1855](https://github.com/hyperf/hyperf/pull/1855) 连接池新增了 `ConstantFrequency` 恒定频率策略来释放限制的连接；
+- [#1871](https://github.com/hyperf/hyperf/pull/1871) 为 Guzzle 增加 `sink` 选项支持；
+- [#1805](https://github.com/hyperf/hyperf/pull/1805) 新增 Coroutine Server 协程服务支持；
+  - 变更了 `Hyperf\Contract\ProcessInterface` 中的 `bind(Server $server)` 方法声明为 `bind($server)`；
+  - 变更了 `Hyperf\Contract\ProcessInterface` 中的 `isEnable()` 方法声明为 `isEnable($server)`；
+  - 配置中心、Crontab、服务监控、消息队列消费者现在可以通过协程模式来运行，且在使用协程服务模式时，也必须以协程模式来运行；
+  - `Hyperf\AsyncQueue\Environment` 的作用域改为当前协程内，而不是整个进程；
+  - 协程模式下不再支持 Task 机制；
+- [#1877](https://github.com/hyperf/hyperf/pull/1877) 在 PHP 8 下使用 `@Inject` 注解时支持通过成员属性强类型声明来替代 `@var` 声明，如下所示：
+
+```
+class Example {
+    /**
+    * @Inject
+    */
+    private ExampleService $exampleService;
+}
+```
+
+- [#1890](https://github.com/hyperf/hyperf/pull/1890) 新增 `Hyperf\HttpServer\ResponseEmitter` 类来响应任意符合 PSR-7 标准的 Response 对象，同时抽象了 `Hyperf\Contract\ResponseEmitterInterface` 契约；
+- [#1890](https://github.com/hyperf/hyperf/pull/1890) 为 `Hyperf\HttpMessage\Server\Response` 类新增了 `getTrailers()` 和 `getTrailer(string $key)` 和 `withTrailer(string $key, $value)` 方法；
+- [#1920](https://github.com/hyperf/hyperf/pull/1920) 新增方法 `Hyperf\WebSocketServer\Sender::close(int $fd, bool $reset = null)`.
+
+## 修复
+
+- [#1825](https://github.com/hyperf/hyperf/pull/1825) 修复了 `StartServer::execute` 的 `TypeError`；
+- [#1854](https://github.com/hyperf/hyperf/pull/1854) 修复了在 filesystem 中使用 `Runtime::enableCoroutine()` 时，`is_resource` 不能工作的问题；
+- [#1900](https://github.com/hyperf/hyperf/pull/1900) 修复了 `Model` 中的 `asDecimal` 方法类型有可能错误的问题；
+- [#1917](https://github.com/hyperf/hyperf/pull/1917) 修复了 `Request::isXmlHttpRequest` 方法无法正常工作的问题；
+
+## 变更
+
+- [#705](https://github.com/hyperf/hyperf/pull/705) 统一了 HTTP 异常的处理方式，现在统一抛出一个 `Hyperf\HttpMessage\Exception\HttpException` 依赖类来替代在 `Dispatcher` 中直接响应的方式，同时提供了 `Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler` 异常处理器来处理该类异常；
+- [#1846](https://github.com/hyperf/hyperf/pull/1846) 当您 require 了 `symfony/serializer` 库，不再自动映射 `Hyperf\Contract\NormalizerInterface` 的实现类，您需要手动添加该映射关系，如下：
+
+```php
+use Hyperf\Utils\Serializer\SerializerFactory;
+use Hyperf\Utils\Serializer\Serializer;
+
+return [
+    Hyperf\Contract\NormalizerInterface::class => new SerializerFactory(Serializer::class),
+];
+```
+
+- [#1924](https://github.com/hyperf/hyperf/pull/1924) 重命名 `Hyperf\GrpcClient\BaseClient` 内 `simpleRequest, getGrpcClient, clientStreamRequest` 方法名为 `_simpleRequest, _getGrpcClient, _clientStreamRequest`；
+
+## 移除
+
+- [#1890](https://github.com/hyperf/hyperf/pull/1890) Removed `Hyperf\Contract\Sendable` interface and all implementations of it.
+- [#1905](https://github.com/hyperf/hyperf/pull/1905) Removed config `config/server.php`, you can merge it into `config/config.php`.
+
+## 优化
+
+- [#1793](https://github.com/hyperf/hyperf/pull/1793) Socket.io 服务现在只在 onOpen and onClose 中触发 connect/disconnect 事件，同时将一些类方法从 private 级别调整到了 protected 级别，以便用户可以方便的重写这些方法；
+- [#1848](https://github.com/hyperf/hyperf/pull/1848) 当 RPC 客户端对应的 Contract 发生变更时，自动重写生成对应的动态代理客户端类；
+- [#1863](https://github.com/hyperf/hyperf/pull/1863) 为 async-queue 组件提供更加安全的停止机制；
+- [#1896](https://github.com/hyperf/hyperf/pull/1896) 当在 constants 组件中使用了同样的 code 时，keys 会被合并起来；
+
 # v1.1.32 - 2020-05-21
 
 ## 修复
@@ -31,12 +247,12 @@
 
 ## 修复
 
-- [#1696](https://github.com/hyperf/hyperf/pull/1696) 修复方法 `Context::copy` 传入字段 `keys` 后无法正常使用的BUG。
-- [#1708](https://github.com/hyperf/hyperf/pull/1708) [#1718](https://github.com/hyperf/hyperf/pull/1718) 修复 `hyperf/socketio-server` 组件内存溢出等BUG。
+- [#1696](https://github.com/hyperf/hyperf/pull/1696) 修复方法 `Context::copy` 传入字段 `keys` 后无法正常使用的 BUG。
+- [#1708](https://github.com/hyperf/hyperf/pull/1708) [#1718](https://github.com/hyperf/hyperf/pull/1718) 修复 `hyperf/socketio-server` 组件内存溢出等 BUG。
 
 ## 优化
 
-- [#1710](https://github.com/hyperf/hyperf/pull/1710) MAC系统下不再使用 `cli_set_process_title` 方法设置进程名。
+- [#1710](https://github.com/hyperf/hyperf/pull/1710) MAC 系统下不再使用 `cli_set_process_title` 方法设置进程名。
 
 # v1.1.30 - 2020-05-07
 
@@ -65,11 +281,11 @@
 
 ## 修复
 
-- [#1639](https://github.com/hyperf/hyperf/pull/1639) 修复 `rpc-client` 会从 `consul` 中获取到不健康节点的BUG。
-- [#1641](https://github.com/hyperf/hyperf/pull/1641) 修复 `rpc-client` 获取到的结果为 `null` 时，会抛出 `RequestException` 的BUG。
-- [#1641](https://github.com/hyperf/hyperf/pull/1641) 修复 `rpc-server` 中 `jsonrpc-tcp-length-check` 协议，无法在 `consul` 中添加心跳检查的BUG。
-- [#1650](https://github.com/hyperf/hyperf/pull/1650) 修复脚本 `describe:routes` 列表展示有误的BUG。
-- [#1655](https://github.com/hyperf/hyperf/pull/1655) 修复 `MysqlProcessor::processColumns` 无法在 `MySQL Server 8.0` 版本中正常工作的BUG。
+- [#1639](https://github.com/hyperf/hyperf/pull/1639) 修复 `rpc-client` 会从 `consul` 中获取到不健康节点的 BUG。
+- [#1641](https://github.com/hyperf/hyperf/pull/1641) 修复 `rpc-client` 获取到的结果为 `null` 时，会抛出 `RequestException` 的 BUG。
+- [#1641](https://github.com/hyperf/hyperf/pull/1641) 修复 `rpc-server` 中 `jsonrpc-tcp-length-check` 协议，无法在 `consul` 中添加心跳检查的 BUG。
+- [#1650](https://github.com/hyperf/hyperf/pull/1650) 修复脚本 `describe:routes` 列表展示有误的 BUG。
+- [#1655](https://github.com/hyperf/hyperf/pull/1655) 修复 `MysqlProcessor::processColumns` 无法在 `MySQL Server 8.0` 版本中正常工作的 BUG。
 
 ## 优化 
 
@@ -169,7 +385,7 @@
 
 ## 修复
 
-- [#1445](https://github.com/hyperf/hyperf/pull/1445) 修复命令 `describe:route` 缺失了带参数的路由；
+- [#1445](https://github.com/hyperf/hyperf/pull/1445) 修复命令 `describe:routes` 缺失了带参数的路由；
 - [#1449](https://github.com/hyperf/hyperf/pull/1449) 修复了高基数请求路径的内存溢出的问题；
 - [#1454](https://github.com/hyperf/hyperf/pull/1454) 修复 Collection 的 `flatten()` 方法因为 `INF` 参数值为 `float` 类型导致无法使用的问题；
 - [#1458](https://github.com/hyperf/hyperf/pull/1458) 修复了 Guzzle 不支持 Elasticsearch 版本大于 7.0 的问题；

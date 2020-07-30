@@ -230,7 +230,7 @@ class IndexController
 > Tips: 您也可以将启动 Server 的命令配置在 IDE 上，便可直接通过 IDE 的 `启动/停止` 操作快捷的完成 `启动服务` 或 `重启服务` 的操作。
 > 且非视图开发时可以采用 [TDD(Test-Driven Development)](https://baike.baidu.com/item/TDD/9064369) 测试驱动开发来进行开发，这样不仅可以省略掉服务重启和频繁切换窗口的麻烦，还可保证接口数据的正确性。
 
-> 另外，在文档 [协程组件库](./zh-cn/awesome-components?id=%e7%83%ad%e6%9b%b4%e6%96%b0%e7%83%ad%e9%87%8d%e8%bd%bd) 一章中提供了多种由社区开发者支持的 热更新/热重载 的解决方案，如仍希望采用 热更新/热重载 方案可再深入了解。
+> 另外，在文档 [协程组件库](zh-cn/awesome-components?id=%e7%83%ad%e6%9b%b4%e6%96%b0%e7%83%ad%e9%87%8d%e8%bd%bd) 一章中提供了多种由社区开发者支持的 热更新/热重载 的解决方案，如仍希望采用 热更新/热重载 方案可再深入了解。
 
 ## 多端口监听
 

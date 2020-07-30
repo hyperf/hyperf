@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -388,10 +388,11 @@ if (! function_exists('getter')) {
 if (! function_exists('parallel')) {
     /**
      * @param callable[] $callables
+     * @param int $concurrent if $concurrent is equal to 0, that means unlimit
      */
-    function parallel(array $callables)
+    function parallel(array $callables, int $concurrent = 0)
     {
-        $parallel = new Parallel();
+        $parallel = new Parallel($concurrent);
         foreach ($callables as $key => $callable) {
             $parallel->add($callable, $key);
         }

@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -480,8 +480,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
 
         try {
             $parser = static::getParser();
-            if ($parser->has($contentType)) {
-                $data = $parser->parse($request->getBody()->getContents(), $contentType);
+            if ($parser->has($contentType) && $content = $request->getBody()->getContents()) {
+                $data = $parser->parse($content, $contentType);
             }
         } catch (\InvalidArgumentException $exception) {
             throw new BadRequestHttpException($exception->getMessage());

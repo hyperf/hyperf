@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -62,4 +62,24 @@ class ErrorCodeStub extends AbstractConstants
      * @Type("Type disabled")
      */
     const TYPE_DISABLE = 0;
+
+    /**
+     * @Message("Type1001")
+     */
+    const TYPE_INT = 1001;
+
+    /**
+     * @Message("Type1002.1")
+     */
+    const TYPE_FLOAT = 1002.1;
+
+    /**
+     * @Message("Type1003.1")
+     */
+    const TYPE_FLOAT_STRING = '1003.1';
+
+    /**
+     * @Message("TypeString")
+     */
+    const TYPE_STRING = 'string';
 }

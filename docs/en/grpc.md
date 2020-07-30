@@ -38,7 +38,7 @@ message HiReply {
 - 使用 protoc 生成示例代码
 
 ```
-# 使用 linux 包管理工具安装 protoc, 下面以 alpine 为例, 也可以参考 hyper-skeleton 下的 Dockerfile
+# 使用 linux 包管理工具安装 protoc, 下面以 alpine 为例, 也可以参考 hyperf-skeleton 下的 Dockerfile
 apk add protobuf
 
 # 使用 protoc 自动生成代码
@@ -71,7 +71,7 @@ grpc
 
 - gRPC server 服务器配置
 
-`server.php` 文件(参考 [配置](zh/config.md)):
+`server.php` 文件(参考 [配置](en/config.md)):
 
 ```php
 'servers' => [
@@ -91,7 +91,7 @@ grpc
 
 - gRPC server 路由配置
 
-`routes.php` 文件(参考 [路由](zh/router.md)):
+`routes.php` 文件(参考 [路由](en/router.md)):
 
 ```php
 Router::addServer('grpc', function () {

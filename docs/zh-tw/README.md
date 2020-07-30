@@ -1,6 +1,6 @@
 # 2.0 介紹
 
-Hyperf 是基於 `Swoole 4.4+` 實現的高效能、高靈活性的 PHP 協程框架，內建協程伺服器及大量常用的元件，效能較傳統基於 `PHP-FPM` 的框架有質的提升，提供超高效能的同時，也保持著極其靈活的可擴充套件性，標準組件均基於 [PSR 標準](https://www.php-fig.org/psr) 實現，基於強大的依賴注入設計，保證了絕大部分元件或類都是 `可替換` 與 `可複用` 的。
+Hyperf 是基於 `Swoole 4.5+` 實現的高效能、高靈活性的 PHP 協程框架，內建協程伺服器及大量常用的元件，效能較傳統基於 `PHP-FPM` 的框架有質的提升，提供超高效能的同時，也保持著極其靈活的可擴充套件性，標準組件均基於 [PSR 標準](https://www.php-fig.org/psr) 實現，基於強大的依賴注入設計，保證了絕大部分元件或類都是 `可替換` 與 `可複用` 的。
    
 框架元件庫除了常見的協程版的 `MySQL 客戶端`、`Redis 客戶端`，還為您準備了協程版的 `Eloquent ORM`、`WebSocket 服務端及客戶端`、`JSON RPC 服務端及客戶端`、`GRPC 服務端及客戶端`、`Zipkin/Jaeger (OpenTracing) 客戶端`、`Guzzle HTTP 客戶端`、`Elasticsearch 客戶端`、`Consul 客戶端`、`ETCD 客戶端`、`AMQP 元件`、`Apollo 配置中心`、`阿里雲 ACM 應用配置管理`、`ETCD 配置中心`、`基於令牌桶演算法的限流器`、`通用連線池`、`熔斷器`、`Swagger 文件生成`、`Swoole Tracker`、`檢視引擎`、`Snowflake 全域性 ID 生成器` 等元件，省去了自己實現對應協程版本的麻煩。  
 

@@ -217,7 +217,7 @@ return [
             'arguments' => 'arguments',
             'result' => 'result',
         ],
-        // 數據庫客户端 (hyper/database)
+        // 數據庫客户端 (hyperf/database)
         'db' => [
             'db.query' => 'db.query',
             'db.statement' => 'db.statement',

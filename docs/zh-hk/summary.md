@@ -52,6 +52,7 @@
   * [快速開始](zh-hk/db/quick-start.md)
   * [查詢構造器](zh-hk/db/querybuilder.md)
   * [模型](zh-hk/db/model.md)
+  * [創建腳本](zh-hk/db/gen.md)
   * [模型關係](zh-hk/db/relationship.md)
   * [查詢分頁](zh-hk/db/paginator.md)
   * [模型事件](zh-hk/db/event.md)
@@ -72,13 +73,14 @@
   * [調用鏈追蹤](zh-hk/tracer.md)
   * [服務監控](zh-hk/metric.md)
   * [服務重試](zh-hk/retry.md)
+  * [Nacos](zh-hk/nacos.md)
   
 * 消息隊列
 
   * [Redis 異步隊列](zh-hk/async-queue.md)
   * [AMQP](zh-hk/amqp.md)
   * [Nats](zh-hk/nats.md)
-  * [Nsq](zh-hk/nsq.md)
+  * [NSQ](zh-hk/nsq.md)
   
 * 其它組件
 
@@ -102,6 +104,8 @@
   * [Snowflake](zh-hk/snowflake.md)
   * [重試](zh-hk/retry.md)
   * [信號處理器](zh-hk/signal.md)
+  * [ReactiveX](zh-hk/reactive-x.md)
+  * [Watcher](zh-hk/watcher.md)
 
 * 應用部署
 
@@ -124,3 +128,4 @@
 * 版本升級指南
   
   * [1.1 升級指南](zh-hk/upgrade/1.1.md)
+  * [2.0 升級指南](zh-hk/upgrade/2.0.md)

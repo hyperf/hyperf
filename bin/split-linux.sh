@@ -3,7 +3,7 @@
 set -e
 set -x
 
-CURRENT_BRANCH="2.0"
+CURRENT_BRANCH="master"
 BASEPATH=$(cd `dirname $0`; cd ../src/; pwd)
 REPOS=$@
 
