@@ -264,7 +264,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             }
         };
 
-        if ($server instanceof \Swoole\Http\Response) {
+        if ($server instanceof SwooleResponse) {
             $onOpen();
         } else {
             defer($onOpen);
