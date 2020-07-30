@@ -52,6 +52,7 @@
   * [快速开始](zh-cn/db/quick-start.md)
   * [查询构造器](zh-cn/db/querybuilder.md)
   * [模型](zh-cn/db/model.md)
+  * [创建脚本](zh-cn/db/gen.md)
   * [模型关系](zh-cn/db/relationship.md)
   * [查询分页](zh-cn/db/paginator.md)
   * [模型事件](zh-cn/db/event.md)
@@ -72,13 +73,14 @@
   * [调用链追踪](zh-cn/tracer.md)
   * [服务监控](zh-cn/metric.md)
   * [服务重试](zh-cn/retry.md)
+  * [Nacos](zh-cn/nacos.md)
   
 * 消息队列
 
   * [Redis 异步队列](zh-cn/async-queue.md)
   * [AMQP](zh-cn/amqp.md)
   * [Nats](zh-cn/nats.md)
-  * [Nsq](zh-cn/nsq.md)
+  * [NSQ](zh-cn/nsq.md)
   
 * 其它组件
 
@@ -102,6 +104,8 @@
   * [Snowflake](zh-cn/snowflake.md)
   * [重试](zh-cn/retry.md)
   * [信号处理器](zh-cn/signal.md)
+  * [ReactiveX](zh-cn/reactive-x.md)
+  * [Watcher](zh-cn/watcher.md)
 
 * 应用部署
 
@@ -124,3 +128,4 @@
 * 版本升级指南
   
   * [1.1 升级指南](zh-cn/upgrade/1.1.md)
+  * [2.0 升级指南](zh-cn/upgrade/2.0.md)

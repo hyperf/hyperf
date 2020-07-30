@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -105,6 +105,15 @@ class AnnotationReaderTest extends TestCase
 
         $this->assertSame('Type enabled', ErrorCodeStub::getType(ErrorCodeStub::TYPE_ENABLE));
         $this->assertSame('Type disabled', ErrorCodeStub::getType(ErrorCodeStub::TYPE_DISABLE));
+    }
+
+    public function testSupportTypes()
+    {
+        $container = $this->getContainer(true);
+        $this->assertSame('Type1001', ErrorCodeStub::getMessage(ErrorCodeStub::TYPE_INT));
+        $this->assertSame('', ErrorCodeStub::getMessage(ErrorCodeStub::TYPE_FLOAT));
+        $this->assertSame('Type1003.1', ErrorCodeStub::getMessage(ErrorCodeStub::TYPE_FLOAT_STRING));
+        $this->assertSame('TypeString', ErrorCodeStub::getMessage(ErrorCodeStub::TYPE_STRING));
     }
 
     protected function getContainer($has = false)

@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -121,10 +121,10 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
             // Send the Response to client.
-            if (! isset($psr7Request) || ! isset($psr7Response)) {
+            if (! isset($psr7Response)) {
                 return;
             }
-            if ($psr7Request->getMethod() === 'HEAD') {
+            if (! isset($psr7Request) || $psr7Request->getMethod() === 'HEAD') {
                 $this->responseEmitter->emit($psr7Response, $response, false);
             } else {
                 $this->responseEmitter->emit($psr7Response, $response, true);

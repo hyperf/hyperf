@@ -2,8 +2,8 @@
 
 Hyperf 為您提供了分佈式系統的外部化配置支持，默認適配了:
 
-- 由攜程開源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyper/config-apollo](https://github.com/hyperf/config-apollo) 組件提供功能支持。
-- 阿里雲提供的免費配置中心服務 [應用配置管理(ACM, Application Config Manager)](https://help.aliyun.com/product/59604.html)，由 [hyper/config-aliyun-acm](https://github.com/hyperf/config-aliyun-acm) 組件提供功能支持。
+- 由攜程開源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyperf/config-apollo](https://github.com/hyperf/config-apollo) 組件提供功能支持。
+- 阿里雲提供的免費配置中心服務 [應用配置管理(ACM, Application Config Manager)](https://help.aliyun.com/product/59604.html)，由 [hyperf/config-aliyun-acm](https://github.com/hyperf/config-aliyun-acm) 組件提供功能支持。
 
 ## 為什麼要使用配置中心？
 

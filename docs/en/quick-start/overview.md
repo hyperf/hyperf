@@ -6,7 +6,7 @@ In order to let you know more about the use of `Hyperf`, this chapter will intro
 
 Hyperf use [nikic/fast-route] (https://github.com/nikic/FastRoute) as the default routing component, so you can easily define your route in `config/routes.php`.   
 
-Not only that，Hyperf also provides an extremely powerful and convenient "Annotation Routing" feature, for more information on routing, please refer to the [Router] (zh/router.md) section.
+Not only that，Hyperf also provides an extremely powerful and convenient "Annotation Routing" feature, for more information on routing, please refer to the [Router] (en/router.md) section.
 
 ### Define routes by file configuration
 
@@ -36,7 +36,7 @@ Router::addRoute(['GET', 'POST', 'HEAD'], '/multi', [\App\Controller\IndexContro
 
 ### Define routes by annotations
 
-`Hyperf` provides an extremely powerful and convenient [annotation] (zh/annotation.md) feature, and there is no doubt that the definition of the route also provides a way to define by annotation. Hyperf provides `@Controller` and `@ AutoController` annotations to define a `Controller`. Here is a brief description. For more details, please refer to the [Routing] (zh/router.md) section.
+`Hyperf` provides an extremely powerful and convenient [annotation] (en/annotation.md) feature, and there is no doubt that the definition of the route also provides a way to define by annotation. Hyperf provides `@Controller` and `@ AutoController` annotations to define a `Controller`. Here is a brief description. For more details, please refer to the [Routing] (en/router.md) section.
 
 ### Define routes by `@AutoController`
 s

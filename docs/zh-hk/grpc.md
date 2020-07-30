@@ -38,7 +38,7 @@ message HiReply {
 - 使用 protoc 生成示例代碼
 
 ```
-# 使用 linux 包管理工具安裝 protoc, 下面以 alpine 為例, 也可以參考 hyper-skeleton 下的 Dockerfile
+# 使用 linux 包管理工具安裝 protoc, 下面以 alpine 為例, 也可以參考 hyperf-skeleton 下的 Dockerfile
 apk add protobuf
 
 # 使用 protoc 自動生成代碼
@@ -144,8 +144,7 @@ public function hello()
 
     $message = $reply->getMessage();
     $user = $reply->getUser();
-
-    $client->close();
+    
     var_dump(memory_get_usage(true));
     return $message;
 }
@@ -158,7 +157,7 @@ class HiClient extends BaseClient
 {
     public function sayHello(HiUser $argument)
     {
-        return $this->simpleRequest(
+        return $this->_simpleRequest(
             '/grpc.hi/sayHello',
             $argument,
             [HiReply::class, 'decode']

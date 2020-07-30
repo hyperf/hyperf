@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -23,7 +23,8 @@ class AnnotationReader
         foreach ($classConstants as $classConstant) {
             $code = $classConstant->getValue();
             $docComment = $classConstant->getDocComment();
-            if ($docComment) {
+            // Not support float and bool, because it will be convert to int.
+            if ($docComment && (is_int($code) || is_string($code))) {
                 $result[$code] = $this->parse($docComment, $result[$code] ?? []);
             }
         }

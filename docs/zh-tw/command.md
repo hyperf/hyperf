@@ -360,4 +360,80 @@ array(2) {
 
 ```
 
+# 執行命令
 
+## 命令列中執行
+
+```bash
+php bin/hyperf.php foo
+```
+
+## 在 Command 中執行其他命令
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Command;
+
+use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\Command\Annotation\Command;
+use Psr\Container\ContainerInterface;
+
+/**
+ * @Command
+ */
+class FooCommand extends HyperfCommand
+{
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+
+        parent::__construct('foo');
+    }
+
+    public function configure()
+    {
+        parent::configure();
+        $this->setDescription('foo command');
+    }
+
+    public function handle()
+    {
+        $this->call('bar', [
+            '--foo' => 'foo'
+        ]);
+    }
+}
+```
+
+## 在非 Command 中執行命令
+
+```php
+$command = 'foo';
+
+$params = ["command" => $command, "--foo" => "foo", "--bar" => "bar"];
+
+// 可以根據自己的需求, 選擇使用的 input/output
+$input = new ArrayInput($params);
+$output = new NullOutput();
+
+/** @var \Psr\Container\ContainerInterface $container */
+$container = \Hyperf\Utils\ApplicationContext::getContainer();
+
+/** @var \Symfony\Component\Console\Application $application */
+$application = $container->get(\Hyperf\Contract\ApplicationInterface::class);
+$application->setAutoExit(false);
+
+// 這種方式: 不會暴露出命令執行中的異常, 不會阻止程式返回
+$exitCode = $application->run($input, $output);
+
+// 第二種方式: 會暴露異常, 需要自己捕捉和處理執行中的異常, 否則會阻止程式的返回
+$exitCode = $application->find($command)->run($input, $output);
+```
