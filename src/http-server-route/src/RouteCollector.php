@@ -22,12 +22,6 @@ use Psr\Container\ContainerInterface;
 
 class RouteCollector
 {
-    const NOT_FOUND = 0;
-
-    const STATIC_ROUTE = 1;
-
-    const DYNAMIC_ROUTE = 2;
-
     /**
      * @var ContainerInterface
      */
@@ -59,10 +53,7 @@ class RouteCollector
                     foreach ($handlers as $handler) {
                         if ($handler instanceof Handler) {
                             $name = $handler->options['name'] ?? $handler->route;
-                            $this->addRoute($serverName, $name, [
-                                self::STATIC_ROUTE,
-                                $handler->route,
-                            ]);
+                            $this->addRoute($serverName, $name, $handler->route);
                         }
                     }
                 }
@@ -72,10 +63,7 @@ class RouteCollector
                         foreach ($route['routeMap'] as [$handler, $variables]) {
                             if ($handler instanceof Handler) {
                                 $name = $handler->options['name'] ?? $handler->route;
-                                $this->addRoute($serverName, $name, [
-                                    self::DYNAMIC_ROUTE,
-                                    $handler->route,
-                                ]);
+                                $this->addRoute($serverName, $name, $handler->route);
                             }
                         }
                     }
@@ -84,54 +72,47 @@ class RouteCollector
         }
     }
 
-    public function addRoute(string $server, string $name, array $route)
+    public function addRoute(string $server, string $name, string $route)
     {
         $this->routes[$server][$name] = $route;
     }
 
-    public function getRoute(string $server, string $name): array
+    public function getRoute(string $server, string $name): ?string
     {
-        return $this->routes[$server][$name] ?? [self::NOT_FOUND, null];
+        return $this->routes[$server][$name] ?? null;
     }
 
     public function getPath(string $name, array $variables = [], string $server = 'http')
     {
         $router = $this->factory->getRouter($server);
-        [$type, $route] = $this->getRoute($server, $name);
-        if ($type === self::NOT_FOUND) {
+        $route = $this->getRoute($server, $name);
+        if ($route === null) {
             throw new RouteNotFoundException(sprintf('Route name %s is not found in server %s.', $name, $server));
         }
 
-        switch ($type) {
-            case self::STATIC_ROUTE:
-                return $route;
-            case self::DYNAMIC_ROUTE:
-                $result = $router->getRouteParser()->parse($route);
-                foreach ($result as $items) {
-                    $path = '';
-                    $vars = $variables;
-                    foreach ($items as $item) {
-                        if (is_array($item)) {
-                            [$key] = $item;
-                            if (! isset($vars[$key])) {
-                                $path = null;
-                                break;
-                            }
-                            $path .= $vars[$key];
-                            unset($vars[$key]);
-                        } else {
-                            $path .= $item;
-                        }
+        $result = $router->getRouteParser()->parse($route);
+        foreach ($result as $items) {
+            $path = '';
+            $vars = $variables;
+            foreach ($items as $item) {
+                if (is_array($item)) {
+                    [$key] = $item;
+                    if (! isset($vars[$key])) {
+                        $path = null;
+                        break;
                     }
-
-                    if (empty($vars) && $path !== null) {
-                        return $path;
-                    }
+                    $path .= $vars[$key];
+                    unset($vars[$key]);
+                } else {
+                    $path .= $item;
                 }
+            }
 
-                throw new RouteInvalidException('$variables for dynamic route is invalid.');
+            if (empty($vars) && $path !== null) {
+                return $path;
+            }
         }
 
-        throw new RouteInvalidException(sprintf('Route type %s is not found.', $type));
+        throw new RouteInvalidException('Route is invliad.');
     }
 }
