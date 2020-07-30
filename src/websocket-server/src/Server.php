@@ -181,13 +181,10 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
                     [$onCloseCallbackClass, $onCloseCallbackMethod] = $callbacks[SwooleEvent::ON_CLOSE];
                     $onCloseCallbackInstance = $this->container->get($onCloseCallbackClass);
 
-                    defer(function () use ($onCloseCallbackInstance, $onCloseCallbackMethod, $response, $fd) {
-                        $onCloseCallbackInstance->{$onCloseCallbackMethod}($response, $fd, 0);
-                    });
-
                     while (true) {
                         $frame = $response->recv();
                         if ($frame === false || $frame instanceof CloseFrame || $frame === '') {
+                            $onCloseCallbackInstance->{$onCloseCallbackMethod}($response, $fd, 0);
                             break;
                         }
                         $onMessageCallbackInstance->{$onMessageCallbackMethod}($response, $frame);

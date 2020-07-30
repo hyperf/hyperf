@@ -4,6 +4,10 @@
 
 - [#2204](https://github.com/hyperf/hyperf/pull/2204) Added `$concurrent` for function `parallel`.
 
+## Fixed
+
+- [#2214](https://github.com/hyperf/hyperf/pull/2214) Fixed websocket server close event won't be executed when the server side close connection.
+
 ## Optimized
 
 - [#2193](https://github.com/hyperf/hyperf/pull/2193) Optimized the scan accuracy for `Hyperf\Watcher\Driver\FindDriver`.
