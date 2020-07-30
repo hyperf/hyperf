@@ -18,9 +18,6 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
-            'dependencies' => [
-                DataFormatter::class => DataFormatterFactory::class,
-            ],
             'listeners' => [
                 InitRouteCollectorListener::class,
             ],

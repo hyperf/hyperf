@@ -9,18 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\HttpServerRoute;
+namespace Hyperf\HttpServerRoute\Exception;
 
-use PHPUnit\Framework\TestCase;
+use Hyperf\Server\Exception\ServerException;
 
-/**
- * @internal
- * @coversNothing
- */
-class ExampleTest extends TestCase
+class RequestNotFoundException extends ServerException
 {
-    public function testExample()
-    {
-        $this->assertTrue(true);
-    }
 }

@@ -129,7 +129,7 @@ class RouteCollector
                     }
                 }
 
-                throw new RouteInvalidException(sprintf('$variables for dynamic route is invalid.', $type));
+                throw new RouteInvalidException('$variables for dynamic route is invalid.');
         }
 
         throw new RouteInvalidException(sprintf('Route type %s is not found.', $type));
