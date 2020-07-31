@@ -4,6 +4,12 @@
 
 - [#2204](https://github.com/hyperf/hyperf/pull/2204) Added `$concurrent` for function `parallel`.
 
+## Fixed
+
+- [#2210](https://github.com/hyperf/hyperf/pull/2210) Fixed bug that open event won't be executed after handshake right now.
+- [#2214](https://github.com/hyperf/hyperf/pull/2214) Fixed bug that close event won't be executed when close the connection by websocket server.
+- [#2218](https://github.com/hyperf/hyperf/pull/2218) Fixed bug that sender does not works for coroutine server.
+
 ## Optimized
 
 - [#2193](https://github.com/hyperf/hyperf/pull/2193) Optimized the scan accuracy for `Hyperf\Watcher\Driver\FindDriver`.

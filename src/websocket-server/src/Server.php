@@ -180,14 +180,10 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
                     [$onCloseCallbackClass, $onCloseCallbackMethod] = $callbacks[SwooleEvent::ON_CLOSE];
                     $onCloseCallbackInstance = $this->container->get($onCloseCallbackClass);
+
                     while (true) {
                         $frame = $response->recv();
-                        if ($frame === false) {
-                            // When close the connection by server-side, the $frame is false.
-                            break;
-                        }
-                        if ($frame instanceof CloseFrame || $frame === '') {
-                            // The connection is closed.
+                        if ($frame === false || $frame instanceof CloseFrame || $frame === '') {
                             $onCloseCallbackInstance->{$onCloseCallbackMethod}($response, $fd, 0);
                             break;
                         }
@@ -261,12 +257,18 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
      */
     protected function deferOnOpen(SwooleRequest $request, string $class, $server)
     {
-        defer(function () use ($request, $class, $server) {
+        $onOpen = function () use ($request, $class, $server) {
             $instance = $this->container->get($class);
             if ($instance instanceof OnOpenInterface) {
                 $instance->onOpen($server, $request);
             }
-        });
+        };
+
+        if ($server instanceof SwooleResponse) {
+            $onOpen();
+        } else {
+            defer($onOpen);
+        }
     }
 
     /**
