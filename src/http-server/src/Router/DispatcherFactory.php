@@ -171,7 +171,7 @@ class DispatcherFactory
             foreach ($mappingAnnotations as $mappingAnnotation) {
                 /** @var Mapping $mapping */
                 if ($mapping = $values[$mappingAnnotation] ?? null) {
-                    if (! isset($mapping->path) || ! isset($mapping->methods)) {
+                    if (! $mapping instanceof Mapping) {
                         continue;
                     }
                     $path = $mapping->path;
@@ -181,9 +181,10 @@ class DispatcherFactory
                     } elseif ($path[0] !== '/') {
                         $path = $prefix . '/' . $path;
                     }
-                    $router->addRoute($mapping->methods, $path, [$className, $methodName], [
-                        'middleware' => $methodMiddlewares,
-                    ]);
+
+                    $options = $mapping->options;
+                    $options['middleware'] = $methodMiddlewares;
+                    $router->addRoute($mapping->methods, $path, [$className, $methodName], $options);
                 }
             }
         }

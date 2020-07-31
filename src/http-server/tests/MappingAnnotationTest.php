@@ -56,6 +56,22 @@ class MappingAnnotationTest extends TestCase
         $this->assertSame($path, $mapping->path);
     }
 
+    public function testMappingOptions()
+    {
+        $mapping = new RequestMapping([
+            'methods' => [
+                'GET', 'POST ', 'put',
+            ],
+            'path' => $path = '/foo',
+            'options' => [
+                'name' => 'foo',
+            ],
+        ]);
+        $this->assertSame(['GET', 'POST', 'PUT'], $mapping->methods);
+        $this->assertSame($path, $mapping->path);
+        $this->assertSame('foo', $mapping->options['name']);
+    }
+
     public function testRequestMappingBindMainProperty()
     {
         $mapping = new RequestMapping(['value' => '/foo']);

@@ -167,6 +167,11 @@ class RouteCollector
         return $this->dataGenerator->getData();
     }
 
+    public function getRouteParser(): RouteParser
+    {
+        return $this->routeParser;
+    }
+
     protected function mergeOptions(array $origin, array $options): array
     {
         return array_merge_recursive($origin, $options);
