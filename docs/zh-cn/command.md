@@ -368,12 +368,13 @@ array(2) {
 `$signature` 为字符串，分为三部分，分别是 `command` `argument` 和 `option`，如下：
 
 ```
-command:name {argument?* : The argument description.}    {--option=* : The option description.}
+command:name {argument?* : The argument description.} {--option=* : The option description.}
 ```
 
 - `?` 代表 `非必传`。
 - `*` 代表 `数组`。
 - `?*` 代表 `非必传的数组`。
+- `=` 代表 `非 Bool`。
 
 ### 示例
 
