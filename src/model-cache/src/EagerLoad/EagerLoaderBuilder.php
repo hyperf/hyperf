@@ -61,7 +61,7 @@ class EagerLoaderBuilder extends Builder
     {
         return count($wheres) === 1
             && $model instanceof CacheableInterface
-            && in_array(Arr::get($wheres[0], 'type'), ['In', 'InRaw'])
+            && in_array(Arr::get($wheres[0], 'type'), ['In', 'InRaw'], true)
             && Arr::get($wheres[0], 'column') === $column
             && $this->isValidValues($wheres[0]['values'] ?? []);
     }
