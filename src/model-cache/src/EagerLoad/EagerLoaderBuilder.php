@@ -13,7 +13,6 @@ namespace Hyperf\ModelCache\EagerLoad;
 
 use Closure;
 use Hyperf\Database\Model\Builder;
-use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\ModelCache\CacheableInterface;
 use Hyperf\Utils\Arr;
@@ -47,20 +46,16 @@ class EagerLoaderBuilder extends Builder
         $model = $relation->getModel();
         $column = sprintf('%s.%s', $model->getTable(), $model->getKeyName());
 
-        if ($this->couldUseEagerLoad($wheres, $model, $column)) {
+        if ($model instanceof CacheableInterface && $this->couldUseEagerLoad($wheres, $column)) {
             return $model::findManyFromCache($wheres[0]['values'] ?? []);
         }
 
         return $relation->getEager();
     }
 
-    /**
-     * @param Model|object $model
-     */
-    protected function couldUseEagerLoad(array $wheres, $model, string $column): bool
+    protected function couldUseEagerLoad(array $wheres, string $column): bool
     {
         return count($wheres) === 1
-            && $model instanceof CacheableInterface
             && in_array(Arr::get($wheres[0], 'type'), ['In', 'InRaw'], true)
             && Arr::get($wheres[0], 'column') === $column
             && $this->isValidValues($wheres[0]['values'] ?? []);
