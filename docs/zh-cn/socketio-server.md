@@ -1,4 +1,4 @@
-Socket.io是一款非常流行的应用层实时通讯协议和框架，可以轻松实现应答、分组、广播。hyperf/socketio-server支持了Socket.io的WebSocket传输协议。
+Socket.io 是一款非常流行的应用层实时通讯协议和框架，可以轻松实现应答、分组、广播。hyperf/socketio-server 支持了 Socket.io 的 WebSocket 传输协议。
 
 ## 安装
 
@@ -149,9 +149,9 @@ function onSomeEvent(\Hyperf\SocketIOServer\Socket $socket){
   $socket->compress(false)->emit('uncompressed', "that's rough");
 }
 ```
-### 全局API
+### 全局 API
 
-直接从容器中获取SocketIO单例。这个单例可向全局广播或指定房间、个人通讯。未指定命名空间时，默认使用'/'空间。
+直接从容器中获取 SocketIO 单例。这个单例可向全局广播或指定房间、个人通讯。未指定命名空间时，默认使用 '/' 空间。
 
 ```php
 <?php
@@ -182,9 +182,9 @@ $io->local->emit('hi', 'my lovely babies');
 $io->emit('an event sent to all connected clients');
 ```
 
-### 命名空间API
+### 命名空间 API
 
-和全局API一样，只不过已经限制了命名空间。
+和全局 API 一样，只不过已经限制了命名空间。
 ```php
 // 以下伪码等价
 $foo->emit();

@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -26,6 +26,7 @@ use Hyperf\Di\Container;
 use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\ListenerProvider;
 use Hyperf\Framework\Logger\StdoutLogger;
+use Hyperf\ModelCache\EagerLoad\EagerLoader;
 use Hyperf\ModelCache\Handler\RedisHandler;
 use Hyperf\ModelCache\Handler\RedisStringHandler;
 use Hyperf\ModelCache\Manager;
@@ -69,7 +70,7 @@ class ContainerStub
             'databases' => [
                 'default' => [
                     'driver' => 'mysql',
-                    'host' => 'localhost',
+                    'host' => '127.0.0.1',
                     'database' => 'hyperf',
                     'username' => 'root',
                     'password' => '',
@@ -157,6 +158,7 @@ class ContainerStub
         });
         $container->shouldReceive('get')->with(Manager::class)->andReturn(new Manager($container));
         $container->shouldReceive('get')->with(PhpSerializerPacker::class)->andReturn(new PhpSerializerPacker());
+        $container->shouldReceive('get')->with(EagerLoader::class)->andReturn(new EagerLoader());
         return $container;
     }
 }

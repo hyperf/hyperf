@@ -5,29 +5,22 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\Watcher;
 
-use Hyperf\Di\Annotation\AnnotationInterface;
 use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\Annotation\ScanConfig;
-use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Utils\Codec\Json;
+use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Watcher\Ast\Metadata;
-use Hyperf\Watcher\Ast\RewriteClassNameVisitor;
 use Hyperf\Watcher\Driver\DriverInterface;
-use Hyperf\Watcher\Driver\FswatchDriver;
-use PhpParser\NodeTraverser;
 use PhpParser\PrettyPrinter\Standard;
 use Psr\Container\ContainerInterface;
 use Roave\BetterReflection\BetterReflection;
-use Roave\BetterReflection\Reflection\Adapter;
-use Roave\BetterReflection\Reflection\ReflectionClass;
 use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\System;
 use Swoole\Process;
@@ -86,11 +79,6 @@ class Watcher
     protected $config;
 
     /**
-     * @var Ast
-     */
-    protected $ast;
-
-    /**
      * @var Standard
      */
     protected $printer;
@@ -117,7 +105,6 @@ class Watcher
         $this->reflection = new BetterReflection();
         $this->reader = new AnnotationReader();
         $this->config = ScanConfig::instance('/');
-        $this->ast = new Ast();
         $this->printer = new Standard();
         $this->channel = new Channel(1);
         $this->channel->push(true);
@@ -125,10 +112,11 @@ class Watcher
 
     public function run()
     {
+        $this->dumpautoload();
         $this->restart(true);
 
         $channel = new Channel(999);
-        go(function () use ($channel) {
+        Coroutine::create(function () use ($channel) {
             $this->driver->watch($channel);
         });
 
@@ -138,96 +126,54 @@ class Watcher
             if ($file === false) {
                 if (count($result) > 0) {
                     $result = [];
-                    // 重启服务
                     $this->restart(false);
                 }
             } else {
-                // 重写缓存
-                $meta = $this->getMetadata($file);
-                if ($meta) {
-                    $ret = System::exec($this->option->getBin() . ' vendor/bin/collector-reload.php ' . $meta->path . ' ' . str_replace('\\', '\\\\', $meta->toClassName()));
-                    if ($ret['code'] === 0) {
-                        $this->output->writeln('Class reload success.');
-                    }
+                $ret = System::exec($this->option->getBin() . ' vendor/hyperf/watcher/collector-reload.php ' . $file);
+                if ($ret['code'] === 0) {
+                    $this->output->writeln('Class reload success.');
                 }
                 $result[] = $file;
             }
         }
     }
 
-    public function collect($className, ReflectionClass $reflection)
+    public function dumpautoload()
     {
-        // Parse class annotations
-        $classAnnotations = $this->reader->getClassAnnotations(new Adapter\ReflectionClass($reflection));
-        if (! empty($classAnnotations)) {
-            foreach ($classAnnotations as $classAnnotation) {
-                if ($classAnnotation instanceof AnnotationInterface) {
-                    $classAnnotation->collectClass($className);
-                }
-            }
-        }
-        // Parse properties annotations
-        $properties = $reflection->getImmediateProperties();
-        foreach ($properties as $property) {
-            $propertyAnnotations = $this->reader->getPropertyAnnotations(new Adapter\ReflectionProperty($property));
-            if (! empty($propertyAnnotations)) {
-                foreach ($propertyAnnotations as $propertyAnnotation) {
-                    if ($propertyAnnotation instanceof AnnotationInterface) {
-                        $propertyAnnotation->collectProperty($className, $property->getName());
-                    }
-                }
-            }
-        }
-        // Parse methods annotations
-        $methods = $reflection->getImmediateMethods();
-        foreach ($methods as $method) {
-            $methodAnnotations = $this->reader->getMethodAnnotations(new Adapter\ReflectionMethod($method));
-            if (! empty($methodAnnotations)) {
-                foreach ($methodAnnotations as $methodAnnotation) {
-                    if ($methodAnnotation instanceof AnnotationInterface) {
-                        $methodAnnotation->collectMethod($className, $method->getName());
-                    }
-                }
-            }
-        }
+        $ret = System::exec('composer dump-autoload -o --no-scripts');
+        $this->output->writeln($ret['output'] ?? '');
     }
 
     public function restart($isStart = true)
     {
-        if (! $isStart) {
-            $pid = $this->filesystem->get(BASE_PATH . '/runtime/hyperf.pid');
+        $file = BASE_PATH . '/runtime/hyperf.pid';
+        if (! $isStart && $this->filesystem->exists($file)) {
+            $pid = $this->filesystem->get($file);
             try {
                 $this->output->writeln('Stop server...');
-                Process::kill((int) $pid, SIGTERM);
+                if (Process::kill((int) $pid, 0)) {
+                    Process::kill((int) $pid, SIGTERM);
+                }
             } catch (\Throwable $exception) {
                 $this->output->writeln('Stop server failed. Please execute `composer dump-autoload -o`');
             }
         }
 
-        go(function () {
+        Coroutine::create(function () {
             $this->channel->pop();
             $this->output->writeln('Start server ...');
-            $ret = System::exec($this->option->getBin() . ' vendor/bin/watcher.php start');
-            if ($ret['code']) {
-                throw new \RuntimeException($ret['output']);
-            }
-            $this->output->writeln('Stop server success');
-            $this->channel->push($ret);
-        });
-    }
 
-    protected function getMetadata(string $file): ?Metadata
-    {
-        $stmts = $this->ast->parse($this->filesystem->get($file));
-        $meta = new Metadata();
-        $meta->path = $file;
-        $traverser = new NodeTraverser();
-        $traverser->addVisitor(new RewriteClassNameVisitor($meta));
-        $traverser->traverse($stmts);
-        if (! $meta->isClass()) {
-            return null;
-        }
-        return $meta;
+            $descriptorspec = [
+                0 => STDIN,
+                1 => STDOUT,
+                2 => STDERR,
+            ];
+
+            proc_open($this->option->getBin() . ' vendor/hyperf/watcher/watcher.php start', $descriptorspec, $pipes);
+
+            $this->output->writeln('Stop server success.');
+            $this->channel->push(1);
+        });
     }
 
     protected function getDriver()
@@ -236,7 +182,6 @@ class Watcher
         if (! class_exists($driver)) {
             throw new \InvalidArgumentException('Driver not support.');
         }
-
-        return make(FswatchDriver::class, ['option' => $this->option]);
+        return make($driver, ['option' => $this->option]);
     }
 }

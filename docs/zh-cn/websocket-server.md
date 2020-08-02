@@ -63,24 +63,24 @@ use Swoole\WebSocket\Server as WebSocketServer;
 
 class WebSocketController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
-    public function onMessage(WebSocketServer $server, Frame $frame): void
+    public function onMessage($server, Frame $frame): void
     {
         $server->push($frame->fd, 'Recv: ' . $frame->data);
     }
 
-    public function onClose(Server $server, int $fd, int $reactorId): void
+    public function onClose($server, int $fd, int $reactorId): void
     {
         var_dump('closed');
     }
 
-    public function onOpen(WebSocketServer $server, Request $request): void
+    public function onOpen($server, Request $request): void
     {
         $server->push($request->fd, 'Opened');
     }
 }
 ```
 
-接下来启动 Server，便能看到对应启动了一个 WebSocket Server 并监听于 9502 端口，此时您便可以通过各种 WebSocket Client 来进行连接和进行数据传输了。
+接下来启动 Server，便能看到对应启动了一个 WebSocket Server 并监听于 9502 端口，此时您便可以通过各种 WebSocket Client 来进行连接和数据传输了。
 
 ```
 $ php bin/hyperf.php start
@@ -88,6 +88,34 @@ $ php bin/hyperf.php start
 [INFO] Worker#0 started.
 [INFO] WebSocket Server listening at 0.0.0.0:9502
 [INFO] HTTP Server listening at 0.0.0.0:9501
+```
+
+!> 当我们同时监听了 HTTP Server 的 9501 端口和 WebSocket Server 的 9502 端口时， WebSocket Client 可以通过 9501 和 9502 两个端口连接 WebSocket Server，即连接 `ws://0.0.0.0:9501` 和 `ws://0.0.0.0:9502` 都可以成功。
+
+因为 Swoole\WebSocket\Server 继承自 Swoole\Http\Server，可以使用 HTTP 触发所有 WebSocket 的推送，了解详情可查看 [Swoole 文档](https://wiki.swoole.com/#/websocket_server?id=websocketserver) onRequest 回调部分。
+
+如需关闭，可以修改 `config/autoload/server.php` 文件给 `http` 服务中增加 `open_websocket_protocol` 配置项。
+
+```php
+<?php
+return [
+    // 这里省略了该文件的其它配置
+    'servers' => [
+        [
+            'name' => 'http',
+            'type' => Server::SERVER_HTTP,
+            'host' => '0.0.0.0',
+            'port' => 9501,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                SwooleEvent::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
+            ],
+            'settings' => [
+                'open_websocket_protocol' => false,
+            ]
+        ],
+    ]
+];
 ```
 
 ## 连接上下文
@@ -109,12 +137,12 @@ use Swoole\WebSocket\Server as WebSocketServer;
 
 class WebSocketController implements OnMessageInterface, OnOpenInterface
 {
-    public function onMessage(WebSocketServer $server, Frame $frame): void
+    public function onMessage($server, Frame $frame): void
     {
         $server->push($frame->fd, 'Username: ' . Context::get('username'));
     }
 
-    public function onOpen(WebSocketServer $server, Request $request): void
+    public function onOpen($server, Request $request): void
     {
         Context::set('username', $request->cookie['username']);
     }
@@ -143,4 +171,55 @@ server {
     proxy_pass http://io_nodes;
   }
 }
+```
+
+## 消息发送器
+
+当我们想在 `HTTP` 服务中，关闭 `WebSocket` 连接时，可以直接使用 `Hyperf\WebSocketServer\Sender`。
+
+`Sender` 会判断 `fd` 是否被当前 `Worker` 所持有，如果是，则会直接发送数据，如果不是，则会通过 `PipeMessage` 发送给除自己外的所有 `Worker`，然后由其他 `Worker` 进行判断，
+如果是自己持有的 `fd`，就会发送对应数据到客户端。
+
+`Sender` 支持 `push` 和 `disconnect` 两个 `API`，如下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\WebSocketServer\Sender;
+
+/**
+ * @AutoController
+ */
+class ServerController
+{
+    /**
+     * @Inject
+     * @var Sender
+     */
+    protected $sender;
+
+    public function close(int $fd)
+    {
+        go(function () use ($fd) {
+            sleep(1);
+            $this->sender->disconnect($fd);
+        });
+
+        return '';
+    }
+
+    public function send(int $fd)
+    {
+        $this->sender->push($fd, 'Hello World.');
+
+        return '';
+    }
+}
+
 ```

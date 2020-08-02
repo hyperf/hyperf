@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -95,9 +95,17 @@ class CoroutineHandler
             $headers['Authorization'] = sprintf('Basic %s', base64_encode($userInfo));
         }
 
-        // TODO: Unknown reason, it will cause 400 some time.
-        unset($headers['Content-Length']);
+        $headers = $this->rewriteHeaders($headers);
+
         $client->setHeaders($headers);
+    }
+
+    protected function rewriteHeaders(array $headers): array
+    {
+        // Unknown reason, Content-Length will cause 400 some time.
+        // Expect header is not supported by \Swoole\Coroutine\Http\Client.
+        unset($headers['Content-Length'], $headers['Expect']);
+        return $headers;
     }
 
     protected function getSettings(RequestInterface $request, $options): array

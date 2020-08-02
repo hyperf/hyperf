@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -28,7 +28,7 @@ class Security
         return preg_match(self::PATTEN, $key) === 0 || strlen(base64_decode($key)) !== 16;
     }
 
-    public function handShakeHeaders(string $key): array
+    public function handshakeHeaders(string $key): array
     {
         return [
             'Upgrade' => 'websocket',

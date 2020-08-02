@@ -52,6 +52,7 @@
   * [快速开始](zh-cn/db/quick-start.md)
   * [查询构造器](zh-cn/db/querybuilder.md)
   * [模型](zh-cn/db/model.md)
+  * [创建脚本](zh-cn/db/gen.md)
   * [模型关系](zh-cn/db/relationship.md)
   * [查询分页](zh-cn/db/paginator.md)
   * [模型事件](zh-cn/db/event.md)
@@ -72,6 +73,7 @@
   * [调用链追踪](zh-cn/tracer.md)
   * [服务监控](zh-cn/metric.md)
   * [服务重试](zh-cn/retry.md)
+  * [Nacos](zh-cn/nacos.md)
   
 * 消息队列
 
@@ -103,6 +105,7 @@
   * [重试](zh-cn/retry.md)
   * [信号处理器](zh-cn/signal.md)
   * [ReactiveX](zh-cn/reactive-x.md)
+  * [Watcher](zh-cn/watcher.md)
 
 * 应用部署
 

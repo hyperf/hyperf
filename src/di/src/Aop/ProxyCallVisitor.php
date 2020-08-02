@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -23,6 +23,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Return_;
+use PhpParser\Node\Stmt\Trait_;
 use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\NodeVisitorAbstract;
 
@@ -50,6 +51,24 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
     public function beforeTraverse(array $nodes)
     {
+        foreach ($nodes as $namespace) {
+            if ($namespace instanceof Node\Stmt\Declare_) {
+                continue;
+            }
+
+            if (! $namespace instanceof Node\Stmt\Namespace_) {
+                break;
+            }
+
+            foreach ($namespace->stmts as $class) {
+                switch ($class) {
+                    case $class instanceof Node\Stmt\ClassLike:
+                        $this->visitorMetadata->classLike = get_class($class);
+                        break;
+                }
+            }
+        }
+
         return null;
     }
 
@@ -62,6 +81,11 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 }
                 // Rewrite the method to proxy call method.
                 return $this->rewriteMethod($node);
+            case $node instanceof Node\Stmt\Trait_:
+                if (! $this->clouldUseSameTrait()) {
+                    return $node;
+                }
+                // no break
             case $node instanceof Class_ && ! $node->isAnonymous():
                 // Add use proxy traits.
                 $stmts = $node->stmts;
@@ -73,6 +97,14 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 return $node;
         }
         return null;
+    }
+
+    /**
+     * @deprecated v2.1 php version (^7.3)
+     */
+    private function clouldUseSameTrait(): bool
+    {
+        return version_compare(PHP_VERSION, '7.3.0', '>=');
     }
 
     /**
@@ -110,7 +142,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         }
         $staticCall = new StaticCall(new Name('self'), '__proxyCall', [
             // __CLASS__
-            new Node\Arg(new Node\Scalar\MagicConst\Class_()),
+            new Node\Arg($this->getMagicConst()),
             // __FUNCTION__
             new Node\Arg(new MagicConstFunction()),
             // self::getParamMap(OriginalClass::class, __FUNCTION, func_get_args())
@@ -146,6 +178,17 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             ];
         }
         return $node;
+    }
+
+    private function getMagicConst(): Node\Scalar\MagicConst
+    {
+        switch ($this->visitorMetadata->classLike) {
+            case Trait_::class:
+                return new Node\Scalar\MagicConst\Trait_();
+            case Class_::class:
+            default:
+                return new Node\Scalar\MagicConst\Class_();
+        }
     }
 
     private function shouldRewrite(ClassMethod $node)

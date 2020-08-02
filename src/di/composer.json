@@ -18,15 +18,12 @@
     },
     "require": {
         "php": ">=7.2",
-        "psr/container": "^1.0",
-        "nikic/php-parser": "^4.1",
         "doctrine/annotations": "^1.6",
-        "symfony/finder": "^5.0",
-        "php-di/phpdoc-reader": "^2.0.1",
         "doctrine/instantiator": "^1.0",
-        "hyperf/event": "~2.0.0",
-        "hyperf/framework": "~2.0.0",
-        "roave/better-reflection": "^4.0"
+        "nikic/php-parser": "^4.1",
+        "psr/container": "^1.0",
+        "roave/better-reflection": "^4.0",
+        "symfony/finder": "^5.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",

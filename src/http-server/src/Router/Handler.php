@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -23,9 +23,15 @@ class Handler
      */
     public $route;
 
-    public function __construct($callback, string $route)
+    /**
+     * @var array
+     */
+    public $options;
+
+    public function __construct($callback, string $route, array $options = [])
     {
         $this->callback = $callback;
         $this->route = $route;
+        $this->options = $options;
     }
 }

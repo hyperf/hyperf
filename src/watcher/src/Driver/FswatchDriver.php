@@ -5,12 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\Watcher\Driver;
 
+use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Str;
 use Hyperf\Watcher\Option;
 use Swoole\Coroutine\Channel;
@@ -48,11 +49,13 @@ class FswatchDriver implements DriverInterface
 
         while (true) {
             $ret = fread($pipes[1], 8192);
-            go(function () use ($ret, $channel) {
-                $files = array_filter(explode("\n", $ret));
-                foreach ($files as $file) {
-                    if (Str::endsWith($file, $this->option->getExt())) {
-                        $channel->push($file);
+            Coroutine::create(function () use ($ret, $channel) {
+                if (is_string($ret)) {
+                    $files = array_filter(explode("\n", $ret));
+                    foreach ($files as $file) {
+                        if (Str::endsWith($file, $this->option->getExt())) {
+                            $channel->push($file);
+                        }
                     }
                 }
             });
