@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#2001](https://github.com/hyperf/hyperf/pull/2001) Added `$signature` to init command easily.
 - [#2204](https://github.com/hyperf/hyperf/pull/2204) Added `$concurrent` for function `parallel`.
 
 ## Fixed
