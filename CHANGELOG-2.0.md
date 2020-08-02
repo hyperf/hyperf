@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#2001](https://github.com/hyperf/hyperf/pull/2001) Added `$signature` to init command easily.
 - [#2204](https://github.com/hyperf/hyperf/pull/2204) Added `$concurrent` for function `parallel`.
 
 ## Fixed
@@ -14,6 +15,7 @@
 ## Optimized
 
 - [#2193](https://github.com/hyperf/hyperf/pull/2193) Optimized the scan accuracy for `Hyperf\Watcher\Driver\FindDriver`.
+- [#2232](https://github.com/hyperf/hyperf/pull/2232) Optimized eager load when the type is `In` or `InRaw` for model-cache.
 
 # v2.0.4 - 2020-07-27
 
