@@ -162,7 +162,6 @@ class FooCommand extends HyperfCommand
 
 执行 `php bin/hyperf.php foo:hello Hyperf` 我们就能看到输出了 `Hello Hyperf` 了。
 
-
 ## 命令常用配置介绍
 
 以下代码皆只修改 `configure` 和 `handle` 中的内容。
@@ -356,6 +355,68 @@ array(2) {
   string(6) "Hyperf"
   [1]=>
   string(6) "Swoole"
+}
+
+```
+
+## 通过 `$signature` 配置命令行
+
+命令行除了上述配置方法外，还支持使用 `$signature` 配置。
+
+> 需要 command 版本 >= 2.0.5
+
+`$signature` 为字符串，分为三部分，分别是 `command` `argument` 和 `option`，如下：
+
+```
+command:name {argument?* : The argument description.}    {--option=* : The option description.}
+```
+
+- `?` 代表 `非必传`。
+- `*` 代表 `数组`。
+- `?*` 代表 `非必传的数组`。
+
+### 示例
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Command;
+
+use Hyperf\Command\Annotation\Command;
+use Hyperf\Command\Command as HyperfCommand;
+use Psr\Container\ContainerInterface;
+
+/**
+ * @Command
+ */
+class DebugCommand extends HyperfCommand
+{
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    protected $signature = 'test:test {id : user_id} {--name= : user_name}';
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+        parent::__construct();
+    }
+
+    public function configure()
+    {
+        parent::configure();
+        $this->setDescription('Hyperf Demo Command');
+    }
+
+    public function handle()
+    {
+        var_dump($this->input->getArguments());
+        var_dump($this->input->getOptions());
+    }
 }
 
 ```

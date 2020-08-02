@@ -71,7 +71,7 @@ abstract class Command extends SymfonyCommand
     /**
      * The name and signature of the command.
      *
-     * @var string|null
+     * @var null|string
      */
     protected $signature;
 
