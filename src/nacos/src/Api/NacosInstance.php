@@ -130,14 +130,18 @@ class NacosInstance extends AbstractNacos
         $nacosNodes = [];
         /** @var InstanceModel $node */
         foreach ($nodes as $node) {
-            $loadNodes[] = new Node($node->ip, $node->port, $node->weight);
+            if (is_array($node)) {
+                $node = (object)$node;
+            }
+            $loadNodes[] = new Node($node->ip, $node->port, (int)$node->weight);
             $key = sprintf('%s:%d', $node->ip, $node->port);
             $nacosNodes[$key] = $node;
         }
 
-        $loadBalancerManager = ApplicationContext::getContainer()->get(LoadBalancerManager::class);
+        $container = ApplicationContext::getContainer();
+        $loadBalancerManager = $container->get(LoadBalancerManager::class);
         /** @var \Hyperf\LoadBalancer\LoadBalancerInterface $loadBalancer */
-        $loadBalancer = $loadBalancerManager->get($tactics);
+        $loadBalancer = $container->get($loadBalancerManager->get($tactics));
         $loadBalancer->setNodes($loadNodes);
 
         /** @var Node $availableNode */
