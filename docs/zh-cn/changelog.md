@@ -1,8 +1,27 @@
 # 版本更新记录
 
+# v2.0.5 - 2020-08-03
+
+## 新增
+
+- [#2001](https://github.com/hyperf/hyperf/pull/2001) 新增参数 `$signature`，用于简化命令行的初始化工作。
+- [#2204](https://github.com/hyperf/hyperf/pull/2204) 为方法 `parallel` 增加 `$concurrent` 参数，用于快速设置并发量。
+
+## 修复
+
+- [#2210](https://github.com/hyperf/hyperf/pull/2210) 修复 `WebSocket` 握手成功后，不会立马触发 `OnOpen` 事件的 BUG。
+- [#2214](https://github.com/hyperf/hyperf/pull/2214) 修复 `WebSocket` 主动关闭连接时，不会触发 `OnClose` 事件的 BUG。
+- [#2218](https://github.com/hyperf/hyperf/pull/2218) 修复在 `协程 Server` 下，`Sender::disconnect` 报错的 BUG。
+- [#2227](https://github.com/hyperf/hyperf/pull/2227) 修复在 `协程 Server` 下，建立 `keepalive` 连接后，上下文数据无法在请求结束后销毁的 BUG。
+
+## 优化
+
+- [#2193](https://github.com/hyperf/hyperf/pull/2193) 优化 `Hyperf\Watcher\Driver\FindDriver`，使其扫描有变动的文件更加精确。
+- [#2232](https://github.com/hyperf/hyperf/pull/2232) 优化 `model-cache` 的预加载功能，使其支持 `In` 和 `InRaw`。
+
 # v2.0.4 - 2020-07-27
 
-## Added
+## 新增
 
 - [#2144](https://github.com/hyperf/hyperf/pull/2144) 数据库查询事件 `Hyperf\Database\Events\QueryExecuted` 添加 `$result` 字段。
 - [#2158](https://github.com/hyperf/hyperf/pull/2158) 路由 `Hyperf\HttpServer\Router\Handler` 中，添加 `$options` 字段。
@@ -12,12 +31,12 @@
 - [#2175](https://github.com/hyperf/hyperf/pull/2175) 模型生成器添加 `ModelRewriteSoftDeletesVisitor`，用于根据数据库字段 `deleted_at`， 添加或者移除 `SoftDeletes`。
 - [#2176](https://github.com/hyperf/hyperf/pull/2176) 模型生成器添加 `ModelRewriteKeyInfoVisitor`，用于根据数据库主键，重写模型字段 `$incrementing` `$primaryKey` 和 `$keyType`。
 
-## Fixed
+## 修复
 
 - [#2149](https://github.com/hyperf/hyperf/pull/2149) 修复自定义进程运行过程中无法从 Nacos 正常更新配置的 BUG。
 - [#2159](https://github.com/hyperf/hyperf/pull/2159) 修复使用 `gen:migration` 时，由于文件已经存在导致的 `FATAL` 异常。
 
-## Optimized
+## 优化
 
 - [#2043](https://github.com/hyperf/hyperf/pull/2043) 当 `SCAN` 目录都不存在时，抛出更加友好的异常。
 - [#2182](https://github.com/hyperf/hyperf/pull/2182) 当使用 `WebSocket` 和 `Http` 服务且 `Http` 接口被访问时，不会记录 `WebSocket` 关闭连接的日志。
