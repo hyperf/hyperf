@@ -1,6 +1,6 @@
 English | [中文](./README-CN.md)
 
-<p align="center"><a href="https://hyperf.io" target="_blank" rel="noopener noreferrer"><img width="70" src="https://www.hyperf.wiki/logo.png" alt="Hyperf Logo"></a></p>
+<p align="center"><a href="https://hyperf.io" target="_blank" rel="noopener noreferrer"><img width="70" src="https://cdn.jsdelivr.net/gh/hyperf/hyperf/docs/logo.png" alt="Hyperf Logo"></a></p>
 
 <p align="center">
   <a href="https://github.com/hyperf/hyperf/releases"><img src="https://poser.pugx.org/hyperf/hyperf/v/stable" alt="Stable Version"></a>

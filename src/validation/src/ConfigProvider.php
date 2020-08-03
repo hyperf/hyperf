@@ -30,9 +30,11 @@ class ConfigProvider
                 PresenceVerifierInterface::class => DatabasePresenceVerifierFactory::class,
                 FactoryInterface::class => ValidatorFactoryFactory::class,
             ],
-            'scan' => [
-                'paths' => [
-                    __DIR__,
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
                 ],
             ],
             'publish' => [

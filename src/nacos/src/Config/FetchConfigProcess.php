@@ -14,6 +14,7 @@ namespace Hyperf\Nacos\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Nacos\Client;
 use Hyperf\Process\AbstractProcess;
+use Hyperf\Process\ProcessCollector;
 use Swoole\Coroutine\Server as CoServer;
 use Swoole\Server;
 
@@ -48,6 +49,16 @@ class FetchConfigProcess extends AbstractProcess
                 for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
                     $this->server->sendMessage($pipeMessage, $workerId);
                 }
+
+                $processes = ProcessCollector::all();
+                if ($processes) {
+                    $string = serialize($pipeMessage);
+                    /** @var \Swoole\Process $process */
+                    foreach ($processes as $process) {
+                        $process->exportSocket()->send($string);
+                    }
+                }
+
                 $cache = $remoteConfig;
             }
             sleep((int) $config->get('nacos.config_reload_interval', 3));

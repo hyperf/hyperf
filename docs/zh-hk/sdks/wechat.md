@@ -70,11 +70,15 @@ use Symfony\Component\HttpFoundation\Request;
 $get = $this->request->getQueryParams();
 $post = $this->request->getParsedBody();
 $cookie = $this->request->getCookieParams();
-$files = $this->request->getUploadedFiles();
+$uploadFiles = $this->request->getUploadedFiles() ?? [];
 $server = $this->request->getServerParams();
 $xml = $this->request->getBody()->getContents();
-
-$app['request'] = new Request($get,$post,[],$cookie,$files,$server,$xml);
+$files = [];
+/** @var \Hyperf\HttpMessage\Upload\UploadedFile $v */
+foreach ($uploadFiles as $k => $v) {
+    $files[$k] = $v->toArray();
+}
+$app['request'] = new Request($get, $post, [], $cookie, $files, $server, $xml);
 
 // Do something...
 
@@ -90,7 +94,7 @@ $app['request'] = new Request($get,$post,[],$cookie,$files,$server,$xml);
 ```php
 $response = $app->server->serve();
 
-return $response->getBody()->getContents();
+return $response->getContent();
 ```
 
 ## 如何替換緩存

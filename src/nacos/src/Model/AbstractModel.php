@@ -41,7 +41,7 @@ abstract class AbstractModel implements Arrayable
         $params = array_filter(get_object_vars($this), function ($item) {
             return $item !== null;
         });
-        unset($params['required_field']);
+        unset($params['requiredFields']);
         $intersect = array_intersect(array_keys($params), $this->requiredFields);
         sort($this->requiredFields);
         sort($intersect);
