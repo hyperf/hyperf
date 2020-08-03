@@ -129,12 +129,12 @@ class NacosInstance extends AbstractNacos
     {
         $loadNodes = [];
         $nacosNodes = [];
-        /** @var InstanceModel $node */
+        /** @var array|InstanceModel $node */
         foreach ($nodes as $node) {
             if (is_array($node)) {
-                $node = (object)$node;
+                $node = (object) $node;
             }
-            $loadNodes[] = new Node($node->ip, $node->port, (int)$node->weight);
+            $loadNodes[] = new Node($node->ip, $node->port, (int) $node->weight);
             $key = sprintf('%s:%d', $node->ip, $node->port);
             $nacosNodes[$key] = $node;
         }
