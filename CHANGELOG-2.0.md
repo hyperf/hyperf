@@ -1,5 +1,9 @@
 # v2.0.6 - TBD
 
+## Fixed
+
+- [#2236](https://github.com/hyperf/hyperf/pull/2236) Fixed bug that select node failed when using `loadBalancer` for nacos.
+
 # v2.0.5 - 2020-08-03
 
 ## Added
