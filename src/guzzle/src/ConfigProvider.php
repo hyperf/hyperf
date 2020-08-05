@@ -21,6 +21,9 @@ class ConfigProvider
                     'paths' => [
                         __DIR__,
                     ],
+                    'class_map' => [
+                        \GuzzleHttp\Client::class => dirname(__DIR__) . '/guzzle/Client.php',
+                    ],
                 ],
             ],
         ];
