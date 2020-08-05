@@ -63,8 +63,11 @@ class Client implements ClientInterface
      */
     public function __construct(array $config = [])
     {
+        if (Coroutine::getCid() > 0) {
+            $config['handler'] = HandlerStack::create(new CoroutineHandler());
+        }
         if (!isset($config['handler'])) {
-            $config['handler'] = HandlerStack::create(Coroutine::getCid() > 0 ? new CoroutineHandler() : null);
+            $config['handler'] = HandlerStack::create();
         } elseif (!is_callable($config['handler'])) {
             throw new \InvalidArgumentException('handler must be a callable');
         }
