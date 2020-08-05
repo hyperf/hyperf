@@ -9,6 +9,7 @@ use Hyperf\Guzzle\CoroutineHandler;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
+use Swoole\Coroutine;
 
 /**
  * @method ResponseInterface get(string|UriInterface $uri, array $options = [])
@@ -63,7 +64,7 @@ class Client implements ClientInterface
     public function __construct(array $config = [])
     {
         if (!isset($config['handler'])) {
-            $config['handler'] = HandlerStack::create(new CoroutineHandler());
+            $config['handler'] = HandlerStack::create(Coroutine::getCid() > 0 ? new CoroutineHandler() : null);
         } elseif (!is_callable($config['handler'])) {
             throw new \InvalidArgumentException('handler must be a callable');
         }
