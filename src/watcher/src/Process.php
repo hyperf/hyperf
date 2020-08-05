@@ -94,6 +94,9 @@ class Process
         // Collect the annotations.
         $ref = $this->reflection->classReflector()->reflect($class);
         BetterReflectionManager::reflectClass($class, $ref);
+        foreach ($collectors as $collector) {
+            $collector::clear($class);
+        }
         $this->collect($class, $ref);
 
         $collectors = $this->config->getCollectors();
