@@ -11,7 +11,7 @@ composer require hyperf/guzzle
 ## 全局替换第三方库
 在不开启 `SWOOLE_HOOK_XXX` 的情况下依然可以将 Guzzle 客户端内即可转为协程化运行。
 
-在无法改变第三方库内部 `handler` 的情况下，可以使用 `class_map` 进行全局替换。
+在无法改变第三方库内部 `handler` 可以使用 `class_map` 进行全局替换。
 
 这种方式类似 SWOOLE_CURL_HOOK
 
@@ -36,7 +36,7 @@ return [
 ];
 ```
 
-注意：上生产环境前你需要进行全面的测试，在未开启协程的情况下将保持 Guzzle 的默认 `handler`，开启协程 `class_map` 的情况下会将所有的 `handler` 替换为 `Hyperf\Guzzle\CoroutineHandler`。
+注意：部署到生产环境前你需要进行全面的测试，在未开启协程的情况下将保持 Guzzle 的默认 `handler`，开启协程 `class_map` 的情况下会将所有 `HandlerStack` 的 `handler` 替换为 `Hyperf\Guzzle\CoroutineHandler`。
 
 
 

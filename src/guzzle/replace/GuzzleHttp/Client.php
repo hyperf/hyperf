@@ -63,13 +63,12 @@ class Client implements ClientInterface
      */
     public function __construct(array $config = [])
     {
-        if (Coroutine::getCid() > 0) {
-            $config['handler'] = HandlerStack::create(new CoroutineHandler());
-        }
         if (!isset($config['handler'])) {
-            $config['handler'] = HandlerStack::create();
+            $config['handler'] = HandlerStack::create(new CoroutineHandler());
         } elseif (!is_callable($config['handler'])) {
             throw new \InvalidArgumentException('handler must be a callable');
+        } elseif (Coroutine::getCid() > 0) {
+            $config['handler']->setHandler(new CoroutineHandler());
         }
 
         // Convert the base_uri to a UriInterface
