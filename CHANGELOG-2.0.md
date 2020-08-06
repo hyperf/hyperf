@@ -1,5 +1,9 @@
 # v2.0.6 - TBD
 
+## Added
+
+- [#2243](https://github.com/hyperf/hyperf/pull/2243) Added `GuzzleHttp\Client` which you can use it coroutinefully by class map.
+
 ## Fixed
 
 - [#2236](https://github.com/hyperf/hyperf/pull/2236) Fixed bug that select node failed when using `loadBalancer` for nacos.

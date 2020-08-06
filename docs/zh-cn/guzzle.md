@@ -123,7 +123,7 @@ $client = make(Client::class, [
 ]);
 ```
 
-## 使用 `ClassMap` 替换 `Guzzle\Client`
+## 使用 `ClassMap` 替换 `GuzzleHttp\Client`
 
 如果第三方组件并没有提供可以替换 `Handler` 的接口，我们也可以通过 `ClassMap` 功能，直接替换 `Client` 来达到将客户端协程化的目的。
 
