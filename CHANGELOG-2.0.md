@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#2236](https://github.com/hyperf/hyperf/pull/2236) Fixed bug that select node failed when using `loadBalancer` for nacos.
+- [#2242](https://github.com/hyperf/hyperf/pull/2242) Fixed bug that collect more than once time when using watcher.
 
 # v2.0.5 - 2020-08-03
 

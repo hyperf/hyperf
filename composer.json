@@ -66,7 +66,7 @@
         "overtrue/flysystem-qiniu": "^1.0",
         "php-amqplib/php-amqplib": "^2.7",
         "php-di/php-di": "^6.0",
-        "phpstan/phpstan": "^0.12",
+        "phpstan/phpstan": "^0.12.36",
         "phpunit/phpunit": "^7.0.0",
         "predis/predis": "^1.1",
         "reactivex/rxphp": "^2.0",
