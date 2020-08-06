@@ -131,6 +131,43 @@ $client = make(Client::class, [
 
 代码示例如下：
 
+class_map/GuzzleHttp/Client.php
+
+```php
+<?php
+namespace GuzzleHttp;
+
+use GuzzleHttp\Psr7;
+use Hyperf\Guzzle\CoroutineHandler;
+use Hyperf\Utils\Coroutine;
+
+class Client implements ClientInterface
+{
+    // 代码省略其他不变的代码
+
+    public function __construct(array $config = [])
+    {
+        $inCoroutine = Coroutine::inCoroutine();
+        if (!isset($config['handler'])) {
+            // 对应的 Handler 可以按需选择 CoroutineHandler 或 PoolHandler
+            $config['handler'] = HandlerStack::create($inCoroutine ? new CoroutineHandler() : null);
+        } elseif ($inCoroutine && $config['handler'] instanceof HandlerStack) {
+            $config['handler']->setHandler(new CoroutineHandler());
+        } elseif (!is_callable($config['handler'])) {
+            throw new \InvalidArgumentException('handler must be a callable');
+        }
+
+        // Convert the base_uri to a UriInterface
+        if (isset($config['base_uri'])) {
+            $config['base_uri'] = Psr7\uri_for($config['base_uri']);
+        }
+
+        $this->configureDefaults($config);
+    }
+}
+
+```
+
 config/autoload/annotations.php
 
 ```php
@@ -144,10 +181,8 @@ return [
     'scan' => [
         // ...
         'class_map' => [
-            Client::class => BASE_PATH . '/vendor/hyperf/guzzle/class_map/GuzzleHttp/Client.php',
+            Client::class => BASE_PATH . '/class_map/GuzzleHttp/Client.php',
         ],
     ],
 ];
 ```
-
-注意：部署到生产环境前你需要进行全面的测试，在未开启协程的情况下将保持 `Guzzle` 的默认 `handler`，开启协程 `class_map` 的情况下会将 `HandlerStack` 的 `handler` 替换为 `Hyperf\Guzzle\CoroutineHandler`。
