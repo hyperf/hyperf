@@ -8,38 +8,6 @@
 composer require hyperf/guzzle
 ```
 
-## 全局替换第三方库
-在不开启 `SWOOLE_HOOK_XXX` 的情况下依然可以将 Guzzle 客户端内即可转为协程化运行。
-
-在无法改变第三方库内部 `handler` 可以使用 `class_map` 进行全局替换。
-
-这种方式类似 SWOOLE_CURL_HOOK
-
-代码示例如下：
-
-config/autoload/annotations.php
-
-```php
-<?php
-
-declare(strict_types=1);
-
-use GuzzleHttp\Client;
-
-return [
-    'scan' => [
-        // ...
-        'class_map' => [
-            Client::class => BASE_PATH . '/vendor/hyperf/guzzle/replace/GuzzleHttp/Client.php',
-        ],
-    ],
-];
-```
-
-注意：部署到生产环境前你需要进行全面的测试，在未开启协程的情况下将保持 Guzzle 的默认 `handler`，开启协程 `class_map` 的情况下会将所有 `HandlerStack` 的 `handler` 替换为 `Hyperf\Guzzle\CoroutineHandler`。
-
-
-
 ## 使用
 
 只需要该组件内的 `Hyperf\Guzzle\CoroutineHandler` 作为处理器设置到 Guzzle 客户端内即可转为协程化运行，为了方便创建协程的 Guzzle 对象，我们提供了一个工厂类 `Hyperf\Guzzle\ClientFactory` 来便捷的创建客户端，代码示例如下：
@@ -154,3 +122,32 @@ $client = make(Client::class, [
     ],
 ]);
 ```
+
+## 使用 `ClassMap` 替换 `Guzzle\Client`
+
+如果第三方组件并没有提供可以替换 `Handler` 的接口，我们也可以通过 `ClassMap` 功能，直接替换 `Client` 来达到将客户端协程化的目的。
+
+> 当然，也可以使用 SWOOLE_HOOK 达到相同的目的。
+
+代码示例如下：
+
+config/autoload/annotations.php
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use GuzzleHttp\Client;
+
+return [
+    'scan' => [
+        // ...
+        'class_map' => [
+            Client::class => BASE_PATH . '/vendor/hyperf/guzzle/class_map/GuzzleHttp/Client.php',
+        ],
+    ],
+];
+```
+
+注意：部署到生产环境前你需要进行全面的测试，在未开启协程的情况下将保持 `Guzzle` 的默认 `handler`，开启协程 `class_map` 的情况下会将 `HandlerStack` 的 `handler` 替换为 `Hyperf\Guzzle\CoroutineHandler`。
