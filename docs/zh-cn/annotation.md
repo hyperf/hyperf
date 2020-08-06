@@ -168,9 +168,9 @@ return [
 
 首先，我们实现一个用于复制上下文的 `Coroutine` 类。其中 `create()` 方法，可以将父类的上下文复制到子类当中。
 
-为了避免命名冲突，约定使用 `replace` 做为文件夹名，后跟要替换的命名空间的文件夹及文件。
+为了避免命名冲突，约定使用 `class_map` 做为文件夹名，后跟要替换的命名空间的文件夹及文件。
 
-如： `replace/Hyperf/Utils/Coroutine.php`
+如： `class_map/Hyperf/Utils/Coroutine.php`
 
 ```php
 <?php
@@ -245,7 +245,7 @@ class Coroutine
 
 然后，我们实现一个跟 `Hyperf\Utils\Coroutine` 一模一样的对象。其中 `create()` 方法替换成我们上述实现的方法。
 
-`replace/Hyperf/Utils/Coroutine.php`
+`class_map/Hyperf/Utils/Coroutine.php`
 
 ```php
 <?php
@@ -344,7 +344,7 @@ return [
         ],
         'class_map' => [
             // 需要映射的类名 => 类所在的文件地址
-            Coroutine::class => BASE_PATH . '/replace/Hyperf/Utils/Coroutine.php',
+            Coroutine::class => BASE_PATH . '/class_map/Hyperf/Utils/Coroutine.php',
         ],
     ],
 ];
