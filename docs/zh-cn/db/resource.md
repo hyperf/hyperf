@@ -26,7 +26,7 @@ php bin/hyperf.php gen:resource UserCollection
 
 ### Grpc 资源
 
-支持转化Grpc资源. 
+支持转化 Grpc 资源. 
 
 ```bash
 php bin/hyperf.php gen:resource User --grpc
@@ -930,4 +930,4 @@ class IndexController extends AbstractController
 
 ## 注意
 
-**因 hyperf 原因, 目前无法自动调用 `toResponse()` 方法. 该问题会导致无法添加任何包裹信息到响应JSON中.**
+**因 hyperf 原因, 目前无法自动调用 `toResponse()` 方法. 该问题会导致无法添加任何包裹信息到响应 JSON 中.**
