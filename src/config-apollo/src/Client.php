@@ -61,7 +61,7 @@ class Client implements ClientInterface
             $result = $this->blockingPull($namespaces);
         }
         foreach ($result as $namespace => $configs) {
-            if (isset($configs['releaseKey'], $configs['configurations'])) {
+            if (isset($configs['releaseKey'], $configs['configurations']) && !empty($configs['configurations'])) {
                 if (isset($callbacks[$namespace])) {
                     // Call the method level callbacks.
                     call($callbacks[$namespace], [$configs, $namespace]);
