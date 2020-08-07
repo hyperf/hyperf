@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Resource\Concerns;
 
-use Exception;
+use Hyperf\Resource\Exception\ResourceException;
 use Hyperf\Utils\Traits\ForwardsCalls;
 
 trait DelegatesToResource
@@ -91,7 +91,7 @@ trait DelegatesToResource
      */
     public function resolveRouteBinding($value)
     {
-        throw new Exception('Resources may not be implicitly resolved from route bindings.');
+        throw new ResourceException('Resources may not be implicitly resolved from route bindings.');
     }
 
     /**

@@ -6,7 +6,7 @@
 
 ## 生成资源
 
-你可以使用 `gen:resource` Artisan 命令来生成一个资源类。默认情况下生成的资源都会被放置在应用程序的 `app/Resource` 文件夹下。资源继承自 `Hyperf\Resource\Json\JsonResource` 类：
+你可以使用 `gen:resource` 命令来生成一个资源类。默认情况下生成的资源都会被放置在应用程序的 `app/Resource` 文件夹下。资源继承自 `Hyperf\Resource\Json\JsonResource` 类：
 
 ```bash
 php bin/hyperf.php gen:resource User
@@ -927,7 +927,3 @@ class IndexController extends AbstractController
 ```
 
 如你想设置响应头信息, 状态码等, 通过调用 `toResponse()` 方法获取到响应对象进行设置.
-
-## 注意
-
-**因 hyperf 原因, 目前无法自动调用 `toResponse()` 方法. 该问题会导致无法添加任何包裹信息到响应 JSON 中.**

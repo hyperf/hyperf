@@ -12,7 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Resource\Json;
 
 use ArrayAccess;
-use Hyperf\HttpMessage\Base\Response as HttpResponse;
+use Hyperf\Database\Model\Model;
+use Hyperf\HttpMessage\Server\ResponseProxyTrait;
 use Hyperf\Resource\Concerns\ConditionallyLoadsAttributes;
 use Hyperf\Resource\Concerns\DelegatesToResource;
 use Hyperf\Resource\JsonEncodingException;
@@ -20,11 +21,13 @@ use Hyperf\Resource\Response\Response;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use JsonSerializable;
+use Psr\Http\Message\ResponseInterface;
 
-class JsonResource extends HttpResponse implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
+class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable, ResponseInterface
 {
     use ConditionallyLoadsAttributes;
     use DelegatesToResource;
+    use ResponseProxyTrait;
 
     /**
      * The resource instance.
@@ -55,13 +58,6 @@ class JsonResource extends HttpResponse implements ArrayAccess, JsonSerializable
      * @var null|string
      */
     public $wrap = 'data';
-
-    /**
-     * Indicates if the resource's collection keys should be preserved.
-     *
-     * @var bool
-     */
-    public $preserveKeys = false;
 
     /**
      * Create a new resource instance.
@@ -98,7 +94,7 @@ class JsonResource extends HttpResponse implements ArrayAccess, JsonSerializable
     public static function collection($resource)
     {
         return tap(new AnonymousResourceCollection($resource, static::class), function ($collection) {
-            $collection->preserveKeys = (new static([]))->preserveKeys === true;
+            $collection->preserveKeys = (new static([]))->preserveKeys;
         });
     }
 
@@ -190,8 +186,16 @@ class JsonResource extends HttpResponse implements ArrayAccess, JsonSerializable
         return $this->resolve();
     }
 
-    public function toResponse()
+    public function toResponse(): ResponseInterface
     {
         return (new Response($this))->toResponse();
+    }
+
+    public function getResponse(): ResponseInterface
+    {
+        if ($this->response instanceof ResponseInterface) {
+            return $this->response;
+        }
+        return $this->response = $this->toResponse();
     }
 }

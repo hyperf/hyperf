@@ -733,5 +733,9 @@ class ResourceTest extends TestCase
         $this->http(function () use ($data) {
             return (new JsonResource($data))->toResponse();
         })->assertJson($expectedJson);
+
+        $this->http(function () use ($data) {
+            return new JsonResource($data);
+        })->assertJson($expectedJson);
     }
 }

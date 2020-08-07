@@ -16,6 +16,7 @@ use Hyperf\Resource\Concerns\CollectsResources;
 use Hyperf\Resource\Response\PaginatedResponse;
 use Hyperf\Utils\Collection;
 use IteratorAggregate;
+use Psr\Http\Message\ResponseInterface;
 
 class ResourceCollection extends JsonResource implements Countable, IteratorAggregate
 {
@@ -67,7 +68,7 @@ class ResourceCollection extends JsonResource implements Countable, IteratorAggr
         return $collection->all();
     }
 
-    public function toResponse()
+    public function toResponse(): ResponseInterface
     {
         if ($this->isPaginatorResource($this->resource)) {
             return (new PaginatedResponse($this))->toResponse();

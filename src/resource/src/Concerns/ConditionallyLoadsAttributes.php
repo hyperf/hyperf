@@ -26,6 +26,13 @@ use Hyperf\Utils\Arr;
 trait ConditionallyLoadsAttributes
 {
     /**
+     * Indicates if the resource's collection keys should be preserved.
+     *
+     * @var bool
+     */
+    public $preserveKeys = false;
+
+    /**
      * Filter the given data, removing any optional values.
      */
     protected function filter(array $data): array
@@ -92,7 +99,7 @@ trait ConditionallyLoadsAttributes
             }
         }
 
-        if ($this->preserveKeys === true) {
+        if ($this->preserveKeys) {
             return $data;
         }
 
