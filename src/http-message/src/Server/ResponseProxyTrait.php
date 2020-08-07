@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Server;
 
+use Hyperf\HttpMessage\Cookie\Cookie;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
@@ -25,6 +26,14 @@ trait ResponseProxyTrait
     public function setResponse(ResponseInterface $response)
     {
         $this->response = $response;
+    }
+
+    public function getResponse(): ResponseInterface
+    {
+        if (! $this->response instanceof ResponseInterface) {
+            throw new RuntimeException('response is invalid.');
+        }
+        return $this->response;
     }
 
     public function getProtocolVersion()
@@ -103,11 +112,46 @@ trait ResponseProxyTrait
         return $this->getResponse()->getReasonPhrase();
     }
 
-    public function getResponse(): ResponseInterface
+    /**
+     * Returns an instance with specified cookies.
+     */
+    public function withCookie(Cookie $cookie): self
     {
-        if (! $this->response instanceof ResponseInterface) {
-            throw new RuntimeException('response is invalid.');
-        }
-        return $this->response;
+        $this->setResponse($this->getResponse()->withCookie($cookie));
+        return $this;
+    }
+
+    /**
+     * Retrieves all cookies.
+     */
+    public function getCookies(): array
+    {
+        return $this->getResponse()->getCookies();
+    }
+
+    /**
+     * Returns an instance with specified trailer.
+     * @param string $value
+     */
+    public function withTrailer(string $key, $value): self
+    {
+        $this->setResponse($this->getResponse()->withTrailer($key, $value));
+        return $this;
+    }
+
+    /**
+     * Retrieves a specified trailer value, returns null if the value does not exists.
+     */
+    public function getTrailer(string $key)
+    {
+        return $this->getResponse()->getTrailer($key);
+    }
+
+    /**
+     * Retrieves all trailers values.
+     */
+    public function getTrailers(): array
+    {
+        return $this->getResponse()->getTrailers();
     }
 }
