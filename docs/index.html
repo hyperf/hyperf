@@ -18,7 +18,7 @@
 
 <body>
   <div id="app"></div>
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/sy-records/staticfile/js/docsify/docsify.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-php.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify-edit-on-github/index.js"></script>
   <script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
@@ -28,7 +28,7 @@
     window.$docsify = {
       name: 'Hyperf',
       repo: 'hyperf/hyperf',
-      homepage: './zh-cn/README.md',
+      homepage: 'zh-cn/README.md',
       loadSidebar: 'summary.md',
       loadNavbar: true,
       fallbackLanguages: ['zh-cn', 'en'],
@@ -60,7 +60,7 @@
         '/summary.md': './zh-cn/summary.md'
       },
       plugins: [
-        EditOnGithubPlugin.create('https://github.com/hyperf/hyperf/tree/master/docs/')
+        EditOnGithubPlugin.create('https://github.com/hyperf/hyperf/blob/master/docs/')
       ],
       plantuml: {
         skin: 'classic',
@@ -78,7 +78,7 @@
     }
   </script>
   <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/sy-records/staticfile/js/docsify/search.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify-plantuml/dist/docsify-plantuml.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
   <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1278274447'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "v1.cnzz.com/z_stat.php%3Fid%3D1278274447' type='text/javascript'%3E%3C/script%3E"));</script>

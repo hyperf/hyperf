@@ -217,11 +217,10 @@ $res = Db::table('user')->select('gender', Db::raw('COUNT(0) AS `count`'))->grou
 
 ### 强制索引
 
-数据库出现的慢查问题, 90% 以上是索引不对, 其中有部分查询是因为数据库服务器的 `查询优化器` 没有使用最佳索引, 这时候就需要使用强制强制索引:
+数据库出现的慢查问题, 90% 以上是索引不对, 其中有部分查询是因为数据库服务器的 `查询优化器` 没有使用最佳索引, 这时候就需要使用强制索引:
 
 ```php
-Db::table(Db::raw(sprintf("{$table} FORCE INDEX({$index})");
-
+Db::table(Db::raw("{$table} FORCE INDEX({$index})"));
 ```
 
 ### 原生方法

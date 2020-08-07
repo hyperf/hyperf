@@ -8,6 +8,14 @@
 composer require hyperf/signal
 ```
 
+## 发布配置
+
+您可以通过下面的命令来发布默认的配置文件到您的项目中：
+
+```bash
+php bin/hyperf.php vendor:publish hyperf/signal
+```
+
 ## 添加处理器
 
 以下我们监听 `Worker` 进程的 `SIGTERM` 信号，当收到信号后，打印出信号值。
@@ -42,7 +50,7 @@ class TermSignalHandler implements SignalHandlerInterface
 
 ```
 
-因为 Worker 进程 SIGTERM 信号被捕获后，无法正常退出，所以用户可以直接 Ctrl+C 退出，或者修改 signal.php 配置
+因为 Worker 进程接收的 SIGTERM 信号被捕获后，无法正常退出，所以用户可以直接 `Ctrl + C` 退出，或者修改 `config/autoload/signal.php` 配置，如下：
 
 ```php
 <?php
@@ -55,7 +63,6 @@ return [
     ],
     'timeout' => 5.0,
 ];
-
 ```
 
-`WorkerStopHandler` 触发后，会在 `max_wait_time` 时间后，关掉当前进程。
+`WorkerStopHandler` 触发后，会在所设置的 [max_wait_time](https://wiki.swoole.com/#/server/setting?id=max_wait_time) 配置时间后，关闭掉当前进程。

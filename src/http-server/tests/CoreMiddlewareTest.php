@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -106,6 +106,12 @@ class CoreMiddlewareTest extends TestCase
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertSame('This is a string', $response->getBody()->getContents());
         $this->assertSame('text/plain', $response->getHeaderLine('content-type'));
+
+        // Json encode failed
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Type is not supported');
+        $response = $reflectionMethod->invoke($middleware, ['id' => fopen(BASE_PATH . '/.gitignore', 'r+')], $request);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
     }
 
     public function testDispatch()
