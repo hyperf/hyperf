@@ -117,7 +117,12 @@ trait ResponseProxyTrait
      */
     public function withCookie(Cookie $cookie): self
     {
-        $this->setResponse($this->getResponse()->withCookie($cookie));
+        $response = $this->getResponse();
+        if (! method_exists($response, 'withCookie')) {
+            throw new RuntimeException('Method withCookie is invalid.');
+        }
+
+        $this->setResponse($response->withCookie($cookie));
         return $this;
     }
 
@@ -126,7 +131,11 @@ trait ResponseProxyTrait
      */
     public function getCookies(): array
     {
-        return $this->getResponse()->getCookies();
+        $response = $this->getResponse();
+        if (! method_exists($response, 'getCookies')) {
+            throw new RuntimeException('Method getCookies is invalid.');
+        }
+        return $response->getCookies();
     }
 
     /**
@@ -135,7 +144,11 @@ trait ResponseProxyTrait
      */
     public function withTrailer(string $key, $value): self
     {
-        $this->setResponse($this->getResponse()->withTrailer($key, $value));
+        $response = $this->getResponse();
+        if (! method_exists($response, 'withTrailer')) {
+            throw new RuntimeException('Method withTrailer is invalid.');
+        }
+        $this->setResponse($response->withTrailer($key, $value));
         return $this;
     }
 
@@ -144,7 +157,11 @@ trait ResponseProxyTrait
      */
     public function getTrailer(string $key)
     {
-        return $this->getResponse()->getTrailer($key);
+        $response = $this->getResponse();
+        if (! method_exists($response, 'getTrailer')) {
+            throw new RuntimeException('Method getTrailer is invalid.');
+        }
+        return $response->getTrailer($key);
     }
 
     /**
@@ -152,6 +169,10 @@ trait ResponseProxyTrait
      */
     public function getTrailers(): array
     {
-        return $this->getResponse()->getTrailers();
+        $response = $this->getResponse();
+        if (! method_exists($response, 'getTrailers')) {
+            throw new RuntimeException('Method getTrailers is invalid.');
+        }
+        return $response->getTrailers();
     }
 }
