@@ -57,6 +57,13 @@ class JsonResource extends HttpResponse implements ArrayAccess, JsonSerializable
     public $wrap = 'data';
 
     /**
+     * Indicates if the resource's collection keys should be preserved.
+     *
+     * @var bool
+     */
+    public $preserveKeys = false;
+
+    /**
      * Create a new resource instance.
      *
      * @param mixed $resource
@@ -91,9 +98,7 @@ class JsonResource extends HttpResponse implements ArrayAccess, JsonSerializable
     public static function collection($resource)
     {
         return tap(new AnonymousResourceCollection($resource, static::class), function ($collection) {
-            if (property_exists(static::class, 'preserveKeys')) {
-                $collection->preserveKeys = (new static([]))->preserveKeys === true;
-            }
+            $collection->preserveKeys = (new static([]))->preserveKeys === true;
         });
     }
 
