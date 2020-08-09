@@ -93,6 +93,9 @@ use Hyperf\Rpc\Contract\PackerInterface;
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\Rpc\Contract\TransporterInterface;
 
+/**
+ * @method int add(int $a, int $b);
+ */
 class CalculatorService extends AbstractClient
 {
     // Define `CalculatorService` as the default value of $service.
@@ -103,9 +106,9 @@ class CalculatorService extends AbstractClient
         ?DataFormatterInterface $dataFormatter = null,
         ?PathGeneratorInterface $pathGenerator = null
     ) {
-        // Specific the transporter here, you could also retrieve the transporter from ProtocolManager.
+        // Specific the transporter here, you could also retrieve the transporter from ProtocolManager or passing by constructor.
         $transporter = new StreamSocketTransporter('127.0.0.1', 9503);
-        // Specific the packer here, you could also retrieve the packer from ProtocolManager.
+        // Specific the packer here, you could also retrieve the packer from ProtocolManager or passing by constructor.
         $packer = new JsonEofPacker();
         parent::__construct($service, $transporter, $packer, $dataFormatter, $pathGenerator);
     }
