@@ -1,14 +1,17 @@
 {
     "name": "hyperf/jet",
+    "description": "Jet is a unification model RPC Client, built-in JSON RPC protocol, available to running in ALL PHP environments, including PHP-FPM and Swoole/Hyperf environments.",
     "type": "library",
     "license": "MIT",
     "keywords": [
         "php",
         "hyperf",
+        "swoole",
+        "php-fpm",
+        "rpc",
         "rpc-client",
         "jsonrpc"
     ],
-    "description": "",
     "autoload": {
         "psr-4": {
             "Hyperf\\Jet\\": "src/"
