@@ -58,17 +58,19 @@ class ValidationMiddleware implements MiddlewareInterface
         if ($this->shouldHandle($dispatched)) {
             try {
                 [$requestHandler, $method] = $this->prepareHandler($dispatched->handler->callback);
-                $reflectionMethod = ReflectionManager::reflectMethod($requestHandler, $method);
-                $parameters = $reflectionMethod->getParameters();
-                foreach ($parameters as $parameter) {
-                    if ($parameter->getType() === null) {
-                        continue;
-                    }
-                    $classname = $parameter->getType()->getName();
-                    if ($this->isImplementedValidatesWhenResolved($classname)) {
-                        /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved $formRequest */
-                        $formRequest = $this->container->get($classname);
-                        $formRequest->validateResolved();
+                if ($method) {
+                    $reflectionMethod = ReflectionManager::reflectMethod($requestHandler, $method);
+                    $parameters = $reflectionMethod->getParameters();
+                    foreach ($parameters as $parameter) {
+                        if ($parameter->getType() === null) {
+                            continue;
+                        }
+                        $classname = $parameter->getType()->getName();
+                        if ($this->isImplementedValidatesWhenResolved($classname)) {
+                            /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved $formRequest */
+                            $formRequest = $this->container->get($classname);
+                            $formRequest->validateResolved();
+                        }
                     }
                 }
             } catch (UnauthorizedException $exception) {
@@ -114,7 +116,8 @@ class ValidationMiddleware implements MiddlewareInterface
             if (strpos($handler, '@') !== false) {
                 return explode('@', $handler);
             }
-            return explode('::', $handler);
+            $array = explode('::', $handler);
+            return [$array[0], $array[1] ?? null];
         }
         if (is_array($handler) && isset($handler[0], $handler[1])) {
             return $handler;

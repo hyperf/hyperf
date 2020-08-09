@@ -29,6 +29,19 @@ class SocketIORouter extends MetadataCollector
         static::set('backward.' . $className, $nsp);
     }
 
+    public static function clear(string $key = null): void
+    {
+        if ($key !== null) {
+            parent::clear('backward.' . $key);
+            foreach (static::$container['forward'] ?? [] as $nsp => $value) {
+                if ($value == $key) {
+                    unset(static::$container['forward'][$nsp]);
+                }
+            }
+        }
+        parent::clear($key);
+    }
+
     public static function getNamespace(string $className)
     {
         return static::get('backward.' . $className, '/');

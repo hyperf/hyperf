@@ -16,6 +16,8 @@ composer require hyperf/guzzle
 composer require overtrue/flysystem-qiniu
 # 使用內存適配器時執行
 composer require league/flysystem-memory
+# 使用騰訊雲 COS 適配器時執行
+composer require overtrue/flysystem-cos
 ```
 
 安裝完成後，執行
@@ -128,7 +130,7 @@ return [
 
 ## 注意事項
 
-1. S3 存儲請確認安裝 `hyperf/guzzle` 組件以提供協程化支持。阿里雲、七牛雲存儲請[開啟 Curl Hook](/zh-cn/coroutine?id=swoole-runtime-hook-level)來使用協程。因 Curl Hook 的參數支持性問題，請使用 Swoole 4.4.13 以上版本。
+1. S3 存儲請確認安裝 `hyperf/guzzle` 組件以提供協程化支持。阿里雲、七牛雲、騰訊云云存儲請[開啟 Curl Hook](/zh-cn/coroutine?id=swoole-runtime-hook-level)來使用協程。因 Curl Hook 的參數支持性問題，請使用 Swoole 4.4.13 以上版本。
 2. minIO, ceph radosgw 等私有對象存儲方案均支持 S3 協議，可以使用 S3 適配器。
 3. 使用 Local 驅動時，根目錄是配置好的地址，而不是操作系統的根目錄。例如，Local 驅動 `root` 設置為 `/var/www`, 則本地磁盤上的 `/var/www/public/file.txt` 通過 flysystem API 訪問時應使用 `/public/file.txt` 或 `public/file.txt` 。
 4. 以阿里雲 OSS 為例，1 核 1 進程讀操作性能對比：
@@ -240,6 +242,21 @@ return [
             'secretKey' => env('QINIU_SECRET_KEY'),
             'bucket' => env('QINIU_BUCKET'),
             'domain' => env('QINIU_DOMAIN'),
+        ],
+        'cos' => [
+            'driver' => \Hyperf\Filesystem\Adapter\CosAdapterFactory::class,
+            'region' => env('COS_REGION'),
+            'credentials' => [
+                'appId' => env('COS_APPID'),
+                'secretId' => env('COS_SECRET_ID'),
+                'secretKey' => env('COS_SECRET_KEY'),
+            ],
+            'bucket' => env('COS_BUCKET'),
+            'read_from_cdn' => false,
+            // 'timeout'         => 60,
+            // 'connect_timeout' => 60,
+            // 'cdn'             => '',
+            // 'scheme'          => 'https',
         ],
     ],
 ];

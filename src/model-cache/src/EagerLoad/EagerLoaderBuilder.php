@@ -45,13 +45,29 @@ class EagerLoaderBuilder extends Builder
         $wheres = $relation->getQuery()->getQuery()->wheres;
         $model = $relation->getModel();
         $column = sprintf('%s.%s', $model->getTable(), $model->getKeyName());
-        if (count($wheres) === 1
-            && $model instanceof CacheableInterface
-            && Arr::get($wheres[0], 'type') === 'InRaw'
-            && Arr::get($wheres[0], 'column') === $column) {
+
+        if ($model instanceof CacheableInterface && $this->couldUseEagerLoad($wheres, $column)) {
             return $model::findManyFromCache($wheres[0]['values'] ?? []);
         }
 
         return $relation->getEager();
+    }
+
+    protected function couldUseEagerLoad(array $wheres, string $column): bool
+    {
+        return count($wheres) === 1
+            && in_array(Arr::get($wheres[0], 'type'), ['In', 'InRaw'], true)
+            && Arr::get($wheres[0], 'column') === $column
+            && $this->isValidValues($wheres[0]['values'] ?? []);
+    }
+
+    protected function isValidValues(array $values): bool
+    {
+        foreach ($values as $value) {
+            if (! is_int($value) && ! is_string($value)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

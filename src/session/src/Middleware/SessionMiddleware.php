@@ -54,16 +54,14 @@ class SessionMiddleware implements MiddlewareInterface
 
         $session = $this->sessionManager->start($request);
 
-        $response = $handler->handle($request);
+        try {
+            $response = $handler->handle($request);
+        } finally {
+            $this->storeCurrentUrl($request, $session);
+            $this->sessionManager->end($session);
+        }
 
-        $this->storeCurrentUrl($request, $session);
-
-        $response = $this->addCookieToResponse($request, $response, $session);
-
-        // @TODO Use defer
-        $this->sessionManager->end($session);
-
-        return $response;
+        return $this->addCookieToResponse($request, $response, $session);
     }
 
     private function isSessionAvailable(): bool
@@ -112,9 +110,11 @@ class SessionMiddleware implements MiddlewareInterface
     ): ResponseInterface {
         $uri = $request->getUri();
         $path = '/';
-        $domain = $uri->getHost();
         $secure = strtolower($uri->getScheme()) === 'https';
         $httpOnly = true;
+
+        $domain = $this->config->get('session.options.domain') ?? $uri->getHost();
+
         $cookie = new Cookie($session->getName(), $session->getId(), $this->getCookieExpirationDate(), $path, $domain, $secure, $httpOnly);
         if (! method_exists($response, 'withCookie')) {
             return $response->withHeader('Set-Cookie', (string) $cookie);

@@ -3,6 +3,13 @@
   * [About Hyperf](en/README.md)
   * [Communication](en/communication.md)
   * [Donate](en/donate.md)
+  * [Contribute](en/contribute.md)
+  
+* Versions
+
+  * [Release Planning](en/release-planning.md)
+  * [Versions](en/versions.md)
+  * [Changelogs](en/changelog.md)
 
 * Quick Start
 
@@ -34,6 +41,11 @@
   * [Paginator](en/paginator.md)
   * [Command](en/command.md)
   * [Testing](en/testing.md)
+  * [View](en/view.md)
+  * [Translation](en/translation.md)
+  * [Validaton](en/validation.md)
+  * [Session](en/session.md)
+  * [File System](en/filesystem.md)
   
 * Database
 
@@ -45,6 +57,8 @@
   * [Model Event](en/db/event.md)
   * [Model Cache](en/db/model-cache.md)
   * [Migration](en/db/migration.md)
+  * [Mutator](en/db/mutators.md)
+  * [Simple DB](en/db/db.md)
   
 * Microservice
 
@@ -56,6 +70,16 @@
   * [Rate Limit](en/rate-limit.md)
   * [Configuration Center](en/config-center.md)
   * [Tracing](en/tracer.md)
+  * [Metric](en/metric.md)
+  * [Retry](en/retry.md)
+  * [Nacos](en/nacos.md)
+  
+* Message Queue
+
+  * [Redis Queue](en/async-queue.md)
+  * [AMQP](en/amqp.md)
+  * [Nats](en/nats.md)
+  * [NSQ](en/nsq.md)
   
 * Other Components
 
@@ -65,10 +89,9 @@
   * [Elasticsearch Client](en/elasticsearch.md)
   * [Consul Client](en/consul.md)
   * [ETCD Client](en/etcd.md)
-  * [AMQP](en/amqp.md)
-  * [Async Queue](en/async-queue.md)
   * [WebSocket Server](en/websocket-server.md)
   * [WebSocket Client](en/websocket-client.md)
+  * [Socket.io](en/socketio-server.md)
   * [Custom Process](en/process.md)
   * [Dev Tool](en/devtool.md)
   * [Utils](en/utils.md)
@@ -76,6 +99,11 @@
   * [Swoole Tracker](en/swoole-tracker.md)
   * [Crontab](en/crontab.md)
   * [Task](en/task.md)
+  * [Enum](en/constants.md)
+  * [Snowflake](en/snowflake.md)
+  * [Signal Manager](en/signal.md)
+  * [ReactiveX](en/reactive-x.md)
+  * [Watcher](en/watcher.md)
 
 * Application Deployment
 
@@ -91,3 +119,8 @@
 
   * [Introduction](en/component-guide/intro.md)
   * [Create a new component](en/component-guide/create.md)
+
+* Upgrade Guide
+  
+  * [1.1 Upgrade Guide](en/upgrade/1.1.md)
+  * [2.0 Upgrade Guide](en/upgrade/2.0.md)

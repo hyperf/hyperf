@@ -52,6 +52,7 @@
   * [快速開始](zh-tw/db/quick-start.md)
   * [查詢構造器](zh-tw/db/querybuilder.md)
   * [模型](zh-tw/db/model.md)
+  * [建立指令碼](zh-tw/db/gen.md)
   * [模型關係](zh-tw/db/relationship.md)
   * [查詢分頁](zh-tw/db/paginator.md)
   * [模型事件](zh-tw/db/event.md)
@@ -72,6 +73,7 @@
   * [呼叫鏈追蹤](zh-tw/tracer.md)
   * [服務監控](zh-tw/metric.md)
   * [服務重試](zh-tw/retry.md)
+  * [Nacos](zh-tw/nacos.md)
   
 * 訊息佇列
 
@@ -103,6 +105,7 @@
   * [重試](zh-tw/retry.md)
   * [訊號處理器](zh-tw/signal.md)
   * [ReactiveX](zh-tw/reactive-x.md)
+  * [Watcher](zh-tw/watcher.md)
 
 * 應用部署
 

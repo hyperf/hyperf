@@ -217,7 +217,7 @@ return [
             'arguments' => 'arguments',
             'result' => 'result',
         ],
-        // 資料庫客戶端 (hyper/database)
+        // 資料庫客戶端 (hyperf/database)
         'db' => [
             'db.query' => 'db.query',
             'db.statement' => 'db.statement',
