@@ -74,6 +74,7 @@
   * [服務監控](zh-hk/metric.md)
   * [服務重試](zh-hk/retry.md)
   * [Nacos](zh-hk/nacos.md)
+  * [Jet](zh-hk/jet.md)
   
 * 消息隊列
 
@@ -91,6 +92,7 @@
   * [Consul 協程客户端](zh-hk/consul.md)
   * [ETCD 協程客户端](zh-hk/etcd.md)
   * [WebSocket 服務](zh-hk/websocket-server.md)
+  * [TCP 服務](zh-hk/tcp-server.md)
   * [WebSocket 協程客户端](zh-hk/websocket-client.md)
   * [Socket.io 服務](zh-hk/socketio-server.md)
   * [自定義進程](zh-hk/process.md)

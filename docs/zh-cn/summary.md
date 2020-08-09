@@ -74,6 +74,7 @@
   * [服务监控](zh-cn/metric.md)
   * [服务重试](zh-cn/retry.md)
   * [Nacos](zh-cn/nacos.md)
+  * [Jet](zh-cn/jet.md)
   
 * 消息队列
 
