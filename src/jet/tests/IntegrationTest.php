@@ -35,7 +35,30 @@ class IntegrationTest extends TestCase
         $this->markTestSkipped('This test needs a complete RPC Server.');
     }
 
-    public function testJsonrpc()
+    public function testJsonrpcCallNormalMethod()
+    {
+        [$service, $protocol] = $this->registerCalculatorServiceWithJsonrpcProtocol();
+        $clientFactory = new ClientFactory();
+        $client = $clientFactory->create($service, $protocol);
+        $result = $client->add($a = 1, $b = 2);
+        $this->assertSame($a + $b, $result);
+        $result = $client->add($a = -20, $b = -10);
+        $this->assertSame($a + $b, $result);
+    }
+
+    /**
+     * @expectedException \Hyperf\Jet\Exception\ServerException
+     * @expectedExceptionMessage Method not found.
+     */
+    public function testJsonrpcCallNotExistMethod()
+    {
+        [$service, $protocol] = $this->registerCalculatorServiceWithJsonrpcProtocol();
+        $clientFactory = new ClientFactory();
+        $client = $clientFactory->create($service, $protocol);
+        $result = $client->notExistMethod($a = 1, $b = 2);
+    }
+
+    protected function registerCalculatorServiceWithJsonrpcProtocol(): array
     {
         $protocol = 'jsonrpc';
         ProtocolManager::register($protocol, [
@@ -50,11 +73,6 @@ class IntegrationTest extends TestCase
                 [$this->host, $this->port],
             ],
         ]);
-        $clientFactory = new ClientFactory();
-        $client = $clientFactory->create($service, $protocol);
-        $result = $client->add($a = 1, $b = 2);
-        $this->assertSame($a + $b, $result);
-        $result = $client->add($a = -20, $b = -10);
-        $this->assertSame($a + $b, $result);
+        return [$service, $protocol];
     }
 }
