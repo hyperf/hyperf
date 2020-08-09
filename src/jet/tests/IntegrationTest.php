@@ -18,6 +18,7 @@ use Hyperf\Jet\PathGenerator\PathGenerator;
 use Hyperf\Jet\ProtocolManager;
 use Hyperf\Jet\ServiceManager;
 use Hyperf\Jet\Transporter\StreamSocketTransporter;
+use HyperfTest\Jet\Stub\CalculatorService;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -35,7 +36,7 @@ class IntegrationTest extends TestCase
         $this->markTestSkipped('This test needs a complete RPC Server.');
     }
 
-    public function testJsonrpcCallNormalMethod()
+    public function testJsonrpcCallNormalMethodWithClientFactory()
     {
         [$service, $protocol] = $this->registerCalculatorServiceWithJsonrpcProtocol();
         $clientFactory = new ClientFactory();
@@ -50,12 +51,31 @@ class IntegrationTest extends TestCase
      * @expectedException \Hyperf\Jet\Exception\ServerException
      * @expectedExceptionMessage Method not found.
      */
-    public function testJsonrpcCallNotExistMethod()
+    public function testJsonrpcCallNotExistMethodWithClientFactory()
     {
         [$service, $protocol] = $this->registerCalculatorServiceWithJsonrpcProtocol();
         $clientFactory = new ClientFactory();
         $client = $clientFactory->create($service, $protocol);
-        $result = $client->notExistMethod($a = 1, $b = 2);
+        $client->notExistMethod($a = 1, $b = 2);
+    }
+
+    public function testJsonrpcCallNormalMethodWithCustomClient()
+    {
+        $client = new CalculatorService();
+        $result = $client->add($a = 1, $b = 2);
+        $this->assertSame($a + $b, $result);
+        $result = $client->add($a = -20, $b = -10);
+        $this->assertSame($a + $b, $result);
+    }
+
+    /**
+     * @expectedException \Hyperf\Jet\Exception\ServerException
+     * @expectedExceptionMessage Method not found.
+     */
+    public function testJsonrpcCallNotExistMethodWithCustomClient()
+    {
+        $client = new CalculatorService();
+        $client->notExistMethod($a = 1, $b = 2);
     }
 
     protected function registerCalculatorServiceWithJsonrpcProtocol(): array
