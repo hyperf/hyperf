@@ -1,6 +1,6 @@
 # Jet, by Hyperf
 
-Jet is a unification model RPC Client, built-in JSON RPC protocol, available to running in ALL PHP environments, including PHP-FPM and Swoole/Hyperf environments. 
+Jet is a unification model RPC Client, built-in JSONRPC protocol, available to running in ALL PHP environments, including PHP-FPM and Swoole/Hyperf environments. 
 
 > Also will built-in gRPC and Tars protocols in future.
 
@@ -14,7 +14,7 @@ composer require hyperf/jet
 
 ## Register protocol
 
-> Register the protocol is not necessary, but you could manage the protocols more easily by using this.
+> Register the protocol is not necessary, but you could manage the protocols more easily by using ProtocolManager.
 
 You cloud register any protocol by `Hyperf\Jet\ProtocolManager`, per protocol basically including Transporter, Packer, DataFormatter and PathGenerator, you could register a JSONRPC protocol like below: 
 
@@ -37,7 +37,7 @@ ProtocolManager::register($protocol = 'jsonrpc', [
 
 ## Register service
 
-> > Register the service is not necessary, but you could manage the services more easily by using this.
+> > Register the service is not necessary, but you could manage the services more easily by using ServiceManager.
 
 After you registered a protocol to `Hyperf\Jet\ProtocolManager`, you could bind the protocol with any services by `Hyperf\Jet\ServiceManager`, like below:
 
@@ -57,7 +57,7 @@ ServiceManager::register($service = 'CalculatorService', $protocol = 'jsonrpc', 
 
 ### Call by ClientFactory
 
-After you registered the protocol and service, you could get your service via `Hyperf/Jet/ClientFactory`, like below:
+After you registered the protocol and service, you could get your service client via `Hyperf/Jet/ClientFactory`, like below:
 
 ```php
 <?php
