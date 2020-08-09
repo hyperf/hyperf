@@ -13,7 +13,7 @@ namespace HyperfTest\Jet;
 
 use Hyperf\Jet\Exception\ServerException;
 use Hyperf\Jet\Packer\JsonLengthPacker;
-use Hyperf\Jet\Transporter\TransporterInterface;
+use Hyperf\Rpc\Contract\TransporterInterface;
 use HyperfTest\Jet\Stub\IdGenerator;
 use PHPUnit\Framework\TestCase;
 
@@ -66,7 +66,7 @@ class ClientTest extends TestCase
                 'error' => [
                     'data' => [
                         'code' => 500,
-                        'message' => 'Inner Server Error',
+                        'message' => 'Internal Server Error',
                     ],
                 ],
                 'context' => [],
@@ -76,7 +76,7 @@ class ClientTest extends TestCase
 
         $this->expectException(ServerException::class);
         $this->expectExceptionCode(500);
-        $this->expectExceptionMessage('Inner Server Error');
+        $this->expectExceptionMessage('Internal Server Error');
         $client->exception();
     }
 }
