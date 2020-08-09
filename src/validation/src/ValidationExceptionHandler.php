@@ -23,7 +23,7 @@ class ValidationExceptionHandler extends ExceptionHandler
         $this->stopPropagation();
         /** @var \Hyperf\Validation\ValidationException $throwable */
         $body = $throwable->validator->errors()->first();
-        return $response->withStatus($throwable->status)->withBody(new SwooleStream($body));
+        return $response->withStatus($throwable->status)->withBody(new SwooleStream($body))->withHeader("Content-Type","text/html; charset=utf-8");
     }
 
     public function isValid(Throwable $throwable): bool
