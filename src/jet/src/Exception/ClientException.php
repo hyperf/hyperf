@@ -9,11 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Jet\Transporter;
+namespace Hyperf\Jet\Exception;
 
-interface TransporterInterface
+class ClientException extends JetException
 {
-    public function send(string $data);
-
-    public function recv();
 }

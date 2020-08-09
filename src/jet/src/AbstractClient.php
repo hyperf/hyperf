@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Jet;
 
-use Hyperf\Contract\PackerInterface;
+use Hyperf\Jet\DataFormatter\DataFormatter;
 use Hyperf\Jet\Exception\RecvFailedException;
 use Hyperf\Jet\Exception\ServerException;
-use Hyperf\Jet\Transporter\TransporterInterface;
+use Hyperf\Jet\PathGenerator\PathGenerator;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
+use Hyperf\Rpc\Contract\PackerInterface;
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
+use Hyperf\Rpc\Contract\TransporterInterface;
 
 abstract class AbstractClient
 {
@@ -36,12 +38,12 @@ abstract class AbstractClient
     protected $packer;
 
     /**
-     * @var DataFormatter
+     * @var DataFormatterInterface
      */
     protected $dataFormatter;
 
     /**
-     * @var PathGenerator
+     * @var PathGeneratorInterface
      */
     protected $pathGenerator;
 
@@ -55,8 +57,10 @@ abstract class AbstractClient
         $this->service = $service;
         $this->packer = $packer;
         $this->transporter = $transporter;
-        is_null($dataFormatter) && $this->dataFormatter = new DataFormatter();
-        is_null($pathGenerator) && $this->pathGenerator = new PathGenerator();
+        is_null($dataFormatter) && $dataFormatter = new DataFormatter();
+        $this->dataFormatter = $dataFormatter;
+        is_null($pathGenerator) && $pathGenerator = new PathGenerator();
+        $this->pathGenerator = $pathGenerator;
     }
 
     public function __call($name, $arguments)

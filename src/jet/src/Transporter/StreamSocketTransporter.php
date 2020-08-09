@@ -11,37 +11,41 @@ declare(strict_types=1);
  */
 namespace Hyperf\Jet\Transporter;
 
+use Hyperf\Jet\Exception\ClientException;
 use Hyperf\Jet\Exception\ConnectionException;
 
-class StreamSocketTransporter implements TransporterInterface
+class StreamSocketTransporter extends AbstractTransporter
 {
+    /**
+     * @var string
+     */
+    public $host;
+
+    /**
+     * @var int
+     */
+    public $port;
+
     /**
      * @var null|resource
      */
     protected $client;
 
     /**
-     * @var string
-     */
-    protected $ip;
-
-    /**
-     * @var int
-     */
-    protected $port;
-
-    /**
      * @var float
      */
     protected $timeout;
 
-    public function __construct(string $ip, int $port, float $timeout = 1.0)
+    /**
+     * @var bool
+     */
+    protected $isConnected = false;
+
+    public function __construct(string $host = '', int $port = 9501, float $timeout = 1.0)
     {
-        $this->ip = $ip;
+        $this->host = $host;
         $this->port = $port;
         $this->timeout = $timeout;
-
-        $this->connect();
     }
 
     public function __destruct()
@@ -51,6 +55,7 @@ class StreamSocketTransporter implements TransporterInterface
 
     public function send(string $data)
     {
+        $this->connect();
         fwrite($this->client, $data);
     }
 
@@ -59,22 +64,41 @@ class StreamSocketTransporter implements TransporterInterface
         return fread($this->client, 65535);
     }
 
-    protected function connect()
+    protected function getTarget(): array
     {
+        if ($this->getLoadBalancer()) {
+            $node = $this->getLoadBalancer()->select();
+        } else {
+            $node = $this;
+        }
+        if (! $node->host || ! $node->port) {
+            throw new ClientException(sprintf('Invalid host %s or port %s.', $node->host, $node->port));
+        }
+        return [$node->host, $node->port];
+    }
+
+    protected function connect(): void
+    {
+        if ($this->isConnected) {
+            return;
+        }
         if ($this->client) {
             fclose($this->client);
             unset($this->client);
         }
 
-        $client = stream_socket_client("tcp://{$this->ip}:{$this->port}", $errno, $errstr, $this->timeout);
+        [$host, $port] = $this->getTarget();
+
+        $client = stream_socket_client("tcp://{$host}:{$port}", $errno, $errstr, $this->timeout);
         if ($client === false) {
             throw new ConnectionException(sprintf('[%d] %s', $errno, $errstr));
         }
 
         $this->client = $client;
+        $this->isConnected = true;
     }
 
-    protected function close()
+    protected function close(): void
     {
         if ($this->client) {
             fclose($this->client);

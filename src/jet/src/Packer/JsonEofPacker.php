@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Jet\Packer;
 
-use Hyperf\Contract\PackerInterface;
+use Hyperf\Rpc\Contract\PackerInterface;
 
 class JsonEofPacker implements PackerInterface
 {
