@@ -64,10 +64,9 @@ class ClientTest extends TestCase
                 'jsonrpc' => '2.0',
                 'id' => uniqid(),
                 'error' => [
-                    'data' => [
-                        'code' => 500,
-                        'message' => 'Internal Server Error',
-                    ],
+                    'code' => 500,
+                    'message' => 'Internal Server Error',
+                    'data' => [],
                 ],
                 'context' => [],
             ]);
