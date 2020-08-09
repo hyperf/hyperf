@@ -65,6 +65,7 @@ $xml = $this->request->getBody()->getContents();
 
 ```php
 <?php
+use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request;
 
 $get = $this->request->getQueryParams();
@@ -78,8 +79,9 @@ $files = [];
 foreach ($uploadFiles as $k => $v) {
     $files[$k] = $v->toArray();
 }
-$app['request'] = new Request($get, $post, [], $cookie, $files, $server, $xml);
-
+$request = new Request($get, $post, [], $cookie, $files, $server, $xml);
+$request->headers = new HeaderBag($this->request->getHeaders());
+$app['request'] = $request;
 // Do something...
 
 ```
