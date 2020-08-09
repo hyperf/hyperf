@@ -1,6 +1,6 @@
 # Jet
 
-Jet 是一个统一模型的 RPC 客户端，内置 JSONRPC 协议的适配，该组件可适用于所有的 PHP 环境，包括 PHP-FPM 和 Swoole 或 Hyperf。
+Jet 是一个统一模型的 RPC 客户端，内置 JSONRPC 协议的适配，该组件可适用于所有的 PHP 环境，包括 PHP-FPM 和 Swoole 或 Hyperf。（在 Hyperf 环境下，目前仍建议直接使用 `hyperf/json-rpc` 组件来作为客户端使用）
 
 > 未来还会内置 gRPC 和 Tars 协议。
 
