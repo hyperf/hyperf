@@ -9,12 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\JsonRpcClient;
+namespace HyperfTest\Jet;
 
-use Hyperf\JsonRpcClient\Exception\ServerException;
-use Hyperf\JsonRpcClient\Packer\JsonLengthPacker;
-use Hyperf\JsonRpcClient\Transporter\TransporterInterface;
-use HyperfTest\JsonRpcClient\Stub\IdGenerator;
+use Hyperf\Jet\Exception\ServerException;
+use Hyperf\Jet\Packer\JsonLengthPacker;
+use Hyperf\Jet\Transporter\TransporterInterface;
+use HyperfTest\Jet\Stub\IdGenerator;
 use PHPUnit\Framework\TestCase;
 
 /**

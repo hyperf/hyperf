@@ -9,11 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\JsonRpcClient;
+namespace Hyperf\Jet;
 
 use Hyperf\Utils\Str;
 
-class PathGenerator
+class PathGenerator implements \Hyperf\Rpc\Contract\PathGeneratorInterface
 {
     public function generate(string $service, string $method): string
     {

@@ -9,11 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\JsonRpcClient\Exception;
+namespace Hyperf\Jet\Exception;
 
 use Throwable;
 
-class ServerException extends \RuntimeException
+class ServerException extends JetException
 {
     /**
      * @var array

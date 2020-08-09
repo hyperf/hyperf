@@ -9,14 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\JsonRpcClient;
+namespace Hyperf\Jet;
 
 use Hyperf\Contract\PackerInterface;
-use Hyperf\JsonRpcClient\Exception\RecvFailedException;
-use Hyperf\JsonRpcClient\Exception\ServerException;
-use Hyperf\JsonRpcClient\Transporter\TransporterInterface;
+use Hyperf\Jet\Exception\RecvFailedException;
+use Hyperf\Jet\Exception\ServerException;
+use Hyperf\Jet\Transporter\TransporterInterface;
+use Hyperf\Rpc\Contract\DataFormatterInterface;
+use Hyperf\Rpc\Contract\PathGeneratorInterface;
 
-abstract class Client
+abstract class AbstractClient
 {
     /**
      * @var null|resource
@@ -36,31 +38,31 @@ abstract class Client
     /**
      * @var DataFormatter
      */
-    protected $formatter;
+    protected $dataFormatter;
 
     /**
      * @var PathGenerator
      */
-    protected $generator;
+    protected $pathGenerator;
 
     /**
      * @var TransporterInterface
      */
     protected $transporter;
 
-    public function __construct(string $service, TransporterInterface $transporter, PackerInterface $packer)
+    public function __construct(string $service, TransporterInterface $transporter, PackerInterface $packer, ?DataFormatterInterface $dataFormatter = null, ?PathGeneratorInterface $pathGenerator = null)
     {
         $this->service = $service;
         $this->packer = $packer;
         $this->transporter = $transporter;
-        $this->formatter = new DataFormatter();
-        $this->generator = new PathGenerator();
+        is_null($dataFormatter) && $this->dataFormatter = new DataFormatter();
+        is_null($pathGenerator) && $this->pathGenerator = new PathGenerator();
     }
 
     public function __call($name, $arguments)
     {
-        $path = $this->generator->generate($this->service, $name);
-        $data = $this->formatter->formatRequest($path, $arguments, $id = uniqid());
+        $path = $this->pathGenerator->generate($this->service, $name);
+        $data = $this->dataFormatter->formatRequest([$path, $arguments, uniqid()]);
         $this->transporter->send($this->packer->pack($data));
         $ret = $this->transporter->recv();
         if (! is_string($ret)) {

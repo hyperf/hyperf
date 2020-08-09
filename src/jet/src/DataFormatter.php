@@ -9,12 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\JsonRpcClient;
+namespace Hyperf\Jet;
 
-class DataFormatter
+use Hyperf\Rpc\Contract\DataFormatterInterface;
+
+class DataFormatter implements DataFormatterInterface
 {
-    public function formatRequest(string $path, array $params, string $id = null)
+    public function formatRequest($data)
     {
+        [$path, $params, $id] = $data;
         return [
             'jsonrpc' => '2.0',
             'method' => $path,
@@ -22,5 +25,15 @@ class DataFormatter
             'id' => $id,
             'data' => [],
         ];
+    }
+
+    public function formatResponse($data)
+    {
+
+    }
+
+    public function formatErrorResponse($data)
+    {
+
     }
 }

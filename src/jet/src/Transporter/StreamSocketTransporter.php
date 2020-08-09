@@ -9,9 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\JsonRpcClient\Transporter;
+namespace Hyperf\Jet\Transporter;
 
-use Hyperf\JsonRpcClient\Exception\ConnectionException;
+use Hyperf\Jet\Exception\ConnectionException;
 
 class StreamSocketTransporter implements TransporterInterface
 {

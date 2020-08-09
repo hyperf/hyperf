@@ -9,11 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\JsonRpcClient\Transporter;
+namespace HyperfTest\Jet\Stub;
 
-interface TransporterInterface
+use Hyperf\Jet\AbstractClient;
+
+/**
+ * @method string id(string $id)
+ * @method void exception()
+ */
+class IdGenerator extends AbstractClient
 {
-    public function send(string $data);
-
-    public function recv();
 }

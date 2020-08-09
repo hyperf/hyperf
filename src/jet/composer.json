@@ -1,20 +1,22 @@
 {
-    "name": "hyperf/json-rpc-client",
+    "name": "hyperf/jet",
     "type": "library",
     "license": "MIT",
     "keywords": [
         "php",
-        "hyperf"
+        "hyperf",
+        "rpc-client",
+        "jsonrpc"
     ],
     "description": "",
     "autoload": {
         "psr-4": {
-            "Hyperf\\JsonRpcClient\\": "src/"
+            "Hyperf\\Jet\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\JsonRpcClient\\": "tests/"
+            "HyperfTest\\Jet\\": "tests/"
         }
     },
     "require": {

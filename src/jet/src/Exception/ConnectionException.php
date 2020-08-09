@@ -9,14 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\JsonRpcClient\Stub;
+namespace Hyperf\Jet\Exception;
 
-use Hyperf\JsonRpcClient\Client;
-
-/**
- * @method string id(string $id)
- * @method void exception()
- */
-class IdGenerator extends Client
+class ConnectionException extends JetException
 {
 }

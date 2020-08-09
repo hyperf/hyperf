@@ -9,8 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\JsonRpcClient\Exception;
+namespace Hyperf\Jet\Transporter;
 
-class ConnectionException extends \RuntimeException
+interface TransporterInterface
 {
+    public function send(string $data);
+
+    public function recv();
 }
