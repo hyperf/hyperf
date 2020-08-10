@@ -51,22 +51,6 @@ Become a financial contributor and help us sustain our community. [[Contribute](
 
 Support this project with your organization or company. Your logo will show up here with a link to your website. [[Contribute](https://hyperf.wiki/#/en/donate)]
 
-## Gold Sponsors
-
-<!--gold start-->
-<table>
-  <tbody>
-    <tr>
-      <td align="left" valign="middle">
-        <a href="https://guojiang.club/?utm_source=hyperf&utm_campaign=sponsor" target="_blank">
-          <img height="110px" src="https://hyperf.wiki/zh-cn/imgs/guojiang-club.jpg">
-        </a>
-      </td>
-    </tr><tr></tr>
-  </tbody>
-</table>
-<!--gold end-->
-
 # Performance
 
 ### Aliyun 8 cores 16G ram
@@ -86,6 +70,7 @@ Transfer/sec:     18.83MB
 # The Hyperf Ecosystem
 
 - 🧬 [Nano](https://github.com/hyperf/nano) is a zero-config, no skeleton, minimal Hyperf distribution that allows you to quickly build a Hyperf application with just a single PHP file.
+- 🚀 [Jet](https://github.com/hyperf/jet) is a unification model RPC Client, built-in JSONRPC protocol, available to running in ALL PHP environments, including PHP-FPM and Swoole/Hyperf environments. 
 
 # License
 

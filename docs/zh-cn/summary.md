@@ -17,6 +17,7 @@
   * [快速开始](zh-cn/quick-start/overview.md)
   * [常见问题](zh-cn/quick-start/questions.md)
   * [编程须知](zh-cn/quick-start/important.md)
+  * [视频教程](https://course.swoole-cloud.com/videos/5/new?from=hyperf.io)
   
 * 核心架构
 

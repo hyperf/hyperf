@@ -17,6 +17,7 @@
   * [快速開始](zh-hk/quick-start/overview.md)
   * [常見問題](zh-hk/quick-start/questions.md)
   * [編程須知](zh-hk/quick-start/important.md)
+  * [視頻教程](https://course.swoole-cloud.com/videos/5/new?from=hyperf.io)
   
 * 核心架構
 
