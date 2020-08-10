@@ -4,12 +4,18 @@
 
 当构建 API 时，你往往需要一个转换层来联结你的 Model 模型和实际返回给用户的 JSON 响应。资源类能够让你以更直观简便的方式将模型和模型集合转化成 JSON。
 
+## 安装
+
+```
+composer require hyperf/transformer
+```
+
 ## 生成资源
 
-你可以使用 `gen:resource` 命令来生成一个资源类。默认情况下生成的资源都会被放置在应用程序的 `app/Resource` 文件夹下。资源继承自 `Hyperf\Resource\Json\JsonResource` 类：
+你可以使用 `gen:transformer` 命令来生成一个资源类。默认情况下生成的资源都会被放置在应用程序的 `app/Transformer` 文件夹下。资源继承自 `Hyperf\Transformer\Json\JsonResource` 类：
 
 ```bash
-php bin/hyperf.php gen:resource User
+php bin/hyperf.php gen:transformer User
 ```
 
 ### 资源集合
@@ -19,17 +25,23 @@ php bin/hyperf.php gen:resource User
 你需要在生成资源时添加 `--collection` 标志以生成一个资源集合。或者，你也可以直接在资源的名称中包含 `Collection` 表示应该生成一个资源集合。资源集合继承自 `Hyperf\Resource\Json\ResourceCollection` 类：
 
 ```bash
-php bin/hyperf.php gen:resource Users --collection
+php bin/hyperf.php gen:transformer Users --collection
 
-php bin/hyperf.php gen:resource UserCollection
+php bin/hyperf.php gen:transformer UserCollection
 ```
 
 ### Grpc 资源
 
 支持转化 Grpc 资源. 
 
+> 需要额外安装 `hyperf/transformer-grpc`
+
+```
+composer require hyperf/transformer-grpc
+```
+
 ```bash
-php bin/hyperf.php gen:resource User --grpc
+php bin/hyperf.php gen:transformer User --grpc
 ```
 
 Grpc 资源需要设置 `message` 类. 通过重写该资源类的 `expect()` 方法来实现.
@@ -38,10 +50,10 @@ Grpc 服务返回时, 必须调用 `toMessage()`. 该方法会返回一个实例
 
 ```php
 <?php
-namespace HyperfTest\Resource\Stubs\Resources;
+namespace HyperfTest\TransformerGrpc\Stubs\Resources;
 
-use Hyperf\Resource\Grpc\GrpcResource;
-use Grpc\HiReply;
+use Hyperf\TransformerGrpc\GrpcResource;
+use HyperfTest\TransformerGrpc\Stubs\Grpc\HiReply;
 
 class HiReplyResource extends GrpcResource
 {
@@ -61,7 +73,7 @@ class HiReplyResource extends GrpcResource
 
 ```
 
-默认生成的资源集合, 可通过实现 `Hyperf\Resource\MessageResource` 接口来使其支持 Grpc 返回.
+默认生成的资源集合, 可通过继承 `Hyperf\TransformerGrpc\GrpcResource` 接口来使其支持 Grpc 返回.
 
 ## 概念综述
 
@@ -72,9 +84,9 @@ class HiReplyResource extends GrpcResource
 ```php
 <?php
 
-namespace App\Resource;
+namespace App\Transformer;
 
-use Hyperf\Resource\Json\JsonResource;
+use Hyperf\Transformer\Json\JsonResource;
 
 class User extends JsonResource
 {
@@ -102,7 +114,7 @@ class User extends JsonResource
 
 namespace App\Controller;
 
-use App\Resource\User as UserResource;
+use App\Transformer\User as UserResource;
 use App\Model\User;
 
 class IndexController extends AbstractController
@@ -123,7 +135,7 @@ class IndexController extends AbstractController
 
 namespace App\Controller;
 
-use App\Resource\User as UserResource;
+use App\Transformer\User as UserResource;
 use App\Model\User;
 
 class IndexController extends AbstractController
@@ -139,7 +151,7 @@ class IndexController extends AbstractController
 当然了，使用如上方法你将不能添加任何附加的元数据和集合一起返回。如果你需要自定义资源集合响应，你需要创建一个专用的资源来表示集合：
 
 ```bash
-php bin/hyperf.php gen:resource UserCollection
+php bin/hyperf.php gen:transformer UserCollection
 ```
 
 你可以轻松的在已生成的资源集合类中定义任何你想在响应中返回的元数据：
@@ -147,9 +159,9 @@ php bin/hyperf.php gen:resource UserCollection
 ```php
 <?php
 
-namespace App\Resource;
+namespace App\Transformer;
 
-use Hyperf\Resource\Json\ResourceCollection;
+use Hyperf\Transformer\Json\ResourceCollection;
 
 class UserCollection extends ResourceCollection
 {
@@ -178,7 +190,7 @@ class UserCollection extends ResourceCollection
 namespace App\Controller;
 
 use App\Model\User;
-use App\Resource\UserCollection;
+use App\Transformer\UserCollection;
 
 class IndexController extends AbstractController
 {
@@ -197,9 +209,9 @@ class IndexController extends AbstractController
 ```php
 <?php
 
-namespace App\Resource;
+namespace App\Transformer;
 
-use Hyperf\Resource\Json\JsonResource;
+use Hyperf\Transformer\Json\JsonResource;
 
 class User extends JsonResource
 {
@@ -235,7 +247,7 @@ class User extends JsonResource
 namespace App\Controller;
 
 use App\Model\User;
-use App\Resource\User as UserResource;
+use App\Transformer\User as UserResource;
 
 class IndexController extends AbstractController
 {
@@ -256,9 +268,9 @@ class IndexController extends AbstractController
 ```php
 <?php
 
-namespace App\Resource;
+namespace App\Transformer;
 
-use Hyperf\Resource\Json\ResourceCollection;
+use Hyperf\Transformer\Json\ResourceCollection;
 
 class UserCollection extends ResourceCollection
 {
@@ -267,7 +279,7 @@ class UserCollection extends ResourceCollection
      *
      * @var string
      */
-    public $collects = 'App\Resource\Member';
+    public $collects = 'App\Transformer\Member';
 
     /**
      * Transform the resource collection into an array.
@@ -296,9 +308,9 @@ class UserCollection extends ResourceCollection
 ```php
 <?php
 
-namespace App\Resource;
+namespace App\Transformer;
 
-use Hyperf\Resource\Json\JsonResource;
+use Hyperf\Transformer\Json\JsonResource;
 
 class User extends JsonResource
 {
@@ -327,7 +339,7 @@ class User extends JsonResource
 namespace App\Controller;
 
 use App\Model\User;
-use App\Resource\User as UserResource;
+use App\Transformer\User as UserResource;
 
 class IndexController extends AbstractController
 {
@@ -345,9 +357,9 @@ class IndexController extends AbstractController
 ```php
 <?php
 
-namespace App\Resource;
+namespace App\Transformer;
 
-use Hyperf\Resource\Json\JsonResource;
+use Hyperf\Transformer\Json\JsonResource;
 
 class User extends JsonResource
 {
@@ -379,7 +391,7 @@ class User extends JsonResource
 <?php
 namespace App\Controller;
 
-use App\Resource\User as UserResource;
+use App\Transformer\User as UserResource;
 use App\Model\User;
 
 class IndexController extends AbstractController
@@ -397,9 +409,9 @@ class IndexController extends AbstractController
 ```php
 <?php
 
-namespace App\Resource;
+namespace App\Transformer;
 
-use Hyperf\Resource\Json\ResourceCollection;
+use Hyperf\Transformer\Json\ResourceCollection;
 
 class UserCollection extends ResourceCollection
 {
@@ -428,7 +440,7 @@ class UserCollection extends ResourceCollection
 namespace App\Controller;
 
 use App\Model\User;
-use App\Resource\UserCollection;
+use App\Transformer\UserCollection;
 
 class IndexController extends AbstractController
 {
@@ -470,7 +482,7 @@ class IndexController extends AbstractController
 namespace App\Controller;
 
 use App\Model\User;
-use App\Resource\UserCollection;
+use App\Transformer\UserCollection;
 
 class IndexController extends AbstractController
 {
@@ -493,9 +505,9 @@ class IndexController extends AbstractController
 ```php
 <?php
 
-namespace App\Resource;
+namespace App\Transformer;
 
-use Hyperf\Resource\Json\ResourceCollection;
+use Hyperf\Transformer\Json\ResourceCollection;
 
 class UserCollection extends ResourceCollection
 {
@@ -561,7 +573,7 @@ class UserCollection extends ResourceCollection
 namespace App\Controller;
 
 use App\Model\User;
-use App\Resource\UserCollection;
+use App\Transformer\UserCollection;
 
 class IndexController extends AbstractController
 {
@@ -614,9 +626,9 @@ class IndexController extends AbstractController
 ```php
 <?php
 
-namespace App\Resource;
+namespace App\Transformer;
 
-use Hyperf\Resource\Json\JsonResource;
+use Hyperf\Transformer\Json\JsonResource;
 
 class User extends JsonResource
 {
@@ -645,9 +657,9 @@ class User extends JsonResource
 ```php
 <?php
 
-namespace App\Resource;
+namespace App\Transformer;
 
-use Hyperf\Resource\Json\JsonResource;
+use Hyperf\Transformer\Json\JsonResource;
 
 class User extends JsonResource
 {
@@ -678,9 +690,9 @@ class User extends JsonResource
 ```php
 <?php
 
-namespace App\Resource;
+namespace App\Transformer;
 
-use Hyperf\Resource\Json\JsonResource;
+use Hyperf\Transformer\Json\JsonResource;
 
 class User extends JsonResource
 {
@@ -718,9 +730,9 @@ class User extends JsonResource
 ```php
 <?php
 
-namespace App\Resource;
+namespace App\Transformer;
 
-use Hyperf\Resource\Json\JsonResource;
+use Hyperf\Transformer\Json\JsonResource;
 
 class User extends JsonResource
 {
@@ -751,9 +763,9 @@ class User extends JsonResource
 ```php
 <?php
 
-namespace App\Resource;
+namespace App\Transformer;
 
-use Hyperf\Resource\Json\JsonResource;
+use Hyperf\Transformer\Json\JsonResource;
 
 class User extends JsonResource
 {
@@ -781,9 +793,9 @@ class User extends JsonResource
 ```php
 <?php
 
-namespace App\Resource;
+namespace App\Transformer;
 
-use Hyperf\Resource\Json\JsonResource;
+use Hyperf\Transformer\Json\JsonResource;
 
 class User extends JsonResource
 {
@@ -813,9 +825,9 @@ class User extends JsonResource
 ```php
 <?php
 
-namespace App\Resource;
+namespace App\Transformer;
 
-use Hyperf\Resource\Json\ResourceCollection;
+use Hyperf\Transformer\Json\ResourceCollection;
 
 class UserCollection extends ResourceCollection
 {
@@ -846,9 +858,9 @@ class UserCollection extends ResourceCollection
 ```php
 <?php
 
-namespace App\Resource;
+namespace App\Transformer;
 
-use Hyperf\Resource\Json\ResourceCollection;
+use Hyperf\Transformer\Json\ResourceCollection;
 
 class UserCollection extends ResourceCollection
 {
@@ -867,7 +879,7 @@ class UserCollection extends ResourceCollection
         ];
     }
 
-    public function with()
+    public function with() : array
     {
         return [
             'meta' => [
@@ -889,7 +901,7 @@ class UserCollection extends ResourceCollection
 namespace App\Controller;
 
 use App\Model\User;
-use App\Resource\UserCollection;
+use App\Transformer\UserCollection;
 
 class IndexController extends AbstractController
 {
@@ -914,7 +926,7 @@ class IndexController extends AbstractController
 namespace App\Controller;
 
 use App\Model\User;
-use App\Resource\User as UserResource;
+use App\Transformer\User as UserResource;
 
 class IndexController extends AbstractController
 {
