@@ -37,7 +37,7 @@ ProtocolManager::register($protocol = 'jsonrpc', [
 
 ## Register service
 
-> > Register the service is not necessary, but you could manage the services more easily by using ServiceManager.
+> Register the service is not necessary, but you could manage the services more easily by using ServiceManager.
 
 After you registered a protocol to `Hyperf\Jet\ProtocolManager`, you could bind the protocol with any services by `Hyperf\Jet\ServiceManager`, like below:
 
