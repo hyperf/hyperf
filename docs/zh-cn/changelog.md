@@ -4,7 +4,7 @@
 
 ## 新增
 
-- [#2125](https://github.com/hyperf/hyperf/pull/2125) 新增 `Jet` 组件。`Jet` 是统一的 `JSON RPC` 客户端，可以运行在所有的 `PHP (>=7.2)` 环境下。
+- [#2125](https://github.com/hyperf/hyperf/pull/2125) 新增 [hyperf/jet](https://github.com/hyperf/jet) 组件。`Jet` 是一个统一模型的 RPC 客户端，内置 JSONRPC 协议的适配，该组件可适用于所有的 `PHP (>= 7.2)` 环境，包括 PHP-FPM 和 Swoole 或 Hyperf。
 
 ## 修复
 

@@ -4,7 +4,7 @@
 
 ## Added
 
-- [#2125](https://github.com/hyperf/hyperf/pull/2125) Added Jet component a unification model RPC Client, built-in JSONRPC protocol, available to running in ALL PHP environments.
+- [#2125](https://github.com/hyperf/hyperf/pull/2125) Added Jet component, Jet is a unification model RPC Client, built-in JSONRPC protocol, available to running in ALL PHP environments, including PHP-FPM and Swoole/Hyperf environments.
 
 ## Fixed
 
