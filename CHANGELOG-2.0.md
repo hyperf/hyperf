@@ -1,4 +1,10 @@
-# v2.0.6 - TBD
+# v2.0.7 - TBD
+
+# v2.0.6 - 2020-08-10
+
+## Added
+
+- [#2125](https://github.com/hyperf/hyperf/pull/2125) Added Jet component a unification model RPC Client, built-in JSONRPC protocol, available to running in ALL PHP environments.
 
 ## Fixed
 

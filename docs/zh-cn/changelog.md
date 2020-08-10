@@ -1,5 +1,16 @@
 # 版本更新记录
 
+# v2.0.6 - 2020-08-10
+
+## 新增
+
+- [#2125](https://github.com/hyperf/hyperf/pull/2125) 新增 `Jet` 组件。`Jet` 是统一的 `JSON RPC` 客户端，可以运行在所有的 `PHP (>=7.2)` 环境下。
+
+## 修复
+
+- [#2236](https://github.com/hyperf/hyperf/pull/2236) 修复 `Nacos` 使用负载均衡器选择节点失败的 BUG。
+- [#2242](https://github.com/hyperf/hyperf/pull/2242) 修复 `watcher` 组件会重复收集多次注解的 BUG。
+
 # v2.0.5 - 2020-08-03
 
 ## 新增
