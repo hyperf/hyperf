@@ -80,7 +80,7 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
 }
 ```
 
-接下來啟動 Server，便能看到對應啟動了一個 WebSocket Server 並監聽於 9502 端口，此時您便可以通過各種 WebSocket Client 來進行連接和進行數據傳輸了。
+接下來啟動 Server，便能看到對應啟動了一個 WebSocket Server 並監聽於 9502 端口，此時您便可以通過各種 WebSocket Client 來進行連接和數據傳輸了。
 
 ```
 $ php bin/hyperf.php start
@@ -88,6 +88,34 @@ $ php bin/hyperf.php start
 [INFO] Worker#0 started.
 [INFO] WebSocket Server listening at 0.0.0.0:9502
 [INFO] HTTP Server listening at 0.0.0.0:9501
+```
+
+!> 當我們同時監聽了 HTTP Server 的 9501 端口和 WebSocket Server 的 9502 端口時， WebSocket Client 可以通過 9501 和 9502 兩個端口連接 WebSocket Server，即連接 `ws://0.0.0.0:9501` 和 `ws://0.0.0.0:9502` 都可以成功。
+
+因為 Swoole\WebSocket\Server 繼承自 Swoole\Http\Server，可以使用 HTTP 觸發所有 WebSocket 的推送，瞭解詳情可查看 [Swoole 文檔](https://wiki.swoole.com/#/websocket_server?id=websocketserver) onRequest 回調部分。
+
+如需關閉，可以修改 `config/autoload/server.php` 文件給 `http` 服務中增加 `open_websocket_protocol` 配置項。
+
+```php
+<?php
+return [
+    // 這裏省略了該文件的其它配置
+    'servers' => [
+        [
+            'name' => 'http',
+            'type' => Server::SERVER_HTTP,
+            'host' => '0.0.0.0',
+            'port' => 9501,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                SwooleEvent::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
+            ],
+            'settings' => [
+                'open_websocket_protocol' => false,
+            ]
+        ],
+    ]
+];
 ```
 
 ## 連接上下文

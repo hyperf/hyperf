@@ -71,19 +71,31 @@ return [
 ### 獲取當前例項
 
 ```php
-$instance = new \Hyperf\Nacos\Instance();
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Nacos\Instance;
+
+$container = ApplicationContext::getContainer();
+$instance = $container->get(Instance::class);
 ```
 
 ### 獲取當前服務
 
 ```php
-$service = new \Hyperf\Nacos\Service();
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Nacos\Service;
+
+$container = ApplicationContext::getContainer();
+$service = $container->get(Service::class);
 ```
 
 ### 獲取一個服務的最優節點
 
 ```php
-$instance = make(NacosInstance::class);
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Nacos\Instance;
+
+$container = ApplicationContext::getContainer();
+$instance = $container->get(Instance::class);
 
 $service = new ServiceModel([
     'service_name' => 'hyperf',

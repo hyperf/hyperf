@@ -1,5 +1,16 @@
 # 版本更新记录
 
+# v2.0.6 - 2020-08-10
+
+## 新增
+
+- [#2125](https://github.com/hyperf/hyperf/pull/2125) 新增 [hyperf/jet](https://github.com/hyperf/jet) 组件。`Jet` 是一个统一模型的 RPC 客户端，内置 JSONRPC 协议的适配，该组件可适用于所有的 `PHP (>= 7.2)` 环境，包括 PHP-FPM 和 Swoole 或 Hyperf。
+
+## 修复
+
+- [#2236](https://github.com/hyperf/hyperf/pull/2236) 修复 `Nacos` 使用负载均衡器选择节点失败的 BUG。
+- [#2242](https://github.com/hyperf/hyperf/pull/2242) 修复 `watcher` 组件会重复收集多次注解的 BUG。
+
 # v2.0.5 - 2020-08-03
 
 ## 新增
