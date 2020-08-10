@@ -1,8 +1,38 @@
 # 版本更新記錄
 
+# v2.0.6 - 2020-08-10
+
+## 新增
+
+- [#2125](https://github.com/hyperf/hyperf/pull/2125) 新增 `Jet` 組件。`Jet` 是統一的 `JSON RPC` 客户端，可以運行在所有的 `PHP (>=7.2)` 環境下。
+
+## 修復
+
+- [#2236](https://github.com/hyperf/hyperf/pull/2236) 修復 `Nacos` 使用負載均衡器選擇節點失敗的 BUG。
+- [#2242](https://github.com/hyperf/hyperf/pull/2242) 修復 `watcher` 組件會重複收集多次註解的 BUG。
+
+# v2.0.5 - 2020-08-03
+
+## 新增
+
+- [#2001](https://github.com/hyperf/hyperf/pull/2001) 新增參數 `$signature`，用於簡化命令行的初始化工作。
+- [#2204](https://github.com/hyperf/hyperf/pull/2204) 為方法 `parallel` 增加 `$concurrent` 參數，用於快速設置併發量。
+
+## 修復
+
+- [#2210](https://github.com/hyperf/hyperf/pull/2210) 修復 `WebSocket` 握手成功後，不會立馬觸發 `OnOpen` 事件的 BUG。
+- [#2214](https://github.com/hyperf/hyperf/pull/2214) 修復 `WebSocket` 主動關閉連接時，不會觸發 `OnClose` 事件的 BUG。
+- [#2218](https://github.com/hyperf/hyperf/pull/2218) 修復在 `協程 Server` 下，`Sender::disconnect` 報錯的 BUG。
+- [#2227](https://github.com/hyperf/hyperf/pull/2227) 修復在 `協程 Server` 下，建立 `keepalive` 連接後，上下文數據無法在請求結束後銷燬的 BUG。
+
+## 優化
+
+- [#2193](https://github.com/hyperf/hyperf/pull/2193) 優化 `Hyperf\Watcher\Driver\FindDriver`，使其掃描有變動的文件更加精確。
+- [#2232](https://github.com/hyperf/hyperf/pull/2232) 優化 `model-cache` 的預加載功能，使其支持 `In` 和 `InRaw`。
+
 # v2.0.4 - 2020-07-27
 
-## Added
+## 新增
 
 - [#2144](https://github.com/hyperf/hyperf/pull/2144) 數據庫查詢事件 `Hyperf\Database\Events\QueryExecuted` 添加 `$result` 字段。
 - [#2158](https://github.com/hyperf/hyperf/pull/2158) 路由 `Hyperf\HttpServer\Router\Handler` 中，添加 `$options` 字段。
@@ -12,12 +42,12 @@
 - [#2175](https://github.com/hyperf/hyperf/pull/2175) 模型生成器添加 `ModelRewriteSoftDeletesVisitor`，用於根據數據庫字段 `deleted_at`， 添加或者移除 `SoftDeletes`。
 - [#2176](https://github.com/hyperf/hyperf/pull/2176) 模型生成器添加 `ModelRewriteKeyInfoVisitor`，用於根據數據庫主鍵，重寫模型字段 `$incrementing` `$primaryKey` 和 `$keyType`。
 
-## Fixed
+## 修復
 
 - [#2149](https://github.com/hyperf/hyperf/pull/2149) 修復自定義進程運行過程中無法從 Nacos 正常更新配置的 BUG。
 - [#2159](https://github.com/hyperf/hyperf/pull/2159) 修復使用 `gen:migration` 時，由於文件已經存在導致的 `FATAL` 異常。
 
-## Optimized
+## 優化
 
 - [#2043](https://github.com/hyperf/hyperf/pull/2043) 當 `SCAN` 目錄都不存在時，拋出更加友好的異常。
 - [#2182](https://github.com/hyperf/hyperf/pull/2182) 當使用 `WebSocket` 和 `Http` 服務且 `Http` 接口被訪問時，不會記錄 `WebSocket` 關閉連接的日誌。

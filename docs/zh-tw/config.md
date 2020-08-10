@@ -68,7 +68,7 @@ return [
 
 如需要設定守護程序化，可在 `settings` 中增加 `'daemonize' => 1`，執行 `php bin/hyperf.php start`後，程式將轉入後臺作為守護程序執行
 
-單獨的 Server 配置需要新增在對應 `servers` 的 `settings` 當中，如 `jsonrpc` 協議的 TCP Server 配置啟用 EOF 自動分包，和設定 EOF 字串
+單獨的 Server 配置需要新增在對應 `servers` 的 `settings` 當中，如 `jsonrpc` 協議的 TCP Server 配置啟用 EOF 自動分包和設定 EOF 字串
 ```php
 <?php
 
