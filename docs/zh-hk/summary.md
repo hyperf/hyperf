@@ -58,8 +58,8 @@
   * [模型事件](zh-hk/db/event.md)
   * [模型緩存](zh-hk/db/model-cache.md)
   * [數據庫遷移](zh-hk/db/migration.md)
-  * [極簡 DB 組件](zh-hk/db/db.md)
   * [修改器](zh-hk/db/mutators.md)
+  * [極簡 DB 組件](zh-hk/db/db.md)
   
 * 微服務
 
@@ -67,15 +67,20 @@
   * [JSON RPC 服務](zh-hk/json-rpc.md)
   * [gRPC 服務](zh-hk/grpc.md)
   * [服務註冊](zh-hk/service-register.md)
+  * [服務重試](zh-hk/retry.md)
   * [服務熔斷及降級](zh-hk/circuit-breaker.md)
   * [服務限流](zh-hk/rate-limit.md)
   * [配置中心](zh-hk/config-center.md)
   * [調用鏈追蹤](zh-hk/tracer.md)
   * [服務監控](zh-hk/metric.md)
-  * [服務重試](zh-hk/retry.md)
-  * [Nacos](zh-hk/nacos.md)
-  * [Jet](zh-hk/jet.md)
+  * [Snowflake](zh-hk/snowflake.md)
   
+* 網絡服務
+
+  * [TCP 服務](zh-hk/tcp-server.md)
+  * [WebSocket 服務](zh-hk/websocket-server.md)
+  * [Socket.io 服務](zh-hk/socketio-server.md)
+
 * 消息隊列
 
   * [Redis 異步隊列](zh-hk/async-queue.md)
@@ -83,31 +88,30 @@
   * [Nats](zh-hk/nats.md)
   * [NSQ](zh-hk/nsq.md)
   
-* 其它組件
+* 客户端
 
-  * [連接池](zh-hk/pool.md)
   * [Redis 協程客户端](zh-hk/redis.md)
   * [Guzzle HTTP 協程客户端](zh-hk/guzzle.md)
   * [Elasticsearch 協程客户端](zh-hk/elasticsearch.md)
   * [Consul 協程客户端](zh-hk/consul.md)
   * [ETCD 協程客户端](zh-hk/etcd.md)
-  * [WebSocket 服務](zh-hk/websocket-server.md)
-  * [TCP 服務](zh-hk/tcp-server.md)
   * [WebSocket 協程客户端](zh-hk/websocket-client.md)
-  * [Socket.io 服務](zh-hk/socketio-server.md)
+  * [Nacos](zh-hk/nacos.md)
+  * [Jet](zh-hk/jet.md)
+
+* 其它組件
+
+  * [連接池](zh-hk/pool.md)
   * [自定義進程](zh-hk/process.md)
-  * [開發者工具](zh-hk/devtool.md)
   * [輔助類](zh-hk/utils.md)
-  * [限流器](zh-hk/rate-limit.md)
-  * [Swoole Tracker](zh-hk/swoole-tracker.md)
   * [定時任務](zh-hk/crontab.md)
   * [Task 機制](zh-hk/task.md)
   * [枚舉類](zh-hk/constants.md)
-  * [Snowflake](zh-hk/snowflake.md)
-  * [重試](zh-hk/retry.md)
   * [信號處理器](zh-hk/signal.md)
   * [ReactiveX](zh-hk/reactive-x.md)
   * [Watcher](zh-hk/watcher.md)
+  * [開發者工具](zh-hk/devtool.md)
+  * [Swoole Tracker](zh-hk/swoole-tracker.md)
 
 * 應用部署
 
