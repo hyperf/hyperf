@@ -6,24 +6,32 @@
 composer require hyperf/redis
 ```
 
-## 配置
+## Configuration
 
-| 配置项 |  类型   |   默认值    |   备注    |
+| Config |  Type   |   Default Value    |   Comment    |
 |:------:|:-------:|:-----------:|:---------:|
-|  host  | string  | 'localhost' | Redis地址 |
-|  auth  | string  |     无      |   密码    |
-|  port  | integer |    6379     |   端口    |
-|   db   | integer |      0      |    DB     |
-
+|  host  | string  | 'localhost' | The host of Redis Server |
+|  auth  | string  |     null      |   The password of Redis Server    |
+|  port  | integer |    6379     |   The port of Redis Server    |
+|   db   | integer |      0      |    The DB of Redis Server     |
+| cluster.enable | boolean |    false    |          Is it cluster mode ?          |
+|  cluster.name  | string  |    null     |             The cluster name             |
+| cluster.seeds  |  array  |     []      | The seeds of cluster, format: ['host:port'] |
+|      pool      | object  |     {}      |           The connection pool           |
+|    options     | object  |     {}      |         The options of Redis Client         |
 ```php
 <?php
-
 return [
     'default' => [
         'host' => env('REDIS_HOST', 'localhost'),
         'auth' => env('REDIS_AUTH', ''),
         'port' => (int) env('REDIS_PORT', 6379),
         'db' => (int) env('REDIS_DB', 0),
+        'cluster' => [
+            'enable' => (bool) env('REDIS_CLUSTER_ENABLE', false),
+            'name' => null,
+            'seeds' => [],
+        ],
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -37,9 +45,9 @@ return [
 
 ```
 
-## 使用
+## Usage
 
-`hyperf/redis` 实现了 `ext-redis` 代理和连接池，用户可以直接使用\Redis客户端。
+`hyperf/redis` implemented the proxy of `ext-redis` and the connection pool, you could use `\Redis` class directly.
 
 ```php
 <?php
@@ -50,9 +58,9 @@ $result = $redis->keys('*');
 
 ```
 
-## 多库配置
+## Multi-resource configuration
 
-有时候在实际使用中，一个 `Redis` 库并不满足需求，一个项目往往需要配置多个库，这个时候，我们就需要修改一下配置文件 `redis.php`，如下：
+Sometimes, a single `Redis` resource can not meet the needs, and a project often needs to configure multiple resources. At this time, we could modify the configuration file `redis.php` as follows:
 
 ```php
 <?php
@@ -63,6 +71,11 @@ return [
         'auth' => env('REDIS_AUTH', ''),
         'port' => (int) env('REDIS_PORT', 6379),
         'db' => (int) env('REDIS_DB', 0),
+        'cluster' => [
+            'enable' => (bool) env('REDIS_CLUSTER_ENABLE', false),
+            'name' => null,
+            'seeds' => [],
+        ],
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -72,7 +85,7 @@ return [
             'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
         ],
     ],
-    // 增加一个名为 foo 的 Redis 连接池
+    // Added a named `foo` redis connection pool
     'foo' => [
         'host' => env('REDIS_HOST', 'localhost'),
         'auth' => env('REDIS_AUTH', ''),
@@ -91,9 +104,9 @@ return [
 
 ```
 
-### 通过代理类使用
+### Use through proxy class
 
-我们可以重写一个 `FooRedis` 类并继承 `Hyperf\Redis\Redis` 类，修改 `poolName` 为上述的 `foo`，即可完成对连接池的切换，示例：
+We could rewrite a `FooRedis` class and inherit the `Hyperf\Redis\Redis` class, and modify the `poolName` property to the above `foo`, to complete the switch of the connection pool, for example:
 
 ```php
 <?php
@@ -102,29 +115,149 @@ use Hyperf\Redis\Redis;
 
 class FooRedis extends Redis
 {
-    // 对应的 Pool 的 key 值
+    // The key value of the corresponding Pool
     protected $poolName = 'foo';
 }
 
-// 通过 DI 容器获取或直接注入当前类
+// Obtain or directly inject the current class through the DI container
 $redis = $this->container->get(FooRedis::class);
 
 $result = $redis->keys('*');
 
 ```
 
-### 使用工厂类
+### Use through factory
 
-在每个库对应一个静态的场景时，通过代理类是一种很好的区分的方法，但有时候需求可能会更加的动态，这时候我们可以通过 `Hyperf\Redis\RedisFactory` 工厂类来动态的传递 `poolName` 来获得对应的连接池的客户端，而无需为每个库创建代理类，示例如下：
+When each resource corresponds to a static scene, the proxy class is a good way to distinguish the resources, but sometimes the demand may be more dynamic. At this time, we could use the `Hyperf\Redis\RedisFactory` factory class to dynamically pass `poolName` argument to retrieve the client of the corresponding connection pool without creating a proxy class for each resource, for example:
 
 ```php
 <?php
 
 use Hyperf\Redis\RedisFactory;
 
-// 通过 DI 容器获取或直接注入 RedisFactory 类
+// Obtain or directly inject the RedisFactory class through the DI container
 $redis = $this->container->get(RedisFactory::class)->get('foo');
 
 $result = $redis->keys('*');
 ```
+
+## Cluster mode
+
+### Cluster name
+ 
+Configure `cluster`, modify `redis.ini`, or modify `Dockerfile`, as follows:
+
+```
+    # - config PHP
+    && { \
+        echo "upload_max_filesize=100M"; \
+        echo "post_max_size=108M"; \
+        echo "memory_limit=1024M"; \
+        echo "date.timezone=${TIMEZONE}"; \
+        echo "redis.clusters.seeds = \"mycluster[]=localhost:7000&mycluster[]=localhost:7001\""; \
+        echo "redis.clusters.timeout = \"mycluster=5\""; \
+        echo "redis.clusters.read_timeout = \"mycluster=10\""; \
+        echo "redis.clusters.auth = \"mycluster=password\"";
+    } | tee conf.d/99-overrides.ini \
+```
+
+The corresponding PHP configuration is as follows
+
+```php
+<?php
+// ./config/autoload/redis.php
+// Ignore the other irrelevant configurations
+return [
+    'default' => [
+        'cluster' => [
+            'enable' => true,
+            'name' => 'mycluster',
+            'seeds' => [],
+        ],
+    ],
+];
+```
+
+### Seeds
+
+Of course, it is also available to use `seeds` directly without configuring the `name`, as follows:
+
+```php
+<?php
+// Ignore the other irrelevant configurations
+return [
+    'default' => [
+        'cluster' => [
+            'enable' => true,
+            'name' => null,
+            'seeds' => [
+                '192.168.1.110:6379',
+                '192.168.1.111:6379',
+            ],
+        ],
+    ],
+];
+```
+
+## Options
+
+You could define `options` configuration to set the options of Redis Client.
+
+For example, use PHP Serializer to serialize the result:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    'default' => [
+        'host' => env('REDIS_HOST', 'localhost'),
+        'auth' => env('REDIS_AUTH', null),
+        'port' => (int) env('REDIS_PORT', 6379),
+        'db' => (int) env('REDIS_DB', 0),
+        'pool' => [
+            'min_connections' => 1,
+            'max_connections' => 10,
+            'connect_timeout' => 10.0,
+            'wait_timeout' => 3.0,
+            'heartbeat' => -1,
+            'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
+        ],
+        'options' => [
+            Redis::OPT_SERIALIZER => Redis::SERIALIZER_PHP,
+        ],
+    ],
+];
+```
+
+For example, set the redis client never timeout:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    'default' => [
+        'host' => env('REDIS_HOST', 'localhost'),
+        'auth' => env('REDIS_AUTH', null),
+        'port' => (int) env('REDIS_PORT', 6379),
+        'db' => (int) env('REDIS_DB', 0),
+        'pool' => [
+            'min_connections' => 1,
+            'max_connections' => 10,
+            'connect_timeout' => 10.0,
+            'wait_timeout' => 3.0,
+            'heartbeat' => -1,
+            'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
+        ],
+        'options' => [
+            Redis::OPT_READ_TIMEOUT => -1,
+        ],
+    ],
+];
+```
+
+> Notice that, in some versions of `phpredis` extension, the value type of `options` has to `string`.
 
