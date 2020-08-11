@@ -16,6 +16,7 @@ use GuzzleHttp\RequestOptions;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Guzzle\ClientFactory;
+use Hyperf\Nacos\Contract\LoggerInterface;
 
 abstract class AbstractNacos
 {
@@ -33,11 +34,19 @@ abstract class AbstractNacos
     {
         $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
+        $this->logger = $container->get(LoggerInterface::class);
     }
 
     public function request($method, $uri, array $options = [])
     {
-        return $this->client()->request($method, $uri, $options);
+        try {
+            return $this->client()->request($method, $uri, $options);
+        } catch (\Throwable $throwable) {
+            $message = printf("request nacos server error: %s", $throwable->getMessage());
+            $this->logger->error($message);
+            return null;
+        }
+
     }
 
     public function getServerUri(): string

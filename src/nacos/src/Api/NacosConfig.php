@@ -14,6 +14,7 @@ namespace Hyperf\Nacos\Api;
 use GuzzleHttp\RequestOptions;
 use Hyperf\Nacos\Model\ConfigModel;
 use Hyperf\Utils\Codec\Json;
+use Psr\Http\Message\ResponseInterface;
 
 class NacosConfig extends AbstractNacos
 {
@@ -22,6 +23,10 @@ class NacosConfig extends AbstractNacos
         $response = $this->request('GET', '/nacos/v1/cs/configs', [
             RequestOptions::QUERY => $configModel->toArray(),
         ]);
+        
+        if (!$response instanceof ResponseInterface) {
+            return [];
+        }
 
         return $configModel->parse($response->getBody()->getContents());
     }

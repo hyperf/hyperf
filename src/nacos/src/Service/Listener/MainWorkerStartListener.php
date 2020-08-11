@@ -9,18 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nacos\Listener;
+namespace Hyperf\Nacos\Service\Listener;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
-use Hyperf\Nacos\Api\NacosInstance;
-use Hyperf\Nacos\Api\NacosService;
-use Hyperf\Nacos\Client;
+use Hyperf\Nacos\Api\NacosInstance as NacosInstanceApi;
+use Hyperf\Nacos\Api\NacosService as NacosServiceApi;
+use Hyperf\Nacos\Config\Client;
 use Hyperf\Nacos\Exception\RuntimeException;
-use Hyperf\Nacos\Instance;
-use Hyperf\Nacos\Service;
+use Hyperf\Nacos\Service\Instance;
+use Hyperf\Nacos\Service\Service;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Psr\Container\ContainerInterface;
 
 class MainWorkerStartListener implements ListenerInterface
@@ -35,47 +36,48 @@ class MainWorkerStartListener implements ListenerInterface
      */
     protected $logger;
 
+    /**
+     * @var ConfigInterface
+     */
+    protected $config;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->config = $this->container->get(ConfigInterface::class);
     }
 
     public function listen(): array
     {
         return [
             MainWorkerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 
     public function process(object $event)
     {
-        $config = $this->container->get(ConfigInterface::class);
-
-        if (! $config->get('nacos')) {
+        if (! $this->config->get('nacos.service.enable', false)) {
             return;
         }
 
-        $nacosService = $this->container->get(NacosService::class);
+        $nacosServiceApi = $this->container->get(NacosServiceApi::class);
         $service = $this->container->get(Service::class);
-        $exist = $nacosService->detail($service);
-        if (! $exist && ! $nacosService->create($service)) {
-            throw new RuntimeException(sprintf('nacos register service fail: %s', $service));
+        $exist = $nacosServiceApi->detail($service);
+        if (! $exist) {
+            if (! $nacosServiceApi->create($service)) {
+                throw new RuntimeException(sprintf('nacos register service fail: %s', $service));
+            }
+
+            $this->logger->info('nacos register service success.', compact('service'));
         }
-        $this->logger->info('nacos register service success.', compact('service'));
 
         $instance = $this->container->get(Instance::class);
-        $nacosInstance = $this->container->get(NacosInstance::class);
-        if (! $nacosInstance->register($instance)) {
+        $nacosInstanceApi = $this->container->get(NacosInstanceApi::class);
+        if (! $nacosInstanceApi->register($instance)) {
             throw new RuntimeException(sprintf('nacos register instance fail: %s', $instance));
         }
         $this->logger->info('nacos register instance success.', compact('instance'));
-
-        $client = $this->container->get(Client::class);
-        $config = $this->container->get(ConfigInterface::class);
-        $appendNode = $config->get('nacos.config_append_node');
-        foreach ($client->pull() as $key => $conf) {
-            $config->set($appendNode ? $appendNode . '.' . $key : $key, $conf);
-        }
     }
 }

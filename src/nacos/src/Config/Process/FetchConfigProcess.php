@@ -9,14 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nacos\Config;
+namespace Hyperf\Nacos\Config\Process;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Nacos\Client;
+use Hyperf\Nacos\Config\Client;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessCollector;
 use Swoole\Coroutine\Server as CoServer;
 use Swoole\Server;
+use Hyperf\Nacos\Config\PipeMessage;
 
 class FetchConfigProcess extends AbstractProcess
 {
@@ -61,13 +62,13 @@ class FetchConfigProcess extends AbstractProcess
 
                 $cache = $remoteConfig;
             }
-            sleep((int) $config->get('nacos.config_reload_interval', 3));
+            sleep((int) $config->get('nacos.config.reload_interval', 3));
         }
     }
 
     public function isEnable($server): bool
     {
         $config = $this->container->get(ConfigInterface::class);
-        return $server instanceof Server && (bool) $config->get('nacos.config_reload_interval', false);
+        return $server instanceof Server && (bool) $config->get('nacos.config.enable', false);
     }
 }

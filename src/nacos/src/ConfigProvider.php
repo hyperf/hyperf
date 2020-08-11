@@ -12,26 +12,23 @@ declare(strict_types=1);
 namespace Hyperf\Nacos;
 
 use Hyperf\Framework\Logger\StdoutLogger;
-use Hyperf\Nacos\Config\FetchConfigProcess;
-use Hyperf\Nacos\Config\OnPipeMessageListener;
 use Hyperf\Nacos\Contract\LoggerInterface;
-use Hyperf\Nacos\Listener\MainWorkerStartListener;
-use Hyperf\Nacos\Listener\OnShutdownListener;
-use Hyperf\Nacos\Process\InstanceBeatProcess;
 
 class ConfigProvider
 {
     public function __invoke(): array
     {
+
         return [
             'listeners' => [
-                MainWorkerStartListener::class,
-                OnShutdownListener::class,
-                OnPipeMessageListener::class,
+                Service\Listener\MainWorkerStartListener::class,
+                Service\Listener\OnShutdownListener::class,
+                Config\Listener\MainWorkerStartListener::class,
+                Config\Listener\OnPipeMessageListener::class,
             ],
             'processes' => [
-                InstanceBeatProcess::class,
-                FetchConfigProcess::class,
+                Service\Process\InstanceBeatProcess::class,
+                Config\Process\FetchConfigProcess::class,
             ],
             'dependencies' => [
                 LoggerInterface::class => StdoutLogger::class,

@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nacos;
+namespace Hyperf\Nacos\Service;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Nacos\Model\ServiceModel;
@@ -18,7 +18,7 @@ class Service extends ServiceModel
 {
     public function __construct(ConfigInterface $config)
     {
-        $config = $config->get('nacos.service', []);
-        parent::__construct($config);
+        $serviceConfig = $config->get('nacos.service', []);
+        parent::__construct($serviceConfig);
     }
 }

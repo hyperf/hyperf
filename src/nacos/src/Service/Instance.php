@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nacos;
+namespace Hyperf\Nacos\Service;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Nacos\Exception\InvalidArgumentException;
@@ -20,18 +20,14 @@ class Instance extends InstanceModel
 {
     public function __construct(ConfigInterface $config)
     {
-        $client = $config->get('nacos.client', []);
-        if (! isset($client['service_name'])) {
-            throw new InvalidArgumentException('nacos.client.service_name is required');
+        $serviceConfig = $config->get('nacos.service', []);
+        if (! isset($serviceConfig['service_name'])) {
+            throw new InvalidArgumentException('nacos.service.service_name is required');
         }
 
-        foreach ($client as $key => $val) {
-            $key = Str::camel($key);
-            if (property_exists($this, $key)) {
-                $this->{$key} = $val;
-            }
-        }
+        parent::__construct($serviceConfig);
 
+        $this->ephemeral = $serviceConfig['ephemeral'] ? "true" : "false";
         $this->ip = current(swoole_get_local_ip());
         $this->port = $config->get('server.servers.0.port');
     }

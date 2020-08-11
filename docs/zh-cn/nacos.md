@@ -14,40 +14,51 @@ composer require hyperf/nacos
 php bin/hyperf.php vendor:publish hyperf/nacos
 ```
 
-### 目录结构
+## 完整配置
+```php
+// config/autoload/nacos.php
 
-```
-./src
-├── Api
-│   ├── AbstractNacos.php
-│   ├── NacosConfig.php
-│   ├── NacosInstance.php
-│   ├── NacosOperator.php
-│   └── NacosService.php
-├── Client.php
-├── Config
-│   ├── FetchConfigProcess.php
-│   ├── OnPipeMessageListener.php
-│   └── PipeMessage.php
-├── ConfigProvider.php
-├── Contract
-│   └── LoggerInterface.php
-├── Exception
-│   ├── InvalidArgumentException.php
-│   ├── NacosThrowable.php
-│   └── RuntimeException.php
-├── Instance.php
-├── Listener
-│   ├── MainWorkerStartListener.php
-│   └── OnShutdownListener.php
-├── Model
-│   ├── AbstractModel.php
-│   ├── ConfigModel.php
-│   ├── InstanceModel.php
-│   └── ServiceModel.php
-├── Process
-│   └── InstanceBeatProcess.php
-└── Service.php
+return [
+    // The nacos host info
+    'host' => '127.0.0.1',
+    'port' => 8848,
+
+    // 服务注册，新服务会自动创建后再注册实例
+    'service' => [
+        'enable' => true, // 是否启用服务注册
+        'namespace_id' => 'namespace_id', // 命名空间ID
+        'group_name' => 'api', // 服务组
+        'service_name' => 'hyperf', // 服务名
+        'protect_threshold' => 0.5, // 服务保护阈值
+        'cluster' => 'DEFAULT', // 实例所处虚拟集群
+        'weight' => 80, // 实例权重
+        'ephemeral' => true, // 是否临时实例
+        'beat_enable' => true, // 是否发送实例心跳，临时实例如果不发送心跳，会被检测为非健康实例
+        'beat_interval' => 5, // 心跳周期
+        'remove_node_when_server_shutdown' => true, // 关机是否注销实例
+        'load_balancer' => 'random', // 负载均衡策略
+    ],
+
+    // 配置中心
+    'config' => [
+        'enable' => true, // 是否启用配置中心
+        'reload_interval' => 3, //配置刷新周期
+        'listener_config' => [
+            [
+                'tenant' => 'namespace_id', // 命名空间ID
+                'group' => 'DEFAULT_GROUP', // 配置分组
+                'data_id' => 'hyperf-service-config', // 配置ID
+                'mapping_path' => 'xxx.yyy', // 使用config('xxx.yyy')获取配置；为空则使用data_id作为配置路径，config('hyperf-service-config')
+            ],
+            [
+                'tenant' => 'namespace_id',
+                'group' => 'DEFAULT_GROUP',
+                'data_id' => 'hyperf-service-config-yml',
+                'type' => 'yml', // 配置类型
+            ]
+        ]
+    ]
+];
 ```
 
 ## 服务与实例
@@ -72,7 +83,7 @@ return [
 
 ```php
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Nacos\Instance;
+use Hyperf\Nacos\Service\Instance;
 
 $container = ApplicationContext::getContainer();
 $instance = $container->get(Instance::class);
@@ -82,7 +93,7 @@ $instance = $container->get(Instance::class);
 
 ```php
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Nacos\Service;
+use Hyperf\Nacos\Service\Service;
 
 $container = ApplicationContext::getContainer();
 $service = $container->get(Service::class);
@@ -92,10 +103,10 @@ $service = $container->get(Service::class);
 
 ```php
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Nacos\Instance;
+use Hyperf\Nacos\Api\NacosInstance;
 
 $container = ApplicationContext::getContainer();
-$instance = $container->get(Instance::class);
+$nacosInstance = $container->get(NacosInstance::class);
 
 $service = new ServiceModel([
     'service_name' => 'hyperf',
@@ -103,7 +114,7 @@ $service = new ServiceModel([
     'namespace_id' => '5ce9d1c1-6732-4ccc-ae1f-5139af86a845'
 ]);
 
-$optimal = $instance->getOptimal($service);
+$optimal = $nacosInstance->getOptimal($service);
 
 ```
 
@@ -119,24 +130,27 @@ $optimal = $instance->getOptimal($service);
 
 return [
     // ...other
-    'config_reload_interval' => 3,
-    // 远程配置合并节点, 默认 config 根节点
-    'config_append_node' => 'nacos_config',
-    'listener_config' => [
-        // 配置项 dataId, group, tenant, type, content
-        [
-            'data_id' => 'hyperf-service-config',
-            'group' => 'DEFAULT_GROUP',
-        ],
-        [
-            'data_id' => 'hyperf-service-config-yml',
-            'group' => 'DEFAULT_GROUP',
-            'type' => 'yml',
-        ],
-    ],
+    // 配置中心
+    'config' => [
+        'enable' => true, // 是否启用配置中心
+        'reload_interval' => 3, //配置刷新周期
+        'listener_config' => [
+            [
+                'tenant' => 'namespace_id', // 命名空间ID
+                'group' => 'DEFAULT_GROUP', // 配置分组
+                'data_id' => 'hyperf-service-config', // 配置ID
+                'mapping_path' => 'xxx.yyy', // 使用config('xxx.yyy')获取配置；为空则使用data_id作为配置路径，config('hyperf-service-config')
+            ],
+            [
+                'tenant' => 'namespace_id',
+                'group' => 'DEFAULT_GROUP',
+                'data_id' => 'hyperf-service-config-yml',
+                'type' => 'yml', // 配置类型
+            ]
+        ]
+    ]
 ];
 ```
 
-系统将自动监听`listener_config` 中的配置，并将其合并入`hyperf Config` 对象的指定(`config_append_node`) 节点，可以用`config('nacos_config.***')` 获取，若没有配置 `config_append_node` 项，将会并入 `Config` 对象根节点。
+第一项配置通过 `config('xxx.yyy')` 获取，第二项配置通过 `config('hyperf-service-config-yml')` 获取。
 
-> 所有配置的 `键(key)` 在实际发起 API 请求时会自动从下划线风格转换为驼峰风格。
