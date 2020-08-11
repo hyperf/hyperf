@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -28,7 +28,6 @@ use Hyperf\Database\Model\Relations\MorphMany;
 use Hyperf\Database\Model\Relations\MorphOne;
 use Hyperf\Database\Model\Relations\MorphTo;
 use Hyperf\Database\Model\Relations\MorphToMany;
-use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Utils\Str;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
@@ -38,6 +37,7 @@ use Roave\BetterReflection\Reflection\ReflectionClass;
 use Roave\BetterReflection\Reflection\ReflectionMethod;
 use Roave\BetterReflection\Reflector\ClassReflector;
 use Roave\BetterReflection\TypesFinder\FindReturnType;
+use RuntimeException;
 
 class ModelUpdateVisitor extends NodeVisitorAbstract
 {
@@ -81,13 +81,11 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     protected $properties = [];
 
     /**
-     * @deprecated v2.0
      * @var ClassReflector
      */
     protected static $reflector;
 
     /**
-     * @deprecated v2.0
      * @var FindReturnType
      */
     protected static $return;
@@ -187,6 +185,9 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         $doc = '/**' . PHP_EOL;
         foreach ($this->columns as $column) {
             [$name, $type, $comment] = $this->getProperty($column);
+            if (array_key_exists($name, $this->properties)) {
+                continue;
+            }
             $doc .= sprintf(' * @property %s $%s %s', $type, $name, $comment) . PHP_EOL;
         }
         foreach ($this->properties as $name => $property) {
@@ -260,26 +261,29 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                     $expr instanceof Node\Expr\MethodCall
                     && $expr->name instanceof Node\Identifier
                     && is_string($expr->name->name)
-                    && isset($expr->args[0])
-                    && $expr->args[0] instanceof Node\Arg
                 ) {
+                    $loop = 0;
+                    while ($expr->var instanceof Node\Expr\MethodCall) {
+                        if ($loop > 32) {
+                            throw new RuntimeException('max loop reached!');
+                        }
+                        ++$loop;
+                        $expr = $expr->var;
+                    }
                     $name = $expr->name->name;
                     if (array_key_exists($name, self::RELATION_METHODS)) {
-                        if ($expr->args[0]->value instanceof Node\Expr\ClassConstFetch) {
-                            $related = $expr->args[0]->value->class->toCodeString();
-                        } else {
-                            $related = (string) ($expr->args[0]->value);
-                        }
-
-                        if (strpos($name, 'Many') !== false) {
-                            // Collection or array of models (because Collection is Arrayable)
-                            $this->setProperty($method->getName(), [$this->getCollectionClass($related), $related . '[]'], true);
-                        } elseif ($name === 'morphTo') {
+                        if ($name === 'morphTo') {
                             // Model isn't specified because relation is polymorphic
-                            $this->setProperty($method->getName(), [Model::class], true);
-                        } else {
-                            // Single model is returned
-                            $this->setProperty($method->getName(), [$related], true);
+                            $this->setProperty($method->getName(), ['\\' . Model::class], true);
+                        } elseif (isset($expr->args[0]) && $expr->args[0]->value instanceof Node\Expr\ClassConstFetch) {
+                            $related = $expr->args[0]->value->class->toCodeString();
+                            if (strpos($name, 'Many') !== false) {
+                                // Collection or array of models (because Collection is Arrayable)
+                                $this->setProperty($method->getName(), [$this->getCollectionClass($related), $related . '[]'], true);
+                            } else {
+                                // Single model is returned
+                                $this->setProperty($method->getName(), [$related], true);
+                            }
                         }
                     }
                 }

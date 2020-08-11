@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -115,7 +115,7 @@ class Filesystem
     public function put(string $path, $contents, bool $lock = false)
     {
         if ($lock) {
-            return $this->atomic($path, function ($path) use ($contents, $lock) {
+            return $this->atomic($path, function ($path) use ($contents) {
                 $handle = fopen($path, 'w+');
                 if ($handle) {
                     $wouldBlock = false;

@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -37,7 +37,7 @@ class Consumer extends Builder
     protected $status = true;
 
     /**
-     * @var EventDispatcherInterface
+     * @var null|EventDispatcherInterface
      */
     protected $eventDispatcher;
 
@@ -87,7 +87,7 @@ class Consumer extends Builder
                     return parallel([$callback]);
                 }
 
-                return $concurrent->create($callback);
+                $concurrent->create($callback);
             }
         );
 

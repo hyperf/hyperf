@@ -16,8 +16,8 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/utils": "~1.1.0",
-        "hyperf/paginator": "~1.1.0",
+        "hyperf/utils": "~2.0.0",
+        "hyperf/paginator": "~2.0.0",
         "psr/container": "^1.0",
         "nesbot/carbon": "^2.0",
         "psr/event-dispatcher": "^1.0"
@@ -47,7 +47,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         }
     },
     "bin": [

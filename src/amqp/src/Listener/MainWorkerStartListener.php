@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -62,7 +62,7 @@ class MainWorkerStartListener implements ListenerInterface
             $producer = $this->container->get(\Hyperf\Amqp\Producer::class);
             $instantiator = $this->container->get(Instantiator::class);
             /**
-             * @var string
+             * @var string $producerMessageClass
              * @var Producer $annotation
              */
             foreach ($producerMessages as $producerMessageClass => $annotation) {

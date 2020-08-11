@@ -21,8 +21,8 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/utils": "~1.1.0",
-        "hyperf/etcd": "~1.1.0"
+        "hyperf/utils": "~2.0.0",
+        "hyperf/etcd": "~2.0.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14"
@@ -36,7 +36,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\ConfigEtcd\\ConfigProvider"

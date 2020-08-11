@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -16,6 +16,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\ServiceGovernance\Register\ConsulAgent;
 use Hyperf\ServiceGovernance\ServiceManager;
 use Psr\Container\ContainerInterface;
@@ -67,11 +68,12 @@ class RegisterServiceListener implements ListenerInterface
     {
         return [
             MainWorkerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 
     /**
-     * @param MainWorkerStart $event
+     * @param MainCoroutineServerStart|MainWorkerStart $event
      */
     public function process(object $event)
     {
@@ -247,9 +249,10 @@ class RegisterServiceListener implements ListenerInterface
     protected function getInternalIp(): string
     {
         $ips = swoole_get_local_ip();
-        if (is_array($ips)) {
+        if (is_array($ips) && ! empty($ips)) {
             return current($ips);
         }
+        /** @var mixed|string $ip */
         $ip = gethostbyname(gethostname());
         if (is_string($ip)) {
             return $ip;
