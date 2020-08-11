@@ -109,9 +109,7 @@ class NacosInstance extends AbstractNacos
             RequestOptions::QUERY => $params,
         ]);
 
-        $rs =  Json::decode($response->getBody()->getContents());
-
-        return $rs;
+        return Json::decode($response->getBody()->getContents());
     }
 
     public function updateHealth(InstanceModel $instanceModel): bool

@@ -23,7 +23,7 @@ class ConfigProvider
             'listeners' => [
                 Service\Listener\MainWorkerStartListener::class,
                 Service\Listener\OnShutdownListener::class,
-                Config\Listener\MainWorkerStartListener::class,
+                Config\Listener\BootProcessListener::class,
                 Config\Listener\OnPipeMessageListener::class,
             ],
             'processes' => [

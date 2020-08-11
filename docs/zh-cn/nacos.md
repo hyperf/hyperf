@@ -42,6 +42,8 @@ return [
     // 配置中心
     'config' => [
         'enable' => true, // 是否启用配置中心
+        // 是否使用独立进程来拉取config，如果否则将在worker内以协程方式拉取
+        'use_standalone_process' => true,
         'reload_interval' => 3, //配置刷新周期
         'listener_config' => [
             [

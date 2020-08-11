@@ -31,6 +31,7 @@ return [
 
     'config' => [
         'enable' => true,
+        'use_standalone_process' => true,
         'reload_interval' => 3,
         'listener_config' => [
             [

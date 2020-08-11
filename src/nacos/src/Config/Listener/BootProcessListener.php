@@ -16,12 +16,15 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Nacos\Config\Client;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Hyperf\Command\Event\BeforeHandle;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
 
-class MainWorkerStartListener implements ListenerInterface
+class BootProcessListener implements ListenerInterface
 {
     /**
      * @var ContainerInterface
@@ -38,11 +41,17 @@ class MainWorkerStartListener implements ListenerInterface
      */
     protected $config;
 
+    /**
+     * @var Client
+     */
+    protected $client;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->config = $container->get(ConfigInterface::class);
+        $this->client = $this->container->get(Client::class);
     }
 
     public function listen(): array
@@ -60,9 +69,31 @@ class MainWorkerStartListener implements ListenerInterface
             return;
         }
 
-        $client = $this->container->get(Client::class);
-        foreach ($client->pull() as $key => $conf) {
+        foreach ($this->client->pull() as $key => $conf) {
             $this->config->set($key, $conf);
+        }
+
+        if (! $this->config->get('nacos.config.use_standalone_process', true)) {
+            Coroutine::create(function () {
+                $interval = $this->config->get('nacos.config.interval', 3);
+                retry(INF, function () use ($interval) {
+                    $prevConfig = [];
+                    while (true) {
+                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
+                        $workerExited = $coordinator->yield($interval);
+                        if ($workerExited) {
+                            break;
+                        }
+                        $config = $this->client->pull();
+                        if ($config !== $prevConfig) {
+                            foreach ($config as $key => $conf) {
+                                $this->config->set($key, $conf);
+                            }
+                        }
+                        $prevConfig = $config;
+                    }
+                }, $interval * 1000);
+            });
         }
     }
 }
