@@ -17,7 +17,6 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Nacos\Api\NacosInstance as NacosInstanceApi;
 use Hyperf\Nacos\Api\NacosService as NacosServiceApi;
-use Hyperf\Nacos\Config\Client;
 use Hyperf\Nacos\Exception\RuntimeException;
 use Hyperf\Nacos\Service\Instance;
 use Hyperf\Nacos\Service\Service;

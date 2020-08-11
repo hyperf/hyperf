@@ -51,7 +51,7 @@ class NacosService extends AbstractNacos
             RequestOptions::QUERY => $serviceModel->toArray(),
         ]);
 
-        if (!$response instanceof ResponseInterface) {
+        if (! $response instanceof ResponseInterface) {
             return [];
         }
 

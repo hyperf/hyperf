@@ -23,8 +23,8 @@ class NacosConfig extends AbstractNacos
         $response = $this->request('GET', '/nacos/v1/cs/configs', [
             RequestOptions::QUERY => $configModel->toArray(),
         ]);
-        
-        if (!$response instanceof ResponseInterface) {
+
+        if (! $response instanceof ResponseInterface) {
             return [];
         }
 

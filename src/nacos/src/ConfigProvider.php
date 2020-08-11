@@ -18,7 +18,6 @@ class ConfigProvider
 {
     public function __invoke(): array
     {
-
         return [
             'listeners' => [
                 Service\Listener\MainWorkerStartListener::class,

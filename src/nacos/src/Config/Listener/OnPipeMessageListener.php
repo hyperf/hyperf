@@ -15,9 +15,9 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
+use Hyperf\Nacos\Config\PipeMessage;
 use Hyperf\Process\Event\PipeMessage as UserProcessPipMessage;
 use Psr\Container\ContainerInterface;
-use Hyperf\Nacos\Config\PipeMessage;
 
 class OnPipeMessageListener implements ListenerInterface
 {

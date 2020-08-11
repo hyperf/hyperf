@@ -45,7 +45,7 @@ return [
                 'group' => 'DEFAULT_GROUP',
                 'data_id' => 'hyperf-service-config-yml',
                 'type' => 'yml',
-            ]
-        ]
-    ]
+            ],
+        ],
+    ],
 ];

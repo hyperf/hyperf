@@ -13,11 +13,11 @@ namespace Hyperf\Nacos\Config\Process;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Nacos\Config\Client;
+use Hyperf\Nacos\Config\PipeMessage;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessCollector;
 use Swoole\Coroutine\Server as CoServer;
 use Swoole\Server;
-use Hyperf\Nacos\Config\PipeMessage;
 
 class FetchConfigProcess extends AbstractProcess
 {
@@ -68,7 +68,6 @@ class FetchConfigProcess extends AbstractProcess
 
     public function isEnable($server): bool
     {
-
         $config = $this->container->get(ConfigInterface::class);
         return $server instanceof Server
             && (bool) $config->get('nacos.config.enable', false)

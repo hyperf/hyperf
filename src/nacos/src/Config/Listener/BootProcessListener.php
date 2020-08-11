@@ -11,18 +11,17 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos\Config\Listener;
 
+use Hyperf\Command\Event\BeforeHandle;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Event\MainWorkerStart;
+use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Nacos\Config\Client;
+use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
-use Hyperf\Command\Event\BeforeHandle;
-use Hyperf\Framework\Event\BeforeWorkerStart;
-use Hyperf\Process\Event\BeforeProcessHandle;
 
 class BootProcessListener implements ListenerInterface
 {

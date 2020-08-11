@@ -14,7 +14,6 @@ namespace Hyperf\Nacos\Service;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Nacos\Exception\InvalidArgumentException;
 use Hyperf\Nacos\Model\InstanceModel;
-use Hyperf\Utils\Str;
 
 class Instance extends InstanceModel
 {
@@ -27,7 +26,7 @@ class Instance extends InstanceModel
 
         parent::__construct($serviceConfig);
 
-        $this->ephemeral = $serviceConfig['ephemeral'] ? "true" : "false";
+        $this->ephemeral = $serviceConfig['ephemeral'] ? 'true' : 'false';
         $this->ip = current(swoole_get_local_ip());
         $this->port = $config->get('server.servers.0.port');
     }
