@@ -14,6 +14,7 @@ namespace Hyperf\Nacos\Api;
 use GuzzleHttp\RequestOptions;
 use Hyperf\Nacos\Model\ServiceModel;
 use Hyperf\Utils\Codec\Json;
+use Psr\Http\Message\ResponseInterface;
 
 class NacosService extends AbstractNacos
 {
@@ -49,6 +50,10 @@ class NacosService extends AbstractNacos
         $response = $this->request('GET', '/nacos/v1/ns/service', [
             RequestOptions::QUERY => $serviceModel->toArray(),
         ]);
+
+        if (! $response instanceof ResponseInterface) {
+            return [];
+        }
 
         return Json::decode($response->getBody()->getContents());
     }

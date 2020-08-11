@@ -13,39 +13,39 @@ return [
     // The nacos host info
     'host' => '127.0.0.1',
     'port' => 8848,
-    // The service info.
+
     'service' => [
-        'service_name' => 'hyperf',
-        'group_name' => 'api',
+        'enable' => true,
         'namespace_id' => 'namespace_id',
-        'protect_threshold' => 0.5,
-    ],
-    // The client info.
-    'client' => [
-        'service_name' => 'hyperf',
         'group_name' => 'api',
-        'weight' => 80,
+        'service_name' => 'hyperf',
+        'protect_threshold' => 0.5,
         'cluster' => 'DEFAULT',
+        'weight' => 80,
         'ephemeral' => true,
         'beat_enable' => true,
         'beat_interval' => 5,
-        'namespace_id' => 'namespace_id', // It must be equal with service.namespaceId.
+        'remove_node_when_server_shutdown' => true,
+        'load_balancer' => 'random',
     ],
-    'remove_node_when_server_shutdown' => true,
-    'config_reload_interval' => 3,
-    'config_append_node' => 'nacos_config',
-    'listener_config' => [
-        // dataId, group, tenant, type, content
-        //[
-        //    'tenant' => 'tenant', // corresponding with service.namespaceId
-        //    'data_id' => 'hyperf-service-config',
-        //    'group' => 'DEFAULT_GROUP',
-        //],
-        //[
-        //    'data_id' => 'hyperf-service-config-yml',
-        //    'group' => 'DEFAULT_GROUP',
-        //    'type' => 'yml',
-        //],
+
+    'config' => [
+        'enable' => true,
+        'use_standalone_process' => true,
+        'reload_interval' => 3,
+        'listener_config' => [
+            [
+                'tenant' => 'namespace_id',
+                'group' => 'DEFAULT_GROUP',
+                'data_id' => 'hyperf-service-config',
+                'mapping_path' => 'xxx.yyy',
+            ],
+            [
+                'tenant' => 'namespace_id',
+                'group' => 'DEFAULT_GROUP',
+                'data_id' => 'hyperf-service-config-yml',
+                'type' => 'yml',
+            ],
+        ],
     ],
-    'load_balancer' => 'random',
 ];

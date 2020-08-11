@@ -9,16 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nacos\Listener;
+namespace Hyperf\Nacos\Service\Listener;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnShutdown;
 use Hyperf\Nacos\Api\NacosInstance;
-use Hyperf\Nacos\Api\NacosService;
 use Hyperf\Nacos\Contract\LoggerInterface;
-use Hyperf\Nacos\Instance;
-use Hyperf\Nacos\Service;
+use Hyperf\Nacos\Service\Instance;
 use Psr\Container\ContainerInterface;
 
 class OnShutdownListener implements ListenerInterface
@@ -43,21 +41,11 @@ class OnShutdownListener implements ListenerInterface
     public function process(object $event)
     {
         $config = $this->container->get(ConfigInterface::class);
-        if (! $config->get('nacos.remove_node_when_server_shutdown', false)) {
+        if (! $config->get('nacos.service.remove_node_when_server_shutdown', false)) {
             return;
         }
 
         $logger = $this->container->get(LoggerInterface::class);
-        /** @var NacosService $nacosService */
-        $nacosService = $this->container->get(NacosService::class);
-        $service = $this->container->get(Service::class);
-        $deleted = $nacosService->delete($service);
-
-        if ($deleted) {
-            $logger && $logger->info('nacos service delete success.');
-        } else {
-            $logger && $logger->erro('nacos service delete fail when shutdown.');
-        }
 
         $instance = $this->container->get(Instance::class);
         /** @var NacosInstance $nacosInstance */

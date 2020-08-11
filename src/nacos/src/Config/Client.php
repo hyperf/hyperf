@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nacos;
+namespace Hyperf\Nacos\Config;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Nacos\Api\NacosConfig;
@@ -42,13 +42,14 @@ class Client
 
     public function pull(): array
     {
-        $listener = $this->config->get('nacos.listener_config', []);
+        $listenerConfig = $this->config->get('nacos.config.listener_config', []);
 
         $config = [];
-        foreach ($listener as $item) {
+        foreach ($listenerConfig as $item) {
             $model = new ConfigModel($item);
             if ($content = $this->client->get($model)) {
-                $config = array_merge_recursive($config, $model->parse($content));
+                $configKey = ($item['mapping_path'] ?? '') ?: $item['data_id'];
+                $config[$configKey] = $model->parse($content);
             }
         }
 

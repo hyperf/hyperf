@@ -80,7 +80,7 @@ class NacosInstance extends AbstractNacos
             return $item['enabled'];
         });
 
-        $tactics = strtolower($this->config->get('nacos.load_balancer', 'random'));
+        $tactics = strtolower($this->config->get('nacos.service.load_balancer', 'random'));
 
         return $this->loadBalancer($enabled, $tactics);
     }

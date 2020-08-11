@@ -59,7 +59,7 @@ class InstanceModel extends AbstractModel
     public $enabled;
 
     /**
-     * @var null|bool
+     * @var null|bool|string
      */
     public $ephemeral;
 

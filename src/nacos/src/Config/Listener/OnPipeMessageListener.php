@@ -9,11 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nacos\Config;
+namespace Hyperf\Nacos\Config\Listener;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
+use Hyperf\Nacos\Config\PipeMessage;
 use Hyperf\Process\Event\PipeMessage as UserProcessPipMessage;
 use Psr\Container\ContainerInterface;
 
@@ -24,9 +26,15 @@ class OnPipeMessageListener implements ListenerInterface
      */
     protected $config;
 
+    /**
+     * @var StdoutLoggerInterface
+     */
+    protected $logger;
+
     public function __construct(ContainerInterface $container)
     {
         $this->config = $container->get(ConfigInterface::class);
+        $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
     /**
@@ -46,10 +54,17 @@ class OnPipeMessageListener implements ListenerInterface
      */
     public function process(object $event)
     {
+        if (! $this->config->get('nacos.config.enable', false)) {
+            return;
+        }
+
         if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
-            $root = $this->config->get('nacos.config_append_node');
-            foreach ($event->data->configurations ?? [] as $key => $conf) {
-                $this->config->set($root ? $root . '.' . $key : $key, $conf);
+            /** @var PipeMessage $data */
+            $data = $event->data;
+            
+            foreach ($data->configurations ?? [] as $k => $v) {
+                $this->config->set($k, $v);
+                $this->logger->debug(sprintf('Config [%s] is updated', $k));
             }
         }
     }
