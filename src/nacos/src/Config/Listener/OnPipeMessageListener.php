@@ -26,6 +26,11 @@ class OnPipeMessageListener implements ListenerInterface
      */
     protected $config;
 
+    /**
+     * @var StdoutLoggerInterface
+     */
+    protected $logger;
+
     public function __construct(ContainerInterface $container)
     {
         $this->config = $container->get(ConfigInterface::class);
@@ -56,8 +61,7 @@ class OnPipeMessageListener implements ListenerInterface
         if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
             /** @var PipeMessage $data */
             $data = $event->data;
-
-            /** @var KV $kv */
+            
             foreach ($data->configurations ?? [] as $k => $v) {
                 $this->config->set($k, $v);
                 $this->logger->debug(sprintf('Config [%s] is updated', $k));

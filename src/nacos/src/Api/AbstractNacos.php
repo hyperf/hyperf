@@ -30,6 +30,11 @@ abstract class AbstractNacos
      */
     protected $config;
 
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
