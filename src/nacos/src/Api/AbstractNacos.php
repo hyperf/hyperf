@@ -47,7 +47,7 @@ abstract class AbstractNacos
         try {
             return $this->client()->request($method, $uri, $options);
         } catch (\Throwable $throwable) {
-            $message = printf('request nacos server error: %s', $throwable->getMessage());
+            $message = sprintf('request nacos server error: %s', $throwable->getMessage());
             $this->logger->error($message);
             return null;
         }
