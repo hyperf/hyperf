@@ -12,9 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\Nacos\Config;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Nacos\Client;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessCollector;
+use Psr\Container\ContainerInterface;
 use Swoole\Coroutine\Server as CoServer;
 use Swoole\Server;
 
@@ -29,6 +31,17 @@ class FetchConfigProcess extends AbstractProcess
      * @var CoServer|Server
      */
     protected $server;
+
+    /**
+     * @var StdoutLoggerInterface
+     */
+    private $logger;
+
+    public function __construct(ContainerInterface $container)
+    {
+        parent::__construct($container);
+        $this->logger = $container->get(StdoutLoggerInterface::class);
+    }
 
     public function bind($server): void
     {
@@ -55,7 +68,10 @@ class FetchConfigProcess extends AbstractProcess
                     $string = serialize($pipeMessage);
                     /** @var \Swoole\Process $process */
                     foreach ($processes as $process) {
-                        $process->exportSocket()->send($string);
+                        $ret = $process->exportSocket()->send($string, 10);
+                        if ($ret === false) {
+                            $this->logger->error('Configuration synchronization failed. Please restart the server.');
+                        }
                     }
                 }
 

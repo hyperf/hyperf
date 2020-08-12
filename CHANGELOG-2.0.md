@@ -1,5 +1,9 @@
 # v2.0.7 - TBD
 
+## Fixed
+
+- [#2275](https://github.com/hyperf/hyperf/pull/2275) Fixed bug that fetch process blocking for config center.
+
 # v2.0.6 - 2020-08-10
 
 ## Added
