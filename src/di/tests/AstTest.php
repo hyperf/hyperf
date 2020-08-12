@@ -17,6 +17,7 @@ use HyperfTest\Di\Stub\AspectCollector;
 use HyperfTest\Di\Stub\Ast\Bar2;
 use HyperfTest\Di\Stub\Ast\Bar3;
 use HyperfTest\Di\Stub\Ast\BarAspect;
+use HyperfTest\Di\Stub\Ast\BarInterface;
 use HyperfTest\Di\Stub\Ast\Foo;
 use HyperfTest\Di\Stub\Ast\FooTrait;
 use PHPUnit\Framework\TestCase;
@@ -107,6 +108,7 @@ class Bar2 extends Bar
         AspectCollector::setAround($aspect, [
             Bar3::class,
             FooTrait::class,
+            BarInterface::class,
         ], []);
 
         $ast = new Ast();
@@ -193,5 +195,24 @@ trait FooTrait
     }
 }', $code);
         }
+
+        $code = $ast->proxy(BarInterface::class);
+        $this->assertSame('<?php
+
+declare (strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace HyperfTest\Di\Stub\Ast;
+
+interface BarInterface
+{
+    public function toArray() : array;
+}', $code);
     }
 }

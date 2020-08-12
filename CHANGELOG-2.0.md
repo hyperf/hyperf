@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#2275](https://github.com/hyperf/hyperf/pull/2275) Fixed bug that fetch process blocking for config center.
+- [#2280](https://github.com/hyperf/hyperf/pull/2280) Fixed bug that interface methods will be rewriten by aop.
 
 # v2.0.6 - 2020-08-10
 
