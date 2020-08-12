@@ -55,7 +55,7 @@ class ProxyFactory
 
         $proxyFileName = str_replace('\\', '_', $serviceClass);
         $proxyClassName = $serviceClass . '_' . md5($this->codeLoader->getCodeByClassName($serviceClass));
-        $path = $dir . $proxyFileName . '.proxy.php';
+        $path = $dir . $proxyFileName . '.rpc-client.proxy.php';
 
         $key = md5($path);
         // If the proxy file does not exist, then try to acquire the coroutine lock.
