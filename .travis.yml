@@ -38,3 +38,6 @@ script:
   - composer analyse src
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
+
+notifications:
+  webhooks: https://oapi.dingtalk.com/robot/send?access_token=72c12e591c435f0f41e09261f6252aeafd284e432657b1f8d4a77b5aac8fbfcd
