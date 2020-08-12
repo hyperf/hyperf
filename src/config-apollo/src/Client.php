@@ -111,10 +111,7 @@ class Client implements ClientInterface
                         'releaseKey' => $body['releaseKey'] ?? '',
                     ];
                 } else {
-                    $result = [
-                        'configurations' => [],
-                        'releaseKey' => '',
-                    ];
+                    $result = [];
                 }
                 return $result;
             }, $namespace);
@@ -146,10 +143,7 @@ class Client implements ClientInterface
                     'releaseKey' => $body['releaseKey'] ?? '',
                 ];
             } else {
-                $result[$namespace] = [
-                    'configurations' => [],
-                    'releaseKey' => '',
-                ];
+                $result[$namespace] = [];
             }
         }
         return $result;
