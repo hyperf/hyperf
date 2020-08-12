@@ -83,7 +83,7 @@ class ConfigFetcherProcess extends AbstractProcess
                 foreach ($processes as $process) {
                     $ret = $process->exportSocket()->send($string, 10);
                     if ($ret === false) {
-                        $this->logger->error('Send config to process failed, please restart server.');
+                        $this->logger->error('Configuration synchronization failed. Please restart the server.');
                     }
                 }
             }
