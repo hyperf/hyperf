@@ -11,6 +11,8 @@ Hyperf 交流 2 群: `811414891`
 
 由于微信群无法直接加入，故可先加下方二维码好友，并声明目的，再拉您入群。
 
+![wechat](imgs/wechat.jpg ':size=375')
+
 ## Community 钉钉群
 
 为了更好的发展 Hyperf 的开源社区，以及帮助您更容易参与进来，我们提供了 Hyperf Community 钉钉群，以便社区对 Pull Request 或迭代计划进行更详细的探讨，欢迎希望参与进 Hyperf 开源事业的您加入。
