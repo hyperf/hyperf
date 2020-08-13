@@ -422,7 +422,7 @@ use Hyperf\Process\Annotation\Process;
 /**
  * @Process()
  */
-class ConsumerProcess extends ConsumerProcess
+class OtherConsumerProcess extends ConsumerProcess
 {
     /**
      * @var string
