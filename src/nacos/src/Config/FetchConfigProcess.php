@@ -68,8 +68,8 @@ class FetchConfigProcess extends AbstractProcess
                     $string = serialize($pipeMessage);
                     /** @var \Swoole\Process $process */
                     foreach ($processes as $process) {
-                        $ret = $process->exportSocket()->send($string, 10);
-                        if ($ret === false) {
+                        $result = $process->exportSocket()->send($string, 10);
+                        if ($result === false) {
                             $this->logger->error('Configuration synchronization failed. Please restart the server.');
                         }
                     }
