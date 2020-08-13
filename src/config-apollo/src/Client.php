@@ -111,6 +111,8 @@ class Client implements ClientInterface
                         'releaseKey' => $body['releaseKey'] ?? '',
                     ];
                 } else {
+                    // The status code is not 200 when the config is not modified in apollo.
+                    // So, we shouldn't change the configurations.
                     $result = [];
                 }
                 return $result;
@@ -143,6 +145,8 @@ class Client implements ClientInterface
                     'releaseKey' => $body['releaseKey'] ?? '',
                 ];
             } else {
+                // The status code is not 200 when the config is not modified in apollo.
+                // So, we shouldn't change the configurations.
                 $result[$namespace] = [];
             }
         }
