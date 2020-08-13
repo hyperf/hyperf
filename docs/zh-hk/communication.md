@@ -11,6 +11,8 @@ Hyperf 交流 2 羣: `811414891`
 
 由於微信羣無法直接加入，故可先加下方二維碼好友，並聲明目的，再拉您入羣。
 
+![wechat](imgs/wechat.jpg ':size=375')
+
 ## Community 釘釘羣
 
 為了更好的發展 Hyperf 的開源社區，以及幫助您更容易參與進來，我們提供了 Hyperf Community 釘釘羣，以便社區對 Pull Request 或迭代計劃進行更詳細的探討，歡迎希望參與進 Hyperf 開源事業的您加入。

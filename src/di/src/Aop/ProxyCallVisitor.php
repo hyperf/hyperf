@@ -85,7 +85,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 if (! $this->clouldUseSameTrait()) {
                     return $node;
                 }
-                // no break
+                // no break; If the node is trait and php version >= 7.3, it can `use ProxyTrait` like class.
             case $node instanceof Class_ && ! $node->isAnonymous():
                 // Add use proxy traits.
                 $stmts = $node->stmts;
@@ -193,6 +193,10 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
     private function shouldRewrite(ClassMethod $node)
     {
+        if (in_array($this->visitorMetadata->classLike, [Node\Stmt\Interface_::class])) {
+            return false;
+        }
+
         $rewriteCollection = Aspect::parse($this->visitorMetadata->className);
 
         return $rewriteCollection->shouldRewrite($node->name->toString());
