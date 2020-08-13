@@ -48,7 +48,7 @@
         "ircmaxell/random-lib": "^1.2",
         "jcchavezs/zipkin-opentracing": "^0.1.5",
         "jean85/pretty-package-versions": "^1.2",
-        "jonahgeorge/jaeger-client-php": "^0.4.4",
+        "jonahgeorge/jaeger-client-php": "^0.6.0",
         "laminas/laminas-mime": "^2.7",
         "league/flysystem": "^1.0",
         "league/flysystem-aws-s3-v3": "^1.0",
