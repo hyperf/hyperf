@@ -3,7 +3,7 @@
 ## Fixed
 
 - [#2275](https://github.com/hyperf/hyperf/pull/2275) Fixed bug that fetch process blocking for config center.
-- [#2276](https://github.com/hyperf/hyperf/pull/2276) Fixed bug that the config is covered because the status code is not 200 when the config is not modified in apollo.
+- [#2276](https://github.com/hyperf/hyperf/pull/2276) Fixed bug that the config is cleared when the config is not modified in apollo.
 - [#2280](https://github.com/hyperf/hyperf/pull/2280) Fixed bug that interface methods will be rewriten by aop.
 - [#2281](https://github.com/hyperf/hyperf/pull/2281) Fixed `co::create` failed in non-coroutine environment.
 
