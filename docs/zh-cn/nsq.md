@@ -251,11 +251,13 @@ class NsqCommand extends HyperfCommand
 }
 ```
 
-### Http Api
+### NSQD HTTP API
 
-框架对 `Topic` 和 `Channel` 的 `Http Api` 进行了简单的封装。
+> NSQD HTTP API Refer: https://nsq.io/components/nsqd.html
 
-比如，当你需要删除某个 `Topic` 时，可以执行以下代码：
+组件对 NSQD HTTP API 进行了封装，您可以很方便的实现对 NSQD HTTP API 的调用。 
+
+比如，当您需要删除某个 `Topic` 时，可以执行以下代码：
 
 ```php
 <?php
@@ -269,20 +271,9 @@ $client = $container->get(Topic::class);
 $client->delete('hyperf.test');
 ```
 
-框架支持以下接口
-
-```
-/topic/create - create a new topic
-/topic/delete - delete a topic
-/topic/empty - empty a topic
-/topic/pause - pause message flow for a topic
-/topic/unpause - unpause message flow for a topic
-/channel/create - create a new channel
-/channel/delete - delete a channel
-/channel/empty - empty a channel
-/channel/pause - pause message flow for a channel
-/channel/unpause - unpause message flow for a channel
-```
+- `Hyperf\Nsq\Api\Topic` 类对应 `topic` 相关的 API；
+- `Hyperf\Nsq\Api\Channle` 类对应 `channel` 相关的 API；
+- `Hyperf\Nsq\Api\Api` 类对应 `ping`、`stats`、`config`、`debug` 等相关的 API；
 
 ## NSQ 协议
 
