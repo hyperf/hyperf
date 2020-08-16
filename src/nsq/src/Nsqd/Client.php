@@ -9,13 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nsq\Api;
+namespace Hyperf\Nsq\Nsqd;
 
 use GuzzleHttp;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Guzzle\CoroutineHandler;
 
-class HttpClient implements HttpClientInterface
+class Client implements ClientInterface
 {
     /**
      * @var array

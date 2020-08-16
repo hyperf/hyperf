@@ -13,7 +13,7 @@ namespace HyperfTest\Nsq;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Guzzle\CoroutineHandler;
-use Hyperf\Nsq\Api\HttpClient;
+use Hyperf\Nsq\Nsqd\Client;
 use HyperfTest\Nsq\Stub\CoroutineHandlerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -34,7 +34,7 @@ class HttpClientTest extends TestCase
         $config = Mockery::mock(ConfigInterface::class);
         $config->shouldReceive('get')->with('nsq', [])->andReturn([]);
 
-        $client = new HttpClient($config);
+        $client = new Client($config);
         $this->assertSame('http://127.0.0.1:4151', $client->getOptions()['base_uri']);
         $this->assertInstanceOf(CoroutineHandler::class, $client->getOptions()['handler']);
     }
@@ -49,7 +49,7 @@ class HttpClientTest extends TestCase
             ],
         ]);
 
-        $client = new HttpClient($config);
+        $client = new Client($config);
         $this->assertSame('http://192.168.1.1:14151', $client->getOptions()['base_uri']);
         $this->assertInstanceOf(CoroutineHandler::class, $client->getOptions()['handler']);
     }
@@ -66,7 +66,7 @@ class HttpClientTest extends TestCase
             ],
         ]);
 
-        $client = new HttpClient($config);
+        $client = new Client($config);
         $this->assertSame('https://nsq.hyperf.io', $client->getOptions()['base_uri']);
         $this->assertInstanceOf(CoroutineHandlerStub::class, $client->getOptions()['handler']);
     }

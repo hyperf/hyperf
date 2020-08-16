@@ -9,16 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nsq\Api;
+namespace Hyperf\Nsq\Nsqd;
 
-abstract class Client
+abstract class AbstractEndpoint
 {
     /**
-     * @var HttpClientInterface
+     * @var ClientInterface
      */
     protected $client;
 
-    public function __construct(HttpClientInterface $client)
+    public function __construct(ClientInterface $client)
     {
         $this->client = $client;
     }

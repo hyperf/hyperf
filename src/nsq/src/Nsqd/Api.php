@@ -9,12 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nsq\Api;
+namespace Hyperf\Nsq\Nsqd;
 
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\ResponseInterface;
 
-class Api extends Client
+class Api extends AbstractEndpoint
 {
     public function stats(string $format = 'text', ?string $topic = null, ?string $channel = null): ResponseInterface
     {

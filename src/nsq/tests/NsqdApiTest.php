@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace HyperfTest\Nsq;
 
 use Hyperf\Config\Config;
-use Hyperf\Nsq\Api\Api;
-use Hyperf\Nsq\Api\Channel;
-use Hyperf\Nsq\Api\HttpClient;
-use Hyperf\Nsq\Api\Topic;
+use Hyperf\Nsq\Nsqd\Api;
+use Hyperf\Nsq\Nsqd\Channel;
+use Hyperf\Nsq\Nsqd\Client;
+use Hyperf\Nsq\Nsqd\Topic;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -24,7 +24,7 @@ use Psr\Http\Message\ResponseInterface;
  * @internal
  * @coversNothing
  */
-class ApiTest extends TestCase
+class NsqdApiTest extends TestCase
 {
     protected function tearDown()
     {
@@ -104,6 +104,6 @@ class ApiTest extends TestCase
     protected function getClient()
     {
         $config = new Config();
-        return new HttpClient($config);
+        return new Client($config);
     }
 }

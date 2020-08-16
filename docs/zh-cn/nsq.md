@@ -262,7 +262,7 @@ class NsqCommand extends HyperfCommand
 ```php
 <?php
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Nsq\Api\Topic;
+use Hyperf\Nsq\Nsqd\Topic;
 
 $container = ApplicationContext::getContainer();
 

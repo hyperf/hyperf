@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nsq;
 
-use Hyperf\Nsq\Api\HttpClient;
-use Hyperf\Nsq\Api\HttpClientInterface;
 use Hyperf\Nsq\Listener\BeforeMainServerStartListener;
+use Hyperf\Nsq\Nsqd\Client;
+use Hyperf\Nsq\Nsqd\ClientInterface;
 
 class ConfigProvider
 {
@@ -24,7 +24,7 @@ class ConfigProvider
                 BeforeMainServerStartListener::class => 99,
             ],
             'dependencies' => [
-                HttpClientInterface::class => HttpClient::class,
+                ClientInterface::class => Client::class,
             ],
             'publish' => [
                 [

@@ -9,12 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nsq\Api;
+namespace Hyperf\Nsq;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 
-interface HttpClientInterface
+interface ClientInterface
 {
     /**
      * Create and send an HTTP request.
