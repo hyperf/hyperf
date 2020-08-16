@@ -42,4 +42,9 @@ class HttpClient implements HttpClientInterface
 
         return $client->request($method, $uri, $options);
     }
+
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
 }

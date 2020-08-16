@@ -29,6 +29,7 @@ install:
   - phpenv config-add .travis/ci.ini
   - bash .travis/setup.mysql.sh
   - docker run -d --name dev-consul -e CONSUL_BIND_INTERFACE=eth0 -p 8500:8500 consul
+  - docker run --name nsq -p 4150:4150 -p 4151:4151 -p 4160:4160 -p 4161:4161 -p 4170:4170 -p 4171:4171 --entrypoint /bin/nsqd -d nsqio/nsq:latest
 
 before_script:
   - cd $TRAVIS_BUILD_DIR
