@@ -12,11 +12,13 @@ declare(strict_types=1);
 namespace HyperfTest\Nsq;
 
 use Hyperf\Config\Config;
+use Hyperf\Nsq\Api\Api;
 use Hyperf\Nsq\Api\Channel;
 use Hyperf\Nsq\Api\HttpClient;
 use Hyperf\Nsq\Api\Topic;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * @internal
@@ -52,9 +54,56 @@ class ApiTest extends TestCase
         $this->assertTrue($client->delete('hyperf.test', 'test'));
     }
 
+    public function testBasicApi()
+    {
+        $client = new Api($this->getClient());
+
+        // /info
+        $info = $client->info();
+        $this->assertInstanceOf(ResponseInterface::class, $info);
+        $this->assertSame(200, $info->getStatusCode());
+        $this->assertJson($info->getBody()->getContents());
+
+        // /ping
+        $ping = $client->ping();
+        $this->assertTrue($ping);
+
+        // /stats - text
+        $stats = $client->stats();
+        $this->assertInstanceOf(ResponseInterface::class, $stats);
+        $this->assertSame(200, $stats->getStatusCode());
+        $this->assertTrue(is_string($stats->getBody()->getContents()));
+
+        // /stats - json
+        $stats = $client->stats('json');
+        $this->assertInstanceOf(ResponseInterface::class, $stats);
+        $this->assertSame(200, $stats->getStatusCode());
+        $this->assertJson($stats->getBody()->getContents());
+    }
+
+    public function testConfigNsalookupdTcpAddresses()
+    {
+        $client = new Api($this->getClient());
+
+        //  PUT /config/nsqlookupd_tcp_addresses
+        $addresses = $client->setConfigNsqlookupdTcpAddresses(['nsqlookupd:4160', 'nsqlookupd:4161']);
+        $this->assertTrue($addresses);
+        $this->assertSame('["nsqlookupd:4160","nsqlookupd:4161"]', $client->getConfigNsqlookupdTcpAddresses()->getBody()->getContents());
+
+        // Reset addresses
+        $client->setConfigNsqlookupdTcpAddresses(['nsqlookupd:4160']);
+
+        //  GET /config/nsqlookupd_tcp_addresses
+        $addresses = $client->getConfigNsqlookupdTcpAddresses();
+        $this->assertInstanceOf(ResponseInterface::class, $addresses);
+        $this->assertSame(200, $addresses->getStatusCode());
+        $this->assertSame('["nsqlookupd:4160"]', $addresses->getBody()->getContents());
+
+    }
+
     protected function getClient()
     {
-        $config = new Config([]);
+        $config = new Config(['nsq' => ['api' => ['port' => 32771]]]);
         return new HttpClient($config);
     }
 }
