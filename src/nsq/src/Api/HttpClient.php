@@ -24,7 +24,11 @@ class HttpClient implements HttpClientInterface
 
     public function __construct(ConfigInterface $config)
     {
-        $options = $config->get('nsq.api.options', []);
+        $nsq = $config->get('nsq', []);
+        $options = $nsq['api']['options'] ?? [];
+        if (! isset($options['base_uri'])) {
+            $options['base_uri'] = sprintf('http://%s:%s', $nsq['host'] ?? '127.0.0.1', $nsq['api']['port'] ?? 4151);
+        }
         if (! isset($options['handler']) && class_exists(CoroutineHandler::class)) {
             $options['handler'] = new CoroutineHandler();
         }

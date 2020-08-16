@@ -13,57 +13,62 @@ namespace Hyperf\Nsq\Api;
 
 use GuzzleHttp\RequestOptions;
 
-class Topic extends Client
+class Channel extends Client
 {
-    public function create(string $topic): bool
+    public function create(string $topic, string $channel): bool
     {
-        $response = $this->client->request('POST', '/topic/create', [
+        $response = $this->client->request('POST', '/channel/create', [
             RequestOptions::QUERY => [
                 'topic' => $topic,
+                'channel' => $channel,
             ],
         ]);
 
         return $response->getStatusCode() === 200;
     }
 
-    public function delete(string $topic): bool
+    public function delete(string $topic, string $channel): bool
     {
-        $response = $this->client->request('POST', '/topic/delete', [
+        $response = $this->client->request('POST', '/channel/delete', [
             RequestOptions::QUERY => [
                 'topic' => $topic,
+                'channel' => $channel,
             ],
         ]);
 
         return $response->getStatusCode() === 200;
     }
 
-    public function empty(string $topic): bool
+    public function empty(string $topic, string $channel): bool
     {
-        $response = $this->client->request('POST', '/topic/empty', [
+        $response = $this->client->request('POST', '/channel/empty', [
             RequestOptions::QUERY => [
                 'topic' => $topic,
+                'channel' => $channel,
             ],
         ]);
 
         return $response->getStatusCode() === 200;
     }
 
-    public function pause(string $topic): bool
+    public function pause(string $topic, string $channel): bool
     {
-        $response = $this->client->request('POST', '/topic/pause', [
+        $response = $this->client->request('POST', '/channel/pause', [
             RequestOptions::QUERY => [
                 'topic' => $topic,
+                'channel' => $channel,
             ],
         ]);
 
         return $response->getStatusCode() === 200;
     }
 
-    public function unpause(string $topic): bool
+    public function unpause(string $topic, string $channel): bool
     {
-        $response = $this->client->request('POST', '/topic/unpause', [
+        $response = $this->client->request('POST', '/channel/unpause', [
             RequestOptions::QUERY => [
                 'topic' => $topic,
+                'channel' => $channel,
             ],
         ]);
 

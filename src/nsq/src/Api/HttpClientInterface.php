@@ -27,7 +27,7 @@ interface HttpClientInterface
      * @param string|UriInterface $uri URI object or string
      * @param array $options request options to apply
      *
-     * @throws GuzzleException
+     * @throws \Throwable
      * @return ResponseInterface
      */
     public function request($method, $uri, array $options = []);

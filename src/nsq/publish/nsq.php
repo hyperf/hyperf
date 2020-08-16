@@ -23,8 +23,8 @@ return [
             'max_idle_time' => 60.0,
         ],
         'api' => [
+            'port' => 4151,
             'options' => [
-                'base_uri' => 'http://127.0.0.1:4151',
             ],
         ],
     ],
