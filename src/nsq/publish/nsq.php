@@ -22,5 +22,10 @@ return [
             'heartbeat' => -1,
             'max_idle_time' => 60.0,
         ],
+        'api' => [
+            'options' => [
+                'base_uri' => 'http://127.0.0.1:4151',
+            ],
+        ],
     ],
 ];
