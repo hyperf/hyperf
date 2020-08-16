@@ -47,27 +47,21 @@ class JsonRpcHttpTransporter implements TransporterInterface
      */
     private $clientFactory;
 
-    private $config = [
-        'connect_timeout' => 5.0,
-        'settings' => [],
-        'pool' => [
-            'min_connections' => 1,
-            'max_connections' => 32,
-            'connect_timeout' => 10.0,
-            'wait_timeout' => 3.0,
-            'heartbeat' => -1,
-            'max_idle_time' => 60.0,
-        ],
-        'recv_timeout' => 5.0,
-    ];
+    /**
+     * @var array
+     */
+    private $clientOptions;
 
-    public function __construct(ClientFactory $clientFactory, array $config = [])
+    public function __construct(ClientFactory $clientFactory, array $clientOptions = [])
     {
         $this->clientFactory = $clientFactory;
-        $this->config = array_replace_recursive($this->config, $config);
-
-        $this->recvTimeout = $this->config['recv_timeout'] ?? 5.0;
-        $this->connectTimeout = $this->config['connect_timeout'] ?? 5.0;
+        if (! isset($clientOptions['recv_timeout'])) {
+            $clientOptions['recv_timeout'] = $this->recvTimeout;
+        }
+        if (! isset($clientOptions['connect_timeout'])) {
+            $clientOptions['connect_timeout'] = $this->connectTimeout;
+        }
+        $this->clientOptions = $clientOptions;
     }
 
     public function send(string $data)
@@ -108,9 +102,11 @@ class JsonRpcHttpTransporter implements TransporterInterface
 
     public function getClient(): Client
     {
-        return $this->clientFactory->create([
-            'timeout' => ($this->connectTimeout + $this->recvTimeout),
-        ]);
+        $clientOptions = $this->clientOptions;
+        // Swoole HTTP Client cannot set recv_timeout and connect_timeout options, use timeout.
+        $clientOptions['timeout'] = $clientOptions['recv_timeout'] + $clientOptions['connect_timeout'];
+        unset($clientOptions['recv_timeout'], $clientOptions['connect_timeout']);
+        return $this->clientFactory->create($clientOptions);
     }
 
     public function getLoadBalancer(): ?LoadBalancerInterface
@@ -136,6 +132,11 @@ class JsonRpcHttpTransporter implements TransporterInterface
     public function getNodes(): array
     {
         return $this->nodes;
+    }
+
+    public function getClientOptions(): array
+    {
+        return $this->clientOptions;
     }
 
     private function getEof()

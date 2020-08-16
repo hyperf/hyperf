@@ -11,8 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\JsonRpc;
 
+use GuzzleHttp\Client;
 use Hyperf\Guzzle\ClientFactory;
 use Hyperf\JsonRpc\JsonRpcHttpTransporter;
+use Hyperf\LoadBalancer\Node;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -30,12 +32,14 @@ class JsonRpcHttpTransporterTest extends TestCase
     public function testJsonRpcHttpTransporterConfig()
     {
         $factory = Mockery::mock(ClientFactory::class);
+        $factory->shouldReceive('create')->once()->with(['timeout' => 3])->andReturn(new Client());
         $transporter = new JsonRpcHttpTransporter($factory, [
             'connect_timeout' => 1,
             'recv_timeout' => 2,
         ]);
+        $transporter->getClient();
 
-        $this->assertSame(1, $transporter->getConfig()['connect_timeout']);
-        $this->assertSame(2, $transporter->getConfig()['recv_timeout']);
+        $this->assertSame(1, $transporter->getClientOptions()['connect_timeout']);
+        $this->assertSame(2, $transporter->getClientOptions()['recv_timeout']);
     }
 }
