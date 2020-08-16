@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -60,7 +60,7 @@ class RedisStorage implements Storage, GlobalScope
     public function isBootstrapped()
     {
         try {
-            return $this->redis->exists($this->key);
+            return (bool) $this->redis->exists($this->key);
         } catch (InvalidArgumentException $e) {
             throw new StorageException('Failed to check for key existence', 0, $e);
         }

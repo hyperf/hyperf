@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -75,40 +75,12 @@ class BaseClient
         return $this->_getGrpcClient()->{$name}(...$arguments);
     }
 
-    private function start()
-    {
-        $client = $this->grpcClient;
-        return $client->isRunning() || $client->start();
-    }
-
     public function _getGrpcClient(): GrpcClient
     {
         if (! $this->initialized) {
             $this->init();
         }
         return $this->grpcClient;
-    }
-
-    private function init()
-    {
-        if (! empty($this->options['client'])) {
-            if (! ($this->options['client'] instanceof GrpcClient)) {
-                throw new InvalidArgumentException('Parameter client have to instanceof Hyperf\GrpcClient\GrpcClient');
-            }
-            $this->grpcClient = $this->options['client'];
-        } else {
-            $this->grpcClient = new GrpcClient(ApplicationContext::getContainer()->get(ChannelPool::class));
-            $this->grpcClient->set($this->hostname, $this->options);
-        }
-        if (! $this->start()) {
-            $message = sprintf(
-                'Grpc client start failed with error code %d when connect to %s',
-                $this->grpcClient->getErrCode(),
-                $this->hostname
-            );
-            throw new GrpcClientException($message, StatusCode::INTERNAL);
-        }
-        $this->initialized = true;
     }
 
     /**
@@ -175,6 +147,34 @@ class BaseClient
             ->setDeserialize($deserialize);
 
         return $call;
+    }
+
+    private function start()
+    {
+        $client = $this->grpcClient;
+        return $client->isRunning() || $client->start();
+    }
+
+    private function init()
+    {
+        if (! empty($this->options['client'])) {
+            if (! ($this->options['client'] instanceof GrpcClient)) {
+                throw new InvalidArgumentException('Parameter client have to instanceof Hyperf\GrpcClient\GrpcClient');
+            }
+            $this->grpcClient = $this->options['client'];
+        } else {
+            $this->grpcClient = new GrpcClient(ApplicationContext::getContainer()->get(ChannelPool::class));
+            $this->grpcClient->set($this->hostname, $this->options);
+        }
+        if (! $this->start()) {
+            $message = sprintf(
+                'Grpc client start failed with error code %d when connect to %s',
+                $this->grpcClient->getErrCode(),
+                $this->hostname
+            );
+            throw new GrpcClientException($message, StatusCode::INTERNAL);
+        }
+        $this->initialized = true;
     }
 
     private function buildRequest(string $method, Message $argument): Request

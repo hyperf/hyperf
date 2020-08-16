@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -52,7 +52,11 @@ class MemoryAdapter implements AdapterInterface
     public function del(string $sid, string ...$rooms)
     {
         if (count($rooms) === 0) {
-            $this->del($sid, ...$this->clientRooms($sid));
+            $clientRooms = $this->clientRooms($sid);
+            if (empty($clientRooms)) {
+                return;
+            }
+            $this->del($sid, ...$clientRooms);
             unset($this->sids[$sid]);
         }
 

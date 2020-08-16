@@ -5,17 +5,11 @@ sudo: required
 matrix:
   include:
     - php: 7.2
-      env: SW_VERSION="4.5.1"
+      env: SW_VERSION="4.5.2"
     - php: 7.3
-      env: SW_VERSION="4.5.1"
+      env: SW_VERSION="4.5.2"
     - php: 7.4
-      env: SW_VERSION="4.5.1"
-    - php: 7.2
-      env: SW_VERSION="4.4.18"
-    - php: 7.3
-      env: SW_VERSION="4.4.18"
-    - php: 7.4
-      env: SW_VERSION="4.4.18"
+      env: SW_VERSION="4.5.2"
 
 services:
   - mysql
@@ -41,20 +35,9 @@ before_script:
   - composer config -g process-timeout 900 && composer update
 
 script:
-  - |
-    composer analyse \
-    src/di \
-    src/json-rpc \
-    src/tracer \
-    src/metric \
-    src/redis \
-    src/nats \
-    src/db \
-    src/retry \
-    src/grpc-client \
-    src/nsq \
-    src/filesystem \
-    src/socketio-server \
-    src/load-balancer
+  - composer analyse src
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
+
+notifications:
+  webhooks: https://oapi.dingtalk.com/robot/send?access_token=72c12e591c435f0f41e09261f6252aeafd284e432657b1f8d4a77b5aac8fbfcd

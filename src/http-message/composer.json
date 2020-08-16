@@ -10,11 +10,15 @@
         "http-message"
     ],
     "require": {
-        "psr/http-message": "^1.0",
-        "laminas/laminas-mime": "^2.7"
+        "hyperf/utils": "~2.0.0",
+        "laminas/laminas-mime": "^2.7",
+        "psr/http-message": "^1.0"
+    },
+    "suggest": {
+        "psr/container": "Required to replace RequestParserInterface."
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7"
+        "psr/container": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -31,9 +35,10 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         },
         "hyperf": {
+            "config": "Hyperf\\HttpMessage\\ConfigProvider"
         }
     },
     "bin": [

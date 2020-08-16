@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -25,7 +25,6 @@ use Hyperf\Utils\Coroutine;
 use Hyperf\WebSocketServer\Sender;
 use Mix\Redis\Subscribe\Subscriber;
 use Redis;
-use Swoole\Server;
 
 class RedisAdapter implements AdapterInterface
 {
@@ -145,9 +144,8 @@ class RedisAdapter implements AdapterInterface
         Coroutine::create(function () {
             CoordinatorManager::until(Constants::ON_WORKER_START)->yield();
             retry(PHP_INT_MAX, function () {
-                $container = ApplicationContext::getContainer();
                 try {
-                    $sub = $container->get(Subscriber::class);
+                    $sub = make(Subscriber::class);
                     if ($sub) {
                         $this->mixSubscribe($sub);
                     } else {
@@ -155,6 +153,7 @@ class RedisAdapter implements AdapterInterface
                         $this->phpRedisSubscribe();
                     }
                 } catch (\Throwable $e) {
+                    $container = ApplicationContext::getContainer();
                     if ($container->has(StdoutLoggerInterface::class)) {
                         $logger = $container->get(StdoutLoggerInterface::class);
                         $logger->error($this->formatThrowable($e));
@@ -273,15 +272,7 @@ class RedisAdapter implements AdapterInterface
 
     private function formatThrowable(\Throwable $throwable): string
     {
-        sprintf(
-            "%s:%s(%s) in %s:%s\nStack trace:\n%s",
-            get_class($throwable),
-            $throwable->getMessage(),
-            $throwable->getCode(),
-            $throwable->getFile(),
-            $throwable->getLine(),
-            $throwable->getTraceAsString()
-        );
+        return (string) $throwable;
     }
 
     private function phpRedisSubscribe()
@@ -302,9 +293,6 @@ class RedisAdapter implements AdapterInterface
     {
         $sub->subscribe($this->getChannelKey());
         $chan = $sub->channel();
-        if (! $chan) {
-            return;
-        }
         Coroutine::create(function () use ($sub) {
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
             $sub->close();
@@ -332,7 +320,6 @@ class RedisAdapter implements AdapterInterface
 
     private function close(int $fd)
     {
-        // Sender should be able to disconnect fd in the future. For now we have to use server.
-        ApplicationContext::getContainer()->get(Server::class)->disconnect($fd);
+        $this->sender->disconnect($fd);
     }
 }
