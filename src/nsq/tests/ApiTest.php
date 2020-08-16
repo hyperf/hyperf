@@ -103,7 +103,7 @@ class ApiTest extends TestCase
 
     protected function getClient()
     {
-        $config = new Config(['nsq' => ['api' => ['port' => 32771]]]);
+        $config = new Config();
         return new HttpClient($config);
     }
 }
