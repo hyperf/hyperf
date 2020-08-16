@@ -343,7 +343,7 @@ client->server: AUTH
 
 == pub ==
 note left of client: 发送一条消息
-client -> server: PUB <topic_name>
+client -> server: PUB~~~~ <topic_name>
 note left of client: 发送多条消息
 client -> server: MPUB
 note left of client: 发送一条延时消息
@@ -352,7 +352,7 @@ client -> server: DPUB
 
 == sub ==
 note left of client: client 使用 channel 订阅 topic
-note right of server: SUB 成功后, client 出于 RDY 0 阶段
+note right of server: SUB 成功后, client 处于 RDY 0 阶段
 client -> server: SUB <topic_name> <channel_name>
 note left of client: 使用 RDY 告诉 server 准备好消费 <count> 条消息
 client -> server: RDY <count>
