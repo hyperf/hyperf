@@ -98,7 +98,6 @@ class NsqdApiTest extends TestCase
         $this->assertInstanceOf(ResponseInterface::class, $addresses);
         $this->assertSame(200, $addresses->getStatusCode());
         $this->assertSame('["nsqlookupd:4160"]', $addresses->getBody()->getContents());
-
     }
 
     protected function getClient()

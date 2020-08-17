@@ -25,9 +25,9 @@ class Client implements ClientInterface
     public function __construct(ConfigInterface $config)
     {
         $nsq = $config->get('nsq', []);
-        $options = $nsq['api']['options'] ?? [];
+        $options = $nsq['nsqd']['options'] ?? [];
         if (! isset($options['base_uri'])) {
-            $options['base_uri'] = sprintf('http://%s:%s', $nsq['host'] ?? '127.0.0.1', $nsq['api']['port'] ?? 4151);
+            $options['base_uri'] = sprintf('http://%s:%s', $nsq['host'] ?? '127.0.0.1', $nsq['nsqd']['port'] ?? 4151);
         }
         if (! isset($options['handler']) && class_exists(CoroutineHandler::class)) {
             $options['handler'] = new CoroutineHandler();

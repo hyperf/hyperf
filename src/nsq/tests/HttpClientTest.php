@@ -44,7 +44,7 @@ class HttpClientTest extends TestCase
         $config = Mockery::mock(ConfigInterface::class);
         $config->shouldReceive('get')->with('nsq', [])->andReturn([
             'host' => '192.168.1.1',
-            'api' => [
+            'nsqd' => [
                 'port' => 14151,
             ],
         ]);
@@ -58,7 +58,7 @@ class HttpClientTest extends TestCase
     {
         $config = Mockery::mock(ConfigInterface::class);
         $config->shouldReceive('get')->with('nsq', [])->andReturn([
-            'api' => [
+            'nsqd' => [
                 'options' => [
                     'base_uri' => 'https://nsq.hyperf.io',
                     'handler' => new CoroutineHandlerStub(),

@@ -4,7 +4,7 @@
 
 ## Added
 
-- [#2307](https://github.com/hyperf/hyperf/pull/2307) Added NSQD HTTP API client support for [hyperf/nsq](https://github.com/hyperf/nsq) component.
+- [#2307](https://github.com/hyperf/hyperf/pull/2307) [#2312](https://github.com/hyperf/hyperf/pull/2312) Added NSQD HTTP API client support for [hyperf/nsq](https://github.com/hyperf/nsq) component.
 
 ## Fixed
 

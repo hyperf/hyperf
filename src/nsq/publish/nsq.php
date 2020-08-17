@@ -22,7 +22,7 @@ return [
             'heartbeat' => -1,
             'max_idle_time' => 60.0,
         ],
-        'api' => [
+        'nsqd' => [
             'port' => 4151,
             'options' => [
             ],
