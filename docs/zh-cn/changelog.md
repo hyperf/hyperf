@@ -4,7 +4,7 @@
 
 ## 新增
 
-- [#2307](https://github.com/hyperf/hyperf/pull/2307) [hyperf/nsq](https://github.com/hyperf/nsq) 组件，新增 `HTTP` 客户端。
+- [#2307](https://github.com/hyperf/hyperf/pull/2307) [hyperf/nsq](https://github.com/hyperf/nsq) 组件，新增 `NSQD` 的 `HTTP` 客户端。
 
 ## 修复
 
