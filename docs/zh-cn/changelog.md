@@ -1,5 +1,20 @@
 # 版本更新记录
 
+# v2.0.7 - 2020-08-17
+
+## 新增
+
+- [#2307](https://github.com/hyperf/hyperf/pull/2307) [hyperf/nsq](https://github.com/hyperf/nsq) 组件，新增 `HTTP` 客户端。
+
+## 修复
+
+- [#2275](https://github.com/hyperf/hyperf/pull/2275) 修复配置中心，拉取配置进程会出现阻塞的 BUG。
+- [#2276](https://github.com/hyperf/hyperf/pull/2276) 修复 `Apollo` 配置中心，当配置没有变更时，会清除所有本地配置项的 BUG。
+- [#2280](https://github.com/hyperf/hyperf/pull/2280) 修复 `Interface` 的方法会被 `AOP` 重写，导致启动报错的 BUG。
+- [#2281](https://github.com/hyperf/hyperf/pull/2281) 当使用 `Task` 组件，且没有启动协程时，`Signal` 组件会导致启动报错的 BUG。
+- [#2304](https://github.com/hyperf/hyperf/pull/2304) 修复当使用 `SocketIOServer` 的内存适配器，删除 `sid` 时，会导致死循环的 BUG。
+- [#2309](https://github.com/hyperf/hyperf/pull/2309) 修复 `JsonRpcHttpTransporter` 无法设置自定义超时时间的 BUG。
+
 # v2.0.6 - 2020-08-10
 
 ## 新增
