@@ -3,6 +3,8 @@
 所有官方提供的组件库均已进行协程化处理，可安全地在 Hyperf 内或其它协程框架内使用，基于 Hyperf 的开放性和可扩展性，社区可对此开发或适配各种各样的组件，得益于此，Hyperf 将存在着无限的可能性。   
 本页将收录各个适配了 Hyperf 的协程组件 和 已经经过验证可安全地用于协程下的常用库，以便您快速的从中选择合适的组件完成您的需求。
 
+> 组件顺序以收录时间排序
+
 ## 如何提交我的组件？
 
 如果您开发的协程组件适配了 Hyperf，那么您可以直接对 [hyperf/hyperf](https://github.com/hyperf/hyperf) 项目的 `master` 分支发起您的 `Pull Request`，也就是更改当前页`(zh-cn/awesome-components.md)`。
