@@ -1,5 +1,9 @@
 # v2.0.7 - TBD
 
+## Added
+
+- [#2307](https://github.com/hyperf/hyperf/pull/2307) Added NSQD HTTP API client support for [hyperf/nsq](https://github.com/hyperf/nsq) component.
+
 ## Fixed
 
 - [#2275](https://github.com/hyperf/hyperf/pull/2275) Fixed bug that fetch process blocking for config center.
