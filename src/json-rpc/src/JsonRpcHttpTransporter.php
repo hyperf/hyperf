@@ -52,16 +52,16 @@ class JsonRpcHttpTransporter implements TransporterInterface
      */
     private $clientOptions;
 
-    public function __construct(ClientFactory $clientFactory, array $clientOptions = [])
+    public function __construct(ClientFactory $clientFactory, array $config = [])
     {
         $this->clientFactory = $clientFactory;
-        if (! isset($clientOptions['recv_timeout'])) {
-            $clientOptions['recv_timeout'] = $this->recvTimeout;
+        if (! isset($config['recv_timeout'])) {
+            $config['recv_timeout'] = $this->recvTimeout;
         }
-        if (! isset($clientOptions['connect_timeout'])) {
-            $clientOptions['connect_timeout'] = $this->connectTimeout;
+        if (! isset($config['connect_timeout'])) {
+            $config['connect_timeout'] = $this->connectTimeout;
         }
-        $this->clientOptions = $clientOptions;
+        $this->clientOptions = $config;
     }
 
     public function send(string $data)
