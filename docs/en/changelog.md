@@ -1,5 +1,20 @@
 # Changelogs
 
+# v2.0.7 - 2020-08-17
+
+## Added
+
+- [#2307](https://github.com/hyperf/hyperf/pull/2307) Added NSQD HTTP API client support for [hyperf/nsq](https://github.com/hyperf/nsq) component.
+
+## Fixed
+
+- [#2275](https://github.com/hyperf/hyperf/pull/2275) Fixed bug that fetch process blocking for config center.
+- [#2276](https://github.com/hyperf/hyperf/pull/2276) Fixed bug that the config is cleared when the config is not modified in apollo.
+- [#2280](https://github.com/hyperf/hyperf/pull/2280) Fixed bug that interface methods will be rewriten by aop.
+- [#2281](https://github.com/hyperf/hyperf/pull/2281) Fixed `co::create` failed in non-coroutine environment for `hyperf/signal`.
+- [#2304](https://github.com/hyperf/hyperf/pull/2304) Fixed dead cycle when del sid for socketio memory adapter.
+- [#2309](https://github.com/hyperf/hyperf/pull/2309) Fixed JsonRpcHttpTransporter cannot set the custom timeout property.
+
 # v2.0.6 - 2020-08-10
 
 ## Added
