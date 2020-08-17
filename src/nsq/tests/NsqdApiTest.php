@@ -103,7 +103,7 @@ class NsqdApiTest extends TestCase
 
     protected function getClient()
     {
-        $config = new Config();
+        $config = new Config([]);
         return new Client($config);
     }
 }
