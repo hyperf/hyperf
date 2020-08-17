@@ -118,8 +118,7 @@ RUN ./deploy_env.sh www.swoole-cloud.com \
 WORKDIR /opt/www
 
 RUN composer install --no-dev \
-    && composer dump-autoload -o \
-    && php /opt/www/bin/hyperf.php di:init-proxy
+    && composer dump-autoload -o
 
 EXPOSE 9501
 
