@@ -47,9 +47,21 @@ class JsonRpcHttpTransporter implements TransporterInterface
      */
     private $clientFactory;
 
-    public function __construct(ClientFactory $clientFactory)
+    /**
+     * @var array
+     */
+    private $clientOptions;
+
+    public function __construct(ClientFactory $clientFactory, array $config = [])
     {
         $this->clientFactory = $clientFactory;
+        if (! isset($config['recv_timeout'])) {
+            $config['recv_timeout'] = $this->recvTimeout;
+        }
+        if (! isset($config['connect_timeout'])) {
+            $config['connect_timeout'] = $this->connectTimeout;
+        }
+        $this->clientOptions = $config;
     }
 
     public function send(string $data)
@@ -90,9 +102,11 @@ class JsonRpcHttpTransporter implements TransporterInterface
 
     public function getClient(): Client
     {
-        return $this->clientFactory->create([
-            'timeout' => ($this->connectTimeout + $this->recvTimeout),
-        ]);
+        $clientOptions = $this->clientOptions;
+        // Swoole HTTP Client cannot set recv_timeout and connect_timeout options, use timeout.
+        $clientOptions['timeout'] = $clientOptions['recv_timeout'] + $clientOptions['connect_timeout'];
+        unset($clientOptions['recv_timeout'], $clientOptions['connect_timeout']);
+        return $this->clientFactory->create($clientOptions);
     }
 
     public function getLoadBalancer(): ?LoadBalancerInterface
@@ -118,6 +132,11 @@ class JsonRpcHttpTransporter implements TransporterInterface
     public function getNodes(): array
     {
         return $this->nodes;
+    }
+
+    public function getClientOptions(): array
+    {
+        return $this->clientOptions;
     }
 
     private function getEof()
