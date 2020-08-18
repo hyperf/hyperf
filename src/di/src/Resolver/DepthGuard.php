@@ -33,7 +33,7 @@ class DepthGuard
 
     public static function getInstance()
     {
-        if (! self::$instance) {
+        if (! isset(self::$instance)) {
             self::$instance = new static();
         }
         return self::$instance;
