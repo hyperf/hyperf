@@ -22,4 +22,6 @@ interface ClientInterface
     public function pull(array $namespaces, array $callbacks = []): void;
 
     public function getOption(): Option;
+
+    public function fetch(array $namespaces, array $callbacks = []): void;
 }

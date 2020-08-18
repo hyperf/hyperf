@@ -52,16 +52,20 @@ return [
     'namespaces' => [
         'application',
     ],
-    // 配置更新間隔（秒）
+    // 配置更新間隔（秒）預設輪詢拉取的間隔時間
     'interval' => 5,
     // 嚴格模式，當為 false 時，拉取的配置值均為 string 型別，當為 true 時，拉取的配置值會轉化為原配置值的資料型別
     'strict_mode' => false,
     // 客戶端IP
     'client_ip' => current(swoole_get_local_ip()),
     // 拉取配置超時時間
-    'pullTimeout' => 10,
-    // 拉取配置間隔
+    'pull_timeout' => 10,
+    // 拉取配置間隔（長輪詢下的超時時間）
     'interval_timeout' => 60,
+    // 拉取配置模式，預設為普通輪詢（以上面的interval配置項為間隔時間的輪詢）
+    // 可修改為LongPullingClient(長輪詢，apollo配置更新後會斷開，然後再去pull新的配置，更新更及時)
+    'fetch_client' => \Hyperf\ConfigApollo\Client::class,
+//    'fetch_client' => \Hyperf\ConfigApollo\LongPullingClient::class,
 ];
 ```
 

@@ -30,7 +30,7 @@ php bin/hyperf.php vendor:publish hyperf/db
 |       password       | string |        null        |            資料庫密碼            |
 |       charset        | string |        utf8        |            資料庫編碼            |
 |      collation       | string |  utf8_unicode_ci   |            資料庫編碼            |
-|      fetch_mode      |  int   | `PDO::FETCH_ASSOC` |        PDO 查詢結果集型別        |
+|      fetch_client      |  int   | `PDO::FETCH_ASSOC` |        PDO 查詢結果集型別        |
 | pool.min_connections |  int   |         1          |        連線池內最少連線數        |
 | pool.max_connections |  int   |         10         |        連線池內最大連線數        |
 | pool.connect_timeout | float  |        10.0        |         連線等待超時時間         |

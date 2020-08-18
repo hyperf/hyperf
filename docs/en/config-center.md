@@ -50,8 +50,14 @@ return [
     ],
     // Strict mode. When the value is false, the configuration value that pulled from Apollo will always is string type, when the value is true, the configuration value will transfer to the suitable type according to the original value type on config container.
     'strict_mode' => false,
-    // The interval of update configuration (seconds)
+    // The interval of update configuration (seconds) 
     'interval' => 5,
+    // The long pulling client timeout seconds
+    'interval_timeout' => 60,
+    // The Apollo fetch client, default is normal polling
+    // You can change to the Long Pulling 
+    'fetch_client' => \Hyperf\ConfigApollo\Client::class,
+//    'fetch_client' => \Hyperf\ConfigApollo\LongPullingClient::class,
 ];
 ```
 
