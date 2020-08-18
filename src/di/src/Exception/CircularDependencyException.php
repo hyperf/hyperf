@@ -33,7 +33,7 @@ class CircularDependencyException extends \RuntimeException
     private function updateMessage(string $name)
     {
         array_unshift($this->list, $name);
-        $listAsString = implode('->', $this->list);
-        $this->message = "dependency depth limit reached due to the following dependencies: {$listAsString}";
+        $listAsString = implode(' -> ', $this->list);
+        $this->message = "depth limit reached due to the following dependencies: {$listAsString}";
     }
 }
