@@ -62,9 +62,9 @@ class ResolverDispatcher implements ResolverInterface
             $guard->increment();
             $resolver = $this->getDefinitionResolver($definition);
             $result = $resolver->resolve($definition, $parameters);
-        } catch (CircularDependencyException $e) {
-            $e->addDefinitionName($definition->getName());
-            throw $e;
+        } catch (CircularDependencyException $exception) {
+            $exception->addDefinitionName($definition->getName());
+            throw $exception;
         } finally {
             $guard->decrement();
         }
@@ -90,9 +90,9 @@ class ResolverDispatcher implements ResolverInterface
             $guard->increment();
             $resolver = $this->getDefinitionResolver($definition);
             $result = $resolver->isResolvable($definition, $parameters);
-        } catch (CircularDependencyException $e) {
-            $e->addDefinitionName($definition->getName());
-            throw $e;
+        } catch (CircularDependencyException $exception) {
+            $exception->addDefinitionName($definition->getName());
+            throw $exception;
         } finally {
             $guard->decrement();
         }

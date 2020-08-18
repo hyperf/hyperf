@@ -39,6 +39,15 @@ class DepthGuard
         return self::$instance;
     }
 
+    /**
+     * Allows user to adjust depth limit.
+     * Should call it before di container bootstraps.
+     */
+    public function setDepthLimit(int $depthLimit)
+    {
+        $this->depthLimit = $depthLimit;
+    }
+
     public function increment()
     {
         Context::override('di.depth', function ($depth) {

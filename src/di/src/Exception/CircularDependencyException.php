@@ -13,8 +13,14 @@ namespace Hyperf\Di\Exception;
 
 class CircularDependencyException extends \RuntimeException
 {
+    /**
+     * @var array
+     */
     protected $list = [];
 
+    /**
+     * @var bool
+     */
     protected $sealed = false;
 
     public function addDefinitionName(string $name)
@@ -27,10 +33,10 @@ class CircularDependencyException extends \RuntimeException
             $this->sealed = true;
         }
 
-        $this->updateMessage($name);
+        $this->updateListAndMessage($name);
     }
 
-    private function updateMessage(string $name)
+    private function updateListAndMessage(string $name)
     {
         array_unshift($this->list, $name);
         $listAsString = implode(' -> ', $this->list);
