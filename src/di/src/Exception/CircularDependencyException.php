@@ -23,7 +23,7 @@ class CircularDependencyException extends \RuntimeException
             return;
         }
 
-        if (count($this->list) > 1 && in_array($name, $this->list)) {
+        if (in_array($name, $this->list)) {
             $this->sealed = true;
         }
 
