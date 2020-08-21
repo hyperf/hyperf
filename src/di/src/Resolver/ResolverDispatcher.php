@@ -15,7 +15,6 @@ use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\FactoryDefinition;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Definition\SelfResolvingDefinitionInterface;
-use Hyperf\Di\Exception\CircularDependencyException;
 use Hyperf\Di\Exception\InvalidDefinitionException;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -58,18 +57,10 @@ class ResolverDispatcher implements ResolverInterface
 
         $guard = DepthGuard::getInstance();
 
-        try {
-            $guard->increment();
+        return $guard->call($definition->getName(), function () use ($definition, $parameters) {
             $resolver = $this->getDefinitionResolver($definition);
-            $result = $resolver->resolve($definition, $parameters);
-        } catch (CircularDependencyException $exception) {
-            $exception->addDefinitionName($definition->getName());
-            throw $exception;
-        } finally {
-            $guard->decrement();
-        }
-
-        return $result;
+            return $resolver->resolve($definition, $parameters);
+        });
     }
 
     /**
@@ -86,18 +77,10 @@ class ResolverDispatcher implements ResolverInterface
 
         $guard = DepthGuard::getInstance();
 
-        try {
-            $guard->increment();
+        return $guard->call($definition->getName(), function () use ($definition, $parameters) {
             $resolver = $this->getDefinitionResolver($definition);
-            $result = $resolver->isResolvable($definition, $parameters);
-        } catch (CircularDependencyException $exception) {
-            $exception->addDefinitionName($definition->getName());
-            throw $exception;
-        } finally {
-            $guard->decrement();
-        }
-
-        return $result;
+            return $resolver->isResolvable($definition, $parameters);
+        });
     }
 
     /**

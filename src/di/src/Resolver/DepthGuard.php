@@ -65,4 +65,21 @@ class DepthGuard
             return --$depth;
         });
     }
+
+    public function call(string $name, callable $callable)
+    {
+        $guard = DepthGuard::getInstance();
+
+        try {
+            $this->increment();
+            $result = $callable();
+        } catch (CircularDependencyException $exception) {
+            $exception->addDefinitionName($name);
+            throw $exception;
+        } finally {
+            $guard->decrement();
+        }
+
+        return $result;
+    }
 }
