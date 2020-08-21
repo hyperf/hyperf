@@ -37,6 +37,10 @@ abstract class AbstractNacos
 
     public function request($method, $uri, array $options = [])
     {
+        if(!empty($this->config->get('nacos.username'))){
+            $options[RequestOptions::QUERY]['username'] = $this->config->get('nacos.username');
+            $options[RequestOptions::QUERY]['password'] = $this->config->get('nacos.password');
+        }
         return $this->client()->request($method, $uri, $options);
     }
 

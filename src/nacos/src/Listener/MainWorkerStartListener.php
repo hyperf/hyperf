@@ -21,6 +21,7 @@ use Hyperf\Nacos\Client;
 use Hyperf\Nacos\Exception\RuntimeException;
 use Hyperf\Nacos\Instance;
 use Hyperf\Nacos\Service;
+use Hyperf\Nacos\Utils\Arr;
 use Psr\Container\ContainerInterface;
 
 class MainWorkerStartListener implements ListenerInterface
@@ -55,6 +56,9 @@ class MainWorkerStartListener implements ListenerInterface
         if (! $config->get('nacos')) {
             return;
         }
+        if (! $config->get('nacos.enable',true)) {
+            return;
+        }
 
         $nacosService = $this->container->get(NacosService::class);
         $service = $this->container->get(Service::class);
@@ -75,6 +79,7 @@ class MainWorkerStartListener implements ListenerInterface
         $config = $this->container->get(ConfigInterface::class);
         $appendNode = $config->get('nacos.config_append_node');
         foreach ($client->pull() as $key => $conf) {
+            $conf = make(Arr::class)->array_merge_deep($config->get($key,[]),$conf);
             $config->set($appendNode ? $appendNode . '.' . $key : $key, $conf);
         }
     }

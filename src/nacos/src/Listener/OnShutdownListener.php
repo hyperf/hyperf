@@ -43,6 +43,9 @@ class OnShutdownListener implements ListenerInterface
     public function process(object $event)
     {
         $config = $this->container->get(ConfigInterface::class);
+        if (! $config->get('nacos.enable',true)) {
+            return;
+        }
         if (! $config->get('nacos.remove_node_when_server_shutdown', false)) {
             return;
         }

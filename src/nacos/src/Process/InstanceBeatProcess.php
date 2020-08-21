@@ -37,7 +37,7 @@ class InstanceBeatProcess extends AbstractProcess
             sleep($config->get('nacos.client.beat_interval', 5));
             $send = $nacosInstance->beat($service, $instance);
             if ($send) {
-                $logger && $logger->info('nacos send beat success!', compact('instance'));
+                $logger && $logger->debug('nacos send beat success!', compact('instance'));
             } else {
                 $logger && $logger->error('nacos send beat fail!', compact('instance'));
             }
@@ -47,6 +47,6 @@ class InstanceBeatProcess extends AbstractProcess
     public function isEnable($server): bool
     {
         $config = $this->container->get(ConfigInterface::class);
-        return $config->get('nacos.client.beat_enable', false);
+        return $config->get('nacos.enable',true) && $config->get('nacos.client.beat_enable', false);
     }
 }
