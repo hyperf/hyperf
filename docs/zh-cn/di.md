@@ -375,28 +375,6 @@ isset($proxy->someProperty);
 unset($proxy->someProperty);
 ```
 
-### 循环依赖友好的 `Resolver`
-
-当触发循环依赖，导致启动失败时，框架会报出内存不足的错误，这时，完全不知道循环依赖发生在哪个类里，导致错误排查难度上升。
-
-框架提供了更加友好的 `Resolver`，只需要配置到 `class_map` 中，即可看到是哪段代码出现问题。
-
-config/autoload/annotations.php
-
-```php
-<?php
-
-return [
-    'scan' => [
-        // 以下省略其他无关配置
-        'class_map' => [
-            Hyperf\Di\Resolver\ResolverDispatcher::class => BASE_PATH . '/vendor/hyperf/di/class_map/Resolver/ResolverDispatcher.php',
-        ],
-    ],
-];
-
-```
-
 ## 注意事项
 
 ### 容器仅管理长生命周期的对象
