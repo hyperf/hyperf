@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use ArrayAccess;
-use ArrayObject;
 
 class Optional implements ArrayAccess
 {
@@ -45,6 +44,10 @@ class Optional implements ArrayAccess
      */
     public function __get($key)
     {
+        if (is_array($this->value) || $this->value instanceof ArrayAccess) {
+            return $this->value[$key] ?? null;
+        }
+
         if (is_object($this->value)) {
             return $this->value->{$key} ?? null;
         }
@@ -58,7 +61,7 @@ class Optional implements ArrayAccess
      */
     public function __isset($name)
     {
-        if (is_array($this->value) || $this->value instanceof ArrayObject) {
+        if (is_array($this->value) || $this->value instanceof ArrayAccess) {
             return isset($this->value[$name]);
         }
 

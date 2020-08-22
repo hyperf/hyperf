@@ -120,7 +120,10 @@ class OptionalTest extends TestCase
 
         $optional = new Optional($obj);
 
+        $this->assertTrue(isset($optional['id']));
         $this->assertTrue(isset($optional->id));
+        $this->assertFalse(isset($optional['name']));
         $this->assertFalse(isset($optional->name));
+        $this->assertSame($id, $optional->id);
     }
 }
