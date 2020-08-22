@@ -1,5 +1,9 @@
 # v2.0.8 - TBD
 
+## Optimized
+
+- [#2319](https://github.com/hyperf/hyperf/pull/2319) Optimized the `ResolverDispatcher` which is friendly for circular dependencies.
+
 # v2.0.7 - 2020-08-17
 
 ## Added
