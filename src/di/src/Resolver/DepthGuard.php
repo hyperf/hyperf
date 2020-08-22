@@ -52,7 +52,7 @@ class DepthGuard
     {
         Context::override('di.depth', function ($depth) {
             $depth = $depth ?? 0;
-            if ($depth++ > $this->depthLimit) {
+            if (++$depth > $this->depthLimit) {
                 throw new CircularDependencyException();
             }
             return $depth;
