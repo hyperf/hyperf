@@ -75,7 +75,7 @@ class RedisNsqAdapter extends RedisAdapter
                         [$packet, $opts] = unserialize($message->getBody());
                         $this->doBroadcast($packet, $opts);
                     } catch (\Throwable $exception) {
-                        $this->logger->error((string)$exception);
+                        $this->logger->error((string) $exception);
                         throw $exception;
                     }
                     return Result::ACK;
@@ -127,29 +127,5 @@ class RedisNsqAdapter extends RedisAdapter
             str_replace('/', '_', $this->nsp->getNamespace()),
             'channel',
         ]);
-    }
-
-    private function handle(Subscriber $sub)
-    {
-        $sub->subscribe($this->getChannelKey());
-        $chan = $sub->channel();
-        Coroutine::create(function () use ($sub) {
-            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
-            $sub->close();
-        });
-        while (true) {
-            $data = $chan->pop();
-            if (empty($data)) { // 手动close与redis异常断开都会导致返回false
-                if (!$sub->closed) {
-                    throw new RuntimeException('Redis subscriber disconnected from Redis.');
-                }
-                break;
-            }
-
-            Coroutine::create(function () use ($data) {
-                [$packet, $opts] = unserialize($data->payload);
-                $this->doBroadcast($packet, $opts);
-            });
-        }
     }
 }

@@ -3,6 +3,7 @@
 ## Added
 
 - [#2335](https://github.com/hyperf/hyperf/pull/2335) Added `Hyperf/Utils/Optional`.
+- [#2336](https://github.com/hyperf/hyperf/pull/2336) Added `RedisNsqAdapter` which publish message through nsq for `socketio-server`.
 
 ## Optimized
 
