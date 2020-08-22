@@ -47,6 +47,8 @@ class Optional implements ArrayAccess
         if (is_object($this->value)) {
             return $this->value->{$key} ?? null;
         }
+
+        return null;
     }
 
     /**
