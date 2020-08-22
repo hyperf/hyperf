@@ -4,6 +4,10 @@
 
 - [#2335](https://github.com/hyperf/hyperf/pull/2335) Added `Hyperf/Utils/Optional`.
 
+## Fixed
+
+- [#2388](https://github.com/hyperf/hyperf/pull/2338) Fixed filesystem does not works when using s3 adapter.
+
 ## Optimized
 
 - [#2319](https://github.com/hyperf/hyperf/pull/2319) Optimized the `ResolverDispatcher` which is friendly for circular dependencies.
