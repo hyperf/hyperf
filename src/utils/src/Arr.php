@@ -523,7 +523,7 @@ class Arr
             }
         } else {
             foreach ($array2 as $key => $value) {
-                if ($unique && in_array($value, $array1)) {
+                if ($unique && in_array($value, $array1, true)) {
                     continue;
                 }
                 $array1[] = $value;

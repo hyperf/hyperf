@@ -66,6 +66,7 @@ class ArrTest extends TestCase
         $this->assertSame([1, 2, 3, 2, 3, 4], Arr::merge([1, 2, 3], [2, 3, 4], false));
         $this->assertSame([1, 2, [1, 2], 3, 4], Arr::merge([1, 2, [1, 2]], [[1, 2], 3, 4]));
         $this->assertSame([1, 2, [1, 2], [1, 2], 3, 4], Arr::merge([1, 2, [1, 2]], [[1, 2], 3, 4], false));
+        $this->assertSame([1, 2, 3, '2', 4], Arr::merge([1, 2, 3], ['2', 3, 4]));
 
         $this->assertSame(['id' => 1, 'name' => 'Hyperf'], Arr::merge(['id' => 1], ['name' => 'Hyperf']));
         $this->assertSame(['id' => 1, 'name' => 'Hyperf', 'gender' => 1], Arr::merge(['id' => 1, 'name' => 'Swoole'], ['name' => 'Hyperf', 'gender' => 1]));

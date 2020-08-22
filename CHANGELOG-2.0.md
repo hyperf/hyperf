@@ -1,5 +1,9 @@
 # v2.0.8 - TBD
 
+## Added
+
+- [#2334](https://github.com/hyperf/hyperf/pull/2334) Added method `Arr::merge`.
+
 ## Optimized
 
 - [#2319](https://github.com/hyperf/hyperf/pull/2319) Optimized the `ResolverDispatcher` which is friendly for circular dependencies.
