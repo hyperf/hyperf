@@ -3,6 +3,7 @@
 ## Added
 
 - [#2334](https://github.com/hyperf/hyperf/pull/2334) Added method `Arr::merge`.
+- [#2335](https://github.com/hyperf/hyperf/pull/2335) Added `Hyperf/Utils/Optional`.
 
 ## Optimized
 
