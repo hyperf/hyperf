@@ -59,6 +59,7 @@ class OptionalTest extends TestCase
         $optional = new Optional($targetObj);
 
         $this->assertFalse(isset($optional->item));
+        $this->assertFalse(isset($targetObj->item));
     }
 
     public function testGetExistItemOnArray()
@@ -92,7 +93,7 @@ class OptionalTest extends TestCase
         $optional = new Optional($targetArr);
 
         $this->assertTrue(isset($optional['item']));
-        $this->assertTrue(isset($optional->item));
+        $this->assertFalse(isset($optional->item));
     }
 
     public function testIssetNotExistItemOnArray()
@@ -121,9 +122,13 @@ class OptionalTest extends TestCase
         $optional = new Optional($obj);
 
         $this->assertTrue(isset($optional['id']));
-        $this->assertTrue(isset($optional->id));
+        $this->assertFalse(isset($optional->id));
+        $this->assertFalse(isset($obj->id));
+
         $this->assertFalse(isset($optional['name']));
         $this->assertFalse(isset($optional->name));
-        $this->assertSame($id, $optional->id);
+        $this->assertFalse(isset($obj->name));
+
+        $this->assertSame($id, $optional['id']);
     }
 }
