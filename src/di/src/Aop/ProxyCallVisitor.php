@@ -103,11 +103,9 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             case $node instanceof MagicConstFunction:
                 // Rewrite __FUNCTION__ to $__function__ variable.
                 return new Variable('__function__');
-                break;
             case $node instanceof MagicConstMethod:
                 // Rewrite __METHOD__ to $__method__ variable.
                 return new Variable('__method__');
-                break;
         }
         return null;
     }
