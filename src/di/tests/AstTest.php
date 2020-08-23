@@ -33,14 +33,7 @@ class AstTest extends TestCase
         BetterReflectionManager::clear();
     }
 
-    public function testAstProxy()
-    {
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
-
-        $ast = new Ast();
-        $code = $ast->proxy(Foo::class);
-
-        $this->assertEquals('<?php
+    protected $license = '<?php
 
 declare (strict_types=1);
 /**
@@ -50,7 +43,16 @@ declare (strict_types=1);
  * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
- */
+ */';
+
+    public function testAstProxy()
+    {
+        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
+
+        $ast = new Ast();
+        $code = $ast->proxy(Foo::class);
+
+        $this->assertEquals($this->license . '
 namespace HyperfTest\Di\Stub\Ast;
 
 class Foo
@@ -70,17 +72,7 @@ class Foo
 
         $ast = new Ast();
         $code = $ast->proxy(Bar2::class);
-        $this->assertEquals('<?php
-
-declare (strict_types=1);
-/**
- * This file is part of Hyperf.
- *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
- */
+        $this->assertEquals($this->license . '
 namespace HyperfTest\Di\Stub\Ast;
 
 class Bar2 extends Bar
@@ -114,17 +106,7 @@ class Bar2 extends Bar
         $ast = new Ast();
         $code = $ast->proxy(Bar3::class);
 
-        $this->assertEquals('<?php
-
-declare (strict_types=1);
-/**
- * This file is part of Hyperf.
- *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
- */
+        $this->assertEquals($this->license . '
 namespace HyperfTest\Di\Stub\Ast;
 
 class Bar3 extends Bar
@@ -140,7 +122,9 @@ class Bar3 extends Bar
     }
     public function getId() : int
     {
-        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () {
+        $__function__ = __FUNCTION__;
+        $__method__ = __METHOD__;
+        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () use($__function__, $__method__) {
             return parent::getId();
         });
     }
@@ -148,17 +132,7 @@ class Bar3 extends Bar
 
         $code = $ast->proxy(FooTrait::class);
         if (version_compare(PHP_VERSION, '7.3.0', '>=')) {
-            $this->assertSame('<?php
-
-declare (strict_types=1);
-/**
- * This file is part of Hyperf.
- *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
- */
+            $this->assertSame($this->license . '
 namespace HyperfTest\\Di\\Stub\\Ast;
 
 trait FooTrait
@@ -166,30 +140,24 @@ trait FooTrait
     use \\Hyperf\\Di\\Aop\\ProxyTrait;
     public function getString() : string
     {
-        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () {
+        $__function__ = __FUNCTION__;
+        $__method__ = __METHOD__;
+        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () use($__function__, $__method__) {
             return uniqid();
         });
     }
 }', $code);
         } else {
-            $this->assertSame('<?php
-
-declare (strict_types=1);
-/**
- * This file is part of Hyperf.
- *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
- */
+            $this->assertSame($this->license . '
 namespace HyperfTest\\Di\\Stub\\Ast;
 
 trait FooTrait
 {
     public function getString() : string
     {
-        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () {
+        $__function__ = __FUNCTION__;
+        $__method__ = __METHOD__;
+        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () use($__function__, $__method__) {
             return uniqid();
         });
     }
@@ -197,17 +165,7 @@ trait FooTrait
         }
 
         $code = $ast->proxy(BarInterface::class);
-        $this->assertSame('<?php
-
-declare (strict_types=1);
-/**
- * This file is part of Hyperf.
- *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
- */
+        $this->assertSame($this->license . '
 namespace HyperfTest\Di\Stub\Ast;
 
 interface BarInterface
