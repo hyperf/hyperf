@@ -1,5 +1,22 @@
 # 版本更新记录
 
+# v2.0.8 - 2020-08-24
+
+## 新增
+
+- [#2334](https://github.com/hyperf/hyperf/pull/2334) 新增更加友好的数组递归合并方法 `Arr::merge`。
+- [#2335](https://github.com/hyperf/hyperf/pull/2335) 新增 `Hyperf/Utils/Optional`，它可以接受任意参数，并允许访问该对象上的属性或调用其方法，即使给定的对象为 `null`，也不会引发错误。
+- [#2336](https://github.com/hyperf/hyperf/pull/2336) 新增 `RedisNsqAdapter`，它通过 `NSQ` 发布消息，使用 `Redis` 记录房间信息。
+
+## 修复
+
+- [#2338](https://github.com/hyperf/hyperf/pull/2338) 修复文件系统使用 `S3` 适配器时，文件是否存在的逻辑与预期不符的BUG。
+- [#2340](https://github.com/hyperf/hyperf/pull/2340) 修复 `__FUNCTION__` 和 `__METHOD__` 魔术方法无法在被 `AOP` 重写的方法里正常工作的 BUG。
+
+## 优化
+
+- [#2319](https://github.com/hyperf/hyperf/pull/2319) 优化 `ResolverDispatcher` ，使项目发生循环依赖时，可以提供更加友好的错误提示。
+
 # v2.0.7 - 2020-08-17
 
 ## 新增
