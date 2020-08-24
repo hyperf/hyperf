@@ -50,7 +50,9 @@ class OnPipeMessageListener implements ListenerInterface
         if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
             $root = $this->config->get('nacos.config_append_node');
             foreach ($event->data->configurations ?? [] as $key => $conf) {
-                $conf = make(Arr::class)->array_merge_deep($this->config->get($key,[]),$conf);
+                if($this->config->get('nacos.config_cover_model',1) == 2){
+                    $conf = make(Arr::class)->array_merge_deep($this->config->get($key,[]),$conf);
+                }
                 $this->config->set($root ? $root . '.' . $key : $key, $conf);
             }
         }

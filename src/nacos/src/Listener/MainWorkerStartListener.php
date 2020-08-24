@@ -79,7 +79,9 @@ class MainWorkerStartListener implements ListenerInterface
         $config = $this->container->get(ConfigInterface::class);
         $appendNode = $config->get('nacos.config_append_node');
         foreach ($client->pull() as $key => $conf) {
-            $conf = make(Arr::class)->array_merge_deep($config->get($key,[]),$conf);
+            if($config->get('nacos.config_cover_model',1) == 2) {
+                $conf = make(Arr::class)->array_merge_deep($config->get($key, []), $conf);
+            }
             $config->set($appendNode ? $appendNode . '.' . $key : $key, $conf);
         }
     }

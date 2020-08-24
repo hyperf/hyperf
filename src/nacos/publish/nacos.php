@@ -15,8 +15,10 @@ return [
     'host' => '127.0.0.1',
     'port' => 8848,
     //The nacos account info
-    'username'=>'dev',
-    'password'=>'123456',
+    'username' => null,
+    'password' => null,
+    //config cover model 1:config覆盖  2:深度合并
+    'config_cover_model' => 1,
     // The service info.
     'service' => [
         'service_name' => 'hyperf',
