@@ -49,6 +49,11 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             ProxyTrait::class,
         ];
 
+    /**
+     * @var bool
+     */
+    private $shouldRewrite = false;
+
     public function __construct(VisitorMetadata $visitorMetadata)
     {
         $this->visitorMetadata = $visitorMetadata;
@@ -77,12 +82,26 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         return null;
     }
 
+    public function enterNode(Node $node)
+    {
+        switch ($node) {
+            case $node instanceof ClassMethod:
+                if ($this->shouldRewrite($node)) {
+                    $this->shouldRewrite = true;
+                } else {
+                    $this->shouldRewrite = false;
+                }
+                break;
+        }
+
+        return null;
+    }
+
     public function leaveNode(Node $node)
     {
         switch ($node) {
             case $node instanceof ClassMethod:
                 if (! $this->shouldRewrite($node)) {
-                    $node->stmts = $this->unshiftMagicMethods($node->stmts);
                     return $node;
                 }
                 // Rewrite the method to proxy call method.
@@ -103,10 +122,16 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 return $node;
             case $node instanceof MagicConstFunction:
                 // Rewrite __FUNCTION__ to $__function__ variable.
-                return new Variable('__function__');
+                if ($this->shouldRewrite) {
+                    return new Variable('__function__');
+                }
+                break;
             case $node instanceof MagicConstMethod:
                 // Rewrite __METHOD__ to $__method__ variable.
-                return new Variable('__method__');
+                if ($this->shouldRewrite) {
+                    return new Variable('__method__');
+                }
+                break;
         }
         return null;
     }

@@ -117,9 +117,7 @@ class Bar4
     }
     public function toMethodString() : string
     {
-        $__function__ = __FUNCTION__;
-        $__method__ = __METHOD__;
-        return $__method__;
+        return __METHOD__;
     }
     public function toRewriteMethodString() : string
     {
