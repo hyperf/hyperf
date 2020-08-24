@@ -1,4 +1,6 @@
-# v2.0.8 - TBD
+# v2.0.9 - TBD
+
+# v2.0.8 - 2020-08-24
 
 ## Added
 
@@ -14,6 +16,10 @@
 ## Optimized
 
 - [#2319](https://github.com/hyperf/hyperf/pull/2319) Optimized the `ResolverDispatcher` which is friendly for circular dependencies.
+
+## Dependencies Upgrade
+
+- Upgraded `markrogoyski/math-php` requirement from `^0.49.0` to `^1.2.0`
 
 # v2.0.7 - 2020-08-17
 
