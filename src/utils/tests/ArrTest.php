@@ -128,5 +128,8 @@ class ArrTest extends TestCase
         $array1['scan']['ignore_annotations'][] = 'author';
 
         $this->assertSame($array1, $result);
+
+        $result = Arr::merge($result, $array2);
+        $this->assertSame($array1, $result);
     }
 }
