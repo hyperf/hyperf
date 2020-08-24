@@ -16,6 +16,7 @@ use Hyperf\Di\BetterReflectionManager;
 use HyperfTest\Di\Stub\AspectCollector;
 use HyperfTest\Di\Stub\Ast\Bar2;
 use HyperfTest\Di\Stub\Ast\Bar3;
+use HyperfTest\Di\Stub\Ast\Bar4;
 use HyperfTest\Di\Stub\Ast\BarAspect;
 use HyperfTest\Di\Stub\Ast\BarInterface;
 use HyperfTest\Di\Stub\Ast\Foo;
@@ -28,11 +29,6 @@ use PHPUnit\Framework\TestCase;
  */
 class AstTest extends TestCase
 {
-    protected function tearDown()
-    {
-        BetterReflectionManager::clear();
-    }
-
     protected $license = '<?php
 
 declare (strict_types=1);
@@ -44,6 +40,11 @@ declare (strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */';
+
+    protected function tearDown()
+    {
+        BetterReflectionManager::clear();
+    }
 
     public function testAstProxy()
     {
@@ -87,6 +88,46 @@ class Bar2 extends Bar
     public static function build()
     {
         return parent::$items;
+    }
+}', $code);
+    }
+
+    public function testMagicMethods()
+    {
+        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
+
+        $aspect = BarAspect::class;
+
+        AspectCollector::setAround($aspect, [
+            Bar4::class . '::toRewriteMethodString',
+        ], []);
+
+        $ast = new Ast();
+        $code = $ast->proxy(Bar4::class);
+        $this->assertEquals($this->license . '
+namespace HyperfTest\Di\Stub\Ast;
+
+class Bar4
+{
+    use \Hyperf\Di\Aop\ProxyTrait;
+    use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    function __construct()
+    {
+        self::__handlePropertyHandler(__CLASS__);
+    }
+    public function toMethodString() : string
+    {
+        $__function__ = __FUNCTION__;
+        $__method__ = __METHOD__;
+        return $__method__;
+    }
+    public function toRewriteMethodString() : string
+    {
+        $__function__ = __FUNCTION__;
+        $__method__ = __METHOD__;
+        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () use($__function__, $__method__) {
+            return $__method__;
+        });
     }
 }', $code);
     }

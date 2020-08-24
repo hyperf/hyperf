@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -82,6 +82,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         switch ($node) {
             case $node instanceof ClassMethod:
                 if (! $this->shouldRewrite($node)) {
+                    $node->stmts = $this->unshiftMagicMethods($node->stmts);
                     return $node;
                 }
                 // Rewrite the method to proxy call method.
@@ -183,12 +184,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 'stmts' => $node->stmts,
             ])),
         ]);
-        $magicConstFunction = new Expression(new Assign(new Variable('__function__'), new MagicConstFunction()));
-        $magicConstMethod = new Expression(new Assign(new Variable('__method__'), new MagicConstMethod()));
-        $stmts = [
-            $magicConstFunction,
-            $magicConstMethod,
-        ];
+        $stmts = $this->unshiftMagicMethods([]);
         if ($shouldReturn) {
             $stmts[] = new Return_($staticCall);
         } else {
@@ -196,6 +192,14 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         }
         $node->stmts = $stmts;
         return $node;
+    }
+
+    private function unshiftMagicMethods($stmts = [])
+    {
+        $magicConstFunction = new Expression(new Assign(new Variable('__function__'), new MagicConstFunction()));
+        $magicConstMethod = new Expression(new Assign(new Variable('__method__'), new MagicConstMethod()));
+        array_unshift($stmts, $magicConstFunction, $magicConstMethod);
+        return $stmts;
     }
 
     private function getMagicConst(): Node\Scalar\MagicConst
