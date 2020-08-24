@@ -5,6 +5,11 @@
 - [#2334](https://github.com/hyperf/hyperf/pull/2334) Added method `Arr::merge`.
 - [#2335](https://github.com/hyperf/hyperf/pull/2335) Added `Hyperf/Utils/Optional`.
 
+## Fixed
+
+- [#2338](https://github.com/hyperf/hyperf/pull/2338) Fixed filesystem does not works when using s3 adapter.
+- [#2340](https://github.com/hyperf/hyperf/pull/2340) Fixed `__FUNCTION__` and `__METHOD__` magic constants does work in closure of aop proxy class
+
 ## Optimized
 
 - [#2319](https://github.com/hyperf/hyperf/pull/2319) Optimized the `ResolverDispatcher` which is friendly for circular dependencies.
