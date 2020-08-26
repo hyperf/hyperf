@@ -16,10 +16,11 @@ use GuzzleHttp\RequestOptions;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Guzzle\ClientFactory;
-use Hyperf\Utils\ApplicationContext;
 
 abstract class AbstractNacos
 {
+    use AccessToken;
+
     /**
      * @var ContainerInterface
      */
@@ -38,8 +39,8 @@ abstract class AbstractNacos
 
     public function request($method, $uri, array $options = [])
     {
-        $accessToken = ApplicationContext::getContainer()->get(NacosAuth::class)->getAccessToken();
-        ! empty($accessToken) && $options[RequestOptions::QUERY]['accessToken'] = $accessToken;
+        $token = $this->getAccessToken();
+        $token && $options[RequestOptions::QUERY]['accessToken'] = $token;
         return $this->client()->request($method, $uri, $options);
     }
 
