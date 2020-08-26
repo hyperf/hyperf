@@ -146,7 +146,7 @@ class Watcher
 
     public function restart($isStart = true)
     {
-        $file = BASE_PATH . '/runtime/hyperf.pid';
+        $file = config('server.settings.pid_file');
         if (! $isStart && $this->filesystem->exists($file)) {
             $pid = $this->filesystem->get($file);
             try {
