@@ -131,7 +131,7 @@ composer dump-autoload -o
 
 ## 语法错误导致服务无法启动
 
-当项目启动时，抛出类似于一下错误时
+当项目启动时，抛出类似于以下错误时
 
 ```
 Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line 27 in vendor/nikic/php-parser/lib/PhpParser/ParserAbstract.php:315
