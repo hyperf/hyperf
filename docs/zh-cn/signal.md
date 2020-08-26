@@ -52,6 +52,8 @@ class TermSignalHandler implements SignalHandlerInterface
 
 因为 Worker 进程接收的 SIGTERM 信号被捕获后，无法正常退出，所以用户可以直接 `Ctrl + C` 退出，或者修改 `config/autoload/signal.php` 配置，如下：
 
+> WorkerStopHandler 不适配于 CoroutineServer，如有需要请自行实现
+
 ```php
 <?php
 
