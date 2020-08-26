@@ -1,4 +1,25 @@
-# v2.0.8 - TBD
+# v2.0.9 - TBD
+
+# v2.0.8 - 2020-08-24
+
+## Added
+
+- [#2334](https://github.com/hyperf/hyperf/pull/2334) Added method `Arr::merge` to merge array more friendly than `array_merge_recursive`.
+- [#2335](https://github.com/hyperf/hyperf/pull/2335) Added `Hyperf/Utils/Optional` which accepts any argument and allows you to access properties or call methods on that object.
+- [#2336](https://github.com/hyperf/hyperf/pull/2336) Added `RedisNsqAdapter` which publish message through nsq for `socketio-server`.
+
+## Fixed
+
+- [#2338](https://github.com/hyperf/hyperf/pull/2338) Fixed filesystem does not works when using s3 adapter.
+- [#2340](https://github.com/hyperf/hyperf/pull/2340) Fixed `__FUNCTION__` and `__METHOD__` magic constants does work in closure of aop proxy class
+
+## Optimized
+
+- [#2319](https://github.com/hyperf/hyperf/pull/2319) Optimized the `ResolverDispatcher` which is friendly for circular dependencies.
+
+## Dependencies Upgrade
+
+- Upgraded `markrogoyski/math-php` requirement from `^0.49.0` to `^1.2.0`
 
 # v2.0.7 - 2020-08-17
 
