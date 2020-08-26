@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Nacos\Api;
 
 use GuzzleHttp\RequestOptions;
-use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Nacos\Model\ConfigModel;
 use Hyperf\Utils\Codec\Json;
 
