@@ -15,7 +15,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ContainerInterface;
-use Hyperf\Guzzle\ClientFactory;
+use Hyperf\Guzzle\CoroutineHandler;
 
 abstract class AbstractNacos
 {
@@ -31,10 +31,16 @@ abstract class AbstractNacos
      */
     protected $config;
 
+    /**
+     * @var callable
+     */
+    protected $handler;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
+        $this->handler = new CoroutineHandler();
     }
 
     public function request($method, $uri, array $options = [])
@@ -55,10 +61,10 @@ abstract class AbstractNacos
 
     public function client(): Client
     {
-        $factory = $this->container->get(ClientFactory::class);
         $headers['charset'] = $headers['charset'] ?? 'UTF-8';
-        return $factory->create([
+        return new Client([
             'base_uri' => $this->getServerUri(),
+            'handler' => $this->handler,
             RequestOptions::HEADERS => [
                 'charset' => 'UTF-8',
             ],

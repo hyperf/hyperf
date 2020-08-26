@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Nacos\Api;
 
 use GuzzleHttp\RequestOptions;
+use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Nacos\Model\ConfigModel;
 use Hyperf\Utils\Codec\Json;
 
@@ -23,7 +24,13 @@ class NacosConfig extends AbstractNacos
             RequestOptions::QUERY => $configModel->toArray(),
         ]);
 
-        return $configModel->parse($response->getBody()->getContents());
+        $statusCode = $response->getStatusCode();
+        $contents = $response->getBody()->getContents();
+        if ($statusCode !== 200) {
+            return [];
+        }
+
+        return $configModel->parse($contents);
     }
 
     public function set(ConfigModel $configModel): array
