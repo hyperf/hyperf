@@ -47,6 +47,6 @@ class InstanceBeatProcess extends AbstractProcess
     public function isEnable($server): bool
     {
         $config = $this->container->get(ConfigInterface::class);
-        return $config->get('nacos.enable',true) && $config->get('nacos.client.beat_enable', false);
+        return $config->get('nacos.enable', true) && $config->get('nacos.client.beat_enable', false);
     }
 }

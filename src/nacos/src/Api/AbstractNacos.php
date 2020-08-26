@@ -39,7 +39,7 @@ abstract class AbstractNacos
     public function request($method, $uri, array $options = [])
     {
         $accessToken = ApplicationContext::getContainer()->get(NacosAuth::class)->getAccessToken();
-        !empty($accessToken) && $options[RequestOptions::QUERY]['accessToken'] = $accessToken;
+        ! empty($accessToken) && $options[RequestOptions::QUERY]['accessToken'] = $accessToken;
         return $this->client()->request($method, $uri, $options);
     }
 

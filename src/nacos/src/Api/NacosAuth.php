@@ -17,9 +17,10 @@ use Hyperf\Utils\Codec\Json;
 class NacosAuth extends AbstractNacos
 {
     /**
-     * @var String
+     * @var string
      */
     private $accessToken;
+
     /**
      * @var int
      */
@@ -27,10 +28,10 @@ class NacosAuth extends AbstractNacos
 
     public function getAccessToken(): string
     {
-        if(empty($this->config->get('nacos.username'))){
+        if (empty($this->config->get('nacos.username'))) {
             return '';
         }
-        if(!empty($this->accessToken) && $this->tokenTtl > time()+60){
+        if (! empty($this->accessToken) && $this->tokenTtl > time() + 60) {
             return $this->accessToken;
         }
         $resultArr = $this->login();
@@ -49,5 +50,4 @@ class NacosAuth extends AbstractNacos
         ]);
         return Json::decode($response->getBody()->getContents());
     }
-
 }

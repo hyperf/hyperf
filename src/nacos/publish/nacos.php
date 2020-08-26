@@ -9,16 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+use Hyperf\Nacos\Constants;
+
 return [
     'enable' => true,
     // The nacos host info
     'host' => '127.0.0.1',
     'port' => 8848,
-    //The nacos account info
+    // The nacos account info
     'username' => null,
     'password' => null,
-    //config cover model 1:config覆盖  2:深度合并
-    'config_cover_model' => 1,
+    'config_merge_mode' => Constants::CONFIG_MERGE_OVERWRITE,
     // The service info.
     'service' => [
         'service_name' => 'hyperf',

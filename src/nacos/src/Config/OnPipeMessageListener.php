@@ -14,8 +14,9 @@ namespace Hyperf\Nacos\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
-use Hyperf\Nacos\Utils\Arr;
+use Hyperf\Nacos\Constants;
 use Hyperf\Process\Event\PipeMessage as UserProcessPipMessage;
+use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
 
 class OnPipeMessageListener implements ListenerInterface
@@ -50,10 +51,11 @@ class OnPipeMessageListener implements ListenerInterface
         if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
             $root = $this->config->get('nacos.config_append_node');
             foreach ($event->data->configurations ?? [] as $key => $conf) {
-                if($this->config->get('nacos.config_cover_model',1) == 2){
-                    $conf = make(Arr::class)->array_merge_deep($this->config->get($key,[]),$conf);
+                $configKey = $root ? $root . '.' . $key : $key;
+                if (is_array($conf) && $this->config->get('nacos.config_merge_mode') == Constants::CONFIG_MERGE_APPEND) {
+                    $conf = Arr::merge($this->config->get($configKey, []), $conf);
                 }
-                $this->config->set($root ? $root . '.' . $key : $key, $conf);
+                $this->config->set($configKey, $conf);
             }
         }
     }

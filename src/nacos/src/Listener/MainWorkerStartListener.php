@@ -18,10 +18,11 @@ use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Nacos\Api\NacosInstance;
 use Hyperf\Nacos\Api\NacosService;
 use Hyperf\Nacos\Client;
+use Hyperf\Nacos\Constants;
 use Hyperf\Nacos\Exception\RuntimeException;
 use Hyperf\Nacos\Instance;
 use Hyperf\Nacos\Service;
-use Hyperf\Nacos\Utils\Arr;
+use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
 
 class MainWorkerStartListener implements ListenerInterface
@@ -56,7 +57,7 @@ class MainWorkerStartListener implements ListenerInterface
         if (! $config->get('nacos')) {
             return;
         }
-        if (! $config->get('nacos.enable',true)) {
+        if (! $config->get('nacos.enable', true)) {
             return;
         }
 
@@ -78,11 +79,13 @@ class MainWorkerStartListener implements ListenerInterface
         $client = $this->container->get(Client::class);
         $config = $this->container->get(ConfigInterface::class);
         $appendNode = $config->get('nacos.config_append_node');
+
         foreach ($client->pull() as $key => $conf) {
-            if($config->get('nacos.config_cover_model',1) == 2) {
-                $conf = make(Arr::class)->array_merge_deep($config->get($key, []), $conf);
+            $configKey = $appendNode ? $appendNode . '.' . $key : $key;
+            if (is_array($conf) && $config->get('nacos.config_merge_mode') == Constants::CONFIG_MERGE_APPEND) {
+                $conf = Arr::merge($config->get($configKey, []), $conf);
             }
-            $config->set($appendNode ? $appendNode . '.' . $key : $key, $conf);
+            $config->set($configKey, $conf);
         }
     }
 }
