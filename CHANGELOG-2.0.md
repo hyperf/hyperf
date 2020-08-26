@@ -1,5 +1,15 @@
 # v2.0.9 - TBD
 
+## Added
+
+- [#2331](https://github.com/hyperf/hyperf/pull/2331) Added auth api for nacos.
+- [#2331](https://github.com/hyperf/hyperf/pull/2331) Added config nacos.enable to control the nacos component.
+- [#2331](https://github.com/hyperf/hyperf/pull/2331) Added array merge mode for nacos.
+
+## Fixed
+
+- [#2331](https://github.com/hyperf/hyperf/pull/2331) Fixed exception thrown when the service or config was not found for nacos.
+
 # v2.0.8 - 2020-08-24
 
 ## Added
