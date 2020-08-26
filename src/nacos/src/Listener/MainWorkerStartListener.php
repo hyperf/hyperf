@@ -61,31 +61,35 @@ class MainWorkerStartListener implements ListenerInterface
             return;
         }
 
-        $nacosService = $this->container->get(NacosService::class);
-        $service = $this->container->get(Service::class);
-        $exist = $nacosService->detail($service);
-        if (! $exist && ! $nacosService->create($service)) {
-            throw new RuntimeException(sprintf('nacos register service fail: %s', $service));
-        }
-        $this->logger->info('nacos register service success.', compact('service'));
-
-        $instance = $this->container->get(Instance::class);
-        $nacosInstance = $this->container->get(NacosInstance::class);
-        if (! $nacosInstance->register($instance)) {
-            throw new RuntimeException(sprintf('nacos register instance fail: %s', $instance));
-        }
-        $this->logger->info('nacos register instance success.', compact('instance'));
-
-        $client = $this->container->get(Client::class);
-        $config = $this->container->get(ConfigInterface::class);
-        $appendNode = $config->get('nacos.config_append_node');
-
-        foreach ($client->pull() as $key => $conf) {
-            $configKey = $appendNode ? $appendNode . '.' . $key : $key;
-            if (is_array($conf) && $config->get('nacos.config_merge_mode') == Constants::CONFIG_MERGE_APPEND) {
-                $conf = Arr::merge($config->get($configKey, []), $conf);
+        try {
+            $nacosService = $this->container->get(NacosService::class);
+            $service = $this->container->get(Service::class);
+            $exist = $nacosService->detail($service);
+            if (! $exist && ! $nacosService->create($service)) {
+                throw new RuntimeException(sprintf('nacos register service fail: %s', $service));
             }
-            $config->set($configKey, $conf);
+            $this->logger->info('nacos register service success.', compact('service'));
+
+            $instance = $this->container->get(Instance::class);
+            $nacosInstance = $this->container->get(NacosInstance::class);
+            if (! $nacosInstance->register($instance)) {
+                throw new RuntimeException(sprintf('nacos register instance fail: %s', $instance));
+            }
+            $this->logger->info('nacos register instance success.', compact('instance'));
+
+            $client = $this->container->get(Client::class);
+            $config = $this->container->get(ConfigInterface::class);
+            $appendNode = $config->get('nacos.config_append_node');
+
+            foreach ($client->pull() as $key => $conf) {
+                $configKey = $appendNode ? $appendNode . '.' . $key : $key;
+                if (is_array($conf) && $config->get('nacos.config_merge_mode') == Constants::CONFIG_MERGE_APPEND) {
+                    $conf = Arr::merge($config->get($configKey, []), $conf);
+                }
+                $config->set($configKey, $conf);
+            }
+        } catch (\Throwable $exception) {
+            $this->logger->critical((string) $exception);
         }
     }
 }

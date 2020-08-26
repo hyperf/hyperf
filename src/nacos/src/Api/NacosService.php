@@ -59,7 +59,7 @@ class NacosService extends AbstractNacos
                 return null;
             }
 
-            throw new RequestException($statusCode, $contents);
+            throw new RequestException($contents, $statusCode);
         }
 
         return Json::decode($contents);

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Nacos\Api;
 
 use GuzzleHttp\RequestOptions;
+use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Utils\Codec\Json;
 
 class NacosAuth extends AbstractNacos
@@ -24,6 +25,12 @@ class NacosAuth extends AbstractNacos
                 'password' => $password,
             ],
         ]);
-        return Json::decode($response->getBody()->getContents());
+
+        $statusCode = $response->getStatusCode();
+        $contents = $response->getBody()->getContents();
+        if ($statusCode !== 200) {
+            throw new RequestException($contents, $statusCode);
+        }
+        return Json::decode($contents);
     }
 }
