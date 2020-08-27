@@ -18,8 +18,6 @@ date_default_timezone_set('Asia/Shanghai');
 ! defined('BASE_PATH') && define('BASE_PATH', getcwd());
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);
 
-putenv('SCAN_CACHEABLE=(true)');
-
 require BASE_PATH . '/vendor/autoload.php';
 
 Hyperf\Di\ClassLoader::init();
