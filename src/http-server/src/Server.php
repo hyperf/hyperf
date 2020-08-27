@@ -27,6 +27,7 @@ use Hyperf\Utils\Context;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Request as SwooleRequest;
@@ -106,6 +107,8 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
 
             [$psr7Request, $psr7Response] = $this->initRequestAndResponse($request, $response);
 
+            $this->toggleEvent(\Hyperf\HttpServer\Event\OnRequestStart::class, $psr7Request, $psr7Response);
+
             $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
             /** @var Dispatched $dispatched */
             $dispatched = $psr7Request->getAttribute(Dispatched::class);
@@ -120,6 +123,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             // Delegate the exception to exception handler.
             $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
+            $this->toggleEvent(\Hyperf\HttpServer\Event\OnRequestEnd::class, $psr7Request, $psr7Response);
             // Send the Response to client.
             if (! isset($psr7Response)) {
                 return;
@@ -170,5 +174,12 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
         Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
         return [$psr7Request, $psr7Response];
+    }
+
+    protected function toggleEvent($event, ...$params)
+    {
+        $eventDispatcher = $this->container->get(EventDispatcherInterface::class);
+
+        $eventDispatcher->dispatch(new $event(...$params));
     }
 }
