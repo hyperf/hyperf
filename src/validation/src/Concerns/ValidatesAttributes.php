@@ -301,7 +301,7 @@ trait ValidatesAttributes
     {
         $this->requireParameterCount(1, $parameters, 'digits');
 
-        return ! preg_match('/[^0-9]/', $value)
+        return ! preg_match('/[^0-9]/', (string) $value)
             && strlen((string) $value) == $parameters[0];
     }
 
@@ -316,7 +316,7 @@ trait ValidatesAttributes
 
         $length = strlen((string) $value);
 
-        return ! preg_match('/[^0-9]/', $value)
+        return ! preg_match('/[^0-9]/', (string) $value)
             && $length >= $parameters[0] && $length <= $parameters[1];
     }
 
