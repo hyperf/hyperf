@@ -15,6 +15,7 @@
 ## Optimized
 
 - [#2359](https://github.com/hyperf/hyperf/pull/2359) Optimized process which stop friendly in coroutine server.
+- [#2363](https://github.com/hyperf/hyperf/pull/2363) Optimized di which is no need to depend on config.
 
 # v2.0.8 - 2020-08-24
 

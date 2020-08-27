@@ -249,7 +249,10 @@ class Scanner
         $basePath = $configDir . '/config.php';
         $aspects = file_exists($aspectsPath) ? include $aspectsPath : [];
         $baseConfig = file_exists($basePath) ? include $basePath : [];
-        $providerConfig = ProviderConfig::load();
+        $providerConfig = [];
+        if (class_exists(ProviderConfig::class)) {
+            $providerConfig = ProviderConfig::load();
+        }
         if (! isset($aspects) || ! is_array($aspects)) {
             $aspects = [];
         }
