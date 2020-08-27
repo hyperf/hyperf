@@ -301,8 +301,9 @@ trait ValidatesAttributes
     {
         $this->requireParameterCount(1, $parameters, 'digits');
 
-        return ! preg_match('/[^0-9]/', (string) $value)
-            && strlen((string) $value) == $parameters[0];
+        $value = (string) $value;
+        return ! preg_match('/[^0-9]/', $value)
+            && strlen($value) == $parameters[0];
     }
 
     /**
@@ -314,9 +315,10 @@ trait ValidatesAttributes
     {
         $this->requireParameterCount(2, $parameters, 'digits_between');
 
-        $length = strlen((string) $value);
+        $value = (string) $value;
+        $length = strlen($value);
 
-        return ! preg_match('/[^0-9]/', (string) $value)
+        return ! preg_match('/[^0-9]/', $value)
             && $length >= $parameters[0] && $length <= $parameters[1];
     }
 
