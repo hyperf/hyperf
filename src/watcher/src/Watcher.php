@@ -16,6 +16,7 @@ use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Coroutine;
+use Hyperf\Utils\Filesystem\FileNotFoundException;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Watcher\Driver\DriverInterface;
 use PhpParser\PrettyPrinter\Standard;
@@ -147,6 +148,9 @@ class Watcher
     public function restart($isStart = true)
     {
         $file = config('server.settings.pid_file');
+        if (empty($file)) {
+            throw new FileNotFoundException('pid_file is not found.');
+        }
         if (! $isStart && $this->filesystem->exists($file)) {
             $pid = $this->filesystem->get($file);
             try {
