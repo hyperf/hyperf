@@ -44,7 +44,7 @@ class CoordinatorManager
 
     /**
      * Alias of static::until.
-     * @deprecated v2.0
+     * @deprecated v2.1
      */
     public static function get(string $identifier): Coordinator
     {

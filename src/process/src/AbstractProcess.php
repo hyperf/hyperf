@@ -165,8 +165,7 @@ abstract class AbstractProcess implements ProcessInterface
                         $this->logThrowable($throwable);
                     }
 
-                    $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
-                    if ($coordinator->yield($this->restartInterval)) {
+                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($this->restartInterval)) {
                         break;
                     }
                 }
