@@ -55,8 +55,12 @@ class ResolverDispatcher implements ResolverInterface
             return $definition->resolve($this->container);
         }
 
-        $resolver = $this->getDefinitionResolver($definition);
-        return $resolver->resolve($definition, $parameters);
+        $guard = DepthGuard::getInstance();
+
+        return $guard->call($definition->getName(), function () use ($definition, $parameters) {
+            $resolver = $this->getDefinitionResolver($definition);
+            return $resolver->resolve($definition, $parameters);
+        });
     }
 
     /**
@@ -71,8 +75,12 @@ class ResolverDispatcher implements ResolverInterface
             return $definition->isResolvable($this->container);
         }
 
-        $resolver = $this->getDefinitionResolver($definition);
-        return $resolver->isResolvable($definition, $parameters);
+        $guard = DepthGuard::getInstance();
+
+        return $guard->call($definition->getName(), function () use ($definition, $parameters) {
+            $resolver = $this->getDefinitionResolver($definition);
+            return $resolver->isResolvable($definition, $parameters);
+        });
     }
 
     /**

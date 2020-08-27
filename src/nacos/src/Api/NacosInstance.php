@@ -77,7 +77,7 @@ class NacosInstance extends AbstractNacos
             return false;
         }
         $enabled = array_filter($instance, function ($item) {
-            return $item['enabled'];
+            return $item['enabled'] && $item['healthy'];
         });
 
         $tactics = strtolower($this->config->get('nacos.load_balancer', 'random'));

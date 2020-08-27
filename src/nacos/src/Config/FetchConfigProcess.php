@@ -84,6 +84,8 @@ class FetchConfigProcess extends AbstractProcess
     public function isEnable($server): bool
     {
         $config = $this->container->get(ConfigInterface::class);
-        return $server instanceof Server && (bool) $config->get('nacos.config_reload_interval', false);
+        return $server instanceof Server
+            && $config->get('nacos.enable', true)
+            && (bool) $config->get('nacos.config_reload_interval', false);
     }
 }
