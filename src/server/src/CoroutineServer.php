@@ -94,6 +94,7 @@ class CoroutineServer implements ServerInterface
                     CoordinatorManager::until(Constants::WORKER_START)->resume();
                     $server->start();
                     $this->eventDispatcher->dispatch(new CoroutineServerStop($name, $server));
+                    CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
                 });
             }
         });
