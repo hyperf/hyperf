@@ -12,6 +12,10 @@
 - [#2356](https://github.com/hyperf/hyperf/pull/2356) Fixed `server:start` failed, when the config of pid_file changed.
 - [#2358](https://github.com/hyperf/hyperf/pull/2358) Fixed validation rule `digits` does not support `int`.
 
+## Optimized
+
+- [#2359](https://github.com/hyperf/hyperf/pull/2359) Optimized process which stop friendly in coroutine server.
+
 # v2.0.8 - 2020-08-24
 
 ## Added

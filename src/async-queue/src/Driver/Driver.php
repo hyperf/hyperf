@@ -29,6 +29,7 @@ abstract class Driver implements DriverInterface
 {
     /**
      * @var bool
+     * @deprecated v2.1 use ProcessManager::isRunning() instead.
      */
     public static $running = true;
 
