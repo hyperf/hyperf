@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\RpcServer\Router;
 
 /**
- * @method static addRoute(string $route, $handler, array $options = [])
- * @method static addGroup($prefix, callable $callback)
+ * @method static void addRoute(string $route, $handler, array $options = [])
+ * @method static void addGroup($prefix, callable $callback)
  */
 class Router
 {
