@@ -47,8 +47,8 @@ class Router
         static::$factory = $factory;
     }
 
-    public static function add(string $route, $handler, array $options = [])
+    public static function add(string $route, $handler, array $options = []): void
     {
-        return self::addRoute($route, $handler, $options);
+        static::addRoute($route, $handler, $options);
     }
 }
