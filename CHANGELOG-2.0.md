@@ -9,7 +9,7 @@
 ## Fixed
 
 - [#2331](https://github.com/hyperf/hyperf/pull/2331) Fixed exception thrown when the service or config was not found for nacos.
-- [#2356](https://github.com/hyperf/hyperf/pull/2356) Fixed `server:start` failed, when the config of pid_file changed.
+- [#2356](https://github.com/hyperf/hyperf/pull/2356) [#2368](https://github.com/hyperf/hyperf/pull/2368) Fixed `server:start` failed, when the config of pid_file changed.
 - [#2358](https://github.com/hyperf/hyperf/pull/2358) Fixed validation rule `digits` does not support `int`.
 
 ## Optimized

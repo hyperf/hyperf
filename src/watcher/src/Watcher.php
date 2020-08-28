@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Watcher;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationReader;
-use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Coroutine;
@@ -75,7 +75,7 @@ class Watcher
     protected $reader;
 
     /**
-     * @var ScanConfig
+     * @var ConfigInterface
      */
     protected $config;
 
@@ -105,7 +105,7 @@ class Watcher
         $this->autoload = array_flip($json['autoload']['psr-4'] ?? []);
         $this->reflection = new BetterReflection();
         $this->reader = new AnnotationReader();
-        $this->config = ScanConfig::instance('/');
+        $this->config = $container->get(ConfigInterface::class);
         $this->printer = new Standard();
         $this->channel = new Channel(1);
         $this->channel->push(true);
@@ -147,9 +147,9 @@ class Watcher
 
     public function restart($isStart = true)
     {
-        $file = config('server.settings.pid_file');
+        $file = $this->config->get('server.settings.pid_file');
         if (empty($file)) {
-            throw new FileNotFoundException('pid_file is not found.');
+            throw new FileNotFoundException('The config of pid_file is not found.');
         }
         if (! $isStart && $this->filesystem->exists($file)) {
             $pid = $this->filesystem->get($file);
