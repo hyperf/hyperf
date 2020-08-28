@@ -23,6 +23,9 @@ class ValidationExceptionHandler extends ExceptionHandler
         $this->stopPropagation();
         /** @var \Hyperf\Validation\ValidationException $throwable */
         $body = $throwable->validator->errors()->first();
+        if (! $response->hasHeader('content-type')) {
+            $response = $response->withAddedHeader('content-type', 'text/plain; charset=utf-8');
+        }
         return $response->withStatus($throwable->status)->withBody(new SwooleStream($body));
     }
 
