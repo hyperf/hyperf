@@ -5,6 +5,7 @@
 - [#2331](https://github.com/hyperf/hyperf/pull/2331) Added auth api for nacos.
 - [#2331](https://github.com/hyperf/hyperf/pull/2331) Added config nacos.enable to control the nacos component.
 - [#2331](https://github.com/hyperf/hyperf/pull/2331) Added array merge mode for nacos.
+- [#2384](https://github.com/hyperf/hyperf/pull/2384) Added function `optional()`.
 
 ## Fixed
 

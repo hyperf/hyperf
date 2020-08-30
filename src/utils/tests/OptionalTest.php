@@ -131,4 +131,100 @@ class OptionalTest extends TestCase
 
         $this->assertSame($id, $optional['id']);
     }
+
+    public function testOptional()
+    {
+        $this->assertNull(optional(null)->something());
+
+        $this->assertEquals(10, optional(new class() {
+            public function something()
+            {
+                return 10;
+            }
+        })->something());
+    }
+
+    public function testOptionalWithCallback()
+    {
+        $this->assertNull(optional(null, function () {
+            throw new RuntimeException(
+                'The optional callback should not be called for null'
+            );
+        }));
+
+        $this->assertEquals(10, optional(5, function ($number) {
+            return $number * 2;
+        }));
+    }
+
+    public function testOptionalWithArray()
+    {
+        $this->assertSame('here', optional(['present' => 'here'])['present']);
+        $this->assertNull(optional(null)['missing']);
+        $this->assertNull(optional(['present' => 'here'])->missing);
+        $this->assertNull(optional(['present' => 'here'])->present);
+    }
+
+    public function testOptionalReturnsObjectPropertyOrNull()
+    {
+        $this->assertSame('bar', optional((object) ['foo' => 'bar'])->foo);
+        $this->assertNull(optional(['foo' => 'bar'])->foo);
+        $this->assertNull(optional((object) ['foo' => 'bar'])->bar);
+    }
+
+    public function testOptionalDeterminesWhetherKeyIsSet()
+    {
+        $this->assertTrue(isset(optional(['foo' => 'bar'])['foo']));
+        $this->assertFalse(isset(optional(['foo' => 'bar'])['bar']));
+        $this->assertFalse(isset(optional()['bar']));
+    }
+
+    public function testOptionalAllowsToSetKey()
+    {
+        $optional = optional([]);
+        $optional['foo'] = 'bar';
+        $this->assertSame('bar', $optional['foo']);
+
+        $optional = optional(null);
+        $optional['foo'] = 'bar';
+        $this->assertFalse(isset($optional['foo']));
+    }
+
+    public function testOptionalAllowToUnsetKey()
+    {
+        $optional = optional(['foo' => 'bar']);
+        $this->assertTrue(isset($optional['foo']));
+        unset($optional['foo']);
+        $this->assertFalse(isset($optional['foo']));
+
+        $optional = optional((object) ['foo' => 'bar']);
+        $this->assertFalse(isset($optional['foo']));
+        $optional['foo'] = 'bar';
+        $this->assertFalse(isset($optional['foo']));
+    }
+
+    public function testOptionalIsMacroable()
+    {
+        Optional::macro('present', function () {
+            if (is_object($this->value)) {
+                return $this->value->present();
+            }
+
+            return new Optional(null);
+        });
+
+        $this->assertNull(optional(null)->present()->something());
+
+        $this->assertSame('$10.00', optional(new class() {
+            public function present()
+            {
+                return new class() {
+                    public function something()
+                    {
+                        return '$10.00';
+                    }
+                };
+            }
+        })->present()->something());
+    }
 }
