@@ -128,3 +128,13 @@ composer dump-autoload -o
 > 當環境變量存在 SCAN_CACHEABLE 時，.env 中無法修改這個配置。
 
 `2.0.0` 和 `2.0.1` 兩個版本，判斷文件是否修改時，沒有判斷修改時間相等的情況，所以文件修改後，立馬生成緩存的情況（比如使用 `watcher` 組件時）, 會導致代碼無法及時生效。
+
+## 語法錯誤導致服務無法啟動
+
+當項目啟動時，拋出類似於以下錯誤時
+
+```
+Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line 27 in vendor/nikic/php-parser/lib/PhpParser/ParserAbstract.php:315
+```
+
+可以執行腳本 `composer analyse`，對項目進行靜態檢測，便可以找到出現問題的代碼段。

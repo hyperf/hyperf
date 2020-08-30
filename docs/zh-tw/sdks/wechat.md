@@ -81,7 +81,7 @@ foreach ($uploadFiles as $k => $v) {
 }
 $request = new Request($get, $post, [], $cookie, $files, $server, $xml);
 $request->headers = new HeaderBag($this->request->getHeaders());
-$app['request'] = $request;
+$app->rebind('request', $request);
 // Do something...
 
 ```

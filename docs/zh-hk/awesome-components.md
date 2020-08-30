@@ -3,6 +3,8 @@
 所有官方提供的組件庫均已進行協程化處理，可安全地在 Hyperf 內或其它協程框架內使用，基於 Hyperf 的開放性和可擴展性，社區可對此開發或適配各種各樣的組件，得益於此，Hyperf 將存在着無限的可能性。   
 本頁將收錄各個適配了 Hyperf 的協程組件 和 已經經過驗證可安全地用於協程下的常用庫，以便您快速的從中選擇合適的組件完成您的需求。
 
+> 組件順序以收錄時間排序
+
 ## 如何提交我的組件？
 
 如果您開發的協程組件適配了 Hyperf，那麼您可以直接對 [hyperf/hyperf](https://github.com/hyperf/hyperf) 項目的 `master` 分支發起您的 `Pull Request`，也就是更改當前頁`(zh-cn/awesome-components.md)`。
