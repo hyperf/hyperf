@@ -32,6 +32,7 @@ class Request extends BaseRequest
     {
         return [
             'content-type' => self::DEFAULT_CONTENT_TYPE,
+            'te' => 'trailers',
             'user-agent' => $this->buildDefaultUserAgent(),
         ];
     }
