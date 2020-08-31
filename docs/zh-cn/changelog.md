@@ -1,5 +1,28 @@
 # 版本更新记录
 
+# v2.0.9 - 2020-08-31
+
+## 新增
+
+- [#2331](https://github.com/hyperf/hyperf/pull/2331) [hyperf/nacos](https://github.com/hyperf/nacos) 组件增加授权接口。
+- [#2331](https://github.com/hyperf/hyperf/pull/2331) [hyperf/nacos](https://github.com/hyperf/nacos) 组件增加 `nacos.enable` 配置，用于控制是否启用 `Nacos` 服务。
+- [#2331](https://github.com/hyperf/hyperf/pull/2331) [hyperf/nacos](https://github.com/hyperf/nacos) 组件增加配置合并类型，默认使用全量覆盖。
+- [#2377](https://github.com/hyperf/hyperf/pull/2377) 为 gRPC 客户端 的 request 增加 `ts` 请求头，以兼容 Node.js gRPC server 等。
+- [#2384](https://github.com/hyperf/hyperf/pull/2384) 新增助手函数 `optional()`，以创建 `Hyperf\Utils\Optional` 对象或更方便 Optional 的使用。
+
+## 修改
+
+- [#2331](https://github.com/hyperf/hyperf/pull/2331) 修复 [hyperf/nacos](https://github.com/hyperf/nacos) 组件，服务或配置不存在时，会抛出异常的问题。
+- [#2356](https://github.com/hyperf/hyperf/pull/2356) [#2368](https://github.com/hyperf/hyperf/pull/2368) 修复 `pid_file` 被用户修改后，命令行 `server:start` 启动失败的问题。
+- [#2358](https://github.com/hyperf/hyperf/pull/2358) 修复验证器规则 `digits` 不支持 `int` 类型的问题。
+
+## 优化
+
+- [#2359](https://github.com/hyperf/hyperf/pull/2359) 优化自定义进程，在协程风格服务下，可以更加友好的停止。
+- [#2363](https://github.com/hyperf/hyperf/pull/2363) 优化 [hyperf/di](https://github.com/hyperf/di) 组件，使其不需要依赖 [hyperf/config](https://github.com/hyperf/config) 组件。
+- [#2373](https://github.com/hyperf/hyperf/pull/2373) 优化 [hyperf/validation](https://github.com/hyperf/validation) 组件的异常捕获器，使其返回 `Response` 时，自动添加 `content-type 头。
+
+
 # v2.0.8 - 2020-08-24
 
 ## 新增
