@@ -190,6 +190,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Utils;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Coroutine as SwooleCoroutine;
 
 class Coroutine
@@ -227,7 +228,10 @@ class Coroutine
         $id = Utils\Coroutine::id();
         $result = SwooleCoroutine::create(function () use ($callable, $id) {
             try {
-                Utils\Context::copy($id);
+                // 按需复制，禁止复制 Socket，不然会导致 Socket 跨协程调用从而报错。
+                Utils\Context::copy($id, [
+                    ServerRequestInterface::class,
+                ]);
                 call($callable);
             } catch (Throwable $throwable) {
                 if ($this->formatter) {
@@ -261,7 +265,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
-use App\Kernel\Context\Coroutine as BCoroutine;
+use App\Kernel\Context\Coroutine as Co;
 use Swoole\Coroutine as SwooleCoroutine;
 use Hyperf\Utils\ApplicationContext;
 
@@ -314,7 +318,7 @@ class Coroutine
      */
     public static function create(callable $callable): int
     {
-        return ApplicationContext::getContainer()->get(BCoroutine::class)->create($callable);
+        return ApplicationContext::getContainer()->get(Co::class)->create($callable);
     }
 
     public static function inCoroutine(): bool
