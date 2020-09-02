@@ -69,6 +69,11 @@ class RedisDriver extends Driver implements KeyCollectorInterface
         return $this->clearPrefix('');
     }
 
+    public function ttl($key)
+    {
+        return (int) $this->redis->ttl($this->getCacheKey($key));
+    }
+
     public function getMultiple($keys, $default = null)
     {
         $cacheKeys = array_map(function ($key) {
