@@ -24,6 +24,7 @@ use Hyperf\Utils\Coroutine\Concurrent;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Swoole\Coroutine;
 
 abstract class Driver implements DriverInterface
 {
@@ -109,6 +110,10 @@ abstract class Driver implements DriverInterface
             }
 
             ++$messageCount;
+        }
+
+        while (! $this->concurrent->isEmpty()) {
+            Coroutine::sleep(0.1);
         }
     }
 
