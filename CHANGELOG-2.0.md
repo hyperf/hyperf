@@ -1,5 +1,9 @@
 # v2.0.10 - TBD
 
+## Added
+
+- [#2411](https://github.com/hyperf/hyperf/pull/2411) Added method `Hyperf\Database\Query\Builder::forPageBeforeId` for database.
+
 # v2.0.9 - 2020-08-31
 
 ## Added
