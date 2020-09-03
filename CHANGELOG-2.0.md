@@ -3,6 +3,7 @@
 ## Added
 
 - [#2411](https://github.com/hyperf/hyperf/pull/2411) Added method `Hyperf\Database\Query\Builder::forPageBeforeId` for database.
+- [#2420](https://github.com/hyperf/hyperf/pull/2420) Added option `enable-event-dispatcher` to initialize EventDispatcher for command.
 
 # v2.0.9 - 2020-08-31
 
