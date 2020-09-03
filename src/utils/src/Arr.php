@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -508,6 +508,30 @@ class Arr
         }
 
         return $result;
+    }
+
+    public static function merge(array $array1, array $array2, bool $unique = true): array
+    {
+        $isAssoc = static::isAssoc($array1);
+        if ($isAssoc) {
+            foreach ($array2 as $key => $value) {
+                if (is_array($value)) {
+                    $array1[$key] = static::merge($array1[$key], $value, $unique);
+                } else {
+                    $array1[$key] = $value;
+                }
+            }
+        } else {
+            foreach ($array2 as $key => $value) {
+                if ($unique && in_array($value, $array1, true)) {
+                    continue;
+                }
+                $array1[] = $value;
+            }
+
+            $array1 = array_values($array1);
+        }
+        return $array1;
     }
 
     /**

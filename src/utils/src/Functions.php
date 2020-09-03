@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -15,6 +15,7 @@ use Hyperf\Utils\Backoff;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\HigherOrderTapProxy;
+use Hyperf\Utils\Optional;
 use Hyperf\Utils\Parallel;
 use Hyperf\Utils\Str;
 
@@ -388,10 +389,11 @@ if (! function_exists('getter')) {
 if (! function_exists('parallel')) {
     /**
      * @param callable[] $callables
+     * @param int $concurrent if $concurrent is equal to 0, that means unlimit
      */
-    function parallel(array $callables)
+    function parallel(array $callables, int $concurrent = 0)
     {
-        $parallel = new Parallel();
+        $parallel = new Parallel($concurrent);
         foreach ($callables as $key => $callable) {
             $parallel->add($callable, $key);
         }
@@ -446,5 +448,23 @@ if (! function_exists('swoole_hook_flags')) {
     function swoole_hook_flags(): int
     {
         return defined('SWOOLE_HOOK_FLAGS') ? SWOOLE_HOOK_FLAGS : SWOOLE_HOOK_ALL;
+    }
+}
+
+if (! function_exists('optional')) {
+    /**
+     * Provide access to optional objects.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    function optional($value = null, callable $callback = null)
+    {
+        if (is_null($callback)) {
+            return new Optional($value);
+        }
+        if (! is_null($value)) {
+            return $callback($value);
+        }
     }
 }

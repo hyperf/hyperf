@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -1706,12 +1706,31 @@ class Builder
     }
 
     /**
+     * Constrain the query to the previous "page" of results before a given ID.
+     *
+     * @param int $perPage
+     * @param null|int $lastId
+     * @param string $column
+     * @return $this
+     */
+    public function forPageBeforeId($perPage = 15, $lastId = 0, $column = 'id')
+    {
+        $this->orders = $this->removeExistingOrdersFor($column);
+
+        if (! is_null($lastId)) {
+            $this->where($column, '<', $lastId);
+        }
+
+        return $this->orderBy($column, 'desc')->limit($perPage);
+    }
+
+    /**
      * Constrain the query to the next "page" of results after a given ID.
      *
      * @param int $perPage
      * @param null|int $lastId
      * @param string $column
-     * @return \Hyperf\Database\Query\Builder|static
+     * @return $this
      */
     public function forPageAfterId($perPage = 15, $lastId = 0, $column = 'id')
     {
@@ -1721,7 +1740,7 @@ class Builder
             $this->where($column, '>', $lastId);
         }
 
-        return $this->orderBy($column, 'asc')->take($perPage);
+        return $this->orderBy($column, 'asc')->limit($perPage);
     }
 
     /**

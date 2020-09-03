@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -74,6 +74,19 @@ class ParallelTest extends TestCase
         $res = $parallel->wait();
         sort($res);
         $this->assertSame([2, 3, 4, 4], array_values($res));
+
+        $num = 10;
+        $callbacks = [];
+        for ($i = 0; $i < 4; ++$i) {
+            $callbacks[] = function () use (&$num) {
+                ++$num;
+                Coroutine::sleep(0.01);
+                return $num;
+            };
+        }
+        $res = parallel($callbacks, 2);
+        sort($res);
+        $this->assertSame([12, 13, 14, 14], array_values($res));
     }
 
     public function testParallelCallbackCount()

@@ -37,7 +37,7 @@ ReactiveX 是 Reactive Extensions 的縮寫，一般簡寫為 Rx，最初是 LIN
 ## 安裝
 
 ```bash
-composer require hyper/reactive-x
+composer require hyperf/reactive-x
 ```
 
 ## 封裝
