@@ -106,6 +106,8 @@ abstract class Command extends SymfonyCommand
         } else {
             parent::__construct($name);
         }
+
+        $this->addEnableDispatcherOption();
     }
 
     /**
@@ -423,8 +425,6 @@ abstract class Command extends SymfonyCommand
         if (! isset($this->signature)) {
             $this->specifyParameters();
         }
-
-        $this->addEnableDispatcherOption();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

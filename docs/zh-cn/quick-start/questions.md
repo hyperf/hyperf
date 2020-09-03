@@ -107,7 +107,7 @@ php -d swoole.use_shortname=Off bin/hyperf.php start
 
 ## 使用 AMQP 组件报 `Swoole\Error: API must be called in the coroutine` 错误
 
-可以在 `config/autoload/amqp.php` 配置文件中将 `close_on_destruct` 改为 `false` 即可。
+可以在 `config/autoload/amqp.php` 配置文件中将 `params.close_on_destruct` 改为 `false` 即可。
 
 ## 使用 Swoole 4.5 版本和 view 组件时访问接口出现 404
 
