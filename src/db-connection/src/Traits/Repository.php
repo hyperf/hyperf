@@ -9,9 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\DbConnection\Traits;
-
 
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
@@ -39,11 +37,6 @@ trait Repository
         return $resolver->connection($connectionName);
     }
 
-    protected function getContainer(): ContainerInterface
-    {
-        return ApplicationContext::getContainer();
-    }
-
     public function getEventDispatcher(): ?EventDispatcherInterface
     {
         return $this->getContainer()->get(EventDispatcherInterface::class);
@@ -54,9 +47,14 @@ trait Repository
      */
     public function getRepository()
     {
-        if (!$this->repository || !class_exists($this->repository) && !interface_exists($this->repository)) {
+        if (! $this->repository || ! class_exists($this->repository) && ! interface_exists($this->repository)) {
             throw new RuntimeException(sprintf('Cannot detect the repository of %s', static::class));
         }
         return $this->getContainer()->get($this->repository);
+    }
+
+    protected function getContainer(): ContainerInterface
+    {
+        return ApplicationContext::getContainer();
     }
 }
