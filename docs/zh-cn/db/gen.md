@@ -244,7 +244,7 @@ class ModelUpdateVisitor extends Visitor
         }
 
         if (Str::startsWith($cast, 'decimal')) {
-            // 如果 cast 为 decimal，则这是 @property 为 string
+            // 如果 cast 为 decimal，则 @property 改为 string
             return 'string';
         }
 

@@ -25,15 +25,16 @@ composer require hyperf/database
 默认配置如下，数据库支持多库配置，默认为 `default`。
 
 |        配置项        |  类型  |     默认值      |        备注        |
-|:--------------------:|:------:|:---------------:|:------------------:|
+| :------------------: | :----: | :-------------: | :----------------: |
 |        driver        | string |       无        |     数据库引擎     |
 |         host         | string |       无        |     数据库地址     |
-|       database       | string |       无        |    数据库默认 DB    |
+|       database       | string |       无        |   数据库默认 DB    |
 |       username       | string |       无        |    数据库用户名    |
 |       password       | string |      null       |     数据库密码     |
 |       charset        | string |      utf8       |     数据库编码     |
 |      collation       | string | utf8_unicode_ci |     数据库编码     |
 |        prefix        | string |       ''        |   数据库模型前缀   |
+|       timezone       | string |      null       |     数据库时区     |
 | pool.min_connections |  int   |        1        | 连接池内最少连接数 |
 | pool.max_connections |  int   |       10        | 连接池内最大连接数 |
 | pool.connect_timeout | float  |      10.0       |  连接等待超时时间  |
