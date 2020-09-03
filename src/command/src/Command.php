@@ -27,6 +27,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 abstract class Command extends SymfonyCommand
 {
+    use EnableEventDispatcher;
+
     /**
      * The name of the command.
      *
@@ -421,10 +423,13 @@ abstract class Command extends SymfonyCommand
         if (! isset($this->signature)) {
             $this->specifyParameters();
         }
+
+        $this->addEnableDispatcherOption();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->enableDispatcher($input);
         $callback = function () {
             try {
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\BeforeHandle($this));
