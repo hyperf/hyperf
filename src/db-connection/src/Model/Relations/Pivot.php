@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\DbConnection\Model\Relations;
 
 use Hyperf\Database\Model\Relations\Pivot as BasePivot;
-use Hyperf\DbConnection\Traits\Repository;
+use Hyperf\DbConnection\Traits\HasContainer;
 
 class Pivot extends BasePivot
 {
-    use Repository;
+    use HasContainer;
 }

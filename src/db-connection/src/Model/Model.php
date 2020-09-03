@@ -12,9 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\DbConnection\Model;
 
 use Hyperf\Database\Model\Model as BaseModel;
-use Hyperf\DbConnection\Traits\Repository;
+use Hyperf\DbConnection\Traits\HasContainer;
+use Hyperf\DbConnection\Traits\HasRepository;
 
 class Model extends BaseModel
 {
-    use Repository;
+    use HasContainer;
+    use HasRepository;
 }

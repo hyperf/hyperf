@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\DbConnection\Model\Relations;
 
 use Hyperf\Database\Model\Relations\MorphPivot as BaseMorphPivot;
-use Hyperf\DbConnection\Traits\Repository;
+use Hyperf\DbConnection\Traits\HasContainer;
 
 class MorphPivot extends BaseMorphPivot
 {
-    use Repository;
+    use HasContainer;
 }
