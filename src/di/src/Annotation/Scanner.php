@@ -14,6 +14,7 @@ namespace Hyperf\Di\Annotation;
 use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\ClassLoader;
+use Hyperf\Di\Exception\DirectoryNotExistException;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Utils\Filesystem\Filesystem;
 use ReflectionProperty;
@@ -162,6 +163,7 @@ class Scanner
 
     /**
      * Normalizes given directory names by removing directory not exist.
+     * @throws DirectoryNotExistException
      */
     public function normalizeDir(array $paths): array
     {
@@ -170,6 +172,10 @@ class Scanner
             if (is_dir($path)) {
                 $result[] = $path;
             }
+        }
+
+        if ($paths && ! $result) {
+            throw new DirectoryNotExistException('The scanned directory does not exist');
         }
 
         return $result;
@@ -243,7 +249,10 @@ class Scanner
         $basePath = $configDir . '/config.php';
         $aspects = file_exists($aspectsPath) ? include $aspectsPath : [];
         $baseConfig = file_exists($basePath) ? include $basePath : [];
-        $providerConfig = ProviderConfig::load();
+        $providerConfig = [];
+        if (class_exists(ProviderConfig::class)) {
+            $providerConfig = ProviderConfig::load();
+        }
         if (! isset($aspects) || ! is_array($aspects)) {
             $aspects = [];
         }

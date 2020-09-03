@@ -66,6 +66,9 @@ class Sender
         if ($this->isCoroutineServer) {
             if (isset($this->responses[$fd])) {
                 array_shift($arguments);
+                if ($method === 'disconnect') {
+                    $method = 'close';
+                }
                 $this->responses[$fd]->{$method}(...$arguments);
                 $this->logger->debug("[WebSocket] Worker send to #{$fd}");
             }

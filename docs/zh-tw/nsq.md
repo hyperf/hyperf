@@ -251,6 +251,30 @@ class NsqCommand extends HyperfCommand
 }
 ```
 
+### NSQD HTTP API
+
+> NSQD HTTP API Refer: https://nsq.io/components/nsqd.html
+
+元件對 NSQD HTTP API 進行了封裝，您可以很方便的實現對 NSQD HTTP API 的呼叫。 
+
+比如，當您需要刪除某個 `Topic` 時，可以執行以下程式碼：
+
+```php
+<?php
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Nsq\Nsqd\Topic;
+
+$container = ApplicationContext::getContainer();
+
+$client = $container->get(Topic::class);
+
+$client->delete('hyperf.test');
+```
+
+- `Hyperf\Nsq\Api\Topic` 類對應 `topic` 相關的 API；
+- `Hyperf\Nsq\Api\Channle` 類對應 `channel` 相關的 API；
+- `Hyperf\Nsq\Api\Api` 類對應 `ping`、`stats`、`config`、`debug` 等相關的 API；
+
 ## NSQ 協議
 
 > https://nsq.io/clients/tcp_protocol_spec.html
@@ -319,7 +343,7 @@ client->server: AUTH
 
 == pub ==
 note left of client: 傳送一條訊息
-client -> server: PUB <topic_name>
+client -> server: PUB~~~~ <topic_name>
 note left of client: 傳送多條訊息
 client -> server: MPUB
 note left of client: 傳送一條延時訊息
@@ -328,7 +352,7 @@ client -> server: DPUB
 
 == sub ==
 note left of client: client 使用 channel 訂閱 topic
-note right of server: SUB 成功後, client 出於 RDY 0 階段
+note right of server: SUB 成功後, client 處於 RDY 0 階段
 client -> server: SUB <topic_name> <channel_name>
 note left of client: 使用 RDY 告訴 server 準備好消費 <count> 條訊息
 client -> server: RDY <count>

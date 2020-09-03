@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Nsq;
 
 use Hyperf\Nsq\Listener\BeforeMainServerStartListener;
+use Hyperf\Nsq\Nsqd\Client;
+use Hyperf\Nsq\Nsqd\ClientInterface;
 
 class ConfigProvider
 {
@@ -20,6 +22,9 @@ class ConfigProvider
         return [
             'listeners' => [
                 BeforeMainServerStartListener::class => 99,
+            ],
+            'dependencies' => [
+                ClientInterface::class => Client::class,
             ],
             'publish' => [
                 [

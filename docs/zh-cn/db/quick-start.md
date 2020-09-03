@@ -339,3 +339,24 @@ try{
     Db::rollBack();
 }
 ```
+
+## 输出刚刚执行的 SQL
+
+> 当前方法仅能用于开发环境，线上部署前一定要去掉，不然会引起严重的内存泄露和数据混淆。
+
+线上记录 `SQL`，请使用 [事件监听](/zh-cn/db/event?id=sql-执行监听器)
+
+```php
+<?php
+
+use Hyperf\DbConnection\Db;
+use App\Model\Book;
+
+// 启用 SQL 数据记录功能
+Db::enableQueryLog();
+
+$book = Book::query()->find(1);
+
+// 打印最后一条 SQL 相关数据
+var_dump(Arr::last(Db::getQueryLog()));
+```

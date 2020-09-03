@@ -25,7 +25,7 @@ class RequestTest extends TestCase
     public function testRequest()
     {
         $request = new Request($path = 'grpc.service/path', $info = new Info());
-        $this->assertSame(2, count($request->headers));
+        $this->assertSame(3, count($request->headers));
         $this->assertSame('application/grpc+proto', $request->headers['content-type']);
         $this->assertRegExp('/^grpc-php-hyperf\/1.0 \(hyperf-grpc-client\/.*\)$/', $request->headers['user-agent']);
         $this->assertSame($path, $request->path);
@@ -35,7 +35,7 @@ class RequestTest extends TestCase
     public function testGetDefaultHeaders()
     {
         $request = new Request($path = 'grpc.service/path', $info = new Info());
-        $this->assertSame(2, count($request->getDefaultHeaders()));
+        $this->assertSame(3, count($request->getDefaultHeaders()));
         $this->assertSame('application/grpc+proto', $request->getDefaultHeaders()['content-type']);
         $this->assertRegExp('/^grpc-php-hyperf\/1.0 \(hyperf-grpc-client\/.*\)$/', $request->getDefaultHeaders()['user-agent']);
     }
@@ -47,7 +47,7 @@ class RequestTest extends TestCase
             'foo' => 'bar',
         ]);
 
-        $this->assertSame(3, count($request->headers));
+        $this->assertSame(4, count($request->headers));
         $this->assertSame('application/grpc', $request->headers['content-type']);
         $this->assertRegExp('/^grpc-php-hyperf\/1.0 \(hyperf-grpc-client\/.*\)$/', $request->headers['user-agent']);
         $this->assertSame('bar', $request->headers['foo']);

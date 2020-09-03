@@ -78,6 +78,7 @@ class RouteCollectorTest extends TestCase
         $this->assertSame('Handler::Get', $data['GET']['/']->callback);
         $this->assertSame('Handler::ApiGet', $data['GET']['/api/']->callback);
         $this->assertSame('Handler::Post', $data['POST']['/']->callback);
+        $this->assertSame(['middleware' => ['PostMiddleware']], $data['POST']['/']->options);
 
         $middle = MiddlewareManager::$container;
         $this->assertSame(['GetMiddleware'], $middle['http']['/']['GET']);

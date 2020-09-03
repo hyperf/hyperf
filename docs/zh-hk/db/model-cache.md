@@ -146,3 +146,47 @@ User::query(true)->where('gender', '>', 1)->delete();
 當生產環境使用了模型緩存時，如果已經建立了對應緩存數據，但此時又因為邏輯變更，添加了新的字段，並且默認值不是 `0`、`空字符`、`null` 這類數據時，就會導致在數據查詢時，從緩存中查出來的數據與數據庫中的數據不一致。
 
 對於這種情況，我們可以修改 `use_default_value` 為 `true`，並添加 `Hyperf\DbConnection\Listener\InitTableCollectorListener` 到 `listener.php` 配置中，使 Hyperf 應用在啟動時主動去獲取數據庫的字段信息，並在獲取緩存數據時與之比較並進行緩存數據修正。
+
+### EagerLoad
+
+當我們使用模型關係時，可以通過 `load` 解決 `N+1` 的問題，但仍然需要查一次數據庫。模型緩存通過重寫了 `ModelBuilder`，可以讓用户儘可能的從緩存中拿到對應的模型。
+
+> 本功能不支持 `morphTo` 和不是隻有 `whereIn` 查詢的關係模型。
+
+以下提供兩種方式：
+
+1. 配置 EagerLoadListener，直接使用 `loadCache` 方法。
+
+修改 `listeners.php` 配置
+
+```php
+return [
+    Hyperf\ModelCache\Listener\EagerLoadListener::class,
+];
+```
+
+通過 `loadCache` 方法，加載對應的模型關係。
+
+```php
+$books = Book::findManyFromCache([1,2,3]);
+$books->loadCache(['user']);
+
+foreach ($books as $book){
+    var_dump($book->user);
+}
+```
+
+2. 使用 EagerLoader
+
+```php
+use Hyperf\ModelCache\EagerLoad\EagerLoader;
+use Hyperf\Utils\ApplicationContext;
+
+$books = Book::findManyFromCache([1,2,3]);
+$loader = ApplicationContext::getContainer()->get(EagerLoader::class);
+$loader->load($books, ['user']);
+
+foreach ($books as $book){
+    var_dump($book->user);
+}
+```

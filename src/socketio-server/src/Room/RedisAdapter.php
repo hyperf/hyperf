@@ -104,7 +104,8 @@ class RedisAdapter implements AdapterInterface
             $this->doBroadcast($packet, $opts);
             return;
         }
-        $this->redis->publish($this->getChannelKey(), serialize([$packet, $opts]));
+
+        $this->publish($this->getChannelKey(), serialize([$packet, $opts]));
     }
 
     public function clients(string ...$rooms): array
@@ -142,7 +143,7 @@ class RedisAdapter implements AdapterInterface
     public function subscribe()
     {
         Coroutine::create(function () {
-            CoordinatorManager::until(Constants::ON_WORKER_START)->yield();
+            CoordinatorManager::until(Constants::WORKER_START)->yield();
             retry(PHP_INT_MAX, function () {
                 try {
                     $sub = make(Subscriber::class);
@@ -180,6 +181,11 @@ class RedisAdapter implements AdapterInterface
                 $this->redis->del(...$keys);
             }
         }
+    }
+
+    protected function publish(string $channel, string $message)
+    {
+        $this->redis->publish($channel, $message);
     }
 
     protected function doBroadcast($packet, $opts)

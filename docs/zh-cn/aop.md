@@ -100,7 +100,7 @@ class FooAspect extends AbstractAspect
 }
 ```
 
-> 2.0 版本已经可以支持切入 Trait，但要求 PHP 版本 >= 7.3。
+> 2.0.3 及以上版本已经可以支持切入 Trait，但要求 PHP 版本 >= 7.3。
 
 ## 代理类缓存
 

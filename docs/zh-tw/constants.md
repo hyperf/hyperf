@@ -32,11 +32,13 @@ composer require hyperf/constants
 
 ### 定義列舉類
 
-通過 `gen:constants` 命令可以快速的生成一個列舉類。
+通過 `gen:constant` 命令可以快速的生成一個列舉類。
 
 ```bash
-php bin/hyperf.php gen:constants ErrorCode
+php bin/hyperf.php gen:constant ErrorCode
 ```
+
+!> 此生成命令僅在 [hyperf/constants](https://github.com/hyperf/constants) 元件版本大於等於 v2.0.1 版本時可用，小於此版本時請手動建立列舉類。
 
 ```php
 <?php
@@ -155,7 +157,7 @@ $message = ErrorCode::getMessage(ErrorCode::PARAMS_INVALID, 'user_id');
 composer require hyperf/translation
 ```
 
-相關配置詳見 [國際化](translation.md)
+相關配置詳見 [國際化](zh-tw/translation.md)
 
 ```php
 <?php

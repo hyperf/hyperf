@@ -23,9 +23,15 @@ class Handler
      */
     public $route;
 
-    public function __construct($callback, string $route)
+    /**
+     * @var array
+     */
+    public $options;
+
+    public function __construct($callback, string $route, array $options = [])
     {
         $this->callback = $callback;
         $this->route = $route;
+        $this->options = $options;
     }
 }
