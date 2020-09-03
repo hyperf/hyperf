@@ -9,12 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\DbConnection\Model;
 
-use Hyperf\Database\Model\Model as BaseModel;
+namespace Hyperf\DbConnection\Model\Relations;
+
+
+use Hyperf\Database\Model\Relations\MorphPivot as BaseMorphPivot;
 use Hyperf\DbConnection\Traits\Repository;
 
-class Model extends BaseModel
+class MorphPivot extends BaseMorphPivot
 {
     use Repository;
 }
