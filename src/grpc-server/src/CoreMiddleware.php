@@ -57,14 +57,20 @@ class CoreMiddleware extends HttpCoreMiddleware
 
         switch ($dispatched->status) {
             case Dispatcher::FOUND:
-                [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
-                $controllerInstance = $this->container->get($controller);
-                if (! method_exists($controller, $action)) {
-                    $grpcMessage = 'Action not exist.';
-                    return $this->handleResponse(null, 500, '500', $grpcMessage);
+                if ($dispatched->handler->callback instanceof \Closure) {
+                    $parameters = $this->parseClosureParameters($dispatched->handler->callback, $dispatched->params);
+                    $result = call($dispatched->handler->callback, $parameters);
+                } else {
+                    [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
+                    $controllerInstance = $this->container->get($controller);
+                    if (! method_exists($controller, $action)) {
+                        $grpcMessage = 'Action not exist.';
+                        return $this->handleResponse(null, 500, '500', $grpcMessage);
+                    }
+                    $parameters = $this->parseParameters($controller, $action, $dispatched->params);
+                    $result = $controllerInstance->{$action}(...$parameters);
                 }
-                $parameters = $this->parseParameters($controller, $action, $dispatched->params);
-                $result = $controllerInstance->{$action}(...$parameters);
+
                 if (! $result instanceof Message) {
                     $grpcMessage = 'The result is not a valid message.';
                     return $this->handleResponse(null, 500, '500', $grpcMessage);
