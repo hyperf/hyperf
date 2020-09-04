@@ -12,6 +12,7 @@
 ## Optimized
 
 - [#2429](https://github.com/hyperf/hyperf/pull/2429) Optimized error message when does not set the value of `@var` for `@Inject`.
+- [#2438](https://github.com/hyperf/hyperf/pull/2438) Optimized code for deleting model cache when model deleted or saved in transaction.
 
 # v2.0.9 - 2020-08-31
 
