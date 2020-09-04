@@ -30,10 +30,7 @@ class DeleteCacheInTransactionListener implements ListenerInterface
         }
 
         if ($event->connection->transactionLevel() === 0) {
-            $models = WaitToDeleteModels::instance()->getModels();
-            foreach ($models as $model) {
-                $model->deleteCache();
-            }
+            WaitToDeleteModels::instance()->delete();
         }
     }
 }
