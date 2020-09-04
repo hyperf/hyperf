@@ -23,12 +23,12 @@ class WaitToDeleteModels
      */
     protected $models;
 
-    public function push(CacheableInterface $model)
+    public function push(CacheableInterface $model): void
     {
         $this->models[] = $model;
     }
 
-    public function delete(): array
+    public function delete(): void
     {
         foreach ($this->models as $model) {
             $model->deleteCache();
