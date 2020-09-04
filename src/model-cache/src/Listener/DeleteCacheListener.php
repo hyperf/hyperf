@@ -29,11 +29,22 @@ class DeleteCacheListener implements ListenerInterface
 
     public function process(object $event)
     {
-        if ($event instanceof Event) {
-            $model = $event->getModel();
-            if ($model instanceof CacheableInterface) {
-                $model->deleteCache();
-            }
+        if (! $event instanceof Event) {
+            return;
         }
+
+        $model = $event->getModel();
+        if (! $model instanceof CacheableInterface) {
+            return;
+        }
+
+        if ($model->getConnection()->transactionLevel() > 0) {
+            defer(function () use ($model) {
+                $model->deleteCache();
+            });
+            return;
+        }
+
+        $model->deleteCache();
     }
 }
