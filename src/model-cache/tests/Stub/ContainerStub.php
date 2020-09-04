@@ -17,6 +17,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\Database\Events\TransactionCommitted;
 use Hyperf\Database\Model\Events\Deleted;
 use Hyperf\Database\Model\Events\Saved;
 use Hyperf\DbConnection\Collector\TableCollector;
@@ -31,6 +32,7 @@ use Hyperf\Framework\Logger\StdoutLogger;
 use Hyperf\ModelCache\EagerLoad\EagerLoader;
 use Hyperf\ModelCache\Handler\RedisHandler;
 use Hyperf\ModelCache\Handler\RedisStringHandler;
+use Hyperf\ModelCache\Listener\DeleteCacheInTransactionListener;
 use Hyperf\ModelCache\Listener\DeleteCacheListener;
 use Hyperf\ModelCache\Manager;
 use Hyperf\ModelCache\Redis\LuaManager;
@@ -126,6 +128,7 @@ class ContainerStub
 
         $provider = new ListenerProvider();
         $listener = new DeleteCacheListener();
+        $provider->on(TransactionCommitted::class, [new DeleteCacheInTransactionListener(), 'process']);
         $provider->on(Saved::class, [$listener, 'process']);
         $provider->on(Deleted::class, [$listener, 'process']);
         $eventDispatcher = new EventDispatcher($provider, $logger);
