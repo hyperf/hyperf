@@ -101,6 +101,10 @@
 
 - [hyperf/graphql](https://github.com/hyperf/graphql) Hyperf 官方提供的 Graphql 服务端组件 (beta)
 
+## 视图
+
+- [fangx/view](https://github.com/fangx-packages/hyperf-view) Blade 模板引擎, 适配 Hyperf
+
 ## 热更新/热重载
 
 - [ha-ni-cc/hyperf-watch](https://github.com/ha-ni-cc/hyperf-watch) 一个基于 Swoole 实现的通用热更新组件
