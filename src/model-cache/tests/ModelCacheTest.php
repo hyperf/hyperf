@@ -16,6 +16,7 @@ use Hyperf\DbConnection\Listener\InitTableCollectorListener;
 use Hyperf\ModelCache\EagerLoad\EagerLoader;
 use Hyperf\ModelCache\Listener\EagerLoadListener;
 use Hyperf\Redis\RedisProxy;
+use Hyperf\Utils\Coroutine;
 use HyperfTest\ModelCache\Stub\BookModel;
 use HyperfTest\ModelCache\Stub\ContainerStub;
 use HyperfTest\ModelCache\Stub\ImageModel;
@@ -331,5 +332,46 @@ class ModelCacheTest extends TestCase
         $model = UserModel::findFromCache(1);
 
         $this->assertArrayHasKey('gender', $model->toArray());
+    }
+
+    public function testModelSave()
+    {
+        $container = ContainerStub::mockContainer();
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+
+        $id = 208;
+        UserModel::query()->firstOrCreate(['id' => $id], [
+            'name' => uniqid(),
+            'gender' => 1,
+        ]);
+
+        $model = UserModel::findFromCache($id);
+        $name = uniqid();
+        $model->name = $name;
+        $model->save();
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:' . $id));
+
+        parallel([function () use ($id, $redis, $name) {
+            $model = UserModel::findFromCache($id);
+            $this->assertSame($name, $model->name);
+            $connection = $model->getConnection();
+            $connection->transaction(function () use ($id) {
+                $model = UserModel::findFromCache($id);
+                $name = uniqid();
+                $model->name = $name;
+                $model->save();
+                Coroutine::create(function () use ($id) {
+                    UserModel::findFromCache($id);
+                });
+            });
+            usleep(1);
+            $this->assertSame(1, $redis->exists('{mc:default:m:user}:id:' . $id));
+        }]);
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:' . $id));
+
+        $model->delete();
     }
 }
