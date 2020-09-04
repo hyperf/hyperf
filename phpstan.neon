@@ -35,7 +35,7 @@ parameters:
     - '#Unsafe usage of new static#'
     - '#Method Hyperf\\Contract\\Sendable::send#'
     - '#Variable .* in PHPDoc tag @var does not exist#'
-    - '#Call to an undefined method Hyperf\\DbConnection\\Model\\Model::hydrate#'
+    - '#Call to an undefined method Hyperf\\Database\\Model\\Model::hydrate#'
     - '#PHPDoc tag @param has invalid value#'
     - '#Static call to instance method Hyperf\\RpcServer\\Router\\Router::#'
     - '#Method Hyperf\\Utils\\Serializer\\ScalarNormalizer::denormalize\(\) should return array\|object but returns#'
