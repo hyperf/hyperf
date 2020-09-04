@@ -16,6 +16,7 @@ use Hyperf\Database\Model\Events\Event;
 use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\ModelCache\CacheableInterface;
+use Hyperf\ModelCache\InvalidCacheManager;
 
 class DeleteCacheListener implements ListenerInterface
 {
@@ -39,7 +40,7 @@ class DeleteCacheListener implements ListenerInterface
         }
 
         if ($model->getConnection()->transactionLevel() > 0) {
-            WaitToDeleteModels::instance()->push($model);
+            InvalidCacheManager::instance()->push($model);
             return;
         }
 

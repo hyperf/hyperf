@@ -13,6 +13,7 @@ namespace Hyperf\ModelCache\Listener;
 
 use Hyperf\Database\Events\TransactionCommitted;
 use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\ModelCache\InvalidCacheManager;
 
 class DeleteCacheInTransactionListener implements ListenerInterface
 {
@@ -30,7 +31,7 @@ class DeleteCacheInTransactionListener implements ListenerInterface
         }
 
         if ($event->connection->transactionLevel() === 0) {
-            WaitToDeleteModels::instance()->delete();
+            InvalidCacheManager::instance()->delete();
         }
     }
 }
