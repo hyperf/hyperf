@@ -7,7 +7,7 @@
 
 ## Fixed
 
-- [#2427](https://github.com/hyperf/hyperf/pull/2427) Fixed model event dispatcher not works for `Pivot` and `MorphPivot`.
+- [#2427](https://github.com/hyperf/hyperf/pull/2427) Fixed model event dispatcher does not works for `Pivot` and `MorphPivot`.
 
 ## Optimized
 
