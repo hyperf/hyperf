@@ -57,4 +57,11 @@ class User extends Model
     {
         return $this->morphOne(Image::class, 'imageable');
     }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'user_role', 'user_id', 'role_id', 'id', 'id')
+            ->using(UserRolePivot::class)->as('pivot')
+            ->withTimestamps();
+    }
 }
