@@ -11,9 +11,13 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database;
 
+use Carbon\Carbon;
 use Hyperf\Database\Events\QueryExecuted;
+use Hyperf\Database\Model\Events\Saved;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\Model\User;
+use HyperfTest\Database\Stubs\Model\UserRole;
+use HyperfTest\Database\Stubs\Model\UserRolePivot;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -38,6 +42,35 @@ class ModelRealBuilderTest extends TestCase
     protected function tearDown()
     {
         Mockery::close();
+    }
+
+    public function testPivot()
+    {
+        $this->getContainer();
+
+        $user = User::query()->find(1);
+        $role = $user->roles->first();
+        $this->assertSame(1, $role->id);
+        $this->assertSame('author', $role->name);
+
+        $this->assertInstanceOf(UserRolePivot::class, $role->pivot);
+        $this->assertSame(1, $role->pivot->user_id);
+        $this->assertSame(1, $role->pivot->role_id);
+
+        $role->pivot->updated_at = $now = Carbon::now()->toDateTimeString();
+        $role->pivot->save();
+
+        $pivot = UserRole::query()->find(1);
+        $this->assertSame($now, $pivot->updated_at->toDateTimeString());
+
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof Saved) {
+                $this->assertSame($event->getModel(), $role->pivot);
+                $hit = true;
+            }
+        }
+
+        $this->assertTrue($hit);
     }
 
     public function testForPageBeforeId()
