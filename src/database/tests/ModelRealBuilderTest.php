@@ -13,6 +13,7 @@ namespace HyperfTest\Database;
 
 use Carbon\Carbon;
 use Hyperf\Database\Events\QueryExecuted;
+use Hyperf\Database\Model\Events\Saved;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\Model\User;
 use HyperfTest\Database\Stubs\Model\UserRole;
@@ -61,6 +62,15 @@ class ModelRealBuilderTest extends TestCase
 
         $pivot = UserRole::query()->find(1);
         $this->assertSame($now, $pivot->updated_at->toDateTimeString());
+
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof Saved) {
+                $this->assertSame($event->getModel(), $role->pivot);
+                $hit = true;
+            }
+        }
+
+        $this->assertTrue($hit);
     }
 
     public function testForPageBeforeId()
