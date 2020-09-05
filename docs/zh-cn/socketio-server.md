@@ -24,7 +24,6 @@ hyperf/socketio-server 组件是基于 WebSocket 实现的，请确保服务端�
 ],
 ```
 
-
 ## 快速开始
 
 ### 服务端
@@ -336,6 +335,62 @@ class WebSocketController extends BaseNamespace
         $socket->emit('event', $data);
     }
 }
+```
+
+### 修改 `SocketIO` 基础参数
+
+框架默认参数：
+
+|          配置          | 类型  | 默认值 |
+| :--------------------: | :---: | :----: |
+|      $pingTimeout      |  int  |  100   |
+|     $pingInterval      |  int  | 10000  |
+| $clientCallbackTimeout |  int  | 10000  |
+
+有时候，由于推送消息比较多或者网络较卡，在 100ms 内，无法及时返回 `PONG`，就会导致连接断开。这时候我们可以通过以下方式，进行重写：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Kernel;
+
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\SocketIOServer\Parser\Decoder;
+use Hyperf\SocketIOServer\Parser\Encoder;
+use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
+use Hyperf\SocketIOServer\SocketIO;
+use Hyperf\WebSocketServer\Sender;
+use Psr\Container\ContainerInterface;
+
+class SocketIOFactory
+{
+    public function __invoke(ContainerInterface $container)
+    {
+        $io = new SocketIO(
+            $container->get(StdoutLoggerInterface::class),
+            $container->get(Sender::class),
+            $container->get(Decoder::class),
+            $container->get(Encoder::class),
+            $container->get(SidProviderInterface::class)
+        );
+
+        // 重写 pingTimeout 参数
+        $io->setPingTimeout(10000);
+
+        return $io;
+    }
+}
+
+```
+
+然后在 `dependencies.php` 添加对应映射即可。
+
+```php
+return [
+    Hyperf\SocketIOServer\SocketIO::class => App\Kernel\SocketIOFactory::class,
+];
 ```
 
 ## Auth 鉴权
