@@ -41,6 +41,9 @@ class WhoopsExceptionHandler extends ExceptionHandler
         $whoops->pushHandler($handler);
         $whoops->allowQuit(false);
         ob_start();
+        if ($handler instanceof JsonResponseHandler) {
+            $handler->addTraceToOutput(true);
+        }
         $whoops->{Run::EXCEPTION_HANDLER}($throwable);
         $content = ob_get_clean();
         return $response
