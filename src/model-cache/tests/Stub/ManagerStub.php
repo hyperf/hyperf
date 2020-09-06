@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\ModelCache\Stub;
 
-use Hyperf\DbConnection\Model\Model;
+use Hyperf\Database\Model\Model;
 
 class ManagerStub extends \Hyperf\ModelCache\Manager
 {

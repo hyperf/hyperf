@@ -14,10 +14,11 @@ namespace Hyperf\ModelCache;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\Model;
 use Hyperf\DbConnection\Collector\TableCollector;
-use Hyperf\DbConnection\Model\Model;
 use Hyperf\ModelCache\Handler\HandlerInterface;
 use Hyperf\ModelCache\Handler\RedisHandler;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
 class Manager
@@ -50,7 +51,7 @@ class Manager
 
         $config = $container->get(ConfigInterface::class);
         if (! $config->has('databases')) {
-            throw new \InvalidArgumentException('config databases is not exist!');
+            throw new InvalidArgumentException('config databases is not exist!');
         }
 
         foreach ($config->get('databases') as $key => $item) {

@@ -4,10 +4,17 @@
 
 - [#2411](https://github.com/hyperf/hyperf/pull/2411) Added method `Hyperf\Database\Query\Builder::forPageBeforeId` for database.
 - [#2420](https://github.com/hyperf/hyperf/pull/2420) [#2426](https://github.com/hyperf/hyperf/pull/2426) Added option `enable-event-dispatcher` to initialize EventDispatcher for command.
+- [#2441](https://github.com/hyperf/hyperf/pull/2441) Added some setters for `SocketIO`.
+
+## Fixed
+
+- [#2427](https://github.com/hyperf/hyperf/pull/2427) Fixed model event dispatcher does not works for `Pivot` and `MorphPivot`.
+- [#2443](https://github.com/hyperf/hyperf/pull/2443) Fixed traceid does not exists when using coroutine handler.
 
 ## Optimized
 
 - [#2429](https://github.com/hyperf/hyperf/pull/2429) Optimized error message when does not set the value of `@var` for `@Inject`.
+- [#2438](https://github.com/hyperf/hyperf/pull/2438) Optimized code for deleting model cache when model deleted or saved in transaction.
 
 # v2.0.9 - 2020-08-31
 
