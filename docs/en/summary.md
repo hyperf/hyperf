@@ -72,7 +72,13 @@
   * [Tracing](en/tracer.md)
   * [Metric](en/metric.md)
   * [Retry](en/retry.md)
-  * [Nacos](en/nacos.md)
+  * [Snowflake](en/snowflake.md)
+  
+* Server
+
+  * [Tcp Server](en/tcp-server.md)
+  * [WebSocket Server](en/websocket-server.md)
+  * [Socket.io](en/socketio-server.md)
   
 * Message Queue
 
@@ -81,35 +87,37 @@
   * [Nats](en/nats.md)
   * [NSQ](en/nsq.md)
   
-* Other Components
-
-  * [Connection Pool](en/pool.md)
+* Clients
+  
   * [Redis Client](en/redis.md)
   * [Guzzle HTTP Client](en/guzzle.md)
   * [Elasticsearch Client](en/elasticsearch.md)
   * [Consul Client](en/consul.md)
   * [ETCD Client](en/etcd.md)
-  * [WebSocket Server](en/websocket-server.md)
   * [WebSocket Client](en/websocket-client.md)
-  * [Socket.io](en/socketio-server.md)
+  * [Nacos](en/nacos.md)
+  * [Jet](en/jet.md)
+  
+* Other Components
+
+  * [Connection Pool](en/pool.md)
   * [Custom Process](en/process.md)
-  * [Dev Tool](en/devtool.md)
   * [Utils](en/utils.md)
   * [Rate Limit](en/rate-limit.md)
-  * [Swoole Tracker](en/swoole-tracker.md)
   * [Crontab](en/crontab.md)
   * [Task](en/task.md)
   * [Enum](en/constants.md)
-  * [Snowflake](en/snowflake.md)
   * [Signal Manager](en/signal.md)
   * [ReactiveX](en/reactive-x.md)
   * [Watcher](en/watcher.md)
+  * [Dev Tool](en/devtool.md)
+  * [Swoole Tracker](en/swoole-tracker.md)
 
-* Application Deployment
+* Deployment
 
   * [Build Docker Swarm cluster](en/tutorial/docker-swarm.md)
   * [Build DaoCloud Devops](en/tutorial/daocloud.md)
-  * [Deploy Supervisor](en/tutorial/supervisor.md)
+  * [Deploy by Supervisor](en/tutorial/supervisor.md)
   
 * Awesome Hyperf
 
@@ -119,6 +127,7 @@
 
   * [Introduction](en/component-guide/intro.md)
   * [Create a new component](en/component-guide/create.md)
+  * [ConfigProvider](en/component-guide/configprovider.md)
 
 * Upgrade Guide
   

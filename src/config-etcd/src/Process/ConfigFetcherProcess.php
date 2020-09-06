@@ -15,6 +15,7 @@ use Hyperf\ConfigEtcd\ClientInterface;
 use Hyperf\ConfigEtcd\KV;
 use Hyperf\ConfigEtcd\PipeMessage;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessCollector;
 use Psr\Container\ContainerInterface;
@@ -44,11 +45,17 @@ class ConfigFetcherProcess extends AbstractProcess
      */
     private $cacheConfig;
 
+    /**
+     * @var StdoutLoggerInterface
+     */
+    private $logger;
+
     public function __construct(ContainerInterface $container)
     {
         parent::__construct($container);
         $this->client = $container->get(ClientInterface::class);
         $this->config = $container->get(ConfigInterface::class);
+        $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
     public function bind($server): void
@@ -81,7 +88,10 @@ class ConfigFetcherProcess extends AbstractProcess
                 $processes = ProcessCollector::all();
                 /** @var \Swoole\Process $process */
                 foreach ($processes as $process) {
-                    $process->exportSocket()->send($string);
+                    $result = $process->exportSocket()->send($string, 10);
+                    if ($result === false) {
+                        $this->logger->error('Configuration synchronization failed. Please restart the server.');
+                    }
                 }
             }
 

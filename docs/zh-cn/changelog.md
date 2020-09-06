@@ -1,5 +1,71 @@
 # 版本更新记录
 
+# v2.0.9 - 2020-08-31
+
+## 新增
+
+- [#2331](https://github.com/hyperf/hyperf/pull/2331) [hyperf/nacos](https://github.com/hyperf/nacos) 组件增加授权接口。
+- [#2331](https://github.com/hyperf/hyperf/pull/2331) [hyperf/nacos](https://github.com/hyperf/nacos) 组件增加 `nacos.enable` 配置，用于控制是否启用 `Nacos` 服务。
+- [#2331](https://github.com/hyperf/hyperf/pull/2331) [hyperf/nacos](https://github.com/hyperf/nacos) 组件增加配置合并类型，默认使用全量覆盖。
+- [#2377](https://github.com/hyperf/hyperf/pull/2377) 为 gRPC 客户端 的 request 增加 `ts` 请求头，以兼容 Node.js gRPC server 等。
+- [#2384](https://github.com/hyperf/hyperf/pull/2384) 新增助手函数 `optional()`，以创建 `Hyperf\Utils\Optional` 对象或更方便 Optional 的使用。
+
+## 修改
+
+- [#2331](https://github.com/hyperf/hyperf/pull/2331) 修复 [hyperf/nacos](https://github.com/hyperf/nacos) 组件，服务或配置不存在时，会抛出异常的问题。
+- [#2356](https://github.com/hyperf/hyperf/pull/2356) [#2368](https://github.com/hyperf/hyperf/pull/2368) 修复 `pid_file` 被用户修改后，命令行 `server:start` 启动失败的问题。
+- [#2358](https://github.com/hyperf/hyperf/pull/2358) 修复验证器规则 `digits` 不支持 `int` 类型的问题。
+
+## 优化
+
+- [#2359](https://github.com/hyperf/hyperf/pull/2359) 优化自定义进程，在协程风格服务下，可以更加友好的停止。
+- [#2363](https://github.com/hyperf/hyperf/pull/2363) 优化 [hyperf/di](https://github.com/hyperf/di) 组件，使其不需要依赖 [hyperf/config](https://github.com/hyperf/config) 组件。
+- [#2373](https://github.com/hyperf/hyperf/pull/2373) 优化 [hyperf/validation](https://github.com/hyperf/validation) 组件的异常捕获器，使其返回 `Response` 时，自动添加 `content-type` 头。
+
+
+# v2.0.8 - 2020-08-24
+
+## 新增
+
+- [#2334](https://github.com/hyperf/hyperf/pull/2334) 新增更加友好的数组递归合并方法 `Arr::merge`。
+- [#2335](https://github.com/hyperf/hyperf/pull/2335) 新增 `Hyperf/Utils/Optional`，它可以接受任意参数，并允许访问该对象上的属性或调用其方法，即使给定的对象为 `null`，也不会引发错误。
+- [#2336](https://github.com/hyperf/hyperf/pull/2336) 新增 `RedisNsqAdapter`，它通过 `NSQ` 发布消息，使用 `Redis` 记录房间信息。
+
+## 修复
+
+- [#2338](https://github.com/hyperf/hyperf/pull/2338) 修复文件系统使用 `S3` 适配器时，文件是否存在的逻辑与预期不符的 BUG。
+- [#2340](https://github.com/hyperf/hyperf/pull/2340) 修复 `__FUNCTION__` 和 `__METHOD__` 魔术方法无法在被 `AOP` 重写的方法里正常工作的 BUG。
+
+## 优化
+
+- [#2319](https://github.com/hyperf/hyperf/pull/2319) 优化 `ResolverDispatcher` ，使项目发生循环依赖时，可以提供更加友好的错误提示。
+
+# v2.0.7 - 2020-08-17
+
+## 新增
+
+- [#2307](https://github.com/hyperf/hyperf/pull/2307) [#2312](https://github.com/hyperf/hyperf/pull/2312) [hyperf/nsq](https://github.com/hyperf/nsq) 组件，新增 `NSQD` 的 `HTTP` 客户端。
+
+## 修复
+
+- [#2275](https://github.com/hyperf/hyperf/pull/2275) 修复配置中心，拉取配置进程会出现阻塞的 BUG。
+- [#2276](https://github.com/hyperf/hyperf/pull/2276) 修复 `Apollo` 配置中心，当配置没有变更时，会清除所有本地配置项的 BUG。
+- [#2280](https://github.com/hyperf/hyperf/pull/2280) 修复 `Interface` 的方法会被 `AOP` 重写，导致启动报错的 BUG。
+- [#2281](https://github.com/hyperf/hyperf/pull/2281) 当使用 `Task` 组件，且没有启动协程时，`Signal` 组件会导致启动报错的 BUG。
+- [#2304](https://github.com/hyperf/hyperf/pull/2304) 修复当使用 `SocketIOServer` 的内存适配器，删除 `sid` 时，会导致死循环的 BUG。
+- [#2309](https://github.com/hyperf/hyperf/pull/2309) 修复 `JsonRpcHttpTransporter` 无法设置自定义超时时间的 BUG。
+
+# v2.0.6 - 2020-08-10
+
+## 新增
+
+- [#2125](https://github.com/hyperf/hyperf/pull/2125) 新增 [hyperf/jet](https://github.com/hyperf/jet) 组件。`Jet` 是一个统一模型的 RPC 客户端，内置 JSONRPC 协议的适配，该组件可适用于所有的 `PHP (>= 7.2)` 环境，包括 PHP-FPM 和 Swoole 或 Hyperf。
+
+## 修复
+
+- [#2236](https://github.com/hyperf/hyperf/pull/2236) 修复 `Nacos` 使用负载均衡器选择节点失败的 BUG。
+- [#2242](https://github.com/hyperf/hyperf/pull/2242) 修复 `watcher` 组件会重复收集多次注解的 BUG。
+
 # v2.0.5 - 2020-08-03
 
 ## 新增

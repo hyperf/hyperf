@@ -14,9 +14,10 @@ return [
     'packer' => Hyperf\Utils\Packer\JsonPacker::class,
     'use_standalone_process' => true,
     'namespaces' => [
-        'application',
+        '/application',
     ],
     'mapping' => [
+        '/application/test' => 'test',
     ],
     'interval' => 5,
 ];

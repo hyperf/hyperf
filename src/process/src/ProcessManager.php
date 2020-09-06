@@ -20,6 +20,11 @@ class ProcessManager
      */
     protected static $processes = [];
 
+    /**
+     * @var bool
+     */
+    protected static $running = true;
+
     public static function register(ProcessInterface $process): void
     {
         static::$processes[] = $process;
@@ -33,5 +38,15 @@ class ProcessManager
     public static function clear(): void
     {
         static::$processes = [];
+    }
+
+    public static function isRunning(): bool
+    {
+        return static::$running;
+    }
+
+    public static function setRunning(bool $running): void
+    {
+        static::$running = $running;
     }
 }

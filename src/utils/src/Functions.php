@@ -15,6 +15,7 @@ use Hyperf\Utils\Backoff;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\HigherOrderTapProxy;
+use Hyperf\Utils\Optional;
 use Hyperf\Utils\Parallel;
 use Hyperf\Utils\Str;
 
@@ -447,5 +448,23 @@ if (! function_exists('swoole_hook_flags')) {
     function swoole_hook_flags(): int
     {
         return defined('SWOOLE_HOOK_FLAGS') ? SWOOLE_HOOK_FLAGS : SWOOLE_HOOK_ALL;
+    }
+}
+
+if (! function_exists('optional')) {
+    /**
+     * Provide access to optional objects.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    function optional($value = null, callable $callback = null)
+    {
+        if (is_null($callback)) {
+            return new Optional($value);
+        }
+        if (! is_null($value)) {
+            return $callback($value);
+        }
     }
 }

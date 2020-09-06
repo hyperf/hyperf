@@ -70,7 +70,7 @@ class SignalManager
 
     public function listen(?int $process)
     {
-        if ($this->isInvalidProcess($process)) {
+        if ($this->isInvalidProcess($process) || ! Coroutine::inCoroutine()) {
             return;
         }
 

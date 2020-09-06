@@ -52,7 +52,11 @@ class MemoryAdapter implements AdapterInterface
     public function del(string $sid, string ...$rooms)
     {
         if (count($rooms) === 0) {
-            $this->del($sid, ...$this->clientRooms($sid));
+            $clientRooms = $this->clientRooms($sid);
+            if (empty($clientRooms)) {
+                return;
+            }
+            $this->del($sid, ...$clientRooms);
             unset($this->sids[$sid]);
         }
 

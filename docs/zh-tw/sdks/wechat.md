@@ -6,7 +6,7 @@
 
 ## 替換 `Handler`
 
-以下以小程式為例，
+以下以公眾號為例，
 
 ```php
 <?php
@@ -17,27 +17,27 @@ use EasyWeChat\Kernel\ServiceContainer;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use Hyperf\Guzzle\CoroutineHandler;
-use Hyperf\Guzzle\HandlerStackFactory;
 use Overtrue\Socialite\Providers\AbstractProvider;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 $container = ApplicationContext::getContainer();
 
-$app = Factory::miniProgram($config);
+$app = Factory::officialAccount($config);
+$handler = new CoroutineHandler();
 
-// 設定 HttpClient，當前設定沒有實際效果，在資料請求時會被 guzzle_handler 覆蓋，但不保證 EasyWeChat 後面會修改這裡。
+// 設定 HttpClient，部分介面直接使用了 http_client。
 $config = $app['config']->get('http', []);
-$config['handler'] = $container->get(HandlerStackFactory::class)->create();
+$config['handler'] = $stack = HandlerStack::create($handler);
 $app->rebind('http_client', new Client($config));
 
-// 重寫 Handler
-$app['guzzle_handler'] = new CoroutineHandler();
+// 部分介面在請求資料時，會根據 guzzle_handler 重置 Handler
+$app['guzzle_handler'] = $handler;
 
-// 設定 OAuth 授權的 Guzzle 配置
-AbstractProvider::setGuzzleOptions([
+// 如果使用的是 OfficialAccount，則還需要設定以下引數
+$app->oauth->setGuzzleOptions([
     'http_errors' => false,
-    'handler' => HandlerStack::create(new CoroutineHandler()),
+    'handler' => $stack,
 ]);
 ```
 
@@ -65,6 +65,7 @@ $xml = $this->request->getBody()->getContents();
 
 ```php
 <?php
+use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request;
 
 $get = $this->request->getQueryParams();
@@ -78,8 +79,9 @@ $files = [];
 foreach ($uploadFiles as $k => $v) {
     $files[$k] = $v->toArray();
 }
-$app['request'] = new Request($get, $post, [], $cookie, $files, $server, $xml);
-
+$request = new Request($get, $post, [], $cookie, $files, $server, $xml);
+$request->headers = new HeaderBag($this->request->getHeaders());
+$app->rebind('request', $request);
 // Do something...
 
 ```

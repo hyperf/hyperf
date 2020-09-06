@@ -74,6 +74,8 @@ class Inject extends AbstractAnnotation
                 throw $exception;
             }
             $this->value = '';
+        } catch (\Throwable $exception) {
+            throw new AnnotationException("The @Inject value is invalid for {$className}->{$target}. Because {$exception->getMessage()}");
         }
     }
 }
