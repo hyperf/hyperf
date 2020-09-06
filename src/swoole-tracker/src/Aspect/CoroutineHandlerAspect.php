@@ -39,11 +39,11 @@ class CoroutineHandlerAspect extends AbstractAspect
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         if (class_exists(Stats::class) && $client = $proceedingJoinPoint->getArguments()[0] ?? null) {
-            if ($client instanceof Client) {
+            if ($client instanceof Client && function_exists('getSwooleTrackerTraceId') && function_exists('getSwooleTrackerSpanId')) {
                 $client->setHeaders(array_merge(
                     [
-                        'x-swoole-traceid' => function_exists('getSwooleTrackerTraceId') ? getSwooleTrackerTraceId() : '',
-                        'x-swoole-spanid' => function_exists('getSwooleTrackerSpanId') ? getSwooleTrackerSpanId() : '',
+                        'x-swoole-traceid' => getSwooleTrackerTraceId(),
+                        'x-swoole-spanid' => getSwooleTrackerSpanId(),
                     ],
                     $client->requestHeaders
                 ));

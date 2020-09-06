@@ -167,3 +167,15 @@ return [
     ],
 ];
 ```
+
+若使用 `jsonrpc-http` 协议实现了 `RPC` 服务，则还需要在 `config/autoload/aspects.php` 配置以下 `Aspect`：
+
+```php
+<?php
+
+return [
+    Hyperf\SwooleTracker\Aspect\CoroutineHandlerAspect::class,
+];
+```
+
+
