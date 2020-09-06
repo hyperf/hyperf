@@ -42,8 +42,8 @@ class CoroutineHandlerAspect extends AbstractAspect
             if ($client instanceof Client) {
                 $client->setHeaders(array_merge(
                     [
-                        'x-swoole-traceid' => getSwooleTrackerTraceId(),
-                        'x-swoole-spanid' => getSwooleTrackerSpanId(),
+                        'x-swoole-traceid' => function_exists('getSwooleTrackerTraceId') ? getSwooleTrackerTraceId() : '',
+                        'x-swoole-spanid' => function_exists('getSwooleTrackerSpanId') ? getSwooleTrackerSpanId() : '',
                     ],
                     $client->requestHeaders
                 ));
