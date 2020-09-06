@@ -17,6 +17,8 @@ use Hyperf\Guzzle\CoroutineHandler;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine\Http\Client;
 use SwooleTracker\Stats;
+use function getSwooleTrackerSpanId;
+use function getSwooleTrackerTraceId;
 
 class CoroutineHandlerAspect extends AbstractAspect
 {
@@ -40,8 +42,8 @@ class CoroutineHandlerAspect extends AbstractAspect
             if ($client instanceof Client) {
                 $client->setHeaders(array_merge(
                     [
-                        'x-swoole-traceid' => '', // TODO: 获取生成的 TraceId
-                        'x-swoole-spanid' => '',
+                        'x-swoole-traceid' => getSwooleTrackerTraceId(),
+                        'x-swoole-spanid' => getSwooleTrackerSpanId(),
                     ],
                     $client->requestHeaders
                 ));
