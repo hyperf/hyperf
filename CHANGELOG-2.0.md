@@ -4,6 +4,7 @@
 
 - [#2411](https://github.com/hyperf/hyperf/pull/2411) Added method `Hyperf\Database\Query\Builder::forPageBeforeId` for database.
 - [#2420](https://github.com/hyperf/hyperf/pull/2420) [#2426](https://github.com/hyperf/hyperf/pull/2426) Added option `enable-event-dispatcher` to initialize EventDispatcher for command.
+- [#2433](https://github.com/hyperf/hyperf/pull/2433) Added support for gRPC Server routing definition by anonymous functions.
 - [#2441](https://github.com/hyperf/hyperf/pull/2441) Added some setters for `SocketIO`.
 
 ## Fixed
