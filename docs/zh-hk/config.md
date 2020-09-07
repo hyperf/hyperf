@@ -23,6 +23,7 @@ config
 │   ├── commands.php // 用於管理自定義命令
 │   ├── consul.php // 用於管理 Consul 客户端
 │   ├── databases.php // 用於管理數據庫客户端
+│   ├── dependencies.php // 用於管理 DI 的依賴關係和類對應關係
 │   ├── devtool.php // 用於管理開發者工具
 │   ├── exceptions.php // 用於管理異常處理器
 │   ├── listeners.php // 用於管理事件監聽者
@@ -34,7 +35,6 @@ config
 │   └── server.php // 用於管理 Server 服務
 ├── config.php // 用於管理用户或框架的配置，如配置相對獨立亦可放於 autoload 文件夾內
 ├── container.php // 負責容器的初始化，作為一個配置文件運行並最終返回一個 Psr\Container\ContainerInterface 對象
-├── dependencies.php // 用於管理 DI 的依賴關係和類對應關係
 └── routes.php // 用於管理路由
 ```
 
@@ -68,7 +68,7 @@ return [
 
 如需要設置守護進程化，可在 `settings` 中增加 `'daemonize' => 1`，執行 `php bin/hyperf.php start`後，程序將轉入後台作為守護進程運行
 
-單獨的 Server 配置需要添加在對應 `servers` 的 `settings` 當中，如 `jsonrpc` 協議的 TCP Server 配置啟用 EOF 自動分包，和設置 EOF 字符串
+單獨的 Server 配置需要添加在對應 `servers` 的 `settings` 當中，如 `jsonrpc` 協議的 TCP Server 配置啟用 EOF 自動分包和設置 EOF 字符串
 ```php
 <?php
 

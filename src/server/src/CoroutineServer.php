@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -94,6 +94,7 @@ class CoroutineServer implements ServerInterface
                     CoordinatorManager::until(Constants::WORKER_START)->resume();
                     $server->start();
                     $this->eventDispatcher->dispatch(new CoroutineServerStop($name, $server));
+                    CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
                 });
             }
         });
@@ -145,7 +146,11 @@ class CoroutineServer implements ServerInterface
                         $handler->initCoreMiddleware($name);
                     }
                     if ($this->server instanceof \Swoole\Coroutine\Http\Server) {
-                        $this->server->handle('/', [$handler, $method]);
+                        $this->server->handle('/', static function ($request, $response) use ($handler, $method) {
+                            Coroutine::create(static function () use ($request, $response, $handler, $method) {
+                                $handler->{$method}($request, $response);
+                            });
+                        });
                     }
                 }
                 return;

@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -331,5 +331,41 @@ class ModelCacheTest extends TestCase
         $model = UserModel::findFromCache(1);
 
         $this->assertArrayHasKey('gender', $model->toArray());
+    }
+
+    public function testModelSave()
+    {
+        $container = ContainerStub::mockContainer();
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+
+        $id = 208;
+        UserModel::query()->firstOrCreate(['id' => $id], [
+            'name' => uniqid(),
+            'gender' => 1,
+        ]);
+
+        $model = UserModel::findFromCache($id);
+        $name = uniqid();
+        $model->name = $name;
+        $model->save();
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:' . $id));
+
+        $model = UserModel::findFromCache($id);
+        $this->assertSame($name, $model->name);
+        $connection = $model->getConnection();
+        $connection->transaction(function () use ($id, $redis) {
+            $model = UserModel::findFromCache($id);
+            $name = uniqid();
+            $model->name = $name;
+            $model->save();
+            UserModel::findFromCache($id);
+            $this->assertSame(1, $redis->exists('{mc:default:m:user}:id:' . $id));
+        });
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:' . $id));
+
+        $model->delete();
     }
 }

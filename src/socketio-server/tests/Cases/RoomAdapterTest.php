@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -63,6 +63,24 @@ class RoomAdapterTest extends AbstractTestCase
         $this->assertNotContains('universe', $room->clientRooms('43'));
         $this->assertEmpty($room->clientRooms('43'));
         $room->broadcast('', ['rooms' => ['universe']]);
+    }
+
+    public function testDelFromEmptyRoom()
+    {
+        $sidProvider = new LocalSidProvider();
+        $server = Mockery::Mock(Sender::class);
+        $room = new MemoryAdapter($server, $sidProvider);
+        $room->del('111');
+
+        $nsp = Mockery::Mock(NamespaceInterface::class);
+        $nsp->shouldReceive('getNamespace')->andReturn('test');
+        $redis = $this->getRedis();
+        $server = Mockery::Mock(Sender::class);
+        $sidProvider = new LocalSidProvider();
+        $room = new RedisAdapter($redis, $server, $nsp, $sidProvider);
+        $room->del('111');
+
+        $this->assertTrue(true);
     }
 
     public function testRedisAdapter()

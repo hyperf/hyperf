@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -33,10 +33,10 @@ use Psr\Container\ContainerInterface;
  * @method static int affectingStatement(string $query, array $bindings = [])
  * @method static bool unprepared(string $query)
  * @method static array prepareBindings(array $bindings)
- * @method static transaction(\Closure $callback, int $attempts = 1)
- * @method static beginTransaction()
- * @method static rollBack()
- * @method static commit()
+ * @method static mixed transaction(\Closure $callback, int $attempts = 1)
+ * @method static void beginTransaction()
+ * @method static void rollBack()
+ * @method static void commit()
  * @method static int transactionLevel()
  * @method static array pretend(\Closure $callback)
  * @method static ConnectionInterface connection(string $pool)

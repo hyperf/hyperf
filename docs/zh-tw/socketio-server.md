@@ -1,4 +1,4 @@
-Socket.io是一款非常流行的應用層實時通訊協議和框架，可以輕鬆實現應答、分組、廣播。hyperf/socketio-server支援了Socket.io的WebSocket傳輸協議。
+Socket.io 是一款非常流行的應用層實時通訊協議和框架，可以輕鬆實現應答、分組、廣播。hyperf/socketio-server 支援了 Socket.io 的 WebSocket 傳輸協議。
 
 ## 安裝
 
@@ -23,7 +23,6 @@ hyperf/socketio-server 元件是基於 WebSocket 實現的，請確保服務端�
     ],
 ],
 ```
-
 
 ## 快速開始
 
@@ -149,9 +148,9 @@ function onSomeEvent(\Hyperf\SocketIOServer\Socket $socket){
   $socket->compress(false)->emit('uncompressed', "that's rough");
 }
 ```
-### 全域性API
+### 全域性 API
 
-直接從容器中獲取SocketIO單例。這個單例可向全域性廣播或指定房間、個人通訊。未指定名稱空間時，預設使用'/'空間。
+直接從容器中獲取 SocketIO 單例。這個單例可向全域性廣播或指定房間、個人通訊。未指定名稱空間時，預設使用 '/' 空間。
 
 ```php
 <?php
@@ -182,9 +181,9 @@ $io->local->emit('hi', 'my lovely babies');
 $io->emit('an event sent to all connected clients');
 ```
 
-### 名稱空間API
+### 名稱空間 API
 
-和全域性API一樣，只不過已經限制了名稱空間。
+和全域性 API 一樣，只不過已經限制了名稱空間。
 ```php
 // 以下偽碼等價
 $foo->emit();
@@ -336,6 +335,62 @@ class WebSocketController extends BaseNamespace
         $socket->emit('event', $data);
     }
 }
+```
+
+### 修改 `SocketIO` 基礎引數
+
+框架預設引數：
+
+|          配置          | 型別  | 預設值 |
+| :--------------------: | :---: | :----: |
+|      $pingTimeout      |  int  |  100   |
+|     $pingInterval      |  int  | 10000  |
+| $clientCallbackTimeout |  int  | 10000  |
+
+有時候，由於推送訊息比較多或者網路較卡，在 100ms 內，無法及時返回 `PONG`，就會導致連線斷開。這時候我們可以通過以下方式，進行重寫：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Kernel;
+
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\SocketIOServer\Parser\Decoder;
+use Hyperf\SocketIOServer\Parser\Encoder;
+use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
+use Hyperf\SocketIOServer\SocketIO;
+use Hyperf\WebSocketServer\Sender;
+use Psr\Container\ContainerInterface;
+
+class SocketIOFactory
+{
+    public function __invoke(ContainerInterface $container)
+    {
+        $io = new SocketIO(
+            $container->get(StdoutLoggerInterface::class),
+            $container->get(Sender::class),
+            $container->get(Decoder::class),
+            $container->get(Encoder::class),
+            $container->get(SidProviderInterface::class)
+        );
+
+        // 重寫 pingTimeout 引數
+        $io->setPingTimeout(10000);
+
+        return $io;
+    }
+}
+
+```
+
+然後在 `dependencies.php` 新增對應對映即可。
+
+```php
+return [
+    Hyperf\SocketIOServer\SocketIO::class => App\Kernel\SocketIOFactory::class,
+];
 ```
 
 ## Auth 鑑權

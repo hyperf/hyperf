@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -46,7 +46,7 @@ class ScanFileDriver implements DriverInterface
 
     public function watch(Channel $channel): void
     {
-        $ms = $this->option->getScanInterval() > 0 ? $this->option->getScanInterval() : 2000;
+        $ms = $this->option->getScanInterval();
         Timer::tick($ms, function () use ($channel) {
             global $lastMD5;
             $files = [];

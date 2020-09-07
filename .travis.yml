@@ -5,11 +5,11 @@ sudo: required
 matrix:
   include:
     - php: 7.2
-      env: SW_VERSION="4.5.2"
+      env: SW_VERSION="4.5.3"
     - php: 7.3
-      env: SW_VERSION="4.5.2"
+      env: SW_VERSION="4.5.3"
     - php: 7.4
-      env: SW_VERSION="4.5.2"
+      env: SW_VERSION="4.5.3"
 
 services:
   - mysql
@@ -29,6 +29,7 @@ install:
   - phpenv config-add .travis/ci.ini
   - bash .travis/setup.mysql.sh
   - docker run -d --name dev-consul -e CONSUL_BIND_INTERFACE=eth0 -p 8500:8500 consul
+  - docker run --name nsq -p 4150:4150 -p 4151:4151 -p 4160:4160 -p 4161:4161 -p 4170:4170 -p 4171:4171 --entrypoint /bin/nsqd -d nsqio/nsq:latest
 
 before_script:
   - cd $TRAVIS_BUILD_DIR
@@ -38,3 +39,6 @@ script:
   - composer analyse src
   - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
+
+notifications:
+  webhooks: https://oapi.dingtalk.com/robot/send?access_token=72c12e591c435f0f41e09261f6252aeafd284e432657b1f8d4a77b5aac8fbfcd

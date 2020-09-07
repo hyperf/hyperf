@@ -86,7 +86,7 @@ class FooProcess extends AbstractProcess
         // 您的代码 ...
     }
     
-    public function isEnable(): bool
+    public function isEnable($server): bool
     {
         // 不跟随服务启动一同启动
         return false;   

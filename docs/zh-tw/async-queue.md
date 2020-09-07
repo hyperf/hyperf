@@ -422,7 +422,7 @@ use Hyperf\Process\Annotation\Process;
 /**
  * @Process()
  */
-class ConsumerProcess extends ConsumerProcess
+class OtherConsumerProcess extends ConsumerProcess
 {
     /**
      * @var string
@@ -444,6 +444,8 @@ return $driver->push(new ExampleJob());
 ## 安全關閉
 
 非同步佇列在終止時，如果正在進行消費邏輯，可能會導致出現錯誤。框架提供了 `DriverStopHandler` ，可以讓非同步佇列程序安全關閉。
+
+> 當前訊號處理器並不適配於 CoroutineServer，如有需要請自行實現
 
 安裝訊號處理器
 

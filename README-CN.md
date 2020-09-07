@@ -1,6 +1,6 @@
 [English](./README.md) | 中文
 
-<p align="center"><a href="https://hyperf.io" target="_blank" rel="noopener noreferrer"><img width="70" src="https://www.hyperf.wiki/logo.png" alt="Hyperf Logo"></a></p>
+<p align="center"><a href="https://hyperf.io" target="_blank" rel="noopener noreferrer"><img width="70" src="https://cdn.jsdelivr.net/gh/hyperf/hyperf/docs/logo.png" alt="Hyperf Logo"></a></p>
 
 <p align="center">
   <a href="https://github.com/hyperf/hyperf/releases"><img src="https://poser.pugx.org/hyperf/hyperf/v/stable" alt="Stable Version"></a>
@@ -63,22 +63,6 @@ Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面�
 
 以组织/公司的名义赞助 Hyperf 项目的发展，您的 LOGO 和链接可以呈现在下方。 [[赞助](https://hyperf.wiki/#/zh/donate)]
 
-## 金牌赞助方
-
-<!--gold start-->
-<table>
-  <tbody>
-    <tr>
-      <td align="left" valign="middle">
-        <a href="https://guojiang.club/?utm_source=hyperf&utm_campaign=sponsor" target="_blank">
-          <img height="110px" src="https://hyperf.wiki/zh-cn/imgs/guojiang-club.jpg">
-        </a>
-      </td>
-    </tr><tr></tr>
-  </tbody>
-</table>
-<!--gold end-->
-
 # 性能
 
 ### 阿里云 8 核 16G
@@ -98,6 +82,8 @@ Transfer/sec:     18.83MB
 # Hyperf 生态
 
 - 🧬 [Nano](https://github.com/hyperf/nano) 是一款零配置、无骨架、极小化的 Hyperf 发行版，通过 Nano 可以让您仅仅通过 1 个 PHP 文件即可快速搭建一个 Hyperf 应用。
+- ⚡️ [GoTask](https://github.com/hyperf/gotask) 是一款可以启动 Go 进程作为 Swoole 主进程边车(Sidecar) 的一个库，利用 IPC 进程通讯将任务投递给边车处理并接收返回值，可以理解为 Go 语言版的 Swoole TaskWorker。
+- 🚀 [Jet](https://github.com/hyperf/jet) 是一个统一模型的 RPC 客户端，内置 JSONRPC 协议的适配，该组件可适用于所有的 PHP 环境，包括 PHP-FPM 和 Swoole 或 Hyperf。
 
 # 开源协议
 
