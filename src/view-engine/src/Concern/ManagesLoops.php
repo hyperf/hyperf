@@ -27,7 +27,7 @@ trait ManagesLoops
     /**
      * Add new loop to the stack.
      *
-     * @param array|Countable $data
+     * @param null|array|Countable $data
      */
     public function addLoop($data)
     {

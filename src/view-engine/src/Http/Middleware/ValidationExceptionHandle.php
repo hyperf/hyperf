@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine\Http\Middleware;
 
 use Hyperf\Contract\SessionInterface;
+use Hyperf\Session\Session;
 use Hyperf\Utils\Contracts\MessageProvider;
 use Hyperf\Utils\MessageBag;
 use Hyperf\Validation\ValidationException;
@@ -32,7 +33,7 @@ class ValidationExceptionHandle implements MiddlewareInterface
     protected $container;
 
     /**
-     * @var SessionInterface
+     * @var Session
      */
     protected $session;
 
@@ -53,7 +54,7 @@ class ValidationExceptionHandle implements MiddlewareInterface
         try {
             $response = $handler->handle($request);
         } catch (Throwable $throwable) {
-            if ($this->isValid($throwable)) {
+            if ($throwable instanceof ValidationException) {
                 /* @var ValidationException $throwable */
                 $this->withErrors($throwable->errors(), $throwable->errorBag);
                 return $this->response()->redirect($this->session->previousUrl());
@@ -63,11 +64,6 @@ class ValidationExceptionHandle implements MiddlewareInterface
         }
 
         return $response;
-    }
-
-    public function isValid(Throwable $throwable): bool
-    {
-        return $throwable instanceof ValidationException;
     }
 
     public function withErrors($provider, $key = 'default')

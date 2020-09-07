@@ -33,7 +33,7 @@ abstract class Component
     /**
      * The component attributes.
      *
-     * @var ComponentAttributeBag
+     * @var null|ComponentAttributeBag
      */
     public $attributes;
 

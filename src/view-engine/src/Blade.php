@@ -44,7 +44,7 @@ use Hyperf\ViewEngine\Compiler\CompilerInterface;
 class Blade
 {
     /**
-     * @var \Hyperf\Contract\ContainerInterface
+     * @var null|\Psr\Container\ContainerInterface
      */
     protected static $container;
 

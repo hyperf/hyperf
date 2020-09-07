@@ -13,7 +13,7 @@ namespace Hyperf\ViewEngine;
 
 use Countable;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\MessageBag;
+use Hyperf\Utils\Contracts\MessageBag;
 
 class ViewErrorBag implements Countable
 {
@@ -83,11 +83,11 @@ class ViewErrorBag implements Countable
      * Get a MessageBag instance from the bags.
      *
      * @param string $key
-     * @return MessageBag
+     * @return \Hyperf\Utils\MessageBag
      */
     public function getBag($key)
     {
-        return Arr::get($this->bags, $key) ?: new MessageBag();
+        return Arr::get($this->bags, $key) ?: new \Hyperf\Utils\MessageBag();
     }
 
     /**
