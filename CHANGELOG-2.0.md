@@ -11,6 +11,7 @@
 
 - [#2427](https://github.com/hyperf/hyperf/pull/2427) Fixed model event dispatcher does not works for `Pivot` and `MorphPivot`.
 - [#2443](https://github.com/hyperf/hyperf/pull/2443) Fixed traceid does not exists when using coroutine handler.
+- [#2449](https://github.com/hyperf/hyperf/pull/2449) Fixed apollo config file name error.
 
 ## Optimized
 
