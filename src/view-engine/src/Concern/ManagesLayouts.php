@@ -42,7 +42,7 @@ trait ManagesLayouts
      * Start injecting content into a section.
      *
      * @param string $section
-     * @param null|string $content
+     * @param null|string|ViewInterface $content
      */
     public function startSection($section, $content = null)
     {
@@ -131,7 +131,7 @@ trait ManagesLayouts
      * Get the string contents of a section.
      *
      * @param string $section
-     * @param string $default
+     * @param string|ViewInterface $default
      * @return string
      */
     public function yieldContent($section, $default = '')

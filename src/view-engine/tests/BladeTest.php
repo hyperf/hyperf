@@ -24,6 +24,7 @@ use Hyperf\ViewEngine\Compiler\CompilerInterface;
 use Hyperf\ViewEngine\ConfigProvider;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 use Hyperf\ViewEngine\Contract\ViewInterface;
+use Hyperf\ViewEngine\Factory\FinderFactory;
 use Hyperf\ViewEngine\HyperfViewEngine;
 use HyperfTest\ViewEngine\Stub\Alert;
 use HyperfTest\ViewEngine\Stub\AlertSlot;
@@ -63,7 +64,7 @@ class BladeTest extends TestCase
                     'alert-slot' => AlertSlot::class,
                 ],
                 'namespaces' => [
-                    'admin' => __DIR__ . '/admin',
+                    'admin_config' => __DIR__ . '/admin',
                 ],
             ],
         ]));
@@ -71,8 +72,10 @@ class BladeTest extends TestCase
         // vendor 下的命令空间
         if (! file_exists(__DIR__ . '/storage/view/vendor/admin/simple_4.blade.php')) {
             @mkdir(__DIR__ . '/storage/view/vendor');
-            @mkdir(__DIR__ . '/storage/view/vendor/admin');
-            file_put_contents(__DIR__ . '/storage/view/vendor/admin/simple_4.blade.php', 'from_vendor');
+            @mkdir(__DIR__ . '/storage/view/vendor/admin_custom');
+            @mkdir(__DIR__ . '/storage/view/vendor/admin_config');
+            file_put_contents(__DIR__ . '/storage/view/vendor/admin_custom/simple_4.blade.php', 'from_vendor');
+            file_put_contents(__DIR__ . '/storage/view/vendor/admin_config/simple_4.blade.php', 'from_vendor');
         }
     }
 
@@ -84,8 +87,8 @@ class BladeTest extends TestCase
 
     public function testRegisterNamespace()
     {
-        $this->assertSame('from_admin', trim((string) view('admin::simple_3')));
-        $this->assertSame('from_vendor', trim((string) view('admin::simple_4')));
+        $this->assertSame('from_admin', trim((string) view('admin_config::simple_3')));
+        $this->assertSame('from_vendor', trim((string) view('admin_config::simple_4')));
     }
 
     public function testViewFunction()
@@ -122,12 +125,10 @@ class BladeTest extends TestCase
 
     public function testUseNamespace()
     {
-        /** @var FactoryInterface $factory */
-        $factory = ApplicationContext::getContainer()->get(FactoryInterface::class);
-        $factory->addNamespace('admin', __DIR__ . '/admin');
+        FinderFactory::addNamespace('admin_custom', __DIR__ . '/admin');
 
-        $this->assertSame('from_admin', trim((string) view('admin::simple_3')));
-        $this->assertSame('from_vendor', trim((string) view('admin::simple_4')));
+        $this->assertSame('from_admin', trim((string) view('admin_custom::simple_3')));
+        $this->assertSame('from_vendor', trim((string) view('admin_custom::simple_4')));
     }
 
     public function testComponent()

@@ -19,7 +19,6 @@ use Hyperf\Utils\Contracts\MessageProvider;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\Macroable;
 use Hyperf\ViewEngine\Contract\EngineInterface;
-use Hyperf\ViewEngine\Contract\FactoryInterface;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use Hyperf\ViewEngine\Contract\Renderable;
 use Hyperf\ViewEngine\Contract\ViewInterface;
@@ -73,7 +72,7 @@ class View implements ArrayAccess, Htmlable, ViewInterface
      * @param string $path
      * @param mixed $data
      */
-    public function __construct(FactoryInterface $factory, EngineInterface $engine, $view, $path, $data = [])
+    public function __construct(Factory $factory, EngineInterface $engine, $view, $path, $data = [])
     {
         $this->view = $view;
         $this->path = $path;
@@ -421,7 +420,7 @@ class View implements ArrayAccess, Htmlable, ViewInterface
      * Parse the given errors into an appropriate value.
      *
      * @param array|MessageProvider|string $provider
-     * @return MessageBag
+     * @return \Hyperf\Utils\MessageBag|MessageBag
      */
     protected function formatErrors($provider)
     {

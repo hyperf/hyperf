@@ -59,7 +59,7 @@ class Factory implements FactoryInterface
     /**
      * The IoC container instance.
      *
-     * @var ContainerInterface
+     * @var null|ContainerInterface
      */
     protected $container;
 
@@ -328,12 +328,6 @@ class Factory implements FactoryInterface
      */
     public function addNamespace(string $namespace, $hints)
     {
-        foreach ($this->finder->getPaths() as $viewPath) {
-            if (is_dir($appPath = $viewPath . '/vendor/' . $namespace)) {
-                $this->finder->addNamespace($namespace, $appPath);
-            }
-        }
-
         $this->finder->addNamespace($namespace, $hints);
 
         return $this;

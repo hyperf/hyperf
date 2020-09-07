@@ -26,7 +26,7 @@ abstract class Compiler
     /**
      * Get the cache path for the compiled views.
      *
-     * @var string
+     * @var null|string
      */
     protected $cachePath;
 

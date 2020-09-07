@@ -12,8 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine\Factory;
 
 use Hyperf\Di\Container;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\ViewEngine\Blade;
+use Hyperf\ViewEngine\Contract\FinderInterface;
 use Hyperf\ViewEngine\Finder;
 
 class FinderFactory
@@ -25,17 +27,30 @@ class FinderFactory
             (array) Blade::config('config.view_path')
         );
 
-        // register view namespace
-        foreach ((array) Blade::config('namespaces', []) as $namespace => $hints) {
-            foreach ($finder->getPaths() as $viewPath) {
-                if (is_dir($appPath = $viewPath . '/vendor/' . $namespace)) {
-                    $finder->addNamespace($namespace, $appPath);
-                }
-            }
-
-            $finder->addNamespace($namespace, $hints);
-        }
+        static::addNamespaces((array) Blade::config('namespaces', []), $finder);
 
         return $finder;
+    }
+
+    public static function addNamespace($namespace, $hints, ?Finder $finder = null)
+    {
+        if (! $finder) {
+            $finder = ApplicationContext::getContainer()->get(FinderInterface::class);
+        }
+
+        foreach ($finder->getPaths() as $viewPath) {
+            if (is_dir($appPath = $viewPath . '/vendor/' . $namespace)) {
+                $finder->addNamespace($namespace, $appPath);
+            }
+        }
+
+        $finder->addNamespace($namespace, $hints);
+    }
+
+    public static function addNamespaces($namespaces, ?Finder $finder = null)
+    {
+        foreach ($namespaces as $namespace => $hints) {
+            static::addNamespace($namespace, $hints, $finder);
+        }
     }
 }
