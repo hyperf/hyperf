@@ -1,0 +1,5 @@
+.idea
+vendor
+*.lock
+.codeCoverage
+.phpunit.result.cache
