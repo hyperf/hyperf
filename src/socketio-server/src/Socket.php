@@ -20,7 +20,7 @@ use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Context;
 use Hyperf\WebSocketServer\Sender;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Server;
 
 class Socket
@@ -98,8 +98,8 @@ class Socket
         return $this->nsp;
     }
 
-    public function getRequest(): RequestInterface
+    public function getRequest(): ServerRequestInterface
     {
-        return Context::get(RequestInterface::class);
+        return Context::get(ServerRequestInterface::class);
     }
 }
