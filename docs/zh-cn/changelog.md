@@ -2,23 +2,23 @@
 
 # v2.0.10 - 2020-09-07
 
-## Added
+## 新增
 
-- [#2411](https://github.com/hyperf/hyperf/pull/2411) 组件 [database](https://github.com/hyperf/database) 新增 `Hyperf\Database\Query\Builder::forPageBeforeId` 方法。
-- [#2420](https://github.com/hyperf/hyperf/pull/2420) [#2426](https://github.com/hyperf/hyperf/pull/2426) 组件 [command](https://github.com/hyperf/command) 新增默认选项 `enable-event-dispatcher` 用于初始化事件触发器。
-- [#2433](https://github.com/hyperf/hyperf/pull/2433) 组件 [grpc-server](https://github.com/hyperf/grpc-server) 路由新增匿名函数支持。
-- [#2441](https://github.com/hyperf/hyperf/pull/2441) 组件 [socketio-server](https://github.com/hyperf/socketio-server) 中 `SocketIO` 新增部分 `setters`。
+- [#2411](https://github.com/hyperf/hyperf/pull/2411) 为 [hyperf/database](https://github.com/hyperf/database) 组件新增 `Hyperf\Database\Query\Builder::forPageBeforeId` 方法。
+- [#2420](https://github.com/hyperf/hyperf/pull/2420) 为 [#2426](https://github.com/hyperf/hyperf/pull/2426) [hyperf/command](https://github.com/hyperf/command) 组件新增默认选项 `enable-event-dispatcher` 用于初始化事件触发器。
+- [#2433](https://github.com/hyperf/hyperf/pull/2433) 为 [hyperf/grpc-server](https://github.com/hyperf/grpc-server) 组件路由新增匿名函数支持。
+- [#2441](https://github.com/hyperf/hyperf/pull/2441) 为 [hyperf/socketio-server](https://github.com/hyperf/socketio-server) 组件中 `SocketIO` 新增了一些 `setters`。
 
-## Fixed
+## 修复
 
 - [#2427](https://github.com/hyperf/hyperf/pull/2427) 修复事件触发器在使用 `Pivot` 或 `MorphPivot` 不生效的问题。
-- [#2443](https://github.com/hyperf/hyperf/pull/2443) 修复使用 `Guzzle` 的 `Coroutine Handler` 时，无法正确是指 `traceid` 和 `spanid` 的问题。
-- [#2449](https://github.com/hyperf/hyperf/pull/2449) 修复发布 `Apollo` 配置文件时，名称错误的问题。
+- [#2443](https://github.com/hyperf/hyperf/pull/2443) 修复使用 [hyperf/Guzzle](https://github.com/hyperf/guzzle) 组件的 `Coroutine Handler` 时，无法正确是指 `traceid` 和 `spanid` 的问题。
+- [#2449](https://github.com/hyperf/hyperf/pull/2449) 修复发布 [hyperf/config-apollo](https://github.com/hyperf/config-apollo) 组件的配置文件时，配置文件名称错误的问题。
 
-## Optimized
+## 优化
 
-- [#2429](https://github.com/hyperf/hyperf/pull/2429) 优化使用 `@Inject` 并且没有设置 `@var` 时的错误信息，方便用户定位问题。
-- [#2438](https://github.com/hyperf/hyperf/pull/2438) 优化使用组件 [model-cache](https://github.com/hyperf/model-cache) 在事务中删除或修改模型时，当事务提交后再删除缓存。
+- [#2429](https://github.com/hyperf/hyperf/pull/2429) 优化使用 `@Inject` 并且没有设置 `@var` 时的错误信息，方便定位问题，改善编程体验。
+- [#2438](https://github.com/hyperf/hyperf/pull/2438) 优化当使用 [hyperf/model-cache](https://github.com/hyperf/model-cache) 组件与数据库事务搭配使用时，在事务中删除或修改模型数据会在事务提交后即时再删除缓存，而不再是在删除或修改模型数据时删除缓存数据。
 
 # v2.0.9 - 2020-08-31
 
