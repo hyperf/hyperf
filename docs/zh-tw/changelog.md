@@ -1,5 +1,25 @@
 # 版本更新記錄
 
+# v2.0.10 - 2020-09-07
+
+## 新增
+
+- [#2411](https://github.com/hyperf/hyperf/pull/2411) 為 [hyperf/database](https://github.com/hyperf/database) 元件新增 `Hyperf\Database\Query\Builder::forPageBeforeId` 方法。
+- [#2420](https://github.com/hyperf/hyperf/pull/2420) 為 [#2426](https://github.com/hyperf/hyperf/pull/2426) [hyperf/command](https://github.com/hyperf/command) 元件新增預設選項 `enable-event-dispatcher` 用於初始化事件觸發器。
+- [#2433](https://github.com/hyperf/hyperf/pull/2433) 為 [hyperf/grpc-server](https://github.com/hyperf/grpc-server) 元件路由新增匿名函式支援。
+- [#2441](https://github.com/hyperf/hyperf/pull/2441) 為 [hyperf/socketio-server](https://github.com/hyperf/socketio-server) 元件中 `SocketIO` 新增了一些 `setters`。
+
+## 修復
+
+- [#2427](https://github.com/hyperf/hyperf/pull/2427) 修復事件觸發器在使用 `Pivot` 或 `MorphPivot` 不生效的問題。
+- [#2443](https://github.com/hyperf/hyperf/pull/2443) 修復使用 [hyperf/Guzzle](https://github.com/hyperf/guzzle) 元件的 `Coroutine Handler` 時，無法正確獲取和傳遞 `traceid` 和 `spanid` 的問題。
+- [#2449](https://github.com/hyperf/hyperf/pull/2449) 修復釋出 [hyperf/config-apollo](https://github.com/hyperf/config-apollo) 元件的配置檔案時，配置檔名稱錯誤的問題。
+
+## 優化
+
+- [#2429](https://github.com/hyperf/hyperf/pull/2429) 優化使用 `@Inject` 並且沒有設定 `@var` 時的錯誤資訊，方便定位問題，改善程式設計體驗。
+- [#2438](https://github.com/hyperf/hyperf/pull/2438) 優化當使用 [hyperf/model-cache](https://github.com/hyperf/model-cache) 元件與資料庫事務搭配使用時，在事務中刪除或修改模型資料會在事務提交後即時再刪除快取，而不再是在刪除或修改模型資料時刪除快取資料。
+
 # v2.0.9 - 2020-08-31
 
 ## 新增
@@ -20,7 +40,7 @@
 
 - [#2359](https://github.com/hyperf/hyperf/pull/2359) 優化自定義程序，在協程風格服務下，可以更加友好的停止。
 - [#2363](https://github.com/hyperf/hyperf/pull/2363) 優化 [hyperf/di](https://github.com/hyperf/di) 元件，使其不需要依賴 [hyperf/config](https://github.com/hyperf/config) 元件。
-- [#2373](https://github.com/hyperf/hyperf/pull/2373) 優化 [hyperf/validation](https://github.com/hyperf/validation) 元件的異常捕獲器，使其返回 `Response` 時，自動新增 `content-type 頭。
+- [#2373](https://github.com/hyperf/hyperf/pull/2373) 優化 [hyperf/validation](https://github.com/hyperf/validation) 元件的異常捕獲器，使其返回 `Response` 時，自動新增 `content-type` 頭。
 
 
 # v2.0.8 - 2020-08-24
