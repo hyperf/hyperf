@@ -193,3 +193,64 @@ class ViewController
 Hello, Hyperf. You are using blade template now.
 ```
 
+## 模板引擎
+
+> 基于 laravel blade 模板引擎改写, 支持原始 blade 模板引擎的语法.
+
+```
+composer require hyperf/view-engine
+```
+
+该组件依赖 [`hyperf/view`](https://hyperf.wiki/2.0/#/zh-cn/view) , 默认安装以下组件
+
+- [`hyperf/session`](https://hyperf.wiki/2.0/#/zh-cn/session)
+
+- [`hyperf/validation`](https://hyperf.wiki/2.0/#/zh-cn/validation)
+
+- [`hyperf/translation`](https://hyperf.wiki/2.0/#/zh-cn/translation)
+
+可通过 `view:publish` 命令, 生成全部的配置文件.
+
+默认生成的配置文件如下:
+
+```php
+return [
+    'engine' => \Hyperf\ViewEngine\HyperfViewEngine::class,
+    'mode' => \Hyperf\View\Mode::SYNC,
+    'config' => [
+        'view_path' => BASE_PATH . '/storage/view/',
+        'cache_path' => BASE_PATH . '/runtime/view/',
+    ],
+
+    # 自定义组件注册
+    'components' => [
+        // 'alert' => \App\View\Components\Alert::class
+    ],
+
+    # 视图命名空间 (主要用于扩展包中)
+    'namespaces' => [
+        // 'admin' => BASE_PATH . '/storage/view/vendor/admin',
+    ],
+];
+```
+
+**该组件提供了 `view()` 方法, 并且兼容 `hyperf/view` 组件的渲染方式.**
+
+使用时, 需添加相关中间件, 以保证某些组件的正常使用:
+
+```php
+# config/autoload/middlewares.php
+return [
+    'http' => [
+        // ...others
+        // session 中间件
+        \Hyperf\Session\Middleware\SessionMiddleware::class,
+        // validation 中间件
+        \Hyperf\Validation\Middleware\ValidationMiddleware::class,
+        // 自动将 session 中的 errors 共享给视图
+        \Hyperf\ViewEngine\Http\Middleware\ShareErrorsFromSession::class,
+        // 自动捕捉 validation 中的异常加入到 session 中
+        \Hyperf\ViewEngine\Http\Middleware\ValidationExceptionHandle::class,
+    ],
+];
+```
