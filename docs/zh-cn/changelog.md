@@ -1,5 +1,25 @@
 # 版本更新记录
 
+# v2.0.10 - 2020-09-07
+
+## Added
+
+- [#2411](https://github.com/hyperf/hyperf/pull/2411) 组件 [database](https://github.com/hyperf/database) 新增 `Hyperf\Database\Query\Builder::forPageBeforeId` 方法。
+- [#2420](https://github.com/hyperf/hyperf/pull/2420) [#2426](https://github.com/hyperf/hyperf/pull/2426) 组件 [command](https://github.com/hyperf/command) 新增默认选项 `enable-event-dispatcher` 用于初始化事件触发器。
+- [#2433](https://github.com/hyperf/hyperf/pull/2433) 组件 [grpc-server](https://github.com/hyperf/grpc-server) 路由新增匿名函数支持。
+- [#2441](https://github.com/hyperf/hyperf/pull/2441) 组件 [socketio-server](https://github.com/hyperf/socketio-server) 中 `SocketIO` 新增部分 `setters`。
+
+## Fixed
+
+- [#2427](https://github.com/hyperf/hyperf/pull/2427) 修复事件触发器在使用 `Pivot` 或 `MorphPivot` 不生效的问题。
+- [#2443](https://github.com/hyperf/hyperf/pull/2443) 修复使用 `Guzzle` 的 `Coroutine Handler` 时，无法正确是指 `traceid` 和 `spanid` 的问题。
+- [#2449](https://github.com/hyperf/hyperf/pull/2449) 修复发布 `Apollo` 配置文件时，名称错误的问题。
+
+## Optimized
+
+- [#2429](https://github.com/hyperf/hyperf/pull/2429) 优化使用 `@Inject` 并且没有设置 `@var` 时的错误信息，方便用户定位问题。
+- [#2438](https://github.com/hyperf/hyperf/pull/2438) 优化使用组件 [model-cache](https://github.com/hyperf/model-cache) 在事务中删除或修改模型时，当事务提交后再删除缓存。
+
 # v2.0.9 - 2020-08-31
 
 ## 新增
