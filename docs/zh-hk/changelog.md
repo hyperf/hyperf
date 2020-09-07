@@ -12,7 +12,7 @@
 ## 修復
 
 - [#2427](https://github.com/hyperf/hyperf/pull/2427) 修復事件觸發器在使用 `Pivot` 或 `MorphPivot` 不生效的問題。
-- [#2443](https://github.com/hyperf/hyperf/pull/2443) 修復使用 [hyperf/Guzzle](https://github.com/hyperf/guzzle) 組件的 `Coroutine Handler` 時，無法正確是指 `traceid` 和 `spanid` 的問題。
+- [#2443](https://github.com/hyperf/hyperf/pull/2443) 修復使用 [hyperf/Guzzle](https://github.com/hyperf/guzzle) 組件的 `Coroutine Handler` 時，無法正確獲取和傳遞 `traceid` 和 `spanid` 的問題。
 - [#2449](https://github.com/hyperf/hyperf/pull/2449) 修復發佈 [hyperf/config-apollo](https://github.com/hyperf/config-apollo) 組件的配置文件時，配置文件名稱錯誤的問題。
 
 ## 優化
