@@ -1,5 +1,9 @@
 # v2.0.11 - TBD
 
+## Added
+
+- [#2455](https://github.com/hyperf/hyperf/pull/2455) Added method `Socket::getRequest` to retrieve psr7 request from socket.
+
 # v2.0.10 - 2020-09-07
 
 ## Added
