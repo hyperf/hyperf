@@ -11,27 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Ast;
 
-use Hyperf\Database\Commands\ModelData;
-use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Str;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
-use PhpParser\NodeVisitorAbstract;
 
-class ModelRewriteKeyInfoVisitor extends NodeVisitorAbstract
+class ModelRewriteKeyInfoVisitor extends AbstractVisitor
 {
-    /**
-     * @var ModelOption
-     */
-    protected $option;
-
-    /**
-     * @var ModelData
-     */
-    protected $data;
-
     /**
      * @var bool
      */
@@ -46,12 +33,6 @@ class ModelRewriteKeyInfoVisitor extends NodeVisitorAbstract
      * @var bool
      */
     protected $hasIncrementing = false;
-
-    public function __construct(ModelOption $option, ModelData $data)
-    {
-        $this->option = $option;
-        $this->data = $data;
-    }
 
     public function leaveNode(Node $node)
     {
