@@ -66,4 +66,13 @@ trait CamelCase
         }
         return $attributes;
     }
+
+    public function getFillable()
+    {
+        $fillable = [];
+        foreach (parent::getFillable() as $key) {
+            $fillable[] = $this->keyTransform($key);
+        }
+        return $fillable;
+    }
 }
