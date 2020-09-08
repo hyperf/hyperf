@@ -32,11 +32,8 @@ use Hyperf\Utils\Str;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
-use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\Reflection\ReflectionClass;
 use Roave\BetterReflection\Reflection\ReflectionMethod;
-use Roave\BetterReflection\Reflector\ClassReflector;
-use Roave\BetterReflection\TypesFinder\FindReturnType;
 use RuntimeException;
 
 class ModelUpdateVisitor extends NodeVisitorAbstract
@@ -79,16 +76,6 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
      * @var array
      */
     protected $properties = [];
-
-    /**
-     * @var ClassReflector
-     */
-    protected static $reflector;
-
-    /**
-     * @var FindReturnType
-     */
-    protected static $return;
 
     public function __construct($class, $columns, ModelOption $option)
     {
@@ -211,7 +198,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     protected function initPropertiesFromMethods()
     {
         /** @var ReflectionClass $reflection */
-        $reflection = self::getReflector()->reflect(get_class($this->class));
+        $reflection = BetterReflectionManager::getReflector()->reflect(get_class($this->class));
         $methods = $reflection->getImmediateMethods();
         $namespace = $reflection->getDeclaringNamespaceAst();
         $casts = $this->class->getCasts();
@@ -223,7 +210,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 // Magic get<name>Attribute
                 $name = Str::snake(substr($method->getName(), 3, -9));
                 if (! empty($name)) {
-                    $type = self::getReturnFinder()->__invoke($method, $namespace);
+                    $type = BetterReflectionManager::getReturnFinder()->__invoke($method, $namespace);
                     $this->setProperty($name, $type, true, null);
                 }
                 continue;
@@ -297,7 +284,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             }
 
             if (is_subclass_of($caster, CastsAttributes::class)) {
-                $ref = self::getReflector()->reflect($caster);
+                $ref = BetterReflectionManager::getReflector()->reflect($caster);
                 $method = $ref->getMethod('get');
                 if ($ast = $method->getReturnStatementsAst()[0]) {
                     if ($ast instanceof Node\Stmt\Return_
@@ -408,23 +395,5 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         /** @var Model $model */
         $model = new $className();
         return '\\' . get_class($model->newCollection());
-    }
-
-    protected static function getReturnFinder(): FindReturnType
-    {
-        if (static::$return instanceof FindReturnType) {
-            return static::$return;
-        }
-
-        return static::$return = new FindReturnType();
-    }
-
-    protected static function getReflector(): ClassReflector
-    {
-        if (self::$reflector instanceof ClassReflector) {
-            return self::$reflector;
-        }
-
-        return self::$reflector = (new BetterReflection())->classReflector();
     }
 }
