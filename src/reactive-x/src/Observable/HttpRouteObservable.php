@@ -48,20 +48,25 @@ class HttpRouteObservable extends Observable
      */
     private $scheduler;
 
-    public function __construct($httpMethod, string $uri, $callback = null, SchedulerInterface $scheduler = null)
+    /**
+     * @var string
+     */
+    private $serverName;
+
+    public function __construct($httpMethod, string $uri, $callback = null, SchedulerInterface $scheduler = null, string $serverName = 'http')
     {
         $this->scheduler = $scheduler;
         $this->httpMethod = $httpMethod;
         $this->uri = $uri;
         $this->callback = $callback;
+        $this->serverName = $serverName;
     }
 
     protected function _subscribe(ObserverInterface $observer): DisposableInterface
     {
         $container = ApplicationContext::getContainer();
         $factory = $container->get(DispatcherFactory::class);
-        $factory->getRouter($container->get(ConfigInterface::class)->get('server.servers.0.name') ?? 'http')
-                ->addRoute($this->httpMethod, $this->uri, function () use ($observer, $container) {
+        $factory->getRouter($this->serverName)->addRoute($this->httpMethod, $this->uri, function () use ($observer, $container) {
             $request = Context::get(ServerRequestInterface::class);
             if ($this->scheduler === null) {
                 $this->scheduler = Scheduler::getDefault();
