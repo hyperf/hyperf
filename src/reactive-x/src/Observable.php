@@ -44,9 +44,9 @@ class Observable
      * @param null|callable|string $callback
      * @throws \Exception
      */
-    public static function fromHttpRoute($httpMethod, string $uri, $callback = null, ?SchedulerInterface $scheduler = null): HttpRouteObservable
+    public static function fromHttpRoute($httpMethod, string $uri, $callback = null, ?SchedulerInterface $scheduler = null, string $serverName = 'http'): HttpRouteObservable
     {
-        return new HttpRouteObservable($httpMethod, $uri, $callback, $scheduler);
+        return new HttpRouteObservable($httpMethod, $uri, $callback, $scheduler, $serverName);
     }
 
     /**

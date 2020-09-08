@@ -9,6 +9,10 @@
 
 - [#2464](https://github.com/hyperf/hyperf/pull/2464) Fixed method `fill` does not works for camel case model.
 
+## Optimized
+
+- [#2461](https://github.com/hyperf/hyperf/pull/2461) Optimized the http route observer which you can observe any one not only `http` for `reactive-x`.
+
 # v2.0.10 - 2020-09-07
 
 ## Added
