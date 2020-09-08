@@ -60,7 +60,8 @@ class HttpRouteObservable extends Observable
     {
         $container = ApplicationContext::getContainer();
         $factory = $container->get(DispatcherFactory::class);
-        $factory->getRouter('http')->addRoute($this->httpMethod, $this->uri, function () use ($observer, $container) {
+        $factory->getRouter($container->get(ConfigInterface::class)->get('server.servers.0.name') ?? 'http')
+                ->addRoute($this->httpMethod, $this->uri, function () use ($observer, $container) {
             $request = Context::get(ServerRequestInterface::class);
             if ($this->scheduler === null) {
                 $this->scheduler = Scheduler::getDefault();
