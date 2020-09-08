@@ -136,6 +136,10 @@ return [
 
 此 `Visitor` 可以根据 `created_at` 和 `updated_at` 自动判断，是否启用默认记录 `创建和修改时间` 的功能。
 
+- Hyperf\Database\Commands\Ast\ModelRewriteGetterSetterVisitor
+
+此 `Visitor` 可以根据数据库字段生成对应的 `getter` 和 `setter`。
+
 ## 覆盖 Visitor
 
 Hyperf 框架中，当使用 `gen:model` 时，默认会将 `decimal` 转化成为 `float`。如下：
