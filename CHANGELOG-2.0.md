@@ -2,7 +2,8 @@
 
 ## Added
 
-- [#2455](https://github.com/hyperf/hyperf/pull/2455) Added method `Socket::getRequest` to retrieve psr7 request from socket.
+- [#2455](https://github.com/hyperf/hyperf/pull/2455) Added method `Socket::getRequest` to retrieve psr7 request from socket for socketio-server.
+- [#2459](https://github.com/hyperf/hyperf/pull/2459) Added `ReloadChannelListener` to reload timeout or failed channels automatically for async-queue.
 
 # v2.0.10 - 2020-09-07
 
