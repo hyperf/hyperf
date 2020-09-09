@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -14,6 +14,7 @@ namespace Hyperf\Process;
 use Hyperf\Contract\ProcessInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
+use Hyperf\Process\Event\AfterCoroutineHandle;
 use Hyperf\Process\Event\AfterProcessHandle;
 use Hyperf\Process\Event\BeforeCoroutineHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
@@ -21,6 +22,8 @@ use Hyperf\Process\Event\PipeMessage;
 use Hyperf\Process\Exception\ServerInvalidException;
 use Hyperf\Process\Exception\SocketAcceptException;
 use Hyperf\Server\CoroutineServer;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -160,13 +163,16 @@ abstract class AbstractProcess implements ProcessInterface
                         $this->handle();
                     } catch (\Throwable $throwable) {
                         $this->logThrowable($throwable);
-                    } finally {
-                        sleep($this->restartInterval);
+                    }
+
+                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($this->restartInterval)) {
+                        break;
                     }
                 }
+                $this->event && $this->event->dispatch(new AfterCoroutineHandle($this, $i));
             };
 
-            go($handler);
+            Coroutine::create($handler);
         }
     }
 

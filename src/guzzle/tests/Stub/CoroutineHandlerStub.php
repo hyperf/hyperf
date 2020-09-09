@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -33,6 +33,11 @@ class CoroutineHandlerStub extends CoroutineHandler
     public function createSink(string $body, string $sink)
     {
         return parent::createSink($body, $sink);
+    }
+
+    public function rewriteHeaders(array $headers): array
+    {
+        return parent::rewriteHeaders($headers);
     }
 
     protected function execute(Client $client, $path)

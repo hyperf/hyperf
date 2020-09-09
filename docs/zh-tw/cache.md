@@ -118,7 +118,7 @@ use Hyperf\Cache\Annotation\Cacheable;
 class DemoService
 {
     /**
-     * @Cacheable(prefix="cache", value="_#{id}", listener="DemoServiceDelete")
+     * @Cacheable(prefix="cache", value="_#{id}", listener="user-update")
      */
     public function getCache(int $id)
     {

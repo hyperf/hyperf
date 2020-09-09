@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -44,9 +44,9 @@ class Observable
      * @param null|callable|string $callback
      * @throws \Exception
      */
-    public static function fromHttpRoute($httpMethod, string $uri, $callback = null, ?SchedulerInterface $scheduler = null): HttpRouteObservable
+    public static function fromHttpRoute($httpMethod, string $uri, $callback = null, ?SchedulerInterface $scheduler = null, string $serverName = 'http'): HttpRouteObservable
     {
-        return new HttpRouteObservable($httpMethod, $uri, $callback, $scheduler);
+        return new HttpRouteObservable($httpMethod, $uri, $callback, $scheduler, $serverName);
     }
 
     /**

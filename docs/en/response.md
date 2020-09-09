@@ -1,10 +1,12 @@
-# 响应
+# Response
 
-在 Hyperf 里可通过 `Hyperf\HttpServer\Contract\ResponseInterface` 接口类来注入 `Response` 代理对象对响应进行处理，默认返回 `Hyperf\HttpServer\Response` 对象，该对象可直接调用所有 `Psr\Http\Message\ResponseInterface` 的方法。
+In Hyperf, you could get the response proxy object by injected `Hyperf\HttpServer\Contract\ResponseInterface` interface, by default, DI container will return an `Hyperf\HttpServer\Response` object, you could directly call all methods of `Psr\Http\Message\ResponseInterface` via this object.
 
-## 返回 Json 格式
+> Note that the standard PSR-7 response object is an immutable object. The return value of all methods starts with `with` is a new object and will not modify the value of the original object.
 
-`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `json($data)` 方法用于快速返回 `Json` 格式，并设置 `Content-Type` 为 `application/json`，`$data` 接受一个数组或为一个实现了 `Hyperf\Utils\Contracts\Arrayable` 接口的对象。
+## Return JSON
+
+You could return a `Json` format content quickly by method `json($data)` of `Hyperf\HttpServer\Contract\ResponseInterface`, and also the `Content-Type` of response object will be set to `application/json`, `$data` accept an array or an object that implemented `Hyperf\Utils\Contracts\Arrayable` interface.
 
 ```php
 <?php
@@ -25,9 +27,9 @@ class IndexController
 }
 ```
 
-## 返回 Xml 格式
+## Return XML
 
-`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `xml($data)` 方法用于快速返回 `XML` 格式，并设置 `Content-Type` 为 `application/xml`，`$data` 接受一个数组或为一个实现了 `Hyperf\Utils\Contracts\Xmlable` 接口的对象。
+You could return a `XML` format content quickly by method `xml($data)` of `Hyperf\HttpServer\Contract\ResponseInterface`, and also the `Content-Type` of response object will be set to `application/xml`, `$data` accept an array or an object that implemented `Hyperf\Utils\Contracts\Xmlable` interface.
 
 ```php
 <?php
@@ -48,9 +50,9 @@ class IndexController
 }
 ```
 
-## 返回 Raw 格式
+## Return the raw content
 
-`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `raw($data)` 方法用于快速返回 `raw` 格式，并设置 `Content-Type` 为 `plain/text`，`$data` 接受一个字符串或为一个实现了 `__toString()` 方法的对象。
+You could return the raw content quickly by method `raw($data)` of `Hyperf\HttpServer\Contract\ResponseInterface`, and also the `Content-Type` of response object will be set to `plain/text`, `$data` accept a string or an object that implemented `__toString()` method.
 
 ```php
 <?php
@@ -68,21 +70,21 @@ class IndexController
 }
 ```
 
-## 返回视图
+## Return view
 
-Hyperf 暂不支持视图返回，欢迎社区贡献相关的 PR。
+Please refer to [View](zh-cn/view.md).
 
-## 重定向
+## Redirection
 
-`Hyperf\HttpServer\Contract\ResponseInterface` 提供了 `redirect(string $toUrl, int $status = 302, string $schema = 'http')`  返回一个已设置重定向状态的 `Psr7ResponseInterface` 对象。
+`Hyperf\HttpServer\Contract\ResponseInterface` provides `redirect(string $toUrl, int $status = 302, string $schema = 'http')` method to return an `Psr7ResponseInterface` object which has already setup redirection status.
 
-`redirect` 方法：   
+`redirect`：   
 
-|        参数          | 类型   |      默认值      |        备注        |
-|:-------------------:|:------:|:---------------:|:------------------:|
-|        toUrl        | string |       无        |     如果参数不存在 `http://` 或 `https://` 则根据当前服务的 Host 自动拼接对应的 URL，且根据 `$schema` 参数拼接协议     |
-|        status       | int    |       302       |     响应状态码     |
-|        schema       | string |       http      |    当 `$toUrl` 不存在 `http://` 或 `https://` 时生效，仅可传递 `http` 或 `https`    |
+|  Arguments  |  Type  | Default Value |                                                      Comment                                                      |
+|:------:|:------:|:------:|:--------------------------------------------------------------------------------------------------------------:|
+| toUrl  | string |   null   | If the argument does not starts with `http://` or `https://`, the corresponding URL will be automatically spliced according to the Host of the current server, and the splicing protocol according to the `$schema` argument |
+| status |  int   |  302   |                                                   Status code of Response                                                   |
+| schema | string |  http  |                 Effective when `$toUrl` does not starts with `http://` or `https://`, only `http` or `https` are available                |
 
 ```php
 <?php
@@ -95,13 +97,13 @@ class IndexController
 {
     public function redirect(ResponseInterface $response): Psr7ResponseInterface
     {
-        // redirect() 方法返回的是一个 Psr\Http\Message\ResponseInterface 对象，需再 return 回去  
+        // redirect() method will return an Psr\Http\Message\ResponseInterface object, needs to return the object.
         return $response->redirect('/anotherUrl');
     }
 }
 ```
 
-## Cookie 设置
+## Cookie
 
 ```php
 <?php
@@ -109,7 +111,7 @@ namespace App\Controller;
 
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Psr\Http\Message\ResponseInterface as Psr7ResponseInterface;
-use Swoft\Http\Message\Cookie\Cookie;
+use Hyperf\HttpMessage\Cookie\Cookie;
 
 class IndexController
 {
@@ -121,8 +123,35 @@ class IndexController
 }
 ```
 
-## Gzip 压缩
+## Gzip Compression
 
-## 分块传输编码 Chunk
+## Chunk
 
-## 返回文件下载
+## File Download
+
+`Hyperf\HttpServer\Contract\ResponseInterface` provides `download(string $file, string $name = '')` method to return an `Psr7ResponseInterface` object which already setup the file download status.   
+If the request contains `if-match` or `if-none-match` header, Hyperf will also compare it with the `ETag` according to the protocol standard, and if they match, it will return a response with a `304` status code.
+
+`download`：   
+
+| Arguments |  Type  | Default Value |                                Comment                                 |
+|:----:|:------:|:------:|:-------------------------------------------------------------------:|
+| file | string |   null   | To return to the absolute path of the downloaded file, use the `BASE_PATH` constant to locate the root directory of the project |
+| name | string |   null   |         The file name of the client download file, if it is empty, the original name of the downloaded file will be used          |
+
+
+```php
+<?php
+namespace App\Controller;
+
+use Hyperf\HttpServer\Contract\ResponseInterface;
+use Psr\Http\Message\ResponseInterface as Psr7ResponseInterface;
+
+class IndexController
+{
+    public function index(ResponseInterface $response): Psr7ResponseInterface
+    {
+        return $response->download(BASE_PATH . '/public/file.csv', 'filename.csv');
+    }
+}
+```

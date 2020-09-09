@@ -29,6 +29,7 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
+        "hyperf/guzzle": "Required to use coroutine nsqd http api. (~2.0.0)"
     },
     "autoload": {
         "psr-4": {

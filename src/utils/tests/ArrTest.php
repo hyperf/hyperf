@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -58,5 +58,78 @@ class ArrTest extends TestCase
         $this->assertSame([2, 2, 3, 4], $data);
         Arr::set($data, 4, 2);
         $this->assertSame([2, 2, 3, 4, 2], $data);
+    }
+
+    public function testArrMerge()
+    {
+        $this->assertSame([1, 2, 3, 4], Arr::merge([1, 2, 3], [2, 3, 4]));
+        $this->assertSame([1, 2, 3, 2, 3, 4], Arr::merge([1, 2, 3], [2, 3, 4], false));
+        $this->assertSame([1, 2, [1, 2], 3, 4], Arr::merge([1, 2, [1, 2]], [[1, 2], 3, 4]));
+        $this->assertSame([1, 2, [1, 2], [1, 2], 3, 4], Arr::merge([1, 2, [1, 2]], [[1, 2], 3, 4], false));
+        $this->assertSame([1, 2, 3, '2', 4], Arr::merge([1, 2, 3], ['2', 3, 4]));
+
+        $this->assertSame(['id' => 1, 'name' => 'Hyperf'], Arr::merge(['id' => 1], ['name' => 'Hyperf']));
+        $this->assertSame(['id' => 1, 'name' => 'Hyperf', 'gender' => 1], Arr::merge(['id' => 1, 'name' => 'Swoole'], ['name' => 'Hyperf', 'gender' => 1]));
+        $this->assertSame(['id' => 1, 'ids' => [1, 2, 3], 'name' => 'Hyperf'], Arr::merge(['id' => 1, 'ids' => [1, 2]], ['name' => 'Hyperf', 'ids' => [1, 2, 3]]));
+        $this->assertSame(['id' => 1, 'ids' => [1, 2, 1, 2, 3], 'name' => 'Hyperf'], Arr::merge(['id' => 1, 'ids' => [1, 2]], ['name' => 'Hyperf', 'ids' => [1, 2, 3]], false));
+
+        $array1 = [
+            'logger' => [
+                'default' => [
+                    'handler' => [
+                        'class' => \Monolog\Handler\StreamHandler::class,
+                        'constructor' => [
+                            'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+                            'level' => \Monolog\Logger::DEBUG,
+                        ],
+                    ],
+                ],
+            ],
+            'scan' => [
+                'paths' => [
+                    BASE_PATH . '/app',
+                ],
+                'ignore_annotations' => [
+                    'mixin',
+                ],
+                'class_map' => [
+                    \Hyperf\Utils\Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
+                ],
+            ],
+        ];
+
+        $array2 = [
+            'logger' => [
+                'default' => [
+                    'handler' => [
+                        'class' => \Monolog\Handler\StreamHandler::class,
+                        'constructor' => [
+                            'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+                            'level' => \Monolog\Logger::INFO,
+                        ],
+                    ],
+                ],
+            ],
+            'scan' => [
+                'ignore_annotations' => [
+                    'mixin',
+                    'author',
+                ],
+                'class_map' => [
+                    \Hyperf\Utils\Coroutine::class => BASE_PATH . '/app/Kernel/ClassMap/Coroutine.php',
+                    \Hyperf\Di\Resolver\ResolverDispatcher::class => BASE_PATH . '/vendor/hyperf/di/class_map/Resolver/ResolverDispatcher.php',
+                ],
+            ],
+        ];
+
+        $result = Arr::merge($array1, $array2);
+        $array1['logger']['default']['handler']['constructor']['level'] = \Monolog\Logger::INFO;
+        $array1['scan']['class_map'][\Hyperf\Di\Resolver\ResolverDispatcher::class] = BASE_PATH . '/vendor/hyperf/di/class_map/Resolver/ResolverDispatcher.php';
+        $array1['scan']['ignore_annotations'][] = 'author';
+
+        $this->assertSame($array1, $result);
+
+        $result = Arr::merge($result, $array2);
+        $this->assertSame($array1, $result);
     }
 }

@@ -162,7 +162,6 @@ class FooCommand extends HyperfCommand
 
 執行 `php bin/hyperf.php foo:hello Hyperf` 我們就能看到輸出了 `Hello Hyperf` 了。
 
-
 ## 命令常用配置介紹
 
 以下代碼皆只修改 `configure` 和 `handle` 中的內容。
@@ -360,4 +359,143 @@ array(2) {
 
 ```
 
+## 通過 `$signature` 配置命令行
 
+命令行除了上述配置方法外，還支持使用 `$signature` 配置。
+
+> 需要 command 版本 >= 2.0.5
+
+`$signature` 為字符串，分為三部分，分別是 `command` `argument` 和 `option`，如下：
+
+```
+command:name {argument?* : The argument description.} {--option=* : The option description.}
+```
+
+- `?` 代表 `非必傳`。
+- `*` 代表 `數組`。
+- `?*` 代表 `非必傳的數組`。
+- `=` 代表 `非 Bool`。
+
+### 示例
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Command;
+
+use Hyperf\Command\Annotation\Command;
+use Hyperf\Command\Command as HyperfCommand;
+use Psr\Container\ContainerInterface;
+
+/**
+ * @Command
+ */
+class DebugCommand extends HyperfCommand
+{
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    protected $signature = 'test:test {id : user_id} {--name= : user_name}';
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+        parent::__construct();
+    }
+
+    public function configure()
+    {
+        parent::configure();
+        $this->setDescription('Hyperf Demo Command');
+    }
+
+    public function handle()
+    {
+        var_dump($this->input->getArguments());
+        var_dump($this->input->getOptions());
+    }
+}
+
+```
+
+# 運行命令
+
+## 命令行中運行
+
+```bash
+php bin/hyperf.php foo
+```
+
+## 在 Command 中運行其他命令
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Command;
+
+use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\Command\Annotation\Command;
+use Psr\Container\ContainerInterface;
+
+/**
+ * @Command
+ */
+class FooCommand extends HyperfCommand
+{
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+
+        parent::__construct('foo');
+    }
+
+    public function configure()
+    {
+        parent::configure();
+        $this->setDescription('foo command');
+    }
+
+    public function handle()
+    {
+        $this->call('bar', [
+            '--foo' => 'foo'
+        ]);
+    }
+}
+```
+
+## 在非 Command 中運行命令
+
+```php
+$command = 'foo';
+
+$params = ["command" => $command, "--foo" => "foo", "--bar" => "bar"];
+
+// 可以根據自己的需求, 選擇使用的 input/output
+$input = new ArrayInput($params);
+$output = new NullOutput();
+
+/** @var \Psr\Container\ContainerInterface $container */
+$container = \Hyperf\Utils\ApplicationContext::getContainer();
+
+/** @var \Symfony\Component\Console\Application $application */
+$application = $container->get(\Hyperf\Contract\ApplicationInterface::class);
+$application->setAutoExit(false);
+
+// 這種方式: 不會暴露出命令執行中的異常, 不會阻止程序返回
+$exitCode = $application->run($input, $output);
+
+// 第二種方式: 會暴露異常, 需要自己捕捉和處理運行中的異常, 否則會阻止程序的返回
+$exitCode = $application->find($command)->run($input, $output);
+```

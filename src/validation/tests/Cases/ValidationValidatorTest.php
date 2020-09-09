@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -1469,6 +1469,9 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator($trans, ['foo' => '123'], ['foo' => 'Digits:200']);
         $this->assertFalse($v->passes());
 
+        $v = new Validator($trans, ['foo' => 123], ['foo' => 'Digits:200']);
+        $this->assertFalse($v->passes());
+
         $v = new Validator($trans, ['foo' => '+2.37'], ['foo' => 'Digits:5']);
         $this->assertTrue($v->fails());
 
@@ -1480,6 +1483,9 @@ class ValidationValidatorTest extends TestCase
         $this->assertTrue($v->passes());
 
         $v = new Validator($trans, ['foo' => 'bar'], ['foo' => 'digits_between:1,10']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => 123], ['foo' => 'digits_between:4,5']);
         $this->assertFalse($v->passes());
 
         $v = new Validator($trans, ['foo' => '123'], ['foo' => 'digits_between:4,5']);

@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -32,6 +32,15 @@ trait CamelCase
             $array[$this->keyTransform($key)] = $value;
         }
         return $array;
+    }
+
+    public function getFillable()
+    {
+        $fillable = [];
+        foreach (parent::getFillable() as $key) {
+            $fillable[] = $this->keyTransform($key);
+        }
+        return $fillable;
     }
 
     public function toArray(): array
