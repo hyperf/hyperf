@@ -106,7 +106,7 @@ class RetryTest extends TestCase
         $this->assertEquals(10, $result);
 
         $container = Mockery::mock(ContainerInterface::class);
-        $container->shouldReceive('get')->with('test')->andReturn($obj);
+        $container->shouldReceive('get')->with('test')->once()->andReturn($obj);
         ApplicationContext::setContainer($container);
         $i = 0;
         $result = Retry::with(new FallbackRetryPolicy('test::fallback'))->max(2)->call(function () use (&$i) {
