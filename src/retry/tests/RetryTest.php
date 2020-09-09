@@ -83,5 +83,17 @@ class RetryTest extends TestCase
             return $i;
         });
         $this->assertEquals(10, $result);
+
+        $i = 0;
+        $obj = new class() {
+            public function fallback()
+            {
+                return 10;
+            }
+        };
+        $result = Retry::max(2)->fallback([$obj, 'fallback'])->call(function () use (&$i) {
+            return $i;
+        });
+        $this->assertEquals(10, $result);
     }
 }
