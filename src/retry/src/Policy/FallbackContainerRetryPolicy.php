@@ -35,7 +35,7 @@ class FallbackContainerRetryPolicy extends BaseRetryPolicy implements RetryPolic
 
     public function end(RetryContext &$retryContext): bool
     {
-        if (!isset($retryContext['retryExhausted']) ||
+        if (! isset($retryContext['retryExhausted']) ||
             empty($this->fallbackClass) || empty($this->fallbackMethod)) {
             return false;
         }
