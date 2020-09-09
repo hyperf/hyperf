@@ -11,9 +11,13 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Retry;
 
+use Hyperf\Retry\Policy\FallbackRetryPolicy;
 use Hyperf\Retry\Policy\MaxAttemptsRetryPolicy;
 use Hyperf\Retry\Retry;
+use Hyperf\Utils\ApplicationContext;
+use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 /**
  * @internal
@@ -21,6 +25,11 @@ use PHPUnit\Framework\TestCase;
  */
 class RetryTest extends TestCase
 {
+    protected function tearDown()
+    {
+        Mockery::close();
+    }
+
     public function testWith()
     {
         $i = 0;
@@ -92,6 +101,15 @@ class RetryTest extends TestCase
             }
         };
         $result = Retry::max(2)->fallback([$obj, 'fallback'])->call(function () use (&$i) {
+            return $i;
+        });
+        $this->assertEquals(10, $result);
+
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->with('test')->andReturn($obj);
+        ApplicationContext::setContainer($container);
+        $i = 0;
+        $result = Retry::with(new FallbackRetryPolicy('test::fallback'))->max(2)->call(function () use (&$i) {
             return $i;
         });
         $this->assertEquals(10, $result);
