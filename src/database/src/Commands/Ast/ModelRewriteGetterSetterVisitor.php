@@ -98,7 +98,7 @@ class ModelRewriteGetterSetterVisitor extends AbstractVisitor
     {
         $node = new Node\Stmt\ClassMethod($method, [
             'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC,
-            'params' => [new Node\Param(new Node\Expr\Variable($name))]
+            'params' => [new Node\Param(new Node\Expr\Variable($name))],
         ]);
         $node->stmts[] = new Node\Stmt\Expression(
             new Node\Expr\Assign(
