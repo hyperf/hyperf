@@ -33,8 +33,8 @@ class FallbackRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterfac
         }
 
         $fallback = $this->fallback;
-        if (is_string($fallback) && strpos($fallback, '::') > 0) {
-            [$class, $method] = explode('::', $fallback);
+        if (is_string($fallback) && strpos($fallback, '@') > 0) {
+            [$class, $method] = explode('@', $fallback);
             $fallback = [$this->getContainer()->get($class), $method];
         }
 

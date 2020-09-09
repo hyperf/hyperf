@@ -15,6 +15,7 @@ use Hyperf\Retry\Policy\FallbackRetryPolicy;
 use Hyperf\Retry\Policy\MaxAttemptsRetryPolicy;
 use Hyperf\Retry\Retry;
 use Hyperf\Utils\ApplicationContext;
+use HyperfTest\Retry\Stub\Foo;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -106,12 +107,16 @@ class RetryTest extends TestCase
         $this->assertEquals(10, $result);
 
         $container = Mockery::mock(ContainerInterface::class);
-        $container->shouldReceive('get')->with('test')->once()->andReturn($obj);
+        $container->shouldReceive('get')->with(Foo::class)->once()->andReturn(new Foo());
         ApplicationContext::setContainer($container);
         $i = 0;
-        $result = Retry::with(new FallbackRetryPolicy('test::fallback'))->max(2)->call(function () use (&$i) {
+        $result = Retry::with(new FallbackRetryPolicy(Foo::class . '@fallback'))->max(2)->call(function () use (&$i) {
             return $i;
         });
         $this->assertEquals(10, $result);
+
+        $this->assertTrue(is_callable('Hyperf\\Utils\\Arr::accessible'));
+        $this->assertTrue(is_callable(Foo::class . '::fallback'));
+        $this->assertTrue(is_callable(Foo::class . '::staticCall'));
     }
 }
