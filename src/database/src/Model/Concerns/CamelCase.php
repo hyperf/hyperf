@@ -34,6 +34,15 @@ trait CamelCase
         return $array;
     }
 
+    public function getFillable()
+    {
+        $fillable = [];
+        foreach (parent::getFillable() as $key) {
+            $fillable[] = $this->keyTransform($key);
+        }
+        return $fillable;
+    }
+
     public function toArray(): array
     {
         $array = [];
@@ -46,15 +55,6 @@ trait CamelCase
     public function toOriginalArray(): array
     {
         return parent::toArray();
-    }
-
-    public function getFillable()
-    {
-        $fillable = [];
-        foreach (parent::getFillable() as $key) {
-            $fillable[] = $this->keyTransform($key);
-        }
-        return $fillable;
     }
 
     protected function keyTransform($key)
