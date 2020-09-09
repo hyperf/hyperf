@@ -95,13 +95,7 @@ class RetryTest extends TestCase
         $this->assertEquals(10, $result);
 
         $i = 0;
-        $obj = new class() {
-            public function fallback()
-            {
-                return 10;
-            }
-        };
-        $result = Retry::max(2)->fallback([$obj, 'fallback'])->call(function () use (&$i) {
+        $result = Retry::max(2)->fallback([new Foo(), 'fallback'])->call(function () use (&$i) {
             return $i;
         });
         $this->assertEquals(10, $result);
@@ -111,6 +105,12 @@ class RetryTest extends TestCase
         ApplicationContext::setContainer($container);
         $i = 0;
         $result = Retry::with(new FallbackRetryPolicy(Foo::class . '@fallback'))->max(2)->call(function () use (&$i) {
+            return $i;
+        });
+        $this->assertEquals(10, $result);
+
+        $i = 0;
+        $result = Retry::with(new FallbackRetryPolicy(Foo::class . '::staticCall'))->max(2)->call(function () use (&$i) {
             return $i;
         });
         $this->assertEquals(10, $result);
