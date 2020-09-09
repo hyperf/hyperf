@@ -11,9 +11,14 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Retry;
 
+use Hyperf\Retry\Policy\FallbackRetryPolicy;
 use Hyperf\Retry\Policy\MaxAttemptsRetryPolicy;
 use Hyperf\Retry\Retry;
+use Hyperf\Utils\ApplicationContext;
+use HyperfTest\Retry\Stub\Foo;
+use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 /**
  * @internal
@@ -21,6 +26,11 @@ use PHPUnit\Framework\TestCase;
  */
 class RetryTest extends TestCase
 {
+    protected function tearDown()
+    {
+        Mockery::close();
+    }
+
     public function testWith()
     {
         $i = 0;
@@ -83,5 +93,30 @@ class RetryTest extends TestCase
             return $i;
         });
         $this->assertEquals(10, $result);
+
+        $i = 0;
+        $result = Retry::max(2)->fallback([new Foo(), 'fallback'])->call(function () use (&$i) {
+            return $i;
+        });
+        $this->assertEquals(10, $result);
+
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->with(Foo::class)->once()->andReturn(new Foo());
+        ApplicationContext::setContainer($container);
+        $i = 0;
+        $result = Retry::with(new FallbackRetryPolicy(Foo::class . '@fallback'))->max(2)->call(function () use (&$i) {
+            return $i;
+        });
+        $this->assertEquals(10, $result);
+
+        $i = 0;
+        $result = Retry::with(new FallbackRetryPolicy(Foo::class . '::staticCall'))->max(2)->call(function () use (&$i) {
+            return $i;
+        });
+        $this->assertEquals(10, $result);
+
+        $this->assertTrue(is_callable('Hyperf\\Utils\\Arr::accessible'));
+        $this->assertTrue(is_callable(Foo::class . '::fallback'));
+        $this->assertTrue(is_callable(Foo::class . '::staticCall'));
     }
 }

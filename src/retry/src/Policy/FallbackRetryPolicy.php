@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Retry\Policy;
 
 use Hyperf\Retry\RetryContext;
+use Hyperf\Utils\ApplicationContext;
 
 class FallbackRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
@@ -30,7 +31,14 @@ class FallbackRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterfac
         if (! isset($retryContext['retryExhausted'])) {
             return false;
         }
-        if (! is_callable($this->fallback)) {
+
+        $fallback = $this->fallback;
+        if (is_string($fallback) && strpos($fallback, '@') > 0) {
+            [$class, $method] = explode('@', $fallback);
+            $fallback = [$this->getContainer()->get($class), $method];
+        }
+
+        if (! is_callable($fallback)) {
             return false;
         }
         $retryContext['lastThrowable'] = $retryContext['lastResult'] = null;
@@ -41,10 +49,15 @@ class FallbackRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterfac
         }
 
         try {
-            $retryContext['lastResult'] = call_user_func($this->fallback, ...$arguments);
+            $retryContext['lastResult'] = call_user_func($fallback, ...$arguments);
         } catch (\Throwable $throwable) {
             $retryContext['lastThrowable'] = $throwable;
         }
         return false;
+    }
+
+    protected function getContainer()
+    {
+        return ApplicationContext::getContainer();
     }
 }
