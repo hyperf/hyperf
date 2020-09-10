@@ -4,7 +4,8 @@
 
 - [#2455](https://github.com/hyperf/hyperf/pull/2455) Added method `Socket::getRequest` to retrieve psr7 request from socket for socketio-server.
 - [#2459](https://github.com/hyperf/hyperf/pull/2459) Added `ReloadChannelListener` to reload timeout or failed channels automatically for async-queue.
-- [#2643](https://github.com/hyperf/hyperf/pull/2463) Added optional visitor `ModelRewriteGetterSetterVisitor` for `gen:model`.
+- [#2463](https://github.com/hyperf/hyperf/pull/2463) Added optional visitor `ModelRewriteGetterSetterVisitor` for `gen:model`.
+- [#2475](https://github.com/hyperf/hyperf/pull/2475) Added `throwbale` to the end of arguments of fallback for `retry` component.
 
 ## Fixed
 

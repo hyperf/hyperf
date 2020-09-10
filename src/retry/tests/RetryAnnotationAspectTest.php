@@ -29,6 +29,7 @@ use Hyperf\Retry\NoOpRetryBudget;
 use Hyperf\Retry\Policy\TimeoutRetryPolicy;
 use Hyperf\Retry\RetryBudgetInterface;
 use Hyperf\Utils\ApplicationContext;
+use HyperfTest\Retry\Stub\Foo;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\Channel;
@@ -295,6 +296,34 @@ class RetryAnnotationAspectTest extends TestCase
         $point->shouldReceive('getArguments')->andReturns([]);
         $this->expectException('RuntimeException');
         $aspect->process($point);
+    }
+
+    public function testFallbackForCircuitBreaker()
+    {
+        $aspect = new RetryAnnotationAspect();
+        $point = Mockery::mock(ProceedingJoinPoint::class);
+
+        $point->shouldReceive('getAnnotationMetadata')->andReturns(
+            new class() extends AnnotationMetadata {
+                public $method;
+
+                public function __construct()
+                {
+                    $state = new \Hyperf\Retry\CircuitBreakerState(10);
+                    $retry = new CircuitBreaker(['circuitBreakerState' => $state]);
+                    $retry->sleepStrategyClass = FlatStrategy::class;
+                    $retry->fallback = Foo::class . '@fallbackWithThrowable';
+                    $retry->maxAttempts = 2;
+                    $this->method = [
+                        AbstractRetry::class => $retry,
+                    ];
+                }
+            }
+        );
+        $point->shouldReceive('process')->times(2)->andThrow(new \RuntimeException('ok'));
+        $point->shouldReceive('getArguments')->andReturns([$string = uniqid()]);
+        $result = $aspect->process($point);
+        $this->assertSame($string . ':ok', $result);
     }
 
     public function testTimeout()
