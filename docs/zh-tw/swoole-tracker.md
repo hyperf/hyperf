@@ -54,11 +54,14 @@ php /opt/www/bin/hyperf.php start
 ```bash
 [swoole_tracker]
 extension=/opt/.build/swoole_tracker.so
-apm.enable=1           #開啟總開關
-apm.sampling_rate=100  #取樣率 例如：100%
 
-# 開啟記憶體洩漏檢測時需要新增
-apm.enable_memcheck=1  #開啟記憶體洩漏檢測 預設0 關閉狀態
+;開啟總開關
+apm.enable=1
+;取樣率 例如：100%
+apm.sampling_rate=100
+
+;開啟記憶體洩漏檢測時新增 默认0 关闭状态
+apm.enable_memcheck=1
 ```
 
 然後將下面的 `Dockerfile` 複製到專案根目錄中。
