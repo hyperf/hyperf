@@ -115,8 +115,18 @@ class RetryTest extends TestCase
         });
         $this->assertEquals(10, $result);
 
-        $this->assertTrue(is_callable('Hyperf\\Utils\\Arr::accessible'));
         $this->assertTrue(is_callable(Foo::class . '::fallback'));
         $this->assertTrue(is_callable(Foo::class . '::staticCall'));
+    }
+
+    public function testThrowableInFallback()
+    {
+        $instance = Mockery::mock(Foo::class);
+        $instance->shouldReceive('test')->twice()->andThrowExceptions([new \RuntimeException()]);
+        Retry::whenThrows()->max(2)->fallback(function ($throwable) {
+            $this->assertInstanceOf(\RuntimeException::class, $throwable);
+        })->call(function () use ($instance) {
+            return $instance->test();
+        });
     }
 }

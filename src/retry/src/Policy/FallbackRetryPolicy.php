@@ -41,12 +41,15 @@ class FallbackRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterfac
         if (! is_callable($fallback)) {
             return false;
         }
+        $throwable = $retryContext['lastThrowable'] ?? null;
         $retryContext['lastThrowable'] = $retryContext['lastResult'] = null;
         if (isset($retryContext['proceedingJoinPoint'])) {
             $arguments = $retryContext['proceedingJoinPoint']->getArguments();
         } else {
             $arguments = [];
         }
+
+        $arguments[] = $throwable;
 
         try {
             $retryContext['lastResult'] = call_user_func($fallback, ...$arguments);
