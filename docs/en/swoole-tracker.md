@@ -29,7 +29,7 @@ php /opt/www/bin/hyperf.php start
 
 2. `swoole_tracker.ini`
 
-```bash
+```ini
 [swoole_tracker]
 extension=/opt/.build/swoole_tracker.so
 
