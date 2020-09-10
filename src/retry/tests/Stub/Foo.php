@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Retry\Stub;
 
+use Throwable;
+
 class Foo
 {
     public function fallback()
@@ -21,5 +23,10 @@ class Foo
     public static function staticCall()
     {
         return 10;
+    }
+
+    public function fallbackWithThrowable(string $string, ?Throwable $throwable = null)
+    {
+        return $string . ':' . $throwable->getMessage();
     }
 }
