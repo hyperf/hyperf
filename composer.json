@@ -295,7 +295,8 @@
             "HyperfTest\\Validation\\": "src/validation/tests/",
             "HyperfTest\\View\\": "src/view/tests/",
             "HyperfTest\\Watcher\\": "src/watcher/tests/",
-            "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/"
+            "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/",
+            "HyperfTest\\WebSocketServer\\": "src/websocket-server/tests/"
         }
     },
     "config": {
