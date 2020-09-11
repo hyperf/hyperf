@@ -1,3 +1,5 @@
+# Socket.io 服务
+
 Socket.io 是一款非常流行的应用层实时通讯协议和框架，可以轻松实现应答、分组、广播。hyperf/socketio-server 支持了 Socket.io 的 WebSocket 传输协议。
 
 ## 安装
