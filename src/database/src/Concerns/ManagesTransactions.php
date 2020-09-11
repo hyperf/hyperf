@@ -59,6 +59,8 @@ trait ManagesTransactions
      */
     public function beginTransaction(): void
     {
+        $this->reconnectIfMissingConnection();
+
         $this->createTransaction();
 
         ++$this->transactions;
