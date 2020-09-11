@@ -13,6 +13,7 @@ namespace Hyperf\ViewEngine\Concern;
 
 use Closure;
 use Hyperf\Utils\Arr;
+use Hyperf\ViewEngine\Contract\Htmlable;
 use Hyperf\ViewEngine\HtmlString;
 use Hyperf\ViewEngine\View;
 use InvalidArgumentException;
@@ -50,7 +51,7 @@ trait ManagesComponents
     /**
      * Start a component rendering process.
      *
-     * @param Closure|string|View $view
+     * @param Closure|Htmlable|string|View $view
      */
     public function startComponent($view, array $data = [])
     {
@@ -93,6 +94,11 @@ trait ManagesComponents
         if ($view instanceof View) {
             return $view->with($data)->render();
         }
+
+        if ($view instanceof Htmlable) {
+            return $view->toHtml();
+        }
+
         return $this->make($view, $data)->render();
     }
 
@@ -137,10 +143,17 @@ trait ManagesComponents
      */
     protected function componentData()
     {
+        $defaultSlot = new HtmlString(trim(ob_get_clean()));
+
+        $slots = array_merge([
+            '__default' => $defaultSlot,
+        ], $this->slots[count($this->componentStack)]);
+
         return array_merge(
             $this->componentData[count($this->componentStack)],
-            ['slot' => new HtmlString(trim(ob_get_clean()))],
-            $this->slots[count($this->componentStack)]
+            ['slot' => $defaultSlot],
+            $this->slots[count($this->componentStack)],
+            ['__laravel_slots' => $slots]
         );
     }
 

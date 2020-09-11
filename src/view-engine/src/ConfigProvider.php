@@ -13,6 +13,7 @@ namespace Hyperf\ViewEngine;
 
 use Hyperf\ViewEngine\Command\ViewPublishCommand;
 use Hyperf\ViewEngine\Compiler\CompilerInterface;
+use Hyperf\ViewEngine\Component\DynamicComponent;
 use Hyperf\ViewEngine\Contract\EngineResolverInterface;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 use Hyperf\ViewEngine\Contract\FinderInterface;
@@ -49,6 +50,11 @@ class ConfigProvider
                     'description' => 'The config for view.',
                     'source' => __DIR__ . '/../publish/view.php',
                     'destination' => BASE_PATH . '/config/autoload/view.php',
+                ],
+            ],
+            'view' => [
+                'components' => [
+                    'dynamic-component' => DynamicComponent::class,
                 ],
             ],
         ];

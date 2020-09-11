@@ -11,11 +11,27 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine\Engine;
 
+use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\ViewEngine\Contract\EngineInterface;
 use Throwable;
 
 class PhpEngine implements EngineInterface
 {
+    /**
+     * The filesystem instance.
+     *
+     * @var Filesystem
+     */
+    protected $files;
+
+    /**
+     * Create a new file engine instance.
+     */
+    public function __construct(Filesystem $files)
+    {
+        $this->files = $files;
+    }
+
     /**
      * Get the evaluated contents of the view.
      *

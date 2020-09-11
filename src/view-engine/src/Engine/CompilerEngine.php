@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine\Engine;
 
 use ErrorException;
+use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\ViewEngine\Compiler\CompilerInterface;
 use Throwable;
 
@@ -32,10 +33,12 @@ class CompilerEngine extends PhpEngine
     protected $lastCompiled = [];
 
     /**
-     * Create a new Blade view engine instance.
+     * Create a new compiler engine instance.
      */
-    public function __construct(CompilerInterface $compiler)
+    public function __construct(CompilerInterface $compiler, Filesystem $files = null)
     {
+        parent::__construct($files ?: new Filesystem());
+
         $this->compiler = $compiler;
     }
 

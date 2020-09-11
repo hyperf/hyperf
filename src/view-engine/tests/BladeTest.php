@@ -21,6 +21,7 @@ use Hyperf\Utils\ApplicationContext;
 use Hyperf\View\Mode;
 use Hyperf\ViewEngine\Compiler\BladeCompiler;
 use Hyperf\ViewEngine\Compiler\CompilerInterface;
+use Hyperf\ViewEngine\Component\DynamicComponent;
 use Hyperf\ViewEngine\ConfigProvider;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 use Hyperf\ViewEngine\Contract\ViewInterface;
@@ -62,6 +63,7 @@ class BladeTest extends TestCase
                 'components' => [
                     'alert' => Alert::class,
                     'alert-slot' => AlertSlot::class,
+                    'dynamic-component' => DynamicComponent::class,
                 ],
                 'namespaces' => [
                     'admin_config' => __DIR__ . '/admin',
@@ -142,5 +144,17 @@ class BladeTest extends TestCase
 
         $this->assertSame('success', trim((string) view('simple_8', ['message' => 'success'])));
         $this->assertSame('success', trim((string) view('simple_9', ['message' => 'success'])));
+    }
+
+    public function testDynamicComponent()
+    {
+        /** @var BladeCompiler $compiler */
+        $compiler = ApplicationContext::getContainer()
+            ->get(CompilerInterface::class);
+
+        $compiler->component(Alert::class, 'alert');
+        $compiler->component(AlertSlot::class, 'alert-slot');
+
+        $this->assertSame('ok', trim((string) view('simple_11', ['componentName' => 'alert', 'message' => 'ok'])));
     }
 }
