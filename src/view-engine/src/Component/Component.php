@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine\Component;
 
 use Closure;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Str;
 use Hyperf\ViewEngine\Blade;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
+use Hyperf\ViewEngine\Contract\Htmlable;
 use Hyperf\ViewEngine\View;
 use ReflectionClass;
 use ReflectionMethod;
@@ -61,14 +61,14 @@ abstract class Component
     /**
      * Get the view / view contents that represent the component.
      *
-     * @return Closure|string|View
+     * @return Closure|Htmlable|string|View
      */
     abstract public function render();
 
     /**
      * Resolve the Blade view or view file that should be used when rendering the component.
      *
-     * @return Closure|string|View
+     * @return Closure|Htmlable|string|View
      */
     public function resolveView()
     {
@@ -78,12 +78,16 @@ abstract class Component
             return $view;
         }
 
+        if ($view instanceof Htmlable) {
+            return $view;
+        }
+
         $resolver = function ($view) {
-            $factory = ApplicationContext::getContainer()->get(FactoryInterface::class);
+            $factory = Blade::container()->get(FactoryInterface::class);
 
             return $factory->exists($view)
                 ? $view
-                : $this->createBladeViewFromString($factory, $view);
+                : $this->createBladeViewFromString($view);
         };
 
         return $view instanceof Closure
@@ -145,22 +149,12 @@ abstract class Component
     /**
      * Create a Blade view with the raw component string content.
      *
-     * @param FactoryInterface $factory
      * @param string $contents
      * @return string
      */
-    protected function createBladeViewFromString($factory, $contents)
+    protected function createBladeViewFromString($contents)
     {
-        $factory->addNamespace(
-            '__components',
-            $directory = Blade::config('config.cache_path')
-        );
-
-        if (! file_exists($viewFile = $directory . '/' . sha1($contents) . '.blade.php')) {
-            if (! is_dir($directory)) {
-                mkdir($directory, 0755, true);
-            }
-
+        if (! is_file($viewFile = Blade::config('config.cache_path') . '/' . sha1($contents) . '.blade.php')) {
             file_put_contents($viewFile, $contents);
         }
 
@@ -180,6 +174,9 @@ abstract class Component
             $reflection = new ReflectionClass($this);
 
             static::$propertyCache[$class] = collect($reflection->getProperties(ReflectionProperty::IS_PUBLIC))
+                ->reject(function (ReflectionProperty $property) {
+                    return $property->isStatic();
+                })
                 ->reject(function (ReflectionProperty $property) {
                     return $this->shouldIgnore($property->getName());
                 })

@@ -131,6 +131,13 @@ class BladeCompiler extends Compiler implements CompilerInterface
     protected $classComponentAliases = [];
 
     /**
+     * The array of class component namespaces to autoload from.
+     *
+     * @var array
+     */
+    protected $classComponentNamespaces = [];
+
+    /**
      * Indicates if component tags should be compiled.
      *
      * @var bool
@@ -268,20 +275,20 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
         $this->directive($name, function ($expression) use ($name) {
             return $expression !== ''
-                    ? "<?php if (\\Fangx\\View\\Blade::check('{$name}', {$expression})): ?>"
-                    : "<?php if (\\Fangx\\View\\Blade::check('{$name}')): ?>";
+                    ? "<?php if (\\Hyperf\\ViewEngine\\Blade::check('{$name}', {$expression})): ?>"
+                    : "<?php if (\\Hyperf\\ViewEngine\\Blade::check('{$name}')): ?>";
         });
 
         $this->directive('unless' . $name, function ($expression) use ($name) {
             return $expression !== ''
-                ? "<?php if (! \\Fangx\\View\\Blade::check('{$name}', {$expression})): ?>"
-                : "<?php if (! \\Fangx\\View\\Blade::check('{$name}')): ?>";
+                ? "<?php if (! \\Hyperf\\ViewEngine\\Blade::check('{$name}', {$expression})): ?>"
+                : "<?php if (! \\Hyperf\\ViewEngine\\Blade::check('{$name}')): ?>";
         });
 
         $this->directive('else' . $name, function ($expression) use ($name) {
             return $expression !== ''
-                ? "<?php elseif (\\Fangx\\View\\Blade::check('{$name}', {$expression})): ?>"
-                : "<?php elseif (\\Fangx\\View\\Blade::check('{$name}')): ?>";
+                ? "<?php elseif (\\Hyperf\\ViewEngine\\Blade::check('{$name}', {$expression})): ?>"
+                : "<?php elseif (\\Hyperf\\ViewEngine\\Blade::check('{$name}')): ?>";
         });
 
         $this->directive('end' . $name, function () {
@@ -353,6 +360,27 @@ class BladeCompiler extends Compiler implements CompilerInterface
     public function getClassComponentAliases()
     {
         return $this->classComponentAliases;
+    }
+
+    /**
+     * Register a class-based component namespace.
+     *
+     * @param string $namespace
+     * @param string $prefix
+     */
+    public function componentNamespace($namespace, $prefix)
+    {
+        $this->classComponentNamespaces[$prefix] = $namespace;
+    }
+
+    /**
+     * Get the registered class component namespaces.
+     *
+     * @return array
+     */
+    public function getClassComponentNamespaces()
+    {
+        return $this->classComponentNamespaces;
     }
 
     /**
@@ -576,6 +604,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
         return (new ComponentTagCompiler(
             $this->classComponentAliases,
+            $this->classComponentNamespaces,
             $this
         ))->compile($value);
     }

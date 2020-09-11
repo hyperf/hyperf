@@ -151,6 +151,13 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
         return $this;
     }
 
+    public function reject($callback)
+    {
+        $this->setAttributes(collect($this->attributes)->reject($callback)->all());
+
+        return $this;
+    }
+
     /**
      * Return a bag of attributes that have keys starting with the given value / pattern.
      *
@@ -160,6 +167,19 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
     public function whereStartsWith($string)
     {
         return $this->filter(function ($value, $key) use ($string) {
+            return Str::startsWith($key, $string);
+        });
+    }
+
+    /**
+     * Return a bag of attributes with keys that do not start with the given value / pattern.
+     *
+     * @param string $string
+     * @return static
+     */
+    public function whereDoesntStartWith($string)
+    {
+        return $this->reject(function ($value, $key) use ($string) {
             return Str::startsWith($key, $string);
         });
     }
@@ -205,7 +225,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
         $attributes = [];
 
         $attributeDefaults = array_map(function ($value) {
-            if (is_null($value) || is_bool($value)) {
+            if (is_object($value) || is_null($value) || is_bool($value)) {
                 return $value;
             }
 
@@ -229,10 +249,29 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
     }
 
     /**
+     * Get all of the raw attributes.
+     *
+     * @return array
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
      * Set the underlying attributes.
      */
     public function setAttributes(array $attributes)
     {
+        if (isset($attributes['attributes']) &&
+            $attributes['attributes'] instanceof self) {
+            $parentBag = $attributes['attributes'];
+
+            unset($attributes['attributes']);
+
+            $attributes = $parentBag->merge($attributes);
+        }
+
         $this->attributes = $attributes;
     }
 

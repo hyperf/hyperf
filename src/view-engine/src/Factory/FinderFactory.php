@@ -28,7 +28,10 @@ class FinderFactory
         );
 
         static::addNamespaces((array) Blade::config('namespaces', []), $finder);
-
+        static::addNamespace('__components', $directory = Blade::config('config.cache_path'), $finder);
+        if (! is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
         return $finder;
     }
 

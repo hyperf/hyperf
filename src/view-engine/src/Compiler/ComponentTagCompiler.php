@@ -16,6 +16,7 @@ use Hyperf\Utils\Str;
 use Hyperf\ViewEngine\Blade;
 use Hyperf\ViewEngine\Component\AnonymousComponent;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
+use Hyperf\ViewEngine\Contract\FinderInterface;
 use InvalidArgumentException;
 use ReflectionClass;
 
@@ -36,6 +37,13 @@ class ComponentTagCompiler
     protected $aliases = [];
 
     /**
+     * The component class namespaces.
+     *
+     * @var array
+     */
+    protected $namespaces = [];
+
+    /**
      * The "bind:" attributes that have been compiled for the current component.
      *
      * @var array
@@ -47,9 +55,10 @@ class ComponentTagCompiler
      *
      * @param ?BladeCompiler $blade
      */
-    public function __construct(array $aliases = [], ?BladeCompiler $blade = null)
+    public function __construct(array $aliases = [], array $namespaces = [], ?BladeCompiler $blade = null)
     {
         $this->aliases = $aliases;
+        $this->namespaces = $namespaces;
 
         $this->blade = $blade ?: new BladeCompiler(new Filesystem(), sys_get_temp_dir());
     }
@@ -80,19 +89,135 @@ class ComponentTagCompiler
     }
 
     /**
+     * Get the component class for a given component alias.
+     *
+     * @throws InvalidArgumentException
+     * @return string
+     */
+    public function componentClass(string $component)
+    {
+        $viewFactory = Blade::container()->get(FactoryInterface::class);
+
+        if (isset($this->aliases[$component])) {
+            if (class_exists($alias = $this->aliases[$component])) {
+                return $alias;
+            }
+
+            if ($viewFactory->exists($alias)) {
+                return $alias;
+            }
+
+            throw new InvalidArgumentException(
+                "Unable to locate class or view [{$alias}] for component [{$component}]."
+            );
+        }
+
+        if ($class = $this->findClassByComponent($component)) {
+            return $class;
+        }
+
+        if (class_exists($class = $this->guessClassName($component))) {
+            return $class;
+        }
+
+        if ($viewFactory->exists($view = $this->guessViewName($component))) {
+            return $view;
+        }
+
+        throw new InvalidArgumentException(
+            "Unable to locate a class or view for component [{$component}]."
+        );
+    }
+
+    /**
+     * Find the class for the given component using the registered namespaces.
+     *
+     * @return null|string|void
+     */
+    public function findClassByComponent(string $component)
+    {
+        $segments = explode('::', $component);
+
+        $prefix = $segments[0];
+
+        if (! isset($this->namespaces[$prefix]) || ! isset($segments[1])) {
+            return;
+        }
+
+        if (class_exists($class = $this->namespaces[$prefix] . '\\' . $this->formatClassName($segments[1]))) {
+            return $class;
+        }
+    }
+
+    /**
      * Guess the class name for the given component.
      *
      * @return string
      */
     public function guessClassName(string $component)
     {
-        $namespace = 'Fangx\\';
+        $class = $this->formatClassName($component);
 
+        return 'App\\View\\Components\\' . $class;
+    }
+
+    /**
+     * Format the class name for the given component.
+     *
+     * @return string
+     */
+    public function formatClassName(string $component)
+    {
         $componentPieces = array_map(function ($componentPiece) {
             return ucfirst(Str::camel($componentPiece));
         }, explode('.', $component));
 
-        return $namespace . 'View\\Components\\' . implode('\\', $componentPieces);
+        return implode('\\', $componentPieces);
+    }
+
+    /**
+     * Guess the view name for the given component.
+     *
+     * @param string $name
+     * @return string
+     */
+    public function guessViewName($name)
+    {
+        $prefix = 'components.';
+
+        $delimiter = FinderInterface::HINT_PATH_DELIMITER;
+
+        if (Str::contains($name, $delimiter)) {
+            return Str::replaceFirst($delimiter, $delimiter . $prefix, $name);
+        }
+
+        return $prefix . $name;
+    }
+
+    /**
+     * Partition the data and extra attributes from the given array of attributes.
+     *
+     * @param string $class
+     * @return array
+     */
+    public function partitionDataAndAttributes($class, array $attributes)
+    {
+        // If the class doesn't exists, we'll assume it's a class-less component and
+        // return all of the attributes as both data and attributes since we have
+        // now way to partition them. The user can exclude attributes manually.
+        if (! class_exists($class)) {
+            return [collect($attributes), collect($attributes)];
+        }
+
+        $constructor = (new ReflectionClass($class))->getConstructor();
+
+        $parameterNames = $constructor
+            ? collect($constructor->getParameters())->map->getName()->all()
+            : [];
+
+        return collect($attributes)->partition(function ($value, $key) use ($parameterNames) {
+            return in_array(Str::camel($key), $parameterNames);
+        })->all();
     }
 
     /**
@@ -142,18 +267,26 @@ class ComponentTagCompiler
                 (?<attributes>
                     (?:
                         \\s+
-                        [\\w\\-:.@]+
-                        (
-                            =
+                        (?:
                             (?:
-                                \\\"[^\\\"]*\\\"
-                                |
-                                \\'[^\\']*\\'
-                                |
-                                [^\\'\\\"=<>]+
+                                \\{\\{\\s*\\\$attributes(?:[^}]+?)?\\s*\\}\\}
+                            )
+                            |
+                            (?:
+                                [\\w\\-:.@]+
+                                (
+                                    =
+                                    (?:
+                                        \\\"[^\\\"]*\\\"
+                                        |
+                                        \\'[^\\']*\\'
+                                        |
+                                        [^\\'\\\"=<>]+
+                                    )
+                                )?
                             )
                         )
-                    ?)*
+                    )*
                     \\s*
                 )
                 (?<![\\/=\\-])
@@ -185,17 +318,25 @@ class ComponentTagCompiler
                 (?<attributes>
                     (?:
                         \\s+
-                        [\\w\\-:.@]+
-                        (
-                            =
+                        (?:
                             (?:
-                                \\\"[^\\\"]*\\\"
-                                |
-                                \\'[^\\']*\\'
-                                |
-                                [^\\'\\\"=<>]+
+                                \\{\\{\\s*\\\$attributes(?:[^}]+?)?\\s*\\}\\}
                             )
-                        )?
+                            |
+                            (?:
+                                [\\w\\-:.@]+
+                                (
+                                    =
+                                    (?:
+                                        \\\"[^\\\"]*\\\"
+                                        |
+                                        \\'[^\\']*\\'
+                                        |
+                                        [^\\'\\\"=<>]+
+                                    )
+                                )?
+                            )
+                        )
                     )*
                     \\s*
                 )
@@ -246,69 +387,6 @@ class ComponentTagCompiler
     }
 
     /**
-     * Get the component class for a given component alias.
-     *
-     * @throws InvalidArgumentException
-     * @return string
-     */
-    protected function componentClass(string $component)
-    {
-        $viewFactory = Blade::container()->make(FactoryInterface::class);
-
-        if (isset($this->aliases[$component])) {
-            if (class_exists($alias = $this->aliases[$component])) {
-                return $alias;
-            }
-
-            if ($viewFactory->exists($alias)) {
-                return $alias;
-            }
-
-            throw new InvalidArgumentException(
-                "Unable to locate class or view [{$alias}] for component [{$component}]."
-            );
-        }
-
-        if (class_exists($class = $this->guessClassName($component))) {
-            return $class;
-        }
-
-        if ($viewFactory->exists($view = "components.{$component}")) {
-            return $view;
-        }
-
-        throw new InvalidArgumentException(
-            "Unable to locate a class or view for component [{$component}]."
-        );
-    }
-
-    /**
-     * Partition the data and extra attributes from the given array of attributes.
-     *
-     * @param string $class
-     * @return array
-     */
-    protected function partitionDataAndAttributes($class, array $attributes)
-    {
-        // If the class doesn't exists, we'll assume it's a class-less component and
-        // return all of the attributes as both data and attributes since we have
-        // now way to partition them. The user can exclude attributes manually.
-        if (! class_exists($class)) {
-            return [collect($attributes), collect($attributes)];
-        }
-
-        $constructor = (new ReflectionClass($class))->getConstructor();
-
-        $parameterNames = $constructor
-            ? collect($constructor->getParameters())->map->getName()->all()
-            : [];
-
-        return collect($attributes)->partition(function ($value, $key) use ($parameterNames) {
-            return in_array(Str::camel($key), $parameterNames);
-        })->all();
-    }
-
-    /**
      * Compile the closing tags within the given string.
      *
      * @return string
@@ -325,6 +403,8 @@ class ComponentTagCompiler
      */
     protected function getAttributesFromAttributeString(string $attributeString)
     {
+        $attributeString = $this->parseAttributeBag($attributeString);
+
         $attributeString = $this->parseBindAttributes($attributeString);
 
         $pattern = '/
@@ -369,6 +449,21 @@ class ComponentTagCompiler
 
             return [$attribute => $value];
         })->toArray();
+    }
+
+    /**
+     * Parse the attribute bag in a given attribute string into it's fully-qualified syntax.
+     *
+     * @return string
+     */
+    protected function parseAttributeBag(string $attributeString)
+    {
+        $pattern = '/
+            (?:^|\\s+)                                        # start of the string or whitespace between attributes
+            \\{\\{\\s*(\\$attributes(?:[^}]+?(?<!\\s))?)\\s*\\}\\} # exact match of attributes variable being echoed
+        /x';
+
+        return preg_replace($pattern, ' :attributes="$1"', $attributeString);
     }
 
     /**
@@ -434,7 +529,7 @@ class ComponentTagCompiler
         return collect($attributes)
             ->map(function (string $value, string $attribute) use ($escapeBound) {
                 return $escapeBound && isset($this->boundAttributes[$attribute]) && $value !== 'true' && ! is_numeric($value)
-                    ? "'{$attribute}' => \\Fangx\\View\\Compiler\\BladeCompiler::sanitizeComponentAttribute({$value})"
+                    ? "'{$attribute}' => \\Hyperf\\ViewEngine\\Compiler\\BladeCompiler::sanitizeComponentAttribute({$value})"
                     : "'{$attribute}' => {$value}";
             })
             ->implode(',');
