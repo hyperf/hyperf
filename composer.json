@@ -234,7 +234,7 @@
         "psr-4": {
             "GPBMetadata\\": "src/grpc-client/tests/GPBMetadata/",
             "Grpc\\": "src/grpc-client/tests/Grpc/",
-            "Routeguide\\": "src/grpc-client/tests/routeguide",
+            "Routeguide\\": "src/grpc-client/tests/Routeguide",
             "HyperfTest\\Amqp\\": "src/amqp/tests/",
             "HyperfTest\\AsyncQueue\\": "src/async-queue/tests/",
             "HyperfTest\\Cache\\": "src/cache/tests/",
