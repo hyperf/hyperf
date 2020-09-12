@@ -68,7 +68,12 @@ class StreamingCall
     public function send($message = null): bool
     {
         if (! $this->getStreamId()) {
-            $this->setStreamId($this->client->openStream($this->method, Parser::serializeMessage($message)));
+            $this->setStreamId($this->client->openStream(
+                $this->method,
+                Parser::serializeMessage($message),
+                '',
+                true
+            ));
             return $this->getStreamId() > 0;
         }
         throw new RuntimeException('You can only send once by a streaming call except connection closed and you retry.');
@@ -77,7 +82,7 @@ class StreamingCall
     public function push($message): bool
     {
         if (! $this->getStreamId()) {
-            $this->setStreamId($this->client->openStream($this->method));
+            $this->setStreamId($this->client->openStream($this->method, null, '', true));
         }
         return $this->client->write($this->getStreamId(), Parser::serializeMessage($message), false);
     }
@@ -93,6 +98,17 @@ class StreamingCall
                 $this->streamId = 0;
             }
         }
+        // disconnected
+        if ($recv === false) {
+            $this->streamId = 0;
+            return[null, 14, $recv];
+        }
+        // server ended the stream
+        if ($recv->pipeline === false) {
+            $this->streamId = 0;
+            return[null, 0, $recv];
+        }
+
         return Parser::parseResponse($recv, $this->deserialize);
     }
 
@@ -101,10 +117,7 @@ class StreamingCall
         if (! $this->getStreamId()) {
             return false;
         }
-        $ret = $this->client->write($this->getStreamId(), null, true);
-        if ($ret) {
-            $this->setStreamId(0);
-        }
-        return $ret;
+        // we cannot reset the streamId here, otherwise the client streaming will break.
+        return $this->client->write($this->getStreamId(), null, true);
     }
 }

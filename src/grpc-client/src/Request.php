@@ -20,6 +20,11 @@ class Request extends BaseRequest
 {
     private const DEFAULT_CONTENT_TYPE = 'application/grpc+proto';
 
+    /**
+     * @var bool $usePipelineRead
+     */
+    public $usePipelineRead;
+
     public function __construct(string $method, Message $argument = null, $headers = [])
     {
         $this->method = 'POST';

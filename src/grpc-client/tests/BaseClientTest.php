@@ -74,7 +74,7 @@ class BaseClientTest extends TestCase
     public function testGrpcClientLaziness()
     {
         $this->getContainer();
-        $client = new BaseClient('127.0.0.1:2222');
+        $client = new HiClient('127.0.0.1:2222');
         $this->assertTrue(true); // No Exception Occurs
         $this->assertNotNull($client->_getGrpcClient());
     }
@@ -82,7 +82,7 @@ class BaseClientTest extends TestCase
     public function testGrpcClientAutoClose()
     {
         $this->getContainer();
-        $client = new BaseClient('127.0.0.1:2222');
+        $client = new HiClient('127.0.0.1:2222');
         $this->assertTrue($client->isConnected());
         $grpcClient = $client->_getGrpcClient();
         unset($client);
@@ -137,7 +137,7 @@ class BaseClientTest extends TestCase
         }
     }
 
-    public function getContainer()
+    protected function getContainer()
     {
         $container = \Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(ChannelPool::class)->andReturn(new ChannelPool());

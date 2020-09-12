@@ -55,7 +55,7 @@ class BaseClient
     public function __destruct()
     {
         if ($this->grpcClient) {
-            $this->grpcClient->close(true);
+            $this->grpcClient->close(false);
         }
     }
 
@@ -96,10 +96,12 @@ class BaseClient
     protected function _simpleRequest(
         string $method,
         Message $argument,
-        $deserialize
+        $deserialize,
+        array $metadata = [],
+        array $options = []
     ) {
-        $streamId = retry($this->options['retry_attempts'] ?? 3, function () use ($method, $argument) {
-            $streamId = $this->send($this->buildRequest($method, $argument));
+        $streamId = retry($this->options['retry_attempts'] ?? 3, function () use ($method, $argument, $options) {
+            $streamId = $this->send($this->buildRequest($method, $argument, $options));
             if ($streamId === 0) {
                 $this->init();
                 // The client should not be used after this exception
@@ -121,12 +123,40 @@ class BaseClient
      */
     protected function _clientStreamRequest(
         string $method,
-        $deserialize
+        $deserialize,
+        array $metadata = [],
+        array $options = []
     ): ClientStreamingCall {
         $call = new ClientStreamingCall();
-        $call->setClient($this->grpcClient)
+        $call->setClient($this->_getGrpcClient())
             ->setMethod($method)
             ->setDeserialize($deserialize);
+
+        return $call;
+    }
+
+    /**
+     * Call a remote method that takes a single argument and returns a stream
+     * of responses.
+     *
+     * @param string $method The name of the method to call
+     * @param callable $deserialize A function that deserializes the responses
+     * @param array $metadata A metadata map to send to the server
+     *                        (optional)
+     * @param array $options An array of options (optional)
+     *
+     * @return ServerStreamingCall The active call object
+     */
+    protected function _serverStreamRequest(
+        $method,
+        $deserialize,
+        array $metadata = [],
+        array $options = []
+    ) {
+        $call = new ServerStreamingCall();
+        $call->setClient($this->_getGrpcClient());
+        $call->setMethod($method);
+        $call->setDeserialize($deserialize);
 
         return $call;
     }
@@ -142,7 +172,7 @@ class BaseClient
         $deserialize
     ): BidiStreamingCall {
         $call = new BidiStreamingCall();
-        $call->setClient($this->grpcClient)
+        $call->setClient($this->_getGrpcClient())
             ->setMethod($method)
             ->setDeserialize($deserialize);
 
@@ -174,11 +204,13 @@ class BaseClient
             );
             throw new GrpcClientException($message, StatusCode::INTERNAL);
         }
+
         $this->initialized = true;
     }
 
-    private function buildRequest(string $method, Message $argument): Request
+    private function buildRequest(string $method, Message $argument, array $options): Request
     {
-        return new Request($method, $argument);
+        $headers = $options['headers'] ?? [];
+        return new Request($method, $argument, $headers);
     }
 }
