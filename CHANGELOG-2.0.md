@@ -11,6 +11,7 @@
 
 - [#2464](https://github.com/hyperf/hyperf/pull/2464) Fixed method `fill` does not works for camel case model.
 - [#2478](https://github.com/hyperf/hyperf/pull/2478) Fixed `Sender::check` does not works when the checked fd not belong to websocket.
+- [#2488](https://github.com/hyperf/hyperf/pull/2488) Fixed `beginTransaction` failed when the pdo is `null`.
 
 ## Optimized
 
