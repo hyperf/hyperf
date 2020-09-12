@@ -227,6 +227,7 @@ class GrpcClient
         }
         $request->pipeline = true;
         if ($usePipelineread) {
+            // @phpstan-ignore-next-line
             if (SWOOLE_VERSION_ID < 40503) {
                 throw new InvalidArgumentException('Require Swoole version >= 4.5.3');
             }
