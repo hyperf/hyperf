@@ -7,7 +7,7 @@
 - [#2455](https://github.com/hyperf/hyperf/pull/2455) 为 [hyperf/socketio-server](https://github.com/hyperf/socketio-server) 组件新增方法 `Socket::getRequest` 用于获取 `Psr7` 规范的 `Request`。
 - [#2459](https://github.com/hyperf/hyperf/pull/2459) 为 [hyperf/async-queue](https://github.com/hyperf/async-queue) 组件新增监听器 `ReloadChannelListener` 用于自动将超时队列里的消息移动到等待执行队列中。
 - [#2463](https://github.com/hyperf/hyperf/pull/2463) 为 [hyperf/database](https://github.com/hyperf/database) 组件新增可选的 `ModelRewriteGetterSetterVisitor` 用于为模型生成对应的 `Getter` 和 `Setter`。
-- [#2475](https://github.com/hyperf/hyperf/pull/2475) 为 [hyperf/retry](https://github.com/hyperf/retry) 组件的 `Fallback` 回调，默认增加 `throwbale` 参数。
+- [#2475](https://github.com/hyperf/hyperf/pull/2475) 为 [hyperf/retry](https://github.com/hyperf/retry) 组件的 `Fallback` 回调，默认增加 `throwable` 参数。
 
 ## 修复
 
