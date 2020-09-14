@@ -217,7 +217,7 @@ class GrpcClient
      * Open a stream and return the id.
      * @param mixed $data
      */
-    public function openStream(string $path, $data = '', string $method = '', bool $usePipelineread = false): int
+    public function openStream(string $path, $data = '', string $method = '', bool $usePipelineRead = false): int
     {
         $method = $method ?: ($data ? 'POST' : 'GET');
         $request = new Request($method);
@@ -226,7 +226,7 @@ class GrpcClient
             $request->data = $data;
         }
         $request->pipeline = true;
-        if ($usePipelineread) {
+        if ($usePipelineRead) {
             // @phpstan-ignore-next-line
             if (SWOOLE_VERSION_ID < 40503) {
                 throw new InvalidArgumentException('Require Swoole version >= 4.5.3');

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\GrpcClient;
 
 use Hyperf\Di\Container;
+use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\GrpcClient\StreamingCall;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ChannelPool;
@@ -30,7 +31,6 @@ class RouteGuideClientTest extends TestCase
 {
     public function testGrpcRouteGuideGetFeature()
     {
-        $this->getContainer();
         $client = new RouteGuideClient('127.0.0.1:50051', ['retry_attempts' => 0]);
 
         $point = new Point();
@@ -42,7 +42,6 @@ class RouteGuideClientTest extends TestCase
 
     public function testGrpcRouteGuideListFeatures()
     {
-        $this->getContainer();
         $client = new RouteGuideClient('127.0.0.1:50051', ['retry_attempts' => 0]);
 
         $hi = new Point();
@@ -75,7 +74,6 @@ class RouteGuideClientTest extends TestCase
 
     public function testGrpcRouteGuideRecordRoute()
     {
-        $this->getContainer();
         $client = new RouteGuideClient('127.0.0.1:50051', ['retry_attempts' => 0]);
 
         $first = new Point();
@@ -97,7 +95,6 @@ class RouteGuideClientTest extends TestCase
 
     public function testGrpcRouteGuideRouteChat()
     {
-        $this->getContainer();
         $client = new RouteGuideClient('127.0.0.1:50051', ['retry_attempts' => 0]);
         $num = rand(0, 1000000);
 
@@ -120,7 +117,8 @@ class RouteGuideClientTest extends TestCase
         $call = $client->routeChat();
         $call->push($firstNote);
         // 第一个点应该无法收到回复
-        $this->assertFalse($call->recv(1)[2]);
+        $this->expectException(GrpcClientException::class);
+        $call->recv(1);
         $call->push($firstNote);
         /** @var RouteNote $note */
         [$note,] = $call->recv();
@@ -132,7 +130,7 @@ class RouteGuideClientTest extends TestCase
         $this->assertEquals($second->getLatitude(), $note->getLocation()->getLatitude());
     }
 
-    protected function getContainer()
+    public function setUp()
     {
         $container = \Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(ChannelPool::class)->andReturn(new ChannelPool());

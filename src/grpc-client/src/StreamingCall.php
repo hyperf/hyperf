@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\GrpcClient;
 
 use Hyperf\Grpc\Parser;
+use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use RuntimeException;
 
@@ -68,18 +69,20 @@ class StreamingCall
 
     public function send($message = null): void
     {
-        if (! $this->getStreamId()) {
-            $this->setStreamId($this->client->openStream(
+        if ($this->getStreamId() <= 0) {
+            $streamId = $this->client->openStream(
                 $this->method,
                 Parser::serializeMessage($message),
                 '',
                 true
-            ));
-            if ($this->getStreamId() <= 0) {
+            );
+            if ($streamId <= 0) {
                 throw $this->newException();
             }
+            $this->setStreamId($streamId);
+            return;
         }
-        throw new RuntimeException('You can only send once by a streaming call except connection closed and you retry.');
+        throw new RuntimeException('You can only send a streaming call once unless retrying after the connection is closed.');
     }
 
     public function push($message): void
@@ -131,6 +134,6 @@ class StreamingCall
 
     private function newException(): GrpcClientException
     {
-        return new GrpcClientException('the remote server may have been disconnected or timed out');
+        return new GrpcClientException('the remote server may have been disconnected or timed out', StatusCode::INTERNAL);
     }
 }

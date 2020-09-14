@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\GrpcClient;
 
+use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 
 /**
@@ -21,6 +22,6 @@ class ServerStreamingCall extends StreamingCall
 {
     public function push($message): void
     {
-        throw new GrpcClientException('ServerStreamingCall can not push data by client');
+        throw new GrpcClientException('ServerStreamingCall can not push data from client', StatusCode::INTERNAL);
     }
 }

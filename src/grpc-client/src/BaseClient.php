@@ -102,7 +102,7 @@ class BaseClient
     ) {
         $streamId = retry($this->options['retry_attempts'] ?? 3, function () use ($method, $argument, $options) {
             $streamId = $this->send($this->buildRequest($method, $argument, $options));
-            if ($streamId === 0) {
+            if ($streamId <= 0) {
                 $this->init();
                 // The client should not be used after this exception
                 throw new GrpcClientException('Failed to send the request to server', StatusCode::INTERNAL);

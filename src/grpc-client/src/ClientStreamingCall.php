@@ -11,6 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\GrpcClient;
 
+use Hyperf\Grpc\StatusCode;
+use Hyperf\GrpcClient\Exception\GrpcClientException;
+
 class ClientStreamingCall extends StreamingCall
 {
     /**
@@ -24,7 +27,6 @@ class ClientStreamingCall extends StreamingCall
             $this->received = true;
             return parent::recv($timeout);
         }
-        trigger_error('ClientStreamingCall can only recv once!', E_USER_ERROR);
-        return false;
+        throw new GrpcClientException('ClientStreamingCall can only call recv once!', StatusCode::INTERNAL);
     }
 }
