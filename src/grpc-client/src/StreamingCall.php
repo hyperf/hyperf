@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\GrpcClient;
 
 use Hyperf\Grpc\Parser;
+use Hyperf\GrpcClient\Exception\GrpcClientException;
 use RuntimeException;
 
 class StreamingCall
@@ -65,7 +66,7 @@ class StreamingCall
         return $this;
     }
 
-    public function send($message = null): bool
+    public function send($message = null): void
     {
         if (! $this->getStreamId()) {
             $this->setStreamId($this->client->openStream(
@@ -74,17 +75,22 @@ class StreamingCall
                 '',
                 true
             ));
-            return $this->getStreamId() > 0;
+            if ($this->getStreamId() <= 0) {
+                throw $this->newException();
+            }
         }
         throw new RuntimeException('You can only send once by a streaming call except connection closed and you retry.');
     }
 
-    public function push($message): bool
+    public function push($message): void
     {
         if (! $this->getStreamId()) {
             $this->setStreamId($this->client->openStream($this->method, null, '', true));
         }
-        return $this->client->write($this->getStreamId(), Parser::serializeMessage($message), false);
+        $success = $this->client->write($this->getStreamId(), Parser::serializeMessage($message), false);
+        if (! $success) {
+            throw $this->newException();
+        }
     }
 
     public function recv(float $timeout = -1.0)
@@ -98,10 +104,9 @@ class StreamingCall
                 $this->streamId = 0;
             }
         }
-        // disconnected
+        // disconnected or timed out
         if ($recv === false) {
-            $this->streamId = 0;
-            return[null, 14, $recv];
+            throw $this->newException();
         }
         // server ended the stream
         if ($recv->pipeline === false) {
@@ -112,12 +117,20 @@ class StreamingCall
         return Parser::parseResponse($recv, $this->deserialize);
     }
 
-    public function end(): bool
+    public function end(): void
     {
         if (! $this->getStreamId()) {
-            return false;
+            throw $this->newException();
         }
         // we cannot reset the streamId here, otherwise the client streaming will break.
-        return $this->client->write($this->getStreamId(), null, true);
+        $success = $this->client->write($this->getStreamId(), null, true);
+        if (! $success) {
+            throw $this->newException();
+        }
+    }
+
+    private function newException(): GrpcClientException
+    {
+        return new GrpcClientException('the remote server may have been disconnected or timed out');
     }
 }

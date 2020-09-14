@@ -43,7 +43,7 @@ class RouteNote extends \Google\Protobuf\Internal\Message
      *                    Optional. Data for populating the Message object.
      *
      *     @var \Routeguide\Point $location
-     *           The location from which the message is sent.
+     *           The location from which the message is sent
      *     @var string $message
      *           The message to be sent.
      * }

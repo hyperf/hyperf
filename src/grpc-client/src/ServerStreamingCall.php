@@ -19,7 +19,7 @@ use Hyperf\GrpcClient\Exception\GrpcClientException;
  */
 class ServerStreamingCall extends StreamingCall
 {
-    public function push($message): bool
+    public function push($message): void
     {
         throw new GrpcClientException('ServerStreamingCall can not push data by client');
     }

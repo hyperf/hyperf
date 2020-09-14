@@ -60,11 +60,11 @@ class RouteSummary extends \Google\Protobuf\Internal\Message
      *                    Optional. Data for populating the Message object.
      *
      *     @var int $point_count
-     *           The number of points received.
+     *           The number of points received
      *     @var int $feature_count
-     *           The number of known features passed while traversing the route.
+     *           The number of known features passed while traversing the route
      *     @var int $distance
-     *           The distance covered in metres.
+     *           The distance covered in metres
      *     @var int $elapsed_time
      *           The duration of the traversal in seconds.
      * }

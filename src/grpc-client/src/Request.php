@@ -21,7 +21,7 @@ class Request extends BaseRequest
     private const DEFAULT_CONTENT_TYPE = 'application/grpc+proto';
 
     /**
-     * @var bool $usePipelineRead
+     * @var bool
      */
     public $usePipelineRead;
 

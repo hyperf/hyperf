@@ -44,7 +44,7 @@ class Rectangle extends \Google\Protobuf\Internal\Message
      *                    Optional. Data for populating the Message object.
      *
      *     @var \Routeguide\Point $lo
-     *           One corner of the rectangle.
+     *           One corner of the rectangle
      *     @var \Routeguide\Point $hi
      *           The other corner of the rectangle.
      * }

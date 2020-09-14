@@ -44,7 +44,7 @@ class Feature extends \Google\Protobuf\Internal\Message
      *                    Optional. Data for populating the Message object.
      *
      *     @var string $name
-     *           The name of the feature.
+     *           The name of the feature
      *     @var \Routeguide\Point $location
      *           The point where the feature is detected.
      * }
