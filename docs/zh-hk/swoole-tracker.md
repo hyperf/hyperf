@@ -60,7 +60,7 @@ apm.enable=1
 ;採樣率 例如：100%
 apm.sampling_rate=100
 
-;開啟內存泄漏檢測時添加 默认0 关闭状态
+;開啟內存泄漏檢測時添加 默認0 關閉狀態
 apm.enable_memcheck=1
 ```
 
