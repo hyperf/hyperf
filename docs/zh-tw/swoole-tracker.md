@@ -60,7 +60,7 @@ apm.enable=1
 ;取樣率 例如：100%
 apm.sampling_rate=100
 
-;開啟記憶體洩漏檢測時新增 默认0 关闭状态
+;開啟記憶體洩漏檢測時新增 預設0 關閉狀態
 apm.enable_memcheck=1
 ```
 
@@ -180,5 +180,3 @@ return [
     Hyperf\SwooleTracker\Aspect\CoroutineHandlerAspect::class,
 ];
 ```
-
-

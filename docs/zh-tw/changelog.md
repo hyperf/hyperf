@@ -1,5 +1,29 @@
 # 版本更新記錄
 
+# v2.0.11 - 2020-09-14
+
+## 新增
+
+- [#2455](https://github.com/hyperf/hyperf/pull/2455) 為 [hyperf/socketio-server](https://github.com/hyperf/socketio-server) 元件新增方法 `Socket::getRequest` 用於獲取 `Psr7` 規範的 `Request`。
+- [#2459](https://github.com/hyperf/hyperf/pull/2459) 為 [hyperf/async-queue](https://github.com/hyperf/async-queue) 元件新增監聽器 `ReloadChannelListener` 用於自動將超時佇列裡的訊息移動到等待執行佇列中。
+- [#2463](https://github.com/hyperf/hyperf/pull/2463) 為 [hyperf/database](https://github.com/hyperf/database) 元件新增可選的 `ModelRewriteGetterSetterVisitor` 用於為模型生成對應的 `Getter` 和 `Setter`。
+- [#2475](https://github.com/hyperf/hyperf/pull/2475) 為 [hyperf/retry](https://github.com/hyperf/retry) 元件的 `Fallback` 回撥，預設增加 `throwbale` 引數。
+
+## 修復
+
+- [#2464](https://github.com/hyperf/hyperf/pull/2464) 修復 [hyperf/database](https://github.com/hyperf/database) 元件中，小駝峰模式模型的 `fill` 方法無法正常使用的問題。
+- [#2478](https://github.com/hyperf/hyperf/pull/2478) 修復 [hyperf/websocket-server](https://github.com/hyperf/websocket-server) 元件中，`Sender::check` 無法檢測非 `WebSocket` 的 `fd` 值。
+- [#2488](https://github.com/hyperf/hyperf/pull/2488) 修復 [hyperf/database](https://github.com/hyperf/database) 元件中，當 `pdo` 例項化失敗後 `beginTransaction` 呼叫失敗的問題。
+
+## 優化
+
+- [#2461](https://github.com/hyperf/hyperf/pull/2461) 優化 [hyperf/reactive-x](https://github.com/hyperf/reactive-x) 元件 `HTTP` 路由監聽器，可以監聽任意埠路由。
+- [#2465](https://github.com/hyperf/hyperf/pull/2465) 優化 [hyperf/retry](https://github.com/hyperf/retry) 元件 `FallbackRetryPolicy` 中 `fallback` 除了可以填寫被 `is_callable` 識別的程式碼外，還可以填寫形如 `class@method` 的格式，框架會從 `Container` 中拿到對應的 `class`，然後執行其 `method` 方法。
+
+## 變更
+
+- [#2492](https://github.com/hyperf/hyperf/pull/2492) 調整 [hyperf/socketio-server](https://github.com/hyperf/socketio-server) 元件中的事件收集順序，確保 `sid` 早於自定義 `onConnect` 被新增到房間中。
+
 # v2.0.10 - 2020-09-07
 
 ## 新增
