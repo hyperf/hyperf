@@ -29,7 +29,7 @@
 ## 新增
 
 - [#2411](https://github.com/hyperf/hyperf/pull/2411) 为 [hyperf/database](https://github.com/hyperf/database) 组件新增 `Hyperf\Database\Query\Builder::forPageBeforeId` 方法。
-- [#2420](https://github.com/hyperf/hyperf/pull/2420) 为 [#2426](https://github.com/hyperf/hyperf/pull/2426) [hyperf/command](https://github.com/hyperf/command) 组件新增默认选项 `enable-event-dispatcher` 用于初始化事件触发器。
+- [#2420](https://github.com/hyperf/hyperf/pull/2420) [#2426](https://github.com/hyperf/hyperf/pull/2426) 为 [hyperf/command](https://github.com/hyperf/command) 组件新增默认选项 `enable-event-dispatcher` 用于初始化事件触发器。
 - [#2433](https://github.com/hyperf/hyperf/pull/2433) 为 [hyperf/grpc-server](https://github.com/hyperf/grpc-server) 组件路由新增匿名函数支持。
 - [#2441](https://github.com/hyperf/hyperf/pull/2441) 为 [hyperf/socketio-server](https://github.com/hyperf/socketio-server) 组件中 `SocketIO` 新增了一些 `setters`。
 
