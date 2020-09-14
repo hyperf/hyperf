@@ -1,3 +1,5 @@
+# Socket.io 服務
+
 Socket.io 是一款非常流行的應用層實時通訊協議和框架，可以輕鬆實現應答、分組、廣播。hyperf/socketio-server 支援了 Socket.io 的 WebSocket 傳輸協議。
 
 ## 安裝
@@ -393,7 +395,7 @@ return [
 ];
 ```
 
-## Auth 鑑權
+### Auth 鑑權
 
 您可以通過使用中介軟體來攔截 WebSocket 握手，實現鑑權功能，如下：
 
@@ -435,3 +437,16 @@ class WebSocketAuthMiddleware implements MiddlewareInterface
 ```
 
 並將上面的中介軟體配置到對應的 WebSocket Server 中去即可。
+
+### 獲取原始請求物件
+
+連線建立以後，有時需獲取客戶端 IP ，Cookie 等請求資訊。原始請求物件已經被保留在[連線上下文](websocket-server.md#連線上下文)中，您可以用如下方式在事件回撥中獲取：
+
+```php
+public function onEvent($socket, $data)
+{
+    $request = Hyperf\WebSocketServer\Context::get(
+        Psr\Http\Message\ServerRequestInterface::class
+    );
+}
+```

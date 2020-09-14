@@ -8,7 +8,7 @@ composer require hyperf/testing
 
 ```json
 "scripts": {
-    "test": "./test/co-phpunit -c phpunit.xml --colors=always"
+    "test": "co-phpunit -c phpunit.xml --colors=always"
 },
 ```
 
@@ -22,23 +22,26 @@ Hyperf 提供了默认的 `bootstrap.php` 文件，它让用户在运行单元�
 declare(strict_types=1);
 
 error_reporting(E_ALL);
+date_default_timezone_set('Asia/Shanghai');
 
 ! defined('BASE_PATH') && define('BASE_PATH', dirname(__DIR__, 1));
+! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);
 
-\Swoole\Runtime::enableCoroutine(true);
+Swoole\Runtime::enableCoroutine(true);
 
 require BASE_PATH . '/vendor/autoload.php';
 
-require BASE_PATH . '/config/container.php';
+Hyperf\Di\ClassLoader::init();
+
+$container = require BASE_PATH . '/config/container.php';
+
+$container->get(Hyperf\Contract\ApplicationInterface::class);
 
 ```
 
-> 当用户修改的代码需要重新生成代理类时，需要主动运行一下脚本。因为你单元测试运行时，并不会重置代理类。
+运行单元测试
 
 ```
-# 重新生成代理类
-vendor/bin/init-proxy.sh
-# 运行单元测试
 composer test
 ```
 
@@ -62,12 +65,39 @@ $result = $client->get('/');
 
 use Hyperf\Testing\Client;
 
-$client = make(Client::class,['server' => 'adminHttp']);
+$client = make(Client::class, ['server' => 'adminHttp']);
 
 $result = $client->json('/user/0',[
     'nickname' => 'Hyperf'
 ]);
 
+```
+
+默认情况下，框架使用 `JsonPacker`，会直接解析 `Body` 为 `array`，如果您直接返回 `string`，则需要设置对应 `Packer`
+
+```php
+<?php
+
+use Hyperf\Testing\Client;
+use Hyperf\Contract\PackerInterface;
+
+$client = make(Client::class, [
+    'packer' => new class() implements PackerInterface {
+        public function pack($data): string
+        {
+            return $data;
+        }
+
+        public function unpack(string $data)
+        {
+            return $data;
+        }
+    },
+]);
+
+$result = $client->json('/user/0',[
+    'nickname' => 'Hyperf'
+]);
 ```
 
 ## 示例

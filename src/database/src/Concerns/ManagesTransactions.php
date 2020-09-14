@@ -162,6 +162,8 @@ trait ManagesTransactions
     protected function createTransaction()
     {
         if ($this->transactions == 0) {
+            $this->reconnectIfMissingConnection();
+
             try {
                 $this->getPdo()->beginTransaction();
             } catch (Exception $e) {
