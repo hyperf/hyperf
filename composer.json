@@ -82,7 +82,7 @@
         "symfony/property-access": "^5.0",
         "symfony/serializer": "^5.0",
         "twig/twig": "^2.12",
-        "vlucas/phpdotenv": "^4.0",
+        "vlucas/phpdotenv": "^5.2",
         "xxtime/flysystem-aliyun-oss": "^1.5"
     },
     "replace": {
