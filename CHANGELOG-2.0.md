@@ -1,5 +1,9 @@
 # v2.0.12 - TBD
 
+## Added
+
+- [#2512](https://github.com/hyperf/hyperf/pull/2512) Added `column_type` for `MySqlGrammar::compileColumnListing`.
+
 # v2.0.11 - 2020-09-14
 
 ## Added
