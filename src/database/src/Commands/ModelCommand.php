@@ -228,9 +228,6 @@ class ModelCommand extends Command
 
         foreach ($columns as $key => $value) {
             $columns[$key]['cast'] = $casts[$value['column_name']] ?? null;
-            if ($value['column_type'] == 'tinyint(1)') {
-                $columns[$key]['data_type'] = 'boolean';
-            }
         }
 
         return $columns;
