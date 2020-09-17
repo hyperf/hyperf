@@ -78,6 +78,7 @@ class RequestTest extends TestCase
         $psrRequest = Mockery::mock(ServerRequestInterface::class);
         $psrRequest->shouldReceive('getParsedBody')->andReturn(['id' => 1]);
         $psrRequest->shouldReceive('getQueryParams')->andReturn(['name' => 'Hyperf']);
+        $psrRequest->shouldReceive('getUploadedFiles')->andReturn([]);
         Context::set(ServerRequestInterface::class, $psrRequest);
 
         $psrRequest = new Request();
