@@ -4,6 +4,10 @@
 
 - [#2512](https://github.com/hyperf/hyperf/pull/2512) Added `column_type` for `MySqlGrammar::compileColumnListing`.
 
+## Fixed
+
+- [#2509](https://github.com/hyperf/hyperf/pull/2509) Fixed mutated attributes do not work in camel case for `hyperf/database`.
+
 # v2.0.11 - 2020-09-14
 
 ## Added
