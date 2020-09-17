@@ -122,6 +122,8 @@ class ModelRealBuilderTest extends TestCase
         $ext = UserExtCamel::query()->find(1);
         $this->assertArrayHasKey('floatNum', $ext->toArray());
         $this->assertArrayHasKey('createdAt', $ext->toArray());
+        $this->assertIsString($ext->updatedAt);
+        $this->assertIsString($ext->toArray()['updatedAt']);
 
         $this->assertIsString($number = $ext->floatNum);
 
@@ -131,7 +133,7 @@ class ModelRealBuilderTest extends TestCase
         $this->assertSame($ext->floatNum, $model->floatNum);
 
         $model->fill([
-            'floatNum' => '1.20'
+            'floatNum' => '1.20',
         ]);
         $model->save();
 

@@ -46,4 +46,9 @@ class UserExtCamel extends Model
      * @var array
      */
     protected $casts = ['id' => 'integer', 'count' => 'integer', 'float_num' => 'decimal:2', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+
+    public function getUpdatedAtAttribute(): string
+    {
+        return (string) $this->getAttributes()['updated_at'];
+    }
 }
