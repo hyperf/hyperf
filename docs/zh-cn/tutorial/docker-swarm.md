@@ -338,6 +338,58 @@ docker run --rm -i -v $basepath/.env:/opt/www/.env \
 /opt/www/bin/hyperf.php your_command
 ```
 
+## 内核优化
+
+> 本小节内容，有待验证，谨慎使用
+
+安装 `KONG` 网关时，有介绍 `Ingress 网络` 存在设计的缺陷，这块可以通过 `优化内核` 处理。
+
+- 指定 TLinux 源
+
+```
+tee /etc/yum.repos.d/CentOS-TLinux.repo <<-'EOF' 
+[Tlinux]
+name=Tlinux for redhat/centos $releasever - $basearch
+failovermethod=priority
+gpgcheck=0
+gpgkey=http://mirrors.tencentyun.com/epel/RPM-GPG-KEY-EPEL-7
+enabled=1
+baseurl=https://mirrors.tencent.com/tlinux/2.4/tlinux/x86_64/
+EOF
+```
+
+- 安装指定内核
+
+```
+yum -y install kernel-devel-4.14.105-19.0012.tl2.x86_64 kernel-4.14.105-19.0013.tl2.x86_64 kernel-headers-4.14.105-19.0013.tl2.x86_64
+```
+
+- 使内核生效
+
+```
+sudo awk -F\' '$1=="menuentry " {print i++ " : " $2}' /etc/grub2.cfg
+grub2-set-default 0
+grub2-mkconfig -o /boot/grub2/grub.cfg
+```
+
+- 重启机器
+
+```
+reboot
+```
+
+### 容器参数优化
+
+> 需要 Docker 19.09.0 以上支持，与 image 配置同级
+
+```yaml
+sysctls:
+  # 网络连接复用模式的选择
+  - net.ipv4.vs.conn_reuse_mode=0
+  # 当LVS转发数据包，发现目的RS无效（删除）时，会丢弃该数据包，但不删除相应连接。值为1时，则马上释放相应连接
+  - net.ipv4.vs.expire_nodest_conn=1
+```
+
 ## 常见问题
 
 ### fatal: git fetch-pack: expected shallow list
