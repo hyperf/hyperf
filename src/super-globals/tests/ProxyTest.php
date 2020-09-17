@@ -98,6 +98,7 @@ class ProxyTest extends TestCase
         $request->shouldReceive('getParsedBody')->andReturn([
             'name' => $name = 'Hyperf' . uniqid(),
         ]);
+        $request->shouldReceive('getUploadedFiles')->andReturn([]);
         Context::set(ServerRequestInterface::class, $request);
         $proxy = new Request();
 
