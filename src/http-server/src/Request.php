@@ -121,7 +121,8 @@ class Request implements RequestInterface
     public function all(): array
     {
         $data = $this->getInputData();
-        return $data ?? [];
+        $files = $this->getUploadedFiles();
+        return array_replace_recursive($data ?? [],$files);
     }
 
     /**
