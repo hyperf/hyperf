@@ -340,6 +340,8 @@ docker run --rm -i -v $basepath/.env:/opt/www/.env \
 
 ## 内核优化
 
+> 本小节内容，有待验证，谨慎使用
+
 安装 `KONG` 网关时，有介绍 `Ingress 网络` 存在设计的缺陷，这块可以通过 `优化内核` 处理。
 
 - 指定 TLinux 源
