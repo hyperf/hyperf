@@ -29,6 +29,15 @@ use Routeguide\RouteSummary;
  */
 class RouteGuideClientTest extends TestCase
 {
+    public function setUp()
+    {
+        $container = \Mockery::mock(Container::class);
+        $container->shouldReceive('get')->with(ChannelPool::class)->andReturn(new ChannelPool());
+        $container->shouldReceive('has')->andReturn(false);
+        ApplicationContext::setContainer($container);
+        return $container;
+    }
+
     public function testGrpcRouteGuideGetFeature()
     {
         $client = new RouteGuideClient('127.0.0.1:50051', ['retry_attempts' => 0]);
@@ -128,14 +137,5 @@ class RouteGuideClientTest extends TestCase
         $call->push($secondNote);
         [$note,] = $call->recv();
         $this->assertEquals($second->getLatitude(), $note->getLocation()->getLatitude());
-    }
-
-    public function setUp()
-    {
-        $container = \Mockery::mock(Container::class);
-        $container->shouldReceive('get')->with(ChannelPool::class)->andReturn(new ChannelPool());
-        $container->shouldReceive('has')->andReturn(false);
-        ApplicationContext::setContainer($container);
-        return $container;
     }
 }
