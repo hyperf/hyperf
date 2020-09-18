@@ -8,6 +8,7 @@
 
 - [#2509](https://github.com/hyperf/hyperf/pull/2509) Fixed mutated attributes do not work in camel case for `hyperf/database`.
 - [#2535](https://github.com/hyperf/hyperf/pull/2535) Fixed `@property` of mutated attribute will be replaced by morphTo for `gen:model`.
+- [#2546](https://github.com/hyperf/hyperf/pull/2546) Fixed db connection don't destruct when using left join.
 
 # v2.0.11 - 2020-09-14
 

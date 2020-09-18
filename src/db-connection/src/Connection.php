@@ -109,7 +109,7 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
     public function close(): bool
     {
-        if($this->connection instanceof \Hyperf\Database\Connection){
+        if ($this->connection instanceof \Hyperf\Database\Connection) {
             $this->connection->disconnect();
         }
 

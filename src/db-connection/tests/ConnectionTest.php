@@ -108,24 +108,33 @@ class ConnectionTest extends TestCase
 
     public function testPdoDontDestruct()
     {
+        $container = ContainerStub::mockContainer();
+        $pool = $container->get(PoolFactory::class)->getPool('default');
+        $config = $container->get(ConfigInterface::class)->get('databases.default');
+
         $callables = [function ($connection) {
             $connection->selectOne('SELECT 1;');
         }, function ($connection) {
             $connection->table('user')->leftJoin('user_ext', 'user.id', '=', 'user_ext.id')->get();
         }];
-        foreach ($callables as $callable) {
-            PDOStub::$destruct = 0;
-            $container = ContainerStub::mockContainer();
-            $pool = $container->get(PoolFactory::class)->getPool('default');
-            $config = $container->get(ConfigInterface::class)->get('databases.default');
-            $connection = new ConnectionStub($container, $pool, $config);
-            $connection->setPdo(new PDOStub('', '', '', []));
 
-            $callable($connection);
-
-            $this->assertSame(0, PDOStub::$destruct);
+        $closes = [function ($connection) {
             $connection->close();
-            $this->assertSame(1, PDOStub::$destruct);
+        }, function ($connection) {
+            $connection->reconnect();
+        }];
+
+        foreach ($callables as $callable) {
+            foreach ($closes as $closure) {
+                $connection = new ConnectionStub($container, $pool, $config);
+                $connection->setPdo(new PDOStub('', '', '', []));
+
+                PDOStub::$destruct = 0;
+                $callable($connection);
+                $this->assertSame(0, PDOStub::$destruct);
+                $closure($connection);
+                $this->assertSame(1, PDOStub::$destruct);
+            }
         }
     }
 
