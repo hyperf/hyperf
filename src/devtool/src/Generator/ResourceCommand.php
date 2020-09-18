@@ -22,29 +22,29 @@ class ResourceCommand extends GeneratorCommand
 {
     public function __construct()
     {
-        parent::__construct('gen:transformer');
+        parent::__construct('gen:resource');
     }
 
     public function configure()
     {
         parent::configure();
-        $this->setDescription('create a new transformer');
-        $this->addOption('collection', 'c', InputOption::VALUE_NONE, 'Create a transformer collection');
-        $this->addOption('grpc', null, InputOption::VALUE_NONE, 'Create a transformer collection');
+        $this->setDescription('create a new resource');
+        $this->addOption('collection', 'c', InputOption::VALUE_NONE, 'Create a resource collection');
+        $this->addOption('grpc', null, InputOption::VALUE_NONE, 'Create a resource collection');
     }
 
     protected function getStub(): string
     {
         return $this->isGrpc()
-            ? __DIR__ . '/stubs/transformer-grpc.stub'
+            ? __DIR__ . '/stubs/resource-grpc.stub'
             : ($this->isCollection()
-                ? __DIR__ . '/stubs/transformer-collection.stub'
-                : __DIR__ . '/stubs/transformer.stub');
+                ? __DIR__ . '/stubs/resource-collection.stub'
+                : __DIR__ . '/stubs/resource.stub');
     }
 
     protected function getDefaultNamespace(): string
     {
-        return $this->getConfig()['namespace'] ?? 'App\\Transformer';
+        return $this->getConfig()['namespace'] ?? 'App\\Resource';
     }
 
     protected function isCollection()
