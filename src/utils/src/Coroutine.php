@@ -12,7 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Event\EventDispatcher;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
+use Hyperf\Utils\Event\ContextSwitchEvent;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine as SwooleCoroutine;
 use Throwable;
@@ -68,6 +70,14 @@ class Coroutine
     {
         $result = SwooleCoroutine::create(function () use ($callable) {
             try {
+                if (ApplicationContext::hasContainer()) {
+                    $container = ApplicationContext::getContainer();
+                    if ($container->has(EventDispatcher::class)) {
+                        /* @var EventDispatcher $dispatcher */
+                        $dispatcher = $container->get(EventDispatcher::class);
+                        $dispatcher->dispatch(new ContextSwitchEvent());
+                    }
+                }
                 call($callable);
             } catch (Throwable $throwable) {
                 if (ApplicationContext::hasContainer()) {
