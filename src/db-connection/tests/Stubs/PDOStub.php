@@ -21,6 +21,8 @@ class PDOStub extends \PDO
 
     public $options;
 
+    public static $destruct = 0;
+
     public function __construct(string $dsn, string $username, string $passwd, array $options)
     {
         $this->dsn = $dsn;
@@ -36,5 +38,10 @@ class PDOStub extends \PDO
 
     public function exec($statement)
     {
+    }
+
+    public function __destruct()
+    {
+        self::$destruct++;
     }
 }

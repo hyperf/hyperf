@@ -106,6 +106,29 @@ class ConnectionTest extends TestCase
         $this->assertSame('mysql:host=192.168.1.1;dbname=hyperf', $pdo->dsn);
     }
 
+    public function testPdoDontDestruct()
+    {
+        $callables = [function ($connection) {
+            $connection->selectOne('SELECT 1;');
+        }, function ($connection) {
+            $connection->table('user')->leftJoin('user_ext', 'user.id', '=', 'user_ext.id')->get();
+        }];
+        foreach ($callables as $callable) {
+            PDOStub::$destruct = 0;
+            $container = ContainerStub::mockContainer();
+            $pool = $container->get(PoolFactory::class)->getPool('default');
+            $config = $container->get(ConfigInterface::class)->get('databases.default');
+            $connection = new ConnectionStub($container, $pool, $config);
+            $connection->setPdo(new PDOStub('', '', '', []));
+
+            $callable($connection);
+
+            $this->assertSame(0, PDOStub::$destruct);
+            $connection->close();
+            $this->assertSame(1, PDOStub::$destruct);
+        }
+    }
+
     public function testConnectionSticky()
     {
         $container = ContainerStub::mockReadWriteContainer();
