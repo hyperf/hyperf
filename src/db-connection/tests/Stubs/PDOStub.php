@@ -21,12 +21,19 @@ class PDOStub extends \PDO
 
     public $options;
 
+    public static $destruct = 0;
+
     public function __construct(string $dsn, string $username, string $passwd, array $options)
     {
         $this->dsn = $dsn;
         $this->username = $username;
         $this->passwd = $passwd;
         $this->options = $options;
+    }
+
+    public function __destruct()
+    {
+        ++self::$destruct;
     }
 
     public function prepare($statement, $driver_options = null)

@@ -83,6 +83,8 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
     public function reconnect(): bool
     {
+        $this->close();
+
         $this->connection = $this->factory->make($this->config);
 
         if ($this->connection instanceof \Hyperf\Database\Connection) {
@@ -107,6 +109,10 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
     public function close(): bool
     {
+        if ($this->connection instanceof \Hyperf\Database\Connection) {
+            $this->connection->disconnect();
+        }
+
         unset($this->connection);
 
         return true;
