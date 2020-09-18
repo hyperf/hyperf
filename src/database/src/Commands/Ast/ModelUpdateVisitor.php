@@ -211,7 +211,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 $name = Str::snake(substr($method->getName(), 3, -9));
                 if (! empty($name)) {
                     $type = BetterReflectionManager::getReturnFinder()->__invoke($method, $namespace);
-                    $this->setProperty($name, $type, true, null);
+                    $this->setProperty($name, $type, true, null, '', false, 1);
                 }
                 continue;
             }
@@ -298,7 +298,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         }
     }
 
-    protected function setProperty(string $name, array $type = null, bool $read = null, bool $write = null, string $comment = '', bool $nullable = false)
+    protected function setProperty(string $name, array $type = null, bool $read = null, bool $write = null, string $comment = '', bool $nullable = false, int $priority = 0)
     {
         if (! isset($this->properties[$name])) {
             $this->properties[$name] = [];
@@ -306,6 +306,10 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             $this->properties[$name]['read'] = false;
             $this->properties[$name]['write'] = false;
             $this->properties[$name]['comment'] = (string) $comment;
+            $this->properties[$name]['priority'] = 0;
+        }
+        if ($this->properties[$name]['priority'] > $priority) {
+            return;
         }
         if ($type !== null) {
             if ($nullable) {
@@ -319,6 +323,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         if ($write !== null) {
             $this->properties[$name]['write'] = $write;
         }
+        $this->properties[$name]['priority'] = $priority;
     }
 
     protected function setMethod(string $name, array $type = [], array $arguments = [])
