@@ -31,6 +31,11 @@ class PDOStub extends \PDO
         $this->options = $options;
     }
 
+    public function __destruct()
+    {
+        ++self::$destruct;
+    }
+
     public function prepare($statement, $driver_options = null)
     {
         return new PDOStatementStub($statement);
@@ -38,10 +43,5 @@ class PDOStub extends \PDO
 
     public function exec($statement)
     {
-    }
-
-    public function __destruct()
-    {
-        self::$destruct++;
     }
 }
