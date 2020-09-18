@@ -183,6 +183,7 @@ public function hello()
 
     /** @var RouteNote $note */
     [$note,] = $call->recv();
+    [$note,] = $call->recv();
 }
 ```
 
