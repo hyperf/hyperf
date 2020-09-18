@@ -981,7 +981,7 @@ trait HasAttributes
     {
         $castType = $this->getCastType($key);
 
-        if (is_null($value) && in_array($castType, static::$primitiveCastTypes)) {
+        if (empty($value) && in_array($castType, static::$primitiveCastTypes)) {
             return $value;
         }
 
