@@ -129,6 +129,7 @@ gRPC server 如何進行 gRPC 響應, 相信你可以根據上面的資訊, 自�
 ```php
 public function hello()
 {
+    // 這個client是協程安全的，可以複用
     $client = new \App\Grpc\HiClient('127.0.0.1:9503', [
         'credentials' => null,
     ]);
@@ -165,6 +166,28 @@ class HiClient extends BaseClient
     }
 }
 ```
+
+gRPC客戶端還支援 gRPC 的 Streaming 模式。以雙向流為例：
+
+```php
+<?
+public function hello()
+{
+    $client = new RouteGuideClient('127.0.0.1:50051');
+
+    $note = new RouteNote();
+
+    $call = $client->routeChat();
+    $call->push($note);
+    $call->push($note);
+
+    /** @var RouteNote $note */
+    [$note,] = $call->recv();
+    [$note,] = $call->recv();
+}
+```
+
+> 請注意在 streaming 模式下，您必須手動捕獲連線斷開的異常 (`Hyperf\GrpcClient\Exception\GrpcClientException`) 並根據需要選擇是否重試。
 
 ## 寫在後面
 

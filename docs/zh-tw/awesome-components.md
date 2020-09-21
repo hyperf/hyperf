@@ -37,6 +37,7 @@
 - [hyperf/database](https://github.com/hyperf/database) Hyperf 官方提供的基於 Eloquent 衍生的資料庫 ORM，可複用於其它框架
 - [hyperf/model](https://github.com/hyperf/model) Hyperf 官方提供的基於 [hyperf/database](https://github.com/hyperf/database) 元件的自動模型快取元件 
 - [reasno/fastmongo](https://github.com/Reasno/fastmongo) 基於 `hyperf/gotask` 實現的協程化 `MongoDB` 客戶端
+- [hyperf-ext/translatable](https://github.com/hyperf-ext/translatable) 為模型提供多語言能力
 
 ## 依賴注入容器
 
@@ -122,12 +123,15 @@
 - [mabu233/sdebug](https://github.com/mabu233/sdebug) 用於協助開發與除錯，`xdebug`的協程改造版
 - [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 通過 `WebSocket` 實時觀測異常錯誤的開發除錯元件
 - [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支援與 laravel 類似的多 env 配置檔案功能，通過 `APP_ENV=testing` 可以載入 `.env.testing` 配置覆蓋預設的 `.env`
+- [qiutuleng/hyperf-dump-server](https://github.com/qiutuleng/hyperf-dump-server) 提供一個 `dump` 函式，可以將程式內的變數或資料列印到另一個命令列視窗中，基於 Symfony 的 `Var-Dump Server` 元件
 
 ## 許可權認證
 
 - [donjan-deng/hyperf-permission](https://github.com/donjan-deng/hyperf-permission) 基於 [spatie/laravel-permission](https://github.com/spatie/laravel-permission) 開發的適配 Hyperf 的許可權元件
 - [fx/hyperf-http-auth](https://github.com/nfangxu/hyperf-http-auth) 根據 laravel 中的 auth 元件改寫的, 適配 hyperf 框架
 - [96qbhy/hyperf-auth](https://github.com/qbhy/hyperf-auth) 參考 laravel 的 auth 元件設計，支援 jwt 和 session 驅動，更輕巧更好用
+- [hyperf-ext/jwt](https://github.com/hyperf-ext/jwt) JWT 元件，實現了完整用於 JWT 認證的能力
+- [hyperf-ext/auth](https://github.com/hyperf-ext/auth) 移植自 `illuminate/auth`，基本完整的實現了 Laravel Auth 的功能特性
 
 ## 第三方 SDK
 

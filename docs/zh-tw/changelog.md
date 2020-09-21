@@ -1,5 +1,22 @@
 # 版本更新記錄
 
+# v2.0.12 - 2020-09-21
+
+## Added
+
+- [#2512](https://github.com/hyperf/hyperf/pull/2512) 為 [hyperf/database](https://github.com/hyperf/database) 元件方法 `MySqlGrammar::compileColumnListing` 新增返回欄位 `column_type`。 
+
+## Fixed
+
+- [#2490](https://github.com/hyperf/hyperf/pull/2490) 修復 [hyperf/grpc-client](https://github.com/hyperf/grpc-client) 元件中，流式客戶端無法正常工作的問題。
+- [#2509](https://github.com/hyperf/hyperf/pull/2509) 修復 [hyperf/database](https://github.com/hyperf/database) 元件中，使用小駝峰模式後，訪問器無法正常工作的問題。
+- [#2535](https://github.com/hyperf/hyperf/pull/2535) 修復 [hyperf/database](https://github.com/hyperf/database) 元件中，使用 `gen:model` 後，通過訪問器生成的註釋 `@property` 會被 `morphTo` 覆蓋的問題。
+- [#2546](https://github.com/hyperf/hyperf/pull/2546) 修復 [hyperf/db-connection](https://github.com/hyperf/db-connection) 元件中，使用 `left join` 等複雜查詢後，`MySQL` 連線無法正常釋放的問題。
+
+## Optimized
+
+- [#2490](https://github.com/hyperf/hyperf/pull/2490) 優化 [hyperf/grpc-client](https://github.com/hyperf/grpc-client) 元件中的異常和單元測試。
+
 # v2.0.11 - 2020-09-14
 
 ## 新增
@@ -29,7 +46,7 @@
 ## 新增
 
 - [#2411](https://github.com/hyperf/hyperf/pull/2411) 為 [hyperf/database](https://github.com/hyperf/database) 元件新增 `Hyperf\Database\Query\Builder::forPageBeforeId` 方法。
-- [#2420](https://github.com/hyperf/hyperf/pull/2420) 為 [#2426](https://github.com/hyperf/hyperf/pull/2426) [hyperf/command](https://github.com/hyperf/command) 元件新增預設選項 `enable-event-dispatcher` 用於初始化事件觸發器。
+- [#2420](https://github.com/hyperf/hyperf/pull/2420) [#2426](https://github.com/hyperf/hyperf/pull/2426) 為 [hyperf/command](https://github.com/hyperf/command) 元件新增預設選項 `enable-event-dispatcher` 用於初始化事件觸發器。
 - [#2433](https://github.com/hyperf/hyperf/pull/2433) 為 [hyperf/grpc-server](https://github.com/hyperf/grpc-server) 元件路由新增匿名函式支援。
 - [#2441](https://github.com/hyperf/hyperf/pull/2441) 為 [hyperf/socketio-server](https://github.com/hyperf/socketio-server) 元件中 `SocketIO` 新增了一些 `setters`。
 
