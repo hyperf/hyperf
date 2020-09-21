@@ -1,5 +1,22 @@
 # 版本更新记录
 
+# v2.0.12 - 2020-09-21
+
+## Added
+
+- [#2512](https://github.com/hyperf/hyperf/pull/2512) 为 [hyperf/database](https://github.com/hyperf/database) 组件方法 `MySqlGrammar::compileColumnListing` 新增返回字段 `column_type`。 
+
+## Fixed
+
+- [#2490](https://github.com/hyperf/hyperf/pull/2490) 修复 [hyperf/grpc-client](https://github.com/hyperf/grpc-client) 组件中，流式客户端无法正常工作的问题。
+- [#2509](https://github.com/hyperf/hyperf/pull/2509) 修复 [hyperf/database](https://github.com/hyperf/database) 组件中，使用小驼峰模式后，访问器无法正常工作的问题。
+- [#2535](https://github.com/hyperf/hyperf/pull/2535) 修复 [hyperf/database](https://github.com/hyperf/database) 组件中，使用 `gen:model` 后，通过访问器生成的注释 `@property` 会被 `morphTo` 覆盖的问题。
+- [#2546](https://github.com/hyperf/hyperf/pull/2546) 修复 [hyperf/db-connection](https://github.com/hyperf/db-connection) 组件中，使用 `left join` 等复杂查询后，`MySQL` 连接无法正常释放的问题。
+
+## Optimized
+
+- [#2490](https://github.com/hyperf/hyperf/pull/2490) 优化 [hyperf/grpc-client](https://github.com/hyperf/grpc-client) 组件中的异常和单元测试。
+
 # v2.0.11 - 2020-09-14
 
 ## 新增

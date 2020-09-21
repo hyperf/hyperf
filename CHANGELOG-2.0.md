@@ -1,4 +1,6 @@
-# v2.0.12 - TBD
+# v2.0.13 - TBD
+
+# v2.0.12 - 2020-09-21
 
 ## Added
 
@@ -13,7 +15,7 @@
 
 ## Optimized
 
-- [#2490](https://github.com/hyperf/hyperf/pull/2490) Optimized exception for grpc-client.
+- [#2490](https://github.com/hyperf/hyperf/pull/2490) Optimized exception and test cases for grpc-client.
 
 # v2.0.11 - 2020-09-14
 
