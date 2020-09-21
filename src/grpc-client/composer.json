@@ -38,7 +38,7 @@
             "HyperfTest\\GrpcClient\\": "tests/",
             "GPBMetadata\\": "tests/GPBMetadata",
             "Grpc\\": "tests/Grpc",
-            "Routeguide\\": "tests/Routeguide",
+            "Routeguide\\": "tests/Routeguide"
         }
     },
     "config": {
