@@ -1,5 +1,9 @@
 # v2.0.13 - TBD
 
+## Fixed
+
+- [#2559](https://github.com/hyperf/hyperf/pull/2559) Fixed the event does not works which caused by connecting with `query` for socketio-server.
+
 # v2.0.12 - 2020-09-21
 
 ## Added
