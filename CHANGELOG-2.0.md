@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#2559](https://github.com/hyperf/hyperf/pull/2559) Fixed the event does not works which caused by connecting with `query` for socketio-server.
+- [#2561](https://github.com/hyperf/hyperf/pull/2561) Optimized error message when close amqp connection failed.
 
 # v2.0.12 - 2020-09-21
 
