@@ -156,8 +156,8 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             /** @var Dispatched $dispatched */
             $dispatched = $psr7Request->getAttribute(Dispatched::class);
             if ($dispatched->isFound()) {
-                $registedMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
-                $middlewares = array_merge($middlewares, $registedMiddlewares);
+                $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
+                $middlewares = array_merge($middlewares, $registeredMiddlewares);
             }
 
             /** @var Response $psr7Response */

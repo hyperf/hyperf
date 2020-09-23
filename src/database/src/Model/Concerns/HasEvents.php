@@ -79,7 +79,7 @@ trait HasEvents
     }
 
     /**
-     * Remove some registed event.
+     * Remove some registered event.
      */
     public function removeEvents(array $events): void
     {
