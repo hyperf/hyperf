@@ -12,10 +12,26 @@ declare(strict_types=1);
 namespace HyperfTest\Redis\Stub;
 
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Redis\Pool\RedisPool;
 
 class RedisPoolStub extends RedisPool
 {
+    public function flushAll()
+    {
+        while ($conn = $this->channel->pop(0.001)) {
+            try {
+                $conn->close();
+            } catch (\Throwable $exception) {
+                if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
+                    $logger->error((string) $exception);
+                }
+            } finally {
+                --$this->currentConnections;
+            }
+        }
+    }
+
     protected function createConnection(): ConnectionInterface
     {
         return new RedisConnectionStub($this->container, $this, $this->config);
