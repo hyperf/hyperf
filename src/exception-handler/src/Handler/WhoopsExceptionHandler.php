@@ -41,9 +41,6 @@ class WhoopsExceptionHandler extends ExceptionHandler
         $whoops->pushHandler($handler);
         $whoops->allowQuit(false);
         ob_start();
-        if ($handler instanceof JsonResponseHandler) {
-            $handler->addTraceToOutput(true);
-        }
         $whoops->{Run::EXCEPTION_HANDLER}($throwable);
         $content = ob_get_clean();
         return $response
@@ -57,7 +54,7 @@ class WhoopsExceptionHandler extends ExceptionHandler
         return env('APP_ENV') !== 'prod' && class_exists(Run::class);
     }
 
-    private function negotiateHandler()
+    protected function negotiateHandler()
     {
         /** @var ServerRequestInterface $request */
         $request = Context::get(ServerRequestInterface::class);
@@ -70,7 +67,7 @@ class WhoopsExceptionHandler extends ExceptionHandler
         return [new PlainTextHandler(),  'text/plain'];
     }
 
-    private function setupHandler($handler)
+    protected function setupHandler($handler)
     {
         if ($handler instanceof PrettyPageHandler) {
             $handler->handleUnconditionally(true);
@@ -91,6 +88,8 @@ class WhoopsExceptionHandler extends ExceptionHandler
             if ($session) {
                 $handler->addDataTableCallback('Hyperf Session', [$session, 'all']);
             }
+        } elseif ($handler instanceof JsonResponseHandler) {
+            $handler->addTraceToOutput(true);
         }
 
         return $handler;
