@@ -132,11 +132,10 @@ abstract class AbstractProcess implements ProcessInterface
                         $this->listen($quit);
                     }
                     $this->handle();
-
-                    $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
                 } catch (\Throwable $throwable) {
                     $this->logThrowable($throwable);
                 } finally {
+                    $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
                     if (isset($quit)) {
                         $quit->push(true);
                     }
