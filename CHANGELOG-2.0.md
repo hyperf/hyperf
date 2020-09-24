@@ -1,5 +1,9 @@
 # v2.0.13 - TBD
 
+## Added
+
+- [#2445](https://github.com/hyperf/hyperf/pull/2445) Added trace info for `WhoopsExceptionHandler` when the header `accept` is `application/json`.
+
 ## Fixed
 
 - [#2559](https://github.com/hyperf/hyperf/pull/2559) Fixed the event does not works which caused by connecting with `query` for socketio-server.
