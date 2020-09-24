@@ -88,10 +88,11 @@ class RedisTest extends TestCase
                 $chan->push(true);
                 Coroutine::sleep(0.01);
                 $hasContextConnection = Context::has('redis.connection.default');
-                $this->assertTrue($hasContextConnection);
+                $this->assertFalse($hasContextConnection);
                 $connection = $method->invoke($redis, [$hasContextConnection]);
                 $this->assertNotEquals($connection->id, $id);
                 $redis->getConnection();
+                $chan->push(true);
             });
 
             $redis->keys('*');
@@ -116,6 +117,7 @@ class RedisTest extends TestCase
         $factory = $factory->getValue($redis);
         $pool = $factory->getPool('default');
         $pool->flushAll();
+        $chan->pop();
     }
 
     public function testRedisReuseAfterThrowable()
