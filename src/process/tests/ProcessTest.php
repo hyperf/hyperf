@@ -35,7 +35,7 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * @group NonAsyncIO
+     * @group NonCoroutine
      */
     public function testEventWhenThrowExceptionInProcess()
     {

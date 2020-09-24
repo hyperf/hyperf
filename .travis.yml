@@ -39,8 +39,7 @@ before_script:
 
 script:
   - composer analyse src
-  - composer test -- --exclude-group NonCoroutine --exclude-group NonAsyncIO
-  - composer test -- --group NonAsyncIO
+  - composer test -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
 
 notifications:
