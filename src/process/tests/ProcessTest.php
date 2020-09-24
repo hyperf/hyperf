@@ -34,6 +34,9 @@ class ProcessTest extends TestCase
         self::$dispatched = [];
     }
 
+    /**
+     * @group NonAsyncIO
+     */
     public function testEventWhenThrowExceptionInProcess()
     {
         $container = $this->getContainer();
