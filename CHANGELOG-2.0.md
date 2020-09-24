@@ -10,6 +10,7 @@
 - [#2561](https://github.com/hyperf/hyperf/pull/2561) Optimized error message when close amqp connection failed.
 - [#2565](https://github.com/hyperf/hyperf/pull/2565) Fixed proxy class generate keyword `parent::class` but the class scope has on parent.
 - [#2578](https://github.com/hyperf/hyperf/pull/2578) Fixed event `AfterProcessHandle` won't be dispatched when throw exception in process.
+- [#2582](https://github.com/hyperf/hyperf/pull/2582) Fixed redis connection has already been bound to another coroutine.
 
 # v2.0.12 - 2020-09-21
 
