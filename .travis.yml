@@ -40,6 +40,7 @@ before_script:
 script:
   - composer analyse src
   - composer test -- --exclude-group NonCoroutine
+  - composer test src/guzzle -- --exclude-group NonCoroutine
   - vendor/bin/phpunit --group NonCoroutine
 
 notifications:

@@ -9,6 +9,7 @@
 - [#2559](https://github.com/hyperf/hyperf/pull/2559) Fixed the event does not works which caused by connecting with `query` for socketio-server.
 - [#2561](https://github.com/hyperf/hyperf/pull/2561) Optimized error message when close amqp connection failed.
 - [#2565](https://github.com/hyperf/hyperf/pull/2565) Fixed proxy class generate keyword `parent::class` but the class scope has on parent.
+- [#2578](https://github.com/hyperf/hyperf/pull/2578) Fixed event `AfterProcessHandle` won't be dispatched when throw exception in process.
 
 # v2.0.12 - 2020-09-21
 
