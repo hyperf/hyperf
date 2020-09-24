@@ -37,6 +37,10 @@ class StreamingCall
      * @var int
      */
     protected $streamId = 0;
+    /**
+     * @var array
+     */
+    protected $metadata;
 
     public function setClient(GrpcClient $client): self
     {
@@ -67,6 +71,12 @@ class StreamingCall
         return $this;
     }
 
+    public function setMetadata(array $metadata): self
+    {
+        $this->metadata = $metadata;
+        return $this;
+    }
+
     public function send($message = null): void
     {
         if ($this->getStreamId() <= 0) {
@@ -74,7 +84,8 @@ class StreamingCall
                 $this->method,
                 Parser::serializeMessage($message),
                 '',
-                true
+                true,
+                $this->metadata
             );
             if ($streamId <= 0) {
                 throw $this->newException();
@@ -88,7 +99,11 @@ class StreamingCall
     public function push($message): void
     {
         if (! $this->getStreamId()) {
-            $this->setStreamId($this->client->openStream($this->method, null, '', true));
+            $this->setStreamId($this->client->openStream($this->method,
+                null,
+                '',
+                true,
+                $this->metadata));
         }
         $success = $this->client->write($this->getStreamId(), Parser::serializeMessage($message), false);
         if (! $success) {

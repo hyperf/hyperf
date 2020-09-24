@@ -207,7 +207,7 @@ class GrpcClient
 
     public function getHttpClient(): SwooleHttp2Client
     {
-        if (! $this->httpClient instanceof SwooleHttp2Client) {
+        if (!$this->httpClient instanceof SwooleHttp2Client) {
             $this->httpClient = $this->buildHttp2Client();
         }
         return $this->httpClient;
@@ -217,7 +217,12 @@ class GrpcClient
      * Open a stream and return the id.
      * @param mixed $data
      */
-    public function openStream(string $path, $data = '', string $method = '', bool $usePipelineRead = false): int
+    public function openStream(
+        string $path, $data = '',
+        string $method = '',
+        bool $usePipelineRead = false,
+        array $metadata = []
+    ): int
     {
         $method = $method ?: ($data ? 'POST' : 'GET');
         $request = new Request($method);
@@ -225,6 +230,7 @@ class GrpcClient
         if ($data) {
             $request->data = $data;
         }
+        $request->headers = $request->headers + $metadata;
         $request->pipeline = true;
         if ($usePipelineRead) {
             // @phpstan-ignore-next-line
