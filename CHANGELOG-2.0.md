@@ -3,6 +3,7 @@
 ## Added
 
 - [#2445](https://github.com/hyperf/hyperf/pull/2445) Added trace info for `WhoopsExceptionHandler` when the header `accept` is `application/json`.
+- [#2580](https://github.com/hyperf/hyperf/pull/2580) Support metadata for grpc client side.
 
 ## Fixed
 
