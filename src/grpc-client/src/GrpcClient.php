@@ -217,14 +217,20 @@ class GrpcClient
      * Open a stream and return the id.
      * @param mixed $data
      */
-    public function openStream(string $path, $data = '', string $method = '', bool $usePipelineRead = false): int
-    {
+    public function openStream(
+        string $path,
+        $data = '',
+        string $method = '',
+        bool $usePipelineRead = false,
+        array $metadata = []
+    ): int {
         $method = $method ?: ($data ? 'POST' : 'GET');
         $request = new Request($method);
         $request->path = $path;
         if ($data) {
             $request->data = $data;
         }
+        $request->headers = $request->headers + $metadata;
         $request->pipeline = true;
         if ($usePipelineRead) {
             // @phpstan-ignore-next-line

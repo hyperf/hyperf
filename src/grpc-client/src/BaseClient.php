@@ -100,6 +100,7 @@ class BaseClient
         array $metadata = [],
         array $options = []
     ) {
+        $options['headers'] = ($options['headers'] ?? []) + $metadata;
         $streamId = retry($this->options['retry_attempts'] ?? 3, function () use ($method, $argument, $options) {
             $streamId = $this->send($this->buildRequest($method, $argument, $options));
             if ($streamId <= 0) {
@@ -130,7 +131,8 @@ class BaseClient
         $call = new ClientStreamingCall();
         $call->setClient($this->_getGrpcClient())
             ->setMethod($method)
-            ->setDeserialize($deserialize);
+            ->setDeserialize($deserialize)
+            ->setMetadata($metadata);
 
         return $call;
     }
@@ -154,9 +156,10 @@ class BaseClient
         array $options = []
     ) {
         $call = new ServerStreamingCall();
-        $call->setClient($this->_getGrpcClient());
-        $call->setMethod($method);
-        $call->setDeserialize($deserialize);
+        $call->setClient($this->_getGrpcClient())
+            ->setMethod($method)
+            ->setDeserialize($deserialize)
+            ->setMetadata($metadata);
 
         return $call;
     }
@@ -169,13 +172,15 @@ class BaseClient
      */
     protected function _bidiRequest(
         string $method,
-        $deserialize
+        $deserialize,
+        array $metadata = [],
+        array $options = []
     ): BidiStreamingCall {
         $call = new BidiStreamingCall();
         $call->setClient($this->_getGrpcClient())
             ->setMethod($method)
-            ->setDeserialize($deserialize);
-
+            ->setDeserialize($deserialize)
+            ->setMetadata($metadata);
         return $call;
     }
 
