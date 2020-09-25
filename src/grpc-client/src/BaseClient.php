@@ -154,8 +154,7 @@ class BaseClient
         $deserialize,
         array $metadata = [],
         array $options = []
-    )
-    {
+    ) {
         $call = new ServerStreamingCall();
         $call->setClient($this->_getGrpcClient())
             ->setMethod($method)

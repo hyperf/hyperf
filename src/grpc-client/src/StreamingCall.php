@@ -37,6 +37,7 @@ class StreamingCall
      * @var int
      */
     protected $streamId = 0;
+
     /**
      * @var array
      */
@@ -99,11 +100,13 @@ class StreamingCall
     public function push($message): void
     {
         if (! $this->getStreamId()) {
-            $this->setStreamId($this->client->openStream($this->method,
+            $this->setStreamId($this->client->openStream(
+                $this->method,
                 null,
                 '',
                 true,
-                $this->metadata));
+                $this->metadata
+            ));
         }
         $success = $this->client->write($this->getStreamId(), Parser::serializeMessage($message), false);
         if (! $success) {
