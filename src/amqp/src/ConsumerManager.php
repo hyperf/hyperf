@@ -32,7 +32,7 @@ class ConsumerManager
 
     public function run()
     {
-        $classes = AnnotationCollector::getClassByAnnotation(ConsumerAnnotation::class);
+        $classes = AnnotationCollector::getClassesByAnnotation(ConsumerAnnotation::class);
         /**
          * @var string $class
          * @var ConsumerAnnotation $annotation
