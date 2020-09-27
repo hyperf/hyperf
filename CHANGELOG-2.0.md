@@ -13,6 +13,10 @@
 - [#2578](https://github.com/hyperf/hyperf/pull/2578) Fixed event `AfterProcessHandle` won't be dispatched when throw exception in process.
 - [#2582](https://github.com/hyperf/hyperf/pull/2582) Fixed redis connection has already been bound to another coroutine.
 
+## Optimized
+
+- [#2584](https://github.com/hyperf/hyperf/pull/2584) Don't delete nacos service when server shutdown.
+
 # v2.0.12 - 2020-09-21
 
 ## Added
