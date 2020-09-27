@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Server\Event;
 
+use Swoole\Coroutine\Http\Server as HttpServer;
 use Swoole\Coroutine\Server;
 
 class MainCoroutineServerStart
@@ -21,7 +22,7 @@ class MainCoroutineServerStart
     public $name = '';
 
     /**
-     * @var object|Server
+     * @var HttpServer|object|Server
      */
     public $server;
 
