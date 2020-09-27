@@ -167,7 +167,7 @@ class HiClient extends BaseClient
 }
 ```
 
-gRPC客户端还支持 gRPC 的 Streaming 模式。以双向流为例：
+gRPC 客户端还支持 gRPC 的 Streaming 模式。以双向流为例：
 
 ```php
 <?

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Contract;
 
+use Swoole\Coroutine\Http\Server as CoHttpServer;
 use Swoole\Coroutine\Server as CoServer;
 use Swoole\Server;
 
@@ -18,7 +19,7 @@ interface ProcessInterface
 {
     /**
      * Create the process object according to process number and bind to server.
-     * @param CoServer|Server $server
+     * @param CoHttpServer|CoServer|Server $server
      */
     public function bind($server): void;
 

@@ -69,7 +69,7 @@ class CrontabDispatcherProcess extends AbstractProcess
 
     public function isEnable($server): bool
     {
-        return $server instanceof Server && $this->config->get('crontab.enable', false);
+        return $this->config->get('crontab.enable', false);
     }
 
     public function handle(): void
