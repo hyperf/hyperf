@@ -52,7 +52,7 @@ class AnnotationCollector extends MetadataCollector
         return self::getClassesByAnnotation($annotation);
     }
 
-    public static function getClassesByAnnotation(string $annotation)
+    public static function getClassesByAnnotation(string $annotation): array
     {
         $result = [];
         foreach (static::$container as $class => $metadata) {

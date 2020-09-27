@@ -15,10 +15,8 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnShutdown;
 use Hyperf\Nacos\Api\NacosInstance;
-use Hyperf\Nacos\Api\NacosService;
 use Hyperf\Nacos\Contract\LoggerInterface;
 use Hyperf\Nacos\Instance;
-use Hyperf\Nacos\Service;
 use Psr\Container\ContainerInterface;
 
 class OnShutdownListener implements ListenerInterface

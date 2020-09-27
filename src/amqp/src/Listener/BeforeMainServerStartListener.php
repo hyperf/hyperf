@@ -14,6 +14,7 @@ namespace Hyperf\Amqp\Listener;
 use Hyperf\Amqp\ConsumerManager;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -38,6 +39,7 @@ class BeforeMainServerStartListener implements ListenerInterface
     {
         return [
             BeforeMainServerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 
