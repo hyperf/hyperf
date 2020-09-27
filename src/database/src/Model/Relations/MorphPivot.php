@@ -41,11 +41,11 @@ class MorphPivot extends Pivot
      */
     public function delete()
     {
-        $query = $this->getDeleteQuery();
+        if($this->morphType !== null) {
+            $this->getDeleteQuery()->where($this->morphType, $this->morphClass);
+        }
 
-        $query->where($this->morphType, $this->morphClass);
-
-        return $query->delete();
+        return parent::delete();
     }
 
     /**
@@ -105,7 +105,9 @@ class MorphPivot extends Pivot
      */
     protected function setKeysForSaveQuery(Builder $query)
     {
-        $query->where($this->morphType, $this->morphClass);
+        if($this->morphType !== null) {
+            $query->where($this->morphType, $this->morphClass);
+        }
 
         return parent::setKeysForSaveQuery($query);
     }
