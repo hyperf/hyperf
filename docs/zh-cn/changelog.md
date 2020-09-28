@@ -1,5 +1,26 @@
 # 版本更新记录
 
+# v2.0.13 - 2020-09-28
+
+## Added
+
+- [#2445](https://github.com/hyperf/hyperf/pull/2445) 当使用异常捕获器 `WhoopsExceptionHandler` 返回 `JSON` 格式化的数据时，自动添加异常的 `Trace` 信息。
+- [#2580](https://github.com/hyperf/hyperf/pull/2580) 新增 `grpc-client` 组件的 `metadata` 支持。
+
+## Fixed
+
+- [#2559](https://github.com/hyperf/hyperf/pull/2559) 修复使用 `socket-io` 连接 `socketio-server` 时，因为携带 `query` 信息，导致事件无法被触发的问题。
+- [#2565](https://github.com/hyperf/hyperf/pull/2565) 修复生成代理类时，因为存在匿名类，导致代理类在没有父类的情况下使用了 `parent::class` 而报错的问题。
+- [#2578](https://github.com/hyperf/hyperf/pull/2578) 修复当自定义进程抛错后，事件 `AfterProcessHandle` 无法被触发的问题。
+- [#2582](https://github.com/hyperf/hyperf/pull/2582) 修复使用 `Redis::multi` 且在 `defer` 中使用了其他 `Redis` 指令后，导致 `Redis` 同时被两个协程使用而报错的问题。
+- [#2589](https://github.com/hyperf/hyperf/pull/2589) 修复使用了协程风格服务时，`AMQP` 消费者无法正常启动的问题。
+- [#2590](https://github.com/hyperf/hyperf/pull/2590) 修复使用了协程风格服务时，`Crontab` 无法正常工作的问题。
+
+## Optimized
+
+- [#2561](https://github.com/hyperf/hyperf/pull/2561) 优化关闭 `AMQP` 连接失败时的错误信息。
+- [#2584](https://github.com/hyperf/hyperf/pull/2584) 当服务关闭时，不再删除 `Nacos` 中对应的服务。
+
 # v2.0.12 - 2020-09-21
 
 ## Added

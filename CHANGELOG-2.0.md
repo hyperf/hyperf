@@ -1,4 +1,6 @@
-# v2.0.13 - TBD
+# v2.0.14 - TBD
+
+# v2.0.13 - 2020-09-28
 
 ## Added
 
@@ -8,7 +10,6 @@
 ## Fixed
 
 - [#2559](https://github.com/hyperf/hyperf/pull/2559) Fixed the event does not works which caused by connecting with `query` for socketio-server.
-- [#2561](https://github.com/hyperf/hyperf/pull/2561) Optimized error message when close amqp connection failed.
 - [#2565](https://github.com/hyperf/hyperf/pull/2565) Fixed proxy class generate keyword `parent::class` but the class scope has on parent.
 - [#2578](https://github.com/hyperf/hyperf/pull/2578) Fixed event `AfterProcessHandle` won't be dispatched when throw exception in process.
 - [#2582](https://github.com/hyperf/hyperf/pull/2582) Fixed redis connection has already been bound to another coroutine.
@@ -17,6 +18,7 @@
 
 ## Optimized
 
+- [#2561](https://github.com/hyperf/hyperf/pull/2561) Optimized error message when close amqp connection failed.
 - [#2584](https://github.com/hyperf/hyperf/pull/2584) Don't delete nacos service when server shutdown.
 
 # v2.0.12 - 2020-09-21
