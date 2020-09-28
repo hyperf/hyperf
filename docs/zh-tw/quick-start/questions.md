@@ -138,3 +138,6 @@ Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line
 ```
 
 可以執行指令碼 `composer analyse`，對專案進行靜態檢測，便可以找到出現問題的程式碼段。
+
+此問題通常是由於 [zircote/swagger](https://github.com/zircote/swagger-php) 的 3.0.5 版本更新導致, 詳情請見 [#834](https://github.com/zircote/swagger-php/issues/834) 。 
+如果安裝了 [hyperf/swagger](https://github.com/hyperf/swagger) 建議將 [zircote/swagger](https://github.com/zircote/swagger-php) 的版本鎖定在 3.0.4

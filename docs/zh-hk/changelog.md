@@ -1,19 +1,40 @@
 # 版本更新記錄
 
+# v2.0.13 - 2020-09-28
+
+## 新增
+
+- [#2445](https://github.com/hyperf/hyperf/pull/2445) 當使用異常捕獲器 `WhoopsExceptionHandler` 返回 `JSON` 格式化的數據時，自動添加異常的 `Trace` 信息。
+- [#2580](https://github.com/hyperf/hyperf/pull/2580) 新增 `grpc-client` 組件的 `metadata` 支持。
+
+## 修復
+
+- [#2559](https://github.com/hyperf/hyperf/pull/2559) 修復使用 `socket-io` 連接 `socketio-server` 時，因為攜帶 `query` 信息，導致事件無法被觸發的問題。
+- [#2565](https://github.com/hyperf/hyperf/pull/2565) 修復生成代理類時，因為存在匿名類，導致代理類在沒有父類的情況下使用了 `parent::class` 而報錯的問題。
+- [#2578](https://github.com/hyperf/hyperf/pull/2578) 修復當自定義進程拋錯後，事件 `AfterProcessHandle` 無法被觸發的問題。
+- [#2582](https://github.com/hyperf/hyperf/pull/2582) 修復使用 `Redis::multi` 且在 `defer` 中使用了其他 `Redis` 指令後，導致 `Redis` 同時被兩個協程使用而報錯的問題。
+- [#2589](https://github.com/hyperf/hyperf/pull/2589) 修復使用了協程風格服務時，`AMQP` 消費者無法正常啟動的問題。
+- [#2590](https://github.com/hyperf/hyperf/pull/2590) 修復使用了協程風格服務時，`Crontab` 無法正常工作的問題。
+
+## 優化
+
+- [#2561](https://github.com/hyperf/hyperf/pull/2561) 優化關閉 `AMQP` 連接失敗時的錯誤信息。
+- [#2584](https://github.com/hyperf/hyperf/pull/2584) 當服務關閉時，不再刪除 `Nacos` 中對應的服務。
+
 # v2.0.12 - 2020-09-21
 
-## Added
+## 新增
 
 - [#2512](https://github.com/hyperf/hyperf/pull/2512) 為 [hyperf/database](https://github.com/hyperf/database) 組件方法 `MySqlGrammar::compileColumnListing` 新增返回字段 `column_type`。 
 
-## Fixed
+## 修復
 
 - [#2490](https://github.com/hyperf/hyperf/pull/2490) 修復 [hyperf/grpc-client](https://github.com/hyperf/grpc-client) 組件中，流式客户端無法正常工作的問題。
 - [#2509](https://github.com/hyperf/hyperf/pull/2509) 修復 [hyperf/database](https://github.com/hyperf/database) 組件中，使用小駝峯模式後，訪問器無法正常工作的問題。
 - [#2535](https://github.com/hyperf/hyperf/pull/2535) 修復 [hyperf/database](https://github.com/hyperf/database) 組件中，使用 `gen:model` 後，通過訪問器生成的註釋 `@property` 會被 `morphTo` 覆蓋的問題。
 - [#2546](https://github.com/hyperf/hyperf/pull/2546) 修復 [hyperf/db-connection](https://github.com/hyperf/db-connection) 組件中，使用 `left join` 等複雜查詢後，`MySQL` 連接無法正常釋放的問題。
 
-## Optimized
+## 優化
 
 - [#2490](https://github.com/hyperf/hyperf/pull/2490) 優化 [hyperf/grpc-client](https://github.com/hyperf/grpc-client) 組件中的異常和單元測試。
 
