@@ -42,6 +42,7 @@
 ## 依賴注入容器
 
 - [hyperf/di](https://github.com/hyperf/di) Hyperf 官方提供的支援註解及 AOP 的依賴注入容器
+- [hyperf/pimple](https://github.com/hyperf-cloud/pimple-integration) 基於 `pimple/pimple` 實現的輕量級符合 `PSR11` 規範的容器元件。可以減少其他框架使用 `Hyperf` 元件時的成本。
 
 ## 服務
 
@@ -61,6 +62,7 @@
 - [hyperf/redis](https://github.com/hyperf/redis) Hyperf 官方提供的 Redis 協程客戶端
 - [hyperf/websocket-client](https://github.com/hyperf/websocket-client) Hyperf 官方提供的 WebSocket 協程客戶端
 - [hyperf/cache](https://github.com/hyperf/cache) Hyperf 官方提供的基於 PSR-16 的快取協程客戶端，支援註解的使用方式
+- [chungou/elasticsearch](https://github.com/kaychem/hyperf-elasticsearch) 一個簡單的 Elasticsearch 構造器
 
 ## 訊息佇列
 
