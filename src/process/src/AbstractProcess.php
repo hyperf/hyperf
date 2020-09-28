@@ -90,6 +90,16 @@ abstract class AbstractProcess implements ProcessInterface
      */
     protected $restartInterval = 5;
 
+    /**
+     * @var bool
+     */
+    protected $processIsExit = false;
+
+    /**
+     * @var int
+     */
+    protected $stepSleepInterval = 0;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -118,20 +128,41 @@ abstract class AbstractProcess implements ProcessInterface
         throw new ServerInvalidException(sprintf('Server %s is invalid.', get_class($server)));
     }
 
+    protected function signal()
+    {
+        \Swoole\Process::signal(SIGTERM, function ($signal) {
+            //var_dump($this->name.' process exit:'.$signal);
+            $this->processIsExit = true;
+        });
+    }
+
     protected function bindServer(Server $server): void
     {
         $num = $this->nums;
         for ($i = 0; $i < $num; ++$i) {
             $process = new SwooleProcess(function (SwooleProcess $process) use ($i) {
                 try {
+                    $this->signal();
                     $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
+                    //$this->signal();//此处信号监听无效，不知道什么原因
 
                     $this->process = $process;
                     if ($this->enableCoroutine) {
                         $quit = new Channel(1);
                         $this->listen($quit);
                     }
-                    $this->handle();
+                    while (true) {
+                        $this->handle();
+                        if ($this->processIsExit) {
+                            break;
+                        }
+                        if ($this->stepSleepInterval > 0) {
+                            \Swoole\Coroutine::sleep($this->stepSleepInterval);
+                            if ($this->processIsExit) {
+                                break;
+                            }
+                        }
+                    }
                 } catch (\Throwable $throwable) {
                     $this->logThrowable($throwable);
                 } finally {
