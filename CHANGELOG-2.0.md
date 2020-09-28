@@ -1,5 +1,9 @@
 # v2.0.14 - TBD
 
+## Fixed
+
+- [#2594](https://github.com/hyperf/hyperf/pull/2594) Fixed crontab does not stops when using signal.
+
 # v2.0.13 - 2020-09-28
 
 ## Added
