@@ -38,6 +38,7 @@ trait CamelCase
     {
         $fillable = [];
         foreach (parent::getFillable() as $key) {
+            $fillable[] = $key;
             $fillable[] = $this->keyTransform($key);
         }
         return $fillable;
