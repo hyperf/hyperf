@@ -95,11 +95,6 @@ abstract class AbstractProcess implements ProcessInterface
      */
     protected $processRunning = true;
 
-    /**
-     * @var int
-     */
-    protected $stepSleepInterval = 0;
-
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -131,7 +126,8 @@ abstract class AbstractProcess implements ProcessInterface
     protected function signal()
     {
         \Swoole\Process::signal(SIGTERM, function ($signal) {
-            $this->processRunning = false;
+            $this->restartInterval = 0;
+            $this->processRunning  = false;
         });
     }
 
@@ -153,12 +149,6 @@ abstract class AbstractProcess implements ProcessInterface
                         if (!$this->processRunning) {
                             break;
                         }
-                        if ($this->stepSleepInterval > 0) {
-                            sleep($this->stepSleepInterval);
-                            if (!$this->processRunning) {
-                                break;
-                            }
-                        }
                     }
                 } catch (\Throwable $throwable) {
                     $this->logThrowable($throwable);
@@ -168,7 +158,9 @@ abstract class AbstractProcess implements ProcessInterface
                         $quit->push(true);
                     }
                     Timer::clearAll();
-                    sleep($this->restartInterval);
+                    if ($this->restartInterval > 0) {
+                        sleep($this->restartInterval);
+                    }
                 }
             }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
             $server->addProcess($process);
