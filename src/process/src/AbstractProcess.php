@@ -93,7 +93,7 @@ abstract class AbstractProcess implements ProcessInterface
     /**
      * @var bool
      */
-    protected $processIsExit = false;
+    protected $processRunning = true;
 
     /**
      * @var int
@@ -131,7 +131,7 @@ abstract class AbstractProcess implements ProcessInterface
     protected function signal()
     {
         \Swoole\Process::signal(SIGTERM, function ($signal) {
-            $this->processIsExit = true;
+            $this->processRunning = false;
         });
     }
 
@@ -150,12 +150,12 @@ abstract class AbstractProcess implements ProcessInterface
                     }
                     while (true) {
                         $this->handle();
-                        if ($this->processIsExit) {
+                        if (!$this->processRunning) {
                             break;
                         }
                         if ($this->stepSleepInterval > 0) {
-                            \Swoole\Coroutine::sleep($this->stepSleepInterval);
-                            if ($this->processIsExit) {
+                            sleep($this->stepSleepInterval);
+                            if (!$this->processRunning) {
                                 break;
                             }
                         }
