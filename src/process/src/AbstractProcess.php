@@ -131,7 +131,6 @@ abstract class AbstractProcess implements ProcessInterface
     protected function signal()
     {
         \Swoole\Process::signal(SIGTERM, function ($signal) {
-            //var_dump($this->name.' process exit:'.$signal);
             $this->processIsExit = true;
         });
     }
@@ -144,8 +143,6 @@ abstract class AbstractProcess implements ProcessInterface
                 try {
                     $this->signal();
                     $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
-                    //$this->signal();//此处信号监听无效，不知道什么原因
-
                     $this->process = $process;
                     if ($this->enableCoroutine) {
                         $quit = new Channel(1);
