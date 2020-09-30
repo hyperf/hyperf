@@ -5,6 +5,10 @@
 - [#2594](https://github.com/hyperf/hyperf/pull/2594) Fixed crontab does not stops when using signal.
 - [#2601](https://github.com/hyperf/hyperf/pull/2601) Fixed `@property` will be replaced by `@property-read` when the property has `getter` and `setter` at the same time.
 
+## Optimized
+
+- [#2603](https://github.com/hyperf/hyperf/pull/2603) Allow `whereNull` to accept array columns argument.
+
 # v2.0.13 - 2020-09-28
 
 ## Added
