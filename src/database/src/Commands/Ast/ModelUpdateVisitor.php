@@ -211,6 +211,13 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 $name = Str::snake(substr($method->getName(), 3, -9));
                 if (! empty($name)) {
                     $type = BetterReflectionManager::getReturnFinder()->__invoke($method, $namespace);
+                    if (empty($type) && $returnType = $method->getReturnType()) {
+                        $returnTypeName = $returnType->getName();
+                        if (class_exists($returnTypeName)) {
+                            $returnTypeName = '\\' . $returnTypeName;
+                        }
+                        $type = [$returnTypeName];
+                    }
                     $this->setProperty($name, $type, true, null, '', false, 1);
                 }
                 continue;
@@ -220,7 +227,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 // Magic set<name>Attribute
                 $name = Str::snake(substr($method->getName(), 3, -9));
                 if (! empty($name)) {
-                    $this->setProperty($name, null, null, true);
+                    $this->setProperty($name, null, null, true, '', false, 1);
                 }
                 continue;
             }

@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#2594](https://github.com/hyperf/hyperf/pull/2594) Fixed crontab does not stops when using signal.
+- [#2601](https://github.com/hyperf/hyperf/pull/2601) Fixed `@property` will be replaced by `@property-read` when the property has `getter` and `setter` at the same time.
 
 # v2.0.13 - 2020-09-28
 
