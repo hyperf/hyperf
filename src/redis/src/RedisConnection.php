@@ -226,10 +226,16 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         return $redis;
     }
 
+    /**
+     * @param string $host
+     * @param int $port
+     * @param float $timeout
+     * @return \Redis
+     */
     protected function createRedis($host, $port, $timeout)
     {
         $redis = new \Redis();
-        if (! $redis->connect($host, $port, $timeout)) {
+        if (! $redis->connect((string) $host, (int) $port, $timeout)) {
             throw new ConnectionException('Connection reconnect failed.');
         }
         return $redis;
