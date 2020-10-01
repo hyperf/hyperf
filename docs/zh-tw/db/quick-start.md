@@ -25,15 +25,16 @@ composer require hyperf/database
 預設配置如下，資料庫支援多庫配置，預設為 `default`。
 
 |        配置項        |  型別  |     預設值      |        備註        |
-|:--------------------:|:------:|:---------------:|:------------------:|
+| :------------------: | :----: | :-------------: | :----------------: |
 |        driver        | string |       無        |     資料庫引擎     |
 |         host         | string |       無        |     資料庫地址     |
-|       database       | string |       無        |    資料庫預設 DB    |
+|       database       | string |       無        |   資料庫預設 DB    |
 |       username       | string |       無        |    資料庫使用者名稱    |
 |       password       | string |      null       |     資料庫密碼     |
 |       charset        | string |      utf8       |     資料庫編碼     |
 |      collation       | string | utf8_unicode_ci |     資料庫編碼     |
 |        prefix        | string |       ''        |   資料庫模型字首   |
+|       timezone       | string |      null       |     資料庫時區     |
 | pool.min_connections |  int   |        1        | 連線池內最少連線數 |
 | pool.max_connections |  int   |       10        | 連線池內最大連線數 |
 | pool.connect_timeout | float  |      10.0       |  連線等待超時時間  |
@@ -98,11 +99,11 @@ return [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
             PDO::ATTR_STRINGIFY_FETCHES => false,
+            // 如果使用的為非原生 MySQL 或雲廠商提供的 DB 如從庫/分析型例項等不支援 MySQL prepare 協議的, 將此項設定為 true
             PDO::ATTR_EMULATE_PREPARES => false,
         ],
     ],
 ];
-
 ```
 
 ### 讀寫分離
@@ -338,4 +339,25 @@ try{
 } catch(\Throwable $ex){
     Db::rollBack();
 }
+```
+
+## 輸出剛剛執行的 SQL
+
+> 當前方法僅能用於開發環境，線上部署前一定要去掉，不然會引起嚴重的記憶體洩露和資料混淆。
+
+線上記錄 `SQL`，請使用 [事件監聽](/zh-cn/db/event)
+
+```php
+<?php
+
+use Hyperf\DbConnection\Db;
+use App\Model\Book;
+
+// 啟用 SQL 資料記錄功能
+Db::enableQueryLog();
+
+$book = Book::query()->find(1);
+
+// 列印最後一條 SQL 相關資料
+var_dump(Arr::last(Db::getQueryLog()));
 ```

@@ -5,12 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\Server;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
@@ -46,7 +47,7 @@ class CoroutineServer implements ServerInterface
     protected $config;
 
     /**
-     * @var Coroutine\Http\Server|Coroutine\Server
+     * @var \Swoole\Coroutine\Http\Server|\Swoole\Coroutine\Server
      */
     protected $server;
 
@@ -78,6 +79,7 @@ class CoroutineServer implements ServerInterface
 
     public function start()
     {
+        $this->writePid();
         run(function () {
             $this->initServer($this->config);
             $servers = ServerManager::list();
@@ -92,6 +94,7 @@ class CoroutineServer implements ServerInterface
                     CoordinatorManager::until(Constants::WORKER_START)->resume();
                     $server->start();
                     $this->eventDispatcher->dispatch(new CoroutineServerStop($name, $server));
+                    CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
                 });
             }
         });
@@ -114,6 +117,9 @@ class CoroutineServer implements ServerInterface
     {
         $servers = $config->getServers();
         foreach ($servers as $server) {
+            if (! $server instanceof \Hyperf\Server\Port) {
+                continue;
+            }
             $name = $server->getName();
             $type = $server->getType();
             $host = $server->getHost();
@@ -121,19 +127,92 @@ class CoroutineServer implements ServerInterface
             $callbacks = array_replace($config->getCallbacks(), $server->getCallbacks());
 
             $this->server = $this->makeServer($type, $host, $port);
-            $this->server->set(array_replace($config->getSettings(), $server->getSettings()));
+            $settings = array_replace($config->getSettings(), $server->getSettings());
+            $this->server->set($settings);
 
-            if (isset($callbacks[SwooleEvent::ON_REQUEST])) {
-                [$class, $method] = $callbacks[SwooleEvent::ON_REQUEST];
-                $handler = $this->container->get($class);
-                if ($handler instanceof MiddlewareInitializerInterface) {
-                    $handler->initCoreMiddleware($name);
-                }
-                $this->server->handle('/', [$handler, $method]);
-            }
+            $this->bindServerCallbacks($type, $name, $callbacks);
 
-            ServerManager::add($name, [$type, $this->server]);
+            ServerManager::add($name, [$type, $this->server, $callbacks]);
         }
+    }
+
+    protected function bindServerCallbacks(int $type, string $name, array $callbacks)
+    {
+        switch ($type) {
+            case ServerInterface::SERVER_HTTP:
+                if (isset($callbacks[SwooleEvent::ON_REQUEST])) {
+                    [$handler, $method] = $this->getCallbackMethod(SwooleEvent::ON_REQUEST, $callbacks);
+                    if ($handler instanceof MiddlewareInitializerInterface) {
+                        $handler->initCoreMiddleware($name);
+                    }
+                    if ($this->server instanceof \Swoole\Coroutine\Http\Server) {
+                        $this->server->handle('/', static function ($request, $response) use ($handler, $method) {
+                            Coroutine::create(static function () use ($request, $response, $handler, $method) {
+                                $handler->{$method}($request, $response);
+                            });
+                        });
+                    }
+                }
+                return;
+            case ServerInterface::SERVER_WEBSOCKET:
+                if (isset($callbacks[SwooleEvent::ON_HAND_SHAKE])) {
+                    [$handler, $method] = $this->getCallbackMethod(SwooleEvent::ON_HAND_SHAKE, $callbacks);
+                    if ($handler instanceof MiddlewareInitializerInterface) {
+                        $handler->initCoreMiddleware($name);
+                    }
+                    if ($this->server instanceof \Swoole\Coroutine\Http\Server) {
+                        $this->server->handle('/', [$handler, $method]);
+                    }
+                }
+                return;
+            case ServerInterface::SERVER_BASE:
+                if (isset($callbacks[SwooleEvent::ON_RECEIVE])) {
+                    [$connectHandler, $connectMethod] = $this->getCallbackMethod(SwooleEvent::ON_CONNECT, $callbacks);
+                    [$receiveHandler, $receiveMethod] = $this->getCallbackMethod(SwooleEvent::ON_RECEIVE, $callbacks);
+                    [$closeHandler, $closeMethod] = $this->getCallbackMethod(SwooleEvent::ON_CLOSE, $callbacks);
+                    if ($receiveHandler instanceof MiddlewareInitializerInterface) {
+                        $receiveHandler->initCoreMiddleware($name);
+                    }
+                    if ($this->server instanceof \Swoole\Coroutine\Server) {
+                        $this->server->handle(function (Coroutine\Server\Connection $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
+                            if ($connectHandler && $connectMethod) {
+                                parallel([static function () use ($connectHandler, $connectMethod, $connection) {
+                                    $connectHandler->{$connectMethod}($connection, $connection->exportSocket()->fd);
+                                }]);
+                            }
+                            while (true) {
+                                $data = $connection->recv();
+                                if (empty($data)) {
+                                    if ($closeHandler && $closeMethod) {
+                                        parallel([static function () use ($closeHandler, $closeMethod, $connection) {
+                                            $closeHandler->{$closeMethod}($connection, $connection->exportSocket()->fd);
+                                        }]);
+                                    }
+                                    $connection->close();
+                                    break;
+                                }
+                                // One coroutine at a time, consistent with other servers
+                                parallel([static function () use ($receiveHandler, $receiveMethod, $connection, $data) {
+                                    $receiveHandler->{$receiveMethod}($connection, $connection->exportSocket()->fd, 0, $data);
+                                }]);
+                            }
+                        });
+                    }
+                }
+                return;
+        }
+
+        throw new RuntimeException('Server type is invalid or the server callback does not exists.');
+    }
+
+    protected function getCallbackMethod(string $callack, array $callbacks): array
+    {
+        $handler = $method = null;
+        if (isset($callbacks[$callack])) {
+            [$class, $method] = $callbacks[$callack];
+            $handler = $this->container->get($class);
+        }
+        return [$handler, $method];
     }
 
     protected function makeServer($type, $host, $port)
@@ -141,11 +220,18 @@ class CoroutineServer implements ServerInterface
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
             case ServerInterface::SERVER_WEBSOCKET:
-                return new Coroutine\Http\Server($host, $port);
+                return new Coroutine\Http\Server($host, $port, false, true);
             case ServerInterface::SERVER_BASE:
-                return new Coroutine\Server($host, $port);
+                return new Coroutine\Server($host, $port, false, true);
         }
 
         throw new RuntimeException('Server type is invalid.');
+    }
+
+    private function writePid(): void
+    {
+        $config = $this->container->get(ConfigInterface::class);
+        $file = $config->get('server.settings.pid_file', BASE_PATH . '/runtime/hyperf.pid');
+        file_put_contents($file, getmypid());
     }
 }

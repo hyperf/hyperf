@@ -9,7 +9,7 @@ Hyperf 對系統環境有一些要求，僅可運行於 Linux 和 Mac 環境下�
 當您不想採用 Docker 來作為執行的環境基礎時，您需要確保您的執行環境達到了以下的要求：   
 
  - PHP >= 7.2
- - Swoole PHP 擴充套件 >= 4.4，並關閉了 `Short Name`
+ - Swoole PHP 擴充套件 >= 4.5，並關閉了 `Short Name`
  - OpenSSL PHP 擴充套件
  - JSON PHP 擴充套件
  - PDO PHP 擴充套件 （如需要使用到 MySQL 客戶端）
@@ -35,7 +35,7 @@ composer create-project hyperf/hyperf-skeleton
 
 ```
 # 下載並執行 hyperf/hyperf 映象，並將映象內的專案目錄繫結到宿主機的 /tmp/skeleton 目錄
-docker run -v /tmp/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/sh hyperf/hyperf:7.2-alpine-cli
+docker run -v /tmp/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/sh hyperf/hyperf:latest
 
 # 映象容器執行後，在容器內安裝 Composer
 wget https://github.com/composer/composer/releases/download/1.8.6/composer.phar

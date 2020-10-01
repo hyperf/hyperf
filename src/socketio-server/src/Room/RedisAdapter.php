@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -25,7 +25,6 @@ use Hyperf\Utils\Coroutine;
 use Hyperf\WebSocketServer\Sender;
 use Mix\Redis\Subscribe\Subscriber;
 use Redis;
-use Swoole\Server;
 
 class RedisAdapter implements AdapterInterface
 {
@@ -105,7 +104,8 @@ class RedisAdapter implements AdapterInterface
             $this->doBroadcast($packet, $opts);
             return;
         }
-        $this->redis->publish($this->getChannelKey(), serialize([$packet, $opts]));
+
+        $this->publish($this->getChannelKey(), serialize([$packet, $opts]));
     }
 
     public function clients(string ...$rooms): array
@@ -143,11 +143,10 @@ class RedisAdapter implements AdapterInterface
     public function subscribe()
     {
         Coroutine::create(function () {
-            CoordinatorManager::until(Constants::ON_WORKER_START)->yield();
+            CoordinatorManager::until(Constants::WORKER_START)->yield();
             retry(PHP_INT_MAX, function () {
-                $container = ApplicationContext::getContainer();
                 try {
-                    $sub = $container->get(Subscriber::class);
+                    $sub = make(Subscriber::class);
                     if ($sub) {
                         $this->mixSubscribe($sub);
                     } else {
@@ -155,6 +154,7 @@ class RedisAdapter implements AdapterInterface
                         $this->phpRedisSubscribe();
                     }
                 } catch (\Throwable $e) {
+                    $container = ApplicationContext::getContainer();
                     if ($container->has(StdoutLoggerInterface::class)) {
                         $logger = $container->get(StdoutLoggerInterface::class);
                         $logger->error($this->formatThrowable($e));
@@ -181,6 +181,11 @@ class RedisAdapter implements AdapterInterface
                 $this->redis->del(...$keys);
             }
         }
+    }
+
+    protected function publish(string $channel, string $message)
+    {
+        $this->redis->publish($channel, $message);
     }
 
     protected function doBroadcast($packet, $opts)
@@ -321,7 +326,6 @@ class RedisAdapter implements AdapterInterface
 
     private function close(int $fd)
     {
-        // Sender should be able to disconnect fd in the future. For now we have to use server.
-        ApplicationContext::getContainer()->get(Server::class)->disconnect($fd);
+        $this->sender->disconnect($fd);
     }
 }

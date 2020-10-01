@@ -31,7 +31,7 @@ class IndexController
 通過 `cURL` 呼叫該地址，即可看到返回的內容。
 
 ```bash
-$ curl http://127.0.0.1:9501/\?target\=Hyperf
+$ curl 'http://127.0.0.1:9501/?target=Hyperf'
 Hello Hyperf.
 ```
 

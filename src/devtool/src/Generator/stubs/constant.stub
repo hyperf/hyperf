@@ -1,0 +1,19 @@
+<?php
+
+declare(strict_types=1);
+
+namespace %NAMESPACE%;
+
+use Hyperf\Constants\AbstractConstants;
+use Hyperf\Constants\Annotation\Constants;
+
+/**
+ * @Constants
+ */
+class %CLASS% extends AbstractConstants
+{
+    /**
+     * @Message("Server Error！")
+     */
+    const SERVER_ERROR = 500;
+}

@@ -5,12 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\SocketIOServer;
 
+use Closure;
 use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
@@ -27,10 +28,9 @@ use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
 use Swoole\Coroutine\Channel;
 use Swoole\Http\Request;
-use Swoole\Server;
+use Swoole\Http\Response;
 use Swoole\Timer;
 use Swoole\WebSocket\Frame;
-use Swoole\WebSocket\Server as WebSocketServer;
 
 /**
  *  packet types
@@ -139,7 +139,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         return $this->of('/')->{$method}(...$args);
     }
 
-    public function onMessage(WebSocketServer $server, Frame $frame): void
+    public function onMessage($server, Frame $frame): void
     {
         if ($frame->data[0] === Engine::PING) {
             $server->push($frame->fd, Engine::PONG); //sever pong
@@ -194,7 +194,10 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         }
     }
 
-    public function onOpen(WebSocketServer $server, Request $request): void
+    /**
+     * @param Response|\Swoole\WebSocket\Server $server
+     */
+    public function onOpen($server, Request $request): void
     {
         $data = [
             'sid' => $this->sidProvider->getSid($request->fd),
@@ -202,13 +205,18 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
             'pingInterval' => $this->pingInterval,
             'pingTimeout' => $this->pingTimeout,
         ];
-        $server->push($request->fd, Engine::OPEN . json_encode($data)); //socket is open
-        $server->push($request->fd, Engine::MESSAGE . Packet::OPEN); //server open
+        if ($server instanceof Response) {
+            $server->push(Engine::OPEN . json_encode($data)); //socket is open
+            $server->push(Engine::MESSAGE . Packet::OPEN); //server open
+        } else {
+            $server->push($request->fd, Engine::OPEN . json_encode($data)); //socket is open
+            $server->push($request->fd, Engine::MESSAGE . Packet::OPEN); //server open
+        }
 
         $this->dispatchEventInAllNamespaces($request->fd, 'connect');
     }
 
-    public function onClose(Server $server, int $fd, int $reactorId): void
+    public function onClose($server, int $fd, int $reactorId): void
     {
         $this->dispatchEventInAllNamespaces($fd, 'disconnect');
     }
@@ -242,6 +250,33 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         $this->clientCallbackTimers[$ackId] = $timerId;
     }
 
+    /**
+     * @return $this
+     */
+    public function setClientCallbackTimeout(int $clientCallbackTimeout)
+    {
+        $this->clientCallbackTimeout = $clientCallbackTimeout;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setPingInterval(int $pingInterval)
+    {
+        $this->pingInterval = $pingInterval;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setPingTimeout(int $pingTimeout)
+    {
+        $this->pingTimeout = $pingTimeout;
+        return $this;
+    }
+
     private function dispatch(int $fd, string $nsp, string $event, ...$payloads)
     {
         $socket = $this->makeSocket($fd, $nsp);
@@ -249,7 +284,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 
         // Check if ack is required
         $last = array_pop($payloads);
-        if ($last instanceof \Closure) {
+        if ($last instanceof Closure) {
             $ack = $last;
         } else {
             array_push($payloads, $last);
@@ -277,7 +312,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 
         foreach ($instance->getEventHandlers() as $key => $callbacks) {
             if ($key === $event) {
-                $output = array_merge($output, $callbacks);
+                $output = array_merge($callbacks, $output);
             }
         }
 

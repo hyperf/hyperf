@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -18,7 +18,9 @@ use Hyperf\SocketIOServer\Parser\Packet;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\WebSocketServer\Context;
 use Hyperf\WebSocketServer\Sender;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Server;
 
 class Socket
@@ -94,5 +96,10 @@ class Socket
     public function getNamespace(): string
     {
         return $this->nsp;
+    }
+
+    public function getRequest(): ServerRequestInterface
+    {
+        return Context::get(ServerRequestInterface::class);
     }
 }

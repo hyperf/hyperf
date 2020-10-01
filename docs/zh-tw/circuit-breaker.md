@@ -13,7 +13,7 @@ composer require hyperf/circuit-breaker
 ## 使用熔斷器
 
 熔斷器的使用十分簡單，只需要加入 `Hyperf\CircuitBreaker\Annotation\CircuitBreaker` 註解，就可以根據規定策略，進行熔斷。
-比如我們需要到另外服務中查詢使用者列表，使用者列表需要關聯很多的表，查詢效率較低，但平常併發量不高的時候，相應速度還說得過去。一旦併發量激增，就會導致響應速度變慢，並會使對方服務出現慢查。這個時候，我們只需要配置一下熔斷超時時間 `timeout` 為 0.05 秒，失敗計數 `failCounter` 超過 1 次後熔斷，相應 `fallback` 為 `App\Service\UserService` 類的 `searchFallback` 方法。這樣當響應超時並觸發熔斷後，就不會再請求對端的服務了，而是直接將服務降級從當前專案中返回資料，即根據 `fallback` 指定的方法來進行返回。
+比如我們需要到另外服務中查詢使用者列表，使用者列表需要關聯很多的表，查詢效率較低，但平常併發量不高的時候，響應速度還說得過去。一旦併發量激增，就會導致響應速度變慢，並會使對方服務出現慢查。這個時候，我們只需要配置一下熔斷超時時間 `timeout` 為 0.05 秒，失敗計數 `failCounter` 超過 1 次後熔斷，相應 `fallback` 為 `App\Service\UserService` 類的 `searchFallback` 方法。這樣當響應超時並觸發熔斷後，就不會再請求對端的服務了，而是直接將服務降級從當前專案中返回資料，即根據 `fallback` 指定的方法來進行返回。
 
 ```php
 <?php

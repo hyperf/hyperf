@@ -1,4 +1,6 @@
-Socket.io是一款非常流行的应用层实时通讯协议和框架，可以轻松实现应答、分组、广播。hyperf/socketio-server支持了Socket.io的WebSocket传输协议。
+# Socket.io 服务
+
+Socket.io 是一款非常流行的应用层实时通讯协议和框架，可以轻松实现应答、分组、广播。hyperf/socketio-server 支持了 Socket.io 的 WebSocket 传输协议。
 
 ## 安装
 
@@ -6,27 +8,28 @@ Socket.io是一款非常流行的应用层实时通讯协议和框架，可以�
 composer require hyperf/socketio-server
 ```
 
-hyperf/socketio-server 是基于WebSocket实现的，请确保服务端已经添加了WebSocket服务配置。
+hyperf/socketio-server 组件是基于 WebSocket 实现的，请确保服务端已经添加了 `WebSocket 服务` 的配置。
 
 ```php
-        [
-            'name' => 'socket-io',
-            'type' => Server::SERVER_WEBSOCKET,
-            'host' => '0.0.0.0',
-            'port' => 9502,
-            'sock_type' => SWOOLE_SOCK_TCP,
-            'callbacks' => [
-                SwooleEvent::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
-                SwooleEvent::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
-                SwooleEvent::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
-            ],
-        ],
+// config/autoload/server.php
+[
+    'name' => 'socket-io',
+    'type' => Server::SERVER_WEBSOCKET,
+    'host' => '0.0.0.0',
+    'port' => 9502,
+    'sock_type' => SWOOLE_SOCK_TCP,
+    'callbacks' => [
+        SwooleEvent::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
+        SwooleEvent::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
+        SwooleEvent::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
+    ],
+],
 ```
-
 
 ## 快速开始
 
 ### 服务端
+
 ```php
 <?php
 
@@ -88,7 +91,7 @@ class WebSocketController extends BaseNamespace
 
 ### 客户端
 
-由于服务端只实现了WebSocket通讯，所以客户端要加上 `{transports:["websocket"]}` 。
+由于服务端只实现了 WebSocket 通讯，所以客户端要加上 `{transports:["websocket"]}` 。
 
 ```html
 <script src="https://cdn.bootcss.com/socket.io/2.3.0/socket.io.js"></script>
@@ -107,52 +110,97 @@ class WebSocketController extends BaseNamespace
 
 ## API 清单
 
+### Socket API
+
+通过 SocketAPI 对目标 Socket 进行推送，或以目标 Socket 的身份在房间内发言。需要在事件回调中使用。
+
 ```php
 <?php
-function onConnect(\Hyperf\SocketIOServer\Socket $socket){
+/**
+ * @Event("SomeEvent")
+ */
+function onSomeEvent(\Hyperf\SocketIOServer\Socket $socket){
 
   // sending to the client
+  // 向连接推送 hello 事件
   $socket->emit('hello', 'can you hear me?', 1, 2, 'abc');
 
   // sending to all clients except sender
+  // 向所有连接推送 broadcast 事件，但是不包括当前连接。
   $socket->broadcast->emit('broadcast', 'hello friends!');
 
   // sending to all clients in 'game' room except sender
+  // 向 game 房间内所有连接推送 nice game 事件，但是不包括当前连接。
   $socket->to('game')->emit('nice game', "let's play a game");
 
   // sending to all clients in 'game1' and/or in 'game2' room, except sender
+  // 向 game1 房间 和 game2 房间内所有连接取并集推送 nice game 事件，但是不包括当前连接。
   $socket->to('game1')->to('game2')->emit('nice game', "let's play a game (too)");
 
   // WARNING: `$socket->to($socket->getSid())->emit()` will NOT work, as it will send to everyone in the room
   // named `$socket->getSid()` but the sender. Please use the classic `$socket->emit()` instead.
+  // 注意：自己给自己推送的时候不要加to，因为$socket->to()总是排除自己。直接$socket->emit()就好了。
 
   // sending with acknowledgement
+  // 发送信息，并且等待并接收客户端响应。
   $reply = $socket->emit('question', 'do you think so?')->reply();
 
   // sending without compression
+  // 无压缩推送
   $socket->compress(false)->emit('uncompressed', "that's rough");
+}
+```
+### 全局 API
 
-  $io = \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
+直接从容器中获取 SocketIO 单例。这个单例可向全局广播或指定房间、个人通讯。未指定命名空间时，默认使用 '/' 空间。
 
-  // sending to all clients in 'game' room, including sender
-  $io->in('game')->emit('big-announcement', 'the game will start soon');
+```php
+<?php
+$io = \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\SocketIOServer\SocketIO::class);
 
-  // sending to all clients in namespace 'myNamespace', including sender
-  $io->of('/myNamespace')->emit('bigger-announcement', 'the tournament will start soon');
+// sending to all clients in 'game' room, including sender
+// 向 game 房间内的所有连接推送 bigger-announcement 事件。
+$io->in('game')->emit('big-announcement', 'the game will start soon');
 
-  // sending to a specific room in a specific namespace, including sender
-  $io->of('/myNamespace')->to('room')->emit('event', 'message');
+// sending to all clients in namespace 'myNamespace', including sender
+// 向 /myNamespace 命名空间下的所有连接推送 bigger-announcement 事件
+$io->of('/myNamespace')->emit('bigger-announcement', 'the tournament will start soon');
 
-  // sending to individual socketid (private message)
-  $io->to('socketId')->emit('hey', 'I just met you');
+// sending to a specific room in a specific namespace, including sender
+// 向 /myNamespace 命名空间下的 room 房间所有连接推送 event 事件
+$io->of('/myNamespace')->to('room')->emit('event', 'message');
 
-  // sending to all clients on this node (when using multiple nodes)
-  $io->local->emit('hi', 'my lovely babies');
+// sending to individual socketid (private message)
+// 向 socketId 单点推送
+$io->to('socketId')->emit('hey', 'I just met you');
 
-  // sending to all connected clients
-  $io->emit('an event sent to all connected clients');
+// sending to all clients on this node (when using multiple nodes)
+// 向本机所有连接推送
+$io->local->emit('hi', 'my lovely babies');
 
-};
+// sending to all connected clients
+// 向所有连接推送
+$io->emit('an event sent to all connected clients');
+```
+
+### 命名空间 API
+
+和全局 API 一样，只不过已经限制了命名空间。
+```php
+// 以下伪码等价
+$foo->emit();
+$io->of('/foo')->emit();
+
+/**
+ * class内使用也等价
+ * @SocketIONamespace("/foo")
+ */
+class FooNamespace extends BaseNamespace {
+    public function onEvent(){
+        $this->emit(); 
+        $this->io->of('/foo')->emit();
+    }
+}
 ```
 
 ## 进阶教程
@@ -186,13 +234,14 @@ return [
 ];
 ```
 
-> swoole 4.4.17 及以下版本只能读取 http 创建好的Cookie，4.4.18 及以上版本可以在WebSocket握手时创建Cookie
+> Swoole 4.4.17 及以下版本只能读取 HTTP 创建好的 Cookie，Swoole 4.4.18 及以上版本可以在 WebSocket 握手时创建 Cookie
 
 ### 调整房间适配器
 
 默认的房间功能通过 Redis 适配器实现，可以适应多进程乃至分布式场景。
 
 1. 可以替换为内存适配器，只适用于单 worker 场景。
+
 ```php
 <?php
 // config/autoload/dependencies.php
@@ -202,6 +251,7 @@ return [
 ```
 
 2. 可以替换为空适配器，不需要房间功能时可以降低消耗。
+
 ```php
 <?php
 // config/autoload/dependencies.php
@@ -289,7 +339,63 @@ class WebSocketController extends BaseNamespace
 }
 ```
 
-## Auth 鉴权
+### 修改 `SocketIO` 基础参数
+
+框架默认参数：
+
+|          配置          | 类型  | 默认值 |
+| :--------------------: | :---: | :----: |
+|      $pingTimeout      |  int  |  100   |
+|     $pingInterval      |  int  | 10000  |
+| $clientCallbackTimeout |  int  | 10000  |
+
+有时候，由于推送消息比较多或者网络较卡，在 100ms 内，无法及时返回 `PONG`，就会导致连接断开。这时候我们可以通过以下方式，进行重写：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Kernel;
+
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\SocketIOServer\Parser\Decoder;
+use Hyperf\SocketIOServer\Parser\Encoder;
+use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
+use Hyperf\SocketIOServer\SocketIO;
+use Hyperf\WebSocketServer\Sender;
+use Psr\Container\ContainerInterface;
+
+class SocketIOFactory
+{
+    public function __invoke(ContainerInterface $container)
+    {
+        $io = new SocketIO(
+            $container->get(StdoutLoggerInterface::class),
+            $container->get(Sender::class),
+            $container->get(Decoder::class),
+            $container->get(Encoder::class),
+            $container->get(SidProviderInterface::class)
+        );
+
+        // 重写 pingTimeout 参数
+        $io->setPingTimeout(10000);
+
+        return $io;
+    }
+}
+
+```
+
+然后在 `dependencies.php` 添加对应映射即可。
+
+```php
+return [
+    Hyperf\SocketIOServer\SocketIO::class => App\Kernel\SocketIOFactory::class,
+];
+```
+
+### Auth 鉴权
 
 您可以通过使用中间件来拦截 WebSocket 握手，实现鉴权功能，如下：
 
@@ -331,3 +437,16 @@ class WebSocketAuthMiddleware implements MiddlewareInterface
 ```
 
 并将上面的中间件配置到对应的 WebSocket Server 中去即可。
+
+### 获取原始请求对象
+
+连接建立以后，有时需获取客户端 IP ，Cookie 等请求信息。原始请求对象已经被保留在[连接上下文](websocket-server.md#连接上下文)中，您可以用如下方式在事件回调中获取：
+
+```php
+public function onEvent($socket, $data)
+{
+    $request = Hyperf\WebSocketServer\Context::get(
+        Psr\Http\Message\ServerRequestInterface::class
+    );
+}
+```

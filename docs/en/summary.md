@@ -3,6 +3,13 @@
   * [About Hyperf](en/README.md)
   * [Communication](en/communication.md)
   * [Donate](en/donate.md)
+  * [Contribute](en/contribute.md)
+  
+* Versions
+
+  * [Release Planning](en/release-planning.md)
+  * [Versions](en/versions.md)
+  * [Changelogs](en/changelog.md)
 
 * Quick Start
 
@@ -34,6 +41,11 @@
   * [Paginator](en/paginator.md)
   * [Command](en/command.md)
   * [Testing](en/testing.md)
+  * [View](en/view.md)
+  * [Translation](en/translation.md)
+  * [Validaton](en/validation.md)
+  * [Session](en/session.md)
+  * [File System](en/filesystem.md)
   
 * Database
 
@@ -45,6 +57,8 @@
   * [Model Event](en/db/event.md)
   * [Model Cache](en/db/model-cache.md)
   * [Migration](en/db/migration.md)
+  * [Mutator](en/db/mutators.md)
+  * [Simple DB](en/db/db.md)
   
 * Microservice
 
@@ -56,32 +70,54 @@
   * [Rate Limit](en/rate-limit.md)
   * [Configuration Center](en/config-center.md)
   * [Tracing](en/tracer.md)
+  * [Metric](en/metric.md)
+  * [Retry](en/retry.md)
+  * [Snowflake](en/snowflake.md)
   
-* Other Components
+* Server
 
-  * [Connection Pool](en/pool.md)
+  * [Tcp Server](en/tcp-server.md)
+  * [WebSocket Server](en/websocket-server.md)
+  * [Socket.io](en/socketio-server.md)
+  
+* Message Queue
+
+  * [Redis Queue](en/async-queue.md)
+  * [AMQP](en/amqp.md)
+  * [Nats](en/nats.md)
+  * [NSQ](en/nsq.md)
+  
+* Clients
+  
   * [Redis Client](en/redis.md)
   * [Guzzle HTTP Client](en/guzzle.md)
   * [Elasticsearch Client](en/elasticsearch.md)
   * [Consul Client](en/consul.md)
   * [ETCD Client](en/etcd.md)
-  * [AMQP](en/amqp.md)
-  * [Async Queue](en/async-queue.md)
-  * [WebSocket Server](en/websocket-server.md)
   * [WebSocket Client](en/websocket-client.md)
+  * [Nacos](en/nacos.md)
+  * [Jet](en/jet.md)
+  
+* Other Components
+
+  * [Connection Pool](en/pool.md)
   * [Custom Process](en/process.md)
-  * [Dev Tool](en/devtool.md)
   * [Utils](en/utils.md)
   * [Rate Limit](en/rate-limit.md)
-  * [Swoole Tracker](en/swoole-tracker.md)
   * [Crontab](en/crontab.md)
   * [Task](en/task.md)
+  * [Enum](en/constants.md)
+  * [Signal Manager](en/signal.md)
+  * [ReactiveX](en/reactive-x.md)
+  * [Watcher](en/watcher.md)
+  * [Dev Tool](en/devtool.md)
+  * [Swoole Tracker](en/swoole-tracker.md)
 
-* Application Deployment
+* Deployment
 
   * [Build Docker Swarm cluster](en/tutorial/docker-swarm.md)
   * [Build DaoCloud Devops](en/tutorial/daocloud.md)
-  * [Deploy Supervisor](en/tutorial/supervisor.md)
+  * [Deploy by Supervisor](en/tutorial/supervisor.md)
   
 * Awesome Hyperf
 
@@ -90,4 +126,10 @@
 * Component Development Guide
 
   * [Introduction](en/component-guide/intro.md)
-  * [Create a new component](en/zh/component-guide/create.md)
+  * [Create a new component](en/component-guide/create.md)
+  * [ConfigProvider](en/component-guide/configprovider.md)
+
+* Upgrade Guide
+  
+  * [1.1 Upgrade Guide](en/upgrade/1.1.md)
+  * [2.0 Upgrade Guide](en/upgrade/2.0.md)

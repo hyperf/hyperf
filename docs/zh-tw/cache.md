@@ -21,7 +21,7 @@ composer require hyperf/cache
 return [
     'default' => [
         'driver' => Hyperf\Cache\Driver\RedisDriver::class,
-        'packer' => Hyperf\Utils\Packer\PhpSerializer::class,
+        'packer' => Hyperf\Utils\Packer\PhpSerializerPacker::class,
         'prefix' => 'c:',
     ],
 ];
@@ -118,7 +118,7 @@ use Hyperf\Cache\Annotation\Cacheable;
 class DemoService
 {
     /**
-     * @Cacheable(prefix="cache", value="_#{id}", listener="DemoServiceDelete")
+     * @Cacheable(prefix="cache", value="_#{id}", listener="user-update")
      */
     public function getCache(int $id)
     {

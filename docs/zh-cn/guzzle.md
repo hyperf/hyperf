@@ -122,3 +122,67 @@ $client = make(Client::class, [
     ],
 ]);
 ```
+
+## 使用 `ClassMap` 替换 `GuzzleHttp\Client`
+
+如果第三方组件并没有提供可以替换 `Handler` 的接口，我们也可以通过 `ClassMap` 功能，直接替换 `Client` 来达到将客户端协程化的目的。
+
+> 当然，也可以使用 SWOOLE_HOOK 达到相同的目的。
+
+代码示例如下：
+
+class_map/GuzzleHttp/Client.php
+
+```php
+<?php
+namespace GuzzleHttp;
+
+use GuzzleHttp\Psr7;
+use Hyperf\Guzzle\CoroutineHandler;
+use Hyperf\Utils\Coroutine;
+
+class Client implements ClientInterface
+{
+    // 代码省略其他不变的代码
+
+    public function __construct(array $config = [])
+    {
+        $inCoroutine = Coroutine::inCoroutine();
+        if (!isset($config['handler'])) {
+            // 对应的 Handler 可以按需选择 CoroutineHandler 或 PoolHandler
+            $config['handler'] = HandlerStack::create($inCoroutine ? new CoroutineHandler() : null);
+        } elseif ($inCoroutine && $config['handler'] instanceof HandlerStack) {
+            $config['handler']->setHandler(new CoroutineHandler());
+        } elseif (!is_callable($config['handler'])) {
+            throw new \InvalidArgumentException('handler must be a callable');
+        }
+
+        // Convert the base_uri to a UriInterface
+        if (isset($config['base_uri'])) {
+            $config['base_uri'] = Psr7\uri_for($config['base_uri']);
+        }
+
+        $this->configureDefaults($config);
+    }
+}
+
+```
+
+config/autoload/annotations.php
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use GuzzleHttp\Client;
+
+return [
+    'scan' => [
+        // ...
+        'class_map' => [
+            Client::class => BASE_PATH . '/class_map/GuzzleHttp/Client.php',
+        ],
+    ],
+];
+```

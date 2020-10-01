@@ -10,7 +10,7 @@ composer require hyperf/service-governance
 
 # 註冊服務
 
-註冊服務可通過 `@RpcService` 註解對一個類進行定義，即為釋出這個服務了，目前 Hyperf 僅適配了 JSON RPC 協議，具體內容也可到 [JSON RPC 服務](./zh/json-rpc.md) 章節瞭解詳情。
+註冊服務可通過 `@RpcService` 註解對一個類進行定義，即為釋出這個服務了，目前 Hyperf 僅適配了 JSON RPC 協議，具體內容也可到 [JSON RPC 服務](zh-tw/json-rpc.md) 章節瞭解詳情。
 
 ```php
 <?php

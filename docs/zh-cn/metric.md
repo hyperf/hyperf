@@ -317,7 +317,7 @@ class OnMetricFactoryReady implements ListenerInterface
 
 您可以使用 `@Counter(name="stat_name_here")` 和 `@Histogram(name="stat_name_here")` 来统计切面的调用次数和运行时间。
 
-关于注解的使用请参阅[注解章节](https://doc.hyperf.io/#/zh/annotation)。
+关于注解的使用请参阅[注解章节](zh-cn/annotation)。
 
 ### 自定义 Histogram Bucket
 
@@ -405,6 +405,6 @@ Router::get('/metrics', function(){
 
 > 本节只适用于 Prometheus 驱动
 
-如果您启用了默认指标，`Hyperf/Metric` 为您准备了一个开箱即用的 Grafana 控制台。下载控制台 [json 文件](https://raw.githubusercontent.com/hyperf/hyperf/master/src/metric/grafana.json)，导入 Grafana 中即可使用。
+如果您启用了默认指标，`Hyperf/Metric` 为您准备了一个开箱即用的 Grafana 控制台。下载控制台 [json 文件](https://cdn.jsdelivr.net/gh/hyperf/hyperf/src/metric/grafana.json)，导入 Grafana 中即可使用。
 
 ![grafana](imgs/grafana.png)

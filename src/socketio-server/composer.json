@@ -38,7 +38,8 @@
     },
     "suggest": {
         "hyperf/command": "Required to use RemoveRedisGarbage command",
-        "hyperf/session": "Required to use session"
+        "hyperf/session": "Required to use session",
+        "hyperf/nsq": "Required to use RedisNsqAdapter"
     },
     "config": {
         "sort-packages": true
@@ -50,7 +51,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\SocketIOServer\\ConfigProvider"

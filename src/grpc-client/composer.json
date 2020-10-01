@@ -37,7 +37,8 @@
         "psr-4": {
             "HyperfTest\\GrpcClient\\": "tests/",
             "GPBMetadata\\": "tests/GPBMetadata",
-            "Grpc\\": "tests/Grpc"
+            "Grpc\\": "tests/Grpc",
+            "Routeguide\\": "tests/Routeguide"
         }
     },
     "config": {
@@ -45,7 +46,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\GrpcClient\\ConfigProvider"

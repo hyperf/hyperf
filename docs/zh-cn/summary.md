@@ -3,6 +3,12 @@
   * [项目介绍](zh-cn/README.md)
   * [线上交流](zh-cn/communication.md)
   * [捐献及赞助](zh-cn/donate.md)
+  * [参与开发](zh-cn/contribute.md)
+  
+* 版本管理
+
+  * [版本计划](zh-cn/release-planning.md)
+  * [版本说明](zh-cn/versions.md)
   * [版本更新记录](zh-cn/changelog.md)
 
 * 快速入门
@@ -11,6 +17,7 @@
   * [快速开始](zh-cn/quick-start/overview.md)
   * [常见问题](zh-cn/quick-start/questions.md)
   * [编程须知](zh-cn/quick-start/important.md)
+  * [视频教程](https://course.swoole-cloud.com/videos/5/new?from=hyperf.io)
   
 * 核心架构
 
@@ -46,13 +53,14 @@
   * [快速开始](zh-cn/db/quick-start.md)
   * [查询构造器](zh-cn/db/querybuilder.md)
   * [模型](zh-cn/db/model.md)
+  * [创建脚本](zh-cn/db/gen.md)
   * [模型关系](zh-cn/db/relationship.md)
   * [查询分页](zh-cn/db/paginator.md)
   * [模型事件](zh-cn/db/event.md)
   * [模型缓存](zh-cn/db/model-cache.md)
   * [数据库迁移](zh-cn/db/migration.md)
-  * [极简 DB 组件](zh-cn/db/db.md)
   * [修改器](zh-cn/db/mutators.md)
+  * [极简 DB 组件](zh-cn/db/db.md)
   
 * 微服务
 
@@ -60,42 +68,51 @@
   * [JSON RPC 服务](zh-cn/json-rpc.md)
   * [gRPC 服务](zh-cn/grpc.md)
   * [服务注册](zh-cn/service-register.md)
+  * [服务重试](zh-cn/retry.md)
   * [服务熔断及降级](zh-cn/circuit-breaker.md)
   * [服务限流](zh-cn/rate-limit.md)
   * [配置中心](zh-cn/config-center.md)
   * [调用链追踪](zh-cn/tracer.md)
   * [服务监控](zh-cn/metric.md)
-  * [服务重试](zh-cn/retry.md)
+  * [Snowflake](zh-cn/snowflake.md)
   
+* 网络服务
+
+  * [TCP 服务](zh-cn/tcp-server.md)
+  * [WebSocket 服务](zh-cn/websocket-server.md)
+  * [Socket.io 服务](zh-cn/socketio-server.md)
+
 * 消息队列
 
   * [Redis 异步队列](zh-cn/async-queue.md)
   * [AMQP](zh-cn/amqp.md)
   * [Nats](zh-cn/nats.md)
-  * [Nsq](zh-cn/nsq.md)
+  * [NSQ](zh-cn/nsq.md)
   
-* 其它组件
+* 客户端
 
-  * [连接池](zh-cn/pool.md)
   * [Redis 协程客户端](zh-cn/redis.md)
   * [Guzzle HTTP 协程客户端](zh-cn/guzzle.md)
   * [Elasticsearch 协程客户端](zh-cn/elasticsearch.md)
   * [Consul 协程客户端](zh-cn/consul.md)
   * [ETCD 协程客户端](zh-cn/etcd.md)
-  * [WebSocket 服务](zh-cn/websocket-server.md)
   * [WebSocket 协程客户端](zh-cn/websocket-client.md)
-  * [Socket.io 服务](zh-cn/socketio-server.md)
+  * [Nacos](zh-cn/nacos.md)
+  * [Jet](zh-cn/jet.md)
+
+* 其它组件
+
+  * [连接池](zh-cn/pool.md)
   * [自定义进程](zh-cn/process.md)
-  * [开发者工具](zh-cn/devtool.md)
   * [辅助类](zh-cn/utils.md)
-  * [限流器](zh-cn/rate-limit.md)
-  * [Swoole Tracker](zh-cn/swoole-tracker.md)
   * [定时任务](zh-cn/crontab.md)
   * [Task 机制](zh-cn/task.md)
   * [枚举类](zh-cn/constants.md)
-  * [Snowflake](zh-cn/snowflake.md)
-  * [重试](zh-cn/retry.md)
   * [信号处理器](zh-cn/signal.md)
+  * [ReactiveX](zh-cn/reactive-x.md)
+  * [Watcher](zh-cn/watcher.md)
+  * [开发者工具](zh-cn/devtool.md)
+  * [Swoole Tracker](zh-cn/swoole-tracker.md)
 
 * 应用部署
 
@@ -118,3 +135,4 @@
 * 版本升级指南
   
   * [1.1 升级指南](zh-cn/upgrade/1.1.md)
+  * [2.0 升级指南](zh-cn/upgrade/2.0.md)

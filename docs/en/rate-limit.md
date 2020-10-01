@@ -71,7 +71,7 @@ class RateLimitController
 ## 触发限流
 当限流被触发时, 默认会抛出 `Hyperf\RateLimit\Exception\RateLimitException` 异常
 
-可以通过[异常处理](zh/exception-handler.md)或者配置 `limitCallback` 限流回调处理。
+可以通过[异常处理](en/exception-handler.md)或者配置 `limitCallback` 限流回调处理。
 
 例如:
 ```php
