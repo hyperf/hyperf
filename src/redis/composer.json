@@ -32,7 +32,7 @@
     },
     "suggest": {
         "hyperf/di": "Create the RedisPool via dependency injection.",
-        "ext-redis": "Support sentinel mode for redis (>=5.2)."
+        "ext-redis": "Required to use sentinel mode (>=5.2)."
     },
     "autoload": {
         "psr-4": {
