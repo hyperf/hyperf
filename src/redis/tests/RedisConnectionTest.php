@@ -51,6 +51,13 @@ class RedisConnectionTest extends TestCase
                 'name' => null,
                 'seeds' => [],
             ],
+            'sentinel' => [
+                'enable' => false,
+                'master_name' => '',
+                'nodes' => [],
+                'persistent' => '',
+                'read_timeout' => 0,
+            ],
             'options' => [],
             'pool' => [
                 'min_connections' => 1,
