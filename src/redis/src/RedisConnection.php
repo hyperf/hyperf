@@ -213,7 +213,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
                     $readTimeout
                 );
                 $masterInfo = $sentinel->getMasterAddrByName($masterName);
-                if ($masterInfo !== false) {
+                if (is_array($masterInfo) && count($masterInfo) >= 2) {
                     [$host, $port] = $masterInfo;
                     break;
                 }
