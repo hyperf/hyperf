@@ -1,5 +1,9 @@
 # v2.0.14 - TBD
 
+## Added
+
+- [#1868](https://github.com/hyperf/hyperf/pull/1868) Added sentinel mode for redis.
+
 ## Fixed
 
 - [#2594](https://github.com/hyperf/hyperf/pull/2594) Fixed crontab does not stops when using signal.
