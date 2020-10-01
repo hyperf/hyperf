@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -15,6 +15,7 @@ use Hyperf\Amqp\Annotation\Consumer;
 use Hyperf\Amqp\ConsumerManager;
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
 use HyperfTest\Amqp\Stub\ContainerStub;
 use HyperfTest\Amqp\Stub\DemoConsumer;
@@ -46,13 +47,14 @@ class ConsumerManagerTest extends TestCase
         $manager = new ConsumerManager($container);
         $manager->run();
 
-        $hasRegisted = false;
+        $hasRegistered = false;
+        /** @var AbstractProcess $item */
         foreach (ProcessManager::all() as $item) {
             if (method_exists($item, 'getConsumerMessage')) {
-                $hasRegisted = true;
+                $hasRegistered = true;
                 /** @var ConsumerMessageInterface $message */
                 $message = $item->getConsumerMessage();
-                $this->assertTrue($item->isEnable());
+                $this->assertTrue($item->isEnable(new \stdClass()));
                 $this->assertSame($exchange, $message->getExchange());
                 $this->assertSame($routingKey, $message->getRoutingKey());
                 $this->assertSame($queue, $message->getQueue());
@@ -62,7 +64,7 @@ class ConsumerManagerTest extends TestCase
             }
         }
 
-        $this->assertTrue($hasRegisted);
+        $this->assertTrue($hasRegistered);
     }
 
     public function testConsumerAnnotationNotEnable()
@@ -80,15 +82,16 @@ class ConsumerManagerTest extends TestCase
         $manager = new ConsumerManager($container);
         $manager->run();
 
-        $hasRegisted = false;
+        $hasRegistered = false;
+        /** @var AbstractProcess $item */
         foreach (ProcessManager::all() as $item) {
             if (method_exists($item, 'getConsumerMessage')) {
-                $hasRegisted = true;
-                $this->assertFalse($item->isEnable());
+                $hasRegistered = true;
+                $this->assertFalse($item->isEnable(new \stdClass()));
                 break;
             }
         }
 
-        $this->assertTrue($hasRegisted);
+        $this->assertTrue($hasRegistered);
     }
 }

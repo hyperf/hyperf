@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -20,6 +20,11 @@ class Request extends BaseRequest
 {
     private const DEFAULT_CONTENT_TYPE = 'application/grpc+proto';
 
+    /**
+     * @var null|bool
+     */
+    public $usePipelineRead;
+
     public function __construct(string $method, Message $argument = null, $headers = [])
     {
         $this->method = 'POST';
@@ -32,6 +37,7 @@ class Request extends BaseRequest
     {
         return [
             'content-type' => self::DEFAULT_CONTENT_TYPE,
+            'te' => 'trailers',
             'user-agent' => $this->buildDefaultUserAgent(),
         ];
     }

@@ -2,7 +2,10 @@
 <?php
 
 $code = 0;
-\Swoole\Coroutine::create(function () use (&$code) {
+Swoole\Coroutine::set(['exit_condition' => function(){
+    return Swoole\Coroutine::stats()['coroutine_num'] === 0;
+}]);
+Swoole\Coroutine::create(function () use (&$code) {
     if (version_compare('7.1.0', PHP_VERSION, '>')) {
         fwrite(
             STDERR,
@@ -60,6 +63,8 @@ $code = 0;
     require PHPUNIT_COMPOSER_INSTALL;
 
     $code = PHPUnit\TextUI\Command::main(false);
+
+    Swoole\Timer::clearAll();
 });
 
 swoole_event_wait();

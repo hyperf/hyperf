@@ -1,8 +1,8 @@
 # v1.1.33 - TBD
 
-## Added
+## Fixed
 
-- [#1829](https://github.com/hyperf/hyperf/pull/1829) Added callback support to logger processor
+- [#1917](https://github.com/hyperf/hyperf/pull/1917) Fixed bug that `Request::isXmlHttpRequest` does not work.
 
 ## Optimized
 

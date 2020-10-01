@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -19,6 +19,7 @@ class Decoder
         $i = 0;
         $type = $payload[$i];
         $nsp = '/';
+        $query = [];
         ++$i;
 
         //TODO: Support attachment
@@ -26,9 +27,20 @@ class Decoder
         // namespace
         if (isset($payload[$i]) && $payload[$i] === '/') {
             ++$i;
-            while ($payload[$i] !== ',') {
+            while ($payload[$i] !== ',' && $payload[$i] !== '?') {
                 $nsp .= $payload[$i];
                 ++$i;
+            }
+            if ($payload[$i] === '?') {
+                ++$i;
+                $query = '';
+                while ($payload[$i] !== ',') {
+                    $query .= $payload[$i];
+                    ++$i;
+                }
+                $result = [];
+                parse_str($query, $result);
+                $query = $result;
             }
             ++$i;
         }
@@ -47,6 +59,7 @@ class Decoder
             'nsp' => $nsp,
             'id' => $id,
             'data' => $data,
+            'query' => $query,
         ]);
     }
 }

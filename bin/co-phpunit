@@ -2,7 +2,10 @@
 <?php
 
 $code = 0;
-\Swoole\Coroutine\Run(function () use (&$code) {
+Swoole\Coroutine::set(['exit_condition' => function(){
+    return Swoole\Coroutine::stats()['coroutine_num'] === 0;
+}]);
+Swoole\Coroutine\Run(function () use (&$code) {
     if (version_compare('7.1.0', PHP_VERSION, '>')) {
         fwrite(
             STDERR,
@@ -54,7 +57,5 @@ $code = 0;
 
     $code = PHPUnit\TextUI\Command::main(false);
 });
-
-swoole_event_wait();
 
 exit($code);

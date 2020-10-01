@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -14,9 +14,9 @@ namespace Hyperf\Di;
 use Hyperf\Contract\ContainerInterface as HyperfContainerInterface;
 use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\ObjectDefinition;
+use Hyperf\Di\Exception\InvalidArgumentException;
 use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Di\Resolver\ResolverDispatcher;
-use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 class Container implements HyperfContainerInterface
@@ -44,25 +44,17 @@ class Container implements HyperfContainerInterface
     private $definitionResolver;
 
     /**
-     * @TODO Extract ProxyFactory to a Interface.
-     * @var ProxyFactory
-     */
-    private $proxyFactory;
-
-    /**
      * Container constructor.
      */
     public function __construct(Definition\DefinitionSourceInterface $definitionSource)
     {
         $this->definitionSource = $definitionSource;
         $this->definitionResolver = new ResolverDispatcher($this);
-        $this->proxyFactory = new ProxyFactory();
         // Auto-register the container.
         $this->resolvedEntries = [
             self::class => $this,
             PsrContainerInterface::class => $this,
             HyperfContainerInterface::class => $this,
-            ProxyFactory::class => $this->proxyFactory,
         ];
     }
 
@@ -132,7 +124,7 @@ class Container implements HyperfContainerInterface
      * `has($name)` returning true does not mean that `get($name)` will not throw an exception.
      * It does however mean that `get($name)` will not throw a `NotFoundExceptionInterface`.
      *
-     * @param string $name identifier of the entry to look for
+     * @param mixed|string $name identifier of the entry to look for
      */
     public function has($name): bool
     {
@@ -154,11 +146,6 @@ class Container implements HyperfContainerInterface
         }
 
         return true;
-    }
-
-    public function getProxyFactory(): ProxyFactory
-    {
-        return $this->proxyFactory;
     }
 
     public function getDefinitionSource(): Definition\DefinitionSourceInterface
