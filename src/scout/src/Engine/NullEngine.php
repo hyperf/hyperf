@@ -5,15 +5,15 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Scout\Engine;
 
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
+use Hyperf\Scout\Builder;
 use Hyperf\Utils\Collection as BaseCollection;
 
 class NullEngine extends Engine
@@ -52,7 +52,7 @@ class NullEngine extends Engine
      * Pluck and return the primary keys of the given results.
      * @param mixed $results
      */
-    public function mapIds($results): Collection
+    public function mapIds($results): BaseCollection
     {
         return BaseCollection::make();
     }
@@ -63,7 +63,7 @@ class NullEngine extends Engine
      */
     public function map(Builder $builder, $results, Model $model): Collection
     {
-        return Collection::make();
+        return new Collection();
     }
 
     /**

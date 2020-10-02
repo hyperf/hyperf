@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Scout\Engine;
 
 use Elasticsearch\Client;
@@ -17,6 +16,9 @@ use Elasticsearch\Client as Elastic;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Builder;
+use Hyperf\Scout\RuntimeException;
+use Hyperf\Scout\SearchableInterface;
+use Hyperf\Utils\Collection as BaseCollection;
 
 class ElasticsearchEngine extends Engine
 {
@@ -124,19 +126,17 @@ class ElasticsearchEngine extends Engine
      * Pluck and return the primary keys of the given results.
      *
      * @param mixed $results
-     * @return \Illuminate\Support\Collection
      */
-    public function mapIds($results): Collection
+    public function mapIds($results): BaseCollection
     {
-        return collect($results['hits']['hits'])->pluck('_id')->values();
+        return (new Collection($results['hits']['hits']))->pluck('_id')->values();
     }
 
     /**
      * Map the given results to instances of the given model.
      *
-     * @param \Laravel\Scout\Builder $builder
      * @param mixed $results
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param Model|SearchableInterface $model
      */
     public function map(Builder $builder, $results, $model): Collection
     {
@@ -167,9 +167,11 @@ class ElasticsearchEngine extends Engine
      */
     public function flush(Model $model): void
     {
-        $model->newQuery()
-            ->orderBy($model->getKeyName())
-            ->unsearchable();
+        $query = $model->newQuery()->orderBy($model->getKeyName());
+        if (! method_exists($query, 'unsearchable')) {
+            throw new RuntimeException('Call to an undefined method unsearchable.');
+        }
+        $query->unsearchable();
     }
 
     /**

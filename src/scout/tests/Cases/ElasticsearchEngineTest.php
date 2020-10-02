@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Scout\Cases;
 
 use Hyperf\Database\Model\Collection;
@@ -104,7 +103,7 @@ class ElasticsearchEngineTest extends TestCase
     {
         /** @var \Elasticsearch\Client|\Mockery\MockInterface $client */
         $client = Mockery::mock(\Elasticsearch\Client::class);
-        $client->shouldReceive('search')->with('modified_by_callback');
+        $client->shouldReceive('search')->with(['modified_by_callback']);
         $engine = new ElasticsearchEngine($client, 'scout');
         $builder = new Builder(
             new ElasticsearchEngineTestModel(),
@@ -112,7 +111,7 @@ class ElasticsearchEngineTest extends TestCase
             function (\Elasticsearch\Client $client, $query, $params) {
                 $this->assertNotEmpty($params);
                 $this->assertEquals('huayra', $query);
-                $params = 'modified_by_callback';
+                $params = ['modified_by_callback'];
                 return $client->search($params);
             }
         );

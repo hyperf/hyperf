@@ -5,15 +5,16 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Scout;
 
+use Closure;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
+use Hyperf\Paginator\AbstractPaginator;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\Collection as BaseCollection;
@@ -26,7 +27,7 @@ class Builder
     /**
      * The model instance.
      *
-     * @var Model
+     * @var Model|SearchableInterface
      */
     public $model;
 
@@ -40,14 +41,14 @@ class Builder
     /**
      * Optional callback before search execution.
      *
-     * @var string
+     * @var null|Closure
      */
     public $callback;
 
     /**
      * Optional callback before model query execution.
      *
-     * @var null|\Closure
+     * @var null|Closure
      */
     public $queryCallback;
 
@@ -82,7 +83,7 @@ class Builder
     /**
      * Create a new search builder instance.
      */
-    public function __construct(Model $model, string $query, ?\Closure $callback = null, ?bool $softDelete = false)
+    public function __construct(Model $model, string $query, ?Closure $callback = null, ?bool $softDelete = false)
     {
         $this->model = $model;
         $this->query = $query;
@@ -177,7 +178,7 @@ class Builder
     /**
      * Pass the query to a given callback.
      */
-    public function tap(\Closure $callback): Builder
+    public function tap(Closure $callback): Builder
     {
         return $this->when(true, $callback);
     }
@@ -185,7 +186,7 @@ class Builder
     /**
      * Set the callback that should have an opportunity to modify the database query.
      */
-    public function query(\Closure $callback): Builder
+    public function query(Closure $callback): Builder
     {
         $this->queryCallback = $callback;
         return $this;
@@ -227,8 +228,9 @@ class Builder
 
     /**
      * Paginate the given query into a simple paginator.
+     * @return AbstractPaginator|LengthAwarePaginator
      */
-    public function paginate(?int $perPage = null, ?string $pageName = 'page', ?int $page = null): LengthAwarePaginator
+    public function paginate(?int $perPage = null, ?string $pageName = 'page', ?int $page = null)
     {
         $engine = $this->engine();
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
@@ -247,8 +249,9 @@ class Builder
 
     /**
      * Paginate the given query into a simple paginator with raw data.
+     * @return AbstractPaginator|LengthAwarePaginator
      */
-    public function paginateRaw(?int $perPage = null, ?string $pageName = 'page', ?int $page = null): LengthAwarePaginator
+    public function paginateRaw(?int $perPage = null, ?string $pageName = 'page', ?int $page = null)
     {
         $engine = $this->engine();
         $page = $page ?: Paginator::resolveCurrentPage($pageName);

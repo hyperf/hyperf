@@ -9,11 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Scout\Provider;
+namespace Hyperf\Scout;
 
-use Hyperf\Scout\Engine\Engine;
-
-interface ProviderInterface
+class RuntimeException extends \RuntimeException
 {
-    public function make(string $name): Engine;
 }

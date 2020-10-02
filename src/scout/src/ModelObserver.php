@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Scout;
 
 use Hyperf\Database\Model\Events\Deleted;
@@ -61,6 +60,7 @@ class ModelObserver
      */
     public function saved(Saved $event): void
     {
+        /** @var SearchableInterface $model */
         $model = $event->getModel();
 
         if (static::syncingDisabledFor($model)) {
@@ -79,13 +79,14 @@ class ModelObserver
      */
     public function deleted(Deleted $event)
     {
+        /** @var Model|SearchableInterface $model */
         $model = $event->getModel();
 
         if (static::syncingDisabledFor($model)) {
             return;
         }
         if ($this->usesSoftDelete($model) && config('scout.soft_delete', false)) {
-            $this->saved($model);
+            $this->saved(new Saved($model));
         } else {
             $model->unsearchable();
         }
@@ -96,6 +97,7 @@ class ModelObserver
      */
     public function forceDeleted(ForceDeleted $event)
     {
+        /** @var Model|SearchableInterface $model */
         $model = $event->getModel();
 
         if (static::syncingDisabledFor($model)) {
