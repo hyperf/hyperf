@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Translation;
 
 use Countable;
@@ -368,9 +367,6 @@ class Translator implements TranslatorInterface
 
     /**
      * Set the parsed value of a key.
-     *
-     * @param string $key
-     * @param array $parsed
      */
     public function setParsedKey(string $key, array $parsed)
     {
@@ -412,6 +408,8 @@ class Translator implements TranslatorInterface
 
             return $line;
         }
+
+        return null;
     }
 
     /**
@@ -489,9 +487,6 @@ class Translator implements TranslatorInterface
 
     /**
      * Parse an array of namespaced segments.
-     *
-     * @param string $key
-     * @return array
      */
     protected function parseNamespacedSegments(string $key): array
     {

@@ -5,16 +5,15 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RpcServer\Router;
 
 /**
- * @method static addRoute($httpMethod, string $route, $handler, array $options = [])
- * @method static addGroup($prefix, callable $callback)
+ * @method static void addRoute(string $route, $handler, array $options = [])
+ * @method static void addGroup($prefix, callable $callback)
  */
 class Router
 {
@@ -48,8 +47,8 @@ class Router
         static::$factory = $factory;
     }
 
-    public static function add(string $route, $handler, array $options = [])
+    public static function add(string $route, $handler, array $options = []): void
     {
-        return self::addRoute('POST', $route, $handler, $options);
+        static::addRoute($route, $handler, $options);
     }
 }

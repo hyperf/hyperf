@@ -5,14 +5,12 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\GrpcClient;
 
-use BadMethodCallException;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\Utils\ChannelPool;
@@ -69,7 +67,7 @@ class GrpcClient
     private $mainCoroutineId = 0;
 
     /**
-     * @var SwooleHttp2Client
+     * @var null|SwooleHttp2Client
      */
     private $httpClient;
 
@@ -95,7 +93,7 @@ class GrpcClient
     private $waitStatus = Status::WAIT_PENDDING;
 
     /**
-     * @var Channel
+     * @var null|Channel
      */
     private $waitYield;
 
@@ -145,13 +143,14 @@ class GrpcClient
         if ($this->recvCoroutineId !== 0 || $this->sendCoroutineId !== 0) {
             throw new RuntimeException('Cannot restart the client.');
         }
-        $this->mainCoroutineId = Coroutine::id();
-        if ($this->mainCoroutineId <= 0) {
-            throw new BadMethodCallException('You have to start it in an alone coroutine.');
+        if (! Coroutine::inCoroutine()) {
+            throw new RuntimeException('Client must be started in coroutine');
         }
         if (! $this->getHttpClient()->connect()) {
-            return false;
+            throw new GrpcClientException('Connect failed, error=' . $this->getHttpClient()->errMsg, $this->getHttpClient()->errCode);
         }
+
+        $this->mainCoroutineId = Coroutine::id();
 
         $this->runReceiveCoroutine();
         $this->runSendCoroutine();
@@ -170,15 +169,20 @@ class GrpcClient
             $shouldKill = true;
         } else {
             $shouldKill = ! $this->getHttpClient()->connect();
-            if ($shouldKill) {
-                // Set `connected` of http client to `false`
-                $this->getHttpClient()->close();
-            }
         }
+        if ($shouldKill) {
+            // Set `connected` of http client to `false`
+            $this->getHttpClient()->close();
+        }
+
         // Clear the receive channel map
         if (! empty($this->recvChannelMap)) {
             foreach ($this->recvChannelMap as $channel) {
-                $channel->push(false);
+                // If this channel has pending pop, we should push 'false' to negate the pop.
+                // Otherwise we should release it directly.
+                while ($channel->stats()['consumer_num'] !== 0) {
+                    $channel->push(false);
+                }
                 $this->channelPool->release($channel);
             }
             $this->recvChannelMap = [];
@@ -211,13 +215,30 @@ class GrpcClient
 
     /**
      * Open a stream and return the id.
+     * @param mixed $data
      */
-    public function openStream(string $path, string $data = null): int
-    {
-        $request = new Request($path);
-        $data && $request->data = $data;
-
+    public function openStream(
+        string $path,
+        $data = '',
+        string $method = '',
+        bool $usePipelineRead = false,
+        array $metadata = []
+    ): int {
+        $method = $method ?: ($data ? 'POST' : 'GET');
+        $request = new Request($method);
+        $request->path = $path;
+        if ($data) {
+            $request->data = $data;
+        }
+        $request->headers = $request->headers + $metadata;
         $request->pipeline = true;
+        if ($usePipelineRead) {
+            // @phpstan-ignore-next-line
+            if (SWOOLE_VERSION_ID < 40503) {
+                throw new InvalidArgumentException('Require Swoole version >= 4.5.3');
+            }
+            $request->usePipelineRead = true;
+        }
 
         return $this->send($request);
     }
@@ -243,16 +264,25 @@ class GrpcClient
         return $streamId;
     }
 
+    public function write(int $streamId, $data, bool $end = false)
+    {
+        if ($this->sendYield === true) {
+            return $this->sendChannel->push([$streamId, $data, $end])
+                && $this->sendResultChannel->pop();
+        }
+        return $this->getHttpClient()->write($streamId, $data, $end);
+    }
+
     public function recv(int $streamId, float $timeout = null)
     {
         if (! $this->isConnected() || $streamId <= 0 || ! $this->isStreamExist($streamId)) {
             return false;
         }
-        $channel = $this->recvChannelMap[$streamId];
+        $channel = $this->recvChannelMap[$streamId] ?? null;
         if ($channel instanceof Channel) {
             $response = $channel->pop($timeout === null ? $this->timeout : $timeout);
             // Pop timeout
-            if ($response === false && $channel->errCode === -1) {
+            if ($response === false && $channel->errCode === SWOOLE_CHANNEL_TIMEOUT) {
                 unset($this->recvChannelMap[$streamId]);
             }
 
@@ -279,19 +309,12 @@ class GrpcClient
         if ($this->waitStatus === Status::WAIT_CLOSE) {
             return $this->yield($yield);
         }
-        $closeId = $this->sendCloseRequest();
-        $result = $closeId && ($this->sendYield ? $this->sendChannel->push(0) : true);
+        $this->getHttpClient()->close();
+        $result = $this->sendYield ? $this->sendChannel->push(0) : true;
         if ($result === true) {
             $this->yield($yield);
         }
         return $result;
-    }
-
-    private function sendCloseRequest(): int
-    {
-        $closeRequest = new Request(Status::CLOSE_KEYWORD);
-
-        return $this->send($closeRequest);
     }
 
     /**
@@ -321,8 +344,6 @@ class GrpcClient
                     }
                     // Force close.
                     if ($this->waitStatus === Status::WAIT_CLOSE_FORCE) {
-                        $this->channelPool->release($this->recvChannelMap[$streamId]);
-                        unset($this->recvChannelMap[$streamId]);
                         if ($this->closeRecv()) {
                             break;
                         }

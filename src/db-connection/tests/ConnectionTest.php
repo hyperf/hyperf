@@ -5,16 +5,15 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\DbConnection;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\DbConnection\Connection;
-use Hyperf\DbConnection\ConnectionResolver;
 use Hyperf\DbConnection\Pool\PoolFactory;
 use Hyperf\Utils\Context;
 use HyperfTest\DbConnection\Stubs\ConnectionStub;
@@ -39,7 +38,7 @@ class ConnectionTest extends TestCase
     {
         $container = ContainerStub::mockContainer();
 
-        $resolver = $container->get(ConnectionResolver::class);
+        $resolver = $container->get(ConnectionResolverInterface::class);
 
         $connection = $resolver->connection();
 
@@ -65,7 +64,7 @@ class ConnectionTest extends TestCase
     {
         $container = ContainerStub::mockContainer();
 
-        $resolver = $container->get(ConnectionResolver::class);
+        $resolver = $container->get(ConnectionResolverInterface::class);
 
         /** @var \Hyperf\Database\Connection $connection */
         $connection = $resolver->connection();
@@ -95,7 +94,7 @@ class ConnectionTest extends TestCase
     {
         $container = ContainerStub::mockReadWriteContainer();
 
-        $resolver = $container->get(ConnectionResolver::class);
+        $resolver = $container->get(ConnectionResolverInterface::class);
 
         /** @var \Hyperf\Database\Connection $connection */
         $connection = $resolver->connection();
@@ -107,12 +106,44 @@ class ConnectionTest extends TestCase
         $this->assertSame('mysql:host=192.168.1.1;dbname=hyperf', $pdo->dsn);
     }
 
+    public function testPdoDontDestruct()
+    {
+        $container = ContainerStub::mockContainer();
+        $pool = $container->get(PoolFactory::class)->getPool('default');
+        $config = $container->get(ConfigInterface::class)->get('databases.default');
+
+        $callables = [function ($connection) {
+            $connection->selectOne('SELECT 1;');
+        }, function ($connection) {
+            $connection->table('user')->leftJoin('user_ext', 'user.id', '=', 'user_ext.id')->get();
+        }];
+
+        $closes = [function ($connection) {
+            $connection->close();
+        }, function ($connection) {
+            $connection->reconnect();
+        }];
+
+        foreach ($callables as $callable) {
+            foreach ($closes as $closure) {
+                $connection = new ConnectionStub($container, $pool, $config);
+                $connection->setPdo(new PDOStub('', '', '', []));
+
+                PDOStub::$destruct = 0;
+                $callable($connection);
+                $this->assertSame(0, PDOStub::$destruct);
+                $closure($connection);
+                $this->assertSame(1, PDOStub::$destruct);
+            }
+        }
+    }
+
     public function testConnectionSticky()
     {
         $container = ContainerStub::mockReadWriteContainer();
 
         parallel([function () use ($container) {
-            $resolver = $container->get(ConnectionResolver::class);
+            $resolver = $container->get(ConnectionResolverInterface::class);
 
             /** @var \Hyperf\Database\Connection $connection */
             $connection = $resolver->connection();
@@ -126,7 +157,7 @@ class ConnectionTest extends TestCase
         }]);
 
         parallel([function () use ($container) {
-            $resolver = $container->get(ConnectionResolver::class);
+            $resolver = $container->get(ConnectionResolverInterface::class);
 
             /** @var \Hyperf\Database\Connection $connection */
             $connection = $resolver->connection();

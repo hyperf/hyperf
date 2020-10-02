@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Guzzle\RingPHP;
 
 use GuzzleHttp\Ring\Core;
@@ -40,7 +39,7 @@ class CoroutineHandler
         $params = parse_url($effectiveUrl);
         $host = $params['host'];
         if (! isset($params['port'])) {
-            $params['port'] = $ssl ? 443 : 80;
+            $params['port'] = $this->getPort($request, $ssl);
         }
         $port = $params['port'];
         $path = $params['path'] ?? '/';
@@ -92,6 +91,15 @@ class CoroutineHandler
         return $settings;
     }
 
+    protected function getPort(array $request, bool $ssl = false): int
+    {
+        if ($port = $request['client']['curl'][CURLOPT_PORT] ?? null) {
+            return (int) $port;
+        }
+
+        return $ssl ? 443 : 80;
+    }
+
     protected function initHeaders(Client $client, $request)
     {
         $headers = [];
@@ -105,9 +113,16 @@ class CoroutineHandler
             $headers['Authorization'] = sprintf('Basic %s', base64_encode($userInfo));
         }
 
-        // TODO: 不知道为啥，这个扔进来就400
-        unset($headers['Content-Length']);
+        $headers = $this->rewriteHeaders($headers);
+
         $client->setHeaders($headers);
+    }
+
+    protected function rewriteHeaders(array $headers): array
+    {
+        // Unknown reason, Content-Length will cause 400 some time.
+        unset($headers['Content-Length']);
+        return $headers;
     }
 
     protected function getErrorResponse(\Throwable $throwable, $btime, $effectiveUrl)

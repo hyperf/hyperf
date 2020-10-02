@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigApollo;
 
 use Closure;
@@ -112,10 +111,9 @@ class Client implements ClientInterface
                         'releaseKey' => $body['releaseKey'] ?? '',
                     ];
                 } else {
-                    $result = [
-                        'configurations' => [],
-                        'releaseKey' => '',
-                    ];
+                    // The status code is not 200 when the config is not modified in apollo.
+                    // So, we shouldn't change the configurations.
+                    $result = [];
                 }
                 return $result;
             }, $namespace);
@@ -147,10 +145,9 @@ class Client implements ClientInterface
                     'releaseKey' => $body['releaseKey'] ?? '',
                 ];
             } else {
-                $result[$namespace] = [
-                    'configurations' => [],
-                    'releaseKey' => '',
-                ];
+                // The status code is not 200 when the config is not modified in apollo.
+                // So, we shouldn't change the configurations.
+                $result[$namespace] = [];
             }
         }
         return $result;

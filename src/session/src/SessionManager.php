@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Session;
 
 use Hyperf\Contract\ConfigInterface;
@@ -39,7 +38,7 @@ class SessionManager
 
     public function getSessionName(): string
     {
-        return 'HYPERF_SESSION_ID';
+        return $this->config->get('session.options.session_name', 'HYPERF_SESSION_ID');
     }
 
     public function start(ServerRequestInterface $request): SessionInterface

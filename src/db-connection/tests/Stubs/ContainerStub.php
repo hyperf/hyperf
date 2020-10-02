@@ -5,16 +5,16 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\DbConnection\Stubs;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\DbConnection\ConnectionResolver;
@@ -40,7 +40,7 @@ class ContainerStub
         $container->shouldReceive('get')->with(PoolFactory::class)->andReturn($factory);
 
         $resolver = new ConnectionResolver($container);
-        $container->shouldReceive('get')->with(ConnectionResolver::class)->andReturn($resolver);
+        $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
 
         $config = new Config([
             StdoutLoggerInterface::class => [
@@ -58,7 +58,7 @@ class ContainerStub
             'databases' => [
                 'default' => [
                     'driver' => 'mysql',
-                    'host' => 'localhost',
+                    'host' => '127.0.0.1',
                     'database' => 'hyperf',
                     'username' => 'root',
                     'password' => '',
@@ -103,7 +103,7 @@ class ContainerStub
         $container->shouldReceive('get')->with(PoolFactory::class)->andReturn($factory);
 
         $resolver = new ConnectionResolver($container);
-        $container->shouldReceive('get')->with(ConnectionResolver::class)->andReturn($resolver);
+        $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
 
         $config = new Config([
             'databases' => [

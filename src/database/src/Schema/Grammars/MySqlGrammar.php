@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Schema\Grammars;
 
 use Hyperf\Database\Connection;
@@ -50,7 +49,15 @@ class MySqlGrammar extends Grammar
      */
     public function compileColumnListing(): string
     {
-        return 'select `column_name`, `data_type`, `column_comment` from information_schema.columns where `table_schema` = ? and `table_name` = ? order by ORDINAL_POSITION';
+        return 'select `column_key`, `column_name`, `data_type`, `column_comment`, `extra`, `column_type` from information_schema.columns where `table_schema` = ? and `table_name` = ? order by ORDINAL_POSITION';
+    }
+
+    /**
+     * Compile the query to determine the list of columns.
+     */
+    public function compileColumns(): string
+    {
+        return 'select `table_schema`, `table_name`, `column_name`, `ordinal_position`, `column_default`, `is_nullable`, `data_type`, `column_comment` from information_schema.columns where `table_schema` = ? order by ORDINAL_POSITION';
     }
 
     /**

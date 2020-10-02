@@ -8,11 +8,16 @@
         "hyperf",
         "swagger"
     ],
+    "homepage": "https://hyperf.io",
     "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/command": "~1.1.0",
+        "hyperf/command": "~2.0.0",
         "zircote/swagger-php": "^3.0"
     },
     "require-dev": {
@@ -37,7 +42,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Swagger\\ConfigProvider"

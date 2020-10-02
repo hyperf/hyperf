@@ -21,25 +21,22 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/utils": "~1.1.0",
-        "hyperf/etcd": "~1.1.0"
+        "hyperf/utils": "~2.0.0",
+        "hyperf/etcd": "~2.0.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.14",
-        "phpstan/phpstan": "^0.10.5",
-        "swoft/swoole-ide-helper": "dev-master"
+        "friendsofphp/php-cs-fixer": "^2.14"
     },
     "config": {
         "sort-packages": true
     },
     "scripts": {
         "test": "co-phpunit -c phpunit.xml --colors=always",
-        "analyze": "phpstan analyse --memory-limit 300M -l 0 ./src",
         "cs-fix": "php-cs-fixer fix $1"
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\ConfigEtcd\\ConfigProvider"

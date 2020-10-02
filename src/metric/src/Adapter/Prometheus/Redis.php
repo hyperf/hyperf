@@ -5,13 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric\Adapter\Prometheus;
 
+use Exception;
 use InvalidArgumentException;
 use Prometheus\Counter;
 use Prometheus\Exception\StorageException;
@@ -62,10 +62,6 @@ class Redis implements Adapter
      */
     private $connectionInitialized = false;
 
-    /**
-     * Redis constructor.
-     * @param array $options
-     */
     public function __construct(array $options = [])
     {
         $this->options = array_merge(self::$defaultOptions, $options);
@@ -73,9 +69,8 @@ class Redis implements Adapter
     }
 
     /**
-     * Create an instance from an established redis connection
-     * @param  \Hyperf\Redis\Redis|\Redis $redis
-     * @return Redis
+     * Create an instance from an established redis connection.
+     * @param \Hyperf\Redis\Redis|\Redis $redis
      */
     public static function fromExistingConnection($redis): self
     {
@@ -88,17 +83,11 @@ class Redis implements Adapter
         return $self;
     }
 
-    /**
-     * @param array $options
-     */
     public static function setDefaultOptions(array $options): void
     {
         self::$defaultOptions = array_merge(self::$defaultOptions, $options);
     }
 
-    /**
-     * @param string $prefix
-     */
     public static function setPrefix(string $prefix): void
     {
         self::$prefix = $prefix;
@@ -132,12 +121,12 @@ class Redis implements Adapter
     }
 
     /**
-     * @param array $data
      * @throws StorageException
      */
     public function updateHistogram(array $data): void
     {
         $this->openConnection();
+        $redisTag = $this->getRedisTag(Histogram::TYPE);
         $bucketToIncrease = '+Inf';
         foreach ($data['buckets'] as $bucket) {
             if ($data['value'] <= $bucket) {
@@ -159,8 +148,8 @@ end
 LUA
             ,
             [
-                $this->toMetricKey($data),
-                self::$prefix . Histogram::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX,
+                $this->toMetricKey($data) . $redisTag,
+                self::$prefix . Histogram::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $redisTag,
                 json_encode(['b' => 'sum', 'labelValues' => $data['labelValues']]),
                 json_encode(['b' => $bucketToIncrease, 'labelValues' => $data['labelValues']]),
                 $data['value'],
@@ -171,12 +160,12 @@ LUA
     }
 
     /**
-     * @param array $data
      * @throws StorageException
      */
     public function updateGauge(array $data): void
     {
         $this->openConnection();
+        $redisTag = $this->getRedisTag(Gauge::TYPE);
         $metaData = $data;
         unset($metaData['value'], $metaData['labelValues'], $metaData['command']);
 
@@ -197,8 +186,8 @@ end
 LUA
             ,
             [
-                $this->toMetricKey($data),
-                self::$prefix . Gauge::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX,
+                $this->toMetricKey($data) . $redisTag,
+                self::$prefix . Gauge::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $redisTag,
                 $this->getRedisCommand($data['command']),
                 json_encode($data['labelValues']),
                 $data['value'],
@@ -209,12 +198,12 @@ LUA
     }
 
     /**
-     * @param array $data
      * @throws StorageException
      */
     public function updateCounter(array $data): void
     {
         $this->openConnection();
+        $redisTag = $this->getRedisTag(Counter::TYPE);
         $metaData = $data;
         unset($metaData['value'], $metaData['labelValues'], $metaData['command']);
 
@@ -229,8 +218,8 @@ return result
 LUA
             ,
             [
-                $this->toMetricKey($data),
-                self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX,
+                $this->toMetricKey($data) . $redisTag,
+                self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $redisTag,
                 $this->getRedisCommand($data['command']),
                 $data['value'],
                 json_encode($data['labelValues']),
@@ -238,6 +227,20 @@ LUA
             ],
             2
         );
+    }
+
+    protected function getRedisTag(string $metricType): string
+    {
+        switch ($metricType) {
+            case Counter::TYPE:
+                return '{counter}';
+            case Histogram::TYPE:
+                return '{histogram}';
+            case Gauge::TYPE:
+                return '{gauge}';
+            default:
+                return '';
+        }
     }
 
     /**
@@ -261,9 +264,6 @@ LUA
         $this->redis->setOption(\Redis::OPT_READ_TIMEOUT, $this->options['read_timeout']);
     }
 
-    /**
-     * @return bool
-     */
     private function connectToServer(): bool
     {
         try {
@@ -280,12 +280,9 @@ LUA
         }
     }
 
-    /**
-     * @return array
-     */
     private function collectHistograms(): array
     {
-        $keys = $this->redis->sMembers(self::$prefix . Histogram::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX);
+        $keys = $this->redis->sMembers($this->getMetricGatherKey(Histogram::TYPE));
         sort($keys);
         $histograms = [];
         foreach ($keys as $key) {
@@ -299,6 +296,9 @@ LUA
             foreach (array_keys($raw) as $k) {
                 $d = json_decode($k, true);
                 if ($d['b'] == 'sum') {
+                    continue;
+                }
+                if (count($d['labelValues']) !== count($histogram['labelNames'])) {
                     continue;
                 }
                 $allLabelValues[] = $d['labelValues'];
@@ -351,12 +351,9 @@ LUA
         return $histograms;
     }
 
-    /**
-     * @return array
-     */
     private function collectGauges(): array
     {
-        $keys = $this->redis->sMembers(self::$prefix . Gauge::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX);
+        $keys = $this->redis->sMembers($this->getMetricGatherKey(Gauge::TYPE));
         sort($keys);
         $gauges = [];
         foreach ($keys as $key) {
@@ -365,6 +362,9 @@ LUA
             unset($raw['__meta']);
             $gauge['samples'] = [];
             foreach ($raw as $k => $value) {
+                if (count($gauge['labelNames']) !== count(json_decode($k, true))) {
+                    continue;
+                }
                 $gauge['samples'][] = [
                     'name' => $gauge['name'],
                     'labelNames' => [],
@@ -380,12 +380,9 @@ LUA
         return $gauges;
     }
 
-    /**
-     * @return array
-     */
     private function collectCounters(): array
     {
-        $keys = $this->redis->sMembers(self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX);
+        $keys = $this->redis->sMembers($this->getMetricGatherKey(Counter::TYPE));
         sort($keys);
         $counters = [];
         foreach ($keys as $key) {
@@ -394,6 +391,9 @@ LUA
             unset($raw['__meta']);
             $counter['samples'] = [];
             foreach ($raw as $k => $value) {
+                if (count($counter['labelNames']) !== count(json_decode($k, true))) {
+                    continue;
+                }
                 $counter['samples'][] = [
                     'name' => $counter['name'],
                     'labelNames' => [],
@@ -409,10 +409,6 @@ LUA
         return $counters;
     }
 
-    /**
-     * @param int $cmd
-     * @return string
-     */
     private function getRedisCommand(int $cmd): string
     {
         switch ($cmd) {
@@ -427,12 +423,28 @@ LUA
         }
     }
 
-    /**
-     * @param array $data
-     * @return string
-     */
     private function toMetricKey(array $data): string
     {
         return implode(':', [self::$prefix, $data['type'], $data['name']]);
+    }
+
+    /**
+     * Get the indicator collection key.
+     *
+     * @param mixed $metricType
+     * @throws \Exception Exception thrown when the incoming metric type does not exist
+     */
+    private function getMetricGatherKey($metricType): string
+    {
+        switch ($metricType) {
+            case Counter::TYPE:
+                return self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Counter::TYPE);
+            case Histogram::TYPE:
+                return self::$prefix . Histogram::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Histogram::TYPE);
+            case Gauge::TYPE:
+                return self::$prefix . Gauge::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Gauge::TYPE);
+            default:
+                throw new Exception('Unknown metric type');
+        }
     }
 }

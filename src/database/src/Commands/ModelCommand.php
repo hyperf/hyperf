@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Commands;
 
 use Hyperf\Command\Command;
@@ -29,6 +28,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ModelCommand extends Command
 {
@@ -58,7 +58,7 @@ class ModelCommand extends Command
     protected $printer;
 
     /**
-     * @var OutputInterface
+     * @var SymfonyStyle
      */
     protected $output;
 
@@ -98,7 +98,9 @@ class ModelCommand extends Command
             ->setRefreshFillable($this->getOption('refresh-fillable', 'commands.gen:model.refresh_fillable', $pool, false))
             ->setTableMapping($this->getOption('table-mapping', 'commands.gen:model.table_mapping', $pool, []))
             ->setIgnoreTables($this->getOption('ignore-tables', 'commands.gen:model.ignore_tables', $pool, []))
-            ->setWithComments($this->getOption('with-comments', 'commands.gen:model.with_comments', $pool, false));
+            ->setWithComments($this->getOption('with-comments', 'commands.gen:model.with_comments', $pool, false))
+            ->setVisitors($this->getOption('visitors', 'commands.gen:model.visitors', $pool, []))
+            ->setPropertyCase($this->getOption('property-case', 'commands.gen:model.property_case', $pool));
 
         if ($table) {
             $this->createModel($table, $option);
@@ -117,10 +119,12 @@ class ModelCommand extends Command
         $this->addOption('prefix', 'P', InputOption::VALUE_OPTIONAL, 'What prefix that you want the Model set.');
         $this->addOption('inheritance', 'i', InputOption::VALUE_OPTIONAL, 'The inheritance that you want the Model extends.');
         $this->addOption('uses', 'U', InputOption::VALUE_OPTIONAL, 'The default class uses of the Model.');
-        $this->addOption('refresh-fillable', null, InputOption::VALUE_NONE, 'Whether generate fillable argement for model.');
+        $this->addOption('refresh-fillable', 'R', InputOption::VALUE_NONE, 'Whether generate fillable argement for model.');
         $this->addOption('table-mapping', 'M', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Table mappings for model.');
         $this->addOption('ignore-tables', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Ignore tables for creating models.');
         $this->addOption('with-comments', null, InputOption::VALUE_NONE, 'Whether generate the property comments for model.');
+        $this->addOption('visitors', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Custom visitors for ast traverser.');
+        $this->addOption('property-case', null, InputOption::VALUE_OPTIONAL, 'Which property case you want use, 0: snake case, 1: camel case.');
     }
 
     protected function getSchemaBuilder(string $poolName): MySqlBuilder
@@ -172,7 +176,6 @@ class ModelCommand extends Command
             if (! is_dir($dir)) {
                 @mkdir($dir, 0755, true);
             }
-
             file_put_contents($path, $this->buildClass($table, $class, $option));
         }
 
@@ -180,12 +183,16 @@ class ModelCommand extends Command
 
         $stms = $this->astParser->parse(file_get_contents($path));
         $traverser = new NodeTraverser();
-        $visitor = make(ModelUpdateVisitor::class, [
+        $traverser->addVisitor(make(ModelUpdateVisitor::class, [
+            'class' => $class,
             'columns' => $columns,
             'option' => $option,
-        ]);
-        $traverser->addVisitor($visitor);
+        ]));
         $traverser->addVisitor(make(ModelRewriteConnectionVisitor::class, [$class, $option->getPool()]));
+        foreach ($option->getVisitors() as $visitorClass) {
+            $data = make(ModelData::class)->setClass($class)->setColumns($columns);
+            $traverser->addVisitor(make($visitorClass, [$option, $data]));
+        }
         $stms = $traverser->traverse($stms);
         $code = $this->printer->prettyPrintFile($stms);
 
@@ -233,7 +240,7 @@ class ModelCommand extends Command
         if (in_array($name, ['force-casts', 'refresh-fillable', 'with-comments'])) {
             $nonInput = false;
         }
-        if (in_array($name, ['table-mapping', 'ignore-tables'])) {
+        if (in_array($name, ['table-mapping', 'ignore-tables', 'visitors'])) {
             $nonInput = [];
         }
 

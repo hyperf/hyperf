@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Retry;
 
 use SplQueue;
@@ -49,7 +48,7 @@ class RetryBudget implements RetryBudgetInterface
         $this->minRetriesPerSec = $minRetriesPerSec;
         $this->percentCanRetry = $percentCanRetry;
         $this->budget = new SplQueue();
-        for ($i = 0; $i < $minRetriesPerSec; ++$i) {
+        for ($i = 0; $i < $minRetriesPerSec / $this->percentCanRetry; ++$i) {
             $this->produce();
         }
         $this->timerId = Timer::tick(1000, function () use ($minRetriesPerSec) {

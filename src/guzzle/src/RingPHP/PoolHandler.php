@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Guzzle\RingPHP;
 
 use GuzzleHttp\Ring\Core;
@@ -40,7 +39,7 @@ class PoolHandler extends CoroutineHandler
         $params = parse_url($effectiveUrl);
         $host = $params['host'];
         if (! isset($params['port'])) {
-            $params['port'] = $ssl ? 443 : 80;
+            $params['port'] = $this->getPort($request, $ssl);
         }
         $port = $params['port'];
         $path = $params['path'] ?? '/';

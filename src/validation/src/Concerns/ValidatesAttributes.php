@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Validation\Concerns;
 
 use Carbon\Carbon;
@@ -161,7 +160,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        return preg_match('/^[\pL\pM\pN]+$/u', $value) > 0;
+        return preg_match('/^[\pL\pM\pN]+$/u', (string) $value) > 0;
     }
 
     /**
@@ -302,8 +301,9 @@ trait ValidatesAttributes
     {
         $this->requireParameterCount(1, $parameters, 'digits');
 
+        $value = (string) $value;
         return ! preg_match('/[^0-9]/', $value)
-            && strlen((string) $value) == $parameters[0];
+            && strlen($value) == $parameters[0];
     }
 
     /**
@@ -315,7 +315,8 @@ trait ValidatesAttributes
     {
         $this->requireParameterCount(2, $parameters, 'digits_between');
 
-        $length = strlen((string) $value);
+        $value = (string) $value;
+        $length = strlen($value);
 
         return ! preg_match('/[^0-9]/', $value)
             && $length >= $parameters[0] && $length <= $parameters[1];
@@ -1216,8 +1217,11 @@ trait ValidatesAttributes
      *
      * @return null|\DateTime
      */
-    protected function getDateTimeWithOptionalFormat(string $format, string $value)
+    protected function getDateTimeWithOptionalFormat(string $format, ?string $value)
     {
+        if (is_null($value)) {
+            return null;
+        }
         if ($date = DateTime::createFromFormat('!' . $format, $value)) {
             return $date;
         }
@@ -1492,7 +1496,7 @@ trait ValidatesAttributes
             return $value->getSize() / 1024;
         }
 
-        return mb_strlen($value);
+        return mb_strlen((string) $value);
     }
 
     /**

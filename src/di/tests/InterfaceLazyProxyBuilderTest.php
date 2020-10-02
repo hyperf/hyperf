@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Di;
 
 use Hyperf\Di\LazyLoader\InterfaceLazyProxyBuilder;
@@ -19,6 +18,10 @@ use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
+use Roave\BetterReflection\BetterReflection;
+use Roave\BetterReflection\Reflection\Adapter\ReflectionMethod;
+use Roave\BetterReflection\Reflector\ClassReflector;
+use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
 
 /**
  * @internal
@@ -76,7 +79,7 @@ CODETEMPLATE;
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $ast = $parser->parse($code);
         $traverser = new NodeTraverser();
-        $visitor = new PublicMethodVisitor();
+        $visitor = new PublicMethodVisitor(...$this->getStmt($code));
         $nameResolver = new NameResolver();
         $traverser->addVisitor($nameResolver);
         $traverser->addVisitor($visitor);
@@ -86,5 +89,18 @@ CODETEMPLATE;
         $stmts = [$builder->getNode()];
         $newCode = $prettyPrinter->prettyPrintFile($stmts);
         $this->assertEquals($expected, $newCode);
+    }
+
+    private function getStmt($code)
+    {
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = new ClassReflector(new StringSourceLocator($code, $astLocator));
+        $reflectionClass = $reflector->reflect('foo\\foo');
+        $reflectionMethods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
+        $stmts = [];
+        foreach ($reflectionMethods as $method) {
+            $stmts[] = $method->getAst();
+        }
+        return [$stmts, 'foo\\foo'];
     }
 }

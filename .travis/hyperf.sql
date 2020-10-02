@@ -17,6 +17,27 @@ VALUES
 	(2,1,'Hyperf Guide 2019','2018-01-02 00:00:00','2018-01-02 00:00:00'),
 	(3,2,'Hyperf Component Guide','2018-01-02 00:00:00','2018-01-02 00:00:00');
 
+DROP TABLE IF EXISTS `images`;
+
+CREATE TABLE `images` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `url` varchar(128) NOT NULL DEFAULT '',
+  `imageable_id` int(10) unsigned NOT NULL,
+  `imageable_type` varchar(32) NOT NULL DEFAULT '',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO `images` (`id`, `url`, `imageable_id`, `imageable_type`, `created_at`, `updated_at`)
+VALUES
+	(1,'https://avatars2.githubusercontent.com/u/44228082?s=200&v=4',1,'user','2018-01-01 00:00:00','2018-01-01 00:00:00'),
+	(2,'https://avatars2.githubusercontent.com/u/44228082?s=200&v=4',2,'user','2018-01-01 00:00:00','2018-01-01 00:00:00'),
+	(3,'https://avatars2.githubusercontent.com/u/44228082?s=200&v=4',1,'book','2018-01-01 00:00:00','2018-01-01 00:00:00'),
+	(4,'https://avatars2.githubusercontent.com/u/44228082?s=200&v=4',2,'book','2018-01-01 00:00:00','2018-01-01 00:00:00'),
+	(5,'https://avatars2.githubusercontent.com/u/44228082?s=200&v=4',3,'book','2018-01-01 00:00:00','2018-01-01 00:00:00'),
+	(6,'https://avatars2.githubusercontent.com/u/44228082?s=200&v=4',0,'','2018-01-01 00:00:00','2018-01-01 00:00:00');
+
 DROP TABLE IF EXISTS `role`;
 
 CREATE TABLE `role` (
@@ -36,7 +57,7 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL DEFAULT '' COMMENT 'user name',
-  `gender` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '1unknow 1male 2female',
+  `gender` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '0:unknow 1:male 2:female',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -46,6 +67,7 @@ INSERT INTO `user` (`id`, `name`, `gender`, `created_at`, `updated_at`)
 VALUES
 	(1,'Hyperf',1,'2018-01-01 00:00:00','2019-06-05 03:27:14'),
 	(2,'Hyperflex',1,'2019-01-01 00:00:00','2019-02-16 09:59:36'),
+	(3,'Hidden',0,'2019-01-01 00:00:00','2019-02-16 09:59:36'),
 	(100,'John',0,NULL,NULL);
 
 DROP TABLE IF EXISTS `user_ext`;

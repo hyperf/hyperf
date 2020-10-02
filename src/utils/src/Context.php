@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils;
 
 use Swoole\Coroutine as SwCoroutine;
@@ -65,13 +64,11 @@ class Context
      */
     public static function copy(int $fromCoroutineId, array $keys = []): void
     {
-        /**
-         * @var \ArrayObject
-         * @var \ArrayObject $current
-         */
+        /** @var \ArrayObject $from */
         $from = SwCoroutine::getContext($fromCoroutineId);
+        /** @var \ArrayObject $current */
         $current = SwCoroutine::getContext();
-        $current->exchangeArray($keys ? array_fill_keys($keys, $from->getArrayCopy()) : $from->getArrayCopy());
+        $current->exchangeArray($keys ? Arr::only($from->getArrayCopy(), $keys) : $from->getArrayCopy());
     }
 
     /**

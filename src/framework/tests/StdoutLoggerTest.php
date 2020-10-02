@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Framework;
 
 use Hyperf\Config\Config;
@@ -46,5 +45,22 @@ class StdoutLoggerTest extends TestCase
         ]), $output);
 
         $logger->info('Hello {name}.', ['name' => 'Hyperf']);
+    }
+
+    public function testLogThrowable()
+    {
+        $output = Mockery::mock(ConsoleOutput::class);
+        $output->shouldReceive('writeln')->with(Mockery::any())->once()->andReturnUsing(function ($message) {
+            $this->assertRegExp('/RuntimeException: Invalid Arguments./', $message);
+        });
+        $logger = new StdoutLogger(new Config([
+            StdoutLoggerInterface::class => [
+                'log_level' => [
+                    LogLevel::ERROR,
+                ],
+            ],
+        ]), $output);
+
+        $logger->error(new \RuntimeException('Invalid Arguments.'));
     }
 }

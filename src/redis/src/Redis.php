@@ -5,17 +5,19 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Redis;
 
 use Hyperf\Redis\Exception\InvalidRedisConnectionException;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Utils\Context;
 
+/**
+ * @mixin \Redis
+ */
 class Redis
 {
     use ScanCaller;
@@ -55,6 +57,7 @@ class Redis
                     // Should storage the connection to coroutine context, then use defer() to release the connection.
                     Context::set($this->getContextKey(), $connection);
                     defer(function () use ($connection) {
+                        Context::set($this->getContextKey(), null);
                         $connection->release();
                     });
                 } else {

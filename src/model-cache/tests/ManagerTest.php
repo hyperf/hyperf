@@ -5,16 +5,16 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\ModelCache;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\DbConnection\Collector\TableCollector;
 use Hyperf\Utils\ApplicationContext;
 use HyperfTest\ModelCache\Stub\ManagerStub;
 use HyperfTest\ModelCache\Stub\ModelStub;
@@ -43,6 +43,7 @@ class ManagerTest extends TestCase
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config($this->getConfig()));
         $container->shouldReceive('make')->with(ContainerInterface::class)->andReturn($container);
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(null);
+        $container->shouldReceive('get')->with(TableCollector::class)->andReturn(new TableCollector());
 
         ApplicationContext::setContainer($container);
 

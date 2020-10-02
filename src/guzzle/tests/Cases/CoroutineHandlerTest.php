@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Guzzle\Cases;
 
 use GuzzleHttp\Client;
@@ -18,7 +17,10 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\RequestOptions;
+use GuzzleHttp\TransferStats;
 use Hyperf\Guzzle\CoroutineHandler;
+use Hyperf\Utils\Codec\Json;
 use HyperfTest\Guzzle\Stub\CoroutineHandlerStub;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
@@ -278,6 +280,83 @@ class CoroutineHandlerTest extends TestCase
         $ex = $handler->checkStatusCode($client, $request);
         $this->assertInstanceOf(RequestException::class, $ex);
         $this->assertSame('Server reset', $ex->getMessage());
+    }
+
+    public function testRequestOptionOnStats()
+    {
+        $url = 'http://127.0.0.1:9501';
+        $handler = new CoroutineHandlerStub();
+        $request = new Request('GET', $url . '/echo');
+
+        $bool = false;
+        $handler($request, [RequestOptions::ON_STATS => function (TransferStats $stats) use (&$bool) {
+            $bool = true;
+            $this->assertIsFloat($stats->getTransferTime());
+        }])->wait();
+        $this->assertTrue($bool);
+    }
+
+    public function testRequestOptionOnStatsInClient()
+    {
+        $bool = false;
+        $url = 'http://127.0.0.1:9501';
+        $client = new Client([
+            'handler' => new CoroutineHandlerStub(),
+            'base_uri' => $url,
+            RequestOptions::ON_STATS => function (TransferStats $stats) use (&$bool) {
+                $bool = true;
+                $this->assertIsFloat($stats->getTransferTime());
+            },
+        ]);
+        $client->get('/');
+        $this->assertTrue($bool);
+    }
+
+    public function testSink()
+    {
+        $dir = BASE_PATH . '/runtime/guzzle/';
+        @mkdir($dir, 0755, true);
+
+        $handler = new CoroutineHandlerStub();
+        $handler->createSink($body = uniqid(), $sink = $dir . uniqid());
+        $this->assertSame($body, file_get_contents($sink));
+    }
+
+    public function testExpect100Continue()
+    {
+        $url = 'http://127.0.0.1:9501';
+        $client = new Client([
+            'handler' => HandlerStack::create(new CoroutineHandlerStub()),
+            'base_uri' => $url,
+        ]);
+        $res = $client->post('/', [
+            RequestOptions::JSON => [
+                'data' => str_repeat($id = uniqid(), 100000),
+            ],
+        ]);
+
+        $data = Json::decode($res->getBody()->getContents());
+        $this->assertArrayNotHasKey('Content-Length', $data['headers']);
+        $this->assertArrayNotHasKey('Expect', $data['headers']);
+
+        $stub = \Mockery::mock(CoroutineHandlerStub::class . '[rewriteHeaders]');
+        $stub->shouldReceive('rewriteHeaders')->withAnyArgs()->andReturnUsing(function ($headers) {
+            return $headers;
+        });
+
+        $client = new Client([
+            'handler' => HandlerStack::create($stub),
+            'base_uri' => $url,
+        ]);
+        $res = $client->post('/', [
+            RequestOptions::JSON => [
+                'data' => str_repeat($id = uniqid(), 100000),
+            ],
+        ]);
+
+        $data = Json::decode($res->getBody()->getContents());
+        $this->assertArrayHasKey('Content-Length', $data['headers']);
+        $this->assertArrayHasKey('Expect', $data['headers']);
     }
 
     protected function getHandler($options = [])

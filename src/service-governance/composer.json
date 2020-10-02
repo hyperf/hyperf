@@ -8,15 +8,20 @@
         "hyperf",
         "service-governance"
     ],
+    "homepage": "https://hyperf.io",
     "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/consul": "~1.1.0",
-        "hyperf/contract": "~1.1.0"
+        "hyperf/consul": "~2.0.0",
+        "hyperf/contract": "~2.0.0"
     },
     "require-dev": {
-        "hyperf/event": "~1.1.0",
+        "hyperf/event": "~2.0.0",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^7.0.0",
@@ -41,7 +46,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\ServiceGovernance\\ConfigProvider"

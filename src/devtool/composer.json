@@ -8,14 +8,19 @@
         "hyperf",
         "devtool"
     ],
+    "homepage": "https://hyperf.io",
     "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/command": "~1.1.0",
-        "hyperf/contract": "~1.1.0",
-        "hyperf/di": "~1.1.0",
-        "hyperf/utils": "~1.1.0"
+        "hyperf/command": "~2.0.0",
+        "hyperf/contract": "~2.0.0",
+        "hyperf/di": "~2.0.0",
+        "hyperf/utils": "~2.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -32,6 +37,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Devtool\\": "tests/"
         }
     },
     "config": {
@@ -39,7 +45,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Devtool\\ConfigProvider"

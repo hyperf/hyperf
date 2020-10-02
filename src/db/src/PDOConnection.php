@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\DB;
 
 use Hyperf\Pool\Exception\ConnectionException;
@@ -93,6 +92,7 @@ class PDOConnection extends AbstractConnection
 
         $this->connection = $pdo;
         $this->lastUseTime = microtime(true);
+        $this->transactions = 0;
         return true;
     }
 

@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 return [
     'default' => [
         'host' => env('REDIS_HOST', 'localhost'),
@@ -23,6 +22,13 @@ return [
             'enable' => (bool) env('REDIS_CLUSTER_ENABLE', false),
             'name' => null,
             'seeds' => [],
+        ],
+        'sentinel' => [
+            'enable' => (bool) env('REDIS_SENTINEL_ENABLE', false),
+            'master_name' => env('REDIS_MASTER_NAME', 'mymaster'),
+            'nodes' => explode(';', env('REDIS_SENTINEL_NODE', '')),
+            'persistent' => '',
+            'read_timeout' => 0,
         ],
         'pool' => [
             'min_connections' => 1,

@@ -8,14 +8,19 @@
         "hyperf",
         "websocket"
     ],
+    "homepage": "https://hyperf.io",
     "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/contract": "~1.1.0",
-        "hyperf/exception-handler": "~1.1.0",
-        "hyperf/http-server": "~1.1.0",
-        "hyperf/utils": "~1.1.0",
+        "hyperf/contract": "~2.0.0",
+        "hyperf/exception-handler": "~2.0.0",
+        "hyperf/http-server": "~2.0.0",
+        "hyperf/utils": "~2.0.0",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
         "psr/log": "^1.0"
@@ -35,6 +40,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\WebSocketServer\\": "tests/"
         }
     },
     "config": {
@@ -42,7 +48,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\WebSocketServer\\ConfigProvider"

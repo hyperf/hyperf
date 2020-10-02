@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Model;
 
 use Hyperf\Contract\CompressInterface;
@@ -23,6 +22,7 @@ use Hyperf\Utils\Traits\Macroable;
 class Collection extends BaseCollection implements CompressInterface
 {
     use Macroable;
+
     /**
      * Find a model in the collection by key.
      *
@@ -439,8 +439,9 @@ class Collection extends BaseCollection implements CompressInterface
 
     /**
      * Get a flattened array of the items in the collection.
+     * @param float|int $depth
      */
-    public function flatten(int $depth = INF): BaseCollection
+    public function flatten($depth = INF): BaseCollection
     {
         return $this->toBase()->flatten($depth);
     }

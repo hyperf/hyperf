@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Command;
 
 use Hyperf\Utils\Contracts\Arrayable;
@@ -28,6 +27,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 abstract class Command extends SymfonyCommand
 {
+    use EnableEventDispatcher;
+
     /**
      * The name of the command.
      *
@@ -41,7 +42,7 @@ abstract class Command extends SymfonyCommand
     protected $input;
 
     /**
-     * @var OutputInterface|SymfonyStyle
+     * @var SymfonyStyle
      */
     protected $output;
 
@@ -70,6 +71,13 @@ abstract class Command extends SymfonyCommand
     protected $hookFlags;
 
     /**
+     * The name and signature of the command.
+     *
+     * @var null|string
+     */
+    protected $signature;
+
+    /**
      * The mapping between human readable verbosity levels and Symfony's OutputInterface.
      *
      * @var array
@@ -93,7 +101,13 @@ abstract class Command extends SymfonyCommand
             $this->hookFlags = swoole_hook_flags();
         }
 
-        parent::__construct($name);
+        if (isset($this->signature)) {
+            $this->configureUsingFluentDefinition();
+        } else {
+            parent::__construct($name);
+        }
+
+        $this->addEnableDispatcherOption();
     }
 
     /**
@@ -161,24 +175,34 @@ abstract class Command extends SymfonyCommand
     }
 
     /**
+     * Give the user a multiple choice from an array of answers.
+     * @param null|mixed $default
+     */
+    public function choiceMultiple(
+        string $question,
+        array $choices,
+        $default = null,
+        ?int $attempts = null
+    ): array {
+        $question = new ChoiceQuestion($question, $choices, $default);
+
+        $question->setMaxAttempts($attempts)->setMultiselect(true);
+
+        return $this->output->askQuestion($question);
+    }
+
+    /**
      * Give the user a single choice from an array of answers.
      *
      * @param null|mixed $default
-     * @param null|mixed $attempts
-     * @param null|mixed $multiple
      */
     public function choice(
         string $question,
         array $choices,
         $default = null,
-        $attempts = null,
-        $multiple = null
+        ?int $attempts = null
     ): string {
-        $question = new ChoiceQuestion($question, $choices, $default);
-
-        $question->setMaxAttempts($attempts)->setMultiselect($multiple);
-
-        return $this->output->askQuestion($question);
+        return $this->choiceMultiple($question, $choices, $default, $attempts)[0];
     }
 
     /**
@@ -379,14 +403,33 @@ abstract class Command extends SymfonyCommand
         }
     }
 
+    /**
+     * Configure the console command using a fluent definition.
+     */
+    protected function configureUsingFluentDefinition()
+    {
+        [$name, $arguments, $options] = Parser::parse($this->signature);
+
+        parent::__construct($this->name = $name);
+
+        // After parsing the signature we will spin through the arguments and options
+        // and set them on this command. These will already be changed into proper
+        // instances of these "InputArgument" and "InputOption" Symfony classes.
+        $this->getDefinition()->addArguments($arguments);
+        $this->getDefinition()->addOptions($options);
+    }
+
     protected function configure()
     {
         parent::configure();
-        $this->specifyParameters();
+        if (! isset($this->signature)) {
+            $this->specifyParameters();
+        }
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->enableDispatcher($input);
         $callback = function () {
             try {
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\BeforeHandle($this));
@@ -399,6 +442,8 @@ abstract class Command extends SymfonyCommand
 
                 $this->eventDispatcher->dispatch(new Event\FailToHandle($this, $exception));
                 return $exception->getCode();
+            } finally {
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\AfterExecute($this));
             }
 
             return 0;

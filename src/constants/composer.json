@@ -7,12 +7,17 @@
         "hyperf",
         "constants"
     ],
+    "homepage": "https://hyperf.io",
     "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/di": "~1.1.0",
-        "hyperf/utils": "~1.1.0"
+        "hyperf/di": "~2.0.0",
+        "hyperf/utils": "~2.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -21,6 +26,7 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
+        "hyperf/translation": "Required to use translation."
     },
     "autoload": {
         "psr-4": {
@@ -37,7 +43,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Constants\\ConfigProvider"

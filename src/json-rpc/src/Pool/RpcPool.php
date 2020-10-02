@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\JsonRpc\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
@@ -32,8 +31,8 @@ class RpcPool extends Pool
     {
         $this->name = $name;
         $this->config = $config;
-        $options = [];
-        $this->frequency = make(Frequency::class);
+        $options = $config['pool'] ?? [];
+        $this->frequency = make(Frequency::class, [$this]);
         parent::__construct($container, $options);
     }
 

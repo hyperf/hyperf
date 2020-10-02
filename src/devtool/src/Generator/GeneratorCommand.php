@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Contract\ConfigInterface;
@@ -50,7 +49,7 @@ abstract class GeneratorCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return null|bool
+     * @return int
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
@@ -66,7 +65,7 @@ abstract class GeneratorCommand extends Command
         // code is untouched. Otherwise, we will continue generating this class' files.
         if (($input->getOption('force') === false) && $this->alreadyExists($this->getNameInput())) {
             $output->writeln(sprintf('<fg=red>%s</>', $name . ' already exists!'));
-            return false;
+            return 0;
         }
 
         // Next, we will generate the path to the location where this class' file should get
@@ -253,8 +252,6 @@ abstract class GeneratorCommand extends Command
 
     /**
      * Get the default namespace for the class.
-     *
-     * @param string $rootNamespace
      */
     abstract protected function getDefaultNamespace(): string;
 }

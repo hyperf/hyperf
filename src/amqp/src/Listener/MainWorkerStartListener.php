@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp\Listener;
 
 use Doctrine\Instantiator\Instantiator;
@@ -19,6 +18,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -48,6 +48,7 @@ class MainWorkerStartListener implements ListenerInterface
     {
         return [
             MainWorkerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 
@@ -58,12 +59,12 @@ class MainWorkerStartListener implements ListenerInterface
     public function process(object $event)
     {
         // Declare exchange and routingKey
-        $producerMessages = AnnotationCollector::getClassByAnnotation(Producer::class);
+        $producerMessages = AnnotationCollector::getClassesByAnnotation(Producer::class);
         if ($producerMessages) {
             $producer = $this->container->get(\Hyperf\Amqp\Producer::class);
             $instantiator = $this->container->get(Instantiator::class);
             /**
-             * @var string
+             * @var string $producerMessageClass
              * @var Producer $annotation
              */
             foreach ($producerMessages as $producerMessageClass => $annotation) {
@@ -74,7 +75,7 @@ class MainWorkerStartListener implements ListenerInterface
                 $annotation->exchange && $instance->setExchange($annotation->exchange);
                 $annotation->routingKey && $instance->setRoutingKey($annotation->routingKey);
                 try {
-                    $producer->declare($instance);
+                    $producer->declare($instance, null, true);
                     $routingKey = $instance->getRoutingKey();
                     if (is_array($routingKey)) {
                         $routingKey = implode(',', $routingKey);

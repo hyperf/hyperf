@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\DbConnection;
 
 use Hyperf\Contract\ConnectionInterface;
@@ -84,6 +83,8 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
     public function reconnect(): bool
     {
+        $this->close();
+
         $this->connection = $this->factory->make($this->config);
 
         if ($this->connection instanceof \Hyperf\Database\Connection) {
@@ -108,6 +109,10 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
     public function close(): bool
     {
+        if ($this->connection instanceof \Hyperf\Database\Connection) {
+            $this->connection->disconnect();
+        }
+
         unset($this->connection);
 
         return true;

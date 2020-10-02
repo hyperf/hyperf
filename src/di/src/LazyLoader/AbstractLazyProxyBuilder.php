@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Di\LazyLoader;
 
 use PhpParser\BuilderFactory;
@@ -90,5 +89,20 @@ abstract class AbstractLazyProxyBuilder
                 ->getNode();
         }
         return $this->builder->getNode();
+    }
+
+    public function getNamespace(): string
+    {
+        return $this->namespace;
+    }
+
+    public function getProxyClassName(): string
+    {
+        return $this->proxyClassName;
+    }
+
+    public function getOriginalClassName(): string
+    {
+        return $this->originalClassName;
     }
 }
