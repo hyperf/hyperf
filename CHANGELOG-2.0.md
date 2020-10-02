@@ -2,6 +2,7 @@
 
 ## Added
 
+- [#1172](https://github.com/hyperf/hyperf/pull/1172) Added `hyperf/scout`, a coroutine friendly version of `laravel/scout`.
 - [#1868](https://github.com/hyperf/hyperf/pull/1868) Added sentinel mode for redis.
 
 ## Fixed
