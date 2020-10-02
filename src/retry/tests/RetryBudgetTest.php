@@ -62,8 +62,8 @@ class RetryBudgetTest extends TestCase
             2,
             0.1
         );
-        System::sleep(1.2);
         $this->assertTrue($budget->consume());
+        System::sleep(1.2);
         $this->assertTrue($budget->consume());
         $this->assertTrue($budget->consume());
         $this->assertTrue($budget->consume());
