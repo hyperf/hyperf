@@ -16,7 +16,7 @@ use Elasticsearch\Client as Elastic;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Builder;
-use Hyperf\Scout\RuntimeException;
+use Hyperf\Scout\Exception\RuntimeException;
 use Hyperf\Scout\SearchableInterface;
 use Hyperf\Utils\Collection as BaseCollection;
 
