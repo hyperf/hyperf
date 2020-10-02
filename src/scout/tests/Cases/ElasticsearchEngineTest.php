@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Scout\Cases;
 
 use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Builder;
 use Hyperf\Scout\Engine\ElasticsearchEngine;
 use HyperfTest\Scout\Stub\ElasticsearchEngineTestModel;
@@ -123,7 +124,7 @@ class ElasticsearchEngineTest extends TestCase
         $client = Mockery::mock('Elasticsearch\Client');
         $engine = new ElasticsearchEngine($client, 'scout');
         $builder = Mockery::mock(Builder::class);
-        $model = Mockery::mock('Illuminate\Database\Eloquent\Model');
+        $model = Mockery::mock(Model::class);
         $model->shouldReceive('getScoutKey')->andReturn('1');
         $model->shouldReceive('getScoutModelsByIds')->once()->with($builder, ['1'])->andReturn($models = Collection::make([$model]));
         $model->shouldReceive('newCollection')->andReturn($models);

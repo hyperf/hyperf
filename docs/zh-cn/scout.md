@@ -48,7 +48,7 @@ class Post extends Model
     namespace App;
 
     use Hyperf\Scout\Searchable;
-    use Illuminate\Database\Eloquent\Model;
+    use Hyperf\Database\Model\Model;
 
     class Post extends Model
     {
@@ -75,7 +75,7 @@ class Post extends Model
     namespace App;
 
     use Hyperf\Scout\Searchable;
-    use Illuminate\Database\Eloquent\Model;
+    use Hyperf\Database\Model\Model;
 
     class Post extends Model
     {
@@ -109,7 +109,7 @@ class Post extends Model
 <a name="adding-records"></a>
 ### 添加记录
 
-当你将 `Hyperf\Scout\Searchable`  trait 添加到模型中，你需要做的是 `save` 一个模型实例，它就会自动添加到你的搜索索引。更新索引操作将会在协程结束时进行，不会堵塞请求。
+当你将 Trait `Hyperf\Scout\Searchable` 添加到模型中，你需要做的是 `save` 一个模型实例，它就会自动添加到你的搜索索引。更新索引操作将会在协程结束时进行，不会堵塞请求。
 
     $order = new App\Order;
 
@@ -191,10 +191,8 @@ class Post extends Model
     $orders = App\Order::search('Star Trek')->get();
 Scout 搜索返回 Eloquent 模型的集合，因此你可以直接从路由或控制器返回结果，它们会被自动转换成 JSON 格式：
 
-    use Illuminate\Http\Request;
-
-    Route::get('/search', function (Request $request) {
-        return App\Order::search($request->search)->get();
+    Route::get('/search', function () {
+        return App\Order::search([])->get();
     });
 
 如果你想在它们返回 Eloquent 模型前得到原结果，你应该使用`raw` 方法:
