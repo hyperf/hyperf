@@ -16,15 +16,9 @@
         "pull-request": "https://github.com/hyperf/hyperf/pulls",
         "source": "https://github.com/hyperf/hyperf"
     },
-    "authors": [
-        {
-            "name": "nfangxu",
-            "email": "nfangxu@gmail.com"
-        }
-    ],
     "require": {
-        "hyperf/resource": "~2.0.0",
-        "hyperf/grpc-server": "~2.0.0"
+        "hyperf/grpc-server": "~2.0.0",
+        "hyperf/resource": "~2.0.0"
     },
     "require-dev": {
         "hyperf/devtool": "~2.0.0"
