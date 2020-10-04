@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package HyperfTest.ResourceGrpc.Stubs.Grpc;
+
+service hi {
+    rpc sayHello (HiUser) returns (HiReply) {
+    }
+}
+
+message HiUser {
+    string name = 1;
+    int32 sex = 2;
+}
+
+message HiReply {
+    string message = 1;
+    HiUser user = 2;
+}
+
+message AllReply
+{
+    string message = 1;
+    repeated HiUser users = 2;
+}
