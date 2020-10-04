@@ -4,6 +4,7 @@
 
 - [#1172](https://github.com/hyperf/hyperf/pull/1172) Added `hyperf/scout`, a coroutine friendly version of `laravel/scout`.
 - [#1868](https://github.com/hyperf/hyperf/pull/1868) Added sentinel mode for redis.
+- [#1969](https://github.com/hyperf/hyperf/pull/1969) Added `hyperf/resource` and `hyperf/resource-grpc` which can format model to response easily.
 
 ## Fixed
 

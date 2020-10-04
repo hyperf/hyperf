@@ -24,7 +24,6 @@
         "psr/container": "^1.0"
     },
     "require-dev": {
-        "doctrine/common": "^2.9",
         "friendsofphp/php-cs-fixer": "^2.16",
         "hyperf/command": "~2.0.0",
         "hyperf/database": "~2.0.0",
