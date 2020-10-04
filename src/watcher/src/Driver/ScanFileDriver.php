@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Watcher\Driver;
 
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Di\Annotation\Inject;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use Hyperf\Watcher\Option;
@@ -33,15 +32,15 @@ class ScanFileDriver implements DriverInterface
     protected $filesystem;
 
     /**
-     * @Inject
      * @var StdoutLoggerInterface
      */
     private $logger;
 
-    public function __construct(Option $option)
+    public function __construct(Option $option, StdoutLoggerInterface $logger)
     {
         $this->option = $option;
         $this->filesystem = new Filesystem();
+        $this->logger = $logger;
     }
 
     public function watch(Channel $channel): void

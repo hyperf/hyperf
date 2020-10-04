@@ -104,10 +104,10 @@ class RoutesCommand extends HyperfCommand
             $data[$unique]['method'][] = $method;
         } else {
             // method,uri,name,action,middleware
-            $registedMiddlewares = MiddlewareManager::get($serverName, $uri, $method);
+            $registeredMiddlewares = MiddlewareManager::get($serverName, $uri, $method);
             $middlewares = $this->config->get('middlewares.' . $serverName, []);
 
-            $middlewares = array_merge($middlewares, $registedMiddlewares);
+            $middlewares = array_merge($middlewares, $registeredMiddlewares);
             $data[$unique] = [
                 'server' => $serverName,
                 'method' => [$method],

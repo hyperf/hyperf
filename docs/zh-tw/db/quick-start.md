@@ -25,15 +25,16 @@ composer require hyperf/database
 預設配置如下，資料庫支援多庫配置，預設為 `default`。
 
 |        配置項        |  型別  |     預設值      |        備註        |
-|:--------------------:|:------:|:---------------:|:------------------:|
+| :------------------: | :----: | :-------------: | :----------------: |
 |        driver        | string |       無        |     資料庫引擎     |
 |         host         | string |       無        |     資料庫地址     |
-|       database       | string |       無        |    資料庫預設 DB    |
+|       database       | string |       無        |   資料庫預設 DB    |
 |       username       | string |       無        |    資料庫使用者名稱    |
 |       password       | string |      null       |     資料庫密碼     |
 |       charset        | string |      utf8       |     資料庫編碼     |
 |      collation       | string | utf8_unicode_ci |     資料庫編碼     |
 |        prefix        | string |       ''        |   資料庫模型字首   |
+|       timezone       | string |      null       |     資料庫時區     |
 | pool.min_connections |  int   |        1        | 連線池內最少連線數 |
 | pool.max_connections |  int   |       10        | 連線池內最大連線數 |
 | pool.connect_timeout | float  |      10.0       |  連線等待超時時間  |
@@ -344,7 +345,7 @@ try{
 
 > 當前方法僅能用於開發環境，線上部署前一定要去掉，不然會引起嚴重的記憶體洩露和資料混淆。
 
-線上記錄 `SQL`，請使用 [事件監聽](/zh-cn/db/event?id=sql-執行監聽器)
+線上記錄 `SQL`，請使用 [事件監聽](/zh-cn/db/event)
 
 ```php
 <?php

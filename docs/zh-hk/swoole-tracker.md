@@ -32,18 +32,16 @@ Swoole Tracker 能夠幫助企業自動分析並彙總統計關鍵系統調用�
 
 ### 安裝擴展
 
-註冊完賬户後，進入[控制枱](https://www.swoole-cloud.com/dashboard/catdemo/)，並申請試用，下載對應客户端。
+註冊完賬户後，進入[控制枱](https://business.swoole.com/SwooleTracker/catdemo)，並申請試用，下載對應的安裝腳本。
 
 相關文檔，請移步 [試用文檔](https://www.kancloud.cn/swoole-inc/ee-base-wiki/1214079) 或 [詳細文檔](https://www.kancloud.cn/swoole-inc/ee-help-wiki/1213080) 
 
-> 具體文檔地址，以從控制枱下載的對應客户端中展示的為準。
-
-將客户端中的所有文件以及以下兩個文件複製到項目目錄 `.build` 中
+將腳本以及以下兩個文件複製到項目目錄 `.build` 中
 
 1. `entrypoint.sh`
 
 ```bash
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 /opt/swoole/script/php/swoole_php /opt/swoole/node-agent/src/node.php &
 
@@ -51,23 +49,33 @@ php /opt/www/bin/hyperf.php start
 
 ```
 
-2. `swoole-tracker.ini`
+2. `swoole_tracker.ini`
 
-```bash
+```ini
 [swoole_tracker]
-extension=/opt/swoole_tracker.so
-apm.enable=1           #打開總開關
-apm.sampling_rate=100  #採樣率 例如：100%
+extension=/opt/.build/swoole_tracker.so
 
-# 開啟內存泄漏檢測時需要添加
-apm.enable_memcheck=1  #開啟內存泄漏檢測 默認0 關閉狀態
+;打開總開關
+apm.enable=1
+;採樣率 例如：100%
+apm.sampling_rate=100
+
+;開啟內存泄漏檢測時添加 默認0 關閉狀態
+apm.enable_memcheck=1
 ```
 
 然後將下面的 `Dockerfile` 複製到項目根目錄中。
 
 ```dockerfile
-FROM hyperf/hyperf:7.2-alpine-cli
-LABEL maintainer="Hyperf Developers <group@hyperf.io>" version="1.0" license="MIT"
+# Default Dockerfile
+#
+# @link     https://www.hyperf.io
+# @document https://hyperf.wiki
+# @contact  group@hyperf.io
+# @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+
+FROM hyperf/hyperf:7.4-alpine-v3.11-cli
+LABEL maintainer="Hyperf Developers <group@hyperf.io>" version="1.0" license="MIT" app.name="Hyperf"
 
 ##
 # ---------- env settings ----------
@@ -76,28 +84,29 @@ LABEL maintainer="Hyperf Developers <group@hyperf.io>" version="1.0" license="MI
 ARG timezone
 
 ENV TIMEZONE=${timezone:-"Asia/Shanghai"} \
-    COMPOSER_VERSION=1.8.6 \
-    APP_ENV=prod
+    APP_ENV=prod \
+    SCAN_CACHEABLE=(true)
 
+# update
 RUN set -ex \
-    && apk update \
     # install composer
     && cd /tmp \
-    && wget https://github.com/composer/composer/releases/download/${COMPOSER_VERSION}/composer.phar \
+    && wget https://mirrors.aliyun.com/composer/composer.phar \
     && chmod u+x composer.phar \
     && mv composer.phar /usr/local/bin/composer \
     # show php version and extensions
     && php -v \
     && php -m \
+    && php --ri swoole \
     #  ---------- some config ----------
     && cd /etc/php7 \
     # - config PHP
     && { \
-        echo "upload_max_filesize=100M"; \
-        echo "post_max_size=108M"; \
-        echo "memory_limit=1024M"; \
+        echo "upload_max_filesize=128M"; \
+        echo "post_max_size=128M"; \
+        echo "memory_limit=1G"; \
         echo "date.timezone=${TIMEZONE}"; \
-    } | tee conf.d/99-overrides.ini \
+    } | tee conf.d/99_overrides.ini \
     # - config timezone
     && ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
     && echo "${TIMEZONE}" > /etc/timezone \
@@ -105,25 +114,29 @@ RUN set -ex \
     && rm -rf /var/cache/apk/* /tmp/* /usr/share/man \
     && echo -e "\033[42;37m Build Completed :).\033[0m\n"
 
-COPY . /opt/www
-WORKDIR /opt/www/.build
+COPY .build /opt/.build
+WORKDIR /opt/.build
 
-# 這裏的地址，以客户端中顯示的為準
-RUN ./deploy_env.sh www.swoole-cloud.com \
+RUN chmod +x swoole-tracker-install.sh \
+    && ./swoole-tracker-install.sh \
     && chmod 755 entrypoint.sh \
-    && cp swoole_tracker72.so /opt/swoole_tracker.so \
-    && cp swoole-tracker.ini /etc/php7/conf.d/swoole-tracker.ini \
+    && cp swoole-tracker/swoole_tracker74.so /opt/.build/swoole_tracker.so \
+    && cp swoole_tracker.ini /etc/php7/conf.d/98_swoole_tracker.ini \
     && php -m
 
 WORKDIR /opt/www
 
-RUN composer install --no-dev \
-    && composer dump-autoload -o \
-    && php /opt/www/bin/hyperf.php
+# Composer Cache
+# COPY ./composer.* /opt/www/
+# RUN composer install --no-dev --no-scripts
+
+COPY . /opt/www
+RUN composer install --no-dev -o && php bin/hyperf.php
 
 EXPOSE 9501
 
-ENTRYPOINT ["sh", ".build/entrypoint.sh"]
+ENTRYPOINT ["sh", "/opt/.build/entrypoint.sh"]
+
 ```
 
 ## 使用
@@ -155,5 +168,15 @@ return [
     'http' => [
         Hyperf\SwooleTracker\Middleware\HttpServerMiddleware::class
     ],
+];
+```
+
+若使用 `jsonrpc-http` 協議實現了 `RPC` 服務，則還需要在 `config/autoload/aspects.php` 配置以下 `Aspect`：
+
+```php
+<?php
+
+return [
+    Hyperf\SwooleTracker\Aspect\CoroutineHandlerAspect::class,
 ];
 ```

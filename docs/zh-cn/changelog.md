@@ -1,5 +1,87 @@
 # 版本更新记录
 
+# v2.0.13 - 2020-09-28
+
+## 新增
+
+- [#2445](https://github.com/hyperf/hyperf/pull/2445) 当使用异常捕获器 `WhoopsExceptionHandler` 返回 `JSON` 格式化的数据时，自动添加异常的 `Trace` 信息。
+- [#2580](https://github.com/hyperf/hyperf/pull/2580) 新增 `grpc-client` 组件的 `metadata` 支持。
+
+## 修复
+
+- [#2559](https://github.com/hyperf/hyperf/pull/2559) 修复使用 `socket-io` 连接 `socketio-server` 时，因为携带 `query` 信息，导致事件无法被触发的问题。
+- [#2565](https://github.com/hyperf/hyperf/pull/2565) 修复生成代理类时，因为存在匿名类，导致代理类在没有父类的情况下使用了 `parent::class` 而报错的问题。
+- [#2578](https://github.com/hyperf/hyperf/pull/2578) 修复当自定义进程抛错后，事件 `AfterProcessHandle` 无法被触发的问题。
+- [#2582](https://github.com/hyperf/hyperf/pull/2582) 修复使用 `Redis::multi` 且在 `defer` 中使用了其他 `Redis` 指令后，导致 `Redis` 同时被两个协程使用而报错的问题。
+- [#2589](https://github.com/hyperf/hyperf/pull/2589) 修复使用了协程风格服务时，`AMQP` 消费者无法正常启动的问题。
+- [#2590](https://github.com/hyperf/hyperf/pull/2590) 修复使用了协程风格服务时，`Crontab` 无法正常工作的问题。
+
+## 优化
+
+- [#2561](https://github.com/hyperf/hyperf/pull/2561) 优化关闭 `AMQP` 连接失败时的错误信息。
+- [#2584](https://github.com/hyperf/hyperf/pull/2584) 当服务关闭时，不再删除 `Nacos` 中对应的服务。
+
+# v2.0.12 - 2020-09-21
+
+## 新增
+
+- [#2512](https://github.com/hyperf/hyperf/pull/2512) 为 [hyperf/database](https://github.com/hyperf/database) 组件方法 `MySqlGrammar::compileColumnListing` 新增返回字段 `column_type`。 
+
+## 修复
+
+- [#2490](https://github.com/hyperf/hyperf/pull/2490) 修复 [hyperf/grpc-client](https://github.com/hyperf/grpc-client) 组件中，流式客户端无法正常工作的问题。
+- [#2509](https://github.com/hyperf/hyperf/pull/2509) 修复 [hyperf/database](https://github.com/hyperf/database) 组件中，使用小驼峰模式后，访问器无法正常工作的问题。
+- [#2535](https://github.com/hyperf/hyperf/pull/2535) 修复 [hyperf/database](https://github.com/hyperf/database) 组件中，使用 `gen:model` 后，通过访问器生成的注释 `@property` 会被 `morphTo` 覆盖的问题。
+- [#2546](https://github.com/hyperf/hyperf/pull/2546) 修复 [hyperf/db-connection](https://github.com/hyperf/db-connection) 组件中，使用 `left join` 等复杂查询后，`MySQL` 连接无法正常释放的问题。
+
+## 优化
+
+- [#2490](https://github.com/hyperf/hyperf/pull/2490) 优化 [hyperf/grpc-client](https://github.com/hyperf/grpc-client) 组件中的异常和单元测试。
+
+# v2.0.11 - 2020-09-14
+
+## 新增
+
+- [#2455](https://github.com/hyperf/hyperf/pull/2455) 为 [hyperf/socketio-server](https://github.com/hyperf/socketio-server) 组件新增方法 `Socket::getRequest` 用于获取 `Psr7` 规范的 `Request`。
+- [#2459](https://github.com/hyperf/hyperf/pull/2459) 为 [hyperf/async-queue](https://github.com/hyperf/async-queue) 组件新增监听器 `ReloadChannelListener` 用于自动将超时队列里的消息移动到等待执行队列中。
+- [#2463](https://github.com/hyperf/hyperf/pull/2463) 为 [hyperf/database](https://github.com/hyperf/database) 组件新增可选的 `ModelRewriteGetterSetterVisitor` 用于为模型生成对应的 `Getter` 和 `Setter`。
+- [#2475](https://github.com/hyperf/hyperf/pull/2475) 为 [hyperf/retry](https://github.com/hyperf/retry) 组件的 `Fallback` 回调，默认增加 `throwable` 参数。
+
+## 修复
+
+- [#2464](https://github.com/hyperf/hyperf/pull/2464) 修复 [hyperf/database](https://github.com/hyperf/database) 组件中，小驼峰模式模型的 `fill` 方法无法正常使用的问题。
+- [#2478](https://github.com/hyperf/hyperf/pull/2478) 修复 [hyperf/websocket-server](https://github.com/hyperf/websocket-server) 组件中，`Sender::check` 无法检测非 `WebSocket` 的 `fd` 值。
+- [#2488](https://github.com/hyperf/hyperf/pull/2488) 修复 [hyperf/database](https://github.com/hyperf/database) 组件中，当 `pdo` 实例化失败后 `beginTransaction` 调用失败的问题。
+
+## 优化
+
+- [#2461](https://github.com/hyperf/hyperf/pull/2461) 优化 [hyperf/reactive-x](https://github.com/hyperf/reactive-x) 组件 `HTTP` 路由监听器，可以监听任意端口路由。
+- [#2465](https://github.com/hyperf/hyperf/pull/2465) 优化 [hyperf/retry](https://github.com/hyperf/retry) 组件 `FallbackRetryPolicy` 中 `fallback` 除了可以填写被 `is_callable` 识别的代码外，还可以填写形如 `class@method` 的格式，框架会从 `Container` 中拿到对应的 `class`，然后执行其 `method` 方法。
+
+## 变更
+
+- [#2492](https://github.com/hyperf/hyperf/pull/2492) 调整 [hyperf/socketio-server](https://github.com/hyperf/socketio-server) 组件中的事件收集顺序，确保 `sid` 早于自定义 `onConnect` 被添加到房间中。
+
+# v2.0.10 - 2020-09-07
+
+## 新增
+
+- [#2411](https://github.com/hyperf/hyperf/pull/2411) 为 [hyperf/database](https://github.com/hyperf/database) 组件新增 `Hyperf\Database\Query\Builder::forPageBeforeId` 方法。
+- [#2420](https://github.com/hyperf/hyperf/pull/2420) [#2426](https://github.com/hyperf/hyperf/pull/2426) 为 [hyperf/command](https://github.com/hyperf/command) 组件新增默认选项 `enable-event-dispatcher` 用于初始化事件触发器。
+- [#2433](https://github.com/hyperf/hyperf/pull/2433) 为 [hyperf/grpc-server](https://github.com/hyperf/grpc-server) 组件路由新增匿名函数支持。
+- [#2441](https://github.com/hyperf/hyperf/pull/2441) 为 [hyperf/socketio-server](https://github.com/hyperf/socketio-server) 组件中 `SocketIO` 新增了一些 `setters`。
+
+## 修复
+
+- [#2427](https://github.com/hyperf/hyperf/pull/2427) 修复事件触发器在使用 `Pivot` 或 `MorphPivot` 不生效的问题。
+- [#2443](https://github.com/hyperf/hyperf/pull/2443) 修复使用 [hyperf/Guzzle](https://github.com/hyperf/guzzle) 组件的 `Coroutine Handler` 时，无法正确获取和传递 `traceid` 和 `spanid` 的问题。
+- [#2449](https://github.com/hyperf/hyperf/pull/2449) 修复发布 [hyperf/config-apollo](https://github.com/hyperf/config-apollo) 组件的配置文件时，配置文件名称错误的问题。
+
+## 优化
+
+- [#2429](https://github.com/hyperf/hyperf/pull/2429) 优化使用 `@Inject` 并且没有设置 `@var` 时的错误信息，方便定位问题，改善编程体验。
+- [#2438](https://github.com/hyperf/hyperf/pull/2438) 优化当使用 [hyperf/model-cache](https://github.com/hyperf/model-cache) 组件与数据库事务搭配使用时，在事务中删除或修改模型数据会在事务提交后即时再删除缓存，而不再是在删除或修改模型数据时删除缓存数据。
+
 # v2.0.9 - 2020-08-31
 
 ## 新增

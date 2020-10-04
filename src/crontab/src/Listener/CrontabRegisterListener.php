@@ -19,6 +19,7 @@ use Hyperf\Crontab\CrontabManager;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Process\Annotation\Process;
+use Hyperf\Process\Event\BeforeCoroutineHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
 
 class CrontabRegisterListener implements ListenerInterface
@@ -52,6 +53,7 @@ class CrontabRegisterListener implements ListenerInterface
     {
         return [
             BeforeProcessHandle::class,
+            BeforeCoroutineHandle::class,
         ];
     }
 

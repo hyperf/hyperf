@@ -338,6 +338,58 @@ docker run --rm -i -v $basepath/.env:/opt/www/.env \
 /opt/www/bin/hyperf.php your_command
 ```
 
+## 核心優化
+
+> 本小節內容，有待驗證，謹慎使用
+
+安裝 `KONG` 閘道器時，有介紹 `Ingress 網路` 存在設計的缺陷，這塊可以通過 `優化核心` 處理。
+
+- 指定 TLinux 源
+
+```
+tee /etc/yum.repos.d/CentOS-TLinux.repo <<-'EOF' 
+[Tlinux]
+name=Tlinux for redhat/centos $releasever - $basearch
+failovermethod=priority
+gpgcheck=0
+gpgkey=http://mirrors.tencentyun.com/epel/RPM-GPG-KEY-EPEL-7
+enabled=1
+baseurl=https://mirrors.tencent.com/tlinux/2.4/tlinux/x86_64/
+EOF
+```
+
+- 安裝指定核心
+
+```
+yum -y install kernel-devel-4.14.105-19.0012.tl2.x86_64 kernel-4.14.105-19.0013.tl2.x86_64 kernel-headers-4.14.105-19.0013.tl2.x86_64
+```
+
+- 使核心生效
+
+```
+sudo awk -F\' '$1=="menuentry " {print i++ " : " $2}' /etc/grub2.cfg
+grub2-set-default 0
+grub2-mkconfig -o /boot/grub2/grub.cfg
+```
+
+- 重啟機器
+
+```
+reboot
+```
+
+### 容器引數優化
+
+> 需要 Docker 19.09.0 以上支援，與 image 配置同級
+
+```yaml
+sysctls:
+  # 網路連線複用模式的選擇
+  - net.ipv4.vs.conn_reuse_mode=0
+  # 當LVS轉發資料包，發現目的RS無效（刪除）時，會丟棄該資料包，但不刪除相應連線。值為1時，則馬上釋放相應連線
+  - net.ipv4.vs.expire_nodest_conn=1
+```
+
 ## 常見問題
 
 ### fatal: git fetch-pack: expected shallow list

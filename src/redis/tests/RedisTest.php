@@ -22,6 +22,7 @@ use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Coroutine;
 use HyperfTest\Redis\Stub\RedisPoolFailedStub;
 use HyperfTest\Redis\Stub\RedisPoolStub;
 use Mockery;
@@ -73,6 +74,52 @@ class RedisTest extends TestCase
         $this->assertSame('db:0 name:get argument:xxxx', $res[0]);
     }
 
+    public function testHasAlreadyBeenBoundToAnotherCoroutine()
+    {
+        $chan = new \Swoole\Coroutine\Channel(1);
+        $redis = $this->getRedis();
+        $ref = new \ReflectionClass($redis);
+        $method = $ref->getMethod('getConnection');
+        $method->setAccessible(true);
+
+        go(function () use ($chan, $redis, $method) {
+            $id = null;
+            defer(function () use ($redis, $chan, &$id, $method) {
+                $chan->push(true);
+                Coroutine::sleep(0.01);
+                $hasContextConnection = Context::has('redis.connection.default');
+                $this->assertFalse($hasContextConnection);
+                $connection = $method->invoke($redis, [$hasContextConnection]);
+                $this->assertNotEquals($connection->id, $id);
+                $redis->getConnection();
+                $chan->push(true);
+            });
+
+            $redis->keys('*');
+
+            $hasContextConnection = Context::has('redis.connection.default');
+            $this->assertFalse($hasContextConnection);
+
+            $redis->multi();
+            $redis->set('id', uniqid());
+            $redis->exec();
+
+            $hasContextConnection = Context::has('redis.connection.default');
+            $this->assertTrue($hasContextConnection);
+
+            $connection = $method->invoke($redis, [$hasContextConnection]);
+            $id = $connection->id;
+        });
+
+        $chan->pop();
+        $factory = $ref->getProperty('factory');
+        $factory->setAccessible(true);
+        $factory = $factory->getValue($redis);
+        $pool = $factory->getPool('default');
+        $pool->flushAll();
+        $chan->pop();
+    }
+
     public function testRedisReuseAfterThrowable()
     {
         $container = $this->getContainer();
@@ -108,7 +155,7 @@ class RedisTest extends TestCase
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
             'redis' => [
                 'default' => [
-                    'host' => 'localhost',
+                    'host' => '127.0.0.1',
                     'auth' => null,
                     'port' => 6379,
                     'db' => 0,

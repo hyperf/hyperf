@@ -14,7 +14,7 @@ namespace Hyperf\Utils\Coordinator;
 class CoordinatorManager
 {
     /**
-     * A container that use to store coordinator.
+     * A container that is used for storing coordinator.
      *
      * @var array
      */

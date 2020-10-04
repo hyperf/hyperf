@@ -113,7 +113,7 @@ class RedisProxyTest extends TestCase
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
             'redis' => [
                 'default' => [
-                    'host' => 'localhost',
+                    'host' => '127.0.0.1',
                     'auth' => null,
                     'port' => 6379,
                     'db' => 0,

@@ -42,7 +42,7 @@ class ConfigProvider
                     'id' => 'config',
                     'description' => 'The config for apollo.',
                     'source' => __DIR__ . '/../publish/apollo.php',
-                    'destination' => BASE_PATH . '/config/autoload/aliyun_acm.php',
+                    'destination' => BASE_PATH . '/config/autoload/apollo.php',
                 ],
             ],
         ];

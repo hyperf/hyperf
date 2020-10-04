@@ -212,6 +212,7 @@
             "Hyperf\\RpcClient\\": "src/rpc-client/src/",
             "Hyperf\\RpcServer\\": "src/rpc-server/src/",
             "Hyperf\\Rpc\\": "src/rpc/src/",
+            "Hyperf\\Scout\\": "src/scout/src/",
             "Hyperf\\Server\\": "src/server/src/",
             "Hyperf\\ServiceGovernance\\": "src/service-governance/src/",
             "Hyperf\\Session\\": "src/session/src/",
@@ -286,6 +287,7 @@
             "HyperfTest\\Resource\\": "src/resource/tests/",
             "HyperfTest\\Retry\\": "src/retry/tests/",
             "HyperfTest\\Rpc\\": "src/rpc/tests/",
+            "HyperfTest\\Scout\\": "src/scout/tests/",
             "HyperfTest\\Server\\": "src/server/tests/",
             "HyperfTest\\ServiceGovernance\\": "src/service-governance/tests/",
             "HyperfTest\\Session\\": "src/session/tests/",
@@ -301,7 +303,9 @@
             "HyperfTest\\Validation\\": "src/validation/tests/",
             "HyperfTest\\View\\": "src/view/tests/",
             "HyperfTest\\Watcher\\": "src/watcher/tests/",
-            "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/"
+            "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/",
+            "HyperfTest\\WebSocketServer\\": "src/websocket-server/tests/",
+            "Routeguide\\": "src/grpc-client/tests/Routeguide/"
         }
     },
     "config": {
@@ -361,6 +365,7 @@
                 "Hyperf\\Retry\\ConfigProvider",
                 "Hyperf\\RpcClient\\ConfigProvider",
                 "Hyperf\\RpcServer\\ConfigProvider",
+                "Hyperf\\Scout\\ConfigProvider",
                 "Hyperf\\Server\\ConfigProvider",
                 "Hyperf\\ServiceGovernance\\ConfigProvider",
                 "Hyperf\\Session\\ConfigProvider",
