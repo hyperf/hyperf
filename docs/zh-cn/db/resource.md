@@ -1,4 +1,6 @@
-# API 资源 - 支持返回 Grpc 响应的资源扩展
+# API 资源构造器
+ 
+> 支持返回 Grpc 响应的资源扩展
 
 ## 简介
 
@@ -30,9 +32,7 @@ php bin/hyperf.php gen:resource Users --collection
 php bin/hyperf.php gen:resource UserCollection
 ```
 
-### Grpc 资源
-
-支持转化 Grpc 资源. 
+## Grpc 资源
 
 > 需要额外安装 `hyperf/resource-grpc`
 
@@ -129,7 +129,7 @@ class IndexController extends AbstractController
 
 ### 资源集合
 
-你可以在者控制器中使用 `collection` 方法来创建资源实例，以返回多个资源的集合或分页响应：
+你可以在控制器中使用 `collection` 方法来创建资源实例，以返回多个资源的集合或分页响应：
 
 ```php
 
@@ -202,7 +202,7 @@ class IndexController extends AbstractController
 
 ```
 
-#### 保护集合的键
+### 保护集合的键
 
 当从路由返回资源集合时，将重置集合的键，使它们以简单的数字顺序。但是，可以将 `preserveKeys` 属性添加到资源类中，指示是否应保留集合键：
 
@@ -259,7 +259,7 @@ class IndexController extends AbstractController
 
 ```
 
-#### 自定义基础资源类
+### 自定义基础资源类
 
 通常，资源集合的 `$this->collection` 属性会自动填充，结果是将集合的每个项映射到其单个资源类。假定单一资源类是集合的类名，但结尾没有 `Collection` 字符串。
 
@@ -331,7 +331,7 @@ class User extends JsonResource
 
 ```
 
-你可以在者控制器中返回已经定义的资源：
+你可以在控制器中返回已经定义的资源：
 
 ```php
 <?php
@@ -351,7 +351,7 @@ class IndexController extends AbstractController
 
 ```
 
-#### 关联
+### 关联
 
 如果你希望在响应中包含关联资源，你只需要将它们添加到 `toArray` 方法返回的数组中。在下面这个例子里，我们将使用 `Post` 资源的 `collection` 方法将用户的文章添加到资源响应中：
 ```php
@@ -383,7 +383,7 @@ class User extends JsonResource
 
 > 如果你只想在关联已经加载时才添加关联资源，请查看相关文档。
 
-#### 资源集合
+### 资源集合
 
 资源是将单个模型转换成数组，而资源集合是将多个模型的集合转换成数组。所有的资源都提供了一个 `collection` 方法来生成一个 「临时」 资源集合，所以你没有必要为每一个模型类型都编写一个资源集合类：
 
@@ -933,6 +933,11 @@ class IndexController extends AbstractController
     public function index()
     {
         return (new UserResource(User::find(1)))->toResponse();
+    }
+
+    public function info()
+    {
+        return new UserResource(User::find(1));
     }
 }
 
