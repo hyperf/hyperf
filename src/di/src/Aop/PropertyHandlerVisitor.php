@@ -41,8 +41,12 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
     public function enterNode(Node $node)
     {
         if ($node instanceof Node\Stmt\Class_) {
-            if ($node->extends) {
-                $this->visitorMetadata->hasExtends = true;
+            if ($this->visitorMetadata->hasExtends === null) {
+                if ($node->extends) {
+                    $this->visitorMetadata->hasExtends = true;
+                } else {
+                    $this->visitorMetadata->hasExtends = false;
+                }
             }
         }
         if ($node instanceof Node\Stmt\ClassMethod) {

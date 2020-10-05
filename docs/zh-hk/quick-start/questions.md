@@ -107,7 +107,7 @@ php -d swoole.use_shortname=Off bin/hyperf.php start
 
 ## 使用 AMQP 組件報 `Swoole\Error: API must be called in the coroutine` 錯誤
 
-可以在 `config/autoload/amqp.php` 配置文件中將 `close_on_destruct` 改為 `false` 即可。
+可以在 `config/autoload/amqp.php` 配置文件中將 `params.close_on_destruct` 改為 `false` 即可。
 
 ## 使用 Swoole 4.5 版本和 view 組件時訪問接口出現 404
 
@@ -138,3 +138,6 @@ Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line
 ```
 
 可以執行腳本 `composer analyse`，對項目進行靜態檢測，便可以找到出現問題的代碼段。
+
+此問題通常是由於 [zircote/swagger](https://github.com/zircote/swagger-php) 的 3.0.5 版本更新導致, 詳情請見 [#834](https://github.com/zircote/swagger-php/issues/834) 。 
+如果安裝了 [hyperf/swagger](https://github.com/hyperf/swagger) 建議將 [zircote/swagger](https://github.com/zircote/swagger-php) 的版本鎖定在 3.0.4

@@ -73,7 +73,7 @@ php bin/hyperf.php migrate --force
 
 ## 回滚迁移
 
-若您希望回滚最后一次的迁移，可以通过 `migrate:rollback` 命令回滚最后一侧的迁移，注意一次迁移可能会包含多个迁移文件：
+若您希望回滚最后一次的迁移，可以通过 `migrate:rollback` 命令回滚最后一次的迁移，注意一次迁移可能会包含多个迁移文件：
 
 ```bash
 php bin/hyperf.php migrate:rollback

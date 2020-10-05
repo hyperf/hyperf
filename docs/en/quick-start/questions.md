@@ -128,3 +128,16 @@ During the development stage, please DO NOT set `scan_cacheable` configuration v
 > When the environment variable exists SCAN_CACHEABLE, this configuration cannot be modified in .env file.
 
 `2.0.0` and `2.0.1`, these two versions, when judging whether the file is modified, there is no judgment that the modification time is equal, so after the file is modified, the cache will be generated immediately (for example, when the `watcher` component is used), as a result, the code cannot take effect in time.
+
+## Syntax error 
+
+Exception will be thrown when hyperf server is started
+
+```
+Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line 27 in vendor/nikic/php-parser/lib/PhpParser/ParserAbstract.php:315
+```
+
+Please run `composer analyse` to initialize a static scan of the source code in order to locate the issue
+
+Normally this issue is caused by  [zircote/swagger](https://github.com/zircote/swagger-php) version 3.0.5, Please see [#834](https://github.com/zircote/swagger-php/issues/834) for further information.
+If you have installed [hyperf/swagger](https://github.com/hyperf/swagger), please lock the version of [zircote/swagger](https://github.com/zircote/swagger-php) at 3.0.4.

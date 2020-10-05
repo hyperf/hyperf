@@ -17,6 +17,7 @@ use HyperfTest\Di\Stub\AspectCollector;
 use HyperfTest\Di\Stub\Ast\Bar2;
 use HyperfTest\Di\Stub\Ast\Bar3;
 use HyperfTest\Di\Stub\Ast\Bar4;
+use HyperfTest\Di\Stub\Ast\Bar5;
 use HyperfTest\Di\Stub\Ast\BarAspect;
 use HyperfTest\Di\Stub\Ast\BarInterface;
 use HyperfTest\Di\Stub\Ast\Foo;
@@ -88,6 +89,33 @@ class Bar2 extends Bar
     public static function build()
     {
         return parent::$items;
+    }
+}', $code);
+    }
+
+    public function testParentConstructor()
+    {
+        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
+
+        $ast = new Ast();
+        $code = $ast->proxy(Bar5::class);
+        $this->assertEquals($this->license . '
+namespace HyperfTest\Di\Stub\Ast;
+
+class Bar5
+{
+    use \Hyperf\Di\Aop\ProxyTrait;
+    use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    public function getBar() : Bar
+    {
+        return new class extends Bar
+        {
+            public function __construct()
+            {
+                self::__handlePropertyHandler(__CLASS__);
+                $this->id = 9501;
+            }
+        };
     }
 }', $code);
     }

@@ -312,7 +312,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 
         foreach ($instance->getEventHandlers() as $key => $callbacks) {
             if ($key === $event) {
-                $output = array_merge($output, $callbacks);
+                $output = array_merge($callbacks, $output);
             }
         }
 

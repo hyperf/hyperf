@@ -256,6 +256,8 @@ public $fallback = '';
 | ---------- | --- | --- |
 | fallback |  callable | fallback 方法 |
 
+`fallback` 除了可以填寫被 `is_callable` 識別的代碼外，還可以填寫形如 `class@method` 的格式，框架會從 `Container` 中拿到對應的 `class`，然後執行其 `method` 方法。
+
 ### 睡眠策略 `SleepRetryPolicy`
 
 提供兩種重試間歇策略。等長重試間歇（FlatStrategy）和變長重試間歇（BackoffStrategy）。

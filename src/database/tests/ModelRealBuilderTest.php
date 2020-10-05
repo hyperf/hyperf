@@ -16,7 +16,9 @@ use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\Events\Saved;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\Model\User;
+use HyperfTest\Database\Stubs\Model\UserExtCamel;
 use HyperfTest\Database\Stubs\Model\UserRole;
+use HyperfTest\Database\Stubs\Model\UserRoleMorphPivot;
 use HyperfTest\Database\Stubs\Model\UserRolePivot;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -106,6 +108,61 @@ class ModelRealBuilderTest extends TestCase
             ['select * from `user` order by `id` asc limit 2', []],
             ['select * from `user` where `id` > ? order by `id` asc limit 2', [1]],
         ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
+            }
+        }
+    }
+
+    public function testCamelCaseGetModel()
+    {
+        $this->getContainer();
+
+        /** @var UserExtCamel $ext */
+        $ext = UserExtCamel::query()->find(1);
+        $this->assertArrayHasKey('floatNum', $ext->toArray());
+        $this->assertArrayHasKey('createdAt', $ext->toArray());
+        $this->assertIsString($ext->updatedAt);
+        $this->assertIsString($ext->toArray()['updatedAt']);
+
+        $this->assertIsString($number = $ext->floatNum);
+
+        $ext->increment('float_num', 1);
+
+        $model = UserExtCamel::query()->find(1);
+        $this->assertSame($ext->floatNum, $model->floatNum);
+
+        $model->fill([
+            'floatNum' => '1.20',
+        ]);
+        $model->save();
+
+        $sqls = [
+            'select * from `user_ext` where `user_ext`.`id` = ? limit 1',
+            'update `user_ext` set `float_num` = `float_num` + 1, `user_ext`.`updated_at` = ? where `id` = ?',
+            'select * from `user_ext` where `user_ext`.`id` = ? limit 1',
+            'update `user_ext` set `float_num` = ?, `user_ext`.`updated_at` = ? where `id` = ?',
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame($event->sql, array_shift($sqls));
+            }
+        }
+    }
+
+    public function testSaveMorphPivot()
+    {
+        $this->getContainer();
+        $pivot = UserRoleMorphPivot::query()->find(1);
+        $pivot->created_at = $now = Carbon::now();
+        $pivot->save();
+
+        $sqls = [
+            ['select * from `user_role` where `user_role`.`id` = ? limit 1', [1]],
+            ['update `user_role` set `created_at` = ?, `user_role`.`updated_at` = ? where `id` = ?', [$now->toDateTimeString(), $now->toDateTimeString(), 1]],
+        ];
+
         while ($event = $this->channel->pop(0.001)) {
             if ($event instanceof QueryExecuted) {
                 $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));

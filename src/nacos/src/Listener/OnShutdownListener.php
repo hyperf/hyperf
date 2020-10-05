@@ -15,10 +15,8 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnShutdown;
 use Hyperf\Nacos\Api\NacosInstance;
-use Hyperf\Nacos\Api\NacosService;
 use Hyperf\Nacos\Contract\LoggerInterface;
 use Hyperf\Nacos\Instance;
-use Hyperf\Nacos\Service;
 use Psr\Container\ContainerInterface;
 
 class OnShutdownListener implements ListenerInterface
@@ -51,16 +49,6 @@ class OnShutdownListener implements ListenerInterface
         }
 
         $logger = $this->container->get(LoggerInterface::class);
-        /** @var NacosService $nacosService */
-        $nacosService = $this->container->get(NacosService::class);
-        $service = $this->container->get(Service::class);
-        $deleted = $nacosService->delete($service);
-
-        if ($deleted) {
-            $logger && $logger->info('nacos service delete success.');
-        } else {
-            $logger && $logger->erro('nacos service delete fail when shutdown.');
-        }
 
         $instance = $this->container->get(Instance::class);
         /** @var NacosInstance $nacosInstance */

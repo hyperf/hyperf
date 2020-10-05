@@ -17,20 +17,9 @@ use Hyperf\Database\Model\Model;
 use Hyperf\Utils\Collection;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
-use PhpParser\NodeVisitorAbstract;
 
-class ModelRewriteTimestampsVisitor extends NodeVisitorAbstract
+class ModelRewriteTimestampsVisitor extends AbstractVisitor
 {
-    /**
-     * @var ModelOption
-     */
-    protected $option;
-
-    /**
-     * @var ModelData
-     */
-    protected $data;
-
     /**
      * @var Model
      */
@@ -43,8 +32,7 @@ class ModelRewriteTimestampsVisitor extends NodeVisitorAbstract
 
     public function __construct(ModelOption $option, ModelData $data)
     {
-        $this->option = $option;
-        $this->data = $data;
+        parent::__construct($option, $data);
 
         $class = $data->getClass();
         $this->class = new $class();
