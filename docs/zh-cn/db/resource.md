@@ -1,4 +1,6 @@
-# API 资源 - 支持返回 Grpc 响应的资源扩展
+# API 资源构造器
+ 
+> 支持返回 Grpc 响应的资源扩展
 
 ## 简介
 
@@ -30,9 +32,7 @@ php bin/hyperf.php gen:resource Users --collection
 php bin/hyperf.php gen:resource UserCollection
 ```
 
-### Grpc 资源
-
-支持转化 Grpc 资源. 
+## Grpc 资源
 
 > 需要额外安装 `hyperf/resource-grpc`
 
@@ -129,7 +129,7 @@ class IndexController extends AbstractController
 
 ### 资源集合
 
-你可以在者控制器中使用 `collection` 方法来创建资源实例，以返回多个资源的集合或分页响应：
+你可以在控制器中使用 `collection` 方法来创建资源实例，以返回多个资源的集合或分页响应：
 
 ```php
 
@@ -202,7 +202,7 @@ class IndexController extends AbstractController
 
 ```
 
-#### 保护集合的键
+### 保护集合的键
 
 当从路由返回资源集合时，将重置集合的键，使它们以简单的数字顺序。但是，可以将 `preserveKeys` 属性添加到资源类中，指示是否应保留集合键：
 
@@ -259,7 +259,7 @@ class IndexController extends AbstractController
 
 ```
 
-#### 自定义基础资源类
+### 自定义基础资源类
 
 通常，资源集合的 `$this->collection` 属性会自动填充，结果是将集合的每个项映射到其单个资源类。假定单一资源类是集合的类名，但结尾没有 `Collection` 字符串。
 
@@ -331,7 +331,7 @@ class User extends JsonResource
 
 ```
 
-你可以在者控制器中返回已经定义的资源：
+你可以在控制器中返回已经定义的资源：
 
 ```php
 <?php
@@ -351,7 +351,7 @@ class IndexController extends AbstractController
 
 ```
 
-#### 关联
+### 关联
 
 如果你希望在响应中包含关联资源，你只需要将它们添加到 `toArray` 方法返回的数组中。在下面这个例子里，我们将使用 `Post` 资源的 `collection` 方法将用户的文章添加到资源响应中：
 ```php
@@ -383,7 +383,7 @@ class User extends JsonResource
 
 > 如果你只想在关联已经加载时才添加关联资源，请查看相关文档。
 
-#### 资源集合
+### 资源集合
 
 资源是将单个模型转换成数组，而资源集合是将多个模型的集合转换成数组。所有的资源都提供了一个 `collection` 方法来生成一个 「临时」 资源集合，所以你没有必要为每一个模型类型都编写一个资源集合类：
 
@@ -496,7 +496,7 @@ class IndexController extends AbstractController
 
 > withoutWrapping 方法只会禁用顶层资源的包裹，不会删除你手动添加到资源集合中的 data 键。而且只会在当前的资源或资源集合中生效，不影响全局。
 
-### 包裹嵌套资源
+#### 包裹嵌套资源
 
 你可以完全自由地决定资源关联如何被包裹。如果你希望无论怎样嵌套，都将所有资源集合包裹在 `data` 键中，那么你需要为每个资源都定义一个资源集合类，并将返回的集合包裹在 `data` 键中。
 
@@ -526,7 +526,7 @@ class UserCollection extends ResourceCollection
 
 ```
 
-### 数据包裹和分页
+#### 分页
 
 当在资源响应中返回分页集合时，即使你调用了 `withoutWrapping` 方法， 组件也会将你的资源数据包裹在 `data` 键中。这是因为分页响应中总会有 `meta` 和 `links` 键包含着分页状态信息：
 
@@ -562,8 +562,6 @@ class UserCollection extends ResourceCollection
         }
     }
 ```
-
-### 分页
 
 你可以将分页实例传递给资源的 `collection` 方法或者自定义的资源集合：
 
@@ -933,6 +931,11 @@ class IndexController extends AbstractController
     public function index()
     {
         return (new UserResource(User::find(1)))->toResponse();
+    }
+
+    public function info()
+    {
+        return new UserResource(User::find(1));
     }
 }
 

@@ -30,7 +30,7 @@ class ResourceCommand extends GeneratorCommand
         parent::configure();
         $this->setDescription('create a new resource');
         $this->addOption('collection', 'c', InputOption::VALUE_NONE, 'Create a resource collection');
-        $this->addOption('grpc', null, InputOption::VALUE_NONE, 'Create a resource collection');
+        $this->addOption('grpc', null, InputOption::VALUE_NONE, 'Create a grpc resource');
     }
 
     protected function getStub(): string
@@ -47,13 +47,13 @@ class ResourceCommand extends GeneratorCommand
         return $this->getConfig()['namespace'] ?? 'App\\Resource';
     }
 
-    protected function isCollection()
+    protected function isCollection(): bool
     {
         return $this->input->getOption('collection') ||
             Str::endsWith($this->input->getArgument('name'), 'Collection');
     }
 
-    protected function isGrpc()
+    protected function isGrpc(): bool
     {
         return $this->input->getOption('grpc');
     }

@@ -61,6 +61,7 @@
   * [数据库迁移](zh-cn/db/migration.md)
   * [修改器](zh-cn/db/mutators.md)
   * [极简 DB 组件](zh-cn/db/db.md)
+  * [API 资源构造器](zh-cn/db/resource.md)
   
 * 微服务
 
