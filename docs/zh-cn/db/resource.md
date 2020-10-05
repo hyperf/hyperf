@@ -496,7 +496,7 @@ class IndexController extends AbstractController
 
 > withoutWrapping 方法只会禁用顶层资源的包裹，不会删除你手动添加到资源集合中的 data 键。而且只会在当前的资源或资源集合中生效，不影响全局。
 
-### 包裹嵌套资源
+#### 包裹嵌套资源
 
 你可以完全自由地决定资源关联如何被包裹。如果你希望无论怎样嵌套，都将所有资源集合包裹在 `data` 键中，那么你需要为每个资源都定义一个资源集合类，并将返回的集合包裹在 `data` 键中。
 
@@ -526,7 +526,7 @@ class UserCollection extends ResourceCollection
 
 ```
 
-### 数据包裹和分页
+#### 分页
 
 当在资源响应中返回分页集合时，即使你调用了 `withoutWrapping` 方法， 组件也会将你的资源数据包裹在 `data` 键中。这是因为分页响应中总会有 `meta` 和 `links` 键包含着分页状态信息：
 
@@ -562,8 +562,6 @@ class UserCollection extends ResourceCollection
         }
     }
 ```
-
-### 分页
 
 你可以将分页实例传递给资源的 `collection` 方法或者自定义的资源集合：
 
