@@ -7,23 +7,17 @@
         "hyperf"
     ],
     "description": "",
-    "authors": [
-        {
-            "name": "nfangxu",
-            "email": "nfangxu@gmail.com"
-        }
-    ],
     "require": {
-        "php": "^7.2.0",
+        "php": ">=7.2",
         "ext-json": "*",
-        "hyperf/config": "^2.0",
-        "hyperf/di": "^2.0",
-        "hyperf/event": "^2.0",
-        "hyperf/session": "^2.0",
-        "hyperf/validation": "^2.0",
-        "hyperf/translation": "^2.0",
-        "hyperf/utils": "^2.0",
-        "hyperf/view": "^2.0"
+        "hyperf/config": "~2.0.0",
+        "hyperf/di": "~2.0.0",
+        "hyperf/event": "~2.0.0",
+        "hyperf/session": "~2.0.0",
+        "hyperf/validation": "~2.0.0",
+        "hyperf/translation": "~2.0.0",
+        "hyperf/utils": "~2.0.0",
+        "hyperf/view": "~2.0.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.16",
@@ -36,7 +30,7 @@
             "Hyperf\\ViewEngine\\": "src/"
         },
         "files": [
-            "./src/Functions.php"
+            "src/Functions.php"
         ]
     },
     "autoload-dev": {
@@ -55,6 +49,9 @@
         "test-coverage": "php -d zend_extension=xdebug ./vendor/bin/phpunit -c phpunit.xml --color=always --coverage-html .codeCoverage"
     },
     "extra": {
+        "branch-alias": {
+            "dev-master": "2.0-dev"
+        },
         "hyperf": {
             "config": "Hyperf\\ViewEngine\\ConfigProvider"
         }
