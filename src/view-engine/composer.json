@@ -4,7 +4,9 @@
     "license": "MIT",
     "keywords": [
         "php",
-        "hyperf"
+        "hyperf",
+        "view",
+        "engine"
     ],
     "description": "",
     "require": {
