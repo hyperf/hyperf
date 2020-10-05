@@ -47,13 +47,13 @@ class ResourceCommand extends GeneratorCommand
         return $this->getConfig()['namespace'] ?? 'App\\Resource';
     }
 
-    protected function isCollection()
+    protected function isCollection(): bool
     {
         return $this->input->getOption('collection') ||
             Str::endsWith($this->input->getArgument('name'), 'Collection');
     }
 
-    protected function isGrpc()
+    protected function isGrpc(): bool
     {
         return $this->input->getOption('grpc');
     }
