@@ -30,7 +30,7 @@ class FindDriver implements DriverInterface
     protected $isDarwin;
 
     /**
-     * @var string
+     * @var int
      */
     protected $startTime;
 
