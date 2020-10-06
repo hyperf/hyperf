@@ -19,7 +19,7 @@ use Swoole\Timer;
 
 class FindDriver implements DriverInterface
 {
-   /**
+    /**
      * @var Option
      */
     protected $option;
@@ -62,7 +62,7 @@ class FindDriver implements DriverInterface
             }
 
             $seconds = ceil(($ms + 1000) / 1000);
-            $minutes = '-'.max(1,$seconds / 60);
+            $minutes = '-' . max(1, $seconds / 60);
 
             [$fileModifyTimes, $changedFiles] = $this->scan($fileModifyTimes, $minutes);
 
@@ -85,7 +85,7 @@ class FindDriver implements DriverInterface
                 $pathName = $line;
                 $modifyTime = fileatime($pathName);
                 //小于启动时间的不执行
-                if ($modifyTime<=$this->startTime) {
+                if ($modifyTime <= $this->startTime) {
                     continue;
                 }
                 if (! empty($ext) && ! Str::endsWith($pathName, $ext)) {
