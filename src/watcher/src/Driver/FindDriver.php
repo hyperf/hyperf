@@ -27,12 +27,12 @@ class FindDriver implements DriverInterface
     /**
      * @var bool
      */
-    protected $isDarwin;
+    protected $isDarwin = false;
 
     /**
      * @var bool
      */
-    protected $isFloat = true;
+    protected $isSupportFloatMinutes = true;
 
     /**
      * @var int
@@ -45,9 +45,8 @@ class FindDriver implements DriverInterface
         if (PHP_OS === 'Darwin') {
             $this->isDarwin = true;
         } else {
-            $this->isDarwin = false;
             $ret = System::exec('cat /proc/version');
-            $this->isFloat = empty(strpos($ret['output']??"", 'Alpine'));
+            $this->isSupportFloatMinutes = empty(strpos($ret['output'] ?? '', 'Alpine'));
         }
         if ($this->isDarwin) {
             $ret = System::exec('which gfind');
@@ -67,7 +66,7 @@ class FindDriver implements DriverInterface
         $this->startTime = time();
         $ms = $this->option->getScanInterval();
         $seconds = ceil(($ms + 1000) / 1000);
-        if ($this->isFloat) {
+        if ($this->isSupportFloatMinutes) {
             $minutes = sprintf('-%.2f', $seconds / 60);
         } else {
             $minutes = sprintf('-%d', ceil($seconds / 60));
