@@ -36,7 +36,7 @@ class ModelRealBuilderTest extends TestCase
      */
     protected $channel;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->channel = new Channel(999);
     }
