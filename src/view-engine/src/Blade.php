@@ -14,6 +14,7 @@ namespace Hyperf\ViewEngine;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\ViewEngine\Compiler\CompilerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class Blade.
@@ -44,7 +45,7 @@ use Hyperf\ViewEngine\Compiler\CompilerInterface;
 class Blade
 {
     /**
-     * @var null|\Psr\Container\ContainerInterface
+     * @var null|ContainerInterface
      */
     protected static $container;
 

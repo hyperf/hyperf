@@ -357,6 +357,157 @@ Hello, @{{ name }}.
 
 #### Switch 语句
 
+您可使用 `@switch`，`@case`，`@break`，`@default` 和 `@endswitch` 语句来构造 `Switch` 语句：
+
+```blade
+@switch($i)
+    @case(1)
+        First case...
+        @break
+
+    @case(2)
+        Second case...
+        @break
+
+    @default
+        Default case...
+@endswitch
+```
+
+#### 循环
+
+除了条件语句，`Blade` 还提供了与 `PHP` 循环结构功能相同的指令。同样，这些语句的功能和它们所对应的 `PHP` 语法一致：
+
+```blade
+@for ($i = 0; $i < 10; $i++)
+    The current value is {{ $i }}
+@endfor
+
+@foreach ($users as $user)
+    <p>This is user {{ $user->id }}</p>
+@endforeach
+
+@forelse ($users as $user)
+    <li>{{ $user->name }}</li>
+@empty
+    <p>No users</p>
+@endforelse
+
+@while (true)
+    <p>I'm looping forever.</p>
+@endwhile
+```
+
+> 循环时，您可以使用 循环变量 去获取有关循环的有价值的信息，例如，您处于循环的第一个迭代亦或是处于最后一个迭代。
+
+在使用循环的时候，您可以终止循环或跳过当前迭代：
+
+```blade
+@foreach ($users as $user)
+    @if ($user->type == 1)
+        @continue
+    @endif
+
+    <li>{{ $user->name }}</li>
+
+    @if ($user->number == 5)
+        @break
+    @endif
+@endforeach
+```
+
+您可以在指令的单独一行中声明一个条件语句：
+
+```blade
+@foreach ($users as $user)
+    @continue($user->type == 1)
+
+    <li>{{ $user->name }}</li>
+
+    @break($user->number == 5)
+@endforeach
+```
+
+#### Loop 变量
+
+循环时，循环内部可以使用 `$loop` 变量。该变量提供了访问一些诸如当前的循环索引和此次迭代是首次或是末次这样的信息的方式：
+
+```blade
+@foreach ($users as $user)
+    @if ($loop->first)
+        This is the first iteration.
+    @endif
+
+    @if ($loop->last)
+        This is the last iteration.
+    @endif
+
+    <p>This is user {{ $user->id }}</p>
+@endforeach
+```
+
+如果您在嵌套循环中，您可以使用循环的 `$loop` 的变量的 `parent` 属性访问父级循环：
+
+```blade
+@foreach ($users as $user)
+    @foreach ($user->posts as $post)
+        @if ($loop->parent->first)
+            This is first iteration of the parent loop.
+        @endif
+    @endforeach
+@endforeach
+```
+
+`$loop` 变量还包含各种各样有用的属性：
+
+| 属性 | 备注 |
+|:--:|:--:|
+| `$loop->index` | 当前迭代的索引（从 0 开始）。|
+| `$loop->iteration` | 当前循环的迭代次数（从 1 开始）。|
+| `$loop->remaining` | 循环剩余的迭代次数。|
+| `$loop->count` | 被迭代的数组的元素个数。|
+| `$loop->first` | 当前迭代是否是循环的首次迭代。|
+| `$loop->last` | 当前迭代是否是循环的末次迭代。|
+| `$loop->even` | 当前循环的迭代次数是否是偶数。|
+| `$loop->odd` | 当前循环的迭代次数是否是奇数。|
+| `$loop->depth` | 当前循环的嵌套深度。|
+| `$loop->parent` | 嵌套循环中的父级循环。|
+
+#### 注释
+
+`Blade` 也允许您在视图中定义注释。但是和 `HTML` 注释不同， `Blade` 注释不会被包含在应用返回的 `HTML` 中：
+
+```blade
+{{-- This comment will not be present in the rendered HTML --}}
+```
+
+#### PHP
+
+在许多情况下，嵌入 `PHP` 代码到您的视图中是很有用的。您可以在模板中使用 `Blade` 的 `@php` 指令执行原生的 `PHP` 代码块：
+
+```blade
+@php
+    //
+@endphp
+```
+
+> 尽管 Blade 提供了这个功能，频繁使用它可能使得您的模板中嵌入过多的逻辑。
+
+#### @once 指令
+
+`@once` 指令允许您定义模板的一部分内容，这部分内容在每一个渲染周期中只会被计算一次。
+该指令在使用 `堆栈` 推送一段特定的 `JavaScript` 代码到页面的头部环境下是很有用的。
+例如，如果您想要在循环中渲染一个特定的 `组件`，您可能希望仅在组件渲染的首次推送 `JavaScript` 代码到头部：
+
+```blade
+@once
+    @push('scripts')
+        <script>
+            // 您自定义的 JavaScript 代码
+        </script>
+    @endpush
+@endonce
+```
 
 ## 可选中间件
 

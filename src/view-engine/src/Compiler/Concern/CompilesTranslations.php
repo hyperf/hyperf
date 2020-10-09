@@ -28,7 +28,7 @@ trait CompilesTranslations
             return "<?php \$__env->startTranslation{$expression}; ?>";
         }
 
-        return "<?php echo \\Fangx\\View\\T::translator()->get{$expression}; ?>";
+        return "<?php echo \\Hyperf\\ViewEngine\\T::translator()->get{$expression}; ?>";
     }
 
     /**
@@ -49,6 +49,6 @@ trait CompilesTranslations
      */
     protected function compileChoice($expression)
     {
-        return "<?php echo \\Fangx\\View\\T::translator()->choice{$expression}; ?>";
+        return "<?php echo \\Hyperf\\ViewEngine\\T::translator()->choice{$expression}; ?>";
     }
 }
