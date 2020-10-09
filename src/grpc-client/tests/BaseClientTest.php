@@ -35,7 +35,7 @@ class BaseClientTest extends TestCase
 {
     public static $server;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         // Dummy server pretending as gRPC
         Coroutine::create(function () {

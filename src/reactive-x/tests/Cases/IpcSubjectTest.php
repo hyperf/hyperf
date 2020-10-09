@@ -38,7 +38,7 @@ use Swoole\Runtime;
  */
 class IpcSubjectTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         Runtime::enableCoroutine(true, swoole_hook_flags());
     }
