@@ -32,7 +32,8 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
-        "hyperf/config": "Require this component for annotation scan progress to retrieve the scan path."
+        "hyperf/config": "Require this component for annotation scan progress to retrieve the scan path.",
+        "vlucas/phpdotenv": "Required to read .env (^5.2)."
     },
     "autoload": {
         "files": [

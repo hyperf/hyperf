@@ -128,13 +128,9 @@ class ClassLoader
 
     protected function loadDotenv(): void
     {
-        $repository = RepositoryBuilder::create()
-            ->withReaders([
-                new Adapter\PutenvAdapter(),
-            ])
-            ->withWriters([
-                new Adapter\PutenvAdapter(),
-            ])
+        var_dump($_ENV);
+        $repository = RepositoryBuilder::createWithNoAdapters()
+            ->addAdapter(Adapter\PutenvAdapter::class)
             ->immutable()
             ->make();
 
