@@ -34,7 +34,7 @@ use Swoole\Http\Response as SwooleResponse;
  */
 class ResponseTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set(PsrResponseInterface::class, null);

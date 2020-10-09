@@ -31,7 +31,7 @@
         "hyperf/http-server": "~2.1.0",
         "mockery/mockery": "^1.0",
         "phpstan/phpstan": "^0.12",
-        "phpunit/phpunit": "^7.0"
+        "phpunit/phpunit": "^9.4"
     },
     "autoload": {
         "psr-4": {

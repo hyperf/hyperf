@@ -17,6 +17,7 @@ use Hyperf\Utils\Context;
 use HyperfTest\Dispatcher\Middlewares\CoreMiddleware;
 use HyperfTest\Dispatcher\Middlewares\TestMiddleware;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -32,7 +33,9 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class HttpDispatcherTest extends TestCase
 {
-    protected function setUp()
+    use ProphecyTrait;
+
+    protected function setUp(): void
     {
         $this->request = $this->prophesize(ServerRequestInterface::class)->reveal();
         $this->response = $this->prophesize(ResponseInterface::class);

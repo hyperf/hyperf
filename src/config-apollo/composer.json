@@ -30,7 +30,7 @@
         "hyperf/process": "~2.1.0",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^7.0.0",
+        "phpunit/phpunit": "^9.4",
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {

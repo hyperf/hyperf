@@ -68,11 +68,9 @@ class FunctionTest extends TestCase
         $this->assertSame(4, $result);
     }
 
-    /**
-     * @expectedException \HyperfTest\Utils\Exception\RetryException
-     */
     public function testRetry()
     {
+        $this->expectException(\HyperfTest\Utils\Exception\RetryException::class);
         $result = 0;
         try {
             retry(2, function () use (&$result) {
@@ -84,11 +82,10 @@ class FunctionTest extends TestCase
         }
     }
 
-    /**
-     * @expectedException \HyperfTest\Utils\Exception\RetryException
-     */
     public function testOneTimesRetry()
     {
+        $this->expectException(\HyperfTest\Utils\Exception\RetryException::class);
+
         $result = 0;
         try {
             retry(1, function () use (&$result) {
@@ -100,11 +97,10 @@ class FunctionTest extends TestCase
         }
     }
 
-    /**
-     * @expectedException \HyperfTest\Utils\Exception\RetryException
-     */
     public function testRetryErrorTimes()
     {
+        $this->expectException(\HyperfTest\Utils\Exception\RetryException::class);
+
         $result = 0;
         try {
             retry(0, function () use (&$result) {

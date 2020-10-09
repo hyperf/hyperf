@@ -29,13 +29,13 @@ use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
  */
 class PageResolverListenerTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         Context::set(PsrServerRequestInterface::class, null);
         Context::set('http.request.parsedData', null);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set(PsrServerRequestInterface::class, null);

@@ -74,14 +74,14 @@ class ModelTest extends TestCase
 {
     use InteractsWithTime;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         Carbon::setTestNow(Carbon::now());
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -1037,12 +1037,11 @@ class ModelTest extends TestCase
         $this->assertEquals('bar', $model->foo);
     }
 
-    /**
-     * @expectedException \Hyperf\Database\Model\MassAssignmentException
-     * @expectedExceptionMessage name
-     */
     public function testGlobalGuarded()
     {
+        $this->expectException(\Hyperf\Database\Model\MassAssignmentException::class);
+        $this->expectExceptionMessage('name');
+
         $model = new ModelStub();
         $model->guard(['*']);
         $model->fill(['name' => 'foo', 'age' => 'bar', 'votes' => 'baz']);
@@ -1393,12 +1392,10 @@ class ModelTest extends TestCase
         $this->assertNotContains('bar', $class->getAvailableEvents());
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage HyperfTest\Database\Stubs\ModelStub::incorrectRelationStub must return a relationship instance.
-     */
     public function testGetModelAttributeMethodThrowsExceptionIfNotRelation()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('HyperfTest\Database\Stubs\ModelStub::incorrectRelationStub must return a relationship instance.');
         $model = new ModelStub();
         $model->incorrectRelationStub;
     }
@@ -1646,12 +1643,11 @@ class ModelTest extends TestCase
         $this->assertNull($array['timestampAttribute']);
     }
 
-    /**
-     * @expectedException \Hyperf\Database\Model\JsonEncodingException
-     * @expectedExceptionMessage Unable to encode attribute [objectAttribute] for model [HyperfTest\Database\Stubs\ModelCastingStub] to JSON: Malformed UTF-8 characters, possibly incorrectly encoded.
-     */
     public function testModelAttributeCastingFailsOnUnencodableData()
     {
+        $this->expectException(\Hyperf\Database\Model\JsonEncodingException::class);
+        $this->expectExceptionMessage('Unable to encode attribute [objectAttribute] for model [HyperfTest\Database\Stubs\ModelCastingStub] to JSON: Malformed UTF-8 characters, possibly incorrectly encoded.');
+
         $model = new ModelCastingStub();
         $model->objectAttribute = ['foo' => "b\xF8r"];
         $obj = new stdClass();

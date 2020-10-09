@@ -30,12 +30,10 @@ class XmlTest extends TestCase
         $this->assertSame($data, Xml::toArray($xml));
     }
 
-    /**
-     * @expectedException \Hyperf\Utils\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Syntax error.
-     */
     public function testToArrayException()
     {
+        $this->expectException(\Hyperf\Utils\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Syntax error.');
         $xml = 'xxxxx';
         $data = [
             'return_code' => 'SUCCESS',

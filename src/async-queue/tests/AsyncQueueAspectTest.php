@@ -34,7 +34,7 @@ use Psr\Container\ContainerInterface;
  */
 class AsyncQueueAspectTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set(FooProxy::class, null);

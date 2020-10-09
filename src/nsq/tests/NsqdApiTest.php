@@ -26,7 +26,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class NsqdApiTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

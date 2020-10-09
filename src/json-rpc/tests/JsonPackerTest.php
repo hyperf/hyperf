@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
  */
 class JsonPackerTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

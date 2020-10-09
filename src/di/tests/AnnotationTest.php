@@ -29,7 +29,7 @@ use PHPUnit\Framework\TestCase;
  */
 class AnnotationTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

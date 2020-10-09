@@ -24,7 +24,7 @@ use Mockery;
  */
 class SocketTest extends AbstractTestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->getContainer();

@@ -32,7 +32,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class RenderTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set(ResponseInterface::class, null);
