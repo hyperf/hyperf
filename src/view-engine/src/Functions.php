@@ -14,8 +14,10 @@ namespace Hyperf\ViewEngine;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\View\RenderInterface;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 use Hyperf\ViewEngine\Contract\ViewInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 
 if (! function_exists('Hyperf\\ViewEngine\\view')) {
@@ -29,16 +31,18 @@ if (! function_exists('Hyperf\\ViewEngine\\view')) {
      */
     function view($view = null, $data = [], $mergeData = [])
     {
+        /** @var ContainerInterface $container */
+        $container = ApplicationContext::getContainer();
         if (interface_exists(ResponseInterface::class) && Context::has(ResponseInterface::class)) {
+            $contentType = $container->get(RenderInterface::class)->getContentType();
             Context::set(
                 ResponseInterface::class,
                 Context::get(ResponseInterface::class)
-                    ->withAddedHeader('content-type', 'text/html')
+                    ->withAddedHeader('content-type', $contentType)
             );
         }
 
-        /** @var FactoryInterface $factory */
-        $factory = ApplicationContext::getContainer()->get(FactoryInterface::class);
+        $factory = $container->get(FactoryInterface::class);
 
         if (func_num_args() === 0) {
             return $factory;

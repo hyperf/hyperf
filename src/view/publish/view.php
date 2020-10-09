@@ -18,5 +18,6 @@ return [
     'config' => [
         'view_path' => BASE_PATH . '/storage/view/',
         'cache_path' => BASE_PATH . '/runtime/view/',
+        'charset' => 'UTF-8',
     ],
 ];

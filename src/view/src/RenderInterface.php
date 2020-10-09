@@ -18,4 +18,6 @@ interface RenderInterface
     public function render(string $template, array $data = []): ResponseInterface;
 
     public function getContents(string $template, array $data = []): string;
+
+    public function getContentType(): string;
 }
