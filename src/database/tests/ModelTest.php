@@ -1036,13 +1036,12 @@ class ModelTest extends TestCase
         $this->assertEquals('bar', $model->age);
         $this->assertEquals('bar', $model->foo);
     }
-
-    /**
-     * @expectedException \Hyperf\Database\Model\MassAssignmentException
-     * @expectedExceptionMessage name
-     */
+    
     public function testGlobalGuarded()
     {
+        $this->expectException(\Hyperf\Database\Model\MassAssignmentException::class);
+        $this->expectExceptionMessage('name');
+
         $model = new ModelStub();
         $model->guard(['*']);
         $model->fill(['name' => 'foo', 'age' => 'bar', 'votes' => 'baz']);
