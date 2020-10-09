@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine\Compiler\Concern;
 
+use Hyperf\Contract\ConfigInterface;
+
 trait CompilesConditionals
 {
     /**
@@ -67,14 +69,15 @@ trait CompilesConditionals
     }
 
     /**
-     * Compile the env statements into valid PHP.
+     * Compile the `@env` statements into valid PHP.
      *
      * @param string $environments
      * @return string
      */
     protected function compileEnv($environments)
     {
-        return "<?php if(app()->environment{$environments}): ?>";
+        $config = ConfigInterface::class;
+        return "<?php if(\\in_array(\$__env->getContainer()->get({$config}::class)->get('app_env'), {$environments})): ?>";
     }
 
     /**
@@ -88,13 +91,13 @@ trait CompilesConditionals
     }
 
     /**
-     * Compile the production statements into valid PHP.
+     * Compile the `@production` statements into valid PHP.
      *
      * @return string
      */
     protected function compileProduction()
     {
-        return "<?php if(app()->environment('production')): ?>";
+        return $this->compileEnv("['prod', 'production']");
     }
 
     /**

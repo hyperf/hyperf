@@ -43,6 +43,7 @@
   * [命令行](zh-cn/command.md)
   * [自动化测试](zh-cn/testing.md)
   * [视图](zh-cn/view.md)
+  * [视图引擎](zh-cn/view-engine.md)
   * [国际化](zh-cn/translation.md)
   * [验证器](zh-cn/validation.md)
   * [Session 会话管理](zh-cn/session.md)

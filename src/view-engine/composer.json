@@ -27,8 +27,8 @@
         "psr/http-message": "^1.0"
     },
     "suggest": {
-        "hyperf/session": "Required to use ValidationExceptionHandle.",
-        "hyperf/validation": "Required to use ValidationExceptionHandle."
+        "hyperf/session": "Required to use ShareErrorsFromSession.",
+        "hyperf/validation": "Required to use ShareErrorsFromSession and ValidationExceptionHandle."
     },
     "autoload": {
         "psr-4": {
