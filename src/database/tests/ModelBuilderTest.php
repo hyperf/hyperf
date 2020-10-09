@@ -117,7 +117,7 @@ class ModelBuilderTest extends TestCase
 
     public function testFirstOrFailMethodThrowsModelNotFoundException()
     {
-        $this->expectException(\Hyperf\Database\Model\ModelNotFoundException::class );
+        $this->expectException(\Hyperf\Database\Model\ModelNotFoundException::class);
 
         $builder = Mockery::mock(Builder::class . '[first]', [$this->getMockQueryBuilder()]);
         $builder->setModel($this->getMockModel());
@@ -439,12 +439,10 @@ class ModelBuilderTest extends TestCase
         $this->assertEquals($builder->bam(), $builder->getQuery());
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Call to undefined method Hyperf\Database\Model\Builder::missingMacro()
-     */
     public function testMissingStaticMacrosThrowsProperException()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Call to undefined method Hyperf\Database\Model\Builder::missingMacro()');
         Builder::missingMacro();
     }
 

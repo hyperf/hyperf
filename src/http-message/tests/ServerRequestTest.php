@@ -65,11 +65,10 @@ class ServerRequestTest extends TestCase
         $this->assertSame($json, RequestStub::normalizeParsedBody($data, $request));
     }
 
-    /**
-     * @expectedException  \Hyperf\HttpMessage\Exception\BadRequestHttpException
-     */
     public function testNormalizeParsedBodyException()
     {
+        $this->expectException(\Hyperf\HttpMessage\Exception\BadRequestHttpException::class);
+
         $this->getContainer();
 
         $json = ['name' => 'Hyperf'];
@@ -79,11 +78,10 @@ class ServerRequestTest extends TestCase
         $this->assertSame([], RequestStub::normalizeParsedBody($json, $request));
     }
 
-    /**
-     * @expectedException  \Hyperf\HttpMessage\Exception\BadRequestHttpException
-     */
     public function testXmlNormalizeParsedBodyException()
     {
+        $this->expectException(\Hyperf\HttpMessage\Exception\BadRequestHttpException::class);
+
         $this->getContainer();
 
         $json = ['name' => 'Hyperf'];

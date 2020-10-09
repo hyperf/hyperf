@@ -21,11 +21,10 @@ use PHPUnit\Framework\TestCase;
  */
 class ClientTest extends TestCase
 {
-    /**
-     * @expectedException \Hyperf\WebSocketClient\Exception\ConnectException
-     */
     public function testClientConnectFailed()
     {
+        $this->expectException(\Hyperf\WebSocketClient\Exception\ConnectException::class);
+
         new Client(new Uri('ws://172.168.1.1:9522'));
     }
 }
