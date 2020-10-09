@@ -24,6 +24,7 @@ use Hyperf\ViewEngine\Compiler\CompilerInterface;
 use Hyperf\ViewEngine\Component\DynamicComponent;
 use Hyperf\ViewEngine\ConfigProvider;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
+use Hyperf\ViewEngine\Contract\FinderInterface;
 use Hyperf\ViewEngine\Contract\ViewInterface;
 use Hyperf\ViewEngine\Factory\FinderFactory;
 use Hyperf\ViewEngine\HyperfViewEngine;
@@ -127,7 +128,9 @@ class BladeTest extends TestCase
 
     public function testUseNamespace()
     {
-        FinderFactory::addNamespace('admin_custom', __DIR__ . '/admin');
+        $finder = ApplicationContext::getContainer()->get(FinderInterface::class);
+        $factory = new FinderFactory();
+        $factory->addNamespace($finder, 'admin_custom', __DIR__ . '/admin');
 
         $this->assertSame('from_admin', trim((string) view('admin_custom::simple_3')));
         $this->assertSame('from_vendor', trim((string) view('admin_custom::simple_4')));
