@@ -41,7 +41,7 @@ class ModelRealBuilderTest extends TestCase
         $this->channel = new Channel(999);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

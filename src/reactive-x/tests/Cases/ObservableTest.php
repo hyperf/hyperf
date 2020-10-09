@@ -67,7 +67,7 @@ class ObservableTest extends TestCase
         RxSwoole::init();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         Mockery::close();
     }

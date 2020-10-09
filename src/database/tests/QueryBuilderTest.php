@@ -35,7 +35,7 @@ use RuntimeException;
  */
 class QueryBuilderTest extends TestCase
 {
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         Mockery::close();
     }

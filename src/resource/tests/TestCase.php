@@ -42,7 +42,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
         Context::set(ResponseInterface::class, new Response());
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Context::set(RequestInterface::class, null);
         Context::set(ResponseInterface::class, null);

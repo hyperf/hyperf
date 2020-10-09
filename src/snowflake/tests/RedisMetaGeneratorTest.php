@@ -37,7 +37,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RedisMetaGeneratorTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $container = $this->getContainer();
         $redis = $container->make(RedisProxy::class, ['pool' => 'snowflake']);

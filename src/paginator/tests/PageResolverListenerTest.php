@@ -35,7 +35,7 @@ class PageResolverListenerTest extends TestCase
         Context::set('http.request.parsedData', null);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set(PsrServerRequestInterface::class, null);

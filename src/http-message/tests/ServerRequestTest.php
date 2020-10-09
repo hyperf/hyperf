@@ -34,7 +34,7 @@ use Swoole\Http\Request as SwooleRequest;
  */
 class ServerRequestTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         RequestStub::setParser(null);

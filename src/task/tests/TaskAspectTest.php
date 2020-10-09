@@ -29,7 +29,7 @@ class TaskAspectTest extends TestCase
 {
     protected $isTaskEnvironment = false;
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         $this->isTaskEnvironment = false;

@@ -25,7 +25,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
  */
 class StdoutLoggerTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

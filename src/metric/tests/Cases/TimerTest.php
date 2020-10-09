@@ -25,7 +25,7 @@ use PHPUnit\Framework\TestCase;
  */
 class TimerTest extends TestCase
 {
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         Mockery::close();
     }
