@@ -50,7 +50,7 @@ class BaseClientTest extends TestCase
         });
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void 
     {
         Coroutine::create(function () {
             self::$server->shutdown();
