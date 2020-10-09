@@ -11,36 +11,30 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine\Factory;
 
-use Hyperf\Di\Container;
-use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\ViewEngine\Blade;
-use Hyperf\ViewEngine\Contract\FinderInterface;
 use Hyperf\ViewEngine\Finder;
+use Psr\Container\ContainerInterface;
 
 class FinderFactory
 {
-    public function __invoke(Container $container)
+    public function __invoke(ContainerInterface $container)
     {
         $finder = new Finder(
             $container->get(Filesystem::class),
             (array) Blade::config('config.view_path')
         );
 
-        static::addNamespaces((array) Blade::config('namespaces', []), $finder);
-        static::addNamespace('__components', $directory = Blade::config('config.cache_path'), $finder);
+        $this->addNamespaces($finder, (array) Blade::config('namespaces', []));
+        $this->addNamespace($finder, '__components', $directory = Blade::config('config.cache_path'));
         if (! is_dir($directory)) {
             mkdir($directory, 0755, true);
         }
         return $finder;
     }
 
-    public static function addNamespace($namespace, $hints, ?Finder $finder = null)
+    public function addNamespace(Finder $finder, string $namespace, $hints)
     {
-        if (! $finder) {
-            $finder = ApplicationContext::getContainer()->get(FinderInterface::class);
-        }
-
         foreach ($finder->getPaths() as $viewPath) {
             if (is_dir($appPath = $viewPath . '/vendor/' . $namespace)) {
                 $finder->addNamespace($namespace, $appPath);
@@ -50,10 +44,10 @@ class FinderFactory
         $finder->addNamespace($namespace, $hints);
     }
 
-    public static function addNamespaces($namespaces, ?Finder $finder = null)
+    public function addNamespaces(Finder $finder, array $namespaces)
     {
         foreach ($namespaces as $namespace => $hints) {
-            static::addNamespace($namespace, $hints, $finder);
+            $this->addNamespace($finder, $namespace, $hints);
         }
     }
 }

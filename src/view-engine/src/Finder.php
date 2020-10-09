@@ -107,10 +107,9 @@ class Finder implements FinderInterface
     /**
      * Add a namespace hint to the finder.
      *
-     * @param string $namespace
      * @param array|string $hints
      */
-    public function addNamespace($namespace, $hints)
+    public function addNamespace(string $namespace, $hints)
     {
         $hints = (array) $hints;
 

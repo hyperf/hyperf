@@ -53,7 +53,7 @@ trait CompilesLayouts
     }
 
     /**
-     * Replace the @parent directive to a placeholder.
+     * Replace the `@parent` directive to a placeholder.
      *
      * @return string
      */

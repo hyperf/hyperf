@@ -98,7 +98,7 @@ EOF;
     }
 
     /**
-     * Compile the @props directive for the component.
+     * Compile the `@props` directive for the component.
      *
      * @return string
      */
