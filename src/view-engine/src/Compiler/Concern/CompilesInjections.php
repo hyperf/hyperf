@@ -27,6 +27,6 @@ trait CompilesInjections
 
         $service = trim($segments[1]);
 
-        return "<?php \${$variable} = \\Fangx\\View\\T::inject('{$service}'); ?>";
+        return "<?php \${$variable} = \\Hyperf\\ViewEngine\\T::inject('{$service}'); ?>";
     }
 }
