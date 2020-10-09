@@ -21,7 +21,7 @@
     "require": {
         "php": ">=7.2",
         "psr/container": "^1.0",
-        "phpunit/phpunit": "^7.0",
+        "phpunit/phpunit": "^9.4",
         "hyperf/contract": "~2.1.0",
         "hyperf/http-message": "~2.1.0",
         "hyperf/http-server": "~2.1.0",
