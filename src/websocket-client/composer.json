@@ -17,9 +17,9 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/contract": "~2.0.0",
-        "hyperf/http-message": "~2.0.0",
-        "hyperf/utils": "~2.0.0",
+        "hyperf/contract": "~2.1.0",
+        "hyperf/http-message": "~2.1.0",
+        "hyperf/utils": "~2.1.0",
         "psr/container": "^1.0",
         "psr/log": "^1.0"
     },

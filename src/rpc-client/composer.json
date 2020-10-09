@@ -20,9 +20,9 @@
     "require": {
         "php": ">=7.2",
         "psr/container": "^1.0",
-        "hyperf/rpc": "~2.0.0",
-        "hyperf/load-balancer": "~2.0.0",
-        "hyperf/utils": "~2.0.0",
+        "hyperf/rpc": "~2.1.0",
+        "hyperf/load-balancer": "~2.1.0",
+        "hyperf/utils": "~2.1.0",
         "roave/better-reflection": "^4.0"
     },
     "require-dev": {

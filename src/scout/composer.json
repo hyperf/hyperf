@@ -10,12 +10,12 @@
     "require": {
         "php": ">=7.2",
         "ext-swoole": ">=4.4",
-        "hyperf/command": "~2.0.0",
-        "hyperf/contract": "~2.0.0",
-        "hyperf/database": "~2.0.0",
-        "hyperf/event": "~2.0.0",
-        "hyperf/model-listener": "~2.0.0",
-        "hyperf/utils": "~2.0.0",
+        "hyperf/command": "~2.1.0",
+        "hyperf/contract": "~2.1.0",
+        "hyperf/database": "~2.1.0",
+        "hyperf/event": "~2.1.0",
+        "hyperf/model-listener": "~2.1.0",
+        "hyperf/utils": "~2.1.0",
         "psr/event-dispatcher": "^1.0"
     },
     "require-dev": {

@@ -23,14 +23,14 @@
     "require": {
         "php": ">=7.2",
         "ext-swoole": ">=4.4",
-        "hyperf/di": "~2.0.0",
+        "hyperf/di": "~2.1.0",
         "league/flysystem": "^1.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",
-        "hyperf/config": "~2.0.0",
-        "hyperf/guzzle": "~2.0.0",
-        "hyperf/testing": "~2.0.0",
+        "hyperf/config": "~2.1.0",
+        "hyperf/guzzle": "~2.1.0",
+        "hyperf/testing": "~2.1.0",
         "league/flysystem-aws-s3-v3": "^1.0",
         "league/flysystem-memory": "^1.0",
         "overtrue/flysystem-qiniu": "^1.0",

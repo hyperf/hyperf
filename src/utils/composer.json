@@ -18,7 +18,7 @@
     "require": {
         "php": ">=7.2",
         "doctrine/inflector": "^2.0",
-        "hyperf/contract": "~2.0.0"
+        "hyperf/contract": "~2.1.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^5.0",

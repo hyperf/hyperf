@@ -20,8 +20,8 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/guzzle": "~2.0.0",
-        "hyperf/utils": "~2.0.0",
+        "hyperf/guzzle": "~2.1.0",
+        "hyperf/utils": "~2.1.0",
         "start-point/etcd-php": "^1.1"
     },
     "require-dev": {
