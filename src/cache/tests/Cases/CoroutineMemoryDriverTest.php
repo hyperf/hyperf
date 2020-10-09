@@ -23,7 +23,7 @@ use Psr\Container\ContainerInterface;
  */
 class CoroutineMemoryDriverTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close();
     }

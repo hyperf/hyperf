@@ -59,7 +59,7 @@ class ObservableTest extends TestCase
         Runtime::enableCoroutine(true, swoole_hook_flags());
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $container = new Container(new DefinitionSource([], new ScanConfig()));
         $container->define(SchedulerInterface::class, EventLoopScheduler::class);
@@ -67,7 +67,7 @@ class ObservableTest extends TestCase
         RxSwoole::init();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close();
     }

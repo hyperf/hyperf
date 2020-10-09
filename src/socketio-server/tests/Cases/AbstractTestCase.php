@@ -37,7 +37,7 @@ use Swoole\Timer;
  */
 abstract class AbstractTestCase extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close();
         Timer::clearAll();

@@ -29,7 +29,7 @@ use Routeguide\RouteSummary;
  */
 class RouteGuideClientTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $container = \Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(ChannelPool::class)->andReturn(new ChannelPool());

@@ -32,7 +32,7 @@ use ReflectionClass;
  */
 class LoggerFactoryTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close();
         Context::set('test.logger.foo_handler.record', null);

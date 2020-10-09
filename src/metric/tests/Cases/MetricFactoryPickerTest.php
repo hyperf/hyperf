@@ -28,7 +28,7 @@ use PHPUnit\Framework\TestCase;
  */
 class MetricFactoryPickerTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close();
     }

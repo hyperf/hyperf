@@ -26,7 +26,7 @@ class DatabaseMigrationCreatorTest extends TestCase
 {
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close();
     }

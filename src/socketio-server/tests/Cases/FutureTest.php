@@ -24,7 +24,7 @@ use Swoole\Coroutine\Channel;
  */
 class FutureTest extends AbstractTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->getContainer();

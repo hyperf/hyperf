@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ConnectionTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close();
     }

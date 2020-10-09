@@ -27,7 +27,7 @@ use ReflectionMethod;
  */
 class MetricFactoryTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close();
     }
