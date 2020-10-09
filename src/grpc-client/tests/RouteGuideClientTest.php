@@ -35,7 +35,6 @@ class RouteGuideClientTest extends TestCase
         $container->shouldReceive('get')->with(ChannelPool::class)->andReturn(new ChannelPool());
         $container->shouldReceive('has')->andReturn(false);
         ApplicationContext::setContainer($container);
-        return $container;
     }
 
     public function testGrpcRouteGuideGetFeature()
