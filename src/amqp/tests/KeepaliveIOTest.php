@@ -92,7 +92,7 @@ class KeepaliveIOTest extends TestCase
         $io->connect();
 
         $this->expectException(AMQPRuntimeException::class);
-        $this->expectExceptionMessageRegExp('/^Socket of keepaliveIO is exhausted\. Cannot establish new socket before wait_timeout\.$/');
+        $this->expectExceptionMessageMatches('/^Socket of keepaliveIO is exhausted\. Cannot establish new socket before wait_timeout\.$/');
         $io->read(10);
     }
 

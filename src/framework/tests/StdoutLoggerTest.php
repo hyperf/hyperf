@@ -51,7 +51,7 @@ class StdoutLoggerTest extends TestCase
     {
         $output = Mockery::mock(ConsoleOutput::class);
         $output->shouldReceive('writeln')->with(Mockery::any())->once()->andReturnUsing(function ($message) {
-            $this->assertRegExp('/RuntimeException: Invalid Arguments./', $message);
+            $this->assertMatchesRegularExpression('/RuntimeException: Invalid Arguments./', $message);
         });
         $logger = new StdoutLogger(new Config([
             StdoutLoggerInterface::class => [

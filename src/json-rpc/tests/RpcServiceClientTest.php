@@ -213,7 +213,7 @@ class RpcServiceClientTest extends TestCase
         $service = new $proxyClass($container, CalculatorServiceInterface::class, 'jsonrpc');
 
         $this->expectException(RequestException::class);
-        $this->expectExceptionMessageRegExp('/^Invalid response\. Request id\[.*\] is not equal to response id\[1234\]\.$/');
+        $this->expectExceptionMessageMatches('/^Invalid response\. Request id\[.*\] is not equal to response id\[1234\]\.$/');
         $service->add(1, 2);
     }
 
