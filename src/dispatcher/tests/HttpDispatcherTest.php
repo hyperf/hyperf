@@ -32,7 +32,7 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class HttpDispatcherTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->request = $this->prophesize(ServerRequestInterface::class)->reveal();
         $this->response = $this->prophesize(ResponseInterface::class);

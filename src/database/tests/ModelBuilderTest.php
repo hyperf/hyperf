@@ -41,7 +41,7 @@ class ModelBuilderTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         Register::setConnectionResolver(new ConnectionResolver(['default' => new Connection(Mockery::mock(PDO::class))]));
     }

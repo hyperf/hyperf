@@ -59,7 +59,7 @@ class ObservableTest extends TestCase
         Runtime::enableCoroutine(true, swoole_hook_flags());
     }
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $container = new Container(new DefinitionSource([], new ScanConfig()));
         $container->define(SchedulerInterface::class, EventLoopScheduler::class);

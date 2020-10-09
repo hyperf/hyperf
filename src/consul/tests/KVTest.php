@@ -31,7 +31,7 @@ class KVTest extends TestCase
 {
     private $kv;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->kv = $this->createKV();
         $this->kv->delete('test', ['recurse' => true]);

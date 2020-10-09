@@ -37,7 +37,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class TestCase extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         Context::set(ResponseInterface::class, new Response());
     }

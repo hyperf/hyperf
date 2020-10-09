@@ -32,7 +32,7 @@ use League\Flysystem\Memory\MemoryAdapter;
  */
 class FilesystemFactoryTest extends AbstractTestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         $container = new Container(new DefinitionSource([], new ScanConfig()));
         ApplicationContext::setContainer($container);

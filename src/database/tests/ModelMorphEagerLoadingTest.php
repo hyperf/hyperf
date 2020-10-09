@@ -35,7 +35,7 @@ class ModelMorphEagerLoadingTest extends TestCase
      */
     protected $channel;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         Relation::morphMap([
             'user' => User::class,
