@@ -58,7 +58,7 @@ class FindDriver implements DriverInterface
                 throw new \InvalidArgumentException('find not exists.');
             }
             $ret = System::exec('find --help', true);
-            $this->isSupportFloatMinutes = (strpos($ret['output']??"", 'BusyBox'))===false;
+            $this->isSupportFloatMinutes = (strpos($ret['output'] ?? '', 'BusyBox')) === false;
         }
     }
 
