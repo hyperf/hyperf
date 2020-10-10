@@ -44,3 +44,4 @@ parameters:
     - '#Call to an undefined method Hyperf\\Utils\\HigherOrderCollectionProxy::.*#'
     - '#Used function getSwooleTracker.* not found#'
     - '#Function getSwooleTracker.* not found#'
+    - '#InfluxDB\\Point constructor expects float\|null, string given#'
