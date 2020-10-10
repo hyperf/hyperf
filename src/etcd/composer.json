@@ -21,8 +21,7 @@
     "require": {
         "php": ">=7.2",
         "hyperf/guzzle": "~2.1.0",
-        "hyperf/utils": "~2.1.0",
-        "start-point/etcd-php": "^1.1"
+        "hyperf/utils": "~2.1.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14"

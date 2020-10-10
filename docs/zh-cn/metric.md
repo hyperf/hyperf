@@ -408,3 +408,11 @@ Router::get('/metrics', function(){
 如果您启用了默认指标，`Hyperf/Metric` 为您准备了一个开箱即用的 Grafana 控制台。下载控制台 [json 文件](https://cdn.jsdelivr.net/gh/hyperf/hyperf/src/metric/grafana.json)，导入 Grafana 中即可使用。
 
 ![grafana](imgs/grafana.png)
+
+## 注意事项
+
+`endclothing/prometheus_client_php : ^0.9` 与 `guzzle : ^7.0` 冲突，如果想在 `guzzle7` 的条件下使用 `metric`，可以主动执行以下操作
+
+```
+composer require promphp/prometheus_client_php
+```

@@ -12,13 +12,13 @@
     "description": "hyperf metric component",
     "require": {
         "php": ">=7.2",
-        "psr/http-message": "^1.0",
-        "endclothing/prometheus_client_php": "^0.9.1",
+        "endclothing/prometheus_client_php": "^0.9",
+        "hyperf/contract": "~2.1.0",
+        "hyperf/guzzle": "~2.1.0",
+        "hyperf/utils": "~2.1.0",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
-        "hyperf/contract": "~2.1.0",
-        "hyperf/utils": "~2.1.0",
-        "hyperf/guzzle": "~2.1.0"
+        "psr/http-message": "^1.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
