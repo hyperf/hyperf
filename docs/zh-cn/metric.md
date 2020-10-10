@@ -411,7 +411,7 @@ Router::get('/metrics', function(){
 
 ## 注意事项
 
-`endclothing/prometheus_client_php : ^0.9` 与 `guzzle : ^7.0` 冲突，如果想在 `guzzle7` 的条件下使用 `metric`，可以主动执行以下操作
+`endclothing/prometheus_client_php` 暂时与 `guzzle : ^7.0` 冲突，如果想在 `guzzle7` 的条件下使用 `metric`，可以主动执行以下操作
 
 ```
 composer require promphp/prometheus_client_php
