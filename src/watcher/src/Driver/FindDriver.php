@@ -45,8 +45,7 @@ class FindDriver implements DriverInterface
         if (PHP_OS === 'Darwin') {
             $this->isDarwin = true;
         } else {
-            $ret = System::exec('cat /proc/version');
-            $this->isSupportFloatMinutes = empty(strpos($ret['output'] ?? '', 'Alpine'));
+            $this->isDarwin = false;
         }
         if ($this->isDarwin) {
             $ret = System::exec('which gfind');
@@ -58,6 +57,8 @@ class FindDriver implements DriverInterface
             if (empty($ret['output'])) {
                 throw new \InvalidArgumentException('find not exists.');
             }
+            $ret = System::exec('find --help', true);
+            $this->isSupportFloatMinutes = (strpos($ret['output']??"", 'BusyBox'))===false;
         }
     }
 
@@ -97,7 +98,7 @@ class FindDriver implements DriverInterface
             foreach ($lineArr as $line) {
                 $pathName = $line;
                 $modifyTime = fileatime($pathName);
-                //小于启动时间的不执行
+                //modifyTime less than or equal to startTime continue
                 if ($modifyTime <= $this->startTime) {
                     continue;
                 }
