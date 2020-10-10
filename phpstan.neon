@@ -22,7 +22,7 @@ parameters:
     - %currentWorkingDirectory%/src/grpc-server/*
     - %currentWorkingDirectory%/src/swagger/*
     - %currentWorkingDirectory%/src/validation/*
-    - %currentWorkingDirectory%/src/view/*
+    - %currentWorkingDirectory%/src/view/src/Engine/*
   ignoreErrors:
     - '#side of && is always#'
     - '#method Redis::zRevRangeByScore\(\) expects int, string given#'
