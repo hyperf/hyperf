@@ -41,5 +41,15 @@ class HttpClientTest extends TestCase
 
             $this->assertIsArray($data);
         }, SWOOLE_HOOK_ALL);
+
+        run(function () {
+            $client = new HttpClient(Mockery::mock(ContainerInterface::class), null, 'http://127.0.0.1:4151');
+
+            $data = $client->get('/stats', [
+                'format' => 'json',
+            ]);
+
+            $this->assertIsArray($data);
+        }, SWOOLE_HOOK_ALL & ~SWOOLE_HOOK_CURL);
     }
 }
