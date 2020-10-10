@@ -24,8 +24,8 @@ parameters:
     - %currentWorkingDirectory%/src/validation/*
     - %currentWorkingDirectory%/src/view/*
     - %currentWorkingDirectory%/src/filesystem/src/Adapter/CosAdapterFactory.php
-    - %currentWorkingDirectory%/metric/src/Adapter/*
-    - %currentWorkingDirectory%/metric/src/ConfigProvider.php
+    - %currentWorkingDirectory%/src/metric/src/Adapter/*
+    - %currentWorkingDirectory%/src/metric/src/ConfigProvider.php
   ignoreErrors:
     - '#side of && is always#'
     - '#method Redis::zRevRangeByScore\(\) expects int, string given#'
