@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer;
 
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\Utils\Context;
 use OpenTracing\Span;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,6 +21,12 @@ use const OpenTracing\Tags\SPAN_KIND_RPC_SERVER;
 
 trait SpanStarter
 {
+    /**
+     * @Inject()
+     * @var \Hyperf\Rpc\Context
+     */
+    private $rpcContext;
+
     /**
      * Helper method to start a span while setting context.
      */
@@ -43,9 +50,14 @@ trait SpanStarter
             if ($spanContext) {
                 $option['child_of'] = $spanContext;
             }
+            if ($spanContextSerialize = $this->rpcContext->get('tracer.spanContext')) {
+                $spanContext = unserialize($spanContextSerialize);
+                $option['child_of'] = $spanContext;
+            }
             $root = $this->tracer->startSpan($name, $option);
             $root->setTag(SPAN_KIND, $kind);
             Context::set('tracer.root', $root);
+            $this->rpcContext->set('tracer.spanContext', serialize($root->getContext()));
             return $root;
         }
         $option['child_of'] = $root->getContext();
