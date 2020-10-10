@@ -37,7 +37,7 @@
         "domnikl/statsd": "^3.0.1",
         "egulias/email-validator": "^2.1",
         "elasticsearch/elasticsearch": "^7.0",
-        "endclothing/prometheus_client_php": "^1.0",
+        "endclothing/prometheus_client_php": "^0.9",
         "fig/http-message-util": "^1.1.2",
         "filp/whoops": "^2.7",
         "friendsofphp/php-cs-fixer": "^2.14",
