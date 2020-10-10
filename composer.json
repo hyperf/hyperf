@@ -81,7 +81,7 @@
         "symfony/finder": "^5.0",
         "symfony/property-access": "^5.0",
         "symfony/serializer": "^5.0",
-        "twig/twig": "^2.12",
+        "twig/twig": "^3.0",
         "vlucas/phpdotenv": "^5.0",
         "xxtime/flysystem-aliyun-oss": "^1.5"
     },
