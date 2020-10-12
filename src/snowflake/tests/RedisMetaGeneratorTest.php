@@ -137,7 +137,7 @@ class RedisMetaGeneratorTest extends TestCase
         $this->assertSame($meta->getWorkerId(), $userId % 31);
     }
 
-    public function testGetNextTimestamp()
+    public function testRedisSecondNextTimestamp()
     {
         $container = $this->getContainer();
         $hConfig = $container->get(ConfigInterface::class);
@@ -147,7 +147,43 @@ class RedisMetaGeneratorTest extends TestCase
         $time = $metaGenerator->getTimestamp();
         $nextTime = $metaGenerator->getNextTimestamp();
         $this->assertSame($time + 1, $nextTime);
-        $this->assertSame(time(), $nextTime);
+    }
+
+    public function testGenerateSameMetaForRedisSecond()
+    {
+        $container = $this->getContainer();
+        $hConfig = $container->get(ConfigInterface::class);
+        $config = new SnowflakeConfig();
+        $metaGenerator = new RedisSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND, $hConfig);
+        $generator = new SnowflakeIdGenerator($metaGenerator);
+        $result = [];
+        $channel = new Channel(2);
+        go(function () use (&$result, $generator, $channel) {
+            try {
+                for ($i = 0; $i < 4100; ++$i) {
+                    $result[] = $generator->generate();
+                }
+            } catch (\Throwable $exception) {
+            } finally {
+                $channel->push(true);
+            }
+        });
+
+        go(function () use (&$result, $generator, $channel) {
+            try {
+                for ($i = 0; $i < 900; ++$i) {
+                    $result[] = $generator->generate();
+                }
+            } catch (\Throwable $exception) {
+            } finally {
+                $channel->push(true);
+            }
+        });
+
+        $channel->pop(5);
+        $channel->pop(5);
+
+        $this->assertSame(5000, count(array_unique($result)));
     }
 
     protected function getContainer()
@@ -184,6 +220,8 @@ class RedisMetaGeneratorTest extends TestCase
         ]);
 
         $container = Mockery::mock(Container::class);
+        ApplicationContext::setContainer($container);
+
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
         $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new Channel($args['size']);
@@ -200,7 +238,6 @@ class RedisMetaGeneratorTest extends TestCase
             return new RedisProxy($factory, $args['pool']);
         });
 
-        ApplicationContext::setContainer($container);
         return $container;
     }
 }

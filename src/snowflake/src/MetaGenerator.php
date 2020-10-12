@@ -42,12 +42,12 @@ abstract class MetaGenerator implements MetaGeneratorInterface
             if ($this->sequence == 0) {
                 $timestamp = $this->getNextTimestamp();
             }
+        } elseif ($timestamp < $this->lastTimestamp) {
+            $this->clockMovedBackwards($timestamp, $this->lastTimestamp);
+            $this->sequence = ($this->sequence + 1) % $this->configuration->maxSequence();
+            $timestamp = $this->lastTimestamp;
         } else {
             $this->sequence = 0;
-        }
-
-        if ($timestamp < $this->lastTimestamp) {
-            $this->clockMovedBackwards($timestamp, $this->lastTimestamp);
         }
 
         if ($timestamp < $this->beginTimestamp) {

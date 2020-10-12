@@ -28,12 +28,11 @@ class RedisSecondMetaGenerator extends RedisMetaGenerator
 
     public function getNextTimestamp(): int
     {
-        $timestamp = $this->getTimestamp();
-        while ($timestamp <= $this->lastTimestamp) {
-            usleep(1000);
-            $timestamp = $this->getTimestamp();
-        }
+        return $this->lastTimestamp + 1;
+    }
 
-        return $timestamp;
+    protected function clockMovedBackwards($timestamp, $lastTimestamp)
+    {
+        // Don't throw exception
     }
 }
