@@ -1,5 +1,9 @@
 # v2.0.15 - TBD
 
+## Fixed
+
+- [#2639](https://github.com/hyperf/hyperf/pull/2639) Fixed exception will not be normalized for json-rpc.
+
 # v2.0.14 - 2020-10-12
 
 ## Added
