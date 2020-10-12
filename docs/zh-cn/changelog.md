@@ -14,7 +14,7 @@
 - [#2601](https://github.com/hyperf/hyperf/pull/2601) 修复命令 `gen:model` 因为 `getter` 和 `setter` 同时存在时，注释 `@property` 会被 `@property-read` 覆盖的问题。
 - [#2607](https://github.com/hyperf/hyperf/pull/2607) 修复使用 `RetryAnnotationAspect` 时，会有一定程度内存泄露的问题。
 - [#2624](https://github.com/hyperf/hyperf/pull/2624) 修复组件 `hyperf/testing` 因使用了 `guzzle 7.0` 和 `CURL HOOK` 导致无法正常工作的问题。
-- [#2632](https://github.com/hyperf/hyperf/pull/2632) 修复 `hyperf\redis` 组件集群模式，无法设置密码的问题。
+- [#2632](https://github.com/hyperf/hyperf/pull/2632) [#2635](https://github.com/hyperf/hyperf/pull/2635) 修复 `hyperf\redis` 组件集群模式，无法设置密码的问题。
 
 ## 优化
 
