@@ -43,6 +43,8 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             'enable' => false,
             'name' => null,
             'seeds' => [],
+            'read_timeout' => 0.0,
+            'persistent' => false,
         ],
         'sentinel' => [
             'enable' => false,
@@ -122,7 +124,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $redis->setOption($name, $value);
         }
 
-        if (isset($auth) && $auth !== '') {
+        if ($redis instanceof \Redis && isset($auth) && $auth !== '') {
             $redis->auth($auth);
         }
 
@@ -164,9 +166,12 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         try {
             $seeds = $this->config['cluster']['seeds'] ?? [];
             $name = $this->config['cluster']['name'] ?? null;
+            $readTimeout = $this->config['cluster']['read_timeout'] ?? null;
+            $persistent = $this->config['cluster']['persistent'] ?? false;
             $timeout = $this->config['timeout'] ?? null;
+            $auth = $this->config['auth'] ?? null;
 
-            $redis = new \RedisCluster($name, $seeds, $timeout);
+            $redis = new \RedisCluster($name, $seeds, $timeout, $readTimeout, $persistent, $auth);
         } catch (\Throwable $e) {
             throw new ConnectionException('Connection reconnect failed ' . $e->getMessage());
         }
