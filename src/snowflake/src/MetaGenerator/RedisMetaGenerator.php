@@ -34,8 +34,6 @@ abstract class RedisMetaGenerator extends MetaGenerator
         parent::__construct($configuration, $beginTimestamp);
 
         $this->config = $config;
-
-        $this->init();
     }
 
     public function init()
