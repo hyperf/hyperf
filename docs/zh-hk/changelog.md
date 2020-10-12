@@ -1,5 +1,24 @@
 # 版本更新記錄
 
+# v2.0.14 - 2020-10-12
+
+## 新增
+
+- [#1172](https://github.com/hyperf/hyperf/pull/1172) 新增基於 `laravel/scout` 實現的組件 `hyperf/scout`, 可以通過搜索引擎進行模型查詢。
+- [#1868](https://github.com/hyperf/hyperf/pull/1868) 新增 `Redis` 組件的哨兵模式。
+- [#1969](https://github.com/hyperf/hyperf/pull/1969) 新增組件 `hyperf/resource` and `hyperf/resource-grpc`，可以更加方便的將模型轉化為 Response。
+
+## 修復
+
+- [#2594](https://github.com/hyperf/hyperf/pull/2594) 修復 `hyperf/crontab` 組件因為無法正常響應 `hyperf/signal`，導致無法停止的問題。
+- [#2601](https://github.com/hyperf/hyperf/pull/2601) 修復命令 `gen:model` 因為 `getter` 和 `setter` 同時存在時，註釋 `@property` 會被 `@property-read` 覆蓋的問題。
+- [#2607](https://github.com/hyperf/hyperf/pull/2607) 修復使用 `RetryAnnotationAspect` 時，會有一定程度內存泄露的問題。
+- [#2624](https://github.com/hyperf/hyperf/pull/2624) 修復組件 `hyperf/testing` 因使用了 `guzzle 7.0` 和 `CURL HOOK` 導致無法正常工作的問題。
+
+## 優化
+
+- [#2603](https://github.com/hyperf/hyperf/pull/2603) 允許 `hyperf/database` 組件，`whereNull` 方法接受 `array` 作為入參。
+
 # v2.0.13 - 2020-09-28
 
 ## 新增
