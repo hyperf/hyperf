@@ -14,6 +14,7 @@
 - [#2601](https://github.com/hyperf/hyperf/pull/2601) Fixed `@property` will be replaced by `@property-read` when the property has `getter` and `setter` at the same time.
 - [#2607](https://github.com/hyperf/hyperf/pull/2607) Fixed memory leak in `RetryAnnotationAspect`.
 - [#2624](https://github.com/hyperf/hyperf/pull/2624) Fixed http client does not works when using guzzle 7.0 and curl hook for `hyperf/testing`.
+- [#2632](https://github.com/hyperf/hyperf/pull/2632) Fixed redis cluster does not support password.
 
 ## Optimized
 
