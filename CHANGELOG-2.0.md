@@ -1,5 +1,9 @@
 # v2.0.15 - TBD
 
+## Fixed
+
+- [#2634](https://github.com/hyperf/hyperf/pull/2634) Fixed bug that `RedisSecondMetaGenerator` will generate the same meta.
+
 # v2.0.14 - 2020-10-12
 
 ## Added
