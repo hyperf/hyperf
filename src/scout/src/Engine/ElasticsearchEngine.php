@@ -16,7 +16,6 @@ use Elasticsearch\Client as Elastic;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Builder;
-use Hyperf\Scout\Exception\RuntimeException;
 use Hyperf\Scout\SearchableInterface;
 use Hyperf\Utils\Collection as BaseCollection;
 
@@ -167,11 +166,9 @@ class ElasticsearchEngine extends Engine
      */
     public function flush(Model $model): void
     {
-        $query = $model->newQuery()->orderBy($model->getKeyName());
-        if (! method_exists($query, 'unsearchable')) {
-            throw new RuntimeException('Call to an undefined method unsearchable.');
-        }
-        $query->unsearchable();
+        $model->newQuery()
+            ->orderBy($model->getKeyName())
+            ->unsearchable();
     }
 
     /**
