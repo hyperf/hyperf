@@ -14,6 +14,7 @@
 - [#2601](https://github.com/hyperf/hyperf/pull/2601) 修復命令 `gen:model` 因為 `getter` 和 `setter` 同時存在時，註釋 `@property` 會被 `@property-read` 覆蓋的問題。
 - [#2607](https://github.com/hyperf/hyperf/pull/2607) 修復使用 `RetryAnnotationAspect` 時，會有一定程度記憶體洩露的問題。
 - [#2624](https://github.com/hyperf/hyperf/pull/2624) 修復元件 `hyperf/testing` 因使用了 `guzzle 7.0` 和 `CURL HOOK` 導致無法正常工作的問題。
+- [#2632](https://github.com/hyperf/hyperf/pull/2632) 修復 `hyperf\redis` 元件叢集模式，無法設定密碼的問題。
 
 ## 優化
 

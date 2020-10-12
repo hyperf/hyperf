@@ -1,10 +1,10 @@
-# 驗證器
+# 模型全文檢索
 
 ## 前言
 
 > [hyperf/scout](https://github.com/hyperf/scout) 衍生於 [laravel/scout](https://github.com/laravel/scout)，我們對它進行了一些協程化改造，但保持了相同的 API。在這裏感謝一下 Laravel 開發組，實現瞭如此強大好用的組件。本文檔部分節選自 Laravel China 社區組織翻譯的 Laravel 官方文檔。
 
-Hyperf/Scout 為 Eloquent 模型的全文搜索提供了一個簡單的、基於驅動程序的解決方案。使用模型觀察員，Scout 會自動同步你的搜索索引和 Eloquent 記錄。
+Hyperf/Scout 為模型的全文搜索提供了一個簡單的、基於驅動程序的解決方案。使用模型觀察員，Scout 會自動同步你的搜索索引和模型記錄。
 
 目前，Scout 自帶了一個 Elasticsearch 驅動；而編寫自定義驅動程序很簡單，你可以自由地使用自己的搜索實現來擴展 Scout。
 
@@ -41,7 +41,7 @@ class Post extends Model
 ## 配置
 ### 配置模型索引
 
-每個 Eloquent 模型與給定的搜索「索引」同步，這個「索引」包含該模型的所有可搜索記錄。換句話説，你可以把每一個「索引」設想為一張 MySQL 數據表。默認情況下，每個模型都會被持久化到與模型的「表」名（通常是模型名稱的複數形式）相匹配的索引。你也可以通過覆蓋模型上的 `searchableAs` 方法來自定義模型的索引：
+每個模型與給定的搜索「索引」同步，這個「索引」包含該模型的所有可搜索記錄。換句話説，你可以把每一個「索引」設想為一張 MySQL 數據表。默認情況下，每個模型都會被持久化到與模型的「表」名（通常是模型名稱的複數形式）相匹配的索引。你也可以通過覆蓋模型上的 `searchableAs` 方法來自定義模型的索引：
 
     <?php
 
@@ -119,9 +119,9 @@ class Post extends Model
 
 #### 批量添加
 
-如果你想通過 Eloquent 查詢構造器將模型集合添加到搜索索引中，你也可以在 Eloquent 查詢構造器上鍊式調用 `searchable` 方法。`searchable` 會把構造器的查詢結果分塊並且將記錄添加到你的搜索索引裏。
+如果你想通過模型查詢構造器將模型集合添加到搜索索引中，你也可以在模型查詢構造器上鍊式調用 `searchable` 方法。`searchable` 會把構造器的查詢結果分塊並且將記錄添加到你的搜索索引裏。
 
-    // 使用 Eloquent 查詢構造器增加...
+    // 使用模型查詢構造器增加...
     App\Order::where('price', '>', 100)->searchable();
 
     // 使用模型關係增加記錄...
@@ -143,9 +143,9 @@ class Post extends Model
 
     $order->save();
 
-你也可以在 Eloquent 查詢語句上使用 `searchable` 方法來更新一個模型的集合。如果這個模型不存在你檢索的索引裏，就會被創建：
+你也可以在模型查詢語句上使用 `searchable` 方法來更新一個模型的集合。如果這個模型不存在你檢索的索引裏，就會被創建：
 
-    // 使用 Eloquent 查詢語句更新...
+    // 使用模型查詢語句更新...
     App\Order::where('price', '>', 100)->searchable();
 
     // 你也可以使用模型關係更新...
@@ -163,9 +163,9 @@ class Post extends Model
 
     $order->delete();
 
-如果你不想在刪除記錄之前檢索模型，可以在 Eloquent 查詢實例或集合上使用 `unsearchable` 方法：
+如果你不想在刪除記錄之前檢索模型，可以在模型查詢實例或集合上使用 `unsearchable` 方法：
 
-    // 通過 Eloquent 查詢刪除...
+    // 通過模型查詢刪除...
     App\Order::where('price', '>', 100)->unsearchable();
 
     // 通過模型關係刪除...
@@ -177,7 +177,7 @@ class Post extends Model
 <a name="pausing-indexing"></a>
 ### 暫停索引
 
-你可能需要在執行一批 Eloquent 操作的時候，不同步模型數據到搜索索引。此時你可以使用協程安全的 `withoutSyncingToSearch` 方法來執行此操作。這個方法接受一個立即執行的回調。該回調中所有的操作都不會同步到模型的索引：
+你可能需要在執行一批模型操作的時候，不同步模型數據到搜索索引。此時你可以使用協程安全的 `withoutSyncingToSearch` 方法來執行此操作。這個方法接受一個立即執行的回調。該回調中所有的操作都不會同步到模型的索引：
 
     App\Order::withoutSyncingToSearch(function () {
         // 執行模型動作...
@@ -186,16 +186,16 @@ class Post extends Model
 <a name="searching"></a>
 ## 搜索
 
-你可以使用 `search` 方法來搜索模型。`search` 方法接受一個用於搜索模型的字符串。你還需在搜索查詢上鍊式調用 `get` 方法，才能用給定的搜索語句查詢與之匹配的 Eloquent 模型：
+你可以使用 `search` 方法來搜索模型。`search` 方法接受一個用於搜索模型的字符串。你還需在搜索查詢上鍊式調用 `get` 方法，才能用給定的搜索語句查詢與之匹配的模型模型：
 
     $orders = App\Order::search('Star Trek')->get();
-Scout 搜索返回 Eloquent 模型的集合，因此你可以直接從路由或控制器返回結果，它們會被自動轉換成 JSON 格式：
+Scout 搜索返回模型模型的集合，因此你可以直接從路由或控制器返回結果，它們會被自動轉換成 JSON 格式：
 
     Route::get('/search', function () {
         return App\Order::search([])->get();
     });
 
-如果你想在它們返回 Eloquent 模型前得到原結果，你應該使用`raw` 方法:
+如果你想在它們返回模型模型前得到原結果，你應該使用`raw` 方法:
 
     $orders = App\Order::search('Star Trek')->raw();
 
@@ -215,7 +215,7 @@ Scout 允許你在搜索查詢中增加簡單的「where」語句。目前，這
 <a name="pagination"></a>
 ### 分頁
 
-除了檢索模型的集合，你也可以使用 `paginate` 方法對搜索結果進行分頁。這個方法會返回一個就像 [傳統的 Eloquent 查詢分頁](/zh-cn/db/paginator) 一樣的 `Paginator`  實例：
+除了檢索模型的集合，你也可以使用 `paginate` 方法對搜索結果進行分頁。這個方法會返回一個就像 [傳統的模型查詢分頁](/zh-cn/db/paginator) 一樣的 `Paginator`  實例：
 
     $orders = App\Order::search('Star Trek')->paginate();
 
@@ -223,7 +223,7 @@ Scout 允許你在搜索查詢中增加簡單的「where」語句。目前，這
 
     $orders = App\Order::search('Star Trek')->paginate(15);
 
-獲取到檢索結果後，就可以使用喜歡的模板引擎來渲染分頁鏈接從而顯示結果，就像傳統的 Eloquent 查詢分頁一樣：
+獲取到檢索結果後，就可以使用喜歡的模板引擎來渲染分頁鏈接從而顯示結果，就像傳統的模型查詢分頁一樣：
 
     <div class="container">
         @foreach ($orders as $order)
@@ -270,7 +270,7 @@ return [
 
 ## 與 laravel/scout 不同之處
 
-- Hyperf/Scout 是使用協程來高效同步搜索索引和 Eloquent 記錄的，無需依賴隊列機制。
+- Hyperf/Scout 是使用協程來高效同步搜索索引和模型記錄的，無需依賴隊列機制。
 - Hyperf/Scout 默認提供的是開源的 Elasticsearch 引擎，而不是閉源的 Algolia。
 
 
