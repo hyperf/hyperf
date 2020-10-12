@@ -20,7 +20,7 @@ composer require hyperf/elasticsearch
 Scout 安装完成后，使用 vendor:publish 命令来生成 Scout 配置文件。这个命令将在你的 config 目录下生成一个 scout.php 配置文件。
 
 ```bash
-php bin/hyperf vendor:publish hyperf/scout
+php bin/hyperf.php vendor:publish hyperf/scout
 ```
 
 最后，在你要做搜索的模型中添加 Hyperf\Scout\Searchable trait。这个 trait 会注册一个模型观察者来保持模型和所有驱动的同步：
