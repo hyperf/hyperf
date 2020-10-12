@@ -2,6 +2,7 @@
 
 ## Fixed
 
+- [#2634](https://github.com/hyperf/hyperf/pull/2634) Fixed bug that `RedisSecondMetaGenerator` will generate the same meta.
 - [#2639](https://github.com/hyperf/hyperf/pull/2639) Fixed exception will not be normalized for json-rpc.
 
 # v2.0.14 - 2020-10-12

@@ -137,6 +137,19 @@ class RedisMetaGeneratorTest extends TestCase
         $this->assertSame($meta->getWorkerId(), $userId % 31);
     }
 
+    public function testGetNextTimestamp()
+    {
+        $container = $this->getContainer();
+        $hConfig = $container->get(ConfigInterface::class);
+        $config = new SnowflakeConfig();
+        $metaGenerator = new RedisSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND, $hConfig);
+
+        $time = $metaGenerator->getTimestamp();
+        $nextTime = $metaGenerator->getNextTimestamp();
+        $this->assertSame($time + 1, $nextTime);
+        $this->assertSame(time(), $nextTime);
+    }
+
     protected function getContainer()
     {
         $config = new Config([
