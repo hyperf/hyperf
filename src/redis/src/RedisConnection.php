@@ -65,7 +65,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {
         parent::__construct($container, $pool);
-        $this->config = array_replace($this->config, $config);
+        $this->config = array_replace_recursive($this->config, $config);
 
         $this->reconnect();
     }
