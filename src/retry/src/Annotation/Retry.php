@@ -18,6 +18,7 @@ use Hyperf\Retry\Policy\FallbackRetryPolicy;
 use Hyperf\Retry\Policy\MaxAttemptsRetryPolicy;
 use Hyperf\Retry\Policy\SleepRetryPolicy;
 use Hyperf\Retry\RetryBudget;
+use Hyperf\Retry\RetryBudgetInterface;
 use Hyperf\Retry\SleepStrategyInterface;
 
 /**
