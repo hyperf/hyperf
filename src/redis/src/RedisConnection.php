@@ -166,7 +166,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         try {
             $seeds = $this->config['cluster']['seeds'] ?? [];
             $name = $this->config['cluster']['name'] ?? null;
-            $readTimeout = $this->config['cluster']['read_timeout'] ?? null;
+            $readTimeout = $this->config['cluster']['read_timeout'] ?? 0.0;
             $persistent = $this->config['cluster']['persistent'] ?? false;
             $timeout = $this->config['timeout'] ?? null;
             $auth = $this->config['auth'] ?? null;
