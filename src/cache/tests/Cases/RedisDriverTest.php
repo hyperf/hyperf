@@ -170,8 +170,7 @@ class RedisDriverTest extends TestCase
                     'reserved' => null,
                     'retry_interval' => 0,
                     'options' => [
-                        // TODO: Removed (string) when php version >= 7.3
-                        \Redis::OPT_SERIALIZER => (string) \Redis::SERIALIZER_PHP,
+                        \Redis::OPT_SERIALIZER => \Redis::SERIALIZER_PHP,
                     ],
                     'pool' => [
                         'min_connections' => 1,

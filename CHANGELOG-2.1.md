@@ -1,4 +1,4 @@
-# v2.0.0 - 2020-06-22
+# v2.1.0 - TBD
     
 ## Dependencies Upgrade
 
@@ -16,7 +16,7 @@
 - Removed deprecated method `parseParameters` from `Hyperf\HttpServer\CoreMiddleware`.
 - Removed deprecated const `ON_WORKER_START` and `ON_WORKER_EXIT` from `Hyperf\Utils\Coordinator\Constants`.
 - Removed deprecated method `get` from `Hyperf\Utils\Coordinator`.
-
+- Removed config `rate-limit.php`, please use `rate_limit.php` instead.
 
 ## Deprecated
 
