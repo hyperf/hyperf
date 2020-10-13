@@ -42,7 +42,7 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
                 // Route found, but the handler does not exist.
                 return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::INTERNAL_ERROR);
             }
-            $parameters = $this->parseParameters($controller, $action, $request->getParsedBody());
+            $parameters = $this->parseMethodParameters($controller, $action, $request->getParsedBody());
             try {
                 $response = $controllerInstance->{$action}(...$parameters);
             } catch (\Throwable $exception) {

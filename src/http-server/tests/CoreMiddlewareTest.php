@@ -49,7 +49,7 @@ class CoreMiddlewareTest extends TestCase
         $middleware = new CoreMiddlewareStub($container = $this->getContainer(), 'http');
         $id = rand(0, 99999);
 
-        $params = $middleware->parseParameters(DemoController::class, 'index', ['id' => $id]);
+        $params = $middleware->parseMethodParameters(DemoController::class, 'index', ['id' => $id]);
 
         $this->assertSame([$id, 'Hyperf', []], $params);
     }

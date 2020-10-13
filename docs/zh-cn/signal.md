@@ -116,8 +116,6 @@ class CoroutineServerStopHandler implements SignalHandlerInterface
 
     public function handle(int $signal): void
     {
-        // 异步队列会使用以下参数循环 pop 消息，v2.1以后版本会使用 ProcessManager::isRunning() 管理。
-        Driver::$running = false;
         ProcessManager::setRunning(false);
 
         foreach (ServerManager::list() as [$type, $server]) {
