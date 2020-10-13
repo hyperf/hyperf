@@ -16,7 +16,7 @@ class Resource
     /**
      * @return false|resource
      */
-    public static function resourceFor(string $body)
+    public static function from(string $body)
     {
         $resource = fopen('php://temp', 'r+');
         if ($body !== '') {

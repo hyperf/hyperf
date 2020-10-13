@@ -23,7 +23,7 @@ class ResourceTest extends TestCase
     public function testResourceFor()
     {
         $data = '123123';
-        $resource = Resource::resourceFor($data);
+        $resource = Resource::from($data);
         $this->assertSame('1', fread($resource, 1));
         $this->assertSame('23', fread($resource, 2));
         $this->assertSame('123', fread($resource, 10));
