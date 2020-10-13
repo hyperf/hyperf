@@ -13,6 +13,7 @@ namespace Hyperf\Guzzle;
 
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Promise\Create;
 use GuzzleHttp\Promise\FulfilledPromise;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Psr7\Uri;
@@ -70,7 +71,7 @@ class CoroutineHandler
 
         $ex = $this->checkStatusCode($client, $request);
         if ($ex !== true) {
-            return \GuzzleHttp\Promise\rejection_for($ex);
+            return Create::rejectionFor($ex);
         }
 
         $response = $this->getResponse($client, $request, $options, microtime(true) - $ms);
