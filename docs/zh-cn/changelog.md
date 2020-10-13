@@ -1,5 +1,25 @@
 # 版本更新记录
 
+# v2.0.14 - 2020-10-12
+
+## 新增
+
+- [#1172](https://github.com/hyperf/hyperf/pull/1172) 新增基于 `laravel/scout` 实现的组件 `hyperf/scout`, 可以通过搜索引擎进行模型查询。
+- [#1868](https://github.com/hyperf/hyperf/pull/1868) 新增 `Redis` 组件的哨兵模式。
+- [#1969](https://github.com/hyperf/hyperf/pull/1969) 新增组件 `hyperf/resource` and `hyperf/resource-grpc`，可以更加方便的将模型转化为 Response。
+
+## 修复
+
+- [#2594](https://github.com/hyperf/hyperf/pull/2594) 修复 `hyperf/crontab` 组件因为无法正常响应 `hyperf/signal`，导致无法停止的问题。
+- [#2601](https://github.com/hyperf/hyperf/pull/2601) 修复命令 `gen:model` 因为 `getter` 和 `setter` 同时存在时，注释 `@property` 会被 `@property-read` 覆盖的问题。
+- [#2607](https://github.com/hyperf/hyperf/pull/2607) [#2637](https://github.com/hyperf/hyperf/pull/2637) 修复使用 `RetryAnnotationAspect` 时，会有一定程度内存泄露的问题。
+- [#2624](https://github.com/hyperf/hyperf/pull/2624) 修复组件 `hyperf/testing` 因使用了 `guzzle 7.0` 和 `CURL HOOK` 导致无法正常工作的问题。
+- [#2632](https://github.com/hyperf/hyperf/pull/2632) [#2635](https://github.com/hyperf/hyperf/pull/2635) 修复 `hyperf\redis` 组件集群模式，无法设置密码的问题。
+
+## 优化
+
+- [#2603](https://github.com/hyperf/hyperf/pull/2603) 允许 `hyperf/database` 组件，`whereNull` 方法接受 `array` 作为入参。
+
 # v2.0.13 - 2020-09-28
 
 ## 新增

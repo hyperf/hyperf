@@ -33,5 +33,6 @@ class RedisSecondMetaGenerator extends RedisMetaGenerator
 
     protected function clockMovedBackwards($timestamp, $lastTimestamp)
     {
+        // Don't throw exception
     }
 }
