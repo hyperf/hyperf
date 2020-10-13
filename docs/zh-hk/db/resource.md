@@ -1,30 +1,30 @@
-# API 资源构造器
+# API 資源構造器
  
-> 支持返回 Grpc 响应的资源扩展
+> 支持返回 Grpc 響應的資源擴展
 
-## 简介
+## 簡介
 
-当构建 API 时，你往往需要一个转换层来联结你的 Model 模型和实际返回给用户的 JSON 响应。资源类能够让你以更直观简便的方式将模型和模型集合转化成 JSON。
+當構建 API 時，你往往需要一個轉換層來聯結你的 Model 模型和實際返回給用户的 JSON 響應。資源類能夠讓你以更直觀簡便的方式將模型和模型集合轉化成 JSON。
 
-## 安装
+## 安裝
 
 ```
 composer require hyperf/resource
 ```
 
-## 生成资源
+## 生成資源
 
-你可以使用 `gen:resource` 命令来生成一个资源类。默认情况下生成的资源都会被放置在应用程序的 `app/Resource` 文件夹下。资源继承自 `Hyperf\Resource\Json\JsonResource` 类：
+你可以使用 `gen:resource` 命令來生成一個資源類。默認情況下生成的資源都會被放置在應用程序的 `app/Resource` 文件夾下。資源繼承自 `Hyperf\Resource\Json\JsonResource` 類：
 
 ```bash
 php bin/hyperf.php gen:resource User
 ```
 
-### 资源集合
+### 資源集合
 
-除了生成资源转换单个模型外，你还可以生成资源集合用来转换模型的集合。这允许你在响应中包含与给定资源相关的链接与其他元信息。
+除了生成資源轉換單個模型外，你還可以生成資源集合用來轉換模型的集合。這允許你在響應中包含與給定資源相關的鏈接與其他元信息。
 
-你需要在生成资源时添加 `--collection` 标志以生成一个资源集合。或者，你也可以直接在资源的名称中包含 `Collection` 表示应该生成一个资源集合。资源集合继承自 `Hyperf\Resource\Json\ResourceCollection` 类：
+你需要在生成資源時添加 `--collection` 標誌以生成一個資源集合。或者，你也可以直接在資源的名稱中包含 `Collection` 表示應該生成一個資源集合。資源集合繼承自 `Hyperf\Resource\Json\ResourceCollection` 類：
 
 ```bash
 php bin/hyperf.php gen:resource Users --collection
@@ -32,9 +32,9 @@ php bin/hyperf.php gen:resource Users --collection
 php bin/hyperf.php gen:resource UserCollection
 ```
 
-## gRPC 资源
+## gRPC 資源
 
-> 需要额外安装 `hyperf/resource-grpc`
+> 需要額外安裝 `hyperf/resource-grpc`
 
 ```
 composer require hyperf/resource-grpc
@@ -44,9 +44,9 @@ composer require hyperf/resource-grpc
 php bin/hyperf.php gen:resource User --grpc
 ```
 
-gRPC 资源需要设置 `message` 类. 通过重写该资源类的 `expect()` 方法来实现.
+gRPC 資源需要設置 `message` 類. 通過重寫該資源類的 `expect()` 方法來實現.
 
-gRPC 服务返回时, 必须调用 `toMessage()`. 该方法会返回一个实例化的 `message` 类.
+gRPC 服務返回時, 必須調用 `toMessage()`. 該方法會返回一個實例化的 `message` 類.
 
 ```php
 <?php
@@ -73,13 +73,13 @@ class HiReplyResource extends GrpcResource
 
 ```
 
-默认生成的资源集合, 可通过继承 `Hyperf\ResourceGrpc\GrpcResource` 接口来使其支持 gRPC 返回.
+默認生成的資源集合, 可通過繼承 `Hyperf\ResourceGrpc\GrpcResource` 接口來使其支持 gRPC 返回.
 
-## 概念综述
+## 概念綜述
 
-> 这是对资源和资源集合的高度概述。强烈建议你阅读本文档的其他部分，以深入了解如何更好地自定义和使用资源。
+> 這是對資源和資源集合的高度概述。強烈建議你閲讀本文檔的其他部分，以深入瞭解如何更好地自定義和使用資源。
 
-在深入了解如何定制化编写你的资源之前，让我们先来看看在框架中如何使用资源。一个资源类表示一个单一模型需要被转换成 JSON 格式。例如，现在我们有一个简单的 `User` 资源类：
+在深入瞭解如何定製化編寫你的資源之前，讓我們先來看看在框架中如何使用資源。一個資源類表示一個單一模型需要被轉換成 JSON 格式。例如，現在我們有一個簡單的 `User` 資源類：
 
 ```php
 <?php
@@ -107,7 +107,7 @@ class User extends JsonResource
 
 ```
 
-每一个资源类都定义了一个 `toArray` 方法，在发送响应时它会返回应该被转化成 JSON 的属性数组。注意在这里我们可以直接使用 `$this` 变量来访问模型属性。这是因为资源类将自动代理属性和方法到底层模型以方便访问。你可以在控制器中返回已定义的资源：
+每一個資源類都定義了一個 `toArray` 方法，在發送響應時它會返回應該被轉化成 JSON 的屬性數組。注意在這裏我們可以直接使用 `$this` 變量來訪問模型屬性。這是因為資源類將自動代理屬性和方法到底層模型以方便訪問。你可以在控制器中返回已定義的資源：
 
 ```php
 <?php
@@ -127,9 +127,9 @@ class IndexController extends AbstractController
 
 ```
 
-### 资源集合
+### 資源集合
 
-你可以在控制器中使用 `collection` 方法来创建资源实例，以返回多个资源的集合或分页响应：
+你可以在控制器中使用 `collection` 方法來創建資源實例，以返回多個資源的集合或分頁響應：
 
 ```php
 
@@ -148,13 +148,13 @@ class IndexController extends AbstractController
 
 ```
 
-当然了，使用如上方法你将不能添加任何附加的元数据和集合一起返回。如果你需要自定义资源集合响应，你需要创建一个专用的资源来表示集合：
+當然了，使用如上方法你將不能添加任何附加的元數據和集合一起返回。如果你需要自定義資源集合響應，你需要創建一個專用的資源來表示集合：
 
 ```bash
 php bin/hyperf.php gen:resource UserCollection
 ```
 
-你可以轻松的在已生成的资源集合类中定义任何你想在响应中返回的元数据：
+你可以輕鬆的在已生成的資源集合類中定義任何你想在響應中返回的元數據：
 
 ```php
 <?php
@@ -183,7 +183,7 @@ class UserCollection extends ResourceCollection
 
 ```
 
-你可以在者控制器中返回已定义的资源集合：
+你可以在者控制器中返回已定義的資源集合：
 
 ```php
 <?php
@@ -202,9 +202,9 @@ class IndexController extends AbstractController
 
 ```
 
-### 保护集合的键
+### 保護集合的鍵
 
-当从路由返回资源集合时，将重置集合的键，使它们以简单的数字顺序。但是，可以将 `preserveKeys` 属性添加到资源类中，指示是否应保留集合键：
+當從路由返回資源集合時，將重置集合的鍵，使它們以簡單的數字順序。但是，可以將 `preserveKeys` 屬性添加到資源類中，指示是否應保留集合鍵：
 
 ```php
 <?php
@@ -216,7 +216,7 @@ use Hyperf\Resource\Json\JsonResource;
 class User extends JsonResource
 {
     /**
-     * 指示是否应保留资源的集合键。
+     * 指示是否應保留資源的集合鍵。
      *
      * @var bool
      */
@@ -239,7 +239,7 @@ class User extends JsonResource
 
 ```
 
-当 `preserveKeys` 属性被设置为 `true`，集合的键将会被保护：
+當 `preserveKeys` 屬性被設置為 `true`，集合的鍵將會被保護：
 
 ```php
 <?php
@@ -259,11 +259,11 @@ class IndexController extends AbstractController
 
 ```
 
-### 自定义基础资源类
+### 自定義基礎資源類
 
-通常，资源集合的 `$this->collection` 属性会自动填充，结果是将集合的每个项映射到其单个资源类。假定单一资源类是集合的类名，但结尾没有 `Collection` 字符串。
+通常，資源集合的 `$this->collection` 屬性會自動填充，結果是將集合的每個項映射到其單個資源類。假定單一資源類是集合的類名，但結尾沒有 `Collection` 字符串。
 
-例如，`UserCollection` 将给定的用户实例映射到 `User` 资源中。若要自定义此行为，你可以重写资源集合的 `$collects` 属性：
+例如，`UserCollection` 將給定的用户實例映射到 `User` 資源中。若要自定義此行為，你可以重寫資源集合的 `$collects` 屬性：
 
 ```php
 <?php
@@ -275,7 +275,7 @@ use Hyperf\Resource\Json\ResourceCollection;
 class UserCollection extends ResourceCollection
 {
     /**
-     * collects 属性定义了资源类。
+     * collects 屬性定義了資源類。
      *
      * @var string
      */
@@ -299,11 +299,11 @@ class UserCollection extends ResourceCollection
 
 ```
 
-## 编写资源
+## 編寫資源
 
-> 如果你还没有阅读 [概念综述](#概念综述)，那么在继续阅读本文档前，强烈建议你去阅读一下。
+> 如果你還沒有閲讀 [概念綜述](#概念綜述)，那麼在繼續閲讀本文檔前，強烈建議你去閲讀一下。
 
-从本质上来说，资源的作用很简单。它们只需要将一个给定的模型转换成一个数组。所以每一个资源都包含一个 `toArray` 方法用来将你的模型属性转换成一个可以返回给用户的 API 友好数组：
+從本質上來説，資源的作用很簡單。它們只需要將一個給定的模型轉換成一個數組。所以每一個資源都包含一個 `toArray` 方法用來將你的模型屬性轉換成一個可以返回給用户的 API 友好數組：
 
 ```php
 <?php
@@ -331,7 +331,7 @@ class User extends JsonResource
 
 ```
 
-你可以在控制器中返回已经定义的资源：
+你可以在控制器中返回已經定義的資源：
 
 ```php
 <?php
@@ -351,9 +351,9 @@ class IndexController extends AbstractController
 
 ```
 
-### 关联
+### 關聯
 
-如果你希望在响应中包含关联资源，你只需要将它们添加到 `toArray` 方法返回的数组中。在下面这个例子里，我们将使用 `Post` 资源的 `collection` 方法将用户的文章添加到资源响应中：
+如果你希望在響應中包含關聯資源，你只需要將它們添加到 `toArray` 方法返回的數組中。在下面這個例子裏，我們將使用 `Post` 資源的 `collection` 方法將用户的文章添加到資源響應中：
 ```php
 <?php
 
@@ -381,11 +381,11 @@ class User extends JsonResource
 
 ```
 
-> 如果你只想在关联已经加载时才添加关联资源，请查看相关文档。
+> 如果你只想在關聯已經加載時才添加關聯資源，請查看相關文檔。
 
-### 资源集合
+### 資源集合
 
-资源是将单个模型转换成数组，而资源集合是将多个模型的集合转换成数组。所有的资源都提供了一个 `collection` 方法来生成一个 「临时」 资源集合，所以你没有必要为每一个模型类型都编写一个资源集合类：
+資源是將單個模型轉換成數組，而資源集合是將多個模型的集合轉換成數組。所有的資源都提供了一個 `collection` 方法來生成一個 「臨時」 資源集合，所以你沒有必要為每一個模型類型都編寫一個資源集合類：
 
 ```php
 <?php
@@ -404,7 +404,7 @@ class IndexController extends AbstractController
 
 ```
 
-要自定义返回集合的元数据，则仍需要定义一个资源集合：
+要自定義返回集合的元數據，則仍需要定義一個資源集合：
 
 ```php
 <?php
@@ -433,7 +433,7 @@ class UserCollection extends ResourceCollection
 
 ```
 
-和单个资源一样，你可以在控制器中直接返回资源集合：
+和單個資源一樣，你可以在控制器中直接返回資源集合：
 
 ```php
 <?php
@@ -452,9 +452,9 @@ class IndexController extends AbstractController
 
 ```
 
-### 数据包裹
+### 數據包裹
 
-默认情况下，当资源响应被转换成 JSON 时，顶层资源将会被包裹在 `data` 键中。因此一个典型的资源集合响应如下所示：
+默認情況下，當資源響應被轉換成 JSON 時，頂層資源將會被包裹在 `data` 鍵中。因此一個典型的資源集合響應如下所示：
 
 ```json
 
@@ -475,7 +475,7 @@ class IndexController extends AbstractController
 
 ```
 
-你可以使用资源基类的 `withoutWrapping` 方法来禁用顶层资源的包裹。
+你可以使用資源基類的 `withoutWrapping` 方法來禁用頂層資源的包裹。
 
 ```php
 <?php
@@ -494,13 +494,13 @@ class IndexController extends AbstractController
 
 ```
 
-> withoutWrapping 方法只会禁用顶层资源的包裹，不会删除你手动添加到资源集合中的 data 键。而且只会在当前的资源或资源集合中生效，不影响全局。
+> withoutWrapping 方法只會禁用頂層資源的包裹，不會刪除你手動添加到資源集合中的 data 鍵。而且只會在當前的資源或資源集合中生效，不影響全局。
 
-#### 包裹嵌套资源
+#### 包裹嵌套資源
 
-你可以完全自由地决定资源关联如何被包裹。如果你希望无论怎样嵌套，都将所有资源集合包裹在 `data` 键中，那么你需要为每个资源都定义一个资源集合类，并将返回的集合包裹在 `data` 键中。
+你可以完全自由地決定資源關聯如何被包裹。如果你希望無論怎樣嵌套，都將所有資源集合包裹在 `data` 鍵中，那麼你需要為每個資源都定義一個資源集合類，並將返回的集合包裹在 `data` 鍵中。
 
-当然，你可能会担心这样顶层资源将会被包裹在两个 `data `键中。请放心， 组件将永远不会让你的资源被双层包裹，因此你不必担心被转换的资源集合会被多重嵌套：
+當然，你可能會擔心這樣頂層資源將會被包裹在兩個 `data `鍵中。請放心， 組件將永遠不會讓你的資源被雙層包裹，因此你不必擔心被轉換的資源集合會被多重嵌套：
 
 ```php
 <?php
@@ -526,9 +526,9 @@ class UserCollection extends ResourceCollection
 
 ```
 
-#### 分页
+#### 分頁
 
-当在资源响应中返回分页集合时，即使你调用了 `withoutWrapping` 方法， 组件也会将你的资源数据包裹在 `data` 键中。这是因为分页响应中总会有 `meta` 和 `links` 键包含着分页状态信息：
+當在資源響應中返回分頁集合時，即使你調用了 `withoutWrapping` 方法， 組件也會將你的資源數據包裹在 `data` 鍵中。這是因為分頁響應中總會有 `meta` 和 `links` 鍵包含着分頁狀態信息：
 
 ```json
 
@@ -563,7 +563,7 @@ class UserCollection extends ResourceCollection
     }
 ```
 
-你可以将分页实例传递给资源的 `collection` 方法或者自定义的资源集合：
+你可以將分頁實例傳遞給資源的 `collection` 方法或者自定義的資源集合：
 
 ```php
 <?php
@@ -582,7 +582,7 @@ class IndexController extends AbstractController
 }
 ```
 
-分页响应中总有 `meta` 和 `links` 键包含着分页状态信息：
+分頁響應中總有 `meta` 和 `links` 鍵包含着分頁狀態信息：
 
 ```json
 
@@ -617,9 +617,9 @@ class IndexController extends AbstractController
     }
 ```
 
-### 条件属性
+### 條件屬性
 
-有些时候，你可能希望在给定条件满足时添加属性到资源响应里。例如，你可能希望如果当前用户是 「管理员」 时添加某个值到资源响应中。在这种情况下组件提供了一些辅助方法来帮助你解决问题。 `when` 方法可以被用来有条件地向资源响应添加属性：
+有些時候，你可能希望在給定條件滿足時添加屬性到資源響應裏。例如，你可能希望如果當前用户是 「管理員」 時添加某個值到資源響應中。在這種情況下組件提供了一些輔助方法來幫助你解決問題。 `when` 方法可以被用來有條件地向資源響應添加屬性：
 
 ```php
 <?php
@@ -648,9 +648,9 @@ class User extends JsonResource
 
 ```
 
-在上面这个例子中，只有当 `isAdmin` 方法返回 `true` 时， `secret` 键才会最终在资源响应中被返回。如果该方法返回 `false` ，则 `secret` 键将会在资源响应被发送给客户端之前被删除。 `when` 方法可以使你避免使用条件语句拼接数组，转而用更优雅的方式来编写你的资源。
+在上面這個例子中，只有當 `isAdmin` 方法返回 `true` 時， `secret` 鍵才會最終在資源響應中被返回。如果該方法返回 `false` ，則 `secret` 鍵將會在資源響應被髮送給客户端之前被刪除。 `when` 方法可以使你避免使用條件語句拼接數組，轉而用更優雅的方式來編寫你的資源。
 
-`when` 方法也接受闭包作为其第二个参数，只有在给定条件为 `true` 时，才从闭包中计算返回的值：
+`when` 方法也接受閉包作為其第二個參數，只有在給定條件為 `true` 時，才從閉包中計算返回的值：
 
 ```php
 <?php
@@ -681,9 +681,9 @@ class User extends JsonResource
 
 ```
 
-#### 有条件的合并数据
+#### 有條件的合併數據
 
-有些时候，你可能希望在给定条件满足时添加多个属性到资源响应里。在这种情况下，你可以使用 `mergeWhen` 方法在给定的条件为 `true` 时将多个属性添加到响应中：
+有些時候，你可能希望在給定條件滿足時添加多個屬性到資源響應裏。在這種情況下，你可以使用 `mergeWhen` 方法在給定的條件為 `true` 時將多個屬性添加到響應中：
 
 ```php
 <?php
@@ -715,15 +715,15 @@ class User extends JsonResource
 
 ```
 
-同理，如果给定的条件为 `false` 时，则这些属性将会在资源响应被发送给客户端之前被移除。
+同理，如果給定的條件為 `false` 時，則這些屬性將會在資源響應被髮送給客户端之前被移除。
 
-> `mergeWhen` 方法不应该被使用在混合字符串和数字键的数组中。此外，它也不应该被使用在不按顺序排列的数字键的数组中。
+> `mergeWhen` 方法不應該被使用在混合字符串和數字鍵的數組中。此外，它也不應該被使用在不按順序排列的數字鍵的數組中。
 
-### 条件关联
+### 條件關聯
 
-除了有条件地添加属性之外，你还可以根据模型关联是否已加载来有条件地在你的资源响应中包含关联。这允许你在控制器中决定加载哪些模型关联，这样你的资源可以在模型关联被加载后才添加它们。
+除了有條件地添加屬性之外，你還可以根據模型關聯是否已加載來有條件地在你的資源響應中包含關聯。這允許你在控制器中決定加載哪些模型關聯，這樣你的資源可以在模型關聯被加載後才添加它們。
 
-这样做可以避免在你的资源中出现 「N+1」 查询问题。你应该使用 `whenLoaded` 方法来有条件的加载关联。为了避免加载不必要的关联，此方法接受关联的名称而不是关联本身作为其参数：
+這樣做可以避免在你的資源中出現 「N+1」 查詢問題。你應該使用 `whenLoaded` 方法來有條件的加載關聯。為了避免加載不必要的關聯，此方法接受關聯的名稱而不是關聯本身作為其參數：
 
 ```php
 <?php
@@ -752,11 +752,11 @@ class User extends JsonResource
 
 ```
 
-在上面这个例子中，如果关联没有被加载，则 `posts` 键将会在资源响应被发送给客户端之前被删除。
+在上面這個例子中，如果關聯沒有被加載，則 `posts` 鍵將會在資源響應被髮送給客户端之前被刪除。
 
-#### 条件中间表信息
+#### 條件中間表信息
 
-除了在你的资源响应中有条件地包含关联外，你还可以使用 `whenPivotLoaded`  方法有条件地从多对多关联的中间表中添加数据。 `whenPivotLoaded` 方法接受的第一个参数为中间表的名称。第二个参数是一个闭包，它定义了在模型上如果中间表信息可用时要返回的值：
+除了在你的資源響應中有條件地包含關聯外，你還可以使用 `whenPivotLoaded`  方法有條件地從多對多關聯的中間表中添加數據。 `whenPivotLoaded` 方法接受的第一個參數為中間表的名稱。第二個參數是一個閉包，它定義了在模型上如果中間表信息可用時要返回的值：
 
 ```php
 <?php
@@ -786,7 +786,7 @@ class User extends JsonResource
 
 ```
 
-如果你的中间表使用的是 `pivot` 以外的访问器，你可以使用 `whenPivotLoadedAs`方法：
+如果你的中間表使用的是 `pivot` 以外的訪問器，你可以使用 `whenPivotLoadedAs`方法：
 
 ```php
 <?php
@@ -816,9 +816,9 @@ class User extends JsonResource
 
 ```
 
-### 添加元数据
+### 添加元數據
 
-一些 JSON API 标准需要你在资源和资源集合响应中添加元数据。这通常包括资源或相关资源的 `links` ，或一些关于资源本身的元数据。如果你需要返回有关资源的其他元数据，只需要将它们包含在 `toArray` 方法中即可。例如在转换资源集合时你可能需要添加 `links` 信息：
+一些 JSON API 標準需要你在資源和資源集合響應中添加元數據。這通常包括資源或相關資源的 `links` ，或一些關於資源本身的元數據。如果你需要返回有關資源的其他元數據，只需要將它們包含在 `toArray` 方法中即可。例如在轉換資源集合時你可能需要添加 `links` 信息：
 
 ```php
 <?php
@@ -847,11 +847,11 @@ class UserCollection extends ResourceCollection
 
 ```
 
-当添加额外的元数据到你的资源中时，你不必担心会覆盖在返回分页响应时自动添加的 `links` 或 `meta` 键。你添加的任何其他 `links` 会与分页响应添加的 `links` 相合并。
+當添加額外的元數據到你的資源中時，你不必擔心會覆蓋在返回分頁響應時自動添加的 `links` 或 `meta` 鍵。你添加的任何其他 `links` 會與分頁響應添加的 `links` 相合並。
 
-#### 顶层元数据
+#### 頂層元數據
 
-有时候你可能希望当资源被作为顶层资源返回时添加某些元数据到资源响应中。这通常包括整个响应的元信息。你可以在资源类中添加 `with` 方法来定义元数据。此方法应返回一个元数据数组，当资源被作为顶层资源渲染时，这个数组将会被包含在资源响应中：
+有時候你可能希望當資源被作為頂層資源返回時添加某些元數據到資源響應中。這通常包括整個響應的元信息。你可以在資源類中添加 `with` 方法來定義元數據。此方法應返回一個元數據數組，當資源被作為頂層資源渲染時，這個數組將會被包含在資源響應中：
 
 ```php
 <?php
@@ -889,9 +889,9 @@ class UserCollection extends ResourceCollection
 
 ```
 
-#### 构造资源时添加元数据
+#### 構造資源時添加元數據
 
-你还可以在者控制器中构造资源实例时添加顶层数据。所有资源都可以使用 `additional` 方法来接受应该被添加到资源响应中的数据数组：
+你還可以在者控制器中構造資源實例時添加頂層數據。所有資源都可以使用 `additional` 方法來接受應該被添加到資源響應中的數據數組：
 
 ```php
 <?php
@@ -914,9 +914,9 @@ class IndexController extends AbstractController
 
 ```
 
-## 响应资源
+## 響應資源
 
-就像你知道的那样，资源可以直接在控制器中被返回：
+就像你知道的那樣，資源可以直接在控制器中被返回：
 
 ```php
 <?php
@@ -941,4 +941,4 @@ class IndexController extends AbstractController
 
 ```
 
-如你想设置响应头信息, 状态码等, 通过调用 `toResponse()` 方法获取到响应对象进行设置.
+如你想設置響應頭信息, 狀態碼等, 通過調用 `toResponse()` 方法獲取到響應對象進行設置.

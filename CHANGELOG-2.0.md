@@ -1,4 +1,12 @@
-# v2.0.14 - TBD
+# v2.0.15 - TBD
+
+## Fixed
+
+- [#2634](https://github.com/hyperf/hyperf/pull/2634) [#2640](https://github.com/hyperf/hyperf/pull/2640) Fixed bug that `RedisSecondMetaGenerator` will generate the same meta.
+- [#2639](https://github.com/hyperf/hyperf/pull/2639) Fixed exception will not be normalized for json-rpc.
+- [#2643](https://github.com/hyperf/hyperf/pull/2643) Fixed undefined method unsearchable for `scout:flush`.
+
+# v2.0.14 - 2020-10-12
 
 ## Added
 
@@ -10,7 +18,9 @@
 
 - [#2594](https://github.com/hyperf/hyperf/pull/2594) Fixed crontab does not stops when using signal.
 - [#2601](https://github.com/hyperf/hyperf/pull/2601) Fixed `@property` will be replaced by `@property-read` when the property has `getter` and `setter` at the same time.
-- [#2607](https://github.com/hyperf/hyperf/pull/2607) Fixed memory leak in `RetryAnnotationAspect`.
+- [#2607](https://github.com/hyperf/hyperf/pull/2607) [#2637](https://github.com/hyperf/hyperf/pull/2637) Fixed memory leak in `RetryAnnotationAspect`.
+- [#2624](https://github.com/hyperf/hyperf/pull/2624) Fixed http client does not works when using guzzle 7.0 and curl hook for `hyperf/testing`.
+- [#2632](https://github.com/hyperf/hyperf/pull/2632) [#2635](https://github.com/hyperf/hyperf/pull/2635) Fixed redis cluster does not support password.
 
 ## Optimized
 
