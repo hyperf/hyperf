@@ -16,9 +16,12 @@ class Resource
     /**
      * @return false|resource
      */
-    public static function from(string $body)
+    public static function from(string $body, ?string $filename = null)
     {
-        $resource = fopen('php://temp', 'r+');
+        if (is_null($filename)) {
+            $filename = 'php://temp';
+        }
+        $resource = fopen($filename, 'r+');
         if ($body !== '') {
             fwrite($resource, $body);
             fseek($resource, 0);

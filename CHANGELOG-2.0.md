@@ -1,5 +1,9 @@
 # v2.0.15 - TBD
 
+## Added
+
+- [#2654](https://github.com/hyperf/hyperf/pull/2654) Added method `Hyperf\Utils\Resource::from` which can convert string to resource.
+
 ## Fixed
 
 - [#2634](https://github.com/hyperf/hyperf/pull/2634) [#2640](https://github.com/hyperf/hyperf/pull/2640) Fixed bug that `RedisSecondMetaGenerator` will generate the same meta.
