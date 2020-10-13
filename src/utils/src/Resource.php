@@ -14,6 +14,7 @@ namespace Hyperf\Utils;
 class Resource
 {
     /**
+     * TODO: Swoole file hook does not support `php://temp` and `php://memory`.
      * @return false|resource
      */
     public static function from(string $body, ?string $filename = null)
