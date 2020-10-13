@@ -13,8 +13,6 @@ namespace Hyperf\Utils;
 
 class Resource
 {
-    const MAX_LENGTH = 1024 * 1024 * 2;
-
     /**
      * TODO: Swoole file hook does not support `php://temp` and `php://memory`.
      * @return false|resource
