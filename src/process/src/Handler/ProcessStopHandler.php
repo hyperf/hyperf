@@ -9,15 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\AsyncQueue\Signal;
+namespace Hyperf\Process\Handler;
 
 use Hyperf\Process\ProcessManager;
 use Hyperf\Signal\SignalHandlerInterface;
 
-/**
- * @deprecated v2.2 use Hyperf\Process\Handler\ProcessStopHandler instead.
- */
-class DriverStopHandler implements SignalHandlerInterface
+class ProcessStopHandler implements SignalHandlerInterface
 {
     public function listen(): array
     {

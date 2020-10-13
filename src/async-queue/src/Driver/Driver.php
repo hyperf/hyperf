@@ -19,6 +19,7 @@ use Hyperf\AsyncQueue\Event\RetryHandle;
 use Hyperf\AsyncQueue\Exception\InvalidPackerException;
 use Hyperf\AsyncQueue\MessageInterface;
 use Hyperf\Contract\PackerInterface;
+use Hyperf\Process\ProcessManager;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Coroutine\Concurrent;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
@@ -27,12 +28,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 abstract class Driver implements DriverInterface
 {
-    /**
-     * @var bool
-     * @deprecated v2.1 use ProcessManager::isRunning() instead.
-     */
-    public static $running = true;
-
     /**
      * @var ContainerInterface
      */
@@ -85,7 +80,7 @@ abstract class Driver implements DriverInterface
         $messageCount = 0;
         $maxMessages = Arr::get($this->config, 'max_messages', 0);
 
-        while (self::$running) {
+        while (ProcessManager::isRunning()) {
             [$data, $message] = $this->pop();
 
             if ($data === false) {

@@ -21,12 +21,6 @@ use Psr\Container\ContainerInterface;
 class Builder
 {
     /**
-     * @deprecated v2.0
-     * @var string
-     */
-    protected $name = 'default';
-
-    /**
      * @var ContainerInterface
      */
     protected $container;

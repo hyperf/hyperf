@@ -235,15 +235,6 @@ class CoreMiddleware implements CoreMiddlewareInterface
     }
 
     /**
-     * Keep it to maintain backward compatibility. Users may have extended core middleware.
-     * @deprecated
-     */
-    protected function parseParameters(string $controller, string $action, array $arguments): array
-    {
-        return $this->parseMethodParameters($controller, $action, $arguments);
-    }
-
-    /**
      * Parse the parameters of method definitions, and then bind the specified arguments or
      * get the value from DI container, combine to a argument array that should be injected
      * and return the array.
