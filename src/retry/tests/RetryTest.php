@@ -81,7 +81,7 @@ class RetryTest extends TestCase
             return ++$i;
         });
         $this->assertLessThan(11, $result);
-        $this->assertGreaterThan(6, $result);
+        $this->assertGreaterThan(5, $result);
     }
 
     public function testFallback()
