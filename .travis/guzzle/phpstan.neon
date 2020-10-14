@@ -23,6 +23,7 @@ parameters:
     - %currentWorkingDirectory%/src/swagger/*
     - %currentWorkingDirectory%/src/validation/*
     - %currentWorkingDirectory%/src/view/src/Engine/*
+    - %currentWorkingDirectory%/src/server/src/SwowServer.php
     - %currentWorkingDirectory%/src/filesystem/src/Adapter/CosAdapterFactory.php
     - %currentWorkingDirectory%/src/metric/src/Adapter/*
     - %currentWorkingDirectory%/src/metric/src/ConfigProvider.php
