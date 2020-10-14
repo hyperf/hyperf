@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Guzzle;
 
+use GuzzleHttp\Promise\Create;
 use GuzzleHttp\Promise\FulfilledPromise;
 use Hyperf\Pool\SimplePool\PoolFactory;
 use Psr\Http\Message\RequestInterface;
@@ -78,7 +79,7 @@ class PoolHandler extends CoroutineHandler
             $ex = $this->checkStatusCode($client, $request);
             if ($ex !== true) {
                 $connection->close();
-                return \GuzzleHttp\Promise\rejection_for($ex);
+                return Create::rejectionFor($ex);
             }
 
             $response = $this->getResponse($client, $request, $options, microtime(true) - $ms);
