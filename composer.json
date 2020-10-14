@@ -44,6 +44,7 @@
         "google/protobuf": "^3.6.1",
         "grpc/grpc": "^1.15",
         "guzzlehttp/guzzle": "^6.3|^7.0",
+        "hyperf/engine": "dev-master",
         "influxdb/influxdb-php": "^1.15.0",
         "ircmaxell/random-lib": "^1.2",
         "jcchavezs/zipkin-opentracing": "^0.1.5",

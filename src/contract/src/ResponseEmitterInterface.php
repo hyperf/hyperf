@@ -12,13 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Contract;
 
 use Psr\Http\Message\ResponseInterface;
-use Swoole\Http\Response;
-use Swow\Http\Server\Session;
 
 interface ResponseEmitterInterface
 {
-    /**
-     * @param Response|Session $connection
-     */
     public function emit(ResponseInterface $response, $connection, bool $withContent = true);
 }
