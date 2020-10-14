@@ -17,6 +17,7 @@
 - Removed deprecated const `ON_WORKER_START` and `ON_WORKER_EXIT` from `Hyperf\Utils\Coordinator\Constants`.
 - Removed deprecated method `get` from `Hyperf\Utils\Coordinator`.
 - Removed config `rate-limit.php`, please use `rate_limit.php` instead.
+- Removed useless class `Hyperf\Resource\Response\ResponseEmitter`.
 
 ## Deprecated
 
