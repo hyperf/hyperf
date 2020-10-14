@@ -12,8 +12,6 @@ declare(strict_types=1);
 namespace HyperfTest\HttpServer\Stub;
 
 use Hyperf\HttpServer\Server;
-use Swoole\Http\Request as SwooleRequest;
-use Swoole\Http\Response as SwooleResponse;
 
 class ServerStub extends Server
 {
