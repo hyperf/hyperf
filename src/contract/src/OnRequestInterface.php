@@ -16,5 +16,9 @@ use Swoole\Http\Response as SwooleResponse;
 
 interface OnRequestInterface
 {
-    public function onRequest(SwooleRequest $request, SwooleResponse $response): void;
+    /**
+     * @param SwooleRequest $request
+     * @param SwooleResponse $response
+     */
+    public function onRequest($request, $response): void;
 }

@@ -13,6 +13,7 @@ namespace Hyperf\Server;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
+use Hyperf\Engine\HttpServer;
 use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
 use Hyperf\Server\Event\MainCoroutineServerStart;
@@ -23,7 +24,6 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Swow\Coroutine;
-use Swow\Http\Server as HttpServer;
 
 class SwowServer implements ServerInterface
 {
@@ -52,6 +52,11 @@ class SwowServer implements ServerInterface
      */
     protected $server;
 
+    /**
+     * @var bool
+     */
+    protected $mainServerStarted = false;
+
     public function __construct(ContainerInterface $container, LoggerInterface $logger, EventDispatcherInterface $dispatcher)
     {
         $this->container = $container;
@@ -72,7 +77,7 @@ class SwowServer implements ServerInterface
         $servers = ServerManager::list();
         $config = $this->config->toArray();
         foreach ($servers as $name => [$type, $server]) {
-            Coroutine::create(function () use ($name, $server, $config) {
+            Coroutine::run(function () use ($name, $server, $config) {
                 if (! $this->mainServerStarted) {
                     $this->mainServerStarted = true;
                     $this->eventDispatcher->dispatch(new MainCoroutineServerStart($name, $server, $config));
@@ -112,32 +117,6 @@ class SwowServer implements ServerInterface
         }
     }
 
-    protected function handle(HttpServer $server)
-    {
-        // $this->server->handle('/', static function ($request, $response) use ($handler, $method) {
-        //     \Swoole\Coroutine::create(static function () use ($request, $response, $handler, $method) {
-        //         $handler->{$method}($request, $response);
-        //     });
-        // });
-        Coroutine::run(static function () use ($server) {
-            while (true) {
-                try {
-                    $server->acceptSession();
-                    Coroutine::run(function () {
-                        try {
-                            while (true) {
-                                $request = null;
-                                $request = $session->recvHttpRequest();
-                            }
-                        } catch (\Throwable $exception) {
-                        }
-                    });
-                } catch (\Throwable $exception) {
-                }
-            }
-        });
-    }
-
     protected function bindServerCallbacks($server, int $type, string $name, array $callbacks)
     {
         switch ($type) {
@@ -148,7 +127,7 @@ class SwowServer implements ServerInterface
                         $handler->initCoreMiddleware($name);
                     }
                     if ($server instanceof HttpServer) {
-                        $this->handle($server);
+                        $server->handle([$handler, $method]);
                     }
                 }
                 return;
@@ -217,8 +196,8 @@ class SwowServer implements ServerInterface
     {
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
-                $server = new HttpServer();
-                $server->bind($host, $port)->listen();
+                $server = new HttpServer($this->logger);
+                $server->bind($host, $port);
                 return $server;
             case ServerInterface::SERVER_WEBSOCKET:
                 // return new Coroutine\Http\Server($host, $port, false, true);
