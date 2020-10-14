@@ -75,7 +75,7 @@ class HttpServer extends Server
         return new HttpCoreMiddleware($this->container, $this->protocol, $this->responseBuilder, $this->serverName);
     }
 
-    protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array
+    protected function initRequestAndResponse($request, $response): array
     {
         // Initialize PSR-7 Request and Response objects.
         $psr7Request = Psr7Request::loadFromSwooleRequest($request);

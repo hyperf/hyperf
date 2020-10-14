@@ -17,7 +17,7 @@ use Swoole\Http\Response as SwooleResponse;
 
 class ServerStub extends Server
 {
-    public function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array
+    public function initRequestAndResponse($request, $response): array
     {
         return parent::initRequestAndResponse($request, $response);
     }
