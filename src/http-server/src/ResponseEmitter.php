@@ -18,7 +18,10 @@ use Swoole\Http\Response;
 
 class ResponseEmitter implements ResponseEmitterInterface
 {
-    public function emit(ResponseInterface $response, Response $swooleResponse, bool $withContent = true)
+    /**
+     * @param Response $swooleResponse
+     */
+    public function emit(ResponseInterface $response, $swooleResponse, bool $withContent = true)
     {
         if (strtolower($swooleResponse->header['Upgrade'] ?? '') === 'websocket') {
             return;

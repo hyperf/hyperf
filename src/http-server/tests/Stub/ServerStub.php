@@ -12,12 +12,10 @@ declare(strict_types=1);
 namespace HyperfTest\HttpServer\Stub;
 
 use Hyperf\HttpServer\Server;
-use Swoole\Http\Request as SwooleRequest;
-use Swoole\Http\Response as SwooleResponse;
 
 class ServerStub extends Server
 {
-    public function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array
+    public function initRequestAndResponse($request, $response): array
     {
         return parent::initRequestAndResponse($request, $response);
     }
