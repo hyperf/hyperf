@@ -19,6 +19,13 @@
 - Removed config `rate-limit.php`, please use `rate_limit.php` instead.
 - Removed useless class `Hyperf\Resource\Response\ResponseEmitter`.
 
+## Changed
+
+- `Hyperf\Utils\Coroutine::parentId` which returns the parent coroutine ID
+  * Returns 0 when running in the top level coroutine.
+  * Throws RunningInNonCoroutineException when running in non-coroutine context
+  * Throws CoroutineDestroyedException when the coroutine has been destroyed
+
 ## Deprecated
 
 - `Hyperf\AsyncQueue\Signal\DriverStopHandler` will be deprecated in v2.2, please use `Hyperf\Process\Handler\ProcessStopHandler` instead.

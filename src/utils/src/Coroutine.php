@@ -13,6 +13,8 @@ namespace Hyperf\Utils;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Engine\Coroutine as Co;
+use Hyperf\Engine\Exception\CoroutineDestroyedException;
+use Hyperf\Engine\Exception\RunningInNonCoroutineException;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine as SwooleCoroutine;
@@ -42,23 +44,13 @@ class Coroutine
 
     /**
      * Returns the parent coroutine ID.
-     * Returns -1 when running in the top level coroutine.
-     * Returns null when running in non-coroutine context.
-     *
-     * @see https://github.com/swoole/swoole-src/pull/2669/files#diff-3bdf726b0ac53be7e274b60d59e6ec80R940
+     * Returns 0 when running in the top level coroutine.
+     * @throws RunningInNonCoroutineException when running in non-coroutine context
+     * @throws CoroutineDestroyedException when the coroutine has been destroyed
      */
-    public static function parentId(?int $coroutineId = null): ?int
+    public static function parentId(?int $coroutineId = null): int
     {
-        if ($coroutineId) {
-            $cid = SwooleCoroutine::getPcid($coroutineId);
-        } else {
-            $cid = SwooleCoroutine::getPcid();
-        }
-        if ($cid === false) {
-            return null;
-        }
-
-        return $cid;
+        return Co::pid($coroutineId);
     }
 
     /**
