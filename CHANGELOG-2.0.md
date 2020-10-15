@@ -10,6 +10,10 @@
 - [#2639](https://github.com/hyperf/hyperf/pull/2639) Fixed exception will not be normalized for json-rpc.
 - [#2643](https://github.com/hyperf/hyperf/pull/2643) Fixed undefined method unsearchable for `scout:flush`.
 
+## Optimized
+
+- [#2656](https://github.com/hyperf/hyperf/pull/2656) Optimized the response when parse parameters failed for json-rpc.
+
 # v2.0.14 - 2020-10-12
 
 ## Added
