@@ -59,8 +59,9 @@ class FrequencyTest extends TestCase
             $channel->push(true);
         });
 
-        new ConstantFrequencyStub($pool);
-        Coroutine::sleep(0.01);
+        $stub = new ConstantFrequencyStub($pool);
+        Coroutine::sleep(0.002);
+        $stub->clear();
         $this->assertGreaterThan(0, $channel->length());
     }
 

@@ -49,7 +49,7 @@ class ServerConfig implements Arrayable
         }
 
         $this->setType($config['type'] ?? Server::class)
-            ->setMode($config['mode'] ?? SWOOLE_BASE)
+            ->setMode($config['mode'] ?? 0)
             ->setServers($servers)
             ->setProcesses($config['processes'] ?? [])
             ->setSettings($config['settings'] ?? [])
