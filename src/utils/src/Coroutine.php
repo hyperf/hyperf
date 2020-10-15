@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Engine\Coroutine as Co;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine as SwooleCoroutine;
@@ -36,7 +37,7 @@ class Coroutine
      */
     public static function id(): int
     {
-        return SwooleCoroutine::getCid();
+        return Co::id();
     }
 
     /**
@@ -66,7 +67,7 @@ class Coroutine
      */
     public static function create(callable $callable): int
     {
-        $result = SwooleCoroutine::create(function () use ($callable) {
+        $coroutine = Co::create(function () use ($callable) {
             try {
                 call($callable);
             } catch (Throwable $throwable) {
@@ -86,11 +87,11 @@ class Coroutine
                 }
             }
         });
-        return is_int($result) ? $result : -1;
+        return is_int($coroutine->getId()) ? $coroutine->getId() : -1;
     }
 
     public static function inCoroutine(): bool
     {
-        return Coroutine::id() > 0;
+        return Co::id() > 0;
     }
 }
