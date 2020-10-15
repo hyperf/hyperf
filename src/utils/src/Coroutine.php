@@ -20,9 +20,6 @@ use Psr\Log\LoggerInterface;
 use Swoole\Coroutine as SwooleCoroutine;
 use Throwable;
 
-/**
- * @method static void defer(callable $callable)
- */
 class Coroutine
 {
     public static function __callStatic($name, $arguments)
@@ -40,6 +37,11 @@ class Coroutine
     public static function id(): int
     {
         return Co::id();
+    }
+
+    public static function defer(callable $callable)
+    {
+        Co::defer($callable);
     }
 
     /**
