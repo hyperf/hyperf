@@ -32,4 +32,5 @@
 
 ## Added
 
-- [#2659](https://github.com/hyperf/hyperf/pull/2659) Support `HttpServer` for [Swow](https://github.com/swow/swow).
+- [#2659](https://github.com/hyperf/hyperf/pull/2659) [#2663](https://github.com/hyperf/hyperf/pull/2663) Support `HttpServer` for [Swow](https://github.com/swow/swow).
+

@@ -17,19 +17,10 @@ use Hyperf\Engine\Exception\CoroutineDestroyedException;
 use Hyperf\Engine\Exception\RunningInNonCoroutineException;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Psr\Log\LoggerInterface;
-use Swoole\Coroutine as SwooleCoroutine;
 use Throwable;
 
 class Coroutine
 {
-    public static function __callStatic($name, $arguments)
-    {
-        if (! method_exists(SwooleCoroutine::class, $name)) {
-            throw new \BadMethodCallException(sprintf('Call to undefined method %s.', $name));
-        }
-        return SwooleCoroutine::$name(...$arguments);
-    }
-
     /**
      * Returns the current coroutine ID.
      * Returns -1 when running in non-coroutine context.
@@ -42,6 +33,11 @@ class Coroutine
     public static function defer(callable $callable)
     {
         Co::defer($callable);
+    }
+
+    public static function sleep(float $seconds)
+    {
+        usleep(intval($seconds) * 1000);
     }
 
     /**
