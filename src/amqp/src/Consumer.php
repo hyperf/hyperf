@@ -93,14 +93,8 @@ class Consumer extends Builder
         );
 
         try {
-            while ($channel->is_consuming()) {
-                if (!ProcessManager::isRunning()) {
-                    break;
-                }
+            while ($channel->is_consuming() && ProcessManager::isRunning()) {
                 $channel->wait();
-                if (!ProcessManager::isRunning()) {
-                    break;
-                }
             }
         } catch (MaxConsumptionException $ex) {
         }
