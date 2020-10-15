@@ -87,7 +87,12 @@ class Coroutine
                 }
             }
         });
-        return is_int($coroutine->getId()) ? $coroutine->getId() : -1;
+
+        try {
+            return $coroutine->getId();
+        } catch (\Throwable $exception) {
+            return -1;
+        }
     }
 
     public static function inCoroutine(): bool
