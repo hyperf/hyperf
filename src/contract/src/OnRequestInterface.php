@@ -17,8 +17,8 @@ use Swoole\Http\Response as SwooleResponse;
 interface OnRequestInterface
 {
     /**
-     * @param SwooleRequest $request
-     * @param SwooleResponse $response
+     * @param mixed $request swoole request or psr server request
+     * @param mixed $response swoole response or swow session
      */
     public function onRequest($request, $response): void;
 }
