@@ -37,7 +37,7 @@ class Coroutine
 
     public static function sleep(float $seconds)
     {
-        usleep(intval($seconds) * 1000);
+        usleep(intval($seconds * 1000 * 1000));
     }
 
     /**
