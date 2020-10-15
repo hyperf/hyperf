@@ -22,3 +22,7 @@
 ## Deprecated
 
 - `Hyperf\AsyncQueue\Signal\DriverStopHandler` will be deprecated in v2.2, please use `Hyperf\Process\Handler\ProcessStopHandler` instead.
+
+## Added
+
+- [#2659](https://github.com/hyperf/hyperf/pull/2659) Support `HttpServer` for [Swow](https://github.com/swow/swow).
