@@ -29,8 +29,6 @@ use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Request as SwooleRequest;
-use Swoole\Http\Response as SwooleResponse;
 use Throwable;
 
 class Server implements OnRequestInterface, MiddlewareInitializerInterface
@@ -99,10 +97,6 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, $this->getDefaultExceptionHandler());
     }
 
-    /**
-     * @param SwooleRequest $request
-     * @param SwooleResponse $response
-     */
     public function onRequest($request, $response): void
     {
         try {
@@ -170,8 +164,8 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
 
     /**
      * Initialize PSR-7 Request and Response objects.
-     * @param mixed $request
-     * @param mixed $response
+     * @param mixed $request swoole request or psr server request
+     * @param mixed $response swoole response or swow session
      */
     protected function initRequestAndResponse($request, $response): array
     {
