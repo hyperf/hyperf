@@ -44,14 +44,15 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
             }
             try {
                 $parameters = $this->parseParameters($controller, $action, $request->getParsedBody());
-            } catch (\Throwable $exception) {
+            } catch (\InvalidArgumentException $exception) {
                 return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::INVALID_PARAMS);
             }
 
             try {
+                $parameters = $this->parseParameters($controller, $action, $request->getParsedBody());
                 $response = $controllerInstance->{$action}(...$parameters);
             } catch (\Throwable $exception) {
-                $response = $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::SERVER_ERROR, $exception);
+                $response = $this->responseBuilder->buildErrorResponse($request, $exception instanceof \InvalidArgumentException ? ResponseBuilder::INVALID_PARAMS : ResponseBuilder::SERVER_ERROR, $exception);
                 $this->responseBuilder->persistToContext($response);
 
                 throw $exception;
