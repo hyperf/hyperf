@@ -24,7 +24,8 @@
         "psr/event-dispatcher": "^1.0",
         "psr/log": "^1.0",
         "php-amqplib/php-amqplib": "^2.7",
-        "doctrine/instantiator": "^1.2.0"
+        "doctrine/instantiator": "^1.2.0",
+        "hyperf/signal": "~2.0.0"
     },
     "require-dev": {
         "hyperf/di": "~2.0.0",

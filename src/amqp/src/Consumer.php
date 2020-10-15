@@ -21,6 +21,7 @@ use Hyperf\Amqp\Message\MessageInterface;
 use Hyperf\Amqp\Pool\PoolFactory;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
+use Hyperf\Process\ProcessManager;
 use Hyperf\Utils\Coroutine\Concurrent;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -93,7 +94,13 @@ class Consumer extends Builder
 
         try {
             while ($channel->is_consuming()) {
+                if (!ProcessManager::isRunning()) {
+                    break;
+                }
                 $channel->wait();
+                if (!ProcessManager::isRunning()) {
+                    break;
+                }
             }
         } catch (MaxConsumptionException $ex) {
         }
