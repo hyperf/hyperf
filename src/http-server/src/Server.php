@@ -172,12 +172,30 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
 
         if ($request instanceof ServerRequestInterface) {
-            $psr7Request = $request;
+            $psr7Request = $this->loadFromPsrRequest($request);
         } else {
             $psr7Request = Psr7Request::loadFromSwooleRequest($request);
         }
 
         Context::set(ServerRequestInterface::class, $psr7Request);
         return [$psr7Request, $psr7Response];
+    }
+
+    protected function loadFromPsrRequest(ServerRequestInterface $request)
+    {
+        if ($contents = $request->getBody()->getContents()) {
+            $parsedBody = Psr7Request::normalizeParsedBody([], $request, $contents);
+            if (! $parsedBody) {
+                parse_str($contents, $parsedBody);
+            }
+
+            if (method_exists($request, 'setParsedBody')) {
+                $request->setParsedBody($parsedBody);
+            } else {
+                $request = $request->withParsedBody($parsedBody);
+            }
+        }
+
+        return $request;
     }
 }

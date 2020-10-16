@@ -464,7 +464,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         return $this;
     }
 
-    protected static function normalizeParsedBody(array $data = [], ?RequestInterface $request = null)
+    public static function normalizeParsedBody(array $data = [], ?RequestInterface $request = null, ?string $contents = null)
     {
         if (! $request) {
             return $data;
@@ -480,7 +480,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
 
         try {
             $parser = static::getParser();
-            if ($parser->has($contentType) && $content = $request->getBody()->getContents()) {
+            if ($parser->has($contentType) && $content = $contents ?? $request->getBody()->getContents()) {
                 $data = $parser->parse($content, $contentType);
             }
         } catch (\InvalidArgumentException $exception) {
