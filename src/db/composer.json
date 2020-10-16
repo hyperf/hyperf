@@ -19,7 +19,6 @@
     },
     "require": {
         "php": ">=7.2",
-        "ext-swoole": ">=4.4",
         "hyperf/config": "~2.1.0",
         "hyperf/contract": "~2.1.0",
         "hyperf/pool": "~2.1.0",
@@ -30,6 +29,9 @@
         "friendsofphp/php-cs-fixer": "^2.14",
         "hyperf/testing": "~2.1.0",
         "mockery/mockery": "^1.0"
+    },
+    "suggest": {
+        "ext-swoole": "Required to use swoole Swoole MySQL."
     },
     "config": {
         "sort-packages": true

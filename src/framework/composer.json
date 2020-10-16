@@ -19,7 +19,6 @@
     },
     "require": {
         "php": ">=7.2",
-        "ext-swoole": ">=4.4",
         "fig/http-message-util": "^1.1.2",
         "hyperf/contract": "~2.1.0",
         "hyperf/utils": "~2.1.0",
@@ -35,6 +34,7 @@
         "phpunit/phpunit": "^9.4"
     },
     "suggest": {
+        "ext-swoole": "Required to use swoole engine.",
         "hyperf/di": "Required to use Command annotation.",
         "hyperf/dispatcher": "Required to use BootApplication event.",
         "hyperf/command": "Required to use Command annotation.",
