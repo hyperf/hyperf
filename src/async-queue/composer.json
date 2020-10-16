@@ -32,6 +32,7 @@
     "suggest": {
         "hyperf/di": "Required to use annotations.",
         "hyperf/event": "Required to dispatch a event.",
+        "hyperf/logger": "Required to use QueueHandleListener.",
         "hyperf/process": "Auto register the consumer process for server."
     },
     "autoload": {
