@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Engine\Channel as CoChannel;
 use Hyperf\Utils\Coroutine;
-use Swoole\Coroutine\Channel as CoChannel;
 
 class Channel
 {
@@ -63,7 +63,7 @@ class Channel
     public function length(): int
     {
         if ($this->isCoroutine()) {
-            return $this->channel->length();
+            return $this->channel->getLength();
         }
         return $this->queue->count();
     }
