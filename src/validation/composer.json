@@ -19,7 +19,6 @@
     },
     "require": {
         "php": ">=7.2",
-        "ext-swoole": ">=4.3",
         "egulias/email-validator": "^2.1",
         "hyperf/command": "~2.1.0",
         "hyperf/contract": "~2.1.0",

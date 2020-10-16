@@ -9,7 +9,6 @@
     "description": "Hyperf Scout provides a driver based solution to searching your Eloquent models. Inspired By Laravel Scout.",
     "require": {
         "php": ">=7.2",
-        "ext-swoole": ">=4.4",
         "hyperf/command": "~2.1.0",
         "hyperf/contract": "~2.1.0",
         "hyperf/database": "~2.1.0",
