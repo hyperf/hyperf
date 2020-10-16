@@ -20,9 +20,13 @@ use Hyperf\AsyncQueue\Event\RetryHandle;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Logger\LoggerFactory;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class QueueHandleListener implements ListenerInterface
 {
+    /**
+     * @var LoggerInterface
+     */
     protected $logger;
 
     public function __construct(ContainerInterface $container)
