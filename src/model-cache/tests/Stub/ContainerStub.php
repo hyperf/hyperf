@@ -17,6 +17,9 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\Database\Events\TransactionCommitted;
+use Hyperf\Database\Model\Events\Deleted;
+use Hyperf\Database\Model\Events\Saved;
 use Hyperf\DbConnection\Collector\TableCollector;
 use Hyperf\DbConnection\ConnectionResolver;
 use Hyperf\DbConnection\Frequency;
@@ -29,6 +32,8 @@ use Hyperf\Framework\Logger\StdoutLogger;
 use Hyperf\ModelCache\EagerLoad\EagerLoader;
 use Hyperf\ModelCache\Handler\RedisHandler;
 use Hyperf\ModelCache\Handler\RedisStringHandler;
+use Hyperf\ModelCache\Listener\DeleteCacheInTransactionListener;
+use Hyperf\ModelCache\Listener\DeleteCacheListener;
 use Hyperf\ModelCache\Manager;
 use Hyperf\ModelCache\Redis\LuaManager;
 use Hyperf\Pool\Channel;
@@ -59,7 +64,6 @@ class ContainerStub
                 'log_level' => [
                     LogLevel::ALERT,
                     LogLevel::CRITICAL,
-                    LogLevel::DEBUG,
                     LogLevel::EMERGENCY,
                     LogLevel::ERROR,
                     LogLevel::INFO,
@@ -122,7 +126,12 @@ class ContainerStub
         $connectionFactory = new ConnectionFactory($container);
         $container->shouldReceive('get')->with(ConnectionFactory::class)->andReturn($connectionFactory);
 
-        $eventDispatcher = new EventDispatcher(new ListenerProvider(), $logger);
+        $provider = new ListenerProvider();
+        $listener = new DeleteCacheListener();
+        $provider->on(TransactionCommitted::class, [new DeleteCacheInTransactionListener(), 'process']);
+        $provider->on(Saved::class, [$listener, 'process']);
+        $provider->on(Deleted::class, [$listener, 'process']);
+        $eventDispatcher = new EventDispatcher($provider, $logger);
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn($eventDispatcher);
 
         $container->shouldReceive('get')->with('db.connector.mysql')->andReturn(new MySqlConnector());

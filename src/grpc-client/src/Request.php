@@ -20,6 +20,11 @@ class Request extends BaseRequest
 {
     private const DEFAULT_CONTENT_TYPE = 'application/grpc+proto';
 
+    /**
+     * @var null|bool
+     */
+    public $usePipelineRead;
+
     public function __construct(string $method, Message $argument = null, $headers = [])
     {
         $this->method = 'POST';
@@ -32,6 +37,7 @@ class Request extends BaseRequest
     {
         return [
             'content-type' => self::DEFAULT_CONTENT_TYPE,
+            'te' => 'trailers',
             'user-agent' => $this->buildDefaultUserAgent(),
         ];
     }

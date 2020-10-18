@@ -13,11 +13,13 @@ namespace HyperfTest\Di;
 
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Annotation\AnnotationReader;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\ClassLoader;
+use Hyperf\Di\Exception\AnnotationException;
 use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Di\ExceptionStub\DemoInjectException;
@@ -25,6 +27,7 @@ use HyperfTest\Di\Stub\AnnotationCollector;
 use HyperfTest\Di\Stub\AspectCollector;
 use HyperfTest\Di\Stub\Demo;
 use HyperfTest\Di\Stub\DemoInject;
+use HyperfTest\Di\Stub\EmptyVarValue;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -74,6 +77,26 @@ class InjectTest extends TestCase
         } catch (\Exception $e) {
             $this->assertSame(true, $e instanceof NotFoundException);
         }
+    }
+
+    public function testInjectNotInitReflector()
+    {
+        $this->expectException(AnnotationException::class);
+        $this->expectExceptionMessage('The @Inject value is invalid for HyperfTest\Di\Stub\EmptyVarValue->demo. Because The class reflector object does not init yet');
+
+        $inject = new Inject();
+        $inject->collectProperty(EmptyVarValue::class, 'demo');
+    }
+
+    public function testInjectEmptyVar()
+    {
+        $this->expectException(AnnotationException::class);
+        $this->expectExceptionMessage('The @Inject value is invalid for HyperfTest\Di\Stub\EmptyVarValue->demo. Because Argument 1 passed to Roave\BetterReflection\TypesFinder\FindPropertyType::Roave\BetterReflection\TypesFinder\{closure}() must be an instance of phpDocumentor\Reflection\DocBlock\Tags\Var_, instance of phpDocumentor\Reflection\DocBlock\Tags\InvalidTag given');
+
+        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
+
+        $inject = new Inject();
+        $inject->collectProperty(EmptyVarValue::class, 'demo');
     }
 
     protected function getContainer()

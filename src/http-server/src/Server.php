@@ -111,8 +111,8 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             $dispatched = $psr7Request->getAttribute(Dispatched::class);
             $middlewares = $this->middlewares;
             if ($dispatched->isFound()) {
-                $registedMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
-                $middlewares = array_merge($middlewares, $registedMiddlewares);
+                $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
+                $middlewares = array_merge($middlewares, $registeredMiddlewares);
             }
 
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);

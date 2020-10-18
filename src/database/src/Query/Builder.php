@@ -884,16 +884,18 @@ class Builder
     /**
      * Add a "where null" clause to the query.
      *
-     * @param string $column
+     * @param array|string $columns
      * @param string $boolean
      * @param bool $not
      * @return $this
      */
-    public function whereNull($column, $boolean = 'and', $not = false)
+    public function whereNull($columns, $boolean = 'and', $not = false)
     {
         $type = $not ? 'NotNull' : 'Null';
 
-        $this->wheres[] = compact('type', 'column', 'boolean');
+        foreach (Arr::wrap($columns) as $column) {
+            $this->wheres[] = compact('type', 'column', 'boolean');
+        }
 
         return $this;
     }
@@ -1706,12 +1708,31 @@ class Builder
     }
 
     /**
+     * Constrain the query to the previous "page" of results before a given ID.
+     *
+     * @param int $perPage
+     * @param null|int $lastId
+     * @param string $column
+     * @return $this
+     */
+    public function forPageBeforeId($perPage = 15, $lastId = 0, $column = 'id')
+    {
+        $this->orders = $this->removeExistingOrdersFor($column);
+
+        if (! is_null($lastId)) {
+            $this->where($column, '<', $lastId);
+        }
+
+        return $this->orderBy($column, 'desc')->limit($perPage);
+    }
+
+    /**
      * Constrain the query to the next "page" of results after a given ID.
      *
      * @param int $perPage
      * @param null|int $lastId
      * @param string $column
-     * @return \Hyperf\Database\Query\Builder|static
+     * @return $this
      */
     public function forPageAfterId($perPage = 15, $lastId = 0, $column = 'id')
     {
@@ -1721,7 +1742,7 @@ class Builder
             $this->where($column, '>', $lastId);
         }
 
-        return $this->orderBy($column, 'asc')->take($perPage);
+        return $this->orderBy($column, 'asc')->limit($perPage);
     }
 
     /**

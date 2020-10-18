@@ -346,6 +346,23 @@ return [
 ];
 ```
 
+### ReloadChannelListener
+
+當訊息執行超時，或專案重啟導致訊息執行被中斷，最終都會被移動到 `timeout` 佇列中，只要您可以保證訊息執行的原子性（同一個訊息執行一次，或執行多次，最終表現一致），
+就可以開啟以下監聽器，框架會自動將 `timeout` 佇列中訊息移動到 `waiting` 佇列中，等待下次消費。
+
+> 監聽器監聽 `QueueLength` 事件，預設執行 500 次訊息後觸發一次。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    Hyperf\AsyncQueue\Listener\ReloadChannelListener::class
+];
+```
+
 ## 任務執行流轉流程
 
 任務執行流轉流程主要包括以下幾個佇列:
@@ -422,7 +439,7 @@ use Hyperf\Process\Annotation\Process;
 /**
  * @Process()
  */
-class ConsumerProcess extends ConsumerProcess
+class OtherConsumerProcess extends ConsumerProcess
 {
     /**
      * @var string
@@ -444,6 +461,8 @@ return $driver->push(new ExampleJob());
 ## 安全關閉
 
 非同步佇列在終止時，如果正在進行消費邏輯，可能會導致出現錯誤。框架提供了 `DriverStopHandler` ，可以讓非同步佇列程序安全關閉。
+
+> 當前訊號處理器並不適配於 CoroutineServer，如有需要請自行實現
 
 安裝訊號處理器
 

@@ -1,3 +1,5 @@
+# Socket.io 服务
+
 Socket.io 是一款非常流行的应用层实时通讯协议和框架，可以轻松实现应答、分组、广播。hyperf/socketio-server 支持了 Socket.io 的 WebSocket 传输协议。
 
 ## 安装
@@ -23,7 +25,6 @@ hyperf/socketio-server 组件是基于 WebSocket 实现的，请确保服务端�
     ],
 ],
 ```
-
 
 ## 快速开始
 
@@ -338,7 +339,63 @@ class WebSocketController extends BaseNamespace
 }
 ```
 
-## Auth 鉴权
+### 修改 `SocketIO` 基础参数
+
+框架默认参数：
+
+|          配置          | 类型  | 默认值 |
+| :--------------------: | :---: | :----: |
+|      $pingTimeout      |  int  |  100   |
+|     $pingInterval      |  int  | 10000  |
+| $clientCallbackTimeout |  int  | 10000  |
+
+有时候，由于推送消息比较多或者网络较卡，在 100ms 内，无法及时返回 `PONG`，就会导致连接断开。这时候我们可以通过以下方式，进行重写：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Kernel;
+
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\SocketIOServer\Parser\Decoder;
+use Hyperf\SocketIOServer\Parser\Encoder;
+use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
+use Hyperf\SocketIOServer\SocketIO;
+use Hyperf\WebSocketServer\Sender;
+use Psr\Container\ContainerInterface;
+
+class SocketIOFactory
+{
+    public function __invoke(ContainerInterface $container)
+    {
+        $io = new SocketIO(
+            $container->get(StdoutLoggerInterface::class),
+            $container->get(Sender::class),
+            $container->get(Decoder::class),
+            $container->get(Encoder::class),
+            $container->get(SidProviderInterface::class)
+        );
+
+        // 重写 pingTimeout 参数
+        $io->setPingTimeout(10000);
+
+        return $io;
+    }
+}
+
+```
+
+然后在 `dependencies.php` 添加对应映射即可。
+
+```php
+return [
+    Hyperf\SocketIOServer\SocketIO::class => App\Kernel\SocketIOFactory::class,
+];
+```
+
+### Auth 鉴权
 
 您可以通过使用中间件来拦截 WebSocket 握手，实现鉴权功能，如下：
 
@@ -380,3 +437,16 @@ class WebSocketAuthMiddleware implements MiddlewareInterface
 ```
 
 并将上面的中间件配置到对应的 WebSocket Server 中去即可。
+
+### 获取原始请求对象
+
+连接建立以后，有时需获取客户端 IP ，Cookie 等请求信息。原始请求对象已经被保留在[连接上下文](websocket-server.md#连接上下文)中，您可以用如下方式在事件回调中获取：
+
+```php
+public function onEvent($socket, $data)
+{
+    $request = Hyperf\WebSocketServer\Context::get(
+        Psr\Http\Message\ServerRequestInterface::class
+    );
+}
+```

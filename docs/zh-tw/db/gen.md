@@ -135,3 +135,165 @@ return [
 - Hyperf\Database\Commands\Ast\ModelRewriteTimestampsVisitor
 
 此 `Visitor` 可以根據 `created_at` 和 `updated_at` 自動判斷，是否啟用預設記錄 `建立和修改時間` 的功能。
+
+- Hyperf\Database\Commands\Ast\ModelRewriteGetterSetterVisitor
+
+此 `Visitor` 可以根據資料庫欄位生成對應的 `getter` 和 `setter`。
+
+## 覆蓋 Visitor
+
+Hyperf 框架中，當使用 `gen:model` 時，預設會將 `decimal` 轉化成為 `float`。如下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Model;
+
+/**
+ * @property int $id
+ * @property int $count
+ * @property float $float_num // decimal
+ * @property string $str
+ * @property string $json
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ */
+class UserExt extends Model
+{
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'user_ext';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['id', 'count', 'float_num', 'str', 'json', 'created_at', 'updated_at'];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = ['id' => 'integer', 'count' => 'integer', 'float_num' => 'float', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+}
+
+```
+
+這時候，我們就可以通過重寫 `ModelUpdateVisitor`，修改這一特性。
+
+```php
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace App\Kernel\Visitor;
+
+use Hyperf\Database\Commands\Ast\ModelUpdateVisitor as Visitor;
+use Hyperf\Utils\Str;
+
+class ModelUpdateVisitor extends Visitor
+{
+    protected function formatDatabaseType(string $type): ?string
+    {
+        switch ($type) {
+            case 'tinyint':
+            case 'smallint':
+            case 'mediumint':
+            case 'int':
+            case 'bigint':
+                return 'integer';
+            case 'decimal':
+                // 設定為 decimal，並設定對應精度
+                return 'decimal:2';
+            case 'float':
+            case 'double':
+            case 'real':
+                return 'float';
+            case 'bool':
+            case 'boolean':
+                return 'boolean';
+            default:
+                return null;
+        }
+    }
+
+    protected function formatPropertyType(string $type, ?string $cast): ?string
+    {
+        if (! isset($cast)) {
+            $cast = $this->formatDatabaseType($type) ?? 'string';
+        }
+
+        switch ($cast) {
+            case 'integer':
+                return 'int';
+            case 'date':
+            case 'datetime':
+                return '\Carbon\Carbon';
+            case 'json':
+                return 'array';
+        }
+
+        if (Str::startsWith($cast, 'decimal')) {
+            // 如果 cast 為 decimal，則 @property 改為 string
+            return 'string';
+        }
+
+        return $cast;
+    }
+}
+```
+
+重新執行 `gen:model` 後，對應模型如下：
+
+```php
+<?php
+
+declare (strict_types=1);
+
+namespace App\Model;
+
+/**
+ * @property int $id 
+ * @property int $count 
+ * @property string $float_num 
+ * @property string $str 
+ * @property string $json 
+ * @property \Carbon\Carbon $created_at 
+ * @property \Carbon\Carbon $updated_at 
+ */
+class UserExt extends Model
+{
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'user_ext';
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['id', 'count', 'float_num', 'str', 'json', 'created_at', 'updated_at'];
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = ['id' => 'integer', 'count' => 'integer', 'float_num' => 'decimal:2', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+}
+```

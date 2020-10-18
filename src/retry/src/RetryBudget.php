@@ -48,11 +48,26 @@ class RetryBudget implements RetryBudgetInterface
         $this->minRetriesPerSec = $minRetriesPerSec;
         $this->percentCanRetry = $percentCanRetry;
         $this->budget = new SplQueue();
-        for ($i = 0; $i < $minRetriesPerSec / $this->percentCanRetry; ++$i) {
+    }
+
+    public function __destruct()
+    {
+        if (! isset($this->timerId)) {
+            return;
+        }
+        Timer::clear($this->timerId);
+    }
+
+    public function init()
+    {
+        if (isset($this->timerId)) {
+            return;
+        }
+        for ($i = 0; $i < $this->minRetriesPerSec / $this->percentCanRetry; ++$i) {
             $this->produce();
         }
-        $this->timerId = Timer::tick(1000, function () use ($minRetriesPerSec) {
-            for ($i = 0; $i < $minRetriesPerSec / $this->percentCanRetry; ++$i) {
+        $this->timerId = Timer::tick(1000, function () {
+            for ($i = 0; $i < $this->minRetriesPerSec / $this->percentCanRetry; ++$i) {
                 $this->produce();
             }
             while (! $this->budget->isEmpty()
@@ -63,13 +78,9 @@ class RetryBudget implements RetryBudgetInterface
         });
     }
 
-    public function __destruct()
-    {
-        Timer::clear($this->timerId);
-    }
-
     public function consume(bool $dryRun = false): bool
     {
+        $this->init();
         if ($this->budget->count() < 1 / $this->percentCanRetry) {
             return false;
         }

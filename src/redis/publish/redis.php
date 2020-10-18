@@ -23,6 +23,13 @@ return [
             'name' => null,
             'seeds' => [],
         ],
+        'sentinel' => [
+            'enable' => (bool) env('REDIS_SENTINEL_ENABLE', false),
+            'master_name' => env('REDIS_MASTER_NAME', 'mymaster'),
+            'nodes' => explode(';', env('REDIS_SENTINEL_NODE', '')),
+            'persistent' => '',
+            'read_timeout' => 0,
+        ],
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,

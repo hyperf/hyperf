@@ -190,3 +190,17 @@ foreach ($books as $book){
     var_dump($book->user);
 }
 ```
+
+### 快取介面卡
+
+您可以根據自己的實際情況實現快取介面卡，只需要實現介面 `Hyperf\ModelCache\Handler\HandlerInterface` 即可。
+
+框架提供了兩個 Handler 可供選擇：
+
+- Hyperf\ModelCache\Handler\RedisHandler
+
+使用 `HASH` 儲存快取，可以有效的處理 `Model::increament()`，不足是因為資料型別只有 `String`，所以對 `null` 支援較差。
+
+- Hyperf\ModelCache\Handler\RedisStringHandler
+
+使用 `String` 儲存快取，因為是序列化的資料，所以支援所有資料型別，不足是無法有效處理 `Model::increament()`，當模型呼叫累加時，通過刪除快取，解決一致性的問題。

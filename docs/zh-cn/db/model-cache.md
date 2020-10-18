@@ -190,3 +190,17 @@ foreach ($books as $book){
     var_dump($book->user);
 }
 ```
+
+### 缓存适配器
+
+您可以根据自己的实际情况实现缓存适配器，只需要实现接口 `Hyperf\ModelCache\Handler\HandlerInterface` 即可。
+
+框架提供了两个 Handler 可供选择：
+
+- Hyperf\ModelCache\Handler\RedisHandler
+
+使用 `HASH` 存储缓存，可以有效的处理 `Model::increament()`，不足是因为数据类型只有 `String`，所以对 `null` 支持较差。
+
+- Hyperf\ModelCache\Handler\RedisStringHandler
+
+使用 `String` 存储缓存，因为是序列化的数据，所以支持所有数据类型，不足是无法有效处理 `Model::increament()`，当模型调用累加时，通过删除缓存，解决一致性的问题。

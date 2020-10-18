@@ -102,7 +102,7 @@ class Sender
     {
         $info = $this->getServer()->connection_info($fd);
 
-        if ($info && $info['websocket_status'] === WEBSOCKET_STATUS_ACTIVE) {
+        if (($info['websocket_status'] ?? null) === WEBSOCKET_STATUS_ACTIVE) {
             return true;
         }
 

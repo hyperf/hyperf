@@ -23,7 +23,13 @@ class NacosConfig extends AbstractNacos
             RequestOptions::QUERY => $configModel->toArray(),
         ]);
 
-        return $configModel->parse($response->getBody()->getContents());
+        $statusCode = $response->getStatusCode();
+        $contents = $response->getBody()->getContents();
+        if ($statusCode !== 200) {
+            return [];
+        }
+
+        return $configModel->parse($contents);
     }
 
     public function set(ConfigModel $configModel): array

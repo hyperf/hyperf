@@ -11,27 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Commands\Ast;
 
-use Hyperf\Database\Commands\ModelData;
-use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\SoftDeletes;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Str;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
-use PhpParser\NodeVisitorAbstract;
 
-class ModelRewriteSoftDeletesVisitor extends NodeVisitorAbstract
+class ModelRewriteSoftDeletesVisitor extends AbstractVisitor
 {
-    /**
-     * @var ModelOption
-     */
-    protected $option;
-
-    /**
-     * @var ModelData
-     */
-    protected $data;
-
     /**
      * @var bool
      */
@@ -46,12 +33,6 @@ class ModelRewriteSoftDeletesVisitor extends NodeVisitorAbstract
      * @var array
      */
     protected $columns = [];
-
-    public function __construct(ModelOption $option, ModelData $data)
-    {
-        $this->option = $option;
-        $this->data = $data;
-    }
 
     public function leaveNode(Node $node)
     {

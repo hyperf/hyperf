@@ -31,7 +31,8 @@
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
-        "hyperf/di": "Create the RedisPool via dependency injection."
+        "hyperf/di": "Create the RedisPool via dependency injection.",
+        "ext-redis": "Required to use sentinel mode (>=5.2)."
     },
     "autoload": {
         "psr-4": {

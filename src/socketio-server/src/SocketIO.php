@@ -250,6 +250,33 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         $this->clientCallbackTimers[$ackId] = $timerId;
     }
 
+    /**
+     * @return $this
+     */
+    public function setClientCallbackTimeout(int $clientCallbackTimeout)
+    {
+        $this->clientCallbackTimeout = $clientCallbackTimeout;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setPingInterval(int $pingInterval)
+    {
+        $this->pingInterval = $pingInterval;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setPingTimeout(int $pingTimeout)
+    {
+        $this->pingTimeout = $pingTimeout;
+        return $this;
+    }
+
     private function dispatch(int $fd, string $nsp, string $event, ...$payloads)
     {
         $socket = $this->makeSocket($fd, $nsp);
@@ -285,7 +312,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 
         foreach ($instance->getEventHandlers() as $key => $callbacks) {
             if ($key === $event) {
-                $output = array_merge($output, $callbacks);
+                $output = array_merge($callbacks, $output);
             }
         }
 
