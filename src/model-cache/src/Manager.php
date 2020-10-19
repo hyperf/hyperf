@@ -75,10 +75,15 @@ class Manager
      */
     private function getCacheTime(Model $instance, HandlerInterface $handler)
     {
-        /** @var Cacheable $instance */
-        $ttl = is_null($instance->getCacheTime())
-            ? $handler->getConfig()->getTtl()
-            : $instance->getCacheTime();
+        $ttl = $offset = 0;
+        if (method_exists($instance, 'getCacheTime')) {
+            $ttl = $instance->getCacheTime();
+            $offset = is_null($instance->getCacheOffset()) ? 0 : $instance->getCacheOffset();
+        }
+
+        if (is_null($ttl)) {
+            $ttl = $handler->getConfig()->getTtl();
+        }
 
         // convert int ttl
         if ($ttl instanceof \DateInterval) {
@@ -88,8 +93,8 @@ class Manager
         }
 
         // ttl + rand offset
-        if ($ttl > 0 && !is_null($instance->getCacheOffset())) {
-            $ttl += rand(0, $instance->getCacheOffset());
+        if ($ttl > 0 && $offset > 0) {
+            $ttl += rand(0, $offset);
         }
         return $ttl;
     }
