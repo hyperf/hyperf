@@ -14,6 +14,7 @@ namespace Hyperf\Paginator;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Paginator\Listener\PageResolverListener;
+use Hyperf\Paginator\Listener\PathResolverListener;
 
 class ConfigProvider
 {
@@ -26,6 +27,7 @@ class ConfigProvider
             ],
             'listeners' => [
                 PageResolverListener::class,
+                PathResolverListener::class,
             ],
         ];
     }
