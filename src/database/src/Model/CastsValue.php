@@ -17,6 +17,11 @@ use Hyperf\Utils\Contracts\Arrayable;
 abstract class CastsValue implements Synchronized, Arrayable
 {
     /**
+     * @var array auto fill
+     */
+    protected $default = [];
+
+    /**
      * @var Model
      */
     protected $model;
@@ -29,17 +34,16 @@ abstract class CastsValue implements Synchronized, Arrayable
     /**
      * @var bool
      */
-    protected $isSynchronized;
+    protected $isSynchronized = FALSE;
 
-    public function __construct(Model $model, $itmes = [])
-    {
+    public function __construct(Model $model, $items = []) {
         $this->model = $model;
-        $this->items = $itmes;
+        $this->items = $items;
     }
 
     public function __get($name)
     {
-        return $this->items[$name];
+        return $this->items[$name] ?? $this->default[$name];
     }
 
     public function __set($name, $value)
