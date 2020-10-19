@@ -35,12 +35,12 @@ trait Cacheable
     /**
      * cache rand offset for ttl
      *
-     * @var int
+     * @var NULL|int
      */
     protected $cacheOffset;
 
     /**
-     * @return int
+     * @return NULL|int
      */
     public function getCacheOffset()
     {
@@ -56,7 +56,7 @@ trait Cacheable
     }
 
     /**
-     * @return bool|int
+     * @return NULL|int
      */
     public function getCacheTime()
     {
@@ -64,7 +64,7 @@ trait Cacheable
     }
 
     /**
-     * @param bool|int $cacheTime
+     * @param NULL|int $cacheTime
      */
     public function setCacheTime($cacheTime)
     {

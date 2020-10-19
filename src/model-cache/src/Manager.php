@@ -80,8 +80,11 @@ class Manager
             ? $handler->getConfig()->getTtl()
             : $instance->getCacheTime();
 
+        // convert int ttl
         if ($ttl instanceof \DateInterval) {
-            $ttl = $ttl->s;
+            $reference = new \DateTimeImmutable();
+            $endTime = $reference->add($ttl);
+            $ttl = $endTime->getTimestamp() - $reference->getTimestamp();
         }
 
         // ttl + rand offset
