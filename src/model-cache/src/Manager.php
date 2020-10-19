@@ -75,8 +75,9 @@ class Manager
      */
     private function getCacheTime(Model $instance, HandlerInterface $handler)
     {
+        /** @var Cacheable $instance */
         $ttl = is_null($instance->getCacheTime())
-            ? $handler->getConfig()->getTtl()
+            ? $handler->getConfig()->getTtl()->s
             : $instance->getCacheTime();
 
         // ttl + rand offset
