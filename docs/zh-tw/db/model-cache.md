@@ -147,6 +147,32 @@ User::query(true)->where('gender', '>', 1)->delete();
 
 對於這種情況，我們可以修改 `use_default_value` 為 `true`，並新增 `Hyperf\DbConnection\Listener\InitTableCollectorListener` 到 `listener.php` 配置中，使 Hyperf 應用在啟動時主動去獲取資料庫的欄位資訊，並在獲取快取資料時與之比較並進行快取資料修正。
 
+### 控制模型中緩存時間
+
+除了 `database.php` 中配置的默認緩存 ttl 時間外，`Hyperf\ModelCache\Cacheable` 支持對模型配置更細的緩存時間：
+
+```php
+class User extends Model implements CacheableInterface
+{
+    use Cacheable;
+    
+    /**
+     * 緩存 10 分鐘
+     *
+     * @var NULL|int
+     */
+    protected $cacheTime = 600;
+
+    /**
+     * 前後 60 秒失效（防止同一時間全部失效穿透數據庫）
+     *
+     * @var int
+     */
+    protected $cacheOffset = 60;
+
+}
+```
+
 ### EagerLoad
 
 當我們使用模型關係時，可以通過 `load` 解決 `N+1` 的問題，但仍然需要查一次資料庫。模型快取通過重寫了 `ModelBuilder`，可以讓使用者儘可能的從快取中拿到對應的模型。

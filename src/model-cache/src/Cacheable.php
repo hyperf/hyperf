@@ -26,6 +26,52 @@ trait Cacheable
     protected $useCacheBuilder = false;
 
     /**
+     * cache time
+     *
+     * @var NULL|int
+     */
+    protected $cacheTime;
+
+    /**
+     * cache rand offset for ttl
+     *
+     * @var int
+     */
+    protected $cacheOffset;
+
+    /**
+     * @return int
+     */
+    public function getCacheOffset()
+    {
+        return $this->cacheOffset;
+    }
+
+    /**
+     * @param int $cacheOffset
+     */
+    public function setCacheOffset($cacheOffset)
+    {
+        $this->cacheOffset = $cacheOffset;
+    }
+
+    /**
+     * @return bool|int
+     */
+    public function getCacheTime()
+    {
+        return $this->cacheTime;
+    }
+
+    /**
+     * @param bool|int $cacheTime
+     */
+    public function setCacheTime($cacheTime)
+    {
+        $this->cacheTime = $cacheTime;
+    }
+
+    /**
      * Fetch a model from cache.
      * @param mixed $id
      * @return null|self

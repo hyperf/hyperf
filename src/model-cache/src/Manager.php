@@ -66,6 +66,27 @@ class Manager
     }
 
     /**
+     * Get cache TTL from instance or handler
+     *
+     * @param $instance
+     * @param $handler
+     *
+     * @return int
+     */
+    private function getCacheTime(Model $instance, HandlerInterface $handler)
+    {
+        $ttl = is_null($instance->getCacheTime())
+            ? $handler->getConfig()->getTtl()
+            : $instance->getCacheTime();
+
+        // ttl + rand offset
+        if ($ttl > 0 && $instance->getCacheOffset() > 0) {
+            $ttl += rand(0, $instance->getCacheOffset());
+        }
+        return $ttl;
+    }
+
+    /**
      * Fetch a model from cache.
      * @param mixed $id
      */
@@ -90,7 +111,7 @@ class Manager
             if (is_null($data)) {
                 $model = $instance->newQuery()->where($primaryKey, '=', $id)->first();
                 if ($model) {
-                    $ttl = $handler->getConfig()->getTtl();
+                    $ttl = $this->getCacheTime($instance, $handler);
                     $handler->set($key, $this->formatModel($model), $ttl);
                 } else {
                     $ttl = $handler->getConfig()->getEmptyModelTtl();
@@ -141,7 +162,7 @@ class Manager
             $targetIds = array_diff($ids, $fetchIds);
             if ($targetIds) {
                 $models = $instance->newQuery()->whereIn($primaryKey, $targetIds)->get();
-                $ttl = $handler->getConfig()->getTtl();
+                $ttl = $this->getCacheTime($instance, $handler);
                 /** @var Model $model */
                 foreach ($models as $model) {
                     $id = $model->getKey();
