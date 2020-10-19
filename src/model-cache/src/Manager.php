@@ -80,7 +80,7 @@ class Manager
             : $instance->getCacheTime();
 
         // ttl + rand offset
-        if ($ttl > 0 && $instance->getCacheOffset() > 0) {
+        if ($ttl > 0 && !is_null($instance->getCacheOffset())) {
             $ttl += rand(0, $instance->getCacheOffset());
         }
         return $ttl;
