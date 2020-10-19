@@ -75,7 +75,8 @@ class Manager
      */
     private function getCacheTime(Model $instance, HandlerInterface $handler)
     {
-        $ttl = $offset = 0;
+        $ttl = null;
+        $offset = 0;
         if (method_exists($instance, 'getCacheTime')) {
             $ttl = $instance->getCacheTime();
             $offset = is_null($instance->getCacheOffset()) ? 0 : $instance->getCacheOffset();
