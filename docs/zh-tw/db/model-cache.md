@@ -158,13 +158,15 @@ class User extends Model implements CacheableInterface
     
     /**
      * 緩存 10 分鐘
+     * 不配置則繼承全局ttl
      *
      * @var NULL|int
      */
     protected $cacheTime = 600;
 
     /**
-     * 前後 60 秒失效（防止同一時間全部失效穿透數據庫）
+     * 前後 60 秒失效（防止同壹時間全部失效穿透數據庫）
+     * 不配置則不啟用
      *
      * @var int
      */

@@ -75,14 +75,14 @@ class Manager
      */
     private function getCacheTtl(Model $instance, HandlerInterface $handler)
     {
-        $ttl = null;
-        $offset = 0;
+        $ttl = $offset = null;
         // override ttl
         if (method_exists($instance, 'getCacheTime')) {
             $ttl = $instance->getCacheTime();
-            if (method_exists($instance, 'getCacheOffset')) {
-                $offset = $instance->getCacheOffset();
-            }
+        }
+        // ttl offset
+        if (method_exists($instance, 'getCacheOffset')) {
+            $offset = $instance->getCacheOffset();
         }
 
         // origin ttl
@@ -97,8 +97,8 @@ class Manager
             $ttl = $endTime->getTimestamp() - $reference->getTimestamp();
         }
 
-        // ttl + rand offset
-        if ($ttl > 0 && $offset > 0) {
+        // ttl + randOffset
+        if ($ttl > 0 && !is_null($offset)) {
             $ttl += rand(0, $offset);
         }
         return $ttl;

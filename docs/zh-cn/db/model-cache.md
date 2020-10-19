@@ -158,6 +158,7 @@ class User extends Model implements CacheableInterface
     
     /**
      * 缓存 10 分钟
+     * 不配置则继承全局ttl
      *
      * @var NULL|int
      */
@@ -165,6 +166,7 @@ class User extends Model implements CacheableInterface
 
     /**
      * 前后 60 秒失效（防止同一时间全部失效穿透数据库）
+     * 不配置则不启用
      *
      * @var int
      */
