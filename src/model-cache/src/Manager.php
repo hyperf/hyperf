@@ -77,16 +77,20 @@ class Manager
     {
         $ttl = null;
         $offset = 0;
+        // override ttl
         if (method_exists($instance, 'getCacheTime')) {
             $ttl = $instance->getCacheTime();
-            $offset = is_null($instance->getCacheOffset()) ? 0 : $instance->getCacheOffset();
+            if (method_exists($instance, 'getCacheOffset')) {
+                $offset = $instance->getCacheOffset();
+            }
         }
 
+        // origin ttl
         if (is_null($ttl)) {
             $ttl = $handler->getConfig()->getTtl();
         }
 
-        // convert int ttl
+        // convert ttl
         if ($ttl instanceof \DateInterval) {
             $reference = new \DateTimeImmutable();
             $endTime = $reference->add($ttl);
