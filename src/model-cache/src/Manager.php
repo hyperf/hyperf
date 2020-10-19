@@ -77,8 +77,12 @@ class Manager
     {
         /** @var Cacheable $instance */
         $ttl = is_null($instance->getCacheTime())
-            ? $handler->getConfig()->getTtl()->s
+            ? $handler->getConfig()->getTtl()
             : $instance->getCacheTime();
+
+        if ($ttl instanceof \DateInterval) {
+            $ttl = $ttl->s;
+        }
 
         // ttl + rand offset
         if ($ttl > 0 && !is_null($instance->getCacheOffset())) {
