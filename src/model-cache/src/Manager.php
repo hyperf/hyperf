@@ -73,7 +73,7 @@ class Manager
      *
      * @return int
      */
-    private function getCacheTime(Model $instance, HandlerInterface $handler)
+    private function getCacheTtl(Model $instance, HandlerInterface $handler)
     {
         $ttl = null;
         $offset = 0;
@@ -129,7 +129,7 @@ class Manager
             if (is_null($data)) {
                 $model = $instance->newQuery()->where($primaryKey, '=', $id)->first();
                 if ($model) {
-                    $ttl = $this->getCacheTime($instance, $handler);
+                    $ttl = $this->getCacheTtl($instance, $handler);
                     $handler->set($key, $this->formatModel($model), $ttl);
                 } else {
                     $ttl = $handler->getConfig()->getEmptyModelTtl();
@@ -180,7 +180,7 @@ class Manager
             $targetIds = array_diff($ids, $fetchIds);
             if ($targetIds) {
                 $models = $instance->newQuery()->whereIn($primaryKey, $targetIds)->get();
-                $ttl = $this->getCacheTime($instance, $handler);
+                $ttl = $this->getCacheTtl($instance, $handler);
                 /** @var Model $model */
                 foreach ($models as $model) {
                     $id = $model->getKey();
