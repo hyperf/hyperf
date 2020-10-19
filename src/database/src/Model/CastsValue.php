@@ -34,7 +34,7 @@ abstract class CastsValue implements Synchronized, Arrayable
     /**
      * @var bool
      */
-    protected $isSynchronized = FALSE;
+    protected $isSynchronized = false;
 
     public function __construct(Model $model, $items = []) {
         $this->model = $model;
