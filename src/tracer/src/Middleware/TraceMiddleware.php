@@ -44,15 +44,14 @@ class TraceMiddleware implements MiddlewareInterface
     {
         $span = $this->buildSpan($request);
 
+        defer(function () {
+            $this->tracer->flush();
+        });
         try {
             $response = $handler->handle($request);
         } finally {
             $span->finish();
         }
-
-        defer(function () {
-            $this->tracer->flush();
-        });
 
         return $response;
     }
