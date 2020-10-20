@@ -43,8 +43,12 @@ class TraceMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $span = $this->buildSpan($request);
-        $response = $handler->handle($request);
-        $span->finish();
+
+        try {
+            $response = $handler->handle($request);
+        } finally {
+            $span->finish();
+        }
 
         defer(function () {
             $this->tracer->flush();
