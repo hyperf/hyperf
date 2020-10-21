@@ -17,11 +17,6 @@ use Hyperf\Utils\Contracts\Arrayable;
 abstract class CastsValue implements Synchronized, Arrayable
 {
     /**
-     * @var array default attributes
-     */
-    protected $default = [];
-
-    /**
      * @var Model
      */
     protected $model;
@@ -44,7 +39,7 @@ abstract class CastsValue implements Synchronized, Arrayable
 
     public function __get($name)
     {
-        return $this->items[$name] ?? $this->default[$name];
+        return $this->items[$name] ?? null;
     }
 
     public function __set($name, $value)
