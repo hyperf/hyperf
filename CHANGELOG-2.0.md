@@ -6,7 +6,7 @@
 
 ## Fixed
 
-- [#2680](https://github.com/hyperf/hyperf/pull/2680) Fixed Type error for `CastsValue`, because `$isSynchronized` not has the default value.
+- [#2680](https://github.com/hyperf/hyperf/pull/2680) Fixed Type error for `CastsValue`, because `$isSynchronized` don't have default value.
 
 ## Optimized
 
