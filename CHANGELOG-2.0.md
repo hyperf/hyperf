@@ -1,4 +1,14 @@
-# v2.0.15 - TBD
+# v2.0.16 - TBD
+
+## Added
+
+- [#2682](https://github.com/hyperf/hyperf/pull/2682) Added method `getCacheTTL` for `CacheableInterface` which can control cache time each models.
+
+## Optimized
+
+- [#2690](https://github.com/hyperf/hyperf/pull/2690) Optimized `tracer` which ensure span finished and flushed.
+
+# v2.0.15 - 2020-10-19
 
 ## Added
 
@@ -9,6 +19,10 @@
 - [#2634](https://github.com/hyperf/hyperf/pull/2634) [#2640](https://github.com/hyperf/hyperf/pull/2640) Fixed bug that `RedisSecondMetaGenerator` will generate the same meta.
 - [#2639](https://github.com/hyperf/hyperf/pull/2639) Fixed exception will not be normalized for json-rpc.
 - [#2643](https://github.com/hyperf/hyperf/pull/2643) Fixed undefined method unsearchable for `scout:flush`.
+
+## Optimized
+
+- [#2656](https://github.com/hyperf/hyperf/pull/2656) Optimized the response when parse parameters failed for json-rpc.
 
 # v2.0.14 - 2020-10-12
 

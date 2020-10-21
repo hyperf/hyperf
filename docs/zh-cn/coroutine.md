@@ -79,7 +79,7 @@ Swoole 协程也是对异步回调的一种解决方案，在 `PHP` 语言下，
 
 ### 最大协程数限制
 
-对 `Swoole Server` 通过 `set` 方法设置 `max_coroutine` 参数，用于配置一个 `Worker` 进程最多可存在的协程数量。因为随着 `Worker` 进程处理的协程数目的增加，其对应占用的内存也会随之增加，为了避免超出 `PHP` 的 `memory_limit` 限制，请根据实际业务的压测结果设置该值，`Swoole` 的默认值为 `3000`, 在 `hyperf-skeleton` 项目中默认设置为 `100000`。
+对 `Swoole Server` 通过 `set` 方法设置 `max_coroutine` 参数，用于配置一个 `Worker` 进程最多可存在的协程数量。因为随着 `Worker` 进程处理的协程数目的增加，其对应占用的内存也会随之增加，为了避免超出 `PHP` 的 `memory_limit` 限制，请根据实际业务的压测结果设置该值，`Swoole` 的默认值为 `100000`（ `Swoole` 版本小于 `v4.4.0-beta` 时默认值为 `3000` ）, 在 `hyperf-skeleton` 项目中默认设置为 `100000`。
 
 ## 使用协程
 
