@@ -42,11 +42,17 @@ class RetryBudget implements RetryBudgetInterface
      */
     private $timerId;
 
+    /**
+     * @var float|int
+     */
+    private $maxToken;
+
     public function __construct(int $ttl, int $minRetriesPerSec, float $percentCanRetry)
     {
         $this->ttl = $ttl;
         $this->minRetriesPerSec = $minRetriesPerSec;
         $this->percentCanRetry = $percentCanRetry;
+        $this->maxToken = ($this->minRetriesPerSec / $this->percentCanRetry) * $this->ttl;
         $this->budget = new SplQueue();
     }
 
@@ -102,6 +108,6 @@ class RetryBudget implements RetryBudgetInterface
     public function hasOverflown(): bool
     {
         return (! $this->budget->isEmpty() && $this->budget->bottom() <= microtime(true))
-            || $this->budget->count() > ($this->minRetriesPerSec / $this->percentCanRetry) * $this->ttl;
+            || $this->budget->count() > $this->maxToken;
     }
 }
