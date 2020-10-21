@@ -368,4 +368,11 @@ class ModelCacheTest extends TestCase
 
         $model->delete();
     }
+
+    public function testModelCacheTTL()
+    {
+        ContainerStub::mockContainer();
+        $model = new BookModel();
+        $this->assertSame(100, $model->getCacheTTL());
+    }
 }

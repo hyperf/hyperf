@@ -66,45 +66,6 @@ class Manager
     }
 
     /**
-     * Get cache TTL from instance or handler
-     *
-     * @param $instance
-     * @param $handler
-     *
-     * @return int
-     */
-    private function getCacheTtl(Model $instance, HandlerInterface $handler)
-    {
-        $ttl = $offset = null;
-        // override ttl
-        if (method_exists($instance, 'getCacheTime')) {
-            $ttl = $instance->getCacheTime();
-        }
-        // ttl offset
-        if (method_exists($instance, 'getCacheOffset')) {
-            $offset = $instance->getCacheOffset();
-        }
-
-        // origin ttl
-        if (is_null($ttl)) {
-            $ttl = $handler->getConfig()->getTtl();
-        }
-
-        // convert ttl
-        if ($ttl instanceof \DateInterval) {
-            $reference = new \DateTimeImmutable();
-            $endTime = $reference->add($ttl);
-            $ttl = $endTime->getTimestamp() - $reference->getTimestamp();
-        }
-
-        // ttl + randOffset
-        if ($ttl > 0 && !is_null($offset)) {
-            $ttl += rand(0, $offset);
-        }
-        return $ttl;
-    }
-
-    /**
      * Fetch a model from cache.
      * @param mixed $id
      */
@@ -296,5 +257,44 @@ class Manager
             $model->getTable()
         );
         return array_replace($defaultData, $data);
+    }
+
+    /**
+     * Get cache TTL from instance or handler.
+     *
+     * @param $instance
+     * @param $handler
+     *
+     * @return int
+     */
+    private function getCacheTtl(Model $instance, HandlerInterface $handler)
+    {
+        $ttl = $offset = null;
+        // override ttl
+        if (method_exists($instance, 'getCacheTime')) {
+            $ttl = $instance->getCacheTime();
+        }
+        // ttl offset
+        if (method_exists($instance, 'getCacheOffset')) {
+            $offset = $instance->getCacheOffset();
+        }
+
+        // origin ttl
+        if (is_null($ttl)) {
+            $ttl = $handler->getConfig()->getTtl();
+        }
+
+        // convert ttl
+        if ($ttl instanceof \DateInterval) {
+            $reference = new \DateTimeImmutable();
+            $endTime = $reference->add($ttl);
+            $ttl = $endTime->getTimestamp() - $reference->getTimestamp();
+        }
+
+        // ttl + randOffset
+        if ($ttl > 0 && ! is_null($offset)) {
+            $ttl += rand(0, $offset);
+        }
+        return $ttl;
     }
 }

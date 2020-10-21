@@ -26,21 +26,21 @@ trait Cacheable
     protected $useCacheBuilder = false;
 
     /**
-     * cache time
+     * cache time.
      *
-     * @var NULL|int
+     * @var null|int
      */
     protected $cacheTime;
 
     /**
-     * cache rand offset for ttl
+     * cache rand offset for ttl.
      *
-     * @var NULL|int
+     * @var null|int
      */
     protected $cacheOffset;
 
     /**
-     * @return NULL|int
+     * @return null|int
      */
     public function getCacheOffset()
     {
@@ -56,7 +56,7 @@ trait Cacheable
     }
 
     /**
-     * @return NULL|int
+     * @return null|int
      */
     public function getCacheTime()
     {
@@ -64,7 +64,7 @@ trait Cacheable
     }
 
     /**
-     * @param NULL|int $cacheTime
+     * @param null|int $cacheTime
      */
     public function setCacheTime($cacheTime)
     {
@@ -104,6 +104,14 @@ trait Cacheable
         $manager = $this->getContainer()->get(Manager::class);
 
         return $manager->destroy([$this->getKey()], get_called_class());
+    }
+
+    /**
+     * Get the expire time for cache.
+     */
+    public function getCacheTTL(): ?int
+    {
+        return null;
     }
 
     /**
