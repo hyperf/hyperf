@@ -8,7 +8,7 @@
 
 - [#2680](https://github.com/hyperf/hyperf/pull/2680) Fixed Type error for `CastsValue`, because `$isSynchronized` don't have default value.
 - [#2680](https://github.com/hyperf/hyperf/pull/2680) Fixed default value in `$items` will be replaced by `__construct` for `CastsValue`.
-- [#2693](https://github.com/hyperf/hyperf/pull/2693) Fixed the wrong overflow algorithm of budget for `hyperf/retry`.
+- [#2693](https://github.com/hyperf/hyperf/pull/2693) Fixed unexpected behavior in retry budget for `hyperf/retry`.
 
 ## Optimized
 
