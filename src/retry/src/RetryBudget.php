@@ -70,8 +70,8 @@ class RetryBudget implements RetryBudgetInterface
             for ($i = 0; $i < $this->minRetriesPerSec / $this->percentCanRetry; ++$i) {
                 $this->produce();
             }
-            while (! $this->budget->isEmpty()
-                && $this->budget->bottom() <= microtime(true)
+            while (
+                $this->hasOverflown()
             ) {
                 $this->budget->dequeue();
             }
@@ -97,5 +97,11 @@ class RetryBudget implements RetryBudgetInterface
     {
         $t = microtime(true) + $this->ttl;
         $this->budget->push($t);
+    }
+
+    public function hasOverflown(): bool
+    {
+        return (! $this->budget->isEmpty() && $this->budget->bottom() <= microtime(true))
+            || $this->budget->count() > ($this->minRetriesPerSec / $this->percentCanRetry) * $this->ttl;
     }
 }

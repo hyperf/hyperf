@@ -69,7 +69,7 @@ class RetryBudgetTest extends TestCase
         $this->assertTrue($budget->consume());
         $this->assertTrue(! $budget->consume());
 
-        // Retry budget should never has more than 1 token in this test
+        // Retry budget should never have more than 1 token in this test
         $budget = new RetryBudget(
             1,
             1,
