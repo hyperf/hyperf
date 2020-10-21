@@ -1,5 +1,9 @@
 # v2.0.16 - TBD
 
+## Added
+
+- [#2682](https://github.com/hyperf/hyperf/pull/2682) Added method `getCacheTTL` for `CacheableInterface` which can control cache time each models.
+
 # v2.0.15 - 2020-10-19
 
 ## Added
