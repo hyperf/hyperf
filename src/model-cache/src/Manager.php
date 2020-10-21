@@ -90,11 +90,7 @@ class Manager
             if (is_null($data)) {
                 $model = $instance->newQuery()->where($primaryKey, '=', $id)->first();
                 if ($model) {
-                    if ($instance instanceof CacheableInterface) {
-                        $ttl = $instance->getCacheTTL() ?? $handler->getConfig()->getTtl();
-                    } else {
-                        $ttl = $handler->getConfig()->getTtl();
-                    }
+                    $ttl = $this->getCacheTTL($instance, $handler);
                     $handler->set($key, $this->formatModel($model), $ttl);
                 } else {
                     $ttl = $handler->getConfig()->getEmptyModelTtl();
@@ -145,11 +141,7 @@ class Manager
             $targetIds = array_diff($ids, $fetchIds);
             if ($targetIds) {
                 $models = $instance->newQuery()->whereIn($primaryKey, $targetIds)->get();
-                if ($instance instanceof CacheableInterface) {
-                    $ttl = $instance->getCacheTTL() ?? $handler->getConfig()->getTtl();
-                } else {
-                    $ttl = $handler->getConfig()->getTtl();
-                }
+                $ttl = $this->getCacheTTL($instance, $handler);
                 /** @var Model $model */
                 foreach ($models as $model) {
                     $id = $model->getKey();
@@ -223,6 +215,14 @@ class Manager
 
         $this->logger->alert('Cache handler not exist, increment failed.');
         return false;
+    }
+
+    protected function getCacheTTL(Model $instance, HandlerInterface $handler)
+    {
+        if ($instance instanceof CacheableInterface) {
+            return $instance->getCacheTTL() ?? $handler->getConfig()->getTtl();
+        }
+        return $handler->getConfig()->getTtl();
     }
 
     /**
