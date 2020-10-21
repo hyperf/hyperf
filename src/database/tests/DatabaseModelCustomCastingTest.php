@@ -233,12 +233,13 @@ class DatabaseModelCustomCastingTest extends TestCase
         $model = new TestModelWithCustomCast();
         $model->user = $user = new UserInfo($model, ['name' => 'Hyperf', 'gender' => 1]);
         $attributes = $model->getAttributes();
-        $this->assertSame(['name' => 'Hyperf', 'gender' => 1, 'role_id' => null], $attributes);
-        $this->assertNull($user->role_id);
+        $this->assertSame(['name' => 'Hyperf', 'gender' => 1, 'role_id' => 0], $attributes);
+        $this->assertSame(0, $user->role_id);
         $user->role_id = 1;
         $this->assertSame(['name' => 'Hyperf', 'gender' => 1, 'role_id' => 1], $model->getAttributes());
         unset($user->role_id);
         $this->assertSame(['name' => 'Hyperf', 'gender' => 1, 'role_id' => null], $model->getAttributes());
+        $this->assertSame(null, $user->role_id);
         unset($user->not_found);
         $this->assertSame(['name' => 'Hyperf', 'gender' => 1, 'role_id' => null], $model->getAttributes());
     }
@@ -438,4 +439,7 @@ class Address
  */
 class UserInfo extends CastsValue
 {
+    protected $items = [
+        'role_id' => 0,
+    ];
 }
