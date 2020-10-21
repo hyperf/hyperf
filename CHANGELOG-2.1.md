@@ -18,6 +18,7 @@
 - Removed deprecated method `get` from `Hyperf\Utils\Coordinator`.
 - Removed config `rate-limit.php`, please use `rate_limit.php` instead.
 - Removed useless class `Hyperf\Resource\Response\ResponseEmitter`.
+- Removed component `hyperf/paginator` from database's dependencies.
 
 ## Changed
 
