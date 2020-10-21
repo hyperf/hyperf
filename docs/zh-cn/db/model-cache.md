@@ -149,7 +149,7 @@ User::query(true)->where('gender', '>', 1)->delete();
 
 ### 控制模型中缓存时间
 
-除了 `database.php` 中配置的默认缓存 ttl 时间外，`Hyperf\ModelCache\Cacheable` 支持对模型配置更细的缓存时间：
+除了 `database.php` 中配置的默认缓存时间 `ttl` 外，`Hyperf\ModelCache\Cacheable` 支持对模型配置更细的缓存时间：
 
 ```php
 class User extends Model implements CacheableInterface
@@ -157,21 +157,13 @@ class User extends Model implements CacheableInterface
     use Cacheable;
     
     /**
-     * 缓存 10 分钟
-     * 不配置则继承全局ttl
-     *
-     * @var NULL|int
+     * 缓存 10 分钟，返回 null 则使用配置文件中设置的超时时间
+     * @return int|null
      */
-    protected $cacheTime = 600;
-
-    /**
-     * 前后 60 秒失效（防止同一时间全部失效穿透数据库）
-     * 不配置则不启用
-     *
-     * @var int
-     */
-    protected $cacheOffset = 60;
-
+    public function getCacheTTL(): ?int
+    {
+        return 600;
+    }
 }
 ```
 
