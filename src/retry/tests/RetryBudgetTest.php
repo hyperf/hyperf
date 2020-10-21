@@ -68,5 +68,20 @@ class RetryBudgetTest extends TestCase
         $this->assertTrue($budget->consume());
         $this->assertTrue($budget->consume());
         $this->assertTrue(! $budget->consume());
+
+        // Retry budget should never have more than 1 token in this test
+        $budget = new RetryBudget(
+            1,
+            1,
+            1
+        );
+        $budget->init();
+        $ref = new \ReflectionClass(RetryBudget::class);
+        $prop = $ref->getProperty('budget');
+        $prop->setAccessible(true);
+        System::sleep(1.2);
+        $this->assertLessThanOrEqual(1, $prop->getValue($budget)->count());
+        System::sleep(1.2);
+        $this->assertLessThanOrEqual(1, $prop->getValue($budget)->count());
     }
 }
