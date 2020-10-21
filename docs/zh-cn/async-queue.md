@@ -103,7 +103,7 @@ class AsyncQueueConsumer extends ConsumerProcess
 
 #### 传统方式
 
-这种模式会把对象直接序列化然后存到 `Redis` 等队列中，所以为了保证序列化后的体积，尽量不要将 `Container`，`Config` 等设置为成员变量。
+这种模式会把对象直接序列化然后存到 `Redis` 等队列中，所以为了保证序列化后的体积，尽量不要将 `Container`，`Config` 等设置为成员变量。且成员变量禁止使用@Inject注入
 
 比如以下 `Job` 的定义，是 **不可取** 的
 
