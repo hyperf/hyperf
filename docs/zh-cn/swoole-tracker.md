@@ -194,6 +194,8 @@ Swoole Tracker 本是一款商业产品，拥有进行内存泄漏检测的能�
 apm.enable_malloc_hook=1
 ```
 
+!> 注意：不要在composer安装依赖时开启；不要在生成代理类缓存时开启。
+
 3. 根据自己的业务，在 Swoole 的 onReceive 或者 onRequest 事件开头加上 `trackerHookMalloc()` 调用：
 
 ```php
