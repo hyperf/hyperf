@@ -98,7 +98,7 @@ class FindDriver implements DriverInterface
             foreach ($lineArr as $line) {
                 $pathName = $line;
                 $modifyTime = fileatime($pathName);
-                //modifyTime less than or equal to startTime continue
+                // modifyTime less than or equal to startTime continue
                 if ($modifyTime <= $this->startTime) {
                     continue;
                 }
