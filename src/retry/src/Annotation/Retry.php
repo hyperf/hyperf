@@ -17,6 +17,7 @@ use Hyperf\Retry\Policy\ClassifierRetryPolicy;
 use Hyperf\Retry\Policy\FallbackRetryPolicy;
 use Hyperf\Retry\Policy\MaxAttemptsRetryPolicy;
 use Hyperf\Retry\Policy\SleepRetryPolicy;
+use Hyperf\Retry\RetryBudget;
 use Hyperf\Retry\RetryBudgetInterface;
 use Hyperf\Retry\SleepStrategyInterface;
 
@@ -115,6 +116,6 @@ class Retry extends AbstractRetry
     public function __construct($value = null)
     {
         parent::__construct($value);
-        $this->retryBudget = make(RetryBudgetInterface::class, $this->retryBudget);
+        $this->retryBudget = make(RetryBudget::class, $this->retryBudget);
     }
 }

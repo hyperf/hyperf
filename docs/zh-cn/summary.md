@@ -62,6 +62,7 @@
   * [修改器](zh-cn/db/mutators.md)
   * [极简 DB 组件](zh-cn/db/db.md)
   * [API 资源构造器](zh-cn/db/resource.md)
+  * [模型全文检索](zh-cn/scout.md)
   
 * 微服务
 
