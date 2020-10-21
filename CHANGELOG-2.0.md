@@ -6,7 +6,7 @@
 
 ## Optimized
 
-- [#2690](https://github.com/hyperf/hyperf/pull/2690) Optimized `tracer` which ensure span finishes.
+- [#2690](https://github.com/hyperf/hyperf/pull/2690) Optimized `tracer` which ensure span finished and flushed.
 
 # v2.0.15 - 2020-10-19
 
