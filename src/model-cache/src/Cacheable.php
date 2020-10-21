@@ -61,6 +61,14 @@ trait Cacheable
     }
 
     /**
+     * Get the expire time for cache.
+     */
+    public function getCacheTTL(): ?int
+    {
+        return null;
+    }
+
+    /**
      * Increment a column's value by a given amount.
      * @param string $column
      * @param float|int $amount

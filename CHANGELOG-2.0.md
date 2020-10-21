@@ -1,4 +1,16 @@
-# v2.0.15 - TBD
+# v2.0.16 - TBD
+
+## Added
+
+- [#2682](https://github.com/hyperf/hyperf/pull/2682) Added method `getCacheTTL` for `CacheableInterface` which can control cache time each models.
+
+## Optimized
+
+- [#2611](https://github.com/hyperf/hyperf/pull/2611) Optimized `FindDriver` for watcher, you can use it in alpine image.
+- [#2662](https://github.com/hyperf/hyperf/pull/2662) Optimized amqp consumer which can stop safely.
+- [#2690](https://github.com/hyperf/hyperf/pull/2690) Optimized `tracer` which ensure span finished and flushed.
+
+# v2.0.15 - 2020-10-19
 
 ## Added
 
