@@ -76,9 +76,7 @@ class RetryBudget implements RetryBudgetInterface
             for ($i = 0; $i < $this->minRetriesPerSec / $this->percentCanRetry; ++$i) {
                 $this->produce();
             }
-            while (
-                $this->hasOverflown()
-            ) {
+            while ($this->hasOverflown()) {
                 $this->budget->dequeue();
             }
         });
