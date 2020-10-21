@@ -4,6 +4,10 @@
 
 - [#2682](https://github.com/hyperf/hyperf/pull/2682) Added method `getCacheTTL` for `CacheableInterface` which can control cache time each models.
 
+## Optimized
+
+- [#2690](https://github.com/hyperf/hyperf/pull/2690) Optimized `tracer` which ensure span finishes.
+
 # v2.0.15 - 2020-10-19
 
 ## Added
