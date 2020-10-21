@@ -368,4 +368,17 @@ class ModelCacheTest extends TestCase
 
         $model->delete();
     }
+
+    public function testModelCacheTTL()
+    {
+        $container = ContainerStub::mockContainer();
+        $model = new BookModel();
+        $this->assertSame(100, $model->getCacheTTL());
+
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        $redis->del('{mc:default:m:book}:id:1');
+        BookModel::findFromCache(1);
+        $this->assertSame(100, $redis->ttl('{mc:default:m:book}:id:1'));
+    }
 }

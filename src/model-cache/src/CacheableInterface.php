@@ -21,4 +21,6 @@ interface CacheableInterface
     public static function findManyFromCache(array $ids): Collection;
 
     public function deleteCache(): bool;
+
+    public function getCacheTTL(): ?int;
 }
