@@ -24,7 +24,7 @@ abstract class CastsValue implements Synchronized, Arrayable
     /**
      * @var array
      */
-    protected $items;
+    protected $items = [];
 
     /**
      * @var bool
@@ -34,7 +34,7 @@ abstract class CastsValue implements Synchronized, Arrayable
     public function __construct(Model $model, $items = [])
     {
         $this->model = $model;
-        $this->items = $items;
+        $this->items = array_merge($this->items, $items);
     }
 
     public function __get($name)
