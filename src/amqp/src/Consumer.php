@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -21,6 +21,7 @@ use Hyperf\Amqp\Message\MessageInterface;
 use Hyperf\Amqp\Pool\PoolFactory;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
+use Hyperf\Process\ProcessManager;
 use Hyperf\Utils\Coroutine\Concurrent;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -92,7 +93,7 @@ class Consumer extends Builder
         );
 
         try {
-            while ($channel->is_consuming()) {
+            while ($channel->is_consuming() && ProcessManager::isRunning()) {
                 $channel->wait();
             }
         } catch (MaxConsumptionException $ex) {

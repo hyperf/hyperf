@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -113,6 +113,15 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
             throw new Exception("Property [{$key}] does not exist on this collection instance.");
         }
         return new HigherOrderCollectionProxy($this, $key);
+    }
+
+    /**
+     * @param mixed $items
+     */
+    public function fill($items = [])
+    {
+        $this->items = $this->getArrayableItems($items);
+        return $this;
     }
 
     /**

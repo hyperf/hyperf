@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -74,6 +74,21 @@ return [
             'secretKey' => env('QINIU_SECRET_KEY'),
             'bucket' => env('QINIU_BUCKET'),
             'domain' => env('QINBIU_DOMAIN'),
+        ],
+        'cos' => [
+            'driver' => \Hyperf\Filesystem\Adapter\CosAdapterFactory::class,
+            'region' => env('COS_REGION'),
+            'credentials' => [
+                'appId' => env('COS_APPID'),
+                'secretId' => env('COS_SECRET_ID'),
+                'secretKey' => env('COS_SECRET_KEY'),
+            ],
+            'bucket' => env('COS_BUCKET'),
+            'read_from_cdn' => false,
+            // 'timeout'         => 60,
+            // 'connect_timeout' => 60,
+            // 'cdn'             => '',
+            // 'scheme'          => 'https',
         ],
     ],
 ];

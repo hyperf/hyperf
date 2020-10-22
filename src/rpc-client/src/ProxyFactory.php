@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -55,7 +55,7 @@ class ProxyFactory
 
         $proxyFileName = str_replace('\\', '_', $serviceClass);
         $proxyClassName = $serviceClass . '_' . md5($this->codeLoader->getCodeByClassName($serviceClass));
-        $path = $dir . $proxyFileName . '.proxy.php';
+        $path = $dir . $proxyFileName . '.rpc-client.proxy.php';
 
         $key = md5($path);
         // If the proxy file does not exist, then try to acquire the coroutine lock.

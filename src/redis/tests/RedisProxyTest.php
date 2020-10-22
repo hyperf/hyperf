@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -113,7 +113,7 @@ class RedisProxyTest extends TestCase
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
             'redis' => [
                 'default' => [
-                    'host' => 'localhost',
+                    'host' => '127.0.0.1',
                     'auth' => null,
                     'port' => 6379,
                     'db' => 0,

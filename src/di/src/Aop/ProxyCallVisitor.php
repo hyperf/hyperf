@@ -5,20 +5,25 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\Di\Aop;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
+use PhpParser\Node\Scalar\MagicConst\Class_ as MagicConstClass;
 use PhpParser\Node\Scalar\MagicConst\Function_ as MagicConstFunction;
+use PhpParser\Node\Scalar\MagicConst\Method as MagicConstMethod;
+use PhpParser\Node\Scalar\MagicConst\Trait_ as MagicConstTrait;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
@@ -43,6 +48,11 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         = [
             ProxyTrait::class,
         ];
+
+    /**
+     * @var bool
+     */
+    private $shouldRewrite = false;
 
     public function __construct(VisitorMetadata $visitorMetadata)
     {
@@ -72,6 +82,21 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         return null;
     }
 
+    public function enterNode(Node $node)
+    {
+        switch ($node) {
+            case $node instanceof ClassMethod:
+                if ($this->shouldRewrite($node)) {
+                    $this->shouldRewrite = true;
+                } else {
+                    $this->shouldRewrite = false;
+                }
+                break;
+        }
+
+        return null;
+    }
+
     public function leaveNode(Node $node)
     {
         switch ($node) {
@@ -85,7 +110,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 if (! $this->clouldUseSameTrait()) {
                     return $node;
                 }
-                // no break
+            // no break; If the node is trait and php version >= 7.3, it can `use ProxyTrait` like class.
             case $node instanceof Class_ && ! $node->isAnonymous():
                 // Add use proxy traits.
                 $stmts = $node->stmts;
@@ -95,6 +120,18 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 $node->stmts = $stmts;
                 unset($stmts);
                 return $node;
+            case $node instanceof MagicConstFunction:
+                // Rewrite __FUNCTION__ to $__function__ variable.
+                if ($this->shouldRewrite) {
+                    return new Variable('__function__');
+                }
+                break;
+            case $node instanceof MagicConstMethod:
+                // Rewrite __METHOD__ to $__method__ variable.
+                if ($this->shouldRewrite) {
+                    return new Variable('__method__');
+                }
+                break;
         }
         return null;
     }
@@ -142,17 +179,17 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         }
         $staticCall = new StaticCall(new Name('self'), '__proxyCall', [
             // __CLASS__
-            new Node\Arg($this->getMagicConst()),
+            new Arg($this->getMagicConst()),
             // __FUNCTION__
-            new Node\Arg(new MagicConstFunction()),
+            new Arg(new MagicConstFunction()),
             // self::getParamMap(OriginalClass::class, __FUNCTION, func_get_args())
-            new Node\Arg(new StaticCall(new Name('self'), '__getParamsMap', [
-                new Node\Arg(new Node\Scalar\MagicConst\Class_()),
-                new Node\Arg(new MagicConstFunction()),
-                new Node\Arg(new FuncCall(new Name('func_get_args'))),
+            new Arg(new StaticCall(new Name('self'), '__getParamsMap', [
+                new Arg(new MagicConstClass()),
+                new Arg(new MagicConstFunction()),
+                new Arg(new FuncCall(new Name('func_get_args'))),
             ])),
             // A closure that wrapped original method code.
-            new Node\Arg(new Closure([
+            new Arg(new Closure([
                 'params' => value(function () use ($node) {
                     // Transfer the variadic variable to normal variable at closure argument. ...$params => $parms
                     $params = $node->getParams();
@@ -165,34 +202,48 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                     }
                     return $params;
                 }),
+                'uses' => [
+                    new Variable('__function__'),
+                    new Variable('__method__'),
+                ],
                 'stmts' => $node->stmts,
             ])),
         ]);
+        $stmts = $this->unshiftMagicMethods([]);
         if ($shouldReturn) {
-            $node->stmts = [
-                new Return_($staticCall),
-            ];
+            $stmts[] = new Return_($staticCall);
         } else {
-            $node->stmts = [
-                new Expression($staticCall),
-            ];
+            $stmts[] = new Expression($staticCall);
         }
+        $node->stmts = $stmts;
         return $node;
+    }
+
+    private function unshiftMagicMethods($stmts = [])
+    {
+        $magicConstFunction = new Expression(new Assign(new Variable('__function__'), new MagicConstFunction()));
+        $magicConstMethod = new Expression(new Assign(new Variable('__method__'), new MagicConstMethod()));
+        array_unshift($stmts, $magicConstFunction, $magicConstMethod);
+        return $stmts;
     }
 
     private function getMagicConst(): Node\Scalar\MagicConst
     {
         switch ($this->visitorMetadata->classLike) {
             case Trait_::class:
-                return new Node\Scalar\MagicConst\Trait_();
+                return new MagicConstTrait();
             case Class_::class:
             default:
-                return new Node\Scalar\MagicConst\Class_();
+                return new MagicConstClass();
         }
     }
 
     private function shouldRewrite(ClassMethod $node)
     {
+        if (in_array($this->visitorMetadata->classLike, [Node\Stmt\Interface_::class])) {
+            return false;
+        }
+
         $rewriteCollection = Aspect::parse($this->visitorMetadata->className);
 
         return $rewriteCollection->shouldRewrite($node->name->toString());

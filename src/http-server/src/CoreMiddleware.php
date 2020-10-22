@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -24,6 +24,7 @@ use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Server\Exception\ServerException;
+use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
@@ -211,12 +212,9 @@ class CoreMiddleware implements CoreMiddlewareInterface
         }
 
         if (is_array($response) || $response instanceof Arrayable) {
-            if ($response instanceof Arrayable) {
-                $response = $response->toArray();
-            }
             return $this->response()
                 ->withAddedHeader('content-type', 'application/json')
-                ->withBody(new SwooleStream(json_encode($response, JSON_UNESCAPED_UNICODE)));
+                ->withBody(new SwooleStream(Json::encode($response)));
         }
 
         if ($response instanceof Jsonable) {

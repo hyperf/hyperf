@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -21,7 +21,7 @@ use Swoole\Server;
 
 /**
  * @method push(int $fd, $data, int $opcode = null, $finish = null)
- * @method close(int $fd, bool $reset = null)
+ * @method disconnect(int $fd, int $code = null, string $reason = null)
  */
 class Sender
 {
@@ -66,6 +66,9 @@ class Sender
         if ($this->isCoroutineServer) {
             if (isset($this->responses[$fd])) {
                 array_shift($arguments);
+                if ($method === 'disconnect') {
+                    $method = 'close';
+                }
                 $this->responses[$fd]->{$method}(...$arguments);
                 $this->logger->debug("[WebSocket] Worker send to #{$fd}");
             }
@@ -99,7 +102,7 @@ class Sender
     {
         $info = $this->getServer()->connection_info($fd);
 
-        if ($info && $info['websocket_status'] === WEBSOCKET_STATUS_ACTIVE) {
+        if (($info['websocket_status'] ?? null) === WEBSOCKET_STATUS_ACTIVE) {
             return true;
         }
 
@@ -117,13 +120,10 @@ class Sender
 
     public function getFdAndMethodFromProxyMethod(string $method, array $arguments): array
     {
-        if (! in_array($method, ['push', 'send', 'sendto', 'close'])) {
+        if (! in_array($method, ['push', 'disconnect'])) {
             throw new InvalidMethodException(sprintf('Method [%s] is not allowed.', $method));
         }
 
-        if ($method !== 'close') {
-            $method = 'push';
-        }
         return [(int) $arguments[0], $method];
     }
 

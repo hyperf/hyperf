@@ -5,15 +5,20 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace HyperfTest\ModelCache;
 
+use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\DbConnection\Listener\InitTableCollectorListener;
+use Hyperf\ModelCache\EagerLoad\EagerLoader;
+use Hyperf\ModelCache\Listener\EagerLoadListener;
 use Hyperf\Redis\RedisProxy;
+use HyperfTest\ModelCache\Stub\BookModel;
 use HyperfTest\ModelCache\Stub\ContainerStub;
+use HyperfTest\ModelCache\Stub\ImageModel;
 use HyperfTest\ModelCache\Stub\UserExtModel;
 use HyperfTest\ModelCache\Stub\UserHiddenModel;
 use HyperfTest\ModelCache\Stub\UserModel;
@@ -257,6 +262,56 @@ class ModelCacheTest extends TestCase
         $this->assertEquals(array_keys($model->getAttributes()), array_keys($model3->getAttributes()));
     }
 
+    public function testEagerLoad()
+    {
+        $container = ContainerStub::mockContainer();
+
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        $redis->del('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2');
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2'));
+        $books = BookModel::query()->get();
+        $loader = new EagerLoader();
+        $loader->load($books, ['user']);
+
+        $this->assertSame(2, $redis->exists('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2'));
+    }
+
+    public function testEagerLoadMacro()
+    {
+        $container = ContainerStub::mockContainer();
+        $listener = new EagerLoadListener($container);
+        $listener->process(new \stdClass());
+
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        $redis->del('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2');
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2'));
+        $books = BookModel::query()->get();
+        $books->loadCache(['user']);
+
+        $this->assertSame(2, $redis->exists('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2'));
+    }
+
+    public function testEagerLoadMorphTo()
+    {
+        ContainerStub::mockContainer();
+        Relation::morphMap([
+            'user' => UserModel::class,
+            'book' => BookModel::class,
+        ]);
+
+        $images = ImageModel::findManyFromCache([1, 2, 3]);
+        $loader = new EagerLoader();
+        $loader->load($images, ['imageable']);
+
+        $this->assertInstanceOf(UserModel::class, $images->shift()->imageable);
+        $this->assertInstanceOf(UserModel::class, $images->shift()->imageable);
+        $this->assertInstanceOf(BookModel::class, $images->shift()->imageable);
+    }
+
     public function testWhenAddedNewColumn()
     {
         $container = ContainerStub::mockContainer();
@@ -276,5 +331,54 @@ class ModelCacheTest extends TestCase
         $model = UserModel::findFromCache(1);
 
         $this->assertArrayHasKey('gender', $model->toArray());
+    }
+
+    public function testModelSave()
+    {
+        $container = ContainerStub::mockContainer();
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+
+        $id = 208;
+        UserModel::query()->firstOrCreate(['id' => $id], [
+            'name' => uniqid(),
+            'gender' => 1,
+        ]);
+
+        $model = UserModel::findFromCache($id);
+        $name = uniqid();
+        $model->name = $name;
+        $model->save();
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:' . $id));
+
+        $model = UserModel::findFromCache($id);
+        $this->assertSame($name, $model->name);
+        $connection = $model->getConnection();
+        $connection->transaction(function () use ($id, $redis) {
+            $model = UserModel::findFromCache($id);
+            $name = uniqid();
+            $model->name = $name;
+            $model->save();
+            UserModel::findFromCache($id);
+            $this->assertSame(1, $redis->exists('{mc:default:m:user}:id:' . $id));
+        });
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:' . $id));
+
+        $model->delete();
+    }
+
+    public function testModelCacheTTL()
+    {
+        $container = ContainerStub::mockContainer();
+        $model = new BookModel();
+        $this->assertSame(100, $model->getCacheTTL());
+
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        $redis->del('{mc:default:m:book}:id:1');
+        BookModel::findFromCache(1);
+        $this->assertSame(100, $redis->ttl('{mc:default:m:book}:id:1'));
     }
 }

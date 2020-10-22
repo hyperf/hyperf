@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -15,6 +15,7 @@ use Hyperf\Database\Migrations\MigrationCreator;
 use Hyperf\Utils\Str;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Throwable;
 
 class GenMigrateCommand extends BaseCommand
 {
@@ -94,14 +95,17 @@ class GenMigrateCommand extends BaseCommand
      */
     protected function writeMigration(string $name, ?string $table, bool $create): void
     {
-        $file = pathinfo($this->creator->create(
-            $name,
-            $this->getMigrationPath(),
-            $table,
-            $create
-        ), PATHINFO_FILENAME);
-
-        $this->info("<info>[INFO] Created Migration:</info> {$file}");
+        try {
+            $file = pathinfo($this->creator->create(
+                $name,
+                $this->getMigrationPath(),
+                $table,
+                $create
+            ), PATHINFO_FILENAME);
+            $this->info("<info>[INFO] Created Migration:</info> {$file}");
+        } catch (Throwable $e) {
+            $this->error("<error>[ERROR] Created Migration:</error> {$e->getMessage()}");
+        }
     }
 
     /**

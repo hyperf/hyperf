@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -14,6 +14,7 @@ namespace Hyperf\Di\Annotation;
 use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\ClassLoader;
+use Hyperf\Di\Exception\DirectoryNotExistException;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Utils\Filesystem\Filesystem;
 use ReflectionProperty;
@@ -133,7 +134,7 @@ class Scanner
         $this->clearRemovedClasses($collectors, $classes);
 
         foreach ($classes as $reflectionClass) {
-            if ($this->filesystem->lastModified($reflectionClass->getFileName()) > $lastCacheModified) {
+            if ($this->filesystem->lastModified($reflectionClass->getFileName()) >= $lastCacheModified) {
                 /** @var MetadataCollector $collector */
                 foreach ($collectors as $collector) {
                     $collector::clear($reflectionClass->getName());
@@ -162,6 +163,7 @@ class Scanner
 
     /**
      * Normalizes given directory names by removing directory not exist.
+     * @throws DirectoryNotExistException
      */
     public function normalizeDir(array $paths): array
     {
@@ -170,6 +172,10 @@ class Scanner
             if (is_dir($path)) {
                 $result[] = $path;
             }
+        }
+
+        if ($paths && ! $result) {
+            throw new DirectoryNotExistException('The scanned directory does not exist');
         }
 
         return $result;
@@ -243,7 +249,10 @@ class Scanner
         $basePath = $configDir . '/config.php';
         $aspects = file_exists($aspectsPath) ? include $aspectsPath : [];
         $baseConfig = file_exists($basePath) ? include $basePath : [];
-        $providerConfig = ProviderConfig::load();
+        $providerConfig = [];
+        if (class_exists(ProviderConfig::class)) {
+            $providerConfig = ProviderConfig::load();
+        }
         if (! isset($aspects) || ! is_array($aspects)) {
             $aspects = [];
         }
@@ -256,6 +265,7 @@ class Scanner
         $aspects = array_merge($providerConfig['aspects'], $baseConfig['aspects'], $aspects);
 
         [$removed, $changed] = $this->getChangedAspects($aspects, $lastCacheModified);
+        // When the aspect removed from config, it should removed from AspectCollector.
         foreach ($removed as $aspect) {
             AspectCollector::clear($aspect);
         }
@@ -294,7 +304,6 @@ class Scanner
             // Priority
             $priority = $priority ?: ($instancePriority ?? null);
             // Save the metadata to AspectCollector
-            // TODO: When the aspect removed from config, it should removed from AspectCollector.
             AspectCollector::setAround($aspect, $classes, $annotations, $priority);
         }
     }

@@ -1,4 +1,6 @@
-Socket.io是一款非常流行的應用層實時通訊協議和框架，可以輕鬆實現應答、分組、廣播。hyperf/socketio-server支持了Socket.io的WebSocket傳輸協議。
+# Socket.io 服務
+
+Socket.io 是一款非常流行的應用層實時通訊協議和框架，可以輕鬆實現應答、分組、廣播。hyperf/socketio-server 支持了 Socket.io 的 WebSocket 傳輸協議。
 
 ## 安裝
 
@@ -23,7 +25,6 @@ hyperf/socketio-server 組件是基於 WebSocket 實現的，請確保服務端�
     ],
 ],
 ```
-
 
 ## 快速開始
 
@@ -149,9 +150,9 @@ function onSomeEvent(\Hyperf\SocketIOServer\Socket $socket){
   $socket->compress(false)->emit('uncompressed', "that's rough");
 }
 ```
-### 全局API
+### 全局 API
 
-直接從容器中獲取SocketIO單例。這個單例可向全局廣播或指定房間、個人通訊。未指定命名空間時，默認使用'/'空間。
+直接從容器中獲取 SocketIO 單例。這個單例可向全局廣播或指定房間、個人通訊。未指定命名空間時，默認使用 '/' 空間。
 
 ```php
 <?php
@@ -182,9 +183,9 @@ $io->local->emit('hi', 'my lovely babies');
 $io->emit('an event sent to all connected clients');
 ```
 
-### 命名空間API
+### 命名空間 API
 
-和全局API一樣，只不過已經限制了命名空間。
+和全局 API 一樣，只不過已經限制了命名空間。
 ```php
 // 以下偽碼等價
 $foo->emit();
@@ -338,7 +339,63 @@ class WebSocketController extends BaseNamespace
 }
 ```
 
-## Auth 鑑權
+### 修改 `SocketIO` 基礎參數
+
+框架默認參數：
+
+|          配置          | 類型  | 默認值 |
+| :--------------------: | :---: | :----: |
+|      $pingTimeout      |  int  |  100   |
+|     $pingInterval      |  int  | 10000  |
+| $clientCallbackTimeout |  int  | 10000  |
+
+有時候，由於推送消息比較多或者網絡較卡，在 100ms 內，無法及時返回 `PONG`，就會導致連接斷開。這時候我們可以通過以下方式，進行重寫：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Kernel;
+
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\SocketIOServer\Parser\Decoder;
+use Hyperf\SocketIOServer\Parser\Encoder;
+use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
+use Hyperf\SocketIOServer\SocketIO;
+use Hyperf\WebSocketServer\Sender;
+use Psr\Container\ContainerInterface;
+
+class SocketIOFactory
+{
+    public function __invoke(ContainerInterface $container)
+    {
+        $io = new SocketIO(
+            $container->get(StdoutLoggerInterface::class),
+            $container->get(Sender::class),
+            $container->get(Decoder::class),
+            $container->get(Encoder::class),
+            $container->get(SidProviderInterface::class)
+        );
+
+        // 重寫 pingTimeout 參數
+        $io->setPingTimeout(10000);
+
+        return $io;
+    }
+}
+
+```
+
+然後在 `dependencies.php` 添加對應映射即可。
+
+```php
+return [
+    Hyperf\SocketIOServer\SocketIO::class => App\Kernel\SocketIOFactory::class,
+];
+```
+
+### Auth 鑑權
 
 您可以通過使用中間件來攔截 WebSocket 握手，實現鑑權功能，如下：
 
@@ -380,3 +437,16 @@ class WebSocketAuthMiddleware implements MiddlewareInterface
 ```
 
 並將上面的中間件配置到對應的 WebSocket Server 中去即可。
+
+### 獲取原始請求對象
+
+連接建立以後，有時需獲取客户端 IP ，Cookie 等請求信息。原始請求對象已經被保留在[連接上下文](websocket-server.md#連接上下文)中，您可以用如下方式在事件回調中獲取：
+
+```php
+public function onEvent($socket, $data)
+{
+    $request = Hyperf\WebSocketServer\Context::get(
+        Psr\Http\Message\ServerRequestInterface::class
+    );
+}
+```

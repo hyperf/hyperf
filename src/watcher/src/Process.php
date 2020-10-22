@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -14,10 +14,14 @@ namespace Hyperf\Watcher;
 use Hyperf\Di\Annotation\AnnotationInterface;
 use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\Annotation\ScanConfig;
+use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\Aop\ProxyManager;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Watcher\Ast\Metadata;
+use Hyperf\Watcher\Ast\RewriteClassNameVisitor;
+use PhpParser\NodeTraverser;
 use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\Reflection\Adapter;
 use Roave\BetterReflection\Reflection\ReflectionClass;
@@ -28,11 +32,6 @@ class Process
      * @var string
      */
     protected $file;
-
-    /**
-     * @var string
-     */
-    protected $class;
 
     /**
      * @var BetterReflection
@@ -55,14 +54,19 @@ class Process
     protected $filesystem;
 
     /**
+     * @var Ast
+     */
+    protected $ast;
+
+    /**
      * @var string
      */
     protected $path = BASE_PATH . '/runtime/container/collectors.cache';
 
-    public function __construct(string $file, string $class)
+    public function __construct(string $file)
     {
         $this->file = $file;
-        $this->class = $class;
+        $this->ast = new Ast();
         $this->reflection = new BetterReflection();
         $this->reader = new AnnotationReader();
         $this->config = ScanConfig::instance('/');
@@ -71,6 +75,11 @@ class Process
 
     public function __invoke()
     {
+        $meta = $this->getMetadata($this->file);
+        if ($meta === null) {
+            return;
+        }
+        $class = $meta->toClassName();
         $collectors = $this->config->getCollectors();
         $data = unserialize(file_get_contents($this->path));
         foreach ($data as $collector => $deserialized) {
@@ -82,9 +91,13 @@ class Process
 
         require $this->file;
 
-        $ref = $this->reflection->classReflector()->reflect($this->class);
-        BetterReflectionManager::reflectClass($this->class, $ref);
-        $this->collect($this->class, $ref);
+        // Collect the annotations.
+        $ref = $this->reflection->classReflector()->reflect($class);
+        BetterReflectionManager::reflectClass($class, $ref);
+        foreach ($collectors as $collector) {
+            $collector::clear($class);
+        }
+        $this->collect($class, $ref);
 
         $collectors = $this->config->getCollectors();
         $data = [];
@@ -97,12 +110,12 @@ class Process
             $this->putCache($this->path, serialize($data));
         }
 
-        // 重做代理类
-        $manager = new ProxyManager([], [$this->class => $this->file], BASE_PATH . '/runtime/container/proxy/');
+        // Reload the proxy class.
+        $manager = new ProxyManager([], [$class => $this->file], BASE_PATH . '/runtime/container/proxy/');
         $ref = new \ReflectionClass($manager);
         $method = $ref->getMethod('generateProxyFiles');
         $method->setAccessible(true);
-        $method->invokeArgs($manager, [$this->class => []]);
+        $method->invokeArgs($manager, [$class => []]);
     }
 
     public function collect($className, ReflectionClass $reflection)
@@ -149,5 +162,19 @@ class Process
         }
 
         $this->filesystem->put($path, $data);
+    }
+
+    protected function getMetadata(string $file): ?Metadata
+    {
+        $stmts = $this->ast->parse($this->filesystem->get($file));
+        $meta = new Metadata();
+        $meta->path = $file;
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(new RewriteClassNameVisitor($meta));
+        $traverser->traverse($stmts);
+        if (! $meta->isClass()) {
+            return null;
+        }
+        return $meta;
     }
 }

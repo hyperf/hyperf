@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -41,8 +41,12 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
     public function enterNode(Node $node)
     {
         if ($node instanceof Node\Stmt\Class_) {
-            if ($node->extends) {
-                $this->visitorMetadata->hasExtends = true;
+            if ($this->visitorMetadata->hasExtends === null) {
+                if ($node->extends) {
+                    $this->visitorMetadata->hasExtends = true;
+                } else {
+                    $this->visitorMetadata->hasExtends = false;
+                }
             }
         }
         if ($node instanceof Node\Stmt\ClassMethod) {
