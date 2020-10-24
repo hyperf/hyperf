@@ -84,11 +84,6 @@ class CoroutineHandler
         return new Client($host, $port, $ssl);
     }
 
-    protected function execute(Client $client, string $method, string $path, array $headers, string $body): RawResponse
-    {
-        return $client->request($method, $path, $headers, $body);
-    }
-
     protected function initHeaders(RequestInterface $request, $options): array
     {
         $headers = [];

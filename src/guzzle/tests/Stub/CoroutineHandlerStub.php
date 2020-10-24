@@ -60,19 +60,4 @@ class CoroutineHandlerStub extends CoroutineHandler
         });
         return $client;
     }
-
-    protected function execute(Client $client, string $method, string $path, array $headers, string $body): RawResponse
-    {
-        ++$this->count;
-        $body = json_encode([
-            'host' => $client->host,
-            'port' => $client->port,
-            'ssl' => $client->ssl,
-            'setting' => $client->setting,
-            'method' => $client->requestMethod,
-            'headers' => $client->requestHeaders,
-            'uri' => $path,
-        ]);
-        return new RawResponse($this->statusCode, [], $body, '1.1');
-    }
 }
