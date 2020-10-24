@@ -11,8 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Guzzle\Stub;
 
+use Hyperf\Engine\Http\Client;
+use Hyperf\Engine\Http\RawResponse;
 use Hyperf\Guzzle\CoroutineHandler;
-use Swoole\Coroutine\Http\Client;
 
 class CoroutineHandlerStub extends CoroutineHandler
 {
@@ -40,9 +41,30 @@ class CoroutineHandlerStub extends CoroutineHandler
         return parent::rewriteHeaders($headers);
     }
 
-    protected function execute(Client $client, $path)
+    protected function makeClient(string $host, int $port, bool $ssl): Client
     {
-        $client->body = json_encode([
+        $client = \Mockery::mock(Client::class . '[request]', [$host, $port, $ssl]);
+        $client->shouldReceive('request')->withAnyArgs()->andReturnUsing(function ($method, $path, $headers, $body) use ($host, $port, $ssl, $client) {
+            ++$this->count;
+            $body = json_encode([
+                'host' => $host,
+                'port' => $port,
+                'ssl' => $ssl,
+                'method' => $method,
+                'headers' => $headers,
+                'setting' => $client->setting,
+                'uri' => $path,
+                'body' => $body,
+            ]);
+            return new RawResponse($this->statusCode, [], $body, '1.1');
+        });
+        return $client;
+    }
+
+    protected function execute(Client $client, string $method, string $path, array $headers, string $body): RawResponse
+    {
+        ++$this->count;
+        $body = json_encode([
             'host' => $client->host,
             'port' => $client->port,
             'ssl' => $client->ssl,
@@ -51,8 +73,6 @@ class CoroutineHandlerStub extends CoroutineHandler
             'headers' => $client->requestHeaders,
             'uri' => $path,
         ]);
-        $client->statusCode = $this->statusCode;
-        $client->headers = [];
-        ++$this->count;
+        return new RawResponse($this->statusCode, [], $body, '1.1');
     }
 }
