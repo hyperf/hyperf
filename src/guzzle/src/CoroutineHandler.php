@@ -86,11 +86,7 @@ class CoroutineHandler
 
     protected function initHeaders(RequestInterface $request, $options): array
     {
-        $headers = [];
-        foreach ($request->getHeaders() as $name => $value) {
-            $headers[$name] = implode(',', $value);
-        }
-
+        $headers = $request->getHeaders();
         $userInfo = $request->getUri()->getUserInfo();
         if ($userInfo) {
             $headers['Authorization'] = sprintf('Basic %s', base64_encode($userInfo));

@@ -100,7 +100,7 @@ class CoroutineHandlerTest extends TestCase
         $this->assertSame('127.0.0.1', $res['host']);
         $this->assertSame(8080, $res['port']);
         $this->assertSame(false, $res['ssl']);
-        $this->assertSame(md5('1234'), $res['headers']['X-TOKEN']);
+        $this->assertSame([md5('1234')], $res['headers']['X-TOKEN']);
 
         $client = new Client([
             'base_uri' => 'https://pokeapi.co',
