@@ -27,6 +27,11 @@
   * Throws RunningInNonCoroutineException when running in non-coroutine context
   * Throws CoroutineDestroyedException when the coroutine has been destroyed
 
+- `Hyperf\Guzzle\CoroutineHandler`
+  * Deleted method `execute`
+  * Method `initHeaders` will return `$headers`, instead of assigning "$headers" directly to the client.
+  * Deleted method `checkStatusCode`
+
 ## Deprecated
 
 - `Hyperf\AsyncQueue\Signal\DriverStopHandler` will be deprecated in v2.2, please use `Hyperf\Process\Handler\ProcessStopHandler` instead.
