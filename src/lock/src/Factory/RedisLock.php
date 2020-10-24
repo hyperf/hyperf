@@ -38,7 +38,7 @@ class RedisLock implements LockInterface
             function () use ($id) {
                 $lockKey = $this->getLockKey($id);
                 $lockContent = $this->getLockContent();
-                $result = $this->redis->set($lockKey, $lockContent, ['nx', 'ex' => $this->config['lock_expired']]);
+                $result = $this->redis->set($lockKey, $lockContent, ['nx', 'ex' => $this->config['lock_expired'] / 1000]);
                 if ($result === false) {
                     throw new LockException('lock fail');
                 }
