@@ -1,8 +1,8 @@
-# 辅助类
+# Utils
 
-Hyperf 提供了大量便捷的辅助类，这里会列出一些常用的好用的，不会列举所有，可自行查看 [hyperf/utils](https://github.com/hyperf-cloud/utils) 组件的代码获得更多信息。
+Hyperf provides a large number of co [hyperf/utils](https://github.com/hyperf/utils) 组件的代码获得更多信息。
 
-## 协程辅助类
+## Coroutine Util class
 
 ### Hyperf\Utils\Coroutine
 
@@ -23,3 +23,25 @@ Hyperf 提供了大量便捷的辅助类，这里会列出一些常用的好用�
 ### Hyperf\Utils\Context
 
 用于处理协程上下文，本质上是对 `Swoole\Coroutine::getContext()` 方法的一个封装，但区别在于这里兼容了非协程环境下的运行。
+
+### Hyperf\Utils\Coordinator\CoordinatorManager
+
+该辅助类用于指挥协程等待事件发生。
+
+```php
+<?php
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coroutine;
+
+Coroutine::create(function() {
+    // 所有OnWorkerStart事件回调完成后唤醒
+    CoordinatorManager::until(Constants::WORKER_START)->yield();
+    echo 'worker started';
+    // 分配资源
+    // 所有OnWorkerExit事件回调完成后唤醒
+    CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
+    echo 'worker exited';
+    // 回收资源
+});
+```
