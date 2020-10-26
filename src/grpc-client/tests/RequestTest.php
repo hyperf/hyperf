@@ -26,7 +26,7 @@ class RequestTest extends TestCase
 {
     protected function setUp(): void
     {
-        $json = Composer::getJsonContent();
+        $json = Composer::getLockContent();
         if (version_compare($json['plugin-api-version'], '2.0.0', '>=')) {
             $this->markTestSkipped(PrettyVersions::class . ' does not support composer v2.0');
         }
