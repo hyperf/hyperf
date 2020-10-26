@@ -17,6 +17,7 @@ use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\Eloquent;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\BelongsTo;
 use Hyperf\Database\Model\Relations\BelongsToMany;
@@ -96,8 +97,10 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 }
                 return $node;
             case $node instanceof Node\Stmt\Class_:
-                $node->setDocComment(new Doc($this->parseProperty()));
+                $node->setDocComment(new Doc($this->parse()));
                 return $node;
+            default:
+                throw new RuntimeException('unexpected node type');
         }
     }
 
@@ -167,9 +170,19 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             is_subclass_of($caster, CastsInboundAttributes::class);
     }
 
-    protected function parseProperty(): string
+    protected function parse() :string
     {
         $doc = '/**' . PHP_EOL;
+        $doc = $this->parseProperty($doc);
+        $doc = $this->parseWhereMethod($doc);
+        $doc = $this->parseScopeMethod($doc);
+        $doc = $this->addMixinEloquent($doc);
+        $doc .= ' */';
+        return $doc;
+    }
+
+    protected function parseProperty(string $doc): string
+    {
         foreach ($this->columns as $column) {
             [$name, $type, $comment] = $this->getProperty($column);
             if (array_key_exists($name, $this->properties)) {
@@ -191,7 +204,58 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 continue;
             }
         }
-        $doc .= ' */';
+        return $doc;
+    }
+
+    /**
+     * @param  string  $doc
+     *
+     * @return string
+     */
+    protected function parseWhereMethod(string $doc) :string
+    {
+        foreach ($this->columns as $column) {
+            [$name, $type, $comment] = $this->getProperty($column);
+            $doc .= sprintf(
+                    ' * @method static %s|%s %s(%s)' . PHP_EOL,
+                    '\\' . Builder::class,
+                    '\\' . get_class($this->class),
+                    Str::studly('where_' . $name),
+                    '$value'
+                )  . PHP_EOL;
+        }
+        return $doc;
+    }
+
+    /**
+     * @param  string  $doc
+     *
+     * @return string
+     */
+    protected function parseScopeMethod(string $doc) :string
+    {
+        foreach ($this->methods as $name => $method) {
+            $doc .= sprintf(
+                    ' * @method static %s|%s %s()' . PHP_EOL,
+                    '\\' . Builder::class,
+                    '\\' . get_class($this->class),
+                    $name
+                )  . PHP_EOL;
+        }
+        return $doc;
+    }
+
+    /**
+     * @param  string  $doc
+     *
+     * @return string
+     */
+    protected function addMixinEloquent(string $doc)
+    {
+        $doc .= sprintf(
+                ' * @mixin %s',
+                '\\' . Eloquent::class,
+            )  . PHP_EOL;
         return $doc;
     }
 
