@@ -1,18 +1,38 @@
 # 版本更新记录
 
+# v2.0.16 - 2020-10-26
+
+## 新增
+
+- [#2682](https://github.com/hyperf/hyperf/pull/2682) 为 `CacheableInterface` 新增方法 `getCacheTTL` 可根据不同模型设置不同的缓存时间。
+- [#2696](https://github.com/hyperf/hyperf/pull/2696) 新增 Swoole Tracker 的内存检测工具。
+
+## 修复
+
+- [#2680](https://github.com/hyperf/hyperf/pull/2680) 修复 `CastsValue` 因为没有设置 `$isSynchronized` 默认值，导致的类型错误。
+- [#2680](https://github.com/hyperf/hyperf/pull/2680) 修复 `CastsValue` 中 `$items` 默认值会被 `__construct` 覆盖的问题。
+- [#2693](https://github.com/hyperf/hyperf/pull/2693) 修复 `hyperf/retry` 组件，`Budget` 表现不符合期望的问题。
+- [#2695](https://github.com/hyperf/hyperf/pull/2695) 修复方法 `Container::define()` 因为容器中的对象已被实例化，而无法重定义的问题。
+
+## 优化
+
+- [#2611](https://github.com/hyperf/hyperf/pull/2611) 优化 `hyperf/watcher` 组件 `FindDriver` ，使其可以在 `Alpine` 镜像中使用。
+- [#2662](https://github.com/hyperf/hyperf/pull/2662) 优化 `Amqp` 消费者进程，使其可以配合 `Signal` 组件安全停止。
+- [#2690](https://github.com/hyperf/hyperf/pull/2690) 优化 `hyperf/tracer` 组件，确保其可以正常执行 `finish` 和 `flush` 方法。
+
 # v2.0.15 - 2020-10-19
 
-## Added
+## 新增
 
 - [#2654](https://github.com/hyperf/hyperf/pull/2654) 新增方法 `Hyperf\Utils\Resource::from`，可以方便的将 `string` 转化为 `resource`。
 
-## Fixed
+## 修复
 
 - [#2634](https://github.com/hyperf/hyperf/pull/2634) [#2640](https://github.com/hyperf/hyperf/pull/2640) 修复 `snowflake` 组件中，元数据生成器 `RedisSecondMetaGenerator` 会产生相同元数据的问题。
 - [#2639](https://github.com/hyperf/hyperf/pull/2639) 修复 `json-rpc` 组件中，异常无法正常被序列化的问题。
 - [#2643](https://github.com/hyperf/hyperf/pull/2643) 修复 `scout:flush` 执行失败的问题。
 
-## Optimized
+## 优化
 
 - [#2656](https://github.com/hyperf/hyperf/pull/2656) 优化了 `json-rpc` 组件中，参数解析失败后，也可以返回对应的错误信息。
 
