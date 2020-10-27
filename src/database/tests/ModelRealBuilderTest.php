@@ -16,6 +16,7 @@ use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\Events\Saved;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\Model\User;
+use HyperfTest\Database\Stubs\Model\UserExt;
 use HyperfTest\Database\Stubs\Model\UserExtCamel;
 use HyperfTest\Database\Stubs\Model\UserRole;
 use HyperfTest\Database\Stubs\Model\UserRoleMorphPivot;
@@ -168,6 +169,16 @@ class ModelRealBuilderTest extends TestCase
                 $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
             }
         }
+    }
+
+    public function testInsertFloatValue()
+    {
+        $this->getContainer();
+        UserExt::query()->where('id', 100)->delete();
+        $res = UserExt::query()->insert(['id' => 100, 'float_num' => 1.2]);
+        $this->assertTrue($res);
+        $res = UserExt::query()->find(100);
+        $this->assertSame('1.2', (string) $res->float_num);
     }
 
     protected function getContainer()
