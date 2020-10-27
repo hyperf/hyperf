@@ -2,7 +2,7 @@
 
 ## Fixed
 
-- [#2719](https://github.com/hyperf/hyperf/pull/2719) Fixed method `Arr::merge` does not works when `array1` not constains the `$key`.
+- [#2719](https://github.com/hyperf/hyperf/pull/2719) Fixed method `Arr::merge` does not works when `array1` does not constains the `$key`.
 
 # v2.0.16 - 2020-10-26
 
