@@ -33,19 +33,6 @@ class MySqlConnection extends Connection
     }
 
     /**
-     * Bind values to their parameters in the given statement.
-     */
-    public function bindValues(\PDOStatement $statement, array $bindings): void
-    {
-        foreach ($bindings as $key => $value) {
-            $statement->bindValue(
-                is_string($key) ? $key : $key + 1,
-                $value
-            );
-        }
-    }
-
-    /**
      * Get the default query grammar instance.
      *
      * @return \Hyperf\Database\Query\Grammars\MySqlGrammar
