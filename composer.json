@@ -21,7 +21,7 @@
         "ext-json": "*",
         "ext-redis": "*",
         "ext-swoole": ">=4.5",
-        "jcchavezs/zipkin-opentracing": "dev-upgrade_to_zipkin_2_0",
+        "jcchavezs/zipkin-opentracing": "^0.2.0",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
         "psr/http-message": "^1.0",
