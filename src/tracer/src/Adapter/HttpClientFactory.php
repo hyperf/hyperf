@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Tracer\Adapter;
 
-use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
-use RuntimeException;
 use Zipkin\Reporters\Http\ClientFactory;
+use RuntimeException;
+use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
 
 class HttpClientFactory implements ClientFactory
 {
@@ -29,7 +30,7 @@ class HttpClientFactory implements ClientFactory
 
     public function build(array $options): callable
     {
-        return function ($payload) use ($options) {
+        return function (string $payload) use ($options): void {
             $url = $options['endpoint_url'];
             unset($options['endpoint_url']);
             $client = $this->guzzleClientFactory->create($options);
@@ -37,6 +38,7 @@ class HttpClientFactory implements ClientFactory
             $requiredHeaders = [
                 'Content-Type' => 'application/json',
                 'Content-Length' => strlen($payload),
+                'b3' => '0',
             ];
             $headers = array_merge($additionalHeaders, $requiredHeaders);
             $response = $client->post($url, [
