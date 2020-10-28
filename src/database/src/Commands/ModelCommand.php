@@ -175,10 +175,7 @@ class ModelCommand extends Command
         $path = BASE_PATH . '/' . $project->path($class);
 
         if (! file_exists($path)) {
-            $dir = dirname($path);
-            if (! is_dir($dir)) {
-                @mkdir($dir, 0755, true);
-            }
+            $this->mkdir($path);
             file_put_contents($path, $this->buildClass($table, $class, $option));
         }
 
@@ -209,7 +206,23 @@ class ModelCommand extends Command
 
     protected function generateIDE(string $code, ModelOption $option, ModelData $data)
     {
-        $visitor = make(GenerateModelIDEVisitor::class, [$option, $data]);
+        $stms = $this->astParser->parse($code);
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(make(GenerateModelIDEVisitor::class, [$option, $data]));
+        $stms = $traverser->traverse($stms);
+        $code = $this->printer->prettyPrintFile($stms);
+        $class = str_replace('\\', '_', $data->getClass());
+        $path = BASE_PATH . '/runtime/ide/' . $class . '.php';
+        $this->mkdir($path);
+        file_put_contents($path, $code);
+    }
+
+    protected function mkdir(string $path): void
+    {
+        $dir = dirname($path);
+        if (! is_dir($dir)) {
+            @mkdir($dir, 0755, true);
+        }
     }
 
     /**

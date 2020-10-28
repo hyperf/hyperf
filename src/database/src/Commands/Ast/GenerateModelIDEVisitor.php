@@ -15,6 +15,8 @@ use Hyperf\Database\Commands\ModelData;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Utils\Str;
+use PhpParser\Comment\Doc;
+use PhpParser\Node;
 use Roave\BetterReflection\Reflection\ReflectionClass;
 use Roave\BetterReflection\Reflection\ReflectionMethod;
 
@@ -25,11 +27,70 @@ class GenerateModelIDEVisitor extends AbstractVisitor
      */
     protected $methods = [];
 
+    /**
+     * @var null|Node\Stmt\Namespace_
+     */
+    protected $namespace;
+
+    /**
+     * @var null|Node\Stmt\Class_
+     */
+    protected $class;
+
     public function __construct(ModelOption $option, ModelData $data)
     {
         parent::__construct($option, $data);
 
         $this->initPropertiesFromMethods();
+
+        $this->parseWhereMethod('');
+    }
+
+    public function leaveNode(Node $node)
+    {
+        if ($node instanceof Node\Stmt\Namespace_) {
+            $this->namespace = new Node\Stmt\Namespace_($node->name);
+        }
+
+        if ($node instanceof Node\Stmt\Class_) {
+            $this->class = new Node\Stmt\Class_($node->name);
+        }
+    }
+
+    public function afterTraverse(array $nodes)
+    {
+        $builder = new Node\Stmt\Property(
+            Node\Stmt\Class_::MODIFIER_PUBLIC | Node\Stmt\Class_::MODIFIER_STATIC,
+            [new Node\Stmt\PropertyProperty('builder')]
+        );
+        $doc = '/**' . PHP_EOL;
+        $doc .= ' * @var \Hyperf\Database\Model\Builder' . PHP_EOL;
+        $doc .= ' */';
+        $builder->setDocComment(new Doc($doc));
+        $this->class->stmts[] = $builder;
+        foreach ($this->data->getColumns() as $column) {
+            $name = Str::camel('where_' . $column['column_name']);
+            $method = new Node\Stmt\ClassMethod($name, [
+                'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC | Node\Stmt\Class_::MODIFIER_STATIC,
+                'params' => [new Node\Param(new Node\Expr\Variable('value'))],
+            ]);
+            $method->stmts[] = new Node\Stmt\Return_(
+                new Node\Expr\MethodCall(
+                    new Node\Expr\StaticPropertyFetch(
+                        new Node\Name('static'),
+                        new Node\VarLikeIdentifier('builder')
+                    ),
+                    new Node\Identifier('dynamicWhere'),
+                    [
+                        new Node\Arg(new Node\Scalar\String_('whereId')),
+                        new Node\Arg(new Node\Expr\Variable('value')),
+                    ]
+                )
+            );
+            $this->class->stmts[] = $method;
+        }
+        $this->namespace->stmts = [$this->class];
+        return [$this->namespace];
     }
 
     protected function setMethod(string $name, array $type = [], array $arguments = [])
@@ -67,5 +128,34 @@ class GenerateModelIDEVisitor extends AbstractVisitor
                 continue;
             }
         }
+    }
+
+    protected function parseWhereMethod(string $doc): string
+    {
+        foreach ($this->data->getColumns() as $column) {
+            $name = $this->option->isCamelCase() ? Str::camel($column['column_name']) : $column['column_name'];
+            var_dump($name);
+            // $doc .= sprintf(
+            //         ' * @method static %s|%s %s(%s)' . PHP_EOL,
+            //         '\\' . Builder::class,
+            //         '\\' . get_class($this->class),
+            //         Str::studly('where_' . $name),
+            //         '$value'
+            //     ) . PHP_EOL;
+        }
+        return $doc;
+    }
+
+    protected function parseScopeMethod(string $doc): string
+    {
+        foreach ($this->methods as $name => $method) {
+            $doc .= sprintf(
+                ' * @method static %s|%s %s()' . PHP_EOL,
+                '\\' . Builder::class,
+                '\\' . get_class($this->class),
+                $name
+            ) . PHP_EOL;
+        }
+        return $doc;
     }
 }
