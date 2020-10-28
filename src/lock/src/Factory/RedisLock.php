@@ -31,14 +31,18 @@ class RedisLock implements LockInterface
         $this->config = array_replace_recursive($this->config, $config);
     }
 
-    public function lock(string $id)
+    public function lock(string $id): bool
     {
         return retry(
             $this->config['retry'],
             function () use ($id) {
                 $lockKey = $this->getLockKey($id);
                 $lockContent = $this->getLockContent();
-                $result = $this->redis->set($lockKey, $lockContent, ['nx', 'ex' => $this->config['lock_expired'] / 1000]);
+                $result = $this->redis->set(
+                    $lockKey,
+                    $lockContent,
+                    ['nx', 'ex' => $this->config['lock_expired'] / 1000]
+                );
                 if ($result === false) {
                     throw new LockException('lock fail');
                 }
@@ -48,7 +52,7 @@ class RedisLock implements LockInterface
         );
     }
 
-    public function unlock(string $id)
+    public function unlock(string $id): bool
     {
         $script = <<<LUA
 local value = redis.call("get",KEYS[1])
@@ -79,7 +83,7 @@ LUA;
         return sprintf('hyperf:lock:$id:%s', $id);
     }
 
-    protected function getLockContent()
+    protected function getLockContent(): string
     {
         $key = 'hyperf.lock.content';
         if (Context::has($key)) {
@@ -91,7 +95,7 @@ LUA;
         return $content;
     }
 
-    protected function genderUUID($prefix = 'hyperf')
+    protected function genderUUID(string $prefix = 'hyperf'): string
     {
         $str = md5(uniqid(mt_rand(), true));
         $uuid = substr($str, 0, 8) . '-';
