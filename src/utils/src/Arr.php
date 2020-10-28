@@ -516,7 +516,7 @@ class Arr
         if ($isAssoc) {
             foreach ($array2 as $key => $value) {
                 if (is_array($value)) {
-                    $array1[$key] = static::merge($array1[$key], $value, $unique);
+                    $array1[$key] = static::merge($array1[$key] ?? [], $value, $unique);
                 } else {
                     $array1[$key] = $value;
                 }

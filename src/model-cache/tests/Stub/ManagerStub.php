@@ -12,11 +12,17 @@ declare(strict_types=1);
 namespace HyperfTest\ModelCache\Stub;
 
 use Hyperf\Database\Model\Model;
+use Hyperf\ModelCache\Handler\HandlerInterface;
 
 class ManagerStub extends \Hyperf\ModelCache\Manager
 {
     public function formatModel(Model $model): array
     {
         return parent::formatModel($model);
+    }
+
+    public function getCacheTTL(Model $instance, HandlerInterface $handler)
+    {
+        return parent::getCacheTTL($instance, $handler);
     }
 }

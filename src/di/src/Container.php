@@ -100,7 +100,7 @@ class Container implements HyperfContainerInterface
      */
     public function define(string $name, $definition)
     {
-        $this->definitionSource->addDefinition($name, $definition);
+        $this->setDefinition($name, $definition);
     }
 
     /**
@@ -153,7 +153,10 @@ class Container implements HyperfContainerInterface
         return $this->definitionSource;
     }
 
-    protected function setDefinition(string $name, DefinitionInterface $definition): void
+    /**
+     * @param array|callable|string $definition
+     */
+    private function setDefinition(string $name, $definition): void
     {
         // Clear existing entry if it exists
         if (array_key_exists($name, $this->resolvedEntries)) {
