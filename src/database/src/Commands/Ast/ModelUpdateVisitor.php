@@ -17,7 +17,6 @@ use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
-use Hyperf\Database\Model\Eloquent;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\BelongsTo;
 use Hyperf\Database\Model\Relations\BelongsToMany;
@@ -172,9 +171,6 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     {
         $doc = '/**' . PHP_EOL;
         $doc = $this->parseProperty($doc);
-        // $doc = $this->parseWhereMethod($doc);
-        // $doc = $this->parseScopeMethod($doc);
-        // $doc = $this->addMixinEloquent($doc);
         $doc .= ' */';
         return $doc;
     }
@@ -202,46 +198,6 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 continue;
             }
         }
-        return $doc;
-    }
-
-    protected function parseWhereMethod(string $doc): string
-    {
-        foreach ($this->columns as $column) {
-            [$name, $type, $comment] = $this->getProperty($column);
-            $doc .= sprintf(
-                ' * @method static %s|%s %s(%s)' . PHP_EOL,
-                '\\' . Builder::class,
-                '\\' . get_class($this->class),
-                Str::studly('where_' . $name),
-                '$value'
-            ) . PHP_EOL;
-        }
-        return $doc;
-    }
-
-    protected function parseScopeMethod(string $doc): string
-    {
-        foreach ($this->methods as $name => $method) {
-            $doc .= sprintf(
-                ' * @method static %s|%s %s()' . PHP_EOL,
-                '\\' . Builder::class,
-                '\\' . get_class($this->class),
-                $name
-            ) . PHP_EOL;
-        }
-        return $doc;
-    }
-
-    /**
-     * @return string
-     */
-    protected function addMixinEloquent(string $doc)
-    {
-        $doc .= sprintf(
-            ' * @mixin %s',
-            '\\' . Eloquent::class,
-        ) . PHP_EOL;
         return $doc;
     }
 

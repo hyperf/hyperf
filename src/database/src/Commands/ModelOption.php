@@ -58,11 +58,6 @@ class ModelOption
     protected $withComments;
 
     /**
-     * @var bool
-     */
-    protected $withIde;
-
-    /**
      * @var array
      */
     protected $tableMapping = [];
@@ -193,17 +188,6 @@ class ModelOption
     public function setWithComments(bool $withComments): self
     {
         $this->withComments = $withComments;
-        return $this;
-    }
-
-    public function isWithIde(): bool
-    {
-        return $this->withIde;
-    }
-
-    public function setWithIde(bool $withIde): self
-    {
-        $this->withIde = $withIde;
         return $this;
     }
 

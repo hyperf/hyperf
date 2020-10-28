@@ -99,7 +99,6 @@ class ModelCommand extends Command
             ->setTableMapping($this->getOption('table-mapping', 'commands.gen:model.table_mapping', $pool, []))
             ->setIgnoreTables($this->getOption('ignore-tables', 'commands.gen:model.ignore_tables', $pool, []))
             ->setWithComments($this->getOption('with-comments', 'commands.gen:model.with_comments', $pool, false))
-            ->setWithIde($this->getOption('with-ide', 'commands.gen:model.with_ide', $pool, false))
             ->setVisitors($this->getOption('visitors', 'commands.gen:model.visitors', $pool, []))
             ->setPropertyCase($this->getOption('property-case', 'commands.gen:model.property_case', $pool));
 
@@ -126,7 +125,6 @@ class ModelCommand extends Command
         $this->addOption('with-comments', null, InputOption::VALUE_NONE, 'Whether generate the property comments for model.');
         $this->addOption('visitors', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Custom visitors for ast traverser.');
         $this->addOption('property-case', null, InputOption::VALUE_OPTIONAL, 'Which property case you want use, 0: snake case, 1: camel case.');
-        $this->addOption('with-ide', null, InputOption::VALUE_NONE, 'Whether generate the ide file for model.');
     }
 
     protected function getSchemaBuilder(string $poolName): MySqlBuilder
@@ -239,7 +237,7 @@ class ModelCommand extends Command
     {
         $result = $this->input->getOption($name);
         $nonInput = null;
-        if (in_array($name, ['force-casts', 'refresh-fillable', 'with-comments', 'with-ide'])) {
+        if (in_array($name, ['force-casts', 'refresh-fillable', 'with-comments'])) {
             $nonInput = false;
         }
         if (in_array($name, ['table-mapping', 'ignore-tables', 'visitors'])) {
