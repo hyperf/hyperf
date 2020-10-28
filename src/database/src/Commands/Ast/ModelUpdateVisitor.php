@@ -96,7 +96,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 }
                 return $node;
             case $node instanceof Node\Stmt\Class_:
-                $node->setDocComment(new Doc($this->parseProperty()));
+                $node->setDocComment(new Doc($this->parse()));
                 return $node;
         }
     }
@@ -167,9 +167,16 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             is_subclass_of($caster, CastsInboundAttributes::class);
     }
 
-    protected function parseProperty(): string
+    protected function parse(): string
     {
         $doc = '/**' . PHP_EOL;
+        $doc = $this->parseProperty($doc);
+        $doc .= ' */';
+        return $doc;
+    }
+
+    protected function parseProperty(string $doc): string
+    {
         foreach ($this->columns as $column) {
             [$name, $type, $comment] = $this->getProperty($column);
             if (array_key_exists($name, $this->properties)) {
@@ -191,7 +198,6 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 continue;
             }
         }
-        $doc .= ' */';
         return $doc;
     }
 

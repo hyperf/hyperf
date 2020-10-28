@@ -1,5 +1,9 @@
 # v2.0.17 - TBD
 
+## Added
+
+- [#2709](https://github.com/hyperf/hyperf/pull/2709) Added `@mixin` into Model, you can use static methods friendly.
+
 ## Fixed
 
 - [#2719](https://github.com/hyperf/hyperf/pull/2719) Fixed method `Arr::merge` does not works when `array1` does not constains the `$key`.
