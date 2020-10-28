@@ -55,7 +55,8 @@ class PageResolverListener implements ListenerInterface
             return 1;
         });
 
-        Paginator::currentPathResolver(function ($default = '/') {
+        Paginator::currentPathResolver(function () {
+            $default = '/';
             if (! ApplicationContext::hasContainer() ||
                 ! interface_exists(RequestInterface::class) ||
                 ! Context::has(ServerRequestInterface::class)

@@ -34,6 +34,9 @@ class PageResolverListenerTest extends TestCase
     {
         Context::set(PsrServerRequestInterface::class, null);
         Context::set('http.request.parsedData', null);
+        Paginator::currentPathResolver(function () {
+            return '/';
+        });
     }
 
     protected function tearDown()
@@ -62,7 +65,6 @@ class PageResolverListenerTest extends TestCase
             return $request->withQueryParams(['page' => 2]);
         }));
         $paginator = new LengthAwarePaginator([1, 2], 10, 2, null);
-        $paginator->toArray();
         $this->assertSame('/?page=3', $paginator->nextPageUrl());
         $this->assertSame('/index', Paginator::resolveCurrentPath());
     }
