@@ -99,8 +99,6 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             case $node instanceof Node\Stmt\Class_:
                 $node->setDocComment(new Doc($this->parse()));
                 return $node;
-            default:
-                throw new RuntimeException('unexpected node type');
         }
     }
 
@@ -170,13 +168,13 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             is_subclass_of($caster, CastsInboundAttributes::class);
     }
 
-    protected function parse() :string
+    protected function parse(): string
     {
         $doc = '/**' . PHP_EOL;
         $doc = $this->parseProperty($doc);
-        $doc = $this->parseWhereMethod($doc);
-        $doc = $this->parseScopeMethod($doc);
-        $doc = $this->addMixinEloquent($doc);
+        // $doc = $this->parseWhereMethod($doc);
+        // $doc = $this->parseScopeMethod($doc);
+        // $doc = $this->addMixinEloquent($doc);
         $doc .= ' */';
         return $doc;
     }
@@ -207,55 +205,43 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         return $doc;
     }
 
-    /**
-     * @param  string  $doc
-     *
-     * @return string
-     */
-    protected function parseWhereMethod(string $doc) :string
+    protected function parseWhereMethod(string $doc): string
     {
         foreach ($this->columns as $column) {
             [$name, $type, $comment] = $this->getProperty($column);
             $doc .= sprintf(
-                    ' * @method static %s|%s %s(%s)' . PHP_EOL,
-                    '\\' . Builder::class,
-                    '\\' . get_class($this->class),
-                    Str::studly('where_' . $name),
-                    '$value'
-                )  . PHP_EOL;
+                ' * @method static %s|%s %s(%s)' . PHP_EOL,
+                '\\' . Builder::class,
+                '\\' . get_class($this->class),
+                Str::studly('where_' . $name),
+                '$value'
+            ) . PHP_EOL;
         }
         return $doc;
     }
 
-    /**
-     * @param  string  $doc
-     *
-     * @return string
-     */
-    protected function parseScopeMethod(string $doc) :string
+    protected function parseScopeMethod(string $doc): string
     {
         foreach ($this->methods as $name => $method) {
             $doc .= sprintf(
-                    ' * @method static %s|%s %s()' . PHP_EOL,
-                    '\\' . Builder::class,
-                    '\\' . get_class($this->class),
-                    $name
-                )  . PHP_EOL;
+                ' * @method static %s|%s %s()' . PHP_EOL,
+                '\\' . Builder::class,
+                '\\' . get_class($this->class),
+                $name
+            ) . PHP_EOL;
         }
         return $doc;
     }
 
     /**
-     * @param  string  $doc
-     *
      * @return string
      */
     protected function addMixinEloquent(string $doc)
     {
         $doc .= sprintf(
-                ' * @mixin %s',
-                '\\' . Eloquent::class,
-            )  . PHP_EOL;
+            ' * @mixin %s',
+            '\\' . Eloquent::class,
+        ) . PHP_EOL;
         return $doc;
     }
 
