@@ -66,12 +66,16 @@ class GenerateModelIDEVisitor extends AbstractVisitor
         $doc .= ' */';
         $builder->setDocComment(new Doc($doc));
         $this->class->stmts[] = $builder;
+        $doc = '/**' . PHP_EOL;
+        $doc .= ' * @return \Hyperf\Database\Model\Builder|static' . PHP_EOL;
+        $doc .= ' */';
         foreach ($this->data->getColumns() as $column) {
             $name = Str::camel('where_' . $column['column_name']);
             $method = new Node\Stmt\ClassMethod($name, [
                 'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC | Node\Stmt\Class_::MODIFIER_STATIC,
                 'params' => [new Node\Param(new Node\Expr\Variable('value'))],
             ]);
+            $method->setDocComment(new Doc($doc));
             $method->stmts[] = new Node\Stmt\Return_(
                 new Node\Expr\MethodCall(
                     new Node\Expr\StaticPropertyFetch(
@@ -80,7 +84,7 @@ class GenerateModelIDEVisitor extends AbstractVisitor
                     ),
                     new Node\Identifier('dynamicWhere'),
                     [
-                        new Node\Arg(new Node\Scalar\String_('whereId')),
+                        new Node\Arg(new Node\Scalar\String_($name)),
                         new Node\Arg(new Node\Expr\Variable('value')),
                     ]
                 )
