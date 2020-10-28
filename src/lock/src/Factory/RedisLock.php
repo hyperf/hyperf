@@ -33,7 +33,7 @@ class RedisLock implements LockInterface
 
     public function lock(string $id)
     {
-        retry(
+        return retry(
             $this->config['retry'],
             function () use ($id) {
                 $lockKey = $this->getLockKey($id);

@@ -37,7 +37,7 @@ class RedisConnectionStub extends RedisConnection
 
     public function __call($name, $arguments)
     {
-        return sprintf('db:%d name:%s argument:%s', $this->db, $name, implode(',', $arguments));
+        return sprintf('db:%d name:%s argument:%s', $this->db, $name, json_encode($arguments));
     }
 
     public function reconnect(): bool
