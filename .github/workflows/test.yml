@@ -7,14 +7,15 @@ env:
 
 jobs:
   ci:
-    name: Test on PHP ${{ matrix.php-version }} MySQL ${{ matrix.mysql-version }}
+    name: Test on PHP${{ matrix.php-version }} MySQL${{ matrix.mysql-version }} Guzzle${{ matrix.guzzle-version }}
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
         os: [ubuntu-latest]
-        php-version: ['7.2', '7.3', '7.4']
+        php-version: ['7.3', '7.4']
         mysql-version: ['5.7', '8.0']
-      max-parallel: 6
+        guzzle-version: ['6', '7']
+      max-parallel: 4
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -28,6 +29,9 @@ jobs:
           coverage: none
       - name: Build Swoole
         run: ./.travis/swoole.install.sh
+      - name: Upgrade Guzzle
+        if: ${{ matrix.guzzle-version == '7' }}
+        run: export GUZZLE_7=1 && ./.travis/guzzle/upgrade.sh
       - name: Setup Packages
         run: composer update -o
       - name: Setup Services
