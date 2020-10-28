@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#2709](https://github.com/hyperf/hyperf/pull/2709) Added @mixin into Model, you can use static methods friendly.
+- [#2709](https://github.com/hyperf/hyperf/pull/2709) Added `@mixin` into Model, you can use static methods friendly.
 
 ## Fixed
 
