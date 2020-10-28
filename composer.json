@@ -68,7 +68,7 @@
         "php-amqplib/php-amqplib": "^2.7",
         "php-di/php-di": "^6.0",
         "phpspec/prophecy-phpunit": "^2.0",
-        "phpstan/phpstan": "0.12.50",
+        "phpstan/phpstan": "^0.12",
         "phpunit/phpunit": "^9.4",
         "predis/predis": "^1.1",
         "reactivex/rxphp": "^2.0",

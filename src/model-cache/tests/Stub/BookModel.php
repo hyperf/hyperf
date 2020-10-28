@@ -56,4 +56,9 @@ class BookModel extends Model implements CacheableInterface
     {
         return $this->morphOne(ImageModel::class, 'imageable');
     }
+
+    public function getCacheTTL(): ?int
+    {
+        return 100;
+    }
 }
