@@ -12,6 +12,11 @@ declare(strict_types=1);
 
 namespace HyperfTest\Cases;
 
+use Hyperf\Lock\IdGenerateInterface;
+use Hyperf\Snowflake\Configuration;
+use Hyperf\Snowflake\IdGenerator\SnowflakeIdGenerator;
+use Hyperf\Snowflake\MetaGenerator\RandomMilliSecondMetaGenerator;
+use Hyperf\Snowflake\MetaGeneratorInterface;
 use PHPUnit\Framework\TestCase;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
@@ -111,6 +116,10 @@ abstract class AbstractTestCase extends TestCase
         );
 
         $container->shouldReceive('get')->with(Redis::class)->andReturn($this->getRedis());
+
+        $config = new Configuration();
+        $generator = new SnowflakeIdGenerator(new RandomMilliSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND));
+        $container->shouldReceive('get')->with(IdGenerateInterface::class)->andReturn($generator);
 
         $container->shouldReceive('make')->with(RedisLock::class, Mockery::any())->andReturnUsing(
             function ($_, $args) {

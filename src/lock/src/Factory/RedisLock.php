@@ -6,6 +6,7 @@ namespace Hyperf\Lock\Factory;
 
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Lock\Exception\LockException;
+use Hyperf\Lock\IdGenerateInterface;
 use Hyperf\Redis\Redis;
 use Hyperf\Utils\Context;
 
@@ -15,6 +16,11 @@ class RedisLock implements LockInterface
      * @var Redis
      */
     protected $redis;
+
+    /**
+     * @var IdGenerateInterface
+     */
+    protected $idGenerate;
 
     protected $config = [
         'driver' => 'redis',
@@ -28,6 +34,7 @@ class RedisLock implements LockInterface
     public function __construct(ContainerInterface $container, array $config = [])
     {
         $this->redis = $container->get(Redis::class);
+        $this->idGenerate = $container->get(IdGenerateInterface::class);
         $this->config = array_replace_recursive($this->config, $config);
     }
 
@@ -41,7 +48,7 @@ class RedisLock implements LockInterface
                 $result = $this->redis->set(
                     $lockKey,
                     $lockContent,
-                    ['nx', 'ex' => $this->config['lock_expired'] / 1000]
+                    ['nx', 'ex' => $this->config['lock_expired']]
                 );
                 if ($result === false) {
                     throw new LockException('lock fail');
@@ -89,20 +96,9 @@ LUA;
         if (Context::has($key)) {
             $content = Context::get($key);
         } else {
-            $content = $this->genderUUID();
+            $content = $this->idGenerate->generate();
             Context::set($key, $content);
         }
         return $content;
-    }
-
-    protected function genderUUID(string $prefix = 'hyperf'): string
-    {
-        $str = md5(uniqid(mt_rand(), true));
-        $uuid = substr($str, 0, 8) . '-';
-        $uuid .= substr($str, 8, 4) . '-';
-        $uuid .= substr($str, 12, 4) . '-';
-        $uuid .= substr($str, 16, 4) . '-';
-        $uuid .= substr($str, 20, 12);
-        return $prefix . $uuid;
     }
 }

@@ -3,8 +3,8 @@
 return [
     'default' => [
         'driver' => 'redis',
-        // lock expired time (millisecond)
-        'lock_expired' => 100,
+        // lock expired time (second)
+        'lock_expired' => 1,
         // with retry lock time (millisecond)
         'with_time' => 300,
         'retry' => 5,
