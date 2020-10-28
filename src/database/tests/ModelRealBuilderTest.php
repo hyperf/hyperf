@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Carbon\Carbon;
+use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\Events\Saved;
 use HyperfTest\Database\Stubs\ContainerStub;
@@ -43,6 +45,10 @@ class ModelRealBuilderTest extends TestCase
 
     protected function tearDown(): void
     {
+        $container = $this->getContainer();
+        /** @var ConnectionInterface $conn */
+        $conn = $container->get(ConnectionResolverInterface::class)->connection();
+        $conn->select('DROP TABLE IF EXISTS `test`;');
         Mockery::close();
     }
 
@@ -167,6 +173,48 @@ class ModelRealBuilderTest extends TestCase
             if ($event instanceof QueryExecuted) {
                 $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
             }
+        }
+    }
+
+    public function testBigIntInsertAndGet()
+    {
+        $container = $this->getContainer();
+        /** @var ConnectionInterface $conn */
+        $conn = $container->get(ConnectionResolverInterface::class)->connection();
+        $conn->select('CREATE TABLE `test` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `uid` bigint(20) unsigned NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
+
+        $sql = 'INSERT INTO test(`user_id`, `uid`) VALUES (?,?)';
+        $this->assertTrue($conn->insert($sql, [PHP_INT_MAX, 1]));
+
+        $binds = [
+            [PHP_INT_MAX, 1],
+            [(string) PHP_INT_MAX, 1],
+            [PHP_INT_MAX, (string) 1],
+            [(string) PHP_INT_MAX, (string) 1],
+        ];
+        $sql = 'SELECT * FROM test WHERE user_id = ? AND uid = ?';
+        foreach ($binds as $bind) {
+            $res = $conn->select($sql, $bind);
+            $this->assertNotEmpty($res);
+        }
+
+        $binds = [
+            [1, PHP_INT_MAX],
+            [1, (string) PHP_INT_MAX],
+            [(string) 1, PHP_INT_MAX],
+            [(string) 1, (string) PHP_INT_MAX],
+        ];
+        $sql = 'SELECT * FROM test WHERE uid = ? AND user_id = ?';
+        foreach ($binds as $bind) {
+            $res = $conn->select($sql, $bind);
+            $this->assertNotEmpty($res);
         }
     }
 

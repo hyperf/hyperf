@@ -32,6 +32,8 @@
   * Method `initHeaders` will return `$headers`, instead of assigning "$headers" directly to the client.
   * Deleted method `checkStatusCode`
 
+- [#2720](https://github.com/hyperf/hyperf/pull/2720) Don't set `data_type` for `PDOStatement::bindValue`.
+
 ## Deprecated
 
 - `Hyperf\AsyncQueue\Signal\DriverStopHandler` will be deprecated in v2.2, please use `Hyperf\Process\Handler\ProcessStopHandler` instead.
