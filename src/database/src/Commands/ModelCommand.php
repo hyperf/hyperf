@@ -215,6 +215,7 @@ class ModelCommand extends Command
         $path = BASE_PATH . '/runtime/ide/' . $class . '.php';
         $this->mkdir($path);
         file_put_contents($path, $code);
+        $this->output->writeln(sprintf('<info>Model IDE %s was created.</info>', $data->getClass()));
     }
 
     protected function mkdir(string $path): void

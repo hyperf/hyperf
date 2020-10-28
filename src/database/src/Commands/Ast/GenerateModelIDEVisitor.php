@@ -42,8 +42,6 @@ class GenerateModelIDEVisitor extends AbstractVisitor
         parent::__construct($option, $data);
 
         $this->initPropertiesFromMethods();
-
-        $this->parseWhereMethod('');
     }
 
     public function leaveNode(Node $node)
@@ -128,22 +126,6 @@ class GenerateModelIDEVisitor extends AbstractVisitor
                 continue;
             }
         }
-    }
-
-    protected function parseWhereMethod(string $doc): string
-    {
-        foreach ($this->data->getColumns() as $column) {
-            $name = $this->option->isCamelCase() ? Str::camel($column['column_name']) : $column['column_name'];
-            var_dump($name);
-            // $doc .= sprintf(
-            //         ' * @method static %s|%s %s(%s)' . PHP_EOL,
-            //         '\\' . Builder::class,
-            //         '\\' . get_class($this->class),
-            //         Str::studly('where_' . $name),
-            //         '$value'
-            //     ) . PHP_EOL;
-        }
-        return $doc;
     }
 
     protected function parseScopeMethod(string $doc): string
