@@ -98,7 +98,7 @@ class GenerateModelIDEVisitor extends AbstractVisitor
         foreach ($this->methods as $name => $call) {
             $method = new Node\Stmt\ClassMethod($name, [
                 'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC | Node\Stmt\Class_::MODIFIER_STATIC,
-                'params' => []
+                'params' => [],
             ]);
             $method->setDocComment(new Doc($scopeDoc));
             $this->class->stmts[] = $method;
@@ -111,6 +111,12 @@ class GenerateModelIDEVisitor extends AbstractVisitor
             )
         );
         return [$this->namespace];
+    }
+
+    public static function modelIdeHelper(string $class): string
+    {
+        var_dump($class);
+        return str_replace('App\\Model', 'App\\Model\\IDE', $class);
     }
 
     protected function setMethod(string $name, array $type = [], array $arguments = [])
@@ -149,11 +155,4 @@ class GenerateModelIDEVisitor extends AbstractVisitor
             }
         }
     }
-
-    public static function modelIdeHelper(string $class) :string
-    {
-        var_dump($class);
-        return str_replace('App\\Model','App\\Model\\IDE',$class);
-    }
-
 }

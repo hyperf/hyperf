@@ -172,8 +172,8 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         $doc = '/**' . PHP_EOL;
         $doc = $this->parseProperty($doc);
         $doc .= ' * @mixin \\' . Eloquent::class . PHP_EOL;
-        if($this->option->isWithIde()) {
-            $doc .= ' * @mixin \\' . GenerateModelIDEVisitor::modelIdeHelper(get_class($this->class)) . PHP_EOL ;
+        if ($this->option->isWithIde()) {
+            $doc .= ' * @mixin \\' . GenerateModelIDEVisitor::modelIdeHelper(get_class($this->class)) . PHP_EOL;
         }
         $doc .= ' */';
         return $doc;

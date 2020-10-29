@@ -11,34 +11,35 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model;
 
-class Eloquent
+class Model
 {
+    /**
+     * @var Builder
+     */
+    protected static $instance;
+
     /**
      * Create and return an un-saved model instance.
      *
      * @param array $attributes
      * @return Model|static
-     * @static
      */
     public static function make($attributes = [])
     {
-        /** @var Builder $instance */
-        return $instance->make($attributes);
+        return static::$instance->make($attributes);
     }
 
     /**
      * Register a new global scope.
      *
      * @param string $identifier
-     * @param Scope|\Closure  $scope
+     * @param \Closure|Scope $scope
      *
      * @return Builder
-     * @static
      */
     public static function withGlobalScope($identifier, $scope)
     {
-        /** @var Builder $instance */
-        return $instance->withGlobalScope($identifier, $scope);
+        return static::$instance->withGlobalScope($identifier, $scope);
     }
 
     /**
@@ -46,37 +47,31 @@ class Eloquent
      *
      * @param Scope|string $scope
      * @return Builder
-     * @static
      */
     public static function withoutGlobalScope($scope)
     {
-        /** @var Builder $instance */
-        return $instance->withoutGlobalScope($scope);
+        return static::$instance->withoutGlobalScope($scope);
     }
 
     /**
      * Remove all or passed registered global scopes.
      *
-     * @param array|null $scopes
+     * @param null|array $scopes
      * @return Builder
-     * @static
      */
     public static function withoutGlobalScopes($scopes = null)
     {
-        /** @var Builder $instance */
-        return $instance->withoutGlobalScopes($scopes);
+        return static::$instance->withoutGlobalScopes($scopes);
     }
 
     /**
      * Get an array of global scopes that were removed from the query.
      *
      * @return array
-     * @static
      */
     public static function removedScopes()
     {
-        /** @var Builder $instance */
-        return $instance->removedScopes();
+        return static::$instance->removedScopes();
     }
 
     /**
@@ -84,12 +79,10 @@ class Eloquent
      *
      * @param mixed $id
      * @return Builder
-     * @static
      */
     public static function whereKey($id)
     {
-        /** @var Builder $instance */
-        return $instance->whereKey($id);
+        return static::$instance->whereKey($id);
     }
 
     /**
@@ -97,43 +90,37 @@ class Eloquent
      *
      * @param mixed $id
      * @return Builder
-     * @static
      */
     public static function whereKeyNot($id)
     {
-        /** @var Builder $instance */
-        return $instance->whereKeyNot($id);
+        return static::$instance->whereKeyNot($id);
     }
 
     /**
      * Add a basic where clause to the query.
      *
-     * @param \Closure|string|array $column
+     * @param array|\Closure|string $column
      * @param mixed $operator
      * @param mixed $value
      * @param string $boolean
      * @return Builder
-     * @static
      */
     public static function where($column, $operator = null, $value = null, $boolean = 'and')
     {
-        /** @var Builder $instance */
-        return $instance->where($column, $operator, $value, $boolean);
+        return static::$instance->where($column, $operator, $value, $boolean);
     }
 
     /**
      * Add an "or where" clause to the query.
      *
-     * @param \Closure|array|string $column
+     * @param array|\Closure|string $column
      * @param mixed $operator
      * @param mixed $value
      * @return Builder
-     * @static
      */
     public static function orWhere($column, $operator = null, $value = null)
     {
-        /** @var Builder $instance */
-        return $instance->orWhere($column, $operator, $value);
+        return static::$instance->orWhere($column, $operator, $value);
     }
 
     /**
@@ -141,12 +128,10 @@ class Eloquent
      *
      * @param string $column
      * @return Builder
-     * @static
      */
     public static function latest($column = null)
     {
-        /** @var Builder $instance */
-        return $instance->latest($column);
+        return static::$instance->latest($column);
     }
 
     /**
@@ -154,12 +139,10 @@ class Eloquent
      *
      * @param string $column
      * @return Builder
-     * @static
      */
     public static function oldest($column = null)
     {
-        /** @var Builder $instance */
-        return $instance->oldest($column);
+        return static::$instance->oldest($column);
     }
 
     /**
@@ -167,12 +150,10 @@ class Eloquent
      *
      * @param array $items
      * @return Collection
-     * @static
      */
     public static function hydrate($items)
     {
-        /** @var Builder $instance */
-        return $instance->hydrate($items);
+        return static::$instance->hydrate($items);
     }
 
     /**
@@ -181,12 +162,10 @@ class Eloquent
      * @param string $query
      * @param array $bindings
      * @return Collection
-     * @static
      */
     public static function fromQuery($query, $bindings = [])
     {
-        /** @var Builder $instance */
-        return $instance->fromQuery($query, $bindings);
+        return static::$instance->fromQuery($query, $bindings);
     }
 
     /**
@@ -194,27 +173,23 @@ class Eloquent
      *
      * @param mixed $id
      * @param array $columns
-     * @return Model|Collection|static[]|static|null
-     * @static
+     * @return null|Collection|Model|static|static[]
      */
     public static function find($id, $columns = [])
     {
-        /** @var Builder $instance */
-        return $instance->find($id, $columns);
+        return static::$instance->find($id, $columns);
     }
 
     /**
      * Find multiple models by their primary keys.
      *
-     * @param \Hyperf\Utils\Contracts\Arrayable|array $ids
+     * @param array|\Hyperf\Utils\Contracts\Arrayable $ids
      * @param array $columns
      * @return Collection
-     * @static
      */
     public static function findMany($ids, $columns = [])
     {
-        /** @var Builder $instance */
-        return $instance->findMany($ids, $columns);
+        return static::$instance->findMany($ids, $columns);
     }
 
     /**
@@ -222,14 +197,12 @@ class Eloquent
      *
      * @param mixed $id
      * @param array $columns
-     * @return Model|Collection|static|static[]
      * @throws ModelNotFoundException
-     * @static
+     * @return Collection|Model|static|static[]
      */
     public static function findOrFail($id, $columns = [])
     {
-        /** @var Builder $instance */
-        return $instance->findOrFail($id, $columns);
+        return static::$instance->findOrFail($id, $columns);
     }
 
     /**
@@ -238,12 +211,10 @@ class Eloquent
      * @param mixed $id
      * @param array $columns
      * @return Model|static
-     * @static
      */
     public static function findOrNew($id, $columns = [])
     {
-        /** @var Builder $instance */
-        return $instance->findOrNew($id, $columns);
+        return static::$instance->findOrNew($id, $columns);
     }
 
     /**
@@ -252,12 +223,10 @@ class Eloquent
      * @param array $attributes
      * @param array $values
      * @return Model|static
-     * @static
      */
     public static function firstOrNew($attributes = [], $values = [])
     {
-        /** @var Builder $instance */
-        return $instance->firstOrNew($attributes, $values);
+        return static::$instance->firstOrNew($attributes, $values);
     }
 
     /**
@@ -266,12 +235,10 @@ class Eloquent
      * @param array $attributes
      * @param array $values
      * @return Model|static
-     * @static
      */
     public static function firstOrCreate($attributes, $values = [])
     {
-        /** @var Builder $instance */
-        return $instance->firstOrCreate($attributes, $values);
+        return static::$instance->firstOrCreate($attributes, $values);
     }
 
     /**
@@ -280,40 +247,34 @@ class Eloquent
      * @param array $attributes
      * @param array $values
      * @return Model|static
-     * @static
      */
     public static function updateOrCreate($attributes, $values = [])
     {
-        /** @var Builder $instance */
-        return $instance->updateOrCreate($attributes, $values);
+        return static::$instance->updateOrCreate($attributes, $values);
     }
 
     /**
      * Execute the query and get the first result or throw an exception.
      *
      * @param array $columns
-     * @return Model|static
      * @throws ModelNotFoundException
-     * @static
+     * @return Model|static
      */
     public static function firstOrFail($columns = [])
     {
-        /** @var Builder $instance */
-        return $instance->firstOrFail($columns);
+        return static::$instance->firstOrFail($columns);
     }
 
     /**
      * Execute the query and get the first result or call a callback.
      *
-     * @param \Closure|array $columns
-     * @param \Closure|null $callback
-     * @return Model|static|mixed
-     * @static
+     * @param array|\Closure $columns
+     * @param null|\Closure $callback
+     * @return mixed|Model|static
      */
     public static function firstOr($columns = [], $callback = null)
     {
-        /** @var Builder $instance */
-        return $instance->firstOr($columns, $callback);
+        return static::$instance->firstOr($columns, $callback);
     }
 
     /**
@@ -321,12 +282,10 @@ class Eloquent
      *
      * @param string $column
      * @return mixed
-     * @static
      */
     public static function value($column)
     {
-        /** @var Builder $instance */
-        return $instance->value($column);
+        return static::$instance->value($column);
     }
 
     /**
@@ -334,12 +293,10 @@ class Eloquent
      *
      * @param array|string $columns
      * @return Collection|static[]
-     * @static
      */
     public static function get($columns = [])
     {
-        /** @var Builder $instance */
-        return $instance->get($columns);
+        return static::$instance->get($columns);
     }
 
     /**
@@ -347,12 +304,10 @@ class Eloquent
      *
      * @param array|string $columns
      * @return Model[]|static[]
-     * @static
      */
     public static function getModels($columns = [])
     {
-        /** @var Builder $instance */
-        return $instance->getModels($columns);
+        return static::$instance->getModels($columns);
     }
 
     /**
@@ -360,135 +315,114 @@ class Eloquent
      *
      * @param array $models
      * @return array
-     * @static
      */
     public static function eagerLoadRelations($models)
     {
-        /** @var Builder $instance */
-        return $instance->eagerLoadRelations($models);
+        return static::$instance->eagerLoadRelations($models);
     }
 
     /**
      * Get a lazy collection for the given query.
      *
      * @return \Generator
-     * @static
      */
     public static function cursor()
     {
-        /** @var Builder $instance */
-        return $instance->cursor();
+        return static::$instance->cursor();
     }
 
     /**
      * Get an array with the values of a given column.
      *
      * @param string $column
-     * @param string|null $key
+     * @param null|string $key
      * @return \Hyperf\Utils\Collection
-     * @static
      */
     public static function pluck($column, $key = null)
     {
-        /** @var Builder $instance */
-        return $instance->pluck($column, $key);
+        return static::$instance->pluck($column, $key);
     }
 
     /**
      * Paginate the given query.
      *
-     * @param int|null $perPage
+     * @param null|int $perPage
      * @param array $columns
      * @param string $pageName
-     * @param int|null $page
-     * @return \Hyperf\Contract\LengthAwarePaginatorInterface
+     * @param null|int $page
      * @throws \InvalidArgumentException
-     * @static
+     * @return \Hyperf\Contract\LengthAwarePaginatorInterface
      */
     public static function paginate($perPage = null, $columns = [], $pageName = 'page', $page = null)
     {
-        /** @var Builder $instance */
-        return $instance->paginate($perPage, $columns, $pageName, $page);
+        return static::$instance->paginate($perPage, $columns, $pageName, $page);
     }
 
     /**
      * Paginate the given query into a simple paginator.
      *
-     * @param int|null $perPage
+     * @param null|int $perPage
      * @param array $columns
      * @param string $pageName
-     * @param int|null $page
+     * @param null|int $page
      * @return \Hyperf\Contract\PaginatorInterface
-     * @static
      */
     public static function simplePaginate($perPage = null, $columns = [], $pageName = 'page', $page = null)
     {
-        /** @var Builder $instance */
-        return $instance->simplePaginate($perPage, $columns, $pageName, $page);
+        return static::$instance->simplePaginate($perPage, $columns, $pageName, $page);
     }
 
     /**
      * Save a new model and return the instance.
      *
      * @param array $attributes
-     * @return Model|$this
-     * @static
+     * @return $this|Model
      */
     public static function create($attributes = [])
     {
-        /** @var Builder $instance */
-        return $instance->create($attributes);
+        return static::$instance->create($attributes);
     }
 
     /**
      * Save a new model and return the instance. Allow mass-assignment.
      *
      * @param array $attributes
-     * @return Model|$this
-     * @static
+     * @return $this|Model
      */
     public static function forceCreate($attributes)
     {
-        /** @var Builder $instance */
-        return $instance->forceCreate($attributes);
+        return static::$instance->forceCreate($attributes);
     }
 
     /**
      * Register a replacement for the default delete function.
      *
      * @param \Closure $callback
-     * @return void
-     * @static
      */
     public static function onDelete($callback)
     {
-        /** @var Builder $instance */
-        $instance->onDelete($callback);
+        static::$instance->onDelete($callback);
     }
 
     /**
      * Call the given local model scopes.
      *
      * @param array|string $scopes
-     * @return static|mixed
-     * @static
+     * @return mixed|static
      */
     public static function scopes($scopes)
     {
-        /** @var Builder $instance */
-        return $instance->scopes($scopes);
+        return static::$instance->scopes($scopes);
     }
 
     /**
      * Apply the scopes to the Eloquent builder instance and return it.
      *
      * @return Builder
-     * @static
      */
     public static function applyScopes()
     {
-        /** @var Builder $instance */
-        return $instance->applyScopes();
+        return static::$instance->applyScopes();
     }
 
     /**
@@ -496,12 +430,10 @@ class Eloquent
      *
      * @param mixed $relations
      * @return Builder
-     * @static
      */
     public static function without($relations)
     {
-        /** @var Builder $instance */
-        return $instance->without($relations);
+        return static::$instance->without($relations);
     }
 
     /**
@@ -509,12 +441,10 @@ class Eloquent
      *
      * @param array $attributes
      * @return Model|static
-     * @static
      */
     public static function newModelInstance($attributes = [])
     {
-        /** @var Builder $instance */
-        return $instance->newModelInstance($attributes);
+        return static::$instance->newModelInstance($attributes);
     }
 
     /**
@@ -522,24 +452,20 @@ class Eloquent
      *
      * @param array $casts
      * @return Builder
-     * @static
      */
     public static function withCasts($casts)
     {
-        /** @var Builder $instance */
-        return $instance->withCasts($casts);
+        return static::$instance->withCasts($casts);
     }
 
     /**
      * Get the underlying query builder instance.
      *
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function getQuery()
     {
-        /** @var Builder $instance */
-        return $instance->getQuery();
+        return static::$instance->getQuery();
     }
 
     /**
@@ -547,36 +473,30 @@ class Eloquent
      *
      * @param \Hyperf\Database\Query\Builder $query
      * @return Builder
-     * @static
      */
     public static function setQuery($query)
     {
-        /** @var Builder $instance */
-        return $instance->setQuery($query);
+        return static::$instance->setQuery($query);
     }
 
     /**
      * Get a base query builder instance.
      *
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function toBase()
     {
-        /** @var Builder $instance */
-        return $instance->toBase();
+        return static::$instance->toBase();
     }
 
     /**
      * Get the relationships being eagerly loaded.
      *
      * @return array
-     * @static
      */
     public static function getEagerLoads()
     {
-        /** @var Builder $instance */
-        return $instance->getEagerLoads();
+        return static::$instance->getEagerLoads();
     }
 
     /**
@@ -584,24 +504,20 @@ class Eloquent
      *
      * @param array $eagerLoad
      * @return Builder
-     * @static
      */
     public static function setEagerLoads($eagerLoad)
     {
-        /** @var Builder $instance */
-        return $instance->setEagerLoads($eagerLoad);
+        return static::$instance->setEagerLoads($eagerLoad);
     }
 
     /**
      * Get the model instance being queried.
      *
      * @return Model|static
-     * @static
      */
     public static function getModel()
     {
-        /** @var Builder $instance */
-        return $instance->getModel();
+        return static::$instance->getModel();
     }
 
     /**
@@ -609,12 +525,10 @@ class Eloquent
      *
      * @param Model $model
      * @return Builder
-     * @static
      */
     public static function setModel($model)
     {
-        /** @var Builder $instance */
-        return $instance->setModel($model);
+        return static::$instance->setModel($model);
     }
 
     /**
@@ -622,12 +536,10 @@ class Eloquent
      *
      * @param string $name
      * @return \Closure
-     * @static
      */
     public static function getMacro($name)
     {
-        /** @var Builder $instance */
-        return $instance->getMacro($name);
+        return static::$instance->getMacro($name);
     }
 
     /**
@@ -635,12 +547,10 @@ class Eloquent
      *
      * @param string $name
      * @return bool
-     * @static
      */
     public static function hasMacro($name)
     {
-        /** @var Builder $instance */
-        return $instance::hasMacro($name);
+        return static::$instance::hasMacro($name);
     }
 
     /**
@@ -649,12 +559,10 @@ class Eloquent
      * @param int $count
      * @param callable $callback
      * @return bool
-     * @static
      */
     public static function chunk($count, $callback)
     {
-        /** @var Builder $instance */
-        return $instance->chunk($count, $callback);
+        return static::$instance->chunk($count, $callback);
     }
 
     /**
@@ -663,12 +571,10 @@ class Eloquent
      * @param callable $callback
      * @param int $count
      * @return bool
-     * @static
      */
     public static function each($callback, $count = 1000)
     {
-        /** @var Builder $instance */
-        return $instance->each($callback, $count);
+        return static::$instance->each($callback, $count);
     }
 
     /**
@@ -676,28 +582,24 @@ class Eloquent
      *
      * @param int $count
      * @param callable $callback
-     * @param string|null $column
-     * @param string|null $alias
+     * @param null|string $column
+     * @param null|string $alias
      * @return bool
-     * @static
      */
     public static function chunkById($count, $callback, $column = null, $alias = null)
     {
-        /** @var Builder $instance */
-        return $instance->chunkById($count, $callback, $column, $alias);
+        return static::$instance->chunkById($count, $callback, $column, $alias);
     }
 
     /**
      * Execute the query and get the first result.
      *
      * @param array|string $columns
-     * @return Model|object|static|null
-     * @static
+     * @return null|Model|object|static
      */
     public static function first($columns = [])
     {
-        /** @var Builder $instance */
-        return $instance->first($columns);
+        return static::$instance->first($columns);
     }
 
     /**
@@ -705,14 +607,12 @@ class Eloquent
      *
      * @param mixed $value
      * @param callable $callback
-     * @param callable|null $default
-     * @return mixed|$this
-     * @static
+     * @param null|callable $default
+     * @return $this|mixed
      */
     public static function when($value, $callback, $default = null)
     {
-        /** @var Builder $instance */
-        return $instance->when($value, $callback, $default);
+        return static::$instance->when($value, $callback, $default);
     }
 
     /**
@@ -720,12 +620,10 @@ class Eloquent
      *
      * @param callable $callback
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function tap($callback)
     {
-        /** @var Builder $instance */
-        return $instance->tap($callback);
+        return static::$instance->tap($callback);
     }
 
     /**
@@ -733,14 +631,12 @@ class Eloquent
      *
      * @param mixed $value
      * @param callable $callback
-     * @param callable|null $default
-     * @return mixed|$this
-     * @static
+     * @param null|callable $default
+     * @return $this|mixed
      */
     public static function unless($value, $callback, $default = null)
     {
-        /** @var Builder $instance */
-        return $instance->unless($value, $callback, $default);
+        return static::$instance->unless($value, $callback, $default);
     }
 
     /**
@@ -750,15 +646,13 @@ class Eloquent
      * @param string $operator
      * @param int $count
      * @param string $boolean
-     * @param \Closure|null $callback
-     * @return Builder|static
+     * @param null|\Closure $callback
      * @throws \RuntimeException
-     * @static
+     * @return Builder|static
      */
     public static function has($relation, $operator = '>=', $count = 1, $boolean = 'and', $callback = null)
     {
-        /** @var Builder $instance */
-        return $instance->has($relation, $operator, $count, $boolean, $callback);
+        return static::$instance->has($relation, $operator, $count, $boolean, $callback);
     }
 
     /**
@@ -768,12 +662,10 @@ class Eloquent
      * @param string $operator
      * @param int $count
      * @return Builder|static
-     * @static
      */
     public static function orHas($relation, $operator = '>=', $count = 1)
     {
-        /** @var Builder $instance */
-        return $instance->orHas($relation, $operator, $count);
+        return static::$instance->orHas($relation, $operator, $count);
     }
 
     /**
@@ -781,14 +673,12 @@ class Eloquent
      *
      * @param string $relation
      * @param string $boolean
-     * @param \Closure|null $callback
+     * @param null|\Closure $callback
      * @return Builder|static
-     * @static
      */
     public static function doesntHave($relation, $boolean = 'and', $callback = null)
     {
-        /** @var Builder $instance */
-        return $instance->doesntHave($relation, $boolean, $callback);
+        return static::$instance->doesntHave($relation, $boolean, $callback);
     }
 
     /**
@@ -796,170 +686,148 @@ class Eloquent
      *
      * @param string $relation
      * @return Builder|static
-     * @static
      */
     public static function orDoesntHave($relation)
     {
-        /** @var Builder $instance */
-        return $instance->orDoesntHave($relation);
+        return static::$instance->orDoesntHave($relation);
     }
 
     /**
      * Add a relationship count / exists condition to the query with where clauses.
      *
      * @param string $relation
-     * @param \Closure|null $callback
+     * @param null|\Closure $callback
      * @param string $operator
      * @param int $count
      * @return Builder|static
-     * @static
      */
     public static function whereHas($relation, $callback = null, $operator = '>=', $count = 1)
     {
-        /** @var Builder $instance */
-        return $instance->whereHas($relation, $callback, $operator, $count);
+        return static::$instance->whereHas($relation, $callback, $operator, $count);
     }
 
     /**
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param string $relation
-     * @param \Closure|null $callback
+     * @param null|\Closure $callback
      * @param string $operator
      * @param int $count
      * @return Builder|static
-     * @static
      */
     public static function orWhereHas($relation, $callback = null, $operator = '>=', $count = 1)
     {
-        /** @var Builder $instance */
-        return $instance->orWhereHas($relation, $callback, $operator, $count);
+        return static::$instance->orWhereHas($relation, $callback, $operator, $count);
     }
 
     /**
      * Add a relationship count / exists condition to the query with where clauses.
      *
      * @param string $relation
-     * @param \Closure|null $callback
+     * @param null|\Closure $callback
      * @return Builder|static
-     * @static
      */
     public static function whereDoesntHave($relation, $callback = null)
     {
-        /** @var Builder $instance */
-        return $instance->whereDoesntHave($relation, $callback);
+        return static::$instance->whereDoesntHave($relation, $callback);
     }
 
     /**
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param string $relation
-     * @param \Closure|null $callback
+     * @param null|\Closure $callback
      * @return Builder|static
-     * @static
      */
     public static function orWhereDoesntHave($relation, $callback = null)
     {
-        /** @var Builder $instance */
-        return $instance->orWhereDoesntHave($relation, $callback);
+        return static::$instance->orWhereDoesntHave($relation, $callback);
     }
 
     /**
      * Add a polymorphic relationship count / exists condition to the query.
      *
      * @param string $relation
-     * @param string|array $types
+     * @param array|string $types
      * @param string $operator
      * @param int $count
      * @param string $boolean
-     * @param \Closure|null $callback
+     * @param null|\Closure $callback
      * @return Builder|static
-     * @static
      */
     public static function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', $callback = null)
     {
-        /** @var Builder $instance */
-        return $instance->hasMorph($relation, $types, $operator, $count, $boolean, $callback);
+        return static::$instance->hasMorph($relation, $types, $operator, $count, $boolean, $callback);
     }
 
     /**
      * Add a polymorphic relationship count / exists condition to the query.
      *
      * @param string $relation
-     * @param string|array $types
+     * @param array|string $types
      * @param string $boolean
-     * @param \Closure|null $callback
+     * @param null|\Closure $callback
      * @return Builder|static
-     * @static
      */
     public static function doesntHaveMorph($relation, $types, $boolean = 'and', $callback = null)
     {
-        /** @var Builder $instance */
-        return $instance->doesntHaveMorph($relation, $types, $boolean, $callback);
+        return static::$instance->doesntHaveMorph($relation, $types, $boolean, $callback);
     }
 
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses.
      *
      * @param string $relation
-     * @param string|array $types
-     * @param \Closure|null $callback
+     * @param array|string $types
+     * @param null|\Closure $callback
      * @param string $operator
      * @param int $count
      * @return Builder|static
-     * @static
      */
     public static function whereHasMorph($relation, $types, $callback = null, $operator = '>=', $count = 1)
     {
-        /** @var Builder $instance */
-        return $instance->whereHasMorph($relation, $types, $callback, $operator, $count);
+        return static::$instance->whereHasMorph($relation, $types, $callback, $operator, $count);
     }
 
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param string $relation
-     * @param string|array $types
-     * @param \Closure|null $callback
+     * @param array|string $types
+     * @param null|\Closure $callback
      * @param string $operator
      * @param int $count
      * @return Builder|static
-     * @static
      */
     public static function orWhereHasMorph($relation, $types, $callback = null, $operator = '>=', $count = 1)
     {
-        /** @var Builder $instance */
-        return $instance->orWhereHasMorph($relation, $types, $callback, $operator, $count);
+        return static::$instance->orWhereHasMorph($relation, $types, $callback, $operator, $count);
     }
 
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses.
      *
      * @param string $relation
-     * @param string|array $types
-     * @param \Closure|null $callback
+     * @param array|string $types
+     * @param null|\Closure $callback
      * @return Builder|static
-     * @static
      */
     public static function whereDoesntHaveMorph($relation, $types, $callback = null)
     {
-        /** @var Builder $instance */
-        return $instance->whereDoesntHaveMorph($relation, $types, $callback);
+        return static::$instance->whereDoesntHaveMorph($relation, $types, $callback);
     }
 
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param string $relation
-     * @param string|array $types
-     * @param \Closure|null $callback
+     * @param array|string $types
+     * @param null|\Closure $callback
      * @return Builder|static
-     * @static
      */
     public static function orWhereDoesntHaveMorph($relation, $types, $callback = null)
     {
-        /** @var Builder $instance */
-        return $instance->orWhereDoesntHaveMorph($relation, $types, $callback);
+        return static::$instance->orWhereDoesntHaveMorph($relation, $types, $callback);
     }
 
     /**
@@ -967,12 +835,10 @@ class Eloquent
      *
      * @param mixed $relations
      * @return Builder
-     * @static
      */
     public static function withCount($relations)
     {
-        /** @var Builder $instance */
-        return $instance->withCount($relations);
+        return static::$instance->withCount($relations);
     }
 
     /**
@@ -980,12 +846,10 @@ class Eloquent
      *
      * @param Builder $from
      * @return Builder|static
-     * @static
      */
     public static function mergeConstraintsFrom($from)
     {
-        /** @var Builder $instance */
-        return $instance->mergeConstraintsFrom($from);
+        return static::$instance->mergeConstraintsFrom($from);
     }
 
     /**
@@ -993,12 +857,10 @@ class Eloquent
      *
      * @param array|mixed $columns
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function select($columns = [])
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->select($columns);
+        return static::$instance->select($columns);
     }
 
     /**
@@ -1006,14 +868,12 @@ class Eloquent
      *
      * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @return \Hyperf\Database\Query\Builder
      * @throws \InvalidArgumentException
-     * @static
+     * @return \Hyperf\Database\Query\Builder
      */
     public static function selectSub($query, $as)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->selectSub($query, $as);
+        return static::$instance->selectSub($query, $as);
     }
 
     /**
@@ -1022,12 +882,10 @@ class Eloquent
      * @param string $expression
      * @param array $bindings
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function selectRaw($expression, $bindings = [])
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->selectRaw($expression, $bindings);
+        return static::$instance->selectRaw($expression, $bindings);
     }
 
     /**
@@ -1035,14 +893,12 @@ class Eloquent
      *
      * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @return \Hyperf\Database\Query\Builder
      * @throws \InvalidArgumentException
-     * @static
+     * @return \Hyperf\Database\Query\Builder
      */
     public static function fromSub($query, $as)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->fromSub($query, $as);
+        return static::$instance->fromSub($query, $as);
     }
 
     /**
@@ -1051,12 +907,10 @@ class Eloquent
      * @param string $expression
      * @param mixed $bindings
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function fromRaw($expression, $bindings = [])
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->fromRaw($expression, $bindings);
+        return static::$instance->fromRaw($expression, $bindings);
     }
 
     /**
@@ -1064,24 +918,20 @@ class Eloquent
      *
      * @param array|mixed $column
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function addSelect($column)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->addSelect($column);
+        return static::$instance->addSelect($column);
     }
 
     /**
      * Force the query to only return distinct results.
      *
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function distinct()
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->distinct();
+        return static::$instance->distinct();
     }
 
     /**
@@ -1089,12 +939,10 @@ class Eloquent
      *
      * @param \Closure|\Hyperf\Database\Query\Builder|string $table
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function from($table)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->from($table);
+        return static::$instance->from($table);
     }
 
     /**
@@ -1102,17 +950,15 @@ class Eloquent
      *
      * @param string $table
      * @param \Closure|string $first
-     * @param string|null $operator
-     * @param string|null $second
+     * @param null|string $operator
+     * @param null|string $second
      * @param string $type
      * @param bool $where
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function join($table, $first, $operator = null, $second = null, $type = 'inner', $where = false)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->join($table, $first, $operator, $second, $type, $where);
+        return static::$instance->join($table, $first, $operator, $second, $type, $where);
     }
 
     /**
@@ -1124,12 +970,10 @@ class Eloquent
      * @param string $second
      * @param string $type
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function joinWhere($table, $first, $operator, $second, $type = 'inner')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->joinWhere($table, $first, $operator, $second, $type);
+        return static::$instance->joinWhere($table, $first, $operator, $second, $type);
     }
 
     /**
@@ -1138,18 +982,16 @@ class Eloquent
      * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
      * @param \Closure|string $first
-     * @param string|null $operator
-     * @param string|null $second
+     * @param null|string $operator
+     * @param null|string $second
      * @param string $type
      * @param bool $where
-     * @return \Hyperf\Database\Query\Builder
      * @throws \InvalidArgumentException
-     * @static
+     * @return \Hyperf\Database\Query\Builder
      */
     public static function joinSub($query, $as, $first, $operator = null, $second = null, $type = 'inner', $where = false)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->joinSub($query, $as, $first, $operator, $second, $type, $where);
+        return static::$instance->joinSub($query, $as, $first, $operator, $second, $type, $where);
     }
 
     /**
@@ -1157,15 +999,13 @@ class Eloquent
      *
      * @param string $table
      * @param \Closure|string $first
-     * @param string|null $operator
-     * @param string|null $second
+     * @param null|string $operator
+     * @param null|string $second
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function leftJoin($table, $first, $operator = null, $second = null)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->leftJoin($table, $first, $operator, $second);
+        return static::$instance->leftJoin($table, $first, $operator, $second);
     }
 
     /**
@@ -1176,12 +1016,10 @@ class Eloquent
      * @param string $operator
      * @param string $second
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function leftJoinWhere($table, $first, $operator, $second)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->leftJoinWhere($table, $first, $operator, $second);
+        return static::$instance->leftJoinWhere($table, $first, $operator, $second);
     }
 
     /**
@@ -1190,15 +1028,13 @@ class Eloquent
      * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
      * @param \Closure|string $first
-     * @param string|null $operator
-     * @param string|null $second
+     * @param null|string $operator
+     * @param null|string $second
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function leftJoinSub($query, $as, $first, $operator = null, $second = null)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->leftJoinSub($query, $as, $first, $operator, $second);
+        return static::$instance->leftJoinSub($query, $as, $first, $operator, $second);
     }
 
     /**
@@ -1206,15 +1042,13 @@ class Eloquent
      *
      * @param string $table
      * @param \Closure|string $first
-     * @param string|null $operator
-     * @param string|null $second
+     * @param null|string $operator
+     * @param null|string $second
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function rightJoin($table, $first, $operator = null, $second = null)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->rightJoin($table, $first, $operator, $second);
+        return static::$instance->rightJoin($table, $first, $operator, $second);
     }
 
     /**
@@ -1225,12 +1059,10 @@ class Eloquent
      * @param string $operator
      * @param string $second
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function rightJoinWhere($table, $first, $operator, $second)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->rightJoinWhere($table, $first, $operator, $second);
+        return static::$instance->rightJoinWhere($table, $first, $operator, $second);
     }
 
     /**
@@ -1239,31 +1071,27 @@ class Eloquent
      * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
      * @param \Closure|string $first
-     * @param string|null $operator
-     * @param string|null $second
+     * @param null|string $operator
+     * @param null|string $second
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function rightJoinSub($query, $as, $first, $operator = null, $second = null)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->rightJoinSub($query, $as, $first, $operator, $second);
+        return static::$instance->rightJoinSub($query, $as, $first, $operator, $second);
     }
 
     /**
      * Add a "cross join" clause to the query.
      *
      * @param string $table
-     * @param \Closure|string|null $first
-     * @param string|null $operator
-     * @param string|null $second
+     * @param null|\Closure|string $first
+     * @param null|string $operator
+     * @param null|string $second
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function crossJoin($table, $first = null, $operator = null, $second = null)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->crossJoin($table, $first, $operator, $second);
+        return static::$instance->crossJoin($table, $first, $operator, $second);
     }
 
     /**
@@ -1271,13 +1099,10 @@ class Eloquent
      *
      * @param array $wheres
      * @param array $bindings
-     * @return void
-     * @static
      */
     public static function mergeWheres($wheres, $bindings)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        $instance->mergeWheres($wheres, $bindings);
+        static::$instance->mergeWheres($wheres, $bindings);
     }
 
     /**
@@ -1286,45 +1111,39 @@ class Eloquent
      * @param string $value
      * @param string $operator
      * @param bool $useDefault
-     * @return array
      * @throws \InvalidArgumentException
-     * @static
+     * @return array
      */
     public static function prepareValueAndOperator($value, $operator, $useDefault = false)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->prepareValueAndOperator($value, $operator, $useDefault);
+        return static::$instance->prepareValueAndOperator($value, $operator, $useDefault);
     }
 
     /**
      * Add a "where" clause comparing two columns to the query.
      *
-     * @param string|array $first
-     * @param string|null $operator
-     * @param string|null $second
-     * @param string|null $boolean
+     * @param array|string $first
+     * @param null|string $operator
+     * @param null|string $second
+     * @param null|string $boolean
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereColumn($first, $operator = null, $second = null, $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereColumn($first, $operator, $second, $boolean);
+        return static::$instance->whereColumn($first, $operator, $second, $boolean);
     }
 
     /**
      * Add an "or where" clause comparing two columns to the query.
      *
-     * @param string|array $first
-     * @param string|null $operator
-     * @param string|null $second
+     * @param array|string $first
+     * @param null|string $operator
+     * @param null|string $second
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereColumn($first, $operator = null, $second = null)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereColumn($first, $operator, $second);
+        return static::$instance->orWhereColumn($first, $operator, $second);
     }
 
     /**
@@ -1334,12 +1153,10 @@ class Eloquent
      * @param mixed $bindings
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereRaw($sql, $bindings = [], $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereRaw($sql, $bindings, $boolean);
+        return static::$instance->whereRaw($sql, $bindings, $boolean);
     }
 
     /**
@@ -1348,12 +1165,10 @@ class Eloquent
      * @param string $sql
      * @param mixed $bindings
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereRaw($sql, $bindings = [])
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereRaw($sql, $bindings);
+        return static::$instance->orWhereRaw($sql, $bindings);
     }
 
     /**
@@ -1364,12 +1179,10 @@ class Eloquent
      * @param string $boolean
      * @param bool $not
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereIn($column, $values, $boolean = 'and', $not = false)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereIn($column, $values, $boolean, $not);
+        return static::$instance->whereIn($column, $values, $boolean, $not);
     }
 
     /**
@@ -1378,12 +1191,10 @@ class Eloquent
      * @param string $column
      * @param mixed $values
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereIn($column, $values)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereIn($column, $values);
+        return static::$instance->orWhereIn($column, $values);
     }
 
     /**
@@ -1393,12 +1204,10 @@ class Eloquent
      * @param mixed $values
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereNotIn($column, $values, $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereNotIn($column, $values, $boolean);
+        return static::$instance->whereNotIn($column, $values, $boolean);
     }
 
     /**
@@ -1407,58 +1216,50 @@ class Eloquent
      * @param string $column
      * @param mixed $values
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereNotIn($column, $values)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereNotIn($column, $values);
+        return static::$instance->orWhereNotIn($column, $values);
     }
 
     /**
      * Add a "where in raw" clause for integer values to the query.
      *
      * @param string $column
-     * @param \Hyperf\Utils\Contracts\Arrayable|array $values
+     * @param array|\Hyperf\Utils\Contracts\Arrayable $values
      * @param string $boolean
      * @param bool $not
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereIntegerInRaw($column, $values, $boolean = 'and', $not = false)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereIntegerInRaw($column, $values, $boolean, $not);
+        return static::$instance->whereIntegerInRaw($column, $values, $boolean, $not);
     }
 
     /**
      * Add a "where not in raw" clause for integer values to the query.
      *
      * @param string $column
-     * @param \Hyperf\Utils\Contracts\Arrayable|array $values
+     * @param array|\Hyperf\Utils\Contracts\Arrayable $values
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereIntegerNotInRaw($column, $values, $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereIntegerNotInRaw($column, $values, $boolean);
+        return static::$instance->whereIntegerNotInRaw($column, $values, $boolean);
     }
 
     /**
      * Add a "where null" clause to the query.
      *
-     * @param string|array $columns
+     * @param array|string $columns
      * @param string $boolean
      * @param bool $not
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereNull($columns, $boolean = 'and', $not = false)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereNull($columns, $boolean, $not);
+        return static::$instance->whereNull($columns, $boolean, $not);
     }
 
     /**
@@ -1466,26 +1267,22 @@ class Eloquent
      *
      * @param string $column
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereNull($column)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereNull($column);
+        return static::$instance->orWhereNull($column);
     }
 
     /**
      * Add a "where not null" clause to the query.
      *
-     * @param string|array $columns
+     * @param array|string $columns
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereNotNull($columns, $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereNotNull($columns, $boolean);
+        return static::$instance->whereNotNull($columns, $boolean);
     }
 
     /**
@@ -1496,12 +1293,10 @@ class Eloquent
      * @param string $boolean
      * @param bool $not
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereBetween($column, $values, $boolean = 'and', $not = false)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereBetween($column, $values, $boolean, $not);
+        return static::$instance->whereBetween($column, $values, $boolean, $not);
     }
 
     /**
@@ -1510,12 +1305,10 @@ class Eloquent
      * @param string $column
      * @param array $values
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereBetween($column, $values)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereBetween($column, $values);
+        return static::$instance->orWhereBetween($column, $values);
     }
 
     /**
@@ -1525,12 +1318,10 @@ class Eloquent
      * @param array $values
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereNotBetween($column, $values, $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereNotBetween($column, $values, $boolean);
+        return static::$instance->whereNotBetween($column, $values, $boolean);
     }
 
     /**
@@ -1539,12 +1330,10 @@ class Eloquent
      * @param string $column
      * @param array $values
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereNotBetween($column, $values)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereNotBetween($column, $values);
+        return static::$instance->orWhereNotBetween($column, $values);
     }
 
     /**
@@ -1552,12 +1341,10 @@ class Eloquent
      *
      * @param string $column
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereNotNull($column)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereNotNull($column);
+        return static::$instance->orWhereNotNull($column);
     }
 
     /**
@@ -1565,15 +1352,13 @@ class Eloquent
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string|null $value
+     * @param null|\DateTimeInterface|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereDate($column, $operator, $value = null, $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereDate($column, $operator, $value, $boolean);
+        return static::$instance->whereDate($column, $operator, $value, $boolean);
     }
 
     /**
@@ -1581,14 +1366,12 @@ class Eloquent
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string|null $value
+     * @param null|\DateTimeInterface|string $value
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereDate($column, $operator, $value = null)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereDate($column, $operator, $value);
+        return static::$instance->orWhereDate($column, $operator, $value);
     }
 
     /**
@@ -1596,15 +1379,13 @@ class Eloquent
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string|null $value
+     * @param null|\DateTimeInterface|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereTime($column, $operator, $value = null, $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereTime($column, $operator, $value, $boolean);
+        return static::$instance->whereTime($column, $operator, $value, $boolean);
     }
 
     /**
@@ -1612,14 +1393,12 @@ class Eloquent
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string|null $value
+     * @param null|\DateTimeInterface|string $value
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereTime($column, $operator, $value = null)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereTime($column, $operator, $value);
+        return static::$instance->orWhereTime($column, $operator, $value);
     }
 
     /**
@@ -1627,15 +1406,13 @@ class Eloquent
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string|null $value
+     * @param null|\DateTimeInterface|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereDay($column, $operator, $value = null, $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereDay($column, $operator, $value, $boolean);
+        return static::$instance->whereDay($column, $operator, $value, $boolean);
     }
 
     /**
@@ -1643,14 +1420,12 @@ class Eloquent
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string|null $value
+     * @param null|\DateTimeInterface|string $value
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereDay($column, $operator, $value = null)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereDay($column, $operator, $value);
+        return static::$instance->orWhereDay($column, $operator, $value);
     }
 
     /**
@@ -1658,15 +1433,13 @@ class Eloquent
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string|null $value
+     * @param null|\DateTimeInterface|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereMonth($column, $operator, $value = null, $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereMonth($column, $operator, $value, $boolean);
+        return static::$instance->whereMonth($column, $operator, $value, $boolean);
     }
 
     /**
@@ -1674,14 +1447,12 @@ class Eloquent
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string|null $value
+     * @param null|\DateTimeInterface|string $value
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereMonth($column, $operator, $value = null)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereMonth($column, $operator, $value);
+        return static::$instance->orWhereMonth($column, $operator, $value);
     }
 
     /**
@@ -1689,15 +1460,13 @@ class Eloquent
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string|int|null $value
+     * @param null|\DateTimeInterface|int|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereYear($column, $operator, $value = null, $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereYear($column, $operator, $value, $boolean);
+        return static::$instance->whereYear($column, $operator, $value, $boolean);
     }
 
     /**
@@ -1705,14 +1474,12 @@ class Eloquent
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string|int|null $value
+     * @param null|\DateTimeInterface|int|string $value
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereYear($column, $operator, $value = null)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereYear($column, $operator, $value);
+        return static::$instance->orWhereYear($column, $operator, $value);
     }
 
     /**
@@ -1721,24 +1488,20 @@ class Eloquent
      * @param \Closure $callback
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereNested($callback, $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereNested($callback, $boolean);
+        return static::$instance->whereNested($callback, $boolean);
     }
 
     /**
      * Create a new query instance for nested where condition.
      *
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function forNestedWhere()
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->forNestedWhere();
+        return static::$instance->forNestedWhere();
     }
 
     /**
@@ -1746,13 +1509,12 @@ class Eloquent
      *
      * @param $this $query
      * @param string $boolean
+     * @param mixed $query
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function addNestedWhereQuery($query, $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->addNestedWhereQuery($query, $boolean);
+        return static::$instance->addNestedWhereQuery($query, $boolean);
     }
 
     /**
@@ -1762,12 +1524,10 @@ class Eloquent
      * @param string $boolean
      * @param bool $not
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereExists($callback, $boolean = 'and', $not = false)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereExists($callback, $boolean, $not);
+        return static::$instance->whereExists($callback, $boolean, $not);
     }
 
     /**
@@ -1776,12 +1536,10 @@ class Eloquent
      * @param \Closure $callback
      * @param bool $not
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereExists($callback, $not = false)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereExists($callback, $not);
+        return static::$instance->orWhereExists($callback, $not);
     }
 
     /**
@@ -1790,12 +1548,10 @@ class Eloquent
      * @param \Closure $callback
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereNotExists($callback, $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereNotExists($callback, $boolean);
+        return static::$instance->whereNotExists($callback, $boolean);
     }
 
     /**
@@ -1803,12 +1559,10 @@ class Eloquent
      *
      * @param \Closure $callback
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereNotExists($callback)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereNotExists($callback);
+        return static::$instance->orWhereNotExists($callback);
     }
 
     /**
@@ -1818,12 +1572,10 @@ class Eloquent
      * @param string $boolean
      * @param bool $not
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function addWhereExistsQuery($query, $boolean = 'and', $not = false)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->addWhereExistsQuery($query, $boolean, $not);
+        return static::$instance->addWhereExistsQuery($query, $boolean, $not);
     }
 
     /**
@@ -1833,14 +1585,12 @@ class Eloquent
      * @param string $operator
      * @param array $values
      * @param string $boolean
-     * @return \Hyperf\Database\Query\Builder
      * @throws \InvalidArgumentException
-     * @static
+     * @return \Hyperf\Database\Query\Builder
      */
     public static function whereRowValues($columns, $operator, $values, $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereRowValues($columns, $operator, $values, $boolean);
+        return static::$instance->whereRowValues($columns, $operator, $values, $boolean);
     }
 
     /**
@@ -1850,12 +1600,10 @@ class Eloquent
      * @param string $operator
      * @param array $values
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereRowValues($columns, $operator, $values)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereRowValues($columns, $operator, $values);
+        return static::$instance->orWhereRowValues($columns, $operator, $values);
     }
 
     /**
@@ -1866,12 +1614,10 @@ class Eloquent
      * @param string $boolean
      * @param bool $not
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereJsonContains($column, $value, $boolean = 'and', $not = false)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereJsonContains($column, $value, $boolean, $not);
+        return static::$instance->whereJsonContains($column, $value, $boolean, $not);
     }
 
     /**
@@ -1880,12 +1626,10 @@ class Eloquent
      * @param string $column
      * @param mixed $value
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereJsonContains($column, $value)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereJsonContains($column, $value);
+        return static::$instance->orWhereJsonContains($column, $value);
     }
 
     /**
@@ -1895,12 +1639,10 @@ class Eloquent
      * @param mixed $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereJsonDoesntContain($column, $value, $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereJsonDoesntContain($column, $value, $boolean);
+        return static::$instance->whereJsonDoesntContain($column, $value, $boolean);
     }
 
     /**
@@ -1909,12 +1651,10 @@ class Eloquent
      * @param string $column
      * @param mixed $value
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereJsonDoesntContain($column, $value)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereJsonDoesntContain($column, $value);
+        return static::$instance->orWhereJsonDoesntContain($column, $value);
     }
 
     /**
@@ -1925,12 +1665,10 @@ class Eloquent
      * @param mixed $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function whereJsonLength($column, $operator, $value = null, $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->whereJsonLength($column, $operator, $value, $boolean);
+        return static::$instance->whereJsonLength($column, $operator, $value, $boolean);
     }
 
     /**
@@ -1940,12 +1678,10 @@ class Eloquent
      * @param mixed $operator
      * @param mixed $value
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orWhereJsonLength($column, $operator, $value = null)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orWhereJsonLength($column, $operator, $value);
+        return static::$instance->orWhereJsonLength($column, $operator, $value);
     }
 
     /**
@@ -1954,12 +1690,10 @@ class Eloquent
      * @param string $method
      * @param array $parameters
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function dynamicWhere($method, $parameters)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->dynamicWhere($method, $parameters);
+        return static::$instance->dynamicWhere($method, $parameters);
     }
 
     /**
@@ -1967,43 +1701,37 @@ class Eloquent
      *
      * @param array|string $groups
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function groupBy(...$groups)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->groupBy(...$groups);
+        return static::$instance->groupBy(...$groups);
     }
 
     /**
      * Add a "having" clause to the query.
      *
      * @param string $column
-     * @param string|null $operator
-     * @param string|null $value
+     * @param null|string $operator
+     * @param null|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function having($column, $operator = null, $value = null, $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->having($column, $operator, $value, $boolean);
+        return static::$instance->having($column, $operator, $value, $boolean);
     }
 
     /**
      * Add a "or having" clause to the query.
      *
      * @param string $column
-     * @param string|null $operator
-     * @param string|null $value
+     * @param null|string $operator
+     * @param null|string $value
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orHaving($column, $operator = null, $value = null)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orHaving($column, $operator, $value);
+        return static::$instance->orHaving($column, $operator, $value);
     }
 
     /**
@@ -2014,12 +1742,10 @@ class Eloquent
      * @param string $boolean
      * @param bool $not
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function havingBetween($column, $values, $boolean = 'and', $not = false)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->havingBetween($column, $values, $boolean, $not);
+        return static::$instance->havingBetween($column, $values, $boolean, $not);
     }
 
     /**
@@ -2029,12 +1755,10 @@ class Eloquent
      * @param array $bindings
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function havingRaw($sql, $bindings = [], $boolean = 'and')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->havingRaw($sql, $bindings, $boolean);
+        return static::$instance->havingRaw($sql, $bindings, $boolean);
     }
 
     /**
@@ -2043,12 +1767,10 @@ class Eloquent
      * @param string $sql
      * @param array $bindings
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orHavingRaw($sql, $bindings = [])
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orHavingRaw($sql, $bindings);
+        return static::$instance->orHavingRaw($sql, $bindings);
     }
 
     /**
@@ -2056,14 +1778,12 @@ class Eloquent
      *
      * @param \Closure|\Hyperf\Database\Query\Builder|string $column
      * @param string $direction
-     * @return \Hyperf\Database\Query\Builder
      * @throws \InvalidArgumentException
-     * @static
+     * @return \Hyperf\Database\Query\Builder
      */
     public static function orderBy($column, $direction = 'asc')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orderBy($column, $direction);
+        return static::$instance->orderBy($column, $direction);
     }
 
     /**
@@ -2071,12 +1791,10 @@ class Eloquent
      *
      * @param string $column
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orderByDesc($column)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orderByDesc($column);
+        return static::$instance->orderByDesc($column);
     }
 
     /**
@@ -2084,12 +1802,10 @@ class Eloquent
      *
      * @param string $seed
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function inRandomOrder($seed = '')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->inRandomOrder($seed);
+        return static::$instance->inRandomOrder($seed);
     }
 
     /**
@@ -2098,12 +1814,10 @@ class Eloquent
      * @param string $sql
      * @param array $bindings
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function orderByRaw($sql, $bindings = [])
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->orderByRaw($sql, $bindings);
+        return static::$instance->orderByRaw($sql, $bindings);
     }
 
     /**
@@ -2111,12 +1825,10 @@ class Eloquent
      *
      * @param int $value
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function skip($value)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->skip($value);
+        return static::$instance->skip($value);
     }
 
     /**
@@ -2124,12 +1836,10 @@ class Eloquent
      *
      * @param int $value
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function offset($value)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->offset($value);
+        return static::$instance->offset($value);
     }
 
     /**
@@ -2137,12 +1847,10 @@ class Eloquent
      *
      * @param int $value
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function take($value)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->take($value);
+        return static::$instance->take($value);
     }
 
     /**
@@ -2150,12 +1858,10 @@ class Eloquent
      *
      * @param int $value
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function limit($value)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->limit($value);
+        return static::$instance->limit($value);
     }
 
     /**
@@ -2164,120 +1870,102 @@ class Eloquent
      * @param int $page
      * @param int $perPage
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function forPage($page, $perPage = 15)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->forPage($page, $perPage);
+        return static::$instance->forPage($page, $perPage);
     }
 
     /**
      * Constrain the query to the previous "page" of results before a given ID.
      *
      * @param int $perPage
-     * @param int|null $lastId
+     * @param null|int $lastId
      * @param string $column
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function forPageBeforeId($perPage = 15, $lastId = 0, $column = 'id')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->forPageBeforeId($perPage, $lastId, $column);
+        return static::$instance->forPageBeforeId($perPage, $lastId, $column);
     }
 
     /**
      * Constrain the query to the next "page" of results after a given ID.
      *
      * @param int $perPage
-     * @param int|null $lastId
+     * @param null|int $lastId
      * @param string $column
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function forPageAfterId($perPage = 15, $lastId = 0, $column = 'id')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->forPageAfterId($perPage, $lastId, $column);
+        return static::$instance->forPageAfterId($perPage, $lastId, $column);
     }
 
     /**
      * Add a union statement to the query.
      *
-     * @param \Hyperf\Database\Query\Builder|\Closure $query
+     * @param \Closure|\Hyperf\Database\Query\Builder $query
      * @param bool $all
      *
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function union($query, $all = false)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->union($query, $all);
+        return static::$instance->union($query, $all);
     }
 
     /**
      * Add a union all statement to the query.
      *
-     * @param \Hyperf\Database\Query\Builder|\Closure $query
+     * @param \Closure|\Hyperf\Database\Query\Builder $query
      *
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function unionAll($query)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->unionAll($query);
+        return static::$instance->unionAll($query);
     }
 
     /**
      * Lock the selected rows in the table.
      *
-     * @param string|bool $value
+     * @param bool|string $value
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function lock($value = true)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->lock($value);
+        return static::$instance->lock($value);
     }
 
     /**
      * Lock the selected rows in the table for updating.
      *
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function lockForUpdate()
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->lockForUpdate();
+        return static::$instance->lockForUpdate();
     }
 
     /**
      * Share lock the selected rows in the table.
      *
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function sharedLock()
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->sharedLock();
+        return static::$instance->sharedLock();
     }
 
     /**
      * Get the SQL representation of the query.
      *
      * @return string
-     * @static
      */
     public static function toSql()
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->toSql();
+        return static::$instance->toSql();
     }
 
     /**
@@ -2285,12 +1973,10 @@ class Eloquent
      *
      * @param array $columns
      * @return int
-     * @static
      */
     public static function getCountForPagination($columns = [])
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->getCountForPagination($columns);
+        return static::$instance->getCountForPagination($columns);
     }
 
     /**
@@ -2299,36 +1985,30 @@ class Eloquent
      * @param string $column
      * @param string $glue
      * @return string
-     * @static
      */
     public static function implode($column, $glue = '')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->implode($column, $glue);
+        return static::$instance->implode($column, $glue);
     }
 
     /**
      * Determine if any rows exist for the current query.
      *
      * @return bool
-     * @static
      */
     public static function exists()
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->exists();
+        return static::$instance->exists();
     }
 
     /**
      * Determine if no rows exist for the current query.
      *
      * @return bool
-     * @static
      */
     public static function doesntExist()
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->doesntExist();
+        return static::$instance->doesntExist();
     }
 
     /**
@@ -2336,12 +2016,10 @@ class Eloquent
      *
      * @param string $columns
      * @return int
-     * @static
      */
     public static function count($columns = '*')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->count($columns);
+        return static::$instance->count($columns);
     }
 
     /**
@@ -2349,12 +2027,10 @@ class Eloquent
      *
      * @param string $column
      * @return mixed
-     * @static
      */
     public static function min($column)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->min($column);
+        return static::$instance->min($column);
     }
 
     /**
@@ -2362,12 +2038,10 @@ class Eloquent
      *
      * @param string $column
      * @return mixed
-     * @static
      */
     public static function max($column)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->max($column);
+        return static::$instance->max($column);
     }
 
     /**
@@ -2375,12 +2049,10 @@ class Eloquent
      *
      * @param string $column
      * @return mixed
-     * @static
      */
     public static function sum($column)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->sum($column);
+        return static::$instance->sum($column);
     }
 
     /**
@@ -2388,12 +2060,10 @@ class Eloquent
      *
      * @param string $column
      * @return mixed
-     * @static
      */
     public static function avg($column)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->avg($column);
+        return static::$instance->avg($column);
     }
 
     /**
@@ -2401,12 +2071,10 @@ class Eloquent
      *
      * @param string $column
      * @return mixed
-     * @static
      */
     public static function average($column)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->average($column);
+        return static::$instance->average($column);
     }
 
     /**
@@ -2415,12 +2083,10 @@ class Eloquent
      * @param string $function
      * @param array $columns
      * @return mixed
-     * @static
      */
     public static function aggregate($function, $columns = [])
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->aggregate($function, $columns);
+        return static::$instance->aggregate($function, $columns);
     }
 
     /**
@@ -2429,12 +2095,10 @@ class Eloquent
      * @param string $function
      * @param array $columns
      * @return float|int
-     * @static
      */
     public static function numericAggregate($function, $columns = [])
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->numericAggregate($function, $columns);
+        return static::$instance->numericAggregate($function, $columns);
     }
 
     /**
@@ -2442,12 +2106,10 @@ class Eloquent
      *
      * @param array $values
      * @return bool
-     * @static
      */
     public static function insert($values)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->insert($values);
+        return static::$instance->insert($values);
     }
 
     /**
@@ -2455,26 +2117,22 @@ class Eloquent
      *
      * @param array $values
      * @return int
-     * @static
      */
     public static function insertOrIgnore($values)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->insertOrIgnore($values);
+        return static::$instance->insertOrIgnore($values);
     }
 
     /**
      * Insert a new record and get the value of the primary key.
      *
      * @param array $values
-     * @param string|null $sequence
+     * @param null|string $sequence
      * @return int
-     * @static
      */
     public static function insertGetId($values, $sequence = null)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->insertGetId($values, $sequence);
+        return static::$instance->insertGetId($values, $sequence);
     }
 
     /**
@@ -2483,12 +2141,10 @@ class Eloquent
      * @param array $columns
      * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @return int
-     * @static
      */
     public static function insertUsing($columns, $query)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->insertUsing($columns, $query);
+        return static::$instance->insertUsing($columns, $query);
     }
 
     /**
@@ -2497,24 +2153,18 @@ class Eloquent
      * @param array $attributes
      * @param array $values
      * @return bool
-     * @static
      */
     public static function updateOrInsert($attributes, $values = [])
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->updateOrInsert($attributes, $values);
+        return static::$instance->updateOrInsert($attributes, $values);
     }
 
     /**
      * Run a truncate statement on the table.
-     *
-     * @return void
-     * @static
      */
     public static function truncate()
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        $instance->truncate();
+        static::$instance->truncate();
     }
 
     /**
@@ -2522,36 +2172,30 @@ class Eloquent
      *
      * @param mixed $value
      * @return \Hyperf\Database\Query\Expression
-     * @static
      */
     public static function raw($value)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->raw($value);
+        return static::$instance->raw($value);
     }
 
     /**
      * Get the current query value bindings in a flattened array.
      *
      * @return array
-     * @static
      */
     public static function getBindings()
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->getBindings();
+        return static::$instance->getBindings();
     }
 
     /**
      * Get the raw array of bindings.
      *
      * @return array
-     * @static
      */
     public static function getRawBindings()
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->getRawBindings();
+        return static::$instance->getRawBindings();
     }
 
     /**
@@ -2559,14 +2203,12 @@ class Eloquent
      *
      * @param array $bindings
      * @param string $type
-     * @return \Hyperf\Database\Query\Builder
      * @throws \InvalidArgumentException
-     * @static
+     * @return \Hyperf\Database\Query\Builder
      */
     public static function setBindings($bindings, $type = 'where')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->setBindings($bindings, $type);
+        return static::$instance->setBindings($bindings, $type);
     }
 
     /**
@@ -2574,14 +2216,12 @@ class Eloquent
      *
      * @param mixed $value
      * @param string $type
-     * @return \Hyperf\Database\Query\Builder
      * @throws \InvalidArgumentException
-     * @static
+     * @return \Hyperf\Database\Query\Builder
      */
     public static function addBinding($value, $type = 'where')
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->addBinding($value, $type);
+        return static::$instance->addBinding($value, $type);
     }
 
     /**
@@ -2589,48 +2229,40 @@ class Eloquent
      *
      * @param \Hyperf\Database\Query\Builder $query
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function mergeBindings($query)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->mergeBindings($query);
+        return static::$instance->mergeBindings($query);
     }
 
     /**
      * Get the database query processor instance.
      *
      * @return \Hyperf\Database\Query\Processors\Processor
-     * @static
      */
     public static function getProcessor()
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->getProcessor();
+        return static::$instance->getProcessor();
     }
 
     /**
      * Get the query grammar instance.
      *
      * @return \Hyperf\Database\Query\Grammars\Grammar
-     * @static
      */
     public static function getGrammar()
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->getGrammar();
+        return static::$instance->getGrammar();
     }
 
     /**
      * Use the write pdo for query.
      *
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function useWritePdo()
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->useWritePdo();
+        return static::$instance->useWritePdo();
     }
 
     /**
@@ -2639,12 +2271,10 @@ class Eloquent
      * @param array $properties
      *
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function cloneWithout($properties)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->cloneWithout($properties);
+        return static::$instance->cloneWithout($properties);
     }
 
     /**
@@ -2653,21 +2283,17 @@ class Eloquent
      * @param array $except
      *
      * @return \Hyperf\Database\Query\Builder
-     * @static
      */
     public static function cloneWithoutBindings($except)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->cloneWithoutBindings($except);
+        return static::$instance->cloneWithoutBindings($except);
     }
 
     /**
      * Register a custom macro.
      *
      * @param string $name
-     * @param object|callable $macro
-     * @return void
-     * @static
+     * @param callable|object $macro
      */
     public static function macro($name, $macro)
     {
@@ -2678,9 +2304,7 @@ class Eloquent
      * Mix another object into the class.
      *
      * @param object $mixin
-     * @return void
      * @throws \ReflectionException
-     * @static
      */
     public static function mixin($mixin)
     {
@@ -2692,13 +2316,11 @@ class Eloquent
      *
      * @param string $method
      * @param array $parameters
-     * @return mixed
      * @throws \BadMethodCallException
-     * @static
+     * @return mixed
      */
     public static function macroCall($method, $parameters)
     {
-        /** @var \Hyperf\Database\Query\Builder $instance */
-        return $instance->macroCall($method, $parameters);
+        return static::$instance->macroCall($method, $parameters);
     }
 }
