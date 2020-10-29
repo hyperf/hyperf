@@ -47,6 +47,7 @@ class GenerateModelIDEVisitor extends AbstractVisitor
     public function leaveNode(Node $node)
     {
         if ($node instanceof Node\Stmt\Namespace_) {
+            $node->name->parts[] = 'IDE';
             $this->namespace = new Node\Stmt\Namespace_($node->name);
         }
 
@@ -91,7 +92,24 @@ class GenerateModelIDEVisitor extends AbstractVisitor
             );
             $this->class->stmts[] = $method;
         }
+        $scopeDoc = '/**' . PHP_EOL;
+        $scopeDoc .= ' * @return \Hyperf\Database\Model\Builder|static' . PHP_EOL;
+        $scopeDoc .= ' */';
+        foreach ($this->methods as $name => $call) {
+            $method = new Node\Stmt\ClassMethod($name, [
+                'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC | Node\Stmt\Class_::MODIFIER_STATIC,
+                'params' => []
+            ]);
+            $method->setDocComment(new Doc($scopeDoc));
+            $this->class->stmts[] = $method;
+        }
         $this->namespace->stmts = [$this->class];
+        $method->stmts[] = new Node\Stmt\Return_(
+            new Node\Expr\StaticPropertyFetch(
+                new Node\Name('static'),
+                new Node\VarLikeIdentifier('builder')
+            )
+        );
         return [$this->namespace];
     }
 
@@ -132,16 +150,10 @@ class GenerateModelIDEVisitor extends AbstractVisitor
         }
     }
 
-    protected function parseScopeMethod(string $doc): string
+    public static function modelIdeHelper(string $class) :string
     {
-        foreach ($this->methods as $name => $method) {
-            $doc .= sprintf(
-                ' * @method static %s|%s %s()' . PHP_EOL,
-                '\\' . Builder::class,
-                '\\' . get_class($this->class),
-                $name
-            ) . PHP_EOL;
-        }
-        return $doc;
+        var_dump($class);
+        return str_replace('App\\Model','App\\Model\\IDE',$class);
     }
+
 }
