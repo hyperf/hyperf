@@ -157,7 +157,7 @@ class ExampleJob extends Job
     public $params;
     
     /**
-     * 任务执行失败后的重试次数(最大重试次数=$maxAttempts+1), 默认0次不开启重试
+     * 任务执行失败后的重试次数，即最大执行次数为 $maxAttempts+1 次
      *
      * @var int
      */
