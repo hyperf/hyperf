@@ -286,6 +286,7 @@
             "HyperfTest\\ResourceGrpc\\": "src/resource-grpc/tests/",
             "HyperfTest\\Resource\\": "src/resource/tests/",
             "HyperfTest\\Retry\\": "src/retry/tests/",
+            "HyperfTest\\RpcServer\\": "src/rpc-server/tests/",
             "HyperfTest\\Rpc\\": "src/rpc/tests/",
             "HyperfTest\\Scout\\": "src/scout/tests/",
             "HyperfTest\\Server\\": "src/server/tests/",

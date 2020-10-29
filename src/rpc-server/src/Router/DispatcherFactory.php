@@ -24,6 +24,7 @@ use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\RpcServer\Annotation\RpcService;
 use Hyperf\RpcServer\Event\AfterPathRegister;
+use Hyperf\Utils\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionMethod;
 
@@ -50,10 +51,6 @@ class DispatcherFactory
      * @var PathGeneratorInterface
      */
     private $pathGenerator;
-    /**
-     * @var string[] 
-     */
-    private $filterMethod = ['__construct'];
 
     public function __construct(EventDispatcherInterface $eventDispatcher, PathGeneratorInterface $pathGenerator)
     {
@@ -120,7 +117,7 @@ class DispatcherFactory
 
         foreach ($publicMethods as $reflectionMethod) {
             $methodName = $reflectionMethod->getName();
-            if (in_array($methodName, $this->filterMethod)) {
+            if (Str::startsWith($methodName, '__')) {
                 continue;
             }
             $path = $this->pathGenerator->generate($prefix, $methodName);
