@@ -16,6 +16,7 @@ use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\Eloquent;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\BelongsTo;
 use Hyperf\Database\Model\Relations\BelongsToMany;
@@ -170,6 +171,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     {
         $doc = '/**' . PHP_EOL;
         $doc = $this->parseProperty($doc);
+        $doc .= ' * @mixin \\' . Eloquent::class . PHP_EOL;
         $doc .= ' */';
         return $doc;
     }
