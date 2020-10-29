@@ -37,6 +37,11 @@ class GenerateModelIDEVisitor extends AbstractVisitor
      */
     protected $class;
 
+    /**
+     * @var string
+     */
+    protected $nsp = '';
+
     public function __construct(ModelOption $option, ModelData $data)
     {
         parent::__construct($option, $data);
@@ -44,14 +49,17 @@ class GenerateModelIDEVisitor extends AbstractVisitor
         $this->initPropertiesFromMethods();
     }
 
-    public function leaveNode(Node $node)
+    public function enterNode(Node $node)
     {
         if ($node instanceof Node\Stmt\Namespace_) {
-            $this->namespace = new Node\Stmt\Namespace_($node->name);
+            $this->namespace = new Node\Stmt\Namespace_();
+            $this->nsp = $node->name->toString();
         }
 
         if ($node instanceof Node\Stmt\Class_) {
-            $this->class = new Node\Stmt\Class_($node->name);
+            $this->class = new Node\Stmt\Class_(
+                new Node\Identifier(self::toIDEClass($this->nsp . '\\' . $node->name->toString()))
+            );
         }
     }
 
@@ -91,8 +99,30 @@ class GenerateModelIDEVisitor extends AbstractVisitor
             );
             $this->class->stmts[] = $method;
         }
+        $scopeDoc = '/**' . PHP_EOL;
+        $scopeDoc .= ' * @return \Hyperf\Database\Model\Builder|static' . PHP_EOL;
+        $scopeDoc .= ' */';
+        foreach ($this->methods as $name => $call) {
+            $method = new Node\Stmt\ClassMethod($name, [
+                'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC | Node\Stmt\Class_::MODIFIER_STATIC,
+                'params' => [],
+            ]);
+            $method->setDocComment(new Doc($scopeDoc));
+            $method->stmts[] = new Node\Stmt\Return_(
+                new Node\Expr\StaticPropertyFetch(
+                    new Node\Name('static'),
+                    new Node\VarLikeIdentifier('builder')
+                )
+            );
+            $this->class->stmts[] = $method;
+        }
         $this->namespace->stmts = [$this->class];
         return [$this->namespace];
+    }
+
+    public static function toIDEClass(string $class): string
+    {
+        return str_replace('\\', '_', $class);
     }
 
     protected function setMethod(string $name, array $type = [], array $arguments = [])
@@ -130,18 +160,5 @@ class GenerateModelIDEVisitor extends AbstractVisitor
                 continue;
             }
         }
-    }
-
-    protected function parseScopeMethod(string $doc): string
-    {
-        foreach ($this->methods as $name => $method) {
-            $doc .= sprintf(
-                ' * @method static %s|%s %s()' . PHP_EOL,
-                '\\' . Builder::class,
-                '\\' . get_class($this->class),
-                $name
-            ) . PHP_EOL;
-        }
-        return $doc;
     }
 }

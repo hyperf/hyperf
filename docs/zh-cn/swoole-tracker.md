@@ -194,7 +194,7 @@ Swoole Tracker 本是一款商业产品，拥有进行内存泄漏检测的能�
 apm.enable_malloc_hook=1
 ```
 
-!> 注意：不要在composer安装依赖时开启；不要在生成代理类缓存时开启。
+!> 注意：不要在 composer 安装依赖时开启；不要在生成代理类缓存时开启。
 
 3. 根据自己的业务，在 Swoole 的 onReceive 或者 onRequest 事件开头加上 `trackerHookMalloc()` 调用：
 
@@ -219,7 +219,7 @@ php -r "trackerAnalyzeLeak();"
 [16916 (Loop 5)] ✅ Nice!! No Leak Were Detected In This Loop
 ```
 
-其中`16916`表示进程 id，`Loop 5`表示第 5 次调用主函数生成的泄漏信息
+其中 `16916` 表示进程 id，`Loop 5`表示第 5 次调用主函数生成的泄漏信息
 
 有确定的内存泄漏：
 
@@ -229,7 +229,7 @@ php -r "trackerAnalyzeLeak();"
 [24265 (Loop 8)] ❌ This Loop TotalLeak: [25216]
 ```
 
-表示第 8 次调用`http_server.php`的 125 行和 129 行，分别泄漏了 12928 字节内存，总共泄漏了 25216 字节内存。
+表示第 8 次调用 `http_server.php` 的 125 行和 129 行，分别泄漏了 12928 字节内存，总共泄漏了 25216 字节内存。
 
 通过调用 `trackerCleanLeak()` 可以清除泄漏日志，重新开始。[了解更多内存检测工具使用细节](https://www.kancloud.cn/swoole-inc/ee-help-wiki/1941569)
 
