@@ -75,7 +75,7 @@ class CrontabRegisterListener implements ListenerInterface
     private function parseCrontabs(): array
     {
         $configCrontabs = $this->config->get('crontab.crontab', []);
-        $annotationCrontabs = AnnotationCollector::getClassByAnnotation(CrontabAnnotation::class);
+        $annotationCrontabs = AnnotationCollector::getClassesByAnnotation(CrontabAnnotation::class);
         $crontabs = [];
         foreach (array_merge($configCrontabs, $annotationCrontabs) as $crontab) {
             if ($crontab instanceof CrontabAnnotation) {

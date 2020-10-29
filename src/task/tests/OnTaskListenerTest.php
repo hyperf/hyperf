@@ -31,7 +31,7 @@ use Swoole\Server;
  */
 class OnTaskListenerTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

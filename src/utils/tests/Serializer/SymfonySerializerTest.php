@@ -58,7 +58,7 @@ class SymfonySerializerTest extends TestCase
     public function testDenormalizeWithWrongType()
     {
         $this->expectException(NotNormalizableValueException::class);
-        $this->expectExceptionMessageRegExp('/Data expected to be of type/');
+        $this->expectExceptionMessageMatches('/Data expected to be of type/');
 
         $serializer = $this->createSerializer();
         $ret = $serializer->denormalize('1', 'int');

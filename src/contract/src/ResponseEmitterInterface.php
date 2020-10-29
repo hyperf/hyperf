@@ -12,9 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\Contract;
 
 use Psr\Http\Message\ResponseInterface;
-use Swoole\Http\Response;
 
 interface ResponseEmitterInterface
 {
-    public function emit(ResponseInterface $response, Response $swooleResponse, bool $withContent = true);
+    /**
+     * @param mixed $connection swoole response or swow session
+     */
+    public function emit(ResponseInterface $response, $connection, bool $withContent = true);
 }

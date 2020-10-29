@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
  */
 class MessageTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

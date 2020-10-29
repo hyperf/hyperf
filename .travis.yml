@@ -4,12 +4,14 @@ sudo: required
 
 matrix:
   include:
-    - php: 7.2
-      env: SW_VERSION="4.5.5"
     - php: 7.3
-      env: SW_VERSION="4.5.5"
+      env: SW_VERSION="4.5.6"
+    - php: 7.3
+      env: SW_VERSION="4.5.6" GUZZLE_7=1
     - php: 7.4
-      env: SW_VERSION="4.5.5"
+      env: SW_VERSION="4.5.6"
+    - php: 7.4
+      env: SW_VERSION="4.5.6" GUZZLE_7=1
 
 services:
   - mysql
@@ -36,7 +38,7 @@ install:
 
 before_script:
   - cd $TRAVIS_BUILD_DIR
-  - composer config -g process-timeout 900 && composer update
+  - composer config -g process-timeout 900 && ./.travis/guzzle/upgrade.sh && composer update -o
 
 script:
   - composer analyse src

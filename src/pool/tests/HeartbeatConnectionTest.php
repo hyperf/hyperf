@@ -28,7 +28,7 @@ use Swoole\Timer;
  */
 class HeartbeatConnectionTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Timer::clearAll();
         Mockery::close();

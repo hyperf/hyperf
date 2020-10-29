@@ -29,8 +29,6 @@ use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Request as SwooleRequest;
-use Swoole\Http\Response as SwooleResponse;
 use Throwable;
 
 class Server implements OnRequestInterface, MiddlewareInitializerInterface
@@ -99,7 +97,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, $this->getDefaultExceptionHandler());
     }
 
-    public function onRequest(SwooleRequest $request, SwooleResponse $response): void
+    public function onRequest($request, $response): void
     {
         try {
             CoordinatorManager::until(Constants::WORKER_START)->yield();
@@ -164,11 +162,22 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         return make(CoreMiddleware::class, [$this->container, $this->serverName]);
     }
 
-    protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array
+    /**
+     * Initialize PSR-7 Request and Response objects.
+     * @param mixed $request swoole request or psr server request
+     * @param mixed $response swoole response or swow session
+     */
+    protected function initRequestAndResponse($request, $response): array
     {
-        // Initialize PSR-7 Request and Response objects.
         Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
-        Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
+
+        if ($request instanceof ServerRequestInterface) {
+            $psr7Request = $request;
+        } else {
+            $psr7Request = Psr7Request::loadFromSwooleRequest($request);
+        }
+
+        Context::set(ServerRequestInterface::class, $psr7Request);
         return [$psr7Request, $psr7Response];
     }
 }

@@ -27,8 +27,8 @@ use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Router\Dispatched;
+use Hyperf\Server\Event;
 use Hyperf\Server\ServerManager;
-use Hyperf\Server\SwooleEvent;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
@@ -175,10 +175,10 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
                     [, , $callbacks] = ServerManager::get($this->serverName);
 
-                    [$onMessageCallbackClass, $onMessageCallbackMethod] = $callbacks[SwooleEvent::ON_MESSAGE];
+                    [$onMessageCallbackClass, $onMessageCallbackMethod] = $callbacks[Event::ON_MESSAGE];
                     $onMessageCallbackInstance = $this->container->get($onMessageCallbackClass);
 
-                    [$onCloseCallbackClass, $onCloseCallbackMethod] = $callbacks[SwooleEvent::ON_CLOSE];
+                    [$onCloseCallbackClass, $onCloseCallbackMethod] = $callbacks[Event::ON_CLOSE];
                     $onCloseCallbackInstance = $this->container->get($onCloseCallbackClass);
 
                     while (true) {

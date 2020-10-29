@@ -49,7 +49,7 @@ class QueryProvider implements QueryProviderInterface
     public function getQueries(): array
     {
         $queryList = [];
-        $classes = AnnotationCollector::getMethodByAnnotation(Query::class);
+        $classes = AnnotationCollector::getMethodsByAnnotation(Query::class);
         $classes = array_unique(array_column($classes, 'class'));
         foreach ($classes as $className) {
             $fieldsBuilder = $this->fieldsBuilderFactory->buildFieldsBuilder($this->recursiveTypeMapper);
@@ -64,7 +64,7 @@ class QueryProvider implements QueryProviderInterface
     public function getMutations(): array
     {
         $mutationList = [];
-        $classes = AnnotationCollector::getMethodByAnnotation(Mutation::class);
+        $classes = AnnotationCollector::getMethodsByAnnotation(Mutation::class);
         $classes = array_unique(array_column($classes, 'class'));
         foreach ($classes as $className) {
             $fieldsBuilder = $this->fieldsBuilderFactory->buildFieldsBuilder($this->recursiveTypeMapper);

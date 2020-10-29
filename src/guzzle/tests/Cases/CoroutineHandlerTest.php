@@ -13,7 +13,6 @@ namespace HyperfTest\Guzzle\Cases;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7\Request;
@@ -23,8 +22,6 @@ use Hyperf\Guzzle\CoroutineHandler;
 use Hyperf\Utils\Codec\Json;
 use HyperfTest\Guzzle\Stub\CoroutineHandlerStub;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\RequestInterface;
-use Swoole\Coroutine\Http\Client as SwooleHttpClient;
 
 /**
  * @internal
@@ -76,7 +73,6 @@ class CoroutineHandlerTest extends TestCase
             ->otherwise(function (ConnectException $e) use (&$called) {
                 $called = true;
                 $this->assertArrayHasKey('errCode', $e->getHandlerContext());
-                $this->assertArrayHasKey('statusCode', $e->getHandlerContext());
             });
         $p->wait();
         $this->assertTrue($called);
@@ -104,7 +100,7 @@ class CoroutineHandlerTest extends TestCase
         $this->assertSame('127.0.0.1', $res['host']);
         $this->assertSame(8080, $res['port']);
         $this->assertSame(false, $res['ssl']);
-        $this->assertSame(md5('1234'), $res['headers']['X-TOKEN']);
+        $this->assertSame([md5('1234')], $res['headers']['X-TOKEN']);
 
         $client = new Client([
             'base_uri' => 'https://pokeapi.co',
@@ -255,31 +251,6 @@ class CoroutineHandlerTest extends TestCase
         $json = json_decode($content, true);
 
         $this->assertEquals('Basic ' . base64_encode('username:password'), $json['headers']['Authorization']);
-    }
-
-    public function testStatusCode()
-    {
-        $client = new SwooleHttpClient('127.0.0.1', 80);
-        $client->statusCode = -1;
-        $request = \Mockery::mock(RequestInterface::class);
-        $handler = new CoroutineHandlerStub();
-        $ex = $handler->checkStatusCode($client, $request);
-        $this->assertInstanceOf(ConnectException::class, $ex);
-
-        $client = new SwooleHttpClient('127.0.0.1', 80);
-        $client->statusCode = -2;
-        $request = \Mockery::mock(RequestInterface::class);
-        $handler = new CoroutineHandlerStub();
-        $ex = $handler->checkStatusCode($client, $request);
-        $this->assertInstanceOf(RequestException::class, $ex);
-
-        $client = new SwooleHttpClient('127.0.0.1', 80);
-        $client->statusCode = -3;
-        $request = \Mockery::mock(RequestInterface::class);
-        $handler = new CoroutineHandlerStub();
-        $ex = $handler->checkStatusCode($client, $request);
-        $this->assertInstanceOf(RequestException::class, $ex);
-        $this->assertSame('Server reset', $ex->getMessage());
     }
 
     public function testRequestOptionOnStats()

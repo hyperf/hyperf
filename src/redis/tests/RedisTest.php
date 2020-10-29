@@ -34,7 +34,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RedisTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set('redis.connection.default', null);

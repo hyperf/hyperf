@@ -32,7 +32,7 @@ use Psr\Http\Message\UploadedFileInterface;
  */
 class ProxyTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set(ServerRequestInterface::class, null);

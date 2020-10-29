@@ -7,4 +7,4 @@ cd swoole
 phpize
 ./configure --enable-openssl --enable-mysqlnd --enable-http2
 make -j$(nproc)
-make install
+sudo make install

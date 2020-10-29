@@ -31,7 +31,7 @@ class KVTest extends TestCase
 {
     private $kv;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->kv = $this->createKV();
         $this->kv->delete('test', ['recurse' => true]);
@@ -97,7 +97,7 @@ class KVTest extends TestCase
             $this->fail('fail because the key does not exist anymore.');
         } catch (\Exception $e) {
             $this->assertInstanceOf('Hyperf\Consul\Exception\ServerException', $e);
-            $this->assertContains('404 Not Found', $e->getMessage());
+            $this->assertStringContainsString('404 Not Found', $e->getMessage());
         }
     }
 
@@ -119,7 +119,7 @@ class KVTest extends TestCase
                 $this->fail('fail because the key does not exist anymore.');
             } catch (\Exception $e) {
                 $this->assertInstanceOf('Hyperf\Consul\Exception\ServerException', $e);
-                $this->assertContains('404 Not Found', $e->getMessage());
+                $this->assertStringContainsString('404 Not Found', $e->getMessage());
             }
         }
     }

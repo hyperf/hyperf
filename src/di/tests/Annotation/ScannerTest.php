@@ -33,7 +33,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ScannerTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         AspectCollector::clear();
         AnnotationCollector::clear();

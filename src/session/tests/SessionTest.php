@@ -136,7 +136,7 @@ class SessionTest extends TestCase
         $this->assertSame('bar', $session->get('foo'));
 
         $this->assertTrue($session->invalidate());
-        $this->assertFileNotExists('/tmp/' . $id);
+        $this->assertFileDoesNotExist('/tmp/' . $id);
     }
 
     public function testFlash()

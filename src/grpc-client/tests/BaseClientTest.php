@@ -35,7 +35,7 @@ class BaseClientTest extends TestCase
 {
     public static $server;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         // Dummy server pretending as gRPC
         Coroutine::create(function () {
@@ -50,14 +50,14 @@ class BaseClientTest extends TestCase
         });
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         Coroutine::create(function () {
             self::$server->shutdown();
         });
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         parent::tearDown();

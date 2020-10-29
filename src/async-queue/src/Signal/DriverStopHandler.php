@@ -11,9 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\AsyncQueue\Signal;
 
-use Hyperf\AsyncQueue\Driver\Driver;
+use Hyperf\Process\ProcessManager;
 use Hyperf\Signal\SignalHandlerInterface;
 
+/**
+ * @deprecated v2.2 use Hyperf\Process\Handler\ProcessStopHandler instead.
+ */
 class DriverStopHandler implements SignalHandlerInterface
 {
     public function listen(): array
@@ -25,6 +28,6 @@ class DriverStopHandler implements SignalHandlerInterface
 
     public function handle(int $signal): void
     {
-        Driver::$running = false;
+        ProcessManager::setRunning(false);
     }
 }

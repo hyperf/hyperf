@@ -161,7 +161,7 @@ class HandlerStackFactoryTest extends TestCase
 
         $this->expectExceptionCode(400);
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessageRegExp('/400 Bad Request/');
+        $this->expectExceptionMessageMatches('/400 Bad Request/');
 
         try {
             $client->get('/');

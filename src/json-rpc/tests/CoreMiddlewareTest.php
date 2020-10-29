@@ -133,10 +133,8 @@ class CoreMiddlewareTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
         $ret = json_decode((string) $response->getBody(), true);
         $this->assertArrayHasKey('error', $ret);
-        $this->assertArraySubset([
-            'code' => ResponseBuilder::SERVER_ERROR,
-            'message' => 'Expected non-zero value of divider',
-        ], $ret['error']);
+        $this->assertSame('Expected non-zero value of divider', $ret['error']['message']);
+        $this->assertSame(ResponseBuilder::SERVER_ERROR, $ret['error']['code']);
     }
 
     public function testDefaultExceptionHandler()
@@ -172,10 +170,8 @@ class CoreMiddlewareTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
         $ret = json_decode((string) $response->getBody(), true);
         $this->assertArrayHasKey('error', $ret);
-        $this->assertArraySubset([
-            'code' => ResponseBuilder::SERVER_ERROR,
-            'message' => 'Expected non-zero value of divider',
-        ], $ret['error']);
+        $this->assertSame('Expected non-zero value of divider', $ret['error']['message']);
+        $this->assertSame(ResponseBuilder::SERVER_ERROR, $ret['error']['code']);
     }
 
     public function createContainer()

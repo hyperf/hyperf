@@ -22,6 +22,11 @@ use PHPUnit\Framework\TestCase;
  */
 class ClosureDefinitionTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        ClosureDefinitionCollector::clear();
+    }
+
     public function testGetParameters()
     {
         $collector = new ClosureDefinitionCollector();
