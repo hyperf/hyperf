@@ -116,6 +116,9 @@ class DispatcherFactory
 
         foreach ($publicMethods as $reflectionMethod) {
             $methodName = $reflectionMethod->getName();
+            if (strtolower($methodName) == '__construct') {
+                continue;
+            }
             $path = $this->pathGenerator->generate($prefix, $methodName);
             $router->addRoute($path, [
                 $className,
