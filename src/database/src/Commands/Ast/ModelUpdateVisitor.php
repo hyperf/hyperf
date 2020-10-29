@@ -16,7 +16,6 @@ use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\Collection;
-use Hyperf\Database\Model\Eloquent;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\BelongsTo;
 use Hyperf\Database\Model\Relations\BelongsToMany;
@@ -171,9 +170,8 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     {
         $doc = '/**' . PHP_EOL;
         $doc = $this->parseProperty($doc);
-        $doc .= ' * @mixin \\' . Eloquent::class . PHP_EOL;
         if ($this->option->isWithIde()) {
-            $doc .= ' * @mixin \\' . GenerateModelIDEVisitor::modelIdeHelper(get_class($this->class)) . PHP_EOL;
+            $doc .= ' * @mixin \\' . GenerateModelIDEVisitor::toIDEClass(get_class($this->class)) . PHP_EOL;
         }
         $doc .= ' */';
         return $doc;

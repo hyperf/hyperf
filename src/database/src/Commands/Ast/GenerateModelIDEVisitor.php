@@ -37,6 +37,11 @@ class GenerateModelIDEVisitor extends AbstractVisitor
      */
     protected $class;
 
+    /**
+     * @var string
+     */
+    protected $nsp = '';
+
     public function __construct(ModelOption $option, ModelData $data)
     {
         parent::__construct($option, $data);
@@ -44,15 +49,17 @@ class GenerateModelIDEVisitor extends AbstractVisitor
         $this->initPropertiesFromMethods();
     }
 
-    public function leaveNode(Node $node)
+    public function enterNode(Node $node)
     {
         if ($node instanceof Node\Stmt\Namespace_) {
-            $node->name->parts[] = 'IDE';
-            $this->namespace = new Node\Stmt\Namespace_($node->name);
+            $this->namespace = new Node\Stmt\Namespace_();
+            $this->nsp = $node->name->toString();
         }
 
         if ($node instanceof Node\Stmt\Class_) {
-            $this->class = new Node\Stmt\Class_($node->name);
+            $this->class = new Node\Stmt\Class_(
+                new Node\Identifier(self::toIDEClass($this->nsp . '\\' . $node->name->toString()))
+            );
         }
     }
 
@@ -101,22 +108,21 @@ class GenerateModelIDEVisitor extends AbstractVisitor
                 'params' => [],
             ]);
             $method->setDocComment(new Doc($scopeDoc));
+            $method->stmts[] = new Node\Stmt\Return_(
+                new Node\Expr\StaticPropertyFetch(
+                    new Node\Name('static'),
+                    new Node\VarLikeIdentifier('builder')
+                )
+            );
             $this->class->stmts[] = $method;
         }
         $this->namespace->stmts = [$this->class];
-        $method->stmts[] = new Node\Stmt\Return_(
-            new Node\Expr\StaticPropertyFetch(
-                new Node\Name('static'),
-                new Node\VarLikeIdentifier('builder')
-            )
-        );
         return [$this->namespace];
     }
 
-    public static function modelIdeHelper(string $class): string
+    public static function toIDEClass(string $class): string
     {
-        var_dump($class);
-        return str_replace('App\\Model', 'App\\Model\\IDE', $class);
+        return str_replace('\\', '_', $class);
     }
 
     protected function setMethod(string $name, array $type = [], array $arguments = [])
