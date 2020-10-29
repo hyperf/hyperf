@@ -9,12 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Tracer\Adapter;
 
-use Zipkin\Reporters\Http\ClientFactory;
-use RuntimeException;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
+use RuntimeException;
+use Zipkin\Reporters\Http\ClientFactory;
 
 class HttpClientFactory implements ClientFactory
 {

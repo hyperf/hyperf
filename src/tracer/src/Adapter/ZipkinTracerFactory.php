@@ -9,16 +9,15 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Tracer\Adapter;
 
-use Zipkin\TracingBuilder;
-use Zipkin\Samplers\BinarySampler;
-use Zipkin\Reporters\Http;
-use Zipkin\Endpoint;
-use ZipkinOpenTracing\Tracer;
-use Hyperf\Tracer\Contract\NamedFactoryInterface;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Tracer\Contract\NamedFactoryInterface;
+use Zipkin\Endpoint;
+use Zipkin\Reporters\Http;
+use Zipkin\Samplers\BinarySampler;
+use Zipkin\TracingBuilder;
+use ZipkinOpenTracing\Tracer;
 
 class ZipkinTracerFactory implements NamedFactoryInterface
 {
@@ -45,7 +44,7 @@ class ZipkinTracerFactory implements NamedFactoryInterface
 
     public function make(string $name): \OpenTracing\Tracer
     {
-        if (!empty($name)) {
+        if (! empty($name)) {
             $this->prefix = "opentracing.tracer.{$name}.";
         }
         [$app, $options, $sampler] = $this->parseConfig();
