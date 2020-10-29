@@ -22,7 +22,7 @@
         "hyperf/di": "~2.1.0",
         "hyperf/guzzle": "~2.1.0",
         "hyperf/utils": "~2.1.0",
-        "jcchavezs/zipkin-opentracing":"^0.1.3",
+        "jcchavezs/zipkin-opentracing":"^0.2.0",
         "opentracing/opentracing":"1.0.*"
     },
     "require-dev": {
