@@ -29,7 +29,21 @@ class ResponseEmitter implements ResponseEmitterInterface
             return $swooleResponse->sendfile($content->getFilename());
         }
         if ($withContent) {
-            $swooleResponse->end($content->getContents());
+            $transferEncodingArray = $response->getHeader('Transfer-Encoding');
+            if (in_array('chunked', $transferEncodingArray)) {
+                // chunk
+                $size = $response->getHeader('Content-Length')[0];
+                $contentArray = str_split($content->getContents(), (int)$size);
+                foreach ($contentArray as $item) {
+                    $swooleResponse->setHeader('Content-Length', (string)strlen($item));
+                    $swooleResponse->write($item);
+                }
+                $swooleResponse->setCookie('Content-Length', '0');
+                $swooleResponse->end();
+            } else {
+                $swooleResponse->end($content->getContents());
+            }
+
         } else {
             $swooleResponse->end();
         }

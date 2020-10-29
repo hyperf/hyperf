@@ -486,4 +486,12 @@ class Response implements PsrResponseInterface, ResponseInterface
 
         return Context::get(PsrResponseInterface::class);
     }
+
+    public function chunk(string $data, int $size): PsrResponseInterface
+    {
+        return $this->getResponse()
+            ->withAddedHeader('Content-Length', $size)
+            ->withAddedHeader('Transfer-Encoding', 'chunked')
+            ->withBody(new SwooleStream($data));
+    }
 }
