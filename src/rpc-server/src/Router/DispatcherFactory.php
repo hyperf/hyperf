@@ -50,6 +50,10 @@ class DispatcherFactory
      * @var PathGeneratorInterface
      */
     private $pathGenerator;
+    /**
+     * @var string[] 
+     */
+    private $filterMethod = ['__construct'];
 
     public function __construct(EventDispatcherInterface $eventDispatcher, PathGeneratorInterface $pathGenerator)
     {
@@ -116,6 +120,9 @@ class DispatcherFactory
 
         foreach ($publicMethods as $reflectionMethod) {
             $methodName = $reflectionMethod->getName();
+            if (in_array($methodName, $this->filterMethod)) {
+                continue;
+            }
             $path = $this->pathGenerator->generate($prefix, $methodName);
             $router->addRoute($path, [
                 $className,
