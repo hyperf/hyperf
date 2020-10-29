@@ -170,6 +170,9 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     {
         $doc = '/**' . PHP_EOL;
         $doc = $this->parseProperty($doc);
+        if ($this->option->isWithIde()) {
+            $doc .= ' * @mixin \\' . GenerateModelIDEVisitor::toIDEClass(get_class($this->class)) . PHP_EOL;
+        }
         $doc .= ' */';
         return $doc;
     }
