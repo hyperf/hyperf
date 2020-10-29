@@ -67,7 +67,11 @@ class BootProcessListener extends OnPipeMessageListener
                 $callbacks[$namespace] = $ipcCallback;
             }
         }
-        $this->client->pull($namespaces, $callbacks);
+        try {
+            $this->client->pull($namespaces, $callbacks);
+        } catch (\Exception $exception) {
+            $this->logger->error($exception->getMessage());
+        }
 
         if (! $this->config->get('apollo.use_standalone_process', true)) {
             Coroutine::create(function () use ($namespaces, $callbacks) {

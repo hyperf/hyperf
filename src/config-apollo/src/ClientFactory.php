@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Hyperf\ConfigApollo;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
 use Psr\Container\ContainerInterface;
 
@@ -21,6 +22,7 @@ class ClientFactory
     public function __invoke(ContainerInterface $container)
     {
         $config = $container->get(ConfigInterface::class);
+        $logger = $container->get(StdoutLoggerInterface::class);
         /** @var \Hyperf\ConfigApollo\Option $option */
         $option = make(Option::class);
         $option->setServer($config->get('apollo.server', 'http://127.0.0.1:8080'))
@@ -41,6 +43,6 @@ class ClientFactory
             return $container->get(GuzzleClientFactory::class)->create($options);
         };
 
-        return make($config->get('apollo.fetch_client', Client::class), compact('option', 'callbacks', 'httpClientFactory', 'config'));
+        return make($config->get('apollo.fetch_client', Client::class), compact('option', 'callbacks', 'httpClientFactory', 'config', 'logger'));
     }
 }

@@ -33,6 +33,9 @@ class ParallelExecutionException extends \RuntimeException
         $this->results = $results;
     }
 
+    /**
+     * @return \Throwable[]
+     */
     public function getThrowables()
     {
         return $this->throwables;

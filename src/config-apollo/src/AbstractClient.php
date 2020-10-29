@@ -12,9 +12,14 @@ declare(strict_types=1);
 namespace Hyperf\ConfigApollo;
 
 use Closure;
+use GuzzleHttp\Exception\RequestException;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Coroutine;
+use Hyperf\Utils\Exception\ParallelExecutionException;
 use Hyperf\Utils\Parallel;
+use InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 
 abstract class AbstractClient implements ClientInterface
 {
@@ -38,18 +43,23 @@ abstract class AbstractClient implements ClientInterface
      */
     protected $config;
 
-
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $logger;
 
     public function __construct(
         Option $option,
         array $callbacks = [],
         Closure $httpClientFactory,
-        ?ConfigInterface $config = null
+        ?ConfigInterface $config = null,
+        ?LoggerInterface $logger = null
     ) {
         $this->option = $option;
         $this->callbacks = $callbacks;
         $this->httpClientFactory = $httpClientFactory;
         $this->config = $config;
+        $this->logger = $logger;
     }
 
     public function pull(array $namespaces, array $callbacks = []): void
@@ -121,7 +131,30 @@ abstract class AbstractClient implements ClientInterface
                 return $result;
             }, $namespace);
         }
-        return $parallel->wait();
+        try {
+            $result = $parallel->wait();
+        } catch (ParallelExecutionException $parallelExecutionException) {
+            foreach ($parallelExecutionException->getThrowables() as $throwable) {
+                $message = $this->prehandleException($throwable);
+                $this->logger->error($message);
+            }
+            $result = [];
+        }
+        return $result;
+    }
+
+    protected function prehandleException(\Throwable $throwable): string
+    {
+        if ($throwable instanceof RequestException) {
+            $responseContent = $throwable->getResponse()->getBody()->getContents();
+            try {
+                $structMessage = Json::decode($responseContent);
+                return sprintf('Apollo Exception, Status: %d, Message: %s', $structMessage['status'] ?? 0, $structMessage['message'] ?? '');
+            } catch (InvalidArgumentException $exception) {
+                return '';
+            }
+        }
+        return $throwable->getMessage();
     }
 
     private function blockingPull(array $namespaces): array

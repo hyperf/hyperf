@@ -95,6 +95,10 @@ class ConfigFetcherProcess extends AbstractProcess
                 $callbacks[$namespace] = $ipcCallback;
             }
         }
-        $this->client->fetch($namespaces, $callbacks);
+        try {
+            $this->client->fetch($namespaces, $callbacks);
+        } catch (\Exception $exception) {
+            $this->logger->error($exception->getMessage());
+        }
     }
 }
