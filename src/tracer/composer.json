@@ -31,11 +31,11 @@
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^9.4",
         "friendsofphp/php-cs-fixer": "^2.9",
-        "jonahgeorge/jaeger-client-php": "^0.4.4"
+        "jonahgeorge/jaeger-client-php": "^0.6"
     },
     "suggest": {
         "hyperf/event": "Required to use DbQueryExecutedListener.",
-        "jonahgeorge/jaeger-client-php":"Required to use jaeger tracing."
+        "jonahgeorge/jaeger-client-php":"Required (^0.6) to use jaeger tracing."
     },
     "autoload": {
         "psr-4": {
