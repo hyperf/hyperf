@@ -155,6 +155,13 @@ use Hyperf\AsyncQueue\Job;
 class ExampleJob extends Job
 {
     public $params;
+    
+    /**
+     * 任务执行失败后的重试次数(最大重试次数=$maxAttempts+1), 默认0次不开启重试
+     *
+     * @var int
+     */
+    protected $maxAttempts = 2;
 
     public function __construct($params)
     {
