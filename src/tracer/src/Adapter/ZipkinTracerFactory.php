@@ -49,7 +49,7 @@ class ZipkinTracerFactory implements NamedFactoryInterface
         }
         [$app, $options, $sampler] = $this->parseConfig();
         $endpoint = Endpoint::create($app['name'], $app['ipv4'], $app['ipv6'], $app['port']);
-        $reporter = new Http($this->clientFactory, $options);
+        $reporter = new Http($options, $this->clientFactory);
         $tracing = TracingBuilder::create()
             ->havingLocalEndpoint($endpoint)
             ->havingSampler($sampler)
