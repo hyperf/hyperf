@@ -4,6 +4,7 @@
 
 - [#2709](https://github.com/hyperf/hyperf/pull/2709) [#2733](https://github.com/hyperf/hyperf/pull/2733) Added `@mixin` into Model, you can use static methods friendly.
 - [#2726](https://github.com/hyperf/hyperf/pull/2726) [#2733](https://github.com/hyperf/hyperf/pull/2733) Added option `--with-ide` which used to generate ide file.
+- [#2737](https://github.com/hyperf/hyperf/pull/2737) Added `view-engine` component, you can use view in coroutine environment.
 
 ## Fixed
 
