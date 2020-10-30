@@ -44,3 +44,5 @@ parameters:
     - '#Call to an undefined method Hyperf\\Utils\\HigherOrderCollectionProxy::.*#'
     - '#Used function getSwooleTracker.* not found#'
     - '#Function getSwooleTracker.* not found#'
+    - '#Call to an undefined method Hyperf\\Database\\Model\\Builder::unsearchable#'
+    - '#trackerHookMalloc not found#'

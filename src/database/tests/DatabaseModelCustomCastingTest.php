@@ -28,6 +28,8 @@ class DatabaseModelCustomCastingTest extends TestCase
     protected function tearDown()
     {
         \Mockery::close();
+        UserInfoCaster::$setCount = 0;
+        UserInfoCaster::$getCount = 0;
     }
 
     public function testBasicCustomCasting()
@@ -215,15 +217,31 @@ class DatabaseModelCustomCastingTest extends TestCase
         $model->syncOriginal();
 
         $attributes = $model->getAttributes();
-        $this->assertSame(['name' => 'Hyperf', 'gender' => 1], $attributes);
+        $this->assertSame(['name' => 'Hyperf', 'gender' => 1], Arr::only($attributes, ['name', 'gender']));
 
         $user->name = 'Nano';
         $attributes = $model->getAttributes();
-        $this->assertSame(['name' => 'Nano', 'gender' => 1], $attributes);
+        $this->assertSame(['name' => 'Nano', 'gender' => 1], Arr::only($attributes, ['name', 'gender']));
 
         $this->assertSame(['name' => 'Nano'], $model->getDirty());
         $this->assertSame(2, UserInfoCaster::$setCount);
         $this->assertSame(0, UserInfoCaster::$getCount);
+    }
+
+    public function testCastsValueSupportNull()
+    {
+        $model = new TestModelWithCustomCast();
+        $model->user = $user = new UserInfo($model, ['name' => 'Hyperf', 'gender' => 1]);
+        $attributes = $model->getAttributes();
+        $this->assertSame(['name' => 'Hyperf', 'gender' => 1, 'role_id' => 0], $attributes);
+        $this->assertSame(0, $user->role_id);
+        $user->role_id = 1;
+        $this->assertSame(['name' => 'Hyperf', 'gender' => 1, 'role_id' => 1], $model->getAttributes());
+        unset($user->role_id);
+        $this->assertSame(['name' => 'Hyperf', 'gender' => 1, 'role_id' => null], $model->getAttributes());
+        $this->assertSame(null, $user->role_id);
+        unset($user->not_found);
+        $this->assertSame(['name' => 'Hyperf', 'gender' => 1, 'role_id' => null], $model->getAttributes());
     }
 }
 
@@ -325,6 +343,7 @@ class UserInfoCaster implements CastsAttributes
         return [
             'name' => $value->name,
             'gender' => $value->gender,
+            'role_id' => $value->role_id,
         ];
     }
 }
@@ -416,7 +435,11 @@ class Address
 /**
  * @property string $name
  * @property int $gender
+ * @property null|int $role_id
  */
 class UserInfo extends CastsValue
 {
+    protected $items = [
+        'role_id' => 0,
+    ];
 }

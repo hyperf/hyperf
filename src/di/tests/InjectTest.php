@@ -91,7 +91,7 @@ class InjectTest extends TestCase
     public function testInjectEmptyVar()
     {
         $this->expectException(AnnotationException::class);
-        $this->expectExceptionMessage('The @Inject value is invalid for HyperfTest\Di\Stub\EmptyVarValue->demo. Because Argument 1 passed to Roave\BetterReflection\TypesFinder\FindPropertyType::Roave\BetterReflection\TypesFinder\{closure}() must be an instance of phpDocumentor\Reflection\DocBlock\Tags\Var_, instance of phpDocumentor\Reflection\DocBlock\Tags\InvalidTag given');
+        $this->expectExceptionMessage('The @Inject value is invalid for HyperfTest\Di\Stub\EmptyVarValue->demo');
 
         BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
 

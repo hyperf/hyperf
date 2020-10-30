@@ -13,6 +13,7 @@ namespace Hyperf\Database\Commands;
 
 use Hyperf\Command\Command;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Database\Commands\Ast\GenerateModelIDEVisitor;
 use Hyperf\Database\Commands\Ast\ModelRewriteConnectionVisitor;
 use Hyperf\Database\Commands\Ast\ModelUpdateVisitor;
 use Hyperf\Database\ConnectionResolverInterface;
@@ -99,6 +100,7 @@ class ModelCommand extends Command
             ->setTableMapping($this->getOption('table-mapping', 'commands.gen:model.table_mapping', $pool, []))
             ->setIgnoreTables($this->getOption('ignore-tables', 'commands.gen:model.ignore_tables', $pool, []))
             ->setWithComments($this->getOption('with-comments', 'commands.gen:model.with_comments', $pool, false))
+            ->setWithIde($this->getOption('with-ide', 'commands.gen:model.with_ide', $pool, false))
             ->setVisitors($this->getOption('visitors', 'commands.gen:model.visitors', $pool, []))
             ->setPropertyCase($this->getOption('property-case', 'commands.gen:model.property_case', $pool));
 
@@ -123,6 +125,7 @@ class ModelCommand extends Command
         $this->addOption('table-mapping', 'M', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Table mappings for model.');
         $this->addOption('ignore-tables', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Ignore tables for creating models.');
         $this->addOption('with-comments', null, InputOption::VALUE_NONE, 'Whether generate the property comments for model.');
+        $this->addOption('with-ide', null, InputOption::VALUE_NONE, 'Whether generate the ide file for model.');
         $this->addOption('visitors', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Custom visitors for ast traverser.');
         $this->addOption('property-case', null, InputOption::VALUE_OPTIONAL, 'Which property case you want use, 0: snake case, 1: camel case.');
     }
@@ -172,10 +175,7 @@ class ModelCommand extends Command
         $path = BASE_PATH . '/' . $project->path($class);
 
         if (! file_exists($path)) {
-            $dir = dirname($path);
-            if (! is_dir($dir)) {
-                @mkdir($dir, 0755, true);
-            }
+            $this->mkdir($path);
             file_put_contents($path, $this->buildClass($table, $class, $option));
         }
 
@@ -189,8 +189,8 @@ class ModelCommand extends Command
             'option' => $option,
         ]));
         $traverser->addVisitor(make(ModelRewriteConnectionVisitor::class, [$class, $option->getPool()]));
+        $data = make(ModelData::class)->setClass($class)->setColumns($columns);
         foreach ($option->getVisitors() as $visitorClass) {
-            $data = make(ModelData::class)->setClass($class)->setColumns($columns);
             $traverser->addVisitor(make($visitorClass, [$option, $data]));
         }
         $stms = $traverser->traverse($stms);
@@ -198,6 +198,32 @@ class ModelCommand extends Command
 
         file_put_contents($path, $code);
         $this->output->writeln(sprintf('<info>Model %s was created.</info>', $class));
+
+        if ($option->isWithIde()) {
+            $this->generateIDE($code, $option, $data);
+        }
+    }
+
+    protected function generateIDE(string $code, ModelOption $option, ModelData $data)
+    {
+        $stms = $this->astParser->parse($code);
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(make(GenerateModelIDEVisitor::class, [$option, $data]));
+        $stms = $traverser->traverse($stms);
+        $code = $this->printer->prettyPrintFile($stms);
+        $class = str_replace('\\', '_', $data->getClass());
+        $path = BASE_PATH . '/runtime/ide/' . $class . '.php';
+        $this->mkdir($path);
+        file_put_contents($path, $code);
+        $this->output->writeln(sprintf('<info>Model IDE %s was created.</info>', $data->getClass()));
+    }
+
+    protected function mkdir(string $path): void
+    {
+        $dir = dirname($path);
+        if (! is_dir($dir)) {
+            @mkdir($dir, 0755, true);
+        }
     }
 
     /**
@@ -237,7 +263,7 @@ class ModelCommand extends Command
     {
         $result = $this->input->getOption($name);
         $nonInput = null;
-        if (in_array($name, ['force-casts', 'refresh-fillable', 'with-comments'])) {
+        if (in_array($name, ['force-casts', 'refresh-fillable', 'with-comments', 'with-ide'])) {
             $nonInput = false;
         }
         if (in_array($name, ['table-mapping', 'ignore-tables', 'visitors'])) {

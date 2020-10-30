@@ -24,6 +24,7 @@ use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\RpcServer\Annotation\RpcService;
 use Hyperf\RpcServer\Event\AfterPathRegister;
+use Hyperf\Utils\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionMethod;
 
@@ -116,6 +117,9 @@ class DispatcherFactory
 
         foreach ($publicMethods as $reflectionMethod) {
             $methodName = $reflectionMethod->getName();
+            if (Str::startsWith($methodName, '__')) {
+                continue;
+            }
             $path = $this->pathGenerator->generate($prefix, $methodName);
             $router->addRoute($path, [
                 $className,

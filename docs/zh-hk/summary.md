@@ -61,6 +61,8 @@
   * [數據庫遷移](zh-hk/db/migration.md)
   * [修改器](zh-hk/db/mutators.md)
   * [極簡 DB 組件](zh-hk/db/db.md)
+  * [API 資源構造器](zh-hk/db/resource.md)
+  * [模型全文檢索](zh-hk/scout.md)
   
 * 微服務
 

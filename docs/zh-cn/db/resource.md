@@ -32,7 +32,7 @@ php bin/hyperf.php gen:resource Users --collection
 php bin/hyperf.php gen:resource UserCollection
 ```
 
-## Grpc 资源
+## gRPC 资源
 
 > 需要额外安装 `hyperf/resource-grpc`
 
@@ -44,9 +44,9 @@ composer require hyperf/resource-grpc
 php bin/hyperf.php gen:resource User --grpc
 ```
 
-Grpc 资源需要设置 `message` 类. 通过重写该资源类的 `expect()` 方法来实现.
+gRPC 资源需要设置 `message` 类. 通过重写该资源类的 `expect()` 方法来实现.
 
-Grpc 服务返回时, 必须调用 `toMessage()`. 该方法会返回一个实例化的 `message` 类.
+gRPC 服务返回时, 必须调用 `toMessage()`. 该方法会返回一个实例化的 `message` 类.
 
 ```php
 <?php
@@ -73,7 +73,7 @@ class HiReplyResource extends GrpcResource
 
 ```
 
-默认生成的资源集合, 可通过继承 `Hyperf\ResourceGrpc\GrpcResource` 接口来使其支持 Grpc 返回.
+默认生成的资源集合, 可通过继承 `Hyperf\ResourceGrpc\GrpcResource` 接口来使其支持 gRPC 返回.
 
 ## 概念综述
 

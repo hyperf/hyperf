@@ -27,6 +27,7 @@ use Hyperf\Retry\BackoffStrategy;
 use Hyperf\Retry\FlatStrategy;
 use Hyperf\Retry\NoOpRetryBudget;
 use Hyperf\Retry\Policy\TimeoutRetryPolicy;
+use Hyperf\Retry\RetryBudget;
 use Hyperf\Retry\RetryBudgetInterface;
 use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Retry\Stub\Foo;
@@ -45,6 +46,7 @@ class RetryAnnotationAspectTest extends TestCase
     {
         $container = new Container(new DefinitionSource([
             RetryBudgetInterface::class => NoOpRetryBudget::class,
+            RetryBudget::class => NoOpRetryBudget::class,
             SleepStrategyInterface::class => flatStrategy::class,
         ], new ScanConfig()));
         ApplicationContext::setContainer($container);

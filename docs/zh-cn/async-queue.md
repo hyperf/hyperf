@@ -105,7 +105,9 @@ class AsyncQueueConsumer extends ConsumerProcess
 
 这种模式会把对象直接序列化然后存到 `Redis` 等队列中，所以为了保证序列化后的体积，尽量不要将 `Container`，`Config` 等设置为成员变量。
 
-比如以下 `Job` 的定义，是 **不可取** 的
+比如以下 `Job` 的定义，是 **不可取** 的，同理 `@Inject` 也是如此。
+
+> 因为 Job 会被序列化，所以成员变量不要包含 匿名函数 等 无法被序列化 的内容，如果不清楚哪些内容无法被序列化，尽量使用注解方式。
 
 ```php
 <?php
@@ -153,6 +155,13 @@ use Hyperf\AsyncQueue\Job;
 class ExampleJob extends Job
 {
     public $params;
+    
+    /**
+     * 任务执行失败后的重试次数，即最大执行次数为 $maxAttempts+1 次
+     *
+     * @var int
+     */
+    protected $maxAttempts = 2;
 
     public function __construct($params)
     {

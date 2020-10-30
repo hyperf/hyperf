@@ -1,5 +1,61 @@
 # 版本更新记录
 
+# v2.0.16 - 2020-10-26
+
+## 新增
+
+- [#2682](https://github.com/hyperf/hyperf/pull/2682) 为 `CacheableInterface` 新增方法 `getCacheTTL` 可根据不同模型设置不同的缓存时间。
+- [#2696](https://github.com/hyperf/hyperf/pull/2696) 新增 Swoole Tracker 的内存检测工具。
+
+## 修复
+
+- [#2680](https://github.com/hyperf/hyperf/pull/2680) 修复 `CastsValue` 因为没有设置 `$isSynchronized` 默认值，导致的类型错误。
+- [#2680](https://github.com/hyperf/hyperf/pull/2680) 修复 `CastsValue` 中 `$items` 默认值会被 `__construct` 覆盖的问题。
+- [#2693](https://github.com/hyperf/hyperf/pull/2693) 修复 `hyperf/retry` 组件，`Budget` 表现不符合期望的问题。
+- [#2695](https://github.com/hyperf/hyperf/pull/2695) 修复方法 `Container::define()` 因为容器中的对象已被实例化，而无法重定义的问题。
+
+## 优化
+
+- [#2611](https://github.com/hyperf/hyperf/pull/2611) 优化 `hyperf/watcher` 组件 `FindDriver` ，使其可以在 `Alpine` 镜像中使用。
+- [#2662](https://github.com/hyperf/hyperf/pull/2662) 优化 `Amqp` 消费者进程，使其可以配合 `Signal` 组件安全停止。
+- [#2690](https://github.com/hyperf/hyperf/pull/2690) 优化 `hyperf/tracer` 组件，确保其可以正常执行 `finish` 和 `flush` 方法。
+
+# v2.0.15 - 2020-10-19
+
+## 新增
+
+- [#2654](https://github.com/hyperf/hyperf/pull/2654) 新增方法 `Hyperf\Utils\Resource::from`，可以方便的将 `string` 转化为 `resource`。
+
+## 修复
+
+- [#2634](https://github.com/hyperf/hyperf/pull/2634) [#2640](https://github.com/hyperf/hyperf/pull/2640) 修复 `snowflake` 组件中，元数据生成器 `RedisSecondMetaGenerator` 会产生相同元数据的问题。
+- [#2639](https://github.com/hyperf/hyperf/pull/2639) 修复 `json-rpc` 组件中，异常无法正常被序列化的问题。
+- [#2643](https://github.com/hyperf/hyperf/pull/2643) 修复 `scout:flush` 执行失败的问题。
+
+## 优化
+
+- [#2656](https://github.com/hyperf/hyperf/pull/2656) 优化了 `json-rpc` 组件中，参数解析失败后，也可以返回对应的错误信息。
+
+# v2.0.14 - 2020-10-12
+
+## 新增
+
+- [#1172](https://github.com/hyperf/hyperf/pull/1172) 新增基于 `laravel/scout` 实现的组件 `hyperf/scout`, 可以通过搜索引擎进行模型查询。
+- [#1868](https://github.com/hyperf/hyperf/pull/1868) 新增 `Redis` 组件的哨兵模式。
+- [#1969](https://github.com/hyperf/hyperf/pull/1969) 新增组件 `hyperf/resource` and `hyperf/resource-grpc`，可以更加方便的将模型转化为 Response。
+
+## 修复
+
+- [#2594](https://github.com/hyperf/hyperf/pull/2594) 修复 `hyperf/crontab` 组件因为无法正常响应 `hyperf/signal`，导致无法停止的问题。
+- [#2601](https://github.com/hyperf/hyperf/pull/2601) 修复命令 `gen:model` 因为 `getter` 和 `setter` 同时存在时，注释 `@property` 会被 `@property-read` 覆盖的问题。
+- [#2607](https://github.com/hyperf/hyperf/pull/2607) [#2637](https://github.com/hyperf/hyperf/pull/2637) 修复使用 `RetryAnnotationAspect` 时，会有一定程度内存泄露的问题。
+- [#2624](https://github.com/hyperf/hyperf/pull/2624) 修复组件 `hyperf/testing` 因使用了 `guzzle 7.0` 和 `CURL HOOK` 导致无法正常工作的问题。
+- [#2632](https://github.com/hyperf/hyperf/pull/2632) [#2635](https://github.com/hyperf/hyperf/pull/2635) 修复 `hyperf\redis` 组件集群模式，无法设置密码的问题。
+
+## 优化
+
+- [#2603](https://github.com/hyperf/hyperf/pull/2603) 允许 `hyperf/database` 组件，`whereNull` 方法接受 `array` 作为入参。
+
 # v2.0.13 - 2020-09-28
 
 ## 新增

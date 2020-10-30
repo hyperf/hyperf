@@ -1886,7 +1886,7 @@ class ModelTest extends TestCase
 
         $dbConfig = [
             'driver' => 'mysql',
-            'host' => 'localhost',
+            'host' => '127.0.0.1',
             'database' => 'hyperf',
             'username' => 'root',
             'password' => '',
