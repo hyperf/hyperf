@@ -55,7 +55,7 @@ class Middleware extends AbstractAnnotation
             if (is_string($middleware) && class_exists($middleware)) {
                 $middlewares[] = new static(compact('middleware'));
             } else if (is_array($middleware) && array_values($middleware) === $middleware) {
-                $middlewares[] = new static(['middleware' => array_shift($middleware),'argument' => $middleware]);
+                $middlewares[] = new static(['middleware' => array_shift($middleware),'arguments' => $middleware]);
             } else {
                 throw new RuntimeException('Invalid Middleware Configuration');
             }
