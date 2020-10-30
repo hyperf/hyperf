@@ -1,0 +1,1 @@
+<x-alert :message="$message"/>

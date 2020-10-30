@@ -139,6 +139,7 @@
         "hyperf/utils": "self.version",
         "hyperf/validation": "self.version",
         "hyperf/view": "self.version",
+        "hyperf/view-engine": "self.version",
         "hyperf/websocket-client": "self.version",
         "hyperf/websocket-server": "self.version"
     },
@@ -153,7 +154,8 @@
             "src/filesystem/src/Adapter/AliyunOssHook.php",
             "src/nats/src/Functions.php",
             "src/translation/src/Functions.php",
-            "src/utils/src/Functions.php"
+            "src/utils/src/Functions.php",
+            "src/view-engine/src/Functions.php"
         ],
         "psr-4": {
             "Hyperf\\Amqp\\": "src/amqp/src/",
@@ -229,6 +231,7 @@
             "Hyperf\\Translation\\": "src/translation/src/",
             "Hyperf\\Utils\\": "src/utils/src/",
             "Hyperf\\Validation\\": "src/validation/src/",
+            "Hyperf\\ViewEngine\\": "src/view-engine/src/",
             "Hyperf\\View\\": "src/view/src/",
             "Hyperf\\Watcher\\": "src/watcher/src/",
             "Hyperf\\WebSocketClient\\": "src/websocket-client/src/",
@@ -302,6 +305,7 @@
             "HyperfTest\\Translation\\": "src/translation/tests/",
             "HyperfTest\\Utils\\": "src/utils/tests/",
             "HyperfTest\\Validation\\": "src/validation/tests/",
+            "HyperfTest\\ViewEngine\\": "src/view-engine/tests/",
             "HyperfTest\\View\\": "src/view/tests/",
             "HyperfTest\\Watcher\\": "src/watcher/tests/",
             "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/",
@@ -382,6 +386,7 @@
                 "Hyperf\\Translation\\ConfigProvider",
                 "Hyperf\\Utils\\ConfigProvider",
                 "Hyperf\\Validation\\ConfigProvider",
+                "Hyperf\\ViewEngine\\ConfigProvider",
                 "Hyperf\\View\\ConfigProvider",
                 "Hyperf\\Watcher\\ConfigProvider",
                 "Hyperf\\WebSocketClient\\ConfigProvider",

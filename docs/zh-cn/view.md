@@ -192,4 +192,3 @@ class ViewController
 ```
 Hello, Hyperf. You are using blade template now.
 ```
-
