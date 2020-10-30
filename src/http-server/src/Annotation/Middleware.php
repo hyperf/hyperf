@@ -20,6 +20,9 @@ use RuntimeException;
  */
 class Middleware extends AbstractAnnotation
 {
+    /**
+     * @var string
+     */
     public $middleware;
 
     /**
@@ -27,11 +30,18 @@ class Middleware extends AbstractAnnotation
      */
     public $arguments = [];
 
-    public function __construct($middleware = null,array $arguments = [])
+    public function __construct($value = null)
     {
-        parent::__construct();
-        $this->bindMainProperty('middleware', ['value' => $middleware]);
-        $this->bindMainProperty('arguments', ['value' => $arguments]);
+        parent::__construct($value);
+        $this->bindMainProperty('middleware',$value);
+        if(is_array($value)) {
+            if (isset($value['middleware'])) {
+                $this->middleware = $value['middleware'];
+            }
+            if (isset($value['arguments'])) {
+                $this->arguments = $value['arguments'];
+            }
+        }
     }
 
     /**
@@ -43,9 +53,9 @@ class Middleware extends AbstractAnnotation
         $middlewares = [];
         foreach ($config as $middleware) {
             if (is_string($middleware) && class_exists($middleware)) {
-                $middlewares[] = new static($middleware);
+                $middlewares[] = new static(compact('middleware'));
             } else if (is_array($middleware) && array_values($middleware) === $middleware) {
-                $middlewares[] = new static(array_shift($middleware),$middleware);
+                $middlewares[] = new static(['middleware' => array_shift($middleware),'argument' => $middleware]);
             } else {
                 throw new RuntimeException('Invalid Middleware Configuration');
             }
@@ -53,5 +63,4 @@ class Middleware extends AbstractAnnotation
         }
         return $middlewares;
     }
-
 }
