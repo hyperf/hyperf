@@ -62,14 +62,12 @@ abstract class AbstractRequestHandler
         } else {
             /** @var Middleware $middleware */
             $middleware = $this->middlewares[$this->offset];
-//            $handler = $this->container->make($middleware->middleware,$middleware->arguments);
             $handler = $this->container->get($middleware->middleware);
         }
         if (! method_exists($handler, 'process')) {
             throw new InvalidArgumentException(sprintf('Invalid middleware, it has to provide a process() method.'));
         }
-//        return $handler->process($request,$this->next(),...$middleware->arguments ?? []);
-        return $handler->process($request, $this->next());
+        return call_user_func([$handler,'process'],$request,$this->next(),...$middleware->arguments ?? []);
     }
 
     /**
