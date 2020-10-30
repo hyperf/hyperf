@@ -171,6 +171,7 @@ class ModelCommand extends Command
 
         $project = new Project();
         $class = $option->getTableMapping()[$table] ?? Str::studly(Str::singular($table));
+        $class = str_replace('/','\\',$class);
         $class = $project->namespace($option->getPath()) . $class;
         $path = BASE_PATH . '/' . $project->path($class);
 
