@@ -13,6 +13,7 @@ namespace Hyperf\Devtool\Describe;
 
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
@@ -105,7 +106,7 @@ class RoutesCommand extends HyperfCommand
         } else {
             // method,uri,name,action,middleware
             $registeredMiddlewares = MiddlewareManager::get($serverName, $uri, $method);
-            $middlewares = $this->config->get('middlewares.' . $serverName, []);
+            $middlewares = Middleware::parseConfig((array)$this->config->get('middlewares.' . $serverName, []));
 
             $middlewares = array_merge($middlewares, $registeredMiddlewares);
             $data[$unique] = [
@@ -113,7 +114,15 @@ class RoutesCommand extends HyperfCommand
                 'method' => [$method],
                 'uri' => $uri,
                 'action' => $action,
-                'middleware' => implode(PHP_EOL, array_unique($middlewares)),
+                'middleware' =>
+                    implode(PHP_EOL, array_map(
+                            static function (Middleware $middleware) {
+                                return sprintf('%s(%s)',$middleware->middleware,implode(',',$middleware->arguments));
+                            },
+                            $middlewares
+                        )
+                    )
+
             ];
         }
     }
