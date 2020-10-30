@@ -19,6 +19,7 @@ use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
+use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\HttpServer\Router\Dispatched;
@@ -95,7 +96,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
         $this->routerDispatcher = $this->createDispatcher($serverName);
 
         $config = $this->container->get(ConfigInterface::class);
-        $this->middlewares = $config->get('middlewares.' . $serverName, []);
+        $this->middlewares = Middleware::parseConfig((array) $config->get('middlewares.' . $serverName, []));
         $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, $this->getDefaultExceptionHandler());
     }
 

@@ -165,7 +165,6 @@ class DispatcherFactory
             // Handle method level middlewares.
             if (isset($values)) {
                 $methodMiddlewares = array_merge($methodMiddlewares, $this->handleMiddleware($values));
-                $methodMiddlewares = array_unique($methodMiddlewares);
             }
 
             foreach ($mappingAnnotations as $mappingAnnotation) {
@@ -229,13 +228,13 @@ class DispatcherFactory
             $middlewares = $metadata[Middlewares::class];
             $result = [];
             foreach ($middlewares->middlewares as $middleware) {
-                $result[] = $middleware->middleware;
+                $result[] = $middleware;
             }
             return $result;
         }
         // @Middleware
         /** @var Middleware $middleware */
         $middleware = $metadata[Middleware::class];
-        return [$middleware->middleware];
+        return [$middleware];
     }
 }
