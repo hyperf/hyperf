@@ -44,3 +44,7 @@
 
 - [#2659](https://github.com/hyperf/hyperf/pull/2659) [#2663](https://github.com/hyperf/hyperf/pull/2663) Support `HttpServer` for [Swow](https://github.com/swow/swow).
 - [#2671](https://github.com/hyperf/hyperf/pull/2671) Added `Hyperf\AsyncQueue\Listener\QueueHandleListener` which can record running logs for async-queue.
+
+## Fixed
+
+- [#2741](https://github.com/hyperf/hyperf/pull/2741) Fixed bug that process does not works in swow server.
