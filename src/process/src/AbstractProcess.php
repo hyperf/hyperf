@@ -32,6 +32,7 @@ use Swoole\Event;
 use Swoole\Process as SwooleProcess;
 use Swoole\Server;
 use Swoole\Timer;
+use Swow;
 
 abstract class AbstractProcess implements ProcessInterface
 {
@@ -226,7 +227,7 @@ abstract class AbstractProcess implements ProcessInterface
     {
         switch (Constant::ENGINE) {
             case 'Swow':
-                return $server instanceof Socket;
+                return $server instanceof Swow\Socket;
             case 'Swoole':
             default:
                 return $server instanceof Coroutine\Http\Server || $server instanceof Coroutine\Server;
