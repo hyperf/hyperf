@@ -11,7 +11,7 @@ jobs:
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-18.04]
         php-version: ['7.2', '7.3', '7.4']
         mysql-version: ['5.7', '8.0']
       max-parallel: 6
