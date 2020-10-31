@@ -108,6 +108,9 @@ class CoroutineServer implements ServerInterface
         return $this->server;
     }
 
+    /**
+     * @deprecated v2.2
+     */
     public static function isCoroutineServer($server): bool
     {
         return $server instanceof Coroutine\Http\Server || $server instanceof Coroutine\Server;
