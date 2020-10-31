@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -14,10 +14,11 @@ namespace Hyperf\ModelCache;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Model\Collection;
+use Hyperf\Database\Model\Model;
 use Hyperf\DbConnection\Collector\TableCollector;
-use Hyperf\DbConnection\Model\Model;
 use Hyperf\ModelCache\Handler\HandlerInterface;
 use Hyperf\ModelCache\Handler\RedisHandler;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
 class Manager
@@ -50,7 +51,7 @@ class Manager
 
         $config = $container->get(ConfigInterface::class);
         if (! $config->has('databases')) {
-            throw new \InvalidArgumentException('config databases is not exist!');
+            throw new InvalidArgumentException('config databases is not exist!');
         }
 
         foreach ($config->get('databases') as $key => $item) {
@@ -89,7 +90,7 @@ class Manager
             if (is_null($data)) {
                 $model = $instance->newQuery()->where($primaryKey, '=', $id)->first();
                 if ($model) {
-                    $ttl = $handler->getConfig()->getTtl();
+                    $ttl = $this->getCacheTTL($instance, $handler);
                     $handler->set($key, $this->formatModel($model), $ttl);
                 } else {
                     $ttl = $handler->getConfig()->getEmptyModelTtl();
@@ -140,7 +141,7 @@ class Manager
             $targetIds = array_diff($ids, $fetchIds);
             if ($targetIds) {
                 $models = $instance->newQuery()->whereIn($primaryKey, $targetIds)->get();
-                $ttl = $handler->getConfig()->getTtl();
+                $ttl = $this->getCacheTTL($instance, $handler);
                 /** @var Model $model */
                 foreach ($models as $model) {
                     $id = $model->getKey();
@@ -217,7 +218,18 @@ class Manager
     }
 
     /**
-     * @param $id
+     * @return \DateInterval|int
+     */
+    protected function getCacheTTL(Model $instance, HandlerInterface $handler)
+    {
+        if ($instance instanceof CacheableInterface) {
+            return $instance->getCacheTTL() ?? $handler->getConfig()->getTtl();
+        }
+        return $handler->getConfig()->getTtl();
+    }
+
+    /**
+     * @param int|string $id
      */
     protected function getCacheKey($id, Model $model, Config $config): string
     {

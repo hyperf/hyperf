@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -17,6 +17,7 @@ use Hyperf\Crontab\Event\CrontabDispatcherStarted;
 use Hyperf\Crontab\Scheduler;
 use Hyperf\Crontab\Strategy\StrategyInterface;
 use Hyperf\Process\AbstractProcess;
+use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
@@ -61,13 +62,13 @@ class CrontabDispatcherProcess extends AbstractProcess
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
-    public function bind(Server $server): void
+    public function bind($server): void
     {
         $this->server = $server;
         parent::bind($server);
     }
 
-    public function isEnable(): bool
+    public function isEnable($server): bool
     {
         return $this->config->get('crontab.enable', false);
     }
@@ -75,7 +76,7 @@ class CrontabDispatcherProcess extends AbstractProcess
     public function handle(): void
     {
         $this->event->dispatch(new CrontabDispatcherStarted());
-        while (true) {
+        while (ProcessManager::isRunning()) {
             $this->sleep();
             $crontabs = $this->scheduler->schedule();
             while (! $crontabs->isEmpty()) {

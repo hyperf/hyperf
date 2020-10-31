@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -30,9 +30,9 @@ abstract class RpcMessage extends Message implements RpcMessageInterface
     public function getQueueBuilder(): QueueBuilder
     {
         return (new QueueBuilder())->setQueue($this->queue)
+            ->setExclusive(true)
             ->setPassive(false)
             ->setDurable(false)
-            ->setExclusive(true)
             ->setAutoDelete(false);
     }
 

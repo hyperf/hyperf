@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -94,17 +94,14 @@ class CookieJar implements CookieJarInterface
      * @param string $name cookie name to search for
      * @return null|SetCookie cookie that was found or null if not found
      */
-    public function getCookieByName($name)
+    public function getCookieByName(string $name)
     {
-        // don't allow a null name
-        if ($name === null) {
-            return null;
-        }
         foreach ($this->cookies as $cookie) {
             if ($cookie->getName() !== null && strcasecmp($cookie->getName(), $name) === 0) {
                 return $cookie;
             }
         }
+        return null;
     }
 
     public function toArray()
@@ -118,12 +115,12 @@ class CookieJar implements CookieJarInterface
     {
         if (! $domain) {
             $this->cookies = [];
-            return;
+            return $this;
         }
         if (! $path) {
             $this->cookies = array_filter(
                 $this->cookies,
-                function (SetCookie $cookie) use ($path, $domain) {
+                function (SetCookie $cookie) use ($domain) {
                     return ! $cookie->matchesDomain($domain);
                 }
             );
@@ -145,6 +142,8 @@ class CookieJar implements CookieJarInterface
                 }
             );
         }
+
+        return $this;
     }
 
     public function clearSessionCookies()

@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -19,6 +19,7 @@ use Hyperf\Crontab\CrontabManager;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Process\Annotation\Process;
+use Hyperf\Process\Event\BeforeCoroutineHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
 
 class CrontabRegisterListener implements ListenerInterface
@@ -52,6 +53,7 @@ class CrontabRegisterListener implements ListenerInterface
     {
         return [
             BeforeProcessHandle::class,
+            BeforeCoroutineHandle::class,
         ];
     }
 

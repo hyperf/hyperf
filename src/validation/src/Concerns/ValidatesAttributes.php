@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -301,8 +301,9 @@ trait ValidatesAttributes
     {
         $this->requireParameterCount(1, $parameters, 'digits');
 
+        $value = (string) $value;
         return ! preg_match('/[^0-9]/', $value)
-            && strlen((string) $value) == $parameters[0];
+            && strlen($value) == $parameters[0];
     }
 
     /**
@@ -314,7 +315,8 @@ trait ValidatesAttributes
     {
         $this->requireParameterCount(2, $parameters, 'digits_between');
 
-        $length = strlen((string) $value);
+        $value = (string) $value;
+        $length = strlen($value);
 
         return ! preg_match('/[^0-9]/', $value)
             && $length >= $parameters[0] && $length <= $parameters[1];

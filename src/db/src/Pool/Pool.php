@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -40,7 +40,7 @@ abstract class Pool extends HyperfPool
         $this->name = $name;
         $this->config = $config->get($key);
         $options = Arr::get($this->config, 'pool', []);
-        $this->frequency = make(Frequency::class);
+        $this->frequency = make(Frequency::class, [$this]);
 
         parent::__construct($container, $options);
     }

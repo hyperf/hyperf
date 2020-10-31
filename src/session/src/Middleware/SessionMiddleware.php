@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -54,16 +54,14 @@ class SessionMiddleware implements MiddlewareInterface
 
         $session = $this->sessionManager->start($request);
 
-        $response = $handler->handle($request);
+        try {
+            $response = $handler->handle($request);
+        } finally {
+            $this->storeCurrentUrl($request, $session);
+            $this->sessionManager->end($session);
+        }
 
-        $this->storeCurrentUrl($request, $session);
-
-        $response = $this->addCookieToResponse($request, $response, $session);
-
-        // @TODO Use defer
-        $this->sessionManager->end($session);
-
-        return $response;
+        return $this->addCookieToResponse($request, $response, $session);
     }
 
     private function isSessionAvailable(): bool
@@ -76,7 +74,7 @@ class SessionMiddleware implements MiddlewareInterface
      */
     private function url(RequestInterface $request): string
     {
-        return rtrim(preg_replace('/\?.*/', '', $request->getUri()));
+        return rtrim(preg_replace('/\?.*/', '', (string) $request->getUri()));
     }
 
     /**
@@ -112,15 +110,17 @@ class SessionMiddleware implements MiddlewareInterface
     ): ResponseInterface {
         $uri = $request->getUri();
         $path = '/';
-        $domain = $uri->getHost();
         $secure = strtolower($uri->getScheme()) === 'https';
         $httpOnly = true;
+
+        $domain = $this->config->get('session.options.domain') ?? $uri->getHost();
+
+        $cookie = new Cookie($session->getName(), $session->getId(), $this->getCookieExpirationDate(), $path, $domain, $secure, $httpOnly);
         if (! method_exists($response, 'withCookie')) {
-            // @TODO Adapte original response object.
-            throw new \RuntimeException('Unsupport response object.');
+            return $response->withHeader('Set-Cookie', (string) $cookie);
         }
         /* @var \Hyperf\HttpMessage\Server\Response $response */
-        return $response->withCookie(new Cookie($session->getName(), $session->getId(), $this->getCookieExpirationDate(), $path, $domain, $secure, $httpOnly));
+        return $response->withCookie($cookie);
     }
 
     /**
