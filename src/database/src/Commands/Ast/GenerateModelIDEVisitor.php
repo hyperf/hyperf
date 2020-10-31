@@ -108,10 +108,10 @@ class GenerateModelIDEVisitor extends AbstractVisitor
             /** @var ReflectionParameter $argument */
             foreach ($call['arguments'] as $argument) {
                 $argName = new Node\Expr\Variable($argument->getName());
-                if($argument->hasType()) {
-                    if($argument->getType()->allowsNull()) {
+                if ($argument->hasType()) {
+                    if ($argument->getType()->allowsNull()) {
                         $argType = new Node\NullableType($argument->getType()->getName());
-                    }else {
+                    } else {
                         $argType = $argument->getType()->getName();
                     }
                 }
