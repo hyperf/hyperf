@@ -19,6 +19,7 @@ use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use Roave\BetterReflection\Reflection\ReflectionClass;
 use Roave\BetterReflection\Reflection\ReflectionMethod;
+use Roave\BetterReflection\Reflection\ReflectionParameter;
 
 class GenerateModelIDEVisitor extends AbstractVisitor
 {
@@ -103,9 +104,26 @@ class GenerateModelIDEVisitor extends AbstractVisitor
         $scopeDoc .= ' * @return \Hyperf\Database\Model\Builder|static' . PHP_EOL;
         $scopeDoc .= ' */';
         foreach ($this->methods as $name => $call) {
+            $params = [];
+            /** @var ReflectionParameter $argument */
+            foreach ($call['arguments'] as $argument) {
+                $argName = new Node\Expr\Variable($argument->getName());
+                if ($argument->hasType()) {
+                    if ($argument->getType()->allowsNull()) {
+                        $argType = new Node\NullableType($argument->getType()->getName());
+                    } else {
+                        $argType = $argument->getType()->getName();
+                    }
+                }
+                $params[] = new Node\Param(
+                    $argName,
+                    $argument->getAst()->default ?? null,
+                    $argType ?? null
+                );
+            }
             $method = new Node\Stmt\ClassMethod($name, [
                 'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC | Node\Stmt\Class_::MODIFIER_STATIC,
-                'params' => [],
+                'params' => $params,
             ]);
             $method->setDocComment(new Doc($scopeDoc));
             $method->stmts[] = new Node\Stmt\Return_(
