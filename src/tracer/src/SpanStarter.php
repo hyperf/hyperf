@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer;
 
+use Hyperf\Rpc;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use OpenTracing\Span;
@@ -31,7 +32,7 @@ trait SpanStarter
     ): Span {
         $root = Context::get('tracer.root');
         if (! $root instanceof Span) {
-            $rpcContext = ApplicationContext::getContainer()->get(\Hyperf\Rpc\Context::class);
+            $container = ApplicationContext::getContainer();
             /** @var ServerRequestInterface $request */
             $request = Context::get(ServerRequestInterface::class);
             if (! $request instanceof ServerRequestInterface) {
@@ -40,19 +41,20 @@ trait SpanStarter
             $carrier = array_map(function ($header) {
                 return $header[0];
             }, $request->getHeaders());
+            if ($container->has(Rpc\Context::class) && $rpcContext = $container->get(Rpc\Context::class)) {
+                $rpcCarrier = $rpcContext->get('tracer.carrier');
+                if (! empty($rpcCarrier)) {
+                    $carrier = $rpcCarrier;
+                }
+            }
             // Extracts the context from the HTTP headers.
             $spanContext = $this->tracer->extract(TEXT_MAP, $carrier);
             if ($spanContext) {
                 $option['child_of'] = $spanContext;
             }
-            if ($spanContextSerialize = $rpcContext->get('tracer.spanContext')) {
-                $spanContext = unserialize($spanContextSerialize);
-                $option['child_of'] = $spanContext;
-            }
             $root = $this->tracer->startSpan($name, $option);
             $root->setTag(SPAN_KIND, $kind);
             Context::set('tracer.root', $root);
-            $rpcContext->set('tracer.spanContext', serialize($root->getContext()));
             return $root;
         }
         $option['child_of'] = $root->getContext();

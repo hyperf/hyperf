@@ -27,6 +27,10 @@ class SpanTagManager
             'db.statement' => 'db.sql',
             'db.query_time' => 'db.query_time',
         ],
+        'rpc' => [
+            'path' => 'rpc.path',
+            'status' => 'rpc.status',
+        ],
     ];
 
     public function apply(array $tags): void
