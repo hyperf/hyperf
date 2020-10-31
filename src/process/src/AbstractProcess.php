@@ -27,6 +27,7 @@ use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Swoole;
 use Swoole\Coroutine\Channel;
 use Swoole\Event;
 use Swoole\Process as SwooleProcess;
@@ -106,7 +107,7 @@ abstract class AbstractProcess implements ProcessInterface
 
     public function bind($server): void
     {
-        if ($this->isCoroutineServer($server)) {
+        if (Constant::isCoroutineServer($server)) {
             $this->bindCoroutineServer($server);
             return;
         }
@@ -220,17 +221,6 @@ abstract class AbstractProcess implements ProcessInterface
             if ($throwable instanceof SocketAcceptException) {
                 $logger->critical('Socket of process is unavailable, please restart the server');
             }
-        }
-    }
-
-    private function isCoroutineServer($server)
-    {
-        switch (Constant::ENGINE) {
-            case 'Swow':
-                return $server instanceof Swow\Socket;
-            case 'Swoole':
-            default:
-                return $server instanceof Coroutine\Http\Server || $server instanceof Coroutine\Server;
         }
     }
 }
