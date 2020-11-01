@@ -41,7 +41,7 @@ class AfterWorkerStartListener implements ListenerInterface
     public function process(object $event)
     {
         if ($event instanceof AfterWorkerStart) {
-            if ($event->server->taskworker) {
+            if (! $event->server->taskworker) {
                 $this->container->get(TaskExecutor::class)->setIsTaskEnvironment(false);
             }
         }
