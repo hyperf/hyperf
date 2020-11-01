@@ -36,7 +36,7 @@ class TaskExecutor
     /**
      * @var bool
      */
-    protected $isTaskEnvironment = false;
+    protected $isTaskEnvironment = true;
 
     public function __construct(ChannelFactory $factory, ExceptionNormalizer $normalizer)
     {
