@@ -17,6 +17,7 @@ class ConfigProvider
     {
         return [
             'listeners' => [
+                Listener\AfterWorkerStartListener::class,
                 Listener\InitServerListener::class,
                 Listener\OnFinishListener::class,
                 Listener\OnTaskListener::class,
