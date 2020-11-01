@@ -11,6 +11,10 @@
 - [#2719](https://github.com/hyperf/hyperf/pull/2719) Fixed method `Arr::merge` does not works when `array1` does not constains the `$key`.
 - [#2723](https://github.com/hyperf/hyperf/pull/2723) Fixed `Paginator::resolveCurrentPath` deos not works.
 
+## Optimized
+
+- [#2746](https://github.com/hyperf/hyperf/pull/2746) Only execute task in the worker process.
+
 ## Changed
 
 - [#2728](https://github.com/hyperf/hyperf/pull/2728) The methods with prefix `__` will not be registered into service for `rpc-server`.
