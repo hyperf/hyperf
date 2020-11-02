@@ -29,6 +29,13 @@ class ElasticsearchEngine extends Engine
     protected $index;
 
     /**
+     * Index is use type
+     *
+     * @var bool
+     */
+    protected $isUseType;
+
+    /**
      * Elastic where the instance of Elastic|\Elasticsearch\Client is stored.
      *
      * @var object
@@ -40,10 +47,11 @@ class ElasticsearchEngine extends Engine
      *
      * @param $index
      */
-    public function __construct(Client $client, $index)
+    public function __construct(Client $client, $index, $isUseType = true)
     {
         $this->elastic = $client;
         $this->index = $index;
+        $this->isUseType = $isUseType;
     }
 
     /**
@@ -55,13 +63,19 @@ class ElasticsearchEngine extends Engine
     {
         $params['body'] = [];
         $models->each(function ($model) use (&$params) {
-            $params['body'][] = [
-                'update' => [
+            if ($this->isUseType) {
+                $update = [
                     '_id' => $model->getKey(),
                     '_index' => $this->index,
                     '_type' => $model->searchableAs(),
-                ],
-            ];
+                ];
+            } else {
+                $update = [
+                    '_id' => $model->getKey(),
+                    '_index' => $model->searchableAs(),
+                ];
+            }
+            $params['body'][] = ['update' => $update,];
             $params['body'][] = [
                 'doc' => $model->toSearchableArray(),
                 'doc_as_upsert' => true,
@@ -79,13 +93,19 @@ class ElasticsearchEngine extends Engine
     {
         $params['body'] = [];
         $models->each(function ($model) use (&$params) {
-            $params['body'][] = [
-                'delete' => [
+            if ($this->isUseType) {
+                $delete = [
                     '_id' => $model->getKey(),
                     '_index' => $this->index,
                     '_type' => $model->searchableAs(),
-                ],
-            ];
+                ];
+            } else {
+                $delete = [
+                    '_id' => $model->getKey(),
+                    '_index' => $model->searchableAs(),
+                ];
+            }
+            $params['body'][] = ['delete' => $delete];
         });
         $this->elastic->bulk($params);
     }

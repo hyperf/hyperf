@@ -22,6 +22,7 @@ return [
         'elasticsearch' => [
             'driver' => \Hyperf\Scout\Provider\ElasticsearchProvider::class,
             'index' => env('ELASTICSEARCH_INDEX', 'hyperf'),
+            'is_use_type' => true,
             'hosts' => [
                 env('ELASTICSEARCH_HOST', 'http://localhost'),
             ],
