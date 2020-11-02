@@ -233,14 +233,16 @@ php -r "trackerAnalyzeLeak();"
 
 通过调用 `trackerCleanLeak()` 可以清除泄漏日志，重新开始。[了解更多内存检测工具使用细节](https://www.kancloud.cn/swoole-inc/ee-help-wiki/1941569)
 
-在 Hyperf 中如果需要检测 HTTP Server 中的内存泄漏，可以在 `config/autoload/aspects.php` 配置以下 `Aspect`：
+如果需要在 Hyperf 中检测 HTTP Server 中的内存泄漏，可以在 `config/autoload/middlewares.php` 添加一个全局中间件：
 
 ```php
 <?php
 
 return [
-    Hyperf\SwooleTracker\Aspect\OnRequestAspect::class,
+    'http' => [
+        Hyperf\SwooleTracker\Middleware\HookMallocMiddleware::class,
+    ],
 ];
 ```
 
-其他 Server 可以参照此 `Aspect` 进行重写使用。
+其他类型 Server 同理。
