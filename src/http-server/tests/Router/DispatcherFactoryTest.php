@@ -80,6 +80,7 @@ class DispatcherFactoryTest extends TestCase
     public function testMiddlewareInController()
     {
         $factory = new DispatcherFactory();
+        // Middleware in options should not works.
         $annotation = new Controller(['prefix' => 'test', 'options' => ['name' => 'Hyperf', 'middleware' => [BarMiddleware::class]]]);
         $factory->handleController(
             DemoController::class,
@@ -104,7 +105,6 @@ class DispatcherFactoryTest extends TestCase
                 $this->assertSame('/index', $value->route);
                 $this->assertSame('index.' . strtolower($method), $value->options['name']);
                 $this->assertSame([
-                    BarMiddleware::class,
                     SetHeaderMiddleware::class,
                     FooMiddleware::class,
                 ], $value->options['middleware']);
