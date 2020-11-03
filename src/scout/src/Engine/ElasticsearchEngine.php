@@ -75,7 +75,7 @@ class ElasticsearchEngine extends Engine
                     '_index' => $model->searchableAs(),
                 ];
             }
-            $params['body'][] = ['update' => $update,];
+            $params['body'][] = ['update' => $update];
             $params['body'][] = [
                 'doc' => $model->toSearchableArray(),
                 'doc_as_upsert' => true,
@@ -209,6 +209,10 @@ class ElasticsearchEngine extends Engine
                 ],
             ],
         ];
+        if (! $this->isUseType) {
+            unset($params['type']);
+            $params['index'] = $builder->index ?: $builder->model->searchableAs();
+        }
         if ($sort = $this->sort($builder)) {
             $params['body']['sort'] = $sort;
         }
