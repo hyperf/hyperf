@@ -111,11 +111,11 @@ class DispatcherFactory
         $methods = $class->getMethods(ReflectionMethod::IS_PUBLIC);
         $prefix = $this->getPrefix($className, $annotation->prefix);
         $router = $this->getRouter($annotation->server);
-        $options = $annotation->options;
 
         $autoMethods = ['GET', 'POST', 'HEAD'];
         $defaultAction = '/index';
         foreach ($methods as $method) {
+            $options = $annotation->options;
             $path = $this->parsePath($prefix, $method);
             $methodName = $method->getName();
             if (substr($methodName, 0, 2) === '__') {
@@ -150,7 +150,6 @@ class DispatcherFactory
         }
         $prefix = $this->getPrefix($className, $annotation->prefix);
         $router = $this->getRouter($annotation->server);
-        $options = $annotation->options;
 
         $mappingAnnotations = [
             RequestMapping::class,
@@ -162,6 +161,7 @@ class DispatcherFactory
         ];
 
         foreach ($methodMetadata as $methodName => $values) {
+            $options = $annotation->options;
             $methodMiddlewares = $middlewares;
             // Handle method level middlewares.
             if (isset($values)) {
@@ -177,14 +177,13 @@ class DispatcherFactory
                         continue;
                     }
                     $path = $mapping->path;
-                    $options = Arr::merge($options, $mapping->options);
 
                     if ($path === '') {
                         $path = $prefix;
                     } elseif ($path[0] !== '/') {
                         $path = $prefix . '/' . $path;
                     }
-                    $router->addRoute($mapping->methods, $path, [$className, $methodName], $options);
+                    $router->addRoute($mapping->methods, $path, [$className, $methodName], Arr::merge($options, $mapping->options));
                 }
             }
         }
