@@ -43,6 +43,13 @@ class ElasticsearchEngine extends Engine
     protected $elastic;
 
     /**
+     * Elastic server version
+     *
+     * @var string
+     */
+    protected $version;
+
+    /**
      * Create a new engine instance.
      *
      * @param $index
@@ -51,7 +58,8 @@ class ElasticsearchEngine extends Engine
     {
         $this->elastic = $client;
         $this->index = $index;
-        $this->isUseType = $isUseType;
+        empty($this->version) && $this->version = $client->info()['version']['number'];
+        $this->isUseType = $this->version >= '7.0' ? false : $isUseType;
     }
 
     /**
