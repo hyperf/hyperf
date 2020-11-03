@@ -128,7 +128,8 @@ class DispatcherFactory
                 $methodMiddlewares = array_merge($methodMiddlewares, $this->handleMiddleware($methodMetadata[$methodName]));
             }
 
-            $options['middleware'] = array_unique(array_merge($options['middleware'] ?? [], $methodMiddlewares));
+            // Rewrite by annotation @Middleware for Controller.
+            $options['middleware'] = array_unique($methodMiddlewares);
 
             $router->addRoute($autoMethods, $path, [$className, $methodName], $options);
 
@@ -168,7 +169,8 @@ class DispatcherFactory
                 $methodMiddlewares = array_merge($methodMiddlewares, $this->handleMiddleware($values));
             }
 
-            $options['middleware'] = array_unique(array_merge($options['middleware'] ?? [], $methodMiddlewares));
+            // Rewrite by annotation @Middleware for Controller.
+            $options['middleware'] = array_unique($methodMiddlewares);
 
             foreach ($mappingAnnotations as $mappingAnnotation) {
                 /** @var Mapping $mapping */
@@ -176,6 +178,9 @@ class DispatcherFactory
                     if (! isset($mapping->path) || ! isset($mapping->methods) || ! isset($mapping->options)) {
                         continue;
                     }
+                    $methodOptions = Arr::merge($options, $mapping->options);
+                    // Rewrite by annotation @Middleware for method.
+                    $methodOptions['middleware'] = $options['middleware'];
                     $path = $mapping->path;
 
                     if ($path === '') {
@@ -183,7 +188,7 @@ class DispatcherFactory
                     } elseif ($path[0] !== '/') {
                         $path = $prefix . '/' . $path;
                     }
-                    $router->addRoute($mapping->methods, $path, [$className, $methodName], Arr::merge($options, $mapping->options));
+                    $router->addRoute($mapping->methods, $path, [$className, $methodName], $methodOptions);
                 }
             }
         }
