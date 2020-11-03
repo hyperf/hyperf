@@ -1,5 +1,9 @@
 # v2.0.18 - TBD
 
+## Added
+
+- [#2752](https://github.com/hyperf/hyperf/pull/2752) Support route `options` for `@AutoController` `@Controller` and `@Mapping`.
+
 # v2.0.17 - 2020-11-02
 
 ## Added
