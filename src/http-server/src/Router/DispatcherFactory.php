@@ -29,6 +29,7 @@ use Hyperf\HttpServer\Annotation\PatchMapping;
 use Hyperf\HttpServer\Annotation\PostMapping;
 use Hyperf\HttpServer\Annotation\PutMapping;
 use Hyperf\HttpServer\Annotation\RequestMapping;
+use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use ReflectionMethod;
 
@@ -110,6 +111,7 @@ class DispatcherFactory
         $methods = $class->getMethods(ReflectionMethod::IS_PUBLIC);
         $prefix = $this->getPrefix($className, $annotation->prefix);
         $router = $this->getRouter($annotation->server);
+        $options = $annotation->options;
 
         $autoMethods = ['GET', 'POST', 'HEAD'];
         $defaultAction = '/index';
@@ -124,18 +126,15 @@ class DispatcherFactory
             // Handle method level middlewares.
             if (isset($methodMetadata[$methodName])) {
                 $methodMiddlewares = array_merge($methodMiddlewares, $this->handleMiddleware($methodMetadata[$methodName]));
-                $methodMiddlewares = array_unique($methodMiddlewares);
             }
 
-            $router->addRoute($autoMethods, $path, [$className, $methodName], [
-                'middleware' => $methodMiddlewares,
-            ]);
+            $options['middleware'] = array_unique(array_merge($options['middleware'] ?? [], $methodMiddlewares));
+
+            $router->addRoute($autoMethods, $path, [$className, $methodName], $options);
 
             if (Str::endsWith($path, $defaultAction)) {
                 $path = Str::replaceLast($defaultAction, '', $path);
-                $router->addRoute($autoMethods, $path, [$className, $methodName], [
-                    'middleware' => $methodMiddlewares,
-                ]);
+                $router->addRoute($autoMethods, $path, [$className, $methodName], $options);
             }
         }
     }
@@ -151,6 +150,8 @@ class DispatcherFactory
         }
         $prefix = $this->getPrefix($className, $annotation->prefix);
         $router = $this->getRouter($annotation->server);
+        $options = $annotation->options;
+
         $mappingAnnotations = [
             RequestMapping::class,
             GetMapping::class,
@@ -165,25 +166,25 @@ class DispatcherFactory
             // Handle method level middlewares.
             if (isset($values)) {
                 $methodMiddlewares = array_merge($methodMiddlewares, $this->handleMiddleware($values));
-                $methodMiddlewares = array_unique($methodMiddlewares);
             }
+
+            $options['middleware'] = array_unique(array_merge($options['middleware'] ?? [], $methodMiddlewares));
 
             foreach ($mappingAnnotations as $mappingAnnotation) {
                 /** @var Mapping $mapping */
                 if ($mapping = $values[$mappingAnnotation] ?? null) {
-                    if (! isset($mapping->path) || ! isset($mapping->methods)) {
+                    if (! isset($mapping->path) || ! isset($mapping->methods) || ! isset($mapping->options)) {
                         continue;
                     }
                     $path = $mapping->path;
+                    $options = Arr::merge($options, $mapping->options);
 
                     if ($path === '') {
                         $path = $prefix;
                     } elseif ($path[0] !== '/') {
                         $path = $prefix . '/' . $path;
                     }
-                    $router->addRoute($mapping->methods, $path, [$className, $methodName], [
-                        'middleware' => $methodMiddlewares,
-                    ]);
+                    $router->addRoute($mapping->methods, $path, [$className, $methodName], $options);
                 }
             }
         }
