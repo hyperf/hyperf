@@ -44,11 +44,8 @@ class ElasticsearchEngine extends Engine
 
     /**
      * Create a new engine instance.
-     *
-     * @param $index
-     * @param mixed $isUseType
      */
-    public function __construct(Client $client, $index)
+    public function __construct(Client $client, ?string $index = null)
     {
         $this->elastic = $client;
         $this->initVersion($client);
