@@ -31,7 +31,6 @@
     "require-dev": {
         "bandwidth-throttle/token-bucket": "^2.0",
         "doctrine/annotations": "^1.6",
-        "doctrine/common": "@stable",
         "doctrine/inflector": "^2.0",
         "doctrine/instantiator": "^1.0",
         "domnikl/statsd": "^3.0.1",
