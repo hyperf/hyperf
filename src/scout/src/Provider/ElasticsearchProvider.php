@@ -35,7 +35,6 @@ class ElasticsearchProvider implements ProviderInterface
         $builder = $this->container->get(ClientBuilderFactory::class)->create();
         $client = $builder->setHosts($config->get("scout.engine.{$name}.hosts"))->build();
         $index = $config->get("scout.engine.{$name}.index");
-        $isUseType = $config->get("scout.engine.{$name}.is_use_type") ?? true;
         return new ElasticsearchEngine($client, $index, $isUseType);
     }
 }

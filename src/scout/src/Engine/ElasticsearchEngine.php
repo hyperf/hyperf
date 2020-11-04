@@ -22,18 +22,18 @@ use Hyperf\Utils\Collection as BaseCollection;
 class ElasticsearchEngine extends Engine
 {
     /**
-     * Index where the models will be saved.
+     * Elastic server version.
      *
      * @var string
      */
-    protected $index;
+    public static $version;
 
     /**
-     * Index is use type
+     * Index where the models will be saved.
      *
-     * @var bool
+     * @var null|string
      */
-    protected $isUseType;
+    protected $index;
 
     /**
      * Elastic where the instance of Elastic|\Elasticsearch\Client is stored.
@@ -43,23 +43,19 @@ class ElasticsearchEngine extends Engine
     protected $elastic;
 
     /**
-     * Elastic server version
-     *
-     * @var string
-     */
-    protected $version;
-
-    /**
      * Create a new engine instance.
      *
      * @param $index
+     * @param mixed $isUseType
      */
-    public function __construct(Client $client, $index, $isUseType = true)
+    public function __construct(Client $client, $index)
     {
         $this->elastic = $client;
-        $this->index = $index;
-        empty($this->version) && $this->version = $client->info()['version']['number'];
-        $this->isUseType = $this->version >= '7.0' ? false : $isUseType;
+        $this->initVersion($client);
+        // When the version of elasticsearch is more than 7.0.0, it does not support type, so set `null` to `$index`.
+        if (version_compare(static::$version, '7.0.0', '<')) {
+            $this->index = $index;
+        }
     }
 
     /**
@@ -71,7 +67,7 @@ class ElasticsearchEngine extends Engine
     {
         $params['body'] = [];
         $models->each(function ($model) use (&$params) {
-            if ($this->isUseType) {
+            if ($this->index) {
                 $update = [
                     '_id' => $model->getKey(),
                     '_index' => $this->index,
@@ -101,7 +97,7 @@ class ElasticsearchEngine extends Engine
     {
         $params['body'] = [];
         $models->each(function ($model) use (&$params) {
-            if ($this->isUseType) {
+            if ($this->index) {
                 $delete = [
                     '_id' => $model->getKey(),
                     '_index' => $this->index,
@@ -199,6 +195,17 @@ class ElasticsearchEngine extends Engine
             ->unsearchable();
     }
 
+    protected function initVersion(Client $client): void
+    {
+        if (! static::$version) {
+            try {
+                static::$version = $client->info()['version']['number'];
+            } catch (\Throwable $exception) {
+                static::$version = '0.0.0';
+            }
+        }
+    }
+
     /**
      * Perform the given search on the engine.
      *
@@ -217,7 +224,7 @@ class ElasticsearchEngine extends Engine
                 ],
             ],
         ];
-        if (! $this->isUseType) {
+        if (! $this->index) {
             unset($params['type']);
             $params['index'] = $builder->index ?: $builder->model->searchableAs();
         }
