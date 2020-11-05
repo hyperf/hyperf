@@ -6,7 +6,7 @@
 
 ## Fixed
 
-- [#2768](https://github.com/hyperf/hyperf/pull/2768) Fixed memory leak when websocket handl shake failed.
+- [#2768](https://github.com/hyperf/hyperf/pull/2768) Fixed memory leak when websocket hande shake failed.
 
 ## Changed
 
