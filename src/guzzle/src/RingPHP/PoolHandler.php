@@ -13,6 +13,7 @@ namespace Hyperf\Guzzle\RingPHP;
 
 use GuzzleHttp\Ring\Core;
 use GuzzleHttp\Ring\Exception\RingException;
+use Hyperf\Engine\Http\Client;
 use Hyperf\Pool\SimplePool\PoolFactory;
 
 class PoolHandler extends CoroutineHandler
@@ -54,6 +55,7 @@ class PoolHandler extends CoroutineHandler
         $connection = $pool->get();
 
         try {
+            /** @var Client $client */
             $client = $connection->getConnection();
             // Init Headers
             $headers = $this->initHeaders($request);
