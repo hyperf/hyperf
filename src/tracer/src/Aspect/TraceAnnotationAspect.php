@@ -58,8 +58,11 @@ class TraceAnnotationAspect implements AroundInterface
         }
         $span = $this->startSpan($name);
         $span->setTag($tag, $source);
-        $result = $proceedingJoinPoint->process();
-        $span->finish();
+        try {
+            $result = $proceedingJoinPoint->process();
+        } finally {
+            $span->finish();
+        }
         return $result;
     }
 }

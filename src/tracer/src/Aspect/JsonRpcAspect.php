@@ -90,13 +90,16 @@ class JsonRpcAspect implements AroundInterface
         }
 
         if ($proceedingJoinPoint->methodName === 'send') {
-            $result = $proceedingJoinPoint->process();
-            /** @var Span $span */
-            if ($span = CT::get('tracer.span.' . static::class)) {
-                if ($this->spanTagManager->has('rpc', 'status')) {
-                    $span->setTag($this->spanTagManager->get('rpc', 'status'), isset($result['result']) ? 'OK' : 'Failed');
+            try {
+                $result = $proceedingJoinPoint->process();
+            } finally {
+                /** @var Span $span */
+                if ($span = CT::get('tracer.span.' . static::class)) {
+                    if ($this->spanTagManager->has('rpc', 'status')) {
+                        $span->setTag($this->spanTagManager->get('rpc', 'status'), isset($result['result']) ? 'OK' : 'Failed');
+                    }
+                    $span->finish();
                 }
-                $span->finish();
             }
 
             return $result;
