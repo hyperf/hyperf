@@ -36,7 +36,12 @@ trait SpanStarter
             /** @var ServerRequestInterface $request */
             $request = Context::get(ServerRequestInterface::class);
             if (! $request instanceof ServerRequestInterface) {
-                throw new \RuntimeException('ServerRequest object missing.');
+                // If the request object is absent, we are probably in a commandline context.
+                // Throwing an exception is unnecessary.
+                $root = $this->tracer->startSpan($name, $option);
+                $root->setTag(SPAN_KIND, $kind);
+                Context::set('tracer.root', $root);
+                return $root;
             }
             $carrier = array_map(function ($header) {
                 return $header[0];
