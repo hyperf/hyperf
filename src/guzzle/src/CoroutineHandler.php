@@ -23,7 +23,6 @@ use Hyperf\Engine\Http\Client;
 use Hyperf\Engine\Http\RawResponse;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
-use Swoole\Coroutine;
 use function GuzzleHttp\is_host_in_noproxy;
 
 /**
@@ -107,7 +106,7 @@ class CoroutineHandler
     {
         $settings = [];
         if (isset($options['delay']) && $options['delay'] > 0) {
-            Coroutine::sleep((float) $options['delay'] / 1000);
+            usleep(intval($options['delay'] * 1000));
         }
 
         // 验证服务端证书

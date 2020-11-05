@@ -14,8 +14,7 @@ namespace Hyperf\Guzzle\RingPHP;
 use GuzzleHttp\Ring\Core;
 use GuzzleHttp\Ring\Exception\RingException;
 use GuzzleHttp\Ring\Future\CompletedFutureArray;
-use Swoole\Coroutine;
-use Swoole\Coroutine\Http\Client;
+use Hyperf\Engine\Http\Client;
 
 /**
  * Http handler that uses Swoole Coroutine as a transport layer.
@@ -47,7 +46,7 @@ class CoroutineHandler
             $path .= '?' . $params['query'];
         }
 
-        $client = new Client($host, $port, $ssl);
+        $client = $this->makeClient($host, $port, $ssl);
         $client->setMethod($method);
         $client->setData($body);
 
@@ -71,6 +70,11 @@ class CoroutineHandler
         return $this->getResponse($client, $btime, $effectiveUrl);
     }
 
+    protected function makeClient(string $host, int $port, bool $ssl): Client
+    {
+        return new Client($host, $port, $ssl);
+    }
+
     protected function execute(Client $client, $path)
     {
         $client->execute($path);
@@ -79,8 +83,8 @@ class CoroutineHandler
     protected function getSettings($options): array
     {
         $settings = [];
-        if (isset($options['delay'])) {
-            Coroutine::sleep((float) $options['delay'] / 1000);
+        if (isset($options['delay']) && $options['delay'] > 0) {
+            usleep(intval($options['delay'] * 1000));
         }
 
         // 超时

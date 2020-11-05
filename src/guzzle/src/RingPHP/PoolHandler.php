@@ -13,7 +13,6 @@ namespace Hyperf\Guzzle\RingPHP;
 
 use GuzzleHttp\Ring\Core;
 use Hyperf\Pool\SimplePool\PoolFactory;
-use Swoole\Coroutine\Http\Client;
 
 class PoolHandler extends CoroutineHandler
 {
@@ -48,7 +47,7 @@ class PoolHandler extends CoroutineHandler
         }
 
         $pool = $this->factory->get($this->getPoolName($host, $port), function () use ($host, $port, $ssl) {
-            return new Client($host, $port, $ssl);
+            return $this->makeClient($host, $port, $ssl);
         }, $this->options);
 
         $connection = $pool->get();
