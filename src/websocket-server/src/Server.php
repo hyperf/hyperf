@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\WebSocketServer;
 
 use Hyperf\Contract\ConfigInterface;
@@ -101,22 +100,21 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         ExceptionHandlerDispatcher $exceptionHandlerDispatcher,
         ResponseEmitter $responseEmitter,
         StdoutLoggerInterface $logger
-    )
-    {
-        $this->container                  = $container;
-        $this->dispatcher                 = $dispatcher;
+    ) {
+        $this->container = $container;
+        $this->dispatcher = $dispatcher;
         $this->exceptionHandlerDispatcher = $exceptionHandlerDispatcher;
-        $this->responseEmitter            = $responseEmitter;
-        $this->logger                     = $logger;
+        $this->responseEmitter = $responseEmitter;
+        $this->logger = $logger;
     }
 
     public function initCoreMiddleware(string $serverName): void
     {
-        $this->serverName     = $serverName;
+        $this->serverName = $serverName;
         $this->coreMiddleware = new CoreMiddleware($this->container, $serverName);
 
-        $config                  = $this->container->get(ConfigInterface::class);
-        $this->middlewares       = $config->get('middlewares.' . $serverName, []);
+        $config = $this->container->get(ConfigInterface::class);
+        $this->middlewares = $config->get('middlewares.' . $serverName, []);
         $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, [
             WebSocketExceptionHandler::class,
         ]);
@@ -143,7 +141,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             Context::set(WsContext::FD, $fd);
             $security = $this->container->get(Security::class);
 
-            $psr7Request  = $this->initRequest($request);
+            $psr7Request = $this->initRequest($request);
             $psr7Response = $this->initResponse();
 
             $this->logger->debug(sprintf('WebSocket: fd[%d] start a handshake request.', $fd));
@@ -159,7 +157,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             $dispatched = $psr7Request->getAttribute(Dispatched::class);
             if ($dispatched->isFound()) {
                 $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
-                $middlewares           = array_merge($middlewares, $registeredMiddlewares);
+                $middlewares = array_merge($middlewares, $registeredMiddlewares);
             }
 
             /** @var Response $psr7Response */
@@ -167,7 +165,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
             $class = $psr7Response->getAttribute('class');
 
-            if (!empty($class)) {
+            if (! empty($class)) {
                 FdCollector::set($fd, $class);
                 $server = $this->getServer();
                 if ($server instanceof \Swoole\Coroutine\Http\Server) {
@@ -204,7 +202,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         } finally {
             isset($fd) && $this->getSender()->setResponse($fd, null);
             // Send the Response to client.
-            if (!$psr7Response || !$psr7Response instanceof Psr7Response) {
+            if (! $psr7Response || ! $psr7Response instanceof Psr7Response) {
                 return;
             }
             $this->responseEmitter->emit($psr7Response, $response, true);
@@ -220,14 +218,14 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         }
         Context::set(WsContext::FD, $fd);
         $fdObj = FdCollector::get($fd);
-        if (!$fdObj) {
+        if (! $fdObj) {
             $this->logger->warning(sprintf('WebSocket: fd[%d] does not exist.', $fd));
             return;
         }
 
         $instance = $this->container->get($fdObj->class);
 
-        if (!$instance instanceof OnMessageInterface) {
+        if (! $instance instanceof OnMessageInterface) {
             $this->logger->warning("{$instance} is not instanceof " . OnMessageInterface::class);
             return;
         }
@@ -238,7 +236,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     public function onClose($server, int $fd, int $reactorId): void
     {
         $fdObj = FdCollector::get($fd);
-        if (!$fdObj) {
+        if (! $fdObj) {
             return;
         }
 
