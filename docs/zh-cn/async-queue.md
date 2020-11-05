@@ -66,9 +66,11 @@ return [
 
 ## 使用
 
-### 消费消息
+### 配置异步消费进程
 
-组件已经提供了默认子进程，只需要将它配置到 `config/autoload/processes.php` 中即可。
+组件已经提供了默认 `异步消费进程`，只需要将它配置到 `config/autoload/processes.php` 中即可。
+
+> ConsumerProcess 是异步消费进程，会根据用户创建的 Job 或者使用 @AsyncQueueMessage 的代码块，执行消费逻辑。
 
 ```php
 <?php
@@ -80,6 +82,8 @@ return [
 ```
 
 当然，您也可以将以下 `Process` 添加到自己的项目中。
+
+> 配置方式和注解方式，二选一即可。
 
 ```php
 <?php
@@ -100,6 +104,9 @@ class AsyncQueueConsumer extends ConsumerProcess
 ```
 
 ### 生产消息
+
+因为异步队列设计与传统队列不同，属于自产自销，只提供一种 `异步处理` 和 `异步延时处理` 的能力。所以生产消息的同时，也会定义好消费逻辑，即下面所说
+的传统方式里的 `handle` 方法，和注解方式中对应的代码块。
 
 #### 传统方式
 
@@ -173,6 +180,7 @@ class ExampleJob extends Job
     {
         // 根据参数处理具体逻辑
         // 通过具体参数获取模型等
+        // 这里的逻辑会在 ConsumerProcess 进程中执行
         var_dump($this->params);
     }
 }
@@ -283,6 +291,7 @@ class QueueService
     public function example($params)
     {
         // 需要异步执行的代码逻辑
+        // 这里的逻辑会在 ConsumerProcess 进程中执行
         var_dump($params);
     }
 }
