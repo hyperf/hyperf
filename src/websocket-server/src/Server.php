@@ -192,10 +192,13 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
                 } else {
                     $this->deferOnOpen($request, $class, $server);
                 }
+            } else {
+                WsContext::release($fd);
             }
         } catch (Throwable $throwable) {
             // Delegate the exception to exception handler.
             $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+            WsContext::release($request->fd);
         } finally {
             isset($fd) && $this->getSender()->setResponse($fd, null);
             // Send the Response to client.
