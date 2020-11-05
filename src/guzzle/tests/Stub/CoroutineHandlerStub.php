@@ -26,11 +26,6 @@ class CoroutineHandlerStub extends CoroutineHandler
         $this->statusCode = $statusCode;
     }
 
-    public function checkStatusCode(Client $client, $request)
-    {
-        return parent::checkStatusCode($client, $request);
-    }
-
     public function createSink(string $body, string $sink)
     {
         return parent::createSink($body, $sink);

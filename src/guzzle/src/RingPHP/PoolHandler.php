@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Guzzle\RingPHP;
 
 use GuzzleHttp\Ring\Core;
+use GuzzleHttp\Ring\Exception\RingException;
 use Hyperf\Pool\SimplePool\PoolFactory;
 
 class PoolHandler extends CoroutineHandler
@@ -54,26 +55,25 @@ class PoolHandler extends CoroutineHandler
 
         try {
             $client = $connection->getConnection();
-            $client->setMethod($method);
-            $client->setData($body);
-
-            $this->initHeaders($client, $request);
+            // Init Headers
+            $headers = $this->initHeaders($request);
+            // Init Headers
             $settings = $this->getSettings($this->options);
-
             if (! empty($settings)) {
                 $client->set($settings);
             }
 
             $btime = microtime(true);
-            $this->execute($client, $path);
 
-            $ex = $this->checkStatusCode($client, $request);
-            if ($ex !== true) {
+            try {
+                $raw = $client->request($method, $path, $headers, (string) $body);
+            } catch (\Exception $exception) {
                 $connection->close();
-                return $this->getErrorResponse($ex, $btime, $effectiveUrl);
+                $exception = new RingException($exception->getMessage());
+                return $this->getErrorResponse($exception, $btime, $effectiveUrl);
             }
 
-            $response = $this->getResponse($client, $btime, $effectiveUrl);
+            $response = $this->getResponse($raw, $btime, $effectiveUrl);
         } finally {
             $connection->release();
         }
