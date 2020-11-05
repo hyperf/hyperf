@@ -4,6 +4,10 @@
 
 - [#2752](https://github.com/hyperf/hyperf/pull/2752) Support route `options` for `@AutoController` `@Controller` and `@Mapping`.
 
+## Fixed
+
+- [#2768](https://github.com/hyperf/hyperf/pull/2768) Fixed memory leak when websocket handl shake failed.
+
 ## Changed
 
 - [#2765](https://github.com/hyperf/hyperf/pull/2765) Use `Hyperf\Utils\Coroutine::create()` instead of `Swoole\Coroutine::create()` for `Concurrent`.
