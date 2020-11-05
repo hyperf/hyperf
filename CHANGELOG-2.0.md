@@ -4,6 +4,10 @@
 
 - [#2752](https://github.com/hyperf/hyperf/pull/2752) Support route `options` for `@AutoController` `@Controller` and `@Mapping`.
 
+## Changed
+
+- [#2765](https://github.com/hyperf/hyperf/pull/2765) Use `Hyperf\Utils\Coroutine::create()` instead of `Swoole\Coroutine::create()` for `Concurrent`.
+
 # v2.0.17 - 2020-11-02
 
 ## Added
