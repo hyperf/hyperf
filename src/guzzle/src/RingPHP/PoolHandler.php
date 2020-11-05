@@ -57,7 +57,6 @@ class PoolHandler extends CoroutineHandler
             $client = $connection->getConnection();
             // Init Headers
             $headers = $this->initHeaders($request);
-            // Init Headers
             $settings = $this->getSettings($this->options);
             if (! empty($settings)) {
                 $client->set($settings);

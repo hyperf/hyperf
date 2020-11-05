@@ -51,7 +51,6 @@ class CoroutineHandler
         $client = $this->makeClient($host, $port, $ssl);
         // Init Headers
         $headers = $this->initHeaders($request);
-        // Init Headers
         $settings = $this->getSettings($this->options);
         if (! empty($settings)) {
             $client->set($settings);
