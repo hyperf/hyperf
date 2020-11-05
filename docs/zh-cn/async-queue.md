@@ -64,13 +64,27 @@ return [
 
 ```
 
+## 工作原理
+
+`ConsumerProcess` 是异步消费进程，会根据用户创建的 `Job` 或者使用 `@AsyncQueueMessage` 的代码块，执行消费逻辑。
+`Job` 和 `@AsyncQueueMessage` 都是需要投递和执行的任务，即数据、消费逻辑都会在任务中定义。
+
+- `Job` 类中成员变量即为待消费的数据，`handle()` 方法则为消费逻辑。
+- `@AsyncQueueMessage` 注解的方法，构造函数传入的数据即为待消费的数据，方法体则为消费逻辑。
+
+```mermaid
+graph LR;
+A[服务启动]-->B[异步消费进程启动]
+B-->C[监听队列]
+D[投递任务]-->C
+C-->F[消费任务]
+```
+
 ## 使用
 
 ### 配置异步消费进程
 
 组件已经提供了默认 `异步消费进程`，只需要将它配置到 `config/autoload/processes.php` 中即可。
-
-> ConsumerProcess 是异步消费进程，会根据用户创建的 Job 或者使用 @AsyncQueueMessage 的代码块，执行消费逻辑。
 
 ```php
 <?php
