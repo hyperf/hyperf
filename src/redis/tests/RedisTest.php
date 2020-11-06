@@ -158,15 +158,18 @@ class RedisTest extends TestCase
 
     public function testNewRedisCluster()
     {
-        $this->expectException(ConnectionException::class);
-        $this->expectExceptionMessage('Connection reconnect failed No valid seeds detected');
-
-        $container = $this->getContainer();
-        $pool = new RedisPoolStub($container, 'cluster1');
-        $container->shouldReceive('make')->once()->with(RedisPool::class, ['name' => 'cluster1'])->andReturn($pool);
-        $factory = new PoolFactory($container);
-        $redis = new RedisProxy($factory, 'cluster1');
-        $redis->get('test');
+        try {
+            $container = $this->getContainer();
+            $pool = new RedisPoolStub($container, 'cluster1');
+            $container->shouldReceive('make')->once()->with(RedisPool::class, ['name' => 'cluster1'])->andReturn($pool);
+            $factory = new PoolFactory($container);
+            $redis = new RedisProxy($factory, 'cluster1');
+            $redis->get('test');
+            $this->assertTrue(false);
+        } catch (\Throwable $exception) {
+            $this->assertInstanceOf(ConnectionException::class, $exception);
+            $this->assertStringNotContainsString('RedisCluster::__construct() expects parameter', $exception->getMessage());
+        }
     }
 
     private function getRedis()
