@@ -15,11 +15,13 @@ use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
 use Hyperf\Pool\Channel;
+use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Redis\Frequency;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
+use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Coroutine;
@@ -154,6 +156,19 @@ class RedisTest extends TestCase
         }
     }
 
+    public function testNewRedisCluster()
+    {
+        $this->expectException(ConnectionException::class);
+        $this->expectExceptionMessage('Connection reconnect failed No valid seeds detected');
+
+        $container = $this->getContainer();
+        $pool = new RedisPoolStub($container, 'cluster1');
+        $container->shouldReceive('make')->once()->with(RedisPool::class, ['name' => 'cluster1'])->andReturn($pool);
+        $factory = new PoolFactory($container);
+        $redis = new RedisProxy($factory, 'cluster1');
+        $redis->get('test');
+    }
+
     private function getRedis()
     {
         $container = $this->getContainer();
@@ -183,6 +198,17 @@ class RedisTest extends TestCase
                         'wait_timeout' => 3.0,
                         'heartbeat' => -1,
                         'max_idle_time' => 60,
+                    ],
+                ],
+                'cluster1' => [
+                    'timeout' => 1.0,
+                    'auth' => null,
+                    'cluster' => [
+                        'enable' => true,
+                        'name' => 'mycluster',
+                        'seeds' => [],
+                        'read_timeout' => 1.0,
+                        'persistent' => false,
                     ],
                 ],
             ],
