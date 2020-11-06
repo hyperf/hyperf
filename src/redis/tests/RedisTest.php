@@ -137,6 +137,23 @@ class RedisTest extends TestCase
         $this->assertSame(1, $pool->getCurrentConnections());
     }
 
+    public function testRedisClusterConstructor()
+    {
+        $ref = new \ReflectionClass(\RedisCluster::class);
+        $method = $ref->getMethod('__construct');
+        $names = [
+            'name', 'seeds', 'timeout', 'read_timeout', 'persistent', 'auth',
+        ];
+        foreach ($method->getParameters() as $parameter) {
+            $this->assertSame(array_shift($names), $parameter->getName());
+            if ($parameter->getName() === 'seeds') {
+                $this->assertSame('array', $parameter->getType()->getName());
+            } else {
+                $this->assertNull($parameter->getType());
+            }
+        }
+    }
+
     private function getRedis()
     {
         $container = $this->getContainer();
