@@ -14,6 +14,7 @@ namespace Hyperf\Amqp;
 use Hyperf\Amqp\Event\AfterConsume;
 use Hyperf\Amqp\Event\BeforeConsume;
 use Hyperf\Amqp\Event\FailToConsume;
+use Hyperf\Amqp\Event\WaitTimeout;
 use Hyperf\Amqp\Exception\MessageException;
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Amqp\Message\MessageInterface;
@@ -23,6 +24,7 @@ use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Process\ProcessManager;
 use Hyperf\Utils\Coroutine\Concurrent;
 use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -89,10 +91,18 @@ class Consumer extends Builder
         );
 
         while ($channel->is_consuming() && ProcessManager::isRunning()) {
-            $channel->wait();
-            if ($maxConsumption > 0 && ++$currentConsumption >= $maxConsumption) {
-                break;
+            try {
+                $channel->wait(null, false, $consumerMessage->getWaitTimeout());
+                if ($maxConsumption > 0 && ++$currentConsumption >= $maxConsumption) {
+                    break;
+                }
+            } catch (AMQPTimeoutException $exception) {
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new WaitTimeout($consumerMessage));
             }
+        }
+
+        while (! $concurrent->isEmpty()) {
+            usleep(10 * 1000);
         }
 
         $pool->release($connection);
