@@ -50,6 +50,10 @@ class RedisConnectionStub extends RedisConnection
 
         $this->lastUseTime = microtime(true);
 
+        if ($this->config['cluster']['enable'] ?? false) {
+            $this->createRedisCluster();
+        }
+
         return true;
     }
 
