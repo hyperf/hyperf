@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -49,7 +49,18 @@ class RedisConnectionTest extends TestCase
             'cluster' => [
                 'enable' => false,
                 'name' => null,
-                'seeds' => [],
+                'seeds' => [
+                    '127.0.0.1:6379',
+                ],
+                'read_timeout' => 0.0,
+                'persistent' => false,
+            ],
+            'sentinel' => [
+                'enable' => false,
+                'master_name' => '',
+                'nodes' => [],
+                'persistent' => '',
+                'read_timeout' => 0,
             ],
             'options' => [],
             'pool' => [
@@ -118,6 +129,16 @@ class RedisConnectionTest extends TestCase
                         'wait_timeout' => 3.0,
                         'heartbeat' => -1,
                         'max_idle_time' => 1,
+                    ],
+                    'cluster' => [
+                        'enable' => false,
+                        'name' => null,
+                        'seeds' => [
+                            '127.0.0.1:6379',
+                        ],
+                    ],
+                    'sentinel' => [
+                        'enable' => false,
                     ],
                 ],
             ],

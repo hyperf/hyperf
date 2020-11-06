@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -34,9 +34,9 @@ return [
             'connection_timeout' => 3.0,
             'read_write_timeout' => 6.0,
             'context' => null,
-            'keepalive' => false,
+            'keepalive' => true,
             'heartbeat' => 3,
-            'close_on_destruct' => true,
+            'close_on_destruct' => false,
         ],
     ],
 ];

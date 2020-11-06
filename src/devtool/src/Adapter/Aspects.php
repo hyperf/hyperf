@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -19,7 +19,7 @@ class Aspects extends AbstractAdapter
 {
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $result = $this->prepareResult($input);
+        $result = $this->prepareResult();
         $this->dump($result, $output);
     }
 

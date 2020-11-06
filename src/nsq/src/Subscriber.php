@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -96,6 +96,6 @@ class Subscriber
 
     private function isMatchResponse($response): bool
     {
-        return ! is_null($this->getPayload()) && (int) $this->type === self::TYPE_RESPONSE && $response === $this->getPayload();
+        return (int) $this->type === self::TYPE_RESPONSE && $response === $this->getPayload();
     }
 }

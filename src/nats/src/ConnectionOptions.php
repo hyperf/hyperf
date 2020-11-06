@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -422,7 +422,7 @@ class ConnectionOptions
     /**
      * Initialize the parameters.
      *
-     * @param array|Traversable $options the connection options
+     * @param array|mixed|Traversable $options the connection options
      *
      * @throws Exception when $options are an invalid type
      */

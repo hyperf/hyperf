@@ -22,7 +22,7 @@
         "psr/container": "^1.0",
         "psr/http-server-middleware": "^1.0",
         "psr/http-message": "^1.0",
-        "hyperf/contract": "^1.0.0"
+        "hyperf/contract": "~2.0.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
@@ -47,7 +47,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Dispatcher\\ConfigProvider"

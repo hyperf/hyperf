@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -15,7 +15,6 @@ use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Database\Commands\ModelOption;
-use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\BelongsTo;
@@ -28,16 +27,13 @@ use Hyperf\Database\Model\Relations\MorphMany;
 use Hyperf\Database\Model\Relations\MorphOne;
 use Hyperf\Database\Model\Relations\MorphTo;
 use Hyperf\Database\Model\Relations\MorphToMany;
-use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Utils\Str;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
-use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\Reflection\ReflectionClass;
 use Roave\BetterReflection\Reflection\ReflectionMethod;
-use Roave\BetterReflection\Reflector\ClassReflector;
-use Roave\BetterReflection\TypesFinder\FindReturnType;
+use RuntimeException;
 
 class ModelUpdateVisitor extends NodeVisitorAbstract
 {
@@ -80,18 +76,6 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
      */
     protected $properties = [];
 
-    /**
-     * @deprecated v2.0
-     * @var ClassReflector
-     */
-    protected static $reflector;
-
-    /**
-     * @deprecated v2.0
-     * @var FindReturnType
-     */
-    protected static $return;
-
     public function __construct($class, $columns, ModelOption $option)
     {
         $this->class = new $class();
@@ -111,7 +95,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 }
                 return $node;
             case $node instanceof Node\Stmt\Class_:
-                $node->setDocComment(new Doc($this->parseProperty()));
+                $node->setDocComment(new Doc($this->parse()));
                 return $node;
         }
     }
@@ -182,11 +166,24 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             is_subclass_of($caster, CastsInboundAttributes::class);
     }
 
-    protected function parseProperty(): string
+    protected function parse(): string
     {
         $doc = '/**' . PHP_EOL;
+        $doc = $this->parseProperty($doc);
+        if ($this->option->isWithIde()) {
+            $doc .= ' * @mixin \\' . GenerateModelIDEVisitor::toIDEClass(get_class($this->class)) . PHP_EOL;
+        }
+        $doc .= ' */';
+        return $doc;
+    }
+
+    protected function parseProperty(string $doc): string
+    {
         foreach ($this->columns as $column) {
             [$name, $type, $comment] = $this->getProperty($column);
+            if (array_key_exists($name, $this->properties)) {
+                continue;
+            }
             $doc .= sprintf(' * @property %s $%s %s', $type, $name, $comment) . PHP_EOL;
         }
         foreach ($this->properties as $name => $property) {
@@ -203,14 +200,13 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 continue;
             }
         }
-        $doc .= ' */';
         return $doc;
     }
 
     protected function initPropertiesFromMethods()
     {
         /** @var ReflectionClass $reflection */
-        $reflection = self::getReflector()->reflect(get_class($this->class));
+        $reflection = BetterReflectionManager::getReflector()->reflect(get_class($this->class));
         $methods = $reflection->getImmediateMethods();
         $namespace = $reflection->getDeclaringNamespaceAst();
         $casts = $this->class->getCasts();
@@ -222,8 +218,15 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 // Magic get<name>Attribute
                 $name = Str::snake(substr($method->getName(), 3, -9));
                 if (! empty($name)) {
-                    $type = self::getReturnFinder()->__invoke($method, $namespace);
-                    $this->setProperty($name, $type, true, null);
+                    $type = BetterReflectionManager::getReturnFinder()->__invoke($method, $namespace);
+                    if (empty($type) && $returnType = $method->getReturnType()) {
+                        $returnTypeName = $returnType->getName();
+                        if (class_exists($returnTypeName)) {
+                            $returnTypeName = '\\' . $returnTypeName;
+                        }
+                        $type = [$returnTypeName];
+                    }
+                    $this->setProperty($name, $type, true, null, '', false, 1);
                 }
                 continue;
             }
@@ -232,18 +235,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 // Magic set<name>Attribute
                 $name = Str::snake(substr($method->getName(), 3, -9));
                 if (! empty($name)) {
-                    $this->setProperty($name, null, null, true);
-                }
-                continue;
-            }
-
-            if (Str::startsWith($method->getName(), 'scope') && $method->getName() !== 'scopeQuery') {
-                $name = Str::camel(substr($method->getName(), 5));
-                if (! empty($name)) {
-                    $args = $method->getParameters();
-                    // Remove the first ($query) argument
-                    array_shift($args);
-                    $this->setMethod($name, [Builder::class, $method->getDeclaringClass()->getName()], $args);
+                    $this->setProperty($name, null, null, true, '', false, 1);
                 }
                 continue;
             }
@@ -260,26 +252,29 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                     $expr instanceof Node\Expr\MethodCall
                     && $expr->name instanceof Node\Identifier
                     && is_string($expr->name->name)
-                    && isset($expr->args[0])
-                    && $expr->args[0] instanceof Node\Arg
                 ) {
+                    $loop = 0;
+                    while ($expr->var instanceof Node\Expr\MethodCall) {
+                        if ($loop > 32) {
+                            throw new RuntimeException('max loop reached!');
+                        }
+                        ++$loop;
+                        $expr = $expr->var;
+                    }
                     $name = $expr->name->name;
                     if (array_key_exists($name, self::RELATION_METHODS)) {
-                        if ($expr->args[0]->value instanceof Node\Expr\ClassConstFetch) {
-                            $related = $expr->args[0]->value->class->toCodeString();
-                        } else {
-                            $related = (string) ($expr->args[0]->value);
-                        }
-
-                        if (strpos($name, 'Many') !== false) {
-                            // Collection or array of models (because Collection is Arrayable)
-                            $this->setProperty($method->getName(), [$this->getCollectionClass($related), $related . '[]'], true);
-                        } elseif ($name === 'morphTo') {
+                        if ($name === 'morphTo') {
                             // Model isn't specified because relation is polymorphic
-                            $this->setProperty($method->getName(), [Model::class], true);
-                        } else {
-                            // Single model is returned
-                            $this->setProperty($method->getName(), [$related], true);
+                            $this->setProperty($method->getName(), ['\\' . Model::class], true);
+                        } elseif (isset($expr->args[0]) && $expr->args[0]->value instanceof Node\Expr\ClassConstFetch) {
+                            $related = $expr->args[0]->value->class->toCodeString();
+                            if (strpos($name, 'Many') !== false) {
+                                // Collection or array of models (because Collection is Arrayable)
+                                $this->setProperty($method->getName(), [$this->getCollectionClass($related), $related . '[]'], true);
+                            } else {
+                                // Single model is returned
+                                $this->setProperty($method->getName(), [$related], true);
+                            }
                         }
                     }
                 }
@@ -293,7 +288,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             }
 
             if (is_subclass_of($caster, CastsAttributes::class)) {
-                $ref = self::getReflector()->reflect($caster);
+                $ref = BetterReflectionManager::getReflector()->reflect($caster);
                 $method = $ref->getMethod('get');
                 if ($ast = $method->getReturnStatementsAst()[0]) {
                     if ($ast instanceof Node\Stmt\Return_
@@ -307,7 +302,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         }
     }
 
-    protected function setProperty(string $name, array $type = null, bool $read = null, bool $write = null, string $comment = '', bool $nullable = false)
+    protected function setProperty(string $name, array $type = null, bool $read = null, bool $write = null, string $comment = '', bool $nullable = false, int $priority = 0)
     {
         if (! isset($this->properties[$name])) {
             $this->properties[$name] = [];
@@ -315,6 +310,10 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             $this->properties[$name]['read'] = false;
             $this->properties[$name]['write'] = false;
             $this->properties[$name]['comment'] = (string) $comment;
+            $this->properties[$name]['priority'] = 0;
+        }
+        if ($this->properties[$name]['priority'] > $priority) {
+            return;
         }
         if ($type !== null) {
             if ($nullable) {
@@ -328,17 +327,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         if ($write !== null) {
             $this->properties[$name]['write'] = $write;
         }
-    }
-
-    protected function setMethod(string $name, array $type = [], array $arguments = [])
-    {
-        $methods = array_change_key_case($this->methods, CASE_LOWER);
-
-        if (! isset($methods[strtolower($name)])) {
-            $this->methods[$name] = [];
-            $this->methods[$name]['type'] = implode('|', $type);
-            $this->methods[$name]['arguments'] = $arguments;
-        }
+        $this->properties[$name]['priority'] = $priority;
     }
 
     protected function getProperty($column): array
@@ -404,23 +393,5 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         /** @var Model $model */
         $model = new $className();
         return '\\' . get_class($model->newCollection());
-    }
-
-    protected static function getReturnFinder(): FindReturnType
-    {
-        if (static::$return instanceof FindReturnType) {
-            return static::$return;
-        }
-
-        return static::$return = new FindReturnType();
-    }
-
-    protected static function getReflector(): ClassReflector
-    {
-        if (self::$reflector instanceof ClassReflector) {
-            return self::$reflector;
-        }
-
-        return self::$reflector = (new BetterReflection())->classReflector();
     }
 }

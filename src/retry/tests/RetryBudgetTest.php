@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -62,11 +62,26 @@ class RetryBudgetTest extends TestCase
             2,
             0.1
         );
+        $this->assertTrue($budget->consume());
         System::sleep(1.2);
         $this->assertTrue($budget->consume());
         $this->assertTrue($budget->consume());
         $this->assertTrue($budget->consume());
-        $this->assertTrue($budget->consume());
         $this->assertTrue(! $budget->consume());
+
+        // Retry budget should never have more than 1 token in this test
+        $budget = new RetryBudget(
+            1,
+            1,
+            1
+        );
+        $budget->init();
+        $ref = new \ReflectionClass(RetryBudget::class);
+        $prop = $ref->getProperty('budget');
+        $prop->setAccessible(true);
+        System::sleep(1.2);
+        $this->assertLessThanOrEqual(1, $prop->getValue($budget)->count());
+        System::sleep(1.2);
+        $this->assertLessThanOrEqual(1, $prop->getValue($budget)->count());
     }
 }

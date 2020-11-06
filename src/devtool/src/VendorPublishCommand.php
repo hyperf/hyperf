@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -59,7 +59,8 @@ class VendorPublishCommand extends SymfonyCommand
 
         $extra = Composer::getMergedExtra()[$package] ?? null;
         if (empty($extra)) {
-            return $output->writeln(sprintf('<fg=red>package [%s] misses `extra` field in composer.json.</>', $package));
+            $output->writeln(sprintf('<fg=red>package [%s] misses `extra` field in composer.json.</>', $package));
+            return SIGTERM;
         }
 
         $provider = Arr::get($extra, 'hyperf.config');
@@ -67,7 +68,8 @@ class VendorPublishCommand extends SymfonyCommand
 
         $publish = Arr::get($config, 'publish');
         if (empty($publish)) {
-            return $output->writeln(sprintf('<fg=red>No file can be published from package [%s].</>', $package));
+            $output->writeln(sprintf('<fg=red>No file can be published from package [%s].</>', $package));
+            return SIGTERM;
         }
 
         if ($show) {
@@ -87,7 +89,8 @@ class VendorPublishCommand extends SymfonyCommand
             }));
 
             if (empty($item)) {
-                return $output->writeln(sprintf('<fg=red>No file can be published from [%s].</>', $id));
+                $output->writeln(sprintf('<fg=red>No file can be published from [%s].</>', $id));
+                return SIGTERM;
             }
 
             return $this->copy($package, $item);

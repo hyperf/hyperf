@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -15,6 +15,7 @@ use Hyperf\Utils\Backoff;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\HigherOrderTapProxy;
+use Hyperf\Utils\Optional;
 use Hyperf\Utils\Parallel;
 use Hyperf\Utils\Str;
 
@@ -66,11 +67,11 @@ if (! function_exists('retry')) {
     /**
      * Retry an operation a given number of times.
      *
-     * @param int $times
+     * @param float|int $times
      * @param int $sleep millisecond
      * @throws \Throwable
      */
-    function retry($times, callable $callback, $sleep = 0)
+    function retry($times, callable $callback, int $sleep = 0)
     {
         $backoff = new Backoff($sleep);
         beginning:
@@ -126,7 +127,7 @@ if (! function_exists('data_get')) {
     /**
      * Get an item from an array or object using "dot" notation.
      *
-     * @param array|int|string $key
+     * @param null|array|int|string $key
      * @param null|mixed $default
      * @param mixed $target
      */
@@ -207,6 +208,7 @@ if (! function_exists('data_set')) {
         } else {
             $target = [];
             if ($segments) {
+                $target[$segment] = [];
                 data_set($target[$segment], $segments, $value, $overwrite);
             } elseif ($overwrite) {
                 $target[$segment] = $value;
@@ -387,10 +389,11 @@ if (! function_exists('getter')) {
 if (! function_exists('parallel')) {
     /**
      * @param callable[] $callables
+     * @param int $concurrent if $concurrent is equal to 0, that means unlimit
      */
-    function parallel(array $callables)
+    function parallel(array $callables, int $concurrent = 0)
     {
-        $parallel = new Parallel();
+        $parallel = new Parallel($concurrent);
         foreach ($callables as $key => $callable) {
             $parallel->add($callable, $key);
         }
@@ -420,8 +423,10 @@ if (! function_exists('make')) {
 if (! function_exists('run')) {
     /**
      * Run callable in non-coroutine environment, all hook functions by Swoole only available in the callable.
+     *
+     * @param array|callable $callbacks
      */
-    function run(callable $callback, int $flags = SWOOLE_HOOK_ALL): bool
+    function run($callbacks, int $flags = SWOOLE_HOOK_ALL): bool
     {
         if (Coroutine::inCoroutine()) {
             throw new RuntimeException('Function \'run\' only execute in non-coroutine environment.');
@@ -429,7 +434,7 @@ if (! function_exists('run')) {
 
         \Swoole\Runtime::enableCoroutine(true, $flags);
 
-        $result = \Swoole\Coroutine\Run($callback);
+        $result = \Swoole\Coroutine\Run(...(array) $callbacks);
 
         \Swoole\Runtime::enableCoroutine(false);
         return $result;
@@ -443,5 +448,23 @@ if (! function_exists('swoole_hook_flags')) {
     function swoole_hook_flags(): int
     {
         return defined('SWOOLE_HOOK_FLAGS') ? SWOOLE_HOOK_FLAGS : SWOOLE_HOOK_ALL;
+    }
+}
+
+if (! function_exists('optional')) {
+    /**
+     * Provide access to optional objects.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    function optional($value = null, callable $callback = null)
+    {
+        if (is_null($callback)) {
+            return new Optional($value);
+        }
+        if (! is_null($value)) {
+            return $callback($value);
+        }
     }
 }

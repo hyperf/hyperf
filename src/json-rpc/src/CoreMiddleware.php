@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -42,7 +42,12 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
                 // Route found, but the handler does not exist.
                 return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::INTERNAL_ERROR);
             }
-            $parameters = $this->parseParameters($controller, $action, $request->getParsedBody());
+            try {
+                $parameters = $this->parseParameters($controller, $action, $request->getParsedBody());
+            } catch (\InvalidArgumentException $exception) {
+                return $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::INVALID_PARAMS);
+            }
+
             try {
                 $response = $controllerInstance->{$action}(...$parameters);
             } catch (\Throwable $exception) {

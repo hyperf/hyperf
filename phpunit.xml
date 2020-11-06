@@ -13,6 +13,7 @@
             <directory suffix="Test.php">./src/amqp/tests</directory>
             <directory suffix="Test.php">./src/async-queue/tests</directory>
             <directory suffix="Test.php">./src/cache/tests</directory>
+            <directory suffix="Test.php">./src/command/tests</directory>
             <directory suffix="Test.php">./src/config/tests</directory>
             <directory suffix="Test.php">./src/config-zookeeper/tests</directory>
             <directory suffix="Test.php">./src/constants/tests</directory>
@@ -39,14 +40,17 @@
             <directory suffix="Test.php">./src/model-cache/tests</directory>
             <directory suffix="Test.php">./src/paginator/tests</directory>
             <directory suffix="Test.php">./src/pool/tests</directory>
+            <directory suffix="Test.php">./src/process/tests</directory>
             <directory suffix="Test.php">./src/protocol/tests</directory>
             <directory suffix="Test.php">./src/rate-limit/tests</directory>
             <directory suffix="Test.php">./src/redis/tests</directory>
             <directory suffix="Test.php">./src/retry/tests</directory>
             <directory suffix="Test.php">./src/rpc/tests</directory>
+            <directory suffix="Test.php">./src/rpc-server/tests</directory>
             <directory suffix="Test.php">./src/server/tests</directory>
             <directory suffix="Test.php">./src/service-governance/tests</directory>
             <directory suffix="Test.php">./src/session/tests</directory>
+            <directory suffix="Test.php">./src/signal/tests</directory>
             <directory suffix="Test.php">./src/snowflake/tests</directory>
             <directory suffix="Test.php">./src/socket/tests</directory>
             <directory suffix="Test.php">./src/socketio-server/tests</directory>
@@ -57,6 +61,7 @@
             <directory suffix="Test.php">./src/translation/tests</directory>
             <directory suffix="Test.php">./src/utils/tests</directory>
             <directory suffix="Test.php">./src/validation/tests</directory>
+            <directory suffix="Test.php">./src/watcher/tests</directory>
             <directory suffix="Test.php">./src/websocket-client/tests</directory>
             <directory suffix="Test.php">./src/websocket-server/tests</directory>
         </testsuite>
@@ -66,6 +71,7 @@
             <directory suffix=".php">./src/amqp/src</directory>
             <directory suffix=".php">./src/async-queue/src</directory>
             <directory suffix=".php">./src/cache/src</directory>
+            <directory suffix=".php">./src/command/src</directory>
             <directory suffix=".php">./src/config/src</directory>
             <directory suffix=".php">./src/constants/src</directory>
             <directory suffix=".php">./src/consul/src</directory>

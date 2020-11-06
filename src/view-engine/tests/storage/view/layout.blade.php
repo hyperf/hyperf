@@ -1,0 +1,3 @@
+@yield("content")
+
+yield-content

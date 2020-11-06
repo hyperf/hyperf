@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -17,6 +17,7 @@ use Hyperf\Retry\Policy\ClassifierRetryPolicy;
 use Hyperf\Retry\Policy\FallbackRetryPolicy;
 use Hyperf\Retry\Policy\MaxAttemptsRetryPolicy;
 use Hyperf\Retry\Policy\SleepRetryPolicy;
+use Hyperf\Retry\RetryBudget;
 use Hyperf\Retry\RetryBudgetInterface;
 use Hyperf\Retry\SleepStrategyInterface;
 
@@ -112,11 +113,9 @@ class Retry extends AbstractRetry
      */
     public $fallback = '';
 
-    public function toArray(): array
+    public function __construct($value = null)
     {
-        if (is_array($this->retryBudget)) {
-            $this->retryBudget = make(RetryBudgetInterface::class, $this->retryBudget);
-        }
-        return parent::toArray();
+        parent::__construct($value);
+        $this->retryBudget = make(RetryBudget::class, $this->retryBudget);
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -61,7 +61,7 @@ class Render implements RenderInterface
     public function render(string $template, array $data = []): ResponseInterface
     {
         return $this->response()
-            ->withAddedHeader('content-type', 'text/html')
+            ->withAddedHeader('content-type', $this->getContentType())
             ->withBody(new SwooleStream($this->getContents($template, $data)));
     }
 
@@ -85,6 +85,13 @@ class Render implements RenderInterface
         } catch (\Throwable $throwable) {
             throw new RenderException($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
+    }
+
+    public function getContentType(): string
+    {
+        $charset = ! empty($this->config['charset']) ? '; charset=' . $this->config['charset'] : '';
+
+        return 'text/html' . $charset;
     }
 
     protected function response(): ResponseInterface
