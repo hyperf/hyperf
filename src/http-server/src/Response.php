@@ -33,6 +33,7 @@ use Hyperf\Utils\Traits\Macroable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
+use Swoole\Http\Response as SwooleResponse;
 use function get_class;
 
 class Response implements PsrResponseInterface, ResponseInterface
@@ -43,6 +44,11 @@ class Response implements PsrResponseInterface, ResponseInterface
      * @var null|PsrResponseInterface
      */
     protected $response;
+
+    /**
+     * @var null|SwooleResponse
+     */
+    protected static $swooleResponse;
 
     public function __construct(?PsrResponseInterface $response = null)
     {
@@ -487,11 +493,13 @@ class Response implements PsrResponseInterface, ResponseInterface
         return Context::get(PsrResponseInterface::class);
     }
 
-    public function chunk(string $data, int $size): PsrResponseInterface
+    public function chunk(string $data): void
     {
-        return $this->getResponse()
-            ->withAddedHeader('Content-Length', $size)
-            ->withAddedHeader('Transfer-Encoding', 'chunked')
-            ->withBody(new SwooleStream($data));
+        static::$swooleResponse->write($data);
+    }
+
+    public function setSwooleService(SwooleResponse $response)
+    {
+        static::$swooleResponse = $response;
     }
 }

@@ -58,5 +58,5 @@ interface ResponseInterface
      */
     public function withCookie(Cookie $cookie): ResponseInterface;
 
-    public function chunk(string $data, int $size): PsrResponseInterface;
+    public function chunk(string $data): void;
 }
