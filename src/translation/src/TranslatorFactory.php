@@ -24,7 +24,7 @@ class TranslatorFactory
         // configuration so we can easily get both of these values from there.
 
         $config = $container->get(ConfigInterface::class);
-        $locale = $config->get('translation.locale');
+        $locale = $config->get('translation.locale') ?: 'zh_cn';
         $fallbackLocale = $config->get('translation.fallback_locale');
 
         $loader = $container->get(TranslatorLoaderInterface::class);
