@@ -21,7 +21,7 @@ class FileLoaderFactory
     {
         $config = $container->get(ConfigInterface::class);
         $files = $container->get(Filesystem::class);
-        $path = $config->get('translation.path');
+        $path = $config->get('translation.path', BASE_PATH . '/storage/languages');
 
         return make(FileLoader::class, compact('files', 'path'));
     }
