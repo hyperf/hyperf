@@ -26,6 +26,7 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
+use Hyperf\HttpServer\Response as HttpServerResponse;
 
 /**
  * @internal
@@ -51,6 +52,13 @@ class ServerTest extends TestCase
             $dispatcher,
             $emitter,
         ]);
+
+
+        $container->shouldReceive('get')
+            ->with(HttpServerResponse::class)
+            ->andReturnUsing(function () {
+                return new HttpServerResponse(null);
+            });
 
         $dispatcher->shouldReceive('dispatch')->andReturnUsing(function ($exception) {
             if ($exception instanceof HttpException) {
