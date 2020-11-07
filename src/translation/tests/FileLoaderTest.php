@@ -13,12 +13,13 @@ namespace HyperfTest\Translation;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Di\Container;
 use Hyperf\Translation\FileLoader;
 use Hyperf\Translation\FileLoaderFactory;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
 
 /**
  * @internal
@@ -33,9 +34,13 @@ class FileLoaderTest extends TestCase
 
     public function testFileLoaderFactory()
     {
-        $container = Mockery::mock(ContainerInterface::class);
+        $container = Mockery::mock(Container::class);
+        ApplicationContext::setContainer($container);
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([]));
         $container->shouldReceive('get')->with(Filesystem::class)->andReturn(new Filesystem());
+        $container->shouldReceive('make')->with(FileLoader::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new FileLoader($args['files'], $args['path']);
+        });
         $factory = new FileLoaderFactory();
         $loader = $factory($container);
         $ref = new \ReflectionClass($loader);
