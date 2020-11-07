@@ -14,13 +14,14 @@ namespace HyperfTest\Translation;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\TranslatorLoaderInterface;
+use Hyperf\Di\Container;
 use Hyperf\Translation\MessageSelector;
 use Hyperf\Translation\Translator;
 use Hyperf\Translation\TranslatorFactory;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Collection;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
 
 /**
  * @internal
@@ -35,9 +36,13 @@ class TranslatorTest extends TestCase
 
     public function testTranslatorFactory()
     {
-        $container = Mockery::mock(ContainerInterface::class);
+        $container = Mockery::mock(Container::class);
+        ApplicationContext::setContainer($container);
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([]));
         $container->shouldReceive('get')->with(TranslatorLoaderInterface::class)->andReturn(Mockery::mock(TranslatorLoaderInterface::class));
+        $container->shouldReceive('make')->with(Translator::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new Translator($args['loader'], $args['locale']);
+        });
         $factory = new TranslatorFactory();
         $loader = $factory($container);
         $ref = new \ReflectionClass($loader);
