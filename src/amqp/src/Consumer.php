@@ -101,7 +101,7 @@ class Consumer extends Builder
             }
         }
 
-        while (! $concurrent->isEmpty()) {
+        while ($concurrent && ! $concurrent->isEmpty()) {
             usleep(10 * 1000);
         }
 
