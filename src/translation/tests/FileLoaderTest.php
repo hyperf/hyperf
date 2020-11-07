@@ -11,10 +11,14 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Translation;
 
+use Hyperf\Config\Config;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Translation\FileLoader;
+use Hyperf\Translation\FileLoaderFactory;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 /**
  * @internal
@@ -25,6 +29,19 @@ class FileLoaderTest extends TestCase
     protected function tearDown(): void
     {
         Mockery::close();
+    }
+
+    public function testFileLoaderFactory()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([]));
+        $container->shouldReceive('get')->with(Filesystem::class)->andReturn(new Filesystem());
+        $factory = new FileLoaderFactory();
+        $loader = $factory($container);
+        $ref = new \ReflectionClass($loader);
+        $path = $ref->getProperty('path');
+        $path->setAccessible(true);
+        $this->assertSame(BASE_PATH . '/storage/languages', $path->getValue($loader));
     }
 
     public function testLoadMethodWithoutNamespacesProperlyCallsLoader()

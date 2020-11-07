@@ -11,12 +11,16 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Translation;
 
+use Hyperf\Config\Config;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\TranslatorLoaderInterface;
 use Hyperf\Translation\MessageSelector;
 use Hyperf\Translation\Translator;
+use Hyperf\Translation\TranslatorFactory;
 use Hyperf\Utils\Collection;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 /**
  * @internal
@@ -27,6 +31,19 @@ class TranslatorTest extends TestCase
     protected function tearDown(): void
     {
         Mockery::close();
+    }
+
+    public function testTranslatorFactory()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([]));
+        $container->shouldReceive('get')->with(TranslatorLoaderInterface::class)->andReturn(Mockery::mock(TranslatorLoaderInterface::class));
+        $factory = new TranslatorFactory();
+        $loader = $factory($container);
+        $ref = new \ReflectionClass($loader);
+        $locale = $ref->getProperty('locale');
+        $locale->setAccessible(true);
+        $this->assertSame('zh_CN', $locale->getValue($loader));
     }
 
     public function testHasMethodReturnsFalseWhenReturnedTranslationIsNull()
