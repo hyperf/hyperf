@@ -256,4 +256,22 @@ class ResponseTest extends TestCase
 
         $this->assertSame($psrResponse, Context::get(PsrResponseInterface::class));
     }
+
+    public function testChunk()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $request = Mockery::mock(RequestInterface::class);
+        $request->shouldReceive('getUri')->andReturn(new Uri('http://127.0.0.1:9501'));
+        $container->shouldReceive('get')->with(RequestInterface::class)->andReturn($request);
+        ApplicationContext::setContainer($container);
+
+        $psrResponse = new \Hyperf\HttpMessage\Base\Response();
+        Context::set(PsrResponseInterface::class, $psrResponse);
+        $responseEmitter = $this->createMock(ResponseEmitter::class);
+
+        $response = new Response($responseEmitter);
+        $res = $response->chunk('hyperf');
+        $this->assertNull($res);
+
+    }
 }
