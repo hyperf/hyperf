@@ -36,6 +36,7 @@ class SwooleStreamTest extends TestCase
         $response = $response->withBody(new SwooleFileStream($file));
 
         $responseEmitter = new ResponseEmitter();
+        $responseEmitter->setSwooleResponse($swooleResponse);
         $this->assertSame(null, $responseEmitter->emit($response, true));
     }
 
@@ -51,6 +52,7 @@ class SwooleStreamTest extends TestCase
         $response = $response->withBody(new SwooleStream($content))->withHeader('TOKEN', 'xxx');
 
         $responseEmitter = new ResponseEmitter();
+        $responseEmitter->setSwooleResponse($swooleResponse);
         $this->assertSame(null, $responseEmitter->emit($response, true));
     }
 
