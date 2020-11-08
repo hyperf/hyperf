@@ -202,7 +202,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             if (! $psr7Response || ! $psr7Response instanceof Psr7Response) {
                 return;
             }
-            $this->responseEmitter->emit($psr7Response, $response, true);
+            $this->responseEmitter->emit($psr7Response, true);
         }
     }
 

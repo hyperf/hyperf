@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
+use Hyperf\Contract\ResponseEmitterInterface;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Stream\SwooleFileStream;
 use Hyperf\HttpMessage\Stream\SwooleStream;
@@ -33,7 +34,6 @@ use Hyperf\Utils\Traits\Macroable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
-use Swoole\Http\Response as SwooleResponse;
 use function get_class;
 
 class Response implements PsrResponseInterface, ResponseInterface
@@ -46,13 +46,14 @@ class Response implements PsrResponseInterface, ResponseInterface
     protected $response;
 
     /**
-     * @var null|SwooleResponse
+     * @var ResponseEmitterInterface
      */
-    protected static $swooleResponse;
+    protected $responseEmitter;
 
-    public function __construct(?PsrResponseInterface $response = null)
+    public function __construct(ResponseEmitterInterface $responseEmitter, ?PsrResponseInterface $response = null)
     {
         $this->response = $response;
+        $this->responseEmitter = $responseEmitter;
     }
 
     public function __call($name, $arguments)
@@ -495,11 +496,9 @@ class Response implements PsrResponseInterface, ResponseInterface
 
     public function chunk(string $data): void
     {
-        static::$swooleResponse->write($data);
-    }
-
-    public function setSwooleService(SwooleResponse $response)
-    {
-        static::$swooleResponse = $response;
+        $response = $this->getResponse()
+            ->withAddedHeader('Transfer-Encoding', 'chunked')
+            ->withBody(new SwooleStream($data));
+        $this->responseEmitter->emit($response,true);
     }
 }

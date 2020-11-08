@@ -18,44 +18,47 @@ use Swoole\Http\Response;
 
 class ResponseEmitter implements ResponseEmitterInterface
 {
-    public function emit(ResponseInterface $response, Response $swooleResponse, bool $withContent = true)
+    /**
+     * @var Response
+     */
+    protected static $swooleResponse;
+
+    public function emit(ResponseInterface $response, bool $withContent = true)
     {
-        if (strtolower($swooleResponse->header['Upgrade'] ?? '') === 'websocket') {
+        if (strtolower(static::$swooleResponse->header['Upgrade'] ?? '') === 'websocket') {
             return;
         }
-        $this->buildSwooleResponse($swooleResponse, $response);
+        $this->buildSwooleResponse($response);
         $content = $response->getBody();
         if ($content instanceof FileInterface) {
-            return $swooleResponse->sendfile($content->getFilename());
+            return static::$swooleResponse->sendfile($content->getFilename());
         }
+
+
         if ($withContent) {
             $transferEncodingArray = $response->getHeader('Transfer-Encoding');
             if (in_array('chunked', $transferEncodingArray)) {
-                // chunk
-                $size = $response->getHeader('Content-Length')[0];
-                $contentArray = str_split($content->getContents(), (int)$size);
-                foreach ($contentArray as $item) {
-                    $swooleResponse->setHeader('Content-Length', (string)strlen($item));
-                    $swooleResponse->write($item);
+                if (empty($content->getContents())) {
+                    static::$swooleResponse->end();
+                } else {
+                    static::$swooleResponse->write($content->getContents());
                 }
-                $swooleResponse->setCookie('Content-Length', '0');
-                $swooleResponse->end();
             } else {
-                $swooleResponse->end($content->getContents());
+                static::$swooleResponse->end($content->getContents());
             }
 
         } else {
-            $swooleResponse->end();
+            static::$swooleResponse->end();
         }
     }
 
-    protected function buildSwooleResponse(Response $swooleResponse, ResponseInterface $response): void
+    protected function buildSwooleResponse(ResponseInterface $response): void
     {
         /*
          * Headers
          */
         foreach ($response->getHeaders() as $key => $value) {
-            $swooleResponse->header($key, implode(';', $value));
+            static::$swooleResponse->header($key, implode(';', $value));
         }
 
         /*
@@ -70,7 +73,7 @@ class ResponseEmitter implements ResponseEmitterInterface
                             'isRaw', 'getValue', 'getName', 'getExpiresTime', 'getPath', 'getDomain', 'isSecure', 'isHttpOnly', 'getSameSite',
                         ])) {
                             $value = $cookie->isRaw() ? $cookie->getValue() : rawurlencode($cookie->getValue());
-                            $swooleResponse->rawcookie($cookie->getName(), $value, $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly(), (string) $cookie->getSameSite());
+                            static::$swooleResponse->rawcookie($cookie->getName(), $value, $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly(), (string) $cookie->getSameSite());
                         }
                     }
                 }
@@ -80,16 +83,16 @@ class ResponseEmitter implements ResponseEmitterInterface
         /*
          * Trailers
          */
-        if (method_exists($response, 'getTrailers') && method_exists($swooleResponse, 'trailer')) {
+        if (method_exists($response, 'getTrailers') && method_exists(static::$swooleResponse, 'trailer')) {
             foreach ($response->getTrailers() ?? [] as $key => $value) {
-                $swooleResponse->trailer($key, $value);
+                static::$swooleResponse->trailer($key, $value);
             }
         }
 
         /*
          * Status code
          */
-        $swooleResponse->status($response->getStatusCode());
+        static::$swooleResponse->status($response->getStatusCode());
     }
 
     protected function isMethodsExists(object $object, array $methods): bool
@@ -101,4 +104,10 @@ class ResponseEmitter implements ResponseEmitterInterface
         }
         return true;
     }
+
+    public function setSwooleResponse(Response $response)
+    {
+        static::$swooleResponse = $response;
+    }
+
 }

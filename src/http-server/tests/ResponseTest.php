@@ -50,25 +50,26 @@ class ResponseTest extends TestCase
 
         $psrResponse = new \Hyperf\HttpMessage\Base\Response();
         Context::set(PsrResponseInterface::class, $psrResponse);
+        $responseEmitter = $this->createMock(ResponseEmitter::class);
 
-        $response = new Response();
+        $response = new Response($responseEmitter);
         $res = $response->redirect('https://www.baidu.com');
 
         $this->assertSame(302, $res->getStatusCode());
         $this->assertSame('https://www.baidu.com', $res->getHeaderLine('Location'));
 
-        $response = new Response();
+        $response = new Response($responseEmitter);
         $res = $response->redirect('http://www.baidu.com');
 
         $this->assertSame(302, $res->getStatusCode());
         $this->assertSame('http://www.baidu.com', $res->getHeaderLine('Location'));
 
-        $response = new Response();
+        $response = new Response($responseEmitter);
         $res = $response->redirect('/index');
         $this->assertSame(302, $res->getStatusCode());
         $this->assertSame('http://127.0.0.1:9501/index', $res->getHeaderLine('Location'));
 
-        $response = new Response();
+        $response = new Response($responseEmitter);
         $res = $response->redirect('index');
         $this->assertSame(302, $res->getStatusCode());
         $this->assertSame('http://127.0.0.1:9501/index', $res->getHeaderLine('Location'));
@@ -81,8 +82,9 @@ class ResponseTest extends TestCase
 
         $psrResponse = new \Hyperf\HttpMessage\Base\Response();
         Context::set(PsrResponseInterface::class, $psrResponse);
+        $responseEmitter = $this->createMock(ResponseEmitter::class);
 
-        $response = new Response();
+        $response = new Response($responseEmitter);
         $reflectionClass = new \ReflectionClass(Response::class);
         $reflectionMethod = $reflectionClass->getMethod('toXml');
         $reflectionMethod->setAccessible(true);
@@ -156,8 +158,9 @@ class ResponseTest extends TestCase
 
         $psrResponse = new \Hyperf\HttpMessage\Base\Response();
         Context::set(PsrResponseInterface::class, $psrResponse);
+        $responseEmitter = $this->createMock(ResponseEmitter::class);
 
-        $response = new Response();
+        $response = new Response($responseEmitter);
         $json = $response->json([
             'kstring' => 'string',
             'kint1' => 1,
@@ -185,8 +188,9 @@ class ResponseTest extends TestCase
 
         $psrResponse = new \Hyperf\HttpMessage\Base\Response();
         Context::set(PsrResponseInterface::class, $psrResponse);
+        $responseEmitter = $this->createMock(ResponseEmitter::class);
 
-        $response = new Response();
+        $response = new Response($responseEmitter);
         $json = $response->json((object) ['id' => 1, 'name' => 'Hyperf']);
 
         $this->assertSame('{"id":1,"name":"Hyperf"}', $json->getBody()->getContents());
@@ -199,8 +203,9 @@ class ResponseTest extends TestCase
 
         $psrResponse = new \Hyperf\HttpMessage\Base\Response();
         Context::set(PsrResponseInterface::class, $psrResponse);
+        $responseEmitter = $this->createMock(ResponseEmitter::class);
 
-        $response = new Response();
+        $response = new Response($responseEmitter);
         $response = $response->withBody(new SwooleStream('xxx'));
 
         $this->assertInstanceOf(PsrResponseInterface::class, $response);
@@ -233,8 +238,9 @@ class ResponseTest extends TestCase
         $swooleResponse->shouldReceive('end')->once()->andReturn(true);
 
         Context::set(PsrResponseInterface::class, $psrResponse = new \Hyperf\HttpMessage\Server\Response());
+        $responseEmitter = $this->createMock(ResponseEmitter::class);
 
-        $response = new Response();
+        $response = new Response($responseEmitter);
         $response = $response->withCookie($cookie1)->withCookie($cookie2)->withHeader('X-Token', 'xxx')->withStatus(200);
 
         $this->assertInstanceOf(Response::class, $response);
@@ -246,7 +252,7 @@ class ResponseTest extends TestCase
         $this->assertInstanceOf(PsrResponseInterface::class, $response);
 
         $responseEmitter = new ResponseEmitter();
-        $responseEmitter->emit($response, $swooleResponse, true);
+        $responseEmitter->emit($response, true);
 
         $this->assertSame($psrResponse, Context::get(PsrResponseInterface::class));
     }

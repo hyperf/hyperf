@@ -17,12 +17,12 @@ use Swoole\Http\Response;
 
 class ResponseEmitter extends \Hyperf\HttpServer\ResponseEmitter
 {
-    public function emit(ResponseInterface $response, Response $swooleResponse, bool $withContent = true)
+    public function emit(ResponseInterface $response, bool $withContent = true)
     {
         if ($response instanceof JsonResource) {
             $response = $response->toResponse();
         }
 
-        return parent::emit($response, $swooleResponse, $withContent);
+        return parent::emit($response, $withContent);
     }
 }

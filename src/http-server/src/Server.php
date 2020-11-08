@@ -102,7 +102,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     public function onRequest(SwooleRequest $request, SwooleResponse $response): void
     {
         try {
-            $this->container->get(Response::class)->setSwooleService($response);
+            $this->responseEmitter->setSwooleResponse($response);
             CoordinatorManager::until(Constants::WORKER_START)->yield();
 
             [$psr7Request, $psr7Response] = $this->initRequestAndResponse($request, $response);
@@ -126,9 +126,9 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
                 return;
             }
             if (! isset($psr7Request) || $psr7Request->getMethod() === 'HEAD') {
-                $this->responseEmitter->emit($psr7Response, $response, false);
+                $this->responseEmitter->emit($psr7Response, false);
             } else {
-                $this->responseEmitter->emit($psr7Response, $response, true);
+                $this->responseEmitter->emit($psr7Response, true);
             }
         }
     }
