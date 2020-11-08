@@ -431,7 +431,7 @@ class Response implements PsrResponseInterface, ResponseInterface
             throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
         }
 
-        return new static($response->{$name}(...$arguments));
+        return new static($this->responseEmitter, $response->{$name}(...$arguments));
     }
 
     /**

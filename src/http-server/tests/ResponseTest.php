@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\HttpServer;
 
+use Hyperf\Contract\ResponseEmitterInterface;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
@@ -252,6 +253,7 @@ class ResponseTest extends TestCase
         $this->assertInstanceOf(PsrResponseInterface::class, $response);
 
         $responseEmitter = new ResponseEmitter();
+        $responseEmitter->setSwooleResponse($swooleResponse);
         $responseEmitter->emit($response, true);
 
         $this->assertSame($psrResponse, Context::get(PsrResponseInterface::class));

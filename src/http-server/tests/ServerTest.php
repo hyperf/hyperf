@@ -67,7 +67,7 @@ class ServerTest extends TestCase
             return null;
         });
 
-        $emitter->shouldReceive('emit')->once()->andReturnUsing(function ($response) {
+        $emitter->shouldReceive('emit')->andReturnUsing(function ($response) {
             $this->assertInstanceOf(Psr7Response::class, $response);
             $this->assertSame(400, $response->getStatusCode());
         });
