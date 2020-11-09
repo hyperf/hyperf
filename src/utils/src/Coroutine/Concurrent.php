@@ -14,7 +14,7 @@ namespace Hyperf\Utils\Coroutine;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Utils\ApplicationContext;
-use Swoole\Coroutine;
+use Hyperf\Utils\Coroutine;
 use Swoole\Coroutine\Channel;
 
 /**

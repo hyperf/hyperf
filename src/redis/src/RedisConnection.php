@@ -164,14 +164,17 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     protected function createRedisCluster()
     {
         try {
-            $seeds = $this->config['cluster']['seeds'] ?? [];
-            $name = $this->config['cluster']['name'] ?? null;
-            $readTimeout = $this->config['cluster']['read_timeout'] ?? 0.0;
-            $persistent = $this->config['cluster']['persistent'] ?? false;
-            $timeout = $this->config['timeout'] ?? null;
-            $auth = $this->config['auth'] ?? null;
+            $paramaters = [];
+            $paramaters[] = $this->config['cluster']['name'] ?? null;
+            $paramaters[] = $this->config['cluster']['seeds'] ?? [];
+            $paramaters[] = $this->config['timeout'] ?? 0.0;
+            $paramaters[] = $this->config['cluster']['read_timeout'] ?? 0.0;
+            $paramaters[] = $this->config['cluster']['persistent'] ?? false;
+            if (isset($this->config['auth'])) {
+                $paramaters[] = $this->config['auth'];
+            }
 
-            $redis = new \RedisCluster($name, $seeds, $timeout, $readTimeout, $persistent, $auth);
+            $redis = new \RedisCluster(...$paramaters);
         } catch (\Throwable $e) {
             throw new ConnectionException('Connection reconnect failed ' . $e->getMessage());
         }

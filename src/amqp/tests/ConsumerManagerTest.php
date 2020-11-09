@@ -60,6 +60,7 @@ class ConsumerManagerTest extends TestCase
                 $this->assertSame($queue, $message->getQueue());
                 $this->assertSame($nums, $item->nums);
                 $this->assertSame($maxConsumption, $message->getMaxConsumption());
+                $this->assertSame(0, $message->getWaitTimeout());
                 break;
             }
         }

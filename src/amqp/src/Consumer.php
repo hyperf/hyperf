@@ -14,7 +14,7 @@ namespace Hyperf\Amqp;
 use Hyperf\Amqp\Event\AfterConsume;
 use Hyperf\Amqp\Event\BeforeConsume;
 use Hyperf\Amqp\Event\FailToConsume;
-use Hyperf\Amqp\Exception\MaxConsumptionException;
+use Hyperf\Amqp\Event\WaitTimeout;
 use Hyperf\Amqp\Exception\MessageException;
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Amqp\Message\MessageInterface;
@@ -24,6 +24,7 @@ use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Process\ProcessManager;
 use Hyperf\Utils\Coroutine\Concurrent;
 use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -79,10 +80,7 @@ class Consumer extends Builder
             false,
             false,
             false,
-            function (AMQPMessage $message) use ($consumerMessage, $concurrent, $maxConsumption, &$currentConsumption) {
-                if ($maxConsumption > 0 && $currentConsumption++ >= $maxConsumption) {
-                    throw new MaxConsumptionException();
-                }
+            function (AMQPMessage $message) use ($consumerMessage, $concurrent) {
                 $callback = $this->getCallback($consumerMessage, $message);
                 if (! $concurrent instanceof Concurrent) {
                     return parallel([$callback]);
@@ -92,11 +90,19 @@ class Consumer extends Builder
             }
         );
 
-        try {
-            while ($channel->is_consuming() && ProcessManager::isRunning()) {
-                $channel->wait();
+        while ($channel->is_consuming() && ProcessManager::isRunning()) {
+            try {
+                $channel->wait(null, false, $consumerMessage->getWaitTimeout());
+                if ($maxConsumption > 0 && ++$currentConsumption >= $maxConsumption) {
+                    break;
+                }
+            } catch (AMQPTimeoutException $exception) {
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new WaitTimeout($consumerMessage));
             }
-        } catch (MaxConsumptionException $ex) {
+        }
+
+        while ($concurrent && ! $concurrent->isEmpty()) {
+            usleep(10 * 1000);
         }
 
         $pool->release($connection);
