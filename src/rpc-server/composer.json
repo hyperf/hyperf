@@ -37,6 +37,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\RpcServer\\": "tests/"
         }
     },
     "config": {

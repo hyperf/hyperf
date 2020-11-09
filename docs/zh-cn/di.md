@@ -126,7 +126,7 @@ class IndexController
 }
 ```
 
-> 通过 `@Inject` 注解注入可作用于 DI 创建的对象，也可作用于通过 `new` 关键词创建的对象；
+> 通过 `@Inject` 注解注入可作用于 DI 创建的（单例）对象，也可作用于通过 `new` 关键词创建的对象；
 
 > 使用 `@Inject` 注解时需 `use Hyperf\Di\Annotation\Inject;` 命名空间；
 

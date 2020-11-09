@@ -56,6 +56,11 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
      */
     protected $maxConsumption = 0;
 
+    /**
+     * @var float|int
+     */
+    protected $waitTimeout = 0;
+
     public function consumeMessage($data, AMQPMessage $message): string
     {
         return $this->consume($data);
@@ -124,6 +129,17 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
     public function setMaxConsumption(int $maxConsumption)
     {
         $this->maxConsumption = $maxConsumption;
+        return $this;
+    }
+
+    public function getWaitTimeout()
+    {
+        return $this->waitTimeout;
+    }
+
+    public function setWaitTimeout($timeout)
+    {
+        $this->waitTimeout = $timeout;
         return $this;
     }
 

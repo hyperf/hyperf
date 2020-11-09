@@ -16,7 +16,6 @@ use Hyperf\Database\Query\Grammars\MySqlGrammar as QueryGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Schema\Grammars\MySqlGrammar as SchemaGrammar;
 use Hyperf\Database\Schema\MySqlBuilder;
-use PDO;
 
 class MySqlConnection extends Connection
 {

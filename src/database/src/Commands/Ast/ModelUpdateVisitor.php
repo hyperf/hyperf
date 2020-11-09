@@ -15,7 +15,6 @@ use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Database\Commands\ModelOption;
-use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\BelongsTo;
@@ -96,7 +95,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 }
                 return $node;
             case $node instanceof Node\Stmt\Class_:
-                $node->setDocComment(new Doc($this->parseProperty()));
+                $node->setDocComment(new Doc($this->parse()));
                 return $node;
         }
     }
@@ -167,9 +166,19 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             is_subclass_of($caster, CastsInboundAttributes::class);
     }
 
-    protected function parseProperty(): string
+    protected function parse(): string
     {
         $doc = '/**' . PHP_EOL;
+        $doc = $this->parseProperty($doc);
+        if ($this->option->isWithIde()) {
+            $doc .= ' * @mixin \\' . GenerateModelIDEVisitor::toIDEClass(get_class($this->class)) . PHP_EOL;
+        }
+        $doc .= ' */';
+        return $doc;
+    }
+
+    protected function parseProperty(string $doc): string
+    {
         foreach ($this->columns as $column) {
             [$name, $type, $comment] = $this->getProperty($column);
             if (array_key_exists($name, $this->properties)) {
@@ -191,7 +200,6 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 continue;
             }
         }
-        $doc .= ' */';
         return $doc;
     }
 
@@ -228,17 +236,6 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 $name = Str::snake(substr($method->getName(), 3, -9));
                 if (! empty($name)) {
                     $this->setProperty($name, null, null, true, '', false, 1);
-                }
-                continue;
-            }
-
-            if (Str::startsWith($method->getName(), 'scope') && $method->getName() !== 'scopeQuery') {
-                $name = Str::camel(substr($method->getName(), 5));
-                if (! empty($name)) {
-                    $args = $method->getParameters();
-                    // Remove the first ($query) argument
-                    array_shift($args);
-                    $this->setMethod($name, [Builder::class, $method->getDeclaringClass()->getName()], $args);
                 }
                 continue;
             }
@@ -331,17 +328,6 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             $this->properties[$name]['write'] = $write;
         }
         $this->properties[$name]['priority'] = $priority;
-    }
-
-    protected function setMethod(string $name, array $type = [], array $arguments = [])
-    {
-        $methods = array_change_key_case($this->methods, CASE_LOWER);
-
-        if (! isset($methods[strtolower($name)])) {
-            $this->methods[$name] = [];
-            $this->methods[$name]['type'] = implode('|', $type);
-            $this->methods[$name]['arguments'] = $arguments;
-        }
     }
 
     protected function getProperty($column): array

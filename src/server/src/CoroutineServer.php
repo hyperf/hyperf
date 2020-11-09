@@ -110,6 +110,7 @@ class CoroutineServer implements ServerInterface
 
     /**
      * @deprecated v2.2
+     * @param mixed $server
      */
     public static function isCoroutineServer($server): bool
     {
