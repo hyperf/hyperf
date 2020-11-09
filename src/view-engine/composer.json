@@ -12,16 +12,16 @@
     "require": {
         "php": ">=7.2",
         "ext-json": "*",
-        "hyperf/config": "~2.0.0",
-        "hyperf/di": "~2.0.0",
-        "hyperf/event": "~2.0.0",
-        "hyperf/utils": "~2.0.0",
-        "hyperf/view": "~2.0.0"
+        "hyperf/config": "~2.1.0",
+        "hyperf/di": "~2.1.0",
+        "hyperf/event": "~2.1.0",
+        "hyperf/utils": "~2.1.0",
+        "hyperf/view": "~2.1.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.16",
-        "hyperf/session": "~2.0.0",
-        "hyperf/validation": "~2.0.0",
+        "hyperf/session": "~2.1.0",
+        "hyperf/validation": "~2.1.0",
         "phpstan/phpstan": "^0.12",
         "phpunit/phpunit": "*",
         "psr/http-message": "^1.0"
