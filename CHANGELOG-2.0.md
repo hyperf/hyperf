@@ -1,5 +1,9 @@
 # v2.0.19 - TBD
 
+## Fixed
+
+- [#2783](https://github.com/hyperf/hyperf/pull/2783) Fixed nsq consumer does not works in coroutine style server.
+
 # v2.0.18 - 2020-11-09
 
 ## Added
