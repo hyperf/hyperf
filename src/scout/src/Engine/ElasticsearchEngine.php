@@ -48,10 +48,8 @@ class ElasticsearchEngine extends Engine
     public function __construct(Client $client, ?string $index = null)
     {
         $this->elastic = $client;
-        $this->initVersion($client);
-        // When the version of elasticsearch is more than 7.0.0, it does not support type, so set `null` to `$index`.
-        if (version_compare(static::$version, '7.0.0', '<')) {
-            $this->index = $index;
+        if ($index) {
+            $this->index = $this->initIndex($client, $index);
         }
     }
 
@@ -192,7 +190,7 @@ class ElasticsearchEngine extends Engine
             ->unsearchable();
     }
 
-    protected function initVersion(Client $client): void
+    protected function initIndex(Client $client, string $index): ?string
     {
         if (! static::$version) {
             try {
@@ -201,6 +199,13 @@ class ElasticsearchEngine extends Engine
                 static::$version = '0.0.0';
             }
         }
+
+        // When the version of elasticsearch is more than 7.0.0, it does not support type, so set `null` to `$index`.
+        if (version_compare(static::$version, '7.0.0', '<')) {
+            return $index;
+        }
+
+        return null;
     }
 
     /**
