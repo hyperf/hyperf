@@ -5,6 +5,10 @@
 - [#2783](https://github.com/hyperf/hyperf/pull/2783) Fixed nsq consumer does not works in coroutine style server.
 - [#2788](https://github.com/hyperf/hyperf/pull/2788) Fixed call non-static method `__handlePropertyHandler()` statically in class proxy.
 
+## Optimized
+
+- [#2750](https://github.com/hyperf/hyperf/pull/2750) Use elastic `index` instead of `type` for `searchableAs`, when the config of `index` is `null` or the elastic version is more than `7.0.0`.
+
 # v2.0.18 - 2020-11-09
 
 ## Added
