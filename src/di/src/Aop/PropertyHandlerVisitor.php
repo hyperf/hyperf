@@ -65,12 +65,12 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
             if ($this->visitorMetadata->hasExtends) {
                 $constructor->stmts[] = $this->buildCallParentConstructorStatement();
             }
-            $constructor->stmts[] = $this->buildStaticCallStatement();
+            $constructor->stmts[] = $this->buildMethodCallStatement();
             $node->stmts = array_merge([$this->buildProxyTraitUseStatement()], [$constructor], $node->stmts);
             $this->visitorMetadata->hasConstructor = true;
         } else {
             if ($node instanceof Node\Stmt\ClassMethod && $node->name->toString() === '__construct') {
-                $node->stmts = array_merge([$this->buildStaticCallStatement()], $node->stmts);
+                $node->stmts = array_merge([$this->buildMethodCallStatement()], $node->stmts);
             }
             if ($node instanceof Node\Stmt\Class_ && ! $node->isAnonymous()) {
                 $node->stmts = array_merge([$this->buildProxyTraitUseStatement()], $node->stmts);
@@ -115,9 +115,9 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
         ]);
     }
 
-    protected function buildStaticCallStatement(): Node\Stmt\Expression
+    protected function buildMethodCallStatement(): Node\Stmt\Expression
     {
-        return new Node\Stmt\Expression(new Node\Expr\StaticCall(new Name('self'), '__handlePropertyHandler', [
+        return new Node\Stmt\Expression(new Node\Expr\MethodCall(new Node\Expr\Variable('this'), '__handlePropertyHandler', [
             new Node\Arg(new Node\Scalar\MagicConst\Class_()),
         ]));
     }
