@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#2783](https://github.com/hyperf/hyperf/pull/2783) Fixed nsq consumer does not works in coroutine style server.
+- [#2788](https://github.com/hyperf/hyperf/pull/2788) Fixed call non-static method statically.
 
 # v2.0.18 - 2020-11-09
 
