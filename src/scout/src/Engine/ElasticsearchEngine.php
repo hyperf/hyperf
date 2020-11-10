@@ -22,9 +22,16 @@ use Hyperf\Utils\Collection as BaseCollection;
 class ElasticsearchEngine extends Engine
 {
     /**
-     * Index where the models will be saved.
+     * Elastic server version.
      *
      * @var string
+     */
+    public static $version;
+
+    /**
+     * Index where the models will be saved.
+     *
+     * @var null|string
      */
     protected $index;
 
@@ -37,13 +44,13 @@ class ElasticsearchEngine extends Engine
 
     /**
      * Create a new engine instance.
-     *
-     * @param $index
      */
-    public function __construct(Client $client, $index)
+    public function __construct(Client $client, ?string $index = null)
     {
         $this->elastic = $client;
-        $this->index = $index;
+        if ($index) {
+            $this->index = $this->initIndex($client, $index);
+        }
     }
 
     /**
@@ -55,13 +62,19 @@ class ElasticsearchEngine extends Engine
     {
         $params['body'] = [];
         $models->each(function ($model) use (&$params) {
-            $params['body'][] = [
-                'update' => [
+            if ($this->index) {
+                $update = [
                     '_id' => $model->getKey(),
                     '_index' => $this->index,
                     '_type' => $model->searchableAs(),
-                ],
-            ];
+                ];
+            } else {
+                $update = [
+                    '_id' => $model->getKey(),
+                    '_index' => $model->searchableAs(),
+                ];
+            }
+            $params['body'][] = ['update' => $update];
             $params['body'][] = [
                 'doc' => $model->toSearchableArray(),
                 'doc_as_upsert' => true,
@@ -79,13 +92,19 @@ class ElasticsearchEngine extends Engine
     {
         $params['body'] = [];
         $models->each(function ($model) use (&$params) {
-            $params['body'][] = [
-                'delete' => [
+            if ($this->index) {
+                $delete = [
                     '_id' => $model->getKey(),
                     '_index' => $this->index,
                     '_type' => $model->searchableAs(),
-                ],
-            ];
+                ];
+            } else {
+                $delete = [
+                    '_id' => $model->getKey(),
+                    '_index' => $model->searchableAs(),
+                ];
+            }
+            $params['body'][] = ['delete' => $delete];
         });
         $this->elastic->bulk($params);
     }
@@ -171,6 +190,24 @@ class ElasticsearchEngine extends Engine
             ->unsearchable();
     }
 
+    protected function initIndex(Client $client, string $index): ?string
+    {
+        if (! static::$version) {
+            try {
+                static::$version = $client->info()['version']['number'];
+            } catch (\Throwable $exception) {
+                static::$version = '0.0.0';
+            }
+        }
+
+        // When the version of elasticsearch is more than 7.0.0, it does not support type, so set `null` to `$index`.
+        if (version_compare(static::$version, '7.0.0', '<')) {
+            return $index;
+        }
+
+        return null;
+    }
+
     /**
      * Perform the given search on the engine.
      *
@@ -189,6 +226,10 @@ class ElasticsearchEngine extends Engine
                 ],
             ],
         ];
+        if (! $this->index) {
+            unset($params['type']);
+            $params['index'] = $builder->index ?: $builder->model->searchableAs();
+        }
         if ($sort = $this->sort($builder)) {
             $params['body']['sort'] = $sort;
         }
