@@ -4,6 +4,7 @@
 
 - [#2783](https://github.com/hyperf/hyperf/pull/2783) Fixed nsq consumer does not works in coroutine style server.
 - [#2788](https://github.com/hyperf/hyperf/pull/2788) Fixed call non-static method `__handlePropertyHandler()` statically in class proxy.
+- [#2790](https://github.com/hyperf/hyperf/pull/2790) Fixed `BootProcessListener` of `config-etcd` does not works in coroutine style server.
 
 ## Optimized
 
