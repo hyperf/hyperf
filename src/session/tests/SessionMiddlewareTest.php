@@ -110,7 +110,7 @@ class SessionMiddlewareTest extends TestCase
         $config->shouldReceive('get')->with('session.options.expire_on_close')->andReturn(0);
         $config->shouldReceive('get')->with('session.options.session_name', 'HYPERF_SESSION_ID')->andReturn('HYPERF_SESSION_ID');
         $config->shouldReceive('get')->with('session.options.domain')->andReturn(null);
-        $config->shouldReceive('get')->with('session.options.expire_minutes', 5 * 60)->andReturn(5 * 60);
+        $config->shouldReceive('get')->with('session.options.expire_minutes', 5 * 60)->andReturn(10 * 60);
 
         $sessionManager = new SessionManager($container, $config);
         $middleware = new SessionMiddleware($sessionManager, $config);
@@ -121,7 +121,7 @@ class SessionMiddlewareTest extends TestCase
 
         /** @var Cookie $cookie */
         $cookie = $response->getCookies()['']['/'][$session->getName()];
-        $this->assertSame($time + (5 * 60 * 60), $cookie->getExpiresTime());
+        $this->assertSame($time + (10 * 60 * 60), $cookie->getExpiresTime());
     }
 
     public function testSessionOptionsDomain()

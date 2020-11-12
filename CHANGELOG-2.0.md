@@ -1,5 +1,9 @@
 # v2.0.19 - TBD
 
+## Added
+
+- [#2794](https://github.com/hyperf/hyperf/pull/2794) Added `options.expire_minutes` for `hyperf/session`, you can use it to control the expire time for cookies.
+
 ## Fixed
 
 - [#2783](https://github.com/hyperf/hyperf/pull/2783) Fixed nsq consumer does not works in coroutine style server.
