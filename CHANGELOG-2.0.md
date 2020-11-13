@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#2794](https://github.com/hyperf/hyperf/pull/2794) Added `options.cookie_lifetime` for `hyperf/session`, you can use it to control the expire time for cookies.
+- [#2794](https://github.com/hyperf/hyperf/pull/2794) [#2802](https://github.com/hyperf/hyperf/pull/2802) Added `options.cookie_lifetime` for `hyperf/session`, you can use it to control the expire time for cookies.
 
 ## Fixed
 
