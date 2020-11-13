@@ -124,7 +124,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             if (! isset($psr7Response)) {
                 return;
             }
-            if (! isset($psr7Request) || $psr7Request->getMethod() === 'HEAD') {
+            if (isset($psr7Request) && $psr7Request->getMethod() === 'HEAD') {
                 $this->responseEmitter->emit($psr7Response, $response, false);
             } else {
                 $this->responseEmitter->emit($psr7Response, $response, true);
