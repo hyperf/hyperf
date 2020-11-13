@@ -64,7 +64,7 @@ class SessionMiddlewareTest extends TestCase
         $config->shouldReceive('get')->with('session.options.expire_on_close')->andReturn(1);
         $config->shouldReceive('get')->with('session.options.session_name', 'HYPERF_SESSION_ID')->andReturn('HYPERF_SESSION_ID');
         $config->shouldReceive('get')->with('session.options.domain')->andReturn(null);
-        $config->shouldReceive('get')->with('session.options.expire_minutes', 5 * 60)->andReturn(5 * 60);
+        $config->shouldReceive('get')->with('session.options.cookie_lifetime', 5 * 60)->andReturn(5 * 60);
 
         $sessionManager = new SessionManager($container, $config);
         $middleware = new SessionMiddleware($sessionManager, $config);
@@ -110,7 +110,7 @@ class SessionMiddlewareTest extends TestCase
         $config->shouldReceive('get')->with('session.options.expire_on_close')->andReturn(0);
         $config->shouldReceive('get')->with('session.options.session_name', 'HYPERF_SESSION_ID')->andReturn('HYPERF_SESSION_ID');
         $config->shouldReceive('get')->with('session.options.domain')->andReturn(null);
-        $config->shouldReceive('get')->with('session.options.expire_minutes', 5 * 60)->andReturn(10 * 60);
+        $config->shouldReceive('get')->with('session.options.cookie_lifetime', 5 * 60 * 60)->andReturn(10 * 60 * 60);
 
         $sessionManager = new SessionManager($container, $config);
         $middleware = new SessionMiddleware($sessionManager, $config);
@@ -137,7 +137,7 @@ class SessionMiddlewareTest extends TestCase
                     'path' => BASE_PATH . '/runtime/session',
                     'gc_maxlifetime' => 1200,
                     'session_name' => 'HYPERF_SESSION_ID',
-                    'expire_minutes' => 5 * 60,
+                    'cookie_lifetime' => 5 * 60 * 60,
                 ],
             ],
         ]);
@@ -163,7 +163,7 @@ class SessionMiddlewareTest extends TestCase
                     'gc_maxlifetime' => 1200,
                     'session_name' => 'HYPERF_SESSION_ID',
                     'domain' => null,
-                    'expire_minutes' => 5 * 60,
+                    'cookie_lifetime' => 5 * 60 * 60,
                 ],
             ],
         ]);
@@ -189,7 +189,7 @@ class SessionMiddlewareTest extends TestCase
                     'gc_maxlifetime' => 1200,
                     'session_name' => 'HYPERF_SESSION_ID',
                     'domain' => 'hyperf.wiki',
-                    'expire_minutes' => 5 * 60,
+                    'cookie_lifetime' => 5 * 60  * 60,
                 ],
             ],
         ]);
@@ -240,7 +240,7 @@ class SessionMiddlewareTest extends TestCase
         $config = Mockery::mock(ConfigInterface::class);
         $config->shouldReceive('get')->with('session.options.expire_on_close')->andReturn(0);
         $config->shouldReceive('get')->with('session.options.domain')->andReturn(null);
-        $config->shouldReceive('get')->with('session.options.expire_minutes', 5 * 60)->andReturn(5 * 60);
+        $config->shouldReceive('get')->with('session.options.cookie_lifetime', 5 * 60 * 60)->andReturn(5 * 60);
         $middleware = new SessionMiddleware(Mockery::mock(SessionManager::class), $config);
         $ref = new ReflectionClass($middleware);
         $method = $ref->getMethod('addCookieToResponse');

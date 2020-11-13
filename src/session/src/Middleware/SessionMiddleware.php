@@ -95,8 +95,8 @@ class SessionMiddleware implements MiddlewareInterface
         if ($this->config->get('session.options.expire_on_close')) {
             $expirationDate = 0;
         } else {
-            $expireMinutes = $this->config->get('session.options.expire_minutes', 5 * 60);
-            $expirationDate = Carbon::now()->addMinutes($expireMinutes)->getTimestamp();
+            $expireSeconds = $this->config->get('session.options.cookie_lifetime', 5 * 60 * 60);
+            $expirationDate = Carbon::now()->addSeconds($expireSeconds)->getTimestamp();
         }
         return $expirationDate;
     }

@@ -19,6 +19,6 @@ return [
         'gc_maxlifetime' => 1200,
         'session_name' => 'HYPERF_SESSION_ID',
         'domain' => null,
-        'expire_minutes' => 5 * 60,
+        'cookie_lifetime' => 5 * 60 * 60,
     ],
 ];
