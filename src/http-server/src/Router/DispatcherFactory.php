@@ -232,15 +232,11 @@ class DispatcherFactory
             // @Middlewares
             /** @var Middlewares $middlewares */
             $middlewares = $metadata[Middlewares::class];
-            $result = [];
-            foreach ($middlewares->middlewares as $middleware) {
-                $result[] = $middleware->middleware;
-            }
-            return $result;
+            return $middlewares->middlewares;
         }
         // @Middleware
         /** @var Middleware $middleware */
         $middleware = $metadata[Middleware::class];
-        return [$middleware->middleware];
+        return [$middleware];
     }
 }

@@ -12,12 +12,16 @@ declare(strict_types=1);
 namespace Hyperf\Dispatcher;
 
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
+use Hyperf\HttpServer\Annotation\Middleware;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use function array_unique;
-use function is_string;
-use function sprintf;
+use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Class AbstractRequestHandler
+ * @package Hyperf\Dispatcher
+ * @mixin RequestHandlerInterface
+ */
 abstract class AbstractRequestHandler
 {
     /**
@@ -46,7 +50,7 @@ abstract class AbstractRequestHandler
      */
     public function __construct(array $middlewares, $coreHandler, ContainerInterface $container)
     {
-        $this->middlewares = array_unique($middlewares);
+        $this->middlewares = $middlewares;
         $this->coreHandler = $coreHandler;
         $this->container = $container;
     }
@@ -56,16 +60,20 @@ abstract class AbstractRequestHandler
         if (! isset($this->middlewares[$this->offset]) && ! empty($this->coreHandler)) {
             $handler = $this->coreHandler;
         } else {
-            $handler = $this->middlewares[$this->offset];
-            is_string($handler) && $handler = $this->container->get($handler);
+            /** @var Middleware $middleware */
+            $middleware = $this->middlewares[$this->offset];
+            $handler = $this->container->get($middleware->middleware);
         }
         if (! method_exists($handler, 'process')) {
             throw new InvalidArgumentException(sprintf('Invalid middleware, it has to provide a process() method.'));
         }
-        return $handler->process($request, $this->next());
+        return call_user_func([$handler,'process'],$request,$this->next(),...$middleware->arguments ?? []);
     }
 
-    protected function next(): self
+    /**
+     * @return static | RequestHandlerInterface
+     */
+    protected function next() :self
     {
         ++$this->offset;
         return $this;
