@@ -16,6 +16,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Nacos\Client;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessCollector;
+use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine\Server as CoServer;
 use Swoole\Server;
@@ -55,7 +56,7 @@ class FetchConfigProcess extends AbstractProcess
         $cache = [];
         $config = $this->container->get(ConfigInterface::class);
         $client = $this->container->get(Client::class);
-        while (true) {
+        while (ProcessManager::isRunning()) {
             $remoteConfig = $client->pull();
             if ($remoteConfig != $cache) {
                 $pipeMessage = new PipeMessage($remoteConfig);

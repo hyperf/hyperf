@@ -17,6 +17,7 @@ use Hyperf\Framework\Event\OnShutdown;
 use Hyperf\Nacos\Api\NacosInstance;
 use Hyperf\Nacos\Contract\LoggerInterface;
 use Hyperf\Nacos\Instance;
+use Hyperf\Server\Event\CoroutineServerStop;
 use Psr\Container\ContainerInterface;
 
 class OnShutdownListener implements ListenerInterface
@@ -35,6 +36,7 @@ class OnShutdownListener implements ListenerInterface
     {
         return [
             OnShutdown::class,
+            CoroutineServerStop::class,
         ];
     }
 
