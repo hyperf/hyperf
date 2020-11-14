@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#1917](https://github.com/hyperf/hyperf/pull/1917) Fixed bug that `Request::isXmlHttpRequest` does not work.
+- [#2813](https://github.com/hyperf/hyperf/pull/2813) Fixed Middleware does not work as expected when repeatedly configured.
 
 ## Optimized
 
