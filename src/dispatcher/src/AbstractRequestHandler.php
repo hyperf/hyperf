@@ -47,7 +47,7 @@ abstract class AbstractRequestHandler
      */
     public function __construct(array $middlewares, $coreHandler, ContainerInterface $container)
     {
-        $this->middlewares = array_unique($middlewares);
+        $this->middlewares = array_values(array_unique($middlewares));
         $this->coreHandler = $coreHandler;
         $this->container = $container;
     }
