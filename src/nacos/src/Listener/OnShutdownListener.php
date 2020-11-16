@@ -23,6 +23,11 @@ use Psr\Container\ContainerInterface;
 class OnShutdownListener implements ListenerInterface
 {
     /**
+     * @var bool
+     */
+    private $processing = false;
+
+    /**
      * @var ContainerInterface
      */
     protected $container;
@@ -42,6 +47,11 @@ class OnShutdownListener implements ListenerInterface
 
     public function process(object $event)
     {
+        if ($this->processing) {
+            return;
+        }
+        $this->processing = true;
+
         $config = $this->container->get(ConfigInterface::class);
         if (! $config->get('nacos.enable', true)) {
             return;
