@@ -77,6 +77,14 @@ return [
 composer require duncan3dc/blade
 ```
 
+或者使用
+
+```bash
+composer require hyperf/view-engine
+```
+
+详细方式见文档 [视图引擎](./view-engine.md)
+
 ### 安装 Smarty 引擎
 
 ```bash
