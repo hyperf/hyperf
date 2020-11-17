@@ -1,5 +1,9 @@
 # v2.0.20 - TBD
 
+## Fixed
+
+- [#2820](https://github.com/hyperf/hyperf/pull/2820) Fixed amqp consumer does not works when using fanout exchange.
+
 # v2.0.19 - 2020-11-17
 
 ## Added
