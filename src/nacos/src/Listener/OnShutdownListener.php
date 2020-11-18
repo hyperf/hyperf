@@ -23,14 +23,14 @@ use Psr\Container\ContainerInterface;
 class OnShutdownListener implements ListenerInterface
 {
     /**
-     * @var bool
-     */
-    private $processing = false;
-
-    /**
      * @var ContainerInterface
      */
     protected $container;
+
+    /**
+     * @var bool
+     */
+    private $processing = false;
 
     public function __construct(ContainerInterface $container)
     {
