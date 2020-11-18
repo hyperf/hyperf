@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#2824](https://github.com/hyperf/hyperf/pull/2824) Added method `simplePaginate()` which return `PaginatorInterface` in `Query/Builder`.
+- [#2824](https://github.com/hyperf/hyperf/pull/2824) Added method `simplePaginate()` which return `PaginatorInterface` in `Hyperf\Database\Query\Builder`.
 
 ## Fixed
 
@@ -10,7 +10,7 @@
 
 ## Changed
 
-- [#2824](https://github.com/hyperf/hyperf/pull/2824) Changed `PaginatorInterface` to `LengthAwarePaginatorInterface` for method `paginate()` in `Query/Builder`.
+- [#2824](https://github.com/hyperf/hyperf/pull/2824) Changed the result from `PaginatorInterface` to `LengthAwarePaginatorInterface` for method `paginate()` in `Hyperf\Database\Query\Builder`.
 
 # v2.0.19 - 2020-11-17
 
