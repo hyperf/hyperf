@@ -2509,27 +2509,6 @@ class Builder
     }
 
     /**
-     * Create a new simple paginator instance.
-     */
-    protected function simplePaginator(Collection $items, int $perPage, int $currentPage, array $options)
-    {
-        $container = ApplicationContext::getContainer();
-        if (! method_exists($container, 'make')) {
-            throw new \RuntimeException('The DI container does not support make() method.');
-        }
-        return $container->make(PaginatorInterface::class, compact('items', 'perPage', 'currentPage', 'options'));
-    }
-
-    protected function paginator(Collection $items, int $total, int $perPage, int $currentPage, array $options)
-    {
-        $container = ApplicationContext::getContainer();
-        if (! method_exists($container, 'make')) {
-            throw new \RuntimeException('The DI container does not support make() method.');
-        }
-        return $container->make(LengthAwarePaginatorInterface::class, compact('items', 'total', 'perPage', 'currentPage', 'options'));
-    }
-
-    /**
      * Creates a subquery and parse it.
      *
      * @param \Closure|\Hyperf\Database\Query\Builder|string $query
