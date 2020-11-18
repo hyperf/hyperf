@@ -2885,4 +2885,28 @@ class Builder
             return ! $binding instanceof Expression;
         }));
     }
+
+    /**
+     * Create a new length-aware paginator instance.
+     */
+    protected function paginator(Collection $items, int $total, int $perPage, int $currentPage, array $options): LengthAwarePaginatorInterface
+    {
+        $container = ApplicationContext::getContainer();
+        if (! method_exists($container, 'make')) {
+            throw new \RuntimeException('The DI container does not support make() method.');
+        }
+        return $container->make(LengthAwarePaginatorInterface::class, compact('items', 'total', 'perPage', 'currentPage', 'options'));
+    }
+
+    /**
+     * Create a new simple paginator instance.
+     */
+    protected function simplePaginator(Collection $items, int $perPage, int $currentPage, array $options): PaginatorInterface
+    {
+        $container = ApplicationContext::getContainer();
+        if (! method_exists($container, 'make')) {
+            throw new \RuntimeException('The DI container does not support make() method.');
+        }
+        return $container->make(PaginatorInterface::class, compact('items', 'perPage', 'currentPage', 'options'));
+    }
 }

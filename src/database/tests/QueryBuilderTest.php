@@ -2633,7 +2633,7 @@ class QueryBuilderTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testPaginate()
+    public function testSimplePaginate()
     {
         $perPage = 16;
         $columns = ['test'];
@@ -2660,7 +2660,7 @@ class QueryBuilderTest extends TestCase
             return Context::get('path');
         });
 
-        $result = $builder->paginate($perPage, $columns, $pageName, $page);
+        $result = $builder->simplePaginate($perPage, $columns, $pageName, $page);
 
         $this->assertEquals(new Paginator($results, $perPage, $page, [
             'path' => $path,
@@ -2668,7 +2668,7 @@ class QueryBuilderTest extends TestCase
         ]), $result);
     }
 
-    public function testPaginateWithDefaultArguments()
+    public function testSimplePaginateWithDefaultArguments()
     {
         $perPage = 15;
         $columns = ['*'];
@@ -2701,7 +2701,7 @@ class QueryBuilderTest extends TestCase
             return Context::get('path');
         });
 
-        $result = $builder->paginate();
+        $result = $builder->simplePaginate();
 
         $this->assertEquals(new Paginator($results, $perPage, $page, [
             'path' => $path,
@@ -2709,7 +2709,7 @@ class QueryBuilderTest extends TestCase
         ]), $result);
     }
 
-    public function testPaginateWhenNoResults()
+    public function testSimplePaginateWhenNoResults()
     {
         $perPage = 15;
         $pageName = 'page';
@@ -2743,7 +2743,7 @@ class QueryBuilderTest extends TestCase
             return Context::get('path');
         });
 
-        $result = $builder->paginate();
+        $result = $builder->simplePaginate();
 
         $this->assertEquals(new Paginator($results, $perPage, $page, [
             'path' => $path,
