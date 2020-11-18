@@ -4,6 +4,10 @@
 
 - [#2820](https://github.com/hyperf/hyperf/pull/2820) Fixed amqp consumer does not works when using fanout exchange.
 
+## Optimized
+
+- [#2821](https://github.com/hyperf/hyperf/pull/2821) Optimized the exceptions thrown by `Json` and `Xml`.
+
 # v2.0.19 - 2020-11-17
 
 ## Added
