@@ -30,7 +30,7 @@ class OnShutdownListener implements ListenerInterface
     /**
      * @var bool
      */
-    private $processing = false;
+    private $processed = false;
 
     public function __construct(ContainerInterface $container)
     {
@@ -47,10 +47,10 @@ class OnShutdownListener implements ListenerInterface
 
     public function process(object $event)
     {
-        if ($this->processing) {
+        if ($this->processed) {
             return;
         }
-        $this->processing = true;
+        $this->processed = true;
 
         $config = $this->container->get(ConfigInterface::class);
         if (! $config->get('nacos.enable', true)) {
