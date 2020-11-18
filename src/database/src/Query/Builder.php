@@ -13,6 +13,7 @@ namespace Hyperf\Database\Query;
 
 use Closure;
 use DateTimeInterface;
+use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\ConnectionInterface;
@@ -1867,13 +1868,31 @@ class Builder
      * @param string $pageName
      * @param null|int $page
      */
-    public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null): PaginatorInterface
+    public function simplePaginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null): PaginatorInterface
     {
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
         $this->skip(($page - 1) * $perPage)->take($perPage + 1);
 
-        return $this->paginator($this->get($columns), $perPage, $page, [
+        return $this->simplePaginator($this->get($columns), $perPage, $page, [
+            'path' => Paginator::resolveCurrentPath(),
+            'pageName' => $pageName,
+        ]);
+    }
+
+    /**
+     * @param int $perPage
+     * @param string[] $columns
+     * @param string $pageName
+     * @param null $page
+     */
+    public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null): LengthAwarePaginatorInterface
+    {
+        $page = $page ?: Paginator::resolveCurrentPage($pageName);
+        $total = $this->getCountForPagination();
+        $results = $total ? $this->forPage($page, $perPage)->get($columns) : collect();
+
+        return $this->paginator($results, $total, $perPage, $page, [
             'path' => Paginator::resolveCurrentPath(),
             'pageName' => $pageName,
         ]);
@@ -2492,13 +2511,22 @@ class Builder
     /**
      * Create a new simple paginator instance.
      */
-    protected function paginator(Collection $items, int $perPage, int $currentPage, array $options)
+    protected function simplePaginator(Collection $items, int $perPage, int $currentPage, array $options)
     {
         $container = ApplicationContext::getContainer();
         if (! method_exists($container, 'make')) {
             throw new \RuntimeException('The DI container does not support make() method.');
         }
         return $container->make(PaginatorInterface::class, compact('items', 'perPage', 'currentPage', 'options'));
+    }
+
+    protected function paginator(Collection $items, int $total, int $perPage, int $currentPage, array $options)
+    {
+        $container = ApplicationContext::getContainer();
+        if (! method_exists($container, 'make')) {
+            throw new \RuntimeException('The DI container does not support make() method.');
+        }
+        return $container->make(LengthAwarePaginatorInterface::class, compact('items', 'total', 'perPage', 'currentPage', 'options'));
     }
 
     /**
