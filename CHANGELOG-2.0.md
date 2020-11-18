@@ -14,8 +14,8 @@
 
 ## Optimized
 
-- [#2821](https://github.com/hyperf/hyperf/pull/2821) Optimized the exceptions thrown by `Json` and `Xml`.
 - [#2805](https://github.com/hyperf/hyperf/pull/2805) Optimized nacos process which can stop safely.
+- [#2821](https://github.com/hyperf/hyperf/pull/2821) Optimized the exceptions thrown by `Json` and `Xml`.
 
 # v2.0.19 - 2020-11-17
 
