@@ -1,4 +1,22 @@
-# v2.0.19 - TBD
+# v2.0.20 - TBD
+
+## Added
+
+- [#2824](https://github.com/hyperf/hyperf/pull/2824) Added method `simplePaginate()` which return `PaginatorInterface` in `Hyperf\Database\Query\Builder`.
+
+## Fixed
+
+- [#2820](https://github.com/hyperf/hyperf/pull/2820) Fixed amqp consumer does not works when using fanout exchange.
+
+## Changed
+
+- [#2824](https://github.com/hyperf/hyperf/pull/2824) Changed the result from `PaginatorInterface` to `LengthAwarePaginatorInterface` for method `paginate()` in `Hyperf\Database\Query\Builder`.
+
+## Optimized
+
+- [#2821](https://github.com/hyperf/hyperf/pull/2821) Optimized the exceptions thrown by `Json` and `Xml`.
+
+# v2.0.19 - 2020-11-17
 
 ## Added
 
@@ -10,6 +28,7 @@
 - [#2788](https://github.com/hyperf/hyperf/pull/2788) Fixed call non-static method `__handlePropertyHandler()` statically in class proxy.
 - [#2790](https://github.com/hyperf/hyperf/pull/2790) Fixed `BootProcessListener` of `config-etcd` does not works in coroutine style server.
 - [#2803](https://github.com/hyperf/hyperf/pull/2803) Fixed response body does not exists when bad request.
+- [#2807](https://github.com/hyperf/hyperf/pull/2807) Fixed Middleware does not work as expected when repeatedly configured.
 
 ## Optimized
 
