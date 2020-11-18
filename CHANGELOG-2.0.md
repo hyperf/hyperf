@@ -12,6 +12,10 @@
 
 - [#2824](https://github.com/hyperf/hyperf/pull/2824) Changed the result from `PaginatorInterface` to `LengthAwarePaginatorInterface` for method `paginate()` in `Hyperf\Database\Query\Builder`.
 
+## Optimized
+
+- [#2821](https://github.com/hyperf/hyperf/pull/2821) Optimized the exceptions thrown by `Json` and `Xml`.
+
 # v2.0.19 - 2020-11-17
 
 ## Added
