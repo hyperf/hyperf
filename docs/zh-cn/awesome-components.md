@@ -134,7 +134,7 @@
 - [96qbhy/hyperf-auth](https://github.com/qbhy/hyperf-auth) 参考 laravel 的 auth 组件设计，支持 jwt 和 session 驱动，更轻巧更好用
 - [hyperf-ext/jwt](https://github.com/hyperf-ext/jwt) JWT 组件，实现了完整用于 JWT 认证的能力
 - [hyperf-ext/auth](https://github.com/hyperf-ext/auth) 移植自 `illuminate/auth`，基本完整的实现了 Laravel Auth 的功能特性
-- [donjan-deng/hyperf-casbin](https://github.com/donjan-deng/hyperf-casbin) 开源访问控制框架 [Casbin](https://casbin.org/docs/zh-CN/overview) 的Hyperf版
+- [donjan-deng/hyperf-casbin](https://github.com/donjan-deng/hyperf-casbin) 适配于 Hyperf 的开源访问控制框架 [Casbin](https://casbin.org/docs/zh-CN/overview)
 
 ## 第三方 SDK
 
