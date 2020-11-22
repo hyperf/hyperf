@@ -26,7 +26,6 @@ return [
         'producer_epoch' => -1,
         'partition_leader_epoch' => -1,
         'interval' => 0,
-        'protocols' => [],
         'session_timeout' => 60,
         'rebalance_timeout' => 60,
         'partitions' => [0],
