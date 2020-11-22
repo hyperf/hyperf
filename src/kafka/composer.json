@@ -19,12 +19,12 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/di": "^2.0",
-        "hyperf/pool": "^2.0",
-        "hyperf/process": "^2.0",
-        "hyperf/utils": "^2.0",
+        "hyperf/pool": "~2.0.0",
+        "hyperf/process": "~2.0.0",
+        "hyperf/utils": "~2.0.0",
         "longlang/phpkafka": "dev-master",
-        "psr/log": "^1.1"
+        "psr/container": "^1.0",
+        "psr/log": "^1.0"
     },
     "require-dev": {
         "swoole/ide-helper": "dev-master"
