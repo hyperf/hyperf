@@ -15,9 +15,11 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Kafka\ConsumerManager;
 use Hyperf\Server\Event\MainCoroutineServerStart;
-use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
 
+/**
+ * Must handle the event before `Hyperf\Process\Listener\BootProcessListener`.
+ */
 class BeforeMainServerStartListener implements ListenerInterface
 {
     /**
@@ -44,6 +46,6 @@ class BeforeMainServerStartListener implements ListenerInterface
     public function process(object $event)
     {
         // Init the consumer process.
-        ApplicationContext::getContainer()->get(ConsumerManager::class)->run();
+        $this->container->get(ConsumerManager::class)->run();
     }
 }

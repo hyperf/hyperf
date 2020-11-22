@@ -48,4 +48,9 @@ class Consumer extends AbstractAnnotation
      * @var int
      */
     public $nums = 1;
+
+    /**
+     * @var bool
+     */
+    public $enable = true;
 }

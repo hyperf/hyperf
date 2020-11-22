@@ -50,7 +50,7 @@ class ConsumerManager
          */
         foreach ($classes as $class => $annotation) {
             $instance = make($class);
-            if (! $instance instanceof AbstractConsumer) {
+            if (! $instance instanceof AbstractConsumer || ! $annotation->enable) {
                 continue;
             }
 
