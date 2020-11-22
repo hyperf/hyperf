@@ -1,0 +1,42 @@
+language: php
+
+sudo: required
+
+matrix:
+  include:
+    - php: 7.2
+      env: SW_VERSION="4.5.2"
+    - php: 7.3
+      env: SW_VERSION="4.5.2"
+    - php: 7.4
+      env: SW_VERSION="4.5.2"
+    - php: master
+      env: SW_VERSION="4.5.2"
+
+  allow_failures:
+    - php: master
+
+services:
+  - mysql
+  - redis-server
+  - docker
+
+before_install:
+  - export PHP_MAJOR="$(`phpenv which php` -r 'echo phpversion();' | cut -d '.' -f 1)"
+  - export PHP_MINOR="$(`phpenv which php` -r 'echo phpversion();' | cut -d '.' -f 2)"
+  - echo $PHP_MAJOR
+  - echo $PHP_MINOR
+
+install:
+  - cd $TRAVIS_BUILD_DIR
+  - bash ./tests/swoole.install.sh
+  - phpenv config-rm xdebug.ini || echo "xdebug not available"
+  - phpenv config-add ./tests/ci.ini
+
+before_script:
+  - cd $TRAVIS_BUILD_DIR
+  - composer config -g process-timeout 900 && composer update
+
+script:
+  - composer analyse
+  - composer test

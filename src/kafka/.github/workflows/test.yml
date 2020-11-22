@@ -1,0 +1,43 @@
+name: PHPUnit
+
+on: [push, pull_request]
+
+env:
+  SW_VERSION: '4.5.6'
+
+jobs:
+  ci:
+    name: Test on PHP ${{ matrix.php-version }}
+    runs-on: "${{ matrix.os }}"
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        php-version: ['7.2', '7.3', '7.4']
+      max-parallel: 3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          ini-values: extension=swoole, opcache.enable_cli=1
+          coverage: none
+      - name: Setup Swoole
+        run: |
+          wget https://github.com/swoole/swoole-src/archive/v${SW_VERSION}.tar.gz -O swoole.tar.gz
+          mkdir -p swoole
+          tar -xf swoole.tar.gz -C swoole --strip-components=1
+          rm swoole.tar.gz
+          cd swoole
+          phpize
+          ./configure --enable-openssl --enable-mysqlnd --enable-http2
+          make -j$(nproc)
+          sudo make install
+      - name: Setup Packages
+        run: composer update -o --no-scripts
+      - name: Run Test Cases
+        run: |
+          composer analyse
+          composer test
