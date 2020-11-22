@@ -2,20 +2,21 @@
 
 # v2.0.20 - 2020-11-23
 
-## Added
+## 新增
 
 - [#2824](https://github.com/hyperf/hyperf/pull/2824) 为 `Hyperf\Database\Query\Builder` 增加方法 `simplePaginate()`。
 
-## Fixed
+## 修复
 
 - [#2820](https://github.com/hyperf/hyperf/pull/2820) 修复使用 `fanout` 交换器时，`AMQP` 消费者无法正常工作的问题。
 - [#2831](https://github.com/hyperf/hyperf/pull/2831) 修复 `AMQP` 连接会被客户端意外关闭的问题。
+- [#2848](https://github.com/hyperf/hyperf/pull/2848) 修复在 `defer` 中使用数据库组件时，会导致数据库连接会同时被其他协程绑定的问题。
 
-## Changed
+## 变更
 
 - [#2824](https://github.com/hyperf/hyperf/pull/2824) 修改 `Hyperf\Database\Query\Builder` 方法 `paginate()` 返回值类型，由 `PaginatorInterface` 变更为 `LengthAwarePaginatorInterface`。
 
-## Optimized
+## 优化
 
 - [#2766](https://github.com/hyperf/hyperf/pull/2766) 优化 `Tracer` 组件，在抛出异常的情况下，也可以执行 `finish` 方法，记录链路。
 - [#2805](https://github.com/hyperf/hyperf/pull/2805) 优化 `Nacos` 进程，可以安全停止。
