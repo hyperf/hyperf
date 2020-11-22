@@ -1,4 +1,6 @@
-# v2.0.20 - TBD
+# v2.0.21 - TBD
+
+# v2.0.20 - 2020-11-23
 
 ## Added
 
@@ -15,6 +17,7 @@
 
 ## Optimized
 
+- [#2766](https://github.com/hyperf/hyperf/pull/2766) Safely finish spans in case of exception for tracer.
 - [#2805](https://github.com/hyperf/hyperf/pull/2805) Optimized nacos process which can stop safely.
 - [#2821](https://github.com/hyperf/hyperf/pull/2821) Optimized the exceptions thrown by `Json` and `Xml`.
 - [#2827](https://github.com/hyperf/hyperf/pull/2827) Optimized `Hyperf\Server\ServerConfig` which return type of `__set` should be void.
