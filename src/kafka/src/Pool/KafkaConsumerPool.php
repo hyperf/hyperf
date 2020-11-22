@@ -49,5 +49,6 @@ class KafkaConsumerPool extends Pool
 
     protected function createConnection(): ConnectionInterface
     {
+        return new Connection($this->container, $this, $this->config);
     }
 }

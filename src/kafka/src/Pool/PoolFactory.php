@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Kafka\Pool;
 
-use Hyperf\Contract\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 class PoolFactory
 {
