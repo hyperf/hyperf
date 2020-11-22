@@ -12,13 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\Kafka;
 
 use Hyperf\Contract\ConnectionInterface;
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\LoggerInterface;
 use Hyperf\Kafka\Pool\KafkaConnectionPool;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Utils\Arr;
 use longlang\phpkafka\Producer\Producer;
+use Psr\Container\ContainerInterface;
 
 class ProducerConnection extends BaseConnection implements ConnectionInterface
 {

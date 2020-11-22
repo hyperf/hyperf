@@ -99,7 +99,7 @@ class ConsumerManager
                 $consumerConfig->setSendTimeout($config['send_timeout']);
                 $groupId = ! empty($this->consumer->getGroupId()) ? sprintf('%s-%s', $this->consumer->getGroupId(), uniqid('')) : '';
                 $consumerConfig->setGroupId($groupId);
-                $consumerConfig->setGroupInstanceId($groupId ?: sprintf('%s-%s', $groupId ?: '', uniqid('')));
+                $consumerConfig->setGroupInstanceId($groupId ?: sprintf('%s-%s', $groupId, uniqid('')));
                 $consumerConfig->setMemberId($this->consumer->getMemberId() ?: '');
                 $consumerConfig->setInterval($config['interval']);
                 $consumerConfig->setBroker($config['bootstrap_server']);

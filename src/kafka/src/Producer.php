@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Kafka;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\ContainerInterface;
 use longlang\phpkafka\Exception\KafkaErrorException;
 use longlang\phpkafka\Producer\ProduceMessage;
 use longlang\phpkafka\Producer\Producer as LongLangConsumer;
@@ -21,6 +20,7 @@ use longlang\phpkafka\Protocol\CreateTopics\CreatableTopic;
 use longlang\phpkafka\Protocol\CreateTopics\CreateTopicsRequest;
 use longlang\phpkafka\Protocol\ErrorCode;
 use longlang\phpkafka\Socket\SwooleSocket;
+use Psr\Container\ContainerInterface;
 
 /**
  * @method close()
