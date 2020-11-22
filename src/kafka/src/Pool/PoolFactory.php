@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Kafka\Pool;
 
+use Hyperf\Contract;
 use Psr\Container\ContainerInterface;
 
 class PoolFactory
@@ -21,7 +22,7 @@ class PoolFactory
     protected $container;
 
     /**
-     * @var KafkaConnectionPool[]
+     * @var KafkaPool[]
      */
     protected $pools = [];
 
@@ -30,7 +31,7 @@ class PoolFactory
         $this->container = $container;
     }
 
-    public function getPool(string $name): KafkaConnectionPool
+    public function getPool(string $name): KafkaPool
     {
         if (isset($this->pools[$name])) {
             return $this->pools[$name];
@@ -39,12 +40,12 @@ class PoolFactory
         return $this->pools[$name] = $this->make($name);
     }
 
-    protected function make(string $name): KafkaConnectionPool
+    protected function make(string $name): KafkaPool
     {
-        if ($this->container instanceof ContainerInterface) {
-            $pool = $this->container->make(KafkaConnectionPool::class, ['name' => $name]);
+        if ($this->container instanceof Contract\ContainerInterface) {
+            $pool = $this->container->make(KafkaPool::class, ['name' => $name]);
         } else {
-            $pool = new KafkaConnectionPool($this->container, $name);
+            $pool = new KafkaPool($this->container, $name);
         }
 
         return $pool;
