@@ -11,11 +11,22 @@ declare(strict_types=1);
  */
 namespace Hyperf\GrpcServer;
 
+use Hyperf\GrpcServer\Listener\RegisterServiceListener;
+use Hyperf\ServiceGovernance\ServiceManager;
+
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
+            'listeners' => [
+                value(function () {
+                    if (class_exists(ServiceManager::class)) {
+                        return RegisterServiceListener::class;
+                    }
+                    return null;
+                }),
+            ],
             'annotations' => [
                 'scan' => [
                     'paths' => [

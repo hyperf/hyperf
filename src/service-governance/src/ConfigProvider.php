@@ -29,7 +29,7 @@ class ConfigProvider
             'annotations' => [
                 'scan' => [
                     'paths' => [
-                        __DIR__,
+                        __DIR__ . '/Grpc/Controller',
                     ],
                 ],
             ],

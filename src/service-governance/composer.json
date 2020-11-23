@@ -33,7 +33,9 @@
     },
     "autoload": {
         "psr-4": {
-            "Hyperf\\ServiceGovernance\\": "src/"
+            "Hyperf\\ServiceGovernance\\": "src/",
+            "GPBMetadata\\": "src/Grpc/GPBMetadata",
+            "Grpc\\": "src/Grpc/Grpc"
         }
     },
     "autoload-dev": {
