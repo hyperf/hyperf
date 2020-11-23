@@ -1,5 +1,9 @@
 # v2.0.21 - TBD
 
+## Changed
+
+- [#2851](https://github.com/hyperf/hyperf/pull/2851) Changed default engine of view config.
+
 # v2.0.20 - 2020-11-23
 
 ## Added
