@@ -14,7 +14,7 @@ namespace Hyperf\Kafka;
 use Hyperf\Contract\ConfigInterface;
 use longlang\phpkafka\Exception\KafkaErrorException;
 use longlang\phpkafka\Producer\ProduceMessage;
-use longlang\phpkafka\Producer\Producer as LongLangConsumer;
+use longlang\phpkafka\Producer\Producer as LongLangProducer;
 use longlang\phpkafka\Producer\ProducerConfig;
 use longlang\phpkafka\Protocol\CreateTopics\CreatableTopic;
 use longlang\phpkafka\Protocol\CreateTopics\CreateTopicsRequest;
@@ -30,7 +30,7 @@ use Psr\Container\ContainerInterface;
 class Producer
 {
     /**
-     * @var LongLangConsumer
+     * @var LongLangProducer
      */
     protected $producer;
 
@@ -58,7 +58,7 @@ class Producer
         $producerConfig->setProducerEpoch($config['producer_epoch']);
         $producerConfig->setPartitionLeaderEpoch($config['partition_leader_epoch']);
 
-        $this->producer = new LongLangConsumer($producerConfig);
+        $this->producer = new LongLangProducer($producerConfig);
     }
 
     public function __call($name, $arguments)
