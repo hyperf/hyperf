@@ -145,6 +145,13 @@ class RegisterServiceListener implements ListenerInterface
                 'Interval' => '1s',
             ];
         }
+        if ($service['protocol'] === 'grpc') {
+            $requestBody['Check'] = [
+                'DeregisterCriticalServiceAfter' => '90m',
+                'GRPC' => "{$address}:{$port}/grpc.health.v1.Health/Check",
+                'Interval' => '1s',
+            ];
+        }
         $response = $this->consulAgent->registerService($requestBody);
         if ($response->getStatusCode() === 200) {
             $this->registeredServices[$serviceName][$service['protocol']][$address][$port] = true;
