@@ -15,6 +15,10 @@ namespace Hyperf\Kafka;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Kafka\Annotation\Consumer as ConsumerAnnotation;
+use Hyperf\Kafka\Event\AfterConsume;
+use Hyperf\Kafka\Event\AfterSubscribe;
+use Hyperf\Kafka\Event\BeforeConsume;
+use Hyperf\Kafka\Event\FailToConsume;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
 use longlang\phpkafka\Client\SwooleClient;
@@ -22,10 +26,10 @@ use longlang\phpkafka\Consumer\ConsumeMessage;
 use longlang\phpkafka\Consumer\Consumer as LongLangConsumer;
 use longlang\phpkafka\Consumer\ConsumerConfig;
 use longlang\phpkafka\Exception\KafkaErrorException;
-use longlang\phpkafka\Protocol\ErrorCode;
-use longlang\phpkafka\Protocol\JoinGroup\JoinGroupRequest;
 use longlang\phpkafka\Socket\SwooleSocket;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Throwable;
 
 class ConsumerManager
 {
@@ -84,41 +88,51 @@ class ConsumerManager
              */
             private $config;
 
+            /**
+             * @var null|EventDispatcherInterface
+             */
+            private $dispatcher;
+
             public function __construct(ContainerInterface $container, AbstractConsumer $consumer)
             {
                 parent::__construct($container);
                 $this->consumer = $consumer;
                 $this->config = $container->get(ConfigInterface::class);
+
+                if ($container->has(EventDispatcherInterface::class)) {
+                    $this->dispatcher = $container->get(EventDispatcherInterface::class);
+                }
             }
 
             public function handle(): void
             {
+                $consumerConfig = $this->getConsumerConfig();
+                $consumer = $this->consumer;
+                $longLangConsumer = new LongLangConsumer(
+                    $consumerConfig, function (ConsumeMessage $message) use ($consumer) {
 
-                $consumerConfig = $this->initConsumerConfig();
-                $consumer = new LongLangConsumer(
-                    $consumerConfig,
-                    function (ConsumeMessage $message) {
-                        $this->consumer->consume($message);
-                    }
+                    $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($consumer, $message));
+
+                    $consumer->consume($message);
+
+                    $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($consumer, $message));
+                }
                 );
 
                 try {
-                    $consumer->start();
-                } catch (KafkaErrorException $e) {
-                    if ($e->getCode() === ErrorCode::REBALANCE_IN_PROGRESS) {
-                        $joinGroupRequest = new JoinGroupRequest();
-                        $joinGroupRequest->setGroupId($consumerConfig->getGroupId());
-                        $joinGroupRequest->setMemberId($consumerConfig->getMemberId());
-                        $joinGroupRequest->setGroupInstanceId($consumerConfig->getGroupInstanceId());
-                        $consumer->getBroker()->getClient()->send($joinGroupRequest);
-                        $consumer->start();
+                    while (true) {
+                        $longLangConsumer->start();
                     }
+                } catch (KafkaErrorException $exception) {
+                    $longLangConsumer->stop();
+                    $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, [], $exception));
+                } catch (Throwable $throwable) {
+                    $longLangConsumer->stop();
+                    $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, [], $throwable));
                 }
-
-
             }
 
-            protected function initConsumerConfig(): ConsumerConfig
+            protected function getConsumerConfig(): ConsumerConfig
             {
                 $config = $this->config->get('kafka.' . $this->consumer->getPool());
                 $consumerConfig = new ConsumerConfig();
@@ -130,7 +144,7 @@ class ConsumerManager
                 $consumerConfig->setSendTimeout($config['send_timeout']);
                 $consumerConfig->setGroupId($this->consumer->getGroupId());
                 $consumerConfig->setGroupInstanceId(sprintf('%s-%s', $this->consumer->getGroupId(), uniqid('')));
-                $consumerConfig->setMemberId($this->consumer->getMemberId() ?: '');
+                $consumerConfig->setMemberId($this->consumer->getMemberId());
                 $consumerConfig->setInterval($config['interval']);
                 $consumerConfig->setBroker($config['bootstrap_server']);
                 $consumerConfig->setSocket(SwooleSocket::class);
