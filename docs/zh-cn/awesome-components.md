@@ -126,6 +126,7 @@
 - [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 通过 `WebSocket` 实时观测异常错误的开发调试组件
 - [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支持与 laravel 类似的多 env 配置文件功能，通过 `APP_ENV=testing` 可以加载 `.env.testing` 配置覆盖默认的 `.env`
 - [qiutuleng/hyperf-dump-server](https://github.com/qiutuleng/hyperf-dump-server) 提供一个 `dump` 函数，可以将程序内的变量或数据打印到另一个命令行窗口中，基于 Symfony 的 `Var-Dump Server` 组件
+- [leearvin/hyperf-tinker](https://github.com/Arvin-Lee/hyperf-tinker) 基于 PsySH 提供一个交互式的 Hyperf shell 容器
 
 ## 权限认证
 
