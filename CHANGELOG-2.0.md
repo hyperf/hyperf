@@ -4,6 +4,10 @@
 
 - [#2851](https://github.com/hyperf/hyperf/pull/2851) Changed default engine of view config.
 
+## Optimized
+
+- [#2861](https://github.com/hyperf/hyperf/pull/2861) Optimized guzzle coroutine handler which throw exception when the status code below zero.
+
 # v2.0.20 - 2020-11-23
 
 ## Added

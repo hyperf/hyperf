@@ -244,18 +244,21 @@ class CoroutineHandler
             'errCode' => $errCode,
         ];
 
-        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_CONNECT_FAILED) {
-            return new ConnectException(sprintf('Connection failed, errCode=%s', $errCode), $request, null, $ctx);
+        if ($statusCode > 0) {
+            return true;
         }
 
-        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_REQUEST_TIMEOUT) {
-            return new RequestException(sprintf('Request timed out, errCode=%s', $errCode), $request, null, null, $ctx);
+        switch ($statusCode) {
+            case SWOOLE_HTTP_CLIENT_ESTATUS_CONNECT_FAILED:
+                return new ConnectException(sprintf('Connection failed, errCode=%s', $errCode), $request, null, $ctx);
+            case SWOOLE_HTTP_CLIENT_ESTATUS_REQUEST_TIMEOUT:
+                return new RequestException(sprintf('Request timed out, errCode=%s', $errCode), $request, null, null, $ctx);
+            case SWOOLE_HTTP_CLIENT_ESTATUS_SERVER_RESET:
+                return new RequestException('Server reset', $request, null, null, $ctx);
+            case -4:
+                return new RequestException(sprintf('Send failed, errCode=%s', $errCode), $request, null, null, $ctx);
+            default:
+                return new RequestException(sprintf('Unknown reason, errCode=%s', $errCode), $request, null, null, $ctx);
         }
-
-        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_SERVER_RESET) {
-            return new RequestException('Server reset', $request, null, null, $ctx);
-        }
-
-        return true;
     }
 }
