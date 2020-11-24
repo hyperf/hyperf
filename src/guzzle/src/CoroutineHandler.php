@@ -255,6 +255,9 @@ class CoroutineHandler
                 return new RequestException(sprintf('Request timed out, errCode=%s', $errCode), $request, null, null, $ctx);
             case SWOOLE_HTTP_CLIENT_ESTATUS_SERVER_RESET:
                 return new RequestException('Server reset', $request, null, null, $ctx);
+            case -4:
+                // Added 2020-09-04
+                return new RequestException(sprintf('Send failed, errCode=%s', $errCode), $request, null, null, $ctx);
             default:
                 return new RequestException(sprintf('Unknown reason, errCode=%s', $errCode), $request, null, null, $ctx);
         }
