@@ -1,5 +1,9 @@
 # v2.0.21 - TBD
 
+## Added
+
+- [#2857](https://github.com/hyperf/hyperf/pull/2857) Support Consul ACL Token for Service Governance.
+
 ## Changed
 
 - [#2851](https://github.com/hyperf/hyperf/pull/2851) Changed default engine of view config.
