@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Kafka;
 
 use Hyperf\Contract\ConfigInterface;
@@ -20,6 +21,9 @@ use longlang\phpkafka\Client\SwooleClient;
 use longlang\phpkafka\Consumer\ConsumeMessage;
 use longlang\phpkafka\Consumer\Consumer as LongLangConsumer;
 use longlang\phpkafka\Consumer\ConsumerConfig;
+use longlang\phpkafka\Exception\KafkaErrorException;
+use longlang\phpkafka\Protocol\ErrorCode;
+use longlang\phpkafka\Protocol\JoinGroup\JoinGroupRequest;
 use longlang\phpkafka\Socket\SwooleSocket;
 use Psr\Container\ContainerInterface;
 
@@ -89,6 +93,33 @@ class ConsumerManager
 
             public function handle(): void
             {
+
+                $consumerConfig = $this->initConsumerConfig();
+                $consumer = new LongLangConsumer(
+                    $consumerConfig,
+                    function (ConsumeMessage $message) {
+                        $this->consumer->consume($message);
+                    }
+                );
+
+                try {
+                    $consumer->start();
+                } catch (KafkaErrorException $e) {
+                    if ($e->getCode() === ErrorCode::REBALANCE_IN_PROGRESS) {
+                        $joinGroupRequest = new JoinGroupRequest();
+                        $joinGroupRequest->setGroupId($consumerConfig->getGroupId());
+                        $joinGroupRequest->setMemberId($consumerConfig->getMemberId());
+                        $joinGroupRequest->setGroupInstanceId($consumerConfig->getGroupInstanceId());
+                        $consumer->getBroker()->getClient()->send($joinGroupRequest);
+                        $consumer->start();
+                    }
+                }
+
+
+            }
+
+            protected function initConsumerConfig(): ConsumerConfig
+            {
                 $config = $this->config->get('kafka.' . $this->consumer->getPool());
                 $consumerConfig = new ConsumerConfig();
                 $consumerConfig->setAutoCommit($this->consumer->isAutoCommit());
@@ -97,9 +128,8 @@ class ConsumerManager
                 $consumerConfig->setTopic($this->consumer->getTopic());
                 $consumerConfig->setRebalanceTimeout($config['rebalance_timeout']);
                 $consumerConfig->setSendTimeout($config['send_timeout']);
-                $groupId = ! empty($this->consumer->getGroupId()) ? sprintf('%s-%s', $this->consumer->getGroupId(), uniqid('')) : '';
-                $consumerConfig->setGroupId($groupId);
-                $consumerConfig->setGroupInstanceId($groupId ?: sprintf('%s-%s', $groupId, uniqid('')));
+                $consumerConfig->setGroupId($this->consumer->getGroupId());
+                $consumerConfig->setGroupInstanceId(sprintf('%s-%s', $this->consumer->getGroupId(), uniqid('')));
                 $consumerConfig->setMemberId($this->consumer->getMemberId() ?: '');
                 $consumerConfig->setInterval($config['interval']);
                 $consumerConfig->setBroker($config['bootstrap_server']);
@@ -111,14 +141,7 @@ class ConsumerManager
                 $consumerConfig->setConnectTimeout($config['connect_timeout']);
                 $consumerConfig->setPartitions($config['partitions']);
                 $consumerConfig->setSessionTimeout($config['session_timeout']);
-
-                $consumer = new LongLangConsumer(
-                    $consumerConfig,
-                    function (ConsumeMessage $message) {
-                        $this->consumer->consume($message);
-                    }
-                );
-                $consumer->start();
+                return $consumerConfig;
             }
         };
     }
