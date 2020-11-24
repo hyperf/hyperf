@@ -28,9 +28,9 @@ class ConsulAgentFactory
                 'base_uri' => $config->get('consul.uri', Agent::DEFAULT_URI),
             ];
 
-            if (!empty($token)) {
+            if (! empty($token)) {
                 $options['headers'] = [
-                    'X-Consul-Token' => $token
+                    'X-Consul-Token' => $token,
                 ];
             }
 
