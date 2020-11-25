@@ -9,14 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Kafka;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Kafka\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Kafka\Event\AfterConsume;
-use Hyperf\Kafka\Event\AfterSubscribe;
 use Hyperf\Kafka\Event\BeforeConsume;
 use Hyperf\Kafka\Event\FailToConsume;
 use Hyperf\Process\AbstractProcess;
@@ -109,14 +107,14 @@ class ConsumerManager
                 $consumerConfig = $this->getConsumerConfig();
                 $consumer = $this->consumer;
                 $longLangConsumer = new LongLangConsumer(
-                    $consumerConfig, function (ConsumeMessage $message) use ($consumer) {
+                    $consumerConfig,
+                    function (ConsumeMessage $message) use ($consumer) {
+                        $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($consumer, $message));
 
-                    $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($consumer, $message));
+                        $result = $consumer->consume($message);
 
-                    $consumer->consume($message);
-
-                    $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($consumer, $message));
-                }
+                        $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($consumer, $message, $result));
+                    }
                 );
 
                 try {
