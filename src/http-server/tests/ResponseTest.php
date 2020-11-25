@@ -175,7 +175,7 @@ class ResponseTest extends TestCase
             ],
         ]);
 
-        $this->assertSame('{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true,"karray":{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true}}', $json->getBody()->getContents());
+        $this->assertSame('{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true,"karray":{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true}}', (string) $json->getBody());
     }
 
     public function testObjectToJson()
@@ -189,7 +189,7 @@ class ResponseTest extends TestCase
         $response = new Response();
         $json = $response->json((object) ['id' => 1, 'name' => 'Hyperf']);
 
-        $this->assertSame('{"id":1,"name":"Hyperf"}', $json->getBody()->getContents());
+        $this->assertSame('{"id":1,"name":"Hyperf"}', (string) $json->getBody());
     }
 
     public function testPsrResponse()

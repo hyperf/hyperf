@@ -93,7 +93,7 @@ class RenderTest extends TestCase
 <body>
 Hello, Hyperf. You are using smarty template now.
 </body>
-</html>', $response->getBody()->getContents());
+</html>', (string) $response->getBody());
         }
     }
 

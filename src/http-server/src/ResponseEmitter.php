@@ -32,7 +32,7 @@ class ResponseEmitter implements ResponseEmitterInterface
             return $swooleResponse->sendfile($content->getFilename());
         }
         if ($withContent) {
-            $swooleResponse->end($content->getContents());
+            $swooleResponse->end((string) $content);
         } else {
             $swooleResponse->end();
         }

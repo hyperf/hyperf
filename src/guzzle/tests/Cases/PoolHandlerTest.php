@@ -54,7 +54,7 @@ class PoolHandlerTest extends TestCase
 
         $res = $client->get('/stats?format=json');
         $this->assertSame(200, $res->getStatusCode());
-        $this->assertIsArray(Json::decode($res->getBody()->getContents()));
+        $this->assertIsArray(Json::decode((string) $res->getBody()));
         $this->assertSame(1, $handler->count);
         $client->get('/stats?format=json');
         $this->assertSame(1, $handler->count);

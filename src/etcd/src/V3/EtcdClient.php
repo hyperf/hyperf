@@ -682,7 +682,7 @@ class EtcdClient
         }
 
         $response = $this->httpClient->request('post', $uri, $data);
-        $content = $response->getBody()->getContents();
+        $content = (string) $response->getBody();
 
         $body = json_decode($content, true);
         if ($this->pretty && isset($body['header'])) {

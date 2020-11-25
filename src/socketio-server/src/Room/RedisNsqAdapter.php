@@ -94,7 +94,7 @@ class RedisNsqAdapter extends RedisAdapter
                 try {
                     $response = $client->stats('json', $this->getChannelKey());
                     if ($response->getStatusCode() == 200) {
-                        $json = Json::decode($response->getBody()->getContents());
+                        $json = Json::decode((string) $response->getBody());
                         foreach ($json['topics'] as $topic) {
                             if (Arr::get($topic, 'topic_name') !== $this->getChannelKey()) {
                                 continue;
