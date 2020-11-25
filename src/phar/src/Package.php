@@ -1,29 +1,26 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\Phar;
 
-
 use Symfony\Component\Finder\Finder;
 
 class Package
 {
-
     private $package;
-    private $directory;
 
+    private $directory;
 
     /**
      * Package constructor.
-     * @param array $package
      * @param $directory
      */
     public function __construct(array $package, $directory)
@@ -33,8 +30,8 @@ class Package
     }
 
     /**
-     * 获取包全名
-     * @return mixed|null
+     * 获取包全名.
+     * @return null|mixed
      */
     public function getName()
     {
@@ -43,7 +40,7 @@ class Package
 
     /**
      * 获取短包名
-     * 如果没有获取到，则使用路径名作为包名
+     * 如果没有获取到，则使用路径名作为包名.
      * @return string
      */
     public function getShortName()
@@ -72,7 +69,7 @@ class Package
     }
 
     /**
-     * 获取包目录
+     * 获取包目录.
      * @return string
      */
     public function getDirectory()
@@ -81,14 +78,14 @@ class Package
     }
 
     /**
-     * 获取资源包
+     * 获取资源包.
      * @return Bundle
      */
     public function bundle()
     {
         $bundle = new Bundle();
 
-        if (empty($this->package['autoload']) && !is_dir($this->directory . $this->getPathVendor())) {
+        if (empty($this->package['autoload']) && ! is_dir($this->directory . $this->getPathVendor())) {
             return $bundle;
         }
         $iterator = Finder::create()
@@ -107,7 +104,6 @@ class Package
      */
     public function getBins()
     {
-        return isset($this->package['bin']) ? $this->package['bin'] : array();
+        return isset($this->package['bin']) ? $this->package['bin'] : [];
     }
-
 }

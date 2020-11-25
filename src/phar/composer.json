@@ -22,7 +22,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\": "tests"
+            "HyperfTest\\Phar\\": "tests/"
         }
     },
     "require": {
