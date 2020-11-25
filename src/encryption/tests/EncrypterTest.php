@@ -9,12 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest;
+namespace HyperfTest\Encryption;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Encryption\Encrypter;
-use PHPStan\Testing\TestCase;
+use Hyperf\Encryption\Contract\EncrypterInterface;
+use Hyperf\Encryption\EncrypterFactory;
+use Hyperf\Encryption\EncrypterInvoker;
+use Hyperf\Utils\ApplicationContext;
+use Mockery;
+use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -23,37 +27,48 @@ use Psr\Container\ContainerInterface;
  */
 class EncrypterTest extends TestCase
 {
-    /**
-     * @return ContainerInterface|\Mockery\LegacyMockInterface|\Mockery\MockInterface
-     */
-    public static function mockContainer()
+    protected function tearDown(): void
     {
-        $container = \Mockery::mock(ContainerInterface::class);
+        Mockery::close();
+    }
+
+    public function mockContainer(): ContainerInterface
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
         $config = new Config([
-            'encrypter' => [
-                'key' => '123456',
-                'cipher' => 'AES-256-CBC',
+            'encryption' => [
+                'default' => [
+                    'key' => '123456',
+                    'cipher' => 'AES-256-CBC',
+                ],
             ],
         ]);
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
+        $container->shouldReceive('get')->with(EncrypterFactory::class)->andReturnUsing(function () use ($container) {
+            return new EncrypterFactory($container);
+        });
+        $container->shouldReceive('get')->with(EncrypterInterface::class)->andReturnUsing(function () use ($container) {
+            return (new EncrypterInvoker())($container);
+        });
         return $container;
     }
 
     public function testEncodeString()
     {
         $input = 'hello word';
-        $container = self::mockContainer();
-        $model = new Encrypter($container);
-        $encrypt = $model->encryptString($input);
-        $this->assertSame($input, $model->decryptString($encrypt));
+        $container = $this->mockContainer();
+        $encrypter = $container->get(EncrypterInterface::class);
+        $encrypt = $encrypter->encryptString($input);
+        $this->assertSame($input, $encrypter->decryptString($encrypt));
     }
 
     public function testEncodeObject()
     {
         $input = range(1, 3);
-        $container = self::mockContainer();
-        $model = new Encrypter($container);
-        $encrypt = $model->encrypt($input);
-        $this->assertSame($input, $model->decrypt($encrypt));
+        $container = $this->mockContainer();
+        $encrypter = $container->get(EncrypterInterface::class);
+        $encrypt = $encrypter->encrypt($input);
+        $this->assertSame($input, $encrypter->decrypt($encrypt));
     }
 }
