@@ -126,33 +126,33 @@ class ConsumerManager
                     }
                 );
 
-                try {
-                    retry(
-                        10,
-                        function () use ($longLangConsumer, $consumerConfig) {
-                            try {
-                                $longLangConsumer->start();
-                            } catch (KafkaErrorException $exception) {
-                                $this->stdoutLogger->error($exception->getMessage());
-                                switch ($exception->getCode()) {
-                                    case ErrorCode::REBALANCE_IN_PROGRESS:
-                                        $joinGroupRequest = new JoinGroupRequest();
-                                        $joinGroupRequest->setGroupInstanceId($consumerConfig->getGroupInstanceId());
-                                        $joinGroupRequest->setMemberId($consumerConfig->getMemberId());
-                                        $joinGroupRequest->setGroupId($consumerConfig->getGroupId());
-                                        $longLangConsumer->getBroker()->getClient()->send($joinGroupRequest);
-                                        $longLangConsumer->start();
-                                }
-
-                                $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, [], $exception));
+                retry(
+                    10,
+                    function () use ($longLangConsumer, $consumerConfig) {
+                        try {
+                            $longLangConsumer->start();
+                        } catch (KafkaErrorException $exception) {
+                            $this->stdoutLogger->error($exception->getMessage());
+                            switch ($exception->getCode()) {
+                                case ErrorCode::REBALANCE_IN_PROGRESS:
+                                    $joinGroupRequest = new JoinGroupRequest();
+                                    $joinGroupRequest->setGroupInstanceId($consumerConfig->getGroupInstanceId());
+                                    $joinGroupRequest->setMemberId($consumerConfig->getMemberId());
+                                    $joinGroupRequest->setGroupId($consumerConfig->getGroupId());
+                                    $longLangConsumer->getBroker()->getClient()->send($joinGroupRequest);
+                                    $longLangConsumer->start();
+                                    break;
+                                case ErrorCode::UNKNOWN_TOPIC_OR_PARTITION:
+                                    // TODO topic not exist
+                                    $longLangConsumer->stop();
+                                    break;
                             }
-                        },
-                        10
-                    );
-                } catch (Throwable $e) {
-                    $this->stdoutLogger->error($e->getMessage());
-                    $longLangConsumer->stop();
-                }
+
+                            $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, [], $exception));
+                        }
+                    },
+                    10
+                );
 
 
             }
