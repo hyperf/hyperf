@@ -11,17 +11,22 @@ declare(strict_types=1);
  */
 namespace Hyperf\Encryption;
 
+use Hyperf\Encryption\Contract\EncrypterInterface;
+
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
+            'dependencies' => [
+                EncrypterInterface::class => EncrypterInvoker::class,
+            ],
             'publish' => [
                 [
                     'id' => 'config',
-                    'description' => 'The config for encrypter.',
-                    'source' => __DIR__ . '/../publish/encrypter.php',
-                    'destination' => BASE_PATH . '/config/autoload/encrypter.php',
+                    'description' => 'The config for encryption.',
+                    'source' => __DIR__ . '/../publish/encryption.php',
+                    'destination' => BASE_PATH . '/config/autoload/encryption.php',
                 ],
             ],
         ];
