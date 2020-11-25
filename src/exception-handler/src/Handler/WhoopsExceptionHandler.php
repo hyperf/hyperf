@@ -57,7 +57,7 @@ class WhoopsExceptionHandler extends ExceptionHandler
     protected function negotiateHandler()
     {
         /** @var ServerRequestInterface $request */
-        $request = Context::get(ServerRequestInterface::class);
+        $request = Context::getGlobal(ServerRequestInterface::class);
         $accepts = $request->getHeaderLine('accept');
         foreach (self::$preference as $contentType => $handler) {
             if (Str::contains($accepts, $contentType)) {
@@ -76,7 +76,7 @@ class WhoopsExceptionHandler extends ExceptionHandler
                 $handler->setApplicationRootPath(BASE_PATH);
             }
 
-            $request = Context::get(ServerRequestInterface::class);
+            $request = Context::getGlobal(ServerRequestInterface::class);
             $handler->addDataTableCallback('PSR7 Query', [$request, 'getQueryParams']);
             $handler->addDataTableCallback('PSR7 Post', [$request, 'getParsedBody']);
             $handler->addDataTableCallback('PSR7 Server', [$request, 'getServerParams']);
@@ -84,7 +84,7 @@ class WhoopsExceptionHandler extends ExceptionHandler
             $handler->addDataTableCallback('PSR7 File', [$request, 'getUploadedFiles']);
             $handler->addDataTableCallback('PSR7 Attribute', [$request, 'getAttributes']);
 
-            $session = Context::get(SessionInterface::class);
+            $session = Context::getGlobal(SessionInterface::class);
             if ($session) {
                 $handler->addDataTableCallback('Hyperf Session', [$session, 'all']);
             }

@@ -328,7 +328,7 @@ class Translator implements TranslatorInterface
      */
     public function getLocale(): string
     {
-        $locale = Context::get($this->getLocaleContextKey());
+        $locale = Context::getGlobal($this->getLocaleContextKey());
 
         return (string) ($locale ?? $this->locale);
     }
@@ -338,7 +338,7 @@ class Translator implements TranslatorInterface
      */
     public function setLocale(string $locale)
     {
-        Context::set($this->getLocaleContextKey(), $locale);
+        Context::setGlobal($this->getLocaleContextKey(), $locale);
     }
 
     /**

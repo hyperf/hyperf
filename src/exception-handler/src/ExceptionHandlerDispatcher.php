@@ -36,7 +36,7 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
          * @var string[] $handlers
          */
         [$throwable, $handlers] = $params;
-        $response = Context::get(ResponseInterface::class);
+        $response = Context::getGlobal(ResponseInterface::class);
 
         foreach ($handlers as $handler) {
             if (! $this->container->has($handler)) {

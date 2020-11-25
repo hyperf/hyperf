@@ -17,10 +17,14 @@ class Context
 {
     protected static $nonCoContext = [];
 
-    public static function set(string $id, $value)
+    public static function set(string $id, $value, $coroutineId = null)
     {
         if (Coroutine::inCoroutine()) {
-            SwCoroutine::getContext()[$id] = $value;
+            if ($coroutineId !== null) {
+                SwCoroutine::getContext($coroutineId)[$id] = $value;
+            } else {
+                SwCoroutine::getContext()[$id] = $value;
+            }
         } else {
             static::$nonCoContext[$id] = $value;
         }
@@ -46,6 +50,71 @@ class Context
                 return isset(SwCoroutine::getContext($coroutineId)[$id]);
             }
             return isset(SwCoroutine::getContext()[$id]);
+        }
+
+        return isset(static::$nonCoContext[$id]);
+    }
+
+    public static function setGlobal(string $id, $value)
+    {
+        if (Coroutine::inCoroutine()) {
+            $parentId = null;
+            while (true) {
+                $pid = is_null($parentId) ? SwCoroutine::getPcid() : SwCoroutine::getPcid($parentId);
+                if ($pid == -1) {
+                    break;
+                }
+                $parentId = $pid;
+            }
+            if (is_null($parentId)) {
+                SwCoroutine::getContext()[$id] = $value;
+            } else {
+                SwCoroutine::getContext($parentId)[$id] = $value;
+            }
+            return $value;
+        } else {
+            static::$nonCoContext[$id] = $value;
+        }
+        return $value;
+    }
+
+    public static function getGlobal(string $id, $default = null)
+    {
+        if (Coroutine::inCoroutine()) {
+            $parentId = null;
+            while (true) {
+                $pid = is_null($parentId) ? SwCoroutine::getPcid() : SwCoroutine::getPcid($parentId);
+                if ($pid == -1) {
+                    break;
+                }
+                $parentId = $pid;
+            }
+            if (is_null($parentId)) {
+                return SwCoroutine::getContext()[$id] ?? $default;
+            } else {
+                return SwCoroutine::getContext($parentId)[$id] ?? $default;
+            }
+        }
+
+        return static::$nonCoContext[$id] ?? $default;
+    }
+
+    public static function hasGlobal(string $id)
+    {
+        if (Coroutine::inCoroutine()) {
+            $parentId = null;
+            while (true) {
+                $pid = is_null($parentId) ? SwCoroutine::getPcid() : SwCoroutine::getPcid($parentId);
+                if ($pid == -1) {
+                    break;
+                }
+                $parentId = $pid;
+            }
+            if (is_null($parentId)) {
+                return isset(SwCoroutine::getContext()[$id]);
+            } else {
+                return isset(SwCoroutine::getContext($parentId)[$id]);
+            }
         }
 
         return isset(static::$nonCoContext[$id]);

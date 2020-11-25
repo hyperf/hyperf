@@ -60,12 +60,12 @@ class SessionManager
 
     public function getSession(): SessionInterface
     {
-        return Context::get(SessionInterface::class);
+        return Context::getGlobal(SessionInterface::class);
     }
 
     public function setSession(SessionInterface $session): self
     {
-        Context::set(SessionInterface::class, $session);
+        Context::setGlobal(SessionInterface::class, $session);
         return $this;
     }
 

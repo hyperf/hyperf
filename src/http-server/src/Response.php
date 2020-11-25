@@ -60,7 +60,7 @@ class Response implements PsrResponseInterface, ResponseInterface
 
     public static function __callStatic($name, $arguments)
     {
-        $response = Context::get(PsrResponseInterface::class);
+        $response = Context::getGlobal(PsrResponseInterface::class);
         if (! method_exists($response, $name)) {
             throw new BadMethodCallException(sprintf('Call to undefined static method %s::%s()', self::class, $name));
         }
@@ -153,7 +153,7 @@ class Response implements PsrResponseInterface, ResponseInterface
         });
 
         // Determine if ETag the client expects matches calculated ETag
-        $request = Context::get(ServerRequestInterface::class);
+        $request = Context::getGlobal(ServerRequestInterface::class);
         if ($request instanceof ServerRequestInterface) {
             $ifMatch = $request->getHeaderLine('if-match');
             $ifNoneMatch = $request->getHeaderLine('if-none-match');
@@ -484,6 +484,6 @@ class Response implements PsrResponseInterface, ResponseInterface
             return $this->response;
         }
 
-        return Context::get(PsrResponseInterface::class);
+        return Context::getGlobal(PsrResponseInterface::class);
     }
 }

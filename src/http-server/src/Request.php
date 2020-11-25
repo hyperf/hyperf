@@ -587,21 +587,21 @@ class Request implements RequestInterface
 
     protected function storeParsedData(callable $callback)
     {
-        if (! Context::has($this->contextkeys['parsedData'])) {
-            return Context::set($this->contextkeys['parsedData'], call($callback));
+        if (! Context::hasGlobal($this->contextkeys['parsedData'])) {
+            return Context::setGlobal($this->contextkeys['parsedData'], call($callback));
         }
-        return Context::get($this->contextkeys['parsedData']);
+        return Context::getGlobal($this->contextkeys['parsedData']);
     }
 
     protected function storeRequestProperty(string $key, $value): self
     {
-        Context::set(__CLASS__ . '.properties.' . $key, value($value));
+        Context::setGlobal(__CLASS__ . '.properties.' . $key, value($value));
         return $this;
     }
 
     protected function getRequestProperty(string $key)
     {
-        return Context::get(__CLASS__ . '.properties.' . $key);
+        return Context::getGlobal(__CLASS__ . '.properties.' . $key);
     }
 
     protected function call($name, $arguments)
@@ -615,6 +615,6 @@ class Request implements RequestInterface
 
     protected function getRequest(): ServerRequestInterface
     {
-        return Context::get(ServerRequestInterface::class);
+        return Context::getGlobal(ServerRequestInterface::class);
     }
 }

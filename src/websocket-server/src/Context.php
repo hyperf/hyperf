@@ -25,7 +25,7 @@ class Context
 
     public static function set(string $id, $value)
     {
-        $fd = CoContext::get(Context::FD, 0);
+        $fd = CoContext::getGlobal(Context::FD, 0);
         $key = sprintf('%d.%s', $fd, $id);
         data_set(self::$container, $key, $value);
         return $value;
@@ -33,33 +33,33 @@ class Context
 
     public static function get(string $id, $default = null, $fd = null)
     {
-        $fd = $fd ?? CoContext::get(Context::FD, 0);
+        $fd = $fd ?? CoContext::getGlobal(Context::FD, 0);
         $key = sprintf('%d.%s', $fd, $id);
         return data_get(self::$container, $key, $default);
     }
 
     public static function has(string $id, $fd = null)
     {
-        $fd = $fd ?? CoContext::get(Context::FD, 0);
+        $fd = $fd ?? CoContext::getGlobal(Context::FD, 0);
         $key = sprintf('%d.%s', $fd, $id);
         return data_get(self::$container, $key) !== null;
     }
 
     public static function destroy(string $id)
     {
-        $fd = CoContext::get(Context::FD, 0);
+        $fd = CoContext::getGlobal(Context::FD, 0);
         unset(self::$container[strval($fd)][$id]);
     }
 
     public static function release(?int $fd = null)
     {
-        $fd = $fd ?? CoContext::get(Context::FD, 0);
+        $fd = $fd ?? CoContext::getGlobal(Context::FD, 0);
         unset(self::$container[strval($fd)]);
     }
 
     public static function copy(int $fromFd, array $keys = []): void
     {
-        $fd = CoContext::get(Context::FD, 0);
+        $fd = CoContext::getGlobal(Context::FD, 0);
         $from = self::$container[$fromFd];
         self::$container[$fd] = ($keys ? Arr::only($from, $keys) : $from);
     }

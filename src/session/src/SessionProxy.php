@@ -173,7 +173,7 @@ class SessionProxy extends Session
 
     protected function getSession(): Session
     {
-        return Context::get(SessionInterface::class);
+        return Context::getGlobal(SessionInterface::class);
     }
 
     protected function mergeNewFlashes(array $keys): void

@@ -138,7 +138,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         try {
             CoordinatorManager::until(Constants::WORKER_START)->yield();
             $fd = $request->fd;
-            Context::set(WsContext::FD, $fd);
+            Context::setGlobal(WsContext::FD, $fd);
             $security = $this->container->get(Security::class);
 
             $psr7Request = $this->initRequest($request);
@@ -217,7 +217,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         } else {
             $fd = $frame->fd;
         }
-        Context::set(WsContext::FD, $fd);
+        Context::setGlobal(WsContext::FD, $fd);
         $fdObj = FdCollector::get($fd);
         if (! $fdObj) {
             $this->logger->warning(sprintf('WebSocket: fd[%d] does not exist.', $fd));
@@ -243,7 +243,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
         $this->logger->debug(sprintf('WebSocket: fd[%d] closed.', $fd));
 
-        Context::set(WsContext::FD, $fd);
+        Context::setGlobal(WsContext::FD, $fd);
         defer(function () use ($fd) {
             // Move those functions to defer, because onClose may throw exceptions
             FdCollector::del($fd);
@@ -280,7 +280,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
      */
     protected function initRequest(SwooleRequest $request): ServerRequestInterface
     {
-        Context::set(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
+        Context::setGlobal(ServerRequestInterface::class, $psr7Request = Psr7Request::loadFromSwooleRequest($request));
         WsContext::set(ServerRequestInterface::class, $psr7Request);
         return $psr7Request;
     }
@@ -290,7 +290,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
      */
     protected function initResponse(): ResponseInterface
     {
-        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
+        Context::setGlobal(ResponseInterface::class, $psr7Response = new Psr7Response());
         return $psr7Response;
     }
 }

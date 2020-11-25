@@ -32,7 +32,7 @@ class CoreMiddleware extends HttpCoreMiddleware
         }
 
         /** @var Response $response */
-        $response = Context::get(ResponseInterface::class);
+        $response = Context::getGlobal(ResponseInterface::class);
 
         $security = $this->container->get(Security::class);
 
