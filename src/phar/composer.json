@@ -1,0 +1,54 @@
+{
+    "name": "hyperf/phar",
+    "description": "An component that supports  Hyperf project packaged as  Phar stand-alone package.",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "phar"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Phar\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\": "tests"
+        }
+    },
+    "require": {
+        "php": ">=7.2",
+        "hyperf/command": "^2.0",
+        "hyperf/di": "^2.0",
+        "hyperf/logger": "^2.0",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.14",
+        "mockery/mockery": "^1.0",
+        "phpstan/phpstan": "^0.12",
+        "phpunit/phpunit": ">=7.0"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "phpunit -c phpunit.xml --colors=always",
+        "analyse": "phpstan analyse --memory-limit 1024M -l 0 ./src",
+        "cs-fix": "php-cs-fixer fix $1"
+    },
+    "extra": {
+        "hyperf": {
+            "config": "Hyperf\\Phar\\ConfigProvider"
+        }
+    }
+}
