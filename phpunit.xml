@@ -25,7 +25,6 @@
             <directory suffix="Test.php">./src/di/tests</directory>
             <directory suffix="Test.php">./src/dispatcher/tests</directory>
             <directory suffix="Test.php">./src/elasticsearch/tests</directory>
-            <directory suffix="Test.php">./src/encryption/tests</directory>
             <directory suffix="Test.php">./src/etcd/tests</directory>
             <directory suffix="Test.php">./src/event/tests</directory>
             <directory suffix="Test.php">./src/exception-handler/tests</directory>
@@ -81,7 +80,6 @@
             <directory suffix=".php">./src/di/src</directory>
             <directory suffix=".php">./src/dispatcher/src</directory>
             <directory suffix=".php">./src/elasticsearch/src</directory>
-            <directory suffix=".php">./src/encryption/src</directory>
             <directory suffix=".php">./src/event/src</directory>
             <directory suffix=".php">./src/grpc-client/src</directory>
             <directory suffix=".php">./src/guzzle/src</directory>
