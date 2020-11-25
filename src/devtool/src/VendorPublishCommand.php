@@ -118,10 +118,32 @@ class VendorPublishCommand extends SymfonyCommand
             if (! file_exists(dirname($destination))) {
                 mkdir(dirname($destination), 0755, true);
             }
-            copy($source, $destination);
+            is_dir($source) ? $this->copyDirectory($source, $destination) : copy($source, $destination);
 
             $this->output->writeln(sprintf('<fg=green>[%s] publishes [%s] successfully.</>', $package, $id));
         }
         return 0;
+    }
+
+    protected function copyDirectory($source, $destination)
+    {
+        $dir_handle = opendir($source);
+        @mkdir($destination, 0755, true);
+        while (($file = readdir($dir_handle)) !== false) {
+            if ($file === '.' || $file === '..') {
+                continue;
+            }
+
+            $from = $source . DIRECTORY_SEPARATOR . $file;
+            $to = $destination . DIRECTORY_SEPARATOR . $file;
+
+            if (is_dir($from)) {
+                $this->copyDirectory($from, $to);
+                continue;
+            }
+
+            copy($from, $to);
+        }
+        closedir($dir_handle);
     }
 }
