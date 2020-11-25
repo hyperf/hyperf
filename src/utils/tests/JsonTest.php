@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Utils;
 
 use Hyperf\Utils\Codec\Json;
+use Hyperf\Utils\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -54,5 +55,11 @@ class JsonTest extends TestCase
         });
 
         $this->assertSame([1, 2, 3], $result);
+    }
+
+    public function testJsonFailed()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Json::decode('{"hype');
     }
 }

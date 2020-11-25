@@ -214,7 +214,7 @@ class FooMiddleware implements MiddlewareInterface
             [
                 'code' => -1,
                 'data' => [
-                    'error' => '中间里验证token无效，阻止继续向下执行',
+                    'error' => '中间件验证token无效，阻止继续向下执行',
                 ],
             ]
         );

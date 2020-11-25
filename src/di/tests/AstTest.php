@@ -63,7 +63,7 @@ class Foo
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
     function __construct()
     {
-        self::__handlePropertyHandler(__CLASS__);
+        $this->__handlePropertyHandler(__CLASS__);
     }
 }', $code);
     }
@@ -83,7 +83,7 @@ class Bar2 extends Bar
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
     public function __construct(int $id)
     {
-        self::__handlePropertyHandler(__CLASS__);
+        $this->__handlePropertyHandler(__CLASS__);
         parent::__construct($id);
     }
     public static function build()
@@ -112,7 +112,7 @@ class Bar5
         {
             public function __construct()
             {
-                self::__handlePropertyHandler(__CLASS__);
+                $this->__handlePropertyHandler(__CLASS__);
                 $this->id = 9501;
             }
         };
@@ -141,7 +141,7 @@ class Bar4
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
     function __construct()
     {
-        self::__handlePropertyHandler(__CLASS__);
+        $this->__handlePropertyHandler(__CLASS__);
     }
     public function toMethodString() : string
     {
@@ -185,7 +185,7 @@ class Bar3 extends Bar
         if (method_exists(parent::class, \'__construct\')) {
             parent::__construct(...func_get_args());
         }
-        self::__handlePropertyHandler(__CLASS__);
+        $this->__handlePropertyHandler(__CLASS__);
     }
     public function getId() : int
     {
