@@ -20,6 +20,7 @@ use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Di\Container;
+use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Collection;
@@ -2633,7 +2634,7 @@ class QueryBuilderTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testPaginate()
+    public function testSimplePaginate()
     {
         $perPage = 16;
         $columns = ['test'];
@@ -2660,7 +2661,7 @@ class QueryBuilderTest extends TestCase
             return Context::get('path');
         });
 
-        $result = $builder->paginate($perPage, $columns, $pageName, $page);
+        $result = $builder->simplePaginate($perPage, $columns, $pageName, $page);
 
         $this->assertEquals(new Paginator($results, $perPage, $page, [
             'path' => $path,
@@ -2668,7 +2669,44 @@ class QueryBuilderTest extends TestCase
         ]), $result);
     }
 
-    public function testPaginateWithDefaultArguments()
+    public function testPaginate()
+    {
+        $perPage = 16;
+        $columns = ['test'];
+        $pageName = 'page-name';
+        $page = 1;
+        $total = 10;
+        $builder = $this->getMockQueryBuilder();
+        $path = 'http://foo.bar?page=3';
+
+        $results = collect([['test' => 'foo'], ['test' => 'bar']]);
+
+        $builder->shouldReceive('get')->once()->andReturn($results);
+        $builder->shouldReceive('getCountForPagination')->andReturn($total);
+
+        Context::set('path', $path);
+        if (! defined('BASE_PATH')) {
+            define('BASE_PATH', __DIR__);
+        }
+
+        $container = Mockery::mock(Container::class);
+        $container->shouldReceive('make')->once()->andReturnUsing(function ($interface, $args) {
+            return new LengthAwarePaginator($args['items'], $args['total'], $args['perPage'], $args['currentPage'], $args['options']);
+        });
+        ApplicationContext::setContainer($container);
+        Paginator::currentPathResolver(function () {
+            return Context::get('path');
+        });
+
+        $result = $builder->paginate($perPage, $columns, $pageName, $page);
+
+        $this->assertEquals(new LengthAwarePaginator($results, $total, $perPage, $page, [
+            'path' => $path,
+            'pageName' => $pageName,
+        ]), $result);
+    }
+
+    public function testSimplePaginateWithDefaultArguments()
     {
         $perPage = 15;
         $columns = ['*'];
@@ -2701,7 +2739,7 @@ class QueryBuilderTest extends TestCase
             return Context::get('path');
         });
 
-        $result = $builder->paginate();
+        $result = $builder->simplePaginate();
 
         $this->assertEquals(new Paginator($results, $perPage, $page, [
             'path' => $path,
@@ -2709,7 +2747,50 @@ class QueryBuilderTest extends TestCase
         ]), $result);
     }
 
-    public function testPaginateWhenNoResults()
+    public function testPaginateWithDefaultArguments()
+    {
+        $perPage = 15;
+        $columns = ['*'];
+        $pageName = 'page';
+        $page = 1;
+        $total = 10;
+        $builder = $this->getMockQueryBuilder();
+        $path = 'http://foo.bar?page=3';
+
+        $results = collect([['test' => 'foo'], ['test' => 'bar']]);
+
+        $builder->shouldReceive('get')->once()->andReturn($results);
+        $builder->shouldReceive('getCountForPagination')->andReturn($total);
+
+        Context::set('path', $path);
+        Context::set('page', $page);
+        if (! defined('BASE_PATH')) {
+            define('BASE_PATH', __DIR__);
+        }
+
+        $container = Mockery::mock(Container::class);
+        $container->shouldReceive('make')->once()->andReturnUsing(function ($interface, $args) {
+            return new LengthAwarePaginator($args['items'], $args['total'], $args['perPage'], $args['currentPage'], $args['options']);
+        });
+        ApplicationContext::setContainer($container);
+
+        Paginator::currentPageResolver(function () {
+            return Context::get('page');
+        });
+
+        Paginator::currentPathResolver(function () {
+            return Context::get('path');
+        });
+
+        $result = $builder->paginate();
+
+        $this->assertEquals(new LengthAwarePaginator($results, $total, $perPage, $page, [
+            'path' => $path,
+            'pageName' => $pageName,
+        ]), $result);
+    }
+
+    public function testSimplePaginateWhenNoResults()
     {
         $perPage = 15;
         $pageName = 'page';
@@ -2743,9 +2824,53 @@ class QueryBuilderTest extends TestCase
             return Context::get('path');
         });
 
-        $result = $builder->paginate();
+        $result = $builder->simplePaginate();
 
         $this->assertEquals(new Paginator($results, $perPage, $page, [
+            'path' => $path,
+            'pageName' => $pageName,
+        ]), $result);
+    }
+
+    public function testPaginateWhenNoResults()
+    {
+        $perPage = 15;
+        $pageName = 'page';
+        $page = 1;
+        $total = 10;
+        $builder = $this->getMockQueryBuilder();
+        $path = 'http://foo.bar?page=3';
+
+        $results = collect();
+
+        $builder->shouldReceive('get')->once()->andReturn($results);
+        $builder->shouldReceive('getCountForPagination')->andReturn($total);
+
+        Context::set('path', $path);
+        Context::set('page', $page);
+        if (! defined('BASE_PATH')) {
+            define('BASE_PATH', __DIR__);
+        }
+
+        $container = Mockery::mock(Container::class);
+        $container->shouldReceive('make')->once()->andReturnUsing(function ($interface, $args) {
+            /** @var Collection $items */
+            $items = $args['items'];
+            return new LengthAwarePaginator(collect($items), $args['total'], $args['perPage'], $args['currentPage'], $args['options']);
+        });
+        ApplicationContext::setContainer($container);
+
+        Paginator::currentPageResolver(function () {
+            return Context::get('page');
+        });
+
+        Paginator::currentPathResolver(function () {
+            return Context::get('path');
+        });
+
+        $result = $builder->paginate();
+
+        $this->assertEquals(new LengthAwarePaginator($results, $total, $perPage, $page, [
             'path' => $path,
             'pageName' => $pageName,
         ]), $result);

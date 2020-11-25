@@ -91,11 +91,15 @@ class HttpClientAspect implements AroundInterface
         );
         $options['headers'] = array_replace($options['headers'] ?? [], $appendHeaders);
         $proceedingJoinPoint->arguments['keys']['options'] = $options;
-        $result = $proceedingJoinPoint->process();
-        if ($result instanceof ResponseInterface) {
-            $span->setTag($this->spanTagManager->get('http_client', 'http.status_code'), $result->getStatusCode());
+
+        try {
+            $result = $proceedingJoinPoint->process();
+            if ($result instanceof ResponseInterface) {
+                $span->setTag($this->spanTagManager->get('http_client', 'http.status_code'), $result->getStatusCode());
+            }
+        } finally {
+            $span->finish();
         }
-        $span->finish();
         return $result;
     }
 }

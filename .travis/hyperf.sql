@@ -73,7 +73,7 @@ VALUES
 DROP TABLE IF EXISTS `user_ext`;
 
 CREATE TABLE `user_ext` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) unsigned NOT NULL,
   `count` int(10) unsigned NOT NULL DEFAULT '0',
   `float_num` decimal(10,2) DEFAULT '0.00',
   `str` varchar(16) DEFAULT NULL,

@@ -58,8 +58,11 @@ class MethodAspect extends AbstractAspect
 
         $key = $proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName;
         $span = $this->startSpan($key);
-        $result = $proceedingJoinPoint->process();
-        $span->finish();
+        try {
+            $result = $proceedingJoinPoint->process();
+        } finally {
+            $span->finish();
+        }
         return $result;
     }
 }

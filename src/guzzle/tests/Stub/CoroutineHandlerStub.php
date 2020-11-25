@@ -30,7 +30,7 @@ class CoroutineHandlerStub extends CoroutineHandler
         return parent::checkStatusCode($client, $request);
     }
 
-    public function createSink(string $body, string $sink)
+    public function createSink(string $body, $sink)
     {
         return parent::createSink($body, $sink);
     }

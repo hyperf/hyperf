@@ -1,8 +1,47 @@
-# v2.0.20 - TBD
+# v2.0.21 - TBD
+
+## Added
+
+- [#2857](https://github.com/hyperf/hyperf/pull/2857) Support Consul ACL Token for Service Governance.
+- [#2875](https://github.com/hyperf/hyperf/pull/2875) Added option `no-restart` for watcher.
+
+## Fixed
+
+- [#2874](https://github.com/hyperf/hyperf/pull/2874) Fixed `scan.ignore_annotations` does not works when using watcher.
+
+## Changed
+
+- [#2851](https://github.com/hyperf/hyperf/pull/2851) Changed default engine of view config.
+
+## Optimized
+
+- [#2785](https://github.com/hyperf/hyperf/pull/2785) Optimized code for watcher.
+- [#2861](https://github.com/hyperf/hyperf/pull/2861) Optimized guzzle coroutine handler which throw exception when the status code below zero.
+- [#2868](https://github.com/hyperf/hyperf/pull/2868) Optimized code for guzzle sink, which support resource not only string.
+
+# v2.0.20 - 2020-11-23
+
+## Added
+
+- [#2824](https://github.com/hyperf/hyperf/pull/2824) Added method `simplePaginate()` which return `PaginatorInterface` in `Hyperf\Database\Query\Builder`.
 
 ## Fixed
 
 - [#2820](https://github.com/hyperf/hyperf/pull/2820) Fixed amqp consumer does not works when using fanout exchange.
+- [#2831](https://github.com/hyperf/hyperf/pull/2831) Fixed bug that amqp connection always be closed by client.
+- [#2848](https://github.com/hyperf/hyperf/pull/2848) Fixed database connection has already been bound to another coroutine when used in defer.
+
+## Changed
+
+- [#2824](https://github.com/hyperf/hyperf/pull/2824) Changed the result from `PaginatorInterface` to `LengthAwarePaginatorInterface` for method `paginate()` in `Hyperf\Database\Query\Builder`.
+
+## Optimized
+
+- [#2766](https://github.com/hyperf/hyperf/pull/2766) Safely finish spans in case of exception for tracer.
+- [#2805](https://github.com/hyperf/hyperf/pull/2805) Optimized nacos process which can stop safely.
+- [#2821](https://github.com/hyperf/hyperf/pull/2821) Optimized the exceptions thrown by `Json` and `Xml`.
+- [#2827](https://github.com/hyperf/hyperf/pull/2827) Optimized `Hyperf\Server\ServerConfig` which return type of `__set` should be void.
+- [#2839](https://github.com/hyperf/hyperf/pull/2839) Optimized comments for `Hyperf\Database\Schema\ColumnDefinition`.
 
 # v2.0.19 - 2020-11-17
 

@@ -74,9 +74,12 @@ class RedisAspect implements AroundInterface
         $arguments = $proceedingJoinPoint->arguments['keys'];
         $span = $this->startSpan('Redis' . '::' . $arguments['name']);
         $span->setTag($this->spanTagManager->get('redis', 'arguments'), json_encode($arguments['arguments']));
-        $result = $proceedingJoinPoint->process();
-        $span->setTag($this->spanTagManager->get('redis', 'result'), json_encode($result));
-        $span->finish();
+        try {
+            $result = $proceedingJoinPoint->process();
+            $span->setTag($this->spanTagManager->get('redis', 'result'), json_encode($result));
+        } finally {
+            $span->finish();
+        }
         return $result;
     }
 }
