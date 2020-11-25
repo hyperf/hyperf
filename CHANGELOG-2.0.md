@@ -4,6 +4,7 @@
 
 - [#2857](https://github.com/hyperf/hyperf/pull/2857) Support Consul ACL Token for Service Governance.
 - [#2864](https://github.com/hyperf/hyperf/pull/2864) Added encryption component.
+- [#2870](https://github.com/hyperf/hyperf/pull/2870) The publish option of `ConfigProvider` allows publish directory.
 
 ## Changed
 
