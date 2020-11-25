@@ -318,8 +318,30 @@ class CoroutineHandlerTest extends TestCase
         @mkdir($dir, 0755, true);
 
         $handler = new CoroutineHandlerStub();
-        $handler->createSink($body = uniqid(), $sink = $dir . uniqid());
+        $stream = $handler->createSink($body = uniqid(), $sink = $dir . uniqid());
         $this->assertSame($body, file_get_contents($sink));
+        $this->assertSame('', stream_get_contents($stream));
+
+        $stream = $handler->createSink($body = uniqid(), $sink);
+        $this->assertSame($body, file_get_contents($sink));
+        $this->assertSame('', stream_get_contents($stream));
+        fseek($stream, 0);
+        $this->assertSame($body, stream_get_contents($stream));
+    }
+
+    public function testResourceSink()
+    {
+        $dir = BASE_PATH . '/runtime/guzzle/';
+        @mkdir($dir, 0755, true);
+        $sink = fopen($file = $dir . uniqid(), 'w+');
+        $handler = new CoroutineHandlerStub();
+        $stream = $handler->createSink($body1 = uniqid(), $sink);
+        $this->assertSame('', stream_get_contents($stream));
+        $stream = $handler->createSink($body2 = uniqid(), $sink);
+        $this->assertSame('', stream_get_contents($stream));
+        $this->assertSame($body1 . $body2, file_get_contents($file));
+        fseek($sink, 0);
+        $this->assertSame($body1 . $body2, stream_get_contents($stream));
     }
 
     public function testExpect100Continue()
