@@ -27,7 +27,7 @@ class NacosAuth extends AbstractNacos
         ]);
 
         $statusCode = $response->getStatusCode();
-        $contents = $response->getBody()->getContents();
+        $contents = (string) $response->getBody();
         if ($statusCode !== 200) {
             throw new RequestException($contents, $statusCode);
         }

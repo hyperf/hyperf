@@ -83,7 +83,7 @@ class HttpServer extends Server
                 $psr7Response = $this->responseBuilder->buildErrorResponse($psr7Request, ResponseBuilder::PARSE_ERROR);
             }
             // @TODO Optimize the error handling of encode.
-            $content = $this->packer->unpack($psr7Request->getBody()->getContents());
+            $content = $this->packer->unpack((string) $psr7Request->getBody());
             if (! isset($content['jsonrpc'], $content['method'], $content['params'])) {
                 $psr7Response = $this->responseBuilder->buildErrorResponse($psr7Request, ResponseBuilder::INVALID_REQUEST);
             }

@@ -57,9 +57,9 @@ class CoroutineHandlerTest extends TestCase
     {
         $a = new CoroutineHandlerStub();
         $request = new Request('GET', 'https://pokeapi.co/api/v2/pokemon/');
-        $resposne = $a($request, ['delay' => 1, 'timeout' => 5])->wait();
+        $response = $a($request, ['delay' => 1, 'timeout' => 5])->wait();
 
-        $json = json_decode($resposne->getBody()->getContents(), true);
+        $json = json_decode((string) $response->getBody(), true);
 
         $this->assertSame(5, $json['setting']['timeout']);
     }
@@ -85,7 +85,7 @@ class CoroutineHandlerTest extends TestCase
             'handler' => HandlerStack::create(new CoroutineHandlerStub()),
         ]);
 
-        $res = $client->get('/echo', [
+        $res = (string) $client->get('/echo', [
             'timeout' => 10,
             'headers' => [
                 'X-TOKEN' => md5('1234'),
@@ -93,7 +93,7 @@ class CoroutineHandlerTest extends TestCase
             'json' => [
                 'id' => 1,
             ],
-        ])->getBody()->getContents();
+        ])->getBody();
 
         $res = \GuzzleHttp\json_decode($res, true);
 
@@ -108,7 +108,7 @@ class CoroutineHandlerTest extends TestCase
             'handler' => HandlerStack::create(new CoroutineHandler()),
         ]);
 
-        $response = $client->get('/api/v2/pokemon')->getBody()->getContents();
+        $response = (string) $client->get('/api/v2/pokemon')->getBody();
 
         $this->assertNotEmpty($response);
     }
@@ -125,7 +125,7 @@ class CoroutineHandlerTest extends TestCase
             ],
         ]);
 
-        $data = json_decode($client->get('/')->getBody()->getContents(), true);
+        $data = json_decode((string) $client->get('/')->getBody(), true);
 
         $this->assertSame(10, $data['setting']['timeout']);
         $this->assertSame(1024 * 1024 * 2, $data['setting']['socket_buffer_size']);
@@ -139,7 +139,7 @@ class CoroutineHandlerTest extends TestCase
             'proxy' => 'http://user:pass@127.0.0.1:8081',
         ]);
 
-        $json = json_decode($client->get('/')->getBody()->getContents(), true);
+        $json = json_decode((string) $client->get('/')->getBody(), true);
 
         $setting = $json['setting'];
 
@@ -161,7 +161,7 @@ class CoroutineHandlerTest extends TestCase
             ],
         ]);
 
-        $json = json_decode($client->get('/')->getBody()->getContents(), true);
+        $json = json_decode((string) $client->get('/')->getBody(), true);
 
         $setting = $json['setting'];
 
@@ -183,7 +183,7 @@ class CoroutineHandlerTest extends TestCase
             ],
         ]);
 
-        $json = json_decode($client->get('/')->getBody()->getContents(), true);
+        $json = json_decode((string) $client->get('/')->getBody(), true);
 
         $setting = $json['setting'];
 
@@ -205,7 +205,7 @@ class CoroutineHandlerTest extends TestCase
             ],
         ]);
 
-        $json = json_decode($client->get('/')->getBody()->getContents(), true);
+        $json = json_decode((string) $client->get('/')->getBody(), true);
 
         $setting = $json['setting'];
 
@@ -223,7 +223,7 @@ class CoroutineHandlerTest extends TestCase
             'ssl_key' => 'apiclient_key.pem',
         ]);
 
-        $data = json_decode($client->get('/')->getBody()->getContents(), true);
+        $data = json_decode((string) $client->get('/')->getBody(), true);
 
         $this->assertSame('apiclient_cert.pem', $data['setting']['ssl_cert_file']);
         $this->assertSame('apiclient_key.pem', $data['setting']['ssl_key_file']);
@@ -234,7 +234,7 @@ class CoroutineHandlerTest extends TestCase
             'timeout' => 5,
         ]);
 
-        $data = json_decode($client->get('/')->getBody()->getContents(), true);
+        $data = json_decode((string) $client->get('/')->getBody(), true);
 
         $this->assertArrayNotHasKey('ssl_cert_file', $data['setting']);
         $this->assertArrayNotHasKey('ssl_key_file', $data['setting']);
@@ -247,7 +247,7 @@ class CoroutineHandlerTest extends TestCase
         $request = new Request('GET', $url . '/echo');
 
         $res = $handler($request, ['timeout' => 5])->wait();
-        $content = $res->getBody()->getContents();
+        $content = (string) $res->getBody();
         $json = json_decode($content, true);
 
         $this->assertEquals('Basic ' . base64_encode('username:password'), $json['headers']['Authorization']);
@@ -328,7 +328,7 @@ class CoroutineHandlerTest extends TestCase
             ],
         ]);
 
-        $data = Json::decode($res->getBody()->getContents());
+        $data = Json::decode((string) $res->getBody());
         $this->assertArrayNotHasKey('Content-Length', $data['headers']);
         $this->assertArrayNotHasKey('Expect', $data['headers']);
 
@@ -347,7 +347,7 @@ class CoroutineHandlerTest extends TestCase
             ],
         ]);
 
-        $data = Json::decode($res->getBody()->getContents());
+        $data = Json::decode((string) $res->getBody());
         $this->assertArrayHasKey('Content-Length', $data['headers']);
         $this->assertArrayHasKey('Expect', $data['headers']);
     }

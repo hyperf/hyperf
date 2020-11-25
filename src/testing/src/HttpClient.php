@@ -57,7 +57,7 @@ class HttpClient
             'headers' => $headers,
             'query' => $data,
         ]);
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function post($uri, $data = [], $headers = [])
@@ -67,7 +67,7 @@ class HttpClient
             'form_params' => $data,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function json($uri, $data = [], $headers = [])
@@ -78,7 +78,7 @@ class HttpClient
             'headers' => $headers,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function file($uri, $data = [], $headers = [])
@@ -104,6 +104,6 @@ class HttpClient
             'multipart' => $multipart,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 }

@@ -136,7 +136,7 @@ class CoreMiddleware extends HttpCoreMiddleware
                         if ($parentClass && $parentClass->getName() === ProtobufMessage::class) {
                             $request = $this->request();
                             $stream = $request->getBody();
-                            return Parser::deserializeMessage([$class->getName(), null], $stream->getContents());
+                            return Parser::deserializeMessage([$class->getName(), null], (string) $stream);
                         }
 
                         if (! $this->container->has($definition['ref']) && ! $definition['allowsNull']) {
