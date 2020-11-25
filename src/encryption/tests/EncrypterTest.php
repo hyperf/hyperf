@@ -56,7 +56,7 @@ class EncrypterTest extends TestCase
 
     public function testEncodeString()
     {
-        $input = 'hello word';
+        $input = 'Hello Word.';
         $container = $this->mockContainer();
         $encrypter = $container->get(EncrypterInterface::class);
         $encrypt = $encrypter->encryptString($input);

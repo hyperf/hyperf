@@ -116,7 +116,8 @@
   * [Watcher](zh-cn/watcher.md)
   * [开发者工具](zh-cn/devtool.md)
   * [Swoole Tracker](zh-cn/swoole-tracker.md)
-
+  * [加密解密](zh-cn/encryption.md)
+  
 * 应用部署
 
   * [Docker Swarm 集群搭建](zh-cn/tutorial/docker-swarm.md)
