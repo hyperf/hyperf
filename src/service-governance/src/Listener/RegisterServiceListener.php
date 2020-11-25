@@ -4,11 +4,13 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://www.hyperf.io
+ * @see     https://www.hyperf.io
  * @document https://hyperf.wiki
  * @contact  group@hyperf.io
+ *
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ServiceGovernance\Listener;
 
 use Hyperf\Consul\Exception\ServerException;
@@ -86,7 +88,7 @@ class RegisterServiceListener implements ListenerInterface
                 foreach ($services as $serviceName => $serviceProtocols) {
                     foreach ($serviceProtocols as $paths) {
                         foreach ($paths as $path => $service) {
-                            if (! isset($service['publishTo'], $service['server'])) {
+                            if (!isset($service['publishTo'], $service['server'])) {
                                 continue;
                             }
                             [$address, $port] = $servers[$service['server']];
@@ -115,6 +117,7 @@ class RegisterServiceListener implements ListenerInterface
         $this->logger->debug(sprintf('Service %s[%s] is registering to the consul.', $serviceName, $path), $this->defaultLoggerContext);
         if ($this->isRegistered($serviceName, $address, $port, $service['protocol'])) {
             $this->logger->info(sprintf('Service %s[%s] has been already registered to the consul.', $serviceName, $path), $this->defaultLoggerContext);
+
             return;
         }
         if (isset($service['id']) && $service['id']) {
@@ -173,6 +176,7 @@ class RegisterServiceListener implements ListenerInterface
         $end = intval($end);
         ++$end;
         $exploded[] = $end;
+
         return implode('-', $exploded);
     }
 
@@ -191,6 +195,7 @@ class RegisterServiceListener implements ListenerInterface
                 }
             }
         }
+
         return $lastService['ID'] ?? $name;
     }
 
@@ -202,13 +207,14 @@ class RegisterServiceListener implements ListenerInterface
         $response = $this->consulAgent->services();
         if ($response->getStatusCode() !== 200) {
             $this->logger->warning(sprintf('Service %s register to the consul failed.', $name), $this->defaultLoggerContext);
+
             return false;
         }
         $services = $response->json();
         $glue = ',';
         $tag = implode($glue, [$name, $address, $port, $protocol]);
         foreach ($services as $serviceId => $service) {
-            if (! isset($service['Service'], $service['Address'], $service['Port'], $service['Meta']['Protocol'])) {
+            if (!isset($service['Service'], $service['Address'], $service['Port'], $service['Meta']['Protocol'])) {
                 continue;
             }
             $currentTag = implode($glue, [
@@ -219,9 +225,11 @@ class RegisterServiceListener implements ListenerInterface
             ]);
             if ($currentTag === $tag) {
                 $this->registeredServices[$name][$protocol][$address][$port] = true;
+
                 return true;
             }
         }
+
         return false;
     }
 
@@ -230,33 +238,34 @@ class RegisterServiceListener implements ListenerInterface
         $result = [];
         $servers = $this->config->get('server.servers', []);
         foreach ($servers as $server) {
-            if (! isset($server['name'], $server['host'], $server['port'])) {
+            if (!isset($server['name'], $server['host'], $server['port'])) {
                 continue;
             }
-            if (! $server['name']) {
+            if (!$server['name']) {
                 throw new \InvalidArgumentException('Invalid server name');
             }
             $host = $server['host'];
             if (in_array($host, ['0.0.0.0', 'localhost'])) {
                 $host = $this->getInternalIp();
             }
-            if (! filter_var($host, FILTER_VALIDATE_IP)) {
+            if (!filter_var($host, FILTER_VALIDATE_IP)) {
                 throw new \InvalidArgumentException(sprintf('Invalid host %s', $host));
             }
             $port = $server['port'];
-            if (! is_numeric($port) || ($port < 0 || $port > 65535)) {
+            if (!is_numeric($port) || ($port < 0 || $port > 65535)) {
                 throw new \InvalidArgumentException(sprintf('Invalid port %s', $port));
             }
             $port = (int) $port;
             $result[$server['name']] = [$host, $port];
         }
+
         return $result;
     }
 
     protected function getInternalIp(): string
     {
         $ips = swoole_get_local_ip();
-        if (is_array($ips) && ! empty($ips)) {
+        if (is_array($ips) && !empty($ips)) {
             return current($ips);
         }
         /** @var mixed|string $ip */

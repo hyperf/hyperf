@@ -28,7 +28,7 @@ class HealthCheckResponse extends \Google\Protobuf\Internal\Message
      * }
      */
     public function __construct($data = NULL) {
-        \GPBMetadata\HealthCheck::initOnce();
+        \Hyperf\ServiceGovernance\Grpc\Metadata\HealthCheck::initOnce();
         parent::__construct($data);
     }
 

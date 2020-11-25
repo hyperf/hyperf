@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package grpc.health.v1;
 
+option php_metadata_namespace = "Hyperf\\ServiceGovernance\\Grpc\\Metadata";
 option php_namespace = "Hyperf\\ServiceGovernance\\Grpc\\Health";
 
 message HealthCheckRequest {
