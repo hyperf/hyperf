@@ -22,9 +22,9 @@ class Client implements ClientInterface
      */
     protected $options = [];
 
-    public function __construct(ConfigInterface $config)
+    public function __construct(ConfigInterface $config, string $pool = 'default')
     {
-        $nsq = $config->get('nsq', []);
+        $nsq = $config->get('nsq.' . $pool, []);
         $options = $nsq['nsqd']['options'] ?? [];
         if (! isset($options['base_uri'])) {
             $options['base_uri'] = sprintf('http://%s:%s', $nsq['host'] ?? '127.0.0.1', $nsq['nsqd']['port'] ?? 4151);
