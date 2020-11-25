@@ -231,7 +231,6 @@ class CoroutineHandler
         }
         if ($body !== '') {
             fwrite($stream, $body);
-            fseek($stream, 0);
         }
 
         return $stream;
