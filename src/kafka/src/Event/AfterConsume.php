@@ -20,7 +20,7 @@ class AfterConsume extends Consume
      */
     protected $result;
 
-    public function __construct(AbstractConsumer $consumer, $data, string $result)
+    public function __construct(AbstractConsumer $consumer, $data, ?string $result)
     {
         parent::__construct($consumer, $data);
 
