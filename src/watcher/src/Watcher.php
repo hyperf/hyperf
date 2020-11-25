@@ -150,6 +150,9 @@ class Watcher
 
     public function restart($isStart = true)
     {
+        if (! $this->option->isRestart()) {
+            return;
+        }
         $file = $this->config->get('server.settings.pid_file');
         if (empty($file)) {
             throw new FileNotFoundException('The config of pid_file is not found.');
