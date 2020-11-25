@@ -120,5 +120,5 @@ abstract class AbstractConsumer
         $this->name = $name;
     }
 
-    abstract public function consume(ConsumeMessage $message);
+    abstract public function consume(ConsumeMessage $message): string;
 }

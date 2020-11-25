@@ -54,7 +54,7 @@
         "league/flysystem-aws-s3-v3": "^1.0",
         "league/flysystem-memory": "^1.0",
         "league/plates": "^3.3",
-        "longlang/phpkafka": "dev-master",
+        "longlang/phpkafka": "^1.0",
         "malukenho/docheader": "^0.1.6",
         "markrogoyski/math-php": "^1.2.0",
         "mix/redis-subscribe": "^2.1",
