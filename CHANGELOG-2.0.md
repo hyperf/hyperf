@@ -3,8 +3,12 @@
 ## Added
 
 - [#2857](https://github.com/hyperf/hyperf/pull/2857) Support Consul ACL Token for Service Governance.
-- [#2864](https://github.com/hyperf/hyperf/pull/2864) Added encryption component.
 - [#2870](https://github.com/hyperf/hyperf/pull/2870) The publish option of `ConfigProvider` allows publish directory.
+- [#2875](https://github.com/hyperf/hyperf/pull/2875) Added option `no-restart` for watcher.
+
+## Fixed
+
+- [#2874](https://github.com/hyperf/hyperf/pull/2874) Fixed `scan.ignore_annotations` does not works when using watcher.
 
 ## Changed
 
@@ -12,6 +16,7 @@
 
 ## Optimized
 
+- [#2785](https://github.com/hyperf/hyperf/pull/2785) Optimized code for watcher.
 - [#2861](https://github.com/hyperf/hyperf/pull/2861) Optimized guzzle coroutine handler which throw exception when the status code below zero.
 - [#2868](https://github.com/hyperf/hyperf/pull/2868) Optimized code for guzzle sink, which support resource not only string.
 
