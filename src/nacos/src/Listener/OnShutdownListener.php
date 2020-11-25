@@ -17,6 +17,7 @@ use Hyperf\Framework\Event\OnShutdown;
 use Hyperf\Nacos\Api\NacosInstance;
 use Hyperf\Nacos\Contract\LoggerInterface;
 use Hyperf\Nacos\Instance;
+use Hyperf\Server\Event\CoroutineServerStop;
 use Psr\Container\ContainerInterface;
 
 class OnShutdownListener implements ListenerInterface
@@ -25,6 +26,11 @@ class OnShutdownListener implements ListenerInterface
      * @var ContainerInterface
      */
     protected $container;
+
+    /**
+     * @var bool
+     */
+    private $processed = false;
 
     public function __construct(ContainerInterface $container)
     {
@@ -35,11 +41,17 @@ class OnShutdownListener implements ListenerInterface
     {
         return [
             OnShutdown::class,
+            CoroutineServerStop::class,
         ];
     }
 
     public function process(object $event)
     {
+        if ($this->processed) {
+            return;
+        }
+        $this->processed = true;
+
         $config = $this->container->get(ConfigInterface::class);
         if (! $config->get('nacos.enable', true)) {
             return;

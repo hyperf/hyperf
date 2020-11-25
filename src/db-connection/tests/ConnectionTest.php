@@ -169,4 +169,18 @@ class ConnectionTest extends TestCase
             $this->assertSame('mysql:host=192.168.1.1;dbname=hyperf', $pdo->dsn);
         }]);
     }
+
+    public function testDbConnectionUseInDefer()
+    {
+        $container = ContainerStub::mockReadWriteContainer();
+
+        parallel([function () use ($container) {
+            $resolver = $container->get(ConnectionResolverInterface::class);
+
+            defer(function () {
+                $this->assertFalse(Context::has('database.connection.default'));
+            });
+            $resolver->connection();
+        }]);
+    }
 }

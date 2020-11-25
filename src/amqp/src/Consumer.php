@@ -18,6 +18,7 @@ use Hyperf\Amqp\Event\WaitTimeout;
 use Hyperf\Amqp\Exception\MessageException;
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Amqp\Message\MessageInterface;
+use Hyperf\Amqp\Message\Type;
 use Hyperf\Amqp\Pool\PoolFactory;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
@@ -130,6 +131,10 @@ class Consumer extends Builder
         $routineKeys = (array) $message->getRoutingKey();
         foreach ($routineKeys as $routingKey) {
             $channel->queue_bind($message->getQueue(), $message->getExchange(), $routingKey);
+        }
+
+        if (empty($routineKeys) && $message->getType() === Type::FANOUT) {
+            $channel->queue_bind($message->getQueue(), $message->getExchange());
         }
 
         if (is_array($qos = $message->getQos())) {

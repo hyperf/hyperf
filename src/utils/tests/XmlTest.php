@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Utils;
 
 use Hyperf\Utils\Codec\Xml;
+use Hyperf\Utils\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -50,5 +51,11 @@ class XmlTest extends TestCase
             'return_msg' => 'OK',
         ];
         $this->assertSame(Xml::toXml(Xml::toArray($xml), null, 'xml'), Xml::toXml($data, null, 'xml'));
+    }
+
+    public function testXmlFailed()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Xml::toArray('{"hype');
     }
 }

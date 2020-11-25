@@ -1,5 +1,47 @@
 # 版本更新记录
 
+# v2.0.20 - 2020-11-23
+
+## 新增
+
+- [#2824](https://github.com/hyperf/hyperf/pull/2824) 为 `Hyperf\Database\Query\Builder` 增加方法 `simplePaginate()`。
+
+## 修复
+
+- [#2820](https://github.com/hyperf/hyperf/pull/2820) 修复使用 `fanout` 交换机时，`AMQP` 消费者无法正常工作的问题。
+- [#2831](https://github.com/hyperf/hyperf/pull/2831) 修复 `AMQP` 连接会被客户端意外关闭的问题。
+- [#2848](https://github.com/hyperf/hyperf/pull/2848) 修复在 `defer` 中使用数据库组件时，会导致数据库连接会同时被其他协程绑定的问题。
+
+## 变更
+
+- [#2824](https://github.com/hyperf/hyperf/pull/2824) 修改 `Hyperf\Database\Query\Builder` 方法 `paginate()` 返回值类型，由 `PaginatorInterface` 变更为 `LengthAwarePaginatorInterface`。
+
+## 优化
+
+- [#2766](https://github.com/hyperf/hyperf/pull/2766) 优化 `Tracer` 组件，在抛出异常的情况下，也可以执行 `finish` 方法，记录链路。
+- [#2805](https://github.com/hyperf/hyperf/pull/2805) 优化 `Nacos` 进程，可以安全停止。
+- [#2821](https://github.com/hyperf/hyperf/pull/2821) 优化工具类 `Json` 和 `Xml`，使其抛出一致的异常。
+- [#2827](https://github.com/hyperf/hyperf/pull/2827) 优化 `Hyperf\Server\ServerConfig`，解决方法 `__set` 因返回值不为 `void`，导致不兼容 `PHP8` 的问题。
+- [#2839](https://github.com/hyperf/hyperf/pull/2839) 优化 `Hyperf\Database\Schema\ColumnDefinition` 的注释。
+
+# v2.0.19 - 2020-11-17
+
+## 新增
+
+- [#2794](https://github.com/hyperf/hyperf/pull/2794) [#2802](https://github.com/hyperf/hyperf/pull/2802) 为 `Session` 组件新增配置项 `options.cookie_lifetime`, 允许用户自己设置 `Cookies` 的超时时间。
+
+## 修复
+
+- [#2783](https://github.com/hyperf/hyperf/pull/2783) 修复 `NSQ` 消费者无法在协程风格下正常使用的问题。
+- [#2788](https://github.com/hyperf/hyperf/pull/2788) 修复非静态方法 `__handlePropertyHandler()` 在代理类中，被静态调用的问题。
+- [#2790](https://github.com/hyperf/hyperf/pull/2790) 修复 `ETCD` 配置中心，`BootProcessListener` 监听器无法在协程风格下正常使用的问题。
+- [#2803](https://github.com/hyperf/hyperf/pull/2803) 修复当 `Request` 无法实例化时，`HTTP` 响应数据被清除的问题。
+- [#2807](https://github.com/hyperf/hyperf/pull/2807) 修复当存在重复的中间件时，中间件的表现会与预期不符的问题。
+
+## 优化
+
+- [#2750](https://github.com/hyperf/hyperf/pull/2750) 优化 `Scout` 组件，当没有配置搜索引擎 `index` 或 `Elasticsearch` 版本高于 `7.0` 时，使用 `index` 而非 `type` 作为模型的搜索条件。
+
 # v2.0.18 - 2020-11-09
 
 ## 新增
