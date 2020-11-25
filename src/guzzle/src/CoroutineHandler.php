@@ -190,8 +190,9 @@ class CoroutineHandler
         }
 
         $body = $client->body;
-        if (isset($options['sink']) && is_string($options['sink'])) {
-            $body = $this->createSink($body, $options['sink']);
+        $sink = $options['sink'] ?? null;
+        if (isset($sink) && (is_string($sink) || is_resource($sink))) {
+            $body = $this->createSink($body, $sink);
         }
 
         $response = new Psr7\Response(
@@ -220,16 +221,16 @@ class CoroutineHandler
         return Psr7\stream_for($body);
     }
 
-    protected function createSink(string $body, string $sink)
+    /**
+     * @param resource|string $stream
+     */
+    protected function createSink(string $body, $stream)
     {
-        if (! empty($options['stream'])) {
-            return $body;
+        if (is_string($stream)) {
+            $stream = fopen($stream, 'w+');
         }
-
-        $stream = fopen($sink, 'w+');
         if ($body !== '') {
             fwrite($stream, $body);
-            fseek($stream, 0);
         }
 
         return $stream;
