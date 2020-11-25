@@ -9,8 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Encryption;
-
-class EncryptException extends \RuntimeException
-{
-}
+return [
+    'default' => [
+        'key' => 'Hyperf',
+        'cipher' => 'AES-128-CBC',
+    ],
+];

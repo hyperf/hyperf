@@ -11,10 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Encryption;
 
-use Hyperf\Contract\ConfigInterface;
-use Psr\Container\ContainerInterface;
+use Hyperf\Encryption\Contract\EncrypterInterface;
+use Hyperf\Encryption\Exception\DecryptException;
+use Hyperf\Encryption\Exception\EncryptException;
+use Hyperf\Encryption\Exception\InvalidArgumentException;
 
-class Encrypter
+class Encrypter implements EncrypterInterface
 {
     /**
      * The encryption key.
@@ -30,34 +32,27 @@ class Encrypter
      */
     protected $cipher;
 
-    /**
-     * @var []
-     */
-    private $configs;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(string $key, string $cipher = 'AES-128-CBC')
     {
-        $config = $container->get(ConfigInterface::class);
-        $this->configs = $config->get('encrypter', []);
-
-        if ($this->key = (string) ($this->configs['key'] ?? '') and ! $this->key) {
-            throw new \RuntimeException('Encrypter key Not Set');
+        if (empty($key)) {
+            throw new InvalidArgumentException('Encrypter key Not Set');
         }
 
-        if ($this->cipher = $this->configs['cipher'] ?? 'AES-128-CBC' and ! in_array(strtolower($this->cipher), openssl_get_cipher_methods())) {
-            throw new \RuntimeException('Encrypter ciphers Not supported');
+        if (! in_array(strtolower($cipher), openssl_get_cipher_methods())) {
+            throw new InvalidArgumentException('Encrypter ciphers Not supported');
         }
+
+        $this->key = $key;
+        $this->cipher = $cipher;
     }
 
     /**
      * Encrypt the given value.
      *
      * @param mixed $value
-     * @param bool $serialize
      * @throws \Exception
-     * @return string
      */
-    public function encrypt($value, $serialize = true)
+    public function encrypt($value, bool $serialize = true): string
     {
         $iv = random_bytes(openssl_cipher_iv_length($this->cipher));
 
@@ -105,11 +100,9 @@ class Encrypter
     /**
      * Decrypt the given value.
      *
-     * @param string $payload
-     * @param bool $unserialize
      * @return mixed
      */
-    public function decrypt($payload, $unserialize = true)
+    public function decrypt(string $payload, bool $unserialize = true)
     {
         $payload = $this->getJsonPayload($payload);
 
