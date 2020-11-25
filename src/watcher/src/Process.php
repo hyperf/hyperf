@@ -68,8 +68,8 @@ class Process
         $this->file = $file;
         $this->ast = new Ast();
         $this->reflection = new BetterReflection();
+        $this->config = $this->initScanConfig();
         $this->reader = new AnnotationReader();
-        $this->config = ScanConfig::instance('/');
         $this->filesystem = new Filesystem();
     }
 
@@ -122,7 +122,7 @@ class Process
     {
         // Parse class annotations
         $classAnnotations = $this->reader->getClassAnnotations(new Adapter\ReflectionClass($reflection));
-        if (! empty($classAnnotations)) {
+        if (!empty($classAnnotations)) {
             foreach ($classAnnotations as $classAnnotation) {
                 if ($classAnnotation instanceof AnnotationInterface) {
                     $classAnnotation->collectClass($className);
@@ -133,7 +133,7 @@ class Process
         $properties = $reflection->getImmediateProperties();
         foreach ($properties as $property) {
             $propertyAnnotations = $this->reader->getPropertyAnnotations(new Adapter\ReflectionProperty($property));
-            if (! empty($propertyAnnotations)) {
+            if (!empty($propertyAnnotations)) {
                 foreach ($propertyAnnotations as $propertyAnnotation) {
                     if ($propertyAnnotation instanceof AnnotationInterface) {
                         $propertyAnnotation->collectProperty($className, $property->getName());
@@ -145,7 +145,7 @@ class Process
         $methods = $reflection->getImmediateMethods();
         foreach ($methods as $method) {
             $methodAnnotations = $this->reader->getMethodAnnotations(new Adapter\ReflectionMethod($method));
-            if (! empty($methodAnnotations)) {
+            if (!empty($methodAnnotations)) {
                 foreach ($methodAnnotations as $methodAnnotation) {
                     if ($methodAnnotation instanceof AnnotationInterface) {
                         $methodAnnotation->collectMethod($className, $method->getName());
@@ -157,7 +157,7 @@ class Process
 
     protected function putCache($path, $data)
     {
-        if (! $this->filesystem->isDirectory($dir = dirname($path))) {
+        if (!$this->filesystem->isDirectory($dir = dirname($path))) {
             $this->filesystem->makeDirectory($dir, 0755, true);
         }
 
@@ -172,9 +172,22 @@ class Process
         $traverser = new NodeTraverser();
         $traverser->addVisitor(new RewriteClassNameVisitor($meta));
         $traverser->traverse($stmts);
-        if (! $meta->isClass()) {
+        if (!$meta->isClass()) {
             return null;
         }
         return $meta;
+    }
+
+    protected function initScanConfig(): ScanConfig
+    {
+        $config = ScanConfig::instance(BASE_PATH . '/config/');
+        // dump($config);
+        // foreach ($config->getIgnoreAnnotations() as $annotation) {
+        //     AnnotationReader::addGlobalIgnoredName($annotation);
+        // }
+        // foreach ($config->getGlobalImports() as $alias => $annotation) {
+        //     AnnotationReader::addGlobalImports($alias, $annotation);
+        // }
+        return $config;
     }
 }
