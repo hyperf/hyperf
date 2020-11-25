@@ -133,6 +133,9 @@ class Watcher
                 $ret = System::exec($this->option->getBin() . ' vendor/hyperf/watcher/collector-reload.php ' . $file);
                 if ($ret['code'] === 0) {
                     $this->output->writeln('Class reload success.');
+                } else {
+                    $this->output->writeln('Class reload failed.');
+                    $this->output->writeln($ret['output'] ?? '');
                 }
                 $result[] = $file;
             }
