@@ -13,7 +13,7 @@ use longlang\phpkafka\Consumer\ConsumeMessage;
  */
 class %CLASS% extends AbstractConsumer
 {
-    public function consume(ConsumeMessage $message)
+    public function consume(ConsumeMessage $message): string
     {
 
     }
