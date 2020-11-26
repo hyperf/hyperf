@@ -20,6 +20,7 @@
 - [#2785](https://github.com/hyperf/hyperf/pull/2785) Optimized code for watcher.
 - [#2861](https://github.com/hyperf/hyperf/pull/2861) Optimized guzzle coroutine handler which throw exception when the status code below zero.
 - [#2868](https://github.com/hyperf/hyperf/pull/2868) Optimized code for guzzle sink, which support resource not only string.
+- [#2883](https://github.com/hyperf/hyperf/pull/2883) Optimized import command for `hyperf/scout`, use `chunkById()` instead of `chunk()`.
 
 # v2.0.20 - 2020-11-23
 
