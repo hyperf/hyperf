@@ -136,22 +136,7 @@ class KafkaConsumer extends AbstractConsumer
 
 ### 投递消息
 
-您可以通过调用 `Hyperf\Kafka\Producer::send(string $topic, ?string $value, ?string $key = null, array $headers = [], int $partitionIndex = 0, ?int $brokerId = null)` 方法来向 `kafka` 投递消息, 下面是在 `Controller`进行消息投递的一个示例：
-
-```php
-// 批量发送消息
-        $producer->sendBatch([
-            new ProduceMessage('hyperf1', 'hyperf1_value', 'hyperf1_key'),
-            new ProduceMessage('hyperf2', 'hyperf2_value', 'hyperf2_key'),
-            new ProduceMessage('hyperf3', 'hyperf3_value', 'hyperf3_key'),
-        ]);
-// 发送单条消息
-
-
-// 发送批量消息
-Hyperf\Kafka\Producer::sendBatch sendBatch(array $messages, ?int $brokerId = null)
-
-```
+您可以通过调用 `Hyperf\Kafka\Producer::send(string $topic, ?string $value, ?string $key = null, array $headers = [], int $partitionIndex = 0, ?int $brokerId = null)` 方法来向 `kafka` 投递消息, 下面是在 `Controller` 进行消息投递的一个示例：
 
 ```php
 <?php
@@ -189,7 +174,7 @@ class IndexController extends AbstractController
 
 ### 一次性投递多条消息
 
-`Hyperf\Kafka\Producer::sendBatch sendBatch(array $messages, ?int $brokerId = null)` 方法来向 `kafka` 批量的投递消息, 下面是在 `Controller`进行消息投递的一个示例：
+`Hyperf\Kafka\Producer::sendBatch(array $messages, ?int $brokerId = null)` 方法来向 `kafka` 批量的投递消息, 下面是在 `Controller` 进行消息投递的一个示例：
 
 
 ```php
