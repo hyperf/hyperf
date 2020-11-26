@@ -20,13 +20,13 @@ use Traversable;
 class Bundle implements IteratorAggregate
 {
     /**
-     * resource list
+     * resource list.
      * @param  array
      */
     private $resource_list = [];
 
     /**
-     *  Add a file to the resource bundle
+     * Add a file to the resource bundle.
      * @param string $file
      * @return Bundle
      */
@@ -37,8 +37,7 @@ class Bundle implements IteratorAggregate
     }
 
     /**
-     * Add a directory package to a resource package
-     *
+     * Add a directory package to a resource package.
      * @param   Finder  $dir
      * @return Bundle
      */
@@ -49,7 +48,7 @@ class Bundle implements IteratorAggregate
     }
 
     /**
-     * Determines whether the file exists in the resource bundle
+     * Determines whether the file exists in the resource bundle.
      * @param string $resource
      * @return bool
      */
@@ -67,7 +66,7 @@ class Bundle implements IteratorAggregate
     }
 
     /**
-     * Determines whether the file exists in the folder resource bundle
+     * Determines whether the file exists in the folder resource bundle.
      * @param Finder $dir
      * @param string $resource
      * @return bool
@@ -86,7 +85,7 @@ class Bundle implements IteratorAggregate
 
 
     /**
-     * Returns an iterator for a list of resources
+     * Returns an iterator for a list of resources.
      * @return ArrayIterator|Traversable
      */
     public function getIterator()

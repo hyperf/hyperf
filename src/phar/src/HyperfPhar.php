@@ -48,6 +48,7 @@ class HyperfPhar
     private $main;
 
     /**
+     * @param ContainerInterface $container
      * @param string $path path to composer.json file
      */
     public function __construct(ContainerInterface $container, string $path)
@@ -58,7 +59,7 @@ class HyperfPhar
     }
 
     /**
-     * Gets the Phar package name
+     * Gets the Phar package name.
      * @return TargetPhar|string
      */
     public function getTarget()
@@ -70,7 +71,7 @@ class HyperfPhar
     }
 
     /**
-     * Set the Phar package name
+     * Set the Phar package name.
      * @param $target
      * @return $this
      */
@@ -85,7 +86,7 @@ class HyperfPhar
     }
 
     /**
-     * Gets the default run script path
+     * Gets the default run script path.
      * @return string
      */
     public function getMain(): string
@@ -107,7 +108,7 @@ class HyperfPhar
     }
 
     /**
-     * Set the default startup file
+     * Set the default startup file.
      * @param $main
      * @return $this
      */
@@ -118,7 +119,7 @@ class HyperfPhar
     }
 
     /**
-     * Get package object
+     * Get package object.
      * @return Package
      */
     public function getPackage()
@@ -127,7 +128,7 @@ class HyperfPhar
     }
 
     /**
-     * Gets a list of all dependent packages
+     * Gets a list of all dependent packages.
      * @return array
      */
     public function getPackagesDependencies()
@@ -136,15 +137,15 @@ class HyperfPhar
 
         $pathVendor = $this->package->getDirectory() . $this->package->getPathVendor();
 
-        // 获取所有安装的依赖包
+        //  Gets all installed dependency packages
         if (is_file($pathVendor . 'composer/installed.json')) {
             $installed = $this->loadJson($pathVendor . 'composer/installed.json');
             $installedPackages = $installed;
-            //支持composer 2.0 的配置结构改变
+            //Configuration structure changes that support Composer 2.0
             if (isset($installed['packages'])) {
                 $installedPackages = $installed['packages'];
             }
-            //把这些依赖的组件，全部打包成package
+            //Package all of these dependent components into packages
             foreach ($installedPackages as $package) {
                 $dir = $package['name'] . '/';
                 if (isset($package['target-dir'])) {
@@ -159,7 +160,7 @@ class HyperfPhar
     }
 
     /**
-     *  Load the configuration
+     * Load the configuration.
      * @param $path
      * @return mixed
      */
@@ -173,7 +174,7 @@ class HyperfPhar
     }
 
     /**
-     * Get file size
+     * Get file size.
      * @param $path
      * @return string
      */
@@ -183,7 +184,7 @@ class HyperfPhar
     }
 
     /**
-     * Gets the relative path relative to the resource bundle
+     * Gets the relative path relative to the resource bundle.
      * @param $path
      * @return false|string
      */
@@ -197,7 +198,6 @@ class HyperfPhar
     }
 
     /**
-     * 输出log.
      * @param $message
      */
     public function log($message)
@@ -206,7 +206,7 @@ class HyperfPhar
     }
 
     /**
-     *  Compile the code into the Phar file
+     * Compile the code into the Phar file.
      */
     public function build()
     {

@@ -46,7 +46,7 @@ class BuildCommand extends HyperfCommand
     }
 
     /**
-     * run command
+     * run command.
      */
     public function handle()
     {
@@ -68,7 +68,7 @@ class BuildCommand extends HyperfCommand
     }
 
     /**
-     * check readonly
+     * check readonly.
      */
     public function assertWritable()
     {

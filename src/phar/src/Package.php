@@ -21,6 +21,7 @@ class Package
 
     /**
      * Package constructor.
+     * @param array $package
      * @param $directory
      */
     public function __construct(array $package, $directory)
@@ -40,7 +41,7 @@ class Package
 
     /**
      * Gets the short package name
-     * If not, the pathname is used as the package name
+     * If not, the pathname is used as the package name.
      * @return string
      */
     public function getShortName()
@@ -56,7 +57,7 @@ class Package
     }
 
     /**
-     * Gets the relative address of the vendor directory, which supports custom addresses in composer.json
+     * Gets the relative address of the vendor directory, which supports custom addresses in composer.json.
      * @return string
      */
     public function getPathVendor()
@@ -69,7 +70,7 @@ class Package
     }
 
     /**
-     * Get package directory
+     * Get package directory.
      * @return string
      */
     public function getDirectory()
@@ -78,7 +79,7 @@ class Package
     }
 
     /**
-     * Get resource bundle object
+     * Get resource bundle object.
      * @return Bundle
      */
     public function bundle()
@@ -99,7 +100,7 @@ class Package
     }
 
     /**
-     * Gets the executable file path, and the directory address where the Phar package will run
+     * Gets the executable file path, and the directory address where the Phar package will run.
      * @return array|mixed
      */
     public function getBins()

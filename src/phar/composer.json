@@ -30,6 +30,7 @@
         "hyperf/command": "^2.0",
         "hyperf/di": "^2.0",
         "hyperf/logger": "^2.0",
+        "psr/container": "^1.0",
         "ext-json": "*"
     },
     "require-dev": {
