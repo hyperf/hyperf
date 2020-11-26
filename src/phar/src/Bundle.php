@@ -39,6 +39,7 @@ class Bundle implements IteratorAggregate
     /**
      * Add a directory package to a resource package
      *
+     * @param   Finder  $dir
      * @return Bundle
      */
     public function addDir(Finder $dir)
