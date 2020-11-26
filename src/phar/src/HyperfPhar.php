@@ -62,7 +62,7 @@ class HyperfPhar
 
 
     /**
-     * 获取phar包名
+     * Gets the Phar package name
      * @return TargetPhar|string
      */
     public function getTarget()
@@ -74,7 +74,7 @@ class HyperfPhar
     }
 
     /**
-     * 设置phar包名
+     * Set the Phar package name
      * @param $target
      * @return $this
      */
@@ -89,7 +89,7 @@ class HyperfPhar
     }
 
     /**
-     * 获取默认运行脚本路径
+     * Gets the default run script path
      * @return string
      */
     public function getMain()
@@ -111,7 +111,7 @@ class HyperfPhar
     }
 
     /**
-     * 设置默认启动文件
+     * Set the default startup file
      * @param $main
      * @return $this
      */
@@ -123,7 +123,7 @@ class HyperfPhar
 
 
     /**
-     * 获取包
+     * Get package object
      * @return Package
      */
     public function getPackage()
@@ -132,7 +132,7 @@ class HyperfPhar
     }
 
     /**
-     * 获取所有依赖的包列表
+     * Gets a list of all dependent packages
      * @return array
      */
     public function getPackagesDependencies()
@@ -165,7 +165,7 @@ class HyperfPhar
     }
 
     /**
-     * 载入配置
+     *  Load the configuration
      * @param $path
      * @return mixed
      */
@@ -179,7 +179,7 @@ class HyperfPhar
     }
 
     /**
-     * 获取文件大小
+     * Get file size
      * @param $path
      * @return string
      */
@@ -189,7 +189,7 @@ class HyperfPhar
     }
 
     /**
-     * 获取相对于资源包的相对路径
+     * Gets the relative path relative to the resource bundle
      * @param $path
      * @return false|string
      */
@@ -212,7 +212,7 @@ class HyperfPhar
     }
 
     /**
-     * 编译代码到phar文件
+     *  Compile the code into the Phar file
      */
     public function build()
     {

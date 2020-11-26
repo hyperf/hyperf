@@ -37,7 +37,7 @@ class BuildCommand extends HyperfCommand
     }
 
     /**
-     * 提示
+     * tips
      */
     public function configure()
     {
@@ -48,7 +48,7 @@ class BuildCommand extends HyperfCommand
     }
 
     /**
-     * 执行命令
+     * run command
      */
     public function handle()
     {
@@ -70,7 +70,7 @@ class BuildCommand extends HyperfCommand
     }
 
     /**
-     * 判断是否打开了readonly
+     * check readonly
      */
     public function assertWritable()
     {

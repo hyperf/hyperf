@@ -35,7 +35,7 @@ class TargetPhar
     }
 
     /**
-     * 开始写入phar包
+     * Start writing the Phar package
      */
     public function stopBuffering()
     {
@@ -43,7 +43,7 @@ class TargetPhar
     }
 
     /**
-     * 添加资源包到phar包中
+     * Add a resource bundle to the Phar package
      *
      * @param  Bundle  $bundle
      */
@@ -60,7 +60,7 @@ class TargetPhar
     }
 
     /**
-     * 添加文件到Phar包中
+     * Add the file to the Phar package
      *
      * @param string $file The file name.
      */
@@ -70,7 +70,7 @@ class TargetPhar
     }
 
     /**
-     * 添加文件夹资源到Phar包中
+     * Add folder resources to the Phar package
      * @param Traversable $iterator
      */
     public function buildFromIterator(Traversable $iterator)
@@ -80,6 +80,7 @@ class TargetPhar
 
 
     /**
+     * Create the default execution file
      * @param string|null $indexFile
      * @param string|null $webIndexFile
      * @return string
@@ -90,7 +91,7 @@ class TargetPhar
     }
 
     /**
-     * 设置默认启动文件
+     * Set the default startup file
      * @param string $stub
      */
     public function setStub(string $stub)
@@ -99,7 +100,7 @@ class TargetPhar
     }
 
     /**
-     * 添加字符串到phar包中
+     * Add a string to the Phar package
      * @param $local
      * @param $contents
      */

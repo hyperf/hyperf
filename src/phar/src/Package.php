@@ -33,7 +33,7 @@ class Package
     }
 
     /**
-     * 获取包全名
+     * Get full package name
      * @return mixed|null
      */
     public function getName()
@@ -42,8 +42,8 @@ class Package
     }
 
     /**
-     * 获取短包名
-     * 如果没有获取到，则使用路径名作为包名
+     * Gets the short package name
+     * If not, the pathname is used as the package name
      * @return string
      */
     public function getShortName()
@@ -59,7 +59,7 @@ class Package
     }
 
     /**
-     * 获取vendor目录的相对地址，支持composer.json中的自定义地址
+     * Gets the relative address of the vendor directory, which supports custom addresses in composer.json
      * @return string
      */
     public function getPathVendor()
@@ -72,7 +72,7 @@ class Package
     }
 
     /**
-     * 获取包目录
+     * Get package directory
      * @return string
      */
     public function getDirectory()
@@ -81,7 +81,7 @@ class Package
     }
 
     /**
-     * 获取资源包
+     * Get resource bundle object
      * @return Bundle
      */
     public function bundle()
@@ -102,7 +102,7 @@ class Package
     }
 
     /**
-     * 获取可执行文件路径，phar包打包后运行的目录地址
+     * Gets the executable file path, and the directory address where the Phar package will run
      * @return array|mixed
      */
     public function getBins()

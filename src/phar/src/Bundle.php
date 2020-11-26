@@ -20,14 +20,14 @@ use Traversable;
 class Bundle implements IteratorAggregate
 {
     /**
-     * 资源列表
+     * resource list
      *
      * @param  array
      */
     private $resource_list = [];
 
     /**
-     * 添加文件到资源包
+     *  Add a file to the resource bundle
      *
      * @param string $file
      * @return  Bundle
@@ -39,7 +39,7 @@ class Bundle implements IteratorAggregate
     }
 
     /**
-     * 添加目录包到资源包
+     * Add a directory package to a resource package
      *
      * @param   Finder  $dir
      * @return  Bundle
@@ -51,7 +51,7 @@ class Bundle implements IteratorAggregate
     }
 
     /**
-     * 判断文件是否存在在资源包中
+     * Determines whether the file exists in the resource bundle
      * @param string $resource
      * @return bool
      */
@@ -70,7 +70,7 @@ class Bundle implements IteratorAggregate
     }
 
     /**
-     * 判断文件是否存在文件夹资源包中
+     * Determines whether the file exists in the folder resource bundle
      * @param Finder $dir
      * @param string $resource
      * @return bool
@@ -88,7 +88,7 @@ class Bundle implements IteratorAggregate
     }
 
     /**
-     * 返回资源列表的迭代器
+     * Returns an iterator for a list of resources
      * @return ArrayIterator|Traversable
      */
     public function getIterator()
