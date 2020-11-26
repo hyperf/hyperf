@@ -32,6 +32,8 @@ return [
         'replica_id' => -1,
         'rack_id' => '',
         'is_auto_create_topic' => true,
+        'num_partitions' => 1,
+        'replication_factor' => 3,
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,

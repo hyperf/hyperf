@@ -163,7 +163,11 @@ class ConsumerManager
             {
                 $createTopicsRequest = new CreateTopicsRequest();
 
-                $createTopicsRequest->setTopics([(new CreatableTopic())->setName($topic)->setNumPartitions(1)->setReplicationFactor(1)]);
+                $pool = $this->consumer->getPool();
+                $createTopicsRequest->setTopics([(new CreatableTopic())
+                    ->setName($topic)
+                    ->setNumPartitions($this->config->get(sprintf('kafka.%s.num_partitions', $pool), 1))
+                    ->setReplicationFactor($this->config->get(sprintf('kafka.%s.replication_factor', $pool), 3))]);
                 $createTopicsRequest->setValidateOnly(false);
                 $consumer->getBroker()->getClient()->send($createTopicsRequest);
             }
