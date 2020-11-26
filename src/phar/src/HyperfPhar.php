@@ -48,8 +48,9 @@ class HyperfPhar
     private $main;
 
     /**
+     * HyperfPhar constructor.
      * @param ContainerInterface $container
-     * @param string $path path to composer.json file
+     * @param string $path
      */
     public function __construct(ContainerInterface $container, string $path)
     {

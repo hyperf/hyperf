@@ -27,6 +27,7 @@ class BuildCommand extends HyperfCommand
 
     /**
      * BuildCommand constructor.
+     * @param $container ContainerInterface
      */
     public function __construct(ContainerInterface $container)
     {
@@ -79,6 +80,7 @@ class BuildCommand extends HyperfCommand
 
     /**
      * @param $path
+     * @param string|null $version
      * @return HyperfPhar
      */
     public function getPhar($path, ?string $version = null)
