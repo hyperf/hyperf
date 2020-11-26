@@ -21,7 +21,6 @@ class Package
 
     /**
      * Package constructor.
-     * @param array $package
      * @param $directory
      */
     public function __construct(array $package, $directory)
@@ -31,8 +30,8 @@ class Package
     }
 
     /**
-     * Get full package name
-     * @return mixed|null
+     * Get full package name.
+     * @return null|mixed
      */
     public function getName()
     {
@@ -85,7 +84,6 @@ class Package
     public function bundle()
     {
         $bundle = new Bundle();
-
         if (empty($this->package['autoload']) && ! is_dir($this->directory . $this->getPathVendor())) {
             return $bundle;
         }

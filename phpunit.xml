@@ -40,6 +40,7 @@
             <directory suffix="Test.php">./src/metric/tests</directory>
             <directory suffix="Test.php">./src/model-cache/tests</directory>
             <directory suffix="Test.php">./src/paginator/tests</directory>
+            <directory suffix="Test.php">./src/phar/tests</directory>
             <directory suffix="Test.php">./src/pool/tests</directory>
             <directory suffix="Test.php">./src/process/tests</directory>
             <directory suffix="Test.php">./src/protocol/tests</directory>
@@ -92,6 +93,7 @@
             <directory suffix=".php">./src/model-cache/src</directory>
             <directory suffix=".php">./src/nsq/src</directory>
             <directory suffix=".php">./src/paginator/src</directory>
+            <directory suffix=".php">./src/phar/src</directory>
             <directory suffix=".php">./src/redis/src</directory>
             <directory suffix=".php">./src/rpc/src</directory>
             <directory suffix=".php">./src/server/src</directory>

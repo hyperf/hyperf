@@ -27,7 +27,6 @@ class Bundle implements IteratorAggregate
 
     /**
      * Add a file to the resource bundle.
-     * @param string $file
      * @return Bundle
      */
     public function addFile(string $file)
@@ -38,7 +37,6 @@ class Bundle implements IteratorAggregate
 
     /**
      * Add a directory package to a resource package.
-     * @param   Finder  $dir
      * @return Bundle
      */
     public function addDir(Finder $dir)
@@ -49,7 +47,6 @@ class Bundle implements IteratorAggregate
 
     /**
      * Determines whether the file exists in the resource bundle.
-     * @param string $resource
      * @return bool
      */
     public function checkContains(string $resource)
@@ -66,9 +63,16 @@ class Bundle implements IteratorAggregate
     }
 
     /**
+     * Returns an iterator for a list of resources.
+     * @return ArrayIterator|Traversable
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->resource_list);
+    }
+
+    /**
      * Determines whether the file exists in the folder resource bundle.
-     * @param Finder $dir
-     * @param string $resource
      * @return bool
      */
     private function directoryContains(Finder $dir, string $resource)
@@ -82,15 +86,4 @@ class Bundle implements IteratorAggregate
 
         return false;
     }
-
-
-    /**
-     * Returns an iterator for a list of resources.
-     * @return ArrayIterator|Traversable
-     */
-    public function getIterator()
-    {
-        return new ArrayIterator($this->resource_list);
-    }
-
 }

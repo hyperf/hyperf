@@ -20,9 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class PackageTest extends TestCase
 {
-    /**
-     * 测试默认值
-     */
     public function testDefaults()
     {
         $package = new Package([], 'dirs/');
@@ -34,9 +31,6 @@ class PackageTest extends TestCase
         $this->assertEquals('vendor/', $package->getPathVendor());
     }
 
-    /**
-     * 测试自定义数据.
-     */
     public function testPackage()
     {
         $package = new Package([
@@ -55,7 +49,11 @@ class PackageTest extends TestCase
     public function testBundleWillContainComposerJsonButNotVendor()
     {
         $dir = realpath(__DIR__ . '/fixtures/03-project-with-phars') . '/';
-        $package = new Package([], $dir);
+        $package = new Package([
+            'config' => [
+                'vendor-dir' => 'vendors',
+            ],
+        ], $dir);
         $bundle = $package->bundle();
 
         $this->assertTrue($bundle->checkContains($dir . 'composer.json'));
@@ -67,7 +65,11 @@ class PackageTest extends TestCase
     public function testBundleWillNotContainComposerPharInRoot()
     {
         $dir = realpath(__DIR__ . '/fixtures/03-project-with-phars') . '/';
-        $package = new Package([], $dir);
+        $package = new Package([
+            'config' => [
+                'vendor-dir' => 'vendors',
+            ],
+        ], $dir);
         $bundle = $package->bundle();
 
         $this->assertFalse($bundle->checkContains($dir . 'composer.phar'));
@@ -77,7 +79,11 @@ class PackageTest extends TestCase
     public function testBundleWillContainComposerPharFromSrc()
     {
         $dir = realpath(__DIR__ . '/fixtures/04-project-with-phars-in-src') . '/';
-        $package = new Package([], $dir);
+        $package = new Package([
+            'config' => [
+                'vendor-dir' => 'vendors',
+            ],
+        ], $dir);
         $bundle = $package->bundle();
 
         $this->assertTrue($bundle->checkContains($dir . 'composer.json'));

@@ -44,7 +44,6 @@ class TargetPhar
 
     /**
      * Add a resource bundle to the Phar package.
-     * @param  Bundle  $bundle
      */
     public function addBundle(Bundle $bundle)
     {
@@ -69,7 +68,6 @@ class TargetPhar
 
     /**
      * Add folder resources to the Phar package.
-     * @param Traversable $iterator
      */
     public function buildFromIterator(Traversable $iterator)
     {
@@ -78,8 +76,6 @@ class TargetPhar
 
     /**
      * Create the default execution file.
-     * @param string|null $indexFile
-     * @param string|null $webIndexFile
      * @return string
      */
     public function createDefaultStub(string $indexFile = null, string $webIndexFile = null)
@@ -89,7 +85,6 @@ class TargetPhar
 
     /**
      * Set the default startup file.
-     * @param string $stub
      */
     public function setStub(string $stub)
     {

@@ -36,7 +36,7 @@ class BuildCommand extends HyperfCommand
     }
 
     /**
-     * tips
+     * tips.
      */
     public function configure()
     {
@@ -80,7 +80,6 @@ class BuildCommand extends HyperfCommand
 
     /**
      * @param $path
-     * @param string|null $version
      * @return HyperfPhar
      */
     public function getPhar($path, ?string $version = null)

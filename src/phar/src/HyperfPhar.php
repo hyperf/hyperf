@@ -49,8 +49,6 @@ class HyperfPhar
 
     /**
      * HyperfPhar constructor.
-     * @param ContainerInterface $container
-     * @param string $path
      */
     public function __construct(ContainerInterface $container, string $path)
     {
@@ -61,7 +59,7 @@ class HyperfPhar
 
     /**
      * Gets the Phar package name.
-     * @return TargetPhar|string
+     * @return string|TargetPhar
      */
     public function getTarget()
     {
@@ -88,7 +86,6 @@ class HyperfPhar
 
     /**
      * Gets the default run script path.
-     * @return string
      */
     public function getMain(): string
     {
@@ -158,30 +155,6 @@ class HyperfPhar
             }
         }
         return $packages;
-    }
-
-    /**
-     * Load the configuration.
-     * @param $path
-     * @return mixed
-     */
-    private function loadJson($path)
-    {
-        $ret = json_decode(file_get_contents($path), true);
-        if ($ret === null) {
-            throw new InvalidArgumentException('Unable to parse given path "' . $path . '"', json_last_error());
-        }
-        return $ret;
-    }
-
-    /**
-     * Get file size.
-     * @param $path
-     * @return string
-     */
-    private function getSize($path)
-    {
-        return round(filesize($path) / 1024, 1) . ' KiB';
     }
 
     /**
@@ -266,5 +239,29 @@ class HyperfPhar
 
         $this->log('');
         $this->log('    <info>OK</info> - Creating <info>' . $this->getTarget() . '</info> (' . $this->getSize($this->getTarget()) . ') completed after ' . round($time, 1) . 's');
+    }
+
+    /**
+     * Load the configuration.
+     * @param $path
+     * @return mixed
+     */
+    private function loadJson($path)
+    {
+        $ret = json_decode(file_get_contents($path), true);
+        if ($ret === null) {
+            throw new InvalidArgumentException('Unable to parse given path "' . $path . '"', json_last_error());
+        }
+        return $ret;
+    }
+
+    /**
+     * Get file size.
+     * @param $path
+     * @return string
+     */
+    private function getSize($path)
+    {
+        return round(filesize($path) / 1024, 1) . ' KiB';
     }
 }
