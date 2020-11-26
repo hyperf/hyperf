@@ -26,6 +26,8 @@ use longlang\phpkafka\Consumer\ConsumeMessage;
 use longlang\phpkafka\Consumer\Consumer as LongLangConsumer;
 use longlang\phpkafka\Consumer\ConsumerConfig;
 use longlang\phpkafka\Exception\KafkaErrorException;
+use longlang\phpkafka\Protocol\CreateTopics\CreatableTopic;
+use longlang\phpkafka\Protocol\CreateTopics\CreateTopicsRequest;
 use longlang\phpkafka\Protocol\ErrorCode;
 use longlang\phpkafka\Protocol\JoinGroup\JoinGroupRequest;
 use longlang\phpkafka\Socket\SwooleSocket;
@@ -143,8 +145,8 @@ class ConsumerManager
                                     $longLangConsumer->start();
                                     break;
                                 case ErrorCode::UNKNOWN_TOPIC_OR_PARTITION:
-                                    // TODO topic not exist
-                                    $longLangConsumer->stop();
+                                    $this->createTopics($longLangConsumer, $consumerConfig->getTopic());
+                                    $longLangConsumer->start();
                                     break;
                             }
 
@@ -155,6 +157,15 @@ class ConsumerManager
                 );
 
 
+            }
+
+            protected function createTopics(LongLangConsumer $consumer, ?string $topic = null)
+            {
+                $createTopicsRequest = new CreateTopicsRequest();
+
+                $createTopicsRequest->setTopics([(new CreatableTopic())->setName($topic)->setNumPartitions(1)->setReplicationFactor(1)]);
+                $createTopicsRequest->setValidateOnly(false);
+                $consumer->getBroker()->getClient()->send($createTopicsRequest);
             }
 
             protected function getConsumerConfig(): ConsumerConfig
