@@ -35,8 +35,11 @@ composer require hyperf/kafka
 |    session_timeout          |   int｜float   |   60   |  如果超时后没有收到心跳信号，则协调器会认为该用户死亡。（单位：秒，支持小数） |
 |    rebalance_timeout        |   int｜float |   60   |  重新平衡组时，协调器等待每个成员重新加入的最长时间（单位：秒，支持小数）。 |
 |    partitions               |   array   |   [0]   |  分区列表 |
-|    replica_id               |   int   |   -1   |  副本 ID |
-|    rack_id                  |   int   |   -1   |  机架编号 |
+|    replica_id               |   int    |   -1   |  副本 ID |
+|    rack_id                  |   int    |   -1   |  机架编号 |
+|    is_auto_create_topic     |    bool    |   true   | 是否需要自动创建 topic |
+|    num_partitions           |    int   | 1 |  自动创建 topic 时 partition 数量 |
+|    replication_factor       | int     | 3   |  自动创建 topic 时 replication_factor 数量 |
 |    is_auto_create_topic     |    bool    |   true   | 是否需要自动创建 topic |
 |    pool                     |   object   |      |   连接池配置 |
 
@@ -67,6 +70,8 @@ return [
         'replica_id' => -1,
         'rack_id' => '',
         'is_auto_create_topic' => true,
+        'num_partitions' => 1,
+        'replication_factor' => 3,
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -125,7 +130,7 @@ use longlang\phpkafka\Consumer\ConsumeMessage;
  */
 class KafkaConsumer extends AbstractConsumer
 {
-    public function consume(ConsumeMessage $message)
+    public function consume(ConsumeMessage $message): string
     {
         var_dump($message->getTopic() . ':' . $message->getKey() . ':' . $message->getValue());
     }
