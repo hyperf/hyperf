@@ -1,11 +1,11 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -25,10 +25,8 @@ class BuildCommand extends HyperfCommand
      */
     protected $container;
 
-
     /**
      * BuildCommand constructor.
-     * @param ContainerInterface $container
      */
     public function __construct(ContainerInterface $container)
     {
@@ -43,8 +41,8 @@ class BuildCommand extends HyperfCommand
     {
         $this->setDescription('Pack your project into a Phar package.')
             ->addOption('name', '', InputOption::VALUE_OPTIONAL, 'This is the name of the Phar package, and if it is not passed in, the project name is used by default', null)
-            ->addOption('bin','b',InputOption::VALUE_OPTIONAL,'The script path to execute by default.', "bin/hyperf.php")
-            ->addOption('path','p',InputOption::VALUE_OPTIONAL,'Project root path, default BASE_PATH.', null);
+            ->addOption('bin', 'b', InputOption::VALUE_OPTIONAL, 'The script path to execute by default.', 'bin/hyperf.php')
+            ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Project root path, default BASE_PATH.', null);
     }
 
     /**
@@ -56,14 +54,14 @@ class BuildCommand extends HyperfCommand
         $name = $this->input->getOption('name');
         $bin = $this->input->getOption('bin');
         $path = $this->input->getOption('path');
-        if (empty($path)){
+        if (empty($path)) {
             $path = BASE_PATH;
         }
         $phar = $this->getPhar($path);
-        if (!empty($bin)){
+        if (! empty($bin)) {
             $phar->setMain($bin);
         }
-        if (!empty($name)){
+        if (! empty($name)) {
             $phar->setTarget($name);
         }
         $phar->build();
@@ -81,10 +79,9 @@ class BuildCommand extends HyperfCommand
 
     /**
      * @param $path
-     * @param null $version
      * @return HyperfPhar
      */
-    public function getPhar($path, $version = null)
+    public function getPhar($path, ?string $version = null)
     {
         if ($version !== null) {
             $path .= ':' . $version;
@@ -93,16 +90,15 @@ class BuildCommand extends HyperfCommand
         if (is_dir($path)) {
             $path = rtrim($path, '/') . '/composer.json';
         }
-        if (!is_file($path)) {
+        if (! is_file($path)) {
             throw new InvalidArgumentException('The given path "' . $path . '" is not a readable file');
         }
-        $phar = new HyperfPhar($this->container,$path);
+        $phar = new HyperfPhar($this->container, $path);
 
         $pathVendor = $phar->getPackage()->getDirectory() . $phar->getPackage()->getPathVendor();
-        if (!is_dir($pathVendor)) {
+        if (! is_dir($pathVendor)) {
             throw new RuntimeException('Project is not installed via composer. Run "composer install" manually');
         }
         return $phar;
     }
-
 }

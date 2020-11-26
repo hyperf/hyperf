@@ -1,11 +1,11 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -23,7 +23,7 @@ class TargetPhar
     private $phar;
 
     /**
-     * @var  HyperfPhar
+     * @var HyperfPhar
      */
     private $hyperfPhar;
 
@@ -49,7 +49,7 @@ class TargetPhar
      */
     public function addBundle(Bundle $bundle)
     {
-        /** @var Finder $resource */
+        /** @var Finder|string $resource */
         foreach ($bundle as $resource) {
             if (is_string($resource)) {
                 $this->addFile($resource);
@@ -62,7 +62,7 @@ class TargetPhar
     /**
      * Add the file to the Phar package
      *
-     * @param string $file The file name.
+     * @param string $file the file name
      */
     public function addFile(string $file)
     {
@@ -77,7 +77,6 @@ class TargetPhar
     {
         $this->phar->buildFromIterator($iterator, $this->hyperfPhar->getPackage()->getDirectory());
     }
-
 
     /**
      * Create the default execution file

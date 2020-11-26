@@ -1,11 +1,11 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -21,16 +21,14 @@ class Bundle implements IteratorAggregate
 {
     /**
      * resource list
-     *
      * @param  array
      */
     private $resource_list = [];
 
     /**
      *  Add a file to the resource bundle
-     *
      * @param string $file
-     * @return  Bundle
+     * @return Bundle
      */
     public function addFile(string $file)
     {
@@ -41,8 +39,7 @@ class Bundle implements IteratorAggregate
     /**
      * Add a directory package to a resource package
      *
-     * @param   Finder  $dir
-     * @return  Bundle
+     * @return Bundle
      */
     public function addDir(Finder $dir)
     {
@@ -58,7 +55,6 @@ class Bundle implements IteratorAggregate
     public function checkContains(string $resource)
     {
         foreach ($this->resource_list as $containedResource) {
-
             if ($containedResource instanceof Finder && $this->directoryContains($containedResource, $resource)) {
                 return true;
             }
@@ -87,6 +83,7 @@ class Bundle implements IteratorAggregate
         return false;
     }
 
+
     /**
      * Returns an iterator for a list of resources
      * @return ArrayIterator|Traversable
@@ -95,4 +92,5 @@ class Bundle implements IteratorAggregate
     {
         return new ArrayIterator($this->resource_list);
     }
+
 }

@@ -1,16 +1,15 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\Phar;
-
 
 use FilesystemIterator;
 use GlobIterator;
@@ -23,26 +22,10 @@ use UnexpectedValueException;
 
 class HyperfPhar
 {
-
-    /**
-     * @var Package
-     */
-    private $package;
-
     /**
      * @var ContainerInterface
      */
     protected $container;
-
-    /**
-     * @var TargetPhar
-     */
-    private $target = null;
-
-    /**
-     * @var string
-     */
-    private $main = null;
 
     /**
      * @var StdoutLoggerInterface
@@ -50,16 +33,29 @@ class HyperfPhar
     protected $logger;
 
     /**
-     * @param ContainerInterface $container
+     * @var Package
+     */
+    private $package;
+
+    /**
+     * @var null|string|TargetPhar
+     */
+    private $target;
+
+    /**
+     * @var string
+     */
+    private $main;
+
+    /**
      * @param string $path path to composer.json file
      */
-    public function __construct(ContainerInterface $container,string $path)
+    public function __construct(ContainerInterface $container, string $path)
     {
         $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->package = new Package($this->loadJson($path), dirname(realpath($path)));
     }
-
 
     /**
      * Gets the Phar package name
@@ -92,19 +88,19 @@ class HyperfPhar
      * Gets the default run script path
      * @return string
      */
-    public function getMain()
+    public function getMain(): string
     {
         if ($this->main === null) {
             foreach ($this->package->getBins() as $path) {
-                if (!file_exists($this->package->getDirectory() . $path)) {
+                if (! file_exists($this->package->getDirectory() . $path)) {
                     throw new UnexpectedValueException('Bin file "' . $path . '" does not exist');
                 }
                 $this->main = $path;
                 break;
             }
             //兜底，使用hyperf默认启动文件
-            if ($this->main == null){
-                return "bin/hyperf.php";
+            if ($this->main == null) {
+                return 'bin/hyperf.php';
             }
         }
         return $this->main;
@@ -121,7 +117,6 @@ class HyperfPhar
         return $this;
     }
 
-
     /**
      * Get package object
      * @return Package
@@ -137,17 +132,16 @@ class HyperfPhar
      */
     public function getPackagesDependencies()
     {
-        $packages = array();
+        $packages = [];
 
         $pathVendor = $this->package->getDirectory() . $this->package->getPathVendor();
 
         // 获取所有安装的依赖包
         if (is_file($pathVendor . 'composer/installed.json')) {
-
             $installed = $this->loadJson($pathVendor . 'composer/installed.json');
             $installedPackages = $installed;
             //支持composer 2.0 的配置结构改变
-            if (isset($installed['packages'])){
+            if (isset($installed['packages'])) {
                 $installedPackages = $installed['packages'];
             }
             //把这些依赖的组件，全部打包成package
@@ -203,7 +197,7 @@ class HyperfPhar
     }
 
     /**
-     * 输出log
+     * 输出log.
      * @param $message
      */
     public function log($message)
@@ -221,7 +215,7 @@ class HyperfPhar
 
         //判断vendor目录是否存在
         $pathVendor = $this->package->getDirectory() . $this->package->getPathVendor();
-        if (!is_dir($pathVendor)) {
+        if (! is_dir($pathVendor)) {
             throw new RuntimeException('Directory "' . $pathVendor . '" not properly installed, did you run "composer install"?');
         }
 
@@ -252,12 +246,9 @@ class HyperfPhar
         $this->log('  - Setting main/stub');
 
         $main = $this->getMain();
-        if ($main === null) {
-            throw new RuntimeException("No main bin file defined! Resulting phar will NOT be executable");
-        }
         //添加默认启动文件
         $targetPhar->setStub($targetPhar->createDefaultStub($main));
-        $this->log('  - Setting default stub <info>'.$main .'</info>.');
+        $this->log('  - Setting default stub <info>' . $main . '</info>.');
 
         // 停止内存缓存，并写入数据到phar文件中，如果发生异常则会抛出
         $targetPhar->stopBuffering();
@@ -267,12 +258,12 @@ class HyperfPhar
         }
 
         if (rename($tmp, $target) === false) {
-            throw new UnexpectedValueException('Unable to rename temporary phar archive to "'.$target.'"');
+            throw new UnexpectedValueException('Unable to rename temporary phar archive to "' . $target . '"');
         }
 
         $time = max(microtime(true) - $time, 0);
 
         $this->log('');
-        $this->log('    <info>OK</info> - Creating <info>' . $this->getTarget() .'</info> (' . $this->getSize($this->getTarget()) . ') completed after ' . round($time, 1) . 's');
+        $this->log('    <info>OK</info> - Creating <info>' . $this->getTarget() . '</info> (' . $this->getSize($this->getTarget()) . ') completed after ' . round($time, 1) . 's');
     }
 }
