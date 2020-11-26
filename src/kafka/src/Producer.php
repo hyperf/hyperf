@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Kafka;
 
 use Hyperf\Contract\ConfigInterface;
@@ -106,13 +107,17 @@ class Producer
         $createTopicsRequest = new CreateTopicsRequest();
         $topics = [];
         if (! empty($topic)) {
-            $topics[] = (new CreatableTopic())->setName($topic)->setNumPartitions(1)->setReplicationFactor(1);
+            $topics[] = (new CreatableTopic())->setName($topic)
+                ->setNumPartitions($this->config['num_partitions'] ?? 1)
+                ->setReplicationFactor($this->config['replication_factor'] ?? 3);
         }
 
         if (! empty($messages)) {
             /** @var ProduceMessage $message */
             foreach ($messages as $message) {
-                $topics[] = (new CreatableTopic())->setName($message->getTopic())->setNumPartitions(1)->setReplicationFactor(1);
+                $topics[] = (new CreatableTopic())->setName($message->getTopic())
+                    ->setNumPartitions($this->config['num_partitions'] ?? 50)
+                    ->setReplicationFactor($this->config['replication_factor'] ?? 50);
             }
         }
 
