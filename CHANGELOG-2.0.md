@@ -9,6 +9,7 @@
 ## Fixed
 
 - [#2874](https://github.com/hyperf/hyperf/pull/2874) Fixed `scan.ignore_annotations` does not works when using watcher.
+- [#2878](https://github.com/hyperf/hyperf/pull/2878) Fixed config of nsqd does not works.
 
 ## Changed
 

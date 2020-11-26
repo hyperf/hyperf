@@ -38,6 +38,7 @@
             <directory suffix="Test.php">./src/logger/tests</directory>
             <directory suffix="Test.php">./src/metric/tests</directory>
             <directory suffix="Test.php">./src/model-cache/tests</directory>
+            <directory suffix="Test.php">./src/nsq/tests</directory>
             <directory suffix="Test.php">./src/paginator/tests</directory>
             <directory suffix="Test.php">./src/pool/tests</directory>
             <directory suffix="Test.php">./src/process/tests</directory>
