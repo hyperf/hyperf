@@ -34,6 +34,12 @@ class TargetPhar
         $this->hyperfPhar = $hyperfPhar;
     }
 
+    public function __toString(): string
+    {
+        $exploded = explode('/', $this->phar->getPath());
+        return end($exploded);
+    }
+
     /**
      * Start writing the Phar package.
      */

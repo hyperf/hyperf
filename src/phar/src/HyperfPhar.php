@@ -47,9 +47,6 @@ class HyperfPhar
      */
     private $main;
 
-    /**
-     * HyperfPhar constructor.
-     */
     public function __construct(ContainerInterface $container, string $path)
     {
         $this->container = $container;
@@ -71,7 +68,7 @@ class HyperfPhar
 
     /**
      * Set the Phar package name.
-     * @param $target
+     * @param string|TargetPhar $target
      * @return $this
      */
     public function setTarget($target)
@@ -107,10 +104,9 @@ class HyperfPhar
 
     /**
      * Set the default startup file.
-     * @param $main
      * @return $this
      */
-    public function setMain($main)
+    public function setMain(string $main)
     {
         $this->main = $main;
         return $this;
@@ -127,9 +123,8 @@ class HyperfPhar
 
     /**
      * Gets a list of all dependent packages.
-     * @return array
      */
-    public function getPackagesDependencies()
+    public function getPackagesDependencies(): array
     {
         $packages = [];
 
@@ -159,10 +154,9 @@ class HyperfPhar
 
     /**
      * Gets the relative path relative to the resource bundle.
-     * @param $path
      * @return false|string
      */
-    public function getPathLocalToBase($path)
+    public function getPathLocalToBase(string $path)
     {
         $root = $this->package->getDirectory();
         if (strpos($path, $root) !== 0) {
@@ -187,13 +181,13 @@ class HyperfPhar
         $this->log('Creating phar <info>' . $this->getTarget() . '</info>');
         $time = microtime(true);
 
-        //判断vendor目录是否存在
+        // Assert vendor dir must exists.
         $pathVendor = $this->package->getDirectory() . $this->package->getPathVendor();
         if (! is_dir($pathVendor)) {
             throw new RuntimeException('Directory "' . $pathVendor . '" not properly installed, did you run "composer install"?');
         }
 
-        // 获取可以写入的phar包
+        // Get file path which could be written for phar.
         $target = $this->getTarget();
         do {
             $tmp = $target . '.' . mt_rand() . '.phar';
@@ -201,17 +195,17 @@ class HyperfPhar
 
         $targetPhar = new TargetPhar(new Phar($tmp), $this);
         $this->log('  - Adding main package "' . $this->package->getName() . '"');
-        //添加项目本身
+        // Add project self.
         $targetPhar->addBundle($this->package->bundle());
 
         $this->log('  - Adding composer base files');
-        // 显示的添加composer自动加载器
+        // Add autoload.php
         $targetPhar->addFile($pathVendor . 'autoload.php');
 
-        // 添加composer基本目录，没有子目录
+        // Add composer autoload files.
         $targetPhar->buildFromIterator(new GlobIterator($pathVendor . 'composer/*.*', FilesystemIterator::KEY_AS_FILENAME));
 
-        //添加composer的依赖资源
+        // Add composer depenedencies.
         foreach ($this->getPackagesDependencies() as $package) {
             $this->log('  - Adding dependency "' . $package->getName() . '" from "' . $this->getPathLocalToBase($package->getDirectory()) . '"');
             $targetPhar->addBundle($package->bundle());
@@ -220,11 +214,10 @@ class HyperfPhar
         $this->log('  - Setting main/stub');
 
         $main = $this->getMain();
-        //添加默认启动文件
+        // Add the default stub.
         $targetPhar->setStub($targetPhar->createDefaultStub($main));
         $this->log('  - Setting default stub <info>' . $main . '</info>.');
 
-        // 停止内存缓存，并写入数据到phar文件中，如果发生异常则会抛出
         $targetPhar->stopBuffering();
 
         if (file_exists($target)) {
@@ -243,10 +236,8 @@ class HyperfPhar
 
     /**
      * Load the configuration.
-     * @param $path
-     * @return mixed
      */
-    private function loadJson($path)
+    private function loadJson(string $path): array
     {
         $ret = json_decode(file_get_contents($path), true);
         if ($ret === null) {
@@ -257,11 +248,11 @@ class HyperfPhar
 
     /**
      * Get file size.
-     * @param $path
+     * @param HyperfPhar|string $path
      * @return string
      */
     private function getSize($path)
     {
-        return round(filesize($path) / 1024, 1) . ' KiB';
+        return round(filesize((string) $path) / 1024, 1) . ' KiB';
     }
 }

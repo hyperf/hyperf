@@ -27,7 +27,6 @@ class BuildCommand extends HyperfCommand
 
     /**
      * BuildCommand constructor.
-     * @param $container ContainerInterface
      */
     public function __construct(ContainerInterface $container)
     {
@@ -35,9 +34,6 @@ class BuildCommand extends HyperfCommand
         $this->container = $container;
     }
 
-    /**
-     * tips.
-     */
     public function configure()
     {
         $this->setDescription('Pack your project into a Phar package.')
@@ -46,9 +42,6 @@ class BuildCommand extends HyperfCommand
             ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Project root path, default BASE_PATH.', null);
     }
 
-    /**
-     * run command.
-     */
     public function handle()
     {
         $this->assertWritable();
@@ -78,11 +71,7 @@ class BuildCommand extends HyperfCommand
         }
     }
 
-    /**
-     * @param $path
-     * @return HyperfPhar
-     */
-    public function getPhar($path, ?string $version = null)
+    public function getPhar(string $path, ?string $version = null): HyperfPhar
     {
         if ($version !== null) {
             $path .= ':' . $version;

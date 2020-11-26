@@ -20,38 +20,36 @@ use Traversable;
 class Bundle implements IteratorAggregate
 {
     /**
-     * resource list.
-     * @param  array
+     * @var Finder[]|string[]
      */
-    private $resource_list = [];
+    private $resources = [];
 
     /**
      * Add a file to the resource bundle.
-     * @return Bundle
+     * @return static
      */
     public function addFile(string $file)
     {
-        $this->resource_list[] = $file;
+        $this->resources[] = $file;
         return $this;
     }
 
     /**
      * Add a directory package to a resource package.
-     * @return Bundle
+     * @return static
      */
     public function addDir(Finder $dir)
     {
-        $this->resource_list[] = $dir;
+        $this->resources[] = $dir;
         return $this;
     }
 
     /**
      * Determines whether the file exists in the resource bundle.
-     * @return bool
      */
-    public function checkContains(string $resource)
+    public function checkContains(string $resource): bool
     {
-        foreach ($this->resource_list as $containedResource) {
+        foreach ($this->resources as $containedResource) {
             if ($containedResource instanceof Finder && $this->directoryContains($containedResource, $resource)) {
                 return true;
             }
@@ -68,7 +66,7 @@ class Bundle implements IteratorAggregate
      */
     public function getIterator()
     {
-        return new ArrayIterator($this->resource_list);
+        return new ArrayIterator($this->resources);
     }
 
     /**

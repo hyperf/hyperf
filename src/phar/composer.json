@@ -27,11 +27,10 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/command": "^2.0",
-        "hyperf/di": "^2.0",
-        "hyperf/logger": "^2.0",
-        "psr/container": "^1.0",
-        "ext-json": "*"
+        "ext-json": "*",
+        "hyperf/command": "~2.0.0",
+        "hyperf/contract": "~2.0.0",
+        "psr/container": "^1.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",
