@@ -34,14 +34,14 @@ class SearchableScope implements Scope
     public function extend(EloquentBuilder $builder)
     {
         $builder->macro('searchable', function (EloquentBuilder $builder, $chunk = null) {
-            $builder->chunk($chunk ?: config('scout.chunk.searchable', 500), function ($models) {
+            $builder->chunkById($chunk ?: config('scout.chunk.searchable', 500), function ($models) {
                 $models->filter->shouldBeSearchable()->searchable();
                 $dispatcher = ApplicationContext::getContainer()->get(EventDispatcherInterface::class);
                 $dispatcher->dispatch(new ModelsImported($models));
             });
         });
         $builder->macro('unsearchable', function (EloquentBuilder $builder, $chunk = null) {
-            $builder->chunk($chunk ?: config('scout.chunk.unsearchable', 500), function ($models) {
+            $builder->chunkById($chunk ?: config('scout.chunk.unsearchable', 500), function ($models) {
                 $models->unsearchable();
                 $dispatcher = ApplicationContext::getContainer()->get(EventDispatcherInterface::class);
                 $dispatcher->dispatch(new ModelsFlushed($models));
