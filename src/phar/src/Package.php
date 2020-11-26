@@ -81,20 +81,21 @@ class Package
      * Get resource bundle object.
      * @return Bundle
      */
-    public function bundle()
+    public function bundle(Finder $finder = null)
     {
         $bundle = new Bundle();
         if (empty($this->package['autoload']) && ! is_dir($this->directory . $this->getPathVendor())) {
             return $bundle;
         }
-        $iterator = Finder::create()
-            ->files()
-            ->ignoreVCS(true)
-            ->exclude(rtrim($this->getPathVendor(), '/'))
-            ->notPath('/^composer\.phar/')
-            ->in($this->getDirectory());
-
-        return $bundle->addDir($iterator);
+        if ($finder == null){
+            $finder = Finder::create()
+                ->files()
+                ->ignoreVCS(true)
+                ->exclude(rtrim($this->getPathVendor(), '/'))
+                ->notPath('/^composer\.phar/')
+                ->in($this->getDirectory());
+        }
+        return $bundle->addDir($finder);
     }
 
     /**

@@ -18,6 +18,7 @@ use InvalidArgumentException;
 use Phar;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
+use Symfony\Component\Finder\Finder;
 use UnexpectedValueException;
 
 class HyperfPhar
@@ -94,7 +95,7 @@ class HyperfPhar
                 $this->main = $path;
                 break;
             }
-            //兜底，使用hyperf默认启动文件
+            //For the bottom, use the hyperF default startup file
             if ($this->main == null) {
                 return 'bin/hyperf.php';
             }
@@ -196,7 +197,25 @@ class HyperfPhar
         $targetPhar = new TargetPhar(new Phar($tmp), $this);
         $this->log('  - Adding main package "' . $this->package->getName() . '"');
         // Add project self.
-        $targetPhar->addBundle($this->package->bundle());
+        $finder = Finder::create()
+            ->files()
+            ->ignoreVCS(true)
+            ->exclude(rtrim($this->package->getPathVendor(), '/'))
+            ->exclude("runtime") //Ignore runtime dir
+            ->notPath('/^composer\.phar/')
+            ->notPath($target) //Ignore the phar package that exists in the project itself
+            ->in($this->package->getDirectory());
+        $targetPhar->addBundle($this->package->bundle($finder));
+
+        //Load the Runtime folder separately
+        if (is_dir($this->package->getDirectory()."runtime")){
+            $this->log('  - Adding runtime container files');
+            $finder = Finder::create()
+                ->files()
+                ->in($this->package->getDirectory()."runtime/container");
+            $targetPhar->addBundle($this->package->bundle($finder));
+        }
+
 
         $this->log('  - Adding composer base files');
         // Add autoload.php
@@ -207,6 +226,10 @@ class HyperfPhar
 
         // Add composer depenedencies.
         foreach ($this->getPackagesDependencies() as $package) {
+            //You don't have to package yourself
+            if (stripos($package->getDirectory(),"vendor/hyperf/phar/") !== false){
+                continue;
+            }
             $this->log('  - Adding dependency "' . $package->getName() . '" from "' . $this->getPathLocalToBase($package->getDirectory()) . '"');
             $targetPhar->addBundle($package->bundle());
         }

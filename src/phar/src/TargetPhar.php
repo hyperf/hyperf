@@ -84,9 +84,12 @@ class TargetPhar
      * Create the default execution file.
      * @return string
      */
-    public function createDefaultStub(string $indexFile = null, string $webIndexFile = null)
+    public function createDefaultStub(string $indexFile, string $webIndexFile = null)
     {
-        return $this->phar->createDefaultStub($indexFile, $webIndexFile);
+        if($webIndexFile != null){
+            return $this->phar->createDefaultStub($indexFile,$webIndexFile);
+        }
+        return $this->phar->createDefaultStub($indexFile);
     }
 
     /**
