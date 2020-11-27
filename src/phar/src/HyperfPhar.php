@@ -16,10 +16,10 @@ use GlobIterator;
 use Hyperf\Contract\StdoutLoggerInterface;
 use InvalidArgumentException;
 use Phar;
-use PhpParser\ParserFactory;
+use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
-use PhpParser\Node;
+use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -94,7 +94,7 @@ class HyperfPhar
     {
         if ($this->main === null) {
             foreach ($this->package->getBins() as $path) {
-                if (!file_exists($this->package->getDirectory() . $path)) {
+                if (! file_exists($this->package->getDirectory() . $path)) {
                     throw new UnexpectedValueException('Bin file "' . $path . '" does not exist');
                 }
                 $this->main = $path;
@@ -189,7 +189,7 @@ class HyperfPhar
 
         // Assert vendor dir must exists.
         $pathVendor = $this->package->getDirectory() . $this->package->getPathVendor();
-        if (!is_dir($pathVendor)) {
+        if (! is_dir($pathVendor)) {
             throw new RuntimeException('Directory "' . $pathVendor . '" not properly installed, did you run "composer install"?');
         }
 
@@ -206,7 +206,7 @@ class HyperfPhar
             ->files()
             ->ignoreVCS(true)
             ->exclude(rtrim($this->package->getPathVendor(), '/'))
-            ->exclude("runtime") //Ignore runtime dir
+            ->exclude('runtime') //Ignore runtime dir
             ->notPath('/^composer\.phar/')
             ->notPath($target) //Ignore the phar package that exists in the project itself
             ->in($this->package->getDirectory());
@@ -216,14 +216,13 @@ class HyperfPhar
         $this->ScanCacheable($targetPhar, true);
 
         //Load the Runtime folder separately
-        if (is_dir($this->package->getDirectory() . "runtime")) {
+        if (is_dir($this->package->getDirectory() . 'runtime')) {
             $this->log('  - Adding runtime container files');
             $finder = Finder::create()
                 ->files()
-                ->in($this->package->getDirectory() . "runtime/container");
+                ->in($this->package->getDirectory() . 'runtime/container');
             $targetPhar->addBundle($this->package->bundle($finder));
         }
-
 
         $this->log('  - Adding composer base files');
         // Add autoload.php
@@ -235,7 +234,7 @@ class HyperfPhar
         // Add composer depenedencies.
         foreach ($this->getPackagesDependencies() as $package) {
             //You don't have to package yourself
-            if (stripos($package->getDirectory(), "vendor/hyperf/phar/") !== false) {
+            if (stripos($package->getDirectory(), 'vendor/hyperf/phar/') !== false) {
                 continue;
             }
             $this->log('  - Adding dependency "' . $package->getName() . '" from "' . $this->getPathLocalToBase($package->getDirectory()) . '"');
@@ -266,6 +265,51 @@ class HyperfPhar
     }
 
     /**
+     * /Find the scan_cacheable configuration and force it to open.
+     */
+    protected function ScanCacheable(TargetPhar $targetPhar, bool $open = true)
+    {
+        $configPath = 'config/config.php';
+        $absPath = $this->package->getDirectory() . $configPath;
+        if (! file_exists($absPath)) {
+            return;
+        }
+        $code = file_get_contents($absPath);
+        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $ast = $parser->parse($code);
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(new class() extends NodeVisitorAbstract {
+            public function leaveNode(Node $node)
+            {
+                if ($node instanceof Node\Stmt\Return_) {
+                    if (! $node->expr instanceof Node\Expr\Array_) {
+                        return $node;
+                    }
+                    foreach ($node->expr as $item) {
+                        foreach ($item as $value) {
+                            if (! $item instanceof Node\Expr\ArrayItem) {
+                                continue;
+                            }
+                            foreach ($value as $k => $v) {
+                                //Find the scan_cacheable configuration and force it to open
+                                if ($v->key instanceof Node\Scalar\String_ && strtolower($v->key->value) == 'scan_cacheable') {
+                                    $v->value = new Node\Expr\ConstFetch(new Node\Name('true'));
+                                }
+                            }
+                        }
+                    }
+                }
+                return $node;
+            }
+        });
+
+        $modifiedStmts = $traverser->traverse($ast);
+        $prettyPrinter = new PrettyPrinter\Standard();
+        $code = $prettyPrinter->prettyPrintFile($modifiedStmts);
+        $targetPhar->addFromString($configPath, $code);
+    }
+
+    /**
      * Load the configuration.
      */
     private function loadJson(string $path): array
@@ -284,48 +328,6 @@ class HyperfPhar
      */
     private function getSize($path)
     {
-        return round(filesize((string)$path) / 1024, 1) . ' KiB';
-    }
-
-    /**
-     * /Find the scan_cacheable configuration and force it to open.
-     * @param TargetPhar $targetPhar
-     * @param bool $open
-     */
-    protected function ScanCacheable(TargetPhar $targetPhar, bool $open = true)
-    {
-        $configPath = "config/config.php";
-        $absPath = $this->package->getDirectory() . $configPath;
-        if (!file_exists($absPath)) {
-            return;
-        }
-        $code = file_get_contents($absPath);
-        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
-        $ast = $parser->parse($code);
-        $traverser = new NodeTraverser;
-        $traverser->addVisitor(new class extends NodeVisitorAbstract {
-            public function leaveNode(Node $node)
-            {
-                if ($node instanceof Node\Stmt\Return_) {
-                    foreach ($node as $item) {
-                        foreach ($item as $value) {
-                            foreach ($value as $k => $v) {
-                                //Find the scan_cacheable configuration and force it to open
-                                if ($v->key instanceof Node\Scalar\String_ && strtolower($v->key->value) == "scan_cacheable") {
-                                    $v->value = new Node\Expr\ConstFetch(new Node\Name("true"));
-                                }
-                            }
-                        }
-                    }
-                    return $node;
-                }
-            }
-        });
-
-        $modifiedStmts = $traverser->traverse($ast);
-        $prettyPrinter = new PrettyPrinter\Standard;
-        $code = $prettyPrinter->prettyPrintFile($modifiedStmts);
-        $targetPhar->addFromString($configPath, $code);
-        return;
+        return round(filesize((string) $path) / 1024, 1) . ' KiB';
     }
 }

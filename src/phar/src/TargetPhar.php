@@ -86,8 +86,8 @@ class TargetPhar
      */
     public function createDefaultStub(string $indexFile, string $webIndexFile = null)
     {
-        if($webIndexFile != null){
-            return $this->phar->createDefaultStub($indexFile,$webIndexFile);
+        if ($webIndexFile != null) {
+            return $this->phar->createDefaultStub($indexFile, $webIndexFile);
         }
         return $this->phar->createDefaultStub($indexFile);
     }

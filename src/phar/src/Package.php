@@ -87,7 +87,7 @@ class Package
         if (empty($this->package['autoload']) && ! is_dir($this->directory . $this->getPathVendor())) {
             return $bundle;
         }
-        if ($finder == null){
+        if ($finder == null) {
             $finder = Finder::create()
                 ->files()
                 ->ignoreVCS(true)
