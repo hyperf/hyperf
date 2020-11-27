@@ -14,13 +14,10 @@ namespace Hyperf\Phar;
 use FilesystemIterator;
 use GlobIterator;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Phar\Ast\Ast;
+use Hyperf\Phar\Ast\Visitor\RewriteConfigVisitor;
 use InvalidArgumentException;
 use Phar;
-use PhpParser\Node;
-use PhpParser\NodeTraverser;
-use PhpParser\NodeVisitorAbstract;
-use PhpParser\ParserFactory;
-use PhpParser\PrettyPrinter;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Symfony\Component\Finder\Finder;
@@ -212,8 +209,8 @@ class HyperfPhar
             ->in($this->package->getDirectory());
         $targetPhar->addBundle($this->package->bundle($finder));
 
-        //Force the ScanCacheable switch on
-        $this->ScanCacheable($targetPhar, true);
+        // Force the ScanCacheable switch on
+        $this->enableScanCacheable($targetPhar);
 
         //Load the Runtime folder separately
         if (is_dir($this->package->getDirectory() . 'runtime')) {
@@ -265,9 +262,9 @@ class HyperfPhar
     }
 
     /**
-     * /Find the scan_cacheable configuration and force it to open.
+     * Find the scan_cacheable configuration and force it to open.
      */
-    protected function ScanCacheable(TargetPhar $targetPhar, bool $open = true)
+    protected function enableScanCacheable(TargetPhar $targetPhar)
     {
         $configPath = 'config/config.php';
         $absPath = $this->package->getDirectory() . $configPath;
@@ -275,37 +272,7 @@ class HyperfPhar
             return;
         }
         $code = file_get_contents($absPath);
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
-        $ast = $parser->parse($code);
-        $traverser = new NodeTraverser();
-        $traverser->addVisitor(new class() extends NodeVisitorAbstract {
-            public function leaveNode(Node $node)
-            {
-                if ($node instanceof Node\Stmt\Return_) {
-                    if (! $node->expr instanceof Node\Expr\Array_) {
-                        return $node;
-                    }
-                    foreach ($node->expr as $item) {
-                        foreach ($item as $value) {
-                            if (! $item instanceof Node\Expr\ArrayItem) {
-                                continue;
-                            }
-                            foreach ($value as $k => $v) {
-                                //Find the scan_cacheable configuration and force it to open
-                                if ($v->key instanceof Node\Scalar\String_ && strtolower($v->key->value) == 'scan_cacheable') {
-                                    $v->value = new Node\Expr\ConstFetch(new Node\Name('true'));
-                                }
-                            }
-                        }
-                    }
-                }
-                return $node;
-            }
-        });
-
-        $modifiedStmts = $traverser->traverse($ast);
-        $prettyPrinter = new PrettyPrinter\Standard();
-        $code = $prettyPrinter->prettyPrintFile($modifiedStmts);
+        $code = Ast::parse($code, [new RewriteConfigVisitor()]);
         $targetPhar->addFromString($configPath, $code);
     }
 
