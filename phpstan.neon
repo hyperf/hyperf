@@ -17,6 +17,7 @@ parameters:
     - %currentWorkingDirectory%/src/contract/*
     - %currentWorkingDirectory%/src/crontab/*
     - %currentWorkingDirectory%/src/database/*
+    - %currentWorkingDirectory%/src/filesystem/src/Adapter/CosAdapterFactory.php
     - %currentWorkingDirectory%/src/graphql/*
     - %currentWorkingDirectory%/src/grpc/*
     - %currentWorkingDirectory%/src/grpc-server/*
