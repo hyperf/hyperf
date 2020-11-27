@@ -452,10 +452,10 @@ public function onEvent($socket, $data)
 ```
 
 ### Nginx 代理配置
-`socket.io`的配置与`websocket`配置有些许不一样，所以很容易踩坑
+
+使用 `nginx` 反向代理 `socket.io` 与 `websocket` 有些许区别
 ```nginx
 server {
-    
     location ^~/socket.io/ {
         # 执行代理访问真实服务器
         proxy_pass http://hyperf; // 例 proxy_pass http://127.0.0.1:9502
