@@ -133,6 +133,9 @@ class Watcher
                 $ret = System::exec($this->option->getBin() . ' vendor/hyperf/watcher/collector-reload.php ' . $file);
                 if ($ret['code'] === 0) {
                     $this->output->writeln('Class reload success.');
+                } else {
+                    $this->output->writeln('Class reload failed.');
+                    $this->output->writeln($ret['output'] ?? '');
                 }
                 $result[] = $file;
             }
@@ -147,6 +150,9 @@ class Watcher
 
     public function restart($isStart = true)
     {
+        if (! $this->option->isRestart()) {
+            return;
+        }
         $file = $this->config->get('server.settings.pid_file');
         if (empty($file)) {
             throw new FileNotFoundException('The config of pid_file is not found.');
