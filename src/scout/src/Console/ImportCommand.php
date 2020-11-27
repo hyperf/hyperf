@@ -13,6 +13,7 @@ namespace Hyperf\Scout\Console;
 
 use Hyperf\Command\Command;
 use Hyperf\Scout\Event\ModelsImported;
+use Hyperf\Scout\Searchable;
 use Hyperf\Utils\ApplicationContext;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -40,14 +41,26 @@ class ImportCommand extends Command
     {
         define('SCOUT_COMMAND', true);
         $class = $this->input->getArgument('model');
+        $chunk = (int) $this->input->getOption('chunk');
+        $column = (string) $this->input->getOption('column');
+        /** @var Searchable $model */
         $model = new $class();
         $provider = ApplicationContext::getContainer()->get(ListenerProviderInterface::class);
         $provider->on(ModelsImported::class, function ($event) use ($class) {
+            /** @var ModelsImported $event */
             $key = $event->models->last()->getScoutKey();
             $this->line('<comment>Imported [' . $class . '] models up to ID:</comment> ' . $key);
         });
-        $model::makeAllSearchable();
+        $model::makeAllSearchable($chunk ?: null, $column ?: null);
         $this->info('All [' . $class . '] records have been imported.');
+    }
+
+    protected function getOptions()
+    {
+        return [
+            ['column', 'c', InputArgument::OPTIONAL, 'Column used in chunking. (Default use primary key)'],
+            ['chunk', '', InputArgument::OPTIONAL, 'The number of records to import at a time (Defaults to configuration value: `scout.chunk.searchable`)'],
+        ];
     }
 
     protected function getArguments()
