@@ -43,7 +43,6 @@ class ImportCommand extends Command
         $class = $this->input->getArgument('model');
         $chunk = (int) $this->input->getOption('chunk');
         $column = (string) $this->input->getOption('column');
-        /** @var Searchable $model */
         $model = new $class();
         $provider = ApplicationContext::getContainer()->get(ListenerProviderInterface::class);
         $provider->on(ModelsImported::class, function ($event) use ($class) {
