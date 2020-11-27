@@ -27,6 +27,6 @@ class Ast
         }
         $stmts = $parser->parse($code);
         $stmts = $traverser->traverse($stmts);
-        return $printer->prettyPrint($stmts);
+        return $printer->prettyPrintFile($stmts);
     }
 }

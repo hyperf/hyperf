@@ -56,7 +56,9 @@ return [
 ];
 ";
         $code = Ast::parse($code, [new RewriteConfigVisitor()]);
-        $this->assertSame("declare (strict_types=1);
+        $this->assertSame("<?php
+
+declare (strict_types=1);
 /**
  * This file is part of Hyperf.
  *
