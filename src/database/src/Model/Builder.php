@@ -664,9 +664,9 @@ class Builder
      */
     public function chunkById($count, callable $callback, $column = null, $alias = null)
     {
-        $column = $column ?: $this->getModel()->getKeyName();
+        $column = $column ?? $this->getModel()->getKeyName();
 
-        $alias = $alias ?: $column;
+        $alias = $alias ?? $column;
 
         $lastId = null;
 
