@@ -13,10 +13,10 @@ namespace Hyperf\Scout\Console;
 
 use Hyperf\Command\Command;
 use Hyperf\Scout\Event\ModelsImported;
-use Hyperf\Scout\Searchable;
 use Hyperf\Utils\ApplicationContext;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class ImportCommand extends Command
 {
@@ -57,8 +57,8 @@ class ImportCommand extends Command
     protected function getOptions()
     {
         return [
-            ['column', 'c', InputArgument::OPTIONAL, 'Column used in chunking. (Default use primary key)'],
-            ['chunk', '', InputArgument::OPTIONAL, 'The number of records to import at a time (Defaults to configuration value: `scout.chunk.searchable`)'],
+            ['column', 'c', InputOption::VALUE_OPTIONAL, 'Column used in chunking. (Default use primary key)'],
+            ['chunk', '', InputOption::VALUE_OPTIONAL, 'The number of records to import at a time (Defaults to configuration value: `scout.chunk.searchable`)'],
         ];
     }
 
