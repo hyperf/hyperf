@@ -234,7 +234,7 @@ class IndexController
 
 ## 多端口监听
 
-`Hyperf` 支持监听多个端口，但因为 `callbacks` 中的对象直接从容器中获取，所以相同的 `Hyperf\HttpServer\Server::class` 会在容器中被覆盖。所以我们需要在依赖关系中，重新定义 `Server`，确保对象隔离。还需要添加对应的`Server`到路由配置中或使用路由注解时指定`server`参数。
+`Hyperf` 支持监听多个端口，但因为 `callbacks` 中的对象直接从容器中获取，所以相同的 `Hyperf\HttpServer\Server::class` 会在容器中被覆盖。所以我们需要在依赖关系中，重新定义 `Server`，确保对象隔离。
 
 > WebSocket 和 TCP 等 Server 同理。
 
@@ -278,15 +278,41 @@ return [
 ];
 ```
 
-`config/routes.php`
+同时 `路由文件`，或者 `注解` 也需要指定对应的 `server`，如下：
+
+- 路由文件 `config/routes.php`
 
 ```php
-...
+<?php
 Router::addServer('innerHttp', function () {
     Router::get('/', 'App\Controller\IndexController@index');
 });
-...
 ```
+
+- 注解
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use Hyperf\HttpServer\Annotation\AutoController;
+
+/**
+ * @AutoController(server="innerHttp")
+ */
+class IndexController
+{
+    public function index()
+    {
+        return 'Hello World.';
+    }
+}
+
+```
+
 
 ## 事件
 
