@@ -5,6 +5,7 @@
 - [#2857](https://github.com/hyperf/hyperf/pull/2857) Support Consul ACL Token for Service Governance.
 - [#2870](https://github.com/hyperf/hyperf/pull/2870) The publish option of `ConfigProvider` allows publish directory.
 - [#2875](https://github.com/hyperf/hyperf/pull/2875) Added option `no-restart` for watcher.
+- [#2891](https://github.com/hyperf/hyperf/pull/2891) Added config file for crontab.
 
 ## Fixed
 
