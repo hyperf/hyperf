@@ -1,5 +1,9 @@
 # v2.0.22 - TBD
 
+## Added
+
+- [#2896](https://github.com/hyperf/hyperf/pull/2896) Support to define autoloaded view component classes and anonymous components.
+
 # v2.0.21 - 2020-11-30
 
 ## Added

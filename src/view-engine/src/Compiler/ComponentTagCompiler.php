@@ -78,10 +78,8 @@ class ComponentTagCompiler
 
     /**
      * Compile the component and slot tags within the given string.
-     *
-     * @return string
      */
-    public function compile(string $value)
+    public function compile(string $value): string
     {
         $value = $this->compileSlots($value);
 
@@ -92,9 +90,8 @@ class ComponentTagCompiler
      * Compile the tags within the given string.
      *
      * @throws InvalidArgumentException
-     * @return string
      */
-    public function compileTags(string $value)
+    public function compileTags(string $value): string
     {
         $value = $this->compileSelfClosingTags($value);
         $value = $this->compileOpeningTags($value);
@@ -105,9 +102,8 @@ class ComponentTagCompiler
      * Get the component class for a given component alias.
      *
      * @throws InvalidArgumentException
-     * @return string
      */
-    public function componentClass(string $component)
+    public function componentClass(string $component): string
     {
         $viewFactory = Blade::container()->get(FactoryInterface::class);
 
@@ -138,7 +134,12 @@ class ComponentTagCompiler
         );
     }
 
-    public function guessComponentFromAutoload($viewFactory, $component)
+    /**
+     * Guess the view or class name for the given component.
+     *
+     * @return string
+     */
+    public function guessComponentFromAutoload(FactoryInterface $viewFactory, string $component): ?string
     {
         foreach ($this->autoloadClasses ?: [null] as $prefix) {
             if (class_exists($view = $this->guessClassName($component, (string) $prefix))) {
@@ -157,30 +158,28 @@ class ComponentTagCompiler
 
     /**
      * Find the class for the given component using the registered namespaces.
-     *
-     * @return null|string|void
      */
-    public function findClassByComponent(string $component)
+    public function findClassByComponent(string $component): ?string
     {
         $segments = explode('::', $component);
 
         $prefix = $segments[0];
 
         if (! isset($this->namespaces[$prefix]) || ! isset($segments[1])) {
-            return;
+            return null;
         }
 
         if (class_exists($class = $this->namespaces[$prefix] . '\\' . $this->formatClassName($segments[1]))) {
             return $class;
         }
+
+        return null;
     }
 
     /**
      * Guess the class name for the given component.
-     *
-     * @return string
      */
-    public function guessClassName(string $component, string $prefix = '')
+    public function guessClassName(string $component, string $prefix = ''): string
     {
         $class = $this->formatClassName($component);
 
@@ -193,10 +192,8 @@ class ComponentTagCompiler
 
     /**
      * Format the class name for the given component.
-     *
-     * @return string
      */
-    public function formatClassName(string $component)
+    public function formatClassName(string $component): string
     {
         $componentPieces = array_map(function ($componentPiece) {
             return ucfirst(Str::camel($componentPiece));
@@ -207,12 +204,8 @@ class ComponentTagCompiler
 
     /**
      * Guess the view name for the given component.
-     *
-     * @param string $name
-     * @param mixed $prefix
-     * @return string
      */
-    public function guessViewName($name, $prefix = '')
+    public function guessViewName(string $name, string $prefix = ''): string
     {
         $prefix = $prefix ?: 'components.';
 
@@ -227,11 +220,8 @@ class ComponentTagCompiler
 
     /**
      * Partition the data and extra attributes from the given array of attributes.
-     *
-     * @param string $class
-     * @return array
      */
-    public function partitionDataAndAttributes($class, array $attributes)
+    public function partitionDataAndAttributes(string $class, array $attributes): array
     {
         // If the class doesn't exists, we'll assume it's a class-less component and
         // return all of the attributes as both data and attributes since we have
@@ -253,10 +243,8 @@ class ComponentTagCompiler
 
     /**
      * Compile the slot tags within the given string.
-     *
-     * @return string
      */
-    public function compileSlots(string $value)
+    public function compileSlots(string $value): string
     {
         $value = preg_replace_callback('/<\s*x[\-\:]slot\s+(:?)name=(?<name>(\"[^\"]+\"|\\\'[^\\\']+\\\'|[^\s>]+))\s*>/', function ($matches) {
             $name = $this->stripQuotes($matches['name']);
@@ -273,10 +261,8 @@ class ComponentTagCompiler
 
     /**
      * Strip any quotes from the given string.
-     *
-     * @return string
      */
-    public function stripQuotes(string $value)
+    public function stripQuotes(string $value): string
     {
         return Str::startsWith($value, ['"', '\''])
             ? substr($value, 1, -1)
@@ -287,9 +273,8 @@ class ComponentTagCompiler
      * Compile the opening tags within the given string.
      *
      * @throws InvalidArgumentException
-     * @return string
      */
-    protected function compileOpeningTags(string $value)
+    protected function compileOpeningTags(string $value): string
     {
         $pattern = "/
             <
@@ -337,9 +322,8 @@ class ComponentTagCompiler
      * Compile the self-closing tags within the given string.
      *
      * @throws InvalidArgumentException
-     * @return string
      */
-    protected function compileSelfClosingTags(string $value)
+    protected function compileSelfClosingTags(string $value): string
     {
         $pattern = "/
             <
@@ -387,9 +371,8 @@ class ComponentTagCompiler
      * Compile the Blade component string for the given component and attributes.
      *
      * @throws InvalidArgumentException
-     * @return string
      */
-    protected function componentString(string $component, array $attributes)
+    protected function componentString(string $component, array $attributes): string
     {
         $class = $this->componentClass($component);
 
@@ -419,20 +402,16 @@ class ComponentTagCompiler
 
     /**
      * Compile the closing tags within the given string.
-     *
-     * @return string
      */
-    protected function compileClosingTags(string $value)
+    protected function compileClosingTags(string $value): string
     {
         return preg_replace('/<\\/\\s*x[-\\:][\\w\\-\\:\\.]*\\s*>/', ' @endcomponentClass ', $value);
     }
 
     /**
      * Get an array of attributes from the given attribute string.
-     *
-     * @return array
      */
-    protected function getAttributesFromAttributeString(string $attributeString)
+    protected function getAttributesFromAttributeString(string $attributeString): array
     {
         $attributeString = $this->parseAttributeBag($attributeString);
 
@@ -484,10 +463,8 @@ class ComponentTagCompiler
 
     /**
      * Parse the attribute bag in a given attribute string into it's fully-qualified syntax.
-     *
-     * @return string
      */
-    protected function parseAttributeBag(string $attributeString)
+    protected function parseAttributeBag(string $attributeString): string
     {
         $pattern = '/
             (?:^|\\s+)                                        # start of the string or whitespace between attributes
@@ -499,10 +476,8 @@ class ComponentTagCompiler
 
     /**
      * Parse the "bind" attributes in a given attribute string into their fully-qualified syntax.
-     *
-     * @return string
      */
-    protected function parseBindAttributes(string $attributeString)
+    protected function parseBindAttributes(string $attributeString): string
     {
         $pattern = '/
             (?:^|\\s+)     # start of the string or whitespace between attributes
@@ -518,10 +493,8 @@ class ComponentTagCompiler
      * Compile any Blade echo statements that are present in the attribute string.
      *
      * These echo statements need to be converted to string concatenation statements.
-     *
-     * @return string
      */
-    protected function compileAttributeEchos(string $attributeString)
+    protected function compileAttributeEchos(string $attributeString): string
     {
         $value = $this->blade->compileEchos($attributeString);
 
@@ -533,10 +506,8 @@ class ComponentTagCompiler
 
     /**
      * Escape the single quotes in the given string that are outside of PHP blocks.
-     *
-     * @return string
      */
-    protected function escapeSingleQuotesOutsideOfPhpBlocks(string $value)
+    protected function escapeSingleQuotesOutsideOfPhpBlocks(string $value): string
     {
         return collect(token_get_all($value))->map(function ($token) {
             if (! is_array($token)) {
@@ -551,11 +522,8 @@ class ComponentTagCompiler
 
     /**
      * Convert an array of attributes to a string.
-     *
-     * @param bool $escapeBound
-     * @return string
      */
-    protected function attributesToString(array $attributes, $escapeBound = true)
+    protected function attributesToString(array $attributes, bool $escapeBound = true): string
     {
         return collect($attributes)
             ->map(function (string $value, string $attribute) use ($escapeBound) {

@@ -54,7 +54,7 @@ class Blade
         return static::resolve()->{$method}(...$args);
     }
 
-    public static function resolve()
+    public static function resolve(): CompilerInterface
     {
         return static::container()
             ->get(CompilerInterface::class);
