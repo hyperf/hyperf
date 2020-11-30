@@ -174,31 +174,24 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Get the path currently being compiled.
-     *
-     * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
 
     /**
      * Set the path currently being compiled.
-     *
-     * @param string $path
      */
-    public function setPath($path)
+    public function setPath(string $path)
     {
         $this->path = $path;
     }
 
     /**
      * Compile the given Blade template contents.
-     *
-     * @param string $value
-     * @return string
      */
-    public function compileString($value)
+    public function compileString(string $value): string
     {
         [$this->footer, $result] = [[], ''];
 
@@ -236,11 +229,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Strip the parentheses from the given expression.
-     *
-     * @param string $expression
-     * @return string
      */
-    public function stripParentheses($expression)
+    public function stripParentheses(string $expression): string
     {
         if (Str::startsWith($expression, '(')) {
             $expression = substr($expression, 1, -1);
@@ -259,20 +249,16 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Get the extensions used by the compiler.
-     *
-     * @return array
      */
-    public function getExtensions()
+    public function getExtensions(): array
     {
         return $this->extensions;
     }
 
     /**
      * Register an "if" statement directive.
-     *
-     * @param string $name
      */
-    public function if($name, callable $callback)
+    public function if(string $name, callable $callback)
     {
         $this->conditions[$name] = $callback;
 
@@ -302,23 +288,17 @@ class BladeCompiler extends Compiler implements CompilerInterface
     /**
      * Check the result of a condition.
      *
-     * @param string $name
      * @param array $parameters
-     * @return bool
      */
-    public function check($name, ...$parameters)
+    public function check(string $name, ...$parameters): bool
     {
         return call_user_func($this->conditions[$name], ...$parameters);
     }
 
     /**
      * Register a class-based component alias directive.
-     *
-     * @param string $class
-     * @param null|string $alias
-     * @param string $prefix
      */
-    public function component($class, $alias = null, $prefix = '')
+    public function component(string $class, ?string $alias = null, string $prefix = '')
     {
         if (! is_null($alias) && Str::contains($alias, '\\')) {
             [$class, $alias] = [$alias, $class];
@@ -341,10 +321,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Register an array of class-based components.
-     *
-     * @param string $prefix
      */
-    public function components(array $components, $prefix = '')
+    public function components(array $components, string $prefix = '')
     {
         foreach ($components as $key => $value) {
             if (is_numeric($key)) {
@@ -357,49 +335,38 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Get the registered class component aliases.
-     *
-     * @return array
      */
-    public function getClassComponentAliases()
+    public function getClassComponentAliases(): array
     {
         return $this->classComponentAliases;
     }
 
     /**
      * Register a class-based component namespace.
-     *
-     * @param string $namespace
-     * @param string $prefix
      */
-    public function componentNamespace($namespace, $prefix)
+    public function componentNamespace(string $namespace, string $prefix)
     {
         $this->classComponentNamespaces[$prefix] = $namespace;
     }
 
     /**
      * Get the registered class component namespaces.
-     *
-     * @return array
      */
-    public function getClassComponentNamespaces()
+    public function getClassComponentNamespaces(): array
     {
         return $this->classComponentNamespaces;
     }
 
     /**
      * Get component autoload config.
-     *
-     * @return array
      */
-    public function getComponentAutoload()
+    public function getComponentAutoload(): array
     {
         return $this->componentAutoload;
     }
 
     /**
      * Set component autoload config.
-     *
-     * @param $config
      */
     public function setComponentAutoload(array $config)
     {
@@ -408,11 +375,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Register a component alias directive.
-     *
-     * @param string $path
-     * @param null|string $alias
      */
-    public function aliasComponent($path, $alias = null)
+    public function aliasComponent(string $path, ?string $alias = null)
     {
         $alias = $alias ?: Arr::last(explode('.', $path));
 
@@ -429,22 +393,16 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Register an include alias directive.
-     *
-     * @param string $path
-     * @param null|string $alias
      */
-    public function include($path, $alias = null)
+    public function include(string $path, ?string $alias = null)
     {
         return $this->aliasInclude($path, $alias);
     }
 
     /**
      * Register an include alias directive.
-     *
-     * @param string $path
-     * @param null|string $alias
      */
-    public function aliasInclude($path, $alias = null)
+    public function aliasInclude(string $path, ?string $alias = null)
     {
         $alias = $alias ?: Arr::last(explode('.', $path));
 
@@ -458,11 +416,9 @@ class BladeCompiler extends Compiler implements CompilerInterface
     /**
      * Register a handler for custom directives.
      *
-     * @param string $name
-     *
      * @throws \InvalidArgumentException
      */
-    public function directive($name, callable $handler)
+    public function directive(string $name, callable $handler)
     {
         if (! preg_match('/^\w+(?:::\w+)?$/x', $name)) {
             throw new InvalidArgumentException("The directive name [{$name}] is not valid. Directive names must only contain alphanumeric characters and underscores.");
@@ -473,10 +429,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Get the list of custom directives.
-     *
-     * @return array
      */
-    public function getCustomDirectives()
+    public function getCustomDirectives(): array
     {
         return $this->customDirectives;
     }
@@ -491,10 +445,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Set the echo format to be used by the compiler.
-     *
-     * @param string $format
      */
-    public function setEchoFormat($format)
+    public function setEchoFormat(string $format)
     {
         $this->echoFormat = $format;
     }
@@ -542,11 +494,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Get the open and closing PHP tag tokens from the given string.
-     *
-     * @param string $contents
-     * @return Collection
      */
-    protected function getOpenAndClosingPhpTokens($contents)
+    protected function getOpenAndClosingPhpTokens(string $contents): Collection
     {
         return collect(token_get_all($contents))
             ->pluck('0')
@@ -557,11 +506,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Store the blocks that do not receive compilation.
-     *
-     * @param string $value
-     * @return string
      */
-    protected function storeUncompiledBlocks($value)
+    protected function storeUncompiledBlocks(string $value): string
     {
         if (strpos($value, '@verbatim') !== false) {
             $value = $this->storeVerbatimBlocks($value);
@@ -576,11 +522,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Store the verbatim blocks and replace them with a temporary placeholder.
-     *
-     * @param string $value
-     * @return string
      */
-    protected function storeVerbatimBlocks($value)
+    protected function storeVerbatimBlocks(string $value): string
     {
         return preg_replace_callback('/(?<!@)@verbatim(.*?)@endverbatim/s', function ($matches) {
             return $this->storeRawBlock($matches[1]);
@@ -589,11 +532,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Store the PHP blocks and replace them with a temporary placeholder.
-     *
-     * @param string $value
-     * @return string
      */
-    protected function storePhpBlocks($value)
+    protected function storePhpBlocks(string $value): string
     {
         return preg_replace_callback('/(?<!@)@php(.*?)@endphp/s', function ($matches) {
             return $this->storeRawBlock("<?php{$matches[1]}?>");
@@ -602,11 +542,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Store a raw block and return a unique raw placeholder.
-     *
-     * @param string $value
-     * @return string
      */
-    protected function storeRawBlock($value)
+    protected function storeRawBlock(string $value): string
     {
         return $this->getRawPlaceholder(
             array_push($this->rawBlocks, $value) - 1
@@ -615,11 +552,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Compile the component tags.
-     *
-     * @param string $value
-     * @return string
      */
-    protected function compileComponentTags($value)
+    protected function compileComponentTags(string $value): string
     {
         if (! $this->compilesComponentTags) {
             return $value;
@@ -654,20 +588,16 @@ class BladeCompiler extends Compiler implements CompilerInterface
      * Get a placeholder to temporary mark the position of raw blocks.
      *
      * @param int|string $replace
-     * @return string
      */
-    protected function getRawPlaceholder($replace)
+    protected function getRawPlaceholder($replace): string
     {
         return str_replace('#', $replace, '@__raw_block_#__@');
     }
 
     /**
      * Add the stored footers onto the given content.
-     *
-     * @param string $result
-     * @return string
      */
-    protected function addFooters($result)
+    protected function addFooters(string $result): string
     {
         return ltrim($result, "\n")
                 . "\n" . implode("\n", array_reverse($this->footer));
@@ -675,15 +605,12 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Parse the tokens from the template.
-     *
-     * @param array $token
-     * @return string
      */
-    protected function parseToken($token)
+    protected function parseToken(array $token): string
     {
         [$id, $content] = $token;
 
-        if ($id == T_INLINE_HTML) {
+        if ((int) $id === T_INLINE_HTML) {
             foreach ($this->compilers as $type) {
                 $content = $this->{"compile{$type}"}($content);
             }
