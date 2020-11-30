@@ -278,6 +278,42 @@ return [
 ];
 ```
 
+同时 `路由文件`，或者 `注解` 也需要指定对应的 `server`，如下：
+
+- 路由文件 `config/routes.php`
+
+```php
+<?php
+Router::addServer('innerHttp', function () {
+    Router::get('/', 'App\Controller\IndexController@index');
+});
+```
+
+- 注解
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use Hyperf\HttpServer\Annotation\AutoController;
+
+/**
+ * @AutoController(server="innerHttp")
+ */
+class IndexController
+{
+    public function index()
+    {
+        return 'Hello World.';
+    }
+}
+
+```
+
+
 ## 事件
 
 除上述提到的 `SwooleEvent::ON_REQUEST` 事件，框架还支持其他事件，所有事件名如下。
