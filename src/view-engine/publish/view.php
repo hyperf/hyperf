@@ -21,6 +21,12 @@ return [
         'charset' => 'UTF-8',
     ],
 
+    // autoload components form this dir
+    'autoload' => [
+        'classes' => [],
+        'components' => [],
+    ],
+
     # 自定义组件
     'components' => [
         // 'alert' => \App\View\Components\Alert::class
