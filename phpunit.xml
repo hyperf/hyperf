@@ -48,6 +48,7 @@
             <directory suffix="Test.php">./src/retry/tests</directory>
             <directory suffix="Test.php">./src/rpc/tests</directory>
             <directory suffix="Test.php">./src/rpc-server/tests</directory>
+            <directory suffix="Test.php">./src/scout/tests</directory>
             <directory suffix="Test.php">./src/server/tests</directory>
             <directory suffix="Test.php">./src/service-governance/tests</directory>
             <directory suffix="Test.php">./src/session/tests</directory>
@@ -93,6 +94,7 @@
             <directory suffix=".php">./src/paginator/src</directory>
             <directory suffix=".php">./src/redis/src</directory>
             <directory suffix=".php">./src/rpc/src</directory>
+            <directory suffix=".php">./src/scout/src</directory>
             <directory suffix=".php">./src/server/src</directory>
             <directory suffix=".php">./src/service-governance/src</directory>
             <directory suffix=".php">./src/session/src</directory>
