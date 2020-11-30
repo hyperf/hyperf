@@ -53,12 +53,12 @@ class ComponentTagCompiler
     /**
      * @var array
      */
-    protected $autoload_classes = [];
+    protected $autoloadClasses = [];
 
     /**
      * @var array
      */
-    protected $autoload_components = [];
+    protected $autoloadComponents = [];
 
     /**
      * Create new component tag compiler.
@@ -70,8 +70,8 @@ class ComponentTagCompiler
     {
         $this->aliases = $aliases;
         $this->namespaces = $namespaces;
-        $this->autoload_classes = $autoload['classes'] ?? [null];
-        $this->autoload_components = $autoload['components'] ?? [null];
+        $this->autoloadClasses = $autoload['classes'] ?? [null];
+        $this->autoloadComponents = $autoload['components'] ?? [null];
 
         $this->blade = $blade ?: new BladeCompiler(new Filesystem(), sys_get_temp_dir());
     }
@@ -140,13 +140,13 @@ class ComponentTagCompiler
 
     public function guessComponentFromAutoload($viewFactory, $component)
     {
-        foreach ($this->autoload_classes ?: [null] as $prefix) {
+        foreach ($this->autoloadClasses ?: [null] as $prefix) {
             if (class_exists($view = $this->guessClassName($component, (string) $prefix))) {
                 return $view;
             }
         }
 
-        foreach ($this->autoload_components ?: [null] as $prefix) {
+        foreach ($this->autoloadComponents ?: [null] as $prefix) {
             if ($viewFactory->exists($view = $this->guessViewName($component, (string) $prefix))) {
                 return $view;
             }
