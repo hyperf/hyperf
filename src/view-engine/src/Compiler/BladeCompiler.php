@@ -143,6 +143,11 @@ class BladeCompiler extends Compiler implements CompilerInterface
     protected $compilesComponentTags = true;
 
     /**
+     * @var array
+     */
+    protected $componentAutoload = [];
+
+    /**
      * Compile the view at the given path.
      *
      * @param null|string $path
@@ -382,6 +387,26 @@ class BladeCompiler extends Compiler implements CompilerInterface
     }
 
     /**
+     * Get component autoload config.
+     *
+     * @return array
+     */
+    public function getComponentAutoload()
+    {
+        return $this->componentAutoload;
+    }
+
+    /**
+     * Set component autoload config.
+     *
+     * @param $config
+     */
+    public function setComponentAutoload(array $config)
+    {
+        $this->componentAutoload = $config;
+    }
+
+    /**
      * Register a component alias directive.
      *
      * @param string $path
@@ -603,7 +628,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
         return (new ComponentTagCompiler(
             $this->classComponentAliases,
             $this->classComponentNamespaces,
-            $this
+            $this,
+            $this->getComponentAutoload() ?: []
         ))->compile($value);
     }
 

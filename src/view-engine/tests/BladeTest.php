@@ -161,4 +161,9 @@ class BladeTest extends TestCase
 
         $this->assertSame('ok', trim((string) view('simple_11', ['componentName' => 'alert', 'message' => 'ok'])));
     }
+
+    public function testComponetAutoload()
+    {
+        $this->assertSame('success', trim((string) view('simple_12', ['message' => 'success'])));
+    }
 }

@@ -30,6 +30,8 @@ class CompilerFactory
             $blade->component($class, $alias);
         }
 
+        $blade->setComponentAutoload(Blade::config('autoload', ['classes' => [], 'components' => []]));
+
         return $blade;
     }
 }

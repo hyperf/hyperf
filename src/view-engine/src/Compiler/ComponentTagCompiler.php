@@ -51,14 +51,27 @@ class ComponentTagCompiler
     protected $boundAttributes = [];
 
     /**
+     * @var array
+     */
+    protected $autoload_classes = [];
+
+    /**
+     * @var array
+     */
+    protected $autoload_components = [];
+
+    /**
      * Create new component tag compiler.
      *
      * @param ?BladeCompiler $blade
+     * @param mixed $autoload
      */
-    public function __construct(array $aliases = [], array $namespaces = [], ?BladeCompiler $blade = null)
+    public function __construct(array $aliases = [], array $namespaces = [], ?BladeCompiler $blade = null, $autoload = [])
     {
         $this->aliases = $aliases;
         $this->namespaces = $namespaces;
+        $this->autoload_classes = $autoload['classes'] ?? [null];
+        $this->autoload_components = $autoload['components'] ?? [null];
 
         $this->blade = $blade ?: new BladeCompiler(new Filesystem(), sys_get_temp_dir());
     }
@@ -116,17 +129,30 @@ class ComponentTagCompiler
             return $class;
         }
 
-        if (class_exists($class = $this->guessClassName($component))) {
-            return $class;
-        }
-
-        if ($viewFactory->exists($view = $this->guessViewName($component))) {
+        if ($view = $this->guessComponentFromAutoload($viewFactory, $component)) {
             return $view;
         }
 
         throw new InvalidArgumentException(
             "Unable to locate a class or view for component [{$component}]."
         );
+    }
+
+    public function guessComponentFromAutoload($viewFactory, $component)
+    {
+        foreach ($this->autoload_classes ?: [null] as $prefix) {
+            if (class_exists($view = $this->guessClassName($component, (string) $prefix))) {
+                return $view;
+            }
+        }
+
+        foreach ($this->autoload_components ?: [null] as $prefix) {
+            if ($viewFactory->exists($view = $this->guessViewName($component, (string) $prefix))) {
+                return $view;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -154,11 +180,15 @@ class ComponentTagCompiler
      *
      * @return string
      */
-    public function guessClassName(string $component)
+    public function guessClassName(string $component, string $prefix = '')
     {
         $class = $this->formatClassName($component);
 
-        return 'App\\View\\Components\\' . $class;
+        if (! $prefix) {
+            $prefix = 'App\\View\\Component\\';
+        }
+
+        return  rtrim($prefix, '\\') . '\\' . $class;
     }
 
     /**
@@ -179,11 +209,12 @@ class ComponentTagCompiler
      * Guess the view name for the given component.
      *
      * @param string $name
+     * @param mixed $prefix
      * @return string
      */
-    public function guessViewName($name)
+    public function guessViewName($name, $prefix = '')
     {
-        $prefix = 'components.';
+        $prefix = $prefix ?: 'components.';
 
         $delimiter = FinderInterface::HINT_PATH_DELIMITER;
 
