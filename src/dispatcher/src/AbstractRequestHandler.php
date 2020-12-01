@@ -67,7 +67,7 @@ abstract class AbstractRequestHandler
             } elseif (is_string($handler)) {
                 [$handler, $parameters] = $this->parseStringHandler($handler);
 
-                $handler = $this->container->get($handler);
+                $handler = clone $this->container->get($handler);
 
                 if (is_array($parameters)) {
                     foreach ($parameters as $parameter) {
