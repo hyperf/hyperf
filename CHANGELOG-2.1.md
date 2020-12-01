@@ -8,6 +8,7 @@
 - Upgraded `endclothing/prometheus_client_php` to `^1.0`;
 - Upgraded `twig/twig` to `^3.0`;
 - Upgraded `jcchavezs/zipkin-opentracing` to `^0.2.0`;
+- Upgraded `doctrine/dbal` to `^3.0`;
 
 ## Removed
 
