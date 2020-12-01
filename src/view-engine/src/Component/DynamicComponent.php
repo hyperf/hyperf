@@ -179,7 +179,8 @@ EOF;
             $this->compiler = new ComponentTagCompiler(
                 Blade::container()->get(CompilerInterface::class)->getClassComponentAliases(),
                 Blade::container()->get(CompilerInterface::class)->getClassComponentNamespaces(),
-                Blade::container()->get(CompilerInterface::class)
+                Blade::container()->get(CompilerInterface::class),
+                Blade::container()->get(CompilerInterface::class)->getComponentAutoload()
             );
         }
 

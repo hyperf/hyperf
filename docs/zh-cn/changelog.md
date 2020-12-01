@@ -1,5 +1,30 @@
 # 版本更新记录
 
+# v2.0.21 - 2020-11-30
+
+## 新增
+
+- [#2857](https://github.com/hyperf/hyperf/pull/2857) 为 `service-governance` 组件新增 `Consul` 的 `ACL Token` 支持。
+- [#2870](https://github.com/hyperf/hyperf/pull/2870) 为脚本 `vendor:publish` 支持发布配置目录的能力。
+- [#2875](https://github.com/hyperf/hyperf/pull/2875) 为 `watcher` 组件新增可选项 `no-restart`，允许动态修改注解缓存，但不重启服务。
+- [#2883](https://github.com/hyperf/hyperf/pull/2883) 为 `scout` 组件数据导入脚本，增加可选项 `--chunk` 和 `--column|c`，允许用户指定任一字段，进行数据插入，解决偏移量过大导致查询效率慢的问题。
+- [#2891](https://github.com/hyperf/hyperf/pull/2891) 为 `crontab` 组件新增可用于发布的配置文件。
+
+## 修复
+
+- [#2874](https://github.com/hyperf/hyperf/pull/2874) 修复在使用 `watcher` 组件时， `scan.ignore_annotations` 配置不生效的问题。
+- [#2878](https://github.com/hyperf/hyperf/pull/2878) 修复 `nsq` 组件中，`nsqd` 配置无法正常工作的问题。
+
+## 变更
+
+- [#2851](https://github.com/hyperf/hyperf/pull/2851) 修改 `view` 组件默认的配置文件，使用 `view-engine` 引擎，而非第三方 `blade` 引擎。
+
+## 优化
+
+- [#2785](https://github.com/hyperf/hyperf/pull/2785) 优化 `watcher` 组件，使其异常信息更加人性化。
+- [#2861](https://github.com/hyperf/hyperf/pull/2861) 优化 `Guzzle Coroutine Handler`，当其 `statusCode` 小于 `0` 时，抛出对应异常。
+- [#2868](https://github.com/hyperf/hyperf/pull/2868) 优化 `Guzzle` 的 `sink` 配置，使其支持传入 `resource`。
+
 # v2.0.20 - 2020-11-23
 
 ## 新增
