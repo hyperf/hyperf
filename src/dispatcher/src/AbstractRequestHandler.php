@@ -57,12 +57,58 @@ abstract class AbstractRequestHandler
             $handler = $this->coreHandler;
         } else {
             $handler = $this->middlewares[$this->offset];
-            is_string($handler) && $handler = $this->container->get($handler);
+
+            if (is_callable($handler)) {
+                return $handler($request, $this->next());
+            }
+
+            if (is_object($handler)) {
+                $handler = clone $handler;
+            } elseif (is_string($handler)) {
+                [$handler, $parameters] = $this->parseStringHandler($handler);
+
+                $handler = $this->container->get($handler);
+
+                if (is_array($parameters)) {
+                    foreach ($parameters as $parameter) {
+                        [$method, $params] = $parameter;
+
+                        if (method_exists($handler, $method)) {
+                            $handler->{$method}(...$params);
+                        }
+                    }
+                }
+            }
         }
-        if (! method_exists($handler, 'process')) {
+
+        if (! is_object($handler) || ! method_exists($handler, 'process')) {
             throw new InvalidArgumentException(sprintf('Invalid middleware, it has to provide a process() method.'));
         }
         return $handler->process($request, $this->next());
+    }
+
+    protected function parseStringHandler(string $handler)
+    {
+        $params = [];
+
+        [$handler, $parameters] = array_pad(explode(':', $handler, 2), 2, []);
+
+        if (is_string($parameters)) {
+            try {
+                preg_match_all('/(\\w+)(\\((.*?,?)?\\))?/', $parameters, $result);
+                foreach ($result[1] as $i => $method) {
+                    if ($result[3][$i] === '') {
+                        $params[] = [$method, []];
+                    } else {
+                        $params[] = [$method, explode(',', $result[3][$i])];
+                    }
+                }
+            } catch (\Throwable $throwable) {
+                $params = [];
+            }
+        }
+
+        return [$handler, $params];
     }
 
     protected function next(): self

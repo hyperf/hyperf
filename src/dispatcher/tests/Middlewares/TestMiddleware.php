@@ -19,6 +19,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class TestMiddleware implements MiddlewareInterface
 {
+    private $test = 'Hyperf';
+
     /**
      * Process an incoming server request and return a response, optionally delegating
      * response creation to a handler.
@@ -27,6 +29,12 @@ class TestMiddleware implements MiddlewareInterface
     {
         /** @var ResponseInterface $response */
         $response = Context::get(ResponseInterface::class);
-        return $response->withAddedHeader('Server', 'Hyperf');
+        return $response->withAddedHeader('Server', 'Hyperf')
+            ->withAddedHeader('x-test', $this->test);
+    }
+
+    public function setTest($v = 'Default')
+    {
+        $this->test = $v;
     }
 }
