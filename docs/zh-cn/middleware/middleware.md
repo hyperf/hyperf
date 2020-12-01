@@ -58,6 +58,37 @@ Router::addGroup(
     ['middleware' => [FooMiddleware::class]]
 );
 
+// 定义匿名函数中间件
+Router::addGroup(
+    '/v3', function () {
+        Router::get('/index', [\App\Controller\IndexController::class, 'index']);
+    },
+    ['middleware' => [
+        function (\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Server\RequestHandlerInterface $handler) {
+            return $handler->handle($request);
+        },
+    ]]
+);
+
+// 定义对象中间件
+Router::addGroup(
+    '/v4', function () {
+        Router::get('/index', [\App\Controller\IndexController::class, 'index']);
+    },
+    ['middleware' => [new FooMiddleware(),]]
+);
+
+// 添加中间件参数
+/**
+ * 需要在 FooMiddleware 中定义 公共方法 setSomeParams 并且接收两个参数
+ *  * public function setSomeParams($foo, $bar);
+ */
+Router::addGroup(
+    '/v5', function () {
+        Router::get('/index', [\App\Controller\IndexController::class, 'index']);
+    },
+    ['middleware' => [FooMiddleware::class . ':setSomeParams(foo,bar)']]
+);
 ```
 
 ### 通过注解定义
