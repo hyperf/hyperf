@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Connectors;
 
-use Doctrine\DBAL\Driver\PDOConnection;
+use Doctrine\DBAL\Driver\PDO\Connection as PDOConnection;
 use Exception;
 use Hyperf\Database\DetectsLostConnections;
 use PDO;
