@@ -509,6 +509,328 @@ Hello, @{{ name }}.
 @endonce
 ```
 
+### 组件及插槽
+
+组件和插槽的作用与片段（Section）和布局（Layout）类似。不过，有些人可能认为组件和插槽使用起来更加方便。Hyperf 支持两种编写组件的方法：基于类的组件和匿名组件。
+
+我们可以通过创建一个继承 `\Hyperf\ViewEngine\Component\Component::class` 类的 class 来定义一个类组件。以下将通过创建一个简单的 `Alert` 组件来向你说明如何使用组件。
+
+> app/View/Component/Alert.php
+
+```php
+<?php
+namespace App\View\Component;
+use Hyperf\ViewEngine\Component\Component;
+use function Hyperf\ViewEngine\view;
+class Alert extends Component
+{
+    public $type;
+    public $message;
+    public function __construct($type, $message)
+    {
+        $this->type = $type;
+        $this->message = $message;
+    }
+    public function render()
+    {
+        return view('components.alert');
+    }
+}
+```
+
+> storage/view/components/alert.blade.php
+```html
+<div class="alert alert-{{ $type }}">
+    {{ $message }}
+</div>
+```
+
+#### 手动注册组件
+
+在 `config/autoload/view.php` 中
+
+```php
+<?php
+return [
+    // ...
+    'components' => [
+        'alert' => \App\View\Component\Alert::class,
+    ],
+];
+```
+
+或者在扩展包中的 `ConfigProvider` 中
+
+```php
+<?php
+class ConfigProvider
+{
+    public function __invoke()
+    {
+        return [
+            // ...others config
+            'view' => [
+                // ...others config
+                'components' => [
+                    'package-alert' => \App\View\Component\Alert::class,
+                ],
+            ],
+        ];
+    }
+}
+```
+
+注册组件后，你将可以通过 HTML 标签别名来使用它：
+
+```html
+<x-alert/>
+<x-package-alert/>
+```
+
+#### 显示组件
+
+你可以在任一 Blade 模板中使用 Blade 组件标签来显示组件。Blade 组件标签以 `x-` 开头，后面接上组件的名称。
+
+```html
+<x-alert/>
+<x-package-alert/>
+```
+
+#### 组件传参
+
+你可以使用 HTML 属性将数据传递给 Blade 组件。普通的值可以通过简单的 HTML 属性传递，而 PHP 表达式及变量应当通过以 `:` 为前缀的属性传递：
+
+```html
+<x-alert type="error" :message="$message"/>
+```
+
+!> 注意：你可以在组件类的构造函数中定义组件所需的数据。组件类中的所有公共属性都将自动传递给组件视图。不必通过组件类的 `render` 方法传递。渲染组件时，可以通过变量名称来获取组件类公共属性的内容。
+
+#### 组件方法
+
+除了可获取组件类的公共属性外，还可以在组件视图中执行组件类上的任何公共方法。例如，某组件具有一个 `isSelected` 方法：
+
+```php
+    /**
+     * 判断给定选项是否为当前选项
+     *
+     * @param  string  $option
+     * @return bool
+     */
+    public function isSelected($option)
+    {
+        return $option === $this->selected;
+    }
+```
+
+你可以通过调用与方法名称相同的变量来执行该方法：
+
+```html
+    <option {{ $isSelected($value) ? 'selected="selected"' : '' }} value="{{ $value }}">
+        {{ $label }}
+    </option>
+```
+
+#### 附加依赖项
+
+如果你的组件需要依赖其他的类，则应当在组件所有数据属性之前列出它们，它们将会被容器自动注入：
+```php
+    use App\AlertCreator;
+    /**
+     * 创建组件实例
+     *
+     * @param  \App\AlertCreator  $creator
+     * @param  string  $type
+     * @param  string  $message
+     * @return void
+     */
+    public function __construct(AlertCreator $creator, $type, $message)
+    {
+        $this->creator = $creator;
+        $this->type = $type;
+        $this->message = $message;
+    }
+```
+
+#### 管理属性
+
+我们已经了解了如何将数据属性传递给组件。然而，有时候我们可能需要指定其他的 HTML 属性（如 `class`），这些属性不是组件所需要的数据。这种情况下，我们将会想要将这些属性向下传递到组件模板的根元素。例如，我们要渲染一个 `alert` 组件，如下所示：
+
+```html
+    <x-alert type="error" :message="$message" class="mt-4"/>
+```
+
+所有不属于组件构造函数的属性都将自动添加到组件的「属性包」中。该属性包将会通过 `$attributes` 变量传递给组件视图。通过输出此变量，即可在组件中呈现所有属性：
+
+```html
+    <div {{ $attributes }}>
+        <!-- 组件内容 -->
+    </div>
+```
+
+#### 默认 / 合并属性
+
+某些时候，你可能需要指定属性的默认值，或将其他值合并到组件的某些属性中。为此，你可以使用属性包的 `merge` 方法：
+
+```html
+    <div {{ $attributes->merge(['class' => 'alert alert-'.$type]) }}>
+        {{ $message }}
+    </div>
+```
+
+假设我们如下方所示使用该组件：
+
+```html
+    <x-alert type="error" :message="$message" class="mb-4"/>
+```
+
+最终呈现的组件 HTML 将如下所示：
+
+```html
+    <div class="alert alert-error mb-4">
+        <!-- $message 变量的内容 -->
+    </div>
+```
+
+#### 插槽
+
+通常，你需要通过 `slots` 向组件传递附加内容。 假设我们创建的 `alert` 组件具有以下标记：
+
+```html
+    <!-- /storage/view/components/alert.blade.php -->
+
+    <div class="alert alert-danger">
+        {{ $slot }}
+    </div>
+```
+
+我门可以通过向组件注入内容的方式，将内容传递到 `slots` ：
+
+```html
+    <x-alert>
+        <strong>Whoops!</strong> Something went wrong!
+    </x-alert>
+```
+
+有时候一个组件可能需要在它内部的不同位置放置多个不同的插槽。我们来修改一下alert组件，使其允许注入 `title` 。
+
+```html
+    <!-- /storage/view/components/alert.blade.php -->
+
+    <span class="alert-title">{{ $title }}</span>
+
+    <div class="alert alert-danger">
+        {{ $slot }}
+    </div>
+```
+
+你可以使用 `x-slot` 标签来定义一个命名插槽的内容。而不在 `x-slot` 标签中的其它内容都将传递给 `$slot` 变量中的组件：
+
+```html
+    <x-alert>
+        <x-slot name="title">
+            Server Error
+        </x-slot>
+
+        <strong>Whoops!</strong> Something went wrong!
+    </x-alert>
+```
+
+#### 内联组件
+
+对于小型组件而言，管理组件类和组件视图模板可能会很麻烦。因此，您可以从 `render` 方法中返回组件的内容：
+
+```php
+    public function render()
+    {
+        return <<<'blade'
+            <div class="alert alert-danger">
+                {{ $slot }}
+            </div>
+        blade;
+    }
+```
+
+#### 匿名组件
+
+与行内组件相同，匿名组件提供了一个通过单个文件管理组件的机制。然而，匿名组件使用的是一个没有关联类的单一视图文件。要定义一个匿名组件，您只需将 Blade 模板置于 `/storage/view/components` 目录下。
+例如，假设您在 `/storage/view/components/alert.blade.php` 中定义了一个组件：
+
+```html
+    <x-alert/>
+```
+
+如果组件在 `components` 目录的子目录中，您可以使用 `.` 字符来指定其路径。例如，假设组件被定义在 `/storage/view/components/inputs/button.blade.php` 中，您可以像这样渲染它：
+
+```html
+    <x-inputs.button/>
+```
+
+#### 匿名组件数据及属性
+
+由于匿名组件没有任何关联类，您可能想要区分哪些数据应该被作为变量传递给组件，而哪些属性应该被存放于 [属性包](#管理属性) 中。
+
+您可以在组件的 Blade 模板的顶层使用 `@props` 指令来指定哪些属性应该作为数据变量。组件中的其他属性都将通过属性包的形式提供。如果您想要为某个数据变量指定一个默认值，您可以将属性名作为数组键，默认值作为数组值来实现：
+
+```blade
+    <!-- /storage/view/components/alert.blade.php -->
+
+    @props(['type' => 'info', 'message'])
+
+    <div {{ $attributes->merge(['class' => 'alert alert-'.$type]) }}>
+        {{ $message }}
+    </div>
+```
+
+#### 动态组件
+
+有时，您可能需要渲染一个组件，但在运行前不知道要渲染哪一个。这种情况下，您可以使用内置的 `dynamic-component` 组件来渲染一个基于值或变量的组件：
+
+```html
+    <x-dynamic-component :component="$componentName" class="mt-4" />
+```
+
+#### 组件自动加载
+
+默认情况下，`App\View\Component\\` 及 `components.` 下的组件会自动注册。你也可以通过配置文件修改这个配置：
+
+> config/autoload/view.php
+
+```php
+return [
+    // ...
+    'autoload' => [
+        'classes' => ['App\\Other\\Component\\', 'App\\Another\\Component\\'],
+        'components' => ['package::components.', 'components.'],
+    ],
+];
+```
+
+## 视图空间
+
+通过定义视图空间，可以方便的在你的扩展包中使用视图文件，只需要在 `ConfigProvider` 中添加一行配置即可：
+
+```php
+<?php
+class ConfigProvider
+{
+    public function __invoke()
+    {
+        return [
+            // ...others config
+            'view' => [
+                // ...others config
+                'namespaces' => [
+                    'package-name' => __DIR__ . '/../views',
+                ],
+            ],
+        ];
+    }
+}
+```
+
+在安装扩展包之后，可以通过在项目的 `/storage/view/vendor/package-name` 中定义相同路径的视图文件，来覆盖扩展包中的视图。
+
 ## 可选中间件
 
 - Hyperf\ViewEngine\Http\Middleware\ShareErrorsFromSession::class

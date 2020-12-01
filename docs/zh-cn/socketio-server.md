@@ -450,3 +450,20 @@ public function onEvent($socket, $data)
     );
 }
 ```
+
+### Nginx 代理配置
+
+使用 `Nginx` 反向代理 `Socket.io` 与 `WebSocket` 有些许区别
+```nginx
+server {
+    location ^~/socket.io/ {
+        # 执行代理访问真实服务器
+        proxy_pass http://hyperf;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+```

@@ -21,12 +21,22 @@ return [
         'charset' => 'UTF-8',
     ],
 
-    # 自定义组件
-    'components' => [
-        // 'alert' => \App\View\Components\Alert::class
+    // Autoload components.
+    'autoload' => [
+        'classes' => [
+            'App\\View\\Component\\',
+        ],
+        'components' => [
+            'components.', // BASE_PATH . '/storage/view/components/'
+        ],
     ],
 
-    # 视图命名空间 (用于扩展包中)
+    # Custom components.
+    'components' => [
+        // 'other-alert' => \Other\ViewComponent\Alert::class
+    ],
+
+    # View namespaces. (Used for packages)
     'namespaces' => [
         // 'admin' => BASE_PATH . '/storage/view/vendor/admin',
     ],
