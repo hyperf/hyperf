@@ -80,7 +80,7 @@ class HttpDispatcherTest extends TestCase
     {
         $middlewares = [
             TestMiddleware::class,
-            Test2Middleware::class,
+            3 => Test2Middleware::class,
             TestMiddleware::class,
         ];
         $container = $this->getContainer();
