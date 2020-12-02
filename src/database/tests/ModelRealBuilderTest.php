@@ -48,7 +48,7 @@ class ModelRealBuilderTest extends TestCase
         $container = $this->getContainer();
         /** @var ConnectionInterface $conn */
         $conn = $container->get(ConnectionResolverInterface::class)->connection();
-        $conn->select('DROP TABLE IF EXISTS `test`;');
+        $conn->statement('DROP TABLE IF EXISTS `test`;');
         Mockery::close();
     }
 
@@ -181,7 +181,7 @@ class ModelRealBuilderTest extends TestCase
         $container = $this->getContainer();
         /** @var ConnectionInterface $conn */
         $conn = $container->get(ConnectionResolverInterface::class)->connection();
-        $conn->select('CREATE TABLE `test` (
+        $conn->statement('CREATE TABLE `test` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) unsigned NOT NULL,
   `uid` bigint(20) unsigned NOT NULL,
