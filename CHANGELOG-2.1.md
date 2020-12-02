@@ -37,6 +37,7 @@
 
 - [#2720](https://github.com/hyperf/hyperf/pull/2720) Don't set `data_type` for `PDOStatement::bindValue`.
 - [#2871](https://github.com/hyperf/hyperf/pull/2871) Use `(string) $body` instead of `$body->getContents()` for getting contents from `StreamInterface`, because method `getContents()` only returns the remaining contents in a string.
+- [#2909](https://github.com/hyperf/hyperf/pull/2909) Allow duplicate middleware settings.
 
 ## Deprecated
 

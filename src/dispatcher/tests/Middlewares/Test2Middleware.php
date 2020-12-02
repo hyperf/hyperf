@@ -17,7 +17,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class TestMiddleware implements MiddlewareInterface
+class Test2Middleware implements MiddlewareInterface
 {
     /**
      * Process an incoming server request and return a response, optionally delegating
@@ -27,7 +27,7 @@ class TestMiddleware implements MiddlewareInterface
     {
         /** @var ResponseInterface $response */
         $response = Context::get(ResponseInterface::class);
-        Context::set(ResponseInterface::class, $response->withAddedHeader('Test', 'Hyperf'));
+        Context::set(ResponseInterface::class, $response->withAddedHeader('Test', 'Hyperf2'));
         return $handler->handle($request);
     }
 }
