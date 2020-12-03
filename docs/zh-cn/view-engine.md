@@ -712,7 +712,7 @@ class ConfigProvider
     </x-alert>
 ```
 
-有时候一个组件可能需要在它内部的不同位置放置多个不同的插槽。我们来修改一下alert组件，使其允许注入 `title` 。
+有时候一个组件可能需要在它内部的不同位置放置多个不同的插槽。我们来修改一下 alert 组件，使其允许注入 `title` 。
 
 ```html
     <!-- /storage/view/components/alert.blade.php -->
