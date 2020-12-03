@@ -255,7 +255,7 @@ use Hyperf\HttpServer\Annotation\AutoController;
 /**
  * @AutoController
  */
-class QueueController extends Controller
+class QueueController extends AbstractController
 {
     /**
      * @Inject
@@ -327,7 +327,7 @@ use Hyperf\HttpServer\Annotation\AutoController;
 /**
  * @AutoController
  */
-class QueueController extends Controller
+class QueueController extends AbstractController
 {
     /**
      * @Inject

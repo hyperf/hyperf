@@ -183,7 +183,7 @@ class UserCollection extends ResourceCollection
 
 ```
 
-你可以在者控制器中返回已定义的资源集合：
+你可以在控制器中返回已定义的资源集合：
 
 ```php
 <?php
@@ -891,7 +891,7 @@ class UserCollection extends ResourceCollection
 
 #### 构造资源时添加元数据
 
-你还可以在者控制器中构造资源实例时添加顶层数据。所有资源都可以使用 `additional` 方法来接受应该被添加到资源响应中的数据数组：
+你还可以在控制器中构造资源实例时添加顶层数据。所有资源都可以使用 `additional` 方法来接受应该被添加到资源响应中的数据数组：
 
 ```php
 <?php

@@ -109,7 +109,7 @@ return [
 @yield('content', 'Hyperf')
 ```
 
-`Blade` 视图可以用 `Hyperf\\ViewEngine\\view` 辅助函数返回：
+`Blade` 视图可以用 `Hyperf\ViewEngine\view` 辅助函数返回：
 
 ```php
 <?php
@@ -124,7 +124,7 @@ use function Hyperf\ViewEngine\view;
 /**
  * @AutoController(prefix="view")
  */
-class ViewController extends Controller
+class ViewController extends AbstractController
 {
     public function child()
     {
@@ -792,7 +792,7 @@ class ConfigProvider
 
 #### 组件自动加载
 
-默认情况下，`App\View\Component\\` 及 `components.` 下的组件会自动注册。你也可以通过配置文件修改这个配置：
+默认情况下，`App\View\Component\` 及 `components.` 下的组件会自动注册。你也可以通过配置文件修改这个配置：
 
 > config/autoload/view.php
 

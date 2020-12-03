@@ -95,7 +95,7 @@ namespace App\Controller;
 
 use App\Exception\FooException;
 
-class IndexController extends Controller
+class IndexController extends AbstractController
 {
     public function index()
     {
