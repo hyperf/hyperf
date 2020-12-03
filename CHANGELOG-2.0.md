@@ -4,6 +4,10 @@
 
 - [#2896](https://github.com/hyperf/hyperf/pull/2896) Support to define autoloaded view component classes and anonymous components.
 
+## Fixed
+
+- [#2913](https://github.com/hyperf/hyperf/pull/2913) Fixed memory leak when using `with()` for ORM.
+
 # v2.0.21 - 2020-11-30
 
 ## Added
