@@ -7,6 +7,7 @@
 ## Fixed
 
 - [#2913](https://github.com/hyperf/hyperf/pull/2913) Fixed memory leak when using `with()` for ORM.
+- [#2915](https://github.com/hyperf/hyperf/pull/2915) Fixed bug that worker will be stoped when `onMessage` or `onClose` failed in websocket server.
 
 # v2.0.21 - 2020-11-30
 
