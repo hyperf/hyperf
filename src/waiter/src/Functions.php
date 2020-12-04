@@ -15,12 +15,12 @@ use Closure;
 use Hyperf\Utils\ApplicationContext;
 
 if (! function_exists('Hyperf\\Waiter\\wait')) {
-    function wait(Closure $closure)
+    function wait(Closure $closure, ?float $timeout = null)
     {
         if (ApplicationContext::hasContainer()) {
             $waiter = ApplicationContext::getContainer()->get(Waiter::class);
-            return $waiter->wait($closure);
+            return $waiter->wait($closure, $timeout);
         }
-        return (new Waiter())->wait($closure);
+        return (new Waiter())->wait($closure, $timeout);
     }
 }

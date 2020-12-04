@@ -14,6 +14,7 @@ namespace Hyperf\Waiter;
 use Closure;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\Coroutine;
+use Hyperf\Waiter\Exception\WaitTimeoutException;
 use Throwable;
 
 class Waiter
@@ -28,14 +29,20 @@ class Waiter
      */
     protected $popTimeout = 10.0;
 
-    public function __construct(float $pushTimeout = 10.0, float $popTimeout = 10.0)
+    public function __construct(float $timeout = 10.0)
     {
-        $this->pushTimeout = $pushTimeout;
-        $this->popTimeout = $popTimeout;
+        $this->popTimeout = $timeout;
     }
 
-    public function wait(Closure $closure)
+    /**
+     * @param null|float $timeout seconds
+     */
+    public function wait(Closure $closure, ?float $timeout = null)
     {
+        if ($timeout === null) {
+            $timeout = $this->popTimeout;
+        }
+
         $channel = new Channel(1);
         Coroutine::create(function () use ($channel, $closure) {
             try {
@@ -47,7 +54,10 @@ class Waiter
             }
         });
 
-        $result = $channel->pop($this->popTimeout);
+        $result = $channel->pop($timeout);
+        if ($result === false && $channel->isTimeout()) {
+            throw new WaitTimeoutException(sprintf('Channel wait failed, reason: Timed out for %s s', $timeout));
+        }
         if ($result instanceof ExceptionThrower) {
             throw $result->getThrowable();
         }
