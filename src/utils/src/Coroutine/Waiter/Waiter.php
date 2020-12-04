@@ -9,12 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Waiter;
+namespace Hyperf\Utils\Coroutine\Waiter;
 
 use Closure;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\Coroutine;
-use Hyperf\Waiter\Exception\WaitTimeoutException;
+use Hyperf\Utils\Coroutine\Waiter\Exception\WaitTimeoutException;
 use Throwable;
 
 class Waiter

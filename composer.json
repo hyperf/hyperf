@@ -156,8 +156,8 @@
             "src/nats/src/Functions.php",
             "src/translation/src/Functions.php",
             "src/utils/src/Functions.php",
-            "src/view-engine/src/Functions.php",
-            "src/waiter/src/Functions.php"
+            "src/utils/src/Coroutine/Waiter/Functions.php",
+            "src/view-engine/src/Functions.php"
         ],
         "psr-4": {
             "Hyperf\\Amqp\\": "src/amqp/src/",
@@ -235,7 +235,6 @@
             "Hyperf\\Validation\\": "src/validation/src/",
             "Hyperf\\ViewEngine\\": "src/view-engine/src/",
             "Hyperf\\View\\": "src/view/src/",
-            "Hyperf\\Waiter\\": "src/waiter/src/",
             "Hyperf\\Watcher\\": "src/watcher/src/",
             "Hyperf\\WebSocketClient\\": "src/websocket-client/src/",
             "Hyperf\\WebSocketServer\\": "src/websocket-server/src/"
@@ -310,7 +309,6 @@
             "HyperfTest\\Validation\\": "src/validation/tests/",
             "HyperfTest\\ViewEngine\\": "src/view-engine/tests/",
             "HyperfTest\\View\\": "src/view/tests/",
-            "HyperfTest\\Waiter\\": "src/waiter/tests/",
             "HyperfTest\\Watcher\\": "src/watcher/tests/",
             "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/",
             "HyperfTest\\WebSocketServer\\": "src/websocket-server/tests/",
@@ -392,7 +390,6 @@
                 "Hyperf\\Validation\\ConfigProvider",
                 "Hyperf\\ViewEngine\\ConfigProvider",
                 "Hyperf\\View\\ConfigProvider",
-                "Hyperf\\Waiter\\ConfigProvider",
                 "Hyperf\\Watcher\\ConfigProvider",
                 "Hyperf\\WebSocketClient\\ConfigProvider",
                 "Hyperf\\WebSocketServer\\ConfigProvider"
