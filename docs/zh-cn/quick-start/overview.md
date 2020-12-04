@@ -39,6 +39,14 @@ Router::addRoute(['GET', 'POST', 'HEAD'], '/multi', [\App\Controller\IndexContro
 `@AutoController` 为绝大多数简单的访问场景提供路由绑定支持，使用 `@AutoController` 时则 Hyperf 会自动解析所在类的所有 `public` 方法并提供 `GET` 和 `POST` 两种请求方式。
 
 > 使用 `@AutoController` 注解时需 `use Hyperf\HttpServer\Annotation\AutoController;` 命名空间；
+>注意: 如果控制器文件名及类名为驼峰,且不指定prefix的情况下,路由失效. 举例:
+
+|            控制器名称              |                注解                 |   访问路由 | 是否有效
+|:-----------------------------:|:-----------------------------------:|:-----------------------------------:| :-----------------------------------:| 
+|    MyGodController            |             @AutoController()       |  /mygod/index                       |          无效                        |
+|    MygodController            |             @AutoController()       |  /mygod/index                       |          有效                        |
+|    MyGodController            |  @AutoController(prefix="/any")     |  /any/index                         |          有效                        | 
+>另外,如果指定了prefix,访问路由就无需加控制器前缀了,如控制器下有  a b c 三个方法  , 直接 /any/a ,/any/b , /any/c 即可,而/any/mygod/a是无效的
 
 ```php
 <?php
