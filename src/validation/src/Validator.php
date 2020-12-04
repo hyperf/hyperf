@@ -228,7 +228,6 @@ class Validator implements ValidatorContract
     public function __call($method, $parameters)
     {
         $rule = Str::snake(substr($method, 8));
-
         if (isset($this->extensions[$rule])) {
             return $this->callExtension($rule, $parameters);
         }
@@ -805,9 +804,7 @@ class Validator implements ValidatorContract
                 ? $this->validateUsingCustomRule($attribute, $value, $rule)
                 : null;
         }
-
         $method = "validate{$rule}";
-
         if ($validatable && ! $this->{$method}($attribute, $value, $parameters, $this)) {
             $this->addFailure($attribute, $rule, $parameters);
         }

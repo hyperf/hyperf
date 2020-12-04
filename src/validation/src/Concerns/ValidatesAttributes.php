@@ -132,7 +132,7 @@ trait ValidatesAttributes
      */
     public function validateAlpha(string $attribute, $value): bool
     {
-        return is_string($value) && preg_match('/^[\pL\pM]+$/u', $value);
+        return is_string($value) && preg_match('/^[A-Za-z]+$/u', $value);
     }
 
     /**
@@ -146,7 +146,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        return preg_match('/^[\pL\pM\pN_-]+$/u', $value) > 0;
+        return preg_match('/^[-_a-zA-Z0-9]+$/u', $value) > 0;
     }
 
     /**
@@ -160,7 +160,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        return preg_match('/^[\pL\pM\pN]+$/u', (string) $value) > 0;
+        return preg_match('/^[a-zA-Z0-9]+$/u', (string) $value) > 0;
     }
 
     /**

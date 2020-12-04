@@ -31,4 +31,11 @@ class ValidateAttributesTest extends TestCase
         $this->assertFalse($validator->validateAlphaNum('', 123.1));
         $this->assertFalse($validator->validateAlphaNum('', '123_f1'));
     }
+
+    public function testValidateAlpha()
+    {
+        $validator = new ValidatesAttributesStub();
+        $this->assertTrue($validator->validateAlpha('', 'English中文'));
+    }
+
 }
