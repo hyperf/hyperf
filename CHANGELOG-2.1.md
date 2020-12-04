@@ -48,6 +48,7 @@
 
 - [#2659](https://github.com/hyperf/hyperf/pull/2659) [#2663](https://github.com/hyperf/hyperf/pull/2663) Support `HttpServer` for [Swow](https://github.com/swow/swow).
 - [#2671](https://github.com/hyperf/hyperf/pull/2671) Added `Hyperf\AsyncQueue\Listener\QueueHandleListener` which can record running logs for async-queue.
+- [#2923](https://github.com/hyperf/hyperf/pull/2923) Added `Hyperf\Utils\Coroutine\Waiter\Waiter` which can wait coroutine to end.
 
 ## Fixed
 
