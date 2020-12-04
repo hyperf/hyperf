@@ -9,13 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\Waiter;
+namespace HyperfTest\Utils\Waiter;
 
 use Hyperf\Engine\Channel;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
-use Hyperf\Waiter\Exception\WaitTimeoutException;
+use Hyperf\Utils\Coroutine\Waiter\Exception\WaitTimeoutException;
+use Hyperf\Utils\Coroutine\Waiter\Waiter;
+use Mockery;
 use PHPUnit\Framework\TestCase;
-use function Hyperf\Waiter\wait;
+use Psr\Container\ContainerInterface;
+use function Hyperf\Utils\Coroutine\Waiter\wait;
 
 /**
  * @internal
@@ -23,6 +27,18 @@ use function Hyperf\Waiter\wait;
  */
 class WaiterTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
+        $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
+    }
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+    }
+
     public function testWait()
     {
         $id = uniqid();

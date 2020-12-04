@@ -9,12 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Waiter;
+namespace Hyperf\Utils\Coroutine\Waiter;
 
 use Closure;
 use Hyperf\Utils\ApplicationContext;
 
-if (! function_exists('Hyperf\\Waiter\\wait')) {
+if (! function_exists('Hyperf\\Utils\\Coroutine\\Waiter\\wait')) {
     function wait(Closure $closure, ?float $timeout = null)
     {
         if (ApplicationContext::hasContainer()) {

@@ -9,8 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Waiter\Exception;
+namespace Hyperf\Utils\Exception;
 
-class WaitTimeoutException extends \RuntimeException
+class TimeoutException extends \RuntimeException
 {
 }
