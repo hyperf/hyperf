@@ -16,15 +16,15 @@
     },
     "require": {
         "php": ">=7.2",
+        "doctrine/instantiator": "^1.2.0",
         "hyperf/contract": "~2.0.0",
-        "hyperf/utils": "~2.0.0",
-        "hyperf/process": "~2.0.0",
         "hyperf/pool": "~2.0.0",
+        "hyperf/process": "~2.0.0",
+        "hyperf/utils": "~2.0.0",
+        "php-amqplib/php-amqplib": "^2.9.2",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
-        "psr/log": "^1.0",
-        "php-amqplib/php-amqplib": "^2.7",
-        "doctrine/instantiator": "^1.2.0"
+        "psr/log": "^1.0"
     },
     "require-dev": {
         "hyperf/di": "~2.0.0",

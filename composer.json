@@ -64,7 +64,7 @@
         "nikic/php-parser": "^4.1",
         "overtrue/flysystem-cos": "^2.0",
         "overtrue/flysystem-qiniu": "^1.0",
-        "php-amqplib/php-amqplib": "^2.7",
+        "php-amqplib/php-amqplib": "^2.9.2",
         "php-di/php-di": "^6.0",
         "phpstan/phpstan": "^0.12.52",
         "phpunit/phpunit": "^7.0.0",
