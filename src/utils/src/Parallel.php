@@ -74,8 +74,7 @@ class Parallel
         return $result;
     }
 
-
-    public function count() :int
+    public function count(): int
     {
         return count($this->callbacks);
     }

@@ -3,6 +3,7 @@
 ## Added
 
 - [#2896](https://github.com/hyperf/hyperf/pull/2896) Support to define autoloaded view component classes and anonymous components.
+- [#2921](https://github.com/hyperf/hyperf/pull/2921) Added method `count()` for `Parallel`.
 
 ## Fixed
 
