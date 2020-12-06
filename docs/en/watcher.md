@@ -59,8 +59,7 @@ wget https://github.com/emcrisostomo/fswatch/releases/download/1.14.0/fswatch-1.
 
 ## Startup
 
-Because of the directory structure, the command has to be run in the project
-root directory.
+Because of the directory structure, the command has to be run in the project root directory.
 
 ```bash
 php bin/hyperf.php server:watch
@@ -69,6 +68,5 @@ php bin/hyperf.php server:watch
 ## Problems
 
 - For the time being, there is a slight problem in the Alpine Docker environment, which will be improved in the future.
-- Deletion of files and modification of .env require a manual restart to take
-  effect.
--  Files in the vendor need to be automatically loaded in the form of classmap before they can be scanned. (I.e. execute composer dump-autoload -o)
+- Deletion of files and modification of .env require a manual restart to take effect.
+- Files in the vendor need to be automatically loaded in the form of classmap before they can be scanned. (I.e. execute composer dump-autoload -o)
