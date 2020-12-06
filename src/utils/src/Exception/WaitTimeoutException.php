@@ -9,9 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils\Coroutine\Waiter\Exception;
-
-use Hyperf\Utils\Exception\TimeoutException;
+namespace Hyperf\Utils\Exception;
 
 class WaitTimeoutException extends TimeoutException
 {
