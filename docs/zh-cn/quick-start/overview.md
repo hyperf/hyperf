@@ -8,7 +8,9 @@ Hyperf 使用 [nikic/fast-route](https://github.com/nikic/FastRoute) 作为默�
 不仅如此，框架还提供了极其强大和方便灵活的 `注解路由` 功能，关于路由的详情文档请查阅 [路由](zh-cn/router.md) 章节
 
 ### 通过配置文件定义路由
+
 路由的文件位于 [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) 项目的 `config/routes.php` ，下面是一些常用的用法示例。
+
 ```php
 <?php
 use Hyperf\HttpServer\Router\Router;
@@ -36,9 +38,18 @@ Router::addRoute(['GET', 'POST', 'HEAD'], '/multi', [\App\Controller\IndexContro
 `Hyperf` 提供了极其强大和方便灵活的 [注解](zh-cn/annotation.md) 功能，在路由的定义上也毫无疑问地提供了注解定义的方式，Hyperf 提供了 `@Controller` 和 `@AutoController` 两种注解来定义一个 `Controller`，此处仅做简单的说明，更多细节请查阅 [路由](zh-cn/router.md) 章节。
 
 ### 通过 `@AutoController` 注解定义路由
+
 `@AutoController` 为绝大多数简单的访问场景提供路由绑定支持，使用 `@AutoController` 时则 Hyperf 会自动解析所在类的所有 `public` 方法并提供 `GET` 和 `POST` 两种请求方式。
 
 > 使用 `@AutoController` 注解时需 `use Hyperf\HttpServer\Annotation\AutoController;` 命名空间；
+
+驼峰命名的控制器，会自动转化为蛇形路由，以下为控制器与实际路由的对应关系示例：
+
+|      控制器      |              注解               |    访问路由    |
+| :--------------: | :-----------------------------: | :------------: |
+| MyDataController |        @AutoController()        | /my_data/index |
+| MydataController |        @AutoController()        | /mydata/index  |
+| MyDataController | @AutoController(prefix="/data") |  /data/index   |
 
 ```php
 <?php
@@ -318,22 +329,22 @@ class IndexController
 
 除上述提到的 `SwooleEvent::ON_REQUEST` 事件，框架还支持其他事件，所有事件名如下。
 
-|            事件名              |                备注                 |
-|:-----------------------------:|:-----------------------------------:|
-|    SwooleEvent::ON_REQUEST    |                                     |
-|     SwooleEvent::ON_START     |   该事件在 `SWOOLE_BASE` 模式下无效    |
-| SwooleEvent::ON_WORKER_START  |                                     |
-|  SwooleEvent::ON_WORKER_EXIT  |                                     |
-| SwooleEvent::ON_PIPE_MESSAGE  |                                     |
-|    SwooleEvent::ON_RECEIVE    |                                     |
-|    SwooleEvent::ON_CONNECT    |                                     |
-|  SwooleEvent::ON_HAND_SHAKE   |                                     |
-|     SwooleEvent::ON_OPEN      |                                     |
-|    SwooleEvent::ON_MESSAGE    |                                     |
-|     SwooleEvent::ON_CLOSE     |                                     |
-|     SwooleEvent::ON_TASK      |                                     |
-|    SwooleEvent::ON_FINISH     |                                     |
-|   SwooleEvent::ON_SHUTDOWN    |                                     |
-|    SwooleEvent::ON_PACKET     |                                     |
-| SwooleEvent::ON_MANAGER_START |                                     |
-| SwooleEvent::ON_MANAGER_STOP  |                                     |
+|            事件名             |               备注                |
+| :---------------------------: | :-------------------------------: |
+|    SwooleEvent::ON_REQUEST    |                                   |
+|     SwooleEvent::ON_START     | 该事件在 `SWOOLE_BASE` 模式下无效 |
+| SwooleEvent::ON_WORKER_START  |                                   |
+|  SwooleEvent::ON_WORKER_EXIT  |                                   |
+| SwooleEvent::ON_PIPE_MESSAGE  |                                   |
+|    SwooleEvent::ON_RECEIVE    |                                   |
+|    SwooleEvent::ON_CONNECT    |                                   |
+|  SwooleEvent::ON_HAND_SHAKE   |                                   |
+|     SwooleEvent::ON_OPEN      |                                   |
+|    SwooleEvent::ON_MESSAGE    |                                   |
+|     SwooleEvent::ON_CLOSE     |                                   |
+|     SwooleEvent::ON_TASK      |                                   |
+|    SwooleEvent::ON_FINISH     |                                   |
+|   SwooleEvent::ON_SHUTDOWN    |                                   |
+|    SwooleEvent::ON_PACKET     |                                   |
+| SwooleEvent::ON_MANAGER_START |                                   |
+| SwooleEvent::ON_MANAGER_STOP  |                                   |
