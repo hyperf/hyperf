@@ -1,6 +1,6 @@
 {
     "name": "hyperf/phar",
-    "description": "An component that supports  Hyperf project packaged as  Phar stand-alone package.",
+    "description": "A component that supports pack Hyperf project as a Phar stand-alone package.",
     "license": "MIT",
     "keywords": [
         "php",
