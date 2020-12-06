@@ -20,6 +20,34 @@ use PHPUnit\Framework\TestCase;
  */
 class ValidateAttributesTest extends TestCase
 {
+    public function testValidateAlpha()
+    {
+        $validator = new ValidatesAttributesStub();
+        $this->assertTrue($validator->validateAlpha('', 'xxx'));
+        $this->assertTrue($validator->validateAlpha('', '你好'));
+
+        $this->assertFalse($validator->validateAlpha('', '123'));
+        $this->assertFalse($validator->validateAlpha('', '123f1'));
+        $this->assertFalse($validator->validateAlpha('', 123));
+        $this->assertFalse($validator->validateAlpha('', 123.1));
+        $this->assertFalse($validator->validateAlpha('', '123_f1'));
+        $this->assertFalse($validator->validateAlpha('', 'xxx_yy'));
+    }
+
+    public function testValidateAlphaDash()
+    {
+        $validator = new ValidatesAttributesStub();
+        $this->assertTrue($validator->validateAlphaDash('', 'xxx'));
+        $this->assertTrue($validator->validateAlphaDash('', 'xxx_yy'));
+        $this->assertTrue($validator->validateAlphaDash('', '你好'));
+        $this->assertTrue($validator->validateAlphaDash('', '123'));
+        $this->assertTrue($validator->validateAlphaDash('', '123f1'));
+        $this->assertTrue($validator->validateAlphaDash('', 123));
+        $this->assertTrue($validator->validateAlphaDash('', '123_f1'));
+
+        $this->assertFalse($validator->validateAlphaDash('', 123.1));
+    }
+
     public function testValidateAlphaNum()
     {
         $validator = new ValidatesAttributesStub();
@@ -27,8 +55,10 @@ class ValidateAttributesTest extends TestCase
         $this->assertTrue($validator->validateAlphaNum('', '123'));
         $this->assertTrue($validator->validateAlphaNum('', '123f1'));
         $this->assertTrue($validator->validateAlphaNum('', 123));
+        $this->assertTrue($validator->validateAlphaNum('', '你好'));
 
         $this->assertFalse($validator->validateAlphaNum('', 123.1));
         $this->assertFalse($validator->validateAlphaNum('', '123_f1'));
+        $this->assertFalse($validator->validateAlphaNum('', 'xxx_yy'));
     }
 }
