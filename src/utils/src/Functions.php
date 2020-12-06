@@ -14,6 +14,7 @@ use Hyperf\Utils\Arr;
 use Hyperf\Utils\Backoff;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Coroutine;
+use Hyperf\Utils\Waiter;
 use Hyperf\Utils\HigherOrderTapProxy;
 use Hyperf\Utils\Optional;
 use Hyperf\Utils\Parallel;
@@ -466,5 +467,16 @@ if (! function_exists('optional')) {
         if (! is_null($value)) {
             return $callback($value);
         }
+    }
+}
+
+if (! function_exists('wait')) {
+    function wait(Closure $closure, ?float $timeout = null)
+    {
+        if (ApplicationContext::hasContainer()) {
+            $waiter = ApplicationContext::getContainer()->get(Waiter::class);
+            return $waiter->wait($closure, $timeout);
+        }
+        return (new Waiter())->wait($closure, $timeout);
     }
 }
