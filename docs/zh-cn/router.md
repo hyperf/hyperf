@@ -90,6 +90,14 @@ Router::addGroup('/user/',function (){
 
 > 使用 `@AutoController` 注解时需 `use Hyperf\HttpServer\Annotation\AutoController;` 命名空间；
 
+驼峰命名的控制器，会自动转化为蛇形路由，以下为控制器与实际路由的对应关系示例：
+
+|    控制器名称    |              注解               |    访问路由    | 是否有效 |
+| :--------------: | :-----------------------------: | :------------: | :------: |
+| MyDataController |        @AutoController()        | /my_data/index |   无效   |
+| MydataController |        @AutoController()        | /mydata/index  |   有效   |
+| MyDataController | @AutoController(prefix="/data") |  /data/index   |   有效   |
+
 ```php
 <?php
 declare(strict_types=1);
