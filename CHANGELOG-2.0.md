@@ -15,7 +15,7 @@
 
 ## Changed
 
-- [#2918](https://github.com/hyperf/hyperf/pull/2918) Disable `server.settings.daemonize` configuration value automatically when using hyperf/watcher component.
+- [#2918](https://github.com/hyperf/hyperf/pull/2918) Don't allow to open `server.settings.daemonize` configuration when using `hyperf/watcher`.
 - [#2930](https://github.com/hyperf/hyperf/pull/2930) Upgrade the minimum version of `php-amqplib` to `v2.9.2`.
 
 ## Optimized

@@ -4,7 +4,7 @@
 
 ## 新增
 
-- [#2896](https://github.com/hyperf/hyperf/pull/2896) 允许 `view-engine` 组件配置自定义加载类和组件。
+- [#2896](https://github.com/hyperf/hyperf/pull/2896) 允许 `view-engine` 组件配置自定义加载类组件和匿名组件。
 - [#2921](https://github.com/hyperf/hyperf/pull/2921) 为 `Parallel` 增加 `count()` 方法，返回同时执行的个数。
 
 ## 修复
