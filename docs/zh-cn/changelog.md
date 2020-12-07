@@ -1,5 +1,27 @@
 # 版本更新记录
 
+# v2.0.22 - 2020-12-07
+
+## 新增
+
+- [#2896](https://github.com/hyperf/hyperf/pull/2896) 允许 `view-engine` 组件配置自定义加载类和组件。
+- [#2921](https://github.com/hyperf/hyperf/pull/2921) 为 `Parallel` 增加 `count()` 方法，返回同时执行的个数。
+
+## 修复
+
+- [#2913](https://github.com/hyperf/hyperf/pull/2913) 修复使用 `ORM` 中的 `with` 预加载逻辑时，会因循环依赖导致内存泄露的问题。
+- [#2915](https://github.com/hyperf/hyperf/pull/2915) 修复 `WebSocket` 工作进程会因 `onMessage` or `onClose` 回调失败，导致进程退出的问题。
+- [#2927](https://github.com/hyperf/hyperf/pull/2927) 修复验证器规则 `alpha_dash` 不支持 `int` 的问题。
+
+## 变更
+
+- [#2918](https://github.com/hyperf/hyperf/pull/2918) 当使用 `watcher` 组件时，不可以开启 `daemonize`。
+- [#2930](https://github.com/hyperf/hyperf/pull/2930) 更新 `php-amqplib` 组件最低版本由 `v2.7` 到 `v2.9.2`。
+
+## 优化
+
+- [#2931](https://github.com/hyperf/hyperf/pull/2931) 判断控制器方法是否存在时，使用实际从容器中得到的对象，而非命名空间。
+
 # v2.0.21 - 2020-11-30
 
 ## 新增
