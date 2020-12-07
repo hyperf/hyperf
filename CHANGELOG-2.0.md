@@ -1,4 +1,6 @@
-# v2.0.22 - TBD
+# v2.0.23 - TBD
+
+# v2.0.22 - 2020-12-07
 
 ## Added
 
@@ -13,7 +15,7 @@
 
 ## Changed
 
-- [#2918](https://github.com/hyperf/hyperf/pull/2918) Disable the `daemonize` when use watcher.
+- [#2918](https://github.com/hyperf/hyperf/pull/2918) Don't allow to open `server.settings.daemonize` configuration when using `hyperf/watcher`.
 - [#2930](https://github.com/hyperf/hyperf/pull/2930) Upgrade the minimum version of `php-amqplib` to `v2.9.2`.
 
 ## Optimized
