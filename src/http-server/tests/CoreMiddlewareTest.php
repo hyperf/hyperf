@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace HyperfTest\HttpServer;
 
+use FastRoute\Dispatcher;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\ClosureDefinitionCollector;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\Dispatcher\HttpRequestHandler;
+use Hyperf\HttpMessage\Exception\ServerErrorHttpException;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
@@ -30,6 +32,7 @@ use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use HyperfTest\HttpServer\Stub\CoreMiddlewareStub;
 use HyperfTest\HttpServer\Stub\DemoController;
+use HyperfTest\HttpServer\Stub\FooController;
 use HyperfTest\HttpServer\Stub\SetHeaderMiddleware;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -181,6 +184,37 @@ class CoreMiddlewareTest extends TestCase
         $request = $middleware->dispatch($request);
         $handler = new HttpRequestHandler([SetHeaderMiddleware::class], $middleware, $container);
         $response = $handler->handle($request);
+    }
+
+    public function testHandleFound()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(DemoController::class)->andReturn(new DemoController());
+        $middleware = new CoreMiddleware($container, 'http');
+        $ref = new \ReflectionClass($middleware);
+        $method = $ref->getMethod('handleFound');
+        $method->setAccessible(true);
+
+        $handler = new Handler([DemoController::class, 'demo'], '/');
+        $dispatched = new Dispatched([Dispatcher::FOUND, $handler, []]);
+        $res = $method->invokeArgs($middleware, [$dispatched, Mockery::mock(ServerRequestInterface::class)]);
+        $this->assertSame('Hello World.', $res);
+    }
+
+    public function testHandleFoundWithNamespace()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(DemoController::class)->andReturn(new FooController());
+        $middleware = new CoreMiddleware($container, 'http');
+        $ref = new \ReflectionClass($middleware);
+        $method = $ref->getMethod('handleFound');
+        $method->setAccessible(true);
+
+        $this->expectException(ServerErrorHttpException::class);
+        $this->expectExceptionMessage('Method of class does not exist.');
+        $handler = new Handler([DemoController::class, 'demo'], '/');
+        $dispatched = new Dispatched([Dispatcher::FOUND, $handler, []]);
+        $method->invokeArgs($middleware, [$dispatched, Mockery::mock(ServerRequestInterface::class)]);
     }
 
     protected function getContainer()
