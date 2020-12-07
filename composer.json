@@ -156,7 +156,6 @@
             "src/nats/src/Functions.php",
             "src/translation/src/Functions.php",
             "src/utils/src/Functions.php",
-            "src/utils/src/Coroutine/Waiter/Functions.php",
             "src/view-engine/src/Functions.php"
         ],
         "psr-4": {

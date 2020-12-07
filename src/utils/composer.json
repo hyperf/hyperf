@@ -39,8 +39,7 @@
     },
     "autoload": {
         "files": [
-            "src/Functions.php",
-            "src/Coroutine/Waiter/Functions.php"
+            "src/Functions.php"
         ],
         "psr-4": {
             "Hyperf\\Utils\\": "src/"
