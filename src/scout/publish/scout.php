@@ -21,9 +21,9 @@ return [
     'engine' => [
         'elasticsearch' => [
             'driver' => Hyperf\Scout\Provider\ElasticsearchProvider::class,
-            'index' => env('ELASTICSEARCH_INDEX', 'hyperf'),
+            'index' => null,
             'hosts' => [
-                env('ELASTICSEARCH_HOST', 'http://localhost'),
+                env('ELASTICSEARCH_HOST', 'http://127.0.0.1:9200'),
             ],
         ],
     ],
