@@ -141,3 +141,15 @@ Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line
 
 此问题通常是由于 [zircote/swagger](https://github.com/zircote/swagger-php) 的 3.0.5 版本更新导致, 详情请见 [#834](https://github.com/zircote/swagger-php/issues/834) 。 
 如果安装了 [hyperf/swagger](https://github.com/hyperf/swagger) 建议将 [zircote/swagger](https://github.com/zircote/swagger-php) 的版本锁定在 3.0.4
+
+## `memory_limit` 默认值太小导致 `php bin/hyperf.php` 运行失败
+
+使用 `php -dmemory_limit=1G bin/hyperf.php start` 运行, 或者修改 `php.ini` 配置文件
+
+```
+# 查看 php.ini 配置文件位置
+php --ini
+
+# 修改 memory_limit 配置
+memory_limit=-1
+```
