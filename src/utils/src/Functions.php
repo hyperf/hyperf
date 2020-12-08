@@ -24,6 +24,7 @@ if (! function_exists('value')) {
      * Return the default value of the given value.
      *
      * @param mixed $value
+     * @return mixed
      */
     function value($value)
     {
@@ -36,6 +37,7 @@ if (! function_exists('env')) {
      *
      * @param string $key
      * @param null|mixed $default
+     * @return mixed
      */
     function env($key, $default = null)
     {
@@ -70,6 +72,7 @@ if (! function_exists('retry')) {
      * @param float|int $times
      * @param int $sleep millisecond
      * @throws \Throwable
+     * @return mixed
      */
     function retry($times, callable $callback, int $sleep = 0)
     {
@@ -91,6 +94,7 @@ if (! function_exists('with')) {
      * Return the given value, optionally passed through the given callback.
      *
      * @param mixed $value
+     * @return mixed
      */
     function with($value, callable $callback = null)
     {
@@ -117,6 +121,7 @@ if (! function_exists('data_fill')) {
      * @param mixed $target
      * @param array|string $key
      * @param mixed $value
+     * @return mixed
      */
     function data_fill(&$target, $key, $value)
     {
@@ -130,6 +135,7 @@ if (! function_exists('data_get')) {
      * @param null|array|int|string $key
      * @param null|mixed $default
      * @param mixed $target
+     * @return mixed
      */
     function data_get($target, $key, $default = null)
     {
@@ -170,6 +176,7 @@ if (! function_exists('data_set')) {
      * @param array|string $key
      * @param bool $overwrite
      * @param mixed $value
+     * @return mixed
      */
     function data_set(&$target, $key, $value, $overwrite = true)
     {
@@ -222,6 +229,7 @@ if (! function_exists('head')) {
      * Get the first element of an array. Useful for method chaining.
      *
      * @param array $array
+     * @return mixed
      */
     function head($array)
     {
@@ -233,6 +241,7 @@ if (! function_exists('last')) {
      * Get the last element from an array.
      *
      * @param array $array
+     * @return mixed
      */
     function last($array)
     {
@@ -245,6 +254,7 @@ if (! function_exists('tap')) {
      *
      * @param null|callable $callback
      * @param mixed $value
+     * @return mixed
      */
     function tap($value, $callback = null)
     {
@@ -390,6 +400,7 @@ if (! function_exists('parallel')) {
     /**
      * @param callable[] $callables
      * @param int $concurrent if $concurrent is equal to 0, that means unlimit
+     * @return array
      */
     function parallel(array $callables, int $concurrent = 0)
     {
@@ -425,6 +436,7 @@ if (! function_exists('run')) {
      * Run callable in non-coroutine environment, all hook functions by Swoole only available in the callable.
      *
      * @param array|callable $callbacks
+     * @return boolean
      */
     function run($callbacks, int $flags = SWOOLE_HOOK_ALL): bool
     {
