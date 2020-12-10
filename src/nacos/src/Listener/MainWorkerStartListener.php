@@ -83,6 +83,7 @@ class MainWorkerStartListener implements ListenerInterface
             $config = $this->container->get(ConfigInterface::class);
             $appendNode = $config->get('nacos.config_append_node');
 
+            pull:
             foreach ($client->pull() as $key => $conf) {
                 $configKey = $appendNode ? $appendNode . '.' . $key : $key;
                 if (is_array($conf) && $config->get('nacos.config_merge_mode') == Constants::CONFIG_MERGE_APPEND) {
@@ -90,6 +91,11 @@ class MainWorkerStartListener implements ListenerInterface
                 }
                 $config->set($configKey, $conf);
             }
+            if ($event instanceof CoroutineServerStart) {
+                sleep((int) $config->get('nacos.config_reload_interval', 3));
+                goto pull;
+            }
+
         } catch (\Throwable $exception) {
             $this->logger->critical((string) $exception);
         }
