@@ -22,6 +22,7 @@ use Hyperf\Nacos\Constants;
 use Hyperf\Nacos\Exception\RuntimeException;
 use Hyperf\Nacos\Instance;
 use Hyperf\Nacos\Service;
+use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
 
@@ -47,6 +48,7 @@ class MainWorkerStartListener implements ListenerInterface
     {
         return [
             MainWorkerStart::class,
+            CoroutineServerStart::class,
         ];
     }
 

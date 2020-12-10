@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer;
 
+use Hyperf\Rpc;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use OpenTracing\Span;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,14 +32,26 @@ trait SpanStarter
     ): Span {
         $root = Context::get('tracer.root');
         if (! $root instanceof Span) {
+            $container = ApplicationContext::getContainer();
             /** @var ServerRequestInterface $request */
             $request = Context::get(ServerRequestInterface::class);
             if (! $request instanceof ServerRequestInterface) {
-                throw new \RuntimeException('ServerRequest object missing.');
+                // If the request object is absent, we are probably in a commandline context.
+                // Throwing an exception is unnecessary.
+                $root = $this->tracer->startSpan($name, $option);
+                $root->setTag(SPAN_KIND, $kind);
+                Context::set('tracer.root', $root);
+                return $root;
             }
             $carrier = array_map(function ($header) {
                 return $header[0];
             }, $request->getHeaders());
+            if ($container->has(Rpc\Context::class) && $rpcContext = $container->get(Rpc\Context::class)) {
+                $rpcCarrier = $rpcContext->get('tracer.carrier');
+                if (! empty($rpcCarrier)) {
+                    $carrier = $rpcCarrier;
+                }
+            }
             // Extracts the context from the HTTP headers.
             $spanContext = $this->tracer->extract(TEXT_MAP, $carrier);
             if ($spanContext) {

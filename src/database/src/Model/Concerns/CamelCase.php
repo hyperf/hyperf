@@ -61,18 +61,4 @@ trait CamelCase
     {
         return Str::camel($key);
     }
-
-    protected function addMutatedAttributesToArray(array $attributes, array $mutatedAttributes)
-    {
-        foreach ($mutatedAttributes as $key) {
-            if (! array_key_exists($this->keyTransform($key), $attributes)) {
-                continue;
-            }
-            $attributes[$this->keyTransform($key)] = $this->mutateAttributeForArray(
-                $this->keyTransform($key),
-                $attributes[$this->keyTransform($key)]
-            );
-        }
-        return $attributes;
-    }
 }

@@ -180,3 +180,69 @@ return [
     Hyperf\SwooleTracker\Aspect\CoroutineHandlerAspect::class,
 ];
 ```
+
+## 免费内存泄漏检测工具
+
+Swoole Tracker 本是一款商业产品，拥有进行内存泄漏检测的能力，不过 Swoole Tracker 把内存泄漏检测的功能完全免费给 PHP 社区使用，完善 PHP 生态，回馈社区，下面将概述它的具体用法。
+
+1. 前往 [Swoole Tracker 官网](https://business.swoole.com/SwooleTracker/download/) 下载最新的 Swoole Tracker 扩展；
+
+2. 和上文添加扩展相同，再加入一行配置：
+
+```ini
+;Leak检测开关
+apm.enable_malloc_hook=1
+```
+
+!> 注意：不要在 composer 安装依赖时开启；不要在生成代理类缓存时开启。
+
+3. 根据自己的业务，在 Swoole 的 onReceive 或者 onRequest 事件开头加上 `trackerHookMalloc()` 调用：
+
+```php
+$http->on('request', function ($request, $response) {
+    trackerHookMalloc();
+    $response->end("<h1>Hello Swoole. #".rand(1000, 9999)."</h1>");
+});
+```
+
+每次调用结束后（第一次调用不会被记录），都会生成一个泄漏的信息到 `/tmp/trackerleak` 日志中，我们可以在 Cli 命令行调用 `trackerAnalyzeLeak()` 函数即可分析泄漏日志，生成泄漏报告
+
+```shell
+php -r "trackerAnalyzeLeak();"
+```
+
+下面是泄漏报告的格式：
+
+没有内存泄漏的情况：
+
+```
+[16916 (Loop 5)] ✅ Nice!! No Leak Were Detected In This Loop
+```
+
+其中 `16916` 表示进程 id，`Loop 5`表示第 5 次调用主函数生成的泄漏信息
+
+有确定的内存泄漏：
+
+```
+[24265 (Loop 8)] /tests/mem_leak/http_server.php:125 => [12928]
+[24265 (Loop 8)] /tests/mem_leak/http_server.php:129 => [12928]
+[24265 (Loop 8)] ❌ This Loop TotalLeak: [25216]
+```
+
+表示第 8 次调用 `http_server.php` 的 125 行和 129 行，分别泄漏了 12928 字节内存，总共泄漏了 25216 字节内存。
+
+通过调用 `trackerCleanLeak()` 可以清除泄漏日志，重新开始。[了解更多内存检测工具使用细节](https://www.kancloud.cn/swoole-inc/ee-help-wiki/1941569)
+
+如果需要在 Hyperf 中检测 HTTP Server 中的内存泄漏，可以在 `config/autoload/middlewares.php` 添加一个全局中间件：
+
+```php
+<?php
+
+return [
+    'http' => [
+        Hyperf\SwooleTracker\Middleware\HookMallocMiddleware::class,
+    ],
+];
+```
+
+其他类型 Server 同理。

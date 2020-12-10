@@ -48,10 +48,6 @@ class ModelRewriteGetterSetterVisitor extends AbstractVisitor
                     continue;
                 }
 
-                foreach ($class->stmts as $stmt) {
-                    var_dump($stmt);
-                }
-
                 array_push($class->stmts, ...$this->buildGetterAndSetter());
             }
         }

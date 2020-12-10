@@ -14,6 +14,8 @@ namespace HyperfTest\GrpcClient;
 use Grpc\Info;
 use Hyperf\Grpc\Parser;
 use Hyperf\GrpcClient\Request;
+use Hyperf\Utils\Composer;
+use Jean85\PrettyVersions;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -22,6 +24,14 @@ use PHPUnit\Framework\TestCase;
  */
 class RequestTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        $json = Composer::getLockContent();
+        if (version_compare($json['plugin-api-version'], '2.0.0', '>=')) {
+            $this->markTestSkipped(PrettyVersions::class . ' does not support composer v2.0');
+        }
+    }
+
     public function testRequest()
     {
         $request = new Request($path = 'grpc.service/path', $info = new Info());

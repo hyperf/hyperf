@@ -74,6 +74,16 @@ return [
 ### 安装 Blade 引擎
 
 ```bash
+composer require hyperf/view-engine
+```
+
+详细方式见文档 [视图引擎](zh-cn/view-engine.md)
+
+或者使用
+
+> duncan3dc/blade 因为使用了 Laravel 的 Support 库，所以会导致某些函数不兼容，暂时不推荐使用
+
+```bash
 composer require duncan3dc/blade
 ```
 
@@ -192,4 +202,3 @@ class ViewController
 ```
 Hello, Hyperf. You are using blade template now.
 ```
-

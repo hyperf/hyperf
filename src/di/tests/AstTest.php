@@ -17,6 +17,7 @@ use HyperfTest\Di\Stub\AspectCollector;
 use HyperfTest\Di\Stub\Ast\Bar2;
 use HyperfTest\Di\Stub\Ast\Bar3;
 use HyperfTest\Di\Stub\Ast\Bar4;
+use HyperfTest\Di\Stub\Ast\Bar5;
 use HyperfTest\Di\Stub\Ast\BarAspect;
 use HyperfTest\Di\Stub\Ast\BarInterface;
 use HyperfTest\Di\Stub\Ast\Foo;
@@ -62,7 +63,7 @@ class Foo
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
     function __construct()
     {
-        self::__handlePropertyHandler(__CLASS__);
+        $this->__handlePropertyHandler(__CLASS__);
     }
 }', $code);
     }
@@ -82,12 +83,39 @@ class Bar2 extends Bar
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
     public function __construct(int $id)
     {
-        self::__handlePropertyHandler(__CLASS__);
+        $this->__handlePropertyHandler(__CLASS__);
         parent::__construct($id);
     }
     public static function build()
     {
         return parent::$items;
+    }
+}', $code);
+    }
+
+    public function testParentConstructor()
+    {
+        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
+
+        $ast = new Ast();
+        $code = $ast->proxy(Bar5::class);
+        $this->assertEquals($this->license . '
+namespace HyperfTest\Di\Stub\Ast;
+
+class Bar5
+{
+    use \Hyperf\Di\Aop\ProxyTrait;
+    use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    public function getBar() : Bar
+    {
+        return new class extends Bar
+        {
+            public function __construct()
+            {
+                $this->__handlePropertyHandler(__CLASS__);
+                $this->id = 9501;
+            }
+        };
     }
 }', $code);
     }
@@ -113,7 +141,7 @@ class Bar4
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
     function __construct()
     {
-        self::__handlePropertyHandler(__CLASS__);
+        $this->__handlePropertyHandler(__CLASS__);
     }
     public function toMethodString() : string
     {
@@ -157,7 +185,7 @@ class Bar3 extends Bar
         if (method_exists(parent::class, \'__construct\')) {
             parent::__construct(...func_get_args());
         }
-        self::__handlePropertyHandler(__CLASS__);
+        $this->__handlePropertyHandler(__CLASS__);
     }
     public function getId() : int
     {

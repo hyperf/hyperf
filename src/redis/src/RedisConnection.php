@@ -43,6 +43,15 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             'enable' => false,
             'name' => null,
             'seeds' => [],
+            'read_timeout' => 0.0,
+            'persistent' => false,
+        ],
+        'sentinel' => [
+            'enable' => false,
+            'master_name' => '',
+            'nodes' => [],
+            'persistent' => '',
+            'read_timeout' => 0,
         ],
         'options' => [],
     ];
@@ -56,7 +65,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {
         parent::__construct($container, $pool);
-        $this->config = array_replace($this->config, $config);
+        $this->config = array_replace_recursive($this->config, $config);
 
         $this->reconnect();
     }
@@ -93,15 +102,19 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $db = $this->config['db'];
         $timeout = $this->config['timeout'];
         $cluster = $this->config['cluster']['enable'] ?? false;
+        $sentinel = $this->config['sentinel']['enable'] ?? false;
 
         $redis = null;
-        if ($cluster !== true) {
-            $redis = new \Redis();
-            if (! $redis->connect($host, $port, $timeout)) {
-                throw new ConnectionException('Connection reconnect failed.');
-            }
-        } else {
-            $redis = $this->createRedisCluster();
+        switch (true) {
+            case $cluster:
+                $redis = $this->createRedisCluster();
+                break;
+            case $sentinel:
+                $redis = $this->createRedisSentinel();
+                break;
+            default:
+                $redis = $this->createRedis($host, $port, $timeout);
+                break;
         }
 
         $options = $this->config['options'] ?? [];
@@ -111,7 +124,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $redis->setOption($name, $value);
         }
 
-        if (isset($auth) && $auth !== '') {
+        if ($redis instanceof \Redis && isset($auth) && $auth !== '') {
             $redis->auth($auth);
         }
 
@@ -151,11 +164,17 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     protected function createRedisCluster()
     {
         try {
-            $seeds = $this->config['cluster']['seeds'] ?? [];
-            $name = $this->config['cluster']['name'] ?? null;
-            $timeout = $this->config['timeout'] ?? null;
+            $paramaters = [];
+            $paramaters[] = $this->config['cluster']['name'] ?? null;
+            $paramaters[] = $this->config['cluster']['seeds'] ?? [];
+            $paramaters[] = $this->config['timeout'] ?? 0.0;
+            $paramaters[] = $this->config['cluster']['read_timeout'] ?? 0.0;
+            $paramaters[] = $this->config['cluster']['persistent'] ?? false;
+            if (isset($this->config['auth'])) {
+                $paramaters[] = $this->config['auth'];
+            }
 
-            $redis = new \RedisCluster($name, $seeds, $timeout);
+            $redis = new \RedisCluster(...$paramaters);
         } catch (\Throwable $e) {
             throw new ConnectionException('Connection reconnect failed ' . $e->getMessage());
         }
@@ -177,5 +196,56 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         }
 
         return $result;
+    }
+
+    protected function createRedisSentinel()
+    {
+        try {
+            $nodes = $this->config['sentinel']['nodes'] ?? [];
+            $timeout = $this->config['timeout'] ?? 0;
+            $persistent = $this->config['sentinel']['persistent'] ?? null;
+            $retryInterval = $this->config['retry_interval'] ?? 0;
+            $readTimeout = $this->config['sentinel']['read_timeout'] ?? 0;
+            $masterName = $this->config['sentinel']['master_name'] ?? '';
+
+            $host = '';
+            $port = 0;
+            foreach ($nodes as $node) {
+                [$sentinelHost, $sentinelPort] = explode(':', $node);
+                $sentinel = new \RedisSentinel(
+                    $sentinelHost,
+                    intval($sentinelPort),
+                    $timeout,
+                    $persistent,
+                    $retryInterval,
+                    $readTimeout
+                );
+                $masterInfo = $sentinel->getMasterAddrByName($masterName);
+                if (is_array($masterInfo) && count($masterInfo) >= 2) {
+                    [$host, $port] = $masterInfo;
+                    break;
+                }
+            }
+            $redis = $this->createRedis($host, $port, $timeout);
+        } catch (\Throwable $e) {
+            throw new ConnectionException('Connection reconnect failed ' . $e->getMessage());
+        }
+
+        return $redis;
+    }
+
+    /**
+     * @param string $host
+     * @param int $port
+     * @param float $timeout
+     * @return \Redis
+     */
+    protected function createRedis($host, $port, $timeout)
+    {
+        $redis = new \Redis();
+        if (! $redis->connect((string) $host, (int) $port, $timeout)) {
+            throw new ConnectionException('Connection reconnect failed.');
+        }
+        return $redis;
     }
 }

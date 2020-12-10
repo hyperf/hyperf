@@ -43,6 +43,7 @@
   * [命令行](zh-cn/command.md)
   * [自动化测试](zh-cn/testing.md)
   * [视图](zh-cn/view.md)
+  * [视图引擎](zh-cn/view-engine.md)
   * [国际化](zh-cn/translation.md)
   * [验证器](zh-cn/validation.md)
   * [Session 会话管理](zh-cn/session.md)
@@ -61,6 +62,8 @@
   * [数据库迁移](zh-cn/db/migration.md)
   * [修改器](zh-cn/db/mutators.md)
   * [极简 DB 组件](zh-cn/db/db.md)
+  * [API 资源构造器](zh-cn/db/resource.md)
+  * [模型全文检索](zh-cn/scout.md)
   
 * 微服务
 
@@ -113,7 +116,7 @@
   * [Watcher](zh-cn/watcher.md)
   * [开发者工具](zh-cn/devtool.md)
   * [Swoole Tracker](zh-cn/swoole-tracker.md)
-
+  
 * 应用部署
 
   * [Docker Swarm 集群搭建](zh-cn/tutorial/docker-swarm.md)

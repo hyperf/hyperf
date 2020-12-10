@@ -15,13 +15,16 @@ use Hyperf\Amqp\Connection\AMQPSwooleConnection;
 use Hyperf\Amqp\Connection\KeepaliveIO;
 use Hyperf\Amqp\Pool\AmqpConnectionPool;
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Coroutine;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Exception\AMQPConnectionClosedException;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class Connection extends BaseConnection implements ConnectionInterface
 {
@@ -82,10 +85,6 @@ class Connection extends BaseConnection implements ConnectionInterface
     public function getActiveConnection(): AbstractConnection
     {
         if ($this->check()) {
-            // The connection is valid, reset the last heartbeat time.
-            $currentTime = microtime(true);
-            $this->lastHeartbeatTime = $currentTime;
-
             return $this->connection;
         }
 
@@ -125,14 +124,30 @@ class Connection extends BaseConnection implements ConnectionInterface
 
     public function check(): bool
     {
-        return isset($this->connection) && $this->connection instanceof AbstractConnection && $this->connection->isConnected() && ! $this->isHeartbeatTimeout();
+        $result = isset($this->connection) && $this->connection instanceof AbstractConnection && $this->connection->isConnected() && ! $this->isHeartbeatTimeout();
+        if ($result) {
+            // The connection is valid, reset the last heartbeat time.
+            $currentTime = microtime(true);
+            $this->lastHeartbeatTime = $currentTime;
+        }
+
+        return $result;
     }
 
     public function close(): bool
     {
-        $this->connection->close();
-        if ($this->connection->getIO() instanceof KeepaliveIO) {
-            $this->connection->getIO()->close();
+        try {
+            if ($this->connection->getIO() instanceof KeepaliveIO) {
+                $this->connection->getIO()->close();
+            }
+
+            $this->connection->close();
+        } catch (AMQPConnectionClosedException $exception) {
+            $this->getLogger()->warning((string) $exception);
+        } catch (\Throwable $exception) {
+            $this->getLogger()->error((string) $exception);
+        } finally {
+            $this->connection = null;
         }
 
         $this->channel = null;
@@ -169,6 +184,11 @@ class Connection extends BaseConnection implements ConnectionInterface
         $connection->set_close_on_destruct($this->params->isCloseOnDestruct());
 
         return $connection;
+    }
+
+    protected function getLogger(): LoggerInterface
+    {
+        return $this->container->get(StdoutLoggerInterface::class);
     }
 
     protected function isHeartbeatTimeout(): bool

@@ -138,3 +138,20 @@ Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line
 ```
 
 可以执行脚本 `composer analyse`，对项目进行静态检测，便可以找到出现问题的代码段。
+
+此问题通常是由于 [zircote/swagger](https://github.com/zircote/swagger-php) 的 3.0.5 版本更新导致, 详情请见 [#834](https://github.com/zircote/swagger-php/issues/834) 。 
+如果安装了 [hyperf/swagger](https://github.com/hyperf/swagger) 建议将 [zircote/swagger](https://github.com/zircote/swagger-php) 的版本锁定在 3.0.4
+
+## 内存限制太小导致项目无法运行
+
+PHP 默认的 `memory_limit` 只有 `128M`，因为 `Hyperf` 使用了 `BetterReflection`，不使用扫描缓存时，会消耗大量内存，所以可能会出现内存不够的情况。
+
+我们可以使用 `php -dmemory_limit=-1 bin/hyperf.php start` 运行, 或者修改 `php.ini` 配置文件
+
+```
+# 查看 php.ini 配置文件位置
+php --ini
+
+# 修改 memory_limit 配置
+memory_limit=-1
+```

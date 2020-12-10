@@ -41,6 +41,8 @@ class Packet implements \ArrayAccess
      */
     public $data;
 
+    public $query;
+
     private function __construct()
     {
     }
@@ -56,6 +58,7 @@ class Packet implements \ArrayAccess
             $new->nsp = '/';
         }
         $new->data = $decoded['data'] ?? null;
+        $new->query = $decoded['query'] ?? null;
         return $new;
     }
 

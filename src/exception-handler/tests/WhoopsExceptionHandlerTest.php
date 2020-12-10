@@ -58,6 +58,8 @@ class WhoopsExceptionHandlerTest extends TestCase
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('application/json', $response->getHeader('Content-Type')[0]);
+        $arr = \json_decode($response->getBody()->__toString(), true);
+        $this->assertArrayHasKey('trace', $arr['error']);
     }
 
     public function testXmlWhoops()

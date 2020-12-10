@@ -156,8 +156,8 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             /** @var Dispatched $dispatched */
             $dispatched = $psr7Request->getAttribute(Dispatched::class);
             if ($dispatched->isFound()) {
-                $registedMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
-                $middlewares = array_merge($middlewares, $registedMiddlewares);
+                $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
+                $middlewares = array_merge($middlewares, $registeredMiddlewares);
             }
 
             /** @var Response $psr7Response */
@@ -165,37 +165,41 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
             $class = $psr7Response->getAttribute('class');
 
-            if (! empty($class)) {
-                FdCollector::set($fd, $class);
-                $server = $this->getServer();
-                if ($server instanceof \Swoole\Coroutine\Http\Server) {
-                    $response->upgrade();
-                    $this->getSender()->setResponse($fd, $response);
-                    $this->deferOnOpen($request, $class, $response);
+            if (empty($class)) {
+                throw new WebSocketHandeShakeException('WebSocket hande shake failed, because the class does not exists.');
+            }
 
-                    [, , $callbacks] = ServerManager::get($this->serverName);
+            FdCollector::set($fd, $class);
+            $server = $this->getServer();
+            if ($server instanceof \Swoole\Coroutine\Http\Server) {
+                $response->upgrade();
+                $this->getSender()->setResponse($fd, $response);
+                $this->deferOnOpen($request, $class, $response);
 
-                    [$onMessageCallbackClass, $onMessageCallbackMethod] = $callbacks[SwooleEvent::ON_MESSAGE];
-                    $onMessageCallbackInstance = $this->container->get($onMessageCallbackClass);
+                [, , $callbacks] = ServerManager::get($this->serverName);
 
-                    [$onCloseCallbackClass, $onCloseCallbackMethod] = $callbacks[SwooleEvent::ON_CLOSE];
-                    $onCloseCallbackInstance = $this->container->get($onCloseCallbackClass);
+                [$onMessageCallbackClass, $onMessageCallbackMethod] = $callbacks[SwooleEvent::ON_MESSAGE];
+                $onMessageCallbackInstance = $this->container->get($onMessageCallbackClass);
 
-                    while (true) {
-                        $frame = $response->recv();
-                        if ($frame === false || $frame instanceof CloseFrame || $frame === '') {
-                            $onCloseCallbackInstance->{$onCloseCallbackMethod}($response, $fd, 0);
-                            break;
-                        }
-                        $onMessageCallbackInstance->{$onMessageCallbackMethod}($response, $frame);
+                [$onCloseCallbackClass, $onCloseCallbackMethod] = $callbacks[SwooleEvent::ON_CLOSE];
+                $onCloseCallbackInstance = $this->container->get($onCloseCallbackClass);
+
+                while (true) {
+                    $frame = $response->recv();
+                    if ($frame === false || $frame instanceof CloseFrame || $frame === '') {
+                        $onCloseCallbackInstance->{$onCloseCallbackMethod}($response, $fd, 0);
+                        break;
                     }
-                } else {
-                    $this->deferOnOpen($request, $class, $server);
+                    $onMessageCallbackInstance->{$onMessageCallbackMethod}($response, $frame);
                 }
+            } else {
+                $this->deferOnOpen($request, $class, $server);
             }
         } catch (Throwable $throwable) {
             // Delegate the exception to exception handler.
             $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+            FdCollector::del($request->fd);
+            WsContext::release($request->fd);
         } finally {
             isset($fd) && $this->getSender()->setResponse($fd, null);
             // Send the Response to client.
@@ -227,7 +231,11 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             return;
         }
 
-        $instance->onMessage($server, $frame);
+        try {
+            $instance->onMessage($server, $frame);
+        } catch (\Throwable $exception) {
+            $this->logger->error((string) $exception);
+        }
     }
 
     public function onClose($server, int $fd, int $reactorId): void
@@ -248,7 +256,11 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
         $instance = $this->container->get($fdObj->class);
         if ($instance instanceof OnCloseInterface) {
-            $instance->onClose($server, $fd, $reactorId);
+            try {
+                $instance->onClose($server, $fd, $reactorId);
+            } catch (\Throwable $exception) {
+                $this->logger->error((string) $exception);
+            }
         }
     }
 

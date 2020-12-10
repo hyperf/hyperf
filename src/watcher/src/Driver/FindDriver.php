@@ -27,12 +27,26 @@ class FindDriver implements DriverInterface
     /**
      * @var bool
      */
-    protected $isDarwin;
+    protected $isDarwin = false;
+
+    /**
+     * @var bool
+     */
+    protected $isSupportFloatMinutes = true;
+
+    /**
+     * @var int
+     */
+    protected $startTime;
 
     public function __construct(Option $option)
     {
         $this->option = $option;
-        $this->isDarwin = PHP_OS === 'Darwin';
+        if (PHP_OS === 'Darwin') {
+            $this->isDarwin = true;
+        } else {
+            $this->isDarwin = false;
+        }
         if ($this->isDarwin) {
             $ret = System::exec('which gfind');
             if (empty($ret['output'])) {
@@ -43,20 +57,26 @@ class FindDriver implements DriverInterface
             if (empty($ret['output'])) {
                 throw new \InvalidArgumentException('find not exists.');
             }
+            $ret = System::exec('find --help', true);
+            $this->isSupportFloatMinutes = (strpos($ret['output'] ?? '', 'BusyBox')) === false;
         }
     }
 
     public function watch(Channel $channel): void
     {
+        $this->startTime = time();
         $ms = $this->option->getScanInterval();
-        Timer::tick($ms, function () use ($channel, $ms) {
+        $seconds = ceil(($ms + 1000) / 1000);
+        if ($this->isSupportFloatMinutes) {
+            $minutes = sprintf('-%.2f', $seconds / 60);
+        } else {
+            $minutes = sprintf('-%d', ceil($seconds / 60));
+        }
+        Timer::tick($ms, function () use ($channel, $minutes) {
             global $fileModifyTimes;
             if (is_null($fileModifyTimes)) {
                 $fileModifyTimes = [];
             }
-
-            $seconds = ceil(($ms + 1000) / 1000);
-            $minutes = sprintf('-%.2f', $seconds / 60);
 
             [$fileModifyTimes, $changedFiles] = $this->scan($fileModifyTimes, $minutes);
 
@@ -70,27 +90,27 @@ class FindDriver implements DriverInterface
     {
         $changedFiles = [];
         $dest = implode(' ', $targets);
-        $ret = System::exec($this->getBin() . ' ' . $dest . ' -mmin ' . $minutes . ' -type f -printf "%p %T+' . PHP_EOL . '"');
+        $ret = System::exec($this->getBin() . ' ' . $dest . ' -mmin ' . $minutes . ' -type f -print');
         if ($ret['code'] === 0 && strlen($ret['output'])) {
-            $stdout = $ret['output'];
+            $stdout = trim($ret['output']);
 
             $lineArr = explode(PHP_EOL, $stdout);
             foreach ($lineArr as $line) {
-                $fileArr = explode(' ', $line);
-                if (count($fileArr) == 2) {
-                    $pathName = $fileArr[0];
-                    $modifyTime = $fileArr[1];
-
-                    if (! empty($ext) && ! Str::endsWith($pathName, $ext)) {
-                        continue;
-                    }
-
-                    if (isset($fileModifyTimes[$pathName]) && $fileModifyTimes[$pathName] == $modifyTime) {
-                        continue;
-                    }
-                    $fileModifyTimes[$pathName] = $modifyTime;
-                    $changedFiles[] = $pathName;
+                $pathName = $line;
+                $modifyTime = filemtime($pathName);
+                // modifyTime less than or equal to startTime continue
+                if ($modifyTime <= $this->startTime) {
+                    continue;
                 }
+                if (! empty($ext) && ! Str::endsWith($pathName, $ext)) {
+                    continue;
+                }
+
+                if (isset($fileModifyTimes[$pathName]) && $fileModifyTimes[$pathName] == $modifyTime) {
+                    continue;
+                }
+                $fileModifyTimes[$pathName] = $modifyTime;
+                $changedFiles[] = $pathName;
             }
         }
 

@@ -52,5 +52,10 @@ class DecoderTest extends AbstractTestCase
         $this->assertEquals('1', $packet['type']);
         $this->assertEquals('/', $packet['nsp']);
         $this->assertEquals([], $packet['data']);
+        $packet = $decoder->decode('1/ws?foo=bar&baz=1,');
+        $this->assertEquals('', $packet['id']);
+        $this->assertEquals('1', $packet['type']);
+        $this->assertEquals('/ws', $packet['nsp']);
+        $this->assertEquals(['foo' => 'bar', 'baz' => '1'], $packet['query']);
     }
 }

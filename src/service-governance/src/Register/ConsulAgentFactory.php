@@ -22,10 +22,19 @@ class ConsulAgentFactory
     {
         return new Agent(function () use ($container) {
             $config = $container->get(ConfigInterface::class);
-            return $container->get(ClientFactory::class)->create([
+            $token = $config->get('consul.token', '');
+            $options = [
                 'timeout' => 2,
                 'base_uri' => $config->get('consul.uri', Agent::DEFAULT_URI),
-            ]);
+            ];
+
+            if (! empty($token)) {
+                $options['headers'] = [
+                    'X-Consul-Token' => $token,
+                ];
+            }
+
+            return $container->get(ClientFactory::class)->create($options);
         });
     }
 }
