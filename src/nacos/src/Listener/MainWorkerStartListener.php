@@ -25,6 +25,7 @@ use Hyperf\Nacos\Service;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
 class MainWorkerStartListener implements ListenerInterface
