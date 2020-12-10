@@ -93,6 +93,20 @@ class ManagerTest extends TestCase
         $this->assertSame(100, $manager->getCacheTTL($model, $handler));
     }
 
+    public function testInvalidCacheManager()
+    {
+        parallel([static function () {
+            $manager = ModelCache\InvalidCacheManager::instance();
+            $model = Mockery::mock(ModelCache\CacheableInterface::class);
+            $model->shouldReceive('deleteCache')->once()->andReturn(true);
+            $manager->push($model);
+            $manager->delete();
+            $manager->delete();
+        }]);
+
+        $this->assertInstanceOf(ModelCache\InvalidCacheManager::class, ModelCache\InvalidCacheManager::instance());
+    }
+
     protected function getConfig(): array
     {
         return [
