@@ -7,6 +7,7 @@
 ## Optimized
 
 - [#2951](https://github.com/hyperf/hyperf/pull/2951) Optimized code for model-cache, which will delete model cache only once, when using it in transaction.
+- [#2953](https://github.com/hyperf/hyperf/pull/2953) Hide `Swoole\ExitException` trace message in command.
 
 # v2.0.22 - 2020-12-07
 
