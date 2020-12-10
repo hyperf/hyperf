@@ -4,6 +4,10 @@
 
 - [#2934](https://github.com/hyperf/hyperf/pull/2934) Changed config file `scout.php` which search engine index is used as the model index name by default.
 
+## Optimized
+
+- [#2951](https://github.com/hyperf/hyperf/pull/2951) Optimized code for model-cache, which will delete model cache only once, when using it in transaction.
+
 # v2.0.22 - 2020-12-07
 
 ## Added
