@@ -1,5 +1,13 @@
 # v2.0.23 - TBD
 
+## Added
+
+- [#2872](https://github.com/hyperf/hyperf/pull/2872) Added `hyperf/phar` component.
+
+## Fixed
+
+- [#2952](https://github.com/hyperf/hyperf/pull/2952) Fixed bug that nacos config center does not works in coroutine server.
+
 ## Changed
 
 - [#2934](https://github.com/hyperf/hyperf/pull/2934) Changed config file `scout.php` which search engine index is used as the model index name by default.
