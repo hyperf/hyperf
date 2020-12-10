@@ -25,9 +25,6 @@ class BuildCommand extends HyperfCommand
      */
     protected $container;
 
-    /**
-     * BuildCommand constructor.
-     */
     public function __construct(ContainerInterface $container)
     {
         parent::__construct('phar:build');
@@ -51,14 +48,14 @@ class BuildCommand extends HyperfCommand
         if (empty($path)) {
             $path = BASE_PATH;
         }
-        $phar = $this->getPhar($path);
+        $builder = $this->getPharBuilder($path);
         if (! empty($bin)) {
-            $phar->setMain($bin);
+            $builder->setMain($bin);
         }
         if (! empty($name)) {
-            $phar->setTarget($name);
+            $builder->setTarget($name);
         }
-        $phar->build();
+        $builder->build();
     }
 
     /**
@@ -71,7 +68,7 @@ class BuildCommand extends HyperfCommand
         }
     }
 
-    public function getPhar(string $path, ?string $version = null): HyperfPhar
+    public function getPharBuilder(string $path, ?string $version = null): PharBuilder
     {
         if ($version !== null) {
             $path .= ':' . $version;
@@ -81,14 +78,14 @@ class BuildCommand extends HyperfCommand
             $path = rtrim($path, '/') . '/composer.json';
         }
         if (! is_file($path)) {
-            throw new InvalidArgumentException('The given path "' . $path . '" is not a readable file');
+            throw new InvalidArgumentException(sprintf('The given path %s is not a readable file', $path));
         }
-        $phar = new HyperfPhar($this->container, $path);
+        $pharBuilder = new PharBuilder($path, $this->container->get(LoggerInterface::class));
 
-        $pathVendor = $phar->getPackage()->getDirectory() . $phar->getPackage()->getPathVendor();
-        if (! is_dir($pathVendor)) {
-            throw new RuntimeException('Project is not installed via composer. Run "composer install" manually');
+        $vendorPath = $pharBuilder->getPackage()->getVendorAbsolutePath();
+        if (! is_dir($vendorPath)) {
+            throw new RuntimeException('The project has not been initialized, please manually execute the command `composer install` to install the dependencies');
         }
-        return $phar;
+        return $pharBuilder;
     }
 }

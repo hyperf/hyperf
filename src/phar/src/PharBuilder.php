@@ -13,25 +13,19 @@ namespace Hyperf\Phar;
 
 use FilesystemIterator;
 use GlobIterator;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Phar\Ast\Ast;
 use Hyperf\Phar\Ast\Visitor\RewriteConfigVisitor;
 use InvalidArgumentException;
 use Phar;
-use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Component\Finder\Finder;
 use UnexpectedValueException;
 
-class HyperfPhar
+class PharBuilder
 {
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var StdoutLoggerInterface
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -50,23 +44,21 @@ class HyperfPhar
      */
     private $main;
 
-    public function __construct(ContainerInterface $container, string $path)
+    public function __construct(string $path, LoggerInterface $logger)
     {
-        $this->container = $container;
-        $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->logger = $logger;
         $this->package = new Package($this->loadJson($path), dirname(realpath($path)));
     }
 
     /**
      * Gets the Phar package name.
-     * @return string|TargetPhar
      */
-    public function getTarget()
+    public function getTarget(): string
     {
         if ($this->target === null) {
             $this->target = $this->package->getShortName() . '.phar';
         }
-        return $this->target;
+        return (string) $this->target;
     }
 
     /**
@@ -97,7 +89,7 @@ class HyperfPhar
                 $this->main = $path;
                 break;
             }
-            //For the bottom, use the hyperF default startup file
+            // Use the default hyperf bootstrap file as default.
             if ($this->main == null) {
                 return 'bin/hyperf.php';
             }
@@ -117,38 +109,38 @@ class HyperfPhar
 
     /**
      * Get package object.
-     * @return Package
      */
-    public function getPackage()
+    public function getPackage(): Package
     {
         return $this->package;
     }
 
     /**
      * Gets a list of all dependent packages.
+     * @return Package[]
      */
     public function getPackagesDependencies(): array
     {
         $packages = [];
 
-        $pathVendor = $this->package->getDirectory() . $this->package->getPathVendor();
+        $vendorPath = $this->package->getVendorAbsolutePath();
 
-        //  Gets all installed dependency packages
-        if (is_file($pathVendor . 'composer/installed.json')) {
-            $installed = $this->loadJson($pathVendor . 'composer/installed.json');
+        // Gets all installed dependency packages
+        if (is_file($vendorPath . 'composer/installed.json')) {
+            $installed = $this->loadJson($vendorPath . 'composer/installed.json');
             $installedPackages = $installed;
-            //Configuration structure changes that support Composer 2.0
+            // Adapte Composer 2.0
             if (isset($installed['packages'])) {
                 $installedPackages = $installed['packages'];
             }
-            //Package all of these dependent components into packages
+            // Package all of these dependent components into the packages
             foreach ($installedPackages as $package) {
                 $dir = $package['name'] . '/';
                 if (isset($package['target-dir'])) {
                     $dir .= trim($package['target-dir'], '/') . '/';
                 }
 
-                $dir = $pathVendor . $dir;
+                $dir = $vendorPath . $dir;
                 $packages[] = new Package($package, $dir);
             }
         }
@@ -157,23 +149,14 @@ class HyperfPhar
 
     /**
      * Gets the relative path relative to the resource bundle.
-     * @return false|string
      */
-    public function getPathLocalToBase(string $path)
+    public function getPathLocalToBase(string $path): ?string
     {
         $root = $this->package->getDirectory();
         if (strpos($path, $root) !== 0) {
             throw new UnexpectedValueException('Path "' . $path . '" is not within base project path "' . $root . '"');
         }
-        return substr($path, strlen($root));
-    }
-
-    /**
-     * @param $message
-     */
-    public function log($message)
-    {
-        $this->logger->info($message);
+        return substr($path, strlen($root)) ?? null;
     }
 
     /**
@@ -181,13 +164,12 @@ class HyperfPhar
      */
     public function build()
     {
-        $this->log('Creating phar <info>' . $this->getTarget() . '</info>');
+        $this->logger->info('Creating phar <info>' . $this->getTarget() . '</info>');
         $time = microtime(true);
 
-        // Assert vendor dir must exists.
-        $pathVendor = $this->package->getDirectory() . $this->package->getPathVendor();
-        if (! is_dir($pathVendor)) {
-            throw new RuntimeException('Directory "' . $pathVendor . '" not properly installed, did you run "composer install"?');
+        $vendorPath = $this->package->getVendorAbsolutePath();
+        if (! is_dir($vendorPath)) {
+            throw new RuntimeException(sprintf('Directory %s not properly installed, did you run "composer install" ?', $vendorPath));
         }
 
         // Get file path which could be written for phar.
@@ -197,68 +179,67 @@ class HyperfPhar
         } while (file_exists($tmp));
 
         $targetPhar = new TargetPhar(new Phar($tmp), $this);
-        $this->log('  - Adding main package "' . $this->package->getName() . '"');
-        // Add project self.
+        $this->logger->info('Adding main package "' . $this->package->getName() . '"');
         $finder = Finder::create()
             ->files()
             ->ignoreVCS(true)
-            ->exclude(rtrim($this->package->getPathVendor(), '/'))
+            ->exclude(rtrim($this->package->getVendorPath(), '/'))
             ->exclude('runtime') //Ignore runtime dir
             ->notPath('/^composer\.phar/')
             ->notPath($target) //Ignore the phar package that exists in the project itself
             ->in($this->package->getDirectory());
         $targetPhar->addBundle($this->package->bundle($finder));
 
-        // Force the ScanCacheable switch on
+        // Force to turn on ScanCacheable.
         $this->enableScanCacheable($targetPhar);
 
-        //Load the Runtime folder separately
+        // Load the Runtime folder separately
         if (is_dir($this->package->getDirectory() . 'runtime')) {
-            $this->log('  - Adding runtime container files');
+            $this->logger->info('Adding runtime container files');
             $finder = Finder::create()
                 ->files()
                 ->in($this->package->getDirectory() . 'runtime/container');
             $targetPhar->addBundle($this->package->bundle($finder));
         }
 
-        $this->log('  - Adding composer base files');
-        // Add autoload.php
-        $targetPhar->addFile($pathVendor . 'autoload.php');
+        $this->logger->info('Adding composer base files');
+        // Add composer autoload file.
+        $targetPhar->addFile($vendorPath . 'autoload.php');
 
         // Add composer autoload files.
-        $targetPhar->buildFromIterator(new GlobIterator($pathVendor . 'composer/*.*', FilesystemIterator::KEY_AS_FILENAME));
+        $targetPhar->buildFromIterator(new GlobIterator($vendorPath . 'composer/*.*', FilesystemIterator::KEY_AS_FILENAME));
 
         // Add composer depenedencies.
         foreach ($this->getPackagesDependencies() as $package) {
-            //You don't have to package yourself
+            // Cannot package yourself.
             if (stripos($package->getDirectory(), 'vendor/hyperf/phar/') !== false) {
                 continue;
             }
-            $this->log('  - Adding dependency "' . $package->getName() . '" from "' . $this->getPathLocalToBase($package->getDirectory()) . '"');
+            $this->logger->info('Adding dependency "' . $package->getName() . '" from "' . $this->getPathLocalToBase($package->getDirectory()) . '"');
             $targetPhar->addBundle($package->bundle());
         }
 
-        $this->log('  - Setting main/stub');
+        $this->logger->info('Setting main/stub');
 
         $main = $this->getMain();
         // Add the default stub.
         $targetPhar->setStub($targetPhar->createDefaultStub($main));
-        $this->log('  - Setting default stub <info>' . $main . '</info>.');
+        $this->logger->info('Setting default stub <info>' . $main . '</info>.');
 
         $targetPhar->stopBuffering();
 
         if (file_exists($target)) {
-            $this->log('  - Overwriting existing file <info>' . $target . '</info> (' . $this->getSize($target) . ')');
+            $this->logger->info('Overwriting existing file <info>' . $target . '</info> (' . $this->getSize($target) . ')');
         }
 
         if (rename($tmp, $target) === false) {
-            throw new UnexpectedValueException('Unable to rename temporary phar archive to "' . $target . '"');
+            throw new UnexpectedValueException(sprintf('Unable to rename temporary phar archive to %s', $target));
         }
 
         $time = max(microtime(true) - $time, 0);
 
-        $this->log('');
-        $this->log('    <info>OK</info> - Creating <info>' . $this->getTarget() . '</info> (' . $this->getSize($this->getTarget()) . ') completed after ' . round($time, 1) . 's');
+        $this->logger->info('');
+        $this->logger->info('    <info>OK</info> - Creating <info>' . $this->getTarget() . '</info> (' . $this->getSize($this->getTarget()) . ') completed after ' . round($time, 1) . 's');
     }
 
     /**
@@ -281,19 +262,19 @@ class HyperfPhar
      */
     private function loadJson(string $path): array
     {
-        $ret = json_decode(file_get_contents($path), true);
-        if ($ret === null) {
-            throw new InvalidArgumentException('Unable to parse given path "' . $path . '"', json_last_error());
+        $result = json_decode(file_get_contents($path), true);
+        if ($result === null) {
+            throw new InvalidArgumentException(sprintf('Unable to parse given path %s', $path), json_last_error());
         }
-        return $ret;
+        return $result;
     }
 
     /**
      * Get file size.
-     * @param HyperfPhar|string $path
-     * @return string
+     *
+     * @param PharBuilder|string $path
      */
-    private function getSize($path)
+    private function getSize($path): string
     {
         return round(filesize((string) $path) / 1024, 1) . ' KiB';
     }

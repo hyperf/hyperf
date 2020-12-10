@@ -15,15 +15,17 @@ use Symfony\Component\Finder\Finder;
 
 class Package
 {
-    private $package;
-
-    private $directory;
+    /**
+     * @var array
+     */
+    protected $package;
 
     /**
-     * Package constructor.
-     * @param $directory
+     * @var string
      */
-    public function __construct(array $package, $directory)
+    protected $directory;
+
+    public function __construct(array $package, string $directory)
     {
         $this->package = $package;
         $this->directory = rtrim($directory, '/') . '/';
@@ -31,25 +33,23 @@ class Package
 
     /**
      * Get full package name.
-     * @return null|mixed
      */
-    public function getName()
+    public function getName(): ?string
     {
-        return isset($this->package['name']) ? $this->package['name'] : null;
+        return $this->package['name'] ?? null;
     }
 
     /**
      * Gets the short package name
      * If not, the pathname is used as the package name.
-     * @return string
      */
-    public function getShortName()
+    public function getShortName(): string
     {
         $name = $this->getName();
         if ($name === null) {
-            $name = realpath($this->directory);
+            $name = realpath($this->getDirectory());
             if ($name === false) {
-                $name = $this->directory;
+                $name = $this->getDirectory();
             }
         }
         return basename($name);
@@ -57,9 +57,8 @@ class Package
 
     /**
      * Gets the relative address of the vendor directory, which supports custom addresses in composer.json.
-     * @return string
      */
-    public function getPathVendor()
+    public function getVendorPath(): string
     {
         $vendor = 'vendor';
         if (isset($this->package['config']['vendor-dir'])) {
@@ -69,41 +68,48 @@ class Package
     }
 
     /**
-     * Get package directory.
-     * @return string
+     * Gets the absolute address of the vendor directory.
      */
-    public function getDirectory()
+    public function getVendorAbsolutePath(): string
+    {
+        return $this->getDirectory() . $this->getVendorPath();
+    }
+
+    /**
+     * Get package directory.
+     */
+    public function getDirectory(): string
     {
         return $this->directory;
     }
 
     /**
      * Get resource bundle object.
-     * @return Bundle
      */
-    public function bundle(Finder $finder = null)
+    public function bundle(Finder $finder = null): Bundle
     {
         $bundle = new Bundle();
-        if (empty($this->package['autoload']) && ! is_dir($this->directory . $this->getPathVendor())) {
+        $dir = $this->getDirectory();
+        $vendorPath = $this->getVendorPath();
+        if (empty($this->package['autoload']) && ! is_dir($dir . $vendorPath)) {
             return $bundle;
         }
         if ($finder == null) {
             $finder = Finder::create()
                 ->files()
                 ->ignoreVCS(true)
-                ->exclude(rtrim($this->getPathVendor(), '/'))
+                ->exclude(rtrim($vendorPath, '/'))
                 ->notPath('/^composer\.phar/')
-                ->in($this->getDirectory());
+                ->in($dir);
         }
-        return $bundle->addDir($finder);
+        return $bundle->addFinder($finder);
     }
 
     /**
      * Gets the executable file path, and the directory address where the Phar package will run.
-     * @return array|mixed
      */
-    public function getBins()
+    public function getBins(): array
     {
-        return isset($this->package['bin']) ? $this->package['bin'] : [];
+        return $this->package['bin'] ?? [];
     }
 }

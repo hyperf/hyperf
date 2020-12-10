@@ -28,7 +28,7 @@ class PackageTest extends TestCase
         $this->assertEquals('dirs/', $package->getDirectory());
         $this->assertEquals(null, $package->getName());
         $this->assertEquals('dirs', $package->getShortName());
-        $this->assertEquals('vendor/', $package->getPathVendor());
+        $this->assertEquals('vendor/', $package->getVendorPath());
     }
 
     public function testPackage()
@@ -43,7 +43,7 @@ class PackageTest extends TestCase
         $this->assertEquals(['bin/hyperf.php', 'bin/phar.php'], $package->getBins());
         $this->assertEquals('hyperf/phar', $package->getName());
         $this->assertEquals('phar', $package->getShortName());
-        $this->assertEquals('src/vendors/', $package->getPathVendor());
+        $this->assertEquals('src/vendors/', $package->getVendorPath());
     }
 
     public function testBundleWillContainComposerJsonButNotVendor()

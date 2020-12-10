@@ -23,15 +23,15 @@ class TargetPhar
     private $phar;
 
     /**
-     * @var HyperfPhar
+     * @var PharBuilder
      */
-    private $hyperfPhar;
+    private $pharBuilder;
 
-    public function __construct(Phar $phar, HyperfPhar $hyperfPhar)
+    public function __construct(Phar $phar, PharBuilder $pharBuilder)
     {
         $phar->startBuffering();
         $this->phar = $phar;
-        $this->hyperfPhar = $hyperfPhar;
+        $this->pharBuilder = $pharBuilder;
     }
 
     public function __toString(): string
@@ -65,26 +65,24 @@ class TargetPhar
 
     /**
      * Add the file to the Phar package.
-     * @param string $file the file name
      */
-    public function addFile(string $file)
+    public function addFile(string $filename): void
     {
-        $this->phar->addFile($file, $this->hyperfPhar->getPathLocalToBase($file));
+        $this->phar->addFile($filename, $this->pharBuilder->getPathLocalToBase($filename));
     }
 
     /**
      * Add folder resources to the Phar package.
      */
-    public function buildFromIterator(Traversable $iterator)
+    public function buildFromIterator(Traversable $iterator): void
     {
-        $this->phar->buildFromIterator($iterator, $this->hyperfPhar->getPackage()->getDirectory());
+        $this->phar->buildFromIterator($iterator, $this->pharBuilder->getPackage()->getDirectory());
     }
 
     /**
      * Create the default execution file.
-     * @return string
      */
-    public function createDefaultStub(string $indexFile, string $webIndexFile = null)
+    public function createDefaultStub(string $indexFile, string $webIndexFile = null): string
     {
         if ($webIndexFile != null) {
             return $this->phar->createDefaultStub($indexFile, $webIndexFile);
@@ -95,17 +93,15 @@ class TargetPhar
     /**
      * Set the default startup file.
      */
-    public function setStub(string $stub)
+    public function setStub(string $stub): void
     {
         $this->phar->setStub($stub);
     }
 
     /**
      * Add a string to the Phar package.
-     * @param $local
-     * @param $contents
      */
-    public function addFromString($local, $contents)
+    public function addFromString(string $local, string $contents): void
     {
         $this->phar->addFromString($local, $contents);
     }

@@ -26,7 +26,7 @@ class Bundle implements IteratorAggregate
 
     /**
      * Add a file to the resource bundle.
-     * @return static
+     * @return $this
      */
     public function addFile(string $file)
     {
@@ -35,10 +35,19 @@ class Bundle implements IteratorAggregate
     }
 
     /**
-     * Add a directory package to a resource package.
-     * @return static
+     * @param string[] $dirs
+     * @return $this
      */
-    public function addDir(Finder $dir)
+    public function addDirs(array $dirs)
+    {
+        return $this->addFinder((new Finder())->files()->ignoreVCS(true)->in($dirs));
+    }
+
+    /**
+     * Add a directory package to a resource package.
+     * @return $this
+     */
+    public function addFinder(Finder $dir)
     {
         $this->resources[] = $dir;
         return $this;
@@ -53,7 +62,7 @@ class Bundle implements IteratorAggregate
             if ($containedResource instanceof Finder && $this->directoryContains($containedResource, $resource)) {
                 return true;
             }
-            if (is_string($containedResource) && $containedResource == $resource) {
+            if (is_string($containedResource) && $containedResource === $resource) {
                 return true;
             }
         }
@@ -62,22 +71,21 @@ class Bundle implements IteratorAggregate
 
     /**
      * Returns an iterator for a list of resources.
-     * @return ArrayIterator|Traversable
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->resources);
     }
 
     /**
      * Determines whether the file exists in the folder resource bundle.
-     * @return bool
      */
-    private function directoryContains(Finder $dir, string $resource)
+    private function directoryContains(Finder $dir, string $resource): bool
     {
+        $resourceStrLength = strlen($resource);
         foreach ($dir as $containedResource) {
             /* @var $containedResource SplFileInfo */
-            if (substr($containedResource->getRealPath(), 0, strlen($resource)) == $resource) {
+            if (substr($containedResource->getRealPath(), 0, $resourceStrLength) == $resource) {
                 return true;
             }
         }
