@@ -86,6 +86,7 @@ class MainWorkerStartListener implements ListenerInterface
             if ($event instanceof MainCoroutineServerStart) {
                 $interval = (int) $config->get('nacos.config_reload_interval', 3);
                 Coroutine::create(function () use ($interval) {
+                    sleep($interval);
                     retry(INF, function () use ($interval) {
                         $prevConfig = [];
                         while (true) {
