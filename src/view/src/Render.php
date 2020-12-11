@@ -17,7 +17,7 @@ use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
 use Hyperf\Utils\Context;
 use Hyperf\View\Engine\EngineInterface;
-use Hyperf\View\Engine\SmartyEngine;
+use Hyperf\View\Engine\NoneEngine;
 use Hyperf\View\Exception\EngineNotFindException;
 use Hyperf\View\Exception\RenderException;
 use Psr\Container\ContainerInterface;
@@ -47,7 +47,7 @@ class Render implements RenderInterface
 
     public function __construct(ContainerInterface $container, ConfigInterface $config)
     {
-        $engine = $config->get('view.engine', SmartyEngine::class);
+        $engine = $config->get('view.engine', NoneEngine::class);
         if (! $container->has($engine)) {
             throw new EngineNotFindException("{$engine} engine is not found.");
         }
