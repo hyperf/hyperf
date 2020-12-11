@@ -11,6 +11,7 @@
 ## Changed
 
 - [#2934](https://github.com/hyperf/hyperf/pull/2934) Changed config file `scout.php` which search engine index is used as the model index name by default.
+- [#2958](https://github.com/hyperf/hyperf/pull/2958) Added NoneEngine, Changed default engine of view config to NoneEngine.
 
 ## Optimized
 
