@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace HyperfTest\View;
 
 use Hyperf\View\Engine\NoneEngine;
-use Hyperf\View\Exception\EngineNotFindException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -23,11 +22,8 @@ class NoneTest extends TestCase
 {
     public function testRender()
     {
-        try {
-            $engine = new NoneEngine();
-        } catch (\Throwable $throwable) {
-            $this->assertInstanceOf(EngineNotFindException::class, $throwable);
-            $this->assertSame('No engine available, You can use Blade, Smarty, Twig, Plates and ThinkTemplate.', $throwable->getMessage());
-        }
+        $content = (new NoneEngine())->render('/', [], []);
+
+        $this->assertNotEmpty($content);
     }
 }
