@@ -1,17 +1,44 @@
-# v2.0.22 - TBD
+# v2.0.23 - TBD
+
+## Added
+
+- [#2872](https://github.com/hyperf/hyperf/pull/2872) Added `hyperf/phar` component.
+
+## Fixed
+
+- [#2952](https://github.com/hyperf/hyperf/pull/2952) Fixed bug that nacos config center does not works in coroutine server.
+
+## Changed
+
+- [#2934](https://github.com/hyperf/hyperf/pull/2934) Changed config file `scout.php` which search engine index is used as the model index name by default.
+- [#2958](https://github.com/hyperf/hyperf/pull/2958) Added NoneEngine as the default engine of view config.
+
+## Optimized
+
+- [#2951](https://github.com/hyperf/hyperf/pull/2951) Optimized code for model-cache, which will delete model cache only once, when using it in transaction.
+- [#2953](https://github.com/hyperf/hyperf/pull/2953) Hide `Swoole\ExitException` trace message in command.
+
+# v2.0.22 - 2020-12-07
 
 ## Added
 
 - [#2896](https://github.com/hyperf/hyperf/pull/2896) Support to define autoloaded view component classes and anonymous components.
+- [#2921](https://github.com/hyperf/hyperf/pull/2921) Added method `count()` for `Parallel`.
 
 ## Fixed
 
 - [#2913](https://github.com/hyperf/hyperf/pull/2913) Fixed memory leak when using `with()` for ORM.
 - [#2915](https://github.com/hyperf/hyperf/pull/2915) Fixed bug that worker will be stoped when `onMessage` or `onClose` failed in websocket server.
+- [#2927](https://github.com/hyperf/hyperf/pull/2927) Fixed validation rule `alpha_dash` does not support `int`.
 
 ## Changed
 
-- [#2918](https://github.com/hyperf/hyperf/pull/2918) Disable the `daemonize` when use watcher.
+- [#2918](https://github.com/hyperf/hyperf/pull/2918) Don't allow to open `server.settings.daemonize` configuration when using `hyperf/watcher`.
+- [#2930](https://github.com/hyperf/hyperf/pull/2930) Upgrade the minimum version of `php-amqplib` to `v2.9.2`.
+
+## Optimized
+
+- [#2931](https://github.com/hyperf/hyperf/pull/2931) Pass controller instance as first argument to method_exists function not the class namespace string.
 
 # v2.0.21 - 2020-11-30
 
