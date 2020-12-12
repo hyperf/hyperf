@@ -214,13 +214,19 @@ class Server implements ServerInterface
             class_exists(Bootstrap\WorkerStartCallback::class);
 
         if ($hasCallback) {
-            return [
-                SwooleEvent::ON_START => [Bootstrap\StartCallback::class, 'onStart'],
+            $callbacks = [
                 SwooleEvent::ON_MANAGER_START => [Bootstrap\ManagerStartCallback::class, 'onManagerStart'],
                 SwooleEvent::ON_WORKER_START => [Bootstrap\WorkerStartCallback::class, 'onWorkerStart'],
                 SwooleEvent::ON_WORKER_STOP => [Bootstrap\WorkerStopCallback::class, 'onWorkerStop'],
                 SwooleEvent::ON_WORKER_EXIT => [Bootstrap\WorkerExitCallback::class, 'onWorkerExit'],
             ];
+            if ($this->server->mode === SWOOLE_BASE) {
+                return $callbacks;
+            }
+
+            return array_merge([
+                SwooleEvent::ON_START => [Bootstrap\StartCallback::class, 'onStart'],
+            ], $callbacks);
         }
 
         return [
