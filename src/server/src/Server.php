@@ -209,9 +209,9 @@ class Server implements ServerInterface
 
     protected function defaultCallbacks()
     {
-        $hasCallback = class_exists(Bootstrap\StartCallback::class) &&
-            class_exists(Bootstrap\ManagerStartCallback::class) &&
-            class_exists(Bootstrap\WorkerStartCallback::class);
+        $hasCallback = class_exists(Bootstrap\StartCallback::class)
+            && class_exists(Bootstrap\ManagerStartCallback::class)
+            && class_exists(Bootstrap\WorkerStartCallback::class);
 
         if ($hasCallback) {
             $callbacks = [
