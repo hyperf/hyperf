@@ -51,7 +51,7 @@ class StartServer extends Command
 
         $serverFactory->configure($serverConfig);
 
-        Coroutine::set(['flags' => swoole_hook_flags()]);
+        Coroutine::set(['hook_flags' => swoole_hook_flags()]);
 
         $serverFactory->start();
 
