@@ -1,5 +1,26 @@
 # 版本更新记录
 
+# v2.0.23 - 2020-12-14
+
+## 新增
+
+- [#2872](https://github.com/hyperf/hyperf/pull/2872) 新增 `hyperf/phar` 组件，用于将 `Hyperf` 项目打包成 `phar`。
+
+## 修复
+
+- [#2952](https://github.com/hyperf/hyperf/pull/2952) 修复 `Nacos` 配置中心，在协程风格服务中无法正常使用的问题。
+
+## 变更
+
+- [#2934](https://github.com/hyperf/hyperf/pull/2934) 变更配置文件 `scout.php`，默认使用 `Elasticsearch` 索引作为模型索引。
+- [#2958](https://github.com/hyperf/hyperf/pull/2958) 变更 `view` 组件默认的渲染引擎为 `NoneEngine`。
+
+## 优化
+
+- [#2951](https://github.com/hyperf/hyperf/pull/2951) 优化 `model-cache` 组件，使其执行完多次事务后，只会删除一次缓存。
+- [#2953](https://github.com/hyperf/hyperf/pull/2953) 隐藏命令行因执行 `exit` 导致的异常 `Swoole\ExitException`。
+- [#2963](https://github.com/hyperf/hyperf/pull/2963) 当异步风格服务使用 `SWOOLE_BASE` 时，会从默认的事件回调中移除 `onStart` 事件。
+
 # v2.0.22 - 2020-12-07
 
 ## 新增
