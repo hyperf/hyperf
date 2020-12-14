@@ -231,7 +231,11 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             return;
         }
 
-        $instance->onMessage($server, $frame);
+        try {
+            $instance->onMessage($server, $frame);
+        } catch (\Throwable $exception) {
+            $this->logger->error((string) $exception);
+        }
     }
 
     public function onClose($server, int $fd, int $reactorId): void
@@ -252,7 +256,11 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
         $instance = $this->container->get($fdObj->class);
         if ($instance instanceof OnCloseInterface) {
-            $instance->onClose($server, $fd, $reactorId);
+            try {
+                $instance->onClose($server, $fd, $reactorId);
+            } catch (\Throwable $exception) {
+                $this->logger->error((string) $exception);
+            }
         }
     }
 

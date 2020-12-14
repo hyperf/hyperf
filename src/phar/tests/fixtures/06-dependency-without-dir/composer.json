@@ -1,0 +1,5 @@
+{
+    "require": {
+        "roave/security-advisories": "dev-master"
+    }
+}

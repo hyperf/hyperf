@@ -209,18 +209,24 @@ class Server implements ServerInterface
 
     protected function defaultCallbacks()
     {
-        $hasCallback = class_exists(Bootstrap\StartCallback::class) &&
-            class_exists(Bootstrap\ManagerStartCallback::class) &&
-            class_exists(Bootstrap\WorkerStartCallback::class);
+        $hasCallback = class_exists(Bootstrap\StartCallback::class)
+            && class_exists(Bootstrap\ManagerStartCallback::class)
+            && class_exists(Bootstrap\WorkerStartCallback::class);
 
         if ($hasCallback) {
-            return [
-                Event::ON_START => [Bootstrap\StartCallback::class, 'onStart'],
+            $callbacks = [
                 Event::ON_MANAGER_START => [Bootstrap\ManagerStartCallback::class, 'onManagerStart'],
                 Event::ON_WORKER_START => [Bootstrap\WorkerStartCallback::class, 'onWorkerStart'],
                 Event::ON_WORKER_STOP => [Bootstrap\WorkerStopCallback::class, 'onWorkerStop'],
                 Event::ON_WORKER_EXIT => [Bootstrap\WorkerExitCallback::class, 'onWorkerExit'],
             ];
+            if ($this->server->mode === SWOOLE_BASE) {
+                return $callbacks;
+            }
+
+            return array_merge([
+                Event::ON_START => [Bootstrap\StartCallback::class, 'onStart'],
+            ], $callbacks);
         }
 
         return [

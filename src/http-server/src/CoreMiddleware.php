@@ -153,7 +153,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
         } else {
             [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
             $controllerInstance = $this->container->get($controller);
-            if (! method_exists($controller, $action)) {
+            if (! method_exists($controllerInstance, $action)) {
                 // Route found, but the handler does not exist.
                 throw new ServerErrorHttpException('Method of class does not exist.');
             }

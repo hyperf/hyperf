@@ -48,3 +48,4 @@ parameters:
     - '#InfluxDB\\Point constructor expects float\|null, string given#'
     - '#Call to an undefined method Hyperf\\Database\\Model\\Builder::unsearchable#'
     - '#trackerHookMalloc not found#'
+    - '#method Phar\:\:buildFromIterator\(\) expects Iterator, Traversable given#'
