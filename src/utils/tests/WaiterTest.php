@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\Utils\Waiter;
+namespace HyperfTest\Utils;
 
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\ApplicationContext;
@@ -18,7 +18,6 @@ use Hyperf\Utils\Exception\WaitTimeoutException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use function wait;
 
 /**
  * @internal
