@@ -30,7 +30,7 @@ class SwooleStreamTest extends TestCase
         $swooleResponse = Mockery::mock(SwooleResponse::class);
         $file = __FILE__;
         $swooleResponse->shouldReceive('sendfile')->with($file)->once()->andReturn(null);
-        $swooleResponse->shouldReceive('status')->with(Mockery::any())->once()->andReturn(200);
+        $swooleResponse->shouldReceive('status')->with(200, '')->once()->andReturn(200);
 
         $response = new Response();
         $response = $response->withBody(new SwooleFileStream($file));
@@ -44,7 +44,7 @@ class SwooleStreamTest extends TestCase
         $swooleResponse = Mockery::mock(SwooleResponse::class);
         $content = '{"id":1}';
         $swooleResponse->shouldReceive('end')->with($content)->once()->andReturn(null);
-        $swooleResponse->shouldReceive('status')->with(Mockery::any())->once()->andReturn(200);
+        $swooleResponse->shouldReceive('status')->with(200, '')->once()->andReturn(200);
         $swooleResponse->shouldReceive('header')->with('TOKEN', 'xxx')->once()->andReturn(null);
 
         $response = new Response();
