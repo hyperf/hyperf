@@ -1,5 +1,9 @@
 # v2.0.24 - TBD
 
+## Optimized
+
+- [#2973](https://github.com/hyperf/hyperf/pull/2973) Support custom HTTP status code.
+
 # v2.0.23 - 2020-12-14
 
 ## Added
