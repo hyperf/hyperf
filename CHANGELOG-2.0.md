@@ -2,7 +2,7 @@
 
 ## Optimized
 
-- [#2973](https://github.com/hyperf/hyperf/pull/2973) Support for custom HTTP status code.
+- [#2973](https://github.com/hyperf/hyperf/pull/2973) Support custom HTTP status code.
 
 # v2.0.23 - 2020-12-14
 
