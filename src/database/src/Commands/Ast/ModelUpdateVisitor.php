@@ -358,6 +358,11 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             case 'bool':
             case 'boolean':
                 return 'boolean';
+            case 'timestamp':
+            case 'datetime':
+                return 'datetime';
+            case 'json':
+                return 'json';
             default:
                 return null;
         }
