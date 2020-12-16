@@ -1,5 +1,9 @@
 # v2.0.24 - TBD
 
+## Fixed
+
+- [#2978](https://github.com/hyperf/hyperf/pull/2980) Fixed bug that `hyperf/snowflake` is broken due to missing `hyperf/contract`.
+
 ## Optimized
 
 - [#2973](https://github.com/hyperf/hyperf/pull/2973) Support custom HTTP status code.
