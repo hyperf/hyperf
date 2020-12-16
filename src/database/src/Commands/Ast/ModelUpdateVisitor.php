@@ -125,7 +125,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             $items = [];
             $casts = $this->class->getCasts();
             foreach ($node->default->items as $item) {
-                $caster = $this->class->getCasts()[$item->key->value] ?? null;
+                $caster = $casts[$item->key->value] ?? null;
                 if ($caster && $this->isCaster($caster)) {
                     $items[] = $item;
                 }
