@@ -39,6 +39,7 @@
 - [#2871](https://github.com/hyperf/hyperf/pull/2871) Use `(string) $body` instead of `$body->getContents()` for getting contents from `StreamInterface`, because method `getContents()` only returns the remaining contents in a string.
 - [#2909](https://github.com/hyperf/hyperf/pull/2909) Allow setting repeated middlewares.
 - [#2935](https://github.com/hyperf/hyperf/pull/2935) Changed the string format for default exception formatter.
+- [#2979](https://github.com/hyperf/hyperf/pull/2979) Don't format `decimal` to `float` for command `gen:model` by default.
 
 ## Deprecated
 

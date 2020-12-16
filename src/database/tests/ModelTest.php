@@ -1811,7 +1811,7 @@ class ModelTest extends TestCase
 
         $called = false;
 
-        ModelStub::withoutTouching(function () use (&$called, $model) {
+        ModelStub::withoutTouching(function () use (&$called) {
             $called = true;
         });
 
@@ -1824,7 +1824,7 @@ class ModelTest extends TestCase
 
         $called = false;
 
-        Model::withoutTouchingOn([ModelStub::class], function () use (&$called, $model) {
+        Model::withoutTouchingOn([ModelStub::class], function () use (&$called) {
             $called = true;
         });
 
