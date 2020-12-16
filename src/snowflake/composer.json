@@ -14,7 +14,8 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2"
+        "php": ">=7.2",
+        "hyperf/contract": "~2.0.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.9",
