@@ -33,7 +33,6 @@ use longlang\phpkafka\Protocol\JoinGroup\JoinGroupRequest;
 use longlang\phpkafka\Socket\SwooleSocket;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Throwable;
 
 class ConsumerManager
 {
@@ -172,7 +171,7 @@ class ConsumerManager
                 $consumer->getBroker()->getClient()->send($createTopicsRequest);
             }
 
-            protected function getConsumerConfig(): ConsumerConfig
+            public function getConsumerConfig(): ConsumerConfig
             {
                 $config = $this->config->get('kafka.' . $this->consumer->getPool());
                 $consumerConfig = new ConsumerConfig();

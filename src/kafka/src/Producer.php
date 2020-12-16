@@ -102,7 +102,7 @@ class Producer
         }
     }
 
-    protected function createTopics(?string $topic = null, ?array $messages = null)
+    public function createTopics(?string $topic = null, ?array $messages = null)
     {
         $createTopicsRequest = new CreateTopicsRequest();
         $topics = [];

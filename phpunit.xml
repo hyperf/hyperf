@@ -67,6 +67,7 @@
             <directory suffix="Test.php">./src/watcher/tests</directory>
             <directory suffix="Test.php">./src/websocket-client/tests</directory>
             <directory suffix="Test.php">./src/websocket-server/tests</directory>
+            <directory suffix="Test.php">./src/kafka/tests</directory>
         </testsuite>
     </testsuites>
     <filter>
@@ -104,6 +105,7 @@
             <directory suffix=".php">./src/task/src</directory>
             <directory suffix=".php">./src/utils/src</directory>
             <directory suffix=".php">./src/websocket-client/src</directory>
+            <directory suffix=".php">./src/kafka/src</directory>
         </whitelist>
     </filter>
 </phpunit>
