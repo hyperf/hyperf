@@ -80,6 +80,7 @@ return PhpCsFixer\Config::create()
         'single_quote' => true,
         'standardize_not_equals' => true,
         'multiline_comment_opening_closing' => true,
+        'lambda_not_used_import' => false,
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()
