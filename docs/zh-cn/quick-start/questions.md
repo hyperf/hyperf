@@ -155,3 +155,14 @@ php --ini
 # 修改 memory_limit 配置
 memory_limit=-1
 ```
+
+## Hyperf 版本从 `2.0.18` 之前版本升级之后, 提示 `Call to undefined method Hyperf/Utils/Arr::merge()`
+
+原因是 `doctrine/common` 组件导致的 `hyperf/utils` 组件无法升级。执行以下命令移除 `doctrine/common` 组件，重新更新 Hyperf 相关组件即可。
+
+```bash
+# 移除组件
+composer remove doctrine/common
+# 更新
+composer update "hyperf/*" -o
+```
