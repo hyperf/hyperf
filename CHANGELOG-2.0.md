@@ -8,6 +8,7 @@
 ## Optimized
 
 - [#2973](https://github.com/hyperf/hyperf/pull/2973) Support custom HTTP status code.
+- [#2992](https://github.com/hyperf/hyperf/pull/2992) Optimized requirements for `hyperf/validation`.
 
 # v2.0.23 - 2020-12-14
 
