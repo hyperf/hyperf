@@ -1,5 +1,18 @@
 # 版本更新记录
 
+# v2.0.24 - 2020-12-21
+
+## 修复
+
+- [#2978](https://github.com/hyperf/hyperf/pull/2980) 修复当没有引用 `hyperf/contract` 时，`hyperf/snowflake` 组件会无法正常使用的问题。
+- [#2983](https://github.com/hyperf/hyperf/pull/2983) 修复使用协程风格服务时，常量 `SWOOLE_HOOK_FLAGS` 无法生效的问题。
+- [#2993](https://github.com/hyperf/hyperf/pull/2993) 修复方法 `Arr::merge()` 入参 `$array1` 为空时，会将关联数组，错误的转化为索引数组的问题。
+
+## 优化
+
+- [#2973](https://github.com/hyperf/hyperf/pull/2973) 支持自定义的 `HTTP` 状态码。
+- [#2992](https://github.com/hyperf/hyperf/pull/2992) 优化组件 `hyperf/validation` 的依赖关系，移除 `hyperf/devtool` 组件。
+
 # v2.0.23 - 2020-12-14
 
 ## 新增
