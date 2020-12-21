@@ -512,12 +512,7 @@ class Arr
 
     public static function merge(array $array1, array $array2, bool $unique = true): array
     {
-        if ($array1) {
-            $isAssoc = static::isAssoc($array1);
-        } else {
-            $isAssoc = static::isAssoc($array2);
-        }
-
+        $isAssoc = static::isAssoc($array1 ?: $array2);
         if ($isAssoc) {
             foreach ($array2 as $key => $value) {
                 if (is_array($value)) {
