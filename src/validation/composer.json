@@ -20,10 +20,8 @@
     "require": {
         "php": ">=7.2",
         "egulias/email-validator": "^2.1",
-        "hyperf/command": "~2.1.0",
         "hyperf/contract": "~2.1.0",
         "hyperf/database": "~2.1.0",
-        "hyperf/devtool": "~2.1.0",
         "hyperf/di": "~2.1.0",
         "hyperf/framework": "~2.1.0",
         "hyperf/http-server": "~2.1.0",
@@ -37,6 +35,7 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",
         "hyperf/db-connection": "~2.1.0",
+        "hyperf/devtool": "~2.1.0",
         "hyperf/testing": "~2.1.0",
         "mockery/mockery": "^1.2"
     },

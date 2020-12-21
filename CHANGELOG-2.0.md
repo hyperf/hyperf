@@ -1,4 +1,17 @@
-# v2.0.24 - TBD
+# v2.0.25 - TBD
+
+# v2.0.24 - 2020-12-21
+
+## Fixed
+
+- [#2978](https://github.com/hyperf/hyperf/pull/2980) Fixed bug that `hyperf/snowflake` is broken due to missing `hyperf/contract`.
+- [#2983](https://github.com/hyperf/hyperf/pull/2983) Fixed swoole hook flags does works for co server.
+- [#2993](https://github.com/hyperf/hyperf/pull/2993) Fixed `Arr::merge()` does not works when `$array1` is empty.
+
+## Optimized
+
+- [#2973](https://github.com/hyperf/hyperf/pull/2973) Support custom HTTP status code.
+- [#2992](https://github.com/hyperf/hyperf/pull/2992) Optimized requirements for `hyperf/validation`.
 
 # v2.0.23 - 2020-12-14
 

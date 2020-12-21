@@ -97,7 +97,7 @@ class CoroutineServer implements ServerInterface
                     CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
                 });
             }
-        });
+        }, swoole_hook_flags());
     }
 
     /**
