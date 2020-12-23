@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   ci:
-    name: Test on PHP${{ matrix.php-version }} MySQL${{ matrix.mysql-version }}
+    name: Test on PHP${{ matrix.php-version }} Swoole${{ matrix.sw-version }} MySQL${{ matrix.mysql-version }}
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
@@ -12,9 +12,9 @@ jobs:
         php-version: ['7.3', '7.4']
         mysql-version: ['5.7', '8.0']
         sw-version: ['4.5.10', '4.6.0-beta']
-      env:
-        SW_VERSION: ${{ matrix.sw-version }}
       max-parallel: 4
+    env:
+      SW_VERSION: ${{ matrix.sw-version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
