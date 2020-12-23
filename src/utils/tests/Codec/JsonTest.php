@@ -56,6 +56,13 @@ class JsonTest extends TestCase
         Json::decode($json);
     }
 
+    public function testEncodeException()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Type is not supported');
+        Json::encode(fopen('php://temp', 'r+'));
+    }
+
     public function testJsonEncodeInCoroutine()
     {
         $result = null;
