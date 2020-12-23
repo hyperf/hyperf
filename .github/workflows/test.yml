@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   ci:
-    name: Test on PHP${{ matrix.php-version }} Swoole${{ matrix.sw-version }} MySQL${{ matrix.mysql-version }}
+    name: Test on PHP${{ matrix.php-version }} SW${{ matrix.sw-version }} MySQL${{ matrix.mysql-version }}
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
