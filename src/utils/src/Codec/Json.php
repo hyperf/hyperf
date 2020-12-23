@@ -17,7 +17,7 @@ use Hyperf\Utils\Exception\InvalidArgumentException;
 
 class Json
 {
-    public static function encode($data, $options = JSON_UNESCAPED_UNICODE, int $depth = 512): string
+    public static function encode($data, int $flags = JSON_UNESCAPED_UNICODE, int $depth = 512): string
     {
         if ($data instanceof Jsonable) {
             return (string) $data;
@@ -28,7 +28,7 @@ class Json
         }
 
         try {
-            $json = json_encode($data, $options | JSON_THROW_ON_ERROR, $depth);
+            $json = json_encode($data, $flags | JSON_THROW_ON_ERROR, $depth);
         } catch (\Throwable $exception) {
             throw new InvalidArgumentException($exception->getMessage(), $exception->getCode());
         }
@@ -36,10 +36,10 @@ class Json
         return $json;
     }
 
-    public static function decode(string $json, $assoc = true, int $depth = 512)
+    public static function decode(string $json, bool $assoc = true, int $depth = 512, int $flags = 0)
     {
         try {
-            $decode = json_decode($json, $assoc, $depth, JSON_THROW_ON_ERROR);
+            $decode = json_decode($json, $assoc, $depth, $flags | JSON_THROW_ON_ERROR);
         } catch (\Throwable $exception) {
             throw new InvalidArgumentException($exception->getMessage(), $exception->getCode());
         }
