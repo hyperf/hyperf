@@ -36,10 +36,10 @@ class Json
         return $json;
     }
 
-    public static function decode(string $json, $assoc = true)
+    public static function decode(string $json, $assoc = true, int $depth = 512)
     {
         try {
-            $decode = json_decode($json, $assoc, 512, JSON_THROW_ON_ERROR);
+            $decode = json_decode($json, $assoc, $depth, JSON_THROW_ON_ERROR);
         } catch (\Throwable $exception) {
             throw new InvalidArgumentException($exception->getMessage(), $exception->getCode());
         }
