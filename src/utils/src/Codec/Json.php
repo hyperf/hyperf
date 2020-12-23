@@ -27,28 +27,23 @@ class Json
             $data = $data->toArray();
         }
 
-        $json = json_encode($data, $options, $depth);
-
-        static::handleJsonError(json_last_error(), json_last_error_msg());
+        try {
+            $json = json_encode($data, $options | JSON_THROW_ON_ERROR, $depth);
+        } catch (\Throwable $exception) {
+            throw new InvalidArgumentException($exception->getMessage(), $exception->getCode());
+        }
 
         return $json;
     }
 
-    public static function decode(string $json, $assoc = true, int $depth = 512, int $flags = 0)
+    public static function decode(string $json, $assoc = true)
     {
-        $decode = json_decode($json, $assoc, $depth, $flags);
-
-        static::handleJsonError(json_last_error(), json_last_error_msg());
-
-        return $decode;
-    }
-
-    protected static function handleJsonError($lastError, $message)
-    {
-        if ($lastError === JSON_ERROR_NONE) {
-            return;
+        try {
+            $decode = json_decode($json, $assoc, 512, JSON_THROW_ON_ERROR);
+        } catch (\Throwable $exception) {
+            throw new InvalidArgumentException($exception->getMessage(), $exception->getCode());
         }
 
-        throw new InvalidArgumentException($message, $lastError);
+        return $decode;
     }
 }

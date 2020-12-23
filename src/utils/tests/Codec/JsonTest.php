@@ -56,13 +56,11 @@ class JsonTest extends TestCase
         Json::decode($json);
     }
 
-    public function testDecodeJsonException()
+    public function testEncodeException()
     {
-        $json = '{"name":"Hyperf}';
-
-        $this->expectException(\JsonException::class);
-        $this->expectExceptionMessage('Control character error, possibly incorrectly encoded');
-        Json::decode($json, true, 512, JSON_THROW_ON_ERROR);
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Type is not supported');
+        Json::encode(fopen('php://temp', 'r+'));
     }
 
     public function testJsonEncodeInCoroutine()
