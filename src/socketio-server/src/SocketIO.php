@@ -23,6 +23,7 @@ use Hyperf\SocketIOServer\Parser\Decoder;
 use Hyperf\SocketIOServer\Parser\Encoder;
 use Hyperf\SocketIOServer\Parser\Engine;
 use Hyperf\SocketIOServer\Parser\Packet;
+use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
@@ -142,6 +143,10 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     public function onMessage($server, Frame $frame): void
     {
         if ($frame->data[0] === Engine::PING) {
+            $adapter = $this->getAdapter();
+            if ($adapter instanceof EphemeralInterface) {
+                $adapter->renew($this->sidProvider->getSid($frame->fd));
+            }
             $server->push($frame->fd, Engine::PONG); //sever pong
             return;
         }
@@ -266,6 +271,16 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     {
         $this->pingInterval = $pingInterval;
         return $this;
+    }
+
+    public function getPingInterval(): int
+    {
+        return $this->pingInterval;
+    }
+
+    public function getPingTimeout(): int
+    {
+        return $this->pingTimeout;
     }
 
     /**
