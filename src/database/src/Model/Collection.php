@@ -343,6 +343,38 @@ class Collection extends BaseCollection implements CompressInterface
     }
 
     /**
+     * Returns only the columns from the collection with the specified keys.
+     *
+     * @param null|array|string $keys
+     */
+    public function columns($keys): BaseCollection
+    {
+        if (is_null($keys)) {
+            return new BaseCollection([]);
+        }
+        $result = [];
+        $isSingleColumn = is_string($keys);
+        foreach ($this->items as $item) {
+            if ($isSingleColumn) {
+                $value = $item->{$keys} ?? null;
+                $result[] = $value instanceof Arrayable ? $value->toArray() : $value;
+            } else {
+                $result[] = value(static function () use ($item, $keys) {
+                    $res = [];
+                    foreach ($keys as $key) {
+                        $value = $item->{$key} ?? null;
+                        $res[$key] = $value instanceof Arrayable ? $value->toArray() : $value;
+                    }
+
+                    return $res;
+                });
+            }
+        }
+
+        return new BaseCollection($result);
+    }
+
+    /**
      * Returns all models in the collection except the models with specified keys.
      *
      * @param mixed $keys
