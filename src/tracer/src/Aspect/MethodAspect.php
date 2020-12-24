@@ -60,6 +60,10 @@ class MethodAspect extends AbstractAspect
         $span = $this->startSpan($key);
         try {
             $result = $proceedingJoinPoint->process();
+        } catch (\Throwable $e) {
+            $span->setTag('error', true);
+            $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+            throw $e;
         } finally {
             $span->finish();
         }
