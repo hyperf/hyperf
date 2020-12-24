@@ -78,7 +78,7 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
         foreach ($rooms as $room) {
             $this->redis->sAdd($this->getRoomKey($room), $sid);
             if ($this->ttl > 0) {
-                $this->redis->zAdd($this->getExpireKey(), (int) (microtime(true) * 1000) + $this->ttl, $sid);
+                $this->redis->zAdd($this->getExpireKey(), microtime(true) * 1000 + $this->ttl, $sid);
             }
         }
         $this->redis->sAdd($this->getStatKey(), $sid);
@@ -226,7 +226,7 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
     public function renew(string $sid): void
     {
         if ($this->ttl > 0) {
-            $this->redis->zIncrBy($this->getExpireKey(), $this->ttl, $sid);
+            $this->redis->zAdd($this->getExpireKey(), microtime(true) * 1000 + $this->ttl, $sid);
         }
     }
 

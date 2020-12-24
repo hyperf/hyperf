@@ -135,8 +135,7 @@ class RoomAdapterTest extends AbstractTestCase
         $room->setTtl(1);
         $room->add('renewed', 'foo');
         $room->renew('renewed');
-        $room->renew('renewed');
-        usleep(1000);
+        usleep(500);
         $room->cleanUpExpiredOnce();
         $this->assertContains('renewed', $room->clients('foo'));
 
