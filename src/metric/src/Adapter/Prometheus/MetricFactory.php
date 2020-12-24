@@ -158,6 +158,10 @@ class MetricFactory implements MetricFactoryInterface
 
     private function doRequest(string $address, string $job, string $method)
     {
+        if (! Str::contains($address, ['https://', 'http://'])) {
+            $address = 'http://' . $address;
+        }
+        $url = $address . '/metrics/job/' . $job . '/ip/' . current(swoole_get_local_ip()) . '/pid/' . getmypid();
         $url = 'http://' . $address . '/metrics/job/' . $job . '/ip/' . current(swoole_get_local_ip()) . '/pid/' . getmypid();
         $client = $this->guzzleClientFactory->create();
         $requestOptions = [
