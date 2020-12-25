@@ -1,5 +1,5 @@
 # v2.1.0 - TBD
-    
+
 ## Dependencies Upgrade
 
 - Upgraded `phpunit/phpunit` to `^9.0`;
@@ -57,3 +57,7 @@
 ## Fixed
 
 - [#2741](https://github.com/hyperf/hyperf/pull/2741) Fixed bug that process does not works in swow server.
+
+## Optimized
+
+- [#3009](https://github.com/hyperf/hyperf/pull/3009) Optimized code for prometheus which support `https` not only `http`.
