@@ -182,12 +182,8 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             new Arg($this->getMagicConst()),
             // __FUNCTION__
             new Arg(new MagicConstFunction()),
-            // self::getParamMap(OriginalClass::class, __FUNCTION, func_get_args())
-            new Arg(new StaticCall(new Name('self'), '__getParamsMap', [
-                new Arg(new MagicConstClass()),
-                new Arg(new MagicConstFunction()),
-                new Arg(new FuncCall(new Name('func_get_args'))),
-            ])),
+            // func_get_args()
+            new Arg(new FuncCall(new Name('func_get_args'))),
             // A closure that wrapped original method code.
             new Arg(new Closure([
                 'params' => value(function () use ($node) {

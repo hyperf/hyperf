@@ -25,6 +25,7 @@ trait ProxyTrait
         array $arguments,
         Closure $closure
     ) {
+        $arguments = self::__getParamsMap($className, $method, $arguments);
         $proceedingJoinPoint = new ProceedingJoinPoint($closure, $className, $method, $arguments);
         $result = self::handleAround($proceedingJoinPoint);
         unset($proceedingJoinPoint);
