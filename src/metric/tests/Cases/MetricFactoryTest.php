@@ -52,6 +52,32 @@ class MetricFactoryTest extends TestCase
         $p = new PrometheusFactory($config, $r, $c);
     }
 
+    public function testPrometheusGetUri()
+    {
+        $config = new Config([
+            'metric' => [
+                'default' => 'prometheus',
+                'use_standalone_process' => true,
+                'metric' => [
+                    'prometheus' => [
+                        'driver' => PrometheusFactory::class,
+                        'mode' => Constants::SCRAPE_MODE,
+                        'namespace' => 'Hello-World!',
+                    ],
+                ],
+            ],
+        ]);
+        $r = Mockery::mock(CollectorRegistry::class);
+        $c = Mockery::mock(ClientFactory::class);
+        $p = new PrometheusFactory($config, $r, $c);
+        $ref = new \ReflectionClass($p);
+        $method = $ref->getMethod('getUri');
+        $method->setAccessible(true);
+        $this->assertStringContainsString('http://127.0.0.1/metrics/job/metric/ip/', $method->invokeArgs($p, ['127.0.0.1', 'metric']));
+        $this->assertStringContainsString('https://127.0.0.1/metrics/job/metric/ip/', $method->invokeArgs($p, ['https://127.0.0.1', 'metric']));
+        $this->assertStringContainsString('http://127.0.0.1:8080/metrics/job/metric/ip/', $method->invokeArgs($p, ['127.0.0.1:8080', 'metric']));
+    }
+
     public function testGetNamespace()
     {
         $config = new Config([
