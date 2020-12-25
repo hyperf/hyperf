@@ -33,6 +33,14 @@ class ConfigProvider
                     ],
                 ],
             ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config of service governance.',
+                    'source' => __DIR__ . '/../publish/service_governance.php',
+                    'destination' => BASE_PATH . '/config/autoload/service_governance.php',
+                ],
+            ],
         ];
     }
 }
