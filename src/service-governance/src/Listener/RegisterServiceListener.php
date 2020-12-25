@@ -78,7 +78,7 @@ class RegisterServiceListener implements ListenerInterface
     public function process(object $event)
     {
         $this->registeredServices = [];
-        $continue = $this->config->get('service_governance.server_publish', true);
+        $continue = $this->config->get('service_governance.publish.enable', true);
         while ($continue) {
             try {
                 $services = $this->serviceManager->all();

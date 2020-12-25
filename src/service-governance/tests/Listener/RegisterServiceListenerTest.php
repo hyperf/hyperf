@@ -109,7 +109,20 @@ class RegisterServiceListenerTest extends TestCase
         $this->assertArrayHasKey('TCP', $serviceDefinition[2]['Check']);
     }
 
-    private function createContainer()
+    public function testPublishDisable()
+    {
+        $container = $this->createContainer(false);
+        $listener = new class($container) extends RegisterServiceListener {
+            protected function getServers(): array
+            {
+                throw new \RuntimeException('service_governance.publish.enable does not works.');
+            }
+        };
+        $listener->process((object) []);
+        $this->assertTrue(true);
+    }
+
+    private function createContainer($enable = true)
     {
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('get')->with(ConsulAgent::class)
@@ -141,6 +154,11 @@ class RegisterServiceListenerTest extends TestCase
                             'host' => '0.0.0.0',
                             'port' => 9503,
                         ],
+                    ],
+                ],
+                'service_governance' => [
+                    'publish' => [
+                        'enable' => $enable,
                     ],
                 ],
             ]));
