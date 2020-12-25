@@ -27,9 +27,9 @@ interface EphemeralInterface
     public function renew(string $sid): void;
 
     /**
-     * CleanUpExpired cleans up all expired sids in fixed interval.
-     * It will not return until worker exited.
-     * Should be called during starting up.
+     * Cleans up all expired sids in a fixed interval.
+     * It will return immediately and loop in the background until 
+     * the worker exits. Should be called during starting up.
      */
     public function cleanupExpired(): void;
 }
