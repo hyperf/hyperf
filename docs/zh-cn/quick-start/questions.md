@@ -141,3 +141,28 @@ Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line
 
 此问题通常是由于 [zircote/swagger](https://github.com/zircote/swagger-php) 的 3.0.5 版本更新导致, 详情请见 [#834](https://github.com/zircote/swagger-php/issues/834) 。 
 如果安装了 [hyperf/swagger](https://github.com/hyperf/swagger) 建议将 [zircote/swagger](https://github.com/zircote/swagger-php) 的版本锁定在 3.0.4
+
+## 内存限制太小导致项目无法运行
+
+PHP 默认的 `memory_limit` 只有 `128M`，因为 `Hyperf` 使用了 `BetterReflection`，不使用扫描缓存时，会消耗大量内存，所以可能会出现内存不够的情况。
+
+我们可以使用 `php -dmemory_limit=-1 bin/hyperf.php start` 运行, 或者修改 `php.ini` 配置文件
+
+```
+# 查看 php.ini 配置文件位置
+php --ini
+
+# 修改 memory_limit 配置
+memory_limit=-1
+```
+
+## Hyperf 版本从 `2.0.18` 之前版本升级之后, 提示 `Call to undefined method Hyperf\Utils\Arr::merge()`
+
+原因是 `doctrine/common` 组件导致的 `hyperf/utils` 组件无法升级。执行以下命令移除 `doctrine/common` 组件，重新更新 Hyperf 相关组件即可。
+
+```bash
+# 移除组件
+composer remove doctrine/common
+# 更新
+composer update "hyperf/*" -o
+```

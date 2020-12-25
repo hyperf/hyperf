@@ -75,7 +75,7 @@ class ResponseEmitter implements ResponseEmitterInterface
         /*
          * Status code
          */
-        $swooleResponse->status($response->getStatusCode());
+        $swooleResponse->status($response->getStatusCode(), $response->getReasonPhrase());
     }
 
     protected function isMethodsExists(object $object, array $methods): bool

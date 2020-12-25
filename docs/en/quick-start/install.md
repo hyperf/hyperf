@@ -36,12 +36,7 @@ Assuming your native environment does not meet the Hyperf environment requiremen
 
 ```
 # Download and run hyperf/hyperf image，and bind the directory of project with /tmp/skeleton of Host
-docker run -v /tmp/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/sh hyperf/hyperf:latest
-
-# After the mirror container is running, install Composer in the container
-wget https://github.com/composer/composer/releases/download/1.8.6/composer.phar
-chmod u+x composer.phar
-mv composer.phar /usr/local/bin/composer
+docker run -v /tmp/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/sh hyperf/hyperf:7.4-alpine-v3.11-swoole
 
 # Install hyperf/hyperf-skeleton project via Composer
 composer create-project hyperf/hyperf-skeleton

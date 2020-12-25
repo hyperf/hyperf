@@ -255,7 +255,7 @@ use Hyperf\HttpServer\Annotation\AutoController;
 /**
  * @AutoController
  */
-class QueueController extends Controller
+class QueueController extends AbstractController
 {
     /**
      * @Inject
@@ -282,6 +282,9 @@ class QueueController extends Controller
 #### 注解方式
 
 框架除了传统方式投递消息，还提供了注解方式。
+
+> 注解方式会在非消费环境下自动投递消息到队列，故，如果我们在队列中使用注解方式时，则不会再次投递到队列当中，而是直接在本消费进程中执行。
+> 如果仍然需要在队列中投递消息，则可以在队列中使用传统模式投递。
 
 让我们重写上述 `QueueService`，直接将 `ExampleJob` 的逻辑搬到 `example` 方法中，并加上对应注解 `AsyncQueueMessage`，具体代码如下。
 
@@ -327,7 +330,7 @@ use Hyperf\HttpServer\Annotation\AutoController;
 /**
  * @AutoController
  */
-class QueueController extends Controller
+class QueueController extends AbstractController
 {
     /**
      * @Inject

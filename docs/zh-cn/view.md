@@ -10,7 +10,13 @@ composer require hyperf/view
 
 ## 配置
 
-View 组件的配置文件位于 `config/autoload/view.php`，若配置文件不存在可自行创建，以下为相关配置的说明：
+View 组件的配置文件位于 `config/autoload/view.php`，若配置文件不存在可执行如下命令生成配置文件
+
+```bash
+php bin/hyperf.php vendor:publish hyperf/view
+```
+
+以下为相关配置的说明：
 
 |       配置        |  类型  |                默认值                 |       备注       |
 |:-----------------:|:------:|:-------------------------------------:|:----------------:|

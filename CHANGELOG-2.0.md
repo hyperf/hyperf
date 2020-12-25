@@ -1,8 +1,75 @@
-# v2.0.21 - TBD
+# v2.0.25 - TBD
+
+# v2.0.24 - 2020-12-21
+
+## Fixed
+
+- [#2978](https://github.com/hyperf/hyperf/pull/2980) Fixed bug that `hyperf/snowflake` is broken due to missing `hyperf/contract`.
+- [#2983](https://github.com/hyperf/hyperf/pull/2983) Fixed swoole hook flags does works for co server.
+- [#2993](https://github.com/hyperf/hyperf/pull/2993) Fixed `Arr::merge()` does not works when `$array1` is empty.
+
+## Optimized
+
+- [#2973](https://github.com/hyperf/hyperf/pull/2973) Support custom HTTP status code.
+- [#2992](https://github.com/hyperf/hyperf/pull/2992) Optimized requirements for `hyperf/validation`.
+
+# v2.0.23 - 2020-12-14
+
+## Added
+
+- [#2872](https://github.com/hyperf/hyperf/pull/2872) Added `hyperf/phar` component.
+
+## Fixed
+
+- [#2952](https://github.com/hyperf/hyperf/pull/2952) Fixed bug that nacos config center does not works in coroutine server.
+
+## Changed
+
+- [#2934](https://github.com/hyperf/hyperf/pull/2934) Changed config file `scout.php` which search engine index is used as the model index name by default.
+- [#2958](https://github.com/hyperf/hyperf/pull/2958) Added NoneEngine as the default engine of view config.
+
+## Optimized
+
+- [#2951](https://github.com/hyperf/hyperf/pull/2951) Optimized code for model-cache, which will delete model cache only once, when using it in transaction.
+- [#2953](https://github.com/hyperf/hyperf/pull/2953) Hide `Swoole\ExitException` trace message in command.
+- [#2963](https://github.com/hyperf/hyperf/pull/2963) Removed `onStart` event from server default callbacks when the mode is `SWOOLE_BASE`.
+
+# v2.0.22 - 2020-12-07
+
+## Added
+
+- [#2896](https://github.com/hyperf/hyperf/pull/2896) Support to define autoloaded view component classes and anonymous components.
+- [#2921](https://github.com/hyperf/hyperf/pull/2921) Added method `count()` for `Parallel`.
+
+## Fixed
+
+- [#2913](https://github.com/hyperf/hyperf/pull/2913) Fixed memory leak when using `with()` for ORM.
+- [#2915](https://github.com/hyperf/hyperf/pull/2915) Fixed bug that worker will be stoped when `onMessage` or `onClose` failed in websocket server.
+- [#2927](https://github.com/hyperf/hyperf/pull/2927) Fixed validation rule `alpha_dash` does not support `int`.
+
+## Changed
+
+- [#2918](https://github.com/hyperf/hyperf/pull/2918) Don't allow to open `server.settings.daemonize` configuration when using `hyperf/watcher`.
+- [#2930](https://github.com/hyperf/hyperf/pull/2930) Upgrade the minimum version of `php-amqplib` to `v2.9.2`.
+
+## Optimized
+
+- [#2931](https://github.com/hyperf/hyperf/pull/2931) Pass controller instance as first argument to method_exists function not the class namespace string.
+
+# v2.0.21 - 2020-11-30
 
 ## Added
 
 - [#2857](https://github.com/hyperf/hyperf/pull/2857) Support Consul ACL Token for Service Governance.
+- [#2870](https://github.com/hyperf/hyperf/pull/2870) The publish option of `ConfigProvider` allows publish directory.
+- [#2875](https://github.com/hyperf/hyperf/pull/2875) Added option `no-restart` for watcher.
+- [#2883](https://github.com/hyperf/hyperf/pull/2883) Added options `--chunk` and `--column|c` into command `scout:import`.
+- [#2891](https://github.com/hyperf/hyperf/pull/2891) Added config file for crontab.
+
+## Fixed
+
+- [#2874](https://github.com/hyperf/hyperf/pull/2874) Fixed `scan.ignore_annotations` does not works when using watcher.
+- [#2878](https://github.com/hyperf/hyperf/pull/2878) Fixed config of nsqd does not works.
 
 ## Changed
 
@@ -10,6 +77,7 @@
 
 ## Optimized
 
+- [#2785](https://github.com/hyperf/hyperf/pull/2785) Optimized code for watcher.
 - [#2861](https://github.com/hyperf/hyperf/pull/2861) Optimized guzzle coroutine handler which throw exception when the status code below zero.
 - [#2868](https://github.com/hyperf/hyperf/pull/2868) Optimized code for guzzle sink, which support resource not only string.
 

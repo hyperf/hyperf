@@ -25,7 +25,6 @@
             <directory suffix="Test.php">./src/di/tests</directory>
             <directory suffix="Test.php">./src/dispatcher/tests</directory>
             <directory suffix="Test.php">./src/elasticsearch/tests</directory>
-            <directory suffix="Test.php">./src/encryption/tests</directory>
             <directory suffix="Test.php">./src/etcd/tests</directory>
             <directory suffix="Test.php">./src/event/tests</directory>
             <directory suffix="Test.php">./src/exception-handler/tests</directory>
@@ -39,6 +38,7 @@
             <directory suffix="Test.php">./src/logger/tests</directory>
             <directory suffix="Test.php">./src/metric/tests</directory>
             <directory suffix="Test.php">./src/model-cache/tests</directory>
+            <directory suffix="Test.php">./src/nsq/tests</directory>
             <directory suffix="Test.php">./src/paginator/tests</directory>
             <directory suffix="Test.php">./src/phar/tests</directory>
             <directory suffix="Test.php">./src/pool/tests</directory>
@@ -49,6 +49,7 @@
             <directory suffix="Test.php">./src/retry/tests</directory>
             <directory suffix="Test.php">./src/rpc/tests</directory>
             <directory suffix="Test.php">./src/rpc-server/tests</directory>
+            <directory suffix="Test.php">./src/scout/tests</directory>
             <directory suffix="Test.php">./src/server/tests</directory>
             <directory suffix="Test.php">./src/service-governance/tests</directory>
             <directory suffix="Test.php">./src/session/tests</directory>
@@ -82,7 +83,6 @@
             <directory suffix=".php">./src/di/src</directory>
             <directory suffix=".php">./src/dispatcher/src</directory>
             <directory suffix=".php">./src/elasticsearch/src</directory>
-            <directory suffix=".php">./src/encryption/src</directory>
             <directory suffix=".php">./src/event/src</directory>
             <directory suffix=".php">./src/grpc-client/src</directory>
             <directory suffix=".php">./src/guzzle/src</directory>
@@ -96,6 +96,7 @@
             <directory suffix=".php">./src/phar/src</directory>
             <directory suffix=".php">./src/redis/src</directory>
             <directory suffix=".php">./src/rpc/src</directory>
+            <directory suffix=".php">./src/scout/src</directory>
             <directory suffix=".php">./src/server/src</directory>
             <directory suffix=".php">./src/service-governance/src</directory>
             <directory suffix=".php">./src/session/src</directory>

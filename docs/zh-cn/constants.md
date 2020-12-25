@@ -111,7 +111,7 @@ namespace App\Controller;
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 
-class IndexController extends Controller
+class IndexController extends AbstractController
 {
     public function index()
     {

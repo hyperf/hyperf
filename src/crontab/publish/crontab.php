@@ -10,8 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 return [
-    'default' => [
-        'key' => 'Hyperf',
-        'cipher' => 'AES-128-CBC',
+    'enable' => true,
+    'crontab' => [
     ],
 ];

@@ -3,7 +3,7 @@ name: PHPUnit for Hyperf
 on: [push, pull_request]
 
 env:
-  SW_VERSION: '4.5.6'
+  SW_VERSION: '4.5.9'
 
 jobs:
   ci:
