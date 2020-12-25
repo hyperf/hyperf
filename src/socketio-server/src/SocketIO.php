@@ -143,10 +143,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     public function onMessage($server, Frame $frame): void
     {
         if ($frame->data[0] === Engine::PING) {
-            $adapter = $this->getAdapter();
-            if ($adapter instanceof EphemeralInterface) {
-                $adapter->renew($this->sidProvider->getSid($frame->fd));
-            }
+            $this->renewInAllNamespaces($frame->fd);
             $server->push($frame->fd, Engine::PONG); //sever pong
             return;
         }
@@ -354,6 +351,21 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         }
         foreach (array_keys($all['forward']) as $nsp) {
             $this->dispatch($fd, $nsp, $event, null);
+        }
+    }
+
+    private function renewInAllNamespaces(int $fd)
+    {
+        $all = SocketIORouter::list();
+        if (! array_key_exists('forward', $all)) {
+            return;
+        }
+        /** @var NamespaceInterface $nsp */
+        foreach (array_keys($all['forward']) as $nsp) {
+            $adapter = $nsp->getAdapter();
+            if ($adapter instanceof EphemeralInterface) {
+                $adapter->renew($this->sidProvider->getSid($fd));
+            }
         }
     }
 }
