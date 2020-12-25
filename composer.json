@@ -61,6 +61,7 @@
         "nesbot/carbon": "^2.0",
         "nikic/fast-route": "^1.3",
         "nikic/php-parser": "^4.1",
+        "opentracing/opentracing": "1.0.0-beta6",
         "overtrue/flysystem-cos": "^2.0|^3.0",
         "overtrue/flysystem-qiniu": "^1.0",
         "php-amqplib/php-amqplib": "^2.9.2",
