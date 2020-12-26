@@ -15,6 +15,7 @@ namespace Hyperf\Kafka;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Kafka\AbstractConsumer;
 use Hyperf\Kafka\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Kafka\Event\AfterConsume;
 use Hyperf\Kafka\Event\BeforeConsume;
@@ -33,6 +34,7 @@ use longlang\phpkafka\Protocol\JoinGroup\JoinGroupRequest;
 use longlang\phpkafka\Socket\SwooleSocket;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+
 
 class ConsumerManager
 {
