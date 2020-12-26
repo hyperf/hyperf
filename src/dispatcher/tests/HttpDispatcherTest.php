@@ -21,6 +21,7 @@ use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * @property ProphecyInterface container
@@ -44,6 +45,7 @@ class HttpDispatcherTest extends TestCase
         $container = $this->prophesize(ContainerInterface::class);
         $container->get(CoreMiddleware::class)->willReturn(new CoreMiddleware());
         $container->get(TestMiddleware::class)->willReturn(new TestMiddleware());
+        $container->get('middleware.test')->willReturn(new TestMiddleware());
         $this->container = $container->reveal();
         Context::set(ServerRequestInterface::class, $this->request);
         Context::set(ResponseInterface::class, $this->response);
@@ -60,5 +62,53 @@ class HttpDispatcherTest extends TestCase
         $response = $dispatcher->dispatch($this->request, $middlewares, $coreHandler);
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertSame('Hyperf', $response->getHeaderLine('Server'));
+    }
+
+    public function testCallableMiddleware()
+    {
+        $coreHandler = $this->container->get(CoreMiddleware::class);
+        $dispatcher = new HttpDispatcher($this->container);
+        $this->assertInstanceOf(HttpDispatcher::class, $dispatcher);
+        $response = $dispatcher->dispatch($this->request, [
+            function (ServerRequestInterface $request, RequestHandlerInterface $handler) {
+                /** @var ResponseInterface $response */
+                $response = Context::get(ResponseInterface::class);
+                return $response->withAddedHeader('Server', 'Hyperf');
+            },
+        ], $coreHandler);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertSame('Hyperf', $response->getHeaderLine('Server'));
+    }
+
+    public function testObjectMiddleware()
+    {
+        $coreHandler = $this->container->get(CoreMiddleware::class);
+        $dispatcher = new HttpDispatcher($this->container);
+        $this->assertInstanceOf(HttpDispatcher::class, $dispatcher);
+        $response = $dispatcher->dispatch($this->request, [
+            new TestMiddleware(),
+        ], $coreHandler);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertSame('Hyperf', $response->getHeaderLine('Server'));
+    }
+
+    public function testMiddlewareParams()
+    {
+        $coreHandler = $this->container->get(CoreMiddleware::class);
+        $dispatcher = new HttpDispatcher($this->container);
+        $this->assertInstanceOf(HttpDispatcher::class, $dispatcher);
+        $response = $dispatcher->dispatch($this->request, [
+            'middleware.test:setTest',
+        ], $coreHandler);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertSame('Hyperf', $response->getHeaderLine('Server'));
+        $this->assertSame('Default', $response->getHeaderLine('x-test'));
+
+        // Test Server
+        $response = $dispatcher->dispatch($this->request, [
+            'middleware.test:setTest(Test)',
+        ], $coreHandler);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertSame('Test', $response->getHeaderLine('x-test'));
     }
 }
