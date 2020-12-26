@@ -147,6 +147,10 @@
 
 - [#2347](https://github.com/hyperf/hyperf/pull/2347) You can set `$waitTimeout` for `ConsumerMessage` to stop amqp consumer safely in coroutine style server.
 
+## Added
+
+- [#2749](https://github.com/hyperf/hyperf/pull/2749) Added CustomMiddleware, you can reuse middleware by passing in parameters.
+
 # v2.0.17 - 2020-11-02
 
 ## Added
