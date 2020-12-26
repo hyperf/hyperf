@@ -61,10 +61,11 @@ class ConsumerManagerTest extends TestCase
 
                 /** @var ConsumerConfig $consumer */
                 $consumer = $item->getConsumerConfig();
+
                 $this->assertSame(true, $consumer->getAutoCommit());
                 $this->assertSame($config['rack_id'], $consumer->getRackId());
                 $this->assertSame($config['replica_id'], $consumer->getReplicaId());
-                $this->assertSame($topic, $consumer->getTopic());
+                $this->assertSame([$topic], $consumer->getTopic());
                 $this->assertSame((float)$config['rebalance_timeout'], $consumer->getRebalanceTimeout());
                 $this->assertSame((float)$config['send_timeout'], $consumer->getSendTimeout());
                 $this->assertSame($groupId, $consumer->getGroupId());
@@ -74,12 +75,17 @@ class ConsumerManagerTest extends TestCase
                 $this->assertSame($config['bootstrap_server'], $consumer->getBroker());
                 $this->assertSame(SwooleSocket::class, $consumer->getSocket());
                 $this->assertSame(SwooleClient::class, $consumer->getClient());
-//                $this->assertSame($config['max_write_attempts'], $consumer->getMaxWriteAttempts());
+                $this->assertSame($config['max_write_attempts'], $consumer->getMaxWriteAttempts());
                 $this->assertSame($config['client_id'], $consumer->getClientId());
-                $this->assertSame((float)$config['recv_timeout'], $consumer->getRecvTimeout());
-                $this->assertSame((float)$config['connect_timeout'], $consumer->getConnectTimeout());
-                $this->assertSame($config['partitions'], $consumer->getPartitions());
-                $this->assertSame((float)$config['session_timeout'], $consumer->getSessionTimeout());
+                $this->assertSame((float) $config['recv_timeout'], $consumer->getRecvTimeout());
+                $this->assertSame((float) $config['connect_timeout'], $consumer->getConnectTimeout());
+                $this->assertSame((float) $config['session_timeout'], $consumer->getSessionTimeout());
+                $this->assertSame($config['group_retry'], $consumer->getGroupRetry());
+                $this->assertSame((float) $config['group_retry_sleep'], $consumer->getGroupRetrySleep());
+                $this->assertSame((float) $config['group_heartbeat'], $consumer->getGroupHeartbeat());
+                $this->assertSame($config['offset_retry'], $consumer->getOffsetRetry());
+                $this->assertSame($config['auto_create_topic'], $consumer->getAutoCreateTopic());
+                $this->assertSame($config['partition_assignment_strategy'], $consumer->getPartitionAssignmentStrategy());
                 $this->assertSame($nums, $item->nums);
                 break;
             }
