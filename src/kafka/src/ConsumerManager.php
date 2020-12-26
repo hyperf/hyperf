@@ -128,7 +128,7 @@ class ConsumerManager
                 );
 
                 retry(
-                    10,
+                    3,
                     function () use ($longLangConsumer, $consumerConfig) {
                         try {
                             $longLangConsumer->start();
