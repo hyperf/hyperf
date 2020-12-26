@@ -14,6 +14,7 @@ namespace HyperfTest\Di;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Utils\ApplicationContext;
+use HyperfTest\Di\Stub\Aspect\GetNameAspect;
 use HyperfTest\Di\Stub\Aspect\IncrAspect;
 use HyperfTest\Di\Stub\Aspect\IncrAspectAnnotation;
 use HyperfTest\Di\Stub\ProxyTraitObject;
@@ -45,6 +46,29 @@ class ProxyTraitTest extends TestCase
 
         $this->assertEquals(['id' => 1, 'str' => 'hy', 'num' => 1.0], $obj->get3(1, 'hy')['keys']);
         $this->assertEquals(['id', 'str', 'num'], $obj->get3(1, 'hy')['order']);
+    }
+
+    public function testProceedingJoinPointGetInstance()
+    {
+        $aspect = [];
+        ApplicationContext::setContainer(value(function () use (&$aspect) {
+            $container = Mockery::mock(ContainerInterface::class);
+            $container->shouldReceive('get')->with(Mockery::any())->andReturnUsing(function ($class) use (&$aspect) {
+                $aspect[] = $class;
+                return new $class();
+            });
+            return $container;
+        }));
+
+        $obj = new ProxyTraitObject();
+        $this->assertSame('HyperfCloud', $obj->getName2());
+
+        AspectCollector::set('classes', [
+            GetNameAspect::class => [ProxyTraitObject::class],
+        ]);
+
+        $obj = new ProxyTraitObject();
+        $this->assertSame('Hyperf', $obj->getName());
     }
 
     public function testHandleAround()

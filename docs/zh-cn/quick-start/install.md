@@ -35,12 +35,8 @@ composer create-project hyperf/hyperf-skeleton
 
 ```
 # 下载并运行 hyperf/hyperf 镜像，并将镜像内的项目目录绑定到宿主机的 /tmp/skeleton 目录
-docker run -v /tmp/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/sh hyperf/hyperf:latest
+docker run -v /tmp/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/sh hyperf/hyperf:7.4-alpine-v3.11-swoole
 
-# 镜像容器运行后，在容器内安装 Composer
-wget https://github.com/composer/composer/releases/download/1.8.6/composer.phar
-chmod u+x composer.phar
-mv composer.phar /usr/local/bin/composer
 # 将 Composer 镜像设置为阿里云镜像，加速国内下载速度
 composer config -g repo.packagist composer https://mirrors.aliyun.com/composer
 

@@ -216,7 +216,7 @@ class ResponseTest extends TestCase
         $id = uniqid();
         $cookie1 = new Cookie('Name', 'Hyperf');
         $cookie2 = new Cookie('Request-Id', $id);
-        $swooleResponse->shouldReceive('status')->with(Mockery::any())->andReturnUsing(function ($code) {
+        $swooleResponse->shouldReceive('status')->with(200, 'OK')->andReturnUsing(function ($code) {
             $this->assertSame($code, 200);
         });
         $swooleResponse->shouldReceive('header')->withAnyArgs()->twice()->andReturnUsing(function ($name, $value) {

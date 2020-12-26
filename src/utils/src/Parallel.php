@@ -74,6 +74,11 @@ class Parallel
         return $result;
     }
 
+    public function count(): int
+    {
+        return count($this->callbacks);
+    }
+
     public function clear(): void
     {
         $this->callbacks = [];

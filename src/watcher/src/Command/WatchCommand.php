@@ -29,6 +29,7 @@ class WatchCommand extends Command
         $this->setDescription('watch command');
         $this->addOption('file', 'F', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, '', []);
         $this->addOption('dir', 'D', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, '', []);
+        $this->addOption('no-restart', 'N', InputOption::VALUE_NONE, 'Whether no need to restart server');
     }
 
     public function handle()
@@ -36,6 +37,7 @@ class WatchCommand extends Command
         $option = make(Option::class, [
             'dir' => $this->input->getOption('dir'),
             'file' => $this->input->getOption('file'),
+            'restart' => ! $this->input->getOption('no-restart'),
         ]);
 
         $watcher = make(Watcher::class, [

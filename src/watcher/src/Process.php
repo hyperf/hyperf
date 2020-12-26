@@ -68,8 +68,8 @@ class Process
         $this->file = $file;
         $this->ast = new Ast();
         $this->reflection = new BetterReflection();
+        $this->config = $this->initScanConfig();
         $this->reader = new AnnotationReader();
-        $this->config = ScanConfig::instance('/');
         $this->filesystem = new Filesystem();
     }
 
@@ -176,5 +176,17 @@ class Process
             return null;
         }
         return $meta;
+    }
+
+    protected function initScanConfig(): ScanConfig
+    {
+        $config = ScanConfig::instance(BASE_PATH . '/config/');
+        foreach ($config->getIgnoreAnnotations() as $annotation) {
+            AnnotationReader::addGlobalIgnoredName($annotation);
+        }
+        foreach ($config->getGlobalImports() as $alias => $annotation) {
+            AnnotationReader::addGlobalImports($alias, $annotation);
+        }
+        return $config;
     }
 }

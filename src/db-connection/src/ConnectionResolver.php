@@ -71,7 +71,8 @@ class ConnectionResolver implements ConnectionResolverInterface
                 Context::set($id, $connection);
             } finally {
                 if (Coroutine::inCoroutine()) {
-                    defer(function () use ($connection) {
+                    defer(function () use ($connection, $id) {
+                        Context::set($id, null);
                         $connection->release();
                     });
                 }
