@@ -57,4 +57,6 @@ interface ResponseInterface
      * Override a response with a cookie.
      */
     public function withCookie(Cookie $cookie): ResponseInterface;
+
+    public function write(string $content);
 }

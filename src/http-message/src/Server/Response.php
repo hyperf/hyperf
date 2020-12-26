@@ -17,6 +17,11 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 class Response extends \Hyperf\HttpMessage\Base\Response
 {
     /**
+     * @var \Swoole\Http\Response
+     */
+    protected $swooleResponse;
+
+    /**
      * @var array
      */
     protected $cookies = [];
@@ -25,6 +30,11 @@ class Response extends \Hyperf\HttpMessage\Base\Response
      * @var array
      */
     protected $trailers = [];
+
+    public function setSwooleResponse(\Swoole\Http\Response $response)
+    {
+        $this->swooleResponse = $response;
+    }
 
     /**
      * Returns an instance with body content.
@@ -80,4 +90,10 @@ class Response extends \Hyperf\HttpMessage\Base\Response
     {
         return $this->trailers;
     }
+
+    public function write(string $content)
+    {
+        $this->swooleResponse->write($content);
+    }
+
 }

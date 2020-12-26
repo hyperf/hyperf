@@ -486,4 +486,9 @@ class Response implements PsrResponseInterface, ResponseInterface
 
         return Context::get(PsrResponseInterface::class);
     }
+
+    public function write(string $content)
+    {
+        $this->getResponse()->write($content);
+    }
 }
