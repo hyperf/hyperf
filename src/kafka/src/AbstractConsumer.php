@@ -120,5 +120,11 @@ abstract class AbstractConsumer
         $this->name = $name;
     }
 
+    protected function ack(ConsumeMessage $message)
+    {
+
+    }
+
+
     abstract public function consume(ConsumeMessage $message): string;
 }
