@@ -120,14 +120,26 @@ class ConsumerManager
                 $consumer = $this->consumer;
                 $longLangConsumer = new LongLangConsumer(
                     $consumerConfig,
-                    function (ConsumeMessage $message) use ($consumer) {
+                    function (ConsumeMessage $message) use ($consumer, $consumerConfig) {
                         $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($consumer, $message));
 
                         $result = $consumer->consume($message);
 
+                        if (! $consumerConfig->getAutoCreateTopic()) {
+
+                            if ($result === Result::ACK) {
+                                $message->getConsumer()->ack($message->getPartition());
+                            }
+
+                            if ($result === Result::REQUEUE) {
+                                make(Producer::class)->send($message->getTopic(), $message->getValue(), $message->getKey(), $message->getHeaders());
+                            }
+                        }
+
                         $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($consumer, $message, $result));
                     }
                 );
+
 
                 retry(
                     3,
