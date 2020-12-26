@@ -9,6 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
+use Hyperf\Kafka\Constants\KafkaStrategy;
+
 return [
     'default' => [
         'connect_timeout' => -1,
@@ -36,7 +39,7 @@ return [
         'group_heartbeat' => 3,
         'offset_retry' => 5,
         'auto_create_topic' => true,
-        'partition_assignment_strategy' => longlang\phpkafka\Consumer\Assignor\RangeAssignor::class,
+        'partition_assignment_strategy' => KafkaStrategy::RANGE_ASSIGNOR,
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,

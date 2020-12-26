@@ -6,6 +6,7 @@ use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
+use Hyperf\Kafka\Constants\KafkaStrategy;
 use Hyperf\Kafka\Producer;
 use Hyperf\Utils\ApplicationContext;
 use Mockery;
@@ -59,15 +60,18 @@ class ContainerStub
                     'producer_id' => -1,
                     'producer_epoch' => -1,
                     'partition_leader_epoch' => -1,
+                    'broker' => '127.0.0.1:9092',
                     'interval' => 0,
                     'session_timeout' => 60,
                     'rebalance_timeout' => 60,
-                    'partitions' => [0],
                     'replica_id' => -1,
                     'rack_id' => '',
-                    'is_auto_create_topic' => true,
-                    'num_partitions' => 1,
-                    'replication_factor' => 3,
+                    'group_retry' => 5,
+                    'group_retry_sleep' => 1,
+                    'group_heartbeat' => 3,
+                    'offset_retry' => 5,
+                    'auto_create_topic' => true,
+                    'partition_assignment_strategy' => KafkaStrategy::RANGE_ASSIGNOR,
                     'pool' => [
                         'min_connections' => 1,
                         'max_connections' => 10,
