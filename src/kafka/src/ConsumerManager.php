@@ -145,10 +145,6 @@ class ConsumerManager
                                     $longLangConsumer->getBroker()->getClient()->send($joinGroupRequest);
                                     $longLangConsumer->start();
                                     break;
-                                case ErrorCode::UNKNOWN_TOPIC_OR_PARTITION:
-                                    $this->createTopics($longLangConsumer, $consumerConfig->getTopic());
-                                    $longLangConsumer->start();
-                                    break;
                             }
 
                             $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, [], $exception));
@@ -160,18 +156,6 @@ class ConsumerManager
 
             }
 
-            protected function createTopics(LongLangConsumer $consumer, ?string $topic = null)
-            {
-                $createTopicsRequest = new CreateTopicsRequest();
-
-                $pool = $this->consumer->getPool();
-                $createTopicsRequest->setTopics([(new CreatableTopic())
-                    ->setName($topic)
-                    ->setNumPartitions($this->config->get(sprintf('kafka.%s.num_partitions', $pool), 1))
-                    ->setReplicationFactor($this->config->get(sprintf('kafka.%s.replication_factor', $pool), 3))]);
-                $createTopicsRequest->setValidateOnly(false);
-                $consumer->getBroker()->getClient()->send($createTopicsRequest);
-            }
 
             public function getConsumerConfig(): ConsumerConfig
             {
@@ -187,15 +171,20 @@ class ConsumerManager
                 $consumerConfig->setGroupInstanceId(sprintf('%s-%s', $this->consumer->getGroupId(), uniqid('')));
                 $consumerConfig->setMemberId($this->consumer->getMemberId() ?: '');
                 $consumerConfig->setInterval($config['interval']);
-                $consumerConfig->setBroker($config['bootstrap_server']);
+                $consumerConfig->setBroker($config['broker']);
                 $consumerConfig->setSocket(SwooleSocket::class);
                 $consumerConfig->setClient(SwooleClient::class);
                 $consumerConfig->setMaxWriteAttempts($config['max_write_attempts']);
                 $consumerConfig->setClientId($config['client_id']);
                 $consumerConfig->setRecvTimeout($config['recv_timeout']);
                 $consumerConfig->setConnectTimeout($config['connect_timeout']);
-                $consumerConfig->setPartitions($config['partitions']);
                 $consumerConfig->setSessionTimeout($config['session_timeout']);
+                $consumerConfig->setGroupRetry($config['group_retry']);
+                $consumerConfig->setGroupRetrySleep($config['group_retry_sleep']);
+                $consumerConfig->setGroupHeartbeat($config['group_heartbeat']);
+                $consumerConfig->setOffsetRetry($config['offset_retry']);
+                $consumerConfig->setAutoCreateTopic($config['auto_create_topic']);
+                $consumerConfig->setPartitionAssignmentStrategy($config['partition_assignment_strategy']);
                 return $consumerConfig;
             }
         };

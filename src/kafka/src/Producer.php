@@ -24,6 +24,8 @@ use longlang\phpkafka\Socket\SwooleSocket;
 use Psr\Container\ContainerInterface;
 
 /**
+ * @method send(string $topic, ?string $value, ?string $key = null, array $headers = [], int $partitionIndex = 0, ?int $brokerId = null)
+ * @method sendBatch(array $messages, ?int $brokerId = null)
  * @method close()
  * @method getConfig()
  * @method getBroker()
@@ -58,6 +60,7 @@ class Producer
         $producerConfig->setProducerId($config['producer_id']);
         $producerConfig->setProducerEpoch($config['producer_epoch']);
         $producerConfig->setPartitionLeaderEpoch($config['partition_leader_epoch']);
+        $producerConfig->setAutoCreateTopic($config['auto_create_topic']);
 
         $this->producer = new LongLangProducer($producerConfig);
     }
@@ -67,62 +70,4 @@ class Producer
         return $this->producer->{$name}(...$arguments);
     }
 
-    public function send(string $topic, ?string $value, ?string $key = null, array $headers = [], int $partitionIndex = 0, ?int $brokerId = null)
-    {
-        try {
-            $this->producer->send($topic, $value, $key, $headers, $partitionIndex, $brokerId);
-        } catch (KafkaErrorException $e) {
-            switch ($e->getCode()) {
-                case ErrorCode::UNKNOWN_TOPIC_OR_PARTITION:
-                    if (! $this->config['is_auto_create_topic']) {
-                        throw $e;
-                    }
-                    $this->createTopics($topic);
-                    $this->send($topic, $value, $key, $headers, $partitionIndex, $brokerId);
-            }
-        }
-    }
-
-    /**
-     * @param ProduceMessage[] $messages
-     */
-    public function sendBatch(array $messages, ?int $brokerId = null)
-    {
-        try {
-            $this->producer->sendBatch($messages, $brokerId);
-        } catch (KafkaErrorException $e) {
-            switch ($e->getCode()) {
-                case ErrorCode::UNKNOWN_TOPIC_OR_PARTITION:
-                    if (! $this->config['is_auto_create_topic']) {
-                        throw $e;
-                    }
-                    $this->createTopics(null, $messages);
-                    $this->producer->sendBatch($messages, $brokerId);
-            }
-        }
-    }
-
-    public function createTopics(?string $topic = null, ?array $messages = null)
-    {
-        $createTopicsRequest = new CreateTopicsRequest();
-        $topics = [];
-        if (! empty($topic)) {
-            $topics[] = (new CreatableTopic())->setName($topic)
-                ->setNumPartitions($this->config['num_partitions'] ?? 1)
-                ->setReplicationFactor($this->config['replication_factor'] ?? 3);
-        }
-
-        if (! empty($messages)) {
-            /** @var ProduceMessage $message */
-            foreach ($messages as $message) {
-                $topics[] = (new CreatableTopic())->setName($message->getTopic())
-                    ->setNumPartitions($this->config['num_partitions'] ?? 50)
-                    ->setReplicationFactor($this->config['replication_factor'] ?? 50);
-            }
-        }
-
-        $createTopicsRequest->setTopics($topics);
-        $createTopicsRequest->setValidateOnly(false);
-        $this->producer->getBroker()->getClient()->send($createTopicsRequest);
-    }
 }
