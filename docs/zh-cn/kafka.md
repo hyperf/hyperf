@@ -31,21 +31,28 @@ composer require hyperf/kafka
 |    producer_id              |   int      |   -1   |  生产者 ID |
 |    producer_epoch           |   int      |   -1   |  生产者 Epoch |
 |    partition_leader_epoch   |   int      |   -1   |  分区 Leader Epoch |
+|    broker                   |   string   |   ''   |  broker，格式：'127.0.0.1:9092' |
 |    interval                 | int｜float |   0   |  未获取消息到消息时，延迟多少秒再次尝试，默认为0则不延迟（单位：秒，支持小数） |
 |    session_timeout          |   int｜float   |   60   |  如果超时后没有收到心跳信号，则协调器会认为该用户死亡。（单位：秒，支持小数） |
 |    rebalance_timeout        |   int｜float |   60   |  重新平衡组时，协调器等待每个成员重新加入的最长时间（单位：秒，支持小数）。 |
 |    partitions               |   array   |   [0]   |  分区列表 |
 |    replica_id               |   int    |   -1   |  副本 ID |
 |    rack_id                  |   int    |   -1   |  机架编号 |
-|    is_auto_create_topic     |    bool    |   true   | 是否需要自动创建 topic |
-|    num_partitions           |    int   | 1 |  自动创建 topic 时 partition 数量 |
-|    replication_factor       | int     | 3   |  自动创建 topic 时 replication_factor 数量 |
-|    is_auto_create_topic     |    bool    |   true   | 是否需要自动创建 topic |
+|    group_retry              |   int    |   5   |  分组操作，匹配预设的错误码时，自动重试次数 |
+|    group_retry_sleep        |   int    |   1   |  分组操作重试延迟，单位：秒 |
+|    group_heartbeat          |   int    |   3   |  分组心跳时间间隔，单位：秒 |
+|    offset_retry             |   int    |   5   |  偏移量操作，匹配预设的错误码时，自动重试次数 |
+|    auto_create_topic        |    bool    |   true   | 是否需要自动创建 topic |
+|    partition_assignment_strategy |    string    |   KafkaStrategy::RANGE_ASSIGNOR   | 消费者分区分配策略,可选：范围分配(`KafkaStrategy::RANGE_ASSIGNOR`) 轮询分配(`KafkaStrategy::ROUND_ROBIN_ASSIGNOR`)) |
 |    pool                     |   object   |      |   连接池配置 |
 
 
 ```php
 <?php
+
+declare(strict_types=1);
+
+use Hyperf\Kafka\Constants\KafkaStrategy;
 
 return [
     'default' => [
@@ -63,15 +70,18 @@ return [
         'producer_id' => -1,
         'producer_epoch' => -1,
         'partition_leader_epoch' => -1,
+        'broker' => '',
         'interval' => 0,
         'session_timeout' => 60,
         'rebalance_timeout' => 60,
-        'partitions' => [0],
         'replica_id' => -1,
         'rack_id' => '',
-        'is_auto_create_topic' => true,
-        'num_partitions' => 1,
-        'replication_factor' => 3,
+        'group_retry' => 5,
+        'group_retry_sleep' => 1,
+        'group_heartbeat' => 3,
+        'offset_retry' => 5,
+        'auto_create_topic' => true,
+        'partition_assignment_strategy' => KafkaStrategy::RANGE_ASSIGNOR,
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -82,6 +92,7 @@ return [
         ],
     ],
 ];
+
 
 ```
 
