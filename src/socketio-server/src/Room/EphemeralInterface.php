@@ -28,7 +28,7 @@ interface EphemeralInterface
 
     /**
      * Cleans up all expired sids in a fixed interval.
-     * It will return immediately and loop in the background until 
+     * It will return immediately and loop in the background until
      * the worker exits. Should be called during starting up.
      */
     public function cleanupExpired(): void;
