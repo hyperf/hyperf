@@ -4,6 +4,10 @@
 
 - [#3030](https://github.com/hyperf/hyperf/pull/3030) Added method `ProceedingJoinPoint::getInstance()` to get instance which will be called by `AOP`.
 
+## Optimized
+
+- [#3011](https://github.com/hyperf/hyperf/pull/3011) Optimized `hyperf/tracer` which will log and tag exception in a span.
+
 # v2.0.24 - 2020-12-21
 
 ## Fixed
