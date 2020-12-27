@@ -119,6 +119,29 @@ class RoomAdapterTest extends AbstractTestCase
         } catch (\Throwable $t) {
             $this->assertTrue(false);
         }
+
+        // Test Ephemeral
+        $room->setTtl(1);
+        $room->add('expired', 'foo');
+        usleep(1000);
+        $room->cleanUpExpiredOnce();
+        $this->assertNotContains('expired', $room->clients('foo'));
+
+        $room->setTtl(100000);
+        $room->add('not_expired', 'foo');
+        $room->cleanUpExpiredOnce();
+        $this->assertContains('not_expired', $room->clients('foo'));
+
+        $room->setTtl(1);
+        $room->add('renewed', 'foo');
+        $room->renew('renewed');
+        usleep(500);
+        $room->cleanUpExpiredOnce();
+        $this->assertContains('renewed', $room->clients('foo'));
+
+        $room->renew('not_exist');
+        $room->cleanUpExpiredOnce();
+        $this->assertNotContains('not_exist', $room->clients('foo'));
     }
 
     private function getRedis($options = [])

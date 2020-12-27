@@ -4,7 +4,7 @@
   * [线上交流](zh-cn/communication.md)
   * [捐献及赞助](zh-cn/donate.md)
   * [参与开发](zh-cn/contribute.md)
-  
+
 * 版本管理
 
   * [版本计划](zh-cn/release-planning.md)
@@ -18,7 +18,7 @@
   * [常见问题](zh-cn/quick-start/questions.md)
   * [编程须知](zh-cn/quick-start/important.md)
   * [视频教程](https://course.swoole-cloud.com/videos/5/new?from=hyperf.io)
-  
+
 * 核心架构
 
   * [生命周期](zh-cn/lifecycle.md)
@@ -28,7 +28,7 @@
   * [依赖注入](zh-cn/di.md)
   * [事件机制](zh-cn/event.md)
   * [AOP 面向切面编程](zh-cn/aop.md)
-  
+
 * 基础功能
 
   * [路由](zh-cn/router.md)
@@ -48,7 +48,7 @@
   * [验证器](zh-cn/validation.md)
   * [Session 会话管理](zh-cn/session.md)
   * [文件系统](zh-cn/filesystem.md)
-  
+
 * 数据库模型
 
   * [快速开始](zh-cn/db/quick-start.md)
@@ -64,7 +64,7 @@
   * [极简 DB 组件](zh-cn/db/db.md)
   * [API 资源构造器](zh-cn/db/resource.md)
   * [模型全文检索](zh-cn/scout.md)
-  
+
 * 微服务
 
   * [架构理念](zh-cn/microservice.md)
@@ -78,7 +78,7 @@
   * [调用链追踪](zh-cn/tracer.md)
   * [服务监控](zh-cn/metric.md)
   * [Snowflake](zh-cn/snowflake.md)
-  
+
 * 网络服务
 
   * [TCP 服务](zh-cn/tcp-server.md)
@@ -91,7 +91,7 @@
   * [AMQP](zh-cn/amqp.md)
   * [Nats](zh-cn/nats.md)
   * [NSQ](zh-cn/nsq.md)
-  
+
 * 客户端
 
   * [Redis 协程客户端](zh-cn/redis.md)
@@ -116,7 +116,8 @@
   * [Watcher](zh-cn/watcher.md)
   * [开发者工具](zh-cn/devtool.md)
   * [Swoole Tracker](zh-cn/swoole-tracker.md)
-  
+  * [Phar 打包器](zh-cn/phar.md)
+
 * 应用部署
 
   * [Docker Swarm 集群搭建](zh-cn/tutorial/docker-swarm.md)
@@ -124,11 +125,11 @@
   * [Supervisor 部署](zh-cn/tutorial/supervisor.md)
   * [Nginx 反向代理](zh-cn/tutorial/nginx.md)
   * [阿里云日志服务](zh-cn/tutorial/aliyun-logger.md)
-  
+
 * Awesome Hyperf
 
   * [协程组件库](zh-cn/awesome-components.md)
-  
+
 * 组件开发指南
 
   * [指南前言](zh-cn/component-guide/intro.md)
@@ -136,7 +137,7 @@
   * [ConfigProvider 机制](zh-cn/component-guide/configprovider.md)
 
 * 版本升级指南
-  
+
   * [1.1 升级指南](zh-cn/upgrade/1.1.md)
   * [2.0 升级指南](zh-cn/upgrade/2.0.md)
   * [2.1 升级指南](zh-cn/upgrade/2.1.md)
