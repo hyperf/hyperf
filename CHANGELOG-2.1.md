@@ -2,6 +2,7 @@
 
 ## Dependencies Upgrade
 
+- Upgraded `php` to `>=7.3`;
 - Upgraded `phpunit/phpunit` to `^9.0`;
 - Upgraded `guzzlehttp/guzzle` to `^6.0|^7.0`;
 - Upgraded `vlucas/phpdotenv` to `^5.0`;
