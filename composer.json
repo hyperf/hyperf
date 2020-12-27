@@ -16,7 +16,7 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=7.3",
         "ext-bcmath": "*",
         "ext-json": "*",
         "ext-redis": "*",
