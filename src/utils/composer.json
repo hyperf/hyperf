@@ -58,7 +58,7 @@
             "config": "Hyperf\\Utils\\ConfigProvider"
         },
         "branch-alias": {
-            "dev-master": "2.0-dev"
+            "dev-master": "2.1-dev"
         }
     },
     "bin": [
