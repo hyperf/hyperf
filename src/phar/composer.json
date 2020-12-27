@@ -48,6 +48,9 @@
         "cs-fix": "php-cs-fixer fix $1"
     },
     "extra": {
+        "branch-alias": {
+            "dev-master": "2.1-dev"
+        },
         "hyperf": {
             "config": "Hyperf\\Phar\\ConfigProvider"
         }
