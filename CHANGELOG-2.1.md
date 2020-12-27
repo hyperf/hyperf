@@ -9,6 +9,7 @@
 - Upgraded `twig/twig` to `^3.0`;
 - Upgraded `jcchavezs/zipkin-opentracing` to `^0.2.0`;
 - Upgraded `doctrine/dbal` to `^3.0`;
+- Upgraded `league/flysystem` to `^1.0|^2.0`;
 
 ## Removed
 
