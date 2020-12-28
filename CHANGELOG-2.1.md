@@ -1,5 +1,9 @@
 # v2.1.1 - TBD
 
+## Fixed
+
+- [#3045](https://github.com/hyperf/hyperf/pull/3045) Fixed type hint error, when don't set `true` for `PDO::ATTR_PERSISTENT`.
+
 # v2.1.0 - 2020-12-28
 
 ## Dependencies Upgrade
