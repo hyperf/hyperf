@@ -1,4 +1,6 @@
-# v2.1.0 - TBD
+# v2.1.1 - TBD
+
+# v2.1.0 - 2020-12-28
 
 ## Dependencies Upgrade
 
