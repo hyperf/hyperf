@@ -114,9 +114,9 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
             $mac = trim(file_get_contents($addressPath));
             if (
                 // Localhost adapter
-                $mac !== '00:00:00:00:00:00' &&
+                $mac !== '00:00:00:00:00:00'
                 // Must match MAC address
-                preg_match('/^([0-9a-f]{2}:){5}[0-9a-f]{2}$/i', $mac)
+                && preg_match('/^([0-9a-f]{2}:){5}[0-9a-f]{2}$/i', $mac)
             ) {
                 return str_replace(':', '', $mac);
             }

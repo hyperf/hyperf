@@ -187,7 +187,7 @@ class ComponentTagCompiler
             $prefix = 'App\\View\\Component\\';
         }
 
-        return  rtrim($prefix, '\\') . '\\' . $class;
+        return rtrim($prefix, '\\') . '\\' . $class;
     }
 
     /**

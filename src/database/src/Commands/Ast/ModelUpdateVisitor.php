@@ -161,9 +161,9 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
      */
     protected function isCaster($caster): bool
     {
-        return is_subclass_of($caster, CastsAttributes::class) ||
-            is_subclass_of($caster, Castable::class) ||
-            is_subclass_of($caster, CastsInboundAttributes::class);
+        return is_subclass_of($caster, CastsAttributes::class)
+            || is_subclass_of($caster, Castable::class)
+            || is_subclass_of($caster, CastsInboundAttributes::class);
     }
 
     protected function parse(): string

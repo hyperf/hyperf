@@ -127,7 +127,7 @@ class CoreMiddleware extends HttpCoreMiddleware
                 $injections[] = null;
                 continue;
             }
-            $injections[] = value(function () use ($definition, $arguments) {
+            $injections[] = value(function () use ($definition) {
                 switch ($definition['type']) {
                     case 'object':
                         $ref = $definition['ref'];

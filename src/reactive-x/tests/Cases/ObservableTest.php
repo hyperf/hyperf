@@ -90,7 +90,7 @@ class ObservableTest extends TestCase
                 });
                 return new EmptyDisposable();
             }
-            $timer = Timer::after($ms, function () use ($ms, $callable) {
+            $timer = Timer::after($ms, function () use ($callable) {
                 $callable();
             });
             return new CallbackDisposable(function () use ($timer) {
