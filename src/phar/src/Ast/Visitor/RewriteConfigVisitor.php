@@ -19,17 +19,9 @@ class RewriteConfigVisitor extends NodeVisitorAbstract
     public function leaveNode(Node $node)
     {
         if ($node instanceof Node\Stmt\Return_) {
-            if (! $node->expr instanceof Node\Expr\Array_) {
-                return $node;
-            }
-            foreach ($node->expr->items as $item) {
-                if (! $item instanceof Node\Expr\ArrayItem) {
-                    continue;
-                }
-                if ($item->key instanceof Node\Scalar\String_ && strtolower($item->key->value) == 'scan_cacheable') {
-                    $item->value = new Node\Expr\ConstFetch(new Node\Name('true'));
-                }
-            }
+            $result = new Node\Expr\Variable('result');
+            $assign = new Node\Expr\Assign($result, $node->expr);
+            return new Node\Stmt\Expression($assign);
         }
         return $node;
     }

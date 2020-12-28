@@ -42,6 +42,11 @@ class PharBuilder
     /**
      * @var string
      */
+    private $version;
+
+    /**
+     * @var string
+     */
     private $main;
 
     public function __construct(string $path, LoggerInterface $logger)
@@ -56,7 +61,11 @@ class PharBuilder
     public function getTarget(): string
     {
         if ($this->target === null) {
-            $this->target = $this->package->getShortName() . '.phar';
+            $target = $this->package->getShortName();
+            if ($this->version !== null) {
+                $target .= ':' . $this->version;
+            }
+            $this->target = $target . '.phar';
         }
         return (string) $this->target;
     }
@@ -73,6 +82,15 @@ class PharBuilder
             $target = rtrim($target, '/') . '/' . $this->getTarget();
         }
         $this->target = $target;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setVersion(string $version)
+    {
+        $this->version = $version;
         return $this;
     }
 
@@ -253,7 +271,7 @@ class PharBuilder
             return;
         }
         $code = file_get_contents($absPath);
-        $code = Ast::parse($code, [new RewriteConfigVisitor()]);
+        $code = (new Ast())->parse($code, [new RewriteConfigVisitor()]);
         $targetPhar->addFromString($configPath, $code);
     }
 
