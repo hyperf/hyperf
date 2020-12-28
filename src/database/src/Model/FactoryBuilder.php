@@ -427,7 +427,7 @@ class FactoryBuilder
      */
     protected function stateHasAfterCallback($state)
     {
-        return isset($this->afterMaking[$this->class][$state]) ||
-               isset($this->afterCreating[$this->class][$state]);
+        return isset($this->afterMaking[$this->class][$state])
+               || isset($this->afterCreating[$this->class][$state]);
     }
 }

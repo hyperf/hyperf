@@ -128,17 +128,17 @@ class CookieJar implements CookieJarInterface
             $this->cookies = array_filter(
                 $this->cookies,
                 function (SetCookie $cookie) use ($path, $domain) {
-                    return ! ($cookie->matchesPath($path) &&
-                        $cookie->matchesDomain($domain));
+                    return ! ($cookie->matchesPath($path)
+                        && $cookie->matchesDomain($domain));
                 }
             );
         } else {
             $this->cookies = array_filter(
                 $this->cookies,
                 function (SetCookie $cookie) use ($path, $domain, $name) {
-                    return ! ($cookie->getName() == $name &&
-                        $cookie->matchesPath($path) &&
-                        $cookie->matchesDomain($domain));
+                    return ! ($cookie->getName() == $name
+                        && $cookie->matchesPath($path)
+                        && $cookie->matchesDomain($domain));
                 }
             );
         }
@@ -179,9 +179,9 @@ class CookieJar implements CookieJarInterface
         foreach ($this->cookies as $i => $c) {
             // Two cookies are identical, when their path, and domain are
             // identical.
-            if ($c->getPath() != $cookie->getPath() ||
-                $c->getDomain() != $cookie->getDomain() ||
-                $c->getName() != $cookie->getName()
+            if ($c->getPath() != $cookie->getPath()
+                || $c->getDomain() != $cookie->getDomain()
+                || $c->getName() != $cookie->getName()
             ) {
                 continue;
             }
@@ -252,10 +252,10 @@ class CookieJar implements CookieJarInterface
         $path = $uri->getPath() ?: '/';
 
         foreach ($this->cookies as $cookie) {
-            if ($cookie->matchesPath($path) &&
-                $cookie->matchesDomain($host) &&
-                ! $cookie->isExpired() &&
-                (! $cookie->getSecure() || $scheme === 'https')
+            if ($cookie->matchesPath($path)
+                && $cookie->matchesDomain($host)
+                && ! $cookie->isExpired()
+                && (! $cookie->getSecure() || $scheme === 'https')
             ) {
                 $values[] = $cookie->getName() . '='
                     . $cookie->getValue();

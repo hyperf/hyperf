@@ -151,10 +151,10 @@ class ValidationRuleParser
             $rule = new ClosureValidationRule($rule);
         }
 
-        if (! is_object($rule) ||
-            $rule instanceof RuleContract ||
-            ($rule instanceof Exists && $rule->queryCallbacks()) ||
-            ($rule instanceof Unique && $rule->queryCallbacks())) {
+        if (! is_object($rule)
+            || $rule instanceof RuleContract
+            || ($rule instanceof Exists && $rule->queryCallbacks())
+            || ($rule instanceof Unique && $rule->queryCallbacks())) {
             return $rule;
         }
 
