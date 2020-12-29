@@ -48,4 +48,14 @@ class MySQLDriverTest extends PDODriverTest
     {
         parent::testMultiTransaction();
     }
+
+    public function testGetError()
+    {
+        parent::testGetError();
+    }
+
+    public function testGetErrorWhenNoErrors()
+    {
+        parent::testGetErrorWhenNoErrors();
+    }
 }

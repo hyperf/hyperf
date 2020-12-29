@@ -24,6 +24,8 @@ use Throwable;
  * @method execute(string $query, array $bindings = [])
  * @method query(string $query, array $bindings = [])
  * @method fetch(string $query, array $bindings = [])
+ * @method getErrorCode()
+ * @method getErrorInfo()
  */
 class DB
 {

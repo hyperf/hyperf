@@ -213,4 +213,25 @@ class PDOConnection extends AbstractConnection
             $connection->prepare(sprintf('set time_zone="%s"', $config['timezone']))->execute();
         }
     }
+
+    /**
+     * Get the error code of the previous statement execution.
+     */
+    public function getErrorCode(): int
+    {
+        return (int) $this->connection->errorInfo()[1];
+    }
+
+    /**
+     * Get the last statement execution error message.
+     */
+    public function getErrorInfo(): string
+    {
+        $info = $this->connection->errorInfo();
+        if (empty($info[2])) {
+            return '';
+        }
+
+        return sprintf("SQLSTATE[%s] [%d] %s", ...$info);
+    }
 }

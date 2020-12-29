@@ -163,4 +163,20 @@ class MySQLConnection extends AbstractConnection
 
         return $statement;
     }
+
+    /**
+     * Get the error code of the previous statement execution.
+     */
+    public function getErrorCode(): int
+    {
+        return (int) $this->connection->errno;
+    }
+
+    /**
+     * Get the last statement execution error message.
+     */
+    public function getErrorInfo(): string
+    {
+        return $this->connection->error;
+    }
 }

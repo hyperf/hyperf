@@ -53,6 +53,8 @@ php bin/hyperf.php vendor:publish hyperf/db
 |      query       |    `array`     |        查询 SQL，返回结果集列表         |
 |      fetch       | `array, object`|     查询 SQL，返回结果集的首行数据       |
 |      connection  |     `self`     |           指定连接的数据库             |
+|   getErrorCode   |     `int`      |           返回错误码                  |
+|   getErrorInfo   |    `string`    |           返回错误信息                |
 
 ## 使用
 

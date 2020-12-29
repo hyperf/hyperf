@@ -60,4 +60,14 @@ interface ConnectionInterface
     public function fetch(string $query, array $bindings = []);
 
     public function call(string $method, array $argument = []);
+
+    /**
+     * Get the error code of the previous statement execution.
+     */
+    public function getErrorCode(): int;
+
+    /**
+     * Get the last statement execution error message.
+     */
+    public function getErrorInfo(): string;
 }

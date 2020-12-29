@@ -127,4 +127,25 @@ class PDODriverTest extends AbstractTestCase
         $connection->reconnect();
         $this->assertSame(0, $connection->transactionLevel());
     }
+
+    public function testGetError()
+    {
+        $this->getContainer();
+
+        try {
+            DB::fetch('SELECT * FROM `table_not_exists`');
+        } catch (\Exception $e) {
+        }
+
+        $this->assertEquals(1146, DB::getErrorCode());
+        $this->assertSame('SQLSTATE[42S02] [1146] Table \'hyperf.table_not_exists\' doesn\'t exist', DB::getErrorInfo());
+    }
+
+    public function testGetErrorWhenNoErrors()
+    {
+        $this->getContainer();
+
+        $this->assertEquals(0, DB::getErrorCode());
+        $this->assertEmpty(DB::getErrorInfo());
+    }
 }
