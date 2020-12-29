@@ -1,4 +1,4 @@
-# Code Update Watcher
+# Watcher (Hot Reload)
 
 Since version `2.0` uses `BetterReflection` to collect the `abstract syntax tree (AST)` and `reflection data`, the scanning speed is much slower than version `1.1`.
 
@@ -6,6 +6,8 @@ Since version `2.0` uses `BetterReflection` to collect the `abstract syntax tree
 
 
 In addition to solving the above startup problems, the `Watcher` component also handles restarting the application immediately after file modification.
+
+> This component is only suitable for development environment, please use it with caution in production environment.
 
 ## Installation
 
@@ -59,7 +61,7 @@ wget https://github.com/emcrisostomo/fswatch/releases/download/1.14.0/fswatch-1.
 
 ## Startup
 
-Because of the directory structure, the command has to be run in the project root directory.
+Because of the directory structure, the start command has to be run in the root directory of project.
 
 ```bash
 php bin/hyperf.php server:watch
