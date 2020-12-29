@@ -30,6 +30,7 @@ use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Register;
 use Hyperf\Database\Model\Relations\BelongsTo;
 use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Database\Query\Builder as BaseBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Utils\ApplicationContext;
@@ -1472,7 +1473,7 @@ class ModelTest extends TestCase
         $model->syncOriginalAttribute('id');
         $model->foo = 2;
 
-        $model->shouldReceive('newModelQuery')->andReturn($query = Mockery::mock(stdClass::class));
+        $model->shouldReceive('newModelQuery')->andReturn($query = Mockery::mock(Builder::class));
         $query->shouldReceive('where')->andReturn($query);
         $query->shouldReceive('increment');
 
@@ -1482,7 +1483,7 @@ class ModelTest extends TestCase
         $model->publicIncrement('foo', 1, ['category' => 1]);
         $this->assertEquals(4, $model->foo);
         $this->assertEquals(1, $model->category);
-        $this->assertTrue($model->isDirty('category'));
+        $this->assertFalse($model->isDirty());
     }
 
     public function testRelationshipTouchOwnersIsPropagated()
@@ -1641,6 +1642,106 @@ class ModelTest extends TestCase
         $this->assertNull($array['dateAttribute']);
         $this->assertNull($array['datetimeAttribute']);
         $this->assertNull($array['timestampAttribute']);
+    }
+
+    public function testGetOriginalCastsAttributes()
+    {
+        $model = new ModelCastingStub();
+        $model->intAttribute = '1';
+        $model->floatAttribute = '0.1234';
+        $model->stringAttribute = 432;
+        $model->boolAttribute = '1';
+        $model->booleanAttribute = '0';
+        $stdClass = new stdClass();
+        $stdClass->json_key = 'json_value';
+        $model->objectAttribute = $stdClass;
+        $array = [
+            'foo' => 'bar',
+        ];
+        $collection = collect($array);
+        $model->arrayAttribute = $array;
+        $model->jsonAttribute = $array;
+        $model->collectionAttribute = $collection;
+
+        $model->syncOriginal();
+
+        $model->intAttribute = 2;
+        $model->floatAttribute = 0.443;
+        $model->stringAttribute = '12';
+        $model->boolAttribute = true;
+        $model->booleanAttribute = false;
+        $model->objectAttribute = $stdClass;
+        $model->arrayAttribute = [
+            'foo' => 'bar2',
+        ];
+        $model->jsonAttribute = [
+            'foo' => 'bar2',
+        ];
+        $model->collectionAttribute = collect([
+            'foo' => 'bar2',
+        ]);
+
+        $this->assertIsInt($model->getOriginal('intAttribute'));
+        $this->assertEquals(1, $model->getOriginal('intAttribute'));
+        $this->assertEquals(2, $model->intAttribute);
+        $this->assertEquals(2, $model->getAttribute('intAttribute'));
+
+        $this->assertIsFloat($model->getOriginal('floatAttribute'));
+        $this->assertEquals(0.1234, $model->getOriginal('floatAttribute'));
+        $this->assertEquals(0.443, $model->floatAttribute);
+
+        $this->assertIsString($model->getOriginal('stringAttribute'));
+        $this->assertSame('432', $model->getOriginal('stringAttribute'));
+        $this->assertSame('12', $model->stringAttribute);
+
+        $this->assertIsBool($model->getOriginal('boolAttribute'));
+        $this->assertTrue($model->getOriginal('boolAttribute'));
+        $this->assertTrue($model->boolAttribute);
+
+        $this->assertIsBool($model->getOriginal('booleanAttribute'));
+        $this->assertFalse($model->getOriginal('booleanAttribute'));
+        $this->assertFalse($model->booleanAttribute);
+
+        $this->assertEquals($stdClass, $model->getOriginal('objectAttribute'));
+        $this->assertEquals($model->getAttribute('objectAttribute'), $model->getOriginal('objectAttribute'));
+
+        $this->assertEquals($array, $model->getOriginal('arrayAttribute'));
+        $this->assertEquals(['foo' => 'bar'], $model->getOriginal('arrayAttribute'));
+        $this->assertEquals(['foo' => 'bar2'], $model->getAttribute('arrayAttribute'));
+
+        $this->assertEquals($array, $model->getOriginal('jsonAttribute'));
+        $this->assertEquals(['foo' => 'bar'], $model->getOriginal('jsonAttribute'));
+        $this->assertEquals(['foo' => 'bar2'], $model->getAttribute('jsonAttribute'));
+
+        $this->assertEquals(['foo' => 'bar'], $model->getOriginal('collectionAttribute')->toArray());
+        $this->assertEquals(['foo' => 'bar2'], $model->getAttribute('collectionAttribute')->toArray());
+    }
+
+    public function testGetOriginalIncrementWithExtra()
+    {
+        $model = new class() extends ModelCastingStub {
+            public function newBaseQueryBuilder()
+            {
+                $connection = Mockery::mock(Connection::class);
+                $grammar = Mockery::mock(Grammar::class);
+                $processor = Mockery::mock(Processor::class);
+                $builder = Mockery::mock(BaseBuilder::class . '[increment]', [$connection, $grammar, $processor]);
+                $builder->shouldReceive('increment')->withAnyArgs()->andReturn(1);
+                return $builder;
+            }
+        };
+        $model->timestamps = false;
+        $model->intAttribute = '1';
+        $model->floatAttribute = '0.1234';
+        $model->exists = true;
+        $model->syncOriginal();
+
+        $model->increment('intAttribute', 1, [
+            'floatAttribute' => '123.4',
+        ]);
+
+        $this->assertSame(2, $model->getOriginal('intAttribute'));
+        $this->assertSame(123.4, $model->getOriginal('floatAttribute'));
     }
 
     public function testModelAttributeCastingFailsOnUnencodableData()
