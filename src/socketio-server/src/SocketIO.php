@@ -360,9 +360,12 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         if (! array_key_exists('forward', $all)) {
             return;
         }
-        /** @var NamespaceInterface $nsp */
+        /** @var string $nsp */
         foreach (array_keys($all['forward']) as $nsp) {
-            $adapter = $nsp->getAdapter();
+            $class = SocketIORouter::getClassName($nsp);
+            /** @var NamespaceInterface $instance */
+            $instance = ApplicationContext::getContainer()->get($class);
+            $adapter = $instance->getAdapter();
             if ($adapter instanceof EphemeralInterface) {
                 $adapter->renew($this->sidProvider->getSid($fd));
             }
