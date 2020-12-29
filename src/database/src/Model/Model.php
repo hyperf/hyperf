@@ -1303,7 +1303,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
         $columns = array_merge(array_keys($extra), [$column]);
         return tap($this->setKeysForSaveQuery($query)->{$method}($column, $amount, $extra), function () use ($columns) {
-            $this->syncChanges();
+            $this->syncChanges($columns);
 
             $this->syncOriginalAttributes($columns);
         });

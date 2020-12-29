@@ -594,9 +594,11 @@ trait HasAttributes
      *
      * @return $this
      */
-    public function syncChanges()
+    public function syncChanges(array $columns = null)
     {
-        $this->changes = $this->getDirty();
+        $changes = $this->getDirty();
+
+        $this->changes = is_array($columns) ? Arr::only($changes, $columns) : $changes;
 
         return $this;
     }
