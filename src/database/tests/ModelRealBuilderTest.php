@@ -146,7 +146,7 @@ class ModelRealBuilderTest extends TestCase
         $this->assertArrayHasKey('count', $ext->getChanges());
         $this->assertSame(2, count($ext->getChanges()));
 
-        // TODO: Don't effect.
+        // Don't effect.
         $ext->str = uniqid();
         $this->assertTrue($ext->isDirty('str'));
 
@@ -154,11 +154,10 @@ class ModelRealBuilderTest extends TestCase
             'float_num' => (string) ($ext->float_num + 1),
         ]);
         $this->assertTrue($ext->isDirty('str'));
-        $this->assertArrayHasKey('str', $ext->getChanges());
+        $this->assertArrayHasKey('count', $ext->getChanges());
         $this->assertArrayHasKey('float_num', $ext->getChanges());
 
-        // TODO: It should be 2.
-        $this->assertSame(3, count($ext->getChanges()));
+        $this->assertSame(2, count($ext->getChanges()));
         $this->assertTrue($ext->save());
         $this->assertArrayHasKey('str', $ext->getChanges());
         $this->assertSame(1, count($ext->getChanges()));
