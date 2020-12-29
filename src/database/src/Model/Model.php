@@ -1297,26 +1297,15 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
             return $query->{$method}($column, $amount, $extra);
         }
 
-        $this->incrementOrDecrementAttributeValue($column, $amount, $extra, $method);
-
-        return $query->where($this->getKeyName(), $this->getKey())->{$method}($column, $amount, $extra);
-    }
-
-    /**
-     * Increment the underlying attribute value and sync with original.
-     *
-     * @param string $column
-     * @param float|int $amount
-     * @param array $extra
-     * @param string $method
-     */
-    protected function incrementOrDecrementAttributeValue($column, $amount, $extra, $method)
-    {
         $this->{$column} = $this->{$column} + ($method === 'increment' ? $amount : $amount * -1);
 
         $this->forceFill($extra);
 
-        $this->syncOriginalAttribute($column);
+        return tap($this->setKeysForSaveQuery($query)->{$method}($column, $amount, $extra), function () use ($column) {
+            $this->syncChanges();
+
+            $this->syncOriginalAttribute($column);
+        });
     }
 
     /**
