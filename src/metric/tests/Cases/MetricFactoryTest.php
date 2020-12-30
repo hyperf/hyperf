@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Metric\Cases;
 
 use Hyperf\Config\Config;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Guzzle\ClientFactory;
 use Hyperf\Metric\Adapter\Prometheus\Constants;
 use Hyperf\Metric\Adapter\Prometheus\MetricFactory as PrometheusFactory;
@@ -48,8 +49,9 @@ class MetricFactoryTest extends TestCase
         ]);
         $r = Mockery::mock(CollectorRegistry::class);
         $c = Mockery::mock(ClientFactory::class);
+        $l = Mockery::mock(StdoutLoggerInterface::class);
         $this->expectException(RuntimeException::class);
-        $p = new PrometheusFactory($config, $r, $c);
+        $p = new PrometheusFactory($config, $r, $c, $l);
     }
 
     public function testPrometheusGetUri()
@@ -69,7 +71,8 @@ class MetricFactoryTest extends TestCase
         ]);
         $r = Mockery::mock(CollectorRegistry::class);
         $c = Mockery::mock(ClientFactory::class);
-        $p = new PrometheusFactory($config, $r, $c);
+        $l = Mockery::mock(StdoutLoggerInterface::class);
+        $p = new PrometheusFactory($config, $r, $c, $l);
         $ref = new \ReflectionClass($p);
         $method = $ref->getMethod('getUri');
         $method->setAccessible(true);
@@ -95,7 +98,8 @@ class MetricFactoryTest extends TestCase
         ]);
         $r = Mockery::mock(CollectorRegistry::class);
         $c = Mockery::mock(ClientFactory::class);
-        $p = new PrometheusFactory($config, $r, $c);
+        $l = Mockery::mock(StdoutLoggerInterface::class);
+        $p = new PrometheusFactory($config, $r, $c, $l);
         $method = new ReflectionMethod(PrometheusFactory::class, 'getNamespace');
         $method->setAccessible(true);
         $this->assertEquals('hello__world_', $method->invoke($p));
