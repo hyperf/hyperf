@@ -14,6 +14,7 @@ namespace Hyperf\Metric;
 use Domnikl\Statsd\Connection;
 use Domnikl\Statsd\Connection\UdpSocket;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
+use Hyperf\Metric\Listener\OnBeforeHandle;
 use Hyperf\Metric\Listener\OnMetricFactoryReady;
 use Hyperf\Metric\Listener\OnPipeMessage;
 use Hyperf\Metric\Listener\OnWorkerStart;
@@ -52,6 +53,7 @@ class ConfigProvider
             'listeners' => [
                 OnPipeMessage::class,
                 OnMetricFactoryReady::class,
+                OnBeforeHandle::class,
                 OnWorkerStart::class,
             ],
             'processes' => [

@@ -11,7 +11,7 @@
     ],
     "description": "hyperf metric component",
     "require": {
-        "php": ">=7.2",
+        "php": ">=7.3",
         "endclothing/prometheus_client_php": "^1.0",
         "hyperf/contract": "~2.1.0",
         "hyperf/guzzle": "~2.1.0",

@@ -16,6 +16,8 @@ use Hyperf\Metric\Adapter\Prometheus\MetricFactory as PrometheusFactory;
 use Hyperf\Metric\Adapter\RemoteProxy\MetricFactory as RemoteFactory;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Exception\InvalidArgumentException;
+use Hyperf\Process\ProcessCollector;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
 class MetricFactoryPicker
@@ -25,17 +27,32 @@ class MetricFactoryPicker
      */
     public static $inMetricProcess = false;
 
+    /**
+     * @var bool
+     */
+    public static $isCommand = false;
+
     public function __invoke(ContainerInterface $container)
     {
+        // All other metric factories needs to be run in coroutine context
+        if (! Coroutine::inCoroutine()) {
+            return $container->get(Adapter\NoOp\MetricFactory::class);
+        }
+
         $config = $container->get(ConfigInterface::class);
         $useStandaloneProcess = $config->get('metric.use_standalone_process');
+
+        // misconfiguration.
+        if ($useStandaloneProcess && ! static::$isCommand && empty(ProcessCollector::all())) {
+            return $container->get(Adapter\NoOp\MetricFactory::class);
+        }
+
         // Return a proxy object for workers if user wants to use a dedicated metric process.
-        if ($useStandaloneProcess && ! static::$inMetricProcess) {
+        if ($useStandaloneProcess && ! static::$inMetricProcess && ! static::$isCommand) {
             return $container->get(RemoteFactory::class);
         }
 
         $name = $config->get('metric.default');
-        $dedicatedProcess = $config->get('metric.metric.use_standalone_process');
         $driver = $config->get("metric.metric.{$name}.driver", PrometheusFactory::class);
 
         $factory = $container->get($driver);
