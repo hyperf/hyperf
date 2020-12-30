@@ -147,6 +147,10 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
             $server->push($frame->fd, Engine::PONG); //sever pong
             return;
         }
+        if ($frame->data[0] === Engine::CLOSE) {
+            $server->disconnect($frame->fd);
+            return;
+        }
         if ($frame->data[0] !== Engine::MESSAGE) {
             $this->stdoutLogger->error("EngineIO event type {$frame->data[0]} not supported");
             return;

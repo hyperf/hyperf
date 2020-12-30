@@ -12,11 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\SocketIOServer\Cases;
 
 use Hyperf\Contract\ContainerInterface;
+use Hyperf\SocketIOServer\Exception\ConnectionClosedException;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\Socket;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\WebSocketServer\Context;
 use Hyperf\WebSocketServer\Sender;
 use Mockery;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @internal
@@ -110,5 +113,19 @@ class SocketTest extends AbstractTestCase
         $prop->setAccessible(true);
         $this->assertFalse($prop->getValue($socket1));
         $this->assertTrue($prop->getValue($socket1->broadcast));
+    }
+
+    public function testGetRequest()
+    {
+        $socket1 = make(Socket::class, [
+            'fd' => 1,
+            'nsp' => '/',
+        ]);
+        $this->expectException(ConnectionClosedException::class);
+        $socket1->getRequest();
+
+        Context::set(ServerRequestInterface::class, Mockery::mock(ServerRequestInterface::class));
+        $request = $socket1->getRequest();
+        $this->assertInstanceOf(ServerRequestInterface::class, $request);
     }
 }
