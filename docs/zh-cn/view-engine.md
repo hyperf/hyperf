@@ -703,7 +703,7 @@ class ConfigProvider
 <div class="alert alert-error mb-4" other-attr="bar"><!-- $message 变量的内容 --></div>
 ```
 
-如上述情况，需要将 `other-attr` 属性也合并的话, 可以使用一下方式：
+如上述情况，需要将 `other-attr` 属性也合并的话，可以使用以下方式，在 `merge()` 方法中添加第二个参数 `true` ：
 
 ```blade
 // 定义
