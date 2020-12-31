@@ -67,7 +67,7 @@ class CoreMiddleware extends HttpCoreMiddleware
                         $grpcMessage = 'Action not exist.';
                         return $this->handleResponse(null, 500, '500', $grpcMessage);
                     }
-                    $parameters = $this->parseMethodParameters($controller, $action, $dispatched->params);
+                    $parameters = $this->parseParameters($controller, $action, $dispatched->params);
                     $result = $controllerInstance->{$action}(...$parameters);
                 }
 
