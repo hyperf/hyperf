@@ -692,6 +692,28 @@ class ConfigProvider
     </div>
 ```
 
+默认情况下，只会合并 `class` 属性，其他属性将会直接进行覆盖，会出现如下情况：
+
+```blade
+// 定义
+<div {{ $attributes->merge(['class' => 'alert alert-'.$type, 'other-attr' => 'foo']) }}>{{ $message }}</div>
+// 使用
+<x-alert type="error" :message="$message" class="mb-4" other-attr="bar"/>
+// 呈现
+<div class="alert alert-error mb-4" other-attr="bar"><!-- $message 变量的内容 --></div>
+```
+
+如上述情况，需要将 `other-attr` 属性也合并的话, 可以使用一下方式：
+
+```blade
+// 定义
+<div {{ $attributes->merge(['class' => 'alert alert-'.$type, 'other-attr' => 'foo'], true) }}>{{ $message }}</div>
+// 使用
+<x-alert type="error" :message="$message" class="mb-4" other-attr="bar"/>
+// 呈现
+<div class="alert alert-error mb-4" other-attr="foo bar"><!-- $message 变量的内容 --></div>
+```
+
 #### 插槽
 
 通常，你需要通过 `slots` 向组件传递附加内容。 假设我们创建的 `alert` 组件具有以下标记：

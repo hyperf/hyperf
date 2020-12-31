@@ -19,8 +19,6 @@ use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\ListenerProvider;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\View\Mode;
-use Hyperf\ViewEngine\Compiler\BladeCompiler;
-use Hyperf\ViewEngine\Compiler\CompilerInterface;
 use Hyperf\ViewEngine\Component\DynamicComponent;
 use Hyperf\ViewEngine\ConfigProvider;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
@@ -29,6 +27,8 @@ use Hyperf\ViewEngine\Contract\ViewInterface;
 use Hyperf\ViewEngine\Factory\FinderFactory;
 use Hyperf\ViewEngine\HyperfViewEngine;
 use HyperfTest\ViewEngine\Stub\Alert;
+use HyperfTest\ViewEngine\Stub\AlertAttributeMerge;
+use HyperfTest\ViewEngine\Stub\AlertAttributeMergeForce;
 use HyperfTest\ViewEngine\Stub\AlertSlot;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -65,6 +65,8 @@ class BladeTest extends TestCase
                 'components' => [
                     'alert' => Alert::class,
                     'alert-slot' => AlertSlot::class,
+                    'alert-attribute-merge' => AlertAttributeMerge::class,
+                    'alert-attribute-merge-force' => AlertAttributeMergeForce::class,
                     'dynamic-component' => DynamicComponent::class,
                 ],
                 'namespaces' => [
@@ -139,31 +141,23 @@ class BladeTest extends TestCase
 
     public function testComponent()
     {
-        /** @var BladeCompiler $compiler */
-        $compiler = ApplicationContext::getContainer()
-            ->get(CompilerInterface::class);
-
-        $compiler->component(Alert::class, 'alert');
-        $compiler->component(AlertSlot::class, 'alert-slot');
-
         $this->assertSame('success', trim((string) view('simple_8', ['message' => 'success'])));
         $this->assertSame('success', trim((string) view('simple_9', ['message' => 'success'])));
     }
 
     public function testDynamicComponent()
     {
-        /** @var BladeCompiler $compiler */
-        $compiler = ApplicationContext::getContainer()
-            ->get(CompilerInterface::class);
-
-        $compiler->component(Alert::class, 'alert');
-        $compiler->component(AlertSlot::class, 'alert-slot');
-
         $this->assertSame('ok', trim((string) view('simple_11', ['componentName' => 'alert', 'message' => 'ok'])));
     }
 
-    public function testComponetAutoload()
+    public function testComponentAutoload()
     {
         $this->assertSame('success', trim((string) view('simple_12', ['message' => 'success'])));
+    }
+
+    public function testComponentMergeAttribute()
+    {
+        $this->assertSame('<div class="alert alert-error mb4" style="height:50px">success</div>', trim((string) view('simple_13', ['message' => 'success'])));
+        $this->assertSame('<div class="alert alert-error mb4" style="background-color:red; height:50px">success</div>', trim((string) view('simple_14', ['message' => 'success'])));
     }
 }
