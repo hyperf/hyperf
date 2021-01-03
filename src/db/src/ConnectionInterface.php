@@ -52,12 +52,12 @@ interface ConnectionInterface
     /**
      * Run a select statement against the database.
      */
-    public function query(string $query, array $bindings = []): array;
+    public function query(string $query, array $bindings = [], int $fetchModel = null): array;
 
     /**
      * Run a select statement and return a single result.
      */
-    public function fetch(string $query, array $bindings = []);
+    public function fetch(string $query, array $bindings = [], int $fetchModel = null);
 
     public function call(string $method, array $argument = []);
 }

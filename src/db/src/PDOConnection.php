@@ -106,7 +106,7 @@ class PDOConnection extends AbstractConnection
         return true;
     }
 
-    public function query(string $query, array $bindings = []): array
+    public function query(string $query, array $bindings = [], int $fetchModel = null): array
     {
         // For select statements, we'll simply execute the query and return an array
         // of the database result set. Each element in the array will be a single
@@ -117,14 +117,14 @@ class PDOConnection extends AbstractConnection
 
         $statement->execute();
 
-        $fetchModel = $this->config['fetch_mode'];
+        $fetchModel === null && $fetchModel = $this->config['fetch_mode'];
 
         return $statement->fetchAll($fetchModel);
     }
 
-    public function fetch(string $query, array $bindings = [])
+    public function fetch(string $query, array $bindings = [], int $fetchModel = null)
     {
-        $records = $this->query($query, $bindings);
+        $records = $this->query($query, $bindings, $fetchModel);
 
         return array_shift($records);
     }

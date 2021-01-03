@@ -119,7 +119,7 @@ class MySQLConnection extends AbstractConnection
         return $this->connection->affected_rows;
     }
 
-    public function query(string $query, array $bindings = []): array
+    public function query(string $query, array $bindings = [], int $fetchModel = null): array
     {
         // For select statements, we'll simply execute the query and return an array
         // of the database result set. Each element in the array will be a single
@@ -131,7 +131,7 @@ class MySQLConnection extends AbstractConnection
         return $statement->fetchAll();
     }
 
-    public function fetch(string $query, array $bindings = [])
+    public function fetch(string $query, array $bindings = [], int $fetchModel = null)
     {
         $records = $this->query($query, $bindings);
 
