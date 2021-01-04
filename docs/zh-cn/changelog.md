@@ -1,5 +1,71 @@
 # 版本更新记录
 
+# v2.1.0 - 2020-12-28
+
+## 依赖升级
+
+- 升级 `php` 版本到 `>=7.3`。
+- 升级组件 `phpunit/phpunit` 版本到 `^9.0`。
+- 升级组件 `guzzlehttp/guzzle` 版本到 `^6.0|^7.0`。
+- 升级组件 `vlucas/phpdotenv` 版本到 `^5.0`。
+- 升级组件 `endclothing/prometheus_client_php` 版本到 `^1.0`。
+- 升级组件 `twig/twig` 版本到 `^3.0`。
+- 升级组件 `jcchavezs/zipkin-opentracing` 版本到 `^0.2.0`。
+- 升级组件 `doctrine/dbal` 版本到 `^3.0`。
+- 升级组件 `league/flysystem` 版本到 `^1.0|^2.0`。
+
+## 移除
+
+- 移除 `Hyperf\Amqp\Builder` 已弃用的成员变量 `$name`。
+- 移除 `Hyperf\Amqp\Message\ConsumerMessageInterface` 已弃用的方法 `consume()`。
+- 移除 `Hyperf\AsyncQueue\Driver\Driver` 已弃用的成员变量 `$running`。
+- 移除 `Hyperf\HttpServer\CoreMiddleware` 已弃用的方法 `parseParameters()`。
+- 移除 `Hyperf\Utils\Coordinator\Constants` 已弃用的常量 `ON_WORKER_START` 和 `ON_WORKER_EXIT`。
+- 移除 `Hyperf\Utils\Coordinator` 已弃用的方法 `get()`。
+- 移除配置文件 `rate-limit.php`, 请使用 `rate_limit.php`。
+- 移除无用的类 `Hyperf\Resource\Response\ResponseEmitter`。
+- 将组件 `hyperf/paginator` 从 `hyperf/database` 依赖中移除。
+- 移除 `Hyperf\Utils\Coroutine\Concurrent` 中的方法 `stats()`。
+
+## 变更
+
+- 方法 `Hyperf\Utils\Coroutine::parentId` 返回父协程的协程 ID
+  * 如果在主协程中，则会返回 0。
+  * 如果在非协程环境中使用，则会抛出 `RunningInNonCoroutineException` 异常。
+  * 如果协程环境已被销毁，则会抛出 `CoroutineDestroyedException` 异常。
+
+- 类 `Hyperf\Guzzle\CoroutineHandler`
+  * 删除了 `execute()` 方法。
+  * 方法 `initHeaders()` 将会返回初始化好的 Header 列表, 而不是直接将 `$headers` 赋值到客户端中。
+  * 删除了 `checkStatusCode()` 方法。
+
+- [#2720](https://github.com/hyperf/hyperf/pull/2720) 不再在方法 `PDOStatement::bindValue()` 中设置 `data_type`，已避免字符串索引中使用整形时，导致索引无法被命中的问题。
+- [#2871](https://github.com/hyperf/hyperf/pull/2871) 从 `StreamInterface` 中获取数据时，使用 `(string) $body` 而不是 `$body->getContents()`，因为方法 `getContents()` 只会返回剩余的数据，而非全部数据。
+- [#2909](https://github.com/hyperf/hyperf/pull/2909) 允许设置重复的中间件。
+- [#2935](https://github.com/hyperf/hyperf/pull/2935) 修改了 `Exception Formatter` 的默认规则。
+- [#2979](https://github.com/hyperf/hyperf/pull/2979) 命令行 `gen:model` 不再自动将 `decimal` 格式转化为 `float`。
+
+## Deprecated
+
+- 类 `Hyperf\AsyncQueue\Signal\DriverStopHandler` 将会在 `v2.2` 版本中弃用, 请使用 `Hyperf\Process\Handler\ProcessStopHandler` 代替。
+- 类 `Hyperf\Server\SwooleEvent` 将会在 `v3.0` 版本中弃用, 请使用 `Hyperf\Server\Event` 代替。
+
+## Added
+
+- [#2659](https://github.com/hyperf/hyperf/pull/2659) [#2663](https://github.com/hyperf/hyperf/pull/2663) 新增了 [Swow](https://github.com/swow/swow) 驱动支持。
+- [#2671](https://github.com/hyperf/hyperf/pull/2671) 新增监听器 `Hyperf\AsyncQueue\Listener\QueueHandleListener`，用来记录异步队列的运行日志。
+- [#2923](https://github.com/hyperf/hyperf/pull/2923) 新增类 `Hyperf\Utils\Waiter`，可以用来等待一个协程结束。
+- [#3001](https://github.com/hyperf/hyperf/pull/3001) 新增方法 `Hyperf\Database\Model\Collection::columns()`，类似于 `array_column`。
+- [#3002](https://github.com/hyperf/hyperf/pull/3002) 为 `Json::decode` 和 `Json::encode` 新增参数 `$depth` 和 `$flags`。
+
+## Fixed
+
+- [#2741](https://github.com/hyperf/hyperf/pull/2741) 修复自定义进程无法在 `Swow` 驱动下使用的问题。
+
+## Optimized
+
+- [#3009](https://github.com/hyperf/hyperf/pull/3009) 优化了 `prometheus`，使其支持 `https` 和 `http` 协议。
+
 # v2.0.25 - 2020-12-28
 
 ## 新增

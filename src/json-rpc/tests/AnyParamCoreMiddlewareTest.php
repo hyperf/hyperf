@@ -142,10 +142,8 @@ class AnyParamCoreMiddlewareTest extends TestCase
         $this->assertArrayHasKey('data', $ret['error']);
 
         $this->assertEquals(\InvalidArgumentException::class, $ret['error']['data']['class']);
-        $this->assertArraySubset([
-            'message' => 'Expected non-zero value of divider',
-            'code' => 0,
-        ], $ret['error']['data']['attributes']);
+        $this->assertSame('Expected non-zero value of divider', $ret['error']['data']['attributes']['message']);
+        $this->assertSame(0, $ret['error']['data']['attributes']['code']);
     }
 
     public function testThrowable()
@@ -179,10 +177,8 @@ class AnyParamCoreMiddlewareTest extends TestCase
         $this->assertArrayHasKey('data', $ret['error']);
 
         $this->assertEquals(\Error::class, $ret['error']['data']['class']);
-        $this->assertArraySubset([
-            'message' => 'Not only a exception.',
-            'code' => 0,
-        ], $ret['error']['data']['attributes']);
+        $this->assertSame('Not only a exception.', $ret['error']['data']['attributes']['message']);
+        $this->assertSame(0, $ret['error']['data']['attributes']['code']);
     }
 
     public function createContainer()

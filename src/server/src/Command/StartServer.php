@@ -13,11 +13,11 @@ namespace Hyperf\Server\Command;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Engine\Coroutine;
 use Hyperf\Server\ServerFactory;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Swoole\Runtime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -51,7 +51,7 @@ class StartServer extends Command
 
         $serverFactory->configure($serverConfig);
 
-        Runtime::enableCoroutine(true, swoole_hook_flags());
+        Coroutine::set(['hook_flags' => swoole_hook_flags()]);
 
         $serverFactory->start();
 
@@ -60,6 +60,9 @@ class StartServer extends Command
 
     private function checkEnvironment(OutputInterface $output)
     {
+        if (! extension_loaded('swoole')) {
+            return;
+        }
         /**
          * swoole.use_shortname = true       => string(1) "1"     => enabled
          * swoole.use_shortname = "true"     => string(1) "1"     => enabled

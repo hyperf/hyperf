@@ -52,7 +52,7 @@ class CoreMiddlewareTest extends TestCase
         $middleware = new CoreMiddlewareStub($container = $this->getContainer(), 'http');
         $id = rand(0, 99999);
 
-        $params = $middleware->parseParameters(DemoController::class, 'index', ['id' => $id]);
+        $params = $middleware->parseMethodParameters(DemoController::class, 'index', ['id' => $id]);
 
         $this->assertSame([$id, 'Hyperf', []], $params);
     }
@@ -68,13 +68,13 @@ class CoreMiddlewareTest extends TestCase
         // String
         $response = $reflectionMethod->invoke($middleware, $body = 'foo', $request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertSame($body, $response->getBody()->getContents());
+        $this->assertSame($body, (string) $response->getBody());
         $this->assertSame('text/plain', $response->getHeaderLine('content-type'));
 
         // Array
         $response = $reflectionMethod->invoke($middleware, $body = ['foo' => 'bar'], $request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertSame(json_encode($body), $response->getBody()->getContents());
+        $this->assertSame(json_encode($body), (string) $response->getBody());
         $this->assertSame('application/json', $response->getHeaderLine('content-type'));
 
         // Arrayable
@@ -85,7 +85,7 @@ class CoreMiddlewareTest extends TestCase
             }
         }, $request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertSame(json_encode(['foo' => 'bar']), $response->getBody()->getContents());
+        $this->assertSame(json_encode(['foo' => 'bar']), (string) $response->getBody());
         $this->assertSame('application/json', $response->getHeaderLine('content-type'));
 
         // Jsonable
@@ -96,7 +96,7 @@ class CoreMiddlewareTest extends TestCase
             }
         }, $request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertSame(json_encode(['foo' => 'bar']), $response->getBody()->getContents());
+        $this->assertSame(json_encode(['foo' => 'bar']), (string) $response->getBody());
         $this->assertSame('application/json', $response->getHeaderLine('content-type'));
 
         // __toString
@@ -107,7 +107,7 @@ class CoreMiddlewareTest extends TestCase
             }
         }, $request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertSame('This is a string', $response->getBody()->getContents());
+        $this->assertSame('This is a string', (string) $response->getBody());
         $this->assertSame('text/plain', $response->getHeaderLine('content-type'));
 
         // Json encode failed
@@ -173,7 +173,7 @@ class CoreMiddlewareTest extends TestCase
         $response->shouldReceive('withBody')->with(Mockery::any())->andReturnUsing(function ($stream) use ($response, $id) {
             $this->assertInstanceOf(SwooleStream::class, $stream);
             /* @var SwooleStream $stream */
-            $this->assertSame(json_encode(['DEBUG' => [$id]]), $stream->getContents());
+            $this->assertSame(json_encode(['DEBUG' => [$id]]), (string) $stream);
             return $response;
         });
         $request = new Request('GET', new Uri('/request'));

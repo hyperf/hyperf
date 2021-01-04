@@ -315,7 +315,6 @@ class BelongsTo extends Relation
      * Get the name of the relationship.
      *
      * @return string
-     * @deprecated The getRelationName() method should be used instead. Will be removed in Laravel 5.9.
      */
     public function getRelation()
     {
@@ -359,8 +358,8 @@ class BelongsTo extends Relation
      */
     protected function relationHasIncrementingId()
     {
-        return $this->related->getIncrementing() &&
-                                $this->related->getKeyType() === 'int';
+        return $this->related->getIncrementing()
+                                && $this->related->getKeyType() === 'int';
     }
 
     /**

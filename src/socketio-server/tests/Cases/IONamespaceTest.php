@@ -31,7 +31,7 @@ use Swoole\Atomic;
  */
 class IONamespaceTest extends AbstractTestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->getContainer();

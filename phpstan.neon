@@ -22,7 +22,8 @@ parameters:
     - %currentWorkingDirectory%/src/grpc-server/*
     - %currentWorkingDirectory%/src/swagger/*
     - %currentWorkingDirectory%/src/validation/*
-    - %currentWorkingDirectory%/src/view/*
+    - %currentWorkingDirectory%/src/view/src/Engine/*
+    - %currentWorkingDirectory%/src/server/src/SwowServer.php
   ignoreErrors:
     - '#side of && is always#'
     - '#method Redis::zRevRangeByScore\(\) expects int, string given#'
@@ -44,6 +45,7 @@ parameters:
     - '#Call to an undefined method Hyperf\\Utils\\HigherOrderCollectionProxy::.*#'
     - '#Used function getSwooleTracker.* not found#'
     - '#Function getSwooleTracker.* not found#'
+    - '#InfluxDB\\Point constructor expects float\|null, string given#'
     - '#Call to an undefined method Hyperf\\Database\\Model\\Builder::unsearchable#'
     - '#trackerHookMalloc not found#'
     - '#method Phar\:\:buildFromIterator\(\) expects Iterator, Traversable given#'

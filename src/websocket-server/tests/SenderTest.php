@@ -27,7 +27,7 @@ use Psr\Container\ContainerInterface;
  */
 class SenderTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

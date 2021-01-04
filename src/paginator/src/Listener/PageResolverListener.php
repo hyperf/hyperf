@@ -38,9 +38,9 @@ class PageResolverListener implements ListenerInterface
     public function process(object $event)
     {
         Paginator::currentPageResolver(function ($pageName = 'page') {
-            if (! ApplicationContext::hasContainer() ||
-                ! interface_exists(RequestInterface::class) ||
-                ! Context::has(ServerRequestInterface::class)
+            if (! ApplicationContext::hasContainer()
+                || ! interface_exists(RequestInterface::class)
+                || ! Context::has(ServerRequestInterface::class)
             ) {
                 return 1;
             }
@@ -57,9 +57,9 @@ class PageResolverListener implements ListenerInterface
 
         Paginator::currentPathResolver(function () {
             $default = '/';
-            if (! ApplicationContext::hasContainer() ||
-                ! interface_exists(RequestInterface::class) ||
-                ! Context::has(ServerRequestInterface::class)
+            if (! ApplicationContext::hasContainer()
+                || ! interface_exists(RequestInterface::class)
+                || ! Context::has(ServerRequestInterface::class)
             ) {
                 return $default;
             }

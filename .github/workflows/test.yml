@@ -2,19 +2,19 @@ name: PHPUnit for Hyperf
 
 on: [push, pull_request]
 
-env:
-  SW_VERSION: '4.5.9'
-
 jobs:
   ci:
-    name: Test on PHP ${{ matrix.php-version }} MySQL ${{ matrix.mysql-version }}
+    name: Test on PHP${{ matrix.php-version }} SW${{ matrix.sw-version }} MySQL${{ matrix.mysql-version }}
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
         os: [ubuntu-latest]
-        php-version: ['7.2', '7.3', '7.4']
+        php-version: ['7.3', '7.4']
         mysql-version: ['5.7', '8.0']
-      max-parallel: 6
+        sw-version: ['4.5.10', '4.6.0-beta']
+      max-parallel: 4
+    env:
+      SW_VERSION: ${{ matrix.sw-version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2

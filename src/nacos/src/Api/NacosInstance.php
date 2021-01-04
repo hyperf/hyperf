@@ -27,7 +27,7 @@ class NacosInstance extends AbstractNacos
             RequestOptions::QUERY => $instanceModel->toArray(),
         ]);
 
-        return $response->getBody()->getContents() === 'ok';
+        return (string) $response->getBody() === 'ok';
     }
 
     public function delete(InstanceModel $instanceModel): bool
@@ -36,7 +36,7 @@ class NacosInstance extends AbstractNacos
             RequestOptions::QUERY => $instanceModel->toArray(),
         ]);
 
-        return $response->getBody()->getContents() === 'ok';
+        return (string) $response->getBody() === 'ok';
     }
 
     public function update(InstanceModel $instanceModel): bool
@@ -47,7 +47,7 @@ class NacosInstance extends AbstractNacos
             RequestOptions::QUERY => $instanceModel->toArray(),
         ]);
 
-        return $response->getBody()->getContents() === 'ok';
+        return (string) $response->getBody() === 'ok';
     }
 
     public function list(ServiceModel $serviceModel, array $clusters = [], ?bool $healthyOnly = null): array
@@ -66,7 +66,7 @@ class NacosInstance extends AbstractNacos
             RequestOptions::QUERY => $params,
         ]);
 
-        return Json::decode($response->getBody()->getContents());
+        return Json::decode((string) $response->getBody());
     }
 
     public function getOptimal(ServiceModel $serviceModel, array $clusters = [])
@@ -91,7 +91,7 @@ class NacosInstance extends AbstractNacos
             RequestOptions::QUERY => $instanceModel->toArray(),
         ]);
 
-        return Json::decode($response->getBody()->getContents());
+        return Json::decode((string) $response->getBody());
     }
 
     public function beat(ServiceModel $serviceModel, InstanceModel $instanceModel): array
@@ -109,7 +109,7 @@ class NacosInstance extends AbstractNacos
             RequestOptions::QUERY => $params,
         ]);
 
-        return Json::decode($response->getBody()->getContents());
+        return Json::decode((string) $response->getBody());
     }
 
     public function updateHealth(InstanceModel $instanceModel): bool
@@ -122,7 +122,7 @@ class NacosInstance extends AbstractNacos
             RequestOptions::QUERY => $instanceModel->toArray(),
         ]);
 
-        return $response == 'ok';
+        return (string) $response->getBody() === 'ok';
     }
 
     protected function loadBalancer(array $nodes, $tactics = 'random')

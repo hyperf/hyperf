@@ -9,12 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Tracer\Middleware;
+namespace Hyperf\Utils\Exception;
 
-/**
- * Classname misspelled. Please use TraceMiddleware.
- * @deprecated
- */
-class TraceMiddeware extends TraceMiddleware
+class WaitTimeoutException extends TimeoutException
 {
 }

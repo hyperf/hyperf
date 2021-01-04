@@ -24,7 +24,7 @@ use Psr\Container\ContainerInterface;
  */
 class PoolTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

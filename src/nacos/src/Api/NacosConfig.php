@@ -24,7 +24,7 @@ class NacosConfig extends AbstractNacos
         ]);
 
         $statusCode = $response->getStatusCode();
-        $contents = $response->getBody()->getContents();
+        $contents = (string) $response->getBody();
         if ($statusCode !== 200) {
             return [];
         }
@@ -38,7 +38,7 @@ class NacosConfig extends AbstractNacos
             RequestOptions::FORM_PARAMS => $configModel->toArray(),
         ]);
 
-        return Json::decode($response->getBody()->getContents());
+        return Json::decode((string) $response->getBody());
     }
 
     public function delete(ConfigModel $configModel): array
@@ -47,6 +47,6 @@ class NacosConfig extends AbstractNacos
             RequestOptions::QUERY => $configModel->toArray(),
         ]);
 
-        return Json::decode($response->getBody()->getContents());
+        return Json::decode((string) $response->getBody());
     }
 }

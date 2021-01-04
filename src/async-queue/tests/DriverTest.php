@@ -29,7 +29,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  */
 class DriverTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

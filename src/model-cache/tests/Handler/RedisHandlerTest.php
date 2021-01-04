@@ -28,7 +28,7 @@ class RedisHandlerTest extends TestCase
 {
     protected $handler = RedisHandler::class;
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

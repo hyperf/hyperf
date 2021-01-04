@@ -148,17 +148,25 @@ class MetricFactory implements MetricFactoryInterface
 
     private function guardConfig()
     {
-        if ($this->config->get("metric.metric.{$this->name}.mode") == Constants::SCRAPE_MODE &&
-            $this->config->get('metric.use_standalone_process') == false) {
+        if ($this->config->get("metric.metric.{$this->name}.mode") == Constants::SCRAPE_MODE
+            && $this->config->get('metric.use_standalone_process') == false) {
             throw new RuntimeException(
                 "Prometheus in scrape mode must be used in conjunction with standalone process. \n Set metric.use_standalone_process to true to avoid this error."
             );
         }
     }
 
+    private function getUri(string $address, string $job): string
+    {
+        if (! Str::contains($address, ['https://', 'http://'])) {
+            $address = 'http://' . $address;
+        }
+        return $address . '/metrics/job/' . $job . '/ip/' . current(swoole_get_local_ip()) . '/pid/' . getmypid();
+    }
+
     private function doRequest(string $address, string $job, string $method)
     {
-        $url = 'http://' . $address . '/metrics/job/' . $job . '/ip/' . current(swoole_get_local_ip()) . '/pid/' . getmypid();
+        $url = $this->getUri($address, $job);
         $client = $this->guzzleClientFactory->create();
         $requestOptions = [
             'headers' => [

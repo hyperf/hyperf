@@ -29,7 +29,7 @@ use PHPUnit\Framework\TestCase;
  */
 class AnnotationReaderTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $reader = new AnnotationReader();
 

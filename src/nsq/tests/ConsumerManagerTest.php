@@ -30,7 +30,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ConsumerManagerTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         ProcessManager::clear();

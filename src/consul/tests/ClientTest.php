@@ -32,7 +32,7 @@ class ClientTest extends TestCase
      */
     private $method;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->client = new Client(function () {
             return Mockery::mock(\GuzzleHttp\Client::class);

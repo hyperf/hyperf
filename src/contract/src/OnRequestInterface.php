@@ -11,10 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Contract;
 
-use Swoole\Http\Request as SwooleRequest;
-use Swoole\Http\Response as SwooleResponse;
-
 interface OnRequestInterface
 {
-    public function onRequest(SwooleRequest $request, SwooleResponse $response): void;
+    /**
+     * @param mixed $request swoole request or psr server request
+     * @param mixed $response swoole response or swow session
+     */
+    public function onRequest($request, $response): void;
 }

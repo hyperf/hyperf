@@ -32,7 +32,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class RenderTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set(ResponseInterface::class, null);
@@ -93,7 +93,7 @@ class RenderTest extends TestCase
 <body>
 Hello, Hyperf. You are using smarty template now.
 </body>
-</html>', $response->getBody()->getContents());
+</html>', (string) $response->getBody());
         }
     }
 

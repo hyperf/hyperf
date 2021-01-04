@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Signal\Handler;
 
-use Hyperf\AsyncQueue\Driver\Driver;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Process\ProcessManager;
 use Hyperf\Server\ServerManager;
@@ -46,9 +45,6 @@ class CoroutineServerStopHandler implements SignalHandlerInterface
 
     public function handle(int $signal): void
     {
-        if (class_exists(Driver::class)) {
-            Driver::$running = false;
-        }
         ProcessManager::setRunning(false);
 
         foreach (ServerManager::list() as [$type, $server]) {

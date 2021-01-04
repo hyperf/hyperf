@@ -21,7 +21,7 @@ use ReflectionMethod;
  */
 class ParserCronNumberTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         ini_set('date.timezone', 'Asia/Shanghai');
     }

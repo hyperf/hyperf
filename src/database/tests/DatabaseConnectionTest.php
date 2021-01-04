@@ -164,9 +164,13 @@ class DatabaseConnectionTest extends TestCase
     public function testBeginTransactionMethodRetriesOnFailure()
     {
         $pdo = $this->createMock(DatabaseConnectionTestMockPDO::class);
-        $pdo->expects($this->at(0))
+        $pdo->expects($this->exactly(2))
             ->method('beginTransaction')
-            ->will($this->throwException(new ErrorException('server has gone away')));
+            ->withConsecutive([], [])
+            ->willReturnOnConsecutiveCalls(
+                $this->throwException(new ErrorException('server has gone away')),
+                null
+            );
         $connection = $this->getMockConnection(['reconnect'], $pdo);
         $connection->expects($this->once())->method('reconnect');
         $connection->beginTransaction();

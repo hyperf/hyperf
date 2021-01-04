@@ -20,7 +20,7 @@ class NacosOperator extends AbstractNacos
     {
         $response = $this->request('GET', '/nacos/v1/ns/operator/switches');
 
-        return Json::decode($response->getBody()->getContents());
+        return Json::decode((string) $response->getBody());
     }
 
     public function updateSwitches($entry, $value, bool $debug = false): array
@@ -32,14 +32,14 @@ class NacosOperator extends AbstractNacos
             RequestOptions::QUERY => $params,
         ]);
 
-        return Json::decode($response->getBody()->getContents());
+        return Json::decode((string) $response->getBody());
     }
 
     public function getMetrics(): array
     {
         $response = $this->request('GET', '/nacos/v1/ns/operator/metrics');
 
-        return Json::decode($response->getBody()->getContents());
+        return Json::decode((string) $response->getBody());
     }
 
     public function getServers($healthy = true): array
@@ -51,13 +51,13 @@ class NacosOperator extends AbstractNacos
             RequestOptions::QUERY => $params,
         ]);
 
-        return Json::decode($response->getBody()->getContents());
+        return Json::decode((string) $response->getBody());
     }
 
     public function getLeader(): array
     {
         $response = $this->request('GET', '/nacos/v1/ns/raft/leader');
 
-        return Json::decode($response->getBody()->getContents());
+        return Json::decode((string) $response->getBody());
     }
 }

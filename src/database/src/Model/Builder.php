@@ -713,9 +713,9 @@ class Builder
         // If the model has a mutator for the requested column, we will spin through
         // the results and mutate the values so that the mutated version of these
         // columns are returned as you would expect from these Model models.
-        if (! $this->model->hasGetMutator($column) &&
-            ! $this->model->hasCast($column) &&
-            ! in_array($column, $this->model->getDates())) {
+        if (! $this->model->hasGetMutator($column)
+            && ! $this->model->hasCast($column)
+            && ! in_array($column, $this->model->getDates())) {
             return $results;
         }
 
@@ -1168,8 +1168,8 @@ class Builder
      */
     protected function addUpdatedAtColumn(array $values)
     {
-        if (! $this->model->usesTimestamps() ||
-            is_null($this->model->getUpdatedAtColumn())) {
+        if (! $this->model->usesTimestamps()
+            || is_null($this->model->getUpdatedAtColumn())) {
             return $values;
         }
 

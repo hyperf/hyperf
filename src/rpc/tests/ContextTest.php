@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ContextTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         (new Context())->clear();
     }
