@@ -10,7 +10,7 @@
 
 ## 新增
 
-- [#3052](https://github.com/hyperf/hyperf/pull/3052) 为 `metric` 组件，新增了手机命令行指标的功能。
+- [#3052](https://github.com/hyperf/hyperf/pull/3052) 为 `metric` 组件，新增了收集命令行指标的功能。
 - [#3054](https://github.com/hyperf/hyperf/pull/3054) 为 `socketio-server` 组件，新增了 `Engine::close` 协议支持，并在调用方法 `getRequest` 失败时，抛出连接已被关闭的异常。
 
 # v2.1.0 - 2020-12-28
