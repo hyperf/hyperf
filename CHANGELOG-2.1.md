@@ -4,6 +4,10 @@
 
 - [#3045](https://github.com/hyperf/hyperf/pull/3045) Fixed type hint error, when don't set `true` for `PDO::ATTR_PERSISTENT`.
 
+## Added
+
+- [#3054](https://github.com/hyperf/hyperf/pull/3054) Support `Engine::close` protocol and improve error handling for `socketio-server`.
+
 # v2.1.0 - 2020-12-28
 
 ## Dependencies Upgrade
