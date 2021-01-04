@@ -160,7 +160,7 @@ class MetricFactory implements MetricFactoryInterface
     private function guardConfig()
     {
         if ($this->config->get("metric.metric.{$this->name}.mode") == Constants::SCRAPE_MODE
-            && $this->config->get('metric.use_standalone_process') == false) {
+            && $this->config->get('metric.use_standalone_process', true) == false) {
             throw new RuntimeException(
                 "Prometheus in scrape mode must be used in conjunction with standalone process. \n Set metric.use_standalone_process to true to avoid this error."
             );
