@@ -41,7 +41,6 @@ parameters:
     - '#Static call to instance method Hyperf\\RpcServer\\Router\\Router::#'
     - '#Method Hyperf\\Utils\\Serializer\\ScalarNormalizer::denormalize\(\) should return array\|object but returns#'
     - '#Function get_debug_type invoked with 1 parameter, 0 required#'
-    - '#gc_status not found#'
     - '#Call to an undefined method Hyperf\\Utils\\HigherOrderCollectionProxy::.*#'
     - '#Used function getSwooleTracker.* not found#'
     - '#Function getSwooleTracker.* not found#'

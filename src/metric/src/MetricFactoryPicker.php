@@ -40,7 +40,7 @@ class MetricFactoryPicker
         }
 
         $config = $container->get(ConfigInterface::class);
-        $useStandaloneProcess = $config->get('metric.use_standalone_process');
+        $useStandaloneProcess = $config->get('metric.use_standalone_process', true);
 
         // misconfiguration.
         if ($useStandaloneProcess && ! static::$isCommand && empty(ProcessCollector::all())) {
