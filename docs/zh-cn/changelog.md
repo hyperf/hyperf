@@ -1,5 +1,18 @@
 # 版本更新记录
 
+# v2.1.1 - 2021-01-04
+
+## 修复
+
+- [#3045](https://github.com/hyperf/hyperf/pull/3045) 修复 `database` 组件，当没有主动设置 `PDO::ATTR_PERSISTENT` 为 `true` 时，导致的类型错误。
+- [#3047](https://github.com/hyperf/hyperf/pull/3047) 修复 `socketio-server` 组件，为 `sid` 续约时报错的问题。
+- [#3062](https://github.com/hyperf/hyperf/pull/3062) 修复 `grpc-server` 组件，入参无法被正确解析的问题。
+
+## 新增
+
+- [#3052](https://github.com/hyperf/hyperf/pull/3052) 为 `metric` 组件，新增了手机命令行指标的功能。
+- [#3054](https://github.com/hyperf/hyperf/pull/3054) 为 `socketio-server` 组件，新增了 `Engine::close` 协议支持，并在调用方法 `getRequest` 失败时，抛出连接已被关闭的异常。
+
 # v2.1.0 - 2020-12-28
 
 ## 依赖升级
