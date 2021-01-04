@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Exception;
 
-use Hyperf\DB\Exception\RuntimeException;
+use Hyperf\Server\Exception\RuntimeException;
 
 class ConnectionClosedException extends RuntimeException
 {
