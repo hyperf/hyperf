@@ -1,5 +1,9 @@
 # v2.1.2 - TBD
 
+## Changed
+
+- [#3077](https://github.com/hyperf/hyperf/pull/3077) Reduced `league/flysystem` to `^1.0`.
+
 # v2.1.1 - 2021-01-04
 
 ## Fixed
