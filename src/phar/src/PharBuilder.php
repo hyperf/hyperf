@@ -219,6 +219,11 @@ class PharBuilder
                 ->in($this->package->getDirectory() . 'runtime/container');
             $targetPhar->addBundle($this->package->bundle($finder));
         }
+        // Add .env file.
+        if (is_file($this->package->getDirectory() . '.env')) {
+            $this->logger->info('Adding .env file');
+            $targetPhar->addFile($this->package->getDirectory() . '.env');
+        }
 
         $this->logger->info('Adding composer base files');
         // Add composer autoload file.
