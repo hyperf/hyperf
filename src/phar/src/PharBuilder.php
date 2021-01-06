@@ -229,10 +229,6 @@ class PharBuilder
 
         // Add composer depenedencies.
         foreach ($this->getPackagesDependencies() as $package) {
-            // Cannot package yourself.
-            if (stripos($package->getDirectory(), 'vendor/hyperf/phar/') !== false) {
-                continue;
-            }
             $this->logger->info('Adding dependency "' . $package->getName() . '" from "' . $this->getPathLocalToBase($package->getDirectory()) . '"');
             $targetPhar->addBundle($package->bundle());
         }
