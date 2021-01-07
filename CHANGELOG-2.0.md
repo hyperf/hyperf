@@ -1,5 +1,9 @@
 # v2.0.26 - TBD
 
+## Fixed
+
+- [#3047](https://github.com/hyperf/hyperf/pull/3047) Fixed bug that renew sid in all namespaces failed.
+
 # v2.0.25 - 2020-12-28
 
 ## Added
