@@ -59,8 +59,9 @@ class DB
             if (! $hasContextConnection) {
                 if ($this->shouldUseSameConnection($name)) {
                     // Should storage the connection to coroutine context, then use defer() to release the connection.
-                    Context::set($this->getContextKey(), $connection);
-                    defer(function () use ($connection) {
+                    Context::set($contextKey = $this->getContextKey(), $connection);
+                    defer(function () use ($connection, $contextKey) {
+                        Context::set($contextKey, null);
                         $connection->release();
                     });
                 } else {
