@@ -25,4 +25,30 @@ class RewriteConfigVisitor extends NodeVisitorAbstract
         }
         return $node;
     }
+
+    public function afterTraverse(array $nodes): array
+    {
+        $nodes[] = $this->createReturn();
+        return $nodes;
+    }
+
+    protected function createReturn(): Node\Stmt\Return_
+    {
+        $funcCall = new Node\Expr\FuncCall(new Node\Name('array_replace'));
+        $funcCall->args = [
+            new Node\Arg(new Node\Expr\Variable('result')),
+            $this->createScanArg(),
+        ];
+        return new Node\Stmt\Return_($funcCall);
+    }
+
+    protected function createScanArg(): Node\Arg
+    {
+        $array = new Node\Expr\Array_();
+        $array->items[] = new Node\Expr\ArrayItem(
+            new Node\Expr\ConstFetch(new Node\Name('true')),
+            new Node\Scalar\String_('scan_cacheable')
+        );
+        return new Node\Arg($array);
+    }
 }
