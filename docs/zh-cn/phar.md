@@ -23,7 +23,7 @@ php bin/hyperf.php phar:build --name=your_project.phar
 - 指定包版本
 
 ```shell
-php bin/hyperf.php phar:build --pharVersion=1.0.1
+php bin/hyperf.php phar:build --phar-version=1.0.1
 ```
 
 - 指定启动文件
