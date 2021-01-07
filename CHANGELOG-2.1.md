@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#3050](https://github.com/hyperf/hyperf/pull/3050) Fixed extra data saved twice when use `save()` after `increment()` with `extra`.
+- [#3082](https://github.com/hyperf/hyperf/pull/3082) Fixed db connection has already been bound to another coroutine when used in defer.
 
 ## Added
 
