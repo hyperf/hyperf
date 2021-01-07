@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\DB;
 
+use Closure;
 use Hyperf\DB\Pool\PoolFactory;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
@@ -24,6 +25,7 @@ use Throwable;
  * @method execute(string $query, array $bindings = [])
  * @method query(string $query, array $bindings = [])
  * @method fetch(string $query, array $bindings = [])
+ * @method run(Closure $closure)
  */
 class DB
 {

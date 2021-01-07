@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\DB;
 
+use Closure;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use PDO;
@@ -159,6 +160,11 @@ class PDOConnection extends AbstractConnection
     public function call(string $method, array $argument = [])
     {
         return $this->connection->{$method}(...$argument);
+    }
+
+    public function run(Closure $closure)
+    {
+        return $closure->call($this, $this->connection);
     }
 
     /**
