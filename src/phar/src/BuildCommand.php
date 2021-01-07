@@ -75,7 +75,6 @@ class BuildCommand extends HyperfCommand
 
     public function getPharBuilder(string $path): PharBuilder
     {
-
         if (is_dir($path)) {
             $path = rtrim($path, '/') . '/composer.json';
         }
