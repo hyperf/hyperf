@@ -22,8 +22,8 @@ use Throwable;
  * @method rollback()
  * @method insert(string $query, array $bindings = [])
  * @method execute(string $query, array $bindings = [])
- * @method query(string $query, array $bindings = [], int $fetchModel = null)
- * @method fetch(string $query, array $bindings = [], int $fetchModel = null)
+ * @method query(string $query, array $bindings = [])
+ * @method fetch(string $query, array $bindings = [])
  */
 class DB
 {
