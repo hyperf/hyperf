@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\DB\Cases;
 
+use Hyperf\DB\DB;
+
 /**
  * @internal
  * @coversNothing
@@ -27,6 +29,27 @@ class MySQLDriverTest extends PDODriverTest
     public function testQuery()
     {
         parent::testQuery();
+    }
+
+    public function testRun()
+    {
+        $db = $this->getContainer()->get(DB::class);
+
+        $sql = 'SELECT * FROM `user` WHERE id = ?;';
+        $bindings = [2];
+        $res = $db->run(function () use ($sql, $bindings) {
+            $statement = $this->prepare($sql);
+
+            $statement->execute($bindings);
+
+            $items = $statement->fetchAll();
+            foreach ($items as $item) {
+                $result[] = (object) $item;
+            }
+            return $result;
+        });
+
+        $this->assertSame('Hyperflex', $res[0]->name);
     }
 
     public function testInsertAndExecute()
