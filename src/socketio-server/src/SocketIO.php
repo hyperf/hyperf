@@ -147,6 +147,10 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
             $server->push($frame->fd, Engine::PONG); //sever pong
             return;
         }
+        if ($frame->data[0] === Engine::CLOSE) {
+            $server->disconnect($frame->fd);
+            return;
+        }
         if ($frame->data[0] !== Engine::MESSAGE) {
             $this->stdoutLogger->error("EngineIO event type {$frame->data[0]} not supported");
             return;
@@ -360,9 +364,8 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         if (! array_key_exists('forward', $all)) {
             return;
         }
-        /** @var NamespaceInterface $nsp */
         foreach (array_keys($all['forward']) as $nsp) {
-            $adapter = $nsp->getAdapter();
+            $adapter = $this->of($nsp)->getAdapter();
             if ($adapter instanceof EphemeralInterface) {
                 $adapter->renew($this->sidProvider->getSid($fd));
             }

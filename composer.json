@@ -49,7 +49,7 @@
         "jean85/pretty-package-versions": "^1.2",
         "jonahgeorge/jaeger-client-php": "^0.6.0",
         "laminas/laminas-mime": "^2.7",
-        "league/flysystem": "^1.0|^2.0",
+        "league/flysystem": "^1.0",
         "league/flysystem-aws-s3-v3": "^1.0|^2.0",
         "league/flysystem-memory": "^1.0|^2.0",
         "league/plates": "^3.3",
@@ -152,7 +152,6 @@
     "autoload": {
         "files": [
             "src/config/src/Functions.php",
-            "src/di/src/Functions.php",
             "src/filesystem/src/Adapter/AliyunOssHook.php",
             "src/nats/src/Functions.php",
             "src/translation/src/Functions.php",

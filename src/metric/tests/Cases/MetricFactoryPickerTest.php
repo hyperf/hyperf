@@ -19,6 +19,7 @@ use Hyperf\Metric\Adapter\Prometheus\MetricFactory as PrometheusFactory;
 use Hyperf\Metric\Adapter\RemoteProxy\MetricFactory as RemoteFactory;
 use Hyperf\Metric\Adapter\StatsD\MetricFactory as StatsDFactory;
 use Hyperf\Metric\MetricFactoryPicker;
+use Hyperf\Process\ProcessCollector;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -95,6 +96,7 @@ class MetricFactoryPickerTest extends TestCase
                 ],
             ],
         ]);
+        ProcessCollector::add('dummy', Mockery::mock(\Swoole\Process::class));
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
         $container->shouldReceive('get')->with(RemoteFactory::class)->andReturn(Mockery::mock(RemoteFactory::class));
