@@ -35,10 +35,10 @@ class AsyncEventDispatcher implements EventDispatcherInterface
 
     public function dispatch(object $event)
     {
-        $delay = $event->async_delay ?? 0;
+        $delay = $event->asyncDelay ?? 0;
         $this->logger->debug("Event async -> ". get_class($event));
-        $driver_factory = ApplicationContext::getContainer()->get(DriverFactory::class);
-        (new AsyncEventDispatchJobService($driver_factory))->push($event, $delay);
+        $driverFactory = ApplicationContext::getContainer()->get(DriverFactory::class);
+        (new AsyncEventDispatchJobService($driverFactory))->push($event, $delay);
         return $event;
     }
 
