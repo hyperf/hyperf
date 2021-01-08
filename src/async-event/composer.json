@@ -1,11 +1,11 @@
 {
-    "name": "mmfei/hyperf-async-event",
+    "name": "hyperf/async-event",
     "type": "library",
     "description": "An async event for hyperf.",
     "license": "MIT",
     "keywords": [
         "async",
-        "envent",
+        "event",
         "hyperf"
     ],
     "autoload": {
