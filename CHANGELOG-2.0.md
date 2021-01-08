@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#3047](https://github.com/hyperf/hyperf/pull/3047) Fixed bug that renew sid in all namespaces failed.
+- [#3087](https://github.com/hyperf/hyperf/pull/3087) Fixed memory leak when using pipeline sometimes.
 
 # v2.0.25 - 2020-12-28
 
