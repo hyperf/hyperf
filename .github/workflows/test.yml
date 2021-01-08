@@ -11,7 +11,7 @@ jobs:
         os: [ubuntu-latest]
         php-version: ['7.3', '7.4']
         mysql-version: ['5.7', '8.0']
-        sw-version: ['4.5.10', '4.6.0-beta']
+        sw-version: ['4.5.10', '4.6.0']
       max-parallel: 4
     env:
       SW_VERSION: ${{ matrix.sw-version }}
