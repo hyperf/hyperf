@@ -2,12 +2,12 @@
 
 ## Installation
 ```
-composer require mmfei/hyperf-async-event
+composer require hyperf/async-event
 ```
 ## Configuration
 ### Publish config
 ```
-php bin/hyperf.php vendor:publish mmfei/hyperf-async-event
+php bin/hyperf.php vendor:publish hyperf/async-event
 ```
 ## Config files:
 ```
@@ -19,7 +19,7 @@ php bin/hyperf.php vendor:publish mmfei/hyperf-async-event
 ## Usage
 ```php
 $event = new \StdClass();
-$event->async_delay = 0;
+$event->asyncDelay = 0;
 $event->data = 'test';
 \Hyperf\Utils\ApplicationContext::getContainer()->get(EventDispatcherInterface::class)->dispatch($event);
 ```
