@@ -158,7 +158,7 @@ class ElasticsearchEngine extends Engine
      */
     public function map(Builder $builder, $results, $model): Collection
     {
-        if ($results['hits']['total'] === 0) {
+        if ($this->getTotalCount($results) === 0) {
             return $model->newCollection();
         }
         $keys = collect($results['hits']['hits'])->pluck('_id')->values()->all();
