@@ -31,6 +31,7 @@ jobs:
         run: ./.travis/swoole.install.sh
       - name: Setup Yasd
         run: |
+          sudo apt-get install libboost-all-dev
           wget https://github.com/swoole/yasd/archive/${YASD_VERSION}.tar.gz -O yasd.tar.gz
           mkdir -p yasd
           tar -xf yasd.tar.gz -C yasd --strip-components=1
