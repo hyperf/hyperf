@@ -136,7 +136,7 @@ class ElasticsearchEngine extends Engine
             'from' => (($page * $perPage) - $perPage),
             'size' => $perPage,
         ]);
-        $result['nbPages'] = $result['hits']['total'] / $perPage;
+        $result['nbPages'] = $this->getTotalCount($result) / $perPage;
         return $result;
     }
 
@@ -158,7 +158,7 @@ class ElasticsearchEngine extends Engine
      */
     public function map(Builder $builder, $results, $model): Collection
     {
-        if ($results['hits']['total'] === 0) {
+        if ($this->getTotalCount($results) === 0) {
             return $model->newCollection();
         }
         $keys = collect($results['hits']['hits'])->pluck('_id')->values()->all();
@@ -177,7 +177,12 @@ class ElasticsearchEngine extends Engine
      */
     public function getTotalCount($results): int
     {
-        return $results['hits']['total'];
+        $total = $results['hits']['total'];
+        if (is_array($total)) {
+            return $results['hits']['total']['value'];
+        }
+
+        return $total;
     }
 
     /**
