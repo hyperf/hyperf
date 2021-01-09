@@ -17,6 +17,7 @@ use HyperfTest\Di\Stub\Aspect\NoProcessAspect;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use function Yasd\Zval\getRefCount;
 
 /**
  * @internal
@@ -44,12 +45,6 @@ class PipelineTest extends TestCase
         });
 
         $this->assertTrue($res);
-
-        ob_start();
-        debug_zval_dump($pipeline);
-        $data = ob_get_clean();
-
-        preg_match('/refcount\((\d+)\)/U', $data, $res);
-        $this->assertEquals(2, $res[1]);
+        $this->assertEquals(2, getRefCount($pipeline));
     }
 }
