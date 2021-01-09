@@ -130,7 +130,7 @@ class ElasticsearchEngineTest extends TestCase
         $model->shouldReceive('newCollection')->andReturn($models);
         $results = $engine->map($builder, [
             'hits' => [
-                'total' => '1',
+                'total' => 1,
                 'hits' => [
                     [
                         '_id' => '1',
