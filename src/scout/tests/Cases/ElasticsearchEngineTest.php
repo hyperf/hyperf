@@ -140,4 +140,23 @@ class ElasticsearchEngineTest extends TestCase
         ], $model);
         $this->assertEquals(1, count($results));
     }
+
+    public function testGetTotalCount()
+    {
+        $client = Mockery::mock('Elasticsearch\Client');
+        $engine = new ElasticsearchEngine($client, 'scout');
+        $this->assertSame(1, $engine->getTotalCount([
+            'hits' => [
+                'total' => 1,
+            ],
+        ]));
+        $this->assertSame(2, $engine->getTotalCount([
+            'hits' => [
+                'total' => [
+                    'value' => 2,
+                    'relation' => 'eq',
+                ],
+            ],
+        ]));
+    }
 }

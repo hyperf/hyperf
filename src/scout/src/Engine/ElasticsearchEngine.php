@@ -136,7 +136,7 @@ class ElasticsearchEngine extends Engine
             'from' => (($page * $perPage) - $perPage),
             'size' => $perPage,
         ]);
-        $result['nbPages'] = $result['hits']['total'] / $perPage;
+        $result['nbPages'] = $this->getTotalCount($result) / $perPage;
         return $result;
     }
 
