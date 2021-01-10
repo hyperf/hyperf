@@ -9,13 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Kafka;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Kafka\AbstractConsumer;
 use Hyperf\Kafka\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Kafka\Event\AfterConsume;
 use Hyperf\Kafka\Event\BeforeConsume;
@@ -27,14 +25,11 @@ use longlang\phpkafka\Consumer\ConsumeMessage;
 use longlang\phpkafka\Consumer\Consumer as LongLangConsumer;
 use longlang\phpkafka\Consumer\ConsumerConfig;
 use longlang\phpkafka\Exception\KafkaErrorException;
-use longlang\phpkafka\Protocol\CreateTopics\CreatableTopic;
-use longlang\phpkafka\Protocol\CreateTopics\CreateTopicsRequest;
 use longlang\phpkafka\Protocol\ErrorCode;
 use longlang\phpkafka\Protocol\JoinGroup\JoinGroupRequest;
 use longlang\phpkafka\Socket\SwooleSocket;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-
 
 class ConsumerManager
 {
@@ -125,10 +120,9 @@ class ConsumerManager
 
                         $result = $consumer->consume($message);
 
-                        if (! $consumerConfig->getAutoCreateTopic()) {
-
+                        if (! $consumerConfig->getAutoCommit()) {
                             if ($result === Result::ACK) {
-                                $message->getConsumer()->ack($message->getPartition());
+                                $message->getConsumer()->ack($message);
                             }
 
                             if ($result === Result::REQUEUE) {
@@ -139,7 +133,6 @@ class ConsumerManager
                         $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($consumer, $message, $result));
                     }
                 );
-
 
                 retry(
                     3,
@@ -164,10 +157,7 @@ class ConsumerManager
                     },
                     10
                 );
-
-
             }
-
 
             public function getConsumerConfig(): ConsumerConfig
             {

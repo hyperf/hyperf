@@ -13,7 +13,6 @@ namespace HyperfTest\Kafka;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
-use Hyperf\Kafka\AbstractConsumer;
 use Hyperf\Kafka\Annotation\Consumer;
 use Hyperf\Kafka\ConsumerManager;
 use Hyperf\Process\AbstractProcess;
@@ -66,12 +65,12 @@ class ConsumerManagerTest extends TestCase
                 $this->assertSame($config['rack_id'], $consumer->getRackId());
                 $this->assertSame($config['replica_id'], $consumer->getReplicaId());
                 $this->assertSame([$topic], $consumer->getTopic());
-                $this->assertSame((float)$config['rebalance_timeout'], $consumer->getRebalanceTimeout());
-                $this->assertSame((float)$config['send_timeout'], $consumer->getSendTimeout());
+                $this->assertSame((float) $config['rebalance_timeout'], $consumer->getRebalanceTimeout());
+                $this->assertSame((float) $config['send_timeout'], $consumer->getSendTimeout());
                 $this->assertSame($groupId, $consumer->getGroupId());
                 $this->assertTrue(strpos($consumer->getGroupInstanceId(), $groupId) !== false);
                 $this->assertSame('', $consumer->getMemberId());
-                $this->assertSame((float)$config['interval'], $consumer->getInterval());
+                $this->assertSame((float) $config['interval'], $consumer->getInterval());
                 $this->assertSame($config['bootstrap_server'], $consumer->getBroker());
                 $this->assertSame(SwooleSocket::class, $consumer->getSocket());
                 $this->assertSame(SwooleClient::class, $consumer->getClient());

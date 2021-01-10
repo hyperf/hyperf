@@ -9,17 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Kafka;
 
 use Hyperf\Contract\ConfigInterface;
-use longlang\phpkafka\Exception\KafkaErrorException;
-use longlang\phpkafka\Producer\ProduceMessage;
 use longlang\phpkafka\Producer\Producer as LongLangProducer;
 use longlang\phpkafka\Producer\ProducerConfig;
-use longlang\phpkafka\Protocol\CreateTopics\CreatableTopic;
-use longlang\phpkafka\Protocol\CreateTopics\CreateTopicsRequest;
-use longlang\phpkafka\Protocol\ErrorCode;
 use longlang\phpkafka\Socket\SwooleSocket;
 use Psr\Container\ContainerInterface;
 
@@ -69,5 +63,4 @@ class Producer
     {
         return $this->producer->{$name}(...$arguments);
     }
-
 }

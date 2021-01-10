@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 namespace HyperfTest\Kafka\Stub;
 
 use Hyperf\Config\Config;
@@ -35,8 +44,8 @@ class ContainerStub
             return true;
         });
 
-        $container->shouldReceive('get')->with(Producer::class)->andReturnUsing(function () use ($container) {
-            return  Mockery::mock(Producer::class);
+        $container->shouldReceive('get')->with(Producer::class)->andReturnUsing(function () {
+            return Mockery::mock(Producer::class);
         });
 
         $container->shouldReceive('make')->with(DemoConsumer::class, Mockery::any())->andReturnUsing(function () use ($container) {
