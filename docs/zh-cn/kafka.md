@@ -19,20 +19,20 @@ composer require hyperf/kafka
  
 |        配置                 |    类型    |  默认值 |                     备注                       |
 |:---------------------------:|:---------:|:------:|:----------------------------------------------:|
-|    connect_timeout          | int｜float |   -1   |  连接超时时间（单位：秒，支持小数），为-1则不限制   |
-|    send_timeout             | int｜float |   -1   |  发送超时时间（单位：秒，支持小数），为-1则不限制   |
-|    recv_timeout             | int｜float |   -1   |  接收超时时间（单位：秒，支持小数），为-1则不限制     |
+|    connect_timeout          | int｜float |   -1   |  连接超时时间（单位：秒，支持小数），为 - 1 则不限制   |
+|    send_timeout             | int｜float |   -1   |  发送超时时间（单位：秒，支持小数），为 - 1 则不限制   |
+|    recv_timeout             | int｜float |   -1   |  接收超时时间（单位：秒，支持小数），为 - 1 则不限制     |
 |    client_id                |   stirng   |  null  |  Kafka 客户端标识   |
 |    max_write_attempts       |   int      |   3    |  最大写入尝试次数 |
-|    brokers                  |   array    |   []   | 手动配置 brokers 列表，如果要使用手动配置，请把updateBrokers设为true|
+|    brokers                  |   array    |   []   | 手动配置 brokers 列表，如果要使用手动配置，请把 updateBrokers 设为 true|
 |    bootstrap_server         |   array    |    '127.0.0.1:9092'    | 引导服务器，如果配置了该值，会自动连接该服务器，并自动更新 brokers  |
 |    update_brokers           |   bool     |   true   |  是否自动更新 brokers |
-|    acks                     |   int      |   0   |  生产者要求领导者，在确认请求完成之前已收到的确认数值。允许的值：0表示无确认，1表示仅领导者，-1表示完整的ISR。 |
+|    acks                     |   int      |   0   |  生产者要求领导者，在确认请求完成之前已收到的确认数值。允许的值：0 表示无确认，1 表示仅领导者，- 1 表示完整的 ISR。 |
 |    producer_id              |   int      |   -1   |  生产者 ID |
 |    producer_epoch           |   int      |   -1   |  生产者 Epoch |
 |    partition_leader_epoch   |   int      |   -1   |  分区 Leader Epoch |
-|    broker                   |   string   |   ''   |  broker，格式：'127.0.0.1:9092' |
-|    interval                 | int｜float |   0   |  未获取消息到消息时，延迟多少秒再次尝试，默认为0则不延迟（单位：秒，支持小数） |
+|    broker                   |   string   |   ''|  broker，格式：'127.0.0.1:9092' |
+|    interval                 | int｜float |   0   |  未获取消息到消息时，延迟多少秒再次尝试，默认为 0 则不延迟（单位：秒，支持小数） |
 |    session_timeout          |   int｜float   |   60   |  如果超时后没有收到心跳信号，则协调器会认为该用户死亡。（单位：秒，支持小数） |
 |    rebalance_timeout        |   int｜float |   60   |  重新平衡组时，协调器等待每个成员重新加入的最长时间（单位：秒，支持小数）。 |
 |    partitions               |   array   |   [0]   |  分区列表 |
@@ -43,7 +43,7 @@ composer require hyperf/kafka
 |    group_heartbeat          |   int    |   3   |  分组心跳时间间隔，单位：秒 |
 |    offset_retry             |   int    |   5   |  偏移量操作，匹配预设的错误码时，自动重试次数 |
 |    auto_create_topic        |    bool    |   true   | 是否需要自动创建 topic |
-|    partition_assignment_strategy |    string    |   KafkaStrategy::RANGE_ASSIGNOR   | 消费者分区分配策略,可选：范围分配(`KafkaStrategy::RANGE_ASSIGNOR`) 轮询分配(`KafkaStrategy::ROUND_ROBIN_ASSIGNOR`)) |
+|    partition_assignment_strategy |    string    |   KafkaStrategy::RANGE_ASSIGNOR   | 消费者分区分配策略, 可选：范围分配(`KafkaStrategy::RANGE_ASSIGNOR`) 轮询分配(`KafkaStrategy::ROUND_ROBIN_ASSIGNOR`)) |
 |    pool                     |   object   |      |   连接池配置 |
 
 
