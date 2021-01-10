@@ -17,7 +17,7 @@ use Hyperf\Di\Aop\RegisterInjectPropertyHandler;
 
 ! defined('BASE_PATH') && define('BASE_PATH', __DIR__);
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);
-! defined('REAL_BASE_PATH') && define('REAL_BASE_PATH', dirname(realpath($argv[0]), pathinfo($argv[0], PATHINFO_EXTENSION) == 'phar' ? 1 : 2));
+! defined('REAL_BASE_PATH') && define('REAL_BASE_PATH', BASE_PATH);
 
 require_once BASE_PATH . '/vendor/autoload.php';
 
