@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Phar;
 
 use Phar;
@@ -59,6 +60,23 @@ class TargetPhar
                 $this->addFile($resource);
             } else {
                 $this->buildFromIterator($resource);
+            }
+        }
+    }
+
+    /**
+     * Add folder link resources to the Phar package.
+     */
+    public function buildFromLinkIterator(Bundle $bundle)
+    {
+        /** @var Finder|string $resource */
+        foreach ($bundle as $resource) {
+            if (is_string($resource)) {
+                $this->addFile($resource);
+            } else {
+                foreach ($resource as $iterator) {
+                    $this->phar->addFile($iterator->getPathname(), $this->pharBuilder->getPathLocalToBase($iterator->getPathname()));
+                }
             }
         }
     }

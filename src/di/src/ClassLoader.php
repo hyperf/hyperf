@@ -40,7 +40,7 @@ class ClassLoader
     public function __construct(ComposerClassLoader $classLoader, string $proxyFileDir, string $configDir)
     {
         $this->setComposerClassLoader($classLoader);
-        if (file_exists(BASE_PATH . '/.env')) {
+        if (file_exists(REAL_BASE_PATH??BASE_PATH . '/.env')) {
             $this->loadDotenv();
         }
 
@@ -133,6 +133,6 @@ class ClassLoader
             ->immutable()
             ->make();
 
-        Dotenv::create($repository, [BASE_PATH])->load();
+        Dotenv::create($repository, [REAL_BASE_PATH??BASE_PATH])->load();
     }
 }

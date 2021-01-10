@@ -41,7 +41,7 @@ class ConfigFactory
         $finder->files()->in($paths)->name('*.php');
         foreach ($finder as $file) {
             $configs[] = [
-                $file->getBasename('.php') => require $file->getRealPath(),
+                $file->getBasename('.php') => require $file->getPathname(),
             ];
         }
         return $configs;

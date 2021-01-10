@@ -211,7 +211,7 @@ class SwowServer implements ServerInterface
     private function writePid(): void
     {
         $config = $this->container->get(ConfigInterface::class);
-        $file = $config->get('server.settings.pid_file', BASE_PATH . '/runtime/hyperf.pid');
+        $file = $config->get('server.settings.pid_file', REAL_BASE_PATH??BASE_PATH . '/runtime/hyperf.pid');
         file_put_contents($file, getmypid());
     }
 }
