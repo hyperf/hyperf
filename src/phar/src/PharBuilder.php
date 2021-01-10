@@ -240,7 +240,7 @@ class PharBuilder
         }
         // Replace ConfigFactory ReadPaths method.
         $this->logger->info('Replace method "readPaths" in file "vendor/hyperf/config/src/ConfigFactory.php" and change "getRealPath" to "getPathname".');
-        $this->replaceConfigFactoryReadPaths($targetPhar,$vendorPath);
+        $this->replaceConfigFactoryReadPaths($targetPhar, $vendorPath);
 
         $this->logger->info('Setting main/stub');
 
