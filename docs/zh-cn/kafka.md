@@ -2,6 +2,8 @@
 
 [kafka](https://github.com/hyperf/kafka) 是实现 `kafka` 标准的组件，主要适用于对 `kafka` 的使用
 
+> 本组件为 Beta 版本，谨慎使用
+
 ## 安装
 
 ```bash

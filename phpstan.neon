@@ -24,6 +24,7 @@ parameters:
     - %currentWorkingDirectory%/src/validation/*
     - %currentWorkingDirectory%/src/view/src/Engine/*
     - %currentWorkingDirectory%/src/server/src/SwowServer.php
+    - %currentWorkingDirectory%/src/kafka/*
   ignoreErrors:
     - '#side of && is always#'
     - '#method Redis::zRevRangeByScore\(\) expects int, string given#'

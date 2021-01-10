@@ -23,7 +23,6 @@ use longlang\phpkafka\Client\SwooleClient;
 use longlang\phpkafka\Consumer\ConsumerConfig;
 use longlang\phpkafka\Socket\SwooleSocket;
 use Mockery;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
@@ -31,7 +30,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ConsumerManagerTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         ProcessManager::clear();
