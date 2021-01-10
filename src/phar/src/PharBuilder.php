@@ -234,7 +234,7 @@ class PharBuilder
                 return true;
             }
         }
-        throw new UnexpectedValueException('composer is not install ,try "' . implode(',', $composers) . '"');
+        throw new UnexpectedValueException('composer is not install ,try "' . implode(',', $this->composerCmd) . '"');
 
     }
 
