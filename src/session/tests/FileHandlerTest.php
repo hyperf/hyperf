@@ -51,7 +51,7 @@ class FileHandlerTest extends TestCase
         $this->assertSame($data, unserialize($handler->read($id)));
         $this->assertFileExists('/tmp/' . $id);
         $handler->destroy($id);
-        $this->assertFileNotExists('/tmp/' . $id);
+        $this->assertFileDoesNotExist('/tmp/' . $id);
     }
 
     public function testReadNotExistsSessionId()
@@ -67,6 +67,6 @@ class FileHandlerTest extends TestCase
         $handler->write($id, 'foo');
         sleep(1);
         $handler->gc(1);
-        $this->assertFileNotExists($path . '/' . $id);
+        $this->assertFileDoesNotExist($path . '/' . $id);
     }
 }

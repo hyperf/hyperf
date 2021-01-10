@@ -27,7 +27,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class ExceptionHandlerTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
 

@@ -102,7 +102,7 @@ class Response implements ResponseInterface
 
     public function __toString()
     {
-        return $this->getBody()->getContents();
+        return (string) $this->getBody();
     }
 
     /**

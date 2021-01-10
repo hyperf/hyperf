@@ -664,9 +664,9 @@ class Builder
      */
     public function chunkById($count, callable $callback, $column = null, $alias = null)
     {
-        $column = is_null($column) ? $this->getModel()->getKeyName() : $column;
+        $column = $column ?? $this->getModel()->getKeyName();
 
-        $alias = is_null($alias) ? $column : $alias;
+        $alias = $alias ?? $column;
 
         $lastId = null;
 
@@ -713,9 +713,9 @@ class Builder
         // If the model has a mutator for the requested column, we will spin through
         // the results and mutate the values so that the mutated version of these
         // columns are returned as you would expect from these Model models.
-        if (! $this->model->hasGetMutator($column) &&
-            ! $this->model->hasCast($column) &&
-            ! in_array($column, $this->model->getDates())) {
+        if (! $this->model->hasGetMutator($column)
+            && ! $this->model->hasCast($column)
+            && ! in_array($column, $this->model->getDates())) {
             return $results;
         }
 
@@ -1168,8 +1168,8 @@ class Builder
      */
     protected function addUpdatedAtColumn(array $values)
     {
-        if (! $this->model->usesTimestamps() ||
-            is_null($this->model->getUpdatedAtColumn())) {
+        if (! $this->model->usesTimestamps()
+            || is_null($this->model->getUpdatedAtColumn())) {
             return $values;
         }
 
@@ -1298,7 +1298,7 @@ class Builder
 
                 [$name, $constraints] = Str::contains($name, ':')
                     ? $this->createSelectWithConstraint($name)
-                    : [$name, function () {
+                    : [$name, static function () {
                     }];
             }
 
@@ -1321,7 +1321,7 @@ class Builder
      */
     protected function createSelectWithConstraint($name)
     {
-        return [explode(':', $name)[0], function ($query) use ($name) {
+        return [explode(':', $name)[0], static function ($query) use ($name) {
             $query->select(explode(',', explode(':', $name)[1]));
         }];
     }
@@ -1344,7 +1344,7 @@ class Builder
             $progress[] = $segment;
 
             if (! isset($results[$last = implode('.', $progress)])) {
-                $results[$last] = function () {
+                $results[$last] = static function () {
                 };
             }
         }

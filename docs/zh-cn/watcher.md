@@ -66,7 +66,8 @@ php bin/hyperf.php server:watch
 ```
 
 ## 不足
+
 - 暂时 Alpine Docker 环境下，稍微有点问题，后续会完善。
-- 删除文件需要手动重启才能生效。
+- 删除文件和修改`.env`需要手动重启才能生效。
 - vendor 中的文件需要使用 classmap 形式自动加载才能被扫描。（即执行`composer dump-autoload -o`)
 

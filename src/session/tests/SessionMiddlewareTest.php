@@ -189,7 +189,7 @@ class SessionMiddlewareTest extends TestCase
                     'gc_maxlifetime' => 1200,
                     'session_name' => 'HYPERF_SESSION_ID',
                     'domain' => 'hyperf.wiki',
-                    'cookie_lifetime' => 5 * 60  * 60,
+                    'cookie_lifetime' => 5 * 60 * 60,
                 ],
             ],
         ]);

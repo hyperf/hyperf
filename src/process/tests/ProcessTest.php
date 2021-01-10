@@ -28,7 +28,7 @@ class ProcessTest extends TestCase
 {
     public static $dispatched = [];
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         self::$dispatched = [];

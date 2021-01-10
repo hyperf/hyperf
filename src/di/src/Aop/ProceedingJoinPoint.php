@@ -108,4 +108,11 @@ class ProceedingJoinPoint
             $this->methodName
         );
     }
+
+    public function getInstance(): ?object
+    {
+        $ref = new \ReflectionFunction($this->originalMethod);
+
+        return $ref->getClosureThis();
+    }
 }

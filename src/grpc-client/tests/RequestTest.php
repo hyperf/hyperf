@@ -37,7 +37,7 @@ class RequestTest extends TestCase
         $request = new Request($path = 'grpc.service/path', $info = new Info());
         $this->assertSame(3, count($request->headers));
         $this->assertSame('application/grpc+proto', $request->headers['content-type']);
-        $this->assertRegExp('/^grpc-php-hyperf\/1.0 \(hyperf-grpc-client\/.*\)$/', $request->headers['user-agent']);
+        $this->assertMatchesRegularExpression('/^grpc-php-hyperf\/1.0 \(hyperf-grpc-client\/.*\)$/', $request->headers['user-agent']);
         $this->assertSame($path, $request->path);
         $this->assertSame(Parser::serializeMessage($info), $request->data);
     }
@@ -47,7 +47,7 @@ class RequestTest extends TestCase
         $request = new Request($path = 'grpc.service/path', $info = new Info());
         $this->assertSame(3, count($request->getDefaultHeaders()));
         $this->assertSame('application/grpc+proto', $request->getDefaultHeaders()['content-type']);
-        $this->assertRegExp('/^grpc-php-hyperf\/1.0 \(hyperf-grpc-client\/.*\)$/', $request->getDefaultHeaders()['user-agent']);
+        $this->assertMatchesRegularExpression('/^grpc-php-hyperf\/1.0 \(hyperf-grpc-client\/.*\)$/', $request->getDefaultHeaders()['user-agent']);
     }
 
     public function testUserDefinedHeaders()
@@ -59,7 +59,7 @@ class RequestTest extends TestCase
 
         $this->assertSame(4, count($request->headers));
         $this->assertSame('application/grpc', $request->headers['content-type']);
-        $this->assertRegExp('/^grpc-php-hyperf\/1.0 \(hyperf-grpc-client\/.*\)$/', $request->headers['user-agent']);
+        $this->assertMatchesRegularExpression('/^grpc-php-hyperf\/1.0 \(hyperf-grpc-client\/.*\)$/', $request->headers['user-agent']);
         $this->assertSame('bar', $request->headers['foo']);
     }
 }

@@ -34,7 +34,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  */
 class RedisDriverTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

@@ -14,10 +14,11 @@ namespace HyperfTest\Etcd\Stub;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Stream;
+use Psr\Http\Message\ResponseInterface;
 
 class GuzzleClientStub extends Client
 {
-    public function request($method, $uri = '', array $options = [])
+    public function request($method, $uri = '', array $options = []): ResponseInterface
     {
         if ($uri == 'kv/put') {
             $stream = fopen('php://temp', 'r+');

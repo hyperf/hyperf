@@ -34,7 +34,7 @@ abstract class AbstractTestCase extends TestCase
 {
     protected $driver = 'pdo';
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set('db.connection.default', null);

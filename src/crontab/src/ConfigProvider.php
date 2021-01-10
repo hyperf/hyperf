@@ -35,6 +35,14 @@ class ConfigProvider
                     ],
                 ],
             ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config for crontab.',
+                    'source' => __DIR__ . '/../publish/crontab.php',
+                    'destination' => BASE_PATH . '/config/autoload/crontab.php',
+                ],
+            ],
         ];
     }
 }

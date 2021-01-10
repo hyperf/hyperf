@@ -113,7 +113,7 @@ registry.cn-hangzhou.aliyuncs.com/log-service/logtail
 ```Dockerfile
 # Default Dockerfile
 
-FROM hyperf/hyperf:7.2-alpine-cli
+FROM hyperf/hyperf:7.4-alpine-v3.11-swoole
 LABEL maintainer="Hyperf Developers <group@hyperf.io>" version="1.0" license="MIT" app.name="hyperf-demo-api"
 
 # 其它内容省略

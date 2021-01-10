@@ -35,7 +35,7 @@ class TcpServer implements OnReceiveInterface
 declare(strict_types=1);
 
 use Hyperf\Server\Server;
-use Hyperf\Server\SwooleEvent;
+use Hyperf\Server\Event;
 
 return [
     // 删除其他不相关的配置项
@@ -47,7 +47,7 @@ return [
             'port' => 9504,
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
-                SwooleEvent::ON_RECEIVE => [App\Controller\TcpServer::class, 'onReceive'],
+                Event::ON_RECEIVE => [App\Controller\TcpServer::class, 'onReceive'],
             ],
             'settings' => [
                 // 按需配置

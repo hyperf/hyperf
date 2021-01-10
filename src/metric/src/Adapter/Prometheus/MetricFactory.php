@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Metric\Adapter\Prometheus;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
 use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
@@ -19,6 +20,7 @@ use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Exception\InvalidArgumentException;
 use Hyperf\Metric\Exception\RuntimeException;
+use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Utils\Coordinator\Constants as Coord;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Str;
@@ -48,12 +50,18 @@ class MetricFactory implements MetricFactoryInterface
      */
     private $name;
 
-    public function __construct(ConfigInterface $config, CollectorRegistry $registry, GuzzleClientFactory $guzzleClientFactory)
+    /**
+     * @var StdoutLoggerInterface
+     */
+    private $logger;
+
+    public function __construct(ConfigInterface $config, CollectorRegistry $registry, GuzzleClientFactory $guzzleClientFactory, StdoutLoggerInterface $logger)
     {
         $this->config = $config;
         $this->registry = $registry;
         $this->guzzleClientFactory = $guzzleClientFactory;
         $this->name = $this->config->get('metric.default');
+        $this->logger = $logger;
         $this->guardConfig();
     }
 
@@ -94,6 +102,9 @@ class MetricFactory implements MetricFactoryInterface
     {
         switch ($this->config->get("metric.metric.{$this->name}.mode")) {
             case Constants::SCRAPE_MODE:
+                if (MetricFactoryPicker::$isCommand) {
+                    $this->logger->warning('Using Prometheus scrape mode in a command. This will stop the command from terminating gracefully.');
+                }
                 $this->scrapeHandle();
                 break;
             case Constants::PUSH_MODE:
@@ -148,17 +159,25 @@ class MetricFactory implements MetricFactoryInterface
 
     private function guardConfig()
     {
-        if ($this->config->get("metric.metric.{$this->name}.mode") == Constants::SCRAPE_MODE &&
-            $this->config->get('metric.use_standalone_process') == false) {
+        if ($this->config->get("metric.metric.{$this->name}.mode") == Constants::SCRAPE_MODE
+            && $this->config->get('metric.use_standalone_process', true) == false) {
             throw new RuntimeException(
                 "Prometheus in scrape mode must be used in conjunction with standalone process. \n Set metric.use_standalone_process to true to avoid this error."
             );
         }
     }
 
+    private function getUri(string $address, string $job): string
+    {
+        if (! Str::contains($address, ['https://', 'http://'])) {
+            $address = 'http://' . $address;
+        }
+        return $address . '/metrics/job/' . $job . '/ip/' . current(swoole_get_local_ip()) . '/pid/' . getmypid();
+    }
+
     private function doRequest(string $address, string $job, string $method)
     {
-        $url = 'http://' . $address . '/metrics/job/' . $job . '/ip/' . current(swoole_get_local_ip()) . '/pid/' . getmypid();
+        $url = $this->getUri($address, $job);
         $client = $this->guzzleClientFactory->create();
         $requestOptions = [
             'headers' => [

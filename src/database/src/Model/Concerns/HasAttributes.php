@@ -218,9 +218,9 @@ trait HasAttributes
         // If the attribute exists in the attribute array or has a "get" mutator we will
         // get the attribute's value. Otherwise, we will proceed as if the developers
         // are asking for a relationship's value. This covers both types of values.
-        if (array_key_exists($key, $this->getAttributes()) ||
-            $this->hasGetMutator($key) ||
-            $this->isClassCastable($key)) {
+        if (array_key_exists($key, $this->getAttributes())
+            || $this->hasGetMutator($key)
+            || $this->isClassCastable($key)) {
             return $this->getAttributeValue($key);
         }
 
@@ -594,9 +594,11 @@ trait HasAttributes
      *
      * @return $this
      */
-    public function syncChanges()
+    public function syncChanges(array $columns = null)
     {
-        $this->changes = $this->getDirty();
+        $changes = $this->getDirty();
+
+        $this->changes = is_array($columns) ? Arr::only($changes, $columns) : $changes;
 
         return $this;
     }
@@ -830,8 +832,8 @@ trait HasAttributes
             // If the attribute cast was a date or a datetime, we will serialize the date as
             // a string. This allows the developers to customize how dates are serialized
             // into an array without affecting how they are persisted into the storage.
-            if ($attributes[$key] &&
-                ($value === 'date' || $value === 'datetime')) {
+            if ($attributes[$key]
+                && ($value === 'date' || $value === 'datetime')) {
                 $attributes[$key] = $this->serializeDate($attributes[$key]);
             }
 
@@ -1077,8 +1079,8 @@ trait HasAttributes
      */
     protected function isCustomDateTimeCast($cast)
     {
-        return strncmp($cast, 'date:', 5) === 0 ||
-            strncmp($cast, 'datetime:', 9) === 0;
+        return strncmp($cast, 'date:', 5) === 0
+            || strncmp($cast, 'datetime:', 9) === 0;
     }
 
     /**
@@ -1111,8 +1113,8 @@ trait HasAttributes
      */
     protected function isDateAttribute($key)
     {
-        return in_array($key, $this->getDates(), true) ||
-            $this->isDateCastable($key);
+        return in_array($key, $this->getDates(), true)
+            || $this->isDateCastable($key);
     }
 
     /**
@@ -1351,9 +1353,9 @@ trait HasAttributes
      */
     protected function isClassCastable($key)
     {
-        return array_key_exists($key, $this->getCasts()) &&
-            class_exists($class = $this->parseCasterClass($this->getCasts()[$key])) &&
-            ! in_array($class, static::$primitiveCastTypes);
+        return array_key_exists($key, $this->getCasts())
+            && class_exists($class = $this->parseCasterClass($this->getCasts()[$key]))
+            && ! in_array($class, static::$primitiveCastTypes);
     }
 
     /**

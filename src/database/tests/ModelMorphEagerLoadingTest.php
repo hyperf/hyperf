@@ -35,7 +35,7 @@ class ModelMorphEagerLoadingTest extends TestCase
      */
     protected $channel;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         Relation::morphMap([
             'user' => User::class,
@@ -44,7 +44,7 @@ class ModelMorphEagerLoadingTest extends TestCase
         $this->channel = new Channel(999);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Relation::$morphMap = [];

@@ -13,6 +13,7 @@ namespace HyperfTest\Utils;
 
 use HyperfTest\Utils\Exception\RetryException;
 use PHPUnit\Framework\TestCase;
+use Swoole\Coroutine\Channel;
 
 /**
  * @internal
@@ -68,11 +69,9 @@ class FunctionTest extends TestCase
         $this->assertSame(4, $result);
     }
 
-    /**
-     * @expectedException \HyperfTest\Utils\Exception\RetryException
-     */
     public function testRetry()
     {
+        $this->expectException(\HyperfTest\Utils\Exception\RetryException::class);
         $result = 0;
         try {
             retry(2, function () use (&$result) {
@@ -84,11 +83,10 @@ class FunctionTest extends TestCase
         }
     }
 
-    /**
-     * @expectedException \HyperfTest\Utils\Exception\RetryException
-     */
     public function testOneTimesRetry()
     {
+        $this->expectException(\HyperfTest\Utils\Exception\RetryException::class);
+
         $result = 0;
         try {
             retry(1, function () use (&$result) {
@@ -100,11 +98,10 @@ class FunctionTest extends TestCase
         }
     }
 
-    /**
-     * @expectedException \HyperfTest\Utils\Exception\RetryException
-     */
     public function testRetryErrorTimes()
     {
+        $this->expectException(\HyperfTest\Utils\Exception\RetryException::class);
+
         $result = 0;
         try {
             retry(0, function () use (&$result) {
@@ -119,5 +116,35 @@ class FunctionTest extends TestCase
     public function testSwooleHookFlags()
     {
         $this->assertSame(SWOOLE_HOOK_ALL, swoole_hook_flags());
+    }
+
+    public function testDefer()
+    {
+        $channel = new Channel(10);
+        parallel([function () use ($channel) {
+            defer(function () use ($channel) {
+                $channel->push(0);
+            });
+            defer(function () use ($channel) {
+                $channel->push(1);
+                defer(function () use ($channel) {
+                    $channel->push(2);
+                });
+                defer(function () use ($channel) {
+                    $channel->push(3);
+                });
+            });
+            defer(function () use ($channel) {
+                $channel->push(4);
+            });
+            $channel->push(5);
+        }]);
+
+        $this->assertSame(5, $channel->pop(0.001));
+        $this->assertSame(4, $channel->pop(0.001));
+        $this->assertSame(1, $channel->pop(0.001));
+        $this->assertSame(3, $channel->pop(0.001));
+        $this->assertSame(2, $channel->pop(0.001));
+        $this->assertSame(0, $channel->pop(0.001));
     }
 }

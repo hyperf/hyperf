@@ -54,12 +54,12 @@ use Swoole\Timer;
  */
 class ObservableTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         Runtime::enableCoroutine(true, swoole_hook_flags());
     }
 
-    public function setUp()
+    protected function setUp(): void
     {
         $container = new Container(new DefinitionSource([], new ScanConfig()));
         $container->define(SchedulerInterface::class, EventLoopScheduler::class);
@@ -67,7 +67,7 @@ class ObservableTest extends TestCase
         RxSwoole::init();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
@@ -90,7 +90,7 @@ class ObservableTest extends TestCase
                 });
                 return new EmptyDisposable();
             }
-            $timer = Timer::after($ms, function () use ($ms, $callable) {
+            $timer = Timer::after($ms, function () use ($callable) {
                 $callable();
             });
             return new CallbackDisposable(function () use ($timer) {

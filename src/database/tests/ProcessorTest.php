@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ProcessorTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

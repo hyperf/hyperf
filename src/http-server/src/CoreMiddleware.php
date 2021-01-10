@@ -153,7 +153,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
         } else {
             [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
             $controllerInstance = $this->container->get($controller);
-            if (! method_exists($controller, $action)) {
+            if (! method_exists($controllerInstance, $action)) {
                 // Route found, but the handler does not exist.
                 throw new ServerErrorHttpException('Method of class does not exist.');
             }
@@ -232,15 +232,6 @@ class CoreMiddleware implements CoreMiddlewareInterface
     protected function response(): ResponseInterface
     {
         return Context::get(ResponseInterface::class);
-    }
-
-    /**
-     * Keep it to maintain backward compatibility. Users may have extended core middleware.
-     * @deprecated
-     */
-    protected function parseParameters(string $controller, string $action, array $arguments): array
-    {
-        return $this->parseMethodParameters($controller, $action, $arguments);
     }
 
     /**

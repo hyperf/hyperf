@@ -23,6 +23,7 @@ use Hyperf\SocketIOServer\Parser\Decoder;
 use Hyperf\SocketIOServer\Parser\Encoder;
 use Hyperf\SocketIOServer\Parser\Engine;
 use Hyperf\SocketIOServer\Parser\Packet;
+use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
@@ -142,7 +143,12 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     public function onMessage($server, Frame $frame): void
     {
         if ($frame->data[0] === Engine::PING) {
+            $this->renewInAllNamespaces($frame->fd);
             $server->push($frame->fd, Engine::PONG); //sever pong
+            return;
+        }
+        if ($frame->data[0] === Engine::CLOSE) {
+            $server->disconnect($frame->fd);
             return;
         }
         if ($frame->data[0] !== Engine::MESSAGE) {
@@ -268,6 +274,16 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         return $this;
     }
 
+    public function getPingInterval(): int
+    {
+        return $this->pingInterval;
+    }
+
+    public function getPingTimeout(): int
+    {
+        return $this->pingTimeout;
+    }
+
     /**
      * @return $this
      */
@@ -339,6 +355,20 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         }
         foreach (array_keys($all['forward']) as $nsp) {
             $this->dispatch($fd, $nsp, $event, null);
+        }
+    }
+
+    private function renewInAllNamespaces(int $fd)
+    {
+        $all = SocketIORouter::list();
+        if (! array_key_exists('forward', $all)) {
+            return;
+        }
+        foreach (array_keys($all['forward']) as $nsp) {
+            $adapter = $this->of($nsp)->getAdapter();
+            if ($adapter instanceof EphemeralInterface) {
+                $adapter->renew($this->sidProvider->getSid($fd));
+            }
         }
     }
 }

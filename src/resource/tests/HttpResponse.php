@@ -437,7 +437,7 @@ class HttpResponse
      */
     public function decodeResponseJson($key = null)
     {
-        $decodedResponse = json_decode($this->getBody()->getContents(), true);
+        $decodedResponse = json_decode((string) $this->getBody(), true);
 
         if (is_null($decodedResponse) || $decodedResponse === false) {
             if ($this->exception) {
@@ -465,7 +465,7 @@ class HttpResponse
      */
     public function dump()
     {
-        $content = $this->getBody()->getContents();
+        $content = (string) $this->getBody();
 
         $json = json_decode($content);
 

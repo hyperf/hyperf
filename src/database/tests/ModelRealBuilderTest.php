@@ -12,10 +12,13 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Carbon\Carbon;
+use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\Events\Saved;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\Model\User;
+use HyperfTest\Database\Stubs\Model\UserExt;
 use HyperfTest\Database\Stubs\Model\UserExtCamel;
 use HyperfTest\Database\Stubs\Model\UserRole;
 use HyperfTest\Database\Stubs\Model\UserRoleMorphPivot;
@@ -36,13 +39,17 @@ class ModelRealBuilderTest extends TestCase
      */
     protected $channel;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->channel = new Channel(999);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
+        $container = $this->getContainer();
+        /** @var ConnectionInterface $conn */
+        $conn = $container->get(ConnectionResolverInterface::class)->connection();
+        $conn->statement('DROP TABLE IF EXISTS `test`;');
         Mockery::close();
     }
 
@@ -115,6 +122,66 @@ class ModelRealBuilderTest extends TestCase
         }
     }
 
+    public function testIncrement()
+    {
+        $this->getContainer();
+
+        /** @var UserExt $ext */
+        $ext = UserExt::query()->find(1);
+        $ext->timestamps = false;
+
+        $this->assertFalse($ext->isDirty());
+
+        $ext->increment('count', 1);
+        $this->assertFalse($ext->isDirty());
+        $this->assertArrayHasKey('count', $ext->getChanges());
+        $this->assertSame(1, count($ext->getChanges()));
+
+        $ext->increment('count', 1, [
+            'str' => uniqid(),
+        ]);
+        $this->assertTrue($ext->save());
+        $this->assertFalse($ext->isDirty());
+        $this->assertArrayHasKey('str', $ext->getChanges());
+        $this->assertArrayHasKey('count', $ext->getChanges());
+        $this->assertSame(2, count($ext->getChanges()));
+
+        // Don't effect.
+        $ext->str = uniqid();
+        $this->assertTrue($ext->isDirty('str'));
+
+        $ext->increment('count', 1, [
+            'float_num' => (string) ($ext->float_num + 1),
+        ]);
+        $this->assertTrue($ext->isDirty('str'));
+        $this->assertArrayHasKey('count', $ext->getChanges());
+        $this->assertArrayHasKey('float_num', $ext->getChanges());
+
+        $this->assertSame(2, count($ext->getChanges()));
+        $this->assertTrue($ext->save());
+        $this->assertArrayHasKey('str', $ext->getChanges());
+        $this->assertSame(1, count($ext->getChanges()));
+
+        $ext->float_num = (string) ($ext->float_num + 1);
+        $this->assertTrue($ext->save());
+        $this->assertArrayHasKey('float_num', $ext->getChanges());
+        $this->assertSame(1, count($ext->getChanges()));
+
+        $sqls = [
+            'select * from `user_ext` where `user_ext`.`id` = ? limit 1',
+            'update `user_ext` set `count` = `count` + 1 where `id` = ?',
+            'update `user_ext` set `count` = `count` + 1, `str` = ? where `id` = ?',
+            'update `user_ext` set `count` = `count` + 1, `float_num` = ? where `id` = ?',
+            'update `user_ext` set `str` = ? where `id` = ?',
+            'update `user_ext` set `float_num` = ? where `id` = ?',
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame($event->sql, array_shift($sqls));
+            }
+        }
+    }
+
     public function testCamelCaseGetModel()
     {
         $this->getContainer();
@@ -167,6 +234,48 @@ class ModelRealBuilderTest extends TestCase
             if ($event instanceof QueryExecuted) {
                 $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
             }
+        }
+    }
+
+    public function testBigIntInsertAndGet()
+    {
+        $container = $this->getContainer();
+        /** @var ConnectionInterface $conn */
+        $conn = $container->get(ConnectionResolverInterface::class)->connection();
+        $conn->statement('CREATE TABLE `test` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL,
+  `uid` bigint(20) unsigned NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;');
+
+        $sql = 'INSERT INTO test(`user_id`, `uid`) VALUES (?,?)';
+        $this->assertTrue($conn->insert($sql, [PHP_INT_MAX, 1]));
+
+        $binds = [
+            [PHP_INT_MAX, 1],
+            [(string) PHP_INT_MAX, 1],
+            [PHP_INT_MAX, (string) 1],
+            [(string) PHP_INT_MAX, (string) 1],
+        ];
+        $sql = 'SELECT * FROM test WHERE user_id = ? AND uid = ?';
+        foreach ($binds as $bind) {
+            $res = $conn->select($sql, $bind);
+            $this->assertNotEmpty($res);
+        }
+
+        $binds = [
+            [1, PHP_INT_MAX],
+            [1, (string) PHP_INT_MAX],
+            [(string) 1, PHP_INT_MAX],
+            [(string) 1, (string) PHP_INT_MAX],
+        ];
+        $sql = 'SELECT * FROM test WHERE uid = ? AND user_id = ?';
+        foreach ($binds as $bind) {
+            $res = $conn->select($sql, $bind);
+            $this->assertNotEmpty($res);
         }
     }
 

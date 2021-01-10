@@ -26,7 +26,7 @@ use PHPUnit\Framework\TestCase;
  */
 class MakeTest extends TestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         $container = new Container(new DefinitionSource([], new ScanConfig()));
         ApplicationContext::setContainer($container);

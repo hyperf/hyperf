@@ -256,8 +256,8 @@ abstract class Component
      */
     protected function shouldIgnore($name)
     {
-        return Str::startsWith($name, '__') ||
-            in_array($name, $this->ignoredMethods());
+        return Str::startsWith($name, '__')
+            || in_array($name, $this->ignoredMethods());
     }
 
     /**

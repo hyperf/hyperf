@@ -15,6 +15,7 @@ use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Swoole\ExitException;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\Table;
@@ -436,6 +437,10 @@ abstract class Command extends SymfonyCommand
                 call([$this, 'handle']);
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\AfterHandle($this));
             } catch (\Throwable $exception) {
+                if (class_exists(ExitException::class) && $exception instanceof ExitException) {
+                    return 0;
+                }
+
                 if (! $this->eventDispatcher) {
                     throw $exception;
                 }

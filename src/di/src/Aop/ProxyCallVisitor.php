@@ -107,10 +107,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 // Rewrite the method to proxy call method.
                 return $this->rewriteMethod($node);
             case $node instanceof Node\Stmt\Trait_:
-                if (! $this->clouldUseSameTrait()) {
-                    return $node;
-                }
-            // no break; If the node is trait and php version >= 7.3, it can `use ProxyTrait` like class.
+                // If the node is trait and php version >= 7.3, it can `use ProxyTrait` like class.
             case $node instanceof Class_ && ! $node->isAnonymous():
                 // Add use proxy traits.
                 $stmts = $node->stmts;
@@ -134,14 +131,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 break;
         }
         return null;
-    }
-
-    /**
-     * @deprecated v2.1 php version (^7.3)
-     */
-    private function clouldUseSameTrait(): bool
-    {
-        return version_compare(PHP_VERSION, '7.3.0', '>=');
     }
 
     /**

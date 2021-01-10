@@ -60,6 +60,10 @@ class TraceAnnotationAspect implements AroundInterface
         $span->setTag($tag, $source);
         try {
             $result = $proceedingJoinPoint->process();
+        } catch (\Throwable $e) {
+            $span->setTag('error', true);
+            $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+            throw $e;
         } finally {
             $span->finish();
         }

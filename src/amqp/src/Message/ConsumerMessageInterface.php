@@ -16,12 +16,6 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 interface ConsumerMessageInterface extends MessageInterface
 {
-    /**
-     * @param array $data
-     * @deprecated v2.1
-     */
-    public function consume($data): string;
-
     public function consumeMessage($data, AMQPMessage $message): string;
 
     public function setQueue(string $queue);

@@ -26,4 +26,9 @@ class DemoController
     {
         return $this->__return($id, $name, $params);
     }
+
+    public function demo()
+    {
+        return 'Hello World.';
+    }
 }
