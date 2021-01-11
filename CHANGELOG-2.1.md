@@ -1,5 +1,9 @@
 # v2.1.3 - TBD
 
+## Fixed
+
+- [#3106](https://github.com/hyperf/hyperf/pull/3106) Fixed bug that call to a member function getArrayCopy() on null when the parent coroutine context destroyed.
+
 # v2.1.2 - 2021-01-11
 
 ## Fixed
