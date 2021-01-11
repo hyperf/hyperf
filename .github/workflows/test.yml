@@ -45,9 +45,6 @@ jobs:
           php --ri yasd
       - name: Setup Packages
         run: composer update -o
-      - name: Setup Packages Only PHP7.4
-        if: ${{ matrix.php-version == '7.4' }}
-        run: composer require "longlang/phpkafka:^1.1" --dev
       - name: Setup Services
         run: |
           docker run --name mysql -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql:${{ matrix.mysql-version }} --bind-address=0.0.0.0 --default-authentication-plugin=mysql_native_password
