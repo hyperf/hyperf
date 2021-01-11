@@ -91,6 +91,7 @@
   * [AMQP](zh-cn/amqp.md)
   * [Nats](zh-cn/nats.md)
   * [NSQ](zh-cn/nsq.md)
+  * [Kafka](zh-cn/kafka.md)
 
 * 客户端
 
