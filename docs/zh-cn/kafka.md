@@ -1,6 +1,6 @@
 # Kafka
 
-`Kafka` 是由 `Apache软件基金会` 开发的一个开源流处理平台，由 `Scala` 和 `Java` 编写。该项目的目标是为处理实时数据提供一个统一、高吞吐、低延迟的平台。其持久化层本质上是一个 "按照分布式事务日志架构的大规模发布/订阅消息队列"
+`Kafka` 是由 `Apache 软件基金会` 开发的一个开源流处理平台，由 `Scala` 和 `Java` 编写。该项目的目标是为处理实时数据提供一个统一、高吞吐、低延迟的平台。其持久化层本质上是一个 "按照分布式事务日志架构的大规模发布/订阅消息队列"
 
 > 本组件为 Beta 版本，谨慎使用
 
@@ -33,7 +33,7 @@ composer require hyperf/kafka
 |          producer_id          |    int     |              -1               |                                                      生产者 ID                                                       |
 |        producer_epoch         |    int     |              -1               |                                                     生产者 Epoch                                                     |
 |    partition_leader_epoch     |    int     |              -1               |                                                  分区 Leader Epoch                                                   |
-|            broker             |   string   |              ''               |                                            broker，格式：'127.0.0.1:9092'                                            |
+|            broker             |   string   |              ''|                                            broker，格式：'127.0.0.1:9092'                                            |
 |           interval            | int｜float |               0               |                   未获取消息到消息时，延迟多少秒再次尝试，默认为 0 则不延迟（单位：秒，支持小数）                    |
 |        session_timeout        | int｜float |              60               |                     如果超时后没有收到心跳信号，则协调器会认为该用户死亡。（单位：秒，支持小数）                     |
 |       rebalance_timeout       | int｜float |              60               |                      重新平衡组时，协调器等待每个成员重新加入的最长时间（单位：秒，支持小数）。                      |
