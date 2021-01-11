@@ -1,4 +1,6 @@
-# v2.1.2 - TBD
+# v2.1.3 - TBD
+
+# v2.1.2 - 2021-01-11
 
 ## Fixed
 
@@ -10,6 +12,7 @@
 
 ## Added
 
+- [#2847](https://github.com/hyperf/hyperf/pull/2847) Added `hyperf/kafka` component.
 - [#3066](https://github.com/hyperf/hyperf/pull/3066) Added method `ConnectionInterface::run(Closure $closure)` for `hyperf/db`.
 
 ## Optimized
