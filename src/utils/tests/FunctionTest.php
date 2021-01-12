@@ -11,9 +11,11 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
+use Hyperf\Utils\Coroutine;
 use HyperfTest\Utils\Exception\RetryException;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\Channel;
+use Swoole\Runtime;
 
 /**
  * @internal
@@ -116,6 +118,25 @@ class FunctionTest extends TestCase
     public function testSwooleHookFlags()
     {
         $this->assertSame(SWOOLE_HOOK_ALL, swoole_hook_flags());
+    }
+
+    /**
+     * @group NonCoroutine
+     */
+    public function testRun()
+    {
+        $asserts = [
+            SWOOLE_HOOK_ALL,
+            SWOOLE_HOOK_SLEEP,
+            SWOOLE_HOOK_CURL,
+        ];
+
+        foreach ($asserts as $flags) {
+            run(function () use ($flags) {
+                $this->assertTrue(Coroutine::inCoroutine());
+                $this->assertSame($flags, Runtime::getHookFlags());
+            }, $flags);
+        }
     }
 
     public function testDefer()
