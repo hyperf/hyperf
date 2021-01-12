@@ -37,7 +37,6 @@ composer require hyperf/kafka
 |           interval            | int｜float |               0               |                   未获取消息到消息时，延迟多少秒再次尝试，默认为 0 则不延迟（单位：秒，支持小数）                    |
 |        session_timeout        | int｜float |              60               |                     如果超时后没有收到心跳信号，则协调器会认为该用户死亡。（单位：秒，支持小数）                     |
 |       rebalance_timeout       | int｜float |              60               |                      重新平衡组时，协调器等待每个成员重新加入的最长时间（单位：秒，支持小数）。                      |
-|          partitions           |   array    |              [0]              |                                                       分区列表                                                       |
 |          replica_id           |    int     |              -1               |                                                       副本 ID                                                        |
 |            rack_id            |    int     |              -1               |                                                       机架编号                                                       |
 |          group_retry          |    int     |               5               |                                      分组操作，匹配预设的错误码时，自动重试次数                                      |

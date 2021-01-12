@@ -81,12 +81,12 @@
 - [#2935](https://github.com/hyperf/hyperf/pull/2935) 修改了 `Exception Formatter` 的默认规则。
 - [#2979](https://github.com/hyperf/hyperf/pull/2979) 命令行 `gen:model` 不再自动将 `decimal` 格式转化为 `float`。
 
-## Deprecated
+## 即将废弃
 
 - 类 `Hyperf\AsyncQueue\Signal\DriverStopHandler` 将会在 `v2.2` 版本中弃用, 请使用 `Hyperf\Process\Handler\ProcessStopHandler` 代替。
 - 类 `Hyperf\Server\SwooleEvent` 将会在 `v3.0` 版本中弃用, 请使用 `Hyperf\Server\Event` 代替。
 
-## Added
+## 新增
 
 - [#2659](https://github.com/hyperf/hyperf/pull/2659) [#2663](https://github.com/hyperf/hyperf/pull/2663) 新增了 [Swow](https://github.com/swow/swow) 驱动支持。
 - [#2671](https://github.com/hyperf/hyperf/pull/2671) 新增监听器 `Hyperf\AsyncQueue\Listener\QueueHandleListener`，用来记录异步队列的运行日志。
@@ -94,11 +94,11 @@
 - [#3001](https://github.com/hyperf/hyperf/pull/3001) 新增方法 `Hyperf\Database\Model\Collection::columns()`，类似于 `array_column`。
 - [#3002](https://github.com/hyperf/hyperf/pull/3002) 为 `Json::decode` 和 `Json::encode` 新增参数 `$depth` 和 `$flags`。
 
-## Fixed
+## 修复
 
 - [#2741](https://github.com/hyperf/hyperf/pull/2741) 修复自定义进程无法在 `Swow` 驱动下使用的问题。
 
-## Optimized
+## 优化
 
 - [#3009](https://github.com/hyperf/hyperf/pull/3009) 优化了 `prometheus`，使其支持 `https` 和 `http` 协议。
 
