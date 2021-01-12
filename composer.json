@@ -147,9 +147,6 @@
         "hyperf/websocket-server": "self.version"
     },
     "suggest": {},
-    "conflict": {
-        "symfony/event-dispatcher": "<4.3"
-    },
     "autoload": {
         "files": [
             "src/config/src/Functions.php",
