@@ -2,7 +2,7 @@
 
 [EasyWeChat](https://www.easywechat.com/) 是一个开源的微信 SDK (非微信官方 SDK)。
 
-> 因为组件默认使用 `Curl`，所以我们需要修改对应的 `GuzzleClient` 为协程客户端，或者修改常量 `SWOOLE_HOOK_FLAGS` 为 `SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL`
+> 因为组件默认使用 `Curl`，所以我们需要修改对应的 `GuzzleClient` 为协程客户端，或者修改常量 [SWOOLE_HOOK_FLAGS](/zh-cn/coroutine?id=swoole-runtime-hook-level)
 
 ## 替换 `Handler`
 
@@ -43,13 +43,7 @@ $app->oauth->setGuzzleOptions([
 
 ## 修改 `SWOOLE_HOOK_FLAGS`
 
-修改入口文件 `bin/hyperf.php`，以下忽略不需要修改的代码。
-
-```php
-<?php
-
-! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL);
-```
+参考 [SWOOLE_HOOK_FLAGS](/zh-cn/coroutine?id=swoole-runtime-hook-level)
 
 ## 如何使用 EasyWeChat
 
