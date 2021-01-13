@@ -56,7 +56,7 @@ class ObservableTest extends TestCase
 {
     public static function setUpBeforeClass(): void
     {
-        Runtime::enableCoroutine(true, swoole_hook_flags());
+        Runtime::enableCoroutine(swoole_hook_flags());
     }
 
     protected function setUp(): void
@@ -85,7 +85,7 @@ class ObservableTest extends TestCase
         }, new EventLoopScheduler(function ($ms, $callable) {
             if ($ms === 0) {
                 Event::defer(function () use ($callable) {
-                    Runtime::enableCoroutine(true, SWOOLE_HOOK_FLAGS);
+                    Runtime::enableCoroutine(SWOOLE_HOOK_FLAGS);
                     Coroutine::create($callable);
                 });
                 return new EmptyDisposable();
