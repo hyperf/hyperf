@@ -36,12 +36,12 @@ class ThriftUdpTransport extends TTransport
     private $logger;
 
     /**
-     * @var resource
+     * @var ?resource
      */
     private $socket;
 
     /**
-     * @var Channel
+     * @var ?Channel
      */
     private $chan;
 
@@ -119,6 +119,7 @@ class ThriftUdpTransport extends TTransport
      */
     public function read($len)
     {
+        return "";
     }
 
     /**
@@ -163,7 +164,7 @@ class ThriftUdpTransport extends TTransport
         }
     }
 
-    private function loop()
+    private function loop(): void
     {
         $this->chan = new Channel();
         Coroutine::create(function () {
