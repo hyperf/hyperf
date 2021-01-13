@@ -38,6 +38,26 @@ class PDODriverTest extends AbstractTestCase
         $this->assertSame('Hyperflex', $res[0]['name']);
     }
 
+    public function testRun()
+    {
+        $db = $this->getContainer()->get(DB::class);
+
+        $sql = 'SELECT * FROM `user` WHERE id = ?;';
+        $bindings = [2];
+        $mode = \PDO::FETCH_OBJ;
+        $res = $db->run(function (\PDO $pdo) use ($sql, $bindings, $mode) {
+            $statement = $pdo->prepare($sql);
+
+            $this->bindValues($statement, $bindings);
+
+            $statement->execute();
+
+            return $statement->fetchAll($mode);
+        });
+
+        $this->assertSame('Hyperflex', $res[0]->name);
+    }
+
     public function testInsertAndExecute()
     {
         $db = $this->getContainer()->get(DB::class);

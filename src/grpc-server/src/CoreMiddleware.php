@@ -114,7 +114,7 @@ class CoreMiddleware extends HttpCoreMiddleware
         return $this->response()->withBody(new SwooleStream((string) $response));
     }
 
-    protected function parseParameters(string $controller, string $action, array $arguments): array
+    protected function parseMethodParameters(string $controller, string $action, array $arguments): array
     {
         $injections = [];
         $definitions = MethodDefinitionCollector::getOrParse($controller, $action);

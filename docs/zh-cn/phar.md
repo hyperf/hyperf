@@ -20,6 +20,12 @@ php bin/hyperf.php phar:build
 php bin/hyperf.php phar:build --name=your_project.phar
 ```
 
+- 指定包版本
+
+```shell
+php bin/hyperf.php phar:build --phar-version=1.0.1
+```
+
 - 指定启动文件
 
 ```shell
@@ -81,7 +87,5 @@ return [
 - scan_cacheable
 
 Phar 打包器会将 `config.php` 配置中的 `scan_cacheable` 主动设置为 `true`。
-
-暂时因为 `Ast` 不支持复杂的代码重写，所以建议使用默认格式，不然可能导致项目无法启动。
 
 当然，主动修改此配置为 `true`，也是可以的。

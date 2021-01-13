@@ -15,6 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
+use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Metric\MetricSetter;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
@@ -93,14 +94,19 @@ class OnMetricFactoryReady implements ListenerInterface
             'metric_process_memory_usage',
             'metric_process_memory_peak_usage'
         );
-
-        $server = $this->container->get(Server::class);
-        $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        $timerId = Timer::tick($timerInterval * 1000, function () use ($metrics, $server) {
+        $serverStats = null;
+        if (! MetricFactoryPicker::$isCommand) {
+            $server = $this->container->get(Server::class);
             $serverStats = $server->stats();
+        }
+
+        $timerInterval = $this->config->get('metric.default_metric_interval', 5);
+        $timerId = Timer::tick($timerInterval * 1000, function () use ($metrics, $serverStats) {
             $coroutineStats = Coroutine::stats();
             $timerStats = Timer::stats();
-            $this->trySet('', $metrics, $serverStats);
+            if ($serverStats) {
+                $this->trySet('', $metrics, $serverStats);
+            }
             $this->trySet('', $metrics, $coroutineStats);
             $this->trySet('timer_', $metrics, $timerStats);
             $load = sys_getloadavg();
@@ -108,6 +114,7 @@ class OnMetricFactoryReady implements ListenerInterface
             $metrics['metric_process_memory_usage']->set(memory_get_usage());
             $metrics['metric_process_memory_peak_usage']->set(memory_get_peak_usage());
         });
+
         // Clean up timer on worker exit;
         Coroutine::create(function () use ($timerId) {
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();

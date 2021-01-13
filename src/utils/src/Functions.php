@@ -433,7 +433,7 @@ if (! function_exists('run')) {
             throw new RuntimeException('Function \'run\' only execute in non-coroutine environment.');
         }
 
-        \Swoole\Runtime::enableCoroutine(true, $flags);
+        \Swoole\Runtime::enableCoroutine($flags);
 
         $result = \Swoole\Coroutine\Run(...(array) $callbacks);
 
