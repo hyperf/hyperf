@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace Jaeger;
 
 use Hyperf\Engine\Channel;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -183,5 +185,16 @@ class ThriftUdpTransport extends TTransport
                 $this->socket = null;
             }
         });
+
+        static $once;
+        if (!isset($once)) {
+            $once = true;
+            Coroutine::create(function () {
+                CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
+                if ($this->chan) {
+                    $this->chan->close();
+                }
+            });
+        }
     }
 }
