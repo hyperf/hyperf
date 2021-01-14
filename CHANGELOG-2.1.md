@@ -10,7 +10,7 @@
 ## Added
 
 - [#3059](https://github.com/hyperf/hyperf/pull/3059) The merged attributes in the view component support attributes other than 'class'.
-- [#3123](https://github.com/hyperf/hyperf/pull/3123) Added `$attributes->has()` for `view-engine`.
+- [#3123](https://github.com/hyperf/hyperf/pull/3123) Added method `ComponentAttributeBag::has()` for `view-engine`.
 
 # v2.1.2 - 2021-01-11
 
