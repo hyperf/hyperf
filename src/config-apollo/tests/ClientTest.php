@@ -30,7 +30,8 @@ class ClientTest extends TestCase
     public function testPull()
     {
         $option = new Option();
-        $option->setServer('http://127.0.0.1:8080')->setAppid('test')->setCluster('default')->setClientIp('127.0.0.1');
+        $option->setServer('http://127.0.0.1:8080')->setAppid('test')->setCluster('default')->setClientIp('127.0.0.1')
+            ->setSecret('b0224a48805442ebacceb0431d98b2bf');
         $container = Mockery::mock(ContainerInterface::class);
         $configInstance = new Config([]);
         $configInstance->set('apollo.test-key', 'pre-value');

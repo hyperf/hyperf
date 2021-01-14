@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ConfigApollo;
 
 use Closure;
+use GuzzleHttp\Exception\ClientException;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Parallel;
@@ -43,7 +45,8 @@ class Client implements ClientInterface
         array $callbacks = [],
         Closure $httpClientFactory,
         ?ConfigInterface $config = null
-    ) {
+    )
+    {
         $this->option = $option;
         $this->callbacks = $callbacks;
         $this->httpClientFactory = $httpClientFactory;
@@ -52,7 +55,7 @@ class Client implements ClientInterface
 
     public function pull(array $namespaces, array $callbacks = []): void
     {
-        if (! $namespaces) {
+        if (!$namespaces) {
             return;
         }
         if (Coroutine::inCoroutine()) {
@@ -86,6 +89,28 @@ class Client implements ClientInterface
         return $this->option;
     }
 
+    private function hasSecret()
+    {
+        return !empty($this->option->getSecret());
+    }
+
+    private function getTimestamp()
+    {
+        list($usec, $sec) = explode(" ", microtime());
+        return sprintf('%.0f', (floatval($usec) + floatval($sec)) * 1000);
+    }
+
+    private function getAuthorization($timestamp, $path_with_query)
+    {
+        if (!$this->hasSecret()) {
+            return '';
+        }
+        $to_signature = $timestamp . "\n" . $path_with_query;
+        $signature = base64_encode(hash_hmac('sha1', $to_signature, $this->option->getSecret(), true));
+        return sprintf('Apollo %s:%s', $this->option->getAppid(), $signature);
+    }
+
+
     private function coroutinePull(array $namespaces): array
     {
         $option = $this->option;
@@ -94,18 +119,26 @@ class Client implements ClientInterface
         foreach ($namespaces as $namespace) {
             $parallel->add(function () use ($option, $httpClientFactory, $namespace) {
                 $client = $httpClientFactory();
-                if (! $client instanceof \GuzzleHttp\Client) {
+                if (!$client instanceof \GuzzleHttp\Client) {
                     throw new \RuntimeException('Invalid http client.');
                 }
                 $releaseKey = ReleaseKey::get($option->buildCacheKey($namespace), null);
+                $query = [
+                    'ip' => $option->getClientIp(),
+                    'releaseKey' => $releaseKey,
+                ];
+                $timestamp = $this->getTimestamp();
+                $headers = [
+                    'Authorization' => $this->getAuthorization($timestamp, parse_url($option->buildBaseUrl(), PHP_URL_PATH) . $namespace . '?' . http_build_query($query)),
+                    'Timestamp' => $timestamp,
+                ];
+
                 $response = $client->get($option->buildBaseUrl() . $namespace, [
-                    'query' => [
-                        'ip' => $option->getClientIp(),
-                        'releaseKey' => $releaseKey,
-                    ],
+                    'query' => $query,
+                    'headers' => $headers,
                 ]);
                 if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
-                    $body = json_decode((string) $response->getBody(), true);
+                    $body = json_decode((string)$response->getBody(), true);
                     $result = [
                         'configurations' => $body['configurations'] ?? [],
                         'releaseKey' => $body['releaseKey'] ?? '',
@@ -128,18 +161,26 @@ class Client implements ClientInterface
         $httpClientFactory = $this->httpClientFactory;
         foreach ($namespaces as $namespace) {
             $client = $httpClientFactory();
-            if (! $client instanceof \GuzzleHttp\Client) {
+            if (!$client instanceof \GuzzleHttp\Client) {
                 throw new \RuntimeException('Invalid http client.');
             }
             $releaseKey = ReleaseKey::get($this->option->buildCacheKey($namespace), null);
+            $query = [
+                'ip' => $this->option->getClientIp(),
+                'releaseKey' => $releaseKey,
+            ];
+            $timestamp = $this->getTimestamp();
+            $headers = [
+                'Authorization' => $this->getAuthorization($timestamp, parse_url($url, PHP_URL_PATH) . $namespace . '?' . http_build_query($query)),
+                'Timestamp' => $timestamp,
+            ];
+
             $response = $client->get($url . $namespace, [
-                'query' => [
-                    'ip' => $this->option->getClientIp(),
-                    'releaseKey' => $releaseKey,
-                ],
+                'query' => $query,
+                'headers' => $headers,
             ]);
             if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
-                $body = json_decode((string) $response->getBody(), true);
+                $body = json_decode((string)$response->getBody(), true);
                 $result[$namespace] = [
                     'configurations' => $body['configurations'] ?? [],
                     'releaseKey' => $body['releaseKey'] ?? '',

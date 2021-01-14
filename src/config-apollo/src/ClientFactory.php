@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\ConfigApollo;
 
 use Hyperf\Contract\ConfigInterface;
@@ -27,12 +28,14 @@ class ClientFactory
             ->setCluster($config->get('apollo.cluster', ''))
             ->setClientIp($config->get('apollo.client_ip', current(swoole_get_local_ip())))
             ->setPullTimeout($config->get('apollo.pull_timeout', 10))
-            ->setIntervalTimeout($config->get('apollo.interval_timeout', 60));
+            ->setIntervalTimeout($config->get('apollo.interval_timeout', 60))
+            ->setSecret($config->get('apollo.secret'));
+
         $namespaces = $config->get('apollo.namespaces', []);
         $callbacks = [];
         foreach ($namespaces as $namespace => $callable) {
             // If does not exist a user-defined callback, then delegate to the dafault callback.
-            if (! is_numeric($namespace) && is_callable($callable)) {
+            if (!is_numeric($namespace) && is_callable($callable)) {
                 $callbacks[$namespace] = $callable;
             }
         }
