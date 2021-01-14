@@ -121,7 +121,7 @@ class ThriftUdpTransport extends TTransport
      */
     public function read($len)
     {
-        return "";
+        return '';
     }
 
     /**
@@ -168,7 +168,7 @@ class ThriftUdpTransport extends TTransport
 
     private function loop(): void
     {
-        $this->chan = new Channel();
+        $this->chan = new Channel(1);
         Coroutine::create(function () {
             try {
                 $this->doOpen();
@@ -187,7 +187,7 @@ class ThriftUdpTransport extends TTransport
         });
 
         static $once;
-        if (!isset($once)) {
+        if (! isset($once)) {
             $once = true;
             Coroutine::create(function () {
                 CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
