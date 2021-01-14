@@ -100,13 +100,13 @@ class Client implements ClientInterface
         return sprintf('%.0f', (floatval($usec) + floatval($sec)) * 1000);
     }
 
-    private function getAuthorization($timestamp, $path_with_query)
+    private function getAuthorization($timestamp, $pathWithQuery)
     {
         if (!$this->hasSecret()) {
             return '';
         }
-        $to_signature = $timestamp . "\n" . $path_with_query;
-        $signature = base64_encode(hash_hmac('sha1', $to_signature, $this->option->getSecret(), true));
+        $toSignature = $timestamp . "\n" . $pathWithQuery;
+        $signature = base64_encode(hash_hmac('sha1', $toSignature, $this->option->getSecret(), true));
         return sprintf('Apollo %s:%s', $this->option->getAppid(), $signature);
     }
 
