@@ -1,6 +1,6 @@
 # 协程组件库
 
-所有官方提供的组件库均已进行协程化处理，可安全地在 Hyperf 内或其它协程框架内使用，基于 Hyperf 的开放性和可扩展性，社区可对此开发或适配各种各样的组件，得益于此，Hyperf 将存在着无限的可能性。   
+所有官方提供的组件库均已进行协程化处理，可安全地在 Hyperf 内或其它协程框架内使用，基于 Hyperf 的开放性和可扩展性，社区可对此开发或适配各种各样的组件，得益于此，Hyperf 将存在着无限的可能性。
 本页将收录各个适配了 Hyperf 的协程组件 和 已经经过验证可安全地用于协程下的常用库，以便您快速的从中选择合适的组件完成您的需求。
 
 > 组件顺序以收录时间排序
@@ -35,7 +35,7 @@
 ## 数据库
 
 - [hyperf/database](https://github.com/hyperf/database) Hyperf 官方提供的基于 Eloquent 衍生的数据库 ORM，可复用于其它框架
-- [hyperf/model](https://github.com/hyperf/model) Hyperf 官方提供的基于 [hyperf/database](https://github.com/hyperf/database) 组件的自动模型缓存组件 
+- [hyperf/model](https://github.com/hyperf/model) Hyperf 官方提供的基于 [hyperf/database](https://github.com/hyperf/database) 组件的自动模型缓存组件
 - [reasno/fastmongo](https://github.com/Reasno/fastmongo) 基于 `hyperf/gotask` 实现的协程化 `MongoDB` 客户端
 - [hyperf-ext/translatable](https://github.com/hyperf-ext/translatable) 为模型提供多语言能力
 
@@ -106,11 +106,11 @@
 
 ## 热更新/热重载
 
+- [hyperf/watcher](zh-cn/watcher.md) 官方热更新组件
 - [ha-ni-cc/hyperf-watch](https://github.com/ha-ni-cc/hyperf-watch) 一个基于 Swoole 实现的通用热更新组件
 - [mix-php/swoolefor](https://github.com/mix-php/swoolefor) 一个由 Mixphp 实现的通用热更新组件
 - [buexplain/go-watch](https://github.com/buexplain/go-watch) 一个基于 Go 语言实现的通用热更新组件
 - [remy/nodemon](https://github.com/remy/nodemon) 一个基于 node.js 实现的通用热更新组件
-- [hyperf/watcher](zh-cn/watcher.md) 适配于 `Hyperf 2.0` 的热更新组件
 
 > Warning: 请勿于生产环境使用 `热更新/热重载` 功能
 
