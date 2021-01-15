@@ -1,5 +1,28 @@
 # 版本更新记录
 
+# v2.1.2 - 2021-01-11
+
+## 修复
+
+- [#3050](https://github.com/hyperf/hyperf/pull/3050) 修复在 `increment()` 后使用 `save()` 时，导致 `extra` 数据被保存两次的问题。
+- [#3082](https://github.com/hyperf/hyperf/pull/3082) 修复 `hyperf/db` 组件在 `defer` 中使用时，会导致连接被其他协程绑定的问题。
+- [#3084](https://github.com/hyperf/hyperf/pull/3084) 修复 `phar` 打包后 `getRealPath` 无法正常工作的问题。
+- [#3087](https://github.com/hyperf/hyperf/pull/3087) 修复使用 `AOP` 时，`pipeline` 导致内存泄露的问题。
+- [#3095](https://github.com/hyperf/hyperf/pull/3095) 修复 `hyperf/scout` 组件中，`ElasticsearchEngine::getTotalCount()` 无法兼容 `Elasticsearch 7.0` 版本的问题。
+
+## 新增
+
+- [#2847](https://github.com/hyperf/hyperf/pull/2847) 新增 `hyperf/kafka` 组件。
+- [#3066](https://github.com/hyperf/hyperf/pull/3066) 为 `hyperf/db` 组件新增 `ConnectionInterface::run(Closure $closure)` 方法。
+
+## 优化
+
+- [#3046](https://github.com/hyperf/hyperf/pull/3046) 打包 `phar` 时，优化了重写 `scan_cacheable` 的代码。
+
+## 变更
+
+- [#3077](https://github.com/hyperf/hyperf/pull/3077) 因组件 `league/flysystem` 的 `2.0` 版本无法兼容，故降级到 `^1.0`。
+
 # v2.1.1 - 2021-01-04
 
 ## 修复
@@ -58,12 +81,12 @@
 - [#2935](https://github.com/hyperf/hyperf/pull/2935) 修改了 `Exception Formatter` 的默认规则。
 - [#2979](https://github.com/hyperf/hyperf/pull/2979) 命令行 `gen:model` 不再自动将 `decimal` 格式转化为 `float`。
 
-## Deprecated
+## 即将废弃
 
 - 类 `Hyperf\AsyncQueue\Signal\DriverStopHandler` 将会在 `v2.2` 版本中弃用, 请使用 `Hyperf\Process\Handler\ProcessStopHandler` 代替。
 - 类 `Hyperf\Server\SwooleEvent` 将会在 `v3.0` 版本中弃用, 请使用 `Hyperf\Server\Event` 代替。
 
-## Added
+## 新增
 
 - [#2659](https://github.com/hyperf/hyperf/pull/2659) [#2663](https://github.com/hyperf/hyperf/pull/2663) 新增了 [Swow](https://github.com/swow/swow) 驱动支持。
 - [#2671](https://github.com/hyperf/hyperf/pull/2671) 新增监听器 `Hyperf\AsyncQueue\Listener\QueueHandleListener`，用来记录异步队列的运行日志。
@@ -71,11 +94,11 @@
 - [#3001](https://github.com/hyperf/hyperf/pull/3001) 新增方法 `Hyperf\Database\Model\Collection::columns()`，类似于 `array_column`。
 - [#3002](https://github.com/hyperf/hyperf/pull/3002) 为 `Json::decode` 和 `Json::encode` 新增参数 `$depth` 和 `$flags`。
 
-## Fixed
+## 修复
 
 - [#2741](https://github.com/hyperf/hyperf/pull/2741) 修复自定义进程无法在 `Swow` 驱动下使用的问题。
 
-## Optimized
+## 优化
 
 - [#3009](https://github.com/hyperf/hyperf/pull/3009) 优化了 `prometheus`，使其支持 `https` 和 `http` 协议。
 

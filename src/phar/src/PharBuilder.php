@@ -14,6 +14,7 @@ namespace Hyperf\Phar;
 use FilesystemIterator;
 use GlobIterator;
 use Hyperf\Phar\Ast\Ast;
+use Hyperf\Phar\Ast\Visitor\RewriteConfigFactoryVisitor;
 use Hyperf\Phar\Ast\Visitor\RewriteConfigVisitor;
 use InvalidArgumentException;
 use Phar;
@@ -42,6 +43,11 @@ class PharBuilder
     /**
      * @var string
      */
+    private $version;
+
+    /**
+     * @var string
+     */
     private $main;
 
     public function __construct(string $path, LoggerInterface $logger)
@@ -56,7 +62,11 @@ class PharBuilder
     public function getTarget(): string
     {
         if ($this->target === null) {
-            $this->target = $this->package->getShortName() . '.phar';
+            $target = $this->package->getShortName();
+            if ($this->version !== null) {
+                $target .= ':' . $this->version;
+            }
+            $this->target = $target . '.phar';
         }
         return (string) $this->target;
     }
@@ -73,6 +83,15 @@ class PharBuilder
             $target = rtrim($target, '/') . '/' . $this->getTarget();
         }
         $this->target = $target;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setVersion(string $version)
+    {
+        $this->version = $version;
         return $this;
     }
 
@@ -201,6 +220,11 @@ class PharBuilder
                 ->in($this->package->getDirectory() . 'runtime/container');
             $targetPhar->addBundle($this->package->bundle($finder));
         }
+        // Add .env file.
+        if (is_file($this->package->getDirectory() . '.env')) {
+            $this->logger->info('Adding .env file');
+            $targetPhar->addFile($this->package->getDirectory() . '.env');
+        }
 
         $this->logger->info('Adding composer base files');
         // Add composer autoload file.
@@ -211,13 +235,12 @@ class PharBuilder
 
         // Add composer depenedencies.
         foreach ($this->getPackagesDependencies() as $package) {
-            // Cannot package yourself.
-            if (stripos($package->getDirectory(), 'vendor/hyperf/phar/') !== false) {
-                continue;
-            }
             $this->logger->info('Adding dependency "' . $package->getName() . '" from "' . $this->getPathLocalToBase($package->getDirectory()) . '"');
             $targetPhar->addBundle($package->bundle());
         }
+        // Replace ConfigFactory ReadPaths method.
+        $this->logger->info('Replace method "readPaths" in file "vendor/hyperf/config/src/ConfigFactory.php" and change "getRealPath" to "getPathname".');
+        $this->replaceConfigFactoryReadPaths($targetPhar, $vendorPath);
 
         $this->logger->info('Setting main/stub');
 
@@ -253,8 +276,23 @@ class PharBuilder
             return;
         }
         $code = file_get_contents($absPath);
-        $code = Ast::parse($code, [new RewriteConfigVisitor()]);
+        $code = (new Ast())->parse($code, [new RewriteConfigVisitor()]);
         $targetPhar->addFromString($configPath, $code);
+    }
+
+    /**
+     * Replace the method in the Config component to get the true path to the configuration file.
+     */
+    protected function replaceConfigFactoryReadPaths(TargetPhar $targetPhar, string $vendorPath)
+    {
+        $configPath = 'hyperf/config/src/ConfigFactory.php';
+        $absPath = $vendorPath . $configPath;
+        if (! file_exists($absPath)) {
+            return;
+        }
+        $code = file_get_contents($absPath);
+        $code = (new Ast())->parse($code, [new RewriteConfigFactoryVisitor()]);
+        $targetPhar->addFromString('vendor/' . $configPath, $code);
     }
 
     /**

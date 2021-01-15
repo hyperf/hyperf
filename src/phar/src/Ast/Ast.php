@@ -12,21 +12,38 @@ declare(strict_types=1);
 namespace Hyperf\Phar\Ast;
 
 use PhpParser\NodeTraverser;
+use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
+use PhpParser\PrettyPrinterAbstract;
 
 class Ast
 {
-    public static function parse(string $code, array $visitors): string
+    /**
+     * @var Parser
+     */
+    private $astParser;
+
+    /**
+     * @var PrettyPrinterAbstract
+     */
+    private $printer;
+
+    public function __construct()
     {
-        $parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
-        $printer = new Standard();
+        $parserFactory = new ParserFactory();
+        $this->astParser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $this->printer = new Standard();
+    }
+
+    public function parse(string $code, array $visitors): string
+    {
         $traverser = new NodeTraverser();
         foreach ($visitors as $visitor) {
             $traverser->addVisitor($visitor);
         }
-        $stmts = $parser->parse($code);
+        $stmts = $this->astParser->parse($code);
         $stmts = $traverser->traverse($stmts);
-        return $printer->prettyPrintFile($stmts);
+        return $this->printer->prettyPrintFile($stmts);
     }
 }

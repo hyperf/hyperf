@@ -668,7 +668,29 @@ class ConfigProvider
     </div>
 ```
 
-#### 默认 / 合并属性
+#### 获取属性
+
+您可以使用 `get()` 方法获取特定的属性值。此方法接受属性名称作为第一个参数(第二个参数为默认值)，并将返回其值。
+
+```html
+    <div class="{{ $attributes->get("class", "default") }}">
+        <!-- 组件内容 -->
+    </div>
+```
+
+#### 检测属性
+
+您可以使用 `has()` 方法获取特定的属性值。此方法接受属性名称作为参数，并将返回布尔值。
+
+```html
+    @if($attributes->has("class"))
+        <div class="{{ $attributes->get("class") }}">
+            <!-- 组件内容 -->
+        </div>
+    @endif
+```
+
+#### 合并属性
 
 某些时候，你可能需要指定属性的默认值，或将其他值合并到组件的某些属性中。为此，你可以使用属性包的 `merge` 方法：
 
@@ -690,6 +712,28 @@ class ConfigProvider
     <div class="alert alert-error mb-4">
         <!-- $message 变量的内容 -->
     </div>
+```
+
+默认情况下，只会合并 `class` 属性，其他属性将会直接进行覆盖，会出现如下情况：
+
+```blade
+// 定义
+<div {{ $attributes->merge(['class' => 'alert alert-'.$type, 'other-attr' => 'foo']) }}>{{ $message }}</div>
+// 使用
+<x-alert type="error" :message="$message" class="mb-4" other-attr="bar"/>
+// 呈现
+<div class="alert alert-error mb-4" other-attr="bar"><!-- $message 变量的内容 --></div>
+```
+
+如上述情况，需要将 `other-attr` 属性也合并的话，可以使用以下方式，在 `merge()` 方法中添加第二个参数 `true` ：
+
+```blade
+// 定义
+<div {{ $attributes->merge(['class' => 'alert alert-'.$type, 'other-attr' => 'foo'], true) }}>{{ $message }}</div>
+// 使用
+<x-alert type="error" :message="$message" class="mb-4" other-attr="bar"/>
+// 呈现
+<div class="alert alert-error mb-4" other-attr="foo bar"><!-- $message 变量的内容 --></div>
 ```
 
 #### 插槽

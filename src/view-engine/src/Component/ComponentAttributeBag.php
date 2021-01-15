@@ -220,7 +220,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
      *
      * @return static
      */
-    public function merge(array $attributeDefaults = [])
+    public function merge(array $attributeDefaults = [], bool $forceMerge = false)
     {
         $attributes = [];
 
@@ -233,9 +233,8 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
         }, $attributeDefaults);
 
         foreach ($this->attributes as $key => $value) {
-            if ($key !== 'class') {
+            if (! $forceMerge && $key !== 'class') {
                 $attributes[$key] = $value;
-
                 continue;
             }
 
@@ -273,6 +272,14 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
         }
 
         $this->attributes = $attributes;
+    }
+
+    /**
+     * Determine if a given attribute exists in the attribute array.
+     */
+    public function has(string $key): bool
+    {
+        return array_key_exists($key, $this->attributes);
     }
 
     /**

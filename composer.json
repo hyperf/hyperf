@@ -49,10 +49,11 @@
         "jean85/pretty-package-versions": "^1.2",
         "jonahgeorge/jaeger-client-php": "^1.0",
         "laminas/laminas-mime": "^2.7",
-        "league/flysystem": "^1.0|^2.0",
+        "league/flysystem": "^1.0",
         "league/flysystem-aws-s3-v3": "^1.0|^2.0",
         "league/flysystem-memory": "^1.0|^2.0",
         "league/plates": "^3.3",
+        "longlang/phpkafka": "^1.1",
         "malukenho/docheader": "^0.1.6",
         "markrogoyski/math-php": "^1.2.0",
         "mix/redis-subscribe": "^2.1",
@@ -146,9 +147,6 @@
         "hyperf/websocket-server": "self.version"
     },
     "suggest": {},
-    "conflict": {
-        "symfony/event-dispatcher": "<4.3"
-    },
     "autoload": {
         "files": [
             "src/config/src/Functions.php",
@@ -193,6 +191,7 @@
             "Hyperf\\HttpMessage\\": "src/http-message/src/",
             "Hyperf\\HttpServer\\": "src/http-server/src/",
             "Hyperf\\JsonRpc\\": "src/json-rpc/src/",
+            "Hyperf\\Kafka\\": "src/kafka/src/",
             "Hyperf\\LoadBalancer\\": "src/load-balancer/src/",
             "Hyperf\\Logger\\": "src/logger/src/",
             "Hyperf\\Memory\\": "src/memory/src/",
@@ -274,6 +273,7 @@
             "HyperfTest\\HttpMessage\\": "src/http-message/tests/",
             "HyperfTest\\HttpServer\\": "src/http-server/tests/",
             "HyperfTest\\JsonRpc\\": "src/json-rpc/tests/",
+            "HyperfTest\\Kafka\\": "src/kafka/tests/",
             "HyperfTest\\LoadBalancer\\": "src/load-balancer/tests/",
             "HyperfTest\\Logger\\": "src/logger/tests/",
             "HyperfTest\\Metric\\": "src/metric/tests/",
@@ -352,6 +352,7 @@
                 "Hyperf\\HttpMessage\\ConfigProvider",
                 "Hyperf\\HttpServer\\ConfigProvider",
                 "Hyperf\\JsonRpc\\ConfigProvider",
+                "Hyperf\\Kafka\\ConfigProvider",
                 "Hyperf\\LoadBalancer\\ConfigProvider",
                 "Hyperf\\Logger\\ConfigProvider",
                 "Hyperf\\Memory\\ConfigProvider",

@@ -19,18 +19,36 @@ class RewriteConfigVisitor extends NodeVisitorAbstract
     public function leaveNode(Node $node)
     {
         if ($node instanceof Node\Stmt\Return_) {
-            if (! $node->expr instanceof Node\Expr\Array_) {
-                return $node;
-            }
-            foreach ($node->expr->items as $item) {
-                if (! $item instanceof Node\Expr\ArrayItem) {
-                    continue;
-                }
-                if ($item->key instanceof Node\Scalar\String_ && strtolower($item->key->value) == 'scan_cacheable') {
-                    $item->value = new Node\Expr\ConstFetch(new Node\Name('true'));
-                }
-            }
+            $result = new Node\Expr\Variable('result');
+            $assign = new Node\Expr\Assign($result, $node->expr);
+            return new Node\Stmt\Expression($assign);
         }
         return $node;
+    }
+
+    public function afterTraverse(array $nodes): array
+    {
+        $nodes[] = $this->createReturn();
+        return $nodes;
+    }
+
+    protected function createReturn(): Node\Stmt\Return_
+    {
+        $funcCall = new Node\Expr\FuncCall(new Node\Name('array_replace'));
+        $funcCall->args = [
+            new Node\Arg(new Node\Expr\Variable('result')),
+            $this->createScanArg(),
+        ];
+        return new Node\Stmt\Return_($funcCall);
+    }
+
+    protected function createScanArg(): Node\Arg
+    {
+        $array = new Node\Expr\Array_();
+        $array->items[] = new Node\Expr\ArrayItem(
+            new Node\Expr\ConstFetch(new Node\Name('true')),
+            new Node\Scalar\String_('scan_cacheable')
+        );
+        return new Node\Arg($array);
     }
 }
