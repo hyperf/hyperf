@@ -316,7 +316,6 @@
             "Routeguide\\": "src/grpc-client/tests/Routeguide/"
         }
     },
-    ,
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
