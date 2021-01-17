@@ -9,12 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Phar;
 
 use Symfony\Component\Finder\Finder;
 
 class Package
 {
+    /**
+     * @var array
+     */
+    protected $exclude;
+
     /**
      * @var array
      */
@@ -25,10 +31,11 @@ class Package
      */
     protected $directory;
 
-    public function __construct(array $package, string $directory)
+    public function __construct(array $package, string $directory, array $exclude = [])
     {
         $this->package = $package;
         $this->directory = rtrim($directory, '/') . '/';
+        $this->exclude = $exclude;
     }
 
     /**
@@ -91,7 +98,7 @@ class Package
         $bundle = new Bundle();
         $dir = $this->getDirectory();
         $vendorPath = $this->getVendorPath();
-        if (empty($this->package['autoload']) && ! is_dir($dir . $vendorPath)) {
+        if (empty($this->package['autoload']) && !is_dir($dir . $vendorPath)) {
             return $bundle;
         }
         if ($finder == null) {
@@ -100,6 +107,7 @@ class Package
                 ->ignoreVCS(true)
                 ->exclude(rtrim($vendorPath, '/'))
                 ->notPath('/^composer\.phar/')
+                ->exclude($this->exclude)
                 ->in($dir);
         }
         return $bundle->addFinder($finder);

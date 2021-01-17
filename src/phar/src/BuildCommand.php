@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Phar;
 
 use Hyperf\Command\Command as HyperfCommand;
@@ -37,7 +38,10 @@ class BuildCommand extends HyperfCommand
             ->addOption('name', '', InputOption::VALUE_OPTIONAL, 'This is the name of the Phar package, and if it is not passed in, the project name is used by default', null)
             ->addOption('bin', 'b', InputOption::VALUE_OPTIONAL, 'The script path to execute by default.', 'bin/hyperf.php')
             ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Project root path, default BASE_PATH.', null)
-            ->addOption('phar-version', '', InputOption::VALUE_OPTIONAL, 'The version of the project that will be compiled.', null);
+            ->addOption('exclude', 'e', InputOption::VALUE_OPTIONAL, 'Project exclude path .', 'Flutter,client,deploy,docker-compose.yml')
+            ->addOption('no-dev', NULL, InputOption::VALUE_OPTIONAL, 'Project is debug path, default false .', 'false')
+            ->addOption('phar-version', '', InputOption::VALUE_OPTIONAL, 'The version of the project that will be compiled.', null)
+            ->addOption('composer-cmd', 'cc', InputOption::VALUE_OPTIONAL, 'composer cmd , default composer,composer.phar,./composer,./composer.phar .', 'composer,composer.phar,./composer,./composer.phar');
     }
 
     public function handle()
@@ -46,16 +50,24 @@ class BuildCommand extends HyperfCommand
         $name = $this->input->getOption('name');
         $bin = $this->input->getOption('bin');
         $path = $this->input->getOption('path');
+        $exclude = $this->input->getOption('exclude');
+        $noDev = $this->input->getOption('no-dev');
         $version = $this->input->getOption('phar-version');
+        $composerCmd = $this->input->getOption('composer-cmd');
         if (empty($path)) {
             $path = BASE_PATH;
         }
-        $builder = $this->getPharBuilder($path);
+        $builder = $this->getPharBuilder($path, $exclude);
         if (! empty($bin)) {
             $builder->setMain($bin);
         }
         if (! empty($name)) {
             $builder->setTarget($name);
+        }
+        $builder->setNoDev($noDev != 'false');
+
+        if (! empty($composerCmd)) {
+            $builder->setComposerCmd($composerCmd);
         }
         if (! empty($version)) {
             $builder->setVersion($version);
@@ -73,7 +85,7 @@ class BuildCommand extends HyperfCommand
         }
     }
 
-    public function getPharBuilder(string $path): PharBuilder
+    public function getPharBuilder(string $path, ?string $exclude = null): PharBuilder
     {
         if (is_dir($path)) {
             $path = rtrim($path, '/') . '/composer.json';
@@ -81,7 +93,7 @@ class BuildCommand extends HyperfCommand
         if (! is_file($path)) {
             throw new InvalidArgumentException(sprintf('The given path %s is not a readable file', $path));
         }
-        $pharBuilder = new PharBuilder($path, $this->container->get(LoggerInterface::class));
+        $pharBuilder = new PharBuilder($path, $this->container->get(LoggerInterface::class), $exclude);
 
         $vendorPath = $pharBuilder->getPackage()->getVendorAbsolutePath();
         if (! is_dir($vendorPath)) {
