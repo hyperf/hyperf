@@ -267,9 +267,8 @@ class PharBuilder
         $mainStr = <<<EOD
 <?php
 \$mountLink = ["$mountLink"];
-!defined('REAL_BASE_PATH') && define('REAL_BASE_PATH', dirname(realpath(\$argv[0]), pathinfo(\$argv[0], PATHINFO_EXTENSION) == 'phar' ? 1 : 2));
 array_walk(\$mountLink, function (\$item){
-    \$file = REAL_BASE_PATH.'/'.\$item;
+    \$file = realpath(\$argv[0]).'/'.\$item;
     if(!file_exists(\$file)){
         if(rtrim(\$item, '/')!=\$item){
             mkdir(REAL_BASE_PATH.\$item, 0777, true);
