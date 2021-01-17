@@ -271,7 +271,7 @@ array_walk(\$mountLink, function (\$item){
     \$file = realpath(\$argv[0]).'/'.\$item;
     if(!file_exists(\$file)){
         if(rtrim(\$item, '/')!=\$item){
-            mkdir(REAL_BASE_PATH.\$item, 0777, true);
+            mkdir(\$file, 0777, true);
         }else{
             file_exists(dirname(\$file)) || mkdir(dirname(\$file), 0777, true);
             file_put_contents(\$file,"");
