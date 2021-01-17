@@ -45,7 +45,7 @@
         "hyperf/engine": "dev-master",
         "influxdb/influxdb-php": "^1.15.0",
         "ircmaxell/random-lib": "^1.2",
-        "jcchavezs/zipkin-opentracing": "dev-master",
+        "jcchavezs/zipkin-opentracing": "dev-master as 1.0.0",
         "jean85/pretty-package-versions": "^1.2",
         "jonahgeorge/jaeger-client-php": "^1.0",
         "laminas/laminas-mime": "^2.7",
