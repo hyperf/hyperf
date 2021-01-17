@@ -22,8 +22,8 @@
         "hyperf/di": "~2.1.0",
         "hyperf/guzzle": "~2.1.0",
         "hyperf/utils": "~2.1.0",
-        "jcchavezs/zipkin-opentracing":"^0.2.0",
-        "opentracing/opentracing":"1.0.0-beta6"
+        "jcchavezs/zipkin-opentracing":"^1.0",
+        "opentracing/opentracing":"^1.0"
     },
     "require-dev": {
         "hyperf/event": "~2.1.0",
@@ -31,7 +31,7 @@
         "mockery/mockery": "^1.0",
         "phpunit/phpunit": "^9.4",
         "friendsofphp/php-cs-fixer": "^2.9",
-        "jonahgeorge/jaeger-client-php": "^0.6"
+        "jonahgeorge/jaeger-client-php": "^1.0"
     },
     "suggest": {
         "hyperf/event": "Required to use DbQueryExecutedListener.",
