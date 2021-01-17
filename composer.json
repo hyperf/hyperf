@@ -45,7 +45,7 @@
         "hyperf/engine": "dev-master",
         "influxdb/influxdb-php": "^1.15.0",
         "ircmaxell/random-lib": "^1.2",
-        "jcchavezs/zipkin-opentracing": "dev-master as 1.0.0",
+        "jcchavezs/zipkin-opentracing": "^1.0",
         "jean85/pretty-package-versions": "^1.2",
         "jonahgeorge/jaeger-client-php": "^1.0",
         "laminas/laminas-mime": "^2.7",
@@ -316,7 +316,11 @@
             "Routeguide\\": "src/grpc-client/tests/Routeguide/"
         }
     },
+    ,
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "config": {
+        "optimize-autoloader": true,
         "sort-packages": true
     },
     "extra": {
@@ -407,7 +411,5 @@
         "cs-fix": "php-cs-fixer fix $1",
         "json-fix": "./bin/composer-json-fixer",
         "analyse": "phpstan analyse --memory-limit 4096M -l 5 -c phpstan.neon"
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }
