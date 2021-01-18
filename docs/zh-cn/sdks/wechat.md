@@ -2,11 +2,11 @@
 
 [EasyWeChat](https://www.easywechat.com/) 是一个开源的微信 SDK (非微信官方 SDK)。
 
-> 因为组件默认使用 `Curl`，所以我们需要修改对应的 `GuzzleClient` 为协程客户端，或者修改常量 `SWOOLE_HOOK_FLAGS` 为 `SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL`
+> 因为组件默认使用 `Curl`，所以我们需要修改对应的 `GuzzleClient` 为协程客户端，或者修改常量 [SWOOLE_HOOK_FLAGS](/zh-cn/coroutine?id=swoole-runtime-hook-level)
 
 ## 替换 `Handler`
 
-以下以小程序为例，
+以下以公众号为例，
 
 ```php
 <?php
@@ -17,39 +17,33 @@ use EasyWeChat\Kernel\ServiceContainer;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use Hyperf\Guzzle\CoroutineHandler;
-use Hyperf\Guzzle\HandlerStackFactory;
 use Overtrue\Socialite\Providers\AbstractProvider;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 $container = ApplicationContext::getContainer();
 
-$app = Factory::miniProgram($config);
+$app = Factory::officialAccount($config);
+$handler = new CoroutineHandler();
 
-// 设置 HttpClient，当前设置没有实际效果，在数据请求时会被 guzzle_handler 覆盖，但不保证 EasyWeChat 后面会修改这里。
+// 设置 HttpClient，部分接口直接使用了 http_client。
 $config = $app['config']->get('http', []);
-$config['handler'] = $container->get(HandlerStackFactory::class)->create();
+$config['handler'] = $stack = HandlerStack::create($handler);
 $app->rebind('http_client', new Client($config));
 
-// 重写 Handler
-$app['guzzle_handler'] = new CoroutineHandler();
+// 部分接口在请求数据时，会根据 guzzle_handler 重置 Handler
+$app['guzzle_handler'] = $handler;
 
-// 设置 OAuth 授权的 Guzzle 配置
-AbstractProvider::setGuzzleOptions([
+// 如果使用的是 OfficialAccount，则还需要设置以下参数
+$app->oauth->setGuzzleOptions([
     'http_errors' => false,
-    'handler' => HandlerStack::create(new CoroutineHandler()),
+    'handler' => $stack,
 ]);
 ```
 
 ## 修改 `SWOOLE_HOOK_FLAGS`
 
-修改入口文件 `bin/hyperf.php`，以下忽略不需要修改的代码。
-
-```php
-<?php
-
-! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL);
-```
+参考 [SWOOLE_HOOK_FLAGS](/zh-cn/coroutine?id=swoole-runtime-hook-level)
 
 ## 如何使用 EasyWeChat
 
@@ -65,17 +59,23 @@ $xml = $this->request->getBody()->getContents();
 
 ```php
 <?php
+use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request;
 
 $get = $this->request->getQueryParams();
 $post = $this->request->getParsedBody();
 $cookie = $this->request->getCookieParams();
-$files = $this->request->getUploadedFiles();
+$uploadFiles = $this->request->getUploadedFiles() ?? [];
 $server = $this->request->getServerParams();
 $xml = $this->request->getBody()->getContents();
-
-$app['request'] = new Request($get,$post,[],$cookie,$files,$server,$xml);
-
+$files = [];
+/** @var \Hyperf\HttpMessage\Upload\UploadedFile $v */
+foreach ($uploadFiles as $k => $v) {
+    $files[$k] = $v->toArray();
+}
+$request = new Request($get, $post, [], $cookie, $files, $server, $xml);
+$request->headers = new HeaderBag($this->request->getHeaders());
+$app->rebind('request', $request);
 // Do something...
 
 ```
@@ -90,7 +90,7 @@ $app['request'] = new Request($get,$post,[],$cookie,$files,$server,$xml);
 ```php
 $response = $app->server->serve();
 
-return $response->getBody()->getContents();
+return $response->getContent();
 ```
 
 ## 如何替换缓存

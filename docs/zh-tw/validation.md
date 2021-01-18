@@ -52,7 +52,7 @@ return [
 
 釋出 Translation 元件的檔案：
 
-```php
+```bash
 php bin/hyperf.php vendor:publish hyperf/translation
 ```
 
@@ -348,7 +348,6 @@ if ($errors->has('foo')) {
     //
 }
 ```
-
 
 ## 驗證規則
 

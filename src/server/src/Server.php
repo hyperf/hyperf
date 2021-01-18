@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -119,8 +119,8 @@ class Server implements ServerInterface
             }
 
             // Trigger beforeStart event.
-            if (isset($callbacks[SwooleEvent::ON_BEFORE_START])) {
-                [$class, $method] = $callbacks[SwooleEvent::ON_BEFORE_START];
+            if (isset($callbacks[Event::ON_BEFORE_START])) {
+                [$class, $method] = $callbacks[Event::ON_BEFORE_START];
                 if ($this->container->has($class)) {
                     $this->container->get($class)->{$method}();
                 }
@@ -183,7 +183,7 @@ class Server implements ServerInterface
     protected function registerSwooleEvents($server, array $events, string $serverName): void
     {
         foreach ($events as $event => $callback) {
-            if (! SwooleEvent::isSwooleEvent($event)) {
+            if (! Event::isSwooleEvent($event)) {
                 continue;
             }
             if (is_array($callback)) {
@@ -209,22 +209,29 @@ class Server implements ServerInterface
 
     protected function defaultCallbacks()
     {
-        $hasCallback = class_exists(Bootstrap\StartCallback::class) &&
-            class_exists(Bootstrap\ManagerStartCallback::class) &&
-            class_exists(Bootstrap\WorkerStartCallback::class);
+        $hasCallback = class_exists(Bootstrap\StartCallback::class)
+            && class_exists(Bootstrap\ManagerStartCallback::class)
+            && class_exists(Bootstrap\WorkerStartCallback::class);
 
         if ($hasCallback) {
-            return [
-                SwooleEvent::ON_START => [Bootstrap\StartCallback::class, 'onStart'],
-                SwooleEvent::ON_MANAGER_START => [Bootstrap\ManagerStartCallback::class, 'onManagerStart'],
-                SwooleEvent::ON_WORKER_START => [Bootstrap\WorkerStartCallback::class, 'onWorkerStart'],
-                SwooleEvent::ON_WORKER_STOP => [Bootstrap\WorkerStopCallback::class, 'onWorkerStop'],
-                SwooleEvent::ON_WORKER_EXIT => [Bootstrap\WorkerExitCallback::class, 'onWorkerExit'],
+            $callbacks = [
+                Event::ON_MANAGER_START => [Bootstrap\ManagerStartCallback::class, 'onManagerStart'],
+                Event::ON_WORKER_START => [Bootstrap\WorkerStartCallback::class, 'onWorkerStart'],
+                Event::ON_WORKER_STOP => [Bootstrap\WorkerStopCallback::class, 'onWorkerStop'],
+                Event::ON_WORKER_EXIT => [Bootstrap\WorkerExitCallback::class, 'onWorkerExit'],
             ];
+
+            if ($this->server->mode === SWOOLE_BASE) {
+                return $callbacks;
+            }
+
+            return array_merge([
+                Event::ON_START => [Bootstrap\StartCallback::class, 'onStart'],
+            ], $callbacks);
         }
 
         return [
-            SwooleEvent::ON_WORKER_START => function (SwooleServer $server, int $workerId) {
+            Event::ON_WORKER_START => function (SwooleServer $server, int $workerId) {
                 printf('Worker %d started.' . PHP_EOL, $workerId);
             },
         ];

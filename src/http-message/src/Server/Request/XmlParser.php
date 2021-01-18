@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -14,7 +14,7 @@ namespace Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\HttpMessage\Server\RequestParserInterface;
 use Hyperf\Utils\Codec\Xml;
-use Hyperf\Utils\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 
 class XmlParser implements RequestParserInterface
 {

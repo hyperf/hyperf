@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -26,13 +26,15 @@ use Hyperf\WebSocketServer\Sender;
 use Mix\Redis\Subscribe\Subscriber;
 use Redis;
 
-class RedisAdapter implements AdapterInterface
+class RedisAdapter implements AdapterInterface, EphemeralInterface
 {
     use Flagger;
 
     protected $redisPrefix = 'ws';
 
     protected $retryInterval = 1000;
+
+    protected $cleanUpExpiredInterval = 30000;
 
     protected $connection = 'default';
 
@@ -56,6 +58,11 @@ class RedisAdapter implements AdapterInterface
      */
     protected $sender;
 
+    /**
+     * @var int time to live
+     */
+    protected $ttl = 0;
+
     public function __construct(RedisFactory $redis, Sender $sender, NamespaceInterface $nsp, SidProviderInterface $sidProvider)
     {
         $this->sender = $sender;
@@ -70,6 +77,9 @@ class RedisAdapter implements AdapterInterface
         $this->redis->sAdd($this->getSidKey($sid), ...$rooms);
         foreach ($rooms as $room) {
             $this->redis->sAdd($this->getRoomKey($room), $sid);
+            if ($this->ttl > 0) {
+                $this->redis->zAdd($this->getExpireKey(), microtime(true) * 1000 + $this->ttl, $sid);
+            }
         }
         $this->redis->sAdd($this->getStatKey(), $sid);
         $this->redis->exec();
@@ -104,7 +114,8 @@ class RedisAdapter implements AdapterInterface
             $this->doBroadcast($packet, $opts);
             return;
         }
-        $this->redis->publish($this->getChannelKey(), serialize([$packet, $opts]));
+
+        $this->publish($this->getChannelKey(), serialize([$packet, $opts]));
     }
 
     public function clients(string ...$rooms): array
@@ -142,7 +153,7 @@ class RedisAdapter implements AdapterInterface
     public function subscribe()
     {
         Coroutine::create(function () {
-            CoordinatorManager::until(Constants::ON_WORKER_START)->yield();
+            CoordinatorManager::until(Constants::WORKER_START)->yield();
             retry(PHP_INT_MAX, function () {
                 try {
                     $sub = make(Subscriber::class);
@@ -180,6 +191,48 @@ class RedisAdapter implements AdapterInterface
                 $this->redis->del(...$keys);
             }
         }
+    }
+
+    public function cleanUpExpired(): void
+    {
+        Coroutine::create(function () {
+            while (true) {
+                CoordinatorManager::until(Constants::WORKER_EXIT)->yield($this->cleanUpExpiredInterval / 1000);
+                $this->cleanUpExpiredOnce();
+            }
+        });
+    }
+
+    public function cleanUpExpiredOnce(): void
+    {
+        // TODO: Redis doesn't provide atomicity. It may be necessary to use a lock here.
+        $sids = $this->redis->zRangeByScore($this->getExpireKey(), '-inf', (string) (microtime(true) * 1000));
+
+        if (! empty($sids)) {
+            foreach ($sids as $sid) {
+                $this->del($sid);
+            }
+        }
+
+        $this->redis->zRem($this->getExpireKey(), ...$sids);
+    }
+
+    public function setTtl(int $ms): EphemeralInterface
+    {
+        $this->ttl = $ms;
+        return $this;
+    }
+
+    public function renew(string $sid): void
+    {
+        if ($this->ttl > 0) {
+            $this->redis->zAdd($this->getExpireKey(), microtime(true) * 1000 + $this->ttl, $sid);
+        }
+    }
+
+    protected function publish(string $channel, string $message)
+    {
+        $this->redis->publish($channel, $message);
     }
 
     protected function doBroadcast($packet, $opts)
@@ -241,6 +294,15 @@ class RedisAdapter implements AdapterInterface
             $this->redisPrefix,
             $this->nsp->getNamespace(),
             'channel',
+        ]);
+    }
+
+    protected function getExpireKey(): string
+    {
+        return join(':', [
+            $this->redisPrefix,
+            $this->nsp->getNamespace(),
+            'expire',
         ]);
     }
 

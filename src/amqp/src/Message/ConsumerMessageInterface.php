@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -16,12 +16,6 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 interface ConsumerMessageInterface extends MessageInterface
 {
-    /**
-     * @deprecated v2.0
-     * @param array $data
-     */
-    public function consume($data): string;
-
     public function consumeMessage($data, AMQPMessage $message): string;
 
     public function setQueue(string $queue);
@@ -43,4 +37,14 @@ interface ConsumerMessageInterface extends MessageInterface
     public function getMaxConsumption(): int;
 
     public function setMaxConsumption(int $maxConsumption);
+
+    /**
+     * @return float|int
+     */
+    public function getWaitTimeout();
+
+    /**
+     * @param float|int $timeout
+     */
+    public function setWaitTimeout($timeout);
 }

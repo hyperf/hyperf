@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -34,7 +34,7 @@ abstract class AbstractTestCase extends TestCase
 {
     protected $driver = 'pdo';
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set('db.connection.default', null);
@@ -47,6 +47,7 @@ abstract class AbstractTestCase extends TestCase
             'db' => [
                 'default' => [
                     'driver' => $this->driver,
+                    'host' => '127.0.0.1',
                     'password' => '',
                     'database' => 'hyperf',
                     'pool' => [
@@ -56,6 +57,7 @@ abstract class AbstractTestCase extends TestCase
                 ],
                 'pdo' => [
                     'driver' => 'pdo',
+                    'host' => '127.0.0.1',
                     'password' => '',
                     'database' => 'hyperf',
                     'pool' => [

@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -25,7 +25,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
  */
 class StdoutLoggerTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
@@ -51,7 +51,7 @@ class StdoutLoggerTest extends TestCase
     {
         $output = Mockery::mock(ConsoleOutput::class);
         $output->shouldReceive('writeln')->with(Mockery::any())->once()->andReturnUsing(function ($message) {
-            $this->assertRegExp('/RuntimeException: Invalid Arguments./', $message);
+            $this->assertMatchesRegularExpression('/RuntimeException: Invalid Arguments./', $message);
         });
         $logger = new StdoutLogger(new Config([
             StdoutLoggerInterface::class => [

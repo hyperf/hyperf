@@ -1,5 +1,5 @@
 # Magic behaviour with __get, __set, __call and __callStatic is not exactly static analyser-friendly :)
-# Fortunately, You can ingore it by the following config.
+# Fortunately, You can ignore it by the following config.
 #
 
 parameters:
@@ -22,7 +22,8 @@ parameters:
     - %currentWorkingDirectory%/src/grpc-server/*
     - %currentWorkingDirectory%/src/swagger/*
     - %currentWorkingDirectory%/src/validation/*
-    - %currentWorkingDirectory%/src/view/*
+    - %currentWorkingDirectory%/src/view/src/Engine/*
+    - %currentWorkingDirectory%/src/server/src/SwowServer.php
   ignoreErrors:
     - '#side of && is always#'
     - '#method Redis::zRevRangeByScore\(\) expects int, string given#'
@@ -35,9 +36,15 @@ parameters:
     - '#Unsafe usage of new static#'
     - '#Method Hyperf\\Contract\\Sendable::send#'
     - '#Variable .* in PHPDoc tag @var does not exist#'
-    - '#Call to an undefined method Hyperf\\DbConnection\\Model\\Model::hydrate#'
+    - '#Call to an undefined method Hyperf\\Database\\Model\\Model::hydrate#'
     - '#PHPDoc tag @param has invalid value#'
     - '#Static call to instance method Hyperf\\RpcServer\\Router\\Router::#'
     - '#Method Hyperf\\Utils\\Serializer\\ScalarNormalizer::denormalize\(\) should return array\|object but returns#'
     - '#Function get_debug_type invoked with 1 parameter, 0 required#'
-    - '#gc_status not found#'
+    - '#Call to an undefined method Hyperf\\Utils\\HigherOrderCollectionProxy::.*#'
+    - '#Used function getSwooleTracker.* not found#'
+    - '#Function getSwooleTracker.* not found#'
+    - '#InfluxDB\\Point constructor expects float\|null, string given#'
+    - '#Call to an undefined method Hyperf\\Database\\Model\\Builder::unsearchable#'
+    - '#trackerHookMalloc not found#'
+    - '#method Phar\:\:buildFromIterator\(\) expects Iterator, Traversable given#'

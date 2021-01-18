@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -36,6 +36,26 @@ class PDODriverTest extends AbstractTestCase
         $res = $db->query('SELECT * FROM `user` WHERE id = ?;', [2]);
 
         $this->assertSame('Hyperflex', $res[0]['name']);
+    }
+
+    public function testRun()
+    {
+        $db = $this->getContainer()->get(DB::class);
+
+        $sql = 'SELECT * FROM `user` WHERE id = ?;';
+        $bindings = [2];
+        $mode = \PDO::FETCH_OBJ;
+        $res = $db->run(function (\PDO $pdo) use ($sql, $bindings, $mode) {
+            $statement = $pdo->prepare($sql);
+
+            $this->bindValues($statement, $bindings);
+
+            $statement->execute();
+
+            return $statement->fetchAll($mode);
+        });
+
+        $this->assertSame('Hyperflex', $res[0]->name);
     }
 
     public function testInsertAndExecute()

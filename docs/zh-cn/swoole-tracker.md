@@ -32,18 +32,16 @@ Swoole Tracker 能够帮助企业自动分析并汇总统计关键系统调用�
 
 ### 安装扩展
 
-注册完账户后，进入[控制台](https://www.swoole-cloud.com/dashboard/catdemo/)，并申请试用，下载对应客户端。
+注册完账户后，进入[控制台](https://business.swoole.com/SwooleTracker/catdemo)，并申请试用，下载对应的安装脚本。
 
 相关文档，请移步 [试用文档](https://www.kancloud.cn/swoole-inc/ee-base-wiki/1214079) 或 [详细文档](https://www.kancloud.cn/swoole-inc/ee-help-wiki/1213080) 
 
-> 具体文档地址，以从控制台下载的对应客户端中展示的为准。
-
-将客户端中的所有文件以及以下两个文件复制到项目目录 `.build` 中
+将脚本以及以下两个文件复制到项目目录 `.build` 中
 
 1. `entrypoint.sh`
 
 ```bash
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 /opt/swoole/script/php/swoole_php /opt/swoole/node-agent/src/node.php &
 
@@ -51,23 +49,33 @@ php /opt/www/bin/hyperf.php start
 
 ```
 
-2. `swoole-tracker.ini`
+2. `swoole_tracker.ini`
 
-```bash
+```ini
 [swoole_tracker]
-extension=/opt/swoole_tracker.so
-apm.enable=1           #打开总开关
-apm.sampling_rate=100  #采样率 例如：100%
+extension=/opt/.build/swoole_tracker.so
 
-# 开启内存泄漏检测时需要添加
-apm.enable_memcheck=1  #开启内存泄漏检测 默认0 关闭状态
+;打开总开关
+apm.enable=1
+;采样率 例如：100%
+apm.sampling_rate=100
+
+;开启内存泄漏检测时添加 默认0 关闭状态
+apm.enable_memcheck=1
 ```
 
 然后将下面的 `Dockerfile` 复制到项目根目录中。
 
 ```dockerfile
-FROM hyperf/hyperf:7.2-alpine-cli
-LABEL maintainer="Hyperf Developers <group@hyperf.io>" version="1.0" license="MIT"
+# Default Dockerfile
+#
+# @link     https://www.hyperf.io
+# @document https://hyperf.wiki
+# @contact  group@hyperf.io
+# @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+
+FROM hyperf/hyperf:7.4-alpine-v3.11-swoole
+LABEL maintainer="Hyperf Developers <group@hyperf.io>" version="1.0" license="MIT" app.name="Hyperf"
 
 ##
 # ---------- env settings ----------
@@ -76,28 +84,29 @@ LABEL maintainer="Hyperf Developers <group@hyperf.io>" version="1.0" license="MI
 ARG timezone
 
 ENV TIMEZONE=${timezone:-"Asia/Shanghai"} \
-    COMPOSER_VERSION=1.8.6 \
-    APP_ENV=prod
+    APP_ENV=prod \
+    SCAN_CACHEABLE=(true)
 
+# update
 RUN set -ex \
-    && apk update \
     # install composer
     && cd /tmp \
-    && wget https://github.com/composer/composer/releases/download/${COMPOSER_VERSION}/composer.phar \
+    && wget https://mirrors.aliyun.com/composer/composer.phar \
     && chmod u+x composer.phar \
     && mv composer.phar /usr/local/bin/composer \
     # show php version and extensions
     && php -v \
     && php -m \
+    && php --ri swoole \
     #  ---------- some config ----------
     && cd /etc/php7 \
     # - config PHP
     && { \
-        echo "upload_max_filesize=100M"; \
-        echo "post_max_size=108M"; \
-        echo "memory_limit=1024M"; \
+        echo "upload_max_filesize=128M"; \
+        echo "post_max_size=128M"; \
+        echo "memory_limit=1G"; \
         echo "date.timezone=${TIMEZONE}"; \
-    } | tee conf.d/99-overrides.ini \
+    } | tee conf.d/99_overrides.ini \
     # - config timezone
     && ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
     && echo "${TIMEZONE}" > /etc/timezone \
@@ -105,25 +114,29 @@ RUN set -ex \
     && rm -rf /var/cache/apk/* /tmp/* /usr/share/man \
     && echo -e "\033[42;37m Build Completed :).\033[0m\n"
 
-COPY . /opt/www
-WORKDIR /opt/www/.build
+COPY .build /opt/.build
+WORKDIR /opt/.build
 
-# 这里的地址，以客户端中显示的为准
-RUN ./deploy_env.sh www.swoole-cloud.com \
+RUN chmod +x swoole-tracker-install.sh \
+    && ./swoole-tracker-install.sh \
     && chmod 755 entrypoint.sh \
-    && cp swoole_tracker72.so /opt/swoole_tracker.so \
-    && cp swoole-tracker.ini /etc/php7/conf.d/swoole-tracker.ini \
+    && cp swoole-tracker/swoole_tracker74.so /opt/.build/swoole_tracker.so \
+    && cp swoole_tracker.ini /etc/php7/conf.d/98_swoole_tracker.ini \
     && php -m
 
 WORKDIR /opt/www
 
-RUN composer install --no-dev \
-    && composer dump-autoload -o \
-    && php /opt/www/bin/hyperf.php di:init-proxy
+# Composer Cache
+# COPY ./composer.* /opt/www/
+# RUN composer install --no-dev --no-scripts
+
+COPY . /opt/www
+RUN composer install --no-dev -o && php bin/hyperf.php
 
 EXPOSE 9501
 
-ENTRYPOINT ["sh", ".build/entrypoint.sh"]
+ENTRYPOINT ["sh", "/opt/.build/entrypoint.sh"]
+
 ```
 
 ## 使用
@@ -157,3 +170,79 @@ return [
     ],
 ];
 ```
+
+若使用 `jsonrpc-http` 协议实现了 `RPC` 服务，则还需要在 `config/autoload/aspects.php` 配置以下 `Aspect`：
+
+```php
+<?php
+
+return [
+    Hyperf\SwooleTracker\Aspect\CoroutineHandlerAspect::class,
+];
+```
+
+## 免费内存泄漏检测工具
+
+Swoole Tracker 本是一款商业产品，拥有进行内存泄漏检测的能力，不过 Swoole Tracker 把内存泄漏检测的功能完全免费给 PHP 社区使用，完善 PHP 生态，回馈社区，下面将概述它的具体用法。
+
+1. 前往 [Swoole Tracker 官网](https://business.swoole.com/SwooleTracker/download/) 下载最新的 Swoole Tracker 扩展；
+
+2. 和上文添加扩展相同，再加入一行配置：
+
+```ini
+;Leak检测开关
+apm.enable_malloc_hook=1
+```
+
+!> 注意：不要在 composer 安装依赖时开启；不要在生成代理类缓存时开启。
+
+3. 根据自己的业务，在 Swoole 的 onReceive 或者 onRequest 事件开头加上 `trackerHookMalloc()` 调用：
+
+```php
+$http->on('request', function ($request, $response) {
+    trackerHookMalloc();
+    $response->end("<h1>Hello Swoole. #".rand(1000, 9999)."</h1>");
+});
+```
+
+每次调用结束后（第一次调用不会被记录），都会生成一个泄漏的信息到 `/tmp/trackerleak` 日志中，我们可以在 Cli 命令行调用 `trackerAnalyzeLeak()` 函数即可分析泄漏日志，生成泄漏报告
+
+```shell
+php -r "trackerAnalyzeLeak();"
+```
+
+下面是泄漏报告的格式：
+
+没有内存泄漏的情况：
+
+```
+[16916 (Loop 5)] ✅ Nice!! No Leak Were Detected In This Loop
+```
+
+其中 `16916` 表示进程 id，`Loop 5`表示第 5 次调用主函数生成的泄漏信息
+
+有确定的内存泄漏：
+
+```
+[24265 (Loop 8)] /tests/mem_leak/http_server.php:125 => [12928]
+[24265 (Loop 8)] /tests/mem_leak/http_server.php:129 => [12928]
+[24265 (Loop 8)] ❌ This Loop TotalLeak: [25216]
+```
+
+表示第 8 次调用 `http_server.php` 的 125 行和 129 行，分别泄漏了 12928 字节内存，总共泄漏了 25216 字节内存。
+
+通过调用 `trackerCleanLeak()` 可以清除泄漏日志，重新开始。[了解更多内存检测工具使用细节](https://www.kancloud.cn/swoole-inc/ee-help-wiki/1941569)
+
+如果需要在 Hyperf 中检测 HTTP Server 中的内存泄漏，可以在 `config/autoload/middlewares.php` 添加一个全局中间件：
+
+```php
+<?php
+
+return [
+    'http' => [
+        Hyperf\SwooleTracker\Middleware\HookMallocMiddleware::class,
+    ],
+];
+```
+
+其他类型 Server 同理。

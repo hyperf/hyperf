@@ -5,15 +5,20 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace HyperfTest\Retry;
 
+use Hyperf\Retry\Policy\FallbackRetryPolicy;
 use Hyperf\Retry\Policy\MaxAttemptsRetryPolicy;
 use Hyperf\Retry\Retry;
+use Hyperf\Utils\ApplicationContext;
+use HyperfTest\Retry\Stub\Foo;
+use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 /**
  * @internal
@@ -21,6 +26,11 @@ use PHPUnit\Framework\TestCase;
  */
 class RetryTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        Mockery::close();
+    }
+
     public function testWith()
     {
         $i = 0;
@@ -71,7 +81,7 @@ class RetryTest extends TestCase
             return ++$i;
         });
         $this->assertLessThan(11, $result);
-        $this->assertGreaterThan(6, $result);
+        $this->assertGreaterThan(5, $result);
     }
 
     public function testFallback()
@@ -83,5 +93,40 @@ class RetryTest extends TestCase
             return $i;
         });
         $this->assertEquals(10, $result);
+
+        $i = 0;
+        $result = Retry::max(2)->fallback([new Foo(), 'fallback'])->call(function () use (&$i) {
+            return $i;
+        });
+        $this->assertEquals(10, $result);
+
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->with(Foo::class)->once()->andReturn(new Foo());
+        ApplicationContext::setContainer($container);
+        $i = 0;
+        $result = Retry::with(new FallbackRetryPolicy(Foo::class . '@fallback'))->max(2)->call(function () use (&$i) {
+            return $i;
+        });
+        $this->assertEquals(10, $result);
+
+        $i = 0;
+        $result = Retry::with(new FallbackRetryPolicy(Foo::class . '::staticCall'))->max(2)->call(function () use (&$i) {
+            return $i;
+        });
+        $this->assertEquals(10, $result);
+
+        $this->assertTrue(is_callable(Foo::class . '::fallback'));
+        $this->assertTrue(is_callable(Foo::class . '::staticCall'));
+    }
+
+    public function testThrowableInFallback()
+    {
+        $instance = Mockery::mock(Foo::class);
+        $instance->shouldReceive('test')->twice()->andThrowExceptions([new \RuntimeException()]);
+        Retry::whenThrows()->max(2)->fallback(function ($throwable) {
+            $this->assertInstanceOf(\RuntimeException::class, $throwable);
+        })->call(function () use ($instance) {
+            return $instance->test();
+        });
     }
 }

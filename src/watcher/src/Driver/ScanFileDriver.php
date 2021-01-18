@@ -5,14 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\Watcher\Driver;
 
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Di\Annotation\Inject;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use Hyperf\Watcher\Option;
@@ -33,20 +32,20 @@ class ScanFileDriver implements DriverInterface
     protected $filesystem;
 
     /**
-     * @Inject
      * @var StdoutLoggerInterface
      */
     private $logger;
 
-    public function __construct(Option $option)
+    public function __construct(Option $option, StdoutLoggerInterface $logger)
     {
         $this->option = $option;
         $this->filesystem = new Filesystem();
+        $this->logger = $logger;
     }
 
     public function watch(Channel $channel): void
     {
-        $ms = $this->option->getScanInterval() > 0 ? $this->option->getScanInterval() : 2000;
+        $ms = $this->option->getScanInterval();
         Timer::tick($ms, function () use ($channel) {
             global $lastMD5;
             $files = [];

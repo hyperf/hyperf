@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -74,6 +74,19 @@ class ParallelTest extends TestCase
         $res = $parallel->wait();
         sort($res);
         $this->assertSame([2, 3, 4, 4], array_values($res));
+
+        $num = 10;
+        $callbacks = [];
+        for ($i = 0; $i < 4; ++$i) {
+            $callbacks[] = function () use (&$num) {
+                ++$num;
+                Coroutine::sleep(0.01);
+                return $num;
+            };
+        }
+        $res = parallel($callbacks, 2);
+        sort($res);
+        $this->assertSame([12, 13, 14, 14], array_values($res));
     }
 
     public function testParallelCallbackCount()
@@ -201,6 +214,25 @@ class ParallelTest extends TestCase
             $this->assertTrue(count($throwables) === 1);
             $this->assertSame('something bad happened', $throwables[0]->getMessage());
         }
+    }
+
+    public function testParallelCount()
+    {
+        $parallel = new Parallel();
+        $id = 0;
+        $parallel->add(static function () use (&$id) {
+            ++$id;
+        });
+        $parallel->add(static function () use (&$id) {
+            ++$id;
+        });
+        $this->assertSame(2, $parallel->count());
+        $parallel->wait();
+        $this->assertSame(2, $parallel->count());
+        $this->assertSame(2, $id);
+        $parallel->wait();
+        $this->assertSame(2, $parallel->count());
+        $this->assertSame(4, $id);
     }
 
     public function returnCoId()

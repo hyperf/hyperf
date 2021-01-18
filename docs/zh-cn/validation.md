@@ -52,7 +52,7 @@ return [
 
 发布 Translation 组件的文件：
 
-```php
+```bash
 php bin/hyperf.php vendor:publish hyperf/translation
 ```
 
@@ -349,7 +349,6 @@ if ($errors->has('foo')) {
 }
 ```
 
-
 ## 验证规则
 
 下面是有效规则及其函数列表：
@@ -382,15 +381,15 @@ if ($errors->has('foo')) {
 
 ##### alpha
 
-验证字段必须是字母。
+验证字段必须是字母(包含中文)。
 
 ##### alpha_dash
 
-验证字段可以包含字母和数字，以及破折号和下划线。
+验证字段可以包含字母(包含中文)和数字，以及破折号和下划线。
 
 ##### alpha_num
 
-验证字段必须是字母或数字。
+验证字段必须是字母(包含中文)或数字。
 
 ##### array
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -13,6 +13,7 @@ namespace Hyperf\Database\Query;
 
 use Closure;
 use DateTimeInterface;
+use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\ConnectionInterface;
@@ -884,16 +885,18 @@ class Builder
     /**
      * Add a "where null" clause to the query.
      *
-     * @param string $column
+     * @param array|string $columns
      * @param string $boolean
      * @param bool $not
      * @return $this
      */
-    public function whereNull($column, $boolean = 'and', $not = false)
+    public function whereNull($columns, $boolean = 'and', $not = false)
     {
         $type = $not ? 'NotNull' : 'Null';
 
-        $this->wheres[] = compact('type', 'column', 'boolean');
+        foreach (Arr::wrap($columns) as $column) {
+            $this->wheres[] = compact('type', 'column', 'boolean');
+        }
 
         return $this;
     }
@@ -1412,7 +1415,7 @@ class Builder
      * Handles dynamic "where" clauses to the query.
      *
      * @param string $method
-     * @param string $parameters
+     * @param array $parameters
      * @return $this
      */
     public function dynamicWhere($method, $parameters)
@@ -1706,12 +1709,31 @@ class Builder
     }
 
     /**
+     * Constrain the query to the previous "page" of results before a given ID.
+     *
+     * @param int $perPage
+     * @param null|int $lastId
+     * @param string $column
+     * @return $this
+     */
+    public function forPageBeforeId($perPage = 15, $lastId = 0, $column = 'id')
+    {
+        $this->orders = $this->removeExistingOrdersFor($column);
+
+        if (! is_null($lastId)) {
+            $this->where($column, '<', $lastId);
+        }
+
+        return $this->orderBy($column, 'desc')->limit($perPage);
+    }
+
+    /**
      * Constrain the query to the next "page" of results after a given ID.
      *
      * @param int $perPage
      * @param null|int $lastId
      * @param string $column
-     * @return \Hyperf\Database\Query\Builder|static
+     * @return $this
      */
     public function forPageAfterId($perPage = 15, $lastId = 0, $column = 'id')
     {
@@ -1721,7 +1743,7 @@ class Builder
             $this->where($column, '>', $lastId);
         }
 
-        return $this->orderBy($column, 'asc')->take($perPage);
+        return $this->orderBy($column, 'asc')->limit($perPage);
     }
 
     /**
@@ -1846,13 +1868,31 @@ class Builder
      * @param string $pageName
      * @param null|int $page
      */
-    public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null): PaginatorInterface
+    public function simplePaginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null): PaginatorInterface
     {
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
         $this->skip(($page - 1) * $perPage)->take($perPage + 1);
 
-        return $this->paginator($this->get($columns), $perPage, $page, [
+        return $this->simplePaginator($this->get($columns), $perPage, $page, [
+            'path' => Paginator::resolveCurrentPath(),
+            'pageName' => $pageName,
+        ]);
+    }
+
+    /**
+     * @param int $perPage
+     * @param string[] $columns
+     * @param string $pageName
+     * @param null $page
+     */
+    public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null): LengthAwarePaginatorInterface
+    {
+        $page = $page ?: Paginator::resolveCurrentPage($pageName);
+        $total = $this->getCountForPagination();
+        $results = $total ? $this->forPage($page, $perPage)->get($columns) : collect();
+
+        return $this->paginator($results, $total, $perPage, $page, [
             'path' => Paginator::resolveCurrentPath(),
             'pageName' => $pageName,
         ]);
@@ -2469,18 +2509,6 @@ class Builder
     }
 
     /**
-     * Create a new simple paginator instance.
-     */
-    protected function paginator(Collection $items, int $perPage, int $currentPage, array $options)
-    {
-        $container = ApplicationContext::getContainer();
-        if (! method_exists($container, 'make')) {
-            throw new \RuntimeException('The DI container does not support make() method.');
-        }
-        return $container->make(PaginatorInterface::class, compact('items', 'perPage', 'currentPage', 'options'));
-    }
-
-    /**
      * Creates a subquery and parse it.
      *
      * @param \Closure|\Hyperf\Database\Query\Builder|string $query
@@ -2856,5 +2884,29 @@ class Builder
         return array_values(array_filter($bindings, function ($binding) {
             return ! $binding instanceof Expression;
         }));
+    }
+
+    /**
+     * Create a new length-aware paginator instance.
+     */
+    protected function paginator(Collection $items, int $total, int $perPage, int $currentPage, array $options): LengthAwarePaginatorInterface
+    {
+        $container = ApplicationContext::getContainer();
+        if (! method_exists($container, 'make')) {
+            throw new \RuntimeException('The DI container does not support make() method.');
+        }
+        return $container->make(LengthAwarePaginatorInterface::class, compact('items', 'total', 'perPage', 'currentPage', 'options'));
+    }
+
+    /**
+     * Create a new simple paginator instance.
+     */
+    protected function simplePaginator(Collection $items, int $perPage, int $currentPage, array $options): PaginatorInterface
+    {
+        $container = ApplicationContext::getContainer();
+        if (! method_exists($container, 'make')) {
+            throw new \RuntimeException('The DI container does not support make() method.');
+        }
+        return $container->make(PaginatorInterface::class, compact('items', 'perPage', 'currentPage', 'options'));
     }
 }

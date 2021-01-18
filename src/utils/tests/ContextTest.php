@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -86,5 +86,24 @@ class ContextTest extends TestCase
         }]);
 
         $this->assertSame($tid, Context::get('test.store.id')->id);
+    }
+
+    public function testContextFromNull()
+    {
+        $res = Context::get('id', $default = 'Hello World!', -1);
+        $this->assertSame($default, $res);
+
+        $res = Context::get('id', null, -1);
+        $this->assertSame(null, $res);
+
+        $this->assertFalse(Context::has('id', -1));
+
+        Context::copy(-1);
+
+        parallel([function () {
+            Context::set('id', $id = uniqid());
+            Context::copy(-1, ['id']);
+            $this->assertSame($id, Context::get('id'));
+        }]);
     }
 }

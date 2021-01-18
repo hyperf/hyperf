@@ -73,7 +73,7 @@ php bin/hyperf.php migrate --force
 
 ## 回滚迁移
 
-若您希望回滚最后一次的迁移，可以通过 `migrate:rollback` 命令回滚最后一侧的迁移，注意一次迁移可能会包含多个迁移文件：
+若您希望回滚最后一次的迁移，可以通过 `migrate:rollback` 命令回滚最后一次的迁移，注意一次迁移可能会包含多个迁移文件：
 
 ```bash
 php bin/hyperf.php migrate:rollback
@@ -313,7 +313,7 @@ class CreateUsersTable extends Migration
 在修改字段之前，请确保将 `doctrine/dbal` 依赖添加到 `composer.json` 文件中。Doctrine DBAL 库用于确定字段的当前状态， 并创建对该字段进行指定调整所需的 SQL 查询：
 
 ```bash
-composer require doctrine/dbal
+composer require "doctrine/dbal:^3.0"
 ```
 
 ### 更新字段属性

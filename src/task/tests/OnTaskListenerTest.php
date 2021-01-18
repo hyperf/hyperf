@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -31,7 +31,7 @@ use Swoole\Server;
  */
 class OnTaskListenerTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
@@ -64,7 +64,7 @@ class OnTaskListenerTest extends TestCase
         $event->task = new Server\Task();
         $event->task->data = new Task([Foo::class, 'exception'], [$id]);
 
-        $event->shouldReceive('setResult')->with(Mockery::any())->andReturnUsing(function ($result) use ($id) {
+        $event->shouldReceive('setResult')->with(Mockery::any())->andReturnUsing(function ($result) {
             $this->assertInstanceOf(Finish::class, $result);
             $this->assertInstanceOf(Exception::class, $result->data);
             $this->assertSame(\RuntimeException::class, $result->data->class);

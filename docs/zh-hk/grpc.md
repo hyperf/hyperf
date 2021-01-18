@@ -38,7 +38,7 @@ message HiReply {
 - 使用 protoc 生成示例代碼
 
 ```
-# 使用 linux 包管理工具安裝 protoc, 下面以 alpine 為例, 也可以參考 hyper-skeleton 下的 Dockerfile
+# 使用 linux 包管理工具安裝 protoc, 下面以 alpine 為例, 也可以參考 hyperf-skeleton 下的 Dockerfile
 apk add protobuf
 
 # 使用 protoc 自動生成代碼
@@ -129,6 +129,7 @@ gRPC server 如何進行 gRPC 響應, 相信你可以根據上面的信息, 自�
 ```php
 public function hello()
 {
+    // 這個client是協程安全的，可以複用
     $client = new \App\Grpc\HiClient('127.0.0.1:9503', [
         'credentials' => null,
     ]);
@@ -157,7 +158,7 @@ class HiClient extends BaseClient
 {
     public function sayHello(HiUser $argument)
     {
-        return $this->simpleRequest(
+        return $this->_simpleRequest(
             '/grpc.hi/sayHello',
             $argument,
             [HiReply::class, 'decode']
@@ -165,6 +166,28 @@ class HiClient extends BaseClient
     }
 }
 ```
+
+gRPC 客户端還支持 gRPC 的 Streaming 模式。以雙向流為例：
+
+```php
+<?
+public function hello()
+{
+    $client = new RouteGuideClient('127.0.0.1:50051');
+
+    $note = new RouteNote();
+
+    $call = $client->routeChat();
+    $call->push($note);
+    $call->push($note);
+
+    /** @var RouteNote $note */
+    [$note,] = $call->recv();
+    [$note,] = $call->recv();
+}
+```
+
+> 請注意在 streaming 模式下，您必須手動捕獲連接斷開的異常 (`Hyperf\GrpcClient\Exception\GrpcClientException`) 並根據需要選擇是否重試。
 
 ## 寫在後面
 

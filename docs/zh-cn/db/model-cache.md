@@ -147,6 +147,26 @@ User::query(true)->where('gender', '>', 1)->delete();
 
 对于这种情况，我们可以修改 `use_default_value` 为 `true`，并添加 `Hyperf\DbConnection\Listener\InitTableCollectorListener` 到 `listener.php` 配置中，使 Hyperf 应用在启动时主动去获取数据库的字段信息，并在获取缓存数据时与之比较并进行缓存数据修正。
 
+### 控制模型中缓存时间
+
+除了 `database.php` 中配置的默认缓存时间 `ttl` 外，`Hyperf\ModelCache\Cacheable` 支持对模型配置更细的缓存时间：
+
+```php
+class User extends Model implements CacheableInterface
+{
+    use Cacheable;
+    
+    /**
+     * 缓存 10 分钟，返回 null 则使用配置文件中设置的超时时间
+     * @return int|null
+     */
+    public function getCacheTTL(): ?int
+    {
+        return 600;
+    }
+}
+```
+
 ### EagerLoad
 
 当我们使用模型关系时，可以通过 `load` 解决 `N+1` 的问题，但仍然需要查一次数据库。模型缓存通过重写了 `ModelBuilder`，可以让用户尽可能的从缓存中拿到对应的模型。
@@ -190,3 +210,17 @@ foreach ($books as $book){
     var_dump($book->user);
 }
 ```
+
+### 缓存适配器
+
+您可以根据自己的实际情况实现缓存适配器，只需要实现接口 `Hyperf\ModelCache\Handler\HandlerInterface` 即可。
+
+框架提供了两个 Handler 可供选择：
+
+- Hyperf\ModelCache\Handler\RedisHandler
+
+使用 `HASH` 存储缓存，可以有效的处理 `Model::increament()`，不足是因为数据类型只有 `String`，所以对 `null` 支持较差。
+
+- Hyperf\ModelCache\Handler\RedisStringHandler
+
+使用 `String` 存储缓存，因为是序列化的数据，所以支持所有数据类型，不足是无法有效处理 `Model::increament()`，当模型调用累加时，通过删除缓存，解决一致性的问题。

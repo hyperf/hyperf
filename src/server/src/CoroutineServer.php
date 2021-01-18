@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -94,9 +94,10 @@ class CoroutineServer implements ServerInterface
                     CoordinatorManager::until(Constants::WORKER_START)->resume();
                     $server->start();
                     $this->eventDispatcher->dispatch(new CoroutineServerStop($name, $server));
+                    CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
                 });
             }
-        });
+        }, swoole_hook_flags());
     }
 
     /**
@@ -107,6 +108,10 @@ class CoroutineServer implements ServerInterface
         return $this->server;
     }
 
+    /**
+     * @deprecated v2.2
+     * @param mixed $server
+     */
     public static function isCoroutineServer($server): bool
     {
         return $server instanceof Coroutine\Http\Server || $server instanceof Coroutine\Server;
@@ -139,19 +144,23 @@ class CoroutineServer implements ServerInterface
     {
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
-                if (isset($callbacks[SwooleEvent::ON_REQUEST])) {
-                    [$handler, $method] = $this->getCallbackMethod(SwooleEvent::ON_REQUEST, $callbacks);
+                if (isset($callbacks[Event::ON_REQUEST])) {
+                    [$handler, $method] = $this->getCallbackMethod(Event::ON_REQUEST, $callbacks);
                     if ($handler instanceof MiddlewareInitializerInterface) {
                         $handler->initCoreMiddleware($name);
                     }
                     if ($this->server instanceof \Swoole\Coroutine\Http\Server) {
-                        $this->server->handle('/', [$handler, $method]);
+                        $this->server->handle('/', static function ($request, $response) use ($handler, $method) {
+                            Coroutine::create(static function () use ($request, $response, $handler, $method) {
+                                $handler->{$method}($request, $response);
+                            });
+                        });
                     }
                 }
                 return;
             case ServerInterface::SERVER_WEBSOCKET:
-                if (isset($callbacks[SwooleEvent::ON_HAND_SHAKE])) {
-                    [$handler, $method] = $this->getCallbackMethod(SwooleEvent::ON_HAND_SHAKE, $callbacks);
+                if (isset($callbacks[Event::ON_HAND_SHAKE])) {
+                    [$handler, $method] = $this->getCallbackMethod(Event::ON_HAND_SHAKE, $callbacks);
                     if ($handler instanceof MiddlewareInitializerInterface) {
                         $handler->initCoreMiddleware($name);
                     }
@@ -161,10 +170,10 @@ class CoroutineServer implements ServerInterface
                 }
                 return;
             case ServerInterface::SERVER_BASE:
-                if (isset($callbacks[SwooleEvent::ON_RECEIVE])) {
-                    [$connectHandler, $connectMethod] = $this->getCallbackMethod(SwooleEvent::ON_CONNECT, $callbacks);
-                    [$receiveHandler, $receiveMethod] = $this->getCallbackMethod(SwooleEvent::ON_RECEIVE, $callbacks);
-                    [$closeHandler, $closeMethod] = $this->getCallbackMethod(SwooleEvent::ON_CLOSE, $callbacks);
+                if (isset($callbacks[Event::ON_RECEIVE])) {
+                    [$connectHandler, $connectMethod] = $this->getCallbackMethod(Event::ON_CONNECT, $callbacks);
+                    [$receiveHandler, $receiveMethod] = $this->getCallbackMethod(Event::ON_RECEIVE, $callbacks);
+                    [$closeHandler, $closeMethod] = $this->getCallbackMethod(Event::ON_CLOSE, $callbacks);
                     if ($receiveHandler instanceof MiddlewareInitializerInterface) {
                         $receiveHandler->initCoreMiddleware($name);
                     }

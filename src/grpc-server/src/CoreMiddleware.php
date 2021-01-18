@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -57,14 +57,20 @@ class CoreMiddleware extends HttpCoreMiddleware
 
         switch ($dispatched->status) {
             case Dispatcher::FOUND:
-                [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
-                $controllerInstance = $this->container->get($controller);
-                if (! method_exists($controller, $action)) {
-                    $grpcMessage = 'Action not exist.';
-                    return $this->handleResponse(null, 500, '500', $grpcMessage);
+                if ($dispatched->handler->callback instanceof \Closure) {
+                    $parameters = $this->parseClosureParameters($dispatched->handler->callback, $dispatched->params);
+                    $result = call($dispatched->handler->callback, $parameters);
+                } else {
+                    [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
+                    $controllerInstance = $this->container->get($controller);
+                    if (! method_exists($controller, $action)) {
+                        $grpcMessage = 'Action not exist.';
+                        return $this->handleResponse(null, 500, '500', $grpcMessage);
+                    }
+                    $parameters = $this->parseMethodParameters($controller, $action, $dispatched->params);
+                    $result = $controllerInstance->{$action}(...$parameters);
                 }
-                $parameters = $this->parseParameters($controller, $action, $dispatched->params);
-                $result = $controllerInstance->{$action}(...$parameters);
+
                 if (! $result instanceof Message) {
                     $grpcMessage = 'The result is not a valid message.';
                     return $this->handleResponse(null, 500, '500', $grpcMessage);
@@ -108,7 +114,7 @@ class CoreMiddleware extends HttpCoreMiddleware
         return $this->response()->withBody(new SwooleStream((string) $response));
     }
 
-    protected function parseParameters(string $controller, string $action, array $arguments): array
+    protected function parseMethodParameters(string $controller, string $action, array $arguments): array
     {
         $injections = [];
         $definitions = MethodDefinitionCollector::getOrParse($controller, $action);
@@ -121,7 +127,7 @@ class CoreMiddleware extends HttpCoreMiddleware
                 $injections[] = null;
                 continue;
             }
-            $injections[] = value(function () use ($definition, $arguments) {
+            $injections[] = value(function () use ($definition) {
                 switch ($definition['type']) {
                     case 'object':
                         $ref = $definition['ref'];
@@ -130,7 +136,7 @@ class CoreMiddleware extends HttpCoreMiddleware
                         if ($parentClass && $parentClass->getName() === ProtobufMessage::class) {
                             $request = $this->request();
                             $stream = $request->getBody();
-                            return Parser::deserializeMessage([$class->getName(), null], $stream->getContents());
+                            return Parser::deserializeMessage([$class->getName(), null], (string) $stream);
                         }
 
                         if (! $this->container->has($definition['ref']) && ! $definition['allowsNull']) {

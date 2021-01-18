@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -128,13 +128,8 @@ class ClassLoader
 
     protected function loadDotenv(): void
     {
-        $repository = RepositoryBuilder::create()
-            ->withReaders([
-                new Adapter\PutenvAdapter(),
-            ])
-            ->withWriters([
-                new Adapter\PutenvAdapter(),
-            ])
+        $repository = RepositoryBuilder::createWithNoAdapters()
+            ->addAdapter(Adapter\PutenvAdapter::class)
             ->immutable()
             ->make();
 

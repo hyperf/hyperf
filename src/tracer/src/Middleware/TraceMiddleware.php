@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -43,12 +43,15 @@ class TraceMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $span = $this->buildSpan($request);
-        $response = $handler->handle($request);
-        $span->finish();
 
         defer(function () {
             $this->tracer->flush();
         });
+        try {
+            $response = $handler->handle($request);
+        } finally {
+            $span->finish();
+        }
 
         return $response;
     }

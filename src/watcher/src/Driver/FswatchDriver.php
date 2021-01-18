@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -69,7 +69,9 @@ class FswatchDriver implements DriverInterface
 
         $cmd = 'fswatch ';
         if (! $this->isDarwin) {
-            $cmd .= '-m inotify_monitor ';
+            $cmd .= ' -m inotify_monitor';
+            $cmd .= " -E --format '%p' -r ";
+            $cmd .= ' --event Created --event Updated --event Removed --event Renamed ';
         }
 
         return $cmd . implode(' ', $dir) . ' ' . implode(' ', $file);

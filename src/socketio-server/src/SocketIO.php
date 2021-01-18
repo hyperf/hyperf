@@ -5,12 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\SocketIOServer;
 
+use Closure;
 use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
@@ -22,13 +23,13 @@ use Hyperf\SocketIOServer\Parser\Decoder;
 use Hyperf\SocketIOServer\Parser\Encoder;
 use Hyperf\SocketIOServer\Parser\Engine;
 use Hyperf\SocketIOServer\Parser\Packet;
+use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
 use Swoole\Coroutine\Channel;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
-use Swoole\Server;
 use Swoole\Timer;
 use Swoole\WebSocket\Frame;
 
@@ -142,7 +143,12 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     public function onMessage($server, Frame $frame): void
     {
         if ($frame->data[0] === Engine::PING) {
+            $this->renewInAllNamespaces($frame->fd);
             $server->push($frame->fd, Engine::PONG); //sever pong
+            return;
+        }
+        if ($frame->data[0] === Engine::CLOSE) {
+            $server->disconnect($frame->fd);
             return;
         }
         if ($frame->data[0] !== Engine::MESSAGE) {
@@ -250,6 +256,43 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         $this->clientCallbackTimers[$ackId] = $timerId;
     }
 
+    /**
+     * @return $this
+     */
+    public function setClientCallbackTimeout(int $clientCallbackTimeout)
+    {
+        $this->clientCallbackTimeout = $clientCallbackTimeout;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setPingInterval(int $pingInterval)
+    {
+        $this->pingInterval = $pingInterval;
+        return $this;
+    }
+
+    public function getPingInterval(): int
+    {
+        return $this->pingInterval;
+    }
+
+    public function getPingTimeout(): int
+    {
+        return $this->pingTimeout;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setPingTimeout(int $pingTimeout)
+    {
+        $this->pingTimeout = $pingTimeout;
+        return $this;
+    }
+
     private function dispatch(int $fd, string $nsp, string $event, ...$payloads)
     {
         $socket = $this->makeSocket($fd, $nsp);
@@ -257,7 +300,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 
         // Check if ack is required
         $last = array_pop($payloads);
-        if ($last instanceof \Closure) {
+        if ($last instanceof Closure) {
             $ack = $last;
         } else {
             array_push($payloads, $last);
@@ -285,7 +328,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 
         foreach ($instance->getEventHandlers() as $key => $callbacks) {
             if ($key === $event) {
-                $output = array_merge($output, $callbacks);
+                $output = array_merge($callbacks, $output);
             }
         }
 
@@ -312,6 +355,20 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         }
         foreach (array_keys($all['forward']) as $nsp) {
             $this->dispatch($fd, $nsp, $event, null);
+        }
+    }
+
+    private function renewInAllNamespaces(int $fd)
+    {
+        $all = SocketIORouter::list();
+        if (! array_key_exists('forward', $all)) {
+            return;
+        }
+        foreach (array_keys($all['forward']) as $nsp) {
+            $adapter = $this->of($nsp)->getAdapter();
+            if ($adapter instanceof EphemeralInterface) {
+                $adapter->renew($this->sidProvider->getSid($fd));
+            }
         }
     }
 }

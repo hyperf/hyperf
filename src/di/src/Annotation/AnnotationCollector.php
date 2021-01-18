@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -52,7 +52,7 @@ class AnnotationCollector extends MetadataCollector
         return self::getClassesByAnnotation($annotation);
     }
 
-    public static function getClassesByAnnotation(string $annotation)
+    public static function getClassesByAnnotation(string $annotation): array
     {
         $result = [];
         foreach (static::$container as $class => $metadata) {

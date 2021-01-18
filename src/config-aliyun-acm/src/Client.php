@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -97,7 +97,7 @@ class Client implements ClientInterface
                 if ($response->getStatusCode() !== 200) {
                     throw new RuntimeException('Get server list failed from Aliyun ACM.');
                 }
-                $this->servers = array_filter(explode("\n", $response->getBody()->getContents()));
+                $this->servers = array_filter(explode("\n", (string) $response->getBody()));
             }
             $server = $this->servers[array_rand($this->servers)];
 
@@ -118,7 +118,7 @@ class Client implements ClientInterface
             if ($response->getStatusCode() !== 200) {
                 throw new RuntimeException('Get config failed from Aliyun ACM.');
             }
-            $content = $response->getBody()->getContents();
+            $content = (string) $response->getBody();
             if (! $content) {
                 return [];
             }
@@ -145,7 +145,7 @@ class Client implements ClientInterface
             if ($response->getStatusCode() !== 200) {
                 throw new RuntimeException('Get config failed from Aliyun ACM.');
             }
-            $securityCredentials = Json::decode($response->getBody()->getContents());
+            $securityCredentials = Json::decode((string) $response->getBody());
             if (! empty($securityCredentials)) {
                 $this->cachedSecurityCredentials[$ecsRamRole] = $securityCredentials;
             }

@@ -405,6 +405,16 @@ Router::get('/metrics', function(){
 
 > 本节只适用于 Prometheus 驱动
 
-如果您启用了默认指标，`Hyperf/Metric` 为您准备了一个开箱即用的 Grafana 控制台。下载控制台 [json 文件](https://raw.githubusercontent.com/hyperf/hyperf/master/src/metric/grafana.json)，导入 Grafana 中即可使用。
+如果您启用了默认指标，`Hyperf/Metric` 为您准备了一个开箱即用的 Grafana 控制台。下载控制台 [json 文件](https://cdn.jsdelivr.net/gh/hyperf/hyperf/src/metric/grafana.json)，导入 Grafana 中即可使用。
 
 ![grafana](imgs/grafana.png)
+
+## 注意事项
+
+- `endclothing/prometheus_client_php` 暂时与 `guzzle : ^7.0` 冲突，如果想在 `guzzle7` 的条件下使用 `metric`，可以主动执行以下操作
+
+```
+composer require promphp/prometheus_client_php
+```
+- 如需在 `hyperf/command` 自定义命令中使用本组件收集指标，需要在启动命令时添加命令行参数: `--enable-event-dispatcher`。
+

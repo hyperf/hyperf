@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -46,7 +46,12 @@ class Option
      */
     protected $scanInterval = 2000;
 
-    public function __construct(ConfigInterface $config, array $dir, array $file)
+    /**
+     * @var bool
+     */
+    protected $restart = true;
+
+    public function __construct(ConfigInterface $config, array $dir, array $file, bool $restart = true)
     {
         $options = $config->get('watcher', []);
 
@@ -59,6 +64,7 @@ class Option
 
         $this->watchDir = array_unique(array_merge($this->watchDir, $dir));
         $this->watchFile = array_unique(array_merge($this->watchFile, $file));
+        $this->restart = $restart;
     }
 
     public function getDriver(): string
@@ -86,8 +92,13 @@ class Option
         return $this->ext;
     }
 
-    public function getScanInterval()
+    public function getScanInterval(): int
     {
-        return $this->scanInterval;
+        return $this->scanInterval > 0 ? $this->scanInterval : 2000;
+    }
+
+    public function isRestart(): bool
+    {
+        return $this->restart;
     }
 }

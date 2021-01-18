@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -65,6 +65,24 @@ class RoomAdapterTest extends AbstractTestCase
         $room->broadcast('', ['rooms' => ['universe']]);
     }
 
+    public function testDelFromEmptyRoom()
+    {
+        $sidProvider = new LocalSidProvider();
+        $server = Mockery::Mock(Sender::class);
+        $room = new MemoryAdapter($server, $sidProvider);
+        $room->del('111');
+
+        $nsp = Mockery::Mock(NamespaceInterface::class);
+        $nsp->shouldReceive('getNamespace')->andReturn('test');
+        $redis = $this->getRedis();
+        $server = Mockery::Mock(Sender::class);
+        $sidProvider = new LocalSidProvider();
+        $room = new RedisAdapter($redis, $server, $nsp, $sidProvider);
+        $room->del('111');
+
+        $this->assertTrue(true);
+    }
+
     public function testRedisAdapter()
     {
         $nsp = Mockery::Mock(NamespaceInterface::class);
@@ -101,6 +119,29 @@ class RoomAdapterTest extends AbstractTestCase
         } catch (\Throwable $t) {
             $this->assertTrue(false);
         }
+
+        // Test Ephemeral
+        $room->setTtl(1);
+        $room->add('expired', 'foo');
+        usleep(1000);
+        $room->cleanUpExpiredOnce();
+        $this->assertNotContains('expired', $room->clients('foo'));
+
+        $room->setTtl(100000);
+        $room->add('not_expired', 'foo');
+        $room->cleanUpExpiredOnce();
+        $this->assertContains('not_expired', $room->clients('foo'));
+
+        $room->setTtl(1);
+        $room->add('renewed', 'foo');
+        $room->renew('renewed');
+        usleep(500);
+        $room->cleanUpExpiredOnce();
+        $this->assertContains('renewed', $room->clients('foo'));
+
+        $room->renew('not_exist');
+        $room->cleanUpExpiredOnce();
+        $this->assertNotContains('not_exist', $room->clients('foo'));
     }
 
     private function getRedis($options = [])

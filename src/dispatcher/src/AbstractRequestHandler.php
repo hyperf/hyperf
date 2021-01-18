@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -14,7 +14,6 @@ namespace Hyperf\Dispatcher;
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use function array_unique;
 use function is_string;
 use function sprintf;
 
@@ -46,7 +45,7 @@ abstract class AbstractRequestHandler
      */
     public function __construct(array $middlewares, $coreHandler, ContainerInterface $container)
     {
-        $this->middlewares = array_unique($middlewares);
+        $this->middlewares = array_values($middlewares);
         $this->coreHandler = $coreHandler;
         $this->container = $container;
     }

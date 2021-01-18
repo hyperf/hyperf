@@ -64,11 +64,27 @@ return [
 
 ```
 
+## 工作原理
+
+`ConsumerProcess` 是异步消费进程，会根据用户创建的 `Job` 或者使用 `@AsyncQueueMessage` 的代码块，执行消费逻辑。
+`Job` 和 `@AsyncQueueMessage` 都是需要投递和执行的任务，即数据、消费逻辑都会在任务中定义。
+
+- `Job` 类中成员变量即为待消费的数据，`handle()` 方法则为消费逻辑。
+- `@AsyncQueueMessage` 注解的方法，构造函数传入的数据即为待消费的数据，方法体则为消费逻辑。
+
+```mermaid
+graph LR;
+A[服务启动]-->B[异步消费进程启动]
+B-->C[监听队列]
+D[投递任务]-->C
+C-->F[消费任务]
+```
+
 ## 使用
 
-### 消费消息
+### 配置异步消费进程
 
-组件已经提供了默认子进程，只需要将它配置到 `config/autoload/processes.php` 中即可。
+组件已经提供了默认 `异步消费进程`，只需要将它配置到 `config/autoload/processes.php` 中即可。
 
 ```php
 <?php
@@ -80,6 +96,8 @@ return [
 ```
 
 当然，您也可以将以下 `Process` 添加到自己的项目中。
+
+> 配置方式和注解方式，二选一即可。
 
 ```php
 <?php
@@ -105,7 +123,9 @@ class AsyncQueueConsumer extends ConsumerProcess
 
 这种模式会把对象直接序列化然后存到 `Redis` 等队列中，所以为了保证序列化后的体积，尽量不要将 `Container`，`Config` 等设置为成员变量。
 
-比如以下 `Job` 的定义，是 **不可取** 的
+比如以下 `Job` 的定义，是 **不可取** 的，同理 `@Inject` 也是如此。
+
+> 因为 Job 会被序列化，所以成员变量不要包含 匿名函数 等 无法被序列化 的内容，如果不清楚哪些内容无法被序列化，尽量使用注解方式。
 
 ```php
 <?php
@@ -153,6 +173,13 @@ use Hyperf\AsyncQueue\Job;
 class ExampleJob extends Job
 {
     public $params;
+    
+    /**
+     * 任务执行失败后的重试次数，即最大执行次数为 $maxAttempts+1 次
+     *
+     * @var int
+     */
+    protected $maxAttempts = 2;
 
     public function __construct($params)
     {
@@ -164,6 +191,7 @@ class ExampleJob extends Job
     {
         // 根据参数处理具体逻辑
         // 通过具体参数获取模型等
+        // 这里的逻辑会在 ConsumerProcess 进程中执行
         var_dump($this->params);
     }
 }
@@ -227,7 +255,7 @@ use Hyperf\HttpServer\Annotation\AutoController;
 /**
  * @AutoController
  */
-class QueueController extends Controller
+class QueueController extends AbstractController
 {
     /**
      * @Inject
@@ -255,6 +283,9 @@ class QueueController extends Controller
 
 框架除了传统方式投递消息，还提供了注解方式。
 
+> 注解方式会在非消费环境下自动投递消息到队列，故，如果我们在队列中使用注解方式时，则不会再次投递到队列当中，而是直接在本消费进程中执行。
+> 如果仍然需要在队列中投递消息，则可以在队列中使用传统模式投递。
+
 让我们重写上述 `QueueService`，直接将 `ExampleJob` 的逻辑搬到 `example` 方法中，并加上对应注解 `AsyncQueueMessage`，具体代码如下。
 
 ```php
@@ -274,6 +305,7 @@ class QueueService
     public function example($params)
     {
         // 需要异步执行的代码逻辑
+        // 这里的逻辑会在 ConsumerProcess 进程中执行
         var_dump($params);
     }
 }
@@ -298,7 +330,7 @@ use Hyperf\HttpServer\Annotation\AutoController;
 /**
  * @AutoController
  */
-class QueueController extends Controller
+class QueueController extends AbstractController
 {
     /**
      * @Inject
@@ -343,6 +375,23 @@ declare(strict_types=1);
 
 return [
     Hyperf\AsyncQueue\Listener\QueueLengthListener::class
+];
+```
+
+### ReloadChannelListener
+
+当消息执行超时，或项目重启导致消息执行被中断，最终都会被移动到 `timeout` 队列中，只要您可以保证消息执行的原子性（同一个消息执行一次，或执行多次，最终表现一致），
+就可以开启以下监听器，框架会自动将 `timeout` 队列中消息移动到 `waiting` 队列中，等待下次消费。
+
+> 监听器监听 `QueueLength` 事件，默认执行 500 次消息后触发一次。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    Hyperf\AsyncQueue\Listener\ReloadChannelListener::class
 ];
 ```
 
@@ -422,7 +471,7 @@ use Hyperf\Process\Annotation\Process;
 /**
  * @Process()
  */
-class ConsumerProcess extends ConsumerProcess
+class OtherConsumerProcess extends ConsumerProcess
 {
     /**
      * @var string
@@ -444,6 +493,8 @@ return $driver->push(new ExampleJob());
 ## 安全关闭
 
 异步队列在终止时，如果正在进行消费逻辑，可能会导致出现错误。框架提供了 `DriverStopHandler` ，可以让异步队列进程安全关闭。
+
+> 当前信号处理器并不适配于 CoroutineServer，如有需要请自行实现
 
 安装信号处理器
 

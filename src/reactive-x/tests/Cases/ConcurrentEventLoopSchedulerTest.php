@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -24,9 +24,9 @@ use Swoole\Runtime;
  */
 class ConcurrentEventLoopSchedulerTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
-        Runtime::enableCoroutine(true, swoole_hook_flags());
+        Runtime::enableCoroutine(swoole_hook_flags());
     }
 
     public function testScheduler()

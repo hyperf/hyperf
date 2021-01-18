@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -66,6 +66,9 @@ class Sender
         if ($this->isCoroutineServer) {
             if (isset($this->responses[$fd])) {
                 array_shift($arguments);
+                if ($method === 'disconnect') {
+                    $method = 'close';
+                }
                 $this->responses[$fd]->{$method}(...$arguments);
                 $this->logger->debug("[WebSocket] Worker send to #{$fd}");
             }
@@ -99,7 +102,7 @@ class Sender
     {
         $info = $this->getServer()->connection_info($fd);
 
-        if ($info && $info['websocket_status'] === WEBSOCKET_STATUS_ACTIVE) {
+        if (($info['websocket_status'] ?? null) === WEBSOCKET_STATUS_ACTIVE) {
             return true;
         }
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -25,7 +25,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RouteCollectorTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         MiddlewareManager::$container = [];
@@ -78,6 +78,7 @@ class RouteCollectorTest extends TestCase
         $this->assertSame('Handler::Get', $data['GET']['/']->callback);
         $this->assertSame('Handler::ApiGet', $data['GET']['/api/']->callback);
         $this->assertSame('Handler::Post', $data['POST']['/']->callback);
+        $this->assertSame(['middleware' => ['PostMiddleware']], $data['POST']['/']->options);
 
         $middle = MiddlewareManager::$container;
         $this->assertSame(['GetMiddleware'], $middle['http']['/']['GET']);

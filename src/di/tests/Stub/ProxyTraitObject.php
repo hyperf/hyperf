@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -16,6 +16,16 @@ use Hyperf\Di\Aop\ProxyTrait;
 class ProxyTraitObject
 {
     use ProxyTrait;
+
+    /**
+     * @var string
+     */
+    public $name;
+
+    public function __construct(string $name = 'Hyperf')
+    {
+        $this->name = $name;
+    }
 
     public function get(?int $id, string $str = '')
     {
@@ -34,10 +44,22 @@ class ProxyTraitObject
 
     public function incr()
     {
-        $__function__ = __FUNCTION__;
-        $__method__ = __METHOD__;
-        return self::__proxyCall(ProxyTraitObject::class, __FUNCTION__, self::__getParamsMap(ProxyTraitObject::class, __FUNCTION__, func_get_args()), function () use ($__function__, $__method__) {
+        return self::__proxyCall(ProxyTraitObject::class, __FUNCTION__, self::__getParamsMap(ProxyTraitObject::class, __FUNCTION__, func_get_args()), function () {
             return 1;
+        });
+    }
+
+    public function getName()
+    {
+        return self::__proxyCall(ProxyTraitObject::class, __FUNCTION__, self::__getParamsMap(ProxyTraitObject::class, __FUNCTION__, func_get_args()), function () {
+            return 'HyperfCloud';
+        });
+    }
+
+    public function getName2()
+    {
+        return self::__proxyCall(ProxyTraitObject::class, __FUNCTION__, self::__getParamsMap(ProxyTraitObject::class, __FUNCTION__, func_get_args()), function () {
+            return 'HyperfCloud';
         });
     }
 }

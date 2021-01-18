@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -27,7 +27,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ConsumerManagerTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         ProcessManager::clear();
     }
@@ -47,11 +47,11 @@ class ConsumerManagerTest extends TestCase
         $manager = new ConsumerManager($container);
         $manager->run();
 
-        $hasRegisted = false;
+        $hasRegistered = false;
         /** @var AbstractProcess $item */
         foreach (ProcessManager::all() as $item) {
             if (method_exists($item, 'getConsumerMessage')) {
-                $hasRegisted = true;
+                $hasRegistered = true;
                 /** @var ConsumerMessageInterface $message */
                 $message = $item->getConsumerMessage();
                 $this->assertTrue($item->isEnable(new \stdClass()));
@@ -60,11 +60,12 @@ class ConsumerManagerTest extends TestCase
                 $this->assertSame($queue, $message->getQueue());
                 $this->assertSame($nums, $item->nums);
                 $this->assertSame($maxConsumption, $message->getMaxConsumption());
+                $this->assertSame(0, $message->getWaitTimeout());
                 break;
             }
         }
 
-        $this->assertTrue($hasRegisted);
+        $this->assertTrue($hasRegistered);
     }
 
     public function testConsumerAnnotationNotEnable()
@@ -82,16 +83,16 @@ class ConsumerManagerTest extends TestCase
         $manager = new ConsumerManager($container);
         $manager->run();
 
-        $hasRegisted = false;
+        $hasRegistered = false;
         /** @var AbstractProcess $item */
         foreach (ProcessManager::all() as $item) {
             if (method_exists($item, 'getConsumerMessage')) {
-                $hasRegisted = true;
+                $hasRegistered = true;
                 $this->assertFalse($item->isEnable(new \stdClass()));
                 break;
             }
         }
 
-        $this->assertTrue($hasRegisted);
+        $this->assertTrue($hasRegistered);
     }
 }

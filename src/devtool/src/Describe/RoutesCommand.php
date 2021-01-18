@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -99,15 +99,15 @@ class RoutesCommand extends HyperfCommand
         } else {
             $action = (string) $handler->callback;
         }
-        $unique = "{$serverName}|{$action}";
+        $unique = "{$serverName}|{$uri}";
         if (isset($data[$unique])) {
             $data[$unique]['method'][] = $method;
         } else {
             // method,uri,name,action,middleware
-            $registedMiddlewares = MiddlewareManager::get($serverName, $uri, $method);
+            $registeredMiddlewares = MiddlewareManager::get($serverName, $uri, $method);
             $middlewares = $this->config->get('middlewares.' . $serverName, []);
 
-            $middlewares = array_merge($middlewares, $registedMiddlewares);
+            $middlewares = array_merge($middlewares, $registeredMiddlewares);
             $data[$unique] = [
                 'server' => $serverName,
                 'method' => [$method],

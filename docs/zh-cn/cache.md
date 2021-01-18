@@ -118,7 +118,7 @@ use Hyperf\Cache\Annotation\Cacheable;
 class DemoService
 {
     /**
-     * @Cacheable(prefix="cache", value="_#{id}", listener="DemoServiceDelete")
+     * @Cacheable(prefix="cache", value="_#{id}", listener="user-update")
      */
     public function getCache(int $id)
     {
@@ -246,8 +246,6 @@ public function updateUserBook(int $id)
 `Hyperf\Cache\Driver\RedisDriver` 会把缓存数据存放到 `Redis` 中，需要用户配置相应的 `Redis 配置`。此方式为默认方式。
 
 ### 协程内存驱动
-
-> 本驱动乃 Beta 版本，请谨慎使用。
 
 如果您需要将数据缓存到 `Context` 中，可以尝试此驱动。例如以下应用场景 `Demo::get` 会在多个地方调用多次，但是又不想每次都到 `Redis` 中进行查询。
 

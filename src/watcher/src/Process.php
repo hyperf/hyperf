@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -32,11 +32,6 @@ class Process
      * @var string
      */
     protected $file;
-
-    /**
-     * @var string
-     */
-    protected $class;
 
     /**
      * @var BetterReflection
@@ -68,19 +63,23 @@ class Process
      */
     protected $path = BASE_PATH . '/runtime/container/collectors.cache';
 
-    public function __construct(string $file, string $class)
+    public function __construct(string $file)
     {
         $this->file = $file;
-        $this->class = $class;
-        $this->reflection = new BetterReflection();
-        $this->reader = new AnnotationReader();
-        $this->config = ScanConfig::instance('/');
-        $this->filesystem = new Filesystem();
         $this->ast = new Ast();
+        $this->reflection = new BetterReflection();
+        $this->config = $this->initScanConfig();
+        $this->reader = new AnnotationReader();
+        $this->filesystem = new Filesystem();
     }
 
     public function __invoke()
     {
+        $meta = $this->getMetadata($this->file);
+        if ($meta === null) {
+            return;
+        }
+        $class = $meta->toClassName();
         $collectors = $this->config->getCollectors();
         $data = unserialize(file_get_contents($this->path));
         foreach ($data as $collector => $deserialized) {
@@ -93,9 +92,12 @@ class Process
         require $this->file;
 
         // Collect the annotations.
-        $ref = $this->reflection->classReflector()->reflect($this->class);
-        BetterReflectionManager::reflectClass($this->class, $ref);
-        $this->collect($this->class, $ref);
+        $ref = $this->reflection->classReflector()->reflect($class);
+        BetterReflectionManager::reflectClass($class, $ref);
+        foreach ($collectors as $collector) {
+            $collector::clear($class);
+        }
+        $this->collect($class, $ref);
 
         $collectors = $this->config->getCollectors();
         $data = [];
@@ -109,11 +111,11 @@ class Process
         }
 
         // Reload the proxy class.
-        $manager = new ProxyManager([], [$this->class => $this->file], BASE_PATH . '/runtime/container/proxy/');
+        $manager = new ProxyManager([], [$class => $this->file], BASE_PATH . '/runtime/container/proxy/');
         $ref = new \ReflectionClass($manager);
         $method = $ref->getMethod('generateProxyFiles');
         $method->setAccessible(true);
-        $method->invokeArgs($manager, [$this->class => []]);
+        $method->invokeArgs($manager, [$class => []]);
     }
 
     public function collect($className, ReflectionClass $reflection)
@@ -174,5 +176,17 @@ class Process
             return null;
         }
         return $meta;
+    }
+
+    protected function initScanConfig(): ScanConfig
+    {
+        $config = ScanConfig::instance(BASE_PATH . '/config/');
+        foreach ($config->getIgnoreAnnotations() as $annotation) {
+            AnnotationReader::addGlobalIgnoredName($annotation);
+        }
+        foreach ($config->getGlobalImports() as $alias => $annotation) {
+            AnnotationReader::addGlobalImports($alias, $annotation);
+        }
+        return $config;
     }
 }

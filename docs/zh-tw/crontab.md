@@ -128,11 +128,13 @@ class FooTask
 
 ### 排程分發策略
 
-定時任務在設計上允許通過不同的策略來排程分發執行任務，目前僅提供了 `多程序執行策略`、`協程執行策略` 兩種策略，預設為 `多程序執行策略`，後面的迭代會增加更多更強的策略。   
+定時任務在設計上允許通過不同的策略來排程分發執行任務，目前僅提供了 `多程序執行策略`、`協程執行策略` 兩種策略，預設為 `多程序執行策略`，後面的迭代會增加更多更強的策略。
+
+> 當使用協程風格服務時，請使用 協程執行策略。
 
 #### 更改排程分發策略
 
-通過在 `config/autoload/dependencies.php` 更改 `Hyperf\Crontab\Strategy\StrategyInterface` 介面類所對應的例項來更改目前所使用的策略，預設情況下使用 `Worker程序執行策略`，對應的類為 `Hyperf\Crontab\Strategy\WorkerStrategy`，如我們希望更改策略為一個新的策略，比如為 `App\Crontab\Strategy\FooStrategy`，那麼如下：
+通過在 `config/autoload/dependencies.php` 更改 `Hyperf\Crontab\Strategy\StrategyInterface` 介面類所對應的例項來更改目前所使用的策略，預設情況下使用 `Worker 程序執行策略`，對應的類為 `Hyperf\Crontab\Strategy\WorkerStrategy`，如我們希望更改策略為一個新的策略，比如為 `App\Crontab\Strategy\FooStrategy`，那麼如下：
 
 ```php
 <?php

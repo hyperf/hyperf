@@ -27,7 +27,7 @@ php bin/hyperf.php gen:command FooCommand
 
 ### 定义命令
 
-定义该命令类所对应的命令有两种形式，一种是通过 `$name` 属性定义，另一种是通过构造函数传参来定义，我们通过代码示例来演示一下，假设我们希望定义该命令类的命令为 `foo:hello`：   
+定义该命令类所对应的命令有两种形式，一种是通过 `$name` 属性定义，另一种是通过构造函数传参来定义，我们通过代码示例来演示一下，假设我们希望定义该命令类的命令为 `foo:hello`：
 
 #### `$name` 属性定义：
 
@@ -74,7 +74,7 @@ class FooCommand extends HyperfCommand
 {
     public function __construct()
     {
-        parent::__construct('foo:hello');    
+        parent::__construct('foo:hello');
     }
 }
 ```
@@ -104,7 +104,7 @@ class FooCommand extends HyperfCommand
      * @var string
      */
     protected $name = 'foo:hello';
-    
+
     public function handle()
     {
         // 通过内置方法 line 在 Console 输出 Hello Hyperf.
@@ -150,7 +150,7 @@ class FooCommand extends HyperfCommand
         $argument = $this->input->getArgument('name') ?? 'World';
         $this->line('Hello ' . $argument, 'info');
     }
-    
+
     protected function getArguments()
     {
         return [
@@ -158,10 +158,9 @@ class FooCommand extends HyperfCommand
         ];
     }
 }
-``` 
+```
 
 执行 `php bin/hyperf.php foo:hello Hyperf` 我们就能看到输出了 `Hello Hyperf` 了。
-
 
 ## 命令常用配置介绍
 
@@ -356,6 +355,67 @@ array(2) {
   string(6) "Hyperf"
   [1]=>
   string(6) "Swoole"
+}
+
+```
+
+## 通过 `$signature` 配置命令行
+
+命令行除了上述配置方法外，还支持使用 `$signature` 配置。
+
+`$signature` 为字符串，分为三部分，分别是 `command` `argument` 和 `option`，如下：
+
+```
+command:name {argument?* : The argument description.} {--option=* : The option description.}
+```
+
+- `?` 代表 `非必传`。
+- `*` 代表 `数组`。
+- `?*` 代表 `非必传的数组`。
+- `=` 代表 `非 Bool`。
+
+### 示例
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Command;
+
+use Hyperf\Command\Annotation\Command;
+use Hyperf\Command\Command as HyperfCommand;
+use Psr\Container\ContainerInterface;
+
+/**
+ * @Command
+ */
+class DebugCommand extends HyperfCommand
+{
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    protected $signature = 'test:test {id : user_id} {--name= : user_name}';
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+        parent::__construct();
+    }
+
+    public function configure()
+    {
+        parent::configure();
+        $this->setDescription('Hyperf Demo Command');
+    }
+
+    public function handle()
+    {
+        var_dump($this->input->getArguments());
+        var_dump($this->input->getOptions());
+    }
 }
 
 ```

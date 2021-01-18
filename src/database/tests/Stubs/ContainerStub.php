@@ -5,12 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace HyperfTest\Database\Stubs;
 
+use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
@@ -32,7 +33,7 @@ class ContainerStub
 
         $dbConfig = [
             'driver' => 'mysql',
-            'host' => 'localhost',
+            'host' => '127.0.0.1',
             'database' => 'hyperf',
             'username' => 'root',
             'password' => '',
@@ -51,5 +52,19 @@ class ContainerStub
         $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
 
         return $container;
+    }
+
+    public static function getModelOption()
+    {
+        $option = new ModelOption();
+        $option->setWithComments(false)
+            ->setRefreshFillable(true)
+            ->setForceCasts(true)
+            ->setInheritance('Model')
+            ->setPath(__DIR__ . '/../Stubs/Model')
+            ->setPool('default')
+            ->setPrefix('')
+            ->setWithIde(false);
+        return $option;
     }
 }

@@ -5,20 +5,23 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\SocketIOServer;
 
 use Hyperf\SocketIOServer\Emitter\Emitter;
+use Hyperf\SocketIOServer\Exception\ConnectionClosedException;
 use Hyperf\SocketIOServer\Parser\Encoder;
 use Hyperf\SocketIOServer\Parser\Engine;
 use Hyperf\SocketIOServer\Parser\Packet;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\WebSocketServer\Context;
 use Hyperf\WebSocketServer\Sender;
+use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Server;
 
 class Socket
@@ -94,5 +97,20 @@ class Socket
     public function getNamespace(): string
     {
         return $this->nsp;
+    }
+
+    /**
+     * @throws ConnectionClosedException After the WebSocketConnection disconnects, this Exception will be thrown
+     */
+    public function getRequest(): ServerRequestInterface
+    {
+        // If the connection is closed (onClose called)，
+        // WebSocketContext would have been released.
+        // $serverRequest is null in this case.
+        $serverRequest = Context::get(ServerRequestInterface::class);
+        if (! $serverRequest instanceof ServerRequestInterface) {
+            throw new ConnectionClosedException('the request has been freed');
+        }
+        return $serverRequest;
     }
 }

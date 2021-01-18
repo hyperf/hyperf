@@ -5,13 +5,14 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace HyperfTest\Utils;
 
 use Hyperf\Utils\Codec\Json;
+use Hyperf\Utils\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -54,5 +55,11 @@ class JsonTest extends TestCase
         });
 
         $this->assertSame([1, 2, 3], $result);
+    }
+
+    public function testJsonFailed()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        Json::decode('{"hype');
     }
 }
