@@ -1,5 +1,22 @@
 # 版本更新记录
 
+# v2.1.3 - 2021-01-18
+
+## 修复
+
+- [#3070](https://github.com/hyperf/hyperf/pull/3070) 修复 `tracer` 组件无法正常使用的问题。
+- [#3106](https://github.com/hyperf/hyperf/pull/3106) 修复协程从已被销毁的协程中复制协程上下文时导致报错的问题。
+- [#3108](https://github.com/hyperf/hyperf/pull/3108) 修复使用 `describe:routes` 命令时，相同 `callback` 不同路由组的路由会被替换覆盖的问题。
+- [#3118](https://github.com/hyperf/hyperf/pull/3118) 修复 `migrations` 配置名位置错误的问题。
+- [#3126](https://github.com/hyperf/hyperf/pull/3126) 修复 `Swoole` 扩展 `v4.6` 版本中，`SWOOLE_HOOK_SOCKETS` 与 `jaeger` 冲突的问题。
+- [#3137](https://github.com/hyperf/hyperf/pull/3137) 修复 `database` 组件，当没有主动设置 `PDO::ATTR_PERSISTENT` 为 `true` 时，导致的类型错误。
+- [#3141](https://github.com/hyperf/hyperf/pull/3141) 修复使用 `Migration` 时，`doctrine/dbal` 无法正常工作的问题。
+
+## 新增
+
+- [#3059](https://github.com/hyperf/hyperf/pull/3059) 为 `view-engine` 组件增加合并任意标签的能力。
+- [#3123](https://github.com/hyperf/hyperf/pull/3123) 为 `view-engine` 组件增加 `ComponentAttributeBag::has()` 方法。
+
 # v2.1.2 - 2021-01-11
 
 ## 修复
