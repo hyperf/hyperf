@@ -29,7 +29,7 @@ class ClientFactory
             ->setClientIp($config->get('apollo.client_ip', current(swoole_get_local_ip())))
             ->setPullTimeout($config->get('apollo.pull_timeout', 10))
             ->setIntervalTimeout($config->get('apollo.interval_timeout', 60))
-            ->setSecret($config->get('apollo.secret'));
+            ->setSecret($config->get('apollo.secret', ''));
 
         $namespaces = $config->get('apollo.namespaces', []);
         $callbacks = [];
