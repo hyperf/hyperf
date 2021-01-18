@@ -220,7 +220,6 @@ class Server implements ServerInterface
                 Event::ON_WORKER_STOP => [Bootstrap\WorkerStopCallback::class, 'onWorkerStop'],
                 Event::ON_WORKER_EXIT => [Bootstrap\WorkerExitCallback::class, 'onWorkerExit'],
             ];
-
             if ($this->server->mode === SWOOLE_BASE) {
                 return $callbacks;
             }
