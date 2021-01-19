@@ -1,0 +1,63 @@
+name: PHPUnit
+
+on: [push, pull_request]
+
+env:
+  SWOOLE_VERSION: '4.5.10'
+  SWOW_VERSION: 'develop'
+
+jobs:
+  ci:
+    name: Test PHP ${{ matrix.php-version }} on ${{ matrix.engine }}
+    runs-on: "${{ matrix.os }}"
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        php-version: ['7.2', '7.3', '7.4']
+        engine: ['none', 'swoole', 'swow']
+      max-parallel: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          ini-values: opcache.enable_cli=1
+          coverage: none
+      - name: Setup Swoole
+        if: ${{ matrix.engine == 'swoole' }}
+        run: |
+          wget https://github.com/swoole/swoole-src/archive/v${SWOOLE_VERSION}.tar.gz -O swoole.tar.gz
+          mkdir -p swoole
+          tar -xf swoole.tar.gz -C swoole --strip-components=1
+          rm swoole.tar.gz
+          cd swoole
+          phpize
+          ./configure --enable-openssl --enable-mysqlnd --enable-http2
+          make -j$(nproc)
+          sudo make install
+          sudo sh -c "echo extension=swoole > /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
+          php --ri swoole
+      - name: Setup Swow
+        if: ${{ matrix.engine == 'swow' }}
+        run: |
+          wget https://github.com/swow/swow/archive/"${SWOW_VERSION}".tar.gz -O swow.tar.gz
+          mkdir -p swow
+          tar -xf swow.tar.gz -C swow --strip-components=1
+          rm swow.tar.gz
+          cd swow/ext || exit
+
+          phpize
+          ./configure --enable-debug
+          make -j "$(nproc)"
+          sudo make install
+          sudo sh -c "echo extension=swow > /etc/php/${{ matrix.php-version }}/cli/conf.d/swow.ini"
+          php --ri swow
+      - name: Setup Packages
+        run: composer update -o --no-scripts
+      - name: Run Test Cases
+        run: |
+          composer analyse
+          composer test
