@@ -1,5 +1,9 @@
 # v2.1.4 - TBD
 
+## Fixed
+
+- [#3165](https://github.com/hyperf/hyperf/pull/3165) Fixed `getColumnListing` does not works in `MySQL 8.0`.
+
 ## Optimized
 
 - [#3169](https://github.com/hyperf/hyperf/pull/3169) Optimized code for `set_error_handler` of `ErrorExceptionHandler`, which expects `callable(int, string, string, int, array): bool`.
