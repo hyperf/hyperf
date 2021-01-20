@@ -2,7 +2,7 @@
 
 ## Fixed
 
-- [#3165](https://github.com/hyperf/hyperf/pull/3165) Fixed `getColumnListing` does not works in `MySQL 8.0`.
+- [#3165](https://github.com/hyperf/hyperf/pull/3165) Fixed `Hyperf\Database\Schema\MySqlBuilder::getColumnListing` does not works in `MySQL 8.0`.
 
 ## Optimized
 
