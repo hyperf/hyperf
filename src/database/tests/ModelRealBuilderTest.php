@@ -271,7 +271,11 @@ class ModelRealBuilderTest extends TestCase
         /** @var MySqlBuilder $builder */
         $builder = $connection->getSchemaBuilder('default');
         $columns = $builder->getColumns();
-        $column = $columns[0];
+        foreach ($columns as $column) {
+            if ($column->getTable() === 'book') {
+                break;
+            }
+        }
         $this->assertInstanceOf(Column::class, $column);
         $this->assertSame('hyperf', $column->getSchema());
         $this->assertSame('book', $column->getTable());
