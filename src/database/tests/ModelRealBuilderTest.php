@@ -16,6 +16,8 @@ use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\Events\Saved;
+use Hyperf\Database\Schema\Column;
+use Hyperf\Database\Schema\MySqlBuilder;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\Model\User;
 use HyperfTest\Database\Stubs\Model\UserExt;
@@ -235,6 +237,54 @@ class ModelRealBuilderTest extends TestCase
                 $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
             }
         }
+    }
+
+    public function testGetColumnListing()
+    {
+        $container = $this->getContainer();
+        $connection = $container->get(ConnectionResolverInterface::class)->connection();
+        /** @var MySqlBuilder $builder */
+        $builder = $connection->getSchemaBuilder('default');
+        $columns = $builder->getColumnListing('user_ext');
+        foreach ($columns as $column) {
+            $this->assertSame($column, strtolower($column));
+        }
+    }
+
+    public function testGetColumnTypeListing()
+    {
+        $container = $this->getContainer();
+        $connection = $container->get(ConnectionResolverInterface::class)->connection();
+        /** @var MySqlBuilder $builder */
+        $builder = $connection->getSchemaBuilder('default');
+        $columns = $builder->getColumnTypeListing('user_ext');
+        $column = $columns[0];
+        foreach ($column as $key => $value) {
+            $this->assertSame($key, strtolower($key));
+        }
+    }
+
+    public function testGetColumns()
+    {
+        $container = $this->getContainer();
+        $connection = $container->get(ConnectionResolverInterface::class)->connection();
+        /** @var MySqlBuilder $builder */
+        $builder = $connection->getSchemaBuilder('default');
+        $columns = $builder->getColumns();
+        foreach ($columns as $column) {
+            if ($column->getTable() === 'book') {
+                break;
+            }
+        }
+        $this->assertInstanceOf(Column::class, $column);
+        $this->assertSame('hyperf', $column->getSchema());
+        $this->assertSame('book', $column->getTable());
+        $this->assertSame('id', $column->getName());
+        $this->assertSame(1, $column->getPosition());
+        $this->assertSame(null, $column->getDefault());
+        $this->assertSame(false, $column->isNullable());
+        $this->assertSame('bigint', $column->getType());
+        $this->assertSame('', $column->getComment());
     }
 
     public function testBigIntInsertAndGet()
