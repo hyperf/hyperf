@@ -1,5 +1,9 @@
 # v2.1.4 - TBD
 
+## Optimized
+
+- [#3169](https://github.com/hyperf/hyperf/pull/3169) Optimized code for `set_error_handler` of `ErrorExceptionHandler`, which expects `callable(int, string, string, int, array): bool`.
+
 # v2.1.3 - 2021-01-18
 
 ## Fixed
