@@ -241,6 +241,10 @@ class RegisterServiceListener implements ListenerInterface
                 throw new \InvalidArgumentException(sprintf('Invalid port %s', $port));
             }
             $port = (int) $port;
+            if(isset($server['docker_address']) && !empty($server['docker_address'])) {
+                $host = $server['docker_address'];
+                $port = 80;
+            }
             $result[$server['name']] = [$host, $port];
         }
         return $result;
