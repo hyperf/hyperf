@@ -36,7 +36,7 @@ composer create-project hyperf/hyperf-skeleton
 ```
 # 下载并运行 hyperf/hyperf 镜像，并将镜像内的项目目录绑定到宿主机的 /tmp/skeleton 目录
 docker run --name hyperf \
--v /data/project/:/date/project/ \
+-v /data/project/:/data/project/ \
 -p 9501:9501 -it \
 --entrypoint /bin/sh \
 hyperf/hyperf:7.4-alpine-v3.11-swoole
@@ -45,7 +45,7 @@ hyperf/hyperf:7.4-alpine-v3.11-swoole
 composer config -g repo.packagist composer https://mirrors.aliyun.com/composer
 
 #进入映射文件夹
-mkdir -p /data/project && cd /data/project
+cd /data/project
 
 # 通过 Composer 安装 hyperf/hyperf-skeleton 项目，此处会有提示安装各种组件，可以都按回车
 composer create-project hyperf/hyperf-skeleton
