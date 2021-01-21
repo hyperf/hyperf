@@ -646,7 +646,7 @@ class Builder
         $this->wheres[] = compact('type', 'column', 'operator', 'value', 'boolean');
 
         if (! $value instanceof Expression) {
-            $this->addBinding($value, 'where');
+            $this->addBinding($this->getFirstFromArray($value), 'where');
         }
 
         return $this;
@@ -938,7 +938,7 @@ class Builder
 
         $this->wheres[] = compact('type', 'column', 'values', 'boolean', 'not');
 
-        $this->addBinding($this->cleanBindings($values), 'where');
+        $this->addBinding(array_slice($this->cleanBindings($values), 0, 2), 'where');
 
         return $this;
     }
@@ -1001,6 +1001,8 @@ class Builder
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
 
+        $value = $this->getFirstFromArray($value);
+
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('Y-m-d');
         }
@@ -1035,6 +1037,8 @@ class Builder
     public function whereTime($column, $operator, $value = null, $boolean = 'and')
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
+
+        $value = $this->getFirstFromArray($value);
 
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('H:i:s');
@@ -1071,6 +1075,8 @@ class Builder
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
 
+        $value = $this->getFirstFromArray($value);
+
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('d');
         }
@@ -1106,6 +1112,8 @@ class Builder
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
 
+        $value = $this->getFirstFromArray($value);
+
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('m');
         }
@@ -1140,6 +1148,8 @@ class Builder
     public function whereYear($column, $operator, $value = null, $boolean = 'and')
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
+
+        $value = $this->getFirstFromArray($value);
 
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('Y');
@@ -1390,7 +1400,7 @@ class Builder
         $this->wheres[] = compact('type', 'column', 'operator', 'value', 'boolean');
 
         if (! $value instanceof Expression) {
-            $this->addBinding($value);
+            $this->addBinding((int) $value);
         }
 
         return $this;
@@ -1494,7 +1504,7 @@ class Builder
         $this->havings[] = compact('type', 'column', 'operator', 'value', 'boolean');
 
         if (! $value instanceof Expression) {
-            $this->addBinding($value, 'having');
+            $this->addBinding($this->getFirstFromArray($value), 'having');
         }
 
         return $this;
@@ -2649,7 +2659,7 @@ class Builder
         $this->wheres[] = compact('column', 'type', 'boolean', 'operator', 'value');
 
         if (! $value instanceof Expression) {
-            $this->addBinding($value, 'where');
+            $this->addBinding($this->getFirstFromArray($value), 'where');
         }
 
         return $this;
@@ -2908,5 +2918,20 @@ class Builder
             throw new \RuntimeException('The DI container does not support make() method.');
         }
         return $container->make(PaginatorInterface::class, compact('items', 'perPage', 'currentPage', 'options'));
+    }
+
+    /**
+     * Get the first element if $value is array.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    private function getFirstFromArray($value)
+    {
+        if (! is_array($value)) {
+            return $value;
+        }
+
+        return $this->getFirstFromArray(head($value));
     }
 }
