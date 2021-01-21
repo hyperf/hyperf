@@ -63,7 +63,7 @@ return [
     // ...other
     'callbacks' => [
         // ...other
-        SwooleEvent::ON_SHUTDOWN => [Hyperf\Framework\Bootstrap\ShutdownCallback::class, 'onShutdown']
+        Event::ON_SHUTDOWN => [Hyperf\Framework\Bootstrap\ShutdownCallback::class, 'onShutdown']
     ]
 ];
 ```
