@@ -35,12 +35,19 @@ composer create-project hyperf/hyperf-skeleton
 
 ```
 # 下载并运行 hyperf/hyperf 镜像，并将镜像内的项目目录绑定到宿主机的 /tmp/skeleton 目录
-docker run -v /tmp/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/sh hyperf/hyperf:7.4-alpine-v3.11-swoole
+docker run --name hyperf \
+-v /data/project/:/date/project/ \
+-p 9501:9501 -it \
+--entrypoint /bin/sh \
+hyperf/hyperf:7.4-alpine-v3.11-swoole
 
 # 将 Composer 镜像设置为阿里云镜像，加速国内下载速度
 composer config -g repo.packagist composer https://mirrors.aliyun.com/composer
 
-# 通过 Composer 安装 hyperf/hyperf-skeleton 项目
+#进入映射文件夹
+mkdir -p /data/project && cd /data/project
+
+# 通过 Composer 安装 hyperf/hyperf-skeleton 项目，此处会有提示安装各种组件，可以都按回车
 composer create-project hyperf/hyperf-skeleton
 
 # 进入安装好的 Hyperf 项目目录
@@ -49,7 +56,7 @@ cd hyperf-skeleton
 php bin/hyperf.php start
 ```
 
-接下来，就可以在 `/tmp/skeleton` 中看到您安装好的代码了。由于 Hyperf 是持久化的 CLI 框架，当您修改完您的代码后，通过 `CTRL + C` 终止当前启动的进程实例，并重新执行 `php bin/hyperf.php start` 启动命令即可。
+接下来，就可以在宿主机 `/data/project/` 中看到您安装好的代码了。由于 Hyperf 是持久化的 CLI 框架，当您修改完您的代码后，通过 `CTRL + C` 终止当前启动的进程实例，并重新执行 `php bin/hyperf.php start` 启动命令即可。
 
 ## 存在兼容性问题的扩展
 
