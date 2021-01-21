@@ -34,12 +34,14 @@ composer create-project hyperf/hyperf-skeleton
 假设您的本机环境并不能达到 Hyperf 的环境要求，或对于环境配置不是那么熟悉，那么您可以通过以下方法来运行及开发 Hyperf 项目：
 
 ```
-# 下载并运行 hyperf/hyperf 镜像，并将镜像内的项目目录绑定到宿主机的 /tmp/skeleton 目录
+# 下载并运行 hyperf/hyperf 镜像，并将镜像内的/data/project目录绑定到宿主机的 /data/project 目录,目录可以更改。
 docker run --name hyperf \
 -v /data/project/:/data/project/ \
 -p 9501:9501 -it \
+--privileged -u root \
 --entrypoint /bin/sh \
 hyperf/hyperf:7.4-alpine-v3.11-swoole
+#注意：“--privileged -u root”  如果不加这个选项，如果宿主机开启了selinux，可能会导致composer安装的时候，提示没有权限创建。或者关闭selinux，或者加这个选项。
 
 # 将 Composer 镜像设置为阿里云镜像，加速国内下载速度
 composer config -g repo.packagist composer https://mirrors.aliyun.com/composer
@@ -56,7 +58,7 @@ cd hyperf-skeleton
 php bin/hyperf.php start
 ```
 
-接下来，就可以在宿主机 `/data/project/` 中看到您安装好的代码了。由于 Hyperf 是持久化的 CLI 框架，当您修改完您的代码后，通过 `CTRL + C` 终止当前启动的进程实例，并重新执行 `php bin/hyperf.php start` 启动命令即可。
+接下来，就可以在宿主机 `/data/project/hyperf-skeleton` 中看到您安装好的代码了。由于 Hyperf 是持久化的 CLI 框架，当您修改完您的代码后，通过 `CTRL + C` 终止当前启动的进程实例，并重新执行 `php bin/hyperf.php start` 启动命令即可。
 
 ## 存在兼容性问题的扩展
 
