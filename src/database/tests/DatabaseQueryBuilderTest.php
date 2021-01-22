@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Exception\InvalidBindingException;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression as Raw;
 use Hyperf\Database\Query\Grammars\Grammar;
@@ -309,47 +310,40 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertEquals([0 => 1], $builder->getBindings());
     }
 
-    public function testWheresWithArrayValue(): void
+    public function testWhereWithArrayValue(): void
     {
         $builder = $this->getBuilder();
         $builder->select('*')->from('users')->where('id', 12);
         $this->assertSame('select * from "users" where "id" = ?', $builder->toSql());
         $this->assertEquals([0 => 12], $builder->getBindings());
 
+        $this->expectException(InvalidBindingException::class);
+        $this->expectExceptionMessage('The value of column id is invalid.');
+
         $builder = $this->getBuilder();
         $builder->select('*')->from('users')->where('id', [12]);
-        $this->assertSame('select * from "users" where "id" = ?', $builder->toSql());
-        $this->assertEquals([0 => 12], $builder->getBindings());
+    }
+
+    public function testWhereBetweenWithArrayValue(): void
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereBetween('id', [1, 100]);
+        $this->assertSame('select * from "users" where "id" between ? and ?', $builder->toSql());
+        $this->assertEquals([0 => 1, 1 => 100], $builder->getBindings());
+
+        $this->expectException(InvalidBindingException::class);
+        $this->expectExceptionMessage('The value length of column id is not equal with 2.');
 
         $builder = $this->getBuilder();
-        $builder->select('*')->from('users')->where('id', '=', [12, 30]);
-        $this->assertSame('select * from "users" where "id" = ?', $builder->toSql());
-        $this->assertEquals([0 => 12], $builder->getBindings());
+        $builder->select('*')->from('users')->whereBetween('id', [1, 2, 3]);
+    }
+
+    public function testWhereBetweenWithoutArrayValue(): void
+    {
+        $this->expectException(\TypeError::class);
 
         $builder = $this->getBuilder();
-        $builder->select('*')->from('users')->where('id', '!=', [12, 30]);
-        $this->assertSame('select * from "users" where "id" != ?', $builder->toSql());
-        $this->assertEquals([0 => 12], $builder->getBindings());
-
-        $builder = $this->getBuilder();
-        $builder->select('*')->from('users')->where('id', '<>', [12, 30]);
-        $this->assertSame('select * from "users" where "id" <> ?', $builder->toSql());
-        $this->assertEquals([0 => 12], $builder->getBindings());
-
-        $builder = $this->getBuilder();
-        $builder->select('*')->from('users')->where('id', '=', [[12, 30]]);
-        $this->assertSame('select * from "users" where "id" = ?', $builder->toSql());
-        $this->assertEquals([0 => 12], $builder->getBindings());
-
-        $builder = $this->getBuilder();
-        $builder->select('*')->from('users')->where('id', '!=', [[12, 30]]);
-        $this->assertSame('select * from "users" where "id" != ?', $builder->toSql());
-        $this->assertEquals([0 => 12], $builder->getBindings());
-
-        $builder = $this->getBuilder();
-        $builder->select('*')->from('users')->where('id', '<>', [[12, 30]]);
-        $this->assertSame('select * from "users" where "id" <> ?', $builder->toSql());
-        $this->assertEquals([0 => 12], $builder->getBindings());
+        $builder->select('*')->from('users')->whereBetween('id', 1);
     }
 
     public function testMySqlWrappingProtectsQuotationMarks(): void

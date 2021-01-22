@@ -939,7 +939,7 @@ class Builder
 
         $this->wheres[] = compact('type', 'column', 'values', 'boolean', 'not');
 
-        $this->addBinding($this->assertBinding($values, $column, 2), 'where');
+        $this->addBinding($this->cleanBindings($this->assertBinding($values, $column, 2)), 'where');
 
         return $this;
     }
