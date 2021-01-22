@@ -46,6 +46,12 @@ Mac
 brew install fswatch
 ```
 
+Ubuntu/Debian
+
+```bash
+apt-get install fswatch
+```
+
 其他
 
 ```bash
