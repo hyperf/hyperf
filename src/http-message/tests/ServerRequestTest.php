@@ -34,7 +34,7 @@ use Swoole\Http\Request as SwooleRequest;
  */
 class ServerRequestTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         RequestStub::setParser(null);
@@ -65,11 +65,10 @@ class ServerRequestTest extends TestCase
         $this->assertSame($json, RequestStub::normalizeParsedBody($data, $request));
     }
 
-    /**
-     * @expectedException  \Hyperf\HttpMessage\Exception\BadRequestHttpException
-     */
     public function testNormalizeParsedBodyException()
     {
+        $this->expectException(\Hyperf\HttpMessage\Exception\BadRequestHttpException::class);
+
         $this->getContainer();
 
         $json = ['name' => 'Hyperf'];
@@ -79,11 +78,10 @@ class ServerRequestTest extends TestCase
         $this->assertSame([], RequestStub::normalizeParsedBody($json, $request));
     }
 
-    /**
-     * @expectedException  \Hyperf\HttpMessage\Exception\BadRequestHttpException
-     */
     public function testXmlNormalizeParsedBodyException()
     {
+        $this->expectException(\Hyperf\HttpMessage\Exception\BadRequestHttpException::class);
+
         $this->getContainer();
 
         $json = ['name' => 'Hyperf'];

@@ -67,7 +67,7 @@ class CoreMiddleware extends HttpCoreMiddleware
                         $grpcMessage = 'Action not exist.';
                         return $this->handleResponse(null, 500, '500', $grpcMessage);
                     }
-                    $parameters = $this->parseParameters($controller, $action, $dispatched->params);
+                    $parameters = $this->parseMethodParameters($controller, $action, $dispatched->params);
                     $result = $controllerInstance->{$action}(...$parameters);
                 }
 
@@ -114,7 +114,7 @@ class CoreMiddleware extends HttpCoreMiddleware
         return $this->response()->withBody(new SwooleStream((string) $response));
     }
 
-    protected function parseParameters(string $controller, string $action, array $arguments): array
+    protected function parseMethodParameters(string $controller, string $action, array $arguments): array
     {
         $injections = [];
         $definitions = MethodDefinitionCollector::getOrParse($controller, $action);
@@ -127,7 +127,7 @@ class CoreMiddleware extends HttpCoreMiddleware
                 $injections[] = null;
                 continue;
             }
-            $injections[] = value(function () use ($definition, $arguments) {
+            $injections[] = value(function () use ($definition) {
                 switch ($definition['type']) {
                     case 'object':
                         $ref = $definition['ref'];
@@ -136,7 +136,7 @@ class CoreMiddleware extends HttpCoreMiddleware
                         if ($parentClass && $parentClass->getName() === ProtobufMessage::class) {
                             $request = $this->request();
                             $stream = $request->getBody();
-                            return Parser::deserializeMessage([$class->getName(), null], $stream->getContents());
+                            return Parser::deserializeMessage([$class->getName(), null], (string) $stream);
                         }
 
                         if (! $this->container->has($definition['ref']) && ! $definition['allowsNull']) {

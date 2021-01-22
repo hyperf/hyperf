@@ -9,12 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Tracer\Middleware;
+namespace Hyperf\Kafka\Pool;
 
-/**
- * Classname misspelled. Please use TraceMiddleware.
- * @deprecated
- */
-class TraceMiddeware extends TraceMiddleware
+use Hyperf\Pool\Frequency as DefaultFrequency;
+
+class Frequency extends DefaultFrequency
 {
 }

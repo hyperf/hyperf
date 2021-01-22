@@ -272,7 +272,7 @@ return [
             'port' => 9501,
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
-                SwooleEvent::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
+                Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
             ],
         ],
         [
@@ -282,7 +282,7 @@ return [
             'port' => 9502,
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
-                SwooleEvent::ON_REQUEST => ['InnerHttp', 'onRequest'],
+                Event::ON_REQUEST => ['InnerHttp', 'onRequest'],
             ],
         ],
     ]
@@ -327,24 +327,24 @@ class IndexController
 
 ## 事件
 
-除上述提到的 `SwooleEvent::ON_REQUEST` 事件，框架还支持其他事件，所有事件名如下。
+除上述提到的 `Event::ON_REQUEST` 事件，框架还支持其他事件，所有事件名如下。
 
-|            事件名             |               备注                |
-| :---------------------------: | :-------------------------------: |
-|    SwooleEvent::ON_REQUEST    |                                   |
-|     SwooleEvent::ON_START     | 该事件在 `SWOOLE_BASE` 模式下无效 |
-| SwooleEvent::ON_WORKER_START  |                                   |
-|  SwooleEvent::ON_WORKER_EXIT  |                                   |
-| SwooleEvent::ON_PIPE_MESSAGE  |                                   |
-|    SwooleEvent::ON_RECEIVE    |                                   |
-|    SwooleEvent::ON_CONNECT    |                                   |
-|  SwooleEvent::ON_HAND_SHAKE   |                                   |
-|     SwooleEvent::ON_OPEN      |                                   |
-|    SwooleEvent::ON_MESSAGE    |                                   |
-|     SwooleEvent::ON_CLOSE     |                                   |
-|     SwooleEvent::ON_TASK      |                                   |
-|    SwooleEvent::ON_FINISH     |                                   |
-|   SwooleEvent::ON_SHUTDOWN    |                                   |
-|    SwooleEvent::ON_PACKET     |                                   |
-| SwooleEvent::ON_MANAGER_START |                                   |
-| SwooleEvent::ON_MANAGER_STOP  |                                   |
+|         事件名          |               备注                |
+| :---------------------: | :-------------------------------: |
+|    Event::ON_REQUEST    |                                   |
+|     Event::ON_START     | 该事件在 `SWOOLE_BASE` 模式下无效 |
+| Event::ON_WORKER_START  |                                   |
+|  Event::ON_WORKER_EXIT  |                                   |
+| Event::ON_PIPE_MESSAGE  |                                   |
+|    Event::ON_RECEIVE    |                                   |
+|    Event::ON_CONNECT    |                                   |
+|  Event::ON_HAND_SHAKE   |                                   |
+|     Event::ON_OPEN      |                                   |
+|    Event::ON_MESSAGE    |                                   |
+|     Event::ON_CLOSE     |                                   |
+|     Event::ON_TASK      |                                   |
+|    Event::ON_FINISH     |                                   |
+|   Event::ON_SHUTDOWN    |                                   |
+|    Event::ON_PACKET     |                                   |
+| Event::ON_MANAGER_START |                                   |
+| Event::ON_MANAGER_STOP  |                                   |

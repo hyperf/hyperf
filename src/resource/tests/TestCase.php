@@ -37,12 +37,12 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class TestCase extends \PHPUnit\Framework\TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         Context::set(ResponseInterface::class, new Response());
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Context::set(RequestInterface::class, null);
         Context::set(ResponseInterface::class, null);

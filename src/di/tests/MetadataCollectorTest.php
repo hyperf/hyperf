@@ -27,7 +27,7 @@ use Psr\Container\ContainerInterface;
  */
 class MetadataCollectorTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         AspectCollector::clear();
         AnnotationCollector::clear();

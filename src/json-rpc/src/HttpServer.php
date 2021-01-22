@@ -27,8 +27,6 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Http\Request as SwooleRequest;
-use Swoole\Http\Response as SwooleResponse;
 
 class HttpServer extends Server
 {
@@ -75,7 +73,7 @@ class HttpServer extends Server
         return new HttpCoreMiddleware($this->container, $this->protocol, $this->responseBuilder, $this->serverName);
     }
 
-    protected function initRequestAndResponse(SwooleRequest $request, SwooleResponse $response): array
+    protected function initRequestAndResponse($request, $response): array
     {
         // Initialize PSR-7 Request and Response objects.
         $psr7Request = Psr7Request::loadFromSwooleRequest($request);
@@ -85,7 +83,7 @@ class HttpServer extends Server
                 $psr7Response = $this->responseBuilder->buildErrorResponse($psr7Request, ResponseBuilder::PARSE_ERROR);
             }
             // @TODO Optimize the error handling of encode.
-            $content = $this->packer->unpack($psr7Request->getBody()->getContents());
+            $content = $this->packer->unpack((string) $psr7Request->getBody());
             if (! isset($content['jsonrpc'], $content['method'], $content['params'])) {
                 $psr7Response = $this->responseBuilder->buildErrorResponse($psr7Request, ResponseBuilder::INVALID_REQUEST);
             }

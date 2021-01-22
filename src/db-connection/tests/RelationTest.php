@@ -25,7 +25,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RelationTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set('database.connection.default', null);

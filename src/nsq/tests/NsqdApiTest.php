@@ -26,7 +26,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class NsqdApiTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
@@ -62,7 +62,7 @@ class NsqdApiTest extends TestCase
         $info = $client->info();
         $this->assertInstanceOf(ResponseInterface::class, $info);
         $this->assertSame(200, $info->getStatusCode());
-        $this->assertJson($info->getBody()->getContents());
+        $this->assertJson((string) $info->getBody());
 
         // /ping
         $ping = $client->ping();
@@ -72,13 +72,13 @@ class NsqdApiTest extends TestCase
         $stats = $client->stats();
         $this->assertInstanceOf(ResponseInterface::class, $stats);
         $this->assertSame(200, $stats->getStatusCode());
-        $this->assertTrue(is_string($stats->getBody()->getContents()));
+        $this->assertTrue(is_string((string) $stats->getBody()));
 
         // /stats - json
         $stats = $client->stats('json');
         $this->assertInstanceOf(ResponseInterface::class, $stats);
         $this->assertSame(200, $stats->getStatusCode());
-        $this->assertJson($stats->getBody()->getContents());
+        $this->assertJson((string) $stats->getBody());
     }
 
     public function testConfigNsalookupdTcpAddresses()
@@ -88,7 +88,7 @@ class NsqdApiTest extends TestCase
         //  PUT /config/nsqlookupd_tcp_addresses
         $addresses = $client->setConfigNsqlookupdTcpAddresses(['nsqlookupd:4160', 'nsqlookupd:4161']);
         $this->assertTrue($addresses);
-        $this->assertSame('["nsqlookupd:4160","nsqlookupd:4161"]', $client->getConfigNsqlookupdTcpAddresses()->getBody()->getContents());
+        $this->assertSame('["nsqlookupd:4160","nsqlookupd:4161"]', (string) $client->getConfigNsqlookupdTcpAddresses()->getBody());
 
         // Reset addresses
         $client->setConfigNsqlookupdTcpAddresses(['nsqlookupd:4160']);
@@ -97,7 +97,7 @@ class NsqdApiTest extends TestCase
         $addresses = $client->getConfigNsqlookupdTcpAddresses();
         $this->assertInstanceOf(ResponseInterface::class, $addresses);
         $this->assertSame(200, $addresses->getStatusCode());
-        $this->assertSame('["nsqlookupd:4160"]', $addresses->getBody()->getContents());
+        $this->assertSame('["nsqlookupd:4160"]', (string) $addresses->getBody());
     }
 
     protected function getClient()

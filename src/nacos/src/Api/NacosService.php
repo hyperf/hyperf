@@ -25,7 +25,7 @@ class NacosService extends AbstractNacos
             RequestOptions::QUERY => $serviceModel->toArray(),
         ]);
 
-        return $response->getBody()->getContents() === 'ok';
+        return (string) $response->getBody() === 'ok';
     }
 
     public function delete(ServiceModel $serviceModel): bool
@@ -34,7 +34,7 @@ class NacosService extends AbstractNacos
             RequestOptions::QUERY => $serviceModel->toArray(),
         ]);
 
-        return $response->getBody()->getContents() === 'ok';
+        return (string) $response->getBody() === 'ok';
     }
 
     public function update(ServiceModel $serviceModel): bool
@@ -43,7 +43,7 @@ class NacosService extends AbstractNacos
             RequestOptions::QUERY => $serviceModel->toArray(),
         ]);
 
-        return $response->getBody()->getContents() === 'ok';
+        return (string) $response->getBody() === 'ok';
     }
 
     public function detail(ServiceModel $serviceModel): ?array
@@ -53,7 +53,7 @@ class NacosService extends AbstractNacos
         ]);
 
         $statusCode = $response->getStatusCode();
-        $contents = $response->getBody()->getContents();
+        $contents = (string) $response->getBody();
         if ($statusCode !== 200) {
             if (Str::contains($contents, 'is not found')) {
                 return null;
@@ -73,6 +73,6 @@ class NacosService extends AbstractNacos
             RequestOptions::QUERY => $params,
         ]);
 
-        return Json::decode($response->getBody()->getContents());
+        return Json::decode((string) $response->getBody());
     }
 }

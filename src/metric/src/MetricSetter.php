@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Metric;
 
 use Hyperf\Metric\Contract\GaugeInterface;
+use Hyperf\Retry\Retry;
+use Hyperf\Utils\Coroutine;
 
 /**
  * A Helper trait to set stats from swoole and kernal.
@@ -48,5 +50,23 @@ trait MetricSetter
                 ->with(...\array_values($labels));
         }
         return $out;
+    }
+
+    /**
+     * Spawn a new coroutine to handle metrics.
+     */
+    private function spawnHandle()
+    {
+        Coroutine::create(function () {
+            if (class_exists(Retry::class)) {
+                Retry::whenThrows()->backoff(100)->call(function () {
+                    $this->factory->handle();
+                });
+            } else {
+                retry(PHP_INT_MAX, function () {
+                    $this->factory->handle();
+                }, 100);
+            }
+        });
     }
 }

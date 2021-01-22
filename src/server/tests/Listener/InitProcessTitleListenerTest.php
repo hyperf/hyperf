@@ -33,7 +33,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  */
 class InitProcessTitleListenerTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

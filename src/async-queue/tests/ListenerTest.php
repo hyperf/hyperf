@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ListenerTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

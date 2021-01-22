@@ -24,6 +24,6 @@ class RequestIdGeneratorTest extends TestCase
     {
         $generator = new RequestIdGenerator();
         $id = $generator->generate();
-        $this->assertRegExp('/^\d{2,}$/', $id);
+        $this->assertMatchesRegularExpression('/^\d{2,}$/', $id);
     }
 }

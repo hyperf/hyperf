@@ -49,8 +49,8 @@ class ResourceCommand extends GeneratorCommand
 
     protected function isCollection(): bool
     {
-        return $this->input->getOption('collection') ||
-            Str::endsWith($this->input->getArgument('name'), 'Collection');
+        return $this->input->getOption('collection')
+            || Str::endsWith($this->input->getArgument('name'), 'Collection');
     }
 
     protected function isGrpc(): bool

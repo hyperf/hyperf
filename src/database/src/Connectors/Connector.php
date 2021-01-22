@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Connectors;
 
-use Doctrine\DBAL\Driver\PDOConnection;
 use Exception;
 use Hyperf\Database\DetectsLostConnections;
 use PDO;
@@ -104,10 +103,6 @@ class Connector
      */
     protected function createPdoConnection($dsn, $username, $password, $options)
     {
-        if (class_exists(PDOConnection::class) && ! $this->isPersistentConnection($options)) {
-            return new PDOConnection($dsn, $username, $password, $options);
-        }
-
         return new PDO($dsn, $username, $password, $options);
     }
 
@@ -119,8 +114,8 @@ class Connector
      */
     protected function isPersistentConnection($options)
     {
-        return isset($options[PDO::ATTR_PERSISTENT]) &&
-            $options[PDO::ATTR_PERSISTENT];
+        return isset($options[PDO::ATTR_PERSISTENT])
+            && $options[PDO::ATTR_PERSISTENT];
     }
 
     /**

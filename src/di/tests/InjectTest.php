@@ -37,7 +37,7 @@ use PHPUnit\Framework\TestCase;
  */
 class InjectTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         AspectCollector::clear();
         AnnotationCollector::clear();

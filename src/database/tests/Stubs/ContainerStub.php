@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database\Stubs;
 
+use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
@@ -51,5 +52,19 @@ class ContainerStub
         $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
 
         return $container;
+    }
+
+    public static function getModelOption()
+    {
+        $option = new ModelOption();
+        $option->setWithComments(false)
+            ->setRefreshFillable(true)
+            ->setForceCasts(true)
+            ->setInheritance('Model')
+            ->setPath(__DIR__ . '/../Stubs/Model')
+            ->setPool('default')
+            ->setPrefix('')
+            ->setWithIde(false);
+        return $option;
     }
 }

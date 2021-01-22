@@ -11,7 +11,8 @@
     ],
     "require": {
         "php": ">=7.0",
-        "guzzlehttp/guzzle": "^6.3",
+        "guzzlehttp/guzzle": "^6.3|^7.0",
+        "hyperf/utils": "~2.1.0",
         "psr/container": "^1.0",
         "psr/http-message": "^1.0"
     },
@@ -36,7 +37,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0-dev"
+            "dev-master": "2.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Guzzle\\ConfigProvider"

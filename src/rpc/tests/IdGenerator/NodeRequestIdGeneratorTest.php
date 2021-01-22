@@ -24,7 +24,7 @@ class NodeRequestIdGeneratorTest extends TestCase
     {
         $generator = new NodeRequestIdGenerator();
         $id = $generator->generate();
-        $this->assertRegExp('/^[0-9a-zA-Z]{7,}$/', $id);
+        $this->assertMatchesRegularExpression('/^[0-9a-zA-Z]{7,}$/', $id);
     }
 
     public function testDecode()

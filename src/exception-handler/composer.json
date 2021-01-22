@@ -1,13 +1,27 @@
 {
     "name": "hyperf/exception-handler",
-    "type": "library",
+    "description": "Exception handler for hyperf",
     "license": "MIT",
     "keywords": [
         "php",
         "swoole",
         "exception-handler"
     ],
-    "description": "Exception handler for hyperf",
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=7.2",
+        "hyperf/contract": "~2.1.0",
+        "hyperf/dispatcher": "~2.1.0",
+        "hyperf/utils": "~2.1.0",
+        "psr/container": "^1.0",
+        "psr/http-message": "^1.0"
+    },
     "autoload": {
         "psr-4": {
             "Hyperf\\ExceptionHandler\\": "src/"
@@ -18,32 +32,15 @@
             "HyperfTest\\ExceptionHandler\\": "tests/"
         }
     },
-    "require": {
-        "php": ">=7.2",
-        "psr/container": "^1.0",
-        "psr/http-message": "^1.0",
-        "hyperf/contract": "~2.0.0",
-        "hyperf/dispatcher": "~2.0.0",
-        "hyperf/utils": "~2.0.0"
-    },
-    "require-dev": {
-        "malukenho/docheader": "^0.1.6",
-        "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^7.0.0",
-        "friendsofphp/php-cs-fixer": "^2.9"
-    },
-    "suggest": {
+    "config": {
+        "sort-packages": true
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0-dev"
+            "dev-master": "2.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\ExceptionHandler\\ConfigProvider"
         }
-    },
-    "scripts": {
-        "test": "./vendor/bin/phpunit -c phpunit.xml",
-        "co_test": "php tests/co_phpunit.php -c phpunit.xml"
     }
 }

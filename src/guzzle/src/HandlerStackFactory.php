@@ -15,7 +15,7 @@ use GuzzleHttp\HandlerStack;
 use Hyperf\Di\Container;
 use Hyperf\Pool\SimplePool\PoolFactory;
 use Hyperf\Utils\ApplicationContext;
-use Swoole\Coroutine;
+use Hyperf\Utils\Coroutine;
 
 class HandlerStackFactory
 {
@@ -54,7 +54,7 @@ class HandlerStackFactory
         $option = array_merge($this->option, $option);
         $middlewares = array_merge($this->middlewares, $middlewares);
 
-        if (Coroutine::getCid() > 0) {
+        if (Coroutine::inCoroutine()) {
             $handler = $this->getHandler($option);
         }
 

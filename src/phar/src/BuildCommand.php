@@ -36,7 +36,8 @@ class BuildCommand extends HyperfCommand
         $this->setDescription('Pack your project into a Phar package.')
             ->addOption('name', '', InputOption::VALUE_OPTIONAL, 'This is the name of the Phar package, and if it is not passed in, the project name is used by default', null)
             ->addOption('bin', 'b', InputOption::VALUE_OPTIONAL, 'The script path to execute by default.', 'bin/hyperf.php')
-            ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Project root path, default BASE_PATH.', null);
+            ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Project root path, default BASE_PATH.', null)
+            ->addOption('phar-version', '', InputOption::VALUE_OPTIONAL, 'The version of the project that will be compiled.', null);
     }
 
     public function handle()
@@ -45,6 +46,7 @@ class BuildCommand extends HyperfCommand
         $name = $this->input->getOption('name');
         $bin = $this->input->getOption('bin');
         $path = $this->input->getOption('path');
+        $version = $this->input->getOption('phar-version');
         if (empty($path)) {
             $path = BASE_PATH;
         }
@@ -54,6 +56,9 @@ class BuildCommand extends HyperfCommand
         }
         if (! empty($name)) {
             $builder->setTarget($name);
+        }
+        if (! empty($version)) {
+            $builder->setVersion($version);
         }
         $builder->build();
     }
@@ -68,12 +73,8 @@ class BuildCommand extends HyperfCommand
         }
     }
 
-    public function getPharBuilder(string $path, ?string $version = null): PharBuilder
+    public function getPharBuilder(string $path): PharBuilder
     {
-        if ($version !== null) {
-            $path .= ':' . $version;
-        }
-
         if (is_dir($path)) {
             $path = rtrim($path, '/') . '/composer.json';
         }

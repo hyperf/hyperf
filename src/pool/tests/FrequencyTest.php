@@ -25,7 +25,7 @@ use PHPUnit\Framework\TestCase;
  */
 class FrequencyTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
@@ -59,8 +59,9 @@ class FrequencyTest extends TestCase
             $channel->push(true);
         });
 
-        new ConstantFrequencyStub($pool);
-        Coroutine::sleep(0.01);
+        $stub = new ConstantFrequencyStub($pool);
+        Coroutine::sleep(0.002);
+        $stub->clear();
         $this->assertGreaterThan(0, $channel->length());
     }
 

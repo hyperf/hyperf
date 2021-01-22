@@ -37,7 +37,7 @@ class MetricProcess extends AbstractProcess
     public function isEnable($server): bool
     {
         $config = $this->container->get(ConfigInterface::class);
-        return $server instanceof Server && $config->get('metric.use_standalone_process') ?? false;
+        return $server instanceof Server && $config->get('metric.use_standalone_process', true);
     }
 
     public function handle(): void

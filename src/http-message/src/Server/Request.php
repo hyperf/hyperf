@@ -480,7 +480,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
 
         try {
             $parser = static::getParser();
-            if ($parser->has($contentType) && $content = $request->getBody()->getContents()) {
+            if ($parser->has($contentType) && $content = (string) $request->getBody()) {
                 $data = $parser->parse($content, $contentType);
             }
         } catch (\InvalidArgumentException $exception) {

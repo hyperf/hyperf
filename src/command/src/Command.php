@@ -436,9 +436,11 @@ abstract class Command extends SymfonyCommand
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\BeforeHandle($this));
                 call([$this, 'handle']);
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\AfterHandle($this));
-            } catch (ExitException $exception) {
-                // Do nothing.
             } catch (\Throwable $exception) {
+                if (class_exists(ExitException::class) && $exception instanceof ExitException) {
+                    return 0;
+                }
+
                 if (! $this->eventDispatcher) {
                     throw $exception;
                 }

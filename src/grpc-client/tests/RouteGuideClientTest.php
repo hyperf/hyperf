@@ -29,13 +29,12 @@ use Routeguide\RouteSummary;
  */
 class RouteGuideClientTest extends TestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         $container = \Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(ChannelPool::class)->andReturn(new ChannelPool());
         $container->shouldReceive('has')->andReturn(false);
         ApplicationContext::setContainer($container);
-        return $container;
     }
 
     public function testGrpcRouteGuideGetFeature()

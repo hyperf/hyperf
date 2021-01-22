@@ -17,6 +17,7 @@ use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Exception\InvalidBindingException;
 use Hyperf\Database\Model\Builder as ModelBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
@@ -646,7 +647,7 @@ class Builder
         $this->wheres[] = compact('type', 'column', 'operator', 'value', 'boolean');
 
         if (! $value instanceof Expression) {
-            $this->addBinding($value, 'where');
+            $this->addBinding($this->assertBinding($value, $column), 'where');
         }
 
         return $this;
@@ -938,7 +939,7 @@ class Builder
 
         $this->wheres[] = compact('type', 'column', 'values', 'boolean', 'not');
 
-        $this->addBinding($this->cleanBindings($values), 'where');
+        $this->addBinding($this->cleanBindings($this->assertBinding($values, $column, 2)), 'where');
 
         return $this;
     }
@@ -1390,7 +1391,7 @@ class Builder
         $this->wheres[] = compact('type', 'column', 'operator', 'value', 'boolean');
 
         if (! $value instanceof Expression) {
-            $this->addBinding($value);
+            $this->addBinding((int) $this->assertBinding($value, $column));
         }
 
         return $this;
@@ -1494,7 +1495,7 @@ class Builder
         $this->havings[] = compact('type', 'column', 'operator', 'value', 'boolean');
 
         if (! $value instanceof Expression) {
-            $this->addBinding($value, 'having');
+            $this->addBinding($this->assertBinding($value, $column), 'having');
         }
 
         return $this;
@@ -1529,7 +1530,7 @@ class Builder
 
         $this->havings[] = compact('type', 'column', 'values', 'boolean', 'not');
 
-        $this->addBinding($this->cleanBindings($values), 'having');
+        $this->addBinding($this->cleanBindings($this->assertBinding($values, $column, 2)), 'having');
 
         return $this;
     }
@@ -2649,7 +2650,7 @@ class Builder
         $this->wheres[] = compact('column', 'type', 'boolean', 'operator', 'value');
 
         if (! $value instanceof Expression) {
-            $this->addBinding($value, 'where');
+            $this->addBinding($this->assertBinding($value, $column), 'where');
         }
 
         return $this;
@@ -2908,5 +2909,36 @@ class Builder
             throw new \RuntimeException('The DI container does not support make() method.');
         }
         return $container->make(PaginatorInterface::class, compact('items', 'perPage', 'currentPage', 'options'));
+    }
+
+    /**
+     * Assert the value for bindings.
+     *
+     * @param mixed $value
+     * @param string $column
+     * @return mixed
+     */
+    protected function assertBinding($value, $column = '', int $limit = 0)
+    {
+        if ($limit === 0) {
+            if (is_array($value)) {
+                throw new InvalidBindingException(sprintf(
+                    'The value of column %s is invalid.',
+                    (string) $column
+                ));
+            }
+
+            return $value;
+        }
+
+        if (count($value) !== $limit) {
+            throw new InvalidBindingException(sprintf(
+                'The value length of column %s is not equal with %d.',
+                (string) $column,
+                $limit
+            ));
+        }
+
+        return $value;
     }
 }
