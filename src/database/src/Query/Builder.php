@@ -1002,8 +1002,6 @@ class Builder
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
 
-        $value = $this->assertBinding($value, $column);
-
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('Y-m-d');
         }
@@ -1038,8 +1036,6 @@ class Builder
     public function whereTime($column, $operator, $value = null, $boolean = 'and')
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
-
-        $value = $this->assertBinding($value, $column);
 
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('H:i:s');
@@ -1076,8 +1072,6 @@ class Builder
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
 
-        $value = $this->assertBinding($value, $column);
-
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('d');
         }
@@ -1113,8 +1107,6 @@ class Builder
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
 
-        $value = $this->assertBinding($value, $column);
-
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('m');
         }
@@ -1149,8 +1141,6 @@ class Builder
     public function whereYear($column, $operator, $value = null, $boolean = 'and')
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
-
-        $value = $this->assertBinding($value, $column);
 
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('Y');

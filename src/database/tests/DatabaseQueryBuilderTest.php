@@ -478,6 +478,15 @@ class DatabaseQueryBuilderTest extends TestCase
         $this->assertEquals([0 => '22:00'], $builder->getBindings());
     }
 
+    public function testWhereTimeMySqlWithArrayValue(): void
+    {
+        $this->expectException(InvalidBindingException::class);
+        $this->expectExceptionMessage('The value of column created_at is invalid.');
+
+        $builder = $this->getMySqlBuilder();
+        $builder->select('*')->from('users')->whereTime('created_at', '>=', ['22:00', '10:00']);
+    }
+
     public function testWhereTimeOperatorOptionalMySql(): void
     {
         $builder = $this->getMySqlBuilder();
