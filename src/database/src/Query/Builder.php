@@ -1401,7 +1401,7 @@ class Builder
         $this->wheres[] = compact('type', 'column', 'operator', 'value', 'boolean');
 
         if (! $value instanceof Expression) {
-            $this->addBinding((int) $value);
+            $this->addBinding((int) $this->assertBinding($value, $column));
         }
 
         return $this;
