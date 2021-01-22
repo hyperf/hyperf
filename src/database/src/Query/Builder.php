@@ -1530,7 +1530,7 @@ class Builder
 
         $this->havings[] = compact('type', 'column', 'values', 'boolean', 'not');
 
-        $this->addBinding($this->cleanBindings($values), 'having');
+        $this->addBinding($this->cleanBindings($this->assertBinding($values, $column, 2)), 'having');
 
         return $this;
     }
