@@ -17,6 +17,7 @@ use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Exception\InvalidBindingException;
 use Hyperf\Database\Model\Builder as ModelBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
@@ -646,7 +647,7 @@ class Builder
         $this->wheres[] = compact('type', 'column', 'operator', 'value', 'boolean');
 
         if (! $value instanceof Expression) {
-            $this->addBinding($this->getFirstFromArray($value), 'where');
+            $this->addBinding($this->assertBinding($value, $column), 'where');
         }
 
         return $this;
@@ -938,7 +939,7 @@ class Builder
 
         $this->wheres[] = compact('type', 'column', 'values', 'boolean', 'not');
 
-        $this->addBinding(array_slice($this->cleanBindings($values), 0, 2), 'where');
+        $this->addBinding($this->assertBinding($values, $column, 2), 'where');
 
         return $this;
     }
@@ -1001,7 +1002,7 @@ class Builder
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
 
-        $value = $this->getFirstFromArray($value);
+        $value = $this->assertBinding($value, $column);
 
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('Y-m-d');
@@ -1038,7 +1039,7 @@ class Builder
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
 
-        $value = $this->getFirstFromArray($value);
+        $value = $this->assertBinding($value, $column);
 
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('H:i:s');
@@ -1075,7 +1076,7 @@ class Builder
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
 
-        $value = $this->getFirstFromArray($value);
+        $value = $this->assertBinding($value, $column);
 
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('d');
@@ -1112,7 +1113,7 @@ class Builder
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
 
-        $value = $this->getFirstFromArray($value);
+        $value = $this->assertBinding($value, $column);
 
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('m');
@@ -1149,7 +1150,7 @@ class Builder
     {
         [$value, $operator] = $this->prepareValueAndOperator($value, $operator, func_num_args() === 2);
 
-        $value = $this->getFirstFromArray($value);
+        $value = $this->assertBinding($value, $column);
 
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('Y');
@@ -1504,7 +1505,7 @@ class Builder
         $this->havings[] = compact('type', 'column', 'operator', 'value', 'boolean');
 
         if (! $value instanceof Expression) {
-            $this->addBinding($this->getFirstFromArray($value), 'having');
+            $this->addBinding($this->assertBinding($value, $column), 'having');
         }
 
         return $this;
@@ -2659,7 +2660,7 @@ class Builder
         $this->wheres[] = compact('column', 'type', 'boolean', 'operator', 'value');
 
         if (! $value instanceof Expression) {
-            $this->addBinding($this->getFirstFromArray($value), 'where');
+            $this->addBinding($this->assertBinding($value, $column), 'where');
         }
 
         return $this;
@@ -2921,17 +2922,33 @@ class Builder
     }
 
     /**
-     * Get the first element if $value is array.
+     * Assert the value for bindings.
      *
      * @param mixed $value
+     * @param string $column
      * @return mixed
      */
-    private function getFirstFromArray($value)
+    protected function assertBinding($value, $column = '', int $limit = 0)
     {
-        if (! is_array($value)) {
+        if ($limit === 0) {
+            if (is_array($value)) {
+                throw new InvalidBindingException(sprintf(
+                    'The value of column %s is invalid.',
+                    (string) $column
+                ));
+            }
+
             return $value;
         }
 
-        return $this->getFirstFromArray(head($value));
+        if (count($value) !== $limit) {
+            throw new InvalidBindingException(sprintf(
+                'The value length of column %s is not equal with %d.',
+                (string) $column,
+                $limit
+            ));
+        }
+
+        return $value;
     }
 }
