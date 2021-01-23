@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Watcher\Driver;
 
 use Hyperf\Utils\Str;
@@ -18,7 +17,7 @@ use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\System;
 use Swoole\Timer;
 
-class NewerFileDriver implements DriverInterface
+class FindNewerDriver implements DriverInterface
 {
     /**
      * @var Option
@@ -64,7 +63,7 @@ class NewerFileDriver implements DriverInterface
                 $changedFiles = $this->scan();
 
                 $this->scaning = false;
-                $this->count++;
+                ++$this->count;
                 foreach ($changedFiles as $file) {
                     $channel->push($file);
                     return;
@@ -77,10 +76,10 @@ class NewerFileDriver implements DriverInterface
     {
         $changedFiles = [];
 
-        $shell = "";
+        $shell = '';
         $len = count($targets);
         // merge find command
-        for ($i = 0; $i < $len; $i++) {
+        for ($i = 0; $i < $len; ++$i) {
             $dest = $targets[$i];
             $symbol = ($i == $len - 1) ? '' : '&';
             $file = $this->getToScanFile();
@@ -96,7 +95,7 @@ class NewerFileDriver implements DriverInterface
                     continue;
                 }
 
-                if (!empty($ext) && !Str::endsWith($pathName, $ext)) {
+                if (! empty($ext) && ! Str::endsWith($pathName, $ext)) {
                     continue;
                 }
                 $changedFiles[] = $pathName;
@@ -122,9 +121,7 @@ class NewerFileDriver implements DriverInterface
             $dirs[] = implode(' ', $files);
         }
 
-        $changedFiles = $this->find($dirs, $ext);
-
-        return $changedFiles;
+        return $this->find($dirs, $ext);
     }
 
     protected function getToModifyFile()
