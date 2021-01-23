@@ -32,11 +32,12 @@ php bin/hyperf.php vendor:publish hyperf/watcher
 
 ## 支持驱动
 
-|                 驱动                 |                备注                 |
-| :----------------------------------: | :---------------------------------: |
-| Hyperf\Watcher\Driver\ScanFileDriver |              无需扩展               |
-| Hyperf\Watcher\Driver\FswatchDriver  |          需要安装 fswatch           |
-|   Hyperf\Watcher\Driver\FindDriver   | 需要安装 find，MAC 下需要安装 gfind |
+|                 驱动                  |                备注                 |
+| :-----------------------------------: | :---------------------------------: |
+| Hyperf\Watcher\Driver\ScanFileDriver  |              无需扩展               |
+|  Hyperf\Watcher\Driver\FswatchDriver  |          需要安装 fswatch           |
+|   Hyperf\Watcher\Driver\FindDriver    | 需要安装 find，MAC 下需要安装 gfind |
+| Hyperf\Watcher\Driver\FindNewerDriver |            需要安装 find            |
 
 ### `fswatch` 安装
 
