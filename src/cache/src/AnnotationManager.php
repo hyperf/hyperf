@@ -52,6 +52,14 @@ class AnnotationManager
         return [$key, $ttl + $this->getRandomOffset($annotation->offset), $group, $annotation];
     }
 
+    public function getCacheableResetTimeout(string $className, string $method): int
+    {
+        /** @var Cacheable $annotation */
+        $annotation = $this->getAnnotation(Cacheable::class, $className, $method);
+
+        return intval($annotation->resetTimeout);
+    }
+
     public function getCacheEvictValue(string $className, string $method, array $arguments): array
     {
         /** @var CacheEvict $annotation */

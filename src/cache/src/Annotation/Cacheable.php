@@ -57,11 +57,19 @@ class Cacheable extends AbstractAnnotation
      */
     public $collect = false;
 
+    /**
+     * 缓存读取失败后，从源方法读取的时间周期.
+     *
+     * @var int
+     */
+    public $resetTimeout = 600;
+
     public function __construct($value = null)
     {
         parent::__construct($value);
         $this->ttl = (int) $this->ttl;
         $this->offset = (int) $this->offset;
+        $this->resetTimeout = (int) $this->resetTimeout;
     }
 
     public function collectMethod(string $className, ?string $target): void

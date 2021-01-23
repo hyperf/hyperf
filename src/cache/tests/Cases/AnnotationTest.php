@@ -34,14 +34,17 @@ class AnnotationTest extends TestCase
 
         $this->assertSame('test', $annotation->prefix);
         $this->assertSame(3600, $annotation->ttl);
+        $this->assertSame(600, $annotation->resetTimeout);
 
         $annotation = new Cacheable([
             'prefix' => 'test',
             'ttl' => '3600',
+            'resetTimeout' => '120',
         ]);
 
         $this->assertSame('test', $annotation->prefix);
         $this->assertSame(3600, $annotation->ttl);
+        $this->assertSame(120, $annotation->resetTimeout);
 
         $annotation = new CachePut([
             'prefix' => 'test',
@@ -59,6 +62,7 @@ class AnnotationTest extends TestCase
         $cacheable = new Cacheable(['prefix' => 'test', 'ttl' => 3600, 'offset' => 100]);
         $cacheable2 = new Cacheable(['prefix' => 'test', 'ttl' => 3600]);
         $cacheput = new CachePut(['prefix' => 'test', 'ttl' => 3600, 'offset' => 100]);
+        $nextCacheable = new Cacheable(['prefix' => 'test', 'ttl' => 30, 'resetTimeout' => 120]);
         $config = Mockery::mock(ConfigInterface::class);
         $logger = Mockery::mock(StdoutLoggerInterface::class);
         /** @var AnnotationManager $manager */
@@ -67,6 +71,7 @@ class AnnotationTest extends TestCase
         $manager->shouldReceive('getAnnotation')->with(Cacheable::class, Mockery::any(), Mockery::any())->once()->andReturn($cacheable);
         $manager->shouldReceive('getAnnotation')->with(Cacheable::class, Mockery::any(), Mockery::any())->once()->andReturn($cacheable2);
         $manager->shouldReceive('getAnnotation')->with(CachePut::class, Mockery::any(), Mockery::any())->once()->andReturn($cacheput);
+        $manager->shouldReceive('getAnnotation')->with(Cacheable::class, Mockery::any(), Mockery::any())->once()->andReturn($nextCacheable);
 
         [$key, $ttl] = $manager->getCacheableValue('Foo', 'test', ['id' => $id = uniqid()]);
         $this->assertSame('test:' . $id, $key);
@@ -81,5 +86,8 @@ class AnnotationTest extends TestCase
         [$key, $ttl] = $manager->getCacheableValue('Foo', 'test', ['id' => $id = uniqid()]);
         $this->assertSame('test:' . $id, $key);
         $this->assertSame(3600, $ttl);
+
+        $resetTimeout = $manager->getCacheableResetTimeout('Foo', 'test');
+        $this->assertSame(120, $resetTimeout);
     }
 }
