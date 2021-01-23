@@ -21,7 +21,9 @@ return [
         'brokers' => [
             '127.0.0.1:9092',
         ],
-        'bootstrap_server' => '127.0.0.1:9092',
+        'bootstrap_server' => [
+            '127.0.0.1:9092',
+        ],
         'update_brokers' => true,
         'acks' => 0,
         'producer_id' => -1,

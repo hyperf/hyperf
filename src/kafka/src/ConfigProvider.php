@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Kafka;
 
+use Hyperf\Kafka\Listener\AfterWorkerExitListener;
 use Hyperf\Kafka\Listener\BeforeMainServerStartListener;
 
 class ConfigProvider
@@ -20,6 +21,7 @@ class ConfigProvider
         return [
             'listeners' => [
                 BeforeMainServerStartListener::class => 99,
+                AfterWorkerExitListener::class => 1,
             ],
             'dependencies' => [
             ],
