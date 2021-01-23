@@ -1,5 +1,19 @@
 # v2.1.4 - TBD
 
+## Fixed
+
+- [#3165](https://github.com/hyperf/hyperf/pull/3165) Fixed `Hyperf\Database\Schema\MySqlBuilder::getColumnListing` does not works in `MySQL 8.0`.
+- [#3174](https://github.com/hyperf/hyperf/pull/3174) Fixed bug that the where bindings will be replaced by not rigorous code.
+- [#3179](https://github.com/hyperf/hyperf/pull/3179) Fixed json-rpc client failed to receive data when the target server restart.
+
+## Optimized
+
+- [#3169](https://github.com/hyperf/hyperf/pull/3169) Optimized code for `set_error_handler` of `ErrorExceptionHandler`, which expects `callable(int, string, string, int, array): bool`.
+
+## Changed
+
+- [#3174](https://github.com/hyperf/hyperf/pull/3174) Assert the binding values for database by default.
+
 # v2.1.3 - 2021-01-18
 
 ## Fixed

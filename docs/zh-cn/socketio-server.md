@@ -19,9 +19,9 @@ hyperf/socketio-server 组件是基于 WebSocket 实现的，请确保服务端�
     'port' => 9502,
     'sock_type' => SWOOLE_SOCK_TCP,
     'callbacks' => [
-        SwooleEvent::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
-        SwooleEvent::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
-        SwooleEvent::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
+        Event::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
+        Event::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
+        Event::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
     ],
 ],
 ```
