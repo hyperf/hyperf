@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\JsonRpc\Exception\ClientException;
 use Hyperf\JsonRpc\Pool\PoolFactory;
 use Hyperf\JsonRpc\Pool\RpcConnection;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
@@ -19,7 +20,6 @@ use Hyperf\LoadBalancer\Node;
 use Hyperf\Pool\Pool;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use Hyperf\Utils\Context;
-use RuntimeException;
 
 class JsonRpcPoolTransporter implements TransporterInterface
 {
@@ -53,6 +53,11 @@ class JsonRpcPoolTransporter implements TransporterInterface
      */
     private $recvTimeout = 5;
 
+    /**
+     * @var int
+     */
+    private $retryCount = 2;
+
     private $config = [
         'connect_timeout' => 5.0,
         'settings' => [],
@@ -65,6 +70,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
             'max_idle_time' => 60.0,
         ],
         'recv_timeout' => 5.0,
+        'retry_count' => 2,
     ];
 
     public function __construct(PoolFactory $factory, array $config = [])
@@ -74,19 +80,18 @@ class JsonRpcPoolTransporter implements TransporterInterface
 
         $this->recvTimeout = $this->config['recv_timeout'] ?? 5.0;
         $this->connectTimeout = $this->config['connect_timeout'] ?? 5.0;
+        $this->retryCount = $this->config['retry_count'] ?? 2;
     }
 
     public function send(string $data)
     {
-        $client = retry(2, function () use ($data) {
+        return retry($this->retryCount, function () use ($data) {
             try {
                 $client = $this->getConnection();
                 if ($client->send($data) === false) {
-                    if ($client->errCode == 104) {
-                        throw new RuntimeException('Connect to server failed.');
-                    }
+                    throw new ClientException('Send data failed. ' . $client->errMsg, $client->errCode);
                 }
-                return $client;
+                return $this->recvAndCheck($client, $this->recvTimeout);
             } catch (\Throwable $throwable) {
                 if (isset($client) && $client instanceof ConnectionInterface) {
                     $client->close();
@@ -94,8 +99,6 @@ class JsonRpcPoolTransporter implements TransporterInterface
                 throw $throwable;
             }
         });
-
-        return $this->recvAndCheck($client, $this->recvTimeout);
     }
 
     public function recv()
