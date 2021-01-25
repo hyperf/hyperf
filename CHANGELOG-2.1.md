@@ -23,6 +23,11 @@
 
 - [#3174](https://github.com/hyperf/hyperf/pull/3174) Assert the binding values for database by default.
 
+## Incubator
+
+- [DAG](https://github.com/hyperf/dag-incubator) Directed Acyclic Graph.
+- [RPN](https://github.com/hyperf/rpn-incubator) Reverse Polish Notation.
+
 # v2.1.3 - 2021-01-18
 
 ## Fixed

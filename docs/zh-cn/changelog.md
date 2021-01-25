@@ -23,6 +23,11 @@
 
 - [#3174](https://github.com/hyperf/hyperf/pull/3174) 严格检查 `hyperf/database` 组件中 `where` 语句绑定参数。
 
+## 新组件孵化
+
+- [DAG](https://github.com/hyperf/dag-incubator) 轻量级有向无环图任务编排库。
+- [RPN](https://github.com/hyperf/rpn-incubator) 逆波兰表示法。
+
 # v2.1.3 - 2021-01-18
 
 ## 修复
