@@ -15,7 +15,6 @@ use Swoole\Coroutine\Server\Connection;
 
 Coroutine::set([
     'hook_flags' => SWOOLE_HOOK_ALL,
-    'daemonize' => (bool) getenv('SW_VERSION')
 ]);
 
 Coroutine\run(function () {
