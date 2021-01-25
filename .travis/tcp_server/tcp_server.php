@@ -26,17 +26,19 @@ Coroutine\run(function () {
                 if ($res === '') {
                     break;
                 }
-                $data = json_decode($res);
-                switch ($data['id']) {
+                $data = json_decode($res, true);
+                switch ($data['id'] ?? null) {
                     case 'timeout':
                         sleep($data['timeout']);
                         $conn->send($data);
                         break;
                     default:
+                        $conn->send('ack: ' . $data['ack']);
                         break;
                 }
             }
         } catch (\Throwable $exception) {
+            var_dump((string) $exception);
         }
     });
     $server->start();
