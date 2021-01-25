@@ -13,6 +13,7 @@
 ## 新增
 
 - [#3170](https://github.com/hyperf/hyperf/pull/3170) 为 `hyperf/watcher` 组件新增了更加友好的驱动器 `FindNewerDriver`，支持 `Mac` `Linux` 和 `Docker`。
+- [#3195](https://github.com/hyperf/hyperf/pull/3195) 为 `JsonRpcPoolTransporter` 新增了重试机制, 当连接、发包、收包失败时，默认重试2次，收包超时不进行重试。
 
 ## 优化
 
