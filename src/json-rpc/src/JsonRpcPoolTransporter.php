@@ -62,6 +62,11 @@ class JsonRpcPoolTransporter implements TransporterInterface
      */
     private $retryCount = 0;
 
+    /**
+     * @var int ms
+     */
+    private $retryInterval = 0;
+
     private $config = [
         'connect_timeout' => 5.0,
         'settings' => [],
@@ -75,6 +80,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
         ],
         'recv_timeout' => 5.0,
         'retry_count' => 2,
+        'retry_interval' => 100,
     ];
 
     public function __construct(PoolFactory $factory, array $config = [])
@@ -85,6 +91,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
         $this->recvTimeout = $this->config['recv_timeout'] ?? 5.0;
         $this->connectTimeout = $this->config['connect_timeout'] ?? 5.0;
         $this->retryCount = $this->config['retry_count'] ?? 2;
+        $this->retryInterval = $this->config['retry_interval'] ?? 100;
     }
 
     public function send(string $data)
@@ -106,7 +113,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
                 }
                 throw $throwable;
             }
-        });
+        }, $this->retryInterval);
         if ($result instanceof ExceptionThrower) {
             throw $result->getThrowable();
         }
