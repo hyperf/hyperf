@@ -1,5 +1,33 @@
 # 版本更新记录
 
+# v2.1.4 - 2021-01-25
+
+## 修复
+
+- [#3165](https://github.com/hyperf/hyperf/pull/3165) 修复方法 `Hyperf\Database\Schema\MySqlBuilder::getColumnListing` 在 `MySQL 8.0` 版本中无法正常使用的问题。
+- [#3174](https://github.com/hyperf/hyperf/pull/3174) 修复 `hyperf/database` 组件中 `where` 语句因为不严谨的代码编写，导致被绑定参数会被恶意替换的问题。
+- [#3179](https://github.com/hyperf/hyperf/pull/3179) 修复 `json-rpc` 客户端因对端服务重启，导致接收数据一直异常的问题。
+- [#3189](https://github.com/hyperf/hyperf/pull/3189) 修复 `kafka` 在集群模式下无法正常使用的问题。
+- [#3191](https://github.com/hyperf/hyperf/pull/3191) 修复 `json-rpc` 客户端因对端服务重启，导致连接池中的连接全部失效，新的请求进来时，首次使用皆会报错的问题。
+
+## 新增
+
+- [#3170](https://github.com/hyperf/hyperf/pull/3170) 为 `hyperf/watcher` 组件新增了更加友好的驱动器 `FindNewerDriver`，支持 `Mac` `Linux` 和 `Docker`。
+
+## 优化
+
+- [#3169](https://github.com/hyperf/hyperf/pull/3169) 优化了 `ErrorExceptionHandler` 中与 `set_error_handler` 相关的入参代码, 解决静态检测因入参不匹配导致报错的问题。
+- [#3191](https://github.com/hyperf/hyperf/pull/3191) 优化了 `hyperf/json-rpc` 组件, 当连接中断后，会先尝试重连。
+
+## 变更
+
+- [#3174](https://github.com/hyperf/hyperf/pull/3174) 严格检查 `hyperf/database` 组件中 `where` 语句绑定参数。
+
+## 新组件孵化
+
+- [DAG](https://github.com/hyperf/dag-incubator) 轻量级有向无环图任务编排库。
+- [RPN](https://github.com/hyperf/rpn-incubator) 逆波兰表示法。
+
 # v2.1.3 - 2021-01-18
 
 ## 修复
