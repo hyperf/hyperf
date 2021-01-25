@@ -81,6 +81,7 @@ class Producer
                 $ack->close();
             } catch (\Throwable $e) {
                 $ack->push($e);
+                throw $e;
             }
         });
         if ($e = $ack->pop()) {
@@ -104,6 +105,7 @@ class Producer
                 $ack->close();
             } catch (\Throwable $e) {
                 $ack->push($e);
+                throw $e;
             }
         });
         if ($e = $ack->pop()) {
@@ -145,7 +147,7 @@ class Producer
                     }
                     try {
                         $closure->call($this);
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         $this->producer->close();
                         break;
                     }
