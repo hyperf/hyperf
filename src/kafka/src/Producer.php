@@ -153,6 +153,7 @@ class Producer
                     }
                 }
             }
+            /* @phpstan-ignore-next-line */
             $this->chan = null;
         });
     }
