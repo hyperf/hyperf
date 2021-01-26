@@ -92,10 +92,10 @@ $service = $container->get(Service::class);
 
 ```php
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Nacos\Instance;
+use Hyperf\Nacos\Api\NacosInstance;
 
 $container = ApplicationContext::getContainer();
-$instance = $container->get(Instance::class);
+$instance = $container->get(NacosInstance::class);
 
 $service = new ServiceModel([
     'service_name' => 'hyperf',
