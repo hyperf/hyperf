@@ -1,5 +1,9 @@
 # v2.1.5 - TBD
 
+## Fixed
+
+- [#3204](https://github.com/hyperf/hyperf/pull/3204) Fixed unexpected behavior for `middlewares` when using `rpc-server`.
+
 # v2.1.4 - 2021-01-25
 
 ## Fixed
