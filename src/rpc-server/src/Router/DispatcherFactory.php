@@ -135,7 +135,9 @@ class DispatcherFactory
 
             // Register middlewares.
             MiddlewareManager::addMiddlewares($annotation->server, $path, 'POST', $middlewares);
-
+    
+            $middlewares = [];
+            
             // Trigger the AfterPathRegister event.
             $this->eventDispatcher->dispatch(new AfterPathRegister($path, $className, $methodName, $annotation));
         }
