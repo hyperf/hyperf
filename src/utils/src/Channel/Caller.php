@@ -19,7 +19,7 @@ use Hyperf\Utils\Exception\WaitTimeoutException;
 class Caller
 {
     /**
-     * @var Channel
+     * @var null|Channel
      */
     protected $channel;
 
