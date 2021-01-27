@@ -9,6 +9,10 @@
 
 - [#3214](https://github.com/hyperf/hyperf/pull/3214) Added Caller which help you to use instance in coroutine security mode.
 
+## Changed
+
+- [#3218](https://github.com/hyperf/hyperf/pull/3218) Set qos of amqp by default.
+
 # v2.1.4 - 2021-01-25
 
 ## Fixed

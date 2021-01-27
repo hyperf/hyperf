@@ -44,7 +44,11 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
     /**
      * @var null|array
      */
-    protected $qos;
+    protected $qos = [
+        'prefetch_size' => 0,
+        'prefetch_count' => 1,
+        'global' => false,
+    ];
 
     /**
      * @var bool
