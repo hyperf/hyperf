@@ -11,12 +11,17 @@ declare(strict_types=1);
  */
 namespace HyperfTest\SocketIOServer\Cases;
 
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Collector\SocketIORouter;
+use Hyperf\SocketIOServer\Parser\Decoder;
+use Hyperf\SocketIOServer\Parser\Encoder;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\SidProvider\LocalSidProvider;
 use Hyperf\SocketIOServer\SocketIO;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
+use HyperfTest\SocketIOServer\Stub\EphemeralAdapter;
 use Mockery;
 use Swoole\Atomic;
 
@@ -107,5 +112,29 @@ class IONamespaceTest extends AbstractTestCase
         $io->to('room')->emit('hello', 'world', false);
         $sender->shouldHaveReceived('push')->withAnyArgs()->twice();
         $this->assertTrue(true);
+    }
+
+    public function testRenewInAllNamespaces()
+    {
+        $container = ApplicationContext::getContainer();
+        $container->define(AdapterInterface::class, EphemeralAdapter::class);
+
+        SocketIO::$messageId = new Atomic();
+        $io = new SocketIO(
+            Mockery::mock(StdoutLoggerInterface::class),
+            Mockery::mock(Sender::class),
+            Mockery::mock(Decoder::class),
+            Mockery::mock(Encoder::class),
+            $sidProvider = new LocalSidProvider()
+        );
+
+        SocketIORouter::addNamespace('/', BaseNamespace::class);
+
+        $ref = new \ReflectionClass($io);
+        $m = $ref->getMethod('renewInAllNamespaces');
+        $m->setAccessible(true);
+        $this->assertFalse(EphemeralAdapter::$isRenew);
+        $m->invokeArgs($io, [1]);
+        $this->assertTrue(EphemeralAdapter::$isRenew);
     }
 }

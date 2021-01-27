@@ -359,6 +359,7 @@ if (! function_exists('class_uses_recursive')) {
 
         $results = [];
 
+        /* @phpstan-ignore-next-line */
         foreach (array_reverse(class_parents($class)) + [$class => $class] as $class) {
             $results += trait_uses_recursive($class);
         }
@@ -433,7 +434,7 @@ if (! function_exists('run')) {
             throw new RuntimeException('Function \'run\' only execute in non-coroutine environment.');
         }
 
-        \Swoole\Runtime::enableCoroutine(true, $flags);
+        \Swoole\Runtime::enableCoroutine($flags);
 
         $result = \Swoole\Coroutine\Run(...(array) $callbacks);
 

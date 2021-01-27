@@ -58,9 +58,11 @@ class Context
      */
     public static function copy(int $fromCoroutineId, array $keys = []): void
     {
-        /** @var \ArrayObject $from */
         $from = Co::getContextFor($fromCoroutineId);
-        /** @var \ArrayObject $current */
+        if ($from === null) {
+            return;
+        }
+
         $current = Co::getContextFor();
         $current->exchangeArray($keys ? Arr::only($from->getArrayCopy(), $keys) : $from->getArrayCopy());
     }

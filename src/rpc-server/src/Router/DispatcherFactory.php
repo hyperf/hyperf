@@ -126,15 +126,16 @@ class DispatcherFactory
                 $methodName,
             ]);
 
+            $methodMiddlewares = $middlewares;
             // Handle method level middlewares.
             if (isset($methodMetadata[$methodName])) {
-                $methodMiddlewares = $this->handleMiddleware($methodMetadata[$methodName]);
-                $middlewares = array_merge($methodMiddlewares, $middlewares);
+                $methodMiddlewares = array_merge($this->handleMiddleware($methodMetadata[$methodName]), $middlewares);
             }
-            $middlewares = array_unique($middlewares);
+            // TODO: Remove array_unique from v3.0.
+            $methodMiddlewares = array_unique($methodMiddlewares);
 
             // Register middlewares.
-            MiddlewareManager::addMiddlewares($annotation->server, $path, 'POST', $middlewares);
+            MiddlewareManager::addMiddlewares($annotation->server, $path, 'POST', $methodMiddlewares);
 
             // Trigger the AfterPathRegister event.
             $this->eventDispatcher->dispatch(new AfterPathRegister($path, $className, $methodName, $annotation));

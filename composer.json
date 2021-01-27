@@ -45,14 +45,15 @@
         "hyperf/engine": "dev-master",
         "influxdb/influxdb-php": "^1.15.0",
         "ircmaxell/random-lib": "^1.2",
-        "jcchavezs/zipkin-opentracing": "^0.2.0",
+        "jcchavezs/zipkin-opentracing": "^1.0",
         "jean85/pretty-package-versions": "^1.2",
-        "jonahgeorge/jaeger-client-php": "^0.6.0",
+        "jonahgeorge/jaeger-client-php": "^1.0",
         "laminas/laminas-mime": "^2.7",
-        "league/flysystem": "^1.0|^2.0",
+        "league/flysystem": "^1.0",
         "league/flysystem-aws-s3-v3": "^1.0|^2.0",
         "league/flysystem-memory": "^1.0|^2.0",
         "league/plates": "^3.3",
+        "longlang/phpkafka": "^1.1",
         "malukenho/docheader": "^0.1.6",
         "markrogoyski/math-php": "^1.2.0",
         "mix/redis-subscribe": "^2.1",
@@ -61,7 +62,7 @@
         "nesbot/carbon": "^2.0",
         "nikic/fast-route": "^1.3",
         "nikic/php-parser": "^4.1",
-        "opentracing/opentracing": "1.0.0-beta6",
+        "opentracing/opentracing": "^1.0",
         "overtrue/flysystem-cos": "^2.0|^3.0",
         "overtrue/flysystem-qiniu": "^1.0",
         "php-amqplib/php-amqplib": "^2.9.2",
@@ -146,13 +147,9 @@
         "hyperf/websocket-server": "self.version"
     },
     "suggest": {},
-    "conflict": {
-        "symfony/event-dispatcher": "<4.3"
-    },
     "autoload": {
         "files": [
             "src/config/src/Functions.php",
-            "src/di/src/Functions.php",
             "src/filesystem/src/Adapter/AliyunOssHook.php",
             "src/nats/src/Functions.php",
             "src/translation/src/Functions.php",
@@ -194,6 +191,7 @@
             "Hyperf\\HttpMessage\\": "src/http-message/src/",
             "Hyperf\\HttpServer\\": "src/http-server/src/",
             "Hyperf\\JsonRpc\\": "src/json-rpc/src/",
+            "Hyperf\\Kafka\\": "src/kafka/src/",
             "Hyperf\\LoadBalancer\\": "src/load-balancer/src/",
             "Hyperf\\Logger\\": "src/logger/src/",
             "Hyperf\\Memory\\": "src/memory/src/",
@@ -275,6 +273,7 @@
             "HyperfTest\\HttpMessage\\": "src/http-message/tests/",
             "HyperfTest\\HttpServer\\": "src/http-server/tests/",
             "HyperfTest\\JsonRpc\\": "src/json-rpc/tests/",
+            "HyperfTest\\Kafka\\": "src/kafka/tests/",
             "HyperfTest\\LoadBalancer\\": "src/load-balancer/tests/",
             "HyperfTest\\Logger\\": "src/logger/tests/",
             "HyperfTest\\Metric\\": "src/metric/tests/",
@@ -293,6 +292,7 @@
             "HyperfTest\\ResourceGrpc\\": "src/resource-grpc/tests/",
             "HyperfTest\\Resource\\": "src/resource/tests/",
             "HyperfTest\\Retry\\": "src/retry/tests/",
+            "HyperfTest\\RpcClient\\": "src/rpc-client/tests/",
             "HyperfTest\\RpcServer\\": "src/rpc-server/tests/",
             "HyperfTest\\Rpc\\": "src/rpc/tests/",
             "HyperfTest\\Scout\\": "src/scout/tests/",
@@ -317,7 +317,10 @@
             "Routeguide\\": "src/grpc-client/tests/Routeguide/"
         }
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "config": {
+        "optimize-autoloader": true,
         "sort-packages": true
     },
     "extra": {
@@ -353,6 +356,7 @@
                 "Hyperf\\HttpMessage\\ConfigProvider",
                 "Hyperf\\HttpServer\\ConfigProvider",
                 "Hyperf\\JsonRpc\\ConfigProvider",
+                "Hyperf\\Kafka\\ConfigProvider",
                 "Hyperf\\LoadBalancer\\ConfigProvider",
                 "Hyperf\\Logger\\ConfigProvider",
                 "Hyperf\\Memory\\ConfigProvider",
@@ -407,7 +411,5 @@
         "cs-fix": "php-cs-fixer fix $1",
         "json-fix": "./bin/composer-json-fixer",
         "analyse": "phpstan analyse --memory-limit 4096M -l 5 -c phpstan.neon"
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }

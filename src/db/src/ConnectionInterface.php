@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\DB;
 
+use Closure;
+
 interface ConnectionInterface
 {
     /**
@@ -60,4 +62,6 @@ interface ConnectionInterface
     public function fetch(string $query, array $bindings = []);
 
     public function call(string $method, array $argument = []);
+
+    public function run(Closure $closure);
 }

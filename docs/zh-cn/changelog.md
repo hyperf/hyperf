@@ -1,5 +1,87 @@
 # 版本更新记录
 
+# v2.1.4 - 2021-01-25
+
+## 修复
+
+- [#3165](https://github.com/hyperf/hyperf/pull/3165) 修复方法 `Hyperf\Database\Schema\MySqlBuilder::getColumnListing` 在 `MySQL 8.0` 版本中无法正常使用的问题。
+- [#3174](https://github.com/hyperf/hyperf/pull/3174) 修复 `hyperf/database` 组件中 `where` 语句因为不严谨的代码编写，导致被绑定参数会被恶意替换的问题。
+- [#3179](https://github.com/hyperf/hyperf/pull/3179) 修复 `json-rpc` 客户端因对端服务重启，导致接收数据一直异常的问题。
+- [#3189](https://github.com/hyperf/hyperf/pull/3189) 修复 `kafka` 在集群模式下无法正常使用的问题。
+- [#3191](https://github.com/hyperf/hyperf/pull/3191) 修复 `json-rpc` 客户端因对端服务重启，导致连接池中的连接全部失效，新的请求进来时，首次使用皆会报错的问题。
+
+## 新增
+
+- [#3170](https://github.com/hyperf/hyperf/pull/3170) 为 `hyperf/watcher` 组件新增了更加友好的驱动器 `FindNewerDriver`，支持 `Mac` `Linux` 和 `Docker`。
+- [#3195](https://github.com/hyperf/hyperf/pull/3195) 为 `JsonRpcPoolTransporter` 新增了重试机制, 当连接、发包、收包失败时，默认重试 2 次，收包超时不进行重试。
+
+## 优化
+
+- [#3169](https://github.com/hyperf/hyperf/pull/3169) 优化了 `ErrorExceptionHandler` 中与 `set_error_handler` 相关的入参代码, 解决静态检测因入参不匹配导致报错的问题。
+- [#3191](https://github.com/hyperf/hyperf/pull/3191) 优化了 `hyperf/json-rpc` 组件, 当连接中断后，会先尝试重连。
+
+## 变更
+
+- [#3174](https://github.com/hyperf/hyperf/pull/3174) 严格检查 `hyperf/database` 组件中 `where` 语句绑定参数。
+
+## 新组件孵化
+
+- [DAG](https://github.com/hyperf/dag-incubator) 轻量级有向无环图任务编排库。
+- [RPN](https://github.com/hyperf/rpn-incubator) 逆波兰表示法。
+
+# v2.1.3 - 2021-01-18
+
+## 修复
+
+- [#3070](https://github.com/hyperf/hyperf/pull/3070) 修复 `tracer` 组件无法正常使用的问题。
+- [#3106](https://github.com/hyperf/hyperf/pull/3106) 修复协程从已被销毁的协程中复制协程上下文时导致报错的问题。
+- [#3108](https://github.com/hyperf/hyperf/pull/3108) 修复使用 `describe:routes` 命令时，相同 `callback` 不同路由组的路由会被替换覆盖的问题。
+- [#3118](https://github.com/hyperf/hyperf/pull/3118) 修复 `migrations` 配置名位置错误的问题。
+- [#3126](https://github.com/hyperf/hyperf/pull/3126) 修复 `Swoole` 扩展 `v4.6` 版本中，`SWOOLE_HOOK_SOCKETS` 与 `jaeger` 冲突的问题。
+- [#3137](https://github.com/hyperf/hyperf/pull/3137) 修复 `database` 组件，当没有主动设置 `PDO::ATTR_PERSISTENT` 为 `true` 时，导致的类型错误。
+- [#3141](https://github.com/hyperf/hyperf/pull/3141) 修复使用 `Migration` 时，`doctrine/dbal` 无法正常工作的问题。
+
+## 新增
+
+- [#3059](https://github.com/hyperf/hyperf/pull/3059) 为 `view-engine` 组件增加合并任意标签的能力。
+- [#3123](https://github.com/hyperf/hyperf/pull/3123) 为 `view-engine` 组件增加 `ComponentAttributeBag::has()` 方法。
+
+# v2.1.2 - 2021-01-11
+
+## 修复
+
+- [#3050](https://github.com/hyperf/hyperf/pull/3050) 修复在 `increment()` 后使用 `save()` 时，导致 `extra` 数据被保存两次的问题。
+- [#3082](https://github.com/hyperf/hyperf/pull/3082) 修复 `hyperf/db` 组件在 `defer` 中使用时，会导致连接被其他协程绑定的问题。
+- [#3084](https://github.com/hyperf/hyperf/pull/3084) 修复 `phar` 打包后 `getRealPath` 无法正常工作的问题。
+- [#3087](https://github.com/hyperf/hyperf/pull/3087) 修复使用 `AOP` 时，`pipeline` 导致内存泄露的问题。
+- [#3095](https://github.com/hyperf/hyperf/pull/3095) 修复 `hyperf/scout` 组件中，`ElasticsearchEngine::getTotalCount()` 无法兼容 `Elasticsearch 7.0` 版本的问题。
+
+## 新增
+
+- [#2847](https://github.com/hyperf/hyperf/pull/2847) 新增 `hyperf/kafka` 组件。
+- [#3066](https://github.com/hyperf/hyperf/pull/3066) 为 `hyperf/db` 组件新增 `ConnectionInterface::run(Closure $closure)` 方法。
+
+## 优化
+
+- [#3046](https://github.com/hyperf/hyperf/pull/3046) 打包 `phar` 时，优化了重写 `scan_cacheable` 的代码。
+
+## 变更
+
+- [#3077](https://github.com/hyperf/hyperf/pull/3077) 因组件 `league/flysystem` 的 `2.0` 版本无法兼容，故降级到 `^1.0`。
+
+# v2.1.1 - 2021-01-04
+
+## 修复
+
+- [#3045](https://github.com/hyperf/hyperf/pull/3045) 修复 `database` 组件，当没有主动设置 `PDO::ATTR_PERSISTENT` 为 `true` 时，导致的类型错误。
+- [#3047](https://github.com/hyperf/hyperf/pull/3047) 修复 `socketio-server` 组件，为 `sid` 续约时报错的问题。
+- [#3062](https://github.com/hyperf/hyperf/pull/3062) 修复 `grpc-server` 组件，入参无法被正确解析的问题。
+
+## 新增
+
+- [#3052](https://github.com/hyperf/hyperf/pull/3052) 为 `metric` 组件，新增了收集命令行指标的功能。
+- [#3054](https://github.com/hyperf/hyperf/pull/3054) 为 `socketio-server` 组件，新增了 `Engine::close` 协议支持，并在调用方法 `getRequest` 失败时，抛出连接已被关闭的异常。
+
 # v2.1.0 - 2020-12-28
 
 ## 依赖升级
@@ -45,12 +127,12 @@
 - [#2935](https://github.com/hyperf/hyperf/pull/2935) 修改了 `Exception Formatter` 的默认规则。
 - [#2979](https://github.com/hyperf/hyperf/pull/2979) 命令行 `gen:model` 不再自动将 `decimal` 格式转化为 `float`。
 
-## Deprecated
+## 即将废弃
 
 - 类 `Hyperf\AsyncQueue\Signal\DriverStopHandler` 将会在 `v2.2` 版本中弃用, 请使用 `Hyperf\Process\Handler\ProcessStopHandler` 代替。
 - 类 `Hyperf\Server\SwooleEvent` 将会在 `v3.0` 版本中弃用, 请使用 `Hyperf\Server\Event` 代替。
 
-## Added
+## 新增
 
 - [#2659](https://github.com/hyperf/hyperf/pull/2659) [#2663](https://github.com/hyperf/hyperf/pull/2663) 新增了 [Swow](https://github.com/swow/swow) 驱动支持。
 - [#2671](https://github.com/hyperf/hyperf/pull/2671) 新增监听器 `Hyperf\AsyncQueue\Listener\QueueHandleListener`，用来记录异步队列的运行日志。
@@ -58,11 +140,11 @@
 - [#3001](https://github.com/hyperf/hyperf/pull/3001) 新增方法 `Hyperf\Database\Model\Collection::columns()`，类似于 `array_column`。
 - [#3002](https://github.com/hyperf/hyperf/pull/3002) 为 `Json::decode` 和 `Json::encode` 新增参数 `$depth` 和 `$flags`。
 
-## Fixed
+## 修复
 
 - [#2741](https://github.com/hyperf/hyperf/pull/2741) 修复自定义进程无法在 `Swow` 驱动下使用的问题。
 
-## Optimized
+## 优化
 
 - [#3009](https://github.com/hyperf/hyperf/pull/3009) 优化了 `prometheus`，使其支持 `https` 和 `http` 协议。
 

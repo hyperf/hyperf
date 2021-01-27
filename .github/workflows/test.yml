@@ -1,6 +1,6 @@
 name: PHPUnit for Hyperf
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
   ci:
@@ -8,13 +8,14 @@ jobs:
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        php-version: ['7.3', '7.4']
-        mysql-version: ['5.7', '8.0']
-        sw-version: ['4.5.10', '4.6.0-beta']
-      max-parallel: 4
+        os: [ ubuntu-latest ]
+        php-version: [ '7.3', '7.4' ]
+        mysql-version: [ '5.7', '8.0' ]
+        sw-version: [ '4.5.10', '4.6.0' ]
+      max-parallel: 8
     env:
       SW_VERSION: ${{ matrix.sw-version }}
+      YASD_VERSION: 'v0.3.5'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -26,8 +27,22 @@ jobs:
           extensions: redis
           ini-values: extension=swoole, opcache.enable_cli=1
           coverage: none
-      - name: Build Swoole
+      - name: Setup Swoole
         run: ./.travis/swoole.install.sh
+      - name: Setup Yasd
+        run: |
+          sudo apt-get install libboost-all-dev
+          wget https://github.com/swoole/yasd/archive/${YASD_VERSION}.tar.gz -O yasd.tar.gz
+          mkdir -p yasd
+          tar -xf yasd.tar.gz -C yasd --strip-components=1
+          rm yasd.tar.gz
+          cd yasd
+          phpize
+          ./configure
+          make -j$(nproc)
+          sudo make install
+          sudo sh -c "echo extension=yasd > /etc/php/${{ matrix.php-version }}/cli/conf.d/yasd.ini"
+          php --ri yasd
       - name: Setup Packages
         run: composer update -o
       - name: Setup Services
@@ -38,6 +53,8 @@ jobs:
           docker run --name nsq -p 4150:4150 -p 4151:4151 -p 4160:4160 -p 4161:4161 -p 4170:4170 -p 4171:4171 --entrypoint /bin/nsqd -d nsqio/nsq:latest
           docker build --tag grpc-server:latest src/grpc-client/tests/Mock
           docker run -d --name grpc-server -p 50051:50051 grpc-server:latest
+          docker build -t tcp-server:latest .travis/tcp_server
+          docker run -d --name tcp-server -p 10001:10001 tcp-server:latest
       - name: Setup Mysql
         run: export TRAVIS_BUILD_DIR=$(pwd) && bash ./.travis/setup.mysql.sh
       - name: Run Scripts Before Test

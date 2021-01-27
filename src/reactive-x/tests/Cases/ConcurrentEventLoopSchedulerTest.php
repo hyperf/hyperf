@@ -26,7 +26,7 @@ class ConcurrentEventLoopSchedulerTest extends TestCase
 {
     public static function setUpBeforeClass(): void
     {
-        Runtime::enableCoroutine(true, swoole_hook_flags());
+        Runtime::enableCoroutine(swoole_hook_flags());
     }
 
     public function testScheduler()
