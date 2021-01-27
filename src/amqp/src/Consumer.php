@@ -101,6 +101,7 @@ class Consumer extends Builder
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new WaitTimeout($consumerMessage));
             } catch (\Throwable $exception) {
                 $this->logger->error((string) $exception);
+                break;
             }
         }
 
