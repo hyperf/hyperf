@@ -99,12 +99,12 @@ class Consumer extends Builder
                 }
             } catch (AMQPTimeoutException $exception) {
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new WaitTimeout($consumerMessage));
+            } catch (\Throwable $exception) {
+                $this->logger->error((string) $exception);
             }
         }
 
-        while ($concurrent && ! $concurrent->isEmpty()) {
-            usleep(10 * 1000);
-        }
+        $this->waitConcurrentHandled($concurrent);
 
         $pool->release($connection);
     }
@@ -146,6 +146,22 @@ class Consumer extends Builder
 
         if (isset($connection) && $release) {
             $connection->release();
+        }
+    }
+
+    /**
+     * Wait the tasks in concurrent handled, the max wait time is 5s.
+     * @param int $interval The wait interval ms
+     * @param int $count The wait count
+     */
+    protected function waitConcurrentHandled(?Concurrent $concurrent, int $interval = 10, int $count = 500): void
+    {
+        $index = 0;
+        while ($concurrent && ! $concurrent->isEmpty()) {
+            usleep($interval * 1000);
+            if ($index++ > $count) {
+                break;
+            }
         }
     }
 
