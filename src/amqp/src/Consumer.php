@@ -149,13 +149,17 @@ class Consumer extends Builder
         }
     }
 
-    protected function waitConcurrentHandled(?Concurrent $concurrent): void
+    /**
+     * Wait the tasks in concurrent handled, the max wait time is 5s.
+     * @param int $interval The wait interval
+     * @param int $count The wait count
+     */
+    protected function waitConcurrentHandled(?Concurrent $concurrent, int $interval = 10, int $count = 500): void
     {
-        $checkCount = 500;
         $index = 0;
         while ($concurrent && ! $concurrent->isEmpty()) {
-            usleep(10 * 1000);
-            if ($index++ > $checkCount) {
+            usleep($interval * 1000);
+            if ($index++ > $count) {
                 break;
             }
         }

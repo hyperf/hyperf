@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#3204](https://github.com/hyperf/hyperf/pull/3204) Fixed unexpected behavior for `middlewares` when using `rpc-server`.
+- [#3209](https://github.com/hyperf/hyperf/pull/3209) Fixed bug that connection was not be released to pool when the amqp consumer broken in coroutine style server.
 
 # v2.1.4 - 2021-01-25
 
