@@ -52,6 +52,12 @@ abstract class AbstractNacos
 
     public function getServerUri(): string
     {
+        $url = $this->config->get('nacos.url');
+
+        if ($url) {
+            return $url;
+        }
+        
         return sprintf(
             '%s:%d',
             $this->config->get('nacos.host', '127.0.0.1'),
