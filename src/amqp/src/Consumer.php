@@ -99,12 +99,12 @@ class Consumer extends Builder
                 }
             } catch (AMQPTimeoutException $exception) {
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new WaitTimeout($consumerMessage));
+            } catch (\Throwable $exception) {
+                $this->logger->error((string) $exception);
             }
         }
 
-        while ($concurrent && ! $concurrent->isEmpty()) {
-            usleep(10 * 1000);
-        }
+        $this->waitConcurrentHandled($concurrent);
 
         $pool->release($connection);
     }
@@ -146,6 +146,18 @@ class Consumer extends Builder
 
         if (isset($connection) && $release) {
             $connection->release();
+        }
+    }
+
+    protected function waitConcurrentHandled(?Concurrent $concurrent): void
+    {
+        $checkCount = 500;
+        $index = 0;
+        while ($concurrent && ! $concurrent->isEmpty()) {
+            usleep(10 * 1000);
+            if ($index++ > $checkCount) {
+                break;
+            }
         }
     }
 
