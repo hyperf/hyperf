@@ -137,11 +137,13 @@ class Connection extends BaseConnection implements ConnectionInterface
     public function close(): bool
     {
         try {
-            if ($this->connection->getIO() instanceof KeepaliveIO) {
-                $this->connection->getIO()->close();
-            }
+            if ($connection = $this->connection) {
+                if ($connection->getIO() instanceof KeepaliveIO) {
+                    $connection->getIO()->close();
+                }
 
-            $this->connection->close();
+                $connection->close();
+            }
         } catch (AMQPConnectionClosedException $exception) {
             $this->getLogger()->warning((string) $exception);
         } catch (\Throwable $exception) {
