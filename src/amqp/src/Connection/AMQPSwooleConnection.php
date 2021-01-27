@@ -32,9 +32,9 @@ class AMQPSwooleConnection extends AbstractConnection
         int $heartbeat = 0
     ) {
         if ($keepalive) {
-            $io = new KeepaliveIO($host, $port, $connectionTimeout, $readWriteTimeout, $context, $keepalive, $heartbeat);
+            $io = make(KeepaliveIO::class, [$host, $port, $connectionTimeout, $readWriteTimeout, $context, $keepalive, $heartbeat]);
         } else {
-            $io = new SwooleIO($host, $port, $connectionTimeout, $readWriteTimeout, $context, $keepalive, $heartbeat);
+            $io = make(SwooleIO::class, [$host, $port, $connectionTimeout, $readWriteTimeout, $context, $keepalive, $heartbeat]);
         }
 
         parent::__construct(

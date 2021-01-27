@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Amqp\Connection;
 
+use Hyperf\Utils\Channel\Caller;
 use InvalidArgumentException;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Wire\AMQPWriter;
@@ -89,6 +90,11 @@ class SocketIO extends AbstractIO
      */
     private $sock;
 
+    /**
+     * @var null|Caller
+     */
+    private $caller;
+
     private $buffer = '';
 
     /**
@@ -127,12 +133,25 @@ class SocketIO extends AbstractIO
      */
     public function connect()
     {
-        $this->sock = make(Socket::class, [
-            'host' => $this->host,
-            'port' => $this->port,
-            'timeout' => $this->connectionTimeout,
-            'heartbeat' => 0, // disable heartbeat
-        ]);
+        if ($this->caller) {
+            $this->caller->initInstance();
+        } else {
+            $host = $this->host;
+            $port = $this->port;
+            $connectionTimeout = $this->connectionTimeout;
+            $this->caller = make(Caller::class, [
+                'closure' => static function () use ($host, $port, $connectionTimeout) {
+                    $sock = new Client(SWOOLE_SOCK_TCP);
+                    if (! $sock->connect($host, $port, $connectionTimeout)) {
+                        throw new AMQPRuntimeException(
+                            sprintf('Error Connecting to server(%s): %s ', $sock->errCode, $sock->errMsg),
+                            $sock->errCode
+                        );
+                    }
+                    return $sock;
+                },
+            ]);
+        }
     }
 
     /**
@@ -152,47 +171,52 @@ class SocketIO extends AbstractIO
     public function read($len)
     {
         $this->check_heartbeat();
-        do {
-            if ($len <= strlen($this->buffer)) {
-                $data = substr($this->buffer, 0, $len);
-                $this->buffer = substr($this->buffer, $len);
-                $this->lastRead = microtime(true);
+        return $this->caller->call(function (Client $socket) use ($len) {
+            do {
+                if ($len <= strlen($this->buffer)) {
+                    $data = substr($this->buffer, 0, $len);
+                    $this->buffer = substr($this->buffer, $len);
+                    $this->lastRead = microtime(true);
 
-                return $data;
-            }
+                    return $data;
+                }
 
-            if (! $this->sock->connected) {
-                throw new AMQPRuntimeException('Broken pipe or closed connection');
-            }
+                if (! $socket->connected) {
+                    throw new AMQPRuntimeException('Broken pipe or closed connection');
+                }
 
-            $read_buffer = $this->sock->recv($this->readWriteTimeout ? $this->readWriteTimeout : -1);
-            if ($read_buffer === false) {
-                throw new AMQPRuntimeException('Error receiving data, errno=' . $this->sock->errCode);
-            }
+                $read_buffer = $socket->recv($this->readWriteTimeout ? $this->readWriteTimeout : -1);
+                if ($read_buffer === false) {
+                    throw new AMQPRuntimeException('Error receiving data, errno=' . $socket->errCode);
+                }
 
-            if ($read_buffer === '') {
-                throw new AMQPRuntimeException('Connection is closed.');
-            }
+                if ($read_buffer === '') {
+                    throw new AMQPRuntimeException('Connection is closed.');
+                }
 
-            $this->buffer .= $read_buffer;
-        } while (true);
+                $this->buffer .= $read_buffer;
+            } while (true);
+        });
     }
 
     /**
      * @param string $data
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      * @throws AMQPRuntimeException
+     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      * @return mixed|void
      */
     public function write($data)
     {
-        $buffer = $this->sock->send($data);
+        $this->check_heartbeat();
+        $this->caller->call(function (Client $socket) use ($data) {
+            $buffer = $socket->send($data);
 
-        if ($buffer === false) {
-            throw new AMQPRuntimeException('Error sending data');
-        }
+            if ($buffer === false) {
+                throw new AMQPRuntimeException('Error sending data');
+            }
 
-        $this->lastWrite = microtime(true);
+            $this->lastWrite = microtime(true);
+        });
     }
 
     /**
@@ -220,10 +244,6 @@ class SocketIO extends AbstractIO
 
     public function close()
     {
-        if (isset($this->sock) && $this->sock instanceof Client) {
-            $this->sock->close();
-        }
-        $this->sock = null;
         $this->lastRead = null;
         $this->lastWrite = null;
     }
@@ -241,7 +261,7 @@ class SocketIO extends AbstractIO
      */
     public function getSocket()
     {
-        return $this->get_socket();
+        throw new \RuntimeException('getSocket is invalid for SocketIO.');
     }
 
     /**
