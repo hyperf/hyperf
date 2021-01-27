@@ -105,10 +105,12 @@ class Consumer extends Builder
             }
         }
 
-        $this->waitConcurrentHandled($concurrent);
-
-        $connection->close();
-        $pool->release($connection);
+        try {
+            $this->waitConcurrentHandled($concurrent);
+            $connection->close();
+        } finally {
+            $pool->release($connection);
+        }
     }
 
     public function declare(MessageInterface $message, ?AMQPChannel $channel = null, bool $release = false): void
