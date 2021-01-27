@@ -151,7 +151,7 @@ class Consumer extends Builder
 
     /**
      * Wait the tasks in concurrent handled, the max wait time is 5s.
-     * @param int $interval The wait interval
+     * @param int $interval The wait interval ms
      * @param int $count The wait count
      */
     protected function waitConcurrentHandled(?Concurrent $concurrent, int $interval = 10, int $count = 500): void
