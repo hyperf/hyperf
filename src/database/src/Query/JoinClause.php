@@ -31,6 +31,7 @@ class JoinClause extends Builder
 
     /**
      * The connection of the parent query builder.
+     *
      * @var \Hyperf\Database\ConnectionInterface
      */
     protected $parentConnection;
@@ -59,7 +60,6 @@ class JoinClause extends Builder
     /**
      * Create a new join clause instance.
      *
-     * @param \Hyperf\Database\Query\Builder $parentQuery
      * @param string $type
      * @param string $table
      */
@@ -67,10 +67,10 @@ class JoinClause extends Builder
     {
         $this->type = $type;
         $this->table = $table;
-        $this->parentConnection = $parentQuery->getConnection();
+        $this->parentClass = get_class($parentQuery);
         $this->parentGrammar = $parentQuery->getGrammar();
         $this->parentProcessor = $parentQuery->getProcessor();
-        $this->parentClass = get_class($parentQuery);
+        $this->parentConnection = $parentQuery->getConnection();
 
         parent::__construct(
             $this->parentConnection,
@@ -93,7 +93,7 @@ class JoinClause extends Builder
      *
      * @param \Closure|string $first
      * @param null|string $operator
-     * @param null|string $second
+     * @param null|\Hyperf\Database\Query\Expression|string $second
      * @param string $boolean
      * @throws \InvalidArgumentException
      * @return $this
