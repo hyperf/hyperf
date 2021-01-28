@@ -4,10 +4,15 @@
 
 - [#3204](https://github.com/hyperf/hyperf/pull/3204) Fixed unexpected behavior for `middlewares` when using `rpc-server`.
 - [#3209](https://github.com/hyperf/hyperf/pull/3209) Fixed bug that connection was not be released to pool when the amqp consumer broken in coroutine style server.
+- [#3222](https://github.com/hyperf/hyperf/pull/3222) Fixed memory leak for join queries in `hyperf/database`.
 
 ## Added
 
 - [#3214](https://github.com/hyperf/hyperf/pull/3214) Added Caller which help you to use instance in coroutine security mode.
+
+## Changed
+
+- [#3218](https://github.com/hyperf/hyperf/pull/3218) Set qos of amqp by default.
 
 # v2.1.4 - 2021-01-25
 
