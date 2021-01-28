@@ -46,7 +46,7 @@
         "influxdb/influxdb-php": "^1.15.0",
         "ircmaxell/random-lib": "^1.2",
         "jcchavezs/zipkin-opentracing": "^1.0",
-        "jean85/pretty-package-versions": "^1.2",
+        "jean85/pretty-package-versions": "^2.0",
         "jonahgeorge/jaeger-client-php": "^1.0",
         "laminas/laminas-mime": "^2.7",
         "league/flysystem": "^1.0",
