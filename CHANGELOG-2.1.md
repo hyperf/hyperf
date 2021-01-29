@@ -15,6 +15,10 @@
 
 - [#3218](https://github.com/hyperf/hyperf/pull/3218) Set qos of amqp by default.
 
+## Optimized
+
+- [#3226](https://github.com/hyperf/hyperf/pull/3226) Run pagination count as subquery for group by and havings.
+
 # v2.1.4 - 2021-01-25
 
 ## Fixed
