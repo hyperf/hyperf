@@ -2741,11 +2741,11 @@ class Builder
             $clone = $this->cloneForPaginationCount();
 
             if (is_null($clone->columns) && ! empty($this->joins)) {
-                $clone->select($this->from.'.*');
+                $clone->select($this->from . '.*');
             }
 
             return $this->newQuery()
-                ->from(new Expression('('.$clone->toSql().') as '.$this->grammar->wrap('aggregate_table')))
+                ->from(new Expression('(' . $clone->toSql() . ') as ' . $this->grammar->wrap('aggregate_table')))
                 ->mergeBindings($clone)
                 ->setAggregate('count', $this->withoutSelectAliases($columns))
                 ->get()->all();
