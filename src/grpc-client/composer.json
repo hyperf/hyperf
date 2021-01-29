@@ -20,7 +20,7 @@
         "php": ">=7.2",
         "hyperf/grpc": "~2.1.0",
         "hyperf/utils": "~2.1.0",
-        "jean85/pretty-package-versions": "^1.2"
+        "jean85/pretty-package-versions": "^1.2|^2.0"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
