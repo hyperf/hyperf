@@ -13,7 +13,7 @@ namespace Hyperf\GrpcClient;
 
 use Google\Protobuf\Internal\Message;
 use Hyperf\Grpc\Parser;
-use Jean85\PrettyVersions;
+use Hyperf\Utils\CodeGen\Package;
 use Swoole\Http2\Request as BaseRequest;
 
 class Request extends BaseRequest
@@ -45,7 +45,7 @@ class Request extends BaseRequest
     private function buildDefaultUserAgent(): string
     {
         $userAgent = 'grpc-php-hyperf/1.0';
-        $grpcClientVersion = PrettyVersions::getVersion('hyperf/grpc-client')->getPrettyVersion();
+        $grpcClientVersion = Package::getPrettyVersion('hyperf/grpc-client');
         if ($grpcClientVersion) {
             $explodedVersions = explode('@', $grpcClientVersion);
             $userAgent .= ' (hyperf-grpc-client/' . $explodedVersions[0] . ')';
