@@ -45,7 +45,10 @@ class TraceMiddleware implements MiddlewareInterface
         $span = $this->buildSpan($request);
 
         defer(function () {
-            $this->tracer->flush();
+            try {
+                $this->tracer->flush();
+            } catch (\Throwable $exception) {
+            }
         });
         try {
             $response = $handler->handle($request);

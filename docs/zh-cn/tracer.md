@@ -25,25 +25,6 @@ composer require jonahgeorge/jaeger-client-php
 php bin/hyperf.php vendor:publish hyperf/tracer
 ```
 
-### opentracking/opentracking 版本申明
-
-由于 [官方包](https://github.com/opentracing/opentracing-php) 最新版还是 `1.0.0-beta6`, 会导致 composer 安装时不符合 `minimum-stability`, 所以 hyperf 框架 fork 了一份, 并基于当前 master 分支打上 `v1.0.0` 版本
-
-```json
-{
-    "require": {
-        ...
-        "opentracing/opentracing":"1.0.0"
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/hyperf/opentracing-php.git"
-        }
-    ]
-}
-```
-
 ## 使用
 
 ### 配置
@@ -218,7 +199,7 @@ return [
 
 ### 配置 Span tag
 
-`1.1.11` 版本后增加了 Span Tag 配置的功能，对于一些 Hyperf 自动收集追踪信息的 Span Tag 名称，可以通过更改 Span Tag 配置来更改对应的名称，只需在配置文件 `config/autolaod/opentracing.php` 内增加 `tags` 配置即可，参考配置如下。如配置项存在，则以配置项的值为准，如配置项不存在，则以组件的默认值为准。
+对于一些 Hyperf 自动收集追踪信息的 Span Tag 名称，可以通过更改 Span Tag 配置来更改对应的名称，只需在配置文件 `config/autolaod/opentracing.php` 内增加 `tags` 配置即可，参考配置如下。如配置项存在，则以配置项的值为准，如配置项不存在，则以组件的默认值为准。
 
 ```php
 return [
