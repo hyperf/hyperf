@@ -57,7 +57,7 @@ abstract class AbstractNacos
         if ($url) {
             return $url;
         }
-        
+
         return sprintf(
             '%s:%d',
             $this->config->get('nacos.host', '127.0.0.1'),
