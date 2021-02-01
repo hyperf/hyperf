@@ -1,5 +1,32 @@
 # 版本更新记录
 
+# v2.1.5 - 2021-02-01
+
+## 修复
+
+- [#3204](https://github.com/hyperf/hyperf/pull/3204) 修复在 `hyperf/rpc-server` 组件中，中间件会被意外替换的问题。
+- [#3209](https://github.com/hyperf/hyperf/pull/3209) 修复 `hyperf/amqp` 组件在使用协程风格服务，且因超时意外报错时，没有办法正常回收到连接池的问题。
+- [#3222](https://github.com/hyperf/hyperf/pull/3222) 修复 `hyperf/database` 组件中 `JOIN` 查询会导致内存泄露的问题。
+- [#3228](https://github.com/hyperf/hyperf/pull/3228) 修复 `hyperf/tracer` 组件中，在 `defer` 中调用 `flush` 失败时，会导致进程异常退出的问题。
+- [#3230](https://github.com/hyperf/hyperf/pull/3230) 修复 `hyperf/scout` 组件中 `orderBy` 方法无效的问题。
+
+## 新增
+
+- [#3211](https://github.com/hyperf/hyperf/pull/3211) 为 `hyperf/nacos` 组件添加了新的配置项 `url`，用于访问 `Nacos` 服务。
+- [#3214](https://github.com/hyperf/hyperf/pull/3214) 新增类 `Hyperf\Utils\Channel\Caller`，可以允许用户使用协程安全的连接，避免连接被多个协程绑定，导致报错的问题。
+- [#3224](https://github.com/hyperf/hyperf/pull/3224) 新增方法 `Hyperf\Utils\CodeGen\Package::getPrettyVersion()`，允许用户获取组件的版本。
+
+## 变更
+
+- [#3218](https://github.com/hyperf/hyperf/pull/3218) 默认为 `AMQP` 配置 `QOS` 参数，`prefetch_count` 为 `1`，`global` 为 `false`，`prefetch_size` 为 `0`。
+- [#3224](https://github.com/hyperf/hyperf/pull/3224) 为组件 `jean85/pretty-package-versions` 升级版本到 `^1.2|^2.0`, 支持 `Composer 2.x`。
+
+> 如果使用 composer 2.x，则需要安装 jean85/pretty-package-versions 的 ^2.0 版本，反之安装 ^1.2 版本
+
+## 优化
+
+- [#3226](https://github.com/hyperf/hyperf/pull/3226) 优化 `hyperf/database` 组件，使用 `group by` 或 `having` 时执行子查询获得总数。
+
 # v2.1.4 - 2021-01-25
 
 ## 修复
