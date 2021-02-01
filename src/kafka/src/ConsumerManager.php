@@ -136,7 +136,7 @@ class ConsumerManager
 
                 retry(
                     3,
-                    function () use ($longLangConsumer, $consumerConfig) {
+                    function () use ($longLangConsumer) {
                         try {
                             $longLangConsumer->start();
                         } catch (KafkaErrorException $exception) {
