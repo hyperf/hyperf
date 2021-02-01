@@ -66,49 +66,49 @@ class Consumer extends Builder
         $pool = $this->getConnectionPool($consumerMessage->getPoolName());
         /** @var \Hyperf\Amqp\Connection $connection */
         $connection = $pool->get();
-        $channel = $connection->getConfirmChannel();
+        try {
+            $channel = $connection->getConfirmChannel();
 
-        $this->declare($consumerMessage, $channel);
-        $concurrent = $this->getConcurrent($consumerMessage->getPoolName());
+            $this->declare($consumerMessage, $channel);
+            $concurrent = $this->getConcurrent($consumerMessage->getPoolName());
 
-        $maxConsumption = $consumerMessage->getMaxConsumption();
-        $currentConsumption = 0;
+            $maxConsumption = $consumerMessage->getMaxConsumption();
+            $currentConsumption = 0;
 
-        $channel->basic_consume(
-            $consumerMessage->getQueue(),
-            $consumerMessage->getConsumerTag(),
-            false,
-            false,
-            false,
-            false,
-            function (AMQPMessage $message) use ($consumerMessage, $concurrent) {
-                $callback = $this->getCallback($consumerMessage, $message);
-                if (! $concurrent instanceof Concurrent) {
-                    return parallel([$callback]);
+            $channel->basic_consume(
+                $consumerMessage->getQueue(),
+                $consumerMessage->getConsumerTag(),
+                false,
+                false,
+                false,
+                false,
+                function (AMQPMessage $message) use ($consumerMessage, $concurrent) {
+                    $callback = $this->getCallback($consumerMessage, $message);
+                    if (! $concurrent instanceof Concurrent) {
+                        return parallel([$callback]);
+                    }
+
+                    $concurrent->create($callback);
                 }
+            );
 
-                $concurrent->create($callback);
-            }
-        );
-
-        while ($channel->is_consuming() && ProcessManager::isRunning()) {
-            try {
-                $channel->wait(null, false, $consumerMessage->getWaitTimeout());
-                if ($maxConsumption > 0 && ++$currentConsumption >= $maxConsumption) {
+            while ($channel->is_consuming() && ProcessManager::isRunning()) {
+                try {
+                    $channel->wait(null, false, $consumerMessage->getWaitTimeout());
+                    if ($maxConsumption > 0 && ++$currentConsumption >= $maxConsumption) {
+                        break;
+                    }
+                } catch (AMQPTimeoutException $exception) {
+                    $this->eventDispatcher && $this->eventDispatcher->dispatch(new WaitTimeout($consumerMessage));
+                } catch (\Throwable $exception) {
+                    $this->logger->error((string) $exception);
                     break;
                 }
-            } catch (AMQPTimeoutException $exception) {
-                $this->eventDispatcher && $this->eventDispatcher->dispatch(new WaitTimeout($consumerMessage));
-            } catch (\Throwable $exception) {
-                $this->logger->error((string) $exception);
-                break;
             }
-        }
 
-        try {
             $this->waitConcurrentHandled($concurrent);
-            $connection->close();
         } finally {
+            $connection->close();
             $pool->release($connection);
         }
     }
@@ -119,37 +119,39 @@ class Consumer extends Builder
             throw new MessageException('Message must instanceof ' . ConsumerMessageInterface::class);
         }
 
-        if (! $channel) {
-            $pool = $this->getConnectionPool($message->getPoolName());
-            /** @var \Hyperf\Amqp\Connection $connection */
-            $connection = $pool->get();
-            $channel = $connection->getChannel();
-        }
+        try {
+            if (! $channel) {
+                $pool = $this->getConnectionPool($message->getPoolName());
+                /** @var \Hyperf\Amqp\Connection $connection */
+                $connection = $pool->get();
+                $channel = $connection->getChannel();
+            }
 
-        parent::declare($message, $channel);
+            parent::declare($message, $channel);
 
-        $builder = $message->getQueueBuilder();
+            $builder = $message->getQueueBuilder();
 
-        $channel->queue_declare($builder->getQueue(), $builder->isPassive(), $builder->isDurable(), $builder->isExclusive(), $builder->isAutoDelete(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
+            $channel->queue_declare($builder->getQueue(), $builder->isPassive(), $builder->isDurable(), $builder->isExclusive(), $builder->isAutoDelete(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
 
-        $routineKeys = (array) $message->getRoutingKey();
-        foreach ($routineKeys as $routingKey) {
-            $channel->queue_bind($message->getQueue(), $message->getExchange(), $routingKey);
-        }
+            $routineKeys = (array) $message->getRoutingKey();
+            foreach ($routineKeys as $routingKey) {
+                $channel->queue_bind($message->getQueue(), $message->getExchange(), $routingKey);
+            }
 
-        if (empty($routineKeys) && $message->getType() === Type::FANOUT) {
-            $channel->queue_bind($message->getQueue(), $message->getExchange());
-        }
+            if (empty($routineKeys) && $message->getType() === Type::FANOUT) {
+                $channel->queue_bind($message->getQueue(), $message->getExchange());
+            }
 
-        if (is_array($qos = $message->getQos())) {
-            $size = $qos['prefetch_size'] ?? null;
-            $count = $qos['prefetch_count'] ?? null;
-            $global = $qos['global'] ?? null;
-            $channel->basic_qos($size, $count, $global);
-        }
-
-        if (isset($connection) && $release) {
-            $connection->release();
+            if (is_array($qos = $message->getQos())) {
+                $size = $qos['prefetch_size'] ?? null;
+                $count = $qos['prefetch_count'] ?? null;
+                $global = $qos['global'] ?? null;
+                $channel->basic_qos($size, $count, $global);
+            }
+        } finally {
+            if (isset($connection) && $release) {
+                $connection->release();
+            }
         }
     }
 

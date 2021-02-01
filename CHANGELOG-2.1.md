@@ -1,5 +1,9 @@
 # v2.1.6 - TBD
 
+## Fixed
+
+- [#3233](https://github.com/hyperf/hyperf/pull/3233) Fixed connection exhausted, when connect amqp server failed.
+
 # v2.1.5 - 2021-02-01
 
 ## Fixed
