@@ -141,16 +141,6 @@ class ConsumerManager
                             $longLangConsumer->start();
                         } catch (KafkaErrorException $exception) {
                             $this->stdoutLogger->error($exception->getMessage());
-                            switch ($exception->getCode()) {
-                                case ErrorCode::REBALANCE_IN_PROGRESS:
-                                    $joinGroupRequest = new JoinGroupRequest();
-                                    $joinGroupRequest->setGroupInstanceId($consumerConfig->getGroupInstanceId());
-                                    $joinGroupRequest->setMemberId($consumerConfig->getMemberId());
-                                    $joinGroupRequest->setGroupId($consumerConfig->getGroupId());
-                                    $longLangConsumer->getBroker()->getClient()->send($joinGroupRequest);
-                                    $longLangConsumer->start();
-                                    break;
-                            }
 
                             $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, [], $exception));
                         }
