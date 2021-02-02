@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer;
 
+use Hyperf\Framework\ApplicationFactory;
 use Hyperf\Rpc;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
@@ -76,6 +77,19 @@ trait SpanStarter
      */
     protected function getTracer()
     {
-        return Context::get('tracer');
+        if (!empty($this->tracer)) {
+
+            return $this->tracer;
+        }
+
+        $tracer = Context::get('tracer');
+
+        if (empty($tracer)) {
+            $tracer = make(TracerFactory::class)(ApplicationContext::getContainer());
+
+            Context::set('tracer', $tracer);
+        }
+
+        return $tracer;
     }
 }
