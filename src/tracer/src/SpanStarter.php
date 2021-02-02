@@ -19,6 +19,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use const OpenTracing\Formats\TEXT_MAP;
 use const OpenTracing\Tags\SPAN_KIND;
 use const OpenTracing\Tags\SPAN_KIND_RPC_SERVER;
+use OpenTracing\Tracer;
 
 trait SpanStarter
 {
@@ -30,7 +31,9 @@ trait SpanStarter
         array $option = [],
         string $kind = SPAN_KIND_RPC_SERVER
     ): Span {
-        $root = Context::get('tracer.root');
+        $tracer = $this->getTracer();
+        $root   = Context::get('tracer.root');
+
         if (! $root instanceof Span) {
             $container = ApplicationContext::getContainer();
             /** @var ServerRequestInterface $request */
@@ -38,7 +41,7 @@ trait SpanStarter
             if (! $request instanceof ServerRequestInterface) {
                 // If the request object is absent, we are probably in a commandline context.
                 // Throwing an exception is unnecessary.
-                $root = $this->tracer->startSpan($name, $option);
+                $root = $tracer->startSpan($name, $option);
                 $root->setTag(SPAN_KIND, $kind);
                 Context::set('tracer.root', $root);
                 return $root;
@@ -53,18 +56,26 @@ trait SpanStarter
                 }
             }
             // Extracts the context from the HTTP headers.
-            $spanContext = $this->tracer->extract(TEXT_MAP, $carrier);
+            $spanContext = $tracer->extract(TEXT_MAP, $carrier);
             if ($spanContext) {
                 $option['child_of'] = $spanContext;
             }
-            $root = $this->tracer->startSpan($name, $option);
+            $root = $tracer->startSpan($name, $option);
             $root->setTag(SPAN_KIND, $kind);
             Context::set('tracer.root', $root);
             return $root;
         }
         $option['child_of'] = $root->getContext();
-        $child = $this->tracer->startSpan($name, $option);
+        $child = $tracer->startSpan($name, $option);
         $child->setTag(SPAN_KIND, $kind);
         return $child;
+    }
+
+    /**
+     * @return Tracer;
+     */
+    protected function getTracer()
+    {
+        return Context::get('tracer');
     }
 }

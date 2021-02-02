@@ -11,10 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer\Middleware;
 
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\Tracer\SpanStarter;
+use Hyperf\Tracer\TracerFactory;
+use Hyperf\Utils\Context;
 use Hyperf\Utils\Coroutine;
+use Hyperf\Contract\ContainerInterface;
+
 use OpenTracing\Span;
-use OpenTracing\Tracer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -25,14 +29,10 @@ class TraceMiddleware implements MiddlewareInterface
     use SpanStarter;
 
     /**
-     * @var Tracer
+     * @Inject
+     * @var ContainerInterface
      */
-    private $tracer;
-
-    public function __construct(Tracer $tracer)
-    {
-        $this->tracer = $tracer;
-    }
+    protected $container;
 
     /**
      * Process an incoming server request.
@@ -42,18 +42,20 @@ class TraceMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $tracer = make(TracerFactory::class)($this->container);
+
+        Context::set('tracer', $tracer);
+
         $span = $this->buildSpan($request);
 
-        defer(function () {
-            try {
-                $this->tracer->flush();
-            } catch (\Throwable $exception) {
-            }
-        });
         try {
             $response = $handler->handle($request);
         } finally {
             $span->finish();
+
+            co(function () use ($tracer) {
+                $tracer->flush();
+            });
         }
 
         return $response;
