@@ -246,11 +246,18 @@ return [
         'cos' => [
             'driver' => \Hyperf\Filesystem\Adapter\CosAdapterFactory::class,
             'region' => env('COS_REGION'),
+            // overtrue/flysystem-cos ^2.0 配置如下
             'credentials' => [
                 'appId' => env('COS_APPID'),
                 'secretId' => env('COS_SECRET_ID'),
                 'secretKey' => env('COS_SECRET_KEY'),
             ],
+            // overtrue/flysystem-cos ^3.0 配置如下
+            // 'app_id' => env('COS_APPID'),
+            // 'secret_id' => env('COS_SECRET_ID'),
+            // 'secret_key' => env('COS_SECRET_KEY'),
+            // 可选，如果 bucket 为私有访问请打开此项
+            // 'signed_url' => false,
             'bucket' => env('COS_BUCKET'),
             'read_from_cdn' => false,
             // 'timeout'         => 60,
