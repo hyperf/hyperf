@@ -25,8 +25,6 @@ use longlang\phpkafka\Consumer\ConsumeMessage;
 use longlang\phpkafka\Consumer\Consumer as LongLangConsumer;
 use longlang\phpkafka\Consumer\ConsumerConfig;
 use longlang\phpkafka\Exception\KafkaErrorException;
-use longlang\phpkafka\Protocol\ErrorCode;
-use longlang\phpkafka\Protocol\JoinGroup\JoinGroupRequest;
 use longlang\phpkafka\Socket\SwooleSocket;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
