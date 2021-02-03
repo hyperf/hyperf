@@ -25,8 +25,6 @@ use longlang\phpkafka\Consumer\ConsumeMessage;
 use longlang\phpkafka\Consumer\Consumer as LongLangConsumer;
 use longlang\phpkafka\Consumer\ConsumerConfig;
 use longlang\phpkafka\Exception\KafkaErrorException;
-use longlang\phpkafka\Protocol\ErrorCode;
-use longlang\phpkafka\Protocol\JoinGroup\JoinGroupRequest;
 use longlang\phpkafka\Socket\SwooleSocket;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -136,21 +134,11 @@ class ConsumerManager
 
                 retry(
                     3,
-                    function () use ($longLangConsumer, $consumerConfig) {
+                    function () use ($longLangConsumer) {
                         try {
                             $longLangConsumer->start();
                         } catch (KafkaErrorException $exception) {
                             $this->stdoutLogger->error($exception->getMessage());
-                            switch ($exception->getCode()) {
-                                case ErrorCode::REBALANCE_IN_PROGRESS:
-                                    $joinGroupRequest = new JoinGroupRequest();
-                                    $joinGroupRequest->setGroupInstanceId($consumerConfig->getGroupInstanceId());
-                                    $joinGroupRequest->setMemberId($consumerConfig->getMemberId());
-                                    $joinGroupRequest->setGroupId($consumerConfig->getGroupId());
-                                    $longLangConsumer->getBroker()->getClient()->send($joinGroupRequest);
-                                    $longLangConsumer->start();
-                                    break;
-                            }
 
                             $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, [], $exception));
                         }

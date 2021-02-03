@@ -4,6 +4,10 @@
 
 - [#3233](https://github.com/hyperf/hyperf/pull/3233) Fixed connection exhausted, when connect amqp server failed.
 
+## Removed
+
+- [#3235](https://github.com/hyperf/hyperf/pull/3235) Removed rebalance check, because `longlang/phpkafka` checked.
+
 # v2.1.5 - 2021-02-01
 
 ## Fixed
