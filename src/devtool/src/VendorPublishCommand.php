@@ -108,32 +108,30 @@ class VendorPublishCommand extends SymfonyCommand
 
     protected function copy($package, $items)
     {
-        foreach ($items as $item) {
-            if (! isset($item['id'], $item['source'], $item['destination'])) {
-                continue;
-            }
-
-            $id = $item['id'];
-            $source = $item['source'];
-            $destination = $item['destination'];
-
-            if (! $this->force && $this->filesystem->exists($destination)) {
-                $this->output->writeln(sprintf('<fg=red>[%s] already exists.</>', $destination));
-                continue;
-            }
-
-            if (! $this->filesystem->exists($dirname = dirname($destination))) {
-                $this->filesystem->makeDirectory($dirname, 0755, true);
-            }
-
-            if ($this->filesystem->isDirectory($source)) {
-                $this->filesystem->copyDirectory($source, $destination);
-            } else {
-                $this->filesystem->copy($source, $destination);
-            }
-
-            $this->output->writeln(sprintf('<fg=green>[%s] publishes [%s] successfully.</>', $package, $id));
+        if (! isset($items['id'], $items['source'], $items['destination'])) {
+            return 0;
         }
+
+        $id = $items['id'];
+        $source = $items['source'];
+        $destination = $items['destination'];
+
+        if (! $this->force && $this->filesystem->exists($destination)) {
+            $this->output->writeln(sprintf('<fg=red>[%s] already exists.</>', $destination));
+            return 0;
+        }
+
+        if (! $this->filesystem->exists($dirname = dirname($destination))) {
+            $this->filesystem->makeDirectory($dirname, 0755, true);
+        }
+
+        if ($this->filesystem->isDirectory($source)) {
+            $this->filesystem->copyDirectory($source, $destination);
+        } else {
+            $this->filesystem->copy($source, $destination);
+        }
+
+        $this->output->writeln(sprintf('<fg=green>[%s] publishes [%s] successfully.</>', $package, $id));
         return 0;
     }
 }
