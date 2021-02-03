@@ -64,7 +64,7 @@ class ConsumerManager
             $annotation->topic && $instance->setTopic($annotation->topic);
             $annotation->groupId && $instance->setGroupId($annotation->groupId);
             $annotation->memberId && $instance->setMemberId($annotation->memberId);
-            $annotation->autoCommit && $instance->setAutoCommit($annotation->autoCommit);
+            $instance->setAutoCommit($annotation->autoCommit);
 
             $process = $this->createProcess($instance);
             $process->name = $instance->getName() . '-' . $instance->getTopic();
