@@ -18,20 +18,21 @@
         "php": ">=7.2",
         "psr/container": "^1.0",
         "psr/event-dispatcher": "^1.0",
-        "hyperf/contract": "~2.0.0",
-        "hyperf/command": "~2.0.0",
-        "hyperf/utils": "~2.0.0"
+        "hyperf/contract": "~2.1.0",
+        "hyperf/command": "~2.1.0",
+        "hyperf/utils": "~2.1.0"
     },
     "require-dev": {
-        "hyperf/process": "~2.0.0",
+        "hyperf/process": "~2.1.0",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^7.0.0",
+        "phpunit/phpunit": "^9.4",
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
         "hyperf/di": "Required to use annotations.",
         "hyperf/event": "Required to dispatch a event.",
+        "hyperf/logger": "Required to use QueueHandleListener.",
         "hyperf/process": "Auto register the consumer process for server."
     },
     "autoload": {
@@ -49,7 +50,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0-dev"
+            "dev-master": "2.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\AsyncQueue\\ConfigProvider"

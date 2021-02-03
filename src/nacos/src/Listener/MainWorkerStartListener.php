@@ -22,7 +22,10 @@ use Hyperf\Nacos\Constants;
 use Hyperf\Nacos\Exception\RuntimeException;
 use Hyperf\Nacos\Instance;
 use Hyperf\Nacos\Service;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Utils\Arr;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
 class MainWorkerStartListener implements ListenerInterface
@@ -47,6 +50,7 @@ class MainWorkerStartListener implements ListenerInterface
     {
         return [
             MainWorkerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 
@@ -77,19 +81,49 @@ class MainWorkerStartListener implements ListenerInterface
             }
             $this->logger->info('nacos register instance success.', compact('instance'));
 
-            $client = $this->container->get(Client::class);
-            $config = $this->container->get(ConfigInterface::class);
-            $appendNode = $config->get('nacos.config_append_node');
+            $this->refreshConfig();
 
-            foreach ($client->pull() as $key => $conf) {
-                $configKey = $appendNode ? $appendNode . '.' . $key : $key;
-                if (is_array($conf) && $config->get('nacos.config_merge_mode') == Constants::CONFIG_MERGE_APPEND) {
-                    $conf = Arr::merge($config->get($configKey, []), $conf);
-                }
-                $config->set($configKey, $conf);
+            if ($event instanceof MainCoroutineServerStart) {
+                $interval = (int) $config->get('nacos.config_reload_interval', 3);
+                Coroutine::create(function () use ($interval) {
+                    sleep($interval);
+                    retry(INF, function () use ($interval) {
+                        $prevConfig = [];
+                        while (true) {
+                            $coordinator = CoordinatorManager::until(\Hyperf\Utils\Coordinator\Constants::WORKER_EXIT);
+                            $workerExited = $coordinator->yield($interval);
+                            if ($workerExited) {
+                                break;
+                            }
+                            $prevConfig = $this->refreshConfig($prevConfig);
+                        }
+                    }, $interval * 1000);
+                });
             }
         } catch (\Throwable $exception) {
             $this->logger->critical((string) $exception);
         }
+    }
+
+    protected function refreshConfig(array $prevConfig = []): array
+    {
+        $client = $this->container->get(Client::class);
+        $config = $this->container->get(ConfigInterface::class);
+        $appendNode = $config->get('nacos.config_append_node');
+
+        $result = $client->pull();
+        if ($result === $prevConfig) {
+            return $result;
+        }
+
+        foreach ($result as $key => $conf) {
+            $configKey = $appendNode ? $appendNode . '.' . $key : $key;
+            if (is_array($conf) && $config->get('nacos.config_merge_mode') == Constants::CONFIG_MERGE_APPEND) {
+                $conf = Arr::merge($config->get($configKey, []), $conf);
+            }
+            $config->set($configKey, $conf);
+        }
+
+        return $result;
     }
 }

@@ -14,8 +14,9 @@ namespace Hyperf\Guzzle\RingPHP;
 use GuzzleHttp\Ring\Core;
 use GuzzleHttp\Ring\Exception\RingException;
 use GuzzleHttp\Ring\Future\CompletedFutureArray;
-use Swoole\Coroutine;
-use Swoole\Coroutine\Http\Client;
+use Hyperf\Engine\Http\Client;
+use Hyperf\Engine\Http\RawResponse;
+use Hyperf\Utils\Resource;
 
 /**
  * Http handler that uses Swoole Coroutine as a transport layer.
@@ -47,40 +48,36 @@ class CoroutineHandler
             $path .= '?' . $params['query'];
         }
 
-        $client = new Client($host, $port, $ssl);
-        $client->setMethod($method);
-        $client->setData($body);
-
-        // 初始化Headers
-        $this->initHeaders($client, $request);
+        $client = $this->makeClient($host, $port, $ssl);
+        // Init Headers
+        $headers = $this->initHeaders($request);
         $settings = $this->getSettings($this->options);
-
-        // 设置客户端参数
         if (! empty($settings)) {
             $client->set($settings);
         }
 
         $btime = microtime(true);
-        $this->execute($client, $path);
 
-        $ex = $this->checkStatusCode($client, $request);
-        if ($ex !== true) {
-            return $this->getErrorResponse($ex, $btime, $effectiveUrl);
+        try {
+            $raw = $client->request($method, $path, $headers, (string) $body);
+        } catch (\Exception $exception) {
+            $exception = new RingException($exception->getMessage());
+            return $this->getErrorResponse($exception, $btime, $effectiveUrl);
         }
 
-        return $this->getResponse($client, $btime, $effectiveUrl);
+        return $this->getResponse($raw, $btime, $effectiveUrl);
     }
 
-    protected function execute(Client $client, $path)
+    protected function makeClient(string $host, int $port, bool $ssl): Client
     {
-        $client->execute($path);
+        return new Client($host, $port, $ssl);
     }
 
     protected function getSettings($options): array
     {
         $settings = [];
-        if (isset($options['delay'])) {
-            Coroutine::sleep((float) $options['delay'] / 1000);
+        if (isset($options['delay']) && $options['delay'] > 0) {
+            usleep(intval($options['delay'] * 1000));
         }
 
         // 超时
@@ -100,7 +97,7 @@ class CoroutineHandler
         return $ssl ? 443 : 80;
     }
 
-    protected function initHeaders(Client $client, $request)
+    protected function initHeaders($request)
     {
         $headers = [];
         foreach ($request['headers'] ?? [] as $name => $value) {
@@ -113,9 +110,7 @@ class CoroutineHandler
             $headers['Authorization'] = sprintf('Basic %s', base64_encode($userInfo));
         }
 
-        $headers = $this->rewriteHeaders($headers);
-
-        $client->setHeaders($headers);
+        return $this->rewriteHeaders($headers);
     }
 
     protected function rewriteHeaders(array $headers): array
@@ -143,47 +138,16 @@ class CoroutineHandler
         ]);
     }
 
-    protected function getResponse(Client $client, $btime, $effectiveUrl)
+    protected function getResponse(RawResponse $response, $btime, $effectiveUrl)
     {
         return new CompletedFutureArray([
             'transfer_stats' => [
                 'total_time' => microtime(true) - $btime,
             ],
             'effective_url' => $effectiveUrl,
-            'headers' => isset($client->headers) ? $client->headers : [],
-            'status' => $client->statusCode,
-            'body' => $this->getStream($client->body),
+            'headers' => $response->headers,
+            'status' => $response->statusCode,
+            'body' => Resource::from($response->body),
         ]);
-    }
-
-    protected function checkStatusCode($client, $request)
-    {
-        $statusCode = $client->statusCode;
-        $errCode = $client->errCode;
-
-        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_CONNECT_FAILED) {
-            return new RingException(sprintf('Connection timed out errCode=%s', $errCode));
-        }
-
-        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_REQUEST_TIMEOUT) {
-            return new RingException('Request timed out');
-        }
-
-        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_SERVER_RESET) {
-            return new RingException('Server reset');
-        }
-
-        return true;
-    }
-
-    protected function getStream(string $resource)
-    {
-        $stream = fopen('php://temp', 'r+');
-        if ($resource !== '') {
-            fwrite($stream, $resource);
-            fseek($stream, 0);
-        }
-
-        return $stream;
     }
 }

@@ -125,7 +125,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             $items = [];
             $casts = $this->class->getCasts();
             foreach ($node->default->items as $item) {
-                $caster = $this->class->getCasts()[$item->key->value] ?? null;
+                $caster = $casts[$item->key->value] ?? null;
                 if ($caster && $this->isCaster($caster)) {
                     $items[] = $item;
                 }
@@ -161,15 +161,18 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
      */
     protected function isCaster($caster): bool
     {
-        return is_subclass_of($caster, CastsAttributes::class) ||
-            is_subclass_of($caster, Castable::class) ||
-            is_subclass_of($caster, CastsInboundAttributes::class);
+        return is_subclass_of($caster, CastsAttributes::class)
+            || is_subclass_of($caster, Castable::class)
+            || is_subclass_of($caster, CastsInboundAttributes::class);
     }
 
     protected function parse(): string
     {
         $doc = '/**' . PHP_EOL;
         $doc = $this->parseProperty($doc);
+        if ($this->option->isWithIde()) {
+            $doc .= ' * @mixin \\' . GenerateModelIDEVisitor::toIDEClass(get_class($this->class)) . PHP_EOL;
+        }
         $doc .= ' */';
         return $doc;
     }
@@ -347,11 +350,6 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             case 'int':
             case 'bigint':
                 return 'integer';
-            case 'decimal':
-            case 'float':
-            case 'double':
-            case 'real':
-                return 'float';
             case 'bool':
             case 'boolean':
                 return 'boolean';

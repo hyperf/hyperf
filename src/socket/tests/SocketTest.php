@@ -25,7 +25,7 @@ use Swoole\Process;
  */
 class SocketTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

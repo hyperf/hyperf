@@ -31,7 +31,7 @@ class RedisFactory
     }
 
     /**
-     * @return \Redis|RedisProxy
+     * @return RedisProxy
      */
     public function get(string $poolName)
     {

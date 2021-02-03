@@ -20,15 +20,14 @@
     "require": {
         "php": ">=7.2",
         "ext-swoole": ">=4.5",
-        "hyperf/command": "2.0.*",
-        "hyperf/di": "2.0.*",
-        "hyperf/framework": "2.0.*"
+        "hyperf/command": "~2.1.0",
+        "hyperf/di": "~2.1.0",
+        "hyperf/framework": "~2.1.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",
         "phpstan/phpstan": "^0.12",
-        "hyperf/testing": "2.0.*",
-        "swoole/ide-helper": "dev-master"
+        "hyperf/testing": "~2.1.0"
     },
     "config": {
         "sort-packages": true
@@ -40,7 +39,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0-dev"
+            "dev-master": "2.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Watcher\\ConfigProvider"

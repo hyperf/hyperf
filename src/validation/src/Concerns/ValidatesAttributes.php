@@ -146,7 +146,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        return preg_match('/^[\pL\pM\pN_-]+$/u', $value) > 0;
+        return preg_match('/^[\pL\pM\pN_-]+$/u', (string) $value) > 0;
     }
 
     /**
@@ -339,8 +339,8 @@ trait ValidatesAttributes
 
         $parameters = $this->parseNamedParameters($parameters);
 
-        if ($this->failsBasicDimensionChecks($parameters, $width, $height) ||
-            $this->failsRatioCheck($parameters, $width, $height)) {
+        if ($this->failsBasicDimensionChecks($parameters, $width, $height)
+            || $this->failsRatioCheck($parameters, $width, $height)) {
             return false;
         }
 
@@ -770,9 +770,9 @@ trait ValidatesAttributes
             return false;
         }
 
-        return $value->getPath() !== '' &&
-            (in_array($value->getMimeType(), $parameters) ||
-                in_array(explode('/', $value->getMimeType())[0] . '/*', $parameters));
+        return $value->getPath() !== ''
+            && (in_array($value->getMimeType(), $parameters)
+                || in_array(explode('/', $value->getMimeType())[0] . '/*', $parameters));
     }
 
     /**
@@ -1263,12 +1263,12 @@ trait ValidatesAttributes
      */
     protected function failsBasicDimensionChecks(array $parameters, int $width, int $height): bool
     {
-        return (isset($parameters['width']) && $parameters['width'] != $width) ||
-            (isset($parameters['min_width']) && $parameters['min_width'] > $width) ||
-            (isset($parameters['max_width']) && $parameters['max_width'] < $width) ||
-            (isset($parameters['height']) && $parameters['height'] != $height) ||
-            (isset($parameters['min_height']) && $parameters['min_height'] > $height) ||
-            (isset($parameters['max_height']) && $parameters['max_height'] < $height);
+        return (isset($parameters['width']) && $parameters['width'] != $width)
+            || (isset($parameters['min_width']) && $parameters['min_width'] > $width)
+            || (isset($parameters['max_width']) && $parameters['max_width'] < $width)
+            || (isset($parameters['height']) && $parameters['height'] != $height)
+            || (isset($parameters['min_height']) && $parameters['min_height'] > $height)
+            || (isset($parameters['max_height']) && $parameters['max_height'] < $height);
     }
 
     /**

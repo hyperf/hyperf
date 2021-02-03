@@ -22,10 +22,10 @@
         }
     },
     "require": {
-        "hyperf/contract": "~2.0.0",
-        "hyperf/guzzle": "~2.0.0",
-        "hyperf/load-balancer": "~2.0.0",
-        "hyperf/utils": "~2.0.0"
+        "hyperf/contract": "~2.1.0",
+        "hyperf/guzzle": "~2.1.0",
+        "hyperf/load-balancer": "~2.1.0",
+        "hyperf/utils": "~2.1.0"
     },
     "require-dev": {
     },
@@ -33,17 +33,17 @@
         "ext-json": "*",
         "ext-simplexml": "*",
         "ext-yaml": "*",
-        "hyperf/event": "~2.0.0",
-        "hyperf/process": "~2.0.0",
-        "hyperf/framework": "~2.0.0",
-        "hyperf/logger": "~2.0.0"
+        "hyperf/event": "~2.1.0",
+        "hyperf/process": "~2.1.0",
+        "hyperf/framework": "~2.1.0",
+        "hyperf/logger": "~2.1.0"
     },
     "config": {
         "sort-packages": true
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0-dev"
+            "dev-master": "2.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Nacos\\ConfigProvider"

@@ -11,28 +11,31 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Guzzle\Stub;
 
+use Hyperf\Engine\Http\Client;
+use Hyperf\Engine\Http\RawResponse;
 use Hyperf\Guzzle\RingPHP\CoroutineHandler;
-use Swoole\Coroutine\Http\Client;
 
 class RingPHPCoroutineHanderStub extends CoroutineHandler
 {
-    public function checkStatusCode($client, $request)
-    {
-        return parent::checkStatusCode($client, $request);
-    }
+    public $count = 0;
 
-    protected function execute(Client $client, $path)
+    protected function makeClient(string $host, int $port, bool $ssl): Client
     {
-        $client->body = json_encode([
-            'host' => $client->host,
-            'port' => $client->port,
-            'ssl' => $client->ssl,
-            'setting' => $client->setting,
-            'method' => $client->requestMethod,
-            'headers' => $client->requestHeaders,
-            'uri' => $path,
-        ]);
-        $client->statusCode = 200;
-        $client->headers = [];
+        $client = \Mockery::mock(Client::class . '[request]', [$host, $port, $ssl]);
+        $client->shouldReceive('request')->withAnyArgs()->andReturnUsing(function ($method, $path, $headers, $body) use ($host, $port, $ssl) {
+            ++$this->count;
+            $body = json_encode([
+                'host' => $host,
+                'port' => $port,
+                'ssl' => $ssl,
+                'method' => $method,
+                'headers' => $headers,
+                'setting' => [],
+                'uri' => $path,
+                'body' => $body,
+            ]);
+            return new RawResponse(200, [], $body, '1.1');
+        });
+        return $client;
     }
 }

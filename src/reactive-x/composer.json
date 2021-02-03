@@ -20,17 +20,17 @@
     "require": {
         "php": ">=7.2",
         "ext-swoole": ">=4.5",
-        "hyperf/contract": "~2.0.0",
-        "hyperf/utils": "~2.0.0",
+        "hyperf/contract": "~2.1.0",
+        "hyperf/utils": "~2.1.0",
         "reactivex/rxphp": "^2.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",
         "phpstan/phpstan": "^0.10.5",
-        "hyperf/event": "~2.0.0",
-        "hyperf/utils": "~2.0.0",
-        "hyperf/testing": "~2.0.0",
-        "hyperf/di": "~2.0.0"
+        "hyperf/event": "~2.1.0",
+        "hyperf/utils": "~2.1.0",
+        "hyperf/testing": "~2.1.0",
+        "hyperf/di": "~2.1.0"
     },
     "suggest": {
         "hyperf/process": "Required to use IpcSubject.",
@@ -46,7 +46,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0-dev"
+            "dev-master": "2.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\ReactiveX\\ConfigProvider"

@@ -38,12 +38,12 @@ use Swoole\Runtime;
  */
 class IpcSubjectTest extends TestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
-        Runtime::enableCoroutine(true, swoole_hook_flags());
+        Runtime::enableCoroutine(swoole_hook_flags());
     }
 
-    public function setUp()
+    protected function setUp(): void
     {
         $container = new Container(new DefinitionSource([], new ScanConfig()));
         $container->define(SchedulerInterface::class, EventLoopScheduler::class);
@@ -51,7 +51,7 @@ class IpcSubjectTest extends TestCase
         RxSwoole::init();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

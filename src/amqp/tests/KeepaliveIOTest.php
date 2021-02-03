@@ -32,7 +32,7 @@ use Swoole\Timer;
  */
 class KeepaliveIOTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Timer::clearAll();
@@ -92,7 +92,7 @@ class KeepaliveIOTest extends TestCase
         $io->connect();
 
         $this->expectException(AMQPRuntimeException::class);
-        $this->expectExceptionMessageRegExp('/^Socket of keepaliveIO is exhausted\. Cannot establish new socket before wait_timeout\.$/');
+        $this->expectExceptionMessageMatches('/^Socket of keepaliveIO is exhausted\. Cannot establish new socket before wait_timeout\.$/');
         $io->read(10);
     }
 

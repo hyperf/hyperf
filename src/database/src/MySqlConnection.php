@@ -11,12 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database;
 
-use Doctrine\DBAL\Driver\PDOMySql\Driver as DoctrineDriver;
+use Hyperf\Database\DBAL\MySqlDriver;
 use Hyperf\Database\Query\Grammars\MySqlGrammar as QueryGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Schema\Grammars\MySqlGrammar as SchemaGrammar;
 use Hyperf\Database\Schema\MySqlBuilder;
-use PDO;
 
 class MySqlConnection extends Connection
 {
@@ -40,8 +39,7 @@ class MySqlConnection extends Connection
         foreach ($bindings as $key => $value) {
             $statement->bindValue(
                 is_string($key) ? $key : $key + 1,
-                $value,
-                is_int($value) || is_float($value) ? PDO::PARAM_INT : PDO::PARAM_STR
+                $value
             );
         }
     }
@@ -79,10 +77,10 @@ class MySqlConnection extends Connection
     /**
      * Get the Doctrine DBAL driver.
      *
-     * @return \Doctrine\DBAL\Driver\PDOMySql\Driver
+     * @return \Doctrine\DBAL\Driver\PDO\MySQL\Driver
      */
     protected function getDoctrineDriver()
     {
-        return new DoctrineDriver();
+        return new MySqlDriver();
     }
 }

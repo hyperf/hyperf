@@ -36,7 +36,7 @@ class Port
     /**
      * @var int
      */
-    protected $sockType = SWOOLE_SOCK_TCP;
+    protected $sockType = 0;
 
     /**
      * @var array

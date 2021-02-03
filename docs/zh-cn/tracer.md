@@ -25,25 +25,6 @@ composer require jonahgeorge/jaeger-client-php
 php bin/hyperf.php vendor:publish hyperf/tracer
 ```
 
-### opentracking/opentracking 版本申明
-
-由于 [官方包](https://github.com/opentracing/opentracing-php) 最新版还是 `1.0.0-beta6`, 会导致 composer 安装时不符合 `minimum-stability`, 所以 hyperf 框架 fork 了一份, 并基于当前 master 分支打上 `v1.0.0` 版本
-
-```json
-{
-    "require": {
-        ...
-        "opentracing/opentracing":"1.0.0"
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/hyperf/opentracing-php.git"
-        }
-    ]
-}
-```
-
 ## 使用
 
 ### 配置
@@ -183,6 +164,22 @@ return [
 
 关于 Jaeger 的更多配置可以在 [[这里](https://github.com/jonahgeorge/jaeger-client-php)] 查看。
 
+#### 配置 JsonRPC 追踪开关
+
+JsonRPC 的链路追踪并不在统一配置当中，暂时还属于 `Beta` 版本的功能。
+
+我们只需要配置 `aspects.php`，加入以下 `Aspect` 即可开启。
+
+> 提示：不要忘了在对端，添加对应的 TraceMiddleware
+
+```php
+<?php
+
+return [
+    Hyperf\Tracer\Aspect\JsonRpcAspect::class,
+];
+```
+
 ### 配置中间件
 
 配置完驱动之后，采集信息还需要配置一下中间件才能启用采集功能。
@@ -199,9 +196,10 @@ return [
     ],
 ];
 ```
+
 ### 配置 Span tag
 
-`1.1.11` 版本后增加了 Span Tag 配置的功能，对于一些 Hyperf 自动收集追踪信息的 Span Tag 名称，可以通过更改 Span Tag 配置来更改对应的名称，只需在配置文件 `config/autolaod/opentracing.php` 内增加 `tags` 配置即可，参考配置如下。如配置项存在，则以配置项的值为准，如配置项不存在，则以组件的默认值为准。
+对于一些 Hyperf 自动收集追踪信息的 Span Tag 名称，可以通过更改 Span Tag 配置来更改对应的名称，只需在配置文件 `config/autolaod/opentracing.php` 内增加 `tags` 配置即可，参考配置如下。如配置项存在，则以配置项的值为准，如配置项不存在，则以组件的默认值为准。
 
 ```php
 return [

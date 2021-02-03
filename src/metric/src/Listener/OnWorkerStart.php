@@ -17,7 +17,6 @@ use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\MetricSetter;
-use Hyperf\Retry\Retry;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
@@ -56,7 +55,6 @@ class OnWorkerStart implements ListenerInterface
     {
         $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
-        $this->factory = $container->get(MetricFactoryInterface::class);
     }
 
     /**
@@ -80,6 +78,8 @@ class OnWorkerStart implements ListenerInterface
         if ($workerId === null) {
             return;
         }
+
+        $this->factory = $this->container->get(MetricFactoryInterface::class);
 
         /*
          * If no standalone process is started, we have to handle metrics on worker.
@@ -134,9 +134,7 @@ class OnWorkerStart implements ListenerInterface
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
         $timerId = Timer::tick($timerInterval * 1000, function () use ($metrics, $server) {
             $serverStats = $server->stats();
-            if (function_exists('gc_status')) {
-                $this->trySet('gc_', $metrics, gc_status());
-            }
+            $this->trySet('gc_', $metrics, gc_status());
             $this->trySet('', $metrics, getrusage());
             $metrics['worker_request_count']->set($serverStats['worker_request_count']);
             $metrics['worker_dispatch_count']->set($serverStats['worker_dispatch_count']);
@@ -152,22 +150,7 @@ class OnWorkerStart implements ListenerInterface
 
     private function shouldFireMetricFactoryReadyEvent(int $workerId): bool
     {
-        return (! $this->config->get('metric.use_standalone_process'))
+        return (! $this->config->get('metric.use_standalone_process', true))
             && $workerId == 0;
-    }
-
-    private function spawnHandle()
-    {
-        Coroutine::create(function () {
-            if (class_exists(Retry::class)) {
-                Retry::whenThrows()->backoff(100)->call(function () {
-                    $this->factory->handle();
-                });
-            } else {
-                retry(PHP_INT_MAX, function () {
-                    $this->factory->handle();
-                }, 100);
-            }
-        });
     }
 }

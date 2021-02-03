@@ -17,9 +17,9 @@ use Psr\Http\Message\ResponseInterface;
 
 class CoreMiddlewareStub extends CoreMiddleware
 {
-    public function parseParameters(string $controller, string $action, array $arguments): array
+    public function parseMethodParameters(string $controller, string $action, array $arguments): array
     {
-        return parent::parseParameters($controller, $action, $arguments);
+        return parent::parseMethodParameters($controller, $action, $arguments);
     }
 
     protected function response(): ResponseInterface

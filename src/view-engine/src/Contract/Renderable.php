@@ -9,12 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Tracer\Middleware;
+namespace Hyperf\ViewEngine\Contract;
 
-/**
- * Classname misspelled. Please use TraceMiddleware.
- * @deprecated
- */
-class TraceMiddeware extends TraceMiddleware
+interface Renderable
 {
+    /**
+     * Get the evaluated contents of the object.
+     */
+    public function render();
 }

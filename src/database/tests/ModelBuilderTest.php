@@ -41,12 +41,12 @@ class ModelBuilderTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         Register::setConnectionResolver(new ConnectionResolver(['default' => new Connection(Mockery::mock(PDO::class))]));
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
@@ -93,11 +93,10 @@ class ModelBuilderTest extends TestCase
         $this->assertInstanceOf(Model::class, $result);
     }
 
-    /**
-     * @expectedException \Hyperf\Database\Model\ModelNotFoundException
-     */
     public function testFindOrFailMethodThrowsModelNotFoundException()
     {
+        $this->expectException(\Hyperf\Database\Model\ModelNotFoundException::class);
+
         $builder = Mockery::mock(Builder::class . '[first]', [$this->getMockQueryBuilder()]);
         $builder->setModel($this->getMockModel());
         $builder->getQuery()->shouldReceive('where')->once()->with('foo_table.foo', '=', 'bar');
@@ -105,11 +104,10 @@ class ModelBuilderTest extends TestCase
         $builder->findOrFail('bar', ['column']);
     }
 
-    /**
-     * @expectedException \Hyperf\Database\Model\ModelNotFoundException
-     */
     public function testFindOrFailMethodWithManyThrowsModelNotFoundException()
     {
+        $this->expectException(\Hyperf\Database\Model\ModelNotFoundException::class);
+
         $builder = Mockery::mock(Builder::class . '[get]', [$this->getMockQueryBuilder()]);
         $builder->setModel($this->getMockModel());
         $builder->getQuery()->shouldReceive('whereIn')->once()->with('foo_table.foo', [1, 2]);
@@ -117,11 +115,10 @@ class ModelBuilderTest extends TestCase
         $builder->findOrFail([1, 2], ['column']);
     }
 
-    /**
-     * @expectedException \Hyperf\Database\Model\ModelNotFoundException
-     */
     public function testFirstOrFailMethodThrowsModelNotFoundException()
     {
+        $this->expectException(\Hyperf\Database\Model\ModelNotFoundException::class);
+
         $builder = Mockery::mock(Builder::class . '[first]', [$this->getMockQueryBuilder()]);
         $builder->setModel($this->getMockModel());
         $builder->shouldReceive('first')->with(['column'])->andReturn(null);
@@ -442,12 +439,10 @@ class ModelBuilderTest extends TestCase
         $this->assertEquals($builder->bam(), $builder->getQuery());
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Call to undefined method Hyperf\Database\Model\Builder::missingMacro()
-     */
     public function testMissingStaticMacrosThrowsProperException()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Call to undefined method Hyperf\Database\Model\Builder::missingMacro()');
         Builder::missingMacro();
     }
 
@@ -532,11 +527,10 @@ class ModelBuilderTest extends TestCase
         $builder->getRelation('ordersGroups');
     }
 
-    /**
-     * @expectedException \Hyperf\Database\Model\RelationNotFoundException
-     */
     public function testGetRelationThrowsException()
     {
+        $this->expectException(\Hyperf\Database\Model\RelationNotFoundException::class);
+
         $builder = $this->getBuilder();
         $builder->setModel($this->getMockModel());
 
@@ -888,7 +882,7 @@ class ModelBuilderTest extends TestCase
 
         $sql = preg_replace($aliasRegex, $alias, $sql);
 
-        $this->assertContains('"self_alias_hash"."id" = "self_related_stubs"."parent_id"', $sql);
+        $this->assertStringContainsString('"self_alias_hash"."id" = "self_related_stubs"."parent_id"', $sql);
     }
 
     public function testDoesntHave()

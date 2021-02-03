@@ -24,7 +24,7 @@ use Swoole\Coroutine;
  */
 class ConcurrentTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->getContainer();
     }

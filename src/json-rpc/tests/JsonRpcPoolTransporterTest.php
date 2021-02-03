@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\JsonRpc;
 
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
+use Hyperf\JsonRpc\Exception\ClientException;
 use Hyperf\JsonRpc\JsonRpcPoolTransporter;
 use Hyperf\JsonRpc\Packer\JsonLengthPacker;
 use Hyperf\JsonRpc\Pool\Frequency;
@@ -31,7 +33,7 @@ use PHPUnit\Framework\TestCase;
  */
 class JsonRpcPoolTransporterTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
@@ -134,6 +136,12 @@ class JsonRpcPoolTransporterTest extends TestCase
         $this->assertSame($conn, $conn2);
         $conn->close();
         $conn2 = $transporter->getConnection();
+        $this->assertSame($conn, $conn2);
+        $conn->close();
+        $conn->reconnectCallback = static function () {
+            throw new ClientException();
+        };
+        $conn2 = $transporter->getConnection();
         $this->assertNotEquals($conn, $conn2);
     }
 
@@ -154,6 +162,7 @@ class JsonRpcPoolTransporterTest extends TestCase
         $container = Mockery::mock(Container::class);
         ApplicationContext::setContainer($container);
 
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
         $container->shouldReceive('get')->with(PoolFactory::class)->andReturn(new PoolFactory($container));
         $container->shouldReceive('make')->with(RpcPool::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($container) {
             return new RpcPoolStub($container, $args['name'], $args['config']);

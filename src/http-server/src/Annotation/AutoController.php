@@ -28,4 +28,9 @@ class AutoController extends AbstractAnnotation
      * @var string
      */
     public $server = 'http';
+
+    /**
+     * @var array
+     */
+    public $options = [];
 }

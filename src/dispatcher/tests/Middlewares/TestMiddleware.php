@@ -27,6 +27,7 @@ class TestMiddleware implements MiddlewareInterface
     {
         /** @var ResponseInterface $response */
         $response = Context::get(ResponseInterface::class);
-        return $response->withAddedHeader('Server', 'Hyperf');
+        Context::set(ResponseInterface::class, $response->withAddedHeader('Test', 'Hyperf'));
+        return $handler->handle($request);
     }
 }

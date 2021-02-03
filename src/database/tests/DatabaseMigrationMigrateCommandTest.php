@@ -27,7 +27,7 @@ class DatabaseMigrationMigrateCommandTest extends TestCase
 {
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         ! defined('BASE_PATH') && define('BASE_PATH', __DIR__);

@@ -10,7 +10,13 @@ composer require hyperf/view
 
 ## 配置
 
-View 组件的配置文件位于 `config/autoload/view.php`，若配置文件不存在可自行创建，以下为相关配置的说明：
+View 组件的配置文件位于 `config/autoload/view.php`，若配置文件不存在可执行如下命令生成配置文件
+
+```bash
+php bin/hyperf.php vendor:publish hyperf/view
+```
+
+以下为相关配置的说明：
 
 |       配置        |  类型  |                默认值                 |       备注       |
 |:-----------------:|:------:|:-------------------------------------:|:----------------:|
@@ -72,6 +78,16 @@ return [
 官方目前支持 `Blade` 、 `Smarty` 、 `Twig` 、 `Plates` 和 `ThinkTemplate` 五种模板，默认安装 [hyperf/view](https://github.com/hyperf/view) 时不会自动安装任何模板引擎，需要您根据自身需求，自行安装对应的模板引擎，使用前必须安装任一模板引擎。
 
 ### 安装 Blade 引擎
+
+```bash
+composer require hyperf/view-engine
+```
+
+详细方式见文档 [视图引擎](zh-cn/view-engine.md)
+
+或者使用
+
+> duncan3dc/blade 因为使用了 Laravel 的 Support 库，所以会导致某些函数不兼容，暂时不推荐使用
 
 ```bash
 composer require duncan3dc/blade
@@ -192,4 +208,3 @@ class ViewController
 ```
 Hello, Hyperf. You are using blade template now.
 ```
-

@@ -43,15 +43,6 @@ class CoordinatorManager
     }
 
     /**
-     * Alias of static::until.
-     * @deprecated v2.1
-     */
-    public static function get(string $identifier): Coordinator
-    {
-        return static::until($identifier);
-    }
-
-    /**
      * Remove the Coordinator by the identifier from container after used,
      * otherwise memory leaks will occur.
      */

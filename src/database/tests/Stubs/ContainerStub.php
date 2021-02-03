@@ -11,19 +11,20 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database\Stubs;
 
+use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\Di\Container;
 use Hyperf\Utils\ApplicationContext;
 use Mockery;
-use Psr\Container\ContainerInterface;
 
 class ContainerStub
 {
     public static function getContainer($callback = null)
     {
-        $container = Mockery::mock(ContainerInterface::class);
+        $container = Mockery::mock(Container::class);
         ApplicationContext::setContainer($container);
 
         $container->shouldReceive('has')->andReturn(true);
@@ -51,5 +52,19 @@ class ContainerStub
         $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
 
         return $container;
+    }
+
+    public static function getModelOption()
+    {
+        $option = new ModelOption();
+        $option->setWithComments(false)
+            ->setRefreshFillable(true)
+            ->setForceCasts(true)
+            ->setInheritance('Model')
+            ->setPath(__DIR__ . '/../Stubs/Model')
+            ->setPool('default')
+            ->setPrefix('')
+            ->setWithIde(false);
+        return $option;
     }
 }

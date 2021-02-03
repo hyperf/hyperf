@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Nsq;
 
-use Hyperf\Contract\ConfigInterface;
+use Hyperf\Config\Config;
 use Hyperf\Guzzle\CoroutineHandler;
 use Hyperf\Nsq\Nsqd\Client;
 use HyperfTest\Nsq\Stub\CoroutineHandlerStub;
@@ -24,16 +24,14 @@ use PHPUnit\Framework\TestCase;
  */
 class HttpClientTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
 
     public function testHttpClientWithEmptyConfig()
     {
-        $config = Mockery::mock(ConfigInterface::class);
-        $config->shouldReceive('get')->with('nsq', [])->andReturn([]);
-
+        $config = new Config([]);
         $client = new Client($config);
         $this->assertSame('http://127.0.0.1:4151', $client->getOptions()['base_uri']);
         $this->assertInstanceOf(CoroutineHandler::class, $client->getOptions()['handler']);
@@ -41,11 +39,14 @@ class HttpClientTest extends TestCase
 
     public function testHttpClientWithHost()
     {
-        $config = Mockery::mock(ConfigInterface::class);
-        $config->shouldReceive('get')->with('nsq', [])->andReturn([
-            'host' => '192.168.1.1',
-            'nsqd' => [
-                'port' => 14151,
+        $config = new Config([
+            'nsq' => [
+                'default' => [
+                    'host' => '192.168.1.1',
+                    'nsqd' => [
+                        'port' => 14151,
+                    ],
+                ],
             ],
         ]);
 
@@ -56,12 +57,15 @@ class HttpClientTest extends TestCase
 
     public function testHttpClientWithOptions()
     {
-        $config = Mockery::mock(ConfigInterface::class);
-        $config->shouldReceive('get')->with('nsq', [])->andReturn([
-            'nsqd' => [
-                'options' => [
-                    'base_uri' => 'https://nsq.hyperf.io',
-                    'handler' => new CoroutineHandlerStub(),
+        $config = new Config([
+            'nsq' => [
+                'default' => [
+                    'nsqd' => [
+                        'options' => [
+                            'base_uri' => 'https://nsq.hyperf.io',
+                            'handler' => new CoroutineHandlerStub(),
+                        ],
+                    ],
                 ],
             ],
         ]);

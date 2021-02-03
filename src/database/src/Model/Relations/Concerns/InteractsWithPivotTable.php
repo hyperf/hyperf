@@ -62,8 +62,8 @@ trait InteractsWithPivotTable
         // Once we have finished attaching or detaching the records, we will see if we
         // have done any attaching or detaching, and if we have we will touch these
         // relationships if they are configured to touch on any database updates.
-        if ($touch && (count($changes['attached']) ||
-                       count($changes['detached']))) {
+        if ($touch && (count($changes['attached'])
+                       || count($changes['detached']))) {
             $this->touchIfTouching();
         }
 
@@ -125,8 +125,8 @@ trait InteractsWithPivotTable
         // Once we have finished attaching or detaching the records, we will see if we
         // have done any attaching or detaching, and if we have we will touch these
         // relationships if they are configured to touch on any database updates.
-        if (count($changes['attached']) ||
-            count($changes['updated'])) {
+        if (count($changes['attached'])
+            || count($changes['updated'])) {
             $this->touchIfTouching();
         }
 
@@ -319,8 +319,8 @@ trait InteractsWithPivotTable
             // Now we'll try to update an existing pivot record with the attributes that were
             // given to the method. If the model is actually updated we will add it to the
             // list of updated pivot records so we return them back out to the consumer.
-            elseif (count($attributes) > 0 &&
-                $this->updateExistingPivot($id, $attributes, $touch)) {
+            elseif (count($attributes) > 0
+                && $this->updateExistingPivot($id, $attributes, $touch)) {
                 $changes['updated'][] = $this->castKey($id);
             }
         }
@@ -338,8 +338,8 @@ trait InteractsWithPivotTable
     {
         $records = [];
 
-        $hasTimestamps = ($this->hasPivotColumn($this->createdAt()) ||
-                  $this->hasPivotColumn($this->updatedAt()));
+        $hasTimestamps = ($this->hasPivotColumn($this->createdAt())
+                  || $this->hasPivotColumn($this->updatedAt()));
 
         // To create the attachment records, we will simply spin through the IDs given
         // and create a new record to insert for each ID. Each ID may actually be a

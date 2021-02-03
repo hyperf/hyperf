@@ -12,16 +12,14 @@ declare(strict_types=1);
 namespace Hyperf\Utils\Coroutine;
 
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Engine\Channel;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Utils\ApplicationContext;
-use Swoole\Coroutine;
-use Swoole\Coroutine\Channel;
+use Hyperf\Utils\Coroutine;
 
 /**
  * @method bool isFull()
  * @method bool isEmpty()
- * @method array stats()
- * @method int length()
  */
 class Concurrent
 {
@@ -43,7 +41,7 @@ class Concurrent
 
     public function __call($name, $arguments)
     {
-        if (in_array($name, ['isFull', 'isEmpty', 'length', 'stats'])) {
+        if (in_array($name, ['isFull', 'isEmpty'])) {
             return $this->channel->{$name}(...$arguments);
         }
     }
@@ -53,9 +51,14 @@ class Concurrent
         return $this->limit;
     }
 
+    public function length(): int
+    {
+        return $this->channel->getLength();
+    }
+
     public function getLength(): int
     {
-        return $this->channel->length();
+        return $this->channel->getLength();
     }
 
     public function getRunningCoroutineCount(): int

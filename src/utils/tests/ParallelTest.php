@@ -216,6 +216,25 @@ class ParallelTest extends TestCase
         }
     }
 
+    public function testParallelCount()
+    {
+        $parallel = new Parallel();
+        $id = 0;
+        $parallel->add(static function () use (&$id) {
+            ++$id;
+        });
+        $parallel->add(static function () use (&$id) {
+            ++$id;
+        });
+        $this->assertSame(2, $parallel->count());
+        $parallel->wait();
+        $this->assertSame(2, $parallel->count());
+        $this->assertSame(2, $id);
+        $parallel->wait();
+        $this->assertSame(2, $parallel->count());
+        $this->assertSame(4, $id);
+    }
+
     public function returnCoId()
     {
         return Coroutine::id();

@@ -55,7 +55,7 @@ class CalculatorService implements CalculatorServiceInterface
 
 `@RpcService` 共有 `4` 个参数：   
 `name` 属性为定义该服务的名称，这里定义一个全局唯一的名字即可，Hyperf 会根据该属性生成对应的 ID 注册到服务中心去；   
-`protocol` 属性为定义该服务暴露的协议，目前仅支持 `jsonrpc` 和 `jsonrpc-http`，分别对应于 TCP 协议和 HTTP 协议下的两种协议，默认值为 `jsonrpc-http`，这里的值对应在 `Hyperf\Rpc\ProtocolManager` 里面注册的协议的 `key`，这两个本质上都是 JSON RPC 协议，区别在于数据格式化、数据打包、数据传输器等不同。   
+`protocol` 属性为定义该服务暴露的协议，目前仅支持 `jsonrpc-http`, `jsonrpc`, `jsonrpc-tcp-length-check` ，分别对应于 HTTP 协议和 TCP 协议下的两种协议，默认值为 `jsonrpc-http`，这里的值对应在 `Hyperf\Rpc\ProtocolManager` 里面注册的协议的 `key`，它们本质上都是 JSON RPC 协议，区别在于数据格式化、数据打包、数据传输器等不同。   
 `server` 属性为绑定该服务类发布所要承载的 `Server`，默认值为 `jsonrpc-http`，该属性对应 `config/autoload/server.php` 文件内 `servers` 下所对应的 `name`，这里也就意味着我们需要定义一个对应的 `Server`，我们下一章节具体阐述这里应该怎样去处理；   
 `publishTo` 属性为定义该服务所要发布的服务中心，目前仅支持 `consul` 或为空，为空时代表不发布该服务到服务中心去，但也就意味着您需要手动处理服务发现的问题，当值为 `consul` 时需要对应配置好 [hyperf/consul](zh-cn/consul.md) 组件的相关配置，要使用此功能需安装 [hyperf/service-governance](https://github.com/hyperf/service-governance) 组件，具体可参考 [服务注册](zh-cn/service-register.md) 章节；
 
@@ -69,7 +69,7 @@ HTTP Server (适配 `jsonrpc-http` 协议)
 <?php
 
 use Hyperf\Server\Server;
-use Hyperf\Server\SwooleEvent;
+use Hyperf\Server\Event;
 
 return [
     // 这里省略了该文件的其它配置
@@ -81,7 +81,7 @@ return [
             'port' => 9504,
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
-                SwooleEvent::ON_REQUEST => [\Hyperf\JsonRpc\HttpServer::class, 'onRequest'],
+                Event::ON_REQUEST => [\Hyperf\JsonRpc\HttpServer::class, 'onRequest'],
             ],
         ],
     ],
@@ -94,7 +94,7 @@ TCP Server (适配 `jsonrpc` 协议)
 <?php
 
 use Hyperf\Server\Server;
-use Hyperf\Server\SwooleEvent;
+use Hyperf\Server\Event;
 
 return [
     // 这里省略了该文件的其它配置
@@ -106,7 +106,7 @@ return [
             'port' => 9503,
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
-                SwooleEvent::ON_RECEIVE => [\Hyperf\JsonRpc\TcpServer::class, 'onReceive'],
+                Event::ON_RECEIVE => [\Hyperf\JsonRpc\TcpServer::class, 'onReceive'],
             ],
             'settings' => [
                 'open_eof_split' => true,
@@ -126,7 +126,7 @@ TCP Server (适配 `jsonrpc-tcp-length-check` 协议)
 <?php
 
 use Hyperf\Server\Server;
-use Hyperf\Server\SwooleEvent;
+use Hyperf\Server\Event;
 
 return [
     // 这里省略了该文件的其它配置
@@ -138,7 +138,7 @@ return [
             'port' => 9503,
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
-                SwooleEvent::ON_RECEIVE => [\Hyperf\JsonRpc\TcpServer::class, 'onReceive'],
+                Event::ON_RECEIVE => [\Hyperf\JsonRpc\TcpServer::class, 'onReceive'],
             ],
             'settings' => [
                 'open_length_check' => true,
@@ -215,6 +215,10 @@ return [
                     // 'package_length_offset' => 0,
                     // 'package_body_offset' => 4,
                 ],
+                // 重试次数，默认值为 2，收包超时不进行重试。暂只支持 JsonRpcPoolTransporter
+                'retry_count' => 2,
+                // 重试间隔，毫秒
+                'retry_interval' => 100,
                 // 当使用 JsonRpcPoolTransporter 时会用到以下配置
                 'pool' => [
                     'min_connections' => 1,

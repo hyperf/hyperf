@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\JsonRpc;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 use Hyperf\Guzzle\ClientFactory;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
@@ -81,14 +82,14 @@ class JsonRpcHttpTransporter implements TransporterInterface
         });
         $url = $schema . $uri;
         $response = $this->getClient()->post($url, [
-            'headers' => [
+            RequestOptions::HEADERS => [
                 'Content-Type' => 'application/json',
             ],
-            'http_errors' => false,
-            'body' => $data,
+            RequestOptions::HTTP_ERRORS => false,
+            RequestOptions::BODY => $data,
         ]);
         if ($response->getStatusCode() === 200) {
-            return $response->getBody()->getContents();
+            return (string) $response->getBody();
         }
         $this->loadBalancer->removeNode($node);
 

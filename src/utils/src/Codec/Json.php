@@ -13,11 +13,15 @@ namespace Hyperf\Utils\Codec;
 
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
-use InvalidArgumentException;
+use Hyperf\Utils\Exception\InvalidArgumentException;
 
 class Json
 {
-    public static function encode($data, $options = JSON_UNESCAPED_UNICODE): string
+    /**
+     * @param mixed $data
+     * @throws InvalidArgumentException
+     */
+    public static function encode($data, int $flags = JSON_UNESCAPED_UNICODE, int $depth = 512): string
     {
         if ($data instanceof Jsonable) {
             return (string) $data;
@@ -27,28 +31,26 @@ class Json
             $data = $data->toArray();
         }
 
-        $json = json_encode($data, $options);
-
-        static::handleJsonError(json_last_error(), json_last_error_msg());
+        try {
+            $json = json_encode($data, $flags | JSON_THROW_ON_ERROR, $depth);
+        } catch (\Throwable $exception) {
+            throw new InvalidArgumentException($exception->getMessage(), $exception->getCode());
+        }
 
         return $json;
     }
 
-    public static function decode(string $json, $assoc = true)
+    /**
+     * @throws InvalidArgumentException
+     */
+    public static function decode(string $json, bool $assoc = true, int $depth = 512, int $flags = 0)
     {
-        $decode = json_decode($json, $assoc);
-
-        static::handleJsonError(json_last_error(), json_last_error_msg());
-
-        return $decode;
-    }
-
-    protected static function handleJsonError($lastError, $message)
-    {
-        if ($lastError === JSON_ERROR_NONE) {
-            return;
+        try {
+            $decode = json_decode($json, $assoc, $depth, $flags | JSON_THROW_ON_ERROR);
+        } catch (\Throwable $exception) {
+            throw new InvalidArgumentException($exception->getMessage(), $exception->getCode());
         }
 
-        throw new InvalidArgumentException($message, $lastError);
+        return $decode;
     }
 }

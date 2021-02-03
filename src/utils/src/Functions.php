@@ -18,6 +18,7 @@ use Hyperf\Utils\HigherOrderTapProxy;
 use Hyperf\Utils\Optional;
 use Hyperf\Utils\Parallel;
 use Hyperf\Utils\Str;
+use Hyperf\Utils\Waiter;
 
 if (! function_exists('value')) {
     /**
@@ -358,6 +359,7 @@ if (! function_exists('class_uses_recursive')) {
 
         $results = [];
 
+        /* @phpstan-ignore-next-line */
         foreach (array_reverse(class_parents($class)) + [$class => $class] as $class) {
             $results += trait_uses_recursive($class);
         }
@@ -432,7 +434,7 @@ if (! function_exists('run')) {
             throw new RuntimeException('Function \'run\' only execute in non-coroutine environment.');
         }
 
-        \Swoole\Runtime::enableCoroutine(true, $flags);
+        \Swoole\Runtime::enableCoroutine($flags);
 
         $result = \Swoole\Coroutine\Run(...(array) $callbacks);
 
@@ -466,5 +468,16 @@ if (! function_exists('optional')) {
         if (! is_null($value)) {
             return $callback($value);
         }
+    }
+}
+
+if (! function_exists('wait')) {
+    function wait(Closure $closure, ?float $timeout = null)
+    {
+        if (ApplicationContext::hasContainer()) {
+            $waiter = ApplicationContext::getContainer()->get(Waiter::class);
+            return $waiter->wait($closure, $timeout);
+        }
+        return (new Waiter())->wait($closure, $timeout);
     }
 }

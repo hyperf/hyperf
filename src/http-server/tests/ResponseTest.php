@@ -34,7 +34,7 @@ use Swoole\Http\Response as SwooleResponse;
  */
 class ResponseTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set(PsrResponseInterface::class, null);
@@ -175,7 +175,7 @@ class ResponseTest extends TestCase
             ],
         ]);
 
-        $this->assertSame('{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true,"karray":{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true}}', $json->getBody()->getContents());
+        $this->assertSame('{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true,"karray":{"kstring":"string","kint1":1,"kint0":0,"kfloat":0.12345,"kfalse":false,"ktrue":true}}', (string) $json->getBody());
     }
 
     public function testObjectToJson()
@@ -189,7 +189,7 @@ class ResponseTest extends TestCase
         $response = new Response();
         $json = $response->json((object) ['id' => 1, 'name' => 'Hyperf']);
 
-        $this->assertSame('{"id":1,"name":"Hyperf"}', $json->getBody()->getContents());
+        $this->assertSame('{"id":1,"name":"Hyperf"}', (string) $json->getBody());
     }
 
     public function testPsrResponse()
@@ -216,7 +216,7 @@ class ResponseTest extends TestCase
         $id = uniqid();
         $cookie1 = new Cookie('Name', 'Hyperf');
         $cookie2 = new Cookie('Request-Id', $id);
-        $swooleResponse->shouldReceive('status')->with(Mockery::any())->andReturnUsing(function ($code) {
+        $swooleResponse->shouldReceive('status')->with(200, 'OK')->andReturnUsing(function ($code) {
             $this->assertSame($code, 200);
         });
         $swooleResponse->shouldReceive('header')->withAnyArgs()->twice()->andReturnUsing(function ($name, $value) {

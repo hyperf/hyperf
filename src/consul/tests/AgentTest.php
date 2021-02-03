@@ -33,7 +33,7 @@ class AgentTest extends TestCase
      */
     private $agent;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->agent = $this->createAgent();
     }

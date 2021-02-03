@@ -17,7 +17,7 @@ composer require hyperf/task
 
 declare(strict_types=1);
 
-use Hyperf\Server\SwooleEvent;
+use Hyperf\Server\Event;
 
 return [
     // 这里省略了其它不相关的配置项
@@ -29,8 +29,8 @@ return [
     ],
     'callbacks' => [
         // Task callbacks
-        SwooleEvent::ON_TASK => [Hyperf\Framework\Bootstrap\TaskCallback::class, 'onTask'],
-        SwooleEvent::ON_FINISH => [Hyperf\Framework\Bootstrap\FinishCallback::class, 'onFinish'],
+        Event::ON_TASK => [Hyperf\Framework\Bootstrap\TaskCallback::class, 'onTask'],
+        Event::ON_FINISH => [Hyperf\Framework\Bootstrap\FinishCallback::class, 'onFinish'],
     ],
 ];
 

@@ -14,6 +14,7 @@ namespace Hyperf\Devtool;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Composer;
+use Hyperf\Utils\Filesystem\Filesystem;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -35,9 +36,15 @@ class VendorPublishCommand extends SymfonyCommand
      */
     protected $force = false;
 
-    public function __construct()
+    /**
+     * @var Filesystem
+     */
+    protected $filesystem;
+
+    public function __construct(Filesystem $filesystem)
     {
         parent::__construct('vendor:publish');
+        $this->filesystem = $filesystem;
     }
 
     protected function configure()
@@ -110,15 +117,20 @@ class VendorPublishCommand extends SymfonyCommand
             $source = $item['source'];
             $destination = $item['destination'];
 
-            if (! $this->force && file_exists($destination)) {
+            if (! $this->force && $this->filesystem->exists($destination)) {
                 $this->output->writeln(sprintf('<fg=red>[%s] already exists.</>', $destination));
                 continue;
             }
 
-            if (! file_exists(dirname($destination))) {
-                mkdir(dirname($destination), 0755, true);
+            if (! $this->filesystem->exists($dirname = dirname($destination))) {
+                $this->filesystem->makeDirectory($dirname, 0755, true);
             }
-            copy($source, $destination);
+
+            if ($this->filesystem->isDirectory($source)) {
+                $this->filesystem->copyDirectory($source, $destination);
+            } else {
+                $this->filesystem->copy($source, $destination);
+            }
 
             $this->output->writeln(sprintf('<fg=green>[%s] publishes [%s] successfully.</>', $package, $id));
         }

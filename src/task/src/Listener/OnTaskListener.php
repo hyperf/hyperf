@@ -16,7 +16,6 @@ use Hyperf\Framework\Event\OnTask;
 use Hyperf\Task\Exception;
 use Hyperf\Task\Finish;
 use Hyperf\Task\Task;
-use Hyperf\Task\TaskExecutor;
 use Psr\Container\ContainerInterface;
 
 class OnTaskListener implements ListenerInterface
@@ -44,9 +43,6 @@ class OnTaskListener implements ListenerInterface
             if (! $data instanceof Task) {
                 return;
             }
-
-            $executor = $this->container->get(TaskExecutor::class);
-            $executor->setIsTaskEnvironment(true);
 
             try {
                 $result = $this->call($data);

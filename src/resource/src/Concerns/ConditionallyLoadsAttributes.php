@@ -89,10 +89,10 @@ trait ConditionallyLoadsAttributes
         $numericKeys = true;
 
         foreach ($data as $key => $value) {
-            if (($value instanceof PotentiallyMissing && $value->isMissing()) ||
-                ($value instanceof self &&
-                    $value->resource instanceof PotentiallyMissing &&
-                    $value->resource->isMissing())) {
+            if (($value instanceof PotentiallyMissing && $value->isMissing())
+                || ($value instanceof self
+                    && $value->resource instanceof PotentiallyMissing
+                    && $value->resource->isMissing())) {
                 unset($data[$key]);
             } else {
                 $numericKeys = $numericKeys && is_numeric($key);
@@ -208,9 +208,9 @@ trait ConditionallyLoadsAttributes
         }
 
         return $this->when(
-            $this->resource->{$accessor} &&
-            ($this->resource->{$accessor} instanceof $table ||
-                $this->resource->{$accessor}->getTable() === $table),
+            $this->resource->{$accessor}
+            && ($this->resource->{$accessor} instanceof $table
+                || $this->resource->{$accessor}->getTable() === $table),
             ...[$value, $default]
         );
     }

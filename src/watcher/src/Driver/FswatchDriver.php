@@ -69,7 +69,9 @@ class FswatchDriver implements DriverInterface
 
         $cmd = 'fswatch ';
         if (! $this->isDarwin) {
-            $cmd .= '-m inotify_monitor ';
+            $cmd .= ' -m inotify_monitor';
+            $cmd .= " -E --format '%p' -r ";
+            $cmd .= ' --event Created --event Updated --event Removed --event Renamed ';
         }
 
         return $cmd . implode(' ', $dir) . ' ' . implode(' ', $file);

@@ -14,7 +14,9 @@ namespace Hyperf\SocketIOServer\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\SocketIOServer\Collector\SocketIORouter;
+use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\Room\RedisAdapter;
+use Hyperf\SocketIOServer\SocketIO;
 use Psr\Container\ContainerInterface;
 
 class StartSubscriberListener implements ListenerInterface
@@ -40,8 +42,14 @@ class StartSubscriberListener implements ListenerInterface
     {
         foreach (SocketIORouter::get('forward') ?? [] as $class) {
             $instance = $this->container->get($class);
-            if ($instance->getAdapter() instanceof RedisAdapter) {
-                $instance->getAdapter()->subscribe();
+            $adapter = $instance->getAdapter();
+            if ($adapter instanceof RedisAdapter) {
+                $adapter->subscribe();
+            }
+            if ($adapter instanceof EphemeralInterface) {
+                $io = $this->container->get(SocketIO::class);
+                $adapter->setTtl($io->getPingInterval() + $io->getPingTimeout());
+                $adapter->cleanUpExpired();
             }
         }
     }
