@@ -246,9 +246,14 @@ return [
         'cos' => [
             'driver' => \Hyperf\Filesystem\Adapter\CosAdapterFactory::class,
             'region' => env('COS_REGION'),
-            'app_id' => env('COS_APPID'),
-            'secret_id' => env('COS_SECRET_ID'),
-            'secret_key' => env('COS_SECRET_KEY'),
+            'credentials' => [ //^2.0配置
+                'appId' => env('COS_APPID'),
+                'secretId' => env('COS_SECRET_ID'),
+                'secretKey' => env('COS_SECRET_KEY'),
+            ],
+            //'app_id' => env('COS_APPID'), ^3.0配置
+            //'secret_id' => env('COS_SECRET_ID'),
+            //'secret_key' => env('COS_SECRET_KEY'),
             'bucket' => env('COS_BUCKET'),
             'read_from_cdn' => false,
             // 'timeout'         => 60,
