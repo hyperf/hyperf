@@ -119,7 +119,6 @@ class ConsumerManager
 
                         $result = $consumer->consume($message);
 
-
                         if (! $consumerConfig->getAutoCommit()) {
                             if (empty($result)) {
                                 throw new InvalidArgumentException();
