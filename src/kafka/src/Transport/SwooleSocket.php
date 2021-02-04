@@ -23,7 +23,7 @@ class SwooleSocket extends \longlang\phpkafka\Socket\SwooleSocket
         /* @phpstan-ignore-next-line */
         while ($this->socket && ! isset($this->receivedBuffer[$length - 1]) && ($timeout == -1 || $leftTime > 0)) {
             $buffer = $this->socket->recv($timeout);
-            if ($buffer === false) {
+            if ($buffer === false || $buffer === '') {
                 return '';
             }
             $this->receivedBuffer .= $buffer;
