@@ -97,12 +97,18 @@ class ConsumerManager
              */
             protected $stdoutLogger;
 
+            /**
+             * @var Producer
+             */
+            protected $producer;
+
             public function __construct(ContainerInterface $container, AbstractConsumer $consumer)
             {
                 parent::__construct($container);
                 $this->consumer = $consumer;
                 $this->config = $container->get(ConfigInterface::class);
                 $this->stdoutLogger = $container->get(StdoutLoggerInterface::class);
+                $this->producer = $container->get(Producer::class);
                 if ($container->has(EventDispatcherInterface::class)) {
                     $this->dispatcher = $container->get(EventDispatcherInterface::class);
                 }
@@ -129,7 +135,7 @@ class ConsumerManager
                             }
 
                             if ($result === Result::REQUEUE) {
-                                make(Producer::class)->send($message->getTopic(), $message->getValue(), $message->getKey(), $message->getHeaders());
+                                $this->producer->send($message->getTopic(), $message->getValue(), $message->getKey(), $message->getHeaders());
                             }
                         }
 
