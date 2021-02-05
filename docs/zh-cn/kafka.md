@@ -12,6 +12,10 @@
 composer require hyperf/kafka
 ```
 
+## 版本要求
+
+- Kafka >= 1.0.0
+
 ## 使用
 
 ### 配置
