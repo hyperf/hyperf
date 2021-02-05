@@ -16,7 +16,7 @@ use Hyperf\Kafka\AbstractConsumer;
 class AfterConsume extends Consume
 {
     /**
-     * @var string
+     * @var null|string
      */
     protected $result;
 

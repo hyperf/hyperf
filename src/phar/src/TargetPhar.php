@@ -76,6 +76,7 @@ class TargetPhar
      */
     public function buildFromIterator(Traversable $iterator): void
     {
+        /* @phpstan-ignore-next-line */
         $this->phar->buildFromIterator($iterator, $this->pharBuilder->getPackage()->getDirectory());
     }
 

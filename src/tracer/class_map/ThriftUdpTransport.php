@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Jaeger;
 
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Engine\Channel;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
@@ -170,19 +172,28 @@ class ThriftUdpTransport extends TTransport
     {
         $this->chan = new Channel(1);
         Coroutine::create(function () {
-            try {
+            while (true) {
                 $this->doOpen();
                 while (true) {
-                    $closure = $this->chan->pop();
-                    if (! $closure) {
+                    try {
+                        $closure = $this->chan->pop();
+                        if (! $closure) {
+                            break 2;
+                        }
+                        $closure->call($this);
+                    } catch (\Throwable $e) {
+                        if (ApplicationContext::hasContainer()) {
+                            if (ApplicationContext::getContainer()->has(StdoutLoggerInterface::class)) {
+                                ApplicationContext::getContainer()
+                                    ->get(StdoutLoggerInterface::class)
+                                    ->error('ThriftUdpTransport error:' . $e->getMessage());
+                            }
+                        }
+                        @socket_close($this->socket);
+                        $this->socket = null;
                         break;
                     }
-                    $closure->call($this);
                 }
-            } finally {
-                @socket_close($this->socket);
-                $this->chan = null;
-                $this->socket = null;
             }
         });
 

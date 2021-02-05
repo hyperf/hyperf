@@ -81,6 +81,7 @@ class Producer
                 $ack->close();
             } catch (\Throwable $e) {
                 $ack->push($e);
+                throw $e;
             }
         });
         if ($e = $ack->pop()) {
@@ -104,6 +105,7 @@ class Producer
                 $ack->close();
             } catch (\Throwable $e) {
                 $ack->push($e);
+                throw $e;
             }
         });
         if ($e = $ack->pop()) {
@@ -135,21 +137,24 @@ class Producer
         }
         $this->chan = new Channel(1);
         Coroutine::create(function () {
-            try {
+            while (true) {
                 $this->producer = $this->makeProducer();
                 $this->topicsMeta = $this->fetchMeta();
-
                 while (true) {
                     $closure = $this->chan->pop();
                     if (! $closure) {
+                        break 2;
+                    }
+                    try {
+                        $closure->call($this);
+                    } catch (\Throwable $e) {
+                        $this->producer->close();
                         break;
                     }
-                    $closure->call($this);
                 }
-            } finally {
-                $this->chan = null;
-                $this->producer->close();
             }
+            /* @phpstan-ignore-next-line */
+            $this->chan = null;
         });
     }
 

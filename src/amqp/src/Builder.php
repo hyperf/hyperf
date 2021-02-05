@@ -41,19 +41,21 @@ class Builder
      */
     public function declare(MessageInterface $message, ?AMQPChannel $channel = null, bool $release = false): void
     {
-        if (! $channel) {
-            $pool = $this->getConnectionPool($message->getPoolName());
-            /** @var \Hyperf\Amqp\Connection $connection */
-            $connection = $pool->get();
-            $channel = $connection->getChannel();
-        }
+        try {
+            if (! $channel) {
+                $pool = $this->getConnectionPool($message->getPoolName());
+                /** @var \Hyperf\Amqp\Connection $connection */
+                $connection = $pool->get();
+                $channel = $connection->getChannel();
+            }
 
-        $builder = $message->getExchangeBuilder();
+            $builder = $message->getExchangeBuilder();
 
-        $channel->exchange_declare($builder->getExchange(), $builder->getType(), $builder->isPassive(), $builder->isDurable(), $builder->isAutoDelete(), $builder->isInternal(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
-
-        if (isset($connection) && $release) {
-            $connection->release();
+            $channel->exchange_declare($builder->getExchange(), $builder->getType(), $builder->isPassive(), $builder->isDurable(), $builder->isAutoDelete(), $builder->isInternal(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
+        } finally {
+            if (isset($connection) && $release) {
+                $connection->release();
+            }
         }
     }
 

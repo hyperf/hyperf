@@ -18,6 +18,7 @@ use Hyperf\Kafka\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Kafka\Event\AfterConsume;
 use Hyperf\Kafka\Event\BeforeConsume;
 use Hyperf\Kafka\Event\FailToConsume;
+use Hyperf\Kafka\Exception\InvalidConsumeResultException;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
 use longlang\phpkafka\Client\SwooleClient;
@@ -25,8 +26,6 @@ use longlang\phpkafka\Consumer\ConsumeMessage;
 use longlang\phpkafka\Consumer\Consumer as LongLangConsumer;
 use longlang\phpkafka\Consumer\ConsumerConfig;
 use longlang\phpkafka\Exception\KafkaErrorException;
-use longlang\phpkafka\Protocol\ErrorCode;
-use longlang\phpkafka\Protocol\JoinGroup\JoinGroupRequest;
 use longlang\phpkafka\Socket\SwooleSocket;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -66,7 +65,7 @@ class ConsumerManager
             $annotation->topic && $instance->setTopic($annotation->topic);
             $annotation->groupId && $instance->setGroupId($annotation->groupId);
             $annotation->memberId && $instance->setMemberId($annotation->memberId);
-            $annotation->autoCommit && $instance->setAutoCommit($annotation->autoCommit);
+            $instance->setAutoCommit($annotation->autoCommit);
 
             $process = $this->createProcess($instance);
             $process->name = $instance->getName() . '-' . $instance->getTopic();
@@ -98,12 +97,18 @@ class ConsumerManager
              */
             protected $stdoutLogger;
 
+            /**
+             * @var Producer
+             */
+            protected $producer;
+
             public function __construct(ContainerInterface $container, AbstractConsumer $consumer)
             {
                 parent::__construct($container);
                 $this->consumer = $consumer;
                 $this->config = $container->get(ConfigInterface::class);
                 $this->stdoutLogger = $container->get(StdoutLoggerInterface::class);
+                $this->producer = $container->get(Producer::class);
                 if ($container->has(EventDispatcherInterface::class)) {
                     $this->dispatcher = $container->get(EventDispatcherInterface::class);
                 }
@@ -121,12 +126,16 @@ class ConsumerManager
                         $result = $consumer->consume($message);
 
                         if (! $consumerConfig->getAutoCommit()) {
+                            if (! is_string($result)) {
+                                throw new InvalidConsumeResultException('The result is invalid.');
+                            }
+
                             if ($result === Result::ACK) {
                                 $message->getConsumer()->ack($message);
                             }
 
                             if ($result === Result::REQUEUE) {
-                                make(Producer::class)->send($message->getTopic(), $message->getValue(), $message->getKey(), $message->getHeaders());
+                                $this->producer->send($message->getTopic(), $message->getValue(), $message->getKey(), $message->getHeaders());
                             }
                         }
 
@@ -136,21 +145,11 @@ class ConsumerManager
 
                 retry(
                     3,
-                    function () use ($longLangConsumer, $consumerConfig) {
+                    function () use ($longLangConsumer) {
                         try {
                             $longLangConsumer->start();
                         } catch (KafkaErrorException $exception) {
                             $this->stdoutLogger->error($exception->getMessage());
-                            switch ($exception->getCode()) {
-                                case ErrorCode::REBALANCE_IN_PROGRESS:
-                                    $joinGroupRequest = new JoinGroupRequest();
-                                    $joinGroupRequest->setGroupInstanceId($consumerConfig->getGroupInstanceId());
-                                    $joinGroupRequest->setMemberId($consumerConfig->getMemberId());
-                                    $joinGroupRequest->setGroupId($consumerConfig->getGroupId());
-                                    $longLangConsumer->getBroker()->getClient()->send($joinGroupRequest);
-                                    $longLangConsumer->start();
-                                    break;
-                            }
 
                             $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, [], $exception));
                         }

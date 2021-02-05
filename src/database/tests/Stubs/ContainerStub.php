@@ -16,15 +16,15 @@ use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\Di\Container;
 use Hyperf\Utils\ApplicationContext;
 use Mockery;
-use Psr\Container\ContainerInterface;
 
 class ContainerStub
 {
     public static function getContainer($callback = null)
     {
-        $container = Mockery::mock(ContainerInterface::class);
+        $container = Mockery::mock(Container::class);
         ApplicationContext::setContainer($container);
 
         $container->shouldReceive('has')->andReturn(true);

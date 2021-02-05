@@ -17,7 +17,7 @@ use longlang\phpkafka\Consumer\ConsumeMessage;
 
 class DemoConsumer extends AbstractConsumer
 {
-    public function consume(ConsumeMessage $message): string
+    public function consume(ConsumeMessage $message)
     {
         return Result::ACK;
     }

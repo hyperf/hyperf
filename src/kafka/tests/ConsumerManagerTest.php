@@ -13,6 +13,7 @@ namespace HyperfTest\Kafka;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Kafka\AbstractConsumer;
 use Hyperf\Kafka\Annotation\Consumer;
 use Hyperf\Kafka\ConsumerManager;
 use Hyperf\Process\AbstractProcess;
@@ -20,6 +21,7 @@ use Hyperf\Process\ProcessManager;
 use HyperfTest\Kafka\Stub\ContainerStub;
 use HyperfTest\Kafka\Stub\DemoConsumer;
 use longlang\phpkafka\Client\SwooleClient;
+use longlang\phpkafka\Consumer\ConsumeMessage;
 use longlang\phpkafka\Consumer\ConsumerConfig;
 use longlang\phpkafka\Socket\SwooleSocket;
 use Mockery;
@@ -115,5 +117,17 @@ class ConsumerManagerTest extends TestCase
         }
 
         $this->assertFalse($hasRegistered);
+    }
+
+    public function testConsumeReturnNull()
+    {
+        $class = new class() extends AbstractConsumer {
+            public function consume(ConsumeMessage $message)
+            {
+            }
+        };
+
+        $result = $class->consume(Mockery::mock(ConsumeMessage::class));
+        $this->assertSame(null, $result);
     }
 }
