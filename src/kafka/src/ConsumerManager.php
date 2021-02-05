@@ -18,6 +18,7 @@ use Hyperf\Kafka\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Kafka\Event\AfterConsume;
 use Hyperf\Kafka\Event\BeforeConsume;
 use Hyperf\Kafka\Event\FailToConsume;
+use Hyperf\Kafka\Exception\InvalidConsumeResultException;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
 use longlang\phpkafka\Client\SwooleClient;
@@ -64,7 +65,7 @@ class ConsumerManager
             $annotation->topic && $instance->setTopic($annotation->topic);
             $annotation->groupId && $instance->setGroupId($annotation->groupId);
             $annotation->memberId && $instance->setMemberId($annotation->memberId);
-            $annotation->autoCommit && $instance->setAutoCommit($annotation->autoCommit);
+            $instance->setAutoCommit($annotation->autoCommit);
 
             $process = $this->createProcess($instance);
             $process->name = $instance->getName() . '-' . $instance->getTopic();
@@ -119,6 +120,10 @@ class ConsumerManager
                         $result = $consumer->consume($message);
 
                         if (! $consumerConfig->getAutoCommit()) {
+                            if (! is_string($result)) {
+                                throw new InvalidConsumeResultException('The result is invalid.');
+                            }
+
                             if ($result === Result::ACK) {
                                 $message->getConsumer()->ack($message);
                             }
