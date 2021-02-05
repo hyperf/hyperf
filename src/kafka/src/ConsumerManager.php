@@ -18,7 +18,7 @@ use Hyperf\Kafka\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Kafka\Event\AfterConsume;
 use Hyperf\Kafka\Event\BeforeConsume;
 use Hyperf\Kafka\Event\FailToConsume;
-use Hyperf\Kafka\Exception\InvalidArgumentException;
+use Hyperf\Kafka\Exception\InvalidConsumeResultException;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
 use longlang\phpkafka\Client\SwooleClient;
@@ -120,8 +120,8 @@ class ConsumerManager
                         $result = $consumer->consume($message);
 
                         if (! $consumerConfig->getAutoCommit()) {
-                            if (empty($result)) {
-                                throw new InvalidArgumentException();
+                            if (! is_string($result)) {
+                                throw new InvalidConsumeResultException('The result is invalid.');
                             }
 
                             if ($result === Result::ACK) {

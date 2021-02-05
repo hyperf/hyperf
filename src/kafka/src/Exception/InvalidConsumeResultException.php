@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Kafka\Exception;
 
-use Exception;
+use RuntimeException;
 
-class InvalidArgumentException extends Exception
+class InvalidConsumeResultException extends RuntimeException
 {
 }
