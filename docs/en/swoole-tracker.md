@@ -67,11 +67,6 @@ ENV TIMEZONE=${timezone:-"Asia/Shanghai"} \
 
 # update
 RUN set -ex \
-    # install composer
-    && cd /tmp \
-    && wget https://mirrors.aliyun.com/composer/composer.phar \
-    && chmod u+x composer.phar \
-    && mv composer.phar /usr/local/bin/composer \
     # show php version and extensions
     && php -v \
     && php -m \
