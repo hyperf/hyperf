@@ -58,7 +58,7 @@ class ContainerStub
                     'connect_timeout' => -1,
                     'send_timeout' => -1,
                     'recv_timeout' => -1,
-                    'client_id' => '',
+                    'client_id' => 'hyperf',
                     'max_write_attempts' => 3,
                     'brokers' => [
                         '127.0.0.1:9092',
