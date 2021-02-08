@@ -4,17 +4,17 @@
 
 ## 修复
 
-- [#3233](https://github.com/hyperf/hyperf/pull/3233) Fixed connection exhausted, when connect amqp server failed.
-- [#3245](https://github.com/hyperf/hyperf/pull/3245) Fixed `autoCommit` does not works when you set `false` for `hyperf/kafka`.
-- [#3255](https://github.com/hyperf/hyperf/pull/3255) Fixed bug that `defer` cannot be triggered in nsq consumer.
+- [#3233](https://github.com/hyperf/hyperf/pull/3233) 修复 `AMQP` 组件，因连接服务端失败，导致连接池耗尽的问题。
+- [#3245](https://github.com/hyperf/hyperf/pull/3245) 修复 `hyperf/kafka` 组件设置 `autoCommit` 为 `false` 无效的问题。
+- [#3255](https://github.com/hyperf/hyperf/pull/3255) 修复 `Nsq` 消费者进程，无法触发 `defer` 方法的问题。
 
 ## 优化
 
-- [#3249](https://github.com/hyperf/hyperf/pull/3249) Optimized `hyperf/kafka` which won't make a new producer to requeue message.
+- [#3249](https://github.com/hyperf/hyperf/pull/3249) 优化 `hyperf/kafka` 组件，可以重用连接进行消息发布。
 
 ## 移除
 
-- [#3235](https://github.com/hyperf/hyperf/pull/3235) Removed rebalance check, because `longlang/phpkafka` checked.
+- [#3235](https://github.com/hyperf/hyperf/pull/3235) 移除 `hyperf/kafka` 组件 `rebalance` 检查，因为底层库 `longlang/phpkafka` 增加了对应的检查。
 
 # v2.1.5 - 2021-02-01
 
