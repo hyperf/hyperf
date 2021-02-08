@@ -176,7 +176,7 @@ class ConsumerManager
                 $consumerConfig->setSocket(SwooleSocket::class);
                 $consumerConfig->setClient(SwooleClient::class);
                 $consumerConfig->setMaxWriteAttempts($config['max_write_attempts']);
-                $consumerConfig->setClientId($config['client_id']);
+                $consumerConfig->setClientId(sprintf('%s-%s', $config['client_id'], uniqid('')));
                 $consumerConfig->setRecvTimeout($config['recv_timeout']);
                 $consumerConfig->setConnectTimeout($config['connect_timeout']);
                 $consumerConfig->setSessionTimeout($config['session_timeout']);
