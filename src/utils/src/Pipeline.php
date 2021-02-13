@@ -101,11 +101,7 @@ class Pipeline
     protected function prepareDestination(Closure $destination): Closure
     {
         return static function ($passable) use ($destination) {
-            try {
-                return $destination($passable);
-            } catch (Throwable $e) {
-                return $this->handleException($passable, $e);
-            }
+            return $destination($passable);
         };
     }
 
@@ -171,18 +167,5 @@ class Pipeline
     protected function handleCarry($carry)
     {
         return $carry;
-    }
-
-    /**
-     * Handle the given exception.
-     *
-     * @param mixed $passable
-     * @param \Throwable $e
-     * @throws \Throwable
-     * @return mixed
-     */
-    protected function handleException($passable, Throwable $e)
-    {
-        throw $e;
     }
 }
