@@ -13,6 +13,7 @@ namespace HyperfTest\Utils;
 
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Pipeline;
+use HyperfTest\Utils\Stub\FooPipeline;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -178,6 +179,22 @@ class PipelineTest extends TestCase
         unset($_SERVER['__test.pipe.one']);
     }
 
+    public function testHandleCarry()
+    {
+        $result = (new FooPipeline($this->getContainer()))
+            ->send($id = rand(0, 99))
+            ->through([PipelineTestPipeOne::class])
+            ->via('incr')
+            ->then(static function ($passable) {
+                if (is_int($passable)) {
+                    $passable += 3;
+                }
+                return $passable;
+            });
+
+        $this->assertSame($id + 6, $result);
+    }
+
     protected function getContainer()
     {
         $container = Mockery::mock(ContainerInterface::class);
@@ -202,6 +219,11 @@ class PipelineTestPipeOne
     public function differentMethod($piped, $next)
     {
         return $next($piped);
+    }
+
+    public function incr($piped, $next)
+    {
+        return $next(++$piped);
     }
 }
 

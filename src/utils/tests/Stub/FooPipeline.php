@@ -15,4 +15,12 @@ use Hyperf\Utils\Pipeline;
 
 class FooPipeline extends Pipeline
 {
+    protected function handleCarry($carry)
+    {
+        $carry = parent::handleCarry($carry);
+        if (is_int($carry)) {
+            $carry += 2;
+        }
+        return $carry;
+    }
 }
