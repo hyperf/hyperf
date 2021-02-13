@@ -101,7 +101,11 @@ class Pipeline
     protected function prepareDestination(Closure $destination): Closure
     {
         return static function ($passable) use ($destination) {
-            return $destination($passable);
+            try {
+                return $destination($passable);
+            } catch (Throwable $e) {
+                return $this->handleException($passable, $e);
+            }
         };
     }
 
@@ -134,7 +138,9 @@ class Pipeline
                     $parameters = [$passable, $stack];
                 }
 
-                return method_exists($pipe, $this->method) ? $pipe->{$this->method}(...$parameters) : $pipe(...$parameters);
+                $carry = method_exists($pipe, $this->method) ? $pipe->{$this->method}(...$parameters) : $pipe(...$parameters);
+
+                return $this->handleCarry($carry);
             };
         };
     }
@@ -154,5 +160,29 @@ class Pipeline
         }
 
         return [$name, $parameters];
+    }
+
+    /**
+     * Handle the value returned from each pipe before passing it to the next.
+     *
+     * @param mixed $carry
+     * @return mixed
+     */
+    protected function handleCarry($carry)
+    {
+        return $carry;
+    }
+
+    /**
+     * Handle the given exception.
+     *
+     * @param mixed $passable
+     * @param \Throwable $e
+     * @throws \Throwable
+     * @return mixed
+     */
+    protected function handleException($passable, Throwable $e)
+    {
+        throw $e;
     }
 }
