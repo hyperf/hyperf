@@ -1,5 +1,9 @@
 # v2.1.7 - TBD
 
+## Added
+
+- [#3261](https://github.com/hyperf/hyperf/pull/3261) Added method `Pipeline::handleCarry()` which to handle the returning value.
+
 # v2.1.6 - 2021-02-08
 
 ## Fixed
