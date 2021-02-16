@@ -13,18 +13,12 @@ namespace Hyperf\Rpc\Contract;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Throwable;
 
 interface HttpMessageBuilderInterface
 {
-    public function buildRequest(string $request, array $context = []): ServerRequestInterface;
+    public function buildRequest(array $data): ServerRequestInterface;
 
-    public function buildErrorResponse(ServerRequestInterface $request, int $code = 500, Throwable $error = null): ResponseInterface;
-
-    /**
-     * @param mixed $response
-     */
-    public function buildResponse(ServerRequestInterface $request, $response): ResponseInterface;
+    public function buildResponse(ServerRequestInterface $request, array $data): ResponseInterface;
 
     public function persistToContext(ResponseInterface $response): ResponseInterface;
 }
