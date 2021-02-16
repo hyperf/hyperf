@@ -35,19 +35,53 @@ class ClassInvokerTest extends TestCase
         $this->assertSame(3, $invoker->three(1, 2));
     }
 
+    public function testClassInvokerGet()
+    {
+        $invoker = new ClassInvoker(new Caller());
+        $this->assertSame(null, $invoker->id);
+        $this->assertSame(md5(''), $invoker->md5);
+        $this->assertSame(sha1(''), $invoker->sha);
+
+        $invoker = new ClassInvoker(new Caller($id = uniqid()));
+        $this->assertSame($id, $invoker->id);
+        $this->assertSame(md5($id), $invoker->md5);
+        $this->assertSame(sha1($id), $invoker->sha);
+    }
+
     public function testClassInvokerCallNotExistMethod()
     {
-        /** @var Caller $invoker */
         $invoker = new ClassInvoker(new Caller());
 
         $this->expectException(\ReflectionException::class);
         $this->expectExceptionMessage('Method zero does not exist');
         $invoker->zero();
     }
+
+    public function testClassInvokerGetNotExistProperty()
+    {
+        $invoker = new ClassInvoker(new Caller());
+
+        $this->expectException(\ReflectionException::class);
+        $this->expectExceptionMessage('Property zero does not exist');
+        $invoker->zero;
+    }
 }
 
 class Caller
 {
+    public $id;
+
+    protected $sha;
+
+    private $md5;
+
+    public function __construct($id = null)
+    {
+        $this->id = $id;
+        $this->md5 = md5($id ?? '');
+        $this->sha = sha1($id ?? '');
+    }
+
     public function three($a, $b)
     {
         return $a + $b;

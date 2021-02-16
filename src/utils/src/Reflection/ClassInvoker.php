@@ -31,6 +31,15 @@ class ClassInvoker
         $this->reflection = new ReflectionClass($instance);
     }
 
+    public function __get($name)
+    {
+        $property = $this->reflection->getProperty($name);
+
+        $property->setAccessible(true);
+
+        return $property->getValue($this->instance);
+    }
+
     public function __call($name, $arguments)
     {
         $method = $this->reflection->getMethod($name);
