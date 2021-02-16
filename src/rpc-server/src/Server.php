@@ -112,7 +112,6 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
             Context::set(ServerRequestInterface::class, $request = $this->buildRequest($fd, $fromId, $data));
             Context::set(ResponseInterface::class, $this->buildResponse($fd, $server));
 
-            // $middlewares = array_merge($this->middlewares, MiddlewareManager::get());
             $middlewares = $this->middlewares;
 
             $request = $this->coreMiddleware->dispatch($request);
