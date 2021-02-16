@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\JsonRpc\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\JsonRpc\DataFormatter;
 use Hyperf\JsonRpc\JsonRpcHttpTransporter;
