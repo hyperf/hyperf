@@ -113,7 +113,7 @@ php bin/hyperf.php gen:kafka-consumer KafkaConsumer
 
 |    配置    |  类型  | 注解或抽象类默认值 |                 备注                 |
 | :--------: | :----: | :----------------: | :----------------------------------: |
-|   topic    | string |         ''         |            要监听的 topic            |
+|   topic    | string |         ''         | 要监听的 topic ，订阅多个topic则使用 `,` 分割  |
 |  groupId   | string |         ''         |           要监听的 groupId           |
 |  memberId  | string |         ''         |          要监听的 memberId           |
 | autoCommit | string |         ''         |           是否需要自动提交           |
