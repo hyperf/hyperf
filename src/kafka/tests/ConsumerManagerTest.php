@@ -43,7 +43,7 @@ class ConsumerManagerTest extends TestCase
         $container = ContainerStub::getContainer();
 
         AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
-            'topic' => $topic = uniqid(),
+            'topic' => $topic = sprintf('%s,%s', uniqid(), uniqid()),
             'name' => $name = uniqid(),
             'groupId' => $groupId = uniqid(),
             'nums' => $nums = rand(1, 10),
@@ -65,7 +65,7 @@ class ConsumerManagerTest extends TestCase
                 $this->assertSame(true, $consumer->getAutoCommit());
                 $this->assertSame($config['rack_id'], $consumer->getRackId());
                 $this->assertSame($config['replica_id'], $consumer->getReplicaId());
-                $this->assertSame([$topic], $consumer->getTopic());
+                $this->assertSame(explode(',', $topic), $consumer->getTopic());
                 $this->assertSame((float) $config['rebalance_timeout'], $consumer->getRebalanceTimeout());
                 $this->assertSame((float) $config['send_timeout'], $consumer->getSendTimeout());
                 $this->assertSame($groupId, $consumer->getGroupId());
