@@ -26,7 +26,7 @@ abstract class AbstractConsumer
     public $pool = 'default';
 
     /**
-     * @var string
+     * @var string|string[]
      */
     public $topic;
 
@@ -60,12 +60,12 @@ abstract class AbstractConsumer
         $this->pool = $pool;
     }
 
-    public function getTopic(): string
+    public function getTopic()
     {
         return $this->topic;
     }
 
-    public function setTopic(string $topic): void
+    public function setTopic($topic): void
     {
         $this->topic = $topic;
     }
