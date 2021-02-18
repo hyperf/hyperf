@@ -68,7 +68,7 @@ class ConsumerManager
             $instance->setAutoCommit($annotation->autoCommit);
 
             $process = $this->createProcess($instance);
-            $process->name = $instance->getName() . '-' . $instance->getTopic();
+            $process->name = $instance->getName();
             $process->nums = (int) $annotation->nums;
             ProcessManager::register($process);
         }
@@ -162,11 +162,10 @@ class ConsumerManager
             {
                 $config = $this->config->get('kafka.' . $this->consumer->getPool());
                 $consumerConfig = new ConsumerConfig();
-                $topics = explode(',', $this->consumer->getTopic());
                 $consumerConfig->setAutoCommit($this->consumer->isAutoCommit());
                 $consumerConfig->setRackId($config['rack_id']);
                 $consumerConfig->setReplicaId($config['replica_id']);
-                $consumerConfig->setTopic($topics);
+                $consumerConfig->setTopic($this->consumer->getTopic());
                 $consumerConfig->setRebalanceTimeout($config['rebalance_timeout']);
                 $consumerConfig->setSendTimeout($config['send_timeout']);
                 $consumerConfig->setGroupId($this->consumer->getGroupId());
