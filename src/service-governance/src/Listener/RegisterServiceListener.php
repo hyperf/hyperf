@@ -16,6 +16,11 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
+use Hyperf\Nacos\Api\NacosInstance;
+use Hyperf\Nacos\Api\NacosService;
+use Hyperf\Nacos\Exception\RuntimeException;
+use Hyperf\Nacos\Model\InstanceModel;
+use Hyperf\Nacos\Model\ServiceModel;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\ServiceGovernance\Register\ConsulAgent;
 use Hyperf\ServiceGovernance\ServiceManager;
@@ -56,12 +61,35 @@ class RegisterServiceListener implements ListenerInterface
      */
     protected $registeredServices;
 
+    /**
+     * @var string
+     */
+    protected $group_name;
+    /**
+     * @var string
+     */
+    protected $namespace_id;
+
+    /**
+     * @var NacosService|mixed
+     */
+    protected $nacosService;
+
+    /**
+     * @var NacosInstance|mixed
+     */
+    protected $nacosInstance;
+
     public function __construct(ContainerInterface $container)
     {
         $this->consulAgent = $container->get(ConsulAgent::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->serviceManager = $container->get(ServiceManager::class);
         $this->config = $container->get(ConfigInterface::class);
+        $this->nacosService = $container->get(NacosService::class);
+        $this->nacosInstance = $container->get(NacosInstance::class);
+        $this->namespace_id = config('nacos.service.namespace_id', 'public');
+        $this->group_name = config('nacos.service.group_name', 'api');
     }
 
     public function listen(): array
@@ -72,9 +100,6 @@ class RegisterServiceListener implements ListenerInterface
         ];
     }
 
-    /**
-     * @param MainCoroutineServerStart|MainWorkerStart $event
-     */
     public function process(object $event)
     {
         $this->registeredServices = [];
@@ -93,6 +118,11 @@ class RegisterServiceListener implements ListenerInterface
                             switch ($service['publishTo']) {
                                 case 'consul':
                                     $this->publishToConsul($address, (int) $port, $service, $serviceName, $path);
+                                    break;
+                            }
+                            switch ($service['publishTo']) {
+                                case 'nacos':
+                                    $this->publishToNacos($address, (int) $port, $service, $serviceName, $path);
                                     break;
                             }
                         }
@@ -151,6 +181,71 @@ class RegisterServiceListener implements ListenerInterface
             $this->logger->info(sprintf('Service %s[%s]:%s register to the consul successfully.', $serviceName, $path, $nextId), $this->defaultLoggerContext);
         } else {
             $this->logger->warning(sprintf('Service %s register to the consul failed.', $serviceName), $this->defaultLoggerContext);
+        }
+    }
+
+    protected function publishToNacos(string $address, int $port, array $service, string $serviceName, string $path)
+    {
+        if (isset($service['id']) && $service['id']) {
+            $nextId = $service['id'];
+        } else {
+            $nextId = $this->generateId($this->getLastServiceId($serviceName));
+        }
+        $serviceModel = new ServiceModel([
+            'service_name' => $serviceName,
+            'group_name' => $this->group_name,
+            'namespace_id' => $this->namespace_id,
+            'protect_threshold' => 0.5,
+            'metadata' => [
+                'Name' => $serviceName,
+                'ID' => $nextId,
+                'Address' => $address,
+                'Port' => $port,
+                'Protocol' => $service['protocol'],
+                'Agreement' => 'JSON-RPC',
+                'AgreementVersion' => '2.0',
+                'Method' => $path
+            ]
+        ]);
+        $exist = $this->nacosService->detail($serviceModel);
+        /**
+         * 已经存在
+         */
+        if ($exist) {
+            $this->logger->info(sprintf('Service %s[%s] has been already registered to the nacos.', $serviceName, $path), $this->defaultLoggerContext);
+        }
+        /**
+         * 创建
+         */
+        if ($exist && $this->nacosService->create($serviceModel)) {
+            $this->logger->info(sprintf('Service %s[%s]:%s register to the nacos successfully.', $serviceName, $path, $nextId), $this->defaultLoggerContext);
+        }
+        if ((!$exist) && $this->nacosService->update($serviceModel)) {
+            $this->logger->info(sprintf('Service %s[%s]:%s update to the nacos successfully.', $serviceName, $path, $nextId), $this->defaultLoggerContext);
+        }
+        $instance = new InstanceModel([
+            'service_name' => $serviceName,
+            'group_name' => $this->group_name,
+            'cluster' => 'DEFAULT',
+            'ephemeral' => true,
+            'beat_enable' => true,
+            'beat_interval' => 5,
+            'namespace_id' => $this->namespace_id,
+            'ip' => $address,
+            'port' => $port,
+            'metadata' => [
+                'Name' => $serviceName,
+                'ID' => $nextId,
+                'Address' => $address,
+                'Port' => $port,
+                'Protocol' => $service['protocol'],
+                'Agreement' => 'JSON-RPC',
+                'AgreementVersion' => '2.0',
+                'Method' => $path
+            ]
+        ]);
+        if (!$this->nacosInstance->register($instance)) {
+            throw new RuntimeException(sprintf('nacos register instance fail: %s', $instance));
         }
     }
 

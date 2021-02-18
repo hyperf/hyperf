@@ -19,6 +19,8 @@ use Hyperf\Guzzle\ClientFactory;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\LoadBalancerManager;
 use Hyperf\LoadBalancer\Node;
+use Hyperf\Nacos\Api\NacosInstance;
+use Hyperf\Nacos\Model\ServiceModel;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\Rpc\IdGenerator;
@@ -200,6 +202,12 @@ abstract class AbstractServiceClient
                         return $this->getNodesFromConsul($registry);
                     };
                     break;
+                case 'nacos':
+                    $nodes = $this->getNodesFromNacos();
+                    $refreshCallback = function () {
+                        return $this->getNodesFromNacos();
+                    };
+                    break;
                 default:
                     throw new InvalidArgumentException(sprintf('Invalid protocol of registry %s', $registryProtocol));
             }
@@ -250,6 +258,31 @@ abstract class AbstractServiceClient
                 $port = (int) $service['Port'] ?? 0;
                 // @TODO Get and set the weight property.
                 $address && $port && $nodes[] = new Node($address, $port);
+            }
+        }
+        return $nodes;
+    }
+
+    protected function getNodesFromNacos(): array
+    {
+        $nacosInstance = $this->container->get(NacosInstance::class);
+        $serviceModel = new ServiceModel([
+            'service_name' => $this->serviceName,
+            'namespace_id' => config('nacos.service.namespace_id','public'),
+            'group_name' => config('nacos.service.group_name','api')
+        ]);
+        $service = $nacosInstance->list($serviceModel);
+        $nodes = [];
+        foreach ($service['hosts'] as $node) {
+            $passing = false;
+            if ($node['healthy'] && $node['valid'] && $node['enabled']){
+                $passing = true;
+            }
+            if ($passing) {
+                $address = $node['ip'] ?? '';
+                $port = (int) $node['port'] ?? 0;
+                $weight = (int)$node['weight'] ?? 1;
+                $address && $port && $weight && $nodes[] = new Node($address, $port, $weight);
             }
         }
         return $nodes;
