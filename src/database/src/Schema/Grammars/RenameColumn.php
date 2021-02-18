@@ -67,9 +67,29 @@ class RenameColumn
     protected static function setRenamedColumns(TableDiff $tableDiff, Fluent $command, Column $column)
     {
         $tableDiff->renamedColumns = [
-            $command->from => new Column($command->to, $column->getType(), $column->toArray()),
+            $command->from => new Column($command->to, $column->getType(), self::getSupportedColumn($column)),
         ];
-
         return $tableDiff;
+    }
+
+    /**
+     * The columns option is supported.
+     *
+     * @return array
+     */
+    protected static function getSupportedColumn(Column $column)
+    {
+        $notSupportedColumns = array_merge(
+            ['name'],
+            array_keys($column->getPlatformOptions()),
+            array_keys($column->getCustomSchemaOptions())
+        );
+        $columnArr = $column->toArray();
+        foreach ($notSupportedColumns as $value) {
+            if (array_key_exists($value, $columnArr)) {
+                unset($columnArr[$value]);
+            }
+        }
+        return $columnArr;
     }
 }
