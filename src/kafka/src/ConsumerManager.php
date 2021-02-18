@@ -169,14 +169,14 @@ class ConsumerManager
                 $consumerConfig->setRebalanceTimeout($config['rebalance_timeout']);
                 $consumerConfig->setSendTimeout($config['send_timeout']);
                 $consumerConfig->setGroupId($this->consumer->getGroupId());
-                $consumerConfig->setGroupInstanceId(sprintf('%s-%s', $this->consumer->getGroupId(), uniqid('')));
+                $consumerConfig->setGroupInstanceId(sprintf('%s-%s', $this->consumer->getGroupId(), uniqid()));
                 $consumerConfig->setMemberId($this->consumer->getMemberId() ?: '');
                 $consumerConfig->setInterval($config['interval']);
                 $consumerConfig->setBroker($config['broker']);
                 $consumerConfig->setSocket(SwooleSocket::class);
                 $consumerConfig->setClient(SwooleClient::class);
                 $consumerConfig->setMaxWriteAttempts($config['max_write_attempts']);
-                $consumerConfig->setClientId($config['client_id']);
+                $consumerConfig->setClientId(sprintf('%s-%s', $config['client_id'] ?: 'Hyperf', uniqid()));
                 $consumerConfig->setRecvTimeout($config['recv_timeout']);
                 $consumerConfig->setConnectTimeout($config['connect_timeout']);
                 $consumerConfig->setSessionTimeout($config['session_timeout']);

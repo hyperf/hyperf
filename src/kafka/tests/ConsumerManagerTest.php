@@ -78,7 +78,7 @@ class ConsumerManagerTest extends TestCase
                 $this->assertSame(SwooleSocket::class, $consumer->getSocket());
                 $this->assertSame(SwooleClient::class, $consumer->getClient());
                 $this->assertSame($config['max_write_attempts'], $consumer->getMaxWriteAttempts());
-                $this->assertSame($config['client_id'], $consumer->getClientId());
+                $this->assertTrue(strpos($consumer->getClientId(), $config['client_id']) !== false);
                 $this->assertSame((float) $config['recv_timeout'], $consumer->getRecvTimeout());
                 $this->assertSame((float) $config['connect_timeout'], $consumer->getConnectTimeout());
                 $this->assertSame((float) $config['session_timeout'], $consumer->getSessionTimeout());
