@@ -68,7 +68,7 @@ class ConsumerManager
             $instance->setAutoCommit($annotation->autoCommit);
 
             $process = $this->createProcess($instance);
-            $process->name = $instance->getName() . '-' . $instance->getTopic();
+            $process->name = $instance->getName();
             $process->nums = (int) $annotation->nums;
             ProcessManager::register($process);
         }
