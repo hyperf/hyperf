@@ -154,3 +154,7 @@ return [
 
 在默认的功能实现下，是由一个 `ConfigFetcherProcess` 进程根据配置的 `interval` 来向 Apollo 拉取对应 `namespace` 的配置，并通过 IPC 通讯将拉取到的新配置传递到各个 Worker 中，并更新到 `Hyperf\Contract\ConfigInterface` 对应的对象内。   
 需要注意的是，更新的配置只会更新 `Config` 对象，故仅限应用层或业务层的配置，不涉及框架层的配置改动，因为框架层的配置改动需要重启服务，如果您有这样的需求，也可以通过自行实现 `ConfigFetcherProcess` 来达到目的。
+
+## 注意事项
+
+在命令行模式时，默认不会触发事件分发，导致无法正常获取到相关配置，可通过添加 `--enable-event-dispatcher` 参数来开启。
