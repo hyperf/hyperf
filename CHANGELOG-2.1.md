@@ -1,5 +1,9 @@
 # v2.1.7 - TBD
 
+## Fixed
+
+- [#3272](https://github.com/hyperf/hyperf/pull/3272) Fixed bug that rename column name failed when using `doctrine/dbal`.
+
 ## Added
 
 - [#3261](https://github.com/hyperf/hyperf/pull/3261) Added method `Pipeline::handleCarry()` which to handle the returning value.
