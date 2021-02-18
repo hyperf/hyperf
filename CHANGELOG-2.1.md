@@ -4,10 +4,7 @@
 
 - [#3261](https://github.com/hyperf/hyperf/pull/3261) Added method `Pipeline::handleCarry()` which to handle the returning value.
 - [#3267](https://github.com/hyperf/hyperf/pull/3267) Added `Hyperf\Utils\Reflection\ClassInvoker` which you can used to execute non public methods or get non public properties.
-
-## Changed
-
-- [#3268](https://github.com/hyperf/hyperf/pull/3268) Support `hyperf/kafka` consumer for subscribing to multiple topics.
+- [#3268](https://github.com/hyperf/hyperf/pull/3268) Added support for kafka consumers to subscribe to multiple topics Support.
 
 # v2.1.6 - 2021-02-08
 
