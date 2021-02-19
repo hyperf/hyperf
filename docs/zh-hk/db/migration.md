@@ -313,7 +313,7 @@ class CreateUsersTable extends Migration
 在修改字段之前，請確保將 `doctrine/dbal` 依賴添加到 `composer.json` 文件中。Doctrine DBAL 庫用於確定字段的當前狀態， 並創建對該字段進行指定調整所需的 SQL 查詢：
 
 ```bash
-composer require doctrine/dbal
+composer require "doctrine/dbal:^3.0"
 ```
 
 ### 更新字段屬性

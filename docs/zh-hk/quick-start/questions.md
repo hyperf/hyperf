@@ -127,8 +127,6 @@ composer dump-autoload -o
 
 > 當環境變量存在 SCAN_CACHEABLE 時，.env 中無法修改這個配置。
 
-`2.0.0` 和 `2.0.1` 兩個版本，判斷文件是否修改時，沒有判斷修改時間相等的情況，所以文件修改後，立馬生成緩存的情況（比如使用 `watcher` 組件時）, 會導致代碼無法及時生效。
-
 ## 語法錯誤導致服務無法啟動
 
 當項目啟動時，拋出類似於以下錯誤時
@@ -139,5 +137,19 @@ Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line
 
 可以執行腳本 `composer analyse`，對項目進行靜態檢測，便可以找到出現問題的代碼段。
 
-此問題通常是由於 [zircote/swagger](https://github.com/zircote/swagger-php) 的 3.0.5 版本更新導致, 詳情請見 [#834](https://github.com/zircote/swagger-php/issues/834) 。 
+此問題通常是由於 [zircote/swagger](https://github.com/zircote/swagger-php) 的 3.0.5 版本更新導致, 詳情請見 [#834](https://github.com/zircote/swagger-php/issues/834) 。
 如果安裝了 [hyperf/swagger](https://github.com/hyperf/swagger) 建議將 [zircote/swagger](https://github.com/zircote/swagger-php) 的版本鎖定在 3.0.4
+
+## 內存限制太小導致項目無法運行
+
+PHP 默認的 `memory_limit` 只有 `128M`，因為 `Hyperf` 使用了 `BetterReflection`，不使用掃描緩存時，會消耗大量內存，所以可能會出現內存不夠的情況。
+
+我們可以使用 `php -dmemory_limit=-1 bin/hyperf.php start` 運行, 或者修改 `php.ini` 配置文件
+
+```
+# 查看 php.ini 配置文件位置
+php --ini
+
+# 修改 memory_limit 配置
+memory_limit=-1
+```

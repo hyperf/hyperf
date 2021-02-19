@@ -2,7 +2,7 @@
 
 ## 概念
 
-AOP 為 `Aspect Oriented Programming` 的縮寫，意為：`面向切面程式設計`，通過動態代理等技術實現程式功能的統一維護的一種技術。AOP 是 OOP 的延續，也是 Hyperf 中的一個重要內容，是函數語言程式設計的一種衍生範型。利用 AOP 可以對業務邏輯的各個部分進行隔離，從而使得業務邏輯各部分之間的耦合度降低，提高程式的可重用性，同時提高了開發的效率。   
+AOP 為 `Aspect Oriented Programming` 的縮寫，意為：`面向切面程式設計`，通過動態代理等技術實現程式功能的統一維護的一種技術。AOP 是 OOP 的延續，也是 Hyperf 中的一個重要內容，是函數語言程式設計的一種衍生範型。利用 AOP 可以對業務邏輯的各個部分進行隔離，從而使得業務邏輯各部分之間的耦合度降低，提高程式的可重用性，同時提高了開發的效率。
 
 用通俗的話來講，就是在 Hyperf 裡可以通過 `切面(Aspect)` 介入到任意類的任意方法的執行流程中去，從而改變或加強原方法的功能，這就是 AOP。
 
@@ -34,13 +34,13 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
  */
 class FooAspect extends AbstractAspect
 {
-    // 要切入的類，可以多個，亦可通過 :: 標識到具體的某個方法，通過 * 可以模糊匹配
+    // 要切入的類或 Trait，可以多個，亦可通過 :: 標識到具體的某個方法，通過 * 可以模糊匹配
     public $classes = [
         SomeClass::class,
         'App\Service\SomeClass::someMethod',
         'App\Service\SomeClass::*Method',
     ];
-    
+
     // 要切入的註解，具體切入的還是使用了這些註解的類，僅可切入類註解和類方法註解
     public $annotations = [
         SomeAnnotation::class,
@@ -60,7 +60,7 @@ class FooAspect extends AbstractAspect
 
 每個 `切面(Aspect)` 必須定義 `@Aspect` 註解或在 `config/autoload/aspects.php` 內配置均可發揮作用。
 
-> 使用 `@Aspect` 註解時需 `use Hyperf\Di\Annotation\Aspect;` 名稱空間；  
+> 使用 `@Aspect` 註解時需 `use Hyperf\Di\Annotation\Aspect;` 名稱空間；
 
 您也可以通過 `@Aspect` 註解本身的屬性來完成切入目標的配置，通過下面註解的形式可以達到與上面的示例一樣的目的：
 
@@ -100,12 +100,10 @@ class FooAspect extends AbstractAspect
 }
 ```
 
-> 2.0.3 及以上版本已經可以支援切入 Trait，但要求 PHP 版本 >= 7.3。
-
 ## 代理類快取
 
 所有被 AOP 影響的類，都會在 `./runtime/container/proxy/` 資料夾內生成對應的 `代理類快取`，是否在啟動時自動生成取決於 `config/config.php` 配置檔案中 `scan_cacheable` 配置項的值，預設值為 `false`，如果該配置項為 `true` 則 Hyperf 不會掃描和生成代理類快取，而是直接以現有的快取檔案作為最終的代理類。如果該配置項為 `false`，則 Hyperf 會在每次啟動應用時掃描註解掃描域並自動的生成對應的代理類快取，當代碼發生變化時，代理類快取也會自動的重新生成。
 
-通常在開發環境下，該值為 `false`，這樣更便於開發除錯，而在部署生產環境時，我們可能會希望 Hyperf 提前將所有代理類提前生成，而不是使用時動態的生成，可以通過 `php bin/hyperf.php` 命令來生成所有代理類，然後再通過環境變數 `SCAN_CACHEABLE` 為 `true` 修改該配置項的值，以達到啟動時間更短、應用記憶體佔用更低的目的。   
+通常在開發環境下，該值為 `false`，這樣更便於開發除錯，而在部署生產環境時，我們可能會希望 Hyperf 提前將所有代理類提前生成，而不是使用時動態的生成，可以通過 `php bin/hyperf.php` 命令來生成所有代理類，然後再通過環境變數 `SCAN_CACHEABLE` 為 `true` 修改該配置項的值，以達到啟動時間更短、應用記憶體佔用更低的目的。
 
 基於以上，如果您使用 Docker 或 Kubernetes 等虛擬化技術來部署您的應用的話，您可以在映象構建階段就生成對應的代理類快取並寫入到映象中去，在執行映象例項時，可大大減少啟動時間和應用記憶體。

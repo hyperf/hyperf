@@ -32,11 +32,12 @@ php bin/hyperf.php vendor:publish hyperf/watcher
 
 ## 支援驅動
 
-|                 驅動                 |                備註                 |
-| :----------------------------------: | :---------------------------------: |
-| Hyperf\Watcher\Driver\ScanFileDriver |              無需擴充套件               |
-| Hyperf\Watcher\Driver\FswatchDriver  |          需要安裝 fswatch           |
-|   Hyperf\Watcher\Driver\FindDriver   | 需要安裝 find，MAC 下需要安裝 gfind |
+|                 驅動                  |                備註                 |
+| :-----------------------------------: | :---------------------------------: |
+| Hyperf\Watcher\Driver\ScanFileDriver  |              無需擴充套件               |
+|  Hyperf\Watcher\Driver\FswatchDriver  |          需要安裝 fswatch           |
+|   Hyperf\Watcher\Driver\FindDriver    | 需要安裝 find，MAC 下需要安裝 gfind |
+| Hyperf\Watcher\Driver\FindNewerDriver |            需要安裝 find            |
 
 ### `fswatch` 安裝
 
@@ -44,6 +45,12 @@ Mac
 
 ```bash
 brew install fswatch
+```
+
+Ubuntu/Debian
+
+```bash
+apt-get install fswatch
 ```
 
 其他
@@ -66,7 +73,8 @@ php bin/hyperf.php server:watch
 ```
 
 ## 不足
+
 - 暫時 Alpine Docker 環境下，稍微有點問題，後續會完善。
-- 刪除檔案需要手動重啟才能生效。
+- 刪除檔案和修改`.env`需要手動重啟才能生效。
 - vendor 中的檔案需要使用 classmap 形式自動載入才能被掃描。（即執行`composer dump-autoload -o`)
 
