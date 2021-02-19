@@ -97,10 +97,26 @@ class SignalManager
         return $this->stopped;
     }
 
+    /**
+     * @deprecated v2.2
+     */
+    public function isStoped(): bool
+    {
+        return $this->isStopped();
+    }
+
     public function setStopped(bool $stopped): self
     {
         $this->stopped = $stopped;
         return $this;
+    }
+
+    /**
+     * @deprecated v2.2
+     */
+    public function setStoped(bool $stopped): self
+    {
+        return $this->setStopped($stopped);
     }
 
     protected function isInvalidProcess(?int $process): bool
