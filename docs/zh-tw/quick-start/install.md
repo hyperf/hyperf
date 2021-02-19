@@ -8,7 +8,7 @@ Hyperf 對系統環境有一些要求，僅可運行於 Linux 和 Mac 環境下�
 
 當您不想採用 Docker 來作為執行的環境基礎時，您需要確保您的執行環境達到了以下的要求：   
 
- - PHP >= 7.2
+ - PHP >= 7.3
  - Swoole PHP 擴充套件 >= 4.5，並關閉了 `Short Name`
  - OpenSSL PHP 擴充套件
  - JSON PHP 擴充套件
@@ -33,27 +33,45 @@ composer create-project hyperf/hyperf-skeleton
 
 假設您的本機環境並不能達到 Hyperf 的環境要求，或對於環境配置不是那麼熟悉，那麼您可以通過以下方法來執行及開發 Hyperf 專案：
 
+- 啟動映象
+
+可以根據實際情況，對映到宿主機對應的目錄，以下以 `/workspace/skeleton` 為例
+
+> 如果 docker 啟動時開啟了 selinux-enabled 選項，容器內訪問宿主機資源就會受限，所以啟動容器時可以增加 --privileged -u root 選項
+
+```shell
+docker run --name hyperf \
+-v /workspace/skeleton:/data/project \
+-p 9501:9501 -it \
+--privileged -u root \
+--entrypoint /bin/sh \
+hyperf/hyperf:7.4-alpine-v3.11-swoole
 ```
-# 下載並執行 hyperf/hyperf 映象，並將映象內的專案目錄繫結到宿主機的 /tmp/skeleton 目錄
-docker run -v /tmp/skeleton:/hyperf-skeleton -p 9501:9501 -it --entrypoint /bin/sh hyperf/hyperf:latest
 
-# 映象容器執行後，在容器內安裝 Composer
-wget https://github.com/composer/composer/releases/download/1.8.6/composer.phar
-chmod u+x composer.phar
-mv composer.phar /usr/local/bin/composer
-# 將 Composer 映象設定為阿里雲映象，加速國內下載速度
+- 將 Composer 映象設定為阿里雲映象，加速國內下載速度
+
+> 視情況而定
+
+```shell
 composer config -g repo.packagist composer https://mirrors.aliyun.com/composer
+```
 
-# 通過 Composer 安裝 hyperf/hyperf-skeleton 專案
+- 建立專案
+
+```shell
+cd /data/project
 composer create-project hyperf/hyperf-skeleton
+```
 
-# 進入安裝好的 Hyperf 專案目錄
+- 啟動專案
+
+```shell
 cd hyperf-skeleton
-# 啟動 Hyperf
 php bin/hyperf.php start
 ```
 
-接下來，就可以在 `/tmp/skeleton` 中看到您安裝好的程式碼了。由於 Hyperf 是持久化的 CLI 框架，當您修改完您的程式碼後，通過 `CTRL + C` 終止當前啟動的程序例項，並重新執行 `php bin/hyperf.php start` 啟動命令即可。
+接下來，就可以在宿主機 `/workspace/skeleton/hyperf-skeleton` 中看到您安裝好的程式碼了。
+由於 Hyperf 是持久化的 CLI 框架，當您修改完您的程式碼後，通過 `CTRL + C` 終止當前啟動的程序例項，並重新執行 `php bin/hyperf.php start` 啟動命令即可。
 
 ## 存在相容性問題的擴充套件
 

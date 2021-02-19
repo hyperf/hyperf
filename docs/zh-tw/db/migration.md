@@ -313,7 +313,7 @@ class CreateUsersTable extends Migration
 在修改欄位之前，請確保將 `doctrine/dbal` 依賴新增到 `composer.json` 檔案中。Doctrine DBAL 庫用於確定欄位的當前狀態， 並建立對該欄位進行指定調整所需的 SQL 查詢：
 
 ```bash
-composer require doctrine/dbal
+composer require "doctrine/dbal:^3.0"
 ```
 
 ### 更新欄位屬性

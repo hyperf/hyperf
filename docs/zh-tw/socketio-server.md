@@ -19,9 +19,9 @@ hyperf/socketio-server 元件是基於 WebSocket 實現的，請確保服務端�
     'port' => 9502,
     'sock_type' => SWOOLE_SOCK_TCP,
     'callbacks' => [
-        SwooleEvent::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
-        SwooleEvent::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
-        SwooleEvent::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
+        Event::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
+        Event::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
+        Event::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
     ],
 ],
 ```
@@ -448,5 +448,22 @@ public function onEvent($socket, $data)
     $request = Hyperf\WebSocketServer\Context::get(
         Psr\Http\Message\ServerRequestInterface::class
     );
+}
+```
+
+### Nginx 代理配置
+
+使用 `Nginx` 反向代理 `Socket.io` 與 `WebSocket` 有些許區別
+```nginx
+server {
+    location ^~/socket.io/ {
+        # 執行代理訪問真實伺服器
+        proxy_pass http://hyperf;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
 }
 ```

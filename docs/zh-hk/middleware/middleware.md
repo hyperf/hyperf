@@ -33,7 +33,7 @@ return [
 
 ### 通過配置文件定義
 
-在使用配置文件定義路由時，您儘可通過配置文件來定義對應的中間件，局部中間件的配置將在路由配置上完成。   
+在使用配置文件定義路由時，您僅可通過配置文件來定義對應的中間件，局部中間件的配置將在路由配置上完成。   
 `Hyperf\HttpServer\Router\Router` 類的每個定義路由的方法的最後一個參數 `$options` 都將接收一個數組，可通過傳遞鍵值 `middleware` 及一個數組值來定義該路由的中間件，我們通過幾個路由定義來演示一下:
 
 ```php
@@ -214,7 +214,7 @@ class FooMiddleware implements MiddlewareInterface
             [
                 'code' => -1,
                 'data' => [
-                    'error' => '中間裏驗證token無效，阻止繼續向下執行',
+                    'error' => '中間件驗證token無效，阻止繼續向下執行',
                 ],
             ]
         );
