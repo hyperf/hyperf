@@ -16,7 +16,9 @@ composer require hyperf/rate-limit
 | key            | NULL   | 生成令牌桶的 key     |
 | waitTimeout    | 3      | 排队超时时间        |
 
+编辑 `rate_limit.php`, 若没有则自行创建
 ```php
+
 <?php
 
 return [
