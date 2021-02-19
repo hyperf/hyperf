@@ -1,6 +1,6 @@
 name: Translate docs
 
-on: [ push, pull_request ]
+on: [ push, pull_request, workflow_dispatch ]
 
 jobs:
   translate:
@@ -16,6 +16,7 @@ jobs:
         with:
           php-version: 7.4
           tools: phpize
+          extensions: swoole
           ini-values: extension=opencc
 
       - name: Install OpenCC
