@@ -13,6 +13,7 @@
 ## Changed
 
 - [#3258](https://github.com/hyperf/hyperf/pull/3258) Set different client ids based on different kafka consumers.
+- [#3282](https://github.com/hyperf/hyperf/pull/3282) Renamed `stoped` to `stopped` for `hyperf/signal`.
 
 # v2.1.6 - 2021-02-08
 
