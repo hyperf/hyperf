@@ -40,7 +40,7 @@ class SignalManager
     /**
      * @var bool
      */
-    protected $stoped = false;
+    protected $stopped = false;
 
     public function __construct(ContainerInterface $container)
     {
@@ -84,7 +84,7 @@ class SignalManager
                         }
                     }
 
-                    if ($this->isStoped()) {
+                    if ($this->isStopped()) {
                         break;
                     }
                 }
@@ -92,14 +92,14 @@ class SignalManager
         }
     }
 
-    public function isStoped(): bool
+    public function isStopped(): bool
     {
-        return $this->stoped;
+        return $this->stopped;
     }
 
-    public function setStoped(bool $stoped): self
+    public function setStopped(bool $stopped): self
     {
-        $this->stoped = $stoped;
+        $this->stopped = $stopped;
         return $this;
     }
 
