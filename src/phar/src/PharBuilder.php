@@ -189,9 +189,9 @@ class PharBuilder
     public function getMountLinkCode(): string
     {
         $mountLink = implode('","', $this->mountLink);
-        $mainStr = <<<EOD
+        return <<<EOD
 <?php
-\$mountLink = ["$mountLink"];
+\$mountLink = ["{$mountLink}"];
 array_walk(\$mountLink, function (\$item){
     \$file = realpath(\$argv[0]).'/'.\$item;
     if(!file_exists(\$file)){
@@ -205,9 +205,8 @@ array_walk(\$mountLink, function (\$item){
     Phar::mount(\$item,\$file);
 });
 EOD;
-        return $mainStr;
     }
-    
+
     /**
      * Compile the code into the Phar file.
      */
@@ -274,7 +273,7 @@ EOD;
         $this->logger->info('Adding main file "' . $main . '"');
         $stubContents = file_get_contents($main);
         $targetPhar->addFromString($main, strtr($stubContents, ['<?php' => $this->getMountLinkCode()]));
-        
+
         $this->logger->info('Setting stub');
         // Add the default stub.
         $targetPhar->setStub($targetPhar->createDefaultStub($main));
