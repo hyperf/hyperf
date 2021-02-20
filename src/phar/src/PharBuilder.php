@@ -41,6 +41,11 @@ class PharBuilder
     private $target;
 
     /**
+     * @var array
+     */
+    private $mountLink = ['.env', 'runtime/hyperf.pid'];
+
+    /**
      * @var string
      */
     private $version;
@@ -181,6 +186,30 @@ class PharBuilder
     /**
      * Compile the code into the Phar file.
      */
+    public function getMountLinkCode(): string
+    {
+        $mountLink = implode('","', $this->mountLink);
+        return <<<EOD
+<?php
+\$mountLink = ["{$mountLink}"];
+array_walk(\$mountLink, function (\$item){
+    \$file = realpath(\$argv[0]).'/'.\$item;
+    if(!file_exists(\$file)){
+        if(rtrim(\$item, '/')!=\$item){
+            mkdir(\$file, 0777, true);
+        }else{
+            file_exists(dirname(\$file)) || mkdir(dirname(\$file), 0777, true);
+            file_put_contents(\$file,"");
+        }
+    }
+    Phar::mount(\$item,\$file);
+});
+EOD;
+    }
+
+    /**
+     * Compile the code into the Phar file.
+     */
     public function build()
     {
         $this->logger->info('Creating phar <info>' . $this->getTarget() . '</info>');
@@ -197,6 +226,8 @@ class PharBuilder
             $tmp = $target . '.' . mt_rand() . '.phar';
         } while (file_exists($tmp));
 
+        $main = $this->getMain();
+
         $targetPhar = new TargetPhar(new Phar($tmp), $this);
         $this->logger->info('Adding main package "' . $this->package->getName() . '"');
         $finder = Finder::create()
@@ -205,6 +236,8 @@ class PharBuilder
             ->exclude(rtrim($this->package->getVendorPath(), '/'))
             ->exclude('runtime') //Ignore runtime dir
             ->notPath('/^composer\.phar/')
+            ->exclude('.*')
+            ->exclude($main)
             ->notPath($target) //Ignore the phar package that exists in the project itself
             ->in($this->package->getDirectory());
         $targetPhar->addBundle($this->package->bundle($finder));
@@ -219,11 +252,6 @@ class PharBuilder
                 ->files()
                 ->in($this->package->getDirectory() . 'runtime/container');
             $targetPhar->addBundle($this->package->bundle($finder));
-        }
-        // Add .env file.
-        if (is_file($this->package->getDirectory() . '.env')) {
-            $this->logger->info('Adding .env file');
-            $targetPhar->addFile($this->package->getDirectory() . '.env');
         }
 
         $this->logger->info('Adding composer base files');
@@ -242,9 +270,11 @@ class PharBuilder
         $this->logger->info('Replace method "readPaths" in file "vendor/hyperf/config/src/ConfigFactory.php" and change "getRealPath" to "getPathname".');
         $this->replaceConfigFactoryReadPaths($targetPhar, $vendorPath);
 
-        $this->logger->info('Setting main/stub');
+        $this->logger->info('Adding main file "' . $main . '"');
+        $stubContents = file_get_contents($main);
+        $targetPhar->addFromString($main, strtr($stubContents, ['<?php' => $this->getMountLinkCode()]));
 
-        $main = $this->getMain();
+        $this->logger->info('Setting stub');
         // Add the default stub.
         $targetPhar->setStub($targetPhar->createDefaultStub($main));
         $this->logger->info('Setting default stub <info>' . $main . '</info>.');
