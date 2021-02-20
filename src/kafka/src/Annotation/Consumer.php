@@ -25,7 +25,7 @@ class Consumer extends AbstractAnnotation
     public $pool = 'default';
 
     /**
-     * @var string
+     * @var string|string[]
      */
     public $topic;
 

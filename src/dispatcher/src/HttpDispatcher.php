@@ -31,9 +31,9 @@ class HttpDispatcher extends AbstractDispatcher
     public function dispatch(...$params): ResponseInterface
     {
         /**
-         * @var RequestInterface
-         * @var array $middlewares
-         * @var MiddlewareInterface $coreHandler
+         * @param RequestInterface $request
+         * @param array $middlewares
+         * @param MiddlewareInterface $coreHandler
          */
         [$request, $middlewares, $coreHandler] = $params;
         $requestHandler = new HttpRequestHandler($middlewares, $coreHandler, $this->container);

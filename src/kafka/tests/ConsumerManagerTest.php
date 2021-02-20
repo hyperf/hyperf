@@ -18,6 +18,7 @@ use Hyperf\Kafka\Annotation\Consumer;
 use Hyperf\Kafka\ConsumerManager;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
+use Hyperf\Utils\Arr;
 use HyperfTest\Kafka\Stub\ContainerStub;
 use HyperfTest\Kafka\Stub\DemoConsumer;
 use longlang\phpkafka\Client\SwooleClient;
@@ -42,8 +43,9 @@ class ConsumerManagerTest extends TestCase
     {
         $container = ContainerStub::getContainer();
 
+        $topic = Arr::random([uniqid(), [uniqid(), uniqid()]]);
         AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
-            'topic' => $topic = uniqid(),
+            'topic' => $topic,
             'name' => $name = uniqid(),
             'groupId' => $groupId = uniqid(),
             'nums' => $nums = rand(1, 10),
@@ -65,7 +67,7 @@ class ConsumerManagerTest extends TestCase
                 $this->assertSame(true, $consumer->getAutoCommit());
                 $this->assertSame($config['rack_id'], $consumer->getRackId());
                 $this->assertSame($config['replica_id'], $consumer->getReplicaId());
-                $this->assertSame([$topic], $consumer->getTopic());
+                $this->assertSame((array) $topic, $consumer->getTopic());
                 $this->assertSame((float) $config['rebalance_timeout'], $consumer->getRebalanceTimeout());
                 $this->assertSame((float) $config['send_timeout'], $consumer->getSendTimeout());
                 $this->assertSame($groupId, $consumer->getGroupId());
@@ -76,7 +78,7 @@ class ConsumerManagerTest extends TestCase
                 $this->assertSame(SwooleSocket::class, $consumer->getSocket());
                 $this->assertSame(SwooleClient::class, $consumer->getClient());
                 $this->assertSame($config['max_write_attempts'], $consumer->getMaxWriteAttempts());
-                $this->assertSame($config['client_id'], $consumer->getClientId());
+                $this->assertTrue(strpos($consumer->getClientId(), $config['client_id']) !== false);
                 $this->assertSame((float) $config['recv_timeout'], $consumer->getRecvTimeout());
                 $this->assertSame((float) $config['connect_timeout'], $consumer->getConnectTimeout());
                 $this->assertSame((float) $config['session_timeout'], $consumer->getSessionTimeout());

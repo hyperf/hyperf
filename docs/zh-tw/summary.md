@@ -4,7 +4,7 @@
   * [線上交流](zh-tw/communication.md)
   * [捐獻及贊助](zh-tw/donate.md)
   * [參與開發](zh-tw/contribute.md)
-  
+
 * 版本管理
 
   * [版本計劃](zh-tw/release-planning.md)
@@ -18,7 +18,7 @@
   * [常見問題](zh-tw/quick-start/questions.md)
   * [程式設計須知](zh-tw/quick-start/important.md)
   * [視訊教程](https://course.swoole-cloud.com/videos/5/new?from=hyperf.io)
-  
+
 * 核心架構
 
   * [生命週期](zh-tw/lifecycle.md)
@@ -28,7 +28,7 @@
   * [依賴注入](zh-tw/di.md)
   * [事件機制](zh-tw/event.md)
   * [AOP 面向切面程式設計](zh-tw/aop.md)
-  
+
 * 基礎功能
 
   * [路由](zh-tw/router.md)
@@ -43,11 +43,12 @@
   * [命令列](zh-tw/command.md)
   * [自動化測試](zh-tw/testing.md)
   * [檢視](zh-tw/view.md)
+  * [檢視引擎](zh-tw/view-engine.md)
   * [國際化](zh-tw/translation.md)
   * [驗證器](zh-tw/validation.md)
   * [Session 會話管理](zh-tw/session.md)
   * [檔案系統](zh-tw/filesystem.md)
-  
+
 * 資料庫模型
 
   * [快速開始](zh-tw/db/quick-start.md)
@@ -63,7 +64,7 @@
   * [極簡 DB 元件](zh-tw/db/db.md)
   * [API 資源構造器](zh-tw/db/resource.md)
   * [模型全文檢索](zh-tw/scout.md)
-  
+
 * 微服務
 
   * [架構理念](zh-tw/microservice.md)
@@ -77,10 +78,10 @@
   * [呼叫鏈追蹤](zh-tw/tracer.md)
   * [服務監控](zh-tw/metric.md)
   * [Snowflake](zh-tw/snowflake.md)
-  
+
 * 網路服務
 
-  * [TCP 服務](zh-tw/tcp-server.md)
+  * [TCP/UDP 服務](zh-tw/tcp-server.md)
   * [WebSocket 服務](zh-tw/websocket-server.md)
   * [Socket.io 服務](zh-tw/socketio-server.md)
 
@@ -90,7 +91,8 @@
   * [AMQP](zh-tw/amqp.md)
   * [Nats](zh-tw/nats.md)
   * [NSQ](zh-tw/nsq.md)
-  
+  * [Kafka](zh-tw/kafka.md)
+
 * 客戶端
 
   * [Redis 協程客戶端](zh-tw/redis.md)
@@ -115,6 +117,7 @@
   * [Watcher](zh-tw/watcher.md)
   * [開發者工具](zh-tw/devtool.md)
   * [Swoole Tracker](zh-tw/swoole-tracker.md)
+  * [Phar 打包器](zh-tw/phar.md)
 
 * 應用部署
 
@@ -123,11 +126,11 @@
   * [Supervisor 部署](zh-tw/tutorial/supervisor.md)
   * [Nginx 反向代理](zh-tw/tutorial/nginx.md)
   * [阿里雲日誌服務](zh-tw/tutorial/aliyun-logger.md)
-  
+
 * Awesome Hyperf
 
   * [協程元件庫](zh-tw/awesome-components.md)
-  
+
 * 元件開發指南
 
   * [指南前言](zh-tw/component-guide/intro.md)
@@ -135,6 +138,7 @@
   * [ConfigProvider 機制](zh-tw/component-guide/configprovider.md)
 
 * 版本升級指南
-  
+
   * [1.1 升級指南](zh-tw/upgrade/1.1.md)
   * [2.0 升級指南](zh-tw/upgrade/2.0.md)
+  * [2.1 升級指南](zh-tw/upgrade/2.1.md)

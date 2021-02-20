@@ -4,7 +4,7 @@
   * [線上交流](zh-hk/communication.md)
   * [捐獻及贊助](zh-hk/donate.md)
   * [參與開發](zh-hk/contribute.md)
-  
+
 * 版本管理
 
   * [版本計劃](zh-hk/release-planning.md)
@@ -18,7 +18,7 @@
   * [常見問題](zh-hk/quick-start/questions.md)
   * [編程須知](zh-hk/quick-start/important.md)
   * [視頻教程](https://course.swoole-cloud.com/videos/5/new?from=hyperf.io)
-  
+
 * 核心架構
 
   * [生命週期](zh-hk/lifecycle.md)
@@ -28,7 +28,7 @@
   * [依賴注入](zh-hk/di.md)
   * [事件機制](zh-hk/event.md)
   * [AOP 面向切面編程](zh-hk/aop.md)
-  
+
 * 基礎功能
 
   * [路由](zh-hk/router.md)
@@ -43,11 +43,12 @@
   * [命令行](zh-hk/command.md)
   * [自動化測試](zh-hk/testing.md)
   * [視圖](zh-hk/view.md)
+  * [視圖引擎](zh-hk/view-engine.md)
   * [國際化](zh-hk/translation.md)
   * [驗證器](zh-hk/validation.md)
   * [Session 會話管理](zh-hk/session.md)
   * [文件系統](zh-hk/filesystem.md)
-  
+
 * 數據庫模型
 
   * [快速開始](zh-hk/db/quick-start.md)
@@ -63,7 +64,7 @@
   * [極簡 DB 組件](zh-hk/db/db.md)
   * [API 資源構造器](zh-hk/db/resource.md)
   * [模型全文檢索](zh-hk/scout.md)
-  
+
 * 微服務
 
   * [架構理念](zh-hk/microservice.md)
@@ -77,10 +78,10 @@
   * [調用鏈追蹤](zh-hk/tracer.md)
   * [服務監控](zh-hk/metric.md)
   * [Snowflake](zh-hk/snowflake.md)
-  
+
 * 網絡服務
 
-  * [TCP 服務](zh-hk/tcp-server.md)
+  * [TCP/UDP 服務](zh-hk/tcp-server.md)
   * [WebSocket 服務](zh-hk/websocket-server.md)
   * [Socket.io 服務](zh-hk/socketio-server.md)
 
@@ -90,7 +91,8 @@
   * [AMQP](zh-hk/amqp.md)
   * [Nats](zh-hk/nats.md)
   * [NSQ](zh-hk/nsq.md)
-  
+  * [Kafka](zh-hk/kafka.md)
+
 * 客户端
 
   * [Redis 協程客户端](zh-hk/redis.md)
@@ -115,6 +117,7 @@
   * [Watcher](zh-hk/watcher.md)
   * [開發者工具](zh-hk/devtool.md)
   * [Swoole Tracker](zh-hk/swoole-tracker.md)
+  * [Phar 打包器](zh-hk/phar.md)
 
 * 應用部署
 
@@ -123,11 +126,11 @@
   * [Supervisor 部署](zh-hk/tutorial/supervisor.md)
   * [Nginx 反向代理](zh-hk/tutorial/nginx.md)
   * [阿里雲日誌服務](zh-hk/tutorial/aliyun-logger.md)
-  
+
 * Awesome Hyperf
 
   * [協程組件庫](zh-hk/awesome-components.md)
-  
+
 * 組件開發指南
 
   * [指南前言](zh-hk/component-guide/intro.md)
@@ -135,6 +138,7 @@
   * [ConfigProvider 機制](zh-hk/component-guide/configprovider.md)
 
 * 版本升級指南
-  
+
   * [1.1 升級指南](zh-hk/upgrade/1.1.md)
   * [2.0 升級指南](zh-hk/upgrade/2.0.md)
+  * [2.1 升級指南](zh-hk/upgrade/2.1.md)
