@@ -66,12 +66,16 @@ class PharBuilder
      */
     private $composer = [];
 
+    /**
+     * @var null|array
+     */
+    private $exclude;
 
-
-    public function __construct(string $path, LoggerInterface $logger)
+    public function __construct(string $path, LoggerInterface $logger, string $exclude = "")
     {
         $this->logger = $logger;
-        $this->package = new Package($this->loadJson($path), dirname(realpath($path)));
+        $this->exclude = explode(',', $exclude) ?? [];
+        $this->package = new Package($this->loadJson($path), dirname(realpath($path)), $this->exclude);
     }
 
     /**
