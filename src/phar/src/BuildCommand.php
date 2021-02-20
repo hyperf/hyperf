@@ -52,7 +52,7 @@ class BuildCommand extends HyperfCommand
         $path = $this->input->getOption('path');
         $version = $this->input->getOption('phar-version');
         $noDev = $this->input->getOption('no-dev');
-        $composer = $this->input->getOption('composer-cmd');
+        $composer = $this->input->getOption('composer');
 
         if (empty($path)) {
             $path = BASE_PATH;
