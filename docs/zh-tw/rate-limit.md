@@ -5,29 +5,24 @@
 ```bash
 composer require hyperf/rate-limit
 ```
-## 預設配置
+
+## 配置
+
+### 釋出配置
+
+```bash
+php bin/hyperf.php vendor:publish hyperf/rate-limit
+```
+
+### 配置說明
 
 |  配置          | 預設值 |         備註        |
 |:--------------:|:------:|:-------------------:|
 | create         | 1      | 每秒生成令牌數      |
 | consume        | 1      | 每次請求消耗令牌數  |
 | capacity       | 2      | 令牌桶最大容量      |
-| limitCallback  | NULL   | 觸發限流時回撥方法  |
-| key            | NULL   | 生成令牌桶的 key     |
-| waitTimeout    | 3      | 排隊超時時間        |
-
-```php
-<?php
-
-return [
-    'create' => 1,
-    'consume' => 1,
-    'capacity' => 2,
-    'limitCallback' => null,
-    'key' => null,
-    'waitTimeout' => 3,
-];
-```
+| limitCallback  | `[]`   | 觸發限流時回撥方法  |
+| waitTimeout    | 1      | 排隊超時時間        |
 
 ## 使用限流器
 

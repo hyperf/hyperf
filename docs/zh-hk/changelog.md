@@ -1,5 +1,26 @@
 # 版本更新記錄
 
+# v2.1.7 - 2021-02-22
+
+## 修復
+
+- [#3272](https://github.com/hyperf/hyperf/pull/3272) 修復使用 `doctrine/dbal` 修改數據庫字段名報錯的問題。
+
+## 新增
+
+- [#3261](https://github.com/hyperf/hyperf/pull/3261) 新增方法 `Pipeline::handleCarry`，可以方便處理返回值。
+- [#3267](https://github.com/hyperf/hyperf/pull/3267) 新增 `Hyperf\Utils\Reflection\ClassInvoker`，用於執行非公共方法和讀取非公共變量。
+- [#3268](https://github.com/hyperf/hyperf/pull/3268) 為 `kafka` 消費者新增訂閲多個主題的能力。
+
+## Optimized
+
+- [#3193](https://github.com/hyperf/hyperf/pull/3193) 將外部文件 `.env` 和 `runtime/hyperf.pid` 裝載到 `phar` 包中的虛擬位置。
+
+## Changed
+
+- [#3258](https://github.com/hyperf/hyperf/pull/3258) 為不同的 `kafka` 消費者設置不同的 Client ID。
+- [#3282](https://github.com/hyperf/hyperf/pull/3282) 為 `hyperf/signal` 將拼寫錯誤的 `stoped` 修改為 `stopped`。
+
 # v2.1.6 - 2021-02-08
 
 ## 修復
