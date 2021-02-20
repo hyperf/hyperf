@@ -66,9 +66,9 @@ class TargetPhar
     /**
      * Add the file to the Phar package.
      */
-    public function addFile(string $filename): void
+    public function addFile(string $filename, ?string $localname = null): void
     {
-        $this->phar->addFile($filename, $this->pharBuilder->getPathLocalToBase($filename));
+        $this->phar->addFile($filename, $localname ?? $this->pharBuilder->getPathLocalToBase($filename));
     }
 
     /**

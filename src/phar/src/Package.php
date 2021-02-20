@@ -18,6 +18,11 @@ class Package
     /**
      * @var array
      */
+    protected $exclude;
+
+    /**
+     * @var array
+     */
     protected $package;
 
     /**
@@ -25,10 +30,12 @@ class Package
      */
     protected $directory;
 
-    public function __construct(array $package, string $directory)
+    public function __construct(array $package, string $directory, array $exclude = [])
     {
         $this->package = $package;
         $this->directory = rtrim($directory, '/') . '/';
+        $this->exclude = $exclude;
+
     }
 
     /**
@@ -99,6 +106,7 @@ class Package
                 ->files()
                 ->ignoreVCS(true)
                 ->exclude(rtrim($vendorPath, '/'))
+                ->exclude($this->exclude)
                 ->notPath('/^composer\.phar/')
                 ->in($dir);
         }

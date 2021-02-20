@@ -37,7 +37,11 @@ class BuildCommand extends HyperfCommand
             ->addOption('name', '', InputOption::VALUE_OPTIONAL, 'This is the name of the Phar package, and if it is not passed in, the project name is used by default', null)
             ->addOption('bin', 'b', InputOption::VALUE_OPTIONAL, 'The script path to execute by default.', 'bin/hyperf.php')
             ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Project root path, default BASE_PATH.', null)
-            ->addOption('phar-version', '', InputOption::VALUE_OPTIONAL, 'The version of the project that will be compiled.', null);
+            ->addOption('phar-version', '', InputOption::VALUE_OPTIONAL, 'The version of the project that will be compiled.', null)
+            ->addOption('exclude', '', InputOption::VALUE_OPTIONAL, 'Project exclude path .', 'Flutter,deploy,docker-compose.yml')
+            ->addOption('no-dev', '', InputOption::VALUE_OPTIONAL, 'Project is debug path, default false .', 'false')
+            ->addOption('composer', '', InputOption::VALUE_OPTIONAL, 'composer cmd , default composer,composer.phar,./composer,./composer.phar .', 'composer,composer.phar,./composer,./composer.phar');
+
     }
 
     public function handle()
@@ -47,10 +51,19 @@ class BuildCommand extends HyperfCommand
         $bin = $this->input->getOption('bin');
         $path = $this->input->getOption('path');
         $version = $this->input->getOption('phar-version');
+        $noDev = $this->input->getOption('no-dev');
+        $composer = $this->input->getOption('composer-cmd');
+
         if (empty($path)) {
             $path = BASE_PATH;
         }
         $builder = $this->getPharBuilder($path);
+        $builder->setNoDev($noDev != 'false');
+
+        if (!empty($composer)) {
+            $builder->setComposer($composer);
+        }
+
         if (! empty($bin)) {
             $builder->setMain($bin);
         }
