@@ -126,12 +126,12 @@ class PharBuilder
 
     /**
      * Set the composer cmd.
-     * @param string $composerCmd
+     * @param string $composer
      * @return $this
      */
-    public function setComposer(string $composerCmd)
+    public function setComposer(string $composer)
     {
-        $this->composer = explode(',', $composerCmd) ?? [];
+        $this->composer = explode(',', $composer) ?? [];
         return $this;
     }
     /**
@@ -240,13 +240,13 @@ class PharBuilder
      */
     public function execComposr(string $cmd): bool
     {
-        foreach ($this->composerCmd as $composer) {
+        foreach ($this->composer as $composer) {
             $return = System::exec("{$composer} $cmd");
             if (($return['code'] ?? -1) === 0) {
                 return true;
             }
         }
-        throw new UnexpectedValueException('composer is not install ,try "' . implode(',', $this->composerCmd) . '"');
+        throw new UnexpectedValueException('composer is not install ,try "' . implode(',', $this->composer) . '"');
     }
 
     /**
