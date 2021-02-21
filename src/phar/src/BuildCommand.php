@@ -63,6 +63,9 @@ class BuildCommand extends HyperfCommand
         if (! empty($version)) {
             $builder->setVersion($version);
         }
+        if (count($mount) > 0) {
+            $builder->setMount($mount);
+        }
 
         $builder->build();
     }
