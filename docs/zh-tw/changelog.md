@@ -11,12 +11,9 @@
 - [#3261](https://github.com/hyperf/hyperf/pull/3261) 新增方法 `Pipeline::handleCarry`，可以方便處理返回值。
 - [#3267](https://github.com/hyperf/hyperf/pull/3267) 新增 `Hyperf\Utils\Reflection\ClassInvoker`，用於執行非公共方法和讀取非公共變數。
 - [#3268](https://github.com/hyperf/hyperf/pull/3268) 為 `kafka` 消費者新增訂閱多個主題的能力。
+- [#3193](https://github.com/hyperf/hyperf/pull/3193) [#3296](https://github.com/hyperf/hyperf/pull/3296) 為 `phar:build` 新增選項 `-M`，可以用來對映外部的檔案或目錄到 `Phar` 包中。 
 
-## Optimized
-
-- [#3193](https://github.com/hyperf/hyperf/pull/3193) 將外部檔案 `.env` 和 `runtime/hyperf.pid` 裝載到 `phar` 包中的虛擬位置。
-
-## Changed
+## 變更
 
 - [#3258](https://github.com/hyperf/hyperf/pull/3258) 為不同的 `kafka` 消費者設定不同的 Client ID。
 - [#3282](https://github.com/hyperf/hyperf/pull/3282) 為 `hyperf/signal` 將拼寫錯誤的 `stoped` 修改為 `stopped`。
