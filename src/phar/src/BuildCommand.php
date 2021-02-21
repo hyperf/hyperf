@@ -38,9 +38,9 @@ class BuildCommand extends HyperfCommand
             ->addOption('bin', 'b', InputOption::VALUE_OPTIONAL, 'The script path to execute by default.', 'bin/hyperf.php')
             ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Project root path, default BASE_PATH.', null)
             ->addOption('phar-version', '', InputOption::VALUE_OPTIONAL, 'The version of the project that will be compiled.', null)
-            ->addOption('exclude', '', InputOption::VALUE_OPTIONAL, 'Project exclude path .', 'Flutter,deploy,docker-compose.yml')
+            ->addOption('exclude', '', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Project exclude path .', ['Flutter','deploy','docker-compose.yml'])
             ->addOption('no-dev', '', InputOption::VALUE_OPTIONAL, 'Project is debug path, default false .', 'false')
-            ->addOption('composer', '', InputOption::VALUE_OPTIONAL, 'composer cmd , default composer,composer.phar,./composer,./composer.phar .', 'composer,composer.phar,./composer,./composer.phar')
+            ->addOption('composer', '', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'composer cmd , default composer,composer.phar,./composer,./composer.phar .', ['composer','composer.phar','./composer','./composer.phar'])
             ->addOption('mount', 'M', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The mount path or dir.');
     }
 
@@ -53,12 +53,13 @@ class BuildCommand extends HyperfCommand
         $version = $this->input->getOption('phar-version');
         $noDev = $this->input->getOption('no-dev');
         $composer = $this->input->getOption('composer');
+        $exclude = $this->input->getOption('exclude');
         $mount = $this->input->getOption('mount');
 
         if (empty($path)) {
             $path = BASE_PATH;
         }
-        $builder = $this->getPharBuilder($path);
+        $builder = $this->getPharBuilder($path, $exclude);
         $builder->setNoDev($noDev != 'false');
 
         if (!empty($composer)) {
@@ -91,7 +92,7 @@ class BuildCommand extends HyperfCommand
         }
     }
 
-    public function getPharBuilder(string $path): PharBuilder
+    public function getPharBuilder(string $path, array $exclude): PharBuilder
     {
         if (is_dir($path)) {
             $path = rtrim($path, '/') . '/composer.json';
@@ -99,7 +100,7 @@ class BuildCommand extends HyperfCommand
         if (! is_file($path)) {
             throw new InvalidArgumentException(sprintf('The given path %s is not a readable file', $path));
         }
-        $pharBuilder = new PharBuilder($path, $this->container->get(LoggerInterface::class));
+        $pharBuilder = new PharBuilder($path, $this->container->get(LoggerInterface::class), $exclude);
 
         $vendorPath = $pharBuilder->getPackage()->getVendorAbsolutePath();
         if (! is_dir($vendorPath)) {
