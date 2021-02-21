@@ -43,7 +43,7 @@ class PharBuilder
     /**
      * @var array
      */
-    private $mountLink = ['.env', 'runtime/hyperf.pid'];
+    private $mount = [];
 
     /**
      * @var string
@@ -140,6 +140,24 @@ class PharBuilder
     }
 
     /**
+     * @return $this
+     */
+    public function setMount(array $mount = [])
+    {
+        foreach ($mount as $item) {
+            $items = explode(':', $item);
+            $this->mount[$items[0]] = $items[1] ?? $items[0];
+        }
+
+        return $this;
+    }
+
+    public function getMount(): array
+    {
+        return $this->mount;
+    }
+
+    /**
      * Gets a list of all dependent packages.
      * @return Package[]
      */
@@ -188,13 +206,20 @@ class PharBuilder
      */
     public function getMountLinkCode(): string
     {
-        $mountLink = implode('","', $this->mountLink);
+        $mountString = '';
+        foreach ($this->getMount() as $link => $inside) {
+            $mountString .= "'{$link}' => '{$inside}',";
+        }
+
         return <<<EOD
 <?php
-\$mountLink = ["{$mountLink}"];
+\$mount = [{$mountString}];
 \$path = dirname(realpath(\$argv[0]));
-array_walk(\$mountLink, function (\$item) use (\$path) {
-    \$file = \$path . '/' . \$item;
+array_walk(\$mount, function (\$item, \$link) use (\$path) {
+    \$file = \$link;
+    if(ltrim(\$link, '/') == \$link){
+        \$file = \$path . '/' . \$item;   
+    }
     if(!file_exists(\$file)){
         if(rtrim(\$item, '/')!=\$item){
             @mkdir(\$file, 0777, true);
@@ -235,12 +260,17 @@ EOD;
             ->files()
             ->ignoreVCS(true)
             ->exclude(rtrim($this->package->getVendorPath(), '/'))
-            ->exclude('runtime') //Ignore runtime dir
+            ->exclude('runtime') // Ignore runtime dir
             ->notPath('/^composer\.phar/')
-            ->exclude('.*')
             ->exclude($main)
-            ->notPath($target) //Ignore the phar package that exists in the project itself
-            ->in($this->package->getDirectory());
+            ->notPath($target); // Ignore the phar package that exists in the project itself
+
+        foreach ($this->getMount() as $inside) {
+            $finder = $finder->exclude($inside);
+        }
+
+        $finder = $finder->in($this->package->getDirectory());
+
         $targetPhar->addBundle($this->package->bundle($finder));
 
         // Force to turn on ScanCacheable.
@@ -253,6 +283,12 @@ EOD;
                 ->files()
                 ->in($this->package->getDirectory() . 'runtime/container');
             $targetPhar->addBundle($this->package->bundle($finder));
+        }
+
+        // Add .env file.
+        if (! in_array('.env', $this->getMount()) && is_file($this->package->getDirectory() . '.env')) {
+            $this->logger->info('Adding .env file');
+            $targetPhar->addFile($this->package->getDirectory() . '.env');
         }
 
         $this->logger->info('Adding composer base files');
