@@ -34,14 +34,14 @@ class BuildCommand extends HyperfCommand
     public function configure()
     {
         $this->setDescription('Pack your project into a Phar package.')
-            ->addOption('name', '', InputOption::VALUE_OPTIONAL, 'This is the name of the Phar package, and if it is not passed in, the project name is used by default', null)
+            ->addOption('name', '', InputOption::VALUE_OPTIONAL, 'This is the name of the Phar package, and if it is not passed in, the project name is used by default')
             ->addOption('bin', 'b', InputOption::VALUE_OPTIONAL, 'The script path to execute by default.', 'bin/hyperf.php')
             ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Project root path, default BASE_PATH.', null)
             ->addOption('phar-version', '', InputOption::VALUE_OPTIONAL, 'The version of the project that will be compiled.', null)
             ->addOption('exclude', '', InputOption::VALUE_OPTIONAL, 'Project exclude path .', 'Flutter,deploy,docker-compose.yml')
             ->addOption('no-dev', '', InputOption::VALUE_OPTIONAL, 'Project is debug path, default false .', 'false')
-            ->addOption('composer', '', InputOption::VALUE_OPTIONAL, 'composer cmd , default composer,composer.phar,./composer,./composer.phar .', 'composer,composer.phar,./composer,./composer.phar');
-
+            ->addOption('composer', '', InputOption::VALUE_OPTIONAL, 'composer cmd , default composer,composer.phar,./composer,./composer.phar .', 'composer,composer.phar,./composer,./composer.phar')
+            ->addOption('mount', 'M', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The mount path or dir.');
     }
 
     public function handle()
@@ -53,6 +53,7 @@ class BuildCommand extends HyperfCommand
         $version = $this->input->getOption('phar-version');
         $noDev = $this->input->getOption('no-dev');
         $composer = $this->input->getOption('composer');
+        $mount = $this->input->getOption('mount');
 
         if (empty($path)) {
             $path = BASE_PATH;
@@ -73,6 +74,10 @@ class BuildCommand extends HyperfCommand
         if (! empty($version)) {
             $builder->setVersion($version);
         }
+        if (count($mount) > 0) {
+            $builder->setMount($mount);
+        }
+
         $builder->build();
     }
 
