@@ -192,8 +192,9 @@ class PharBuilder
         return <<<EOD
 <?php
 \$mountLink = ["{$mountLink}"];
-array_walk(\$mountLink, function (\$item){
-    \$file = realpath(\$argv[0]).'/'.\$item;
+\$path = realpath(\$argv[0]);
+array_walk(\$mountLink, function (\$item, \$path){
+    \$file = \$path . '/' . \$item;
     if(!file_exists(\$file)){
         if(rtrim(\$item, '/')!=\$item){
             mkdir(\$file, 0777, true);
