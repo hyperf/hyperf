@@ -218,7 +218,7 @@ class PharBuilder
 array_walk(\$mount, function (\$item, \$link) use (\$path) {
     \$file = \$link;
     if(ltrim(\$link, '/') == \$link){
-        \$file = \$path . '/' . \$item;   
+        \$file = \$path . '/' . \$link;   
     }
     if(!file_exists(\$file)){
         if(rtrim(\$item, '/')!=\$item){
