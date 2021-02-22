@@ -39,7 +39,7 @@ composer require hyperf/kafka
 |          producer_id          |    int     |              -1               |                                                      生產者 ID                                                       |
 |        producer_epoch         |    int     |              -1               |                                                     生產者 Epoch                                                     |
 |    partition_leader_epoch     |    int     |              -1               |                                                  分區 Leader Epoch                                                   |
-|            broker             |   string   |              ''               |                                            broker，格式：'127.0.0.1:9092'                                            |
+|            broker             |   string   |              ''|                                            broker，格式：'127.0.0.1:9092'                                            |
 |           interval            | int｜float |               0               |                   未獲取消息到消息時，延遲多少秒再次嘗試，默認為 0 則不延遲（單位：秒，支持小數）                    |
 |        session_timeout        | int｜float |              60               |                     如果超時後沒有收到心跳信號，則協調器會認為該用户死亡。（單位：秒，支持小數）                     |
 |       rebalance_timeout       | int｜float |              60               |                      重新平衡組時，協調器等待每個成員重新加入的最長時間（單位：秒，支持小數）。                      |
