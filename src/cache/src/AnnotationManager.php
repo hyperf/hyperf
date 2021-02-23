@@ -47,7 +47,7 @@ class AnnotationManager
 
         $key = $this->getFormatedKey($annotation->prefix, $arguments, $annotation->value);
         $group = $annotation->group;
-        $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
+        $ttl = $annotation->ttl ?: $this->config->get("cache.{$group}.ttl", 3600);
 
         return [$key, $ttl + $this->getRandomOffset($annotation->offset), $group, $annotation];
     }
@@ -76,7 +76,7 @@ class AnnotationManager
 
         $key = $this->getFormatedKey($annotation->prefix, $arguments, $annotation->value);
         $group = $annotation->group;
-        $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
+        $ttl = $annotation->ttl ?: $this->config->get("cache.{$group}.ttl", 3600);
 
         return [$key, $ttl + $this->getRandomOffset($annotation->offset), $group, $annotation];
     }
@@ -86,10 +86,10 @@ class AnnotationManager
         /** @var FailCache $annotation */
         $annotation = $this->getAnnotation(FailCache::class, $className, $method);
 
-        $prefix = $annotation->prefix ?? ($className . '::' . $method);
+        $prefix = $annotation->prefix ?: ($className . '::' . $method);
         $key = $this->getFormatedKey($prefix, $arguments, $annotation->value);
         $group = $annotation->group;
-        $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
+        $ttl = $annotation->ttl ?: $this->config->get("cache.{$group}.ttl", 3600);
 
         return [$key, $ttl, $group, $annotation];
     }
