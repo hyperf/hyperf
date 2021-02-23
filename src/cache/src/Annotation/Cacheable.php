@@ -32,7 +32,7 @@ class Cacheable extends AbstractAnnotation
     public $value;
 
     /**
-     * @var int
+     * @var null|int
      */
     public $ttl;
 
@@ -60,7 +60,9 @@ class Cacheable extends AbstractAnnotation
     public function __construct($value = null)
     {
         parent::__construct($value);
-        $this->ttl = (int) $this->ttl;
+        if ($this->ttl !== null) {
+            $this->ttl = (int) $this->ttl;
+        }
         $this->offset = (int) $this->offset;
     }
 
