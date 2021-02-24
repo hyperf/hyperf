@@ -30,7 +30,7 @@ class CachePut extends AbstractAnnotation
     public $value;
 
     /**
-     * @var int|null
+     * @var null|int
      */
     public $ttl;
 
