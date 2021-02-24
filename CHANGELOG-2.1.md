@@ -1,5 +1,9 @@
 # v2.1.8 - TBD
 
+## Fixed 
+
+- [#3301](https://github.com/hyperf/hyperf/pull/3301) Fixed bug that the value of ttl will be converted to 0 when you don't set it for `hyperf/cache`.
+
 # v2.1.7 - 2021-02-22
 
 ## Fixed

@@ -86,7 +86,7 @@ class AnnotationManager
         /** @var FailCache $annotation */
         $annotation = $this->getAnnotation(FailCache::class, $className, $method);
 
-        $prefix = $annotation->prefix ?: ($className . '::' . $method);
+        $prefix = $annotation->prefix ?? ($className . '::' . $method);
         $key = $this->getFormatedKey($prefix, $arguments, $annotation->value);
         $group = $annotation->group;
         $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
