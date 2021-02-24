@@ -36,7 +36,7 @@ use Hyperf\Server\Server;
 use Hyperf\Server\Event;
 
 return [
-    // 刪除其他不相關的配置項
+    // 以下刪除了其他不相關的配置項
     'servers' => [
         [
             'name' => 'tcp',
@@ -104,7 +104,7 @@ use Hyperf\Server\Server;
 use Hyperf\Server\Event;
 
 return [
-    // 刪除其他不相關的配置項
+    // 以下刪除了其他不相關的配置項
     'servers' => [
         [
             'name' => 'udp',
