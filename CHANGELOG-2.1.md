@@ -8,6 +8,10 @@
 
 - [#3308](https://github.com/hyperf/hyperf/pull/3308) Send response directly when the handler does not exists.
 
+## Incubator
+
+- [rpc-multiplex](https://github.com/hyperf/rpc-multiplex-incubator) Rpc for multiplexing connection
+
 # v2.1.7 - 2021-02-22
 
 ## Fixed
