@@ -1,3 +1,31 @@
 # ETCD
 
-`hyperf/etcd` 组件将于 `hyperf 1.1` 版本释出，可留意 [Project Version 1.1](https://github.com/hyperf/hyperf/projects/2) 的了解具体进度。
+## 安装
+
+```
+composer require hyperf/etcd
+```
+
+## 添加配置文件 `etcd.php`
+
+```php
+<?php
+return [
+    'uri' => 'http://192.168.1.200:2379',
+    'version' => 'v3beta',
+    'options' => [
+        'timeout' => 10,
+    ],
+];
+```
+
+## 使用
+
+```php
+<?php
+
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Etcd\KVInterface;
+
+$client = ApplicationContext::getContainer()->get(KVInterface::class);
+```
