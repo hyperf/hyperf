@@ -103,15 +103,6 @@ return [
 composer require hyperf/etcd
 ```
 
-因为 `Etcd` 分为 `v2` 和 `v3` 版本，所以根据需要选择安装
-
-```
-# Etcd v3 http client.
-composer require start-point/etcd-php
-# Etcd v2 http client.
-composer require linkorb/etcd-php
-```
-
 - 添加 `Etcd 客户端` 配置文件 `etcd.php`
 
 ```php
