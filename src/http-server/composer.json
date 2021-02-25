@@ -18,15 +18,15 @@
     },
     "require": {
         "php": ">=7.2",
-        "psr/container": "^1.0",
-        "nikic/fast-route": "^1.3",
         "hyperf/contract": "~2.1.0",
         "hyperf/dispatcher": "~2.1.0",
         "hyperf/event": "~2.1.0",
         "hyperf/exception-handler": "~2.1.0",
         "hyperf/http-message": "~2.1.0",
         "hyperf/server": "~2.1.0",
-        "hyperf/utils": "~2.1.0"
+        "hyperf/utils": "~2.1.0",
+        "nikic/fast-route": "^1.3",
+        "psr/container": "^1.0"
     },
     "require-dev": {
         "hyperf/di": "~2.1.0",
