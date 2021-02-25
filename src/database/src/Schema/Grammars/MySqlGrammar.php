@@ -91,8 +91,7 @@ class MySqlGrammar extends Grammar
             $blueprint
         );
 
-        // Finally
-        // append comment
+        // Finally we will append table comment.
         return $this->compileCreateComment(
             $sql,
             $connection,

@@ -48,7 +48,7 @@ class Blueprint
     public $temporary = false;
 
     /**
-     * The Comment that should be used for the table.
+     * The comment of the table.
      *
      * @var string
      */
@@ -171,9 +171,7 @@ class Blueprint
     }
 
     /**
-     * Set that the table comments
-     *
-     * @param string $comment
+     * Set the table comment.
      */
     public function comment(string $comment)
     {
@@ -1150,7 +1148,7 @@ class Blueprint
     }
 
     /**
-     * Get the comment the blueprint describes.
+     * Get the comment on the blueprint.
      *
      * @return string
      */

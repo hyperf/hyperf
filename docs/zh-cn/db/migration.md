@@ -305,6 +305,7 @@ class CreateUsersTable extends Migration
 | $table->unsignedTinyInteger('votes');	|  相当于 Unsigned TINYINT |
 | $table->uuid('id');	|  相当于 UUID |
 | $table->year('birth_year');	|  相当于 YEAR |
+| $table->comment('Table Comment');	| 设置表注释，相当于 COMMENT |
 
 ## 修改字段
 
