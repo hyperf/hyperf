@@ -52,7 +52,7 @@ class Blueprint
      *
      * @var string
      */
-    protected $comment;
+    protected $comment = '';
 
     /**
      * The table the blueprint describes.
