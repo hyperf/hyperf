@@ -51,6 +51,15 @@ class RouteCollectorTest extends TestCase
         $this->assertSame('Handler::ApiPost', $data['POST']['/api/']->callback);
     }
 
+    public function testGetRouteParser()
+    {
+        $parser = new Std();
+        $generator = new DataGenerator();
+        $collector = new RouteCollector($parser, $generator);
+
+        $this->assertSame($parser, $collector->getRouteParser());
+    }
+
     public function testAddGroupMiddleware()
     {
         $parser = new Std();

@@ -43,6 +43,8 @@ abstract class AbstractTestCase extends TestCase
     protected function getContainer($options = [])
     {
         $container = Mockery::mock(Container::class);
+        ApplicationContext::setContainer($container);
+
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'db' => [
                 'default' => [
@@ -86,7 +88,6 @@ abstract class AbstractTestCase extends TestCase
             return new DB($factory, $params['poolName']);
         });
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturn(false);
-        ApplicationContext::setContainer($container);
         return $container;
     }
 }
