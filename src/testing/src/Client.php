@@ -184,6 +184,7 @@ class Client extends Server
         $request = new Psr7Request($method, $uri, $headers, $body);
         $request = $request->withQueryParams($query)
             ->withParsedBody($data)
+            ->withCookieParams($headers['cookies'])
             ->withUploadedFiles($this->normalizeFiles($multipart));
 
         Context::set(ServerRequestInterface::class, $psr7Request = $request);
