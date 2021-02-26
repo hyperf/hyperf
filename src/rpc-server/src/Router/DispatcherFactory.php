@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RpcServer\Router;
 
 use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
@@ -25,6 +24,7 @@ use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\RpcServer\Annotation\RpcService;
 use Hyperf\RpcServer\Event\AfterPathRegister;
+use Hyperf\Utils\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionMethod;
 
@@ -117,21 +117,25 @@ class DispatcherFactory
 
         foreach ($publicMethods as $reflectionMethod) {
             $methodName = $reflectionMethod->getName();
+            if (Str::startsWith($methodName, '__')) {
+                continue;
+            }
             $path = $this->pathGenerator->generate($prefix, $methodName);
             $router->addRoute($path, [
                 $className,
                 $methodName,
             ]);
 
+            $methodMiddlewares = $middlewares;
             // Handle method level middlewares.
             if (isset($methodMetadata[$methodName])) {
-                $methodMiddlewares = $this->handleMiddleware($methodMetadata[$methodName]);
-                $middlewares = array_merge($methodMiddlewares, $middlewares);
+                $methodMiddlewares = array_merge($this->handleMiddleware($methodMetadata[$methodName]), $middlewares);
             }
-            $middlewares = array_unique($middlewares);
+            // TODO: Remove array_unique from v3.0.
+            $methodMiddlewares = array_unique($methodMiddlewares);
 
             // Register middlewares.
-            MiddlewareManager::addMiddlewares($annotation->server, $path, 'POST', $middlewares);
+            MiddlewareManager::addMiddlewares($annotation->server, $path, 'POST', $methodMiddlewares);
 
             // Trigger the AfterPathRegister event.
             $this->eventDispatcher->dispatch(new AfterPathRegister($path, $className, $methodName, $annotation));

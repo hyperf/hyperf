@@ -5,14 +5,15 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric;
 
 use Hyperf\Metric\Contract\GaugeInterface;
+use Hyperf\Retry\Retry;
+use Hyperf\Utils\Coroutine;
 
 /**
  * A Helper trait to set stats from swoole and kernal.
@@ -23,9 +24,6 @@ trait MetricSetter
      * Try to set every stats available to the gauge.
      * Some of the stats might be missing depending
      * on the platform.
-     * @param string $prefix
-     * @param array $metrics
-     * @param array $stats
      */
     private function trySet(string $prefix, array $metrics, array $stats): void
     {
@@ -40,7 +38,6 @@ trait MetricSetter
     /**
      * Create an array of gauges.
      * @param array<string, string> $labels
-     * @param array<int, string> $names
      * @return GaugeInterface[]
      */
     private function factoryMetrics(array $labels, string ...$names): array
@@ -53,5 +50,23 @@ trait MetricSetter
                 ->with(...\array_values($labels));
         }
         return $out;
+    }
+
+    /**
+     * Spawn a new coroutine to handle metrics.
+     */
+    private function spawnHandle()
+    {
+        Coroutine::create(function () {
+            if (class_exists(Retry::class)) {
+                Retry::whenThrows()->backoff(100)->call(function () {
+                    $this->factory->handle();
+                });
+            } else {
+                retry(PHP_INT_MAX, function () {
+                    $this->factory->handle();
+                }, 100);
+            }
+        });
     }
 }

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Hyperf</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="description" content="Hyperf框架官方文档">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link rel="shortcut icon" href="//hyperf.wiki/2.0/favicon.ico" />
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/themes/vue.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.css">
+  <style>
+    .app-name-link img {
+      width: 16%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-php.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-edit-on-github/index.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: false });
+
+    window.$docsify = {
+      name: 'Hyperf',
+      repo: 'hyperf/hyperf',
+      homepage: 'zh-cn/README.md',
+      loadSidebar: 'summary.md',
+      loadNavbar: true,
+      fallbackLanguages: ['zh-cn', 'en'],
+      mergeNavbar: true,
+      themeColor: '#3F51B5',
+      logo: '/logo.png',
+      auto2top: true,
+      subMaxLevel: 4,
+      topMargin: 20,
+      search: {
+        depth: 6,
+        noData: {
+          '/en/': 'No results!',
+          '/zh-cn/': '没有找到结果!',
+          '/zh-hk/': '沒有找到結果!',
+          '/zh-tw/': '沒有找到結果!',
+          '/': '没有找到结果!'
+        },
+        paths: 'auto',
+        placeholder: {
+          '/en/': 'Type to Search',
+          '/zh-cn/': '输入关键词搜索',
+          '/zh-hk/': '輸入關鍵詞搜索',
+          '/zh-tw/': '輸入關鍵詞搜索',
+          '/': '输入关键词搜索'
+        },
+        pathNamespaces: ['/zh-cn', '/zh-tw', '/zh-hk', '/en']
+      },
+      alias: {
+        '/summary.md': './zh-cn/summary.md'
+      },
+      plugins: [
+        EditOnGithubPlugin.create('https://github.com/hyperf/hyperf/blob/master/docs/')
+      ],
+      plantuml: {
+        skin: 'classic',
+      },
+      markdown:{
+        renderer: {
+          code: function(code, lang) {
+            if (lang === "mermaid") {
+              return ('<div class="mermaid">' + mermaid.render(lang, code) + '</div>');
+            }
+            return this.origin.code.apply(this, arguments);
+          }
+        }
+      }
+    }
+  </script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-plantuml/dist/docsify-plantuml.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
+  <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1278274447'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "v1.cnzz.com/z_stat.php%3Fid%3D1278274447' type='text/javascript'%3E%3C/script%3E"));</script>
+</body>
+
+</html>

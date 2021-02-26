@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Consul;
 
 use GuzzleHttp\Client;
@@ -32,7 +31,7 @@ class KVTest extends TestCase
 {
     private $kv;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->kv = $this->createKV();
         $this->kv->delete('test', ['recurse' => true]);
@@ -98,7 +97,7 @@ class KVTest extends TestCase
             $this->fail('fail because the key does not exist anymore.');
         } catch (\Exception $e) {
             $this->assertInstanceOf('Hyperf\Consul\Exception\ServerException', $e);
-            $this->assertContains('404 Not Found', $e->getMessage());
+            $this->assertStringContainsString('404 Not Found', $e->getMessage());
         }
     }
 
@@ -120,7 +119,7 @@ class KVTest extends TestCase
                 $this->fail('fail because the key does not exist anymore.');
             } catch (\Exception $e) {
                 $this->assertInstanceOf('Hyperf\Consul\Exception\ServerException', $e);
-                $this->assertContains('404 Not Found', $e->getMessage());
+                $this->assertStringContainsString('404 Not Found', $e->getMessage());
             }
         }
     }

@@ -5,14 +5,14 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\JsonRpc;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 use Hyperf\Guzzle\ClientFactory;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
@@ -48,9 +48,21 @@ class JsonRpcHttpTransporter implements TransporterInterface
      */
     private $clientFactory;
 
-    public function __construct(ClientFactory $clientFactory)
+    /**
+     * @var array
+     */
+    private $clientOptions;
+
+    public function __construct(ClientFactory $clientFactory, array $config = [])
     {
         $this->clientFactory = $clientFactory;
+        if (! isset($config['recv_timeout'])) {
+            $config['recv_timeout'] = $this->recvTimeout;
+        }
+        if (! isset($config['connect_timeout'])) {
+            $config['connect_timeout'] = $this->connectTimeout;
+        }
+        $this->clientOptions = $config;
     }
 
     public function send(string $data)
@@ -70,25 +82,32 @@ class JsonRpcHttpTransporter implements TransporterInterface
         });
         $url = $schema . $uri;
         $response = $this->getClient()->post($url, [
-            'headers' => [
+            RequestOptions::HEADERS => [
                 'Content-Type' => 'application/json',
             ],
-            'http_errors' => false,
-            'body' => $data,
+            RequestOptions::HTTP_ERRORS => false,
+            RequestOptions::BODY => $data,
         ]);
         if ($response->getStatusCode() === 200) {
-            return $response->getBody()->getContents();
+            return (string) $response->getBody();
         }
         $this->loadBalancer->removeNode($node);
 
         return '';
     }
 
+    public function recv()
+    {
+        throw new \RuntimeException(__CLASS__ . ' does not support recv method.');
+    }
+
     public function getClient(): Client
     {
-        return $this->clientFactory->create([
-            'timeout' => ($this->connectTimeout + $this->recvTimeout),
-        ]);
+        $clientOptions = $this->clientOptions;
+        // Swoole HTTP Client cannot set recv_timeout and connect_timeout options, use timeout.
+        $clientOptions['timeout'] = $clientOptions['recv_timeout'] + $clientOptions['connect_timeout'];
+        unset($clientOptions['recv_timeout'], $clientOptions['connect_timeout']);
+        return $this->clientFactory->create($clientOptions);
     }
 
     public function getLoadBalancer(): ?LoadBalancerInterface
@@ -114,6 +133,11 @@ class JsonRpcHttpTransporter implements TransporterInterface
     public function getNodes(): array
     {
         return $this->nodes;
+    }
+
+    public function getClientOptions(): array
+    {
+        return $this->clientOptions;
     }
 
     private function getEof()

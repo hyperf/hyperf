@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Utils\Codec;
 
 use Hyperf\Utils\Codec\Json;
@@ -48,17 +47,20 @@ class JsonTest extends TestCase
         $this->assertEquals((object) $data, Json::decode($json, false));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Control character error, possibly incorrectly encoded
-     */
     public function testDecodeException()
     {
-        $data = [
-            'name' => 'Hyperf',
-        ];
         $json = '{"name":"Hyperf}';
-        $this->assertSame($data, Json::decode($json));
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Control character error, possibly incorrectly encoded');
+        Json::decode($json);
+    }
+
+    public function testEncodeException()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Type is not supported');
+        Json::encode(fopen('php://temp', 'r+'));
     }
 
     public function testJsonEncodeInCoroutine()

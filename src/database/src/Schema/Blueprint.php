@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Schema;
 
 use BadMethodCallException;
@@ -47,6 +46,13 @@ class Blueprint
      * @var bool
      */
     public $temporary = false;
+
+    /**
+     * The comment of the table.
+     *
+     * @var string
+     */
+    protected $comment = '';
 
     /**
      * The table the blueprint describes.
@@ -162,6 +168,14 @@ class Blueprint
     public function create()
     {
         return $this->addCommand('create');
+    }
+
+    /**
+     * Set the table comment.
+     */
+    public function comment(string $comment)
+    {
+        $this->comment = $comment;
     }
 
     /**
@@ -408,7 +422,7 @@ class Blueprint
      *
      * @param array|string $columns
      * @param string $name
-     * @return \Hyperf\Utils\Fluent
+     * @return \Hyperf\Database\Schema\ForeignKeyDefinition|\Hyperf\Utils\Fluent
      */
     public function foreign($columns, $name = null)
     {
@@ -1131,6 +1145,16 @@ class Blueprint
     public function getTable()
     {
         return $this->table;
+    }
+
+    /**
+     * Get the comment on the blueprint.
+     *
+     * @return string
+     */
+    public function getComment()
+    {
+        return $this->comment;
     }
 
     /**

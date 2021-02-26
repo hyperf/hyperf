@@ -5,20 +5,20 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Etcd\Stub;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Stream;
+use Psr\Http\Message\ResponseInterface;
 
 class GuzzleClientStub extends Client
 {
-    public function request($method, $uri = '', array $options = [])
+    public function request($method, $uri = '', array $options = []): ResponseInterface
     {
         if ($uri == 'kv/put') {
             $stream = fopen('php://temp', 'r+');

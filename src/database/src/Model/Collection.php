@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Model;
 
 use Hyperf\Contract\CompressInterface;
@@ -18,9 +17,12 @@ use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
+use Hyperf\Utils\Traits\Macroable;
 
 class Collection extends BaseCollection implements CompressInterface
 {
+    use Macroable;
+
     /**
      * Find a model in the collection by key.
      *
@@ -341,6 +343,38 @@ class Collection extends BaseCollection implements CompressInterface
     }
 
     /**
+     * Returns only the columns from the collection with the specified keys.
+     *
+     * @param null|array|string $keys
+     */
+    public function columns($keys): BaseCollection
+    {
+        if (is_null($keys)) {
+            return new BaseCollection([]);
+        }
+        $result = [];
+        $isSingleColumn = is_string($keys);
+        foreach ($this->items as $item) {
+            if ($isSingleColumn) {
+                $value = $item->{$keys} ?? null;
+                $result[] = $value instanceof Arrayable ? $value->toArray() : $value;
+            } else {
+                $result[] = value(static function () use ($item, $keys) {
+                    $res = [];
+                    foreach ($keys as $key) {
+                        $value = $item->{$key} ?? null;
+                        $res[$key] = $value instanceof Arrayable ? $value->toArray() : $value;
+                    }
+
+                    return $res;
+                });
+            }
+        }
+
+        return new BaseCollection($result);
+    }
+
+    /**
      * Returns all models in the collection except the models with specified keys.
      *
      * @param mixed $keys
@@ -437,8 +471,9 @@ class Collection extends BaseCollection implements CompressInterface
 
     /**
      * Get a flattened array of the items in the collection.
+     * @param float|int $depth
      */
-    public function flatten(int $depth = INF): BaseCollection
+    public function flatten($depth = INF): BaseCollection
     {
         return $this->toBase()->flatten($depth);
     }

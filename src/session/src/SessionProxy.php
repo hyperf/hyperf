@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Session;
 
 use Hyperf\Contract\SessionInterface;
@@ -89,17 +88,17 @@ class SessionProxy extends Session
 
     public function migrate(bool $destroy = false, ?int $lifetime = null): bool
     {
-        return $this->getSession->migrate($destroy, $lifetime);
+        return $this->getSession()->migrate($destroy, $lifetime);
     }
 
     public function save(): void
     {
-        $this->getSession->save();
+        $this->getSession()->save();
     }
 
     public function has(string $name): bool
     {
-        return $this->getSession->has($name);
+        return $this->getSession()->has($name);
     }
 
     public function get(string $name, $default = null)

@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Session;
 
 use Hyperf\Contract\ConfigInterface;
@@ -17,6 +16,7 @@ use Hyperf\HttpMessage\Server\Request;
 use Hyperf\Session\Session;
 use Hyperf\Session\SessionManager;
 use Hyperf\Utils\Str;
+use HyperfTest\Session\Stub\MockStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -42,7 +42,7 @@ class SessionManagerTest extends TestCase
     public function testParseSessionId()
     {
         $request = new Request('get', '/');
-        $sessionManager = new SessionManager(Mockery::mock(ContainerInterface::class), Mockery::mock(ConfigInterface::class));
+        $sessionManager = new SessionManager(Mockery::mock(ContainerInterface::class), MockStub::makeConfig());
         $reflectionClass = new ReflectionClass(SessionManager::class);
         $parseSessionIdMethod = $reflectionClass->getMethod('parseSessionId');
         $parseSessionIdMethod->setAccessible(true);

@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RpcServer;
 
 use Closure;
@@ -59,7 +58,7 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
                 // Route found, but the handler does not exist.
                 return $this->response()->withStatus(500)->withBody(new SwooleStream('Method of class does not exist.'));
             }
-            $parameters = $this->parseParameters($controller, $action, $request->getParsedBody());
+            $parameters = $this->parseMethodParameters($controller, $action, $request->getParsedBody());
             $response = $controllerInstance->{$action}(...$parameters);
         }
         return $response;

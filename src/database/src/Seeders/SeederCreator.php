@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Seeders;
 
 use Hyperf\Utils\Filesystem\Filesystem;
@@ -27,8 +26,6 @@ class SeederCreator
 
     /**
      * Create a new seeder creator instance.
-     *
-     * @param Filesystem $files
      */
     public function __construct(Filesystem $files)
     {

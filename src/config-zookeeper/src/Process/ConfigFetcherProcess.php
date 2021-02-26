@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigZookeeper\Process;
 
 use Hyperf\ConfigZookeeper\ClientInterface;
@@ -18,15 +17,13 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Process\AbstractProcess;
-use Hyperf\Process\Annotation\Process;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
-/**
- * @Process(name="zookeeper-config-fetcher")
- */
 class ConfigFetcherProcess extends AbstractProcess
 {
+    public $name = 'zookeeper-config-fetcher';
+
     // ext-swoole-zookeeper need use in coroutine
     public $enableCoroutine = true;
 
@@ -57,15 +54,17 @@ class ConfigFetcherProcess extends AbstractProcess
         $this->config = $container->get(ConfigInterface::class);
     }
 
-    public function bind(Server $server): void
+    public function bind($server): void
     {
         $this->server = $server;
         parent::bind($server);
     }
 
-    public function isEnable(): bool
+    public function isEnable($server): bool
     {
-        return $this->config->get('zookeeper.enable', false);
+        return $server instanceof Server
+            && $this->config->get('zookeeper.enable', false)
+            && $this->config->get('zookeeper.use_standalone_process', true);
     }
 
     public function handle(): void

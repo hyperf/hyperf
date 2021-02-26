@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace %NAMESPACE%;
+
+use Hyperf\Kafka\AbstractConsumer;
+use Hyperf\Kafka\Annotation\Consumer;
+use longlang\phpkafka\Consumer\ConsumeMessage;
+
+/**
+ * @Consumer(topic="hyperf", groupId="hyperf", autoCommit=true, nums=1)
+ */
+class %CLASS% extends AbstractConsumer
+{
+    public function consume(ConsumeMessage $message)
+    {
+
+    }
+}

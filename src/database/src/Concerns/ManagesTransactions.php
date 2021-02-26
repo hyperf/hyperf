@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Concerns;
 
 use Closure;
@@ -137,8 +136,8 @@ trait ManagesTransactions
         // On a deadlock, MySQL rolls back the entire transaction so we can't just
         // retry the query. We have to throw this exception all the way out and
         // let the developer handle it in another way. We will decrement too.
-        if ($this->causedByDeadlock($e) &&
-            $this->transactions > 1) {
+        if ($this->causedByDeadlock($e)
+            && $this->transactions > 1) {
             --$this->transactions;
 
             throw $e;
@@ -149,8 +148,8 @@ trait ManagesTransactions
         // if we haven't we will return and try this query again in our loop.
         $this->rollBack();
 
-        if ($this->causedByDeadlock($e) &&
-            $currentAttempt < $maxAttempts) {
+        if ($this->causedByDeadlock($e)
+            && $currentAttempt < $maxAttempts) {
             return;
         }
 
@@ -163,6 +162,8 @@ trait ManagesTransactions
     protected function createTransaction()
     {
         if ($this->transactions == 0) {
+            $this->reconnectIfMissingConnection();
+
             try {
                 $this->getPdo()->beginTransaction();
             } catch (Exception $e) {

@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils;
 
 use Hyperf\Utils\Exception\ParallelExecutionException;
@@ -39,10 +38,10 @@ class Parallel
 
     public function add(callable $callable, $key = null)
     {
-        if (is_string($key)) {
-            $this->callbacks[$key] = $callable;
-        } else {
+        if (is_null($key)) {
             $this->callbacks[] = $callable;
+        } else {
+            $this->callbacks[$key] = $callable;
         }
     }
 
@@ -65,14 +64,19 @@ class Parallel
             });
         }
         $wg->wait();
-        if ($throw && count($throwables) > 0) {
-            $message = 'At least one throwable occurred during parallel execution:' . PHP_EOL . $this->formatThrowables($throwables);
+        if ($throw && ($throwableCount = count($throwables)) > 0) {
+            $message = 'Detecting ' . $throwableCount . ' throwable occurred during parallel execution:' . PHP_EOL . $this->formatThrowables($throwables);
             $executionException = new ParallelExecutionException($message);
             $executionException->setResults($result);
             $executionException->setThrowables($throwables);
             throw $executionException;
         }
         return $result;
+    }
+
+    public function count(): int
+    {
+        return count($this->callbacks);
     }
 
     public function clear(): void
@@ -82,12 +86,14 @@ class Parallel
 
     /**
      * Format throwables into a nice list.
+     *
+     * @param \Throwable[] $throwables
      */
-    private function formatThrowables(array $exception): string
+    private function formatThrowables(array $throwables): string
     {
         $output = '';
-        foreach ($exception as $key => $value) {
-            $output .= \sprintf('(%s) %s: %s' . PHP_EOL, $key, get_class($value), $value->getMessage());
+        foreach ($throwables as $key => $value) {
+            $output .= \sprintf('(%s) %s: %s' . PHP_EOL . '%s' . PHP_EOL, $key, get_class($value), $value->getMessage(), $value->getTraceAsString());
         }
         return $output;
     }

@@ -5,18 +5,20 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
+use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Metric\MetricSetter;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine;
 use Swoole\Server;
@@ -88,20 +90,35 @@ class OnMetricFactoryReady implements ListenerInterface
             'tasking_num',
             'request_count',
             'timer_num',
-            'timer_round'
+            'timer_round',
+            'metric_process_memory_usage',
+            'metric_process_memory_peak_usage'
         );
-
-        $server = $this->container->get(Server::class);
-        $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        Timer::tick($timerInterval * 1000, function () use ($metrics, $server) {
+        $serverStats = null;
+        if (! MetricFactoryPicker::$isCommand) {
+            $server = $this->container->get(Server::class);
             $serverStats = $server->stats();
+        }
+
+        $timerInterval = $this->config->get('metric.default_metric_interval', 5);
+        $timerId = Timer::tick($timerInterval * 1000, function () use ($metrics, $serverStats) {
             $coroutineStats = Coroutine::stats();
             $timerStats = Timer::stats();
-            $this->trySet('', $metrics, $serverStats);
+            if ($serverStats) {
+                $this->trySet('', $metrics, $serverStats);
+            }
             $this->trySet('', $metrics, $coroutineStats);
             $this->trySet('timer_', $metrics, $timerStats);
             $load = sys_getloadavg();
             $metrics['sys_load']->set(round($load[0] / swoole_cpu_num(), 2));
+            $metrics['metric_process_memory_usage']->set(memory_get_usage());
+            $metrics['metric_process_memory_peak_usage']->set(memory_get_peak_usage());
+        });
+
+        // Clean up timer on worker exit;
+        Coroutine::create(function () use ($timerId) {
+            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
+            Timer::clear($timerId);
         });
     }
 }

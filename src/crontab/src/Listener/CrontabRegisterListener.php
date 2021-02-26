@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Crontab\Listener;
 
 use Hyperf\Contract\ConfigInterface;
@@ -20,6 +19,7 @@ use Hyperf\Crontab\CrontabManager;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Process\Annotation\Process;
+use Hyperf\Process\Event\BeforeCoroutineHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
 
 class CrontabRegisterListener implements ListenerInterface
@@ -53,6 +53,7 @@ class CrontabRegisterListener implements ListenerInterface
     {
         return [
             BeforeProcessHandle::class,
+            BeforeCoroutineHandle::class,
         ];
     }
 
@@ -74,7 +75,7 @@ class CrontabRegisterListener implements ListenerInterface
     private function parseCrontabs(): array
     {
         $configCrontabs = $this->config->get('crontab.crontab', []);
-        $annotationCrontabs = AnnotationCollector::getClassByAnnotation(CrontabAnnotation::class);
+        $annotationCrontabs = AnnotationCollector::getClassesByAnnotation(CrontabAnnotation::class);
         $crontabs = [];
         foreach (array_merge($configCrontabs, $annotationCrontabs) as $crontab) {
             if ($crontab instanceof CrontabAnnotation) {

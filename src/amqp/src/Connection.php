@@ -5,23 +5,26 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Connection\AMQPSwooleConnection;
+use Hyperf\Amqp\Connection\KeepaliveIO;
 use Hyperf\Amqp\Pool\AmqpConnectionPool;
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Coroutine;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Exception\AMQPConnectionClosedException;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class Connection extends BaseConnection implements ConnectionInterface
 {
@@ -31,7 +34,7 @@ class Connection extends BaseConnection implements ConnectionInterface
     protected $pool;
 
     /**
-     * @var AbstractConnection
+     * @var null|AbstractConnection
      */
     protected $connection;
 
@@ -56,14 +59,14 @@ class Connection extends BaseConnection implements ConnectionInterface
     protected $lastHeartbeatTime = 0.0;
 
     /**
-     * @var \PhpAmqpLib\Channel\AMQPChannel
+     * @var null|AMQPChannel
      */
-    private $channel;
+    protected $channel;
 
     /**
-     * @var \PhpAmqpLib\Channel\AMQPChannel
+     * @var null|AMQPChannel
      */
-    private $confirmChannel;
+    protected $confirmChannel;
 
     public function __construct(ContainerInterface $container, AmqpConnectionPool $pool, array $config)
     {
@@ -82,10 +85,6 @@ class Connection extends BaseConnection implements ConnectionInterface
     public function getActiveConnection(): AbstractConnection
     {
         if ($this->check()) {
-            // The connection is valid, reset the last heartbeat time.
-            $currentTime = microtime(true);
-            $this->lastHeartbeatTime = $currentTime;
-
             return $this->connection;
         }
 
@@ -113,6 +112,10 @@ class Connection extends BaseConnection implements ConnectionInterface
 
     public function reconnect(): bool
     {
+        if ($this->connection && $this->connection->getIO() instanceof KeepaliveIO) {
+            $this->connection->getIO()->close();
+        }
+
         $this->connection = $this->initConnection();
         $this->channel = null;
         $this->confirmChannel = null;
@@ -121,12 +124,34 @@ class Connection extends BaseConnection implements ConnectionInterface
 
     public function check(): bool
     {
-        return isset($this->connection) && $this->connection instanceof AbstractConnection && $this->connection->isConnected() && ! $this->isHeartbeatTimeout();
+        $result = isset($this->connection) && $this->connection instanceof AbstractConnection && $this->connection->isConnected() && ! $this->isHeartbeatTimeout();
+        if ($result) {
+            // The connection is valid, reset the last heartbeat time.
+            $currentTime = microtime(true);
+            $this->lastHeartbeatTime = $currentTime;
+        }
+
+        return $result;
     }
 
     public function close(): bool
     {
-        $this->connection->close();
+        try {
+            if ($connection = $this->connection) {
+                if ($connection->getIO() instanceof KeepaliveIO) {
+                    $connection->getIO()->close();
+                }
+
+                $connection->close();
+            }
+        } catch (AMQPConnectionClosedException $exception) {
+            $this->getLogger()->warning((string) $exception);
+        } catch (\Throwable $exception) {
+            $this->getLogger()->error((string) $exception);
+        } finally {
+            $this->connection = null;
+        }
+
         $this->channel = null;
         $this->confirmChannel = null;
         return true;
@@ -140,7 +165,32 @@ class Connection extends BaseConnection implements ConnectionInterface
         }
 
         $this->lastHeartbeatTime = microtime(true);
-        return new $class($this->config['host'] ?? 'localhost', $this->config['port'] ?? 5672, $this->config['user'] ?? 'guest', $this->config['password'] ?? 'guest', $this->config['vhost'] ?? '/', $this->params->isInsist(), $this->params->getLoginMethod(), $this->params->getLoginResponse(), $this->params->getLocale(), $this->params->getConnectionTimeout(), $this->params->getReadWriteTimeout(), $this->params->getContext(), $this->params->isKeepalive(), $this->params->getHeartbeat());
+        /** @var AbstractConnection $connection */
+        $connection = new $class(
+            $this->config['host'] ?? 'localhost',
+            $this->config['port'] ?? 5672,
+            $this->config['user'] ?? 'guest',
+            $this->config['password'] ?? 'guest',
+            $this->config['vhost'] ?? '/',
+            $this->params->isInsist(),
+            $this->params->getLoginMethod(),
+            $this->params->getLoginResponse(),
+            $this->params->getLocale(),
+            $this->params->getConnectionTimeout(),
+            $this->params->getReadWriteTimeout(),
+            $this->params->getContext(),
+            $this->params->isKeepalive(),
+            $this->params->getHeartbeat()
+        );
+
+        $connection->set_close_on_destruct($this->params->isCloseOnDestruct());
+
+        return $connection;
+    }
+
+    protected function getLogger(): LoggerInterface
+    {
+        return $this->container->get(StdoutLoggerInterface::class);
     }
 
     protected function isHeartbeatTimeout(): bool

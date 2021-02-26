@@ -5,14 +5,15 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Redis\Stub;
 
+use Hyperf\Pool\Pool;
 use Hyperf\Redis\RedisConnection;
+use Psr\Container\ContainerInterface;
 
 class RedisConnectionStub extends RedisConnection
 {
@@ -25,6 +26,14 @@ class RedisConnectionStub extends RedisConnection
     public $db;
 
     public $timeout;
+
+    public $id;
+
+    public function __construct(ContainerInterface $container, Pool $pool, array $config)
+    {
+        parent::__construct($container, $pool, $config);
+        $this->id = uniqid();
+    }
 
     public function __call($name, $arguments)
     {
@@ -40,6 +49,10 @@ class RedisConnectionStub extends RedisConnection
         $this->timeout = $this->config['timeout'];
 
         $this->lastUseTime = microtime(true);
+
+        if ($this->config['cluster']['enable'] ?? false) {
+            $this->createRedisCluster();
+        }
 
         return true;
     }

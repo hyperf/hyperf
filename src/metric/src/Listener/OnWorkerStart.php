@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
@@ -18,12 +17,13 @@ use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\MetricSetter;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
 use Swoole\Timer;
-use Throwable;
 use function gc_status;
 use function getrusage;
 use function memory_get_peak_usage;
@@ -55,7 +55,6 @@ class OnWorkerStart implements ListenerInterface
     {
         $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
-        $this->factory = $container->get(MetricFactoryInterface::class);
     }
 
     /**
@@ -79,6 +78,8 @@ class OnWorkerStart implements ListenerInterface
         if ($workerId === null) {
             return;
         }
+
+        $this->factory = $this->container->get(MetricFactoryInterface::class);
 
         /*
          * If no standalone process is started, we have to handle metrics on worker.
@@ -131,34 +132,25 @@ class OnWorkerStart implements ListenerInterface
 
         $server = $this->container->get(Server::class);
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        Timer::tick($timerInterval * 1000, function () use ($metrics, $server) {
+        $timerId = Timer::tick($timerInterval * 1000, function () use ($metrics, $server) {
             $serverStats = $server->stats();
-            if (function_exists('gc_status')) {
-                $this->trySet('gc_', $metrics, gc_status());
-            }
+            $this->trySet('gc_', $metrics, gc_status());
             $this->trySet('', $metrics, getrusage());
             $metrics['worker_request_count']->set($serverStats['worker_request_count']);
             $metrics['worker_dispatch_count']->set($serverStats['worker_dispatch_count']);
             $metrics['memory_usage']->set(memory_get_usage());
             $metrics['memory_peak_usage']->set(memory_get_peak_usage());
         });
+        // Clean up timer on worker exit;
+        Coroutine::create(function () use ($timerId) {
+            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
+            Timer::clear($timerId);
+        });
     }
 
     private function shouldFireMetricFactoryReadyEvent(int $workerId): bool
     {
-        return (! $this->config->get('metric.use_standalone_process'))
+        return (! $this->config->get('metric.use_standalone_process', true))
             && $workerId == 0;
-    }
-
-    private function spawnHandle()
-    {
-        Coroutine::create(function () {
-            try {
-                $this->factory->handle();
-            } catch (Throwable $t) {
-                $this->spawnHandle();
-                throw $t;
-            }
-        });
     }
 }

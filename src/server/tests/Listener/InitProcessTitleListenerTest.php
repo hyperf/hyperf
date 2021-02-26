@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Server\Listener;
 
 use Hyperf\Config\Config;
@@ -34,7 +33,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  */
 class InitProcessTitleListenerTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
@@ -64,7 +63,11 @@ class InitProcessTitleListenerTest extends TestCase
 
         $listener->process(new BeforeProcessHandle($process, 1));
 
-        $this->assertSame('test.demo.1', Context::get('test.server.process.title'));
+        if (! $listener->isSupportedOS()) {
+            $this->assertSame(null, Context::get('test.server.process.title'));
+        } else {
+            $this->assertSame('test.demo.1', Context::get('test.server.process.title'));
+        }
     }
 
     public function testProcessName()
@@ -82,7 +85,11 @@ class InitProcessTitleListenerTest extends TestCase
 
         $listener->process(new BeforeProcessHandle($process, 0));
 
-        $this->assertSame($name . '.test.demo.0', Context::get('test.server.process.title'));
+        if (! $listener->isSupportedOS()) {
+            $this->assertSame(null, Context::get('test.server.process.title'));
+        } else {
+            $this->assertSame($name . '.test.demo.0', Context::get('test.server.process.title'));
+        }
     }
 
     public function testUserDefinedDot()
@@ -100,6 +107,10 @@ class InitProcessTitleListenerTest extends TestCase
 
         $listener->process(new BeforeProcessHandle($process, 0));
 
-        $this->assertSame($name . '#test.demo#0', Context::get('test.server.process.title'));
+        if (! $listener->isSupportedOS()) {
+            $this->assertSame(null, Context::get('test.server.process.title'));
+        } else {
+            $this->assertSame($name . '#test.demo#0', Context::get('test.server.process.title'));
+        }
     }
 }

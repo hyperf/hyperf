@@ -5,20 +5,25 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Process;
 
 use Hyperf\Contract\ProcessInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Engine\Constant;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
+use Hyperf\Process\Event\AfterCoroutineHandle;
 use Hyperf\Process\Event\AfterProcessHandle;
+use Hyperf\Process\Event\BeforeCoroutineHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Process\Event\PipeMessage;
+use Hyperf\Process\Exception\ServerInvalidException;
 use Hyperf\Process\Exception\SocketAcceptException;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -26,6 +31,7 @@ use Swoole\Coroutine\Channel;
 use Swoole\Event;
 use Swoole\Process as SwooleProcess;
 use Swoole\Server;
+use Swoole\Timer;
 
 abstract class AbstractProcess implements ProcessInterface
 {
@@ -65,7 +71,7 @@ abstract class AbstractProcess implements ProcessInterface
     protected $event;
 
     /**
-     * @var SwooleProcess
+     * @var null|SwooleProcess
      */
     protected $process;
 
@@ -92,12 +98,27 @@ abstract class AbstractProcess implements ProcessInterface
         }
     }
 
-    public function isEnable(): bool
+    public function isEnable($server): bool
     {
         return true;
     }
 
-    public function bind(Server $server): void
+    public function bind($server): void
+    {
+        if (Constant::isCoroutineServer($server)) {
+            $this->bindCoroutineServer($server);
+            return;
+        }
+
+        if ($server instanceof Server) {
+            $this->bindServer($server);
+            return;
+        }
+
+        throw new ServerInvalidException(sprintf('Server %s is invalid.', get_class($server)));
+    }
+
+    protected function bindServer(Server $server): void
     {
         $num = $this->nums;
         for ($i = 0; $i < $num; ++$i) {
@@ -111,14 +132,14 @@ abstract class AbstractProcess implements ProcessInterface
                         $this->listen($quit);
                     }
                     $this->handle();
-
-                    $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
                 } catch (\Throwable $throwable) {
                     $this->logThrowable($throwable);
                 } finally {
+                    $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
                     if (isset($quit)) {
                         $quit->push(true);
                     }
+                    Timer::clearAll();
                     sleep($this->restartInterval);
                 }
             }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);
@@ -127,6 +148,30 @@ abstract class AbstractProcess implements ProcessInterface
             if ($this->enableCoroutine) {
                 ProcessCollector::add($this->name, $process);
             }
+        }
+    }
+
+    protected function bindCoroutineServer($server): void
+    {
+        $num = $this->nums;
+        for ($i = 0; $i < $num; ++$i) {
+            $handler = function () use ($i) {
+                $this->event && $this->event->dispatch(new BeforeCoroutineHandle($this, $i));
+                while (true) {
+                    try {
+                        $this->handle();
+                    } catch (\Throwable $throwable) {
+                        $this->logThrowable($throwable);
+                    }
+
+                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($this->restartInterval)) {
+                        break;
+                    }
+                }
+                $this->event && $this->event->dispatch(new AfterCoroutineHandle($this, $i));
+            };
+
+            Coroutine::create($handler);
         }
     }
 

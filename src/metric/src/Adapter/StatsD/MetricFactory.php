@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Metric\Adapter\StatsD;
 
 use Domnikl\Statsd\Client;
@@ -19,7 +18,8 @@ use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
-use Swoole\Coroutine;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 
 class MetricFactory implements MetricFactoryInterface
 {
@@ -84,15 +84,18 @@ class MetricFactory implements MetricFactoryInterface
         $interval = (float) $this->config->get("metric.metric.{$name}.push_interval", 5);
         $batchEnabled = $this->config->get("metric.metric.{$name}.enable_batch") == true;
         // Block handle from returning.
-        do {
-            if ($batchEnabled) {
+        if ($batchEnabled) {
+            do {
                 $this->client->startBatch();
-                Coroutine::sleep((int) $interval);
+                $workerExited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($interval);
                 $this->client->endBatch();
-            } else {
-                Coroutine::sleep(5000);
-            }
-        } while (true);
+                if ($workerExited) {
+                    break;
+                }
+            } while (true);
+        } else {
+            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
+        }
     }
 
     protected function getConnection(): Connection

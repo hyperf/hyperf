@@ -1,0 +1,65 @@
+{
+    "name": "hyperf/filesystem",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf"
+    ],
+    "description": "flysystem integration for hyperf",
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Filesystem\\": "src/"
+        },
+        "files": [
+            "src/Adapter/AliyunOssHook.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Filesystem\\": "tests"
+        }
+    },
+    "require": {
+        "php": ">=7.2",
+        "hyperf/di": "~2.1.0",
+        "league/flysystem": "^1.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.14",
+        "hyperf/config": "~2.1.0",
+        "hyperf/guzzle": "~2.1.0",
+        "hyperf/testing": "~2.1.0",
+        "league/flysystem-aws-s3-v3": "^1.0",
+        "league/flysystem-memory": "^1.0",
+        "overtrue/flysystem-qiniu": "^1.0",
+        "overtrue/flysystem-cos": "^2.0|^3.0",
+        "phpstan/phpstan": "^0.10.5",
+        "xxtime/flysystem-aliyun-oss": "^1.5"
+    },
+    "suggest": {
+        "ext-swoole": "Required to use swoole AliyunOssHook.",
+        "xxtime/flysystem-aliyun-oss": "required to use aliyun oss adapter",
+        "league/flysystem-memory": "required to use memory adapter",
+        "hyperf/guzzle": "required to use s3 adapter",
+        "league/flysystem-aws-s3-v3": "required to use s3 adapter",
+        "overtrue/flysystem-qiniu": "required to use qiniu adapter",
+        "overtrue/flysystem-cos": "required to use cos adapter (^2.0|^3.0)"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "co-phpunit -c phpunit.xml --colors=always",
+        "analyse": "phpstan analyse --memory-limit 300M -l 0 ./src",
+        "cs-fix": "php-cs-fixer fix $1"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.1-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Filesystem\\ConfigProvider"
+        }
+    }
+}

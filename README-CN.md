@@ -1,18 +1,24 @@
 [English](./README.md) | 中文
 
-[![Build Status](https://travis-ci.org/hyperf/hyperf.svg?branch=master)](https://travis-ci.org/hyperf/hyperf)
-<a href="https://packagist.org/packages/hyperf/hyperf"><img src="https://poser.pugx.org/hyperf/hyperf/v/stable.svg" alt="Latest Stable Version"></a>
-[![Php Version](https://img.shields.io/badge/php-%3E=7.2-brightgreen.svg?maxAge=2592000)](https://secure.php.net/)
-[![Swoole Version](https://img.shields.io/badge/swoole-%3E=4.4-brightgreen.svg?maxAge=2592000)](https://github.com/swoole/swoole-src)
-[![Hyperf License](https://img.shields.io/github/license/hyperf/hyperf.svg?maxAge=2592000)](https://github.com/hyperf/hyperf/blob/master/LICENSE)
+<p align="center"><a href="https://hyperf.io" target="_blank" rel="noopener noreferrer"><img width="70" src="https://cdn.jsdelivr.net/gh/hyperf/hyperf/docs/logo.png" alt="Hyperf Logo"></a></p>
+
+<p align="center">
+  <a href="https://github.com/hyperf/hyperf/releases"><img src="https://poser.pugx.org/hyperf/hyperf/v/stable" alt="Stable Version"></a>
+  <a href="https://travis-ci.org/hyperf/hyperf"><img src="https://travis-ci.org/hyperf/hyperf.svg?branch=master" alt="Build Status"></a>
+  <a href="https://packagist.org/packages/hyperf/framework"><img src="https://poser.pugx.org/hyperf/framework/downloads" alt="Total Downloads"></a>
+  <a href="https://packagist.org/packages/hyperf/framework"><img src="https://poser.pugx.org/hyperf/framework/d/monthly" alt="Monthly Downloads"></a>
+  <a href="https://www.php.net"><img src="https://img.shields.io/badge/php-%3E=7.3-brightgreen.svg?maxAge=2592000" alt="Php Version"></a>
+  <a href="https://github.com/swoole/swoole-src"><img src="https://img.shields.io/badge/swoole-%3E=4.5-brightgreen.svg?maxAge=2592000" alt="Swoole Version"></a>
+  <a href="https://github.com/hyperf/hyperf/blob/master/LICENSE"><img src="https://img.shields.io/github/license/hyperf/hyperf.svg?maxAge=2592000" alt="Hyperf License"></a>
+</p>
 
 # 介绍
 
-Hyperf 是基于 `Swoole 4.4+` 实现的高性能、高灵活性的 PHP 协程框架，内置协程服务器及大量常用的组件，性能较传统基于 `PHP-FPM` 的框架有质的提升，提供超高性能的同时，也保持着极其灵活的可扩展性，标准组件均基于 [PSR 标准](https://www.php-fig.org/psr) 实现，基于强大的依赖注入设计，保证了绝大部分组件或类都是 `可替换` 与 `可复用` 的。
+Hyperf 是基于 `Swoole 4.5+` 实现的高性能、高灵活性的 PHP 协程框架，内置协程服务器及大量常用的组件，性能较传统基于 `PHP-FPM` 的框架有质的提升，提供超高性能的同时，也保持着极其灵活的可扩展性，标准组件均基于 [PSR 标准](https://www.php-fig.org/psr) 实现，基于强大的依赖注入设计，保证了绝大部分组件或类都是 `可替换` 与 `可复用` 的。
 
-框架组件库除了常见的协程版的 `MySQL 客户端`、`Redis 客户端`，还为您准备了协程版的 `Eloquent ORM`、`WebSocket 服务端及客户端`、`JSON RPC 服务端及客户端`、`GRPC 服务端及客户端`、`Zipkin/Jaeger (OpenTracing) 客户端`、`Guzzle HTTP 客户端`、`Elasticsearch 客户端`、`Consul 客户端`、`ETCD 客户端`、`AMQP 组件`、`Apollo 配置中心`、`阿里云 ACM 应用配置管理`、`ETCD 配置中心`、`基于令牌桶算法的限流器`、`通用连接池`、`熔断器`、`Swagger 文档生成`、`Swoole Tracker`、`Blade 、 Smarty 、 Twig 、 Plates 和 ThinkTemplate 视图引擎`、`Snowflake 全局ID生成器` 等组件，省去了自己实现对应协程版本的麻烦。   
+框架组件库除了常见的协程版的 `MySQL 客户端`、`Redis 客户端`，还为您准备了协程版的 `Eloquent ORM`、`WebSocket 服务端及客户端`、`JSON RPC 服务端及客户端`、`GRPC 服务端及客户端`、`Zipkin/Jaeger (OpenTracing) 客户端`、`Guzzle HTTP 客户端`、`Elasticsearch 客户端`、`Consul 客户端`、`ETCD 客户端`、`AMQP 组件`、`NSQ 组件`、`Nats 组件`、`Apollo 配置中心`、`阿里云 ACM 应用配置管理`、`ETCD 配置中心`、`基于令牌桶算法的限流器`、`通用连接池`、`熔断器`、`Swagger 文档生成`、`Swoole Tracker`、`视图引擎`、`Snowflake 全局 ID 生成器` 等组件，省去了自己实现对应协程版本的麻烦。  
 
-Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面向切面编程`、`基于 PSR-15 的中间件`、`自定义进程`、`基于 PSR-14 的事件管理器`、`Redis/RabbitMQ 消息队列`、`自动模型缓存`、`基于 PSR-16 的缓存`、`Crontab 秒级定时任务`、`Translation 国际化`、`Validation 验证器` 等非常便捷的功能，满足丰富的技术场景和业务场景，开箱即用。
+Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面向切面编程`、`基于 PSR-15 的中间件`、`自定义进程`、`基于 PSR-14 的事件管理器`、`Redis/RabbitMQ/NSQ/Nats 消息队列`、`自动模型缓存`、`基于 PSR-16 的缓存`、`Crontab 秒级定时任务`、`Translation 国际化`、`Validation 验证器` 等非常便捷的功能，满足丰富的技术场景和业务场景，开箱即用。
 
 # 框架初衷
 
@@ -29,12 +35,12 @@ Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面�
 
 # 生产可用
 
-我们为组件进行了大量的单元测试以保证逻辑的正确，目前存在 `1120` 个单测共 `3369` 个断言条件，同时维护了高质量的文档，在 Hyperf 正式对外开放(2019年6月20日)之前，便已经过了严酷的生产环境的考验，我们才正式的对外开放该项目，现在已有很多的大型互联网企业都已将 Hyperf 部署到了自己的生产环境上并稳定运行。   
+我们为组件进行了大量的单元测试以保证逻辑的正确，目前存在 `1120` 个单测共 `3369` 个断言条件，同时维护了高质量的文档，在 Hyperf 正式对外开放(2019年6月20日)之前，便已经过了严酷的生产环境的考验，我们才正式的对外开放该项目，现在已有很多的大型互联网企业将 Hyperf 部署到了自己的生产环境上并稳定运行。   
 
 # 运行环境
 
 - Linux, OS X or Cygwin, WSL
-- PHP 7.2+
+- PHP 7.3+
 - Swoole 4.4+
 
 # 安全漏洞
@@ -57,21 +63,27 @@ Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面�
 
 以组织/公司的名义赞助 Hyperf 项目的发展，您的 LOGO 和链接可以呈现在下方。 [[赞助](https://hyperf.wiki/#/zh/donate)]
 
-## 金牌赞助方
+# 性能
 
-<!--gold start-->
-<table>
-  <tbody>
-    <tr>
-      <td align="left" valign="middle">
-        <a href="https://1shanghu.com" target="_blank">
-          <img height="80px" src="https://github.com/hyperf/hyperf/blob/master/doc/zh/imgs/1shanghu.jpg">
-        </a>
-      </td>
-    </tr><tr></tr>
-  </tbody>
-</table>
-<!--gold end-->
+### 阿里云 8 核 16G
+
+命令: `wrk -c 1024 -t 8 http://127.0.0.1:9501/`
+```bash
+Running 10s test @ http://127.0.0.1:9501/
+  8 threads and 1024 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    10.08ms    6.82ms  56.66ms   70.19%
+    Req/Sec    13.17k     5.94k   33.06k    84.12%
+  1049478 requests in 10.10s, 190.16MB read
+Requests/sec: 103921.49
+Transfer/sec:     18.83MB
+```
+
+# Hyperf 生态
+
+- 🧬 [Nano](https://github.com/hyperf/nano) 是一款零配置、无骨架、极小化的 Hyperf 发行版，通过 Nano 可以让您仅仅通过 1 个 PHP 文件即可快速搭建一个 Hyperf 应用。
+- ⚡️ [GoTask](https://github.com/hyperf/gotask) 是一款可以启动 Go 进程作为 Swoole 主进程边车(Sidecar) 的一个库，利用 IPC 进程通讯将任务投递给边车处理并接收返回值，可以理解为 Go 语言版的 Swoole TaskWorker。
+- 🚀 [Jet](https://github.com/hyperf/jet) 是一个统一模型的 RPC 客户端，内置 JSONRPC 协议的适配，该组件可适用于所有的 PHP 环境，包括 PHP-FPM 和 Swoole 或 Hyperf。
 
 # 开源协议
 

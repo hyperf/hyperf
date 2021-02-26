@@ -5,13 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\DB;
 
+use Closure;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use PDO;
@@ -93,6 +93,7 @@ class PDOConnection extends AbstractConnection
 
         $this->connection = $pdo;
         $this->lastUseTime = microtime(true);
+        $this->transactions = 0;
         return true;
     }
 
@@ -117,9 +118,9 @@ class PDOConnection extends AbstractConnection
 
         $statement->execute();
 
-        $fetchModel = $this->config['fetch_mode'];
+        $fetchMode = $this->config['fetch_mode'];
 
-        return $statement->fetchAll($fetchModel);
+        return $statement->fetchAll($fetchMode);
     }
 
     public function fetch(string $query, array $bindings = [])
@@ -159,6 +160,11 @@ class PDOConnection extends AbstractConnection
     public function call(string $method, array $argument = [])
     {
         return $this->connection->{$method}(...$argument);
+    }
+
+    public function run(Closure $closure)
+    {
+        return $closure->call($this, $this->connection);
     }
 
     /**

@@ -5,24 +5,28 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Guzzle;
 
 use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Promise\Create;
 use GuzzleHttp\Promise\FulfilledPromise;
+use GuzzleHttp\Psr7;
 use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\Utils;
+use GuzzleHttp\RequestOptions;
+use GuzzleHttp\TransferStats;
+use Hyperf\Engine\Http\Client;
+use Hyperf\Engine\Http\RawResponse;
 use Psr\Http\Message\RequestInterface;
-use Swoole\Coroutine;
-use Swoole\Coroutine\Http\Client;
+use Psr\Http\Message\StreamInterface;
 use function GuzzleHttp\is_host_in_noproxy;
 
 /**
- * Http handler that uses Swoole Coroutine as a transport layer.
+ * Http handler that uses Swoole/Swow Coroutine as a transport layer.
  */
 class CoroutineHandler
 {
@@ -48,57 +52,61 @@ class CoroutineHandler
             $path .= '?' . $query;
         }
 
-        $client = new Client($host, $port, $ssl);
-        $client->setMethod($request->getMethod());
-        $client->setData((string) $request->getBody());
+        $client = $this->makeClient($host, $port, $ssl);
 
-        // 初始化Headers
-        $this->initHeaders($client, $request, $options);
-        // 初始化配置
+        // Init Headers
+        $headers = $this->initHeaders($request, $options);
+        // Init Settings
         $settings = $this->getSettings($request, $options);
-        // 设置客户端参数
         if (! empty($settings)) {
             $client->set($settings);
         }
-        $this->execute($client, $path);
 
-        $ex = $this->checkStatusCode($client, $request);
-        if ($ex !== true) {
-            return \GuzzleHttp\Promise\rejection_for($ex);
+        $ms = microtime(true);
+
+        try {
+            $raw = $client->request($request->getMethod(), $path, $headers, (string) $request->getBody());
+        } catch (\Exception $exception) {
+            $exception = new ConnectException($exception->getMessage(), $request, null, [
+                'errCode' => $exception->getCode(),
+            ]);
+            return Create::rejectionFor($exception);
         }
 
-        $response = $this->getResponse($client);
+        $response = $this->getResponse($raw, $request, $options, microtime(true) - $ms);
 
         return new FulfilledPromise($response);
     }
 
-    protected function execute(Client $client, $path)
+    protected function makeClient(string $host, int $port, bool $ssl): Client
     {
-        $client->execute($path);
+        return new Client($host, $port, $ssl);
     }
 
-    protected function initHeaders(Client $client, RequestInterface $request, $options)
+    protected function initHeaders(RequestInterface $request, $options): array
     {
-        $headers = [];
-        foreach ($request->getHeaders() as $name => $value) {
-            $headers[$name] = implode(',', $value);
-        }
-
+        $headers = $request->getHeaders();
         $userInfo = $request->getUri()->getUserInfo();
         if ($userInfo) {
             $headers['Authorization'] = sprintf('Basic %s', base64_encode($userInfo));
         }
 
-        // TODO: Unknown reason, it will cause 400 some time.
-        unset($headers['Content-Length']);
-        $client->setHeaders($headers);
+        return $this->rewriteHeaders($headers);
+    }
+
+    protected function rewriteHeaders(array $headers): array
+    {
+        // Unknown reason, Content-Length will cause 400 some time.
+        // Expect header is not supported by \Swoole\Coroutine\Http\Client.
+        unset($headers['Content-Length'], $headers['Expect']);
+        return $headers;
     }
 
     protected function getSettings(RequestInterface $request, $options): array
     {
         $settings = [];
         if (isset($options['delay']) && $options['delay'] > 0) {
-            Coroutine::sleep((float) $options['delay'] / 1000);
+            usleep(intval($options['delay'] * 1000));
         }
 
         // 验证服务端证书
@@ -116,8 +124,8 @@ class CoroutineHandler
                     }
                     // If it's a directory or a link to a directory use CURLOPT_CAPATH.
                     // If not, it's probably a file, or a link to a file, so use CURLOPT_CAINFO.
-                    if (is_dir($options['verify']) ||
-                        (is_link($options['verify']) && is_dir(readlink($options['verify'])))) {
+                    if (is_dir($options['verify'])
+                        || (is_link($options['verify']) && is_dir(readlink($options['verify'])))) {
                         $settings['ssl_capath'] = $options['verify'];
                     } else {
                         $settings['ssl_cafile'] = $options['verify'];
@@ -169,39 +177,52 @@ class CoroutineHandler
         return $settings;
     }
 
-    protected function getResponse(Client $client)
+    protected function getResponse(RawResponse $raw, RequestInterface $request, array $options, float $transferTime)
     {
-        if ($client->set_cookie_headers) {
-            $client->headers['set-cookie'] = $client->set_cookie_headers;
+        $body = $raw->body;
+        $sink = $options['sink'] ?? null;
+        if (isset($sink) && (is_string($sink) || is_resource($sink))) {
+            $body = $this->createSink($body, $sink);
         }
-        return new \GuzzleHttp\Psr7\Response(
-            $client->statusCode,
-            isset($client->headers) ? $client->headers : [],
-            $client->body
+
+        $response = new Psr7\Response(
+            $raw->statusCode,
+            $raw->headers,
+            $body
         );
+
+        if ($callback = $options[RequestOptions::ON_STATS] ?? null) {
+            $stats = new TransferStats(
+                $request,
+                $response,
+                $transferTime,
+                $raw->statusCode,
+                []
+            );
+
+            $callback($stats);
+        }
+
+        return $response;
     }
 
-    protected function checkStatusCode(Client $client, $request)
+    protected function createStream(string $body): StreamInterface
     {
-        $statusCode = $client->statusCode;
-        $errCode = $client->errCode;
-        $ctx = [
-            'statusCode' => $statusCode,
-            'errCode' => $errCode,
-        ];
+        return Utils::streamFor($body);
+    }
 
-        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_CONNECT_FAILED) {
-            return new ConnectException(sprintf('Connection failed, errCode=%s', $errCode), $request, null, $ctx);
+    /**
+     * @param resource|string $stream
+     */
+    protected function createSink(string $body, $stream)
+    {
+        if (is_string($stream)) {
+            $stream = fopen($stream, 'w+');
+        }
+        if ($body !== '') {
+            fwrite($stream, $body);
         }
 
-        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_REQUEST_TIMEOUT) {
-            return new RequestException(sprintf('Request timed out, errCode=%s', $errCode), $request, null, null, $ctx);
-        }
-
-        if ($statusCode === SWOOLE_HTTP_CLIENT_ESTATUS_SERVER_RESET) {
-            return new RequestException('Server reset', $request, null, null, $ctx);
-        }
-
-        return true;
+        return $stream;
     }
 }

@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpMessage\Cookie;
 
 use Psr\Http\Message\RequestInterface;
@@ -95,17 +94,14 @@ class CookieJar implements CookieJarInterface
      * @param string $name cookie name to search for
      * @return null|SetCookie cookie that was found or null if not found
      */
-    public function getCookieByName($name)
+    public function getCookieByName(string $name)
     {
-        // don't allow a null name
-        if ($name === null) {
-            return null;
-        }
         foreach ($this->cookies as $cookie) {
             if ($cookie->getName() !== null && strcasecmp($cookie->getName(), $name) === 0) {
                 return $cookie;
             }
         }
+        return null;
     }
 
     public function toArray()
@@ -119,12 +115,12 @@ class CookieJar implements CookieJarInterface
     {
         if (! $domain) {
             $this->cookies = [];
-            return;
+            return $this;
         }
         if (! $path) {
             $this->cookies = array_filter(
                 $this->cookies,
-                function (SetCookie $cookie) use ($path, $domain) {
+                function (SetCookie $cookie) use ($domain) {
                     return ! $cookie->matchesDomain($domain);
                 }
             );
@@ -132,20 +128,22 @@ class CookieJar implements CookieJarInterface
             $this->cookies = array_filter(
                 $this->cookies,
                 function (SetCookie $cookie) use ($path, $domain) {
-                    return ! ($cookie->matchesPath($path) &&
-                        $cookie->matchesDomain($domain));
+                    return ! ($cookie->matchesPath($path)
+                        && $cookie->matchesDomain($domain));
                 }
             );
         } else {
             $this->cookies = array_filter(
                 $this->cookies,
                 function (SetCookie $cookie) use ($path, $domain, $name) {
-                    return ! ($cookie->getName() == $name &&
-                        $cookie->matchesPath($path) &&
-                        $cookie->matchesDomain($domain));
+                    return ! ($cookie->getName() == $name
+                        && $cookie->matchesPath($path)
+                        && $cookie->matchesDomain($domain));
                 }
             );
         }
+
+        return $this;
     }
 
     public function clearSessionCookies()
@@ -181,9 +179,9 @@ class CookieJar implements CookieJarInterface
         foreach ($this->cookies as $i => $c) {
             // Two cookies are identical, when their path, and domain are
             // identical.
-            if ($c->getPath() != $cookie->getPath() ||
-                $c->getDomain() != $cookie->getDomain() ||
-                $c->getName() != $cookie->getName()
+            if ($c->getPath() != $cookie->getPath()
+                || $c->getDomain() != $cookie->getDomain()
+                || $c->getName() != $cookie->getName()
             ) {
                 continue;
             }
@@ -254,10 +252,10 @@ class CookieJar implements CookieJarInterface
         $path = $uri->getPath() ?: '/';
 
         foreach ($this->cookies as $cookie) {
-            if ($cookie->matchesPath($path) &&
-                $cookie->matchesDomain($host) &&
-                ! $cookie->isExpired() &&
-                (! $cookie->getSecure() || $scheme === 'https')
+            if ($cookie->matchesPath($path)
+                && $cookie->matchesDomain($host)
+                && ! $cookie->isExpired()
+                && (! $cookie->getSecure() || $scheme === 'https')
             ) {
                 $values[] = $cookie->getName() . '='
                     . $cookie->getValue();

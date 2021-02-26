@@ -5,16 +5,16 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Dispatcher;
 
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\MiddlewareInterface;
 
 class HttpDispatcher extends AbstractDispatcher
 {
@@ -28,15 +28,12 @@ class HttpDispatcher extends AbstractDispatcher
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function dispatch(...$params): ResponseInterface
     {
         /**
-         * @var RequestInterface
-         * @var array $middlewares
-         * @var string $coreHandler
+         * @param RequestInterface $request
+         * @param array $middlewares
+         * @param MiddlewareInterface $coreHandler
          */
         [$request, $middlewares, $coreHandler] = $params;
         $requestHandler = new HttpRequestHandler($middlewares, $coreHandler, $this->container);

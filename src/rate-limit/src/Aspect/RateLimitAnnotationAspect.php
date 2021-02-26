@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RateLimit\Aspect;
 
 use bandwidthThrottle\tokenBucket\storage\StorageException;
@@ -57,7 +56,7 @@ class RateLimitAnnotationAspect implements AroundInterface
     public function __construct(ConfigInterface $config, RequestInterface $request, RateLimitHandler $rateLimitHandler)
     {
         $this->annotationProperty = get_object_vars(new RateLimit());
-        $this->config = $config->get('rate-limit', []);
+        $this->config = $this->parseConfig($config);
         $this->request = $request;
         $this->rateLimitHandler = $rateLimitHandler;
     }
@@ -108,6 +107,7 @@ class RateLimitAnnotationAspect implements AroundInterface
     public function getWeightingAnnotation(array $annotations): RateLimit
     {
         $property = array_merge($this->annotationProperty, $this->config);
+        /** @var null|RateLimit $annotation */
         foreach ($annotations as $annotation) {
             if (! $annotation) {
                 continue;
@@ -123,6 +123,26 @@ class RateLimitAnnotationAspect implements AroundInterface
         return [
             $metadata->class[RateLimit::class] ?? null,
             $metadata->method[RateLimit::class] ?? null,
+        ];
+    }
+
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
+    protected function parseConfig(ConfigInterface $config)
+    {
+        if ($config->has('rate_limit')) {
+            return $config->get('rate_limit');
+        }
+
+        return [
+            'create' => 1,
+            'consume' => 1,
+            'capacity' => 2,
+            'limitCallback' => [],
+            'waitTimeout' => 1,
         ];
     }
 }

@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Nats;
 
 use Hyperf\Di\Annotation\AnnotationCollector;
@@ -39,9 +38,9 @@ class ConsumerManager
 
     public function run()
     {
-        $classes = AnnotationCollector::getClassByAnnotation(ConsumerAnnotation::class);
+        $classes = AnnotationCollector::getClassesByAnnotation(ConsumerAnnotation::class);
         /**
-         * @var string
+         * @var string $class
          * @var ConsumerAnnotation $annotation
          */
         foreach ($classes as $class => $annotation) {

@@ -5,15 +5,15 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Testing;
 
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
+use Hyperf\Engine\Coroutine;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
@@ -21,6 +21,7 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\MiddlewareManager;
+use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Server;
 use Hyperf\Utils\Arr;
@@ -31,7 +32,6 @@ use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Coroutine as SwCoroutine;
 
 class Client extends Server
 {
@@ -50,7 +50,7 @@ class Client extends Server
 
     public function __construct(ContainerInterface $container, PackerInterface $packer = null, $server = 'http')
     {
-        parent::__construct($container, $container->get(HttpDispatcher::class), $container->get(ExceptionHandlerDispatcher::class));
+        parent::__construct($container, $container->get(HttpDispatcher::class), $container->get(ExceptionHandlerDispatcher::class), $container->get(ResponseEmitter::class));
         $this->packer = $packer ?? new JsonPacker();
 
         $this->initCoreMiddleware($server);
@@ -63,7 +63,7 @@ class Client extends Server
             'query' => $data,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function post($uri, $data = [], $headers = [])
@@ -73,7 +73,7 @@ class Client extends Server
             'form_params' => $data,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function put($uri, $data = [], $headers = [])
@@ -83,7 +83,7 @@ class Client extends Server
             'form_params' => $data,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function delete($uri, $data = [], $headers = [])
@@ -93,7 +93,7 @@ class Client extends Server
             'query' => $data,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function json($uri, $data = [], $headers = [])
@@ -103,7 +103,7 @@ class Client extends Server
             'headers' => $headers,
             'json' => $data,
         ]);
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function file($uri, $data = [], $headers = [])
@@ -129,7 +129,7 @@ class Client extends Server
             'multipart' => $multipart,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function request(string $method, string $path, array $options = [])
@@ -144,8 +144,8 @@ class Client extends Server
         $dispatched = $psr7Request->getAttribute(Dispatched::class);
         $middlewares = $this->middlewares;
         if ($dispatched->isFound()) {
-            $registedMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
-            $middlewares = array_merge($middlewares, $registedMiddlewares);
+            $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
+            $middlewares = array_merge($middlewares, $registeredMiddlewares);
         }
 
         try {
@@ -194,7 +194,7 @@ class Client extends Server
 
     protected function flushContext()
     {
-        $context = SwCoroutine::getContext();
+        $context = Coroutine::getContextFor() ?? [];
 
         foreach ($context as $key => $value) {
             if (Str::startsWith($key, $this->ignoreContextPrefix)) {

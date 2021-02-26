@@ -1,0 +1,64 @@
+{
+    "name": "hyperf/resource",
+    "description": "A api resource component for hyperf.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+      "php",
+      "hyperf",
+      "resource"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=7.2",
+        "ext-json": "*",
+        "hyperf/http-message": "~2.1.0",
+        "hyperf/paginator": "~2.1.0",
+        "hyperf/utils": "~2.1.0",
+        "psr/container": "^1.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.16",
+        "hyperf/command": "~2.1.0",
+        "hyperf/database": "~2.1.0",
+        "hyperf/devtool": "~2.1.0",
+        "hyperf/http-server": "~2.1.0",
+        "mockery/mockery": "^1.0",
+        "phpstan/phpstan": "^0.12",
+        "phpunit/phpunit": "^9.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Resource\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Resource\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.1-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Resource\\ConfigProvider"
+        }
+    },
+    "bin": [
+    ],
+    "scripts": {
+        "cs-fix": "php-cs-fixer fix $1",
+        "test": "phpunit --colors=always -c phpunit.xml",
+        "analyse": "phpstan analyse --memory-limit 300M -l 0 -c phpstan.neon ./src ./tests"
+    }
+}

@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\GraphQL;
 
 use GraphQL\Type\Definition\InputObjectType;
@@ -418,10 +417,10 @@ class TypeMapper implements TypeMapperInterface
             $this->mapNameToType = $this->cache->get($keyNameCache);
             $this->mapClassToFactory = $this->cache->get($keyInputClassCache);
             $this->mapInputNameToFactory = $this->cache->get($keyInputNameCache);
-            if ($this->mapClassToTypeArray === null ||
-                $this->mapNameToType === null ||
-                $this->mapClassToFactory === null ||
-                $this->mapInputNameToFactory === null
+            if ($this->mapClassToTypeArray === null
+                || $this->mapNameToType === null
+                || $this->mapClassToFactory === null
+                || $this->mapInputNameToFactory === null
             ) {
                 $lock = $this->lockFactory->createLock('buildmap_' . $this->namespace, 5);
                 if (! $lock->acquire()) {

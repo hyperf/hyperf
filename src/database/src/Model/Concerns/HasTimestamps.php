@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Model\Concerns;
 
 use Carbon\Carbon;
@@ -116,8 +115,8 @@ trait HasTimestamps
             $this->setUpdatedAt($time);
         }
 
-        if (! $this->exists && ! is_null(static::CREATED_AT) &&
-            ! $this->isDirty(static::CREATED_AT)) {
+        if (! $this->exists && ! is_null(static::CREATED_AT)
+            && ! $this->isDirty(static::CREATED_AT)) {
             $this->setCreatedAt($time);
         }
     }

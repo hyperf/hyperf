@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Etcd;
 
 use GuzzleHttp\HandlerStack;
@@ -37,7 +36,7 @@ abstract class Client
     /**
      * @var HandlerStack[]
      */
-    protected $stacks;
+    protected $stacks = [];
 
     /**
      * @var HandlerStackFactory
@@ -57,7 +56,7 @@ abstract class Client
     protected function getDefaultHandler()
     {
         $id = (int) Coroutine::inCoroutine();
-        if ($this->stacks[$id] instanceof HandlerStack) {
+        if (isset($this->stacks[$id]) && $this->stacks[$id] instanceof HandlerStack) {
             return $this->stacks[$id];
         }
 

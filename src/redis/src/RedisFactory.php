@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Redis;
 
 use Hyperf\Contract\ConfigInterface;
@@ -32,7 +31,7 @@ class RedisFactory
     }
 
     /**
-     * @return \Redis|RedisProxy
+     * @return RedisProxy
      */
     public function get(string $poolName)
     {

@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\WebSocketServer\Listener;
 
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -65,7 +64,8 @@ class OnPipeMessageListener implements ListenerInterface
             $message = $event->data;
 
             try {
-                $this->sender->proxy($message->name, $message->arguments);
+                [$fd, $method] = $this->sender->getFdAndMethodFromProxyMethod($message->name, $message->arguments);
+                $this->sender->proxy($fd, $method, $message->arguments);
             } catch (\Throwable $exception) {
                 $formatter = $this->container->get(FormatterInterface::class);
                 $this->logger->warning($formatter->format($exception));

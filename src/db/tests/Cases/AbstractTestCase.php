@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\DB\Cases;
 
 use Hyperf\Config\Config;
@@ -35,7 +34,7 @@ abstract class AbstractTestCase extends TestCase
 {
     protected $driver = 'pdo';
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set('db.connection.default', null);
@@ -48,6 +47,17 @@ abstract class AbstractTestCase extends TestCase
             'db' => [
                 'default' => [
                     'driver' => $this->driver,
+                    'host' => '127.0.0.1',
+                    'password' => '',
+                    'database' => 'hyperf',
+                    'pool' => [
+                        'max_connections' => 20,
+                    ],
+                    'options' => $options,
+                ],
+                'pdo' => [
+                    'driver' => 'pdo',
+                    'host' => '127.0.0.1',
                     'password' => '',
                     'database' => 'hyperf',
                     'pool' => [
@@ -72,6 +82,9 @@ abstract class AbstractTestCase extends TestCase
         });
         $container->shouldReceive('get')->with(PoolFactory::class)->andReturn($factory = new PoolFactory($container));
         $container->shouldReceive('get')->with(DB::class)->andReturn(new DB($factory, 'default'));
+        $container->shouldReceive('make')->with(DB::class, Mockery::any())->andReturnUsing(function ($_, $params) use ($factory) {
+            return new DB($factory, $params['poolName']);
+        });
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturn(false);
         ApplicationContext::setContainer($container);
         return $container;
