@@ -167,7 +167,7 @@ class Client extends Server
         $json = $options['json'] ?? [];
         $headers = $options['headers'] ?? [];
         $multipart = $options['multipart'] ?? [];
-
+        $cookies = isset($options['headers']['cookies']) && $options['headers']['cookies'] ? $options['headers']['cookies'] : [];
         $data = $params;
 
         // Initialize PSR-7 Request and Response objects.
@@ -184,7 +184,7 @@ class Client extends Server
         $request = new Psr7Request($method, $uri, $headers, $body);
         $request = $request->withQueryParams($query)
             ->withParsedBody($data)
-            ->withCookieParams($headers['cookies'])
+            ->withCookieParams($cookies)
             ->withUploadedFiles($this->normalizeFiles($multipart));
 
         Context::set(ServerRequestInterface::class, $psr7Request = $request);
