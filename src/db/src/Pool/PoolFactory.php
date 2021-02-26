@@ -13,6 +13,7 @@ namespace Hyperf\DB\Pool;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\DB\Exception\DriverNotFoundException;
+use Hyperf\DB\Exception\InvalidDriverException;
 use Psr\Container\ContainerInterface;
 
 class PoolFactory
