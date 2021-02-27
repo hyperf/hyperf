@@ -18,6 +18,7 @@
 ## Incubator
 
 - [rpc-multiplex](https://github.com/hyperf/rpc-multiplex-incubator) Rpc for multiplexing connection
+- [db-pgsql](https://github.com/hyperf/db-pgsql-incubator) PgSQL driver for Hyperf DB Component
 
 # v2.1.7 - 2021-02-22
 
