@@ -15,6 +15,11 @@
 - [#3308](https://github.com/hyperf/hyperf/pull/3308) Send response directly when the handler does not exists.
 - [#3319](https://github.com/hyperf/hyperf/pull/3319) Optimized code that get connection from pool.
 
+## Incubator
+
+- [rpc-multiplex](https://github.com/hyperf/rpc-multiplex-incubator) Rpc for multiplexing connection
+- [db-pgsql](https://github.com/hyperf/db-pgsql-incubator) PgSQL driver for Hyperf DB Component
+
 # v2.1.7 - 2021-02-22
 
 ## Fixed
