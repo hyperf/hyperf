@@ -13,6 +13,7 @@
 ## Optimized
 
 - [#3308](https://github.com/hyperf/hyperf/pull/3308) Send response directly when the handler does not exists.
+- [#3319](https://github.com/hyperf/hyperf/pull/3319) Optimized code that get connection from pool.
 
 ## Incubator
 
