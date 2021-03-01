@@ -1,5 +1,27 @@
 # 版本更新記錄
 
+# v2.1.8 - 2021-03-01
+
+## 修復
+
+- [#3301](https://github.com/hyperf/hyperf/pull/3301) 修復 `hyperf/cache` 組件，當沒有在註解中設置超時時間時，會將超時時間強制轉化為 0，導致緩存不失效的問題。
+
+## 新增
+
+- [#3310](https://github.com/hyperf/hyperf/pull/3310) 新增方法 `Blueprint::comment()`，可以允許在使用 `Migration` 的時候，設置表註釋。 
+- [#3311](https://github.com/hyperf/hyperf/pull/3311) 新增方法 `RouteCollector::getRouteParser`，可以方便的從 `RouteCollector` 中獲取到 `RouteParser` 對象。
+- [#3316](https://github.com/hyperf/hyperf/pull/3316) 允許用户在 `hyperf/db` 組件中，註冊自定義數據庫適配器。
+
+## 優化
+
+- [#3308](https://github.com/hyperf/hyperf/pull/3308) 優化 `WebSocket` 服務，當找不到對應路由時，直接返回響應。
+- [#3319](https://github.com/hyperf/hyperf/pull/3319) 優化從連接池獲取連接的代碼邏輯，避免因重寫低頻組件導致報錯，使得連接被意外丟棄。
+
+## 新組件孵化
+
+- [rpc-multiplex](https://github.com/hyperf/rpc-multiplex-incubator) 基於 Channel 實現的多路複用 RPC 組件。
+- [db-pgsql](https://github.com/hyperf/db-pgsql-incubator) 適配於 `hyperf/db` 的 `PgSQL` 適配器。
+
 # v2.1.7 - 2021-02-22
 
 ## 修復
