@@ -24,7 +24,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: redis, pdo, pdo_mysql
+          extensions: redis, pdo, pdo_mysql, bcmath
           ini-values: opcache.enable_cli=1
           coverage: none
       - name: Setup Swoole
