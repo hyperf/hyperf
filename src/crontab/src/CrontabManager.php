@@ -30,7 +30,7 @@ class CrontabManager
 
     public function register(Crontab $crontab): bool
     {
-        if (! $this->isValidCrontab($crontab)) {
+        if (! $this->isValidCrontab($crontab) || ! $crontab->isEnable()) {
             return false;
         }
         $this->crontabs[$crontab->getName()] = $crontab;
