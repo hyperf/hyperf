@@ -15,7 +15,7 @@ jobs:
       max-parallel: 8
     env:
       SW_VERSION: ${{ matrix.sw-version }}
-      YASD_VERSION: 'v0.3.5'
+      YASD_VERSION: 'v0.3.7'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
