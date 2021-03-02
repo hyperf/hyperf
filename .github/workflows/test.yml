@@ -24,11 +24,14 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: redis
-          ini-values: extension=swoole, opcache.enable_cli=1
+          extensions: redis, pdo, pdo_mysql
+          ini-values: opcache.enable_cli=1
           coverage: none
       - name: Setup Swoole
-        run: ./.travis/swoole.install.sh
+        run: |
+          ./.travis/swoole.install.sh
+          sudo sh -c "echo extension=swoole > /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
+          php --ri swoole
       - name: Setup Yasd
         run: |
           sudo apt-get install libboost-all-dev
