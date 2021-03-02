@@ -1,5 +1,9 @@
 # v2.1.9 - TBD
 
+## Fixed
+
+- [#3326](https://github.com/hyperf/hyperf/pull/3326) Fixed bug that `unpack` custom data failed when using `JsonEofPacker`.
+
 # v2.1.8 - 2021-03-01
 
 ## Fixed 
