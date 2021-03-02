@@ -31,14 +31,14 @@ class CrontabManagerTest extends TestCase
         $this->assertSame([], $manager->getCrontabs());
 
         $manager->register(tap(new Crontab(), function (Crontab $crontab) {
-            return $crontab->setName('test')->setRule('* * * * *')->setCallback(static function () {
+            $crontab->setName('test')->setRule('* * * * *')->setCallback(static function () {
             });
         }));
 
         $this->assertArrayHasKey('test', $manager->getCrontabs());
 
         $manager->register(tap(new Crontab(), function (Crontab $crontab) {
-            return $crontab->setName('test2')->setRule('* * * * *')->setEnable(false)->setCallback(static function () {
+            $crontab->setName('test2')->setRule('* * * * *')->setEnable(false)->setCallback(static function () {
             });
         }));
 

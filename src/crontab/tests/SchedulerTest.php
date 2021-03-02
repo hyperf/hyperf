@@ -26,8 +26,9 @@ class SchedulerTest extends TestCase
     public function testGetSchedules()
     {
         $scheduler = new Scheduler(new CrontabManager(new Parser()));
-        $this->assertSame([], tap(new ClassInvoker($scheduler), static function ($scheduler) {
-            return $scheduler->getSchedules();
-        }));
+
+        $invoker = new ClassInvoker($scheduler);
+
+        $this->assertSame([], $invoker->getSchedules());
     }
 }
