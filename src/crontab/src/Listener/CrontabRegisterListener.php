@@ -17,6 +17,7 @@ use Hyperf\Crontab\Annotation\Crontab as CrontabAnnotation;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\CrontabManager;
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\ReflectionManager;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Process\Event\BeforeCoroutineHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
@@ -64,9 +65,8 @@ class CrontabRegisterListener implements ListenerInterface
     {
         $crontabs = $this->parseCrontabs();
         foreach ($crontabs as $crontab) {
-            if ($crontab instanceof Crontab) {
+            if ($crontab instanceof Crontab && $this->crontabManager->register($crontab)) {
                 $this->logger->debug(sprintf('Crontab %s have been registered.', $crontab->getName()));
-                $this->crontabManager->register($crontab);
             }
         }
     }
@@ -76,9 +76,9 @@ class CrontabRegisterListener implements ListenerInterface
         $configCrontabs = $this->config->get('crontab.crontab', []);
         $annotationCrontabs = AnnotationCollector::getClassesByAnnotation(CrontabAnnotation::class);
         $crontabs = [];
-        foreach (array_merge($configCrontabs, $annotationCrontabs) as $crontab) {
+        foreach (array_merge($configCrontabs, $annotationCrontabs) as $className => $crontab) {
             if ($crontab instanceof CrontabAnnotation) {
-                $crontab = $this->buildCrontabByAnnotation($crontab);
+                $crontab = $this->buildCrontabByAnnotation($className, $crontab);
             }
             if ($crontab instanceof Crontab) {
                 $crontabs[$crontab->getName()] = $crontab;
@@ -87,7 +87,7 @@ class CrontabRegisterListener implements ListenerInterface
         return array_values($crontabs);
     }
 
-    private function buildCrontabByAnnotation(CrontabAnnotation $annotation): Crontab
+    private function buildCrontabByAnnotation(string $className, CrontabAnnotation $annotation): Crontab
     {
         $crontab = new Crontab();
         isset($annotation->name) && $crontab->setName($annotation->name);
@@ -100,6 +100,26 @@ class CrontabRegisterListener implements ListenerInterface
         isset($annotation->callback) && $crontab->setCallback($annotation->callback);
         isset($annotation->memo) && $crontab->setMemo($annotation->memo);
         isset($annotation->enable) && $crontab->setEnable($annotation->enable);
+
+        if ($annotation->enableMethod) {
+            $crontab->setEnable($this->resolveCrontabEnableMethod($className, $annotation->enableMethod, $crontab->isEnable()));
+        }
+
         return $crontab;
+    }
+
+    private function resolveCrontabEnableMethod(string $className, string $enableMethod, bool $default): bool
+    {
+        try {
+            $reflectionClass = ReflectionManager::reflectClass($className);
+            $method = $reflectionClass->getMethod($enableMethod);
+
+            if ($method->isPublic()) {
+                return make($className)->{$enableMethod}();
+            }
+        } catch (\ReflectionException $e) {
+        }
+
+        return $default;
     }
 }
