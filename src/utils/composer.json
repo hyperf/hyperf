@@ -19,7 +19,7 @@
         "php": ">=7.2",
         "doctrine/inflector": "^2.0",
         "hyperf/contract": "~2.1.0",
-        "hyperf/engine": "^1.0"
+        "hyperf/engine": "^1.1"
     },
     "require-dev": {
         "symfony/var-dumper": "^5.0",
