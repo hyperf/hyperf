@@ -30,5 +30,10 @@ class StringHelperTest extends TestCase
 
         $string = StringHelper::format('test', ['id' => 1, 'name' => 'Hyperf']);
         $this->assertSame('test:1:Hyperf', $string);
+
+        $string = StringHelper::format('test', ['_this' => new class extends \stdClass {
+            public $id = 1;
+        }], '#{_this.id}');
+        $this->assertSame('test:1', $string);
     }
 }

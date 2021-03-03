@@ -49,6 +49,10 @@ class CacheEvictAspect extends AbstractAspect
         $className = $proceedingJoinPoint->className;
         $method = $proceedingJoinPoint->methodName;
         $arguments = $proceedingJoinPoint->arguments['keys'];
+        $instance = $proceedingJoinPoint->getInstance();
+        if (!is_null($instance)){
+            $arguments['_this'] = $instance;
+        }
 
         [$key, $all, $group, $annotation] = $this->annotationManager->getCacheEvictValue($className, $method, $arguments);
 

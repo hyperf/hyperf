@@ -57,6 +57,10 @@ class FailCacheAspect extends AbstractAspect
         $className = $proceedingJoinPoint->className;
         $method = $proceedingJoinPoint->methodName;
         $arguments = $proceedingJoinPoint->arguments['keys'];
+        $instance = $proceedingJoinPoint->getInstance();
+        if (!is_null($instance)){
+            $arguments['_this'] = $instance;
+        }
 
         [$key, $ttl, $group] = $this->annotationManager->getFailCacheValue($className, $method, $arguments);
 
