@@ -72,6 +72,11 @@ class Crontab extends AbstractAnnotation
      */
     public $enable = true;
 
+    /**
+     * @var string
+     */
+    public $enableMethod = 'isEnable';
+
     public function __construct($value = null)
     {
         parent::__construct($value);
@@ -81,17 +86,32 @@ class Crontab extends AbstractAnnotation
 
     public function collectClass(string $className): void
     {
+        $reflectionClass = ReflectionManager::reflectClass($className);
+        $reflectionMethods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
+
+        $this->parseName($className);
+        $this->parseCallback($className, $reflectionMethods);
+        $this->parseEnable($className, $reflectionClass);
+
+        parent::collectClass($className);
+    }
+
+    protected function parseName(string $className)
+    {
         if (! $this->name) {
             $this->name = $className;
         }
+    }
+
+    protected function parseCallback(string $className, array $reflectionMethods)
+    {
         if (! $this->callback) {
-            $reflectionClass = ReflectionManager::reflectClass($className);
-            $reflectionMethods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
             $availableMethodCount = 0;
             $firstAvailableMethod = null;
             $hasInvokeMagicMethod = false;
             foreach ($reflectionMethods as $reflectionMethod) {
-                if (! Str::startsWith($reflectionMethod->getName(), ['__'])) {
+                if (! Str::startsWith($reflectionMethod->getName(), ['__']) &&
+                    $reflectionMethod->getName() !== $this->enableMethod) {
                     ++$availableMethodCount;
                     ! $firstAvailableMethod && $firstAvailableMethod = $reflectionMethod;
                 } elseif ($reflectionMethod->getName() === '__invoke') {
@@ -108,6 +128,17 @@ class Crontab extends AbstractAnnotation
         } elseif (is_string($this->callback)) {
             $this->callback = [$className, $this->callback];
         }
-        parent::collectClass($className);
+    }
+
+    protected function parseEnable(string $className, \ReflectionClass $reflectionClass)
+    {
+        try {
+            $method = $reflectionClass->getMethod($this->enableMethod);
+
+            if ($method->isPublic()) {
+                $this->enable = make($className)->{$this->enableMethod}();
+            }
+        } catch (\ReflectionException $e) {
+        }
     }
 }
