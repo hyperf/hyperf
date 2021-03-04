@@ -16,6 +16,7 @@ use Hyperf\Cache\Annotation\CachePut;
 use Hyperf\Cache\AnnotationManager;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -84,17 +85,23 @@ class AnnotationTest extends TestCase
         $manager->shouldReceive('getAnnotation')->with(Cacheable::class, Mockery::any(), Mockery::any())->once()->andReturn($cacheable2);
         $manager->shouldReceive('getAnnotation')->with(CachePut::class, Mockery::any(), Mockery::any())->once()->andReturn($cacheput);
 
-        [$key, $ttl] = $manager->getCacheableValue('Foo', 'test', ['id' => $id = uniqid()]);
+        $closure = static function () {
+        };
+
+        $point = new ProceedingJoinPoint($closure, 'Foo', 'test', ['keys' => ['id' => $id = uniqid()]]);
+        [$key, $ttl] = $manager->getCacheableValue($point);
         $this->assertSame('test:' . $id, $key);
         $this->assertGreaterThanOrEqual(3600, $ttl);
         $this->assertLessThanOrEqual(3700, $ttl);
 
-        [$key, $ttl] = $manager->getCachePutValue('Foo', 'test', ['id' => $id = uniqid()]);
+        $point = new ProceedingJoinPoint($closure, 'Foo', 'test', ['keys' => ['id' => $id = uniqid()]]);
+        [$key, $ttl] = $manager->getCachePutValue($point);
         $this->assertSame('test:' . $id, $key);
         $this->assertGreaterThanOrEqual(3600, $ttl);
         $this->assertLessThanOrEqual(3700, $ttl);
 
-        [$key, $ttl] = $manager->getCacheableValue('Foo', 'test', ['id' => $id = uniqid()]);
+        $point = new ProceedingJoinPoint($closure, 'Foo', 'test', ['keys' => ['id' => $id = uniqid()]]);
+        [$key, $ttl] = $manager->getCacheableValue($point);
         $this->assertSame('test:' . $id, $key);
         $this->assertSame(3600, $ttl);
     }

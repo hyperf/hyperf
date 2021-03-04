@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Cache\Cases;
 
 use Hyperf\Cache\Helper\StringHelper;
+use Hyperf\Di\Aop\ProceedingJoinPoint;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -34,9 +35,27 @@ class StringHelperTest extends TestCase
         $string = StringHelper::format('test', ['id' => 1, 'name' => 'Hyperf'], 'Hyperf:#{name}');
         $this->assertSame('test:Hyperf:Hyperf', $string);
 
-        $string = StringHelper::format('test', ['this' => new class() extends \stdClass {
+        $string = StringHelper::format('test', ['this' => new class() {
             public $id = 1;
         }], '#{this.id}');
         $this->assertSame('test:1', $string);
+
+        $class = new class($id = uniqid()) {
+            public $id;
+
+            public function __construct($id)
+            {
+                $this->id = $id;
+            }
+
+            public function getPoint()
+            {
+                return new ProceedingJoinPoint(function () {
+                }, 'Foo', 'test', []);
+            }
+        };
+
+        $string = StringHelper::format('test', [], '#{this.id}', $class->getPoint());
+        $this->assertSame('test:' . $id, $string);
     }
 }

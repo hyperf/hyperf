@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Cache\Helper;
 
+use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Utils\Str;
 
 class StringHelper
@@ -18,12 +19,15 @@ class StringHelper
     /**
      * Format cache key with prefix and arguments.
      */
-    public static function format(string $prefix, array $arguments, ?string $value = null): string
+    public static function format(string $prefix, array $arguments, ?string $value = null, ?ProceedingJoinPoint $proceedingJoinPoint = null): string
     {
         if ($value !== null) {
             if ($matches = StringHelper::parse($value)) {
                 foreach ($matches as $search) {
                     $k = str_replace(['#{', '}'], '', $search);
+                    if (strpos($k, 'this.') === 0 && ! array_key_exists('this', $arguments)) {
+                        $arguments['this'] = $proceedingJoinPoint->getInstance();
+                    }
 
                     $value = Str::replaceFirst($search, (string) data_get($arguments, $k), $value);
                 }

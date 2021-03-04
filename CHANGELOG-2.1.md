@@ -8,6 +8,11 @@
 ## Added
 
 - [#3325](https://github.com/hyperf/hyperf/pull/3325) Added `enable` to control the crontab task which to register or not.
+- [#3331](https://github.com/hyperf/hyperf/pull/3331) Support `#{this.key}` which you can used to get cache key from original object for `Cacheable`, `CachePut` and so on.
+
+## Changed
+
+- [#3331](https://github.com/hyperf/hyperf/pull/3331) Changed input arguments for `Hyperf\Cache\AnnotationManager::get*Value`.
 
 # v2.1.8 - 2021-03-01
 

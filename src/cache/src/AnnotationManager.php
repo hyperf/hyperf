@@ -21,6 +21,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 class AnnotationManager
 {
@@ -40,20 +41,28 @@ class AnnotationManager
         $this->logger = $logger;
     }
 
-    public function getCacheableValue(string $className, string $method, array $arguments): array
+    public function getCacheableValue(ProceedingJoinPoint $proceedingJoinPoint): array
     {
+        $className = $proceedingJoinPoint->className;
+        $method = $proceedingJoinPoint->methodName;
+        $arguments = $proceedingJoinPoint->arguments['keys'];
+
         /** @var Cacheable $annotation */
         $annotation = $this->getAnnotation(Cacheable::class, $className, $method);
 
-        $key = $this->getFormatedKey($annotation->prefix, $arguments, $annotation->value);
+        $key = $this->getFormatedKey($annotation->prefix, $arguments, $annotation->value, $proceedingJoinPoint);
         $group = $annotation->group;
         $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
 
         return [$key, $ttl + $this->getRandomOffset($annotation->offset), $group, $annotation];
     }
 
-    public function getCacheEvictValue(string $className, string $method, array $arguments): array
+    public function getCacheEvictValue(ProceedingJoinPoint $proceedingJoinPoint): array
     {
+        $className = $proceedingJoinPoint->className;
+        $method = $proceedingJoinPoint->methodName;
+        $arguments = $proceedingJoinPoint->arguments['keys'];
+
         /** @var CacheEvict $annotation */
         $annotation = $this->getAnnotation(CacheEvict::class, $className, $method);
 
@@ -69,8 +78,12 @@ class AnnotationManager
         return [$key, $all, $group, $annotation];
     }
 
-    public function getCachePutValue(string $className, string $method, array $arguments): array
+    public function getCachePutValue(ProceedingJoinPoint $proceedingJoinPoint): array
     {
+        $className = $proceedingJoinPoint->className;
+        $method = $proceedingJoinPoint->methodName;
+        $arguments = $proceedingJoinPoint->arguments['keys'];
+
         /** @var CachePut $annotation */
         $annotation = $this->getAnnotation(CachePut::class, $className, $method);
 
@@ -81,8 +94,12 @@ class AnnotationManager
         return [$key, $ttl + $this->getRandomOffset($annotation->offset), $group, $annotation];
     }
 
-    public function getFailCacheValue(string $className, string $method, array $arguments): array
+    public function getFailCacheValue(ProceedingJoinPoint $proceedingJoinPoint): array
     {
+        $className = $proceedingJoinPoint->className;
+        $method = $proceedingJoinPoint->methodName;
+        $arguments = $proceedingJoinPoint->arguments['keys'];
+
         /** @var FailCache $annotation */
         $annotation = $this->getAnnotation(FailCache::class, $className, $method);
 
@@ -114,9 +131,9 @@ class AnnotationManager
         return $result;
     }
 
-    protected function getFormatedKey(string $prefix, array $arguments, ?string $value = null): string
+    protected function getFormatedKey(string $prefix, array $arguments, ?string $value = null, ?ProceedingJoinPoint $proceedingJoinPoint = null): string
     {
-        $key = StringHelper::format($prefix, $arguments, $value);
+        $key = StringHelper::format($prefix, $arguments, $value, $proceedingJoinPoint);
 
         if (strlen($key) > 64) {
             $this->logger->warning('The cache key length is too long. The key is ' . $key);

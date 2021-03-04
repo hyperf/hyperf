@@ -54,15 +54,7 @@ class FailCacheAspect extends AbstractAspect
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $className = $proceedingJoinPoint->className;
-        $method = $proceedingJoinPoint->methodName;
-        $arguments = $proceedingJoinPoint->arguments['keys'];
-        $instance = $proceedingJoinPoint->getInstance();
-        if (! is_null($instance)) {
-            $arguments['this'] = $instance;
-        }
-
-        [$key, $ttl, $group] = $this->annotationManager->getFailCacheValue($className, $method, $arguments);
+        [$key, $ttl, $group] = $this->annotationManager->getFailCacheValue($proceedingJoinPoint);
 
         $driver = $this->manager->getDriver($group);
 

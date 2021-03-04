@@ -48,15 +48,7 @@ class CacheableAspect extends AbstractAspect
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $className = $proceedingJoinPoint->className;
-        $method = $proceedingJoinPoint->methodName;
-        $arguments = $proceedingJoinPoint->arguments['keys'];
-        $instance = $proceedingJoinPoint->getInstance();
-        if (! is_null($instance)) {
-            $arguments['this'] = $instance;
-        }
-
-        [$key, $ttl, $group, $annotation] = $this->annotationManager->getCacheableValue($className, $method, $arguments);
+        [$key, $ttl, $group, $annotation] = $this->annotationManager->getCacheableValue($proceedingJoinPoint);
 
         $driver = $this->manager->getDriver($group);
 

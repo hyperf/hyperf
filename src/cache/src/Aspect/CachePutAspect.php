@@ -45,15 +45,7 @@ class CachePutAspect extends AbstractAspect
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $className = $proceedingJoinPoint->className;
-        $method = $proceedingJoinPoint->methodName;
-        $arguments = $proceedingJoinPoint->arguments['keys'];
-        $instance = $proceedingJoinPoint->getInstance();
-        if (! is_null($instance)) {
-            $arguments['this'] = $instance;
-        }
-
-        [$key, $ttl, $group] = $this->annotationManager->getCachePutValue($className, $method, $arguments);
+        [$key, $ttl, $group] = $this->annotationManager->getCachePutValue($proceedingJoinPoint);
 
         $driver = $this->manager->getDriver($group);
 
