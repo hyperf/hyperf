@@ -25,7 +25,7 @@ class StringHelper
             if ($matches = StringHelper::parse($value)) {
                 foreach ($matches as $search) {
                     $k = str_replace(['#{', '}'], '', $search);
-                    if (strpos($k, 'this.') === 0 && ! array_key_exists('this', $arguments)) {
+                    if (strpos($k, 'this') === 0 && ! array_key_exists('this', $arguments)) {
                         $arguments['this'] = $proceedingJoinPoint->getInstance();
                     }
 
