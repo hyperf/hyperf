@@ -49,8 +49,8 @@ class CachePutAspect extends AbstractAspect
         $method = $proceedingJoinPoint->methodName;
         $arguments = $proceedingJoinPoint->arguments['keys'];
         $instance = $proceedingJoinPoint->getInstance();
-        if (!is_null($instance)){
-            $arguments['_this'] = $instance;
+        if (! is_null($instance)) {
+            $arguments['this'] = $instance;
         }
 
         [$key, $ttl, $group] = $this->annotationManager->getCachePutValue($className, $method, $arguments);

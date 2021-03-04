@@ -52,8 +52,8 @@ class CacheableAspect extends AbstractAspect
         $method = $proceedingJoinPoint->methodName;
         $arguments = $proceedingJoinPoint->arguments['keys'];
         $instance = $proceedingJoinPoint->getInstance();
-        if (!is_null($instance)){
-            $arguments['_this'] = $instance;
+        if (! is_null($instance)) {
+            $arguments['this'] = $instance;
         }
 
         [$key, $ttl, $group, $annotation] = $this->annotationManager->getCacheableValue($className, $method, $arguments);
