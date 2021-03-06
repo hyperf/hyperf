@@ -11,7 +11,7 @@
 
 ## Optimized
 
-- [#3338](https://github.com/hyperf/hyperf/pull/3338) Optimized code for `testing`, which mock request in an alone coroutine.
+- [#3338](https://github.com/hyperf/hyperf/pull/3338) Optimized code for `testing` which mock request in an alone coroutine.
 
 # v2.1.8 - 2021-03-01
 
