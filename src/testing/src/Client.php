@@ -13,7 +13,6 @@ namespace Hyperf\Testing;
 
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
-use Hyperf\Engine\Coroutine;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
@@ -28,7 +27,6 @@ use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Packer\JsonPacker;
-use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -182,18 +180,6 @@ class Client extends Server
         Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
 
         return [$psr7Request, $psr7Response];
-    }
-
-    protected function flushContext()
-    {
-        $context = Coroutine::getContextFor() ?? [];
-
-        foreach ($context as $key => $value) {
-            if (Str::startsWith($key, $this->ignoreContextPrefix)) {
-                continue;
-            }
-            $context[$key] = null;
-        }
     }
 
     protected function normalizeFiles(array $multipart): array
