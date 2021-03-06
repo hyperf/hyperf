@@ -36,14 +36,6 @@ use Psr\Http\Message\ServerRequestInterface;
 class Client extends Server
 {
     /**
-     * @var array
-     */
-    public $ignoreContextPrefix = [
-        'database.connection',
-        'redis.connection',
-    ];
-
-    /**
      * @var PackerInterface
      */
     protected $packer;
@@ -134,34 +126,34 @@ class Client extends Server
 
     public function request(string $method, string $path, array $options = [])
     {
-        /*
-         * @var Psr7Request
-         */
-        [$psr7Request, $psr7Response] = $this->init($method, $path, $options);
+        return wait(function () use ($method, $path, $options) {
+            /*
+             * @var Psr7Request
+             */
+            [$psr7Request, $psr7Response] = $this->init($method, $path, $options);
 
-        $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
-        /** @var Dispatched $dispatched */
-        $dispatched = $psr7Request->getAttribute(Dispatched::class);
-        $middlewares = $this->middlewares;
-        if ($dispatched->isFound()) {
-            $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
-            $middlewares = array_merge($middlewares, $registeredMiddlewares);
-        }
+            $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
+            /** @var Dispatched $dispatched */
+            $dispatched = $psr7Request->getAttribute(Dispatched::class);
+            $middlewares = $this->middlewares;
+            if ($dispatched->isFound()) {
+                $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
+                $middlewares = array_merge($middlewares, $registeredMiddlewares);
+            }
 
-        try {
-            $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
-        } catch (\Throwable $throwable) {
-            // Delegate the exception to exception handler.
-            $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
-        }
+            try {
+                $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
+            } catch (\Throwable $throwable) {
+                // Delegate the exception to exception handler.
+                $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+            }
 
-        return $psr7Response;
+            return $psr7Response;
+        });
     }
 
     protected function init(string $method, string $path, array $options = []): array
     {
-        $this->flushContext();
-
         $query = $options['query'] ?? [];
         $params = $options['form_params'] ?? [];
         $json = $options['json'] ?? [];
