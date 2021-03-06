@@ -13,7 +13,6 @@ namespace Hyperf\Testing;
 
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
-use Hyperf\Engine\Coroutine;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
@@ -28,7 +27,6 @@ use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Packer\JsonPacker;
-use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -36,17 +34,14 @@ use Psr\Http\Message\ServerRequestInterface;
 class Client extends Server
 {
     /**
-     * @var array
-     */
-    public $ignoreContextPrefix = [
-        'database.connection',
-        'redis.connection',
-    ];
-
-    /**
      * @var PackerInterface
      */
     protected $packer;
+
+    /**
+     * @var float
+     */
+    protected $waitTimeout = 10.0;
 
     public function __construct(ContainerInterface $container, PackerInterface $packer = null, $server = 'http')
     {
@@ -134,34 +129,34 @@ class Client extends Server
 
     public function request(string $method, string $path, array $options = [])
     {
-        /*
-         * @var Psr7Request
-         */
-        [$psr7Request, $psr7Response] = $this->init($method, $path, $options);
+        return wait(function () use ($method, $path, $options) {
+            /*
+             * @var Psr7Request
+             */
+            [$psr7Request, $psr7Response] = $this->init($method, $path, $options);
 
-        $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
-        /** @var Dispatched $dispatched */
-        $dispatched = $psr7Request->getAttribute(Dispatched::class);
-        $middlewares = $this->middlewares;
-        if ($dispatched->isFound()) {
-            $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
-            $middlewares = array_merge($middlewares, $registeredMiddlewares);
-        }
+            $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
+            /** @var Dispatched $dispatched */
+            $dispatched = $psr7Request->getAttribute(Dispatched::class);
+            $middlewares = $this->middlewares;
+            if ($dispatched->isFound()) {
+                $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
+                $middlewares = array_merge($middlewares, $registeredMiddlewares);
+            }
 
-        try {
-            $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
-        } catch (\Throwable $throwable) {
-            // Delegate the exception to exception handler.
-            $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
-        }
+            try {
+                $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
+            } catch (\Throwable $throwable) {
+                // Delegate the exception to exception handler.
+                $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+            }
 
-        return $psr7Response;
+            return $psr7Response;
+        }, $this->waitTimeout);
     }
 
     protected function init(string $method, string $path, array $options = []): array
     {
-        $this->flushContext();
-
         $query = $options['query'] ?? [];
         $params = $options['form_params'] ?? [];
         $json = $options['json'] ?? [];
@@ -190,18 +185,6 @@ class Client extends Server
         Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
 
         return [$psr7Request, $psr7Response];
-    }
-
-    protected function flushContext()
-    {
-        $context = Coroutine::getContextFor() ?? [];
-
-        foreach ($context as $key => $value) {
-            if (Str::startsWith($key, $this->ignoreContextPrefix)) {
-                continue;
-            }
-            $context[$key] = null;
-        }
     }
 
     protected function normalizeFiles(array $multipart): array

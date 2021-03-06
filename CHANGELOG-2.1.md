@@ -9,6 +9,10 @@
 
 - [#3325](https://github.com/hyperf/hyperf/pull/3325) Added `enable` to control the crontab task which to register or not.
 
+## Optimized
+
+- [#3338](https://github.com/hyperf/hyperf/pull/3338) Optimized code for `testing` which mock request in an alone coroutine.
+
 # v2.1.8 - 2021-03-01
 
 ## Fixed 

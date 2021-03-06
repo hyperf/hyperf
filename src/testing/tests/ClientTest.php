@@ -26,8 +26,10 @@ use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Router;
 use Hyperf\Testing\Client;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
+use Hyperf\Utils\Waiter;
 use HyperfTest\Testing\Stub\Exception\Handler\FooExceptionHandler;
 use HyperfTest\Testing\Stub\FooController;
 use Mockery;
@@ -49,6 +51,19 @@ class ClientTest extends TestCase
 
         $this->assertSame(0, $data['code']);
         $this->assertSame('Hello Hyperf!', $data['data']);
+    }
+
+    public function testClientReturnCoroutineId()
+    {
+        $container = $this->getContainer();
+
+        $client = new Client($container);
+
+        $id = Coroutine::id();
+        $data = $client->get('/id');
+
+        $this->assertSame(0, $data['code']);
+        $this->assertNotEquals($id, $data['data']);
     }
 
     public function testClientException()
@@ -90,11 +105,13 @@ class ClientTest extends TestCase
         $container->shouldReceive('make')->with(CoreMiddleware::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new CoreMiddleware(...array_values($args));
         });
+        $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
         ApplicationContext::setContainer($container);
 
         Router::init($factory);
         Router::get('/', [FooController::class, 'index']);
         Router::get('/exception', [FooController::class, 'exception']);
+        Router::get('/id', [FooController::class, 'id']);
 
         return $container;
     }

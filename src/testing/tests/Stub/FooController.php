@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Testing\Stub;
 
+use Hyperf\Utils\Coroutine;
+
 class FooController
 {
     public function index()
@@ -21,5 +23,10 @@ class FooController
     public function exception()
     {
         throw new \RuntimeException('Server Error', 500);
+    }
+
+    public function id()
+    {
+        return ['code' => 0, 'data' => Coroutine::id()];
     }
 }
