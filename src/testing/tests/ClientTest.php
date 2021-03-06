@@ -26,6 +26,7 @@ use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Router;
 use Hyperf\Testing\Client;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use HyperfTest\Testing\Stub\Exception\Handler\FooExceptionHandler;
@@ -48,6 +49,19 @@ class ClientTest extends TestCase
         $data = $client->get('/');
 
         $this->assertSame(0, $data['code']);
+        $this->assertSame('Hello Hyperf!', $data['data']);
+    }
+
+    public function testClientReturnCoroutineId()
+    {
+        $container = $this->getContainer();
+
+        $client = new Client($container);
+
+        $id = Coroutine::id();
+        $data = $client->get('/id');
+
+        $this->assertNotEquals($id, $data['code']);
         $this->assertSame('Hello Hyperf!', $data['data']);
     }
 
@@ -95,6 +109,7 @@ class ClientTest extends TestCase
         Router::init($factory);
         Router::get('/', [FooController::class, 'index']);
         Router::get('/exception', [FooController::class, 'exception']);
+        Router::get('/id', [FooController::class, 'id']);
 
         return $container;
     }
