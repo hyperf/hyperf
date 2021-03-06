@@ -38,6 +38,11 @@ class Client extends Server
      */
     protected $packer;
 
+    /**
+     * @var float
+     */
+    protected $waitTimeout = 10.0;
+
     public function __construct(ContainerInterface $container, PackerInterface $packer = null, $server = 'http')
     {
         parent::__construct($container, $container->get(HttpDispatcher::class), $container->get(ExceptionHandlerDispatcher::class), $container->get(ResponseEmitter::class));
@@ -147,7 +152,7 @@ class Client extends Server
             }
 
             return $psr7Response;
-        });
+        }, $this->waitTimeout);
     }
 
     protected function init(string $method, string $path, array $options = []): array
