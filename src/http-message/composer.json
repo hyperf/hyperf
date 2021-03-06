@@ -18,7 +18,7 @@
         "psr/container": "Required to replace RequestParserInterface."
     },
     "require-dev": {
-        "psr/container": "^1.0"
+        "psr/container": "^1.0|^2.0"
     },
     "autoload": {
         "psr-4": {

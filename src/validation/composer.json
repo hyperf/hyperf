@@ -28,7 +28,7 @@
         "hyperf/utils": "~2.1.0",
         "hyperf/translation": "~2.1.0",
         "nesbot/carbon": "^2.21",
-        "psr/container": "^1.0",
+        "psr/container": "^1.0|^2.0",
         "psr/event-dispatcher": "^1.0",
         "psr/http-message": "^1.0"
     },
