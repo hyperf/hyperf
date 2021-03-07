@@ -1,5 +1,20 @@
 # 版本更新記錄
 
+# v2.1.9 - 2021-03-07
+
+## 修復
+
+- [#3326](https://github.com/hyperf/hyperf/pull/3326) 修復使用 `JsonEofPacker` 無法正確解包自定義 `eof` 數據的問題。
+- [#3330](https://github.com/hyperf/hyperf/pull/3330) 修復因其他協程修改靜態變量 `$constraints`，導致模型關係查詢錯誤的問題。
+
+## 新增
+
+- [#3325](https://github.com/hyperf/hyperf/pull/3325) 為 `Crontab` 註解增加 `enable` 參數，用於控制當前任務是否註冊到定時任務中。
+
+## 優化
+
+- [#3338](https://github.com/hyperf/hyperf/pull/3338) 優化了 `testing` 組件，使模擬請求的方法運行在獨立的協程當中，避免協程變量污染。
+
 # v2.1.8 - 2021-03-01
 
 ## 修復
