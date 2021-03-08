@@ -1,5 +1,9 @@
 # v2.1.10 - TBD
 
+## Fixed
+
+- [#3348](https://github.com/hyperf/hyperf/pull/3348) Fixed bug that `Arr::forget` failed when the integer key does not exists.
+
 # v2.1.9 - 2021-03-08
 
 ## Fixed

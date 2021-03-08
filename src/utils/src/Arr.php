@@ -205,7 +205,7 @@ class Arr
                 unset($array[$key]);
                 continue;
             }
-            $parts = explode('.', $key);
+            $parts = explode('.', (string) $key);
             // clean up before each pass
             $array = &$original;
             while (count($parts) > 1) {

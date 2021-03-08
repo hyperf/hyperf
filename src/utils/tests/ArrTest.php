@@ -162,6 +162,10 @@ class ArrTest extends TestCase
         Arr::forget($data, ['data.id']);
         $this->assertSame(['id' => 1, 'name' => 'Hyperf', 'data' => []], $data);
 
+        $data = ['data' => ['data' => ['id' => 1, 'name' => 'Hyperf']]];
+        Arr::forget($data, ['data.data.id']);
+        $this->assertSame(['data' => ['data' => ['name' => 'Hyperf']]], $data);
+
         $data = [1, 2];
         Arr::forget($data, [2]);
         $this->assertSame([1, 2], $data);
