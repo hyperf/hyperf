@@ -388,7 +388,7 @@ use App\Model\User;
 User::query()->where('gender', 1)->update(['gender_show' => '男性']);
 ```
 
-> 批量更新時， 更新的模型不會觸發 saved 和 updated 事件。因為在批量更新時，從不會去檢索模型。
+> 批量更新時， 更新的模型不會觸發 `saved` 和 `updated` 事件。因為在批量更新時，並沒有例項化模型。同時，也不會執行相應的 `casts`，例如資料庫中 `json` 格式，在 Model 類中 `casts` 欄位標記為 `array`，若是用批量更新，則插入時不會自動將 `array` 轉換為 `json` 字串格式。
 
 ### 批量賦值
 
