@@ -172,7 +172,7 @@ class BelongsToMany extends Relation
     {
         $this->performJoin();
 
-        if (static::$constraints) {
+        if (Constraint::isConstraint()) {
             $this->addWhereConstraints();
         }
     }

@@ -1,4 +1,25 @@
-# v2.1.8 - TBD
+# v2.1.10 - TBD
+
+## Fixed
+
+- [#3348](https://github.com/hyperf/hyperf/pull/3348) Fixed bug that `Arr::forget` failed when the integer key does not exists.
+
+# v2.1.9 - 2021-03-08
+
+## Fixed
+
+- [#3326](https://github.com/hyperf/hyperf/pull/3326) Fixed bug that `unpack` custom data failed when using `JsonEofPacker`.
+- [#3330](https://github.com/hyperf/hyperf/pull/3330) Fixed data query error caused by unexpected change of `$constraints` by other coroutine.
+
+## Added
+
+- [#3325](https://github.com/hyperf/hyperf/pull/3325) Added `enable` to control the crontab task which to register or not.
+
+## Optimized
+
+- [#3338](https://github.com/hyperf/hyperf/pull/3338) Optimized code for `testing` which mock request in an alone coroutine.
+
+# v2.1.8 - 2021-03-01
 
 ## Fixed 
 
@@ -7,10 +28,18 @@
 ## Added
 
 - [#3310](https://github.com/hyperf/hyperf/pull/3310) Added `Blueprint::comment()` which you can set comment of table for migration.
+- [#3311](https://github.com/hyperf/hyperf/pull/3311) Added `RouteCollector::getRouteParser` which you can get `RouteParser` from `RouteCollector`.
+- [#3316](https://github.com/hyperf/hyperf/pull/3316) Allow custom driver which you can used to register your own driver for `hyperf/db`.
 
 ## Optimized
 
 - [#3308](https://github.com/hyperf/hyperf/pull/3308) Send response directly when the handler does not exists.
+- [#3319](https://github.com/hyperf/hyperf/pull/3319) Optimized code that get connection from pool.
+
+## Incubator
+
+- [rpc-multiplex](https://github.com/hyperf/rpc-multiplex-incubator) Rpc for multiplexing connection
+- [db-pgsql](https://github.com/hyperf/db-pgsql-incubator) PgSQL driver for Hyperf DB Component
 
 # v2.1.7 - 2021-02-22
 
