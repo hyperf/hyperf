@@ -69,6 +69,7 @@ class ValidationMiddleware implements MiddlewareInterface
                         if ($this->isImplementedValidatesWhenResolved($classname)) {
                             /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved $formRequest */
                             $formRequest = $this->container->get($classname);
+                            $formRequest->setServerRequest($request);
                             $formRequest->validateResolved();
                         }
                     }
