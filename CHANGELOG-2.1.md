@@ -3,7 +3,7 @@
 ## Fixed
 
 - [#3348](https://github.com/hyperf/hyperf/pull/3348) Fixed bug that `Arr::forget` failed when the integer key does not exists.
-- [#3351](https://github.com/hyperf/hyperf/pull/3351) Fixed bug that `FormRequest` does not get the changed data from `Context`.
+- [#3351](https://github.com/hyperf/hyperf/pull/3351) Fixed bug that `FormRequest` could't get the changed data from `Context`.
 
 # v2.1.9 - 2021-03-08
 
