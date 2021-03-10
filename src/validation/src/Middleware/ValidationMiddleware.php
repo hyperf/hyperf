@@ -55,6 +55,8 @@ class ValidationMiddleware implements MiddlewareInterface
             throw new ServerException(sprintf('The dispatched object is not a %s object.', Dispatched::class));
         }
 
+        Context::set(ServerRequestInterface::class, $request);
+
         if ($this->shouldHandle($dispatched)) {
             try {
                 [$requestHandler, $method] = $this->prepareHandler($dispatched->handler->callback);
@@ -69,7 +71,6 @@ class ValidationMiddleware implements MiddlewareInterface
                         if ($this->isImplementedValidatesWhenResolved($classname)) {
                             /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved $formRequest */
                             $formRequest = $this->container->get($classname);
-                            $formRequest->setServerRequest($request);
                             $formRequest->validateResolved();
                         }
                     }
