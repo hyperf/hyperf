@@ -21,6 +21,7 @@ use Hyperf\Validation\ValidatesWhenResolvedTrait;
 use Hyperf\Validation\ValidationException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class FormRequest extends Request implements ValidatesWhenResolved
 {
@@ -32,6 +33,13 @@ class FormRequest extends Request implements ValidatesWhenResolved
      * @var ContainerInterface
      */
     protected $container;
+
+    /**
+     * The server request instance.
+     *
+     * @var ServerRequestInterface
+     */
+    protected $request;
 
     /**
      * The key to be used for the view error bag.
@@ -95,6 +103,18 @@ class FormRequest extends Request implements ValidatesWhenResolved
     public function setContainer(ContainerInterface $container)
     {
         $this->container = $container;
+
+        return $this;
+    }
+
+    /**
+     * Set the server request implementation.
+     *
+     * @return $this
+     */
+    public function setServerRequest(ServerRequestInterface $request)
+    {
+        $this->request = $request;
 
         return $this;
     }
@@ -186,5 +206,13 @@ class FormRequest extends Request implements ValidatesWhenResolved
     protected function getContextValidatorKey(): string
     {
         return sprintf('%s:%s', get_called_class(), ValidatorInterface::class);
+    }
+
+    /**
+     * Get ServerRequest
+     */
+    protected function getRequest(): ServerRequestInterface
+    {
+        return $this->request ?: parent::getRequest();
     }
 }
