@@ -574,13 +574,13 @@ class Request implements RequestInterface
     protected function getInputData(): array
     {
         return $this->storeParsedData(function () {
-            if (is_array($this->call('getParsedBody', []))) {
-                $data = $this->call('getParsedBody', []);
+            if (is_array($this->getParsedBody())) {
+                $data = $this->getParsedBody();
             } else {
                 $data = [];
             }
 
-            return array_merge($data, $this->call('getQueryParams', []));
+            return array_merge($data, $this->getQueryParams());
         });
     }
 

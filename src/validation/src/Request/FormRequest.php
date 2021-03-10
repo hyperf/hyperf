@@ -23,6 +23,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+
 class FormRequest extends Request implements ValidatesWhenResolved
 {
     use ValidatesWhenResolvedTrait;
@@ -213,6 +214,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     protected function getRequest(): ServerRequestInterface
     {
-        return $this->request;
+        return $this->request ?: parent::getRequest();
     }
+
 }
