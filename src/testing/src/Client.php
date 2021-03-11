@@ -170,6 +170,7 @@ class Client extends Server
             foreach ($servers as $item) {
                 if ($item['name'] == $server) {
                     $this->baseUri = sprintf('http://127.0.0.1:%d/', (int) $item['port']);
+                    break;
                 }
             }
         }
