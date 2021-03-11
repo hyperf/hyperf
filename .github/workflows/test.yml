@@ -34,6 +34,7 @@ jobs:
           php --ri swoole
       - name: Setup Yasd
         run: |
+          sudo apt-get update
           sudo apt-get install libboost-all-dev
           wget https://github.com/swoole/yasd/archive/${YASD_VERSION}.tar.gz -O yasd.tar.gz
           mkdir -p yasd

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Testing;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
@@ -43,12 +44,18 @@ class Client extends Server
      */
     protected $waitTimeout = 10.0;
 
+    /**
+     * @var string
+     */
+    protected $baseUri = 'http://127.0.0.1/';
+
     public function __construct(ContainerInterface $container, PackerInterface $packer = null, $server = 'http')
     {
         parent::__construct($container, $container->get(HttpDispatcher::class), $container->get(ExceptionHandlerDispatcher::class), $container->get(ResponseEmitter::class));
         $this->packer = $packer ?? new JsonPacker();
 
         $this->initCoreMiddleware($server);
+        $this->initBaseUri($server);
     }
 
     public function get($uri, $data = [], $headers = [])
@@ -155,6 +162,20 @@ class Client extends Server
         }, $this->waitTimeout);
     }
 
+    protected function initBaseUri($server): void
+    {
+        if ($this->container->has(ConfigInterface::class)) {
+            $config = $this->container->get(ConfigInterface::class);
+            $servers = $config->get('server.servers', []);
+            foreach ($servers as $item) {
+                if ($item['name'] == $server) {
+                    $this->baseUri = sprintf('http://127.0.0.1:%d/', (int) $item['port']);
+                    break;
+                }
+            }
+        }
+    }
+
     protected function init(string $method, string $path, array $options = []): array
     {
         $query = $options['query'] ?? [];
@@ -166,7 +187,7 @@ class Client extends Server
         $data = $params;
 
         // Initialize PSR-7 Request and Response objects.
-        $uri = (new Uri())->withPath($path)->withQuery(http_build_query($query));
+        $uri = (new Uri($this->baseUri . ltrim($path, '/')))->withQuery(http_build_query($query));
 
         $content = http_build_query($params);
         if ($method == 'POST' && data_get($headers, 'Content-Type') == 'application/json') {
