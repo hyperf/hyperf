@@ -24,6 +24,8 @@ use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Router;
+use Hyperf\Server\Event;
+use Hyperf\Server\Server;
 use Hyperf\Testing\Client;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
@@ -78,6 +80,27 @@ class ClientTest extends TestCase
         $this->assertSame('Server Error', $data['message']);
     }
 
+    public function testClientGetUri()
+    {
+        $container = $this->getContainer();
+
+        $client = new Client($container);
+
+        $data = $client->get('/request', [
+            'id' => $id = uniqid(),
+        ]);
+
+        $this->assertSame($data['uri'], [
+            'scheme' => 'http',
+            'host' => '127.0.0.1',
+            'port' => 9501,
+            'path' => '/request',
+            'query' => 'id=' . $id,
+        ]);
+
+        $this->assertSame($id, $data['params']['id']);
+    }
+
     public function getContainer()
     {
         $container = Mockery::mock(Container::class);
@@ -97,6 +120,20 @@ class ClientTest extends TestCase
                     ],
                 ],
             ],
+            'server' => [
+                'servers' => [
+                    [
+                        'name' => 'http',
+                        'type' => Server::SERVER_HTTP,
+                        'host' => '0.0.0.0',
+                        'port' => 9501,
+                        'sock_type' => SWOOLE_SOCK_TCP,
+                        'callbacks' => [
+                            Event::ON_REQUEST => [Server::class, 'onRequest'],
+                        ],
+                    ],
+                ],
+            ],
         ]));
         $container->shouldReceive('get')->with(Filesystem::class)->andReturn(new Filesystem());
         $container->shouldReceive('get')->with(FooController::class)->andReturn(new FooController());
@@ -112,6 +149,7 @@ class ClientTest extends TestCase
         Router::get('/', [FooController::class, 'index']);
         Router::get('/exception', [FooController::class, 'exception']);
         Router::get('/id', [FooController::class, 'id']);
+        Router::addRoute(['GET', 'POST'], '/request', [FooController::class, 'request']);
 
         return $container;
     }
