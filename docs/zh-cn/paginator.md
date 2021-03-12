@@ -124,5 +124,6 @@ $perPage = $paginator->perPage();
 
 ```php
 <?php
+// 注意 `Hyperf\Paginator\Paginator` 没有这个方法，需要使用 `Hyperf\Paginator\LengthAwarePaginator`
 $total = $paginator->total();
 ```
