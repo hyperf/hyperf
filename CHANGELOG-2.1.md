@@ -7,6 +7,10 @@
 - [#3356](https://github.com/hyperf/hyperf/pull/3356) Fixed bug that could't get the valid `uri` when using `Hyperf\Testing\Client`.
 - [#3363](https://github.com/hyperf/hyperf/pull/3363) Fixed `constants` which defined in `bin/hyperf.php` does not works.
 
+## Optimized
+
+- [#3364](https://github.com/hyperf/hyperf/pull/3364) Optimized `phar:build` that you can run phar without `php`, such as `./composer.phar` instead of `php composer.phar`.
+
 # v2.1.9 - 2021-03-08
 
 ## Fixed
