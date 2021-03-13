@@ -11,6 +11,10 @@
 
 - [#3364](https://github.com/hyperf/hyperf/pull/3364) Optimized `phar:build` that you can run phar without `php`, such as `./composer.phar` instead of `php composer.phar`.
 
+## Changed
+
+- [#3365](https://github.com/hyperf/hyperf/pull/3365) Shouldn't write pid to the file when `pid_file` is not configured for coroutine style server.
+
 # v2.1.9 - 2021-03-08
 
 ## Fixed
