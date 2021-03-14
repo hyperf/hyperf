@@ -1,4 +1,6 @@
-# v2.1.10 - TBD
+# v2.1.11 - TBD
+
+# v2.1.10 - 2021-03-15
 
 ## Fixed
 
@@ -6,14 +8,11 @@
 - [#3351](https://github.com/hyperf/hyperf/pull/3351) Fixed bug that `FormRequest` could't get the changed data from `Context`.
 - [#3356](https://github.com/hyperf/hyperf/pull/3356) Fixed bug that could't get the valid `uri` when using `Hyperf\Testing\Client`.
 - [#3363](https://github.com/hyperf/hyperf/pull/3363) Fixed `constants` which defined in `bin/hyperf.php` does not works.
+- [#3365](https://github.com/hyperf/hyperf/pull/3365) Fixed bug that `pid_file` will be created accidently when you don't configure `pid_file` in coroutine style server.
 
 ## Optimized
 
 - [#3364](https://github.com/hyperf/hyperf/pull/3364) Optimized `phar:build` that you can run phar without `php`, such as `./composer.phar` instead of `php composer.phar`.
-
-## Changed
-
-- [#3365](https://github.com/hyperf/hyperf/pull/3365) Shouldn't write pid to the file when `pid_file` is not configured for coroutine style server.
 
 # v2.1.9 - 2021-03-08
 
