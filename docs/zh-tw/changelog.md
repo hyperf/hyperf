@@ -1,5 +1,19 @@
 # 版本更新記錄
 
+# v2.1.10 - 2021-03-15
+
+## 修復
+
+- [#3348](https://github.com/hyperf/hyperf/pull/3348) 修復當使用 `Arr::forget` 方法在 `key` 為 `integer` 且不存在時，執行報錯的問題。
+- [#3351](https://github.com/hyperf/hyperf/pull/3351) 修復 `hyperf/validation` 元件中，`FormRequest` 無法從協程上下文中獲取到修改後的 `ServerRequest`，從而導致驗證器驗證失敗的問題。
+- [#3356](https://github.com/hyperf/hyperf/pull/3356) 修復 `hyperf/testing` 元件中，客戶端 `Hyperf\Testing\Client` 無法模擬構造正常的 `UriInterface` 的問題。
+- [#3363](https://github.com/hyperf/hyperf/pull/3363) 修復在入口檔案 `bin/hyperf.php` 中自定義的常量，無法在命令 `server:watch` 中使用的問題。
+- [#3365](https://github.com/hyperf/hyperf/pull/3365) 修復當使用協程風格服務時，如果使用者沒有配置 `pid_file`，仍然會意外生成 `runtime/hyperf.pid` 檔案的問題。
+
+## 優化
+
+- [#3364](https://github.com/hyperf/hyperf/pull/3364) 優化命令 `phar:build`，你可以在不使用 `php` 指令碼的情況下執行 `phar` 檔案，就像使用命令 `./composer.phar` 而非 `php composer.phar`。
+
 # v2.1.9 - 2021-03-08
 
 ## 修復
