@@ -1,20 +1,19 @@
-# v2.1.10 - TBD
+# v2.1.11 - TBD
+
+# v2.1.10 - 2021-03-15
 
 ## Fixed
 
 - [#3348](https://github.com/hyperf/hyperf/pull/3348) Fixed bug that `Arr::forget` failed when the integer key does not exists.
 - [#3351](https://github.com/hyperf/hyperf/pull/3351) Fixed bug that `FormRequest` could't get the changed data from `Context`.
 - [#3356](https://github.com/hyperf/hyperf/pull/3356) Fixed bug that could't get the valid `uri` when using `Hyperf\Testing\Client`.
-- [#3363](https://github.com/hyperf/hyperf/pull/3363) Fixed `constants` which defined in `bin/hyperf.php` does not works.
+- [#3363](https://github.com/hyperf/hyperf/pull/3363) Fixed bug that `constants` which defined in `bin/hyperf.php` does not works for `server:start`.
+- [#3365](https://github.com/hyperf/hyperf/pull/3365) Fixed bug that `pid_file` will be created accidently when you don't configure `pid_file` in coroutine style server.
 
 ## Optimized
 
 - [#3364](https://github.com/hyperf/hyperf/pull/3364) Optimized `phar:build` that you can run phar without `php`, such as `./composer.phar` instead of `php composer.phar`.
 - [#3367](https://github.com/hyperf/hyperf/pull/3367) Optimized code for guessing the return type for custom caster when using `gen:model`.
-
-## Changed
-
-- [#3365](https://github.com/hyperf/hyperf/pull/3365) Shouldn't write pid to the file when `pid_file` is not configured for coroutine style server.
 
 # v2.1.9 - 2021-03-08
 
