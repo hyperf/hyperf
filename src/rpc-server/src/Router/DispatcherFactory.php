@@ -121,8 +121,8 @@ class DispatcherFactory
             if (Str::startsWith($methodName, '__')) {
                 continue;
             }
-            $ignore = AnnotationCollector::getClassMethodAnnotation($className, $methodName);
-            if (isset($ignore[IgnoreRpcMethod::class])) {
+
+            if (isset($methodMetadata[$methodName][IgnoreRpcMethod::class])) {
                 continue;
             }
             $path = $this->pathGenerator->generate($prefix, $methodName);

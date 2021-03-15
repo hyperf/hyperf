@@ -15,11 +15,13 @@ use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\Rpc\PathGenerator\PathGenerator;
+use Hyperf\RpcServer\Annotation\IgnoreRpcMethod;
 use Hyperf\RpcServer\Annotation\RpcService;
 use Hyperf\RpcServer\Event\AfterPathRegister;
 use Hyperf\RpcServer\Router\DispatcherFactory;
 use HyperfTest\RpcServer\Stub\ContainerStub;
 use HyperfTest\RpcServer\Stub\IdGeneratorStub;
+use HyperfTest\RpcServer\Stub\IgnoreMethodStub;
 use HyperfTest\RpcServer\Stub\MiddlewareStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -85,4 +87,33 @@ class RouterDispatcherFactoryTest extends TestCase
         $this->assertSame(['Foo'], MiddlewareManager::get('jsonrpc-http', '/middleware_stub/foo', 'POST'));
         $this->assertSame(['Bar', 'Foo'], MiddlewareManager::get('jsonrpc-http', '/middleware_stub/generate', 'POST'));
     }
+
+    public function testIgnoreRpcMethod()
+    {
+        $container = ContainerStub::getContainer();
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturnUsing(function () {
+            $dispatcher = Mockery::mock(EventDispatcherInterface::class);
+            $dispatcher->shouldReceive('dispatch')->withAnyArgs()->once()->andReturnUsing(function ($object) {
+                $this->assertInstanceOf(AfterPathRegister::class, $object);
+
+                $this->assertSame('/ignore_method_stub/noIgnore', $object->path);
+                return $object;
+            });
+            return $dispatcher;
+        });
+        $container->shouldReceive('get')->with(PathGeneratorInterface::class)->andReturn(new PathGenerator());
+        $factory = new DispatcherFactory(
+            $container->get(EventDispatcherInterface::class),
+            $container->get(PathGeneratorInterface::class)
+        );
+        $ref = new \ReflectionClass($factory);
+        $m = $ref->getMethod('handleRpcService');
+        $m->setAccessible(true);
+        $m->invokeArgs($factory, [IgnoreMethodStub::class, new RpcService(), [
+            'ignore'=>[
+                IgnoreRpcMethod::class => new IgnoreRpcMethod(),
+            ]
+        ], []]);
+    }
+
 }
