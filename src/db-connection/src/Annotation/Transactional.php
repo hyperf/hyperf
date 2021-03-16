@@ -19,4 +19,5 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  */
 class Transactional extends AbstractAnnotation
 {
+    public $connection = 'default';
 }
