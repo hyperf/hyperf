@@ -1,5 +1,9 @@
 # v2.1.11 - TBD
 
+## Added
+
+- [#3376](https://github.com/hyperf/hyperf/pull/3376) Support `$connection` and `$attempts` for `Hyperf\DbConnection\Annotation\Transactional`.
+
 # v2.1.10 - 2021-03-15
 
 ## Fixed
