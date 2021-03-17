@@ -46,6 +46,7 @@ class TransactionAspect extends AbstractAspect
         if (! $annotation instanceof Transactional) {
             throw new AnnotationException("Annotation Transactional couldn't be collected successfully.");
         }
+
         return $annotation;
     }
 }
