@@ -13,7 +13,7 @@
 ## 優化
 
 - [#3364](https://github.com/hyperf/hyperf/pull/3364) 優化命令 `phar:build`，你可以在不使用 `php` 腳本的情況下執行 `phar` 文件，就像使用命令 `./composer.phar` 而非 `php composer.phar`。
-- [#3367](https://github.com/hyperf/hyperf/pull/3367) 優化使用 `gen:model` 生成模型字段的類型註釋時，儘量讀取自定義轉換器轉換後的對量類型。
+- [#3367](https://github.com/hyperf/hyperf/pull/3367) 優化使用 `gen:model` 生成模型字段的類型註釋時，儘量讀取自定義轉換器轉換後的對象類型。
 
 # v2.1.9 - 2021-03-08
 
