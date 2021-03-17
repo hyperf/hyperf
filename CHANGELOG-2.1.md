@@ -1,5 +1,13 @@
 # v2.1.11 - TBD
 
+## Added
+
+- [#3376](https://github.com/hyperf/hyperf/pull/3376) Support `$connection` and `$attempts` for `Hyperf\DbConnection\Annotation\Transactional`.
+
+## Fixed
+
+- [#3380](https://github.com/hyperf/hyperf/pull/3380) Fixed bug that super globals does not work when request don't persist to context.
+
 # v2.1.10 - 2021-03-15
 
 ## Fixed
