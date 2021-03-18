@@ -13,6 +13,7 @@ namespace HyperfTest\Di;
 
 use Hyperf\Di\ReflectionManager;
 use HyperfTest\Di\Stub\Ast\Bar;
+use HyperfTest\Di\Stub\FooProperty;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,6 +22,19 @@ use PHPUnit\Framework\TestCase;
  */
 class ReflectionTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        \Mockery::close();
+        ReflectionManager::clear();
+    }
+
+    public function testReflectProperties()
+    {
+        $res = ReflectionManager::reflectPropertyNames(FooProperty::class);
+
+        $this->assertSame(['name', 'nickname', 'username'], $res);
+    }
+
     public function testReturnType()
     {
         $paramaters = ReflectionManager::reflectClass(Bar::class)->getMethod('__construct')->getParameters();
