@@ -425,3 +425,73 @@ class DemoLogicTest extends HttpTestCase
     }
 }
 ```
+
+## 生成测试覆盖率
+
+执行
+
+`php bin/hyperf.php vendor:publish hyperf/testing`
+
+
+- 修改 composer.json 在 autoload-dev 中增加 classmap 用来将PHPunit中检测 XDebug 扩展的地方修改为检测 SDebug
+
+```json
+    "autoload-dev": {
+        ...
+        "classmap": [
+            "classmap/"
+        ]
+        ...
+    },
+```
+
+- 添加 `coverage` `coverage-output` 命令
+
+```json
+    "scripts": {
+        ...
+        "coverage": "co-phpunit -c phpunit.xml --colors=always --coverage-html ./runtime/codeCoverage",
+        "coverage-output": "co-phpunit -c phpunit.xml --colors=never --coverage-text",
+        ...
+    }
+
+```
+
+- 修改 phpunit.xml 去除 coverage 标签中 processUncoveredFiles="true" 否则会抛出异常
+
+```
+Fatal error: Cannot declare class App\Controller\AbstractController, because the name is already in use in /home/dickens7/worker/code/hyperf-skeleton/app/Controller/AbstractController.php on line 19
+
+Call Stack:
+    0.0005    1449288   1. {closure:/home/dickens7/worker/code/hyperf/src/testing/co-phpunit:8-68}() /home/dickens7/worker/code/hyperf/src/testing/co-phpunit:0
+    0.0130    5341448   2. PHPUnit\TextUI\Command::main() /home/dickens7/worker/code/hyperf/src/testing/co-phpunit:65
+    0.0130    5341560   3. PHPUnit\TextUI\Command->run() /home/dickens7/worker/code/hyperf-skeleton/vendor/phpunit/phpunit/src/TextUI/Command.php:96
+    7.9843   84339040   4. PHPUnit\TextUI\TestRunner->run() /home/dickens7/worker/code/hyperf-skeleton/vendor/phpunit/phpunit/src/TextUI/Command.php:143
+    8.0005   85614104   5. SebastianBergmann\CodeCoverage\Report\Html\Facade->process() /home/dickens7/worker/code/hyperf-skeleton/vendor/phpunit/phpunit/src/TextUI/TestRunner.php:737
+    8.0006   85617328   6. SebastianBergmann\CodeCoverage\CodeCoverage->getReport() /home/dickens7/worker/code/hyperf-skeleton/vendor/phpunit/php-code-coverage/src/Report/Html/Facade.php:54
+    8.0168   85673752   7. SebastianBergmann\CodeCoverage\Node\Builder->build() /home/dickens7/worker/code/hyperf-skeleton/vendor/phpunit/php-code-coverage/src/CodeCoverage.php:139
+    8.0168   85673752   8. SebastianBergmann\CodeCoverage\CodeCoverage->getData() /home/dickens7/worker/code/hyperf-skeleton/vendor/phpunit/php-code-coverage/src/Node/Builder.php:44
+    8.0168   85673752   9. SebastianBergmann\CodeCoverage\CodeCoverage->processUncoveredFilesFromFilter() /home/dickens7/worker/code/hyperf-skeleton/vendor/phpunit/php-code-coverage/src/CodeCoverage.php:167
+    8.0874   85675928  10. include_once('/home/dickens7/worker/code/hyperf-skeleton/app/Controller/AbstractController.php') /home/dickens7/worker/code/hyperf-skeleton/vendor/phpunit/php-code-coverage/src/CodeCoverage.php:538
+```
+
+- 增加目录 <directory suffix=".php">./runtime/container/proxy</directory> 将代理类也加入测试覆盖范围
+
+#### 修改后xml 示例如下
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" backupStaticAttributes="false" bootstrap="./test/bootstrap.php" colors="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage>
+    <include>
+      <directory suffix=".php">./app</directory>
+      <directory suffix=".php">./runtime/container/proxy</directory>
+    </include>
+  </coverage>
+  <testsuites>
+    <testsuite name="Tests">
+      <directory suffix="Test.php">./test</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>
+```
