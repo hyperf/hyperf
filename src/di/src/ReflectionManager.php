@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Di;
 
 use InvalidArgumentException;
@@ -59,15 +60,15 @@ class ReflectionManager extends MetadataCollector
         return static::$container['property'][$key];
     }
 
-    public static function reflectPropertyNames(string $className)
+    public static function reflectPropertyNames(string $className, ?int $filter = null)
     {
         $key = $className;
         if (! isset(static::$container['property_names'][$key])) {
             if (! class_exists($className) && ! interface_exists($className) && ! trait_exists($className)) {
                 throw new InvalidArgumentException("Class {$className} not exist");
             }
-            static::$container['property_names'][$key] = value(function () use ($className) {
-                $properties = static::reflectClass($className)->getProperties();
+            static::$container['property_names'][$key] = value(function () use ($className, $filter) {
+                $properties = static::reflectClass($className)->getProperties($filter);
                 $result = [];
                 foreach ($properties as $property) {
                     $result[] = $property->getName();

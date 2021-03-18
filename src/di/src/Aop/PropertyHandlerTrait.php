@@ -41,7 +41,7 @@ trait PropertyHandlerTrait
         // Inject the properties of parent class
         $parentReflectionClass = $reflectionClass;
         while ($parentReflectionClass = $parentReflectionClass->getParentClass()) {
-            $parentClassProperties = ReflectionManager::reflectPropertyNames($parentReflectionClass->getName());
+            $parentClassProperties = ReflectionManager::reflectPropertyNames($parentReflectionClass->getName(), \ReflectionProperty::IS_PRIVATE);
             $parentClassProperties = array_diff($parentClassProperties, $handled);
             $handled = array_merge(
                 $handled,
