@@ -1,0 +1,1 @@
+<x-alert-attribute-merge-force type="error" class="mb4" style="height:50px" :message="$message" />

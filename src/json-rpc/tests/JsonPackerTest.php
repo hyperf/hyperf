@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
  */
 class JsonPackerTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
@@ -41,11 +41,27 @@ class JsonPackerTest extends TestCase
 
         $packer = new JsonEofPacker([
             'settings' => [
+                'package_eof' => "\r\n",
+            ],
+        ]);
+        $array = $packer->unpack("{\"id\":1}\r\n");
+        $this->assertSame($array, ['id' => 1]);
+
+        $packer = new JsonEofPacker([
+            'settings' => [
                 'package_eof' => "\r\n\r\n",
             ],
         ]);
         $string = $packer->pack(['id' => 1]);
         $this->assertTrue(Str::endsWith($string, "\r\n\r\n"));
+
+        $packer = new JsonEofPacker([
+            'settings' => [
+                'package_eof' => "\r\n\r\n",
+            ],
+        ]);
+        $array = $packer->unpack("{\"id\":1}\r\n\r\n");
+        $this->assertSame($array, ['id' => 1]);
     }
 
     public function testPackOpenLengthCheck()

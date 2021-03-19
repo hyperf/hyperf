@@ -85,10 +85,6 @@ class Connection extends BaseConnection implements ConnectionInterface
     public function getActiveConnection(): AbstractConnection
     {
         if ($this->check()) {
-            // The connection is valid, reset the last heartbeat time.
-            $currentTime = microtime(true);
-            $this->lastHeartbeatTime = $currentTime;
-
             return $this->connection;
         }
 
@@ -128,17 +124,26 @@ class Connection extends BaseConnection implements ConnectionInterface
 
     public function check(): bool
     {
-        return isset($this->connection) && $this->connection instanceof AbstractConnection && $this->connection->isConnected() && ! $this->isHeartbeatTimeout();
+        $result = isset($this->connection) && $this->connection instanceof AbstractConnection && $this->connection->isConnected() && ! $this->isHeartbeatTimeout();
+        if ($result) {
+            // The connection is valid, reset the last heartbeat time.
+            $currentTime = microtime(true);
+            $this->lastHeartbeatTime = $currentTime;
+        }
+
+        return $result;
     }
 
     public function close(): bool
     {
         try {
-            if ($this->connection->getIO() instanceof KeepaliveIO) {
-                $this->connection->getIO()->close();
-            }
+            if ($connection = $this->connection) {
+                if ($connection->getIO() instanceof KeepaliveIO) {
+                    $connection->getIO()->close();
+                }
 
-            $this->connection->close();
+                $connection->close();
+            }
         } catch (AMQPConnectionClosedException $exception) {
             $this->getLogger()->warning((string) $exception);
         } catch (\Throwable $exception) {

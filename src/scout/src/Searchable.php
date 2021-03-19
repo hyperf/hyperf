@@ -111,7 +111,7 @@ trait Searchable
     /**
      * Make all instances of the model searchable.
      */
-    public static function makeAllSearchable()
+    public static function makeAllSearchable(?int $chunk = null, ?string $column = null)
     {
         $self = new static();
         $softDelete = static::usesSoftDelete() && config('scout.soft_delete', false);
@@ -119,8 +119,8 @@ trait Searchable
             ->when($softDelete, function ($query) {
                 $query->withTrashed();
             })
-            ->orderBy($self->getKeyName())
-            ->searchable();
+            ->orderBy($column ?: $self->getKeyName())
+            ->searchable($chunk, $column);
     }
 
     /**
@@ -158,10 +158,14 @@ trait Searchable
         if ($builder->queryCallback) {
             call_user_func($builder->queryCallback, $query);
         }
+
+        $modelIdPositions = array_flip($ids);
         return $query->whereIn(
             $this->getScoutKeyName(),
             $ids
-        )->get();
+        )->get()->sortBy(static function ($model) use ($modelIdPositions) {
+            return $modelIdPositions[$model->getScoutKey()];
+        })->values();
     }
 
     /**

@@ -18,7 +18,6 @@ use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\CrontabManager;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Process\Annotation\Process;
 use Hyperf\Process\Event\BeforeCoroutineHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
 
@@ -75,7 +74,7 @@ class CrontabRegisterListener implements ListenerInterface
     private function parseCrontabs(): array
     {
         $configCrontabs = $this->config->get('crontab.crontab', []);
-        $annotationCrontabs = AnnotationCollector::getClassByAnnotation(CrontabAnnotation::class);
+        $annotationCrontabs = AnnotationCollector::getClassesByAnnotation(CrontabAnnotation::class);
         $crontabs = [];
         foreach (array_merge($configCrontabs, $annotationCrontabs) as $crontab) {
             if ($crontab instanceof CrontabAnnotation) {
@@ -100,6 +99,7 @@ class CrontabRegisterListener implements ListenerInterface
         isset($annotation->onOneServer) && $crontab->setOnOneServer($annotation->onOneServer);
         isset($annotation->callback) && $crontab->setCallback($annotation->callback);
         isset($annotation->memo) && $crontab->setMemo($annotation->memo);
+        isset($annotation->enable) && $crontab->setEnable($annotation->enable);
         return $crontab;
     }
 }

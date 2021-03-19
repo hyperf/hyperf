@@ -34,7 +34,7 @@ abstract class AbstractTestCase extends TestCase
 {
     protected $driver = 'pdo';
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set('db.connection.default', null);
@@ -43,10 +43,13 @@ abstract class AbstractTestCase extends TestCase
     protected function getContainer($options = [])
     {
         $container = Mockery::mock(Container::class);
+        ApplicationContext::setContainer($container);
+
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'db' => [
                 'default' => [
                     'driver' => $this->driver,
+                    'host' => '127.0.0.1',
                     'password' => '',
                     'database' => 'hyperf',
                     'pool' => [
@@ -56,6 +59,7 @@ abstract class AbstractTestCase extends TestCase
                 ],
                 'pdo' => [
                     'driver' => 'pdo',
+                    'host' => '127.0.0.1',
                     'password' => '',
                     'database' => 'hyperf',
                     'pool' => [
@@ -84,7 +88,6 @@ abstract class AbstractTestCase extends TestCase
             return new DB($factory, $params['poolName']);
         });
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturn(false);
-        ApplicationContext::setContainer($container);
         return $container;
     }
 }

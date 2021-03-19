@@ -63,7 +63,7 @@ return [
     // ...other
     'callbacks' => [
         // ...other
-        SwooleEvent::ON_SHUTDOWN => [Hyperf\Framework\Bootstrap\ShutdownCallback::class, 'onShutdown']
+        Event::ON_SHUTDOWN => [Hyperf\Framework\Bootstrap\ShutdownCallback::class, 'onShutdown']
     ]
 ];
 ```
@@ -92,10 +92,11 @@ $service = $container->get(Service::class);
 
 ```php
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Nacos\Instance;
+use Hyperf\Nacos\Api\NacosInstance;
+use Hyperf\Nacos\Model\ServiceModel;
 
 $container = ApplicationContext::getContainer();
-$instance = $container->get(Instance::class);
+$instance = $container->get(NacosInstance::class);
 
 $service = new ServiceModel([
     'service_name' => 'hyperf',

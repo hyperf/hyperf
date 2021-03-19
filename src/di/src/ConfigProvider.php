@@ -53,6 +53,9 @@ class ConfigProvider
                         AspectCollector::class,
                     ],
                 ],
+                'ignore_annotations' => [
+                    'mixin',
+                ],
             ],
         ];
     }

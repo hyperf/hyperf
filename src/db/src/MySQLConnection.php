@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\DB;
 
+use Closure;
 use Hyperf\DB\Exception\RuntimeException;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
@@ -151,6 +152,11 @@ class MySQLConnection extends AbstractConnection
         }
 
         return $this->connection->{$method}(...$argument);
+    }
+
+    public function run(Closure $closure)
+    {
+        return $closure->call($this, $this->connection);
     }
 
     protected function prepare(string $query): Statement

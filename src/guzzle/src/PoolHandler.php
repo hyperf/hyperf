@@ -11,11 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Guzzle;
 
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Promise\Create;
 use GuzzleHttp\Promise\FulfilledPromise;
 use Hyperf\Pool\SimplePool\PoolFactory;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
-use Swoole\Coroutine\Http\Client;
 
 class PoolHandler extends CoroutineHandler
 {
@@ -55,17 +56,14 @@ class PoolHandler extends CoroutineHandler
         }
 
         $pool = $this->factory->get($this->getPoolName($uri), function () use ($host, $port, $ssl) {
-            return new Client($host, $port, $ssl);
+            return $this->makeClient($host, $port, $ssl);
         }, $this->option);
 
         $connection = $pool->get();
 
         try {
             $client = $connection->getConnection();
-            $client->setMethod($request->getMethod());
-            $client->setData((string) $request->getBody());
-
-            $this->initHeaders($client, $request, $options);
+            $headers = $this->initHeaders($request, $options);
             $settings = $this->getSettings($request, $options);
             if (! empty($settings)) {
                 $client->set($settings);
@@ -73,15 +71,17 @@ class PoolHandler extends CoroutineHandler
 
             $ms = microtime(true);
 
-            $this->execute($client, $path);
-
-            $ex = $this->checkStatusCode($client, $request);
-            if ($ex !== true) {
+            try {
+                $raw = $client->request($request->getMethod(), $path, $headers, (string) $request->getBody());
+            } catch (\Exception $exception) {
                 $connection->close();
-                return \GuzzleHttp\Promise\rejection_for($ex);
+                $exception = new ConnectException($exception->getMessage(), $request, null, [
+                    'errCode' => $exception->getCode(),
+                ]);
+                return Create::rejectionFor($exception);
             }
 
-            $response = $this->getResponse($client, $request, $options, microtime(true) - $ms);
+            $response = $this->getResponse($raw, $request, $options, microtime(true) - $ms);
         } finally {
             $connection->release();
         }

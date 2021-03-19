@@ -73,6 +73,15 @@ class ArrTest extends TestCase
         $this->assertSame(['id' => 1, 'ids' => [1, 2, 3], 'name' => 'Hyperf'], Arr::merge(['id' => 1, 'ids' => [1, 2]], ['name' => 'Hyperf', 'ids' => [1, 2, 3]]));
         $this->assertSame(['id' => 1, 'ids' => [1, 2, 1, 2, 3], 'name' => 'Hyperf'], Arr::merge(['id' => 1, 'ids' => [1, 2]], ['name' => 'Hyperf', 'ids' => [1, 2, 3]], false));
 
+        $this->assertSame(['id' => 1, 'name' => ['Hyperf']], Arr::merge(['id' => 2], ['id' => 1, 'name' => ['Hyperf']]));
+        $this->assertSame(['id' => 1, 'name' => 'Hyperf'], Arr::merge([], ['id' => 1, 'name' => 'Hyperf']));
+        $this->assertSame([1, 2, 3], Arr::merge([], [1, 2, 3]));
+        $this->assertSame([1, 2, 3], Arr::merge([], [1, 2, 2, 3]));
+        $this->assertSame([1, 2, [1, 2, 3]], Arr::merge([], [1, 2, 2, [1, 2, 3], [1, 2, 3]]));
+        $this->assertSame([1, 2, [1, 2, 3], [1, 2, 3, 4]], Arr::merge([], [1, 2, 2, [1, 2, 3], [1, 2, 3, 4]]));
+        $this->assertSame([1, 2, 3], Arr::merge([1, 2], ['id' => 3]));
+        $this->assertSame([1, 2, 'id' => 3], Arr::merge([], [1, 2, 'id' => 3]));
+
         $array1 = [
             'logger' => [
                 'default' => [
@@ -131,5 +140,34 @@ class ArrTest extends TestCase
 
         $result = Arr::merge($result, $array2);
         $this->assertSame($array1, $result);
+    }
+
+    public function testArrorForget()
+    {
+        $data = [1, 2];
+        Arr::forget($data, [1]);
+        $this->assertSame([1], $data);
+
+        $data = ['id' => 1, 'name' => 'Hyperf'];
+        Arr::forget($data, ['gender']);
+        $this->assertSame(['id' => 1, 'name' => 'Hyperf'], $data);
+        Arr::forget($data, ['id']);
+        $this->assertSame(['name' => 'Hyperf'], $data);
+
+        $data = ['id' => 1, 'name' => 'Hyperf', 'data' => ['id' => 2], 'data.name' => 'Swoole'];
+        Arr::forget($data, ['data.gender']);
+        $this->assertSame(['id' => 1, 'name' => 'Hyperf', 'data' => ['id' => 2], 'data.name' => 'Swoole'], $data);
+        Arr::forget($data, ['data.name']);
+        $this->assertSame(['id' => 1, 'name' => 'Hyperf', 'data' => ['id' => 2]], $data);
+        Arr::forget($data, ['data.id']);
+        $this->assertSame(['id' => 1, 'name' => 'Hyperf', 'data' => []], $data);
+
+        $data = ['data' => ['data' => ['id' => 1, 'name' => 'Hyperf']]];
+        Arr::forget($data, ['data.data.id']);
+        $this->assertSame(['data' => ['data' => ['name' => 'Hyperf']]], $data);
+
+        $data = [1, 2];
+        Arr::forget($data, [2]);
+        $this->assertSame([1, 2], $data);
     }
 }

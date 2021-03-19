@@ -20,6 +20,7 @@ use Hyperf\SuperGlobals\Proxy\Request;
 use Hyperf\SuperGlobals\Proxy\Server;
 use Hyperf\SuperGlobals\Proxy\Session;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Waiter;
 use HyperfTest\SuperGlobals\Stub\ContainerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +33,7 @@ use Psr\Http\Message\UploadedFileInterface;
  */
 class ProxyTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set(ServerRequestInterface::class, null);
@@ -123,6 +124,12 @@ class ProxyTest extends TestCase
         $this->assertSame($token, $proxy['HTTP_X_TOKEN']);
         $this->assertSame('127.0.0.1', $proxy['HTTP_X_FORWARDED_FOR']);
         $this->assertSame('hyperf.io', $proxy['HTTP_HOST']);
+
+        (new Waiter())->wait(function () {
+            $proxy = new Server([]);
+            $this->assertSame([], $proxy->toArray());
+            $this->assertSame(null, $proxy['SERVER_NAME'] ?? null);
+        });
     }
 
     public function testSession()

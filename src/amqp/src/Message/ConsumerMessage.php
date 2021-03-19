@@ -44,7 +44,11 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
     /**
      * @var null|array
      */
-    protected $qos;
+    protected $qos = [
+        'prefetch_size' => 0,
+        'prefetch_count' => 1,
+        'global' => false,
+    ];
 
     /**
      * @var bool
@@ -55,6 +59,11 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
      * @var int
      */
     protected $maxConsumption = 0;
+
+    /**
+     * @var float|int
+     */
+    protected $waitTimeout = 0;
 
     public function consumeMessage($data, AMQPMessage $message): string
     {
@@ -102,6 +111,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
 
     public function getConsumerTag(): string
     {
+        // TODO(v3.0): Use empty string instead of routing keys
         return implode(',', (array) $this->getRoutingKey());
     }
 
@@ -124,6 +134,17 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
     public function setMaxConsumption(int $maxConsumption)
     {
         $this->maxConsumption = $maxConsumption;
+        return $this;
+    }
+
+    public function getWaitTimeout()
+    {
+        return $this->waitTimeout;
+    }
+
+    public function setWaitTimeout($timeout)
+    {
+        $this->waitTimeout = $timeout;
         return $this;
     }
 

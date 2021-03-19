@@ -27,7 +27,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  */
 class OnWorkerStartTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }

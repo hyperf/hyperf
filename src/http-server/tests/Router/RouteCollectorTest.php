@@ -25,7 +25,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RouteCollectorTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         MiddlewareManager::$container = [];
@@ -49,6 +49,15 @@ class RouteCollectorTest extends TestCase
         $this->assertSame('Handler::ApiGet', $data['GET']['/api/']->callback);
         $this->assertSame('Handler::Post', $data['POST']['/']->callback);
         $this->assertSame('Handler::ApiPost', $data['POST']['/api/']->callback);
+    }
+
+    public function testGetRouteParser()
+    {
+        $parser = new Std();
+        $generator = new DataGenerator();
+        $collector = new RouteCollector($parser, $generator);
+
+        $this->assertSame($parser, $collector->getRouteParser());
     }
 
     public function testAddGroupMiddleware()

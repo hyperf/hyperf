@@ -25,6 +25,11 @@ class SearchableModel extends Model
      */
     protected $fillable = ['id'];
 
+    /**
+     * @var \Closure
+     */
+    protected $queryCallback;
+
     public function searchableAs()
     {
         return 'table';
@@ -33,5 +38,18 @@ class SearchableModel extends Model
     public function scoutMetadata()
     {
         return [];
+    }
+
+    public function setQueryCallback(\Closure $closure)
+    {
+        $this->queryCallback = $closure;
+    }
+
+    public function newQuery()
+    {
+        if ($this->queryCallback) {
+            return $this->queryCallback->__invoke($this);
+        }
+        return parent::newQuery();
     }
 }

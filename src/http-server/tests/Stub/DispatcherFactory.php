@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\HttpServer\Stub;
 
 use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Router\RouteCollector;
 
 class DispatcherFactory extends \Hyperf\HttpServer\Router\DispatcherFactory
@@ -24,6 +25,11 @@ class DispatcherFactory extends \Hyperf\HttpServer\Router\DispatcherFactory
     public function handleAutoController(string $className, AutoController $annotation, array $middlewares = [], array $methodMetadata = []): void
     {
         parent::handleAutoController($className, $annotation, $middlewares, $methodMetadata);
+    }
+
+    public function handleController(string $className, Controller $annotation, array $methodMetadata, array $middlewares = []): void
+    {
+        parent::handleController($className, $annotation, $methodMetadata, $middlewares);
     }
 
     public function getRouter(string $serverName): RouteCollector

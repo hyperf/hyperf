@@ -13,6 +13,7 @@ namespace Hyperf\DB\Pool;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\DB\Exception\DriverNotFoundException;
+use Hyperf\DB\Exception\InvalidDriverException;
 use Psr\Container\ContainerInterface;
 
 class PoolFactory
@@ -42,7 +43,11 @@ class PoolFactory
         $driver = $config->get(sprintf('db.%s.driver', $name), 'pdo');
         $class = $this->getPoolName($driver);
 
-        return $this->pools[$name] = make($class, [$this->container, $name]);
+        $pool = make($class, [$this->container, $name]);
+        if (! $pool instanceof Pool) {
+            throw new InvalidDriverException(sprintf('Driver %s is not invalid.', $driver));
+        }
+        return $this->pools[$name] = $pool;
     }
 
     protected function getPoolName(string $driver)
@@ -52,6 +57,10 @@ class PoolFactory
                 return MySQLPool::class;
             case 'pdo':
                 return PDOPool::class;
+        }
+
+        if (class_exists($driver)) {
+            return $driver;
         }
 
         throw new DriverNotFoundException(sprintf('Driver %s is not found.', $driver));

@@ -97,7 +97,7 @@ class CoroutineServer implements ServerInterface
                     CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
                 });
             }
-        });
+        }, swoole_hook_flags());
     }
 
     /**
@@ -108,6 +108,10 @@ class CoroutineServer implements ServerInterface
         return $this->server;
     }
 
+    /**
+     * @param mixed $server
+     * @deprecated v2.2
+     */
     public static function isCoroutineServer($server): bool
     {
         return $server instanceof Coroutine\Http\Server || $server instanceof Coroutine\Server;
@@ -140,8 +144,8 @@ class CoroutineServer implements ServerInterface
     {
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
-                if (isset($callbacks[SwooleEvent::ON_REQUEST])) {
-                    [$handler, $method] = $this->getCallbackMethod(SwooleEvent::ON_REQUEST, $callbacks);
+                if (isset($callbacks[Event::ON_REQUEST])) {
+                    [$handler, $method] = $this->getCallbackMethod(Event::ON_REQUEST, $callbacks);
                     if ($handler instanceof MiddlewareInitializerInterface) {
                         $handler->initCoreMiddleware($name);
                     }
@@ -155,8 +159,8 @@ class CoroutineServer implements ServerInterface
                 }
                 return;
             case ServerInterface::SERVER_WEBSOCKET:
-                if (isset($callbacks[SwooleEvent::ON_HAND_SHAKE])) {
-                    [$handler, $method] = $this->getCallbackMethod(SwooleEvent::ON_HAND_SHAKE, $callbacks);
+                if (isset($callbacks[Event::ON_HAND_SHAKE])) {
+                    [$handler, $method] = $this->getCallbackMethod(Event::ON_HAND_SHAKE, $callbacks);
                     if ($handler instanceof MiddlewareInitializerInterface) {
                         $handler->initCoreMiddleware($name);
                     }
@@ -166,10 +170,10 @@ class CoroutineServer implements ServerInterface
                 }
                 return;
             case ServerInterface::SERVER_BASE:
-                if (isset($callbacks[SwooleEvent::ON_RECEIVE])) {
-                    [$connectHandler, $connectMethod] = $this->getCallbackMethod(SwooleEvent::ON_CONNECT, $callbacks);
-                    [$receiveHandler, $receiveMethod] = $this->getCallbackMethod(SwooleEvent::ON_RECEIVE, $callbacks);
-                    [$closeHandler, $closeMethod] = $this->getCallbackMethod(SwooleEvent::ON_CLOSE, $callbacks);
+                if (isset($callbacks[Event::ON_RECEIVE])) {
+                    [$connectHandler, $connectMethod] = $this->getCallbackMethod(Event::ON_CONNECT, $callbacks);
+                    [$receiveHandler, $receiveMethod] = $this->getCallbackMethod(Event::ON_RECEIVE, $callbacks);
+                    [$closeHandler, $closeMethod] = $this->getCallbackMethod(Event::ON_CLOSE, $callbacks);
                     if ($receiveHandler instanceof MiddlewareInitializerInterface) {
                         $receiveHandler->initCoreMiddleware($name);
                     }
@@ -231,7 +235,9 @@ class CoroutineServer implements ServerInterface
     private function writePid(): void
     {
         $config = $this->container->get(ConfigInterface::class);
-        $file = $config->get('server.settings.pid_file', BASE_PATH . '/runtime/hyperf.pid');
-        file_put_contents($file, getmypid());
+        $file = $config->get('server.settings.pid_file');
+        if ($file) {
+            file_put_contents($file, getmypid());
+        }
     }
 }

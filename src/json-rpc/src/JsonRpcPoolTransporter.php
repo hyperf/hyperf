@@ -12,14 +12,18 @@ declare(strict_types=1);
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\JsonRpc\Exception\ClientException;
 use Hyperf\JsonRpc\Pool\PoolFactory;
 use Hyperf\JsonRpc\Pool\RpcConnection;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Pool\Pool;
 use Hyperf\Rpc\Contract\TransporterInterface;
+use Hyperf\Rpc\Exception\RecvException;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
-use RuntimeException;
+use Hyperf\Utils\Exception\ExceptionThrower;
 
 class JsonRpcPoolTransporter implements TransporterInterface
 {
@@ -53,6 +57,16 @@ class JsonRpcPoolTransporter implements TransporterInterface
      */
     private $recvTimeout = 5;
 
+    /**
+     * @var int
+     */
+    private $retryCount = 0;
+
+    /**
+     * @var int ms
+     */
+    private $retryInterval = 0;
+
     private $config = [
         'connect_timeout' => 5.0,
         'settings' => [],
@@ -65,6 +79,8 @@ class JsonRpcPoolTransporter implements TransporterInterface
             'max_idle_time' => 60.0,
         ],
         'recv_timeout' => 5.0,
+        'retry_count' => 2,
+        'retry_interval' => 100,
     ];
 
     public function __construct(PoolFactory $factory, array $config = [])
@@ -74,28 +90,34 @@ class JsonRpcPoolTransporter implements TransporterInterface
 
         $this->recvTimeout = $this->config['recv_timeout'] ?? 5.0;
         $this->connectTimeout = $this->config['connect_timeout'] ?? 5.0;
+        $this->retryCount = $this->config['retry_count'] ?? 2;
+        $this->retryInterval = $this->config['retry_interval'] ?? 100;
     }
 
     public function send(string $data)
     {
-        $client = retry(2, function () use ($data) {
+        $result = retry($this->retryCount, function () use ($data) {
             try {
                 $client = $this->getConnection();
                 if ($client->send($data) === false) {
-                    if ($client->errCode == 104) {
-                        throw new RuntimeException('Connect to server failed.');
-                    }
+                    throw new ClientException('Send data failed. ' . $client->errMsg, $client->errCode);
                 }
-                return $client;
+                return $this->recvAndCheck($client, $this->recvTimeout);
             } catch (\Throwable $throwable) {
                 if (isset($client) && $client instanceof ConnectionInterface) {
                     $client->close();
                 }
+                if ($throwable instanceof RecvException && $throwable->getCode() === SOCKET_ETIMEDOUT) {
+                    // Don't retry, when recv timeout.
+                    return new ExceptionThrower($throwable);
+                }
                 throw $throwable;
             }
-        });
-
-        return $this->recvAndCheck($client, $this->recvTimeout);
+        }, $this->retryInterval);
+        if ($result instanceof ExceptionThrower) {
+            throw $result->getThrowable();
+        }
+        return $result;
     }
 
     public function recv()
@@ -113,8 +135,16 @@ class JsonRpcPoolTransporter implements TransporterInterface
         $class = spl_object_hash($this) . '.Connection';
         /** @var RpcConnection $connection */
         $connection = Context::get($class);
-        if (isset($connection) && $connection->check()) {
-            return $connection;
+        if (isset($connection)) {
+            try {
+                if (! $connection->check()) {
+                    // Try to reconnect the target server.
+                    $connection->reconnect();
+                }
+                return $connection;
+            } catch (\Throwable $exception) {
+                $this->log($exception);
+            }
         }
 
         $connection = $this->getPool()->get();
@@ -184,5 +214,13 @@ class JsonRpcPoolTransporter implements TransporterInterface
             return $this->loadBalancer->select();
         }
         return $this->nodes[array_rand($this->nodes)];
+    }
+
+    private function log($message)
+    {
+        $container = ApplicationContext::getContainer();
+        if ($container->has(StdoutLoggerInterface::class) && $logger = $container->get(StdoutLoggerInterface::class)) {
+            $logger->error((string) $message);
+        }
     }
 }

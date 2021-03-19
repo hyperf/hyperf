@@ -1,6 +1,6 @@
 # 異步隊列
 
-異步隊列區別於 `RabbitMQ` `Kafka` 等消息隊列，它只提供一種 `異步處理` 和 `異步延時處理` 的能力，並 **不能** 嚴格地保證消息的持久化和 **不支持** ACK 應答機制。
+異步隊列區別於 `RabbitMQ` `Kafka` 等消息隊列，它只提供一種 `異步處理` 和 `異步延時處理` 的能力，並 **不能** 嚴格地保證消息的持久化和 **不支持** 完備的 ACK 應答機制。
 
 ## 安裝
 
@@ -64,11 +64,27 @@ return [
 
 ```
 
+## 工作原理
+
+`ConsumerProcess` 是異步消費進程，會根據用户創建的 `Job` 或者使用 `@AsyncQueueMessage` 的代碼塊，執行消費邏輯。
+`Job` 和 `@AsyncQueueMessage` 都是需要投遞和執行的任務，即數據、消費邏輯都會在任務中定義。
+
+- `Job` 類中成員變量即為待消費的數據，`handle()` 方法則為消費邏輯。
+- `@AsyncQueueMessage` 註解的方法，構造函數傳入的數據即為待消費的數據，方法體則為消費邏輯。
+
+```mermaid
+graph LR;
+A[服務啟動]-->B[異步消費進程啟動]
+B-->C[監聽隊列]
+D[投遞任務]-->C
+C-->F[消費任務]
+```
+
 ## 使用
 
-### 消費消息
+### 配置異步消費進程
 
-組件已經提供了默認子進程，只需要將它配置到 `config/autoload/processes.php` 中即可。
+組件已經提供了默認 `異步消費進程`，只需要將它配置到 `config/autoload/processes.php` 中即可。
 
 ```php
 <?php
@@ -80,6 +96,8 @@ return [
 ```
 
 當然，您也可以將以下 `Process` 添加到自己的項目中。
+
+> 配置方式和註解方式，二選一即可。
 
 ```php
 <?php
@@ -105,7 +123,9 @@ class AsyncQueueConsumer extends ConsumerProcess
 
 這種模式會把對象直接序列化然後存到 `Redis` 等隊列中，所以為了保證序列化後的體積，儘量不要將 `Container`，`Config` 等設置為成員變量。
 
-比如以下 `Job` 的定義，是 **不可取** 的
+比如以下 `Job` 的定義，是 **不可取** 的，同理 `@Inject` 也是如此。
+
+> 因為 Job 會被序列化，所以成員變量不要包含 匿名函數 等 無法被序列化 的內容，如果不清楚哪些內容無法被序列化，儘量使用註解方式。
 
 ```php
 <?php
@@ -153,6 +173,13 @@ use Hyperf\AsyncQueue\Job;
 class ExampleJob extends Job
 {
     public $params;
+    
+    /**
+     * 任務執行失敗後的重試次數，即最大執行次數為 $maxAttempts+1 次
+     *
+     * @var int
+     */
+    protected $maxAttempts = 2;
 
     public function __construct($params)
     {
@@ -164,6 +191,7 @@ class ExampleJob extends Job
     {
         // 根據參數處理具體邏輯
         // 通過具體參數獲取模型等
+        // 這裏的邏輯會在 ConsumerProcess 進程中執行
         var_dump($this->params);
     }
 }
@@ -227,7 +255,7 @@ use Hyperf\HttpServer\Annotation\AutoController;
 /**
  * @AutoController
  */
-class QueueController extends Controller
+class QueueController extends AbstractController
 {
     /**
      * @Inject
@@ -255,6 +283,9 @@ class QueueController extends Controller
 
 框架除了傳統方式投遞消息，還提供了註解方式。
 
+> 註解方式會在非消費環境下自動投遞消息到隊列，故，如果我們在隊列中使用註解方式時，則不會再次投遞到隊列當中，而是直接在本消費進程中執行。
+> 如果仍然需要在隊列中投遞消息，則可以在隊列中使用傳統模式投遞。
+
 讓我們重寫上述 `QueueService`，直接將 `ExampleJob` 的邏輯搬到 `example` 方法中，並加上對應註解 `AsyncQueueMessage`，具體代碼如下。
 
 ```php
@@ -274,6 +305,7 @@ class QueueService
     public function example($params)
     {
         // 需要異步執行的代碼邏輯
+        // 這裏的邏輯會在 ConsumerProcess 進程中執行
         var_dump($params);
     }
 }
@@ -298,7 +330,7 @@ use Hyperf\HttpServer\Annotation\AutoController;
 /**
  * @AutoController
  */
-class QueueController extends Controller
+class QueueController extends AbstractController
 {
     /**
      * @Inject
@@ -485,3 +517,12 @@ return [
 ];
 
 ```
+
+
+## 異步驅動之間的區別
+
+- Hyperf\AsyncQueue\Driver\RedisDriver::class
+
+此異步驅動會將整個 `JOB` 進行序列化，當投遞即時隊列後，會 `lpush` 到 `list` 結構中，投遞延時隊列，會 `zadd` 到 `zset` 結構中。
+所以，如果 `Job` 的參數完全一致的情況，在延時隊列中就會出現後投遞的消息 **覆蓋** 前面投遞的消息的問題。
+如果不想出現延時消息覆蓋的情況，只需要在 `Job` 裏增加一個唯一的 `uniqid`，或者在使用 `註解` 的方法上增加一個 `uniqid` 的入參即可。

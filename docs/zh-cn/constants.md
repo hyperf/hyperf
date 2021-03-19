@@ -9,7 +9,7 @@ class ErrorCode
 {
     const SERVER_ERROR = 500;
     const PARAMS_INVALID = 1000;
-    
+
     public static $messages = [
         self::SERVER_ERROR => 'Server Error',
         self::PARAMS_INVALID => '参数非法'
@@ -37,8 +37,6 @@ composer require hyperf/constants
 ```bash
 php bin/hyperf.php gen:constant ErrorCode
 ```
-
-!> 此生成命令仅在 [hyperf/constants](https://github.com/hyperf/constants) 组件版本大于等于 v2.0.1 版本时可用，小于此版本时请手动创建枚举类。
 
 ```php
 <?php
@@ -111,7 +109,7 @@ namespace App\Controller;
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 
-class IndexController extends Controller
+class IndexController extends AbstractController
 {
     public function index()
     {

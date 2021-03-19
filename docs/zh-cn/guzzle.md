@@ -37,6 +37,22 @@ class Foo {
 }
 ```
 
+### 使用 ^7.0 版本
+
+组件对 `Guzzle` 的依赖已经由 `^6.3` 改为 `^6.3 | ^7.0`，默认情况下已经可以安装 `^7.0` 版本，但以下组件会与 `^7.0` 冲突。
+
+- hyperf/metric
+
+可以主动执行以下操作，解决冲突
+
+```
+composer require "promphp/prometheus_client_php:2.2.1"
+```
+
+- overtrue/flysystem-cos
+
+因为依赖库依赖了 `guzzlehttp/guzzle-services`，而其不支持 `^7.0`，故暂时无法解决。
+
 ## 使用 Swoole 配置
 
 有时候我们想直接修改 `Swoole` 配置，所以我们也提供了相关配置项，不过这项配置在 `Curl Guzzle 客户端` 中是无法生效的，所以谨慎使用。

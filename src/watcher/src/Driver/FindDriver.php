@@ -92,12 +92,12 @@ class FindDriver implements DriverInterface
         $dest = implode(' ', $targets);
         $ret = System::exec($this->getBin() . ' ' . $dest . ' -mmin ' . $minutes . ' -type f -print');
         if ($ret['code'] === 0 && strlen($ret['output'])) {
-            $stdout = $ret['output'];
+            $stdout = trim($ret['output']);
 
             $lineArr = explode(PHP_EOL, $stdout);
             foreach ($lineArr as $line) {
                 $pathName = $line;
-                $modifyTime = fileatime($pathName);
+                $modifyTime = filemtime($pathName);
                 // modifyTime less than or equal to startTime continue
                 if ($modifyTime <= $this->startTime) {
                     continue;

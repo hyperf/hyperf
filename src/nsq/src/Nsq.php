@@ -81,7 +81,7 @@ class Nsq
 
     public function subscribe(string $topic, string $channel, callable $callback): void
     {
-        $this->call(function (Socket $socket) use ($topic, $channel,$callback) {
+        $this->call(function (Socket $socket) use ($topic, $channel, $callback) {
             $this->sendSub($socket, $topic, $channel);
             while ($this->sendRdy($socket)) {
                 $reader = new Subscriber($socket);

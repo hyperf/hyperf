@@ -52,6 +52,22 @@ class AnnotationTest extends TestCase
         $this->assertSame('test', $annotation->prefix);
         $this->assertSame(3600, $annotation->ttl);
         $this->assertSame(100, $annotation->offset);
+
+        $annotation = new Cacheable([
+            'prefix' => 'test',
+            'ttl' => null,
+        ]);
+
+        $this->assertSame('test', $annotation->prefix);
+        $this->assertSame(null, $annotation->ttl);
+
+        $annotation = new CachePut([
+            'prefix' => 'test',
+            'ttl' => null,
+        ]);
+
+        $this->assertSame('test', $annotation->prefix);
+        $this->assertSame(null, $annotation->ttl);
     }
 
     public function testAnnotationManager()

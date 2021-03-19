@@ -46,6 +46,6 @@ class LoggerTest extends TestCase
 
         $logger->error(new \RuntimeException('Invalid Arguments'));
 
-        $this->assertRegExp('/RuntimeException: Invalid Arguments/', $handler->getRecords()[0]['message']);
+        $this->assertMatchesRegularExpression('/RuntimeException: Invalid Arguments/', $handler->getRecords()[0]['message']);
     }
 }

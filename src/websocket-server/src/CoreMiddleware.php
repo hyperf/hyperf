@@ -21,6 +21,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class CoreMiddleware extends HttpCoreMiddleware
 {
+    const HANDLER_NAME = 'class';
+
     /**
      * Handle the response when found.
      */
@@ -42,6 +44,6 @@ class CoreMiddleware extends HttpCoreMiddleware
             $response = $response->withHeader(Security::SEC_WEBSOCKET_PROTOCOL, $wsProtocol);
         }
 
-        return $response->withAttribute('class', $controller);
+        return $response->withAttribute(self::HANDLER_NAME, $controller);
     }
 }

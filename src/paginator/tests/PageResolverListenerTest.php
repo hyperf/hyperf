@@ -17,6 +17,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Request;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Listener\PageResolverListener;
+use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Mockery;
@@ -29,13 +30,16 @@ use Psr\Http\Message\ServerRequestInterface as PsrServerRequestInterface;
  */
 class PageResolverListenerTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         Context::set(PsrServerRequestInterface::class, null);
         Context::set('http.request.parsedData', null);
+        Paginator::currentPathResolver(function () {
+            return '/';
+        });
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set(PsrServerRequestInterface::class, null);
@@ -47,12 +51,14 @@ class PageResolverListenerTest extends TestCase
         $this->getContainer();
         $paginator = new LengthAwarePaginator([1, 2], 10, 2, null);
         $this->assertSame('/?page=2', $paginator->nextPageUrl());
+        $this->assertSame('/', Paginator::resolveCurrentPath());
 
         $listener = new PageResolverListener();
         $listener->process(new BootApplication());
 
         $paginator = new LengthAwarePaginator([1, 2], 10, 2, null);
         $this->assertSame('/?page=2', $paginator->nextPageUrl());
+        $this->assertSame('/', Paginator::resolveCurrentPath());
 
         Context::set(PsrServerRequestInterface::class, value(function () {
             $request = new \Hyperf\HttpMessage\Server\Request('GET', '/index');
@@ -60,6 +66,7 @@ class PageResolverListenerTest extends TestCase
         }));
         $paginator = new LengthAwarePaginator([1, 2], 10, 2, null);
         $this->assertSame('/?page=3', $paginator->nextPageUrl());
+        $this->assertSame('/index', Paginator::resolveCurrentPath());
     }
 
     protected function getContainer()

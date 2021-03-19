@@ -16,6 +16,7 @@ use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Coroutine;
+use Hyperf\Utils\Exception\InvalidArgumentException;
 use Hyperf\Utils\Filesystem\FileNotFoundException;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Watcher\Driver\DriverInterface;
@@ -133,6 +134,9 @@ class Watcher
                 $ret = System::exec($this->option->getBin() . ' vendor/hyperf/watcher/collector-reload.php ' . $file);
                 if ($ret['code'] === 0) {
                     $this->output->writeln('Class reload success.');
+                } else {
+                    $this->output->writeln('Class reload failed.');
+                    $this->output->writeln($ret['output'] ?? '');
                 }
                 $result[] = $file;
             }
@@ -147,9 +151,16 @@ class Watcher
 
     public function restart($isStart = true)
     {
+        if (! $this->option->isRestart()) {
+            return;
+        }
         $file = $this->config->get('server.settings.pid_file');
         if (empty($file)) {
             throw new FileNotFoundException('The config of pid_file is not found.');
+        }
+        $daemonize = $this->config->get('server.settings.daemonize', false);
+        if ($daemonize) {
+            throw new InvalidArgumentException('Please set `server.settings.daemonize` to false');
         }
         if (! $isStart && $this->filesystem->exists($file)) {
             $pid = $this->filesystem->get($file);
@@ -173,7 +184,7 @@ class Watcher
                 2 => STDERR,
             ];
 
-            proc_open($this->option->getBin() . ' vendor/hyperf/watcher/watcher.php start', $descriptorspec, $pipes);
+            proc_open($this->option->getBin() . ' ' . BASE_PATH . '/vendor/hyperf/watcher/watcher.php start', $descriptorspec, $pipes);
 
             $this->output->writeln('Stop server success.');
             $this->channel->push(1);

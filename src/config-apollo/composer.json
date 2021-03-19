@@ -20,17 +20,17 @@
     "require": {
         "php": ">=7.2",
         "psr/container": "^1.0",
-        "hyperf/contract": "~2.0.0",
-        "hyperf/utils": "~2.0.0"
+        "hyperf/contract": "~2.1.0",
+        "hyperf/utils": "~2.1.0"
     },
     "require-dev": {
-        "hyperf/config": "~2.0.0",
-        "hyperf/event": "~2.0.0",
-        "hyperf/framework": "~2.0.0",
-        "hyperf/process": "~2.0.0",
+        "hyperf/config": "~2.1.0",
+        "hyperf/event": "~2.1.0",
+        "hyperf/framework": "~2.1.0",
+        "hyperf/process": "~2.1.0",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^7.0.0",
+        "phpunit/phpunit": "^9.4",
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
@@ -51,7 +51,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0-dev"
+            "dev-master": "2.1-dev"
         },
         "hyperf": {
             "config": "Hyperf\\ConfigApollo\\ConfigProvider"

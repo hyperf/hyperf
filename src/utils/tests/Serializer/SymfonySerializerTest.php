@@ -53,12 +53,21 @@ class SymfonySerializerTest extends TestCase
 
         $ret = $serializer->denormalize(['1', 2, '03'], 'mixed[]');
         $this->assertSame(['1', 2, '03'], $ret);
+
+        $serializer = $this->createSerializer();
+        $ret = $serializer->denormalize('1', 'int');
+        $this->assertSame(1, $ret);
+
+        $ret = $serializer->denormalize(['1', 2, '03'], 'int[]');
+        $this->assertSame([1, 2, 3], $ret);
     }
 
     public function testDenormalizeWithWrongType()
     {
+        $this->markTestSkipped('The test cases skipped, when `symfony/serializer` >= v5.1.9');
+
         $this->expectException(NotNormalizableValueException::class);
-        $this->expectExceptionMessageRegExp('/Data expected to be of type/');
+        $this->expectExceptionMessageMatches('/Data expected to be of type/');
 
         $serializer = $this->createSerializer();
         $ret = $serializer->denormalize('1', 'int');

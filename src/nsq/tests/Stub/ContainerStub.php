@@ -17,6 +17,7 @@ use Hyperf\Nsq\MessageBuilder;
 use Hyperf\Nsq\Nsq;
 use Hyperf\Nsq\Pool\NsqPoolFactory;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Waiter;
 use Mockery;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -31,6 +32,9 @@ class ContainerStub
         $container = Mockery::mock(Container::class);
         ApplicationContext::setContainer($container);
 
+        $container->shouldReceive('make')->with(Waiter::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new Waiter(...$args);
+        });
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturnUsing(function () {
             $logger = Mockery::mock(StdoutLoggerInterface::class);
             $logger->shouldReceive('debug')->andReturn(null);

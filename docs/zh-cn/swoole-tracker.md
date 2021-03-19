@@ -74,7 +74,7 @@ apm.enable_memcheck=1
 # @contact  group@hyperf.io
 # @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
 
-FROM hyperf/hyperf:7.4-alpine-v3.11-cli
+FROM hyperf/hyperf:7.4-alpine-v3.11-swoole
 LABEL maintainer="Hyperf Developers <group@hyperf.io>" version="1.0" license="MIT" app.name="Hyperf"
 
 ##
@@ -89,11 +89,6 @@ ENV TIMEZONE=${timezone:-"Asia/Shanghai"} \
 
 # update
 RUN set -ex \
-    # install composer
-    && cd /tmp \
-    && wget https://mirrors.aliyun.com/composer/composer.phar \
-    && chmod u+x composer.phar \
-    && mv composer.phar /usr/local/bin/composer \
     # show php version and extensions
     && php -v \
     && php -m \
@@ -194,7 +189,7 @@ Swoole Tracker 本是一款商业产品，拥有进行内存泄漏检测的能�
 apm.enable_malloc_hook=1
 ```
 
-!> 注意：不要在composer安装依赖时开启；不要在生成代理类缓存时开启。
+!> 注意：不要在 composer 安装依赖时开启；不要在生成代理类缓存时开启。
 
 3. 根据自己的业务，在 Swoole 的 onReceive 或者 onRequest 事件开头加上 `trackerHookMalloc()` 调用：
 
@@ -219,7 +214,7 @@ php -r "trackerAnalyzeLeak();"
 [16916 (Loop 5)] ✅ Nice!! No Leak Were Detected In This Loop
 ```
 
-其中`16916`表示进程 id，`Loop 5`表示第 5 次调用主函数生成的泄漏信息
+其中 `16916` 表示进程 id，`Loop 5`表示第 5 次调用主函数生成的泄漏信息
 
 有确定的内存泄漏：
 
@@ -229,18 +224,20 @@ php -r "trackerAnalyzeLeak();"
 [24265 (Loop 8)] ❌ This Loop TotalLeak: [25216]
 ```
 
-表示第 8 次调用`http_server.php`的 125 行和 129 行，分别泄漏了 12928 字节内存，总共泄漏了 25216 字节内存。
+表示第 8 次调用 `http_server.php` 的 125 行和 129 行，分别泄漏了 12928 字节内存，总共泄漏了 25216 字节内存。
 
 通过调用 `trackerCleanLeak()` 可以清除泄漏日志，重新开始。[了解更多内存检测工具使用细节](https://www.kancloud.cn/swoole-inc/ee-help-wiki/1941569)
 
-在 Hyperf 中如果需要检测 HTTP Server 中的内存泄漏，可以在 `config/autoload/aspects.php` 配置以下 `Aspect`：
+如果需要在 Hyperf 中检测 HTTP Server 中的内存泄漏，可以在 `config/autoload/middlewares.php` 添加一个全局中间件：
 
 ```php
 <?php
 
 return [
-    Hyperf\SwooleTracker\Aspect\OnRequestAspect::class,
+    'http' => [
+        Hyperf\SwooleTracker\Middleware\HookMallocMiddleware::class,
+    ],
 ];
 ```
 
-其他 Server 可以参照此 `Aspect` 进行重写使用。
+其他类型 Server 同理。

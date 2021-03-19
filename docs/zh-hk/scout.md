@@ -20,7 +20,7 @@ composer require hyperf/elasticsearch
 Scout 安裝完成後，使用 vendor:publish 命令來生成 Scout 配置文件。這個命令將在你的 config 目錄下生成一個 scout.php 配置文件。
 
 ```bash
-php bin/hyperf vendor:publish hyperf/scout
+php bin/hyperf.php vendor:publish hyperf/scout
 ```
 
 最後，在你要做搜索的模型中添加 Hyperf\Scout\Searchable trait。這個 trait 會註冊一個模型觀察者來保持模型和所有驅動的同步：
@@ -39,6 +39,44 @@ class Post extends Model
 }
 ```
 ## 配置
+
+### 配置文件
+
+生成配置文件
+
+```
+php bin/hyperf.php vendor:publish hyperf/scout
+```
+
+配置文件
+
+```php
+<?php
+
+declare(strict_types=1);
+
+return [
+    'default' => env('SCOUT_ENGINE', 'elasticsearch'),
+    'chunk' => [
+        'searchable' => 500,
+        'unsearchable' => 500,
+    ],
+    'prefix' => env('SCOUT_PREFIX', ''),
+    'soft_delete' => false,
+    'concurrency' => 100,
+    'engine' => [
+        'elasticsearch' => [
+            'driver' => Hyperf\Scout\Provider\ElasticsearchProvider::class,
+            // 如果 index 設置為 null，則每個模型會對應一個索引，反之每個模型對應一個類型
+            'index' => null,
+            'hosts' => [
+                env('ELASTICSEARCH_HOST', 'http://127.0.0.1:9200'),
+            ],
+        ],
+    ],
+];
+
+```
 ### 配置模型索引
 
 每個模型與給定的搜索「索引」同步，這個「索引」包含該模型的所有可搜索記錄。換句話説，你可以把每一個「索引」設想為一張 MySQL 數據表。默認情況下，每個模型都會被持久化到與模型的「表」名（通常是模型名稱的複數形式）相匹配的索引。你也可以通過覆蓋模型上的 `searchableAs` 方法來自定義模型的索引：
@@ -66,6 +104,7 @@ class Post extends Model
     }
 
 <a name="configuring-searchable-data"></a>
+
 ### 配置可搜索的數據
 
 默認情況下，「索引」會從模型的 `toArray` 方法中讀取數據來做持久化。如果要自定義同步到搜索索引的數據，可以覆蓋模型上的 `toSearchableArray` 方法：

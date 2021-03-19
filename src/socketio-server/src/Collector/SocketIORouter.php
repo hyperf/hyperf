@@ -56,7 +56,7 @@ class SocketIORouter extends MetadataCollector
     {
         $class = static::getClassName($nsp);
         if (! $class) {
-            throw new RouteNotFoundException("Namespace {$nsp} is not registered in the router.");
+            throw new RouteNotFoundException("namespace {$nsp} is not registered in the router.");
         }
         if (! ApplicationContext::getContainer()->has($class)) {
             throw new RouteNotFoundException("namespace {$nsp} cannot be instantiated.");

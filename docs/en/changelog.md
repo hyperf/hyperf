@@ -1,5 +1,316 @@
 # Changelogs
 
+# v2.1.1 - 2021-01-04
+
+## Fixed
+
+- [#3045](https://github.com/hyperf/hyperf/pull/3045) Fixed type hint error, when don't set `true` for `PDO::ATTR_PERSISTENT`.
+- [#3047](https://github.com/hyperf/hyperf/pull/3047) Fixed bug that renew sid in all namespaces failed.
+- [#3062](https://github.com/hyperf/hyperf/pull/3062) Fixed bug that parameters don't parsed correctly in grpc server.
+
+## Added
+
+- [#3052](https://github.com/hyperf/hyperf/pull/3052) Support collecting metrics while running command.
+- [#3054](https://github.com/hyperf/hyperf/pull/3054) Support `Engine::close` protocol and improve error handling for `socketio-server`.
+
+# v2.1.0 - 2020-12-28
+
+## Dependencies Upgrade
+
+- Upgraded `php` to `>=7.3`;
+- Upgraded `phpunit/phpunit` to `^9.0`;
+- Upgraded `guzzlehttp/guzzle` to `^6.0|^7.0`;
+- Upgraded `vlucas/phpdotenv` to `^5.0`;
+- Upgraded `endclothing/prometheus_client_php` to `^1.0`;
+- Upgraded `twig/twig` to `^3.0`;
+- Upgraded `jcchavezs/zipkin-opentracing` to `^0.2.0`;
+- Upgraded `doctrine/dbal` to `^3.0`;
+- Upgraded `league/flysystem` to `^1.0|^2.0`;
+
+## Removed
+
+- Removed deprecated property `$name` from `Hyperf\Amqp\Builder`.
+- Removed deprecated method `consume` from `Hyperf\Amqp\Message\ConsumerMessageInterface`.
+- Removed deprecated property `$running` from `Hyperf\AsyncQueue\Driver\Driver`.
+- Removed deprecated method `parseParameters` from `Hyperf\HttpServer\CoreMiddleware`.
+- Removed deprecated const `ON_WORKER_START` and `ON_WORKER_EXIT` from `Hyperf\Utils\Coordinator\Constants`.
+- Removed deprecated method `get` from `Hyperf\Utils\Coordinator`.
+- Removed config `rate-limit.php`, please use `rate_limit.php` instead.
+- Removed useless class `Hyperf\Resource\Response\ResponseEmitter`.
+- Removed component `hyperf/paginator` from database's dependencies.
+- Removed method `stats` from `Hyperf\Utils\Coroutine\Concurrent`.
+
+## Changed
+
+- `Hyperf\Utils\Coroutine::parentId` which returns the parent coroutine ID
+  * Returns 0 when running in the top level coroutine.
+  * Throws RunningInNonCoroutineException when running in non-coroutine context
+  * Throws CoroutineDestroyedException when the coroutine has been destroyed
+
+- `Hyperf\Guzzle\CoroutineHandler`
+  * Deleted method `execute`
+  * Method `initHeaders` will return `$headers`, instead of assigning "$headers" directly to the client.
+  * Deleted method `checkStatusCode`
+
+- [#2720](https://github.com/hyperf/hyperf/pull/2720) Don't set `data_type` for `PDOStatement::bindValue`.
+- [#2871](https://github.com/hyperf/hyperf/pull/2871) Use `(string) $body` instead of `$body->getContents()` for getting contents from `StreamInterface`, because method `getContents()` only returns the remaining contents in a string.
+- [#2909](https://github.com/hyperf/hyperf/pull/2909) Allow setting repeated middlewares.
+- [#2935](https://github.com/hyperf/hyperf/pull/2935) Changed the string format for default exception formatter.
+- [#2979](https://github.com/hyperf/hyperf/pull/2979) Don't format `decimal` to `float` for command `gen:model` by default.
+
+## Deprecated
+
+- `Hyperf\AsyncQueue\Signal\DriverStopHandler` will be deprecated in v2.2, please use `Hyperf\Process\Handler\ProcessStopHandler` instead.
+- `Hyperf\Server\SwooleEvent` will be deprecated in v3.0, please use `Hyperf\Server\Event` instead.
+
+## Added
+
+- [#2659](https://github.com/hyperf/hyperf/pull/2659) [#2663](https://github.com/hyperf/hyperf/pull/2663) Support `HttpServer` for [Swow](https://github.com/swow/swow).
+- [#2671](https://github.com/hyperf/hyperf/pull/2671) Added `Hyperf\AsyncQueue\Listener\QueueHandleListener` which can record running logs for async-queue.
+- [#2923](https://github.com/hyperf/hyperf/pull/2923) Added `Hyperf\Utils\Waiter` which can wait coroutine to end.
+- [#3001](https://github.com/hyperf/hyperf/pull/3001) Added method `Hyperf\Database\Model\Collection::columns()`.
+- [#3002](https://github.com/hyperf/hyperf/pull/3002) Added params `$depth` and `$flags` for `Json::decode` and `Json::encode`.
+
+## Fixed
+
+- [#2741](https://github.com/hyperf/hyperf/pull/2741) Fixed bug that process does not works in swow server.
+
+## Optimized
+
+- [#3009](https://github.com/hyperf/hyperf/pull/3009) Optimized code for prometheus which support `https` not only `http`.
+
+# v2.0.25 - 2020-12-28
+
+## Added
+
+- [#3015](https://github.com/hyperf/hyperf/pull/3015) Added a mechanism to clean up garbage sid automatically for `socketio-server`.
+- [#3030](https://github.com/hyperf/hyperf/pull/3030) Added method `ProceedingJoinPoint::getInstance()` to get instance which will be called by `AOP`.
+
+## Optimized
+
+- [#3011](https://github.com/hyperf/hyperf/pull/3011) Optimized `hyperf/tracer` which will log and tag exception in a span.
+
+# v2.0.24 - 2020-12-21
+
+## Fixed
+
+- [#2978](https://github.com/hyperf/hyperf/pull/2980) Fixed bug that `hyperf/snowflake` is broken due to missing `hyperf/contract`.
+- [#2983](https://github.com/hyperf/hyperf/pull/2983) Fixed swoole hook flags does works for co server.
+- [#2993](https://github.com/hyperf/hyperf/pull/2993) Fixed `Arr::merge()` does not works when `$array1` is empty.
+
+## Optimized
+
+- [#2973](https://github.com/hyperf/hyperf/pull/2973) Support custom HTTP status code.
+- [#2992](https://github.com/hyperf/hyperf/pull/2992) Optimized requirements for `hyperf/validation`.
+
+# v2.0.23 - 2020-12-14
+
+## Added
+
+- [#2872](https://github.com/hyperf/hyperf/pull/2872) Added `hyperf/phar` component.
+
+## Fixed
+
+- [#2952](https://github.com/hyperf/hyperf/pull/2952) Fixed bug that nacos config center does not works in coroutine server.
+
+## Changed
+
+- [#2934](https://github.com/hyperf/hyperf/pull/2934) Changed config file `scout.php` which search engine index is used as the model index name by default.
+- [#2958](https://github.com/hyperf/hyperf/pull/2958) Added NoneEngine as the default engine of view config.
+
+## Optimized
+
+- [#2951](https://github.com/hyperf/hyperf/pull/2951) Optimized code for model-cache, which will delete model cache only once, when using it in transaction.
+- [#2953](https://github.com/hyperf/hyperf/pull/2953) Hide `Swoole\ExitException` trace message in command.
+- [#2963](https://github.com/hyperf/hyperf/pull/2963) Removed `onStart` event from server default callbacks when the mode is `SWOOLE_BASE`.
+
+# v2.0.22 - 2020-12-07
+
+## Added
+
+- [#2896](https://github.com/hyperf/hyperf/pull/2896) Support to define autoloaded view component classes and anonymous components.
+- [#2921](https://github.com/hyperf/hyperf/pull/2921) Added method `count()` for `Parallel`.
+
+## Fixed
+
+- [#2913](https://github.com/hyperf/hyperf/pull/2913) Fixed memory leak when using `with()` for ORM.
+- [#2915](https://github.com/hyperf/hyperf/pull/2915) Fixed bug that worker will be stopped when `onMessage` or `onClose` failed in websocket server.
+- [#2927](https://github.com/hyperf/hyperf/pull/2927) Fixed validation rule `alpha_dash` does not support `int`.
+
+## Changed
+
+- [#2918](https://github.com/hyperf/hyperf/pull/2918) Don't allow to open `server.settings.daemonize` configuration when using `hyperf/watcher`.
+- [#2930](https://github.com/hyperf/hyperf/pull/2930) Upgrade the minimum version of `php-amqplib` to `v2.9.2`.
+
+## Optimized
+
+- [#2931](https://github.com/hyperf/hyperf/pull/2931) Pass controller instance as first argument to method_exists function not the class namespace string.
+
+# v2.0.21 - 2020-11-30
+
+## Added
+
+- [#2857](https://github.com/hyperf/hyperf/pull/2857) Support Consul ACL Token for Service Governance.
+- [#2870](https://github.com/hyperf/hyperf/pull/2870) The publish option of `ConfigProvider` allows publish directory.
+- [#2875](https://github.com/hyperf/hyperf/pull/2875) Added option `no-restart` for watcher.
+- [#2883](https://github.com/hyperf/hyperf/pull/2883) Added options `--chunk` and `--column|c` into command `scout:import`.
+- [#2891](https://github.com/hyperf/hyperf/pull/2891) Added config file for crontab.
+
+## Fixed
+
+- [#2874](https://github.com/hyperf/hyperf/pull/2874) Fixed `scan.ignore_annotations` does not works when using watcher.
+- [#2878](https://github.com/hyperf/hyperf/pull/2878) Fixed config of nsqd does not works.
+
+## Changed
+
+- [#2851](https://github.com/hyperf/hyperf/pull/2851) Changed default engine of view config.
+
+## Optimized
+
+- [#2785](https://github.com/hyperf/hyperf/pull/2785) Optimized code for watcher.
+- [#2861](https://github.com/hyperf/hyperf/pull/2861) Optimized guzzle coroutine handler which throw exception when the status code below zero.
+- [#2868](https://github.com/hyperf/hyperf/pull/2868) Optimized code for guzzle sink, which support resource not only string.
+
+# v2.0.20 - 2020-11-23
+
+## Added
+
+- [#2824](https://github.com/hyperf/hyperf/pull/2824) Added method `simplePaginate()` which return `PaginatorInterface` in `Hyperf\Database\Query\Builder`.
+
+## Fixed
+
+- [#2820](https://github.com/hyperf/hyperf/pull/2820) Fixed amqp consumer does not works when using fanout exchange.
+- [#2831](https://github.com/hyperf/hyperf/pull/2831) Fixed bug that amqp connection always be closed by client.
+- [#2848](https://github.com/hyperf/hyperf/pull/2848) Fixed database connection has already been bound to another coroutine when used in defer.
+
+## Changed
+
+- [#2824](https://github.com/hyperf/hyperf/pull/2824) Changed the result from `PaginatorInterface` to `LengthAwarePaginatorInterface` for method `paginate()` in `Hyperf\Database\Query\Builder`.
+
+## Optimized
+
+- [#2766](https://github.com/hyperf/hyperf/pull/2766) Safely finish spans in case of exception for tracer.
+- [#2805](https://github.com/hyperf/hyperf/pull/2805) Optimized nacos process which can stop safely.
+- [#2821](https://github.com/hyperf/hyperf/pull/2821) Optimized the exceptions thrown by `Json` and `Xml`.
+- [#2827](https://github.com/hyperf/hyperf/pull/2827) Optimized `Hyperf\Server\ServerConfig` which return type of `__set` should be void.
+- [#2839](https://github.com/hyperf/hyperf/pull/2839) Optimized comments for `Hyperf\Database\Schema\ColumnDefinition`.
+
+# v2.0.19 - 2020-11-17
+
+## Added
+
+- [#2794](https://github.com/hyperf/hyperf/pull/2794) [#2802](https://github.com/hyperf/hyperf/pull/2802) Added `options.cookie_lifetime` for `hyperf/session`, you can use it to control the expire time for cookies.
+
+## Fixed
+
+- [#2783](https://github.com/hyperf/hyperf/pull/2783) Fixed nsq consumer does not works in coroutine style server.
+- [#2788](https://github.com/hyperf/hyperf/pull/2788) Fixed call non-static method `__handlePropertyHandler()` statically in class proxy.
+- [#2790](https://github.com/hyperf/hyperf/pull/2790) Fixed `BootProcessListener` of `config-etcd` does not works in coroutine style server.
+- [#2803](https://github.com/hyperf/hyperf/pull/2803) Fixed response body does not exists when bad request.
+- [#2807](https://github.com/hyperf/hyperf/pull/2807) Fixed Middleware does not work as expected when repeatedly configured.
+
+## Optimized
+
+- [#2750](https://github.com/hyperf/hyperf/pull/2750) Use elastic `index` instead of `type` for `searchableAs`, when the config of `index` is `null` or the elastic version is more than `7.0.0`.
+
+# v2.0.18 - 2020-11-09
+
+## Added
+
+- [#2752](https://github.com/hyperf/hyperf/pull/2752) Support route `options` for `@AutoController` `@Controller` and `@Mapping`.
+
+## Fixed
+
+- [#2768](https://github.com/hyperf/hyperf/pull/2768) Fixed memory leak when websocket hande shake failed.
+- [#2777](https://github.com/hyperf/hyperf/pull/2777) Fixed `$auth` does not support `null` for low version of `ext-redis`.
+- [#2779](https://github.com/hyperf/hyperf/pull/2779) Fixed server start failed, when don't publish config of translation.
+
+## Changed
+
+- [#2765](https://github.com/hyperf/hyperf/pull/2765) Use `Hyperf\Utils\Coroutine::create()` instead of `Swoole\Coroutine::create()` for `Concurrent`.
+
+## Optimzied
+
+- [#2347](https://github.com/hyperf/hyperf/pull/2347) You can set `$waitTimeout` for `ConsumerMessage` to stop amqp consumer safely in coroutine style server.
+
+# v2.0.17 - 2020-11-02
+
+## Added
+
+- [#2625](https://github.com/hyperf/hyperf/pull/2625) Added aspect `Hyperf\Tracer\Aspect\JsonRpcAspect` which support json-rpc for tracer component.
+- [#2709](https://github.com/hyperf/hyperf/pull/2709) [#2733](https://github.com/hyperf/hyperf/pull/2733) Added `@mixin` into Model, you can use static methods friendly.
+- [#2726](https://github.com/hyperf/hyperf/pull/2726) [#2733](https://github.com/hyperf/hyperf/pull/2733) Added option `--with-ide` which used to generate ide file.
+- [#2737](https://github.com/hyperf/hyperf/pull/2737) Added [view-engine](https://github.com/hyperf/view-engine) component.
+
+## Fixed
+
+- [#2719](https://github.com/hyperf/hyperf/pull/2719) Fixed method `Arr::merge` does not works when `array1` does not constains the `$key`.
+- [#2723](https://github.com/hyperf/hyperf/pull/2723) Fixed `Paginator::resolveCurrentPath` deos not works.
+
+## Optimized
+
+- [#2746](https://github.com/hyperf/hyperf/pull/2746) Only execute task in the worker process.
+
+## Changed
+
+- [#2728](https://github.com/hyperf/hyperf/pull/2728) The methods with prefix `__` will not be registered into service for `rpc-server`.
+
+# v2.0.16 - 2020-10-26
+
+## Added
+
+- [#2682](https://github.com/hyperf/hyperf/pull/2682) Added method `getCacheTTL` for `CacheableInterface` which can control cache time each models.
+- [#2696](https://github.com/hyperf/hyperf/pull/2696) Added swoole tracker leak tool.
+
+## Fixed
+
+- [#2680](https://github.com/hyperf/hyperf/pull/2680) Fixed Type error for `CastsValue`, because `$isSynchronized` don't have default value.
+- [#2680](https://github.com/hyperf/hyperf/pull/2680) Fixed default value in `$items` will be replaced by `__construct` for `CastsValue`.
+- [#2693](https://github.com/hyperf/hyperf/pull/2693) Fixed unexpected behavior in retry budget for `hyperf/retry`.
+- [#2695](https://github.com/hyperf/hyperf/pull/2695) Fixed method `Container::define()` does not works when the class has been resolved.
+
+## Optimized
+
+- [#2611](https://github.com/hyperf/hyperf/pull/2611) Optimized `FindDriver` for watcher, you can use it in alpine image.
+- [#2662](https://github.com/hyperf/hyperf/pull/2662) Optimized amqp consumer which can stop safely.
+- [#2690](https://github.com/hyperf/hyperf/pull/2690) Optimized `tracer` which ensure span finished and flushed.
+
+# v2.0.15 - 2020-10-19
+
+## Added
+
+- [#2654](https://github.com/hyperf/hyperf/pull/2654) Added method `Hyperf\Utils\Resource::from` which can convert `string` to `resource`.
+
+## Fixed
+
+- [#2634](https://github.com/hyperf/hyperf/pull/2634) [#2640](https://github.com/hyperf/hyperf/pull/2640) Fixed bug that `RedisSecondMetaGenerator` will generate the same meta.
+- [#2639](https://github.com/hyperf/hyperf/pull/2639) Fixed exception will not be normalized for json-rpc.
+- [#2643](https://github.com/hyperf/hyperf/pull/2643) Fixed undefined method unsearchable for `scout:flush`.
+
+## Optimized
+
+- [#2656](https://github.com/hyperf/hyperf/pull/2656) Optimized the response when parse parameters failed for json-rpc.
+
+# v2.0.14 - 2020-10-12
+
+## Added
+
+- [#1172](https://github.com/hyperf/hyperf/pull/1172) Added `hyperf/scout`, a coroutine friendly version of `laravel/scout`.
+- [#1868](https://github.com/hyperf/hyperf/pull/1868) Added sentinel mode for redis.
+- [#1969](https://github.com/hyperf/hyperf/pull/1969) Added `hyperf/resource` and `hyperf/resource-grpc` which can format model to response easily.
+
+## Fixed
+
+- [#2594](https://github.com/hyperf/hyperf/pull/2594) Fixed crontab does not stops when using signal.
+- [#2601](https://github.com/hyperf/hyperf/pull/2601) Fixed `@property` will be replaced by `@property-read` when the property has `getter` and `setter` at the same time.
+- [#2607](https://github.com/hyperf/hyperf/pull/2607) [#2637](https://github.com/hyperf/hyperf/pull/2637) Fixed memory leak in `RetryAnnotationAspect`.
+- [#2624](https://github.com/hyperf/hyperf/pull/2624) Fixed http client does not works when using guzzle 7.0 and curl hook for `hyperf/testing`.
+- [#2632](https://github.com/hyperf/hyperf/pull/2632) [#2635](https://github.com/hyperf/hyperf/pull/2635) Fixed redis cluster does not support password.
+
+## Optimized
+
+- [#2603](https://github.com/hyperf/hyperf/pull/2603) Allow `whereNull` to accept array columns argument.
+
 # v2.0.13 - 2020-09-28
 
 ## Added
@@ -13,7 +324,7 @@
 - [#2565](https://github.com/hyperf/hyperf/pull/2565) Fixed proxy class generate keyword `parent::class` but the class scope has on parent.
 - [#2578](https://github.com/hyperf/hyperf/pull/2578) Fixed event `AfterProcessHandle` won't be dispatched when throw exception in process.
 - [#2582](https://github.com/hyperf/hyperf/pull/2582) Fixed redis connection has already been bound to another coroutine.
-- [#2589](https://github.com/hyperf/hyperf/pull/2589) Fixed amqp consumer does not starts when using coroutine style server. 
+- [#2589](https://github.com/hyperf/hyperf/pull/2589) Fixed amqp consumer does not starts when using coroutine style server.
 - [#2590](https://github.com/hyperf/hyperf/pull/2590) Fixed crontab does not works when using coroutine style server.
 
 ## Optimized
@@ -244,7 +555,7 @@
 ## Optimized
 
 - [#2049](https://github.com/hyperf/hyperf/pull/2049) Optimized stdout when server restart for `hyperf/watcher`.
-- [#2090](https://github.com/hyperf/hyperf/pull/2090) Adapte original response object for `hyperf/session`. 
+- [#2090](https://github.com/hyperf/hyperf/pull/2090) Adapte original response object for `hyperf/session`.
 
 ## Changed
 
@@ -266,7 +577,7 @@
 ## Fixed
 
 - [#1952](https://github.com/hyperf/hyperf/pull/1952) Fixed bug that migration will be created although class already exists.
-- [#1960](https://github.com/hyperf/hyperf/pull/1960) Fixed `Hyperf\HttpServer\ResponseEmitter::isMethodsExists()` method does not works as expected. 
+- [#1960](https://github.com/hyperf/hyperf/pull/1960) Fixed `Hyperf\HttpServer\ResponseEmitter::isMethodsExists()` method does not works as expected.
 - [#1961](https://github.com/hyperf/hyperf/pull/1961) Fixed start failed when `config/autoload/aspects.php` does not exists.
 - [#1964](https://github.com/hyperf/hyperf/pull/1964) Fixed http status code 500 caused by empty body.
 - [#1965](https://github.com/hyperf/hyperf/pull/1965) Fixed the wrong http code when `initRequestAndResponse` failed.
@@ -289,7 +600,7 @@
 
 ## Major Changes
 
-1. Refactor [hyperf/di](https://github.com/hyperf/di) component, in particular, AOP and Annotation Scanner are optimized, in v2.0, the component use a brand new loading mechanism to provided an incredible AOP function. 
+1. Refactor [hyperf/di](https://github.com/hyperf/di) component, in particular, AOP and Annotation Scanner are optimized, in v2.0, the component use a brand new loading mechanism to provided an incredible AOP function.
     1. The most significant functional differences compared to v1.x is that you can cut into any classes in any ways with Aspect. For example, in v1.x, you can only use AOP in the class instance that created by Hyperf DI container, you cannot cut into the class instance that created by `new` identifier. But now, in v2.0, it is available. But there is still has an exception, the classes that used in bootstrap stage still cannot works.
     2. In v1.x, the AOP ONLY available for the normal classes, not for Final class that cannot be inherited by a subclass. But now, in v2.0. it is available.
     3. In v1.x, you cannot use the property value that marked by `@Inject` or `@Value` annotation in the constructor of current class. But now, in v2.0, it is available.
@@ -299,9 +610,9 @@
     7. In v1.x, the proxy class will not re-generate when the proxy file exists even the code of the proxy class changed, this strategy will improve the time-consuming of scan, but at the same time, this will lead to a certain degree of development inconvenience. And now, in v2.0, the file cache of proxy class will generated according to the code content of the proxy class, this changes will reduces the mental burden of development.
     8. Add `priority` parameter for Aspect, now you could define `priority` in Aspect class by class property or annotation property, to manage the order of the aspects.
     9. In v1.x, you can only define an Aspect class by `@Aspect` annotation, you cannot define the Aspect class by configuration file. But now, in v2.0, it is available to define the Aspect class by configuration file or ConfigProvider.
-    10. In v1.x, you have to add `Hyperf\Di\Listener\LazyLoaderBootApplicationListener` to enable lazy loading. In 2.0, lazy loading can be used directly. This listener is therefore removed. 
+    10. In v1.x, you have to add `Hyperf\Di\Listener\LazyLoaderBootApplicationListener` to enable lazy loading. In 2.0, lazy loading can be used directly. This listener is therefore removed.
     11. Added `annotations.scan.class_map` configuration, now you could replace any content of class dynamically above the autoload rules.
-    
+
 ## Dependencies Upgrade
 
 - Upgraded `ext-swoole` to `>=4.5`;
@@ -340,7 +651,7 @@
   - Process mode of config-center, crontab, metric, comsumers of MQ can not running in coroutine server.
   - Change the life-cycle of `Hyperf\AsyncQueue\Environment`, can only applies in the current coroutine, not the whole current process.
   - Coroutine Server does not support task mechanism.
-  
+
 - [#1877](https://github.com/hyperf/hyperf/pull/1877) Support to use typehint of property on PHP 8 to replace `@var` when using `@Inject` annotation, for example:
 
 ```
@@ -443,7 +754,7 @@ return [
 - [#1682](https://github.com/hyperf/hyperf/pull/1682) Fixed the connection pool does not works in JSONRPC pool transporter.
 - [#1683](https://github.com/hyperf/hyperf/pull/1683) Fixed JSONRPC client connection reset failed, when the connection was closed in context.
 
-## Optimized 
+## Optimized
 
 - [#1670](https://github.com/hyperf/hyperf/pull/1670) Optimized a meaningless redis delete instruction for cache component.
 
@@ -463,7 +774,7 @@ return [
 - [#1650](https://github.com/hyperf/hyperf/pull/1650) Fixed bug that command `describe:routes` will show the wrong list.
 - [#1655](https://github.com/hyperf/hyperf/pull/1655) Fixed `MysqlProcessor::processColumns` does not work when the MySQL server is 8.0 version.
 
-## Optimized 
+## Optimized
 
 - [#1636](https://github.com/hyperf/hyperf/pull/1636) Optimized `co-phpunit` do not broken in coroutine environment, when cases failed.
 
@@ -836,7 +1147,7 @@ return [
 ## Added
 
 - [#860](https://github.com/hyperf/hyperf/pull/860) Added retry component.
-- [#952](https://github.com/hyperf/hyperf/pull/952) Added think template engine for view. 
+- [#952](https://github.com/hyperf/hyperf/pull/952) Added think template engine for view.
 - [#973](https://github.com/hyperf/hyperf/pull/973) Added `Hyperf\JsonRpc\JsonRpcPoolTransporter`.
 - [#976](https://github.com/hyperf/hyperf/pull/976) Added params `close_on_destruct` for `hyperf/amqp`.
 
@@ -846,13 +1157,13 @@ return [
 - [#956](https://github.com/hyperf/hyperf/pull/956) Fixed bug that `RedisHandler::incr` fails in cluster mode for model cache.
 - [#966](https://github.com/hyperf/hyperf/pull/966) Fixed type error, when use paginator in non-worker process.
 - [#968](https://github.com/hyperf/hyperf/pull/968) Fixed aspect does not works when class and annotation exist at the same time.
-- [#980](https://github.com/hyperf/hyperf/pull/980) Fixed `migrate`, `save` and `has` methods of Session do not work as expected. 
+- [#980](https://github.com/hyperf/hyperf/pull/980) Fixed `migrate`, `save` and `has` methods of Session do not work as expected.
 - [#982](https://github.com/hyperf/hyperf/pull/982) Fixed `Hyperf\GrpcClient\GrpcClient::yield` does not get the correct channel pool.
 - [#987](https://github.com/hyperf/hyperf/pull/987) Fixed missing method call `parent::configure()` of `command.stub`.
 
 ## Optimized
 
-- [#991](https://github.com/hyperf/hyperf/pull/991) Optimized `Hyperf\DbConnection\ConnectionResolver::connection`. 
+- [#991](https://github.com/hyperf/hyperf/pull/991) Optimized `Hyperf\DbConnection\ConnectionResolver::connection`.
 
 ## Changed
 
@@ -929,20 +1240,20 @@ return [
 
 - [#778](https://github.com/hyperf/hyperf/pull/778) Added `PUT` and `DELETE` for `Hyperf\Testing\Client`.
 - [#784](https://github.com/hyperf/hyperf/pull/784) Add Metric Component
-- [#795](https://github.com/hyperf/hyperf/pull/795) Added `restartInterval` for `AbstractProcess`. 
+- [#795](https://github.com/hyperf/hyperf/pull/795) Added `restartInterval` for `AbstractProcess`.
 - [#804](https://github.com/hyperf/hyperf/pull/804) Added `BeforeHandle` `AfterHandle` and `FailToHandle` for command.
 
 ## Fixed
 
 - [#779](https://github.com/hyperf/hyperf/pull/779) Fixed bug that JPG file cannot be verified.
 - [#787](https://github.com/hyperf/hyperf/pull/787) Fixed bug that "--class" option does not exist.
-- [#795](https://github.com/hyperf/hyperf/pull/795) Fixed process not restart when throw an exception. 
-- [#796](https://github.com/hyperf/hyperf/pull/796) Fixed `config_etcd.enable` does not works. 
+- [#795](https://github.com/hyperf/hyperf/pull/795) Fixed process not restart when throw an exception.
+- [#796](https://github.com/hyperf/hyperf/pull/796) Fixed `config_etcd.enable` does not works.
 
 ## Optimized
 
 - [#781](https://github.com/hyperf/hyperf/pull/781) Publish validation language package according to translation setting.
-- [#796](https://github.com/hyperf/hyperf/pull/796) Don't remake HandlerStack for etcd. 
+- [#796](https://github.com/hyperf/hyperf/pull/796) Don't remake HandlerStack for etcd.
 - [#797](https://github.com/hyperf/hyperf/pull/797) Use channel to communicate, instead of sharing mem
 
 ## Changed
@@ -955,7 +1266,7 @@ return [
 ## Added
 
 - [#745](https://github.com/hyperf/hyperf/pull/745) Added option `with-comments` for command `gen:model`.
-- [#747](https://github.com/hyperf/hyperf/pull/747) Added `AfterConsume`,`BeforeConsume`,`FailToConsume` events for AMQP consumer. 
+- [#747](https://github.com/hyperf/hyperf/pull/747) Added `AfterConsume`,`BeforeConsume`,`FailToConsume` events for AMQP consumer.
 - [#762](https://github.com/hyperf/hyperf/pull/762) Add concurrent for parallel.
 
 ## Fixed
@@ -988,7 +1299,7 @@ return [
 - [#704](https://github.com/hyperf/hyperf/pull/704) Fixed bug that `Call to a member function getName() on null` in `Hyperf\Validation\Middleware\ValidationMiddleware` when the argument of action method does not define the argument type.
 - [#713](https://github.com/hyperf/hyperf/pull/713) Fixed `ignoreAnnotations` does not works when cache is used.
 - [#717](https://github.com/hyperf/hyperf/pull/717) Fixed the validator will be created repeatedly in `getValidatorInstance`.
-- [#724](https://github.com/hyperf/hyperf/pull/724) Fixed `db:seed` command without database selected. 
+- [#724](https://github.com/hyperf/hyperf/pull/724) Fixed `db:seed` command without database selected.
 - [#737](https://github.com/hyperf/hyperf/pull/737) Fixed custom process does not enable for tracer.
 
 # v1.1.1 - 2019-10-08
@@ -1050,7 +1361,7 @@ return ApplicationContext::setContainer($container);
 - [#523](https://github.com/hyperf/hyperf/pull/523) The command `db:model` will generate the singular class name of an plural table as default.
 - [#614](https://github.com/hyperf/hyperf/pull/614) [#617](https://github.com/hyperf/hyperf/pull/617) Changed the structure of config provider, also moved `config/dependencies.php` to `config/autoload/dependencies.php`, also you could place `dependencies` into config/config.php.
 
-Changed the structure of config provider:   
+Changed the structure of config provider:
 Before:
 ```php
 'scan' => [
@@ -1138,7 +1449,7 @@ Now:
 
 ## Deleted
 
-- [#545](https://github.com/hyperf/hyperf/pull/545) Deleted useless static methods `restoring` and `restored` of trait SoftDeletes. 
+- [#545](https://github.com/hyperf/hyperf/pull/545) Deleted useless static methods `restoring` and `restored` of trait SoftDeletes.
 
 ## Optimized
 
@@ -1183,7 +1494,7 @@ Now:
 - [#451](https://github.com/hyperf/hyperf/pull/451) Removed routes of magic methods from `AuthController`.
 - [#468](https://github.com/hyperf/hyperf/pull/468) Default exception handlers catch all exceptions.
 
-## Fixed 
+## Fixed
 
 - [#466](https://github.com/hyperf/hyperf/pull/466) Fixed error when the number of data is not enough to paginate.
 - [#466](https://github.com/hyperf/hyperf/pull/470) Optimized `vendor:publish` command, if the destination folder exists, then will not repeatedly create the folder.
@@ -1243,7 +1554,7 @@ Now:
 
 - [#330](https://github.com/hyperf/hyperf/pull/330) Hidden the scan message of DI when $paths is empty.
 - [#328](https://github.com/hyperf/hyperf/pull/328) Added support for user defined project path according to the rules defined by composer.json's psr-4 autoload.
-- [#329](https://github.com/hyperf/hyperf/pull/329) Optimized exception handler of rpc-server and json-rpc component. 
+- [#329](https://github.com/hyperf/hyperf/pull/329) Optimized exception handler of rpc-server and json-rpc component.
 - [#340](https://github.com/hyperf/hyperf/pull/340) Added support for `make` function accept index-based array as parameters.
 - [#349](https://github.com/hyperf/hyperf/pull/349) Renamed the class name below, fixed the typo.
 
@@ -1306,14 +1617,14 @@ Now:
 ## Fixed
 
 - [#266](https://github.com/hyperf/hyperf/pull/266) Fixed timeout when produce a amqp message.
-- [#273](https://github.com/hyperf/hyperf/pull/273) Fixed all services have been registered to Consul will be deleted by the last register action. 
+- [#273](https://github.com/hyperf/hyperf/pull/273) Fixed all services have been registered to Consul will be deleted by the last register action.
 - [#274](https://github.com/hyperf/hyperf/pull/274) Fixed the content type of view response.
 
 # v1.0.6 - 2019-07-24
 
 ## Added
 
-- [#203](https://github.com/hyperf/hyperf/pull/203) [#236](https://github.com/hyperf/hyperf/pull/236) [#247](https://github.com/hyperf/hyperf/pull/247) [#252](https://github.com/hyperf/hyperf/pull/252) Added View component, support for Blade engine and Smarty engine. 
+- [#203](https://github.com/hyperf/hyperf/pull/203) [#236](https://github.com/hyperf/hyperf/pull/236) [#247](https://github.com/hyperf/hyperf/pull/247) [#252](https://github.com/hyperf/hyperf/pull/252) Added View component, support for Blade engine and Smarty engine.
 - [#203](https://github.com/hyperf/hyperf/pull/203) Added support for Swoole Task mechanism.
 - [#245](https://github.com/hyperf/hyperf/pull/245) Added TaskWorkerStrategy and WorkerStrategy crontab strategies.
 - [#251](https://github.com/hyperf/hyperf/pull/251) Added coroutine memory driver for cache.
@@ -1351,7 +1662,7 @@ Now:
 
 - [#176](https://github.com/hyperf/hyperf/pull/176) Fixed TypeError: Return value of LengthAwarePaginator::nextPageUrl() must be of the type string or null, none returned.
 - [#188](https://github.com/hyperf/hyperf/pull/188) Fixed proxy of guzzle client does not work expected.
-- [#211](https://github.com/hyperf/hyperf/pull/211) Fixed rpc client will be replaced by the latest one. 
+- [#211](https://github.com/hyperf/hyperf/pull/211) Fixed rpc client will be replaced by the latest one.
 - [#212](https://github.com/hyperf/hyperf/pull/212) Fixed config `ssl_key` and `cert` of guzzle client does not work expected.
 
 # v1.0.4 - 2019-07-08
@@ -1363,7 +1674,7 @@ Now:
 
 ## Changed
 
-- [#124](https://github.com/hyperf/hyperf/pull/124) Added `$delay` parameter for `DriverInterface::push`, and marked `DriverInterface::delay` method to deprecated. 
+- [#124](https://github.com/hyperf/hyperf/pull/124) Added `$delay` parameter for `DriverInterface::push`, and marked `DriverInterface::delay` method to deprecated.
 - [#125](https://github.com/hyperf/hyperf/pull/125) Changed the default value of parameter $default of config() function to null.
 
 ## Fixed
@@ -1387,19 +1698,19 @@ Now:
 ## Added
 
 - [#48](https://github.com/hyperf/hyperf/pull/48) Added WebSocket Client.
-- [#51](https://github.com/hyperf/hyperf/pull/51) Added property `enableCache` to `DefinitionSource` to enable annotation cache. 
+- [#51](https://github.com/hyperf/hyperf/pull/51) Added property `enableCache` to `DefinitionSource` to enable annotation cache.
 - [#61](https://github.com/hyperf/hyperf/pull/61) Added property type of `Model` created by command `db:model`.
 - [#65](https://github.com/hyperf/hyperf/pull/65) Added JSON support for model-cache.
 - Added WebSocket Server.
 
 ## Changed
 
-- [#46](https://github.com/hyperf/hyperf/pull/46) Removed hyperf/framework requirement of `hyperf/di`, `hyperf/command` and `hyperf/dispatcher`. 
+- [#46](https://github.com/hyperf/hyperf/pull/46) Removed hyperf/framework requirement of `hyperf/di`, `hyperf/command` and `hyperf/dispatcher`.
 
 ## Fixed
 
-- [#45](https://github.com/hyperf/hyperf/pull/55) Fixed http server start failed, when the skeleton included `hyperf/websocket-server`. 
-- [#55](https://github.com/hyperf/hyperf/pull/55) Fixed the method level middleware annotation. 
+- [#45](https://github.com/hyperf/hyperf/pull/55) Fixed http server start failed, when the skeleton included `hyperf/websocket-server`.
+- [#55](https://github.com/hyperf/hyperf/pull/55) Fixed the method level middleware annotation.
 - [#73](https://github.com/hyperf/hyperf/pull/73) Fixed short name is not work for `db:model`.
 - [#88](https://github.com/hyperf/hyperf/pull/88) Fixed prefix is not right in deep directory.
 - [#101](https://github.com/hyperf/hyperf/pull/101) Fixed constants resolution failed when no message annotation exists.
@@ -1414,7 +1725,7 @@ Now:
 ## Fixed
 
 - Fixed http server will be affected of websocket server.
-- Fixed proxy class 
+- Fixed proxy class
 - Fixed database pool will be fulled in testing.
 - Fixed co-phpunit work not expected.
 - Fixed model event `creating`, `updating` ... not work expected.

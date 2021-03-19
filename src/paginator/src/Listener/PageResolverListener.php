@@ -38,9 +38,9 @@ class PageResolverListener implements ListenerInterface
     public function process(object $event)
     {
         Paginator::currentPageResolver(function ($pageName = 'page') {
-            if (! ApplicationContext::hasContainer() ||
-                ! interface_exists(RequestInterface::class) ||
-                ! Context::has(ServerRequestInterface::class)
+            if (! ApplicationContext::hasContainer()
+                || ! interface_exists(RequestInterface::class)
+                || ! Context::has(ServerRequestInterface::class)
             ) {
                 return 1;
             }
@@ -53,6 +53,25 @@ class PageResolverListener implements ListenerInterface
             }
 
             return 1;
+        });
+
+        Paginator::currentPathResolver(function () {
+            $default = '/';
+            if (! ApplicationContext::hasContainer()
+                || ! interface_exists(RequestInterface::class)
+                || ! Context::has(ServerRequestInterface::class)
+            ) {
+                return $default;
+            }
+
+            $container = ApplicationContext::getContainer();
+            $url = $container->get(RequestInterface::class)->url();
+
+            if (filter_var($url, FILTER_VALIDATE_URL) !== false) {
+                return $url;
+            }
+
+            return $url;
         });
     }
 }

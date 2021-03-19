@@ -31,7 +31,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RedisProxyTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $redis = $this->getRedis();
         $redis->flushDB();

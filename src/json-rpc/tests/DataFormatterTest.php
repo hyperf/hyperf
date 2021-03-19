@@ -26,7 +26,7 @@ use PHPUnit\Framework\TestCase;
  */
 class DataFormatterTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         (new RpcContext())->clear();

@@ -15,7 +15,6 @@ use Hyperf\Contract\Castable;
 use Hyperf\Contract\CastsAttributes;
 use Hyperf\Contract\CastsInboundAttributes;
 use Hyperf\Database\Commands\ModelOption;
-use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\BelongsTo;
@@ -96,7 +95,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 }
                 return $node;
             case $node instanceof Node\Stmt\Class_:
-                $node->setDocComment(new Doc($this->parseProperty()));
+                $node->setDocComment(new Doc($this->parse()));
                 return $node;
         }
     }
@@ -126,7 +125,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             $items = [];
             $casts = $this->class->getCasts();
             foreach ($node->default->items as $item) {
-                $caster = $this->class->getCasts()[$item->key->value] ?? null;
+                $caster = $casts[$item->key->value] ?? null;
                 if ($caster && $this->isCaster($caster)) {
                     $items[] = $item;
                 }
@@ -162,36 +161,49 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
      */
     protected function isCaster($caster): bool
     {
-        return is_subclass_of($caster, CastsAttributes::class) ||
-            is_subclass_of($caster, Castable::class) ||
-            is_subclass_of($caster, CastsInboundAttributes::class);
+        return is_subclass_of($caster, CastsAttributes::class)
+            || is_subclass_of($caster, Castable::class)
+            || is_subclass_of($caster, CastsInboundAttributes::class);
     }
 
-    protected function parseProperty(): string
+    protected function parse(): string
     {
         $doc = '/**' . PHP_EOL;
+        $doc = $this->parseProperty($doc);
+        if ($this->option->isWithIde()) {
+            $doc .= ' * @mixin \\' . GenerateModelIDEVisitor::toIDEClass(get_class($this->class)) . PHP_EOL;
+        }
+        $doc .= ' */';
+        return $doc;
+    }
+
+    protected function parseProperty(string $doc): string
+    {
         foreach ($this->columns as $column) {
             [$name, $type, $comment] = $this->getProperty($column);
             if (array_key_exists($name, $this->properties)) {
+                if (! empty($comment)) {
+                    $this->properties[$name]['comment'] = $comment;
+                }
                 continue;
             }
             $doc .= sprintf(' * @property %s $%s %s', $type, $name, $comment) . PHP_EOL;
         }
         foreach ($this->properties as $name => $property) {
+            $comment = $property['comment'] ?? '';
             if ($property['read'] && $property['write']) {
-                $doc .= sprintf(' * @property %s $%s', $property['type'], $name) . PHP_EOL;
+                $doc .= sprintf(' * @property %s $%s %s', $property['type'], $name, $comment) . PHP_EOL;
                 continue;
             }
             if ($property['read']) {
-                $doc .= sprintf(' * @property-read %s $%s', $property['type'], $name) . PHP_EOL;
+                $doc .= sprintf(' * @property-read %s $%s %s', $property['type'], $name, $comment) . PHP_EOL;
                 continue;
             }
             if ($property['write']) {
-                $doc .= sprintf(' * @property-write %s $%s', $property['type'], $name) . PHP_EOL;
+                $doc .= sprintf(' * @property-write %s $%s %s', $property['type'], $name, $comment) . PHP_EOL;
                 continue;
             }
         }
-        $doc .= ' */';
         return $doc;
     }
 
@@ -228,17 +240,6 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 $name = Str::snake(substr($method->getName(), 3, -9));
                 if (! empty($name)) {
                     $this->setProperty($name, null, null, true, '', false, 1);
-                }
-                continue;
-            }
-
-            if (Str::startsWith($method->getName(), 'scope') && $method->getName() !== 'scopeQuery') {
-                $name = Str::camel(substr($method->getName(), 5));
-                if (! empty($name)) {
-                    $args = $method->getParameters();
-                    // Remove the first ($query) argument
-                    array_shift($args);
-                    $this->setMethod($name, [Builder::class, $method->getDeclaringClass()->getName()], $args);
                 }
                 continue;
             }
@@ -299,6 +300,9 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                         && $ast->expr->class instanceof Node\Name\FullyQualified
                     ) {
                         $this->setProperty($key, [$ast->expr->class->toCodeString()], true, true);
+                    } elseif ($type = $method->getReturnType()) {
+                        // Get return type which defined in `CastsAttributes::get()`.
+                        $this->setProperty($key, ['\\' . ltrim($type->getName(), '\\')], true, true);
                     }
                 }
             }
@@ -333,17 +337,6 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         $this->properties[$name]['priority'] = $priority;
     }
 
-    protected function setMethod(string $name, array $type = [], array $arguments = [])
-    {
-        $methods = array_change_key_case($this->methods, CASE_LOWER);
-
-        if (! isset($methods[strtolower($name)])) {
-            $this->methods[$name] = [];
-            $this->methods[$name]['type'] = implode('|', $type);
-            $this->methods[$name]['arguments'] = $arguments;
-        }
-    }
-
     protected function getProperty($column): array
     {
         $name = $this->option->isCamelCase() ? Str::camel($column['column_name']) : $column['column_name'];
@@ -364,11 +357,6 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             case 'int':
             case 'bigint':
                 return 'integer';
-            case 'decimal':
-            case 'float':
-            case 'double':
-            case 'real':
-                return 'float';
             case 'bool':
             case 'boolean':
                 return 'boolean';

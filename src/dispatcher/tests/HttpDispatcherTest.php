@@ -13,10 +13,14 @@ namespace HyperfTest\Dispatcher;
 
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\HttpMessage\Server\Response;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use HyperfTest\Dispatcher\Middlewares\CoreMiddleware;
+use HyperfTest\Dispatcher\Middlewares\Test2Middleware;
 use HyperfTest\Dispatcher\Middlewares\TestMiddleware;
+use Mockery;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -32,33 +36,76 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class HttpDispatcherTest extends TestCase
 {
-    protected function setUp()
+    use ProphecyTrait;
+
+    protected function tearDown(): void
     {
-        $this->request = $this->prophesize(ServerRequestInterface::class)->reveal();
-        $this->response = $this->prophesize(ResponseInterface::class);
-        $swooleResponse = $this->getMockBuilder(\Swoole\Http\Response::class)->getMock();
-        $this->response->withAddedHeader('Server', 'Hyperf')
-            ->shouldBeCalled()
-            ->willReturn((new Response($swooleResponse))->withAddedHeader('Server', 'Hyperf'));
-        $this->response = $this->response->reveal();
-        $container = $this->prophesize(ContainerInterface::class);
-        $container->get(CoreMiddleware::class)->willReturn(new CoreMiddleware());
-        $container->get(TestMiddleware::class)->willReturn(new TestMiddleware());
-        $this->container = $container->reveal();
-        Context::set(ServerRequestInterface::class, $this->request);
-        Context::set(ResponseInterface::class, $this->response);
+        Mockery::close();
     }
 
-    public function testA()
+    public function testDispatch()
     {
         $middlewares = [
             TestMiddleware::class,
         ];
-        $coreHandler = $this->container->get(CoreMiddleware::class);
-        $dispatcher = new HttpDispatcher($this->container);
+        $container = $this->getContainer();
+        $request = Context::get(ServerRequestInterface::class);
+        $coreHandler = $container->get(CoreMiddleware::class);
+        $dispatcher = new HttpDispatcher($container);
         $this->assertInstanceOf(HttpDispatcher::class, $dispatcher);
-        $response = $dispatcher->dispatch($this->request, $middlewares, $coreHandler);
+        $response = $dispatcher->dispatch($request, $middlewares, $coreHandler);
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertSame('Hyperf', $response->getHeaderLine('Server'));
+        $this->assertSame('Hyperf', $response->getHeaderLine('Test'));
+    }
+
+    public function testRepeatedMiddleware()
+    {
+        $middlewares = [
+            TestMiddleware::class,
+            TestMiddleware::class,
+        ];
+        $container = $this->getContainer();
+        $request = Context::get(ServerRequestInterface::class);
+        $coreHandler = $container->get(CoreMiddleware::class);
+        $dispatcher = new HttpDispatcher($container);
+        $this->assertInstanceOf(HttpDispatcher::class, $dispatcher);
+        $response = $dispatcher->dispatch($request, $middlewares, $coreHandler);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertSame('Hyperf', $response->getHeaderLine('Server'));
+        $this->assertSame('Hyperf, Hyperf', $response->getHeaderLine('Test'));
+    }
+
+    public function testIntervalRepeatedMiddleware()
+    {
+        $middlewares = [
+            TestMiddleware::class,
+            3 => Test2Middleware::class,
+            TestMiddleware::class,
+        ];
+        $container = $this->getContainer();
+        $request = Context::get(ServerRequestInterface::class);
+        $coreHandler = $container->get(CoreMiddleware::class);
+        $dispatcher = new HttpDispatcher($container);
+        $this->assertInstanceOf(HttpDispatcher::class, $dispatcher);
+        $response = $dispatcher->dispatch($request, $middlewares, $coreHandler);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertSame('Hyperf', $response->getHeaderLine('Server'));
+        $this->assertSame('Hyperf, Hyperf2, Hyperf', $response->getHeaderLine('Test'));
+    }
+
+    protected function getContainer()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
+
+        $container->shouldReceive('get')->with(CoreMiddleware::class)->andReturn(new CoreMiddleware());
+        $container->shouldReceive('get')->with(TestMiddleware::class)->andReturn(new TestMiddleware());
+        $container->shouldReceive('get')->with(Test2Middleware::class)->andReturn(new Test2Middleware());
+        $request = Mockery::mock(ServerRequestInterface::class);
+        $response = new Response();
+        Context::set(ServerRequestInterface::class, $request);
+        Context::set(ResponseInterface::class, $response);
+        return $container;
     }
 }

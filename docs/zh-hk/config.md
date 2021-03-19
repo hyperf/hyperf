@@ -47,7 +47,7 @@ config
 declare(strict_types=1);
 
 use Hyperf\Server\Server;
-use Hyperf\Server\SwooleEvent;
+use Hyperf\Server\Event;
 
 return [
     // 這裏省略了該文件的其它配置
@@ -73,7 +73,7 @@ return [
 <?php
 
 use Hyperf\Server\Server;
-use Hyperf\Server\SwooleEvent;
+use Hyperf\Server\Event;
 
 return [
     // 這裏省略了該文件的其它配置
@@ -85,7 +85,7 @@ return [
             'port' => 9503,
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
-                SwooleEvent::ON_RECEIVE => [\Hyperf\JsonRpc\TcpServer::class, 'onReceive'],
+                Event::ON_RECEIVE => [\Hyperf\JsonRpc\TcpServer::class, 'onReceive'],
             ],
             'settings' => [
                 'open_eof_split' => true, // 啟用 EOF 自動分包

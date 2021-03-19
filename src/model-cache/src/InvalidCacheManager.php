@@ -29,7 +29,7 @@ class InvalidCacheManager
 
     public function delete(): void
     {
-        foreach ($this->models as $model) {
+        while ($model = array_pop($this->models)) {
             $model->deleteCache();
         }
     }

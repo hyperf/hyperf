@@ -52,7 +52,7 @@ apm.enable_memcheck=1
 # @contact  group@hyperf.io
 # @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
 
-FROM hyperf/hyperf:7.4-alpine-v3.11-cli
+FROM hyperf/hyperf:7.4-alpine-v3.11-swoole
 LABEL maintainer="Hyperf Developers <group@hyperf.io>" version="1.0" license="MIT" app.name="Hyperf"
 
 ##
@@ -67,11 +67,6 @@ ENV TIMEZONE=${timezone:-"Asia/Shanghai"} \
 
 # update
 RUN set -ex \
-    # install composer
-    && cd /tmp \
-    && wget https://mirrors.aliyun.com/composer/composer.phar \
-    && chmod u+x composer.phar \
-    && mv composer.phar /usr/local/bin/composer \
     # show php version and extensions
     && php -v \
     && php -m \

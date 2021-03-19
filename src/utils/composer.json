@@ -18,7 +18,8 @@
     "require": {
         "php": ">=7.2",
         "doctrine/inflector": "^2.0",
-        "hyperf/contract": "~2.0.0"
+        "hyperf/contract": "~2.1.0",
+        "hyperf/engine": "^1.1"
     },
     "require-dev": {
         "symfony/var-dumper": "^5.0",
@@ -26,7 +27,7 @@
         "symfony/serializer": "^5.0",
         "malukenho/docheader": "^0.1.6",
         "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^7.0.0",
+        "phpunit/phpunit": "^9.4",
         "friendsofphp/php-cs-fixer": "^2.9"
     },
     "suggest": {
@@ -57,7 +58,7 @@
             "config": "Hyperf\\Utils\\ConfigProvider"
         },
         "branch-alias": {
-            "dev-master": "2.0-dev"
+            "dev-master": "2.1-dev"
         }
     },
     "bin": [

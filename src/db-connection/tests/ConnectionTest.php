@@ -28,7 +28,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ConnectionTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set('database.connection.default', null);
@@ -167,6 +167,20 @@ class ConnectionTest extends TestCase
             $this->assertSame('mysql:host=192.168.1.2;dbname=hyperf', $pdo->dsn);
             $pdo = $connection->getReadPdo();
             $this->assertSame('mysql:host=192.168.1.1;dbname=hyperf', $pdo->dsn);
+        }]);
+    }
+
+    public function testDbConnectionUseInDefer()
+    {
+        $container = ContainerStub::mockReadWriteContainer();
+
+        parallel([function () use ($container) {
+            $resolver = $container->get(ConnectionResolverInterface::class);
+
+            defer(function () {
+                $this->assertFalse(Context::has('database.connection.default'));
+            });
+            $resolver->connection();
         }]);
     }
 }

@@ -42,7 +42,7 @@ class LogAfterProcessStoppedListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        $message = sprintf('Process[%s.%d] stoped.', $event->process->name, $event->index);
+        $message = sprintf('Process[%s.%d] stopped.', $event->process->name, $event->index);
         if ($this->container->has(StdoutLoggerInterface::class)) {
             $logger = $this->container->get(StdoutLoggerInterface::class);
             $logger->info($message);

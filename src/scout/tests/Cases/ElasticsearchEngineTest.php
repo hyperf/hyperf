@@ -16,6 +16,7 @@ use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Builder;
 use Hyperf\Scout\Engine\ElasticsearchEngine;
 use HyperfTest\Scout\Stub\ElasticsearchEngineTestModel;
+use HyperfTest\Scout\Stub\SearchableModel;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -25,7 +26,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ElasticsearchEngineTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         $this->assertTrue(true);
@@ -119,6 +120,22 @@ class ElasticsearchEngineTest extends TestCase
         $engine->search($builder);
     }
 
+    public function testGetScoutModelsByIds()
+    {
+        $model = new SearchableModel();
+        $query = Mockery::mock(\Hyperf\Database\Model\Builder::class);
+        $query->shouldReceive('whereIn->get')->andReturn(new Collection([
+            new SearchableModel(['id' => 1]),
+            new SearchableModel(['id' => 2]),
+        ]));
+        $model->setQueryCallback(static function () use ($query) {
+            return $query;
+        });
+        $builder = Mockery::mock(Builder::class);
+        $res = $model->getScoutModelsByIds($builder, [2, 1]);
+        $this->assertSame([['id' => 2], ['id' => 1]], $res->toArray());
+    }
+
     public function testMapCorrectlyMapsResultsToModels()
     {
         $client = Mockery::mock('Elasticsearch\Client');
@@ -130,7 +147,7 @@ class ElasticsearchEngineTest extends TestCase
         $model->shouldReceive('newCollection')->andReturn($models);
         $results = $engine->map($builder, [
             'hits' => [
-                'total' => '1',
+                'total' => 1,
                 'hits' => [
                     [
                         '_id' => '1',
@@ -139,5 +156,24 @@ class ElasticsearchEngineTest extends TestCase
             ],
         ], $model);
         $this->assertEquals(1, count($results));
+    }
+
+    public function testGetTotalCount()
+    {
+        $client = Mockery::mock('Elasticsearch\Client');
+        $engine = new ElasticsearchEngine($client, 'scout');
+        $this->assertSame(1, $engine->getTotalCount([
+            'hits' => [
+                'total' => 1,
+            ],
+        ]));
+        $this->assertSame(2, $engine->getTotalCount([
+            'hits' => [
+                'total' => [
+                    'value' => 2,
+                    'relation' => 'eq',
+                ],
+            ],
+        ]));
     }
 }

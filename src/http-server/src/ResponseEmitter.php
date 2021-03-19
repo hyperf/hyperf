@@ -18,7 +18,10 @@ use Swoole\Http\Response;
 
 class ResponseEmitter implements ResponseEmitterInterface
 {
-    public function emit(ResponseInterface $response, Response $swooleResponse, bool $withContent = true)
+    /**
+     * @param Response $swooleResponse
+     */
+    public function emit(ResponseInterface $response, $swooleResponse, bool $withContent = true)
     {
         if (strtolower($swooleResponse->header['Upgrade'] ?? '') === 'websocket') {
             return;
@@ -29,7 +32,7 @@ class ResponseEmitter implements ResponseEmitterInterface
             return $swooleResponse->sendfile($content->getFilename());
         }
         if ($withContent) {
-            $swooleResponse->end($content->getContents());
+            $swooleResponse->end((string) $content);
         } else {
             $swooleResponse->end();
         }
@@ -75,7 +78,7 @@ class ResponseEmitter implements ResponseEmitterInterface
         /*
          * Status code
          */
-        $swooleResponse->status($response->getStatusCode());
+        $swooleResponse->status($response->getStatusCode(), $response->getReasonPhrase());
     }
 
     protected function isMethodsExists(object $object, array $methods): bool

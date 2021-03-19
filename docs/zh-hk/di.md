@@ -126,7 +126,7 @@ class IndexController
 }
 ```
 
-> 通過 `@Inject` 註解注入可作用於 DI 創建的對象，也可作用於通過 `new` 關鍵詞創建的對象；
+> 通過 `@Inject` 註解注入可作用於 DI 創建的（單例）對象，也可作用於通過 `new` 關鍵詞創建的對象；
 
 > 使用 `@Inject` 註解時需 `use Hyperf\Di\Annotation\Inject;` 命名空間；
 

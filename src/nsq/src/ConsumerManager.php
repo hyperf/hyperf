@@ -21,6 +21,7 @@ use Hyperf\Nsq\Event\BeforeSubscribe;
 use Hyperf\Nsq\Event\FailToConsume;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
+use Hyperf\Utils\Waiter;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -38,7 +39,7 @@ class ConsumerManager
 
     public function run()
     {
-        $classes = AnnotationCollector::getClassByAnnotation(ConsumerAnnotation::class);
+        $classes = AnnotationCollector::getClassesByAnnotation(ConsumerAnnotation::class);
         /**
          * @var string $class
          * @var ConsumerAnnotation $annotation
@@ -84,6 +85,11 @@ class ConsumerManager
              */
             private $config;
 
+            /**
+             * @var Waiter
+             */
+            private $waiter;
+
             public function __construct(ContainerInterface $container, AbstractConsumer $consumer)
             {
                 parent::__construct($container);
@@ -93,6 +99,7 @@ class ConsumerManager
                     'container' => $container,
                     'pool' => $consumer->getPool(),
                 ]);
+                $this->waiter = make(Waiter::class, [0]);
 
                 if ($container->has(EventDispatcherInterface::class)) {
                     $this->dispatcher = $container->get(EventDispatcherInterface::class);
@@ -119,17 +126,19 @@ class ConsumerManager
                     $this->consumer->getTopic(),
                     $this->consumer->getChannel(),
                     function ($data) {
-                        $result = null;
-                        try {
-                            $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($this->consumer, $data));
-                            $result = $this->consumer->consume($data);
-                            $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($this->consumer, $data, $result));
-                        } catch (\Throwable $throwable) {
-                            $result = Result::DROP;
-                            $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, $data, $throwable));
-                        }
+                        return $this->waiter->wait(function () use ($data) {
+                            $result = null;
+                            try {
+                                $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($this->consumer, $data));
+                                $result = $this->consumer->consume($data);
+                                $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($this->consumer, $data, $result));
+                            } catch (\Throwable $throwable) {
+                                $result = Result::DROP;
+                                $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, $data, $throwable));
+                            }
 
-                        return $result;
+                            return $result;
+                        });
                     }
                 );
 

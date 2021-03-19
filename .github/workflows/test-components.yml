@@ -1,0 +1,45 @@
+name: Test for Hyperf Components
+
+on: [ push, pull_request ]
+
+jobs:
+  phar:
+    name: Test for Phar
+    runs-on: 'ubuntu-latest'
+    env:
+      SW_VERSION: '4.6.4'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          tools: phpize
+          extensions: redis
+          ini-values: extension=swoole, opcache.enable_cli=1, swoole.use_shortname='Off', phar.readonly='Off'
+          coverage: none
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Build phar tester
+        run: |
+          git clone https://github.com/limingxinleo/hyperf-phar-tester.git --depth 1
+          cd hyperf-phar-tester
+          composer update -o --no-dev
+          rm -rf vendor/hyperf/phar
+          cp -rf ../src/phar vendor/hyperf/phar
+          composer dump-autoload -o
+      - name: Test
+        run: |
+          cd hyperf-phar-tester
+          php bin/hyperf.php phar:build --name no_env.phar
+          php no_env.phar show:name -N null
+          cp .env.example .env
+          php bin/hyperf.php phar:build --name default_env.phar
+          php default_env.phar show:name -N hyperf-phar-tester
+          php bin/hyperf.php phar:build --name link_env.phar -M .env.link:.env
+          echo APP_NAME=helloworld > .env.link
+          php link_env.phar show:name -N helloworld
+          sudo chmod u+x link_env.phar
+          ./link_env.phar show:name -N helloworld
+

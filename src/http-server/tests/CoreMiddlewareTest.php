@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace HyperfTest\HttpServer;
 
+use FastRoute\Dispatcher;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\ClosureDefinitionCollector;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\Dispatcher\HttpRequestHandler;
+use Hyperf\HttpMessage\Exception\ServerErrorHttpException;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
@@ -30,6 +32,7 @@ use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use HyperfTest\HttpServer\Stub\CoreMiddlewareStub;
 use HyperfTest\HttpServer\Stub\DemoController;
+use HyperfTest\HttpServer\Stub\FooController;
 use HyperfTest\HttpServer\Stub\SetHeaderMiddleware;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -49,7 +52,7 @@ class CoreMiddlewareTest extends TestCase
         $middleware = new CoreMiddlewareStub($container = $this->getContainer(), 'http');
         $id = rand(0, 99999);
 
-        $params = $middleware->parseParameters(DemoController::class, 'index', ['id' => $id]);
+        $params = $middleware->parseMethodParameters(DemoController::class, 'index', ['id' => $id]);
 
         $this->assertSame([$id, 'Hyperf', []], $params);
     }
@@ -65,13 +68,13 @@ class CoreMiddlewareTest extends TestCase
         // String
         $response = $reflectionMethod->invoke($middleware, $body = 'foo', $request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertSame($body, $response->getBody()->getContents());
+        $this->assertSame($body, (string) $response->getBody());
         $this->assertSame('text/plain', $response->getHeaderLine('content-type'));
 
         // Array
         $response = $reflectionMethod->invoke($middleware, $body = ['foo' => 'bar'], $request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertSame(json_encode($body), $response->getBody()->getContents());
+        $this->assertSame(json_encode($body), (string) $response->getBody());
         $this->assertSame('application/json', $response->getHeaderLine('content-type'));
 
         // Arrayable
@@ -82,7 +85,7 @@ class CoreMiddlewareTest extends TestCase
             }
         }, $request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertSame(json_encode(['foo' => 'bar']), $response->getBody()->getContents());
+        $this->assertSame(json_encode(['foo' => 'bar']), (string) $response->getBody());
         $this->assertSame('application/json', $response->getHeaderLine('content-type'));
 
         // Jsonable
@@ -93,7 +96,7 @@ class CoreMiddlewareTest extends TestCase
             }
         }, $request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertSame(json_encode(['foo' => 'bar']), $response->getBody()->getContents());
+        $this->assertSame(json_encode(['foo' => 'bar']), (string) $response->getBody());
         $this->assertSame('application/json', $response->getHeaderLine('content-type'));
 
         // __toString
@@ -104,7 +107,7 @@ class CoreMiddlewareTest extends TestCase
             }
         }, $request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
-        $this->assertSame('This is a string', $response->getBody()->getContents());
+        $this->assertSame('This is a string', (string) $response->getBody());
         $this->assertSame('text/plain', $response->getHeaderLine('content-type'));
 
         // Json encode failed
@@ -170,7 +173,7 @@ class CoreMiddlewareTest extends TestCase
         $response->shouldReceive('withBody')->with(Mockery::any())->andReturnUsing(function ($stream) use ($response, $id) {
             $this->assertInstanceOf(SwooleStream::class, $stream);
             /* @var SwooleStream $stream */
-            $this->assertSame(json_encode(['DEBUG' => [$id]]), $stream->getContents());
+            $this->assertSame(json_encode(['DEBUG' => [$id]]), (string) $stream);
             return $response;
         });
         $request = new Request('GET', new Uri('/request'));
@@ -181,6 +184,37 @@ class CoreMiddlewareTest extends TestCase
         $request = $middleware->dispatch($request);
         $handler = new HttpRequestHandler([SetHeaderMiddleware::class], $middleware, $container);
         $response = $handler->handle($request);
+    }
+
+    public function testHandleFound()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(DemoController::class)->andReturn(new DemoController());
+        $middleware = new CoreMiddleware($container, 'http');
+        $ref = new \ReflectionClass($middleware);
+        $method = $ref->getMethod('handleFound');
+        $method->setAccessible(true);
+
+        $handler = new Handler([DemoController::class, 'demo'], '/');
+        $dispatched = new Dispatched([Dispatcher::FOUND, $handler, []]);
+        $res = $method->invokeArgs($middleware, [$dispatched, Mockery::mock(ServerRequestInterface::class)]);
+        $this->assertSame('Hello World.', $res);
+    }
+
+    public function testHandleFoundWithNamespace()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(DemoController::class)->andReturn(new FooController());
+        $middleware = new CoreMiddleware($container, 'http');
+        $ref = new \ReflectionClass($middleware);
+        $method = $ref->getMethod('handleFound');
+        $method->setAccessible(true);
+
+        $this->expectException(ServerErrorHttpException::class);
+        $this->expectExceptionMessage('Method of class does not exist.');
+        $handler = new Handler([DemoController::class, 'demo'], '/');
+        $dispatched = new Dispatched([Dispatcher::FOUND, $handler, []]);
+        $method->invokeArgs($middleware, [$dispatched, Mockery::mock(ServerRequestInterface::class)]);
     }
 
     protected function getContainer()

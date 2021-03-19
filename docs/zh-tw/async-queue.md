@@ -1,6 +1,6 @@
 # 非同步佇列
 
-非同步佇列區別於 `RabbitMQ` `Kafka` 等訊息佇列，它只提供一種 `非同步處理` 和 `非同步延時處理` 的能力，並 **不能** 嚴格地保證訊息的持久化和 **不支援** ACK 應答機制。
+非同步佇列區別於 `RabbitMQ` `Kafka` 等訊息佇列，它只提供一種 `非同步處理` 和 `非同步延時處理` 的能力，並 **不能** 嚴格地保證訊息的持久化和 **不支援** 完備的 ACK 應答機制。
 
 ## 安裝
 
@@ -64,11 +64,27 @@ return [
 
 ```
 
+## 工作原理
+
+`ConsumerProcess` 是非同步消費程序，會根據使用者建立的 `Job` 或者使用 `@AsyncQueueMessage` 的程式碼塊，執行消費邏輯。
+`Job` 和 `@AsyncQueueMessage` 都是需要投遞和執行的任務，即資料、消費邏輯都會在任務中定義。
+
+- `Job` 類中成員變數即為待消費的資料，`handle()` 方法則為消費邏輯。
+- `@AsyncQueueMessage` 註解的方法，建構函式傳入的資料即為待消費的資料，方法體則為消費邏輯。
+
+```mermaid
+graph LR;
+A[服務啟動]-->B[非同步消費程序啟動]
+B-->C[監聽佇列]
+D[投遞任務]-->C
+C-->F[消費任務]
+```
+
 ## 使用
 
-### 消費訊息
+### 配置非同步消費程序
 
-元件已經提供了預設子程序，只需要將它配置到 `config/autoload/processes.php` 中即可。
+元件已經提供了預設 `非同步消費程序`，只需要將它配置到 `config/autoload/processes.php` 中即可。
 
 ```php
 <?php
@@ -80,6 +96,8 @@ return [
 ```
 
 當然，您也可以將以下 `Process` 新增到自己的專案中。
+
+> 配置方式和註解方式，二選一即可。
 
 ```php
 <?php
@@ -105,7 +123,9 @@ class AsyncQueueConsumer extends ConsumerProcess
 
 這種模式會把物件直接序列化然後存到 `Redis` 等佇列中，所以為了保證序列化後的體積，儘量不要將 `Container`，`Config` 等設定為成員變數。
 
-比如以下 `Job` 的定義，是 **不可取** 的
+比如以下 `Job` 的定義，是 **不可取** 的，同理 `@Inject` 也是如此。
+
+> 因為 Job 會被序列化，所以成員變數不要包含 匿名函式 等 無法被序列化 的內容，如果不清楚哪些內容無法被序列化，儘量使用註解方式。
 
 ```php
 <?php
@@ -153,6 +173,13 @@ use Hyperf\AsyncQueue\Job;
 class ExampleJob extends Job
 {
     public $params;
+    
+    /**
+     * 任務執行失敗後的重試次數，即最大執行次數為 $maxAttempts+1 次
+     *
+     * @var int
+     */
+    protected $maxAttempts = 2;
 
     public function __construct($params)
     {
@@ -164,6 +191,7 @@ class ExampleJob extends Job
     {
         // 根據引數處理具體邏輯
         // 通過具體引數獲取模型等
+        // 這裡的邏輯會在 ConsumerProcess 程序中執行
         var_dump($this->params);
     }
 }
@@ -227,7 +255,7 @@ use Hyperf\HttpServer\Annotation\AutoController;
 /**
  * @AutoController
  */
-class QueueController extends Controller
+class QueueController extends AbstractController
 {
     /**
      * @Inject
@@ -255,6 +283,9 @@ class QueueController extends Controller
 
 框架除了傳統方式投遞訊息，還提供了註解方式。
 
+> 註解方式會在非消費環境下自動投遞訊息到佇列，故，如果我們在佇列中使用註解方式時，則不會再次投遞到隊列當中，而是直接在本消費程序中執行。
+> 如果仍然需要在佇列中投遞訊息，則可以在佇列中使用傳統模式投遞。
+
 讓我們重寫上述 `QueueService`，直接將 `ExampleJob` 的邏輯搬到 `example` 方法中，並加上對應註解 `AsyncQueueMessage`，具體程式碼如下。
 
 ```php
@@ -274,6 +305,7 @@ class QueueService
     public function example($params)
     {
         // 需要非同步執行的程式碼邏輯
+        // 這裡的邏輯會在 ConsumerProcess 程序中執行
         var_dump($params);
     }
 }
@@ -298,7 +330,7 @@ use Hyperf\HttpServer\Annotation\AutoController;
 /**
  * @AutoController
  */
-class QueueController extends Controller
+class QueueController extends AbstractController
 {
     /**
      * @Inject
@@ -485,3 +517,12 @@ return [
 ];
 
 ```
+
+
+## 非同步驅動之間的區別
+
+- Hyperf\AsyncQueue\Driver\RedisDriver::class
+
+此非同步驅動會將整個 `JOB` 進行序列化，當投遞即時佇列後，會 `lpush` 到 `list` 結構中，投遞延時佇列，會 `zadd` 到 `zset` 結構中。
+所以，如果 `Job` 的引數完全一致的情況，在延時佇列中就會出現後投遞的訊息 **覆蓋** 前面投遞的訊息的問題。
+如果不想出現延時訊息覆蓋的情況，只需要在 `Job` 裡增加一個唯一的 `uniqid`，或者在使用 `註解` 的方法上增加一個 `uniqid` 的入參即可。

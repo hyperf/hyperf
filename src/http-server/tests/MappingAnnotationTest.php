@@ -31,9 +31,11 @@ class MappingAnnotationTest extends TestCase
         $mapping = new RequestMapping([
             'methods' => 'get,post,put',
             'path' => $path = '/foo',
+            'options' => ['id' => $id = uniqid()],
         ]);
         $this->assertSame(['GET', 'POST', 'PUT'], $mapping->methods);
         $this->assertSame($path, $mapping->path);
+        $this->assertSame($id, $mapping->options['id']);
 
         // The methods have space
         $mapping = new RequestMapping([

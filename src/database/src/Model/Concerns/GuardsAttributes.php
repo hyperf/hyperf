@@ -152,8 +152,8 @@ trait GuardsAttributes
             return false;
         }
 
-        return empty($this->getFillable()) &&
-            ! Str::startsWith($key, '_');
+        return empty($this->getFillable())
+            && ! Str::startsWith($key, '_');
     }
 
     /**

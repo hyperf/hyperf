@@ -17,6 +17,9 @@ use Hyperf\HttpServer\Server;
 use Psr\Container\ContainerInterface;
 use function trackerHookMalloc;
 
+/**
+ * @deprecated v2.1 use HookMallocMiddleware instead.
+ */
 class OnRequestAspect extends AbstractAspect
 {
     public $classes = [

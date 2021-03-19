@@ -22,7 +22,7 @@ class DatabaseMigrationRepositoryFactory
     {
         $reslover = $container->get(ConnectionResolverInterface::class);
         $config = $container->get(ConfigInterface::class);
-        $table = $config->get('databases.migrations', 'migrations');
+        $table = $config->get('databases.default.migrations', 'migrations');
         return make(DatabaseMigrationRepository::class, [
             'resolver' => $reslover,
             'table' => $table,

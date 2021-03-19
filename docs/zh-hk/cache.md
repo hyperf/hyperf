@@ -247,8 +247,6 @@ public function updateUserBook(int $id)
 
 ### 協程內存驅動
 
-> 本驅動乃 Beta 版本，請謹慎使用。
-
 如果您需要將數據緩存到 `Context` 中，可以嘗試此驅動。例如以下應用場景 `Demo::get` 會在多個地方調用多次，但是又不想每次都到 `Redis` 中進行查詢。
 
 ```php

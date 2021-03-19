@@ -1,0 +1,64 @@
+{
+    "name": "hyperf/view-engine",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf",
+        "view",
+        "engine"
+    ],
+    "description": "",
+    "require": {
+        "php": ">=7.2",
+        "ext-json": "*",
+        "hyperf/config": "~2.1.0",
+        "hyperf/di": "~2.1.0",
+        "hyperf/event": "~2.1.0",
+        "hyperf/utils": "~2.1.0",
+        "hyperf/view": "~2.1.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.16",
+        "hyperf/session": "~2.1.0",
+        "hyperf/validation": "~2.1.0",
+        "phpstan/phpstan": "^0.12",
+        "phpunit/phpunit": "*",
+        "psr/http-message": "^1.0"
+    },
+    "suggest": {
+        "hyperf/session": "Required to use ShareErrorsFromSession.",
+        "hyperf/validation": "Required to use ShareErrorsFromSession and ValidationExceptionHandle."
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\ViewEngine\\": "src/"
+        },
+        "files": [
+            "src/Functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\ViewEngine\\": "tests/"
+        }
+    },
+    "bin": [],
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "cs-fix": "php-cs-fixer fix $1",
+        "analyse": "phpstan analyse --memory-limit 300M -l 0 -c phpstan.neon ./src ./tests",
+        "test": "./vendor/bin/phpunit -c phpunit.xml --color=always",
+        "test-coverage": "php -d zend_extension=xdebug ./vendor/bin/phpunit -c phpunit.xml --color=always --coverage-html .codeCoverage"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.1-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\ViewEngine\\ConfigProvider"
+        }
+    }
+}

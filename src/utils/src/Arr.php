@@ -205,7 +205,7 @@ class Arr
                 unset($array[$key]);
                 continue;
             }
-            $parts = explode('.', $key);
+            $parts = explode('.', (string) $key);
             // clean up before each pass
             $array = &$original;
             while (count($parts) > 1) {
@@ -512,11 +512,11 @@ class Arr
 
     public static function merge(array $array1, array $array2, bool $unique = true): array
     {
-        $isAssoc = static::isAssoc($array1);
+        $isAssoc = static::isAssoc($array1 ?: $array2);
         if ($isAssoc) {
             foreach ($array2 as $key => $value) {
                 if (is_array($value)) {
-                    $array1[$key] = static::merge($array1[$key], $value, $unique);
+                    $array1[$key] = static::merge($array1[$key] ?? [], $value, $unique);
                 } else {
                     $array1[$key] = $value;
                 }

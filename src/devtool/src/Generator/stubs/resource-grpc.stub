@@ -23,6 +23,5 @@ class %CLASS% extends GrpcResource
      */
     public function expect(): string
     {
-        // TODO: Implement expect() method.
     }
 }
