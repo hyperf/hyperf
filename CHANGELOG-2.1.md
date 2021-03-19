@@ -7,6 +7,7 @@
 ## Fixed
 
 - [#3380](https://github.com/hyperf/hyperf/pull/3380) Fixed bug that super globals does not work when request don't persist to context.
+- [#3394](https://github.com/hyperf/hyperf/pull/3394) Fixed bug that the injected property will be replaced by injected property defined in trait.
 
 # v2.1.10 - 2021-03-15
 
