@@ -54,7 +54,7 @@ trait PropertyHandlerTrait
         $parentReflectionClass = $reflectionClass;
         while ($parentReflectionClass = $parentReflectionClass->getParentClass()) {
             $parentClassProperties = ReflectionManager::reflectPropertyNames($parentReflectionClass->getName());
-            $parentClassProperties = array_filter($parentClassProperties, static function($property) use ($reflectionClass){
+            $parentClassProperties = array_filter($parentClassProperties, static function ($property) use ($reflectionClass) {
                 return $reflectionClass->hasProperty($property);
             });
             $parentClassProperties = array_diff($parentClassProperties, $handled);
