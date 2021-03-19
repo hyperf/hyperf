@@ -30,7 +30,7 @@ trait PropertyHandlerTrait
         $handled = $this->__handle($className, $className, $propertyHandlers, $properties);
 
         // Inject the properties of traits.
-        // Because the properties of trait couldn't be reflected by class.
+        // Because the property annocations of trait couldn't be collected by class.
         $traitNames = $reflectionClass->getTraitNames();
         if (is_array($traitNames)) {
             foreach ($traitNames ?? [] as $traitName) {
