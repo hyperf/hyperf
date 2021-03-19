@@ -59,23 +59,33 @@ class ReflectionManager extends MetadataCollector
         return static::$container['property'][$key];
     }
 
-    public static function reflectPropertyNames(string $className)
+    public static function reflectPropertyNames(string $className, ?int $exclude = null)
     {
         $key = $className;
         if (! isset(static::$container['property_names'][$key])) {
             if (! class_exists($className) && ! interface_exists($className) && ! trait_exists($className)) {
                 throw new InvalidArgumentException("Class {$className} not exist");
             }
-            static::$container['property_names'][$key] = value(function () use ($className) {
-                $properties = static::reflectClass($className)->getProperties();
-                $result = [];
-                foreach ($properties as $property) {
-                    $result[] = $property->getName();
-                }
-                return $result;
-            });
+            static::$container['property_names'][$key] = [];
+            foreach (static::reflectClass($className)->getProperties() as $property) {
+                $propertyModifier = $property->getModifiers();
+                $level = ReflectionProperty::IS_PUBLIC;
+                do {
+                    if ($propertyModifier & $level) {
+                        static::$container['property_names'][$key][$level][] = $property->getName();
+                    }
+                } while (($propertyModifier = $propertyModifier & ~$level) && $level = $level << 1);
+            }
         }
-        return static::$container['property_names'][$key];
+        $filter = [];
+        if ($exclude) {
+            foreach (static::$container['property_names'][$key] as $level => $propertyNames) {
+                if ($exclude & $level) {
+                    $filter = array_merge($filter, $propertyNames);
+                }
+            }
+        }
+        return array_unique(array_diff(array_merge(...static::$container['property_names'][$key]), $filter));
     }
 
     public static function clear(?string $key = null): void
