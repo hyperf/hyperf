@@ -29,16 +29,28 @@ trait PropertyHandlerTrait
         // Inject the properties of current class
         $handled = $this->__handle($className, $className, $propertyHandlers, $properties);
 
-        // Inject the properties of traits
+        // Inject the properties of traits.
+        // Because the properties of trait couldn't be reflected by class.
         $traitNames = $reflectionClass->getTraitNames();
         if (is_array($traitNames)) {
             foreach ($traitNames ?? [] as $traitName) {
                 $traitProperties = ReflectionManager::reflectPropertyNames($traitName);
-                $this->__handle($className, $traitName, $propertyHandlers, $traitProperties);
+                $traitProperties = array_diff($traitProperties, $handled);
+                $handled = array_merge(
+                    $handled,
+                    $this->__handle($className, $traitName, $propertyHandlers, $traitProperties)
+                );
             }
         }
 
-        // Inject the properties of parent class
+        // Inject the properties of parent class.
+        // It can be used to deal with parent classes whose subclasses have constructor function, but don't execute `parent::__construct()`.
+        // For example:
+        // class SubClass extend ParentClass
+        // {
+        //     public function __construct() {
+        //     }
+        // }
         $parentReflectionClass = $reflectionClass;
         while ($parentReflectionClass = $parentReflectionClass->getParentClass()) {
             $parentClassProperties = ReflectionManager::reflectPropertyNames($parentReflectionClass->getName());
