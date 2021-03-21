@@ -11,7 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Pool;
 
+use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Contract\FrequencyInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Pool\Pool;
 use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Pool\Stub\FooPool;
 use Mockery;
@@ -89,6 +92,34 @@ class PoolTest extends TestCase
         $pool->flushOne();
         $this->assertSame(2, $pool->getConnectionsInChannel());
         $this->assertSame(2, $pool->getCurrentConnections());
+    }
+
+    public function testFrequenctHitFailed()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('has')->andReturnTrue();
+        $logger = Mockery::mock(StdoutLoggerInterface::class);
+        $logger->shouldReceive('error')->with(Mockery::any())->once()->andReturnUsing(function ($args) {
+            $this->assertStringContainsString('Hit Failed', $args);
+        });
+        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn($logger);
+
+        $pool = new class($container, []) extends Pool {
+            public function __construct(ContainerInterface $container, array $config = [])
+            {
+                parent::__construct($container, $config);
+
+                $this->frequency = Mockery::mock(FrequencyInterface::class);
+                $this->frequency->shouldReceive('hit')->andThrow(new \RuntimeException('Hit Failed'));
+            }
+
+            protected function createConnection(): ConnectionInterface
+            {
+                return Mockery::mock(ConnectionInterface::class);
+            }
+        };
+
+        $this->assertInstanceOf(ConnectionInterface::class, $pool->get());
     }
 
     protected function getContainer()

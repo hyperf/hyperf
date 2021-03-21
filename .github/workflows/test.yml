@@ -11,11 +11,11 @@ jobs:
         os: [ ubuntu-latest ]
         php-version: [ '7.3', '7.4' ]
         mysql-version: [ '5.7', '8.0' ]
-        sw-version: [ '4.5.11', '4.6.3' ]
+        sw-version: [ '4.5.11', '4.6.4' ]
       max-parallel: 8
     env:
       SW_VERSION: ${{ matrix.sw-version }}
-      YASD_VERSION: 'v0.3.5'
+      YASD_VERSION: 'v0.3.7'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -24,13 +24,17 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          extensions: redis
-          ini-values: extension=swoole, opcache.enable_cli=1
+          extensions: redis, pdo, pdo_mysql, bcmath
+          ini-values: opcache.enable_cli=1
           coverage: none
       - name: Setup Swoole
-        run: ./.travis/swoole.install.sh
+        run: |
+          ./.travis/swoole.install.sh
+          sudo sh -c "echo extension=swoole > /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
+          php --ri swoole
       - name: Setup Yasd
         run: |
+          sudo apt-get update
           sudo apt-get install libboost-all-dev
           wget https://github.com/swoole/yasd/archive/${YASD_VERSION}.tar.gz -O yasd.tar.gz
           mkdir -p yasd

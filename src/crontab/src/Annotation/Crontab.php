@@ -67,6 +67,11 @@ class Crontab extends AbstractAnnotation
      */
     public $memo = '';
 
+    /**
+     * @var bool
+     */
+    public $enable = true;
+
     public function __construct($value = null)
     {
         parent::__construct($value);

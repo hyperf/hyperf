@@ -1,5 +1,57 @@
 # 版本更新记录
 
+# v2.1.10 - 2021-03-15
+
+## 修复
+
+- [#3348](https://github.com/hyperf/hyperf/pull/3348) 修复当使用 `Arr::forget` 方法在 `key` 为 `integer` 且不存在时，执行报错的问题。
+- [#3351](https://github.com/hyperf/hyperf/pull/3351) 修复 `hyperf/validation` 组件中，`FormRequest` 无法从协程上下文中获取到修改后的 `ServerRequest`，从而导致验证器验证失败的问题。
+- [#3356](https://github.com/hyperf/hyperf/pull/3356) 修复 `hyperf/testing` 组件中，客户端 `Hyperf\Testing\Client` 无法模拟构造正常的 `UriInterface` 的问题。
+- [#3363](https://github.com/hyperf/hyperf/pull/3363) 修复在入口文件 `bin/hyperf.php` 中自定义的常量，无法在命令 `server:watch` 中使用的问题。
+- [#3365](https://github.com/hyperf/hyperf/pull/3365) 修复当使用协程风格服务时，如果用户没有配置 `pid_file`，仍然会意外生成 `runtime/hyperf.pid` 文件的问题。
+
+## 优化
+
+- [#3364](https://github.com/hyperf/hyperf/pull/3364) 优化命令 `phar:build`，你可以在不使用 `php` 脚本的情况下执行 `phar` 文件，就像使用命令 `./composer.phar` 而非 `php composer.phar`。
+- [#3367](https://github.com/hyperf/hyperf/pull/3367) 优化使用 `gen:model` 生成模型字段的类型注释时，尽量读取自定义转换器转换后的对象类型。
+
+# v2.1.9 - 2021-03-08
+
+## 修复
+
+- [#3326](https://github.com/hyperf/hyperf/pull/3326) 修复使用 `JsonEofPacker` 无法正确解包自定义 `eof` 数据的问题。
+- [#3330](https://github.com/hyperf/hyperf/pull/3330) 修复因其他协程修改静态变量 `$constraints`，导致模型关系查询错误的问题。
+
+## 新增
+
+- [#3325](https://github.com/hyperf/hyperf/pull/3325) 为 `Crontab` 注解增加 `enable` 参数，用于控制当前任务是否注册到定时任务中。
+
+## 优化
+
+- [#3338](https://github.com/hyperf/hyperf/pull/3338) 优化了 `testing` 组件，使模拟请求的方法运行在独立的协程当中，避免协程变量污染。
+
+# v2.1.8 - 2021-03-01
+
+## 修复
+
+- [#3301](https://github.com/hyperf/hyperf/pull/3301) 修复 `hyperf/cache` 组件，当没有在注解中设置超时时间时，会将超时时间强制转化为 0，导致缓存不失效的问题。
+
+## 新增
+
+- [#3310](https://github.com/hyperf/hyperf/pull/3310) 新增方法 `Blueprint::comment()`，可以允许在使用 `Migration` 的时候，设置表注释。 
+- [#3311](https://github.com/hyperf/hyperf/pull/3311) 新增方法 `RouteCollector::getRouteParser`，可以方便的从 `RouteCollector` 中获取到 `RouteParser` 对象。
+- [#3316](https://github.com/hyperf/hyperf/pull/3316) 允许用户在 `hyperf/db` 组件中，注册自定义数据库适配器。
+
+## 优化
+
+- [#3308](https://github.com/hyperf/hyperf/pull/3308) 优化 `WebSocket` 服务，当找不到对应路由时，直接返回响应。
+- [#3319](https://github.com/hyperf/hyperf/pull/3319) 优化从连接池获取连接的代码逻辑，避免因重写低频组件导致报错，使得连接被意外丢弃。
+
+## 新组件孵化
+
+- [rpc-multiplex](https://github.com/hyperf/rpc-multiplex-incubator) 基于 Channel 实现的多路复用 RPC 组件。
+- [db-pgsql](https://github.com/hyperf/db-pgsql-incubator) 适配于 `hyperf/db` 的 `PgSQL` 适配器。
+
 # v2.1.7 - 2021-02-22
 
 ## 修复

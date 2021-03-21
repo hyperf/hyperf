@@ -167,6 +167,7 @@ class Manager
         }
 
         $this->logger->alert('Cache handler not exist, fetch data from database.');
+        // @phpstan-ignore-next-line
         return $instance->newQuery()->whereIn($primaryKey, $ids)->get();
     }
 

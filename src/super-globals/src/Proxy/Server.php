@@ -30,6 +30,10 @@ class Server extends Proxy
 
     public function toArray(): array
     {
+        if (! $this->hasRequest()) {
+            return [];
+        }
+
         $headers = [];
         foreach ($this->getRequest()->getHeaders() as $key => $value) {
             $headers['HTTP_' . str_replace('-', '_', Str::upper($key))] = $value;

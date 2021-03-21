@@ -18,6 +18,9 @@ class Post extends Proxy
 {
     public function toArray(): array
     {
+        if (! $this->hasRequest()) {
+            return [];
+        }
         return (array) $this->getRequest()->getParsedBody();
     }
 
