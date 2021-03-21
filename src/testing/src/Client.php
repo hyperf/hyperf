@@ -137,11 +137,18 @@ class Client extends Server
     public function request(string $method, string $path, array $options = [])
     {
         return wait(function () use ($method, $path, $options) {
-            return $this->sendRequest($this->init($method, $path, $options));
+            return $this->execute($this->init($method, $path, $options));
         }, $this->waitTimeout);
     }
 
     public function sendRequest(ServerRequestInterface $psr7Request): ResponseInterface
+    {
+        return wait(function () use ($psr7Request) {
+            return $this->execute($psr7Request);
+        }, $this->waitTimeout);
+    }
+
+    protected function execute(ServerRequestInterface $psr7Request): ResponseInterface
     {
         $this->persistToContext($psr7Request, new Psr7Response());
 
