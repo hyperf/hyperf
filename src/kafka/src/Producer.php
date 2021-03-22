@@ -136,26 +136,37 @@ class Producer
             return;
         }
         $this->chan = new Channel(1);
-        Coroutine::create(function () {
+        $ack = new Channel();
+        Coroutine::create(function () use ($ack) {
             while (true) {
-                $this->producer = $this->makeProducer();
-                $this->topicsMeta = $this->fetchMeta();
-                while (true) {
-                    $closure = $this->chan->pop();
-                    if (! $closure) {
-                        break 2;
+                try {
+                    $this->producer = $this->makeProducer();
+                    $this->topicsMeta = $this->fetchMeta();
+                    while (true) {
+                        $closure = $this->chan->pop();
+                        if (! $closure) {
+                            break 2;
+                        }
+                        try {
+                            $closure->call($this);
+                        } catch (\Throwable $e) {
+                            $this->producer->close();
+                            break;
+                        }
                     }
-                    try {
-                        $closure->call($this);
-                    } catch (\Throwable $e) {
-                        $this->producer->close();
-                        break;
-                    }
+                    $ack->close();
+                }catch (\Throwable $e){
+                    $ack->push($e);
+                    break;
                 }
             }
             /* @phpstan-ignore-next-line */
             $this->chan = null;
         });
+
+        if ($e = $ack->pop()){
+            throw $e;
+        }
     }
 
     private function makeProducer(): LongLangProducer
