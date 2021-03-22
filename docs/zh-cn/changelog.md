@@ -1,5 +1,19 @@
 # 版本更新记录
 
+# v2.1.11 - 2021-03-22
+
+## 新增
+
+- [#3376](https://github.com/hyperf/hyperf/pull/3376) 为注解 `Hyperf\DbConnection\Annotation\Transactional` 增加参数 `$connection` 和 `$attempts`，用户可以按需设置事务连接和重试次数。
+- [#3403](https://github.com/hyperf/hyperf/pull/3403) 新增方法 `Hyperf\Testing\Client::sendRequest()`，用户可以使用自己构造的 `ServerRequest`，比如设置 `Cookies`。
+
+## 修复
+
+- [#3380](https://github.com/hyperf/hyperf/pull/3380) 修复超全局变量，在协程上下文里没有 `Request` 对象时，无法正常工作的问题。
+- [#3394](https://github.com/hyperf/hyperf/pull/3394) 修复使用 `@Inject` 注入的对象，会被 `trait` 中注入的对象覆盖的问题。
+- [#3395](https://github.com/hyperf/hyperf/pull/3395) 修复当继承使用 `@Inject` 注入私有变量的父类时，而导致子类实例化报错的问题。
+- [#3398](https://github.com/hyperf/hyperf/pull/3398) 修复单元测试中使用 `UploadedFile::isValid()` 时，无法正确判断结果的问题。
+
 # v2.1.10 - 2021-03-15
 
 ## 修复
