@@ -22,6 +22,7 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Component\Finder\Finder;
 use UnexpectedValueException;
+use Swoole\Coroutine\System;
 
 class PharBuilder
 {
@@ -55,10 +56,26 @@ class PharBuilder
      */
     private $main;
 
-    public function __construct(string $path, LoggerInterface $logger)
+    /**
+     * @var null|bool
+     */
+    private $noDev;
+
+    /**
+     * @var array
+     */
+    private $composer = [];
+
+    /**
+     * @var null|array
+     */
+    private $exclude;
+
+    public function __construct(string $path, LoggerInterface $logger, array $exclude = [])
     {
         $this->logger = $logger;
-        $this->package = new Package($this->loadJson($path), dirname(realpath($path)));
+        $this->exclude = $exclude;
+        $this->package = new Package($this->loadJson($path), dirname(realpath($path)), $this->exclude);
     }
 
     /**
@@ -100,6 +117,27 @@ class PharBuilder
         return $this;
     }
 
+    /**
+     * Set the Phar package is dev.
+     * @param bool $noDev
+     * @return $this
+     */
+    public function setNoDev(bool $noDev)
+    {
+        $this->noDev = $noDev;
+        return $this;
+    }
+
+    /**
+     * Set the composer cmd.
+     * @param array $composer
+     * @return $this
+     */
+    public function setComposer(array $composer)
+    {
+        $this->composer = $composer;
+        return $this;
+    }
     /**
      * Gets the default run script path.
      */
@@ -177,13 +215,14 @@ class PharBuilder
             }
             // Package all of these dependent components into the packages
             foreach ($installedPackages as $package) {
-                $dir = $package['name'] . '/';
+                // support  custom install path
+                $dir = 'composer/'.$package['install-path'] . '/';
                 if (isset($package['target-dir'])) {
                     $dir .= trim($package['target-dir'], '/') . '/';
                 }
 
                 $dir = $vendorPath . $dir;
-                $packages[] = new Package($package, $dir);
+                $packages[] = new Package($package, $this->canonicalize($dir), $this->exclude);
             }
         }
         return $packages;
@@ -198,7 +237,40 @@ class PharBuilder
         if (strpos($path, $root) !== 0) {
             throw new UnexpectedValueException('Path "' . $path . '" is not within base project path "' . $root . '"');
         }
-        return substr($path, strlen($root)) ?? null;
+        $base = substr($path, strlen($root));
+        return empty($base) ? null : $this->canonicalize($base);
+    }
+
+    /**
+     * Gets the canonicalize path .
+     */
+    function canonicalize($address)
+    {
+        $address = explode('/', $address);
+        $keys = array_keys($address, '..');
+
+        foreach ($keys as $keypos => $key) {
+            array_splice($address, $key - ($keypos * 2 + 1), 2);
+        }
+
+        $address = implode('/', $address);
+        $address = str_replace('./', '', $address);
+
+        return $address;
+    }
+
+    /**
+     * exec composr cmd.
+     */
+    public function execComposr(string $cmd): bool
+    {
+        foreach ($this->composer as $composer) {
+            $return = System::exec("{$composer} $cmd");
+            if (($return['code'] ?? -1) === 0) {
+                return true;
+            }
+        }
+        throw new UnexpectedValueException('composer is not install ,try "' . implode(',', $this->composer) . '"');
     }
 
     /**
@@ -253,6 +325,7 @@ EOD;
         } while (file_exists($tmp));
 
         $main = $this->getMain();
+        $tmpPharDir = '/tmp/' . $tmp . '/';
 
         $targetPhar = new TargetPhar(new Phar($tmp), $this);
         $this->logger->info('Adding main package "' . $this->package->getName() . '"');
@@ -263,7 +336,9 @@ EOD;
             ->exclude('runtime') // Ignore runtime dir
             ->notPath('/^composer\.phar/')
             ->exclude($main)
-            ->notPath($target); // Ignore the phar package that exists in the project itself
+            ->exclude($this->exclude)
+            ->exclude('composer.lock')
+            ->notPath($target); //Ignore the phar package that exists in the project itself
 
         foreach ($this->getMount() as $inside) {
             $finder = $finder->exclude($inside);
@@ -295,13 +370,79 @@ EOD;
         // Add composer autoload file.
         $targetPhar->addFile($vendorPath . 'autoload.php');
 
+        // Read composer.lock
+        if (is_readable(BASE_PATH . '/composer.lock')) {
+            $lockPath = BASE_PATH . '/composer.lock';
+        } else {
+            throw new \RuntimeException('composer.lock not found.');
+        }
+        $lock = json_decode(file_get_contents($lockPath), true);
+        //Setting no dev
+        $packagesList = [];
+        if ($this->noDev) {
+            $this->logger->info('Setting composer no-dev');
+            foreach ($lock['packages'] ?? [] as $package) {
+                $packagesList[$package['name'] ?? ''] = true;
+            }
+
+            //delete dev packages
+            $lock['packages-dev'] = [];
+
+            //delete dev autoload
+            $bashVendorPath = $this->getPathLocalToBase($vendorPath);
+
+            mkdir($tmpPharDir . $bashVendorPath, 0777, true);
+            copy('composer.json', $tmpPharDir . '/composer.json');
+            copy('composer.lock', $tmpPharDir . '/composer.lock');
+            mkdir($tmpPharDir . $bashVendorPath . '/composer', 0777, true);
+            $installedFiel = '/composer/installed.json';
+            copy($vendorPath . $installedFiel, $tmpPharDir . $bashVendorPath . $installedFiel);
+
+            // Add no dev composer autoload files.
+            foreach (new GlobIterator($vendorPath . '*', FilesystemIterator::KEY_AS_FILENAME) as $cFile) {
+                if ($cFile->isDir() && $cFile->getFilename() != 'composer') {
+                    symlink($cFile->getPathname(), $tmpPharDir . $bashVendorPath . $cFile->getFilename());
+                }
+            }
+            $this->execComposr("dumpautoload --no-dev -o -d $tmpPharDir");
+
+            $this->logger->info('Adding no dev composer base files');
+            // Add no dev composer autoload file.
+            $targetPhar->addFromString($bashVendorPath . 'autoload.php', file_get_contents($tmpPharDir . $bashVendorPath . 'autoload.php'));
+
+            // Add no dev composer autoload files.
+            foreach (new GlobIterator($tmpPharDir . $bashVendorPath . 'composer/*.*', FilesystemIterator::KEY_AS_FILENAME) as $cFile) {
+                $targetPhar->addFromString($bashVendorPath . 'composer/' . $cFile->getFilename(), file_get_contents($cFile->getPathname()));
+            }
+        }
+        // Add composer.lock
+        $targetPhar->addFromString('composer.lock', json_encode($lock, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
         // Add composer autoload files.
         $targetPhar->buildFromIterator(new GlobIterator($vendorPath . 'composer/*.*', FilesystemIterator::KEY_AS_FILENAME));
 
         // Add composer depenedencies.
         foreach ($this->getPackagesDependencies() as $package) {
+            // Not add dev package .
+            if ($this->noDev && empty($packagesList[$package->getName()])) {
+                continue;
+            }
             $this->logger->info('Adding dependency "' . $package->getName() . '" from "' . $this->getPathLocalToBase($package->getDirectory()) . '"');
-            $targetPhar->addBundle($package->bundle());
+            // support package symlink
+            if (is_link(rtrim($package->getDirectory(), '/'))) {
+                $bundle = $package->bundle();
+                foreach ($bundle as $resource) {
+                    if (is_string($resource)) {
+                        $targetPhar->addFile($resource);
+                    } else {
+                        foreach ($resource as $iterator) {
+                            $targetPhar->addFile($iterator->getPathname());
+                        }
+                    }
+                }
+            } else {
+                $targetPhar->addBundle($package->bundle());
+            }
         }
         // Replace ConfigFactory ReadPaths method.
         $this->logger->info('Replace method "readPaths" in file "vendor/hyperf/config/src/ConfigFactory.php" and change "getRealPath" to "getPathname".');
