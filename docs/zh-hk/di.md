@@ -3,7 +3,9 @@
 ## 簡介
 
 Hyperf 默認採用 [hyperf/di](https://github.com/hyperf/di) 作為框架的依賴注入管理容器，儘管從設計上我們允許您更換其它的依賴注入管理容器，但我們強烈不建議您更換該組件。   
-[hyperf/di](https://github.com/hyperf/di) 是一個強大的用於管理類的依賴關係並完成自動注入的組件，與傳統依賴注入容器的區別在於更符合長生命週期的應用使用、提供了 [註解及註解注入](zh-hk/annotation.md) 的支持、提供了無比強大的 [AOP 面向切面編程](zh-hk/aop.md) 能力，這些能力及易用性作為 Hyperf 的核心輸出，我們自信的認為該組件是最優秀的。
+[hyperf/di](https://github.com/hyperf/di)
+是一個強大的用於管理類的依賴關係並完成自動注入的組件，與傳統依賴注入容器的區別在於更符合長生命週期的應用使用、提供了 [註解及註解注入](zh-hk/annotation.md)
+的支持、提供了無比強大的 [AOP 面向切面編程](zh-hk/aop.md) 能力，這些能力及易用性作為 Hyperf 的核心輸出，我們自信的認為該組件是最優秀的。
 
 ## 安裝
 
@@ -19,6 +21,7 @@ composer require hyperf/di
 
 通常來説，類的關係及注入是無需顯性定義的，這一切 Hyperf 都會默默的為您完成，我們通過一些代碼示例來説明一下相關的用法。      
 假設我們需要在 `IndexController` 內調用 `UserService` 類的 `getInfoById(int $id)` 方法。
+
 ```php
 <?php
 namespace App\Service;
@@ -65,7 +68,8 @@ class IndexController
 
 > 注意使用構造函數注入時，調用方也就是 `IndexController` 必須是由 DI 創建的對象才能完成自動注入，而 Controller 默認是由 DI 創建的，所以可以直接使用構造函數注入
 
-當您希望定義一個可選的依賴項時，可以通過給參數定義為 `nullable` 或將參數的默認值定義為 `null`，即表示該參數如果在 DI 容器中沒有找到或無法創建對應的對象時，不拋出異常而是直接使用 `null` 來注入。*(該功能僅在 1.1.0 或更高版本可用)*
+當您希望定義一個可選的依賴項時，可以通過給參數定義為 `nullable` 或將參數的默認值定義為 `null`，即表示該參數如果在 DI 容器中沒有找到或無法創建對應的對象時，不拋出異常而是直接使用 `null` 來注入。*(該功能僅在
+1.1.0 或更高版本可用)*
 
 ```php
 <?php
@@ -132,7 +136,8 @@ class IndexController
 
 ##### Required 參數
 
-`@Inject` 註解存在一個 `required` 參數，默認值為 `true`，當將該參數定義為 `false` 時，則表明該成員屬性為一個可選依賴，當對應 `@var` 的對象不存在於 DI 容器或不可創建時，將不會拋出異常而是注入一個 `null`，如下：
+`@Inject` 註解存在一個 `required` 參數，默認值為 `true`，當將該參數定義為 `false` 時，則表明該成員屬性為一個可選依賴，當對應 `@var` 的對象不存在於 DI
+容器或不可創建時，將不會拋出異常而是注入一個 `null`，如下：
 
 ```php
 <?php
@@ -166,7 +171,8 @@ class IndexController
 
 ### 抽象對象注入
 
-基於上面的例子，從合理的角度上來説，Controller 面向的不應該直接是一個 `UserService` 類，可能更多的是一個 `UserServiceInterface` 的接口類，此時我們可以通過 `config/autoload/dependencies.php` 來綁定對象關係達到目的，我們還是通過代碼來解釋一下。
+基於上面的例子，從合理的角度上來説，Controller 面向的不應該直接是一個 `UserService` 類，可能更多的是一個 `UserServiceInterface`
+的接口類，此時我們可以通過 `config/autoload/dependencies.php` 來綁定對象關係達到目的，我們還是通過代碼來解釋一下。
 
 定義一個接口類：
 
@@ -233,7 +239,8 @@ class IndexController
 
 ### 工廠對象注入
 
-我們假設 `UserService` 的實現會更加複雜一些，在創建 `UserService` 對象時構造函數還需要傳遞進來一些非直接注入型的參數，假設我們需要從配置中取得一個值，然後 `UserService` 需要根據這個值來決定是否開啟緩存模式（順帶一説 Hyperf 提供了更好用的 [模型緩存](zh-hk/db/model-cache.md) 功能）   
+我們假設 `UserService` 的實現會更加複雜一些，在創建 `UserService` 對象時構造函數還需要傳遞進來一些非直接注入型的參數，假設我們需要從配置中取得一個值，然後 `UserService`
+需要根據這個值來決定是否開啟緩存模式（順帶一説 Hyperf 提供了更好用的 [模型緩存](zh-hk/db/model-cache.md) 功能）
 
 我們需要創建一個工廠來生成 `UserService` 對象：
 
@@ -375,16 +382,10 @@ isset($proxy->someProperty);
 unset($proxy->someProperty);
 ```
 
-## 注意事項
-
-### 容器僅管理長生命週期的對象
-
-換種方式理解就是容器內管理的對象**都是單例**，這樣的設計對於長生命週期的應用來説會更加的高效，減少了大量無意義的對象創建和銷燬，這樣的設計也就意味着所有需要交由 DI 容器管理的對象**均不能包含** `狀態` 值。   
-`狀態` 可直接理解為會隨着請求而變化的值，事實上在 [協程](zh-hk/coroutine.md) 編程中，這些狀態值也是應該存放於 `協程上下文` 中的，即 `Hyperf\Utils\Context`。
-
 ## 短生命週期對象
 
-通過 `new` 關鍵詞創建的對象毫無疑問的短生命週期的，那麼如果希望創建一個短生命週期的對象但又希望使用 `構造函數依賴自動注入功能` 呢？這時我們可以通過 `make(string $name, array $parameters = [])` 函數來創建 `$name` 對應的的實例，代碼示例如下：   
+通過 `new` 關鍵詞創建的對象毫無疑問的短生命週期的，那麼如果希望創建一個短生命週期的對象但又希望使用 `構造函數依賴自動注入功能`
+呢？這時我們可以通過 `make(string $name, array $parameters = [])` 函數來創建 `$name` 對應的的實例，代碼示例如下：
 
 ```php
 $userService = make(UserService::class, ['enableCache' => true]);
@@ -394,7 +395,9 @@ $userService = make(UserService::class, ['enableCache' => true]);
 
 ## 獲取容器對象
 
-有些時候我們可能希望去實現一些更動態的需求時，會希望可以直接獲取到 `容器(Container)` 對象，在絕大部分情況下，框架的入口類（比如命令類、控制器、RPC 服務提供者等）都是由 `容器(Container)` 創建並維護的，也就意味着您所寫的絕大部分業務代碼都是在 `容器(Container)` 的管理作用之下的，也就意味着在絕大部分情況下您都可以通過在 `構造函數(Constructor)` 聲明或通過 `@Inject` 註解注入 `Psr\Container\ContainerInterface` 接口類都能夠獲得 `Hyperf\Di\Container` 容器對象，我們通過代碼來演示一下：
+有些時候我們可能希望去實現一些更動態的需求時，會希望可以直接獲取到 `容器(Container)` 對象，在絕大部分情況下，框架的入口類（比如命令類、控制器、RPC 服務提供者等）都是由 `容器(Container)`
+創建並維護的，也就意味着您所寫的絕大部分業務代碼都是在 `容器(Container)` 的管理作用之下的，也就意味着在絕大部分情況下您都可以通過在 `構造函數(Constructor)` 聲明或通過 `@Inject`
+註解注入 `Psr\Container\ContainerInterface` 接口類都能夠獲得 `Hyperf\Di\Container` 容器對象，我們通過代碼來演示一下：
 
 ```php
 <?php
@@ -418,8 +421,62 @@ class IndexController
 }
 ```   
 
-在某些更極端動態的情況下，或者非 `容器(Container)` 的管理作用之下時，想要獲取到 `容器(Container)` 對象還可以通過 `\Hyperf\Utils\ApplicationContext::getContaienr()` 方法來獲得 `容器(Container)` 對象。
+在某些更極端動態的情況下，或者非 `容器(Container)` 的管理作用之下時，想要獲取到 `容器(Container)`
+對象還可以通過 `\Hyperf\Utils\ApplicationContext::getContaienr()` 方法來獲得 `容器(Container)` 對象。
 
 ```php
 $container = \Hyperf\Utils\ApplicationContext::getContainer();
+```
+
+## 注意事項
+
+### 容器僅管理長生命週期的對象
+
+換種方式理解就是容器內管理的對象**都是單例**，這樣的設計對於長生命週期的應用來説會更加的高效，減少了大量無意義的對象創建和銷燬，這樣的設計也就意味着所有需要交由 DI 容器管理的對象**均不能包含** `狀態` 值。   
+`狀態` 可直接理解為會隨着請求而變化的值，事實上在 [協程](zh-hk/coroutine.md) 編程中，這些狀態值也是應該存放於 `協程上下文` 中的，即 `Hyperf\Utils\Context`。
+
+### @Inject 注入覆蓋順序
+
+`@Inject` 覆蓋順序為子類覆蓋 `Trait` 覆蓋 父類，即 下述 `Origin` 的 `foo` 變量為本身注入的 `Foo1`。
+
+同理，假如 `Origin` 不存在變量 `$foo` 時，`$foo` 會被第一個 `Trait` 完成注入，注入類 `Foo2`。
+
+```php
+use Hyperf\Di\Annotation\Inject;
+
+class ParentClass
+{
+    /**
+     * @Inject
+     * @var Foo4 
+     */
+    protected $foo;
+}
+
+trait Foo1{
+    /**
+     * @Inject
+     * @var Foo2 
+     */
+    protected $foo;
+}
+
+trait Foo2{
+    /**
+     * @Inject
+     * @var Foo3
+     */
+    protected $foo;
+}
+
+class Origin extends ParentClass
+{
+    use Foo1;
+    use Foo2;
+    /**
+     * @Inject
+     * @var Foo1
+     */
+    protected $foo;
+}
 ```

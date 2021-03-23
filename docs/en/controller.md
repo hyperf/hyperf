@@ -1,6 +1,7 @@
 # Controller
 
 To process HTTP requests by using Controller, you need to bind routing and controller methods in `Config` or `Annotation` way. Check the chapter [Router](en/route.md) for more details.
+
 For the `Request` and `Response`, Hyperf provids `Hyperf\HttpServer\Contract\RequestInterface` and `Hyperf\HttpServer\Contract\ResponseInterface` for you to get parameters and return values. Check the chapters [Request](en/request.md) and [Response](en/response.md) for more details.
 
 ## Create a Controller

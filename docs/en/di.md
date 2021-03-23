@@ -3,6 +3,7 @@
 ## Introduction
 
 Hyperf uses [hyperf/di](https://github.com/hyperf-cloud/di) as the framework's dependency injection management container by default. Although in design, we allow you to replace the dependency injection management container with other components, we strongly recommended that don't replace [hyperf/di](https://github.com/hyperf-cloud/di).
+
 [hyperf/di](https://github.com/hyperf-cloud/di) is a powerful component used to manage dependencies of classes and excute automatic injection. Compared with traditional dependency injection containers, it is more suitable for long-life applications, provides the [Annotation & Annotation Injection](en/annotation.md) support and extremely powerful [AOP Aspect-Oriented Programming](en/aop.md) capabilities. These capabilities and ease of use are the main output of Hyperf, and we firmly believe that this component is the best.
 
 ## Installation
