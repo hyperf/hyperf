@@ -3,7 +3,8 @@
 ## Introduction
 
 Hyperf uses [hyperf/di](https://github.com/hyperf-cloud/di) as the framework's dependency injection management container by default. Although in design, we allow you to replace the dependency injection management container with other components, we strongly recommended that don't replace [hyperf/di](https://github.com/hyperf-cloud/di).
-[hyperf/di](https://github.com/hyperf-cloud/di) is a powerful component used to manage dependencies of classes and excute automatic injection. Compared with traditional dependency injection containers, it is more suitable for long-life applications, provides the [Annotation & Annotation Injection](en/annotation.md) support and extremely powerful [AOP Aspect-Oriented Programming](en/aop.md) capabilities. These capabilities and ease of use are the main output of Hyperf, and we confidently believe that this component is the best.
+
+[hyperf/di](https://github.com/hyperf-cloud/di) is a powerful component used to manage dependencies of classes and excute automatic injection. Compared with traditional dependency injection containers, it is more suitable for long-life applications, provides the [Annotation & Annotation Injection](en/annotation.md) support and extremely powerful [AOP Aspect-Oriented Programming](en/aop.md) capabilities. These capabilities and ease of use are the main output of Hyperf, and we firmly believe that this component is the best.
 
 ## Installation
 
@@ -17,7 +18,7 @@ composer require hyperf/di
 
 ### Simple Object Injection
 
-Generally, the relationship and injection of the class do not need to be conspicuously defined. Hyperf will all these for you. The following code demo will illustrate related usage.
+Generally, the relationship and injection of the class do not need to be conspicuously defined. Hyperf will do all these for you. The following code demo will illustrate related usage.
 Suppose we need to call the `getInfoById(int $id)` method of the `UserService` class in the `IndexController`.
 ```php
 <?php
@@ -66,7 +67,7 @@ class IndexController
 
 > Note that the caller, that is, the `IndexController` must be an object created by `DI` to perform automatic injection. And controller is created by `DI` by default, so that you can inject directly in constructor.
 
-When you want to define an optional dependency, you can define the parameter as `nullable` or the default value of the parameter as `null`. This means that if the parameter is not found in the DI container or the corresponding object cannot be created, `null` will be injected instead of throwing an exception. *(This function is only available in 1.1.0 or higher version available)*
+When you want to define an optional dependency, you can define the parameter as `nullable` or the default value of the parameter as `null`. This means that if the parameter is not found in the DI container or the corresponding object cannot be created, `null` will be injected instead of throwing an exception. *(This function is only available in 1.1.0 or higher version)*
 
 ```php
 <?php
@@ -297,7 +298,7 @@ return [
 ];
 ```
 
-In this way, when injecting `UserServiceInterface`, the container will hand over the objects' creation to `UserServiceFactory`.
+In this way, when injecting `UserServiceInterface`, the container will hand over the object's creation to `UserServiceFactory`.
 
 > Of course, in this scenario, you can use the `@Value` annotation to inject configuration more conveniently rather than building a factory class. This example is just for explaining.
 
@@ -307,15 +308,15 @@ Hyperf's long-lived dependency injection is done when the project starts. This m
 
 * It is not a coroutine environment when the constructor runs. If injection happened, a coroutine switching class may be triggered. It will cause the framework to fail to start.
 
-* Avoid circular dependencies in the constructor (typical examples are `Listener` and `EventDispatcherInterface`), otherwise the startup will fail.
+* Avoid circular dependencies in the constructor (typically, `Listener` and `EventDispatcherInterface`), otherwise the startup will fail.
 
-The current solution is: only inject `Psr\Container\ContainerInterface` into the instance, and other components are obtained through `container` at a time outside the runtime of the construction function. However, as PSR-11 states:
+The current solution is: only inject `Psr\Container\ContainerInterface` into the instance, and other components are obtained through `container` at a time outside the runtime of the constructor. However, as PSR-11 states:
 
-> 「Users should not pass the container as a parameter to the object and then obtain the dependency of the object in the object through the container. This is to use the container as a service locator, and the service locator is an anti-pattern.」
+> 「Users should not pass the container as a parameter to the object and then obtain the dependency of that object through the passed container. This uses the container as a service locator, and the service locator is an anti-pattern.」
 
 In other words, although this approach works, it is not recommended from the perspective of design patterns.
 
-Another solution is to use the lazy proxy mode commonly used in PHP, inject a proxy object, and then instantiate the target object when it is used. 
+Another solution is to use the lazy proxy mode which commonly used in PHP, inject a proxy object, and then instantiate the target object when it is used. 
 The Hyperf DI component is designed with lazy loading injection function.
 
 Add the `config/autoload/lazy_loader.php` file and bind the lazy loading relationship:
@@ -326,7 +327,7 @@ return [
     /**
      * Format：proxy class name => original class name
      * The proxy class does not exist at this time, and Hyperf will automatically generate this class in the runtime folder.
-     * The proxy class name and namespace can be freely defined.
+     * The proxy class name and namespace can be defined by yourself.
      */
     'App\Service\LazyUserService' => \App\Service\UserServiceInterface::class
 ];
@@ -391,7 +392,7 @@ $userService = make(UserService::class, ['enableCache' => true]);
 
 ## Get the Container Object
 
-Sometimes we may wish to achieve some more dynamic requirements, we would like to be able to directly obtain the `Container` object. In most cases, the entry classes of the framework, such as command classes, controllers, RPC service providers, etc., are created and maintained by `Container`, which means that most of your business codes are all under the management of `Container`. This also means that in most cases you can get the `Hyperf\Di\Container` object by declaring in the `Constructor` or by injecting the `Psr\Container\ContainerInterface` interface class through the `@Inject` annotation. Here is an example:
+Sometimes we wish to achieve some more dynamic requirements, we would like to be able to directly obtain the `Container` object. In most cases, the entry classes of the framework, such as command classes, controllers, RPC service providers, etc., are created and maintained by `Container`, which means that most of your business codes are all under the management of `Container`. This also means that in most cases you can get the `Hyperf\Di\Container` object by declaring in the `Constructor` or by injecting the `Psr\Container\ContainerInterface` interface class through the `@Inject` annotation. Here is an example:
 
 ```php
 <?php
@@ -415,7 +416,7 @@ class IndexController
 }
 ```   
 
-In some more extreme dynamic situations, or when it is not under the management of `Container`, you can also use `\Hyperf\Utils\ApplicationContext::getContaienr( )` method to obtain the `Container` object.
+In some more extreme dynamic situations, or when it is not under the management of `Container`, you can also use `\Hyperf\Utils\ApplicationContext::getContaienr()` method to obtain the `Container` object.
 
 ```php
 $container = \Hyperf\Utils\ApplicationContext::getContainer();

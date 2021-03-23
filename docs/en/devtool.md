@@ -27,4 +27,4 @@ All commands supported by Command can be listed by executing the above command. 
   gen:process        Create a new process class
  vendor
   vendor:publish     Publish any publishable configs from vendor packages.
-```x
+```
