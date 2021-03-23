@@ -432,12 +432,8 @@ EOD;
             if (is_link(rtrim($package->getDirectory(), '/'))) {
                 $bundle = $package->bundle();
                 foreach ($bundle as $resource) {
-                    if (is_string($resource)) {
-                        $targetPhar->addFile($resource);
-                    } else {
-                        foreach ($resource as $iterator) {
-                            $targetPhar->addFile($iterator->getPathname());
-                        }
+                    foreach ($resource as $iterator) {
+                        $targetPhar->addFile($iterator->getPathname());
                     }
                 }
             } else {
