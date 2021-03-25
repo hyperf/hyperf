@@ -324,7 +324,6 @@ EOD;
         } while (file_exists($tmp));
 
         $main = $this->getMain();
-        $tmpPharDir = '/tmp/' . $tmp . '/';
 
         $targetPhar = new TargetPhar(new Phar($tmp), $this);
         $this->logger->info('Adding main package "' . $this->package->getName() . '"');
@@ -388,29 +387,37 @@ EOD;
 
             //delete dev autoload
             $bashVendorPath = $this->getPathLocalToBase($vendorPath);
+            $tmpPharDir = 'build_tmp/';
+            try {
+                $this->removeDir($tmpPharDir);
 
-            mkdir($tmpPharDir . $bashVendorPath, 0777, true);
-            copy('composer.json', $tmpPharDir . '/composer.json');
-            copy('composer.lock', $tmpPharDir . '/composer.lock');
-            mkdir($tmpPharDir . $bashVendorPath . '/composer', 0777, true);
-            $installedFiel = '/composer/installed.json';
-            copy($vendorPath . $installedFiel, $tmpPharDir . $bashVendorPath . $installedFiel);
+                mkdir($tmpPharDir . $bashVendorPath, 0777, true);
+                copy('composer.json', $tmpPharDir . '/composer.json');
+                copy('composer.lock', $tmpPharDir . '/composer.lock');
+                mkdir($tmpPharDir . $bashVendorPath . '/composer', 0777, true);
 
-            // Add no dev composer autoload files.
-            foreach (new GlobIterator($vendorPath . '*', FilesystemIterator::KEY_AS_FILENAME) as $cFile) {
-                if ($cFile->isDir() && $cFile->getFilename() != 'composer') {
-                    symlink($cFile->getPathname(), $tmpPharDir . $bashVendorPath . $cFile->getFilename());
+                $installedFiel = '/composer/installed.json';
+                copy($vendorPath . $installedFiel, $tmpPharDir . $bashVendorPath . $installedFiel);
+
+                // Add no dev composer autoload files.
+                foreach (new GlobIterator($vendorPath . '*', FilesystemIterator::KEY_AS_FILENAME) as $cFile) {
+                    if ($cFile->isDir() && $cFile->getFilename() != 'composer') {
+                        symlink($cFile->getPathname(), $tmpPharDir . $bashVendorPath . $cFile->getFilename());
+                    }
                 }
-            }
-            $this->execComposr("dumpautoload --no-dev -o -d {$tmpPharDir}");
 
-            $this->logger->info('Adding no dev composer base files');
-            // Add no dev composer autoload file.
-            $targetPhar->addFromString($bashVendorPath . 'autoload.php', file_get_contents($tmpPharDir . $bashVendorPath . 'autoload.php'));
+                $this->execComposr("dumpautoload --no-dev -o -d {$tmpPharDir}");
 
-            // Add no dev composer autoload files.
-            foreach (new GlobIterator($tmpPharDir . $bashVendorPath . 'composer/*.*', FilesystemIterator::KEY_AS_FILENAME) as $cFile) {
-                $targetPhar->addFromString($bashVendorPath . 'composer/' . $cFile->getFilename(), file_get_contents($cFile->getPathname()));
+                $this->logger->info('Adding no dev composer base files');
+                // Add no dev composer autoload file.
+                $targetPhar->addFromString($bashVendorPath . 'autoload.php', file_get_contents($tmpPharDir . $bashVendorPath . 'autoload.php'));
+
+                // Add no dev composer autoload files.
+                foreach (new GlobIterator($tmpPharDir . $bashVendorPath . 'composer/*.*', FilesystemIterator::KEY_AS_FILENAME) as $cFile) {
+                    $targetPhar->addFromString($bashVendorPath . 'composer/' . $cFile->getFilename(), file_get_contents($cFile->getPathname()));
+                }
+            } finally {
+                $this->removeDir($tmpPharDir);
             }
         }else{
             // Add composer autoload file.
@@ -469,6 +476,26 @@ EOD;
 
         $this->logger->info('');
         $this->logger->info('    <info>OK</info> - Creating <info>' . $this->getTarget() . '</info> (' . $this->getSize($this->getTarget()) . ') completed after ' . round($time, 1) . 's');
+    }
+
+    /**
+     * delete dir.
+     */
+    protected function removeDir($target){
+        if(!file_exists($target)){
+            return;
+        }
+        $directory = new \RecursiveDirectoryIterator($target,  \FilesystemIterator::SKIP_DOTS);
+        $files = new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($files as $file) {
+            $file = (string)$file;
+            if (is_dir($file) && !is_link($file)) {
+                rmdir($file);
+            } else {
+                unlink($file);
+            }
+        }
+        rmdir($target);
     }
 
     /**
