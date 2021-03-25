@@ -40,7 +40,7 @@ class BuildCommand extends HyperfCommand
             ->addOption('phar-version', '', InputOption::VALUE_OPTIONAL, 'The version of the project that will be compiled.')
             ->addOption('exclude', '', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Excludes directories.')
             ->addOption('no-dev', '', InputOption::VALUE_NONE, 'Disables installation of require-dev packages.')
-            ->addOption('composer', '', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The path of composer.', ['composer', 'composer.phar', './composer', './composer.phar'])
+            ->addOption('composer', '', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The path of composer.')
             ->addOption('mount', 'M', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The mount path or dir.');
     }
 

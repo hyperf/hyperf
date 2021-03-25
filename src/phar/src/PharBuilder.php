@@ -64,7 +64,7 @@ class PharBuilder
     /**
      * @var array
      */
-    private $composer = [];
+    private $composer = ['composer', 'composer.phar', './composer', './composer.phar'];
 
     /**
      * @var null|array
@@ -214,13 +214,14 @@ class PharBuilder
             }
             // Package all of these dependent components into the packages
             foreach ($installedPackages as $package) {
-                // support  custom install path
+                // support custom install path
                 $dir = 'composer/' . $package['install-path'] . '/';
                 if (isset($package['target-dir'])) {
                     $dir .= trim($package['target-dir'], '/') . '/';
                 }
 
                 $dir = $vendorPath . $dir;
+
                 $packages[] = new Package($package, $this->canonicalize($dir), $this->exclude);
             }
         }
@@ -241,7 +242,7 @@ class PharBuilder
     }
 
     /**
-     * Gets the canonicalize path .
+     * Gets the canonicalize path, like realpath.
      * @param mixed $address
      */
     public function canonicalize($address)
@@ -336,7 +337,7 @@ EOD;
             ->exclude($main)
             ->exclude($this->exclude)
             ->exclude('composer.lock')
-            ->notPath($target); //Ignore the phar package that exists in the project itself
+            ->notPath($target); // Ignore the phar package that exists in the project itself
 
         foreach ($this->getMount() as $inside) {
             $finder = $finder->exclude($inside);
