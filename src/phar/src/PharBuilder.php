@@ -387,7 +387,7 @@ EOD;
 
             //delete dev autoload
             $bashVendorPath = $this->getPathLocalToBase($vendorPath);
-            $tmpPharDir = 'build_tmp/';
+            $tmpPharDir = $this->package->getDirectory() . '/runtime/build_tmp/';
             try {
                 $this->removeDir($tmpPharDir);
 
@@ -419,7 +419,7 @@ EOD;
             } finally {
                 $this->removeDir($tmpPharDir);
             }
-        }else{
+        } else {
             // Add composer autoload file.
             $targetPhar->addFile($vendorPath . 'autoload.php');
 
@@ -481,11 +481,12 @@ EOD;
     /**
      * delete dir.
      */
-    protected function removeDir($target){
-        if(!file_exists($target)){
+    protected function removeDir($target)
+    {
+        if (!file_exists($target)) {
             return;
         }
-        $directory = new \RecursiveDirectoryIterator($target,  \FilesystemIterator::SKIP_DOTS);
+        $directory = new \RecursiveDirectoryIterator($target, \FilesystemIterator::SKIP_DOTS);
         $files = new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::CHILD_FIRST);
         foreach ($files as $file) {
             $file = (string)$file;
