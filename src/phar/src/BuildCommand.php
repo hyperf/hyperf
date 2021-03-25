@@ -38,9 +38,9 @@ class BuildCommand extends HyperfCommand
             ->addOption('bin', 'b', InputOption::VALUE_OPTIONAL, 'The script path to execute by default.', 'bin/hyperf.php')
             ->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'Project root path, default BASE_PATH.', null)
             ->addOption('phar-version', '', InputOption::VALUE_OPTIONAL, 'The version of the project that will be compiled.', null)
-            ->addOption('exclude', '', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Project exclude path .', ['Flutter','deploy','docker-compose.yml'])
+            ->addOption('exclude', '', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Project exclude path .', ['Flutter', 'deploy', 'docker-compose.yml'])
             ->addOption('no-dev', '', InputOption::VALUE_OPTIONAL, 'Project is debug path, default false .', 'false')
-            ->addOption('composer', '', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'composer cmd , default composer,composer.phar,./composer,./composer.phar .', ['composer','composer.phar','./composer','./composer.phar'])
+            ->addOption('composer', '', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'composer cmd , default composer,composer.phar,./composer,./composer.phar .', ['composer', 'composer.phar', './composer', './composer.phar'])
             ->addOption('mount', 'M', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'The mount path or dir.');
     }
 
@@ -62,7 +62,7 @@ class BuildCommand extends HyperfCommand
         $builder = $this->getPharBuilder($path, $exclude);
         $builder->setNoDev($noDev != 'false');
 
-        if (!empty($composer)) {
+        if (! empty($composer)) {
             $builder->setComposer($composer);
         }
 

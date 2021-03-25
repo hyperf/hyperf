@@ -20,9 +20,9 @@ use InvalidArgumentException;
 use Phar;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
+use Swoole\Coroutine\System;
 use Symfony\Component\Finder\Finder;
 use UnexpectedValueException;
-use Swoole\Coroutine\System;
 
 class PharBuilder
 {
@@ -119,7 +119,6 @@ class PharBuilder
 
     /**
      * Set the Phar package is dev.
-     * @param bool $noDev
      * @return $this
      */
     public function setNoDev(bool $noDev)
@@ -130,7 +129,6 @@ class PharBuilder
 
     /**
      * Set the composer cmd.
-     * @param array $composer
      * @return $this
      */
     public function setComposer(array $composer)
@@ -138,6 +136,7 @@ class PharBuilder
         $this->composer = $composer;
         return $this;
     }
+
     /**
      * Gets the default run script path.
      */
@@ -216,7 +215,7 @@ class PharBuilder
             // Package all of these dependent components into the packages
             foreach ($installedPackages as $package) {
                 // support  custom install path
-                $dir = 'composer/'.$package['install-path'] . '/';
+                $dir = 'composer/' . $package['install-path'] . '/';
                 if (isset($package['target-dir'])) {
                     $dir .= trim($package['target-dir'], '/') . '/';
                 }
@@ -243,8 +242,9 @@ class PharBuilder
 
     /**
      * Gets the canonicalize path .
+     * @param mixed $address
      */
-    function canonicalize($address)
+    public function canonicalize($address)
     {
         $address = explode('/', $address);
         $keys = array_keys($address, '..');
@@ -254,9 +254,7 @@ class PharBuilder
         }
 
         $address = implode('/', $address);
-        $address = str_replace('./', '', $address);
-
-        return $address;
+        return str_replace('./', '', $address);
     }
 
     /**
@@ -265,7 +263,7 @@ class PharBuilder
     public function execComposr(string $cmd): bool
     {
         foreach ($this->composer as $composer) {
-            $return = System::exec("{$composer} $cmd");
+            $return = System::exec("{$composer} {$cmd}");
             if (($return['code'] ?? -1) === 0) {
                 return true;
             }
@@ -404,7 +402,7 @@ EOD;
                     symlink($cFile->getPathname(), $tmpPharDir . $bashVendorPath . $cFile->getFilename());
                 }
             }
-            $this->execComposr("dumpautoload --no-dev -o -d $tmpPharDir");
+            $this->execComposr("dumpautoload --no-dev -o -d {$tmpPharDir}");
 
             $this->logger->info('Adding no dev composer base files');
             // Add no dev composer autoload file.

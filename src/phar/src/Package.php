@@ -35,7 +35,6 @@ class Package
         $this->package = $package;
         $this->directory = rtrim($directory, '/') . '/';
         $this->exclude = $exclude;
-
     }
 
     /**
