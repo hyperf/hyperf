@@ -42,4 +42,6 @@ jobs:
           php link_env.phar show:name -N helloworld
           sudo chmod u+x link_env.phar
           ./link_env.phar show:name -N helloworld
+          php bin/hyperf.php phar:build --name no_dev.phar --no-dev
+          php no_dev.phar show:name -N hyperf-phar-tester
 
