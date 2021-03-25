@@ -366,8 +366,7 @@ EOD;
         }
 
         $this->logger->info('Adding composer base files');
-        // Add composer autoload file.
-        $targetPhar->addFile($vendorPath . 'autoload.php');
+
 
         // Read composer.lock
         if (is_readable(BASE_PATH . '/composer.lock')) {
@@ -413,12 +412,16 @@ EOD;
             foreach (new GlobIterator($tmpPharDir . $bashVendorPath . 'composer/*.*', FilesystemIterator::KEY_AS_FILENAME) as $cFile) {
                 $targetPhar->addFromString($bashVendorPath . 'composer/' . $cFile->getFilename(), file_get_contents($cFile->getPathname()));
             }
+        }else{
+            // Add composer autoload file.
+            $targetPhar->addFile($vendorPath . 'autoload.php');
+
+            // Add composer autoload files.
+            $targetPhar->buildFromIterator(new GlobIterator($vendorPath . 'composer/*.*', FilesystemIterator::KEY_AS_FILENAME));
         }
         // Add composer.lock
         $targetPhar->addFromString('composer.lock', json_encode($lock, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
-        // Add composer autoload files.
-        $targetPhar->buildFromIterator(new GlobIterator($vendorPath . 'composer/*.*', FilesystemIterator::KEY_AS_FILENAME));
 
         // Add composer depenedencies.
         foreach ($this->getPackagesDependencies() as $package) {
