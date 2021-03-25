@@ -4,8 +4,12 @@ on: [ push, pull_request ]
 
 jobs:
   phar:
-    name: Test for Phar
+    name: Test for Building PHAR ${{ matrix.no-dev }}
     runs-on: 'ubuntu-latest'
+    strategy:
+      matrix:
+        no-dev: [ '', '--no-dev' ]
+      max-parallel: 2
     env:
       SW_VERSION: '4.6.4'
     steps:
@@ -25,7 +29,7 @@ jobs:
         run: |
           git clone https://github.com/limingxinleo/hyperf-phar-tester.git --depth 1
           cd hyperf-phar-tester
-          composer update -o --no-dev
+          composer update -o ${{ matrix.no-dev }}
           rm -rf vendor/hyperf/phar
           cp -rf ../src/phar vendor/hyperf/phar
           composer dump-autoload -o
