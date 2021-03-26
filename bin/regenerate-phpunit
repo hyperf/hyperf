@@ -1,0 +1,96 @@
+#!/usr/bin/env php
+<?php
+
+use PhpParser\Node;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
+use PhpParser\Parser;
+use PhpParser\ParserFactory;
+use PhpParser\PrettyPrinter\Standard;
+
+require_once 'vendor/autoload.php';
+
+class RunInCoroutineVisitor extends NodeVisitorAbstract
+{
+    /**
+     * @var Parser
+     */
+    protected $parser;
+
+    public function __construct(Parser $parser)
+    {
+        $this->parser = $parser;
+    }
+
+    public function afterTraverse(array $nodes)
+    {
+        /** @var Node\Stmt\Expression $main */
+        $main = array_pop($nodes);
+        $main = $main->expr;
+
+        $nodes[] = new Node\Stmt\Expression(new Node\Expr\Assign(
+            new Node\Expr\Variable('code'),
+            new Node\Scalar\LNumber(0)
+        ));
+
+        $nodes[] = $this->getCoroutineSetter()[0];
+
+        $main->args[] = new Node\Arg(new Node\Expr\ConstFetch(new Node\Name('false')));
+
+        $nodes[] = new Node\Stmt\Expression(
+            new Node\Expr\FuncCall(
+                new Node\Name('Swoole\Coroutine\run'),
+                [
+                    new Node\Arg(new Node\Expr\Closure([
+                        'stmts' => [
+                            new Node\Stmt\Expression(new Node\Expr\Assign(
+                                new Node\Expr\Variable('code'),
+                                $main
+                            )),
+                            $this->getTimerClearAll()[0],
+                        ],
+                        'uses' => [
+                            new Node\Expr\ClosureUse(new Node\Expr\Variable('code'), true),
+                        ],
+                    ])),
+                ]
+            )
+        );
+        $nodes[] = new Node\Stmt\Expression(new Node\Expr\Exit_(new Node\Expr\Variable('code')));
+        return $nodes;
+    }
+
+    protected function getCoroutineSetter(): array
+    {
+        return $this->parser->parse("<?php 
+Swoole\\Coroutine::set([
+    'hook_flags' => SWOOLE_HOOK_ALL,
+    'exit_condition' => function() {
+        return Swoole\\Coroutine::stats()['coroutine_num'] === 0;
+    }
+]);");
+    }
+
+    protected function getTimerClearAll(): array
+    {
+        return $this->parser->parse("<?php Swoole\Timer::clearAll();");
+    }
+}
+
+$parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+$printer = new Standard();
+$traverser = new NodeTraverser();
+
+$code = file_get_contents(__DIR__ . '/../vendor/phpunit/phpunit/phpunit');
+
+$stmts = $parser->parse($code);
+$traverser->addVisitor(new RunInCoroutineVisitor($parser));
+$stmts = $traverser->traverse($stmts);
+
+$code = $printer->prettyPrint($stmts);
+
+// TODO: Unknown reason
+$code = ltrim($code, '?>' . PHP_EOL);
+
+file_put_contents(__DIR__ . '/co-phpunit', $code);
+file_put_contents(__DIR__ . '/../src/testing/co-phpunit', $code);
