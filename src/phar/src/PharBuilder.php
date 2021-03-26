@@ -349,14 +349,6 @@ EOD;
         // Force to turn on ScanCacheable.
         $this->enableScanCacheable($targetPhar);
 
-        // Load the Runtime folder separately
-        if (is_dir($this->package->getDirectory() . 'runtime')) {
-            $this->logger->info('Adding runtime container files');
-            $finder = Finder::create()
-                ->files()
-                ->in($this->package->getDirectory() . 'runtime/container');
-            $targetPhar->addBundle($this->package->bundle($finder));
-        }
 
         // Add .env file.
         if (! in_array('.env', $this->getMount()) && is_file($this->package->getDirectory() . '.env')) {
@@ -387,26 +379,21 @@ EOD;
 
             //delete dev autoload
             $bashVendorPath = $this->getPathLocalToBase($vendorPath);
-            $tmpPharDir = $this->package->getDirectory() . '/runtime/build_tmp/';
+            $tmpPharDir = $this->package->getDirectory() . 'runtime/build_tmp/';
             try {
-                $this->removeDir($tmpPharDir);
+                System::exec("rm -rf {$tmpPharDir}");
 
-                mkdir($tmpPharDir . $bashVendorPath, 0777, true);
-                copy('composer.json', $tmpPharDir . '/composer.json');
-                copy('composer.lock', $tmpPharDir . '/composer.lock');
-                mkdir($tmpPharDir . $bashVendorPath . '/composer', 0777, true);
+                mkdir($tmpPharDir, 0777, true);
 
-                $installedFiel = '/composer/installed.json';
-                copy($vendorPath . $installedFiel, $tmpPharDir . $bashVendorPath . $installedFiel);
-
-                // Add no dev composer autoload files.
-                foreach (new GlobIterator($vendorPath . '*', FilesystemIterator::KEY_AS_FILENAME) as $cFile) {
-                    if ($cFile->isDir() && $cFile->getFilename() != 'composer') {
-                        symlink($cFile->getPathname(), $tmpPharDir . $bashVendorPath . $cFile->getFilename());
+                // Add base file
+                foreach (new GlobIterator($this->package->getDirectory() . '*', FilesystemIterator::KEY_AS_FILENAME) as $cFile) {
+                    if (!in_array($cFile->getFilename(), ['runtime'])) {
+                        $t = $tmpPharDir . $cFile->getFilename();
+                        System::exec("cp -r {$cFile->getPathname()} {$t}");
                     }
                 }
-
-                $this->execComposr("dumpautoload --no-dev -o -d {$tmpPharDir}");
+                $this->execComposr("dump-autoload --no-dev -o -d {$tmpPharDir} ");
+                System::exec("php {$tmpPharDir}/bin/hyperf.php");
 
                 $this->logger->info('Adding no dev composer base files');
                 // Add no dev composer autoload file.
@@ -416,8 +403,18 @@ EOD;
                 foreach (new GlobIterator($tmpPharDir . $bashVendorPath . 'composer/*.*', FilesystemIterator::KEY_AS_FILENAME) as $cFile) {
                     $targetPhar->addFromString($bashVendorPath . 'composer/' . $cFile->getFilename(), file_get_contents($cFile->getPathname()));
                 }
+
+
+                // Load the Runtime folder separately
+                if (is_dir($tmpPharDir . '/runtime')) {
+                    $this->logger->info('Adding runtime container files');
+                    // Add no dev container cache files.
+                    foreach (new GlobIterator($tmpPharDir . 'runtime/container/*.*', FilesystemIterator::KEY_AS_FILENAME) as $cFile) {
+                        $targetPhar->addFromString('runtime/container/' . $cFile->getFilename(), file_get_contents($cFile->getPathname()));
+                    }
+                }
             } finally {
-                $this->removeDir($tmpPharDir);
+                System::exec("rm -rf ${tmpPharDir}");
             }
         } else {
             // Add composer autoload file.
@@ -425,6 +422,15 @@ EOD;
 
             // Add composer autoload files.
             $targetPhar->buildFromIterator(new GlobIterator($vendorPath . 'composer/*.*', FilesystemIterator::KEY_AS_FILENAME));
+
+            // Load the Runtime folder separately
+            if (is_dir($this->package->getDirectory() . 'runtime')) {
+                $this->logger->info('Adding runtime container files');
+                $finder = Finder::create()
+                    ->files()
+                    ->in($this->package->getDirectory() . 'runtime/container');
+                $targetPhar->addBundle($this->package->bundle($finder));
+            }
         }
         // Add composer.lock
         $targetPhar->addFromString('composer.lock', json_encode($lock, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
@@ -478,26 +484,6 @@ EOD;
         $this->logger->info('    <info>OK</info> - Creating <info>' . $this->getTarget() . '</info> (' . $this->getSize($this->getTarget()) . ') completed after ' . round($time, 1) . 's');
     }
 
-    /**
-     * delete dir.
-     */
-    protected function removeDir($target)
-    {
-        if (!file_exists($target)) {
-            return;
-        }
-        $directory = new \RecursiveDirectoryIterator($target, \FilesystemIterator::SKIP_DOTS);
-        $files = new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::CHILD_FIRST);
-        foreach ($files as $file) {
-            $file = (string)$file;
-            if (is_dir($file) && !is_link($file)) {
-                rmdir($file);
-            } else {
-                unlink($file);
-            }
-        }
-        rmdir($target);
-    }
 
     /**
      * Find the scan_cacheable configuration and force it to open.
