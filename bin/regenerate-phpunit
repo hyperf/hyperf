@@ -1,0 +1,85 @@
+#!/usr/bin/env php
+<?php
+
+use PhpParser\Node;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
+use PhpParser\ParserFactory;
+use PhpParser\PrettyPrinter\Standard;
+
+require_once 'vendor/autoload.php';
+
+class RunInCoroutineVisitor extends NodeVisitorAbstract
+{
+    /**
+     * @var Node\Stmt\Expression
+     */
+    protected $setter;
+
+    public function __construct(Node\Stmt\Expression $setter)
+    {
+        $this->setter = $setter;
+    }
+
+    public function afterTraverse(array $nodes)
+    {
+        /** @var Node\Stmt\Expression $main */
+        $main = array_pop($nodes);
+        $main = $main->expr;
+
+        $nodes[] = new Node\Stmt\Expression(new Node\Expr\Assign(
+            new Node\Expr\Variable('code'),
+            new Node\Scalar\LNumber(0)
+        ));
+
+        $nodes[] = $this->setter;
+
+        $main->args[] = new Node\Arg(new Node\Expr\ConstFetch(new Node\Name('false')));
+
+        $nodes[] = new Node\Stmt\Expression(
+            new Node\Expr\FuncCall(
+                new Node\Name('Swoole\Coroutine\run'),
+                [
+                    new Node\Arg(new Node\Expr\Closure([
+                        'stmts' => [
+                            new Node\Stmt\Expression(new Node\Expr\Assign(
+                                new Node\Expr\Variable('code'),
+                                $main
+                            )),
+                        ],
+                        'uses' => [
+                            new Node\Expr\ClosureUse(new Node\Expr\Variable('code'), true),
+                        ],
+                    ])),
+                ]
+            )
+        );
+        $nodes[] = new Node\Stmt\Expression(new Node\Expr\Exit_(new Node\Expr\Variable('code')));
+        return $nodes;
+    }
+}
+
+$parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+$printer = new Standard();
+$traverser = new NodeTraverser();
+
+$code = file_get_contents(__DIR__ . '/../vendor/phpunit/phpunit/phpunit');
+
+$setters = $parser->parse("<?php 
+Swoole\\Coroutine::set([
+    'hook_flags' => SWOOLE_HOOK_ALL,
+    'exit_condition' => function() {
+        return Swoole\\Coroutine::stats()['coroutine_num'] === 0;
+    }
+]);");
+
+$stmts = $parser->parse($code);
+$traverser->addVisitor(new RunInCoroutineVisitor($setters[0]));
+$stmts = $traverser->traverse($stmts);
+
+$code = $printer->prettyPrint($stmts);
+
+// TODO: Unknown reason
+$code = ltrim($code, '?>' . PHP_EOL);
+
+file_put_contents(__DIR__ . '/co-phpunit', $code);
