@@ -1,5 +1,9 @@
 # v2.1.12 - TBD
 
+## Optimized
+
+- [#3422](https://github.com/hyperf/hyperf/pull/3422) Optimized code for `co-phpunit`.
+
 # v2.1.11 - 2021-03-22
 
 ## Added
