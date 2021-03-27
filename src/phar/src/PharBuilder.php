@@ -393,7 +393,7 @@ EOD;
                     }
                 }
                 $this->execComposr("dump-autoload --no-dev -o -d {$tmpPharDir} ");
-                System::exec("php {$tmpPharDir}/bin/hyperf.php");
+                System::exec("php {$tmpPharDir}/bin/hyperf.php show:name -N hyperf-phar-tester");
 
                 $this->logger->info('Adding no dev composer base files');
                 // Add no dev composer autoload file.
