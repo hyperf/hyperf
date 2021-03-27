@@ -404,12 +404,11 @@ EOD;
                     $targetPhar->addFromString($bashVendorPath . 'composer/' . $cFile->getFilename(), file_get_contents($cFile->getPathname()));
                 }
 
-
                 // Load the Runtime folder separately
-                if (is_dir($tmpPharDir . '/runtime')) {
+                if (is_dir($tmpPharDir . 'runtime')) {
                     $this->logger->info('Adding runtime container files');
                     // Add no dev container cache files.
-                    foreach (new GlobIterator($tmpPharDir . 'runtime/container/*.*', FilesystemIterator::KEY_AS_FILENAME) as $cFile) {
+                    foreach (new GlobIterator($tmpPharDir . 'runtime/container/*', FilesystemIterator::KEY_AS_FILENAME) as $cFile) {
                         $targetPhar->addFromString('runtime/container/' . $cFile->getFilename(), file_get_contents($cFile->getPathname()));
                     }
                 }
