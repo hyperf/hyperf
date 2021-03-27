@@ -51,7 +51,7 @@ class TaskWorkerStrategy extends AbstractStrategy
     protected function getNextWorkerId(Server $server): int
     {
         ++$this->currentWorkerId;
-        $minWorkerId = $server->setting['worker_num'];
+        $minWorkerId = (int) $server->setting['worker_num'];
         $maxWorkerId = $minWorkerId + $server->setting['task_worker_num'] - 1;
         if ($this->currentWorkerId < $minWorkerId) {
             $this->currentWorkerId = $minWorkerId;
