@@ -1,5 +1,9 @@
 # v2.1.12 - TBD
 
+## Fixed
+
+- [#3423](https://github.com/hyperf/hyperf/pull/3423) Fixed crontab does not works when worker_num isn't integer for task worker strategy.
+
 ## Optimized
 
 - [#3422](https://github.com/hyperf/hyperf/pull/3422) Optimized code for `co-phpunit`.
