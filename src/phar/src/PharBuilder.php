@@ -367,7 +367,7 @@ EOD;
         }
         $lock = json_decode(file_get_contents($lockPath), true);
         //Setting no dev
-        $packagesList = [];
+        $packagesList = ["composer/semver"=>true,"composer/xdebug-handler"=>true];
         if ($this->noDev) {
             $this->logger->info('Setting composer no-dev');
             foreach ($lock['packages'] ?? [] as $package) {
@@ -393,7 +393,7 @@ EOD;
                     }
                 }
                 $this->execComposr("dump-autoload --no-dev -o -d {$tmpPharDir} ");
-                System::exec("php {$tmpPharDir}/bin/hyperf.php show:name -N hyperf-phar-tester");
+                System::exec("php {$tmpPharDir}/bin/hyperf.php ");
 
                 $this->logger->info('Adding no dev composer base files');
                 // Add no dev composer autoload file.
