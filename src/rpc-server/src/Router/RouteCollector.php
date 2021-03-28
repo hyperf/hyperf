@@ -13,7 +13,6 @@ namespace Hyperf\RpcServer\Router;
 
 use FastRoute\DataGenerator;
 use FastRoute\RouteParser;
-use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\Router\Handler;
 
 class RouteCollector
@@ -59,11 +58,8 @@ class RouteCollector
     {
         $route = $this->currentGroupPrefix . $route;
         $routeDatas = $this->routeParser->parse($route);
-        $server = $options['server'] ?? 'rpc';
         foreach ($routeDatas as $routeData) {
-            // Use 'GET' method for RPC.
             $this->dataGenerator->addRoute('POST', $routeData, new Handler($handler, $route));
-            MiddlewareManager::addMiddlewares($server, $route, 'GET', $options['middleware'] ?? []);
         }
     }
 
