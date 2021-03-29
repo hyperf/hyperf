@@ -1,5 +1,16 @@
 # 版本更新記錄
 
+# v2.1.12 - 2021-03-29
+
+## 修復
+
+- [#3423](https://github.com/hyperf/hyperf/pull/3423) 修復 `worker_num` 設定為非 `Integer` 時，導致定時任務中 `Task` 策略無法正常使用的問題。
+- [#3426](https://github.com/hyperf/hyperf/pull/3426) 修復為可選引數路由設定中介軟體時，導致中介軟體被意外執行兩次的問題。
+
+## 優化
+
+- [#3422](https://github.com/hyperf/hyperf/pull/3422) 優化了 `co-phpunit` 的程式碼。
+
 # v2.1.11 - 2021-03-22
 
 ## 新增
