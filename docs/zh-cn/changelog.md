@@ -1,5 +1,16 @@
 # 版本更新记录
 
+# v2.1.12 - 2021-03-29
+
+## 修复
+
+- [#3423](https://github.com/hyperf/hyperf/pull/3423) 修复 `worker_num` 设置为非 `Integer` 时，导致定时任务中 `Task` 策略无法正常使用的问题。
+- [#3426](https://github.com/hyperf/hyperf/pull/3426) 修复为可选参数路由设置中间件时，导致中间件被意外执行两次的问题。
+
+## 优化
+
+- [#3422](https://github.com/hyperf/hyperf/pull/3422) 优化了 `co-phpunit` 的代码。
+
 # v2.1.11 - 2021-03-22
 
 ## 新增

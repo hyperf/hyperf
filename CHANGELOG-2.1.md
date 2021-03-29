@@ -1,5 +1,7 @@
 # v2.1.12 - TBD
 
+# v2.1.12 - 2021-03-29
+
 ## Fixed
 
 - [#3423](https://github.com/hyperf/hyperf/pull/3423) Fixed crontab does not works when worker_num isn't integer for task worker strategy.
