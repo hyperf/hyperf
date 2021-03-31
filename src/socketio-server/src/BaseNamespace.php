@@ -20,6 +20,7 @@ use Hyperf\SocketIOServer\Room\AdapterInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
+use HyperfTest\SocketIOServer\Stub\EphemeralAdapter;
 
 class BaseNamespace implements NamespaceInterface
 {
@@ -34,6 +35,11 @@ class BaseNamespace implements NamespaceInterface
     {
         /* @var AdapterInterface adapter */
         $this->adapter = make(AdapterInterface::class, ['sender' => $sender, 'nsp' => $this]);
+        if ($this->adapter instanceof EphemeralAdapter) {
+            $this->adapter = $this->adapter->setTtl(
+                SocketIOConfig::getPingInterval() + SocketIOConfig::getPingTimeout()
+            );
+        }
         $this->sidProvider = $sidProvider;
         $this->sender = $sender;
         $this->broadcast = true;

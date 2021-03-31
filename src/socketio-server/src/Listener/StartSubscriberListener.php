@@ -47,8 +47,6 @@ class StartSubscriberListener implements ListenerInterface
                 $adapter->subscribe();
             }
             if ($adapter instanceof EphemeralInterface) {
-                $io = $this->container->get(SocketIO::class);
-                $adapter->setTtl($io->getPingInterval() + $io->getPingTimeout());
                 $adapter->cleanUpExpired();
             }
         }
