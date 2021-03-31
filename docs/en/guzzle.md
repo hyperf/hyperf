@@ -141,7 +141,6 @@ $client = make(Client::class, [
 
 ## Use `ClassMap` to replace `GuzzleHttp\Client`
 
-
 If the third-party component does not provide an interface that can replace the `Handler`, we can also use the `ClassMap` to directly replace the `Client` to achieve the purpose of coroutineization of client.
 
 > Of course, you can also use SWOOLE_HOOK to achieve the same purpose.
