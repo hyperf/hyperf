@@ -148,7 +148,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         $this->encoder = $encoder;
         $this->sender = $sender;
         $this->sidProvider = $sidProvider;
-        $this->config = $config ?? new SocketIOConfig();
+        $this->config = $config ?? ApplicationContext::getContainer()->get(SocketIOConfig::class);
     }
 
     public function __call($method, $args)

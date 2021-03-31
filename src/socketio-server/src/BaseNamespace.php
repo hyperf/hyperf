@@ -37,7 +37,7 @@ class BaseNamespace implements NamespaceInterface
         $this->adapter = make(AdapterInterface::class, ['sender' => $sender, 'nsp' => $this]);
         if ($this->adapter instanceof EphemeralInterface) {
             if ($config === null) {
-                $config = new SocketIOConfig();
+                $config = ApplicationContext::getContainer()->get(SocketIOConfig::class);
             }
             $this->adapter->setTtl(
                 $config->getPingInterval() + $config->getPingTimeout()
