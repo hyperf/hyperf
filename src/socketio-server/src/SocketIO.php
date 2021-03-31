@@ -281,7 +281,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     }
 
     /**
-     * @deprecated use SocketIOConfig::getPingTimeout() instead
+     * @deprecated use SocketIOConfig::getPingInterval() instead
      */
     public function getPingInterval(): int
     {
