@@ -16,45 +16,45 @@ class SocketIOConfig
     /**
      * @var int
      */
-    private static $clientCallbackTimeout = 10000;
+    private $clientCallbackTimeout = 10000;
 
     /**
      * @var int
      */
-    private static $pingInterval = 10000;
+    private $pingInterval = 10000;
 
     /**
      * @var int
      */
-    private static $pingTimeout = 100;
+    private $pingTimeout = 100;
 
-    public static function getClientCallbackTimeout(): int
+    public function getClientCallbackTimeout(): int
     {
-        return self::$clientCallbackTimeout;
+        return $this->clientCallbackTimeout;
     }
 
-    public static function setClientCallbackTimeout(int $clientCallbackTimeout): void
+    public function setClientCallbackTimeout(int $clientCallbackTimeout): void
     {
-        self::$clientCallbackTimeout = $clientCallbackTimeout;
+        $this->clientCallbackTimeout = $clientCallbackTimeout;
     }
 
-    public static function getPingInterval(): int
+    public function getPingInterval(): int
     {
-        return self::$pingInterval;
+        return $this->pingInterval;
     }
 
-    public static function setPingInterval(int $pingInterval): void
+    public function setPingInterval(int $pingInterval): void
     {
-        self::$pingInterval = $pingInterval;
+        $this->pingInterval = $pingInterval;
     }
 
-    public static function getPingTimeout(): int
+    public function getPingTimeout(): int
     {
-        return self::$pingTimeout;
+        return $this->pingTimeout;
     }
 
-    public static function setPingTimeout(int $pingTimeout): void
+    public function setPingTimeout(int $pingTimeout): void
     {
-        self::$pingTimeout = $pingTimeout;
+        $this->pingTimeout = $pingTimeout;
     }
 }

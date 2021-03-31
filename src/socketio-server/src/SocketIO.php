@@ -130,13 +130,25 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
      */
     protected $clientCallbackTimers;
 
-    public function __construct(StdoutLoggerInterface $stdoutLogger, Sender $sender, Decoder $decoder, Encoder $encoder, SidProviderInterface $sidProvider)
-    {
+    /**
+     * @var SocketIOConfig
+     */
+    protected $config;
+
+    public function __construct(
+        StdoutLoggerInterface $stdoutLogger,
+        Sender $sender,
+        Decoder $decoder,
+        Encoder $encoder,
+        SidProviderInterface $sidProvider,
+        ?SocketIOConfig $config = null
+    ) {
         $this->stdoutLogger = $stdoutLogger;
         $this->decoder = $decoder;
         $this->encoder = $encoder;
         $this->sender = $sender;
         $this->sidProvider = $sidProvider;
+        $this->config = $config ?? new SocketIOConfig();
     }
 
     public function __call($method, $args)
@@ -266,7 +278,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
      */
     public function setClientCallbackTimeout(int $clientCallbackTimeout)
     {
-        SocketIOConfig::setClientCallbackTimeout($clientCallbackTimeout);
+        $this->config->setClientCallbackTimeout($clientCallbackTimeout);
         return $this;
     }
 
@@ -276,7 +288,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
      */
     public function setPingInterval(int $pingInterval)
     {
-        SocketIOConfig::setPingInterval($pingInterval);
+        $this->config->setPingInterval($pingInterval);
         return $this;
     }
 
@@ -288,7 +300,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         if ($this->pingInterval != 10000) {
             return $this->pingInterval;
         }
-        return SocketIOConfig::getPingInterval();
+        return $this->config->getPingInterval();
     }
 
     /**
@@ -299,7 +311,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         if ($this->pingTimeout != 100) {
             return $this->pingTimeout;
         }
-        return SocketIOConfig::getPingTimeout();
+        return $this->config->getPingTimeout();
     }
 
     /**
@@ -308,7 +320,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
      */
     public function setPingTimeout(int $pingTimeout)
     {
-        SocketIOConfig::setPingTimeout($pingTimeout);
+        $this->config->setPingTimeout($pingTimeout);
         return $this;
     }
 
@@ -317,7 +329,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         if ($this->clientCallbackTimeout !== 10000) {
             return $this->clientCallbackTimeout;
         }
-        return SocketIOConfig::getClientCallbackTimeout();
+        return $this->config->getClientCallbackTimeout();
     }
 
     private function dispatch(int $fd, string $nsp, string $event, ...$payloads)

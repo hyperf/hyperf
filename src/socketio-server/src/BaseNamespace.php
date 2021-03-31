@@ -31,13 +31,16 @@ class BaseNamespace implements NamespaceInterface
      */
     private $eventHandlers = [];
 
-    public function __construct(Sender $sender, SidProviderInterface $sidProvider)
+    public function __construct(Sender $sender, SidProviderInterface $sidProvider, ?SocketIOConfig $config = null)
     {
         /* @var AdapterInterface adapter */
         $this->adapter = make(AdapterInterface::class, ['sender' => $sender, 'nsp' => $this]);
         if ($this->adapter instanceof EphemeralInterface) {
+            if ($config === null) {
+                $config = new SocketIOConfig();
+            }
             $this->adapter->setTtl(
-                SocketIOConfig::getPingInterval() + SocketIOConfig::getPingTimeout()
+                $config->getPingInterval() + $config->getPingTimeout()
             );
         }
         $this->sidProvider = $sidProvider;
