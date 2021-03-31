@@ -17,10 +17,10 @@ use Hyperf\SocketIOServer\Parser\Encoder;
 use Hyperf\SocketIOServer\Parser\Engine;
 use Hyperf\SocketIOServer\Parser\Packet;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
+use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
-use HyperfTest\SocketIOServer\Stub\EphemeralAdapter;
 
 class BaseNamespace implements NamespaceInterface
 {
@@ -35,7 +35,7 @@ class BaseNamespace implements NamespaceInterface
     {
         /* @var AdapterInterface adapter */
         $this->adapter = make(AdapterInterface::class, ['sender' => $sender, 'nsp' => $this]);
-        if ($this->adapter instanceof EphemeralAdapter) {
+        if ($this->adapter instanceof EphemeralInterface) {
             $this->adapter = $this->adapter->setTtl(
                 SocketIOConfig::getPingInterval() + SocketIOConfig::getPingTimeout()
             );
