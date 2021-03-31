@@ -18,7 +18,6 @@ use Hyperf\Server\Exception\RuntimeException;
 use Hyperf\SocketIOServer\Emitter\Flagger;
 use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
-use Hyperf\SocketIOServer\SocketIO;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
