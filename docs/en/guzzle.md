@@ -1,6 +1,6 @@
-# Guzzle HTTP 客户端
+# Guzzle HTTP Client
 
-[hyperf/guzzle](https://github.com/hyperf-cloud/guzzle) 组件基于 Guzzle 进行协程处理，通过 Swoole HTTP 客户端作为协程驱动替换到 Guzzle 内，以达到 HTTP 客户端的协程化。
+The [hyperf/guzzle](https://github.com/hyperf/guzzle) component is based on Guzzle for coroutine processing, and is replaced into Guzzle through the Swoole HTTP client as a coroutine driver to achieve the coroutineization of the HTTP client.
 
 ## Installation
 
@@ -8,9 +8,9 @@
 composer require hyperf/guzzle
 ```
 
-## 使用
+## Application
 
-只需要该组件内的 `Hyperf\Guzzle\CoroutineHandler` 作为处理器设置到 Guzzle 客户端内即可转为协程化运行，为了方便创建协程的 Guzzle 对象，我们提供了一个工厂类 `Hyperf\Guzzle\ClientFactory` 来便捷的创建客户端，代码示例如下：
+Just set the `Hyperf\Guzzle\CoroutineHandler` in this component into the Guzzle client as a handler to convert into a coroutine operation. In order to facilitate the creation of the Guzzle object of the coroutine, we provide a factory class `Hyperf\Guzzle\ClientFactory` to conveniently create the client. Example is as follow:
 
 ```php
 <?php 
@@ -29,19 +29,35 @@ class Foo {
     
     public function bar()
     {
-        // $options 等同于 GuzzleHttp\Client 构造函数的 $config 参数
+        // $options is equivalent to the $config parameter of the GuzzleHttp\Client constructor
         $options = [];
-        // $client 为协程化的 GuzzleHttp\Client 对象
+        // $client is a coroutineized GuzzleHttp\Client object
         $client = $this->clientFactory->create($options);
     }
 }
 ```
 
-## 使用Swoole配置
+### Use ^7.0 version
 
-有时候我们想直接修改 `Swoole` 配置，所以我们也提供了相关配置项，不过这项配置在 `Curl Guzzle 客户端` 中是无法生效的，所以谨慎使用。
+The component's dependency on `Guzzle` has been changed from `^6.3` to `^6.3 | ^7.0`. The `^7.0` version can be installed by default, but the following components will conflict with `^7.0`:
 
-> 这项配置会替换原来的配置，比如以下 timeout 会被 10 替换。
+- hyperf/metric
+
+You can actively perform the following actions to resolve conflicts
+
+```
+composer require "promphp/prometheus_client_php:2.2.1"
+```
+
+- overtrue/flysystem-cos
+
+Due to the dependent library depends on `guzzlehttp/guzzle-services`, and it does not support `^7.0`, it cannot be resolved temporarily.
+
+## Use Swoole configuration
+
+Sometimes we want to modify the `Swoole` configuration directly, so we also provide related configuration items. But this configuration cannot take effect in the `Curl Guzzle client`, so use it carefully.
+
+> This configuration will replace the original configuration. For example, the timeout below will be replaced by 10.
 
 ```php
 <?php
@@ -63,49 +79,127 @@ $response = $client->get('/');
 
 ```
 
-## 连接池
+## Connection Pool
 
-Hyperf 除了实现了 `Hyperf\Guzzle\CoroutineHandler` 外，还基于 `Hyperf\Pool\SimplePool` 实现了 `Hyperf\Guzzle\PoolHandler`。
+Hyperf not only implements `Hyperf\Guzzle\CoroutineHandler`, but also implements `Hyperf\Guzzle\PoolHandler` based on `Hyperf\Pool\SimplePool`.
 
-### 原因
+### Why
 
-简单来说，主机 TCP连接数 是有上限的，当我们并发大到超过这个上限值时，就导致请求无法正常建立。另外，TCP连接结束后还会有一个 TIME-WAIT 阶段，所以也无法实时释放连接。这就导致了实际并发可能远低于 TCP 上限值。所以，我们需要一个连接池来维持这个阶段，尽量减少 TIME-WAIT 造成的影响，让TCP连接进行复用。
+There is an upper limit on the number of host TCP connections. When our concurrency exceeds this upper limit, the request cannot be established normally. In addition, there will be a TIME-WAIT after the TCP connection ends, so the connection cannot be released in time. Therefore, we need a connection pool to maintain this stage, minimize the impact of TIME-WAIT, and allow TCP connections to be reused.
 
-### 使用
+### Application
 
 ```php
+<?php
 use GuzzleHttp\Client;
 use Hyperf\Utils\Coroutine;
 use GuzzleHttp\HandlerStack;
 use Hyperf\Guzzle\PoolHandler;
 use Hyperf\Guzzle\RetryMiddleware;
 
-function default_guzzle_handler(): HandlerStack
-{
-    $handler = null;
-    if (Coroutine::inCoroutine()) {
-        $handler = make(PoolHandler::class, [
-            'option' => [
-                'max_connections' => 50,
-            ],
-        ]);
-    }
-
-    // 默认的重试Middleware
-    $retry = make(RetryMiddleware::class, [
-        'retries' => 1,
-        'delay' => 10,
+$handler = null;
+if (Coroutine::inCoroutine()) {
+    $handler = make(PoolHandler::class, [
+        'option' => [
+            'max_connections' => 50,
+        ],
     ]);
-
-    $stack = HandlerStack::create($handler);
-    $stack->push($retry->getMiddleware(), 'retry');
-
-    return $stack;
 }
+
+// Default retry middleware
+$retry = make(RetryMiddleware::class, [
+    'retries' => 1,
+    'delay' => 10,
+]);
+
+$stack = HandlerStack::create($handler);
+$stack->push($retry->getMiddleware(), 'retry');
 
 $client = make(Client::class, [
     'config' => [
-        'handler' => default_guzzle_handler(),
+        'handler' => $stack,
     ],
 ]);
+```
+
+In addition, the framework also provides `HandlerStackFactory` to conveniently create the above `$stack`.
+
+```php
+<?php
+use Hyperf\Guzzle\HandlerStackFactory;
+use GuzzleHttp\Client;
+
+$factory = new HandlerStackFactory();
+$stack = $factory->create();
+
+$client = make(Client::class, [
+    'config' => [
+        'handler' => $stack,
+    ],
+]);
+```
+
+## Use `ClassMap` to replace `GuzzleHttp\Client`
+
+
+If the third-party component does not provide an interface that can replace the `Handler`, we can also use the `ClassMap` to directly replace the `Client` to achieve the purpose of coroutineization of client.
+
+> Of course, you can also use SWOOLE_HOOK to achieve the same purpose.
+
+Example is as follow:
+
+class_map/GuzzleHttp/Client.php
+
+```php
+<?php
+namespace GuzzleHttp;
+
+use GuzzleHttp\Psr7;
+use Hyperf\Guzzle\CoroutineHandler;
+use Hyperf\Utils\Coroutine;
+
+class Client implements ClientInterface
+{
+    // Omitted other unchanged codes
+
+    public function __construct(array $config = [])
+    {
+        $inCoroutine = Coroutine::inCoroutine();
+        if (!isset($config['handler'])) {
+            // The corresponding Handler can choose CoroutineHandler or PoolHandler as needed
+            $config['handler'] = HandlerStack::create($inCoroutine ? new CoroutineHandler() : null);
+        } elseif ($inCoroutine && $config['handler'] instanceof HandlerStack) {
+            $config['handler']->setHandler(new CoroutineHandler());
+        } elseif (!is_callable($config['handler'])) {
+            throw new \InvalidArgumentException('handler must be a callable');
+        }
+
+        // Convert the base_uri to a UriInterface
+        if (isset($config['base_uri'])) {
+            $config['base_uri'] = Psr7\uri_for($config['base_uri']);
+        }
+
+        $this->configureDefaults($config);
+    }
+}
+
+```
+
+config/autoload/annotations.php
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use GuzzleHttp\Client;
+
+return [
+    'scan' => [
+        // ...
+        'class_map' => [
+            Client::class => BASE_PATH . '/class_map/GuzzleHttp/Client.php',
+        ],
+    ],
+];
 ```
