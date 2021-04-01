@@ -324,6 +324,9 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         return $this;
     }
 
+    /**
+     * @deprecated use SocketIOConfig::getClientCallbackTimeout() instead
+     */
     private function getClientCallbackTimeout(): int
     {
         if ($this->clientCallbackTimeout !== 10000) {
