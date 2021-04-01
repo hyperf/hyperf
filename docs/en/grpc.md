@@ -189,6 +189,6 @@ public function hello()
 
 > Note that in streaming mode, you must manually catch the disconnected exception (`Hyperf\GrpcClient\Exception\GrpcClientException`) and choose whether to retry or not.
 
-## At Then End
+## At the end
 
 If you are a high-frequency user of gRPC, you are welcome to pay attention to the follow-up developer tools of hyperf, which can generate a full set of gRPC code based on the .proto file.
