@@ -152,11 +152,11 @@ class Nsq
             if ($socket->send($payload) === false) {
                 throw new ConnectionException('Payload send failed, the errorCode is ' . $socket->errCode);
             }
-            $reader = new Subscriber($socket);
-            $reader->recv();
-            if (!$reader->isOk()){
-                throw New ConnectionException('Payload send failed, the error is '.$reader->getPayload());
-            }
+//            $reader = new Subscriber($socket);
+//            $reader->recv();
+//            if (!$reader->isOk()){
+//                throw New ConnectionException('Payload send failed, the error is '.$reader->getPayload());
+//            }
             return true;
         });
     }
