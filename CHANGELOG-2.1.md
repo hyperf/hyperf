@@ -1,10 +1,14 @@
-# v2.1.12 - TBD
+# v2.1.13 - TBD
 
 ## Fixed
 
 - [#3432](https://github.com/hyperf/hyperf/pull/3432) Fixed bug that `ttl` does not works on other workers for socketio-server.
 - [#3434](https://github.com/hyperf/hyperf/pull/3434) Fixed bug that the type of rpc result does not support types which allows null.
 - [#3447](https://github.com/hyperf/hyperf/pull/3447) Fixed default value of column does not works in model-cache when has table prefix.
+
+## Added
+
+- [#3449](https://github.com/hyperf/hyperf/pull/3449) Support `@Crontabs` which you can used to run more than one crontab task.
 
 # v2.1.12 - 2021-03-29
 

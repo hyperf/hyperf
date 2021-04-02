@@ -92,6 +92,43 @@ class FooTask
 }
 ```
 
+#### 配置多个定时任务
+
+```php
+<?php
+namespace App\Task;
+
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Crontab\Annotation\Crontab;
+use Hyperf\Crontab\Annotation\Crontabs;
+use Hyperf\Di\Annotation\Inject;
+
+/**
+ * @Crontabs({
+ *     @Crontab(name="Foo1", rule="* * * * * *", callback="foo1", memo="这是一个示例的定时任务"),
+ *     @Crontab(name="Foo2", rule="* * * * * *", callback="foo2", memo="这是一个示例的定时任务")
+ * })
+ */
+class FooTask
+{
+    /**
+     * @Inject()
+     * @var \Hyperf\Contract\StdoutLoggerInterface
+     */
+    private $logger;
+
+    public function foo1()
+    {
+        $this->logger->info(date('Y-m-d H:i:s', time()));
+    }
+    
+    public function foo2()
+    {
+        $this->logger->info('foo2');
+    }
+}
+```
+
 ### 任务属性
 
 #### name
