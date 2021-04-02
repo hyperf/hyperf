@@ -34,9 +34,6 @@ class TableCollector
         $this->data[$pool][$column->getTable()][$column->getName()] = $column;
     }
 
-    /**
-     * @return Column[]
-     */
     public function get(string $pool, ?string $table = null): array
     {
         if ($table === null) {
@@ -53,9 +50,9 @@ class TableCollector
 
     public function getDefaultValue(string $connectName, string $table): array
     {
-        $tablseData = $this->get($connectName, $table);
+        $columns = $this->get($connectName, $table);
         $list = [];
-        foreach ($tablseData as $column) {
+        foreach ($columns as $column) {
             $list[$column->getName()] = $column->getDefault();
         }
         return $list;

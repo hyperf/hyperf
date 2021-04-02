@@ -275,6 +275,6 @@ class Manager
 
     protected function getPrefix(string $connection): string
     {
-        return $this->container->get(ConfigInterface::class)->get('databases.' . $connection . '.prefix', '');
+        return (string) $this->container->get(ConfigInterface::class)->get('databases.' . $connection . '.prefix');
     }
 }
