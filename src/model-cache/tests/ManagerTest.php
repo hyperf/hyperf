@@ -14,10 +14,12 @@ namespace HyperfTest\ModelCache;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Database\Schema\Column;
 use Hyperf\DbConnection\Collector\TableCollector;
 use Hyperf\ModelCache;
 use Hyperf\ModelCache\Handler\HandlerInterface;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Reflection\ClassInvoker;
 use HyperfTest\ModelCache\Stub\ManagerStub;
 use HyperfTest\ModelCache\Stub\ModelStub;
 use HyperfTest\ModelCache\Stub\NonHandler;
@@ -105,6 +107,44 @@ class ManagerTest extends TestCase
         }]);
 
         $this->assertInstanceOf(ModelCache\InvalidCacheManager::class, ModelCache\InvalidCacheManager::instance());
+    }
+
+    public function testGetAttributes()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn(new StdoutLogger());
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
+            'databases' => [
+                'default' => [
+                    'prefix' => 'tb_',
+                    'cache' => [
+                        'handler' => NonHandler::class,
+                        'cache_key' => 'mc:%s:m:%s:%s:%s',
+                        'prefix' => 'default',
+                        'pool' => 'default',
+                        'ttl' => 3600 * 24,
+                        'empty_model_ttl' => 3600,
+                        'load_script' => true,
+                        'use_default_value' => true,
+                    ],
+                ],
+            ],
+        ]));
+        $container->shouldReceive('make')->with(ContainerInterface::class)->andReturn($container);
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(null);
+        $container->shouldReceive('get')->with(TableCollector::class)->andReturn($collector = new TableCollector());
+
+        $collector->add('default', new Column('', 'tb_model', 'str', 1, 'empty', true, 'varchar', ''));
+        ApplicationContext::setContainer($container);
+
+        $manager = new ClassInvoker(new ManagerStub($container));
+        $handler = $manager->handlers['default'];
+        $model = new class() extends ModelStub {
+            protected $table = 'model';
+        };
+        $data = $manager->getAttributes($handler->getConfig(), $model, ['id' => 1]);
+
+        $this->assertSame(['str' => 'empty', 'id' => 1], $data);
     }
 
     protected function getConfig(): array

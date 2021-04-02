@@ -264,10 +264,17 @@ class Manager
         if (! $config->isUseDefaultValue()) {
             return $data;
         }
+
+        $connection = $model->getConnectionName();
         $defaultData = $this->collector->getDefaultValue(
-            $model->getConnectionName(),
-            $model->getTable()
+            $connection,
+            $this->getPrefix($connection) . $model->getTable()
         );
         return array_replace($defaultData, $data);
+    }
+
+    protected function getPrefix(string $connection): string
+    {
+        return $this->container->get(ConfigInterface::class)->get('databases.' . $connection . '.prefix', '');
     }
 }
