@@ -14,6 +14,7 @@ namespace Hyperf\Crontab\Listener;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Annotation\Crontab as CrontabAnnotation;
+use Hyperf\Crontab\Annotation\Crontabs;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\CrontabManager;
 use Hyperf\Di\Annotation\AnnotationCollector;
@@ -75,8 +76,10 @@ class CrontabRegisterListener implements ListenerInterface
     {
         $configCrontabs = $this->config->get('crontab.crontab', []);
         $annotationCrontabs = AnnotationCollector::getClassesByAnnotation(CrontabAnnotation::class);
+        $annotations = $this->getAnnotationFromCrontabs();
+
         $crontabs = [];
-        foreach (array_merge($configCrontabs, $annotationCrontabs) as $crontab) {
+        foreach (array_merge($configCrontabs, $annotationCrontabs, $annotations) as $crontab) {
             if ($crontab instanceof CrontabAnnotation) {
                 $crontab = $this->buildCrontabByAnnotation($crontab);
             }
@@ -85,6 +88,21 @@ class CrontabRegisterListener implements ListenerInterface
             }
         }
         return array_values($crontabs);
+    }
+
+    private function getAnnotationFromCrontabs()
+    {
+        $annotations = AnnotationCollector::getClassesByAnnotation(Crontabs::class);
+        $crontabs = [];
+        /**
+         * @var string $className
+         * @var Crontabs $annotation
+         */
+        foreach ($annotations as $className => $annotation) {
+            $crontabs = array_merge($crontabs, $annotation->crontabs);
+        }
+
+        return $crontabs;
     }
 
     private function buildCrontabByAnnotation(CrontabAnnotation $annotation): Crontab

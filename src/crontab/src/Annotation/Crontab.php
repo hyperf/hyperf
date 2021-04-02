@@ -18,7 +18,7 @@ use ReflectionMethod;
 
 /**
  * @Annotation
- * @Target({"CLASS", "METHOD"})
+ * @Target({"CLASS", "METHOD", "ANNOTATION"})
  */
 class Crontab extends AbstractAnnotation
 {
