@@ -2,7 +2,8 @@
 
 ## Fixed
 
-- [3434](https://github.com/hyperf/hyperf/pull/3434) Fixed bug that the type of rpc result does not support types which allows null.
+- [#3432](https://github.com/hyperf/hyperf/pull/3432) Fixed bug that `ttl` does not works on other workers for socketio-server.
+- [#3434](https://github.com/hyperf/hyperf/pull/3434) Fixed bug that the type of rpc result does not support types which allows null.
 
 # v2.1.12 - 2021-03-29
 
