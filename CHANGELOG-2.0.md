@@ -6,6 +6,7 @@
 - [#3087](https://github.com/hyperf/hyperf/pull/3087) Fixed memory leak when using pipeline sometimes.
 - [#3179](https://github.com/hyperf/hyperf/pull/3179) Fixed json-rpc client failed to receive data when the target server restart.
 - [#3222](https://github.com/hyperf/hyperf/pull/3222) Fixed memory leak for join queries in `hyperf/database`.
+- [#3454](https://github.com/hyperf/hyperf/pull/3454) Fixed bug that http2 connection will be closed accidentally when recv timeout.
 
 # v2.0.25 - 2020-12-28
 
