@@ -336,7 +336,8 @@ class GrpcClient
             $this->recvCoroutineId = Coroutine::id();
             // Start the receive loop
             while (true) {
-                $response = $this->getHttpClient()->recv();
+                $httpClient = $this->getHttpClient();
+                $response = $httpClient->recv();
                 if ($response !== false) {
                     $streamId = $response->streamId;
                     if (! $this->isStreamExist($streamId)) {
@@ -359,6 +360,9 @@ class GrpcClient
                         break;
                     }
                 } else {
+                    if ($httpClient->errCode === SOCKET_ETIMEDOUT) {
+                        continue;
+                    }
                     // If no response, then close all the connection.
                     if ($this->closeRecv()) {
                         break;
