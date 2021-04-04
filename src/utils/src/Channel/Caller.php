@@ -42,6 +42,7 @@ class Caller
 
     public function call(Closure $closure)
     {
+        $release = true;
         try {
             $channel = $this->channel;
             $instance = $channel->pop($this->waitTimeout);
@@ -56,8 +57,11 @@ class Caller
             }
 
             $result = $closure($instance);
+        } catch (ChannelClosedException | WaitTimeoutException $exception) {
+            $release = false;
+            throw $exception;
         } finally {
-            $instance && $channel->push($instance);
+            $release && $channel->push($instance ?? null);
         }
 
         return $result;
