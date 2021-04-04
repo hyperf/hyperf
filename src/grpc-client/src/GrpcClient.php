@@ -92,7 +92,7 @@ class GrpcClient
      *
      * @var Channel
      */
-    private $recvWaitChannel = null;
+    private $recvWaitChannel;
 
     /**
      * @var int
