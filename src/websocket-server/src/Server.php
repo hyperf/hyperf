@@ -204,7 +204,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         } finally {
             isset($fd) && $this->getSender()->setResponse($fd, null);
             // Send the Response to client.
-            if (! $psr7Response || ! $psr7Response instanceof Psr7Response) {
+            if (! isset($psr7Response) || ! $psr7Response instanceof Psr7Response) {
                 return;
             }
             $this->responseEmitter->emit($psr7Response, $response, true);
