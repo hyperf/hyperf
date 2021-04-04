@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\JsonRpc;
 
-use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\JsonRpc\Exception\ClientException;
 use Hyperf\JsonRpc\Pool\PoolFactory;
@@ -104,7 +103,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
                 }
                 return $this->recvAndCheck($client, $this->recvTimeout);
             } catch (\Throwable $throwable) {
-                if (isset($client) && $client instanceof ConnectionInterface) {
+                if (isset($client)) {
                     $client->close();
                 }
                 if ($throwable instanceof RecvException && $throwable->getCode() === SOCKET_ETIMEDOUT) {
