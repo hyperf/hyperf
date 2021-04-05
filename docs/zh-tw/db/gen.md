@@ -257,6 +257,17 @@ class ModelUpdateVisitor extends Visitor
 }
 ```
 
+配置對映關係 `dependencies.php`
+
+```php
+<?php
+
+return [
+    Hyperf\Database\Commands\Ast\ModelUpdateVisitor::class => App\Kernel\Visitor\ModelUpdateVisitor::class,
+];
+
+```
+
 重新執行 `gen:model` 後，對應模型如下：
 
 ```php
