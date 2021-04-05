@@ -177,17 +177,36 @@ class PharBuilder
             }
             // Package all of these dependent components into the packages
             foreach ($installedPackages as $package) {
-                $dir = $package['name'] . '/';
+                // support custom install path
+                $dir = 'composer/' . $package['install-path'] . '/';
                 if (isset($package['target-dir'])) {
                     $dir .= trim($package['target-dir'], '/') . '/';
                 }
 
                 $dir = $vendorPath . $dir;
-                $packages[] = new Package($package, $dir);
+                $packages[] = new Package($package, $this->canonicalize($dir));
             }
         }
         return $packages;
     }
+
+    /**
+     * Gets the canonicalize path, like realpath.
+     * @param mixed $address
+     */
+    public function canonicalize($address)
+    {
+        $address = explode('/', $address);
+        $keys = array_keys($address, '..');
+
+        foreach ($keys as $keypos => $key) {
+            array_splice($address, $key - ($keypos * 2 + 1), 2);
+        }
+
+        $address = implode('/', $address);
+        return str_replace('./', '', $address);
+    }
+
 
     /**
      * Gets the relative path relative to the resource bundle.
@@ -198,7 +217,8 @@ class PharBuilder
         if (strpos($path, $root) !== 0) {
             throw new UnexpectedValueException('Path "' . $path . '" is not within base project path "' . $root . '"');
         }
-        return substr($path, strlen($root)) ?? null;
+        $basePath = substr($path, strlen($root));
+        return empty($basePath) ? null : $this->canonicalize($basePath);
     }
 
     /**
@@ -301,7 +321,17 @@ EOD;
         // Add composer depenedencies.
         foreach ($this->getPackagesDependencies() as $package) {
             $this->logger->info('Adding dependency "' . $package->getName() . '" from "' . $this->getPathLocalToBase($package->getDirectory()) . '"');
-            $targetPhar->addBundle($package->bundle());
+            // support package symlink
+            if (is_link(rtrim($package->getDirectory(), '/'))) {
+                $bundle = $package->bundle();
+                foreach ($bundle as $resource) {
+                    foreach ($resource as $iterator) {
+                        $targetPhar->addFile($iterator->getPathname());
+                    }
+                }
+            } else {
+                $targetPhar->addBundle($package->bundle());
+            }
         }
         // Replace ConfigFactory ReadPaths method.
         $this->logger->info('Replace method "readPaths" in file "vendor/hyperf/config/src/ConfigFactory.php" and change "getRealPath" to "getPathname".');
