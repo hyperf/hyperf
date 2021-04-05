@@ -10,6 +10,7 @@
 ## Optimized
 
 - [#3453](https://github.com/hyperf/hyperf/pull/3453) Optimized code for releasing instance in `Hyperf\Utils\Channel\Caller`.
+- [#3455](https://github.com/hyperf/hyperf/pull/3455) Optimized `phar:build`, which can support `symlink` package.
 
 # v2.1.12 - 2021-03-29
 
