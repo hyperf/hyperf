@@ -1,5 +1,19 @@
 # 版本更新記錄
 
+# v2.1.13 - 2021-04-06
+
+## 修復
+
+- [#3432](https://github.com/hyperf/hyperf/pull/3432) 修復 `SocketIO` 服務，定時清理失效 `fd` 的功能無法作用到其他 `worker` 進程的問題。
+- [#3434](https://github.com/hyperf/hyperf/pull/3434) 修復 `RPC` 結果不支持允許為 `null` 的類型，例如 `?array` 會被強制轉化為數組。
+- [#3447](https://github.com/hyperf/hyperf/pull/3447) 修復模型緩存中，因為存在表前綴，導致模型默認值無法生效的問題。
+- [#3450](https://github.com/hyperf/hyperf/pull/3450) 修復註解 `@Crontab` 無法作用於 `方法` 的問題，支持一個類中，配置多個 `@Crontab`。
+
+## 優化
+
+- [#3453](https://github.com/hyperf/hyperf/pull/3453) 優化了類 `Hyperf\Utils\Channel\Caller` 回收實例時的機制，防止因為實例為 `null` 時，導致無法正確回收的問題。
+- [#3455](https://github.com/hyperf/hyperf/pull/3455) 優化腳本 `phar:build`，支持使用軟連接方式加載的組件包。
+
 # v2.1.12 - 2021-03-29
 
 ## 修復
