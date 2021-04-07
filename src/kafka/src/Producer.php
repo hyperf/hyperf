@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Kafka;
 
 use Hyperf\Contract\ConfigInterface;
@@ -38,6 +39,12 @@ class Producer
     protected $chan;
 
     /**
+     * exception channel
+     * @var ?Channel
+     */
+    protected $expChan;
+
+    /**
      * @var LongLangProducer
      */
     protected $producer;
@@ -59,13 +66,13 @@ class Producer
         $ack = new Channel();
         $this->chan->push(function () use ($topic, $key, $value, $headers, $partitionIndex, $ack) {
             try {
-                if (! isset($this->topicsMeta[$topic])) {
+                if (!isset($this->topicsMeta[$topic])) {
                     $this->producer->send($topic, $value, $key, $headers);
                     $ack->close();
                     return;
                 }
 
-                if (! is_int($partitionIndex)) {
+                if (!is_int($partitionIndex)) {
                     $index = $this->getIndex($key, $value, count($this->topicsMeta[$topic]));
                     $partitionIndex = array_keys($this->topicsMeta[$topic])[$index];
                 }
@@ -84,6 +91,12 @@ class Producer
                 throw $e;
             }
         });
+
+        //check first
+        if ($e = $this->expChan->pop()) {
+            throw $e;
+        }
+
         if ($e = $ack->pop()) {
             throw $e;
         }
@@ -108,6 +121,11 @@ class Producer
                 throw $e;
             }
         });
+
+        if ($e = $this->expChan->pop()) {
+            throw $e;
+        }
+
         if ($e = $ack->pop()) {
             throw $e;
         }
@@ -117,6 +135,10 @@ class Producer
     {
         if ($this->chan) {
             $this->chan->close();
+        }
+
+        if ($this->expChan) {
+            $this->expChan->close();
         }
     }
 
@@ -136,15 +158,16 @@ class Producer
             return;
         }
         $this->chan = new Channel(1);
-        $ack = new Channel();
-        Coroutine::create(function () use ($ack) {
+        Coroutine::create(function () {
             while (true) {
+                $this->expChan = new Channel();
                 try {
                     $this->producer = $this->makeProducer();
                     $this->topicsMeta = $this->fetchMeta();
+                    $this->expChan->close();
                     while (true) {
                         $closure = $this->chan->pop();
-                        if (! $closure) {
+                        if (!$closure) {
                             break 2;
                         }
                         try {
@@ -154,19 +177,16 @@ class Producer
                             break;
                         }
                     }
-                    $ack->close();
-                }catch (\Throwable $e){
-                    $ack->push($e);
+                } catch (\Throwable $e) {
+                    //this is important while expChan blocked
+                    $this->chan = null;
+                    $this->expChan->push($e);
                     break;
                 }
             }
             /* @phpstan-ignore-next-line */
             $this->chan = null;
         });
-
-        if ($e = $ack->pop()){
-            throw $e;
-        }
     }
 
     private function makeProducer(): LongLangProducer
