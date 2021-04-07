@@ -160,8 +160,8 @@ class Producer
         $this->chan = new Channel(1);
         Coroutine::create(function () {
             while (true) {
-                $this->expChan = new Channel();
                 try {
+                    $this->expChan = new Channel();
                     $this->producer = $this->makeProducer();
                     $this->topicsMeta = $this->fetchMeta();
                     $this->expChan->close();
