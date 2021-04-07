@@ -259,7 +259,6 @@ class UserServiceFactory
         $config = $container->get(ConfigInterface::class);
         // 我们假设对应的配置的 key 为 cache.enable
         $enableCache = $config->get('cache.enable', false);
-        // make(string $name, array $parameters = []) 方法等同于 new ，使用 make() 方法是为了允许 AOP 的介入，而直接 new 会导致 AOP 无法正常介入流程
         return make(UserService::class, compact('enableCache'));
     }
 }
@@ -391,7 +390,7 @@ unset($proxy->someProperty);
 $userService = make(UserService::class, ['enableCache' => true]);
 ```
 
-> 注意仅 `$name` 对应的对象为短生命周期对象，该对象的所有依赖都是通过 `get()` 方法获取的，即为长生命周期的对象
+> 注意仅 `$name` 对应的对象为短生命周期对象，该对象的所有依赖都是通过 `get()` 方法获取的，即为长生命周期的对象，可理解为该对象是一个浅拷贝的对象
 
 ## 获取容器对象
 
