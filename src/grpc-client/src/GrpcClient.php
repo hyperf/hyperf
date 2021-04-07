@@ -195,10 +195,7 @@ class GrpcClient
             }
             $this->recvChannelMap = [];
         }
-        while ($this->recvWaitChannel->stats()['consumer_num'] !== 0) {
-            $this->recvWaitChannel->push(false);
-        }
-        $this->channelPool->release($this->recvWaitChannel);
+        $this->releaseRecvWaitChannel();
         return $shouldKill;
     }
 
@@ -323,6 +320,7 @@ class GrpcClient
             return $this->yield($yield);
         }
         $this->getHttpClient()->close();
+        $this->releaseRecvWaitChannel();
         $result = $this->sendYield ? $this->sendChannel->push(0) : true;
         if ($result === true) {
             $this->yield($yield);
@@ -425,5 +423,16 @@ class GrpcClient
         $httpClient = new SwooleHttp2Client($this->host, $this->port, $this->ssl);
         $httpClient->set($this->options);
         return $httpClient;
+    }
+
+    private function releaseRecvWaitChannel()
+    {
+        if (!empty($this->recvWaitChannel)) {
+            while ($this->recvWaitChannel->stats()['consumer_num'] !== 0) {
+                $this->recvWaitChannel->push(false);
+            }
+            $this->channelPool->release($this->recvWaitChannel);
+            $this->recvWaitChannel = null;
+        }
     }
 }
