@@ -1,55 +1,56 @@
-# 微服务
+# Microservice
 
-微服务就是一些协同工作的，小而自治的服务。
+Microservices are small and autonomous services that work together.
 
-## 很小，专注做好一件事
+## Small, focus on doing one thing well
 
-随着需求的迭代，新功能的增加，代码库往往会变得越来越大，尽管我们极力希望在巨大的代码库中做到清晰的模块化，但事实上模块与模块之间的界限很难划分得清楚，逐渐地相似的功能代码在代码库中随处可见，以致于在迭代时想要知道该在什么地方做修改都很困难，修复 `Bug` 和增加新特性新功能越来越难。   
-在一个单体系统中，通常会创建一些抽象层或者实现模块化来保证代码的 `内聚性`，从而避免上面提到的问题。
+With the iteration of requirements and the increase of new features, the code repository tends to become larger and larger. Although we strongly hope to achieve clear modularity in the huge code repository, in fact, the boundaries between modules are difficult to distinguish clearly. Gradually, similar functional codes can be seen everywhere in the code repository. As a result, it is very difficult to know where to make changes when edition updates, and it is increasingly difficult to fix `Bug` and add new features.
+In a mono-system, some abstraction layers or modularization are usually created to ensure the `cohesion` of the code, thereby avoiding the problems mentioned above.
 
-> 根据 Robert C. Martin 的一个对 [单一职责原则 (Single Responsibility Principle)](https://baike.baidu.com/item/单一职责原则/9456515) 的论述：“*把因为相同原因而变化的东西聚合到一起，把因为不同原因而变化的东西分离开来。*” 该论述很好地强调了内聚性这一概念。
+> According to Robert C. Martin [Single Responsibility Principle](https://baike.baidu.com/item/单一职责原则/9456515): "* Put things that change for the same reason together and separate things that change for different reasons. *" This argument emphasizes the concept of `cohesion` very well.
 
-微服务则将这一理念应用在独立的服务上，根据业务的边界确定服务的边界，每个服务专注于服务边界之内的事情，因为可以避免很多由于代码库过大衍生出来的各种问题。   
-那么一个微服务到底应该多微小？足够小即可，不要过小。那么怎么衡量一个系统是否拆足够小了呢？当你面对这个系统时，不会再有 "过大" 想要拆小它的欲望时，那么它应该就足够小了。服务越小，`微服务架构(Microservice)` 的优点和缺点也就越明显，使用的服务越小，独立性带来的好处就越多，但管理大量的服务也会更加复杂。
+Microservices apply this concept to independent services, and determine the boundaries of services based on the boundaries of the business. Each service focuses on things within the boundaries of the service. By doing so, can we avoid many problems arising from excessively large code repository.
+How tiny should a microservice be? Small enough, but not too small. 
+How to evaluate whether a system is disassembled small enough? When you don't have the desire to make it smaller in the entire system, then it should be small enough. The smaller the services, the more obvious the advantages and disadvantages of `Microservice`. The smaller the service used, the greater the benefits of independence, but the management of a large number of services will also be more complicated.
 
-## 自治性
+## Autonomy
 
-一个微服务就是一个独立的实体，它可以独立被部署，也可以作为一个操作系统进程存在。服务与服务之间存在隔离性，服务之间均通过网络调用进行通信，从而加强服务之间的隔离性，避免紧耦合。服务之间应该可以彼此独立进行修改，并且某一个服务的部署不应该引起该 `服务消费方(Service Consumer)` 的变动。这就要求我们需要考虑这些 `服务提供方(Service Provider)` 什么应该暴露，什么应该隐藏，如果暴露得过多，那么 `服务消费方(Service Consumer)` 会与该服务的内部实现产生耦合，这会使得服务直接产生额外的协调工作，从而降低了服务的自治性。
+A microservice is an independent entity, it can be deployed independently, and it can also exist as an operating system process. There is isolation between services, and services are communicated through network, thereby strengthening the isolation between services and avoiding tight coupling. Services should be able to be modified independently, and the deployment of a certain service should not cause changes in the `Service Consumer`. This requires us to consider how much of these `Service Providers` should be exposed and what should be hidden. If they are exposed too much, the `Service Consumer` will be coupled with the internal implementation of the providers. This will make the service directly generate additional coordination work, thereby reducing the autonomy of the service.
 
-## 主要好处
+## Main benefits
 
-### 技术的异构性
+### Heterogeneity of technology
 
-在一个由多个服务相互协作的系统中，可以在不同的服务中选用最适合该服务的技术，且由于服务间通过网络调用，服务的实现不会受限于系统的实现语言或框架。也就意味着当系统中一部分需要做性能提升，可以使用性能更好的技术栈重新构建该部分的实现。
+In a system where multiple services cooperate with each other, the technology which is most suitable for the service can be selected from different services. Because the services are called through the network, the realization of the service will not be limited by the implementation language or system framework. This means that when a part of the system needs performance improvement, the implementation of that part can be rebuilt using a better-performing technology stack.
 
-### 弹性
+### Elasticity
 
-实现弹性系统的一个关键概念就是 `舱壁(Bulkhead)`，如果系统中的一个组件或一个服务不可用了，但并没有导致级联故障，那么系统的其它部分还可以正常运行。微服务的 `服务边界` 很显然就是一个 `舱壁(Bulkhead)`，在 `单体架构(Monolithic architecture)` 系统中，也就是传统的 `PHP-FPM` 架构下的系统中，如果某个部分不可用，那么大部分情况是所有功能都不可用，虽然可以通过负载均衡等技术将系统部署在多个节点上面降低系统完全不可用的概率，但对于 `微服务架构(Microservice)` 系统而言，其架构本身就能够很好地处理服务不可用和功能降级等问题。
+A key concept to realize a elastic system is `Bulkhead`. If a component or a service in the system is unavailable, but does not cause a cascading failure, then other parts of the system can still operate normally. The `service boundary` of microservice is obviously a `Bulkhead`. In the `Monolithic architecture` system, that is, the system under the traditional `PHP-FPM` architecture, if a certain part is unavailable, then all functions are unavailable in most cases. Although the system can be deployed on multiple nodes through technologies such as load balancing to reduce the probability that the system is completely unavailable, for the `Microservice` system, the architecture itself can handle service unavailability and issues such as functional degradation.
 
-### 扩展
+### Expansibility
 
-一个 `单体架构(Monolithic architecture)` 的系统只能作为一个整体进行扩展，即使系统中只有一小部分存在性能问题。如果使用较小的多个服务，则可以只对需要扩展的服务进行扩展，这样可以把那些不需要扩展的服务运行在更廉价的服务器上，节省成本。
+A `monolithic architecture` system can only be expanded as a whole, even if only a small part of the system has performance problems. If you use multiple smaller services, you can only extend the services which need to be extended, so that those services which do not need to be extended can be run on cheaper servers and saving costs.
 
-### 简化部署
+### Simply deployment
 
-在代码量庞大的 `单体架构(Monolithic architecture)` 系统中，即使只修改了一行代码，也需要重新部署整个系统才能够发布该变更，这种部署影响很大、风险很高，因此涉及到的干系人不敢轻易做部署，于是在实际的操作中部署的频率就不变得很低，版本与版本之间会对系统做了很多的功能或 `Bugfix`，并一次性将大量的变更一次性发布到生产环境中去，但两次发布之间的差异越大，出错的可能性就更大。   
-当然在传统的 `PHP-FPM` 架构下的开发中，我们可能不会存在这样的问题，因为热更新是一种天然的存在，但利弊是同时存在的。
+In a `monolithic architecture` system with a huge amount of code, even if only one line of code is modified, the entire system needs to be redeployed to publish the change. This kind of deployment has a great impact and high risk, so related persons rarely do such deployment. Therefore, the frequency of deployment in actual operations become very low. A lot of features or `Bugfix` will be made to the system between versions, and a large number of changes will be released to the production environment at one time. But the greater the difference between the two releases, the greater the likelihood of errors.
+Of course, in the development under the traditional `PHP-FPM` architecture, we may not have such a problem, because hot updates are a natural existence. However, the pros and cons exist at the same time.
 
-### 与组织架构相匹配
+### Match with the organizational structure
 
-在 `单体架构(Monolithic architecture)` 下，且团队的结构也是 "分布式" (异地) 的情况下，大量工程师的代码提交导致的代码冲突与异地的迭代沟通会使维护系统变得更加的复杂，我们都知道一个合适的团队规模的人在一个小型的代码库上工作可获得更高的生产力，那么服务的拆分和归属便能很好的划分相关的职责。
+In the case of `Monolithic architecture` and the structure of the team is also 'distributed' (remote), code conflicts caused by a large number of engineers' code submissions and iterative communication in different places will make the maintenance system more complex. As we all know that a team with appropriate size can get higher productivity by working on a small repository, so the division of services can well divide the related responsibilities.
 
-### 可组合性
+### Composability
 
-`分布式系统` 和 `面向服务架构(SOA)` 声称的主要好处是易于重用已有的功能，那么在 `微服务架构(Microservice)` 下，更细粒度的服务拆分会将这一优点体现得更淋漓尽致。
+The main benefit claimed by `Distributed System` and `Service Oriented Architecture (SOA)` is that it is easy to reuse existing functions. Under the `Microservice`, more fine-grained service splitting will reflect this advantage more vividly.
 
-### 可重构性高
+### Highly reconfigurable
 
-如果您面对的是一个大型的 `单体架构(Monolithic architecture)` 系统，里面的代码混乱而丑陋，所有人都不敢轻易去重构它。但当你面对的是一个小规模的细粒度的服务时，重构一个服务甚至重写一个对应的服务都是一件相对可操作的事情。在一个大型的 `单体架构(Monolithic architecture)` 系统一天删除上百行代码，您可以确信不会引发任何的问题吗？但在良好的 `微服务架构(Microservice)` 下，我相信直接删除一个服务您也可以游刃有余。
+If you are facing a large `monolithic architecture` system, the code inside is messy, and everyone is afraid to refactor. But when you are dealing with a small-scale fine-grained service, refactoring a service or even rewriting a corresponding service is relatively operable.
+In a large `monolithic architecture` system, can you be sure that it will not cause any problems with hundreds of lines of code are deleted in one single day? But with a good `Microservice`, I believe that you can delete a service directly without any problem.
 
-## 没有银弹 No Silver Bullet
+## No Silver Bullet
 
-虽然 `微服务架构(Microservice)` 好处众多，但 **微服务不是银弹 ！！！** ，您需要面对所有分布式系统都需要面对的复杂性，你可能需要在部署、测试和监控上做很多的工作，在服务间调用、服务的可靠性上做很多工作，甚至您还需要处理类似于 分布式事务 或者与 CAP 相关的问题。尽管 `Hyperf` 已经为您解决了许多的问题，但在实施 `微服务架构(Microservice)` 之前您的团队必须储备足够的分布式系统相关的知识体系，以面对很多您在 `单体架构(Monolithic architecture)` 下可能没有面临过甚至没有考虑过的问题。
+Although the benefits of `Microservices` are numerous, however, **Microservice is not a silver bullet! ! !**. You need to consider the complexity that all distributed systems need to consider. You may need to do a lot of work on deployment, testing, monitoring, calls between services, and service reliability, and even you need to deal with issues similar to distributed transactions or CAP-related issues. Although `Hyperf` has solved many problems for you, your team must have enough knowledge related to distributed systems before implementing `Microservice`, in order to deal with problems that you may never face or considered.
 
-
-*| 本章节部分内容译自 Sam Newman 的 《Building Microservices 》*
+*| Part of the content in this chapter is referred from《Building Microservices》 by Sam Newman*
