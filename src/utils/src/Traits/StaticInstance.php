@@ -17,6 +17,11 @@ trait StaticInstance
 {
     protected $instanceKey;
 
+    /**
+     * @param array $params
+     * @param bool $refresh
+     * @return $this
+     */
     public static function instance($params = [], $refresh = false)
     {
         $key = get_called_class();
