@@ -207,10 +207,15 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
                 while (true) {
                     $frame = $response->recv();
                     if ($frame === false || $frame instanceof CloseFrame || $frame === '') {
-                        $onCloseCallbackInstance->{$onCloseCallbackMethod}($response, $fd, 0);
+                        wait(static function () use ($onCloseCallbackInstance, $onCloseCallbackMethod, $response, $fd) {
+                            $onCloseCallbackInstance->{$onCloseCallbackMethod}($response, $fd, 0);
+                        });
                         break;
                     }
-                    $onMessageCallbackInstance->{$onMessageCallbackMethod}($response, $frame);
+
+                    wait(static function () use ($onMessageCallbackInstance, $onMessageCallbackMethod, $response, $frame) {
+                        $onMessageCallbackInstance->{$onMessageCallbackMethod}($response, $frame);
+                    });
                 }
             } else {
                 $this->deferOnOpen($request, $class, $server);
