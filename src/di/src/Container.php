@@ -114,8 +114,7 @@ class Container implements HyperfContainerInterface
         if (isset($this->resolvedEntries[$name]) || array_key_exists($name, $this->resolvedEntries)) {
             return $this->resolvedEntries[$name];
         }
-        $this->resolvedEntries[$name] = $value = $this->make($name);
-        return $value;
+        return $this->resolvedEntries[$name] = $this->make($name);
     }
 
     /**
@@ -170,11 +169,7 @@ class Container implements HyperfContainerInterface
     private function getDefinition(string $name): ?DefinitionInterface
     {
         // Local cache that avoids fetching the same definition twice
-        if (! array_key_exists($name, $this->fetchedDefinitions)) {
-            $this->fetchedDefinitions[$name] = $this->definitionSource->getDefinition($name);
-        }
-
-        return $this->fetchedDefinitions[$name];
+        return $this->fetchedDefinitions[$name] ?? $this->fetchedDefinitions[$name] = $this->definitionSource->getDefinition($name);
     }
 
     /**
