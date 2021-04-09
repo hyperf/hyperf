@@ -20,7 +20,7 @@ trait StaticInstance
     /**
      * @param array $params
      * @param bool $refresh
-     * @return $this
+     * @return static
      */
     public static function instance($params = [], $refresh = false)
     {
