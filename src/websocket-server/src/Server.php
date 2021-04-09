@@ -28,6 +28,7 @@ use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Event;
+use Hyperf\Server\Server as AsyncStyleServer;
 use Hyperf\Server\ServerManager;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Coordinator\Constants;
@@ -94,6 +95,11 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
      */
     protected $serverName = 'websocket';
 
+    /**
+     * @var null|\Swoole\Coroutine\Http\Server|WebSocketServer
+     */
+    protected $server;
+
     public function __construct(
         ContainerInterface $container,
         HttpDispatcher $dispatcher,
@@ -125,7 +131,20 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
      */
     public function getServer()
     {
-        return $this->container->get(SwooleServer::class);
+        if ($this->server) {
+            return $this->server;
+        }
+        $config = $this->container->get(ConfigInterface::class);
+
+        $type = $config->get('server.type', AsyncStyleServer::class);
+
+        if ($type === AsyncStyleServer::class) {
+            return $this->container->get(SwooleServer::class);
+        }
+
+        [, $server] = ServerManager::get($this->serverName);
+
+        return $this->server = $server;
     }
 
     public function getSender(): Sender
