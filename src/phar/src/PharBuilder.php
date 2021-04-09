@@ -207,7 +207,6 @@ class PharBuilder
         return str_replace('./', '', $address);
     }
 
-
     /**
      * Gets the relative path relative to the resource bundle.
      */
