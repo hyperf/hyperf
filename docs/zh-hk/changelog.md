@@ -1,5 +1,16 @@
 # 版本更新記錄
 
+# v2.1.14 - 2021-04-12
+
+## Fixed
+
+- [#3465](https://github.com/hyperf/hyperf/pull/3465) 修復協程風格下，`WebSocket` 服務不支持配置多個端口的問題。
+- [#3467](https://github.com/hyperf/hyperf/pull/3467) 修復協程風格下，`WebSocket` 服務無法正常釋放連接池的問題。
+
+## Added
+
+- [#3472](https://github.com/hyperf/hyperf/pull/3472) 新增方法 `Sender::getResponse()`，可以在協程風格的 `WebSocket` 服務裏，獲得與 `fd` 一一對應的 `Response` 對象。
+
 # v2.1.13 - 2021-04-06
 
 ## 修復
