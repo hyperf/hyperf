@@ -172,7 +172,7 @@ class DemoProcess extends AbstractProcess
             $count = $redis->llen('queue:failed');
 
             if ($count > 0) {
-                $logger->warning('The num of failed queue is '. $count);
+                $logger->warning('The num of failed queue is ' . $count);
             }
 
             sleep(1);
