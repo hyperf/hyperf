@@ -259,7 +259,6 @@ class UserServiceFactory
         $config = $container->get(ConfigInterface::class);
         // 我們假設對應的配置的 key 為 cache.enable
         $enableCache = $config->get('cache.enable', false);
-        // make(string $name, array $parameters = []) 方法等同於 new ，使用 make() 方法是為了允許 AOP 的介入，而直接 new 會導致 AOP 無法正常介入流程
         return make(UserService::class, compact('enableCache'));
     }
 }
@@ -391,7 +390,7 @@ unset($proxy->someProperty);
 $userService = make(UserService::class, ['enableCache' => true]);
 ```
 
-> 注意僅 `$name` 對應的對象為短生命週期對象，該對象的所有依賴都是通過 `get()` 方法獲取的，即為長生命週期的對象
+> 注意僅 `$name` 對應的對象為短生命週期對象，該對象的所有依賴都是通過 `get()` 方法獲取的，即為長生命週期的對象，可理解為該對象是一個淺拷貝的對象
 
 ## 獲取容器對象
 
