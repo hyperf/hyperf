@@ -122,7 +122,7 @@ class FooProcess extends AbstractProcess
      * Process name
      * @var string
      */
-    public $name ='user-process';
+    public $name = 'user-process';
 
     /**
      * Redirect the standard input and output of a custom process
@@ -171,8 +171,8 @@ class DemoProcess extends AbstractProcess
             $redis = $this->container->get(\Redis::class);
             $count = $redis->llen('queue:failed');
 
-            if ($count> 0) {
-                $logger->warning('The num of failed queue is'. $count);
+            if ($count > 0) {
+                $logger->warning('The num of failed queue is '. $count);
             }
 
             sleep(1);
