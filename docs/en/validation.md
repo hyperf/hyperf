@@ -48,7 +48,7 @@ return [
 
 ### Publish validator language files
 
-Due to the multi-language function, this component relies on the [hyperf/translation](https://github.com/hyperf/translation) component. If you have not added the configuration file of the translation component, please execute the following command to publish the configuration file of the translation component, if you have already published it or added it manually, you only need to publish the language file of the validator component:
+Due to the multi-language function, this component relies on the [hyperf/translation](https://github.com/hyperf/translation) component. If you have not added the configuration file of the translation component, you can execute the following command to publish the configuration file of the translation component. If the configuration already exists, you only need to publish the language file of the validator component:
 
 Publish the files of the translation component:
 
