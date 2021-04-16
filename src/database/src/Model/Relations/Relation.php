@@ -336,6 +336,8 @@ abstract class Relation
     /**
      * Get a relationship join table hash.
      *
+     * For safety, The relationship ensures this method is only used in the same coroutine.
+     *
      * @return string
      */
     public function getRelationCountHash(bool $incrementJoinCount = true)
