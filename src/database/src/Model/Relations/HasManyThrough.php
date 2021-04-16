@@ -462,16 +462,6 @@ class HasManyThrough extends Relation
     }
 
     /**
-     * Get a relationship join table hash.
-     *
-     * @return string
-     */
-    public function getRelationCountHash()
-    {
-        return 'laravel_reserved_' . static::$selfJoinCount++;
-    }
-
-    /**
      * Get the qualified foreign key on the related model.
      *
      * @return string

@@ -334,6 +334,18 @@ abstract class Relation
     }
 
     /**
+     * Get a relationship join table hash.
+     *
+     * For safety, The relationship ensures this method is only used in the same coroutine.
+     *
+     * @return string
+     */
+    public function getRelationCountHash(bool $incrementJoinCount = true)
+    {
+        return 'hyperf_reserved_' . ($incrementJoinCount ? static::$selfJoinCount++ : static::$selfJoinCount);
+    }
+
+    /**
      * Get all of the primary keys for an array of models.
      *
      * @param string $key

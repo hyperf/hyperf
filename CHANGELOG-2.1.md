@@ -1,5 +1,9 @@
 # v2.1.15 - TBD
 
+## Added
+
+- [#3484](https://github.com/hyperf/hyperf/pull/3484) Added methods `withMax()` `withMin()` `withSum()` and `withAvg()`.
+
 # v2.1.14 - 2021-04-12
 
 ## Fixed
