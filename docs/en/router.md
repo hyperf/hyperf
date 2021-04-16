@@ -17,7 +17,7 @@ Only a URI and a closure (Closure) are needed to construct a basic route:
 use Hyperf\HttpServer\Router\Router;
 
 Router::get('/hello-hyperf', function () {
-    return'Hello Hyperf.';
+    return 'Hello Hyperf.';
 });
 ```
 
@@ -32,9 +32,9 @@ The so-called standard routing refers to the routing handled by the `controllers
 use Hyperf\HttpServer\Router\Router;
 
 // Any of the following three definitions can achieve the same effect
-Router::get('/hello-hyperf','App\Controller\IndexController::hello');
-Router::get('/hello-hyperf','App\Controller\IndexController@hello');
-Router::get('/hello-hyperf', [App\Controller\IndexController::class,'hello']);
+Router::get('/hello-hyperf', 'App\Controller\IndexController::hello');
+Router::get('/hello-hyperf', 'App\Controller\IndexController@hello');
+Router::get('/hello-hyperf', [App\Controller\IndexController::class, 'hello']);
 ```
 
 The route is defined as binding the `/hello-hyperf` path to the `hello` method under `App\Controller\IndexController`.
@@ -71,11 +71,11 @@ Router::addRoute(['GET','POST','PUT','DELETE'], $uri, $callback);
 The route group adds the group prefix to each URI. The actual route is `group/route`, namely `/user/index`, `/user/store`, `/user/update`, `/user/delete`
 
 ```php
-Router::addGroup('/user/',function (){
-    Router::get('index','App\Controller\UserController@index');
-    Router::post('store','App\Controller\UserController@store');
-    Router::get('update','App\Controller\UserController@update');
-    Router::post('delete','App\Controller\UserController@delete');
+Router::addGroup('/user/', function (){
+    Router::get('index', 'App\Controller\UserController@index');
+    Router::post('store', 'App\Controller\UserController@store');
+    Router::get('update', 'App\Controller\UserController@update');
+    Router::post('delete', 'App\Controller\UserController@delete');
 });
 ```
 
@@ -177,7 +177,7 @@ It should be noted that the `prefix` is not always used: when the `path` of a me
 > Given route parameters must be consistent with the controller parameter key name and type, otherwise the controller cannot accept the relevant parameters
 
 ```php
-Router::get('/user/{id}','App\Controller\UserController::info');
+Router::get('/user/{id}', 'App\Controller\UserController::info');
 ```
 Access route parameter via controller method injection.
 
@@ -194,10 +194,10 @@ Access route parameter via request object.
 ```php
 public function index(RequestInterface $request)
 {
-        // If it exists, it will return, if it does not exist, it will return the default value null
-        $id = $request->route('id');
-        // If it exists, it returns, if it doesn't exist, it returns the default value 0
-        $id = $request->route('id', 0);
+    // If it exists, it will return, if it does not exist, it will return the default value null
+    $id = $request->route('id');
+    // If it exists, it returns, if it doesn't exist, it returns the default value 0
+    $id = $request->route('id', 0);
 }
 ```
 
