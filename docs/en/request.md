@@ -51,7 +51,7 @@ If you want to obtain routing parameters through controller method parameters, y
 // Route definition using configuration method
 use Hyperf\HttpServer\Router\Router;
 
-Router::addRoute(['GET','HEAD'],'/user/{id:\d+}', [\App\Controller\IndexController::class,'user']);
+Router::addRoute(['GET','HEAD'], '/user/{id:\d+}', [\App\Controller\IndexController::class, 'user']);
 ```
 
 Then you can get the `query` parameter `id` by declaring the `$id` parameter on the method parameter, as shown below:
@@ -168,7 +168,7 @@ $all = $request->all();
 
 ### Get the specified input value
 
-Use `input(string $key, $default = null)` and `inputs(array $keys, $default = null): array` to obtain `one` or `multiple` input values ​​of any form:
+Use `input(string $key, $default = null)` and `inputs(array $keys, $default = null): array` to obtain `one` or `multiple` input values of any form:
 
 ```php
 // Returns the input value if it exists or null if it doesn't exist
@@ -225,7 +225,7 @@ if ($request->has('name')) {
     // ...
 }
 
-// Judge multiple values ​​at the same time
+// Judge multiple values at the same time
 if ($request->has(['name','email'])) {
     // ...
 }
