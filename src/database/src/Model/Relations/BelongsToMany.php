@@ -762,16 +762,6 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Get a relationship join table hash.
-     *
-     * @return string
-     */
-    public function getRelationCountHash()
-    {
-        return 'laravel_reserved_' . static::$selfJoinCount++;
-    }
-
-    /**
      * Specify that the pivot table has creation and update timestamps.
      *
      * @param null|mixed $createdAt

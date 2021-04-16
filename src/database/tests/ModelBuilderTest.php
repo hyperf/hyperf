@@ -681,6 +681,15 @@ class ModelBuilderTest extends TestCase
         $this->assertEquals('select "model_builder_test_model_parent_stubs".*, (select count(*) from "model_builder_test_model_close_related_stubs" where "model_builder_test_model_parent_stubs"."foo_id" = "model_builder_test_model_close_related_stubs"."id") as "foo_count" from "model_builder_test_model_parent_stubs"', $builder->toSql());
     }
 
+    public function testWithMax()
+    {
+        $model = new ModelBuilderTestModelParentStub();
+
+        $builder = $model->withMax('foo', 'id');
+
+        $this->assertEquals('select "model_builder_test_model_parent_stubs".*, (select max("model_builder_test_model_close_related_stubs"."id") from "model_builder_test_model_close_related_stubs" where "model_builder_test_model_parent_stubs"."foo_id" = "model_builder_test_model_close_related_stubs"."id") as "foo_max_id" from "model_builder_test_model_parent_stubs"', $builder->toSql());
+    }
+
     public function testWithCountAndSelect()
     {
         $model = new ModelBuilderTestModelParentStub();
@@ -862,7 +871,7 @@ class ModelBuilderTest extends TestCase
 
         // alias has a dynamic hash, so replace with a static string for comparison
         $alias = 'self_alias_hash';
-        $aliasRegex = '/\b(laravel_reserved_\d)(\b|$)/i';
+        $aliasRegex = '/\b(hyperf_reserved_\d)(\b|$)/i';
 
         $nestedSql = preg_replace($aliasRegex, $alias, $nestedSql);
         $dotSql = preg_replace($aliasRegex, $alias, $dotSql);
@@ -878,7 +887,7 @@ class ModelBuilderTest extends TestCase
 
         // alias has a dynamic hash, so replace with a static string for comparison
         $alias = 'self_alias_hash';
-        $aliasRegex = '/\b(laravel_reserved_\d)(\b|$)/i';
+        $aliasRegex = '/\b(hyperf_reserved_\d)(\b|$)/i';
 
         $sql = preg_replace($aliasRegex, $alias, $sql);
 
