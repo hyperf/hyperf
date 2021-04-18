@@ -1,17 +1,18 @@
-# 分页器
+# Paginator
 
-在您需要对数据进行分页处理时，可以借助 [hyperf/paginator](https://github.com/hyperf-cloud/paginator) 组件很方便的解决您的问题，您可对您的数据查询进行一定的封装处理，以便更好的使用分页功能，该组件也可用于其它框架上。   
-通常情况下，您对分页器的需求可能都是存在于数据库查询上，[hyperf/database](https://github.com/hyperf-cloud/database) 数据库组件已经与分页器组件进行了结合，您可以在进行数据查询时很方便的调用分页器来实现分页，具体可查阅 [数据库模型-分页](en/db/paginator.md) 章节。
+When you need to paginate data, you can use the [hyperf/paginator](https://github.com/hyperf/paginator) component to solve your problem conveniently. You can encapsulate your data query little bit to perform better pagination. This component can also works well on other frameworks.
 
-# 安装
+In most cases, paginator is used when query from databases. [hyperf/database](https://github.com/hyperf/database) component has already adapted the paginator component. You can easily use the paginator during data query. More details in [Database - Paginator](en/db/paginator.md) chapter.
+
+# Installation
 
 ```bash
 composer require hyperf/paginator
 ```
 
-# 基本使用
+# Basic Usage
 
-只需存在数据集和分页需求，便可通过实例化一个 `Hyperf\Paginator\Paginator` 类来进行分页处理，该类的构造函数接收 `__construct($items, int $perPage, ?int $currentPage = null, array $options = [])` 参数，我们只需以 `数组(Array)` 或 `Hyperf\Utils\Colletion` 集合类的形式传递数据集到 `$items` 参数，并设定每页数据量 `$perPage` 和当前页数 `$currentPage` 即可，`$options` 参数则可以通过 `Key-Value` 的形式定义分页器实例内的所有属性，具体可查阅分页器类的内部属性。
+As long as there are data sets and paging requirements, you can instantiate a `Hyperf\Paginator\Paginator` class for paging processing. The constructor of this class receives `__construct($items, int $perPage, ?int $currentPage = null, array $options = [])` parameters. Just pass the data set to the `$items` parameter in the form of `Array (Array)` or `Hyperf\Utils\Colletion` collection class, and set the amount of data per page `$perPage` and the current page number `$currentPage `. The `$options` parameter can define all the attributes of the paginator instance in the form of `Key-Value`, and you can refer to the internal attributes of the paginator class for more details.
 
 ```php
 <?php
@@ -21,6 +22,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Paginator\Paginator;
+use Hyperf\Utils\Collection;
 
 /**
  * @AutoController()
@@ -29,50 +31,55 @@ class UserController
 {
     public function index(RequestInterface $request)
     {
-        $currentPage = $request->input('page', 1);
-        $perPage = 2;
-        $users = [
+        $currentPage = (int) $request->input('page', 1);
+        $perPage = (int) $request->input('per_page', 2);
+
+        // Perform query according to $currentPage and $perPage. The Collection type is used here.
+        $collection = new Collection([
             ['id' => 1, 'name' => 'Tom'],
             ['id' => 2, 'name' => 'Sam'],
             ['id' => 3, 'name' => 'Tim'],
             ['id' => 4, 'name' => 'Joe'],
-        ];
+        ]);
+
+        $users = array_values($collection->forPage($currentPage, $perPage)->toArray());
+
         return new Paginator($users, $perPage, $currentPage);
     }
 }
 ```
 
-# 分页器方法
+# Paginator Methods
 
-## 获取当前页数
+## Get current page number
 
 ```php
 <?php
 $currentPage = $paginator->currentPage();
 ```
 
-## 获取当前页的条数
+## Get item count in the current page
 
 ```php
 <?php
 $count = $paginator->count();
 ```
 
-## 获取当前页中第一条数据的编号
+## Get the first item in the current page
 
 ```php
 <?php
 $firstItem = $paginator->firstItem();
 ```
 
-## 获取当前页中最后一条数据的编号
+## Get the last item in the current page
 
 ```php
 <?php
 $lastItem = $paginator->lastItem();
 ```
 
-## 获取是否还有更多的分页
+## Whether there is more page or not
 
 ```php
 <?php
@@ -81,20 +88,37 @@ if ($paginator->hasMorePages()) {
 }
 ```
 
-## 获取上一页和下一页的 URL
+## Get URL of the corresponding page
 
 ```php
 <?php
-// 下一页的 URL
+// URL of the next page
 $nextPageUrl = $paginator->nextPageUrl();
-// 上一页的 URL
+// URL of the previous page
 $previousPageUrl = $paginator->previousPageUrl();
+// URL of the $page
+$url = $paginator->url($page);
 ```
 
-## 获取指定页数的 URL
+## On the first page or not
 
 ```php
 <?php
-// 获取指定 $page 页数的 URL
-$url = $paginator->url($page);
+$onFirstPage = $paginator->onFirstPage();
+```
+
+## Get item count per page
+
+```php
+<?php
+$perPage = $paginator->perPage();
+```
+
+## Total count
+
+> No such method in Hyperf\Paginator\Paginator, you need to use Hyperf\Paginator\LengthAwarePaginator
+
+```php
+<?php
+$total = $paginator->total();
 ```
