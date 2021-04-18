@@ -97,7 +97,7 @@ class RateLimitController
     {
         // $seconds Token generation time interval, in seconds
         // $proceedingJoinPoint The entry point for the execution of this request
-        // You can handle it by yourself or continue its execution by calling `$proceedingJoinPoint->process()`
+        // You can handle it by yourself, or continue its execution by calling `$proceedingJoinPoint->process()`
         return $proceedingJoinPoint->process();
     }
 }
