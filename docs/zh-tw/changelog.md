@@ -1,13 +1,19 @@
 # 版本更新記錄
 
+# v2.1.15 - 2021-04-19
+
+## 新增
+
+- [#3484](https://github.com/hyperf/hyperf/pull/3484) 新增 `ORM` 方法 `withMax()` `withMin()` `withSum()` 和 `withAvg()`.
+
 # v2.1.14 - 2021-04-12
 
-## Fixed
+## 修復
 
 - [#3465](https://github.com/hyperf/hyperf/pull/3465) 修復協程風格下，`WebSocket` 服務不支援配置多個埠的問題。
 - [#3467](https://github.com/hyperf/hyperf/pull/3467) 修復協程風格下，`WebSocket` 服務無法正常釋放連線池的問題。
 
-## Added
+## 新增
 
 - [#3472](https://github.com/hyperf/hyperf/pull/3472) 新增方法 `Sender::getResponse()`，可以在協程風格的 `WebSocket` 服務裡，獲得與 `fd` 一一對應的 `Response` 物件。
 
