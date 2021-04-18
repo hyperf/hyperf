@@ -1,5 +1,11 @@
 # 版本更新记录
 
+# v2.1.15 - 2021-04-19
+
+## 新增
+
+- [#3484](https://github.com/hyperf/hyperf/pull/3484) 新增 `ORM` 方法 `withMax()` `withMin()` `withSum()` 和 `withAvg()`.
+
 # v2.1.14 - 2021-04-12
 
 ## 修复
