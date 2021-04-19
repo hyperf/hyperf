@@ -16,7 +16,8 @@ jobs:
         php-version: [ '7.3', '7.4' ]
         mysql-version: [ '5.7', '8.0' ]
         sw-version: [ 'v4.5.11', 'v4.6.5', 'master' ]
-      max-parallel: 8
+      max-parallel: 12
+      fail-fast: false
     env:
       SW_VERSION: ${{ matrix.sw-version }}
       YASD_VERSION: 'v0.3.7'
