@@ -1,6 +1,10 @@
 name: PHPUnit for Hyperf
 
-on: [ push, pull_request ]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron:  '0 10 * * *'
 
 jobs:
   ci:
@@ -11,7 +15,7 @@ jobs:
         os: [ ubuntu-latest ]
         php-version: [ '7.3', '7.4' ]
         mysql-version: [ '5.7', '8.0' ]
-        sw-version: [ '4.5.11', '4.6.4' ]
+        sw-version: [ '4.5.11', '4.6.5' ]
       max-parallel: 8
     env:
       SW_VERSION: ${{ matrix.sw-version }}
