@@ -1,18 +1,23 @@
 name: PHPUnit for Hyperf
 
-on: [ push, pull_request ]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 10 * * *'
 
 jobs:
   ci:
-    name: Test on PHP${{ matrix.php-version }} SW${{ matrix.sw-version }} MySQL${{ matrix.mysql-version }}
+    name: Test on PHP${{ matrix.php-version }} Swoole-${{ matrix.sw-version }} MySQL${{ matrix.mysql-version }}
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
         os: [ ubuntu-latest ]
         php-version: [ '7.3', '7.4' ]
         mysql-version: [ '5.7', '8.0' ]
-        sw-version: [ '4.5.11', '4.6.4' ]
-      max-parallel: 8
+        sw-version: [ 'v4.5.11', 'v4.6.5', 'master' ]
+      max-parallel: 12
+      fail-fast: false
     env:
       SW_VERSION: ${{ matrix.sw-version }}
       YASD_VERSION: 'v0.3.7'
@@ -31,7 +36,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install libcurl4-openssl-dev
-          wget https://github.com/swoole/swoole-src/archive/v${SW_VERSION}.tar.gz -O swoole.tar.gz
+          wget https://github.com/swoole/swoole-src/archive/${SW_VERSION}.tar.gz -O swoole.tar.gz
           mkdir -p swoole
           tar -xf swoole.tar.gz -C swoole --strip-components=1
           rm swoole.tar.gz

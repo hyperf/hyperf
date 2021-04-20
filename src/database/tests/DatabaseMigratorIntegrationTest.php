@@ -44,6 +44,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
         $dbConfig = [
             'driver' => 'mysql',
             'host' => '127.0.0.1',
+            'port' => 3306,
             'database' => 'hyperf',
             'username' => 'root',
             'password' => '',
@@ -110,7 +111,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Users Table'",
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci COMMENT='Users Table'",
         ];
 
         $this->assertTrue(in_array($sql, $asserts, true));
@@ -131,7 +132,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
   `created_at` timestamp NOT NULL,
   KEY `password_resets_email_index` (`email`),
   KEY `password_resets_token_index` (`token`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci',
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci',
         ];
         $this->assertTrue(in_array($sql, $asserts, true));
     }

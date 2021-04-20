@@ -98,7 +98,7 @@ class RateLimitController
     {
         // $seconds 下次生成Token 的間隔, 單位為秒
         // $proceedingJoinPoint 此次請求執行的切入點
-        // 可以通過呼叫 `$proceedingJoinPoint->process()` 繼續執行或者自行處理
+        // 可以通過呼叫 `$proceedingJoinPoint->process()` 繼續完成執行，或者自行處理
         return $proceedingJoinPoint->process();
     }
 }
