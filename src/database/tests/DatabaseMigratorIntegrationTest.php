@@ -44,6 +44,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
         $dbConfig = [
             'driver' => 'mysql',
             'host' => '127.0.0.1',
+            'port' => 3306,
             'database' => 'hyperf',
             'username' => 'root',
             'password' => '',
