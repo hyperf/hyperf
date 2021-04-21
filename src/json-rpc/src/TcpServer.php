@@ -116,12 +116,12 @@ class TcpServer extends Server
         return $response->withAttribute('fd', $fd)->withAttribute('server', $server);
     }
 
-    protected function buildRequest(int $fd, int $fromId, string $data): ServerRequestInterface
+    protected function buildRequest(int $fd, int $reactorId, string $data): ServerRequestInterface
     {
-        return $this->buildJsonRpcRequest($fd, $fromId, $this->packer->unpack($data) ?? ['jsonrpc' => '2.0']);
+        return $this->buildJsonRpcRequest($fd, $reactorId, $this->packer->unpack($data) ?? ['jsonrpc' => '2.0']);
     }
 
-    protected function buildJsonRpcRequest(int $fd, int $fromId, array $data)
+    protected function buildJsonRpcRequest(int $fd, int $reactorId, array $data)
     {
         if (! isset($data['method'])) {
             $data['method'] = '';
@@ -134,7 +134,7 @@ class TcpServer extends Server
 
         $uri = (new Uri())->withPath($data['method'])->withHost($port->host)->withPort($port->port);
         $request = (new Psr7Request('POST', $uri))->withAttribute('fd', $fd)
-            ->withAttribute('fromId', $fromId)
+            ->withAttribute('fromId', $reactorId)
             ->withAttribute('data', $data)
             ->withAttribute('request_id', $data['id'] ?? null)
             ->withParsedBody($data['params'] ?? '');
