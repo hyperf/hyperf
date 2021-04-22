@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#3510](https://github.com/hyperf/hyperf/pull/3510) Fixed bug that consult couldn't force a node into the left state.
+- [#3513](https://github.com/hyperf/hyperf/pull/3513) Fixed nats connection closed accidentally when socket timeout is smaller than max idle time.
 
 # v2.1.15 - 2021-04-19
 
