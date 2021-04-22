@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc;
 
 use GuzzleHttp\Client;
@@ -56,10 +57,10 @@ class JsonRpcHttpTransporter implements TransporterInterface
     public function __construct(ClientFactory $clientFactory, array $config = [])
     {
         $this->clientFactory = $clientFactory;
-        if (! isset($config['recv_timeout'])) {
+        if (!isset($config['recv_timeout'])) {
             $config['recv_timeout'] = $this->recvTimeout;
         }
-        if (! isset($config['connect_timeout'])) {
+        if (!isset($config['connect_timeout'])) {
             $config['connect_timeout'] = $this->connectTimeout;
         }
         $this->clientOptions = $config;
@@ -74,22 +75,27 @@ class JsonRpcHttpTransporter implements TransporterInterface
             if (property_exists($node, 'schema')) {
                 $schema = $node->schema;
             }
-            if (! in_array($schema, ['http', 'https'])) {
+            if (!in_array($schema, ['http', 'https'])) {
                 $schema = 'http';
             }
             $schema .= '://';
             return $schema;
         });
         $url = $schema . $uri;
-        $response = $this->getClient()->post($url, [
+        $options = [
             RequestOptions::HEADERS => [
                 'Content-Type' => 'application/json',
             ],
             RequestOptions::HTTP_ERRORS => false,
             RequestOptions::BODY => $data,
-        ]);
+        ];
+        $token = config('consul.token', '');
+        if (!empty($token)) {
+            $options[RequestOptions::HEADERS]['X-Consul-Token'] = $token;
+        }
+        $response = $this->getClient()->post($url, $options);
         if ($response->getStatusCode() === 200) {
-            return (string) $response->getBody();
+            return (string)$response->getBody();
         }
         $this->loadBalancer->removeNode($node);
 
