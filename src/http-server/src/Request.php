@@ -593,6 +593,13 @@ class Request implements RequestInterface
         return Context::get($this->contextkeys['parsedData']);
     }
 
+    public function clearStoredParsedData()
+    {
+        if (Context::has($this->contextkeys['parsedData'])) {
+            Context::destroy($this->contextkeys['parsedData']);
+        }
+    }
+
     protected function storeRequestProperty(string $key, $value): self
     {
         Context::set(__CLASS__ . '.properties.' . $key, value($value));
