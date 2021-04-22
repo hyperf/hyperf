@@ -503,6 +503,13 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
+    public function clearStoredParsedData(): void
+    {
+        if (Context::has($this->contextkeys['parsedData'])) {
+            Context::set($this->contextkeys['parsedData'], null);
+        }
+    }
+
     /**
      * Check that the given file is a valid SplFileInfo instance.
      * @param mixed $file
@@ -591,13 +598,6 @@ class Request implements RequestInterface
             return Context::set($this->contextkeys['parsedData'], call($callback));
         }
         return Context::get($this->contextkeys['parsedData']);
-    }
-
-    public function clearStoredParsedData()
-    {
-        if (Context::has($this->contextkeys['parsedData'])) {
-            Context::destroy($this->contextkeys['parsedData']);
-        }
     }
 
     protected function storeRequestProperty(string $key, $value): self
