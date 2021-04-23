@@ -29,15 +29,20 @@ class PropertyHandlerManager
     }
 
     /**
-     * @return callable[]
+     * @return callable[]|null
      */
-    public static function get(string $annotation): array
+    public static function get(string $annotation): ?array
     {
-        return static::$container[$annotation];
+        return static::$container[$annotation] ?? null;
     }
 
     public static function all(): array
     {
         return static::$container;
+    }
+
+    public static function isEmpty(): bool
+    {
+        return empty(static::all());
     }
 }
