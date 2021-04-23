@@ -34,11 +34,7 @@ trait PropertyHandlerTrait
         if (is_array($traitNames)) {
             foreach ($traitNames ?? [] as $traitName) {
                 $traitProperties = ReflectionManager::reflectPropertyNames($traitName);
-                $traitProperties = array_diff($traitProperties, $handled);
-                $handled = array_merge(
-                    $handled,
-                    $this->__handle($className, $traitName, $traitProperties)
-                );
+                $handled = $this->__diffHandle($className, $traitName, $traitProperties, $handled);
             }
         }
 
@@ -56,12 +52,14 @@ trait PropertyHandlerTrait
             $parentClassProperties = array_filter($parentClassProperties, static function ($property) use ($reflectionClass) {
                 return $reflectionClass->hasProperty($property);
             });
-            $parentClassProperties = array_diff($parentClassProperties, $handled);
-            $handled = array_merge(
-                $handled,
-                $this->__handle($className, $parentReflectionClass->getName(), $parentClassProperties)
-            );
+            $handled = $this->__diffHandle($className, $parentReflectionClass->getName(), $parentClassProperties, $handled);
         }
+    }
+
+    private function __diffHandle(string $currentClassName, string $targetClassName, array $properties, array $excludeProperties): array
+    {
+        $properties = array_diff($properties, $excludeProperties);
+        return array_merge($excludeProperties, $this->__handle($currentClassName, $targetClassName, $properties));
     }
 
     protected function __handle(string $currentClassName, string $targetClassName, array $properties): array
