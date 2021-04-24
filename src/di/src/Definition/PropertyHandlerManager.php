@@ -29,7 +29,7 @@ class PropertyHandlerManager
     }
 
     /**
-     * @return callable[]|null
+     * @return null|callable[]
      */
     public static function get(string $annotation): ?array
     {
