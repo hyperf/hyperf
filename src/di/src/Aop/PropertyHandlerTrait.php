@@ -19,18 +19,17 @@ trait PropertyHandlerTrait
 {
     protected function __handlePropertyHandler(string $className)
     {
-        $propertyHandlers = PropertyHandlerManager::all();
-        if (! $propertyHandlers) {
+        if (PropertyHandlerManager::isEmpty()) {
             return;
         }
         $reflectionClass = ReflectionManager::reflectClass($className);
         $properties = ReflectionManager::reflectPropertyNames($className);
 
         // Inject the properties of current class
-        $handled = $this->__handle($className, $className, $propertyHandlers, $properties);
+        $handled = $this->__handle($className, $className, $properties);
 
         // Inject the properties of traits.
-        // Because the property annocations of trait couldn't be collected by class.
+        // Because the property annotations of trait couldn't be collected by class.
         $traitNames = $reflectionClass->getTraitNames();
         if (is_array($traitNames)) {
             foreach ($traitNames ?? [] as $traitName) {
@@ -38,7 +37,7 @@ trait PropertyHandlerTrait
                 $traitProperties = array_diff($traitProperties, $handled);
                 $handled = array_merge(
                     $handled,
-                    $this->__handle($className, $traitName, $propertyHandlers, $traitProperties)
+                    $this->__handle($className, $traitName, $traitProperties)
                 );
             }
         }
@@ -60,12 +59,12 @@ trait PropertyHandlerTrait
             $parentClassProperties = array_diff($parentClassProperties, $handled);
             $handled = array_merge(
                 $handled,
-                $this->__handle($className, $parentReflectionClass->getName(), $propertyHandlers, $parentClassProperties)
+                $this->__handle($className, $parentReflectionClass->getName(), $parentClassProperties)
             );
         }
     }
 
-    protected function __handle(string $currentClassName, string $targetClassName, array $propertyHandlers, array $properties)
+    protected function __handle(string $currentClassName, string $targetClassName, array $properties): array
     {
         $handled = [];
         foreach ($properties as $propertyName) {
@@ -74,8 +73,7 @@ trait PropertyHandlerTrait
                 continue;
             }
             foreach ($propertyMetadata as $annotationName => $annotation) {
-                if (isset($propertyHandlers[$annotationName])) {
-                    $callbacks = $propertyHandlers[$annotationName];
+                if ($callbacks = PropertyHandlerManager::get($annotationName)) {
                     foreach ($callbacks as $callback) {
                         call($callback, [$this, $currentClassName, $targetClassName, $propertyName, $annotation]);
                     }
