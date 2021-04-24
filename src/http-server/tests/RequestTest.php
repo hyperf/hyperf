@@ -94,4 +94,21 @@ class RequestTest extends TestCase
         $psrRequest = new Request();
         $this->assertSame(['id' => 1, 'name' => 'Hyperf'], $psrRequest->inputs(['id', 'name'], ['name' => 'Hyperf']));
     }
+
+    public function testClearStoredParsedData()
+    {
+        $psrRequest = new \Hyperf\HttpMessage\Server\Request('GET', '/');
+        $psrRequest = $psrRequest->withParsedBody(['id' => 1]);
+        Context::set(ServerRequestInterface::class, $psrRequest);
+
+        $request = new Request();
+        $this->assertSame(['id' => 1], $request->all());
+
+        $psrRequest = $psrRequest->withParsedBody(['id' => 1, 'name' => 'hyperf']);
+        Context::set(ServerRequestInterface::class, $psrRequest);
+        $this->assertSame(['id' => 1], $request->all());
+
+        $request->clearStoredParsedData();
+        $this->assertSame(['id' => 1, 'name' => 'hyperf'], $request->all());
+    }
 }

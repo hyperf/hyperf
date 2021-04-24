@@ -1,22 +1,22 @@
-# 请求对象
+# Request object
 
-`请求对象(Request)` 是完全基于 [PSR-7](https://www.php-fig.org/psr/psr-7/) 标准实现的，由 [hyperf/http-message](https://github.com/hyperf-cloud/http-message) 组件提供实现支持。
+`Request object (Request)` is completely implemented based on the [PSR-7](https://www.php-fig.org/psr/psr-7/) standard and is implemented by [hyperf/http-message](https://github.com/hyperf/http-message).
 
-> 注意 [PSR-7](https://www.php-fig.org/psr/psr-7/) 标准为 `请求(Request)` 进行了 `immutable 机制` 的设计，所有以 `with` 开头的方法的返回值都是一个新对象，不会修改原对象的值
+> Note that the [PSR-7](https://www.php-fig.org/psr/psr-7/) standard `Request (Request)` is designed with `immutable mechanism`, all methods starting with the `with` prefix return a new object and will not modify the value of the original object
 
 ## Installation
 
-该组件完全独立，适用于任何一个框架项目。
+This component is completely independent and suitable for any framework project.
 
 ```bash
 composer require hyperf/http-message
 ```
 
-> 如用于其它框架项目则仅支持 PSR-7 提供的 API，具体可直接查阅 PSR-7 的相关规范，该文档所描述的使用方式仅限于使用 Hyperf 时的用法。
+> If used in other framework projects, only the API provided by PSR-7 is supported. For details, you can refer directly to the relevant specifications of PSR-7. The usage described in this document is limited to usage when using Hyperf.
 
-## 获得请求对象
+## Get the request object
 
-可以通过容器注入 `Hyperf\HttpServer\Contract\RequestInterface` 获得 对应的 `Hyperf\HttpServer\Request`，实际注入的对象为一个代理对象，代理的对象为每个请求的 `PSR-7 请求对象(Request)`，也就意味着仅可在 `onRequest` 声明周期内可获得此对象，下面是一个获取示例：
+You can inject `Hyperf\HttpServer\Contract\RequestInterface` through the container to obtain the corresponding `Hyperf\HttpServer\Request`. The actual injected object is a proxy object implementing `PSR-7 request object (Request)` for each request, which means that this object can only be obtained during the life cycle of `onRequest`. The following is an example of how to obtain the request object:
 
 ```php
 declare(strict_types=1);
@@ -38,23 +38,23 @@ class IndexController
 }
 ```
 
-### 依赖注入与参数
+### Dependency injection and parameters
 
-如果希望通过控制器方法参数获取路由参数，可以在依赖项之后列出对应的参数，框架会自动将对应的参数注入到方法参数内，比如您的路由是这样定义的：
+If you want to obtain routing parameters through controller method parameters, you can list the corresponding parameters after the dependencies, and the framework will automatically inject the corresponding parameters into the method parameters. For example, if your route is defined as follows:
 
 ```php
-// 注解方式
+// Route definition using annotation method
 /**
  * @GetMapping(path="/user/{id:\d+}")
  */
- 
-// 配置方式
+
+// Route definition using configuration method
 use Hyperf\HttpServer\Router\Router;
 
-Router::addRoute(['GET', 'HEAD'], '/user/{id:\d+}', [\App\Controller\IndexController::class, 'user']);
+Router::addRoute(['GET','HEAD'], '/user/{id:\d+}', [\App\Controller\IndexController::class, 'user']);
 ```
 
-则可以通过在方法参数上声明 `$id` 参数获得 `Query` 参数 `id`，如下所示：
+Then you can get the `query` parameter `id` by declaring the `$id` parameter on the method parameter, as shown below:
 
 ```php
 declare(strict_types=1);
@@ -76,19 +76,46 @@ class IndexController
 }
 ```
 
-### 请求路径 & 方法
+In addition to obtaining route parameters through dependency injection, you can also obtain route parameters through the `route` method of the request object, as shown below:
 
-`Hyperf\HttpServer\Contract\RequestInterface` 除了使用 [PSR-7](https://www.php-fig.org/psr/psr-7/) 标准定义的 `APIs` 之外，还提供了多种方法来检查请求，下面我们提供一些方法的示例：
+```php
+declare(strict_types=1);
 
-#### 获取请求路径
+namespace App\Controller;
 
-`path()` 方法返回请求的路径信息。也就是说，如果传入的请求的目标地址是 `http://domain.com/foo/bar?baz=1`，那么 `path()` 将会返回 `foo/bar`：
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Annotation\AutoController;
+
+/**
+ * @AutoController()
+ */
+class IndexController
+{
+    public function info(RequestInterface $request)
+    {
+        // Returns the route parameter id if defined or null if the value is missing
+        $id = $request->route('id');
+
+        // Returns the route parameter id if defined or 0 if the value is missing
+        $id = $request->route('id', 0);
+        // ...
+    }
+}
+```
+
+### Request path & method
+
+In addition to using the `APIs` defined by the [PSR-7](https://www.php-fig.org/psr/psr-7/) standard `Hyperf\HttpServer\Contract\RequestInterface`, the request object also provides a variety of methods for accessing request data. Below is a list of some examples of methods:
+
+#### Get the request path
+
+The `path()` method returns the requested path information. In other words, if the destination address of the incoming request is `http://domain.com/foo/bar?baz=1`, then `path()` will return `foo/bar`:
 
 ```php
 $uri = $request->path();
 ```
 
-`is(...$patterns)` 方法可以验证传入的请求路径和指定规则是否匹配。使用这个方法的时，你也可以传递一个 `*` 字符作为通配符：
+The `is(...$patterns)` method can verify whether the incoming request path matches the specified rule. When using this method, you can also pass a `*` character as a wildcard:
 
 ```php
 if ($request->is('user/*')) {
@@ -96,21 +123,21 @@ if ($request->is('user/*')) {
 }
 ```
 
-#### 获取请求的 URL
+#### Get the requested URL
 
-你可以使用 `url()` 或 `fullUrl()` 方法去获取传入请求的完整 `URL`。`url()` 方法返回不带有 `Query 参数` 的 `URL`，而 `fullUrl()` 方法的返回值包含 `Query 参数` ：
+You can use the `url()` or `fullUrl()` method to get the full `URL` of the incoming request. The `url()` method returns the `URL` without the `query parameters`, and the return value of the `fullUrl()` method contains the `query parameters`:
 
 ```php
-// 没有查询参数
+// No query parameters
 $url = $request->url();
 
-// 带上查询参数
+// With query parameters
 $url = $request->fullUrl();
 ```
 
-#### 获取请求方法
+#### Get request method
 
-`getMethod()` 方法将返回 `HTTP` 的请求方法。你也可以使用 `isMethod(string $method)` 方法去验证 `HTTP` 的请求方法与指定规则是否匹配：
+The `getMethod()` method will return the request method of `HTTP`. You can also use the `isMethod(string $method)` method to verify whether the request method of `HTTP` matches the specified rules:
 
 ```php
 $method = $request->getMethod();
@@ -120,117 +147,124 @@ if ($request->isMethod('post')) {
 }
 ```
 
-### PSR-7 请求及方法
+### PSR-7 request and method
 
-[hyperf/http-message](https://github.com/hyperf-cloud/http-message) 组件本身是一个实现了 [PSR-7](https://www.php-fig.org/psr/psr-7/) 标准的组件，相关方法都可以通过注入的 `请求对象(Request)` 来调用。   
-如果注入时声明为 [PSR-7](https://www.php-fig.org/psr/psr-7/) 标准的 `Psr\Http\Message\ServerRequestInterface` 接口，则框架会自动转换为等同于 `Hyperf\HttpServer\Contract\RequestInterface` 的 `Hyperf\HttpServer\Request` 对象。   
+The message component [hyperf/http-message](https://github.com/hyperf/http-message) itself is an implementation of [PSR-7](https://www.php-fig.org/psr/psr-7/) standard components and the interface methods can be called through the injected request object (Request).
+If the request is declared as `Psr\Http\Message\ServerRequestInterface` [PSR-7](https://www.php-fig.org/psr/psr-7/) standard  interface during injection, the framework will automatically convert to the equivalent `Hyperf\HttpServer\Request` object that implements `Hyperf\HttpServer\Contract\RequestInterface`.
 
-> 建议使用 `Hyperf\HttpServer\Contract\RequestInterface` 来注入，这样可获得 IDE 对专属方法的自动完成提醒支持。
+> It is recommended to use `Hyperf\HttpServer\Contract\RequestInterface` for injection so that you can get the IDE's auto-completion reminder support for exclusive methods.
 
-## 输入预处理 & 规范化
+## Input preprocessing & normalization
 
-## 获取输入
+## Get input
 
-### 获取所有输入
+### Get all input
 
-您可以使用 `all()` 方法以 `数组` 形式获取到所有输入数据:
+You can use the `all()` method to get all the input data in the form of an `array`:
 
 ```php
 $all = $request->all();
 ```
 
-### 获取指定输入值
+### Get the specified input value
 
-通过 `input(string $key, $default = null)` 和 `inputs(array $keys, $default = null): array` 获取 `一个` 或 `多个` 任意形式的输入值：
+Use `input(string $key, $default = null)` and `inputs(array $keys, $default = null): array` to obtain `one` or `multiple` input values of any form:
 
 ```php
-// 存在则返回，不存在则返回 null
+// Returns the input value if it exists or null if it doesn't exist
 $name = $request->input('name');
-// 存在则返回，不存在则返回默认值 Hyperf
-$name = $request->input('name', 'Hyperf');
+
+// Return the input value if it exists or the default value of 'Hyperf' if it doesn't exist
+$name = $request->input('name','Hyperf');
 ```
 
-如果传输表单数据中包含「数组」形式的数据，那么可以使用「点」语法来获取数组：
+If the transmission form data contains data in the form of an array, you can use the dot syntax to get a naster value from the array:
 
 ```php
 $name = $request->input('products.0.name');
 
 $names = $request->input('products.*.name');
 ```
-### 从查询字符串获取输入
+### Get input from query string
 
-使用 `input`, `inputs` 方法可以从整个请求中获取输入数据（包括 `Query 参数`），而 `query(?string $key = null, $default = null)` 方法可以只从查询字符串中获取输入数据：
+Use the `input` or `inputs` method to get the input data from the entire request (including the `query parameters`), and the `query(?string $key = null, $default = null)` method to get input only from the query string:
 
 ```php
-// 存在则返回，不存在则返回 null
+// Return the query parameter if it exists, return null if it doesn't exist
 $name = $request->query('name');
-// 存在则返回，不存在则返回默认值 Hyperf
-$name = $request->query('name', 'Hyperf');
-// 不传递参数则以关联数组的形式返回所有 Query 参数
+
+// Return the query parameter if it exists, return default value of 'Hyperf' if it doesn't exist
+$name = $request->query('name','Hyperf');
+
+// If no parameters are passed, all query parameters are returned as an associative array
 $name = $request->query();
 ```
 
-### 获取 `JSON` 输入信息
+### Get `JSON` input information
 
-如果请求的 `Body` 数据格式是 `JSON`，则只要 `请求对象(Request)` 的 `Content-Type` `Header值` 正确设置为 `application/json`，就可以通过  `input(string $key, $default = null)` 方法访问 `JSON` 数据，你甚至可以使用 「点」语法来读取 `JSON` 数组：
+If the request `body` data format is `JSON`, as long as the `Content-Type` header value of the `Request object (Request)` is set correctly to `application/json`, you can use the `input(string $key , $default = null)` method to access the `JSON` data and you can even use the dot syntax to read the `JSON` array:
 
 ```php
-// 存在则返回，不存在则返回 null
+// Return value or null if it does not exist
 $name = $request->input('user.name');
-// 存在则返回，不存在则返回默认值 Hyperf
-$name = $request->input('user.name', 'Hyperf');
-// 不传递参数则以数组形式返回所有 Json 数据
-$name = $request->input();
+
+// Return value or default value of 'Hyperf' if it does not exist
+$name = $request->input('user.name','Hyperf');
+
+// Return all Json data as an array
+$name = $request->all();
 ```
 
-### 确定是否存在输入值
+### Determine if input value exists
 
-要判断请求是否存在某个值，可以使用 `has($keys)` 方法。如果请求中存在该值则返回 `true`，不存在则返回 `false`，`$keys` 可以传递一个字符串，或传递一个数组包含多个字符串，只有全部存在才会返回 `true`：
+To determine whether a value exists in the request, you can use the `has($keys)` method. If the value exists in the request, it will return `true`, if it does not exist, it will return `false`. The first parameter can be either a string or an array containing multiple strings. In the latter case, the method will return `true` only if all of the keys exist:
 
 ```php
-// 仅判断单个值
+// Only judge a single value
 if ($request->has('name')) {
     // ...
 }
-// 同时判断多个值
-if ($request->has(['name', 'email'])) {
+
+// Judge multiple values at the same time
+if ($request->has(['name','email'])) {
     // ...
 }
 ```
 
 ## Cookies
 
-### 从请求中获取 Cookies
+### Get Cookies from the request
 
-使用 `getCookieParams()` 方法从请求中获取所有的 `Cookies`，结果会返回一个关联数组。
+Use the `getCookieParams()` method to get all the `Cookies` from the request as an associative array.
 
 ```php
 $cookies = $request->getCookieParams();
 ```
 
-如果希望获取某一个 `Cookie` 值，可通过 `cookie(string $key, $default = null)` 方法来获取对应的值：
+You can use the `cookie(string $key, $default = null)` method to get the value of the corresponding cookie:
 
  ```php
-// 存在则返回，不存在则返回 null
+// Return value if the cookie exists or return null if it doesn't exist
 $name = $request->cookie('name');
-// 存在则返回，不存在则返回默认值 Hyperf
-$name = $request->cookie('name', 'Hyperf');
+
+// Return value if the cookie exists or return a default value of 'Hyperf' if it doesn't exist
+$name = $request->cookie('name','Hyperf');
  ```
 
-## 文件
+## File
 
-### 获取上传文件
+### Get uploaded files
 
-你可以使用 `file(string $key, $default): ?Hyperf\HttpMessage\Upload\UploadedFile` 方法从请求中获取上传的文件对象。如果上传的文件存在则该方法返回一个 `Hyperf\HttpMessage\Upload\UploadedFile` 类的实例，该类继承了 `PHP` 的 `SplFileInfo` 类的同时也提供了各种与文件交互的方法：
+You can use the `file(string $key, $default): ?Hyperf\HttpMessage\Upload\UploadedFile` method to get the uploaded file object from the request. If the uploaded file exists, this method returns an instance of `Hyperf\HttpMessage\Upload\UploadedFile` class, which inherits the `SplFileInfo` class of `PHP` and also provides various methods for interacting with the file:
 
 ```php
-// 存在则返回一个 Hyperf\HttpMessage\Upload\UploadedFile 对象，不存在则返回 null
+// Returns a Hyperf\HttpMessage\Upload\UploadedFile object if the file exists, or null if it does not exist
 $file = $request->file('photo');
 ```
 
-### 检查文件是否存在
+### Check if the file exists
 
-您可以使用 `hasFile(string $key): bool` 方法确认请求中是否存在文件：
+You can use the `hasFile(string $key): bool` method to confirm whether there is a file in the request:
 
 ```php
 if ($request->hasFile('photo')) {
@@ -238,9 +272,9 @@ if ($request->hasFile('photo')) {
 }
 ```
 
-### 验证成功上传
+### Verify successful upload
 
-除了检查上传的文件是否存在外，您也可以通过 `isValid(): bool` 方法验证上传的文件是否有效：
+In addition to checking whether the uploaded file exists, you can also verify whether the uploaded file is valid through the `isValid(): bool` method:
 
 ```php
 if ($request->file('photo')->isValid()) {
@@ -248,27 +282,27 @@ if ($request->file('photo')->isValid()) {
 }
 ```
 
-### 文件路径 & 扩展名
+### File path & extension
 
-`UploadedFile` 类还包含访问文件的完整路径及其扩展名方法。`getExtension()` 方法会根据文件内容判断文件的扩展名。该扩展名可能会和客户端提供的扩展名不同：
+The `UploadedFile` class also contains methods for accessing the full path of the file and its extension. The `getExtension()` method will determine the extension of the file based on the content of the file. The extension may be different from the extension provided by the client:
 
 ```php
-// 该路径为上传文件的临时路径
+// The path is the temporary path of the uploaded file
 $path = $request->file('photo')->getPath();
 
-// 由于 Swoole 上传文件的 tmp_name 并没有保持文件原名，所以这个方法已重写为获取原文件名的后缀名
+// Since the tmp_name of the uploaded file by Swoole does not retain the original file name, this method has been rewritten to obtain the suffix of the original file name
 $extension = $request->file('photo')->getExtension();
 ```
 
-### 存储上传文件
+### Store uploaded files
 
-上传的文件在未手动储存之前，都是存在一个临时位置上的，如果您没有对该文件进行储存处理，则在请求结束后会从临时位置上移除，所以我们可能需要对文件进行持久化储存处理，通过 `moveTo(string $targetPath): void` 将临时文件移动到 `$targetPath` 位置持久化储存，代码示例如下：
+The uploaded file is stored in a temporary location before it is manually stored. If you do not store the file, it will be removed from the temporary location after the request is completed. Use `moveTo(string $targetPath): void` to move temporary files to the location of `$targetPath` for persistent storage. The code example is as follows:
 
 ```php
 $file = $request->file('photo');
 $file->moveTo('/foo/bar.jpg');
 
-// 通过 isMoved(): bool 方法判断方法是否已移动
+// Determine whether the method has moved through the isMoved(): bool method
 if ($file->isMoved()) {
     // ...
 }
