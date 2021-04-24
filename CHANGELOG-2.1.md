@@ -9,6 +9,10 @@
 
 - [#3514](https://github.com/hyperf/hyperf/pull/3514) Added method `Hyperf\HttpServer\Request::clearStoredParsedData()`.
 
+## Optimized
+
+- [#3517](https://github.com/hyperf/hyperf/pull/3517) Optimized code for `Hyperf\Di\Aop\PropertyHandlerTrait`.
+
 # v2.1.15 - 2021-04-19
 
 ## Added
