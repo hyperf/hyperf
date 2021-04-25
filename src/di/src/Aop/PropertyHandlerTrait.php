@@ -30,17 +30,22 @@ trait PropertyHandlerTrait
 
         // Inject the properties of traits.
         // Because the property annotations of trait couldn't be collected by class.
-        $traitNames = $reflectionClass->getTraitNames();
-        if (is_array($traitNames)) {
-            foreach ($traitNames ?? [] as $traitName) {
-                $traitProperties = ReflectionManager::reflectPropertyNames($traitName);
+        $recursiveTrait = function (\ReflectionClass $reflectionClass, array $handled) use (&$recursiveTrait, $className) {
+            foreach ($reflectionClass->getTraits() ?? [] as $reflectionTrait) {
+                if (in_array($reflectionTrait->getName(), [ProxyTrait::class, PropertyHandlerTrait::class])) {
+                    continue;
+                }
+                $traitProperties = ReflectionManager::reflectPropertyNames($reflectionTrait->getName());
                 $traitProperties = array_diff($traitProperties, $handled);
                 $handled = array_merge(
                     $handled,
-                    $this->__handle($className, $traitName, $traitProperties)
+                    $this->__handle($className, $reflectionTrait->getName(), $traitProperties)
                 );
+                $handled = $recursiveTrait($reflectionTrait, $handled);
             }
-        }
+            return $handled;
+        };
+        $handled = $recursiveTrait($reflectionClass, $handled);
 
         // Inject the properties of parent class.
         // It can be used to deal with parent classes whose subclasses have constructor function, but don't execute `parent::__construct()`.
