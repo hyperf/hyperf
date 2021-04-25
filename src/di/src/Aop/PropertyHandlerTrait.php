@@ -62,6 +62,9 @@ trait PropertyHandlerTrait
             }
             $traitProperties = ReflectionManager::reflectPropertyNames($reflectionTrait->getName());
             $traitProperties = array_diff($traitProperties, $handled);
+            if (! $traitProperties) {
+                continue;
+            }
             $handled = array_merge(
                 $handled,
                 $this->__handle($className, $reflectionTrait->getName(), $traitProperties)

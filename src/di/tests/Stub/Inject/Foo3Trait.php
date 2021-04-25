@@ -22,4 +22,9 @@ trait Foo3Trait
      * @var Bar
      */
     protected $bar;
+
+    public function getValue()
+    {
+        return 'foo3';
+    }
 }

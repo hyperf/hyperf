@@ -20,4 +20,9 @@ trait FooTrait
      * @var Bar
      */
     protected $foo;
+
+    public function getValue()
+    {
+        return 'foo';
+    }
 }

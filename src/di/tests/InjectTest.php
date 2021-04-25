@@ -202,6 +202,7 @@ class InjectTest extends TestCase
         $origin = new Origin7Class();
         $this->assertInstanceOf(Bar::class, $origin->getFoo());
         $this->assertInstanceOf(Bar::class, $origin->getBar());
+        $this->assertSame('foo3', $origin->getValue());
     }
 
     public function testInjectParentParent()

@@ -49,7 +49,6 @@ class ReflectionTest extends TestCase
     {
         $res = ReflectionManager::reflectPropertyNames(Foo3Trait::class);
 
-        $this->assertArrayHasKey('bar', $res);
-        $this->assertArrayHasKey('foo', $res);
+        $this->assertSame(['bar', 'foo'], $res);
     }
 }
