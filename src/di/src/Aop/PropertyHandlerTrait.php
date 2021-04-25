@@ -32,6 +32,7 @@ trait PropertyHandlerTrait
         // Because the property annotations of trait couldn't be collected by class.
         $traitNames = $reflectionClass->getTraitNames();
         if (is_array($traitNames)) {
+            $traitNames = array_diff($traitNames, [ProxyTrait::class, PropertyHandlerTrait::class]);
             foreach ($traitNames ?? [] as $traitName) {
                 $traitProperties = ReflectionManager::reflectPropertyNames($traitName);
                 $traitProperties = array_diff($traitProperties, $handled);
