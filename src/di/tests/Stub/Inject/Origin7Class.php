@@ -11,18 +11,17 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Di\Stub\Inject;
 
-use Hyperf\Di\Annotation\Inject;
-
-trait FooTrait
+class Origin7Class
 {
-    /**
-     * @Inject
-     * @var Bar
-     */
-    protected $foo;
+    use Foo3Trait;
 
-    public function getValue()
+    public function getFoo()
     {
-        return 'foo';
+        return $this->foo;
+    }
+
+    public function getBar()
+    {
+        return $this->bar;
     }
 }

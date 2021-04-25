@@ -30,17 +30,7 @@ trait PropertyHandlerTrait
 
         // Inject the properties of traits.
         // Because the property annotations of trait couldn't be collected by class.
-        $traitNames = $reflectionClass->getTraitNames();
-        if (is_array($traitNames)) {
-            foreach ($traitNames ?? [] as $traitName) {
-                $traitProperties = ReflectionManager::reflectPropertyNames($traitName);
-                $traitProperties = array_diff($traitProperties, $handled);
-                $handled = array_merge(
-                    $handled,
-                    $this->__handle($className, $traitName, $traitProperties)
-                );
-            }
-        }
+        $handled = $this->__handleTrait($reflectionClass, $handled, $className);
 
         // Inject the properties of parent class.
         // It can be used to deal with parent classes whose subclasses have constructor function, but don't execute `parent::__construct()`.
@@ -62,6 +52,26 @@ trait PropertyHandlerTrait
                 $this->__handle($className, $parentReflectionClass->getName(), $parentClassProperties)
             );
         }
+    }
+
+    protected function __handleTrait(\ReflectionClass $reflectionClass, array $handled, string $className): array
+    {
+        foreach ($reflectionClass->getTraits() ?? [] as $reflectionTrait) {
+            if (in_array($reflectionTrait->getName(), [ProxyTrait::class, PropertyHandlerTrait::class])) {
+                continue;
+            }
+            $traitProperties = ReflectionManager::reflectPropertyNames($reflectionTrait->getName());
+            $traitProperties = array_diff($traitProperties, $handled);
+            if (! $traitProperties) {
+                continue;
+            }
+            $handled = array_merge(
+                $handled,
+                $this->__handle($className, $reflectionTrait->getName(), $traitProperties)
+            );
+            $handled = $this->__handleTrait($reflectionTrait, $handled, $className);
+        }
+        return $handled;
     }
 
     protected function __handle(string $currentClassName, string $targetClassName, array $properties): array
