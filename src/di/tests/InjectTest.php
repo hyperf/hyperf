@@ -31,12 +31,14 @@ use HyperfTest\Di\Stub\EmptyVarValue;
 use HyperfTest\Di\Stub\Inject\Bar;
 use HyperfTest\Di\Stub\Inject\Foo;
 use HyperfTest\Di\Stub\Inject\Foo2Trait;
+use HyperfTest\Di\Stub\Inject\Foo3Trait;
 use HyperfTest\Di\Stub\Inject\FooTrait;
 use HyperfTest\Di\Stub\Inject\Origin2Class;
 use HyperfTest\Di\Stub\Inject\Origin3Class;
 use HyperfTest\Di\Stub\Inject\Origin4Class;
 use HyperfTest\Di\Stub\Inject\Origin5Class;
 use HyperfTest\Di\Stub\Inject\Origin6Class;
+use HyperfTest\Di\Stub\Inject\Origin7Class;
 use HyperfTest\Di\Stub\Inject\OriginClass;
 use HyperfTest\Di\Stub\Inject\Parent2Class;
 use HyperfTest\Di\Stub\Inject\Parent3Class;
@@ -176,6 +178,33 @@ class InjectTest extends TestCase
         $this->assertInstanceOf(Tar::class, $origin->getFoo());
     }
 
+    public function testInjectTraitNesting()
+    {
+        $this->getContainer();
+        $classes = [
+            FooTrait::class,
+            Foo3Trait::class,
+            Origin7Class::class,
+        ];
+
+        if (! is_dir($dir = BASE_PATH . '/runtime/container/proxy/')) {
+            mkdir($dir, 0777, true);
+        }
+
+        $ast = new Ast();
+        foreach ($classes as $class) {
+            $code = $ast->proxy($class);
+            $id = md5($class);
+            file_put_contents($file = $dir . $id . '.proxy.php', $code);
+            require_once $file;
+        }
+
+        $origin = new Origin7Class();
+        $this->assertInstanceOf(Bar::class, $origin->getFoo());
+        $this->assertInstanceOf(Bar::class, $origin->getBar());
+        $this->assertSame('foo3', $origin->getValue());
+    }
+
     public function testInjectParentParent()
     {
         $this->getContainer();
@@ -306,12 +335,14 @@ class InjectTest extends TestCase
             Origin2Class::class,
             Origin3Class::class,
             Foo2Trait::class,
+            Foo3Trait::class,
             Origin4Class::class,
             Origin5Class::class,
             Parent2Class::class,
             Parent3Class::class,
             Parent4Class::class,
             Origin6Class::class,
+            Origin7Class::class,
         ];
 
         foreach ($classes as $class) {

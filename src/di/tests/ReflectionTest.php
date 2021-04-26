@@ -13,6 +13,7 @@ namespace HyperfTest\Di;
 
 use Hyperf\Di\ReflectionManager;
 use HyperfTest\Di\Stub\Ast\Bar;
+use HyperfTest\Di\Stub\Inject\Foo3Trait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -42,5 +43,12 @@ class ReflectionTest extends TestCase
         foreach ($paramaters as $parameter) {
             $this->assertTrue($parameter->getType() instanceof \ReflectionNamedType);
         }
+    }
+
+    public function testReflectionPropertyForTraitUseTrait()
+    {
+        $res = ReflectionManager::reflectPropertyNames(Foo3Trait::class);
+
+        $this->assertSame(['bar', 'foo'], $res);
     }
 }

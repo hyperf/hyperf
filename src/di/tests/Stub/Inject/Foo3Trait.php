@@ -13,16 +13,18 @@ namespace HyperfTest\Di\Stub\Inject;
 
 use Hyperf\Di\Annotation\Inject;
 
-trait FooTrait
+trait Foo3Trait
 {
+    use FooTrait;
+
     /**
      * @Inject
      * @var Bar
      */
-    protected $foo;
+    protected $bar;
 
     public function getValue()
     {
-        return 'foo';
+        return 'foo3';
     }
 }

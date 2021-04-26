@@ -19,29 +19,18 @@ trait PropertyHandlerTrait
 {
     protected function __handlePropertyHandler(string $className)
     {
-        $propertyHandlers = PropertyHandlerManager::all();
-        if (! $propertyHandlers) {
+        if (PropertyHandlerManager::isEmpty()) {
             return;
         }
         $reflectionClass = ReflectionManager::reflectClass($className);
         $properties = ReflectionManager::reflectPropertyNames($className);
 
         // Inject the properties of current class
-        $handled = $this->__handle($className, $className, $propertyHandlers, $properties);
+        $handled = $this->__handle($className, $className, $properties);
 
         // Inject the properties of traits.
-        // Because the property annocations of trait couldn't be collected by class.
-        $traitNames = $reflectionClass->getTraitNames();
-        if (is_array($traitNames)) {
-            foreach ($traitNames ?? [] as $traitName) {
-                $traitProperties = ReflectionManager::reflectPropertyNames($traitName);
-                $traitProperties = array_diff($traitProperties, $handled);
-                $handled = array_merge(
-                    $handled,
-                    $this->__handle($className, $traitName, $propertyHandlers, $traitProperties)
-                );
-            }
-        }
+        // Because the property annotations of trait couldn't be collected by class.
+        $handled = $this->__handleTrait($reflectionClass, $handled, $className);
 
         // Inject the properties of parent class.
         // It can be used to deal with parent classes whose subclasses have constructor function, but don't execute `parent::__construct()`.
@@ -60,12 +49,32 @@ trait PropertyHandlerTrait
             $parentClassProperties = array_diff($parentClassProperties, $handled);
             $handled = array_merge(
                 $handled,
-                $this->__handle($className, $parentReflectionClass->getName(), $propertyHandlers, $parentClassProperties)
+                $this->__handle($className, $parentReflectionClass->getName(), $parentClassProperties)
             );
         }
     }
 
-    protected function __handle(string $currentClassName, string $targetClassName, array $propertyHandlers, array $properties)
+    protected function __handleTrait(\ReflectionClass $reflectionClass, array $handled, string $className): array
+    {
+        foreach ($reflectionClass->getTraits() ?? [] as $reflectionTrait) {
+            if (in_array($reflectionTrait->getName(), [ProxyTrait::class, PropertyHandlerTrait::class])) {
+                continue;
+            }
+            $traitProperties = ReflectionManager::reflectPropertyNames($reflectionTrait->getName());
+            $traitProperties = array_diff($traitProperties, $handled);
+            if (! $traitProperties) {
+                continue;
+            }
+            $handled = array_merge(
+                $handled,
+                $this->__handle($className, $reflectionTrait->getName(), $traitProperties)
+            );
+            $handled = $this->__handleTrait($reflectionTrait, $handled, $className);
+        }
+        return $handled;
+    }
+
+    protected function __handle(string $currentClassName, string $targetClassName, array $properties): array
     {
         $handled = [];
         foreach ($properties as $propertyName) {
@@ -74,8 +83,7 @@ trait PropertyHandlerTrait
                 continue;
             }
             foreach ($propertyMetadata as $annotationName => $annotation) {
-                if (isset($propertyHandlers[$annotationName])) {
-                    $callbacks = $propertyHandlers[$annotationName];
+                if ($callbacks = PropertyHandlerManager::get($annotationName)) {
                     foreach ($callbacks as $callback) {
                         call($callback, [$this, $currentClassName, $targetClassName, $propertyName, $annotation]);
                     }

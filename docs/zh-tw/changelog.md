@@ -1,13 +1,35 @@
 # 版本更新記錄
 
+# v2.1.16 - 2021-04-26
+
+## 修復
+
+- [#3510](https://github.com/hyperf/hyperf/pull/3510) 修復 `consul` 無法將節點強制離線的問題。
+- [#3513](https://github.com/hyperf/hyperf/pull/3513) 修復 `Nats` 因為 `Socket` 超時時間小於最大閒置時間，導致連線意外關閉的問題。
+- [#3520](https://github.com/hyperf/hyperf/pull/3520) 修復 `@Inject` 無法作用於巢狀 `Trait` 的問題。
+
+## 新增
+
+- [#3514](https://github.com/hyperf/hyperf/pull/3514) 新增方法 `Hyperf\HttpServer\Request::clearStoredParsedData()`。
+
+## 優化
+
+- [#3517](https://github.com/hyperf/hyperf/pull/3517) 優化 `Hyperf\Di\Aop\PropertyHandlerTrait`。
+
+# v2.1.15 - 2021-04-19
+
+## 新增
+
+- [#3484](https://github.com/hyperf/hyperf/pull/3484) 新增 `ORM` 方法 `withMax()` `withMin()` `withSum()` 和 `withAvg()`.
+
 # v2.1.14 - 2021-04-12
 
-## Fixed
+## 修復
 
 - [#3465](https://github.com/hyperf/hyperf/pull/3465) 修復協程風格下，`WebSocket` 服務不支援配置多個埠的問題。
 - [#3467](https://github.com/hyperf/hyperf/pull/3467) 修復協程風格下，`WebSocket` 服務無法正常釋放連線池的問題。
 
-## Added
+## 新增
 
 - [#3472](https://github.com/hyperf/hyperf/pull/3472) 新增方法 `Sender::getResponse()`，可以在協程風格的 `WebSocket` 服務裡，獲得與 `fd` 一一對應的 `Response` 物件。
 

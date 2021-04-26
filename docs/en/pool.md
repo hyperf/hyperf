@@ -1,4 +1,4 @@
-# 连接池
+# Pool
 
 ## Installation
 
@@ -6,17 +6,17 @@
 composer require hyperf/pool
 ```
 
-## 为什么需要连接池？
+## Why the pool needed?
 
-当并发量很低的时候，连接可以临时建立，但当服务吞吐达到几百、几千的时候，频繁 `建立连接 Connect` 和 `销毁连接 Close` 就有可能会成为服务的一个瓶颈，那么当服务启动的时候，先建立好若干个连接并存放于一个队列中，当需要使用时从队列中取出一个并使用，使用完后再反还到队列去，而对这个队列数据结构进行维护的，就是连接池。
+When the amount of concurrency is very low, the connection can be temporarily established. However, when the service throughput reaches hundreds or thousands of magnitude, frequent `Connect` and `Close` may become a bottleneck of the service. Practically, when the service is started, several connections can be established and stored in a queue. When needed, one is taken from the queue and used, and then returned to the queue after use. The data structure of this queue is maintained by the connection pool.
 
-## 使用连接池
+## Usage
 
-对于 Hyperf 官方提供的组件，都是已经对接好连接池的，在使用上无任何的感知，底层自动完成连接的取用和归还。
+For the components provided by Hyperf, the connection pool has been adapted. No perception in use. Hyperf automatically completes the acquisition and return of the connection.
 
-## 自定义连接池
+## Custom connection pool
 
-定义一个连接池首先需要实现一个继承了 `Hyperf\Pool\Pool` 的子类并实现抽象方法 `createConnection`，并返回一个实现了 `Hyperf\Contract\ConnectionInterface` 接口的对象，这样您创建的连接池对象就已经完成了，如下示例：
+To define a connection pool, you first need to implement a subclass that inherits `Hyperf\Pool\Pool` and implements the abstract method `createConnection`, and an object that implements the `Hyperf\Contract\ConnectionInterface` interface should be returned. A demo shown as follow:
 ```php
 <?php
 namespace App\Pool;
@@ -26,17 +26,17 @@ use Hyperf\Pool\Pool;
 
 class MyConnectionPool extends Pool
 {
-    public function createConnection(): ConnectionInteface
+    public function createConnection(): ConnectionInterface
     {
         return new MyConnection();
     }
 }
 ``` 
-这样便可以通过对实例化后的 `MyConnectionPool` 对象调用 `get(): ConnectionInterface` 和 `release(ConnectionInterface $connection): void` 方法执行连接的取用和归还了。   
+In this way, the connection can be taken and returned by calling the methods of `get(): ConnectionInterface` and `release(ConnectionInterface $connection): void` on the instantiated `MyConnectionPool` object.
 
 ## SimplePool
 
-这里框架提供了一个非常简单的连接池实现。
+A simple pool implementation is provided by hyperf.
 
 ```php
 <?php
@@ -54,10 +54,68 @@ $pool = $factory->get('your pool name', function () use ($host, $port, $ssl) {
 
 $connection = $pool->get();
 
-$client = $connection->getConnection(); // 即上述 Client.
+$client = $connection->getConnection(); // The Client which mentioned above.
 
-// Do somethind.
+// Do something.
 
 $connection->release();
 
+```
+
+## Low-frequency Interface
+
+The pool has a built-in `LowFrequencyInterface` interface. The low-frequency component used by default, and determine whether to release excess connections in the pool based on the frequency of acquiring connections from the pool.
+
+If we need to replace the corresponding low-frequency component, you can directly replace it in the `dependencies` configuration. Take the database component as an example.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Pool;
+
+class Frequency extends \Hyperf\Pool\Frequency
+{
+    /**
+     * The time interval of the calculated frequency
+     * @var int
+     */
+    protected $time = 10;
+
+    /**
+     * Threshold
+     * @var int
+     */
+    protected $lowFrequency = 5;
+
+    /**
+     * Minimum time interval for continuous low frequency triggering
+     * @var int
+     */
+    protected $lowFrequencyInterval = 60;
+}
+
+```
+
+Modify the mapping as follows
+
+```php
+<?php
+return [
+    Hyperf\DbConnection\Frequency::class => App\Pool\Frequency::class,
+];
+```
+
+### Constant frequency
+
+Hyperf also provides another low-frequency component `ConstantFrequency`.
+
+When this component is instantiated, a timer will be started and the method `Pool::flushOne(false)` will be called at a regular interval. This method will take a connection from the pool and a connection will be destroyed when the method judged it has been idle for more than a period of time.
+
+```php
+<?php
+return [
+    Hyperf\DbConnection\Frequency::class => Hyperf\Pool\ConstantFrequency::class,
+];
 ```
