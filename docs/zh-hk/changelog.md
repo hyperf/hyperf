@@ -1,5 +1,21 @@
 # 版本更新記錄
 
+# v2.1.16 - 2021-04-26
+
+## 修復
+
+- [#3510](https://github.com/hyperf/hyperf/pull/3510) 修復 `consul` 無法將節點強制離線的問題。
+- [#3513](https://github.com/hyperf/hyperf/pull/3513) 修復 `Nats` 因為 `Socket` 超時時間小於最大閒職時間，導致連接意外關閉的問題。
+- [#3520](https://github.com/hyperf/hyperf/pull/3520) 修復 `@Inject` 無法作用於嵌套 `Trait` 的問題。
+
+## 新增
+
+- [#3514](https://github.com/hyperf/hyperf/pull/3514) 新增方法 `Hyperf\HttpServer\Request::clearStoredParsedData()`。
+
+## 優化
+
+- [#3517](https://github.com/hyperf/hyperf/pull/3517) 優化 `Hyperf\Di\Aop\PropertyHandlerTrait`。
+
 # v2.1.15 - 2021-04-19
 
 ## 新增
