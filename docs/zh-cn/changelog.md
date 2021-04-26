@@ -5,7 +5,7 @@
 ## 修复
 
 - [#3510](https://github.com/hyperf/hyperf/pull/3510) 修复 `consul` 无法将节点强制离线的问题。
-- [#3513](https://github.com/hyperf/hyperf/pull/3513) 修复 `Nats` 因为 `Socket` 超时时间小于最大闲职时间，导致连接意外关闭的问题。
+- [#3513](https://github.com/hyperf/hyperf/pull/3513) 修复 `Nats` 因为 `Socket` 超时时间小于最大闲置时间，导致连接意外关闭的问题。
 - [#3520](https://github.com/hyperf/hyperf/pull/3520) 修复 `@Inject` 无法作用于嵌套 `Trait` 的问题。
 
 ## 新增
