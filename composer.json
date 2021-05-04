@@ -38,7 +38,7 @@
         "elasticsearch/elasticsearch": "^7.0",
         "fig/http-message-util": "^1.1.2",
         "filp/whoops": "^2.7",
-        "friendsofphp/php-cs-fixer": "^2.14",
+        "friendsofphp/php-cs-fixer": "^3.0",
         "google/protobuf": "^3.6.1",
         "grpc/grpc": "^1.15",
         "guzzlehttp/guzzle": "^6.3|^7.0",
