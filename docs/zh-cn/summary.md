@@ -84,6 +84,7 @@
   * [TCP/UDP 服务](zh-cn/tcp-server.md)
   * [WebSocket 服务](zh-cn/websocket-server.md)
   * [Socket.io 服务](zh-cn/socketio-server.md)
+  * [协程风格服务](zh-cn/coroutine-server.md)
 
 * 消息队列
 
