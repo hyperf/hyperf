@@ -49,5 +49,6 @@ class LogAfterProcessStoppedListener implements ListenerInterface
         } else {
             echo $message . PHP_EOL;
         }
+        $event->process->exit();
     }
 }

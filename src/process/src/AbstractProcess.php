@@ -98,6 +98,11 @@ abstract class AbstractProcess implements ProcessInterface
         }
     }
 
+    public function exit($exitCode = 0)
+    {
+        $this->process->exit($exitCode);
+    }
+
     public function isEnable($server): bool
     {
         return true;
