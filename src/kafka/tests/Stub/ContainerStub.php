@@ -69,7 +69,6 @@ class ContainerStub
                     'producer_id' => -1,
                     'producer_epoch' => -1,
                     'partition_leader_epoch' => -1,
-                    'broker' => '127.0.0.1:9092',
                     'interval' => 0,
                     'session_timeout' => 60,
                     'rebalance_timeout' => 60,
