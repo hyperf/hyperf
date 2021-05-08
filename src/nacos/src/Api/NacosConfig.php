@@ -17,7 +17,7 @@ use Hyperf\Utils\Codec\Json;
 
 class NacosConfig extends AbstractNacos
 {
-    public function get(ConfigModel $configModel): array
+    public function get(ConfigModel $configModel)
     {
         $response = $this->request('GET', '/nacos/v1/cs/configs', [
             RequestOptions::QUERY => $configModel->toArray(),
