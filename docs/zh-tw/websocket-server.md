@@ -15,20 +15,22 @@ composer require hyperf/websocket-server
 ```php
 <?php
 
-'servers' => [
-    [
-        'name' => 'ws',
-        'type' => Server::SERVER_WEBSOCKET,
-        'host' => '0.0.0.0',
-        'port' => 9502,
-        'sock_type' => SWOOLE_SOCK_TCP,
-        'callbacks' => [
-            Event::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
-            Event::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
-            Event::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
+return [
+    'servers' => [
+        [
+            'name' => 'ws',
+            'type' => Server::SERVER_WEBSOCKET,
+            'host' => '0.0.0.0',
+            'port' => 9502,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                Event::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
+                Event::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
+                Event::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
+            ],
         ],
     ],
-],
+];
 ```
 
 ## 配置路由
