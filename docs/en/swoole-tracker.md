@@ -1,20 +1,42 @@
 # Swoole Tracker
 
-[Swoole Tracker](https://www.swoole-cloud.com/tracker.html)是 Swoole 官方推出的一整套企业级包括 PHP 和  Swoole 分析调试工具以及应用性能管理（APM）平台，针对常规的 FPM 和 Swoole 常驻进程的业务，提供全面的性能监控、分析和调试的解决方案。（曾命名：Swoole Enterprise）
+[Swoole Tracker](https://www.swoole-cloud.com/tracker.html) is a set of enterprise-level tools officially powered by Swoole, including PHP and Swoole analysis, debugging tools, and application performance management (APM) platform. The Swoole Tracker focus on conventional FPM and Swoole resident process business, provide comprehensive performance monitoring, analysis and debugging solutions. (former name: Swoole Enterprise)
 
-- 时刻掌握应用架构模型
-- 分布式跨应用链路追踪
-- 完善的系统监控
-- 零成本接入
-- 全面分析报告服务状况
+Swoole Tracker can help companies automatically analyze and summarize important system calls and locate specific PHP business codes, intelligently and accurately. It optimize business application performance, and provides a powerful debugging tool chain to escort corporate business and improve IT production efficiency.
+
+- Keep abreast of the application architecture model
+> Automatically discover the topological structure of applications and display it. Keep abreast of application architecture models.
+
+- Distributed cross-application link tracking
+> Support non-intrusive distributed cross-application link tracking, making each request clear at a glance. Fully supporting coroutine/non-coroutine environment. Support real-time data visualization.
+
+- Comprehensive analysis and reporting of service status
+> Invocation information reported by the service in various dimensions, such as total flow, average time consumption, timeout rate, etc., and comprehensively analyze and report the service status.
+
+- Powerful debugging toolchain
+> The system supports remote debugging, which can be remotely opened in the background of the system to perform memory leaks detection, block detection, code performance analysis, and check the call stack. It also supports manual debugging and viewing results in the background.
+
+- Support FPM and Swoole
+> Perfect support for PHP-FPM environment, not limited to use in Swoole.
+
+- Complete system monitoring
+> Support complete system monitoring, zero-cost deployment, monitor the CPU, memory, network, disk and other resources, which can be easily integrated into the existing alarm system.
+
+- Install with one simple click and zero-cost access
+> Avoid and reduce the overall investment risk. The client of this system provides scripts that can be deployed with one click, and the server can run in the Docker environment, which is convenient.
+
+- Improve production efficiency of various departments
+> Track service and code-level performance bottlenecks in complex systems, help development departments improve work efficiency, and focus on core business work.
 
 ## Installation
 
-注册完账户后，进入[控制台](https://business.swoole.com/SwooleTracker/catdemo)，并申请试用，下载对应的安装脚本。
+### Install extension
 
-相关文档，请移步 [试用文档](https://www.kancloud.cn/swoole-inc/ee-base-wiki/1214079) 或 [详细文档](https://www.kancloud.cn/swoole-inc/ee-help-wiki/1213080) 
+After registering an account, enter the [console](https://business.swoole.com/SwooleTracker/catdemo) to apply for a trial and download the corresponding installation script.
 
-将脚本以及以下两个文件复制到项目目录 `.build` 中
+Relevant docs [Basic](https://www.kancloud.cn/swoole-inc/ee-base-wiki/1214079) and [Help](https://www.kancloud.cn/swoole-inc/ee-help-wiki/1213080)
+
+Copy the script and the following two files to the `.build` in the project directory.
 
 1. `entrypoint.sh`
 
@@ -33,16 +55,16 @@ php /opt/www/bin/hyperf.php start
 [swoole_tracker]
 extension=/opt/.build/swoole_tracker.so
 
-;打开总开关
+;enable apm
 apm.enable=1
-;采样率 例如：100%
+;sampling rate, for example: 100%
 apm.sampling_rate=100
 
-;开启内存泄漏检测时添加 默认0 关闭状态
+;memory leak detection, default 0 (off)
 apm.enable_memcheck=1
 ```
 
-然后将下面的 `Dockerfile` 复制到项目根目录中。
+Then copy the following `Dockerfile` to the project root directory.
 
 ```dockerfile
 # Default Dockerfile
@@ -112,27 +134,28 @@ ENTRYPOINT ["sh", "/opt/.build/entrypoint.sh"]
 
 ```
 
-## 使用
+## Usage
 
-### 不依赖组件
+### Component-free way
 
-`Swoole Tracker` 的 `v2.5.0` 以上版本支持自动生成应用名称并创建应用，无需修改任何代码。
+The `v2.5.0` and above versions of `Swoole Tracker` support automatically generating application names and creating applications without modifying any code.
 
-如果使用 `Swoole` 的 `HttpServer` 那么生成的应用名称为`ip:port`
+If you use the `HttpServer` of `Swoole`, then the generated application name is `ip:port`
 
-如果使用 `Swoole` 其他的 `Server` 那么生成的应用名称为`ip(hostname):port`
+If you use other `Server` of `Swoole`, then the generated application name is `ip(hostname):port`
 
-即安装好 `swoole_tracker` 扩展之后就可以正常使用 `Swoole Tracker` 的功能
+After installing the `swoole_tracker` extension, you can then use the `Swoole Tracker` normally
 
-### 依赖组件
+### With Component way
 
-当你需要自定义应用名称时则需要安装组件，使用 `Composer` 安装：
+When you need to customize the application name, you need to install the component. 
+Use `Composer` to install:
 
 ```bash
 composer require hyperf/swoole-tracker
 ```
 
-安装完成后在 `config/autoload/middlewares.php` 配置文件中注册 `Hyperf\SwooleTracker\Middleware\HttpServerMiddleware` 中间件即可，如下：
+After the installation, register the `Hyperf\SwooleTracker\Middleware\HttpServerMiddleware` middleware in the `config/autoload/middlewares.php` configuration file, as follows:
 
 ```php
 <?php
@@ -144,7 +167,7 @@ return [
 ];
 ```
 
-若使用 `jsonrpc-http` 协议实现了 `RPC` 服务，则还需要在 `config/autoload/aspects.php` 配置以下 `Aspect`：
+If you use the `jsonrpc-http` protocol to implement the `RPC` service, you also need to configure the following `Aspect` in `config/autoload/aspects.php`:
 
 ```php
 <?php
@@ -153,3 +176,69 @@ return [
     Hyperf\SwooleTracker\Aspect\CoroutineHandlerAspect::class,
 ];
 ```
+
+## Free memory leak detection tool
+
+Swoole Tracker is a commercial product that has the ability to detect memory leaks. However, Swoole Tracker provides the function of memory leak detection to the PHP community for free to improve the PHP ecosystem and show thanks and respect to the community. The following will outline its usage.
+
+1. Go to [Swoole Tracker Web](https://business.swoole.com/SwooleTracker/download/) to download the latest Swoole Tracker extension;
+
+2. Same as what mentioned above to add the extension, and add another line of configuration:
+
+```ini
+;enable leak detection
+apm.enable_malloc_hook=1
+```
+
+!> Note: Do not enable it when composer installs dependencies. Do not enable it when generating proxy class cache.
+
+1. According to your own business, add a call of `trackerHookMalloc()` at the beginning of Swoole `onReceive` or `onRequest` event:
+
+```php
+$http->on('request', function ($request, $response) {
+    trackerHookMalloc();
+    $response->end("<h1>Hello Swoole. #".rand(1000, 9999)."</h1>");
+});
+```
+
+After each call ends (the first call will not be recorded), a leaked message will be generated in the `/tmp/trackerleak` log. We can use the `trackerAnalyzeLeak()` function on the CLI command line to analyze the leak log to generate a report.
+
+```shell
+php -r "trackerAnalyzeLeak();"
+```
+
+Report form will be like the following:
+
+when there is no leak:
+
+```
+[16916 (Loop 5)] ✅ Nice!! No Leak Were Detected In This Loop
+```
+
+where `16916` represents process id, and `Loop 5` means the leak message in the 5th time main function calling.
+
+when there are certain leak:
+
+```
+[24265 (Loop 8)] /tests/mem_leak/http_server.php:125 => [12928]
+[24265 (Loop 8)] /tests/mem_leak/http_server.php:129 => [12928]
+[24265 (Loop 8)] ❌ This Loop TotalLeak: [25216]
+```
+
+It means that lines 125 and 129 of `http_server.php` respectively leaked 12928 bytes of memory (in total 25216 bytes) in the 8th time calling.
+
+You can clear the leak log by calling `trackerCleanLeak()`. [For more details about the memory detection tools](https://www.kancloud.cn/swoole-inc/ee-help-wiki/1941569)
+
+If you need to detect memory leaks in HTTP Server in Hyperf, you can add a global middleware in `config/autoload/middlewares.php`:
+
+```php
+<?php
+
+return [
+    'http' => [
+        Hyperf\SwooleTracker\Middleware\HookMallocMiddleware::class,
+    ],
+];
+```
+
+The same to apply to other Server types.

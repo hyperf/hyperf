@@ -77,9 +77,7 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
         $this->redis->sAdd($this->getSidKey($sid), ...$rooms);
         foreach ($rooms as $room) {
             $this->redis->sAdd($this->getRoomKey($room), $sid);
-            if ($this->ttl > 0) {
-                $this->redis->zAdd($this->getExpireKey(), microtime(true) * 1000 + $this->ttl, $sid);
-            }
+            $this->redis->zAdd($this->getExpireKey(), microtime(true) * 1000 + $this->ttl, $sid);
         }
         $this->redis->sAdd($this->getStatKey(), $sid);
         $this->redis->exec();

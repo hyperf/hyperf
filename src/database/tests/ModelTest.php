@@ -29,10 +29,12 @@ use Hyperf\Database\Model\Events;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Register;
 use Hyperf\Database\Model\Relations\BelongsTo;
+use Hyperf\Database\Model\Relations\Constraint;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as BaseBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Engine\Channel;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Context;
@@ -1972,6 +1974,21 @@ class ModelTest extends TestCase
         $meta = $users->compress();
         $users2 = $meta->uncompress();
         $this->assertEquals($users, $users2);
+    }
+
+    public function testConstraint()
+    {
+        $chan = new Channel(1);
+        go(function () use ($chan) {
+            Relation::noConstraints(function () {
+                usleep(1000);
+            });
+
+            $chan->push(true);
+        });
+
+        $this->assertTrue(Constraint::isConstraint());
+        $chan->pop();
     }
 
     protected function getContainer()

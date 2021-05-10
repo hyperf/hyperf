@@ -172,7 +172,7 @@ class BelongsToMany extends Relation
     {
         $this->performJoin();
 
-        if (static::$constraints) {
+        if (Constraint::isConstraint()) {
             $this->addWhereConstraints();
         }
     }
@@ -759,16 +759,6 @@ class BelongsToMany extends Relation
     public function getExistenceCompareKey()
     {
         return $this->getQualifiedForeignPivotKeyName();
-    }
-
-    /**
-     * Get a relationship join table hash.
-     *
-     * @return string
-     */
-    public function getRelationCountHash()
-    {
-        return 'laravel_reserved_' . static::$selfJoinCount++;
     }
 
     /**

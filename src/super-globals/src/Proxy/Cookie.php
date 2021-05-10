@@ -18,6 +18,9 @@ class Cookie extends Proxy
 {
     public function toArray(): array
     {
+        if (! $this->hasRequest()) {
+            return [];
+        }
         return $this->getRequest()->getCookieParams();
     }
 

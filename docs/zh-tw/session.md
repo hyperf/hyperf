@@ -52,9 +52,10 @@ return [
 
 namespace App\Controller;
 
+use Hyperf\Di\Annotation\Inject;
+
 class IndexController
 {
-
     /**
      * @Inject()
      * @var \Hyperf\Contract\SessionInterface

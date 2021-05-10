@@ -1,24 +1,25 @@
-# 依赖注入
+# Dependency Injection
 
-## 简介
+## Introduction
 
-Hyperf 默认采用 [hyperf/di](https://github.com/hyperf-cloud/di) 作为框架的依赖注入管理容器，尽管从设计上我们允许您更换其它的依赖注入管理容器，但我们强烈不建议您更换该组件。   
-[hyperf/di](https://github.com/hyperf-cloud/di) 是一个强大的用于管理类的依赖关并完成自动注入的组件，与传统依赖注入容器的区别在于更符合长生命周期的应用使用、提供了 [注解及注解注入](en/annotation.md) 的支持、提供了无比强大的 [AOP 面向切面编程](en/aop.md) 能力，这些能力及易用性作为 Hyperf 的核心输出，我们自信的认为该组件是最优秀的。
+Hyperf uses [hyperf/di](https://github.com/hyperf-cloud/di) as the framework's dependency injection management container by default. Although in design, we allow you to replace the dependency injection management container with other components, we strongly recommended that don't replace [hyperf/di](https://github.com/hyperf-cloud/di).
+
+[hyperf/di](https://github.com/hyperf-cloud/di) is a powerful component used to manage dependencies of classes and excute automatic injection. Compared with traditional dependency injection containers, it is more suitable for long-life applications, provides the [Annotation & Annotation Injection](en/annotation.md) support and extremely powerful [AOP Aspect-Oriented Programming](en/aop.md) capabilities. These capabilities and ease of use are the main output of Hyperf, and we firmly believe that this component is the best.
 
 ## Installation
 
-该组件默认存在 [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) 项目中并作为主要组件存在，如希望在其它框架内使用该组件可通过下面的命令安装。
+This component exists by default in the [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton) and exists as the major component. If you want to use this component in other frameworks, you can install it with the following command.
 
 ```bash
 composer require hyperf/di
 ```
 
-## 绑定对象关系
+## Binding Object Relationship
 
-### 简单对象注入
+### Simple Object Injection
 
-通常来说，类的关系及注入是无需显性定义的，这一切 Hyperf 都会默默的为您完成，我们通过一些代码示例来说明一下相关的用法。      
-假设我们需要在 `IndexController` 内调用 `UserService` 类的 `getInfoById(int $id)` 方法。
+Generally, the relationship and injection of the class do not need to be conspicuously defined. Hyperf will do all these for you. The following code demo will illustrate related usage.
+Suppose we need to call the `getInfoById(int $id)` method of the `UserService` class in the `IndexController`.
 ```php
 <?php
 namespace App\Service;
@@ -27,13 +28,13 @@ class UserService
 {
     public function getInfoById(int $id)
     {
-        // 我们假设存在一个 Info 实体
+        // Assume that there is an entity of Info.
         return (new Info())->fill($id);    
     }
 }
 ```
 
-#### 通过构造方法注入
+#### Inject by Constructor
 
 ```php
 <?php
@@ -49,7 +50,7 @@ class IndexController
      */
     private $userService;
     
-    // 通过在构造函数的参数上声明参数类型完成自动注入
+    // Automatic injection is completed by declaring the parameter type on the parameters of the constructor
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
@@ -58,15 +59,48 @@ class IndexController
     public function index()
     {
         $id = 1;
-        // 直接使用
+        // Use directly
         return $this->userService->getInfoById($id);    
     }
 }
 ```
 
-> 注意调用方也就是 `IndexController` 必须是由 DI 创建的对象才能完成自动注入，Controller 默认是由 DI 创建的
+> Note that the caller, that is, the `IndexController` must be an object created by `DI` to perform automatic injection. And controller is created by `DI` by default, so that you can inject directly in constructor.
 
-#### 通过 `@Inject` 注解注入
+When you want to define an optional dependency, you can define the parameter as `nullable` or the default value of the parameter as `null`. This means that if the parameter is not found in the DI container or the corresponding object cannot be created, `null` will be injected instead of throwing an exception. *(This function is only available in 1.1.0 or higher version)*
+
+```php
+<?php
+namespace App\Controller;
+
+use App\Service\UserService;
+
+class IndexController
+{
+    /**
+     * @var null|UserService
+     */
+    private $userService;
+    
+    // Declare an optional parameter by setting it as nullable.
+    public function __construct(?UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+    
+    public function index()
+    {
+        $id = 1;
+        if ($this->userService instanceof UserService) {
+            // $userService is available only in the condition that it is not null
+            return $this->userService->getInfoById($id);    
+        }
+        return null;
+    }
+}
+```
+
+#### Inject by `@Inject`
 
 ```php
 <?php
@@ -79,7 +113,7 @@ use Hyperf\HttpServer\Annotation\AutoController;
 class IndexController
 {
     /**
-     * 通过 `@Inject` 注解注入由 `@var` 注解声明的属性类型对象
+     * Use `@Inject` to inject the attribute type object declared by `@var` 
      * 
      * @Inject 
      * @var UserService
@@ -89,21 +123,55 @@ class IndexController
     public function index()
     {
         $id = 1;
-        // 直接使用
+        // Use directly
         return $this->userService->getInfoById($id);    
     }
 }
 ```
 
-> 注意调用方也就是 `IndexController` 必须是由 DI 创建的对象才能完成自动注入，Controller 默认是由 DI 创建的
+> Note that the caller, that is, the `IndexController` must be an object created by `DI` to perform automatic injection. Controller is created by `DI` by default.
 
-> 使用 `@Inject` 注解时需 `use Hyperf\Di\Annotation\Inject;` 命名空间；
+> The namespace `use Hyperf\Di\Annotation\Inject;` should be used when `@Inject` used.
 
-### 抽象对象注入
+##### Required Parameter
 
-基于上面的例子，从合理的角度上来说，Controller 面向的不应该直接是一个 `UserService` 类，可能更多的是一个 `UserServiceInterface` 的接口类，此时我们可以通过 `config/autoload/dependencies.php` 来绑定对象关系达到目的，我们还是通过代码来解释一下。
+The `@Inject` annotation has a `required` parameter, and the default value is `true`. When the parameter is defined as `false`, it indicates that this attribute is an optional dependency. When the object corresponding to `@var` does not exist in DI, a `null` will be injected instead of throwing an exception.
 
-定义一个接口类：
+```php
+<?php
+namespace App\Controller;
+
+use App\Service\UserService;
+use Hyperf\Di\Annotation\Inject;
+
+class IndexController
+{
+    /**
+     * Inject the attribute type object declared by the `@var` annotation through the `@Inject` annotation
+     * Null will be injected when UserService does not exist in the DI container or cannot be created
+     *
+     * @Inject(required=false) 
+     * @var UserService
+     */
+    private $userService;
+    
+    public function index()
+    {
+        $id = 1;
+        if ($this->userService instanceof UserService) {
+            // $userService is available only in the condition that it is not null
+            return $this->userService->getInfoById($id);    
+        }
+        return null;
+    }
+}
+```
+
+### Abstract Object Injection
+
+Based on the above example, from a reasonable point of view, the Controller should not directly work with a `UserService` class, but maybe more of an interface class of `UserServiceInterface`. So, we can use `config/autoload/dependencies. php` to bind the object relationship to achieve the goal. A code demo can explain this.
+
+Define an interface class:
 
 ```php
 <?php
@@ -115,7 +183,7 @@ interface UserServiceInterface
 }
 ```
 
-`UserService` 实现接口类：
+`UserService` implements the interface：
 
 ```php
 <?php
@@ -125,13 +193,13 @@ class UserService implements UserServiceInterface
 {
     public function getInfoById(int $id)
     {
-        // 我们假设存在一个 Info 实体
+        // Assume that there is an entity of Info.
         return (new Info())->fill($id);    
     }
 }
 ```
 
-在 `config/autoload/dependencies.php` 内完成关系配置：
+Configure relations in `config/autoload/dependencies.php`:
 
 ```php
 <?php
@@ -140,7 +208,7 @@ return [
 ];
 ```
 
-这样配置后就可以直接通过 `UserServiceInterface` 来注入 `UserService` 对象了，我们仅通过注解注入的方式来举例，构造函数注入也是一样的：
+After this configuration, you can directly inject the `UserService` object through the `UserServiceInterface`. We use annotation injection as an example, and the constructor injection is also the same:
 
 ```php
 <?php
@@ -161,17 +229,17 @@ class IndexController
     public function index()
     {
         $id = 1;
-        // 直接使用
+        // Use directly
         return $this->userService->getInfoById($id);    
     }
 }
 ```
 
-### 工厂对象注入
+### Factory Object Injection
+  
+Now, let the implementation of `UserService` be more complex, and there are some indirect injected parameters that should be passed into the constructor when a `UserService` instance is created. Imagine that we have to get a value from config, then `UserService` needs to decide whether to enable cache mode based on this value. (By the way, Hyperf provides a better [cache mode](en/db/model-cache.md) function)
 
-我们假设 `UserService` 的实现会更加复杂一些，在创建 `UserService` 对象时构造函数还需要传递进来一些非直接注入型的参数，假设我们需要从配置中取得一个值，然后 `UserService` 需要根据这个值来决定是否开启缓存模式（顺带一说 Hyperf 提供了更好用的 [模型缓存](en/db/model-cache.md) 功能）   
-
-我们需要创建一个工厂来生成 `UserService` 对象：
+We have to create a factory to generate `UserService`  objects:
 
 ```php
 <?php 
@@ -182,19 +250,19 @@ use Psr\Container\ContainerInterface;
 
 class UserServiceFactory
 {
-    // 实现一个 __invoke() 方法来完成对象的生产，方法参数会自动注入一个当前的容器实例
+    // Implement an __invoke() method for the production of the object, and parameters will be automatically injected into a current container instance
     public function __invoke(ContainerInterface $container)
     {
         $config = $container->get(ConfigInterface::class);
-        // 我们假设对应的配置的 key 为 cache.enable
+        // Assume that the key of corresponding config is cache.enable
         $enableCache = $config->get('cache.enable', false);
-        // make(string $name, array $parameters = []) 方法等同于 new ，使用 make() 方法是为了允许 AOP 的介入，而直接 new 会导致 AOP 无法正常介入流程
+        // The method make(string $name, array $parameters = []) is equivalent to new. Using make() allows AOP to intervene, however, using new will prevent AOP to intervene into normal processing.
         return make(UserService::class, compact('enableCache'));
     }
 }
 ```
 
-`UserService` 也许在构造函数提供一个参数接收对应的值：
+`UserService` may provide an attribute in the constructor to receive the corresponding value:
 
 ```php
 <?php
@@ -210,7 +278,7 @@ class UserService implements UserServiceInterface
     
     public function __construct(bool $enableCache)
     {
-        // 接收值并储存于类属性中
+        // Receiving the value and store it at an attribute
         $this->enableCache = $enableCache;
     }
     
@@ -221,7 +289,7 @@ class UserService implements UserServiceInterface
 }
 ```
 
-在 `config/autoload/dependencies.php` 调整绑定关系：
+Adjust the binding relationship in `config/autoload/dependencies.php`:
 
 ```php
 <?php
@@ -230,30 +298,101 @@ return [
 ];
 ```
 
-这样在注入 `UserServiceInterface` 的时候容器就会交由 `UserServiceFactory` 来创建对象了。
+In this way, when injecting `UserServiceInterface`, the container will hand over the object's creation to `UserServiceFactory`.
 
-> 当然在该场景中可以通过 `@Value` 注解来更便捷的注入配置而无需构建工厂类，此仅为举例
+> Of course, in this scenario, you can use the `@Value` annotation to inject configuration more conveniently rather than building a factory class. This example is just for explaining.
 
-## 注意事项
+### Lazy Loading
 
-### 容器仅管理长生命周期的对象
+Hyperf's long-lived dependency injection is done when the project starts. This means that long-lived classes need to pay attention to:
 
-换种方式理解就是容器内管理的对象**都是单例**，这样的设计对于长生命周期的应用来说会更加的高效，减少了大量无意义的对象创建和销毁，这样的设计也就意味着所有需要交由 DI 容器管理的对象**均不能包含** `状态` 值。   
-`状态` 可直接理解为会随着请求而变化的值，事实上在 [协程](en/coroutine.md) 编程中，这些状态值也是应该存放于 `协程上下文` 中的，即 `Hyperf\Utils\Context`。
+* It is not a coroutine environment when the constructor runs. If injection happened, a coroutine switching class may be triggered. It will cause the framework to fail to start.
 
-## 短生命周期对象
+* Avoid circular dependencies in the constructor (typically, `Listener` and `EventDispatcherInterface`), otherwise the startup will fail.
 
-通过 `new` 关键词创建的对象毫无疑问的短生命周期的，那么如果希望创建一个短生命周期的对象但又希望通过依赖注入容器注入相关的依赖呢？这是我们可以通过 `make(string $name, array $parameters = [])` 函数来创建 `$name` 对应的的实例，代码示例如下：   
+The current solution is: only inject `Psr\Container\ContainerInterface` into the instance, and other components are obtained through `container` at a time outside the runtime of the constructor. However, as PSR-11 states:
+
+> 「Users should not pass the container as a parameter to the object and then obtain the dependency of that object through the passed container. This uses the container as a service locator, and the service locator is an anti-pattern.」
+
+In other words, although this approach works, it is not recommended from the perspective of design patterns.
+
+Another solution is to use the lazy proxy mode which commonly used in PHP, inject a proxy object, and then instantiate the target object when it is used. 
+The Hyperf DI component is designed with lazy loading injection function.
+
+Add the `config/autoload/lazy_loader.php` file and bind the lazy loading relationship:
+
+```php
+<?php
+return [
+    /**
+     * Format：proxy class name => original class name
+     * The proxy class does not exist at this time, and Hyperf will automatically generate this class in the runtime folder.
+     * The proxy class name and namespace can be defined by yourself.
+     */
+    'App\Service\LazyUserService' => \App\Service\UserServiceInterface::class
+];
+```
+
+In this way, when injecting `App\Service\LazyUserService`, the container will create a `lazy loading proxy class` and inject it into the target object.
+
+```php
+use App\Service\LazyUserService;
+
+class Foo{
+    public $service;
+    public function __construct(LazyUserService $service){
+        $this->service = $service;
+    }
+}
+````
+
+You can also inject lazy loading proxy through the annotation `@Inject(lazy=true)`. Implementing lazy loading through annotations does not need to create configuration files.
+
+```php
+use Hyperf\Di\Annotation\Inject;
+use App\Service\UserServiceInterface;
+
+class Foo{
+    /**
+     * @Inject(lazy=true)
+     * @var UserServiceInterface
+     */
+    public $service;
+}
+````
+
+Note: When the proxy object performs the following operations, the proxy object will be actually instantiated from the container.
+
+```php
+// Call methods
+$proxy->someMethod();
+
+// Get attributes
+echo $proxy->someProperty;
+
+// Set attributes
+$proxy->someProperty = 'foo';
+
+// Check if a attribute exists
+isset($proxy->someProperty);
+
+// Delete attributes
+unset($proxy->someProperty);
+```
+
+## Short-lived Objects
+
+Objects created by the `new` are undoubtedly short-lived. If you want to create a short-lived object and want to inject related dependencies through the dependency injection container, you can create `$name` through the `make(string $name, array $parameters = [])` function. The code example is as follows:
 
 ```php
 $userService = make(UserService::class, ['enableCache' => true]);
 ```
 
-> 注意仅 `$name` 对应的对象为短生命周期对象，该对象的所有依赖都是通过 `get()` 方法获取的，即为长生命周期的对象
+> Note that only the object corresponding to `$name` is a short-lived object, and all dependencies of this object are obtained through the `get()` method, which means this object is a long-lived object.
 
-## 获取容器对象
+## Get the Container Object
 
-有些时候我们可能希望去实现一些更动态的需求时，会希望可以直接获取到 `容器(Container)` 对象，在绝大部分情况下，框架的入口类（比如命令类、控制器、RPC服务提供者等）都是由 `容器(Container)` 创建并维护的，也就意味着您所写的绝大部分业务代码都是在 `容器(Container)` 的管理作用之下的，也就意味着在绝大部分情况下您都可以通过在 `构造函数(Constructor)` 声明或通过 `@Inject` 注解注入 `Psr\Container\ContainerInterface` 接口类都能够获得 `Hyperf\Di\Container` 容器对象，我们通过代码来演示一下：
+Sometimes we wish to achieve some more dynamic requirements, we would like to be able to directly obtain the `Container` object. In most cases, the entry classes of the framework, such as command classes, controllers, RPC service providers, etc., are created and maintained by `Container`, which means that most of your business codes are all under the management of `Container`. This also means that in most cases you can get the `Hyperf\Di\Container` object by declaring in the `Constructor` or by injecting the `Psr\Container\ContainerInterface` interface class through the `@Inject` annotation. Here is an example:
 
 ```php
 <?php
@@ -269,7 +408,7 @@ class IndexController
      */
     private $container;
     
-    // 通过在构造函数的参数上声明参数类型完成自动注入
+    // Automatic injection is completed by declaring the parameter type on the parameters of the constructor
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -277,8 +416,14 @@ class IndexController
 }
 ```   
 
-在某些更极端动态的情况下，或者非 `容器(Container)` 的管理作用之下时，想要获取到 `容器(Container)` 对象还可以通过 `\Hyperf\Utils\ApplicationContext::getContaienr()` 方法来获得 `容器(Container)` 对象。
+In some more extreme dynamic situations, or when it is not under the management of `Container`, you can also use `\Hyperf\Utils\ApplicationContext::getContaienr()` method to obtain the `Container` object.
 
 ```php
 $container = \Hyperf\Utils\ApplicationContext::getContainer();
 ```
+
+## Cautions
+
+### The container only manages long-lived objects
+
+In other words, the objects managed by container are **all singletons**. This design is more efficient for long-life applications, reducing the meaningless creation and destruction of objects. This also means that all objects that need to be managed by the DI container **can not** contain the `state` value. Which `state` represents some values that will change with the request. In fact, in [coroutine](en/coroutine.md) programming, these state values should also be stored in the `coroutine context`, that is, ` Hyperf\Utils\Context`.

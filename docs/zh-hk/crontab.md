@@ -78,7 +78,6 @@ use Hyperf\Di\Annotation\Inject;
  */
 class FooTask
 {
-
     /**
      * @Inject()
      * @var \Hyperf\Contract\StdoutLoggerInterface
@@ -88,6 +87,14 @@ class FooTask
     public function execute()
     {
         $this->logger->info(date('Y-m-d H:i:s', time()));
+    }
+    
+    /**
+     * @Crontab(rule="* * * * * *", memo="foo")
+     */
+    public function foo()
+    {
+        var_dump('foo');
     }
 }
 ```

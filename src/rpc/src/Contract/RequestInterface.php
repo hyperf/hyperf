@@ -35,7 +35,7 @@ interface RequestInterface
 
     public function getFromId(): int;
 
-    public function setFromId(int $fromId): RequestInterface;
+    public function setFromId(int $reactorId): RequestInterface;
 
     public function getData(): string;
 

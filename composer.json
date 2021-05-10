@@ -71,7 +71,7 @@
         "phpstan/phpstan": "^0.12",
         "phpunit/phpunit": "^9.4",
         "predis/predis": "^1.1",
-        "promphp/prometheus_client_php": "^2.2",
+        "promphp/prometheus_client_php": "2.2.1",
         "reactivex/rxphp": "^2.0",
         "roave/better-reflection": "^4.0",
         "smarty/smarty": "^3.1",

@@ -182,21 +182,25 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         foreach ($this->columns as $column) {
             [$name, $type, $comment] = $this->getProperty($column);
             if (array_key_exists($name, $this->properties)) {
+                if (! empty($comment)) {
+                    $this->properties[$name]['comment'] = $comment;
+                }
                 continue;
             }
             $doc .= sprintf(' * @property %s $%s %s', $type, $name, $comment) . PHP_EOL;
         }
         foreach ($this->properties as $name => $property) {
+            $comment = $property['comment'] ?? '';
             if ($property['read'] && $property['write']) {
-                $doc .= sprintf(' * @property %s $%s', $property['type'], $name) . PHP_EOL;
+                $doc .= sprintf(' * @property %s $%s %s', $property['type'], $name, $comment) . PHP_EOL;
                 continue;
             }
             if ($property['read']) {
-                $doc .= sprintf(' * @property-read %s $%s', $property['type'], $name) . PHP_EOL;
+                $doc .= sprintf(' * @property-read %s $%s %s', $property['type'], $name, $comment) . PHP_EOL;
                 continue;
             }
             if ($property['write']) {
-                $doc .= sprintf(' * @property-write %s $%s', $property['type'], $name) . PHP_EOL;
+                $doc .= sprintf(' * @property-write %s $%s %s', $property['type'], $name, $comment) . PHP_EOL;
                 continue;
             }
         }
@@ -296,6 +300,9 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                         && $ast->expr->class instanceof Node\Name\FullyQualified
                     ) {
                         $this->setProperty($key, [$ast->expr->class->toCodeString()], true, true);
+                    } elseif ($type = $method->getReturnType()) {
+                        // Get return type which defined in `CastsAttributes::get()`.
+                        $this->setProperty($key, ['\\' . ltrim($type->getName(), '\\')], true, true);
                     }
                 }
             }
