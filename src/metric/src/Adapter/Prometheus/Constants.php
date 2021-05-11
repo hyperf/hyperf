@@ -13,9 +13,9 @@ namespace Hyperf\Metric\Adapter\Prometheus;
 
 class Constants
 {
-    const SCRAPE_MODE = 1;
+    public const SCRAPE_MODE = 1;
 
-    const PUSH_MODE = 2;
+    public const PUSH_MODE = 2;
 
-    const CUSTOM_MODE = 3;
+    public const CUSTOM_MODE = 3;
 }

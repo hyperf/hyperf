@@ -28,7 +28,7 @@ use Prometheus\Storage\Adapter;
  */
 class Redis implements Adapter
 {
-    const PROMETHEUS_METRIC_KEYS_SUFFIX = '_METRIC_KEYS';
+    public const PROMETHEUS_METRIC_KEYS_SUFFIX = '_METRIC_KEYS';
 
     /**
      * @var array

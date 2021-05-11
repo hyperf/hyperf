@@ -16,20 +16,20 @@ class Result
     /**
      * Acknowledge the message.
      */
-    const ACK = 'ack';
+    public const ACK = 'ack';
 
     /**
      * Unacknowledge the message.
      */
-    const NACK = 'nack';
+    public const NACK = 'nack';
 
     /**
      * Reject the message and requeue it.
      */
-    const REQUEUE = 'requeue';
+    public const REQUEUE = 'requeue';
 
     /**
      * Reject the message and drop it.
      */
-    const DROP = 'drop';
+    public const DROP = 'drop';
 }
