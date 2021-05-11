@@ -37,7 +37,7 @@ use RuntimeException;
 
 class ModelUpdateVisitor extends NodeVisitorAbstract
 {
-    const RELATION_METHODS = [
+    public const RELATION_METHODS = [
         'hasMany' => HasMany::class,
         'hasManyThrough' => HasManyThrough::class,
         'hasOneThrough' => HasOneThrough::class,
