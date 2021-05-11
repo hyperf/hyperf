@@ -108,7 +108,7 @@ use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
 /**
- * @Process(name="foo_process", name="user-process"，redirectStdinStdout=false, pipeType=2, enableCoroutine=true)
+ * @Process(name="user-process"，redirectStdinStdout=false, pipeType=2, enableCoroutine=true)
  */
 class FooProcess extends AbstractProcess
 {

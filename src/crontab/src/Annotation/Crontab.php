@@ -79,6 +79,25 @@ class Crontab extends AbstractAnnotation
         $this->rule = str_replace('\\', '', $this->rule);
     }
 
+    public function collectMethod(string $className, ?string $target): void
+    {
+        if ($target === null) {
+            return;
+        }
+
+        if (! $this->name) {
+            $this->name = $className . '::' . $target;
+        }
+
+        if (! $this->callback) {
+            $this->callback = [$className, $target];
+        } elseif (is_string($this->callback)) {
+            $this->callback = [$className, $this->callback];
+        }
+
+        parent::collectMethod($className, $target);
+    }
+
     public function collectClass(string $className): void
     {
         if (! $this->name) {

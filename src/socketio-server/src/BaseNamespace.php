@@ -17,6 +17,7 @@ use Hyperf\SocketIOServer\Parser\Encoder;
 use Hyperf\SocketIOServer\Parser\Engine;
 use Hyperf\SocketIOServer\Parser\Packet;
 use Hyperf\SocketIOServer\Room\AdapterInterface;
+use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
@@ -30,10 +31,18 @@ class BaseNamespace implements NamespaceInterface
      */
     private $eventHandlers = [];
 
-    public function __construct(Sender $sender, SidProviderInterface $sidProvider)
+    public function __construct(Sender $sender, SidProviderInterface $sidProvider, ?SocketIOConfig $config = null)
     {
         /* @var AdapterInterface adapter */
         $this->adapter = make(AdapterInterface::class, ['sender' => $sender, 'nsp' => $this]);
+        if ($this->adapter instanceof EphemeralInterface) {
+            if ($config === null) {
+                $config = ApplicationContext::getContainer()->get(SocketIOConfig::class);
+            }
+            $this->adapter->setTtl(
+                $config->getPingInterval() + $config->getPingTimeout()
+            );
+        }
         $this->sidProvider = $sidProvider;
         $this->sender = $sender;
         $this->broadcast = true;

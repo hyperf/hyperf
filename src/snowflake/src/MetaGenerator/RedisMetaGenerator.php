@@ -18,7 +18,7 @@ use Hyperf\Snowflake\MetaGenerator;
 
 abstract class RedisMetaGenerator extends MetaGenerator
 {
-    const DEFAULT_REDIS_KEY = 'hyperf:snowflake:workerId';
+    public const DEFAULT_REDIS_KEY = 'hyperf:snowflake:workerId';
 
     /**
      * @var ConfigInterface

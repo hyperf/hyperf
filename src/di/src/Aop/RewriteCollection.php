@@ -13,9 +13,9 @@ namespace Hyperf\Di\Aop;
 
 class RewriteCollection
 {
-    const CLASS_LEVEL = 1;
+    public const CLASS_LEVEL = 1;
 
-    const METHOD_LEVEL = 2;
+    public const METHOD_LEVEL = 2;
 
     /**
      * Which methods can be rewrite.

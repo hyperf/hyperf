@@ -1,18 +1,23 @@
 name: PHPUnit for Hyperf
 
-on: [ push, pull_request ]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 10 * * *'
 
 jobs:
   ci:
-    name: Test on PHP${{ matrix.php-version }} SW${{ matrix.sw-version }} MySQL${{ matrix.mysql-version }}
+    name: Test on PHP${{ matrix.php-version }} Swoole-${{ matrix.sw-version }} MySQL${{ matrix.mysql-version }}
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
         os: [ ubuntu-latest ]
         php-version: [ '7.3', '7.4' ]
         mysql-version: [ '5.7', '8.0' ]
-        sw-version: [ '4.5.11', '4.6.3' ]
-      max-parallel: 8
+        sw-version: [ 'v4.5.11', 'v4.6.6', 'master' ]
+      max-parallel: 12
+      fail-fast: false
     env:
       SW_VERSION: ${{ matrix.sw-version }}
       YASD_VERSION: 'v0.3.7'
@@ -29,11 +34,23 @@ jobs:
           coverage: none
       - name: Setup Swoole
         run: |
-          ./.travis/swoole.install.sh
+          sudo apt-get update
+          sudo apt-get install libcurl4-openssl-dev
+          wget https://github.com/swoole/swoole-src/archive/${SW_VERSION}.tar.gz -O swoole.tar.gz
+          mkdir -p swoole
+          tar -xf swoole.tar.gz -C swoole --strip-components=1
+          rm swoole.tar.gz
+          cd swoole
+          phpize
+          ./configure --enable-openssl --enable-http2 --enable-swoole-curl --enable-swoole-json
+          make -j$(nproc)
+          sudo make install
           sudo sh -c "echo extension=swoole > /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
+          sudo sh -c "echo swoole.use_shortname='Off' >> /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
           php --ri swoole
       - name: Setup Yasd
         run: |
+          sudo apt-get update
           sudo apt-get install libboost-all-dev
           wget https://github.com/swoole/yasd/archive/${YASD_VERSION}.tar.gz -O yasd.tar.gz
           mkdir -p yasd

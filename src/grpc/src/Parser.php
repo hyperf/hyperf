@@ -15,7 +15,7 @@ use Google\Protobuf\Internal\Message;
 
 class Parser
 {
-    const GRPC_ERROR_NO_RESPONSE = -1;
+    public const GRPC_ERROR_NO_RESPONSE = -1;
 
     public static function pack(string $data): string
     {

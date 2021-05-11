@@ -68,18 +68,14 @@ class DepthGuard
 
     public function call(string $name, callable $callable)
     {
-        $guard = DepthGuard::getInstance();
-
         try {
             $this->increment();
-            $result = $callable();
+            return $callable();
         } catch (CircularDependencyException $exception) {
             $exception->addDefinitionName($name);
             throw $exception;
         } finally {
-            $guard->decrement();
+            $this->decrement();
         }
-
-        return $result;
     }
 }

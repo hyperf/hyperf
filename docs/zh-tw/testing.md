@@ -425,3 +425,49 @@ class DemoLogicTest extends HttpTestCase
     }
 }
 ```
+
+# 單元測試覆蓋率
+
+## 使用 phpdbg 生成單元測試覆蓋率
+
+修改 `phpunit.xml` 檔案內容為如下
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         bootstrap="./test/bootstrap.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false">
+    <testsuites>
+        <testsuite name="Tests">
+            <directory suffix="Test.php">./test</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        // 需要生成單元測試覆蓋率的檔案
+        <whitelist processUncoveredFilesFromWhitelist="false">
+            <directory suffix=".php">./app</directory>
+        </whitelist>
+    </filter>
+
+    <logging>
+        <log type="coverage-html" target="cover/"/>
+    </logging>
+</phpunit>
+
+```
+
+
+執行以下命令
+
+```shell
+phpdbg -dmemory_limit=1024M -qrr ./vendor/bin/co-phpunit -c phpunit.xml --colors=always
+```
+
+
+

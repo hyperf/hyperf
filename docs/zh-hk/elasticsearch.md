@@ -48,3 +48,10 @@ $client = $builder->setHosts(['http://127.0.0.1:9200'])->build();
 $info = $client->info();
 ```
 
+### 如何設置用户名密碼
+
+當搜索引擎需要使用用户名和密碼時，比如購買了 `Elasticsearch` 企業版，我們可以使用以下 `host` 訪問搜索引擎。
+
+```
+http://username:password@xxxx.aliyuncs.com:9200
+```

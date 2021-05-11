@@ -1,6 +1,6 @@
-# 日志
+# Logger
 
-`hyperf/logger` 组件是基于 [psr/logger](https://github.com/php-fig/logger) 实现的，默认使用 [monolog/monolog](https://github.com/Seldaek/monolog) 作为驱动，在 `hyperf-skeleton` 项目内默认提供了一些日志配置，默认使用 `Monolog\Handler\StreamHandler`, 由于 `Swoole` 已经对 `fopen`, `fwrite` 等函数进行了协程化处理，所以只要不将 `useLocking` 参数设置为 `true`，就是协程安全的。
+The `hyperf/logger` component is implemented based on [psr/logger](https://github.com/php-fig/log), and [monolog/monolog](https://github.com/Seldaek/monolog) is used by default as a driver. Some log configurations are provided by default in the `hyperf-skeleton` project, and `Monolog\Handler\StreamHandler` is used by default. Since `Swoole` has already coroutineized functions such as `fopen`, `fwrite`, so long as the `useLocking` parameter is not set to `true`, the coroutine is safe.
 
 ## Installation
 
@@ -8,9 +8,9 @@
 composer require hyperf/logger
 ```
 
-## 配置
+## Configuration
 
-在 `hyperf-skeleton` 项目内默认提供了一些日志配置，默认情况下，日志的配置文件为 `config/autoload/logger.php` ，示例如下：
+Some log configurations are provided by default in the `hyperf-skeleton` project. By default, the log configuration file is `config/autoload/logger.php`. An example is as follows:
 
 ```php
 <?php
@@ -36,7 +36,7 @@ return [
 ];
 ```
 
-## 使用
+## Instruction for use
 
 ```php
 <?php
@@ -58,8 +58,8 @@ class DemoService
 
     public function __construct(LoggerFactory $loggerFactory)
     {
-        // default 对应 config/autoload/logger.php 内的 key
-        $this->logger = $loggerFactory->get('default');
+        // The first parameter corresponds to the name of the log, and the second parameter corresponds to the key in config/autoload/logger.php
+        $this->logger = $loggerFactory->get('log', 'default');
     }
 
     public function method()
@@ -70,9 +70,9 @@ class DemoService
 }
 ```
 
-## 关于 monolog 的基础知识
+## Basic knowledge about monolog
 
-我们结合代码来看一些 `monolog` 中所涉及到的基础概念:
+Let's take a look at some of the basic concepts involved in monolog with the following code:
 
 ```php
 use Monolog\Formatter\LineFormatter;
@@ -80,34 +80,34 @@ use Monolog\Handler\FirePHPHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
-// 创建一个 Channel，参数 log 即为 Channel 的名字
+// Create a Channel. The parameter log is the name of the Channel
 $log = new Logger('log');
 
-// 创建两个 Handler，对应变量 $stream 和 $fire
+// Create two Handlers, corresponding to variables $stream and $fire
 $stream = new StreamHandler('test.log', Logger::WARNING);
 $fire = new FirePHPHandler();
 
-// 定义时间格式为 "Y-m-d H:i:s"
+// Define the time format as "Y-m-d H:i:s"
 $dateFormat = "Y n j, g:i a";
-// 定义日志格式为 "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n"
+// Define the log format as "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n"
 $output = "%datetime%||%channel||%level_name%||%message%||%context%||%extra%\n";
-// 根据 时间格式 和 日志格式，创建一个 Formatter
+// Create a Formatter based on the time format and log format
 $formatter = new LineFormatter($output, $dateFormat);
 
-// 将 Formatter 设置到 Handler 里面
+// Set Formatter to Handler
 $stream->setFormatter($formatter);
 
-// 讲 Handler 推入到 Channel 的 Handler 队列内
+// Push the Handler into the Handler queue of the Channel
 $log->pushHandler($stream);
 $log->pushHandler($fire);
 
-// clone new log channel
+// Clone new log channel
 $log2 = $log->withName('log2');
 
-// add records to the log
+// Add records to the log
 $log->warning('Foo');
 
-// add extra data to record
+// Add extra data to record
 // 1. log context
 $log->error('a new user', ['username' => 'daydaygo']);
 // 2. processor
@@ -119,18 +119,18 @@ $log->pushProcessor(new \Monolog\Processor\MemoryPeakUsageProcessor());
 $log->alert('czl');
 ```
 
-- 首先, 实例化一个 `Logger`, 取个名字, 名字对应的就是 `channel`
-- 可以为 `Logger` 绑定多个 `Handler`, `Logger` 打日志, 交由 `Handler` 来处理
-- `Handler` 可以指定需要处理那些 **日志级别** 的日志, 比如 `Logger::WARNING`, 只处理日志级别 `>=Logger::WARNING` 的日志
-- 谁来格式化日志? `Formatter`, 设置好 Formatter 并绑定到相应的 `Handler` 上
-- 日志包含那些部分: `"%datetime%||%channel||%level_name%||%message%||%context%||%extra%\n"`
-- 区分一下日志中添加的额外信息 `context` 和 `extra`: `context` 由用户打日志时额外指定, 更加灵活; `extra` 由绑定到 `Logger` 上的 `Processor` 固定添加, 比较适合收集一些 **常见信息**
+- Firstly, instantiate a `Logger` and take a name which corresponds to `channel`
+- You can bind multiple `Handler` to `Logger`. `Logger` performs log, and hand it over to `Handler` for processing
+- `Handler` can specify which **log level** logs need to be processed, such as `Logger::WARNING` or only process logs with log level `>=Logger::WARNING`
+- Who will format the log? The `Formatter` will. Just set the Formatter and bind it to the corresponding `Handler`
+- What parts of the log included: `"%datetime%||%channel||%level_name%||%message%||%context%||%extra%\n"`
+- Distinguish the extra information added in the log `context` and `extra`: The `context` is additionally specified by the user when logging, which is more flexible; And the `extra` is fixedly added by the `Processor` bound to the `Logger`, which is more suitable for collecting some **common information**
 
-## 更多用法
+## More usage
 
-### 封装 `Log` 类
+### Encapsulate the `Log` class
 
-可能有些时候您更想保持大多数框架使用日志的习惯，那么您可以在 `App` 下创建一个 `Log` 类，并通过 `__callStatic` 魔术方法静态方法调用实现对 `Logger` 的取用以及各个等级的日志记录，我们通过代码来演示一下：
+Sometimes, you may wish to keep the habit of logging in most frameworks. Then you can create a `Log` class under `App`, and call the magic static method `__callStatic` to access to `Logger` and each Level of logging. Let’s demonstrate through code:
 
 ```php
 namespace App;
@@ -138,42 +138,26 @@ namespace App;
 use Hyperf\Logger\Logger;
 use Hyperf\Utils\ApplicationContext;
 
-/**
- * @method static Logger get($name)
- * @method static void log($level, $message, array $context = array())
- * @method static void emergency($message, array $context = array())
- * @method static void alert($message, array $context = array())
- * @method static void critical($message, array $context = array())
- * @method static void error($message, array $context = array())
- * @method static void warning($message, array $context = array())
- * @method static void notice($message, array $context = array())
- * @method static void info($message, array $context = array())
- * @method static void debug($message, array $context = array())
- */
+
 class Log
 {
-    public static function __callStatic($name, $arguments)
+    public static function get(string $name = 'app')
     {
-        $container = ApplicationContext::getContainer();
-        $factory = $container->get(\Hyperf\Logger\LoggerFactory::class);
-        if ($name === 'get') {
-            return $factory->get(...$arguments);
-        }
-        $log = $factory->get('default');
-        $log->$name(...$arguments);
+        return ApplicationContext::getContainer()->get(\Hyperf\Logger\LoggerFactory::class)->get($name);
     }
 }
+
 ```
 
-默认使用 `default` 的 `Channel` 来记录日志，您也可以通过使用 `Log::get($name)` 方法获得不同 `Channel` 的 `Logger`, 强大的 `容器(Container)` 帮您解决了这一切
+By default, a `Channel` named `app` is used to record logs. You can also use the `Log::get($name)` method to obtain the `Logger` of different `Channels`. The powerful `Container` can help you to solve it all
 
-### stdout 日志
+### stdout log
 
-框架组件所输出的日志在默认情况下是由 `Hyperf\Contract\StdoutLoggerInterface` 接口的实现类 `Hyperf\Framework\Logger\StdoutLogger` 提供支持的，该实现类只是为了将相关的信息通过 `print_r()` 输出在 `标准输出(stdout)`，即为启动 `Hyperf` 的 `终端(Terminal)` 上，也就意味着其实并没有使用到 `monolog` 的，那么如果想要使用 `monolog` 来保持一致要怎么处理呢？
+By default, the log output by the framework components is supported by the implementation class of the interface `Hyperf\Contract\StdoutLoggerInterface`, the `Hyperf\Framework\Logger\StdoutLogger`. This implementation class is just to output the relevant information on the `stdout` through `print_r()`, which is the `terminal` that starts `Hyperf`. In this case, `monolog` is not actually used. What if you want to use `monolog` to be consistent?
 
-是的, 还是通过强大的 `容器(Container)`.
+Absolutely, it is through the powerful `Container`.
 
-- 首先, 实现一个 `StdoutLoggerFactory` 类，关于 `Factory` 的用法可在 [依赖注入](en/di.md) 章节获得更多详细的说明。
+- First, implement a `StdoutLoggerFactory` class. The usage of `Factory` can be explained in more detail in the [Dependency Injection](zh-cn/di.md) chapter.
 
 ```php
 <?php
@@ -192,7 +176,7 @@ class StdoutLoggerFactory
 }
 ```
 
-- 申明依赖, 使用 `StdoutLoggerInterface` 的地方, 由实际依赖的 `StdoutLoggerFactory` 实例化的类来完成
+- Declare the dependency, the work of `StdoutLoggerInterface` is done by the class instantiated by the actual dependent `StdoutLoggerFactory`
 
 ```php
 // config/autoload/dependencies.php
@@ -201,9 +185,9 @@ return [
 ];
 ```
 
-### 不同环境下输出不同格式的日志
+### Output different format logs in different environments
 
-上面这么多的使用, 都还只在 monolog 中的 `Logger` 这里打转, 这里来看看 `Handler` 和 `Formatter`
+So many uses of the above are only for the `Logger` in the monolog. Let's take a look at `Handler` and `Formatter`.
 
 ```php
 // config/autoload/logger.php
@@ -238,7 +222,102 @@ return [
 ]
 ```
 
-- 默认配置了名为 `default` 的 `Handler`, 并包含了此 `Handler` 及其 `Formatter` 的信息
-- 获取 `Logger` 时, 如果没有指定 `Handler`, 底层会自动把 `default` 这一 `Handler` 绑定到 `Logger` 上
-- dev(开发)环境: 日志使用 `php://stdout` 输出到 `标准输出(stdout)`, 并且 `Formatter` 中设置 `allowInlineLineBreaks`, 方便查看多行日志
-- 非 dev 环境: 日志使用 `JsonFormatter`, 会被格式为 json, 方便投递到第三方日志服务
+- A `Handler` named `default` is configured by default, and contains the information of this `Handler` and its `Formatter`
+- When obtaining the `Logger`, if the `Handler` is not specified, the bottom layer will automatically bind the `default(Handler)` to the `Logger`
+- dev (development) environment: Use `php://stdout` to output logs to `stdout`, and set `allowInlineLineBreaks` in `Formatter`, which is convenient for viewing multi-line logs
+- Non-dev environment: The log uses `JsonFormatter`, which will be formatted as `json` and is convenient for delivery to third-party log services
+
+### Rotate log files by date
+
+If you want the log file to be rotated according to the date, you can use the `Monolog\Handler\RotatingFileHandler` provided by `Mongolog`. And the configuration is as follows:
+
+Modify the `config/autoload/logger.php` configuration file, change `Handler` to `Monolog\Handler\RotatingFileHandler::class` and change the `stream` field to `filename`.
+
+```php
+<?php
+
+return [
+    'default' => [
+        'handler' => [
+            'class' => Monolog\Handler\RotatingFileHandler::class,
+            'constructor' => [
+                'filename' => BASE_PATH . '/runtime/logs/hyperf.log',
+                'level' => Monolog\Logger::DEBUG,
+            ],
+        ],
+        'formatter' => [
+            'class' => Monolog\Formatter\LineFormatter::class,
+            'constructor' => [
+                'format' => null,
+                'dateFormat' => null,
+                'allowInlineLineBreaks' => true,
+            ],
+        ],
+    ],
+];
+```
+
+If you want to perform more fine-grained log cutting, you can also extend the `Monolog\Handler\RotatingFileHandler` class and reimplement the `rotate()` method.
+
+### Configure multiple `Handler`
+
+Users can modify `handlers` so that the corresponding log group can supports multiple `handlers`. For example, in the following configuration, when a user posts a log higher the level of `INFO`, the log will be written only in `hyperf.log`.
+When a user posts a log higher the level of `DEBUG`, it will be written in `hyperf.log` and `hyperf-debug.log`.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Monolog\Handler;
+use Monolog\Formatter;
+use Monolog\Logger;
+
+return [
+    'default' => [
+        'handlers' => [
+            [
+                'class' => Handler\StreamHandler::class,
+                'constructor' => [
+                    'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
+                    'level' => Logger::INFO,
+                ],
+                'formatter' => [
+                    'class' => Formatter\LineFormatter::class,
+                    'constructor' => [
+                        'format' => null,
+                        'dateFormat' => null,
+                        'allowInlineLineBreaks' => true,
+                    ],
+                ],
+            ],
+            [
+                'class' => Handler\StreamHandler::class,
+                'constructor' => [
+                    'stream' => BASE_PATH . '/runtime/logs/hyperf-debug.log',
+                    'level' => Logger::DEBUG,
+                ],
+                'formatter' => [
+                    'class' => Formatter\JsonFormatter::class,
+                    'constructor' => [
+                        'batchMode' => Formatter\JsonFormatter::BATCH_MODE_JSON,
+                        'appendNewline' => true,
+                    ],
+                ],
+            ],
+        ],
+    ],
+];
+
+```
+
+The result is as follows
+
+```
+==> runtime/logs/hyperf.log <==
+[2019-11-08 11:11:35] hyperf.INFO: 5dc4dce791690 [] []
+
+==> runtime/logs/hyperf-debug.log <==
+{"message":"5dc4dce791690","context":[],"level":200,"level_name":"INFO","channel":"hyperf","datetime":{"date":"2019-11-08 11:11:35.597153","timezone_type":3,"timezone":"Asia/Shanghai"},"extra":[]}
+{"message":"xxxx","context":[],"level":100,"level_name":"DEBUG","channel":"hyperf","datetime":{"date":"2019-11-08 11:11:35.597635","timezone_type":3,"timezone":"Asia/Shanghai"},"extra":[]}
+```

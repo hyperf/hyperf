@@ -13,9 +13,9 @@ namespace Hyperf\Utils\Codec;
 
 class Base62
 {
-    const CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    public const CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
-    const BASE = 62;
+    public const BASE = 62;
 
     public static function encode(int $number): string
     {

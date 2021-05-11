@@ -75,8 +75,9 @@ class CrontabRegisterListener implements ListenerInterface
     {
         $configCrontabs = $this->config->get('crontab.crontab', []);
         $annotationCrontabs = AnnotationCollector::getClassesByAnnotation(CrontabAnnotation::class);
+        $methodCrontabs = $this->getCrontabsFromMethod();
         $crontabs = [];
-        foreach (array_merge($configCrontabs, $annotationCrontabs) as $crontab) {
+        foreach (array_merge($configCrontabs, $annotationCrontabs, $methodCrontabs) as $crontab) {
             if ($crontab instanceof CrontabAnnotation) {
                 $crontab = $this->buildCrontabByAnnotation($crontab);
             }
@@ -85,6 +86,16 @@ class CrontabRegisterListener implements ListenerInterface
             }
         }
         return array_values($crontabs);
+    }
+
+    private function getCrontabsFromMethod()
+    {
+        $result = AnnotationCollector::getMethodsByAnnotation(CrontabAnnotation::class);
+        $crontabs = [];
+        foreach ($result as $item) {
+            $crontabs[] = $item['annotation'];
+        }
+        return $crontabs;
     }
 
     private function buildCrontabByAnnotation(CrontabAnnotation $annotation): Crontab

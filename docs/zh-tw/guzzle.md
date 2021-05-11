@@ -46,7 +46,7 @@ class Foo {
 可以主動執行以下操作，解決衝突
 
 ```
-composer require promphp/prometheus_client_php
+composer require "promphp/prometheus_client_php:2.2.1"
 ```
 
 - overtrue/flysystem-cos

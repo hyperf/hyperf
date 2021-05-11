@@ -1,5 +1,107 @@
 # 版本更新记录
 
+# v2.1.16 - 2021-04-26
+
+## 修复
+
+- [#3510](https://github.com/hyperf/hyperf/pull/3510) 修复 `consul` 无法将节点强制离线的问题。
+- [#3513](https://github.com/hyperf/hyperf/pull/3513) 修复 `Nats` 因为 `Socket` 超时时间小于最大闲置时间，导致连接意外关闭的问题。
+- [#3520](https://github.com/hyperf/hyperf/pull/3520) 修复 `@Inject` 无法作用于嵌套 `Trait` 的问题。
+
+## 新增
+
+- [#3514](https://github.com/hyperf/hyperf/pull/3514) 新增方法 `Hyperf\HttpServer\Request::clearStoredParsedData()`。
+
+## 优化
+
+- [#3517](https://github.com/hyperf/hyperf/pull/3517) 优化 `Hyperf\Di\Aop\PropertyHandlerTrait`。
+
+# v2.1.15 - 2021-04-19
+
+## 新增
+
+- [#3484](https://github.com/hyperf/hyperf/pull/3484) 新增 `ORM` 方法 `withMax()` `withMin()` `withSum()` 和 `withAvg()`.
+
+# v2.1.14 - 2021-04-12
+
+## 修复
+
+- [#3465](https://github.com/hyperf/hyperf/pull/3465) 修复协程风格下，`WebSocket` 服务不支持配置多个端口的问题。
+- [#3467](https://github.com/hyperf/hyperf/pull/3467) 修复协程风格下，`WebSocket` 服务无法正常释放连接池的问题。
+
+## 新增
+
+- [#3472](https://github.com/hyperf/hyperf/pull/3472) 新增方法 `Sender::getResponse()`，可以在协程风格的 `WebSocket` 服务里，获得与 `fd` 一一对应的 `Response` 对象。
+
+# v2.1.13 - 2021-04-06
+
+## 修复
+
+- [#3432](https://github.com/hyperf/hyperf/pull/3432) 修复 `SocketIO` 服务，定时清理失效 `fd` 的功能无法作用到其他 `worker` 进程的问题。
+- [#3434](https://github.com/hyperf/hyperf/pull/3434) 修复 `RPC` 结果不支持允许为 `null` 的类型，例如 `?array` 会被强制转化为数组。
+- [#3447](https://github.com/hyperf/hyperf/pull/3447) 修复模型缓存中，因为存在表前缀，导致模型默认值无法生效的问题。
+- [#3450](https://github.com/hyperf/hyperf/pull/3450) 修复注解 `@Crontab` 无法作用于 `方法` 的问题，支持一个类中，配置多个 `@Crontab`。
+
+## 优化
+
+- [#3453](https://github.com/hyperf/hyperf/pull/3453) 优化了类 `Hyperf\Utils\Channel\Caller` 回收实例时的机制，防止因为实例为 `null` 时，导致无法正确回收的问题。
+- [#3455](https://github.com/hyperf/hyperf/pull/3455) 优化脚本 `phar:build`，支持使用软连接方式加载的组件包。
+
+# v2.1.12 - 2021-03-29
+
+## 修复
+
+- [#3423](https://github.com/hyperf/hyperf/pull/3423) 修复 `worker_num` 设置为非 `Integer` 时，导致定时任务中 `Task` 策略无法正常使用的问题。
+- [#3426](https://github.com/hyperf/hyperf/pull/3426) 修复为可选参数路由设置中间件时，导致中间件被意外执行两次的问题。
+
+## 优化
+
+- [#3422](https://github.com/hyperf/hyperf/pull/3422) 优化了 `co-phpunit` 的代码。
+
+# v2.1.11 - 2021-03-22
+
+## 新增
+
+- [#3376](https://github.com/hyperf/hyperf/pull/3376) 为注解 `Hyperf\DbConnection\Annotation\Transactional` 增加参数 `$connection` 和 `$attempts`，用户可以按需设置事务连接和重试次数。
+- [#3403](https://github.com/hyperf/hyperf/pull/3403) 新增方法 `Hyperf\Testing\Client::sendRequest()`，用户可以使用自己构造的 `ServerRequest`，比如设置 `Cookies`。
+
+## 修复
+
+- [#3380](https://github.com/hyperf/hyperf/pull/3380) 修复超全局变量，在协程上下文里没有 `Request` 对象时，无法正常工作的问题。
+- [#3394](https://github.com/hyperf/hyperf/pull/3394) 修复使用 `@Inject` 注入的对象，会被 `trait` 中注入的对象覆盖的问题。
+- [#3395](https://github.com/hyperf/hyperf/pull/3395) 修复当继承使用 `@Inject` 注入私有变量的父类时，而导致子类实例化报错的问题。
+- [#3398](https://github.com/hyperf/hyperf/pull/3398) 修复单元测试中使用 `UploadedFile::isValid()` 时，无法正确判断结果的问题。
+
+# v2.1.10 - 2021-03-15
+
+## 修复
+
+- [#3348](https://github.com/hyperf/hyperf/pull/3348) 修复当使用 `Arr::forget` 方法在 `key` 为 `integer` 且不存在时，执行报错的问题。
+- [#3351](https://github.com/hyperf/hyperf/pull/3351) 修复 `hyperf/validation` 组件中，`FormRequest` 无法从协程上下文中获取到修改后的 `ServerRequest`，从而导致验证器验证失败的问题。
+- [#3356](https://github.com/hyperf/hyperf/pull/3356) 修复 `hyperf/testing` 组件中，客户端 `Hyperf\Testing\Client` 无法模拟构造正常的 `UriInterface` 的问题。
+- [#3363](https://github.com/hyperf/hyperf/pull/3363) 修复在入口文件 `bin/hyperf.php` 中自定义的常量，无法在命令 `server:watch` 中使用的问题。
+- [#3365](https://github.com/hyperf/hyperf/pull/3365) 修复当使用协程风格服务时，如果用户没有配置 `pid_file`，仍然会意外生成 `runtime/hyperf.pid` 文件的问题。
+
+## 优化
+
+- [#3364](https://github.com/hyperf/hyperf/pull/3364) 优化命令 `phar:build`，你可以在不使用 `php` 脚本的情况下执行 `phar` 文件，就像使用命令 `./composer.phar` 而非 `php composer.phar`。
+- [#3367](https://github.com/hyperf/hyperf/pull/3367) 优化使用 `gen:model` 生成模型字段的类型注释时，尽量读取自定义转换器转换后的对象类型。
+
+# v2.1.9 - 2021-03-08
+
+## 修复
+
+- [#3326](https://github.com/hyperf/hyperf/pull/3326) 修复使用 `JsonEofPacker` 无法正确解包自定义 `eof` 数据的问题。
+- [#3330](https://github.com/hyperf/hyperf/pull/3330) 修复因其他协程修改静态变量 `$constraints`，导致模型关系查询错误的问题。
+
+## 新增
+
+- [#3325](https://github.com/hyperf/hyperf/pull/3325) 为 `Crontab` 注解增加 `enable` 参数，用于控制当前任务是否注册到定时任务中。
+
+## 优化
+
+- [#3338](https://github.com/hyperf/hyperf/pull/3338) 优化了 `testing` 组件，使模拟请求的方法运行在独立的协程当中，避免协程变量污染。
+
 # v2.1.8 - 2021-03-01
 
 ## 修复

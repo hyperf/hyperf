@@ -19,11 +19,11 @@ use Swoole\Server as SwooleServer;
 
 interface ServerInterface
 {
-    const SERVER_HTTP = 1;
+    public const SERVER_HTTP = 1;
 
-    const SERVER_WEBSOCKET = 2;
+    public const SERVER_WEBSOCKET = 2;
 
-    const SERVER_BASE = 3;
+    public const SERVER_BASE = 3;
 
     public function __construct(ContainerInterface $container, LoggerInterface $logger, EventDispatcherInterface $dispatcher);
 
