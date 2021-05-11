@@ -20,20 +20,15 @@
     },
     "require": {
         "php": ">=7.0",
-        "hyperf/guzzle": "~2.1.0",
-        "elasticsearch/elasticsearch": "^7.0"
+        "elasticsearch/elasticsearch": "^7.0",
+        "hyperf/guzzle": "~2.2.0"
     },
-    "require-dev": {
-        "phpunit/phpunit": "^9.4",
-        "guzzlehttp/ringphp": "~1.0"
+    "config": {
+        "sort-packages": true
     },
     "extra": {
         "branch-alias": {
             "dev-master": "2.1-dev"
         }
-    },
-    "scripts": {
-        "test": "./vendor/bin/phpunit -c phpunit.xml",
-        "co_test": "php tests/co_phpunit.php -c phpunit.xml"
     }
 }

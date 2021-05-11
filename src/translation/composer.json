@@ -7,6 +7,12 @@
         "translation",
         "hyperf"
     ],
+    "require": {
+        "php": ">=7.2",
+        "hyperf/contract": "~2.2.0",
+        "hyperf/utils": "~2.2.0",
+        "psr/container": "^1.0|^2.0"
+    },
     "autoload": {
         "files": [
             "src/Functions.php"
@@ -20,22 +26,8 @@
             "HyperfTest\\Translation\\": "tests"
         }
     },
-    "require": {
-        "php": ">=7.2",
-        "hyperf/contract": "~2.1.0",
-        "hyperf/utils": "~2.1.0",
-        "psr/container": "^1.0|^2.0"
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.14",
-        "mockery/mockery": "^1.2"
-    },
     "config": {
         "sort-packages": true
-    },
-    "scripts": {
-        "test": "co-phpunit -c phpunit.xml --colors=always",
-        "cs-fix": "php-cs-fixer fix $1"
     },
     "extra": {
         "branch-alias": {

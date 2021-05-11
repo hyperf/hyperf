@@ -7,6 +7,21 @@
         "hyperf"
     ],
     "description": "Socket.io implementation for hyperf",
+    "require": {
+        "php": ">=7.2",
+        "ext-json": "*",
+        "ext-redis": "*",
+        "ext-swoole": ">=4.4",
+        "hyperf/di": "~2.2.0",
+        "hyperf/redis": "~2.2.0",
+        "hyperf/websocket-server": "~2.2.0",
+        "mix/redis-subscribe": "^2.1"
+    },
+    "suggest": {
+        "hyperf/command": "Required to use RemoveRedisGarbage command",
+        "hyperf/session": "Required to use session",
+        "hyperf/nsq": "Required to use RedisNsqAdapter"
+    },
     "autoload": {
         "psr-4": {
             "Hyperf\\SocketIOServer\\": "src/"
@@ -17,37 +32,8 @@
             "HyperfTest\\SocketIOServer\\": "tests"
         }
     },
-    "require": {
-        "php": ">=7.2",
-        "ext-json": "*",
-        "ext-redis": "*",
-        "ext-swoole": ">=4.4",
-        "hyperf/di": "~2.1.0",
-        "hyperf/redis": "~2.1.0",
-        "hyperf/websocket-server": "~2.1.0",
-        "mix/redis-subscribe": "^2.1"
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.14",
-        "hyperf/command": "~2.1.0",
-        "hyperf/config": "~2.1.0",
-        "hyperf/session": "~2.1.0",
-        "hyperf/testing": "~2.1.0",
-        "mockery/mockery": "^1.3",
-        "phpstan/phpstan": "^0.10.5"
-    },
-    "suggest": {
-        "hyperf/command": "Required to use RemoveRedisGarbage command",
-        "hyperf/session": "Required to use session",
-        "hyperf/nsq": "Required to use RedisNsqAdapter"
-    },
     "config": {
         "sort-packages": true
-    },
-    "scripts": {
-        "test": "co-phpunit -c phpunit.xml --colors=always",
-        "analyse": "phpstan analyse --memory-limit 300M -l 3 ./src",
-        "cs-fix": "php-cs-fixer fix $1"
     },
     "extra": {
         "branch-alias": {

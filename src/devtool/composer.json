@@ -17,10 +17,10 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/command": "~2.1.0",
-        "hyperf/contract": "~2.1.0",
-        "hyperf/di": "~2.1.0",
-        "hyperf/utils": "~2.1.0"
+        "hyperf/command": "~2.2.0",
+        "hyperf/contract": "~2.2.0",
+        "hyperf/di": "~2.2.0",
+        "hyperf/utils": "~2.2.0"
     },
     "autoload": {
         "psr-4": {
