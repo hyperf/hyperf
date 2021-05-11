@@ -17,19 +17,11 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/contract": "~2.1.0",
-        "hyperf/utils": "~2.1.0",
+        "hyperf/contract": "~2.2.0",
+        "hyperf/utils": "~2.2.0",
         "psr/container": "^1.0|^2.0",
         "psr/http-server-middleware": "^1.0",
         "psr/log": "^1.0"
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.9",
-        "malukenho/docheader": "^0.1.6",
-        "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^9.4"
-    },
-    "suggest": {
     },
     "autoload": {
         "psr-4": {
@@ -50,11 +42,5 @@
         "hyperf": {
             "config": "Hyperf\\SwooleTracker\\ConfigProvider"
         }
-    },
-    "bin": [
-    ],
-    "scripts": {
-        "cs-fix": "php-cs-fixer fix $1",
-        "test": "phpunit --colors=always"
     }
 }

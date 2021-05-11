@@ -20,18 +20,8 @@
     "require": {
         "php": ">=7.2",
         "psr/container": "^1.0|^2.0",
-        "hyperf/contract": "~2.1.0",
-        "hyperf/utils": "~2.1.0"
-    },
-    "require-dev": {
-        "hyperf/config": "~2.1.0",
-        "hyperf/event": "~2.1.0",
-        "hyperf/framework": "~2.1.0",
-        "hyperf/process": "~2.1.0",
-        "malukenho/docheader": "^0.1.6",
-        "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^9.4",
-        "friendsofphp/php-cs-fixer": "^2.9"
+        "hyperf/contract": "~2.2.0",
+        "hyperf/utils": "~2.2.0"
     },
     "suggest": {
         "hyperf/process": "Use hyperf process to run ConfigFetcherProcess."
@@ -56,11 +46,5 @@
         "hyperf": {
             "config": "Hyperf\\ConfigApollo\\ConfigProvider"
         }
-    },
-    "bin": [
-    ],
-    "scripts": {
-        "cs-fix": "php-cs-fixer fix $1",
-        "test": "phpunit --colors=always"
     }
 }

@@ -21,18 +21,11 @@
     "require": {
         "php": ">=7.2",
         "psr/container": "^1.0|^2.0",
-        "phpunit/phpunit": "^9.4",
-        "hyperf/contract": "~2.1.0",
-        "hyperf/http-message": "~2.1.0",
-        "hyperf/http-server": "~2.1.0",
-        "hyperf/utils": "~2.1.0"
-    },
-    "require-dev": {
-        "malukenho/docheader": "^0.1.6",
-        "mockery/mockery": "^1.0",
-        "friendsofphp/php-cs-fixer": "^2.9"
-    },
-    "suggest": {
+        "phpunit/phpunit": "^9.5",
+        "hyperf/contract": "~2.2.0",
+        "hyperf/http-message": "~2.2.0",
+        "hyperf/http-server": "~2.2.0",
+        "hyperf/utils": "~2.2.0"
     },
     "extra": {
         "branch-alias": {
@@ -41,9 +34,5 @@
     },
     "bin": [
         "co-phpunit"
-    ],
-    "scripts": {
-        "test": "./vendor/bin/phpunit -c phpunit.xml",
-        "co_test": "php tests/co_phpunit.php -c phpunit.xml"
-    }
+    ]
 }

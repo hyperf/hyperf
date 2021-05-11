@@ -20,31 +20,20 @@
     "require": {
         "php": ">=7.2",
         "egulias/email-validator": "^2.1",
-        "hyperf/contract": "~2.1.0",
-        "hyperf/database": "~2.1.0",
-        "hyperf/di": "~2.1.0",
-        "hyperf/framework": "~2.1.0",
-        "hyperf/http-server": "~2.1.0",
-        "hyperf/utils": "~2.1.0",
-        "hyperf/translation": "~2.1.0",
+        "hyperf/contract": "~2.2.0",
+        "hyperf/database": "~2.2.0",
+        "hyperf/di": "~2.2.0",
+        "hyperf/framework": "~2.2.0",
+        "hyperf/http-server": "~2.2.0",
+        "hyperf/utils": "~2.2.0",
+        "hyperf/translation": "~2.2.0",
         "nesbot/carbon": "^2.21",
         "psr/container": "^1.0|^2.0",
         "psr/event-dispatcher": "^1.0",
         "psr/http-message": "^1.0"
     },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.14",
-        "hyperf/db-connection": "~2.1.0",
-        "hyperf/devtool": "~2.1.0",
-        "hyperf/testing": "~2.1.0",
-        "mockery/mockery": "^1.2"
-    },
     "config": {
         "sort-packages": true
-    },
-    "scripts": {
-        "test": "co-phpunit -c phpunit.xml --colors=always",
-        "cs-fix": "php-cs-fixer fix $1"
     },
     "extra": {
         "branch-alias": {
