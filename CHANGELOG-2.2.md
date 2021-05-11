@@ -3,3 +3,4 @@
 ## Dependencies Upgrade
 
 - Upgraded `friendsofphp/php-cs-fixer` to `^3.0`;
+- Upgraded `psr/container` to `^1.0|^2.0`;

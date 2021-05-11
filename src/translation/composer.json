@@ -24,7 +24,7 @@
         "php": ">=7.2",
         "hyperf/contract": "~2.1.0",
         "hyperf/utils": "~2.1.0",
-        "psr/container": "^1.0"
+        "psr/container": "^1.0|^2.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",

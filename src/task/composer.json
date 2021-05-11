@@ -20,7 +20,7 @@
         "hyperf/contract": "~2.1.0",
         "hyperf/framework": "~2.1.0",
         "hyperf/utils": "~2.1.0",
-        "psr/container": "^1.0",
+        "psr/container": "^1.0|^2.0",
         "psr/event-dispatcher": "^1.0",
         "psr/log": "^1.0",
         "symfony/property-access": "^5.0",

@@ -31,7 +31,7 @@
         "hyperf/command": "~2.1.0",
         "hyperf/contract": "~2.1.0",
         "nikic/php-parser": "^4.1",
-        "psr/container": "^1.0"
+        "psr/container": "^1.0|^2.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",

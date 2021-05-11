@@ -22,7 +22,7 @@
         "hyperf/process": "~2.1.0",
         "hyperf/pool": "~2.1.0",
         "php-amqplib/php-amqplib": "^2.9.2",
-        "psr/container": "^1.0",
+        "psr/container": "^1.0|^2.0",
         "psr/event-dispatcher": "^1.0",
         "psr/log": "^1.0"
     },
