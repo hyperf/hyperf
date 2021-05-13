@@ -24,6 +24,7 @@ use Hyperf\Utils\Coordinator\CoordinatorManager;
 use HyperfTest\HttpServer\Stub\ServerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
@@ -45,11 +46,15 @@ class ServerTest extends TestCase
         $container = $this->getContainer();
         $dispatcher = Mockery::mock(ExceptionHandlerDispatcher::class);
         $emitter = Mockery::mock(ResponseEmitter::class);
+        $event = tap(Mockery::mock(EventDispatcherInterface::class), static function ($event) {
+            $event->shouldReceive('dispatch')->withAnyArgs()->andReturnNull();
+        });
         $server = Mockery::mock(ServerStub::class . '[initRequestAndResponse]', [
             $container,
             Mockery::mock(HttpDispatcher::class),
             $dispatcher,
             $emitter,
+            $event,
         ]);
 
         $dispatcher->shouldReceive('dispatch')->andReturnUsing(function ($exception) {

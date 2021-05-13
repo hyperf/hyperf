@@ -19,6 +19,8 @@ use Hyperf\Di\Container;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
+use Hyperf\Event\EventDispatcher;
+use Hyperf\Event\ListenerProvider;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\ResponseEmitter;
@@ -36,6 +38,7 @@ use HyperfTest\Testing\Stub\Exception\Handler\FooExceptionHandler;
 use HyperfTest\Testing\Stub\FooController;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
@@ -106,6 +109,7 @@ class ClientTest extends TestCase
         $container = Mockery::mock(Container::class);
 
         $container->shouldReceive('get')->with(HttpDispatcher::class)->andReturn(new HttpDispatcher($container));
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(new EventDispatcher(new ListenerProvider()));
         $container->shouldReceive('get')->with(ExceptionHandlerDispatcher::class)->andReturn(new ExceptionHandlerDispatcher($container));
         $container->shouldReceive('get')->with(ResponseEmitter::class)->andReturn(new ResponseEmitter());
         $container->shouldReceive('get')->with(DispatcherFactory::class)->andReturn($factory = new DispatcherFactory());

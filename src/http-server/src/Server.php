@@ -20,6 +20,7 @@ use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
+use Hyperf\HttpServer\Event\RequestHandled;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
@@ -27,6 +28,7 @@ use Hyperf\Utils\Context;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -74,16 +76,27 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     protected $responseEmitter;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * @var string
      */
     protected $serverName;
 
-    public function __construct(ContainerInterface $container, HttpDispatcher $dispatcher, ExceptionHandlerDispatcher $exceptionHandlerDispatcher, ResponseEmitter $responseEmitter)
-    {
+    public function __construct(
+        ContainerInterface $container,
+        HttpDispatcher $dispatcher,
+        ExceptionHandlerDispatcher $exceptionHandlerDispatcher,
+        ResponseEmitter $responseEmitter,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->container = $container;
         $this->dispatcher = $dispatcher;
         $this->exceptionHandlerDispatcher = $exceptionHandlerDispatcher;
         $this->responseEmitter = $responseEmitter;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function initCoreMiddleware(string $serverName): void
@@ -118,6 +131,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             // Delegate the exception to exception handler.
             $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         } finally {
+            $this->eventDispatcher->dispatch(new RequestHandled($psr7Request ?? null, $psr7Response ?? null));
             // Send the Response to client.
             if (! isset($psr7Response)) {
                 return;

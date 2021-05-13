@@ -24,6 +24,7 @@ use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\RequestDispatcher;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -50,9 +51,10 @@ class HttpServer extends Server
         RequestDispatcher $dispatcher,
         ExceptionHandlerDispatcher $exceptionHandlerDispatcher,
         ResponseEmitter $responseEmitter,
-        ProtocolManager $protocolManager
+        ProtocolManager $protocolManager,
+        EventDispatcherInterface $event
     ) {
-        parent::__construct($container, $dispatcher, $exceptionHandlerDispatcher, $responseEmitter);
+        parent::__construct($container, $dispatcher, $exceptionHandlerDispatcher, $responseEmitter, $event);
         $this->protocol = new Protocol($container, $protocolManager, 'jsonrpc-http');
         $this->packer = $this->protocol->getPacker();
         $this->responseBuilder = make(ResponseBuilder::class, [

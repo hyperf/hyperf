@@ -13,3 +13,8 @@
 ## Changed
 
 - Changed the default priority of aspect to 0.
+- `Hyperf\HttpServer\Server::__construct()` invoked with 5 parameters, `EventDispatcherInterface` is added.
+
+## Added
+
+- [#3579](https://github.com/hyperf/hyperf/pull/3579) Added event `RequestHandled`, which will be handled after each `request`.

@@ -29,6 +29,7 @@ use Hyperf\Utils\Context;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -51,7 +52,13 @@ class Client extends Server
 
     public function __construct(ContainerInterface $container, PackerInterface $packer = null, $server = 'http')
     {
-        parent::__construct($container, $container->get(HttpDispatcher::class), $container->get(ExceptionHandlerDispatcher::class), $container->get(ResponseEmitter::class));
+        parent::__construct(
+            $container,
+            $container->get(HttpDispatcher::class),
+            $container->get(ExceptionHandlerDispatcher::class),
+            $container->get(ResponseEmitter::class),
+            $container->get(EventDispatcherInterface::class)
+        );
         $this->packer = $packer ?? new JsonPacker();
 
         $this->initCoreMiddleware($server);
