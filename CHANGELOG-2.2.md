@@ -13,3 +13,4 @@
 ## Changed
 
 - Changed the default priority of aspect to 0.
+- Changed the consumer tag of amqp to empty string.
