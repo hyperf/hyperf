@@ -9,3 +9,7 @@
 ## Dependencies Changed
 
 - `domnikl/statsd` is abandoned and no longer maintained. The author suggests using the `slickdeals/statsd` package instead.
+
+## Changed
+
+- Changed the default priority of aspect to 0.
