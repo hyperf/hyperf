@@ -219,13 +219,13 @@ class AopAspectTest extends TestCase
         $annotation->collectClass(Foo2Aspect::class);
 
         $this->assertSame([
-            'priority' => 4611686018427387904,
+            'priority' => 0,
             'classes' => [Foo::class],
             'annotations' => [DemoAnnotation::class],
         ], AspectCollector::getRule(FooAspect::class));
 
         $this->assertSame([
-            'priority' => 4611686018427387904,
+            'priority' => 0,
             'classes' => [Foo::class],
             'annotations' => [],
         ], AspectCollector::getRule(Foo2Aspect::class));
