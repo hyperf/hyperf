@@ -21,7 +21,7 @@
         "psr/http-message": "^1.0"
     },
     "suggest": {
-        "domnikl/statsd": "Required to use StatdD driver.",
+        "slickdeals/statsd": "Required to use StatdD driver.",
         "influxdb/influxdb-php": "Required to use InfluxDB driver.",
         "hyperf/di": "Required to use annotations.",
         "hyperf/event": "Required to use listeners for default metrics.",
