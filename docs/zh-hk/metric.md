@@ -15,6 +15,9 @@ composer require hyperf/metric
 ```bash
 # StatsD 所需依賴
 composer require domnikl/statsd
+# 因 domnikl/statsd 已不再维护，可以使用以下组件代替
+composer require slickdeals/statsd
+
 # InfluxDB 所需依賴 
 composer require influxdb/influxdb-php 
 ```

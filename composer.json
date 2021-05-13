@@ -33,7 +33,7 @@
         "doctrine/annotations": "^1.6",
         "doctrine/inflector": "^2.0",
         "doctrine/instantiator": "^1.0",
-        "domnikl/statsd": "^3.0.1",
+        "slickdeals/statsd": "^3.0.1",
         "egulias/email-validator": "^3.0",
         "elasticsearch/elasticsearch": "^7.0",
         "fig/http-message-util": "^1.1.2",
