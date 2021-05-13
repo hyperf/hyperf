@@ -28,11 +28,31 @@ class CrontabAnnotationTest extends TestCase
         $annotation->collectClass(FooCron::class);
     }
 
-    public function testIsEnable()
+    public function testCallableNormal()
     {
         $annotation = new Crontab();
-        $annotation->enableMethod = 'isEnable';
+        $annotation->callback = 'execute';
         $annotation->collectClass(FooCron::class);
         $this->assertEquals([FooCron::class, 'execute'], $annotation->callback);
+    }
+
+    public function testEnable()
+    {
+        $annotation = new Crontab();
+        $annotation->callback = 'execute';
+        $annotation->collectClass(FooCron::class);
+        $this->assertTrue($annotation->enable);
+
+        $annotation = new Crontab();
+        $annotation->callback = 'execute';
+        $annotation->enable = 'true';
+        $annotation->collectClass(FooCron::class);
+        $this->assertTrue($annotation->enable);
+
+        $annotation = new Crontab();
+        $annotation->callback = 'execute';
+        $annotation->enable = 'isEnable';
+        $annotation->collectClass(FooCron::class);
+        $this->assertEquals([FooCron::class, 'isEnable'], $annotation->enable);
     }
 }

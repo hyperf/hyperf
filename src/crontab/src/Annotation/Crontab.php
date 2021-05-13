@@ -68,14 +68,9 @@ class Crontab extends AbstractAnnotation
     public $memo = '';
 
     /**
-     * @var bool
+     * @var bool|array
      */
     public $enable = true;
-
-    /**
-     * @var string|null
-     */
-    public $enableMethod = null;
 
     public function __construct($value = null)
     {
@@ -90,24 +85,27 @@ class Crontab extends AbstractAnnotation
             return;
         }
 
-        if (! $this->name) {
-            $this->name = $className . '::' . $target;
-        }
-
-        if (! $this->callback) {
-            $this->callback = [$className, $target];
-        } elseif (is_string($this->callback)) {
-            $this->callback = [$className, $this->callback];
-        }
-
         parent::collectMethod($className, $target);
     }
 
     public function collectClass(string $className): void
     {
+        $this->parseName($className);
+        $this->parseCallback($className);
+        $this->parseEnable($className);
+
+        parent::collectClass($className);
+    }
+
+    protected function parseName(string $className): void
+    {
         if (! $this->name) {
             $this->name = $className;
         }
+    }
+
+    protected function parseCallback(string $className): void
+    {
         if (! $this->callback) {
             $reflectionClass = ReflectionManager::reflectClass($className);
             $reflectionMethods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
@@ -115,8 +113,7 @@ class Crontab extends AbstractAnnotation
             $firstAvailableMethod = null;
             $hasInvokeMagicMethod = false;
             foreach ($reflectionMethods as $reflectionMethod) {
-                if (! Str::startsWith($reflectionMethod->getName(), ['__']) &&
-                    $reflectionMethod->getName() !== $this->enableMethod) {
+                if (! Str::startsWith($reflectionMethod->getName(), ['__'])) {
                     ++$availableMethodCount;
                     ! $firstAvailableMethod && $firstAvailableMethod = $reflectionMethod;
                 } elseif ($reflectionMethod->getName() === '__invoke') {
@@ -133,6 +130,22 @@ class Crontab extends AbstractAnnotation
         } elseif (is_string($this->callback)) {
             $this->callback = [$className, $this->callback];
         }
-        parent::collectClass($className);
+    }
+
+    protected function parseEnable(string $className): void
+    {
+        if (is_string($this->enable) && 'true' === $this->enable) {
+            $this->enable = true;
+            return;
+        }
+
+        if (is_string($this->enable) && 'false' === $this->enable) {
+            $this->enable = false;
+            return;
+        }
+
+        if (is_string($this->enable)) {
+            $this->enable = [$className, $this->enable];
+        }
     }
 }

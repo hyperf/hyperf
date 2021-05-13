@@ -26,6 +26,7 @@ use Hyperf\Utils\Reflection\ClassInvoker;
 use HyperfTest\Crontab\Stub\FooCron;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 /**
  * @internal
@@ -33,6 +34,22 @@ use PHPUnit\Framework\TestCase;
  */
 class CrontabRegisterListenerTest extends TestCase
 {
+    protected $prevContainer;
+
+    protected function setUp(): void
+    {
+        if (ApplicationContext::hasContainer()) {
+            $this->prevContainer = ApplicationContext::getContainer();
+        }
+    }
+
+    protected function tearDown(): void
+    {
+        if ($this->prevContainer instanceof ContainerInterface) {
+            ApplicationContext::setContainer($this->prevContainer);
+        }
+    }
+
     public function testBuildCrontabByAnnotationEnableMethod()
     {
         $container = Mockery::mock(Container::class);
@@ -45,7 +62,8 @@ class CrontabRegisterListenerTest extends TestCase
         ApplicationContext::setContainer($container);
 
         $crontabAnnotation = new Crontab();
-        $crontabAnnotation->enableMethod = 'isEnable';
+        $crontabAnnotation->callback = 'execute';
+        $crontabAnnotation->enable = 'isEnable';
         $crontabAnnotation->collectClass(FooCron::class);
 
         $annotationCrontabs = AnnotationCollector::getClassesByAnnotation(CrontabAnnotation::class);
@@ -53,7 +71,7 @@ class CrontabRegisterListenerTest extends TestCase
         $manager = new CrontabManager(new Parser());
         $class = new ClassInvoker(new CrontabRegisterListener($manager, Mockery::mock(StdoutLoggerInterface::class), Mockery::mock(ConfigInterface::class)));
 
-        $crontab = $class->buildCrontabByAnnotation(FooCron::class, $annotationCrontabs[FooCron::class]);
+        $crontab = $class->buildCrontabByAnnotation($annotationCrontabs[FooCron::class]);
 
         $this->assertFalse($crontab->isEnable());
     }

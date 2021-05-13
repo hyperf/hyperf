@@ -69,7 +69,7 @@ class CrontabRegisterListener implements ListenerInterface
                 $this->logger->debug(sprintf('Crontab %s have been registered.', $crontab->getName()));
             }
         }
-        
+
     }
 
     private function parseCrontabs(): array
@@ -78,9 +78,9 @@ class CrontabRegisterListener implements ListenerInterface
         $annotationCrontabs = AnnotationCollector::getClassesByAnnotation(CrontabAnnotation::class);
         $methodCrontabs = $this->getCrontabsFromMethod();
         $crontabs = [];
-        foreach (array_merge($configCrontabs, $annotationCrontabs, $methodCrontabs) as $className => $crontab) {
+        foreach (array_merge($configCrontabs, $annotationCrontabs, $methodCrontabs) as $crontab) {
             if ($crontab instanceof CrontabAnnotation) {
-                $crontab = $this->buildCrontabByAnnotation($className, $crontab);
+                $crontab = $this->buildCrontabByAnnotation($crontab);
             }
             if ($crontab instanceof Crontab) {
                 $crontabs[$crontab->getName()] = $crontab;
@@ -99,7 +99,7 @@ class CrontabRegisterListener implements ListenerInterface
         return $crontabs;
     }
 
-    private function buildCrontabByAnnotation(string $className, CrontabAnnotation $annotation): Crontab
+    private function buildCrontabByAnnotation(CrontabAnnotation $annotation): Crontab
     {
         $crontab = new Crontab();
         isset($annotation->name) && $crontab->setName($annotation->name);
@@ -111,27 +111,36 @@ class CrontabRegisterListener implements ListenerInterface
         isset($annotation->onOneServer) && $crontab->setOnOneServer($annotation->onOneServer);
         isset($annotation->callback) && $crontab->setCallback($annotation->callback);
         isset($annotation->memo) && $crontab->setMemo($annotation->memo);
-        isset($annotation->enable) && $crontab->setEnable($annotation->enable);
-
-        if ($annotation->enableMethod) {
-            $crontab->setEnable($this->resolveCrontabEnableMethod($className, $annotation->enableMethod, $crontab->isEnable()));
-        }
+        isset($annotation->enable) && $crontab->setEnable($this->resolveCrontabEnableMethod($annotation->enable));
 
         return $crontab;
     }
 
-    private function resolveCrontabEnableMethod(string $className, string $enableMethod, bool $default): bool
+    /**
+     * @param bool|array $enable
+     */
+    private function resolveCrontabEnableMethod($enable): bool
     {
-        try {
-            $reflectionClass = ReflectionManager::reflectClass($className);
-            $method = $reflectionClass->getMethod($enableMethod);
-
-            if ($method->isPublic()) {
-                return make($className)->{$enableMethod}();
-            }
-        } catch (\ReflectionException $e) {
+        if (is_bool($enable)) {
+            return $enable;
         }
 
-        return $default;
+        $className = reset($enable);
+        $method = end($enable);
+
+        try {
+            $reflectionClass = ReflectionManager::reflectClass($className);
+            $reflectionMethod = $reflectionClass->getMethod($method);
+
+            if ($reflectionMethod->isPublic()) {
+                return make($className)->{$method}();
+            }
+
+            $this->logger->info('Crontab enable method is not public, skip register.');
+        } catch (\ReflectionException $e) {
+            $this->logger->error('Resolve crontab enable failed, skip register.');
+        }
+
+        return false;
     }
 }
