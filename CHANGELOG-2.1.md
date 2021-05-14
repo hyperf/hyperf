@@ -1,5 +1,9 @@
 # v2.1.17 - TBD
 
+## Fixed
+
+- [#3856](https://github.com/hyperf/hyperf/pull/3586) Fixed bug that coroutine won't destruct for keepalive request in swow server.
+
 # v2.1.16 - 2021-04-26
 
 ## Fixed
