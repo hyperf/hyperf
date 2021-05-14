@@ -20,11 +20,10 @@ use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Server\Exception\RuntimeException;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
-use Swow\Coroutine as SwowCoroutine;
+use Swow\Coroutine;
 
 class SwowServer implements ServerInterface
 {
@@ -78,7 +77,7 @@ class SwowServer implements ServerInterface
         $servers = ServerManager::list();
         $config = $this->config->toArray();
         foreach ($servers as $name => [$type, $server]) {
-            SwowCoroutine::run(function () use ($name, $server, $config) {
+            Coroutine::run(function () use ($name, $server, $config) {
                 if (! $this->mainServerStarted) {
                     $this->mainServerStarted = true;
                     $this->eventDispatcher->dispatch(new MainCoroutineServerStart($name, $server, $config));
