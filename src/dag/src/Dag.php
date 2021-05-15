@@ -15,6 +15,7 @@ use Hyperf\Dag\Exception\InvalidArgumentException;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Coroutine\Concurrent;
+use SplStack;
 
 class Dag implements Runner
 {
@@ -29,6 +30,41 @@ class Dag implements Runner
     protected $concurrency = 10;
 
     /**
+     * @var int
+     */
+    protected $vertexNum;
+
+    /**
+     * @var array<string,int>
+     */
+    protected $circularDependences;
+
+    /**
+     * @var SplStack
+     */
+    protected $stack;
+
+    /**
+     * @var array<string,int>
+     */
+    protected $isInStack;
+
+    /**
+     * @var array<string,int>
+     */
+    protected $dfn;
+
+    /**
+     * @var array<string,int>
+     */
+    protected $low;
+
+    /**
+     * @var int
+     */
+    protected $time;
+
+    /**
      * Add a vertex to the dag.
      * It doesn't make sense to add a vertex with the same key more than once.
      * If so they are simply ignored.
@@ -36,6 +72,7 @@ class Dag implements Runner
     public function addVertex(Vertex $vertex): self
     {
         $this->vertexes[$vertex->key] = $vertex;
+        $this->vertexNum = count($this->vertexes);
         return $this;
     }
 
@@ -102,6 +139,30 @@ class Dag implements Runner
         return $this;
     }
 
+    public function checkCircularDependences(): array
+    {
+        $this->circularDependences = [];
+        $this->isInStack = [];
+        $this->dfn = [];
+        $this->low = [];
+        $this->time = 1;
+        $this->stack = new SplStack;
+
+        foreach ($this->vertexes as $vertex) {
+            $this->dfn[$vertex->key] = 0;
+            $this->low[$vertex->key] = 0;
+            $this->isInStack[$vertex->key] = false;
+        }
+
+        foreach ($this->vertexes as $vertex) {
+            if (!$this->dfn[$vertex->key]) {
+                $this->_checkCircularDependences($vertex);
+            }
+        }
+
+        return $this->circularDependences;
+    }
+
     private function scheduleChildren(Vertex $element, Channel $queue, array $visited): void
     {
         foreach ($element->children as $child) {
@@ -136,6 +197,52 @@ class Dag implements Runner
 
         foreach ($roots as $root) {
             $queue->push($root);
+        }
+    }
+
+    private function isConnected(Vertex $src, Vertex $dst)
+    {
+        foreach ($src->children as $child) {
+            if ($dst === $child) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function _checkCircularDependences(Vertex $vertexSrc)
+    {
+        $this->dfn[$vertexSrc->key] = $this->low[$vertexSrc->key] = $this->time++;
+        $this->stack->push($vertexSrc->key);
+        $this->isInStack[$vertexSrc->key] = true;
+
+        foreach ($this->vertexes as $vertexDst) {
+            if ($this->isConnected($vertexSrc, $vertexDst)) {
+                if ($this->dfn[$vertexDst->key] == 0) {
+                    $this->_checkCircularDependences($vertexDst);
+                    $this->low[$vertexSrc->key] = min($this->low[$vertexSrc->key], $this->low[$vertexDst->key]);
+                } elseif ($this->isInStack[$vertexDst->key]) {
+                    $this->low[$vertexSrc->key] = min($this->low[$vertexSrc->key], $this->dfn[$vertexDst->key]);
+                }
+            }
+        }
+    
+        if ($this->dfn[$vertexSrc->key] == $this->low[$vertexSrc->key]) {
+            $scc = [];
+            do {
+                /**
+                 * @var string
+                 */
+                $vertexKey = $this->stack->top();
+                $this->stack->pop();
+                $this->isInStack[$vertexKey] = false;
+                $scc[] = $vertexKey;
+            } while ($vertexKey != $vertexSrc->key);
+
+            if (count($scc) > 1) {
+                $this->circularDependences[] = $scc;
+            }
         }
     }
 }
