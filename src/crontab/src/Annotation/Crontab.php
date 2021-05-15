@@ -68,7 +68,7 @@ class Crontab extends AbstractAnnotation
     public $memo = '';
 
     /**
-     * @var bool|array
+     * @var array|bool
      */
     public $enable = true;
 
@@ -134,12 +134,12 @@ class Crontab extends AbstractAnnotation
 
     protected function parseEnable(string $className): void
     {
-        if (is_string($this->enable) && 'true' === $this->enable) {
+        if (is_string($this->enable) && $this->enable === 'true') {
             $this->enable = true;
             return;
         }
 
-        if (is_string($this->enable) && 'false' === $this->enable) {
+        if (is_string($this->enable) && $this->enable === 'false') {
             $this->enable = false;
             return;
         }

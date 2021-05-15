@@ -69,7 +69,6 @@ class CrontabRegisterListener implements ListenerInterface
                 $this->logger->debug(sprintf('Crontab %s have been registered.', $crontab->getName()));
             }
         }
-
     }
 
     private function parseCrontabs(): array
@@ -117,7 +116,7 @@ class CrontabRegisterListener implements ListenerInterface
     }
 
     /**
-     * @param bool|array $enable
+     * @param array|bool $enable
      */
     private function resolveCrontabEnableMethod($enable): bool
     {
