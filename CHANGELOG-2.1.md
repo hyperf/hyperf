@@ -1,12 +1,14 @@
-# v2.1.17 - TBD
+# v2.1.18 - TBD
 
-## Added
-
-- [#3329](https://github.com/hyperf/hyperf/pull/3329) The `enable` parameter of the `@Crontab` supports `array`, which you can dynamically control whether the task is executed or not.
+# v2.1.17 - 2021-05-17
 
 ## Fixed
 
 - [#3856](https://github.com/hyperf/hyperf/pull/3586) Fixed bug that coroutine won't destruct for keepalive request in swow server.
+
+## Added
+
+- [#3329](https://github.com/hyperf/hyperf/pull/3329) The `enable` parameter of the `@Crontab` supports `array`, which you can dynamically control whether the task is executed or not.
 
 # v2.1.16 - 2021-04-26
 
