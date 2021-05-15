@@ -119,6 +119,7 @@
   * [开发者工具](zh-cn/devtool.md)
   * [Swoole Tracker](zh-cn/swoole-tracker.md)
   * [Phar 打包器](zh-cn/phar.md)
+  * [DAG](zh-cn/dag.md)
 
 * 应用部署
 
