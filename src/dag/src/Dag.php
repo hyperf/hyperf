@@ -45,7 +45,7 @@ class Dag implements Runner
     protected $stack;
 
     /**
-     * @var array<string,int>
+     * @var array<string,bool>
      */
     protected $isInStack;
 
