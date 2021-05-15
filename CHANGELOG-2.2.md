@@ -14,3 +14,7 @@
 
 - Changed the default priority of aspect to 0.
 - Changed the consumer tag of amqp to empty string.
+
+## Added
+
+- [#3589](https://github.com/hyperf/hyperf/pull/3589) Added DAG component.

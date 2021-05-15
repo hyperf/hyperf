@@ -18,6 +18,7 @@
             <directory suffix="Test.php">./src/config-zookeeper/tests</directory>
             <directory suffix="Test.php">./src/constants/tests</directory>
             <directory suffix="Test.php">./src/consul/tests</directory>
+            <directory suffix="Test.php">./src/dag/tests</directory>
             <directory suffix="Test.php">./src/database/tests</directory>
             <directory suffix="Test.php">./src/db/tests</directory>
             <directory suffix="Test.php">./src/db-connection/tests</directory>
@@ -81,6 +82,7 @@
             <directory suffix=".php">./src/config/src</directory>
             <directory suffix=".php">./src/constants/src</directory>
             <directory suffix=".php">./src/consul/src</directory>
+            <directory suffix=".php">./src/dag/src</directory>
             <directory suffix=".php">./src/database/src</directory>
             <directory suffix=".php">./src/db-connection/src</directory>
             <directory suffix=".php">./src/di/src</directory>
