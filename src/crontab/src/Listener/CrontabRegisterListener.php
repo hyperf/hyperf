@@ -21,6 +21,7 @@ use Hyperf\Di\ReflectionManager;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Process\Event\BeforeCoroutineHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
+use Hyperf\Utils\ApplicationContext;
 
 class CrontabRegisterListener implements ListenerInterface
 {
@@ -135,13 +136,10 @@ class CrontabRegisterListener implements ListenerInterface
                 if ($reflectionMethod->isStatic()) {
                     return $className::$method();
                 }
-                $constructor = $reflectionClass->getConstructor();
-                if ($constructor === null || $constructor->getNumberOfParameters() === 0) {
-                    return (new $className())->{$method}();
-                }
 
-                if ($instance = $reflectionClass->newInstanceWithoutConstructor()) {
-                    return $instance->{$method}();
+                $container = ApplicationContext::getContainer();
+                if ($container->has($className)) {
+                    return $container->get($className)->{$method}();
                 }
             }
 

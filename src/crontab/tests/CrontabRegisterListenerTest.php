@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Crontab;
 
+use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Annotation\Crontab;
@@ -19,6 +20,7 @@ use Hyperf\Crontab\CrontabManager;
 use Hyperf\Crontab\Listener\CrontabRegisterListener;
 use Hyperf\Crontab\Parser;
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Container;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Reflection\ClassInvoker;
 use HyperfTest\Crontab\Stub\FooCron;
@@ -51,6 +53,11 @@ class CrontabRegisterListenerTest extends TestCase
 
     public function testBuildCrontabWithoutConstructorByAnnotationEnableMethod()
     {
+        $container = Mockery::mock(Container::class);
+        $container->shouldReceive('has')->with(FooCron2::class)->andReturnTrue();
+        $container->shouldReceive('get')->with(FooCron2::class)->andReturn(new FooCron2());
+        ApplicationContext::setContainer($container);
+
         $crontabAnnotation = new Crontab();
         $crontabAnnotation->callback = 'execute';
         $crontabAnnotation->enable = 'isEnable';
@@ -68,6 +75,13 @@ class CrontabRegisterListenerTest extends TestCase
 
     public function testBuildCrontabWithConstructorByAnnotationEnableMethod()
     {
+        $container = Mockery::mock(Container::class);
+        $container->shouldReceive('has')->with(FooCron::class)->andReturnTrue();
+        $container->shouldReceive('get')->with(FooCron::class)->andReturn(new FooCron(new Config([
+            'enable' => true,
+        ])));
+        ApplicationContext::setContainer($container);
+
         $crontabAnnotation = new Crontab();
         $crontabAnnotation->callback = 'execute';
         $crontabAnnotation->enable = 'isEnable';
@@ -80,11 +94,18 @@ class CrontabRegisterListenerTest extends TestCase
 
         $crontab = $class->buildCrontabByAnnotation($annotationCrontabs[FooCron::class]);
 
-        $this->assertFalse($crontab->isEnable());
+        $this->assertTrue($crontab->isEnable());
     }
 
     public function testBuildCrontabWithStaticMethodByAnnotationEnableMethod()
     {
+        $container = Mockery::mock(Container::class);
+        $container->shouldReceive('has')->with(FooCron::class)->andReturnTrue();
+        $container->shouldReceive('get')->with(FooCron::class)->andReturn(new FooCron(new Config([
+            'enable' => true,
+        ])));
+        ApplicationContext::setContainer($container);
+
         $crontabAnnotation = new Crontab();
         $crontabAnnotation->callback = 'execute';
         $crontabAnnotation->enable = 'isEnableCrontab';
