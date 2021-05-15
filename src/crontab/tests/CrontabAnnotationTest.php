@@ -55,4 +55,12 @@ class CrontabAnnotationTest extends TestCase
         $annotation->collectClass(FooCron::class);
         $this->assertEquals([FooCron::class, 'isEnable'], $annotation->enable);
     }
+
+    public function testCollectMethod()
+    {
+        $annotation = new Crontab();
+        $annotation->collectMethod(FooCron::class, 'cron');
+        $this->assertSame(FooCron::class . '::cron', $annotation->name);
+        $this->assertSame([FooCron::class, 'cron'], $annotation->callback);
+    }
 }

@@ -21,6 +21,7 @@ use Hyperf\Di\ReflectionManager;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Process\Event\BeforeCoroutineHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
+use Hyperf\Utils\ApplicationContext;
 
 class CrontabRegisterListener implements ListenerInterface
 {
@@ -132,7 +133,13 @@ class CrontabRegisterListener implements ListenerInterface
             $reflectionMethod = $reflectionClass->getMethod($method);
 
             if ($reflectionMethod->isPublic()) {
-                return make($className)->{$method}();
+                if ($reflectionMethod->isStatic()) {
+                    return $className::$method();
+                }
+
+                if (ApplicationContext::getContainer()->has($className)) {
+                    return ApplicationContext::getContainer()->get($className)->{$method}();
+                }
             }
 
             $this->logger->info('Crontab enable method is not public, skip register.');

@@ -85,6 +85,16 @@ class Crontab extends AbstractAnnotation
             return;
         }
 
+        if (! $this->name) {
+            $this->name = $className . '::' . $target;
+        }
+
+        if (! $this->callback) {
+            $this->callback = [$className, $target];
+        } elseif (is_string($this->callback)) {
+            $this->callback = [$className, $this->callback];
+        }
+
         parent::collectMethod($className, $target);
     }
 
