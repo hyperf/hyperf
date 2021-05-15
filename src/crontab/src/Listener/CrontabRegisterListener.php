@@ -135,8 +135,14 @@ class CrontabRegisterListener implements ListenerInterface
                 if ($reflectionMethod->isStatic()) {
                     return $className::$method();
                 }
+                $constructor = $reflectionClass->getConstructor();
+                if ($constructor === null || $constructor->getNumberOfParameters() === 0) {
+                    return (new $className())->{$method}();
+                }
 
-                return (new $className())->{$method}();
+                if ($instance = $reflectionClass->newInstanceWithoutConstructor()) {
+                    return $instance->{$method}();
+                }
             }
 
             $this->logger->info('Crontab enable method is not public, skip register.');
