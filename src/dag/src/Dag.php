@@ -35,7 +35,7 @@ class Dag implements Runner
     protected $vertexNum;
 
     /**
-     * @var array<string,int>
+     * @var array<int,array>
      */
     protected $circularDependences;
 
@@ -155,7 +155,7 @@ class Dag implements Runner
         }
 
         foreach ($this->vertexes as $vertex) {
-            if (!$this->dfn[$vertex->key]) {
+            if ($this->dfn[$vertex->key] === 0) {
                 $this->_checkCircularDependences($vertex);
             }
         }
