@@ -1,5 +1,5 @@
 {
-    "name": "hyperf/dag-incubator",
+    "name": "hyperf/dag",
     "description": "Dag runner for hyperf",
     "type": "library",
     "license": "MIT",
@@ -34,6 +34,9 @@
     "extra": {
         "hyperf": {
             "config": "Hyperf\\Dag\\ConfigProvider"
+        },
+        "branch-alias": {
+            "dev-master": "2.1-dev"
         }
     }
 }
