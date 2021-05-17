@@ -26,6 +26,11 @@ class ParserCronNumberTest extends TestCase
         ini_set('date.timezone', 'Asia/Shanghai');
     }
 
+    protected function tearDown(): void
+    {
+        ini_set('date.timezone', '');
+    }
+
     public function testParse()
     {
         $parser = new Parser();
