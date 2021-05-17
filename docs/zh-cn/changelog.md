@@ -1,5 +1,15 @@
 # 版本更新记录
 
+# v2.1.17 - 2021-05-17
+
+## 修复
+
+- [#3856](https://github.com/hyperf/hyperf/pull/3586) 修复 `Swow` 服务处理 `keepalive` 的请求时，协程无法在每个请求后结束的问题。
+
+## 新增
+
+- [#3329](https://github.com/hyperf/hyperf/pull/3329) `@Crontab` 注解的 `enable` 参数增加支持设置数组, 你可以通过它动态的控制定时任务是否启动。
+
 # v2.1.16 - 2021-04-26
 
 ## 修复
