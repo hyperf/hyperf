@@ -15,12 +15,12 @@ jobs:
         os: [ ubuntu-latest ]
         php-version: [ '7.3', '7.4' ]
         mysql-version: [ '5.7', '8.0' ]
-        sw-version: [ 'v4.5.11', 'v4.6.6', 'master' ]
+        sw-version: [ 'v4.5.11', 'v4.6.7', 'master' ]
       max-parallel: 12
       fail-fast: false
     env:
       SW_VERSION: ${{ matrix.sw-version }}
-      YASD_VERSION: 'v0.3.7'
+      YASD_VERSION: 'v0.3.8'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
