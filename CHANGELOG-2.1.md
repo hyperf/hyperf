@@ -1,5 +1,9 @@
 # v2.1.18 - TBD
 
+## Fixed
+
+- [#3598](https://github.com/hyperf/hyperf/pull/3598) Fixed bug that `increment/decrement` does not works as expect when used in transaction for model-cache.
+
 # v2.1.17 - 2021-05-17
 
 ## Fixed
