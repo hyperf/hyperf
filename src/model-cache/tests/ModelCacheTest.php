@@ -451,4 +451,37 @@ class ModelCacheTest extends TestCase
 
         UserModel::query(true)->where('id', $id)->delete();
     }
+
+    public function testModelDecrInTransaction()
+    {
+        $container = ContainerStub::mockContainer();
+
+        $id = 209;
+        UserModel::query()->firstOrCreate(['id' => $id], [
+            'name' => uniqid(),
+            'gender' => 1,
+        ]);
+
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+
+        wait(function () use ($redis, $id) {
+            Db::beginTransaction();
+            try {
+                $model = UserModel::findFromCache($id);
+                /* @var \Redis $redis */
+                $this->assertEquals(1, $redis->exists('{mc:default:m:user}:id:' . $id));
+                $model->decrement('gender');
+                $this->assertEquals(1, $redis->hGet('{mc:default:m:user}:id:' . $id, 'gender'));
+                $invoker = new ClassInvoker(InvalidCacheManager::instance());
+                $this->assertSame(1, count($invoker->models));
+                Db::commit();
+            } catch (\Throwable $exception) {
+                Db::rollBack();
+            }
+        });
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:' . $id));
+
+        UserModel::query(true)->where('id', $id)->delete();
+    }
 }
