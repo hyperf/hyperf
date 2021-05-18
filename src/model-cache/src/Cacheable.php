@@ -78,7 +78,7 @@ trait Cacheable
     {
         $res = parent::increment($column, $amount, $extra);
         if ($res > 0) {
-            if (empty($extra)) {
+            if (empty($extra) && $this->getConnection()->transactionLevel() === 0) {
                 // Only increment a column's value.
                 /** @var Manager $manager */
                 $manager = $this->getContainer()->get(Manager::class);
@@ -101,7 +101,7 @@ trait Cacheable
     {
         $res = parent::decrement($column, $amount, $extra);
         if ($res > 0) {
-            if (empty($extra)) {
+            if (empty($extra) && $this->getConnection()->transactionLevel() === 0) {
                 // Only decrement a column's value.
                 /** @var Manager $manager */
                 $manager = $this->getContainer()->get(Manager::class);
