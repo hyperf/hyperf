@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Resolver;
 
+use Hyperf\Di\Aop\PropertyHandler;
 use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Exception\DependencyException;
@@ -97,6 +98,7 @@ class ObjectResolver implements ResolverInterface
 
             $args = $this->parameterResolver->resolveParameters($constructorInjection, $classReflection->getConstructor(), $parameters);
             $object = new $className(...$args);
+            (new PropertyHandler())->handle($object);
         } catch (NotFoundExceptionInterface $e) {
             throw new DependencyException(sprintf('Error while injecting dependencies into %s: %s', $classReflection ? $classReflection->getName() : '', $e->getMessage()), 0, $e);
         } catch (InvalidDefinitionException $e) {
