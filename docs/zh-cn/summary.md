@@ -120,6 +120,7 @@
   * [Swoole Tracker](zh-cn/swoole-tracker.md)
   * [Phar 打包器](zh-cn/phar.md)
   * [DAG](zh-cn/dag.md)
+  * [RPN - 逆波兰表示法](zh-cn/rpn.md)
 
 * 应用部署
 
