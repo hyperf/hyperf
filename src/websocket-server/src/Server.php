@@ -302,7 +302,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         };
 
         if ($server instanceof SwooleResponse) {
-            $onOpen();
+            wait($onOpen);
         } else {
             defer($onOpen);
         }
