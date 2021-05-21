@@ -4,6 +4,7 @@
 
 - [#3598](https://github.com/hyperf/hyperf/pull/3598) Fixed bug that `increment/decrement` does not works as expect when used in transaction for model-cache.
 - [#3607](https://github.com/hyperf/hyperf/pull/3607) Fixed bug that coroutine won't destruct when using `onOpen` in coroutine style websocket server.
+- [#3610](https://github.com/hyperf/hyperf/pull/3610) Fixed bug that `fromSub()` and `joinSub()` don't work with table prefix.
 
 # v2.1.17 - 2021-05-17
 
