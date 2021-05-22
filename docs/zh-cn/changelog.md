@@ -1,5 +1,13 @@
 # 版本更新记录
 
+# v2.1.18 - 2021-05-24
+
+## 修复
+
+- [#3598](https://github.com/hyperf/hyperf/pull/3598) 修复事务回滚时，模型累加、累减操作会导致模型缓存产生脏数据的问题。
+- [#3607](https://github.com/hyperf/hyperf/pull/3607) 修复在使用协程风格的 `WebSocket` 服务时，`onOpen` 事件无法在事件结束后销毁协程的问题。
+- [#3610](https://github.com/hyperf/hyperf/pull/3610) 修复数据库存在前缀时，`fromSub()` 和 `joinSub()` 无法正常使用的问题。
+
 # v2.1.17 - 2021-05-17
 
 ## 修复
