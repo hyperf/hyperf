@@ -1,5 +1,13 @@
 # 版本更新記錄
 
+# v2.1.18 - 2021-05-24
+
+## 修復
+
+- [#3598](https://github.com/hyperf/hyperf/pull/3598) 修復事務回滾時，模型累加、累減操作會導致模型快取產生髒資料的問題。
+- [#3607](https://github.com/hyperf/hyperf/pull/3607) 修復在使用協程風格的 `WebSocket` 服務時，`onOpen` 事件無法在事件結束後銷燬協程的問題。
+- [#3610](https://github.com/hyperf/hyperf/pull/3610) 修復資料庫存在字首時，`fromSub()` 和 `joinSub()` 無法正常使用的問題。
+
 # v2.1.17 - 2021-05-17
 
 ## 修復
