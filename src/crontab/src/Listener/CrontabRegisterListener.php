@@ -17,9 +17,11 @@ use Hyperf\Crontab\Annotation\Crontab as CrontabAnnotation;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\CrontabManager;
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\ReflectionManager;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Process\Event\BeforeCoroutineHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
+use Hyperf\Utils\ApplicationContext;
 
 class CrontabRegisterListener implements ListenerInterface
 {
@@ -64,9 +66,8 @@ class CrontabRegisterListener implements ListenerInterface
     {
         $crontabs = $this->parseCrontabs();
         foreach ($crontabs as $crontab) {
-            if ($crontab instanceof Crontab) {
+            if ($crontab instanceof Crontab && $this->crontabManager->register($crontab)) {
                 $this->logger->debug(sprintf('Crontab %s have been registered.', $crontab->getName()));
-                $this->crontabManager->register($crontab);
             }
         }
     }
@@ -88,7 +89,7 @@ class CrontabRegisterListener implements ListenerInterface
         return array_values($crontabs);
     }
 
-    private function getCrontabsFromMethod()
+    private function getCrontabsFromMethod(): array
     {
         $result = AnnotationCollector::getMethodsByAnnotation(CrontabAnnotation::class);
         $crontabs = [];
@@ -110,7 +111,43 @@ class CrontabRegisterListener implements ListenerInterface
         isset($annotation->onOneServer) && $crontab->setOnOneServer($annotation->onOneServer);
         isset($annotation->callback) && $crontab->setCallback($annotation->callback);
         isset($annotation->memo) && $crontab->setMemo($annotation->memo);
-        isset($annotation->enable) && $crontab->setEnable($annotation->enable);
+        isset($annotation->enable) && $crontab->setEnable($this->resolveCrontabEnableMethod($annotation->enable));
+
         return $crontab;
+    }
+
+    /**
+     * @param array|bool $enable
+     */
+    private function resolveCrontabEnableMethod($enable): bool
+    {
+        if (is_bool($enable)) {
+            return $enable;
+        }
+
+        $className = reset($enable);
+        $method = end($enable);
+
+        try {
+            $reflectionClass = ReflectionManager::reflectClass($className);
+            $reflectionMethod = $reflectionClass->getMethod($method);
+
+            if ($reflectionMethod->isPublic()) {
+                if ($reflectionMethod->isStatic()) {
+                    return $className::$method();
+                }
+
+                $container = ApplicationContext::getContainer();
+                if ($container->has($className)) {
+                    return $container->get($className)->{$method}();
+                }
+            }
+
+            $this->logger->info('Crontab enable method is not public, skip register.');
+        } catch (\ReflectionException $e) {
+            $this->logger->error('Resolve crontab enable failed, skip register.');
+        }
+
+        return false;
     }
 }

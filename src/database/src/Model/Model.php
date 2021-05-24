@@ -28,7 +28,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
 
 /**
- * @mixin Builder
  * @mixin ModelIDE
  */
 abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable, CompressInterface

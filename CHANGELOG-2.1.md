@@ -1,4 +1,22 @@
-# v2.1.17 - TBD
+# v2.1.19 - TBD
+
+# v2.1.18 - 2021-05-24
+
+## Fixed
+
+- [#3598](https://github.com/hyperf/hyperf/pull/3598) Fixed bug that `increment/decrement` does not works as expect when used in transaction for model-cache.
+- [#3607](https://github.com/hyperf/hyperf/pull/3607) Fixed bug that coroutine won't destruct when using `onOpen` in coroutine style websocket server.
+- [#3610](https://github.com/hyperf/hyperf/pull/3610) Fixed bug that `fromSub()` and `joinSub()` don't work with table prefix.
+
+# v2.1.17 - 2021-05-17
+
+## Fixed
+
+- [#3856](https://github.com/hyperf/hyperf/pull/3586) Fixed bug that coroutine won't destruct for keepalive request in swow server.
+
+## Added
+
+- [#3329](https://github.com/hyperf/hyperf/pull/3329) The `enable` parameter of the `@Crontab` supports `array`, which you can dynamically control whether the task is executed or not.
 
 # v2.1.16 - 2021-04-26
 

@@ -1,5 +1,23 @@
 # 版本更新记录
 
+# v2.1.18 - 2021-05-24
+
+## 修复
+
+- [#3598](https://github.com/hyperf/hyperf/pull/3598) 修复事务回滚时，模型累加、累减操作会导致模型缓存产生脏数据的问题。
+- [#3607](https://github.com/hyperf/hyperf/pull/3607) 修复在使用协程风格的 `WebSocket` 服务时，`onOpen` 事件无法在事件结束后销毁协程的问题。
+- [#3610](https://github.com/hyperf/hyperf/pull/3610) 修复数据库存在前缀时，`fromSub()` 和 `joinSub()` 无法正常使用的问题。
+
+# v2.1.17 - 2021-05-17
+
+## 修复
+
+- [#3856](https://github.com/hyperf/hyperf/pull/3586) 修复 `Swow` 服务处理 `keepalive` 的请求时，协程无法在每个请求后结束的问题。
+
+## 新增
+
+- [#3329](https://github.com/hyperf/hyperf/pull/3329) `@Crontab` 注解的 `enable` 参数增加支持设置数组, 你可以通过它动态的控制定时任务是否启动。
+
 # v2.1.16 - 2021-04-26
 
 ## 修复
