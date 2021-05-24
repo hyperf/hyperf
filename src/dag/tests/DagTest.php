@@ -238,15 +238,15 @@ class DagTest extends TestCase
     {
         $key = 1;
         $dag = new \Hyperf\Dag\Dag();
-        $a = \Hyperf\Dag\Vertex::make(function() {echo "A\n";}, (string) $key++);
-        $b = \Hyperf\Dag\Vertex::make(function() {echo "B\n";}, (string) $key++);
-        $c = \Hyperf\Dag\Vertex::make(function() {echo "C\n";}, (string) $key++);
-        $d = \Hyperf\Dag\Vertex::make(function() {echo "D\n";}, (string) $key++);
-        $e = \Hyperf\Dag\Vertex::make(function() {echo "E\n";}, (string) $key++);
-        $f = \Hyperf\Dag\Vertex::make(function() {echo "F\n";}, (string) $key++);
-        $g = \Hyperf\Dag\Vertex::make(function() {echo "G\n";}, (string) $key++);
-        $h = \Hyperf\Dag\Vertex::make(function() {echo "H\n";}, (string) $key++);
-        $i = \Hyperf\Dag\Vertex::make(function() {echo "I\n";}, (string) $key++);
+        $a = \Hyperf\Dag\Vertex::make(function () {echo "A\n"; }, (string) $key++);
+        $b = \Hyperf\Dag\Vertex::make(function () {echo "B\n"; }, (string) $key++);
+        $c = \Hyperf\Dag\Vertex::make(function () {echo "C\n"; }, (string) $key++);
+        $d = \Hyperf\Dag\Vertex::make(function () {echo "D\n"; }, (string) $key++);
+        $e = \Hyperf\Dag\Vertex::make(function () {echo "E\n"; }, (string) $key++);
+        $f = \Hyperf\Dag\Vertex::make(function () {echo "F\n"; }, (string) $key++);
+        $g = \Hyperf\Dag\Vertex::make(function () {echo "G\n"; }, (string) $key++);
+        $h = \Hyperf\Dag\Vertex::make(function () {echo "H\n"; }, (string) $key++);
+        $i = \Hyperf\Dag\Vertex::make(function () {echo "I\n"; }, (string) $key++);
         $dag->addVertex($a)
             ->addVertex($b)
             ->addVertex($c)
@@ -268,8 +268,8 @@ class DagTest extends TestCase
 
         $ret = $dag->checkCircularDependences();
 
-        $this->assertEquals(["3", "2", "1"], $ret[0]);
-        $this->assertEquals(["6", "5", "4"], $ret[1]);
-        $this->assertEquals(["9", "8", "7"], $ret[2]);
+        $this->assertEquals(['3', '2', '1'], $ret[0]);
+        $this->assertEquals(['6', '5', '4'], $ret[1]);
+        $this->assertEquals(['9', '8', '7'], $ret[2]);
     }
 }

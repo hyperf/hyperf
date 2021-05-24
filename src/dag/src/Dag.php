@@ -146,7 +146,7 @@ class Dag implements Runner
         $this->dfn = [];
         $this->low = [];
         $this->time = 1;
-        $this->stack = new SplStack;
+        $this->stack = new SplStack();
 
         foreach ($this->vertexes as $vertex) {
             $this->dfn[$vertex->key] = 0;
@@ -227,7 +227,7 @@ class Dag implements Runner
                 }
             }
         }
-    
+
         if ($this->dfn[$vertexSrc->key] == $this->low[$vertexSrc->key]) {
             $scc = [];
             do {
