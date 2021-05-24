@@ -1,0 +1,43 @@
+{
+    "name": "hyperf/db-pgsql-incubator",
+    "description": "A pgsql handler for hyperf/db.",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=7.3",
+        "hyperf/db": "~2.2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\DB\\PgSQL\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\DB\\PgSQL\\": "tests"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "co-phpunit -c phpunit.xml --colors=always",
+        "analyse": "phpstan analyse --memory-limit 1024M -l 0 ./src",
+        "cs-fix": "php-cs-fixer fix $1"
+    },
+    "extra": {
+        "hyperf": {
+            "config": "Hyperf\\DB\\PgSQL\\ConfigProvider"
+        }
+    }
+}
