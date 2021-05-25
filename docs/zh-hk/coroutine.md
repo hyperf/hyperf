@@ -226,26 +226,6 @@ try{
 }
 ```
 
-### Concurrent 協程運行控制
-
-`Hyperf\Utils\Coroutine\Concurrent` 基於 `Swoole\Coroutine\Channel` 實現，用來控制一個代碼塊內同時運行的最大協程數量的特性。
-
-以下樣例，當同時執行 `10` 個子協程時，會在循環中阻塞，但只會阻塞當前協程，直到釋放出一個位置後，循環繼續執行下一個子協程。
-
-```php
-<?php
-
-use Hyperf\Utils\Coroutine\Concurrent;
-
-$concurrent = new Concurrent(10);
-
-for ($i = 0; $i < 15; ++$i) {
-    $concurrent->create(function () use ($count) {
-        // Do something...
-    });
-}
-```
-
 ### 協程上下文
 
 由於同一個進程內協程間是內存共享的，但協程的執行/切換是非順序的，也就意味着我們很難掌控當前的協程是哪一個*(事實上可以，但通常沒人這麼幹)*，所以我們需要在發生協程切換時能夠同時切換對應的上下文。   
