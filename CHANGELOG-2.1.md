@@ -1,5 +1,9 @@
 # v2.1.19 - TBD
 
+## Fixed
+
+- [#3618](https://github.com/hyperf/hyperf/pull/3618) Fixed routes with same path but different methods will be merged when using `describe:routes`.
+
 # v2.1.18 - 2021-05-24
 
 ## Fixed
