@@ -240,7 +240,7 @@ use Hyperf\Utils\Coroutine\Concurrent;
 $concurrent = new Concurrent(10);
 
 for ($i = 0; $i < 15; ++$i) {
-    $concurrent->create(function () use ($count) {
+    $concurrent->create(function () {
         // Do something...
     });
 }
