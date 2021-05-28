@@ -114,37 +114,31 @@ class Consumer extends Builder
             throw new MessageException('Message must instanceof ' . ConsumerMessageInterface::class);
         }
 
-        try {
-            if (! $channel) {
-                $connection = $this->factory->getConnection($message->getPoolName());
-                $channel = $connection->getChannel();
-            }
+        if (! $channel) {
+            $connection = $this->factory->getConnection($message->getPoolName());
+            $channel = $connection->getChannel();
+        }
 
-            parent::declare($message, $channel);
+        parent::declare($message, $channel);
 
-            $builder = $message->getQueueBuilder();
+        $builder = $message->getQueueBuilder();
 
-            $channel->queue_declare($builder->getQueue(), $builder->isPassive(), $builder->isDurable(), $builder->isExclusive(), $builder->isAutoDelete(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
+        $channel->queue_declare($builder->getQueue(), $builder->isPassive(), $builder->isDurable(), $builder->isExclusive(), $builder->isAutoDelete(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
 
-            $routineKeys = (array) $message->getRoutingKey();
-            foreach ($routineKeys as $routingKey) {
-                $channel->queue_bind($message->getQueue(), $message->getExchange(), $routingKey);
-            }
+        $routineKeys = (array) $message->getRoutingKey();
+        foreach ($routineKeys as $routingKey) {
+            $channel->queue_bind($message->getQueue(), $message->getExchange(), $routingKey);
+        }
 
-            if (empty($routineKeys) && $message->getType() === Type::FANOUT) {
-                $channel->queue_bind($message->getQueue(), $message->getExchange());
-            }
+        if (empty($routineKeys) && $message->getType() === Type::FANOUT) {
+            $channel->queue_bind($message->getQueue(), $message->getExchange());
+        }
 
-            if (is_array($qos = $message->getQos())) {
-                $size = $qos['prefetch_size'] ?? null;
-                $count = $qos['prefetch_count'] ?? null;
-                $global = $qos['global'] ?? null;
-                $channel->basic_qos($size, $count, $global);
-            }
-        } finally {
-            if (isset($connection) && $release) {
-                $connection->release();
-            }
+        if (is_array($qos = $message->getQos())) {
+            $size = $qos['prefetch_size'] ?? null;
+            $count = $qos['prefetch_count'] ?? null;
+            $global = $qos['global'] ?? null;
+            $channel->basic_qos($size, $count, $global);
         }
     }
 

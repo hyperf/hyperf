@@ -38,12 +38,12 @@ class SwooleIO extends AbstractIO
     protected $port;
 
     /**
-     * @var float
+     * @var int
      */
     protected $connectionTimeout;
 
     /**
-     * @var float
+     * @var int
      */
     protected $readWriteTimeout;
 
@@ -90,8 +90,8 @@ class SwooleIO extends AbstractIO
     public function __construct(
         string $host,
         int $port,
-        float $connectionTimeout,
-        float $readWriteTimeout,
+        int $connectionTimeout,
+        int $readWriteTimeout,
         int $heartbeat = 0
     ) {
         if ($heartbeat !== 0 && ($readWriteTimeout < ($heartbeat * 2))) {
@@ -234,11 +234,6 @@ class SwooleIO extends AbstractIO
         return $this->get_socket();
     }
 
-    /**
-     * @param int $sec
-     * @param int $usec
-     * @return int|mixed
-     */
     public function select($sec, $usec)
     {
         return $this->do_select($sec, $usec);
