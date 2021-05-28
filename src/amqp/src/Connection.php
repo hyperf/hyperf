@@ -44,11 +44,6 @@ class Connection extends BaseConnection implements ConnectionInterface
     protected $config;
 
     /**
-     * @var Context
-     */
-    protected $context;
-
-    /**
      * @var Params
      */
     protected $params;
@@ -72,7 +67,6 @@ class Connection extends BaseConnection implements ConnectionInterface
     {
         parent::__construct($container, $pool);
         $this->config = $config;
-        $this->context = $container->get(Context::class);
         $this->params = new Params(Arr::get($config, 'params', []));
         $this->connection = $this->initConnection();
     }

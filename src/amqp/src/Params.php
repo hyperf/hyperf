@@ -33,6 +33,8 @@ class Params
 
     protected $closeOnDestruct = true;
 
+    protected $channelRpcTimeout = 0.0;
+
     public function __construct(array $data)
     {
         if (isset($data['insist'])) {
@@ -73,6 +75,10 @@ class Params
 
         if (isset($data['close_on_destruct'])) {
             $this->setCloseOnDestruct($data['close_on_destruct']);
+        }
+
+        if (isset($data['channel_rpc_timeout'])) {
+            $this->setChannelRpcTimeout($data['channel_rpc_timeout']);
         }
     }
 
@@ -175,5 +181,15 @@ class Params
     public function setHeartbeat(int $heartbeat)
     {
         $this->heartbeat = $heartbeat;
+    }
+
+    public function getChannelRpcTimeout(): float
+    {
+        return $this->channelRpcTimeout;
+    }
+
+    public function setChannelRpcTimeout(float $channelRpcTimeout)
+    {
+        $this->channelRpcTimeout = $channelRpcTimeout;
     }
 }
