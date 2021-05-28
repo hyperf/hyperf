@@ -43,23 +43,27 @@ class ConnectionFactory
 
     public function refresh(string $pool)
     {
-        $key = sprintf('amqp.%s', $pool);
-        if (! $this->config->has($key)) {
-            throw new InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
-        }
-
-        $config = $this->config->get($key);
-        $count = $config['pool']['connections'] ?? 2;
+        $config = $this->getConfig($pool);
+        $count = $config['pool']['connections'] ?? 1;
 
         for ($i = 0; $i < $count; ++$i) {
-            $this->connections[$pool][] = $this->make($config);
+            $this->connections[$pool][] = $connection = $this->make($config);
+            $connection->connect();
         }
     }
 
     public function getConnection(string $pool): AMQPConnection
     {
         if (isset($this->connections[$pool])) {
-            return Arr::random($this->connections[$pool]);
+            $index = array_rand($this->connections[$pool]);
+            $connection = $this->connections[$pool][$index];
+            if ($connection->isBroken) {
+                unset($this->connections[$pool][$index]);
+                $this->connections[$pool][$index] = $connection = $this->make($this->getConfig($pool));
+                $connection->connect();
+            }
+
+            return $connection;
         }
 
         $this->refresh($pool);
@@ -98,5 +102,15 @@ class ConnectionFactory
         );
 
         return $connection->setLogger($this->container->get(StdoutLoggerInterface::class));
+    }
+
+    protected function getConfig(string $pool): array
+    {
+        $key = sprintf('amqp.%s', $pool);
+        if (! $this->config->has($key)) {
+            throw new InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
+        }
+
+        return $this->config->get($key);
     }
 }
