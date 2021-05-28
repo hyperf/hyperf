@@ -20,6 +20,7 @@ return [
             'limit' => 1,
         ],
         'pool' => [
+            'connections' => 2,
             'min_connections' => 1,
             'max_connections' => 10,
             'connect_timeout' => 10.0,
