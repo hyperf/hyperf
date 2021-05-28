@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Amqp;
 
 use Hyperf\Engine\Channel;
+use Hyperf\Utils\Coroutine;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Wire\IO\AbstractIO;
@@ -22,6 +23,11 @@ class AMQPConnection extends AbstractConnection
     public const CHANNEL_POOL_LENGTH = 20000;
 
     public const CONFIRM_CHANNEL_POOL_LENGTH = 10000;
+
+    /**
+     * @var bool
+     */
+    public $isBroken = false;
 
     /**
      * @var Channel
@@ -59,6 +65,10 @@ class AMQPConnection extends AbstractConnection
 
         $this->pool = new Channel(static::CHANNEL_POOL_LENGTH);
         $this->confirmPool = new Channel(static::CONFIRM_CHANNEL_POOL_LENGTH);
+
+        Coroutine::create(function () {
+            $this->isBroken = $this->io->isBroken();
+        });
     }
 
     /**
@@ -85,6 +95,7 @@ class AMQPConnection extends AbstractConnection
     public function setLogger(?LoggerInterface $logger)
     {
         $this->logger = $logger;
+        $this->io->setLogger($logger);
         return $this;
     }
 
@@ -123,5 +134,15 @@ class AMQPConnection extends AbstractConnection
         } else {
             $this->pool->push($channel->getChannelId());
         }
+    }
+
+    public function connectOnConstruct()
+    {
+        return false;
+    }
+
+    public function connect()
+    {
+        return parent::connect();
     }
 }

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Amqp;
 
+use Hyperf\Amqp\Exception\NotSupportedException;
 use Hyperf\Amqp\Message\RpcMessageInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -18,6 +19,7 @@ class RpcClient extends Builder
 {
     public function call(RpcMessageInterface $rpcMessage, int $timeout = 5)
     {
+        throw new NotSupportedException('RPC is not supported.');
         try {
             $pool = $this->poolFactory->getRpcPool($rpcMessage->getPoolName());
             /** @var RpcConnection $connection */

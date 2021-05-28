@@ -63,6 +63,11 @@ class SwooleIO extends AbstractIO
     protected $readChannel;
 
     /**
+     * @var Channel
+     */
+    protected $brokenChannel;
+
+    /**
      * @var LoggerInterface
      */
     protected $logger;
@@ -99,6 +104,7 @@ class SwooleIO extends AbstractIO
         $this->heartbeat = $heartbeat;
 
         $this->readChannel = $this->makeChannel();
+        $this->brokenChannel = new Channel(1);
     }
 
     public function setLogger(LoggerInterface $logger): void
@@ -118,6 +124,10 @@ class SwooleIO extends AbstractIO
                     }
 
                     if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
+                        break;
+                    }
+
+                    if ($this->brokenChannel->isClosing()) {
                         break;
                     }
 
@@ -183,8 +193,8 @@ class SwooleIO extends AbstractIO
 
     /**
      * @param string $data
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      * @throws AMQPRuntimeException
+     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
      * @return mixed|void
      */
     public function write($data)
@@ -252,6 +262,13 @@ class SwooleIO extends AbstractIO
         return $this;
     }
 
+    public function isBroken(): bool
+    {
+        $this->brokenChannel->pop(-1);
+        $this->brokenChannel->close();
+        return true;
+    }
+
     protected function loop(): void
     {
         $this->heartbeat();
@@ -290,6 +307,7 @@ class SwooleIO extends AbstractIO
                 }
             } finally {
                 $this->logger && $this->logger->warning('Recv loop broken, wait to restart in next time. The reason is ' . $reason);
+                $this->brokenChannel->push(true);
                 $chan->close();
                 $client->close();
             }
@@ -322,6 +340,7 @@ class SwooleIO extends AbstractIO
                 }
             } finally {
                 $this->logger && $this->logger->warning('Send loop broken, wait to restart in next time. The reason is ' . $reason);
+                $this->brokenChannel->push(true);
                 $chan->close();
                 $client->close();
             }
@@ -351,7 +370,7 @@ class SwooleIO extends AbstractIO
 
         $seconds = intval($sec) + intval($usec) / 1000;
 
-        $ret = $readChannel->pop($seconds);
+        $readChannel->pop($seconds);
         if ($readChannel->isClosing()) {
             return 1;
         }
