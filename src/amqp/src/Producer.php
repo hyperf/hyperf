@@ -31,29 +31,28 @@ class Producer extends Builder
         $this->injectMessageProperty($producerMessage);
 
         $message = new AMQPMessage($producerMessage->payload(), $producerMessage->getProperties());
-        $pool = $this->getConnectionPool($producerMessage->getPoolName());
-        /** @var \Hyperf\Amqp\Connection $connection */
-        $connection = $pool->get();
-        try {
-            if ($confirm) {
-                $channel = $connection->getConfirmChannel();
-            } else {
-                $channel = $connection->getChannel();
-            }
-            $channel->set_ack_handler(function () use (&$result) {
-                $result = true;
-            });
-            $channel->basic_publish($message, $producerMessage->getExchange(), $producerMessage->getRoutingKey());
-            $channel->wait_for_pending_acks_returns($timeout);
-        } catch (\Throwable $exception) {
-            // Reconnect the connection before release.
-            $connection->reconnect();
-            throw $exception;
-        } finally {
-            $connection->release();
+        $connection = $this->factory->getConnection($producerMessage->getPoolName());
+
+        if ($confirm) {
+            $channel = $connection->getConfirmChannel();
+        } else {
+            $channel = $connection->getChannel();
         }
 
-        return $confirm ? $result : true;
+        $channel->set_ack_handler(function () use (&$result) {
+            $result = true;
+        });
+        $channel->basic_publish($message, $producerMessage->getExchange(), $producerMessage->getRoutingKey());
+        $channel->wait_for_pending_acks_returns($timeout);
+
+        if ($confirm) {
+            $connection->releaseChannel($channel, true);
+        } else {
+            $result = true;
+            $connection->releaseChannel($channel);
+        }
+
+        return $result;
     }
 
     private function injectMessageProperty(ProducerMessageInterface $producerMessage)

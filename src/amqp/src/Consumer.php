@@ -19,7 +19,6 @@ use Hyperf\Amqp\Exception\MessageException;
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Amqp\Message\MessageInterface;
 use Hyperf\Amqp\Message\Type;
-use Hyperf\Amqp\Pool\PoolFactory;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Process\ProcessManager;
@@ -51,10 +50,10 @@ class Consumer extends Builder
 
     public function __construct(
         ContainerInterface $container,
-        PoolFactory $poolFactory,
+        ConnectionFactory $factory,
         LoggerInterface $logger
     ) {
-        parent::__construct($container, $poolFactory);
+        parent::__construct($container, $factory);
         $this->logger = $logger;
         if ($container->has(EventDispatcherInterface::class)) {
             $this->eventDispatcher = $container->get(EventDispatcherInterface::class);
@@ -63,54 +62,50 @@ class Consumer extends Builder
 
     public function consume(ConsumerMessageInterface $consumerMessage): void
     {
-        $pool = $this->getConnectionPool($consumerMessage->getPoolName());
-        /** @var \Hyperf\Amqp\Connection $connection */
-        $connection = $pool->get();
-        try {
-            $channel = $connection->getConfirmChannel();
+        $connection = $this->factory->getConnection($consumerMessage->getPoolName());
 
-            $this->declare($consumerMessage, $channel);
-            $concurrent = $this->getConcurrent($consumerMessage->getPoolName());
+        $channel = $connection->getConfirmChannel();
 
-            $maxConsumption = $consumerMessage->getMaxConsumption();
-            $currentConsumption = 0;
+        $this->declare($consumerMessage, $channel);
+        $concurrent = $this->getConcurrent($consumerMessage->getPoolName());
 
-            $channel->basic_consume(
-                $consumerMessage->getQueue(),
-                $consumerMessage->getConsumerTag(),
-                false,
-                false,
-                false,
-                false,
-                function (AMQPMessage $message) use ($consumerMessage, $concurrent) {
-                    $callback = $this->getCallback($consumerMessage, $message);
-                    if (! $concurrent instanceof Concurrent) {
-                        return parallel([$callback]);
-                    }
+        $maxConsumption = $consumerMessage->getMaxConsumption();
+        $currentConsumption = 0;
 
-                    $concurrent->create($callback);
+        $channel->basic_consume(
+            $consumerMessage->getQueue(),
+            $consumerMessage->getConsumerTag(),
+            false,
+            false,
+            false,
+            false,
+            function (AMQPMessage $message) use ($consumerMessage, $concurrent) {
+                $callback = $this->getCallback($consumerMessage, $message);
+                if (! $concurrent instanceof Concurrent) {
+                    return parallel([$callback]);
                 }
-            );
 
-            while ($channel->is_consuming() && ProcessManager::isRunning()) {
-                try {
-                    $channel->wait(null, false, $consumerMessage->getWaitTimeout());
-                    if ($maxConsumption > 0 && ++$currentConsumption >= $maxConsumption) {
-                        break;
-                    }
-                } catch (AMQPTimeoutException $exception) {
-                    $this->eventDispatcher && $this->eventDispatcher->dispatch(new WaitTimeout($consumerMessage));
-                } catch (\Throwable $exception) {
-                    $this->logger->error((string) $exception);
+                $concurrent->create($callback);
+            }
+        );
+
+        while ($channel->is_consuming() && ProcessManager::isRunning()) {
+            try {
+                $channel->wait(null, false, $consumerMessage->getWaitTimeout());
+                if ($maxConsumption > 0 && ++$currentConsumption >= $maxConsumption) {
                     break;
                 }
+            } catch (AMQPTimeoutException $exception) {
+                $this->eventDispatcher && $this->eventDispatcher->dispatch(new WaitTimeout($consumerMessage));
+            } catch (\Throwable $exception) {
+                $this->logger->error((string) $exception);
+                break;
             }
-
-            $this->waitConcurrentHandled($concurrent);
-        } finally {
-            $connection->close();
-            $pool->release($connection);
         }
+
+        $this->waitConcurrentHandled($concurrent);
+
+        $connection->releaseChannel($channel, true);
     }
 
     public function declare(MessageInterface $message, ?AMQPChannel $channel = null, bool $release = false): void
@@ -121,9 +116,7 @@ class Consumer extends Builder
 
         try {
             if (! $channel) {
-                $pool = $this->getConnectionPool($message->getPoolName());
-                /** @var \Hyperf\Amqp\Connection $connection */
-                $connection = $pool->get();
+                $connection = $this->factory->getConnection($message->getPoolName());
                 $channel = $connection->getChannel();
             }
 
