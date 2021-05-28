@@ -21,9 +21,9 @@ class Params
 
     protected $locale = 'en_US';
 
-    protected $connectionTimeout = 3.0;
+    protected $connectionTimeout = 3;
 
-    protected $readWriteTimeout = 3.0;
+    protected $readWriteTimeout = 3;
 
     protected $context;
 
@@ -54,11 +54,11 @@ class Params
         }
 
         if (isset($data['connection_timeout'])) {
-            $this->setConnectionTimeout($data['connection_timeout']);
+            $this->setConnectionTimeout((int) $data['connection_timeout']);
         }
 
         if (isset($data['read_write_timeout'])) {
-            $this->setReadWriteTimeout($data['read_write_timeout']);
+            $this->setReadWriteTimeout((int) $data['read_write_timeout']);
         }
 
         if (isset($data['context'])) {
@@ -102,12 +102,12 @@ class Params
         return $this->locale;
     }
 
-    public function getConnectionTimeout(): float
+    public function getConnectionTimeout(): int
     {
         return $this->connectionTimeout;
     }
 
-    public function getReadWriteTimeout(): float
+    public function getReadWriteTimeout(): int
     {
         return $this->readWriteTimeout;
     }
@@ -158,12 +158,12 @@ class Params
         $this->locale = $locale;
     }
 
-    public function setConnectionTimeout(float $connectionTimeout)
+    public function setConnectionTimeout(int $connectionTimeout)
     {
         $this->connectionTimeout = $connectionTimeout;
     }
 
-    public function setReadWriteTimeout(float $readWriteTimeout)
+    public function setReadWriteTimeout(int $readWriteTimeout)
     {
         $this->readWriteTimeout = $readWriteTimeout;
     }

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Amqp;
 
+use Hyperf\Amqp\IO\SwooleIO;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\Coroutine;
 use PhpAmqpLib\Channel\AMQPChannel;
@@ -58,7 +59,7 @@ class AMQPConnection extends AbstractConnection
         string $locale = 'en_US',
         AbstractIO $io = null,
         int $heartbeat = 0,
-        float $connection_timeout = 0,
+        int $connection_timeout = 0,
         float $channel_rpc_timeout = 0.0
     ) {
         parent::__construct($user, $password, $vhost, $insist, $login_method, $login_response, $locale, $io, $heartbeat, $connection_timeout, $channel_rpc_timeout);
@@ -67,7 +68,9 @@ class AMQPConnection extends AbstractConnection
         $this->confirmPool = new Channel(static::CONFIRM_CHANNEL_POOL_LENGTH);
 
         Coroutine::create(function () {
-            $this->isBroken = $this->io->isBroken();
+            if ($this->io instanceof SwooleIO) {
+                $this->isBroken = $this->io->isBroken();
+            }
         });
     }
 
@@ -95,7 +98,9 @@ class AMQPConnection extends AbstractConnection
     public function setLogger(?LoggerInterface $logger)
     {
         $this->logger = $logger;
-        $this->io->setLogger($logger);
+        if ($this->io instanceof SwooleIO) {
+            $this->io->setLogger($logger);
+        }
         return $this;
     }
 

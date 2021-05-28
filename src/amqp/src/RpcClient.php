@@ -13,32 +13,11 @@ namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Exception\NotSupportedException;
 use Hyperf\Amqp\Message\RpcMessageInterface;
-use PhpAmqpLib\Message\AMQPMessage;
 
 class RpcClient extends Builder
 {
     public function call(RpcMessageInterface $rpcMessage, int $timeout = 5)
     {
         throw new NotSupportedException('RPC is not supported.');
-        try {
-            $pool = $this->poolFactory->getRpcPool($rpcMessage->getPoolName());
-            /** @var RpcConnection $connection */
-            $connection = $pool->get();
-            $channel = $connection->initChannel($rpcMessage->getQueueBuilder(), uniqid());
-
-            $message = new AMQPMessage(
-                $rpcMessage->serialize(),
-                [
-                    'correlation_id' => $connection->getCorrelationId(),
-                    'reply_to' => $connection->getQueue(),
-                ]
-            );
-
-            $channel->basic_publish($message, $rpcMessage->getExchange(), $rpcMessage->getRoutingKey());
-            $body = $connection->getAMQPMessage($timeout)->getBody();
-            return $rpcMessage->unserialize($body);
-        } finally {
-            isset($connection) && $connection->release();
-        }
     }
 }
