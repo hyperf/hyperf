@@ -27,8 +27,8 @@ class ParamsTest extends TestCase
             'login_method' => 'AMQPLAIN',
             'login_response' => null,
             'locale' => 'en_US',
-            'connection_timeout' => 3.0,
-            'read_write_timeout' => 6.0,
+            'connection_timeout' => 3,
+            'read_write_timeout' => 6,
             'context' => null,
             'keepalive' => false,
             'heartbeat' => 3,
@@ -39,8 +39,8 @@ class ParamsTest extends TestCase
         $this->assertSame('AMQPLAIN', $params->getLoginMethod());
         $this->assertNull($params->getLoginResponse());
         $this->assertSame('en_US', $params->getLocale());
-        $this->assertSame(3.0, $params->getConnectionTimeout());
-        $this->assertSame(6.0, $params->getReadWriteTimeout());
+        $this->assertSame(3, $params->getConnectionTimeout());
+        $this->assertSame(6, $params->getReadWriteTimeout());
         $this->assertNull($params->getContext());
         $this->assertFalse($params->isKeepalive());
         $this->assertSame(3, $params->getHeartbeat());
