@@ -37,6 +37,7 @@ return [
             'context' => null,
             'keepalive' => true,
             'heartbeat' => 3,
+            'channel_rpc_timeout' => 0.0,
             'close_on_destruct' => false,
         ],
     ],

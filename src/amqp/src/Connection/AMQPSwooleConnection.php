@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Amqp\Connection;
 
+use Hyperf\Amqp\IO\SwooleIO;
 use PhpAmqpLib\Connection\AbstractConnection;
 
 class AMQPSwooleConnection extends AbstractConnection
