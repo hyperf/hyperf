@@ -132,7 +132,9 @@ class Scanner
 
         $this->clearRemovedClasses($collectors, $classes);
 
+        $reflectionClassMap = [];
         foreach ($classes as $reflectionClass) {
+            $reflectionClassMap[$reflectionClass->getName()] = $reflectionClass->getFileName();
             if ($this->filesystem->lastModified($reflectionClass->getFileName()) >= $lastCacheModified) {
                 /** @var MetadataCollector $collector */
                 foreach ($collectors as $collector) {
@@ -157,7 +159,7 @@ class Scanner
 
         unset($annotationReader);
 
-        return $classes;
+        return [$reflectionClassMap, $data];
     }
 
     /**

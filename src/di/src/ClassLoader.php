@@ -19,8 +19,10 @@ use Dotenv\Repository\RepositoryBuilder;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Aop\ProxyManager;
+use Hyperf\Di\Exception\Exception;
 use Hyperf\Di\LazyLoader\LazyLoader;
 use Hyperf\Utils\Composer;
+use Hyperf\Utils\Filesystem\Filesystem;
 
 class ClassLoader
 {
@@ -45,13 +47,39 @@ class ClassLoader
         }
 
         // Scan by ScanConfig to generate the reflection class map
-        $scanner = new Scanner($this, $config = ScanConfig::instance($configDir));
+        $config = ScanConfig::instance($configDir);
         $classLoader->addClassMap($config->getClassMap());
-        $reflectionClassMap = $scanner->scan();
-        // Get the class map of Composer loader
-        $composerLoaderClassMap = $this->getComposerClassLoader()->getClassMap();
-        $proxyManager = new ProxyManager($reflectionClassMap, $composerLoaderClassMap, $proxyFileDir);
-        $this->proxies = $proxyManager->getProxies();
+
+
+        $scanner = new Scanner($this, $config);
+        $filesystem = new Filesystem();
+        $path = '/dev/shm/ClassLoader';
+
+        $pid = pcntl_fork();
+        if ($pid == -1) {
+            throw new Exception('The process fork failed');
+        }
+        if (! $pid) {
+            [$classMap, $collectorData] = $scanner->scan();
+
+            // Get the class map of Composer loader
+            $classMap = array_merge($classMap, $this->getComposerClassLoader()->getClassMap());
+            $proxyManager = new ProxyManager($classMap, $proxyFileDir);
+            $proxies = $proxyManager->getProxies();
+
+            $filesystem->put($path, serialize([$collectorData, $proxies]));
+            exit;
+        }
+        $pid = pcntl_wait($status);
+
+        [$collectorData, $proxies] = unserialize($filesystem->get($path));
+
+        /** @var MetadataCollector|string $collector */
+        foreach ($collectorData as $collector => $data) {
+            $collector::deserialize($data);
+        }
+
+        $this->proxies = $proxies;
     }
 
     public function loadClass(string $class): void
@@ -84,7 +112,7 @@ class ClassLoader
                 /** @var ComposerClassLoader $composerClassLoader */
                 $composerClassLoader = $loader[0];
                 AnnotationRegistry::registerLoader(function ($class) use ($composerClassLoader) {
-                    return (bool) $composerClassLoader->findFile($class);
+                    return (bool)$composerClassLoader->findFile($class);
                 });
                 $loader[0] = new static($composerClassLoader, $proxyFileDirPath, $configDir);
             }

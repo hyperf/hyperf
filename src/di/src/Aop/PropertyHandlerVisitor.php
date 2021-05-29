@@ -11,9 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
-use Hyperf\Di\BetterReflectionManager;
-use Hyperf\Di\Inject\InjectTrait;
-use OutOfBoundsException;
+use Hyperf\Di\ReflectionManager;
 use PhpParser\Node;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\TraitUse;
@@ -87,13 +85,14 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
         } else {
             // Create a new constructor class method node.
             $constructor = new Node\Stmt\ClassMethod('__construct');
-            $reflection = BetterReflectionManager::reflectClass($this->visitorMetadata->className);
+            $reflection = ReflectionManager::reflectClass($this->visitorMetadata->className);
             try {
                 $parameters = $reflection->getMethod('__construct')->getParameters();
                 foreach ($parameters as $parameter) {
+                    // TODO 待改
                     $constructor->params[] = $parameter->getAst();
                 }
-            } catch (OutOfBoundsException $exception) {
+            } catch (\ReflectionException $exception) {
                 // Cannot found __construct method in parent class or traits, do noting.
             }
         }
@@ -123,7 +122,7 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
     }
 
     /**
-     * Build `use InjectTrait;` statement.
+     * Build `use PropertyHandlerTrait;` statement.
      */
     protected function buildProxyTraitUseStatement(): TraitUse
     {
