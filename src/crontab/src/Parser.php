@@ -137,8 +137,8 @@ class Parser
                 'second' => $this->parseSegment($cron[0], 0, 59),
                 'minutes' => $this->parseSegment($cron[1], 0, 59),
                 'hours' => $this->parseSegment($cron[2], 0, 23),
-                'day' => $this->parseSegment($cron[3], 1, 31),
-                'month' => $this->parseSegment($cron[4], 1, 12),
+                'day' => $this->parseSegment($cron[3], 1, 31) ?: [1],
+                'month' => $this->parseSegment($cron[4], 1, 12) ?: [1],
                 'week' => $this->parseSegment($cron[5], 0, 6),
             ];
         } else {
@@ -146,8 +146,8 @@ class Parser
                 'second' => [1 => 0],
                 'minutes' => $this->parseSegment($cron[0], 0, 59),
                 'hours' => $this->parseSegment($cron[1], 0, 23),
-                'day' => $this->parseSegment($cron[2], 1, 31),
-                'month' => $this->parseSegment($cron[3], 1, 12),
+                'day' => $this->parseSegment($cron[2], 1, 31) ?: [1],
+                'month' => $this->parseSegment($cron[3], 1, 12) ?: [1],
                 'week' => $this->parseSegment($cron[4], 0, 6),
             ];
         }
