@@ -50,7 +50,6 @@ class ClassLoader
         $config = ScanConfig::instance($configDir);
         $classLoader->addClassMap($config->getClassMap());
 
-
         $scanner = new Scanner($this, $config);
         $filesystem = new Filesystem();
         $path = '/dev/shm/ClassLoader';
@@ -112,7 +111,7 @@ class ClassLoader
                 /** @var ComposerClassLoader $composerClassLoader */
                 $composerClassLoader = $loader[0];
                 AnnotationRegistry::registerLoader(function ($class) use ($composerClassLoader) {
-                    return (bool)$composerClassLoader->findFile($class);
+                    return (bool) $composerClassLoader->findFile($class);
                 });
                 $loader[0] = new static($composerClassLoader, $proxyFileDirPath, $configDir);
             }
