@@ -15,6 +15,10 @@
 - Changed the default priority of aspect to 0.
 - Changed the consumer tag of amqp to empty string.
 
+## Deprecated
+
+- `Hyperf\Utils\Resource` will be deprecated in v2.3, please use `Hyperf\Utils\ResourceGenerator` instead.
+
 ## Added
 
 - [#3589](https://github.com/hyperf/hyperf/pull/3589) Added DAG component.
