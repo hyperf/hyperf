@@ -26,7 +26,8 @@
         "symfony/var-dumper": "Required to use the dd function (^5.0).",
         "symfony/serializer": "Required to use SymfonyNormalizer (^5.0)",
         "symfony/property-access": "Required to use SymfonyNormalizer (^5.0)",
-        "hyperf/di": "Required to use ExceptionNormalizer"
+        "hyperf/di": "Required to use ExceptionNormalizer",
+        "nikic/php-parser": "Required to use PhpParser. (^4.0)"
     },
     "autoload": {
         "files": [
