@@ -13,7 +13,7 @@ namespace HyperfTest\Utils\Stub;
 
 class Bar
 {
-    public function __construct(string $name, Foo $foo, $extra = [], $str = false)
+    public function __construct(string $name, Foo $foo, $extra = [])
     {
     }
 }
