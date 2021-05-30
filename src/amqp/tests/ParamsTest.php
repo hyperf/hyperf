@@ -33,6 +33,7 @@ class ParamsTest extends TestCase
             'keepalive' => false,
             'heartbeat' => 3,
             'close_on_destruct' => true,
+            'channel_rpc_timeout' => 10.0,
         ]);
 
         $this->assertFalse($params->isInsist());
@@ -45,5 +46,6 @@ class ParamsTest extends TestCase
         $this->assertFalse($params->isKeepalive());
         $this->assertSame(3, $params->getHeartbeat());
         $this->assertTrue($params->isCloseOnDestruct());
+        $this->assertSame(10.0, $params->getChannelRpcTimeout());
     }
 }

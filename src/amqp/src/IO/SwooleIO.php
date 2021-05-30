@@ -16,6 +16,8 @@ use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use InvalidArgumentException;
+use PhpAmqpLib\Exception\AMQPConnectionClosedException;
+use PhpAmqpLib\Exception\AMQPNoDataException;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Wire\AMQPWriter;
 use PhpAmqpLib\Wire\IO\AbstractIO;
@@ -114,34 +116,31 @@ class SwooleIO extends AbstractIO
 
     public function heartbeat()
     {
-        if (! $this->enableHeartbeat) {
-            $this->enableHeartbeat = true;
-            Coroutine::create(function () {
-                while (true) {
-                    $heartbeat = 5;
-                    if ($this->heartbeat > 0) {
-                        $heartbeat = $this->heartbeat;
-                    }
-
-                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
-                        break;
-                    }
-
-                    if ($this->brokenChannel->isClosing()) {
-                        break;
-                    }
-
-                    try {
-                        // PING
-                        if ($chan = $this->pushChannel and $chan->isEmpty()) {
-                            $this->write_heartbeat();
-                        }
-                    } catch (\Throwable $exception) {
-                        $this->logger && $this->logger->error((string) $exception);
-                    }
+        Coroutine::create(function () {
+            while (true) {
+                $heartbeat = 5;
+                if ($this->heartbeat > 0) {
+                    $heartbeat = $this->heartbeat;
                 }
-            });
-        }
+
+                if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
+                    break;
+                }
+
+                if ($this->brokenChannel->isClosing()) {
+                    break;
+                }
+
+                try {
+                    // PING
+                    if ($chan = $this->pushChannel and $chan->isEmpty()) {
+                        $this->write_heartbeat();
+                    }
+                } catch (\Throwable $exception) {
+                    $this->logger && $this->logger->error((string) $exception);
+                }
+            }
+        });
     }
 
     /**
@@ -152,14 +151,7 @@ class SwooleIO extends AbstractIO
      */
     public function connect()
     {
-        $sock = new Client(SWOOLE_SOCK_TCP);
-        if (! $sock->connect($this->host, $this->port, $this->connectionTimeout)) {
-            throw new AMQPRuntimeException(
-                sprintf('Error Connecting to server: %s ', $sock->errMsg),
-                $sock->errCode
-            );
-        }
-        $this->sock = $sock;
+        $this->loop();
     }
 
     /**
@@ -178,17 +170,13 @@ class SwooleIO extends AbstractIO
      */
     public function read($len)
     {
-        $this->loop();
+        if ($len > strlen($this->buffer)) {
+            throw new AMQPNoDataException(sprintf('Error reading data. Requested %s bytes while string buffer has only %s', $len, strlen($this->buffer)));
+        }
 
-        do {
-            if ($len <= strlen($this->buffer)) {
-                $data = substr($this->buffer, 0, $len);
-                $this->buffer = substr($this->buffer, $len);
-                return $data;
-            }
-
-            $this->select($this->readWriteTimeout, null);
-        } while (true);
+        $data = substr($this->buffer, 0, $len);
+        $this->buffer = substr($this->buffer, $len);
+        return $data;
     }
 
     /**
@@ -199,8 +187,9 @@ class SwooleIO extends AbstractIO
      */
     public function write($data)
     {
-        $this->loop();
-
+        if ($this->pushChannel->isClosing()) {
+            throw new AMQPConnectionClosedException();
+        }
         $this->pushChannel->push($data);
     }
 
@@ -213,25 +202,9 @@ class SwooleIO extends AbstractIO
 
     public function close()
     {
-        $this->logger && $this->logger->warning('Connection closed, wait to restart in next time.');
+        $this->logger && $this->logger->error('Connection closed, wait to restart in next time.');
         $this->pushChannel->close();
         $this->sock->close();
-    }
-
-    /**
-     * @return null|Client|resource
-     */
-    public function get_socket()
-    {
-        return $this->sock;
-    }
-
-    /**
-     * @return resource
-     */
-    public function getSocket()
-    {
-        return $this->get_socket();
     }
 
     public function select($sec, $usec)
@@ -244,8 +217,6 @@ class SwooleIO extends AbstractIO
      */
     public function disableHeartbeat()
     {
-        $this->heartbeat = 0;
-
         return $this;
     }
 
@@ -264,15 +235,13 @@ class SwooleIO extends AbstractIO
         return true;
     }
 
-    protected function loop(): void
+    public function loop(): void
     {
-        $this->heartbeat();
-
-        if ($this->pushChannel !== null && ! $this->pushChannel->isClosing()) {
+        if ($this->pushChannel !== null) {
             return;
         }
         $this->pushChannel = $this->makeChannel();
-        $this->connect();
+        $this->sock = $this->makeClient();
 
         Coroutine::create(function () {
             $reason = '';
@@ -291,6 +260,7 @@ class SwooleIO extends AbstractIO
                     }
 
                     if ($data === false || $data === '') {
+                        var_dump($data);
                         $reason = 'client broken. ' . $client->errMsg;
                         break;
                     }
@@ -301,7 +271,7 @@ class SwooleIO extends AbstractIO
                     $readChannel->close();
                 }
             } finally {
-                $this->logger && $this->logger->warning('Recv loop broken, wait to restart in next time. The reason is ' . $reason);
+                $this->logger && $this->logger->error('Recv loop broken, wait to restart in next time. The reason is ' . $reason);
                 $this->brokenChannel->push(true);
                 $chan->close();
                 $client->close();
@@ -330,16 +300,30 @@ class SwooleIO extends AbstractIO
 
                     $res = $client->send($data);
                     if ($res === false) {
-                        $this->logger && $this->logger->warning('Send data failed. The reason is ' . $client->errMsg);
+                        $this->logger && $this->logger->error('Send data failed. The reason is ' . $client->errMsg);
                     }
                 }
             } finally {
-                $this->logger && $this->logger->warning('Send loop broken, wait to restart in next time. The reason is ' . $reason);
+                $this->logger && $this->logger->error('Send loop broken, wait to restart in next time. The reason is ' . $reason);
                 $this->brokenChannel->push(true);
                 $chan->close();
                 $client->close();
             }
         });
+
+        $this->heartbeat();
+    }
+
+    protected function makeClient()
+    {
+        $sock = new Client(SWOOLE_SOCK_TCP);
+        if (! $sock->connect($this->host, $this->port, $this->connectionTimeout)) {
+            throw new AMQPRuntimeException(
+                sprintf('Error Connecting to server: %s ', $sock->errMsg),
+                $sock->errCode
+            );
+        }
+        return $sock;
     }
 
     /**

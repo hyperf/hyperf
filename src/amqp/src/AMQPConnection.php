@@ -16,6 +16,7 @@ use Hyperf\Engine\Channel;
 use Hyperf\Utils\Coroutine;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
+use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Wire\IO\AbstractIO;
 use Psr\Log\LoggerInterface;
 
@@ -46,6 +47,11 @@ class AMQPConnection extends AbstractConnection
     protected $logger;
 
     /**
+     * @var int
+     */
+    protected $lastChannelId = 0;
+
+    /**
      * @param null $login_response @deprecated
      * @param AbstractIO $io
      */
@@ -66,30 +72,11 @@ class AMQPConnection extends AbstractConnection
 
         $this->pool = new Channel(static::CHANNEL_POOL_LENGTH);
         $this->confirmPool = new Channel(static::CONFIRM_CHANNEL_POOL_LENGTH);
-
         Coroutine::create(function () {
             if ($this->io instanceof SwooleIO) {
                 $this->isBroken = $this->io->isBroken();
             }
         });
-    }
-
-    /**
-     * @return static
-     */
-    public function setPool(Channel $pool)
-    {
-        $this->pool = $pool;
-        return $this;
-    }
-
-    /**
-     * @return static
-     */
-    public function setConfirmPool(Channel $confirmPool)
-    {
-        $this->confirmPool = $confirmPool;
-        return $this;
     }
 
     /**
@@ -111,23 +98,33 @@ class AMQPConnection extends AbstractConnection
 
     public function getChannel(): AMQPChannel
     {
-        if ($this->pool->isEmpty()) {
-            return $this->channel();
+        $id = 0;
+        if (! $this->pool->isEmpty()) {
+            $id = (int) $this->pool->pop(0.001);
         }
 
-        $id = (int) $this->pool->pop(0.001);
+        if ($id === 0) {
+            $id = $this->makeChannelId();
+        }
+
         return $this->channel($id);
     }
 
     public function getConfirmChannel(): AMQPChannel
     {
-        if ($this->confirmPool->isEmpty()) {
-            $channel = $this->channel();
-            $channel->confirm_select();
-        } else {
+        $id = 0;
+        $confirm = false;
+        if (! $this->pool->isEmpty()) {
             $id = (int) $this->confirmPool->pop(0.001);
-            $channel = $this->channel($id);
         }
+
+        if ($id === 0) {
+            $id = $this->makeChannelId();
+            $confirm = true;
+        }
+
+        $channel = $this->channel($id);
+        $confirm && $channel->confirm_select();
 
         return $channel;
     }
@@ -141,13 +138,15 @@ class AMQPConnection extends AbstractConnection
         }
     }
 
-    public function connectOnConstruct()
+    protected function makeChannelId(): int
     {
-        return false;
-    }
+        for ($i = 0; $i < $this->channel_max; ++$i) {
+            $id = ($this->lastChannelId++ % $this->channel_max) + 1;
+            if (! isset($this->channels[$id])) {
+                return $id;
+            }
+        }
 
-    public function connect()
-    {
-        return parent::connect();
+        throw new AMQPRuntimeException('No free channel ids');
     }
 }
