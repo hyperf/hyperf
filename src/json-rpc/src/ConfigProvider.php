@@ -24,13 +24,13 @@ class ConfigProvider
                 DataFormatter::class => DataFormatterFactory::class,
             ],
             'listeners' => [
-                RegisterProtocolListener::class => intval(2147483647 / 2),
+                RegisterProtocolListener::class,
                 value(function () {
                     if (class_exists(ServiceManager::class)) {
                         return RegisterServiceListener::class;
                     }
                     return null;
-                }) => intval(2147483647 / 2),
+                }),
             ],
             'annotations' => [
                 'scan' => [
