@@ -11,6 +11,10 @@
 
 - [#3626](https://github.com/hyperf/hyperf/pull/3626) 為 `RPC` 元件增加了新的路徑打包器 `Hyperf\Rpc\PathGenerator\DotPathGenerator`。
 
+## 新元件孵化
+
+- [nacos-sdk](https://github.com/hyperf/nacos-sdk-incubator) 基於 Nacos Open API 實現的 SDK。
+
 # v2.1.18 - 2021-05-24
 
 ## 修復
