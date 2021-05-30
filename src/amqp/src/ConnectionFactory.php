@@ -15,6 +15,7 @@ use Hyperf\Amqp\IO\SwooleIO;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\Arr;
+use Hyperf\Utils\Coroutine\Locker;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
@@ -46,21 +47,30 @@ class ConnectionFactory
         $config = $this->getConfig($pool);
         $count = $config['pool']['connections'] ?? 1;
 
-        for ($i = 0; $i < $count; ++$i) {
-            $this->connections[$pool][] = $connection = $this->make($config);
-            $connection->connect();
+        if (Locker::lock(static::class)) {
+            for ($i = 0; $i < $count; ++$i) {
+                $connection = $this->make($config);
+                $this->connections[$pool][] = $connection;
+            }
+            Locker::unlock(static::class);
         }
     }
 
     public function getConnection(string $pool): AMQPConnection
     {
-        if (isset($this->connections[$pool])) {
+        if (! empty($this->connections[$pool])) {
             $index = array_rand($this->connections[$pool]);
             $connection = $this->connections[$pool][$index];
             if ($connection->isBroken) {
-                unset($this->connections[$pool][$index]);
-                $this->connections[$pool][$index] = $connection = $this->make($this->getConfig($pool));
-                $connection->connect();
+                if (Locker::lock(static::class . 'getConnection')) {
+                    unset($this->connections[$pool][$index]);
+                    $connection->close();
+                    $connection = $this->make($this->getConfig($pool));
+                    $this->connections[$pool][] = $connection;
+                    Locker::unlock(static::class . 'getConnection');
+                } else {
+                    return $this->getConnection($pool);
+                }
             }
 
             return $connection;
