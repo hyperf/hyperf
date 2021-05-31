@@ -1,4 +1,19 @@
-# v2.1.19 - TBD
+# v2.1.20 - TBD
+
+# v2.1.19 - 2021-05-31
+
+## Fixed
+
+- [#3618](https://github.com/hyperf/hyperf/pull/3618) Fixed routes with same path but different methods will be merged when using `describe:routes`.
+- [#3625](https://github.com/hyperf/hyperf/pull/3625) Fixed bug that `class_map` does not works in `Hyperf\Di\Annotation\Scanner`.
+
+## Added
+
+- [#3626](https://github.com/hyperf/hyperf/pull/3626) Added `Hyperf\Rpc\PathGenerator\DotPathGenerator`.
+
+## Incubator
+
+- [nacos-sdk](https://github.com/hyperf/nacos-sdk-incubator) Nacos SDK for Open API.
 
 # v2.1.18 - 2021-05-24
 

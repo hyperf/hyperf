@@ -99,7 +99,7 @@ class RoutesCommand extends HyperfCommand
         } else {
             $action = (string) $handler->callback;
         }
-        $unique = "{$serverName}|{$uri}";
+        $unique = "{$serverName}|{$uri}|{$action}";
         if (isset($data[$unique])) {
             $data[$unique]['method'][] = $method;
         } else {

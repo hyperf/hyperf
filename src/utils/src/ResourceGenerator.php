@@ -11,10 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
-/**
- * @deprecated v2.3, please use ResourceGenerator instead.
- */
-class Resource
+class ResourceGenerator
 {
     /**
      * TODO: Swoole file hook does not support `php://temp` and `php://memory`.

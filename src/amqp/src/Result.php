@@ -19,7 +19,7 @@ class Result
     public const ACK = 'ack';
 
     /**
-     * Unacknowledge the message.
+     * Unacknowledged the message.
      */
     public const NACK = 'nack';
 

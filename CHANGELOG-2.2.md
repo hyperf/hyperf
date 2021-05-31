@@ -15,6 +15,14 @@
 - Changed the default priority of aspect to 0.
 - Changed the consumer tag of amqp to empty string.
 
+## Deprecated
+
+- `Hyperf\Utils\Resource` will be deprecated in v2.3, please use `Hyperf\Utils\ResourceGenerator` instead.
+
 ## Added
 
 - [#3589](https://github.com/hyperf/hyperf/pull/3589) Added DAG component.
+- [#3606](https://github.com/hyperf/hyperf/pull/3606) Added RPN component.
+- [#3629](https://github.com/hyperf/hyperf/pull/3629) Added `Hyperf\Utils\Channel\ChannelManager` which used to manage channels.
+- [#3631](https://github.com/hyperf/hyperf/pull/3631) Support multiplexing for AMQP component.
+- [#3635](https://github.com/hyperf/hyperf/pull/3635) Added Hyperf\Utils\CodeGen\PhpParser which used to generate AST for reflection. 
