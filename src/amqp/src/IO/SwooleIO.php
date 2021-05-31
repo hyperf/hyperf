@@ -22,6 +22,7 @@ use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Wire\AMQPWriter;
 use PhpAmqpLib\Wire\IO\AbstractIO;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Swoole\Coroutine\Client;
 use const SWOOLE_SOCK_TCP;
 
@@ -70,7 +71,7 @@ class SwooleIO extends AbstractIO
     protected $brokenChannel;
 
     /**
-     * @var LoggerInterface
+     * @var null|LoggerInterface
      */
     protected $logger;
 
@@ -84,7 +85,15 @@ class SwooleIO extends AbstractIO
      */
     private $sock;
 
+    /**
+     * @var string
+     */
     private $buffer = '';
+
+    /**
+     * @var bool
+     */
+    private $exited = false;
 
     /**
      * @throws \InvalidArgumentException when readWriteTimeout argument does not 2x the heartbeat
@@ -124,6 +133,7 @@ class SwooleIO extends AbstractIO
                 }
 
                 if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
+                    $this->exited = true;
                     $this->close();
                     break;
                 }
@@ -138,7 +148,7 @@ class SwooleIO extends AbstractIO
                         $this->write_heartbeat();
                     }
                 } catch (\Throwable $exception) {
-                    $this->logger && $this->logger->error((string) $exception);
+                    $this->log((string) $exception);
                 }
             }
         });
@@ -182,8 +192,8 @@ class SwooleIO extends AbstractIO
 
     /**
      * @param string $data
-     * @throws AMQPRuntimeException
      * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
+     * @throws AMQPRuntimeException
      * @return mixed|void
      */
     public function write($data)
@@ -203,7 +213,7 @@ class SwooleIO extends AbstractIO
 
     public function close()
     {
-        $this->logger && $this->logger->error('Connection closed, wait to restart in next time.');
+        $this->log('Connection closed, wait to restart in next time.');
         $this->pushChannel->close();
         $this->sock->close();
     }
@@ -271,7 +281,7 @@ class SwooleIO extends AbstractIO
                     $readChannel->close();
                 }
             } finally {
-                $this->logger && $this->logger->error('Recv loop broken, wait to restart in next time. The reason is ' . $reason);
+                $this->log('Recv loop broken, wait to restart in next time. The reason is ' . $reason);
                 $this->brokenChannel->push(true);
                 $chan->close();
                 $client->close();
@@ -300,11 +310,11 @@ class SwooleIO extends AbstractIO
 
                     $res = $client->send($data);
                     if ($res === false) {
-                        $this->logger && $this->logger->error('Send data failed. The reason is ' . $client->errMsg);
+                        $this->log('Send data failed. The reason is ' . $client->errMsg);
                     }
                 }
             } finally {
-                $this->logger && $this->logger->error('Send loop broken, wait to restart in next time. The reason is ' . $reason);
+                $this->log('Send loop broken, wait to restart in next time. The reason is ' . $reason);
                 $this->brokenChannel->push(true);
                 $chan->close();
                 $client->close();
@@ -359,5 +369,17 @@ class SwooleIO extends AbstractIO
     protected function makeChannel(): Channel
     {
         return new Channel(65535);
+    }
+
+    protected function log(string $message)
+    {
+        if ($this->logger) {
+            $level = LogLevel::ERROR;
+            if ($this->exited) {
+                $level = LogLevel::WARNING;
+            }
+
+            $this->logger->log($level, $message);
+        }
     }
 }
