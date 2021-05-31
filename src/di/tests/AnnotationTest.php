@@ -14,9 +14,9 @@ namespace HyperfTest\Di;
 use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
-use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Di\Exception\DirectoryNotExistException;
+use Hyperf\Di\ReflectionManager;
 use HyperfTest\Di\Stub\AnnotationCollector;
 use HyperfTest\Di\Stub\Ignore;
 use HyperfTest\Di\Stub\IgnoreDemoAnnotation;
@@ -36,11 +36,9 @@ class AnnotationTest extends TestCase
 
     public function testIgnoreAnnotations()
     {
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub/']);
-
         $scaner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
         $reader = new AnnotationReader();
-        $scaner->collect($reader, $ref = BetterReflectionManager::reflectClass(Ignore::class));
+        $scaner->collect($reader, $ref = ReflectionManager::reflectClass(Ignore::class));
         $annotations = AnnotationCollector::get(Ignore::class . '._c');
         $this->assertArrayHasKey(IgnoreDemoAnnotation::class, $annotations);
 

@@ -16,15 +16,13 @@ use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\Aop\ProxyManager;
-use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\MetadataCollector;
+use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Watcher\Ast\Metadata;
 use Hyperf\Watcher\Ast\RewriteClassNameVisitor;
 use PhpParser\NodeTraverser;
-use Roave\BetterReflection\BetterReflection;
-use Roave\BetterReflection\Reflection\Adapter;
-use Roave\BetterReflection\Reflection\ReflectionClass;
+use ReflectionClass;
 
 class Process
 {
@@ -32,11 +30,6 @@ class Process
      * @var string
      */
     protected $file;
-
-    /**
-     * @var BetterReflection
-     */
-    protected $reflection;
 
     /**
      * @var AnnotationReader
@@ -67,7 +60,6 @@ class Process
     {
         $this->file = $file;
         $this->ast = new Ast();
-        $this->reflection = new BetterReflection();
         $this->config = $this->initScanConfig();
         $this->reader = new AnnotationReader();
         $this->filesystem = new Filesystem();
@@ -89,11 +81,12 @@ class Process
             }
         }
 
-        require $this->file;
+        if (! empty($this->file)) {
+            require $this->file;
+        }
 
         // Collect the annotations.
-        $ref = $this->reflection->classReflector()->reflect($class);
-        BetterReflectionManager::reflectClass($class, $ref);
+        $ref = ReflectionManager::reflectClass($class);
         foreach ($collectors as $collector) {
             $collector::clear($class);
         }
@@ -111,8 +104,8 @@ class Process
         }
 
         // Reload the proxy class.
-        $manager = new ProxyManager([], [$class => $this->file], BASE_PATH . '/runtime/container/proxy/');
-        $ref = new \ReflectionClass($manager);
+        $manager = new ProxyManager([$class => $this->file], BASE_PATH . '/runtime/container/proxy/');
+        $ref = new ReflectionClass($manager);
         $method = $ref->getMethod('generateProxyFiles');
         $method->setAccessible(true);
         $method->invokeArgs($manager, [$class => []]);
@@ -121,7 +114,7 @@ class Process
     public function collect($className, ReflectionClass $reflection)
     {
         // Parse class annotations
-        $classAnnotations = $this->reader->getClassAnnotations(new Adapter\ReflectionClass($reflection));
+        $classAnnotations = $this->reader->getClassAnnotations($reflection);
         if (! empty($classAnnotations)) {
             foreach ($classAnnotations as $classAnnotation) {
                 if ($classAnnotation instanceof AnnotationInterface) {
@@ -130,9 +123,9 @@ class Process
             }
         }
         // Parse properties annotations
-        $properties = $reflection->getImmediateProperties();
+        $properties = $reflection->getProperties();
         foreach ($properties as $property) {
-            $propertyAnnotations = $this->reader->getPropertyAnnotations(new Adapter\ReflectionProperty($property));
+            $propertyAnnotations = $this->reader->getPropertyAnnotations($property);
             if (! empty($propertyAnnotations)) {
                 foreach ($propertyAnnotations as $propertyAnnotation) {
                     if ($propertyAnnotation instanceof AnnotationInterface) {
@@ -142,9 +135,9 @@ class Process
             }
         }
         // Parse methods annotations
-        $methods = $reflection->getImmediateMethods();
+        $methods = $reflection->getMethods();
         foreach ($methods as $method) {
-            $methodAnnotations = $this->reader->getMethodAnnotations(new Adapter\ReflectionMethod($method));
+            $methodAnnotations = $this->reader->getMethodAnnotations($method);
             if (! empty($methodAnnotations)) {
                 foreach ($methodAnnotations as $methodAnnotation) {
                     if ($methodAnnotation instanceof AnnotationInterface) {

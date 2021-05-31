@@ -14,7 +14,6 @@ namespace Hyperf\Di\Aop;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Utils\Filesystem\Filesystem;
-use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class ProxyManager
 {
@@ -45,11 +44,10 @@ class ProxyManager
     protected $filesystem;
 
     public function __construct(
-        array $reflectionClassMap = [],
-        array $composerLoaderClassMap = [],
+        array $classMap = [],
         string $proxyDir = ''
     ) {
-        $this->classMap = $this->mergeClassMap($reflectionClassMap, $composerLoaderClassMap);
+        $this->classMap = $classMap;
         $this->proxyDir = $proxyDir;
         $this->filesystem = new Filesystem();
         $this->proxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap(
@@ -65,19 +63,6 @@ class ProxyManager
     public function getProxyDir(): string
     {
         return $this->proxyDir;
-    }
-
-    /**
-     * @param ReflectionClass[] $reflectionClassMap
-     */
-    protected function mergeClassMap(array $reflectionClassMap, array $composerLoaderClassMap): array
-    {
-        $classMap = [];
-        foreach ($reflectionClassMap as $class) {
-            $classMap[$class->getName()] = $class->getFileName();
-        }
-
-        return array_merge($classMap, $composerLoaderClassMap);
     }
 
     protected function generateProxyFiles(array $proxies = []): array
@@ -167,8 +152,7 @@ class ProxyManager
             }
         }
 
-        foreach ($reflectionClassMap as $class => $path) {
-            $className = $class;
+        foreach ($reflectionClassMap as $className => $path) {
             // Aggregate the class annotations
             $classAnnotations = $this->retrieveAnnotations($className . '._c');
             // Aggregate all methods annotations
@@ -190,45 +174,6 @@ class ProxyManager
             }
         }
         return $proxies;
-    }
-
-    protected function initProxiesByComposerClassMap(array $classMap = []): array
-    {
-        $proxies = [];
-        if (! $classMap) {
-            return $proxies;
-        }
-        $classAspects = $this->getClassAspects();
-        if ($classAspects) {
-            foreach ($classMap as $className => $file) {
-                $match = [];
-                foreach ($classAspects as $aspect => $rules) {
-                    foreach ($rules as $rule) {
-                        if ($this->isMatch($rule, $className)) {
-                            $match[] = $aspect;
-                        }
-                    }
-                }
-                if ($match) {
-                    $match = array_flip(array_flip($match));
-                    $proxies[$className] = $match;
-                }
-            }
-        }
-
-        return $proxies;
-    }
-
-    protected function getClassAspects(): array
-    {
-        $aspects = AspectCollector::get('classes', []);
-        // Remove the useless aspect rules
-        foreach ($aspects as $aspect => $rules) {
-            if (! $rules) {
-                unset($aspects[$aspect]);
-            }
-        }
-        return $aspects;
     }
 
     protected function retrieveAnnotations(string $annotationCollectorKey): array

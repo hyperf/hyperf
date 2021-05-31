@@ -14,6 +14,7 @@
 
 - Changed the default priority of aspect to 0.
 - Changed the consumer tag of amqp to empty string.
+- [#3634](https://github.com/hyperf/hyperf/pull/3634) Use Fork Process strategy to replace BetterReflection strategy.
 
 ## Deprecated
 

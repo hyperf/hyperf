@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Annotation;
 
-use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\Exception\AnnotationException;
-use Hyperf\Di\TypesFinderManager;
-use phpDocumentor\Reflection\Types\Object_;
+use Hyperf\Di\ReflectionManager;
+use PhpDocReader\AnnotationException as DocReaderAnnotationException;
+use PhpDocReader\PhpDocReader;
 
 /**
  * @Annotation
@@ -37,28 +37,29 @@ class Inject extends AbstractAnnotation
      */
     public $lazy = false;
 
+    /**
+     * @var PhpDocReader
+     */
+    private $docReader;
+
     public function __construct($value = null)
     {
         parent::__construct($value);
+        $this->docReader = new PhpDocReader();
     }
 
     public function collectProperty(string $className, ?string $target): void
     {
         try {
-            $reflectionClass = BetterReflectionManager::reflectClass($className);
-            $properties = $reflectionClass->getImmediateProperties();
-            $reflectionProperty = $properties[$target] ?? null;
-            if (! $reflectionProperty) {
-                $this->value = '';
-                return;
-            }
-            if ($reflectionProperty->hasType()) {
+            $reflectionClass = ReflectionManager::reflectClass($className);
+
+            $reflectionProperty = $reflectionClass->getProperty($target);
+
+            if (method_exists($reflectionProperty, 'hasType') && $reflectionProperty->hasType()) {
+                /* @phpstan-ignore-next-line */
                 $this->value = $reflectionProperty->getType()->getName();
             } else {
-                $reflectionTypes = TypesFinderManager::getPropertyFinder()->__invoke($reflectionProperty, $reflectionClass->getDeclaringNamespaceAst());
-                if (isset($reflectionTypes[0]) && $reflectionTypes[0] instanceof Object_) {
-                    $this->value = ltrim((string) $reflectionTypes[0], '\\');
-                }
+                $this->value = $this->docReader->getPropertyClass($reflectionProperty);
             }
 
             if (empty($this->value)) {
@@ -69,9 +70,9 @@ class Inject extends AbstractAnnotation
                 $this->value = 'HyperfLazy\\' . $this->value;
             }
             AnnotationCollector::collectProperty($className, $target, static::class, $this);
-        } catch (AnnotationException $exception) {
+        } catch (AnnotationException | DocReaderAnnotationException $exception) {
             if ($this->required) {
-                throw $exception;
+                throw new AnnotationException($exception->getMessage());
             }
             $this->value = '';
         } catch (\Throwable $exception) {

@@ -21,8 +21,8 @@
         "doctrine/annotations": "^1.6",
         "doctrine/instantiator": "^1.0",
         "nikic/php-parser": "^4.1",
+        "php-di/phpdoc-reader": "^2.2",
         "psr/container": "^1.0|^2.0",
-        "roave/better-reflection": "^4.0",
         "symfony/finder": "^5.0",
         "vlucas/phpdotenv": "^5.0"
     },
