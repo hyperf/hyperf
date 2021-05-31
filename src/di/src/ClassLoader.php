@@ -48,12 +48,8 @@ class ClassLoader
         $classLoader->addClassMap($config->getClassMap());
 
         $scanner = new Scanner($this, $config);
-        [$collectorData, $this->proxies] = $scanner->scan($this->getComposerClassLoader()->getClassMap(), $proxyFileDir);
 
-        /** @var MetadataCollector|string $collector */
-        foreach ($collectorData as $collector => $data) {
-            $collector::deserialize($data);
-        }
+        $this->proxies = $scanner->scan($this->getComposerClassLoader()->getClassMap(), $proxyFileDir);
     }
 
     public function loadClass(string $class): void

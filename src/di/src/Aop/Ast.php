@@ -60,15 +60,6 @@ class Ast
         return $this->printer->prettyPrintFile($modifiedStmts);
     }
 
-    private function getCodeByClassName(string $className): string
-    {
-        $file = Composer::getLoader()->findFile($className);
-        if (! $file) {
-            return '';
-        }
-        return file_get_contents($file);
-    }
-
     public function parseClassByStmts(array $stmts): string
     {
         $namespace = $className = '';
@@ -84,5 +75,14 @@ class Ast
             }
         }
         return ($namespace && $className) ? $namespace . '\\' . $className : '';
+    }
+
+    private function getCodeByClassName(string $className): string
+    {
+        $file = Composer::getLoader()->findFile($className);
+        if (! $file) {
+            return '';
+        }
+        return file_get_contents($file);
     }
 }

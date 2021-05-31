@@ -42,7 +42,7 @@ class Scanner
     /**
      * @var string
      */
-    protected $path = BASE_PATH . '/runtime/container/collectors.cache';
+    protected $path = BASE_PATH . '/runtime/container/scan.cache';
 
     public function __construct(ClassLoader $classloader, ScanConfig $scanConfig)
     {
@@ -104,33 +104,31 @@ class Scanner
         unset($reflection, $classAnnotations, $properties, $methods);
     }
 
-    /**
-     * @return ReflectionClass[]
-     */
     public function scan(array $classMap = [], string $proxyDir = ''): array
     {
-        $scanTemp = BASE_PATH . '/runtime/container/scan.temp';
+        $paths = $this->scanConfig->getPaths();
+        $collectors = $this->scanConfig->getCollectors();
+        if (! $paths) {
+            return [];
+        }
+
+        $lastCacheModified = file_exists($this->path) ? $this->filesystem->lastModified($this->path) : 0;
+        if ($lastCacheModified > 0 && $this->scanConfig->isCacheable()) {
+            return $this->deserializeCachedScanData($collectors);
+        }
+
         $pid = pcntl_fork();
         if ($pid == -1) {
             throw new Exception('The process fork failed');
         }
         if ($pid) {
             pcntl_wait($status);
-            return unserialize($this->filesystem->get($scanTemp));
+            return $this->deserializeCachedScanData($collectors);
         }
 
-        $paths = $this->scanConfig->getPaths();
-        $collectors = $this->scanConfig->getCollectors();
-        $classes = [];
-        if (! $paths) {
-            return $classes;
-        }
+        $this->deserializeCachedScanData($collectors);
 
         $annotationReader = new AnnotationReader();
-        $lastCacheModified = $this->deserializeCachedCollectors($collectors);
-        if ($lastCacheModified > 0 && $this->scanConfig->isCacheable()) {
-            return [];
-        }
 
         $paths = $this->normalizeDir($paths);
 
@@ -159,18 +157,12 @@ class Scanner
             $data[$collector] = $collector::serialize();
         }
 
-        if ($data) {
-            $this->putCache($this->path, serialize($data));
-        }
-
-        unset($annotationReader);
-
         // Get the class map of Composer loader
         $classMap = array_merge($reflectionClassMap, $classMap);
         $proxyManager = new ProxyManager($classMap, $proxyDir);
         $proxies = $proxyManager->getProxies();
 
-        $this->putCache($scanTemp, serialize([$data, $proxies]));
+        $this->putCache($this->path, serialize([$data, $proxies]));
         exit;
     }
 
@@ -192,6 +184,19 @@ class Scanner
         }
 
         return $result;
+    }
+
+    protected function deserializeCachedScanData(array $collectors): array
+    {
+        [$data, $proxies] = unserialize(file_get_contents($this->path));
+        foreach ($data as $collector => $deserialized) {
+            /** @var MetadataCollector $collector */
+            if (in_array($collector, $collectors)) {
+                $collector::deserialize($deserialized);
+            }
+        }
+
+        return $proxies;
     }
 
     protected function deserializeCachedCollectors(array $collectors): int

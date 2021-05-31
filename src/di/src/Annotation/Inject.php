@@ -51,10 +51,8 @@ class Inject extends AbstractAnnotation
     {
         try {
             $reflectionClass = ReflectionManager::reflectClass($className);
-            if (! $reflectionProperty = $reflectionClass->getProperty($target)) {
-                $this->value = '';
-                return;
-            }
+
+            $reflectionProperty = $reflectionClass->getProperty($target);
 
             if (method_exists($reflectionProperty, 'hasType') && $reflectionProperty->hasType()) {
                 $this->value = $reflectionProperty->getType()->getName();
