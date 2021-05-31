@@ -239,7 +239,7 @@ return [
 ];
 ```
 
-然后修改我们的 `WebSocket` 服务中的 `callbacks` 配置，以下隐藏了不想干的配置
+然后修改我们的 `WebSocket` 服务中的 `callbacks` 配置，以下隐藏了不相干的配置
 
 ```php
 <?php
