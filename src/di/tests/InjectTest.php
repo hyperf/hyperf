@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Di;
 
+use Exception;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\Annotation\Inject;
@@ -19,7 +20,6 @@ use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Aop\Ast;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Di\Exception\AnnotationException;
-use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Di\ExceptionStub\DemoInjectException;
@@ -186,7 +186,6 @@ class InjectTest extends TestCase
     public function testInjectParentParent()
     {
         $this->getContainer();
-        $ast = new Ast();
         $classes = [
             Parent2Class::class,
             Origin5Class::class,
@@ -242,11 +241,9 @@ class InjectTest extends TestCase
     public function testInjectException()
     {
         try {
-            $scaner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
+            $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
             $reader = new AnnotationReader();
-            $scaner->collect($reader, ReflectionManager::reflectClass(DemoInjectException::class));
-
-            new DemoInjectException();
+            $scanner->collect($reader, ReflectionManager::reflectClass(DemoInjectException::class));
         } catch (\Exception $e) {
             $this->assertSame('The @var annotation on HyperfTest\Di\ExceptionStub\DemoInjectException::demo contains a non existent class "Demo1". Did you maybe forget to add a "use" statement for this annotation?', $e->getMessage());
             $this->assertSame(true, $e instanceof \PhpDocReader\AnnotationException);
@@ -275,7 +272,7 @@ class InjectTest extends TestCase
             throw new Exception('The process fork failed');
         }
         if ($pid === 0) {
-            $scaner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
+            $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
             $reader = new AnnotationReader();
 
             if (empty($classes)) {
@@ -299,7 +296,7 @@ class InjectTest extends TestCase
             }
 
             foreach ($classes as $class) {
-                $scaner->collect($reader, ReflectionManager::reflectClass($class));
+                $scanner->collect($reader, ReflectionManager::reflectClass($class));
             }
 
             file_put_contents($path, AnnotationCollector::serialize());
