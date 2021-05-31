@@ -260,7 +260,6 @@ class SwooleIO extends AbstractIO
                     }
 
                     if ($data === false || $data === '') {
-                        var_dump($data);
                         $reason = 'client broken. ' . $client->errMsg;
                         break;
                     }

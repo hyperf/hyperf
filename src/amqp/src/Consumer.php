@@ -64,43 +64,48 @@ class Consumer extends Builder
     {
         $connection = $this->factory->getConnection($consumerMessage->getPoolName());
 
-        $channel = $connection->getConfirmChannel();
+        try {
+            $channel = $connection->getConfirmChannel();
 
-        $this->declare($consumerMessage, $channel);
-        $concurrent = $this->getConcurrent($consumerMessage->getPoolName());
+            $this->declare($consumerMessage, $channel);
+            $concurrent = $this->getConcurrent($consumerMessage->getPoolName());
 
-        $maxConsumption = $consumerMessage->getMaxConsumption();
-        $currentConsumption = 0;
+            $maxConsumption = $consumerMessage->getMaxConsumption();
+            $currentConsumption = 0;
 
-        $channel->basic_consume(
-            $consumerMessage->getQueue(),
-            $consumerMessage->getConsumerTag(),
-            false,
-            false,
-            false,
-            false,
-            function (AMQPMessage $message) use ($consumerMessage, $concurrent) {
-                $callback = $this->getCallback($consumerMessage, $message);
-                if (! $concurrent instanceof Concurrent) {
-                    return parallel([$callback]);
+            $channel->basic_consume(
+                $consumerMessage->getQueue(),
+                $consumerMessage->getConsumerTag(),
+                false,
+                false,
+                false,
+                false,
+                function (AMQPMessage $message) use ($consumerMessage, $concurrent) {
+                    $callback = $this->getCallback($consumerMessage, $message);
+                    if (! $concurrent instanceof Concurrent) {
+                        return parallel([$callback]);
+                    }
+
+                    $concurrent->create($callback);
                 }
+            );
 
-                $concurrent->create($callback);
-            }
-        );
-
-        while ($channel->is_consuming() && ProcessManager::isRunning()) {
-            try {
-                $channel->wait(null, false, $consumerMessage->getWaitTimeout());
-                if ($maxConsumption > 0 && ++$currentConsumption >= $maxConsumption) {
+            while ($channel->is_consuming() && ProcessManager::isRunning()) {
+                try {
+                    $channel->wait(null, false, $consumerMessage->getWaitTimeout());
+                    if ($maxConsumption > 0 && ++$currentConsumption >= $maxConsumption) {
+                        break;
+                    }
+                } catch (AMQPTimeoutException $exception) {
+                    $this->eventDispatcher && $this->eventDispatcher->dispatch(new WaitTimeout($consumerMessage));
+                } catch (\Throwable $exception) {
+                    $this->logger->error((string) $exception);
                     break;
                 }
-            } catch (AMQPTimeoutException $exception) {
-                $this->eventDispatcher && $this->eventDispatcher->dispatch(new WaitTimeout($consumerMessage));
-            } catch (\Throwable $exception) {
-                $this->logger->error((string) $exception);
-                break;
             }
+        } catch (\Throwable $exception) {
+            isset($channel) && $channel->close();
+            throw $exception;
         }
 
         $this->waitConcurrentHandled($concurrent);

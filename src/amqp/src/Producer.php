@@ -33,17 +33,22 @@ class Producer extends Builder
         $message = new AMQPMessage($producerMessage->payload(), $producerMessage->getProperties());
         $connection = $this->factory->getConnection($producerMessage->getPoolName());
 
-        if ($confirm) {
-            $channel = $connection->getConfirmChannel();
-        } else {
-            $channel = $connection->getChannel();
-        }
+        try {
+            if ($confirm) {
+                $channel = $connection->getConfirmChannel();
+            } else {
+                $channel = $connection->getChannel();
+            }
 
-        $channel->set_ack_handler(function () use (&$result) {
-            $result = true;
-        });
-        $channel->basic_publish($message, $producerMessage->getExchange(), $producerMessage->getRoutingKey());
-        $channel->wait_for_pending_acks_returns($timeout);
+            $channel->set_ack_handler(function () use (&$result) {
+                $result = true;
+            });
+            $channel->basic_publish($message, $producerMessage->getExchange(), $producerMessage->getRoutingKey());
+            $channel->wait_for_pending_acks_returns($timeout);
+        } catch (\Throwable $exception) {
+            isset($channel) && $channel->close();
+            throw $exception;
+        }
 
         if ($confirm) {
             $connection->releaseChannel($channel, true);
