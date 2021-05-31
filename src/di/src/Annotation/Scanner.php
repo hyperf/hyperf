@@ -12,9 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Config\ProviderConfig;
+use Hyperf\Di\Aop\ProxyManager;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Di\Exception\DirectoryNotExistException;
+use Hyperf\Di\Exception\Exception;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Utils\Filesystem\Filesystem;
 use ReflectionProperty;
@@ -106,8 +108,18 @@ class Scanner
     /**
      * @return ReflectionClass[]
      */
-    public function scan(): array
+    public function scan(array $classMap = [], string $proxyDir = ''): array
     {
+        $path = '/dev/shm/ClassLoader';
+        $pid = pcntl_fork();
+        if ($pid == -1) {
+            throw new Exception('The process fork failed');
+        }
+        if ($pid) {
+            pcntl_wait($status);
+            return unserialize($this->filesystem->get($path));
+        }
+
         $paths = $this->scanConfig->getPaths();
         $collectors = $this->scanConfig->getCollectors();
         $classes = [];
@@ -159,7 +171,13 @@ class Scanner
 
         unset($annotationReader);
 
-        return [$reflectionClassMap, $data];
+        // Get the class map of Composer loader
+        $classMap = array_merge($reflectionClassMap, $classMap);
+        $proxyManager = new ProxyManager($classMap, $proxyDir);
+        $proxies = $proxyManager->getProxies();
+
+        $this->filesystem->put($path, serialize([$data, $proxies]));
+        exit;
     }
 
     /**

@@ -18,11 +18,8 @@ use Dotenv\Repository\Adapter;
 use Dotenv\Repository\RepositoryBuilder;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
-use Hyperf\Di\Aop\ProxyManager;
-use Hyperf\Di\Exception\Exception;
 use Hyperf\Di\LazyLoader\LazyLoader;
 use Hyperf\Utils\Composer;
-use Hyperf\Utils\Filesystem\Filesystem;
 
 class ClassLoader
 {
@@ -51,34 +48,12 @@ class ClassLoader
         $classLoader->addClassMap($config->getClassMap());
 
         $scanner = new Scanner($this, $config);
-        $filesystem = new Filesystem();
-        $path = '/dev/shm/ClassLoader';
-
-        $pid = pcntl_fork();
-        if ($pid == -1) {
-            throw new Exception('The process fork failed');
-        }
-        if (! $pid) {
-            [$classMap, $collectorData] = $scanner->scan();
-
-            // Get the class map of Composer loader
-            $classMap = array_merge($classMap, $this->getComposerClassLoader()->getClassMap());
-            $proxyManager = new ProxyManager($classMap, $proxyFileDir);
-            $proxies = $proxyManager->getProxies();
-
-            $filesystem->put($path, serialize([$collectorData, $proxies]));
-            exit;
-        }
-        $pid = pcntl_wait($status);
-
-        [$collectorData, $proxies] = unserialize($filesystem->get($path));
+        [$collectorData, $this->proxies] = $scanner->scan($this->getComposerClassLoader()->getClassMap(), $proxyFileDir);
 
         /** @var MetadataCollector|string $collector */
         foreach ($collectorData as $collector => $data) {
             $collector::deserialize($data);
         }
-
-        $this->proxies = $proxies;
     }
 
     public function loadClass(string $class): void
