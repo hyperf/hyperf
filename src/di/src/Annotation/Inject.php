@@ -55,6 +55,7 @@ class Inject extends AbstractAnnotation
             $reflectionProperty = $reflectionClass->getProperty($target);
 
             if (method_exists($reflectionProperty, 'hasType') && $reflectionProperty->hasType()) {
+                /* @phpstan-ignore-next-line */
                 $this->value = $reflectionProperty->getType()->getName();
             } else {
                 $this->value = $this->docReader->getPropertyClass($reflectionProperty);

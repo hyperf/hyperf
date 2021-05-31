@@ -17,6 +17,7 @@ use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\ClassLoader;
+use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Filesystem\Filesystem;
 use HyperfTest\Di\Stub\AnnotationCollector;
@@ -69,7 +70,7 @@ class ScannerTest extends TestCase
         $method->setAccessible(true);
 
         $reader = new AnnotationReader();
-        $scanner->collect($reader, BetterReflectionManager::reflectClass(Debug2Aspect::class));
+        $scanner->collect($reader, ReflectionManager::reflectClass(Debug2Aspect::class));
 
         // Don't has aspects.cache or aspects changed.
         [$removed, $changed] = $method->invokeArgs($scanner, [[Debug1Aspect::class, Debug2Aspect::class, Debug3Aspect::class], 0]);
