@@ -41,6 +41,9 @@ class AsyncQueueAspectTest extends TestCase
         ReflectionManager::clear();
     }
 
+    /**
+     * @group NonCoroutine
+     */
     public function testNotAsyncMessage()
     {
         $container = $this->getContainer();
@@ -53,6 +56,9 @@ class AsyncQueueAspectTest extends TestCase
         $this->assertSame([$id, $uuid, $data], Context::get(FooProxy::class));
     }
 
+    /**
+     * @group NonCoroutine
+     */
     public function testAsyncMessage()
     {
         $container = $this->getContainer();
@@ -65,6 +71,9 @@ class AsyncQueueAspectTest extends TestCase
         $this->assertSame($data, Context::get(FooProxy::class));
     }
 
+    /**
+     * @group NonCoroutine
+     */
     public function testAsyncMessageVariadic()
     {
         $container = $this->getContainer();
@@ -87,13 +96,20 @@ class AsyncQueueAspectTest extends TestCase
         AnnotationCollector::collectMethod(FooProxy::class, 'async', AsyncQueueMessage::class, new AsyncQueueMessage());
         AnnotationCollector::collectMethod(FooProxy::class, 'variadic', AsyncQueueMessage::class, new AsyncQueueMessage());
 
-        $ast = new Ast();
-        $code = $ast->proxy(FooProxy::class);
-        if (! is_dir($dir = BASE_PATH . '/runtime/container/proxy/')) {
-            mkdir($dir, 0777, true);
+        $pid = pcntl_fork();
+        if (! $pid) {
+            $ast = new Ast();
+            $code = $ast->proxy(FooProxy::class);
+            if (! is_dir($dir = BASE_PATH . '/runtime/container/proxy/')) {
+                mkdir($dir, 0777, true);
+            }
+            file_put_contents($file = $dir . 'FooProxy.proxy.php', $code);
+            exit;
         }
-        file_put_contents($file = $dir . 'FooProxy.proxy.php', $code);
-        require_once $file;
+
+        pcntl_wait($status);
+
+        require_once BASE_PATH . '/runtime/container/proxy/FooProxy.proxy.php';
 
         $container->shouldReceive('get')->with(FooProxy::class)->andReturn(new FooProxy());
         $container->shouldReceive('get')->with(AsyncQueueAspect::class)->andReturnUsing(function ($_) use ($container) {
