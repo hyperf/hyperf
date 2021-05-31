@@ -124,6 +124,7 @@ class SwooleIO extends AbstractIO
                 }
 
                 if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
+                    $this->close();
                     break;
                 }
 
