@@ -188,6 +188,10 @@ class Scanner
 
     protected function deserializeCachedScanData(array $collectors): array
     {
+        if (! file_exists($this->path)) {
+            return [];
+        }
+
         [$data, $proxies] = unserialize(file_get_contents($this->path));
         foreach ($data as $collector => $deserialized) {
             /** @var MetadataCollector $collector */
