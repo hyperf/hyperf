@@ -45,6 +45,11 @@ class Scanner
      */
     protected $path = BASE_PATH . '/runtime/container/collectors.cache';
 
+    /**
+     * @var string
+     */
+    protected $scanTemp = BASE_PATH . '/runtime/container/scan.temp';
+
     public function __construct(ClassLoader $classloader, ScanConfig $scanConfig)
     {
         $this->classloader = $classloader;
@@ -110,14 +115,13 @@ class Scanner
      */
     public function scan(array $classMap = [], string $proxyDir = ''): array
     {
-        $path = '/dev/shm/ClassLoader';
         $pid = pcntl_fork();
         if ($pid == -1) {
             throw new Exception('The process fork failed');
         }
         if ($pid) {
             pcntl_wait($status);
-            return unserialize($this->filesystem->get($path));
+            return unserialize($this->filesystem->get($this->scanTemp));
         }
 
         $paths = $this->scanConfig->getPaths();
@@ -176,7 +180,7 @@ class Scanner
         $proxyManager = new ProxyManager($classMap, $proxyDir);
         $proxies = $proxyManager->getProxies();
 
-        $this->filesystem->put($path, serialize([$data, $proxies]));
+        $this->filesystem->put($this->scanTemp, serialize([$data, $proxies]));
         exit;
     }
 
