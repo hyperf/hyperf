@@ -246,7 +246,7 @@ class InjectTest extends TestCase
             $scanner->collect($reader, ReflectionManager::reflectClass(DemoInjectException::class));
         } catch (\Exception $e) {
             $this->assertSame('The @var annotation on HyperfTest\Di\ExceptionStub\DemoInjectException::demo contains a non existent class "Demo1". Did you maybe forget to add a "use" statement for this annotation?', $e->getMessage());
-            $this->assertSame(true, $e instanceof \PhpDocReader\AnnotationException);
+            $this->assertSame(true, $e instanceof AnnotationException);
         }
     }
 
