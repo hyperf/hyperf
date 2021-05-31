@@ -1,4 +1,6 @@
-# v2.1.19 - TBD
+# v2.1.20 - TBD
+
+# v2.1.19 - 2021-05-31
 
 ## Fixed
 
@@ -8,6 +10,10 @@
 ## Added
 
 - [#3626](https://github.com/hyperf/hyperf/pull/3626) Added `Hyperf\Rpc\PathGenerator\DotPathGenerator`.
+
+## Incubator
+
+- [nacos-sdk](https://github.com/hyperf/nacos-sdk-incubator) Nacos SDK for Open API.
 
 # v2.1.18 - 2021-05-24
 

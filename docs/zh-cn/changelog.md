@@ -1,5 +1,20 @@
 # 版本更新记录
 
+# v2.1.19 - 2021-05-31
+
+## 修复
+
+- [#3618](https://github.com/hyperf/hyperf/pull/3618) 修复使用了相同路径但不同实现逻辑的路由会在命令 `describe:routes` 中，被合并成一条的问题。
+- [#3625](https://github.com/hyperf/hyperf/pull/3625) 修复 `Hyperf\Di\Annotation\Scanner` 中无法正常使用 `class_map` 功能的问题。
+
+## 新增
+
+- [#3626](https://github.com/hyperf/hyperf/pull/3626) 为 `RPC` 组件增加了新的路径打包器 `Hyperf\Rpc\PathGenerator\DotPathGenerator`。
+
+## 新组件孵化
+
+- [nacos-sdk](https://github.com/hyperf/nacos-sdk-incubator) 基于 Nacos Open API 实现的 SDK。
+
 # v2.1.18 - 2021-05-24
 
 ## 修复
