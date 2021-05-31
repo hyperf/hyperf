@@ -20,7 +20,7 @@ use Hyperf\AsyncQueue\Environment;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\Ast;
-use Hyperf\Di\BetterReflectionManager;
+use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use HyperfTest\AsyncQueue\Stub\FooProxy;
@@ -38,7 +38,7 @@ class AsyncQueueAspectTest extends TestCase
     {
         Mockery::close();
         Context::set(FooProxy::class, null);
-        BetterReflectionManager::clear();
+        ReflectionManager::clear();
     }
 
     public function testNotAsyncMessage()
@@ -81,8 +81,6 @@ class AsyncQueueAspectTest extends TestCase
     {
         $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
-
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub/']);
 
         $aspect = new Aspect();
         $aspect->collectClass(AsyncQueueAspect::class);

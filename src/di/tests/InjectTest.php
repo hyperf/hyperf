@@ -17,10 +17,10 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Aop\Ast;
-use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Di\Exception\AnnotationException;
 use Hyperf\Di\Exception\NotFoundException;
+use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Di\ExceptionStub\DemoInjectException;
 use HyperfTest\Di\Stub\AnnotationCollector;
@@ -59,7 +59,7 @@ class InjectTest extends TestCase
         AspectCollector::clear();
         AnnotationCollector::clear();
         Mockery::close();
-        BetterReflectionManager::clear();
+        ReflectionManager::clear();
     }
 
     public function testInject()
@@ -299,7 +299,7 @@ class InjectTest extends TestCase
     public function testInjectNotInitReflector()
     {
         $this->expectException(AnnotationException::class);
-        $this->expectExceptionMessage('The @Inject value is invalid for HyperfTest\Di\Stub\EmptyVarValue->demo. Because The class reflector object does not init yet');
+        $this->expectExceptionMessage('The @Inject value is invalid for HyperfTest\Di\Stub\EmptyVarValue->demo');
 
         $inject = new Inject();
         $inject->collectProperty(EmptyVarValue::class, 'demo');
@@ -310,8 +310,6 @@ class InjectTest extends TestCase
         $this->expectException(AnnotationException::class);
         $this->expectExceptionMessage('The @Inject value is invalid for HyperfTest\Di\Stub\EmptyVarValue->demo');
 
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
-
         $inject = new Inject();
         $inject->collectProperty(EmptyVarValue::class, 'demo');
     }
@@ -320,8 +318,6 @@ class InjectTest extends TestCase
     {
         $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
-
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
 
         $scaner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
         $reader = new AnnotationReader();
@@ -346,7 +342,7 @@ class InjectTest extends TestCase
         ];
 
         foreach ($classes as $class) {
-            $scaner->collect($reader, BetterReflectionManager::reflectClass($class));
+            $scaner->collect($reader, ReflectionManager::reflectClass($class));
         }
 
         $classes = [

@@ -14,7 +14,7 @@ namespace HyperfTest\Di;
 use Hyperf\Di\Annotation\Aspect as AspectAnnotation;
 use Hyperf\Di\Aop\Aspect;
 use Hyperf\Di\Aop\RewriteCollection;
-use Hyperf\Di\BetterReflectionManager;
+use Hyperf\Di\ReflectionManager;
 use HyperfTest\Di\Stub\AnnotationCollector;
 use HyperfTest\Di\Stub\AspectCollector;
 use HyperfTest\Di\Stub\DemoAnnotation;
@@ -33,7 +33,7 @@ class AopAspectTest extends TestCase
     {
         AspectCollector::clear();
         AnnotationCollector::clear();
-        BetterReflectionManager::clear();
+        ReflectionManager::clear();
     }
 
     public function testParseMoreThanOneMethods()
@@ -211,8 +211,6 @@ class AopAspectTest extends TestCase
 
     public function testAspectAnnotation()
     {
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
-
         $annotation = new AspectAnnotation();
 
         $annotation->collectClass(FooAspect::class);
