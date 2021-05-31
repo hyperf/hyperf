@@ -13,6 +13,7 @@ namespace Hyperf\Di\Annotation;
 
 use Hyperf\Di\Exception\AnnotationException;
 use Hyperf\Di\ReflectionManager;
+use PhpDocReader\AnnotationException as DocReaderAnnotationException;
 use PhpDocReader\PhpDocReader;
 
 /**
@@ -55,6 +56,7 @@ class Inject extends AbstractAnnotation
             $reflectionProperty = $reflectionClass->getProperty($target);
 
             if (method_exists($reflectionProperty, 'hasType') && $reflectionProperty->hasType()) {
+                /* @phpstan-ignore-next-line */
                 $this->value = $reflectionProperty->getType()->getName();
             } else {
                 $this->value = $this->docReader->getPropertyClass($reflectionProperty);
@@ -68,7 +70,7 @@ class Inject extends AbstractAnnotation
                 $this->value = 'HyperfLazy\\' . $this->value;
             }
             AnnotationCollector::collectProperty($className, $target, static::class, $this);
-        } catch (AnnotationException | \PhpDocReader\AnnotationException $exception) {
+        } catch (AnnotationException | DocReaderAnnotationException $exception) {
             if ($this->required) {
                 throw new AnnotationException($exception->getMessage());
             }
