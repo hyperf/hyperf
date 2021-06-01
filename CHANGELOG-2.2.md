@@ -26,4 +26,5 @@
 - [#3606](https://github.com/hyperf/hyperf/pull/3606) Added RPN component.
 - [#3629](https://github.com/hyperf/hyperf/pull/3629) Added `Hyperf\Utils\Channel\ChannelManager` which used to manage channels.
 - [#3631](https://github.com/hyperf/hyperf/pull/3631) Support multiplexing for AMQP component.
-- [#3635](https://github.com/hyperf/hyperf/pull/3635) Added Hyperf\Utils\CodeGen\PhpParser which used to generate AST for reflection. 
+- [#3635](https://github.com/hyperf/hyperf/pull/3635) Added `Hyperf\Utils\CodeGen\PhpParser` which used to generate AST for reflection. 
+- [#3648](https://github.com/hyperf/hyperf/pull/3648) Added `Hyperf\Utils\CodeGen\PhpDocReaderManager` to manage `PhpDocReader`.
