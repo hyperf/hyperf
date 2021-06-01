@@ -70,7 +70,6 @@
         "predis/predis": "^1.1",
         "promphp/prometheus_client_php": "2.2.1",
         "reactivex/rxphp": "^2.0",
-        "roave/better-reflection": "^4.0",
         "slickdeals/statsd": "^3.0.1",
         "smarty/smarty": "^3.1",
         "squizlabs/php_codesniffer": "^3.4",
