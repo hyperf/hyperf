@@ -90,4 +90,29 @@ class PhpParser
                 throw new InvalidArgumentException($value . ' is invalid');
         }
     }
+
+    /**
+     * @return Node\Stmt\ClassMethod[]
+     */
+    public function getAllMethodsFromStmts(array $stmts): array
+    {
+        $methods = [];
+        foreach ($stmts as $namespace) {
+            if (! $namespace instanceof Node\Stmt\Namespace_) {
+                continue;
+            }
+
+            foreach ($namespace->stmts as $class) {
+                if (! $class instanceof Node\Stmt\Class_ && ! $class instanceof Node\Stmt\Interface_) {
+                    continue;
+                }
+
+                foreach ($class->getMethods() as $method) {
+                    $methods[] = $method;
+                }
+            }
+        }
+
+        return $methods;
+    }
 }

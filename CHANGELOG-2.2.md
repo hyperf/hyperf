@@ -15,6 +15,7 @@
 - [#3580](https://github.com/hyperf/hyperf/pull/3580) Changed the default priority of aspect to 0.
 - [#3582](https://github.com/hyperf/hyperf/pull/3582) Changed the consumer tag of amqp to empty string.
 - [#3634](https://github.com/hyperf/hyperf/pull/3634) Use Fork Process strategy to replace BetterReflection strategy.
+  - [#3649](https://github.com/hyperf/hyperf/pull/3649) Removed `roave/better-reflection` from `hyperf/database` when using `gen:model`.
 
 ## Deprecated
 
