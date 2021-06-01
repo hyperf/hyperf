@@ -138,7 +138,7 @@ class StdoutLogger implements StdoutLoggerInterface
         $this->output->writeln($message);
     }
 
-    protected function getMessage(string $message, string $level = LogLevel::INFO, array $tags)
+    protected function getMessage(string $message, string $level = LogLevel::INFO, array $tags = [])
     {
         $tag = null;
         switch ($level) {

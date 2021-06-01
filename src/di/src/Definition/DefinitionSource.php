@@ -74,7 +74,7 @@ class DefinitionSource implements DefinitionSourceInterface
                 continue;
             }
 
-            $parameterClass = $parameter->getClass();
+            $parameterClass = $parameter->getDeclaringClass();
 
             if ($parameterClass) {
                 $parameters[$index] = new Reference($parameterClass->getName());
