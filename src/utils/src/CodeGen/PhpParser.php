@@ -103,7 +103,7 @@ class PhpParser
             }
 
             foreach ($namespace->stmts as $class) {
-                if (! $class instanceof Node\Stmt\Class_) {
+                if (! $class instanceof Node\Stmt\Class_ && ! $class instanceof Node\Stmt\Interface_) {
                     continue;
                 }
 
