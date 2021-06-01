@@ -28,6 +28,19 @@ class PhpParser
         'mixed',
     ];
 
+    /**
+     * @var null|PhpParser
+     */
+    protected static $instance;
+
+    public static function getInstance(): PhpParser
+    {
+        if (static::$instance) {
+            return static::$instance;
+        }
+        return static::$instance = new static();
+    }
+
     public function getAstFromReflectionParameter(ReflectionParameter $parameter): Node\Param
     {
         $result = new Node\Param(

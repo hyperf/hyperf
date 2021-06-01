@@ -86,12 +86,11 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
         } else {
             // Create a new constructor class method node.
             $constructor = new Node\Stmt\ClassMethod('__construct');
-            $phpParser = new PhpParser();
             $reflection = ReflectionManager::reflectClass($this->visitorMetadata->className);
             try {
                 $parameters = $reflection->getMethod('__construct')->getParameters();
                 foreach ($parameters as $parameter) {
-                    $constructor->params[] = $phpParser->getAstFromReflectionParameter($parameter);
+                    $constructor->params[] = PhpParser::getInstance()->getAstFromReflectionParameter($parameter);
                 }
             } catch (\ReflectionException $exception) {
                 // Cannot found __construct method in parent class or traits, do noting.

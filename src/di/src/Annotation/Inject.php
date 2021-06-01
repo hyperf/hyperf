@@ -13,8 +13,8 @@ namespace Hyperf\Di\Annotation;
 
 use Hyperf\Di\Exception\AnnotationException;
 use Hyperf\Di\ReflectionManager;
+use Hyperf\Utils\CodeGen\PhpDocReaderManager;
 use PhpDocReader\AnnotationException as DocReaderAnnotationException;
-use PhpDocReader\PhpDocReader;
 
 /**
  * @Annotation
@@ -37,15 +37,9 @@ class Inject extends AbstractAnnotation
      */
     public $lazy = false;
 
-    /**
-     * @var PhpDocReader
-     */
-    private $docReader;
-
     public function __construct($value = null)
     {
         parent::__construct($value);
-        $this->docReader = new PhpDocReader();
     }
 
     public function collectProperty(string $className, ?string $target): void
@@ -59,7 +53,7 @@ class Inject extends AbstractAnnotation
                 /* @phpstan-ignore-next-line */
                 $this->value = $reflectionProperty->getType()->getName();
             } else {
-                $this->value = $this->docReader->getPropertyClass($reflectionProperty);
+                $this->value = PhpDocReaderManager::getInstance()->getPropertyClass($reflectionProperty);
             }
 
             if (empty($this->value)) {
