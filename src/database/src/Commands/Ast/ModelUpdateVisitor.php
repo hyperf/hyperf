@@ -387,7 +387,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         // Return something in the very very unlikely scenario the model doesn't
         // have a newCollection() method.
         if (! method_exists($className, 'newCollection')) {
-            return Collection::class;
+            return '\\' . Collection::class;
         }
 
         /** @var Model $model */
