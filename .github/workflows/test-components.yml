@@ -50,7 +50,7 @@ jobs:
       - name: Setup Services
         run: |
           docker run --name mysql -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql:${{ matrix.mysql-version }} --bind-address=0.0.0.0 --default-authentication-plugin=mysql_native_password
-          sleep 10
+          sleep 20
       - name: Setup Mysql
         run: export TRAVIS_BUILD_DIR=$(pwd) && bash ./.travis/setup.mysql.sh
       - name: Run Test Cases
