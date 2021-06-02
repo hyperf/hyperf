@@ -41,6 +41,8 @@ class ProxyCallVisitor extends NodeVisitorAbstract
     public function beforeTraverse(array $nodes)
     {
         $this->nodes = $nodes;
+
+        return null;
     }
 
     public function enterNode(Node $node)
