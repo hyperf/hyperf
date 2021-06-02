@@ -27,12 +27,12 @@ use Hyperf\Database\Model\Relations\MorphMany;
 use Hyperf\Database\Model\Relations\MorphOne;
 use Hyperf\Database\Model\Relations\MorphTo;
 use Hyperf\Database\Model\Relations\MorphToMany;
+use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Utils\CodeGen\PhpParser;
 use Hyperf\Utils\Str;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
-use Roave\BetterReflection\Reflection\ReflectionClass;
-use Roave\BetterReflection\Reflection\ReflectionMethod;
 use RuntimeException;
 
 class ModelUpdateVisitor extends NodeVisitorAbstract
@@ -67,7 +67,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
     protected $option;
 
     /**
-     * @var array
+     * @var Node\Stmt\ClassMethod[]
      */
     protected $methods = [];
 
@@ -81,7 +81,16 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         $this->class = new $class();
         $this->columns = $columns;
         $this->option = $option;
+    }
+
+    public function beforeTraverse(array $nodes)
+    {
+        $this->methods = PhpParser::getInstance()->getAllMethodsFromStmts($nodes);
+        sort($this->methods);
+
         $this->initPropertiesFromMethods();
+
+        return null;
     }
 
     public function leaveNode(Node $node)
@@ -209,21 +218,18 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
     protected function initPropertiesFromMethods()
     {
-        /** @var ReflectionClass $reflection */
-        $reflection = BetterReflectionManager::getReflector()->reflect(get_class($this->class));
-        $methods = $reflection->getImmediateMethods();
-        $namespace = $reflection->getDeclaringNamespaceAst();
+        $reflection = new \ReflectionClass(get_class($this->class));
         $casts = $this->class->getCasts();
 
-        sort($methods);
-        /** @var ReflectionMethod $method */
-        foreach ($methods as $method) {
+        foreach ($this->methods as $methodStmt) {
+            $methodName = $methodStmt->name->name;
+            $method = $reflection->getMethod($methodName);
             if (Str::startsWith($method->getName(), 'get') && Str::endsWith($method->getName(), 'Attribute')) {
                 // Magic get<name>Attribute
                 $name = Str::snake(substr($method->getName(), 3, -9));
                 if (! empty($name)) {
-                    $type = BetterReflectionManager::getReturnFinder()->__invoke($method, $namespace);
-                    if (empty($type) && $returnType = $method->getReturnType()) {
+                    $type = ['mixed'];
+                    if ($returnType = $method->getReturnType()) {
                         $returnTypeName = $returnType->getName();
                         if (class_exists($returnTypeName)) {
                             $returnTypeName = '\\' . $returnTypeName;
@@ -248,10 +254,9 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 continue;
             }
 
-            $return = $method->getReturnStatementsAst();
-            // Magic Relation
-            if (count($return) === 1 && $return[0] instanceof Node\Stmt\Return_) {
-                $expr = $return[0]->expr;
+            $return = end($methodStmt->stmts);
+            if ($return instanceof Node\Stmt\Return_) {
+                $expr = $return->expr;
                 if (
                     $expr instanceof Node\Expr\MethodCall
                     && $expr->name instanceof Node\Identifier
@@ -292,18 +297,11 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             }
 
             if (is_subclass_of($caster, CastsAttributes::class)) {
-                $ref = BetterReflectionManager::getReflector()->reflect($caster);
+                $ref = new \ReflectionClass($caster);
                 $method = $ref->getMethod('get');
-                if ($ast = $method->getReturnStatementsAst()[0]) {
-                    if ($ast instanceof Node\Stmt\Return_
-                        && $ast->expr instanceof Node\Expr\New_
-                        && $ast->expr->class instanceof Node\Name\FullyQualified
-                    ) {
-                        $this->setProperty($key, [$ast->expr->class->toCodeString()], true, true);
-                    } elseif ($type = $method->getReturnType()) {
-                        // Get return type which defined in `CastsAttributes::get()`.
-                        $this->setProperty($key, ['\\' . ltrim($type->getName(), '\\')], true, true);
-                    }
+                if ($type = $method->getReturnType()) {
+                    // Get return type which defined in `CastsAttributes::get()`.
+                    $this->setProperty($key, ['\\' . ltrim($type->getName(), '\\')], true, true);
                 }
             }
         }
@@ -389,7 +387,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         // Return something in the very very unlikely scenario the model doesn't
         // have a newCollection() method.
         if (! method_exists($className, 'newCollection')) {
-            return Collection::class;
+            return '\\' . Collection::class;
         }
 
         /** @var Model $model */

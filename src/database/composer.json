@@ -23,7 +23,7 @@
     },
     "suggest": {
         "doctrine/dbal": "Required to rename columns (^3.0).",
-        "roave/better-reflection": "Required to use ModelCommand (^4.0)."
+        "nikic/php-parser": "Required to use ModelCommand. (^4.0)"
     },
     "autoload": {
         "psr-4": {

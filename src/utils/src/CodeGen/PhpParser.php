@@ -13,6 +13,9 @@ namespace Hyperf\Utils\CodeGen;
 
 use Hyperf\Utils\Exception\InvalidArgumentException;
 use PhpParser\Node;
+use PhpParser\Parser;
+use PhpParser\ParserFactory;
+use ReflectionClass;
 use ReflectionParameter;
 
 class PhpParser
@@ -28,7 +31,40 @@ class PhpParser
         'mixed',
     ];
 
-    public function getAstFromReflectionParameter(ReflectionParameter $parameter): Node\Param
+    /**
+     * @var null|PhpParser
+     */
+    protected static $instance;
+
+    /**
+     * @var Parser
+     */
+    protected $parser;
+
+    public function __construct()
+    {
+        $parserFactory = new ParserFactory();
+        $this->parser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+    }
+
+    public static function getInstance(): PhpParser
+    {
+        if (static::$instance) {
+            return static::$instance;
+        }
+        return static::$instance = new static();
+    }
+
+    /**
+     * @return null|Node\Stmt[]
+     */
+    public function getNodesFromReflectionClass(ReflectionClass $reflectionClass): ?array
+    {
+        $code = file_get_contents($reflectionClass->getFileName());
+        return $this->parser->parse($code);
+    }
+
+    public function getNodeFromReflectionParameter(ReflectionParameter $parameter): Node\Param
     {
         $result = new Node\Param(
             new Node\Expr\Variable($parameter->getName())
@@ -76,5 +112,30 @@ class PhpParser
             default:
                 throw new InvalidArgumentException($value . ' is invalid');
         }
+    }
+
+    /**
+     * @return Node\Stmt\ClassMethod[]
+     */
+    public function getAllMethodsFromStmts(array $stmts): array
+    {
+        $methods = [];
+        foreach ($stmts as $namespace) {
+            if (! $namespace instanceof Node\Stmt\Namespace_) {
+                continue;
+            }
+
+            foreach ($namespace->stmts as $class) {
+                if (! $class instanceof Node\Stmt\Class_ && ! $class instanceof Node\Stmt\Interface_) {
+                    continue;
+                }
+
+                foreach ($class->getMethods() as $method) {
+                    $methods[] = $method;
+                }
+            }
+        }
+
+        return $methods;
     }
 }
