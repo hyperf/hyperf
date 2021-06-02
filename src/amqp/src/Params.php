@@ -35,6 +35,8 @@ class Params
 
     protected $channelRpcTimeout = 0.0;
 
+    protected $maxIdleChannels = 10;
+
     public function __construct(array $data)
     {
         if (isset($data['insist'])) {
@@ -79,6 +81,10 @@ class Params
 
         if (isset($data['channel_rpc_timeout'])) {
             $this->setChannelRpcTimeout($data['channel_rpc_timeout']);
+        }
+
+        if (isset($data['max_idle_channels'])) {
+            $this->setMaxIdleChannels((int) $data['max_idle_channels']);
         }
     }
 
@@ -191,5 +197,15 @@ class Params
     public function setChannelRpcTimeout(float $channelRpcTimeout)
     {
         $this->channelRpcTimeout = $channelRpcTimeout;
+    }
+
+    public function getMaxIdleChannels(): int
+    {
+        return $this->maxIdleChannels;
+    }
+
+    public function setMaxIdleChannels(int $maxIdleChannels)
+    {
+        $this->maxIdleChannels = $maxIdleChannels;
     }
 }

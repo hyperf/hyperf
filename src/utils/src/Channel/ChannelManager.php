@@ -20,6 +20,16 @@ class ChannelManager
      */
     protected $channels = [];
 
+    /**
+     * @var int
+     */
+    protected $size = 1;
+
+    public function __construct(int $size = 1)
+    {
+        $this->size = $size;
+    }
+
     public function get(int $id, bool $initialize = false): ?Channel
     {
         if (isset($this->channels[$id])) {
@@ -27,7 +37,7 @@ class ChannelManager
         }
 
         if ($initialize) {
-            return $this->channels[$id] = $this->make(1);
+            return $this->channels[$id] = $this->make($this->size);
         }
 
         return null;

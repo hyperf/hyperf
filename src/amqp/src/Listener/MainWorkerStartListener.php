@@ -84,6 +84,8 @@ class MainWorkerStartListener implements ListenerInterface
                 } catch (AMQPProtocolChannelException $e) {
                     $this->logger->debug('AMQPProtocolChannelException: ' . $e->getMessage());
                     // Do nothing.
+                } catch (\Throwable $exception) {
+                    $this->logger->error((string) $exception);
                 }
             }
         }

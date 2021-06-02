@@ -11,18 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Amqp\IO;
 
-use Hyperf\Engine\Channel;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coroutine;
-use InvalidArgumentException;
 use PhpAmqpLib\Exception\AMQPConnectionClosedException;
-use PhpAmqpLib\Exception\AMQPNoDataException;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Wire\AMQPWriter;
 use PhpAmqpLib\Wire\IO\AbstractIO;
-use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 use Swoole\Coroutine\Client;
 use const SWOOLE_SOCK_TCP;
 
@@ -48,37 +40,7 @@ class SwooleIO extends AbstractIO
     /**
      * @var int
      */
-    protected $readWriteTimeout;
-
-    /**
-     * @var int
-     */
     protected $heartbeat;
-
-    /**
-     * @var null|Channel
-     */
-    protected $pushChannel;
-
-    /**
-     * @var Channel
-     */
-    protected $readChannel;
-
-    /**
-     * @var Channel
-     */
-    protected $brokenChannel;
-
-    /**
-     * @var null|LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var bool
-     */
-    protected $enableHeartbeat = false;
 
     /**
      * @var null|Client
@@ -91,237 +53,83 @@ class SwooleIO extends AbstractIO
     private $buffer = '';
 
     /**
-     * @var bool
-     */
-    private $exited = false;
-
-    /**
      * @throws \InvalidArgumentException when readWriteTimeout argument does not 2x the heartbeat
      */
     public function __construct(
         string $host,
         int $port,
-        int $connectionTimeout,
-        int $readWriteTimeout,
-        int $heartbeat = 0
+        int $connectionTimeout
     ) {
-        if ($heartbeat !== 0 && ($readWriteTimeout < ($heartbeat * 2))) {
-            throw new InvalidArgumentException('Argument readWriteTimeout must be at least 2x the heartbeat.');
-        }
         $this->host = $host;
         $this->port = $port;
         $this->connectionTimeout = $connectionTimeout;
-        $this->readWriteTimeout = $readWriteTimeout;
-        $this->heartbeat = $heartbeat;
-
-        $this->readChannel = $this->makeChannel();
-        $this->brokenChannel = new Channel(1);
-    }
-
-    public function setLogger(LoggerInterface $logger): void
-    {
-        $this->logger = $logger;
-    }
-
-    public function heartbeat()
-    {
-        Coroutine::create(function () {
-            while (true) {
-                $heartbeat = 5;
-                if ($this->heartbeat > 0) {
-                    $heartbeat = $this->heartbeat;
-                }
-
-                if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
-                    $this->exited = true;
-                    $this->close();
-                    break;
-                }
-
-                if ($this->brokenChannel->isClosing()) {
-                    break;
-                }
-
-                try {
-                    // PING
-                    if ($chan = $this->pushChannel and $chan->isEmpty()) {
-                        $this->write_heartbeat();
-                    }
-                } catch (\Throwable $exception) {
-                    $this->log((string) $exception);
-                }
-            }
-        });
     }
 
     /**
      * Sets up the stream connection.
      *
      * @throws AMQPRuntimeException
-     * @throws \Exception
      */
     public function connect()
     {
-        $this->loop();
+        $this->sock = $this->makeClient();
     }
 
-    /**
-     * Reconnects the socket.
-     */
-    public function reconnect()
-    {
-        $this->close();
-        $this->loop();
-    }
-
-    /**
-     * @param int $len
-     * @throws AMQPRuntimeException
-     * @return mixed|string
-     */
     public function read($len)
     {
-        if ($len > strlen($this->buffer)) {
-            throw new AMQPNoDataException(sprintf('Error reading data. Requested %s bytes while string buffer has only %s', $len, strlen($this->buffer)));
-        }
+        do {
+            if ($len <= strlen($this->buffer)) {
+                $data = substr($this->buffer, 0, $len);
+                $this->buffer = substr($this->buffer, $len);
 
-        $data = substr($this->buffer, 0, $len);
-        $this->buffer = substr($this->buffer, $len);
-        return $data;
+                return $data;
+            }
+
+            if (! $this->sock->isConnected()) {
+                throw new AMQPConnectionClosedException('Broken pipe or closed connection. ' . $this->sock->errMsg);
+            }
+
+            $buffer = $this->sock->recv(-1);
+
+            if ($buffer === '') {
+                throw new AMQPConnectionClosedException('Connection is closed. The reason is ' . $this->sock->errMsg);
+            }
+
+            $this->buffer .= $buffer;
+        } while (true);
     }
 
-    /**
-     * @param string $data
-     * @throws \PhpAmqpLib\Exception\AMQPTimeoutException
-     * @throws AMQPRuntimeException
-     * @return mixed|void
-     */
     public function write($data)
     {
-        if ($this->pushChannel->isClosing()) {
-            throw new AMQPConnectionClosedException();
+        $buffer = $this->sock->send($data);
+
+        if ($buffer === false) {
+            throw new AMQPConnectionClosedException('Error sending data');
         }
-        $this->pushChannel->push($data);
     }
 
-    /**
-     * Heartbeat logic: check connection health here.
-     */
     public function check_heartbeat()
     {
     }
 
     public function close()
     {
-        $this->log('Connection closed, wait to restart in next time.');
-        $this->pushChannel && $this->pushChannel->close();
         $this->sock && $this->sock->close();
     }
 
     public function select($sec, $usec)
     {
-        return $this->do_select($sec, $usec);
+        return 1;
     }
 
-    /**
-     * @return $this
-     */
     public function disableHeartbeat()
     {
         return $this;
     }
 
-    /**
-     * @return $this
-     */
     public function reenableHeartbeat()
     {
         return $this;
-    }
-
-    public function isBroken(): bool
-    {
-        $this->brokenChannel->pop(-1);
-        $this->brokenChannel->close();
-        return true;
-    }
-
-    public function loop(): void
-    {
-        if ($this->pushChannel !== null) {
-            return;
-        }
-        $this->pushChannel = $this->makeChannel();
-        $this->sock = $this->makeClient();
-
-        Coroutine::create(function () {
-            $reason = '';
-            try {
-                $chan = $this->pushChannel;
-                $client = $this->sock;
-                while (true) {
-                    $data = $client->recv(-1);
-                    if (! $client->isConnected()) {
-                        $reason = 'client disconnected. ' . $client->errMsg;
-                        break;
-                    }
-                    if ($chan->isClosing()) {
-                        $reason = 'channel closed.';
-                        break;
-                    }
-
-                    if ($data === false || $data === '') {
-                        $reason = 'client broken. ' . $client->errMsg;
-                        break;
-                    }
-
-                    $this->buffer .= $data;
-                    $readChannel = $this->readChannel;
-                    $this->readChannel = $this->makeChannel();
-                    $readChannel->close();
-                }
-            } finally {
-                $this->log('Recv loop broken, wait to restart in next time. The reason is ' . $reason);
-                $this->brokenChannel->push(true);
-                $chan->close();
-                $client->close();
-            }
-        });
-
-        Coroutine::create(function () {
-            $reason = '';
-            try {
-                $chan = $this->pushChannel;
-                $client = $this->sock;
-                while (true) {
-                    $data = $chan->pop();
-                    if ($chan->isClosing()) {
-                        $reason = 'channel closed.';
-                        break;
-                    }
-                    if (! $client->isConnected()) {
-                        $reason = 'client disconnected.' . $client->errMsg;
-                        break;
-                    }
-
-                    if (empty($data)) {
-                        continue;
-                    }
-
-                    $res = $client->send($data);
-                    if ($res === false) {
-                        $this->log('Send data failed. The reason is ' . $client->errMsg);
-                    }
-                }
-            } finally {
-                $this->log('Send loop broken, wait to restart in next time. The reason is ' . $reason);
-                $this->brokenChannel->push(true);
-                $chan->close();
-                $client->close();
-            }
-        });
-
-        $this->heartbeat();
     }
 
     protected function makeClient()
@@ -336,9 +144,6 @@ class SwooleIO extends AbstractIO
         return $sock;
     }
 
-    /**
-     * Sends a heartbeat message.
-     */
     protected function write_heartbeat()
     {
         $pkt = new AMQPWriter();
@@ -351,35 +156,6 @@ class SwooleIO extends AbstractIO
 
     protected function do_select($sec, $usec)
     {
-        if (strlen($this->buffer) > 0) {
-            return 1;
-        }
-
-        $readChannel = $this->readChannel;
-
-        $seconds = intval($sec) + intval($usec) / 1000;
-
-        $readChannel->pop($seconds);
-        if ($readChannel->isClosing()) {
-            return 1;
-        }
-        return 0;
-    }
-
-    protected function makeChannel(): Channel
-    {
-        return new Channel(65535);
-    }
-
-    protected function log(string $message)
-    {
-        if ($this->logger) {
-            $level = LogLevel::ERROR;
-            if ($this->exited) {
-                $level = LogLevel::WARNING;
-            }
-
-            $this->logger->log($level, $message);
-        }
+        return 1;
     }
 }
