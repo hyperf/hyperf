@@ -15,6 +15,7 @@ use Closure;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Parallel;
+use RuntimeException;
 
 class Client implements ClientInterface
 {
@@ -40,7 +41,7 @@ class Client implements ClientInterface
 
     public function __construct(
         Option $option,
-        array $callbacks = [],
+        array $callbacks,
         Closure $httpClientFactory,
         ?ConfigInterface $config = null
     ) {
@@ -95,7 +96,7 @@ class Client implements ClientInterface
             $parallel->add(function () use ($option, $httpClientFactory, $namespace) {
                 $client = $httpClientFactory();
                 if (! $client instanceof \GuzzleHttp\Client) {
-                    throw new \RuntimeException('Invalid http client.');
+                    throw new RuntimeException('Invalid http client.');
                 }
                 $releaseKey = ReleaseKey::get($option->buildCacheKey($namespace), null);
                 $response = $client->get($option->buildBaseUrl() . $namespace, [
@@ -129,7 +130,7 @@ class Client implements ClientInterface
         foreach ($namespaces as $namespace) {
             $client = $httpClientFactory();
             if (! $client instanceof \GuzzleHttp\Client) {
-                throw new \RuntimeException('Invalid http client.');
+                throw new RuntimeException('Invalid http client.');
             }
             $releaseKey = ReleaseKey::get($this->option->buildCacheKey($namespace), null);
             $response = $client->get($url . $namespace, [
