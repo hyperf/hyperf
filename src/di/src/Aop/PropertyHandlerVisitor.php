@@ -90,7 +90,7 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
             try {
                 $parameters = $reflection->getMethod('__construct')->getParameters();
                 foreach ($parameters as $parameter) {
-                    $constructor->params[] = PhpParser::getInstance()->getAstFromReflectionParameter($parameter);
+                    $constructor->params[] = PhpParser::getInstance()->getNodeFromReflectionParameter($parameter);
                 }
             } catch (\ReflectionException $exception) {
                 // Cannot found __construct method in parent class or traits, do noting.

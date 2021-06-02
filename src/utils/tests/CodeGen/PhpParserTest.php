@@ -38,10 +38,10 @@ class PhpParserTest extends TestCase
         $bar = new \ReflectionClass(Bar::class);
         $parameters = $bar->getMethod('__construct')->getParameters();
         $parser = new PhpParser();
-        $this->assertNodeParam($name, $parser->getAstFromReflectionParameter($parameters[0]));
-        $this->assertNodeParam($foo, $foo2 = $parser->getAstFromReflectionParameter($parameters[1]));
+        $this->assertNodeParam($name, $parser->getNodeFromReflectionParameter($parameters[0]));
+        $this->assertNodeParam($foo, $foo2 = $parser->getNodeFromReflectionParameter($parameters[1]));
         $this->assertSame(['', 'HyperfTest', 'Utils', 'Stub', 'Foo'], $foo2->type->parts);
-        $this->assertNodeParam($extra, $parser->getAstFromReflectionParameter($parameters[2]));
+        $this->assertNodeParam($extra, $parser->getNodeFromReflectionParameter($parameters[2]));
     }
 
     protected function assertNodeParam(Node\Param $param, Node\Param $param2)
