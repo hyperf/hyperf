@@ -56,7 +56,7 @@ class SwooleIO extends AbstractIO
     protected $heartbeat;
 
     /**
-     * @var Channel
+     * @var null|Channel
      */
     protected $pushChannel;
 
@@ -214,8 +214,8 @@ class SwooleIO extends AbstractIO
     public function close()
     {
         $this->log('Connection closed, wait to restart in next time.');
-        $this->pushChannel->close();
-        $this->sock->close();
+        $this->pushChannel && $this->pushChannel->close();
+        $this->sock && $this->sock->close();
     }
 
     public function select($sec, $usec)
