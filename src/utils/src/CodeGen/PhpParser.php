@@ -56,7 +56,7 @@ class PhpParser
     }
 
     /**
-     * @return Node\Stmt[]|null
+     * @return null|Node\Stmt[]
      */
     public function getAstFromReflectionClass(ReflectionClass $reflectionClass): ?array
     {
