@@ -29,6 +29,9 @@
 - [#3606](https://github.com/hyperf/hyperf/pull/3606) Added RPN component.
 - [#3629](https://github.com/hyperf/hyperf/pull/3629) Added `Hyperf\Utils\Channel\ChannelManager` which used to manage channels.
 - [#3631](https://github.com/hyperf/hyperf/pull/3631) Support multiplexing for AMQP component.
+  - [#3639](https://github.com/hyperf/hyperf/pull/3639) Close push channel and socket when worker exited.
+  - [#3640](https://github.com/hyperf/hyperf/pull/3640) Optimized log level for SwooleIO.
+  - [#3657](https://github.com/hyperf/hyperf/pull/3657) Added `max_idle_channels` to avoid memory exhausted for rabbitmq.
 - [#3635](https://github.com/hyperf/hyperf/pull/3635) Added `Hyperf\Utils\CodeGen\PhpParser` which used to generate AST for reflection. 
 - [#3648](https://github.com/hyperf/hyperf/pull/3648) Added `Hyperf\Utils\CodeGen\PhpDocReaderManager` to manage `PhpDocReader`.
 
