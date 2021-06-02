@@ -111,7 +111,8 @@ class ConnectionFactory
             $params->getChannelRpcTimeout()
         );
 
-        return $connection->setLogger($this->container->get(StdoutLoggerInterface::class));
+        return $connection->setParams($params)
+            ->setLogger($this->container->get(StdoutLoggerInterface::class));
     }
 
     protected function getConfig(string $pool): array

@@ -52,6 +52,11 @@ class AMQPConnection extends AbstractConnection
     protected $lastChannelId = 0;
 
     /**
+     * @var null|Params
+     */
+    protected $params;
+
+    /**
      * @param null $login_response @deprecated
      * @param AbstractIO $io
      */
@@ -88,6 +93,15 @@ class AMQPConnection extends AbstractConnection
         if ($this->io instanceof SwooleIO) {
             $this->io->setLogger($logger);
         }
+        return $this;
+    }
+
+    /**
+     * @return static
+     */
+    public function setParams(Params $params)
+    {
+        $this->params = $params;
         return $this;
     }
 
@@ -131,6 +145,14 @@ class AMQPConnection extends AbstractConnection
 
     public function releaseChannel(AMQPChannel $channel, bool $confirm = false): void
     {
+        if ($this->params) {
+            $length = $confirm ? $this->confirmPool->getLength() : $this->pool->getLength();
+            if ($length > $this->params->getMaxIdleChannels()) {
+                $channel->close();
+                return;
+            }
+        }
+
         if ($confirm) {
             $this->confirmPool->push($channel->getChannelId());
         } else {
