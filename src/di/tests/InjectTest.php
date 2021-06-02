@@ -265,8 +265,6 @@ class InjectTest extends TestCase
         ApplicationContext::setContainer($container);
         $path = BASE_PATH . '/runtime/scan.cache';
 
-//        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
-
         $pid = pcntl_fork();
         if ($pid == -1) {
             throw new Exception('The process fork failed');
