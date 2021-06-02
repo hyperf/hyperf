@@ -48,11 +48,14 @@ class ConnectionFactory
         $count = $config['pool']['connections'] ?? 1;
 
         if (Locker::lock(static::class)) {
-            for ($i = 0; $i < $count; ++$i) {
-                $connection = $this->make($config);
-                $this->connections[$pool][] = $connection;
+            try {
+                for ($i = 0; $i < $count; ++$i) {
+                    $connection = $this->make($config);
+                    $this->connections[$pool][] = $connection;
+                }
+            } finally {
+                Locker::unlock(static::class);
             }
-            Locker::unlock(static::class);
         }
     }
 
@@ -61,13 +64,16 @@ class ConnectionFactory
         if (! empty($this->connections[$pool])) {
             $index = array_rand($this->connections[$pool]);
             $connection = $this->connections[$pool][$index];
-            if ($connection->isBroken) {
+            if (! $connection->isConnected()) {
                 if (Locker::lock(static::class . 'getConnection')) {
-                    unset($this->connections[$pool][$index]);
-                    $connection->close();
-                    $connection = $this->make($this->getConfig($pool));
-                    $this->connections[$pool][] = $connection;
-                    Locker::unlock(static::class . 'getConnection');
+                    try {
+                        unset($this->connections[$pool][$index]);
+                        $connection->close();
+                        $connection = $this->make($this->getConfig($pool));
+                        $this->connections[$pool][] = $connection;
+                    } finally {
+                        Locker::unlock(static::class . 'getConnection');
+                    }
                 } else {
                     return $this->getConnection($pool);
                 }

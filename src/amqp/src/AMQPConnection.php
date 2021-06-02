@@ -31,11 +31,6 @@ class AMQPConnection extends AbstractConnection
     public const CONFIRM_CHANNEL_POOL_LENGTH = 10000;
 
     /**
-     * @var bool
-     */
-    public $isBroken = false;
-
-    /**
      * @var Channel
      */
     protected $pool;
@@ -217,6 +212,7 @@ class AMQPConnection extends AbstractConnection
             } catch (\Throwable $exception) {
                 $this->logger && $this->logger->error('Recv loop broken. The reason is ' . (string) $exception);
             } finally {
+                $this->loop = false;
                 $this->close();
             }
         });
