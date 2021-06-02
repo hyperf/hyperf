@@ -92,9 +92,7 @@ class ConnectionFactory
         $io = new SwooleIO(
             $host,
             $port,
-            $params->getConnectionTimeout(),
-            $params->getReadWriteTimeout(),
-            $params->getHeartbeat()
+            $params->getConnectionTimeout()
         );
 
         $connection = new AMQPConnection(
