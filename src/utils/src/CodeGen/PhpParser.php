@@ -58,13 +58,13 @@ class PhpParser
     /**
      * @return null|Node\Stmt[]
      */
-    public function getAstFromReflectionClass(ReflectionClass $reflectionClass): ?array
+    public function getNodesFromReflectionClass(ReflectionClass $reflectionClass): ?array
     {
         $code = file_get_contents($reflectionClass->getFileName());
         return $this->parser->parse($code);
     }
 
-    public function getAstFromReflectionParameter(ReflectionParameter $parameter): Node\Param
+    public function getNodeFromReflectionParameter(ReflectionParameter $parameter): Node\Param
     {
         $result = new Node\Param(
             new Node\Expr\Variable($parameter->getName())

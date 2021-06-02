@@ -181,15 +181,15 @@ class LazyLoader
     private function buildNewCode(AbstractLazyProxyBuilder $builder, string $proxy, ReflectionClass $reflectionClass): string
     {
         $target = $reflectionClass->getName();
-        $ast = PhpParser::getInstance()->getAstFromReflectionClass($reflectionClass);
+        $nodes = PhpParser::getInstance()->getNodesFromReflectionClass($reflectionClass);
         $builder->addClassBoilerplate($proxy, $target);
         $builder->addClassRelationship();
         $traverser = new NodeTraverser();
-        $methods = PhpParser::getInstance()->getAllMethodsFromStmts($ast);
+        $methods = PhpParser::getInstance()->getAllMethodsFromStmts($nodes);
         $visitor = new PublicMethodVisitor($methods, $builder->getOriginalClassName());
         $traverser->addVisitor(new NameResolver());
         $traverser->addVisitor($visitor);
-        $traverser->traverse($ast);
+        $traverser->traverse($nodes);
         $builder->addNodes($visitor->nodes);
         $prettyPrinter = new Standard();
         return $prettyPrinter->prettyPrintFile([$builder->getNode()]);
