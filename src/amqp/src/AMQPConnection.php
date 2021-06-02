@@ -128,7 +128,7 @@ class AMQPConnection extends AbstractConnection
     {
         $id = 0;
         $confirm = false;
-        if (! $this->pool->isEmpty()) {
+        if (! $this->confirmPool->isEmpty()) {
             $id = (int) $this->confirmPool->pop(0.001);
         }
 
