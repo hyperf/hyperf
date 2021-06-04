@@ -1,5 +1,9 @@
 # v2.1.20 - TBD
 
+## Fixed
+
+- [#3663](https://github.com/hyperf/hyperf/pull/3663) Fixed undefined index: Port for `AbstractServiceClient::getNodesFromConsul()`.
+
 # v2.1.19 - 2021-05-31
 
 ## Fixed
