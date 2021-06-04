@@ -12,7 +12,7 @@ composer require xxtime/flysystem-aliyun-oss
 # 使用 S3 适配器时执行
 composer require league/flysystem-aws-s3-v3
 composer require hyperf/guzzle
-# 使用七牛云（测试）适配器时执行
+# 使用七牛云适配器时执行
 composer require overtrue/flysystem-qiniu
 # 使用内存适配器时执行
 composer require league/flysystem-memory
