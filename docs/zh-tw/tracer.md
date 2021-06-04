@@ -231,7 +231,7 @@ return [
 
 ### 接入阿里雲鏈路追蹤服務
 
-當我們在使用阿里雲的鏈路追蹤服務時，由於對端也是支援 `Zipkin` 的協議的，故可以直接通過在 `condif/autoload/opentracing.php` 配置檔案內修改 `endpoint_url` 的值為您對應的阿里雲 `region` 的地址，具體地址可在阿里雲的鏈路追蹤服務內得到，更多細節可參考 [阿里雲鏈路追蹤服務幫助文件](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv)。
+當我們在使用阿里雲的鏈路追蹤服務時，由於對端也是支援 `Zipkin` 的協議的，故可以直接通過在 `config/autoload/opentracing.php` 配置檔案內修改 `endpoint_url` 的值為您對應的阿里雲 `region` 的地址，具體地址可在阿里雲的鏈路追蹤服務內得到，更多細節可參考 [阿里雲鏈路追蹤服務幫助文件](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv)。
 
 ### 使用其他 Tracer 驅動
 
