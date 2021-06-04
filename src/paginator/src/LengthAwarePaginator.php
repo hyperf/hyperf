@@ -59,7 +59,7 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
         $this->items = $items instanceof Collection ? $items : Collection::make($items);
     }
 
-    public function __toString():string
+    public function __toString(): string
     {
         return $this->toJson();
     }

@@ -12,6 +12,7 @@
 
 ## Changed
 
+- [#3334](https://github.com/hyperf/hyperf/pull/3334) Changed the return value of `LengthAwarePaginator::toArray()` to be consistent with that of `Paginator::toArray()`.
 - [#3580](https://github.com/hyperf/hyperf/pull/3580) Changed the default priority of aspect to 0.
 - [#3582](https://github.com/hyperf/hyperf/pull/3582) Changed the consumer tag of amqp to empty string.
 - [#3634](https://github.com/hyperf/hyperf/pull/3634) Use Fork Process strategy to replace BetterReflection strategy.
