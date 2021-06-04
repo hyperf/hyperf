@@ -81,6 +81,11 @@ class Parser
         } elseif (strpos($string, ',') !== false) {
             $exploded = explode(',', $string);
             foreach ($exploded as $value) {
+                if (strpos($value, '/') !== false) {
+                    $result = array_merge($result, $this->parseSegment($value, $min, $max, $start));
+                    continue;
+                }
+
                 if (! $this->between((int) $value, (int) ($min > $start ? $min : $start), (int) $max)) {
                     continue;
                 }
