@@ -114,8 +114,7 @@ class Container implements HyperfContainerInterface
         if (isset($this->resolvedEntries[$name]) || array_key_exists($name, $this->resolvedEntries)) {
             return $this->resolvedEntries[$name];
         }
-        $this->resolvedEntries[$name] = $value = $this->make($name);
-        return $value;
+        return $this->resolvedEntries[$name] = $this->make($name);
     }
 
     /**

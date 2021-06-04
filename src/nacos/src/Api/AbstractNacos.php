@@ -67,7 +67,6 @@ abstract class AbstractNacos
 
     public function client(): Client
     {
-        $headers['charset'] = $headers['charset'] ?? 'UTF-8';
         return new Client([
             'base_uri' => $this->getServerUri(),
             'handler' => $this->handler,

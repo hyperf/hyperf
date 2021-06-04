@@ -26,6 +26,11 @@ class ParserTest extends TestCase
         ini_set('date.timezone', 'Asia/Shanghai');
     }
 
+    protected function tearDown(): void
+    {
+        ini_set('date.timezone', '');
+    }
+
     public function testParseSecondLevel()
     {
         $crontabString = '*/11 * * * * *';

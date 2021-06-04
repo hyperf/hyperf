@@ -374,7 +374,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        return (new EmailValidator())->isValid($value, new RFCValidation());
+        return (new EmailValidator())->isValid((string) $value, new RFCValidation());
     }
 
     /**

@@ -11,14 +11,18 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcClient\Proxy;
 
+use Hyperf\Utils\CodeGen\PhpParser;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\NodeVisitorAbstract;
-use ReflectionMethod;
-use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
+    /**
+     * @var array
+     */
+    protected $nodes;
+
     /**
      * @var string
      */
@@ -32,6 +36,13 @@ class ProxyCallVisitor extends NodeVisitorAbstract
     public function __construct(string $classname)
     {
         $this->classname = $classname;
+    }
+
+    public function beforeTraverse(array $nodes)
+    {
+        $this->nodes = $nodes;
+
+        return null;
     }
 
     public function enterNode(Node $node)
@@ -59,11 +70,10 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
     public function generateStmts(Interface_ $node): array
     {
-        $betterReflectionInterface = ReflectionClass::createFromName($this->namespace . '\\' . $node->name);
-        $reflectionMethods = $betterReflectionInterface->getMethods(ReflectionMethod::IS_PUBLIC);
+        $methods = PhpParser::getInstance()->getAllMethodsFromStmts($this->nodes);
         $stmts = [];
-        foreach ($reflectionMethods as $method) {
-            $stmts[] = $this->overrideMethod($method->getAst());
+        foreach ($methods as $method) {
+            $stmts[] = $this->overrideMethod($method);
         }
         return $stmts;
     }

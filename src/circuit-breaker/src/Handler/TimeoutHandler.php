@@ -18,7 +18,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 class TimeoutHandler extends AbstractHandler
 {
-    const DEFAULT_TIMEOUT = 5;
+    public const DEFAULT_TIMEOUT = 5;
 
     protected function process(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation)
     {

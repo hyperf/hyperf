@@ -17,7 +17,7 @@ jobs:
         with:
           php-version: 7.4
           tools: phpize
-          extensions: swoole
+          extensions: swoole, redis
           ini-values: extension=opencc
 
       - name: Install OpenCC

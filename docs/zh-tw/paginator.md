@@ -122,6 +122,8 @@ $perPage = $paginator->perPage();
 
 ## 資料總數
 
+> Hyperf\Paginator\Paginator 沒有這個方法，需要使用 Hyperf\Paginator\LengthAwarePaginator
+
 ```php
 <?php
 $total = $paginator->total();

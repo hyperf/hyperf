@@ -13,7 +13,7 @@ namespace Hyperf\Nacos;
 
 class Constants
 {
-    const CONFIG_MERGE_OVERWRITE = 1;
+    public const CONFIG_MERGE_OVERWRITE = 1;
 
-    const CONFIG_MERGE_APPEND = 2;
+    public const CONFIG_MERGE_APPEND = 2;
 }

@@ -1,5 +1,140 @@
 # 版本更新記錄
 
+# v2.1.19 - 2021-05-31
+
+## 修復
+
+- [#3618](https://github.com/hyperf/hyperf/pull/3618) 修復使用了相同路徑但不同實現邏輯的路由會在命令 `describe:routes` 中，被合併成一條的問題。
+- [#3625](https://github.com/hyperf/hyperf/pull/3625) 修復 `Hyperf\Di\Annotation\Scanner` 中無法正常使用 `class_map` 功能的問題。
+
+## 新增
+
+- [#3626](https://github.com/hyperf/hyperf/pull/3626) 為 `RPC` 組件增加了新的路徑打包器 `Hyperf\Rpc\PathGenerator\DotPathGenerator`。
+
+## 新組件孵化
+
+- [nacos-sdk](https://github.com/hyperf/nacos-sdk-incubator) 基於 Nacos Open API 實現的 SDK。
+
+# v2.1.18 - 2021-05-24
+
+## 修復
+
+- [#3598](https://github.com/hyperf/hyperf/pull/3598) 修復事務回滾時，模型累加、累減操作會導致模型緩存產生髒數據的問題。
+- [#3607](https://github.com/hyperf/hyperf/pull/3607) 修復在使用協程風格的 `WebSocket` 服務時，`onOpen` 事件無法在事件結束後銷燬協程的問題。
+- [#3610](https://github.com/hyperf/hyperf/pull/3610) 修復數據庫存在前綴時，`fromSub()` 和 `joinSub()` 無法正常使用的問題。
+
+# v2.1.17 - 2021-05-17
+
+## 修復
+
+- [#3856](https://github.com/hyperf/hyperf/pull/3586) 修復 `Swow` 服務處理 `keepalive` 的請求時，協程無法在每個請求後結束的問題。
+
+## 新增
+
+- [#3329](https://github.com/hyperf/hyperf/pull/3329) `@Crontab` 註解的 `enable` 參數增加支持設置數組, 你可以通過它動態的控制定時任務是否啟動。
+
+# v2.1.16 - 2021-04-26
+
+## 修復
+
+- [#3510](https://github.com/hyperf/hyperf/pull/3510) 修復 `consul` 無法將節點強制離線的問題。
+- [#3513](https://github.com/hyperf/hyperf/pull/3513) 修復 `Nats` 因為 `Socket` 超時時間小於最大閒置時間，導致連接意外關閉的問題。
+- [#3520](https://github.com/hyperf/hyperf/pull/3520) 修復 `@Inject` 無法作用於嵌套 `Trait` 的問題。
+
+## 新增
+
+- [#3514](https://github.com/hyperf/hyperf/pull/3514) 新增方法 `Hyperf\HttpServer\Request::clearStoredParsedData()`。
+
+## 優化
+
+- [#3517](https://github.com/hyperf/hyperf/pull/3517) 優化 `Hyperf\Di\Aop\PropertyHandlerTrait`。
+
+# v2.1.15 - 2021-04-19
+
+## 新增
+
+- [#3484](https://github.com/hyperf/hyperf/pull/3484) 新增 `ORM` 方法 `withMax()` `withMin()` `withSum()` 和 `withAvg()`.
+
+# v2.1.14 - 2021-04-12
+
+## 修復
+
+- [#3465](https://github.com/hyperf/hyperf/pull/3465) 修復協程風格下，`WebSocket` 服務不支持配置多個端口的問題。
+- [#3467](https://github.com/hyperf/hyperf/pull/3467) 修復協程風格下，`WebSocket` 服務無法正常釋放連接池的問題。
+
+## 新增
+
+- [#3472](https://github.com/hyperf/hyperf/pull/3472) 新增方法 `Sender::getResponse()`，可以在協程風格的 `WebSocket` 服務裏，獲得與 `fd` 一一對應的 `Response` 對象。
+
+# v2.1.13 - 2021-04-06
+
+## 修復
+
+- [#3432](https://github.com/hyperf/hyperf/pull/3432) 修復 `SocketIO` 服務，定時清理失效 `fd` 的功能無法作用到其他 `worker` 進程的問題。
+- [#3434](https://github.com/hyperf/hyperf/pull/3434) 修復 `RPC` 結果不支持允許為 `null` 的類型，例如 `?array` 會被強制轉化為數組。
+- [#3447](https://github.com/hyperf/hyperf/pull/3447) 修復模型緩存中，因為存在表前綴，導致模型默認值無法生效的問題。
+- [#3450](https://github.com/hyperf/hyperf/pull/3450) 修復註解 `@Crontab` 無法作用於 `方法` 的問題，支持一個類中，配置多個 `@Crontab`。
+
+## 優化
+
+- [#3453](https://github.com/hyperf/hyperf/pull/3453) 優化了類 `Hyperf\Utils\Channel\Caller` 回收實例時的機制，防止因為實例為 `null` 時，導致無法正確回收的問題。
+- [#3455](https://github.com/hyperf/hyperf/pull/3455) 優化腳本 `phar:build`，支持使用軟連接方式加載的組件包。
+
+# v2.1.12 - 2021-03-29
+
+## 修復
+
+- [#3423](https://github.com/hyperf/hyperf/pull/3423) 修復 `worker_num` 設置為非 `Integer` 時，導致定時任務中 `Task` 策略無法正常使用的問題。
+- [#3426](https://github.com/hyperf/hyperf/pull/3426) 修復為可選參數路由設置中間件時，導致中間件被意外執行兩次的問題。
+
+## 優化
+
+- [#3422](https://github.com/hyperf/hyperf/pull/3422) 優化了 `co-phpunit` 的代碼。
+
+# v2.1.11 - 2021-03-22
+
+## 新增
+
+- [#3376](https://github.com/hyperf/hyperf/pull/3376) 為註解 `Hyperf\DbConnection\Annotation\Transactional` 增加參數 `$connection` 和 `$attempts`，用户可以按需設置事務連接和重試次數。
+- [#3403](https://github.com/hyperf/hyperf/pull/3403) 新增方法 `Hyperf\Testing\Client::sendRequest()`，用户可以使用自己構造的 `ServerRequest`，比如設置 `Cookies`。
+
+## 修復
+
+- [#3380](https://github.com/hyperf/hyperf/pull/3380) 修復超全局變量，在協程上下文裏沒有 `Request` 對象時，無法正常工作的問題。
+- [#3394](https://github.com/hyperf/hyperf/pull/3394) 修復使用 `@Inject` 注入的對象，會被 `trait` 中注入的對象覆蓋的問題。
+- [#3395](https://github.com/hyperf/hyperf/pull/3395) 修復當繼承使用 `@Inject` 注入私有變量的父類時，而導致子類實例化報錯的問題。
+- [#3398](https://github.com/hyperf/hyperf/pull/3398) 修復單元測試中使用 `UploadedFile::isValid()` 時，無法正確判斷結果的問題。
+
+# v2.1.10 - 2021-03-15
+
+## 修復
+
+- [#3348](https://github.com/hyperf/hyperf/pull/3348) 修復當使用 `Arr::forget` 方法在 `key` 為 `integer` 且不存在時，執行報錯的問題。
+- [#3351](https://github.com/hyperf/hyperf/pull/3351) 修復 `hyperf/validation` 組件中，`FormRequest` 無法從協程上下文中獲取到修改後的 `ServerRequest`，從而導致驗證器驗證失敗的問題。
+- [#3356](https://github.com/hyperf/hyperf/pull/3356) 修復 `hyperf/testing` 組件中，客户端 `Hyperf\Testing\Client` 無法模擬構造正常的 `UriInterface` 的問題。
+- [#3363](https://github.com/hyperf/hyperf/pull/3363) 修復在入口文件 `bin/hyperf.php` 中自定義的常量，無法在命令 `server:watch` 中使用的問題。
+- [#3365](https://github.com/hyperf/hyperf/pull/3365) 修復當使用協程風格服務時，如果用户沒有配置 `pid_file`，仍然會意外生成 `runtime/hyperf.pid` 文件的問題。
+
+## 優化
+
+- [#3364](https://github.com/hyperf/hyperf/pull/3364) 優化命令 `phar:build`，你可以在不使用 `php` 腳本的情況下執行 `phar` 文件，就像使用命令 `./composer.phar` 而非 `php composer.phar`。
+- [#3367](https://github.com/hyperf/hyperf/pull/3367) 優化使用 `gen:model` 生成模型字段的類型註釋時，儘量讀取自定義轉換器轉換後的對象類型。
+
+# v2.1.9 - 2021-03-08
+
+## 修復
+
+- [#3326](https://github.com/hyperf/hyperf/pull/3326) 修復使用 `JsonEofPacker` 無法正確解包自定義 `eof` 數據的問題。
+- [#3330](https://github.com/hyperf/hyperf/pull/3330) 修復因其他協程修改靜態變量 `$constraints`，導致模型關係查詢錯誤的問題。
+
+## 新增
+
+- [#3325](https://github.com/hyperf/hyperf/pull/3325) 為 `Crontab` 註解增加 `enable` 參數，用於控制當前任務是否註冊到定時任務中。
+
+## 優化
+
+- [#3338](https://github.com/hyperf/hyperf/pull/3338) 優化了 `testing` 組件，使模擬請求的方法運行在獨立的協程當中，避免協程變量污染。
+
 # v2.1.8 - 2021-03-01
 
 ## 修復

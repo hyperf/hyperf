@@ -19,7 +19,7 @@ use function make;
 
 class RateLimitHandler
 {
-    const RATE_LIMIT_BUCKETS = 'rateLimit:buckets';
+    public const RATE_LIMIT_BUCKETS = 'rateLimit:buckets';
 
     /**
      * @var \Redis

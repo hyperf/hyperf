@@ -32,6 +32,7 @@ use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Timer;
 use Swoole\WebSocket\Frame;
+use Swoole\WebSocket\Server;
 
 /**
  *  packet types
@@ -83,16 +84,19 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 
     /**
      * @var int
+     * @deprecated
      */
     protected $clientCallbackTimeout = 10000;
 
     /**
      * @var int
+     * @deprecated
      */
     protected $pingInterval = 10000;
 
     /**
      * @var int
+     * @deprecated
      */
     protected $pingTimeout = 100;
 
@@ -126,13 +130,25 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
      */
     protected $clientCallbackTimers;
 
-    public function __construct(StdoutLoggerInterface $stdoutLogger, Sender $sender, Decoder $decoder, Encoder $encoder, SidProviderInterface $sidProvider)
-    {
+    /**
+     * @var SocketIOConfig
+     */
+    protected $config;
+
+    public function __construct(
+        StdoutLoggerInterface $stdoutLogger,
+        Sender $sender,
+        Decoder $decoder,
+        Encoder $encoder,
+        SidProviderInterface $sidProvider,
+        ?SocketIOConfig $config = null
+    ) {
         $this->stdoutLogger = $stdoutLogger;
         $this->decoder = $decoder;
         $this->encoder = $encoder;
         $this->sender = $sender;
         $this->sidProvider = $sidProvider;
+        $this->config = $config ?? ApplicationContext::getContainer()->get(SocketIOConfig::class);
     }
 
     public function __call($method, $args)
@@ -201,15 +217,15 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     }
 
     /**
-     * @param Response|\Swoole\WebSocket\Server $server
+     * @param Response|Server $server
      */
     public function onOpen($server, Request $request): void
     {
         $data = [
             'sid' => $this->sidProvider->getSid($request->fd),
             'upgrades' => ['websocket'],
-            'pingInterval' => $this->pingInterval,
-            'pingTimeout' => $this->pingTimeout,
+            'pingInterval' => $this->getPingInterval(),
+            'pingTimeout' => $this->getPingTimeout(),
         ];
         if ($server instanceof Response) {
             $server->push(Engine::OPEN . json_encode($data)); //socket is open
@@ -246,7 +262,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     {
         $this->clientCallbacks[$ackId] = $channel;
         // Clean up using timer to avoid memory leak.
-        $timerId = Timer::after($timeoutMs ?? $this->clientCallbackTimeout, function () use ($ackId) {
+        $timerId = Timer::after($timeoutMs ?? $this->getClientCallbackTimeout(), function () use ($ackId) {
             if (! isset($this->clientCallbacks[$ackId])) {
                 return;
             }
@@ -258,39 +274,65 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 
     /**
      * @return $this
+     * @deprecated use SocketIOConfig::setClientCallbackTimeout() instead
      */
     public function setClientCallbackTimeout(int $clientCallbackTimeout)
     {
-        $this->clientCallbackTimeout = $clientCallbackTimeout;
+        $this->config->setClientCallbackTimeout($clientCallbackTimeout);
         return $this;
     }
 
     /**
      * @return $this
+     * @deprecated use SocketIOConfig::setPingInterval() instead
      */
     public function setPingInterval(int $pingInterval)
     {
-        $this->pingInterval = $pingInterval;
+        $this->config->setPingInterval($pingInterval);
         return $this;
     }
 
+    /**
+     * @deprecated use SocketIOConfig::getPingInterval() instead
+     */
     public function getPingInterval(): int
     {
-        return $this->pingInterval;
+        if ($this->pingInterval != 10000) {
+            return $this->pingInterval;
+        }
+        return $this->config->getPingInterval();
     }
 
+    /**
+     * @deprecated use SocketIOConfig::getPingTimeout() instead
+     */
     public function getPingTimeout(): int
     {
-        return $this->pingTimeout;
+        if ($this->pingTimeout != 100) {
+            return $this->pingTimeout;
+        }
+        return $this->config->getPingTimeout();
     }
 
     /**
      * @return $this
+     * @deprecated use SocketIOConfig::setPingTimeout instead
      */
     public function setPingTimeout(int $pingTimeout)
     {
-        $this->pingTimeout = $pingTimeout;
+        $this->config->setPingTimeout($pingTimeout);
         return $this;
+    }
+
+    /**
+     * @deprecated use SocketIOConfig::getClientCallbackTimeout() instead
+     */
+    private function getClientCallbackTimeout(): int
+    {
+        if ($this->clientCallbackTimeout !== 10000) {
+            return $this->clientCallbackTimeout;
+        }
+        return $this->config->getClientCallbackTimeout();
     }
 
     private function dispatch(int $fd, string $nsp, string $event, ...$payloads)

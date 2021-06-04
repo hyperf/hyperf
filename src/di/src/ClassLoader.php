@@ -18,7 +18,6 @@ use Dotenv\Repository\Adapter;
 use Dotenv\Repository\RepositoryBuilder;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
-use Hyperf\Di\Aop\ProxyManager;
 use Hyperf\Di\LazyLoader\LazyLoader;
 use Hyperf\Utils\Composer;
 
@@ -45,13 +44,12 @@ class ClassLoader
         }
 
         // Scan by ScanConfig to generate the reflection class map
-        $scanner = new Scanner($this, $config = ScanConfig::instance($configDir));
+        $config = ScanConfig::instance($configDir);
         $classLoader->addClassMap($config->getClassMap());
-        $reflectionClassMap = $scanner->scan();
-        // Get the class map of Composer loader
-        $composerLoaderClassMap = $this->getComposerClassLoader()->getClassMap();
-        $proxyManager = new ProxyManager($reflectionClassMap, $composerLoaderClassMap, $proxyFileDir);
-        $this->proxies = $proxyManager->getProxies();
+
+        $scanner = new Scanner($this, $config);
+
+        $this->proxies = $scanner->scan($this->getComposerClassLoader()->getClassMap(), $proxyFileDir);
     }
 
     public function loadClass(string $class): void

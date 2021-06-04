@@ -68,7 +68,7 @@ class Crontab extends AbstractAnnotation
     public $memo = '';
 
     /**
-     * @var bool
+     * @var array|bool
      */
     public $enable = true;
 
@@ -79,11 +79,43 @@ class Crontab extends AbstractAnnotation
         $this->rule = str_replace('\\', '', $this->rule);
     }
 
+    public function collectMethod(string $className, ?string $target): void
+    {
+        if ($target === null) {
+            return;
+        }
+
+        if (! $this->name) {
+            $this->name = $className . '::' . $target;
+        }
+
+        if (! $this->callback) {
+            $this->callback = [$className, $target];
+        } elseif (is_string($this->callback)) {
+            $this->callback = [$className, $this->callback];
+        }
+
+        parent::collectMethod($className, $target);
+    }
+
     public function collectClass(string $className): void
+    {
+        $this->parseName($className);
+        $this->parseCallback($className);
+        $this->parseEnable($className);
+
+        parent::collectClass($className);
+    }
+
+    protected function parseName(string $className): void
     {
         if (! $this->name) {
             $this->name = $className;
         }
+    }
+
+    protected function parseCallback(string $className): void
+    {
         if (! $this->callback) {
             $reflectionClass = ReflectionManager::reflectClass($className);
             $reflectionMethods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
@@ -108,6 +140,22 @@ class Crontab extends AbstractAnnotation
         } elseif (is_string($this->callback)) {
             $this->callback = [$className, $this->callback];
         }
-        parent::collectClass($className);
+    }
+
+    protected function parseEnable(string $className): void
+    {
+        if (is_string($this->enable) && $this->enable === 'true') {
+            $this->enable = true;
+            return;
+        }
+
+        if (is_string($this->enable) && $this->enable === 'false') {
+            $this->enable = false;
+            return;
+        }
+
+        if (is_string($this->enable)) {
+            $this->enable = [$className, $this->enable];
+        }
     }
 }

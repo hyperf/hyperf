@@ -28,7 +28,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
 
 /**
- * @mixin Builder
  * @mixin ModelIDE
  */
 abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable, CompressInterface
@@ -46,14 +45,14 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      *
      * @var string
      */
-    const CREATED_AT = 'created_at';
+    public const CREATED_AT = 'created_at';
 
     /**
      * The name of the "updated at" column.
      *
      * @var string
      */
-    const UPDATED_AT = 'updated_at';
+    public const UPDATED_AT = 'updated_at';
 
     /**
      * Indicates if the IDs are auto-incrementing.

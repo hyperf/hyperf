@@ -13,17 +13,17 @@ namespace Hyperf\SocketIOServer\Parser;
 
 class Engine
 {
-    const OPEN = '0';
+    public const OPEN = '0';
 
-    const CLOSE = '1';
+    public const CLOSE = '1';
 
-    const PING = '2';
+    public const PING = '2';
 
-    const PONG = '3';
+    public const PONG = '3';
 
-    const MESSAGE = '4';
+    public const MESSAGE = '4';
 
-    const UPGRADE = '5';
+    public const UPGRADE = '5';
 
-    const NOOP = '6';
+    public const NOOP = '6';
 }

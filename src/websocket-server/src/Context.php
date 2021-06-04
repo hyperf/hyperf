@@ -16,7 +16,7 @@ use Hyperf\Utils\Context as CoContext;
 
 class Context
 {
-    const FD = 'ws.fd';
+    public const FD = 'ws.fd';
 
     /**
      * @var array

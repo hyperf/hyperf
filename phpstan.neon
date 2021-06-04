@@ -43,6 +43,5 @@ parameters:
     - '#Function get_debug_type invoked with 1 parameter, 0 required#'
     - '#Call to an undefined method Hyperf\\Utils\\HigherOrderCollectionProxy::.*#'
     - '#InfluxDB\\Point constructor expects float\|null, string given#'
-    - '#Call to an undefined method Hyperf\\Database\\Model\\Builder::unsearchable#'
     - '#getSwooleTracker.* not found#'
     - '#trackerHookMalloc not found#'

@@ -242,16 +242,6 @@ class BelongsTo extends Relation
     }
 
     /**
-     * Get a relationship join table hash.
-     *
-     * @return string
-     */
-    public function getRelationCountHash()
-    {
-        return 'laravel_reserved_' . static::$selfJoinCount++;
-    }
-
-    /**
      * Get the child of the relationship.
      *
      * @return \Hyperf\Database\Model\Model

@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Amqp;
 
+use Hyperf\Amqp\ConnectionFactory;
 use Hyperf\Amqp\Consumer;
-use Hyperf\Amqp\Pool\PoolFactory;
 use Hyperf\Utils\Coroutine\Concurrent;
 use HyperfTest\Amqp\Stub\ContainerStub;
 use Mockery;
@@ -28,7 +28,7 @@ class ConsumerTest extends TestCase
     public function testConsumerConcurrentLimit()
     {
         $container = ContainerStub::getContainer();
-        $consumer = new Consumer($container, Mockery::mock(PoolFactory::class), Mockery::mock(LoggerInterface::class));
+        $consumer = new Consumer($container, Mockery::mock(ConnectionFactory::class), Mockery::mock(LoggerInterface::class));
         $ref = new \ReflectionClass($consumer);
         $method = $ref->getMethod('getConcurrent');
         $method->setAccessible(true);
