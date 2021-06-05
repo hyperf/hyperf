@@ -15,9 +15,6 @@ composer require hyperf/metric
 ```bash
 # StatsD 所需依賴
 composer require domnikl/statsd
-# 因 domnikl/statsd 已不再维护，可以使用以下组件代替
-composer require slickdeals/statsd
-
 # InfluxDB 所需依賴 
 composer require influxdb/influxdb-php 
 ```
@@ -414,10 +411,5 @@ Router::get('/metrics', function(){
 
 ## 注意事項
 
-- `endclothing/prometheus_client_php` 暫時與 `guzzle : ^7.0` 衝突，如果想在 `guzzle7` 的條件下使用 `metric`，可以主動執行以下操作
-
-```
-composer require "promphp/prometheus_client_php:2.2.1"
-```
 - 如需在 `hyperf/command` 自定義命令中使用本組件收集指標，需要在啟動命令時添加命令行參數: `--enable-event-dispatcher`。
 
