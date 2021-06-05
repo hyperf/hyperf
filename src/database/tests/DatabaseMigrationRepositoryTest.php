@@ -50,7 +50,7 @@ class DatabaseMigrationRepositoryTest extends TestCase
 
     public function testGetLastMigrationsGetsAllMigrationsWithTheLatestBatchNumber()
     {
-        $repo = $this->getMockBuilder(DatabaseMigrationRepository::class)->setMethods(['getLastBatchNumber'])->setConstructorArgs([
+        $repo = $this->getMockBuilder(DatabaseMigrationRepository::class)->onlyMethods(['getLastBatchNumber'])->setConstructorArgs([
             $resolver = Mockery::mock(ConnectionResolverInterface::class), 'migrations',
         ])->getMock();
         $repo->expects($this->once())->method('getLastBatchNumber')->will($this->returnValue(1));
