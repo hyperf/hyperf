@@ -53,7 +53,7 @@ class TranslatorTest extends TestCase
 
     public function testHasMethodReturnsFalseWhenReturnedTranslationIsNull()
     {
-        $t = $this->getMockBuilder(Translator::class)->setMethods(['get'])->setConstructorArgs([
+        $t = $this->getMockBuilder(Translator::class)->onlyMethods(['get'])->setConstructorArgs([
             $this->getLoader(),
             'en',
         ])->getMock();
@@ -63,7 +63,7 @@ class TranslatorTest extends TestCase
             ->will($this->returnValue('foo'));
         $this->assertFalse($t->has('foo', 'bar'));
 
-        $t = $this->getMockBuilder(Translator::class)->setMethods(['get'])->setConstructorArgs([
+        $t = $this->getMockBuilder(Translator::class)->onlyMethods(['get'])->setConstructorArgs([
             $this->getLoader(),
             'en',
             'sp',
@@ -74,7 +74,7 @@ class TranslatorTest extends TestCase
             ->will($this->returnValue('bar'));
         $this->assertTrue($t->has('foo', 'bar'));
 
-        $t = $this->getMockBuilder(Translator::class)->setMethods(['get'])->setConstructorArgs([
+        $t = $this->getMockBuilder(Translator::class)->onlyMethods(['get'])->setConstructorArgs([
             $this->getLoader(),
             'en',
         ])->getMock();
@@ -84,7 +84,7 @@ class TranslatorTest extends TestCase
             ->will($this->returnValue('bar'));
         $this->assertTrue($t->hasForLocale('foo', 'bar'));
 
-        $t = $this->getMockBuilder(Translator::class)->setMethods(['get'])->setConstructorArgs([
+        $t = $this->getMockBuilder(Translator::class)->onlyMethods(['get'])->setConstructorArgs([
             $this->getLoader(),
             'en',
         ])->getMock();
@@ -95,7 +95,7 @@ class TranslatorTest extends TestCase
         $this->assertFalse($t->hasForLocale('foo', 'bar'));
 
         $t = $this->getMockBuilder(Translator::class)
-            ->setMethods(['load', 'getLine'])
+            ->onlyMethods(['load', 'getLine'])
             ->setConstructorArgs([$this->getLoader(), 'en'])
             ->getMock();
         $t->expects($this->any())
@@ -109,7 +109,7 @@ class TranslatorTest extends TestCase
         $this->assertTrue($t->hasForLocale('foo'));
 
         $t = $this->getMockBuilder(Translator::class)
-            ->setMethods(['load', 'getLine'])
+            ->onlyMethods(['load', 'getLine'])
             ->setConstructorArgs([$this->getLoader(), 'en'])
             ->getMock();
         $t->expects($this->any())
@@ -150,7 +150,7 @@ class TranslatorTest extends TestCase
     public function testGetMethodProperlyLoadsAndRetrievesItemWithCapitalization()
     {
         $t = $this->getMockBuilder(Translator::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->setConstructorArgs([$this->getLoader(), 'en'])
             ->getMock();
         $t->getLoader()->shouldReceive('load')->once()->with('en', 'bar', 'foo')->andReturn([
@@ -198,7 +198,7 @@ class TranslatorTest extends TestCase
 
     public function testChoiceMethodProperlyLoadsAndRetrievesItem()
     {
-        $t = $this->getMockBuilder(Translator::class)->setMethods(['get'])->setConstructorArgs([
+        $t = $this->getMockBuilder(Translator::class)->onlyMethods(['get'])->setConstructorArgs([
             $this->getLoader(),
             'en',
         ])->getMock();
@@ -214,7 +214,7 @@ class TranslatorTest extends TestCase
 
     public function testChoiceMethodProperlyCountsCollectionsAndLoadsAndRetrievesItem()
     {
-        $t = $this->getMockBuilder(Translator::class)->setMethods(['get'])->setConstructorArgs([
+        $t = $this->getMockBuilder(Translator::class)->onlyMethods(['get'])->setConstructorArgs([
             $this->getLoader(),
             'en',
         ])->getMock();
