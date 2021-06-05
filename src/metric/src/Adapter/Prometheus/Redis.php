@@ -20,12 +20,6 @@ use Prometheus\Histogram;
 use Prometheus\MetricFamilySamples;
 use Prometheus\Storage\Adapter;
 
-/**
- * This class is backported from
- * endclothing/prometheus_client_php 1.0.* branch.
- * The 1.0.* branch requires php7.3, so we cannot
- * directly use it in Hyperf as of now.
- */
 class Redis implements Adapter
 {
     public const PROMETHEUS_METRIC_KEYS_SUFFIX = '_METRIC_KEYS';
@@ -97,6 +91,11 @@ class Redis implements Adapter
      * @throws StorageException
      */
     public function flushRedis(): void
+    {
+        $this->wipeStorage();
+    }
+
+    public function wipeStorage(): void
     {
         $this->openConnection();
         $this->redis->flushAll();

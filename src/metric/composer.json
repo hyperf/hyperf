@@ -12,10 +12,10 @@
     "description": "hyperf metric component",
     "require": {
         "php": ">=7.3",
-        "endclothing/prometheus_client_php": "^1.0",
         "hyperf/contract": "~2.2.0",
         "hyperf/guzzle": "~2.2.0",
         "hyperf/utils": "~2.2.0",
+        "promphp/prometheus_client_php": "^2.2",
         "psr/container": "^1.0|^2.0",
         "psr/event-dispatcher": "^1.0",
         "psr/http-message": "^1.0"
@@ -39,7 +39,10 @@
             "HyperfTest\\Metric\\": "tests/"
         }
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "config": {
+        "optimize-autoloader": true,
         "sort-packages": true
     },
     "extra": {
