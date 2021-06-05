@@ -164,7 +164,7 @@ trait ReplacesAttributes
             return str_replace(':value', $parameters[0], $message);
         }
 
-        return str_replace(':value', $this->getSize($attribute, $value), $message);
+        return str_replace(':value', (string) $this->getSize($attribute, $value), $message);
     }
 
     /**
@@ -176,7 +176,7 @@ trait ReplacesAttributes
             return str_replace(':value', $parameters[0], $message);
         }
 
-        return str_replace(':value', $this->getSize($attribute, $value), $message);
+        return str_replace(':value', (string) $this->getSize($attribute, $value), $message);
     }
 
     /**
@@ -188,7 +188,7 @@ trait ReplacesAttributes
             return str_replace(':value', $parameters[0], $message);
         }
 
-        return str_replace(':value', $this->getSize($attribute, $value), $message);
+        return str_replace(':value', (string) $this->getSize($attribute, $value), $message);
     }
 
     /**
@@ -200,7 +200,7 @@ trait ReplacesAttributes
             return str_replace(':value', $parameters[0], $message);
         }
 
-        return str_replace(':value', $this->getSize($attribute, $value), $message);
+        return str_replace(':value', (string) $this->getSize($attribute, $value), $message);
     }
 
     /**
