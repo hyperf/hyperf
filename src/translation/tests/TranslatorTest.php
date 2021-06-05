@@ -150,7 +150,7 @@ class TranslatorTest extends TestCase
     public function testGetMethodProperlyLoadsAndRetrievesItemWithCapitalization()
     {
         $t = $this->getMockBuilder(Translator::class)
-            ->onlyMethods(null)
+            ->onlyMethods([])
             ->setConstructorArgs([$this->getLoader(), 'en'])
             ->getMock();
         $t->getLoader()->shouldReceive('load')->once()->with('en', 'bar', 'foo')->andReturn([
