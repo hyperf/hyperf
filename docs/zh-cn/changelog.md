@@ -5,6 +5,7 @@
 ## 修复
 
 - [#3667](https://github.com/hyperf/hyperf/pull/3667) 修复形如 `10-12/1,14-15/1` 的定时任务规则无法正常使用的问题。
+- [#3669](https://github.com/hyperf/hyperf/pull/3669) 修复了没有反斜线形如 `10-12` 的定时任务规则无法正常使用的问题。
 
 ## 优化
 
