@@ -1476,7 +1476,7 @@ trait ValidatesAttributes
      * Get the size of an attribute.
      *
      * @param mixed $value
-     * @return mixed
+     * @return float|int
      */
     protected function getSize(string $attribute, $value)
     {
