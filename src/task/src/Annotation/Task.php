@@ -28,4 +28,9 @@ class Task extends AbstractAnnotation
      * @var int
      */
     public $timeout = 10;
+
+    /**
+     * @var int
+     */
+    public $taskWorkerId = -1;
 }

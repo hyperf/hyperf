@@ -58,7 +58,7 @@ class TaskExecutor
             throw new TaskExecuteException('The server does not support task.');
         }
 
-        $taskId = $this->server->task($task);
+        $taskId = $this->server->task($task, $task->targetTaskWorkerId);
         if ($taskId === false) {
             throw new TaskExecuteException('Task execute failed.');
         }
