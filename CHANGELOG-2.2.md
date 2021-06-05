@@ -40,6 +40,7 @@
 ## Optimized
 
 - [#3670](https://github.com/hyperf/hyperf/pull/3670) Adapt database component to support php8.
+- [#3673](https://github.com/hyperf/hyperf/pull/3673) Adapt all components to support php8.
 
 ## Fixed
 
