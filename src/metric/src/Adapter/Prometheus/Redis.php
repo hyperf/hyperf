@@ -92,6 +92,11 @@ class Redis implements Adapter
      */
     public function flushRedis(): void
     {
+        $this->wipeStorage();
+    }
+
+    public function wipeStorage(): void
+    {
         $this->openConnection();
         $this->redis->flushAll();
     }
