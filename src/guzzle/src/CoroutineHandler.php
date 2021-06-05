@@ -243,8 +243,8 @@ class CoroutineHandler
         if ($port = $uri->getPort()) {
             return $port;
         }
-        if (isset(static::$defaultPorts[$uri->getScheme()])) {
-            return static::$defaultPorts[$uri->getScheme()];
+        if (isset(self::$defaultPorts[$uri->getScheme()])) {
+            return self::$defaultPorts[$uri->getScheme()];
         }
         throw new InvalidArgumentException("Unsupported scheme from the URI {$uri->__toString()}");
     }
