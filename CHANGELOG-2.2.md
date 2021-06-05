@@ -37,7 +37,10 @@
 - [#3635](https://github.com/hyperf/hyperf/pull/3635) Added `Hyperf\Utils\CodeGen\PhpParser` which used to generate AST for reflection. 
 - [#3648](https://github.com/hyperf/hyperf/pull/3648) Added `Hyperf\Utils\CodeGen\PhpDocReaderManager` to manage `PhpDocReader`.
 
+## Optimized
+
+- [#3670](https://github.com/hyperf/hyperf/pull/3670) Adapt database component to support php8.
+
 ## Fixed
 
 - [#3650](https://github.com/hyperf/hyperf/pull/3650) Fixed bug that `ReflectionParameter::getClass()` will be deprecated in php8.
-
