@@ -71,10 +71,13 @@ class DatabaseConnectionTest extends TestCase
 
     public function testSelectProperlyCallsPDO()
     {
-        $pdo = $this->getMockBuilder(DatabaseConnectionTestMockPDO::class)->setMethods(['prepare'])->getMock();
-        $writePdo = $this->getMockBuilder(DatabaseConnectionTestMockPDO::class)->setMethods(['prepare'])->getMock();
+        $pdo = $this->getMockBuilder(DatabaseConnectionTestMockPDO::class)->onlyMethods(['prepare'])->getMock();
+        $writePdo = $this->getMockBuilder(DatabaseConnectionTestMockPDO::class)->onlyMethods(['prepare'])->getMock();
         $writePdo->expects($this->never())->method('prepare');
-        $statement = $this->getMockBuilder('PDOStatement')->setMethods(['execute', 'fetchAll', 'bindValue'])->getMock();
+        $statement = $this->getMockBuilder('PDOStatement')
+            ->onlyMethods(['setFetchMode', 'execute', 'fetchAll', 'bindValue'])
+            ->getMock();
+        $statement->expects($this->once())->method('setFetchMode');
         $statement->expects($this->once())->method('bindValue')->with('foo', 'bar', 2);
         $statement->expects($this->once())->method('execute');
         $statement->expects($this->once())->method('fetchAll')->willReturn(['boom']);
