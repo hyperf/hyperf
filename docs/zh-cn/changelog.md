@@ -1,5 +1,17 @@
 # 版本更新记录
 
+# v2.1.20 - 2021-06-07
+
+## 修复
+
+- [#3667](https://github.com/hyperf/hyperf/pull/3667) 修复形如 `10-12/1,14-15/1` 的定时任务规则无法正常使用的问题。
+- [#3669](https://github.com/hyperf/hyperf/pull/3669) 修复了没有反斜线形如 `10-12` 的定时任务规则无法正常使用的问题。
+
+## 优化
+
+- [#3663](https://github.com/hyperf/hyperf/pull/3663) 优化 `AbstractServiceClient::getNodesFromConsul()` 方法，排除了可能找不到端口的隐患。
+- [#3668](https://github.com/hyperf/hyperf/pull/3668) 优化 `Guzzle` 组件中 `CoroutineHandler` 代理相关的代码，增强其兼容性。
+
 # v2.1.19 - 2021-05-31
 
 ## 修复

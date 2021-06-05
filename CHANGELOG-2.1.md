@@ -1,9 +1,16 @@
-# v2.1.20 - TBD
+# v2.1.21 - TBD
+
+# v2.1.20 - 2021-06-07
 
 ## Fixed
 
-- [#3663](https://github.com/hyperf/hyperf/pull/3663) Fixed undefined index: Port for `AbstractServiceClient::getNodesFromConsul()`.
-- [#3667](https://github.com/hyperf/hyperf/pull/3667) Fixed rule like `10-12/1,14-15/1` does not works for crontab.
+- [#3667](https://github.com/hyperf/hyperf/pull/3667) Fixed bug that the crontab rule like `10-12/1,14-15/1` does not works.
+- [#3669](https://github.com/hyperf/hyperf/pull/3669) Fixed bug that the crontab rule without backslash like `10-12` does not works.
+
+## Optimized
+
+- [#3663](https://github.com/hyperf/hyperf/pull/3663) Optimized code of `AbstractServiceClient::getNodesFromConsul()`.
+- [#3668](https://github.com/hyperf/hyperf/pull/3668) Optimized proxy code of `CoroutineHandler`, which is more friendly than before.
 
 # v2.1.19 - 2021-05-31
 
