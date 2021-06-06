@@ -6,6 +6,7 @@
 
 - [#3667](https://github.com/hyperf/hyperf/pull/3667) Fixed bug that the crontab rule like `10-12/1,14-15/1` does not works.
 - [#3669](https://github.com/hyperf/hyperf/pull/3669) Fixed bug that the crontab rule without backslash like `10-12` does not works.
+- [#3674](https://github.com/hyperf/hyperf/pull/3674) Fixed bug that property `$workerId` does not works in annotation `@Task`.
 
 ## Optimized
 
