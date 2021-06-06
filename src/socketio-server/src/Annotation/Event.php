@@ -14,7 +14,6 @@ namespace Hyperf\SocketIOServer\Annotation;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\SocketIOServer\Collector\EventAnnotationCollector;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionMethod;
 
 /**
  * @Annotation
@@ -38,7 +37,7 @@ class Event extends AbstractAnnotation
 
     public function collectClass(string $className): void
     {
-        $methods = ReflectionManager::reflectClass($className)->getMethods(ReflectionMethod::IS_PUBLIC);
+        $methods = ReflectionManager::reflectClass($className)->getMethods(\ReflectionMethod::IS_PUBLIC);
         foreach ($methods as $method) {
             $target = $method->getName();
             EventAnnotationCollector::collectEvent($className, $target, new Event(['value' => $target]));

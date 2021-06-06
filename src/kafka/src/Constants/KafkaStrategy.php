@@ -16,7 +16,7 @@ use longlang\phpkafka\Consumer\Assignor\RoundRobinAssignor;
 
 class KafkaStrategy
 {
-    const RANGE_ASSIGNOR = RangeAssignor::class;
+    public const RANGE_ASSIGNOR = RangeAssignor::class;
 
-    const ROUND_ROBIN_ASSIGNOR = RoundRobinAssignor::class;
+    public const ROUND_ROBIN_ASSIGNOR = RoundRobinAssignor::class;
 }

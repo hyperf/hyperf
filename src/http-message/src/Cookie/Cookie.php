@@ -13,9 +13,9 @@ namespace Hyperf\HttpMessage\Cookie;
 
 class Cookie
 {
-    const SAMESITE_LAX = 'lax';
+    public const SAMESITE_LAX = 'lax';
 
-    const SAMESITE_STRICT = 'strict';
+    public const SAMESITE_STRICT = 'strict';
 
     protected $name;
 

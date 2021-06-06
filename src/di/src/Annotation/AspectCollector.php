@@ -105,7 +105,6 @@ class AspectCollector extends MetadataCollector
 
     private static function getDefaultPriority(): int
     {
-        // TODO(v3.0): Changed the default priority to 0.
-        return (int) (PHP_INT_MAX / 2);
+        return 0;
     }
 }

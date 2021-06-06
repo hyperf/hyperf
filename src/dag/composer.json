@@ -1,0 +1,42 @@
+{
+    "name": "hyperf/dag",
+    "description": "Dag runner for hyperf",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=7.3",
+        "hyperf/utils": "~2.2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Dag\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Dag\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "hyperf": {
+            "config": "Hyperf\\Dag\\ConfigProvider"
+        },
+        "branch-alias": {
+            "dev-master": "2.1-dev"
+        }
+    }
+}

@@ -49,7 +49,5 @@ class RoutesCommandTest extends TestCase
         $method->invokeArgs($command, [&$data, 'http', 'POST', null, new Handler(IndexController::class . '::index5', '/index5')]);
 
         $this->assertSame(5, count($data));
-
-        $this->assertTrue(is_callable('HyperfTest\Devtool\Stub\IndexController::index'));
     }
 }

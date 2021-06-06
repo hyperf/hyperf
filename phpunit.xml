@@ -19,6 +19,7 @@
             <directory suffix="Test.php">./src/constants/tests</directory>
             <directory suffix="Test.php">./src/consul/tests</directory>
             <directory suffix="Test.php">./src/crontab/tests</directory>
+            <directory suffix="Test.php">./src/dag/tests</directory>
             <directory suffix="Test.php">./src/database/tests</directory>
             <directory suffix="Test.php">./src/db/tests</directory>
             <directory suffix="Test.php">./src/db-connection/tests</directory>
@@ -53,6 +54,7 @@
             <directory suffix="Test.php">./src/rpc/tests</directory>
             <directory suffix="Test.php">./src/rpc-client/tests</directory>
             <directory suffix="Test.php">./src/rpc-server/tests</directory>
+            <directory suffix="Test.php">./src/rpn/tests</directory>
             <directory suffix="Test.php">./src/scout/tests</directory>
             <directory suffix="Test.php">./src/server/tests</directory>
             <directory suffix="Test.php">./src/service-governance/tests</directory>
@@ -83,6 +85,7 @@
             <directory suffix=".php">./src/constants/src</directory>
             <directory suffix=".php">./src/consul/src</directory>
             <directory suffix=".php">./src/crontab/src</directory>
+            <directory suffix=".php">./src/dag/src</directory>
             <directory suffix=".php">./src/database/src</directory>
             <directory suffix=".php">./src/db-connection/src</directory>
             <directory suffix=".php">./src/di/src</directory>
@@ -103,6 +106,7 @@
             <directory suffix=".php">./src/phar/src</directory>
             <directory suffix=".php">./src/redis/src</directory>
             <directory suffix=".php">./src/rpc/src</directory>
+            <directory suffix=".php">./src/rpn/src</directory>
             <directory suffix=".php">./src/scout/src</directory>
             <directory suffix=".php">./src/server/src</directory>
             <directory suffix=".php">./src/service-governance/src</directory>
