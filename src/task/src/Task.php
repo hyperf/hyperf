@@ -26,12 +26,12 @@ class Task
     /**
      * @var int
      */
-    public $targetTaskWorkerId;
+    public $workerId;
 
-    public function __construct($callback, array $arguments = [], int $targetTaskWorkerId = -1)
+    public function __construct($callback, array $arguments = [], int $workerId = -1)
     {
         $this->callback = $callback;
         $this->arguments = $arguments;
-        $this->targetTaskWorkerId = $targetTaskWorkerId;
+        $this->workerId = $workerId;
     }
 }
