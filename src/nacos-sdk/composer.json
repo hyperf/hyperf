@@ -1,0 +1,71 @@
+{
+    "name": "hyperf/nacos-sdk-incubator",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf",
+        "nacos"
+    ],
+    "description": "Nacos SDK",
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\NacosSdk\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\NacosSdk\\": "tests"
+        }
+    },
+    "require": {
+        "php": ">=7.3",
+        "guzzlehttp/guzzle": "^6.5|^7.0",
+        "hyperf/contract": "^2.1",
+        "hyperf/utils": "^2.1"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "hyperf/di": "^2.1",
+        "hyperf/config": "^2.1",
+        "hyperf/event": "^2.1",
+        "hyperf/framework": "^2.1",
+        "hyperf/guzzle": "^2.1",
+        "hyperf/load-balancer": "^2.1",
+        "hyperf/logger": "^2.1",
+        "hyperf/process": "^2.1",
+        "mockery/mockery": "^1.0",
+        "phpstan/phpstan": "^0.12",
+        "phpunit/phpunit": ">=7.0",
+        "swoole/ide-helper": "dev-master",
+        "symfony/var-dumper": "^5.1"
+    },
+    "suggest": {
+        "ext-json": "*",
+        "ext-simplexml": "*",
+        "ext-yaml": "*",
+        "hyperf/event": "~2.1.0",
+        "hyperf/process": "~2.1.0",
+        "hyperf/framework": "~2.1.0",
+        "hyperf/logger": "~2.1.0"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "phpunit -c phpunit.xml --colors=always",
+        "analyse": "phpstan analyse --memory-limit 1024M -l 0 ./src",
+        "cs-fix": "php-cs-fixer fix $1"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "2.2-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\NacosSdk\\ConfigProvider"
+        }
+    }
+}
