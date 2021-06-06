@@ -3,7 +3,7 @@
 ## 安装
 
 ```shell
-composer require hyperf/nacos-sdk-incubator
+composer require hyperf/nacos-sdk
 ```
 
 ## 使用

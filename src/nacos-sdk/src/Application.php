@@ -41,7 +41,7 @@ class Application
     protected $providers = [];
 
     /**
-     * @var ConfigProvider
+     * @var Config
      */
     protected $config;
 
