@@ -86,7 +86,9 @@ class RpcChannel
      */
     public function wait(int $timeout)
     {
-        return $this->chan->pop($timeout);
+        $this->channel->wait(null, false, $timeout);
+
+        return $this->chan->pop(0.001);
     }
 
     public function close()

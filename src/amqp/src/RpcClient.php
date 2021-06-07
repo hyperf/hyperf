@@ -15,7 +15,6 @@ use Hyperf\Amqp\Builder\QueueBuilder;
 use Hyperf\Amqp\Exception\TimeoutException;
 use Hyperf\Amqp\Message\RpcMessageInterface;
 use Hyperf\Engine\Channel;
-use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class RpcClient extends Builder
@@ -73,7 +72,7 @@ class RpcClient extends Builder
 
     protected function initChannel(RpcChannel $channel, QueueBuilder $builder)
     {
-        $queue = $channel->getChannel()->queue_declare(
+        [$queue] = $channel->getChannel()->queue_declare(
             $builder->getQueue(),
             $builder->isPassive(),
             $builder->isDurable(),
@@ -101,7 +100,7 @@ class RpcClient extends Builder
         $channel->setQueue($queue);
     }
 
-    protected function release(Channel $chan, AMQPChannel $channel): void
+    protected function release(Channel $chan, RpcChannel $channel): void
     {
         if ($chan->getLength() > static::MAX_CHANNEL) {
             $channel->close();
