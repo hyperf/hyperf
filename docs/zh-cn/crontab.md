@@ -133,6 +133,81 @@ class FooTask
 
 定时任务的备注，该属性为可选属性，没有任何逻辑上的意义，仅供开发人员查阅帮助对该定时任务的理解。
 
+#### enable
+
+当前任务是否生效。
+
+> 除了 bool 类型，还支持 string 和 array
+
+如果 `enable` 是 `string`，则会调用当前类对应的方法，来判断此定时任务是否运行
+
+```php
+<?php
+
+namespace App\Crontab;
+
+use Carbon\Carbon;
+use Hyperf\Crontab\Annotation\Crontab;
+
+/**
+ * @Crontab(name="Echo", rule="* * * * * *", callback="execute", enable="isEnable", memo="这是一个示例的定时任务")
+ */
+class EchoCrontab
+{
+    public function execute()
+    {
+        var_dump(Carbon::now()->toDateTimeString());
+    }
+
+    public function isEnable(): bool
+    {
+        return true;
+    }
+}
+```
+
+如果 `enable` 是 `array`，则会调用 `array[0]` 对应的 `array[1]`，来判断此定时任务是否运行
+
+```php
+<?php
+
+namespace App\Crontab;
+
+class EnableChecker
+{
+    public function isEnable(): bool
+    {
+        return false;
+    }
+}
+```
+
+```php
+<?php
+
+namespace App\Crontab;
+
+use Carbon\Carbon;
+use Hyperf\Crontab\Annotation\Crontab;
+
+/**
+ * @Crontab(name="Echo", rule="* * * * * *", callback="execute", enable={EnableChecker::class, "isEnable"}, memo="这是一个示例的定时任务")
+ */
+class EchoCrontab
+{
+    public function execute()
+    {
+        var_dump(Carbon::now()->toDateTimeString());
+    }
+
+    public function isEnable(): bool
+    {
+        return true;
+    }
+}
+
+```
+
 ### 调度分发策略
 
 定时任务在设计上允许通过不同的策略来调度分发执行任务，目前仅提供了 `多进程执行策略`、`协程执行策略` 两种策略，默认为 `多进程执行策略`，后面的迭代会增加更多更强的策略。

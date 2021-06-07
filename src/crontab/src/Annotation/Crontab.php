@@ -68,7 +68,7 @@ class Crontab extends AbstractAnnotation
     public $memo = '';
 
     /**
-     * @var array|bool
+     * @var array|bool|string
      */
     public $enable = true;
 
