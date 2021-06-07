@@ -13,10 +13,6 @@
 - [#3663](https://github.com/hyperf/hyperf/pull/3663) Optimized code of `AbstractServiceClient::getNodesFromConsul()`.
 - [#3668](https://github.com/hyperf/hyperf/pull/3668) Optimized proxy code of `CoroutineHandler`, which is more friendly than before.
 
-## Fixed
-
-- [#3663](https://github.com/hyperf/hyperf/pull/3663) Fixed undefined index: Port for `AbstractServiceClient::getNodesFromConsul()`.
-
 # v2.1.19 - 2021-05-31
 
 ## Fixed
