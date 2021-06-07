@@ -16,12 +16,23 @@ use Hyperf\Amqp\Exception\TimeoutException;
 use Hyperf\Amqp\Message\RpcMessageInterface;
 use Hyperf\Engine\Channel;
 use PhpAmqpLib\Message\AMQPMessage;
+use Psr\Container\ContainerInterface;
 
 class RpcClient extends Builder
 {
-    public const MAX_CHANNEL = 64;
-
     protected $poolChannels = [];
+
+    /**
+     * @var int
+     */
+    protected $maxChannels;
+
+    public function __construct(ContainerInterface $container, ConnectionFactory $factory, int $maxChannels = 64)
+    {
+        $this->maxChannels = $maxChannels;
+
+        parent::__construct($container, $factory);
+    }
 
     public function call(RpcMessageInterface $rpcMessage, int $timeout = 5)
     {
@@ -102,7 +113,7 @@ class RpcClient extends Builder
 
     protected function release(Channel $chan, RpcChannel $channel): void
     {
-        if ($chan->getLength() > static::MAX_CHANNEL) {
+        if ($chan->getLength() > $this->maxChannels) {
             $channel->close();
             return;
         }
@@ -115,7 +126,7 @@ class RpcClient extends Builder
     protected function initPoolChannel(string $pool, string $exchange, string $queue)
     {
         if (! isset($this->poolChannels[$pool][$exchange][$queue])) {
-            $this->poolChannels[$pool][$exchange][$queue] = new Channel(static::MAX_CHANNEL);
+            $this->poolChannels[$pool][$exchange][$queue] = new Channel($this->maxChannels);
         }
 
         return $this->poolChannels[$pool][$exchange][$queue];
