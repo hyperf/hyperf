@@ -2,7 +2,7 @@
 
 ## Fixed
 
-- [#3684](https://github.com/hyperf/hyperf/pull/3684) Fixed the wrong judgment of `fail counter` or `duration` for circuit breaker.
+- [#3684](https://github.com/hyperf/hyperf/pull/3684) Fixed the wrong judgment of `counter` or `duration` for circuit breaker.
 
 # v2.1.20 - 2021-06-07
 
