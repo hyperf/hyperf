@@ -231,7 +231,7 @@ The default sampler records the call link for all requests, which will have a ce
 
 ### Access to Alibaba Cloud link tracking service
 
-When we are using Alibaba Cloud’s link tracking service, since the opposite end also supports the `Zipkin` protocol, you can directly modify the value of `endpoint_url` in the `condif/autoload/opentracing.php` configuration file to your corresponding address of Aliyun `region`. The specific address can be obtained in Alibaba Cloud's link tracking service. For more details, please refer to [Alibaba Cloud Link Tracking Service Help Document](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv)
+When we are using Alibaba Cloud’s link tracking service, since the opposite end also supports the `Zipkin` protocol, you can directly modify the value of `endpoint_url` in the `config/autoload/opentracing.php` configuration file to your corresponding address of Aliyun `region`. The specific address can be obtained in Alibaba Cloud's link tracking service. For more details, please refer to [Alibaba Cloud Link Tracking Service Help Document](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv)
 
 ### Use other Tracer drivers
 

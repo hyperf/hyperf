@@ -1,5 +1,18 @@
 # 版本更新記錄
 
+# v2.1.20 - 2021-06-07
+
+## 修復
+
+- [#3667](https://github.com/hyperf/hyperf/pull/3667) 修復形如 `10-12/1,14-15/1` 的定時任務規則無法正常使用的問題。
+- [#3669](https://github.com/hyperf/hyperf/pull/3669) 修復了沒有反斜線形如 `10-12` 的定時任務規則無法正常使用的問題。
+- [#3674](https://github.com/hyperf/hyperf/pull/3674) 修復 `@Task` 註解中，參數 `$workerId` 無法正常使用的問題。
+
+## 優化
+
+- [#3663](https://github.com/hyperf/hyperf/pull/3663) 優化 `AbstractServiceClient::getNodesFromConsul()` 方法，排除了可能找不到端口的隱患。
+- [#3668](https://github.com/hyperf/hyperf/pull/3668) 優化 `Guzzle` 組件中 `CoroutineHandler` 代理相關的代碼，增強其兼容性。
+
 # v2.1.19 - 2021-05-31
 
 ## 修復

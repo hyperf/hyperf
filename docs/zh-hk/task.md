@@ -101,6 +101,13 @@ $result = $task->handle(Coroutine::id());
 
 > 使用 `@Task` 註解時需 `use Hyperf\Task\Annotation\Task;`
 
+註解支持以下參數
+
+|   配置   | 類型  | 默認值 |                        備註                        |
+| :------: | :---: | :----: | :------------------------------------------------: |
+| timeout  |  int  |   10   |                  任務執行超時時間                  |
+| workerId |  int  |   -1   | 指定投遞的 Task 進程 ID (-1 代表隨機投遞到空閒進程) |
+
 ## 附錄
 
 Swoole 暫時沒有協程化的函數列表
