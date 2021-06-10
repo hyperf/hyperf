@@ -68,7 +68,7 @@
         "php-amqplib/php-amqplib": "^2.9.2",
         "php-di/php-di": "^6.0",
         "phpspec/prophecy-phpunit": "^2.0",
-        "phpstan/phpstan": "0.12.86",
+        "phpstan/phpstan": "0.12.89",
         "phpunit/phpunit": "^9.4",
         "predis/predis": "^1.1",
         "promphp/prometheus_client_php": "2.2.1",
