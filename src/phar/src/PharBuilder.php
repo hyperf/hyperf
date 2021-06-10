@@ -300,8 +300,17 @@ EOD;
             $this->logger->info('Adding runtime container files');
             $finder = Finder::create()
                 ->files()
+                ->exclude($cacheFile = 'runtime/container/scan.cache')
                 ->in($this->package->getDirectory() . 'runtime/container');
             $targetPhar->addBundle($this->package->bundle($finder));
+            $cache = file_get_contents($cacheFile);
+            $scanCache = unserialize($cache);
+            $proxies = [];
+            foreach ($scanCache[1] as $class => $path){
+                $proxies[$class] = $this->getPathLocalToBase($path);
+            }
+            $scanCache[1] = $proxies;
+            $targetPhar->addFromString($cacheFile, serialize($scanCache));
         }
 
         // Add .env file.
