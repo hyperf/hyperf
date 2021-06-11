@@ -12,7 +12,6 @@ parameters:
     - %currentWorkingDirectory%/src/*/tests/*
     - %currentWorkingDirectory%/src/*/publish/*
     - %currentWorkingDirectory%/src/di/src/Resolver/FactoryResolver.php
-    - %currentWorkingDirectory%/src/circuit-breaker/*
     - %currentWorkingDirectory%/src/config-zookeeper/*
     - %currentWorkingDirectory%/src/contract/*
     - %currentWorkingDirectory%/src/crontab/*
