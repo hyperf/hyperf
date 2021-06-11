@@ -16,4 +16,20 @@ interface CircuitBreakerInterface
     public function state(): State;
 
     public function attempt(): bool;
+
+    public function open(): void;
+
+    public function close(): void;
+
+    public function halfOpen(): void;
+
+    public function getDuration(): float;
+
+    public function getFailCounter(): int;
+
+    public function getSuccessCounter(): int;
+
+    public function incrSuccessCounter(): int;
+
+    public function incrFailCounter(): int;
 }
