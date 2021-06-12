@@ -888,11 +888,16 @@ $validator = $this->validationFactory->make($request->all(), [
 ```php
 namespace App\Listener;
 
-
+use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Event\ValidatorFactoryResolved;
 
+/**
+ * @Listener()
+ * Class ValidatorFactoryResolvedListener
+ * @package App\Listener
+ */
 class ValidatorFactoryResolvedListener implements ListenerInterface
 {
 
