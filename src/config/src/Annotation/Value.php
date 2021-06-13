@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Config\Annotation;
 
+use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
 /**
  * @Annotation
  * @Target({"PROPERTY"})
  */
+#[Attribute(Attribute::TARGET_PROPERTY)]
 class Value extends AbstractAnnotation
 {
     /**
@@ -24,9 +26,10 @@ class Value extends AbstractAnnotation
      */
     public $key;
 
-    public function __construct($value = null)
+    public function __construct(...$value)
     {
-        parent::__construct($value);
+        parent::__construct(...$value);
+        $value = $this->formatParams($value);
         $this->bindMainProperty('key', $value);
     }
 }

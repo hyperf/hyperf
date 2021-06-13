@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpServer\Annotation;
 
+use Attribute;
 use Hyperf\Utils\Str;
 
 /**
  * @Annotation
  * @Target({"METHOD"})
  */
+#[Attribute(Attribute::TARGET_METHOD)]
 class RequestMapping extends Mapping
 {
     public const GET = 'GET';
@@ -38,9 +40,10 @@ class RequestMapping extends Mapping
      */
     public $methods = ['GET', 'POST'];
 
-    public function __construct($value = null)
+    public function __construct(...$value)
     {
-        parent::__construct($value);
+        parent::__construct(...$value);
+        $value = $this->formatParams($value);
         if (isset($value['methods'])) {
             if (is_string($value['methods'])) {
                 // Explode a string to a array

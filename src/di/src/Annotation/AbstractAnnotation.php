@@ -17,15 +17,25 @@ use ReflectionProperty;
 
 abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
 {
-    public function __construct($value = null)
+    public function __construct(...$value)
     {
-        if (is_array($value)) {
-            foreach ($value as $key => $val) {
-                if (property_exists($this, $key)) {
-                    $this->{$key} = $val;
-                }
+        $value = $this->formatParams($value);
+        foreach ($value as $key => $val) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $val;
             }
         }
+    }
+
+    protected function formatParams($value): array
+    {
+        if (isset($value[0])) {
+            $value = $value[0];
+        }
+        if (! is_array($value)) {
+            $value = ['value' => $value];
+        }
+        return $value;
     }
 
     public function toArray(): array

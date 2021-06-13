@@ -30,8 +30,10 @@ abstract class Mapping extends AbstractAnnotation
      */
     public $options = [];
 
-    public function __construct($value = null)
+    public function __construct(...$value)
     {
+        $value = $this->formatParams($value);
+
         if (isset($value['path'])) {
             $this->path = $value['path'];
         }

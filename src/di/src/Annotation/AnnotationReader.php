@@ -205,6 +205,9 @@ class AnnotationReader implements Reader
 
     public function getClassAnnotations(ReflectionClass $class)
     {
+        if (method_exists($class, 'getAttributes') && $attributes = $class->getAttributes()) {
+            return array_map(fn(\ReflectionAttribute $attribute) => $attribute->newInstance(), $attributes);
+        }
         $this->parser->setTarget(Target::TARGET_CLASS);
         $this->parser->setImports($this->getClassImports($class));
         $this->parser->setIgnoredAnnotationNames($this->getIgnoredAnnotationNames($class));
@@ -228,6 +231,9 @@ class AnnotationReader implements Reader
 
     public function getPropertyAnnotations(ReflectionProperty $property)
     {
+        if (method_exists($property, 'getAttributes') && $attributes = $property->getAttributes()) {
+            return array_map(fn(\ReflectionAttribute $attribute) => $attribute->newInstance(), $attributes);
+        }
         $class = $property->getDeclaringClass();
         $context = 'property ' . $class->getName() . '::$' . $property->getName();
 
@@ -254,6 +260,9 @@ class AnnotationReader implements Reader
 
     public function getMethodAnnotations(ReflectionMethod $method)
     {
+        if (method_exists($method, 'getAttributes') && $attributes = $method->getAttributes()) {
+            return array_map(fn(\ReflectionAttribute $attribute) => $attribute->newInstance(), $attributes);
+        }
         $class = $method->getDeclaringClass();
         $context = 'method ' . $class->getName() . '::' . $method->getName() . '()';
 

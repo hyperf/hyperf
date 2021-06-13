@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Process\Annotation;
 
+use Attribute;
 use Doctrine\Common\Annotations\Annotation\Target;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
@@ -18,6 +19,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  * @Annotation
  * @Target("CLASS")
  */
+#[Attribute(Attribute::TARGET_CLASS)]
 class Process extends AbstractAnnotation
 {
     /**

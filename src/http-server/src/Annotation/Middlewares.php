@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpServer\Annotation;
 
+use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
 /**
  * @Annotation
  * @Target({"ALL"})
  */
+#[Attribute]
 class Middlewares extends AbstractAnnotation
 {
     /**
@@ -24,8 +26,9 @@ class Middlewares extends AbstractAnnotation
      */
     public $middlewares = [];
 
-    public function __construct($value = null)
+    public function __construct(...$value)
     {
+        $value = $this->formatParams($value);
         $this->bindMainProperty('middlewares', $value);
     }
 }

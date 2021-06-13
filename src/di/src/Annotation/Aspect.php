@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Annotation;
 
+use Attribute;
 use Hyperf\Di\ReflectionManager;
 use ReflectionProperty;
 
@@ -18,6 +19,7 @@ use ReflectionProperty;
  * @Annotation
  * @Target({"CLASS"})
  */
+#[Attribute(Attribute::TARGET_CLASS)]
 class Aspect extends AbstractAnnotation
 {
     /**
