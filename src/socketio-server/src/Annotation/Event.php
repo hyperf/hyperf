@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Annotation;
 
+use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\SocketIOServer\Collector\EventAnnotationCollector;
@@ -19,13 +20,15 @@ use Hyperf\SocketIOServer\Collector\EventAnnotationCollector;
  * @Annotation
  * @Target({"CLASS", "METHOD"})
  */
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Event extends AbstractAnnotation
 {
     public $event = 'event';
 
-    public function __construct($value = [])
+    public function __construct(...$value)
     {
-        parent::__construct();
+        parent::__construct(...$value);
+        $value = $this->formatParams($value);
         $this->bindMainProperty('event', $value);
     }
 

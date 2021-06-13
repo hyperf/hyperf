@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Annotation;
 
+use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\Str;
@@ -20,6 +21,7 @@ use ReflectionMethod;
  * @Annotation
  * @Target({"CLASS", "METHOD"})
  */
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Crontab extends AbstractAnnotation
 {
     /**
@@ -72,9 +74,10 @@ class Crontab extends AbstractAnnotation
      */
     public $enable = true;
 
-    public function __construct($value = null)
+    public function __construct(...$value)
     {
-        parent::__construct($value);
+        parent::__construct(...$value);
+        $value = $this->formatParams($value);
         $this->bindMainProperty('rule', $value);
         if (! empty($this->rule)) {
             $this->rule = str_replace('\\', '', $this->rule);

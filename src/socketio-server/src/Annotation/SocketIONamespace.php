@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Annotation;
 
+use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\SocketIOServer\Collector\SocketIORouter;
 
@@ -18,13 +19,15 @@ use Hyperf\SocketIOServer\Collector\SocketIORouter;
  * @Annotation
  * @Target({"CLASS"})
  */
+#[Attribute(Attribute::TARGET_CLASS)]
 class SocketIONamespace extends AbstractAnnotation
 {
     public $namespace = '/';
 
-    public function __construct($value = [])
+    public function __construct(...$value)
     {
-        parent::__construct();
+        parent::__construct(...$value);
+        $value = $this->formatParams($value);
         $this->bindMainProperty('namespace', $value);
     }
 

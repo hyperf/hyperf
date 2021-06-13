@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ModelListener\Annotation;
 
+use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\ModelListener\Collector\ListenerCollector;
 use Hyperf\Utils\Arr;
@@ -19,6 +20,7 @@ use Hyperf\Utils\Arr;
  * @Annotation
  * @Target({"CLASS"})
  */
+#[Attribute(Attribute::TARGET_CLASS)]
 class ModelListener extends AbstractAnnotation
 {
     /**
@@ -26,9 +28,10 @@ class ModelListener extends AbstractAnnotation
      */
     public $models = [];
 
-    public function __construct($value = null)
+    public function __construct(...$value)
     {
-        parent::__construct($value);
+        parent::__construct(...$value);
+        $value = $this->formatParams($value);
 
         if ($value = $value['value'] ?? null) {
             if (is_string($value)) {
