@@ -894,9 +894,7 @@ use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Event\ValidatorFactoryResolved;
 
 /**
- * @Listener()
- * Class ValidatorFactoryResolvedListener
- * @package App\Listener
+ * @Listener
  */
 class ValidatorFactoryResolvedListener implements ListenerInterface
 {
