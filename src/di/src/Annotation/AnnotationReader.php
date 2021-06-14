@@ -205,7 +205,7 @@ class AnnotationReader implements Reader
 
     public function getClassAnnotations(ReflectionClass $class)
     {
-        if ($annotations = $this->getPhp8Annotations($class)) {
+        if ($annotations = $this->getAttributes($class)) {
             return $annotations;
         }
         $this->parser->setTarget(Target::TARGET_CLASS);
@@ -229,7 +229,7 @@ class AnnotationReader implements Reader
         return null;
     }
 
-    public function getPhp8Annotations(\Reflector $reflection): ?array
+    public function getAttributes(\Reflector $reflection): ?array
     {
         if (method_exists($reflection, 'getAttributes') && $attributes = $reflection->getAttributes()) {
             return array_map(fn(\ReflectionAttribute $attribute) => $attribute->newInstance(), $attributes);
@@ -239,7 +239,7 @@ class AnnotationReader implements Reader
 
     public function getPropertyAnnotations(ReflectionProperty $property)
     {
-        if ($annotations = $this->getPhp8Annotations($property)) {
+        if ($annotations = $this->getAttributes($property)) {
             return $annotations;
         }
         $class = $property->getDeclaringClass();
@@ -268,7 +268,7 @@ class AnnotationReader implements Reader
 
     public function getMethodAnnotations(ReflectionMethod $method)
     {
-        if ($annotations = $this->getPhp8Annotations($method)) {
+        if ($annotations = $this->getAttributes($method)) {
             return $annotations;
         }
         $class = $method->getDeclaringClass();
