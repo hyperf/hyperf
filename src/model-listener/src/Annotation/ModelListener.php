@@ -30,13 +30,13 @@ class ModelListener extends AbstractAnnotation
 
     public function __construct(...$value)
     {
-        $value = parent::__construct(...$value);
+        parent::__construct(...$value);
 
-        if ($value = $value['value'] ?? null) {
-            if (is_string($value)) {
-                $this->models = [$value];
-            } elseif (is_array($value) && ! Arr::isAssoc($value)) {
-                $this->models = $value;
+        if ($formattedValue = $this->formattedValue['value'] ?? null) {
+            if (is_string($formattedValue)) {
+                $this->models = [$formattedValue];
+            } elseif (is_array($formattedValue) && ! Arr::isAssoc($formattedValue)) {
+                $this->models = $formattedValue;
             }
         }
     }

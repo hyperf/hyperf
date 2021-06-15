@@ -42,14 +42,14 @@ class RequestMapping extends Mapping
 
     public function __construct(...$value)
     {
-        $value = parent::__construct(...$value);
-        if (isset($value['methods'])) {
-            if (is_string($value['methods'])) {
+        parent::__construct(...$value);
+        if (isset($this->formattedValue['methods'])) {
+            if (is_string($this->formattedValue['methods'])) {
                 // Explode a string to a array
-                $this->methods = explode(',', Str::upper(str_replace(' ', '', $value['methods'])));
+                $this->methods = explode(',', Str::upper(str_replace(' ', '', $this->formattedValue['methods'])));
             } else {
                 $methods = [];
-                foreach ($value['methods'] as $method) {
+                foreach ($this->formattedValue['methods'] as $method) {
                     $methods[] = Str::upper(str_replace(' ', '', $method));
                 }
                 $this->methods = $methods;

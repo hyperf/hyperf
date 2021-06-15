@@ -17,15 +17,20 @@ use ReflectionProperty;
 
 abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
 {
+
+    /**
+     * @var null|array
+     */
+    protected $formattedValue = null;
+
     public function __construct(...$value)
     {
-        $value = $this->formatParams($value);
-        foreach ($value as $key => $val) {
+        $this->formattedValue = $this->formatParams($value);
+        foreach ($this->formattedValue as $key => $val) {
             if (property_exists($this, $key)) {
                 $this->{$key} = $val;
             }
         }
-        return $value;
     }
 
     protected function formatParams($value): array
@@ -64,10 +69,10 @@ abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
         AnnotationCollector::collectProperty($className, $target, static::class, $this);
     }
 
-    protected function bindMainProperty(string $key, ?array $value)
+    protected function bindMainProperty(string $key)
     {
-        if (isset($value['value'])) {
-            $this->{$key} = $value['value'];
+        if (isset($this->formattedValue['value'])) {
+            $this->{$key} = $this->formattedValue['value'];
         }
     }
 }
