@@ -17,11 +17,6 @@ use ReflectionProperty;
 
 abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
 {
-    /**
-     * @var null|array
-     */
-    protected $formattedValue;
-
     public function __construct(...$value)
     {
         $formattedValue = $this->formatParams($value);

@@ -21,6 +21,8 @@
   - [#3654](https://github.com/hyperf/hyperf/pull/3654) Removed `roave/better-reflection` from other components.
 - [#3676](https://github.com/hyperf/hyperf/pull/3676) Use `promphp/prometheus_client_php` instead of `endclothing/prometheus_client_php`.
 - [#3694](https://github.com/hyperf/hyperf/pull/3694) Changed `Hyperf\CircuitBreaker\CircuitBreakerInterface` to support php8.
+  - Changed `CircuitBreaker::inc*Counter()` to `CircuitBreaker::incr*Counter()`.
+  - Changed type hint for method `AbstractHandler::switch()`.
 
 ## Deprecated
 
