@@ -232,12 +232,13 @@ class AnnotationReader implements Reader
 
     public function getAttributes(\Reflector $reflection): ?array
     {
+        $result = null;
         if (method_exists($reflection, 'getAttributes') && $attributes = $reflection->getAttributes()) {
-            return array_map(function (\ReflectionAttribute $attribute) {
-                return $attribute->newInstance();
-            }, $attributes);
+            foreach ($attributes as $attribute) {
+                $result[] = $attribute->newInstance();
+            }
         }
-        return null;
+        return $result;
     }
 
     public function getPropertyAnnotations(ReflectionProperty $property)
