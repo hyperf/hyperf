@@ -17,31 +17,19 @@ use ReflectionProperty;
 
 abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
 {
-
     /**
      * @var null|array
      */
-    protected $formattedValue = null;
+    protected $formattedValue;
 
     public function __construct(...$value)
     {
-        $this->formattedValue = $this->formatParams($value);
-        foreach ($this->formattedValue as $key => $val) {
+        $formattedValue = $this->formatParams($value);
+        foreach ($formattedValue as $key => $val) {
             if (property_exists($this, $key)) {
                 $this->{$key} = $val;
             }
         }
-    }
-
-    protected function formatParams($value): array
-    {
-        if (isset($value[0])) {
-            $value = $value[0];
-        }
-        if (! is_array($value)) {
-            $value = ['value' => $value];
-        }
-        return $value;
     }
 
     public function toArray(): array
@@ -69,10 +57,22 @@ abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
         AnnotationCollector::collectProperty($className, $target, static::class, $this);
     }
 
-    protected function bindMainProperty(string $key)
+    protected function formatParams($value): array
     {
-        if (isset($this->formattedValue['value'])) {
-            $this->{$key} = $this->formattedValue['value'];
+        if (isset($value[0])) {
+            $value = $value[0];
+        }
+        if (! is_array($value)) {
+            $value = ['value' => $value];
+        }
+        return $value;
+    }
+
+    protected function bindMainProperty(string $key, array $value)
+    {
+        $formattedValue = $this->formatParams($value);
+        if (isset($formattedValue['value'])) {
+            $this->{$key} = $formattedValue['value'];
         }
     }
 }

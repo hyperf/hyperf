@@ -33,6 +33,6 @@ abstract class Mapping extends AbstractAnnotation
     public function __construct(...$value)
     {
         parent::__construct(...$value);
-        $this->bindMainProperty('path');
+        $this->bindMainProperty('path', $value);
     }
 }

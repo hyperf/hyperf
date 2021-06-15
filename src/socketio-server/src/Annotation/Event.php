@@ -28,7 +28,7 @@ class Event extends AbstractAnnotation
     public function __construct(...$value)
     {
         parent::__construct(...$value);
-        $this->bindMainProperty('event');
+        $this->bindMainProperty('event', $value);
     }
 
     public function collectMethod(string $className, ?string $target): void

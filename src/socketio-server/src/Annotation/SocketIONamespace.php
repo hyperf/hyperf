@@ -27,7 +27,7 @@ class SocketIONamespace extends AbstractAnnotation
     public function __construct(...$value)
     {
         parent::__construct(...$value);
-        $this->bindMainProperty('namespace');
+        $this->bindMainProperty('namespace', $value);
     }
 
     public function collectClass(string $className): void

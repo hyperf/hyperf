@@ -32,7 +32,7 @@ class ModelListener extends AbstractAnnotation
     {
         parent::__construct(...$value);
 
-        if ($formattedValue = $this->formattedValue['value'] ?? null) {
+        if ($formattedValue = $this->formatParams($value)['value'] ?? null) {
             if (is_string($formattedValue)) {
                 $this->models = [$formattedValue];
             } elseif (is_array($formattedValue) && ! Arr::isAssoc($formattedValue)) {

@@ -29,6 +29,6 @@ class Middlewares extends AbstractAnnotation
     public function __construct(...$value)
     {
         $this->formatParams($value);
-        $this->bindMainProperty('middlewares');
+        $this->bindMainProperty('middlewares', $value);
     }
 }
