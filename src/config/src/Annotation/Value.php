@@ -28,8 +28,7 @@ class Value extends AbstractAnnotation
 
     public function __construct(...$value)
     {
-        parent::__construct(...$value);
-        $value = $this->formatParams($value);
+        $value = parent::__construct(...$value);
         $this->bindMainProperty('key', $value);
     }
 }

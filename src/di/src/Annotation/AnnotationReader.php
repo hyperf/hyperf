@@ -71,7 +71,8 @@ class AnnotationReader implements Reader
         'example' => true,
         'filesource' => true,
         'global' => true,
-        'ignore' => true, /* Can we enable this? 'index' => true, */ 'internal' => true,
+        'ignore' => true, /* Can we enable this? 'index' => true, */
+        'internal' => true,
         'license' => true, 'link' => true,
         'method' => true,
         'package' => true, 'param' => true, 'property' => true, 'property-read' => true, 'property-write' => true,
@@ -232,7 +233,9 @@ class AnnotationReader implements Reader
     public function getAttributes(\Reflector $reflection): ?array
     {
         if (method_exists($reflection, 'getAttributes') && $attributes = $reflection->getAttributes()) {
-            return array_map(fn(\ReflectionAttribute $attribute) => $attribute->newInstance(), $attributes);
+            return array_map(function (\ReflectionAttribute $attribute) {
+                return $attribute->newInstance();
+            }, $attributes);
         }
         return null;
     }

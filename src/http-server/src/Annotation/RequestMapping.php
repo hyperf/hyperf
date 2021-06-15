@@ -42,8 +42,7 @@ class RequestMapping extends Mapping
 
     public function __construct(...$value)
     {
-        parent::__construct(...$value);
-        $value = $this->formatParams($value);
+        $value = parent::__construct(...$value);
         if (isset($value['methods'])) {
             if (is_string($value['methods'])) {
                 // Explode a string to a array
