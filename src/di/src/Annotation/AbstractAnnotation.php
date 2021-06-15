@@ -25,6 +25,7 @@ abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
                 $this->{$key} = $val;
             }
         }
+        return $value;
     }
 
     protected function formatParams($value): array

@@ -30,8 +30,7 @@ class ModelListener extends AbstractAnnotation
 
     public function __construct(...$value)
     {
-        parent::__construct(...$value);
-        $value = $this->formatParams($value);
+        $value = parent::__construct(...$value);
 
         if ($value = $value['value'] ?? null) {
             if (is_string($value)) {
