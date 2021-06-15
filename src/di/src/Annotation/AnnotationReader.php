@@ -230,21 +230,23 @@ class AnnotationReader implements Reader
         return null;
     }
 
-    public function getAttributes(\Reflector $reflection): ?array
+    public function getAttributes(\Reflector $reflection): array
     {
-        $result = null;
-        if (method_exists($reflection, 'getAttributes') && $attributes = $reflection->getAttributes()) {
-            foreach ($attributes as $attribute) {
-                $result[] = $attribute->newInstance();
-            }
+        $result = [];
+        if (! method_exists($reflection, 'getAttributes')) {
+            return $result;
+        }
+        $attributes = $reflection->getAttributes();
+        foreach ($attributes as $attribute) {
+            $result[] = $attribute->newInstance();
         }
         return $result;
     }
 
     public function getPropertyAnnotations(ReflectionProperty $property)
     {
-        if ($annotations = $this->getAttributes($property)) {
-            return $annotations;
+        if (\PHP_VERSION_ID >= 80000) {
+            return $this->getAttributes($property);
         }
         $class = $property->getDeclaringClass();
         $context = 'property ' . $class->getName() . '::$' . $property->getName();
@@ -272,8 +274,8 @@ class AnnotationReader implements Reader
 
     public function getMethodAnnotations(ReflectionMethod $method)
     {
-        if ($annotations = $this->getAttributes($method)) {
-            return $annotations;
+        if (\PHP_VERSION_ID >= 80000) {
+            return $this->getAttributes($method);
         }
         $class = $method->getDeclaringClass();
         $context = 'method ' . $class->getName() . '::' . $method->getName() . '()';
