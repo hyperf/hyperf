@@ -28,7 +28,7 @@ class Middleware extends AbstractAnnotation
 
     public function __construct(...$value)
     {
-        $value = parent::__construct(...$value);
-        $this->bindMainProperty('middleware', $value);
+        parent::__construct(...$value);
+        $this->bindMainProperty('middleware');
     }
 }

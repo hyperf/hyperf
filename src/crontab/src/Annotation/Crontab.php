@@ -76,8 +76,8 @@ class Crontab extends AbstractAnnotation
 
     public function __construct(...$value)
     {
-        $value = parent::__construct(...$value);
-        $this->bindMainProperty('rule', $value);
+        parent::__construct(...$value);
+        $this->bindMainProperty('rule');
         if (! empty($this->rule)) {
             $this->rule = str_replace('\\', '', $this->rule);
         }
