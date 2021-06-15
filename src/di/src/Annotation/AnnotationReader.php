@@ -206,8 +206,10 @@ class AnnotationReader implements Reader
 
     public function getClassAnnotations(ReflectionClass $class)
     {
-        if ($annotations = $this->getAttributes($class)) {
-            return $annotations;
+        if (\PHP_VERSION_ID >= 80000) {
+            if ($attributes = $this->getAttributes($class)) {
+                return $attributes;
+            }
         }
         $this->parser->setTarget(Target::TARGET_CLASS);
         $this->parser->setImports($this->getClassImports($class));
@@ -246,7 +248,9 @@ class AnnotationReader implements Reader
     public function getPropertyAnnotations(ReflectionProperty $property)
     {
         if (\PHP_VERSION_ID >= 80000) {
-            return $this->getAttributes($property);
+            if ($attributes = $this->getAttributes($property)) {
+                return $attributes;
+            }
         }
         $class = $property->getDeclaringClass();
         $context = 'property ' . $class->getName() . '::$' . $property->getName();
@@ -275,7 +279,9 @@ class AnnotationReader implements Reader
     public function getMethodAnnotations(ReflectionMethod $method)
     {
         if (\PHP_VERSION_ID >= 80000) {
-            return $this->getAttributes($method);
+            if ($attributes = $this->getAttributes($method)) {
+                return $attributes;
+            }
         }
         $class = $method->getDeclaringClass();
         $context = 'method ' . $class->getName() . '::' . $method->getName() . '()';
