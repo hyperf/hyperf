@@ -23,6 +23,7 @@
 - [#3694](https://github.com/hyperf/hyperf/pull/3694) Changed `Hyperf\CircuitBreaker\CircuitBreakerInterface` to support php8.
   - Changed `CircuitBreaker::inc*Counter()` to `CircuitBreaker::incr*Counter()`.
   - Changed type hint for method `AbstractHandler::switch()`.
+- [#3706](https://github.com/hyperf/hyperf/pull/3706) Changed the style of writing to `#[Middlewares(FooMiddleware::class)]` from `@Middlewares({@Middleware(FooMiddleware::class)})` in PHP8.
 
 ## Deprecated
 

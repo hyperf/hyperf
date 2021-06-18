@@ -28,7 +28,13 @@ class Middlewares extends AbstractAnnotation
 
     public function __construct(...$value)
     {
-        $this->formatParams($value);
+        if (is_string($value[0])) {
+            $middlewares = [];
+            foreach ($value as $key => $middlewareName) {
+                $middlewares['value'][] = new Middleware($middlewareName);
+            }
+            $value = $middlewares;
+        }
         $this->bindMainProperty('middlewares', $value);
     }
 }

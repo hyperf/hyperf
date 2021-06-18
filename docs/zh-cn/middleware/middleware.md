@@ -119,6 +119,7 @@ class IndexController
     }
 }
 ```
+> 注意: 使用`PHP8`的`Attributes`语法时, 应简化为`#[Middlewares(FooMiddleware::class, BarMiddleware::class)]`这种格式, 下同。
 
 #### 定义方法级别的中间件
 
