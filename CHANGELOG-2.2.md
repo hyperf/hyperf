@@ -53,3 +53,4 @@
 
 - [#3650](https://github.com/hyperf/hyperf/pull/3650) Fixed bug that `ReflectionParameter::getClass()` will be deprecated in php8.
 - [#3692](https://github.com/hyperf/hyperf/pull/3692) Fixed bug that class proxies couldn't be included when building phar.
+- [#3706](https://github.com/hyperf/hyperf/pull/3706) Fixed bug that `#[Middlewares]` does not work in PHP8.
