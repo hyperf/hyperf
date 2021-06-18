@@ -28,7 +28,7 @@ class Middlewares extends AbstractAnnotation
 
     public function __construct(...$value)
     {
-        if (count($value) > 1) {
+        if (is_string($value[0])) {
             $middlewares = [];
             foreach ($value as $key => $middlewareName) {
                 $middlewares['value'][] = new Middleware($middlewareName);
