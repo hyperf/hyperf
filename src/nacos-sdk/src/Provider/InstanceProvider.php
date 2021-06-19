@@ -60,6 +60,7 @@ class InstanceProvider extends AbstractProvider
 
     /**
      * @param $optional = [
+     *     'groupName' => '',
      *     'clusterName' => '',
      *     'namespaceId' => '',
      *     'weight' => 0.99,
@@ -68,12 +69,11 @@ class InstanceProvider extends AbstractProvider
      *     'ephemeral' => false,
      * ]
      */
-    public function update(string $serviceName, string $groupName, string $ip, int $port, array $optional = []): ResponseInterface
+    public function update(string $ip, int $port, string $serviceName, array $optional = []): ResponseInterface
     {
         return $this->request('PUT', '/nacos/v1/ns/instance', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'serviceName' => $serviceName,
-                'groupName' => $groupName,
                 'ip' => $ip,
                 'port' => $port,
             ])),
