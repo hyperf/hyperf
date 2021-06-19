@@ -13,6 +13,7 @@ namespace Hyperf\NacosSdk\Provider;
 
 use GuzzleHttp\RequestOptions;
 use Hyperf\NacosSdk\AbstractProvider;
+use Hyperf\Utils\Codec\Json;
 use Psr\Http\Message\ResponseInterface;
 
 class InstanceProvider extends AbstractProvider
@@ -117,6 +118,15 @@ class InstanceProvider extends AbstractProvider
         ]);
     }
 
+    /**
+     * @param $beat = [
+     *     'ip' => '',
+     *     'port' => 9501,
+     *     'serviceName' => '',
+     *     'cluster' => '',
+     *     'weight' => 1,
+     * ]
+     */
     public function beat(string $serviceName, array $beat = [], ?string $groupName = null, ?bool $ephemeral = null): ResponseInterface
     {
         return $this->request('PUT', '/nacos/v1/ns/instance/beat', [
@@ -124,7 +134,7 @@ class InstanceProvider extends AbstractProvider
                 'serviceName' => $serviceName,
                 'groupName' => $groupName,
                 'ephemeral' => $ephemeral,
-                'beat' => $beat,
+                'beat' => Json::encode($beat),
             ]),
         ]);
     }
