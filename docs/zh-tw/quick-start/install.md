@@ -4,7 +4,7 @@
 
 Hyperf 對系統環境有一些要求，僅可運行於 Linux 和 Mac 環境下，但由於 Docker 虛擬化技術的發展，在 Windows 下也可以通過 Docker for Windows 來作為執行環境，通常來說 Mac 環境下，我們更推薦本地環境部署，以避免 Docker 共享磁碟緩慢導致 Hyperf 啟動速度慢的問題。   
 
-[hyperf\hyperf-docker](https://github.com/hyperf/hyperf-docker) 專案內已經為您準備好了各種版本的 Dockerfile ，或直接基於已經構建好的 [hyperf\hyperf](https://hub.docker.com/r/hyperf/hyperf) 映象來執行。   
+[hyperf/hyperf-docker](https://github.com/hyperf/hyperf-docker) 專案內已經為您準備好了各種版本的 Dockerfile ，或直接基於已經構建好的 [hyperf/hyperf](https://hub.docker.com/r/hyperf/hyperf) 映象來執行。   
 
 當您不想採用 Docker 來作為執行的環境基礎時，您需要確保您的執行環境達到了以下的要求：   
 
