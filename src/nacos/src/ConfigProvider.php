@@ -11,13 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nacos;
 
-use Hyperf\Framework\Logger\StdoutLogger;
-use Hyperf\Nacos\Config\FetchConfigProcess;
-use Hyperf\Nacos\Config\OnPipeMessageListener;
-use Hyperf\Nacos\Contract\LoggerInterface;
+use Hyperf\Nacos\Listener\ConfigReloadListener;
 use Hyperf\Nacos\Listener\MainWorkerStartListener;
 use Hyperf\Nacos\Listener\OnShutdownListener;
+use Hyperf\Nacos\Process\FetchConfigProcess;
 use Hyperf\Nacos\Process\InstanceBeatProcess;
+use Hyperf\Nacos\Service\IPReader;
+use Hyperf\Nacos\Service\IPReaderInterface;
+use Hyperf\NacosSdk\Application;
 
 class ConfigProvider
 {
@@ -27,14 +28,15 @@ class ConfigProvider
             'listeners' => [
                 MainWorkerStartListener::class,
                 OnShutdownListener::class,
-                OnPipeMessageListener::class,
+                ConfigReloadListener::class,
             ],
             'processes' => [
                 InstanceBeatProcess::class,
                 FetchConfigProcess::class,
             ],
             'dependencies' => [
-                LoggerInterface::class => StdoutLogger::class,
+                Application::class => ClientFactory::class,
+                IPReaderInterface::class => IPReader::class,
             ],
             'annotations' => [],
             'publish' => [

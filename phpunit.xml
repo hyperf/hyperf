@@ -41,6 +41,7 @@
             <directory suffix="Test.php">./src/logger/tests</directory>
             <directory suffix="Test.php">./src/metric/tests</directory>
             <directory suffix="Test.php">./src/model-cache/tests</directory>
+            <directory suffix="Test.php">./src/nacos/tests</directory>
             <directory suffix="Test.php">./src/nacos-sdk/tests</directory>
             <directory suffix="Test.php">./src/nats/tests</directory>
             <directory suffix="Test.php">./src/nsq/tests</directory>
@@ -101,6 +102,7 @@
             <directory suffix=".php">./src/kafka/src</directory>
             <directory suffix=".php">./src/logger/src</directory>
             <directory suffix=".php">./src/model-cache/src</directory>
+            <directory suffix=".php">./src/nacos/src</directory>
             <directory suffix=".php">./src/nacos-sdk/src</directory>
             <directory suffix=".php">./src/nats/src</directory>
             <directory suffix=".php">./src/nsq/src</directory>

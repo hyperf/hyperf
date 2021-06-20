@@ -280,6 +280,7 @@
             "HyperfTest\\ModelCache\\": "src/model-cache/tests/",
             "HyperfTest\\ModelListener\\": "src/model-listener/tests/",
             "HyperfTest\\NacosSdk\\": "src/nacos-sdk/tests/",
+            "HyperfTest\\Nacos\\": "src/nacos/tests/",
             "HyperfTest\\Nats\\": "src/nats/tests/",
             "HyperfTest\\Nsq\\": "src/nsq/tests/",
             "HyperfTest\\Paginator\\": "src/paginator/tests/",

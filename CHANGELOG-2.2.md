@@ -26,6 +26,7 @@
   - Changed `CircuitBreaker::inc*Counter()` to `CircuitBreaker::incr*Counter()`.
   - Changed type hint for method `AbstractHandler::switch()`.
 - [#3706](https://github.com/hyperf/hyperf/pull/3706) Changed the style of writing to `#[Middlewares(FooMiddleware::class)]` from `@Middlewares({@Middleware(FooMiddleware::class)})` in PHP8.
+- [#3715](https://github.com/hyperf/hyperf/pull/3715) Restructure nacos component, be sure to reread the documents.
 
 ## Deprecated
 

@@ -21,20 +21,24 @@
             "Hyperf\\Nacos\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Nacos\\": "tests"
+        }
+    },
     "require": {
         "hyperf/contract": "~2.2.0",
         "hyperf/guzzle": "~2.2.0",
-        "hyperf/load-balancer": "~2.2.0",
+        "hyperf/nacos-sdk": "~2.2.0",
         "hyperf/utils": "~2.2.0"
     },
     "suggest": {
         "ext-json": "*",
         "ext-simplexml": "*",
         "ext-yaml": "*",
-        "hyperf/event": "~2.2.0",
-        "hyperf/process": "~2.2.0",
-        "hyperf/framework": "~2.2.0",
-        "hyperf/logger": "~2.2.0"
+        "hyperf/event": "Required to use listeners. (~2.2.0)",
+        "hyperf/process": "Required to use processes. (~2.2.0)",
+        "hyperf/framework": "Required to use listeners. (~2.2.0)"
     },
     "config": {
         "sort-packages": true

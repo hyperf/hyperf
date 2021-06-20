@@ -12,7 +12,6 @@ declare(strict_types=1);
 use Hyperf\Nacos\Constants;
 
 return [
-    'enable' => true,
     // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
     // 'url' => '',
     // The nacos host info
@@ -21,40 +20,45 @@ return [
     // The nacos account info
     'username' => null,
     'password' => null,
-    'config_merge_mode' => Constants::CONFIG_MERGE_OVERWRITE,
+    'guzzle' => [
+        'config' => [],
+    ],
+    'config' => [
+        'enable' => true,
+        'merge_mode' => Constants::CONFIG_MERGE_OVERWRITE,
+        'reload_interval' => 3,
+        'default_key' => 'nacos_config',
+        'listener_config' => [
+            // dataId, group, tenant, type, content
+            'nacos_config' => [
+                'tenant' => 'tenant', // corresponding with service.namespaceId
+                'data_id' => 'hyperf-service-config',
+                'group' => 'DEFAULT_GROUP',
+            ],
+            'nacos_config.data' => [
+                'data_id' => 'hyperf-service-config-yml',
+                'group' => 'DEFAULT_GROUP',
+                'type' => 'yml',
+            ],
+        ],
+    ],
     // The service info.
     'service' => [
+        'enable' => true,
         'service_name' => 'hyperf',
         'group_name' => 'api',
         'namespace_id' => 'namespace_id',
         'protect_threshold' => 0.5,
+        'metadata' => null,
+        'selector' => null,
+        'instance' => [
+            'ip' => Hyperf\Nacos\Service\IPReaderInterface::class,
+            'cluster' => null,
+            'weight' => null,
+            'metadata' => null,
+            'ephemeral' => null,
+            'heartbeat' => 5,
+            'auto_removed' => false,
+        ],
     ],
-    // The client info.
-    'client' => [
-        'service_name' => 'hyperf',
-        'group_name' => 'api',
-        'weight' => 80,
-        'cluster' => 'DEFAULT',
-        'ephemeral' => true,
-        'beat_enable' => true,
-        'beat_interval' => 5,
-        'namespace_id' => 'namespace_id', // It must be equal with service.namespaceId.
-    ],
-    'remove_node_when_server_shutdown' => true,
-    'config_reload_interval' => 3,
-    'config_append_node' => 'nacos_config',
-    'listener_config' => [
-        // dataId, group, tenant, type, content
-        //[
-        //    'tenant' => 'tenant', // corresponding with service.namespaceId
-        //    'data_id' => 'hyperf-service-config',
-        //    'group' => 'DEFAULT_GROUP',
-        //],
-        //[
-        //    'data_id' => 'hyperf-service-config-yml',
-        //    'group' => 'DEFAULT_GROUP',
-        //    'type' => 'yml',
-        //],
-    ],
-    'load_balancer' => 'random',
 ];
