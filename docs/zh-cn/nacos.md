@@ -14,51 +14,17 @@ composer require hyperf/nacos
 php bin/hyperf.php vendor:publish hyperf/nacos
 ```
 
-### 目录结构
-
-```
-./src
-├── Api
-│   ├── AbstractNacos.php
-│   ├── NacosConfig.php
-│   ├── NacosInstance.php
-│   ├── NacosOperator.php
-│   └── NacosService.php
-├── Client.php
-├── Config
-│   ├── FetchConfigProcess.php
-│   ├── OnPipeMessageListener.php
-│   └── PipeMessage.php
-├── ConfigProvider.php
-├── Contract
-│   └── LoggerInterface.php
-├── Exception
-│   ├── InvalidArgumentException.php
-│   ├── NacosThrowable.php
-│   └── RuntimeException.php
-├── Instance.php
-├── Listener
-│   ├── MainWorkerStartListener.php
-│   └── OnShutdownListener.php
-├── Model
-│   ├── AbstractModel.php
-│   ├── ConfigModel.php
-│   ├── InstanceModel.php
-│   └── ServiceModel.php
-├── Process
-│   └── InstanceBeatProcess.php
-└── Service.php
-```
-
 ## 服务与实例
 
-`MainWorkerStartListener.php` 将在系统启动完成时自动完成 `实例注册`，`服务注册` 
+`MainWorkerStartListener.php` 将在系统启动完成时自动完成 `实例注册`，`服务注册`
 
 如果需要在服务下线时自动注销服务，请增加如下配置，以监听 `Shutdown` 事件
 
-```php
-// config/autoload/server.php
+- config/autoload/server.php
 
+```php
+<?php
+use Hyperf\Server\Event;
 return [
     // ...other
     'callbacks' => [
@@ -68,43 +34,19 @@ return [
 ];
 ```
 
-### 获取当前实例
+### 获取服务的可用节点列表
 
 ```php
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Nacos\Instance;
+use Hyperf\Nacos\Client;
 
 $container = ApplicationContext::getContainer();
-$instance = $container->get(Instance::class);
-```
+$client = $container->get(Client::class);
 
-### 获取当前服务
-
-```php
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Nacos\Service;
-
-$container = ApplicationContext::getContainer();
-$service = $container->get(Service::class);
-```
-
-### 获取一个服务的最优节点
-
-```php
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Nacos\Api\NacosInstance;
-use Hyperf\Nacos\Model\ServiceModel;
-
-$container = ApplicationContext::getContainer();
-$instance = $container->get(NacosInstance::class);
-
-$service = new ServiceModel([
-    'service_name' => 'hyperf',
-    'group_name' => 'api',
-    'namespace_id' => '5ce9d1c1-6732-4ccc-ae1f-5139af86a845'
+$optimal = $client->getValidNodes('hyperf', [
+    'groupName' => 'api',
+    'namespaceId' => '5ce9d1c1-6732-4ccc-ae1f-5139af86a845'
 ]);
-
-$optimal = $instance->getOptimal($service);
 
 ```
 
@@ -115,29 +57,41 @@ $optimal = $instance->getOptimal($service);
 `FetchConfigProcess.php` 自定义进程将监听配置, 若有更新将发送 `PipeMessage` 到各服务`worker` 进程, 并合入当前进程的 `Config`
 
 如果服务如下配置
+
 ```php
 // config/autoload/nacos.php
 
 return [
-    // ...other
-    'config_reload_interval' => 3,
-    // 远程配置合并节点, 默认 config 根节点
-    'config_append_node' => 'nacos_config',
-    'listener_config' => [
-        // 配置项 dataId, group, tenant, type, content
-        [
-            'data_id' => 'hyperf-service-config',
-            'group' => 'DEFAULT_GROUP',
-        ],
-        [
-            'data_id' => 'hyperf-service-config-yml',
-            'group' => 'DEFAULT_GROUP',
-            'type' => 'yml',
+    'host' => '127.0.0.1',
+    'port' => 8848,
+    'username' => null,
+    'password' => null,
+    'config' => [
+        // 是否开启配置中心
+        'enable' => true,
+        // 合并模式
+        'merge_mode' => Constants::CONFIG_MERGE_OVERWRITE,
+        // 配置读取间隔
+        'reload_interval' => 3,
+        // 默认的配置 KEY 值
+        'default_key' => 'nacos_config',
+        'listener_config' => [
+            // $key => $config
+            // 不设置 key 时，则使用 default_key 配置的 key
+            'nacos_config' => [
+                'tenant' => 'tenant',
+                'data_id' => 'json',
+                'group' => 'DEFAULT_GROUP',
+                'type' => 'json',
+            ],
+            'nacos_config.data' => [
+                'data_id' => 'text',
+                'group' => 'DEFAULT_GROUP',
+            ],
         ],
     ],
 ];
 ```
 
-系统将自动监听`listener_config` 中的配置，并将其合并入`hyperf Config` 对象的指定(`config_append_node`) 节点，可以用`config('nacos_config.***')` 获取，若没有配置 `config_append_node` 项，将会并入 `Config` 对象根节点。
-
-> 所有配置的 `键(key)` 在实际发起 API 请求时会自动从下划线风格转换为驼峰风格。
+系统将自动监听 `listener_config` 中的配置，并将其合并到对应的节点中，例如上述的 `nacos_config` ，可以用`config('nacos_config.***')`
+获取，若没有配置 `$key` 项，将会并入 `default_key` 节点。
