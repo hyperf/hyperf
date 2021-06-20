@@ -12,10 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Nacos\Process;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Nacos\Api\NacosInstance;
-use Hyperf\Nacos\Contract\LoggerInterface;
-use Hyperf\Nacos\Instance;
-use Hyperf\Nacos\Service;
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Nacos\Service\IPReaderInterface;
+use Hyperf\NacosSdk\Application;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
 
@@ -24,23 +23,49 @@ class InstanceBeatProcess extends AbstractProcess
     /**
      * @var string
      */
-    public $name = 'nacos-beat';
+    public $name = 'nacos-heartbeat';
 
     public function handle(): void
     {
-        $instance = $this->container->get(Instance::class);
-        $nacosInstance = $this->container->get(NacosInstance::class);
-        $service = $this->container->get(Service::class);
-
         $config = $this->container->get(ConfigInterface::class);
-        $logger = $this->container->get(LoggerInterface::class);
+        $logger = $this->container->get(StdoutLoggerInterface::class);
+        $client = $this->container->get(Application::class);
+
+        $serviceConfig = $config->get('nacos.service', []);
+        $serviceName = $serviceConfig['service_name'];
+        $groupName = $serviceConfig['group_name'] ?? null;
+        $instanceConfig = $serviceConfig['instance'] ?? [];
+        $ephemeral = $instanceConfig['ephemeral'] ?? null;
+        $cluster = $instanceConfig['cluster'] ?? null;
+        $weight = $instanceConfig['weight'] ?? null;
+        /** @var IPReaderInterface $ipReader */
+        $ipReader = $this->container->get($instanceConfig['ip']);
+        $ip = $ipReader->read();
+
         while (ProcessManager::isRunning()) {
-            sleep($config->get('nacos.client.beat_interval', 5));
-            $send = $nacosInstance->beat($service, $instance);
-            if ($send) {
-                $logger && $logger->debug('nacos send beat success!', compact('instance'));
-            } else {
-                $logger && $logger->error('nacos send beat fail!', compact('instance'));
+            $heartbeat = $config->get('nacos.service.instance.heartbeat', 5);
+            sleep($heartbeat ?: 5);
+
+            $ports = $config->get('server.servers', []);
+            foreach ($ports as $portServer) {
+                $port = (int) $portServer['port'];
+                $response = $client->instance->beat(
+                    $serviceName,
+                    [
+                        'ip' => $ip,
+                        'port' => $port,
+                        'cluster' => $cluster,
+                        'weight' => $weight,
+                    ],
+                    $groupName,
+                    $ephemeral
+                );
+
+                if ($response->getStatusCode() === 200) {
+                    $logger->debug(sprintf('Instance %s:%d heartbeat successfully!', $ip, $port));
+                } else {
+                    $logger->error(sprintf('Instance %s:%d heartbeat failed!', $ip, $port));
+                }
             }
         }
     }
@@ -48,6 +73,6 @@ class InstanceBeatProcess extends AbstractProcess
     public function isEnable($server): bool
     {
         $config = $this->container->get(ConfigInterface::class);
-        return $config->get('nacos.enable', true) && $config->get('nacos.client.beat_enable', false);
+        return $config->get('nacos.service.enable', true) && $config->get('nacos.service.instance.heartbeat', 0);
     }
 }
