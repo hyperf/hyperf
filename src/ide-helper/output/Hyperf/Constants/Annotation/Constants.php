@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
@@ -12,9 +12,8 @@ declare (strict_types=1);
 namespace Hyperf\Constants\Annotation;
 
 use Attribute;
-use Hyperf\Constants\AnnotationReader;
-use Hyperf\Constants\ConstantsCollector;
 use Hyperf\Di\Annotation\AbstractAnnotation;
+
 /**
  * @Annotation
  * @Target({"CLASS"})

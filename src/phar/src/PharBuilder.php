@@ -306,7 +306,7 @@ EOD;
             $cache = file_get_contents($cacheFile);
             $scanCache = unserialize($cache);
             $proxies = [];
-            foreach ($scanCache[1] as $class => $path){
+            foreach ($scanCache[1] as $class => $path) {
                 $proxies[$class] = $this->getPathLocalToBase($path);
             }
             $scanCache[1] = $proxies;

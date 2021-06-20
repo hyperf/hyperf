@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
@@ -12,8 +12,7 @@ declare (strict_types=1);
 namespace Hyperf\Di\Annotation;
 
 use Attribute;
-use Hyperf\Di\ReflectionManager;
-use ReflectionProperty;
+
 /**
  * @Annotation
  * @Target({"CLASS"})

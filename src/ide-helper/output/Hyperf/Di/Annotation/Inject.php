@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
@@ -12,10 +12,7 @@ declare (strict_types=1);
 namespace Hyperf\Di\Annotation;
 
 use Attribute;
-use Hyperf\Di\Exception\AnnotationException;
-use Hyperf\Di\ReflectionManager;
-use Hyperf\Utils\CodeGen\PhpDocReaderManager;
-use PhpDocReader\AnnotationException as DocReaderAnnotationException;
+
 /**
  * @Annotation
  * @Target({"PROPERTY"})

@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
@@ -14,6 +14,7 @@ namespace Hyperf\Process\Annotation;
 use Attribute;
 use Doctrine\Common\Annotations\Annotation\Target;
 use Hyperf\Di\Annotation\AbstractAnnotation;
+
 /**
  * @Annotation
  * @Target("CLASS")

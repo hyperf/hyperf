@@ -13,7 +13,6 @@ namespace Hyperf\IDEHelper;
 
 use Hyperf\IDEHelper\Visitor\AnnotationIDEVisitor;
 use Hyperf\Utils\Composer;
-use Hyperf\Utils\Str;
 use ReflectionClass;
 
 class AnnotationGenerator
@@ -49,7 +48,7 @@ class AnnotationGenerator
                             ]);
 
                             $target = $this->output . '/' . str_replace('\\', '/', $reflection->getName());
-                            if (!is_dir(dirname($target))) {
+                            if (! is_dir(dirname($target))) {
                                 mkdir(dirname($target), 0777, true);
                             }
 

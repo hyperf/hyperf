@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
@@ -12,13 +12,7 @@ declare (strict_types=1);
 namespace Hyperf\Retry\Annotation;
 
 use Attribute;
-use Hyperf\Retry\CircuitBreakerState;
-use Hyperf\Retry\Policy\CircuitBreakerRetryPolicy;
-use Hyperf\Retry\Policy\ClassifierRetryPolicy;
-use Hyperf\Retry\Policy\FallbackRetryPolicy;
-use Hyperf\Retry\Policy\MaxAttemptsRetryPolicy;
-use Hyperf\Retry\Policy\SleepRetryPolicy;
-use Hyperf\Retry\SleepStrategyInterface;
+
 /**
  * @Annotation
  * @Target({"METHOD"})

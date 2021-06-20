@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
@@ -13,8 +13,7 @@ namespace Hyperf\SocketIOServer\Annotation;
 
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
-use Hyperf\Di\ReflectionManager;
-use Hyperf\SocketIOServer\Collector\EventAnnotationCollector;
+
 /**
  * @Annotation
  * @Target({"CLASS", "METHOD"})

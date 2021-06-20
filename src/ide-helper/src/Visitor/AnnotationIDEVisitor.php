@@ -33,7 +33,7 @@ class AnnotationIDEVisitor extends NodeVisitorAbstract
             }
             if ($node instanceof Node\Stmt\Namespace_) {
                 foreach ($node->stmts as $class) {
-                    if (!$class instanceof Node\Stmt\Class_) {
+                    if (! $class instanceof Node\Stmt\Class_) {
                         continue;
                     }
 
@@ -42,10 +42,10 @@ class AnnotationIDEVisitor extends NodeVisitorAbstract
                         $properties[] = new Node\Param(new Node\Expr\Variable($property->getName()));
                     }
                     $class->stmts = [
-                        new Node\Stmt\ClassMethod('__construct',[
+                        new Node\Stmt\ClassMethod('__construct', [
                             'flags' => Node\Stmt\Class_::MODIFIER_PUBLIC,
-                            'params' => $properties
-                        ])
+                            'params' => $properties,
+                        ]),
                     ];
                 }
             }

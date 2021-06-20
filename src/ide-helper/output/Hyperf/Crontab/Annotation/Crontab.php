@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
@@ -13,9 +13,7 @@ namespace Hyperf\Crontab\Annotation;
 
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
-use Hyperf\Di\ReflectionManager;
-use Hyperf\Utils\Str;
-use ReflectionMethod;
+
 /**
  * @Annotation
  * @Target({"CLASS", "METHOD"})

@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
@@ -12,9 +12,8 @@ declare (strict_types=1);
 namespace Hyperf\Cache\Annotation;
 
 use Attribute;
-use Hyperf\Cache\CacheListenerCollector;
 use Hyperf\Di\Annotation\AbstractAnnotation;
-use Hyperf\Di\Annotation\AnnotationCollector;
+
 /**
  * @Annotation
  * @Target({"METHOD"})

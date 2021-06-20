@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
@@ -13,6 +13,7 @@ namespace Hyperf\RpcServer\Annotation;
 
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
+
 /**
  * @Annotation
  * @Target({"CLASS"})

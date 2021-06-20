@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
@@ -13,8 +13,8 @@ namespace Hyperf\CircuitBreaker\Annotation;
 
 use Attribute;
 use Doctrine\Common\Annotations\Annotation\Target;
-use Hyperf\CircuitBreaker\Handler\TimeoutHandler;
 use Hyperf\Di\Annotation\AbstractAnnotation;
+
 /**
  * @Annotation
  * @Target({"METHOD"})
