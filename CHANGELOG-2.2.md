@@ -46,6 +46,7 @@
 - [#3679](https://github.com/hyperf/hyperf/pull/3679) Added Nacos SDK component.
   - [#3712](https://github.com/hyperf/hyperf/pull/3712) The input parameters of `InstanceProvider::update()` are modified to make it more friendly.
 - [#3698](https://github.com/hyperf/hyperf/pull/3698) Support PHP8 Attribute which can replace doctrine annotations.
+- [#3714](https://github.com/hyperf/hyperf/pull/3714) Added ide-helper component.
 
 ## Optimized
 
