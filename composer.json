@@ -316,6 +316,7 @@
             "HyperfTest\\Watcher\\": "src/watcher/tests/",
             "HyperfTest\\WebSocketClient\\": "src/websocket-client/tests/",
             "HyperfTest\\WebSocketServer\\": "src/websocket-server/tests/",
+            "Hyperf\\IDEHelper\\": "src/ide-helper/src/",
             "Routeguide\\": "src/grpc-client/tests/Routeguide/"
         }
     },
