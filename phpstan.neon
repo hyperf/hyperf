@@ -19,6 +19,7 @@ parameters:
     - %currentWorkingDirectory%/src/graphql/*
     - %currentWorkingDirectory%/src/grpc/*
     - %currentWorkingDirectory%/src/grpc-server/*
+    - %currentWorkingDirectory%/src/ide-helper/*
     - %currentWorkingDirectory%/src/swagger/*
     - %currentWorkingDirectory%/src/tracer/*
     - %currentWorkingDirectory%/src/validation/*
