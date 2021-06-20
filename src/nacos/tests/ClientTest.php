@@ -36,4 +36,15 @@ class ClientTest extends TestCase
 
         $this->assertSame(['nacos_config' => ['id' => 1], 'nacos_config.data' => 'Hello World', ['ids' => [1, 2, 3]]], $data);
     }
+
+    public function testClientGetValidNodes()
+    {
+        $container = ContainerStub::getContainer();
+
+        $client = new Client($container);
+
+        $data = $client->getValidNodes('foo');
+
+        $this->assertSame(1, count($data));
+    }
 }
