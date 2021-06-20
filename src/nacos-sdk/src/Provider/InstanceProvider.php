@@ -13,6 +13,7 @@ namespace Hyperf\NacosSdk\Provider;
 
 use GuzzleHttp\RequestOptions;
 use Hyperf\NacosSdk\AbstractProvider;
+use Hyperf\Utils\Codec\Json;
 use Psr\Http\Message\ResponseInterface;
 
 class InstanceProvider extends AbstractProvider
@@ -60,6 +61,7 @@ class InstanceProvider extends AbstractProvider
 
     /**
      * @param $optional = [
+     *     'groupName' => '',
      *     'clusterName' => '',
      *     'namespaceId' => '',
      *     'weight' => 0.99,
@@ -68,12 +70,11 @@ class InstanceProvider extends AbstractProvider
      *     'ephemeral' => false,
      * ]
      */
-    public function update(string $serviceName, string $groupName, string $ip, int $port, array $optional = []): ResponseInterface
+    public function update(string $ip, int $port, string $serviceName, array $optional = []): ResponseInterface
     {
         return $this->request('PUT', '/nacos/v1/ns/instance', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'serviceName' => $serviceName,
-                'groupName' => $groupName,
                 'ip' => $ip,
                 'port' => $port,
             ])),
@@ -117,6 +118,15 @@ class InstanceProvider extends AbstractProvider
         ]);
     }
 
+    /**
+     * @param $beat = [
+     *     'ip' => '',
+     *     'port' => 9501,
+     *     'serviceName' => '',
+     *     'cluster' => '',
+     *     'weight' => 1,
+     * ]
+     */
     public function beat(string $serviceName, array $beat = [], ?string $groupName = null, ?bool $ephemeral = null): ResponseInterface
     {
         return $this->request('PUT', '/nacos/v1/ns/instance/beat', [
@@ -124,7 +134,7 @@ class InstanceProvider extends AbstractProvider
                 'serviceName' => $serviceName,
                 'groupName' => $groupName,
                 'ephemeral' => $ephemeral,
-                'beat' => $beat,
+                'beat' => Json::encode($beat),
             ]),
         ]);
     }

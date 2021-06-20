@@ -42,7 +42,7 @@ class Config
      *     'base_uri' => 'http://127.0.0.1:8848',
      *     'username' => null,
      *     'password' => null,
-     *     'guzzle' => [],
+     *     'guzzle_config' => [],
      * ]
      */
     public function __construct(array $config = [])
