@@ -33,7 +33,7 @@ composer require hyperf/kafka
 | client_id                     | stirng     | null                          | Kafka 客户端标识                                                                                                     |
 | max_write_attempts            | int        | 3                             | 最大写入尝试次数                                                                                                     |
 | brokers                       | array      | []                            | 手动配置 brokers 列表，如果要使用手动配置，请把 updateBrokers 设为 true                                              |
-| bootstrap_server              | array      | '127.0.0.1:9092'              | 引导服务器，如果配置了该值，会自动连接该服务器，并自动更新 brokers                                                   |
+| bootstrap_servers             | array      | '127.0.0.1:9092'              | 引导服务器，如果配置了该值，会自动连接该服务器，并自动更新 brokers                                                   |
 | update_brokers                | bool       | true                          | 是否自动更新 brokers                                                                                                 |
 | acks                          | int        | 0                             | 生产者要求领导者，在确认请求完成之前已收到的确认数值。允许的值：0 表示无确认，1 表示仅领导者，- 1 表示完整的 ISR。   |
 | producer_id                   | int        | -1                            | 生产者 ID                                                                                                            |
@@ -71,7 +71,7 @@ return [
         'brokers' => [
             '127.0.0.1:9092',
         ],
-        'bootstrap_server' => '127.0.0.1:9092',
+        'bootstrap_servers' => '127.0.0.1:9092',
         'update_brokers' => true,
         'acks' => 0,
         'producer_id' => -1,
