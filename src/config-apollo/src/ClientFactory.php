@@ -22,13 +22,13 @@ class ClientFactory
         $config = $container->get(ConfigInterface::class);
         /** @var \Hyperf\ConfigApollo\Option $option */
         $option = make(Option::class);
-        $option->setServer($config->get('apollo.server', 'http://127.0.0.1:8080'))
-            ->setAppid($config->get('apollo.appid', ''))
-            ->setCluster($config->get('apollo.cluster', ''))
-            ->setClientIp($config->get('apollo.client_ip', current(swoole_get_local_ip())))
-            ->setPullTimeout($config->get('apollo.pull_timeout', 10))
-            ->setIntervalTimeout($config->get('apollo.interval_timeout', 60));
-        $namespaces = $config->get('apollo.namespaces', []);
+        $option->setServer($config->get('config_center.drivers.apollo.server', 'http://127.0.0.1:8080'))
+            ->setAppid($config->get('config_center.drivers.apollo.appid', ''))
+            ->setCluster($config->get('config_center.drivers.apollo.cluster', ''))
+            ->setClientIp($config->get('config_center.drivers.apollo.client_ip', current(swoole_get_local_ip())))
+            ->setPullTimeout($config->get('config_center.drivers.apollo.pull_timeout', 10))
+            ->setIntervalTimeout($config->get('config_center.drivers.apollo.interval_timeout', 60));
+        $namespaces = $config->get('config_center.drivers.apollo.namespaces', []);
         $callbacks = [];
         foreach ($namespaces as $namespace => $callable) {
             // If does not exist a user-defined callback, then delegate to the dafault callback.

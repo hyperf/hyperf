@@ -24,11 +24,11 @@ class ConfigProvider
                 ClientInterface::class => ClientFactory::class,
             ],
             'processes' => [
-                ConfigFetcherProcess::class,
+                // ConfigFetcherProcess::class,
             ],
             'listeners' => [
-                BootProcessListener::class,
-                OnPipeMessageListener::class,
+                // BootProcessListener::class,
+                // OnPipeMessageListener::class,
             ],
             'annotations' => [
                 'scan' => [
