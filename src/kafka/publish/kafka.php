@@ -21,7 +21,7 @@ return [
         'brokers' => [
             '127.0.0.1:9092',
         ],
-        'bootstrap_server' => [
+        'bootstrap_servers' => [
             '127.0.0.1:9092',
         ],
         'update_brokers' => true,

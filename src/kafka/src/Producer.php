@@ -168,7 +168,7 @@ class Producer
         $producerConfig->setClientId($config['client_id']);
         $producerConfig->setMaxWriteAttempts($config['max_write_attempts']);
         $producerConfig->setSocket(SwooleSocket::class);
-        $producerConfig->setBootstrapServer($config['bootstrap_server']);
+        $producerConfig->setBootstrapServers($config['bootstrap_servers']);
         $producerConfig->setUpdateBrokers($config['update_brokers']);
         $producerConfig->setBrokers($config['brokers']);
         $producerConfig->setAcks($config['acks']);

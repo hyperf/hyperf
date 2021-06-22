@@ -110,7 +110,7 @@ class KafkaConnection extends BaseConnection implements ConnectionInterface
         $producerConfig->setMaxWriteAttempts($this->config['max_write_attempts']);
         $producerConfig->setSocket(SwooleSocket::class);
         $producerConfig->setBrokers($this->config['brokers']);
-        $producerConfig->setBootstrapServer($this->config['bootstrap_server']);
+        $producerConfig->setBootstrapServers($this->config['bootstrap_servers']);
         $producerConfig->setUpdateBrokers($this->config['update_brokers']);
         $producerConfig->setAcks($this->config['acks']);
         $producerConfig->setProducerId($this->config['producer_id']);
