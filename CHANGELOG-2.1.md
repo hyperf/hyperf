@@ -1,5 +1,9 @@
 # v2.1.22 - TBD
 
+## Security
+
+- [#3723](https://github.com/hyperf/hyperf/pull/3723) Fixed the active_url rule for validation in input fails to correctly check dns record with dns_get_record resulting in bypassing the validation.
+
 # v2.1.21 - 2021-06-21
 
 ## Fixed
