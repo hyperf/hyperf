@@ -74,7 +74,7 @@ class ConsumerManagerTest extends TestCase
                 $this->assertTrue(strpos($consumer->getGroupInstanceId(), $groupId) !== false);
                 $this->assertSame('', $consumer->getMemberId());
                 $this->assertSame((float) $config['interval'], $consumer->getInterval());
-                $this->assertSame($config['bootstrap_server'], $consumer->getBroker());
+                $this->assertTrue(in_array($config['bootstrap_servers'], $consumer->getBrokers()));
                 $this->assertSame(SwooleSocket::class, $consumer->getSocket());
                 $this->assertSame(SwooleClient::class, $consumer->getClient());
                 $this->assertSame($config['max_write_attempts'], $consumer->getMaxWriteAttempts());

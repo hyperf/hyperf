@@ -21,7 +21,7 @@ return [
         'brokers' => [
             '127.0.0.1:9092',
         ],
-        'bootstrap_server' => [
+        'bootstrap_servers' => [
             '127.0.0.1:9092',
         ],
         'update_brokers' => true,
@@ -29,7 +29,6 @@ return [
         'producer_id' => -1,
         'producer_epoch' => -1,
         'partition_leader_epoch' => -1,
-        'broker' => '',
         'interval' => 0,
         'session_timeout' => 60,
         'rebalance_timeout' => 60,
