@@ -84,6 +84,7 @@
   * [TCP/UDP 服務](zh-tw/tcp-server.md)
   * [WebSocket 服務](zh-tw/websocket-server.md)
   * [Socket.io 服務](zh-tw/socketio-server.md)
+  * [協程風格服務](zh-tw/coroutine-server.md)
 
 * 訊息佇列
 
@@ -118,6 +119,8 @@
   * [開發者工具](zh-tw/devtool.md)
   * [Swoole Tracker](zh-tw/swoole-tracker.md)
   * [Phar 打包器](zh-tw/phar.md)
+  * [DAG](zh-tw/dag.md)
+  * [RPN - 逆波蘭表示法](zh-tw/rpn.md)
 
 * 應用部署
 

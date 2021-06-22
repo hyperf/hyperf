@@ -36,7 +36,7 @@ php bin/hyperf.php vendor:publish hyperf/metric
 `default`：配置文件内的 `default` 对应的值则为使用的驱动名称。驱动的具体配置在 `metric` 项下定义，使用与 `key` 相同的驱动。
 
 ```php
-'default' => env('TELEMETRY_DRIVER', 'prometheus'),
+'default' => env('METRIC_DRIVER', 'prometheus'),
 ```
 
 * `use_standalone_process`: 是否使用 `独立监控进程`。推荐开启。关闭后将在 `Worker 进程` 中处理指标收集与上报。
@@ -63,7 +63,7 @@ php bin/hyperf.php vendor:publish hyperf/metric
 use Hyperf\Metric\Adapter\Prometheus\Constants;
 
 return [
-    'default' => env('TELEMETRY_DRIVER', 'prometheus'),
+    'default' => env('METRIC_DRIVER', 'prometheus'),
     'use_standalone_process' => env('TELEMETRY_USE_STANDALONE_PROCESS', true),
     'enable_default_metric' => env('TELEMETRY_ENABLE_DEFAULT_TELEMETRY', true),
     'default_metric_interval' => env('DEFAULT_METRIC_INTERVAL', 5),
@@ -116,7 +116,7 @@ Prometheus 有两种工作模式，爬模式与推模式（通过 Prometheus Pus
 
 ```php
 return [
-    'default' => env('TELEMETRY_DRIVER', 'statd'),
+    'default' => env('METRIC_DRIVER', 'statd'),
     'use_standalone_process' => env('TELEMETRY_USE_STANDALONE_PROCESS', true),
     'enable_default_metric' => env('TELEMETRY_ENABLE_DEFAULT_TELEMETRY', true),
     'metric' => [
@@ -141,7 +141,7 @@ StatsD 目前只支持 UDP 模式，需要配置 UDP 地址 `udp_host`，UDP 端
 
 ```php
 return [
-    'default' => env('TELEMETRY_DRIVER', 'influxdb'),
+    'default' => env('METRIC_DRIVER', 'influxdb'),
     'use_standalone_process' => env('TELEMETRY_USE_STANDALONE_PROCESS', true),
     'enable_default_metric' => env('TELEMETRY_ENABLE_DEFAULT_TELEMETRY', true),
     'metric' => [
@@ -411,10 +411,5 @@ Router::get('/metrics', function(){
 
 ## 注意事项
 
-- `endclothing/prometheus_client_php` 暂时与 `guzzle : ^7.0` 冲突，如果想在 `guzzle7` 的条件下使用 `metric`，可以主动执行以下操作
-
-```
-composer require "promphp/prometheus_client_php:2.2.1"
-```
 - 如需在 `hyperf/command` 自定义命令中使用本组件收集指标，需要在启动命令时添加命令行参数: `--enable-event-dispatcher`。
 

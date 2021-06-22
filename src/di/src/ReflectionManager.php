@@ -11,10 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di;
 
+use Hyperf\Di\Aop\Ast;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
+use Symfony\Component\Finder\Finder;
 
 class ReflectionManager extends MetadataCollector
 {
@@ -83,5 +85,32 @@ class ReflectionManager extends MetadataCollector
         if ($key === null) {
             static::$container = [];
         }
+    }
+
+    public static function getPropertyDefaultValue(ReflectionProperty $property)
+    {
+        return method_exists($property, 'getDefaultValue')
+            ? $property->getDefaultValue()
+            : $property->getDeclaringClass()->getDefaultProperties()[$property->getName()] ?? null;
+    }
+
+    public static function getAllClasses(array $paths): array
+    {
+        $finder = new Finder();
+        $finder->files()->in($paths)->name('*.php');
+        $parser = new Ast();
+
+        $reflectionClasses = [];
+        foreach ($finder as $file) {
+            try {
+                $stmts = $parser->parse($file->getContents());
+                if (! $className = $parser->parseClassByStmts($stmts)) {
+                    continue;
+                }
+                $reflectionClasses[$className] = static::reflectClass($className);
+            } catch (\Throwable $e) {
+            }
+        }
+        return $reflectionClasses;
     }
 }

@@ -1,5 +1,51 @@
 # 版本更新记录
 
+# v2.1.20 - 2021-06-07
+
+## 修复
+
+- [#3667](https://github.com/hyperf/hyperf/pull/3667) 修复形如 `10-12/1,14-15/1` 的定时任务规则无法正常使用的问题。
+- [#3669](https://github.com/hyperf/hyperf/pull/3669) 修复了没有反斜线形如 `10-12` 的定时任务规则无法正常使用的问题。
+- [#3674](https://github.com/hyperf/hyperf/pull/3674) 修复 `@Task` 注解中，参数 `$workerId` 无法正常使用的问题。
+
+## 优化
+
+- [#3663](https://github.com/hyperf/hyperf/pull/3663) 优化 `AbstractServiceClient::getNodesFromConsul()` 方法，排除了可能找不到端口的隐患。
+- [#3668](https://github.com/hyperf/hyperf/pull/3668) 优化 `Guzzle` 组件中 `CoroutineHandler` 代理相关的代码，增强其兼容性。
+
+# v2.1.19 - 2021-05-31
+
+## 修复
+
+- [#3618](https://github.com/hyperf/hyperf/pull/3618) 修复使用了相同路径但不同实现逻辑的路由会在命令 `describe:routes` 中，被合并成一条的问题。
+- [#3625](https://github.com/hyperf/hyperf/pull/3625) 修复 `Hyperf\Di\Annotation\Scanner` 中无法正常使用 `class_map` 功能的问题。
+
+## 新增
+
+- [#3626](https://github.com/hyperf/hyperf/pull/3626) 为 `RPC` 组件增加了新的路径打包器 `Hyperf\Rpc\PathGenerator\DotPathGenerator`。
+
+## 新组件孵化
+
+- [nacos-sdk](https://github.com/hyperf/nacos-sdk-incubator) 基于 Nacos Open API 实现的 SDK。
+
+# v2.1.18 - 2021-05-24
+
+## 修复
+
+- [#3598](https://github.com/hyperf/hyperf/pull/3598) 修复事务回滚时，模型累加、累减操作会导致模型缓存产生脏数据的问题。
+- [#3607](https://github.com/hyperf/hyperf/pull/3607) 修复在使用协程风格的 `WebSocket` 服务时，`onOpen` 事件无法在事件结束后销毁协程的问题。
+- [#3610](https://github.com/hyperf/hyperf/pull/3610) 修复数据库存在前缀时，`fromSub()` 和 `joinSub()` 无法正常使用的问题。
+
+# v2.1.17 - 2021-05-17
+
+## 修复
+
+- [#3856](https://github.com/hyperf/hyperf/pull/3586) 修复 `Swow` 服务处理 `keepalive` 的请求时，协程无法在每个请求后结束的问题。
+
+## 新增
+
+- [#3329](https://github.com/hyperf/hyperf/pull/3329) `@Crontab` 注解的 `enable` 参数增加支持设置数组, 你可以通过它动态的控制定时任务是否启动。
+
 # v2.1.16 - 2021-04-26
 
 ## 修复

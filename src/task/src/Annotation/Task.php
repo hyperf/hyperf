@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Task\Annotation;
 
+use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
 /**
  * @Annotation
  * @Target({"CLASS", "METHOD"})
  */
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Task extends AbstractAnnotation
 {
     /**

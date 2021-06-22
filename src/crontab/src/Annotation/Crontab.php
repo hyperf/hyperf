@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Annotation;
 
+use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\Str;
@@ -20,6 +21,7 @@ use ReflectionMethod;
  * @Annotation
  * @Target({"CLASS", "METHOD"})
  */
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Crontab extends AbstractAnnotation
 {
     /**
@@ -68,15 +70,17 @@ class Crontab extends AbstractAnnotation
     public $memo = '';
 
     /**
-     * @var bool
+     * @var array|bool|string
      */
     public $enable = true;
 
-    public function __construct($value = null)
+    public function __construct(...$value)
     {
-        parent::__construct($value);
+        parent::__construct(...$value);
         $this->bindMainProperty('rule', $value);
-        $this->rule = str_replace('\\', '', $this->rule);
+        if (! empty($this->rule)) {
+            $this->rule = str_replace('\\', '', $this->rule);
+        }
     }
 
     public function collectMethod(string $className, ?string $target): void
@@ -100,9 +104,22 @@ class Crontab extends AbstractAnnotation
 
     public function collectClass(string $className): void
     {
+        $this->parseName($className);
+        $this->parseCallback($className);
+        $this->parseEnable($className);
+
+        parent::collectClass($className);
+    }
+
+    protected function parseName(string $className): void
+    {
         if (! $this->name) {
             $this->name = $className;
         }
+    }
+
+    protected function parseCallback(string $className): void
+    {
         if (! $this->callback) {
             $reflectionClass = ReflectionManager::reflectClass($className);
             $reflectionMethods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
@@ -127,6 +144,22 @@ class Crontab extends AbstractAnnotation
         } elseif (is_string($this->callback)) {
             $this->callback = [$className, $this->callback];
         }
-        parent::collectClass($className);
+    }
+
+    protected function parseEnable(string $className): void
+    {
+        if (is_string($this->enable) && $this->enable === 'true') {
+            $this->enable = true;
+            return;
+        }
+
+        if (is_string($this->enable) && $this->enable === 'false') {
+            $this->enable = false;
+            return;
+        }
+
+        if (is_string($this->enable)) {
+            $this->enable = [$className, $this->enable];
+        }
     }
 }

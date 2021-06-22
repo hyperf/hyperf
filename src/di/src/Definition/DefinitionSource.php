@@ -74,10 +74,9 @@ class DefinitionSource implements DefinitionSourceInterface
                 continue;
             }
 
-            $parameterClass = $parameter->getClass();
-
-            if ($parameterClass) {
-                $parameters[$index] = new Reference($parameterClass->getName());
+            $parameterType = $parameter->getType();
+            if ($parameterType && $parameterType instanceof \ReflectionNamedType && ! $parameterType->isBuiltin()) {
+                $parameters[$index] = new Reference($parameterType->getName());
             }
         }
 

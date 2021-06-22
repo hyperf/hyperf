@@ -20,7 +20,7 @@ return [
             'connect_timeout' => 10.0,
             'wait_timeout' => 3.0,
             'heartbeat' => -1,
-            'max_idle_time' => 60.0,
+            'max_idle_time' => 30.0,
         ],
         'nsqd' => [
             'port' => 4151,
