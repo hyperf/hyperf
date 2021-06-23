@@ -4,6 +4,10 @@
 
 - [#3723](https://github.com/hyperf/hyperf/pull/3723) Fixed the active_url rule for validation in input fails to correctly check dns record with dns_get_record resulting in bypassing the validation.
 
+## Fixed
+
+- [#3721](https://github.com/hyperf/hyperf/pull/3721) Fixed the `in` and `not in` rule for validation in input fails to correctly check `in:00` rule when passing `0`.
+
 # v2.1.21 - 2021-06-21
 
 ## Fixed
