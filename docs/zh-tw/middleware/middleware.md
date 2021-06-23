@@ -119,6 +119,7 @@ class IndexController
     }
 }
 ```
+> 注意: 使用 `PHP8` 的 `Attributes` 語法時, 應簡化為`#[Middlewares(FooMiddleware::class, BarMiddleware::class)]`這種格式, 下同。
 
 #### 定義方法級別的中介軟體
 
