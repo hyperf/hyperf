@@ -10,12 +10,12 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 return [
-    'enable' => env('CONFIG_CENTER_ENABLE', true),
+    'enable' => (bool) env('CONFIG_CENTER_ENABLE', true),
     'driver' => env('CONFIG_CENTER_DRIVER', 'apollo'),
-    'use_standalone_process' => env('CONFIG_CENTER_USE_STANDALONE_PROCESS', true),
+    'use_standalone_process' => (bool) env('CONFIG_CENTER_USE_STANDALONE_PROCESS', true),
     'drivers' => [
         'apollo' => [
-            'driver' => \Hyperf\ConfigApollo\ApolloDriver::class,
+            'driver' => Hyperf\ConfigApollo\ApolloDriver::class,
             'server' => 'http://127.0.0.1:9080',
             'appid' => 'test',
             'cluster' => 'default',
@@ -35,7 +35,16 @@ return [
             'driver' => '',
         ],
         'etcd' => [
-            'driver' => '',
+            'driver' => Hyperf\ConfigEtcd\EtcdDriver::class,
+            'packer' => Hyperf\Utils\Packer\JsonPacker::class,
+            'namespaces' => [
+                '/application',
+            ],
+            'mapping' => [
+                // etcd key => config key
+                '/application/test' => 'test',
+            ],
+            'interval' => 5,
         ],
         'zookeeper' => [
             'driver' => '',

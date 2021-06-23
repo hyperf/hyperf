@@ -76,6 +76,7 @@ class ConfigFetcherProcess extends AbstractProcess
         if (method_exists($instance, 'setConfig')) {
             $instance->setConfig($this->config);
         }
+
         $instance->configFetcherHandle();
     }
 }
