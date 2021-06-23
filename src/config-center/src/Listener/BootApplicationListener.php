@@ -43,6 +43,7 @@ class BootApplicationListener implements ListenerInterface
 
         $configs = [
             'config_apollo',
+            'aliyun_acm',
             'config_etcd',
         ];
 

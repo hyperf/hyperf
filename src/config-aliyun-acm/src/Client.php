@@ -67,13 +67,13 @@ class Client implements ClientInterface
         }
 
         // ACM config
-        $endpoint = $this->config->get('aliyun_acm.endpoint', 'acm.aliyun.com');
-        $namespace = $this->config->get('aliyun_acm.namespace', '');
-        $dataId = $this->config->get('aliyun_acm.data_id', '');
-        $group = $this->config->get('aliyun_acm.group', 'DEFAULT_GROUP');
-        $accessKey = $this->config->get('aliyun_acm.access_key', '');
-        $secretKey = $this->config->get('aliyun_acm.secret_key', '');
-        $ecsRamRole = (string) $this->config->get('aliyun_acm.ecs_ram_role', '');
+        $endpoint = $this->config->get('config_center.drivers.aliyun_acm.endpoint', 'acm.aliyun.com');
+        $namespace = $this->config->get('config_center.drivers.aliyun_acm.namespace', '');
+        $dataId = $this->config->get('config_center.drivers.aliyun_acm.data_id', '');
+        $group = $this->config->get('config_center.drivers.aliyun_acm.group', 'DEFAULT_GROUP');
+        $accessKey = $this->config->get('config_center.drivers.aliyun_acm.access_key', '');
+        $secretKey = $this->config->get('config_center.drivers.aliyun_acm.secret_key', '');
+        $ecsRamRole = (string) $this->config->get('config_center.drivers.aliyun_acm.ecs_ram_role', '');
         $securityToken = [];
         if (empty($accessKey) && ! empty($ecsRamRole)) {
             $securityCredentials = $this->getSecurityCredentialsWithEcsRamRole($ecsRamRole);
