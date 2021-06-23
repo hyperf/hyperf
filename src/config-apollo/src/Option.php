@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigApollo;
 
 use Hyperf\Utils\Str;
@@ -59,11 +58,11 @@ class Option
     public function buildBaseUrl(): string
     {
         return implode('/', [
-                $this->getServer(),
-                'configs',
-                $this->getAppid(),
-                $this->getCluster(),
-            ]) . '/';
+            $this->getServer(),
+            'configs',
+            $this->getAppid(),
+            $this->getCluster(),
+        ]) . '/';
     }
 
     public function buildCacheKey(string $namespace): string
@@ -78,7 +77,7 @@ class Option
 
     public function setServer(string $server): self
     {
-        if (!Str::startsWith($server, 'http://')) {
+        if (! Str::startsWith($server, 'http://')) {
             $server = 'http://' . $server;
         }
         $this->server = $server;

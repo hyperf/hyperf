@@ -9,11 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigApollo;
 
 use Closure;
-use GuzzleHttp\Exception\ClientException;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Parallel;
@@ -46,8 +44,7 @@ class Client implements ClientInterface
         array $callbacks,
         Closure $httpClientFactory,
         ?ConfigInterface $config = null
-    )
-    {
+    ) {
         $this->option = $option;
         $this->callbacks = $callbacks;
         $this->httpClientFactory = $httpClientFactory;
@@ -56,7 +53,7 @@ class Client implements ClientInterface
 
     public function pull(array $namespaces, array $callbacks = []): void
     {
-        if (!$namespaces) {
+        if (! $namespaces) {
             return;
         }
         if (Coroutine::inCoroutine()) {
@@ -92,25 +89,24 @@ class Client implements ClientInterface
 
     private function hasSecret(): bool
     {
-        return !empty($this->option->getSecret());
+        return ! empty($this->option->getSecret());
     }
 
     private function getTimestamp(): string
     {
-        list($usec, $sec) = explode(" ", microtime());
+        [$usec, $sec] = explode(' ', microtime());
         return sprintf('%.0f', (floatval($usec) + floatval($sec)) * 1000);
     }
 
     private function getAuthorization(string $timestamp, string $pathWithQuery): string
     {
-        if (!$this->hasSecret()) {
+        if (! $this->hasSecret()) {
             return '';
         }
         $toSignature = $timestamp . "\n" . $pathWithQuery;
         $signature = base64_encode(hash_hmac('sha1', $toSignature, $this->option->getSecret(), true));
         return sprintf('Apollo %s:%s', $this->option->getAppid(), $signature);
     }
-
 
     private function coroutinePull(array $namespaces): array
     {
@@ -139,7 +135,7 @@ class Client implements ClientInterface
                     'headers' => $headers,
                 ]);
                 if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
-                    $body = json_decode((string)$response->getBody(), true);
+                    $body = json_decode((string) $response->getBody(), true);
                     $result = [
                         'configurations' => $body['configurations'] ?? [],
                         'releaseKey' => $body['releaseKey'] ?? '',
@@ -181,7 +177,7 @@ class Client implements ClientInterface
                 'headers' => $headers,
             ]);
             if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
-                $body = json_decode((string)$response->getBody(), true);
+                $body = json_decode((string) $response->getBody(), true);
                 $result[$namespace] = [
                     'configurations' => $body['configurations'] ?? [],
                     'releaseKey' => $body['releaseKey'] ?? '',
