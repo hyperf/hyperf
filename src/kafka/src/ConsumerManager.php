@@ -172,7 +172,7 @@ class ConsumerManager
                 $consumerConfig->setGroupInstanceId(sprintf('%s-%s', $this->consumer->getGroupId(), uniqid()));
                 $consumerConfig->setMemberId($this->consumer->getMemberId() ?: '');
                 $consumerConfig->setInterval($config['interval']);
-                $consumerConfig->setBrokers($config['brokers']);
+                $consumerConfig->setBootstrapServers($config['bootstrap_servers']);
                 $consumerConfig->setSocket(SwooleSocket::class);
                 $consumerConfig->setClient(SwooleClient::class);
                 $consumerConfig->setMaxWriteAttempts($config['max_write_attempts']);

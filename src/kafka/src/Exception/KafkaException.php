@@ -9,10 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Kafka\Pool;
+namespace Hyperf\Kafka\Exception;
 
-use Hyperf\Pool\Frequency as DefaultFrequency;
+use RuntimeException;
 
-class Frequency extends DefaultFrequency
+class KafkaException extends RuntimeException
 {
 }
