@@ -127,8 +127,6 @@ composer dump-autoload -o
 
 > 当环境变量存在 SCAN_CACHEABLE 时，.env 中无法修改这个配置。
 
-`2.0.0` 和 `2.0.1` 两个版本，判断文件是否修改时，没有判断修改时间相等的情况，所以文件修改后，立马生成缓存的情况（比如使用 `watcher` 组件时）, 会导致代码无法及时生效。
-
 ## 语法错误导致服务无法启动
 
 当项目启动时，抛出类似于以下错误时
@@ -139,7 +137,7 @@ Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line
 
 可以执行脚本 `composer analyse`，对项目进行静态检测，便可以找到出现问题的代码段。
 
-此问题通常是由于 [zircote/swagger](https://github.com/zircote/swagger-php) 的 3.0.5 版本更新导致, 详情请见 [#834](https://github.com/zircote/swagger-php/issues/834) 。 
+此问题通常是由于 [zircote/swagger](https://github.com/zircote/swagger-php) 的 3.0.5 版本更新导致, 详情请见 [#834](https://github.com/zircote/swagger-php/issues/834) 。
 如果安装了 [hyperf/swagger](https://github.com/hyperf/swagger) 建议将 [zircote/swagger](https://github.com/zircote/swagger-php) 的版本锁定在 3.0.4
 
 ## 内存限制太小导致项目无法运行
@@ -154,15 +152,4 @@ php --ini
 
 # 修改 memory_limit 配置
 memory_limit=-1
-```
-
-## Hyperf 版本从 `2.0.18` 之前版本升级之后, 提示 `Call to undefined method Hyperf\Utils\Arr::merge()`
-
-原因是 `doctrine/common` 组件导致的 `hyperf/utils` 组件无法升级。执行以下命令移除 `doctrine/common` 组件，重新更新 Hyperf 相关组件即可。
-
-```bash
-# 移除组件
-composer remove doctrine/common
-# 更新
-composer update "hyperf/*" -o
 ```

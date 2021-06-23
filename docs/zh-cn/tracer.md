@@ -25,25 +25,6 @@ composer require jonahgeorge/jaeger-client-php
 php bin/hyperf.php vendor:publish hyperf/tracer
 ```
 
-### opentracking/opentracking 版本申明
-
-由于 [官方包](https://github.com/opentracing/opentracing-php) 最新版还是 `1.0.0-beta6`, 会导致 composer 安装时不符合 `minimum-stability`, 所以 hyperf 框架 fork 了一份, 并基于当前 master 分支打上 `v1.0.0` 版本
-
-```json
-{
-    "require": {
-        ...
-        "opentracing/opentracing":"1.0.0"
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/hyperf/opentracing-php.git"
-        }
-    ]
-}
-```
-
 ## 使用
 
 ### 配置
@@ -218,7 +199,7 @@ return [
 
 ### 配置 Span tag
 
-`1.1.11` 版本后增加了 Span Tag 配置的功能，对于一些 Hyperf 自动收集追踪信息的 Span Tag 名称，可以通过更改 Span Tag 配置来更改对应的名称，只需在配置文件 `config/autolaod/opentracing.php` 内增加 `tags` 配置即可，参考配置如下。如配置项存在，则以配置项的值为准，如配置项不存在，则以组件的默认值为准。
+对于一些 Hyperf 自动收集追踪信息的 Span Tag 名称，可以通过更改 Span Tag 配置来更改对应的名称，只需在配置文件 `config/autolaod/opentracing.php` 内增加 `tags` 配置即可，参考配置如下。如配置项存在，则以配置项的值为准，如配置项不存在，则以组件的默认值为准。
 
 ```php
 return [
@@ -250,7 +231,7 @@ return [
 
 ### 接入阿里云链路追踪服务
 
-当我们在使用阿里云的链路追踪服务时，由于对端也是支持 `Zipkin` 的协议的，故可以直接通过在 `condif/autoload/opentracing.php` 配置文件内修改 `endpoint_url` 的值为您对应的阿里云 `region` 的地址，具体地址可在阿里云的链路追踪服务内得到，更多细节可参考 [阿里云链路追踪服务帮助文档](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv)。
+当我们在使用阿里云的链路追踪服务时，由于对端也是支持 `Zipkin` 的协议的，故可以直接通过在 `config/autoload/opentracing.php` 配置文件内修改 `endpoint_url` 的值为您对应的阿里云 `region` 的地址，具体地址可在阿里云的链路追踪服务内得到，更多细节可参考 [阿里云链路追踪服务帮助文档](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv)。
 
 ### 使用其他 Tracer 驱动
 

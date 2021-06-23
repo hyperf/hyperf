@@ -17,6 +17,7 @@ use GuzzleHttp\Exception\ClientException;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Parallel;
+use RuntimeException;
 
 class Client implements ClientInterface
 {
@@ -42,7 +43,7 @@ class Client implements ClientInterface
 
     public function __construct(
         Option $option,
-        array $callbacks = [],
+        array $callbacks,
         Closure $httpClientFactory,
         ?ConfigInterface $config = null
     )
@@ -89,18 +90,18 @@ class Client implements ClientInterface
         return $this->option;
     }
 
-    private function hasSecret()
+    private function hasSecret(): bool
     {
         return !empty($this->option->getSecret());
     }
 
-    private function getTimestamp()
+    private function getTimestamp(): string
     {
         list($usec, $sec) = explode(" ", microtime());
         return sprintf('%.0f', (floatval($usec) + floatval($sec)) * 1000);
     }
 
-    private function getAuthorization($timestamp, $pathWithQuery)
+    private function getAuthorization(string $timestamp, string $pathWithQuery): string
     {
         if (!$this->hasSecret()) {
             return '';
@@ -119,8 +120,8 @@ class Client implements ClientInterface
         foreach ($namespaces as $namespace) {
             $parallel->add(function () use ($option, $httpClientFactory, $namespace) {
                 $client = $httpClientFactory();
-                if (!$client instanceof \GuzzleHttp\Client) {
-                    throw new \RuntimeException('Invalid http client.');
+                if (! $client instanceof \GuzzleHttp\Client) {
+                    throw new RuntimeException('Invalid http client.');
                 }
                 $releaseKey = ReleaseKey::get($option->buildCacheKey($namespace), null);
                 $query = [
@@ -161,10 +162,10 @@ class Client implements ClientInterface
         $httpClientFactory = $this->httpClientFactory;
         foreach ($namespaces as $namespace) {
             $client = $httpClientFactory();
-            if (!$client instanceof \GuzzleHttp\Client) {
-                throw new \RuntimeException('Invalid http client.');
+            if (! $client instanceof \GuzzleHttp\Client) {
+                throw new RuntimeException('Invalid http client.');
             }
-            $releaseKey = ReleaseKey::get($this->option->buildCacheKey($namespace), null);
+            $releaseKey = ReleaseKey::get($this->option->buildCacheKey($namespace));
             $query = [
                 'ip' => $this->option->getClientIp(),
                 'releaseKey' => $releaseKey,

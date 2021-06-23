@@ -76,6 +76,7 @@ class TargetPhar
      */
     public function buildFromIterator(Traversable $iterator): void
     {
+        /* @phpstan-ignore-next-line */
         $this->phar->buildFromIterator($iterator, $this->pharBuilder->getPackage()->getDirectory());
     }
 
@@ -84,10 +85,12 @@ class TargetPhar
      */
     public function createDefaultStub(string $indexFile, string $webIndexFile = null): string
     {
+        $params = [$indexFile];
         if ($webIndexFile != null) {
-            return $this->phar->createDefaultStub($indexFile, $webIndexFile);
+            $params[] = $webIndexFile;
         }
-        return $this->phar->createDefaultStub($indexFile);
+
+        return '#!/usr/bin/env php' . PHP_EOL . $this->phar->createDefaultStub(...$params);
     }
 
     /**

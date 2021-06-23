@@ -20,6 +20,9 @@ class Request extends Proxy
 {
     public function toArray(): array
     {
+        if (! $this->hasRequest()) {
+            return [];
+        }
         $request = $this->getContainer()->get(HyperfRequest::class);
         return $request->all();
     }

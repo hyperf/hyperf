@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\Nacos\Listener;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnShutdown;
-use Hyperf\Nacos\Api\NacosInstance;
-use Hyperf\Nacos\Contract\LoggerInterface;
-use Hyperf\Nacos\Instance;
+use Hyperf\Nacos\Service\IPReaderInterface;
+use Hyperf\NacosSdk\Application;
 use Hyperf\Server\Event\CoroutineServerStop;
 use Psr\Container\ContainerInterface;
 
@@ -28,6 +28,11 @@ class OnShutdownListener implements ListenerInterface
     protected $container;
 
     /**
+     * @var StdoutLoggerInterface
+     */
+    protected $logger;
+
+    /**
      * @var bool
      */
     private $processed = false;
@@ -35,6 +40,7 @@ class OnShutdownListener implements ListenerInterface
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+        $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
     public function listen(): array
@@ -53,22 +59,39 @@ class OnShutdownListener implements ListenerInterface
         $this->processed = true;
 
         $config = $this->container->get(ConfigInterface::class);
-        if (! $config->get('nacos.enable', true)) {
+        if (! $config->get('nacos.service.enable', true)) {
             return;
         }
-        if (! $config->get('nacos.remove_node_when_server_shutdown', false)) {
+        if (! $config->get('nacos.service.instance.auto_removed', false)) {
             return;
         }
 
-        $logger = $this->container->get(LoggerInterface::class);
+        $serviceConfig = $config->get('nacos.service', []);
+        $serviceName = $serviceConfig['service_name'];
+        $groupName = $serviceConfig['group_name'] ?? null;
+        $namespaceId = $serviceConfig['namespace_id'] ?? null;
+        $instanceConfig = $serviceConfig['instance'] ?? [];
+        $ephemeral = $instanceConfig['ephemeral'] ?? null;
+        $cluster = $instanceConfig['cluster'] ?? null;
+        /** @var IPReaderInterface $ipReader */
+        $ipReader = $this->container->get($instanceConfig['ip']);
+        $ip = $ipReader->read();
 
-        $instance = $this->container->get(Instance::class);
-        /** @var NacosInstance $nacosInstance */
-        $nacosInstance = make(NacosInstance::class);
-        if ($nacosInstance->delete($instance)) {
-            $logger && $logger->info('nacos instance delete success.');
-        } else {
-            $logger && $logger->erro('nacos instance delete fail when shutdown.');
+        $client = $this->container->get(Application::class);
+        $ports = $config->get('server.servers', []);
+        foreach ($ports as $portServer) {
+            $port = (int) $portServer['port'];
+            $response = $client->instance->delete($serviceName, $groupName, $ip, $port, [
+                'clusterName' => $cluster,
+                'namespaceId' => $namespaceId,
+                'ephemeral' => $ephemeral,
+            ]);
+
+            if ($response->getStatusCode() === 200) {
+                $this->logger->debug(sprintf('Instance %s:%d deleted successfully!', $ip, $port));
+            } else {
+                $this->logger->error(sprintf('Instance %s:%d deleted failed!', $ip, $port));
+            }
         }
     }
 }

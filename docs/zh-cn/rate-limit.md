@@ -5,29 +5,24 @@
 ```bash
 composer require hyperf/rate-limit
 ```
-## 默认配置
+
+## 配置
+
+### 发布配置
+
+```bash
+php bin/hyperf.php vendor:publish hyperf/rate-limit
+```
+
+### 配置说明
 
 |  配置          | 默认值 |         备注        |
 |:--------------:|:------:|:-------------------:|
 | create         | 1      | 每秒生成令牌数      |
 | consume        | 1      | 每次请求消耗令牌数  |
 | capacity       | 2      | 令牌桶最大容量      |
-| limitCallback  | NULL   | 触发限流时回调方法  |
-| key            | NULL   | 生成令牌桶的 key     |
-| waitTimeout    | 3      | 排队超时时间        |
-
-```php
-<?php
-
-return [
-    'create' => 1,
-    'consume' => 1,
-    'capacity' => 2,
-    'limitCallback' => null,
-    'key' => null,
-    'waitTimeout' => 3,
-];
-```
+| limitCallback  | `[]`   | 触发限流时回调方法  |
+| waitTimeout    | 1      | 排队超时时间        |
 
 ## 使用限流器
 
@@ -103,7 +98,7 @@ class RateLimitController
     {
         // $seconds 下次生成Token 的间隔, 单位为秒
         // $proceedingJoinPoint 此次请求执行的切入点
-        // 可以通过调用 `$proceedingJoinPoint->process()` 继续执行或者自行处理
+        // 可以通过调用 `$proceedingJoinPoint->process()` 继续完成执行，或者自行处理
         return $proceedingJoinPoint->process();
     }
 }

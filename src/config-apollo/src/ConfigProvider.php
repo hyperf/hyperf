@@ -11,10 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigApollo;
 
-use Hyperf\ConfigApollo\Listener\BootProcessListener;
-use Hyperf\ConfigApollo\Listener\OnPipeMessageListener;
-use Hyperf\ConfigApollo\Process\ConfigFetcherProcess;
-
 class ConfigProvider
 {
     public function __invoke(): array
@@ -23,26 +19,11 @@ class ConfigProvider
             'dependencies' => [
                 ClientInterface::class => ClientFactory::class,
             ],
-            'processes' => [
-                ConfigFetcherProcess::class,
-            ],
-            'listeners' => [
-                BootProcessListener::class,
-                OnPipeMessageListener::class,
-            ],
             'annotations' => [
                 'scan' => [
                     'paths' => [
                         __DIR__,
                     ],
-                ],
-            ],
-            'publish' => [
-                [
-                    'id' => 'config',
-                    'description' => 'The config for apollo.',
-                    'source' => __DIR__ . '/../publish/apollo.php',
-                    'destination' => BASE_PATH . '/config/autoload/apollo.php',
                 ],
             ],
         ];

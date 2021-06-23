@@ -103,15 +103,6 @@ return [
 composer require hyperf/etcd
 ```
 
-因為 `Etcd` 分為 `v2` 和 `v3` 版本，所以根據需要選擇安裝
-
-```
-# Etcd v3 http client.
-composer require start-point/etcd-php
-# Etcd v2 http client.
-composer require linkorb/etcd-php
-```
-
 - 新增 `Etcd 客戶端` 配置檔案 `etcd.php`
 
 ```php
@@ -154,3 +145,7 @@ return [
 
 在預設的功能實現下，是由一個 `ConfigFetcherProcess` 程序根據配置的 `interval` 來向 Apollo 拉取對應 `namespace` 的配置，並通過 IPC 通訊將拉取到的新配置傳遞到各個 Worker 中，並更新到 `Hyperf\Contract\ConfigInterface` 對應的物件內。   
 需要注意的是，更新的配置只會更新 `Config` 物件，故僅限應用層或業務層的配置，不涉及框架層的配置改動，因為框架層的配置改動需要重啟服務，如果您有這樣的需求，也可以通過自行實現 `ConfigFetcherProcess` 來達到目的。
+
+## 注意事項
+
+在命令列模式時，預設不會觸發事件分發，導致無法正常獲取到相關配置，可通過新增 `--enable-event-dispatcher` 引數來開啟。

@@ -12,7 +12,7 @@ composer require xxtime/flysystem-aliyun-oss
 # 使用 S3 介面卡時執行
 composer require league/flysystem-aws-s3-v3
 composer require hyperf/guzzle
-# 使用七牛雲（測試）介面卡時執行
+# 使用七牛雲介面卡時執行
 composer require overtrue/flysystem-qiniu
 # 使用記憶體介面卡時執行
 composer require league/flysystem-memory
@@ -246,11 +246,18 @@ return [
         'cos' => [
             'driver' => \Hyperf\Filesystem\Adapter\CosAdapterFactory::class,
             'region' => env('COS_REGION'),
+            // overtrue/flysystem-cos ^2.0 配置如下
             'credentials' => [
                 'appId' => env('COS_APPID'),
                 'secretId' => env('COS_SECRET_ID'),
                 'secretKey' => env('COS_SECRET_KEY'),
             ],
+            // overtrue/flysystem-cos ^3.0 配置如下
+            // 'app_id' => env('COS_APPID'),
+            // 'secret_id' => env('COS_SECRET_ID'),
+            // 'secret_key' => env('COS_SECRET_KEY'),
+            // 可選，如果 bucket 為私有訪問請開啟此項
+            // 'signed_url' => false,
             'bucket' => env('COS_BUCKET'),
             'read_from_cdn' => false,
             // 'timeout'         => 60,

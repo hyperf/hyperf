@@ -162,6 +162,29 @@ class RpcServiceClientTest extends TestCase
         $this->assertEquals($uniqid, $ret);
     }
 
+    public function testProxyReturnNullableTypeWithNull()
+    {
+        $container = $this->createContainer();
+        /** @var MockInterface $transporter */
+        $transporter = $container->get(JsonRpcTransporter::class);
+        $transporter->shouldReceive('setLoadBalancer')
+            ->andReturnSelf();
+        $transporter->shouldReceive('send')
+            ->andReturnUsing(function ($data) {
+                $id = json_decode($data, true)['id'];
+                return json_encode([
+                    'id' => $id,
+                    'result' => null,
+                ]);
+            });
+        $factory = new ProxyFactory();
+        $proxyClass = $factory->createProxy(CalculatorServiceInterface::class);
+        /** @var CalculatorServiceInterface $service */
+        $service = new $proxyClass($container, CalculatorServiceInterface::class, 'jsonrpc');
+        $ret = $service->getString();
+        $this->assertNull($ret);
+    }
+
     public function testProxyCallableParameterAndReturnArray()
     {
         $container = $this->createContainer();

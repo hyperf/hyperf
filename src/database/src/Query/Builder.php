@@ -17,6 +17,7 @@ use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Exception\InvalidBindingException;
 use Hyperf\Database\Model\Builder as ModelBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
@@ -323,7 +324,7 @@ class Builder
     {
         [$query, $bindings] = $this->createSub($query);
 
-        return $this->fromRaw('(' . $query . ') as ' . $this->grammar->wrap($as), $bindings);
+        return $this->fromRaw('(' . $query . ') as ' . $this->grammar->wrapTable($as), $bindings);
     }
 
     /**
@@ -454,7 +455,7 @@ class Builder
     {
         [$query, $bindings] = $this->createSub($query);
 
-        $expression = '(' . $query . ') as ' . $this->grammar->wrap($as);
+        $expression = '(' . $query . ') as ' . $this->grammar->wrapTable($as);
 
         $this->addBinding($bindings, 'join');
 
@@ -646,7 +647,7 @@ class Builder
         $this->wheres[] = compact('type', 'column', 'operator', 'value', 'boolean');
 
         if (! $value instanceof Expression) {
-            $this->addBinding($value, 'where');
+            $this->addBinding($this->assertBinding($value, $column), 'where');
         }
 
         return $this;
@@ -938,7 +939,7 @@ class Builder
 
         $this->wheres[] = compact('type', 'column', 'values', 'boolean', 'not');
 
-        $this->addBinding($this->cleanBindings($values), 'where');
+        $this->addBinding($this->cleanBindings($this->assertBinding($values, $column, 2)), 'where');
 
         return $this;
     }
@@ -1390,7 +1391,7 @@ class Builder
         $this->wheres[] = compact('type', 'column', 'operator', 'value', 'boolean');
 
         if (! $value instanceof Expression) {
-            $this->addBinding($value);
+            $this->addBinding((int) $this->assertBinding($value, $column));
         }
 
         return $this;
@@ -1494,7 +1495,7 @@ class Builder
         $this->havings[] = compact('type', 'column', 'operator', 'value', 'boolean');
 
         if (! $value instanceof Expression) {
-            $this->addBinding($value, 'having');
+            $this->addBinding($this->assertBinding($value, $column), 'having');
         }
 
         return $this;
@@ -1529,7 +1530,7 @@ class Builder
 
         $this->havings[] = compact('type', 'column', 'values', 'boolean', 'not');
 
-        $this->addBinding($this->cleanBindings($values), 'having');
+        $this->addBinding($this->cleanBindings($this->assertBinding($values, $column, 2)), 'having');
 
         return $this;
     }
@@ -1911,9 +1912,6 @@ class Builder
         // Once we have run the pagination count query, we will get the resulting count and
         // take into account what type of query it was. When there is a group by we will
         // just return the count of the entire results set since that will be correct.
-        if (isset($this->groups)) {
-            return count($results);
-        }
         if (! isset($results[0])) {
             return 0;
         }
@@ -2649,7 +2647,7 @@ class Builder
         $this->wheres[] = compact('column', 'type', 'boolean', 'operator', 'value');
 
         if (! $value instanceof Expression) {
-            $this->addBinding($value, 'where');
+            $this->addBinding($this->assertBinding($value, $column), 'where');
         }
 
         return $this;
@@ -2721,6 +2719,17 @@ class Builder
     }
 
     /**
+     * Clone the existing query instance for usage in a pagination subquery.
+     *
+     * @return self
+     */
+    protected function cloneForPaginationCount()
+    {
+        return $this->cloneWithout(['orders', 'limit', 'offset'])
+            ->cloneWithoutBindings(['order']);
+    }
+
+    /**
      * Run a pagination count query.
      *
      * @param array $columns
@@ -2728,6 +2737,20 @@ class Builder
      */
     protected function runPaginationCountQuery($columns = ['*'])
     {
+        if ($this->groups || $this->havings) {
+            $clone = $this->cloneForPaginationCount();
+
+            if (is_null($clone->columns) && ! empty($this->joins)) {
+                $clone->select($this->from . '.*');
+            }
+
+            return $this->newQuery()
+                ->from(new Expression('(' . $clone->toSql() . ') as ' . $this->grammar->wrap('aggregate_table')))
+                ->mergeBindings($clone)
+                ->setAggregate('count', $this->withoutSelectAliases($columns))
+                ->get()->all();
+        }
+
         $without = $this->unions ? ['orders', 'limit', 'offset'] : ['columns', 'orders', 'limit', 'offset'];
 
         return $this->cloneWithout($without)
@@ -2908,5 +2931,36 @@ class Builder
             throw new \RuntimeException('The DI container does not support make() method.');
         }
         return $container->make(PaginatorInterface::class, compact('items', 'perPage', 'currentPage', 'options'));
+    }
+
+    /**
+     * Assert the value for bindings.
+     *
+     * @param mixed $value
+     * @param string $column
+     * @return mixed
+     */
+    protected function assertBinding($value, $column = '', int $limit = 0)
+    {
+        if ($limit === 0) {
+            if (is_array($value)) {
+                throw new InvalidBindingException(sprintf(
+                    'The value of column %s is invalid.',
+                    (string) $column
+                ));
+            }
+
+            return $value;
+        }
+
+        if (count($value) !== $limit) {
+            throw new InvalidBindingException(sprintf(
+                'The value length of column %s is not equal with %d.',
+                (string) $column,
+                $limit
+            ));
+        }
+
+        return $value;
     }
 }

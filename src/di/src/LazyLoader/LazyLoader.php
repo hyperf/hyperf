@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\LazyLoader;
 
+use Hyperf\Utils\CodeGen\PhpParser;
 use Hyperf\Utils\Coroutine\Locker as CoLocker;
 use Hyperf\Utils\Str;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\PrettyPrinter\Standard;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionMethod;
-use Roave\BetterReflection\Reflection\ReflectionClass;
+use ReflectionClass;
 
 class LazyLoader
 {
@@ -55,18 +55,16 @@ class LazyLoader
      */
     public static function bootstrap(string $configDir): LazyLoader
     {
+        if (static::$instance) {
+            return static::$instance;
+        }
         $path = $configDir . self::CONFIG_FILE_NAME;
 
+        $config = [];
         if (file_exists($path)) {
-            $config = include $configDir . self::CONFIG_FILE_NAME;
-        } else {
-            $config = [];
+            $config = include $path;
         }
-
-        if (is_null(static::$instance)) {
-            static::$instance = new LazyLoader($config);
-        }
-        return static::$instance;
+        return static::$instance = new static($config);
     }
 
     /**
@@ -134,7 +132,7 @@ class LazyLoader
      */
     protected function generatorLazyProxy(string $proxy, string $target): string
     {
-        $targetReflection = ReflectionClass::createFromName($target);
+        $targetReflection = new ReflectionClass($target);
         if ($this->isUnsupportedReflectionType($targetReflection)) {
             $builder = new FallbackLazyProxyBuilder();
             return $this->buildNewCode($builder, $proxy, $targetReflection);
@@ -183,28 +181,17 @@ class LazyLoader
     private function buildNewCode(AbstractLazyProxyBuilder $builder, string $proxy, ReflectionClass $reflectionClass): string
     {
         $target = $reflectionClass->getName();
-        $ast = $reflectionClass->getAst();
+        $nodes = PhpParser::getInstance()->getNodesFromReflectionClass($reflectionClass);
         $builder->addClassBoilerplate($proxy, $target);
         $builder->addClassRelationship();
         $traverser = new NodeTraverser();
-        $visitor = new PublicMethodVisitor($this->getMethodsStmts($reflectionClass), $builder->getOriginalClassName());
-        $nameResolver = new NameResolver();
-        $traverser->addVisitor($nameResolver);
+        $methods = PhpParser::getInstance()->getAllMethodsFromStmts($nodes);
+        $visitor = new PublicMethodVisitor($methods, $builder->getOriginalClassName());
+        $traverser->addVisitor(new NameResolver());
         $traverser->addVisitor($visitor);
-        $traverser->traverse([$ast]);
+        $traverser->traverse($nodes);
         $builder->addNodes($visitor->nodes);
         $prettyPrinter = new Standard();
-        $stmts = [$builder->getNode()];
-        return $prettyPrinter->prettyPrintFile($stmts);
-    }
-
-    private function getMethodsStmts(ReflectionClass $reflectionClass)
-    {
-        $reflectionMethods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
-        $stmts = [];
-        foreach ($reflectionMethods as $method) {
-            $stmts[] = $method->getAst();
-        }
-        return $stmts;
+        return $prettyPrinter->prettyPrintFile([$builder->getNode()]);
     }
 }

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\GraphQL\Annotation;
 
+use Attribute;
 use Hyperf\Di\Annotation\AnnotationInterface;
 
 /**
@@ -20,6 +21,7 @@ use Hyperf\Di\Annotation\AnnotationInterface;
  *     @Attribute("class", type="string"),
  * })
  */
+#[Attribute(Attribute::TARGET_CLASS)]
 class Type extends \TheCodingMachine\GraphQLite\Annotations\Type implements AnnotationInterface
 {
     use AnnotationTrait;

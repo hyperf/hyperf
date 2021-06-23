@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Amqp\Message;
 
+use Hyperf\Amqp\ConnectionFactory;
 use Hyperf\Amqp\Consumer;
 use Hyperf\Amqp\Message\Type;
-use Hyperf\Amqp\Pool\PoolFactory;
 use Hyperf\Contract\StdoutLoggerInterface;
 use HyperfTest\Amqp\Stub\ContainerStub;
 use HyperfTest\Amqp\Stub\QosConsumer;
@@ -53,7 +53,7 @@ class ConsumerMessageTest extends TestCase
             $this->assertSame([null, 10, null], $args);
         });
 
-        $consumer = new Consumer($container, $container->get(PoolFactory::class), $container->get(StdoutLoggerInterface::class));
+        $consumer = new Consumer($container, $container->get(ConnectionFactory::class), $container->get(StdoutLoggerInterface::class));
         $consumer->declare(new QosConsumer(), $channel);
     }
 }

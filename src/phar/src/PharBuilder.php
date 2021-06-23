@@ -41,6 +41,11 @@ class PharBuilder
     private $target;
 
     /**
+     * @var array
+     */
+    private $mount = [];
+
+    /**
      * @var string
      */
     private $version;
@@ -135,6 +140,24 @@ class PharBuilder
     }
 
     /**
+     * @return $this
+     */
+    public function setMount(array $mount = [])
+    {
+        foreach ($mount as $item) {
+            $items = explode(':', $item);
+            $this->mount[$items[0]] = $items[1] ?? $items[0];
+        }
+
+        return $this;
+    }
+
+    public function getMount(): array
+    {
+        return $this->mount;
+    }
+
+    /**
      * Gets a list of all dependent packages.
      * @return Package[]
      */
@@ -154,16 +177,34 @@ class PharBuilder
             }
             // Package all of these dependent components into the packages
             foreach ($installedPackages as $package) {
-                $dir = $package['name'] . '/';
+                // support custom install path
+                $dir = 'composer/' . $package['install-path'] . '/';
                 if (isset($package['target-dir'])) {
                     $dir .= trim($package['target-dir'], '/') . '/';
                 }
 
                 $dir = $vendorPath . $dir;
-                $packages[] = new Package($package, $dir);
+                $packages[] = new Package($package, $this->canonicalize($dir));
             }
         }
         return $packages;
+    }
+
+    /**
+     * Gets the canonicalize path, like realpath.
+     * @param mixed $address
+     */
+    public function canonicalize($address)
+    {
+        $address = explode('/', $address);
+        $keys = array_keys($address, '..');
+
+        foreach ($keys as $keypos => $key) {
+            array_splice($address, $key - ($keypos * 2 + 1), 2);
+        }
+
+        $address = implode('/', $address);
+        return str_replace('./', '', $address);
     }
 
     /**
@@ -175,7 +216,40 @@ class PharBuilder
         if (strpos($path, $root) !== 0) {
             throw new UnexpectedValueException('Path "' . $path . '" is not within base project path "' . $root . '"');
         }
-        return substr($path, strlen($root)) ?? null;
+        $basePath = substr($path, strlen($root));
+        return empty($basePath) ? null : $this->canonicalize($basePath);
+    }
+
+    /**
+     * Compile the code into the Phar file.
+     */
+    public function getMountLinkCode(): string
+    {
+        $mountString = '';
+        foreach ($this->getMount() as $link => $inside) {
+            $mountString .= "'{$link}' => '{$inside}',";
+        }
+
+        return <<<EOD
+<?php
+\$mount = [{$mountString}];
+\$path = dirname(realpath(\$argv[0]));
+array_walk(\$mount, function (\$item, \$link) use (\$path) {
+    \$file = \$link;
+    if(ltrim(\$link, '/') == \$link){
+        \$file = \$path . '/' . \$link;   
+    }
+    if(!file_exists(\$file)){
+        if(rtrim(\$item, '/')!=\$item){
+            @mkdir(\$file, 0777, true);
+        }else{
+            file_exists(dirname(\$file)) || @mkdir(dirname(\$file), 0777, true);
+            file_put_contents(\$file,"");
+        }
+    }
+    Phar::mount(\$item,\$file);
+});
+EOD;
     }
 
     /**
@@ -197,16 +271,25 @@ class PharBuilder
             $tmp = $target . '.' . mt_rand() . '.phar';
         } while (file_exists($tmp));
 
+        $main = $this->getMain();
+
         $targetPhar = new TargetPhar(new Phar($tmp), $this);
         $this->logger->info('Adding main package "' . $this->package->getName() . '"');
         $finder = Finder::create()
             ->files()
             ->ignoreVCS(true)
             ->exclude(rtrim($this->package->getVendorPath(), '/'))
-            ->exclude('runtime') //Ignore runtime dir
+            ->exclude('runtime') // Ignore runtime dir
             ->notPath('/^composer\.phar/')
-            ->notPath($target) //Ignore the phar package that exists in the project itself
-            ->in($this->package->getDirectory());
+            ->exclude($main)
+            ->notPath($target); // Ignore the phar package that exists in the project itself
+
+        foreach ($this->getMount() as $inside) {
+            $finder = $finder->exclude($inside);
+        }
+
+        $finder = $finder->in($this->package->getDirectory());
+
         $targetPhar->addBundle($this->package->bundle($finder));
 
         // Force to turn on ScanCacheable.
@@ -217,11 +300,21 @@ class PharBuilder
             $this->logger->info('Adding runtime container files');
             $finder = Finder::create()
                 ->files()
+                ->exclude($cacheFile = 'runtime/container/scan.cache')
                 ->in($this->package->getDirectory() . 'runtime/container');
             $targetPhar->addBundle($this->package->bundle($finder));
+            $cache = file_get_contents($cacheFile);
+            $scanCache = unserialize($cache);
+            $proxies = [];
+            foreach ($scanCache[1] as $class => $path) {
+                $proxies[$class] = $this->getPathLocalToBase($path);
+            }
+            $scanCache[1] = $proxies;
+            $targetPhar->addFromString($cacheFile, serialize($scanCache));
         }
+
         // Add .env file.
-        if (is_file($this->package->getDirectory() . '.env')) {
+        if (! in_array('.env', $this->getMount()) && is_file($this->package->getDirectory() . '.env')) {
             $this->logger->info('Adding .env file');
             $targetPhar->addFile($this->package->getDirectory() . '.env');
         }
@@ -236,15 +329,27 @@ class PharBuilder
         // Add composer depenedencies.
         foreach ($this->getPackagesDependencies() as $package) {
             $this->logger->info('Adding dependency "' . $package->getName() . '" from "' . $this->getPathLocalToBase($package->getDirectory()) . '"');
-            $targetPhar->addBundle($package->bundle());
+            // support package symlink
+            if (is_link(rtrim($package->getDirectory(), '/'))) {
+                $bundle = $package->bundle();
+                foreach ($bundle as $resource) {
+                    foreach ($resource as $iterator) {
+                        $targetPhar->addFile($iterator->getPathname());
+                    }
+                }
+            } else {
+                $targetPhar->addBundle($package->bundle());
+            }
         }
         // Replace ConfigFactory ReadPaths method.
         $this->logger->info('Replace method "readPaths" in file "vendor/hyperf/config/src/ConfigFactory.php" and change "getRealPath" to "getPathname".');
         $this->replaceConfigFactoryReadPaths($targetPhar, $vendorPath);
 
-        $this->logger->info('Setting main/stub');
+        $this->logger->info('Adding main file "' . $main . '"');
+        $stubContents = file_get_contents($main);
+        $targetPhar->addFromString($main, strtr($stubContents, ['<?php' => $this->getMountLinkCode()]));
 
-        $main = $this->getMain();
+        $this->logger->info('Setting stub');
         // Add the default stub.
         $targetPhar->setStub($targetPhar->createDefaultStub($main));
         $this->logger->info('Setting default stub <info>' . $main . '</info>.');

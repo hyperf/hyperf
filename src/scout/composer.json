@@ -9,16 +9,13 @@
     "description": "Hyperf Scout provides a driver based solution to searching your Eloquent models. Inspired By Laravel Scout.",
     "require": {
         "php": ">=7.2",
-        "hyperf/command": "~2.1.0",
-        "hyperf/contract": "~2.1.0",
-        "hyperf/database": "~2.1.0",
-        "hyperf/event": "~2.1.0",
-        "hyperf/model-listener": "~2.1.0",
-        "hyperf/utils": "~2.1.0",
+        "hyperf/command": "~2.2.0",
+        "hyperf/contract": "~2.2.0",
+        "hyperf/database": "~2.2.0",
+        "hyperf/event": "~2.2.0",
+        "hyperf/model-listener": "~2.2.0",
+        "hyperf/utils": "~2.2.0",
         "psr/event-dispatcher": "^1.0"
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.14"
     },
     "suggest": {
         "hyperf/elasticsearch": "Required to use elasticsearch driver."
@@ -43,10 +40,5 @@
         "hyperf": {
             "config": "Hyperf\\Scout\\ConfigProvider"
         }
-    },
-    "scripts": {
-        "test": "co-phpunit -c phpunit.xml --colors=always",
-        "analyze": "phpstan analyse --memory-limit 300M -l 0 ./src",
-        "cs-fix": "php-cs-fixer fix $1"
     }
 }

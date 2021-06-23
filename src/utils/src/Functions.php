@@ -359,6 +359,7 @@ if (! function_exists('class_uses_recursive')) {
 
         $results = [];
 
+        /* @phpstan-ignore-next-line */
         foreach (array_reverse(class_parents($class)) + [$class => $class] as $class) {
             $results += trait_uses_recursive($class);
         }

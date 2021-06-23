@@ -83,7 +83,7 @@ grpc
         'port' => 9503,
         'sock_type' => SWOOLE_SOCK_TCP,
         'callbacks' => [
-            SwooleEvent::ON_REQUEST => [\Hyperf\GrpcServer\Server::class, 'onRequest'],
+            Event::ON_REQUEST => [\Hyperf\GrpcServer\Server::class, 'onRequest'],
         ],
     ],
 ],

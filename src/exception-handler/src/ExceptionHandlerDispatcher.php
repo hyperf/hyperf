@@ -32,8 +32,8 @@ class ExceptionHandlerDispatcher extends AbstractDispatcher
     public function dispatch(...$params)
     {
         /**
-         * @var Throwable
-         * @var string[] $handlers
+         * @param Throwable $throwable
+         * @param string[] $handlers
          */
         [$throwable, $handlers] = $params;
         $response = Context::get(ResponseInterface::class);

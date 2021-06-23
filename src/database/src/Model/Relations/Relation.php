@@ -58,13 +58,6 @@ abstract class Relation
     protected $related;
 
     /**
-     * Indicates if the relation is adding constraints.
-     *
-     * @var bool
-     */
-    protected static $constraints = true;
-
-    /**
      * Create a new relation instance.
      */
     public function __construct(Builder $query, Model $parent)
@@ -110,9 +103,9 @@ abstract class Relation
      */
     public static function noConstraints(Closure $callback)
     {
-        $previous = static::$constraints;
+        $previous = Constraint::isConstraint();
 
-        static::$constraints = false;
+        Constraint::setConstraint(false);
 
         // When resetting the relation where clause, we want to shift the first element
         // off of the bindings, leaving only the constraints that the developers put
@@ -120,7 +113,7 @@ abstract class Relation
         try {
             return call_user_func($callback);
         } finally {
-            static::$constraints = $previous;
+            Constraint::setConstraint($previous);
         }
     }
 
@@ -338,6 +331,18 @@ abstract class Relation
     public static function getMorphedModel($alias)
     {
         return self::$morphMap[$alias] ?? null;
+    }
+
+    /**
+     * Get a relationship join table hash.
+     *
+     * For safety, The relationship ensures this method is only used in the same coroutine.
+     *
+     * @return string
+     */
+    public function getRelationCountHash(bool $incrementJoinCount = true)
+    {
+        return 'hyperf_reserved_' . ($incrementJoinCount ? static::$selfJoinCount++ : static::$selfJoinCount);
     }
 
     /**

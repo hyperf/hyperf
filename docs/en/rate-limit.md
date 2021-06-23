@@ -1,37 +1,31 @@
-# 令牌桶限流器
+# Token bucket rate limiter
 
 ## Installation
 
 ```bash
 composer require hyperf/rate-limit
 ```
-## 默认配置
+## Configuration
 
-|  配置          | 默认值 |         备注        |
-|:--------------:|:------:|:-------------------:|
-| create         | 1      | 每秒生成令牌数      |
-| consume        | 1      | 每次请求消耗令牌数  |
-| capacity       | 2      | 令牌桶最大容量      |
-| limitCallback  | NULL   | 触发限流时回调方法  |
-| key            | NULL   | 生成令牌桶的key     |
-| waitTimeout    | 3      | 排队超时时间        |
+### Publish config
 
-```php
-<?php
-
-return [
-    'create' => 1,
-    'consume' => 1,
-    'capacity' => 2,
-    'limitCallback' => null,
-    'key' => null,
-    'waitTimeout' => 3,
-];
+```bash
+php bin/hyperf.php vendor:publish hyperf/rate-limit
 ```
 
-## 使用限流器
+### Config description
 
-组件提供 `Hyperf\RateLimit\Annotation\RateLimit` 注解，作用于类、类方法，可以覆盖配置文件。 例如，
+|  config item   | default |         remark        |
+|:--------------:|:-------:|:---------------------:|
+| create         | 1       | Number of tokens generated per second            |
+| consume        | 1       | Number of tokens consumed per request            |
+| capacity       | 2       | Maximum capacity of token bucket                 |
+| limitCallback  | `[]`    | Callback method when current limit is triggered  |
+| waitTimeout    | 1       | timeout in wait queue                            |
+
+## Usage
+
+The component provides `Hyperf\RateLimit\Annotation\RateLimit` annotation, which acts on classes and class methods, and can override configuration files. For example:
 
 ```php
 <?php
@@ -53,7 +47,7 @@ class RateLimitController
      */
     public function test()
     {
-        return ["QPS 1, 峰值3"];
+        return ["QPS 1, Peek3"];
     }
 
     /**
@@ -62,18 +56,18 @@ class RateLimitController
      */
     public function test2()
     {
-        return ["QPS 2, 峰值2"];
+        return ["QPS 2, Peek2"];
     }
 }
 ``` 
-配置优先级 `方法注解 > 类注解 > 配置文件 > 默认配置`
+Configuration priority `Method Annotation > Class Annotation > Configuration File > Default Configuration`
 
-## 触发限流
-当限流被触发时, 默认会抛出 `Hyperf\RateLimit\Exception\RateLimitException` 异常
+## Trigger current limit
+When the current limit is triggered, the `Hyperf\RateLimit\Exception\RateLimitException` will be thrown by default.
 
-可以通过[异常处理](en/exception-handler.md)或者配置 `limitCallback` 限流回调处理。
+You can use [Exception Handler](en/exception-handler.md) or configure `limitCallback` to handle the current limit callback.
 
-例如:
+For example:
 ```php
 <?php
 
@@ -86,7 +80,7 @@ use Hyperf\RateLimit\Annotation\RateLimit;
 
 /**
  * @Controller(prefix="rate-limit")
- * @RateLimit(limitCallback={RateLimitController::class, 'limitCallback'})
+ * @RateLimit(limitCallback={RateLimitController::class, "limitCallback"})
  */
 class RateLimitController
 {
@@ -96,14 +90,14 @@ class RateLimitController
      */
     public function test()
     {
-        return ["QPS 1, 峰值3"];
+        return ["QPS 1, Peek3"];
     }
     
     public static function limitCallback(float $seconds, ProceedingJoinPoint $proceedingJoinPoint)
     {
-        // $seconds 下次生成Token 的间隔, 单位为秒
-        // $proceedingJoinPoint 此次请求执行的切入点
-        // 可以通过调用 `$proceedingJoinPoint->process()` 继续执行或者自行处理
+        // $seconds Token generation time interval, in seconds
+        // $proceedingJoinPoint The entry point for the execution of this request
+        // You can handle it by yourself, or continue its execution by calling `$proceedingJoinPoint->process()`
         return $proceedingJoinPoint->process();
     }
 }

@@ -275,6 +275,14 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
     }
 
     /**
+     * Determine if a given attribute exists in the attribute array.
+     */
+    public function has(string $key): bool
+    {
+        return array_key_exists($key, $this->attributes);
+    }
+
+    /**
      * Get content as a string of HTML.
      *
      * @return string

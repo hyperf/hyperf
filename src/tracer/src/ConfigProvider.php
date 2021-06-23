@@ -13,6 +13,7 @@ namespace Hyperf\Tracer;
 
 use GuzzleHttp\Client;
 use Hyperf\Tracer\Listener\DbQueryExecutedListener;
+use Jaeger\ThriftUdpTransport;
 use OpenTracing\Tracer;
 
 class ConfigProvider
@@ -33,6 +34,9 @@ class ConfigProvider
                 'scan' => [
                     'paths' => [
                         __DIR__,
+                    ],
+                    'class_map' => [
+                        ThriftUdpTransport::class => __DIR__ . '/../class_map/ThriftUdpTransport.php',
                     ],
                 ],
             ],

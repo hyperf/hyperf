@@ -22,7 +22,6 @@ use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Watcher\Driver\DriverInterface;
 use PhpParser\PrettyPrinter\Standard;
 use Psr\Container\ContainerInterface;
-use Roave\BetterReflection\BetterReflection;
 use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\System;
 use Swoole\Process;
@@ -66,11 +65,6 @@ class Watcher
     protected $autoload;
 
     /**
-     * @var BetterReflection
-     */
-    protected $reflection;
-
-    /**
      * @var AnnotationReader
      */
     protected $reader;
@@ -104,7 +98,6 @@ class Watcher
         $this->output = $output;
         $json = Json::decode($this->filesystem->get(BASE_PATH . '/composer.json'));
         $this->autoload = array_flip($json['autoload']['psr-4'] ?? []);
-        $this->reflection = new BetterReflection();
         $this->reader = new AnnotationReader();
         $this->config = $container->get(ConfigInterface::class);
         $this->printer = new Standard();
@@ -184,7 +177,7 @@ class Watcher
                 2 => STDERR,
             ];
 
-            proc_open($this->option->getBin() . ' vendor/hyperf/watcher/watcher.php start', $descriptorspec, $pipes);
+            proc_open($this->option->getBin() . ' ' . BASE_PATH . '/vendor/hyperf/watcher/watcher.php start', $descriptorspec, $pipes);
 
             $this->output->writeln('Stop server success.');
             $this->channel->push(1);

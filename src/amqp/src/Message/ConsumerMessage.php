@@ -44,7 +44,11 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
     /**
      * @var null|array
      */
-    protected $qos;
+    protected $qos = [
+        'prefetch_size' => 0,
+        'prefetch_count' => 1,
+        'global' => false,
+    ];
 
     /**
      * @var bool
@@ -107,7 +111,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
 
     public function getConsumerTag(): string
     {
-        return implode(',', (array) $this->getRoutingKey());
+        return '';
     }
 
     public function isEnable(): bool

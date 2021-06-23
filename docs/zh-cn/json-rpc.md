@@ -215,6 +215,10 @@ return [
                     // 'package_length_offset' => 0,
                     // 'package_body_offset' => 4,
                 ],
+                // 重试次数，默认值为 2，收包超时不进行重试。暂只支持 JsonRpcPoolTransporter
+                'retry_count' => 2,
+                // 重试间隔，毫秒
+                'retry_interval' => 100,
                 // 当使用 JsonRpcPoolTransporter 时会用到以下配置
                 'pool' => [
                     'min_connections' => 1,

@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database;
 
-use Doctrine\DBAL\Driver\PDO\MySQL\Driver as DoctrineDriver;
+use Hyperf\Database\DBAL\MySqlDriver;
 use Hyperf\Database\Query\Grammars\MySqlGrammar as QueryGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Schema\Grammars\MySqlGrammar as SchemaGrammar;
@@ -81,6 +81,6 @@ class MySqlConnection extends Connection
      */
     protected function getDoctrineDriver()
     {
-        return new DoctrineDriver();
+        return new MySqlDriver();
     }
 }

@@ -17,6 +17,11 @@ class RpcConnectionStub extends RpcConnection
 {
     public $lastData = '';
 
+    /**
+     * @var null|\Closure
+     */
+    public $reconnectCallback;
+
     public function __call($name, $arguments)
     {
         if ($name == 'send') {
@@ -39,6 +44,9 @@ class RpcConnectionStub extends RpcConnection
 
     public function reconnect(): bool
     {
+        if ($this->reconnectCallback) {
+            return $this->reconnectCallback->call($this);
+        }
         $this->lastUseTime = microtime(true);
         return true;
     }

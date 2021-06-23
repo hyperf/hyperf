@@ -28,7 +28,7 @@ class Node
      */
     public $port;
 
-    public function __construct(string $host = '127.0.0.1', int $port, int $weight = 0)
+    public function __construct(string $host, int $port, int $weight = 0)
     {
         $this->host = $host;
         $this->port = $port;

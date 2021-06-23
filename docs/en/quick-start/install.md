@@ -8,7 +8,7 @@ The various versions of Dockerfile have been prepared for you in the [hyperf\hyp
 
 When you don't want to use Docker as the basis for your running environment, you need to make sure that your operating environment meets the following requirements:  
 
- - PHP >= 7.2
+ - PHP >= 7.3
  - Swoole PHP extension >= 4.5，and Disabled `Short Name`
  - OpenSSL PHP extension
  - JSON PHP extension

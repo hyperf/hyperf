@@ -15,20 +15,22 @@ composer require hyperf/websocket-server
 ```php
 <?php
 
-'servers' => [
-    [
-        'name' => 'ws',
-        'type' => Server::SERVER_WEBSOCKET,
-        'host' => '0.0.0.0',
-        'port' => 9502,
-        'sock_type' => SWOOLE_SOCK_TCP,
-        'callbacks' => [
-            SwooleEvent::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
-            SwooleEvent::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
-            SwooleEvent::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
+return [
+    'servers' => [
+        [
+            'name' => 'ws',
+            'type' => Server::SERVER_WEBSOCKET,
+            'host' => '0.0.0.0',
+            'port' => 9502,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                Event::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
+                Event::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
+                Event::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
+            ],
         ],
     ],
-],
+];
 ```
 
 ## 配置路由
@@ -108,7 +110,7 @@ return [
             'port' => 9501,
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
-                SwooleEvent::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
+                Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
             ],
             'settings' => [
                 'open_websocket_protocol' => false,
@@ -223,3 +225,49 @@ class ServerController
 }
 
 ```
+
+## 在 WebSocket 服務中處理 HTTP 請求
+
+我們除了可以將 HTTP 服務和 WebSocket 服務通過埠分開，也可以在 WebSocket 中監聽 HTTP 請求。
+
+因為 `server.servers.*.callbacks` 中的配置項，都是單例的，所以我們需要在 `dependencies` 中配置一個單獨的例項。
+
+```php
+<?php
+return [
+    'HttpServer' => Hyperf\HttpServer\Server::class,
+];
+```
+
+然後修改我們的 `WebSocket` 服務中的 `callbacks` 配置，以下隱藏了不相干的配置
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Hyperf\Server\Event;
+use Hyperf\Server\Server;
+
+return [
+    'mode' => SWOOLE_BASE,
+    'servers' => [
+        [
+            'name' => 'ws',
+            'type' => Server::SERVER_WEBSOCKET,
+            'host' => '0.0.0.0',
+            'port' => 9502,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                Event::ON_REQUEST => ['HttpServer', 'onRequest'],
+                Event::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
+                Event::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
+                Event::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
+            ],
+        ],
+    ],
+];
+
+```
+
+最後我們便可以在 `ws` 中，新增 `HTTP` 路由了。

@@ -570,7 +570,12 @@ class Connection implements ConnectionInterface
      */
     public function getDoctrineSchemaManager()
     {
-        return $this->getDoctrineDriver()->getSchemaManager($this->getDoctrineConnection());
+        $connection = $this->getDoctrineConnection();
+
+        return $this->getDoctrineDriver()->getSchemaManager(
+            $connection,
+            $connection->getDatabasePlatform()
+        );
     }
 
     /**
@@ -586,7 +591,7 @@ class Connection implements ConnectionInterface
             $this->doctrineConnection = new DoctrineConnection([
                 'pdo' => $this->getPdo(),
                 'dbname' => $this->getConfig('database'),
-                'driver' => $driver->getName(),
+                'driver' => null,
             ], $driver);
         }
 

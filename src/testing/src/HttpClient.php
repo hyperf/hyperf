@@ -106,4 +106,9 @@ class HttpClient
 
         return $this->packer->unpack((string) $response->getBody());
     }
+
+    public function client()
+    {
+        return $this->client;
+    }
 }

@@ -28,6 +28,7 @@ use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Event;
+use Hyperf\Server\Server as AsyncStyleServer;
 use Hyperf\Server\ServerManager;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Coordinator\Constants;
@@ -94,6 +95,11 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
      */
     protected $serverName = 'websocket';
 
+    /**
+     * @var null|\Swoole\Coroutine\Http\Server|WebSocketServer
+     */
+    protected $server;
+
     public function __construct(
         ContainerInterface $container,
         HttpDispatcher $dispatcher,
@@ -125,7 +131,20 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
      */
     public function getServer()
     {
-        return $this->container->get(SwooleServer::class);
+        if ($this->server) {
+            return $this->server;
+        }
+        $config = $this->container->get(ConfigInterface::class);
+
+        $type = $config->get('server.type', AsyncStyleServer::class);
+
+        if ($type === AsyncStyleServer::class) {
+            return $this->container->get(SwooleServer::class);
+        }
+
+        [, $server] = ServerManager::get($this->serverName);
+
+        return $this->server = $server;
     }
 
     public function getSender(): Sender
@@ -163,10 +182,11 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             /** @var Response $psr7Response */
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
 
-            $class = $psr7Response->getAttribute('class');
+            $class = $psr7Response->getAttribute(CoreMiddleware::HANDLER_NAME);
 
             if (empty($class)) {
-                throw new WebSocketHandeShakeException('WebSocket hande shake failed, because the class does not exists.');
+                $this->logger->warning('WebSocket hande shake failed, because the class does not exists.');
+                return;
             }
 
             FdCollector::set($fd, $class);
@@ -187,10 +207,15 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
                 while (true) {
                     $frame = $response->recv();
                     if ($frame === false || $frame instanceof CloseFrame || $frame === '') {
-                        $onCloseCallbackInstance->{$onCloseCallbackMethod}($response, $fd, 0);
+                        wait(static function () use ($onCloseCallbackInstance, $onCloseCallbackMethod, $response, $fd) {
+                            $onCloseCallbackInstance->{$onCloseCallbackMethod}($response, $fd, 0);
+                        });
                         break;
                     }
-                    $onMessageCallbackInstance->{$onMessageCallbackMethod}($response, $frame);
+
+                    wait(static function () use ($onMessageCallbackInstance, $onMessageCallbackMethod, $response, $frame) {
+                        $onMessageCallbackInstance->{$onMessageCallbackMethod}($response, $frame);
+                    });
                 }
             } else {
                 $this->deferOnOpen($request, $class, $server);
@@ -203,7 +228,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         } finally {
             isset($fd) && $this->getSender()->setResponse($fd, null);
             // Send the Response to client.
-            if (! $psr7Response || ! $psr7Response instanceof Psr7Response) {
+            if (! isset($psr7Response) || ! $psr7Response instanceof Psr7Response) {
                 return;
             }
             $this->responseEmitter->emit($psr7Response, $response, true);
@@ -277,7 +302,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         };
 
         if ($server instanceof SwooleResponse) {
-            $onOpen();
+            wait($onOpen);
         } else {
             defer($onOpen);
         }

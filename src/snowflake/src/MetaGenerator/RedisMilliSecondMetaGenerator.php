@@ -16,7 +16,7 @@ use Hyperf\Snowflake\ConfigurationInterface;
 
 class RedisMilliSecondMetaGenerator extends RedisMetaGenerator
 {
-    public function __construct(ConfigurationInterface $configuration, int $beginTimestamp = self::DEFAULT_BEGIN_SECOND, ConfigInterface $config)
+    public function __construct(ConfigurationInterface $configuration, int $beginTimestamp, ConfigInterface $config)
     {
         parent::__construct($configuration, $beginTimestamp * 1000, $config);
     }

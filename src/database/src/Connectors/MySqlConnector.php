@@ -137,9 +137,8 @@ class MySqlConnector extends Connector implements ConnectorInterface
 
     /**
      * Set the modes for the connection.
-     * @param PDO $connection
      */
-    protected function setModes($connection, array $config)
+    protected function setModes(PDO $connection, array $config)
     {
         if (isset($config['modes'])) {
             $this->setCustomModes($connection, $config);

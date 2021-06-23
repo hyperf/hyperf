@@ -38,6 +38,16 @@ php bin/hyperf.php phar:build --bin=bin/hyperf.php
 php bin/hyperf.php phar:build --path=BASE_PATH
 ```
 
+- 映射外部文件
+
+> 需要 hyperf/phar 版本 >= v2.1.7
+
+下述命令，可以允许 `phar` 包读取同目录的 `.env` 文件，方便 `phar` 分发到各个环境当中
+
+```shell
+php bin/hyperf.php phar:build -M .env
+```
+
 ## 运行
 
 ```shell

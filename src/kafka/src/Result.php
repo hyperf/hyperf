@@ -16,15 +16,15 @@ class Result
     /**
      * Acknowledge the message.
      */
-    const ACK = 'ack';
+    public const ACK = 'ack';
 
     /**
      * Reject the message and requeue it.
      */
-    const REQUEUE = 'requeue';
+    public const REQUEUE = 'requeue';
 
     /**
      * Reject the message and drop it.
      */
-    const DROP = 'drop';
+    public const DROP = 'drop';
 }

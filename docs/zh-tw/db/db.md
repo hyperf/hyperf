@@ -10,7 +10,7 @@ composer require hyperf/db
 
 ## 釋出元件配置
 
-該元件的配置檔案位於 `config/autoload/db.php`，如果檔案不存在，可通過下面的命令來將配置檔案釋出到骨架去： 
+該元件的配置檔案位於 `config/autoload/db.php`，如果檔案不存在，可通過下面的命令來將配置檔案釋出到骨架去：
 
 ```bash
 php bin/hyperf.php vendor:publish hyperf/db
@@ -79,4 +79,28 @@ use Hyperf\DB\DB;
 
 $res = DB::query('SELECT * FROM `user` WHERE gender = ?;', [1]);
 
+```
+
+### 使用匿名函式自定義方法
+
+> 此種方式可以允許使用者直接操作底層的 `PDO` 或者 `MySQL`，所以需要自己處理相容問題
+
+比如我們想執行某些查詢，使用不同的 `fetch mode`，則可以通過以下方式，自定義自己的方法
+
+```php
+<?php
+use Hyperf\DB\DB;
+
+$sql = 'SELECT * FROM `user` WHERE id = ?;';
+$bindings = [2];
+$mode = \PDO::FETCH_OBJ;
+$res = DB::run(function (\PDO $pdo) use ($sql, $bindings, $mode) {
+    $statement = $pdo->prepare($sql);
+
+    $this->bindValues($statement, $bindings);
+
+    $statement->execute();
+
+    return $statement->fetchAll($mode);
+});
 ```

@@ -26,10 +26,12 @@ class ErrorExceptionHandler implements ListenerInterface
 
     public function process(object $event)
     {
-        set_error_handler(function ($level, $message, $file = '', $line = 0, $context = []) {
+        set_error_handler(static function ($level, $message, $file = '', $line = 0): bool {
             if (error_reporting() & $level) {
                 throw new ErrorException($message, 0, $level, $file, $line);
             }
+
+            return true;
         });
     }
 }
