@@ -58,7 +58,7 @@ trait ValidatesAttributes
 
         if ($url = parse_url($value, PHP_URL_HOST)) {
             try {
-                return count(dns_get_record($url, DNS_A | DNS_AAAA)) > 0;
+                return count(dns_get_record($url . '.', DNS_A | DNS_AAAA)) > 0;
             } catch (Exception $e) {
                 return false;
             }
@@ -630,7 +630,7 @@ trait ValidatesAttributes
             return count(array_diff($value, $parameters)) === 0;
         }
 
-        return ! is_array($value) && in_array((string) $value, $parameters);
+        return ! is_array($value) && in_array((string) $value, $parameters, true);
     }
 
     /**

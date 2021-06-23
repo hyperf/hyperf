@@ -291,7 +291,7 @@ trait FormatsMessages
         $actualValue = $this->getValue($attribute);
 
         if (is_scalar($actualValue) || is_null($actualValue)) {
-            $message = str_replace(':input', $actualValue, $message);
+            $message = str_replace(':input', (string) $actualValue, $message);
         }
 
         return $message;
