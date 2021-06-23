@@ -1,13 +1,25 @@
 {
     "name": "hyperf/config-center",
-    "type": "library",
+    "description": "The abstraction component of config center",
     "license": "MIT",
     "keywords": [
         "php",
         "hyperf",
         "config-center"
     ],
-    "description": "The abstraction component of config center",
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=7.3"
+    },
+    "suggest": {
+        "hyperf/process": "^2.1"
+    },
     "autoload": {
         "psr-4": {
             "Hyperf\\ConfigCenter\\": "src/"
@@ -15,33 +27,16 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\": "tests"
+            "HyperfTest\\ConfigCenter\\": "tests"
         }
     },
-    "require": {
-        "php": ">=7.3"
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.14",
-        "mockery/mockery": "^1.0",
-        "phpstan/phpstan": "^0.12",
-        "phpunit/phpunit": ">=7.0"
-    },
-    "suggest": {
-        "hyperf/process": "^2.1"
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "config": {
-        "optimize-autoloader": true,
         "sort-packages": true
     },
-    "scripts": {
-        "test": "phpunit -c phpunit.xml --colors=always",
-        "analyse": "phpstan analyse --memory-limit 1024M -l 0 ./src",
-        "cs-fix": "php-cs-fixer fix $1"
-    },
     "extra": {
+        "branch-alias": {
+            "dev-master": "2.1-dev"
+        },
         "hyperf": {
             "config": "Hyperf\\ConfigCenter\\ConfigProvider"
         }

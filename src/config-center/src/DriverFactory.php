@@ -30,7 +30,7 @@ class DriverFactory
     {
         $defaultDriver = $this->config->get('config_center.driver', '');
         $config = $this->config->get('config_center.drivers.' . $driver, []);
-        $class = $config['driver'] ?? '';
+        $class = $config['driver'] ?? $defaultDriver;
         return make($class, $config);
     }
 }
