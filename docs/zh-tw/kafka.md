@@ -25,33 +25,33 @@ composer require hyperf/kafka
 預設配置檔案如下：
 
 
-|             配置              |    型別    |            預設值             |                                                         備註                                                         |
-| :---------------------------: | :--------: | :---------------------------: | :------------------------------------------------------------------------------------------------------------------: |
-|        connect_timeout        | int｜float |              -1               |                                 連線超時時間（單位：秒，支援小數），為 - 1 則不限制                                  |
-|         send_timeout          | int｜float |              -1               |                                 傳送超時時間（單位：秒，支援小數），為 - 1 則不限制                                  |
-|         recv_timeout          | int｜float |              -1               |                                 接收超時時間（單位：秒，支援小數），為 - 1 則不限制                                  |
-|           client_id           |   stirng   |             null              |                                                   Kafka 客戶端標識                                                   |
-|      max_write_attempts       |    int     |               3               |                                                   最大寫入嘗試次數                                                   |
-|            brokers            |   array    |              []               |                       手動配置 brokers 列表，如果要使用手動配置，請把 updateBrokers 設為 true                        |
-|       bootstrap_server        |   array    |       '127.0.0.1:9092'        |                          引導伺服器，如果配置了該值，會自動連線該伺服器，並自動更新 brokers                          |
-|        update_brokers         |    bool    |             true              |                                                 是否自動更新 brokers                                                 |
-|             acks              |    int     |               0               |  生產者要求領導者，在確認請求完成之前已收到的確認數值。允許的值：0 表示無確認，1 表示僅領導者，- 1 表示完整的 ISR。  |
-|          producer_id          |    int     |              -1               |                                                      生產者 ID                                                       |
-|        producer_epoch         |    int     |              -1               |                                                     生產者 Epoch                                                     |
-|    partition_leader_epoch     |    int     |              -1               |                                                  分割槽 Leader Epoch                                                   |
-|            broker             |   string   |              ''|                                            broker，格式：'127.0.0.1:9092'                                            |
-|           interval            | int｜float |               0               |                   未獲取訊息到訊息時，延遲多少秒再次嘗試，預設為 0 則不延遲（單位：秒，支援小數）                    |
-|        session_timeout        | int｜float |              60               |                     如果超時後沒有收到心跳訊號，則協調器會認為該使用者死亡。（單位：秒，支援小數）                     |
-|       rebalance_timeout       | int｜float |              60               |                      重新平衡組時，協調器等待每個成員重新加入的最長時間（單位：秒，支援小數）。                      |
-|          replica_id           |    int     |              -1               |                                                       副本 ID                                                        |
-|            rack_id            |    int     |              -1               |                                                       機架編號                                                       |
-|          group_retry          |    int     |               5               |                                      分組操作，匹配預設的錯誤碼時，自動重試次數                                      |
-|       group_retry_sleep       |    int     |               1               |                                              分組操作重試延遲，單位：秒                                              |
-|        group_heartbeat        |    int     |               3               |                                              分組心跳時間間隔，單位：秒                                              |
-|         offset_retry          |    int     |               5               |                                     偏移量操作，匹配預設的錯誤碼時，自動重試次數                                     |
-|       auto_create_topic       |    bool    |             true              |                                                是否需要自動建立 topic                                                |
-| partition_assignment_strategy |   string   | KafkaStrategy::RANGE_ASSIGNOR | 消費者分割槽分配策略, 可選：範圍分配(`KafkaStrategy::RANGE_ASSIGNOR`) 輪詢分配(`KafkaStrategy::ROUND_ROBIN_ASSIGNOR`)) |
-|             pool              |   object   |                               |                                                      連線池配置                                                      |
+| 配置                          | 型別       | 預設值                        | 備註                                                                                                                 |
+| ----------------------------- | ---------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| connect_timeout               | int｜float | -1                            | 連線超時時間（單位：秒，支援小數），為 - 1 則不限制                                                                  |
+| send_timeout                  | int｜float | -1                            | 傳送超時時間（單位：秒，支援小數），為 - 1 則不限制                                                                  |
+| recv_timeout                  | int｜float | -1                            | 接收超時時間（單位：秒，支援小數），為 - 1 則不限制                                                                  |
+| client_id                     | stirng     | null                          | Kafka 客戶端標識                                                                                                     |
+| max_write_attempts            | int        | 3                             | 最大寫入嘗試次數                                                                                                     |
+| brokers                       | array      | []                            | 手動配置 brokers 列表，如果要使用手動配置，請把 updateBrokers 設為 true                                              |
+| bootstrap_servers             | array      | '127.0.0.1:9092'              | 引導伺服器，如果配置了該值，會自動連線該伺服器，並自動更新 brokers                                                   |
+| update_brokers                | bool       | true                          | 是否自動更新 brokers                                                                                                 |
+| acks                          | int        | 0                             | 生產者要求領導者，在確認請求完成之前已收到的確認數值。允許的值：0 表示無確認，1 表示僅領導者，- 1 表示完整的 ISR。   |
+| producer_id                   | int        | -1                            | 生產者 ID                                                                                                            |
+| producer_epoch                | int        | -1                            | 生產者 Epoch                                                                                                         |
+| partition_leader_epoch        | int        | -1                            | 分割槽 Leader Epoch                                                                                                    |
+| broker                        | string     | ''                            | broker，格式：'127.0.0.1:9092'                                                                                       |
+| interval                      | int｜float | 0                             | 未獲取訊息到訊息時，延遲多少秒再次嘗試，預設為 0 則不延遲（單位：秒，支援小數）                                      |
+| session_timeout               | int｜float | 60                            | 如果超時後沒有收到心跳訊號，則協調器會認為該使用者死亡。（單位：秒，支援小數）                                         |
+| rebalance_timeout             | int｜float | 60                            | 重新平衡組時，協調器等待每個成員重新加入的最長時間（單位：秒，支援小數）。                                           |
+| replica_id                    | int        | -1                            | 副本 ID                                                                                                              |
+| rack_id                       | int        | -1                            | 機架編號                                                                                                             |
+| group_retry                   | int        | 5                             | 分組操作，匹配預設的錯誤碼時，自動重試次數                                                                           |
+| group_retry_sleep             | int        | 1                             | 分組操作重試延遲，單位：秒                                                                                           |
+| group_heartbeat               | int        | 3                             | 分組心跳時間間隔，單位：秒                                                                                           |
+| offset_retry                  | int        | 5                             | 偏移量操作，匹配預設的錯誤碼時，自動重試次數                                                                         |
+| auto_create_topic             | bool       | true                          | 是否需要自動建立 topic                                                                                               |
+| partition_assignment_strategy | string     | KafkaStrategy::RANGE_ASSIGNOR | 消費者分割槽分配策略, 可選：範圍分配(`KafkaStrategy::RANGE_ASSIGNOR`) 輪詢分配(`KafkaStrategy::ROUND_ROBIN_ASSIGNOR`)) |
+| pool                          | object     |                               | 連線池配置                                                                                                           |
 
 
 ```php
@@ -71,7 +71,7 @@ return [
         'brokers' => [
             '127.0.0.1:9092',
         ],
-        'bootstrap_server' => '127.0.0.1:9092',
+        'bootstrap_servers' => '127.0.0.1:9092',
         'update_brokers' => true,
         'acks' => 0,
         'producer_id' => -1,
