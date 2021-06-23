@@ -48,14 +48,4 @@ abstract class AbstractDriver implements DriverInterface
         $this->config = $config;
         return $this;
     }
-
-    protected function updateConfig(array $config)
-    {
-        foreach ($config as $key => $value) {
-            if (is_string($key)) {
-                $this->config->set($key, $value);
-                $this->logger->debug(sprintf('Config [%s] is updated', $key));
-            }
-        }
-    }
 }
