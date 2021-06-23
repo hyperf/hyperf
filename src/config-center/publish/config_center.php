@@ -32,7 +32,15 @@ return [
             'driver' => '',
         ],
         'aliyun_acm' => [
-            'driver' => '',
+            'driver' => Hyperf\ConfigAliyunAcm\AliyunAcmDriver::class,
+            'interval' => 5,
+            'endpoint' => env('ALIYUN_ACM_ENDPOINT', 'acm.aliyun.com'),
+            'namespace' => env('ALIYUN_ACM_NAMESPACE', ''),
+            'data_id' => env('ALIYUN_ACM_DATA_ID', ''),
+            'group' => env('ALIYUN_ACM_GROUP', 'DEFAULT_GROUP'),
+            'access_key' => env('ALIYUN_ACM_AK', ''),
+            'secret_key' => env('ALIYUN_ACM_SK', ''),
+            'ecs_ram_role' => env('ALIYUN_ACM_RAM_ROLE', ''),
         ],
         'etcd' => [
             'driver' => Hyperf\ConfigEtcd\EtcdDriver::class,
