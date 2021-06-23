@@ -29,6 +29,7 @@
 - [#3715](https://github.com/hyperf/hyperf/pull/3715) Restructure nacos component, be sure to reread the documents.
 - [#3722](https://github.com/hyperf/hyperf/pull/3722) Removed config `config_apollo.php`, please use `config_center.php` instead.
 - [#3725](https://github.com/hyperf/hyperf/pull/3725) Removed config `config_etcd.php`, please use `config_center.php` instead.
+- [#3730](https://github.com/hyperf/hyperf/pull/3730) Removed config `brokers` and `update_brokers` from kafka.
 
 ## Deprecated
 
@@ -58,6 +59,10 @@
 
 - [#3670](https://github.com/hyperf/hyperf/pull/3670) Adapt database component to support php8.
 - [#3673](https://github.com/hyperf/hyperf/pull/3673) Adapt all components to support php8.
+- [#3730](https://github.com/hyperf/hyperf/pull/3730) Optimized code for kafka component.
+  - Support `timeout` for `Producer` to avoid requests not responding.
+  - Removed useless code with pool.
+  - Throw exceptions when connect kafka failed.
 
 ## Fixed
 

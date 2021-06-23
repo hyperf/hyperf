@@ -13,11 +13,13 @@ namespace Hyperf\Kafka;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Engine\Channel;
-use Hyperf\Kafka\Transport\SwooleSocket;
+use Hyperf\Kafka\Exception\ConnectionCLosedException;
+use Hyperf\Kafka\Exception\TimeoutException;
 use longlang\phpkafka\Broker;
 use longlang\phpkafka\Producer\ProduceMessage;
 use longlang\phpkafka\Producer\Producer as LongLangProducer;
 use longlang\phpkafka\Producer\ProducerConfig;
+use longlang\phpkafka\Socket\SwooleSocket;
 use Swoole\Coroutine;
 
 class Producer
@@ -43,49 +45,39 @@ class Producer
     protected $producer;
 
     /**
-     * @var array
+     * @var int
      */
-    protected $topicsMeta;
+    protected $timeout;
 
-    public function __construct(ConfigInterface $config, string $name = 'default')
+    public function __construct(ConfigInterface $config, string $name = 'default', int $timeout = 10)
     {
         $this->config = $config;
         $this->name = $name;
+        $this->timeout = $timeout;
     }
 
     public function send(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null): void
     {
         $this->loop();
-        $ack = new Channel();
-        $this->chan->push(function () use ($topic, $key, $value, $headers, $partitionIndex, $ack) {
+        $ack = new Channel(1);
+        $chan = $this->chan;
+        $chan->push(function () use ($topic, $key, $value, $headers, $partitionIndex, $ack) {
             try {
-                if (! isset($this->topicsMeta[$topic])) {
-                    $this->producer->send($topic, $value, $key, $headers);
-                    $ack->close();
-                    return;
-                }
-
-                if (! is_int($partitionIndex)) {
-                    $index = $this->getIndex($key, $value, count($this->topicsMeta[$topic]));
-                    $partitionIndex = array_keys($this->topicsMeta[$topic])[$index];
-                }
-
-                $this->producer->send(
-                    $topic,
-                    $value,
-                    $key,
-                    $headers,
-                    $partitionIndex,
-                    $this->topicsMeta[$topic][$partitionIndex]
-                );
+                $this->producer->send($topic, $value, $key, $headers, $partitionIndex);
                 $ack->close();
             } catch (\Throwable $e) {
                 $ack->push($e);
                 throw $e;
             }
         });
-        if ($e = $ack->pop()) {
+        if ($chan->isClosing()) {
+            throw new ConnectionCLosedException('Connection closed.');
+        }
+        if ($e = $ack->pop($this->timeout)) {
             throw $e;
+        }
+        if ($ack->isTimeout()) {
+            throw new TimeoutException('Kafka send timeout.');
         }
     }
 
@@ -95,21 +87,25 @@ class Producer
     public function sendBatch(array $messages): void
     {
         $this->loop();
-        $ack = new Channel();
-        $this->chan->push(function () use ($messages, $ack) {
+        $ack = new Channel(1);
+        $chan = $this->chan;
+        $chan->push(function () use ($messages, $ack) {
             try {
-                $messagesByBroker = $this->slitByBroker($messages);
-                foreach ($messagesByBroker as $brokerId => $messages) {
-                    $this->producer->sendBatch($messages, $brokerId);
-                }
+                $this->producer->sendBatch($messages);
                 $ack->close();
             } catch (\Throwable $e) {
                 $ack->push($e);
                 throw $e;
             }
         });
+        if ($chan->isClosing()) {
+            throw new ConnectionCLosedException('Connection closed.');
+        }
         if ($e = $ack->pop()) {
             throw $e;
+        }
+        if ($ack->isTimeout()) {
+            throw new TimeoutException('Kafka send timeout.');
         }
     }
 
@@ -139,7 +135,6 @@ class Producer
         Coroutine::create(function () {
             while (true) {
                 $this->producer = $this->makeProducer();
-                $this->topicsMeta = $this->fetchMeta();
                 while (true) {
                     $closure = $this->chan->pop();
                     if (! $closure) {
@@ -154,6 +149,7 @@ class Producer
                 }
             }
             /* @phpstan-ignore-next-line */
+            $this->chan->close();
             $this->chan = null;
         });
     }
@@ -169,50 +165,11 @@ class Producer
         $producerConfig->setMaxWriteAttempts($config['max_write_attempts']);
         $producerConfig->setSocket(SwooleSocket::class);
         $producerConfig->setBootstrapServers($config['bootstrap_servers']);
-        $producerConfig->setUpdateBrokers($config['update_brokers']);
-        $producerConfig->setBrokers($config['brokers']);
         $producerConfig->setAcks($config['acks']);
         $producerConfig->setProducerId($config['producer_id']);
         $producerConfig->setProducerEpoch($config['producer_epoch']);
         $producerConfig->setPartitionLeaderEpoch($config['partition_leader_epoch']);
         $producerConfig->setAutoCreateTopic($config['auto_create_topic']);
         return new LongLangProducer($producerConfig);
-    }
-
-    private function getIndex($key, $value, $max)
-    {
-        if ($key === null) {
-            return crc32($value) % $max;
-        }
-        return crc32($key) % $max;
-    }
-
-    /**
-     * @param ProduceMessage[] $messages
-     */
-    private function slitByBroker(array $messages): array
-    {
-        $messageByBroker = [];
-        foreach ($messages as $message) {
-            $messageByBroker[$this->getMessageBrokerId($message)][] = $message;
-        }
-        return $messageByBroker;
-    }
-
-    private function getMessageBrokerId(ProduceMessage $message): int
-    {
-        return $this->topicsMeta[$message->getTopic()][$message->getPartitionIndex()];
-    }
-
-    private function fetchMeta(): array
-    {
-        $metaCache = [];
-        $topicMeta = $this->producer->getBroker()->getTopicsMeta();
-        foreach ($topicMeta as $meta) {
-            foreach ($meta->getPartitions() as $partition) {
-                $metaCache[$meta->getName()][$partition->getPartitionIndex()] = $partition->getLeaderId();
-            }
-        }
-        return $metaCache;
     }
 }
