@@ -50,6 +50,11 @@ class Option
      */
     private $intervalTimeout = 60;
 
+    /**
+     * @var string
+     */
+    private $secret;
+
     public function buildBaseUrl(): string
     {
         return implode('/', [
@@ -143,5 +148,16 @@ class Option
     {
         $this->intervalTimeout = $intervalTimeout;
         return $this;
+    }
+
+    public function setSecret(string $secret): self
+    {
+        $this->secret = $secret;
+        return $this;
+    }
+
+    public function getSecret(): string
+    {
+        return $this->secret;
     }
 }

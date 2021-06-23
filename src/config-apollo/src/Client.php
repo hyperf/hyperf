@@ -87,6 +87,27 @@ class Client implements ClientInterface
         return $this->option;
     }
 
+    private function hasSecret(): bool
+    {
+        return ! empty($this->option->getSecret());
+    }
+
+    private function getTimestamp(): string
+    {
+        [$usec, $sec] = explode(' ', microtime());
+        return sprintf('%.0f', (floatval($usec) + floatval($sec)) * 1000);
+    }
+
+    private function getAuthorization(string $timestamp, string $pathWithQuery): string
+    {
+        if (! $this->hasSecret()) {
+            return '';
+        }
+        $toSignature = $timestamp . "\n" . $pathWithQuery;
+        $signature = base64_encode(hash_hmac('sha1', $toSignature, $this->option->getSecret(), true));
+        return sprintf('Apollo %s:%s', $this->option->getAppid(), $signature);
+    }
+
     private function coroutinePull(array $namespaces): array
     {
         $option = $this->option;
@@ -99,11 +120,19 @@ class Client implements ClientInterface
                     throw new RuntimeException('Invalid http client.');
                 }
                 $releaseKey = ReleaseKey::get($option->buildCacheKey($namespace), null);
+                $query = [
+                    'ip' => $option->getClientIp(),
+                    'releaseKey' => $releaseKey,
+                ];
+                $timestamp = $this->getTimestamp();
+                $headers = [
+                    'Authorization' => $this->getAuthorization($timestamp, parse_url($option->buildBaseUrl(), PHP_URL_PATH) . $namespace . '?' . http_build_query($query)),
+                    'Timestamp' => $timestamp,
+                ];
+
                 $response = $client->get($option->buildBaseUrl() . $namespace, [
-                    'query' => [
-                        'ip' => $option->getClientIp(),
-                        'releaseKey' => $releaseKey,
-                    ],
+                    'query' => $query,
+                    'headers' => $headers,
                 ]);
                 if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
                     $body = json_decode((string) $response->getBody(), true);
@@ -132,12 +161,20 @@ class Client implements ClientInterface
             if (! $client instanceof \GuzzleHttp\Client) {
                 throw new RuntimeException('Invalid http client.');
             }
-            $releaseKey = ReleaseKey::get($this->option->buildCacheKey($namespace), null);
+            $releaseKey = ReleaseKey::get($this->option->buildCacheKey($namespace));
+            $query = [
+                'ip' => $this->option->getClientIp(),
+                'releaseKey' => $releaseKey,
+            ];
+            $timestamp = $this->getTimestamp();
+            $headers = [
+                'Authorization' => $this->getAuthorization($timestamp, parse_url($url, PHP_URL_PATH) . $namespace . '?' . http_build_query($query)),
+                'Timestamp' => $timestamp,
+            ];
+
             $response = $client->get($url . $namespace, [
-                'query' => [
-                    'ip' => $this->option->getClientIp(),
-                    'releaseKey' => $releaseKey,
-                ],
+                'query' => $query,
+                'headers' => $headers,
             ]);
             if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
                 $body = json_decode((string) $response->getBody(), true);

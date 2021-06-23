@@ -27,7 +27,8 @@ class ClientFactory
             ->setCluster($config->get('config_center.drivers.apollo.cluster', ''))
             ->setClientIp($config->get('config_center.drivers.apollo.client_ip', current(swoole_get_local_ip())))
             ->setPullTimeout($config->get('config_center.drivers.apollo.pull_timeout', 10))
-            ->setIntervalTimeout($config->get('config_center.drivers.apollo.interval_timeout', 60));
+            ->setIntervalTimeout($config->get('config_center.drivers.apollo.interval_timeout', 60))
+            ->setSecret($config->get('config_center.drivers.apollo.secret', ''));
         $namespaces = $config->get('config_center.drivers.apollo.namespaces', []);
         $callbacks = [];
         foreach ($namespaces as $namespace => $callable) {
