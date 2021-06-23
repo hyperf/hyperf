@@ -1,5 +1,9 @@
 # v2.1.22 - TBD
 
+## Fixed
+
+- [#3721](https://github.com/hyperf/hyperf/pull/3721) Fixed the `in` and `not in` rule for validation in input fails to correctly check `in:00` rule when passing `0`.
+
 # v2.1.21 - 2021-06-21
 
 ## Fixed
