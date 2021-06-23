@@ -27,6 +27,8 @@
   - Changed type hint for method `AbstractHandler::switch()`.
 - [#3706](https://github.com/hyperf/hyperf/pull/3706) Changed the style of writing to `#[Middlewares(FooMiddleware::class)]` from `@Middlewares({@Middleware(FooMiddleware::class)})` in PHP8.
 - [#3715](https://github.com/hyperf/hyperf/pull/3715) Restructure nacos component, be sure to reread the documents.
+- [#3722](https://github.com/hyperf/hyperf/pull/3722) Removed config `config_apollo.php`, please use `config_center.php` instead.
+- [#3725](https://github.com/hyperf/hyperf/pull/3725) Removed config `config_etcd.php`, please use `config_center.php` instead.
 
 ## Deprecated
 
@@ -49,6 +51,7 @@
   - [#3712](https://github.com/hyperf/hyperf/pull/3712) The input parameters of `InstanceProvider::update()` are modified to make it more friendly.
 - [#3698](https://github.com/hyperf/hyperf/pull/3698) Support PHP8 Attribute which can replace doctrine annotations.
 - [#3714](https://github.com/hyperf/hyperf/pull/3714) Added ide-helper component.
+- [#3722](https://github.com/hyperf/hyperf/pull/3722) Added config-center component.
 
 ## Optimized
 

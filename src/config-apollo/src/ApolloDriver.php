@@ -26,7 +26,7 @@ class ApolloDriver extends AbstractDriver
     protected $client;
 
     /**
-     * @var \Hyperf\Contract\StdoutLoggerInterface
+     * @var StdoutLoggerInterface
      */
     protected $logger;
 

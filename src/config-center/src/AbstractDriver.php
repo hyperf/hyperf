@@ -13,13 +13,17 @@ namespace Hyperf\ConfigCenter;
 
 use Hyperf\ConfigCenter\Contract\DriverInterface;
 use Hyperf\Contract\ConfigInterface;
+use Swoole\Server;
 
 abstract class AbstractDriver implements DriverInterface
 {
+    /**
+     * @var null|Server
+     */
     protected $server;
 
     /**
-     * @var ConfigInterface
+     * @var null|ConfigInterface
      */
     protected $config;
 

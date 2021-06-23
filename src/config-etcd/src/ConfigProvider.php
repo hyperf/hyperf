@@ -11,10 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigEtcd;
 
-use Hyperf\ConfigEtcd\Listener\BootProcessListener;
-use Hyperf\ConfigEtcd\Listener\OnPipeMessageListener;
-use Hyperf\ConfigEtcd\Process\ConfigFetcherProcess;
-
 class ConfigProvider
 {
     public function __invoke(): array
@@ -22,13 +18,6 @@ class ConfigProvider
         return [
             'dependencies' => [
                 ClientInterface::class => Client::class,
-            ],
-            'processes' => [
-                ConfigFetcherProcess::class,
-            ],
-            'listeners' => [
-                BootProcessListener::class,
-                OnPipeMessageListener::class,
             ],
             'annotations' => [
                 'scan' => [
