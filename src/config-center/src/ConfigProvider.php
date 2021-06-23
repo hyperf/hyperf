@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigCenter;
 
+use Hyperf\ConfigCenter\Listener\BootApplicationListener;
 use Hyperf\ConfigCenter\Listener\BootProcessListener;
 use Hyperf\ConfigCenter\Listener\OnPipeMessageListener;
 use Hyperf\ConfigCenter\Process\ConfigFetcherProcess;
@@ -28,6 +29,7 @@ class ConfigProvider
                 ConfigFetcherProcess::class,
             ],
             'listeners' => [
+                BootApplicationListener::class,
                 BootProcessListener::class,
                 OnPipeMessageListener::class,
             ],

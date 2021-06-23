@@ -14,6 +14,7 @@ namespace Hyperf\ConfigCenter\Listener;
 use Hyperf\Command\Event\BeforeHandle;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 
 class BootProcessListener extends OnPipeMessageListener
 {
@@ -23,6 +24,7 @@ class BootProcessListener extends OnPipeMessageListener
             BeforeWorkerStart::class,
             BeforeProcessHandle::class,
             BeforeHandle::class,
+            MainCoroutineServerStart::class,
         ];
     }
 

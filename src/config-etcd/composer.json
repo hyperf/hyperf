@@ -16,8 +16,9 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/utils": "~2.2.0",
-        "hyperf/etcd": "~2.2.0"
+        "hyperf/config-center": "~2.2.0",
+        "hyperf/etcd": "~2.2.0",
+        "hyperf/utils": "~2.2.0"
     },
     "config": {
         "sort-packages": true
