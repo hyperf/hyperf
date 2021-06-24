@@ -9,10 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
+use Hyperf\ConfigCenter\Mode;
+
 return [
     'enable' => (bool) env('CONFIG_CENTER_ENABLE', true),
     'driver' => env('CONFIG_CENTER_DRIVER', 'apollo'),
-    'use_standalone_process' => (bool) env('CONFIG_CENTER_USE_STANDALONE_PROCESS', true),
+    'mode' => env('CONFIG_CENTER_MODE', Mode::PROCESS),
     'drivers' => [
         'apollo' => [
             'driver' => Hyperf\ConfigApollo\ApolloDriver::class,

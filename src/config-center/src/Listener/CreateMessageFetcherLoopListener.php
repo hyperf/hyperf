@@ -12,12 +12,17 @@ declare(strict_types=1);
 namespace Hyperf\ConfigCenter\Listener;
 
 use Hyperf\Command\Event\BeforeHandle;
+use Hyperf\ConfigCenter\DriverFactory;
+use Hyperf\ConfigCenter\Mode;
+use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 
 class CreateMessageFetcherLoopListener extends OnPipeMessageListener
 {
+
     public function listen(): array
     {
         return [
@@ -30,7 +35,10 @@ class CreateMessageFetcherLoopListener extends OnPipeMessageListener
 
     public function process(object $event)
     {
-        $instance = $this->createDriverInstance();
-        $instance && $instance->createMessageFetcherLoop();
+        $mode = $this->config->get('config_center.mode', Mode::PROCESS);
+        if ($mode === Mode::COROUTINE) {
+            $instance = $this->createDriverInstance();
+            $instance && $instance->createMessageFetcherLoop();
+        }
     }
 }
