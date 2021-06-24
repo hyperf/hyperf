@@ -109,13 +109,6 @@ class ContainerStub
             return $logger;
         });
 
-        $container->shouldReceive('get')->with(IPReaderInterface::class)->andReturn(new class() implements IPReaderInterface {
-            public function read(): string
-            {
-                return '127.0.0.1';
-            }
-        });
-
         $container->shouldReceive('get')->with(Client::class)->andReturnUsing(function () use ($container) {
             return new Client($container);
         });

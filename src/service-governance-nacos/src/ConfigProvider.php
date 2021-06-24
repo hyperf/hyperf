@@ -9,13 +9,24 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\ConfigNacos;
+namespace Hyperf\ServiceGovernanceNacos;
 
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
+            'dependencies' => [
+            ],
+            'listeners' => [
+            ],
+            'annotations' => [
+                'scan' => [
+                    'paths' => [
+                        __DIR__,
+                    ],
+                ],
+            ],
         ];
     }
 }

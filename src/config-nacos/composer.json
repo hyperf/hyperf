@@ -27,9 +27,10 @@
         }
     },
     "require": {
+        "hyperf/config-center": "~2.2.0",
         "hyperf/contract": "~2.2.0",
         "hyperf/guzzle": "~2.2.0",
-        "hyperf/nacos-sdk": "~2.2.0",
+        "hyperf/nacos": "~2.2.0",
         "hyperf/utils": "~2.2.0"
     },
     "suggest": {
