@@ -56,6 +56,9 @@ return [
         ],
         'zookeeper' => [
             'driver' => '',
+            'server' => env('ZOOKEEPER_SERVER', '127.0.0.1:2181'),
+            'path' => env('ZOOKEEPER_CONFIG_PATH', '/conf'),
+            'interval' => 5,
         ],
     ],
 ];

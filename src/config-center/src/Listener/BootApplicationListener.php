@@ -45,6 +45,7 @@ class BootApplicationListener implements ListenerInterface
             'config_apollo',
             'aliyun_acm',
             'config_etcd',
+            'zookeeper',
         ];
 
         foreach ($configs as $config) {

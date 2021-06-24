@@ -12,7 +12,7 @@ parameters:
     - %currentWorkingDirectory%/src/*/tests/*
     - %currentWorkingDirectory%/src/*/publish/*
     - %currentWorkingDirectory%/src/di/src/Resolver/FactoryResolver.php
-    - %currentWorkingDirectory%/src/config-zookeeper/*
+    - %currentWorkingDirectory%/src/config-zookeeper/src/Client.php
     - %currentWorkingDirectory%/src/contract/*
     - %currentWorkingDirectory%/src/crontab/*
     - %currentWorkingDirectory%/src/database/*
