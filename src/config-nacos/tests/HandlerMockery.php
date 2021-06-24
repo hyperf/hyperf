@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\Nacos;
+namespace HyperfTest\ConfigNacos;
 
 use GuzzleHttp\Promise\FulfilledPromise;
 use GuzzleHttp\Psr7;
@@ -22,7 +22,6 @@ class HandlerMockery
         $uri = $request->getUri()->getPath();
         $mapping = [
             '/nacos/v1/auth/users/login' => '/json/login.json',
-            '/nacos/v1/cs/configs' => '/json/get_config.json',
             '/nacos/v1/ns/instance/list' => '/json/instance_list.json',
             '/nacos/v1/ns/instance' => '/json/instance_detail.json',
             '/nacos/v1/ns/operator/switches' => '/json/get_switches.json',
@@ -33,10 +32,49 @@ class HandlerMockery
             '/nacos/v1/ns/service/list' => '/json/service_list.json',
         ];
 
+        if ($json = $mapping[$uri] ?? null) {
+            return new FulfilledPromise(new Psr7\Response(
+                200,
+                [],
+                file_get_contents(__DIR__ . $json)
+            ));
+        }
+
+        $data = '';
+        switch ($uri) {
+            case '/nacos/v1/cs/configs':
+                $query = $request->getUri()->getQuery();
+                switch (static::parse($query)['dataId']) {
+                    case 'json':
+                        $data = '{"id": 1}';
+                        break;
+                    case 'json2':
+                        $data = '{"ids": [1,2,3]}';
+                        break;
+                    case 'text':
+                        $data = 'Hello World';
+                        break;
+                    default:
+                        $data = '{}';
+                        break;
+                }
+        }
+
         return new FulfilledPromise(new Psr7\Response(
             200,
             [],
-            file_get_contents(__DIR__ . $mapping[$uri])
+            $data
         ));
+    }
+
+    public static function parse(string $query): array
+    {
+        $data = explode('&', $query);
+        $result = [];
+        foreach ($data as $item) {
+            [$key, $value] = explode('=', $item);
+            $result[$key] = $value;
+        }
+        return $result;
     }
 }

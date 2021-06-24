@@ -9,12 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nacos;
+namespace Hyperf\ConfigNacos\Service;
 
-class ConfigProvider
+class IPReader
 {
-    public function __invoke(): array
+    public function read(): string
     {
-        return [];
+        return current(swoole_get_local_ip());
     }
 }

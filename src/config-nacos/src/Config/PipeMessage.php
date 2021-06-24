@@ -9,12 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nacos;
+namespace Hyperf\ConfigNacos\Config;
 
-class ConfigProvider
+class PipeMessage
 {
-    public function __invoke(): array
+    /**
+     * @var array
+     */
+    public $configurations;
+
+    public function __construct(array $configurations)
     {
-        return [];
+        $this->configurations = $configurations;
     }
 }
