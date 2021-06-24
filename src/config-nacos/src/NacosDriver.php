@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\ConfigNacos;
 
 use Hyperf\ConfigCenter\AbstractDriver;
-use Hyperf\ConfigNacos\Config\PipeMessage;
+use Hyperf\ConfigNacos\PipeMessage;
 use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
 
