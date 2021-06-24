@@ -27,7 +27,7 @@ class NacosDriver extends AbstractDriver
     public function __construct(ContainerInterface $container)
     {
         parent::__construct($container);
-        $this->client = $container->get(Client::class);
+        $this->client = $container->get(ClientInterface::class);
     }
 
     protected function updateConfig(array $config)
