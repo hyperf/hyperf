@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\ConfigApollo;
 
 use Hyperf\ConfigCenter\AbstractDriver;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
@@ -73,6 +72,27 @@ class ApolloDriver extends AbstractDriver
         }
     }
 
+    public function onPipeMessage(object $event): void
+    {
+        if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
+            /** @var PipeMessage $data */
+            $data = $event->data;
+
+            if (! $data->isValid()) {
+                return;
+            }
+
+            $option = $this->client->getOption();
+            $cacheKey = $option->buildCacheKey($data->namespace);
+            $cachedKey = ReleaseKey::get($cacheKey);
+            if ($cachedKey && $cachedKey === $data->releaseKey) {
+                return;
+            }
+            $this->updateConfig($data->configurations);
+            ReleaseKey::set($cacheKey, $data->releaseKey);
+        }
+    }
+
     protected function pull(): array
     {
         [$namespaces, $callbacks] = $this->createNamespaceCallbacks();
@@ -97,28 +117,6 @@ class ApolloDriver extends AbstractDriver
                 ReleaseKey::set($cacheKey, $data->releaseKey);
             }
         });
-    }
-
-
-    public function onPipeMessage(object $event): void
-    {
-        if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
-            /** @var PipeMessage $data */
-            $data = $event->data;
-
-            if (! $data->isValid()) {
-                return;
-            }
-
-            $option = $this->client->getOption();
-            $cacheKey = $option->buildCacheKey($data->namespace);
-            $cachedKey = ReleaseKey::get($cacheKey);
-            if ($cachedKey && $cachedKey === $data->releaseKey) {
-                return;
-            }
-            $this->updateConfig($data->configurations);
-            ReleaseKey::set($cacheKey, $data->releaseKey);
-        }
     }
 
     protected function formatValue($value)

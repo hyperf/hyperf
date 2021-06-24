@@ -132,7 +132,7 @@ abstract class AbstractDriver implements DriverInterface
 
     protected function pull(): array
     {
-      return $this->client->pull();
+        return $this->client->pull();
     }
 
     protected function updateConfig(array $config)
