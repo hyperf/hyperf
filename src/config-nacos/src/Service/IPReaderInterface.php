@@ -9,12 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nacos;
+namespace Hyperf\ConfigNacos\Service;
 
-class ConfigProvider
+interface IPReaderInterface
 {
-    public function __invoke(): array
-    {
-        return [];
-    }
+    public function read(): string;
 }

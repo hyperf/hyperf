@@ -9,12 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Nacos;
+namespace HyperfTest\Nacos;
 
-class ConfigProvider
+use Mockery;
+use PHPUnit\Framework\TestCase;
+
+/**
+ * Class AbstractTestCase.
+ */
+abstract class AbstractTestCase extends TestCase
 {
-    public function __invoke(): array
+    protected function tearDown(): void
     {
-        return [];
+        Mockery::close();
     }
 }

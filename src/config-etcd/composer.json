@@ -1,6 +1,7 @@
 {
     "name": "hyperf/config-etcd",
     "type": "library",
+    "description": "An etcd adapter for config center component.",
     "license": "MIT",
     "keywords": [
         "php",
@@ -8,7 +9,6 @@
         "etcd",
         "config"
     ],
-    "description": "Etcd Config Center for Hyperf.",
     "autoload": {
         "psr-4": {
             "Hyperf\\ConfigEtcd\\": "src/"
