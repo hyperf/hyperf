@@ -18,37 +18,15 @@ class PipeMessage implements PipeMessageInterface
     /**
      * @var array
      */
-    public $configurations;
-
-    /**
-     * @var string
-     */
-    public $releaseKey;
-
-    /**
-     * @var string
-     */
-    public $namespace;
+    public $data;
 
     public function __construct($data)
     {
-        if (isset($data['configurations'], $data['releaseKey'], $data['namespace'])) {
-            $this->configurations = $data['configurations'];
-            $this->releaseKey = $data['releaseKey'];
-            $this->namespace = $data['namespace'];
-        }
-    }
-
-    public function isValid(): bool
-    {
-        if (! $this->configurations || ! $this->releaseKey || ! $this->namespace) {
-            return false;
-        }
-        return true;
+        $this->data = $data;
     }
 
     public function getData(): array
     {
-        return $this->configurations ?? [];
+        return $this->data ?? [];
     }
 }

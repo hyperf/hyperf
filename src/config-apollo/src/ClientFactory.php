@@ -29,17 +29,9 @@ class ClientFactory
             ->setPullTimeout($config->get('config_center.drivers.apollo.pull_timeout', 10))
             ->setIntervalTimeout($config->get('config_center.drivers.apollo.interval_timeout', 60))
             ->setSecret($config->get('config_center.drivers.apollo.secret', ''));
-        $namespaces = $config->get('config_center.drivers.apollo.namespaces', []);
-        $callbacks = [];
-        foreach ($namespaces as $namespace => $callable) {
-            // If does not exist a user-defined callback, then delegate to the dafault callback.
-            if (! is_numeric($namespace) && is_callable($callable)) {
-                $callbacks[$namespace] = $callable;
-            }
-        }
         $httpClientFactory = function (array $options = []) use ($container) {
             return $container->get(GuzzleClientFactory::class)->create($options);
         };
-        return make(Client::class, compact('option', 'callbacks', 'httpClientFactory', 'config'));
+        return make(Client::class, compact('option', 'httpClientFactory'));
     }
 }

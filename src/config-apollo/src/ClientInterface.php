@@ -17,9 +17,8 @@ interface ClientInterface
      * Pull the config values from configuration center, and then update the Config values.
      *
      * @param array $namespaces the namespaces of configs that you want to pull
-     * @param array $callbacks the method level callbacks, will execute these callbacks after the config values pulled
      */
-    public function pull(array $namespaces, array $callbacks = []): void;
+    public function pull(array $namespaces): array;
 
     public function getOption(): Option;
 }

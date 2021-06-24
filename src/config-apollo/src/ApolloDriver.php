@@ -12,11 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\ConfigApollo;
 
 use Hyperf\ConfigCenter\AbstractDriver;
-use Hyperf\ConfigCenter\Contract\PipeMessageInterface;
-use Hyperf\ConfigCenter\Mode;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
 class ApolloDriver extends AbstractDriver
@@ -36,89 +31,9 @@ class ApolloDriver extends AbstractDriver
         $this->client = $container->get(ClientInterface::class);
     }
 
-    public function configFetcherHandle(): void
-    {
-        if (! $this->server) {
-            return;
-        }
-        [$namespaces, $callbacks] = $this->buildNamespacesCallbacks(function ($configs, $namespace) {
-            if (isset($configs['configurations'], $configs['releaseKey'])) {
-                $configs['namespace'] = $namespace;
-                $this->shareConfigToProcesses($configs);
-            }
-        });
-        while (true) {
-            $this->client->pull($namespaces, $callbacks);
-            sleep($this->getInterval());
-        }
-    }
-
-    public function createMessageFetcherLoop(int $mode): void
-    {
-        if ($mode === Mode::COROUTINE) {
-            Coroutine::create(function () {
-                $interval = $this->config->get('config_center.drivers.apollo.interval', 5);
-                retry(INF, function () {
-                    while (true) {
-                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
-                        $workerExited = $coordinator->yield($this->getInterval());
-                        if ($workerExited) {
-                            break;
-                        }
-                        $this->pull();
-                    }
-                }, $interval * 1000);
-            });
-        } else {
-            $this->configFetcherHandle();
-        }
-    }
-
-    public function onPipeMessage(PipeMessageInterface $pipeMessage): void
-    {
-        if ($pipeMessage instanceof PipeMessage) {
-            $data = $pipeMessage;
-
-            if (! $data->isValid()) {
-                return;
-            }
-
-            $option = $this->client->getOption();
-            $cacheKey = $option->buildCacheKey($data->namespace);
-            $cachedKey = ReleaseKey::get($cacheKey);
-            if ($cachedKey && $cachedKey === $data->releaseKey) {
-                return;
-            }
-            $this->updateConfig($data->configurations);
-            ReleaseKey::set($cacheKey, $data->releaseKey);
-        }
-    }
-
     protected function pull(): array
     {
-        [$namespaces, $callbacks] = $this->createNamespaceCallbacks();
-        $this->client->pull($namespaces, $callbacks);
-        return [];
-    }
-
-    protected function createNamespaceCallbacks(): array
-    {
-        return $this->buildNamespacesCallbacks(function ($configs, $namespace) {
-            if (isset($configs['configurations'], $configs['releaseKey'])) {
-                $configs['namespace'] = $namespace;
-                $pipeMessage = $this->pipeMessage;
-                $data = new $pipeMessage($configs);
-
-                $option = $this->client->getOption();
-                $cacheKey = $option->buildCacheKey($data->namespace);
-                $cachedKey = ReleaseKey::get($cacheKey);
-                if ($cachedKey && $cachedKey === $data->releaseKey) {
-                    return;
-                }
-                $this->updateConfig($data->configurations);
-                ReleaseKey::set($cacheKey, $data->releaseKey);
-            }
-        });
+        return $this->client->pull($this->getNamespaces());
     }
 
     protected function formatValue($value)
@@ -149,23 +64,23 @@ class ApolloDriver extends AbstractDriver
         return $value;
     }
 
-    protected function updateConfig(array $config)
+    protected function updateConfig(array $configs)
     {
-        foreach ($config ?? [] as $key => $value) {
+        $mergedConfigs = [];
+        foreach ($configs as $config) {
+            foreach ($config as $key => $value) {
+                $mergedConfigs[$key] = $value;
+            }
+        }
+        unset($configs);
+        foreach ($mergedConfigs ?? [] as $key => $value) {
             $this->config->set($key, $this->formatValue($value));
             $this->logger->debug(sprintf('Config [%s] is updated', $key));
         }
     }
 
-    protected function buildNamespacesCallbacks(callable $ipcCallback): array
+    protected function getNamespaces(): array
     {
-        $callbacks = [];
-        $namespaces = $this->config->get('config_center.drivers.apollo.namespaces', []);
-        foreach ($namespaces as $namespace) {
-            if (is_string($namespace)) {
-                $callbacks[$namespace] = $ipcCallback;
-            }
-        }
-        return [$namespaces, $callbacks];
+        return $this->config->get('config_center.drivers.apollo.namespaces', []);
     }
 }
