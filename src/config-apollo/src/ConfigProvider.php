@@ -18,14 +18,7 @@ class ConfigProvider
         return [
             'dependencies' => [
                 ClientInterface::class => ClientFactory::class,
-            ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
+            ]
         ];
     }
 }

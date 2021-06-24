@@ -19,13 +19,6 @@ class ConfigProvider
             'dependencies' => [
                 ClientInterface::class => Client::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
         ];
     }
 }

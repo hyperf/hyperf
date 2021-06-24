@@ -35,13 +35,6 @@ class ConfigProvider
                 CreateMessageFetcherLoopListener::class,
                 OnPipeMessageListener::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
             'publish' => [
                 [
                     'id' => 'config-center',
