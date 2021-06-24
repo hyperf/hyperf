@@ -61,7 +61,7 @@ class OnPipeMessageListener implements ListenerInterface
     public function process(object $event)
     {
         $instance = $this->createDriverInstance();
-        $instance && $instance->onPipeMessageHandle($event);
+        $instance && $instance->onPipeMessage($event);
     }
 
     protected function createDriverInstance(): ?DriverInterface
@@ -74,10 +74,6 @@ class OnPipeMessageListener implements ListenerInterface
         if (! $driver) {
             return null;
         }
-        $instance = $this->driverFactory->create($driver);
-        if (method_exists($instance, 'setConfig')) {
-            $instance->setConfig($this->config);
-        }
-        return $instance;
+        return $this->driverFactory->create($driver);
     }
 }

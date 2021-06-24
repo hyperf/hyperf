@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigAliyunAcm;
 
-class PipeMessage
+use Hyperf\ConfigCenter\Contract\PipeMessageInterface;
+
+class PipeMessage implements PipeMessageInterface
 {
     /**
      * @var array
@@ -21,5 +23,10 @@ class PipeMessage
     public function __construct($data)
     {
         $this->data = $data;
+    }
+
+    public function getData(): array
+    {
+        return $this->data;
     }
 }

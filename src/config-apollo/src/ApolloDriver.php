@@ -13,10 +13,10 @@ namespace Hyperf\ConfigApollo;
 
 use Hyperf\ConfigCenter\AbstractDriver;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Process\ProcessCollector;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
+use Psr\Container\ContainerInterface;
 
 class ApolloDriver extends AbstractDriver
 {
@@ -25,15 +25,14 @@ class ApolloDriver extends AbstractDriver
      */
     protected $client;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
+    protected $driverName = 'apollop';
 
-    public function __construct(ClientInterface $client, StdoutLoggerInterface $logger)
+    protected $pipeMessage = PipeMessage::class;
+
+    public function __construct(ContainerInterface $container)
     {
-        $this->client = $client;
-        $this->logger = $logger;
+        parent::__construct($container);
+        $this->client = $container->get(ClientInterface::class);
     }
 
     public function configFetcherHandle(): void
@@ -44,73 +43,64 @@ class ApolloDriver extends AbstractDriver
         [$namespaces, $callbacks] = $this->buildNamespacesCallbacks(function ($configs, $namespace) {
             if (isset($configs['configurations'], $configs['releaseKey'])) {
                 $configs['namespace'] = $namespace;
-                $pipeMessage = new PipeMessage($configs);
-                $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
-                for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
-                    $this->server->sendMessage($pipeMessage, $workerId);
-                }
-
-                $string = serialize($pipeMessage);
-
-                $processes = ProcessCollector::all();
-                /** @var \Swoole\Process $process */
-                foreach ($processes as $process) {
-                    $result = $process->exportSocket()->send($string, 10);
-                    if ($result === false) {
-                        $this->logger->error('Configuration synchronization failed. Please restart the server.');
-                    }
-                }
+                $this->shareConfigToProcesses($configs);
             }
         });
         while (true) {
             $this->client->pull($namespaces, $callbacks);
-            sleep($this->config->get('config_center.drivers.apollo.interval', 5));
+            sleep($this->getInterval());
         }
     }
 
-    public function bootProcessHandle(object $event): void
+    public function createMessageFetcherLoop(): void
     {
-        [$namespaces, $callbacks] = $this->buildNamespacesCallbacks(function ($configs, $namespace) {
+        if (! $this->config->get('config_center.use_standalone_process', true)) {
+            Coroutine::create(function () {
+                $interval = $this->config->get('config_center.drivers.apollo.interval', 5);
+                retry(INF, function () {
+                    while (true) {
+                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
+                        $workerExited = $coordinator->yield($this->getInterval());
+                        if ($workerExited) {
+                            break;
+                        }
+                        $this->pull();
+                    }
+                }, $interval * 1000);
+            });
+        } else {
+            $this->configFetcherHandle();
+        }
+    }
+
+    protected function pull(): array
+    {
+        [$namespaces, $callbacks] = $this->createNamespaceCallbacks();
+        $this->client->pull($namespaces, $callbacks);
+    }
+
+    protected function createNamespaceCallbacks(): array
+    {
+        return $this->buildNamespacesCallbacks(function ($configs, $namespace) {
             if (isset($configs['configurations'], $configs['releaseKey'])) {
                 $configs['namespace'] = $namespace;
-                $data = new PipeMessage($configs);
+                $pipeMessage = $this->pipeMessage;
+                $data = new $pipeMessage($configs);
 
                 $option = $this->client->getOption();
-                if (! $option instanceof Option) {
-                    return;
-                }
                 $cacheKey = $option->buildCacheKey($data->namespace);
                 $cachedKey = ReleaseKey::get($cacheKey);
                 if ($cachedKey && $cachedKey === $data->releaseKey) {
                     return;
                 }
-                foreach ($data->configurations ?? [] as $key => $value) {
-                    $this->config->set($key, $this->formatValue($value));
-                    $this->logger->debug(sprintf('Config [%s] is updated', $key));
-                }
+                $this->updateConfig($data->configurations);
                 ReleaseKey::set($cacheKey, $data->releaseKey);
             }
         });
-        $this->client->pull($namespaces, $callbacks);
-
-        if (! $this->config->get('config_center.use_standalone_process', true)) {
-            Coroutine::create(function () use ($namespaces, $callbacks) {
-                $interval = $this->config->get('config_center.drivers.apollo.interval', 5);
-                retry(INF, function () use ($namespaces, $callbacks, $interval) {
-                    while (true) {
-                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
-                        $workerExited = $coordinator->yield($interval);
-                        if ($workerExited) {
-                            break;
-                        }
-                        $this->client->pull($namespaces, $callbacks);
-                    }
-                }, $interval * 1000);
-            });
-        }
     }
 
-    public function onPipeMessageHandle(object $event): void
+
+    public function onPipeMessage(object $event): void
     {
         if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
             /** @var PipeMessage $data */
@@ -121,18 +111,12 @@ class ApolloDriver extends AbstractDriver
             }
 
             $option = $this->client->getOption();
-            if (! $option instanceof Option) {
-                return;
-            }
             $cacheKey = $option->buildCacheKey($data->namespace);
             $cachedKey = ReleaseKey::get($cacheKey);
             if ($cachedKey && $cachedKey === $data->releaseKey) {
                 return;
             }
-            foreach ($data->configurations ?? [] as $key => $value) {
-                $this->config->set($key, $this->formatValue($value));
-                $this->logger->debug(sprintf('Config [%s] is updated', $key));
-            }
+            $this->updateConfig($data->configurations);
             ReleaseKey::set($cacheKey, $data->releaseKey);
         }
     }
@@ -163,6 +147,14 @@ class ApolloDriver extends AbstractDriver
         }
 
         return $value;
+    }
+
+    protected function updateConfig(array $config)
+    {
+        foreach ($config ?? [] as $key => $value) {
+            $this->config->set($key, $this->formatValue($value));
+            $this->logger->debug(sprintf('Config [%s] is updated', $key));
+        }
     }
 
     protected function buildNamespacesCallbacks(callable $ipcCallback): array

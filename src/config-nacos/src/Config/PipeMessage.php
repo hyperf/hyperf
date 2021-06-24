@@ -11,15 +11,22 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigNacos\Config;
 
-class PipeMessage
+use Hyperf\ConfigCenter\Contract\PipeMessageInterface;
+
+class PipeMessage implements PipeMessageInterface
 {
     /**
      * @var array
      */
-    public $configurations;
+    public $data;
 
-    public function __construct(array $configurations)
+    public function __construct(array $data)
     {
-        $this->configurations = $configurations;
+        $this->data = $data;
+    }
+
+    public function getData(): array
+    {
+        return $this->data;
     }
 }

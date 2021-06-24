@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigApollo;
 
-class PipeMessage
+use Hyperf\ConfigCenter\Contract\PipeMessageInterface;
+
+class PipeMessage implements PipeMessageInterface
 {
     /**
      * @var array
@@ -43,5 +45,10 @@ class PipeMessage
             return false;
         }
         return true;
+    }
+
+    public function getData(): array
+    {
+        return $this->configurations ?? [];
     }
 }
