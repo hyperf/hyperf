@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace HyperfTest\ConfigNacos;
 
 use Hyperf\ConfigNacos\Client;
-use Hyperf\ConfigNacos\Config\ConfigManager;
 use Hyperf\ConfigNacos\Constants;
 use Hyperf\ConfigNacos\Service\IPReaderInterface;
 use Hyperf\Contract\ConfigInterface;
@@ -47,34 +46,37 @@ class ContainerStub
                     ['port' => 9502],
                 ],
             ],
+            'config_center' => [
+                'drivers' => [
+                    'nacos' => [
+                        'merge_mode' => Constants::CONFIG_MERGE_OVERWRITE,
+                        'reload_interval' => 1,
+                        'default_key' => 'nacos_default_config',
+                        'listener_config' => [
+                            'nacos_config' => [
+                                'tenant' => 'tenant',
+                                'data_id' => 'json',
+                                'group' => 'DEFAULT_GROUP',
+                                'type' => 'json',
+                            ],
+                            'nacos_config.data' => [
+                                'data_id' => 'text',
+                                'group' => 'DEFAULT_GROUP',
+                            ],
+                            [
+                                'data_id' => 'json2',
+                                'group' => 'DEFAULT_GROUP',
+                                'type' => 'json',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
             'nacos' => [
                 'host' => '127.0.0.1',
                 'port' => 8848,
                 'username' => null,
                 'password' => null,
-                'config' => [
-                    'enable' => true,
-                    'merge_mode' => Constants::CONFIG_MERGE_OVERWRITE,
-                    'reload_interval' => 1,
-                    'default_key' => 'nacos_default_config',
-                    'listener_config' => [
-                        'nacos_config' => [
-                            'tenant' => 'tenant',
-                            'data_id' => 'json',
-                            'group' => 'DEFAULT_GROUP',
-                            'type' => 'json',
-                        ],
-                        'nacos_config.data' => [
-                            'data_id' => 'text',
-                            'group' => 'DEFAULT_GROUP',
-                        ],
-                        [
-                            'data_id' => 'json2',
-                            'group' => 'DEFAULT_GROUP',
-                            'type' => 'json',
-                        ],
-                    ],
-                ],
                 'service' => [
                     'enable' => true,
                     'service_name' => 'hyperf',
@@ -105,10 +107,6 @@ class ContainerStub
                 var_dump($message);
             });
             return $logger;
-        });
-
-        $container->shouldReceive('get')->with(ConfigManager::class)->andReturnUsing(function () use ($container) {
-            return new ConfigManager($container->get(ConfigInterface::class));
         });
 
         $container->shouldReceive('get')->with(IPReaderInterface::class)->andReturn(new class() implements IPReaderInterface {

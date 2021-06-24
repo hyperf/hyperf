@@ -51,7 +51,7 @@ class Client
 
     public function pull(): array
     {
-        $listener = $this->config->get('nacos.config.listener_config', []);
+        $listener = $this->config->get('config_center.drivers.nacos.listener_config', []);
 
         $config = [];
         foreach ($listener as $key => $item) {

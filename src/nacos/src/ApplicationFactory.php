@@ -9,14 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\ConfigNacos;
+namespace Hyperf\Nacos;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Nacos\Application;
-use Hyperf\Nacos\Config;
 use Psr\Container\ContainerInterface;
 
-class ClientFactory
+class ApplicationFactory
 {
     public function __invoke(ContainerInterface $container)
     {

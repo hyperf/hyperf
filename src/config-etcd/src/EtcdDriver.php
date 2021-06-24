@@ -67,7 +67,7 @@ class EtcdDriver extends AbstractDriver
             if ($config !== $cacheConfig) {
                 $cacheConfig = $config;
                 $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
-                $pipeMessage = new PipeMessage($this->format($config));
+                $pipeMessage = new PipeMessage($config);
                 for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
                     $this->server->sendMessage($pipeMessage, $workerId);
                 }
@@ -119,16 +119,7 @@ class EtcdDriver extends AbstractDriver
     public function onPipeMessageHandle(object $event): void
     {
         if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
-            $data = $event->data;
-
-            /** @var KV $kv */
-            foreach ($data->configurations ?? [] as $kv) {
-                $key = $this->mapping[$kv->key] ?? null;
-                if (is_string($key)) {
-                    $this->config->set($key, $this->packer->unpack($kv->value));
-                    $this->logger->debug(sprintf('Config [%s] is updated', $key));
-                }
-            }
+            $this->updateConfig($event->data->configurations);
         }
     }
 
