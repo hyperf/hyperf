@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace HyperfTest\ConfigZookeeper;
 
 use Hyperf\Config\Config;
+use Hyperf\ConfigCenter\PipeMessage;
 use Hyperf\ConfigZookeeper\ClientInterface;
-use Hyperf\ConfigZookeeper\PipeMessage;
 use Hyperf\ConfigZookeeper\ZookeeperDriver;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;

@@ -31,7 +31,7 @@ class ApolloDriver extends AbstractDriver
 
     protected function pull(): array
     {
-        return $this->client->pull($this->getNamespaces());
+        return $this->client->pull();
     }
 
     protected function formatValue($value)
@@ -62,23 +62,19 @@ class ApolloDriver extends AbstractDriver
         return $value;
     }
 
-    protected function updateConfig(array $configs)
+    protected function updateConfig(array $config)
     {
         $mergedConfigs = [];
-        foreach ($configs as $config) {
-            foreach ($config as $key => $value) {
+        foreach ($config as $c) {
+            foreach ($c as $key => $value) {
                 $mergedConfigs[$key] = $value;
             }
         }
-        unset($configs);
+        unset($config);
         foreach ($mergedConfigs ?? [] as $key => $value) {
             $this->config->set($key, $this->formatValue($value));
             $this->logger->debug(sprintf('Config [%s] is updated', $key));
         }
     }
 
-    protected function getNamespaces(): array
-    {
-        return $this->config->get('config_center.drivers.apollo.namespaces', []);
-    }
 }
