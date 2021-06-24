@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\ConfigNacos;
 
 use Hyperf\ConfigCenter\AbstractDriver;
-use Hyperf\ConfigNacos\PipeMessage;
 use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
 
@@ -24,8 +23,6 @@ class NacosDriver extends AbstractDriver
     protected $client;
 
     protected $driverName = 'nacos';
-
-    protected $pipeMessage = PipeMessage::class;
 
     public function __construct(ContainerInterface $container)
     {

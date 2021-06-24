@@ -54,7 +54,7 @@ abstract class AbstractDriver implements DriverInterface
     /**
      * @var null|string
      */
-    protected $pipeMessage;
+    protected $pipeMessage = PipeMessage::class;
 
     /**
      * @var string

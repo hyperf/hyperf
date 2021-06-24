@@ -29,8 +29,6 @@ class EtcdDriver extends AbstractDriver
 
     protected $driverName = 'etcd';
 
-    protected $pipeMessage = PipeMessage::class;
-
     public function __construct(ContainerInterface $container)
     {
         parent::__construct($container);
