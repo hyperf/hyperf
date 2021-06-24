@@ -9,8 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\ConfigZookeeper;
+namespace Hyperf\ConfigCenter\Contract;
 
-interface ClientInterface extends \Hyperf\ConfigCenter\Contract\ClientInterface
+interface PipeMessageInterface
 {
+    public function getData(): array;
 }

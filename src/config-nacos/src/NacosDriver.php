@@ -20,6 +20,7 @@ use Hyperf\Utils\Arr;
 use Hyperf\Utils\Coordinator\Constants as CooConst;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
+use Psr\Container\ContainerInterface;
 
 class NacosDriver extends AbstractDriver
 {
@@ -28,80 +29,14 @@ class NacosDriver extends AbstractDriver
      */
     protected $client;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
+    protected $driverName = 'nacos';
 
-    public function __construct(Client $client, StdoutLoggerInterface $logger)
+    protected $pipeMessage = PipeMessage::class;
+
+    public function __construct(ContainerInterface $container)
     {
-        $this->client = $client;
-        $this->logger = $logger;
-    }
-
-    public function configFetcherHandle(): void
-    {
-        $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
-        $cache = [];
-        while (ProcessManager::isRunning()) {
-            $config = $this->client->pull();
-            if ($config != $cache) {
-                $pipeMessage = new PipeMessage($config);
-                for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
-                    $this->server->sendMessage($pipeMessage, $workerId);
-                }
-
-                $processes = ProcessCollector::all();
-                if ($processes) {
-                    $string = serialize($pipeMessage);
-                    /** @var \Swoole\Process $process */
-                    foreach ($processes as $process) {
-                        $result = $process->exportSocket()->send($string, 10);
-                        if ($result === false) {
-                            $this->logger->error('Configuration synchronization failed. Please restart the server.');
-                        }
-                    }
-                }
-
-                $cache = $config;
-            }
-            sleep($this->config->get('config_center.drivers.nacos.interval', 5));
-        }
-    }
-
-    public function bootProcessHandle(object $event): void
-    {
-        if ($config = $this->client->pull()) {
-            $this->updateConfig($config);
-        }
-
-        if (! $this->config->get('config_center.use_standalone_process', true)) {
-            Coroutine::create(function () {
-                $interval = $this->config->get('config_center.drivers.nacos.interval', 5);
-                retry(INF, function () use ($interval) {
-                    $prevConfig = [];
-                    while (true) {
-                        $coordinator = CoordinatorManager::until(CooConst::WORKER_EXIT);
-                        $workerExited = $coordinator->yield($interval);
-                        if ($workerExited) {
-                            break;
-                        }
-                        $config = $this->client->pull();
-                        if ($config !== $prevConfig) {
-                            $this->updateConfig($config);
-                        }
-                        $prevConfig = $config;
-                    }
-                }, $interval * 1000);
-            });
-        }
-    }
-
-    public function onPipeMessageHandle(object $event): void
-    {
-        if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
-            $this->updateConfig($event->data->configurations);
-        }
+        parent::__construct($container);
+        $this->client = $container->get(Client::class);
     }
 
     protected function updateConfig(array $config)

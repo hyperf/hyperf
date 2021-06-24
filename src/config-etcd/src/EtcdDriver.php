@@ -12,32 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\ConfigEtcd;
 
 use Hyperf\ConfigCenter\AbstractDriver;
-use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Process\ProcessCollector;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
 
 class EtcdDriver extends AbstractDriver
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var ClientInterface
-     */
-    protected $client;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
     /**
      * @var JsonPacker
      */
@@ -48,79 +27,16 @@ class EtcdDriver extends AbstractDriver
      */
     protected $mapping;
 
+    protected $driverName = 'etcd';
+
+    protected $pipeMessage = PipeMessage::class;
+
     public function __construct(ContainerInterface $container)
     {
-        $this->container = $container;
+        parent::__construct($container);
         $this->client = $container->get(ClientInterface::class);
-        $this->logger = $container->get(StdoutLoggerInterface::class);
-        $this->config = $container->get(ConfigInterface::class);
-
         $this->mapping = $this->config->get('config_center.drivers.etcd.mapping', []);
         $this->packer = $container->get($this->config->get('config_center.drivers.etcd.packer', JsonPacker::class));
-    }
-
-    public function configFetcherHandle(): void
-    {
-        $cacheConfig = null;
-        while (true) {
-            $config = $this->client->pull();
-            if ($config !== $cacheConfig) {
-                $cacheConfig = $config;
-                $workerCount = $this->server->setting['worker_num'] + $this->server->setting['task_worker_num'] - 1;
-                $pipeMessage = new PipeMessage($config);
-                for ($workerId = 0; $workerId <= $workerCount; ++$workerId) {
-                    $this->server->sendMessage($pipeMessage, $workerId);
-                }
-
-                $string = serialize($pipeMessage);
-
-                $processes = ProcessCollector::all();
-                /** @var \Swoole\Process $process */
-                foreach ($processes as $process) {
-                    $result = $process->exportSocket()->send($string, 10);
-                    if ($result === false) {
-                        $this->logger->error('Configuration synchronization failed. Please restart the server.');
-                    }
-                }
-            }
-
-            sleep($this->config->get('config_center.drivers.etcd.interval', 5));
-        }
-    }
-
-    public function bootProcessHandle(object $event): void
-    {
-        if ($config = $this->client->pull()) {
-            $this->updateConfig($config);
-        }
-
-        if (! $this->config->get('config_center.use_standalone_process', true)) {
-            Coroutine::create(function () {
-                $interval = $this->config->get('config_center.drivers.etcd.interval', 5);
-                retry(INF, function () use ($interval) {
-                    $prevConfig = [];
-                    while (true) {
-                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
-                        $workerExited = $coordinator->yield($interval);
-                        if ($workerExited) {
-                            break;
-                        }
-                        $config = $this->client->pull();
-                        if ($config !== $prevConfig) {
-                            $this->updateConfig($config);
-                        }
-                        $prevConfig = $config;
-                    }
-                }, $interval * 1000);
-            });
-        }
-    }
-
-    public function onPipeMessageHandle(object $event): void
-    {
-        if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
-            $this->updateConfig($event->data->configurations);
-        }
     }
 
     protected function updateConfig(array $config)

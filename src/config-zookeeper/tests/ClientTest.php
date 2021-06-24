@@ -49,15 +49,14 @@ class ClientTest extends TestCase
 
             return $logger;
         }));
+        $driver = new ZookeeperDriver($container);
         $client = $container->get(ClientInterface::class);
-        $driver = new ZookeeperDriver($client, $container->get(StdoutLoggerInterface::class));
-        $driver->setConfig($container->get(ConfigInterface::class));
         $config = $client->pull();
         $event = Mockery::mock(OnPipeMessage::class);
         $event->data = new PipeMessage($config);
         $config = $container->get(ConfigInterface::class);
         $this->assertSame('pre-value', $config->get('zookeeper.test-key'));
-        $driver->onPipeMessageHandle($event);
+        $driver->onPipeMessage($event);
         $this->assertSame('after-value', $config->get('zookeeper.test-key'));
     }
 

@@ -13,9 +13,9 @@ namespace Hyperf\ConfigCenter\Contract;
 
 interface DriverInterface
 {
-    public function configFetcherHandle(): void;
+    public function fetchConfig();
 
-    public function bootProcessHandle(object $event): void;
+    public function createMessageFetcherLoop(): void;
 
-    public function onPipeMessageHandle(object $event): void;
+    public function onPipeMessage(object $event): void;
 }

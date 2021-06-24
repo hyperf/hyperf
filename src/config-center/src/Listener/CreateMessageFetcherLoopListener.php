@@ -16,7 +16,7 @@ use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 
-class BootProcessListener extends OnPipeMessageListener
+class CreateMessageFetcherLoopListener extends OnPipeMessageListener
 {
     public function listen(): array
     {
@@ -31,6 +31,6 @@ class BootProcessListener extends OnPipeMessageListener
     public function process(object $event)
     {
         $instance = $this->createDriverInstance();
-        $instance && $instance->bootProcessHandle($event);
+        $instance && $instance->createMessageFetcherLoop();
     }
 }
