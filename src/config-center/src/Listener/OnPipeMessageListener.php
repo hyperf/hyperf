@@ -17,7 +17,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
-use Hyperf\Process\Event\PipeMessage as UserProcessPipMessage;
+use Hyperf\Process\Event\PipeMessage as UserProcessPipeMessage;
 
 class OnPipeMessageListener implements ListenerInterface
 {
@@ -50,7 +50,7 @@ class OnPipeMessageListener implements ListenerInterface
     {
         return [
             OnPipeMessage::class,
-            UserProcessPipMessage::class,
+            UserProcessPipeMessage::class,
         ];
     }
 
@@ -60,8 +60,11 @@ class OnPipeMessageListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        $instance = $this->createDriverInstance();
-        $instance && $instance->onPipeMessage($event);
+        if ($instance = $this->createDriverInstance()) {
+            if ($event instanceof OnPipeMessage || $event instanceof UserProcessPipeMessage) {
+                $instance->onPipeMessage($event->data);
+            }
+        }
     }
 
     protected function createDriverInstance(): ?DriverInterface

@@ -18,7 +18,6 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
 use Hyperf\Process\ProcessCollector;
-use Hyperf\Process\ProcessManager;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
@@ -82,11 +81,9 @@ abstract class AbstractDriver implements DriverInterface
         }
     }
 
-    public function onPipeMessage(object $event): void
+    public function onPipeMessage(PipeMessageInterface $pipeMessage): void
     {
-        if ($event instanceof OnPipeMessage && $event->data instanceof PipeMessageInterface) {
-            $this->updateConfig($event->data->getData());
-        }
+        $this->updateConfig($pipeMessage->getData());
     }
 
     public function getServer(): ?Server
@@ -114,7 +111,7 @@ abstract class AbstractDriver implements DriverInterface
                         }
                         $config = $this->pull();
                         if ($config !== $prevConfig) {
-                            if (class_exists(ProcessManager::class) && ProcessManager::isRunning()) {
+                            if (class_exists(ProcessCollector::class) && ! ProcessCollector::isEmpty()) {
                                 $this->shareConfigToProcesses($config);
                             } else {
                                 $this->updateConfig($config);

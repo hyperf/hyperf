@@ -17,5 +17,5 @@ interface DriverInterface
 
     public function createMessageFetcherLoop(): void;
 
-    public function onPipeMessage(object $event): void;
+    public function onPipeMessage(PipeMessageInterface $pipeMessage): void;
 }

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\ConfigApollo;
 
 use Hyperf\ConfigCenter\AbstractDriver;
+use Hyperf\ConfigCenter\Contract\PipeMessageInterface;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
@@ -24,7 +25,7 @@ class ApolloDriver extends AbstractDriver
      */
     protected $client;
 
-    protected $driverName = 'apollop';
+    protected $driverName = 'apollo';
 
     protected $pipeMessage = PipeMessage::class;
 
@@ -72,11 +73,10 @@ class ApolloDriver extends AbstractDriver
         }
     }
 
-    public function onPipeMessage(object $event): void
+    public function onPipeMessage(PipeMessageInterface $pipeMessage): void
     {
-        if (property_exists($event, 'data') && $event->data instanceof PipeMessage) {
-            /** @var PipeMessage $data */
-            $data = $event->data;
+        if ($pipeMessage instanceof PipeMessage) {
+            $data = $pipeMessage;
 
             if (! $data->isValid()) {
                 return;
@@ -97,6 +97,7 @@ class ApolloDriver extends AbstractDriver
     {
         [$namespaces, $callbacks] = $this->createNamespaceCallbacks();
         $this->client->pull($namespaces, $callbacks);
+        return [];
     }
 
     protected function createNamespaceCallbacks(): array

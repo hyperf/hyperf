@@ -12,17 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\ConfigCenter\Listener;
 
 use Hyperf\Command\Event\BeforeHandle;
-use Hyperf\ConfigCenter\DriverFactory;
 use Hyperf\ConfigCenter\Mode;
-use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 
 class CreateMessageFetcherLoopListener extends OnPipeMessageListener
 {
-
     public function listen(): array
     {
         return [
