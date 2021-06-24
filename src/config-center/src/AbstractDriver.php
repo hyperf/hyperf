@@ -16,7 +16,6 @@ use Hyperf\ConfigCenter\Contract\DriverInterface;
 use Hyperf\ConfigCenter\Contract\PipeMessageInterface;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Framework\Event\OnPipeMessage;
 use Hyperf\Process\ProcessCollector;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
