@@ -13,6 +13,7 @@ namespace Hyperf\ConfigApollo;
 
 use Hyperf\ConfigCenter\AbstractDriver;
 use Hyperf\ConfigCenter\Contract\PipeMessageInterface;
+use Hyperf\ConfigCenter\Mode;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
@@ -52,9 +53,9 @@ class ApolloDriver extends AbstractDriver
         }
     }
 
-    public function createMessageFetcherLoop(): void
+    public function createMessageFetcherLoop(int $mode): void
     {
-        if (! $this->config->get('config_center.use_standalone_process', true)) {
+        if ($mode === Mode::COROUTINE) {
             Coroutine::create(function () {
                 $interval = $this->config->get('config_center.drivers.apollo.interval', 5);
                 retry(INF, function () {

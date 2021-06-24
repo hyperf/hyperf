@@ -68,9 +68,35 @@ abstract class AbstractDriver implements DriverInterface
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
-    public function createMessageFetcherLoop(): void
+    public function createMessageFetcherLoop(int $mode): void
     {
-        $this->createCoroutineMessageHandlerLoop($this->getInterval());
+        $interval = $this->getInterval();
+        Coroutine::create(function () use ($mode, $interval) {
+            retry(INF, function () use ($mode, $interval) {
+                $prevConfig = [];
+                while (true) {
+                    try {
+                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
+                        $workerExited = $coordinator->yield($interval);
+                        if ($workerExited) {
+                            break;
+                        }
+                        $config = $this->pull();
+                        if ($config !== $prevConfig) {
+                            if ($mode === Mode::PROCESS) {
+                                $this->shareConfigToProcesses($config);
+                            } else {
+                                $this->updateConfig($config);
+                            }
+                        }
+                        $prevConfig = $config;
+                    } catch (\Throwable $exception) {
+                        $this->logger->error((string) $exception);
+                        throw $exception;
+                    }
+                }
+            }, $interval * 1000);
+        });
     }
 
     public function fetchConfig()
