@@ -152,7 +152,7 @@ use Hyperf\Amqp\Result;
  */
 class DemoConsumer extends ConsumerMessage
 {
-    public function consume($data): string
+    public function consumeMessage($data): string
     {
         print_r($data);
         return Result::ACK;
