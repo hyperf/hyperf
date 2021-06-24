@@ -11,14 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigApollo;
 
-interface ClientInterface
+interface ClientInterface extends \Hyperf\ConfigCenter\Contract\ClientInterface
 {
-    /**
-     * Pull the config values from configuration center, and then update the Config values.
-     *
-     * @param array $namespaces the namespaces of configs that you want to pull
-     */
-    public function pull(array $namespaces): array;
-
     public function getOption(): Option;
 }

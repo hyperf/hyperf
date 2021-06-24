@@ -13,12 +13,16 @@ namespace Hyperf\ConfigApollo;
 
 use Closure;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Parallel;
 use RuntimeException;
 
 class Client implements ClientInterface
 {
+    /**
+     * @var ConfigInterface
+     */
+    protected $config;
+
     /**
      * @var Option
      */
@@ -36,24 +40,28 @@ class Client implements ClientInterface
 
     public function __construct(
         Option $option,
-        Closure $httpClientFactory
+        Closure $httpClientFactory,
+        ConfigInterface $config
     ) {
         $this->option = $option;
         $this->httpClientFactory = $httpClientFactory;
+        $this->config = $config;
     }
 
-    public function pull(array $namespaces): array
+    public function pull(): array
     {
-        if (! $namespaces) {
-            return [];
-        }
-        $result = $this->parallelPull($namespaces);
-        return $result;
+        $namespaces = $this->config->get('config_center.drivers.apollo.namespaces');
+        return $this->parallelPull($namespaces);
     }
 
     public function getOption(): Option
     {
         return $this->option;
+    }
+
+    protected function getReleaseKey(string $cacheKey): ?string
+    {
+        return $this->cache[$cacheKey]['releaseKey'] ?? null;
     }
 
     private function hasSecret(): bool
@@ -122,10 +130,5 @@ class Client implements ClientInterface
             }, $namespace);
         }
         return $parallel->wait();
-    }
-
-    protected function getReleaseKey(string $cacheKey): ?string
-    {
-        return $this->cache[$cacheKey]['releaseKey'] ?? null;
     }
 }

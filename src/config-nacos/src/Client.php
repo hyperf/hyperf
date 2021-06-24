@@ -19,7 +19,7 @@ use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Codec\Xml;
 use Psr\Container\ContainerInterface;
 
-class Client
+class Client implements ClientInterface
 {
     /**
      * @var ContainerInterface
