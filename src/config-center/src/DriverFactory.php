@@ -17,7 +17,7 @@ use Hyperf\Contract\ConfigInterface;
 class DriverFactory
 {
     /**
-     * @var \Hyperf\Contract\ConfigInterface
+     * @var ConfigInterface
      */
     protected $config;
 
