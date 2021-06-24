@@ -13,6 +13,7 @@ namespace Hyperf\ConfigApollo;
 
 use Closure;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\Parallel;
 use RuntimeException;
 
@@ -26,26 +27,33 @@ class Client implements ClientInterface
     /**
      * @var Option
      */
-    private $option;
+    protected $option;
 
     /**
      * @var array
      */
-    private $cache = [];
+    protected $cache = [];
 
     /**
      * @var Closure
      */
-    private $httpClientFactory;
+    protected $httpClientFactory;
+
+    /**
+     * @var \Hyperf\Contract\StdoutLoggerInterface
+     */
+    protected $logger;
 
     public function __construct(
         Option $option,
         Closure $httpClientFactory,
-        ConfigInterface $config
+        ConfigInterface $config,
+        StdoutLoggerInterface $logger
     ) {
         $this->option = $option;
         $this->httpClientFactory = $httpClientFactory;
         $this->config = $config;
+        $this->logger = $logger;
     }
 
     public function pull(): array
