@@ -1,5 +1,5 @@
 {
-    "name": "hyperf/nacos",
+    "name": "hyperf/config-nacos",
     "description": "A nacos adapter for config center component.",
     "license": "MIT",
     "keywords": [
