@@ -9,16 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\ConfigNacos\Listener;
+namespace Hyperf\ServiceGovernanceNacos\Listener;
 
-use Hyperf\ConfigNacos\Exception\RequestException;
-use Hyperf\ConfigNacos\Service\IPReaderInterface;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Nacos\Application;
+use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Server\Event\MainCoroutineServerStart;
+use Hyperf\ServiceGovernanceNacos\IPReaderInterface;
 use Psr\Container\ContainerInterface;
 
 class MainWorkerStartListener implements ListenerInterface
