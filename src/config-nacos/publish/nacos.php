@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-use Hyperf\Nacos\Constants;
+use Hyperf\ConfigNacos\Constants;
 
 return [
     // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port

@@ -15,6 +15,18 @@ class ConfigProvider
 {
     public function __invoke(): array
     {
-        return [];
+        return [
+            'dependencies' => [
+                Application::class => ApplicationFactory::class,
+            ],
+            'publish' => [
+                [
+                    'id' => 'nacos',
+                    'description' => 'The config for nacos.',
+                    'source' => __DIR__ . '/../publish/nacos.php',
+                    'destination' => BASE_PATH . '/config/autoload/nacos.php',
+                ],
+            ],
+        ];
     }
 }

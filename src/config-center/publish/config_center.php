@@ -29,7 +29,23 @@ return [
             'interval_timeout' => 1,
         ],
         'nacos' => [
-            'driver' => '',
+            'driver' => Hyperf\ConfigNacos\NacosDriver::class,
+            'merge_mode' => Hyperf\ConfigNacos\Constants::CONFIG_MERGE_OVERWRITE,
+            'interval' => 3,
+            'default_key' => 'nacos_config',
+            'listener_config' => [
+                // dataId, group, tenant, type, content
+                'nacos_config' => [
+                    'tenant' => 'tenant', // corresponding with service.namespaceId
+                    'data_id' => 'hyperf-service-config',
+                    'group' => 'DEFAULT_GROUP',
+                ],
+                'nacos_config.data' => [
+                    'data_id' => 'hyperf-service-config-yml',
+                    'group' => 'DEFAULT_GROUP',
+                    'type' => 'yml',
+                ],
+            ],
         ],
         'aliyun_acm' => [
             'driver' => Hyperf\ConfigAliyunAcm\AliyunAcmDriver::class,

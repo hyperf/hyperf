@@ -31,6 +31,8 @@
 - [#3725](https://github.com/hyperf/hyperf/pull/3725) Removed config `config_etcd.php`, please use `config_center.php` instead.
 - [#3730](https://github.com/hyperf/hyperf/pull/3730) Removed config `brokers` and `update_brokers` from kafka.
 - [#3733](https://github.com/hyperf/hyperf/pull/3733) Removed config `zookeeper.php`, please use `config_center.php` instead.
+- [#3734](https://github.com/hyperf/hyperf/pull/3734) Splited `nacos` into `config-nacos` and `service-governance-nacos`.
+- [#3734](https://github.com/hyperf/hyperf/pull/3734) Renamed `nacos-sdk` as `nacos`.
 
 ## Deprecated
 

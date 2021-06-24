@@ -11,8 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigNacos\Listener;
 
-use Hyperf\ConfigNacos\Client;
-use Hyperf\ConfigNacos\Config\ConfigManager;
 use Hyperf\ConfigNacos\Exception\RequestException;
 use Hyperf\ConfigNacos\Service\IPReaderInterface;
 use Hyperf\Contract\ConfigInterface;
@@ -21,9 +19,6 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Nacos\Application;
 use Hyperf\Server\Event\MainCoroutineServerStart;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
 class MainWorkerStartListener implements ListenerInterface
@@ -153,42 +148,8 @@ class MainWorkerStartListener implements ListenerInterface
                         break;
                 }
             }
-
-            $this->refreshConfig();
-
-            if ($event instanceof MainCoroutineServerStart) {
-                $interval = (int) $config->get('nacos.config.reload_interval', 3);
-                Coroutine::create(function () use ($interval) {
-                    sleep($interval);
-                    retry(INF, function () use ($interval) {
-                        $prevConfig = [];
-                        while (true) {
-                            $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
-                            $workerExited = $coordinator->yield($interval);
-                            if ($workerExited) {
-                                break;
-                            }
-                            $prevConfig = $this->refreshConfig($prevConfig);
-                        }
-                    }, $interval * 1000);
-                });
-            }
         } catch (\Throwable $exception) {
             $this->logger->critical((string) $exception);
         }
-    }
-
-    protected function refreshConfig(array $prevConfig = []): array
-    {
-        $client = $this->container->get(Client::class);
-        $manager = $this->container->get(ConfigManager::class);
-
-        $result = $client->pull();
-        if ($result === $prevConfig) {
-            return $result;
-        }
-
-        $manager->merge($result);
-        return $result;
     }
 }
