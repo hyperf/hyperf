@@ -9,8 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-use Hyperf\ConfigNacos\Constants;
-
 return [
     // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
     // 'url' => '',
@@ -22,25 +20,6 @@ return [
     'password' => null,
     'guzzle' => [
         'config' => [],
-    ],
-    'config' => [
-        'enable' => true,
-        'merge_mode' => Constants::CONFIG_MERGE_OVERWRITE,
-        'reload_interval' => 3,
-        'default_key' => 'nacos_config',
-        'listener_config' => [
-            // dataId, group, tenant, type, content
-            'nacos_config' => [
-                'tenant' => 'tenant', // corresponding with service.namespaceId
-                'data_id' => 'hyperf-service-config',
-                'group' => 'DEFAULT_GROUP',
-            ],
-            'nacos_config.data' => [
-                'data_id' => 'hyperf-service-config-yml',
-                'group' => 'DEFAULT_GROUP',
-                'type' => 'yml',
-            ],
-        ],
     ],
     // The service info.
     'service' => [
