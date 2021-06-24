@@ -56,7 +56,7 @@ class ClientTest extends TestCase
         $event->data = new PipeMessage($config);
         $config = $container->get(ConfigInterface::class);
         $this->assertSame('pre-value', $config->get('zookeeper.test-key'));
-        $driver->onPipeMessage($event);
+        $driver->onPipeMessage($event->data);
         $this->assertSame('after-value', $config->get('zookeeper.test-key'));
     }
 
