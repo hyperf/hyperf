@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\ConfigCenter\Process;
 
 use Hyperf\ConfigCenter\DriverFactory;
+use Hyperf\ConfigCenter\Mode;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\AbstractProcess;
@@ -60,7 +61,7 @@ class ConfigFetcherProcess extends AbstractProcess
     {
         return $server instanceof Server
             && $this->config->get('config_center.enable', false)
-            && $this->config->get('config_center.use_standalone_process', true);
+            && $this->config->get('config_center.mode', Mode::PROCESS) === Mode::PROCESS;
     }
 
     public function handle(): void
