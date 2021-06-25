@@ -22,8 +22,8 @@ use Hyperf\Rpc\IdGenerator;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcClient\Exception\RequestException;
-use Hyperf\ServiceGovernance\ServiceGovernanceInterface;
-use Hyperf\ServiceGovernance\ServiceGovernanceManager;
+use Hyperf\ServiceGovernance\DriverInterface;
+use Hyperf\ServiceGovernance\DriverManager;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -191,8 +191,8 @@ abstract class AbstractServiceClient
         $registryProtocol = $consumer['registry']['protocol'] ?? null;
         $registryAddress = $consumer['registry']['address'] ?? null;
         // Current $consumer is the config of the specified consumer.
-        if (! empty($registryProtocol) && ! empty($registryAddress) && $this->container->has(ServiceGovernanceManager::class)) {
-            $governance = $this->container->get(ServiceGovernanceManager::class)->get($registryProtocol);
+        if (! empty($registryProtocol) && ! empty($registryAddress) && $this->container->has(DriverManager::class)) {
+            $governance = $this->container->get(DriverManager::class)->get($registryProtocol);
             if (! $governance) {
                 throw new InvalidArgumentException(sprintf('Invalid protocol of registry %s', $registryProtocol));
             }
@@ -221,7 +221,7 @@ abstract class AbstractServiceClient
         throw new InvalidArgumentException('Config of registry or nodes missing.');
     }
 
-    protected function getNodes(ServiceGovernanceInterface $governance, string $address): array
+    protected function getNodes(DriverInterface $governance, string $address): array
     {
         $nodeArray = $governance->getNodes($address, $this->serviceName, [
             'protocol' => $this->protocol,

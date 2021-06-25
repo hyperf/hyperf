@@ -13,19 +13,19 @@ namespace Hyperf\ServiceGovernance\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
-use Hyperf\ServiceGovernance\ConsulGovernance;
-use Hyperf\ServiceGovernance\ServiceGovernanceManager;
+use Hyperf\ServiceGovernance\ConsulDriver;
+use Hyperf\ServiceGovernance\DriverManager;
 
-class RegisterServiceGovernanceListener implements ListenerInterface
+class RegisterDriverListener implements ListenerInterface
 {
     /**
-     * @var ServiceGovernanceManager
+     * @var DriverManager
      */
-    protected $manager;
+    protected $driverManager;
 
-    public function __construct(ServiceGovernanceManager $manager)
+    public function __construct(DriverManager $manager)
     {
-        $this->manager = $manager;
+        $this->driverManager = $manager;
     }
 
     public function listen(): array
@@ -37,6 +37,6 @@ class RegisterServiceGovernanceListener implements ListenerInterface
 
     public function process(object $event)
     {
-        $this->manager->register('consul', make(ConsulGovernance::class));
+        $this->driverManager->register('consul', make(ConsulDriver::class));
     }
 }

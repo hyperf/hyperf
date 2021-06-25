@@ -19,7 +19,7 @@ use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\ServiceGovernance\IPReaderInterface;
 use Hyperf\ServiceGovernance\Register\ConsulAgent;
-use Hyperf\ServiceGovernance\ServiceGovernanceManager;
+use Hyperf\ServiceGovernance\DriverManager;
 use Hyperf\ServiceGovernance\ServiceManager;
 use Psr\Container\ContainerInterface;
 
@@ -51,7 +51,7 @@ class RegisterServiceListener implements ListenerInterface
     protected $ipReader;
 
     /**
-     * @var ServiceGovernanceManager
+     * @var DriverManager
      */
     protected $governanceManager;
 
@@ -62,7 +62,7 @@ class RegisterServiceListener implements ListenerInterface
         $this->serviceManager = $container->get(ServiceManager::class);
         $this->config = $container->get(ConfigInterface::class);
         $this->ipReader = $container->get(IPReaderInterface::class);
-        $this->governanceManager = $container->get(ServiceGovernanceManager::class);
+        $this->governanceManager = $container->get(DriverManager::class);
     }
 
     public function listen(): array
@@ -85,7 +85,7 @@ class RegisterServiceListener implements ListenerInterface
                 $servers = $this->getServers();
                 foreach ($services as $serviceName => $serviceProtocols) {
                     foreach ($serviceProtocols as $paths) {
-                        foreach ($paths as $path => $service) {
+                        foreach ($paths as $service) {
                             if (! isset($service['publishTo'], $service['server'])) {
                                 continue;
                             }
