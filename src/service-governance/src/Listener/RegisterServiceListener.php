@@ -17,6 +17,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Server\Event\MainCoroutineServerStart;
+use Hyperf\ServiceGovernance\IPReaderInterface;
 use Hyperf\ServiceGovernance\Register\ConsulAgent;
 use Hyperf\ServiceGovernance\ServiceManager;
 use Psr\Container\ContainerInterface;
@@ -44,6 +45,11 @@ class RegisterServiceListener implements ListenerInterface
     protected $config;
 
     /**
+     * @var IPReaderInterface
+     */
+    protected $ipReader;
+
+    /**
      * @var array
      */
     protected $defaultLoggerContext
@@ -62,6 +68,7 @@ class RegisterServiceListener implements ListenerInterface
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->serviceManager = $container->get(ServiceManager::class);
         $this->config = $container->get(ConfigInterface::class);
+        $this->ipReader = $container->get(IPReaderInterface::class);
     }
 
     public function listen(): array
@@ -231,7 +238,7 @@ class RegisterServiceListener implements ListenerInterface
             }
             $host = $server['host'];
             if (in_array($host, ['0.0.0.0', 'localhost'])) {
-                $host = $this->getInternalIp();
+                $host = $this->ipReader->read();
             }
             if (! filter_var($host, FILTER_VALIDATE_IP)) {
                 throw new \InvalidArgumentException(sprintf('Invalid host %s', $host));
@@ -244,19 +251,5 @@ class RegisterServiceListener implements ListenerInterface
             $result[$server['name']] = [$host, $port];
         }
         return $result;
-    }
-
-    protected function getInternalIp(): string
-    {
-        $ips = swoole_get_local_ip();
-        if (is_array($ips) && ! empty($ips)) {
-            return current($ips);
-        }
-        /** @var mixed|string $ip */
-        $ip = gethostbyname(gethostname());
-        if (is_string($ip)) {
-            return $ip;
-        }
-        throw new \RuntimeException('Can not get the internal IP.');
     }
 }
