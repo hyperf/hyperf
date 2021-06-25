@@ -25,7 +25,7 @@
         "hyperf/utils": "~2.2.0"
     },
     "suggest": {
-        "hyperf/consul": "For fetch the nodes info from consul.",
+        "hyperf/service-governance": "Required to fetch the nodes info from service governance.",
         "hyperf/di": "For better container experience.",
         "hyperf/pool": "Required to use connection pool."
     },

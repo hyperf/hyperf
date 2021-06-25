@@ -13,7 +13,13 @@ namespace Hyperf\ServiceGovernance;
 
 interface ServiceGovernanceInterface
 {
-    public function getNodes(): array;
+    /**
+     * @param $metadata = [
+     *     'protocol' => 'default',
+     * ]
+     * @return array = [['host' => '127.0.0.1', 'port' => 9501]]
+     */
+    public function getNodes(string $uri, string $name, array $metadata): array;
 
     /**
      * @param $metadata = [
