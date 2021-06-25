@@ -50,7 +50,47 @@ composer require hyperf/config-nacos
 composer require hyperf/config-zookeeper
 ```
 
-## 配置文件
+## 接入配置中心
+
+### 接入 Etcd 配置中心
+
+如果需要使用 `ETCD` 配置中心，则首先需要添加 `Etcd 客户端` 配置文件 `etcd.php`
+
+```php
+<?php
+return [
+    'uri' => 'http://127.0.0.1:2379',
+    'version' => 'v3beta',
+    'options' => [
+        'timeout' => 10,
+    ],
+];
+```
+
+### 接入 Nacos 配置中心
+
+如果需要使用 `Nacos` 配置中心，则首先需要添加 `Nacos 客户端` 配置文件 `nacos.php`
+
+```php
+<?php
+
+return [
+    // 如果不是 HTTP 协议，则需要直接配置 url
+    // 'url' => '',
+    // Nacos 的 IP 和 端口
+    'host' => '127.0.0.1',
+    'port' => 8848,
+    // 用户名和密码
+    'username' => null,
+    'password' => null,
+    // 相关的 Guzzle 配置，支持自定义
+    'guzzle' => [
+        'config' => [],
+    ],
+];
+```
+
+### 修改配置中心统一配置
 
 ```php
 <?php
@@ -68,25 +108,37 @@ return [
     'drivers' => [
         'apollo' => [
             'driver' => Hyperf\ConfigApollo\ApolloDriver::class,
+            // Apollo Server
             'server' => 'http://127.0.0.1:9080',
+            // 您的 AppId
             'appid' => 'test',
+            // 当前应用所在的集群
             'cluster' => 'default',
+            // 当前应用需要接入的 Namespace，可配置多个
             'namespaces' => [
                 'application',
             ],
+            // 配置更新间隔（秒）
             'interval' => 5,
+            // 严格模式，当为 false 时，拉取的配置值均为 string 类型，当为 true 时，拉取的配置值会转化为原配置值的数据类型
             'strict_mode' => false,
+            // 客户端IP
             'client_ip' => current(swoole_get_local_ip()),
+            // 拉取配置超时时间
             'pullTimeout' => 10,
+            // 拉取配置间隔
             'interval_timeout' => 1,
         ],
         'nacos' => [
             'driver' => Hyperf\ConfigNacos\NacosDriver::class,
+            // 配置合并方式，支持覆盖和合并
             'merge_mode' => Hyperf\ConfigNacos\Constants::CONFIG_MERGE_OVERWRITE,
             'interval' => 3,
+            // 如果对应的映射 key 没有设置，则使用默认的 key
             'default_key' => 'nacos_config',
             'listener_config' => [
                 // dataId, group, tenant, type, content
+                // 映射后的配置 KEY => Nacos 中实际的配置
                 'nacos_config' => [
                     'tenant' => 'tenant', // corresponding with service.namespaceId
                     'data_id' => 'hyperf-service-config',
@@ -101,25 +153,35 @@ return [
         ],
         'aliyun_acm' => [
             'driver' => Hyperf\ConfigAliyunAcm\AliyunAcmDriver::class,
+            // 配置更新间隔（秒）
             'interval' => 5,
+            // 阿里云 ACM 断点地址，取决于您的可用区
             'endpoint' => env('ALIYUN_ACM_ENDPOINT', 'acm.aliyun.com'),
+            // 当前应用需要接入的 Namespace
             'namespace' => env('ALIYUN_ACM_NAMESPACE', ''),
+            // 您的配置对应的 Data ID
             'data_id' => env('ALIYUN_ACM_DATA_ID', ''),
+            // 您的配置对应的 Group
             'group' => env('ALIYUN_ACM_GROUP', 'DEFAULT_GROUP'),
+            // 您的阿里云账号的 Access Key
             'access_key' => env('ALIYUN_ACM_AK', ''),
+            // 您的阿里云账号的 Secret Key
             'secret_key' => env('ALIYUN_ACM_SK', ''),
             'ecs_ram_role' => env('ALIYUN_ACM_RAM_ROLE', ''),
         ],
         'etcd' => [
             'driver' => Hyperf\ConfigEtcd\EtcdDriver::class,
             'packer' => Hyperf\Utils\Packer\JsonPacker::class,
+            // 需要同步的数据前缀
             'namespaces' => [
                 '/application',
             ],
+            // `Etcd` 与 `Config` 的映射关系。映射中不存在的 `key`，则不会被同步到 `Config` 中
             'mapping' => [
                 // etcd key => config key
                 '/application/test' => 'test',
             ],
+            // 配置更新间隔（秒）
             'interval' => 5,
         ],
         'zookeeper' => [
@@ -131,118 +193,6 @@ return [
     ],
 ];
 
-```
-
-## 接入 Apollo 配置中心
-
-如果您没有对配置组件进行替换使用默认的 [hyperf/config](https://github.com/hyperf/config) 组件的话，接入 Apollo 配置中心则是轻而易举，只需两步。
-- 通过 Composer 将 [hyperf/config-apollo](https://github.com/hyperf/config-apollo) ，即执行命令 `composer require hyperf/config-apollo`
-- 在 `config/autoload` 文件夹内增加一个 `apollo.php` 的配置文件，配置内容如下
-
-```php
-<?php
-return [
-    // 是否开启配置中心的接入流程，为 true 时会自动启动一个 ConfigFetcherProcess 进程用于更新配置
-    'enable' => true,
-    // 是否使用独立进程来拉取config，如果否则将在worker内以协程方式拉取
-    'use_standalone_process' => true,
-    // Apollo Server
-    'server' => 'http://127.0.0.1:8080',
-    // 您的 AppId
-    'appid' => 'test',
-    // 当前应用所在的集群
-    'cluster' => 'default',
-    // 当前应用需要接入的 Namespace，可配置多个
-    'namespaces' => [
-        'application',
-    ],
-    // 配置更新间隔（秒）
-    'interval' => 5,
-    // 严格模式，当为 false 时，拉取的配置值均为 string 类型，当为 true 时，拉取的配置值会转化为原配置值的数据类型
-    'strict_mode' => false,
-    // 客户端IP
-    'client_ip' => current(swoole_get_local_ip()),
-    // 拉取配置超时时间
-    'pullTimeout' => 10,
-    // 拉取配置间隔
-    'interval_timeout' => 60,
-];
-```
-
-## 接入 Aliyun ACM 配置中心
-
-接入 Aliyun ACM 配置中心与 Apollo 一样都是轻而易举的，同样只需两步。
-- 通过 Composer 将 [hyperf/config-aliyun-acm](https://github.com/hyperf/config-aliyun-acm) ，即执行命令 `composer require hyperf/config-aliyun-acm`
-- 在 `config/autoload` 文件夹内增加一个 `aliyun_acm.php` 的配置文件，配置内容如下
-
-```php
-<?php
-return [
-    // 是否开启配置中心的接入流程，为 true 时会自动启动一个 ConfigFetcherProcess 进程用于更新配置
-    'enable' => true,
-    // 是否使用独立进程来拉取config，如果否则将在worker内以协程方式拉取
-    'use_standalone_process' => true,
-    // 配置更新间隔（秒）
-    'interval' => 5,
-    // 阿里云 ACM 断点地址，取决于您的可用区
-    'endpoint' => env('ALIYUN_ACM_ENDPOINT', 'acm.aliyun.com'),
-    // 当前应用需要接入的 Namespace
-    'namespace' => env('ALIYUN_ACM_NAMESPACE', ''),
-    // 您的配置对应的 Data ID
-    'data_id' => env('ALIYUN_ACM_DATA_ID', ''),
-    // 您的配置对应的 Group
-    'group' => env('ALIYUN_ACM_GROUP', 'DEFAULT_GROUP'),
-    // 您的阿里云账号的 Access Key
-    'access_key' => env('ALIYUN_ACM_AK', ''),
-    // 您的阿里云账号的 Secret Key
-    'secret_key' => env('ALIYUN_ACM_SK', ''),
-];
-```
-
-## 接入 Etcd 配置中心
-
-- 安装 `Etcd 客户端`
-
-```
-composer require hyperf/etcd
-```
-
-- 添加 `Etcd 客户端` 配置文件 `etcd.php`
-
-```php
-<?php
-return [
-    'uri' => 'http://192.168.1.200:2379',
-    'version' => 'v3beta',
-    'options' => [
-        'timeout' => 10,
-    ],
-];
-```
-
-- 安装 `Etcd 配置中心`
-
-```
-composer require hyperf/config-etcd
-```
-
-- 添加 `Etcd 配置中心` 配置文件 `config_etcd.php`
-
-> mapping 为 `Etcd` 与 `Config` 的映射关系。映射中不存在的 `key`，则不会被同步到 `Config` 中。
-
-```php
-<?php
-return [
-    'enable' => true,
-    'use_standalone_process' => true,
-    'namespaces' => [
-        '/test',
-    ],
-    'mapping' => [
-        '/test/test' => 'etcd.test.test',
-    ],
-    'interval' => 5,
-];
 ```
 
 ## 配置更新的作用范围

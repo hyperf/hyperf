@@ -253,7 +253,6 @@
             "HyperfTest\\AsyncQueue\\": "src/async-queue/tests/",
             "HyperfTest\\Cache\\": "src/cache/tests/",
             "HyperfTest\\Command\\": "src/command/tests/",
-            "HyperfTest\\ConfigAliyunAcm\\": "src/config-aliyun-acm/tests/",
             "HyperfTest\\ConfigApollo\\": "src/config-apollo/tests/",
             "HyperfTest\\ConfigCenter\\": "src/config-center/tests/",
             "HyperfTest\\ConfigNacos\\": "src/config-nacos/tests/",
