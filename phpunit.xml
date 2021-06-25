@@ -15,6 +15,7 @@
             <directory suffix="Test.php">./src/cache/tests</directory>
             <directory suffix="Test.php">./src/command/tests</directory>
             <directory suffix="Test.php">./src/config/tests</directory>
+            <directory suffix="Test.php">./src/config-center/tests</directory>
             <directory suffix="Test.php">./src/config-nacos/tests</directory>
             <directory suffix="Test.php">./src/config-zookeeper/tests</directory>
             <directory suffix="Test.php">./src/constants/tests</directory>
@@ -84,6 +85,7 @@
             <directory suffix=".php">./src/cache/src</directory>
             <directory suffix=".php">./src/command/src</directory>
             <directory suffix=".php">./src/config/src</directory>
+            <directory suffix=".php">./src/config-center/src</directory>
             <directory suffix=".php">./src/config-nacos/src</directory>
             <directory suffix=".php">./src/constants/src</directory>
             <directory suffix=".php">./src/consul/src</directory>

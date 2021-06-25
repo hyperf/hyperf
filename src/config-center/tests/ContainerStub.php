@@ -12,17 +12,22 @@ declare(strict_types=1);
 namespace HyperfTest\ConfigCenter;
 
 use Hyperf\ConfigCenter\DriverFactory;
+use Hyperf\ConfigEtcd;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Di\Container;
+use Hyperf\Etcd\KVInterface;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Codec\Json;
+use Hyperf\Utils\Packer\JsonPacker;
 use Mockery;
-use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class ContainerStub
 {
     public static function mockContainer(ConfigInterface $config)
     {
-        $container = Mockery::mock(ContainerInterface::class);
+        $container = Mockery::mock(Container::class);
         ApplicationContext::setContainer($container);
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
@@ -32,6 +37,24 @@ class ContainerStub
             return $logger;
         });
         $container->shouldReceive('get')->with(DriverFactory::class)->andReturn(new DriverFactory($config));
+        $container->shouldReceive('make')->with(ConfigEtcd\EtcdDriver::class, Mockery::any())->andReturnUsing(function () use ($container) {
+            return new ConfigEtcd\EtcdDriver($container);
+        });
+        $container->shouldReceive('get')->with(ConfigEtcd\ClientInterface::class)->andReturnUsing(function () use ($container) {
+            return new ConfigEtcd\Client(
+                $container->get(KVInterface::class),
+                $container->get(ConfigInterface::class)
+            );
+        });
+        $container->shouldReceive('get')->with(KVInterface::class)->andReturnUsing(function () {
+            $kv = Mockery::mock(KVInterface::class);
+            $kv->shouldReceive('fetchByPrefix')->withAnyArgs()->andReturn(
+                Json::decode(file_get_contents(__DIR__ . '/json/etcd.kv.json'))
+            );
+            return $kv;
+        });
+        $container->shouldReceive('get')->with(JsonPacker::class)->andReturn(new JsonPacker());
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
 
         return $container;
     }

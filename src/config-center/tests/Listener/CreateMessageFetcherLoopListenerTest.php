@@ -31,7 +31,7 @@ class CreateMessageFetcherLoopListenerTest extends TestCase
         Mockery::close();
     }
 
-    public function testCoroutineMode()
+    public function testRunningMode()
     {
         $config = new Config([
             'config_center' => [
