@@ -12,7 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\ServiceGovernance;
 
 use Hyperf\Consul\AgentInterface;
+use Hyperf\Consul\Health;
+use Hyperf\Consul\HealthInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Guzzle\ClientFactory;
+use Hyperf\LoadBalancer\Node;
+use Hyperf\ServiceGovernance\Exception\ComponentRequiredException;
 use Hyperf\ServiceGovernance\Register\ConsulAgent;
 use Psr\Container\ContainerInterface;
 
@@ -33,15 +38,44 @@ class ConsulGovernance implements ServiceGovernanceInterface
      */
     protected $registeredServices = [];
 
+    protected $health;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
-    public function getNodes(): array
+    public function getNodes(string $uri, string $name, array $metadata): array
     {
-        // TODO: Implement getNodes() method.
+        $health = $this->createConsulHealth($uri);
+        $services = $health->service($name)->json();
+        $nodes = [];
+        foreach ($services as $node) {
+            $passing = true;
+            $service = $node['Service'] ?? [];
+            $checks = $node['Checks'] ?? [];
+
+            if (isset($service['Meta']['Protocol']) && $metadata['protocol'] !== $service['Meta']['Protocol']) {
+                // The node is invalid, if the protocol is not equal with the client's protocol.
+                continue;
+            }
+
+            foreach ($checks as $check) {
+                $status = $check['Status'] ?? false;
+                if ($status !== 'passing') {
+                    $passing = false;
+                }
+            }
+
+            if ($passing) {
+                $address = $service['Address'] ?? '';
+                $port = (int) ($service['Port'] ?? 0);
+                // @TODO Get and set the weight property.
+                $address && $port && $nodes[] = ['host' => $address, 'port' => $port];
+            }
+        }
+        return $nodes;
     }
 
     public function register(string $name, string $host, int $port, array $metadata): void
@@ -149,5 +183,24 @@ class ConsulGovernance implements ServiceGovernanceInterface
         ++$end;
         $exploded[] = $end;
         return implode('-', $exploded);
+    }
+
+    protected function createConsulHealth(string $baseUri): HealthInterface
+    {
+        if ($this->health instanceof HealthInterface) {
+            return $this->health;
+        }
+
+        if (! class_exists(Health::class)) {
+            throw new ComponentRequiredException('Component of \'hyperf/consul\' is required if you want the client fetch the nodes info from consul.');
+        }
+
+        return $this->health = make(Health::class, [
+            'clientFactory' => function () use ($baseUri) {
+                return $this->container->get(ClientFactory::class)->create([
+                    'base_uri' => $baseUri,
+                ]);
+            },
+        ]);
     }
 }
