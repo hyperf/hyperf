@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ServiceGovernance;
 
+use Hyperf\ServiceGovernance\Listener\RegisterServiceGovernanceListener;
 use Hyperf\ServiceGovernance\Listener\RegisterServiceListener;
 use Hyperf\ServiceGovernance\Register\ConsulAgent;
 use Hyperf\ServiceGovernance\Register\ConsulAgentFactory;
@@ -25,6 +26,7 @@ class ConfigProvider
                 IPReaderInterface::class => IPReader::class,
             ],
             'listeners' => [
+                RegisterServiceGovernanceListener::class,
                 RegisterServiceListener::class,
             ],
             'annotations' => [

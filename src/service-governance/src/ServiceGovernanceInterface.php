@@ -15,5 +15,17 @@ interface ServiceGovernanceInterface
 {
     public function getNodes(): array;
 
-    public function register(): void;
+    /**
+     * @param $metadata = [
+     *     'protocol' => 'default',
+     * ]
+     */
+    public function register(string $name, string $host, int $port, array $metadata): void;
+
+    /**
+     * @param $metadata = [
+     *     'protocol' => 'default',
+     * ]
+     */
+    public function isRegistered(string $name, string $host, int $port, array $metadata): bool;
 }

@@ -19,6 +19,7 @@ use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\ServiceGovernance\IPReaderInterface;
 use Hyperf\ServiceGovernance\Register\ConsulAgent;
+use Hyperf\ServiceGovernance\ServiceGovernanceManager;
 use Hyperf\ServiceGovernance\ServiceManager;
 use Psr\Container\ContainerInterface;
 
@@ -50,17 +51,9 @@ class RegisterServiceListener implements ListenerInterface
     protected $ipReader;
 
     /**
-     * @var array
+     * @var ServiceGovernanceManager
      */
-    protected $defaultLoggerContext
-        = [
-            'component' => 'service-governance',
-        ];
-
-    /**
-     * @var array
-     */
-    protected $registeredServices;
+    protected $governanceManager;
 
     public function __construct(ContainerInterface $container)
     {
@@ -69,6 +62,7 @@ class RegisterServiceListener implements ListenerInterface
         $this->serviceManager = $container->get(ServiceManager::class);
         $this->config = $container->get(ConfigInterface::class);
         $this->ipReader = $container->get(IPReaderInterface::class);
+        $this->governanceManager = $container->get(ServiceGovernanceManager::class);
     }
 
     public function listen(): array
@@ -84,7 +78,6 @@ class RegisterServiceListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        $this->registeredServices = [];
         $continue = true;
         while ($continue) {
             try {
@@ -97,10 +90,10 @@ class RegisterServiceListener implements ListenerInterface
                                 continue;
                             }
                             [$address, $port] = $servers[$service['server']];
-                            switch ($service['publishTo']) {
-                                case 'consul':
-                                    $this->publishToConsul($address, (int) $port, $service, $serviceName, $path);
-                                    break;
+                            if ($governance = $this->governanceManager->get($service['publishTo'])) {
+                                if (! $governance->isRegistered($serviceName, $address, (int) $port, $service)) {
+                                    $governance->register($serviceName, $address, (int) $port, $service);
+                                }
                             }
                         }
                     }
@@ -115,114 +108,6 @@ class RegisterServiceListener implements ListenerInterface
                 }
             }
         }
-    }
-
-    protected function publishToConsul(string $address, int $port, array $service, string $serviceName, string $path)
-    {
-        $this->logger->debug(sprintf('Service %s[%s] is registering to the consul.', $serviceName, $path), $this->defaultLoggerContext);
-        if ($this->isRegistered($serviceName, $address, $port, $service['protocol'])) {
-            $this->logger->info(sprintf('Service %s[%s] has been already registered to the consul.', $serviceName, $path), $this->defaultLoggerContext);
-            return;
-        }
-        if (isset($service['id']) && $service['id']) {
-            $nextId = $service['id'];
-        } else {
-            $nextId = $this->generateId($this->getLastServiceId($serviceName));
-        }
-        $requestBody = [
-            'Name' => $serviceName,
-            'ID' => $nextId,
-            'Address' => $address,
-            'Port' => $port,
-            'Meta' => [
-                'Protocol' => $service['protocol'],
-            ],
-        ];
-        if ($service['protocol'] === 'jsonrpc-http') {
-            $requestBody['Check'] = [
-                'DeregisterCriticalServiceAfter' => '90m',
-                'HTTP' => "http://{$address}:{$port}/",
-                'Interval' => '1s',
-            ];
-        }
-        if (in_array($service['protocol'], ['jsonrpc', 'jsonrpc-tcp-length-check'], true)) {
-            $requestBody['Check'] = [
-                'DeregisterCriticalServiceAfter' => '90m',
-                'TCP' => "{$address}:{$port}",
-                'Interval' => '1s',
-            ];
-        }
-        $response = $this->consulAgent->registerService($requestBody);
-        if ($response->getStatusCode() === 200) {
-            $this->registeredServices[$serviceName][$service['protocol']][$address][$port] = true;
-            $this->logger->info(sprintf('Service %s[%s]:%s register to the consul successfully.', $serviceName, $path, $nextId), $this->defaultLoggerContext);
-        } else {
-            $this->logger->warning(sprintf('Service %s register to the consul failed.', $serviceName), $this->defaultLoggerContext);
-        }
-    }
-
-    protected function generateId(string $name)
-    {
-        $exploded = explode('-', $name);
-        $length = count($exploded);
-        $end = -1;
-        if ($length > 1 && is_numeric($exploded[$length - 1])) {
-            $end = $exploded[$length - 1];
-            unset($exploded[$length - 1]);
-        }
-        $end = intval($end);
-        ++$end;
-        $exploded[] = $end;
-        return implode('-', $exploded);
-    }
-
-    protected function getLastServiceId(string $name)
-    {
-        $maxId = -1;
-        $lastService = $name;
-        $services = $this->consulAgent->services()->json();
-        foreach ($services ?? [] as $id => $service) {
-            if (isset($service['Service']) && $service['Service'] === $name) {
-                $exploded = explode('-', (string) $id);
-                $length = count($exploded);
-                if ($length > 1 && is_numeric($exploded[$length - 1]) && $maxId < $exploded[$length - 1]) {
-                    $maxId = $exploded[$length - 1];
-                    $lastService = $service;
-                }
-            }
-        }
-        return $lastService['ID'] ?? $name;
-    }
-
-    protected function isRegistered(string $name, string $address, int $port, string $protocol): bool
-    {
-        if (isset($this->registeredServices[$name][$protocol][$address][$port])) {
-            return true;
-        }
-        $response = $this->consulAgent->services();
-        if ($response->getStatusCode() !== 200) {
-            $this->logger->warning(sprintf('Service %s register to the consul failed.', $name), $this->defaultLoggerContext);
-            return false;
-        }
-        $services = $response->json();
-        $glue = ',';
-        $tag = implode($glue, [$name, $address, $port, $protocol]);
-        foreach ($services as $serviceId => $service) {
-            if (! isset($service['Service'], $service['Address'], $service['Port'], $service['Meta']['Protocol'])) {
-                continue;
-            }
-            $currentTag = implode($glue, [
-                $service['Service'],
-                $service['Address'],
-                $service['Port'],
-                $service['Meta']['Protocol'],
-            ]);
-            if ($currentTag === $tag) {
-                $this->registeredServices[$name][$protocol][$address][$port] = true;
-                return true;
-            }
-        }
-        return false;
     }
 
     protected function getServers(): array
