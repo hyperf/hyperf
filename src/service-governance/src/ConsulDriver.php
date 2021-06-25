@@ -21,7 +21,7 @@ use Hyperf\ServiceGovernance\Exception\ComponentRequiredException;
 use Hyperf\ServiceGovernance\Register\ConsulAgent;
 use Psr\Container\ContainerInterface;
 
-class ConsulGovernance implements ServiceGovernanceInterface
+class ConsulDriver implements DriverInterface
 {
     /**
      * @var ContainerInterface

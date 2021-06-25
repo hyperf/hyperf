@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ServiceGovernance;
 
-interface ServiceGovernanceInterface
+interface DriverInterface
 {
     /**
      * @param $metadata = [
