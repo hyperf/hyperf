@@ -17,7 +17,7 @@
             "create_revision": "5",
             "mod_revision": "47",
             "version": "38",
-            "value": "{\n    \"message\":\"Hyperf123\",\n    \"id\":12\n}"
+            "value": "{\n    \"message\":\"Hello Hyperf\",\n    \"id\":1\n}"
         }
     ],
     "count": "2"

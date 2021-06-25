@@ -13,6 +13,7 @@ namespace HyperfTest\ConfigCenter;
 
 use Hyperf\ConfigCenter\DriverFactory;
 use Hyperf\ConfigEtcd;
+use Hyperf\ConfigNacos;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
@@ -52,6 +53,19 @@ class ContainerStub
                 Json::decode(file_get_contents(__DIR__ . '/json/etcd.kv.json'))
             );
             return $kv;
+        });
+        $container->shouldReceive('make')->with(ConfigNacos\NacosDriver::class)->withAnyArgs()->andReturnUsing(function () use ($container) {
+            return new ConfigNacos\NacosDriver($container);
+        });
+        $container->shouldReceive('get')->with(ConfigNacos\ClientInterface::class)->andReturnUsing(function () {
+            $client = Mockery::mock(ConfigNacos\ClientInterface::class);
+            $client->shouldReceive('pull')->andReturn([
+                'test' => [
+                    'message' => 'Hello Hyperf',
+                    'id' => 1,
+                ],
+            ]);
+            return $client;
         });
         $container->shouldReceive('get')->with(JsonPacker::class)->andReturn(new JsonPacker());
         $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
