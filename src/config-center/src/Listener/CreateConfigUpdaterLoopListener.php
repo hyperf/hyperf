@@ -17,7 +17,7 @@ use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 
-class CreateMessageFetcherLoopListener extends OnPipeMessageListener
+class CreateConfigUpdaterLoopListener extends OnPipeMessageListener
 {
     public function listen(): array
     {
@@ -31,10 +31,8 @@ class CreateMessageFetcherLoopListener extends OnPipeMessageListener
 
     public function process(object $event)
     {
-        $mode = strtolower($this->config->get('config_center.mode', Mode::PROCESS));
-        if ($mode === Mode::COROUTINE) {
-            $instance = $this->createDriverInstance();
-            $instance && $instance->createMessageFetcherLoop(Mode::COROUTINE);
-        }
+        $mode = $this->config->get('config_center.mode', Mode::PROCESS);
+        $instance = $this->createDriverInstance();
+        $instance && $instance->createConfigUpdaterLoop($mode);
     }
 }

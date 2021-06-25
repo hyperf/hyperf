@@ -13,6 +13,7 @@ namespace Hyperf\ConfigCenter;
 
 use Hyperf\ConfigCenter\Contract\DriverInterface;
 use Hyperf\Contract\ConfigInterface;
+use Psr\Container\ContainerInterface;
 
 class DriverFactory
 {
@@ -21,8 +22,14 @@ class DriverFactory
      */
     protected $config;
 
-    public function __construct(ConfigInterface $config)
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    public function __construct(ContainerInterface $container, ConfigInterface $config)
     {
+        $this->container = $container;
         $this->config = $config;
     }
 
@@ -31,7 +38,7 @@ class DriverFactory
         $defaultDriver = $this->config->get('config_center.driver', '');
         $config = $this->config->get('config_center.drivers.' . $driver, []);
         $class = $config['driver'] ?? $defaultDriver;
-        $instance = make($class, $config);
+        $instance = $this->container->get($class);
         foreach ($properties as $method => $value) {
             if (method_exists($instance, $method)) {
                 $instance->{$method}($value);

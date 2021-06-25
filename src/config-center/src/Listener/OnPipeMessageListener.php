@@ -67,7 +67,7 @@ class OnPipeMessageListener implements ListenerInterface
         }
     }
 
-    protected function createDriverInstance(): ?DriverInterface
+    protected function createDriverInstance(array $properties = []): ?DriverInterface
     {
         if (! $this->config->get('config_center.enable', false)) {
             return null;
@@ -77,6 +77,6 @@ class OnPipeMessageListener implements ListenerInterface
         if (! $driver) {
             return null;
         }
-        return $this->driverFactory->create($driver);
+        return $this->driverFactory->create($driver, $properties);
     }
 }

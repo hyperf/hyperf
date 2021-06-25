@@ -66,13 +66,9 @@ class ConfigFetcherProcess extends AbstractProcess
 
     public function handle(): void
     {
-        $driver = $this->config->get('config_center.driver', '');
-        if (! $driver) {
-            return;
+        // Do nothing, just create the process
+        while (true) {
+            sleep(1);
         }
-        $instance = $this->driverFactory->create($driver, [
-            'setServer' => $this->server,
-        ]);
-        $instance->createMessageFetcherLoop(Mode::PROCESS);
     }
 }

@@ -16,6 +16,7 @@ use Hyperf\ConfigCenter\Contract\DriverInterface;
 use Hyperf\ConfigCenter\Contract\PipeMessageInterface;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Engine\Channel;
 use Hyperf\Process\ProcessCollector;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
@@ -60,19 +61,25 @@ abstract class AbstractDriver implements DriverInterface
      */
     protected $driverName = '';
 
+    /**
+     * @var \Hyperf\Engine\Channel
+     */
+    protected $channel;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->channel = new Channel();
     }
 
-    public function createMessageFetcherLoop(string $mode): void
+    public function createConfigUpdaterLoop(int $mode): void
     {
-        $interval = $this->getInterval();
-        Coroutine::create(function () use ($mode, $interval) {
-            retry(INF, function () use ($mode, $interval) {
+        Coroutine::create(function () use ($mode) {
+            retry(INF, function () use ($mode) {
                 $prevConfig = [];
+                $interval = $this->getInterval();
                 while (true) {
                     try {
                         $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
@@ -80,15 +87,37 @@ abstract class AbstractDriver implements DriverInterface
                         if ($workerExited) {
                             break;
                         }
-                        $config = $this->pull();
+                        $config = $this->channel->pop();
                         if ($config !== $prevConfig) {
+                            $prevConfig = $config;
                             if ($mode === Mode::PROCESS) {
                                 $this->shareConfigToProcesses($config);
                             } else {
                                 $this->updateConfig($config);
                             }
                         }
-                        $prevConfig = $config;
+                    } catch (\Throwable $exception) {
+                        $this->logger->error((string) $exception);
+                        throw $exception;
+                    }
+                }
+            });
+        });
+    }
+
+    public function createConfigFetcherLoop(): void
+    {
+        Coroutine::create(function () {
+            $interval = $this->getInterval();
+            retry(INF, function () use ($interval) {
+                while (true) {
+                    try {
+                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
+                        $workerExited = $coordinator->yield($interval);
+                        if ($workerExited) {
+                            break;
+                        }
+                        $this->channel->push($this->pull());
                     } catch (\Throwable $exception) {
                         $this->logger->error((string) $exception);
                         throw $exception;
@@ -102,7 +131,7 @@ abstract class AbstractDriver implements DriverInterface
     {
         if (method_exists($this->client, 'pull')) {
             $config = $this->pull();
-            $config && is_array($config) && $this->updateConfig($config);
+            $config && is_array($config) && $this->channel->push($config);
         }
     }
 
@@ -120,36 +149,6 @@ abstract class AbstractDriver implements DriverInterface
     {
         $this->server = $server;
         return $this;
-    }
-
-    protected function createCoroutineMessageHandlerLoop(int $interval): int
-    {
-        return Coroutine::create(function () use ($interval) {
-            retry(INF, function () use ($interval) {
-                $prevConfig = [];
-                while (true) {
-                    try {
-                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
-                        $workerExited = $coordinator->yield($interval);
-                        if ($workerExited) {
-                            break;
-                        }
-                        $config = $this->pull();
-                        if ($config !== $prevConfig) {
-                            if (class_exists(ProcessCollector::class) && ! ProcessCollector::isEmpty()) {
-                                $this->shareConfigToProcesses($config);
-                            } else {
-                                $this->updateConfig($config);
-                            }
-                        }
-                        $prevConfig = $config;
-                    } catch (\Throwable $exception) {
-                        $this->logger->error((string) $exception);
-                        throw $exception;
-                    }
-                }
-            }, $interval * 1000);
-        });
     }
 
     protected function pull(): array

@@ -12,7 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\ConfigCenter;
 
 use Hyperf\ConfigCenter\Listener\BootApplicationListener;
-use Hyperf\ConfigCenter\Listener\CreateMessageFetcherLoopListener;
+use Hyperf\ConfigCenter\Listener\CreateConfigUpdaterLoopListener;
+use Hyperf\ConfigCenter\Listener\CreateConfigFetcherLoopListener;
 use Hyperf\ConfigCenter\Listener\FetchConfigOnBootListener;
 use Hyperf\ConfigCenter\Listener\OnPipeMessageListener;
 use Hyperf\ConfigCenter\Process\ConfigFetcherProcess;
@@ -32,7 +33,8 @@ class ConfigProvider
             'listeners' => [
                 BootApplicationListener::class,
                 FetchConfigOnBootListener::class,
-                CreateMessageFetcherLoopListener::class,
+                CreateConfigFetcherLoopListener::class,
+                CreateConfigUpdaterLoopListener::class,
                 OnPipeMessageListener::class,
             ],
             'publish' => [
