@@ -17,6 +17,8 @@ use Hyperf\Consul\ConsulResponse;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Logger\Logger;
+use Hyperf\ServiceGovernance\IPReader;
+use Hyperf\ServiceGovernance\IPReaderInterface;
 use Hyperf\ServiceGovernance\Listener\RegisterServiceListener;
 use Hyperf\ServiceGovernance\Register\ConsulAgent;
 use Hyperf\ServiceGovernance\ServiceManager;
@@ -144,6 +146,7 @@ class RegisterServiceListenerTest extends TestCase
                     ],
                 ],
             ]));
+        $container->shouldReceive('get')->with(IPReaderInterface::class)->andReturn(new IPReader());
         return $container;
     }
 }

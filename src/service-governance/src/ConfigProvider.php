@@ -22,6 +22,7 @@ class ConfigProvider
         return [
             'dependencies' => [
                 ConsulAgent::class => ConsulAgentFactory::class,
+                IPReaderInterface::class => IPReader::class,
             ],
             'listeners' => [
                 RegisterServiceListener::class,
