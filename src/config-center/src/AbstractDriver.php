@@ -74,7 +74,7 @@ abstract class AbstractDriver implements DriverInterface
         $this->channel = new Channel();
     }
 
-    public function createConfigUpdaterLoop(int $mode): void
+    public function createConfigUpdaterLoop(string $mode): void
     {
         Coroutine::create(function () use ($mode) {
             retry(INF, function () use ($mode) {

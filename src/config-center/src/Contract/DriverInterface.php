@@ -15,7 +15,7 @@ interface DriverInterface
 {
     public function fetchConfig();
 
-    public function createConfigUpdaterLoop(int $mode): void;
+    public function createConfigUpdaterLoop(string $mode): void;
 
     public function createConfigFetcherLoop(): void;
 
