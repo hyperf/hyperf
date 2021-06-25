@@ -61,7 +61,7 @@ class ConfigFetcherProcess extends AbstractProcess
     {
         return $server instanceof Server
             && $this->config->get('config_center.enable', false)
-            && $this->config->get('config_center.mode', Mode::PROCESS) === Mode::PROCESS;
+            && strtolower($this->config->get('config_center.mode', Mode::PROCESS)) === Mode::PROCESS;
     }
 
     public function handle(): void

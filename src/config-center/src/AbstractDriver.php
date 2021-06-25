@@ -67,7 +67,7 @@ abstract class AbstractDriver implements DriverInterface
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
-    public function createMessageFetcherLoop(int $mode): void
+    public function createMessageFetcherLoop(string $mode): void
     {
         $interval = $this->getInterval();
         Coroutine::create(function () use ($mode, $interval) {

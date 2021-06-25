@@ -18,7 +18,7 @@ class ConfigProvider
         return [
             'dependencies' => [
                 ClientInterface::class => ClientFactory::class,
-            ]
+            ],
         ];
     }
 }

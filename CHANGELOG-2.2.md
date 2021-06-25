@@ -33,6 +33,9 @@
 - [#3733](https://github.com/hyperf/hyperf/pull/3733) Removed config `zookeeper.php`, please use `config_center.php` instead.
 - [#3734](https://github.com/hyperf/hyperf/pull/3734) Splited `nacos` into `config-nacos` and `service-governance-nacos`.
 - [#3734](https://github.com/hyperf/hyperf/pull/3734) Renamed `nacos-sdk` as `nacos`.
+- [#3737](https://github.com/hyperf/hyperf/pull/3737) Refactor config-center and config driver
+  - Added `AbstractDriver` and merge the duplicate code into the abstraction class
+  - Added `PipeMessageInterface` to uniform the message struct of config fetcher process
 
 ## Deprecated
 
