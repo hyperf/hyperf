@@ -13,7 +13,7 @@ namespace Hyperf\ConfigCenter;
 
 class Mode
 {
-    public const PROCESS = 1;
+    public const PROCESS = 'process';
 
-    public const COROUTINE = 2;
+    public const COROUTINE = 'coroutine';
 }

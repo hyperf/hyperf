@@ -4,6 +4,9 @@ Hyperf 为您提供了分布式系统的外部化配置支持，默认适配了:
 
 - 由携程开源的 [ctripcorp/apollo](https://github.com/ctripcorp/apollo)，由 [hyperf/config-apollo](https://github.com/hyperf/config-apollo) 组件提供功能支持。
 - 阿里云提供的免费配置中心服务 [应用配置管理(ACM, Application Config Manager)](https://help.aliyun.com/product/59604.html)，由 [hyperf/config-aliyun-acm](https://github.com/hyperf/config-aliyun-acm) 组件提供功能支持。
+- ETCD
+- Nacos
+- Zookeeper
 
 ## 为什么要使用配置中心？
 
@@ -27,6 +30,107 @@ composer require hyperf/config-apollo
 
 ```bash
 composer require hyperf/config-aliyun-acm
+```
+
+### Etcd
+
+```bash
+composer require hyperf/config-etcd
+```
+
+### Nacos
+
+```bash
+composer require hyperf/config-nacos
+```
+
+### Zookeeper
+
+```bash
+composer require hyperf/config-zookeeper
+```
+
+## 配置文件
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Hyperf\ConfigCenter\Mode;
+
+return [
+    // 是否开启配置中心
+    'enable' => (bool) env('CONFIG_CENTER_ENABLE', true),
+    'driver' => env('CONFIG_CENTER_DRIVER', 'apollo'),
+    // 配置中心的运行模式，多进程模型推荐使用 PROCESS 模式，单进程模型推荐使用 COROUTINE 模式
+    'mode' => env('CONFIG_CENTER_MODE', Mode::PROCESS),
+    'drivers' => [
+        'apollo' => [
+            'driver' => Hyperf\ConfigApollo\ApolloDriver::class,
+            'server' => 'http://127.0.0.1:9080',
+            'appid' => 'test',
+            'cluster' => 'default',
+            'namespaces' => [
+                'application',
+            ],
+            'interval' => 5,
+            'strict_mode' => false,
+            'client_ip' => current(swoole_get_local_ip()),
+            'pullTimeout' => 10,
+            'interval_timeout' => 1,
+        ],
+        'nacos' => [
+            'driver' => Hyperf\ConfigNacos\NacosDriver::class,
+            'merge_mode' => Hyperf\ConfigNacos\Constants::CONFIG_MERGE_OVERWRITE,
+            'interval' => 3,
+            'default_key' => 'nacos_config',
+            'listener_config' => [
+                // dataId, group, tenant, type, content
+                'nacos_config' => [
+                    'tenant' => 'tenant', // corresponding with service.namespaceId
+                    'data_id' => 'hyperf-service-config',
+                    'group' => 'DEFAULT_GROUP',
+                ],
+                'nacos_config.data' => [
+                    'data_id' => 'hyperf-service-config-yml',
+                    'group' => 'DEFAULT_GROUP',
+                    'type' => 'yml',
+                ],
+            ],
+        ],
+        'aliyun_acm' => [
+            'driver' => Hyperf\ConfigAliyunAcm\AliyunAcmDriver::class,
+            'interval' => 5,
+            'endpoint' => env('ALIYUN_ACM_ENDPOINT', 'acm.aliyun.com'),
+            'namespace' => env('ALIYUN_ACM_NAMESPACE', ''),
+            'data_id' => env('ALIYUN_ACM_DATA_ID', ''),
+            'group' => env('ALIYUN_ACM_GROUP', 'DEFAULT_GROUP'),
+            'access_key' => env('ALIYUN_ACM_AK', ''),
+            'secret_key' => env('ALIYUN_ACM_SK', ''),
+            'ecs_ram_role' => env('ALIYUN_ACM_RAM_ROLE', ''),
+        ],
+        'etcd' => [
+            'driver' => Hyperf\ConfigEtcd\EtcdDriver::class,
+            'packer' => Hyperf\Utils\Packer\JsonPacker::class,
+            'namespaces' => [
+                '/application',
+            ],
+            'mapping' => [
+                // etcd key => config key
+                '/application/test' => 'test',
+            ],
+            'interval' => 5,
+        ],
+        'zookeeper' => [
+            'driver' => Hyperf\ConfigZookeeper\ZookeeperDriver::class,
+            'server' => env('ZOOKEEPER_SERVER', '127.0.0.1:2181'),
+            'path' => env('ZOOKEEPER_CONFIG_PATH', '/conf'),
+            'interval' => 5,
+        ],
+    ],
+];
+
 ```
 
 ## 接入 Apollo 配置中心

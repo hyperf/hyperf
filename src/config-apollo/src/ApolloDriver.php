@@ -76,5 +76,4 @@ class ApolloDriver extends AbstractDriver
             $this->logger->debug(sprintf('Config [%s] is updated', $key));
         }
     }
-
 }
