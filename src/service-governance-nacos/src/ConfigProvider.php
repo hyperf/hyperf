@@ -11,6 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\ServiceGovernanceNacos;
 
+use Hyperf\ConfigNacos\Process\InstanceBeatProcess;
+use Hyperf\ServiceGovernanceNacos\Listener\MainWorkerStartListener;
+use Hyperf\ServiceGovernanceNacos\Listener\OnShutdownListener;
+
 class ConfigProvider
 {
     public function __invoke(): array
@@ -19,6 +23,11 @@ class ConfigProvider
             'dependencies' => [
             ],
             'listeners' => [
+                MainWorkerStartListener::class,
+                OnShutdownListener::class,
+            ],
+            'processes' => [
+                InstanceBeatProcess::class,
             ],
             'annotations' => [
                 'scan' => [
