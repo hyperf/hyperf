@@ -15,7 +15,7 @@ interface DriverInterface
 {
     public function fetchConfig();
 
-    public function createMessageFetcherLoop(string $mode): void;
+    public function createMessageFetcherLoop(): void;
 
     public function onPipeMessage(PipeMessageInterface $pipeMessage): void;
 }

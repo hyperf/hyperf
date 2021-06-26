@@ -73,7 +73,7 @@ class ConfigFetcherProcess extends AbstractProcess
         $instance = $this->driverFactory->create($driver, [
             'setServer' => $this->server,
         ]);
-        $instance->createMessageFetcherLoop(Mode::PROCESS);
+        $instance->createMessageFetcherLoop();
         while (true) {
             sleep(1);
         }

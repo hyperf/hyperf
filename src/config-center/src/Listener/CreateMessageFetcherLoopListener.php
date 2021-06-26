@@ -34,7 +34,7 @@ class CreateMessageFetcherLoopListener extends OnPipeMessageListener
         $mode = strtolower($this->config->get('config_center.mode', Mode::PROCESS));
         if ($mode === Mode::COROUTINE) {
             $instance = $this->createDriverInstance();
-            $instance && $instance->createMessageFetcherLoop(Mode::COROUTINE);
+            $instance && $instance->createMessageFetcherLoop();
         }
     }
 }

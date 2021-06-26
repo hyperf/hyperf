@@ -47,7 +47,7 @@ class AbstractDriverTest extends TestCase
         $factory = new DriverFactory($config);
         $driver = $factory->create($driver);
 
-        $driver->createMessageFetcherLoop(Mode::COROUTINE);
+        $driver->createMessageFetcherLoop();
         sleep(2);
         $this->assertSame(['message' => 'Hello Hyperf', 'id' => 1], $config->get('test'));
     }

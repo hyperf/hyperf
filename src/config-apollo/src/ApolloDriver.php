@@ -36,7 +36,7 @@ class ApolloDriver extends AbstractDriver
         $this->client = $container->get(ClientInterface::class);
     }
 
-    public function createMessageFetcherLoop(string $mode): void
+    public function createMessageFetcherLoop(): void
     {
         $pullMode = $this->config->get('config_center.drivers.apollo.pull_mode', PullMode::INTERVAL);
         if ($pullMode === PullMode::LONG_PULLING) {
