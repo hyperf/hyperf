@@ -21,22 +21,25 @@ class DriverFactory
      */
     protected $config;
 
+    /**
+     * @var DriverInterface[]
+     */
+    protected $drivers = [];
+
     public function __construct(ConfigInterface $config)
     {
         $this->config = $config;
     }
 
-    public function create(string $driver, array $properties = []): DriverInterface
+    public function get(string $driver): DriverInterface
     {
+        if ($instance = $this->drivers[$driver] ?? null) {
+            return $instance;
+        }
+
         $defaultDriver = $this->config->get('config_center.driver', '');
         $config = $this->config->get('config_center.drivers.' . $driver, []);
         $class = $config['driver'] ?? $defaultDriver;
-        $instance = make($class, $config);
-        foreach ($properties as $method => $value) {
-            if (method_exists($instance, $method)) {
-                $instance->{$method}($value);
-            }
-        }
-        return $instance;
+        return $this->drivers[$driver] = make($class, $config);
     }
 }

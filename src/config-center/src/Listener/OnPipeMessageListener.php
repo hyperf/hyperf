@@ -77,6 +77,6 @@ class OnPipeMessageListener implements ListenerInterface
         if (! $driver) {
             return null;
         }
-        return $this->driverFactory->create($driver);
+        return $this->driverFactory->get($driver);
     }
 }

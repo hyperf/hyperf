@@ -45,7 +45,7 @@ class AbstractDriverTest extends TestCase
         ContainerStub::mockContainer($config);
         $driver = $config->get('config_center.driver', '');
         $factory = new DriverFactory($config);
-        $driver = $factory->create($driver);
+        $driver = $factory->get($driver);
 
         $driver->createMessageFetcherLoop(Mode::COROUTINE);
         sleep(2);
@@ -60,7 +60,7 @@ class AbstractDriverTest extends TestCase
         ContainerStub::mockContainer($config);
         $driver = $config->get('config_center.driver', '');
         $factory = new DriverFactory($config);
-        $driver = $factory->create($driver);
+        $driver = $factory->get($driver);
 
         $driver->onPipeMessage($pipeMessage);
         $this->assertSame($assert, $config->get('test'));

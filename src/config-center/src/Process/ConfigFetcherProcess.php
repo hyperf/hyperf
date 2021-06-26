@@ -70,9 +70,11 @@ class ConfigFetcherProcess extends AbstractProcess
         if (! $driver) {
             return;
         }
-        $instance = $this->driverFactory->create($driver, [
-            'setServer' => $this->server,
-        ]);
+        $instance = $this->driverFactory->get($driver);
+        if (method_exists($instance, 'setServer')) {
+            $instance->setServer($this->server);
+        }
+
         $instance->createMessageFetcherLoop(Mode::PROCESS);
     }
 }

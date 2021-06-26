@@ -44,7 +44,7 @@ class CreateMessageFetcherLoopListenerTest extends TestCase
         $factory = Mockery::mock(DriverFactory::class);
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('createMessageFetcherLoop')->with(Mode::COROUTINE)->once()->andReturnNull();
-        $factory->shouldReceive('create')->with('test')->once()->andReturn($driver);
+        $factory->shouldReceive('get')->with('test')->once()->andReturn($driver);
 
         $listener = new CreateMessageFetcherLoopListener($factory, $config, Mockery::mock(StdoutLoggerInterface::class));
         $listener->process(new \stdClass());
