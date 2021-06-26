@@ -74,5 +74,8 @@ class ConfigFetcherProcess extends AbstractProcess
             'setServer' => $this->server,
         ]);
         $instance->createMessageFetcherLoop(Mode::PROCESS);
+        while (true) {
+            sleep(1);
+        }
     }
 }
