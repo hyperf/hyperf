@@ -65,6 +65,15 @@ class Option
         ]) . '/';
     }
 
+    public function buildLongPullingBaseUrl(): string
+    {
+        return implode('/', [
+            $this->getServer(),
+            'notifications',
+            'v2',
+        ]);
+    }
+
     public function buildCacheKey(string $namespace): string
     {
         return implode('+', [$this->getAppid() . $this->getCluster(), $namespace]);
