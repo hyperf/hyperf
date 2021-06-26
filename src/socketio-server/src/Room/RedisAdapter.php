@@ -18,6 +18,7 @@ use Hyperf\Server\Exception\RuntimeException;
 use Hyperf\SocketIOServer\Emitter\Flagger;
 use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
+use Hyperf\SocketIOServer\SocketIO;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
@@ -62,6 +63,13 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
      * @var int time to live
      */
     protected $ttl = 0;
+
+    private $timeout = 30;
+
+    /**
+     * @var false|int
+     */
+    private static $expiration = null;
 
     public function __construct(RedisFactory $redis, Sender $sender, NamespaceInterface $nsp, SidProviderInterface $sidProvider)
     {
@@ -223,6 +231,7 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
 
     public function renew(string $sid): void
     {
+        $this->clearDieServerRedisKey();
         if ($this->ttl > 0) {
             $this->redis->zAdd($this->getExpireKey(), microtime(true) * 1000 + $this->ttl, $sid);
         }
@@ -382,4 +391,44 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
     {
         $this->sender->disconnect($fd);
     }
+
+    private function clearDieServerRedisKey(): bool
+    {
+        if (! empty(static::$expiration) && static::$expiration > time()) {
+            return true;
+        }
+
+        static::$expiration = strtotime(sprintf('+%s second', $this->timeout / 2));
+
+        $this->redis->hMSet(
+            'socketIo:exp',
+            ['socket#' . SocketIO::$serverId => json_encode(['id' => SocketIO::$serverId, 'exp' => sprintf('+%s second', $this->timeout),]),]
+        );
+
+        $res = $this->redis->set('lock:socketIo', '1', ['nx', 'ex' => $this->timeout]);
+        if ($res) {
+            Coroutine::create(function () {
+                $result = $this->redis->hGetAll('socket:exp');
+                foreach ($result as $key => $value) {
+                    $currentServiceInfo = json_decode($value, true);
+                    // clear history server redis key
+                    if ($currentServiceInfo['exp'] < time()) {
+                        $iterator = null;
+                        while (true) {
+                            $keys = $this->redis->scan($iterator, "*{$currentServiceInfo['id']}*");
+                            if ($keys === false) {
+                                break;
+                            }
+                            if (! empty($keys)) {
+                                $this->redis->del(...$keys);
+                            }
+                        }
+                        $this->redis->hDel('socketIo:exp', $key);
+                    }
+                }
+            });
+        }
+    }
+
+
 }
