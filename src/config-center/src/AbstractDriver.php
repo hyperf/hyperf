@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigCenter;
 
+use Hyperf\ConfigApollo\PullMode;
 use Hyperf\ConfigCenter\Contract\ClientInterface;
 use Hyperf\ConfigCenter\Contract\DriverInterface;
 use Hyperf\ConfigCenter\Contract\PipeMessageInterface;
@@ -69,8 +70,8 @@ abstract class AbstractDriver implements DriverInterface
 
     public function createMessageFetcherLoop(string $mode): void
     {
-        $interval = $this->getInterval();
-        Coroutine::create(function () use ($mode, $interval) {
+        Coroutine::create(function () use ($mode) {
+            $interval = $this->getInterval();
             retry(INF, function () use ($mode, $interval) {
                 $prevConfig = [];
                 while (true) {
@@ -82,11 +83,7 @@ abstract class AbstractDriver implements DriverInterface
                         }
                         $config = $this->pull();
                         if ($config !== $prevConfig) {
-                            if ($mode === Mode::PROCESS) {
-                                $this->shareConfigToProcesses($config);
-                            } else {
-                                $this->updateConfig($config);
-                            }
+                            $this->syncConfig($config);
                         }
                         $prevConfig = $config;
                     } catch (\Throwable $exception) {
@@ -122,34 +119,13 @@ abstract class AbstractDriver implements DriverInterface
         return $this;
     }
 
-    protected function createCoroutineMessageHandlerLoop(int $interval): int
+    protected function syncConfig(array $config)
     {
-        return Coroutine::create(function () use ($interval) {
-            retry(INF, function () use ($interval) {
-                $prevConfig = [];
-                while (true) {
-                    try {
-                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
-                        $workerExited = $coordinator->yield($interval);
-                        if ($workerExited) {
-                            break;
-                        }
-                        $config = $this->pull();
-                        if ($config !== $prevConfig) {
-                            if (class_exists(ProcessCollector::class) && ! ProcessCollector::isEmpty()) {
-                                $this->shareConfigToProcesses($config);
-                            } else {
-                                $this->updateConfig($config);
-                            }
-                        }
-                        $prevConfig = $config;
-                    } catch (\Throwable $exception) {
-                        $this->logger->error((string) $exception);
-                        throw $exception;
-                    }
-                }
-            }, $interval * 1000);
-        });
+        if (class_exists(ProcessCollector::class) && ! ProcessCollector::isEmpty()) {
+            $this->shareConfigToProcesses($config);
+        } else {
+            $this->updateConfig($config);
+        }
     }
 
     protected function pull(): array
