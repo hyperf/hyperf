@@ -40,3 +40,87 @@ class CalculatorService implements CalculatorServiceInterface
 `publishTo` 属性为定义该服务所要发布的服务中心，目前仅支持 `consul` 或为空，为空时代表不发布该服务到服务中心去，但也就意味着您需要手动处理服务发现的问题，当值为 `consul` 时需要对应配置好 [hyperf/consul](zh-cn/consul.md) 组件的相关配置，要使用此功能需安装 [hyperf/service-governance](https://github.com/hyperf/service-governance) 组件；
 
 > 使用 `@RpcService` 注解需 `use Hyperf\RpcServer\Annotation\RpcService;` 命名空间。
+
+## 自定义服务治理适配器
+
+除了默认支持 `Consul` 外，用户还可以根据自己的需要，注册自定义的适配器。
+
+我们可以创建一个 FooService 实现 `Hyperf\ServiceGovernance\DriverInterface`
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\ServiceGovernance;
+
+use Hyperf\ServiceGovernance\DriverInterface;
+
+class FooDriver implements DriverInterface
+{
+    public function getNodes(string $uri, string $name, array $metadata): array
+    {
+        return [];
+    }
+
+    public function register(string $name, string $host, int $port, array $metadata): void
+    {
+    }
+
+    public function isRegistered(string $name, string $address, int $port, array $metadata): bool
+    {
+        return true;
+    }
+}
+```
+
+然后创建一个监听器，将其注册到 `DriverManager` 中即可。
+
+```php
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+namespace App\ServiceGovernance\Listener;
+
+use App\ServiceGovernance\FooDriver;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Framework\Event\BootApplication;
+use Hyperf\ServiceGovernance\DriverManager;
+
+class RegisterDriverListener implements ListenerInterface
+{
+    /**
+     * @var DriverManager
+     */
+    protected $driverManager;
+
+    public function __construct(DriverManager $manager)
+    {
+        $this->driverManager = $manager;
+    }
+
+    public function listen(): array
+    {
+        return [
+            BootApplication::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        $this->driverManager->register('foo', make(FooDriver::class));
+    }
+}
+
+```
+
+> 不要忘了把监听器配置到 `listeners.php` 中
