@@ -15,6 +15,7 @@ use Closure;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\Parallel;
+use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 
 class Client implements ClientInterface
@@ -67,33 +68,7 @@ class Client implements ClientInterface
         return $this->option;
     }
 
-    protected function getReleaseKey(string $cacheKey): ?string
-    {
-        return $this->cache[$cacheKey]['releaseKey'] ?? null;
-    }
-
-    private function hasSecret(): bool
-    {
-        return ! empty($this->option->getSecret());
-    }
-
-    private function getTimestamp(): string
-    {
-        [$usec, $sec] = explode(' ', microtime());
-        return sprintf('%.0f', (floatval($usec) + floatval($sec)) * 1000);
-    }
-
-    private function getAuthorization(string $timestamp, string $pathWithQuery): string
-    {
-        if (! $this->hasSecret()) {
-            return '';
-        }
-        $toSignature = $timestamp . "\n" . $pathWithQuery;
-        $signature = base64_encode(hash_hmac('sha1', $toSignature, $this->option->getSecret(), true));
-        return sprintf('Apollo %s:%s', $this->option->getAppid(), $signature);
-    }
-
-    private function parallelPull(array $namespaces): array
+    public function parallelPull(array $namespaces): array
     {
         $option = $this->option;
         $parallel = new Parallel();
@@ -138,5 +113,55 @@ class Client implements ClientInterface
             }, $namespace);
         }
         return $parallel->wait();
+    }
+
+    public function longPulling(array $notifications): ?ResponseInterface
+    {
+        $httpClientFactory = $this->httpClientFactory;
+        $client = $httpClientFactory([
+            'timeout' => 60,
+        ]);
+        if (! $client instanceof \GuzzleHttp\Client) {
+            throw new RuntimeException('Invalid http client.');
+        }
+        try {
+            $uri = $this->option->buildLongPullingBaseUrl();
+            return $client->get($uri, [
+                'query' => [
+                    'appId' => $this->option->getAppid(),
+                    'cluster' => $this->option->getCluster(),
+                    'notifications' => json_encode(array_values($notifications)),
+                ],
+            ]);
+        } catch (\Exception $exceptiosn) {
+            // Do nothing
+            return null;
+        }
+    }
+
+    protected function getReleaseKey(string $cacheKey): ?string
+    {
+        return $this->cache[$cacheKey]['releaseKey'] ?? null;
+    }
+
+    private function hasSecret(): bool
+    {
+        return ! empty($this->option->getSecret());
+    }
+
+    private function getTimestamp(): string
+    {
+        [$usec, $sec] = explode(' ', microtime());
+        return sprintf('%.0f', (floatval($usec) + floatval($sec)) * 1000);
+    }
+
+    private function getAuthorization(string $timestamp, string $pathWithQuery): string
+    {
+        if (! $this->hasSecret()) {
+            return '';
+        }
+        $toSignature = $timestamp . "\n" . $pathWithQuery;
+        $signature = base64_encode(hash_hmac('sha1', $toSignature, $this->option->getSecret(), true));
+        return sprintf('Apollo %s:%s', $this->option->getAppid(), $signature);
     }
 }

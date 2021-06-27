@@ -67,11 +67,11 @@ abstract class AbstractDriver implements DriverInterface
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
-    public function createMessageFetcherLoop(string $mode): void
+    public function createMessageFetcherLoop(): void
     {
-        $interval = $this->getInterval();
-        Coroutine::create(function () use ($mode, $interval) {
-            retry(INF, function () use ($mode, $interval) {
+        Coroutine::create(function () {
+            $interval = $this->getInterval();
+            retry(INF, function () use ($interval) {
                 $prevConfig = [];
                 while (true) {
                     try {
@@ -82,11 +82,7 @@ abstract class AbstractDriver implements DriverInterface
                         }
                         $config = $this->pull();
                         if ($config !== $prevConfig) {
-                            if ($mode === Mode::PROCESS) {
-                                $this->shareConfigToProcesses($config);
-                            } else {
-                                $this->updateConfig($config);
-                            }
+                            $this->syncConfig($config);
                         }
                         $prevConfig = $config;
                     } catch (\Throwable $exception) {
@@ -122,34 +118,13 @@ abstract class AbstractDriver implements DriverInterface
         return $this;
     }
 
-    protected function createCoroutineMessageHandlerLoop(int $interval): int
+    protected function syncConfig(array $config)
     {
-        return Coroutine::create(function () use ($interval) {
-            retry(INF, function () use ($interval) {
-                $prevConfig = [];
-                while (true) {
-                    try {
-                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
-                        $workerExited = $coordinator->yield($interval);
-                        if ($workerExited) {
-                            break;
-                        }
-                        $config = $this->pull();
-                        if ($config !== $prevConfig) {
-                            if (class_exists(ProcessCollector::class) && ! ProcessCollector::isEmpty()) {
-                                $this->shareConfigToProcesses($config);
-                            } else {
-                                $this->updateConfig($config);
-                            }
-                        }
-                        $prevConfig = $config;
-                    } catch (\Throwable $exception) {
-                        $this->logger->error((string) $exception);
-                        throw $exception;
-                    }
-                }
-            }, $interval * 1000);
-        });
+        if (class_exists(ProcessCollector::class) && ! ProcessCollector::isEmpty()) {
+            $this->shareConfigToProcesses($config);
+        } else {
+            $this->updateConfig($config);
+        }
     }
 
     protected function pull(): array

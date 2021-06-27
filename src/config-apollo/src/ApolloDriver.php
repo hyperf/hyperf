@@ -12,7 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\ConfigApollo;
 
 use Hyperf\ConfigCenter\AbstractDriver;
+use Hyperf\Engine\Channel;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class ApolloDriver extends AbstractDriver
 {
@@ -23,10 +28,108 @@ class ApolloDriver extends AbstractDriver
 
     protected $driverName = 'apollo';
 
+    protected $notifications = [];
+
     public function __construct(ContainerInterface $container)
     {
         parent::__construct($container);
         $this->client = $container->get(ClientInterface::class);
+    }
+
+    public function createMessageFetcherLoop(): void
+    {
+        $pullMode = $this->config->get('config_center.drivers.apollo.pull_mode', PullMode::INTERVAL);
+        if ($pullMode === PullMode::LONG_PULLING) {
+            $this->handleLongPullingLoop();
+        } elseif ($pullMode === PullMode::INTERVAL) {
+            $this->handleIntervalLoop();
+        }
+    }
+
+    protected function handleIntervalLoop(): void
+    {
+        $prevConfig = [];
+        $this->loop(function () use (&$prevConfig) {
+            $config = $this->pull();
+            if ($config !== $prevConfig) {
+                $this->syncConfig($config);
+                $prevConfig = $config;
+            }
+        });
+    }
+
+    protected function handleLongPullingLoop(): void
+    {
+        $prevConfig = [];
+        $channel = new Channel(1);
+        $this->longPulling($channel);
+        Coroutine::create(function () use (&$prevConfig, $channel) {
+            while (true) {
+                try {
+                    $namespaces = $channel->pop();
+                    if (! $namespaces && $channel->isClosing()) {
+                        break;
+                    }
+                    $config = $this->client->parallelPull($namespaces);
+                    if ($config !== $prevConfig) {
+                        $this->syncConfig($config);
+                        $prevConfig = $config;
+                    }
+                } catch (\Throwable $exception) {
+                    $this->logger->error((string) $exception);
+                }
+            }
+        });
+    }
+
+    protected function loop(callable $callable, ?Channel $channel = null): int
+    {
+        return Coroutine::create(function () use ($callable, $channel) {
+            $interval = $this->getInterval();
+            retry(INF, function () use ($callable, $channel, $interval) {
+                while (true) {
+                    try {
+                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
+                        $untilEvent = $coordinator->yield($interval);
+                        if ($untilEvent) {
+                            $channel && $channel->close();
+                            break;
+                        }
+                        $callable();
+                    } catch (\Throwable $exception) {
+                        $this->logger->error((string) $exception);
+                        throw $exception;
+                    }
+                }
+            }, $interval * 1000);
+        });
+    }
+
+    protected function longPulling(Channel $channel): void
+    {
+        $namespaces = $this->config->get('config_center.drivers.apollo.namespaces', []);
+        foreach ($namespaces as $namespace) {
+            $this->notifications[$namespace] = [
+                'namespaceName' => $namespace,
+                'notificationId' => -1,
+            ];
+        }
+        $this->loop(function () use ($channel) {
+            $response = $this->client->longPulling($this->notifications);
+            if ($response instanceof ResponseInterface && $response->getStatusCode() === 200) {
+                $body = json_decode((string) $response->getBody(), true);
+                foreach ($body as $item) {
+                    if (isset($item['namespaceName'], $item['notificationId']) && $item['notificationId'] > $this->notifications[$item['namespaceName']]['notificationId']) {
+                        $prevId = $this->notifications[$item['namespaceName']]['notificationId'];
+                        $this->notifications[$item['namespaceName']]['notificationId'] = $afterId = $item['notificationId'];
+                        $this->logger->debug(sprintf('Updated apollo namespace [%s] notification id from %s to %s', $item['namespaceName'], $prevId, $afterId));
+                        if ($prevId > -1) {
+                            $channel->push([$item['namespaceName']]);
+                        }
+                    }
+                }
+            }
+        }, $channel);
     }
 
     protected function pull(): array

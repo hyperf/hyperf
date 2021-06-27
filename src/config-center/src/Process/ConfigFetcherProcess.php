@@ -16,6 +16,7 @@ use Hyperf\ConfigCenter\Mode;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\AbstractProcess;
+use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
@@ -73,6 +74,9 @@ class ConfigFetcherProcess extends AbstractProcess
         $instance = $this->driverFactory->create($driver, [
             'setServer' => $this->server,
         ]);
-        $instance->createMessageFetcherLoop(Mode::PROCESS);
+        $instance->createMessageFetcherLoop();
+        while (ProcessManager::isRunning()) {
+            sleep(1);
+        }
     }
 }

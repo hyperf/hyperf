@@ -20,6 +20,7 @@ use Hyperf\ConfigEtcd\EtcdDriver;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
+use Hyperf\Process\ProcessManager;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
@@ -101,11 +102,12 @@ class ConfigFetcherProcessTest extends TestCase
         $container->shouldReceive('make')->with(ConfigEtcd\EtcdDriver::class, Mockery::any())->andReturnUsing(function () {
             $driver = Mockery::mock(ConfigEtcd\EtcdDriver::class);
             $driver->shouldReceive('setServer')->once()->andReturnSelf();
-            $driver->shouldReceive('createMessageFetcherLoop')->with(Mode::PROCESS)->once()->andReturnNull();
+            $driver->shouldReceive('createMessageFetcherLoop')->once()->andReturnNull();
             return $driver;
         });
 
         $process = new ConfigFetcherProcess($container);
+        ProcessManager::setRunning(false);
         $process->handle();
         $this->assertTrue(true);
     }

@@ -9,13 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\ConfigCenter\Contract;
+namespace Hyperf\ConfigApollo;
 
-interface DriverInterface
+class PullMode
 {
-    public function fetchConfig();
+    public const INTERVAL = 'interval';
 
-    public function createMessageFetcherLoop(): void;
-
-    public function onPipeMessage(PipeMessageInterface $pipeMessage): void;
+    public const LONG_PULLING = 'long_pulling';
 }
