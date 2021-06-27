@@ -12,12 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\ConfigApollo;
 
 use Hyperf\ConfigCenter\AbstractDriver;
+use Hyperf\Engine\Channel;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Swoole\Coroutine\Channel;
 
 class ApolloDriver extends AbstractDriver
 {
@@ -61,30 +61,38 @@ class ApolloDriver extends AbstractDriver
     protected function handleLongPullingLoop(): void
     {
         $prevConfig = [];
-        $channel = new Channel();
+        $channel = new Channel(1);
         $this->longPulling($channel);
-        $this->loop(function () use (&$prevConfig, $channel) {
-            $namespaces = $channel->pop();
-            $config = $this->client->parallelPull($namespaces);
-            if ($config !== $prevConfig) {
-                $this->syncConfig($config);
-                $prevConfig = $config;
+        Coroutine::create(function () use (&$prevConfig, $channel) {
+            while (true) {
+                try {
+                    $namespaces = $channel->pop();
+                    if (! $namespaces && $channel->isClosing()) {
+                        break;
+                    }
+                    $config = $this->client->parallelPull($namespaces);
+                    if ($config !== $prevConfig) {
+                        $this->syncConfig($config);
+                        $prevConfig = $config;
+                    }
+                } catch (\Throwable $exception) {
+                    $this->logger->error((string) $exception);
+                }
             }
         });
     }
 
-    protected function loop(callable $callable, string $until = Constants::WORKER_EXIT, ?int $interval = null): int
+    protected function loop(callable $callable, ?Channel $channel = null): int
     {
-        if (is_null($interval)) {
+        return Coroutine::create(function () use ($callable, $channel) {
             $interval = $this->getInterval();
-        }
-        return Coroutine::create(function () use ($callable, $until, $interval) {
-            retry(INF, function () use ($callable, $until, $interval) {
+            retry(INF, function () use ($callable, $channel, $interval) {
                 while (true) {
                     try {
-                        $coordinator = CoordinatorManager::until($until);
+                        $coordinator = CoordinatorManager::until(Constants::WORKER_EXIT);
                         $untilEvent = $coordinator->yield($interval);
                         if ($untilEvent) {
+                            $channel && $channel->close();
                             break;
                         }
                         $callable();
@@ -121,7 +129,7 @@ class ApolloDriver extends AbstractDriver
                     }
                 }
             }
-        });
+        }, $channel);
     }
 
     protected function pull(): array

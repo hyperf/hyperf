@@ -61,6 +61,7 @@
 - [#3722](https://github.com/hyperf/hyperf/pull/3722) Added config-center component.
 - [#3728](https://github.com/hyperf/hyperf/pull/3728) Added support for `secret` of Apollo.
 - [#3743](https://github.com/hyperf/hyperf/pull/3743) Support custom register for service governance.
+- [#3753](https://github.com/hyperf/hyperf/pull/3753) Support long pulling mode for Apollo Client.
 
 ## Optimized
 
