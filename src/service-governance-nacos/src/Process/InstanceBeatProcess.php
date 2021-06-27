@@ -16,7 +16,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Nacos\Application;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
-use Hyperf\ServiceGovernanceNacos\IPReaderInterface;
+use Hyperf\ServiceGovernance\IPReaderInterface;
 
 class InstanceBeatProcess extends AbstractProcess
 {
@@ -38,8 +38,7 @@ class InstanceBeatProcess extends AbstractProcess
         $ephemeral = $instanceConfig['ephemeral'] ?? null;
         $cluster = $instanceConfig['cluster'] ?? null;
         $weight = $instanceConfig['weight'] ?? null;
-        /** @var IPReaderInterface $ipReader */
-        $ipReader = $this->container->get($instanceConfig['ip']);
+        $ipReader = $this->container->get(IPReaderInterface::class);
         $ip = $ipReader->read();
 
         while (ProcessManager::isRunning()) {
