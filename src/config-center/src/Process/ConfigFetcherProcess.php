@@ -16,6 +16,7 @@ use Hyperf\ConfigCenter\Mode;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\AbstractProcess;
+use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
@@ -74,7 +75,7 @@ class ConfigFetcherProcess extends AbstractProcess
             'setServer' => $this->server,
         ]);
         $instance->createMessageFetcherLoop();
-        while (true) {
+        while (ProcessManager::isRunning()) {
             sleep(1);
         }
     }

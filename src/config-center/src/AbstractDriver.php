@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigCenter;
 
-use Hyperf\ConfigApollo\PullMode;
 use Hyperf\ConfigCenter\Contract\ClientInterface;
 use Hyperf\ConfigCenter\Contract\DriverInterface;
 use Hyperf\ConfigCenter\Contract\PipeMessageInterface;

@@ -17,9 +17,9 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Server\Event\MainCoroutineServerStart;
+use Hyperf\ServiceGovernance\DriverManager;
 use Hyperf\ServiceGovernance\IPReaderInterface;
 use Hyperf\ServiceGovernance\Register\ConsulAgent;
-use Hyperf\ServiceGovernance\DriverManager;
 use Hyperf\ServiceGovernance\ServiceManager;
 use Psr\Container\ContainerInterface;
 
