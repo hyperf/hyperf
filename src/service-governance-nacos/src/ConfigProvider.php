@@ -20,7 +20,7 @@ class ConfigProvider
         return [
             'listeners' => [
                 RegisterDriverListener::class,
-            ]
+            ],
         ];
     }
 }
