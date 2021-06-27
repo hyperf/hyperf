@@ -18,7 +18,7 @@ use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Server\Event\MainCoroutineServerStart;
-use Hyperf\ServiceGovernanceNacos\IPReaderInterface;
+use Hyperf\ServiceGovernance\IPReaderInterface;
 use Psr\Container\ContainerInterface;
 
 class MainWorkerStartListener implements ListenerInterface
@@ -33,10 +33,16 @@ class MainWorkerStartListener implements ListenerInterface
      */
     protected $logger;
 
+    /**
+     * @var IPReaderInterface
+     */
+    protected $ipReader;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->ipReader = $container->get(IPReaderInterface::class);
     }
 
     public function listen(): array
@@ -108,9 +114,7 @@ class MainWorkerStartListener implements ListenerInterface
             $weight = $instanceConfig['weight'] ?? null;
             $metadata = $instanceConfig['metadata'] ?? null;
 
-            /** @var IPReaderInterface $ipReader */
-            $ipReader = $this->container->get($instanceConfig['ip']);
-            $ip = $ipReader->read();
+            $ip = $this->ipReader->read();
             $optional = [
                 'groupName' => $groupName,
                 'namespaceId' => $namespaceId,

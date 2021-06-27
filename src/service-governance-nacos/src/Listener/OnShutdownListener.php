@@ -17,7 +17,7 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnShutdown;
 use Hyperf\Nacos\Application;
 use Hyperf\Server\Event\CoroutineServerStop;
-use Hyperf\ServiceGovernanceNacos\IPReaderInterface;
+use Hyperf\ServiceGovernance\IPReaderInterface;
 use Psr\Container\ContainerInterface;
 
 class OnShutdownListener implements ListenerInterface
@@ -33,6 +33,11 @@ class OnShutdownListener implements ListenerInterface
     protected $logger;
 
     /**
+     * @var IPReaderInterface
+     */
+    protected $ipReader;
+
+    /**
      * @var bool
      */
     private $processed = false;
@@ -41,6 +46,7 @@ class OnShutdownListener implements ListenerInterface
     {
         $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->ipReader = $container->get(IPReaderInterface::class);
     }
 
     public function listen(): array
@@ -73,9 +79,7 @@ class OnShutdownListener implements ListenerInterface
         $instanceConfig = $serviceConfig['instance'] ?? [];
         $ephemeral = $instanceConfig['ephemeral'] ?? null;
         $cluster = $instanceConfig['cluster'] ?? null;
-        /** @var IPReaderInterface $ipReader */
-        $ipReader = $this->container->get($instanceConfig['ip']);
-        $ip = $ipReader->read();
+        $ip = $this->ipReader->read();
 
         $client = $this->container->get(Application::class);
         $ports = $config->get('server.servers', []);

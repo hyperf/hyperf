@@ -31,7 +31,6 @@ return [
         'metadata' => null,
         'selector' => null,
         'instance' => [
-            'ip' => Hyperf\Nacos\Service\IPReaderInterface::class,
             'cluster' => null,
             'weight' => null,
             'metadata' => null,

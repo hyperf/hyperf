@@ -20,6 +20,7 @@
         "php": ">=7.2",
         "hyperf/contract": "~2.2.0",
         "hyperf/nacos": "~2.2.0",
+        "hyperf/service-governance": "~2.2.0",
         "hyperf/utils": "~2.2.0"
     },
     "autoload": {
