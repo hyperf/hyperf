@@ -9,7 +9,7 @@ then
 fi
 
 NOW=$(date +%s)
-CURRENT_BRANCH="2.2"
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 VERSION=$1
 BASEPATH=$(cd `dirname $0`; cd ../src/; pwd)
 

@@ -4,7 +4,7 @@
 
 Hyperf 对系统环境有一些要求，仅可运行于 Linux 和 Mac 环境下，但由于 Docker 虚拟化技术的发展，在 Windows 下也可以通过 Docker for Windows 来作为运行环境，通常来说 Mac 环境下，我们更推荐本地环境部署，以避免 Docker 共享磁盘缓慢导致 Hyperf 启动速度慢的问题。   
 
-[hyperf\hyperf-docker](https://github.com/hyperf/hyperf-docker) 项目内已经为您准备好了各种版本的 Dockerfile ，或直接基于已经构建好的 [hyperf\hyperf](https://hub.docker.com/r/hyperf/hyperf) 镜像来运行。   
+[hyperf/hyperf-docker](https://github.com/hyperf/hyperf-docker) 项目内已经为您准备好了各种版本的 Dockerfile ，或直接基于已经构建好的 [hyperf/hyperf](https://hub.docker.com/r/hyperf/hyperf) 镜像来运行。   
 
 当您不想采用 Docker 来作为运行的环境基础时，您需要确保您的运行环境达到了以下的要求：   
 

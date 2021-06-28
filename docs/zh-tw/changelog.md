@@ -1,5 +1,22 @@
 # 版本更新記錄
 
+# v2.1.22 - 2021-06-28
+
+## 安全性更新
+
+- [#3723](https://github.com/hyperf/hyperf/pull/3723) 修復驗證器規則 `active_url` 無法正確檢查 `dns` 記錄，從而導致繞過驗證的問題。
+- [#3724](https://github.com/hyperf/hyperf/pull/3724) 修復可以利用 `RequiredIf` 規則生成用於反序列化漏洞的小工具鏈的問題。
+
+## 修復
+
+- [#3721](https://github.com/hyperf/hyperf/pull/3721) 修復了驗證器規則 `in` 和 `not in` 判斷有誤的問題，例如規則為 `in:00` 時，`0`不應該被允許通過。
+
+# v2.1.21 - 2021-06-21
+
+## 修復
+
+- [#3684](https://github.com/hyperf/hyperf/pull/3684) 修復使用熔斷器時，成功次數和失敗次數的界限判斷有誤的問題。
+
 # v2.1.20 - 2021-06-07
 
 ## 修復

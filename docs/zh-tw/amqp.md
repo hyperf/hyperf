@@ -142,13 +142,14 @@ namespace App\Amqp\Consumers;
 use Hyperf\Amqp\Annotation\Consumer;
 use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
 
 /**
  * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1)
  */
 class DemoConsumer extends ConsumerMessage
 {
-    public function consume($data): string
+    public function consumeMessage($data, AMQPMessage $message): string
     {
         print_r($data);
         return Result::ACK;
@@ -173,13 +174,14 @@ namespace App\Amqp\Consumers;
 use Hyperf\Amqp\Annotation\Consumer;
 use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
 
 /**
  * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1, enable=false)
  */
 class DemoConsumer extends ConsumerMessage
 {
-    public function consume($data): string
+    public function consumeMessage($data, AMQPMessage $message): string
     {
         print_r($data);
         return Result::ACK;

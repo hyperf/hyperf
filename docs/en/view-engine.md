@@ -82,7 +82,7 @@ When defining a subview, use the `@extends` directive of `Blade` to specify the 
 As shown in the previous example, the content of these fragments will be controlled and displayed by the `@yield` directive in the layout:
 
 ```blade
-<!-- Stored in resources/views/child.blade.php -->
+<!-- Stored in storage/view/child.blade.php -->
 
 @extends('layouts.app')
 

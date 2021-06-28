@@ -1823,6 +1823,10 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator($trans, ['name' => 0], ['name' => 'In:bar,baz']);
         $this->assertFalse($v->passes());
 
+        $trans = $this->getIlluminateArrayTranslator();
+        $v = new Validator($trans, ['name' => 0], ['name' => 'In:00,000']);
+        $this->assertFalse($v->passes());
+
         $v = new Validator($trans, ['name' => 'foo'], ['name' => 'In:foo,baz']);
         $this->assertTrue($v->passes());
 
