@@ -82,7 +82,7 @@ return [
 就如前面的示例中所示，這些片段的內容將由佈局中的 `@yield` 指令控制顯示：
 
 ```blade
-<!-- Stored in resources/views/child.blade.php -->
+<!-- Stored in storage/view/child.blade.php -->
 
 @extends('layouts.app')
 
