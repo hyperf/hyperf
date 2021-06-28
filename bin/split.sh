@@ -3,7 +3,7 @@
 set -e
 set -x
 
-CURRENT_BRANCH="master"
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 BASEPATH=$(cd `dirname $0`; cd ../src/; pwd)
 REPOS=$@
 
