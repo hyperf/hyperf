@@ -20,9 +20,13 @@ $autoload = [];
 $autoloadFiles = [];
 $autoloadDev = [];
 $configProviders = [];
+$replaces = [];
 foreach ($files as $file) {
     $component = basename(dirname($file));
     $composerJson = json_decode(file_get_contents($file), true);
+    if(isset($composerJson['name']) && str_starts_with($composerJson['name'], 'hyperf')){
+        $replaces[$composerJson['name']] = '*';
+    }
 
     foreach ($composerJson['autoload']['files'] ?? [] as $file) {
         $autoloadFiles[] = "src/{$component}/" . preg_replace('#^./#', '', $file);
@@ -42,12 +46,14 @@ ksort($autoload);
 sort($autoloadFiles);
 ksort($autoloadDev);
 sort($configProviders);
+ksort($replaces);
 
 $json = json_decode(file_get_contents(__DIR__ . '/../composer.json'));
 $json->autoload->files = $autoloadFiles;
 $json->autoload->{'psr-4'} = $autoload;
 $json->{'autoload-dev'}->{'psr-4'} = $autoloadDev;
 $json->extra->hyperf->config = $configProviders;
+$json->replace = $replaces;
 
 file_put_contents(
     __DIR__ . '/../composer.json',

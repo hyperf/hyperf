@@ -1,5 +1,5 @@
 {
-    "name": "hyperf/rpc-multiplex-incubator",
+    "name": "hyperf/rpc-multiplex",
     "type": "library",
     "license": "MIT",
     "keywords": [
@@ -7,6 +7,18 @@
         "hyperf"
     ],
     "description": "Rpc for multiplexing connection",
+    "require": {
+        "php": ">=7.3",
+        "hyperf/framework": "~2.2.0",
+        "hyperf/http-message": "~2.2.0",
+        "hyperf/load-balancer": "~2.2.0",
+        "hyperf/rpc": "~2.2.0",
+        "hyperf/rpc-client": "~2.2.0",
+        "hyperf/rpc-server": "~2.2.0",
+        "hyperf/server": "~2.2.0",
+        "hyperf/utils": "~2.2.0",
+        "multiplex/socket": "^0.4"
+    },
     "autoload": {
         "psr-4": {
             "Hyperf\\RpcMultiplex\\": "src/"
@@ -17,46 +29,15 @@
             "HyperfTest\\RpcMultiplex\\": "tests/"
         }
     },
-    "require": {
-        "php": ">=7.3",
-        "hyperf/framework": "^2.1",
-        "hyperf/http-message": "^2.1",
-        "hyperf/load-balancer": "^2.1",
-        "hyperf/rpc": "^2.1",
-        "hyperf/rpc-client": "^2.1",
-        "hyperf/rpc-server": "^2.1",
-        "hyperf/server": "^2.1",
-        "hyperf/utils": "^2.1",
-        "multiplex/socket": "^0.4"
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.0",
-        "hyperf/config": "^2.1",
-        "hyperf/di": "^2.1",
-        "mockery/mockery": "^1.0",
-        "phpstan/phpstan": "^0.12",
-        "phpunit/phpunit": ">=7.0",
-        "swoole/ide-helper": "dev-master",
-        "swow/swow": "dev-develop",
-        "symfony/var-dumper": "^5.1"
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "config": {
-        "optimize-autoloader": true,
         "sort-packages": true
-    },
-    "scripts": {
-        "test": "phpunit -c phpunit.xml --colors=always",
-        "analyse": "phpstan analyse --memory-limit 1024M -l 5 -c phpstan.neon ./src",
-        "cs-fix": "php-cs-fixer fix $1"
     },
     "extra": {
         "hyperf": {
             "config": "Hyperf\\RpcMultiplex\\ConfigProvider"
         },
         "branch-alias": {
-            "dev-main": "0.4-dev"
+            "dev-master": "2.1-dev"
         }
     }
 }
