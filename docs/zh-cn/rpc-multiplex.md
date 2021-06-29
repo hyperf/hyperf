@@ -1,6 +1,8 @@
-# Rpc for multiplexing connection
+# 基于多路复用的 RPC 组件
 
-[![PHPUnit](https://github.com/hyperf/rpc-multiplex-incubator/actions/workflows/test.yml/badge.svg)](https://github.com/hyperf/rpc-multiplex-incubator/actions/workflows/test.yml)
+本组件基于 `TCP` 协议，多路复用的设计借鉴于 `AMQP` 组件。
+
+> 暂不支持注册中心
 
 ## 安装
 
@@ -10,9 +12,9 @@ composer require hyperf/rpc-multiplex
 
 ## Server 配置
 
-修改 `config/autoload/server.php` 配置文件
+修改 `config/autoload/server.php` 配置文件，以下配置删除了不相干的配置。
 
-> 删除不相干配置
+`settings` 设置中，分包规则不允许修改，只可以修改 `package_max_length`，此配置需要 `Server` 和 `Client` 保持一致。
 
 ```php
 <?php
@@ -107,5 +109,6 @@ return [
 ];
 
 ```
+
 
 
