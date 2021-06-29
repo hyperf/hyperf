@@ -71,6 +71,7 @@
   - Support `timeout` for `Producer` to avoid requests not responding.
   - Removed useless code with pool.
   - Throw exceptions when connect kafka failed.
+- [#3758](https://github.com/hyperf/hyperf/pull/3758) Optimized code for pool which get connection again when first failed.
 
 ## Fixed
 
