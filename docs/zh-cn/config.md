@@ -208,7 +208,7 @@ $config->has($key);
 | null    | (null) null  |
 | (null)  | (null) null  |
 
-如果你需要使用包含空格的环境变量，可以通过将值括在双引号中来实现，比如：
+如果你需要使用包含空格或包含其他特殊字符的环境变量，可以通过将值括在双引号中来实现，比如：
 
 ```dotenv
 APP_NAME="Hyperf Skeleton"
