@@ -29,9 +29,13 @@ class StrTest extends TestCase
         $arr = [
             '0' => 0,
             '1' => 1,
-            'a' => 'a'
+            'a' => 'a',
         ];
 
         $this->assertSame([0, 1, 'a' => 'a'], $arr);
+        foreach ($arr as $i => $v) {
+            $this->assertIsInt($i);
+            break;
+        }
     }
 }
