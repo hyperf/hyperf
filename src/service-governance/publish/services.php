@@ -27,7 +27,7 @@ return [
             'username' => null,
             'password' => null,
             'guzzle' => [
-                'config' => [],
+                'config' => null,
             ],
             'service_name' => 'hyperf',
             'group_name' => 'api',
