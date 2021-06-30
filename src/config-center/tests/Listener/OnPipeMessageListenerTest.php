@@ -81,4 +81,8 @@ class OnPipeMessageListenerTest extends TestCase
         $listener->process(new UserProcessPipeMessage($pipeMessage));
         $this->assertTrue(true);
     }
+
+    public function testOnPipeMessageWithoutPipeMessageInterface()
+    {
+    }
 }

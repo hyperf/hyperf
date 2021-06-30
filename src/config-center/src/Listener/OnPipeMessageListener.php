@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\ConfigCenter\Listener;
 
 use Hyperf\ConfigCenter\Contract\DriverInterface;
+use Hyperf\ConfigCenter\Contract\PipeMessageInterface;
 use Hyperf\ConfigCenter\DriverFactory;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -62,7 +63,7 @@ class OnPipeMessageListener implements ListenerInterface
     {
         if ($instance = $this->createDriverInstance()) {
             if ($event instanceof OnPipeMessage || $event instanceof UserProcessPipeMessage) {
-                $instance->onPipeMessage($event->data);
+                $event->data instanceof PipeMessageInterface && $instance->onPipeMessage($event->data);
             }
         }
     }
