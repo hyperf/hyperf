@@ -19,6 +19,6 @@ return [
     'username' => null,
     'password' => null,
     'guzzle' => [
-        'config' => [],
+        'config' => null,
     ],
 ];

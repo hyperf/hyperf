@@ -35,6 +35,7 @@ class Config
         'headers' => [
             'charset' => 'UTF-8',
         ],
+        'http_errors' => false,
     ];
 
     /**
