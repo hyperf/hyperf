@@ -84,5 +84,22 @@ class OnPipeMessageListenerTest extends TestCase
 
     public function testOnPipeMessageWithoutPipeMessageInterface()
     {
+        $config = new Config([
+            'config_center' => [
+                'enable' => true,
+                'driver' => 'etcd',
+                'drivers' => [
+                    'etcd' => [
+                        'driver' => EtcdDriver::class,
+                    ],
+                ],
+            ],
+        ]);
+        ContainerStub::mockContainer($config);
+        $factory = new DriverFactory($config);
+        $logger = Mockery::mock(StdoutLoggerInterface::class);
+        $listener = new OnPipeMessageListener($factory, $config, $logger);
+        $listener->process(new UserProcessPipeMessage(null));
+        $this->assertTrue(true);
     }
 }
