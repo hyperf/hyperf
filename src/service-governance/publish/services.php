@@ -29,20 +29,8 @@ return [
             'guzzle' => [
                 'config' => null,
             ],
-            'service_name' => 'hyperf',
             'group_name' => 'api',
             'namespace_id' => 'namespace_id',
-            'protect_threshold' => 0.5,
-            'metadata' => null,
-            'selector' => null,
-            'instance' => [
-                'cluster' => null,
-                'weight' => null,
-                'metadata' => null,
-                'ephemeral' => null,
-                'heartbeat' => 5,
-                'auto_removed' => false,
-            ],
         ],
     ],
 ];
