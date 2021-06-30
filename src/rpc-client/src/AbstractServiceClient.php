@@ -191,7 +191,7 @@ abstract class AbstractServiceClient
         $registryProtocol = $consumer['registry']['protocol'] ?? null;
         $registryAddress = $consumer['registry']['address'] ?? null;
         // Current $consumer is the config of the specified consumer.
-        if (! empty($registryProtocol) && ! empty($registryAddress) && $this->container->has(DriverManager::class)) {
+        if (! empty($registryProtocol) && $this->container->has(DriverManager::class)) {
             $governance = $this->container->get(DriverManager::class)->get($registryProtocol);
             if (! $governance) {
                 throw new InvalidArgumentException(sprintf('Invalid protocol of registry %s', $registryProtocol));

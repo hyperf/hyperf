@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\ServiceGovernanceNacos;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\Utils\Codec\Json;
@@ -26,7 +26,7 @@ class NacosDriver implements DriverInterface
     protected $container;
 
     /**
-     * @var Application
+     * @var Client
      */
     protected $client;
 
@@ -40,16 +40,25 @@ class NacosDriver implements DriverInterface
      */
     protected $serviceRegistered = [];
 
+    /**
+     * @var ConfigInterface
+     */
+    protected $config;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->client = $container->get(Application::class);
+        $this->client = $container->get(Client::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->config = $container->get(ConfigInterface::class);
     }
 
     public function getNodes(string $uri, string $name, array $metadata): array
     {
-        $response = $this->client->instance->list($name);
+        $response = $this->client->instance->list($name, [
+            'groupName' => $this->config->get('services.drivers.nacos.group_name'),
+            'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
+        ]);
         if ($response->getStatusCode() !== 200) {
             throw new RequestException((string) $response->getBody(), $response->getStatusCode());
         }
@@ -58,7 +67,7 @@ class NacosDriver implements DriverInterface
         $hosts = $data['hosts'] ?? [];
         $nodes = [];
         foreach ($hosts as $node) {
-            if (isset($node['ip'], $node['port']) && $node['valid'] ?? false) {
+            if (isset($node['ip'], $node['port']) && ($node['healthy'] ?? false)) {
                 $nodes[] = [
                     'host' => $node['ip'],
                     'port' => $node['port'],
@@ -73,6 +82,8 @@ class NacosDriver implements DriverInterface
     {
         if (! array_key_exists($name, $this->serviceRegistered)) {
             $response = $this->client->service->create($name, [
+                'groupName' => $this->config->get('services.drivers.nacos.group_name'),
+                'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
                 'metadata' => $metadata,
             ]);
 
@@ -85,6 +96,8 @@ class NacosDriver implements DriverInterface
 
         $response = $this->client->instance->register($host, $port, $name, [
             'metadata' => $metadata,
+            'groupName' => $this->config->get('services.drivers.nacos.group_name'),
+            'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
         ]);
 
         if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
@@ -95,19 +108,26 @@ class NacosDriver implements DriverInterface
     public function isRegistered(string $name, string $host, int $port, array $metadata): bool
     {
         if (! array_key_exists($name, $this->serviceRegistered)) {
-            $response = $this->client->service->detail($name);
+            $response = $this->client->service->detail(
+                $name,
+                $this->config->get('services.drivers.nacos.group_name'),
+                $this->config->get('services.drivers.nacos.namespace_id')
+            );
             if ($response->getStatusCode() === 404) {
                 return false;
             }
 
             if ($response->getStatusCode() !== 200) {
-                throw new RequestException(sprintf('Failed to get nacos service %s!', $name));
+                throw new RequestException(sprintf('Failed to get nacos service %s!', $name), $response->getStatusCode());
             }
 
             $this->serviceRegistered[$name] = true;
         }
 
-        $response = $this->client->instance->detail($host, $port, $name);
+        $response = $this->client->instance->detail($host, $port, $name, [
+            'groupName' => $this->config->get('services.drivers.nacos.group_name'),
+            'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
+        ]);
         if ($response->getStatusCode() === 404) {
             return false;
         }

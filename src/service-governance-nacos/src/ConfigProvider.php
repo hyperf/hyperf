@@ -18,6 +18,9 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
+            'dependencies' => [
+                Client::class => ClientFactory::class,
+            ],
             'listeners' => [
                 RegisterDriverListener::class,
             ],

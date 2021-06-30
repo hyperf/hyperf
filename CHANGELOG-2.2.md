@@ -32,6 +32,7 @@
 - [#3730](https://github.com/hyperf/hyperf/pull/3730) Removed config `brokers` and `update_brokers` from kafka.
 - [#3733](https://github.com/hyperf/hyperf/pull/3733) Removed config `zookeeper.php`, please use `config_center.php` instead.
 - [#3734](https://github.com/hyperf/hyperf/pull/3734) Splited `nacos` into `config-nacos` and `service-governance-nacos`.
+  - [#3772](https://github.com/hyperf/hyperf/pull/3772) Fixed bug that nacos driver do not work.
 - [#3734](https://github.com/hyperf/hyperf/pull/3734) Renamed `nacos-sdk` as `nacos`.
 - [#3737](https://github.com/hyperf/hyperf/pull/3737) Refactor config-center and config driver
   - Added `AbstractDriver` and merge the duplicate code into the abstraction class
