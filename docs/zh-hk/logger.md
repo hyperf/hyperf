@@ -260,7 +260,7 @@ return [
 ### 配置多個 `Handler`
 
 用户可以修改 `handlers` 讓對應日誌組支持多個 `handler`。比如以下配置，當用户投遞一個 `INFO` 級別以上的日誌時，會在 `hyperf.log` 和 `hyperf-debug.log` 寫入日誌。
-當用户投遞一個 `DEBUG` 級別以上日誌時，只會在 `hyperf-debug.log` 中寫入日誌。
+當用户投遞一個 `DEBUG` 級別日誌時，只會在 `hyperf-debug.log` 中寫入日誌。
 
 ```php
 <?php
