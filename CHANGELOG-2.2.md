@@ -6,6 +6,7 @@
 - Upgraded `psr/container` to `^1.0|^2.0`;
 - Upgraded `egulias/email-validator` to `^3.0`;
 - Upgraded `markrogoyski/math-php` to `^2.0`;
+- [3783](https://github.com/hyperf/hyperf/pull/3783) Upgraded `league/flysystem` to `^1.0|^2.0`;
 
 ## Dependencies Changed
 

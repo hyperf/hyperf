@@ -15,17 +15,21 @@ use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
-use Hyperf\Di\Definition\ScanConfig;
 use Hyperf\Filesystem\Adapter\LocalAdapterFactory;
 use Hyperf\Filesystem\Adapter\MemoryAdapterFactory;
 use Hyperf\Filesystem\FilesystemFactory;
 use Hyperf\Filesystem\FilesystemInvoker;
+use Hyperf\Filesystem\Version;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Reflection\ClassInvoker;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
+use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\Memory\MemoryAdapter;
 
 ! defined('BASE_PATH') && define('BASE_PATH', '.');
+
 /**
  * @internal
  * @coversNothing
@@ -34,7 +38,7 @@ class FilesystemFactoryTest extends AbstractTestCase
 {
     protected function setUp(): void
     {
-        $container = new Container(new DefinitionSource([], new ScanConfig()));
+        $container = new Container(new DefinitionSource([]));
         ApplicationContext::setContainer($container);
     }
 
@@ -56,8 +60,13 @@ class FilesystemFactoryTest extends AbstractTestCase
         $container = ApplicationContext::getContainer();
         $container->set(ConfigInterface::class, $config);
         $factory = new FilesystemFactory($container);
-        $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $factory->get('test'));
-        $this->assertInstanceOf(MemoryAdapter::class, $factory->get('test')->getAdapter());
+        $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem = $factory->get('test'));
+        if (Version::isV2()) {
+            $invoker = new ClassInvoker($fileSystem);
+            $this->assertInstanceOf(InMemoryFilesystemAdapter::class, $invoker->adapter);
+        } else {
+            $this->assertInstanceOf(MemoryAdapter::class, $fileSystem->getAdapter());
+        }
     }
 
     public function testDefault()
@@ -81,7 +90,12 @@ class FilesystemFactoryTest extends AbstractTestCase
         $container->define(Filesystem::class, FilesystemInvoker::class);
         $fileSystem = $container->get(Filesystem::class);
         $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem);
-        $this->assertInstanceOf(Local::class, $fileSystem->getAdapter());
+        if (Version::isV2()) {
+            $invoker = new ClassInvoker($fileSystem);
+            $this->assertInstanceOf(LocalFilesystemAdapter::class, $invoker->adapter);
+        } else {
+            $this->assertInstanceOf(Local::class, $fileSystem->getAdapter());
+        }
     }
 
     public function testMissingConfiguration()
@@ -92,6 +106,11 @@ class FilesystemFactoryTest extends AbstractTestCase
         $container->define(Filesystem::class, FilesystemInvoker::class);
         $fileSystem = $container->get(Filesystem::class);
         $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem);
-        $this->assertInstanceOf(Local::class, $fileSystem->getAdapter());
+        if (Version::isV2()) {
+            $invoker = new ClassInvoker($fileSystem);
+            $this->assertInstanceOf(LocalFilesystemAdapter::class, $invoker->adapter);
+        } else {
+            $this->assertInstanceOf(Local::class, $fileSystem->getAdapter());
+        }
     }
 }

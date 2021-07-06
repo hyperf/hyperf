@@ -16,6 +16,7 @@ parameters:
     - %currentWorkingDirectory%/src/contract/*
     - %currentWorkingDirectory%/src/crontab/*
     - %currentWorkingDirectory%/src/database/*
+    - %currentWorkingDirectory%/src/filesystem/*
     - %currentWorkingDirectory%/src/graphql/*
     - %currentWorkingDirectory%/src/grpc/*
     - %currentWorkingDirectory%/src/grpc-server/*

@@ -13,11 +13,10 @@ namespace Hyperf\Filesystem\Adapter;
 
 use Hyperf\Filesystem\Contract\AdapterFactoryInterface;
 use League\Flysystem\Adapter\NullAdapter;
-use League\Flysystem\AdapterInterface;
 
 class NullAdapterFactory implements AdapterFactoryInterface
 {
-    public function make(array $options): AdapterInterface
+    public function make(array $options)
     {
         return new NullAdapter();
     }

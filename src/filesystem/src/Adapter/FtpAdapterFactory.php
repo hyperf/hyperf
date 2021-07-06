@@ -13,11 +13,10 @@ namespace Hyperf\Filesystem\Adapter;
 
 use Hyperf\Filesystem\Contract\AdapterFactoryInterface;
 use League\Flysystem\Adapter\Ftp;
-use League\Flysystem\AdapterInterface;
 
 class FtpAdapterFactory implements AdapterFactoryInterface
 {
-    public function make(array $options): AdapterInterface
+    public function make(array $options)
     {
         return new Ftp($options);
     }
