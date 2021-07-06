@@ -5,19 +5,20 @@ on:
   pull_request:
   schedule:
     - cron: '0 10 * * *'
-
+env:
+  SW_VERSION: 'v4.6.7'
 jobs:
   database:
     name: Test for Database
     runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
         php-version: [ '7.3', '7.4', '8.0' ]
         mysql-version: [ '5.7', '8.0' ]
       max-parallel: 6
       fail-fast: false
-    env:
-      SW_VERSION: 'v4.6.7'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -30,21 +31,7 @@ jobs:
           ini-values: opcache.enable_cli=1
           coverage: none
       - name: Setup Swoole
-        run: |
-          sudo apt-get update
-          sudo apt-get install libcurl4-openssl-dev
-          wget https://github.com/swoole/swoole-src/archive/${SW_VERSION}.tar.gz -O swoole.tar.gz
-          mkdir -p swoole
-          tar -xf swoole.tar.gz -C swoole --strip-components=1
-          rm swoole.tar.gz
-          cd swoole
-          phpize
-          ./configure --enable-openssl --enable-http2 --enable-swoole-curl --enable-swoole-json
-          make -j$(nproc)
-          sudo make install
-          sudo sh -c "echo extension=swoole > /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
-          sudo sh -c "echo swoole.use_shortname='Off' >> /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
-          php --ri swoole
+        run: ./.travis/swoole.install.sh
       - name: Setup Packages
         run: composer update -o
       - name: Setup Services
@@ -57,25 +44,59 @@ jobs:
         run: |
           composer test src/database -- --exclude-group NonCoroutine
           vendor/bin/phpunit src/database --group NonCoroutine
-  phar:
-    name: Test for Building PHAR ${{ matrix.no-dev }}
+  filesystem:
+    name: Test for Filesystem
     runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        no-dev: [ '', '--no-dev' ]
-      max-parallel: 2
-    env:
-      SW_VERSION: '4.6.6'
+        version: [ '^1.0', '^2.0' ]
+        php-version: [ '7.4', '8.0' ]
+      max-parallel: 6
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          ini-values: opcache.enable_cli=1
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Setup Packages
+        run: composer require "league/flysystem:${{ matrix.version }}" --dev -o -W
+      - name: Setup Flysystem(v1.0) Adapters
+        if: ${{ matrix.version == '^1.0' }}
+        run: composer require xxtime/flysystem-aliyun-oss
+      - name: Setup Flysystem(v2.0) Adapters
+        if: ${{ matrix.version == '^2.0' }}
+        run: |
+          composer require hyperf/flysystem-oss
+          composer require league/flysystem-ftp
+      - name: Run Test Cases
+        run: composer test src/filesystem
+  phar:
+    name: Test for Building PHAR ${{ matrix.no-dev }}
+    runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+    strategy:
+      matrix:
+        no-dev: [ '', '--no-dev' ]
+        php-version: [ '8.0' ]
+      max-parallel: 2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
           tools: phpize
           extensions: redis
-          ini-values: extension=swoole, opcache.enable_cli=1, swoole.use_shortname='Off', phar.readonly='Off'
+          ini-values: opcache.enable_cli=1, phar.readonly='Off'
           coverage: none
       - name: Setup Swoole
         run: ./.travis/swoole.install.sh

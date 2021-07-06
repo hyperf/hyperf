@@ -15,18 +15,25 @@ use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
+use Hyperf\Filesystem\Adapter\AliyunOssAdapterFactory;
 use Hyperf\Filesystem\Adapter\LocalAdapterFactory;
 use Hyperf\Filesystem\Adapter\MemoryAdapterFactory;
 use Hyperf\Filesystem\FilesystemFactory;
 use Hyperf\Filesystem\FilesystemInvoker;
 use Hyperf\Filesystem\Version;
+use Hyperf\Flysystem\OSS\Adapter as OSSAdapter;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Reflection\ClassInvoker;
+use League\Flysystem\Adapter\Ftp;
 use League\Flysystem\Adapter\Local;
+use League\Flysystem\AwsS3v3\AwsS3Adapter;
+use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 use League\Flysystem\Filesystem;
+use League\Flysystem\Ftp\FtpAdapter;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\Memory\MemoryAdapter;
+use Xxtime\Flysystem\Aliyun\OssAdapter as XxtimeOSSAdapter;
 
 ! defined('BASE_PATH') && define('BASE_PATH', '.');
 
@@ -111,6 +118,107 @@ class FilesystemFactoryTest extends AbstractTestCase
             $this->assertInstanceOf(LocalFilesystemAdapter::class, $invoker->adapter);
         } else {
             $this->assertInstanceOf(Local::class, $fileSystem->getAdapter());
+        }
+    }
+
+    public function testFtpAdapter()
+    {
+        if (! class_exists(FtpAdapter::class) && ! class_exists(Ftp::class)) {
+            $this->markTestSkipped('Ftp Adapter does not exists.');
+        }
+        $config = new Config([
+            'file' => [
+                'default' => 'ftp',
+                'storage' => [
+                    'ftp' => [
+                        'driver' => \Hyperf\Filesystem\Adapter\FtpAdapterFactory::class,
+                        'host' => 'ftp.example.com',
+                        'username' => 'username',
+                        'password' => 'password',
+                    ],
+                ],
+            ],
+        ]);
+        $container = ApplicationContext::getContainer();
+        $container->set(ConfigInterface::class, $config);
+        $container->define(Filesystem::class, FilesystemInvoker::class);
+        $fileSystem = $container->get(Filesystem::class);
+        $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem);
+        if (Version::isV2()) {
+            $invoker = new ClassInvoker($fileSystem);
+            $this->assertInstanceOf(FtpAdapter::class, $invoker->adapter);
+        } else {
+            $this->assertInstanceOf(Ftp::class, $fileSystem->getAdapter());
+        }
+    }
+
+    public function testAliyunOSSAdapter()
+    {
+        if (! class_exists(OSSAdapter::class) && ! class_exists(XxtimeOSSAdapter::class)) {
+            $this->markTestSkipped('OSS Adapter does not exists.');
+        }
+        $config = new Config([
+            'file' => [
+                'default' => 'oss',
+                'storage' => [
+                    'oss' => [
+                        'driver' => AliyunOssAdapterFactory::class,
+                        'accessId' => 'xxx',
+                        'accessSecret' => 'xxx',
+                        'bucket' => 'hyperf',
+                        'endpoint' => null,
+                    ],
+                ],
+            ],
+        ]);
+        $container = ApplicationContext::getContainer();
+        $container->set(ConfigInterface::class, $config);
+        $container->define(Filesystem::class, FilesystemInvoker::class);
+        $fileSystem = $container->get(Filesystem::class);
+        $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem);
+        if (Version::isV2()) {
+            $invoker = new ClassInvoker($fileSystem);
+            $this->assertInstanceOf(OSSAdapter::class, $invoker->adapter);
+        } else {
+            $this->assertInstanceOf(XxtimeOSSAdapter::class, $fileSystem->getAdapter());
+        }
+    }
+
+    public function testS3Adapter()
+    {
+        if (! class_exists(AwsS3V3Adapter::class) && ! class_exists(AwsS3Adapter::class)) {
+            $this->markTestSkipped('OSS Adapter does not exists.');
+        }
+        $config = new Config([
+            'file' => [
+                'default' => 's3',
+                'storage' => [
+                    's3' => [
+                        'driver' => \Hyperf\Filesystem\Adapter\S3AdapterFactory::class,
+                        'credentials' => [
+                            'key' => 'xxx',
+                            'secret' => 'xxx',
+                        ],
+                        'region' => 'shanghai',
+                        'version' => 'latest',
+                        'bucket_endpoint' => false,
+                        'use_path_style_endpoint' => false,
+                        'endpoint' => 'xxx',
+                        'bucket_name' => 'xxx',
+                    ],
+                ],
+            ],
+        ]);
+        $container = ApplicationContext::getContainer();
+        $container->set(ConfigInterface::class, $config);
+        $container->define(Filesystem::class, FilesystemInvoker::class);
+        $fileSystem = $container->get(Filesystem::class);
+        $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem);
+        if (Version::isV2()) {
+            $invoker = new ClassInvoker($fileSystem);
+            $this->assertInstanceOf(AwsS3V3Adapter::class, $invoker->adapter);
+        } else {
+            $this->assertInstanceOf(AwsS3Adapter::class, $fileSystem->getAdapter());
         }
     }
 }
