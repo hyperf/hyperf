@@ -64,7 +64,7 @@ class DemoService
 
     public function method()
     {
-        // Do somthing.
+        // Do something.
         $this->logger->info("Your log message.");
     }
 }
@@ -135,14 +135,14 @@ $log->alert('czl');
 ```php
 namespace App;
 
-use Hyperf\Logger\Logger;
+use Hyperf\Logger\LoggerFactory;
 use Hyperf\Utils\ApplicationContext;
 
 class Log
 {
     public static function get(string $name = 'app')
     {
-        return ApplicationContext::getContainer()->get(\Hyperf\Logger\LoggerFactory::class)->get($name);
+        return ApplicationContext::getContainer()->get(LoggerFactory::class)->get($name);
     }
 }
 ```
@@ -174,7 +174,7 @@ class StdoutLoggerFactory
 }
 ```
 
-- 申明依赖, 使用 `StdoutLoggerInterface` 的地方, 由实际依赖的 `StdoutLoggerFactory` 实例化的类来完成
+- 声明依赖, 使用 `StdoutLoggerInterface` 的地方, 由实际依赖的 `StdoutLoggerFactory` 实例化的类来完成
 
 ```php
 // config/autoload/dependencies.php
@@ -217,7 +217,7 @@ return [
         ],
         'formatter' => $formatter,
     ],
-]
+];
 ```
 
 - 默认配置了名为 `default` 的 `Handler`, 并包含了此 `Handler` 及其 `Formatter` 的信息
@@ -306,7 +306,6 @@ return [
         ],
     ],
 ];
-
 ```
 
 结果如下
