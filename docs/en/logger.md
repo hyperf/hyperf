@@ -64,7 +64,7 @@ class DemoService
 
     public function method()
     {
-        // Do somthing.
+        // Do something.
         $this->logger->info("Your log message.");
     }
 }
