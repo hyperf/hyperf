@@ -261,7 +261,9 @@ If you want to perform more fine-grained log cutting, you can also extend the `M
 
 ### Configure multiple `Handler`
 
-Users can modify `handlers` so that the corresponding log group can supports multiple `handlers`. For example, in the following configuration, when a user posts a log higher the level of `INFO`, it will be written in `hyperf.log` and `hyperf-debug.log`.When a user posts a log higher the level of `DEBUG`, the log will be written only in `hyperf-debug.log`.
+Users can modify `handlers` so that the corresponding log group can supports multiple `handlers`. 
+For example, in the following configuration, when a user posts a log higher the level of `INFO`, it will be written in `hyperf.log` and `hyperf-debug.log`.
+When a user posts a `DEBUG` log, the log will be written only in `hyperf-debug.log`.
 
 ```php
 <?php
