@@ -12,12 +12,17 @@ declare(strict_types=1);
 namespace Hyperf\Filesystem\Adapter;
 
 use Hyperf\Filesystem\Contract\AdapterFactoryInterface;
+use Hyperf\Filesystem\Exception\InvalidArgumentException;
+use Hyperf\Filesystem\Version;
 use League\Flysystem\Adapter\NullAdapter;
 
 class NullAdapterFactory implements AdapterFactoryInterface
 {
     public function make(array $options)
     {
+        if (Version::isV2()) {
+            throw new InvalidArgumentException('NullAdapter should not be used in `league/flysystem` v2.0');
+        }
         return new NullAdapter();
     }
 }

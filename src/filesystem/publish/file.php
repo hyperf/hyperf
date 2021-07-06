@@ -27,6 +27,7 @@ return [
             // 'ssl' => true,
             // 'timeout' => 30,
             // 'ignorePassiveAddress' => false,
+            // 'timestampsOnUnixListingsEnabled' => true,
         ],
         'memory' => [
             'driver' => \Hyperf\Filesystem\Adapter\MemoryAdapterFactory::class,
