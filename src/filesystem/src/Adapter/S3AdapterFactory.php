@@ -15,13 +15,13 @@ use Aws\Handler\GuzzleV6\GuzzleHandler;
 use Aws\S3\S3Client;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
+use Hyperf\Filesystem\Contract\AdapterFactoryInterface;
 use Hyperf\Guzzle\CoroutineHandler;
-use League\Flysystem\AdapterInterface;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 
-class S3AdapterFactory
+class S3AdapterFactory implements AdapterFactoryInterface
 {
-    public function make(array $options): AdapterInterface
+    public function make(array $options)
     {
         $handler = new GuzzleHandler(new Client([
             'handler' => HandlerStack::create(new CoroutineHandler()),

@@ -9,15 +9,14 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Filesystem\Contract;
+namespace Hyperf\Filesystem;
 
-use League\Flysystem\AdapterInterface;
 use League\Flysystem\FilesystemAdapter;
 
-interface AdapterFactoryInterface
+class Version
 {
-    /**
-     * @return AdapterInterface|FilesystemAdapter
-     */
-    public function make(array $options);
+    public static function isV2(): bool
+    {
+        return interface_exists(FilesystemAdapter::class);
+    }
 }
