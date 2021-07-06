@@ -15,6 +15,7 @@
         "hyperf/event": "~2.1.0",
         "hyperf/model-listener": "~2.1.0",
         "hyperf/utils": "~2.1.0",
+        "hyperf/paginator": "~2.1.0",
         "psr/event-dispatcher": "^1.0"
     },
     "require-dev": {
