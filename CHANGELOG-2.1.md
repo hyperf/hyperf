@@ -1,4 +1,10 @@
-# v2.1.23 - TBD
+# v2.1.24 - TBD
+
+# v2.1.23 - 2021-07-07
+
+## Fixed
+
+- [#3787](https://github.com/hyperf/hyperf/pull/3787) Fixed an error initializing psr7request, and the responseinterface:: class will not be found later, resulting in the wrong type of exception handling handle parameter.
 
 # v2.1.22 - 2021-06-28
 
