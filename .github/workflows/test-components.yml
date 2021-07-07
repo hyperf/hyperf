@@ -69,12 +69,17 @@ jobs:
         run: composer require "league/flysystem:${{ matrix.version }}" --dev -o -W
       - name: Setup Flysystem(v1.0) Adapters
         if: ${{ matrix.version == '^1.0' }}
-        run: composer require xxtime/flysystem-aliyun-oss
+        run: |
+          composer require xxtime/flysystem-aliyun-oss
+          composer require "overtrue/flysystem-cos:^3.0"
+          composer require "overtrue/flysystem-qiniu:^1.0"
       - name: Setup Flysystem(v2.0) Adapters
         if: ${{ matrix.version == '^2.0' }}
         run: |
           composer require hyperf/flysystem-oss
           composer require league/flysystem-ftp
+          composer require "overtrue/flysystem-cos:^4.0"
+          composer require "overtrue/flysystem-qiniu:^2.0"
       - name: Run Test Cases
         run: composer test src/filesystem
   phar:
