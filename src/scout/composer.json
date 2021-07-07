@@ -18,7 +18,8 @@
         "psr/event-dispatcher": "^1.0"
     },
     "suggest": {
-        "hyperf/elasticsearch": "Required to use elasticsearch driver."
+        "hyperf/elasticsearch": "Required to use elasticsearch driver.",
+        "hyperf/paginator": "Required to use paginate method."
     },
     "autoload": {
         "psr-4": {
