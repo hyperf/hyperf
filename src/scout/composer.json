@@ -19,7 +19,7 @@
     },
     "suggest": {
         "hyperf/elasticsearch": "Required to use elasticsearch driver.",
-        "hyperf/paginator": "Required to paginate data.",
+        "hyperf/paginator": "Required to use paginate method."
     },
     "autoload": {
         "psr-4": {
