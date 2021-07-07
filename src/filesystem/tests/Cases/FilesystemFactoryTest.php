@@ -33,6 +33,8 @@ use League\Flysystem\Ftp\FtpAdapter;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\Memory\MemoryAdapter;
+use Overtrue\Flysystem\Cos\CosAdapter;
+use Overtrue\Flysystem\Qiniu\QiniuAdapter;
 use Xxtime\Flysystem\Aliyun\OssAdapter as XxtimeOSSAdapter;
 
 ! defined('BASE_PATH') && define('BASE_PATH', '.');
@@ -219,6 +221,72 @@ class FilesystemFactoryTest extends AbstractTestCase
             $this->assertInstanceOf(AwsS3V3Adapter::class, $invoker->adapter);
         } else {
             $this->assertInstanceOf(AwsS3Adapter::class, $fileSystem->getAdapter());
+        }
+    }
+
+    public function testCosAdapter()
+    {
+        if (! class_exists(CosAdapter::class)) {
+            $this->markTestSkipped('COS Adapter does not exists.');
+        }
+        $config = new Config([
+            'file' => [
+                'default' => 'cos',
+                'storage' => [
+                    'cos' => [
+                        'driver' => \Hyperf\Filesystem\Adapter\CosAdapterFactory::class,
+                        'region' => 'xxx',
+                        'app_id' => 'xxx',
+                        'secret_id' => 'xxx',
+                        'secret_key' => 'xxx',
+                        'bucket' => 'hyperf',
+                        'read_from_cdn' => false,
+                    ],
+                ],
+            ],
+        ]);
+        $container = ApplicationContext::getContainer();
+        $container->set(ConfigInterface::class, $config);
+        $container->define(Filesystem::class, FilesystemInvoker::class);
+        $fileSystem = $container->get(Filesystem::class);
+        $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem);
+        if (Version::isV2()) {
+            $invoker = new ClassInvoker($fileSystem);
+            $this->assertInstanceOf(CosAdapter::class, $invoker->adapter);
+        } else {
+            $this->assertInstanceOf(CosAdapter::class, $fileSystem->getAdapter());
+        }
+    }
+
+    public function testQiniuAdapter()
+    {
+        if (! class_exists(QiniuAdapter::class)) {
+            $this->markTestSkipped('Qiniu Adapter does not exists.');
+        }
+        $config = new Config([
+            'file' => [
+                'default' => 'qiniu',
+                'storage' => [
+                    'qiniu' => [
+                        'driver' => \Hyperf\Filesystem\Adapter\QiniuAdapterFactory::class,
+                        'accessKey' => 'xxx',
+                        'secretKey' => 'xxx',
+                        'bucket' => 'xxx',
+                        'domain' => 'xxx',
+                    ],
+                ],
+            ],
+        ]);
+        $container = ApplicationContext::getContainer();
+        $container->set(ConfigInterface::class, $config);
+        $container->define(Filesystem::class, FilesystemInvoker::class);
+        $fileSystem = $container->get(Filesystem::class);
+        $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem);
+        if (Version::isV2()) {
+            $invoker = new ClassInvoker($fileSystem);
+            $this->assertInstanceOf(QiniuAdapter::class, $invoker->adapter);
+        } else {
+            $this->assertInstanceOf(QiniuAdapter::class, $fileSystem->getAdapter());
         }
     }
 }
