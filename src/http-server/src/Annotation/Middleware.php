@@ -18,7 +18,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  * @Annotation
  * @Target({"ALL"})
  */
-#[Attribute]
+#[Attribute(Attribute::IS_REPEATABLE)]
 class Middleware extends AbstractAnnotation
 {
     /**

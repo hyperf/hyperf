@@ -220,27 +220,24 @@ class DispatcherFactory
 
     protected function handleMiddleware(array $metadata): array
     {
-        $hasMiddlewares = isset($metadata[Middlewares::class]);
-        $hasMiddleware = isset($metadata[Middleware::class]);
-        if (! $hasMiddlewares && ! $hasMiddleware) {
+        /** @var Middlewares $middlewares */
+        $middlewares = $metadata[Middlewares::class] ?? null;
+        /** @var Middleware $middleware */
+        $middleware = $metadata[Middleware::class] ?? null;
+
+        if (! $middlewares && ! $middleware) {
             return [];
         }
-        if ($hasMiddlewares && $hasMiddleware) {
+        if ($middlewares && $middleware) {
             throw new ConflictAnnotationException('Could not use @Middlewares and @Middleware annotation at the same times at same level.');
         }
-        if ($hasMiddlewares) {
-            // @Middlewares
-            /** @var Middlewares $middlewares */
-            $middlewares = $metadata[Middlewares::class];
+        if ($middlewares) {
             $result = [];
             foreach ($middlewares->middlewares as $middleware) {
                 $result[] = $middleware->middleware;
             }
             return $result;
         }
-        // @Middleware
-        /** @var Middleware $middleware */
-        $middleware = $metadata[Middleware::class];
         return [$middleware->middleware];
     }
 }

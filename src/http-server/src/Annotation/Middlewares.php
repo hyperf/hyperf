@@ -30,7 +30,7 @@ class Middlewares extends AbstractAnnotation
     {
         if (is_string($value[0])) {
             $middlewares = [];
-            foreach ($value as $key => $middlewareName) {
+            foreach ($value as $middlewareName) {
                 $middlewares['value'][] = new Middleware($middlewareName);
             }
             $value = $middlewares;
