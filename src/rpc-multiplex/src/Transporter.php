@@ -41,7 +41,7 @@ class Transporter implements TransporterInterface
         ],
         'recv_timeout' => 5.0,
         'retry_count' => 2,
-        'retry_interval' => 100,
+        'retry_interval' => 0,
         'client_count' => 4,
     ];
 
@@ -55,6 +55,7 @@ class Transporter implements TransporterInterface
     public function send(string $data)
     {
         $retryCount = $this->config['retry_count'] ?? 2;
+        $retryInterval = $this->config['retry_interval'] ?? 0;
         $result = retry($retryCount, function () use ($data) {
             try {
                 return $this->factory->get()->request($data);
@@ -65,7 +66,7 @@ class Transporter implements TransporterInterface
 
                 return new ExceptionThrower($exception);
             }
-        });
+        }, $retryInterval);
 
         if ($result instanceof ExceptionThrower) {
             throw $result->getThrowable();

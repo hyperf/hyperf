@@ -39,6 +39,7 @@ class TransporterTest extends AbstractTestCase
 
         $transporter = new Transporter($container, [
             'connect_timeout' => $timeout = rand(50, 100),
+            'retry_interval' => 123,
         ]);
 
         $invoker = new ClassInvoker($transporter);
@@ -46,5 +47,7 @@ class TransporterTest extends AbstractTestCase
 
         $factory = new ClassInvoker($invoker->factory);
         $this->assertSame($timeout, $factory->config['connect_timeout']);
+
+        $this->assertSame(123, $factory->config['retry_interval']);
     }
 }
