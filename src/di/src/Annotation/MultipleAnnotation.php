@@ -45,6 +45,11 @@ class MultipleAnnotation implements MultipleAnnotationInterface
         $this->annotations[] = $annotation;
     }
 
+    public function toAnnotations(): array
+    {
+        return $this->annotations;
+    }
+
     public function collectClass(string $className): void
     {
         throw new AnnotationException('MultipleAnnotation[' . $this->className() . '] does not support collectClass()');

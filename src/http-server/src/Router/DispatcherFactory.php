@@ -16,6 +16,7 @@ use FastRoute\Dispatcher;
 use FastRoute\Dispatcher\GroupCountBased;
 use FastRoute\RouteParser\Std;
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Annotation\MultipleAnnotationInterface;
 use Hyperf\Di\Exception\ConflictAnnotationException;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\HttpServer\Annotation\AutoController;
@@ -222,8 +223,11 @@ class DispatcherFactory
     {
         /** @var null|Middlewares $middlewares */
         $middlewares = $metadata[Middlewares::class] ?? null;
-        /** @var null|Middleware[] $middleware */
+        /** @var null|MultipleAnnotationInterface $middleware */
         $middleware = $metadata[Middleware::class] ?? null;
+        if ($middleware instanceof MultipleAnnotationInterface) {
+            $middleware = $middleware->toAnnotations();
+        }
 
         if (! $middlewares && ! $middleware) {
             return [];

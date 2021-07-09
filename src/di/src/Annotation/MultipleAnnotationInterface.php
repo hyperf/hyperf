@@ -21,4 +21,9 @@ interface MultipleAnnotationInterface extends AnnotationInterface
      * @throws AnnotationException
      */
     public function insert(AnnotationInterface $annotation): void;
+
+    /**
+     * @return AnnotationInterface[]
+     */
+    public function toAnnotations(): array;
 }
