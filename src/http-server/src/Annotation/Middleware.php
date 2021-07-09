@@ -14,6 +14,8 @@ namespace Hyperf\HttpServer\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Annotation\MultipleAnnotation;
+use Hyperf\Di\Annotation\MultipleAnnotationInterface;
 
 /**
  * @Annotation
@@ -36,14 +38,24 @@ class Middleware extends AbstractAnnotation
     public function collectClass(string $className): void
     {
         $annotation = AnnotationCollector::getClassAnnotation($className, self::class);
-        $annotation = $annotation ? array_merge($annotation, [$this]) : [$this];
+        if ($annotation instanceof MultipleAnnotationInterface) {
+            $annotation->insert($this);
+        } else {
+            $annotation = new MultipleAnnotation($this);
+        }
+
         AnnotationCollector::collectClass($className, self::class, $annotation);
     }
 
     public function collectMethod(string $className, ?string $target): void
     {
         $annotation = AnnotationCollector::getClassMethodAnnotation($className, $target)[self::class] ?? null;
-        $annotation = $annotation ? array_merge($annotation, [$this]) : [$this];
+        if ($annotation instanceof MultipleAnnotationInterface) {
+            $annotation->insert($this);
+        } else {
+            $annotation = new MultipleAnnotation($this);
+        }
+
         AnnotationCollector::collectMethod($className, $target, self::class, $annotation);
     }
 }
