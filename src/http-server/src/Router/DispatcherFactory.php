@@ -235,6 +235,7 @@ class DispatcherFactory
         if ($middlewares && $middleware) {
             throw new ConflictAnnotationException('Could not use @Middlewares and @Middleware annotation at the same times at same level.');
         }
+
         return array_map(function (Middleware $middleware) {
             return $middleware->middleware;
         }, $middlewares ? $middlewares->middlewares : $middleware);

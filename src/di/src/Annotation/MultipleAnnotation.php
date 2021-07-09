@@ -36,13 +36,14 @@ class MultipleAnnotation implements MultipleAnnotationInterface
         return $this->className;
     }
 
-    public function insert(AnnotationInterface $annotation): void
+    public function insert(AnnotationInterface $annotation)
     {
         if (! $annotation instanceof $this->className) {
             throw new AnnotationException(get_class($annotation) . ' must instanceof ' . $this->className);
         }
 
         $this->annotations[] = $annotation;
+        return $this;
     }
 
     public function toAnnotations(): array
