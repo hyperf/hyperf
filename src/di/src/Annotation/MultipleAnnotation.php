@@ -31,6 +31,15 @@ class MultipleAnnotation implements MultipleAnnotationInterface
         $this->className = get_class($annotation);
     }
 
+    public function __get(string $name)
+    {
+        if (count($this->annotations) > 1) {
+            throw new AnnotationException('MultipleAnnotation[' . $this->className() . '] has more than one annotations.');
+        }
+
+        return $this->annotations[0]->{$name};
+    }
+
     public function className(): string
     {
         return $this->className;
