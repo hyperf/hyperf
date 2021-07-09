@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
+use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\AspectCollector;
 use Hyperf\Utils\Filesystem\Filesystem;
@@ -181,9 +182,13 @@ class ProxyManager
         $defined = [];
         $annotations = AnnotationCollector::get($annotationCollectorKey, []);
 
-        foreach ($annotations as $k => $annotation) {
+        foreach ($annotations as $className => $annotation) {
             if (is_object($annotation)) {
-                $defined[] = $k;
+                $defined[] = $className;
+            } elseif (isset($annotation[0]) && $annotation[0] instanceof AbstractAnnotation) {
+                foreach ($annotation as $item) {
+                    $defined[] = get_class($item);
+                }
             } else {
                 $defined = array_merge($defined, array_keys($annotation));
             }

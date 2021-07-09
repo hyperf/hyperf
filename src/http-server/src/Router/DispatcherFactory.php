@@ -222,7 +222,7 @@ class DispatcherFactory
     {
         /** @var Middlewares $middlewares */
         $middlewares = $metadata[Middlewares::class] ?? null;
-        /** @var Middleware $middleware */
+        /** @var Middleware[] $middleware */
         $middleware = $metadata[Middleware::class] ?? null;
 
         if (! $middlewares && ! $middleware) {
@@ -231,13 +231,8 @@ class DispatcherFactory
         if ($middlewares && $middleware) {
             throw new ConflictAnnotationException('Could not use @Middlewares and @Middleware annotation at the same times at same level.');
         }
-        if ($middlewares) {
-            $result = [];
-            foreach ($middlewares->middlewares as $middleware) {
-                $result[] = $middleware->middleware;
-            }
-            return $result;
-        }
-        return [$middleware->middleware];
+        return array_map(function (Middleware $middleware) {
+            return $middleware->middleware;
+        }, $middlewares ? $middlewares->middlewares : $middleware);
     }
 }

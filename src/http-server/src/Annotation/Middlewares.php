@@ -22,7 +22,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 class Middlewares extends AbstractAnnotation
 {
     /**
-     * @var array
+     * @var Middleware[]
      */
     public $middlewares = [];
 
