@@ -220,9 +220,9 @@ class DispatcherFactory
 
     protected function handleMiddleware(array $metadata): array
     {
-        /** @var Middlewares $middlewares */
+        /** @var null|Middlewares $middlewares */
         $middlewares = $metadata[Middlewares::class] ?? null;
-        /** @var Middleware[] $middleware */
+        /** @var null|Middleware[] $middleware */
         $middleware = $metadata[Middleware::class] ?? null;
 
         if (! $middlewares && ! $middleware) {
