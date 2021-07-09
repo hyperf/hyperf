@@ -181,9 +181,9 @@ class ProxyManager
         $defined = [];
         $annotations = AnnotationCollector::get($annotationCollectorKey, []);
 
-        foreach ($annotations as $k => $annotation) {
+        foreach ($annotations as $name => $annotation) {
             if (is_object($annotation)) {
-                $defined[] = $k;
+                $defined[] = $name;
             } else {
                 $defined = array_merge($defined, array_keys($annotation));
             }

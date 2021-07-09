@@ -22,7 +22,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 class Middlewares extends AbstractAnnotation
 {
     /**
-     * @var array
+     * @var Middleware[]
      */
     public $middlewares = [];
 
@@ -30,10 +30,10 @@ class Middlewares extends AbstractAnnotation
     {
         if (is_string($value[0])) {
             $middlewares = [];
-            foreach ($value as $key => $middlewareName) {
-                $middlewares['value'][] = new Middleware($middlewareName);
+            foreach ($value as $middlewareName) {
+                $middlewares[] = new Middleware($middlewareName);
             }
-            $value = $middlewares;
+            $value = ['value' => $middlewares];
         }
         $this->bindMainProperty('middlewares', $value);
     }
