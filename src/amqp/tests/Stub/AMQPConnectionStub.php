@@ -12,11 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Amqp\Stub;
 
 use Hyperf\Amqp\AMQPConnection;
+use Hyperf\Utils\Channel\ChannelManager;
 
 class AMQPConnectionStub extends AMQPConnection
 {
     public function __construct()
     {
+        $this->channelManager = new ChannelManager(16);
+        $this->channelManager->get(0, true);
     }
 
     public function setLastChannelId(int $id)
