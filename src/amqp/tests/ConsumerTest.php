@@ -14,6 +14,9 @@ namespace HyperfTest\Amqp;
 use Hyperf\Amqp\ConnectionFactory;
 use Hyperf\Amqp\Consumer;
 use Hyperf\Utils\Coroutine\Concurrent;
+use Hyperf\Utils\Exception\ChannelClosedException;
+use Hyperf\Utils\Reflection\ClassInvoker;
+use HyperfTest\Amqp\Stub\AMQPConnectionStub;
 use HyperfTest\Amqp\Stub\ContainerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -39,5 +42,18 @@ class ConsumerTest extends TestCase
         /** @var Concurrent $concurrent */
         $concurrent = $method->invokeArgs($consumer, ['co']);
         $this->assertSame(5, $concurrent->getLimit());
+    }
+
+    public function testWaitChannel()
+    {
+        $connection = new AMQPConnectionStub();
+        $invoker = new ClassInvoker($connection);
+        $chan = $invoker->channelManager->get(1, true);
+        $chan->push($id = uniqid());
+        $this->assertSame($id, $invoker->wait_channel(1));
+
+        $this->expectException(ChannelClosedException::class);
+        $chan->close();
+        $invoker->wait_channel(1);
     }
 }
