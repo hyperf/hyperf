@@ -31,6 +31,9 @@ class ConfigProvider
                     'paths' => [
                         __DIR__,
                     ],
+                    'ignore_annotations' => [
+                        'type',
+                    ],
                 ],
             ],
         ];
