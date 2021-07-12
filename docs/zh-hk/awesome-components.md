@@ -144,4 +144,4 @@
 - [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支持 Swoole 協程的第三方登錄授權 SDK（QQ、微信、微博、Github、Gitee 等）
 - [overtrue/wechat](zh-hk/sdks/wechat) EasyWeChat，一個流行的非官方微信 SDK
 - [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole 協程環境下的可用的 PHPMailer
-- [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 可能是基於 hyperf 的最優雅的支付寶、微信支付 SDK 了 
+- [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 可能是基於 hyperf 的優雅的支付寶、微信支付 SDK 了 
