@@ -31,6 +31,7 @@ return [
             ],
             'group_name' => 'api',
             'namespace_id' => 'namespace_id',
+            'heartbeat' => 5,
         ],
     ],
 ];
