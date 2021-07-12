@@ -66,6 +66,7 @@
 - [#3753](https://github.com/hyperf/hyperf/pull/3753) Support long pulling mode for Apollo Client.
 - [#3759](https://github.com/hyperf/hyperf/pull/3759) Added `rpc-multiplex` component.
 - [#3791](https://github.com/hyperf/hyperf/pull/3791) Support setting multiple annotations by inheriting `AbstractMultipleAnnotation`, such as `@Middleware`.
+- [#3806](https://github.com/hyperf/hyperf/pull/3806) Added heartbeat for nacos service governance.
 
 ## Optimized
 

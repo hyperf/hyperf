@@ -16,6 +16,9 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\Utils\Codec\Json;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
 class NacosDriver implements DriverInterface
@@ -103,6 +106,8 @@ class NacosDriver implements DriverInterface
         if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
             throw new RequestException(sprintf('Failed to create nacos instance %s:%d! for %s', $host, $port, $name));
         }
+
+        $this->registerHeartbeat($name, $host, $port);
     }
 
     public function isRegistered(string $name, string $host, int $port, array $metadata): bool
@@ -128,6 +133,7 @@ class NacosDriver implements DriverInterface
             'groupName' => $this->config->get('services.drivers.nacos.group_name'),
             'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
         ]);
+
         if ($response->getStatusCode() === 404) {
             return false;
         }
@@ -140,6 +146,39 @@ class NacosDriver implements DriverInterface
             throw new RequestException(sprintf('Failed to get nacos instance %s:%d for %s!', $host, $port, $name));
         }
 
+        $this->registerHeartbeat($name, $host, $port);
+
         return true;
+    }
+
+    protected function registerHeartbeat(string $name, string $host, int $port): void
+    {
+        Coroutine::create(function () use ($name, $host, $port) {
+            retry(INF, function () use ($name, $host, $port) {
+                while (true) {
+                    $heartbeat = $this->config->get('services.drivers.nacos.heartbeat', 5);
+                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
+                        break;
+                    }
+
+                    $response = $this->client->instance->beat(
+                        $name,
+                        [
+                            'ip' => $host,
+                            'port' => $port,
+                            'serviceName' => $name,
+                        ],
+                        $this->config->get('services.drivers.nacos.group_name'),
+                        $this->config->get('services.drivers.nacos.namespace_id'),
+                    );
+
+                    if ($response->getStatusCode() === 200) {
+                        $this->logger->debug(sprintf('Instance %s:%d heartbeat successfully!', $host, $port));
+                    } else {
+                        $this->logger->error(sprintf('Instance %s:%d heartbeat failed!', $host, $port));
+                    }
+                }
+            });
+        });
     }
 }
