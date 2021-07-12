@@ -166,9 +166,10 @@ class NacosDriver implements DriverInterface
                         [
                             'ip' => $host,
                             'port' => $port,
-                            'serviceName' => 'DEFAULT_GROUP@@FooService',
+                            'serviceName' => $name,
                         ],
-                        $this->config->get('services.drivers.nacos.group_name')
+                        $this->config->get('services.drivers.nacos.group_name'),
+                        $this->config->get('services.drivers.nacos.namespace_id'),
                     );
 
                     if ($response->getStatusCode() === 200) {

@@ -127,12 +127,13 @@ class InstanceProvider extends AbstractProvider
      *     'weight' => 1,
      * ]
      */
-    public function beat(string $serviceName, array $beat = [], ?string $groupName = null, ?bool $ephemeral = null): ResponseInterface
+    public function beat(string $serviceName, array $beat = [], ?string $groupName = null, ?string $namespaceId = null, ?bool $ephemeral = null): ResponseInterface
     {
         return $this->request('PUT', '/nacos/v1/ns/instance/beat', [
             RequestOptions::QUERY => $this->filter([
                 'serviceName' => $serviceName,
                 'groupName' => $groupName,
+                'namespaceId' => $namespaceId,
                 'ephemeral' => $ephemeral,
                 'beat' => Json::encode($beat),
             ]),
