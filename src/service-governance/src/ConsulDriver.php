@@ -14,6 +14,7 @@ namespace Hyperf\ServiceGovernance;
 use Hyperf\Consul\AgentInterface;
 use Hyperf\Consul\Health;
 use Hyperf\Consul\HealthInterface;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Guzzle\ClientFactory;
 use Hyperf\LoadBalancer\Node;
@@ -51,6 +52,7 @@ class ConsulDriver implements DriverInterface
         $health = $this->createConsulHealth($uri);
         $services = $health->service($name)->json();
         $nodes = [];
+        $nodeFilter = $this->container->get(ConfigInterface::class)->get('consul.node_filter');
         foreach ($services as $node) {
             $passing = true;
             $service = $node['Service'] ?? [];
@@ -71,8 +73,11 @@ class ConsulDriver implements DriverInterface
             if ($passing) {
                 $address = $service['Address'] ?? '';
                 $port = (int) ($service['Port'] ?? 0);
+                if (isset($nodeFilter) and is_callable($nodeFilter)) {
+                    $extra = $nodeFilter($node);
+                }
                 // @TODO Get and set the weight property.
-                $address && $port && $nodes[] = ['host' => $address, 'port' => $port];
+                $address && $port && $nodes[] = ['host' => $address, 'port' => $port, 'extra' => $extra ?? []];
             }
         }
         return $nodes;

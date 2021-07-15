@@ -28,10 +28,16 @@ class Node
      */
     public $port;
 
-    public function __construct(string $host, int $port, int $weight = 0)
+    /**
+     * @var array
+     */
+    public $extra;
+
+    public function __construct(string $host, int $port, array $extra = [], int $weight = 0)
     {
         $this->host = $host;
         $this->port = $port;
+        $this->extra = $extra;
         $this->weight = $weight;
     }
 }
