@@ -70,6 +70,7 @@
   * [架構理念](zh-hk/microservice.md)
   * [JSON RPC 服務](zh-hk/json-rpc.md)
   * [gRPC 服務](zh-hk/grpc.md)
+  * [多路複用 RPC 服務](zh-hk/rpc-multiplex.md) 
   * [服務註冊](zh-hk/service-register.md)
   * [服務重試](zh-hk/retry.md)
   * [服務熔斷及降級](zh-hk/circuit-breaker.md)
