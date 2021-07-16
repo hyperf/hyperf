@@ -49,9 +49,14 @@ class Xml
 
     public static function toArray($xml)
     {
-        $disableLibxmlEntityLoader = libxml_disable_entity_loader(true);
-        $respObject = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOERROR);
-        libxml_disable_entity_loader($disableLibxmlEntityLoader);
+        if (\PHP_VERSION_ID < 80000) {
+            $disableLibxmlEntityLoader = libxml_disable_entity_loader(true);
+            $respObject = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOERROR);
+            libxml_disable_entity_loader($disableLibxmlEntityLoader);
+        } else {
+            $respObject = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOERROR);
+        }
+
         if ($respObject === false) {
             throw new InvalidArgumentException('Syntax error.');
         }
