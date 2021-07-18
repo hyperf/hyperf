@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\ServiceGovernance;
+namespace Hyperf\ServiceGovernanceConsul;
 
 use Hyperf\Consul\AgentInterface;
 use Hyperf\Consul\Health;
@@ -17,8 +17,8 @@ use Hyperf\Consul\HealthInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Guzzle\ClientFactory;
 use Hyperf\LoadBalancer\Node;
+use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\ServiceGovernance\Exception\ComponentRequiredException;
-use Hyperf\ServiceGovernance\Register\ConsulAgent;
 use Psr\Container\ContainerInterface;
 
 class ConsulDriver implements DriverInterface

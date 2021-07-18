@@ -9,9 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\ServiceGovernance;
+namespace Hyperf\ServiceGovernanceConsul;
 
-use Hyperf\ServiceGovernance\Listener\RegisterServiceListener;
+use Hyperf\ServiceGovernanceConsul\Listener\RegisterDriverListener;
 
 class ConfigProvider
 {
@@ -19,10 +19,10 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                IPReaderInterface::class => IPReader::class,
+                ConsulAgent::class => ConsulAgentFactory::class,
             ],
             'listeners' => [
-                RegisterServiceListener::class,
+                RegisterDriverListener::class,
             ],
             'annotations' => [
                 'scan' => [

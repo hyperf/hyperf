@@ -9,12 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\ServiceGovernance\Listener;
+namespace Hyperf\ServiceGovernanceConsul\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
-use Hyperf\ServiceGovernance\ConsulDriver;
 use Hyperf\ServiceGovernance\DriverManager;
+use Hyperf\ServiceGovernanceConsul\ConsulDriver;
 
 class RegisterDriverListener implements ListenerInterface
 {
