@@ -1,4 +1,6 @@
-# v2.2.0 - TBD
+# v2.2.1 - TBD
+
+# v2.2.0 - 2021-07-19
 
 ## Dependencies Upgrade
 

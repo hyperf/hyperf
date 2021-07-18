@@ -1,6 +1,6 @@
 # 视图引擎
 
-> 基于 laravel blade 模板引擎改写, 支持原始 blade 模板引擎的语法.
+> 基于 Laravel blade 模板引擎改写, 支持原始 blade 模板引擎的语法.
 
 ```bash
 composer require hyperf/view-engine
