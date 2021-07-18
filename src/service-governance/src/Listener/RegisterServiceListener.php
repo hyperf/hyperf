@@ -19,17 +19,11 @@ use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\ServiceGovernance\DriverManager;
 use Hyperf\ServiceGovernance\IPReaderInterface;
-use Hyperf\ServiceGovernance\Register\ConsulAgent;
 use Hyperf\ServiceGovernance\ServiceManager;
 use Psr\Container\ContainerInterface;
 
 class RegisterServiceListener implements ListenerInterface
 {
-    /**
-     * @var ConsulAgent
-     */
-    protected $consulAgent;
-
     /**
      * @var StdoutLoggerInterface
      */
@@ -57,7 +51,6 @@ class RegisterServiceListener implements ListenerInterface
 
     public function __construct(ContainerInterface $container)
     {
-        $this->consulAgent = $container->get(ConsulAgent::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->serviceManager = $container->get(ServiceManager::class);
         $this->config = $container->get(ConfigInterface::class);
