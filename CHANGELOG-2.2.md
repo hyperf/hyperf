@@ -38,6 +38,7 @@
 - [#3737](https://github.com/hyperf/hyperf/pull/3737) Refactor config-center and config driver
   - Added `AbstractDriver` and merge the duplicate code into the abstraction class
   - Added `PipeMessageInterface` to uniform the message struct of config fetcher process
+- [#3817](https://github.com/hyperf/hyperf/pull/3817) Split `service-governance-consul` from `service-governance`.
 
 ## Deprecated
 

@@ -22,7 +22,9 @@
     },
     "suggest": {
         "hyperf/event": "Required to use RegisterServiceListener.",
-        "hyperf/framework": "Required to use RegisterServiceListener."
+        "hyperf/framework": "Required to use RegisterServiceListener.",
+        "hyperf/service-governance-consul": "Required to use consul adapter.",
+        "hyperf/service-governance-nacos": "Required to use nacos adapter."
     },
     "autoload": {
         "psr-4": {
