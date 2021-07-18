@@ -20,31 +20,37 @@ Hyperf 为您提供了分布式系统的外部化配置支持，默认适配了:
 
 ## 安装
 
-### Apollo
+### 配置中心统一接入层
+
+```bash
+composer require hyperf/config-center
+```
+
+### 使用 Apollo 需安装
 
 ```bash
 composer require hyperf/config-apollo
 ```
 
-### Aliyun ACM
+### 使用 Aliyun ACM 需安装
 
 ```bash
 composer require hyperf/config-aliyun-acm
 ```
 
-### Etcd
+### 使用 Etcd 需安装
 
 ```bash
 composer require hyperf/config-etcd
 ```
 
-### Nacos
+### 使用 Nacos 需安装
 
 ```bash
 composer require hyperf/config-nacos
 ```
 
-### Zookeeper
+### 使用 Zookeeper 需安装
 
 ```bash
 composer require hyperf/config-zookeeper
@@ -52,45 +58,7 @@ composer require hyperf/config-zookeeper
 
 ## 接入配置中心
 
-### 接入 Etcd 配置中心
-
-如果需要使用 `ETCD` 配置中心，则首先需要添加 `Etcd 客户端` 配置文件 `etcd.php`
-
-```php
-<?php
-return [
-    'uri' => 'http://127.0.0.1:2379',
-    'version' => 'v3beta',
-    'options' => [
-        'timeout' => 10,
-    ],
-];
-```
-
-### 接入 Nacos 配置中心
-
-如果需要使用 `Nacos` 配置中心，则首先需要添加 `Nacos 客户端` 配置文件 `nacos.php`
-
-```php
-<?php
-
-return [
-    // 如果不是 HTTP 协议，则需要直接配置 url
-    // 'url' => '',
-    // Nacos 的 IP 和 端口
-    'host' => '127.0.0.1',
-    'port' => 8848,
-    // 用户名和密码
-    'username' => null,
-    'password' => null,
-    // 相关的 Guzzle 配置，支持自定义
-    'guzzle' => [
-        'config' => [],
-    ],
-];
-```
-
-### 修改配置中心统一配置
+### 配置文件
 
 ```php
 <?php
@@ -102,6 +70,7 @@ use Hyperf\ConfigCenter\Mode;
 return [
     // 是否开启配置中心
     'enable' => (bool) env('CONFIG_CENTER_ENABLE', true),
+    // 使用的驱动类型，对应同级别配置 drivers 下的 key
     'driver' => env('CONFIG_CENTER_DRIVER', 'apollo'),
     // 配置中心的运行模式，多进程模型推荐使用 PROCESS 模式，单进程模型推荐使用 COROUTINE 模式
     'mode' => env('CONFIG_CENTER_MODE', Mode::PROCESS),
@@ -192,12 +161,14 @@ return [
         ],
     ],
 ];
-
 ```
+
+如配置文件不存在可执行 `php bin/hyperf.php vendor:publish hyperf/config-center` 命令来生成。
+
 
 ## 配置更新的作用范围
 
-在默认的功能实现下，是由一个 `ConfigFetcherProcess` 进程根据配置的 `interval` 来向 Apollo 拉取对应 `namespace` 的配置，并通过 IPC 通讯将拉取到的新配置传递到各个 Worker 中，并更新到 `Hyperf\Contract\ConfigInterface` 对应的对象内。   
+在默认的功能实现下，是由一个 `ConfigFetcherProcess` 进程根据配置的 `interval` 来向 配置中心 Server 拉取对应 `namespace` 的配置，并通过 IPC 通讯将拉取到的新配置传递到各个 Worker 中，并更新到 `Hyperf\Contract\ConfigInterface` 对应的对象内。   
 需要注意的是，更新的配置只会更新 `Config` 对象，故仅限应用层或业务层的配置，不涉及框架层的配置改动，因为框架层的配置改动需要重启服务，如果您有这样的需求，也可以通过自行实现 `ConfigFetcherProcess` 来达到目的。
 
 ## 注意事项
