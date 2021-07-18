@@ -8,6 +8,22 @@
 composer require hyperf/service-governance
 ```
 
+## 选择安装对应的适配器
+
+服务注册支持 `Consul` 和 `Nacos`，按需引入对应的适配器组件
+
+- Consul
+
+```shell
+composer require hyperf/service-governance-consul
+```
+
+- Nacos
+
+```shell
+composer require hyperf/service-governance-nacos
+```
+
 # 注册服务
 
 注册服务可通过 `@RpcService` 注解对一个类进行定义，即为发布这个服务了，目前 Hyperf 仅适配了 JSON RPC 协议，具体内容也可到 [JSON RPC 服务](zh-cn/json-rpc.md) 章节了解详情。
