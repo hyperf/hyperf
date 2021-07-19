@@ -45,7 +45,7 @@ class Client implements ClientInterface
     {
         $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
-        $this->client = $container->get(Application::class);
+        $this->client = $container->get(NacosClient::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
