@@ -146,3 +146,4 @@
   * [1.1 升級指南](zh-hk/upgrade/1.1.md)
   * [2.0 升級指南](zh-hk/upgrade/2.0.md)
   * [2.1 升級指南](zh-hk/upgrade/2.1.md)
+  * [2.2 升級指南](zh-hk/upgrade/2.2.md)
