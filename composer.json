@@ -283,6 +283,7 @@
             "HyperfTest\\Command\\": "src/command/tests/",
             "HyperfTest\\ConfigApollo\\": "src/config-apollo/tests/",
             "HyperfTest\\ConfigCenter\\": "src/config-center/tests/",
+            "HyperfTest\\ConfigEtcd\\": "src/config-etcd/tests/",
             "HyperfTest\\ConfigNacos\\": "src/config-nacos/tests/",
             "HyperfTest\\ConfigZookeeper\\": "src/config-zookeeper/tests/",
             "HyperfTest\\Config\\": "src/config/tests/",

@@ -97,6 +97,7 @@
             <directory suffix=".php">./src/di/src</directory>
             <directory suffix=".php">./src/dispatcher/src</directory>
             <directory suffix=".php">./src/elasticsearch/src</directory>
+            <directory suffix=".php">./src/etcd/src</directory>
             <directory suffix=".php">./src/event/src</directory>
             <directory suffix=".php">./src/grpc-client/src</directory>
             <directory suffix=".php">./src/guzzle/src</directory>
