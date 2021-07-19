@@ -1,5 +1,9 @@
 # v2.2.1 - TBD
 
+## Fixed
+
+- [#3828](https://github.com/hyperf/hyperf/pull/3828) Fixed bug that lazy inject does not work for `Hyperf\Redis\Redis` in `PHP8.0`.
+
 # v2.2.0 - 2021-07-19
 
 ## Dependencies Upgrade
