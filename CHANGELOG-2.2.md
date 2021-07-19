@@ -41,6 +41,7 @@
   - Added `AbstractDriver` and merge the duplicate code into the abstraction class
   - Added `PipeMessageInterface` to uniform the message struct of config fetcher process
 - [#3817](https://github.com/hyperf/hyperf/pull/3817) [#3818](https://github.com/hyperf/hyperf/pull/3818) Split `service-governance-consul` from `service-governance`.
+- [#3819](https://github.com/hyperf/hyperf/pull/3819) Use their own configuration below `config_center.php` for config center component which using ETCD and Nacos.
 
 ## Deprecated
 

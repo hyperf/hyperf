@@ -13,6 +13,7 @@ namespace HyperfTest\ConfigNacos;
 
 use Hyperf\ConfigNacos\Client;
 use Hyperf\ConfigNacos\Constants;
+use Hyperf\ConfigNacos\NacosClient;
 use Hyperf\ConfigNacos\Service\IPReaderInterface;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -107,6 +108,10 @@ class ContainerStub
                 var_dump($message);
             });
             return $logger;
+        });
+
+        $container->shouldReceive('get')->with(NacosClient::class)->andReturnUsing(function () use ($container) {
+            return $container->get(Application::class);
         });
 
         $container->shouldReceive('get')->with(Client::class)->andReturnUsing(function () use ($container) {

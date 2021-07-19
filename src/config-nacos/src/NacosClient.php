@@ -11,15 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigNacos;
 
-class ConfigProvider
+use Hyperf\Nacos\Application;
+
+class NacosClient extends Application
 {
-    public function __invoke(): array
-    {
-        return [
-            'dependencies' => [
-                ClientInterface::class => Client::class,
-                NacosClient::class => NacosClientFactory::class,
-            ],
-        ];
-    }
 }

@@ -11,15 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigEtcd;
 
-class ConfigProvider
+interface KVInterface extends \Hyperf\Etcd\KVInterface
 {
-    public function __invoke(): array
-    {
-        return [
-            'dependencies' => [
-                ClientInterface::class => ClientFactory::class,
-                KVInterface::class => KVFactory::class,
-            ],
-        ];
-    }
 }

@@ -50,6 +50,17 @@ return [
                     'type' => 'yml',
                 ],
             ],
+            'client' => [
+                // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
+                // 'url' => '',
+                'host' => '127.0.0.1',
+                'port' => 8848,
+                'username' => null,
+                'password' => null,
+                'guzzle' => [
+                    'config' => null,
+                ],
+            ],
         ],
         'aliyun_acm' => [
             'driver' => Hyperf\ConfigAliyunAcm\AliyunAcmDriver::class,
@@ -73,6 +84,14 @@ return [
                 '/application/test' => 'test',
             ],
             'interval' => 5,
+            'client' => [
+                # Etcd Client
+                'uri' => 'http://127.0.0.1:2379',
+                'version' => 'v3beta',
+                'options' => [
+                    'timeout' => 10,
+                ],
+            ],
         ],
         'zookeeper' => [
             'driver' => Hyperf\ConfigZookeeper\ZookeeperDriver::class,
