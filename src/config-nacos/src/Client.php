@@ -15,6 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Exception\RequestException;
+use Hyperf\Utils\Arr;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Codec\Xml;
 use Psr\Container\ContainerInterface;
@@ -64,7 +65,7 @@ class Client implements ClientInterface
                 $this->logger->error(sprintf('The config of %s read failed from Nacos.', $key));
                 continue;
             }
-            $config[$key] = $this->decode((string) $response->getBody(), $type);
+            $config = Arr::merge($config,$this->decode((string) $response->getBody(), $type));
         }
 
         return $config;

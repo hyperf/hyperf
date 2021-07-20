@@ -36,23 +36,18 @@ return [
             'driver' => Hyperf\ConfigNacos\NacosDriver::class,
             'merge_mode' => Hyperf\ConfigNacos\Constants::CONFIG_MERGE_OVERWRITE,
             'interval' => 3,
-            'default_key' => 'nacos_config',
             'listener_config' => [
                 // dataId, group, tenant, type, content
-                'nacos_config' => [
+                [
                     'tenant' => 'tenant', // corresponding with service.namespaceId
                     'data_id' => 'hyperf-service-config',
-                    'group' => 'DEFAULT_GROUP',
-                ],
-                'nacos_config.data' => [
-                    'data_id' => 'hyperf-service-config-yml',
                     'group' => 'DEFAULT_GROUP',
                     'type' => 'yml',
                 ],
             ],
             'client' => [
                 // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
-                // 'url' => '',
+                // 'uri' => '',
                 'host' => '127.0.0.1',
                 'port' => 8848,
                 'username' => null,

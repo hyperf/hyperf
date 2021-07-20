@@ -32,11 +32,7 @@ class NacosDriver extends AbstractDriver
 
     protected function updateConfig(array $config)
     {
-        $root = $this->config->get('config_center.drivers.nacos.default_key');
         foreach ($config ?? [] as $key => $conf) {
-            if (is_int($key)) {
-                $key = $root;
-            }
             if (is_array($conf) && $this->config->get('config_center.drivers.nacos.merge_mode') === Constants::CONFIG_MERGE_APPEND) {
                 $conf = Arr::merge($this->config->get($key, []), $conf);
             }
