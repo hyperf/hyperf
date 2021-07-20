@@ -41,7 +41,7 @@ return [
 
 `Hyperf\ServiceGovernanceNacos\Listener\MainWorkerStartListener`
 `Hyperf\ServiceGovernanceNacos\Listener\OnShutdownListener`
-`Hyperf\ConfigNacos\Process\InstanceBeatProcess`
+`Hyperf\ServiceGovernanceNacos\Process\InstanceBeatProcess`
 
 然后增加如下配置，以监听 `Shutdown` 事件
 
