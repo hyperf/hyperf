@@ -3,7 +3,7 @@
 ## Fixed
 
 - [#3828](https://github.com/hyperf/hyperf/pull/3828) Fixed bug that lazy inject does not work for `Hyperf\Redis\Redis` in `PHP8.0`.
-- [#3845](https://github.com/hyperf/hyperf/pull/3845) Fixed bug that `watcher` does not works for `v2.2`.
+- [#3845](https://github.com/hyperf/hyperf/pull/3845) Fixed bug that `watcher` does not work for `v2.2`.
 
 # v2.2.0 - 2021-07-19
 
