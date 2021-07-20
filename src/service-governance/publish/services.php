@@ -20,6 +20,7 @@ return [
         'consul' => [
             'uri' => 'http://127.0.0.1:8500',
             'token' => '',
+            'node_filter' => ''
         ],
         'nacos' => [
             // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port

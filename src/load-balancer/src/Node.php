@@ -24,14 +24,20 @@ class Node
     public $host;
 
     /**
+     * @var array
+     */
+    public $extra;
+
+    /**
      * @var int
      */
     public $port;
 
-    public function __construct(string $host, int $port, int $weight = 0)
+    public function __construct(string $host, int $port, array $extra = [], int $weight = 0)
     {
         $this->host = $host;
         $this->port = $port;
+        $this->extra = $extra;
         $this->weight = $weight;
     }
 }

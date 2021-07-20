@@ -229,7 +229,7 @@ abstract class AbstractServiceClient
         $nodes = [];
         foreach ($nodeArray as $node) {
             // @TODO Get and set the weight property.
-            $nodes[] = new Node($node['host'], $node['port']);
+            $nodes[] = new Node($node['host'], $node['port'], $node['extra'] ?? []);
         }
 
         return $nodes;
