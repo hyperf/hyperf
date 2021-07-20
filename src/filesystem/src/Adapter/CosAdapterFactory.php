@@ -12,12 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\Filesystem\Adapter;
 
 use Hyperf\Filesystem\Contract\AdapterFactoryInterface;
-use League\Flysystem\AdapterInterface;
 use Overtrue\Flysystem\Cos\CosAdapter;
 
 class CosAdapterFactory implements AdapterFactoryInterface
 {
-    public function make(array $options): AdapterInterface
+    public function make(array $options)
     {
         return new CosAdapter($options);
     }

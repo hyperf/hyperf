@@ -115,7 +115,6 @@ class RetryTest extends TestCase
         });
         $this->assertEquals(10, $result);
 
-        $this->assertTrue(is_callable(Foo::class . '::fallback'));
         $this->assertTrue(is_callable(Foo::class . '::staticCall'));
     }
 

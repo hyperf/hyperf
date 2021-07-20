@@ -13,11 +13,11 @@ namespace Hyperf\Amqp\Message;
 
 class Type
 {
-    const DIRECT = 'direct';
+    public const DIRECT = 'direct';
 
-    const FANOUT = 'fanout';
+    public const FANOUT = 'fanout';
 
-    const TOPIC = 'topic';
+    public const TOPIC = 'topic';
 
     public static function all()
     {

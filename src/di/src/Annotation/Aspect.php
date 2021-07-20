@@ -11,13 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Annotation;
 
-use Hyperf\Di\BetterReflectionManager;
+use Attribute;
+use Hyperf\Di\ReflectionManager;
 use ReflectionProperty;
 
 /**
  * @Annotation
  * @Target({"CLASS"})
  */
+#[Attribute(Attribute::TARGET_CLASS)]
 class Aspect extends AbstractAnnotation
 {
     /**
@@ -44,17 +46,17 @@ class Aspect extends AbstractAnnotation
     protected function collect(string $className)
     {
         // Create the aspect instance without invoking their constructor.
-        $reflectionClass = BetterReflectionManager::reflectClass($className);
-        $properties = $reflectionClass->getImmediateProperties(ReflectionProperty::IS_PUBLIC);
+        $reflectionClass = ReflectionManager::reflectClass($className);
+        $properties = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
         $instanceClasses = $instanceAnnotations = [];
         $instancePriority = null;
         foreach ($properties as $property) {
             if ($property->getName() === 'classes') {
-                $instanceClasses = $property->getDefaultValue();
+                $instanceClasses = ReflectionManager::getPropertyDefaultValue($property);
             } elseif ($property->getName() === 'annotations') {
-                $instanceAnnotations = $property->getDefaultValue();
+                $instanceAnnotations = ReflectionManager::getPropertyDefaultValue($property);
             } elseif ($property->getName() === 'priority') {
-                $instancePriority = $property->getDefaultValue();
+                $instancePriority = ReflectionManager::getPropertyDefaultValue($property);
             }
         }
 

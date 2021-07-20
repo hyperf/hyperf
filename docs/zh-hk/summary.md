@@ -70,6 +70,7 @@
   * [架構理念](zh-hk/microservice.md)
   * [JSON RPC 服務](zh-hk/json-rpc.md)
   * [gRPC 服務](zh-hk/grpc.md)
+  * [多路複用 RPC 服務](zh-hk/rpc-multiplex.md) 
   * [服務註冊](zh-hk/service-register.md)
   * [服務重試](zh-hk/retry.md)
   * [服務熔斷及降級](zh-hk/circuit-breaker.md)
@@ -119,6 +120,8 @@
   * [開發者工具](zh-hk/devtool.md)
   * [Swoole Tracker](zh-hk/swoole-tracker.md)
   * [Phar 打包器](zh-hk/phar.md)
+  * [DAG](zh-hk/dag.md)
+  * [RPN - 逆波蘭表示法](zh-hk/rpn.md)
 
 * 應用部署
 
@@ -143,3 +146,4 @@
   * [1.1 升級指南](zh-hk/upgrade/1.1.md)
   * [2.0 升級指南](zh-hk/upgrade/2.0.md)
   * [2.1 升級指南](zh-hk/upgrade/2.1.md)
+  * [2.2 升級指南](zh-hk/upgrade/2.2.md)

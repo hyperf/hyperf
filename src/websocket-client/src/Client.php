@@ -75,10 +75,7 @@ class Client
      */
     public function push(string $data, int $opcode = WEBSOCKET_OPCODE_TEXT, int $flags = null): bool
     {
-        if (isset($flags)) {
-            return $this->client->push($data, $opcode, $flags);
-        }
-        return $this->client->push($data, $opcode);
+        return $this->client->push($data, $opcode, $flags);
     }
 
     public function close(): bool

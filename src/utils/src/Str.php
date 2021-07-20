@@ -70,7 +70,7 @@ class Str
         }
 
         foreach (static::charsArray() as $key => $val) {
-            $value = str_replace($val, $key, $value);
+            $value = str_replace($val, (string) $key, $value);
         }
 
         return preg_replace('/[^\x20-\x7E]/u', '', $value);

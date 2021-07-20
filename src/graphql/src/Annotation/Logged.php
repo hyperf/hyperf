@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\GraphQL\Annotation;
 
+use Attribute;
 use Hyperf\Di\Annotation\AnnotationInterface;
 
 /**
  * @Annotation
  * @Target({"METHOD"})
  */
+#[Attribute(Attribute::TARGET_METHOD)]
 class Logged extends \TheCodingMachine\GraphQLite\Annotations\Logged implements AnnotationInterface
 {
     use AnnotationTrait;

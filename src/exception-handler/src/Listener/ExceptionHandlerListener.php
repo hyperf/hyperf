@@ -20,7 +20,7 @@ use SplPriorityQueue;
 
 class ExceptionHandlerListener implements ListenerInterface
 {
-    const HANDLER_KEY = 'exceptions.handler';
+    public const HANDLER_KEY = 'exceptions.handler';
 
     /**
      * @var ConfigInterface
