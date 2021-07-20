@@ -18,6 +18,7 @@
     },
     "require": {
         "php": ">=7.3",
+        "ext-pcntl": "*",
         "doctrine/annotations": "^1.6",
         "doctrine/instantiator": "^1.0",
         "nikic/php-parser": "^4.1",
