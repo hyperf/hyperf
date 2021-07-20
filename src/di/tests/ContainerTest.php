@@ -14,6 +14,7 @@ namespace HyperfTest\Di;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
 use HyperfTest\Di\Stub\Bar;
+use HyperfTest\Di\Stub\Container\ContainerProxy;
 use HyperfTest\Di\Stub\Foo;
 use HyperfTest\Di\Stub\FooInterface;
 use Mockery;
@@ -56,5 +57,10 @@ class ContainerTest extends TestCase
             return Mockery::mock(Bar::class);
         });
         $this->assertInstanceOf(Bar::class, $foo = $container->make(FooInterface::class));
+    }
+
+    public function testPsrContainer()
+    {
+        $this->assertInstanceOf(Container::class, new ContainerProxy());
     }
 }
