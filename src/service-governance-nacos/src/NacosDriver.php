@@ -87,7 +87,6 @@ class NacosDriver implements DriverInterface
             $response = $this->client->service->create($name, [
                 'groupName' => $this->config->get('services.drivers.nacos.group_name'),
                 'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
-                'metadata' => $metadata,
             ]);
 
             if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
@@ -98,7 +97,6 @@ class NacosDriver implements DriverInterface
         }
 
         $response = $this->client->instance->register($host, $port, $name, [
-            'metadata' => $metadata,
             'groupName' => $this->config->get('services.drivers.nacos.group_name'),
             'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
         ]);
