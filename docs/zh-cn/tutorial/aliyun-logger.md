@@ -84,9 +84,9 @@ registry.cn-hangzhou.aliyuncs.com/log-service/logtail
 |      模式      |                   完整正则模式                    |                 |
 |    单行模式    |                       false                       |                 |
 |    日志样例    |     `[2019-03-07 11:58:57] hyperf.WARNING: xxx`     |                 |
-| 首行正则表达式 |         \[\d+-\d+-\d+\s\d+:\d+:\d+\]\s.*          |                 |
+| 首行正则表达式 |         \\\[\d+-\d+-\d+\s\d+:\d+:\d+\]\s.*          |                 |
 |    提取字段    |                       true                        |                 |
-|   正则表达式   | \[(\d+-\d+-\d+\s\d+:\d+:\d+)\]\s(\w+)\.(\w+):(.*) |                 |
+|   正则表达式   | \\\[(\d+-\d+-\d+\s\d+:\d+:\d+)\]\s(\w+)\.(\w+):(.*) |                 |
 |  日志抽取内容  |              time name level content              |                 |
 
 5. 查询分析配置
