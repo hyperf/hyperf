@@ -301,10 +301,7 @@ use Mockery;
 
 class DemoLogicTest extends HttpTestCase
 {
-    /**
-     * @after
-     */
-    public function tearDownAfterMethod()
+    public function tearDown(): void
     {
         Mockery::close();
     }
