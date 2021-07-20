@@ -18,7 +18,6 @@
     },
     "require": {
         "php": ">=7.3",
-        "ext-pcntl": "*",
         "doctrine/annotations": "^1.6",
         "doctrine/instantiator": "^1.0",
         "nikic/php-parser": "^4.1",
@@ -28,7 +27,8 @@
         "vlucas/phpdotenv": "^5.0"
     },
     "suggest": {
-        "hyperf/config": "Require this component for annotation scan progress to retrieve the scan path."
+        "hyperf/config": "Require this component for annotation scan progress to retrieve the scan path.",
+        "ext-pcntl": "Required to scan with annotations."
     },
     "autoload": {
         "psr-4": {

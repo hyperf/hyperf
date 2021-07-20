@@ -26,7 +26,7 @@
         "psr/container": "^1.0|^2.0"
     },
     "suggest": {
-        "ext-swoole": "Required to use swoole Swoole MySQL."
+        "ext-swoole": "Required to use Swoole Coroutine MySQL."
     },
     "config": {
         "sort-packages": true
