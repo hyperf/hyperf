@@ -23,7 +23,7 @@ trait LazyProxyTrait
         }
     }
 
-    public function __call(string $method, array $arguments)
+    public function __call($method, $arguments)
     {
         $obj = $this->getInstance();
         return call_user_func([$obj, $method], ...$arguments);
