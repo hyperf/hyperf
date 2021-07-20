@@ -73,7 +73,7 @@ class ConsulDriver implements DriverInterface
             if ($passing) {
                 $address = $service['Address'] ?? '';
                 $port = (int) ($service['Port'] ?? 0);
-                if (isset($nodeFiltero) and is_callable($nodeFilter)) {
+                if (isset($nodeFilter) and is_callable($nodeFilter)) {
                     $extra = $nodeFilter($node);
                 }
                 // @TODO Get and set the weight property.
