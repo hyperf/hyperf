@@ -118,7 +118,7 @@ public function sayHello(HiUser $user)
 
 - 如果想更深入一点
 
-gRPC server 如何对 gRPC 请求进行处理的: `\Hyperf\GrpcServer\CoreMiddleware::process()` (`vendor/hyperf/grpc-server/src/CoreMiddleware.php:46`, 复制后直接使用 phpstorm 打开), 解析出 `request_uri`, 即得到 `/{package}.{service}/{rpc}` 信息, 然后调用好封装好的 gRPC 编解码类 `\Hyperf\Grpc\Parser::deserializeMessage`(`vendor/hyperf/grpc-server/src/CoreMiddleware.php:137`), 就可以获取到请求的明文信息
+gRPC server 如何对 gRPC 请求进行处理的: `\Hyperf\GrpcServer\CoreMiddleware::process()` (`vendor/hyperf/grpc-server/src/CoreMiddleware.php:46`, 复制后直接使用 phpstorm 打开), 解析出 `request_uri`, 即得到 `/{package}.{service}/{rpc}` 信息, 然后调用好封装好的 gRPC 编解码类 `\Hyperf\Grpc\Parser::deserializeMessage`(`vendor/hyperf/grpc-server/src/CoreMiddleware.php:139`), 就可以获取到请求的明文信息
 
 gRPC server 如何进行 gRPC 响应, 相信你可以根据上面的信息, 自己发现.
 
