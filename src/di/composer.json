@@ -28,7 +28,7 @@
     },
     "suggest": {
         "hyperf/config": "Require this component for annotation scan progress to retrieve the scan path.",
-        "ext-pcntl": "Required to scan with annotations."
+        "ext-pcntl": "Required to scan annotations."
     },
     "autoload": {
         "psr-4": {
