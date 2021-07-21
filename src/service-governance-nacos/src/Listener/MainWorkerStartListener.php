@@ -86,21 +86,21 @@ class MainWorkerStartListener implements ListenerInterface
                 'selector' => $selector,
             ];
 
-            if ($response->getStatusCode() === 404 ||
-                ($response->getStatusCode() === 500 && strpos((string)$response->getBody(), 'is not found') > 0)) {
+            if ($response->getStatusCode() === 404
+                || ($response->getStatusCode() === 500 && strpos((string) $response->getBody(), 'is not found') > 0)) {
                 $response = $client->service->create($serviceName, $optional);
-                if ($response->getStatusCode() !== 200 || (string)$response->getBody() !== 'ok') {
+                if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
                     throw new RequestException(sprintf('Failed to create nacos service %s!', $serviceName));
                 }
                 $this->logger->info(sprintf('Nacos service %s was created successfully!', $serviceName));
             } elseif ($response->getStatusCode() === 200) {
                 $response = $client->service->update($serviceName, $optional);
-                if ($response->getStatusCode() !== 200 || (string)$response->getBody() !== 'ok') {
+                if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
                     throw new RequestException(sprintf('Failed to update nacos service %s!', $serviceName));
                 }
                 $this->logger->info(sprintf('Nacos service %s was updated successfully!', $serviceName));
             } else {
-                throw new RequestException((string)$response->getBody(), $response->getStatusCode());
+                throw new RequestException((string) $response->getBody(), $response->getStatusCode());
             }
 
             // Register Instance to Nacos.
@@ -131,16 +131,16 @@ class MainWorkerStartListener implements ListenerInterface
                     'cluster' => $cluster,
                 ]));
 
-                if ($response->getStatusCode() === 404 ||
-                    ($response->getStatusCode() === 500 && strpos((string)$response->getBody(), 'no ips found') > 0)) {
+                if ($response->getStatusCode() === 404
+                    || ($response->getStatusCode() === 500 && strpos((string) $response->getBody(), 'no ips found') > 0)) {
                     $response = $client->instance->register($ip, $port, $serviceName, $optionalData);
-                    if ($response->getStatusCode() !== 200 || (string)$response->getBody() !== 'ok') {
+                    if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
                         throw new RequestException(sprintf('Failed to create nacos instance %s:%d!', $ip, $port));
                     }
                     $this->logger->info(sprintf('Nacos instance %s:%d was created successfully!', $ip, $port));
                 } elseif ($response->getStatusCode() === 200) {
                     $response = $client->instance->update($ip, $port, $serviceName, $optionalData);
-                    if ($response->getStatusCode() !== 200 || (string)$response->getBody() !== 'ok') {
+                    if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
                         throw new RequestException(sprintf('Failed to update nacos instance %s:%d!', $ip, $port));
                     }
                     $this->logger->info(sprintf('Nacos instance %s:%d was updated successfully!', $ip, $port));
