@@ -79,23 +79,25 @@ memory_limit=-1
 
 ## Interface 不存在
 
-在 2.0-2.1 版本时，为了实现 AOP 作用于非 DI 管理的对象（如 `new` 关键词实例化的对象时），底层实现采用了 `BetterReflection` 组件来实现相关功能，带来新的编程体验的同时，也还是存在一些此前未攻克的问题，如下:
+在 `2.0` - `2.1` 版本时，为了实现 `AOP` 作用于非 `DI` 管理的对象（如 `new` 关键词实例化的对象时），底层实现采用了 `BetterReflection` 组件来实现相关功能，带来新的编程体验的同时，也带来了一些很难攻克的问题，如下:
 
 - 无扫描缓存时项目启动很慢
 - 特殊场景下 `Inject` 和 `Value` 不生效
 - `BetterReflection` 尚未支持 PHP 8 (截止 2.2 发版时)
 
-在新的版本里，弃用了 `BetterReflection` 的应用，采用了 `子进程扫描` 的方式来解决以上这些痛点，但在低版本的 PHP 中也有一些不兼容的情况：
+在新的版本里，弃用了 `BetterReflection` 的应用，采用了 `子进程扫描` 的方式来解决以上这些痛点，但在低版本的 `PHP` 中也有一些不兼容的情况：
 
-使用 PHP 7.3 启动应用后遇到类似如下错误：
+使用 `PHP 7.3` 启动应用后遇到类似如下错误：
 
 ```bash
 PHP Fatal error:  Interface 'Hyperf\Signal\SignalHandlerInterface' not found in vendor/hyperf/process/src/Handler/ProcessStopHandler.php on line 17
 ```
 
-此问题是由于在 PHP 7.3 中通过 `子进程扫描` 的方式去获取反射，在某个类中实现了一个不存在的 `Interface` ，就会导致抛出 `Interface not found` 的异常，而高版本的 PHP 则不会。
+此问题是由于在 `PHP 7.3` 中通过 `子进程扫描` 的方式去获取反射，在某个类中实现了一个不存在的 `Interface` ，就会导致抛出 `Interface not found` 的异常，而高版本的 `PHP` 则不会。
 
 解决方法为创建对应的 `Interface` 并正常引入。上文中的报错解决方法为安装 `hyperf/signal` 组件即可。
+
+> 当然，最好还是可以升级到 7.4 或者 8.0 版本
 
 ```bash
 composer require hyperf/signal
