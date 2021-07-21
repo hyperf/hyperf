@@ -11,10 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpServer\Annotation;
 
+use Attribute;
+
 /**
  * @Annotation
  * @Target({"METHOD"})
  */
+#[Attribute(Attribute::TARGET_METHOD)]
 class PutMapping extends Mapping
 {
     public $methods = ['PUT'];

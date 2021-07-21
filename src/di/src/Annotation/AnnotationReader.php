@@ -71,7 +71,8 @@ class AnnotationReader implements Reader
         'example' => true,
         'filesource' => true,
         'global' => true,
-        'ignore' => true, /* Can we enable this? 'index' => true, */ 'internal' => true,
+        'ignore' => true, /* Can we enable this? 'index' => true, */
+        'internal' => true,
         'license' => true, 'link' => true,
         'method' => true,
         'package' => true, 'param' => true, 'property' => true, 'property-read' => true, 'property-write' => true,
@@ -205,6 +206,11 @@ class AnnotationReader implements Reader
 
     public function getClassAnnotations(ReflectionClass $class)
     {
+        if (\PHP_VERSION_ID >= 80000) {
+            if ($attributes = $this->getAttributes($class)) {
+                return $attributes;
+            }
+        }
         $this->parser->setTarget(Target::TARGET_CLASS);
         $this->parser->setImports($this->getClassImports($class));
         $this->parser->setIgnoredAnnotationNames($this->getIgnoredAnnotationNames($class));
@@ -226,8 +232,26 @@ class AnnotationReader implements Reader
         return null;
     }
 
+    public function getAttributes(\Reflector $reflection): array
+    {
+        $result = [];
+        if (! method_exists($reflection, 'getAttributes')) {
+            return $result;
+        }
+        $attributes = $reflection->getAttributes();
+        foreach ($attributes as $attribute) {
+            $result[] = $attribute->newInstance();
+        }
+        return $result;
+    }
+
     public function getPropertyAnnotations(ReflectionProperty $property)
     {
+        if (\PHP_VERSION_ID >= 80000) {
+            if ($attributes = $this->getAttributes($property)) {
+                return $attributes;
+            }
+        }
         $class = $property->getDeclaringClass();
         $context = 'property ' . $class->getName() . '::$' . $property->getName();
 
@@ -254,6 +278,11 @@ class AnnotationReader implements Reader
 
     public function getMethodAnnotations(ReflectionMethod $method)
     {
+        if (\PHP_VERSION_ID >= 80000) {
+            if ($attributes = $this->getAttributes($method)) {
+                return $attributes;
+            }
+        }
         $class = $method->getDeclaringClass();
         $context = 'method ' . $class->getName() . '::' . $method->getName() . '()';
 

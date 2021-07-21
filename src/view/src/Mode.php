@@ -13,7 +13,7 @@ namespace Hyperf\View;
 
 class Mode
 {
-    const TASK = 'task';
+    public const TASK = 'task';
 
-    const SYNC = 'sync';
+    public const SYNC = 'sync';
 }

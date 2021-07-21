@@ -16,11 +16,11 @@ use Swoole\Coroutine\Socket;
 
 class Subscriber
 {
-    const TYPE_RESPONSE = 0;
+    public const TYPE_RESPONSE = 0;
 
-    const TYPE_ERROR = 1;
+    public const TYPE_ERROR = 1;
 
-    const TYPE_MESSAGE = 2;
+    public const TYPE_MESSAGE = 2;
 
     /**
      * @var \Swoole\Coroutine\Socket

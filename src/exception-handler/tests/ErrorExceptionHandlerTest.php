@@ -26,7 +26,11 @@ class ErrorExceptionHandlerTest extends TestCase
         $listener->process((object) []);
 
         $this->expectException(\ErrorException::class);
-        $this->expectExceptionMessage('Undefined offset: 1');
+        if (version_compare(PHP_VERSION, '8.0', '>=')) {
+            $this->expectExceptionMessage('Undefined array key 1');
+        } else {
+            $this->expectExceptionMessage('Undefined offset: 1');
+        }
         try {
             $array = [];
             $array[1];

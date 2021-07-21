@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\HttpServer\Router;
 
+use Hyperf\Di\Annotation\MultipleAnnotation;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\GetMapping;
@@ -88,7 +89,7 @@ class DispatcherFactoryTest extends TestCase
             ['index' => [
                 GetMapping::class => new GetMapping(['path' => '/index', 'options' => ['name' => 'index.get', 'id' => 1]]),
                 PostMapping::class => new PostMapping(['path' => '/index', 'options' => ['name' => 'index.post']]),
-                Middleware::class => new Middleware(['middleware' => FooMiddleware::class]),
+                Middleware::class => new MultipleAnnotation(new Middleware(['middleware' => FooMiddleware::class])),
             ]],
             [SetHeaderMiddleware::class]
         );

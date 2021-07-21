@@ -21,6 +21,7 @@ class OriginClass extends ParentClass
      * @Inject
      * @var Tar
      */
+    #[Inject]
     protected $foo;
 
     public function getFoo()

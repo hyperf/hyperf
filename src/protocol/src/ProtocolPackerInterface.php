@@ -15,7 +15,7 @@ use Hyperf\Contract\PackerInterface;
 
 interface ProtocolPackerInterface extends PackerInterface
 {
-    const HEAD_LENGTH = 4;
+    public const HEAD_LENGTH = 4;
 
     public function length(string $head): int;
 }

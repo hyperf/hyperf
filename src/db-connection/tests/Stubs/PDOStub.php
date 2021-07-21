@@ -38,6 +38,9 @@ class PDOStub extends \PDO
 
     public function prepare($statement, $driver_options = null)
     {
+        if (version_compare(PHP_VERSION, '8.0', '>=')) {
+            return new PDOStatementStubPHP8($statement);
+        }
         return new PDOStatementStub($statement);
     }
 

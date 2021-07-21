@@ -177,9 +177,3 @@ class UserService
 ### 最好只在 `Listener` 中注入 `ContainerInterface`。
 
 最好只在 `Listener` 中注入 `ContainerInterface`，而其他的組件在 `process` 中通過 `container` 獲取。框架啟動開始時，會實例化 `EventDispatcherInterface`，這個時候還不是協程環境，如果 `Listener` 中注入了可能會觸發協程切換的類，就會導致框架啟動失敗。
-
-### `BootApplication` 事件儘量避免 IO 操作 
-
-> `1.1.6` 版本及更新的版本已優化此問題
-
-在 `1.1.6` 版本之前，因為 `BootApplication` 是在 `Command` 初始化 和 `Server` 啟動前觸發，所以當前環境一定是非協程環境，一旦使用了協程 `API`，則會導致啟動失敗。

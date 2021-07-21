@@ -4,7 +4,7 @@ English | [中文](./README-CN.md)
 
 <p align="center">
   <a href="https://github.com/hyperf/hyperf/releases"><img src="https://poser.pugx.org/hyperf/hyperf/v/stable" alt="Stable Version"></a>
-  <a href="https://www.php.net"><img src="https://img.shields.io/badge/php-%3E=7.3-brightgreen.svg?maxAge=2592000" alt="Php Version"></a>
+  <a href="https://www.php.net"><img src="https://img.shields.io/badge/php-%3E=7.4-brightgreen.svg?maxAge=2592000" alt="Php Version"></a>
   <a href="https://github.com/swoole/swoole-src"><img src="https://img.shields.io/badge/swoole-%3E=4.5-brightgreen.svg?maxAge=2592000" alt="Swoole Version"></a>
   <a href="https://github.com/hyperf/hyperf/blob/master/LICENSE"><img src="https://img.shields.io/github/license/hyperf/hyperf.svg?maxAge=2592000" alt="Hyperf License"></a>
 </p>
@@ -17,7 +17,7 @@ English | [中文](./README-CN.md)
 
 # Introductions
 
-Hyperf is an extremely performant and flexible PHP CLI framework based on `Swoole 4.5+`, powered by the state-of-the-art coroutine server and a large number of battle-tested components. Aside from the decisive benchmark outmatching against PHP-FPM frameworks, Hyperf also distinct itself by its focus on flexibility and composability.  Hyperf ships with an AOP-enabling dependency injector to ensure components and classes are pluggable and meta programmable. All of its core components strictly follow the PSR standards and thus can be used in other frameworks. 
+Hyperf is an extremely performant and flexible progressive PHP CLI framework, powered by the state-of-the-art coroutine server and a large number of battle-tested components. Aside from the decisive benchmark outmatching against PHP-FPM frameworks, Hyperf also distinct itself by its focus on flexibility and composability.  Hyperf ships with an AOP-enabling dependency injector to ensure components and classes are pluggable and meta programmable. All of its core components strictly follow the PSR standards and thus can be used in other frameworks. 
 
 Hyperf's architecture is built upon the combination of `Coroutine`, `Dependency injection`, `Events`, `Annotation`, `AOP (aspect-oriented programming)`. Core components provided by Hyperf can be used out of the box in coroutine context. The set includes but not limited to: `MySQL coroutine client`, `Redis coroutine client`, `WebSocket server and client`, `JSON RPC server and client`, `gRPC server and client`, `Zipkin/Jaeger (OpenTracing) client`, `Guzzle HTTP client`, `Elasticsearch client`, `Consul client`, `ETCD client`, `AMQP component`, `Apollo configuration center`, `Aliyun ACM`, `ETCD configuration center`, `Token bucket algorithm-based limiter`, `Universal connection pool`, `Circuit breaker`, `Swagger`, `Swoole Tracker`, `Snowflake`, `Simply Redis MQ`, `RabbitMQ`, `NSQ`, `Nats`, `Seconds level crontab`, `Custom Processes`, etc. Be assured Hyperf is still a PHP framework. You will also find familiar packages such as `Middleware`, `Event Manager`,  `Coroutine optimized Eloquent ORM` (And Model Cache!), `Translation`, `Validation`, `View engine (Blade/Smarty/Twig/Plates/ThinkTemplate)` and more at your command.
 
@@ -29,7 +29,7 @@ Many new PHP frameworks had emerged over the years, yet we were still waiting fo
 
 `Hyperspeed + Flexibility = Hyperf`. The equation hidden in the name exhibits Hyperf's genetic ambition.  
 
-Hyperspeed: Leveraging Swoole coroutine, Hyperf is capable of handling massive traffic. Hyperf team made many optimizations throughout the framework to eliminate every obstacle between the end-user and the roaring engine.   
+Hyperspeed: Leveraging Swoole and Swow coroutine, Hyperf is capable of handling massive traffic. Hyperf team made many optimizations throughout the framework to eliminate every obstacle between the end-user and the roaring engine.   
 
 Flexibility: Hyperf believes its Dependency Injection component is best in class. With the help of Hyperf DI, components and class are all pluggable and meta programmable. On the other hand, All Hyperf components are mean to be shared interchangeably with the world, as they all follow [PSR](https://www.php-fig.org/psr) or open contracts.
 

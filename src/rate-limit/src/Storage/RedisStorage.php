@@ -23,7 +23,7 @@ use function make;
 
 class RedisStorage implements Storage, GlobalScope
 {
-    const KEY_PREFIX = 'rateLimiter:storage:';
+    public const KEY_PREFIX = 'rateLimiter:storage:';
 
     /**
      * @var Mutex
