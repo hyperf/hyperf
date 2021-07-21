@@ -65,7 +65,7 @@ class Client implements ClientInterface
                 $this->logger->error(sprintf('The config of %s read failed from Nacos.', $key));
                 continue;
             }
-            $config = Arr::merge($config,$this->decode((string) $response->getBody(), $type));
+            $config[$key] = $this->decode((string) $response->getBody(), $type);
         }
 
         return $config;
