@@ -10,7 +10,7 @@ composer require hyperf/filesystem
 
 `League\Flysystem` 组件 `v1.0` 和 `v2.0` 版本变动较大，所以需要根据不同的版本，安装对应的适配器
 
-- 阿里与 OSS 适配器
+- 阿里云 OSS 适配器
 
 `Flysystem v1.0` 版本
 
