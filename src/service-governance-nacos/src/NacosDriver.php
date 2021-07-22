@@ -140,6 +140,10 @@ class NacosDriver implements DriverInterface
             return false;
         }
 
+        if ($response->getStatusCode() === 500 && strpos((string) $response->getBody(), 'no matched ip') > 0) {
+            return false;
+        }
+
         if ($response->getStatusCode() !== 200) {
             throw new RequestException(sprintf('Failed to get nacos instance %s:%d for %s!', $host, $port, $name));
         }
