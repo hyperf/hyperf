@@ -118,7 +118,7 @@ Correspondence between the definition in the .proto file and gRPC server routing
 
 - If you would like to go further in this
 
-How gRPC server processes gRPC requests(`vendor/hyperf/grpc-server/src/CoreMiddleware.php)`: `\Hyperf\GrpcServer\CoreMiddleware::process()`, parse the `request_uri` and get the `/{package}.{service}/{rpc}` information, and then call the encapsulated gRPC decode class `\Hyperf\Grpc\Parser::deserializeMessage`, you can get the requested plaintext information
+How gRPC server processes gRPC requests(`vendor/hyperf/grpc-server/src/CoreMiddleware.php)`: `\Hyperf\GrpcServer\CoreMiddleware::process()` parse the `request_uri` and get the `/{package}.{service}/{rpc}` information, and then call the encapsulated gRPC decode class `\Hyperf\Grpc\Parser::deserializeMessage`, you can get the requested plaintext information
 
 How gRPC server responds to gRPC? You may get the answer through provided information above.
 
