@@ -133,7 +133,7 @@
 
 - [donjan-deng/hyperf-permission](https://github.com/donjan-deng/hyperf-permission) 基于 [spatie/laravel-permission](https://github.com/spatie/laravel-permission) 开发的适配 Hyperf 的权限组件
 - [fx/hyperf-http-auth](https://github.com/nfangxu/hyperf-http-auth) 根据 laravel 中的 auth 组件改写的, 适配 hyperf 框架
-- [96qbhy/hyperf-auth](https://github.com/qbhy/hyperf-auth) 参考 laravel 的 auth 组件设计，支持 jwt 和 session 驱动，更轻巧更好用
+- [96qbhy/hyperf-auth](https://github.com/qbhy/hyperf-auth) 参考 laravel 的 auth 组件设计，支持 jwt、session、sso(单点多设备登录) 驱动
 - [hyperf-ext/jwt](https://github.com/hyperf-ext/jwt) JWT 组件，实现了完整用于 JWT 认证的能力
 - [hyperf-ext/auth](https://github.com/hyperf-ext/auth) 移植自 `illuminate/auth`，基本完整的实现了 Laravel Auth 的功能特性
 - [donjan-deng/hyperf-casbin](https://github.com/donjan-deng/hyperf-casbin) 适配于 Hyperf 的开源访问控制框架 [Casbin](https://casbin.org/docs/zh-CN/overview)
