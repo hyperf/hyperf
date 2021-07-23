@@ -20,7 +20,7 @@ jobs:
     env:
       SW_VERSION: ${{ matrix.sw-version }}
       MYSQL_VERSION: '5.7'
-      YASD_VERSION: 'v0.3.8'
+      YASD_VERSION: 'v0.3.9'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
