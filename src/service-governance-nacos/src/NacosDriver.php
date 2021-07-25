@@ -20,6 +20,7 @@ use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class NacosDriver implements DriverInterface
 {
@@ -87,7 +88,7 @@ class NacosDriver implements DriverInterface
             $response = $this->client->service->create($name, [
                 'groupName' => $this->config->get('services.drivers.nacos.group_name'),
                 'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
-                'metadata' => $metadata,
+                'metadata' => $this->formatMetadata($metadata),
             ]);
 
             if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
@@ -98,9 +99,9 @@ class NacosDriver implements DriverInterface
         }
 
         $response = $this->client->instance->register($host, $port, $name, [
-            'metadata' => $metadata,
             'groupName' => $this->config->get('services.drivers.nacos.group_name'),
             'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
+            'metadata' => $this->formatMetadata($metadata),
         ]);
 
         if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
@@ -138,11 +139,7 @@ class NacosDriver implements DriverInterface
             'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
         ]);
 
-        if ($response->getStatusCode() === 404) {
-            return false;
-        }
-
-        if ($response->getStatusCode() === 500 && strpos((string) $response->getBody(), 'no ips found') > 0) {
+        if ($this->isNoIpsFound($response)) {
             return false;
         }
 
@@ -153,6 +150,42 @@ class NacosDriver implements DriverInterface
         $this->registerHeartbeat($name, $host, $port);
 
         return true;
+    }
+
+    protected function isNoIpsFound(ResponseInterface $response): bool
+    {
+        if ($response->getStatusCode() === 404) {
+            return true;
+        }
+
+        if ($response->getStatusCode() === 500) {
+            $messages = [
+                'no ips found',
+                'no matched ip',
+            ];
+            $body = (string) $response->getBody();
+            foreach ($messages as $message) {
+                if (strpos($body, $message) !== false) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    protected function formatMetadata(array $metadata): ?string
+    {
+        if (empty($metadata)) {
+            return null;
+        }
+
+        $result = '';
+        foreach ($metadata as $k => $v) {
+            $result .= $k . '=' . $v;
+        }
+
+        return urlencode($result);
     }
 
     protected function registerHeartbeat(string $name, string $host, int $port): void
