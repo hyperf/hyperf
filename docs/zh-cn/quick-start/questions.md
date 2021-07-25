@@ -1,82 +1,5 @@
 # 常见问题
 
-## `Inject` 或 `Value` 注解不生效
-
-`2.0` 使用了构造函数中注入 `Inject` 和 `Value` 的功能，以下两种场景，可能会导致注入失效，请注意使用。
-
-1. 原类没有使用 `Inject` 或 `Value`，但父类使用了 `Inject` 或 `Value`，且原类写了构造函数，同时又没有调用父类构造函数的情况。
-
-这样就会导致原类不会生成代理类，而实例化的时候又调用了自身的构造函数，故没办法执行到父类的构造函数。
-所以父类代理类中的方法 `__handlePropertyHandler` 就不会执行，那么 `Inject` 或 `Value` 注解就不会生效。
-
-```php
-class ParentClass {
-    /**
-     * @Inject
-     * @var Service
-     */
-    protected $value;
-}
-
-class Origin extends ParentClass
-{
-    public function __construct() {}
-}
-```
-
-2. 原类没有使用 `Inject` 或 `Value`，但 `Trait` 中使用了 `Inject` 或 `Value`。
-
-这样就会导致原类不会生成代理类，故没办法执行构造函数里的 `__handlePropertyHandler`，所以 `Trait` 的 `Inject` 或 `Value` 注解就不会生效。
-
-```php
-trait OriginTrait {
-    /**
-     * @Inject
-     * @var Service
-     */
-    protected $value;
-}
-
-class Origin
-{
-    use OriginTrait;
-}
-```
-
-基于上述两种情况，可见 `原类` 是否生成代理类至关重要，所以，如果使用了带有 `Inject` 或 `Value` 的 `Trait` 和 `父类` 时，给原类添加一个 `Inject`，即可解决上述两种情况。
-
-```php
-
-use Hyperf\Contract\StdoutLoggerInterface;
-
-trait OriginTrait {
-    /**
-     * @Inject
-     * @var Service
-     */
-    protected $trait;
-}
-
-class ParentClass {
-    /**
-     * @Inject
-     * @var Service
-     */
-    protected $value;
-}
-
-class Origin extends ParentClass
-{
-    use OriginTrait;
-
-    /**
-     * @Inject
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-}
-```
-
 ## Swoole 短名未关闭
 
 ```
@@ -152,4 +75,30 @@ php --ini
 
 # 修改 memory_limit 配置
 memory_limit=-1
+```
+
+## PHP 7.3 版本对 DI 的兼容性有所下降
+
+在 `2.0` - `2.1` 版本时，为了实现 `AOP` 作用于非 `DI` 管理的对象（如 `new` 关键词实例化的对象时），底层实现采用了 `BetterReflection` 组件来实现相关功能，带来新的编程体验的同时，也带来了一些很难攻克的问题，如下:
+
+- 无扫描缓存时项目启动很慢
+- 特殊场景下 `Inject` 和 `Value` 不生效
+- `BetterReflection` 尚未支持 PHP 8 (截止 2.2 发版时)
+
+在新的版本里，弃用了 `BetterReflection` 的应用，采用了 `子进程扫描` 的方式来解决以上这些痛点，但在低版本的 `PHP` 中也有一些不兼容的情况：
+
+使用 `PHP 7.3` 启动应用后遇到类似如下错误：
+
+```bash
+PHP Fatal error:  Interface 'Hyperf\Signal\SignalHandlerInterface' not found in vendor/hyperf/process/src/Handler/ProcessStopHandler.php on line 17
+```
+
+此问题是由于在 `PHP 7.3` 中通过 `子进程扫描` 的方式去获取反射，在某个类中实现了一个不存在的 `Interface` ，就会导致抛出 `Interface not found` 的异常，而高版本的 `PHP` 则不会。
+
+解决方法为创建对应的 `Interface` 并正常引入。上文中的报错解决方法为安装 `hyperf/signal` 组件即可。
+
+> 当然，最好还是可以升级到 7.4 或者 8.0 版本
+
+```bash
+composer require hyperf/signal
 ```

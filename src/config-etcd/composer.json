@@ -14,6 +14,11 @@
             "Hyperf\\ConfigEtcd\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\ConfigEtcd\\": "tests"
+        }
+    },
     "require": {
         "php": ">=7.2",
         "hyperf/config-center": "~2.2.0",

@@ -17,7 +17,8 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                ClientInterface::class => Client::class,
+                ClientInterface::class => ClientFactory::class,
+                KVInterface::class => KVFactory::class,
             ],
         ];
     }

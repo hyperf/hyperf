@@ -1,4 +1,12 @@
-# v2.2.0 - TBD
+# v2.2.1 - TBD
+
+## Fixed
+
+- [#3828](https://github.com/hyperf/hyperf/pull/3828) Fixed bug that lazy inject does not work for `Hyperf\Redis\Redis` in `PHP8.0`.
+- [#3845](https://github.com/hyperf/hyperf/pull/3845) Fixed bug that `watcher` does not work for `v2.2`.
+- [#3848](https://github.com/hyperf/hyperf/pull/3848) Fixed bug that the usage of registering itself like `nacos v2.1` does not work.
+
+# v2.2.0 - 2021-07-19
 
 ## Dependencies Upgrade
 
@@ -38,7 +46,8 @@
 - [#3737](https://github.com/hyperf/hyperf/pull/3737) Refactor config-center and config driver
   - Added `AbstractDriver` and merge the duplicate code into the abstraction class
   - Added `PipeMessageInterface` to uniform the message struct of config fetcher process
-- [#3817](https://github.com/hyperf/hyperf/pull/3817) Split `service-governance-consul` from `service-governance`.
+- [#3817](https://github.com/hyperf/hyperf/pull/3817) [#3818](https://github.com/hyperf/hyperf/pull/3818) Split `service-governance-consul` from `service-governance`.
+- [#3819](https://github.com/hyperf/hyperf/pull/3819) Use their own configuration below `config_center.php` for config center component which using ETCD and Nacos.
 
 ## Deprecated
 

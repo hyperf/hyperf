@@ -27,7 +27,8 @@
         "vlucas/phpdotenv": "^5.0"
     },
     "suggest": {
-        "hyperf/config": "Require this component for annotation scan progress to retrieve the scan path."
+        "hyperf/config": "Require this component for annotation scan progress to retrieve the scan path.",
+        "ext-pcntl": "Required to scan annotations."
     },
     "autoload": {
         "psr-4": {

@@ -54,7 +54,7 @@ class Process
     /**
      * @var string
      */
-    protected $path = BASE_PATH . '/runtime/container/collectors.cache';
+    protected $path = BASE_PATH . '/runtime/container/scan.cache';
 
     public function __construct(string $file)
     {
@@ -73,7 +73,7 @@ class Process
         }
         $class = $meta->toClassName();
         $collectors = $this->config->getCollectors();
-        $data = unserialize(file_get_contents($this->path));
+        [$data] = unserialize(file_get_contents($this->path));
         foreach ($data as $collector => $deserialized) {
             /** @var MetadataCollector $collector */
             if (in_array($collector, $collectors)) {
@@ -99,16 +99,10 @@ class Process
             $data[$collector] = $collector::serialize();
         }
 
-        if ($data) {
-            $this->putCache($this->path, serialize($data));
-        }
-
         // Reload the proxy class.
         $manager = new ProxyManager([$class => $this->file], BASE_PATH . '/runtime/container/proxy/');
-        $ref = new ReflectionClass($manager);
-        $method = $ref->getMethod('generateProxyFiles');
-        $method->setAccessible(true);
-        $method->invokeArgs($manager, [$class => []]);
+        $proxies = $manager->getProxies();
+        $this->putCache($this->path, serialize([$data, $proxies]));
     }
 
     public function collect($className, ReflectionClass $reflection)

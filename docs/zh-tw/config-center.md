@@ -20,31 +20,37 @@ Hyperf 為您提供了分散式系統的外部化配置支援，預設適配了:
 
 ## 安裝
 
-### Apollo
+### 配置中心統一接入層
+
+```bash
+composer require hyperf/config-center
+```
+
+### 使用 Apollo 需安裝
 
 ```bash
 composer require hyperf/config-apollo
 ```
 
-### Aliyun ACM
+### 使用 Aliyun ACM 需安裝
 
 ```bash
 composer require hyperf/config-aliyun-acm
 ```
 
-### Etcd
+### 使用 Etcd 需安裝
 
 ```bash
 composer require hyperf/config-etcd
 ```
 
-### Nacos
+### 使用 Nacos 需安裝
 
 ```bash
 composer require hyperf/config-nacos
 ```
 
-### Zookeeper
+### 使用 Zookeeper 需安裝
 
 ```bash
 composer require hyperf/config-zookeeper
@@ -52,45 +58,7 @@ composer require hyperf/config-zookeeper
 
 ## 接入配置中心
 
-### 接入 Etcd 配置中心
-
-如果需要使用 `ETCD` 配置中心，則首先需要新增 `Etcd 客戶端` 配置檔案 `etcd.php`
-
-```php
-<?php
-return [
-    'uri' => 'http://127.0.0.1:2379',
-    'version' => 'v3beta',
-    'options' => [
-        'timeout' => 10,
-    ],
-];
-```
-
-### 接入 Nacos 配置中心
-
-如果需要使用 `Nacos` 配置中心，則首先需要新增 `Nacos 客戶端` 配置檔案 `nacos.php`
-
-```php
-<?php
-
-return [
-    // 如果不是 HTTP 協議，則需要直接配置 url
-    // 'url' => '',
-    // Nacos 的 IP 和 埠
-    'host' => '127.0.0.1',
-    'port' => 8848,
-    // 使用者名稱和密碼
-    'username' => null,
-    'password' => null,
-    // 相關的 Guzzle 配置，支援自定義
-    'guzzle' => [
-        'config' => [],
-    ],
-];
-```
-
-### 修改配置中心統一配置
+### 配置檔案
 
 ```php
 <?php
@@ -102,6 +70,7 @@ use Hyperf\ConfigCenter\Mode;
 return [
     // 是否開啟配置中心
     'enable' => (bool) env('CONFIG_CENTER_ENABLE', true),
+    // 使用的驅動型別，對應同級別配置 drivers 下的 key
     'driver' => env('CONFIG_CENTER_DRIVER', 'apollo'),
     // 配置中心的執行模式，多程序模型推薦使用 PROCESS 模式，單程序模型推薦使用 COROUTINE 模式
     'mode' => env('CONFIG_CENTER_MODE', Mode::PROCESS),
@@ -150,6 +119,17 @@ return [
                     'type' => 'yml',
                 ],
             ],
+            'client' => [
+                // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
+                // 'url' => '',
+                'host' => '127.0.0.1',
+                'port' => 8848,
+                'username' => null,
+                'password' => null,
+                'guzzle' => [
+                    'config' => null,
+                ],
+            ],
         ],
         'aliyun_acm' => [
             'driver' => Hyperf\ConfigAliyunAcm\AliyunAcmDriver::class,
@@ -183,6 +163,14 @@ return [
             ],
             // 配置更新間隔（秒）
             'interval' => 5,
+            'client' => [
+                # Etcd Client
+                'uri' => 'http://127.0.0.1:2379',
+                'version' => 'v3beta',
+                'options' => [
+                    'timeout' => 10,
+                ],
+            ],
         ],
         'zookeeper' => [
             'driver' => Hyperf\ConfigZookeeper\ZookeeperDriver::class,
@@ -192,12 +180,14 @@ return [
         ],
     ],
 ];
-
 ```
+
+如配置檔案不存在可執行 `php bin/hyperf.php vendor:publish hyperf/config-center` 命令來生成。
+
 
 ## 配置更新的作用範圍
 
-在預設的功能實現下，是由一個 `ConfigFetcherProcess` 程序根據配置的 `interval` 來向 Apollo 拉取對應 `namespace` 的配置，並通過 IPC 通訊將拉取到的新配置傳遞到各個 Worker 中，並更新到 `Hyperf\Contract\ConfigInterface` 對應的物件內。   
+在預設的功能實現下，是由一個 `ConfigFetcherProcess` 程序根據配置的 `interval` 來向 配置中心 Server 拉取對應 `namespace` 的配置，並通過 IPC 通訊將拉取到的新配置傳遞到各個 Worker 中，並更新到 `Hyperf\Contract\ConfigInterface` 對應的物件內。   
 需要注意的是，更新的配置只會更新 `Config` 物件，故僅限應用層或業務層的配置，不涉及框架層的配置改動，因為框架層的配置改動需要重啟服務，如果您有這樣的需求，也可以通過自行實現 `ConfigFetcherProcess` 來達到目的。
 
 ## 注意事項

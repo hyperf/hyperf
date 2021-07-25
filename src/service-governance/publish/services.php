@@ -17,6 +17,10 @@ return [
     'consumers' => [],
     'providers' => [],
     'drivers' => [
+        'consul' => [
+            'uri' => 'http://127.0.0.1:8500',
+            'token' => '',
+        ],
         'nacos' => [
             // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
             // 'url' => '',

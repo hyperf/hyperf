@@ -18,6 +18,7 @@ class ConfigProvider
         return [
             'dependencies' => [
                 ClientInterface::class => Client::class,
+                NacosClient::class => NacosClientFactory::class,
             ],
         ];
     }
