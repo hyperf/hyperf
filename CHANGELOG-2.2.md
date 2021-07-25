@@ -2,6 +2,7 @@
 
 ## Fixed
 
+- [#3750](https://github.com/hyperf/hyperf/pull/3750) Fixed fatal error which caused by dispatching a non exist namespace when using `socket-io`.
 - [#3828](https://github.com/hyperf/hyperf/pull/3828) Fixed bug that lazy inject does not work for `Hyperf\Redis\Redis` in `PHP8.0`.
 - [#3843](https://github.com/hyperf/hyperf/pull/3843) Fixed bug that the metadata of nacos instance can't be registered successfully.
 - [#3845](https://github.com/hyperf/hyperf/pull/3845) Fixed bug that `watcher` does not work for `v2.2`.
