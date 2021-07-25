@@ -6,6 +6,10 @@
 - [#3845](https://github.com/hyperf/hyperf/pull/3845) Fixed bug that `watcher` does not work for `v2.2`.
 - [#3848](https://github.com/hyperf/hyperf/pull/3848) Fixed bug that the usage of registering itself like `nacos v2.1` does not work.
 
+## Optimized
+
+- [#3843](https://github.com/hyperf/hyperf/pull/3843) Check the status code and body of the response to ensure whether the instance is registered.
+
 # v2.2.0 - 2021-07-19
 
 ## Dependencies Upgrade
