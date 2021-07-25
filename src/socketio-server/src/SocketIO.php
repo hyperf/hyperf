@@ -338,6 +338,9 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     private function dispatch(int $fd, string $nsp, string $event, ...$payloads)
     {
         $socket = $this->makeSocket($fd, $nsp);
+        if (empty($socket)) {
+            return null;
+        }
         $ack = null;
 
         // Check if ack is required
@@ -377,16 +380,21 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         return $output;
     }
 
-    private function makeSocket(int $fd, string $nsp = '/'): Socket
+    private function makeSocket(int $fd, string $nsp = '/'): ?Socket
     {
-        return make(Socket::class, [
-            'adapter' => SocketIORouter::getAdapter($nsp),
-            'sender' => $this->sender,
-            'fd' => $fd,
-            'nsp' => $nsp,
-            'addCallback' => function (string $ackId, Channel $channel, ?int $timeout = null) {
-                $this->addCallback($ackId, $channel, $timeout);
-            }, ]);
+        try {
+            return make(Socket::class, [
+                'adapter' => SocketIORouter::getAdapter($nsp),
+                'sender' => $this->sender,
+                'fd' => $fd,
+                'nsp' => $nsp,
+                'addCallback' => function (string $ackId, Channel $channel, ?int $timeout = null) {
+                    $this->addCallback($ackId, $channel, $timeout);
+                }, ]);
+        } catch (\Throwable $exception) {
+            $this->stdoutLogger->error('Socket.io ' . $exception->getMessage());
+            return null;
+        }
     }
 
     private function dispatchEventInAllNamespaces(int $fd, string $event)
