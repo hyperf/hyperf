@@ -1,0 +1,10 @@
+{
+    "serviceCount": 336,
+    "load": 0.09,
+    "mem": 0.46210432,
+    "responsibleServiceCount": 98,
+    "instanceCount": 4,
+    "cpu": 0.010242796,
+    "status": "UP",
+    "responsibleInstanceCount": 0
+}

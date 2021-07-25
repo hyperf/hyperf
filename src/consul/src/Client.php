@@ -20,7 +20,7 @@ use Psr\Log\NullLogger;
 
 abstract class Client
 {
-    const DEFAULT_URI = 'http://127.0.0.1:8500';
+    public const DEFAULT_URI = 'http://127.0.0.1:8500';
 
     /**
      * Will execute this closure everytime when the consul client send a HTTP request,

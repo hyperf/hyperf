@@ -21,7 +21,7 @@ class Uri implements UriInterface
      * we apply this default host when no host is given yet to form a
      * valid URI.
      */
-    const DEFAULT_HTTP_HOST = 'localhost';
+    public const DEFAULT_HTTP_HOST = 'localhost';
 
     /**
      * @var array

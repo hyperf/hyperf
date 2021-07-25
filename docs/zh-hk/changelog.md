@@ -1,5 +1,22 @@
 # 版本更新記錄
 
+# v2.1.23 - 2021-07-12
+
+## 優化
+
+- [#3787](https://github.com/hyperf/hyperf/pull/3787) 優化 `JSON RPC` 服務，優先初始化 `PSR Response`，用於避免 `PSR Request` 初始化失敗後，無法從上下文中獲取 `Response` 的問題。
+
+# v2.1.22 - 2021-06-28
+
+## 安全性更新
+
+- [#3723](https://github.com/hyperf/hyperf/pull/3723) 修復驗證器規則 `active_url` 無法正確檢查 `dns` 記錄，從而導致繞過驗證的問題。
+- [#3724](https://github.com/hyperf/hyperf/pull/3724) 修復可以利用 `RequiredIf` 規則生成用於反序列化漏洞的小工具鏈的問題。
+
+## 修復
+
+- [#3721](https://github.com/hyperf/hyperf/pull/3721) 修復了驗證器規則 `in` 和 `not in` 判斷有誤的問題，例如規則為 `in:00` 時，`0`不應該被允許通過。
+
 # v2.1.21 - 2021-06-21
 
 ## 修復

@@ -12,8 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\Filesystem\Contract;
 
 use League\Flysystem\AdapterInterface;
+use League\Flysystem\FilesystemAdapter;
 
 interface AdapterFactoryInterface
 {
-    public function make(array $options): AdapterInterface;
+    /**
+     * @return AdapterInterface|FilesystemAdapter
+     */
+    public function make(array $options);
 }
