@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\GraphQL\Annotation;
 
+use Attribute;
 use Hyperf\Di\Annotation\AnnotationInterface;
 
 /**
@@ -25,6 +26,7 @@ use Hyperf\Di\Annotation\AnnotationInterface;
  *     @Attribute("failWith", type="mixed"),
  * })
  */
+#[Attribute(Attribute::TARGET_CLASS)]
 class SourceField extends \TheCodingMachine\GraphQLite\Annotations\SourceField implements AnnotationInterface
 {
     use AnnotationTrait;

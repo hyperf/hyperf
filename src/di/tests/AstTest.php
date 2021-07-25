@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Di;
 
 use Hyperf\Di\Aop\Ast;
-use Hyperf\Di\BetterReflectionManager;
+use Hyperf\Di\ReflectionManager;
 use HyperfTest\Di\Stub\AspectCollector;
 use HyperfTest\Di\Stub\Ast\Bar2;
 use HyperfTest\Di\Stub\Ast\Bar3;
@@ -44,13 +44,11 @@ declare (strict_types=1);
 
     protected function tearDown(): void
     {
-        BetterReflectionManager::clear();
+        ReflectionManager::clear();
     }
 
     public function testAstProxy()
     {
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
-
         $ast = new Ast();
         $code = $ast->proxy(Foo::class);
 
@@ -70,8 +68,6 @@ class Foo
 
     public function testParentMethods()
     {
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
-
         $ast = new Ast();
         $code = $ast->proxy(Bar2::class);
         $this->assertEquals($this->license . '
@@ -95,8 +91,6 @@ class Bar2 extends Bar
 
     public function testParentConstructor()
     {
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
-
         $ast = new Ast();
         $code = $ast->proxy(Bar5::class);
         $this->assertEquals($this->license . '
@@ -122,8 +116,6 @@ class Bar5
 
     public function testMagicMethods()
     {
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
-
         $aspect = BarAspect::class;
 
         AspectCollector::setAround($aspect, [
@@ -160,8 +152,6 @@ class Bar4
 
     public function testRewriteMethods()
     {
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
-
         $aspect = BarAspect::class;
 
         AspectCollector::setAround($aspect, [

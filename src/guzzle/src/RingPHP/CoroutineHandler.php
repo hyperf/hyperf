@@ -16,7 +16,7 @@ use GuzzleHttp\Ring\Exception\RingException;
 use GuzzleHttp\Ring\Future\CompletedFutureArray;
 use Hyperf\Engine\Http\Client;
 use Hyperf\Engine\Http\RawResponse;
-use Hyperf\Utils\Resource;
+use Hyperf\Utils\ResourceGenerator;
 
 /**
  * Http handler that uses Swoole Coroutine as a transport layer.
@@ -147,7 +147,7 @@ class CoroutineHandler
             'effective_url' => $effectiveUrl,
             'headers' => $response->headers,
             'status' => $response->statusCode,
-            'body' => Resource::from($response->body),
+            'body' => ResourceGenerator::from($response->body),
         ]);
     }
 }

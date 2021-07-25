@@ -2,16 +2,19 @@
 
 ## 服务器要求
 
-Hyperf 对系统环境有一些要求，仅可运行于 Linux 和 Mac 环境下，但由于 Docker 虚拟化技术的发展，在 Windows 下也可以通过 Docker for Windows 来作为运行环境，通常来说 Mac 环境下，我们更推荐本地环境部署，以避免 Docker 共享磁盘缓慢导致 Hyperf 启动速度慢的问题。   
+Hyperf 对系统环境有一些要求，当您使用 Swoole 网络引擎驱动时，仅可运行于 Linux 和 Mac 环境下，但由于 Docker 虚拟化技术的发展，在 Windows 下也可以通过 Docker for Windows 来作为运行环境，通常来说 Mac 环境下，我们更推荐本地环境部署，以避免 Docker 共享磁盘缓慢导致 Hyperf 启动速度慢的问题。当您使用 Swow 网络引擎驱动时，则可在 Windows、Linux、Mac 下运行。
 
 [hyperf/hyperf-docker](https://github.com/hyperf/hyperf-docker) 项目内已经为您准备好了各种版本的 Dockerfile ，或直接基于已经构建好的 [hyperf/hyperf](https://hub.docker.com/r/hyperf/hyperf) 镜像来运行。   
 
 当您不想采用 Docker 来作为运行的环境基础时，您需要确保您的运行环境达到了以下的要求：   
 
- - PHP >= 7.3
- - Swoole PHP 扩展 >= 4.5，并关闭了 `Short Name`
- - OpenSSL PHP 扩展
+ - PHP >= 7.4
+ - 以下任一网络引擎
+   - Swoole PHP 扩展 >= 4.5，并关闭了 `Short Name`
+   - Swow PHP 扩展 (Beta)
  - JSON PHP 扩展
+ - Pcntl PHP 扩展
+ - OpenSSL PHP 扩展（如需要使用到 HTTPS）
  - PDO PHP 扩展 （如需要使用到 MySQL 客户端）
  - Redis PHP 扩展 （如需要使用到 Redis 客户端）
  - Protobuf PHP 扩展 （如需要使用到 gRPC 服务端或客户端）
@@ -23,10 +26,16 @@ Hyperf 使用 [Composer](https://getcomposer.org) 来管理项目的依赖，在
 
 ### 通过 `Composer` 创建项目
 
-[hyperf/hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) 项目是我们已经为您准备好的一个骨架项目，内置了一些常用的组件及相关配置的文件及结构，是一个可以快速用于业务开发的 Web 项目基础，在安装时，您可根据您自身的需求，对组件依赖进行选择。   
-执行下面的命令可以于当前所在位置创建一个 hyperf-skeleton 项目
+我们已经为您准备好的一个骨架项目，内置了一些常用的组件及相关配置的文件及结构，是一个可以快速用于业务开发的 Web 项目基础，在安装时，您可根据您自身的需求，对组件依赖进行选择。   
+执行下面的命令可以于当前所在位置创建一个 skeleton 项目
+
+基于 Swoole 驱动：   
 ```
 composer create-project hyperf/hyperf-skeleton 
+```
+基于 Swow 驱动：   
+```
+composer create-project hyperf/swow-skeleton 
 ```
 
 ### Docker 下开发

@@ -1,23 +1,87 @@
 # 文件系统
 
-文件系统组件集成了 PHP 生态中大名鼎鼎的 League\Flysystem (这也是 Laravel 等诸多知名框架的底层库)。通过合理抽象，程序不必感知存储引擎究竟是本地硬盘还是云服务器，实现解耦。本组件对常用的云存储服务提供了协程化支持。
+文件系统组件集成了 PHP 生态中大名鼎鼎的 `League\Flysystem` (这也是 Laravel 等诸多知名框架的底层库)。通过合理抽象，程序不必感知存储引擎究竟是本地硬盘还是云服务器，实现解耦。本组件对常用的云存储服务提供了协程化支持。
 
 ## 安装
 
-```bash
-# 首先执行
+```shell
 composer require hyperf/filesystem
-# 使用阿里云 OSS 适配器时执行
+```
+
+`League\Flysystem` 组件 `v1.0` 和 `v2.0` 版本变动较大，所以需要根据不同的版本，安装对应的适配器
+
+- 阿里云 OSS 适配器
+
+`Flysystem v1.0` 版本
+
+```shell
 composer require xxtime/flysystem-aliyun-oss
-# 使用 S3 适配器时执行
-composer require league/flysystem-aws-s3-v3
+```
+
+`Flysystem v2.0` 版本
+
+```shell
+composer require hyperf/flysystem-oss
+```
+
+- S3 适配器
+
+`Flysystem v1.0` 版本
+
+```shell
+composer require "league/flysystem-aws-s3-v3:^1.0"
 composer require hyperf/guzzle
-# 使用七牛云适配器时执行
-composer require overtrue/flysystem-qiniu
-# 使用内存适配器时执行
-composer require league/flysystem-memory
-# 使用腾讯云 COS 适配器时执行
-composer require overtrue/flysystem-cos
+```
+
+`Flysystem v2.0` 版本
+
+```shell
+composer require "league/flysystem-aws-s3-v3:^2.0"
+composer require hyperf/guzzle
+```
+
+- 七牛适配器
+
+`Flysystem v1.0` 版本
+
+```shell
+composer require "overtrue/flysystem-qiniu:^1.0"
+```
+
+`Flysystem v2.0` 版本
+
+```shell
+composer require "overtrue/flysystem-qiniu:^2.0"
+```
+
+- 内存适配器
+
+`Flysystem v1.0` 版本
+
+```shell
+composer require "league/flysystem-memory:^1.0"
+```
+
+`Flysystem v2.0` 版本
+
+```shell
+composer require "league/flysystem-memory:^2.0"
+```
+
+- 腾讯云 COS 适配器
+
+`Flysystem v1.0` 版本
+
+> flysystem-cos v2.0 版本已经不推荐使用了，请按照最新的文档修改为 3.0 版本
+
+```shell
+composer require "overtrue/flysystem-cos:^3.0"
+```
+
+`Flysystem v2.0` 版本
+
+```shell
+composer require "overtrue/flysystem-cos:^4.0"
 ```
 
 安装完成后，执行
@@ -33,6 +97,8 @@ php bin/hyperf.php vendor:publish hyperf/filesystem
 通过 DI 注入 `League\Flysystem\Filesystem` 即可使用。
 
 API 如下：
+
+> 以下示例为 Flysystem v1.0 版本，v2.0 版本请看官方文档
 
 ```php
 <?php
@@ -253,9 +319,9 @@ return [
                 'secretKey' => env('COS_SECRET_KEY'),
             ],
             // overtrue/flysystem-cos ^3.0 配置如下
-            // 'app_id' => env('COS_APPID'),
-            // 'secret_id' => env('COS_SECRET_ID'),
-            // 'secret_key' => env('COS_SECRET_KEY'),
+            'app_id' => env('COS_APPID'),
+            'secret_id' => env('COS_SECRET_ID'),
+            'secret_key' => env('COS_SECRET_KEY'),
             // 可选，如果 bucket 为私有访问请打开此项
             // 'signed_url' => false,
             'bucket' => env('COS_BUCKET'),

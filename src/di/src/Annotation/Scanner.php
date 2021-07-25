@@ -12,14 +12,15 @@ declare(strict_types=1);
 namespace Hyperf\Di\Annotation;
 
 use Hyperf\Config\ProviderConfig;
-use Hyperf\Di\BetterReflectionManager;
+use Hyperf\Di\Aop\ProxyManager;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Di\Exception\DirectoryNotExistException;
+use Hyperf\Di\Exception\Exception;
 use Hyperf\Di\MetadataCollector;
+use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\Filesystem\Filesystem;
+use ReflectionClass;
 use ReflectionProperty;
-use Roave\BetterReflection\Reflection\Adapter;
-use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class Scanner
 {
@@ -41,7 +42,7 @@ class Scanner
     /**
      * @var string
      */
-    protected $path = BASE_PATH . '/runtime/container/collectors.cache';
+    protected $path = BASE_PATH . '/runtime/container/scan.cache';
 
     public function __construct(ClassLoader $classloader, ScanConfig $scanConfig)
     {
@@ -67,7 +68,7 @@ class Scanner
             }
         }
         // Parse class annotations
-        $classAnnotations = $reader->getClassAnnotations(new Adapter\ReflectionClass($reflection));
+        $classAnnotations = $reader->getClassAnnotations($reflection);
         if (! empty($classAnnotations)) {
             foreach ($classAnnotations as $classAnnotation) {
                 if ($classAnnotation instanceof AnnotationInterface) {
@@ -76,9 +77,9 @@ class Scanner
             }
         }
         // Parse properties annotations
-        $properties = $reflection->getImmediateProperties();
+        $properties = $reflection->getProperties();
         foreach ($properties as $property) {
-            $propertyAnnotations = $reader->getPropertyAnnotations(new Adapter\ReflectionProperty($property));
+            $propertyAnnotations = $reader->getPropertyAnnotations($property);
             if (! empty($propertyAnnotations)) {
                 foreach ($propertyAnnotations as $propertyAnnotation) {
                     if ($propertyAnnotation instanceof AnnotationInterface) {
@@ -88,9 +89,9 @@ class Scanner
             }
         }
         // Parse methods annotations
-        $methods = $reflection->getImmediateMethods();
+        $methods = $reflection->getMethods();
         foreach ($methods as $method) {
-            $methodAnnotations = $reader->getMethodAnnotations(new Adapter\ReflectionMethod($method));
+            $methodAnnotations = $reader->getMethodAnnotations($method);
             if (! empty($methodAnnotations)) {
                 foreach ($methodAnnotations as $methodAnnotation) {
                     if ($methodAnnotation instanceof AnnotationInterface) {
@@ -103,40 +104,45 @@ class Scanner
         unset($reflection, $classAnnotations, $properties, $methods);
     }
 
-    /**
-     * @return ReflectionClass[]
-     */
-    public function scan(): array
+    public function scan(array $classMap = [], string $proxyDir = ''): array
     {
         $paths = $this->scanConfig->getPaths();
         $collectors = $this->scanConfig->getCollectors();
-        $classes = [];
         if (! $paths) {
-            return $classes;
-        }
-
-        $annotationReader = new AnnotationReader();
-        $lastCacheModified = $this->deserializeCachedCollectors($collectors);
-        if ($lastCacheModified > 0 && $this->scanConfig->isCacheable()) {
             return [];
         }
 
+        $lastCacheModified = file_exists($this->path) ? $this->filesystem->lastModified($this->path) : 0;
+        if ($lastCacheModified > 0 && $this->scanConfig->isCacheable()) {
+            return $this->deserializeCachedScanData($collectors);
+        }
+
+        $pid = pcntl_fork();
+        if ($pid == -1) {
+            throw new Exception('The process fork failed');
+        }
+        if ($pid) {
+            pcntl_wait($status);
+            return $this->deserializeCachedScanData($collectors);
+        }
+
+        $this->deserializeCachedScanData($collectors);
+
+        $annotationReader = new AnnotationReader();
+
         $paths = $this->normalizeDir($paths);
 
-        $reflector = BetterReflectionManager::initClassReflector($paths);
-        $classes = $reflector->getAllClasses();
-        // Initialize cache for BetterReflectionManager.
-        foreach ($classes as $class) {
-            BetterReflectionManager::reflectClass($class->getName(), $class);
-        }
+        $classes = ReflectionManager::getAllClasses($paths);
 
         $this->clearRemovedClasses($collectors, $classes);
 
-        foreach ($classes as $reflectionClass) {
+        $reflectionClassMap = [];
+        foreach ($classes as $className => $reflectionClass) {
+            $reflectionClassMap[$className] = $reflectionClass->getFileName();
             if ($this->filesystem->lastModified($reflectionClass->getFileName()) >= $lastCacheModified) {
                 /** @var MetadataCollector $collector */
                 foreach ($collectors as $collector) {
-                    $collector::clear($reflectionClass->getName());
+                    $collector::clear($className);
                 }
 
                 $this->collect($annotationReader, $reflectionClass);
@@ -151,13 +157,13 @@ class Scanner
             $data[$collector] = $collector::serialize();
         }
 
-        if ($data) {
-            $this->putCache($this->path, serialize($data));
-        }
+        // Get the class map of Composer loader
+        $classMap = array_merge($reflectionClassMap, $classMap);
+        $proxyManager = new ProxyManager($classMap, $proxyDir);
+        $proxies = $proxyManager->getProxies();
 
-        unset($annotationReader);
-
-        return $classes;
+        $this->putCache($this->path, serialize([$data, $proxies]));
+        exit;
     }
 
     /**
@@ -178,6 +184,23 @@ class Scanner
         }
 
         return $result;
+    }
+
+    protected function deserializeCachedScanData(array $collectors): array
+    {
+        if (! file_exists($this->path)) {
+            return [];
+        }
+
+        [$data, $proxies] = unserialize(file_get_contents($this->path));
+        foreach ($data as $collector => $deserialized) {
+            /** @var MetadataCollector $collector */
+            if (in_array($collector, $collectors)) {
+                $collector::deserialize($deserialized);
+            }
+        }
+
+        return $proxies;
     }
 
     protected function deserializeCachedCollectors(array $collectors): int
@@ -203,10 +226,7 @@ class Scanner
     protected function clearRemovedClasses(array $collectors, array $reflections): void
     {
         $path = BASE_PATH . '/runtime/container/classes.cache';
-        $classes = [];
-        foreach ($reflections as $reflection) {
-            $classes[] = $reflection->getName();
-        }
+        $classes = array_keys($reflections);
 
         $data = [];
         if ($this->filesystem->exists($path)) {
@@ -225,7 +245,7 @@ class Scanner
         }
     }
 
-    protected function putCache($path, $data)
+    protected function putCache(string $path, $data)
     {
         if (! $this->filesystem->isDirectory($dir = dirname($path))) {
             $this->filesystem->makeDirectory($dir, 0755, true);
@@ -283,17 +303,17 @@ class Scanner
             }
 
             // Create the aspect instance without invoking their constructor.
-            $reflectionClass = BetterReflectionManager::reflectClass($aspect);
-            $properties = $reflectionClass->getImmediateProperties(ReflectionProperty::IS_PUBLIC);
+            $reflectionClass = ReflectionManager::reflectClass($aspect);
+            $properties = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
             $instanceClasses = $instanceAnnotations = [];
             $instancePriority = null;
             foreach ($properties as $property) {
                 if ($property->getName() === 'classes') {
-                    $instanceClasses = $property->getDefaultValue();
+                    $instanceClasses = ReflectionManager::getPropertyDefaultValue($property);
                 } elseif ($property->getName() === 'annotations') {
-                    $instanceAnnotations = $property->getDefaultValue();
+                    $instanceAnnotations = ReflectionManager::getPropertyDefaultValue($property);
                 } elseif ($property->getName() === 'priority') {
-                    $instancePriority = $property->getDefaultValue();
+                    $instancePriority = ReflectionManager::getPropertyDefaultValue($property);
                 }
             }
 

@@ -1,5 +1,11 @@
 # 版本更新记录
 
+# v2.1.23 - 2021-07-12
+
+## 优化
+
+- [#3787](https://github.com/hyperf/hyperf/pull/3787) 优化 `JSON RPC` 服务，优先初始化 `PSR Response`，用于避免 `PSR Request` 初始化失败后，无法从上下文中获取 `Response` 的问题。
+
 # v2.1.22 - 2021-06-28
 
 ## 安全性更新

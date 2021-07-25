@@ -1,0 +1,19 @@
+{
+    "metadata": {},
+    "groupName": "DEFAULT_GROUP",
+    "namespaceId": "public",
+    "name": "nacos.test.2",
+    "selector": {
+        "type": "none"
+    },
+    "protectThreshold": 0,
+    "clusters": [
+        {
+            "healthChecker": {
+                "type": "TCP"
+            },
+            "metadata": {},
+            "name": "c1"
+        }
+    ]
+}

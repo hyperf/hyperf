@@ -14,12 +14,10 @@ namespace Hyperf\Database\Commands\Ast;
 use Hyperf\Database\Commands\ModelData;
 use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\Builder;
+use Hyperf\Utils\CodeGen\PhpParser;
 use Hyperf\Utils\Str;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
-use Roave\BetterReflection\Reflection\ReflectionClass;
-use Roave\BetterReflection\Reflection\ReflectionMethod;
-use Roave\BetterReflection\Reflection\ReflectionParameter;
 
 class GenerateModelIDEVisitor extends AbstractVisitor
 {
@@ -46,8 +44,13 @@ class GenerateModelIDEVisitor extends AbstractVisitor
     public function __construct(ModelOption $option, ModelData $data)
     {
         parent::__construct($option, $data);
+    }
 
-        $this->initPropertiesFromMethods();
+    public function beforeTraverse(array $nodes)
+    {
+        $this->initPropertiesFromMethods($nodes);
+
+        return null;
     }
 
     public function enterNode(Node $node)
@@ -105,7 +108,7 @@ class GenerateModelIDEVisitor extends AbstractVisitor
         $scopeDoc .= ' */';
         foreach ($this->methods as $name => $call) {
             $params = [];
-            /** @var ReflectionParameter $argument */
+            /** @var \ReflectionParameter $argument */
             foreach ($call['arguments'] as $argument) {
                 $argName = new Node\Expr\Variable($argument->getName());
                 if ($argument->hasType()) {
@@ -154,15 +157,13 @@ class GenerateModelIDEVisitor extends AbstractVisitor
         }
     }
 
-    protected function initPropertiesFromMethods()
+    protected function initPropertiesFromMethods(array $nodes)
     {
-        /** @var ReflectionClass $reflection */
-        $reflection = BetterReflectionManager::getReflector()->reflect($this->data->getClass());
-        $methods = $reflection->getImmediateMethods();
-
+        $methods = PhpParser::getInstance()->getAllMethodsFromStmts($nodes);
+        $reflection = new \ReflectionClass($this->data->getClass());
         sort($methods);
-        /** @var ReflectionMethod $method */
-        foreach ($methods as $method) {
+        foreach ($methods as $methodStmt) {
+            $method = $reflection->getMethod($methodStmt->name->name);
             if (Str::startsWith($method->getName(), 'scope') && $method->getName() !== 'scopeQuery') {
                 $name = Str::camel(substr($method->getName(), 5));
                 if (! empty($name)) {
@@ -171,11 +172,6 @@ class GenerateModelIDEVisitor extends AbstractVisitor
                     array_shift($args);
                     $this->setMethod($name, [Builder::class, $method->getDeclaringClass()->getName()], $args);
                 }
-                continue;
-            }
-
-            if ($method->getNumberOfParameters() > 0) {
-                continue;
             }
         }
     }

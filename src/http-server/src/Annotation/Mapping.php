@@ -30,14 +30,9 @@ abstract class Mapping extends AbstractAnnotation
      */
     public $options = [];
 
-    public function __construct($value = null)
+    public function __construct(...$value)
     {
-        if (isset($value['path'])) {
-            $this->path = $value['path'];
-        }
-        if (isset($value['options'])) {
-            $this->options = (array) $value['options'];
-        }
+        parent::__construct(...$value);
         $this->bindMainProperty('path', $value);
     }
 }

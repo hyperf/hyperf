@@ -43,8 +43,8 @@ class Caller
     public function call(Closure $closure)
     {
         $release = true;
+        $channel = $this->channel;
         try {
-            $channel = $this->channel;
             $instance = $channel->pop($this->waitTimeout);
             if ($instance === false) {
                 if ($channel->isClosing()) {

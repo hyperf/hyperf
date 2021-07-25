@@ -208,7 +208,7 @@ $config->has($key);
 | null    | (null) null  |
 | (null)  | (null) null  |
 
-如果你需要使用包含空格的環境變數，可以通過將值括在雙引號中來實現，比如：
+如果你需要使用包含空格或包含其他特殊字元的環境變數，可以通過將值括在雙引號中來實現，比如：
 
 ```dotenv
 APP_NAME="Hyperf Skeleton"
@@ -233,7 +233,7 @@ Hyperf 採用元件化設計，在新增一些元件進來骨架專案後，我�
 
 ## 配置中心
 
-Hyperf 為您提供了分散式系統的外部化配置支援，目前支援由攜程開源的 `Apollo`、阿里雲 ACM 應用配置管理、ETCD 以及 Zookeeper 作為配置中心的支援。
+Hyperf 為您提供了分散式系統的外部化配置支援，目前支援由攜程開源的 `Apollo`、阿里雲 ACM 應用配置管理、ETCD、Nacos 以及 Zookeeper 作為配置中心的支援。
 關於配置中心的使用細節我們由 [配置中心](zh-tw/config-center.md) 章節來闡述。
 
 
