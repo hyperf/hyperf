@@ -1,5 +1,21 @@
 # 版本更新記錄
 
+# v2.2.1 - 2021-07-27
+
+## 修復
+
+- [#3750](https://github.com/hyperf/hyperf/pull/3750) 修復使用 `SocketIO` 時，由於觸發了一個不存在的命名空間，而導致致命錯誤的問題。
+- [#3828](https://github.com/hyperf/hyperf/pull/3828) 修復在 `PHP 8.0` 版本中，無法對 `Hyperf\Redis\Redis` 使用懶加載注入的問題。
+- [#3843](https://github.com/hyperf/hyperf/pull/3843) 修復 `Nacos` 實例無法正常註冊元數據的問題。
+- [#3845](https://github.com/hyperf/hyperf/pull/3845) 修復 `watcher` 組件無法在 `v2.2` 版本中正常使用的問題。
+- [#3848](https://github.com/hyperf/hyperf/pull/3848) 修復 `Nacos` 組件無法像 `v2.1` 版本註冊自身到 `Nacos` 服務中的問題。
+
+## 優化
+
+- [#3763](https://github.com/hyperf/hyperf/pull/3763) 使 `JsonResource::wrap()` 和 `JsonResource::withoutWrapping()` 支持鏈式調用。
+- [#3843](https://github.com/hyperf/hyperf/pull/3843) 在 `Nacos` 註冊服務時，根據 `HTTP` 響應的返回碼和數據協同判斷，以確保是否已註冊過。
+- [#3854](https://github.com/hyperf/hyperf/pull/3854) 為文件下載方法支持 `RFC 5987`，他允許使用 `UTF-8` 變化和 `URL` 格式化。
+
 # v2.1.23 - 2021-07-12
 
 ## 優化
