@@ -14,7 +14,7 @@
 
 - [#3763](https://github.com/hyperf/hyperf/pull/3763) 使 `JsonResource::wrap()` 和 `JsonResource::withoutWrapping()` 支援鏈式呼叫。
 - [#3843](https://github.com/hyperf/hyperf/pull/3843) 在 `Nacos` 註冊服務時，根據 `HTTP` 響應的返回碼和資料協同判斷，以確保是否已註冊過。
-- [#3854](https://github.com/hyperf/hyperf/pull/3854) 為檔案下載方法支援 `RFC 5987`，他允許使用 `UTF-8` 變化和 `URL` 格式化。
+- [#3854](https://github.com/hyperf/hyperf/pull/3854) 為檔案下載方法支援 `RFC 5987`，它允許使用 `UTF-8` 格式和 `URL` 格式化。
 
 # v2.1.23 - 2021-07-12
 
