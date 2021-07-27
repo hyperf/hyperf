@@ -180,7 +180,7 @@ class NacosDriver implements DriverInterface
             return null;
         }
 
-        return json_encode($metadata, JSON_UNESCAPED_UNICODE);
+        return Json::encode($metadata);
     }
 
     protected function registerHeartbeat(string $name, string $host, int $port): void
