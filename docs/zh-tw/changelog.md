@@ -6,9 +6,9 @@
 
 - [#3750](https://github.com/hyperf/hyperf/pull/3750) 修復使用 `SocketIO` 時，由於觸發了一個不存在的名稱空間，而導致致命錯誤的問題。
 - [#3828](https://github.com/hyperf/hyperf/pull/3828) 修復在 `PHP 8.0` 版本中，無法對 `Hyperf\Redis\Redis` 使用懶載入注入的問題。
-- [#3843](https://github.com/hyperf/hyperf/pull/3843) 修復 `Nacos` 例項無法正常註冊元資料的問題。
 - [#3845](https://github.com/hyperf/hyperf/pull/3845) 修復 `watcher` 元件無法在 `v2.2` 版本中正常使用的問題。
 - [#3848](https://github.com/hyperf/hyperf/pull/3848) 修復 `Nacos` 元件無法像 `v2.1` 版本註冊自身到 `Nacos` 服務中的問題。
+- [#3866](https://github.com/hyperf/hyperf/pull/3866) 修復 `Nacos` 例項無法正常註冊元資料的問題。
 
 ## 優化
 
