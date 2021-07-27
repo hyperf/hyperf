@@ -156,6 +156,26 @@ return [
 
 ```
 
+### 原生註解(Attributes)
+
+眾所周知，在 PHP 8 增加了 `原生註解(Attributes)` 的特性，Hyperf 2.2 版本開始也支持了原生註解的寫法，文檔內的所有註解都可做對應的轉換，如下：
+
+#### PHPDoc 註解
+
+```php
+/**
+ * @ClassAnnotation()
+ */
+class Foo {}
+```
+
+#### PHP 原生註解
+
+```php
+#[ClassAnnotation()]
+class Foo {}
+```
+
 ### 利用註解數據
 
 在沒有自定義註解收集方法時，默認會將註解的元數據統一收集在 `Hyperf\Di\Annotation\AnnotationCollector` 類內，通過該類的靜態方法可以方便的獲取對應的元數據用於邏輯判斷或實現。

@@ -301,7 +301,7 @@ use Mockery;
 
 class DemoLogicTest extends HttpTestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close();
     }
@@ -390,7 +390,10 @@ use Mockery;
 
 class DemoLogicTest extends HttpTestCase
 {
-    public function tearDown()
+    /**
+     * @after
+     */
+    public function tearDownAfterMethod()
     {
         Mockery::close();
     }

@@ -11,10 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Annotation;
 
+use Attribute;
+
 /**
  * @Annotation
  * @Target({"ALL"})
  */
+#[Attribute]
 class Debug extends AbstractAnnotation
 {
 }

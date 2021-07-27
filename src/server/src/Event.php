@@ -16,102 +16,102 @@ class Event
     /**
      * Swoole onStart event.
      */
-    const ON_START = 'start';
+    public const ON_START = 'start';
 
     /**
      * Swoole onWorkerStart event.
      */
-    const ON_WORKER_START = 'workerStart';
+    public const ON_WORKER_START = 'workerStart';
 
     /**
      * Swoole onWorkerStop event.
      */
-    const ON_WORKER_STOP = 'workerStop';
+    public const ON_WORKER_STOP = 'workerStop';
 
     /**
      * Swoole onWorkerExit event.
      */
-    const ON_WORKER_EXIT = 'workerExit';
+    public const ON_WORKER_EXIT = 'workerExit';
 
     /**
      * Swoole onWorkerError event.
      */
-    const ON_WORKER_ERROR = 'workerError';
+    public const ON_WORKER_ERROR = 'workerError';
 
     /**
      * Swoole onPipeMessage event.
      */
-    const ON_PIPE_MESSAGE = 'pipeMessage';
+    public const ON_PIPE_MESSAGE = 'pipeMessage';
 
     /**
      * Swoole onRequest event.
      */
-    const ON_REQUEST = 'request';
+    public const ON_REQUEST = 'request';
 
     /**
      * Swoole onReceive event.
      */
-    const ON_RECEIVE = 'receive';
+    public const ON_RECEIVE = 'receive';
 
     /**
      * Swoole onConnect event.
      */
-    const ON_CONNECT = 'connect';
+    public const ON_CONNECT = 'connect';
 
     /**
      * Swoole onHandShake event.
      */
-    const ON_HAND_SHAKE = 'handshake';
+    public const ON_HAND_SHAKE = 'handshake';
 
     /**
      * Swoole onOpen event.
      */
-    const ON_OPEN = 'open';
+    public const ON_OPEN = 'open';
 
     /**
      * Swoole onMessage event.
      */
-    const ON_MESSAGE = 'message';
+    public const ON_MESSAGE = 'message';
 
     /**
      * Swoole onClose event.
      */
-    const ON_CLOSE = 'close';
+    public const ON_CLOSE = 'close';
 
     /**
      * Swoole onTask event.
      */
-    const ON_TASK = 'task';
+    public const ON_TASK = 'task';
 
     /**
      * Swoole onFinish event.
      */
-    const ON_FINISH = 'finish';
+    public const ON_FINISH = 'finish';
 
     /**
      * Swoole onShutdown event.
      */
-    const ON_SHUTDOWN = 'shutdown';
+    public const ON_SHUTDOWN = 'shutdown';
 
     /**
      * Swoole onPacket event.
      */
-    const ON_PACKET = 'packet';
+    public const ON_PACKET = 'packet';
 
     /**
      * Swoole onManagerStart event.
      */
-    const ON_MANAGER_START = 'managerStart';
+    public const ON_MANAGER_START = 'managerStart';
 
     /**
      * Swoole onManagerStop event.
      */
-    const ON_MANAGER_STOP = 'managerStop';
+    public const ON_MANAGER_STOP = 'managerStop';
 
     /**
      * Before server start, it's not a swoole event.
      */
-    const ON_BEFORE_START = 'beforeStart';
+    public const ON_BEFORE_START = 'beforeStart';
 
     public static function isSwooleEvent($event): bool
     {

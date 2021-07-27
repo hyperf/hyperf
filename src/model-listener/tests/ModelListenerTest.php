@@ -45,7 +45,7 @@ class ModelListenerTest extends TestCase
 
         Register::setEventDispatcher(new EventDispatcher($listenerProvider));
 
-        $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps'])->getMock();
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery', 'updateTimestamps'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('where')->once()->with('id', '=', 1);
         $query->shouldReceive('update')->once()->with(['foo' => 'bar'])->andReturn(1);

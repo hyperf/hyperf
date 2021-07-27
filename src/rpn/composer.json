@@ -1,0 +1,36 @@
+{
+    "name": "hyperf/rpn",
+    "description": "Reverse Polish Notation",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf",
+        "RPN"
+    ],
+    "require": {
+        "php": ">=7.2",
+        "ext-bcmath": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Rpn\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Rpn\\": "tests"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Rpn\\ConfigProvider"
+        }
+    }
+}

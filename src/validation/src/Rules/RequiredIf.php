@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation\Rules;
 
+use InvalidArgumentException;
+
 class RequiredIf
 {
     /**
@@ -27,7 +29,11 @@ class RequiredIf
      */
     public function __construct($condition)
     {
-        $this->condition = $condition;
+        if (! is_string($condition)) {
+            $this->condition = $condition;
+        } else {
+            throw new InvalidArgumentException('The provided condition must be a callable or boolean.');
+        }
     }
 
     /**

@@ -13,15 +13,15 @@ namespace Hyperf\WebSocketServer;
 
 class Security
 {
-    const VERSION = '13';
+    public const VERSION = '13';
 
-    const PATTEN = '#^[+/0-9A-Za-z]{21}[AQgw]==$#';
+    public const PATTEN = '#^[+/0-9A-Za-z]{21}[AQgw]==$#';
 
-    const KEY = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
+    public const KEY = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
 
-    const SEC_WEBSOCKET_KEY = 'Sec-Websocket-Key';
+    public const SEC_WEBSOCKET_KEY = 'Sec-Websocket-Key';
 
-    const SEC_WEBSOCKET_PROTOCOL = 'Sec-WebSocket-Protocol';
+    public const SEC_WEBSOCKET_PROTOCOL = 'Sec-WebSocket-Protocol';
 
     public function isInvalidSecurityKey(string $key): bool
     {

@@ -58,7 +58,7 @@ trait ValidatesAttributes
 
         if ($url = parse_url($value, PHP_URL_HOST)) {
             try {
-                return count(dns_get_record($url, DNS_A | DNS_AAAA)) > 0;
+                return count(dns_get_record($url . '.', DNS_A | DNS_AAAA)) > 0;
             } catch (Exception $e) {
                 return false;
             }
@@ -374,7 +374,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        return (new EmailValidator())->isValid($value, new RFCValidation());
+        return (new EmailValidator())->isValid((string) $value, new RFCValidation());
     }
 
     /**
@@ -1476,7 +1476,7 @@ trait ValidatesAttributes
      * Get the size of an attribute.
      *
      * @param mixed $value
-     * @return mixed
+     * @return float|int
      */
     protected function getSize(string $attribute, $value)
     {

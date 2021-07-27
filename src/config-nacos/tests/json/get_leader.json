@@ -1,0 +1,10 @@
+{
+    "leader": {
+        "heartbeatDueMs": 2500,
+        "ip": "1.1.1.1:8848",
+        "leaderDueMs": 12853,
+        "state": "LEADER",
+        "term": 54202,
+        "voteFor": "1.1.1.1:8848"
+    }
+}

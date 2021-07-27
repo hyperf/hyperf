@@ -1,4 +1,21 @@
-# v2.1.22 - TBD
+# v2.1.24 - TBD
+
+# v2.1.23 - 2021-07-12
+
+## Optimized
+
+- [#3787](https://github.com/hyperf/hyperf/pull/3787) Initialize PSR Response first to avoid problems caused by the failure of building PSR Request.
+
+# v2.1.22 - 2021-06-28
+
+## Security
+
+- [#3723](https://github.com/hyperf/hyperf/pull/3723) Fixed the active_url rule for validation in input fails to correctly check dns record with dns_get_record resulting in bypassing the validation.
+- [#3724](https://github.com/hyperf/hyperf/pull/3724) Fixed bug that `RequiredIf` can be exploited to generate gadget chains for deserialization vulnerabiltiies.
+
+## Fixed
+
+- [#3721](https://github.com/hyperf/hyperf/pull/3721) Fixed the `in` and `not in` rule for validation in input fails to correctly check `in:00` rule when passing `0`.
 
 ## Fixed
 

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Retry\Annotation;
 
+use Attribute;
 use Doctrine\Common\Annotations\Annotation\Target;
 use Hyperf\Retry\Policy\BudgetRetryPolicy;
 use Hyperf\Retry\Policy\ClassifierRetryPolicy;
@@ -25,6 +26,7 @@ use Hyperf\Retry\SleepStrategyInterface;
  * @Annotation
  * @Target({"METHOD"})
  */
+#[Attribute(Attribute::TARGET_METHOD)]
 class Retry extends AbstractRetry
 {
     /**
@@ -113,9 +115,9 @@ class Retry extends AbstractRetry
      */
     public $fallback = '';
 
-    public function __construct($value = null)
+    public function __construct(...$value)
     {
-        parent::__construct($value);
+        parent::__construct(...$value);
         $this->retryBudget = make(RetryBudget::class, $this->retryBudget);
     }
 }

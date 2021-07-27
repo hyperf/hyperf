@@ -18,6 +18,7 @@ composer require hyperf/amqp
 |     password     | string |   guest   |      密码      |
 |      vhost       | string |     /     |     vhost      |
 | concurrent.limit |  int   |     0     | 同时消费的数量 |
+| pool.connections |  int   |     1     | 进程内保持的连接数 |
 |       pool       | object |           |   连接池配置   |
 |      params      | object |           |    基本配置    |
 
@@ -35,11 +36,7 @@ return [
             'limit' => 1,
         ],
         'pool' => [
-            'min_connections' => 1,
-            'max_connections' => 10,
-            'connect_timeout' => 10.0,
-            'wait_timeout' => 3.0,
-            'heartbeat' => -1,
+            'connections' => 1,
         ],
         'params' => [
             'insist' => false,
@@ -60,7 +57,7 @@ return [
 ];
 ```
 
-可在 `producer` 或者 `consumer` 的 `__construct` 函数中, 设置不同 `pool`.
+可在 `producer` 或者 `consumer` 的 `__construct` 函数中，设置不同 `pool`，例如上述的 `default` 和 `pool2`。
 
 ## 投递消息
 
@@ -88,7 +85,6 @@ use Hyperf\Amqp\Message\ProducerMessage;
 use App\Models\User;
 
 /**
- * DemoProducer
  * @Producer(exchange="hyperf", routingKey="hyperf")
  */
 class DemoProducer extends ProducerMessage
@@ -146,13 +142,14 @@ namespace App\Amqp\Consumers;
 use Hyperf\Amqp\Annotation\Consumer;
 use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
 
 /**
  * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1)
  */
 class DemoConsumer extends ConsumerMessage
 {
-    public function consume($data): string
+    public function consumeMessage($data, AMQPMessage $message): string
     {
         print_r($data);
         return Result::ACK;
@@ -177,13 +174,14 @@ namespace App\Amqp\Consumers;
 use Hyperf\Amqp\Annotation\Consumer;
 use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
 
 /**
  * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1, enable=false)
  */
 class DemoConsumer extends ConsumerMessage
 {
-    public function consume($data): string
+    public function consumeMessage($data, AMQPMessage $message): string
     {
         print_r($data);
         return Result::ACK;

@@ -16,10 +16,10 @@ class Constants
     /**
      * Swoole onWorkerStart event.
      */
-    const WORKER_START = 'workerStart';
+    public const WORKER_START = 'workerStart';
 
     /**
      * Swoole onWorkerExit event.
      */
-    const WORKER_EXIT = 'workerExit';
+    public const WORKER_EXIT = 'workerExit';
 }
