@@ -192,15 +192,15 @@ class NacosDriver implements DriverInterface
                     if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
                         break;
                     }
-
+                    $groupName = $this->config->get('services.drivers.nacos.group_name');
                     $response = $this->client->instance->beat(
                         $name,
                         [
                             'ip' => $host,
                             'port' => $port,
-                            'serviceName' => $name,
+                            'serviceName' => $groupName . '@@' . $name,
                         ],
-                        $this->config->get('services.drivers.nacos.group_name'),
+                        $groupName,
                         $this->config->get('services.drivers.nacos.namespace_id'),
                     );
 
