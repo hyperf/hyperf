@@ -198,7 +198,7 @@ class NacosDriver implements DriverInterface
                         [
                             'ip' => $host,
                             'port' => $port,
-                            'serviceName' => $groupName . "@@" . $name,
+                            'serviceName' => $groupName . '@@' . $name,
                         ],
                         $groupName,
                         $this->config->get('services.drivers.nacos.namespace_id'),
