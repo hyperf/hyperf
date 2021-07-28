@@ -33,6 +33,7 @@ class InstanceBeatProcess extends AbstractProcess
 
         $serviceConfig = $config->get('nacos.service', []);
         $serviceName = $serviceConfig['service_name'];
+        $namespaceId = $serviceConfig['namespace_id'];
         $groupName = $serviceConfig['group_name'] ?? null;
         $instanceConfig = $serviceConfig['instance'] ?? [];
         $ephemeral = $instanceConfig['ephemeral'] ?? null;
@@ -53,10 +54,12 @@ class InstanceBeatProcess extends AbstractProcess
                     [
                         'ip' => $ip,
                         'port' => $port,
+                        'serviceName' => $groupName . '@@' . $serviceName,
                         'cluster' => $cluster,
                         'weight' => $weight,
                     ],
                     $groupName,
+                    $namespaceId,
                     $ephemeral
                 );
 
