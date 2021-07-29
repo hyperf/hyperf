@@ -19,6 +19,11 @@ use Psr\Http\Message\ResponseInterface;
 class InstanceProvider extends AbstractProvider
 {
     /**
+     * @var bool
+     */
+    public $lightBeatEnabled = false;
+
+    /**
      * @param $optional = [
      *     'groupName' => '',
      *     'clusterName' => '',
@@ -129,13 +134,18 @@ class InstanceProvider extends AbstractProvider
      */
     public function beat(string $serviceName, array $beat = [], ?string $groupName = null, ?string $namespaceId = null, ?bool $ephemeral = null): ResponseInterface
     {
+        $beatStr = '';
+        if(!$this->lightBeatEnabled){
+            $beatStr = Json::encode($beat);
+        }
+
         return $this->request('PUT', '/nacos/v1/ns/instance/beat', [
             RequestOptions::QUERY => $this->filter([
                 'serviceName' => $serviceName,
                 'groupName' => $groupName,
                 'namespaceId' => $namespaceId,
                 'ephemeral' => $ephemeral,
-                'beat' => Json::encode($beat),
+                'beat' => $beatStr,
             ]),
         ]);
     }

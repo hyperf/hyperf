@@ -59,6 +59,11 @@ class NacosDriver implements DriverInterface
      */
     protected $config;
 
+    /**
+     * @var array
+     */
+    private $metadata;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -94,11 +99,12 @@ class NacosDriver implements DriverInterface
 
     public function register(string $name, string $host, int $port, array $metadata): void
     {
+        $this->setMetadata($metadata);
         if (! array_key_exists($name, $this->serviceCreated)) {
             $response = $this->client->service->create($name, [
                 'groupName' => $this->config->get('services.drivers.nacos.group_name'),
                 'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
-                'metadata' => $this->formatMetadata($metadata),
+                'metadata' => $this->getMetadata(),
                 'protectThreshold' => (float)$this->config->get('services.drivers.nacos.protect_threshold',0),
             ]);
 
@@ -111,7 +117,7 @@ class NacosDriver implements DriverInterface
         $response = $this->client->instance->register($host, $port, $name, [
             'groupName' => $this->config->get('services.drivers.nacos.group_name'),
             'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
-            'metadata' => $this->formatMetadata($metadata),
+            'metadata' => $this->getMetadata(),
         ]);
 
         if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
@@ -127,7 +133,7 @@ class NacosDriver implements DriverInterface
         if ( array_key_exists($name, $this->serviceRegistered)) {
             return true;
         }
-
+        $this->setMetadata($metadata);
         $response = $this->client->service->detail(
             $name,
             $this->config->get('services.drivers.nacos.group_name'),
@@ -187,13 +193,18 @@ class NacosDriver implements DriverInterface
         return false;
     }
 
-    protected function formatMetadata(array $metadata): ?string
+    protected function setMetadata($metadata)
     {
-        if (empty($metadata)) {
+        $this->metadata = $metadata;
+    }
+
+    protected function getMetadata(): ?string
+    {
+        if (empty($this->metadata)) {
             return null;
         }
-
-        return Json::encode($metadata);
+        unset($this->metadata['methodName']);
+        return Json::encode($this->metadata);
     }
 
     protected function registerHeartbeat(string $name, string $host, int $port): void
@@ -228,6 +239,23 @@ class NacosDriver implements DriverInterface
                         $this->logger->debug(sprintf('Instance %s:%d heartbeat successfully!', $host, $port));
                     } else {
                         $this->logger->error(sprintf('Instance %s:%d heartbeat failed!', $host, $port));
+                        continue;
+                    }
+
+                    $result = json_decode($response->getBody()->getContents(), true);
+
+                    $lightBeatEnabled = false;
+                    if(isset($result['lightBeatEnabled'])){
+                        $lightBeatEnabled = $result['lightBeatEnabled'];
+                    }
+                    $this->client->instance->lightBeatEnabled = $lightBeatEnabled;
+
+                    if($result['code'] == 20404){
+                        $this->client->instance->register($host, $port, $name, [
+                            'groupName' => $this->config->get('services.drivers.nacos.group_name'),
+                            'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
+                            'metadata' => $this->getMetadata(),
+                        ]);
                     }
                 }
             });
