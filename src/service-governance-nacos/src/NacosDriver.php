@@ -62,7 +62,7 @@ class NacosDriver implements DriverInterface
     /**
      * @var array
      */
-    private $metadata;
+    private $metadata = [];
 
     public function __construct(ContainerInterface $container)
     {
