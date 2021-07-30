@@ -2,7 +2,7 @@
 
 ## Fixed
 
-- [#3872](https://github.com/hyperf/hyperf/pull/3872) Fixed bug that heartbeat failed when using nacos without default group.
+- [#3872](https://github.com/hyperf/hyperf/pull/3872) [#3873](https://github.com/hyperf/hyperf/pull/3873) Fixed bug that heartbeat failed when using nacos without default group.
 - [#3879](https://github.com/hyperf/hyperf/pull/3879) Fixed bug that `watcher` does not work caused by proxies replaced.
 
 # v2.2.1 - 2021-07-27
