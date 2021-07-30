@@ -135,7 +135,7 @@ class InstanceProvider extends AbstractProvider
                 'groupName' => $groupName,
                 'namespaceId' => $namespaceId,
                 'ephemeral' => $ephemeral,
-                'beat' => Json::encode($beat),
+                'beat' => ! empty($beat) ? Json::encode($beat) : '',
             ]),
         ]);
     }
