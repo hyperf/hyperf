@@ -99,12 +99,12 @@ class NacosDriver implements DriverInterface
 
     public function register(string $name, string $host, int $port, array $metadata): void
     {
-        $this->setMetadata($metadata);
+        $this->setMetadata($name, $metadata);
         if (! array_key_exists($name, $this->serviceCreated)) {
             $response = $this->client->service->create($name, [
                 'groupName' => $this->config->get('services.drivers.nacos.group_name'),
                 'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
-                'metadata' => $this->getMetadata(),
+                'metadata' => $this->getMetadata($name),
                 'protectThreshold' => (float) $this->config->get('services.drivers.nacos.protect_threshold', 0),
             ]);
 
@@ -117,7 +117,7 @@ class NacosDriver implements DriverInterface
         $response = $this->client->instance->register($host, $port, $name, [
             'groupName' => $this->config->get('services.drivers.nacos.group_name'),
             'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
-            'metadata' => $this->getMetadata(),
+            'metadata' => $this->getMetadata($name),
         ]);
 
         if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
@@ -133,7 +133,7 @@ class NacosDriver implements DriverInterface
         if (array_key_exists($name, $this->serviceRegistered)) {
             return true;
         }
-        $this->setMetadata($metadata);
+        $this->setMetadata($name, $metadata);
         $response = $this->client->service->detail(
             $name,
             $this->config->get('services.drivers.nacos.group_name'),
@@ -193,18 +193,18 @@ class NacosDriver implements DriverInterface
         return false;
     }
 
-    protected function setMetadata($metadata)
+    protected function setMetadata(string $name, array $metadata)
     {
-        $this->metadata = $metadata;
+        $this->metadata[$name] = $metadata;
     }
 
-    protected function getMetadata(): ?string
+    protected function getMetadata(string $name): ?string
     {
-        if (empty($this->metadata)) {
+        if (empty($this->metadata[$name])) {
             return null;
         }
-        unset($this->metadata['methodName']);
-        return Json::encode($this->metadata);
+        unset($this->metadata[$name]['methodName']);
+        return Json::encode($this->metadata[$name]);
     }
 
     protected function registerHeartbeat(string $name, string $host, int $port): void
@@ -259,7 +259,7 @@ class NacosDriver implements DriverInterface
                         $this->client->instance->register($host, $port, $name, [
                             'groupName' => $this->config->get('services.drivers.nacos.group_name'),
                             'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
-                            'metadata' => $this->getMetadata(),
+                            'metadata' => $this->getMetadata($name),
                         ]);
                     }
                 }
