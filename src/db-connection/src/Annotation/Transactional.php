@@ -12,14 +12,14 @@ declare(strict_types=1);
 namespace Hyperf\DbConnection\Annotation;
 
 use Attribute;
-use Hyperf\Di\Annotation\AbstractAnnotation;
+use Hyperf\Di\Annotation\AbstractMultipleAnnotation;
 
 /**
  * @Annotation
  * @Target({"METHOD"})
  */
-#[Attribute(Attribute::TARGET_METHOD)]
-class Transactional extends AbstractAnnotation
+#[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
+class Transactional extends AbstractMultipleAnnotation
 {
     /**
      * @var string
