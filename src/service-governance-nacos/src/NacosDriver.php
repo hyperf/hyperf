@@ -218,19 +218,27 @@ class NacosDriver implements DriverInterface
 
         Coroutine::create(function () use ($name, $host, $port) {
             retry(INF, function () use ($name, $host, $port) {
+
+                $lightBeatEnabled = false;
                 while (true) {
                     $heartbeat = $this->config->get('services.drivers.nacos.heartbeat', 5);
                     if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
                         break;
                     }
                     $groupName = $this->config->get('services.drivers.nacos.group_name');
-                    $response = $this->client->instance->beat(
-                        $name,
-                        [
+
+                    $beat = [];
+                    if(!$lightBeatEnabled){
+                        $beat = [
                             'ip' => $host,
                             'port' => $port,
                             'serviceName' => $groupName . '@@' . $name,
-                        ],
+                        ];
+                    }
+
+                    $response = $this->client->instance->beat(
+                        $name,
+                        $beat,
                         $groupName,
                         $this->config->get('services.drivers.nacos.namespace_id'),
                     );
@@ -248,7 +256,6 @@ class NacosDriver implements DriverInterface
                     if(isset($result['lightBeatEnabled'])){
                         $lightBeatEnabled = $result['lightBeatEnabled'];
                     }
-                    $this->client->instance->lightBeatEnabled = $lightBeatEnabled;
 
                     if($result['code'] == 20404){
                         $this->client->instance->register($host, $port, $name, [
