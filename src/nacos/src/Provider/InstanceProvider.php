@@ -18,7 +18,6 @@ use Psr\Http\Message\ResponseInterface;
 
 class InstanceProvider extends AbstractProvider
 {
-
     /**
      * @param $optional = [
      *     'groupName' => '',
@@ -136,7 +135,7 @@ class InstanceProvider extends AbstractProvider
                 'groupName' => $groupName,
                 'namespaceId' => $namespaceId,
                 'ephemeral' => $ephemeral,
-                'beat' => !empty($beat) ? Json::encode($beat) : '',
+                'beat' => ! empty($beat) ? Json::encode($beat) : '',
             ]),
         ]);
     }
