@@ -4,6 +4,7 @@
 
 - [#3872](https://github.com/hyperf/hyperf/pull/3872) Fixed bug that heartbeat failed when using nacos without default group.
 - [#3879](https://github.com/hyperf/hyperf/pull/3879) Fixed bug that `watcher` does not work caused by proxies replaced.
+- [#3887](https://github.com/hyperf/hyperf/pull/3887) Support PHP 8.0 transaction repeat annotation
 
 # v2.2.1 - 2021-07-27
 
