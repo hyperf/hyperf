@@ -236,19 +236,21 @@ class NacosDriver implements DriverInterface
 
                     $response = $this->client->instance->beat(
                         $name,
+                        $host,
+                        $port,
                         $beat,
                         $groupName,
                         $this->config->get('services.drivers.nacos.namespace_id'),
                     );
 
+                    $result = json_decode($response->getBody()->getContents(), true);
+
                     if ($response->getStatusCode() === 200) {
-                        $this->logger->debug(sprintf('Instance %s:%d heartbeat successfully!', $host, $port));
+                        $this->logger->debug(sprintf('Instance %s:%d heartbeat successfully, result code:%s', $host, $port,$result['code']));
                     } else {
                         $this->logger->error(sprintf('Instance %s:%d heartbeat failed!', $host, $port));
                         continue;
                     }
-
-                    $result = json_decode($response->getBody()->getContents(), true);
 
                     $lightBeatEnabled = false;
                     if (isset($result['lightBeatEnabled'])) {
