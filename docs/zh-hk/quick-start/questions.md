@@ -102,3 +102,39 @@ PHP Fatal error:  Interface 'Hyperf\Signal\SignalHandlerInterface' not found in 
 ```bash
 composer require hyperf/signal
 ```
+
+## Trait 內使用 `@Inject` 注入報錯 `Error while injecting dependencies into ... No entry or class found ...`
+
+若 Trait 通過 `@Inject @var` 注入屬性, 同時子類裏 `use` 了不同命名空間的同名類, 會導致 Trait 裏類名被覆蓋，進而導致注入失效:
+
+```php
+use Hyperf\HttpServer\Contract\ResponseInterface;
+use Hyperf\Di\Annotation\Inject;
+
+trait TestTrait
+{
+    /**
+     * @Inject()   
+     * @var ResponseInterface
+     */
+    protected $response;
+}
+```
+
+如上 Trait 類注入 `Hyperf\HttpServer\Contract\ResponseInterface`, 若子類使用不同命名空間的`ResponseInterface` 類, 如`use Psr\Http\Message\ResponseInterface`, 會導致 Trait 原類名被覆蓋:
+
+```php
+// use 同類名會覆蓋Trait
+use Psr\Http\Message\ResponseInterface;
+
+class IndexController
+{
+    use TestTrait;
+}
+// Error while injecting dependencies into App\Controller\IndexController: No entry or class found for 'Psr\Http\Message\ResponseInterface'
+```
+
+上述問題可以通過以下兩個方法解決:
+
+- 子類通過 `as` 修改別名: `use Psr\Http\Message\ResponseInterface as PsrResponseInterface;`
+- Trait 類`PHP7.4` 以上通過屬性類型限制: `protected ResponseInterface $response;`

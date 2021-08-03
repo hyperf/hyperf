@@ -1,5 +1,17 @@
 # 版本更新記錄
 
+# v2.2.2 - 2021-08-03
+
+## 修復
+
+- [#3872](https://github.com/hyperf/hyperf/pull/3872) [#3873](https://github.com/hyperf/hyperf/pull/3873) 修復使用 `Nacos` 服務時，因為沒有使用預設的組名，導致心跳失敗的問題。
+- [#3877](https://github.com/hyperf/hyperf/pull/3877) 修復 `Nacos` 服務，心跳會被註冊多次的問題。
+- [#3879](https://github.com/hyperf/hyperf/pull/3879) 修復熱更新因為代理類被覆蓋，導致無法正常使用的問題。
+
+## 優化
+
+- [#3877](https://github.com/hyperf/hyperf/pull/3877) 為 `Nacos` 服務，增加 `lightBeatEnabled` 支援。
+
 # v2.2.1 - 2021-07-27
 
 ## 修復
