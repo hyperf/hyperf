@@ -132,6 +132,8 @@ class InstanceProvider extends AbstractProvider
         return $this->request('PUT', '/nacos/v1/ns/instance/beat', [
             RequestOptions::QUERY => $this->filter([
                 'serviceName' => $serviceName,
+                'ip' => $beat['ip'] ?? null,
+                'port' => $beat['port'] ?? null,
                 'groupName' => $groupName,
                 'namespaceId' => $namespaceId,
                 'ephemeral' => $ephemeral,

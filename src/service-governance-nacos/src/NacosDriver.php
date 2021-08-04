@@ -225,13 +225,12 @@ class NacosDriver implements DriverInterface
                     }
                     $groupName = $this->config->get('services.drivers.nacos.group_name');
 
-                    $beat = [];
+                    $beat = [
+                        'ip' => $host,
+                        'port' => $port,
+                    ];
                     if (! $lightBeatEnabled) {
-                        $beat = [
-                            'ip' => $host,
-                            'port' => $port,
-                            'serviceName' => $groupName . '@@' . $name,
-                        ];
+                        $beat['serviceName'] = $groupName . '@@' . $name;
                     }
 
                     $response = $this->client->instance->beat(
@@ -241,14 +240,14 @@ class NacosDriver implements DriverInterface
                         $this->config->get('services.drivers.nacos.namespace_id'),
                     );
 
+                    $result = json_decode($response->getBody()->getContents(), true);
+
                     if ($response->getStatusCode() === 200) {
-                        $this->logger->debug(sprintf('Instance %s:%d heartbeat successfully!', $host, $port));
+                        $this->logger->debug(sprintf('Instance %s:%d heartbeat successfully, result code:%s', $host, $port, $result['code']));
                     } else {
                         $this->logger->error(sprintf('Instance %s:%d heartbeat failed!', $host, $port));
                         continue;
                     }
-
-                    $result = json_decode($response->getBody()->getContents(), true);
 
                     $lightBeatEnabled = false;
                     if (isset($result['lightBeatEnabled'])) {

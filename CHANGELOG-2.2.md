@@ -1,5 +1,9 @@
 # v2.2.3 - TBD
 
+## Fixed
+
+- [#3897](https://github.com/hyperf/hyperf/pull/3897) Fixed bug that nacos instance will be registered more than once, because heartbeat failed caused by light beat enabled.
+
 # v2.2.2 - 2021-08-03
 
 ## Fixed
