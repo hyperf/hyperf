@@ -121,7 +121,7 @@ class MainWorkerStartListener implements ListenerInterface
                 'clusterName' => $cluster,
                 'weight' => $weight,
                 'metadata' => $metadata,
-                'enabled' => true,
+                'enabled' => 'true',
             ]);
 
             $ports = $config->get('server.servers', []);
