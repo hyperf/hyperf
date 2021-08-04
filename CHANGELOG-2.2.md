@@ -1,5 +1,9 @@
 # v2.2.3 - TBD
 
+## Fixed
+
+- [#3897](https://github.com/hyperf/hyperf/pull/3897) Fixed instance registered more than once when light beat enabled for nacos.
+- 
 # v2.2.2 - 2021-08-03
 
 ## Fixed
