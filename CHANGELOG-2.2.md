@@ -2,8 +2,8 @@
 
 ## Fixed
 
-- [#3897](https://github.com/hyperf/hyperf/pull/3897) Fixed instance registered more than once when light beat enabled for nacos.
-- 
+- [#3897](https://github.com/hyperf/hyperf/pull/3897) Fixed bug that nacos instance will be registered more than once when light beat enabled.
+
 # v2.2.2 - 2021-08-03
 
 ## Fixed
