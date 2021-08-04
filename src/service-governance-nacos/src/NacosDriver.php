@@ -246,7 +246,7 @@ class NacosDriver implements DriverInterface
                     $result = json_decode($response->getBody()->getContents(), true);
 
                     if ($response->getStatusCode() === 200) {
-                        $this->logger->debug(sprintf('Instance %s:%d heartbeat successfully, result code:%s', $host, $port,$result['code']));
+                        $this->logger->debug(sprintf('Instance %s:%d heartbeat successfully, result code:%s', $host, $port, $result['code']));
                     } else {
                         $this->logger->error(sprintf('Instance %s:%d heartbeat failed!', $host, $port));
                         continue;
