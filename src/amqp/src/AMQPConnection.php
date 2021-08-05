@@ -234,6 +234,9 @@ class AMQPConnection extends AbstractConnection
     protected function wait_channel($channel_id, $timeout = 0)
     {
         $chan = $this->channelManager->get($channel_id);
+        if ($chan === null) {
+            throw new ChannelClosedException('Wait channel was already closed.');
+        }
 
         $data = $chan->pop($timeout);
         if ($data === false) {
