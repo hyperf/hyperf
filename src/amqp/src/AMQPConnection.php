@@ -189,8 +189,11 @@ class AMQPConnection extends AbstractConnection
 
     public function close($reply_code = 0, $reply_text = '', $method_sig = [0, 0])
     {
-        $res = parent::close($reply_code, $reply_text, $method_sig);
-        $this->channelManager->flush();
+        try {
+            $res = parent::close($reply_code, $reply_text, $method_sig);
+        } finally {
+            $this->channelManager->flush();
+        }
         return $res;
     }
 
@@ -227,7 +230,12 @@ class AMQPConnection extends AbstractConnection
                 $this->logger && $this->logger->log($level, 'Recv loop broken. The reason is ' . (string) $exception);
             } finally {
                 $this->loop = false;
-                $this->close();
+                if (! $this->exited) {
+                    // When loop broken, AMQPConnection will not be able to communicate with AMQP server.
+                    // So flush all recv channels to ensure closing AMQP connections quickly.
+                    $this->channelManager->flush();
+                    $this->close();
+                }
             }
         });
     }
