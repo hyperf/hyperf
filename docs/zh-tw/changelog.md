@@ -1,5 +1,14 @@
 # 版本更新記錄
 
+# v2.2.3 - 2021-08-09
+
+## Fixed
+
+- [#3897](https://github.com/hyperf/hyperf/pull/3897) 修復因為 `lightBeatEnabled` 導致心跳失敗，進而導致 `Nacos` 服務註冊多次的問題。
+- [#3905](https://github.com/hyperf/hyperf/pull/3905) 修復 `AMQP` 連線在關閉時導致空指標的問題。
+- [#3906](https://github.com/hyperf/hyperf/pull/3906) 修復 `AMQP` 連線關閉時，因已經銷燬所有等待通道而導致失敗的問題。
+- [#3908](https://github.com/hyperf/hyperf/pull/3908) 修復使用了以 `CoordinatorManager` 為基礎的迴圈邏輯時，自定義程序無法正常重啟的問題。
+
 # v2.2.2 - 2021-08-03
 
 ## 修復
