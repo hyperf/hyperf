@@ -11,16 +11,16 @@ declare(strict_types=1);
  */
 namespace Hyperf\ServiceGovernanceConsul;
 
-use Hyperf\Consul\Health;
-use Hyperf\LoadBalancer\Node;
-use Hyperf\Guzzle\ClientFactory;
 use Hyperf\Consul\AgentInterface;
+use Hyperf\Consul\Health;
 use Hyperf\Consul\HealthInterface;
 use Hyperf\Contract\ConfigInterface;
-use Psr\Container\ContainerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Guzzle\ClientFactory;
+use Hyperf\LoadBalancer\Node;
 use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\ServiceGovernance\Exception\ComponentRequiredException;
+use Psr\Container\ContainerInterface;
 
 class ConsulDriver implements DriverInterface
 {
