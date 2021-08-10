@@ -336,6 +336,7 @@
             "HyperfTest\\Rpn\\": "src/rpn/tests/",
             "HyperfTest\\Scout\\": "src/scout/tests/",
             "HyperfTest\\Server\\": "src/server/tests/",
+            "HyperfTest\\ServiceGovernanceConsul\\": "src/service-governance-consul/tests/",
             "HyperfTest\\ServiceGovernanceNacos\\": "src/service-governance-nacos/tests/",
             "HyperfTest\\ServiceGovernance\\": "src/service-governance/tests/",
             "HyperfTest\\Session\\": "src/session/tests/",

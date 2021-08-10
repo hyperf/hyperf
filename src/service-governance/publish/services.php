@@ -20,6 +20,10 @@ return [
         'consul' => [
             'uri' => 'http://127.0.0.1:8500',
             'token' => '',
+            'check' => [
+                'deregister_critical_service_after' => '90m',
+                'interval' => '1s',
+            ],
         ],
         'nacos' => [
             // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port

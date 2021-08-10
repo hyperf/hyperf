@@ -1,5 +1,7 @@
 # v2.2.4 - TBD
 
+- [#3924](https://github.com/hyperf/hyperf/pull/3924) Added health check parameters for consul service register.
+
 # v2.2.3 - 2021-08-09
 
 ## Fixed
