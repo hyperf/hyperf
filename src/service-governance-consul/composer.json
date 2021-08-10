@@ -28,6 +28,11 @@
             "Hyperf\\ServiceGovernanceConsul\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\ServiceGovernanceConsul\\": "tests/"
+        }
+    },
     "config": {
         "sort-packages": true
     },
