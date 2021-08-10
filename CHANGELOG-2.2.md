@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#3925](https://github.com/hyperf/hyperf/pull/3925) Fixed bug that heartbeat failed caused by nacos light beat enabled.
+- [#3926](https://github.com/hyperf/hyperf/pull/3926) Fixed config of `config_center.drivers.nacos.client` does not work.
 
 ## Added
 
