@@ -228,16 +228,16 @@ class NacosDriver implements DriverInterface
                     $beat = [
                         'ip' => $host,
                         'port' => $port,
+                        'serviceName' => $groupName . '@@' . $name,
                     ];
-                    if (! $lightBeatEnabled) {
-                        $beat['serviceName'] = $groupName . '@@' . $name;
-                    }
 
                     $response = $this->client->instance->beat(
                         $name,
                         $beat,
                         $groupName,
                         $this->config->get('services.drivers.nacos.namespace_id'),
+                        null,
+                        $lightBeatEnabled
                     );
 
                     $result = json_decode($response->getBody()->getContents(), true);
