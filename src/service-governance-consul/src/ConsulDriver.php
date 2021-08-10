@@ -11,15 +11,16 @@ declare(strict_types=1);
  */
 namespace Hyperf\ServiceGovernanceConsul;
 
-use Hyperf\Consul\AgentInterface;
 use Hyperf\Consul\Health;
-use Hyperf\Consul\HealthInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Guzzle\ClientFactory;
 use Hyperf\LoadBalancer\Node;
+use Hyperf\Guzzle\ClientFactory;
+use Hyperf\Consul\AgentInterface;
+use Hyperf\Consul\HealthInterface;
+use Hyperf\Contract\ConfigInterface;
+use Psr\Container\ContainerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\ServiceGovernance\Exception\ComponentRequiredException;
-use Psr\Container\ContainerInterface;
 
 class ConsulDriver implements DriverInterface
 {
@@ -40,10 +41,16 @@ class ConsulDriver implements DriverInterface
 
     protected $health;
 
+    /**
+     * @var ConfigInterface
+     */
+    protected $config;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->config = $container->get(ConfigInterface::class);
     }
 
     public function getNodes(string $uri, string $name, array $metadata): array
@@ -82,6 +89,8 @@ class ConsulDriver implements DriverInterface
     {
         $nextId = empty($metadata['id']) ? $this->generateId($this->getLastServiceId($name)) : $metadata['id'];
         $protocol = $metadata['protocol'];
+        $deregisterCriticalServiceAfter = $this->config->get('services.drivers.consul.check.deregister_critical_service_after') ?? '90m';
+        $interval = $this->config->get('services.drivers.consul.check.interval') ?? '1s';
         $requestBody = [
             'Name' => $name,
             'ID' => $nextId,
@@ -93,16 +102,16 @@ class ConsulDriver implements DriverInterface
         ];
         if ($protocol === 'jsonrpc-http') {
             $requestBody['Check'] = [
-                'DeregisterCriticalServiceAfter' => '90m',
+                'DeregisterCriticalServiceAfter' => $deregisterCriticalServiceAfter,
                 'HTTP' => "http://{$host}:{$port}/",
-                'Interval' => '1s',
+                'Interval' => $interval,
             ];
         }
         if (in_array($protocol, ['jsonrpc', 'jsonrpc-tcp-length-check'], true)) {
             $requestBody['Check'] = [
-                'DeregisterCriticalServiceAfter' => '90m',
+                'DeregisterCriticalServiceAfter' => $deregisterCriticalServiceAfter,
                 'TCP' => "{$host}:{$port}",
-                'Interval' => '1s',
+                'Interval' => $interval,
             ];
         }
         $response = $this->client()->registerService($requestBody);
