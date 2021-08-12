@@ -8,6 +8,7 @@
 ## Added
 
 - [#3924](https://github.com/hyperf/hyperf/pull/3924) Added health check parameters for consul service register.
+- [#3932](https://github.com/hyperf/hyperf/pull/3932) Support requeue the message when return `NACK` for `AMQP` consumer.
 
 # v2.2.3 - 2021-08-09
 
