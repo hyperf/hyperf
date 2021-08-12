@@ -204,7 +204,7 @@ class Consumer extends Builder
             }
             if ($result === Result::NACK) {
                 $this->logger->debug($deliveryTag . ' uacked.');
-                return $channel->basic_nack($deliveryTag);
+                return $channel->basic_nack($deliveryTag, false, $consumerMessage->isRequeue());
             }
             if ($consumerMessage->isRequeue() && $result === Result::REQUEUE) {
                 $this->logger->debug($deliveryTag . ' requeued.');
