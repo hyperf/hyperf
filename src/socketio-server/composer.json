@@ -15,7 +15,7 @@
         "hyperf/di": "~2.2.0",
         "hyperf/redis": "~2.2.0",
         "hyperf/websocket-server": "~2.2.0",
-        "mix/redis-subscribe": "^2.1"
+        "mix/redis-subscriber": "^3.0"
     },
     "suggest": {
         "hyperf/command": "Required to use RemoveRedisGarbage command",

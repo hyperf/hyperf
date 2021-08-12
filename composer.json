@@ -53,7 +53,7 @@
         "league/plates": "^3.3",
         "longlang/phpkafka": "^1.1",
         "markrogoyski/math-php": "^2.0",
-        "mix/redis-subscribe": "^2.1",
+        "mix/redis-subscriber": "^3.0",
         "mockery/mockery": "^1.0",
         "monolog/monolog": "^2.0",
         "multiplex/socket": "^0.4.0",

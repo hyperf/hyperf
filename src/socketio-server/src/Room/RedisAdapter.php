@@ -23,7 +23,7 @@ use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Hyperf\WebSocketServer\Sender;
-use Mix\Redis\Subscribe\Subscriber;
+use Mix\Redis\Subscriber\Subscriber;
 use Redis;
 
 class RedisAdapter implements AdapterInterface, EphemeralInterface
