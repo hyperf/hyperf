@@ -85,6 +85,11 @@ return [
             'id' => App\JsonRpc\CalculatorServiceInterface::class,
             'protocol' => Hyperf\RpcMultiplex\Constant::PROTOCOL_DEFAULT,
             'load_balancer' => 'random',
+            // 这个消费者要从哪个服务中心获取节点信息，如不配置则不会从服务中心获取节点信息
+            'registry' => [
+                'protocol' => 'consul',
+                'address' => 'http://127.0.0.1:8500',
+            ],
             'nodes' => [
                 ['host' => '127.0.0.1', 'port' => 9502],
             ],

@@ -43,7 +43,7 @@ class RegisterServiceListener implements ListenerInterface
     public function process(object $event)
     {
         $annotation = $event->annotation;
-        if (! in_array($annotation->protocol, ['jsonrpc', 'jsonrpc-http', 'jsonrpc-tcp-length-check'])) {
+        if (! in_array($annotation->protocol, ['jsonrpc', 'jsonrpc-http', 'jsonrpc-tcp-length-check', 'multiplex.default'])) {
             return;
         }
         $metadata = $event->toArray();
