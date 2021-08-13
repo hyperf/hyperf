@@ -2,8 +2,6 @@
 
 本组件基于 `TCP` 协议，多路复用的设计借鉴于 `AMQP` 组件。
 
-> 暂不支持注册中心
-
 ## 安装
 
 ```
@@ -115,5 +113,15 @@ return [
 
 ```
 
+### 注册中心
+
+如果需要使用注册中心，则需要手动添加以下监听器
+
+```php
+<?php
+return [
+    Hyperf\RpcMultiplex\Listener\RegisterServiceListener::class,
+];
+```
 
 
