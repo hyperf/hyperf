@@ -105,7 +105,7 @@ class MainWorkerStartListener implements ListenerInterface
 
             // Register Instance to Nacos.
             $instanceConfig = $serviceConfig['instance'] ?? [];
-            $ephemeral = $instanceConfig['ephemeral'] ?? null;
+            $ephemeral = in_array($instanceConfig['ephemeral'], [true, 'true'], true) ? 'true' : 'false';
             $cluster = $instanceConfig['cluster'] ?? null;
             $weight = $instanceConfig['weight'] ?? null;
             $metadata = $instanceConfig['metadata'] ?? null;
@@ -121,7 +121,7 @@ class MainWorkerStartListener implements ListenerInterface
                 'clusterName' => $cluster,
                 'weight' => $weight,
                 'metadata' => $metadata,
-                'enabled' => true,
+                'enabled' => 'true',
             ]);
 
             $ports = $config->get('server.servers', []);

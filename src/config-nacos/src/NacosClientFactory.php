@@ -20,7 +20,7 @@ class NacosClientFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        $config = $container->get(ConfigInterface::class)->get('config-center.drivers.nacos.client', []);
+        $config = $container->get(ConfigInterface::class)->get('config_center.drivers.nacos.client', []);
         if (empty($config)) {
             return $container->get(Application::class);
         }

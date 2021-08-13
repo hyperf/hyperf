@@ -45,9 +45,24 @@ class NacosDriver implements DriverInterface
     protected $serviceRegistered = [];
 
     /**
+     * @var array
+     */
+    protected $serviceCreated = [];
+
+    /**
+     * @var array
+     */
+    protected $registerHeartbeat = [];
+
+    /**
      * @var ConfigInterface
      */
     protected $config;
+
+    /**
+     * @var array
+     */
+    private $metadata = [];
 
     public function __construct(ContainerInterface $container)
     {
@@ -84,55 +99,59 @@ class NacosDriver implements DriverInterface
 
     public function register(string $name, string $host, int $port, array $metadata): void
     {
-        if (! array_key_exists($name, $this->serviceRegistered)) {
+        $this->setMetadata($name, $metadata);
+        if (! array_key_exists($name, $this->serviceCreated)) {
             $response = $this->client->service->create($name, [
                 'groupName' => $this->config->get('services.drivers.nacos.group_name'),
                 'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
-                'metadata' => $this->formatMetadata($metadata),
+                'metadata' => $this->getMetadata($name),
+                'protectThreshold' => (float) $this->config->get('services.drivers.nacos.protect_threshold', 0),
             ]);
 
             if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
-                throw new RequestException(sprintf('Failed to create nacos service %s!', $name));
+                throw new RequestException(sprintf('Failed to create nacos service %s , %s !', $name, (string) $response->getBody()));
             }
 
-            $this->serviceRegistered[$name] = true;
+            $this->serviceCreated[$name] = true;
         }
-
         $response = $this->client->instance->register($host, $port, $name, [
             'groupName' => $this->config->get('services.drivers.nacos.group_name'),
             'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
-            'metadata' => $this->formatMetadata($metadata),
+            'metadata' => $this->getMetadata($name),
         ]);
 
         if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
-            throw new RequestException(sprintf('Failed to create nacos instance %s:%d! for %s', $host, $port, $name));
+            throw new RequestException(sprintf('Failed to create nacos instance %s:%d! for %s , %s ', $host, $port, $name, (string) $response->getBody()));
         }
 
+        $this->serviceRegistered[$name] = true;
         $this->registerHeartbeat($name, $host, $port);
     }
 
     public function isRegistered(string $name, string $host, int $port, array $metadata): bool
     {
-        if (! array_key_exists($name, $this->serviceRegistered)) {
-            $response = $this->client->service->detail(
-                $name,
-                $this->config->get('services.drivers.nacos.group_name'),
-                $this->config->get('services.drivers.nacos.namespace_id')
-            );
-            if ($response->getStatusCode() === 404) {
-                return false;
-            }
-
-            if ($response->getStatusCode() === 500 && strpos((string) $response->getBody(), 'is not found') > 0) {
-                return false;
-            }
-
-            if ($response->getStatusCode() !== 200) {
-                throw new RequestException(sprintf('Failed to get nacos service %s!', $name), $response->getStatusCode());
-            }
-
-            $this->serviceRegistered[$name] = true;
+        if (array_key_exists($name, $this->serviceRegistered)) {
+            return true;
         }
+        $this->setMetadata($name, $metadata);
+        $response = $this->client->service->detail(
+            $name,
+            $this->config->get('services.drivers.nacos.group_name'),
+            $this->config->get('services.drivers.nacos.namespace_id')
+        );
+        if ($response->getStatusCode() === 404) {
+            return false;
+        }
+
+        if ($response->getStatusCode() === 500 && strpos((string) $response->getBody(), 'is not found') > 0) {
+            return false;
+        }
+
+        if ($response->getStatusCode() !== 200) {
+            throw new RequestException(sprintf('Failed to get nacos service %s!', $name), $response->getStatusCode());
+        }
+
+        $this->serviceCreated[$name] = true;
 
         $response = $this->client->instance->detail($host, $port, $name, [
             'groupName' => $this->config->get('services.drivers.nacos.group_name'),
@@ -146,7 +165,7 @@ class NacosDriver implements DriverInterface
         if ($response->getStatusCode() !== 200) {
             throw new RequestException(sprintf('Failed to get nacos instance %s:%d for %s!', $host, $port, $name));
         }
-
+        $this->serviceRegistered[$name] = true;
         $this->registerHeartbeat($name, $host, $port);
 
         return true;
@@ -174,40 +193,72 @@ class NacosDriver implements DriverInterface
         return false;
     }
 
-    protected function formatMetadata(array $metadata): ?string
+    protected function setMetadata(string $name, array $metadata)
     {
-        if (empty($metadata)) {
+        $this->metadata[$name] = $metadata;
+    }
+
+    protected function getMetadata(string $name): ?string
+    {
+        if (empty($this->metadata[$name])) {
             return null;
         }
-
-        return Json::encode($metadata);
+        unset($this->metadata[$name]['methodName']);
+        return Json::encode($this->metadata[$name]);
     }
 
     protected function registerHeartbeat(string $name, string $host, int $port): void
     {
+        $key = $name . $host . $port;
+        if (isset($this->registerHeartbeat[$key])) {
+            return;
+        }
+        $this->registerHeartbeat[$key] = true;
+
         Coroutine::create(function () use ($name, $host, $port) {
             retry(INF, function () use ($name, $host, $port) {
+                $lightBeatEnabled = false;
                 while (true) {
                     $heartbeat = $this->config->get('services.drivers.nacos.heartbeat', 5);
                     if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
                         break;
                     }
 
+                    $groupName = $this->config->get('services.drivers.nacos.group_name');
+
                     $response = $this->client->instance->beat(
                         $name,
                         [
                             'ip' => $host,
                             'port' => $port,
-                            'serviceName' => $name,
+                            'serviceName' => $groupName . '@@' . $name,
                         ],
-                        $this->config->get('services.drivers.nacos.group_name'),
+                        $groupName,
                         $this->config->get('services.drivers.nacos.namespace_id'),
+                        null,
+                        $lightBeatEnabled
                     );
 
+                    $result = json_decode($response->getBody()->getContents(), true);
+
                     if ($response->getStatusCode() === 200) {
-                        $this->logger->debug(sprintf('Instance %s:%d heartbeat successfully!', $host, $port));
+                        $this->logger->debug(sprintf('Instance %s:%d heartbeat successfully, result code:%s', $host, $port, $result['code']));
                     } else {
                         $this->logger->error(sprintf('Instance %s:%d heartbeat failed!', $host, $port));
+                        continue;
+                    }
+
+                    $lightBeatEnabled = false;
+                    if (isset($result['lightBeatEnabled'])) {
+                        $lightBeatEnabled = $result['lightBeatEnabled'];
+                    }
+
+                    if ($result['code'] == 20404) {
+                        $this->client->instance->register($host, $port, $name, [
+                            'groupName' => $this->config->get('services.drivers.nacos.group_name'),
+                            'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
+                            'metadata' => $this->getMetadata($name),
+                        ]);
                     }
                 }
             });

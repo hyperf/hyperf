@@ -1,5 +1,26 @@
 # 版本更新记录
 
+# v2.2.3 - 2021-08-09
+
+## Fixed
+
+- [#3897](https://github.com/hyperf/hyperf/pull/3897) 修复因为 `lightBeatEnabled` 导致心跳失败，进而导致 `Nacos` 服务注册多次的问题。
+- [#3905](https://github.com/hyperf/hyperf/pull/3905) 修复 `AMQP` 连接在关闭时导致空指针的问题。
+- [#3906](https://github.com/hyperf/hyperf/pull/3906) 修复 `AMQP` 连接关闭时，因已经销毁所有等待通道而导致失败的问题。
+- [#3908](https://github.com/hyperf/hyperf/pull/3908) 修复使用了以 `CoordinatorManager` 为基础的循环逻辑时，自定义进程无法正常重启的问题。
+
+# v2.2.2 - 2021-08-03
+
+## 修复
+
+- [#3872](https://github.com/hyperf/hyperf/pull/3872) [#3873](https://github.com/hyperf/hyperf/pull/3873) 修复使用 `Nacos` 服务时，因为没有使用默认的组名，导致心跳失败的问题。
+- [#3877](https://github.com/hyperf/hyperf/pull/3877) 修复 `Nacos` 服务，心跳会被注册多次的问题。
+- [#3879](https://github.com/hyperf/hyperf/pull/3879) 修复热更新因为代理类被覆盖，导致无法正常使用的问题。
+
+## 优化
+
+- [#3877](https://github.com/hyperf/hyperf/pull/3877) 为 `Nacos` 服务，增加 `lightBeatEnabled` 支持。
+
 # v2.2.1 - 2021-07-27
 
 ## 修复

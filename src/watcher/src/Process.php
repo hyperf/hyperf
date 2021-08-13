@@ -73,7 +73,7 @@ class Process
         }
         $class = $meta->toClassName();
         $collectors = $this->config->getCollectors();
-        [$data] = unserialize(file_get_contents($this->path));
+        [$data, $proxies] = unserialize(file_get_contents($this->path));
         foreach ($data as $collector => $deserialized) {
             /** @var MetadataCollector $collector */
             if (in_array($collector, $collectors)) {
@@ -100,7 +100,7 @@ class Process
         }
 
         // Reload the proxy class.
-        $manager = new ProxyManager([$class => $this->file], BASE_PATH . '/runtime/container/proxy/');
+        $manager = new ProxyManager(array_merge($proxies, [$class => $this->file]), BASE_PATH . '/runtime/container/proxy/');
         $proxies = $manager->getProxies();
         $this->putCache($this->path, serialize([$data, $proxies]));
     }

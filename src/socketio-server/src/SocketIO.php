@@ -244,7 +244,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     }
 
     /**
-     * @return NamespaceInterface | BaseNamespace possibly a BaseNamespace, but allow user to use any NamespaceInterface implementation instead
+     * @return BaseNamespace|NamespaceInterface possibly a BaseNamespace, but allow user to use any NamespaceInterface implementation instead
      */
     public function of(string $nsp): NamespaceInterface
     {
