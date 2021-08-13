@@ -107,7 +107,7 @@ class ConsulDriver implements DriverInterface
                 'Interval' => $interval,
             ];
         }
-        if (in_array($protocol, ['jsonrpc', 'jsonrpc-tcp-length-check'], true)) {
+        if (in_array($protocol, ['jsonrpc', 'jsonrpc-tcp-length-check', 'multiplex.default'], true)) {
             $requestBody['Check'] = [
                 'DeregisterCriticalServiceAfter' => $deregisterCriticalServiceAfter,
                 'TCP' => "{$host}:{$port}",
