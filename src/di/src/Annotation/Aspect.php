@@ -43,8 +43,7 @@ class Aspect extends AbstractAnnotation
 
     protected function collect(string $className)
     {
-        // Create the aspect instance without invoking their constructor.
-        [$instanceClasses,$instanceAnnotations,$instancePriority] = CommonHandle::reflectionHandle($className);
+        [$instanceClasses, $instanceAnnotations, $instancePriority] = AspectLoader::load($className);
 
         // Classes
         $classes = $this->classes;

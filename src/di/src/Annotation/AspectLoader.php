@@ -14,9 +14,12 @@ namespace Hyperf\Di\Annotation;
 use Hyperf\Di\ReflectionManager;
 use ReflectionProperty;
 
-class CommonHandle
+class AspectLoader
 {
-    public static function reflectionHandle(string $className):array
+    /**
+     * Load classes annotations and priority from aspect without invoking their constructor.
+     */
+    public static function load(string $className): array
     {
         $reflectionClass = ReflectionManager::reflectClass($className);
         $properties = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
@@ -32,6 +35,6 @@ class CommonHandle
             }
         }
 
-        return [$instanceClasses,$instanceAnnotations,$instancePriority];
+        return [$instanceClasses, $instanceAnnotations, $instancePriority];
     }
 }

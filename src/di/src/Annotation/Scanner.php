@@ -301,8 +301,7 @@ class Scanner
                 continue;
             }
 
-            // Create the aspect instance without invoking their constructor.
-            [$instanceClasses,$instanceAnnotations,$instancePriority] = CommonHandle::reflectionHandle($aspect);
+            [$instanceClasses, $instanceAnnotations, $instancePriority] = AspectLoader::load($aspect);
 
             $classes = $instanceClasses ?: [];
             // Annotations
