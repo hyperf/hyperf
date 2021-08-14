@@ -38,4 +38,24 @@ class StrTest extends TestCase
             break;
         }
     }
+
+    public function testMask()
+    {
+        $res = Str::mask('hyperf');
+
+        $this->assertSame('******', $res);
+
+        $res = Str::mask('hyperf', 3);
+
+        $this->assertSame('hyp***', $res);
+
+        $res = Str::mask('hyperf', -3);
+
+        $this->assertSame('***erf', $res);
+
+        $res = Str::mask('hyperf', 0, '-');
+
+        $this->assertSame('------', $res);
+
+    }
 }

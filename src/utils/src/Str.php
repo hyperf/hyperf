@@ -484,6 +484,23 @@ class Str
     }
 
     /**
+     * Replaces the first or the last ones chars from a string by a given char.
+     *
+     * @param string $string
+     * @param int $offset If is negative it starts from the end.
+     * @param string $replacement Default is *.
+     * @return string
+     */
+    public static function mask(string $string, int $offset = 0, string $replacement = '*'): string
+    {
+        $hidden_length = strlen($string) - abs($offset);
+
+        $hidden = str_repeat($replacement, $hidden_length);
+
+        return substr_replace($string, $hidden, max(0, $offset), $hidden_length);
+    }
+
+    /**
      * Returns the replacements for the ascii method.
      * Note: Adapted from Stringy\Stringy.
      *
