@@ -20,7 +20,6 @@ use Hyperf\Di\MetadataCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\Filesystem\Filesystem;
 use ReflectionClass;
-use ReflectionProperty;
 
 class Scanner
 {
@@ -158,8 +157,7 @@ class Scanner
         }
 
         // Get the class map of Composer loader
-        $classMap = array_merge($reflectionClassMap, $classMap);
-        $proxyManager = new ProxyManager($classMap, $proxyDir);
+        $proxyManager = new ProxyManager(array_merge($reflectionClassMap, $classMap), $proxyDir);
         $proxies = $proxyManager->getProxies();
 
         $this->putCache($this->path, serialize([$data, $proxies]));
@@ -303,19 +301,7 @@ class Scanner
             }
 
             // Create the aspect instance without invoking their constructor.
-            $reflectionClass = ReflectionManager::reflectClass($aspect);
-            $properties = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
-            $instanceClasses = $instanceAnnotations = [];
-            $instancePriority = null;
-            foreach ($properties as $property) {
-                if ($property->getName() === 'classes') {
-                    $instanceClasses = ReflectionManager::getPropertyDefaultValue($property);
-                } elseif ($property->getName() === 'annotations') {
-                    $instanceAnnotations = ReflectionManager::getPropertyDefaultValue($property);
-                } elseif ($property->getName() === 'priority') {
-                    $instancePriority = ReflectionManager::getPropertyDefaultValue($property);
-                }
-            }
+            [$instanceClasses,$instanceAnnotations,$instancePriority] = CommonHandle::reflectionHandle($aspect);
 
             $classes = $instanceClasses ?: [];
             // Annotations
