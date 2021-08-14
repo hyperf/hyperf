@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
+use Hyperf\Utils\Exception\InvalidArgumentException;
 use Hyperf\Utils\Str;
 use PHPUnit\Framework\TestCase;
 
@@ -49,13 +50,23 @@ class StrTest extends TestCase
 
         $this->assertSame('hyp***', $res);
 
-        $res = Str::mask('hyperf', -3);
+        $res = Str::mask('hyperf', 3, 1);
+
+        $this->assertSame('hyp*rf', $res);
+
+        $res = Str::mask('hyperf', 0, 3);
 
         $this->assertSame('***erf', $res);
 
-        $res = Str::mask('hyperf', 0, '-');
+        $res = Str::mask('hyperf', 1, 1);
+
+        $this->assertSame('h*perf', $res);
+
+        $res = Str::mask('hyperf', 0, 0, '-');
 
         $this->assertSame('------', $res);
 
+        $this->expectException(InvalidArgumentException::class);
+        Str::mask('hyperf', -1);
     }
 }

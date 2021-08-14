@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
+use Hyperf\Utils\Exception\InvalidArgumentException;
 use Hyperf\Utils\Traits\Macroable;
 
 /**
@@ -486,18 +487,20 @@ class Str
     /**
      * Replaces the first or the last ones chars from a string by a given char.
      *
-     * @param string $string
-     * @param int $offset If is negative it starts from the end.
-     * @param string $replacement Default is *.
-     * @return string
+     * @param int $offset if is negative it starts from the end
+     * @param string $replacement default is *
      */
-    public static function mask(string $string, int $offset = 0, string $replacement = '*'): string
+    public static function mask(string $string, int $offset = 0, int $length = 0, string $replacement = '*'): string
     {
-        $hidden_length = strlen($string) - abs($offset);
+        if ($offset < 0 || $length < 0) {
+            throw new InvalidArgumentException('The offset and length must equal or greater than zero.');
+        }
 
-        $hidden = str_repeat($replacement, $hidden_length);
+        $hiddenLength = $length ?: strlen($string) - $offset;
 
-        return substr_replace($string, $hidden, max(0, $offset), $hidden_length);
+        $hidden = str_repeat($replacement, $hiddenLength);
+
+        return substr_replace($string, $hidden, $offset, $hiddenLength);
     }
 
     /**
