@@ -20,7 +20,6 @@ use Hyperf\Di\MetadataCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\Filesystem\Filesystem;
 use ReflectionClass;
-use ReflectionProperty;
 
 class Scanner
 {
@@ -303,19 +302,7 @@ class Scanner
             }
 
             // Create the aspect instance without invoking their constructor.
-            $reflectionClass = ReflectionManager::reflectClass($aspect);
-            $properties = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
-            $instanceClasses = $instanceAnnotations = [];
-            $instancePriority = null;
-            foreach ($properties as $property) {
-                if ($property->getName() === 'classes') {
-                    $instanceClasses = ReflectionManager::getPropertyDefaultValue($property);
-                } elseif ($property->getName() === 'annotations') {
-                    $instanceAnnotations = ReflectionManager::getPropertyDefaultValue($property);
-                } elseif ($property->getName() === 'priority') {
-                    $instancePriority = ReflectionManager::getPropertyDefaultValue($property);
-                }
-            }
+            [$instanceClasses,$instanceAnnotations,$instancePriority] = CommonHandle::reflectionHandle($aspect);
 
             $classes = $instanceClasses ?: [];
             // Annotations
