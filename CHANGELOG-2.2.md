@@ -11,6 +11,10 @@
 - [#3932](https://github.com/hyperf/hyperf/pull/3932) Support requeue the message when return `NACK` for `AMQP` consumer.
 - [#3941](https://github.com/hyperf/hyperf/pull/3941) Support service register for `rpc-multiplex`.
 
+## Optimized
+
+- [#3944](https://github.com/hyperf/hyperf/pull/3944) Encapsulated the code for reading aspect meta properties.
+
 # v2.2.3 - 2021-08-09
 
 ## Fixed

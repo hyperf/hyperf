@@ -75,7 +75,7 @@ class DefinitionSource implements DefinitionSourceInterface
             }
 
             $parameterType = $parameter->getType();
-            if ($parameterType && $parameterType instanceof \ReflectionNamedType && ! $parameterType->isBuiltin()) {
+            if ($parameterType instanceof \ReflectionNamedType && ! $parameterType->isBuiltin()) {
                 $parameters[$index] = new Reference($parameterType->getName());
             }
         }
