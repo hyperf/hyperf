@@ -10,6 +10,7 @@
 - [#3924](https://github.com/hyperf/hyperf/pull/3924) Added health check parameters for consul service register.
 - [#3932](https://github.com/hyperf/hyperf/pull/3932) Support requeue the message when return `NACK` for `AMQP` consumer.
 - [#3941](https://github.com/hyperf/hyperf/pull/3941) Support service register for `rpc-multiplex`.
+- [#3947](https://github.com/hyperf/hyperf/pull/3947) Added method `Str::mask` which used to replace chars from a string by a given char.
 
 ## Optimized
 

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
+use Hyperf\Utils\Exception\InvalidArgumentException;
 use Hyperf\Utils\Traits\Macroable;
 
 /**
@@ -481,6 +482,33 @@ class Str
     public static function ucfirst(string $string): string
     {
         return static::upper(static::substr($string, 0, 1)) . static::substr($string, 1);
+    }
+
+    /**
+     * Replaces the first or the last ones chars from a string by a given char.
+     *
+     * @param int $offset if is negative it starts from the end
+     * @param string $replacement default is *
+     */
+    public static function mask(string $string, int $offset = 0, int $length = 0, string $replacement = '*')
+    {
+        if ($length < 0) {
+            throw new InvalidArgumentException('The length must equal or greater than zero.');
+        }
+
+        $stringLength = mb_strlen($string);
+        $absOffset = abs($offset);
+        if ($absOffset >= $stringLength) {
+            return $string;
+        }
+
+        $hiddenLength = $length ?: $stringLength - $absOffset;
+
+        if ($offset >= 0) {
+            return mb_substr($string, 0, $offset) . str_repeat($replacement, $hiddenLength) . mb_substr($string, $offset + $hiddenLength);
+        }
+
+        return mb_substr($string, 0, max($stringLength - $hiddenLength - $absOffset, 0)) . str_repeat($replacement, $hiddenLength) . mb_substr($string, $offset);
     }
 
     /**
