@@ -18,8 +18,8 @@ composer require hyperf/amqp
 |     password     | string |   guest   |      密碼      |
 |      vhost       | string |     /     |     vhost      |
 | concurrent.limit |  int   |     0     | 同時消費的數量 |
-| pool.connections |  int   |     1     | 進程內保持的連接數 |
 |       pool       | object |           |   連接池配置   |
+| pool.connections |  int   |     1     | 進程內保持的連接數 |
 |      params      | object |           |    基本配置    |
 
 ```php
