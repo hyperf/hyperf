@@ -80,6 +80,38 @@ class StrTest extends TestCase
 
     public function testMbMask()
     {
+        $res = Str::mbMask('hyperf');
+
+        $this->assertSame('******', $res);
+
+        $res = Str::mbMask('hyperf', 3);
+
+        $this->assertSame('hyp***', $res);
+
+        $res = Str::mbMask('hyperf', 3, 1);
+
+        $this->assertSame('hyp*rf', $res);
+
+        $res = Str::mbMask('hyperf', 0, 3);
+
+        $this->assertSame('***erf', $res);
+
+        $res = Str::mbMask('hyperf', 0, 0, '-');
+
+        $this->assertSame('------', $res);
+
+        $res = Str::mbMask('hyperf', 6, 2);
+
+        $this->assertSame('hyperf', $res);
+
+        $res = Str::mbMask('hyperf', 7);
+
+        $this->assertSame('hyperf', $res);
+
+        $res = Str::mbMask('hyperf', 3, 10);
+
+        $this->assertSame('hyp**********', $res);
+
         $res = Str::mbMask('你好啊');
 
         $this->assertSame('***', $res);
