@@ -58,15 +58,62 @@ class StrTest extends TestCase
 
         $this->assertSame('***erf', $res);
 
-        $res = Str::mask('hyperf', 1, 1);
-
-        $this->assertSame('h*perf', $res);
-
         $res = Str::mask('hyperf', 0, 0, '-');
 
         $this->assertSame('------', $res);
 
+        $res = Str::mask('hyperf', 6, 2);
+
+        $this->assertSame('hyperf', $res);
+
+        $res = Str::mask('hyperf', 7);
+
+        $this->assertSame('hyperf', $res);
+
+        $res = Str::mask('hyperf', 3, 10);
+
+        $this->assertSame('hyp**********', $res);
+
         $this->expectException(InvalidArgumentException::class);
         Str::mask('hyperf', -1);
+    }
+
+    public function testMbMask()
+    {
+        $res = Str::mbMask('你好啊');
+
+        $this->assertSame('***', $res);
+
+        $res = Str::mbMask('你好世界', 3);
+
+        $this->assertSame('你好世*', $res);
+
+        $res = Str::mbMask('你好世界', 2, 1);
+
+        $this->assertSame('你好*界', $res);
+
+        $res = Str::mbMask('你好世界', 0, 3);
+
+        $this->assertSame('***界', $res);
+
+        $res = Str::mbMask('你好世界', 1, 1);
+
+        $this->assertSame('你*世界', $res);
+
+        $res = Str::mbMask('你好世界', 0, 0, '-');
+
+        $this->assertSame('----', $res);
+
+        $res = Str::mbMask('你好世界', 6, 2);
+
+        $this->assertSame('你好世界', $res);
+
+        $res = Str::mbMask('你好世界', 7);
+
+        $this->assertSame('你好世界', $res);
+
+        $res = Str::mbMask('你好世界', 3, 10);
+
+        $this->assertSame('你好世**********', $res);
     }
 }
