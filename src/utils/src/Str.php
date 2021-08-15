@@ -490,44 +490,25 @@ class Str
      * @param int $offset if is negative it starts from the end
      * @param string $replacement default is *
      */
-    public static function mask(string $string, int $offset = 0, int $length = 0, string $replacement = '*'): string
+    public static function mask(string $string, int $offset = 0, int $length = 0, string $replacement = '*')
     {
-        if ($offset < 0 || $length < 0) {
-            throw new InvalidArgumentException('The offset and length must equal or greater than zero.');
-        }
-
-        $stringLength = strlen($string);
-        if ($offset >= $stringLength) {
-            return $string;
-        }
-
-        $hiddenLength = $length ?: $stringLength - $offset;
-
-        $hidden = str_repeat($replacement, $hiddenLength);
-
-        return substr_replace($string, $hidden, $offset, $hiddenLength);
-    }
-
-    /**
-     * Replaces the first or the last ones chars from a string by a given char.
-     *
-     * @param int $offset if is negative it starts from the end
-     * @param string $replacement default is *
-     */
-    public static function mbMask(string $string, int $offset = 0, int $length = 0, string $replacement = '*')
-    {
-        if ($offset < 0 || $length < 0) {
-            throw new InvalidArgumentException('The offset and length must equal or greater than zero.');
+        if ($length < 0) {
+            throw new InvalidArgumentException('The length must equal or greater than zero.');
         }
 
         $stringLength = mb_strlen($string);
-        if ($offset >= $stringLength) {
+        $absOffset = abs($offset);
+        if ($absOffset >= $stringLength) {
             return $string;
         }
 
-        $hiddenLength = $length ?: $stringLength - $offset;
+        $hiddenLength = $length ?: $stringLength - $absOffset;
 
-        return mb_substr($string, 0, $offset) . str_repeat($replacement, $hiddenLength) . mb_substr($string, $offset + $hiddenLength);
+        if ($offset >= 0) {
+            return mb_substr($string, 0, $offset) . str_repeat($replacement, $hiddenLength) . mb_substr($string, $offset + $hiddenLength);
+        }
+
+        return mb_substr($string, 0, max($stringLength - $hiddenLength - $absOffset, 0)) . str_repeat($replacement, $hiddenLength) . mb_substr($string, $offset);
     }
 
     /**
