@@ -991,9 +991,7 @@ trait ValidatesAttributes
     {
         $this->requireParameterCount(1, $parameters, 'same');
 
-        $other = Arr::get($this->data, $parameters[0]);
-
-        return $value === $other;
+        return ($value === Arr::get($this->data, $parameters[0]));
     }
 
     /**
@@ -1057,9 +1055,7 @@ trait ValidatesAttributes
     {
         try {
             new DateTimeZone($value);
-        } catch (Exception $e) {
-            return false;
-        } catch (Throwable $e) {
+        } catch (Exception | Throwable $e) {
             return false;
         }
 

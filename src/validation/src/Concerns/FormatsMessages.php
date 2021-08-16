@@ -85,7 +85,7 @@ trait FormatsMessages
      * @param mixed $value
      * @return string
      */
-    public function getDisplayableValue(string $attribute, $value)
+    public function getDisplayableValue(string $attribute, $value): string
     {
         if (isset($this->customValues[$attribute][$value])) {
             return $this->customValues[$attribute][$value];
