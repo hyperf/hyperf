@@ -1,5 +1,9 @@
 # v2.2.5 - TBD
 
+## Fixed
+
+- [#3959](https://github.com/hyperf/hyperf/pull/3959) Fixed 
+
 ## Optimized
 
 - [#3957](https://github.com/hyperf/hyperf/pull/3957) Support generate the type of getAttribute with `@return` for command `gen:model`.
