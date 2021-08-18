@@ -235,6 +235,10 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                             $returnTypeName = '\\' . $returnTypeName;
                         }
                         $type = [$returnTypeName];
+                    } elseif ($docComment = $method->getDocComment()) {
+                        if (preg_match('/@return\s+(\S+)\s*/', $docComment, $matches)) {
+                            $type = [$matches[1]];
+                        }
                     }
                     $this->setProperty($name, $type, true, null, '', false, 1);
                 }
