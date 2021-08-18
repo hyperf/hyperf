@@ -72,7 +72,6 @@ class PhpDocReader
      * Parse the docblock of the property to get the type (class or primitive type) of the param annotation.
      *
      * @throws AnnotationException
-     * @return null|string Type of the property (content of var annotation)
      */
     public function getReturnType(ReflectionMethod $method, bool $withoutNamespace = false): array
     {
@@ -83,7 +82,6 @@ class PhpDocReader
      * Parse the docblock of the property to get the class of the param annotation.
      *
      * @throws AnnotationException
-     * @return null|string Type of the property (content of var annotation)
      */
     public function getReturnClass(ReflectionMethod $method, bool $withoutNamespace = false): array
     {

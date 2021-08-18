@@ -229,17 +229,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 // Magic get<name>Attribute
                 $name = Str::snake(substr($method->getName(), 3, -9));
                 if (! empty($name)) {
-                    $type = ['mixed'];
-                    if ($returnType = $method->getReturnType()) {
-                        $returnTypeName = $returnType->getName();
-                        if (class_exists($returnTypeName)) {
-                            $returnTypeName = '\\' . $returnTypeName;
-                        }
-                        $type = [$returnTypeName];
-                    } elseif ($docComment = $method->getDocComment()) {
-                        $reader = PhpDocReader::getInstance();
-                        $type = $reader->getReturnType($method, true);
-                    }
+                    $type = PhpDocReader::getInstance()->getReturnType($method, true);
                     $this->setProperty($name, $type, true, null, '', false, 1);
                 }
                 continue;
