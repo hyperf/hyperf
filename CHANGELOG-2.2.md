@@ -1,5 +1,9 @@
 # v2.2.5 - TBD
 
+## Fixed
+
+- [#3959](https://github.com/hyperf/hyperf/pull/3959) Fixed validate rule `date` does not work as expected when the value isn't string.
+
 ## Optimized
 
 - [#3957](https://github.com/hyperf/hyperf/pull/3957) Support generate the type of getAttribute with `@return` for command `gen:model`.
