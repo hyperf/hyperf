@@ -28,6 +28,7 @@ use Hyperf\Database\Model\Relations\MorphOne;
 use Hyperf\Database\Model\Relations\MorphTo;
 use Hyperf\Database\Model\Relations\MorphToMany;
 use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Utils\CodeGen\PhpDocReader;
 use Hyperf\Utils\CodeGen\PhpParser;
 use Hyperf\Utils\Str;
 use PhpParser\Comment\Doc;
@@ -236,9 +237,8 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                         }
                         $type = [$returnTypeName];
                     } elseif ($docComment = $method->getDocComment()) {
-                        if (preg_match('/@return\s+(\S+)\s*/', $docComment, $matches)) {
-                            $type = [$matches[1]];
-                        }
+                        $reader = PhpDocReader::getInstance();
+                        $type = $reader->getReturnType($method, true);
                     }
                     $this->setProperty($name, $type, true, null, '', false, 1);
                 }
