@@ -220,7 +220,7 @@ trait ValidatesAttributes
             return true;
         }
 
-        if ((! is_string($value) && ! is_numeric($value)) || strtotime($value) === false) {
+        if ((! is_string($value) && ! is_numeric($value)) || strtotime((string) $value) === false) {
             return false;
         }
 
