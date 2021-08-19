@@ -1,6 +1,12 @@
 <?php
 
 declare(strict_types=1);
+
+namespace Hyperf\ConfigNacos;
+
+use Hyperf\ConfigCenter\AbstractDriver;
+use Hyperf\Utils\Arr;
+use Psr\Container\ContainerInterface;
 /**
  * This file is part of Hyperf.
  *
@@ -9,12 +15,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\ConfigNacos;
-
-use Hyperf\ConfigCenter\AbstractDriver;
-use Hyperf\Utils\Arr;
-use Psr\Container\ContainerInterface;
-
 class NacosDriver extends AbstractDriver
 {
     /**
@@ -34,14 +34,25 @@ class NacosDriver extends AbstractDriver
     {
         $root = $this->config->get('config_center.drivers.nacos.default_key');
         foreach ($config ?? [] as $key => $conf) {
-            if (is_int($key)) {
-                $key = $root;
+            if (! is_int($key)) {
+                $this->setConfig($key, $conf);
+            } else {
+                if (is_array($conf)) {
+                    foreach ($conf as $k => $value) {
+                        $this->setConfig($k, $value);
+                    }
+                } else {
+                    $this->setConfig($root, $conf);
+                }
             }
-            if (is_array($conf) && $this->config->get('config_center.drivers.nacos.merge_mode') === Constants::CONFIG_MERGE_APPEND) {
-                $conf = Arr::merge($this->config->get($key, []), $conf);
-            }
-
-            $this->config->set($key, $conf);
         }
+    }
+
+    private function setConfig($key, $conf)
+    {
+        if (is_array($conf) && $this->config->get('config_center.drivers.nacos.merge_mode') === Constants::CONFIG_MERGE_APPEND) {
+            $conf = Arr::merge($this->config->get($key, []), $conf);
+        }
+        $this->config->set($key, $conf);
     }
 }
