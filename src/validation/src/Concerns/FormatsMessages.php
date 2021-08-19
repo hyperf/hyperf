@@ -83,7 +83,6 @@ trait FormatsMessages
      * Get the displayable name of the value.
      *
      * @param mixed $value
-     * @return string
      */
     public function getDisplayableValue(string $attribute, $value): string
     {
