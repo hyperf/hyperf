@@ -991,7 +991,9 @@ trait ValidatesAttributes
     {
         $this->requireParameterCount(1, $parameters, 'same');
 
-        return ($value === Arr::get($this->data, $parameters[0]));
+        $other = Arr::get($this->data, $parameters[0]);
+
+        return $value === $other;
     }
 
     /**
