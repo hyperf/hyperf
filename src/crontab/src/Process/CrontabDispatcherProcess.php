@@ -102,8 +102,6 @@ class CrontabDispatcherProcess extends AbstractProcess
             if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($sleep)) {
                 return true;
             }
-
-            \Swoole\Coroutine::sleep($sleep);
         }
 
         return false;

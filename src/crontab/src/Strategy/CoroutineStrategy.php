@@ -28,8 +28,6 @@ class CoroutineStrategy extends AbstractStrategy
                     if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($wait)) {
                         return;
                     }
-
-                    \Swoole\Coroutine::sleep($wait);
                 }
                 $executor = $this->container->get(Executor::class);
                 $executor->execute($crontab);
