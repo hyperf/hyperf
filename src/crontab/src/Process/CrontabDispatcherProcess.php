@@ -18,6 +18,8 @@ use Hyperf\Crontab\Scheduler;
 use Hyperf\Crontab\Strategy\StrategyInterface;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
@@ -77,7 +79,9 @@ class CrontabDispatcherProcess extends AbstractProcess
     {
         $this->event->dispatch(new CrontabDispatcherStarted());
         while (ProcessManager::isRunning()) {
-            $this->sleep();
+            if ($this->sleep()) {
+                break;
+            }
             $crontabs = $this->scheduler->schedule();
             while (! $crontabs->isEmpty()) {
                 $crontab = $crontabs->dequeue();
@@ -86,11 +90,20 @@ class CrontabDispatcherProcess extends AbstractProcess
         }
     }
 
-    private function sleep()
+    /**
+     * @return bool whether the server shutdown
+     */
+    private function sleep(): bool
     {
         $current = date('s', time());
         $sleep = 60 - $current;
         $this->logger->debug('Crontab dispatcher sleep ' . $sleep . 's.');
-        $sleep > 0 && \Swoole\Coroutine::sleep($sleep);
+        if ($sleep > 0) {
+            if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($sleep)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
