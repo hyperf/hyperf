@@ -16,6 +16,7 @@ use Hyperf\Command\Annotation\Command;
 /**
  * @Command
  */
+#[Command]
 class CommandCommand extends GeneratorCommand
 {
     public function __construct()

@@ -11,6 +11,7 @@ use Psr\Container\ContainerInterface;
 /**
  * @Command
  */
+#[Command]
 class %CLASS% extends HyperfCommand
 {
     /**
