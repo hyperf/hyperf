@@ -1057,7 +1057,7 @@ trait ValidatesAttributes
     {
         try {
             new DateTimeZone($value);
-        } catch (Exception | Throwable $e) {
+        } catch (Throwable $e) {
             return false;
         }
 
