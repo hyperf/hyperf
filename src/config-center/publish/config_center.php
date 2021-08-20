@@ -39,16 +39,16 @@ return [
             'default_key' => 'nacos_config',
             'listener_config' => [
                 // dataId, group, tenant, type, content
-                'nacos_config' => [
-                    'tenant' => 'tenant', // corresponding with service.namespaceId
-                    'data_id' => 'hyperf-service-config',
-                    'group' => 'DEFAULT_GROUP',
-                ],
-                'nacos_config.data' => [
-                    'data_id' => 'hyperf-service-config-yml',
-                    'group' => 'DEFAULT_GROUP',
-                    'type' => 'yml',
-                ],
+                // 'nacos_config' => [
+                //     'tenant' => 'tenant', // corresponding with service.namespaceId
+                //     'data_id' => 'hyperf-service-config',
+                //     'group' => 'DEFAULT_GROUP',
+                // ],
+                // 'nacos_config.data' => [
+                //     'data_id' => 'hyperf-service-config-yml',
+                //     'group' => 'DEFAULT_GROUP',
+                //     'type' => 'yml',
+                // ],
             ],
             'client' => [
                 // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
