@@ -5,6 +5,10 @@
 - [#3959](https://github.com/hyperf/hyperf/pull/3959) Fixed validate rule `date` does not work as expected when the value isn't string.
 - [#3960](https://github.com/hyperf/hyperf/pull/3960) Fixed bug that crontab cannot be closed safely in coroutine style server.
 
+## Added
+
+- [code-generator](https://github.com/hyperf/code-generator) Added `code-generator` which used to regenerate classes with `Attributes` instead of `Doctrine Annotations`.
+
 ## Optimized
 
 - [#3957](https://github.com/hyperf/hyperf/pull/3957) Support generate the type of getAttribute with `@return` for command `gen:model`.
