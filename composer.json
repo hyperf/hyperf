@@ -64,7 +64,7 @@
         "php-amqplib/php-amqplib": "^3.0",
         "php-di/phpdoc-reader": "^2.2",
         "phpspec/prophecy-phpunit": "^2.0",
-        "phpstan/phpstan": "0.12.95",
+        "phpstan/phpstan": "0.12.94",
         "phpunit/phpunit": "^9.5",
         "predis/predis": "^1.1",
         "promphp/prometheus_client_php": "^2.2",
