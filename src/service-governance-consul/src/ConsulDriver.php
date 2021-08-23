@@ -72,6 +72,7 @@ class ConsulDriver implements DriverInterface
                 $status = $check['Status'] ?? false;
                 if ($status !== 'passing') {
                     $passing = false;
+                    break;
                 }
             }
 
