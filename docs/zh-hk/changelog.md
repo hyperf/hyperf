@@ -1,5 +1,20 @@
 # 版本更新記錄
 
+# v2.2.5 - 2021-08-23
+
+## 修復
+
+- [#3959](https://github.com/hyperf/hyperf/pull/3959) 修復驗證器規則 `date` 在入參為 `string` 時，無法正常使用的問題。
+- [#3960](https://github.com/hyperf/hyperf/pull/3960) 修復協程風格服務下，`Crontab` 無法平滑關閉的問題。
+
+## 新增
+
+- [code-generator](https://github.com/hyperf/code-generator) 新增組件 `code-generator`，可以用來將 `Doctrine` 註解轉化為 `PHP8` 的原生註解。
+
+## 優化
+
+- [#3957](https://github.com/hyperf/hyperf/pull/3957) 使用命令 `gen:model` 生成 `getAttribute` 註釋時，支持基於 `@return` 註釋返回對應的類型。
+
 # v2.2.4 - 2021-08-16
 
 ## 修復
