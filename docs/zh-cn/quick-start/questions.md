@@ -139,9 +139,9 @@ class IndexController
 - 子类通过 `as` 修改别名: `use Psr\Http\Message\ResponseInterface as PsrResponseInterface;`
 - Trait 类`PHP7.4` 以上通过属性类型限制: `protected ResponseInterface $response;`
 
-## GRPC 扩展导致项目无法运行
+## Grpc 扩展或未安装 Pcntl 导致项目无法启动
 
-> 新版本的注解扫描使用了 `pcntl` 扩展，所以请先确保您的 `PHP` 安装了此扩展。
+- v2.2 版本的注解扫描使用了 `pcntl` 扩展，所以请先确保您的 `PHP` 安装了此扩展。
 
 ```shell
 php --ri pcntl
@@ -151,4 +151,4 @@ pcntl
 pcntl support => enabled
 ```
 
-当开启 `grpc` 的时候，需要添加 `grpc.enable_fork_support= 1;` 到 `php.ini` 中，以支持开启子进程。
+- 当开启 `grpc` 的时候，需要添加 `grpc.enable_fork_support= 1;` 到 `php.ini` 中，以支持开启子进程。
