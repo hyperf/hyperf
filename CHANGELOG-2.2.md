@@ -1,5 +1,9 @@
 # v2.2.6 - TBD
 
+## Fixed
+
+- [#3969](https://github.com/hyperf/hyperf/pull/3969) Fixed type error when using `Hyperf\Validation\Rules\Unique::__toString()` in PHP8.
+
 # v2.2.5 - 2021-08-23
 
 ## Fixed
