@@ -280,6 +280,7 @@
             "HyperfTest\\Amqp\\": "src/amqp/tests/",
             "HyperfTest\\AsyncQueue\\": "src/async-queue/tests/",
             "HyperfTest\\Cache\\": "src/cache/tests/",
+            "HyperfTest\\CircuitBreaker\\": "src/circuit-breaker/tests/",
             "HyperfTest\\Command\\": "src/command/tests/",
             "HyperfTest\\ConfigApollo\\": "src/config-apollo/tests/",
             "HyperfTest\\ConfigCenter\\": "src/config-center/tests/",

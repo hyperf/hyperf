@@ -60,6 +60,7 @@ class CircuitBreaker extends AbstractAnnotation
     public function __construct(...$value)
     {
         parent::__construct(...$value);
-        $this->bindMainProperty('value', $value);
+
+        $this->value = $this->formatParams($value);
     }
 }

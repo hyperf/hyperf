@@ -13,6 +13,7 @@
             <directory suffix="Test.php">./src/amqp/tests</directory>
             <directory suffix="Test.php">./src/async-queue/tests</directory>
             <directory suffix="Test.php">./src/cache/tests</directory>
+            <directory suffix="Test.php">./src/circuit-breaker/tests</directory>
             <directory suffix="Test.php">./src/command/tests</directory>
             <directory suffix="Test.php">./src/config/tests</directory>
             <directory suffix="Test.php">./src/config-center/tests</directory>
@@ -84,6 +85,7 @@
             <directory suffix=".php">./src/amqp/src</directory>
             <directory suffix=".php">./src/async-queue/src</directory>
             <directory suffix=".php">./src/cache/src</directory>
+            <directory suffix=".php">./src/circuit-breaker/src</directory>
             <directory suffix=".php">./src/command/src</directory>
             <directory suffix=".php">./src/config/src</directory>
             <directory suffix=".php">./src/config-center/src</directory>
