@@ -13,13 +13,9 @@
 
 use Hyperf\Utils\ApplicationContext;
 use EasyWeChat\Factory;
-use EasyWeChat\Kernel\ServiceContainer;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use Hyperf\Guzzle\CoroutineHandler;
-use Overtrue\Socialite\Providers\AbstractProvider;
-use Symfony\Component\HttpFoundation\ParameterBag;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 $container = ApplicationContext::getContainer();
 
