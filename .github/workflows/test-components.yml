@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: '0 2 * * *'
 env:
-  SW_VERSION: 'v4.7.0'
+  SW_VERSION: 'v4.7.1'
 jobs:
   database:
     name: Test for Database
@@ -54,6 +54,7 @@ jobs:
         version: [ '^1.0', '^2.0' ]
         php-version: [ '7.4', '8.0' ]
       max-parallel: 6
+      fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -81,7 +82,8 @@ jobs:
           composer require "overtrue/flysystem-cos:^4.0"
           composer require "overtrue/flysystem-qiniu:^2.0"
       - name: Run Test Cases
-        run: composer test src/filesystem
+        run: |
+          composer test src/filesystem -- --exclude-group NonCoroutine
   phar:
     name: Test for Building PHAR ${{ matrix.no-dev }}
     runs-on: 'ubuntu-latest'
@@ -92,6 +94,7 @@ jobs:
         no-dev: [ '', '--no-dev' ]
         php-version: [ '8.0' ]
       max-parallel: 2
+      fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v2
