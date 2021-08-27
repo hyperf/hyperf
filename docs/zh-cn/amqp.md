@@ -157,6 +157,160 @@ class DemoConsumer extends ConsumerMessage
 }
 ```
 
+## 延时队列
+
+####生产者
+使用 `gen:amqp-producer` 命令创建一个 `producer`。这里举例direct类型，其他类型如fanout、topic，改生产者和消费者中的type即可。
+
+```bash
+php bin/hyperf.php gen:amqp-producer DelayDirectProducer
+```
+
+在 DelayDirectProducer 文件中，加入`use ProducerDelayedMessageTrait;`。
+示例如下。
+
+```php
+<?php
+
+namespace App\Amqp\Producer;
+
+use Hyperf\Amqp\Annotation\Producer;
+use Hyperf\Amqp\Message\ProducerDelayedMessageTrait;
+use Hyperf\Amqp\Message\ProducerMessage;
+use Hyperf\Amqp\Message\Type;
+
+/**
+ * @Producer()
+ */
+class DelayDirectProducer extends ProducerMessage
+{
+    use ProducerDelayedMessageTrait;
+
+    protected $exchange = 'ext.hyperf.delay';
+
+    protected $type = Type::DIRECT;
+
+    protected $routingKey = '';
+
+    public function __construct($data)
+    {
+        $this->payload = $data;
+    }
+}
+```
+####消费者
+使用 `gen:amqp-consumer` 命令创建一个 `consumer`。
+
+```bash
+php bin/hyperf.php gen:amqp-consumer DelayDirectConsumer
+```
+
+在 DelayDirectConsumer 文件中，增加引入`use ProducerDelayedMessageTrait, ConsumerDelayedMessageTrait;`。
+示例如下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Amqp\Consumer;
+
+use Hyperf\Amqp\Annotation\Consumer;
+use Hyperf\Amqp\Message\ConsumerDelayedMessageTrait;
+use Hyperf\Amqp\Message\ConsumerMessage;
+use Hyperf\Amqp\Message\ProducerDelayedMessageTrait;
+use Hyperf\Amqp\Message\Type;
+use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
+
+/**
+ * @Consumer(nums=1)
+ */
+class DelayDirectConsumer extends ConsumerMessage
+{
+    use ProducerDelayedMessageTrait;
+    use ConsumerDelayedMessageTrait;
+
+    protected $exchange = 'ext.hyperf.delay';
+    
+    protected $queue = 'queue.hyperf.delay';
+    
+    protected $type = Type::DIRECT; //Type::FANOUT;
+    
+    protected $routingKey = '';
+
+    public function consumeMessage($data, AMQPMessage $message): string
+    {
+        var_dump($data, 'delay+direct consumeTime:' . (microtime(true)));
+        return Result::ACK;
+    }
+}
+
+```
+####生产延时消息
+使用 `gen:command DelayCommand` 命令创建一个 `DelayCommand`。如下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Command;
+
+use App\Amqp\Producer\DelayDirectProducer;
+//use App\Amqp\Producer\DelayFanoutProducer;
+//use App\Amqp\Producer\DelayTopicProducer;
+use Hyperf\Amqp\Producer;
+use Hyperf\Command\Annotation\Command;
+use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\Utils\ApplicationContext;
+use Psr\Container\ContainerInterface;
+
+/**
+ * @Command
+ */
+class DelayCommand extends HyperfCommand
+{
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+
+        parent::__construct('demo:command');
+    }
+
+    public function configure()
+    {
+        parent::configure();
+        $this->setDescription('Hyperf Demo Command');
+    }
+
+    public function handle()
+    {
+        //1.delayed + direct
+        $message = new DelayDirectProducer('delay+direct produceTime:'.(microtime(true)));
+        //2.delayed + fanout
+        //$message = new DelayFanoutProducer('delay+fanout produceTime:'.(microtime(true)));
+        //3.delayed + topic
+        //$message = new DelayTopicProducer('delay+topic produceTime:' . (microtime(true)));
+        $message->setDelayMs(5000);
+        $producer = ApplicationContext::getContainer()->get(Producer::class);
+        $producer->produce($message);
+
+    }
+}
+
+```
+执行命令行生产消息
+```
+php bin/hyperf.php demo:command
+```
+
+
 ### 禁止消费进程自启
 
 默认情况下，使用了 `@Consumer` 注解后，框架会自动创建子进程启动消费者，并且会在子进程异常退出后，重新拉起。
