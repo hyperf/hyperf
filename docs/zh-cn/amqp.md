@@ -159,15 +159,15 @@ class DemoConsumer extends ConsumerMessage
 
 ## 延时队列
 
-####生产者
-使用 `gen:amqp-producer` 命令创建一个 `producer`。这里举例 direct 类型，其他类型如 fanout、topic，改生产者和消费者中的 type 即可。
+### 生产者
+
+使用 `gen:amqp-producer` 命令创建一个 `producer`。这里举例 `direct` 类型，其他类型如 `fanout`、`topic`，改生产者和消费者中的 `type` 即可。
 
 ```bash
 php bin/hyperf.php gen:amqp-producer DelayDirectProducer
 ```
 
-在 DelayDirectProducer 文件中，加入`use ProducerDelayedMessageTrait;`。
-示例如下。
+在 DelayDirectProducer 文件中，加入`use ProducerDelayedMessageTrait;`，示例如下：
 
 ```php
 <?php
@@ -198,15 +198,15 @@ class DelayDirectProducer extends ProducerMessage
     }
 }
 ```
-####消费者
+### 消费者
+
 使用 `gen:amqp-consumer` 命令创建一个 `consumer`。
 
 ```bash
 php bin/hyperf.php gen:amqp-consumer DelayDirectConsumer
 ```
 
-在 DelayDirectConsumer 文件中，增加引入`use ProducerDelayedMessageTrait, ConsumerDelayedMessageTrait;`。
-示例如下：
+在 `DelayDirectConsumer` 文件中，增加引入`use ProducerDelayedMessageTrait, ConsumerDelayedMessageTrait;`，示例如下：
 
 ```php
 <?php
@@ -247,7 +247,11 @@ class DelayDirectConsumer extends ConsumerMessage
 }
 
 ```
-####生产延时消息
+
+### 生产延时消息
+
+> 以下是在 Command 中演示如何使用，具体用法请以实际为准
+
 使用 `gen:command DelayCommand` 命令创建一个 `DelayCommand`。如下：
 
 ```php
