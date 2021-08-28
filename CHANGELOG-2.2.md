@@ -6,6 +6,10 @@
 - [#3979](https://github.com/hyperf/hyperf/pull/3979) Fixed bug that timeout property does not work in circuit breaker.
 - [#3986](https://github.com/hyperf/hyperf/pull/3986) Fixed OSS hook failed when using `SWOOLE_HOOK_NATIVE_CURL`.
 
+## Added
+
+- [#3987](https://github.com/hyperf/hyperf/pull/3987) Support delayed message exchange for AMQP.
+
 # v2.2.5 - 2021-08-23
 
 ## Fixed
