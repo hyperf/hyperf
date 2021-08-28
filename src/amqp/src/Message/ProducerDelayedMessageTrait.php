@@ -23,8 +23,6 @@ trait ProducerDelayedMessageTrait
 {
     /**
      * Set the delay time.
-     * @param int $millisecond
-     * @param string $name
      * @return $this
      */
     public function setDelayMs(int $millisecond, string $name = 'x-delay'): self
@@ -38,7 +36,7 @@ trait ProducerDelayedMessageTrait
      */
     public function getExchangeBuilder(): ExchangeBuilder
     {
-        return (new ExchangeBuilder())->setExchange((string)$this->getExchange())
+        return (new ExchangeBuilder())->setExchange((string) $this->getExchange())
             ->setType('x-delayed-message')
             ->setArguments(new AMQPTable(['x-delayed-type' => $this->getType()]));
     }

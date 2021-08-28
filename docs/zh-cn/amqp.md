@@ -160,7 +160,7 @@ class DemoConsumer extends ConsumerMessage
 ## 延时队列
 
 ####生产者
-使用 `gen:amqp-producer` 命令创建一个 `producer`。这里举例direct类型，其他类型如fanout、topic，改生产者和消费者中的type即可。
+使用 `gen:amqp-producer` 命令创建一个 `producer`。这里举例 direct 类型，其他类型如 fanout、topic，改生产者和消费者中的 type 即可。
 
 ```bash
 php bin/hyperf.php gen:amqp-producer DelayDirectProducer

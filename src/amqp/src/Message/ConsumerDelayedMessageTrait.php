@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Builder\QueueBuilder;
@@ -25,7 +24,7 @@ trait ConsumerDelayedMessageTrait
      */
     public function getQueueBuilder(): QueueBuilder
     {
-        return (new QueueBuilder())->setQueue((string)$this->getQueue())
+        return (new QueueBuilder())->setQueue((string) $this->getQueue())
             ->setArguments(new AMQPTable(['x-dead-letter-exchange' => 'delayed']));
     }
 }
