@@ -17,7 +17,7 @@ namespace Oss\OssClient {
         if (Runtime::getHookFlags() & SWOOLE_HOOK_CURL) {
             return \is_resource($resource) || $resource instanceof \Swoole\Curl\Handler;
         }
-        if (Runtime::getHookFlags() & SWOOLE_HOOK_NATIVE_CURL) {
+        if (defined('SWOOLE_HOOK_NATIVE_CURL') && (Runtime::getHookFlags() & SWOOLE_HOOK_NATIVE_CURL)) {
             return \is_resource($resource) || $resource instanceof \Swoole\Coroutine\Curl\Handle;
         }
         return \is_resource($resource);

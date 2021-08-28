@@ -28,6 +28,15 @@ class AliyunHookTest extends TestCase
         run(function () {
             $rs = ResourceGenerator::from('foo');
             $this->assertTrue(\Oss\OssClient\is_resource($rs));
+
+            $rs = curl_init();
+            if (version_compare(SWOOLE_VERSION, '4.6.0', '<')) {
+                $this->assertInstanceOf(\Swoole\Curl\Handler::class, $rs);
+            } else {
+                $this->assertInstanceOf(\Swoole\Coroutine\Curl\Handle::class, $rs);
+            }
+
+            $this->assertTrue(\Oss\OssClient\is_resource($rs));
         });
 
         run(function () {
