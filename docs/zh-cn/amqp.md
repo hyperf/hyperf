@@ -162,6 +162,14 @@ class DemoConsumer extends ConsumerMessage
 AMQP 的延时队列，并不会根据延时时间进行排序，所以，一旦你投递了一个延时 10s 的任务，又往这个队列中投递了一个延时 5s 的任务，那么也一定会在第一个 10s 任务完成后，才会消费第二个 5s 的任务。
 所以，需要根据时间设置不同的队列，如果想要更加灵活的延时队列，可以尝试 异步队列(async-queue) 和 AMQP 配合使用。
 
+另外，AMQP 需要下载 [延时插件](https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases)，并激活才能正常使用
+
+```shell
+wget https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases/download/3.9.0/rabbitmq_delayed_message_exchange-3.9.0.ez
+cp rabbitmq_delayed_message_exchange-3.9.0.ez /opt/rabbitmq/plugins/
+rabbitmq-plugins enable rabbitmq_delayed_message_exchange
+```
+
 ### 生产者
 
 使用 `gen:amqp-producer` 命令创建一个 `producer`。这里举例 `direct` 类型，其他类型如 `fanout`、`topic`，改生产者和消费者中的 `type` 即可。
