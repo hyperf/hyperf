@@ -159,6 +159,9 @@ class DemoConsumer extends ConsumerMessage
 
 ## 延时队列
 
+AMQP 的延时队列，并不会根据延时时间进行排序，所以，一旦你投递了一个延时 10s 的任务，又往这个队列中投递了一个延时 5s 的任务，那么也一定会在第一个 10s 任务完成后，才会消费第二个 5s 的任务。
+所以，需要根据时间设置不同的队列，如果想要更加灵活的延时队列，可以尝试 异步队列(async-queue) 和 AMQP 配合使用。
+
 ### 生产者
 
 使用 `gen:amqp-producer` 命令创建一个 `producer`。这里举例 `direct` 类型，其他类型如 `fanout`、`topic`，改生产者和消费者中的 `type` 即可。
