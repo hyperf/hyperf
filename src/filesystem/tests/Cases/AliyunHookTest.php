@@ -29,5 +29,10 @@ class AliyunHookTest extends TestCase
             $rs = ResourceGenerator::from('foo');
             $this->assertTrue(\Oss\OssClient\is_resource($rs));
         });
+
+        run(function () {
+            $rs = ResourceGenerator::from('foo');
+            $this->assertTrue(\Oss\OssClient\is_resource($rs));
+        }, 0);
     }
 }
