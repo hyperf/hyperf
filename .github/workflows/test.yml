@@ -13,8 +13,8 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        php-version: [ '7.3', '7.4', '8.0' ]
-        sw-version: [ 'v4.5.11', 'v4.6.7', 'v4.7.0', 'master' ]
+        php-version: [ '7.4', '8.0' ]
+        sw-version: [ 'v4.5.11', 'v4.6.7', 'v4.7.1', 'master' ]
       max-parallel: 12
       fail-fast: false
     env:
@@ -85,3 +85,4 @@ jobs:
           composer analyse src
           composer test -- --exclude-group NonCoroutine
           vendor/bin/phpunit --group NonCoroutine
+          vendor/bin/phpunit src/filesystem --group NonCoroutine
