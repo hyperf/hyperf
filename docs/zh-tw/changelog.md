@@ -1,5 +1,17 @@
 # 版本更新記錄
 
+# v2.2.6 - 2021-08-30
+
+## 修復
+
+- [#3969](https://github.com/hyperf/hyperf/pull/3969) 修復 PHP8 環境下使用 `Hyperf\Validation\Rules\Unique::__toString()` 導致型別錯誤的問題。
+- [#3979](https://github.com/hyperf/hyperf/pull/3979) 修復熔斷器元件，`timeout` 變數無法使用的問題。 
+- [#3986](https://github.com/hyperf/hyperf/pull/3986) 修復檔案系統元件，開啟 `SWOOLE_HOOK_NATIVE_CURL` 後導致 OSS hook 失敗的問題。
+
+## 新增
+
+- [#3987](https://github.com/hyperf/hyperf/pull/3987) AMQP 元件支援延時佇列。
+
 # v2.2.5 - 2021-08-23
 
 ## 修復

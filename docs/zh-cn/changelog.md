@@ -1,5 +1,18 @@
 # 版本更新记录
 
+# v2.2.6 - 2021-08-30
+
+## 修复
+
+- [#3969](https://github.com/hyperf/hyperf/pull/3969) 修复 PHP8 环境下使用 `Hyperf\Validation\Rules\Unique::__toString()` 导致类型错误的问题。
+- [#3979](https://github.com/hyperf/hyperf/pull/3979) 修复熔断器组件，`timeout` 变量无法使用的问题。 
+- [#3986](https://github.com/hyperf/hyperf/pull/3986) 修复文件系统组件，开启 `SWOOLE_HOOK_NATIVE_CURL` 后导致 OSS hook 失败的问题。
+
+## 新增
+
+- [#3987](https://github.com/hyperf/hyperf/pull/3987) AMQP 组件支持延时队列。
+- [#3989](https://github.com/hyperf/hyperf/pull/3989) 为热更新组件新增了配置 `command`，可以用来定义自己的启动脚本，支持 [nano](https://github.com/hyperf/nano) 组件。
+
 # v2.2.5 - 2021-08-23
 
 ## 修复

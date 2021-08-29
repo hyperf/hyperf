@@ -2,6 +2,8 @@
 
 [EasyWeChat](https://www.easywechat.com/) 是一個開源的微信 SDK (非微信官方 SDK)。
 
+> 如果您使用了 Swoole 4.7.0 及以上版本，並且開啟了 native curl 選項，則可以不按照此文檔進行操作。
+
 > 因為組件默認使用 `Curl`，所以我們需要修改對應的 `GuzzleClient` 為協程客户端，或者修改常量 [SWOOLE_HOOK_FLAGS](/zh-cn/coroutine?id=swoole-runtime-hook-level)
 
 ## 替換 `Handler`
@@ -13,13 +15,9 @@
 
 use Hyperf\Utils\ApplicationContext;
 use EasyWeChat\Factory;
-use EasyWeChat\Kernel\ServiceContainer;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use Hyperf\Guzzle\CoroutineHandler;
-use Overtrue\Socialite\Providers\AbstractProvider;
-use Symfony\Component\HttpFoundation\ParameterBag;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 $container = ApplicationContext::getContainer();
 
