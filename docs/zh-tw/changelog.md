@@ -11,6 +11,7 @@
 ## 新增
 
 - [#3987](https://github.com/hyperf/hyperf/pull/3987) AMQP 元件支援延時佇列。
+- [#3989](https://github.com/hyperf/hyperf/pull/3989) 為熱更新元件新增了配置 `command`，可以用來定義自己的啟動指令碼，支援 [nano](https://github.com/hyperf/nano) 元件。
 
 # v2.2.5 - 2021-08-23
 
