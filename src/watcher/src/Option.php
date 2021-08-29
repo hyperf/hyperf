@@ -27,6 +27,11 @@ class Option
     protected $bin = 'php';
 
     /**
+     * @var string
+     */
+    protected $command = 'vendor/hyperf/watcher/watcher.php start';
+
+    /**
      * @var string[]
      */
     protected $watchDir = ['app', 'config'];
@@ -57,6 +62,7 @@ class Option
 
         isset($options['driver']) && $this->driver = $options['driver'];
         isset($options['bin']) && $this->bin = $options['bin'];
+        isset($options['command']) && $this->command = $options['command'];
         isset($options['watch']['dir']) && $this->watchDir = (array) $options['watch']['dir'];
         isset($options['watch']['file']) && $this->watchFile = (array) $options['watch']['file'];
         isset($options['watch']['scan_interval']) && $this->scanInterval = (int) $options['watch']['scan_interval'];
@@ -75,6 +81,11 @@ class Option
     public function getBin(): string
     {
         return $this->bin;
+    }
+
+    public function getCommand(): mixed
+    {
+        return $this->command;
     }
 
     public function getWatchDir(): array
