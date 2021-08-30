@@ -83,7 +83,7 @@ class Option
         return $this->bin;
     }
 
-    public function getCommand(): mixed
+    public function getCommand(): string
     {
         return $this->command;
     }
