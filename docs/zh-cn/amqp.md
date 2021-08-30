@@ -157,6 +157,58 @@ class DemoConsumer extends ConsumerMessage
 }
 ```
 
+### 禁止消费进程自启
+
+默认情况下，使用了 `@Consumer` 注解后，框架会自动创建子进程启动消费者，并且会在子进程异常退出后，重新拉起。
+如果出于开发阶段，进行消费者调试时，可能会因为消费其他消息而导致调试不便。
+
+这种情况，只需要在 `@Consumer` 注解中配置 `enable=false` (默认为 `true` 跟随服务启动)或者在对应的消费者中重写类方法 `isEnable()` 返回 `false` 即可
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Amqp\Consumers;
+
+use Hyperf\Amqp\Annotation\Consumer;
+use Hyperf\Amqp\Message\ConsumerMessage;
+use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
+
+/**
+ * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1, enable=false)
+ */
+class DemoConsumer extends ConsumerMessage
+{
+    public function consumeMessage($data, AMQPMessage $message): string
+    {
+        print_r($data);
+        return Result::ACK;
+    }
+
+    public function isEnable(): bool
+    {
+        return parent::isEnable();
+    }
+}
+```
+
+### 设置最大消费数
+
+可以修改 `@Consumer` 注解中的 `maxConsumption` 属性，设置此消费者最大处理的消息数，达到指定消费数后，消费者进程会重启。
+
+### 消费结果
+
+框架会根据 `Consumer` 内的 `consume` 方法所返回的结果来决定该消息的响应行为，共有 4 中响应结果，分别为 `\Hyperf\Amqp\Result::ACK`、`\Hyperf\Amqp\Result::NACK`、`\Hyperf\Amqp\Result::REQUEUE`、`\Hyperf\Amqp\Result::DROP`，每个返回值分别代表如下行为：
+
+| 返回值                       | 行为                                                                 |
+|------------------------------|----------------------------------------------------------------------|
+| \Hyperf\Amqp\Result::ACK     | 确认消息正确被消费掉了                                               |
+| \Hyperf\Amqp\Result::NACK    | 消息没有被正确消费掉，以 `basic_nack` 方法来响应                     |
+| \Hyperf\Amqp\Result::REQUEUE | 消息没有被正确消费掉，以 `basic_reject` 方法来响应，并使消息重新入列 |
+| \Hyperf\Amqp\Result::DROP    | 消息没有被正确消费掉，以 `basic_reject` 方法来响应                   |
+
 ## 延时队列
 
 AMQP 的延时队列，并不会根据延时时间进行排序，所以，一旦你投递了一个延时 10s 的任务，又往这个队列中投递了一个延时 5s 的任务，那么也一定会在第一个 10s 任务完成后，才会消费第二个 5s 的任务。
@@ -325,58 +377,6 @@ class DelayCommand extends HyperfCommand
 php bin/hyperf.php demo:command
 ```
 
-
-### 禁止消费进程自启
-
-默认情况下，使用了 `@Consumer` 注解后，框架会自动创建子进程启动消费者，并且会在子进程异常退出后，重新拉起。
-如果出于开发阶段，进行消费者调试时，可能会因为消费其他消息而导致调试不便。
-
-这种情况，只需要在 `@Consumer` 注解中配置 `enable=false` (默认为 `true` 跟随服务启动)或者在对应的消费者中重写类方法 `isEnable()` 返回 `false` 即可
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Amqp\Consumers;
-
-use Hyperf\Amqp\Annotation\Consumer;
-use Hyperf\Amqp\Message\ConsumerMessage;
-use Hyperf\Amqp\Result;
-use PhpAmqpLib\Message\AMQPMessage;
-
-/**
- * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1, enable=false)
- */
-class DemoConsumer extends ConsumerMessage
-{
-    public function consumeMessage($data, AMQPMessage $message): string
-    {
-        print_r($data);
-        return Result::ACK;
-    }
-
-    public function isEnable(): bool
-    {
-        return parent::isEnable();
-    }
-}
-```
-
-### 设置最大消费数
-
-可以修改 `@Consumer` 注解中的 `maxConsumption` 属性，设置此消费者最大处理的消息数，达到指定消费数后，消费者进程会重启。
-
-### 消费结果
-
-框架会根据 `Consumer` 内的 `consume` 方法所返回的结果来决定该消息的响应行为，共有 4 中响应结果，分别为 `\Hyperf\Amqp\Result::ACK`、`\Hyperf\Amqp\Result::NACK`、`\Hyperf\Amqp\Result::REQUEUE`、`\Hyperf\Amqp\Result::DROP`，每个返回值分别代表如下行为：
-
-| 返回值                       | 行为                                                                 |
-|------------------------------|----------------------------------------------------------------------|
-| \Hyperf\Amqp\Result::ACK     | 确认消息正确被消费掉了                                               |
-| \Hyperf\Amqp\Result::NACK    | 消息没有被正确消费掉，以 `basic_nack` 方法来响应                     |
-| \Hyperf\Amqp\Result::REQUEUE | 消息没有被正确消费掉，以 `basic_reject` 方法来响应，并使消息重新入列 |
-| \Hyperf\Amqp\Result::DROP    | 消息没有被正确消费掉，以 `basic_reject` 方法来响应                   |
 
 ## RPC 远程过程调用
 
