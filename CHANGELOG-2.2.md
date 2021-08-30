@@ -11,7 +11,7 @@
 ## Added
 
 - [#3987](https://github.com/hyperf/hyperf/pull/3987) Support delayed message exchange for AMQP.
-- [#3989](https://github.com/hyperf/hyperf/pull/3989) Added option `command` which used to define your own start command.
+- [#3989](https://github.com/hyperf/hyperf/pull/3989) [#3992](https://github.com/hyperf/hyperf/pull/3992) Added option `command` which used to define your own start command.
 
 # v2.2.5 - 2021-08-23
 

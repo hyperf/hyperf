@@ -11,7 +11,7 @@
 ## 新增
 
 - [#3987](https://github.com/hyperf/hyperf/pull/3987) AMQP 组件支持延时队列。
-- [#3989](https://github.com/hyperf/hyperf/pull/3989) 为热更新组件新增了配置 `command`，可以用来定义自己的启动脚本，支持 [nano](https://github.com/hyperf/nano) 组件。
+- [#3989](https://github.com/hyperf/hyperf/pull/3989) [#3992](https://github.com/hyperf/hyperf/pull/3992) 为热更新组件新增了配置 `command`，可以用来定义自己的启动脚本，支持 [nano](https://github.com/hyperf/nano) 组件。
 
 # v2.2.5 - 2021-08-23
 
