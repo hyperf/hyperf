@@ -61,7 +61,7 @@ class Inject extends AbstractAnnotation
                 $this->value = 'HyperfLazy\\' . $this->value;
             }
             AnnotationCollector::collectProperty($className, $target, static::class, $this);
-        } catch (AnnotationException | DocReaderAnnotationException $exception) {
+        } catch (AnnotationException|DocReaderAnnotationException $exception) {
             if ($this->required) {
                 throw new AnnotationException($exception->getMessage());
             }
