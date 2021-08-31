@@ -2,6 +2,7 @@
 
 # Fixed
 
+- [#3997](https://github.com/hyperf/hyperf/pull/3997) Fixed unexpected termination of nats consumer after timeout.
 - [#3998](https://github.com/hyperf/hyperf/pull/3998) Fixed bug that `apollo` does not support `https`.
 
 # v2.2.6 - 2021-08-30
