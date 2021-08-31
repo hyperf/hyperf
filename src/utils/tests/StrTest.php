@@ -134,4 +134,12 @@ class StrTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         Str::mask('hyperf', -1, -1);
     }
+
+    public function testStartsWith()
+    {
+        $this->assertFalse(Str::startsWith('hyperf.wiki', 'http://'));
+        $this->assertFalse(Str::startsWith('hyperf.wiki', ['http://', 'https://']));
+        $this->assertTrue(Str::startsWith('http://www.hyperf.io', 'http://'));
+        $this->assertTrue(Str::startsWith('https://www.hyperf.io', ['http://', 'https://']));
+    }
 }

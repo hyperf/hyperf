@@ -86,7 +86,7 @@ class Option
 
     public function setServer(string $server): self
     {
-        if (! Str::startsWith($server, 'http://')) {
+        if (! Str::startsWith($server, ['http://', 'https://'])) {
             $server = 'http://' . $server;
         }
         $this->server = $server;

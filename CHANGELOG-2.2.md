@@ -1,5 +1,9 @@
 # v2.2.7 - TBD
 
+# Fixed
+
+- [#3998](https://github.com/hyperf/hyperf/pull/3998) Fixed bug that `apollo` does not support `https`.
+
 # v2.2.6 - 2021-08-30
 
 ## Fixed
