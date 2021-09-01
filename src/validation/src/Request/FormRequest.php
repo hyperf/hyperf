@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Validation\Request;
 
 use Hyperf\Contract\ValidatorInterface;
@@ -41,6 +42,18 @@ class FormRequest extends Request implements ValidatesWhenResolved
     protected $errorBag = 'default';
 
     /**
+     * Scene value array
+     *
+     * @var array
+     */
+    protected $scenes = [];
+
+    /**
+     * Current scene value.
+     */
+    protected $currentScene;
+
+    /**
      * The input keys that should not be flashed on redirect.
      *
      * @var array
@@ -50,6 +63,17 @@ class FormRequest extends Request implements ValidatesWhenResolved
     public function __construct(ContainerInterface $container)
     {
         $this->setContainer($container);
+    }
+
+
+    /**
+     * @param $scene
+     * @return $this
+     */
+    public function scene($scene)
+    {
+        $this->currentScene = $scene;
+        return $this;
     }
 
     /**
@@ -128,7 +152,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
     {
         return $factory->make(
             $this->validationData(),
-            call_user_func_array([$this, 'rules'], []),
+            $this->getRules(),
             $this->messages(),
             $this->attributes()
         );
@@ -186,5 +210,24 @@ class FormRequest extends Request implements ValidatesWhenResolved
     protected function getContextValidatorKey(): string
     {
         return sprintf('%s:%s', get_called_class(), ValidatorInterface::class);
+    }
+
+    /**
+     * Get scene rules.
+     */
+    protected function getRules()
+    {
+        $rules    = call_user_func_array([$this, 'rules'], []);
+        $newRules = [];
+        if ($this->currentScene && isset($this->scenes[$this->currentScene])) {
+            $sceneFields = is_array($this->scenes[$this->currentScene]) ? $this->scenes[$this->currentScene] : explode(',', $this->scenes[$this->currentScene]);
+            foreach ($sceneFields as $field) {
+                if (array_key_exists($field, $rules)) {
+                    $newRules[$field] = $rules[$field];
+                }
+            }
+            return $newRules;
+        }
+        return $rules;
     }
 }
