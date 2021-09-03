@@ -6,7 +6,7 @@
 - [#3998](https://github.com/hyperf/hyperf/pull/3998) Fixed bug that `apollo` does not support `https`.
 
 ## Optimized
-- [#4009](https://github.com/hyperf/hyperf/pull/4009) Optimized `ReflectionParameter::getClass()` is deprecated in PHP8.
+- [#4009](https://github.com/hyperf/hyperf/pull/4009) Optimized method `MethodDefinitionCollector::getOrParse()` to avoid deprecated in PHP8.
 
 # v2.2.6 - 2021-08-30
 
