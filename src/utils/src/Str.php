@@ -46,7 +46,7 @@ class Str
     /**
      * Get a new stringable object from the given string.
      *
-     * @param  string  $string
+     * @param string $string
      * @return Stringable
      */
     public static function of($string)
@@ -69,8 +69,8 @@ class Str
     /**
      * Return the remainder of a string after the last occurrence of a given value.
      *
-     * @param  string  $subject
-     * @param  string  $search
+     * @param string $subject
+     * @param string $search
      * @return string
      */
     public static function afterLast($subject, $search)
@@ -125,8 +125,8 @@ class Str
     /**
      * Get the portion of a string before the last occurrence of a given value.
      *
-     * @param  string  $subject
-     * @param  string  $search
+     * @param string $subject
+     * @param string $search
      * @return string
      */
     public static function beforeLast($subject, $search)
@@ -147,9 +147,9 @@ class Str
     /**
      * Get the portion of a string between two given values.
      *
-     * @param  string  $subject
-     * @param  string  $from
-     * @param  string  $to
+     * @param string $subject
+     * @param string $from
+     * @param string $to
      * @return string
      */
     public static function between($subject, $from, $to)
@@ -197,8 +197,8 @@ class Str
     /**
      * Determine if a given string contains all array values.
      *
-     * @param  string  $haystack
-     * @param  string[]  $needles
+     * @param string $haystack
+     * @param string[] $needles
      * @return bool
      */
     public static function containsAll($haystack, array $needles)
@@ -354,8 +354,8 @@ class Str
     /**
      * Get the string matching the given pattern.
      *
-     * @param  string  $pattern
-     * @param  string  $subject
+     * @param string $pattern
+     * @param string $subject
      * @return string
      */
     public static function match($pattern, $subject)
@@ -372,9 +372,9 @@ class Str
     /**
      * Get the string matching the given pattern.
      *
-     * @param  string  $pattern
-     * @param  string  $subject
-     * @return \Illuminate\Support\Collection
+     * @param string $pattern
+     * @param string $subject
+     * @return Collection
      */
     public static function matchAll($pattern, $subject)
     {
@@ -390,9 +390,9 @@ class Str
     /**
      * Pad both sides of a string with another.
      *
-     * @param  string  $value
-     * @param  int  $length
-     * @param  string  $pad
+     * @param string $value
+     * @param int $length
+     * @param string $pad
      * @return string
      */
     public static function padBoth($value, $length, $pad = ' ')
@@ -403,9 +403,9 @@ class Str
     /**
      * Pad the left side of a string with another.
      *
-     * @param  string  $value
-     * @param  int  $length
-     * @param  string  $pad
+     * @param string $value
+     * @param int $length
+     * @param string $pad
      * @return string
      */
     public static function padLeft($value, $length, $pad = ' ')
@@ -416,9 +416,9 @@ class Str
     /**
      * Pad the right side of a string with another.
      *
-     * @param  string  $value
-     * @param  int  $length
-     * @param  string  $pad
+     * @param string $value
+     * @param int $length
+     * @param string $pad
      * @return string
      */
     public static function padRight($value, $length, $pad = ' ')
@@ -477,8 +477,6 @@ class Str
     /**
      * Repeat the given string.
      *
-     * @param  string  $string
-     * @param  int  $times
      * @return string
      */
     public static function repeat(string $string, int $times)
@@ -501,9 +499,9 @@ class Str
     /**
      * Replace the given value in the given string.
      *
-     * @param  string|string[]  $search
-     * @param  string|string[]  $replace
-     * @param  string|string[]  $subject
+     * @param string|string[] $search
+     * @param string|string[] $replace
+     * @param string|string[] $subject
      * @return string
      */
     public static function replace($search, $replace, $subject)
@@ -546,18 +544,16 @@ class Str
     /**
      * Remove any occurrence of the given string in the subject.
      *
-     * @param  string|array<string>  $search
-     * @param  string  $subject
-     * @param  bool  $caseSensitive
+     * @param array<string>|string $search
+     * @param string $subject
+     * @param bool $caseSensitive
      * @return string
      */
     public static function remove($search, $subject, $caseSensitive = true)
     {
-        $subject = $caseSensitive
+        return $caseSensitive
                     ? str_replace($search, '', $subject)
                     : str_ireplace($search, '', $subject);
-
-        return $subject;
     }
 
     /**
@@ -686,19 +682,18 @@ class Str
     /**
      * Returns the number of substring occurrences.
      *
-     * @param  string  $haystack
-     * @param  string  $needle
-     * @param  int  $offset
-     * @param  int|null  $length
+     * @param string $haystack
+     * @param string $needle
+     * @param int $offset
+     * @param null|int $length
      * @return int
      */
     public static function substrCount($haystack, $needle, $offset = 0, $length = null)
     {
         if (! is_null($length)) {
             return substr_count($haystack, $needle, $offset, $length);
-        } else {
-            return substr_count($haystack, $needle, $offset);
         }
+        return substr_count($haystack, $needle, $offset);
     }
 
     /**
