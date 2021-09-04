@@ -50,7 +50,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Current scene value.
      */
-    protected $currentScene;
+    protected $scene;
 
     /**
      * The input keys that should not be flashed on redirect.
@@ -70,7 +70,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     public function scene($scene)
     {
-        $this->currentScene = $scene;
+        $this->scene = $scene;
         return $this;
     }
 
@@ -217,9 +217,8 @@ class FormRequest extends Request implements ValidatesWhenResolved
     {
         $rules = call_user_func_array([$this, 'rules'], []);
         $newRules = [];
-        if ($this->currentScene && isset($this->scenes[$this->currentScene])) {
-            $sceneFields = is_array($this->scenes[$this->currentScene]) ? $this->scenes[$this->currentScene] : explode(',', $this->scenes[$this->currentScene]);
-            foreach ($sceneFields as $field) {
+        if ($this->scene && isset($this->scenes[$this->scene]) && is_array($this->scenes[$this->scene])) {
+            foreach ($this->scenes[$this->scene] as $field) {
                 if (array_key_exists($field, $rules)) {
                     $newRules[$field] = $rules[$field];
                 }
