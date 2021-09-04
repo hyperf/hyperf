@@ -64,13 +64,13 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     public function scene(string $scene)
     {
-        Context::set(static::class . '::scene', $scene);
+        Context::set($this->getContextValidatorKey('scene'), $scene);
         return $this;
     }
 
     public function getScene(): ?string
     {
-        return Context::get(static::class . '::scene');
+        return Context::get($this->getContextValidatorKey('scene'));
     }
 
     /**
@@ -125,7 +125,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     protected function getValidatorInstance(): ValidatorInterface
     {
-        return Context::getOrSet($this->getContextValidatorKey(), function () {
+        return Context::getOrSet($this->getContextValidatorKey(ValidatorInterface::class), function () {
             $factory = $this->container->get(ValidationFactory::class);
 
             if (method_exists($this, 'validator')) {
@@ -204,9 +204,9 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Get context validator key.
      */
-    protected function getContextValidatorKey(): string
+    protected function getContextValidatorKey(string $key): string
     {
-        return sprintf('%s:%s', get_called_class(), ValidatorInterface::class);
+        return sprintf('%s:%s', spl_object_hash($this), $key);
     }
 
     /**
