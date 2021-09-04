@@ -44,6 +44,17 @@ class Str
     protected static $studlyCache = [];
 
     /**
+     * Get a new stringable object from the given string.
+     *
+     * @param  string  $string
+     * @return Stringable
+     */
+    public static function of($string)
+    {
+        return new Stringable($string);
+    }
+
+    /**
      * Return the remainder of a string after a given value.
      *
      * @param string $subject
