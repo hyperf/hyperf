@@ -41,16 +41,11 @@ class FormRequest extends Request implements ValidatesWhenResolved
     protected $errorBag = 'default';
 
     /**
-     * Scene value array.
+     * The scenes defined by developer.
      *
      * @var array
      */
     protected $scenes = [];
-
-    /**
-     * Current scene value.
-     */
-    protected $scene;
 
     /**
      * The input keys that should not be flashed on redirect.
@@ -65,13 +60,17 @@ class FormRequest extends Request implements ValidatesWhenResolved
     }
 
     /**
-     * @param $scene
      * @return $this
      */
-    public function scene($scene)
+    public function scene(string $scene)
     {
-        $this->scene = $scene;
+        Context::set(static::class . '::scene', $scene);
         return $this;
+    }
+
+    public function getScene(): ?string
+    {
+        return Context::get(static::class . '::scene');
     }
 
     /**
@@ -217,8 +216,9 @@ class FormRequest extends Request implements ValidatesWhenResolved
     {
         $rules = call_user_func_array([$this, 'rules'], []);
         $newRules = [];
-        if ($this->scene && isset($this->scenes[$this->scene]) && is_array($this->scenes[$this->scene])) {
-            foreach ($this->scenes[$this->scene] as $field) {
+        $scene = $this->getScene();
+        if ($scene && isset($this->scenes[$scene]) && is_array($this->scenes[$scene])) {
+            foreach ($this->scenes[$scene] as $field) {
                 if (array_key_exists($field, $rules)) {
                     $newRules[$field] = $rules[$field];
                 }
