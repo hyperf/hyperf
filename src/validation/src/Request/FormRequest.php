@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Validation\Request;
 
 use Hyperf\Contract\ValidatorInterface;
@@ -42,7 +41,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
     protected $errorBag = 'default';
 
     /**
-     * Scene value array
+     * Scene value array.
      *
      * @var array
      */
@@ -64,7 +63,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
     {
         $this->setContainer($container);
     }
-
 
     /**
      * @param $scene
@@ -217,7 +215,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     protected function getRules()
     {
-        $rules    = call_user_func_array([$this, 'rules'], []);
+        $rules = call_user_func_array([$this, 'rules'], []);
         $newRules = [];
         if ($this->currentScene && isset($this->scenes[$this->currentScene])) {
             $sceneFields = is_array($this->scenes[$this->currentScene]) ? $this->scenes[$this->currentScene] : explode(',', $this->scenes[$this->currentScene]);
