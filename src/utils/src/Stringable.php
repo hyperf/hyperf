@@ -275,16 +275,6 @@ class Stringable implements JsonSerializable
     }
 
     /**
-     * Determine if a given string is 7 bit ASCII.
-     *
-     * @return bool
-     */
-    public function isAscii()
-    {
-        return Str::isAscii($this->value);
-    }
-
-    /**
      * Determine if the given string is empty.
      *
      * @return bool
@@ -345,16 +335,6 @@ class Stringable implements JsonSerializable
     public function lower()
     {
         return new static(Str::lower($this->value));
-    }
-
-    /**
-     * Convert GitHub flavored Markdown into HTML.
-     *
-     * @return static
-     */
-    public function markdown(array $options = [])
-    {
-        return new static(Str::markdown($this->value, $options));
     }
 
     /**
