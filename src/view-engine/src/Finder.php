@@ -266,6 +266,7 @@ class Finder implements FinderInterface
      */
     protected function parseNamespaceSegments($name)
     {
+        /* @phpstan-ignore-next-line */
         $segments = explode(static::HINT_PATH_DELIMITER, $name);
 
         if (count($segments) !== 2) {

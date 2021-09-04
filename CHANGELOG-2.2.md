@@ -12,6 +12,7 @@
 ## Added
 
 - [#4002](https://github.com/hyperf/hyperf/pull/4002) [#4012](https://github.com/hyperf/hyperf/pull/4012) Support method `FormRequest::scene()` which used to rewrite different rules according to different scenes.
+- [#4011](https://github.com/hyperf/hyperf/pull/4011) Added some methods for `Hyperf\Utils\Str`.
 
 # v2.2.6 - 2021-08-30
 
