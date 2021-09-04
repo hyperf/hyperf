@@ -224,7 +224,7 @@ class Stringable implements JsonSerializable
     /**
      * Explode the string into an array.
      *
-     * @param string $delimiter
+     * @param non-empty-string $delimiter
      * @param int $limit
      * @return \Hyperf\Utils\Collection
      */
