@@ -215,9 +215,9 @@ class FormRequest extends Request implements ValidatesWhenResolved
     protected function getRules()
     {
         $rules = call_user_func_array([$this, 'rules'], []);
-        $newRules = [];
         $scene = $this->getScene();
         if ($scene && isset($this->scenes[$scene]) && is_array($this->scenes[$scene])) {
+            $newRules = [];
             foreach ($this->scenes[$scene] as $field) {
                 if (array_key_exists($field, $rules)) {
                     $newRules[$field] = $rules[$field];
