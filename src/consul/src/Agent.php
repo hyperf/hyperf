@@ -48,7 +48,7 @@ class Agent extends Client implements AgentInterface
 
     public function forceLeave($node): ConsulResponse
     {
-        return $this->request('GET', '/v1/agent/force-leave/' . $node);
+        return $this->request('PUT', '/v1/agent/force-leave/' . $node);
     }
 
     public function registerCheck($check): ConsulResponse

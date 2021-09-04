@@ -17,7 +17,7 @@ use Hyperf\Contract\OnReceiveInterface;
 
 class TcpServer implements OnReceiveInterface
 {
-    public function onReceive($server, int $fd, int $fromId, string $data): void
+    public function onReceive($server, int $fd, int $reactorId, string $data): void
     {
         $server->send($fd, 'recv:' . $data);
     }
@@ -36,7 +36,7 @@ use Hyperf\Server\Server;
 use Hyperf\Server\Event;
 
 return [
-    // 删除其他不相关的配置项
+    // 以下删除了其他不相关的配置项
     'servers' => [
         [
             'name' => 'tcp',
@@ -104,7 +104,7 @@ use Hyperf\Server\Server;
 use Hyperf\Server\Event;
 
 return [
-    // 删除其他不相关的配置项
+    // 以下删除了其他不相关的配置项
     'servers' => [
         [
             'name' => 'udp',

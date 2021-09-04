@@ -1,6 +1,6 @@
 # 视图引擎
 
-> 基于 laravel blade 模板引擎改写, 支持原始 blade 模板引擎的语法.
+> 基于 Laravel blade 模板引擎改写, 支持原始 blade 模板引擎的语法.
 
 ```bash
 composer require hyperf/view-engine
@@ -82,7 +82,7 @@ return [
 就如前面的示例中所示，这些片段的内容将由布局中的 `@yield` 指令控制显示：
 
 ```blade
-<!-- Stored in resources/views/child.blade.php -->
+<!-- Stored in storage/view/child.blade.php -->
 
 @extends('layouts.app')
 

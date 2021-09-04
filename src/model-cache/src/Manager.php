@@ -167,6 +167,7 @@ class Manager
         }
 
         $this->logger->alert('Cache handler not exist, fetch data from database.');
+        // @phpstan-ignore-next-line
         return $instance->newQuery()->whereIn($primaryKey, $ids)->get();
     }
 
@@ -263,10 +264,17 @@ class Manager
         if (! $config->isUseDefaultValue()) {
             return $data;
         }
+
+        $connection = $model->getConnectionName();
         $defaultData = $this->collector->getDefaultValue(
-            $model->getConnectionName(),
-            $model->getTable()
+            $connection,
+            $this->getPrefix($connection) . $model->getTable()
         );
         return array_replace($defaultData, $data);
+    }
+
+    protected function getPrefix(string $connection): string
+    {
+        return (string) $this->container->get(ConfigInterface::class)->get('databases.' . $connection . '.prefix');
     }
 }

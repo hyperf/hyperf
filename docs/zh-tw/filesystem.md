@@ -1,23 +1,87 @@
 # 檔案系統
 
-檔案系統元件集成了 PHP 生態中大名鼎鼎的 League\Flysystem (這也是 Laravel 等諸多知名框架的底層庫)。通過合理抽象，程式不必感知儲存引擎究竟是本地硬碟還是雲伺服器，實現解耦。本元件對常用的雲端儲存服務提供了協程化支援。
+檔案系統元件集成了 PHP 生態中大名鼎鼎的 `League\Flysystem` (這也是 Laravel 等諸多知名框架的底層庫)。通過合理抽象，程式不必感知儲存引擎究竟是本地硬碟還是雲伺服器，實現解耦。本元件對常用的雲端儲存服務提供了協程化支援。
 
 ## 安裝
 
-```bash
-# 首先執行
+```shell
 composer require hyperf/filesystem
-# 使用阿里雲 OSS 介面卡時執行
+```
+
+`League\Flysystem` 元件 `v1.0` 和 `v2.0` 版本變動較大，所以需要根據不同的版本，安裝對應的介面卡
+
+- 阿里雲 OSS 介面卡
+
+`Flysystem v1.0` 版本
+
+```shell
 composer require xxtime/flysystem-aliyun-oss
-# 使用 S3 介面卡時執行
-composer require league/flysystem-aws-s3-v3
+```
+
+`Flysystem v2.0` 版本
+
+```shell
+composer require hyperf/flysystem-oss
+```
+
+- S3 介面卡
+
+`Flysystem v1.0` 版本
+
+```shell
+composer require "league/flysystem-aws-s3-v3:^1.0"
 composer require hyperf/guzzle
-# 使用七牛雲（測試）介面卡時執行
-composer require overtrue/flysystem-qiniu
-# 使用記憶體介面卡時執行
-composer require league/flysystem-memory
-# 使用騰訊雲 COS 介面卡時執行
-composer require overtrue/flysystem-cos
+```
+
+`Flysystem v2.0` 版本
+
+```shell
+composer require "league/flysystem-aws-s3-v3:^2.0"
+composer require hyperf/guzzle
+```
+
+- 七牛介面卡
+
+`Flysystem v1.0` 版本
+
+```shell
+composer require "overtrue/flysystem-qiniu:^1.0"
+```
+
+`Flysystem v2.0` 版本
+
+```shell
+composer require "overtrue/flysystem-qiniu:^2.0"
+```
+
+- 記憶體介面卡
+
+`Flysystem v1.0` 版本
+
+```shell
+composer require "league/flysystem-memory:^1.0"
+```
+
+`Flysystem v2.0` 版本
+
+```shell
+composer require "league/flysystem-memory:^2.0"
+```
+
+- 騰訊雲 COS 介面卡
+
+`Flysystem v1.0` 版本
+
+> flysystem-cos v2.0 版本已經不推薦使用了，請按照最新的文件修改為 3.0 版本
+
+```shell
+composer require "overtrue/flysystem-cos:^3.0"
+```
+
+`Flysystem v2.0` 版本
+
+```shell
+composer require "overtrue/flysystem-cos:^4.0"
 ```
 
 安裝完成後，執行
@@ -33,6 +97,8 @@ php bin/hyperf.php vendor:publish hyperf/filesystem
 通過 DI 注入 `League\Flysystem\Filesystem` 即可使用。
 
 API 如下：
+
+> 以下示例為 Flysystem v1.0 版本，v2.0 版本請看官方文件
 
 ```php
 <?php
@@ -246,11 +312,18 @@ return [
         'cos' => [
             'driver' => \Hyperf\Filesystem\Adapter\CosAdapterFactory::class,
             'region' => env('COS_REGION'),
+            // overtrue/flysystem-cos ^2.0 配置如下
             'credentials' => [
                 'appId' => env('COS_APPID'),
                 'secretId' => env('COS_SECRET_ID'),
                 'secretKey' => env('COS_SECRET_KEY'),
             ],
+            // overtrue/flysystem-cos ^3.0 配置如下
+            'app_id' => env('COS_APPID'),
+            'secret_id' => env('COS_SECRET_ID'),
+            'secret_key' => env('COS_SECRET_KEY'),
+            // 可選，如果 bucket 為私有訪問請開啟此項
+            // 'signed_url' => false,
             'bucket' => env('COS_BUCKET'),
             'read_from_cdn' => false,
             // 'timeout'         => 60,

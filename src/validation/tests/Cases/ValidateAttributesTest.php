@@ -61,4 +61,11 @@ class ValidateAttributesTest extends TestCase
         $this->assertFalse($validator->validateAlphaNum('', '123_f1'));
         $this->assertFalse($validator->validateAlphaNum('', 'xxx_yy'));
     }
+
+    public function testValidateDate()
+    {
+        $validator = new ValidatesAttributesStub();
+
+        $this->assertFalse($validator->validateDate('', 123));
+    }
 }

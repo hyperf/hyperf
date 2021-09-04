@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\JsonRpc\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\JsonRpc\DataFormatter;
 use Hyperf\JsonRpc\JsonRpcHttpTransporter;
@@ -45,8 +44,6 @@ class RegisterProtocolListener implements ListenerInterface
     /**
      * All official rpc protocols should register in here,
      * and the others non-official protocols should register in their own component via listener.
-     *
-     * @param BeforeWorkerStart $event
      */
     public function process(object $event)
     {

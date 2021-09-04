@@ -1,8 +1,231 @@
-# v2.1.6 - TBD
+# v2.1.24 - TBD
+
+# v2.1.23 - 2021-07-12
+
+## Optimized
+
+- [#3787](https://github.com/hyperf/hyperf/pull/3787) Initialize PSR Response first to avoid problems caused by the failure of building PSR Request.
+
+# v2.1.22 - 2021-06-28
+
+## Security
+
+- [#3723](https://github.com/hyperf/hyperf/pull/3723) Fixed the active_url rule for validation in input fails to correctly check dns record with dns_get_record resulting in bypassing the validation.
+- [#3724](https://github.com/hyperf/hyperf/pull/3724) Fixed bug that `RequiredIf` can be exploited to generate gadget chains for deserialization vulnerabiltiies.
+
+## Fixed
+
+- [#3721](https://github.com/hyperf/hyperf/pull/3721) Fixed the `in` and `not in` rule for validation in input fails to correctly check `in:00` rule when passing `0`.
+
+# v2.1.21 - 2021-06-21
+
+## Fixed
+
+- [#3684](https://github.com/hyperf/hyperf/pull/3684) Fixed the wrong judgment of `counter` or `duration` for circuit breaker.
+
+# v2.1.20 - 2021-06-07
+
+## Fixed
+
+- [#3667](https://github.com/hyperf/hyperf/pull/3667) Fixed bug that the crontab rule like `10-12/1,14-15/1` does not works.
+- [#3669](https://github.com/hyperf/hyperf/pull/3669) Fixed bug that the crontab rule without backslash like `10-12` does not works.
+- [#3674](https://github.com/hyperf/hyperf/pull/3674) Fixed bug that property `$workerId` does not works in annotation `@Task`.
+
+## Optimized
+
+- [#3663](https://github.com/hyperf/hyperf/pull/3663) Optimized code of `AbstractServiceClient::getNodesFromConsul()`.
+- [#3668](https://github.com/hyperf/hyperf/pull/3668) Optimized proxy code of `CoroutineHandler`, which is more friendly than before.
+
+# v2.1.19 - 2021-05-31
+
+## Fixed
+
+- [#3618](https://github.com/hyperf/hyperf/pull/3618) Fixed routes with same path but different methods will be merged when using `describe:routes`.
+- [#3625](https://github.com/hyperf/hyperf/pull/3625) Fixed bug that `class_map` does not works in `Hyperf\Di\Annotation\Scanner`.
+
+## Added
+
+- [#3626](https://github.com/hyperf/hyperf/pull/3626) Added `Hyperf\Rpc\PathGenerator\DotPathGenerator`.
+
+## Incubator
+
+- [nacos-sdk](https://github.com/hyperf/nacos-sdk-incubator) Nacos SDK for Open API.
+
+# v2.1.18 - 2021-05-24
+
+## Fixed
+
+- [#3598](https://github.com/hyperf/hyperf/pull/3598) Fixed bug that `increment/decrement` does not works as expect when used in transaction for model-cache.
+- [#3607](https://github.com/hyperf/hyperf/pull/3607) Fixed bug that coroutine won't destruct when using `onOpen` in coroutine style websocket server.
+- [#3610](https://github.com/hyperf/hyperf/pull/3610) Fixed bug that `fromSub()` and `joinSub()` don't work with table prefix.
+
+# v2.1.17 - 2021-05-17
+
+## Fixed
+
+- [#3856](https://github.com/hyperf/hyperf/pull/3586) Fixed bug that coroutine won't destruct for keepalive request in swow server.
+
+## Added
+
+- [#3329](https://github.com/hyperf/hyperf/pull/3329) The `enable` parameter of the `@Crontab` supports `array`, which you can dynamically control whether the task is executed or not.
+
+# v2.1.16 - 2021-04-26
+
+## Fixed
+
+- [#3510](https://github.com/hyperf/hyperf/pull/3510) Fixed bug that consul couldn't force a node into the left state.
+- [#3513](https://github.com/hyperf/hyperf/pull/3513) Fixed nats connection closed accidentally when socket timeout is smaller than max idle time.
+- [#3520](https://github.com/hyperf/hyperf/pull/3520) Fixed `@Inject` does not works in nested trait.
+
+## Added
+
+- [#3514](https://github.com/hyperf/hyperf/pull/3514) Added method `Hyperf\HttpServer\Request::clearStoredParsedData()`.
+
+## Optimized
+
+- [#3517](https://github.com/hyperf/hyperf/pull/3517) Optimized code for `Hyperf\Di\Aop\PropertyHandlerTrait`.
+
+# v2.1.15 - 2021-04-19
+
+## Added
+
+- [#3484](https://github.com/hyperf/hyperf/pull/3484) Added methods `withMax()` `withMin()` `withSum()` and `withAvg()`.
+
+# v2.1.14 - 2021-04-12
+
+## Fixed
+
+- [#3465](https://github.com/hyperf/hyperf/pull/3465) Fixed bug that websocket does not works when exist more than one server in coroutine style.
+- [#3467](https://github.com/hyperf/hyperf/pull/3467) Fixed bug that db connection couldn't be released to pool when using coroutine style websocket server.
+
+## Added
+
+- [#3472](https://github.com/hyperf/hyperf/pull/3472) Added method `Sender::getResponse()` which you can used to get response from coroutine style server.
+
+# v2.1.13 - 2021-04-06
+
+## Fixed
+
+- [#3432](https://github.com/hyperf/hyperf/pull/3432) Fixed bug that `ttl` does not works on other workers for socketio-server.
+- [#3434](https://github.com/hyperf/hyperf/pull/3434) Fixed bug that the type of rpc result does not support types which allows null.
+- [#3447](https://github.com/hyperf/hyperf/pull/3447) Fixed default value of column does not works in model-cache when has table prefix.
+- [#3450](https://github.com/hyperf/hyperf/pull/3450) Fixed bug that `@Crontab` does not works when used in methods.
+
+## Optimized
+
+- [#3453](https://github.com/hyperf/hyperf/pull/3453) Optimized code for releasing instance in `Hyperf\Utils\Channel\Caller`.
+- [#3455](https://github.com/hyperf/hyperf/pull/3455) Optimized `phar:build`, which can support `symlink` package.
+
+# v2.1.12 - 2021-03-29
+
+## Fixed
+
+- [#3423](https://github.com/hyperf/hyperf/pull/3423) Fixed crontab does not works when worker_num isn't integer for task worker strategy.
+- [#3426](https://github.com/hyperf/hyperf/pull/3426) Fixed bug that middleware will be handled twice when used in optional route.
+
+## Optimized
+
+- [#3422](https://github.com/hyperf/hyperf/pull/3422) Optimized code for `co-phpunit`.
+
+# v2.1.11 - 2021-03-22
+
+## Added
+
+- [#3376](https://github.com/hyperf/hyperf/pull/3376) Support `$connection` and `$attempts` for `Hyperf\DbConnection\Annotation\Transactional`.
+- [#3403](https://github.com/hyperf/hyperf/pull/3403) Added method `Hyperf\Testing\Client::sendRequest()` that you can use your own server request.
+
+## Fixed
+
+- [#3380](https://github.com/hyperf/hyperf/pull/3380) Fixed bug that super globals does not work when request don't persist to context.
+- [#3394](https://github.com/hyperf/hyperf/pull/3394) Fixed bug that the injected property will be replaced by injected property defined in trait.
+- [#3395](https://github.com/hyperf/hyperf/pull/3395) Fixed bug that the private property which injected by parent class does not exists in class.
+- [#3398](https://github.com/hyperf/hyperf/pull/3398) Fixed UploadedFile::isValid() does not works in phpunit.
+
+# v2.1.10 - 2021-03-15
+
+## Fixed
+
+- [#3348](https://github.com/hyperf/hyperf/pull/3348) Fixed bug that `Arr::forget` failed when the integer key does not exists.
+- [#3351](https://github.com/hyperf/hyperf/pull/3351) Fixed bug that `FormRequest` could't get the changed data from `Context`.
+- [#3356](https://github.com/hyperf/hyperf/pull/3356) Fixed bug that could't get the valid `uri` when using `Hyperf\Testing\Client`.
+- [#3363](https://github.com/hyperf/hyperf/pull/3363) Fixed bug that `constants` which defined in `bin/hyperf.php` does not works for `server:start`.
+- [#3365](https://github.com/hyperf/hyperf/pull/3365) Fixed bug that `pid_file` will be created accidently when you don't configure `pid_file` in coroutine style server.
+
+## Optimized
+
+- [#3364](https://github.com/hyperf/hyperf/pull/3364) Optimized `phar:build` that you can run phar without `php`, such as `./composer.phar` instead of `php composer.phar`.
+- [#3367](https://github.com/hyperf/hyperf/pull/3367) Optimized code for guessing the return type for custom caster when using `gen:model`.
+
+# v2.1.9 - 2021-03-08
+
+## Fixed
+
+- [#3326](https://github.com/hyperf/hyperf/pull/3326) Fixed bug that `unpack` custom data failed when using `JsonEofPacker`.
+- [#3330](https://github.com/hyperf/hyperf/pull/3330) Fixed data query error caused by unexpected change of `$constraints` by other coroutine.
+
+## Added
+
+- [#3325](https://github.com/hyperf/hyperf/pull/3325) Added `enable` to control the crontab task which to register or not.
+
+## Optimized
+
+- [#3338](https://github.com/hyperf/hyperf/pull/3338) Optimized code for `testing` which mock request in an alone coroutine.
+
+# v2.1.8 - 2021-03-01
+
+## Fixed 
+
+- [#3301](https://github.com/hyperf/hyperf/pull/3301) Fixed bug that the value of ttl will be converted to 0 when you don't set it for `hyperf/cache`.
+
+## Added
+
+- [#3310](https://github.com/hyperf/hyperf/pull/3310) Added `Blueprint::comment()` which you can set comment of table for migration.
+- [#3311](https://github.com/hyperf/hyperf/pull/3311) Added `RouteCollector::getRouteParser` which you can get `RouteParser` from `RouteCollector`.
+- [#3316](https://github.com/hyperf/hyperf/pull/3316) Allow custom driver which you can used to register your own driver for `hyperf/db`.
+
+## Optimized
+
+- [#3308](https://github.com/hyperf/hyperf/pull/3308) Send response directly when the handler does not exists.
+- [#3319](https://github.com/hyperf/hyperf/pull/3319) Optimized code that get connection from pool.
+
+## Incubator
+
+- [rpc-multiplex](https://github.com/hyperf/rpc-multiplex-incubator) Rpc for multiplexing connection
+- [db-pgsql](https://github.com/hyperf/db-pgsql-incubator) PgSQL driver for Hyperf DB Component
+
+# v2.1.7 - 2021-02-22
+
+## Fixed
+
+- [#3272](https://github.com/hyperf/hyperf/pull/3272) Fixed bug that rename column name failed when using `doctrine/dbal`.
+
+## Added
+
+- [#3261](https://github.com/hyperf/hyperf/pull/3261) Added method `Pipeline::handleCarry()` which to handle the returning value.
+- [#3267](https://github.com/hyperf/hyperf/pull/3267) Added `Hyperf\Utils\Reflection\ClassInvoker` which you can used to execute non public methods or get non public properties.
+- [#3268](https://github.com/hyperf/hyperf/pull/3268) Added support for kafka consumers to subscribe to multiple topics.
+- [#3193](https://github.com/hyperf/hyperf/pull/3193) [#3296](https://github.com/hyperf/hyperf/pull/3296) Added option `-M` which you can mount external files or dirs to a virtual location within the phar archive for `phar:build`.
+
+## Changed
+
+- [#3258](https://github.com/hyperf/hyperf/pull/3258) Set different client ids based on different kafka consumers.
+- [#3282](https://github.com/hyperf/hyperf/pull/3282) Renamed `stoped` to `stopped` for `hyperf/signal`.
+
+# v2.1.6 - 2021-02-08
 
 ## Fixed
 
 - [#3233](https://github.com/hyperf/hyperf/pull/3233) Fixed connection exhausted, when connect amqp server failed.
+- [#3245](https://github.com/hyperf/hyperf/pull/3245) Fixed `autoCommit` does not works when you set `false` for `hyperf/kafka`.
+- [#3255](https://github.com/hyperf/hyperf/pull/3255) Fixed bug that `defer` cannot be triggered in nsq consumer.
+
+## Optimized
+
+- [#3249](https://github.com/hyperf/hyperf/pull/3249) Optimized `hyperf/kafka` which won't make a new producer to requeue message.
+
+## Removed
+
+- [#3235](https://github.com/hyperf/hyperf/pull/3235) Removed rebalance check, because `longlang/phpkafka` checked.
 
 # v2.1.5 - 2021-02-01
 

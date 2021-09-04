@@ -381,15 +381,15 @@ if ($errors->has('foo')) {
 
 ##### alpha
 
-驗證欄位必須是字母。
+驗證欄位必須是字母(包含中文)。
 
 ##### alpha_dash
 
-驗證欄位可以包含字母和數字，以及破折號和下劃線。
+驗證欄位可以包含字母(包含中文)和數字，以及破折號和下劃線。
 
 ##### alpha_num
 
-驗證欄位必須是字母或數字。
+驗證欄位必須是字母(包含中文)或數字。
 
 ##### array
 
@@ -888,11 +888,14 @@ $validator = $this->validationFactory->make($request->all(), [
 ```php
 namespace App\Listener;
 
-
+use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Event\ValidatorFactoryResolved;
 
+/**
+ * @Listener
+ */
 class ValidatorFactoryResolvedListener implements ListenerInterface
 {
 

@@ -62,7 +62,7 @@
 ## Fixed
 
 - [#2913](https://github.com/hyperf/hyperf/pull/2913) Fixed memory leak when using `with()` for ORM.
-- [#2915](https://github.com/hyperf/hyperf/pull/2915) Fixed bug that worker will be stoped when `onMessage` or `onClose` failed in websocket server.
+- [#2915](https://github.com/hyperf/hyperf/pull/2915) Fixed bug that worker will be stopped when `onMessage` or `onClose` failed in websocket server.
 - [#2927](https://github.com/hyperf/hyperf/pull/2927) Fixed validation rule `alpha_dash` does not support `int`.
 
 ## Changed

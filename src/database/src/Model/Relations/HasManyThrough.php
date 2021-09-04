@@ -98,7 +98,7 @@ class HasManyThrough extends Relation
 
         $this->performJoin();
 
-        if (static::$constraints) {
+        if (Constraint::isConstraint()) {
             $this->query->where($this->getQualifiedFirstKeyName(), '=', $localValue);
         }
     }
@@ -459,16 +459,6 @@ class HasManyThrough extends Relation
             '=',
             $hash . '.' . $this->firstKey
         );
-    }
-
-    /**
-     * Get a relationship join table hash.
-     *
-     * @return string
-     */
-    public function getRelationCountHash()
-    {
-        return 'laravel_reserved_' . static::$selfJoinCount++;
     }
 
     /**

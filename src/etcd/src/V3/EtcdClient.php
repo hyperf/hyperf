@@ -19,65 +19,65 @@ use GuzzleHttp\Client as HttpClient;
 class EtcdClient
 {
     // KV
-    const URI_PUT = 'kv/put';
+    public const URI_PUT = 'kv/put';
 
-    const URI_RANGE = 'kv/range';
+    public const URI_RANGE = 'kv/range';
 
-    const URI_DELETE_RANGE = 'kv/deleterange';
+    public const URI_DELETE_RANGE = 'kv/deleterange';
 
-    const URI_TXN = 'kv/txn';
+    public const URI_TXN = 'kv/txn';
 
-    const URI_COMPACTION = 'kv/compaction';
+    public const URI_COMPACTION = 'kv/compaction';
 
     // Lease
-    const URI_GRANT = 'lease/grant';
+    public const URI_GRANT = 'lease/grant';
 
-    const URI_REVOKE = 'kv/lease/revoke';
+    public const URI_REVOKE = 'kv/lease/revoke';
 
-    const URI_KEEPALIVE = 'lease/keepalive';
+    public const URI_KEEPALIVE = 'lease/keepalive';
 
-    const URI_TIMETOLIVE = 'kv/lease/timetolive';
+    public const URI_TIMETOLIVE = 'kv/lease/timetolive';
 
     // Role
-    const URI_AUTH_ROLE_ADD = 'auth/role/add';
+    public const URI_AUTH_ROLE_ADD = 'auth/role/add';
 
-    const URI_AUTH_ROLE_GET = 'auth/role/get';
+    public const URI_AUTH_ROLE_GET = 'auth/role/get';
 
-    const URI_AUTH_ROLE_DELETE = 'auth/role/delete';
+    public const URI_AUTH_ROLE_DELETE = 'auth/role/delete';
 
-    const URI_AUTH_ROLE_LIST = 'auth/role/list';
+    public const URI_AUTH_ROLE_LIST = 'auth/role/list';
 
     // Authenticate
-    const URI_AUTH_ENABLE = 'auth/enable';
+    public const URI_AUTH_ENABLE = 'auth/enable';
 
-    const URI_AUTH_DISABLE = 'auth/disable';
+    public const URI_AUTH_DISABLE = 'auth/disable';
 
-    const URI_AUTH_AUTHENTICATE = 'auth/authenticate';
+    public const URI_AUTH_AUTHENTICATE = 'auth/authenticate';
 
     // User
-    const URI_AUTH_USER_ADD = 'auth/user/add';
+    public const URI_AUTH_USER_ADD = 'auth/user/add';
 
-    const URI_AUTH_USER_GET = 'auth/user/get';
+    public const URI_AUTH_USER_GET = 'auth/user/get';
 
-    const URI_AUTH_USER_DELETE = 'auth/user/delete';
+    public const URI_AUTH_USER_DELETE = 'auth/user/delete';
 
-    const URI_AUTH_USER_CHANGE_PASSWORD = 'auth/user/changepw';
+    public const URI_AUTH_USER_CHANGE_PASSWORD = 'auth/user/changepw';
 
-    const URI_AUTH_USER_LIST = 'auth/user/list';
+    public const URI_AUTH_USER_LIST = 'auth/user/list';
 
-    const URI_AUTH_ROLE_GRANT = 'auth/role/grant';
+    public const URI_AUTH_ROLE_GRANT = 'auth/role/grant';
 
-    const URI_AUTH_ROLE_REVOKE = 'auth/role/revoke';
+    public const URI_AUTH_ROLE_REVOKE = 'auth/role/revoke';
 
-    const URI_AUTH_USER_GRANT = 'auth/user/grant';
+    public const URI_AUTH_USER_GRANT = 'auth/user/grant';
 
-    const URI_AUTH_USER_REVOKE = 'auth/user/revoke';
+    public const URI_AUTH_USER_REVOKE = 'auth/user/revoke';
 
-    const PERMISSION_READ = 0;
+    public const PERMISSION_READ = 0;
 
-    const PERMISSION_WRITE = 1;
+    public const PERMISSION_WRITE = 1;
 
-    const PERMISSION_READWRITE = 2;
+    public const PERMISSION_READWRITE = 2;
 
     /**
      * @var HttpClient

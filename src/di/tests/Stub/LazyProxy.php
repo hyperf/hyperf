@@ -17,5 +17,5 @@ class LazyProxy extends Proxied
 {
     use LazyProxyTrait;
 
-    const PROXY_TARGET = 'HyperfTest\\Di\\Stub\\Proxied';
+    public const PROXY_TARGET = 'HyperfTest\\Di\\Stub\\Proxied';
 }

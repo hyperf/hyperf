@@ -50,6 +50,11 @@ class Option
      */
     private $intervalTimeout = 60;
 
+    /**
+     * @var string
+     */
+    private $secret;
+
     public function buildBaseUrl(): string
     {
         return implode('/', [
@@ -58,6 +63,15 @@ class Option
             $this->getAppid(),
             $this->getCluster(),
         ]) . '/';
+    }
+
+    public function buildLongPullingBaseUrl(): string
+    {
+        return implode('/', [
+            $this->getServer(),
+            'notifications',
+            'v2',
+        ]);
     }
 
     public function buildCacheKey(string $namespace): string
@@ -72,7 +86,7 @@ class Option
 
     public function setServer(string $server): self
     {
-        if (! Str::startsWith($server, 'http://')) {
+        if (! Str::startsWith($server, ['http://', 'https://'])) {
             $server = 'http://' . $server;
         }
         $this->server = $server;
@@ -143,5 +157,16 @@ class Option
     {
         $this->intervalTimeout = $intervalTimeout;
         return $this;
+    }
+
+    public function setSecret(string $secret): self
+    {
+        $this->secret = $secret;
+        return $this;
+    }
+
+    public function getSecret(): string
+    {
+        return $this->secret;
     }
 }

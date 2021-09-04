@@ -13,13 +13,13 @@ namespace Hyperf\SocketIOServer\Parser;
 
 class Packet implements \ArrayAccess
 {
-    const OPEN = '0';
+    public const OPEN = '0';
 
-    const CLOSE = '1';
+    public const CLOSE = '1';
 
-    const EVENT = '2';
+    public const EVENT = '2';
 
-    const ACK = '3';
+    public const ACK = '3';
 
     /**
      * @var string

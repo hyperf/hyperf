@@ -1,4 +1,4 @@
-# 开发者工具
+# Dev Tool
 
 ## Installation
 
@@ -6,13 +6,13 @@
 composer require hyperf/devtool
 ```
 
-# 支持的命令
+# Supported Commands
 
 ```bash
 php bin/hyperf.php
 ```
 
-通过执行上面的命令可获得 Command 所支持的所有命令，其中返回结果 `gen` 系列命令和 `vendor:publish` 命令主要为 `devtool` 组件提供支持
+All commands supported by Command can be listed by executing the above command. Series of commands under the `gen` and `vendor:publish` mainly provide support for the `devtool` component.
 
 ```
  gen
@@ -27,4 +27,4 @@ php bin/hyperf.php
   gen:process        Create a new process class
  vendor
   vendor:publish     Publish any publishable configs from vendor packages.
-```x
+```

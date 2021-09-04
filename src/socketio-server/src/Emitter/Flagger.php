@@ -14,7 +14,7 @@ namespace Hyperf\SocketIOServer\Emitter;
 trait Flagger
 {
     /**
-     * @return int | bool flags
+     * @return bool|int flags
      */
     protected function guessFlags(bool $compress)
     {

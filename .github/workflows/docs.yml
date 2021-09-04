@@ -1,0 +1,47 @@
+name: Translate docs
+
+on:
+  push:
+    branches:
+      - release-*
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          tools: phpize
+          extensions: swoole, redis
+          ini-values: extension=opencc
+
+      - name: Install OpenCC
+        run: |
+          sudo apt-get install libopencc-dev -y
+
+      - name: Build opencc4php
+        run: |
+          git clone https://github.com/nauxliu/opencc4php.git --depth 1
+          cd opencc4php
+          phpize
+          ./configure
+          make
+          sudo make install
+          php --ri opencc
+          cd ..
+          rm -rf opencc4php
+
+      - name: Start Translate
+        run: |
+          composer install
+          php bin/doc-translate
+
+      - name: Commit Updated
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update docs and translate

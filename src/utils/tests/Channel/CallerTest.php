@@ -21,6 +21,25 @@ use PHPUnit\Framework\TestCase;
  */
 class CallerTest extends TestCase
 {
+    public function testCallerWithNull()
+    {
+        $caller = new Caller(static function () {
+            return null;
+        });
+
+        $id = $caller->call(static function ($instance) {
+            return 1;
+        });
+
+        $this->assertSame(1, $id);
+
+        $id = $caller->call(static function ($instance) {
+            return 2;
+        });
+
+        $this->assertSame(2, $id);
+    }
+
     public function testCaller()
     {
         $obj = new \stdClass();

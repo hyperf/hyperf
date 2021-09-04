@@ -48,6 +48,13 @@ class Blueprint
     public $temporary = false;
 
     /**
+     * The comment of the table.
+     *
+     * @var string
+     */
+    protected $comment = '';
+
+    /**
      * The table the blueprint describes.
      *
      * @var string
@@ -161,6 +168,14 @@ class Blueprint
     public function create()
     {
         return $this->addCommand('create');
+    }
+
+    /**
+     * Set the table comment.
+     */
+    public function comment(string $comment)
+    {
+        $this->comment = $comment;
     }
 
     /**
@@ -1130,6 +1145,16 @@ class Blueprint
     public function getTable()
     {
         return $this->table;
+    }
+
+    /**
+     * Get the comment on the blueprint.
+     *
+     * @return string
+     */
+    public function getComment()
+    {
+        return $this->comment;
     }
 
     /**

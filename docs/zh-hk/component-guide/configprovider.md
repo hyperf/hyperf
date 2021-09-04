@@ -71,7 +71,7 @@ php bin/hyperf.php vendor:publish hyperf/amqp
 {
     "name": "hyperf/foo",
     "require": {
-        "php": ">=7.2"
+        "php": ">=7.3"
     },
     "autoload": {
         "psr-4": {

@@ -11,6 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nats;
 
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coroutine;
 use RandomLib\Factory;
 use RandomLib\Generator;
 
@@ -443,6 +446,26 @@ class Connection
 
         fclose($this->streamSocket);
         $this->streamSocket = null;
+    }
+
+    public function heartbeat()
+    {
+        if ($this->timeout > 0) {
+            Coroutine::create(function () {
+                while (true) {
+                    $exited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($this->timeout / 2);
+                    if ($exited) {
+                        break;
+                    }
+
+                    if (is_null($this->streamSocket)) {
+                        break;
+                    }
+
+                    $this->ping();
+                }
+            });
+        }
     }
 
     /**

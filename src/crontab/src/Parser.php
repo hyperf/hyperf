@@ -81,6 +81,11 @@ class Parser
         } elseif (strpos($string, ',') !== false) {
             $exploded = explode(',', $string);
             foreach ($exploded as $value) {
+                if (strpos($value, '/') !== false || strpos($string, '-') !== false) {
+                    $result = array_merge($result, $this->parseSegment($value, $min, $max, $start));
+                    continue;
+                }
+
                 if (! $this->between((int) $value, (int) ($min > $start ? $min : $start), (int) $max)) {
                     continue;
                 }
@@ -99,6 +104,8 @@ class Parser
                 $result[] = $i;
                 $i += $exploded[1];
             }
+        } elseif (strpos($string, '-') !== false) {
+            $result = array_merge($result, $this->parseSegment($string . '/1', $min, $max, $start));
         } elseif ($this->between((int) $string, $min > $start ? $min : $start, $max)) {
             $result[] = (int) $string;
         }
