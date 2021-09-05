@@ -112,7 +112,6 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
             Context::set(ServerRequestInterface::class, $request = $this->buildRequest($fd, $reactorId, $data));
             Context::set(ResponseInterface::class, $this->buildResponse($fd, $server));
 
-            // $middlewares = array_merge($this->middlewares, MiddlewareManager::get());
             $middlewares = $this->middlewares;
 
             $request = $this->coreMiddleware->dispatch($request);
@@ -148,7 +147,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
     }
 
     /**
-     * @param \Swoole\Coroutine\Server\Connection|SwooleServer $server
+     * @param Connection|SwooleServer $server
      */
     protected function send($server, int $fd, ResponseInterface $response): void
     {
