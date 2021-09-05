@@ -51,7 +51,9 @@ composer require hyperf/kafka
 | offset_retry                  | int        | 5                             | 偏移量操作，匹配预设的错误码时，自动重试次数                                                                         |
 | auto_create_topic             | bool       | true                          | 是否需要自动创建 topic                                                                                               |
 | partition_assignment_strategy | string     | KafkaStrategy::RANGE_ASSIGNOR | 消费者分区分配策略, 可选：范围分配(`KafkaStrategy::RANGE_ASSIGNOR`) 轮询分配(`KafkaStrategy::ROUND_ROBIN_ASSIGNOR`)) |
-| pool                          | object     |                               | 连接池配置                                                                                                           |
+| sasl                          | array      | []                            | SASL身份认证信息。为空则不发送身份认证信息 |
+| ssl                           | array      | []                            | SSL链接相关信息,为空则不使用SSL |
+| pool                          | object     | []                            | 连接池配置                                                                                                           |
 
 
 ```php
@@ -89,6 +91,8 @@ return [
         'offset_retry' => 5,
         'auto_create_topic' => true,
         'partition_assignment_strategy' => KafkaStrategy::RANGE_ASSIGNOR,
+        'sasl' => [],
+        'ssl' => [],
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -206,4 +210,31 @@ class IndexController extends AbstractController
 }
 
 ```
+
+### SASL 配置说明
+
+|参数名|说明|默认值|
+| - | - | - |
+| type | SASL授权对应的类。PLAIN为`\longlang\phpkafka\Sasl\PlainSasl::class`| ''|
+| username | 账号 | '' |
+| password | 密码 | '' |
+
+### SSL 配置说明
+
+|参数名|说明|默认值|
+| - | - | - |
+| open  | 是否开启SSL传输加密 | `false` |
+| compression | 是否开启压缩 | `true`  |
+| certFile |cert证书存放路径|`''`|
+| keyFile |私钥存放路径|`''`|
+| passphrase |  cert证书密码 | `''`|
+| peerName| 服务器主机名。默认为链接的host| `''`|
+| verifyPeer |是否校验远端证书 | `false` |
+| verifyPeerName |是否校验远端服务器名称 | `false` |
+| verifyDepth | 如果证书链条层次太深，超过了本选项的设定值，则终止验证。 默认不校验层级 | `0`|
+| allowSelfSigned | 是否允许自签证书 | `false` |
+| cafile | CA证书路径 | `''`|
+| capath  | CA证书目录。会自动扫描该路径下所有pem文件 | `''`|
+
+
 
