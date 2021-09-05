@@ -37,10 +37,8 @@ return [
         'auto_create_topic' => true,
         'partition_assignment_strategy' => KafkaStrategy::RANGE_ASSIGNOR,
         'sasl' => [
-
         ],
         'ssl' => [
-
         ],
         'pool' => [
             'min_connections' => 1,
