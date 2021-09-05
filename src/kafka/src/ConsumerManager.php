@@ -186,6 +186,8 @@ class ConsumerManager
                 $consumerConfig->setOffsetRetry($config['offset_retry']);
                 $consumerConfig->setAutoCreateTopic($config['auto_create_topic']);
                 $consumerConfig->setPartitionAssignmentStrategy($config['partition_assignment_strategy']);
+                $consumerConfig->setSasl($config['sasl'] ?? []);
+                $consumerConfig->setSsl($config['ssl'] ?? []);
                 return $consumerConfig;
             }
         };

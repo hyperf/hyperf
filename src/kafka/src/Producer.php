@@ -170,6 +170,8 @@ class Producer
         $producerConfig->setProducerEpoch($config['producer_epoch']);
         $producerConfig->setPartitionLeaderEpoch($config['partition_leader_epoch']);
         $producerConfig->setAutoCreateTopic($config['auto_create_topic']);
+        $producerConfig->setSasl($config['sasl'] ?? []);
+        $producerConfig->setSsl($config['ssl'] ?? []);
         return new LongLangProducer($producerConfig);
     }
 }
