@@ -72,7 +72,7 @@ if (! function_exists('retry')) {
      * @param int $sleep millisecond
      * @throws \Throwable
      */
-    function retry($times, callable $callback, int $sleep = 0, ?callable $when = null)
+    function retry($times, callable $callback, int $sleep = 0)
     {
         $attempts = 0;
         $backoff = new Backoff($sleep);
@@ -81,7 +81,7 @@ if (! function_exists('retry')) {
         try {
             return $callback(++$attempts);
         } catch (\Throwable $e) {
-            if (--$times < 0 || ($when && ! $when($e))) {
+            if (--$times < 0) {
                 throw $e;
             }
 
