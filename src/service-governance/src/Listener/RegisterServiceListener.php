@@ -93,8 +93,7 @@ class RegisterServiceListener implements ListenerInterface
                 }
                 $continue = false;
             } catch (\Throwable $throwable) {
-                $this->logger->warning('Cannot register service, connection of service center failed, re-register after 10 seconds.');
-                $this->logger->error($throwable);
+                $this->logger->warning(sprintf('Cannot register service, connection of service center failed, re-register after 10 seconds. %s',$throwable->getMessage()));
                 sleep(10);
             }
         }

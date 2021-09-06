@@ -240,7 +240,7 @@ class NacosDriver implements DriverInterface
                             $lightBeatEnabled
                         );
                     }catch (\Throwable $throwable){
-                        $this->logger->error($throwable);
+                        $this->logger->error(sprintf('Naocs beat failed. %s',$throwable->getMessage()));
                         continue;
                     }
 
