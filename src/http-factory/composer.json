@@ -1,0 +1,50 @@
+{
+    "name": "hyperf/http-factory",
+    "type": "library",
+    "description": "microservice framework base on swoole",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "http-message",
+        "http-factory"
+    ],
+    "require": {
+        "hyperf/http-message": "~2.0.0",
+        "psr/http-message": "^1.0",
+        "psr/http-factory": "^1.0"
+    },
+    "suggest": {
+        "psr/container": "Required to replace RequestParserInterface."
+    },
+    "require-dev": {
+        "psr/container": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\HttpMessage\\Factory\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\HttpMessage\\Factory\\ConfigProvider"
+        }
+    },
+    "bin": [
+    ],
+    "scripts": {
+        "cs-fix": "php-cs-fixer fix $1",
+        "test": "phpunit --colors=always"
+    }
+}
