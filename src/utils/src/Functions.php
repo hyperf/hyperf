@@ -76,11 +76,10 @@ if (! function_exists('retry')) {
     {
         $attempts = 0;
         $backoff = new Backoff($sleep);
-        $attempts++;
 
         beginning:
         try {
-            return $callback($attempts);
+            return $callback(++$attempts);
         } catch (\Throwable $e) {
             if (--$times < 0 || ($when && ! $when($e))) {
                 throw $e;
