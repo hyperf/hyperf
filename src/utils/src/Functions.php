@@ -74,14 +74,17 @@ if (! function_exists('retry')) {
      */
     function retry($times, callable $callback, int $sleep = 0)
     {
+        $attempts = 0;
         $backoff = new Backoff($sleep);
+
         beginning:
         try {
-            return $callback();
+            return $callback(++$attempts);
         } catch (\Throwable $e) {
             if (--$times < 0) {
                 throw $e;
             }
+
             $backoff->sleep();
             goto beginning;
         }
