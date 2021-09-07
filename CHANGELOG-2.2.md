@@ -1,5 +1,9 @@
 # v2.2.8 - TBD
 
+## Added
+
+- [#4021](https://github.com/hyperf/hyperf/pull/4021) Added argument `$attempts` into `$callback` when using function `retry()`.
+
 # v2.2.7 - 2021-09-06
 
 # Fixed
