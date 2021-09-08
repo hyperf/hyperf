@@ -151,6 +151,8 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: phpize
           ini-values: opcache.enable_cli=1
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
       - name: Setup Packages
         run: |
           composer update -o
