@@ -2,6 +2,7 @@
 
 ## Fixed
 
+- [#4028](https://github.com/hyperf/hyperf/pull/4028) Fixed the success rate calculation in grafana dashboard.
 - [#4030](https://github.com/hyperf/hyperf/pull/4030) Fixed bug that async-queue broken caused by uncompress model failed.
 
 ## Added
