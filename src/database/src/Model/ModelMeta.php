@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model;
 
-use Hyperf\Contract\CompressInterface;
 use Hyperf\Contract\UnCompressInterface;
 
 class ModelMeta implements UnCompressInterface
