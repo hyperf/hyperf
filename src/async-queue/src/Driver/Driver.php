@@ -19,6 +19,7 @@ use Hyperf\AsyncQueue\Event\RetryHandle;
 use Hyperf\AsyncQueue\Exception\InvalidPackerException;
 use Hyperf\AsyncQueue\MessageInterface;
 use Hyperf\Contract\PackerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\ProcessManager;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Coroutine\Concurrent;
@@ -81,29 +82,34 @@ abstract class Driver implements DriverInterface
         $maxMessages = Arr::get($this->config, 'max_messages', 0);
 
         while (ProcessManager::isRunning()) {
-            [$data, $message] = $this->pop();
+            try {
+                [$data, $message] = $this->pop();
 
-            if ($data === false) {
-                continue;
+                if ($data === false) {
+                    continue;
+                }
+
+                $callback = $this->getCallback($data, $message);
+
+                if ($this->concurrent instanceof Concurrent) {
+                    $this->concurrent->create($callback);
+                } else {
+                    parallel([$callback]);
+                }
+
+                if ($messageCount % $this->lengthCheckCount === 0) {
+                    $this->checkQueueLength();
+                }
+
+                if ($maxMessages > 0 && $messageCount >= $maxMessages) {
+                    break;
+                }
+            } catch (\Throwable $exception) {
+                $logger = $this->container->get(StdoutLoggerInterface::class);
+                $logger->error((string) $exception);
+            } finally {
+                ++$messageCount;
             }
-
-            $callback = $this->getCallback($data, $message);
-
-            if ($this->concurrent instanceof Concurrent) {
-                $this->concurrent->create($callback);
-            } else {
-                parallel([$callback]);
-            }
-
-            if ($messageCount % $this->lengthCheckCount === 0) {
-                $this->checkQueueLength();
-            }
-
-            if ($maxMessages > 0 && $messageCount >= $maxMessages) {
-                break;
-            }
-
-            ++$messageCount;
         }
     }
 
