@@ -157,5 +157,5 @@ jobs:
         run: |
           composer remove symfony/console --dev -W
           composer remove friendsofphp/php-cs-fixer --dev -W
-          composer analyse src/container
-          vendor/bin/phpunit src/container
+          composer analyse src/di
+          vendor/bin/phpunit src/di
