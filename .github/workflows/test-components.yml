@@ -131,3 +131,30 @@ jobs:
           sudo chmod u+x link_env.phar
           ./link_env.phar show:name -N helloworld
 
+
+  container:
+    name: Test for Psr Container V2.0
+    runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+    strategy:
+      matrix:
+        php-version: [ '7.4', '8.0' ]
+      max-parallel: 6
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          ini-values: opcache.enable_cli=1
+      - name: Setup Packages
+        run: |
+          composer update -o
+          composer remove symfony/console --dev
+          composer remove friendsofphp/php-cs-fixer --dev
+          composer analyse src/container
+          vendor/bin/phpunit src/container
