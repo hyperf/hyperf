@@ -162,6 +162,13 @@ class Scanner
         $proxies = $proxyManager->getProxies();
 
         $this->putCache($this->path, serialize([$data, $proxies]));
+        
+        if(function_exists("posix_kill")){
+            posix_kill(getmypid(), SIGTERM);
+        }else{
+            system('kill -9 '. getmypid());
+        }
+        
         exit;
     }
 
