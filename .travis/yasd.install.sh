@@ -10,5 +10,5 @@ phpize
 ./configure
 make -j$(nproc)
 sudo make install
-sudo sh -c "echo extension=yasd > /etc/php/${{ matrix.php-version }}/cli/conf.d/yasd.ini"
+sudo sh -c "echo extension=yasd > /etc/php/${PHP_VERSION}/cli/conf.d/yasd.ini"
 php --ri yasd
