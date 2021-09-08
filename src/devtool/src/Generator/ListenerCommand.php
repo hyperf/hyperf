@@ -16,6 +16,7 @@ use Hyperf\Command\Annotation\Command;
 /**
  * @Command
  */
+#[Command]
 class ListenerCommand extends GeneratorCommand
 {
     public function __construct()

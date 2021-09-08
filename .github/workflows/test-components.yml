@@ -6,7 +6,8 @@ on:
   schedule:
     - cron: '0 2 * * *'
 env:
-  SW_VERSION: 'v4.7.0'
+  SW_VERSION: 'v4.7.1'
+  YASD_VERSION: 'v0.3.9'
 jobs:
   database:
     name: Test for Database
@@ -15,7 +16,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '7.3', '7.4', '8.0' ]
+        php-version: [ '7.4', '8.0' ]
         mysql-version: [ '5.7', '8.0' ]
       max-parallel: 6
       fail-fast: false
@@ -54,6 +55,7 @@ jobs:
         version: [ '^1.0', '^2.0' ]
         php-version: [ '7.4', '8.0' ]
       max-parallel: 6
+      fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -81,7 +83,8 @@ jobs:
           composer require "overtrue/flysystem-cos:^4.0"
           composer require "overtrue/flysystem-qiniu:^2.0"
       - name: Run Test Cases
-        run: composer test src/filesystem
+        run: |
+          composer test src/filesystem -- --exclude-group NonCoroutine
   phar:
     name: Test for Building PHAR ${{ matrix.no-dev }}
     runs-on: 'ubuntu-latest'
@@ -92,6 +95,7 @@ jobs:
         no-dev: [ '', '--no-dev' ]
         php-version: [ '8.0' ]
       max-parallel: 2
+      fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -128,3 +132,38 @@ jobs:
           sudo chmod u+x link_env.phar
           ./link_env.phar show:name -N helloworld
 
+
+  container:
+    name: Test for Psr Container V2.0
+    runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+    strategy:
+      matrix:
+        php-version: [ '7.4', '8.0' ]
+      max-parallel: 6
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          ini-values: opcache.enable_cli=1
+          coverage: none
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Setup Yasd
+        run: ./.travis/yasd.install.sh
+      - name: Setup Packages
+        run: |
+          cp .travis/.env.example .env
+          composer remove friendsofphp/php-cs-fixer --dev -W
+          composer remove symfony/console --dev -W
+          composer update -oW
+      - name: Run Test Cases
+        run: |
+          composer analyse src/di
+          vendor/bin/phpunit src/di

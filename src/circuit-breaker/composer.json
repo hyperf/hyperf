@@ -28,6 +28,11 @@
             "Hyperf\\CircuitBreaker\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\CircuitBreaker\\": "tests/"
+        }
+    },
     "config": {
         "sort-packages": true
     },

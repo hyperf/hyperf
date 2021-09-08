@@ -349,6 +349,79 @@ if ($errors->has('foo')) {
 }
 ```
 
+### 场景
+
+验证器增加了场景功能，我们可以很方便的按需修改验证规则。
+
+> 此功能需要本组件版本大于等于 2.2.7
+
+创建一个 `SceneRequest` 如下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Request;
+
+use Hyperf\Validation\Request\FormRequest;
+
+class SceneRequest extends FormRequest
+{
+    protected $scenes = [
+        'foo' => ['username'],
+        'bar' => ['username', 'password'],
+    ];
+
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     */
+    public function rules(): array
+    {
+        return [
+            'username' => 'required',
+            'gender' => 'required',
+        ];
+    }
+}
+```
+
+当我们正常使用时，会使用所有的验证规则，即 `username` 和 `gender` 都是必填的。
+
+我们可以设定场景，让此次请求只验证 `username` 必填。
+
+> 如果我们配置了 `Hyperf\Validation\Middleware\ValidationMiddleware`，且将 `SceneRequest` 注入到方法上，就会导致入参在中间件中直接进行验证，故场景值无法生效，所以我们需要在方法里从容器中获取对应的 `SceneRequest`，进行场景切换。
+
+```php
+<?php
+
+namespace App\Controller;
+
+use App\Request\DebugRequest;
+use App\Request\SceneRequest;
+use Hyperf\HttpServer\Annotation\AutoController;
+
+#[AutoController(prefix: 'foo')]
+class FooController extends Controller
+{
+    public function scene()
+    {
+        $request = $this->container->get(SceneRequest::class);
+        $request->scene('foo')->validateResolved();
+
+        return $this->response->success($request->all());
+    }
+}
+```
+
 ## 验证规则
 
 下面是有效规则及其函数列表：

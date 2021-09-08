@@ -91,16 +91,20 @@ memory_limit=-1
 
 ```bash
 PHP Fatal error:  Interface 'Hyperf\Signal\SignalHandlerInterface' not found in vendor/hyperf/process/src/Handler/ProcessStopHandler.php on line 17
+
+PHP Fatal error:  Interface 'Symfony\Component\Serializer\SerializerInterface' not found in vendor/hyperf/utils/src/Serializer/Serializer.php on line 46
 ```
 
 此问题是由于在 `PHP 7.3` 中通过 `子进程扫描` 的方式去获取反射，在某个类中实现了一个不存在的 `Interface` ，就会导致抛出 `Interface not found` 的异常，而高版本的 `PHP` 则不会。
 
-解决方法为创建对应的 `Interface` 并正常引入。上文中的报错解决方法为安装 `hyperf/signal` 组件即可。
+解决方法为创建对应的 `Interface` 并正常引入。上文中的报错解决方法为安装对应所依赖的组件即可。
 
 > 当然，最好还是可以升级到 7.4 或者 8.0 版本
 
 ```bash
 composer require hyperf/signal
+
+composer require symfony/serializer
 ```
 
 ## Trait 内使用 `@Inject` 注入报错 `Error while injecting dependencies into ... No entry or class found ...`
@@ -138,3 +142,17 @@ class IndexController
 
 - 子类通过 `as` 修改别名: `use Psr\Http\Message\ResponseInterface as PsrResponseInterface;`
 - Trait 类`PHP7.4` 以上通过属性类型限制: `protected ResponseInterface $response;`
+
+## Grpc 扩展或未安装 Pcntl 导致项目无法启动
+
+- v2.2 版本的注解扫描使用了 `pcntl` 扩展，所以请先确保您的 `PHP` 安装了此扩展。
+
+```shell
+php --ri pcntl
+
+pcntl
+
+pcntl support => enabled
+```
+
+- 当开启 `grpc` 的时候，需要添加 `grpc.enable_fork_support= 1;` 到 `php.ini` 中，以支持开启子进程。

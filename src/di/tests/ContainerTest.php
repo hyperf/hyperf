@@ -43,7 +43,9 @@ class ContainerTest extends TestCase
     {
         $container = new Container(new DefinitionSource([]));
         $subject = new Foo();
+        $this->assertFalse($container->has(FooInterface::class));
         $container->set(FooInterface::class, $subject);
+        $this->assertTrue($container->has(FooInterface::class));
         $this->assertSame($subject, $container->get(FooInterface::class));
     }
 
@@ -51,6 +53,7 @@ class ContainerTest extends TestCase
     {
         $container = new Container(new DefinitionSource([]));
         $container->define(FooInterface::class, Foo::class);
+        $this->assertTrue($container->has(FooInterface::class));
         $this->assertInstanceOf(Foo::class, $container->make(FooInterface::class));
 
         $container->define(FooInterface::class, function () {

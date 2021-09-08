@@ -83,6 +83,22 @@ class RedisDriverTest extends TestCase
         $this->assertEquals($model, $model2);
     }
 
+    public function testDemoModelUnCompressToNull()
+    {
+        $content = Str::random(1000);
+
+        $model = new DemoModel(9999, 'Hyperf', 1, $content);
+        $s1 = serialize($model);
+        $this->assertSame(1131, strlen($s1));
+
+        $meta = $model->compress();
+        $s2 = serialize($meta);
+        $this->assertSame(68, strlen($s2));
+        $this->assertInstanceOf(DemoModelMeta::class, $meta);
+
+        $this->assertNull($meta->uncompress());
+    }
+
     public function testAsyncQueueJobGenerate()
     {
         $container = $this->getContainer();

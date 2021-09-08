@@ -10,6 +10,7 @@ use Hyperf\Process\Annotation\Process;
 /**
  * @Process(name="%CLASS%")
  */
+#[Process(name: '%CLASS%')]
 class %CLASS% extends AbstractProcess
 {
     public function handle(): void

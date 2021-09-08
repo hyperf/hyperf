@@ -57,7 +57,7 @@ class Caller
             }
 
             $result = $closure($instance);
-        } catch (ChannelClosedException | WaitTimeoutException $exception) {
+        } catch (ChannelClosedException|WaitTimeoutException $exception) {
             $release = false;
             throw $exception;
         } finally {

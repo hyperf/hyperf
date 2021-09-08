@@ -1189,7 +1189,7 @@
           "refId": "E"
         },
         {
-          "expr": "sum(rate([[app_name]]_http_requests_count{instance=~\"$instance\",request_status=~\"[1-3]\\\\d{2}\"}[5m]))  by (request_path)/sum(rate([[app_name]]_http_requests_count{instance=~\"$instance\",request_status=~\"[1-3]\\\\d{2}\"}[5m])) by (request_path)",
+          "expr": "sum(rate([[app_name]]_http_requests_count{instance=~\"$instance\",request_status=~\"[1-3]\\\\d{2}\"}[5m]))  by (request_path)/sum(rate([[app_name]]_http_requests_count{instance=~\"$instance\"}[5m])) by (request_path)",
           "format": "table",
           "instant": true,
           "intervalFactor": 1,

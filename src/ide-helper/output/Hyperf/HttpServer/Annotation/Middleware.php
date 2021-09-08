@@ -12,14 +12,14 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer\Annotation;
 
 use Attribute;
-use Hyperf\Di\Annotation\AbstractAnnotation;
+use Hyperf\Di\Annotation\AbstractMultipleAnnotation;
 
 /**
  * @Annotation
  * @Target({"ALL"})
  */
-#[Attribute]
-class Middleware extends AbstractAnnotation
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
+class Middleware extends AbstractMultipleAnnotation
 {
     public function __construct($middleware)
     {

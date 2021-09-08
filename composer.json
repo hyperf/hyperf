@@ -80,6 +80,7 @@
         "symfony/finder": "^5.0",
         "symfony/property-access": "^5.0",
         "symfony/serializer": "^5.0",
+        "symfony/var-dumper": "^5.3",
         "twig/twig": "^3.0",
         "vlucas/phpdotenv": "^5.0"
     },
@@ -280,6 +281,7 @@
             "HyperfTest\\Amqp\\": "src/amqp/tests/",
             "HyperfTest\\AsyncQueue\\": "src/async-queue/tests/",
             "HyperfTest\\Cache\\": "src/cache/tests/",
+            "HyperfTest\\CircuitBreaker\\": "src/circuit-breaker/tests/",
             "HyperfTest\\Command\\": "src/command/tests/",
             "HyperfTest\\ConfigApollo\\": "src/config-apollo/tests/",
             "HyperfTest\\ConfigCenter\\": "src/config-center/tests/",
