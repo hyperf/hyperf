@@ -3,11 +3,16 @@
 ## Fixed
 
 - [#4028](https://github.com/hyperf/hyperf/pull/4028) Fixed the success rate calculation in grafana dashboard.
-- [#4030](https://github.com/hyperf/hyperf/pull/4030) Fixed bug that async-queue broken caused by uncompress model failed.
+- [#4030](https://github.com/hyperf/hyperf/pull/4030) Fixed bug that async-queue broken caused by uncompressing model failed.
 
 ## Added
 
+- [#4017](https://github.com/hyperf/hyperf/pull/4017) Added `Macroable` into `Hyperf\Utils\Collection`.
 - [#4021](https://github.com/hyperf/hyperf/pull/4021) Added argument `$attempts` into `$callback` when using function `retry()`.
+
+## Removed
+
+- [#4017](https://github.com/hyperf/hyperf/pull/4017) Removed `Macroable` from `Hyperf\Database\Model\Collection` because it already exists in `Hyperf\Utils\Collection`.
 
 # v2.2.7 - 2021-09-06
 
