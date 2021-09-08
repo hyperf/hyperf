@@ -35,7 +35,7 @@ class ModelMeta implements UnCompressInterface
         $this->key = $key;
     }
 
-    public function uncompress(): CompressInterface
+    public function uncompress()
     {
         if (is_null($this->key)) {
             return new $this->class();
