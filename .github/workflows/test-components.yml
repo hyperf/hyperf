@@ -155,8 +155,7 @@ jobs:
         run: ./.travis/swoole.install.sh
       - name: Setup Packages
         run: |
-          composer update -o
-          composer remove symfony/console --dev
-          composer remove friendsofphp/php-cs-fixer --dev
+          composer remove symfony/console --dev -W
+          composer remove friendsofphp/php-cs-fixer --dev -W
           composer analyse src/container
           vendor/bin/phpunit src/container
