@@ -162,5 +162,8 @@ jobs:
           cp .travis/.env.example .env
           composer remove friendsofphp/php-cs-fixer --dev -W
           composer remove symfony/console --dev -W
+          composer update -oW
+      - name: Run Test Cases
+        run: |
           composer analyse src/di
           vendor/bin/phpunit src/di
