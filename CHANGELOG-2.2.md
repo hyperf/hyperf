@@ -1,5 +1,9 @@
 # v2.2.8 - TBD
 
+## Fixed
+
+- [#4030](https://github.com/hyperf/hyperf/pull/4030) Fixed bug that async-queue broken caused by uncompress model failed.
+
 ## Added
 
 - [#4021](https://github.com/hyperf/hyperf/pull/4021) Added argument `$attempts` into `$callback` when using function `retry()`.
