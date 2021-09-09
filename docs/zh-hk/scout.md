@@ -254,7 +254,7 @@ Scout 允許你在搜索查詢中增加簡單的「where」語句。目前，這
 <a name="pagination"></a>
 ### 分頁
 
-除了檢索模型的集合，你也可以使用 `paginate` 方法對搜索結果進行分頁。這個方法會返回一個就像 [傳統的模型查詢分頁](/zh-cn/db/paginator) 一樣的 `Paginator`  實例：
+除了檢索模型的集合，你也可以使用 `paginate` 方法對搜索結果進行分頁。這個方法會返回一個就像 [傳統的模型查詢分頁](/zh-hk/db/paginator) 一樣的 `Paginator`  實例：
 
     $orders = App\Order::search('Star Trek')->paginate();
 

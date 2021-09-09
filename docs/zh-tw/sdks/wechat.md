@@ -4,7 +4,7 @@
 
 > 如果您使用了 Swoole 4.7.0 及以上版本，並且開啟了 native curl 選項，則可以不按照此文件進行操作。
 
-> 因為元件預設使用 `Curl`，所以我們需要修改對應的 `GuzzleClient` 為協程客戶端，或者修改常量 [SWOOLE_HOOK_FLAGS](/zh-cn/coroutine?id=swoole-runtime-hook-level)
+> 因為元件預設使用 `Curl`，所以我們需要修改對應的 `GuzzleClient` 為協程客戶端，或者修改常量 [SWOOLE_HOOK_FLAGS](/zh-tw/coroutine?id=swoole-runtime-hook-level)
 
 ## 替換 `Handler`
 
@@ -41,7 +41,7 @@ $app->oauth->setGuzzleOptions([
 
 ## 修改 `SWOOLE_HOOK_FLAGS`
 
-參考 [SWOOLE_HOOK_FLAGS](/zh-cn/coroutine?id=swoole-runtime-hook-level)
+參考 [SWOOLE_HOOK_FLAGS](/zh-tw/coroutine?id=swoole-runtime-hook-level)
 
 ## 如何使用 EasyWeChat
 
