@@ -26,6 +26,7 @@
     },
     "suggest": {
         "hyperf/event": "Required to use DbQueryExecutedListener.",
+        "jcchavezs/zipkin-opentracing": "Required to use zipkin tracing.",
         "jonahgeorge/jaeger-client-php":"Required (^0.6) to use jaeger tracing."
     },
     "autoload": {
