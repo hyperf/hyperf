@@ -20,11 +20,16 @@ use PhpAmqpLib\Wire\AMQPTable;
 trait ConsumerDelayedMessageTrait
 {
     /**
+     * @var string x-dead-letter-exchange
+     */
+    protected $deadLetterExchange = 'delayed';
+
+    /**
      * Overwrite.
      */
     public function getQueueBuilder(): QueueBuilder
     {
         return (new QueueBuilder())->setQueue((string) $this->getQueue())
-            ->setArguments(new AMQPTable(['x-dead-letter-exchange' => 'delayed']));
+            ->setArguments(new AMQPTable(['x-dead-letter-exchange' => $this->deadLetterExchange]));
     }
 }
