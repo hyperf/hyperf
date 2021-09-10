@@ -1,5 +1,21 @@
 # 版本更新记录
 
+# v2.2.7 - 2021-09-06
+
+# 修复
+
+- [#3997](https://github.com/hyperf/hyperf/pull/3997) 修复 `Nats` 消费者会在连接超时后崩溃的问题。
+- [#3998](https://github.com/hyperf/hyperf/pull/3998) 修复 `Apollo` 不支持 `https` 协议的问题。
+
+## 优化
+
+- [#4009](https://github.com/hyperf/hyperf/pull/4009) 优化方法 `MethodDefinitionCollector::getOrParse()`，避免在 PHP8 环境下，触发即将废弃的错误。
+
+## 新增
+
+- [#4002](https://github.com/hyperf/hyperf/pull/4002) [#4012](https://github.com/hyperf/hyperf/pull/4012) 为验证器增加场景功能，允许不同场景下，使用不同的验证规则。
+- [#4011](https://github.com/hyperf/hyperf/pull/4011) 为工具类 `Hyperf\Utils\Str` 增加了一些新的便捷方法。
+
 # v2.2.6 - 2021-08-30
 
 ## 修复

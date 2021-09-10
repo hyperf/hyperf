@@ -115,6 +115,17 @@ class FunctionTest extends TestCase
         }
     }
 
+    public function testRetryWithAttempts()
+    {
+        $this->expectException(\HyperfTest\Utils\Exception\RetryException::class);
+
+        $asserts = [1, 2, 3];
+        retry(2, function ($attempts) use (&$asserts) {
+            $this->assertSame($attempts, array_shift($asserts));
+            throw new RetryException('Retry Test');
+        });
+    }
+
     public function testSwooleHookFlags()
     {
         $this->assertSame(SWOOLE_HOOK_ALL, swoole_hook_flags());
