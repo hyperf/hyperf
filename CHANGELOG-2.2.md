@@ -10,7 +10,7 @@
 - [#4013](https://github.com/hyperf/hyperf/pull/4013) Support `sameSite=None` when return response with cookies.
 - [#4017](https://github.com/hyperf/hyperf/pull/4017) Added `Macroable` into `Hyperf\Utils\Collection`.
 - [#4021](https://github.com/hyperf/hyperf/pull/4021) Added argument `$attempts` into `$callback` when using function `retry()`.
-- [#4040](https://github.com/hyperf/hyperf/pull/4040) Added property `$deadLetterExchange` into `ConsumerDelayedMessageTrait`, you can rewrite it by yourself.
+- [#4040](https://github.com/hyperf/hyperf/pull/4040) Added method `ConsumerDelayedMessageTrait::getDeadLetterExchange()` which used to rewrite `x-dead-letter-exchange` by yourself.
 
 ## Removed
 
