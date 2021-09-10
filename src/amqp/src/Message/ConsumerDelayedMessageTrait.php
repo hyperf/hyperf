@@ -25,6 +25,11 @@ trait ConsumerDelayedMessageTrait
     public function getQueueBuilder(): QueueBuilder
     {
         return (new QueueBuilder())->setQueue((string) $this->getQueue())
-            ->setArguments(new AMQPTable(['x-dead-letter-exchange' => 'delayed']));
+            ->setArguments(new AMQPTable(['x-dead-letter-exchange' => $this->getDeadLetterExchange()]));
+    }
+
+    protected function getDeadLetterExchange(): string
+    {
+        return 'delayed';
     }
 }
