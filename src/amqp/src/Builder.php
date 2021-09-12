@@ -12,8 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Message\MessageInterface;
-use Hyperf\Amqp\Pool\AmqpConnectionPool;
-use Hyperf\Amqp\Pool\PoolFactory;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use Psr\Container\ContainerInterface;
@@ -25,40 +23,44 @@ class Builder
      */
     protected $container;
 
-    /**
-     * @var PoolFactory
-     */
     protected $poolFactory;
 
-    public function __construct(ContainerInterface $container, PoolFactory $poolFactory)
+    /**
+     * @var ConnectionFactory
+     */
+    protected $factory;
+
+    public function __construct(ContainerInterface $container, ConnectionFactory $factory)
     {
         $this->container = $container;
-        $this->poolFactory = $poolFactory;
+        $this->factory = $factory;
     }
 
     /**
      * @throws AMQPProtocolChannelException when the channel operation is failed
      */
-    public function declare(MessageInterface $message, ?AMQPChannel $channel = null, bool $release = false): void
+    public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
     {
+        $releaseToChannel = false;
         if (! $channel) {
-            $pool = $this->getConnectionPool($message->getPoolName());
-            /** @var \Hyperf\Amqp\Connection $connection */
-            $connection = $pool->get();
+            $connection = $this->factory->getConnection($message->getPoolName());
             $channel = $connection->getChannel();
+            $releaseToChannel = true;
         }
 
-        $builder = $message->getExchangeBuilder();
+        try {
+            $builder = $message->getExchangeBuilder();
 
-        $channel->exchange_declare($builder->getExchange(), $builder->getType(), $builder->isPassive(), $builder->isDurable(), $builder->isAutoDelete(), $builder->isInternal(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
+            $channel->exchange_declare($builder->getExchange(), $builder->getType(), $builder->isPassive(), $builder->isDurable(), $builder->isAutoDelete(), $builder->isInternal(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
+        } catch (\Throwable $exception) {
+            if ($releaseToChannel && isset($channel)) {
+                $channel->close();
+            }
 
-        if (isset($connection) && $release) {
-            $connection->release();
+            throw $exception;
         }
-    }
-
-    protected function getConnectionPool(string $poolName): AmqpConnectionPool
-    {
-        return $this->poolFactory->getPool($poolName);
+        if ($releaseToChannel) {
+            isset($connection) && $connection->releaseChannel($channel);
+        }
     }
 }

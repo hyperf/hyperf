@@ -13,72 +13,54 @@ namespace Hyperf\ConfigApollo;
 
 use Closure;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Utils\Coroutine;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\Parallel;
+use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 
 class Client implements ClientInterface
 {
     /**
+     * @var ConfigInterface
+     */
+    protected $config;
+
+    /**
      * @var Option
      */
-    private $option;
+    protected $option;
 
     /**
      * @var array
      */
-    private $callbacks;
+    protected $cache = [];
 
     /**
      * @var Closure
      */
-    private $httpClientFactory;
+    protected $httpClientFactory;
 
     /**
-     * @var null|ConfigInterface
+     * @var \Hyperf\Contract\StdoutLoggerInterface
      */
-    private $config;
+    protected $logger;
 
     public function __construct(
         Option $option,
-        array $callbacks = [],
         Closure $httpClientFactory,
-        ?ConfigInterface $config = null
+        ConfigInterface $config,
+        StdoutLoggerInterface $logger
     ) {
         $this->option = $option;
-        $this->callbacks = $callbacks;
         $this->httpClientFactory = $httpClientFactory;
         $this->config = $config;
+        $this->logger = $logger;
     }
 
-    public function pull(array $namespaces, array $callbacks = []): void
+    public function pull(): array
     {
-        if (! $namespaces) {
-            return;
-        }
-        if (Coroutine::inCoroutine()) {
-            $result = $this->coroutinePull($namespaces);
-        } else {
-            $result = $this->blockingPull($namespaces);
-        }
-        foreach ($result as $namespace => $configs) {
-            if (isset($configs['releaseKey'], $configs['configurations'])) {
-                if (isset($callbacks[$namespace])) {
-                    // Call the method level callbacks.
-                    call($callbacks[$namespace], [$configs, $namespace]);
-                } elseif (isset($this->callbacks[$namespace]) && is_callable($this->callbacks[$namespace])) {
-                    // Call the config level callbacks.
-                    call($this->callbacks[$namespace], [$configs, $namespace]);
-                } else {
-                    // Call the default callback.
-                    if ($this->config instanceof ConfigInterface) {
-                        foreach ($configs['configurations'] ?? [] as $key => $value) {
-                            $this->config->set($key, $value);
-                        }
-                    }
-                }
-                ReleaseKey::set($this->option->buildCacheKey($namespace), $configs['releaseKey']);
-            }
-        }
+        $namespaces = $this->config->get('config_center.drivers.apollo.namespaces');
+        return $this->parallelPull($namespaces);
     }
 
     public function getOption(): Option
@@ -86,7 +68,7 @@ class Client implements ClientInterface
         return $this->option;
     }
 
-    private function coroutinePull(array $namespaces): array
+    public function parallelPull(array $namespaces): array
     {
         $option = $this->option;
         $parallel = new Parallel();
@@ -95,25 +77,37 @@ class Client implements ClientInterface
             $parallel->add(function () use ($option, $httpClientFactory, $namespace) {
                 $client = $httpClientFactory();
                 if (! $client instanceof \GuzzleHttp\Client) {
-                    throw new \RuntimeException('Invalid http client.');
+                    throw new RuntimeException('Invalid http client.');
                 }
-                $releaseKey = ReleaseKey::get($option->buildCacheKey($namespace), null);
+                $cacheKey = $option->buildCacheKey($namespace);
+                $releaseKey = $this->getReleaseKey($cacheKey);
+                $query = [
+                    'ip' => $option->getClientIp(),
+                    'releaseKey' => $releaseKey,
+                ];
+                $timestamp = $this->getTimestamp();
+                $headers = [
+                    'Authorization' => $this->getAuthorization($timestamp, parse_url($option->buildBaseUrl(), PHP_URL_PATH) . $namespace . '?' . http_build_query($query)),
+                    'Timestamp' => $timestamp,
+                ];
+
                 $response = $client->get($option->buildBaseUrl() . $namespace, [
-                    'query' => [
-                        'ip' => $option->getClientIp(),
-                        'releaseKey' => $releaseKey,
-                    ],
+                    'query' => $query,
+                    'headers' => $headers,
                 ]);
                 if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
                     $body = json_decode((string) $response->getBody(), true);
-                    $result = [
-                        'configurations' => $body['configurations'] ?? [],
+                    $result = $body['configurations'] ?? [];
+                    $this->cache[$cacheKey] = [
                         'releaseKey' => $body['releaseKey'] ?? '',
+                        'configurations' => $result,
                     ];
                 } else {
-                    // The status code is not 200 when the config is not modified in apollo.
-                    // So, we shouldn't change the configurations.
-                    $result = [];
+                    // Status code is 304 or Connection Failed, use the previous config value
+                    $result = $this->cache[$cacheKey]['configurations'] ?? [];
+                    if ($response->getStatusCode() !== 304) {
+                        $this->logger->error('Connect to Apollo server failed');
+                    }
                 }
                 return $result;
             }, $namespace);
@@ -121,35 +115,53 @@ class Client implements ClientInterface
         return $parallel->wait();
     }
 
-    private function blockingPull(array $namespaces): array
+    public function longPulling(array $notifications): ?ResponseInterface
     {
-        $result = [];
-        $url = $this->option->buildBaseUrl();
         $httpClientFactory = $this->httpClientFactory;
-        foreach ($namespaces as $namespace) {
-            $client = $httpClientFactory();
-            if (! $client instanceof \GuzzleHttp\Client) {
-                throw new \RuntimeException('Invalid http client.');
-            }
-            $releaseKey = ReleaseKey::get($this->option->buildCacheKey($namespace), null);
-            $response = $client->get($url . $namespace, [
+        $client = $httpClientFactory([
+            'timeout' => 60,
+        ]);
+        if (! $client instanceof \GuzzleHttp\Client) {
+            throw new RuntimeException('Invalid http client.');
+        }
+        try {
+            $uri = $this->option->buildLongPullingBaseUrl();
+            return $client->get($uri, [
                 'query' => [
-                    'ip' => $this->option->getClientIp(),
-                    'releaseKey' => $releaseKey,
+                    'appId' => $this->option->getAppid(),
+                    'cluster' => $this->option->getCluster(),
+                    'notifications' => json_encode(array_values($notifications)),
                 ],
             ]);
-            if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
-                $body = json_decode((string) $response->getBody(), true);
-                $result[$namespace] = [
-                    'configurations' => $body['configurations'] ?? [],
-                    'releaseKey' => $body['releaseKey'] ?? '',
-                ];
-            } else {
-                // The status code is not 200 when the config is not modified in apollo.
-                // So, we shouldn't change the configurations.
-                $result[$namespace] = [];
-            }
+        } catch (\Exception $exceptiosn) {
+            // Do nothing
+            return null;
         }
-        return $result;
+    }
+
+    protected function getReleaseKey(string $cacheKey): ?string
+    {
+        return $this->cache[$cacheKey]['releaseKey'] ?? null;
+    }
+
+    private function hasSecret(): bool
+    {
+        return ! empty($this->option->getSecret());
+    }
+
+    private function getTimestamp(): string
+    {
+        [$usec, $sec] = explode(' ', microtime());
+        return sprintf('%.0f', (floatval($usec) + floatval($sec)) * 1000);
+    }
+
+    private function getAuthorization(string $timestamp, string $pathWithQuery): string
+    {
+        if (! $this->hasSecret()) {
+            return '';
+        }
+        $toSignature = $timestamp . "\n" . $pathWithQuery;
+        $signature = base64_encode(hash_hmac('sha1', $toSignature, $this->option->getSecret(), true));
+        return sprintf('Apollo %s:%s', $this->option->getAppid(), $signature);
     }
 }

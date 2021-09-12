@@ -158,10 +158,14 @@ trait Searchable
         if ($builder->queryCallback) {
             call_user_func($builder->queryCallback, $query);
         }
+
+        $modelIdPositions = array_flip($ids);
         return $query->whereIn(
             $this->getScoutKeyName(),
             $ids
-        )->get();
+        )->get()->sortBy(static function ($model) use ($modelIdPositions) {
+            return $modelIdPositions[$model->getScoutKey()];
+        })->values();
     }
 
     /**

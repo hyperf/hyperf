@@ -1,25 +1,47 @@
-# 辅助类
+# Utils
 
-Hyperf 提供了大量便捷的辅助类，这里会列出一些常用的好用的，不会列举所有，可自行查看 [hyperf/utils](https://github.com/hyperf-cloud/utils) 组件的代码获得更多信息。
+Hyperf provides a large number of convenient utils. Some commonly used and useful ones but not all of them are listed in this section. For more details, please refer [hyperf/utils](https://github.com/hyperf/utils).
 
-## 协程辅助类
+## Coroutine Util
 
 ### Hyperf\Utils\Coroutine
 
-该辅助类用于协助进行协程相关的判断或操作。
+This util is used to assist in the judgment or operation of the coroutine.
 
 #### id(): int
 
-通过静态方法 `id()` 获得当前所处的 `协程 ID`，如当前不处于协程环境下，则返回 `-1`。 
+Get current `coroutine ID` by using static method `id()`. If it is not under the coroutine environment return `-1`.
 
 #### create(callable $callable): int
 
-通过静态方法 `create(callable $callable)` 可创建一个协程，还可以通过全局函数 `co(callable $callable)` 或 `go(callable $callable)` 达到同样的目的，该方法是对 `Swoole` 创建协程方法的一个封装，区别在于不会抛出未捕获的异常，未捕获的异常会通过 `Hyperf\Contract\StdoutLoggerInterface` 以 `warning` 等级输出。
+The static method `create(callable $callable)` can be used to create a coroutine. It can also be done by using global method `co(callable $callable)` and `go(callable $callable)`. The `create(callable $callable)` method is an encapsulation of the creation method in `Swoole`. The difference is that it will not throw out uncaught exceptions, which will be thrown by `Hyperf\Contract\StdoutLoggerInterface` as `warning` exceptions.
 
 #### inCoroutine(): bool
 
-通过静态方法 `inCoroutine()` 判断当前是否处于协程环境下。
+`inCoroutine()` is a static method to determine whether it is currently in a coroutine environment.
 
 ### Hyperf\Utils\Context
 
-用于处理协程上下文，本质上是对 `Swoole\Coroutine::getContext()` 方法的一个封装，但区别在于这里兼容了非协程环境下的运行。
+The `Context` is used to handle coroutine context. It is basically an encapsulation of `Swoole\Coroutine::getContext()`. However, the `Hyperf\Utils\Context` is compatible with running in a non-coroutine environment.
+
+### Hyperf\Utils\Coordinator\CoordinatorManager
+
+The `CoordinatorManager` is used to schedule the coroutine when events occurred.
+
+```php
+<?php
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coroutine;
+
+Coroutine::create(function() {
+    // Invoked after all OnWorkerStart event callbacks are completed
+    CoordinatorManager::until(Constants::WORKER_START)->yield();
+    echo 'worker started';
+    // Assigning resources
+    // Invoked after all OnWorkerStart event callbacks are completed
+    CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
+    echo 'worker exited';
+    // Recycling resources
+});
+```

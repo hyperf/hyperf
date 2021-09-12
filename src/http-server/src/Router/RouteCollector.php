@@ -70,8 +70,9 @@ class RouteCollector
             $method = strtoupper($method);
             foreach ($routeDatas as $routeData) {
                 $this->dataGenerator->addRoute($method, $routeData, new Handler($handler, $route, $options));
-                MiddlewareManager::addMiddlewares($this->server, $route, $method, $options['middleware'] ?? []);
             }
+
+            MiddlewareManager::addMiddlewares($this->server, $route, $method, $options['middleware'] ?? []);
         }
     }
 
@@ -165,6 +166,11 @@ class RouteCollector
     public function getData(): array
     {
         return $this->dataGenerator->getData();
+    }
+
+    public function getRouteParser(): RouteParser
+    {
+        return $this->routeParser;
     }
 
     protected function mergeOptions(array $origin, array $options): array

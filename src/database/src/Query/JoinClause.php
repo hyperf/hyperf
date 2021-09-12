@@ -30,16 +30,36 @@ class JoinClause extends Builder
     public $table;
 
     /**
-     * The parent query builder instance.
+     * The connection of the parent query builder.
      *
-     * @var \Hyperf\Database\Query\Builder
+     * @var \Hyperf\Database\ConnectionInterface
      */
-    private $parentQuery;
+    protected $parentConnection;
+
+    /**
+     * The grammar of the parent query builder.
+     *
+     * @var \Hyperf\Database\Query\Grammars\Grammar
+     */
+    protected $parentGrammar;
+
+    /**
+     * The processor of the parent query builder.
+     *
+     * @var \Hyperf\Database\Query\Processors\Processor
+     */
+    protected $parentProcessor;
+
+    /**
+     * The class name of the parent query builder.
+     *
+     * @var string
+     */
+    protected $parentClass;
 
     /**
      * Create a new join clause instance.
      *
-     * @param \Hyperf\Database\Query\Builder $parentQuery
      * @param string $type
      * @param string $table
      */
@@ -47,12 +67,15 @@ class JoinClause extends Builder
     {
         $this->type = $type;
         $this->table = $table;
-        $this->parentQuery = $parentQuery;
+        $this->parentClass = get_class($parentQuery);
+        $this->parentGrammar = $parentQuery->getGrammar();
+        $this->parentProcessor = $parentQuery->getProcessor();
+        $this->parentConnection = $parentQuery->getConnection();
 
         parent::__construct(
-            $parentQuery->getConnection(),
-            $parentQuery->getGrammar(),
-            $parentQuery->getProcessor()
+            $this->parentConnection,
+            $this->parentGrammar,
+            $this->parentProcessor
         );
     }
 
@@ -70,7 +93,7 @@ class JoinClause extends Builder
      *
      * @param \Closure|string $first
      * @param null|string $operator
-     * @param null|string $second
+     * @param null|\Hyperf\Database\Query\Expression|string $second
      * @param string $boolean
      * @throws \InvalidArgumentException
      * @return $this
@@ -104,7 +127,7 @@ class JoinClause extends Builder
      */
     public function newQuery()
     {
-        return new static($this->parentQuery, $this->type, $this->table);
+        return new static($this->newParentQuery(), $this->type, $this->table);
     }
 
     /**
@@ -114,6 +137,18 @@ class JoinClause extends Builder
      */
     protected function forSubQuery()
     {
-        return $this->parentQuery->newQuery();
+        return $this->newParentQuery()->newQuery();
+    }
+
+    /**
+     * Create a new parent query instance.
+     *
+     * @return \Hyperf\Database\Query\Builder
+     */
+    protected function newParentQuery()
+    {
+        $class = $this->parentClass;
+
+        return new $class($this->parentConnection, $this->parentGrammar, $this->parentProcessor);
     }
 }

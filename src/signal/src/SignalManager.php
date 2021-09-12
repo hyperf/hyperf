@@ -40,7 +40,7 @@ class SignalManager
     /**
      * @var bool
      */
-    protected $stoped = false;
+    protected $stopped = false;
 
     public function __construct(ContainerInterface $container)
     {
@@ -84,7 +84,7 @@ class SignalManager
                         }
                     }
 
-                    if ($this->isStoped()) {
+                    if ($this->isStopped()) {
                         break;
                     }
                 }
@@ -92,15 +92,31 @@ class SignalManager
         }
     }
 
-    public function isStoped(): bool
+    public function isStopped(): bool
     {
-        return $this->stoped;
+        return $this->stopped;
     }
 
-    public function setStoped(bool $stoped): self
+    /**
+     * @deprecated v2.2
+     */
+    public function isStoped(): bool
     {
-        $this->stoped = $stoped;
+        return $this->isStopped();
+    }
+
+    public function setStopped(bool $stopped): self
+    {
+        $this->stopped = $stopped;
         return $this;
+    }
+
+    /**
+     * @deprecated v2.2
+     */
+    public function setStoped(bool $stopped): self
+    {
+        return $this->setStopped($stopped);
     }
 
     protected function isInvalidProcess(?int $process): bool

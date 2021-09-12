@@ -78,7 +78,9 @@ trait Cacheable
     {
         $res = parent::increment($column, $amount, $extra);
         if ($res > 0) {
-            if (empty($extra)) {
+            if ($this->getConnection()->transactionLevel() && $this instanceof CacheableInterface) {
+                InvalidCacheManager::instance()->push($this);
+            } elseif (empty($extra)) {
                 // Only increment a column's value.
                 /** @var Manager $manager */
                 $manager = $this->getContainer()->get(Manager::class);
@@ -101,7 +103,9 @@ trait Cacheable
     {
         $res = parent::decrement($column, $amount, $extra);
         if ($res > 0) {
-            if (empty($extra)) {
+            if ($this->getConnection()->transactionLevel() && $this instanceof CacheableInterface) {
+                InvalidCacheManager::instance()->push($this);
+            } elseif (empty($extra)) {
                 // Only decrement a column's value.
                 /** @var Manager $manager */
                 $manager = $this->getContainer()->get(Manager::class);

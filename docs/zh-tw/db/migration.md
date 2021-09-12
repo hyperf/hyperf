@@ -247,64 +247,65 @@ class CreateUsersTable extends Migration
 
 ## 可用的欄位定義方法
 
-| 命令 | 描述
-| --- | --- |
-| $table->bigIncrements('id');	|  遞增 ID（主鍵），相當於「UNSIGNED BIG INTEGER」 |
-| $table->bigInteger('votes');	|  相當於 BIGINT |
-| $table->binary('data');	|  相當於 BLOB |
-| $table->boolean('confirmed');	|  相當於 BOOLEAN |
-| $table->char('name', 100);	|  相當於帶有長度的 CHAR |
-| $table->date('created_at');	|  相當於 DATE |
-| $table->dateTime('created_at');	|  相當於 DATETIME |
-| $table->dateTimeTz('created_at');	|  相當於帶時區 DATETIME |
-| $table->decimal('amount', 8, 2);	|  相當於帶有精度與基數 DECIMAL |
-| $table->double('amount', 8, 2);	|  相當於帶有精度與基數 DOUBLE |
-| $table->enum('level', ['easy', 'hard']);	|  相當於 ENUM |
-| $table->float('amount', 8, 2);	|  相當於帶有精度與基數 FLOAT |
-| $table->geometry('positions');	|  相當於 GEOMETRY |
-| $table->geometryCollection('positions');	|  相當於 GEOMETRYCOLLECTION |
-| $table->increments('id');	|  遞增的 ID (主鍵)，相當於「UNSIGNED INTEGER」 |
-| $table->integer('votes');	|  相當於 INTEGER |
-| $table->ipAddress('visitor');	|  相當於 IP 地址 |
-| $table->json('options');	|  相當於 JSON |
-| $table->jsonb('options');	|  相當於 JSONB |
-| $table->lineString('positions');	|  相當於 LINESTRING |
-| $table->longText('description');	|  相當於 LONGTEXT |
-| $table->macAddress('device');	|  相當於 MAC 地址 |
-| $table->mediumIncrements('id');	|  遞增 ID (主鍵) ，相當於「UNSIGNED MEDIUM INTEGER」 |
-| $table->mediumInteger('votes');	|  相當於 MEDIUMINT |
-| $table->mediumText('description');	|  相當於 MEDIUMTEXT |
-| $table->morphs('taggable');	|  相當於加入遞增的 taggable_id 與字串 taggable_type |
-| $table->multiLineString('positions');	|  相當於 MULTILINESTRING |
-| $table->multiPoint('positions');	|  相當於 MULTIPOINT |
-| $table->multiPolygon('positions');	|  相當於 MULTIPOLYGON |
-| $table->nullableMorphs('taggable');	|  相當於可空版本的 morphs() 欄位 |
-| $table->nullableTimestamps();	|  相當於可空版本的 timestamps() 欄位 |
-| $table->point('position');	|  相當於 POINT |
-| $table->polygon('positions');	|  相當於 POLYGON |
-| $table->rememberToken();	|  相當於可空版本的 VARCHAR (100) 的 remember_token 欄位 |
-| $table->smallIncrements('id');	|  遞增 ID (主鍵) ，相當於「UNSIGNED SMALL INTEGER」 |
-| $table->smallInteger('votes');	|  相當於 SMALLINT |
-| $table->softDeletes();	|  相當於為軟刪除新增一個可空的 deleted_at 欄位 |
-| $table->softDeletesTz();	|  相當於為軟刪除新增一個可空的 帶時區的 deleted_at 欄位 |
-| $table->string('name', 100);	|  相當於帶長度的 VARCHAR |
-| $table->text('description');	|  相當於 TEXT |
-| $table->time('sunrise');	|  相當於 TIME |
-| $table->timeTz('sunrise');	|  相當於帶時區的 TIME |
-| $table->timestamp('added_on');	|  相當於 TIMESTAMP |
-| $table->timestampTz('added_on');	|  相當於帶時區的 TIMESTAMP |
-| $table->timestamps();	|  相當於可空的 created_at 和 updated_at TIMESTAMP |
-| $table->timestampsTz();	|  相當於可空且帶時區的 created_at 和 updated_at TIMESTAMP |
-| $table->tinyIncrements('id');	|  相當於自動遞增 UNSIGNED TINYINT |
-| $table->tinyInteger('votes');	|  相當於 TINYINT |
-| $table->unsignedBigInteger('votes');	|  相當於 Unsigned BIGINT |
-| $table->unsignedDecimal('amount', 8, 2);	|  相當於帶有精度和基數的 UNSIGNED DECIMAL |
-| $table->unsignedInteger('votes');	|  相當於 Unsigned INT |
-| $table->unsignedMediumInteger('votes');	|  相當於 Unsigned MEDIUMINT |
-| $table->unsignedSmallInteger('votes');	|  相當於 Unsigned SMALLINT |
-| $table->unsignedTinyInteger('votes');	|  相當於 Unsigned TINYINT |
-| $table->uuid('id');	|  相當於 UUID |
-| $table->year('birth_year');	|  相當於 YEAR |
+| 命令                                     | 描述                                                    |
+| ---------------------------------------- | ------------------------------------------------------- |
+| $table->bigIncrements('id');             | 遞增 ID（主鍵），相當於「UNSIGNED BIG INTEGER」         |
+| $table->bigInteger('votes');             | 相當於 BIGINT                                           |
+| $table->binary('data');                  | 相當於 BLOB                                             |
+| $table->boolean('confirmed');            | 相當於 BOOLEAN                                          |
+| $table->char('name', 100);               | 相當於帶有長度的 CHAR                                   |
+| $table->date('created_at');              | 相當於 DATE                                             |
+| $table->dateTime('created_at');          | 相當於 DATETIME                                         |
+| $table->dateTimeTz('created_at');        | 相當於帶時區 DATETIME                                   |
+| $table->decimal('amount', 8, 2);         | 相當於帶有精度與基數 DECIMAL                            |
+| $table->double('amount', 8, 2);          | 相當於帶有精度與基數 DOUBLE                             |
+| $table->enum('level', ['easy', 'hard']); | 相當於 ENUM                                             |
+| $table->float('amount', 8, 2);           | 相當於帶有精度與基數 FLOAT                              |
+| $table->geometry('positions');           | 相當於 GEOMETRY                                         |
+| $table->geometryCollection('positions'); | 相當於 GEOMETRYCOLLECTION                               |
+| $table->increments('id');                | 遞增的 ID (主鍵)，相當於「UNSIGNED INTEGER」            |
+| $table->integer('votes');                | 相當於 INTEGER                                          |
+| $table->ipAddress('visitor');            | 相當於 IP 地址                                          |
+| $table->json('options');                 | 相當於 JSON                                             |
+| $table->jsonb('options');                | 相當於 JSONB                                            |
+| $table->lineString('positions');         | 相當於 LINESTRING                                       |
+| $table->longText('description');         | 相當於 LONGTEXT                                         |
+| $table->macAddress('device');            | 相當於 MAC 地址                                         |
+| $table->mediumIncrements('id');          | 遞增 ID (主鍵) ，相當於「UNSIGNED MEDIUM INTEGER」      |
+| $table->mediumInteger('votes');          | 相當於 MEDIUMINT                                        |
+| $table->mediumText('description');       | 相當於 MEDIUMTEXT                                       |
+| $table->morphs('taggable');              | 相當於加入遞增的 taggable_id 與字串 taggable_type     |
+| $table->multiLineString('positions');    | 相當於 MULTILINESTRING                                  |
+| $table->multiPoint('positions');         | 相當於 MULTIPOINT                                       |
+| $table->multiPolygon('positions');       | 相當於 MULTIPOLYGON                                     |
+| $table->nullableMorphs('taggable');      | 相當於可空版本的 morphs() 欄位                          |
+| $table->nullableTimestamps();            | 相當於可空版本的 timestamps() 欄位                      |
+| $table->point('position');               | 相當於 POINT                                            |
+| $table->polygon('positions');            | 相當於 POLYGON                                          |
+| $table->rememberToken();                 | 相當於可空版本的 VARCHAR (100) 的 remember_token 欄位   |
+| $table->smallIncrements('id');           | 遞增 ID (主鍵) ，相當於「UNSIGNED SMALL INTEGER」       |
+| $table->smallInteger('votes');           | 相當於 SMALLINT                                         |
+| $table->softDeletes();                   | 相當於為軟刪除新增一個可空的 deleted_at 欄位            |
+| $table->softDeletesTz();                 | 相當於為軟刪除新增一個可空的 帶時區的 deleted_at 欄位   |
+| $table->string('name', 100);             | 相當於帶長度的 VARCHAR                                  |
+| $table->text('description');             | 相當於 TEXT                                             |
+| $table->time('sunrise');                 | 相當於 TIME                                             |
+| $table->timeTz('sunrise');               | 相當於帶時區的 TIME                                     |
+| $table->timestamp('added_on');           | 相當於 TIMESTAMP                                        |
+| $table->timestampTz('added_on');         | 相當於帶時區的 TIMESTAMP                                |
+| $table->timestamps();                    | 相當於可空的 created_at 和 updated_at TIMESTAMP         |
+| $table->timestampsTz();                  | 相當於可空且帶時區的 created_at 和 updated_at TIMESTAMP |
+| $table->tinyIncrements('id');            | 相當於自動遞增 UNSIGNED TINYINT                         |
+| $table->tinyInteger('votes');            | 相當於 TINYINT                                          |
+| $table->unsignedBigInteger('votes');     | 相當於 Unsigned BIGINT                                  |
+| $table->unsignedDecimal('amount', 8, 2); | 相當於帶有精度和基數的 UNSIGNED DECIMAL                 |
+| $table->unsignedInteger('votes');        | 相當於 Unsigned INT                                     |
+| $table->unsignedMediumInteger('votes');  | 相當於 Unsigned MEDIUMINT                               |
+| $table->unsignedSmallInteger('votes');   | 相當於 Unsigned SMALLINT                                |
+| $table->unsignedTinyInteger('votes');    | 相當於 Unsigned TINYINT                                 |
+| $table->uuid('id');                      | 相當於 UUID                                             |
+| $table->year('birth_year');              | 相當於 YEAR                                             |
+| $table->comment('Table Comment');        | 設定表註釋，相當於 COMMENT                              |
 
 ## 修改欄位
 
@@ -313,7 +314,7 @@ class CreateUsersTable extends Migration
 在修改欄位之前，請確保將 `doctrine/dbal` 依賴新增到 `composer.json` 檔案中。Doctrine DBAL 庫用於確定欄位的當前狀態， 並建立對該欄位進行指定調整所需的 SQL 查詢：
 
 ```bash
-composer require doctrine/dbal
+composer require "doctrine/dbal:^3.0"
 ```
 
 ### 更新欄位屬性
@@ -374,13 +375,13 @@ Schema::table('users', function (Blueprint $table) {
 
 #### 可用的命令別名
 
-| 命令 | 描述
-| --- | --- |
-| $table->dropRememberToken(); | 	刪除 remember_token 欄位。
-| $table->dropSoftDeletes(); | 	刪除 deleted_at 欄位。
-| $table->dropSoftDeletesTz(); | 	dropSoftDeletes() 方法的別名。
-| $table->dropTimestamps(); | 	刪除 created_at and updated_at 欄位。
-| $table->dropTimestampsTz(); | 	dropTimestamps() 方法的別名。
+| 命令                         | 描述                                  |
+| ---------------------------- | ------------------------------------- |
+| $table->dropRememberToken(); | 刪除 remember_token 欄位。            |
+| $table->dropSoftDeletes();   | 刪除 deleted_at 欄位。                |
+| $table->dropSoftDeletesTz(); | dropSoftDeletes() 方法的別名。        |
+| $table->dropTimestamps();    | 刪除 created_at and updated_at 欄位。 |
+| $table->dropTimestampsTz();  | dropTimestamps() 方法的別名。         |
 
 ## 索引
 
@@ -422,13 +423,13 @@ $table->index(['account_id', 'created_at'], '');
 
 ##### 可用的索引型別
 
-| 命令 | 描述
-| --- | --- |
-| $table->primary('id'); | 	新增主鍵
-| $table->primary(['id', 'parent_id']); | 	新增複合鍵
-| $table->unique('email'); | 	新增唯一索引
-| $table->index('state'); | 	新增普通索引
-| $table->spatialIndex('location'); | 	新增空間索引
+| 命令                                  | 描述         |
+| ------------------------------------- | ------------ |
+| $table->primary('id');                | 新增主鍵     |
+| $table->primary(['id', 'parent_id']); | 新增複合鍵   |
+| $table->unique('email');              | 新增唯一索引 |
+| $table->index('state');               | 新增普通索引 |
+| $table->spatialIndex('location');     | 新增空間索引 |
 
 ### 重新命名索引
 
@@ -444,12 +445,12 @@ $table->renameIndex('from', 'to');
 
 您可通過下面的方法來刪除索引，預設情況下遷移程式會自動將資料庫名稱、索引的欄位名及索引型別簡單地連線在一起作為名稱。舉例如下:
 
-| 命令 | 描述
-| --- | --- |
-| $table->dropPrimary('users_id_primary'); | 	從 users 表中刪除主鍵
-| $table->dropUnique('users_email_unique'); | 	從 users 表中刪除唯一索引
-| $table->dropIndex('geo_state_index'); | 	從 geo 表中刪除基本索引
-| $table->dropSpatialIndex('geo_location_spatialindex'); | 	從 geo 表中刪除空間索引
+| 命令                                                   | 描述                      |
+| ------------------------------------------------------ | ------------------------- |
+| $table->dropPrimary('users_id_primary');               | 從 users 表中刪除主鍵     |
+| $table->dropUnique('users_email_unique');              | 從 users 表中刪除唯一索引 |
+| $table->dropIndex('geo_state_index');                  | 從 geo 表中刪除基本索引   |
+| $table->dropSpatialIndex('geo_location_spatialindex'); | 從 geo 表中刪除空間索引   |
 
 您也可以通過傳遞欄位陣列到 `dropIndex` 方法，遷移程式會根據表名、欄位和鍵型別生成的索引名稱：
 

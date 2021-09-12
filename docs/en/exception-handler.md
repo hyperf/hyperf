@@ -1,33 +1,32 @@
-# 异常处理器
+# Excepiton Handler
 
-在 `Hyperf` 里，业务代码都运行在 `Worker进程` 上，也就意味着一旦任意一个请求的业务存在没有捕获处理的异常的话，都会导致对应的 `Worker进程` 被中断退出，虽然被中断的 `Worker进程` 仍会被重新拉起，但对服务而已也是不能接受的，且捕获异常并输出合理的报错内容给客户端也是更加友好的。   
-我们可以通过对各个 `server` 定义不同的 `异常处理器(ExceptionHandler)`，一旦业务流程存在没有捕获的异常，到会被传递到已注册的 `异常处理器(ExceptionHandler)` 去处理。
+In `Hyperf`, all the business code excute on `Worker Process`. In this case, once any request has an exception that has not been caught, the corresponding `Worker Process` will be interrupted and exited, which is unacceptable for the service. Catch exceptions and output reasonable error content is also more friendly to the client. We can define different `ExceptionHandlers` for each `server`, and once there are exceptions that are not caught in the process, they will be passed to the registered `ExceptionHandler` for processing.
 
-## 自定义一个异常处理
+## Customize an Exception Handling
 
-### 注册异常处理器
+### Register Exception Handler
 
-目前仅支持配置文件的形式注册 `异常处理器(ExceptionHandler)`，配置文件位于 `config/autoload/exceptions.php`，将您的自定义异常处理器配置在对应的 `server` 下即可：
+Currently, it only supports the registration of `ExceptionHandler` in the form of a configuration file. The configuration file is located in `config/autoload/exceptions.php`. Configure your custom exception handler under the corresponding `server`:
 
 ```php
 <?php
 // config/autoload/exceptions.php
 return [
     'handler' => [
-        // 这里的 http 对应 config/autoload/server.php 内的 server 所对应的 name 值
+        // The http here corresponds to the name value corresponding to the server in config/autoload/server.php
         'http' => [
-            // 这里配置完整的类命名空间地址已完成对该异常处理器的注册
+            // The registration of the exception handler has done by configuring the complete class namespace address here
             \App\Exception\Handler\FooExceptionHandler::class,
         ],    
     ],
 ];
 ```
 
-> 每个异常处理器配置数组的顺序决定了异常在处理器间传递的顺序。
+> The order of each exception handler configuration array determines the order in which exceptions are passed between handlers.
 
-### 定义异常处理器
+### Define Exception Handler
 
-我们可以在任意位置定义一个 `类(Class)` 并继承抽象类 ` Hyperf\ExceptionHandler\ExceptionHandler` 并实现其中的抽象方法，如下：
+We can define a `class (Class)` anywhere and inherit the abstract class `Hyperf\ExceptionHandler\ExceptionHandler` and implement the abstract methods in it. As shown below:
 
 ```php
 <?php
@@ -43,27 +42,27 @@ class FooExceptionHandler extends  ExceptionHandler
 {
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
-        // 判断被捕获到的异常是希望被捕获的异常
+        // Determine that the caught exception is the wanted exception
         if ($throwable instanceof FooException) {
-            // 格式化输出
+            // Formatted output
             $data = json_encode([
                 'code' => $throwable->getCode(),
                 'message' => $throwable->getMessage(),
             ], JSON_UNESCAPED_UNICODE);
 
-            // 阻止异常冒泡
+            // Prevent bubbling
             $this->stopPropagation();
             return $response->withStatus(500)->withBody(new SwooleStream($data));
         }
 
-        // 交给下一个异常处理器
-        return $respose;
+        // Hand over to the next exception handler
+        return $response;
 
-        // 或者不做处理直接屏蔽异常
+        // Or directly shield the exception without processing
     }
 
     /**
-     * 判断该异常处理器是否要对该异常进行处理
+     * Determine whether the exception handler needs to handle the exception or not
      */
     public function isValid(Throwable $throwable): bool
     {
@@ -72,7 +71,7 @@ class FooExceptionHandler extends  ExceptionHandler
 }
 ```
 
-### 定义异常类
+### Define Exception Class
 
 ```php
 <?php
@@ -87,7 +86,7 @@ class FooException extends ServerException
 }
 ```
 
-### 触发异常
+### Trigger Exception
 
 ```php
 
@@ -95,7 +94,7 @@ namespace App\Controller;
 
 use App\Exception\FooException;
 
-class IndexController extends Controller
+class IndexController extends AbstractController
 {
     public function index()
     {
@@ -104,4 +103,71 @@ class IndexController extends Controller
 }
 
 ```
-在上面这个例子，我们先假设 `FooException` 是存在的一个异常，以及假设已经完成了该处理器的配置，那么当业务抛出一个没有被捕获处理的异常时，就会根据配置的顺序依次传递，整一个处理流程可以理解为一个管道，若前一个异常处理器调用 `$this->stopPropagation()` 则不再往后传递，若最后一个配置的异常处理器仍不对该异常进行捕获处理，那么就会交由 Hyperf 的默认异常处理器处理了。
+In the example above, we assume that `FooException` is a thrown exception, and exception handlers are configured. When an uncaught exception has been thrown, it will be passed through the handler registration order. Imagine the processing as a pipe, the exception will not be passed once there are some handler calls `$this->stopPropagation()`. The default handler of Hyperf will be the last one to catch exceptions if there is no other handler to catch such exceptions.
+
+## Integrated Whoops
+
+The framework provides Whoops integration.
+
+Install Whoops first
+```php
+composer require --dev filp/whoops
+```
+
+Then configure the special exception handler for Whoops.
+
+```php
+// config/autoload/exceptions.php
+return [
+    'handler' => [
+        'http' => [
+            \Hyperf\ExceptionHandler\Handler\WhoopsExceptionHandler::class,
+        ],    
+    ],
+];
+```
+
+As shown in the image:
+
+![whoops](/imgs/whoops.png)
+
+
+## Error Listener
+
+The framework provides the `error_reporting()` error level listener `Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler`.
+
+### Configuration
+
+Add a listener in `config/autoload/listeners.php`
+
+```php
+<?php
+return [
+    \Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler::class
+];
+```
+
+When a code similar to the following appears, `\ErrorException` will be thrown
+
+```php
+<?php
+try {
+    $a = [];
+    var_dump($a[1]);
+} catch (\Throwable $throwable) {
+    var_dump(get_class($throwable), $throwable->getMessage());
+}
+
+// string(14) "ErrorException"
+// string(19) "Undefined offset: 1"
+```
+
+If no listener is configured, no exception will be thrown.
+
+```
+PHP Notice:  Undefined offset: 1 in IndexController.php on line 24
+
+Notice: Undefined offset: 1 in IndexController.php on line 24
+NULL
+```
+

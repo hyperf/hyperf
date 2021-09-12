@@ -20,17 +20,17 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class ResponseBuilder
 {
-    const SERVER_ERROR = -32000;
+    public const SERVER_ERROR = -32000;
 
-    const INVALID_REQUEST = -32600;
+    public const INVALID_REQUEST = -32600;
 
-    const METHOD_NOT_FOUND = -32601;
+    public const METHOD_NOT_FOUND = -32601;
 
-    const INVALID_PARAMS = -32602;
+    public const INVALID_PARAMS = -32602;
 
-    const INTERNAL_ERROR = -32603;
+    public const INTERNAL_ERROR = -32603;
 
-    const PARSE_ERROR = -32700;
+    public const PARSE_ERROR = -32700;
 
     /**
      * @var \Hyperf\Rpc\Contract\DataFormatterInterface

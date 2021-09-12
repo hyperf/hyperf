@@ -17,12 +17,9 @@ use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
-use Hyperf\Utils\Traits\Macroable;
 
 class Collection extends BaseCollection implements CompressInterface
 {
-    use Macroable;
-
     /**
      * Find a model in the collection by key.
      *

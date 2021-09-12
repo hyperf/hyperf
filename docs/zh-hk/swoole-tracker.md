@@ -74,7 +74,7 @@ apm.enable_memcheck=1
 # @contact  group@hyperf.io
 # @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
 
-FROM hyperf/hyperf:7.4-alpine-v3.11-cli
+FROM hyperf/hyperf:7.4-alpine-v3.11-swoole
 LABEL maintainer="Hyperf Developers <group@hyperf.io>" version="1.0" license="MIT" app.name="Hyperf"
 
 ##
@@ -89,11 +89,6 @@ ENV TIMEZONE=${timezone:-"Asia/Shanghai"} \
 
 # update
 RUN set -ex \
-    # install composer
-    && cd /tmp \
-    && wget https://mirrors.aliyun.com/composer/composer.phar \
-    && chmod u+x composer.phar \
-    && mv composer.phar /usr/local/bin/composer \
     # show php version and extensions
     && php -v \
     && php -m \
@@ -180,3 +175,69 @@ return [
     Hyperf\SwooleTracker\Aspect\CoroutineHandlerAspect::class,
 ];
 ```
+
+## 免費內存泄漏檢測工具
+
+Swoole Tracker 本是一款商業產品，擁有進行內存泄漏檢測的能力，不過 Swoole Tracker 把內存泄漏檢測的功能完全免費給 PHP 社區使用，完善 PHP 生態，回饋社區，下面將概述它的具體用法。
+
+1. 前往 [Swoole Tracker 官網](https://business.swoole.com/SwooleTracker/download/) 下載最新的 Swoole Tracker 擴展；
+
+2. 和上文添加擴展相同，再加入一行配置：
+
+```ini
+;Leak檢測開關
+apm.enable_malloc_hook=1
+```
+
+!> 注意：不要在 composer 安裝依賴時開啟；不要在生成代理類緩存時開啟。
+
+3. 根據自己的業務，在 Swoole 的 onReceive 或者 onRequest 事件開頭加上 `trackerHookMalloc()` 調用：
+
+```php
+$http->on('request', function ($request, $response) {
+    trackerHookMalloc();
+    $response->end("<h1>Hello Swoole. #".rand(1000, 9999)."</h1>");
+});
+```
+
+每次調用結束後（第一次調用不會被記錄），都會生成一個泄漏的信息到 `/tmp/trackerleak` 日誌中，我們可以在 Cli 命令行調用 `trackerAnalyzeLeak()` 函數即可分析泄漏日誌，生成泄漏報告
+
+```shell
+php -r "trackerAnalyzeLeak();"
+```
+
+下面是泄漏報告的格式：
+
+沒有內存泄漏的情況：
+
+```
+[16916 (Loop 5)] ✅ Nice!! No Leak Were Detected In This Loop
+```
+
+其中 `16916` 表示進程 id，`Loop 5`表示第 5 次調用主函數生成的泄漏信息
+
+有確定的內存泄漏：
+
+```
+[24265 (Loop 8)] /tests/mem_leak/http_server.php:125 => [12928]
+[24265 (Loop 8)] /tests/mem_leak/http_server.php:129 => [12928]
+[24265 (Loop 8)] ❌ This Loop TotalLeak: [25216]
+```
+
+表示第 8 次調用 `http_server.php` 的 125 行和 129 行，分別泄漏了 12928 字節內存，總共泄漏了 25216 字節內存。
+
+通過調用 `trackerCleanLeak()` 可以清除泄漏日誌，重新開始。[瞭解更多內存檢測工具使用細節](https://www.kancloud.cn/swoole-inc/ee-help-wiki/1941569)
+
+如果需要在 Hyperf 中檢測 HTTP Server 中的內存泄漏，可以在 `config/autoload/middlewares.php` 添加一個全局中間件：
+
+```php
+<?php
+
+return [
+    'http' => [
+        Hyperf\SwooleTracker\Middleware\HookMallocMiddleware::class,
+    ],
+];
+```
+
+其他類型 Server 同理。

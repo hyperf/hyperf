@@ -111,7 +111,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
 
     public function getConsumerTag(): string
     {
-        return implode(',', (array) $this->getRoutingKey());
+        return '';
     }
 
     public function isEnable(): bool

@@ -345,12 +345,13 @@ try{
 
 > 當前方法僅能用於開發環境，線上部署前一定要去掉，不然會引起嚴重的內存泄露和數據混淆。
 
-線上記錄 `SQL`，請使用 [事件監聽](/zh-cn/db/event)
+線上記錄 `SQL`，請使用 [事件監聽](/zh-hk/db/event)
 
 ```php
 <?php
 
 use Hyperf\DbConnection\Db;
+use Hyperf\Utils\Arr;
 use App\Model\Book;
 
 // 啟用 SQL 數據記錄功能

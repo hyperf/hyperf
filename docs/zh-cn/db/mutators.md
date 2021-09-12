@@ -267,9 +267,8 @@ class AddressCaster implements CastsAttributes
 {
     /**
      * 将取出的数据进行转换
-     * @return \App\Address
      */
-    public function get($model, $key, $value, $attributes)
+    public function get($model, $key, $value, $attributes): Address
     {
         return new Address(
             $attributes['address_line_one'],
@@ -377,7 +376,7 @@ use Hyperf\Utils\Arr;
 
 class UserInfoCaster implements CastsAttributes
 {
-    public function get($model, string $key, $value, array $attributes)
+    public function get($model, string $key, $value, array $attributes): UserInfo
     {
         return new UserInfo($model, Arr::only($attributes, ['name', 'gender']));
     }
