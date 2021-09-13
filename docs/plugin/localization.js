@@ -5,8 +5,8 @@ window.HyperfLocalization = {
                 // zh-cn is the default so is not present
                 fullMatches = ['zh-tw', 'zh-hk'],
                 locale = (navigator.languages
-                ? navigator.languages[0]
-                : (navigator.language || navigator.userLanguage)).toLowerCase();
+                    ? navigator.languages[0]
+                    : (navigator.language || navigator.userLanguage)).toLowerCase();
 
             for (var i = 0; i < shortMatches.length; i++) {
                 if (locale.substr(0, 2) === shortMatches[i] && vm.route.path === '/') {
