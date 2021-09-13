@@ -1,0 +1,20 @@
+version: 2
+updates:
+- package-ecosystem: composer
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: endclothing/prometheus_client_php
+    versions:
+    - ">= 1.a, < 2"
+  - dependency-name: jonahgeorge/jaeger-client-php
+    versions:
+    - ">= 1.a, < 2"
+  - dependency-name: phpunit/phpunit
+    versions:
+    - ">= 8.a, < 9"
+  - dependency-name: promphp/prometheus_client_php
+    versions:
+    - "> 2.2.1, < 3"
