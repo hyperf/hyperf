@@ -13,7 +13,7 @@
 - [#4013](https://github.com/hyperf/hyperf/pull/4013) 为 `Cookies` 增加 `sameSite=None` 的支持。
 - [#4017](https://github.com/hyperf/hyperf/pull/4017) 为 `Hyperf\Utils\Collection` 增加 `Macroable`。
 - [#4021](https://github.com/hyperf/hyperf/pull/4021) 为 `retry()` 方法中 `$callback` 匿名函数增加 `$attempts` 变量。
-- [#4040](https://github.com/hyperf/hyperf/pull/4040) 为 `AMQP` 组件新增方法 `ConsumerDelayedMessageTrait::getDeadLetterExchange()`，我们可以用来重写 `x-dead-letter-exchange` 参数。
+- [#4040](https://github.com/hyperf/hyperf/pull/4040) 为 `AMQP` 组件新增方法 `ConsumerDelayedMessageTrait::getDeadLetterExchange()`，可以用来重写 `x-dead-letter-exchange` 参数。
 
 ## 移除
 
