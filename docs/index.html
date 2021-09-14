@@ -22,7 +22,6 @@
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-php.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify-edit-on-github/index.js"></script>
-  <script src="/2.2/plugin/localization.js"></script>
   <script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
   <script>
     mermaid.initialize({ startOnLoad: false });
@@ -64,7 +63,28 @@
       },
       plugins: [
         EditOnGithubPlugin.create('https://github.com/hyperf/hyperf/blob/master/docs/'),
-        HyperfLocalization.loadPlugin
+        function(hook, vm) {
+          hook.beforeEach(function(content) {
+            var shortMatches = ['en'],
+                    // zh-cn is the default so is not present
+                    fullMatches = ['zh-tw', 'zh-hk'],
+                    locale = (navigator.languages
+                            ? navigator.languages[0]
+                            : (navigator.language || navigator.userLanguage)).toLowerCase();
+
+            for (var i = 0; i < shortMatches.length; i++) {
+              if (locale.substr(0, 2) === shortMatches[i] && vm.route.path === '/') {
+                window.location.hash = '/' + shortMatches[i] + '/';
+              }
+            }
+
+            for (i = 0; i < fullMatches.length; i++) {
+              if (locale === fullMatches[i] && vm.route.path === '/') {
+                window.location.hash = '/' + fullMatches[i] + '/';
+              }
+            }
+          })
+        }
       ],
       plantuml: {
         skin: 'classic',
