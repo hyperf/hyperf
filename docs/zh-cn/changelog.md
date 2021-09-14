@@ -1,5 +1,24 @@
 # 版本更新记录
 
+# v2.2.8 - 2021-09-14
+
+## 修复
+
+- [#4028](https://github.com/hyperf/hyperf/pull/4028) 修复 `grafana` 面板中，请求数结果计算错误的问题。
+- [#4030](https://github.com/hyperf/hyperf/pull/4030) 修复异步队列会因为解压缩模型失败，导致进程中断随后重启的问题。
+- [#4042](https://github.com/hyperf/hyperf/pull/4042) 修复因 `SocketIO` 服务关闭时清理过期的 `fd`，进而导致协程死锁的问题。
+
+## 新增
+
+- [#4013](https://github.com/hyperf/hyperf/pull/4013) 为 `Cookies` 增加 `sameSite=None` 的支持。
+- [#4017](https://github.com/hyperf/hyperf/pull/4017) 为 `Hyperf\Utils\Collection` 增加 `Macroable`。
+- [#4021](https://github.com/hyperf/hyperf/pull/4021) 为 `retry()` 方法中 `$callback` 匿名函数增加 `$attempts` 变量。
+- [#4040](https://github.com/hyperf/hyperf/pull/4040) 为 `AMQP` 组价新增方法 `ConsumerDelayedMessageTrait::getDeadLetterExchange()`，我们可以用来重写 `x-dead-letter-exchange` 参数。
+
+## 移除
+
+- [#4017](https://github.com/hyperf/hyperf/pull/4017) 从 `Hyperf\Database\Model\Collection` 中移除 `Macroable`，因为它的基类 `Hyperf\Utils\Collection` 已引入了对应的 `Macroable`。
+
 # v2.2.7 - 2021-09-06
 
 # 修复
