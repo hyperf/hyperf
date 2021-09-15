@@ -67,7 +67,7 @@
         "phpstan/phpstan": "^0.12",
         "phpunit/phpunit": "^9.5",
         "predis/predis": "^1.1",
-        "promphp/prometheus_client_php": "^2.2",
+        "promphp/prometheus_client_php": "2.2.*",
         "reactivex/rxphp": "^2.0",
         "slickdeals/statsd": "^3.0.1",
         "smarty/smarty": "^3.1",
