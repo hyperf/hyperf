@@ -1,5 +1,10 @@
 # v2.2.9 - TBD
 
+## Optimized
+
+- [#4062](https://github.com/hyperf/hyperf/pull/4062) Optimized timezone setting of watcher.
+
+
 # v2.2.8 - 2021-09-14
 
 ## Fixed
