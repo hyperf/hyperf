@@ -1,5 +1,9 @@
 # v2.2.9 - TBD
 
+## Fixed
+
+- [#4061](https://github.com/hyperf/hyperf/pull/4061) Fixed the conflict between the latest version of prometheus_client_php and `hyperf/metric`.
+
 # v2.2.8 - 2021-09-14
 
 ## Fixed
