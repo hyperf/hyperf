@@ -124,7 +124,7 @@ class Watcher
                     $this->restart(false);
                 }
             } else {
-                $ret = System::exec($this->option->getBin() . ' vendor/hyperf/watcher/collector-reload.php ' . $file);
+                $ret = System::exec("{$this->option->getBin()} vendor/hyperf/watcher/collector-reload.php {$file} {$this->option->getTimezone()}");
                 if ($ret['code'] === 0) {
                     $this->output->writeln('Class reload success.');
                 } else {

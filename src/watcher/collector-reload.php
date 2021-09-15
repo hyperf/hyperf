@@ -13,7 +13,7 @@ ini_set('display_errors', 'on');
 ini_set('display_startup_errors', 'on');
 
 error_reporting(E_ALL);
-date_default_timezone_set('Asia/Shanghai');
+date_default_timezone_set($argv[2]);
 
 ! defined('BASE_PATH') && define('BASE_PATH', getcwd());
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);

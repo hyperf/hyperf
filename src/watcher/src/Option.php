@@ -56,6 +56,11 @@ class Option
      */
     protected $restart = true;
 
+    /**
+     * @var string
+     */
+    protected $timezone = '';
+
     public function __construct(ConfigInterface $config, array $dir, array $file, bool $restart = true)
     {
         $options = $config->get('watcher', []);
@@ -67,6 +72,7 @@ class Option
         isset($options['watch']['file']) && $this->watchFile = (array) $options['watch']['file'];
         isset($options['watch']['scan_interval']) && $this->scanInterval = (int) $options['watch']['scan_interval'];
         isset($options['ext']) && $this->ext = (array) $options['ext'];
+        isset($options['timezone']) && $this->timezone = $options['timezone'];
 
         $this->watchDir = array_unique(array_merge($this->watchDir, $dir));
         $this->watchFile = array_unique(array_merge($this->watchFile, $file));
@@ -111,5 +117,14 @@ class Option
     public function isRestart(): bool
     {
         return $this->restart;
+    }
+
+    public function getTimezone(): string
+    {
+        if (empty($this->timezone)) {
+            $this->timezone = date_default_timezone_get();
+        }
+
+        return $this->timezone;
     }
 }
