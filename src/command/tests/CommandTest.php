@@ -13,6 +13,7 @@ namespace HyperfTest\Command;
 
 use Hyperf\Utils\Reflection\ClassInvoker;
 use HyperfTest\Command\Command\DefaultSwooleFlagsCommand;
+use HyperfTest\Command\Command\FooCommand;
 use HyperfTest\Command\Command\FooExceptionCommand;
 use HyperfTest\Command\Command\FooExitCommand;
 use HyperfTest\Command\Command\SwooleFlagsCommand;
@@ -41,6 +42,9 @@ class CommandTest extends TestCase
         $this->assertSame(SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL, $command->getHookFlags());
     }
 
+    /**
+     * @group NonCoroutine
+     */
     public function testExitCodeWhenThrowException()
     {
         /** @var FooExceptionCommand $command */
@@ -54,5 +58,15 @@ class CommandTest extends TestCase
         $command = new ClassInvoker(new FooExitCommand());
         $exitCode = $command->execute($input, Mockery::mock(OutputInterface::class));
         $this->assertSame(11, $exitCode);
+
+        /** @var FooCommand $command */
+        $command = new ClassInvoker(new FooCommand());
+        $exitCode = $command->execute($input, Mockery::mock(OutputInterface::class));
+        $this->assertSame(0, $exitCode);
+    }
+
+    public function testExitCodeWhenThrowExceptionInCoroutine()
+    {
+        $this->testExitCodeWhenThrowException();
     }
 }
