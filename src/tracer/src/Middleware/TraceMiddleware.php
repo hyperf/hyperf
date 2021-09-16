@@ -26,13 +26,19 @@ class TraceMiddleware implements MiddlewareInterface
     use SpanStarter;
 
     /**
+     * @var bool
+     */
+    protected $withException;
+
+    /**
      * @var Tracer
      */
     private $tracer;
 
-    public function __construct(Tracer $tracer)
+    public function __construct(Tracer $tracer, bool $withException = false)
     {
         $this->tracer = $tracer;
+        $this->withException = $withException;
     }
 
     /**
@@ -55,24 +61,28 @@ class TraceMiddleware implements MiddlewareInterface
             $response = $handler->handle($request);
             $span->setTag('response.statusCode', $response->getStatusCode());
         } catch (\Throwable $exception) {
-            $span->setTag('error', true);
-            $span->setTag('error.code', $exception->getCode());
-            $span->setTag('error.file', $exception->getFile());
-            $span->setTag('error.line', $exception->getLine());
-            $span->setTag('error.message', $exception->getMessage());
-            $span->setTag('error.stackTrace', $exception->getTraceAsString());
-            $span->setTag('error.type', get_class($exception));
-
-            if ($exception instanceof HttpException) {
-                $span->setTag('error.statusCode', $exception->getStatusCode());
-            }
-
+            $this->withException && $this->appendExceptionToSpan($span, $exception);
             throw $exception;
         } finally {
             $span->finish();
         }
 
         return $response;
+    }
+
+    protected function appendExceptionToSpan(Span $span, \Throwable $exception): void
+    {
+        $span->setTag('error', true);
+        $span->setTag('error.code', $exception->getCode());
+        $span->setTag('error.file', $exception->getFile());
+        $span->setTag('error.line', $exception->getLine());
+        $span->setTag('error.message', $exception->getMessage());
+        $span->setTag('error.stackTrace', $exception->getTraceAsString());
+        $span->setTag('error.type', get_class($exception));
+
+        if ($exception instanceof HttpException) {
+            $span->setTag('error.statusCode', $exception->getStatusCode());
+        }
     }
 
     protected function buildSpan(ServerRequestInterface $request): Span
