@@ -2,7 +2,7 @@
 
 Hyperf is an MIT licensed open source project and completely free to use. However, the amount of effort needed to maintain and develop new features for the project is not sustainable without proper financial backing. You can support Hyperf development via the following methods:
 
-## Sponsored the development of Hyperf
+## Sponsor the development of Hyperf
 
 If you run a business and are using Hyperf in a revenue-generating product, it makes business sense to sponsor Hyperf development: it ensures the project that your product relies on stays healthy and actively maintained. It can also help your exposure in the Hyperf community and makes it easier to attract Hyperf developers.
 If you are an individual user and have enjoyed the productivity of using Hyperf, consider donating as a sign of appreciation - like buying me coffee once in a while :)
