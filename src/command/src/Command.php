@@ -93,11 +93,11 @@ abstract class Command extends SymfonyCommand
         ];
 
     /**
-     * The return code of the command.
+     * The exit code of the command.
      *
      * @var int
      */
-    protected $executeCode = 0;
+    protected $exitCode = 0;
 
     public function __construct(string $name = null)
     {
@@ -445,7 +445,7 @@ abstract class Command extends SymfonyCommand
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\AfterHandle($this));
             } catch (\Throwable $exception) {
                 if (class_exists(ExitException::class) && $exception instanceof ExitException) {
-                    return $this->executeCode = (int) $exception->getStatus();
+                    return $this->exitCode = (int) $exception->getStatus();
                 }
 
                 if (! $this->eventDispatcher) {
@@ -453,7 +453,7 @@ abstract class Command extends SymfonyCommand
                 }
 
                 $this->eventDispatcher->dispatch(new Event\FailToHandle($this, $exception));
-                return $this->executeCode = $exception->getCode();
+                return $this->exitCode = $exception->getCode();
             } finally {
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\AfterExecute($this));
             }
@@ -463,7 +463,7 @@ abstract class Command extends SymfonyCommand
 
         if ($this->coroutine && ! Coroutine::inCoroutine()) {
             run($callback, $this->hookFlags);
-            return $this->executeCode;
+            return $this->exitCode;
         }
 
         return $callback();
