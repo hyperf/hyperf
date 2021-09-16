@@ -5,6 +5,10 @@
 - [#4061](https://github.com/hyperf/hyperf/pull/4061) Fixed the conflict between the latest version of prometheus_client_php and `hyperf/metric`.
 - [#4068](https://github.com/hyperf/hyperf/pull/4068) Fixed bug that exit code of `Command` is incorrect when throwing an exception.
 
+## Added
+
+- [#4045](https://github.com/hyperf/hyperf/pull/4045) Support to control whether to report by `tracer` through config `opentracing.enable.error`.
+
 # v2.2.8 - 2021-09-14
 
 ## Fixed

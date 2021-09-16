@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer\Middleware;
 
+use Hyperf\HttpMessage\Exception\HttpException;
 use Hyperf\Tracer\SpanStarter;
+use Hyperf\Tracer\SwitchManager;
 use Hyperf\Utils\Coroutine;
 use OpenTracing\Span;
 use OpenTracing\Tracer;
@@ -25,13 +27,19 @@ class TraceMiddleware implements MiddlewareInterface
     use SpanStarter;
 
     /**
+     * @var SwitchManager
+     */
+    protected $switchManager;
+
+    /**
      * @var Tracer
      */
     private $tracer;
 
-    public function __construct(Tracer $tracer)
+    public function __construct(Tracer $tracer, SwitchManager $switchManager)
     {
         $this->tracer = $tracer;
+        $this->switchManager = $switchManager;
     }
 
     /**
@@ -52,11 +60,30 @@ class TraceMiddleware implements MiddlewareInterface
         });
         try {
             $response = $handler->handle($request);
+            $span->setTag('response.statusCode', $response->getStatusCode());
+        } catch (\Throwable $exception) {
+            $this->switchManager->isEnable('error') && $this->appendExceptionToSpan($span, $exception);
+            throw $exception;
         } finally {
             $span->finish();
         }
 
         return $response;
+    }
+
+    protected function appendExceptionToSpan(Span $span, \Throwable $exception): void
+    {
+        $span->setTag('error', true);
+        $span->setTag('error.code', $exception->getCode());
+        $span->setTag('error.file', $exception->getFile());
+        $span->setTag('error.line', $exception->getLine());
+        $span->setTag('error.message', $exception->getMessage());
+        $span->setTag('error.stackTrace', $exception->getTraceAsString());
+        $span->setTag('error.type', get_class($exception));
+
+        if ($exception instanceof HttpException) {
+            $span->setTag('error.statusCode', $exception->getStatusCode());
+        }
     }
 
     protected function buildSpan(ServerRequestInterface $request): Span
