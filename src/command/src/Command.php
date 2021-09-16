@@ -445,7 +445,7 @@ abstract class Command extends SymfonyCommand
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\AfterHandle($this));
             } catch (\Throwable $exception) {
                 if (class_exists(ExitException::class) && $exception instanceof ExitException) {
-                    return 0;
+                    return $this->executeCode = (int) $exception->getStatus();
                 }
 
                 if (! $this->eventDispatcher) {
@@ -453,9 +453,7 @@ abstract class Command extends SymfonyCommand
                 }
 
                 $this->eventDispatcher->dispatch(new Event\FailToHandle($this, $exception));
-                $errCode = $exception->getCode();
-                $this->executeCode = $errCode;
-                return $errCode;
+                return $this->executeCode = $exception->getCode();
             } finally {
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\AfterExecute($this));
             }
@@ -468,6 +466,6 @@ abstract class Command extends SymfonyCommand
             return $this->executeCode;
         }
 
-        return $this->executeCode;
+        return $callback();
     }
 }
