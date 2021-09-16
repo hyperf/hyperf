@@ -18,6 +18,7 @@ return [
         'redis' => env('TRACER_ENABLE_REDIS', false),
         'db' => env('TRACER_ENABLE_DB', false),
         'method' => env('TRACER_ENABLE_METHOD', false),
+        'error' => false,
     ],
     'tracer' => [
         'zipkin' => [
