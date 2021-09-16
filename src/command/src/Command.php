@@ -92,6 +92,13 @@ abstract class Command extends SymfonyCommand
             'normal' => OutputInterface::VERBOSITY_NORMAL,
         ];
 
+    /**
+     * The return code of the command.
+     *
+     * @var int
+     */
+    protected $executeCode = 0;
+
     public function __construct(string $name = null)
     {
         if (! $name && $this->name) {
@@ -446,7 +453,9 @@ abstract class Command extends SymfonyCommand
                 }
 
                 $this->eventDispatcher->dispatch(new Event\FailToHandle($this, $exception));
-                return $exception->getCode();
+                $errCode = $exception->getCode();
+                $this->executeCode = $errCode;
+                return $errCode;
             } finally {
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\AfterExecute($this));
             }
@@ -456,9 +465,9 @@ abstract class Command extends SymfonyCommand
 
         if ($this->coroutine && ! Coroutine::inCoroutine()) {
             run($callback, $this->hookFlags);
-            return 0;
+            return $this->executeCode;
         }
 
-        return $callback();
+        return $this->executeCode;
     }
 }
