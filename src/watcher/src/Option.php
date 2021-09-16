@@ -125,6 +125,6 @@ class Option
             $this->timezone = date_default_timezone_get();
         }
 
-        return $this->timezone;
+        return escapeshellarg($this->timezone);
     }
 }
