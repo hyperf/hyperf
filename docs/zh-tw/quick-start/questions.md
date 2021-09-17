@@ -156,3 +156,16 @@ pcntl support => enabled
 ```
 
 - 當開啟 `grpc` 的時候，需要新增 `grpc.enable_fork_support= 1;` 到 `php.ini` 中，以支援開啟子程序。
+
+## HTTP Server 將 `open_websocket_protocol` 設定為 `false` 後啟動報錯：`Swoole\Server::start(): require onReceive callback`
+
+1. 檢查 Swoole 是否編譯了 http2
+
+```shell
+php --ri swoole | grep http2
+http2 => enabled
+```
+
+如果沒有，需要重新編譯 Swoole 並增加 `--enable-http2` 引數。
+
+2. 檢查 [server.php](/zh-tw/config?id=serverphp-配置說明) 檔案中 `open_http2_protocol` 選項是否為 `true`。

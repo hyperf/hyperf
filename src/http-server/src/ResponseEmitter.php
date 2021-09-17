@@ -23,18 +23,22 @@ class ResponseEmitter implements ResponseEmitterInterface
      */
     public function emit(ResponseInterface $response, $swooleResponse, bool $withContent = true)
     {
-        if (strtolower($swooleResponse->header['Upgrade'] ?? '') === 'websocket') {
-            return;
-        }
-        $this->buildSwooleResponse($swooleResponse, $response);
-        $content = $response->getBody();
-        if ($content instanceof FileInterface) {
-            return $swooleResponse->sendfile($content->getFilename());
-        }
-        if ($withContent) {
-            $swooleResponse->end((string) $content);
-        } else {
-            $swooleResponse->end();
+        try {
+            if (strtolower($swooleResponse->header['Upgrade'] ?? '') === 'websocket') {
+                return;
+            }
+            $this->buildSwooleResponse($swooleResponse, $response);
+            $content = $response->getBody();
+            if ($content instanceof FileInterface) {
+                return $swooleResponse->sendfile($content->getFilename());
+            }
+
+            if ($withContent) {
+                $swooleResponse->end((string) $content);
+            } else {
+                $swooleResponse->end();
+            }
+        } catch (\Throwable $exception) {
         }
     }
 

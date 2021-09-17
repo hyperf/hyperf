@@ -9,9 +9,13 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Contract;
+namespace HyperfTest\Command\Command;
 
-interface UnCompressInterface
+use Hyperf\Command\Command;
+
+class FooCommand extends Command
 {
-    public function uncompress();
+    public function handle()
+    {
+    }
 }

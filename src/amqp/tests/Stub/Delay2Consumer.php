@@ -9,9 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Contract;
+namespace HyperfTest\Amqp\Stub;
 
-interface UnCompressInterface
+use Hyperf\Amqp\Message\ConsumerDelayedMessageTrait;
+use Hyperf\Amqp\Message\ConsumerMessage;
+
+class Delay2Consumer extends ConsumerMessage
 {
-    public function uncompress();
+    use ConsumerDelayedMessageTrait;
 }

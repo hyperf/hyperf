@@ -1,4 +1,35 @@
-# v2.2.7 - TBD
+# v2.2.9 - TBD
+
+## Fixed
+
+- [#4061](https://github.com/hyperf/hyperf/pull/4061) Fixed the conflict between the latest version of prometheus_client_php and `hyperf/metric`.
+- [#4068](https://github.com/hyperf/hyperf/pull/4068) Fixed bug that exit code of `Command` is incorrect when throwing an exception.
+- [#4076](https://github.com/hyperf/hyperf/pull/4076) Fixed server broken caused by sending response failed.
+
+## Added
+
+- [#4045](https://github.com/hyperf/hyperf/pull/4045) Support to control whether to report by `tracer` through config `opentracing.enable.error`.
+
+# v2.2.8 - 2021-09-14
+
+## Fixed
+
+- [#4028](https://github.com/hyperf/hyperf/pull/4028) Fixed the success rate calculation in grafana dashboard.
+- [#4030](https://github.com/hyperf/hyperf/pull/4030) Fixed bug that async-queue broken caused by uncompressing model failed.
+- [#4042](https://github.com/hyperf/hyperf/pull/4042) Fixed coroutines deadlock caused by cleaning up expired fds in socketio-server when stop server.
+
+## Added
+
+- [#4013](https://github.com/hyperf/hyperf/pull/4013) Support `sameSite=None` when return response with cookies.
+- [#4017](https://github.com/hyperf/hyperf/pull/4017) Added `Macroable` into `Hyperf\Utils\Collection`.
+- [#4021](https://github.com/hyperf/hyperf/pull/4021) Added argument `$attempts` into `$callback` when using function `retry()`.
+- [#4040](https://github.com/hyperf/hyperf/pull/4040) Added method `ConsumerDelayedMessageTrait::getDeadLetterExchange()` which used to rewrite `x-dead-letter-exchange` by yourself.
+
+## Removed
+
+- [#4017](https://github.com/hyperf/hyperf/pull/4017) Removed `Macroable` from `Hyperf\Database\Model\Collection` because it already exists in `Hyperf\Utils\Collection`.
+
+# v2.2.7 - 2021-09-06
 
 # Fixed
 

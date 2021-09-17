@@ -1,5 +1,40 @@
 # 版本更新記錄
 
+# v2.2.8 - 2021-09-14
+
+## 修復
+
+- [#4028](https://github.com/hyperf/hyperf/pull/4028) 修復 `grafana` 面板中，請求數結果計算錯誤的問題。
+- [#4030](https://github.com/hyperf/hyperf/pull/4030) 修復異步隊列會因為解壓縮模型失敗，導致進程中斷隨後重啟的問題。
+- [#4042](https://github.com/hyperf/hyperf/pull/4042) 修復因 `SocketIO` 服務關閉時清理過期的 `fd`，進而導致協程死鎖的問題。
+
+## 新增
+
+- [#4013](https://github.com/hyperf/hyperf/pull/4013) 為 `Cookies` 增加 `sameSite=None` 的支持。
+- [#4017](https://github.com/hyperf/hyperf/pull/4017) 為 `Hyperf\Utils\Collection` 增加 `Macroable`。
+- [#4021](https://github.com/hyperf/hyperf/pull/4021) 為 `retry()` 方法中 `$callback` 匿名函數增加 `$attempts` 變量。
+- [#4040](https://github.com/hyperf/hyperf/pull/4040) 為 `AMQP` 組件新增方法 `ConsumerDelayedMessageTrait::getDeadLetterExchange()`，可以用來重寫 `x-dead-letter-exchange` 參數。
+
+## 移除
+
+- [#4017](https://github.com/hyperf/hyperf/pull/4017) 從 `Hyperf\Database\Model\Collection` 中移除 `Macroable`，因為它的基類 `Hyperf\Utils\Collection` 已引入了對應的 `Macroable`。
+
+# v2.2.7 - 2021-09-06
+
+# 修復
+
+- [#3997](https://github.com/hyperf/hyperf/pull/3997) 修復 `Nats` 消費者會在連接超時後崩潰的問題。
+- [#3998](https://github.com/hyperf/hyperf/pull/3998) 修復 `Apollo` 不支持 `https` 協議的問題。
+
+## 優化
+
+- [#4009](https://github.com/hyperf/hyperf/pull/4009) 優化方法 `MethodDefinitionCollector::getOrParse()`，避免在 PHP8 環境下，觸發即將廢棄的錯誤。
+
+## 新增
+
+- [#4002](https://github.com/hyperf/hyperf/pull/4002) [#4012](https://github.com/hyperf/hyperf/pull/4012) 為驗證器增加場景功能，允許不同場景下，使用不同的驗證規則。
+- [#4011](https://github.com/hyperf/hyperf/pull/4011) 為工具類 `Hyperf\Utils\Str` 增加了一些新的便捷方法。
+
 # v2.2.6 - 2021-08-30
 
 ## 修復
@@ -11,7 +46,7 @@
 ## 新增
 
 - [#3987](https://github.com/hyperf/hyperf/pull/3987) AMQP 組件支持延時隊列。
-- [#3989](https://github.com/hyperf/hyperf/pull/3989) 為熱更新組件新增了配置 `command`，可以用來定義自己的啟動腳本，支持 [nano](https://github.com/hyperf/nano) 組件。
+- [#3989](https://github.com/hyperf/hyperf/pull/3989) [#3992](https://github.com/hyperf/hyperf/pull/3992) 為熱更新組件新增了配置 `command`，可以用來定義自己的啟動腳本，支持 [nano](https://github.com/hyperf/nano) 組件。
 
 # v2.2.5 - 2021-08-23
 

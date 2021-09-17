@@ -47,3 +47,4 @@ parameters:
     - '#InfluxDB\\Point constructor expects float\|null, string given#'
     - '#getSwooleTracker.* not found#'
     - '#trackerHookMalloc not found#'
+    - '#separator of function explode expects non-empty-string, string given#'

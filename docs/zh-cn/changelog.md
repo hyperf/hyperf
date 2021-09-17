@@ -1,5 +1,40 @@
 # 版本更新记录
 
+# v2.2.8 - 2021-09-14
+
+## 修复
+
+- [#4028](https://github.com/hyperf/hyperf/pull/4028) 修复 `grafana` 面板中，请求数结果计算错误的问题。
+- [#4030](https://github.com/hyperf/hyperf/pull/4030) 修复异步队列会因为解压缩模型失败，导致进程中断随后重启的问题。
+- [#4042](https://github.com/hyperf/hyperf/pull/4042) 修复因 `SocketIO` 服务关闭时清理过期的 `fd`，进而导致协程死锁的问题。
+
+## 新增
+
+- [#4013](https://github.com/hyperf/hyperf/pull/4013) 为 `Cookies` 增加 `sameSite=None` 的支持。
+- [#4017](https://github.com/hyperf/hyperf/pull/4017) 为 `Hyperf\Utils\Collection` 增加 `Macroable`。
+- [#4021](https://github.com/hyperf/hyperf/pull/4021) 为 `retry()` 方法中 `$callback` 匿名函数增加 `$attempts` 变量。
+- [#4040](https://github.com/hyperf/hyperf/pull/4040) 为 `AMQP` 组件新增方法 `ConsumerDelayedMessageTrait::getDeadLetterExchange()`，可以用来重写 `x-dead-letter-exchange` 参数。
+
+## 移除
+
+- [#4017](https://github.com/hyperf/hyperf/pull/4017) 从 `Hyperf\Database\Model\Collection` 中移除 `Macroable`，因为它的基类 `Hyperf\Utils\Collection` 已引入了对应的 `Macroable`。
+
+# v2.2.7 - 2021-09-06
+
+# 修复
+
+- [#3997](https://github.com/hyperf/hyperf/pull/3997) 修复 `Nats` 消费者会在连接超时后崩溃的问题。
+- [#3998](https://github.com/hyperf/hyperf/pull/3998) 修复 `Apollo` 不支持 `https` 协议的问题。
+
+## 优化
+
+- [#4009](https://github.com/hyperf/hyperf/pull/4009) 优化方法 `MethodDefinitionCollector::getOrParse()`，避免在 PHP8 环境下，触发即将废弃的错误。
+
+## 新增
+
+- [#4002](https://github.com/hyperf/hyperf/pull/4002) [#4012](https://github.com/hyperf/hyperf/pull/4012) 为验证器增加场景功能，允许不同场景下，使用不同的验证规则。
+- [#4011](https://github.com/hyperf/hyperf/pull/4011) 为工具类 `Hyperf\Utils\Str` 增加了一些新的便捷方法。
+
 # v2.2.6 - 2021-08-30
 
 ## 修复

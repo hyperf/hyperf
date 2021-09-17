@@ -195,7 +195,9 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
     {
         Coroutine::create(function () {
             while (true) {
-                CoordinatorManager::until(Constants::WORKER_EXIT)->yield($this->cleanUpExpiredInterval / 1000);
+                if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($this->cleanUpExpiredInterval / 1000)) {
+                    break;
+                }
                 $this->cleanUpExpiredOnce();
             }
         });
