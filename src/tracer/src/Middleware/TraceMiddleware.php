@@ -60,9 +60,12 @@ class TraceMiddleware implements MiddlewareInterface
         });
         try {
             $response = $handler->handle($request);
-            $span->setTag('response.statusCode', $response->getStatusCode());
+            $span->setTag('response.status_code', $response->getStatusCode());
         } catch (\Throwable $exception) {
-            $this->switchManager->isEnable('error') && $this->appendExceptionToSpan($span, $exception);
+            $this->switchManager->isEnable('exception') && $this->appendExceptionToSpan($span, $exception);
+            if ($exception instanceof HttpException) {
+                $span->setTag('response.status_code', $exception->getStatusCode());
+            }
             throw $exception;
         } finally {
             $span->finish();
@@ -74,16 +77,9 @@ class TraceMiddleware implements MiddlewareInterface
     protected function appendExceptionToSpan(Span $span, \Throwable $exception): void
     {
         $span->setTag('error', true);
-        $span->setTag('error.code', $exception->getCode());
-        $span->setTag('error.file', $exception->getFile());
-        $span->setTag('error.line', $exception->getLine());
-        $span->setTag('error.message', $exception->getMessage());
-        $span->setTag('error.stackTrace', $exception->getTraceAsString());
-        $span->setTag('error.type', get_class($exception));
-
-        if ($exception instanceof HttpException) {
-            $span->setTag('error.statusCode', $exception->getStatusCode());
-        }
+        $span->setTag('exception.code', $exception->getCode());
+        $span->setTag('exception.class', get_class($exception));
+        $span->log(['exception' => (string) $exception]);
     }
 
     protected function buildSpan(ServerRequestInterface $request): Span
