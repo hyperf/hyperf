@@ -19,7 +19,7 @@ If you don't use Docker as the basis for your system environment, you need to ma
 
 ## Install Hyperf
 
-Hyperf uses [Composer] (https://getcomposer.org) to manage project dependencies. Before using Hyperf, make sure your operating environment has Composer installed.
+Hyperf uses [Composer](https://getcomposer.org) to manage project dependencies. Before using Hyperf, make sure your operating environment has Composer installed.
 
 ### Create project via `Composer`
 
