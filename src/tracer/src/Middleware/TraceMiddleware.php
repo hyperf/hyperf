@@ -13,6 +13,7 @@ namespace Hyperf\Tracer\Middleware;
 
 use Hyperf\HttpMessage\Exception\HttpException;
 use Hyperf\Tracer\SpanStarter;
+use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use Hyperf\Utils\Coroutine;
 use OpenTracing\Span;
@@ -32,14 +33,20 @@ class TraceMiddleware implements MiddlewareInterface
     protected $switchManager;
 
     /**
+     * @var SpanTagManager
+     */
+    protected $spanTagManager;
+
+    /**
      * @var Tracer
      */
     private $tracer;
 
-    public function __construct(Tracer $tracer, SwitchManager $switchManager)
+    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
     {
         $this->tracer = $tracer;
         $this->switchManager = $switchManager;
+        $this->spanTagManager = $spanTagManager;
     }
 
     /**
@@ -77,8 +84,9 @@ class TraceMiddleware implements MiddlewareInterface
     protected function appendExceptionToSpan(Span $span, \Throwable $exception): void
     {
         $span->setTag('error', true);
-        $span->setTag('exception.code', $exception->getCode());
-        $span->setTag('exception.class', get_class($exception));
+        $span->setTag($this->spanTagManager->get('exception', 'class'), get_class($exception));
+        $span->setTag($this->spanTagManager->get('exception', 'code'), $exception->getCode());
+        $span->setTag($this->spanTagManager->get('exception', 'message'), $exception->getMessage());
         $span->log(['exception' => (string) $exception]);
     }
 

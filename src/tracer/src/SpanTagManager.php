@@ -31,6 +31,11 @@ class SpanTagManager
             'path' => 'rpc.path',
             'status' => 'rpc.status',
         ],
+        'exception' => [
+            'class' => 'exception.class',
+            'code' => 'exception.code',
+            'message' => 'exception.message',
+        ],
     ];
 
     public function apply(array $tags): void

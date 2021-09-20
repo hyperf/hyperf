@@ -72,5 +72,10 @@ return [
             'db.statement' => 'db.statement',
             'db.query_time' => 'db.query_time',
         ],
+        'exception' => [
+            'class' => 'exception.class',
+            'code' => 'exception.code',
+            'message' => 'exception.message',
+        ],
     ],
 ];
