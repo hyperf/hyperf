@@ -113,4 +113,9 @@ class ReflectionManager extends MetadataCollector
         }
         return $reflectionClasses;
     }
+
+    public static function getContainer(): array
+    {
+        return self::$container;
+    }
 }
