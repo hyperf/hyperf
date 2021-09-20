@@ -35,6 +35,7 @@ class SpanTagManager
             'class' => 'exception.class',
             'code' => 'exception.code',
             'message' => 'exception.message',
+            'stack_trace' => 'exception.stack_trace',
         ],
         'request' => [
             'path' => 'request.path',
