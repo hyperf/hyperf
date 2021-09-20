@@ -34,11 +34,11 @@ class AnnotationReaderTest extends TestCase
         ], $properties['globalImports']);
     }
 
+    /**
+     * @requires PHP 8.0
+     */
     public function testGetNotFoundAttributesOfClass()
     {
-        if (\PHP_VERSION_ID < 80000) {
-            $this->markTestSkipped('The test only for PHP 8');
-        }
         $reflectionClass = new ReflectionClass(NotFoundAttributeTarget::class);
 
         $exceptionMessage = "No attribute class found for 'HyperfTest\\Di\\Stub\\NotExistAttribute' in HyperfTest\\Di\\Stub\\NotFoundAttributeTarget";
@@ -56,11 +56,11 @@ class AnnotationReaderTest extends TestCase
         }
     }
 
+    /**
+     * @requires PHP 8.0
+     */
     public function testGetNotFoundAttributesOfMethod()
     {
-        if (\PHP_VERSION_ID < 80000) {
-            $this->markTestSkipped('The test only for PHP 8');
-        }
         $reflectionClass = new ReflectionClass(NotFoundAttributeTarget::class);
         $reflectionMethod = $reflectionClass->getMethod('foo');
 
@@ -79,11 +79,11 @@ class AnnotationReaderTest extends TestCase
         }
     }
 
+    /**
+     * @requires PHP 8.0
+     */
     public function testGetNotFoundAttributesOfProperty()
     {
-        if (\PHP_VERSION_ID < 80000) {
-            $this->markTestSkipped('The test only for PHP 8');
-        }
         $reflectionClass = new ReflectionClass(NotFoundAttributeTarget::class);
         $reflectionProperty = $reflectionClass->getProperty('foo');
 
