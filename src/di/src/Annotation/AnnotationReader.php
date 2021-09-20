@@ -17,6 +17,7 @@ use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\DocParser;
 use Doctrine\Common\Annotations\PhpParser;
 use Doctrine\Common\Annotations\Reader;
+use Hyperf\Di\Exception\NotFoundException;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -240,6 +241,29 @@ class AnnotationReader implements Reader
         }
         $attributes = $reflection->getAttributes();
         foreach ($attributes as $attribute) {
+            if (! class_exists($attribute->getName())) {
+                $className = $methodName = $propertyName = '';
+                if ($reflection instanceof ReflectionClass) {
+                    $className = $reflection->getName();
+                } elseif ($reflection instanceof ReflectionMethod) {
+                    $className = $reflection->getDeclaringClass()->getName();
+                    $methodName = $reflection->getName();
+                } elseif ($reflection instanceof ReflectionProperty) {
+                    $className = $reflection->getDeclaringClass()->getName();
+                    $propertyName = $reflection->getName();
+                }
+                $message = sprintf(
+                    "No attribute class found for '%s' in %s",
+                    $attribute->getName(), $className
+                );
+                if ($methodName) {
+                    $message .= sprintf('->%s() method', $methodName);
+                }
+                if ($propertyName) {
+                    $message .= sprintf('::$%s property', $propertyName);
+                }
+                throw new NotFoundException($message);
+            }
             $result[] = $attribute->newInstance();
         }
         return $result;
