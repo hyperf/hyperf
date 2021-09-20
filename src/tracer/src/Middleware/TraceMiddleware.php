@@ -67,11 +67,11 @@ class TraceMiddleware implements MiddlewareInterface
         });
         try {
             $response = $handler->handle($request);
-            $span->setTag('response.status_code', $response->getStatusCode());
+            $span->setTag($this->spanTagManager->get('response', 'status_code'), $response->getStatusCode());
         } catch (\Throwable $exception) {
             $this->switchManager->isEnable('exception') && $this->appendExceptionToSpan($span, $exception);
             if ($exception instanceof HttpException) {
-                $span->setTag('response.status_code', $exception->getStatusCode());
+                $span->setTag($this->spanTagManager->get('response', 'status_code'), $exception->getStatusCode());
             }
             throw $exception;
         } finally {
@@ -94,11 +94,11 @@ class TraceMiddleware implements MiddlewareInterface
     {
         $uri = $request->getUri();
         $span = $this->startSpan('request');
-        $span->setTag('coroutine.id', (string) Coroutine::id());
-        $span->setTag('request.path', (string) $uri);
-        $span->setTag('request.method', $request->getMethod());
+        $span->setTag($this->spanTagManager->get('coroutine', 'id'), (string) Coroutine::id());
+        $span->setTag($this->spanTagManager->get('request', 'path'), (string) $uri);
+        $span->setTag($this->spanTagManager->get('request', 'method'), $request->getMethod());
         foreach ($request->getHeaders() as $key => $value) {
-            $span->setTag('request.header.' . $key, implode(', ', $value));
+            $span->setTag($this->spanTagManager->get('request', 'header') . '.' . $key, implode(', ', $value));
         }
         return $span;
     }
