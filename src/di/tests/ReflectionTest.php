@@ -91,7 +91,7 @@ class ReflectionTest extends TestCase
 
     public function testReflectionManagerGetAllClasses()
     {
-        $reflections = ReflectionManager::getAllClasses(['./Stub']);
+        $reflections = ReflectionManager::getAllClasses([__DIR__ . '/Stub']);
         $this->assertGreaterThan(0, count($reflections));
         foreach ($reflections as $name => $reflection) {
             $this->assertTrue(class_exists($name) || interface_exists($name) || trait_exists($name));
