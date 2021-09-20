@@ -221,7 +221,7 @@ class ResponseTest extends TestCase
         });
         $swooleResponse->shouldReceive('header')->withAnyArgs()->twice()->andReturnUsing(function ($name, $value) {
             if ($name == 'X-Token') {
-                $this->assertSame($value, 'xxx');
+                $this->assertSame($value, ['xxx']);
             }
             return true;
         });

@@ -14,7 +14,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         php-version: [ '7.4', '8.0' ]
-        sw-version: [ 'v4.5.11', 'v4.6.7', 'v4.7.1', 'master' ]
+        sw-version: [ 'v4.6.7', 'v4.7.1', 'master' ]
       max-parallel: 12
       fail-fast: false
     env:
