@@ -13,7 +13,6 @@ namespace HyperfTest\Di;
 
 use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
 use Hyperf\Di\Annotation\AnnotationReader;
-use Hyperf\Di\Exception\NotFoundException;
 use HyperfTest\Di\Stub\NotFoundAttributeTarget;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -39,7 +38,7 @@ class AnnotationReaderTest extends TestCase
     {
         $reflectionClass = new ReflectionClass(NotFoundAttributeTarget::class);
 
-        $exceptionMessage = "No attribute class found for 'HyperfTest\Di\Stub\NotExistAttribute' in HyperfTest\Di\Stub\NotFoundAttributeTarget";
+        $exceptionMessage = "No attribute class found for 'HyperfTest\\Di\\Stub\\NotExistAttribute' in HyperfTest\\Di\\Stub\\NotFoundAttributeTarget";
 
         try {
             $annotationReader = new AnnotationReader();
@@ -59,7 +58,7 @@ class AnnotationReaderTest extends TestCase
         $reflectionClass = new ReflectionClass(NotFoundAttributeTarget::class);
         $reflectionMethod = $reflectionClass->getMethod('foo');
 
-        $exceptionMessage = "No attribute class found for 'HyperfTest\Di\Stub\NotExistAttribute' in HyperfTest\Di\Stub\NotFoundAttributeTarget->foo() method";
+        $exceptionMessage = "No attribute class found for 'HyperfTest\\Di\\Stub\\NotExistAttribute' in HyperfTest\\Di\\Stub\\NotFoundAttributeTarget->foo() method";
 
         try {
             $annotationReader = new AnnotationReader();
@@ -79,7 +78,7 @@ class AnnotationReaderTest extends TestCase
         $reflectionClass = new ReflectionClass(NotFoundAttributeTarget::class);
         $reflectionProperty = $reflectionClass->getProperty('foo');
 
-        $exceptionMessage = "No attribute class found for 'HyperfTest\Di\Stub\NotExistAttribute' in HyperfTest\Di\Stub\NotFoundAttributeTarget::\$foo property";
+        $exceptionMessage = "No attribute class found for 'HyperfTest\\Di\\Stub\\NotExistAttribute' in HyperfTest\\Di\\Stub\\NotFoundAttributeTarget::\$foo property";
 
         try {
             $annotationReader = new AnnotationReader();

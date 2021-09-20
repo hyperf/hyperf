@@ -254,7 +254,8 @@ class AnnotationReader implements Reader
                 }
                 $message = sprintf(
                     "No attribute class found for '%s' in %s",
-                    $attribute->getName(), $className
+                    $attribute->getName(),
+                    $className
                 );
                 if ($methodName) {
                     $message .= sprintf('->%s() method', $methodName);
