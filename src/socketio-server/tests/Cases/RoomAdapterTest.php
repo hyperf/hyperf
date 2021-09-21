@@ -30,7 +30,7 @@ use Hyperf\SocketIOServer\Room\RedisAdapter;
 use Hyperf\SocketIOServer\SidProvider\LocalSidProvider;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
-use Mix\Redis\Subscribe\Subscriber;
+use Mix\Redis\Subscriber\Subscriber;
 use Mockery;
 
 /**
