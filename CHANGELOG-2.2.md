@@ -10,6 +10,11 @@
 
 - [#4014](https://github.com/hyperf/hyperf/pull/4014) [#4080](https://github.com/hyperf/hyperf/pull/4080) Support `sasl` and `ssl` for kafka.
 - [#4045](https://github.com/hyperf/hyperf/pull/4045) [#4082](https://github.com/hyperf/hyperf/pull/4082) Support to control whether to report by `tracer` through config `opentracing.enable.exception`.
+- [#4086](https://github.com/hyperf/hyperf/pull/4086) Support annotation for interface.
+
+# Optimized
+
+- [#4084](https://github.com/hyperf/hyperf/pull/4084) Optimized the exception message when the attribute not found.
 
 # v2.2.8 - 2021-09-14
 
