@@ -13,6 +13,7 @@ namespace Hyperf\Tracer\Middleware;
 
 use Hyperf\HttpMessage\Exception\HttpException;
 use Hyperf\Tracer\SpanStarter;
+use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use Hyperf\Utils\Coroutine;
 use OpenTracing\Span;
@@ -32,14 +33,20 @@ class TraceMiddleware implements MiddlewareInterface
     protected $switchManager;
 
     /**
+     * @var SpanTagManager
+     */
+    protected $spanTagManager;
+
+    /**
      * @var Tracer
      */
     private $tracer;
 
-    public function __construct(Tracer $tracer, SwitchManager $switchManager)
+    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
     {
         $this->tracer = $tracer;
         $this->switchManager = $switchManager;
+        $this->spanTagManager = $spanTagManager;
     }
 
     /**
@@ -60,9 +67,12 @@ class TraceMiddleware implements MiddlewareInterface
         });
         try {
             $response = $handler->handle($request);
-            $span->setTag('response.statusCode', $response->getStatusCode());
+            $span->setTag($this->spanTagManager->get('response', 'status_code'), $response->getStatusCode());
         } catch (\Throwable $exception) {
-            $this->switchManager->isEnable('error') && $this->appendExceptionToSpan($span, $exception);
+            $this->switchManager->isEnable('exception') && $this->appendExceptionToSpan($span, $exception);
+            if ($exception instanceof HttpException) {
+                $span->setTag($this->spanTagManager->get('response', 'status_code'), $exception->getStatusCode());
+            }
             throw $exception;
         } finally {
             $span->finish();
@@ -74,27 +84,21 @@ class TraceMiddleware implements MiddlewareInterface
     protected function appendExceptionToSpan(Span $span, \Throwable $exception): void
     {
         $span->setTag('error', true);
-        $span->setTag('error.code', $exception->getCode());
-        $span->setTag('error.file', $exception->getFile());
-        $span->setTag('error.line', $exception->getLine());
-        $span->setTag('error.message', $exception->getMessage());
-        $span->setTag('error.stackTrace', $exception->getTraceAsString());
-        $span->setTag('error.type', get_class($exception));
-
-        if ($exception instanceof HttpException) {
-            $span->setTag('error.statusCode', $exception->getStatusCode());
-        }
+        $span->setTag($this->spanTagManager->get('exception', 'class'), get_class($exception));
+        $span->setTag($this->spanTagManager->get('exception', 'code'), $exception->getCode());
+        $span->setTag($this->spanTagManager->get('exception', 'message'), $exception->getMessage());
+        $span->setTag($this->spanTagManager->get('exception', 'stack_trace'), (string) $exception);
     }
 
     protected function buildSpan(ServerRequestInterface $request): Span
     {
         $uri = $request->getUri();
         $span = $this->startSpan('request');
-        $span->setTag('coroutine.id', (string) Coroutine::id());
-        $span->setTag('request.path', (string) $uri);
-        $span->setTag('request.method', $request->getMethod());
+        $span->setTag($this->spanTagManager->get('coroutine', 'id'), (string) Coroutine::id());
+        $span->setTag($this->spanTagManager->get('request', 'path'), (string) $uri);
+        $span->setTag($this->spanTagManager->get('request', 'method'), $request->getMethod());
         foreach ($request->getHeaders() as $key => $value) {
-            $span->setTag('request.header.' . $key, implode(', ', $value));
+            $span->setTag($this->spanTagManager->get('request', 'header') . '.' . $key, implode(', ', $value));
         }
         return $span;
     }
