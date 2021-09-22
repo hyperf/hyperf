@@ -18,7 +18,7 @@ return [
         'redis' => env('TRACER_ENABLE_REDIS', false),
         'db' => env('TRACER_ENABLE_DB', false),
         'method' => env('TRACER_ENABLE_METHOD', false),
-        'error' => false,
+        'exception' => env('TRACER_ENABLE_EXCEPTION', false),
     ],
     'tracer' => [
         'zipkin' => [
@@ -71,6 +71,23 @@ return [
             'db.query' => 'db.query',
             'db.statement' => 'db.statement',
             'db.query_time' => 'db.query_time',
+        ],
+        'exception' => [
+            'class' => 'exception.class',
+            'code' => 'exception.code',
+            'message' => 'exception.message',
+            'stack_trace' => 'exception.stack_trace',
+        ],
+        'request' => [
+            'path' => 'request.path',
+            'method' => 'request.method',
+            'header' => 'request.header',
+        ],
+        'coroutine' => [
+            'id' => 'coroutine.id',
+        ],
+        'response' => [
+            'status_code' => 'response.status_code',
         ],
     ],
 ];

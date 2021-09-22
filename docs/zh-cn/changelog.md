@@ -1,5 +1,23 @@
 # 版本更新记录
 
+# v2.2.9 - 2021-09-22
+
+## 修复
+
+- [#4061](https://github.com/hyperf/hyperf/pull/4061) 修复 `hyperf/metric` 组件与最新版本的 `prometheus_client_php` 存在冲突的问题。
+- [#4068](https://github.com/hyperf/hyperf/pull/4068) 修复命令行抛出错误时，退出码与实际不符的问题。
+- [#4076](https://github.com/hyperf/hyperf/pull/4076) 修复 `HTTP` 服务因返回数据不是标准 `HTTP` 协议时，导致服务宕机的问题。
+
+## 新增
+
+- [#4014](https://github.com/hyperf/hyperf/pull/4014) [#4080](https://github.com/hyperf/hyperf/pull/4080) 为 `kafka` 组件增加 `sasl` 和 `ssl` 的支持。
+- [#4045](https://github.com/hyperf/hyperf/pull/4045) [#4082](https://github.com/hyperf/hyperf/pull/4082) 为 `tracer` 组件新增配置 `opentracing.enable.exception`，用来判断是否收集异常信息。
+- [#4086](https://github.com/hyperf/hyperf/pull/4086) 支持收集接口 `Interface` 的注解信息。
+
+# 优化
+
+- [#4084](https://github.com/hyperf/hyperf/pull/4084) 优化了注解找不到时的错误信息。
+- 
 # v2.2.8 - 2021-09-14
 
 ## 修复
