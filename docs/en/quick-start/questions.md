@@ -1,143 +1,168 @@
 # FAQ
 
-## `Inject` or `Value` annotation does not works
-
-`2.0` version has changed the mechanism of injection, in the new version, Hyperf will injecting the value of `Inject` and `Value` annotations in the constructor of target class. The following two scenarios may cause injection failure, please pay attention.
-
-1. The target class have not use `Inject` or `Value` annotations, but the parent class uses `Inject` or `Value` annotations, also the target class has a constructor, but at the same time the parent class constructor is not called by child class.
-
-This case will cause the target class will not generate the proxy class, and call its own constructor when instantiating, so there is no way to execute the parent class's constructor.   
-So the method `__handlePropertyHandler` in the proxy class of the parent class will not be executed, then the `Inject` or `Value` annotations will not take effect.
-
-```php
-class ParentClass {
-    /**
-     * @Inject
-     * @var Service
-     */
-    protected $value;
-}
-
-class Origin extends ParentClass
-{
-    public function __construct() {}
-}
-```
-
-2. The target class have not use `Inject` or `Value` annotatinos, but `Inject` or `Value` annotations are used in the `Trait` that use by target class.
-
-This case will cause the target class will not generate the proxy class, so there is no way to execute the `__handlePropertyHandler` in the constructor, then the `Inject` or `Value` annotations of `Trait` will not take effect.
-
-```php
-trait OriginTrait {
-    /**
-     * @Inject
-     * @var Service
-     */
-    protected $value;
-}
-
-class Origin
-{
-    use OriginTrait;
-}
-```
-
-Based on the above two cases, it can be seen that whether the target class generates the proxy class is very important action. Therefore, if you use `Trait` and `parent class` with `Inject` or `Value` annotations, you could just add a `Inject` or `Value` annotations to the target class could solve the above two cases.
-
-```php
-
-use Hyperf\Contract\StdoutLoggerInterface;
-
-trait OriginTrait {
-    /**
-     * @Inject
-     * @var Service
-     */
-    protected $trait;
-}
-
-class ParentClass {
-    /**
-     * @Inject
-     * @var Service
-     */
-    protected $value;
-}
-
-class Origin extends ParentClass
-{
-    use OriginTrait;
-
-    /**
-     * @Inject
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-}
-```
-
-## Swoole Short Name has not been disabled
+## Swoole short function names have not been disabled
 
 ```
-[ERROR] Swoole short name have to disable before start server, please set swoole.use_shortname = 'Off' into your php.ini.
+[ERROR] Swoole short function names must be disabled before the server starts, please set swoole.use_shortname = 'Off' in your php.ini.
 ```
 
-You need to add `swoole.use_shortname ='Off'` configuration in your php.ini configuration file
+You need to add `swoole.use_shortname ='Off'` to your php.ini configuration file
 
 > Note that this configuration MUST be configured in php.ini and CANNOT be overridden by the ini_set() function.
 
-You could also start the server through the following command, turn off the Swoole short name function when executing the PHP command
+You could also start the server through the following command, disabling the Swoole short function names when executing the PHP command:
 
 ```
 php -d swoole.use_shortname=Off bin/hyperf.php start
 ```
 
-## The message of async-queue loss
-   
-If you notice that the logical of `handle` method does not executed when using the async-queue component, please check the following situations first:
-   
-1. Is `Redis Server` shared with other project or other peoples, and messages are consumed by other project or other peoples?
-2. Whether the local process has remnants and is consumed by other processes
-   
-The following provides a foolproof solution:
-   
-1. killall php
-2. Modify `async-queue` configuration `channel`
-   
-## Shows `Swoole\Error: API must be called in the coroutine` error when using hyperf/amqp component
-   
-You can modify the `close_on_destruct` configuration value to `false` in the `config/autoload/amqp.php` configuration file.
+## Message loss in asynchronous queues
 
-## When using Swoole 4.5 version and view component, all accesses appears 404
-    
-If you are using Swoole 4.5 version and the view component if there is an 404 problem, you can try to remove the `static_handler_locations` configuration item in the `config/autoload/server.php` file.
-    
-The path under this configuration will be considered as a static file route, so if `/` is configured, all requests will be considered as file paths, resulting in 404.
+If the `handle` method is not being executed when using the `async-queue` component, please check the following possibilities:
 
-## Code does not take effect after modified
+1. Is `Redis` being shared with another project or other users, and are the messages being consumed by those projects or users?
+2. Do you have remnants of old processes still running which could be consuming the messages?
+
+The following provides an easy solution to both of these issues:
    
-When you encounter the problem that the modified code does not take effect, please execute the following command
+1. Run the command `killall php` in your `console`
+2. Modify the `channel` configuration of your `async-queue`
+   
+## `Swoole\Error: API must be called in the coroutine` error when using the `hyperf/amqp` component
+   
+Set the `close_on_destruct` configuration value to `false` in the `config/autoload/amqp.php` configuration file.
+
+## All requests return 404 errors when using Swoole version 4.5 and the `view` component
+    
+If you are using Swoole version 4.5 and the `view` component and there is a `404` error problem, you can try to remove the `static_handler_locations` configuration item from the `config/autoload/server.php` configuration file.
+    
+This configuration value contains a path that will be considered a `static file` route, so if the value is `/`, all requests are processed as files, resulting in 404 errors.
+
+## Code changes have no effect
+   
+If there is no change when you modify the code of your `Hyperf` application, run the following command:
    
 ```bash
 composer dump-autoload -o
 ```
    
-During the development stage, please DO NOT set `scan_cacheable` configuration value to `true`, it will cause the file to not be scanned again when the `collector cache` exists. In addition, the `Dockerfile` in the official skeleton package has this configuration enabled by default. When developing under the `Docker` environment, please pay attention to this.
+During development, please DO NOT set the `scan_cacheable` configuration value to `true`, as it will cause the file to not be re-parsed when the `collector cache` is being used. In addition, the `Dockerfile` in the official `hyperf-skeleton` package has this configuration enabled by default. When developing under the `Docker` environment, please set `scan_cacheable` to `false`.
 
-> When the environment variable exists SCAN_CACHEABLE, this configuration cannot be modified in .env file.
+> When the environment variable `SCAN_CACHEABLE` exists, this configuration cannot be modified in any `.env` file.
 
-`2.0.0` and `2.0.1`, these two versions, when judging whether the file is modified, there is no judgment that the modification time is equal, so after the file is modified, the cache will be generated immediately (for example, when the `watcher` component is used), as a result, the code cannot take effect in time.
+## Syntax error when starting the server
 
-## Syntax error 
-
-Exception will be thrown when hyperf server is started
+Is the following exception is thrown when the `Hyperf` server starts:
 
 ```
 Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line 27 in vendor/nikic/php-parser/lib/PhpParser/ParserAbstract.php:315
 ```
 
-Please run `composer analyse` to initialize a static scan of the source code in order to locate the issue
+Please run `composer analyse` to initialize a static scan of the source code in order to locate the issue.
 
-Normally this issue is caused by  [zircote/swagger](https://github.com/zircote/swagger-php) version 3.0.5, Please see [#834](https://github.com/zircote/swagger-php/issues/834) for further information.
-If you have installed [hyperf/swagger](https://github.com/hyperf/swagger), please lock the version of [zircote/swagger](https://github.com/zircote/swagger-php) at 3.0.4.
+Normally this issue is caused by running version `3.0.5` of [zircote/swagger](https://github.com/zircote/swagger-php), please see [#834](https://github.com/zircote/swagger-php/issues/834) for further information.
+
+If you have installed [hyperf/swagger](https://github.com/hyperf/swagger), please lock the version of [zircote/swagger](https://github.com/zircote/swagger-php) at `3.0.4`.
+
+## `Hyperf` will not execute commands because the memory_limit is too small
+
+By default, the `memory_limit` of `PHP` is set to `128M`. Because `Hyperf` makes use of the `BetterReflection` package to perform code analysis, a large amount of memory may be consumed and the `PHP` process may throw fatal exceptions when it runs out of memory.
+
+You can either run commands with an argument to increase the memory limit `php -d memory_limit=-1 bin/hyperf.php start` or modify the `php.ini` configuration file:
+
+```ini
+# Look for the location of your php.ini file
+php --ini
+
+# Set the memory_limit within that file
+memory_limit=-1
+```
+
+## Dependency injection is not working correctly in `PHP` version `7.3`
+
+In versions `2.0` - `2.1`, `Hyperf` uses the `BetterReflection` package to make `AOP` work with none `DI` managed objects (such as objects instantiated using the `new` keyword). While implementing `AOP` in this way enhances the developer experience, it also brings several difficulties:
+
+* Project startup is slow without a `scan cache`
+* `Inject` and `Value` annotations have no effect
+* `BetterReflection` does not support `PHP` version `8` (as of the `2.2` release)
+
+In newer versions, we stopped using the `BetterReflection` package in favour of using a child process to scan the codebase to solve these pain points but this introduced some compatibility issues in older versions of `PHP`:
+
+In `php7.3` you may encounter an error similar to the following when starting the application:
+
+```
+PHP Fatal error:  Interface 'Hyperf\Signal\SignalHandlerInterface' not found in vendor/hyperf/process/src/Handler/ProcessStopHandler.php on line 17
+
+PHP Fatal error:  Interface 'Symfony\Component\Serializer\SerializerInterface' not found in vendor/hyperf/utils/src/Serializer/Serializer.php on line 46
+```
+
+This problem is due to how `PHP` version `7.3` handles using reflection to find an interface which does exist or has no corresponding class. The best solution is to upgrade to `PHP` version `7.4` or `8.0` but the issue can also be fixed by installing the components which contain these interfaces as follows:
+
+```
+composer require hyperf/signal
+
+composer require symfony/serializer
+```
+
+## `Error while injecting dependencies into... No entry or class found...` error when injecting traits using `@Inject`
+
+This error appears when you inject a trait using namespaces via `Inject` and the class containing the `use Trait;` syntax uses a conflicting namespace. This is a complex concept but the following examples should make it simple:
+
+```php
+use Hyperf\HttpServer\Contract\ResponseInterface; # Namespace containing ResponseInterface class
+use Hyperf\Di\Annotation\Inject;
+
+trait TestTrait
+{
+    /**
+     * @Inject()   
+     * @var ResponseInterface
+     */
+    protected $response;
+}
+```
+
+In the above trait, the class `Hyperf\HttpServer\Contract\ResponseInterface` is injected. If the sub-class (the class which uses this trait) uses a `ResponseInterface` class with a difference namespace, for example `Psr\Http\Message\ResponseInterface`, it will cause the injected `ResponseInterfece` to be overwritten.
+
+```php
+use Psr\Http\Message\ResponseInterface; # A conflicting namespace containing a ResponseInterface class
+
+class IndexController
+{
+    use TestTrait;
+    // Error while injecting dependencies into App\Controller\IndexController: No entry or class found for 'Psr\Http\Message\ResponseInterface'
+}
+```
+
+This issue can be fixed using the following methods:
+
+* Create an alias in the sub-class to prevent a conflict: `use Psr\Http\Message\ResponseInterface as PsrResponseInterface;`
+* In `PHP` version `7.4` you can add a type to the attribute within the trait class: `protected ResponseInterface $response;`
+## `Hyperf` will not execute commands because `gprc` or `pcntl` extensions are not installed
+
+`Hyperf` version `2.2` requires the `pcntl` extension, you can check if it's installed by running the command `php --ri pcntl`:
+
+```
+pcntl
+
+pcntl support => enabled
+```
+
+When using `grpc`, you must enable `fork support` to support opening child processes by adding the following to your `php.ini`:
+
+```
+grpc.enable_fork_support=1;
+```
+
+## The `open_http2_protocol` value is set to `false` after receiving the error: `Swoole\Server::start(): require onReceive callback`
+
+1. Check if `Swoole` has been compiled with `http2` support:
+
+```
+php --ri swoole | grep http2
+http2 => enabled
+```
+
+If the result of this command is empty, you need to recompile `Swoole` with the `--enabled-http2` parameter
+
+2. Check the `open_http2_protocol` configuration value is set to `true` in the `config/autoload/server.php` configuration file
