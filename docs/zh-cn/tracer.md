@@ -11,11 +11,15 @@
 composer require hyperf/tracer
 ```
 
-[hyperf/tracer](https://github.com/hyperf/tracer) 组件默认安装了 [Zipkin](https://zipkin.io/) 相关依赖。如果要使用 [Jaeger](https://www.jaegertracing.io/)，还需要执行下面的命令安装对应的依赖：
-
-```bash
-composer require jonahgeorge/jaeger-client-php
-```
+[hyperf/tracer](https://github.com/hyperf/tracer) 组件依赖于对等依赖：
+- 对于[Zipkin](https://zipkin.io/)，需要执行如下命令安装对应的依赖：
+    ```bash
+    composer require jcchavezs/zipkin-opentracing    
+    ```
+- 而如果要使用[Jaeger](https://www.jaegertracing.io/)，则需要执行如下命令安装对应的依赖:
+    ```bash
+    composer require jonahgeorge/jaeger-client-php
+    ```
 
 ### 增加组件配置
 

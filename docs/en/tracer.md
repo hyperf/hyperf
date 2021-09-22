@@ -1,7 +1,9 @@
 # Call link tracking
 
 In the microservice architecture, there will be a lot of services by splitting, which means that a business request may go through 3 or 4 services at least, even dozens or more. Under this architecture, it is extremely difficult when we need to debug a certain problem. Then we need a call link tracking system to help us dynamically display the service call link so that we can quickly locate the problem, and also optimize the service based on the link information.
-In `Hyperf`, we provide the [hyperf/tracer](https://github.com/hyperf/tracer) component to track and analyze the call of each cross-network request. Currently, the [Zipkin](https://zipkin.io/) system and the [Jaeger](https://www.jaegertracing.io/) system are docked according to the [OpenTracing](https://opentracing.io) protocol. Users can also customize this by following the OpenTracing protocol.
+In `Hyperf`, we provide the [hyperf/tracer](https://github.com/hyperf/tracer) component to track and analyze the call of each cross-network request.
+Currently, the [Zipkin](https://zipkin.io/) system and the [Jaeger](https://www.jaegertracing.io/) system are docked according to the [OpenTracing](https://opentracing.io) protocol.
+Users can also customize this by following the OpenTracing protocol.
 
 ## Installation
 
@@ -11,11 +13,15 @@ In `Hyperf`, we provide the [hyperf/tracer](https://github.com/hyperf/tracer) co
 composer require hyperf/tracer
 ```
 
-The [hyperf/tracer](https://github.com/hyperf/tracer) component has installed [Zipkin](https://zipkin.io/) related dependencies by default. If you want to use [Jaeger](https://www.jaegertracing.io/), you need to execute the following command to install the corresponding dependencies:
-
-```bash
-composer require jonahgeorge/jaeger-client-php
-```
+The [hyperf/tracer](https://github.com/hyperf/tracer) component depends on peer dependencies:
+- For [Zipkin](https://zipkin.io/), you need to execute the following command to install the corresponding dependencies:
+    ```bash
+    composer require jcchavezs/zipkin-opentracing    
+    ```
+- And if you want to use [Jaeger](https://www.jaegertracing.io/), you need to execute the following command to install the corresponding dependencies:
+    ```bash
+    composer require jonahgeorge/jaeger-client-php
+    ```
 
 ### Add component configuration
 
