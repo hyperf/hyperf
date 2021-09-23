@@ -89,7 +89,7 @@ class StartServer extends Command
         $useShortname = ini_get_all('swoole')['swoole.use_shortname']['local_value'];
         $useShortname = strtolower(trim(str_replace('0', '', $useShortname)));
         if (! in_array($useShortname, ['', 'off', 'false'], true)) {
-            $output->writeln('<error>ERROR</error> Swoole short name have to disable before start server, please set swoole.use_shortname = off into your php.ini.');
+            $output->writeln("<error>ERROR</error> Swoole short function names must be disabled before the server starts, please set swoole.use_shortname = 'Off' in your php.ini.");
             exit(SIGTERM);
         }
     }
