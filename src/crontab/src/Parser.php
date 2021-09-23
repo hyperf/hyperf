@@ -86,7 +86,7 @@ class Parser
                     continue;
                 }
 
-                if (! $this->between((int) $value, (int) ($min > $start ? $min : $start), (int) $max)) {
+                if (trim($value) === '' || ! $this->between((int) $value, (int) ($min > $start ? $min : $start), (int) $max)) {
                     continue;
                 }
                 $result[] = (int) $value;
