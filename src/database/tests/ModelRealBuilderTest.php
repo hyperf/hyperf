@@ -126,6 +126,18 @@ class ModelRealBuilderTest extends TestCase
         }
     }
 
+    public function testDuplicateEntryForPrimary()
+    {
+        $this->getContainer();
+        try {
+            $model = new UserExt();
+            $model->id = 1;
+            $model->save();
+        } catch (\PDOException $exception) {
+            $this->assertEquals(23000, $exception->getCode());
+        }
+    }
+
     public function testIncrement()
     {
         $this->getContainer();
