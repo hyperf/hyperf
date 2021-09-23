@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Dispatcher;
 
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
@@ -52,13 +53,18 @@ abstract class AbstractRequestHandler
 
     protected function handleRequest($request)
     {
-        if (! isset($this->middlewares[$this->offset]) && ! empty($this->coreHandler)) {
+        if (!isset($this->middlewares[$this->offset]) && !empty($this->coreHandler)) {
             $handler = $this->coreHandler;
         } else {
             $handler = $this->middlewares[$this->offset];
-            is_string($handler) && $handler = $this->container->get($handler);
+            if (is_array($handler) && count($handler) > 1) {
+                list($handler, $arguments) = $handler;
+                is_string($handler) && $handler = make($handler, [$arguments]);
+            } else {
+                is_string($handler) && $handler = $this->container->get($handler);
+            }
         }
-        if (! method_exists($handler, 'process')) {
+        if (!method_exists($handler, 'process')) {
             throw new InvalidArgumentException(sprintf('Invalid middleware, it has to provide a process() method.'));
         }
         return $handler->process($request, $this->next());
