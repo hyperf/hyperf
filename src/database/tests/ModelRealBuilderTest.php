@@ -20,6 +20,7 @@ use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\Schema\Column;
 use Hyperf\Database\Schema\MySqlBuilder;
 use Hyperf\Paginator\LengthAwarePaginator;
+use Hyperf\Utils\Str;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\Model\User;
 use HyperfTest\Database\Stubs\Model\UserExt;
@@ -135,6 +136,7 @@ class ModelRealBuilderTest extends TestCase
             $model->save();
         } catch (\PDOException $exception) {
             $this->assertEquals(23000, $exception->getCode());
+            $this->assertNotEmpty(Str::match("/Duplicate entry \'\w+\' for key \'\w+\'/", $exception->getMessage()));
         }
     }
 
