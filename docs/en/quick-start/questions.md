@@ -154,7 +154,7 @@ When using `grpc`, you must enable `fork support` to support opening child proce
 grpc.enable_fork_support=1;
 ```
 
-## The `open_http2_protocol` value is set to `false` after receiving the error: `Swoole\Server::start(): require onReceive callback`
+## The `open_websocket_protocol` value is set to `false` after receiving the error: `Swoole\Server::start(): require onReceive callback`
 
 1. Check if `Swoole` has been compiled with `http2` support:
 
