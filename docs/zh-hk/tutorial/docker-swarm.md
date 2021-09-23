@@ -108,6 +108,23 @@ $ vim /etc/gitlab-runner/config.toml
 concurrent = 5
 ```
 
+### 修改郵箱
+
+如果需要 `Gitlab` 發送郵件（比如用户創建的郵件等），可以嘗試修改 `/srv/gitlab/config/gitlab.rb`
+
+```
+gitlab_rails['smtp_enable'] = true
+gitlab_rails['smtp_address'] = "smtp.exmail.qq.com"
+gitlab_rails['smtp_port'] = 465
+gitlab_rails['smtp_user_name'] = "git@xxxx.com"
+gitlab_rails['smtp_password'] = "xxxx"
+gitlab_rails['smtp_authentication'] = "login"
+gitlab_rails['smtp_enable_starttls_auto'] = true
+gitlab_rails['smtp_tls'] = true
+gitlab_rails['gitlab_email_from'] = 'git@xxxx.com'
+gitlab_rails['smtp_domain'] = "exmail.qq.com"
+```
+
 ## 初始化 Swarm 集羣
 
 登錄另外一台機器，初始化集羣
