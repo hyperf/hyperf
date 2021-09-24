@@ -136,6 +136,7 @@ class ModelRealBuilderTest extends TestCase
             $model->save();
         } catch (\PDOException $exception) {
             $this->assertEquals(23000, $exception->getCode());
+            var_dump($exception->getMessage());
             $this->assertNotEmpty(Str::match("/Duplicate entry \'\w+\' for key \'\w+\'/", $exception->getMessage()));
         }
     }
