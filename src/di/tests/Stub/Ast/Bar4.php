@@ -18,7 +18,18 @@ class Bar4
         return __METHOD__;
     }
 
-    public function toRewriteMethodString(): string
+    public function toRewriteMethodString1(int $count): string
+    {
+        return __METHOD__;
+    }
+
+    public function toRewriteMethodString2(int $count, string ...$params): string
+    {
+        return __METHOD__;
+    }
+
+
+    public function toRewriteMethodString3(int &$count): string
     {
         return __METHOD__;
     }
