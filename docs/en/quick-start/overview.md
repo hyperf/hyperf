@@ -36,8 +36,6 @@ Router::addRoute(['GET', 'POST', 'HEAD'], '/multi', [\App\Controller\IndexContro
 
 ### Define routes via annotations
 
-`Hyperf`
-
 `Hyperf` provides an [Annotations](en/annotation.md) feature which makes it fast and easy to define routes. Hyperf provides `@Controller` and `@AutoController` annotations for use in a `Controller` class. For in-depth instructions, please refer to the [Routing](en/router.md) chapter. Here are some quick examples:
 
 ### Define routes via `@AutoController`
@@ -230,7 +228,7 @@ class IndexController
    
 In the above example, we can easily see that `$userService` is not instantiated manually, but the class object corresponding to the property is automatically injected by `Hyperf`.
 
-However, this case does not really shows the real power of dependency injection. We assume that `UserService` has its own depencencies, and that those dependencies have many other dependencies as well, so that any class you define needs to instantiate many objects manually and manage the order of each class's arguments. In `Hyperf`, we don't need to manually manage these dependencies, just declare the class name of the arguments we need, and `Hyperf` does all the work for us.
+However, this case does not really show the real power of dependency injection. We assume that `UserService` has its own depencencies, and that those dependencies have many other dependencies as well, so that any class you define needs to instantiate many objects manually and manage the order of each class's arguments. In `Hyperf`, we don't need to manually manage these dependencies, just declare the class name of the arguments we need, and `Hyperf` does all the work for us.
 
 When `UserService` needs to undergo a drastic internal change such as replacing a local service with an RPC remote service, we only needs to adjust the class definition of `UserService.php` to replace the old service with the new RPC service in a single file.
 
