@@ -44,13 +44,26 @@ trait ProxyTrait
         $reflectParameters = $reflectMethod->getParameters();
         $leftArgCount = count($args);
         foreach ($reflectParameters as $key => $reflectionParameter) {
-            $arg = $reflectionParameter->isVariadic() ? $args : array_shift($args);
-            if (! isset($arg) && $leftArgCount <= 0) {
-                $arg = $reflectionParameter->getDefaultValue();
+            if (! $reflectionParameter->isVariadic()) {
+                $arg = array_shift($args);
+                if (! isset($arg) && $leftArgCount <= 0) {
+                    $arg = $reflectionParameter->getDefaultValue();
+                }
+                --$leftArgCount;
+                $map['keys'][$reflectionParameter->getName()] = $arg;
+                $map['order'][] = $reflectionParameter->getName();
+            } else {
+                // When a variable-length argument is in use, it is the last argument in the list. Since variable
+                // names can not start with a number, here we use integer values as "parameter names" and array keys.
+                //
+                // Since variable-length argument doesn't accept default values, we don't need to worry about that either.
+                $i = 0;
+                foreach ($args as $arg) {
+                    $map['keys'][$i] = $arg;
+                    $map['order'][] = $i;
+                    ++$i;
+                }
             }
-            --$leftArgCount;
-            $map['keys'][$reflectionParameter->getName()] = $arg;
-            $map['order'][] = $reflectionParameter->getName();
         }
         return $map;
     }
