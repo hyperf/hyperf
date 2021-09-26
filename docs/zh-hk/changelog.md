@@ -4,6 +4,7 @@
 
 ## 修復
 
+- [#4088](https://github.com/hyperf/hyperf/pull/4088) 修復使用定時器規則時，會將空字符串轉化為 `0` 的問題。
 - [#4096](https://github.com/hyperf/hyperf/pull/4096) 修復當帶有類型的動態參數生成代理類時，會出現類型錯誤的問題。
 
 # v2.2.9 - 2021-09-22
