@@ -186,6 +186,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                         if ($param instanceof Node\Param && $param->variadic) {
                             $newParam = clone $param;
                             $newParam->variadic = false;
+                            $newParam->type = null;
                             $params[$key] = $newParam;
                         }
                     }
