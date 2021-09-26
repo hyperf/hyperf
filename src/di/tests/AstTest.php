@@ -119,7 +119,10 @@ class Bar5
         $aspect = BarAspect::class;
 
         AspectCollector::setAround($aspect, [
-            Bar4::class . '::toRewriteMethodString',
+            Bar4::class . '::toRewriteMethodString1',
+            Bar4::class . '::toRewriteMethodString2',
+            Bar4::class . '::toRewriteMethodString3',
+            Bar4::class . '::toRewriteMethodString4',
         ], []);
 
         $ast = new Ast();
@@ -139,11 +142,47 @@ class Bar4
     {
         return __METHOD__;
     }
-    public function toRewriteMethodString() : string
+    /**
+     * To test method parameters (with type declaration in use).
+     */
+    public function toRewriteMethodString1(int $count) : string
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function (int $count) use($__function__, $__method__) {
+            return $__method__;
+        });
+    }
+    /**
+     * To test passing by references.
+     */
+    public function toRewriteMethodString2(int &$count) : string
+    {
+        $__function__ = __FUNCTION__;
+        $__method__ = __METHOD__;
+        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function (int &$count) use($__function__, $__method__) {
+            return $__method__;
+        });
+    }
+    /**
+     * To test variadic parameters (without type declaration).
+     */
+    public function toRewriteMethodString3(...$params) : string
+    {
+        $__function__ = __FUNCTION__;
+        $__method__ = __METHOD__;
+        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function ($params) use($__function__, $__method__) {
+            return $__method__;
+        });
+    }
+    /**
+     * To test variadic parameters with type declaration.
+     */
+    public function toRewriteMethodString4(int &$count, string ...$params) : string
+    {
+        $__function__ = __FUNCTION__;
+        $__method__ = __METHOD__;
+        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function (int &$count, $params) use($__function__, $__method__) {
             return $__method__;
         });
     }

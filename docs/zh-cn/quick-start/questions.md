@@ -3,7 +3,7 @@
 ## Swoole 短名未关闭
 
 ```
-[ERROR] Swoole short name have to disable before start server, please set swoole.use_shortname = 'Off' into your php.ini.
+[ERROR] Swoole short function names must be disabled before the server starts, please set swoole.use_shortname = 'Off' in your php.ini.
 ```
 
 您需要在您的 php.ini 配置文件增加 `swoole.use_shortname = 'Off'` 配置项
@@ -67,7 +67,7 @@ Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line
 
 PHP 默认的 `memory_limit` 只有 `128M`，因为 `Hyperf` 使用了 `BetterReflection`，不使用扫描缓存时，会消耗大量内存，所以可能会出现内存不够的情况。
 
-我们可以使用 `php -dmemory_limit=-1 bin/hyperf.php start` 运行, 或者修改 `php.ini` 配置文件
+我们可以使用 `php -d memory_limit=-1 bin/hyperf.php start` 运行, 或者修改 `php.ini` 配置文件
 
 ```
 # 查看 php.ini 配置文件位置
