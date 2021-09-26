@@ -104,6 +104,19 @@ class ParserTest extends TestCase
         ], $this->toDatatime($result));
     }
 
+    public function testParseSecondLevelWithEmptyString()
+    {
+        $crontabString = '10,14,,15, * * * * *';
+        $parser = new Parser();
+        $startTime = Carbon::createFromTimestamp(1591754280)->startOfMinute();
+        $result = $parser->parse($crontabString, $startTime->getTimestamp());
+        $this->assertSame([
+            '2020-06-10 09:58:10',
+            '2020-06-10 09:58:14',
+            '2020-06-10 09:58:15',
+        ], $this->toDatatime($result));
+    }
+
     public function testParseMinuteLevelBetween(): void
     {
         $crontabString = '10-15/1 10-12/1 10 * * *';
