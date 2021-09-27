@@ -10,7 +10,6 @@ English | [中文](./README-CN.md)
 </p>
 <p align="center">
   <a href="https://github.com/hyperf/hyperf/actions"><img src="https://github.com/hyperf/hyperf/workflows/PHPUnit%20for%20Hyperf/badge.svg" alt="PHPUnit for Hyperf"></a>
-  <a href="https://travis-ci.org/hyperf/hyperf"><img src="https://travis-ci.org/hyperf/hyperf.svg?branch=master" alt="Build Status"></a>
   <a href="https://packagist.org/packages/hyperf/framework"><img src="https://poser.pugx.org/hyperf/framework/downloads" alt="Total Downloads"></a>
   <a href="https://packagist.org/packages/hyperf/framework"><img src="https://poser.pugx.org/hyperf/framework/d/monthly" alt="Monthly Downloads"></a>
 </p>

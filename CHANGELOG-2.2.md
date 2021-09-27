@@ -1,4 +1,11 @@
-# v2.2.10 - TBD
+# v2.2.11 - TBD
+
+# v2.2.10 - 2021-09-26
+
+## Fixed
+
+- [#4088](https://github.com/hyperf/hyperf/pull/4088) Fixed bug that crontab rule convert `empty string` into `0` accidentally.
+- [#4096](https://github.com/hyperf/hyperf/pull/4096) Fixed bug that generate proxy class failed caused by variadic parameters with type.
 
 # v2.2.9 - 2021-09-22
 
