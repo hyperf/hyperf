@@ -174,7 +174,7 @@ return [
         ],
         'nacos' => [
             // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
-            // 'url' => '',
+            // 'uri' => '',
             // The nacos host info
             'host' => '127.0.0.1',
             'port' => 8848,
