@@ -1,5 +1,9 @@
 # v2.2.11 - TBD
 
+## Fixed
+
+- [#4101](https://github.com/hyperf/hyperf/pull/4101) Fixed bug that auth failed when password has special charsets.
+
 # v2.2.10 - 2021-09-26
 
 ## Fixed
