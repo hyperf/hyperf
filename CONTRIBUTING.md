@@ -1,13 +1,13 @@
 # Participate in development
 
-Hyperf is an open source project. The development of this open source project is impossible without the support of our community. If you want to participate in the development of Hyperf, you can begin by checking out our open [issues](https://github.com/hyperf/hyperf/issues?page=2&q=is%3Aissue+is%3Aopen), usually following these steps: 
+Hyperf is an open source project. The development of this open source project is impossible without the support of our community. If you want to participate in the development of Hyperf, you can begin by checking out our open [issues](https://github.com/hyperf/hyperf/issues?page=2&q=is%3Aissue+is%3Aopen), usually following these steps:
 
-1. Follow the [issues](https://github.com/hyperf/hyperf/issues?page=2&q=is%3Aissue+is%3Aopen) page, and reply to the comments of users who ask questions; 
-2. Via the [issues](https://github.com/hyperf/hyperf/issues?page=2&q=is%3Aissue+is%3Aopen) page, look for bugs or feature requests within your capabilities according to your current understanding of Hyperf, and submit code to the [hyperf/hyperf](https://github.com/hyperf/hyperf) repository in the form of a [Pull Request](https://github.com/hyperf/hyperf/pulls); 
-3. Follow the progress and replies to your Pull Request, in order to merge your Pull Request into the main repository as soon as possible; 
-4. Review Pull Requests submitted by others and give suggestions and opinions. 
+1. Follow the [issues](https://github.com/hyperf/hyperf/issues?page=2&q=is%3Aissue+is%3Aopen) page, and reply to the comments of users who ask questions;
+2. Via the [issues](https://github.com/hyperf/hyperf/issues?page=2&q=is%3Aissue+is%3Aopen) page, look for bugs or feature requests within your capabilities according to your current understanding of Hyperf, and submit code to the [hyperf/hyperf](https://github.com/hyperf/hyperf) repository in the form of a [Pull Request](https://github.com/hyperf/hyperf/pulls);
+3. Follow the progress and replies to your Pull Request, in order to merge your Pull Request into the main repository as soon as possible;
+4. Review Pull Requests submitted by others and give suggestions and opinions.
 5. Develop independent functional components according to the needs of others or yourself;
-6. Persist in and continue to carry out the above steps. 
+6. Persist in and continue to carry out the above steps.
 
 ## Join the Hyperf team
 
