@@ -44,7 +44,6 @@ use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 use Swoole\Server as SwooleServer;
 use Swoole\WebSocket\CloseFrame;
-use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 use Throwable;
 
@@ -152,7 +151,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         return $this->container->get(Sender::class);
     }
 
-    public function onHandShake(SwooleRequest $request, SwooleResponse $response): void
+    public function onHandShake($request, $response): void
     {
         try {
             CoordinatorManager::until(Constants::WORKER_START)->yield();
@@ -235,7 +234,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         }
     }
 
-    public function onMessage($server, Frame $frame): void
+    public function onMessage($server, $frame): void
     {
         if ($server instanceof SwooleResponse) {
             $fd = $server->fd;
