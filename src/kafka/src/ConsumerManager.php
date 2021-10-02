@@ -114,6 +114,14 @@ class ConsumerManager
                 }
             }
 
+            public function isEnable($server): bool
+            {
+                return $this->config->get(
+                    sprintf('kafka.%s.enable', $this->consumer->getPool()),
+                    true
+                ) && $this->consumer->isEnable();
+            }
+
             public function handle(): void
             {
                 $consumerConfig = $this->getConsumerConfig();

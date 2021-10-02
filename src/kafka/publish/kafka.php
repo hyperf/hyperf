@@ -13,6 +13,7 @@ use Hyperf\Kafka\Constants\KafkaStrategy;
 
 return [
     'default' => [
+        'enable' => true,
         'connect_timeout' => -1,
         'send_timeout' => -1,
         'recv_timeout' => -1,
