@@ -4,6 +4,10 @@
 
 - [#4101](https://github.com/hyperf/hyperf/pull/4101) Fixed bug that auth failed when password has special charsets.
 
+# Optimized
+
+- [#4114](https://github.com/hyperf/hyperf/pull/4114) Optimized get error code after Websocket upgrade failed.
+
 # v2.2.10 - 2021-09-26
 
 ## Fixed
