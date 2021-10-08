@@ -19,7 +19,7 @@
         "php": ">=7.2",
         "doctrine/inflector": "^2.0",
         "hyperf/contract": "~2.2.0",
-        "hyperf/engine": "^1.1",
+        "hyperf/engine": "^1.2",
         "hyperf/macroable": "~2.2.0"
     },
     "suggest": {
