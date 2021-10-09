@@ -7,6 +7,7 @@
 # Optimized
 
 - [#4114](https://github.com/hyperf/hyperf/pull/4114) Optimized get error code after Websocket upgrade failed.
+- [#4119](https://github.com/hyperf/hyperf/pull/4119) Optimized testing client which create the directory again when the directory does not exist.
 
 # v2.2.10 - 2021-09-26
 
