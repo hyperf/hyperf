@@ -2,7 +2,7 @@
 
 ## 概念
 
-Hyperf 是运行于 `Swoole 4` 的协程和 `Swow` 协程之上的，这也是 Hyperf 能提供高性能的其中一个很大的因素。
+`Hyperf` 是运行于 `Swoole 4` 的协程和 `Swow` 协程之上的，这也是 `Hyperf` 能提供高性能的其中一个很大的因素。
 
 ### PHP-FPM 的运作模式
 
@@ -312,4 +312,4 @@ $request = Context::override(ServerRequestInterface::class, function (ServerRequ
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL | SWOOLE_HOOK_CURL);
 ``` 
 
-!> 如果 Swoole 版本 >= `v4.5.4`，不需要做任何修改。
+!> 如果 `Swoole` 版本 >= `v4.5.4`，不需要做任何修改。
