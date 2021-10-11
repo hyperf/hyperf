@@ -1,8 +1,10 @@
-# v2.2.11 - TBD
+# v2.2.12 - TBD
+
+# v2.2.11 - 2021-10-11
 
 ## Fixed
 
-- [#4101](https://github.com/hyperf/hyperf/pull/4101) Fixed bug that auth failed when password has special charsets.
+- [#4101](https://github.com/hyperf/hyperf/pull/4101) Fixed bug that auth failed when password has special charsets for nacos.
 
 # Optimized
 

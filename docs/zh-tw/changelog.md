@@ -1,5 +1,16 @@
 # 版本更新記錄
 
+# v2.2.11 - 2021-10-11
+
+## 修復
+
+- [#4101](https://github.com/hyperf/hyperf/pull/4101) 修復 Nacos 使用的密碼攜帶特殊字元時，密碼會被 `urlencode` 導致密碼錯誤的問題。
+
+# 優化
+
+- [#4114](https://github.com/hyperf/hyperf/pull/4114) 優化 WebSocket 客戶端初始化失敗時的錯誤資訊。
+- [#4119](https://github.com/hyperf/hyperf/pull/4119) 優化單測客戶端在上傳檔案時，因為預設的上傳路徑已經存在，導致報錯的問題（只發生在最新的 Swoole 版本中）。
+
 # v2.2.10 - 2021-09-26
 
 ## 修復

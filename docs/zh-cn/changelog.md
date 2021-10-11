@@ -1,5 +1,16 @@
 # 版本更新记录
 
+# v2.2.11 - 2021-10-11
+
+## 修复
+
+- [#4101](https://github.com/hyperf/hyperf/pull/4101) 修复 Nacos 使用的密码携带特殊字符时，密码会被 `urlencode` 导致密码错误的问题。
+
+# 优化
+
+- [#4114](https://github.com/hyperf/hyperf/pull/4114) 优化 WebSocket 客户端初始化失败时的错误信息。
+- [#4119](https://github.com/hyperf/hyperf/pull/4119) 优化单测客户端在上传文件时，因为默认的上传路径已经存在，导致报错的问题（只发生在最新的 Swoole 版本中）。
+
 # v2.2.10 - 2021-09-26
 
 ## 修复
