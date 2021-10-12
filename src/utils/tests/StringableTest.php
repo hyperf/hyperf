@@ -95,4 +95,12 @@ class StringableTest extends TestCase
         $this->assertTrue(Str::of('http://www.hyperf.io')->startsWith('http://'));
         $this->assertTrue(Str::of('https://www.hyperf.io')->startsWith(['http://', 'https://']));
     }
+
+    public function testStripTags()
+    {
+        $this->assertSame('beforeafter', (string) Str::of('before<br>after')->stripTags());
+        $this->assertSame('before<br>after', (string) Str::of('before<br>after')->stripTags('<br>'));
+        $this->assertSame('before<br>after', (string) Str::of('<strong>before</strong><br>after')->stripTags('<br>'));
+        $this->assertSame('<strong>before</strong><br>after', (string) Str::of('<strong>before</strong><br>after')->stripTags('<br><strong>'));
+    }
 }
