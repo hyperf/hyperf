@@ -4,6 +4,10 @@
 
 - [#4129](https://github.com/hyperf/hyperf/pull/4129) Added methods `Str::stripTags()` and `Stringable::stripTags()`.
 
+## Fixed
+
+- [#4130](https://github.com/hyperf/hyperf/pull/4130) Fixed generate model failed when using option `--with-ide` and `scope` methods.
+
 # v2.2.11 - 2021-10-11
 
 ## Fixed
