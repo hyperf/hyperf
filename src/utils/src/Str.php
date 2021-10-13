@@ -571,7 +571,7 @@ class Str
      *
      * @param  string  $allowedTags
      */
-    public function stripTags(string $value, $allowedTags = null): string
+    public static function stripTags(string $value, $allowedTags = null): string
     {
         return strip_tags($value, $allowedTags);
     }
