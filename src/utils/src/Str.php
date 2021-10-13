@@ -570,9 +570,8 @@ class Str
      * Strip HTML and PHP tags from the given string.
      *
      * @param  string  $allowedTags
-     * @return static
      */
-    public function stripTags(string $value, $allowedTags = null)
+    public function stripTags(string $value, $allowedTags = null): string
     {
         return strip_tags($value, $allowedTags);
     }
