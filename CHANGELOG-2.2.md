@@ -1,5 +1,9 @@
 # v2.2.12 - TBD
 
+## Added
+
+- [#4129](https://github.com/hyperf/hyperf/pull/4129) Added methods `Str::stripTags()` and `Stringable::stripTags()`.
+
 # v2.2.11 - 2021-10-11
 
 ## Fixed

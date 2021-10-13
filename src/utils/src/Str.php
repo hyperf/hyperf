@@ -569,7 +569,7 @@ class Str
     /**
      * Strip HTML and PHP tags from the given string.
      *
-     * @param string[]|string|null $allowedTags
+     * @param null|string|string[] $allowedTags
      */
     public static function stripTags(string $value, $allowedTags = null): string
     {
