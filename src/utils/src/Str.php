@@ -572,9 +572,9 @@ class Str
      * @param  string  $allowedTags
      * @return static
      */
-    public function stripTags($allowedTags = null)
+    public function stripTags(string $value, $allowedTags = null)
     {
-        return new static(strip_tags($this->value, $allowedTags));
+        return strip_tags($value, $allowedTags);
     }
 
     /**
