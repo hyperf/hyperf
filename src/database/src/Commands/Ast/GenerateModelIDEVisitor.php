@@ -16,6 +16,7 @@ use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Utils\CodeGen\PhpParser;
 use Hyperf\Utils\Str;
+use PhpParser\BuilderFactory;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
 
@@ -37,12 +38,18 @@ class GenerateModelIDEVisitor extends AbstractVisitor
     protected $class;
 
     /**
+     * @var BuilderFactory
+     */
+    protected $factory;
+
+    /**
      * @var string
      */
     protected $nsp = '';
 
     public function __construct(ModelOption $option, ModelData $data)
     {
+        $this->factory = new BuilderFactory();
         parent::__construct($option, $data);
     }
 
@@ -118,9 +125,12 @@ class GenerateModelIDEVisitor extends AbstractVisitor
                         $argType = $argument->getType()->getName();
                     }
                 }
+                if($argument->isDefaultValueAvailable()) {
+                    $argDefaultValue = $this->factory->val($argument->getDefaultValue());
+                }
                 $params[] = new Node\Param(
                     $argName,
-                    $argument->getAst()->default ?? null,
+                    $argDefaultValue ?? null,
                     $argType ?? null
                 );
             }
