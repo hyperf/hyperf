@@ -567,6 +567,16 @@ class Str
     }
 
     /**
+     * Strip HTML and PHP tags from the given string.
+     *
+     * @param null|string|string[] $allowedTags
+     */
+    public static function stripTags(string $value, $allowedTags = null): string
+    {
+        return strip_tags($value, $allowedTags);
+    }
+
+    /**
      * Convert the given string to upper-case.
      */
     public static function upper(string $value): string
