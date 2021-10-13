@@ -104,11 +104,11 @@ class StringableTest extends TestCase
         $this->assertSame('<strong>before</strong><br>after', (string) Str::of('<strong>before</strong><br>after')->stripTags('<br><strong>'));
 
         if (PHP_VERSION_ID >= 70400) {
-            $this->assertSame('<strong>before</strong><br>after', Str::of('<strong>before</strong><br>after')->stripTags(['<br>', '<strong>']));
+            $this->assertSame('<strong>before</strong><br>after', (string) Str::of('<strong>before</strong><br>after')->stripTags(['<br>', '<strong>']));
         }
 
         if (PHP_VERSION_ID >= 80000) {
-            $this->assertSame('beforeafter', Str::of('before<br>after')->stripTags(null));
+            $this->assertSame('beforeafter', (string) Str::of('before<br>after')->stripTags(null));
         }
     }
 }
