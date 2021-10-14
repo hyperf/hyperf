@@ -60,7 +60,7 @@ class CollectionTest extends TestCase
 
     public function testHasAny($collection)
     {
-        $data = new $collection(['id' => 1, 'first' => 'Hello', 'second' => 'World']);
+        $data = new Collection(['id' => 1, 'first' => 'Hello', 'second' => 'World']);
 
         $this->assertTrue($data->hasAny('first'));
         $this->assertFalse($data->hasAny('third'));
