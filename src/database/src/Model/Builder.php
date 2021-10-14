@@ -476,6 +476,7 @@ class Builder
     public function firstOrNew(array $attributes, array $values = [])
     {
         if (! is_null($instance = $this->where($attributes)->first())) {
+            $instance->fill($values);
             return $instance;
         }
 
