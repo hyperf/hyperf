@@ -58,7 +58,7 @@ class CollectionTest extends TestCase
         $this->assertSame(['Hyperf', $uuid], $collection->flatten()->toArray());
     }
 
-    public function testHasAny($collection)
+    public function testHasAny()
     {
         $data = new Collection(['id' => 1, 'first' => 'Hello', 'second' => 'World']);
 
