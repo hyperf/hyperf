@@ -6,7 +6,8 @@
 
 ## Fixed
 
-- [#4130](https://github.com/hyperf/hyperf/pull/4130) Fixed generate model failed when using option `--with-ide` and `scope` methods.
+- [#4130](https://github.com/hyperf/hyperf/pull/4130) Fixed bug that generate model failed when using option `--with-ide` and `scope` methods.
+- [#4141](https://github.com/hyperf/hyperf/pull/4141) Fixed bug that validator factory does not support other validators.
 
 # v2.2.11 - 2021-10-11
 

@@ -119,7 +119,7 @@ class ValidatorFactory implements ValidatorFactoryInterface
             $validator->setContainer($this->container);
         }
 
-        $this->addExtensions($validator);
+        $validator instanceof Validator && $this->addExtensions($validator);
 
         return $validator;
     }
