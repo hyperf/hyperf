@@ -1,5 +1,16 @@
 # 版本更新記錄
 
+# v2.2.12 - 2021-10-18
+
+## 新增
+
+- [#4129](https://github.com/hyperf/hyperf/pull/4129) 新增方法 `Str::stripTags()` 和 `Stringable::stripTags()`。
+
+## 修復
+
+- [#4130](https://github.com/hyperf/hyperf/pull/4130) 修復生成模型時，因為使用了選項 `--with-ide` 和 `scope` 方法導致報錯的問題。
+- [#4141](https://github.com/hyperf/hyperf/pull/4141) 修復驗證器工廠不支援其他驗證器的問題。
+
 # v2.2.11 - 2021-10-11
 
 ## 修復
