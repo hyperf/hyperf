@@ -125,7 +125,7 @@ class GenerateModelIDEVisitor extends AbstractVisitor
                         $argType = $argument->getType()->getName();
                     }
                 }
-                if($argument->isDefaultValueAvailable()) {
+                if ($argument->isDefaultValueAvailable()) {
                     $argDefaultValue = $this->factory->val($argument->getDefaultValue());
                 }
                 $params[] = new Node\Param(

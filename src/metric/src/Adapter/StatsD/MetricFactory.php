@@ -85,14 +85,14 @@ class MetricFactory implements MetricFactoryInterface
         $batchEnabled = $this->config->get("metric.metric.{$name}.enable_batch") == true;
         // Block handle from returning.
         if ($batchEnabled) {
-            do {
+            while (true) {
                 $this->client->startBatch();
                 $workerExited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($interval);
                 $this->client->endBatch();
                 if ($workerExited) {
                     break;
                 }
-            } while (true);
+            }
         } else {
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
         }
