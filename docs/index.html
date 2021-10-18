@@ -26,6 +26,12 @@
   <script>
     mermaid.initialize({ startOnLoad: false });
 
+    // Set html "lang" attribute based on URL
+    var lang = location.hash.match(/#\/(zh-tw|zh-hk|en)\//);
+    if (lang) {
+      document.documentElement.setAttribute('lang', lang[1]);
+    }
+
     window.$docsify = {
       name: 'Hyperf',
       repo: 'hyperf/hyperf',
@@ -59,7 +65,19 @@
         pathNamespaces: ['/zh-cn', '/zh-tw', '/zh-hk', '/en']
       },
       alias: {
-        '/summary.md': './zh-cn/summary.md'
+        '/summary.md': '/zh-cn/summary.md',
+        '/.*/_navbar.md': '/_navbar.md',
+        '/zh-cn/.*/summary.md': '/zh-cn/summary.md',
+        '/zh-tw/.*/summary.md': '/zh-tw/summary.md',
+        '/zh-hk/.*/summary.md': '/zh-hk/summary.md',
+        '/en/.*/summary.md': '/en/summary.md',
+      },
+      nameLink: {
+        '/zh-cn/': '#/zh-cn/',
+        '/zh-tw/': '#/zh-tw/',
+        '/zh-hk/': '#/zh-hk/',
+        '/en/': '#/en/',
+        '/': '#/',
       },
       plugins: [
         EditOnGithubPlugin.create('https://github.com/hyperf/hyperf/blob/master/docs/'),
