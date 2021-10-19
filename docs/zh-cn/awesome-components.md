@@ -137,6 +137,9 @@
 - [hyperf-ext/auth](https://github.com/hyperf-ext/auth) 移植自 `illuminate/auth`，基本完整的实现了 Laravel Auth 的功能特性
 - [donjan-deng/hyperf-casbin](https://github.com/donjan-deng/hyperf-casbin) 适配于 Hyperf 的开源访问控制框架 [Casbin](https://casbin.org/docs/zh-CN/overview)
 
+## 分布式锁
+- [lysice/hyperf-redis-lock](https://github.com/Lysice/hyperf-redis-lock) 根据laravel的 lock 组件改写 适配于 Hyperf框架。
+
 ## 第三方 SDK
 
 - [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支持 Swoole 协程的支付宝/微信支付 SDK
