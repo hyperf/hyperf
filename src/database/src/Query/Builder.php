@@ -495,7 +495,7 @@ class Builder
      *
      * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @param string $first
+     * @param string|\Closure $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder|static
