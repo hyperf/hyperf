@@ -138,7 +138,8 @@
 - [donjan-deng/hyperf-casbin](https://github.com/donjan-deng/hyperf-casbin) 适配于 Hyperf 的开源访问控制框架 [Casbin](https://casbin.org/docs/zh-CN/overview)
 
 ## 分布式锁
-- [lysice/hyperf-redis-lock](https://github.com/Lysice/hyperf-redis-lock) 根据laravel的 lock 组件改写 适配于 Hyperf框架。
+
+- [lysice/hyperf-redis-lock](https://github.com/Lysice/hyperf-redis-lock) 根据 Laravel 的 lock 组件改写，适配于 Hyperf 框架。
 
 ## 第三方 SDK
 
