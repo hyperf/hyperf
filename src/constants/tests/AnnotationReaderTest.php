@@ -116,6 +116,15 @@ class AnnotationReaderTest extends TestCase
         $this->assertSame('TypeString', ErrorCodeStub::getMessage(ErrorCodeStub::TYPE_STRING));
     }
 
+    public function testSupportSingleQuota()
+    {
+        $container = $this->getContainer(true);
+        $this->assertSame('Type1004', ErrorCodeStub::TYPE_SINGLE_QUOTA);
+
+        $res = ErrorCodeStub::getParam(ErrorCodeStub::TYPE_SINGLE_QUOTA, ['order_id']);
+        $this->assertSame('Params[order_id] is invalid.', $res);
+    }
+
     protected function getContainer($has = false)
     {
         $container = Mockery::mock(ContainerInterface::class);

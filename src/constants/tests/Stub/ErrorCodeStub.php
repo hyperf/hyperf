@@ -82,4 +82,10 @@ class ErrorCodeStub extends AbstractConstants
      * @Message("TypeString")
      */
     public const TYPE_STRING = 'string';
+
+    /**
+     * @Message('Type1004')
+     * @Param('Params[%s] is invalid')
+     */
+    public const TYPE_SINGLE_QUOTA = 1004;
 }

@@ -32,18 +32,40 @@ class AnnotationReader
         return $result;
     }
 
+    /**
+     * Get the doc element matched
+     * @param string $doc
+     * @param array $previous
+     * @return array
+     */
     protected function parse(string $doc, array $previous = [])
     {
-        $pattern = '/\\@(\\w+)\\(\\"(.+)\\"\\)/U';
-        if (preg_match_all($pattern, $doc, $result)) {
-            if (isset($result[1], $result[2])) {
-                $keys = $result[1];
-                $values = $result[2];
+        $patternDoubleQuota = '/\\@(\\w+)\\(\\"(.+)\\"\\)/U';
+        $patternSingleQuota = '/\\@(\\w+)\\(\'(.+)\'\\)/U';
+        if (preg_match_all($patternDoubleQuota, $doc, $result)) {
+            $previous = $this->parseDoc($result);
+        }
+        if (preg_match_all($patternSingleQuota, $doc, $result)){
+            $previous = array_merge($this->parseDoc($result), $previous);
+        }
 
-                foreach ($keys as $i => $key) {
-                    if (isset($values[$i])) {
-                        $previous[Str::lower($key)] = $values[$i];
-                    }
+        return $previous;
+    }
+
+    /**
+     * @param array $result
+     * @return array
+     */
+    protected function parseDoc(array $result = [])
+    {
+        $previous = [];
+        if (isset($result[1], $result[2])) {
+            $keys = $result[1];
+            $values = $result[2];
+
+            foreach ($keys as $i => $key) {
+                if (isset($values[$i])) {
+                    $previous[Str::lower($key)] = $values[$i];
                 }
             }
         }
