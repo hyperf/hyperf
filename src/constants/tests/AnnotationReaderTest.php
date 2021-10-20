@@ -122,7 +122,7 @@ class AnnotationReaderTest extends TestCase
         $this->assertSame('Type1004', ErrorCodeStub::getMessage(ErrorCodeStub::TYPE_SINGLE_QUOTA));
 
         $res = ErrorCodeStub::getParam(ErrorCodeStub::TYPE_SINGLE_QUOTA, ['order_id']);
-        $this->assertSame('Params[order_id] is invalid.', $res);
+        $this->assertSame('Params[order_id] is invalid', $res);
     }
 
     protected function getContainer($has = false)
