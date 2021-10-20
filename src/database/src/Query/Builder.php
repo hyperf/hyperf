@@ -480,7 +480,7 @@ class Builder
      * Add a "join where" clause to the query.
      *
      * @param string $table
-     * @param string $first
+     * @param \Closure|string $first
      * @param string $operator
      * @param string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -495,7 +495,7 @@ class Builder
      *
      * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @param string $first
+     * @param \Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -523,7 +523,7 @@ class Builder
      * Add a "right join where" clause to the query.
      *
      * @param string $table
-     * @param string $first
+     * @param \Closure|string $first
      * @param string $operator
      * @param string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -538,7 +538,7 @@ class Builder
      *
      * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @param string $first
+     * @param \Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder|static
