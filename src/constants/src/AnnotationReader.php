@@ -43,10 +43,10 @@ class AnnotationReader
         $patternDoubleQuota = '/\\@(\\w+)\\(\\"(.+)\\"\\)/U';
         $patternSingleQuota = '/\\@(\\w+)\\(\'(.+)\'\\)/U';
         if (preg_match_all($patternDoubleQuota, $doc, $result)) {
-            $previous = $this->parseDoc($result);
+            $previous = $this->parseDoc($result, $previous);
         }
         if (preg_match_all($patternSingleQuota, $doc, $result)){
-            $previous = array_merge($this->parseDoc($result), $previous);
+            $previous = $this->parseDoc($result, $previous);
         }
 
         return $previous;
@@ -54,11 +54,11 @@ class AnnotationReader
 
     /**
      * @param array $result
+     * @param array $previous
      * @return array
      */
-    protected function parseDoc(array $result = [])
+    protected function parseDoc(array $result = [], array $previous = [])
     {
-        $previous = [];
         if (isset($result[1], $result[2])) {
             $keys = $result[1];
             $values = $result[2];

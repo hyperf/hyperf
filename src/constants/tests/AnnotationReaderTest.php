@@ -119,7 +119,7 @@ class AnnotationReaderTest extends TestCase
     public function testSupportSingleQuota()
     {
         $container = $this->getContainer(true);
-        $this->assertSame('Type1004', ErrorCodeStub::TYPE_SINGLE_QUOTA);
+        $this->assertSame('Type1004', ErrorCodeStub::getMessage(ErrorCodeStub::TYPE_SINGLE_QUOTA));
 
         $res = ErrorCodeStub::getParam(ErrorCodeStub::TYPE_SINGLE_QUOTA, ['order_id']);
         $this->assertSame('Params[order_id] is invalid.', $res);
