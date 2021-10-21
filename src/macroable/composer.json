@@ -1,6 +1,6 @@
 {
     "name": "hyperf/macroable",
-    "description": "Hyperf Macroable package which come from illuminate/support",
+    "description": "Hyperf Macroable package which come from illuminate/macroable",
     "license": "MIT",
     "keywords": [
         "php",

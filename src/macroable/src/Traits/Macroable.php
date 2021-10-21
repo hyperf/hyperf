@@ -17,7 +17,7 @@ use ReflectionClass;
 use ReflectionMethod;
 
 /**
- * This file come from illuminate/support,
+ * This file come from illuminate/macroable,
  * thanks Laravel Team provide such a useful class.
  */
 trait Macroable
@@ -34,8 +34,8 @@ trait Macroable
      *
      * @param string $method
      * @param array $parameters
-     *
      * @throws \BadMethodCallException
+     * @return mixed
      */
     public static function __callStatic($method, $parameters)
     {
@@ -47,11 +47,13 @@ trait Macroable
             ));
         }
 
-        if (static::$macros[$method] instanceof Closure) {
-            return call_user_func_array(Closure::bind(static::$macros[$method], null, static::class), $parameters);
+        $macro = static::$macros[$method];
+
+        if ($macro instanceof Closure) {
+            $macro = $macro->bindTo(null, static::class);
         }
 
-        return call_user_func_array(static::$macros[$method], $parameters);
+        return $macro(...$parameters);
     }
 
     /**
@@ -59,8 +61,8 @@ trait Macroable
      *
      * @param string $method
      * @param array $parameters
-     *
      * @throws \BadMethodCallException
+     * @return mixed
      */
     public function __call($method, $parameters)
     {
@@ -75,10 +77,10 @@ trait Macroable
         $macro = static::$macros[$method];
 
         if ($macro instanceof Closure) {
-            return call_user_func_array($macro->bindTo($this, static::class), $parameters);
+            $macro = $macro->bindTo($this, static::class);
         }
 
-        return call_user_func_array($macro, $parameters);
+        return $macro(...$parameters);
     }
 
     /**
@@ -96,19 +98,21 @@ trait Macroable
      * Mix another object into the class.
      *
      * @param object $mixin
+     * @param bool $replace
      *
      * @throws \ReflectionException
      */
-    public static function mixin($mixin)
+    public static function mixin($mixin, $replace = true)
     {
         $methods = (new ReflectionClass($mixin))->getMethods(
             ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED
         );
 
         foreach ($methods as $method) {
-            $method->setAccessible(true);
-
-            static::macro($method->name, $method->invoke($mixin));
+            if ($replace || ! static::hasMacro($method->name)) {
+                $method->setAccessible(true);
+                static::macro($method->name, $method->invoke($mixin));
+            }
         }
     }
 
