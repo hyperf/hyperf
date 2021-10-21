@@ -5,11 +5,16 @@
 ## Added
 
 - [#4129](https://github.com/hyperf/hyperf/pull/4129) Added methods `Str::stripTags()` and `Stringable::stripTags()`.
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) Allow `Macroable::mixin` to only add macros that do not exist yet.
 
 ## Fixed
 
 - [#4130](https://github.com/hyperf/hyperf/pull/4130) Fixed bug that generate model failed when using option `--with-ide` and `scope` methods.
 - [#4141](https://github.com/hyperf/hyperf/pull/4141) Fixed bug that validator factory does not support other validators.
+
+## Optimized
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) Split `hyperf/macroable` from `hyperf/utils`.
 
 # v2.2.11 - 2021-10-11
 
