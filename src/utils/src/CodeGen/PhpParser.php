@@ -75,11 +75,22 @@ class PhpParser
         }
 
         if ($parameter->hasType()) {
-            $type = $parameter->getType()->getName();
-            if (! in_array($type, static::TYPES)) {
-                $result->type = new Node\Name('\\' . $type);
+            /** @var \ReflectionNamedType|\ReflectionUnionType $getType */
+            $getType = $parameter->getType();
+            if ($getType instanceof \ReflectionUnionType) {
+                $unionType = [];
+                foreach ($getType->getTypes() as $objType) {
+                    $unionType[] = $objType->getName();
+                }
+                $type = implode('|', $unionType);
+                $result->type = new Node\Name($type);
             } else {
-                $result->type = new Node\Identifier($parameter->getType()->getName());
+                $type = $getType->getName();
+                if (! in_array($type, static::TYPES)) {
+                    $result->type = new Node\Name('\\' . $type);
+                } else {
+                    $result->type = new Node\Identifier($type);
+                }
             }
         }
 
