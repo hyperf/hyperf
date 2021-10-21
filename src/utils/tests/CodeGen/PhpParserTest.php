@@ -13,6 +13,7 @@ namespace HyperfTest\Utils\CodeGen;
 
 use Hyperf\Utils\CodeGen\PhpParser;
 use HyperfTest\Utils\Stub\Bar;
+use HyperfTest\Utils\Stub\UnionTypeFoo;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\ParserFactory;
@@ -27,9 +28,9 @@ class PhpParserTest extends TestCase
     public function testGetAstFromReflectionParameter()
     {
         $parserFactory = new ParserFactory();
-        $parser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $parser7 = $parserFactory->create(ParserFactory::ONLY_PHP7);
 
-        $stmts = $parser->parse(file_get_contents(__DIR__ . '/../Stub/Bar.php'));
+        $stmts = $parser7->parse(file_get_contents(__DIR__ . '/../Stub/Bar.php'));
         /** @var ClassMethod $classMethod */
         $classMethod = $stmts[1]->stmts[0]->stmts[0];
         $name = $classMethod->getParams()[0];
@@ -42,6 +43,17 @@ class PhpParserTest extends TestCase
         $this->assertNodeParam($foo, $foo2 = $parser->getNodeFromReflectionParameter($parameters[1]));
         $this->assertSame(['', 'HyperfTest', 'Utils', 'Stub', 'Foo'], $foo2->type->parts);
         $this->assertNodeParam($extra, $parser->getNodeFromReflectionParameter($parameters[2]));
+
+        if (PHP_VERSION_ID > 80000) {
+            $stmts = $parser7->parse(file_get_contents(__DIR__ . '/../Stub/UnionTypeFoo.php'));
+            /** @var ClassMethod $classMethod */
+            $classMethod = $stmts[1]->stmts[0]->stmts[0];
+            $name = $classMethod->getParams()[0];
+
+            $foo = new \ReflectionClass(UnionTypeFoo::class);
+            $parameters = $foo->getMethod('__construct')->getParameters();
+            $this->assertNodeParam($name, $parser->getNodeFromReflectionParameter($parameters[0]));
+        }
     }
 
     protected function assertNodeParam(Node\Param $param, Node\Param $param2)

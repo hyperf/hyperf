@@ -11,6 +11,7 @@
 
 - [#4130](https://github.com/hyperf/hyperf/pull/4130) Fixed bug that generate model failed when using option `--with-ide` and `scope` methods.
 - [#4141](https://github.com/hyperf/hyperf/pull/4141) Fixed bug that validator factory does not support other validators.
+- [#4158](https://github.com/hyperf/hyperf/pull/4158) Fixed bug that generate proxy class failed when using union type.
 
 ## Optimized
 
