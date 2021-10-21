@@ -80,10 +80,14 @@ class PhpParser
             if ($getType instanceof \ReflectionUnionType) {
                 $unionType = [];
                 foreach ($getType->getTypes() as $objType) {
-                    $unionType[] = $objType->getName();
+                    $type = $objType->getName();
+                    if (! in_array($type, static::TYPES)) {
+                        $unionType[] = new Node\Name('\\' . $type);
+                    } else {
+                        $unionType[] = new Node\Identifier($type);
+                    }
                 }
-                $type = implode('|', $unionType);
-                $result->type = new Node\Name($type);
+                $result->type = new Node\UnionType($unionType);
             } else {
                 $type = $getType->getName();
                 if (! in_array($type, static::TYPES)) {
