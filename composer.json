@@ -226,6 +226,7 @@
             "Hyperf\\Kafka\\": "src/kafka/src/",
             "Hyperf\\LoadBalancer\\": "src/load-balancer/src/",
             "Hyperf\\Logger\\": "src/logger/src/",
+            "Hyperf\\Macroable\\": "src/macroable/src/",
             "Hyperf\\Memory\\": "src/memory/src/",
             "Hyperf\\Metric\\": "src/metric/src/",
             "Hyperf\\ModelCache\\": "src/model-cache/src/",
@@ -266,10 +267,7 @@
             "Hyperf\\Testing\\": "src/testing/src/",
             "Hyperf\\Tracer\\": "src/tracer/src/",
             "Hyperf\\Translation\\": "src/translation/src/",
-            "Hyperf\\Utils\\": [
-                "src/macroable/src/",
-                "src/utils/src/"
-            ],
+            "Hyperf\\Utils\\": "src/utils/src/",
             "Hyperf\\Validation\\": "src/validation/src/",
             "Hyperf\\ViewEngine\\": "src/view-engine/src/",
             "Hyperf\\View\\": "src/view/src/",
@@ -318,6 +316,7 @@
             "HyperfTest\\Kafka\\": "src/kafka/tests/",
             "HyperfTest\\LoadBalancer\\": "src/load-balancer/tests/",
             "HyperfTest\\Logger\\": "src/logger/tests/",
+            "HyperfTest\\Macroable\\": "src/macroable/tests/",
             "HyperfTest\\Metric\\": "src/metric/tests/",
             "HyperfTest\\ModelCache\\": "src/model-cache/tests/",
             "HyperfTest\\ModelListener\\": "src/model-listener/tests/",
@@ -354,10 +353,7 @@
             "HyperfTest\\Task\\": "src/task/tests/",
             "HyperfTest\\Testing\\": "src/testing/tests/",
             "HyperfTest\\Translation\\": "src/translation/tests/",
-            "HyperfTest\\Utils\\": [
-                "src/macroable/tests/",
-                "src/utils/tests/"
-            ],
+            "HyperfTest\\Utils\\": "src/utils/tests/",
             "HyperfTest\\Validation\\": "src/validation/tests/",
             "HyperfTest\\ViewEngine\\": "src/view-engine/tests/",
             "HyperfTest\\View\\": "src/view/tests/",
