@@ -13,8 +13,8 @@ namespace Hyperf\Utils\Filesystem;
 
 use ErrorException;
 use FilesystemIterator;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Traits\Macroable;
 use Symfony\Component\Finder\Finder;
 
 /**

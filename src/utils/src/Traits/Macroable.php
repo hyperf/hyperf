@@ -11,6 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Traits;
 
+/**
+ * @deprecated please use `Hyperf\Macroable\Macroable` instead
+ */
 trait Macroable
 {
     use \Hyperf\Macroable\Macroable;

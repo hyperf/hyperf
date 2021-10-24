@@ -10,7 +10,7 @@
 
 ## Optimized
 
-- [#4159](https://github.com/hyperf/hyperf/pull/4159) Split `hyperf/macroable` from `hyperf/utils`.
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) [#4166](https://github.com/hyperf/hyperf/pull/4166) Split `hyperf/macroable` from `hyperf/utils`.
 
 # v2.2.12 - 2021-10-18
 
