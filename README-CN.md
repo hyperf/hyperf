@@ -91,6 +91,11 @@ Transfer/sec:     18.83MB
 - ⚡️ [GoTask](https://github.com/hyperf/gotask) 是一款可以启动 Go 进程作为 Swoole 主进程边车(Sidecar) 的一个库，利用 IPC 进程通讯将任务投递给边车处理并接收返回值，可以理解为 Go 语言版的 Swoole TaskWorker。
 - 🚀 [Jet](https://github.com/hyperf/jet) 是一个统一模型的 RPC 客户端，内置 JSONRPC 协议的适配，该组件可适用于所有的 PHP 环境，包括 PHP-FPM 和 Swoole 或 Hyperf。
 
+
+# Star 趋势
+
+[![Star 趋势](https://starchart.cc/hyperf/hyperf.svg)](https://starchart.cc/hyperf/hyperf.svg)
+
 # 开源协议
 
 Hyperf 是一个基于 [MIT 协议](https://github.com/hyperf/hyperf/blob/master/LICENSE) 开源的软件。
