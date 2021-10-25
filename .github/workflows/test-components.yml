@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: '0 2 * * *'
 env:
-  SW_VERSION: 'v4.7.1'
+  SW_VERSION: 'v4.8.0'
   YASD_VERSION: 'v0.3.9'
 jobs:
   database:
