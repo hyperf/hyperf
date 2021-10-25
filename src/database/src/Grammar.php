@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database;
 
 use Hyperf\Database\Query\Expression;
-use Hyperf\Utils\Traits\Macroable;
+use Hyperf\Macroable\Macroable;
 
 abstract class Grammar
 {

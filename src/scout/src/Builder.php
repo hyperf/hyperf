@@ -14,11 +14,11 @@ namespace Hyperf\Scout;
 use Closure;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Paginator\AbstractPaginator;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\Collection as BaseCollection;
-use Hyperf\Utils\Traits\Macroable;
 
 class Builder
 {

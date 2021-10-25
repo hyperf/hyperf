@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Macroable;
 
-use Hyperf\Utils\Traits\Macroable;
+use Hyperf\Macroable\Macroable;
 use PHPUnit\Framework\TestCase;
 
 /**

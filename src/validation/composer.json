@@ -25,6 +25,7 @@
         "hyperf/di": "~2.2.0",
         "hyperf/framework": "~2.2.0",
         "hyperf/http-server": "~2.2.0",
+        "hyperf/macroable": "~2.2.0",
         "hyperf/translation": "~2.2.0",
         "hyperf/utils": "~2.2.0",
         "nesbot/carbon": "^2.21",

@@ -23,6 +23,7 @@
         "hyperf/event": "~2.2.0",
         "hyperf/exception-handler": "~2.2.0",
         "hyperf/http-message": "~2.2.0",
+        "hyperf/macroable": "~2.2.0",
         "hyperf/server": "~2.2.0",
         "hyperf/utils": "~2.2.0",
         "nikic/fast-route": "^1.3",

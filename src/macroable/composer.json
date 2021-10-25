@@ -20,12 +20,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Hyperf\\Utils\\": "src/"
+            "Hyperf\\Macroable\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HyperfTest\\Utils\\": "tests/"
+            "HyperfTest\\Macroable\\": "tests/"
         }
     },
     "config": {
