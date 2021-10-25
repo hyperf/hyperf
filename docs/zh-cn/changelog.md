@@ -12,7 +12,7 @@
 
 ## 优化
 
-- [#4159](https://github.com/hyperf/hyperf/pull/4159) 将组件 `hyperf/macroable` 从 `hyperf/utils` 中分离出来。
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) [#4166](https://github.com/hyperf/hyperf/pull/4166) 将组件 `hyperf/macroable` 从 `hyperf/utils` 中分离出来。
 
 # v2.2.12 - 2021-10-18
 
