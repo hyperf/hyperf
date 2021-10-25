@@ -16,8 +16,8 @@ use Closure;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Grammars\Grammar;
 use Hyperf\Database\SQLiteConnection;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Fluent;
-use Hyperf\Utils\Traits\Macroable;
 
 class Blueprint
 {

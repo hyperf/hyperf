@@ -15,6 +15,7 @@
         "hyperf/config": "~2.2.0",
         "hyperf/di": "~2.2.0",
         "hyperf/event": "~2.2.0",
+        "hyperf/macroable": "~2.2.0",
         "hyperf/utils": "~2.2.0",
         "hyperf/view": "~2.2.0"
     },

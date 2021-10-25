@@ -12,12 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use Closure;
+use Hyperf\Macroable\Macroable;
 use JsonSerializable;
 
 class Stringable implements JsonSerializable
 {
     use Traits\Conditionable;
-    use Traits\Macroable;
+    use Macroable;
     use Traits\Tappable;
 
     /**

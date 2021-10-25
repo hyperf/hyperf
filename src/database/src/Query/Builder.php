@@ -21,6 +21,7 @@ use Hyperf\Database\Exception\InvalidBindingException;
 use Hyperf\Database\Model\Builder as ModelBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
@@ -28,7 +29,6 @@ use Hyperf\Utils\Collection;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\ForwardsCalls;
-use Hyperf\Utils\Traits\Macroable;
 use InvalidArgumentException;
 use RuntimeException;
 
