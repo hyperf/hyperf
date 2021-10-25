@@ -1,5 +1,19 @@
 # 版本更新記錄
 
+# v2.2.13 - 2021-10-25
+
+## 新增
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) 為 `Macroable::mixin` 方法增加參數 `$replace`，當其設置為 `false` 時，會優先判斷是否已經存在。
+
+## 修復
+
+- [#4158](https://github.com/hyperf/hyperf/pull/4158) 修復因為使用了 `Union` 類型，導致生成代理類失敗的問題。
+
+## 優化
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) [#4166](https://github.com/hyperf/hyperf/pull/4166) 將組件 `hyperf/macroable` 從 `hyperf/utils` 中分離出來。
+
 # v2.2.12 - 2021-10-18
 
 ## 新增
