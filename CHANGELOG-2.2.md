@@ -1,5 +1,9 @@
 # v2.2.14 - TBD
 
+## Fixed
+
+- [#4171](https://github.com/hyperf/hyperf/pull/4171) Fixed health check failed when using consul with token.
+
 # v2.2.13 - 2021-10-25
 
 ## Added

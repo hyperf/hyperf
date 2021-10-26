@@ -208,7 +208,7 @@ class ConsulDriver implements DriverInterface
         $options = [
             'base_uri' => $baseUri,
         ];
-        
+
         if (! empty($token)) {
             $options['headers'] = [
                 'X-Consul-Token' => $token,
