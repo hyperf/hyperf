@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Task;
 
 use Hyperf\Task\Exception\TaskException;
@@ -37,7 +36,7 @@ class TaskExecutor
     /**
      * @var bool
      */
-    protected $isTaskEnvironment = false;
+    protected $isTaskEnvironment = true;
 
     public function __construct(ChannelFactory $factory, ExceptionNormalizer $normalizer)
     {
@@ -55,7 +54,11 @@ class TaskExecutor
 
     public function execute(Task $task, float $timeout = 10)
     {
-        $taskId = $this->server->task($task);
+        if (! $this->server instanceof Server) {
+            throw new TaskExecuteException('The server does not support task.');
+        }
+
+        $taskId = $this->server->task($task, $task->workerId);
         if ($taskId === false) {
             throw new TaskExecuteException('Task execute failed.');
         }
@@ -64,7 +67,11 @@ class TaskExecutor
 
         if ($result instanceof Exception) {
             $exception = $this->normalizer->denormalize($result->attributes, $result->class);
-            throw $exception;
+            if ($exception instanceof \Throwable) {
+                throw $exception;
+            }
+
+            throw new TaskExecuteException(get_class($exception) . ' is not instance of Throwable.');
         }
 
         return $result;

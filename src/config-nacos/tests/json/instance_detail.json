@@ -1,0 +1,10 @@
+{
+    "metadata": {},
+    "instanceId": "10.10.10.10-8888-DEFAULT-nacos.test.2",
+    "port": 8888,
+    "service": "nacos.test.2",
+    "healthy": false,
+    "ip": "10.10.10.10",
+    "clusterName": "DEFAULT",
+    "weight": 1.0
+}

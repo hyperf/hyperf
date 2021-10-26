@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Validation\Concerns;
 
 use Closure;
@@ -83,11 +82,9 @@ trait FormatsMessages
     /**
      * Get the displayable name of the value.
      *
-     * @param string $attribute
      * @param mixed $value
-     * @return string
      */
-    public function getDisplayableValue(string $attribute, $value)
+    public function getDisplayableValue(string $attribute, $value): string
     {
         if (isset($this->customValues[$attribute][$value])) {
             return $this->customValues[$attribute][$value];
@@ -99,7 +96,7 @@ trait FormatsMessages
             return $line;
         }
 
-        return $value;
+        return (string) $value;
     }
 
     /**
@@ -293,7 +290,7 @@ trait FormatsMessages
         $actualValue = $this->getValue($attribute);
 
         if (is_scalar($actualValue) || is_null($actualValue)) {
-            $message = str_replace(':input', $actualValue, $message);
+            $message = str_replace(':input', $this->getDisplayableValue($attribute, $actualValue), $message);
         }
 
         return $message;

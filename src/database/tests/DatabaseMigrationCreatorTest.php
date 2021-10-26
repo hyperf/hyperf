@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Database;
 
 use Hyperf\Database\Migrations\MigrationCreator;
@@ -27,7 +26,7 @@ class DatabaseMigrationCreatorTest extends TestCase
 {
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
@@ -39,6 +38,8 @@ class DatabaseMigrationCreatorTest extends TestCase
         $creator->expects($this->any())->method('getDatePrefix')->will($this->returnValue('foo'));
         $creator->getFilesystem()->shouldReceive('get')->once()->with($creator->stubPath() . '/blank.stub')->andReturn('DummyClass');
         $creator->getFilesystem()->shouldReceive('put')->once()->with('foo/foo_create_bar.php', 'CreateBar');
+        $creator->getFilesystem()->shouldReceive('glob')->once()->with('foo/*.php')->andReturn(['foo/foo_create_bar.php']);
+        $creator->getFilesystem()->shouldReceive('requireOnce')->once()->with('foo/foo_create_bar.php');
 
         $creator->create('create_bar', 'foo');
     }
@@ -56,6 +57,8 @@ class DatabaseMigrationCreatorTest extends TestCase
         $creator->expects($this->any())->method('getDatePrefix')->will($this->returnValue('foo'));
         $creator->getFilesystem()->shouldReceive('get')->once()->with($creator->stubPath() . '/update.stub')->andReturn('DummyClass DummyTable');
         $creator->getFilesystem()->shouldReceive('put')->once()->with('foo/foo_create_bar.php', 'CreateBar baz');
+        $creator->getFilesystem()->shouldReceive('glob')->once()->with('foo/*.php')->andReturn(['foo/foo_create_bar.php']);
+        $creator->getFilesystem()->shouldReceive('requireOnce')->once()->with('foo/foo_create_bar.php');
 
         $creator->create('create_bar', 'foo', $table);
 
@@ -70,6 +73,8 @@ class DatabaseMigrationCreatorTest extends TestCase
         $creator->expects($this->any())->method('getDatePrefix')->will($this->returnValue('foo'));
         $creator->getFilesystem()->shouldReceive('get')->once()->with($creator->stubPath() . '/update.stub')->andReturn('DummyClass DummyTable');
         $creator->getFilesystem()->shouldReceive('put')->once()->with('foo/foo_create_bar.php', 'CreateBar baz');
+        $creator->getFilesystem()->shouldReceive('glob')->once()->with('foo/*.php')->andReturn(['foo/foo_create_bar.php']);
+        $creator->getFilesystem()->shouldReceive('requireOnce')->once()->with('foo/foo_create_bar.php');
 
         $creator->create('create_bar', 'foo', 'baz');
     }
@@ -80,6 +85,8 @@ class DatabaseMigrationCreatorTest extends TestCase
         $creator->expects($this->any())->method('getDatePrefix')->will($this->returnValue('foo'));
         $creator->getFilesystem()->shouldReceive('get')->once()->with($creator->stubPath() . '/create.stub')->andReturn('DummyClass DummyTable');
         $creator->getFilesystem()->shouldReceive('put')->once()->with('foo/foo_create_bar.php', 'CreateBar baz');
+        $creator->getFilesystem()->shouldReceive('glob')->once()->with('foo/*.php')->andReturn(['foo/foo_create_bar.php']);
+        $creator->getFilesystem()->shouldReceive('requireOnce')->once()->with('foo/foo_create_bar.php');
 
         $creator->create('create_bar', 'foo', 'baz', true);
     }
@@ -91,6 +98,8 @@ class DatabaseMigrationCreatorTest extends TestCase
 
         $creator = $this->getCreator();
         $creator->getFilesystem()->shouldReceive('get');
+        $creator->getFilesystem()->shouldReceive('glob')->once()->with('foo/*.php')->andReturn(['foo/foo_create_bar.php']);
+        $creator->getFilesystem()->shouldReceive('requireOnce')->once()->with('foo/foo_create_bar.php');
 
         $creator->create(MigrationCreatorFakeMigration::class, 'foo');
     }
@@ -98,6 +107,6 @@ class DatabaseMigrationCreatorTest extends TestCase
     protected function getCreator()
     {
         $files = Mockery::mock(Filesystem::class);
-        return $this->getMockBuilder(MigrationCreator::class)->setMethods(['getDatePrefix'])->setConstructorArgs([$files])->getMock();
+        return $this->getMockBuilder(MigrationCreator::class)->onlyMethods(['getDatePrefix'])->setConstructorArgs([$files])->getMock();
     }
 }

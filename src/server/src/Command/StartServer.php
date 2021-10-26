@@ -5,20 +5,19 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Server\Command;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Engine\Coroutine;
 use Hyperf\Server\ServerFactory;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Swoole\Runtime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -39,8 +38,6 @@ class StartServer extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        Runtime::enableCoroutine(true, swoole_hook_flags());
-
         $this->checkEnvironment($output);
 
         $serverFactory = $this->container->get(ServerFactory::class)
@@ -53,11 +50,19 @@ class StartServer extends Command
         }
 
         $serverFactory->configure($serverConfig);
+
+        Coroutine::set(['hook_flags' => swoole_hook_flags()]);
+
         $serverFactory->start();
+
+        return 0;
     }
 
     private function checkEnvironment(OutputInterface $output)
     {
+        if (! extension_loaded('swoole')) {
+            return;
+        }
         /**
          * swoole.use_shortname = true       => string(1) "1"     => enabled
          * swoole.use_shortname = "true"     => string(1) "1"     => enabled
@@ -84,8 +89,8 @@ class StartServer extends Command
         $useShortname = ini_get_all('swoole')['swoole.use_shortname']['local_value'];
         $useShortname = strtolower(trim(str_replace('0', '', $useShortname)));
         if (! in_array($useShortname, ['', 'off', 'false'], true)) {
-            $output->writeln('<error>ERROR</error> Swoole short name have to disable before start server, please set swoole.use_shortname = off into your php.ini.');
-            exit(0);
+            $output->writeln("<error>ERROR</error> Swoole short function names must be disabled before the server starts, please set swoole.use_shortname = 'Off' in your php.ini.");
+            exit(SIGTERM);
         }
     }
 }

@@ -5,21 +5,25 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\GrpcClient;
 
 use Google\Protobuf\Internal\Message;
 use Hyperf\Grpc\Parser;
-use Jean85\PrettyVersions;
+use Hyperf\Utils\CodeGen\Package;
 use Swoole\Http2\Request as BaseRequest;
 
 class Request extends BaseRequest
 {
     private const DEFAULT_CONTENT_TYPE = 'application/grpc+proto';
+
+    /**
+     * @var null|bool
+     */
+    public $usePipelineRead;
 
     public function __construct(string $method, Message $argument = null, $headers = [])
     {
@@ -33,6 +37,7 @@ class Request extends BaseRequest
     {
         return [
             'content-type' => self::DEFAULT_CONTENT_TYPE,
+            'te' => 'trailers',
             'user-agent' => $this->buildDefaultUserAgent(),
         ];
     }
@@ -40,7 +45,7 @@ class Request extends BaseRequest
     private function buildDefaultUserAgent(): string
     {
         $userAgent = 'grpc-php-hyperf/1.0';
-        $grpcClientVersion = PrettyVersions::getVersion('hyperf/grpc-client')->getPrettyVersion();
+        $grpcClientVersion = Package::getPrettyVersion('hyperf/grpc-client');
         if ($grpcClientVersion) {
             $explodedVersions = explode('@', $grpcClientVersion);
             $userAgent .= ' (hyperf-grpc-client/' . $explodedVersions[0] . ')';

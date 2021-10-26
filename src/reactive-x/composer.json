@@ -1,0 +1,42 @@
+{
+    "name": "hyperf/reactive-x",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf"
+    ],
+    "description": "ReactiveX integration for Swoole and Hyperf",
+    "require": {
+        "php": ">=7.2",
+        "ext-swoole": ">=4.5",
+        "hyperf/contract": "~2.2.0",
+        "hyperf/utils": "~2.2.0",
+        "reactivex/rxphp": "^2.0"
+    },
+    "suggest": {
+        "hyperf/process": "Required to use IpcSubject.",
+        "hyperf/event": "Required to use Observable::fromEvent method."
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\ReactiveX\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\ReactiveX\\": "tests"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\ReactiveX\\ConfigProvider"
+        }
+    }
+}

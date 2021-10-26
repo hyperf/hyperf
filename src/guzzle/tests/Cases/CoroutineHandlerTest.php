@@ -5,24 +5,23 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Guzzle\Cases;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\RequestOptions;
+use GuzzleHttp\TransferStats;
 use Hyperf\Guzzle\CoroutineHandler;
+use Hyperf\Utils\Codec\Json;
 use HyperfTest\Guzzle\Stub\CoroutineHandlerStub;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\RequestInterface;
-use Swoole\Coroutine\Http\Client as SwooleHttpClient;
 
 /**
  * @internal
@@ -58,9 +57,9 @@ class CoroutineHandlerTest extends TestCase
     {
         $a = new CoroutineHandlerStub();
         $request = new Request('GET', 'https://pokeapi.co/api/v2/pokemon/');
-        $resposne = $a($request, ['delay' => 1, 'timeout' => 5])->wait();
+        $response = $a($request, ['delay' => 1, 'timeout' => 5])->wait();
 
-        $json = json_decode($resposne->getBody()->getContents(), true);
+        $json = json_decode((string) $response->getBody(), true);
 
         $this->assertSame(5, $json['setting']['timeout']);
     }
@@ -74,7 +73,6 @@ class CoroutineHandlerTest extends TestCase
             ->otherwise(function (ConnectException $e) use (&$called) {
                 $called = true;
                 $this->assertArrayHasKey('errCode', $e->getHandlerContext());
-                $this->assertArrayHasKey('statusCode', $e->getHandlerContext());
             });
         $p->wait();
         $this->assertTrue($called);
@@ -87,7 +85,7 @@ class CoroutineHandlerTest extends TestCase
             'handler' => HandlerStack::create(new CoroutineHandlerStub()),
         ]);
 
-        $res = $client->get('/echo', [
+        $res = (string) $client->get('/echo', [
             'timeout' => 10,
             'headers' => [
                 'X-TOKEN' => md5('1234'),
@@ -95,14 +93,14 @@ class CoroutineHandlerTest extends TestCase
             'json' => [
                 'id' => 1,
             ],
-        ])->getBody()->getContents();
+        ])->getBody();
 
         $res = \GuzzleHttp\json_decode($res, true);
 
         $this->assertSame('127.0.0.1', $res['host']);
         $this->assertSame(8080, $res['port']);
         $this->assertSame(false, $res['ssl']);
-        $this->assertSame(md5('1234'), $res['headers']['X-TOKEN']);
+        $this->assertSame([md5('1234')], $res['headers']['X-TOKEN']);
 
         $client = new Client([
             'base_uri' => 'https://pokeapi.co',
@@ -110,7 +108,7 @@ class CoroutineHandlerTest extends TestCase
             'handler' => HandlerStack::create(new CoroutineHandler()),
         ]);
 
-        $response = $client->get('/api/v2/pokemon')->getBody()->getContents();
+        $response = (string) $client->get('/api/v2/pokemon')->getBody();
 
         $this->assertNotEmpty($response);
     }
@@ -127,7 +125,7 @@ class CoroutineHandlerTest extends TestCase
             ],
         ]);
 
-        $data = json_decode($client->get('/')->getBody()->getContents(), true);
+        $data = json_decode((string) $client->get('/')->getBody(), true);
 
         $this->assertSame(10, $data['setting']['timeout']);
         $this->assertSame(1024 * 1024 * 2, $data['setting']['socket_buffer_size']);
@@ -141,7 +139,7 @@ class CoroutineHandlerTest extends TestCase
             'proxy' => 'http://user:pass@127.0.0.1:8081',
         ]);
 
-        $json = json_decode($client->get('/')->getBody()->getContents(), true);
+        $json = json_decode((string) $client->get('/')->getBody(), true);
 
         $setting = $json['setting'];
 
@@ -163,7 +161,7 @@ class CoroutineHandlerTest extends TestCase
             ],
         ]);
 
-        $json = json_decode($client->get('/')->getBody()->getContents(), true);
+        $json = json_decode((string) $client->get('/')->getBody(), true);
 
         $setting = $json['setting'];
 
@@ -185,7 +183,7 @@ class CoroutineHandlerTest extends TestCase
             ],
         ]);
 
-        $json = json_decode($client->get('/')->getBody()->getContents(), true);
+        $json = json_decode((string) $client->get('/')->getBody(), true);
 
         $setting = $json['setting'];
 
@@ -207,7 +205,7 @@ class CoroutineHandlerTest extends TestCase
             ],
         ]);
 
-        $json = json_decode($client->get('/')->getBody()->getContents(), true);
+        $json = json_decode((string) $client->get('/')->getBody(), true);
 
         $setting = $json['setting'];
 
@@ -225,7 +223,7 @@ class CoroutineHandlerTest extends TestCase
             'ssl_key' => 'apiclient_key.pem',
         ]);
 
-        $data = json_decode($client->get('/')->getBody()->getContents(), true);
+        $data = json_decode((string) $client->get('/')->getBody(), true);
 
         $this->assertSame('apiclient_cert.pem', $data['setting']['ssl_cert_file']);
         $this->assertSame('apiclient_key.pem', $data['setting']['ssl_key_file']);
@@ -236,7 +234,7 @@ class CoroutineHandlerTest extends TestCase
             'timeout' => 5,
         ]);
 
-        $data = json_decode($client->get('/')->getBody()->getContents(), true);
+        $data = json_decode((string) $client->get('/')->getBody(), true);
 
         $this->assertArrayNotHasKey('ssl_cert_file', $data['setting']);
         $this->assertArrayNotHasKey('ssl_key_file', $data['setting']);
@@ -249,35 +247,109 @@ class CoroutineHandlerTest extends TestCase
         $request = new Request('GET', $url . '/echo');
 
         $res = $handler($request, ['timeout' => 5])->wait();
-        $content = $res->getBody()->getContents();
+        $content = (string) $res->getBody();
         $json = json_decode($content, true);
 
         $this->assertEquals('Basic ' . base64_encode('username:password'), $json['headers']['Authorization']);
     }
 
-    public function testStatusCode()
+    public function testRequestOptionOnStats()
     {
-        $client = new SwooleHttpClient('127.0.0.1', 80);
-        $client->statusCode = -1;
-        $request = \Mockery::mock(RequestInterface::class);
+        $url = 'http://127.0.0.1:9501';
         $handler = new CoroutineHandlerStub();
-        $ex = $handler->checkStatusCode($client, $request);
-        $this->assertInstanceOf(ConnectException::class, $ex);
+        $request = new Request('GET', $url . '/echo');
 
-        $client = new SwooleHttpClient('127.0.0.1', 80);
-        $client->statusCode = -2;
-        $request = \Mockery::mock(RequestInterface::class);
-        $handler = new CoroutineHandlerStub();
-        $ex = $handler->checkStatusCode($client, $request);
-        $this->assertInstanceOf(RequestException::class, $ex);
+        $bool = false;
+        $handler($request, [RequestOptions::ON_STATS => function (TransferStats $stats) use (&$bool) {
+            $bool = true;
+            $this->assertIsFloat($stats->getTransferTime());
+        }])->wait();
+        $this->assertTrue($bool);
+    }
 
-        $client = new SwooleHttpClient('127.0.0.1', 80);
-        $client->statusCode = -3;
-        $request = \Mockery::mock(RequestInterface::class);
+    public function testRequestOptionOnStatsInClient()
+    {
+        $bool = false;
+        $url = 'http://127.0.0.1:9501';
+        $client = new Client([
+            'handler' => new CoroutineHandlerStub(),
+            'base_uri' => $url,
+            RequestOptions::ON_STATS => function (TransferStats $stats) use (&$bool) {
+                $bool = true;
+                $this->assertIsFloat($stats->getTransferTime());
+            },
+        ]);
+        $client->get('/');
+        $this->assertTrue($bool);
+    }
+
+    public function testSink()
+    {
+        $dir = BASE_PATH . '/runtime/guzzle/';
+        @mkdir($dir, 0755, true);
+
         $handler = new CoroutineHandlerStub();
-        $ex = $handler->checkStatusCode($client, $request);
-        $this->assertInstanceOf(RequestException::class, $ex);
-        $this->assertSame('Server reset', $ex->getMessage());
+        $stream = $handler->createSink($body = uniqid(), $sink = $dir . uniqid());
+        $this->assertSame($body, file_get_contents($sink));
+        $this->assertSame('', stream_get_contents($stream));
+
+        $stream = $handler->createSink($body = uniqid(), $sink);
+        $this->assertSame($body, file_get_contents($sink));
+        $this->assertSame('', stream_get_contents($stream));
+        fseek($stream, 0);
+        $this->assertSame($body, stream_get_contents($stream));
+    }
+
+    public function testResourceSink()
+    {
+        $dir = BASE_PATH . '/runtime/guzzle/';
+        @mkdir($dir, 0755, true);
+        $sink = fopen($file = $dir . uniqid(), 'w+');
+        $handler = new CoroutineHandlerStub();
+        $stream = $handler->createSink($body1 = uniqid(), $sink);
+        $this->assertSame('', stream_get_contents($stream));
+        $stream = $handler->createSink($body2 = uniqid(), $sink);
+        $this->assertSame('', stream_get_contents($stream));
+        $this->assertSame($body1 . $body2, file_get_contents($file));
+        fseek($sink, 0);
+        $this->assertSame($body1 . $body2, stream_get_contents($stream));
+    }
+
+    public function testExpect100Continue()
+    {
+        $url = 'http://127.0.0.1:9501';
+        $client = new Client([
+            'handler' => HandlerStack::create(new CoroutineHandlerStub()),
+            'base_uri' => $url,
+        ]);
+        $res = $client->post('/', [
+            RequestOptions::JSON => [
+                'data' => str_repeat($id = uniqid(), 100000),
+            ],
+        ]);
+
+        $data = Json::decode((string) $res->getBody());
+        $this->assertArrayNotHasKey('Content-Length', $data['headers']);
+        $this->assertArrayNotHasKey('Expect', $data['headers']);
+
+        $stub = \Mockery::mock(CoroutineHandlerStub::class . '[rewriteHeaders]');
+        $stub->shouldReceive('rewriteHeaders')->withAnyArgs()->andReturnUsing(function ($headers) {
+            return $headers;
+        });
+
+        $client = new Client([
+            'handler' => HandlerStack::create($stub),
+            'base_uri' => $url,
+        ]);
+        $res = $client->post('/', [
+            RequestOptions::JSON => [
+                'data' => str_repeat($id = uniqid(), 100000),
+            ],
+        ]);
+
+        $data = Json::decode((string) $res->getBody());
+        $this->assertArrayHasKey('Content-Length', $data['headers']);
+        $this->assertArrayHasKey('Expect', $data['headers']);
     }
 
     protected function getHandler($options = [])

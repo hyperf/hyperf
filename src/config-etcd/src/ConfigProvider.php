@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigEtcd;
 
 class ConfigProvider
@@ -18,23 +17,8 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                ClientInterface::class => Client::class,
-            ],
-
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
-            'publish' => [
-                [
-                    'id' => 'config',
-                    'description' => 'The config for config_etcd.',
-                    'source' => __DIR__ . '/../publish/config_etcd.php',
-                    'destination' => BASE_PATH . '/config/autoload/config_etcd.php',
-                ],
+                ClientInterface::class => ClientFactory::class,
+                KVInterface::class => KVFactory::class,
             ],
         ];
     }

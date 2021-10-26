@@ -5,15 +5,15 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Di\Aop;
 
 use Hyperf\Utils\Composer;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
@@ -44,16 +44,19 @@ class Ast
         return $this->astParser->parse($code);
     }
 
-    public function proxy(string $className, string $proxyClassName)
+    public function proxy(string $className)
     {
-        $stmts = AstCollector::get($className, value(function () use ($className) {
-            $code = $this->getCodeByClassName($className);
-            return $stmts = $this->astParser->parse($code);
-        }));
+        $code = $this->getCodeByClassName($className);
+        $stmts = $this->astParser->parse($code);
         $traverser = new NodeTraverser();
-        // @TODO Allow user modify or replace node vistor.
-        $traverser->addVisitor(new ProxyClassNameVisitor($proxyClassName));
-        $traverser->addVisitor(new ProxyCallVisitor($className));
+        $visitorMetadata = new VisitorMetadata();
+        $visitorMetadata->className = $className;
+        // User could modify or replace the node vistors by Hyperf\Di\Aop\AstVisitorRegistry.
+        $queue = clone AstVisitorRegistry::getQueue();
+        foreach ($queue as $string) {
+            $visitor = new $string($visitorMetadata);
+            $traverser->addVisitor($visitor);
+        }
         $modifiedStmts = $traverser->traverse($stmts);
         return $this->printer->prettyPrintFile($modifiedStmts);
     }
@@ -65,7 +68,7 @@ class Ast
             if ($stmt instanceof Namespace_ && $stmt->name) {
                 $namespace = $stmt->name->toString();
                 foreach ($stmt->stmts as $node) {
-                    if ($node instanceof Class_ && $node->name) {
+                    if (($node instanceof Class_ || $node instanceof Interface_) && $node->name) {
                         $className = $node->name->toString();
                         break;
                     }

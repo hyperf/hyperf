@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\HttpServer\Router;
 
 use FastRoute\DataGenerator\GroupCountBased as DataGenerator;
@@ -26,7 +25,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RouteCollectorTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         MiddlewareManager::$container = [];
@@ -50,6 +49,15 @@ class RouteCollectorTest extends TestCase
         $this->assertSame('Handler::ApiGet', $data['GET']['/api/']->callback);
         $this->assertSame('Handler::Post', $data['POST']['/']->callback);
         $this->assertSame('Handler::ApiPost', $data['POST']['/api/']->callback);
+    }
+
+    public function testGetRouteParser()
+    {
+        $parser = new Std();
+        $generator = new DataGenerator();
+        $collector = new RouteCollector($parser, $generator);
+
+        $this->assertSame($parser, $collector->getRouteParser());
     }
 
     public function testAddGroupMiddleware()
@@ -79,6 +87,7 @@ class RouteCollectorTest extends TestCase
         $this->assertSame('Handler::Get', $data['GET']['/']->callback);
         $this->assertSame('Handler::ApiGet', $data['GET']['/api/']->callback);
         $this->assertSame('Handler::Post', $data['POST']['/']->callback);
+        $this->assertSame(['middleware' => ['PostMiddleware']], $data['POST']['/']->options);
 
         $middle = MiddlewareManager::$container;
         $this->assertSame(['GetMiddleware'], $middle['http']['/']['GET']);
@@ -120,5 +129,23 @@ class RouteCollectorTest extends TestCase
 
         $res = $collector->mergeOptions($origin, $options);
         $this->assertSame(['A', 'B', 'C', 'B'], $res['middleware']);
+    }
+
+    public function testMiddlewareInOptionalRoute()
+    {
+        $parser = new Std();
+        $generator = new DataGenerator();
+        $collector = new RouteCollectorStub($parser, $generator, 'test');
+
+        $routes = [
+            '/user/[{id:\d+}]',
+            '/role/{id:\d+}',
+            '/user',
+        ];
+
+        foreach ($routes as $route) {
+            $collector->addRoute('GET', $route, 'User::Info', ['middleware' => $middlewares = ['FooMiddleware']]);
+            $this->assertSame($middlewares, MiddlewareManager::get('test', $route, 'GET'));
+        }
     }
 }

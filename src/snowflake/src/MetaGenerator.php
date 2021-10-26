@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Snowflake;
 
 use Hyperf\Snowflake\Exception\SnowflakeException;
@@ -43,12 +42,12 @@ abstract class MetaGenerator implements MetaGeneratorInterface
             if ($this->sequence == 0) {
                 $timestamp = $this->getNextTimestamp();
             }
+        } elseif ($timestamp < $this->lastTimestamp) {
+            $this->clockMovedBackwards($timestamp, $this->lastTimestamp);
+            $this->sequence = ($this->sequence + 1) % $this->configuration->maxSequence();
+            $timestamp = $this->lastTimestamp;
         } else {
             $this->sequence = 0;
-        }
-
-        if ($timestamp < $this->lastTimestamp) {
-            $this->clockMovedBackwards($timestamp, $this->lastTimestamp);
         }
 
         if ($timestamp < $this->beginTimestamp) {

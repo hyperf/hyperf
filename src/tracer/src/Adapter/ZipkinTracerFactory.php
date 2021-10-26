@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Tracer\Adapter;
 
 use Hyperf\Contract\ConfigInterface;
@@ -50,7 +49,7 @@ class ZipkinTracerFactory implements NamedFactoryInterface
         }
         [$app, $options, $sampler] = $this->parseConfig();
         $endpoint = Endpoint::create($app['name'], $app['ipv4'], $app['ipv6'], $app['port']);
-        $reporter = new Http($this->clientFactory, $options);
+        $reporter = new Http($options, $this->clientFactory);
         $tracing = TracingBuilder::create()
             ->havingLocalEndpoint($endpoint)
             ->havingSampler($sampler)

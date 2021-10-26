@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Task\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
@@ -17,7 +16,6 @@ use Hyperf\Framework\Event\OnTask;
 use Hyperf\Task\Exception;
 use Hyperf\Task\Finish;
 use Hyperf\Task\Task;
-use Hyperf\Task\TaskExecutor;
 use Psr\Container\ContainerInterface;
 
 class OnTaskListener implements ListenerInterface
@@ -45,9 +43,6 @@ class OnTaskListener implements ListenerInterface
             if (! $data instanceof Task) {
                 return;
             }
-
-            $executor = $this->container->get(TaskExecutor::class);
-            $executor->setIsTaskEnvironment(true);
 
             try {
                 $result = $this->call($data);

@@ -1,0 +1,46 @@
+{
+    "name": "hyperf/scout",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf"
+    ],
+    "description": "Hyperf Scout provides a driver based solution to searching your Eloquent models. Inspired By Laravel Scout.",
+    "require": {
+        "php": ">=7.2",
+        "hyperf/command": "~2.2.0",
+        "hyperf/contract": "~2.2.0",
+        "hyperf/database": "~2.2.0",
+        "hyperf/event": "~2.2.0",
+        "hyperf/macroable": "~2.2.0",
+        "hyperf/model-listener": "~2.2.0",
+        "hyperf/utils": "~2.2.0",
+        "psr/event-dispatcher": "^1.0"
+    },
+    "suggest": {
+        "hyperf/elasticsearch": "Required to use elasticsearch driver.",
+        "hyperf/paginator": "Required to use paginate method."
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Scout\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Scout\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Scout\\ConfigProvider"
+        }
+    }
+}

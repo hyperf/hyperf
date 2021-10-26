@@ -5,26 +5,25 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RpcClient;
 
-use Hyperf\Consul\Agent;
-use Hyperf\Consul\Health;
-use Hyperf\Consul\HealthInterface;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\IdGeneratorInterface;
-use Hyperf\Guzzle\ClientFactory;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\LoadBalancerManager;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
+use Hyperf\Rpc\IdGenerator;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
+use Hyperf\RpcClient\Exception\RequestException;
+use Hyperf\ServiceGovernance\DriverInterface;
+use Hyperf\ServiceGovernance\DriverManager;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -88,26 +87,26 @@ abstract class AbstractServiceClient
     {
         $this->container = $container;
         $this->loadBalancerManager = $container->get(LoadBalancerManager::class);
-        $protocol = new Protocol($container, $container->get(ProtocolManager::class), $this->protocol);
+        $protocol = new Protocol($container, $container->get(ProtocolManager::class), $this->protocol, $this->getOptions());
         $loadBalancer = $this->createLoadBalancer(...$this->createNodes());
         $transporter = $protocol->getTransporter()->setLoadBalancer($loadBalancer);
         $this->client = make(Client::class)
             ->setPacker($protocol->getPacker())
             ->setTransporter($transporter);
-        if ($container->has(IdGeneratorInterface::class)) {
-            $this->idGenerator = $container->get(IdGeneratorInterface::class);
-        }
+        $this->idGenerator = $this->getIdGenerator();
         $this->pathGenerator = $protocol->getPathGenerator();
         $this->dataFormatter = $protocol->getDataFormatter();
     }
 
     protected function __request(string $method, array $params, ?string $id = null)
     {
-        if ($this->idGenerator instanceof IdGeneratorInterface && ! $id) {
+        if (! $id && $this->idGenerator instanceof IdGeneratorInterface) {
             $id = $this->idGenerator->generate();
         }
         $response = $this->client->send($this->__generateData($method, $params, $id));
         if (is_array($response)) {
+            $response = $this->checkRequestIdAndTryAgain($response, $id);
+
             if (array_key_exists('result', $response)) {
                 return $response['result'];
             }
@@ -115,7 +114,7 @@ abstract class AbstractServiceClient
                 return $response['error'];
             }
         }
-        throw new RuntimeException('Invalid response.');
+        throw new RequestException('Invalid response.');
     }
 
     protected function __generateRpcPath(string $methodName): string
@@ -131,11 +130,52 @@ abstract class AbstractServiceClient
         return $this->dataFormatter->formatRequest([$this->__generateRpcPath($methodName), $params, $id]);
     }
 
+    protected function getIdGenerator(): IdGeneratorInterface
+    {
+        if ($this->container->has(IdGenerator\IdGeneratorInterface::class)) {
+            return $this->container->get(IdGenerator\IdGeneratorInterface::class);
+        }
+
+        if ($this->container->has(IdGeneratorInterface::class)) {
+            return $this->container->get(IdGeneratorInterface::class);
+        }
+
+        return $this->container->get(IdGenerator\UniqidIdGenerator::class);
+    }
+
     protected function createLoadBalancer(array $nodes, callable $refresh = null): LoadBalancerInterface
     {
         $loadBalancer = $this->loadBalancerManager->getInstance($this->serviceName, $this->loadBalancer)->setNodes($nodes);
         $refresh && $loadBalancer->refresh($refresh);
         return $loadBalancer;
+    }
+
+    protected function getOptions(): array
+    {
+        $consumer = $this->getConsumerConfig();
+
+        return $consumer['options'] ?? [];
+    }
+
+    protected function getConsumerConfig(): array
+    {
+        if (! $this->container->has(ConfigInterface::class)) {
+            throw new RuntimeException(sprintf('The object implementation of %s missing.', ConfigInterface::class));
+        }
+
+        $config = $this->container->get(ConfigInterface::class);
+
+        // According to the registry config of the consumer, retrieve the nodes.
+        $consumers = $config->get('services.consumers', []);
+        $config = [];
+        foreach ($consumers as $consumer) {
+            if (isset($consumer['name']) && $consumer['name'] === $this->serviceName) {
+                $config = $consumer;
+                break;
+            }
+        }
+
+        return $config;
     }
 
     /**
@@ -145,39 +185,25 @@ abstract class AbstractServiceClient
      */
     protected function createNodes(): array
     {
-        if (! $this->container->has(ConfigInterface::class)) {
-            throw new RuntimeException(sprintf('The object implementation of %s missing.', ConfigInterface::class));
-        }
         $refreshCallback = null;
-        $config = $this->container->get(ConfigInterface::class);
+        $consumer = $this->getConsumerConfig();
 
-        // According to the registry config of the consumer, retrieve the nodes.
-        $consumers = $config->get('services.consumers', []);
-        $isMatch = false;
-        foreach ($consumers as $consumer) {
-            if (isset($consumer['name']) && $consumer['name'] === $this->serviceName) {
-                $isMatch = true;
-                break;
-            }
-        }
-
+        $registryProtocol = $consumer['registry']['protocol'] ?? null;
+        $registryAddress = $consumer['registry']['address'] ?? null;
         // Current $consumer is the config of the specified consumer.
-        if ($isMatch && isset($consumer['registry']['protocol'], $consumer['registry']['address'])) {
-            // According to the protocol and address of the registry, retrieve the nodes.
-            switch ($registryProtocol = $consumer['registry']['protocol'] ?? '') {
-                case 'consul':
-                    $registry = $consumer['registry'] ?? [];
-                    $nodes = $this->getNodesFromConsul($registry);
-                    $refreshCallback = function () use ($registry) {
-                        return $this->getNodesFromConsul($registry);
-                    };
-                    break;
-                default:
-                    throw new InvalidArgumentException(sprintf('Invalid protocol of registry %s', $registryProtocol));
-                    break;
+        if (! empty($registryProtocol) && $this->container->has(DriverManager::class)) {
+            $governance = $this->container->get(DriverManager::class)->get($registryProtocol);
+            if (! $governance) {
+                throw new InvalidArgumentException(sprintf('Invalid protocol of registry %s', $registryProtocol));
             }
+            $nodes = $this->getNodes($governance, $registryAddress);
+            $refreshCallback = function () use ($governance, $registryAddress) {
+                return $this->getNodes($governance, $registryAddress);
+            };
+
             return [$nodes, $refreshCallback];
         }
+
         // Not exists the registry config, then looking for the 'nodes' property.
         if (isset($consumer['nodes'])) {
             $nodes = [];
@@ -191,62 +217,46 @@ abstract class AbstractServiceClient
             }
             return [$nodes, $refreshCallback];
         }
+
         throw new InvalidArgumentException('Config of registry or nodes missing.');
     }
 
-    protected function getNodesFromConsul(array $config): array
+    protected function getNodes(DriverInterface $governance, string $address): array
     {
-        $agent = $this->createConsulAgent($config);
-        $services = $agent->services()->json();
+        $nodeArray = $governance->getNodes($address, $this->serviceName, [
+            'protocol' => $this->protocol,
+        ]);
         $nodes = [];
-        foreach ($services as $serviceId => $service) {
-            if (! isset($service['Service'], $service['Address'], $service['Port']) || $service['Service'] !== $this->serviceName) {
-                continue;
-            }
+        foreach ($nodeArray as $node) {
             // @TODO Get and set the weight property.
-            $nodes[$serviceId] = new Node($service['Address'], $service['Port']);
+            $nodes[] = new Node($node['host'], $node['port']);
         }
-        if (empty($nodes)) {
-            return $nodes;
-        }
-        $health = $this->createConsulHealth($config);
-        $checks = $health->checks($this->serviceName)->json();
-        foreach ($checks ?? [] as $check) {
-            if (! isset($check['Status'], $check['ServiceID'])) {
-                continue;
-            }
-            if ($check['Status'] !== 'passing') {
-                unset($nodes[$check['ServiceID']]);
-            }
-        }
-        return array_values($nodes);
+
+        return $nodes;
     }
 
-    protected function createConsulAgent(array $config)
+    protected function checkRequestIdAndTryAgain(array $response, $id, int $again = 1): array
     {
-        if (! $this->container->has(Agent::class)) {
-            throw new InvalidArgumentException('Component of \'hyperf/consul\' is required if you want the client fetch the nodes info from consul.');
+        if (is_null($id)) {
+            // If the request id is null then do not check.
+            return $response;
         }
-        return make(Agent::class, [
-            'clientFactory' => function () use ($config) {
-                return $this->container->get(ClientFactory::class)->create([
-                    'base_uri' => $config['address'] ?? Agent::DEFAULT_URI,
-                ]);
-            },
-        ]);
-    }
 
-    protected function createConsulHealth(array $config): HealthInterface
-    {
-        if (! $this->container->has(Health::class)) {
-            throw new InvalidArgumentException('Component of \'hyperf/consul\' is required if you want the client fetch the nodes info from consul.');
+        if (isset($response['id']) && $response['id'] === $id) {
+            return $response;
         }
-        return make(Health::class, [
-            'clientFactory' => function () use ($config) {
-                return $this->container->get(ClientFactory::class)->create([
-                    'base_uri' => $config['address'] ?? Health::DEFAULT_URI,
-                ]);
-            },
-        ]);
+
+        if ($again <= 0) {
+            throw new RequestException(sprintf(
+                'Invalid response. Request id[%s] is not equal to response id[%s].',
+                $id,
+                $response['id'] ?? null
+            ));
+        }
+
+        $response = $this->client->recv();
+        --$again;
+
+        return $this->checkRequestIdAndTryAgain($response, $id, $again);
     }
 }

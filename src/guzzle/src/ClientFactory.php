@@ -5,17 +5,16 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Guzzle;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine;
 
 class ClientFactory
 {
@@ -32,7 +31,7 @@ class ClientFactory
     public function create(array $options = []): Client
     {
         $stack = null;
-        if (Coroutine::getCid() > 0) {
+        if (Coroutine::inCoroutine()) {
             $stack = HandlerStack::create(new CoroutineHandler());
         }
 

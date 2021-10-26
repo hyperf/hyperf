@@ -9,4 +9,4 @@ community_bridge: # Replace with a single Community Bridge project-name e.g., cl
 liberapay: # Replace with a single Liberapay username
 issuehunt: #
 otechie: # Replace with a single Otechie username
-custom: https://doc.hyperf.io/#/zh/donate
+custom: https://hyperf.wiki/2.0/#/zh-cn/donate

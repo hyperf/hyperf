@@ -5,111 +5,169 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Di\Annotation;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
-use Hyperf\Di\Aop\Ast;
+use Hyperf\Config\ProviderConfig;
+use Hyperf\Di\Aop\ProxyManager;
+use Hyperf\Di\ClassLoader;
+use Hyperf\Di\Exception\DirectoryNotExistException;
+use Hyperf\Di\Exception\Exception;
+use Hyperf\Di\MetadataCollector;
 use Hyperf\Di\ReflectionManager;
-use Symfony\Component\Finder\Finder;
+use Hyperf\Utils\Filesystem\Filesystem;
+use ReflectionClass;
 
 class Scanner
 {
     /**
-     * @var Ast
+     * @var \Hyperf\Di\ClassLoader
      */
-    private $parser;
+    protected $classloader;
 
-    public function __construct(array $ignoreAnnotations = ['mixin'])
+    /**
+     * @var ScanConfig
+     */
+    protected $scanConfig;
+
+    /**
+     * @var Filesystem
+     */
+    protected $filesystem;
+
+    /**
+     * @var string
+     */
+    protected $path = BASE_PATH . '/runtime/container/scan.cache';
+
+    public function __construct(ClassLoader $classloader, ScanConfig $scanConfig)
     {
-        $this->parser = new Ast();
+        $this->classloader = $classloader;
+        $this->scanConfig = $scanConfig;
+        $this->filesystem = new Filesystem();
 
-        // TODO: this method is deprecated and will be removed in doctrine/annotations 2.0
-        AnnotationRegistry::registerLoader('class_exists');
-
-        foreach ($ignoreAnnotations as $annotation) {
+        foreach ($scanConfig->getIgnoreAnnotations() as $annotation) {
             AnnotationReader::addGlobalIgnoredName($annotation);
+        }
+        foreach ($scanConfig->getGlobalImports() as $alias => $annotation) {
+            AnnotationReader::addGlobalImports($alias, $annotation);
         }
     }
 
-    public function scan(array $paths): array
+    public function collect(AnnotationReader $reader, ReflectionClass $reflection)
     {
+        $className = $reflection->getName();
+        if ($path = $this->scanConfig->getClassMap()[$className] ?? null) {
+            if ($reflection->getFileName() !== $path) {
+                // When the original class is dynamically replaced, the original class should not be collected.
+                return;
+            }
+        }
+        // Parse class annotations
+        $classAnnotations = $reader->getClassAnnotations($reflection);
+        if (! empty($classAnnotations)) {
+            foreach ($classAnnotations as $classAnnotation) {
+                if ($classAnnotation instanceof AnnotationInterface) {
+                    $classAnnotation->collectClass($className);
+                }
+            }
+        }
+        // Parse properties annotations
+        $properties = $reflection->getProperties();
+        foreach ($properties as $property) {
+            $propertyAnnotations = $reader->getPropertyAnnotations($property);
+            if (! empty($propertyAnnotations)) {
+                foreach ($propertyAnnotations as $propertyAnnotation) {
+                    if ($propertyAnnotation instanceof AnnotationInterface) {
+                        $propertyAnnotation->collectProperty($className, $property->getName());
+                    }
+                }
+            }
+        }
+        // Parse methods annotations
+        $methods = $reflection->getMethods();
+        foreach ($methods as $method) {
+            $methodAnnotations = $reader->getMethodAnnotations($method);
+            if (! empty($methodAnnotations)) {
+                foreach ($methodAnnotations as $methodAnnotation) {
+                    if ($methodAnnotation instanceof AnnotationInterface) {
+                        $methodAnnotation->collectMethod($className, $method->getName());
+                    }
+                }
+            }
+        }
+
+        unset($reflection, $classAnnotations, $properties, $methods);
+    }
+
+    public function scan(array $classMap = [], string $proxyDir = ''): array
+    {
+        $paths = $this->scanConfig->getPaths();
+        $collectors = $this->scanConfig->getCollectors();
         if (! $paths) {
             return [];
         }
+
+        $lastCacheModified = file_exists($this->path) ? $this->filesystem->lastModified($this->path) : 0;
+        if ($lastCacheModified > 0 && $this->scanConfig->isCacheable()) {
+            return $this->deserializeCachedScanData($collectors);
+        }
+
+        $pid = pcntl_fork();
+        if ($pid == -1) {
+            throw new Exception('The process fork failed');
+        }
+        if ($pid) {
+            pcntl_wait($status);
+            return $this->deserializeCachedScanData($collectors);
+        }
+
+        $this->deserializeCachedScanData($collectors);
+
+        $annotationReader = new AnnotationReader();
+
         $paths = $this->normalizeDir($paths);
 
-        $finder = new Finder();
-        $finder->files()->in($paths)->name('*.php');
+        $classes = ReflectionManager::getAllClasses($paths);
 
-        $meta = [];
-        foreach ($finder as $file) {
-            try {
-                $stmts = $this->parser->parse($file->getContents());
-                $className = $this->parser->parseClassByStmts($stmts);
-                if (! $className) {
-                    continue;
+        $this->clearRemovedClasses($collectors, $classes);
+
+        $reflectionClassMap = [];
+        foreach ($classes as $className => $reflectionClass) {
+            $reflectionClassMap[$className] = $reflectionClass->getFileName();
+            if ($this->filesystem->lastModified($reflectionClass->getFileName()) >= $lastCacheModified) {
+                /** @var MetadataCollector $collector */
+                foreach ($collectors as $collector) {
+                    $collector::clear($className);
                 }
-                $meta[$className] = $stmts;
-            } catch (\RuntimeException $e) {
-                continue;
+
+                $this->collect($annotationReader, $reflectionClass);
             }
         }
-        $this->collect(array_keys($meta));
 
-        return $meta;
-    }
+        $this->loadAspects($lastCacheModified);
 
-    public function collect($classCollection)
-    {
-        $reader = new AnnotationReader();
-        // Because the annotation class should loaded before use it, so load file via $finder previous, and then parse annotation here.
-        foreach ($classCollection as $className) {
-            $reflectionClass = ReflectionManager::reflectClass($className);
-            $classAnnotations = $reader->getClassAnnotations($reflectionClass);
-            if (! empty($classAnnotations)) {
-                foreach ($classAnnotations as $classAnnotation) {
-                    if ($classAnnotation instanceof AnnotationInterface) {
-                        $classAnnotation->collectClass($className);
-                    }
-                }
-            }
-
-            // Parse properties annotations.
-            $properties = $reflectionClass->getProperties();
-            foreach ($properties as $property) {
-                $propertyAnnotations = $reader->getPropertyAnnotations($property);
-                if (! empty($propertyAnnotations)) {
-                    foreach ($propertyAnnotations as $propertyAnnotation) {
-                        if ($propertyAnnotation instanceof AnnotationInterface) {
-                            $propertyAnnotation->collectProperty($className, $property->getName());
-                        }
-                    }
-                }
-            }
-
-            // Parse methods annotations.
-            $methods = $reflectionClass->getMethods();
-            foreach ($methods as $method) {
-                $methodAnnotations = $reader->getMethodAnnotations($method);
-                if (! empty($methodAnnotations)) {
-                    foreach ($methodAnnotations as $methodAnnotation) {
-                        if ($methodAnnotation instanceof AnnotationInterface) {
-                            $methodAnnotation->collectMethod($className, $method->getName());
-                        }
-                    }
-                }
-            }
+        $data = [];
+        /** @var MetadataCollector|string $collector */
+        foreach ($collectors as $collector) {
+            $data[$collector] = $collector::serialize();
         }
+
+        // Get the class map of Composer loader
+        $classMap = array_merge($reflectionClassMap, $classMap);
+        $proxyManager = new ProxyManager($classMap, $proxyDir);
+        $proxies = $proxyManager->getProxies();
+
+        $this->putCache($this->path, serialize([$data, $proxies]));
+        exit;
     }
 
     /**
      * Normalizes given directory names by removing directory not exist.
+     * @throws DirectoryNotExistException
      */
     public function normalizeDir(array $paths): array
     {
@@ -120,6 +178,179 @@ class Scanner
             }
         }
 
+        if ($paths && ! $result) {
+            throw new DirectoryNotExistException('The scanned directory does not exist');
+        }
+
         return $result;
+    }
+
+    protected function deserializeCachedScanData(array $collectors): array
+    {
+        if (! file_exists($this->path)) {
+            return [];
+        }
+
+        [$data, $proxies] = unserialize(file_get_contents($this->path));
+        foreach ($data as $collector => $deserialized) {
+            /** @var MetadataCollector $collector */
+            if (in_array($collector, $collectors)) {
+                $collector::deserialize($deserialized);
+            }
+        }
+
+        return $proxies;
+    }
+
+    protected function deserializeCachedCollectors(array $collectors): int
+    {
+        if (! file_exists($this->path)) {
+            return 0;
+        }
+
+        $data = unserialize(file_get_contents($this->path));
+        foreach ($data as $collector => $deserialized) {
+            /** @var MetadataCollector $collector */
+            if (in_array($collector, $collectors)) {
+                $collector::deserialize($deserialized);
+            }
+        }
+
+        return $this->filesystem->lastModified($this->path);
+    }
+
+    /**
+     * @param ReflectionClass[] $reflections
+     */
+    protected function clearRemovedClasses(array $collectors, array $reflections): void
+    {
+        $path = BASE_PATH . '/runtime/container/classes.cache';
+        $classes = array_keys($reflections);
+
+        $data = [];
+        if ($this->filesystem->exists($path)) {
+            $data = unserialize($this->filesystem->get($path));
+        }
+
+        $this->putCache($path, serialize($classes));
+
+        $removed = array_diff($data, $classes);
+
+        foreach ($removed as $class) {
+            /** @var MetadataCollector $collector */
+            foreach ($collectors as $collector) {
+                $collector::clear($class);
+            }
+        }
+    }
+
+    protected function putCache(string $path, $data)
+    {
+        if (! $this->filesystem->isDirectory($dir = dirname($path))) {
+            $this->filesystem->makeDirectory($dir, 0755, true);
+        }
+
+        $this->filesystem->put($path, $data);
+    }
+
+    /**
+     * Load aspects to AspectCollector by configuration files and ConfigProvider.
+     */
+    protected function loadAspects(int $lastCacheModified): void
+    {
+        $configDir = $this->scanConfig->getConfigDir();
+        if (! $configDir) {
+            return;
+        }
+
+        $aspectsPath = $configDir . '/autoload/aspects.php';
+        $basePath = $configDir . '/config.php';
+        $aspects = file_exists($aspectsPath) ? include $aspectsPath : [];
+        $baseConfig = file_exists($basePath) ? include $basePath : [];
+        $providerConfig = [];
+        if (class_exists(ProviderConfig::class)) {
+            $providerConfig = ProviderConfig::load();
+        }
+        if (! isset($aspects) || ! is_array($aspects)) {
+            $aspects = [];
+        }
+        if (! isset($baseConfig['aspects']) || ! is_array($baseConfig['aspects'])) {
+            $baseConfig['aspects'] = [];
+        }
+        if (! isset($providerConfig['aspects']) || ! is_array($providerConfig['aspects'])) {
+            $providerConfig['aspects'] = [];
+        }
+        $aspects = array_merge($providerConfig['aspects'], $baseConfig['aspects'], $aspects);
+
+        [$removed, $changed] = $this->getChangedAspects($aspects, $lastCacheModified);
+        // When the aspect removed from config, it should removed from AspectCollector.
+        foreach ($removed as $aspect) {
+            AspectCollector::clear($aspect);
+        }
+
+        foreach ($aspects ?? [] as $key => $value) {
+            if (is_numeric($key)) {
+                $aspect = $value;
+                $priority = null;
+            } else {
+                $aspect = $key;
+                $priority = (int) $value;
+            }
+
+            if (! in_array($aspect, $changed)) {
+                continue;
+            }
+
+            [$instanceClasses, $instanceAnnotations, $instancePriority] = AspectLoader::load($aspect);
+
+            $classes = $instanceClasses ?: [];
+            // Annotations
+            $annotations = $instanceAnnotations ?: [];
+            // Priority
+            $priority = $priority ?: ($instancePriority ?? null);
+            // Save the metadata to AspectCollector
+            AspectCollector::setAround($aspect, $classes, $annotations, $priority);
+        }
+    }
+
+    protected function getChangedAspects(array $aspects, int $lastCacheModified): array
+    {
+        $path = BASE_PATH . '/runtime/container/aspects.cache';
+        $classes = [];
+        foreach ($aspects as $key => $value) {
+            if (is_numeric($key)) {
+                $classes[] = $value;
+            } else {
+                $classes[] = $key;
+            }
+        }
+
+        $data = [];
+        if ($this->filesystem->exists($path)) {
+            $data = unserialize($this->filesystem->get($path));
+        }
+
+        $this->putCache($path, serialize($classes));
+
+        $diff = array_diff($data, $classes);
+        $changed = array_diff($classes, $data);
+        $removed = [];
+        foreach ($diff as $item) {
+            $annotation = AnnotationCollector::getClassAnnotation($item, Aspect::class);
+            if (is_null($annotation)) {
+                $removed[] = $item;
+            }
+        }
+        foreach ($classes as $class) {
+            $file = $this->classloader->getComposerClassLoader()->findFile($class);
+            if ($lastCacheModified <= $this->filesystem->lastModified($file)) {
+                $changed[] = $class;
+            }
+        }
+
+        return [
+            array_values(array_unique($removed)),
+            array_values(array_unique($changed)),
+        ];
     }
 }

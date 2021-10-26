@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Model\Relations;
 
 use Hyperf\Database\Model\Builder;
@@ -70,7 +69,7 @@ abstract class HasOneOrMany extends Relation
      */
     public function addConstraints()
     {
-        if (static::$constraints) {
+        if (Constraint::isConstraint()) {
             $this->query->where($this->foreignKey, '=', $this->getParentKey());
 
             $this->query->whereNotNull($this->foreignKey);
@@ -277,16 +276,6 @@ abstract class HasOneOrMany extends Relation
             '=',
             $hash . '.' . $this->getForeignKeyName()
         );
-    }
-
-    /**
-     * Get a relationship join table hash.
-     *
-     * @return string
-     */
-    public function getRelationCountHash()
-    {
-        return 'laravel_reserved_' . static::$selfJoinCount++;
     }
 
     /**

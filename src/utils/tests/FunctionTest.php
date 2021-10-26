@@ -5,15 +5,17 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Utils;
 
+use Hyperf\Utils\Coroutine;
 use HyperfTest\Utils\Exception\RetryException;
 use PHPUnit\Framework\TestCase;
+use Swoole\Coroutine\Channel;
+use Swoole\Runtime;
 
 /**
  * @internal
@@ -28,6 +30,17 @@ class FunctionTest extends TestCase
         }, [1]);
 
         $this->assertSame(2, $result);
+    }
+
+    public function testReturnOfGo()
+    {
+        $uniqid = uniqid();
+        $id = go(function () use (&$uniqid) {
+            $uniqid = 'Hyperf';
+        });
+
+        $this->assertTrue(is_int($id));
+        $this->assertSame('Hyperf', $uniqid);
     }
 
     public function testDataGet()
@@ -58,11 +71,9 @@ class FunctionTest extends TestCase
         $this->assertSame(4, $result);
     }
 
-    /**
-     * @expectedException \HyperfTest\Utils\Exception\RetryException
-     */
     public function testRetry()
     {
+        $this->expectException(\HyperfTest\Utils\Exception\RetryException::class);
         $result = 0;
         try {
             retry(2, function () use (&$result) {
@@ -74,11 +85,10 @@ class FunctionTest extends TestCase
         }
     }
 
-    /**
-     * @expectedException \HyperfTest\Utils\Exception\RetryException
-     */
     public function testOneTimesRetry()
     {
+        $this->expectException(\HyperfTest\Utils\Exception\RetryException::class);
+
         $result = 0;
         try {
             retry(1, function () use (&$result) {
@@ -90,11 +100,10 @@ class FunctionTest extends TestCase
         }
     }
 
-    /**
-     * @expectedException \HyperfTest\Utils\Exception\RetryException
-     */
     public function testRetryErrorTimes()
     {
+        $this->expectException(\HyperfTest\Utils\Exception\RetryException::class);
+
         $result = 0;
         try {
             retry(0, function () use (&$result) {
@@ -106,8 +115,68 @@ class FunctionTest extends TestCase
         }
     }
 
+    public function testRetryWithAttempts()
+    {
+        $this->expectException(\HyperfTest\Utils\Exception\RetryException::class);
+
+        $asserts = [1, 2, 3];
+        retry(2, function ($attempts) use (&$asserts) {
+            $this->assertSame($attempts, array_shift($asserts));
+            throw new RetryException('Retry Test');
+        });
+    }
+
     public function testSwooleHookFlags()
     {
         $this->assertSame(SWOOLE_HOOK_ALL, swoole_hook_flags());
+    }
+
+    /**
+     * @group NonCoroutine
+     */
+    public function testRun()
+    {
+        $asserts = [
+            SWOOLE_HOOK_ALL,
+            SWOOLE_HOOK_SLEEP,
+            SWOOLE_HOOK_CURL,
+        ];
+
+        foreach ($asserts as $flags) {
+            run(function () use ($flags) {
+                $this->assertTrue(Coroutine::inCoroutine());
+                $this->assertSame($flags, Runtime::getHookFlags());
+            }, $flags);
+        }
+    }
+
+    public function testDefer()
+    {
+        $channel = new Channel(10);
+        parallel([function () use ($channel) {
+            defer(function () use ($channel) {
+                $channel->push(0);
+            });
+            defer(function () use ($channel) {
+                $channel->push(1);
+                defer(function () use ($channel) {
+                    $channel->push(2);
+                });
+                defer(function () use ($channel) {
+                    $channel->push(3);
+                });
+            });
+            defer(function () use ($channel) {
+                $channel->push(4);
+            });
+            $channel->push(5);
+        }]);
+
+        $this->assertSame(5, $channel->pop(0.001));
+        $this->assertSame(4, $channel->pop(0.001));
+        $this->assertSame(1, $channel->pop(0.001));
+        $this->assertSame(3, $channel->pop(0.001));
+        $this->assertSame(2, $channel->pop(0.001));
+        $this->assertSame(0, $channel->pop(0.001));
     }
 }

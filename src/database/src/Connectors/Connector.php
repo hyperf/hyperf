@@ -5,14 +5,12 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Connectors;
 
-use Doctrine\DBAL\Driver\PDOConnection;
 use Exception;
 use Hyperf\Database\DetectsLostConnections;
 use PDO;
@@ -105,10 +103,6 @@ class Connector
      */
     protected function createPdoConnection($dsn, $username, $password, $options)
     {
-        if (class_exists(PDOConnection::class) && ! $this->isPersistentConnection($options)) {
-            return new PDOConnection($dsn, $username, $password, $options);
-        }
-
         return new PDO($dsn, $username, $password, $options);
     }
 
@@ -120,8 +114,8 @@ class Connector
      */
     protected function isPersistentConnection($options)
     {
-        return isset($options[PDO::ATTR_PERSISTENT]) &&
-            $options[PDO::ATTR_PERSISTENT];
+        return isset($options[PDO::ATTR_PERSISTENT])
+            && $options[PDO::ATTR_PERSISTENT];
     }
 
     /**

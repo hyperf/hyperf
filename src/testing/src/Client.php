@@ -5,55 +5,57 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Testing;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\MiddlewareManager;
+use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Server;
+use Hyperf\Testing\HttpMessage\Upload\UploadedFile;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Packer\JsonPacker;
-use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Coroutine as SwCoroutine;
 
 class Client extends Server
 {
-    /**
-     * @var array
-     */
-    public $ignoreContextPrefix = [
-        'database.connection',
-        'redis.connection',
-    ];
-
     /**
      * @var PackerInterface
      */
     protected $packer;
 
+    /**
+     * @var float
+     */
+    protected $waitTimeout = 10.0;
+
+    /**
+     * @var string
+     */
+    protected $baseUri = 'http://127.0.0.1/';
+
     public function __construct(ContainerInterface $container, PackerInterface $packer = null, $server = 'http')
     {
-        parent::__construct($container, $container->get(HttpDispatcher::class), $container->get(ExceptionHandlerDispatcher::class));
+        parent::__construct($container, $container->get(HttpDispatcher::class), $container->get(ExceptionHandlerDispatcher::class), $container->get(ResponseEmitter::class));
         $this->packer = $packer ?? new JsonPacker();
 
         $this->initCoreMiddleware($server);
+        $this->initBaseUri($server);
     }
 
     public function get($uri, $data = [], $headers = [])
@@ -63,7 +65,7 @@ class Client extends Server
             'query' => $data,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function post($uri, $data = [], $headers = [])
@@ -73,7 +75,7 @@ class Client extends Server
             'form_params' => $data,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function put($uri, $data = [], $headers = [])
@@ -83,7 +85,7 @@ class Client extends Server
             'form_params' => $data,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function delete($uri, $data = [], $headers = [])
@@ -93,7 +95,7 @@ class Client extends Server
             'query' => $data,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function json($uri, $data = [], $headers = [])
@@ -103,7 +105,7 @@ class Client extends Server
             'headers' => $headers,
             'json' => $data,
         ]);
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function file($uri, $data = [], $headers = [])
@@ -129,23 +131,34 @@ class Client extends Server
             'multipart' => $multipart,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function request(string $method, string $path, array $options = [])
     {
-        /*
-         * @var Psr7Request
-         */
-        [$psr7Request, $psr7Response] = $this->init($method, $path, $options);
+        return wait(function () use ($method, $path, $options) {
+            return $this->execute($this->init($method, $path, $options));
+        }, $this->waitTimeout);
+    }
+
+    public function sendRequest(ServerRequestInterface $psr7Request): ResponseInterface
+    {
+        return wait(function () use ($psr7Request) {
+            return $this->execute($psr7Request);
+        }, $this->waitTimeout);
+    }
+
+    protected function execute(ServerRequestInterface $psr7Request): ResponseInterface
+    {
+        $this->persistToContext($psr7Request, new Psr7Response());
 
         $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
         /** @var Dispatched $dispatched */
         $dispatched = $psr7Request->getAttribute(Dispatched::class);
         $middlewares = $this->middlewares;
         if ($dispatched->isFound()) {
-            $registedMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
-            $middlewares = array_merge($middlewares, $registedMiddlewares);
+            $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
+            $middlewares = array_merge($middlewares, $registeredMiddlewares);
         }
 
         try {
@@ -158,10 +171,28 @@ class Client extends Server
         return $psr7Response;
     }
 
-    protected function init(string $method, string $path, array $options = []): array
+    protected function persistToContext(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $this->flushContext();
+        Context::set(ServerRequestInterface::class, $request);
+        Context::set(ResponseInterface::class, $response);
+    }
 
+    protected function initBaseUri($server): void
+    {
+        if ($this->container->has(ConfigInterface::class)) {
+            $config = $this->container->get(ConfigInterface::class);
+            $servers = $config->get('server.servers', []);
+            foreach ($servers as $item) {
+                if ($item['name'] == $server) {
+                    $this->baseUri = sprintf('http://127.0.0.1:%d/', (int) $item['port']);
+                    break;
+                }
+            }
+        }
+    }
+
+    protected function init(string $method, string $path, array $options = []): ServerRequestInterface
+    {
         $query = $options['query'] ?? [];
         $params = $options['form_params'] ?? [];
         $json = $options['json'] ?? [];
@@ -171,7 +202,7 @@ class Client extends Server
         $data = $params;
 
         // Initialize PSR-7 Request and Response objects.
-        $uri = (new Uri())->withPath($path)->withQuery(http_build_query($query));
+        $uri = (new Uri($this->baseUri . ltrim($path, '/')))->withQuery(http_build_query($query));
 
         $content = http_build_query($params);
         if ($method == 'POST' && data_get($headers, 'Content-Type') == 'application/json') {
@@ -182,26 +213,9 @@ class Client extends Server
         $body = new SwooleStream($content);
 
         $request = new Psr7Request($method, $uri, $headers, $body);
-        $request = $request->withQueryParams($query)
+        return $request->withQueryParams($query)
             ->withParsedBody($data)
             ->withUploadedFiles($this->normalizeFiles($multipart));
-
-        Context::set(ServerRequestInterface::class, $psr7Request = $request);
-        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
-
-        return [$psr7Request, $psr7Response];
-    }
-
-    protected function flushContext()
-    {
-        $context = SwCoroutine::getContext();
-
-        foreach ($context as $key => $value) {
-            if (Str::startsWith($key, $this->ignoreContextPrefix)) {
-                continue;
-            }
-            $context[$key] = null;
-        }
     }
 
     protected function normalizeFiles(array $multipart): array
@@ -217,7 +231,9 @@ class Client extends Server
 
                 $dir = BASE_PATH . '/runtime/uploads';
                 $tmpName = $dir . '/' . $filename;
-                $fileSystem->makeDirectory($dir);
+                if (! is_dir($dir)) {
+                    $fileSystem->makeDirectory($dir);
+                }
                 $fileSystem->put($tmpName, $contents);
 
                 $stats = fstat($contents);

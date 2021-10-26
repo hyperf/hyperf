@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\RateLimit\Handler;
 
 use bandwidthThrottle\tokenBucket\Rate;
@@ -20,7 +19,7 @@ use function make;
 
 class RateLimitHandler
 {
-    const RATE_LIMIT_BUCKETS = 'rateLimit:buckets';
+    public const RATE_LIMIT_BUCKETS = 'rateLimit:buckets';
 
     /**
      * @var \Redis

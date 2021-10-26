@@ -5,13 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\CircuitBreaker\Annotation;
 
+use Attribute;
 use Doctrine\Common\Annotations\Annotation\Target;
 use Hyperf\CircuitBreaker\Handler\TimeoutHandler;
 use Hyperf\Di\Annotation\AbstractAnnotation;
@@ -19,8 +19,9 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 /**
  * @Annotation
  * @Target({"METHOD"})
- * @property $timeout
+ * @property float $timeout
  */
+#[Attribute(Attribute::TARGET_METHOD)]
 class CircuitBreaker extends AbstractAnnotation
 {
     /**
@@ -56,10 +57,10 @@ class CircuitBreaker extends AbstractAnnotation
      */
     public $value;
 
-    public function __construct($value = null)
+    public function __construct(...$value)
     {
-        parent::__construct($value);
+        parent::__construct(...$value);
 
-        $this->value = $value ?? [];
+        $this->value = $this->formatParams($value);
     }
 }

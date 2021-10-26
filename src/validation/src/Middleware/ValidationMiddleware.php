@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Validation\Middleware;
 
 use Closure;
@@ -56,20 +55,24 @@ class ValidationMiddleware implements MiddlewareInterface
             throw new ServerException(sprintf('The dispatched object is not a %s object.', Dispatched::class));
         }
 
+        Context::set(ServerRequestInterface::class, $request);
+
         if ($this->shouldHandle($dispatched)) {
             try {
                 [$requestHandler, $method] = $this->prepareHandler($dispatched->handler->callback);
-                $reflectionMethod = ReflectionManager::reflectMethod($requestHandler, $method);
-                $parameters = $reflectionMethod->getParameters();
-                foreach ($parameters as $parameter) {
-                    if ($parameter->getType() === null) {
-                        continue;
-                    }
-                    $classname = $parameter->getType()->getName();
-                    if ($this->isImplementedValidatesWhenResolved($classname)) {
-                        /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved $formRequest */
-                        $formRequest = $this->container->get($classname);
-                        $formRequest->validateResolved();
+                if ($method) {
+                    $reflectionMethod = ReflectionManager::reflectMethod($requestHandler, $method);
+                    $parameters = $reflectionMethod->getParameters();
+                    foreach ($parameters as $parameter) {
+                        if ($parameter->getType() === null) {
+                            continue;
+                        }
+                        $classname = $parameter->getType()->getName();
+                        if ($this->isImplementedValidatesWhenResolved($classname)) {
+                            /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved $formRequest */
+                            $formRequest = $this->container->get($classname);
+                            $formRequest->validateResolved();
+                        }
                     }
                 }
             } catch (UnauthorizedException $exception) {
@@ -115,7 +118,8 @@ class ValidationMiddleware implements MiddlewareInterface
             if (strpos($handler, '@') !== false) {
                 return explode('@', $handler);
             }
-            return explode('::', $handler);
+            $array = explode('::', $handler);
+            return [$array[0], $array[1] ?? null];
         }
         if (is_array($handler) && isset($handler[0], $handler[1])) {
             return $handler;

@@ -1,0 +1,46 @@
+{
+    "name": "hyperf/session",
+    "description": "A session library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "session"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=7.2",
+        "psr/http-server-middleware": "^1.0",
+        "hyperf/utils": "~2.2.0"
+    },
+    "suggest": {
+        "psr/container": "Required to use SessionFactory.",
+        "hyperf/config": "Required to load session config."
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Session\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Session\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Session\\ConfigProvider"
+        }
+    }
+}

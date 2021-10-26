@@ -5,14 +5,18 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Pool;
 
+use Hyperf\Pool\Channel;
+use Hyperf\Pool\Pool;
+use Hyperf\Utils\Coroutine;
+use HyperfTest\Pool\Stub\ConstantFrequencyStub;
 use HyperfTest\Pool\Stub\FrequencyStub;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,6 +25,11 @@ use PHPUnit\Framework\TestCase;
  */
 class FrequencyTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        Mockery::close();
+    }
+
     public function testFrequencyHit()
     {
         $frequency = new FrequencyStub();
@@ -40,6 +49,20 @@ class FrequencyTest extends TestCase
         $frequency->hit();
         $num = $frequency->frequency();
         $this->assertSame(42 / 5, $num);
+    }
+
+    public function testConstantFrequency()
+    {
+        $pool = Mockery::mock(Pool::class);
+        $channel = new Channel(100);
+        $pool->shouldReceive('flushOne')->andReturnUsing(function () use ($channel) {
+            $channel->push(true);
+        });
+
+        $stub = new ConstantFrequencyStub($pool);
+        Coroutine::sleep(0.002);
+        $stub->clear();
+        $this->assertGreaterThan(0, $channel->length());
     }
 
     public function testFrequencyHitOneSecondAfter()

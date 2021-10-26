@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Di\Definition;
 
 class PropertyHandlerManager
@@ -30,15 +29,20 @@ class PropertyHandlerManager
     }
 
     /**
-     * @return callable[]
+     * @return null|callable[]
      */
-    public static function get(string $annotation): array
+    public static function get(string $annotation): ?array
     {
-        return static::$container[$annotation];
+        return static::$container[$annotation] ?? null;
     }
 
     public static function all(): array
     {
         return static::$container;
+    }
+
+    public static function isEmpty(): bool
+    {
+        return empty(static::all());
     }
 }

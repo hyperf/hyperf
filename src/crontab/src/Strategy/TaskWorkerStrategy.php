@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Crontab\Strategy;
 
 use Carbon\Carbon;
@@ -52,7 +51,7 @@ class TaskWorkerStrategy extends AbstractStrategy
     protected function getNextWorkerId(Server $server): int
     {
         ++$this->currentWorkerId;
-        $minWorkerId = $server->setting['worker_num'];
+        $minWorkerId = (int) $server->setting['worker_num'];
         $maxWorkerId = $minWorkerId + $server->setting['task_worker_num'] - 1;
         if ($this->currentWorkerId < $minWorkerId) {
             $this->currentWorkerId = $minWorkerId;

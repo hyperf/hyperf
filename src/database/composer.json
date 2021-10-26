@@ -7,25 +7,25 @@
         "hyperf",
         "database"
     ],
+    "homepage": "https://hyperf.io",
     "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/utils": "~1.1.0",
-        "hyperf/paginator": "~1.1.0",
-        "psr/container": "^1.0",
+        "hyperf/macroable": "~2.2.0",
+        "hyperf/utils": "~2.2.8",
         "nesbot/carbon": "^2.0",
+        "psr/container": "^1.0|^2.0",
         "psr/event-dispatcher": "^1.0"
     },
-    "require-dev": {
-        "malukenho/docheader": "^0.1.6",
-        "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^7.0.0",
-        "friendsofphp/php-cs-fixer": "^2.9"
-    },
     "suggest": {
-        "doctrine/dbal": "Required to rename columns (^2.6).",
-        "nikic/php-parser": "Required to use ModelCommand (^4.1)."
+        "doctrine/dbal": "Required to rename columns (^3.0).",
+        "nikic/php-parser": "Required to use ModelCommand. (^4.0)",
+        "php-di/phpdoc-reader": "Required to use ModelCommand. (^2.2)"
     },
     "autoload": {
         "psr-4": {
@@ -42,13 +42,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.2-dev"
         }
-    },
-    "bin": [
-    ],
-    "scripts": {
-        "cs-fix": "php-cs-fixer fix $1",
-        "test": "phpunit --colors=always"
     }
 }

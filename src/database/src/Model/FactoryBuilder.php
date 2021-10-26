@@ -5,15 +5,14 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Model;
 
 use Faker\Generator as Faker;
-use Hyperf\Utils\Traits\Macroable;
+use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
 
 class FactoryBuilder
@@ -428,7 +427,7 @@ class FactoryBuilder
      */
     protected function stateHasAfterCallback($state)
     {
-        return isset($this->afterMaking[$this->class][$state]) ||
-               isset($this->afterCreating[$this->class][$state]);
+        return isset($this->afterMaking[$this->class][$state])
+               || isset($this->afterCreating[$this->class][$state]);
     }
 }

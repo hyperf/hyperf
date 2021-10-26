@@ -1,0 +1,56 @@
+{
+    "name": "hyperf/metric",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf",
+        "prometheus",
+        "statsd",
+        "metrics",
+        "influxdb"
+    ],
+    "description": "hyperf metric component",
+    "require": {
+        "php": ">=7.3",
+        "hyperf/contract": "~2.2.0",
+        "hyperf/guzzle": "~2.2.0",
+        "hyperf/utils": "~2.2.0",
+        "promphp/prometheus_client_php": "2.2.*",
+        "psr/container": "^1.0|^2.0",
+        "psr/event-dispatcher": "^1.0",
+        "psr/http-message": "^1.0"
+    },
+    "suggest": {
+        "slickdeals/statsd": "Required to use StatdD driver.",
+        "influxdb/influxdb-php": "Required to use InfluxDB driver.",
+        "hyperf/di": "Required to use annotations.",
+        "hyperf/event": "Required to use listeners for default metrics.",
+        "hyperf/process": "Required to use standalone process, or you have to roll your own",
+        "hyperf/retry": "Required to use back-off retry implementation.",
+        "hyperf/http-server": "Required to capture routes in middleware."
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Metric\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Metric\\": "tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Metric\\ConfigProvider"
+        }
+    }
+}

@@ -5,16 +5,20 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Translation;
 
+use Hyperf\Config\Config;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\TranslatorLoaderInterface;
+use Hyperf\Di\Container;
 use Hyperf\Translation\MessageSelector;
 use Hyperf\Translation\Translator;
+use Hyperf\Translation\TranslatorFactory;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Collection;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -30,9 +34,26 @@ class TranslatorTest extends TestCase
         Mockery::close();
     }
 
+    public function testTranslatorFactory()
+    {
+        $container = Mockery::mock(Container::class);
+        ApplicationContext::setContainer($container);
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([]));
+        $container->shouldReceive('get')->with(TranslatorLoaderInterface::class)->andReturn(Mockery::mock(TranslatorLoaderInterface::class));
+        $container->shouldReceive('make')->with(Translator::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new Translator($args['loader'], $args['locale']);
+        });
+        $factory = new TranslatorFactory();
+        $loader = $factory($container);
+        $ref = new \ReflectionClass($loader);
+        $locale = $ref->getProperty('locale');
+        $locale->setAccessible(true);
+        $this->assertSame('zh_CN', $locale->getValue($loader));
+    }
+
     public function testHasMethodReturnsFalseWhenReturnedTranslationIsNull()
     {
-        $t = $this->getMockBuilder(Translator::class)->setMethods(['get'])->setConstructorArgs([
+        $t = $this->getMockBuilder(Translator::class)->onlyMethods(['get'])->setConstructorArgs([
             $this->getLoader(),
             'en',
         ])->getMock();
@@ -42,7 +63,7 @@ class TranslatorTest extends TestCase
             ->will($this->returnValue('foo'));
         $this->assertFalse($t->has('foo', 'bar'));
 
-        $t = $this->getMockBuilder(Translator::class)->setMethods(['get'])->setConstructorArgs([
+        $t = $this->getMockBuilder(Translator::class)->onlyMethods(['get'])->setConstructorArgs([
             $this->getLoader(),
             'en',
             'sp',
@@ -53,7 +74,7 @@ class TranslatorTest extends TestCase
             ->will($this->returnValue('bar'));
         $this->assertTrue($t->has('foo', 'bar'));
 
-        $t = $this->getMockBuilder(Translator::class)->setMethods(['get'])->setConstructorArgs([
+        $t = $this->getMockBuilder(Translator::class)->onlyMethods(['get'])->setConstructorArgs([
             $this->getLoader(),
             'en',
         ])->getMock();
@@ -63,7 +84,7 @@ class TranslatorTest extends TestCase
             ->will($this->returnValue('bar'));
         $this->assertTrue($t->hasForLocale('foo', 'bar'));
 
-        $t = $this->getMockBuilder(Translator::class)->setMethods(['get'])->setConstructorArgs([
+        $t = $this->getMockBuilder(Translator::class)->onlyMethods(['get'])->setConstructorArgs([
             $this->getLoader(),
             'en',
         ])->getMock();
@@ -74,7 +95,7 @@ class TranslatorTest extends TestCase
         $this->assertFalse($t->hasForLocale('foo', 'bar'));
 
         $t = $this->getMockBuilder(Translator::class)
-            ->setMethods(['load', 'getLine'])
+            ->onlyMethods(['load', 'getLine'])
             ->setConstructorArgs([$this->getLoader(), 'en'])
             ->getMock();
         $t->expects($this->any())
@@ -88,7 +109,7 @@ class TranslatorTest extends TestCase
         $this->assertTrue($t->hasForLocale('foo'));
 
         $t = $this->getMockBuilder(Translator::class)
-            ->setMethods(['load', 'getLine'])
+            ->onlyMethods(['load', 'getLine'])
             ->setConstructorArgs([$this->getLoader(), 'en'])
             ->getMock();
         $t->expects($this->any())
@@ -129,7 +150,7 @@ class TranslatorTest extends TestCase
     public function testGetMethodProperlyLoadsAndRetrievesItemWithCapitalization()
     {
         $t = $this->getMockBuilder(Translator::class)
-            ->setMethods(null)
+            ->onlyMethods([])
             ->setConstructorArgs([$this->getLoader(), 'en'])
             ->getMock();
         $t->getLoader()->shouldReceive('load')->once()->with('en', 'bar', 'foo')->andReturn([
@@ -177,7 +198,7 @@ class TranslatorTest extends TestCase
 
     public function testChoiceMethodProperlyLoadsAndRetrievesItem()
     {
-        $t = $this->getMockBuilder(Translator::class)->setMethods(['get'])->setConstructorArgs([
+        $t = $this->getMockBuilder(Translator::class)->onlyMethods(['get'])->setConstructorArgs([
             $this->getLoader(),
             'en',
         ])->getMock();
@@ -193,7 +214,7 @@ class TranslatorTest extends TestCase
 
     public function testChoiceMethodProperlyCountsCollectionsAndLoadsAndRetrievesItem()
     {
-        $t = $this->getMockBuilder(Translator::class)->setMethods(['get'])->setConstructorArgs([
+        $t = $this->getMockBuilder(Translator::class)->onlyMethods(['get'])->setConstructorArgs([
             $this->getLoader(),
             'en',
         ])->getMock();
@@ -284,6 +305,25 @@ class TranslatorTest extends TestCase
         $t->getLoader()->shouldReceive('load')->once()->with('en', '*', '*')->andReturn([]);
         $t->getLoader()->shouldReceive('load')->once()->with('en', 'foo :message', '*')->andReturn([]);
         $this->assertEquals('foo baz', $t->getFromJson('foo :message', ['message' => 'baz']));
+    }
+
+    public function testSetLocale()
+    {
+        $t = new Translator($this->getLoader(), 'en');
+        $this->assertEquals('en', $t->getLocale());
+        parallel([
+            function () use ($t) {
+                $this->assertEquals('en', $t->getLocale());
+                $t->setLocale('zh_CN');
+                $this->assertEquals('zh_CN', $t->getLocale());
+            },
+            function () use ($t) {
+                $this->assertEquals('en', $t->getLocale());
+                $t->setLocale('zh_HK');
+                $this->assertEquals('zh_HK', $t->getLocale());
+            },
+        ]);
+        $this->assertEquals('en', $t->getLocale());
     }
 
     protected function getLoader()

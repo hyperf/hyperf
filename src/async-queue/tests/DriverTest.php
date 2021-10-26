@@ -5,15 +5,15 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\AsyncQueue;
 
 use Hyperf\AsyncQueue\Driver\ChannelConfig;
 use Hyperf\Di\Container;
+use Hyperf\Redis\RedisFactory;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine\Concurrent;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
@@ -29,7 +29,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  */
 class DriverTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
@@ -59,6 +59,11 @@ class DriverTest extends TestCase
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(null);
         $container->shouldReceive('make')->with(ChannelConfig::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new ChannelConfig($args['channel']);
+        });
+        $container->shouldReceive('get')->with(RedisFactory::class)->andReturnUsing(function ($_) {
+            $factory = Mockery::mock(RedisFactory::class);
+            $factory->shouldReceive('get')->with('default')->andReturn(new Redis());
+            return $factory;
         });
 
         ApplicationContext::setContainer($container);

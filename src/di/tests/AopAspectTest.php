@@ -5,16 +5,16 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Di;
 
 use Hyperf\Di\Annotation\Aspect as AspectAnnotation;
 use Hyperf\Di\Aop\Aspect;
 use Hyperf\Di\Aop\RewriteCollection;
+use Hyperf\Di\ReflectionManager;
 use HyperfTest\Di\Stub\AnnotationCollector;
 use HyperfTest\Di\Stub\AspectCollector;
 use HyperfTest\Di\Stub\DemoAnnotation;
@@ -29,10 +29,11 @@ use PHPUnit\Framework\TestCase;
  */
 class AopAspectTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         AspectCollector::clear();
         AnnotationCollector::clear();
+        ReflectionManager::clear();
     }
 
     public function testParseMoreThanOneMethods()
@@ -216,11 +217,13 @@ class AopAspectTest extends TestCase
         $annotation->collectClass(Foo2Aspect::class);
 
         $this->assertSame([
+            'priority' => 0,
             'classes' => [Foo::class],
             'annotations' => [DemoAnnotation::class],
         ], AspectCollector::getRule(FooAspect::class));
 
         $this->assertSame([
+            'priority' => 0,
             'classes' => [Foo::class],
             'annotations' => [],
         ], AspectCollector::getRule(Foo2Aspect::class));

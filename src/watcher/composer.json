@@ -1,0 +1,38 @@
+{
+    "name": "hyperf/watcher",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf"
+    ],
+    "description": "Hot reload watcher for Hyperf",
+    "require": {
+        "php": ">=7.2",
+        "ext-swoole": ">=4.5",
+        "hyperf/command": "~2.2.0",
+        "hyperf/di": "~2.2.0",
+        "hyperf/framework": "~2.2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Watcher\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Watcher\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Watcher\\ConfigProvider"
+        }
+    }
+}

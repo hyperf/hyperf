@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Crontab\Process;
 
 use Hyperf\Contract\ConfigInterface;
@@ -18,6 +17,9 @@ use Hyperf\Crontab\Event\CrontabDispatcherStarted;
 use Hyperf\Crontab\Scheduler;
 use Hyperf\Crontab\Strategy\StrategyInterface;
 use Hyperf\Process\AbstractProcess;
+use Hyperf\Process\ProcessManager;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
@@ -62,13 +64,13 @@ class CrontabDispatcherProcess extends AbstractProcess
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 
-    public function bind(Server $server): void
+    public function bind($server): void
     {
         $this->server = $server;
         parent::bind($server);
     }
 
-    public function isEnable(): bool
+    public function isEnable($server): bool
     {
         return $this->config->get('crontab.enable', false);
     }
@@ -76,8 +78,10 @@ class CrontabDispatcherProcess extends AbstractProcess
     public function handle(): void
     {
         $this->event->dispatch(new CrontabDispatcherStarted());
-        while (true) {
-            $this->sleep();
+        while (ProcessManager::isRunning()) {
+            if ($this->sleep()) {
+                break;
+            }
             $crontabs = $this->scheduler->schedule();
             while (! $crontabs->isEmpty()) {
                 $crontab = $crontabs->dequeue();
@@ -86,11 +90,20 @@ class CrontabDispatcherProcess extends AbstractProcess
         }
     }
 
-    private function sleep()
+    /**
+     * @return bool whether the server shutdown
+     */
+    private function sleep(): bool
     {
         $current = date('s', time());
         $sleep = 60 - $current;
         $this->logger->debug('Crontab dispatcher sleep ' . $sleep . 's.');
-        $sleep > 0 && \Swoole\Coroutine::sleep($sleep);
+        if ($sleep > 0) {
+            if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($sleep)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

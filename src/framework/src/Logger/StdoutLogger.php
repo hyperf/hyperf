@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Framework\Logger;
 
 use Hyperf\Contract\ConfigInterface;
@@ -134,12 +133,12 @@ class StdoutLogger implements StdoutLoggerInterface
         $search = array_map(function ($key) {
             return sprintf('{%s}', $key);
         }, $keys);
-        $message = str_replace($search, $context, $this->getMessage($message, $level, $tags));
+        $message = str_replace($search, $context, $this->getMessage((string) $message, $level, $tags));
 
         $this->output->writeln($message);
     }
 
-    protected function getMessage(string $message, string $level = LogLevel::INFO, array $tags)
+    protected function getMessage(string $message, string $level = LogLevel::INFO, array $tags = [])
     {
         $tag = null;
         switch ($level) {

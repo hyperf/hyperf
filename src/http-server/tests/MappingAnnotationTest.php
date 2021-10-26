@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\HttpServer;
 
 use Hyperf\HttpServer\Annotation\RequestMapping;
@@ -32,9 +31,11 @@ class MappingAnnotationTest extends TestCase
         $mapping = new RequestMapping([
             'methods' => 'get,post,put',
             'path' => $path = '/foo',
+            'options' => ['id' => $id = uniqid()],
         ]);
         $this->assertSame(['GET', 'POST', 'PUT'], $mapping->methods);
         $this->assertSame($path, $mapping->path);
+        $this->assertSame($id, $mapping->options['id']);
 
         // The methods have space
         $mapping = new RequestMapping([

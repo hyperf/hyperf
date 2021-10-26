@@ -5,15 +5,15 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Pool;
 
+use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Engine\Channel as CoChannel;
 use Hyperf\Utils\Coroutine;
-use Swoole\Coroutine\Channel as CoChannel;
 
 class Channel
 {
@@ -36,6 +36,9 @@ class Channel
         $this->queue = new \SplQueue();
     }
 
+    /**
+     * @return ConnectionInterface|false
+     */
     public function pop(float $timeout)
     {
         if ($this->isCoroutine()) {
@@ -44,18 +47,23 @@ class Channel
         return $this->queue->shift();
     }
 
+    /**
+     * @param ConnectionInterface $data
+     * @return bool
+     */
     public function push($data)
     {
         if ($this->isCoroutine()) {
             return $this->channel->push($data);
         }
-        return $this->queue->push($data);
+        $this->queue->push($data);
+        return true;
     }
 
     public function length(): int
     {
         if ($this->isCoroutine()) {
-            return $this->channel->length();
+            return $this->channel->getLength();
         }
         return $this->queue->count();
     }

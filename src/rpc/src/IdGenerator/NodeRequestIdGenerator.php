@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Rpc\IdGenerator;
 
 use Hyperf\Contract\IdGeneratorInterface;
@@ -115,9 +114,9 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
             $mac = trim(file_get_contents($addressPath));
             if (
                 // Localhost adapter
-                $mac !== '00:00:00:00:00:00' &&
+                $mac !== '00:00:00:00:00:00'
                 // Must match MAC address
-                preg_match('/^([0-9a-f]{2}:){5}[0-9a-f]{2}$/i', $mac)
+                && preg_match('/^([0-9a-f]{2}:){5}[0-9a-f]{2}$/i', $mac)
             ) {
                 return str_replace(':', '', $mac);
             }

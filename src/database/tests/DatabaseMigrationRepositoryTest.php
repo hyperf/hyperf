@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Database;
 
 use Closure;
@@ -51,7 +50,7 @@ class DatabaseMigrationRepositoryTest extends TestCase
 
     public function testGetLastMigrationsGetsAllMigrationsWithTheLatestBatchNumber()
     {
-        $repo = $this->getMockBuilder(DatabaseMigrationRepository::class)->setMethods(['getLastBatchNumber'])->setConstructorArgs([
+        $repo = $this->getMockBuilder(DatabaseMigrationRepository::class)->onlyMethods(['getLastBatchNumber'])->setConstructorArgs([
             $resolver = Mockery::mock(ConnectionResolverInterface::class), 'migrations',
         ])->getMock();
         $repo->expects($this->once())->method('getLastBatchNumber')->will($this->returnValue(1));
@@ -97,7 +96,7 @@ class DatabaseMigrationRepositoryTest extends TestCase
 
     public function testGetNextBatchNumberReturnsLastBatchNumberPlusOne()
     {
-        $repo = $this->getMockBuilder(DatabaseMigrationRepository::class)->setMethods(['getLastBatchNumber'])->setConstructorArgs([
+        $repo = $this->getMockBuilder(DatabaseMigrationRepository::class)->onlyMethods(['getLastBatchNumber'])->setConstructorArgs([
             Mockery::mock(ConnectionResolverInterface::class), 'migrations',
         ])->getMock();
         $repo->expects($this->once())->method('getLastBatchNumber')->will($this->returnValue(1));

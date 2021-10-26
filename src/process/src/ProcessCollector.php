@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Process;
 
 use Swoole\Process;
@@ -38,5 +37,10 @@ class ProcessCollector
             $result = array_merge($result, $processes);
         }
         return $result;
+    }
+
+    public static function isEmpty(): bool
+    {
+        return static::$processes === [];
     }
 }

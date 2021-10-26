@@ -5,23 +5,22 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\CircuitBreaker\Handler;
 
 use Hyperf\CircuitBreaker\Annotation\CircuitBreaker as Annotation;
-use Hyperf\CircuitBreaker\CircuitBreaker;
+use Hyperf\CircuitBreaker\CircuitBreakerInterface;
 use Hyperf\CircuitBreaker\Exception\TimeoutException;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 class TimeoutHandler extends AbstractHandler
 {
-    const DEFAULT_TIMEOUT = 5;
+    public const DEFAULT_TIMEOUT = 5;
 
-    protected function process(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation)
+    protected function process(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreakerInterface $breaker, Annotation $annotation)
     {
         $timeout = $annotation->value['timeout'] ?? self::DEFAULT_TIMEOUT;
         $time = microtime(true);

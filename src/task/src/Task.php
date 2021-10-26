@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Task;
 
 class Task
@@ -24,9 +23,15 @@ class Task
      */
     public $arguments;
 
-    public function __construct($callback, array $arguments = [])
+    /**
+     * @var int
+     */
+    public $workerId;
+
+    public function __construct($callback, array $arguments = [], int $workerId = -1)
     {
         $this->callback = $callback;
         $this->arguments = $arguments;
+        $this->workerId = $workerId;
     }
 }

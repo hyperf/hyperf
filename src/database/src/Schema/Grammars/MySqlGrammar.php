@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Schema\Grammars;
 
 use Hyperf\Database\Connection;
@@ -47,12 +46,18 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile the query to determine the list of columns.
-     *
-     * @return string
      */
-    public function compileColumnListing()
+    public function compileColumnListing(): string
     {
-        return 'select `column_name`, `data_type`, `column_comment` from information_schema.columns where `table_schema` = ? and `table_name` = ?';
+        return 'select `column_key` as `column_key`, `column_name` as `column_name`, `data_type` as `data_type`, `column_comment` as `column_comment`, `extra` as `extra`, `column_type` as `column_type` from information_schema.columns where `table_schema` = ? and `table_name` = ? order by ORDINAL_POSITION';
+    }
+
+    /**
+     * Compile the query to determine the list of columns.
+     */
+    public function compileColumns(): string
+    {
+        return 'select `table_schema`, `table_name`, `column_name`, `ordinal_position`, `column_default`, `is_nullable`, `data_type`, `column_comment` from information_schema.columns where `table_schema` = ? order by ORDINAL_POSITION';
     }
 
     /**
@@ -77,10 +82,17 @@ class MySqlGrammar extends Grammar
             $blueprint
         );
 
-        // Finally, we will append the engine configuration onto this SQL statement as
+        // we will append the engine configuration onto this SQL statement as
         // the final thing we do before returning this finished SQL. Once this gets
         // added the query will be ready to execute against the real connections.
-        return $this->compileCreateEngine(
+        $sql = $this->compileCreateEngine(
+            $sql,
+            $connection,
+            $blueprint
+        );
+
+        // Finally we will append table comment.
+        return $this->compileCreateComment(
             $sql,
             $connection,
             $blueprint
@@ -458,6 +470,21 @@ class MySqlGrammar extends Grammar
         }
         if (! is_null($engine = $connection->getConfig('engine'))) {
             return $sql . ' engine = ' . $engine;
+        }
+
+        return $sql;
+    }
+
+    /**
+     * Append the comment to a command.
+     *
+     * @param string $sql
+     * @return string
+     */
+    protected function compileCreateComment($sql, Connection $connection, Blueprint $blueprint)
+    {
+        if ($comment = $blueprint->getComment()) {
+            return $sql . ' COMMENT = \'' . $comment . '\'';
         }
 
         return $sql;

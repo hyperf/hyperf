@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\CircuitBreaker\Handler;
 
 use Hyperf\CircuitBreaker\Annotation\CircuitBreaker as Annotation;
@@ -73,29 +72,31 @@ abstract class AbstractHandler implements HandlerInterface
         return sprintf('%s::%s', $proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
     }
 
-    protected function switch(CircuitBreaker $breaker, Annotation $annotation, bool $status)
+    protected function switch(CircuitBreakerInterface $breaker, Annotation $annotation, bool $status): void
     {
         $state = $breaker->state();
         if ($state->isClose()) {
             $this->logger->debug('The current state is closed.');
-            if ($breaker->getDuration() > $annotation->duration) {
+            if ($breaker->getDuration() >= $annotation->duration) {
                 $info = sprintf(
                     'The duration=%ss of closed state longer than the annotation duration=%ss and is reset to the closed state.',
                     $breaker->getDuration(),
                     $annotation->duration
                 );
                 $this->logger->debug($info);
-                return $breaker->close();
+                $breaker->close();
+                return;
             }
 
-            if (! $status && $breaker->getFailCounter() > $annotation->failCounter) {
+            if (! $status && $breaker->getFailCounter() >= $annotation->failCounter) {
                 $info = sprintf(
                     'The failCounter=%s more than the annotation failCounter=%s and is reset to the open state.',
                     $breaker->getFailCounter(),
                     $annotation->failCounter
                 );
                 $this->logger->debug($info);
-                return $breaker->open();
+                $breaker->open();
+                return;
             }
 
             return;
@@ -103,24 +104,26 @@ abstract class AbstractHandler implements HandlerInterface
 
         if ($state->isHalfOpen()) {
             $this->logger->debug('The current state is half opened.');
-            if (! $status && $breaker->getFailCounter() > $annotation->failCounter) {
+            if (! $status && $breaker->getFailCounter() >= $annotation->failCounter) {
                 $info = sprintf(
                     'The failCounter=%s more than the annotation failCounter=%s and is reset to the open state.',
                     $breaker->getFailCounter(),
                     $annotation->failCounter
                 );
                 $this->logger->debug($info);
-                return $breaker->open();
+                $breaker->open();
+                return;
             }
 
-            if ($status && $breaker->getSuccessCounter() > $annotation->successCounter) {
+            if ($status && $breaker->getSuccessCounter() >= $annotation->successCounter) {
                 $info = sprintf(
                     'The successCounter=%s more than the annotation successCounter=%s and is reset to the closed state.',
                     $breaker->getSuccessCounter(),
                     $annotation->successCounter
                 );
                 $this->logger->debug($info);
-                return $breaker->close();
+                $breaker->close();
+                return;
             }
 
             return;
@@ -128,26 +131,27 @@ abstract class AbstractHandler implements HandlerInterface
 
         if ($state->isOpen()) {
             $this->logger->debug('The current state is opened.');
-            if ($breaker->getDuration() > $annotation->duration) {
+            if ($breaker->getDuration() >= $annotation->duration) {
                 $info = sprintf(
                     'The duration=%ss of opened state longer than the annotation duration=%ss and is reset to the half opened state.',
                     $breaker->getDuration(),
                     $annotation->duration
                 );
                 $this->logger->debug($info);
-                return $breaker->halfOpen();
+                $breaker->halfOpen();
+                return;
             }
 
             return;
         }
     }
 
-    protected function call(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation)
+    protected function call(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreakerInterface $breaker, Annotation $annotation)
     {
         try {
             $result = $this->process($proceedingJoinPoint, $breaker, $annotation);
 
-            $breaker->incSuccessCounter();
+            $breaker->incrSuccessCounter();
             $this->switch($breaker, $annotation, true);
         } catch (\Throwable $exception) {
             if (! $exception instanceof CircuitBreakerException) {
@@ -158,14 +162,14 @@ abstract class AbstractHandler implements HandlerInterface
             $msg = sprintf('%s::%s %s.', $proceedingJoinPoint->className, $proceedingJoinPoint->methodName, $exception->getMessage());
             $this->logger->debug($msg);
 
-            $breaker->incFailCounter();
+            $breaker->incrFailCounter();
             $this->switch($breaker, $annotation, false);
         }
 
         return $result;
     }
 
-    protected function attemptCall(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation)
+    protected function attemptCall(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreakerInterface $breaker, Annotation $annotation)
     {
         if ($breaker->attempt()) {
             return $this->call($proceedingJoinPoint, $breaker, $annotation);
@@ -174,7 +178,7 @@ abstract class AbstractHandler implements HandlerInterface
         return $this->fallback($proceedingJoinPoint, $breaker, $annotation);
     }
 
-    protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation)
+    protected function fallback(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreakerInterface $breaker, Annotation $annotation)
     {
         [$className, $methodName] = $this->prepareHandler($annotation->fallback);
 
@@ -188,7 +192,7 @@ abstract class AbstractHandler implements HandlerInterface
         return $class->{$methodName}(...$argument);
     }
 
-    abstract protected function process(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreaker $breaker, Annotation $annotation);
+    abstract protected function process(ProceedingJoinPoint $proceedingJoinPoint, CircuitBreakerInterface $breaker, Annotation $annotation);
 
     protected function prepareHandler(string $fallback): array
     {

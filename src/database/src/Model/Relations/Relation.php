@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Model\Relations;
 
 use Closure;
@@ -17,9 +16,9 @@ use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Query\Expression;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Traits\ForwardsCalls;
-use Hyperf\Utils\Traits\Macroable;
 
 /**
  * @mixin \Hyperf\Database\Model\Builder
@@ -57,13 +56,6 @@ abstract class Relation
      * @var \Hyperf\Database\Model\Model
      */
     protected $related;
-
-    /**
-     * Indicates if the relation is adding constraints.
-     *
-     * @var bool
-     */
-    protected static $constraints = true;
 
     /**
      * Create a new relation instance.
@@ -111,9 +103,9 @@ abstract class Relation
      */
     public static function noConstraints(Closure $callback)
     {
-        $previous = static::$constraints;
+        $previous = Constraint::isConstraint();
 
-        static::$constraints = false;
+        Constraint::setConstraint(false);
 
         // When resetting the relation where clause, we want to shift the first element
         // off of the bindings, leaving only the constraints that the developers put
@@ -121,7 +113,7 @@ abstract class Relation
         try {
             return call_user_func($callback);
         } finally {
-            static::$constraints = $previous;
+            Constraint::setConstraint($previous);
         }
     }
 
@@ -339,6 +331,18 @@ abstract class Relation
     public static function getMorphedModel($alias)
     {
         return self::$morphMap[$alias] ?? null;
+    }
+
+    /**
+     * Get a relationship join table hash.
+     *
+     * For safety, The relationship ensures this method is only used in the same coroutine.
+     *
+     * @return string
+     */
+    public function getRelationCountHash(bool $incrementJoinCount = true)
+    {
+        return 'hyperf_reserved_' . ($incrementJoinCount ? static::$selfJoinCount++ : static::$selfJoinCount);
     }
 
     /**

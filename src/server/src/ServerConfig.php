@@ -5,22 +5,23 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Server;
 
 use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Utils\Contracts\Arrayable;
 
 /**
+ * @method ServerConfig setType(string $type)
  * @method ServerConfig setMode(int $mode)
  * @method ServerConfig setServers(array $servers)
  * @method ServerConfig setProcesses(array $processes)
  * @method ServerConfig setSettings(array $settings)
  * @method ServerConfig setCallbacks(array $callbacks)
+ * @method string getType()
  * @method int getMode()
  * @method array getServers()
  * @method array getProcesses()
@@ -47,20 +48,17 @@ class ServerConfig implements Arrayable
             $servers[] = Port::build($item);
         }
 
-        $this->setMode($config['mode'] ?? SWOOLE_BASE)
+        $this->setType($config['type'] ?? Server::class)
+            ->setMode($config['mode'] ?? 0)
             ->setServers($servers)
             ->setProcesses($config['processes'] ?? [])
             ->setSettings($config['settings'] ?? [])
             ->setCallbacks($config['callbacks'] ?? []);
     }
 
-    public function __set($name, $value): self
+    public function __set($name, $value)
     {
-        if (! $this->isAvailableProperty($name)) {
-            throw new \InvalidArgumentException(sprintf('Invalid property %s', $name));
-        }
-        $this->config[$name] = $value;
-        return $this;
+        $this->set($name, $value);
     }
 
     public function __get($name)
@@ -79,7 +77,7 @@ class ServerConfig implements Arrayable
             if (! $this->isAvailableProperty($propertyName)) {
                 throw new \InvalidArgumentException(sprintf('Invalid property %s', $propertyName));
             }
-            return $prefix === 'set' ? $this->__set($propertyName, ...$arguments) : $this->__get($propertyName);
+            return $prefix === 'set' ? $this->set($propertyName, ...$arguments) : $this->__get($propertyName);
         }
     }
 
@@ -94,10 +92,19 @@ class ServerConfig implements Arrayable
         return $this->config;
     }
 
+    protected function set($name, $value): self
+    {
+        if (! $this->isAvailableProperty($name)) {
+            throw new \InvalidArgumentException(sprintf('Invalid property %s', $name));
+        }
+        $this->config[$name] = $value;
+        return $this;
+    }
+
     private function isAvailableProperty(string $name)
     {
         return in_array($name, [
-            'mode', 'servers', 'processes', 'settings', 'callbacks',
+            'type', 'mode', 'servers', 'processes', 'settings', 'callbacks',
         ]);
     }
 }

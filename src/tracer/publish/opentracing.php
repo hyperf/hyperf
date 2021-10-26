@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 use Zipkin\Samplers\BinarySampler;
 
 return [
@@ -19,6 +18,7 @@ return [
         'redis' => env('TRACER_ENABLE_REDIS', false),
         'db' => env('TRACER_ENABLE_DB', false),
         'method' => env('TRACER_ENABLE_METHOD', false),
+        'exception' => env('TRACER_ENABLE_EXCEPTION', false),
     ],
     'tracer' => [
         'zipkin' => [
@@ -55,6 +55,39 @@ return [
                     'reporting_port' => env('JAEGER_REPORTING_PORT', 5775),
                 ],
             ],
+        ],
+    ],
+    'tags' => [
+        'http_client' => [
+            'http.url' => 'http.url',
+            'http.method' => 'http.method',
+            'http.status_code' => 'http.status_code',
+        ],
+        'redis' => [
+            'arguments' => 'arguments',
+            'result' => 'result',
+        ],
+        'db' => [
+            'db.query' => 'db.query',
+            'db.statement' => 'db.statement',
+            'db.query_time' => 'db.query_time',
+        ],
+        'exception' => [
+            'class' => 'exception.class',
+            'code' => 'exception.code',
+            'message' => 'exception.message',
+            'stack_trace' => 'exception.stack_trace',
+        ],
+        'request' => [
+            'path' => 'request.path',
+            'method' => 'request.method',
+            'header' => 'request.header',
+        ],
+        'coroutine' => [
+            'id' => 'coroutine.id',
+        ],
+        'response' => [
+            'status_code' => 'response.status_code',
         ],
     ],
 ];

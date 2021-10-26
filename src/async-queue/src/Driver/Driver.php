@@ -5,21 +5,22 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\AsyncQueue\Driver;
 
-use Hyperf\AsyncQueue\Environment;
 use Hyperf\AsyncQueue\Event\AfterHandle;
 use Hyperf\AsyncQueue\Event\BeforeHandle;
 use Hyperf\AsyncQueue\Event\FailedHandle;
+use Hyperf\AsyncQueue\Event\QueueLength;
 use Hyperf\AsyncQueue\Event\RetryHandle;
 use Hyperf\AsyncQueue\Exception\InvalidPackerException;
 use Hyperf\AsyncQueue\MessageInterface;
 use Hyperf\Contract\PackerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Process\ProcessManager;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Coroutine\Concurrent;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
@@ -53,6 +54,11 @@ abstract class Driver implements DriverInterface
      */
     protected $config;
 
+    /**
+     * @var int
+     */
+    protected $lengthCheckCount = 500;
+
     public function __construct(ContainerInterface $container, $config)
     {
         $this->container = $container;
@@ -72,29 +78,46 @@ abstract class Driver implements DriverInterface
 
     public function consume(): void
     {
-        $this->container->get(Environment::class)->setAsyncQueue(true);
-
         $messageCount = 0;
         $maxMessages = Arr::get($this->config, 'max_messages', 0);
 
-        while (true) {
-            [$data, $message] = $this->pop();
+        while (ProcessManager::isRunning()) {
+            try {
+                [$data, $message] = $this->pop();
 
-            if ($data === false) {
-                continue;
+                if ($data === false) {
+                    continue;
+                }
+
+                $callback = $this->getCallback($data, $message);
+
+                if ($this->concurrent instanceof Concurrent) {
+                    $this->concurrent->create($callback);
+                } else {
+                    parallel([$callback]);
+                }
+
+                if ($messageCount % $this->lengthCheckCount === 0) {
+                    $this->checkQueueLength();
+                }
+
+                if ($maxMessages > 0 && $messageCount >= $maxMessages) {
+                    break;
+                }
+            } catch (\Throwable $exception) {
+                $logger = $this->container->get(StdoutLoggerInterface::class);
+                $logger->error((string) $exception);
+            } finally {
+                ++$messageCount;
             }
+        }
+    }
 
-            $callback = $this->getCallback($data, $message);
-
-            if ($this->concurrent instanceof Concurrent) {
-                $this->concurrent->create($callback);
-            } else {
-                parallel([$callback]);
-            }
-
-            if ($maxMessages > 0 && ++$messageCount >= $maxMessages) {
-                break;
-            }
+    protected function checkQueueLength()
+    {
+        $info = $this->info();
+        foreach ($info as $key => $value) {
+            $this->event && $this->event->dispatch(new QueueLength($this, $key, $value));
         }
     }
 

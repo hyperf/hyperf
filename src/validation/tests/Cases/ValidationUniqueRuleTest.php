@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Validation\Cases;
 
 use Hyperf\Database\Model\Model;
@@ -60,6 +59,10 @@ class ValidationUniqueRuleTest extends TestCase
         $rule = new Unique('table');
         $rule->where('foo', '"bar"');
         $this->assertEquals('unique:table,NULL,NULL,id,foo,"""bar"""', (string) $rule);
+
+        $rule = new Unique('table');
+        $rule->where('foo', 1);
+        $this->assertEquals('unique:table,NULL,NULL,id,foo,"1"', (string) $rule);
     }
 }
 

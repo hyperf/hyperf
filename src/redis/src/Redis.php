@@ -5,18 +5,23 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Redis;
 
+use Hyperf\Redis\Exception\InvalidRedisConnectionException;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Utils\Context;
 
+/**
+ * @mixin \Redis
+ */
 class Redis
 {
+    use ScanCaller;
+
     /**
      * @var PoolFactory
      */
@@ -39,6 +44,7 @@ class Redis
         $connection = $this->getConnection($hasContextConnection);
 
         try {
+            $connection = $connection->getConnection();
             // Execute the command with the arguments.
             $result = $connection->{$name}(...$arguments);
         } finally {
@@ -51,6 +57,7 @@ class Redis
                     // Should storage the connection to coroutine context, then use defer() to release the connection.
                     Context::set($this->getContextKey(), $connection);
                     defer(function () use ($connection) {
+                        Context::set($this->getContextKey(), null);
                         $connection->release();
                     });
                 } else {
@@ -77,7 +84,7 @@ class Redis
     }
 
     /**
-     * Get a connection from coroutine context, or from redis connectio pool.
+     * Get a connection from coroutine context, or from redis connection pool.
      * @param mixed $hasContextConnection
      */
     private function getConnection($hasContextConnection): RedisConnection
@@ -88,7 +95,10 @@ class Redis
         }
         if (! $connection instanceof RedisConnection) {
             $pool = $this->factory->getPool($this->poolName);
-            $connection = $pool->get()->getConnection();
+            $connection = $pool->get();
+        }
+        if (! $connection instanceof RedisConnection) {
+            throw new InvalidRedisConnectionException('The connection is not a valid RedisConnection.');
         }
         return $connection;
     }

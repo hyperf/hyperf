@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Consul;
 
 use HyperfTest\Consul\Stub\Client;
@@ -33,7 +32,7 @@ class ClientTest extends TestCase
      */
     private $method;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->client = new Client(function () {
             return Mockery::mock(\GuzzleHttp\Client::class);

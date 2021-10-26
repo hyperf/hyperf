@@ -1,0 +1,42 @@
+{
+    "name": "hyperf/db",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf"
+    ],
+    "description": "",
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\DB\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\DB\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=7.2",
+        "hyperf/config": "~2.2.0",
+        "hyperf/contract": "~2.2.0",
+        "hyperf/pool": "~2.2.0",
+        "hyperf/utils": "~2.2.0",
+        "psr/container": "^1.0|^2.0"
+    },
+    "suggest": {
+        "ext-swoole": "Required to use Swoole Coroutine MySQL."
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\DB\\ConfigProvider"
+        }
+    }
+}

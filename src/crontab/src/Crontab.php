@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
@@ -32,6 +31,26 @@ class Crontab
     protected $rule;
 
     /**
+     * @var bool
+     */
+    protected $singleton = false;
+
+    /**
+     * @var string
+     */
+    protected $mutexPool = 'default';
+
+    /**
+     * @var int
+     */
+    protected $mutexExpires = 3600;
+
+    /**
+     * @var bool
+     */
+    protected $onOneServer = false;
+
+    /**
      * @var mixed
      */
     protected $callback;
@@ -45,6 +64,11 @@ class Crontab
      * @var null|\Carbon\Carbon
      */
     protected $executeTime;
+
+    /**
+     * @var bool
+     */
+    protected $enable = true;
 
     public function getName(): ?string
     {
@@ -65,6 +89,50 @@ class Crontab
     public function setRule(?string $rule): Crontab
     {
         $this->rule = $rule;
+        return $this;
+    }
+
+    public function isSingleton(): bool
+    {
+        return $this->singleton;
+    }
+
+    public function setSingleton(bool $singleton): Crontab
+    {
+        $this->singleton = $singleton;
+        return $this;
+    }
+
+    public function getMutexPool(): string
+    {
+        return $this->mutexPool;
+    }
+
+    public function setMutexPool(string $mutexPool): Crontab
+    {
+        $this->mutexPool = $mutexPool;
+        return $this;
+    }
+
+    public function getMutexExpires(): int
+    {
+        return $this->mutexExpires;
+    }
+
+    public function setMutexExpires(int $mutexExpires): Crontab
+    {
+        $this->mutexExpires = $mutexExpires;
+        return $this;
+    }
+
+    public function isOnOneServer(): bool
+    {
+        return $this->onOneServer;
+    }
+
+    public function setOnOneServer(bool $onOneServer): Crontab
+    {
+        $this->onOneServer = $onOneServer;
         return $this;
     }
 
@@ -109,6 +177,17 @@ class Crontab
     public function setExecuteTime(Carbon $executeTime): Crontab
     {
         $this->executeTime = $executeTime;
+        return $this;
+    }
+
+    public function isEnable(): bool
+    {
+        return $this->enable;
+    }
+
+    public function setEnable(bool $enable): Crontab
+    {
+        $this->enable = $enable;
         return $this;
     }
 }

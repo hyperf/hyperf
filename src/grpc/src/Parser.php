@@ -5,18 +5,17 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Grpc;
 
 use Google\Protobuf\Internal\Message;
 
 class Parser
 {
-    const GRPC_ERROR_NO_RESPONSE = -1;
+    public const GRPC_ERROR_NO_RESPONSE = -1;
 
     public static function pack(string $data): string
     {
@@ -69,7 +68,7 @@ class Parser
 
     /**
      * @param null|\swoole_http2_response $response
-     * @param $deserialize
+     * @param mixed $deserialize
      * @return \Grpc\StringifyAble[]|Message[]|\swoole_http2_response[]
      */
     public static function parseResponse($response, $deserialize): array
@@ -77,18 +76,23 @@ class Parser
         if (! $response) {
             return ['No response', self::GRPC_ERROR_NO_RESPONSE, $response];
         }
-        if ($response->statusCode !== 200) {
+        if (self::isinvalidStatus($response->statusCode)) {
             $message = $response->headers['grpc-message'] ?? 'Http status Error';
             $code = $response->headers['grpc-status'] ?? ($response->errCode ?: $response->statusCode);
             return [$message, (int) $code, $response];
         }
-        $grpc_status = (int) ($response->headers['grpc-status'] ?? 0);
-        if ($grpc_status !== 0) {
-            return [$response->headers['grpc-message'] ?? 'Unknown error', $grpc_status, $response];
+        $grpcStatus = (int) ($response->headers['grpc-status'] ?? 0);
+        if ($grpcStatus !== 0) {
+            return [$response->headers['grpc-message'] ?? 'Unknown error', $grpcStatus, $response];
         }
         $data = $response->data;
         $reply = self::deserializeMessage($deserialize, $data);
         $status = (int) ($response->headers['grpc-status'] ?? 0 ?: 0);
         return [$reply, $status, $response];
+    }
+
+    private static function isinvalidStatus(int $code)
+    {
+        return $code !== 0 && $code !== 200 && $code !== 400;
     }
 }

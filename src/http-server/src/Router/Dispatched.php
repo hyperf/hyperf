@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpServer\Router;
 
 use FastRoute\Dispatcher;
@@ -22,7 +21,7 @@ class Dispatched
     public $status;
 
     /**
-     * @var Handler
+     * @var null|Handler
      */
     public $handler;
 
@@ -34,7 +33,7 @@ class Dispatched
     /**
      * Dispatches against the provided HTTP method verb and URI.
      *
-     * @param array with one of the following formats:
+     * @param array $array with one of the following formats:
      *
      *     [Dispatcher::NOT_FOUND]
      *     [Dispatcher::METHOD_NOT_ALLOWED, ['GET', 'OTHER_ALLOWED_METHODS']]

@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Redis;
 
 use Hyperf\Config\Config;
@@ -32,13 +31,12 @@ use PHPUnit\Framework\TestCase;
  */
 class RedisProxyTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
-        Mockery::close();
-
         $redis = $this->getRedis();
-        $redis->del('test');
-        $redis->del('test:test');
+        $redis->flushDB();
+
+        Mockery::close();
     }
 
     public function testRedisOptionPrefix()
@@ -53,6 +51,20 @@ class RedisProxyTest extends TestCase
         $this->assertSame('yyy', $this->getRedis()->get('test:test'));
     }
 
+    public function testHyperLogLog()
+    {
+        $redis = $this->getRedis();
+        $res = $redis->pfAdd('test:hyperloglog', ['123', 'fff']);
+        $this->assertSame(1, $res);
+        $res = $redis->pfAdd('test:hyperloglog', ['123']);
+        $this->assertSame(0, $res);
+        $this->assertSame(2, $redis->pfCount('test:hyperloglog'));
+        $redis->pfAdd('test:hyperloglog2', [1234]);
+        $redis->pfMerge('test:hyperloglog2', ['test:hyperloglog']);
+        $this->assertSame(3, $redis->pfCount('test:hyperloglog2'));
+        $this->assertFalse($redis->pfAdd('test:hyperloglog3', []));
+    }
+
     public function testRedisOptionSerializer()
     {
         $redis = $this->getRedis([
@@ -65,6 +77,46 @@ class RedisProxyTest extends TestCase
         $this->assertSame('s:3:"yyy";', $this->getRedis()->get('test'));
     }
 
+    public function testRedisScan()
+    {
+        $redis = $this->getRedis();
+        $origin = ['scan:1', 'scan:2', 'scan:3', 'scan:4'];
+        foreach ($origin as $value) {
+            $redis->set($value, '1');
+        }
+
+        $it = null;
+        $result = [];
+        while (false !== $res = $redis->scan($it, 'scan:*', 2)) {
+            $result = array_merge($result, $res);
+        }
+
+        sort($result);
+
+        $this->assertEquals($origin, $result);
+        $this->assertSame(0, $it);
+    }
+
+    public function testRedisHScan()
+    {
+        $redis = $this->getRedis();
+        $origin = ['scan:1', 'scan:2', 'scan:3', 'scan:4'];
+        foreach ($origin as $value) {
+            $redis->hSet('scaner', $value, '1');
+        }
+
+        $it = null;
+        $result = [];
+        while (false !== $res = $redis->hScan('scaner', $it, 'scan:*', 2)) {
+            $result = array_merge($result, array_keys($res));
+        }
+
+        sort($result);
+
+        $this->assertEquals($origin, $result);
+        $this->assertSame(0, $it);
+    }
+
     /**
      * @param mixed $optinos
      * @return \Redis
@@ -75,7 +127,7 @@ class RedisProxyTest extends TestCase
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
             'redis' => [
                 'default' => [
-                    'host' => 'localhost',
+                    'host' => '127.0.0.1',
                     'auth' => null,
                     'port' => 6379,
                     'db' => 0,

@@ -5,14 +5,11 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Utils\Contracts;
-
-use Hyperf\Validation\Contracts\Support\MessageProvider;
 
 interface MessageBag
 {
@@ -43,9 +40,6 @@ interface MessageBag
 
     /**
      * Get the first message from the bag for a given key.
-     *
-     * @param null|string $key
-     * @param null|string $format
      */
     public function first(?string $key = null, ?string $format = null): string;
 

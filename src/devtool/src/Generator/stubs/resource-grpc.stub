@@ -1,0 +1,27 @@
+<?php
+
+namespace %NAMESPACE%;
+
+use Hyperf\ResourceGrpc\GrpcResource;
+
+class %CLASS% extends GrpcResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return parent::toArray();
+    }
+
+    /**
+     * The grpc message for the resource.
+     *
+     * @return string
+     */
+    public function expect(): string
+    {
+    }
+}

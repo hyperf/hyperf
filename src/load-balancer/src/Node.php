@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\LoadBalancer;
 
 class Node
@@ -29,7 +28,7 @@ class Node
      */
     public $port;
 
-    public function __construct(string $host = '127.0.0.1', int $port, int $weight = 0)
+    public function __construct(string $host, int $port, int $weight = 0)
     {
         $this->host = $host;
         $this->port = $port;

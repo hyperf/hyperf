@@ -5,17 +5,17 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\AsyncQueue;
 
 use Hyperf\AsyncQueue\Driver\ChannelConfig;
 use Hyperf\AsyncQueue\Driver\RedisDriver;
 use Hyperf\AsyncQueue\Message;
 use Hyperf\Di\Container;
+use Hyperf\Redis\RedisFactory;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
@@ -34,7 +34,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  */
 class RedisDriverTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
@@ -83,6 +83,22 @@ class RedisDriverTest extends TestCase
         $this->assertEquals($model, $model2);
     }
 
+    public function testDemoModelUnCompressToNull()
+    {
+        $content = Str::random(1000);
+
+        $model = new DemoModel(9999, 'Hyperf', 1, $content);
+        $s1 = serialize($model);
+        $this->assertSame(1131, strlen($s1));
+
+        $meta = $model->compress();
+        $s2 = serialize($meta);
+        $this->assertSame(68, strlen($s2));
+        $this->assertInstanceOf(DemoModelMeta::class, $meta);
+
+        $this->assertNull($meta->uncompress());
+    }
+
     public function testAsyncQueueJobGenerate()
     {
         $container = $this->getContainer();
@@ -118,9 +134,17 @@ class RedisDriverTest extends TestCase
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(PhpSerializerPacker::class)->andReturn($packer);
         $container->shouldReceive('get')->once()->with(EventDispatcherInterface::class)->andReturn(null);
-        $container->shouldReceive('get')->once()->with(\Redis::class)->andReturn(new Redis());
+        $container->shouldReceive('get')->with(\Redis::class)->andReturn(new Redis());
         $container->shouldReceive('make')->with(ChannelConfig::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new ChannelConfig($args['channel']);
+        });
+        $container->shouldReceive('make')->with(Message::class, Mockery::any())->andReturnUsing(function ($class, $args) {
+            return new Message(...$args);
+        });
+        $container->shouldReceive('get')->with(RedisFactory::class)->andReturnUsing(function ($_) {
+            $factory = Mockery::mock(RedisFactory::class);
+            $factory->shouldReceive('get')->with('default')->andReturn(new Redis());
+            return $factory;
         });
 
         ApplicationContext::setContainer($container);

@@ -5,14 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Di;
 
-class MethodDefinitionCollector extends MetadataCollector implements MethodDefinitionCollectorInterface
+class MethodDefinitionCollector extends AbstractCallableDefinitionCollector implements MethodDefinitionCollectorInterface
 {
     /**
      * @var array
@@ -56,7 +55,7 @@ class MethodDefinitionCollector extends MetadataCollector implements MethodDefin
                     $definitions[] = [
                         'type' => 'object',
                         'name' => $parameter->getName(),
-                        'ref' => $parameter->getClass()->getName() ?? null,
+                        'ref' => $type ?? null,
                         'allowsNull' => $parameter->allowsNull(),
                     ];
                     break;
@@ -73,17 +72,8 @@ class MethodDefinitionCollector extends MetadataCollector implements MethodDefin
             return static::get($key);
         }
         $parameters = ReflectionManager::reflectClass($class)->getMethod($method)->getParameters();
-        $definitions = [];
-        foreach ($parameters as $parameter) {
-            $definitions[] = $this->createType(
-                $parameter->getName(),
-                $parameter->getType(),
-                $parameter->allowsNull(),
-                $parameter->isDefaultValueAvailable(),
-                $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null
-            );
-        }
 
+        $definitions = $this->getDefinitionsFromParameters($parameters);
         static::set($key, $definitions);
         return $definitions;
     }
@@ -98,14 +88,5 @@ class MethodDefinitionCollector extends MetadataCollector implements MethodDefin
         $type = $this->createType('', $returnType, $returnType ? $returnType->allowsNull() : true);
         static::set($key, $type);
         return $type;
-    }
-
-    private function createType($name, ?\ReflectionType $type, $allowsNull, $hasDefault = false, $defaultValue = null)
-    {
-        return new ReflectionType($type ? $type->getName() : 'mixed', $allowsNull, [
-            'defaultValueAvailable' => $hasDefault,
-            'defaultValue' => $defaultValue,
-            'name' => $name,
-        ]);
     }
 }

@@ -5,38 +5,35 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Message\MessageInterface;
-use Hyperf\Amqp\Pool\AmqpConnectionPool;
-use Hyperf\Amqp\Pool\PoolFactory;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use Psr\Container\ContainerInterface;
 
 class Builder
 {
-    protected $name = 'default';
-
     /**
      * @var ContainerInterface
      */
     protected $container;
 
-    /**
-     * @var PoolFactory
-     */
-    private $poolFactory;
+    protected $poolFactory;
 
-    public function __construct(ContainerInterface $container, PoolFactory $poolFactory)
+    /**
+     * @var ConnectionFactory
+     */
+    protected $factory;
+
+    public function __construct(ContainerInterface $container, ConnectionFactory $factory)
     {
         $this->container = $container;
-        $this->poolFactory = $poolFactory;
+        $this->factory = $factory;
     }
 
     /**
@@ -44,20 +41,26 @@ class Builder
      */
     public function declare(MessageInterface $message, ?AMQPChannel $channel = null): void
     {
+        $releaseToChannel = false;
         if (! $channel) {
-            $pool = $this->getConnectionPool($message->getPoolName());
-            /** @var \Hyperf\Amqp\Connection $connection */
-            $connection = $pool->get();
+            $connection = $this->factory->getConnection($message->getPoolName());
             $channel = $connection->getChannel();
+            $releaseToChannel = true;
         }
 
-        $builder = $message->getExchangeBuilder();
+        try {
+            $builder = $message->getExchangeBuilder();
 
-        $channel->exchange_declare($builder->getExchange(), $builder->getType(), $builder->isPassive(), $builder->isDurable(), $builder->isAutoDelete(), $builder->isInternal(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
-    }
+            $channel->exchange_declare($builder->getExchange(), $builder->getType(), $builder->isPassive(), $builder->isDurable(), $builder->isAutoDelete(), $builder->isInternal(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
+        } catch (\Throwable $exception) {
+            if ($releaseToChannel && isset($channel)) {
+                $channel->close();
+            }
 
-    protected function getConnectionPool(string $poolName): AmqpConnectionPool
-    {
-        return $this->poolFactory->getPool($poolName);
+            throw $exception;
+        }
+        if ($releaseToChannel) {
+            isset($connection) && $connection->releaseChannel($channel);
+        }
     }
 }

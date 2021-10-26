@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\GraphQL;
 
 use Doctrine\Common\Annotations\AnnotationException;
@@ -32,10 +31,10 @@ use function substr;
 class AnnotationReader
 {
     // In this mode, no exceptions will be thrown for incorrect annotations (unless the name of the annotation we are looking for is part of the docblock)
-    const LAX_MODE = 'LAX_MODE';
+    public const LAX_MODE = 'LAX_MODE';
 
     // In this mode, exceptions will be thrown for any incorrect annotations.
-    const STRICT_MODE = 'STRICT_MODE';
+    public const STRICT_MODE = 'STRICT_MODE';
 
     /**
      * @var Reader
@@ -63,9 +62,7 @@ class AnnotationReader
 
     /**
      * AnnotationReader constructor.
-     * @param Reader $reader
      * @param string $mode One of self::LAX_MODE or self::STRICT_MODE
-     * @param array $strictNamespaces
      */
     public function __construct(Reader $reader, string $mode = self::STRICT_MODE, array $strictNamespaces = [])
     {

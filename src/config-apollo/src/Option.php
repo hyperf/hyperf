@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\ConfigApollo;
 
 use Hyperf\Utils\Str;
@@ -51,6 +50,11 @@ class Option
      */
     private $intervalTimeout = 60;
 
+    /**
+     * @var string
+     */
+    private $secret;
+
     public function buildBaseUrl(): string
     {
         return implode('/', [
@@ -59,6 +63,15 @@ class Option
             $this->getAppid(),
             $this->getCluster(),
         ]) . '/';
+    }
+
+    public function buildLongPullingBaseUrl(): string
+    {
+        return implode('/', [
+            $this->getServer(),
+            'notifications',
+            'v2',
+        ]);
     }
 
     public function buildCacheKey(string $namespace): string
@@ -73,7 +86,7 @@ class Option
 
     public function setServer(string $server): self
     {
-        if (! Str::startsWith($server, 'http://')) {
+        if (! Str::startsWith($server, ['http://', 'https://'])) {
             $server = 'http://' . $server;
         }
         $this->server = $server;
@@ -96,7 +109,7 @@ class Option
         return $this->namespaces;
     }
 
-    public function setNamespaces(string $namespaces): self
+    public function setNamespaces(array $namespaces): self
     {
         $this->namespaces = $namespaces;
         return $this;
@@ -144,5 +157,16 @@ class Option
     {
         $this->intervalTimeout = $intervalTimeout;
         return $this;
+    }
+
+    public function setSecret(string $secret): self
+    {
+        $this->secret = $secret;
+        return $this;
+    }
+
+    public function getSecret(): string
+    {
+        return $this->secret;
     }
 }

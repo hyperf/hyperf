@@ -1,0 +1,24 @@
+{
+    "header": {
+        "cluster_id": "11588568905070377092",
+        "member_id": "128088275939295631",
+        "revision": "47",
+        "raft_term": "464"
+    },
+    "kvs": [
+        {
+            "key": "/application",
+            "create_revision": "4",
+            "mod_revision": "4",
+            "version": "1"
+        },
+        {
+            "key": "/application/test",
+            "create_revision": "5",
+            "mod_revision": "47",
+            "version": "38",
+            "value": "{\n    \"message\":\"Hello Hyperf\",\n    \"id\":1\n}"
+        }
+    ],
+    "count": "2"
+}

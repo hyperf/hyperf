@@ -1,0 +1,38 @@
+{
+    "name": "hyperf/nacos",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf",
+        "nacos"
+    ],
+    "description": "Nacos SDK",
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Nacos\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Nacos\\": "tests"
+        }
+    },
+    "require": {
+        "php": ">=7.3",
+        "guzzlehttp/guzzle": "^6.5|^7.0",
+        "hyperf/contract": "~2.2.0",
+        "hyperf/utils": "~2.2.0"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Nacos\\ConfigProvider"
+        }
+    }
+}

@@ -5,21 +5,20 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Commands\Migrations;
 
 class TableGuesser
 {
-    const CREATE_PATTERNS = [
+    public const CREATE_PATTERNS = [
         '/^create_(\w+)_table$/',
         '/^create_(\w+)$/',
     ];
 
-    const CHANGE_PATTERNS = [
+    public const CHANGE_PATTERNS = [
         '/_(to|from|in)_(\w+)_table$/',
         '/_(to|from|in)_(\w+)$/',
     ];

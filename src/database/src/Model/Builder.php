@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Database\Model;
 
 use BadMethodCallException;
@@ -135,7 +134,7 @@ class Builder
             return call_user_func_array(static::$macros[$method], $parameters);
         }
 
-        if (method_exists($this->model, $scope = 'scope' . ucfirst($method))) {
+        if (isset($this->model) && method_exists($this->model, $scope = 'scope' . ucfirst($method))) {
             return $this->callScope([$this->model, $scope], $parameters);
         }
 
@@ -665,9 +664,9 @@ class Builder
      */
     public function chunkById($count, callable $callback, $column = null, $alias = null)
     {
-        $column = is_null($column) ? $this->getModel()->getKeyName() : $column;
+        $column = $column ?? $this->getModel()->getKeyName();
 
-        $alias = is_null($alias) ? $column : $alias;
+        $alias = $alias ?? $column;
 
         $lastId = null;
 
@@ -714,9 +713,9 @@ class Builder
         // If the model has a mutator for the requested column, we will spin through
         // the results and mutate the values so that the mutated version of these
         // columns are returned as you would expect from these Model models.
-        if (! $this->model->hasGetMutator($column) &&
-            ! $this->model->hasCast($column) &&
-            ! in_array($column, $this->model->getDates())) {
+        if (! $this->model->hasGetMutator($column)
+            && ! $this->model->hasCast($column)
+            && ! in_array($column, $this->model->getDates())) {
             return $results;
         }
 
@@ -730,7 +729,7 @@ class Builder
      *
      * @throws \InvalidArgumentException
      */
-    public function paginate(int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginatorInterface
+    public function paginate(?int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginatorInterface
     {
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
@@ -977,6 +976,19 @@ class Builder
     }
 
     /**
+     * Apply query-time casts to the model instance.
+     *
+     * @param array $casts
+     * @return $this
+     */
+    public function withCasts($casts)
+    {
+        $this->model->mergeCasts($casts);
+
+        return $this;
+    }
+
+    /**
      * Get the underlying query builder instance.
      *
      * @return \Hyperf\Database\Query\Builder
@@ -1156,8 +1168,8 @@ class Builder
      */
     protected function addUpdatedAtColumn(array $values)
     {
-        if (! $this->model->usesTimestamps() ||
-            is_null($this->model->getUpdatedAtColumn())) {
+        if (! $this->model->usesTimestamps()
+            || is_null($this->model->getUpdatedAtColumn())) {
             return $values;
         }
 
@@ -1286,7 +1298,7 @@ class Builder
 
                 [$name, $constraints] = Str::contains($name, ':')
                     ? $this->createSelectWithConstraint($name)
-                    : [$name, function () {
+                    : [$name, static function () {
                     }];
             }
 
@@ -1309,7 +1321,7 @@ class Builder
      */
     protected function createSelectWithConstraint($name)
     {
-        return [explode(':', $name)[0], function ($query) use ($name) {
+        return [explode(':', $name)[0], static function ($query) use ($name) {
             $query->select(explode(',', explode(':', $name)[1]));
         }];
     }
@@ -1332,7 +1344,7 @@ class Builder
             $progress[] = $segment;
 
             if (! isset($results[$last = implode('.', $progress)])) {
-                $results[$last] = function () {
+                $results[$last] = static function () {
                 };
             }
         }

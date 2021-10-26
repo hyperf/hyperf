@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Validation;
 
 use Hyperf\Validation\Contract\Rule;
@@ -51,9 +50,7 @@ class ClosureValidationRule implements RuleContract
     /**
      * Determine if the validation rule passes.
      *
-     * @param string $attribute
      * @param mixed $value
-     * @return bool
      */
     public function passes(string $attribute, $value): bool
     {

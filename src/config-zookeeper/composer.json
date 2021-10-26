@@ -1,0 +1,50 @@
+{
+    "name": "hyperf/config-zookeeper",
+    "description": "An zookeeper adapter for Hyperf config component.",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "config",
+        "configuration",
+        "zookeeper"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=7.2",
+        "psr/container": "^1.0|^2.0",
+        "hyperf/contract": "~2.2.0"
+    },
+    "suggest": {
+        "hyperf/process": "Use hyperf process to run ConfigFetcherProcess.",
+        "ext-swoole-zookeeper": "coroutine client for zookeeper"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\ConfigZookeeper\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\ConfigZookeeper\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\ConfigZookeeper\\ConfigProvider"
+        }
+    }
+}

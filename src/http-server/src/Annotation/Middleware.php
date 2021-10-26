@@ -5,29 +5,30 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\HttpServer\Annotation;
 
-use Hyperf\Di\Annotation\AbstractAnnotation;
+use Attribute;
+use Hyperf\Di\Annotation\AbstractMultipleAnnotation;
 
 /**
  * @Annotation
  * @Target({"ALL"})
  */
-class Middleware extends AbstractAnnotation
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
+class Middleware extends AbstractMultipleAnnotation
 {
     /**
      * @var string
      */
     public $middleware = '';
 
-    public function __construct($value = null)
+    public function __construct(...$value)
     {
-        parent::__construct($value);
+        parent::__construct(...$value);
         $this->bindMainProperty('middleware', $value);
     }
 }

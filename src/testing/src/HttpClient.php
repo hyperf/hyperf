@@ -5,16 +5,17 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Testing;
 
 use GuzzleHttp\Client;
 use Hyperf\Contract\PackerInterface;
+use Hyperf\Guzzle\CoroutineHandler;
 use Hyperf\Utils\Arr;
+use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
 
@@ -39,9 +40,14 @@ class HttpClient
     {
         $this->container = $container;
         $this->packer = $packer ?? new JsonPacker();
+        $handler = null;
+        if (Coroutine::inCoroutine()) {
+            $handler = new CoroutineHandler();
+        }
         $this->client = new Client([
             'base_uri' => $baseUri,
             'timeout' => 2,
+            'handler' => $handler,
         ]);
     }
 
@@ -51,7 +57,7 @@ class HttpClient
             'headers' => $headers,
             'query' => $data,
         ]);
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function post($uri, $data = [], $headers = [])
@@ -61,7 +67,7 @@ class HttpClient
             'form_params' => $data,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function json($uri, $data = [], $headers = [])
@@ -72,7 +78,7 @@ class HttpClient
             'headers' => $headers,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
     }
 
     public function file($uri, $data = [], $headers = [])
@@ -98,6 +104,11 @@ class HttpClient
             'multipart' => $multipart,
         ]);
 
-        return $this->packer->unpack($response->getBody()->getContents());
+        return $this->packer->unpack((string) $response->getBody());
+    }
+
+    public function client()
+    {
+        return $this->client;
     }
 }

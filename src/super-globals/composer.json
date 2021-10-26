@@ -1,0 +1,48 @@
+{
+    "name": "hyperf/super-globals",
+    "description": "A superglobals library for Hyperf.",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "superglobals"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=7.2",
+        "hyperf/contract": "~2.2.0",
+        "hyperf/utils": "~2.2.0"
+    },
+    "suggest": {
+        "hyperf/http-server": "Required to use $_SERVER.",
+        "hyperf/session": "Required to use $_SESSION."
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\SuperGlobals\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\SuperGlobals\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\SuperGlobals\\ConfigProvider"
+        }
+    }
+}

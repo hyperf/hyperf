@@ -5,11 +5,10 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\CircuitBreaker;
 
 use Psr\Container\ContainerInterface;
@@ -68,62 +67,50 @@ class CircuitBreaker implements CircuitBreakerInterface
         return $attempt->attempt();
     }
 
-    public function open()
+    public function open(): void
     {
         $this->init();
         $this->state->open();
     }
 
-    public function close()
+    public function close(): void
     {
         $this->init();
         $this->state->close();
     }
 
-    public function halfOpen()
+    public function halfOpen(): void
     {
         $this->init();
         $this->state->halfOpen();
     }
 
-    /**
-     * @return float
-     */
     public function getDuration(): float
     {
         return microtime(true) - $this->timestamp;
     }
 
-    /**
-     * @return int
-     */
     public function getFailCounter(): int
     {
         return $this->failCounter;
     }
 
-    /**
-     * @return int
-     */
     public function getSuccessCounter(): int
     {
         return $this->successCounter;
     }
 
-    /**
-     * @return float
-     */
     public function getTimestamp(): float
     {
         return $this->timestamp;
     }
 
-    public function incFailCounter(): int
+    public function incrFailCounter(): int
     {
         return ++$this->failCounter;
     }
 
-    public function incSuccessCounter(): int
+    public function incrSuccessCounter(): int
     {
         return ++$this->successCounter;
     }
