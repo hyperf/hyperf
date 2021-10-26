@@ -38,7 +38,7 @@ message HiReply {
 - 使用 protoc 生成示例代码
 
 ```
-# 使用 linux 包管理工具安装 protoc, 下面以 alpine 为例, 也可以参考 hyper-skeleton 下的 Dockerfile
+# 使用 linux 包管理工具安装 protoc, 下面以 alpine 为例, 也可以参考 hyperf-skeleton 下的 Dockerfile
 apk add protobuf
 
 # 使用 protoc 自动生成代码
@@ -84,7 +84,7 @@ grpc
         'port' => 9503,
         'sock_type' => SWOOLE_SOCK_TCP,
         'callbacks' => [
-            SwooleEvent::ON_REQUEST => [\Hyperf\GrpcServer\Server::class, 'onRequest'],
+            Event::ON_REQUEST => [\Hyperf\GrpcServer\Server::class, 'onRequest'],
         ],
     ],
 ],
@@ -92,7 +92,7 @@ grpc
 
 - gRPC server 路由配置
 
-`routes.php` 文件(参考 [路由](zh/router.md)):
+`routes.php` 文件(参考 [路由](zh-cn/router.md)):
 
 ```php
 Router::addServer('grpc', function () {
@@ -119,7 +119,7 @@ public function sayHello(HiUser $user)
 
 - 如果想更深入一点
 
-gRPC server 如何对 gRPC 请求进行处理的: `\Hyperf\GrpcServer\CoreMiddleware::process()` (`vendor/hyperf/grpc-server/src/CoreMiddleware.php:46`, 复制后直接使用 phpstorm 打开), 解析出 `request_uri`, 即得到 `/{package}.{service}/{rpc}` 信息, 然后调用好封装好的 gRPC 编解码类 `\Hyperf\Grpc\Parser::deserializeMessage`(`vendor/hyperf/grpc-server/src/CoreMiddleware.php:137`), 就可以获取到请求的明文信息
+gRPC server 如何对 gRPC 请求进行处理的(`vendor/hyperf/grpc-server/src/CoreMiddleware.php)`: `\Hyperf\GrpcServer\CoreMiddleware::process()` 解析出 `request_uri`, 即得到 `/{package}.{service}/{rpc}` 信息, 然后调用封装好的 gRPC 编解码类 `\Hyperf\Grpc\Parser::deserializeMessage`, 就可以获取到请求的明文信息
 
 gRPC server 如何进行 gRPC 响应, 相信你可以根据上面的信息, 自己发现.
 
@@ -132,6 +132,7 @@ gRPC server 如何进行 gRPC 响应, 相信你可以根据上面的信息, 自�
 ```php
 public function hello()
 {
+    // 这个client是协程安全的，可以复用
     $client = new \App\Grpc\HiClient('127.0.0.1:9503', [
         'credentials' => null,
     ]);
@@ -147,8 +148,7 @@ public function hello()
 
     $message = $reply->getMessage();
     $user = $reply->getUser();
-
-    $client->close();
+    
     var_dump(memory_get_usage(true));
     return $message;
 }
@@ -161,7 +161,7 @@ class HiClient extends BaseClient
 {
     public function sayHello(HiUser $argument)
     {
-        return $this->simpleRequest(
+        return $this->_simpleRequest(
             '/grpc.hi/sayHello',
             $argument,
             [HiReply::class, 'decode']
@@ -176,6 +176,28 @@ gRPC client 路由配置
 ```php
 Router::get('/grpc/client/hello', 'App\Controller\GrpcController@hello');
 ```
+
+gRPC 客户端还支持 gRPC 的 Streaming 模式。以双向流为例：
+
+```php
+<?
+public function hello()
+{
+    $client = new RouteGuideClient('127.0.0.1:50051');
+
+    $note = new RouteNote();
+
+    $call = $client->routeChat();
+    $call->push($note);
+    $call->push($note);
+
+    /** @var RouteNote $note */
+    [$note,] = $call->recv();
+    [$note,] = $call->recv();
+}
+```
+
+> 请注意在 streaming 模式下，您必须手动捕获连接断开的异常 (`Hyperf\GrpcClient\Exception\GrpcClientException`) 并根据需要选择是否重试。
 
 ## 写在后面
 
