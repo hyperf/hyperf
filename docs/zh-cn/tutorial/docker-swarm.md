@@ -425,3 +425,42 @@ $ git version
 # 重新安装 gitlab-runner 并重新注册 gitlab-runner
 $ yum install gitlab-runner
 ```
+
+### Service 重启后，内网出现偶发的，容器无法触达的问题，比如多次在其他容器，访问此服务的接口，会出现 Connection refused
+
+这是由于 IP 不够用导致，可以修改网段，增加可用 IP
+
+创建新的 Network
+
+```
+docker network create \
+--driver overlay \
+--subnet 12.0.0.0/8 \
+--opt encrypted \
+--attachable \
+default-network
+```
+
+为服务增加新的 Network
+
+```
+docker service update --network-add default-network service_name
+```
+
+删除原来的 Network
+
+```
+docker service update --network-rm old-network service_name
+```
+
+### 为 Service 增加节点，发现一直卡在 create 阶段
+
+原因和解决办法同上
+
+### 当在 Portainer 中修改了仓库密码后，更新 Service 失败
+
+这是因为 Portainer 修改后，不能作用于已经创建的服务，所以手动更新即可
+
+```
+docker service update --with-registry-auth service_name   
+```
