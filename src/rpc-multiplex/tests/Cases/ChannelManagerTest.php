@@ -37,10 +37,10 @@ class ChannelManagerTest extends AbstractTestCase
 
         $channels = $manager->getChannels();
         foreach ($channels as $id => $channel) {
-            $manager->get($id + 2, true);
+            $manager->get($id + 3, true);
             $manager->close($id);
         }
 
-        $this->assertSame([3, 4], array_keys($manager->getChannels()));
+        $this->assertSame([4, 3, 5], array_keys($manager->getChannels()));
     }
 }
