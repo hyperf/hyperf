@@ -179,13 +179,6 @@ class HiClient extends BaseClient
 }
 ```
 
-gRPC client 路由配置
-
-`routes.php` 文件(参考 [路由](zh/router.md)):
-```php
-Router::get('/grpc/client/hello', 'App\Controller\GrpcController@hello');
-```
-
 gRPC 客户端还支持 gRPC 的 Streaming 模式。以双向流为例：
 
 ```php
