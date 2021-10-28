@@ -1,5 +1,9 @@
 # v2.2.14 - TBD
 
+## Added
+
+- [#4181](https://github.com/hyperf/hyperf/pull/4181) Added versions (v1.0, v2.0, v3.0) support for `psr/log`.
+
 ## Fixed
 
 - [#4171](https://github.com/hyperf/hyperf/pull/4171) Fixed health check failed when using consul with token.
