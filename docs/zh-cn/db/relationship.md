@@ -234,7 +234,7 @@ class User extends Model
 }
 ```
 
-现在，我们来获取所有的用户及其对应角色
+现在，我们来获取所有的用户及其对应角色：
 
 ```php
 $users = User::query()->get();
@@ -246,7 +246,7 @@ foreach ($users as $user){
 
 此循环将执行一个查询，用于获取全部用户，然后为每个用户执行获取角色的查询。如果我们有 10 个人，此循环将运行 11 个查询：1 个用于查询用户，10 个附加查询对应的角色。
 
-谢天谢地，我们能够使用预加载将操作压缩到只有 2 个查询。在查询时，可以使用 with 方法指定想要预加载的关联：
+谢天谢地，我们能够使用预加载将操作压缩到只有 2 个查询。在查询时，可以使用 `with` 方法指定想要预加载的关联：
 
 ```php
 $users = User::query()->with('role')->get();
@@ -256,7 +256,7 @@ foreach ($users as $user){
 }
 ```
 
-在这个例子中，仅执行了两个查询
+在这个例子中，仅执行了两个查询：
 
 ```
 SELECT * FROM `user`;
@@ -273,7 +273,7 @@ SELECT * FROM `role` WHERE id in (1, 2, 3, ...);
 #### 表结构
 
 一对一多态关联与简单的一对一关联类似；不过，目标模型能够在一个关联上从属于多个模型。
-例如，Book 和 User 可能共享一个关联到 Image 模型的关系。使用一对一多态关联允许使用一个唯一图片列表同时用于 Book 和 User。让我们先看看表结构：
+例如，`Book` 和 `User` 可能共享一个关联到 `Image` 模型的关系。使用一对一多态关联允许使用一个唯一图片列表同时用于 `Book` 和 `User`。让我们先看看表结构：
 
 ```
 book
@@ -291,7 +291,7 @@ image
   imageable_type - string
 ```
 
-image 表中的 imageable_id 字段会根据 imageable_type 的不同代表不同含义，默认情况下，imageable_type 直接是相关模型类名。
+`image` 表中的 `imageable_id` 字段会根据 `imageable_type` 的不同代表不同含义，默认情况下，`imageable_type` 直接是相关模型类名。
 
 #### 模型示例
 
@@ -383,7 +383,7 @@ class User extends Model
 
 #### 获取关联
 
-获取用户所有的图片
+获取用户所有的图片。
 
 ```php
 use App\Model\User;
