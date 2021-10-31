@@ -7,6 +7,7 @@
 ## Fixed
 
 - [#4171](https://github.com/hyperf/hyperf/pull/4171) Fixed health check failed when using consul with token.
+- [#4188](https://github.com/hyperf/hyperf/pull/4188) Fixed bug that build phar failed when using composer `1.x`.
 
 # v2.2.13 - 2021-10-25
 
