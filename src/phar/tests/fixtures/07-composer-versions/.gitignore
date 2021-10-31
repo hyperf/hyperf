@@ -1,0 +1,4 @@
+!2.x/composer.lock
+!2.x/vendor/composer/installed.json
+!1.x/composer.lock
+!1.x/vendor/composer/installed.json
