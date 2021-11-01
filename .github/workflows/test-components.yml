@@ -206,7 +206,7 @@ jobs:
             composer require symfony/console --dev -W
             composer analyse src/framework
           fi
-          composer analyse src/server
+          composer analyse src/server/src/Entry/Logger.php
           composer analyse src/logger
           composer test src/framework
           composer test src/logger
