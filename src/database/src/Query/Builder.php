@@ -21,6 +21,7 @@ use Hyperf\Database\Exception\InvalidBindingException;
 use Hyperf\Database\Model\Builder as ModelBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Database\Schema\Schema;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\ApplicationContext;
@@ -354,6 +355,21 @@ class Builder
         $column = is_array($column) ? $column : func_get_args();
 
         $this->columns = array_merge((array) $this->columns, $column);
+
+        return $this;
+    }
+
+    /**
+     * Set the columns to be ignored.
+     *
+     * @param array|mixed $columns
+     * @return $this
+     */
+    public function ignoreSelect($field = ['*'])
+    {
+        $field = is_string($field) ? func_get_args() : $field;
+        $columns = Schema::getColumnListing($this->from);
+        $this->columns = array_diff($columns, $field);
 
         return $this;
     }
