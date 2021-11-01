@@ -1,5 +1,16 @@
 # 版本更新记录
 
+# v2.2.14 - 2021-11-01
+
+## 新增
+
+- [#4181](https://github.com/hyperf/hyperf/pull/4181) 为框架增加 `psr/log` 组件版本 `v1.0`, `v2.0`, `v3.0` 的支持。
+
+## 修复
+
+- [#4171](https://github.com/hyperf/hyperf/pull/4171) 修复使用 `consul` 组件时，开启 `ACL` 验证后，健康检测失败的问题。
+- [#4188](https://github.com/hyperf/hyperf/pull/4188) 修复使用 `composer 1.x` 版本时，打包 `phar` 失败的问题。
+
 # v2.2.13 - 2021-10-25
 
 ## 新增
