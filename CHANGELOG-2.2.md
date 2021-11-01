@@ -4,7 +4,7 @@
 
 ## Added
 
-- [#4181](https://github.com/hyperf/hyperf/pull/4181) Added versions (v1.0, v2.0, v3.0) support for `psr/log`.
+- [#4181](https://github.com/hyperf/hyperf/pull/4181) [#4192](https://github.com/hyperf/hyperf/pull/4192) Added versions (v1.0, v2.0, v3.0) support for `psr/log`.
 
 ## Fixed
 
