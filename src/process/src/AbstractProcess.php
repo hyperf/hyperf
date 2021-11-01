@@ -140,6 +140,7 @@ abstract class AbstractProcess implements ProcessInterface
                         $quit->push(true);
                     }
                     Timer::clearAll();
+                    CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
                     sleep($this->restartInterval);
                 }
             }, $this->redirectStdinStdout, $this->pipeType, $this->enableCoroutine);

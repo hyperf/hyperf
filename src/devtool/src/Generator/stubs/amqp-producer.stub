@@ -10,6 +10,7 @@ use Hyperf\Amqp\Message\ProducerMessage;
 /**
  * @Producer(exchange="hyperf", routingKey="hyperf")
  */
+#[Producer(exchange: 'hyperf', routingKey: 'hyperf')]
 class %CLASS% extends ProducerMessage
 {
     public function __construct($data)

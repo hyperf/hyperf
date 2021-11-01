@@ -25,33 +25,36 @@ composer require hyperf/kafka
 默認配置文件如下：
 
 
-|             配置              |    類型    |            默認值             |                                                         備註                                                         |
-| :---------------------------: | :--------: | :---------------------------: | :------------------------------------------------------------------------------------------------------------------: |
-|        connect_timeout        | int｜float |              -1               |                                 連接超時時間（單位：秒，支持小數），為 - 1 則不限制                                  |
-|         send_timeout          | int｜float |              -1               |                                 發送超時時間（單位：秒，支持小數），為 - 1 則不限制                                  |
-|         recv_timeout          | int｜float |              -1               |                                 接收超時時間（單位：秒，支持小數），為 - 1 則不限制                                  |
-|           client_id           |   stirng   |             null              |                                                   Kafka 客户端標識                                                   |
-|      max_write_attempts       |    int     |               3               |                                                   最大寫入嘗試次數                                                   |
-|            brokers            |   array    |              []               |                       手動配置 brokers 列表，如果要使用手動配置，請把 updateBrokers 設為 true                        |
-|       bootstrap_server        |   array    |       '127.0.0.1:9092'        |                          引導服務器，如果配置了該值，會自動連接該服務器，並自動更新 brokers                          |
-|        update_brokers         |    bool    |             true              |                                                 是否自動更新 brokers                                                 |
-|             acks              |    int     |               0               |  生產者要求領導者，在確認請求完成之前已收到的確認數值。允許的值：0 表示無確認，1 表示僅領導者，- 1 表示完整的 ISR。  |
-|          producer_id          |    int     |              -1               |                                                      生產者 ID                                                       |
-|        producer_epoch         |    int     |              -1               |                                                     生產者 Epoch                                                     |
-|    partition_leader_epoch     |    int     |              -1               |                                                  分區 Leader Epoch                                                   |
-|            broker             |   string   |              ''|                                            broker，格式：'127.0.0.1:9092'                                            |
-|           interval            | int｜float |               0               |                   未獲取消息到消息時，延遲多少秒再次嘗試，默認為 0 則不延遲（單位：秒，支持小數）                    |
-|        session_timeout        | int｜float |              60               |                     如果超時後沒有收到心跳信號，則協調器會認為該用户死亡。（單位：秒，支持小數）                     |
-|       rebalance_timeout       | int｜float |              60               |                      重新平衡組時，協調器等待每個成員重新加入的最長時間（單位：秒，支持小數）。                      |
-|          replica_id           |    int     |              -1               |                                                       副本 ID                                                        |
-|            rack_id            |    int     |              -1               |                                                       機架編號                                                       |
-|          group_retry          |    int     |               5               |                                      分組操作，匹配預設的錯誤碼時，自動重試次數                                      |
-|       group_retry_sleep       |    int     |               1               |                                              分組操作重試延遲，單位：秒                                              |
-|        group_heartbeat        |    int     |               3               |                                              分組心跳時間間隔，單位：秒                                              |
-|         offset_retry          |    int     |               5               |                                     偏移量操作，匹配預設的錯誤碼時，自動重試次數                                     |
-|       auto_create_topic       |    bool    |             true              |                                                是否需要自動創建 topic                                                |
-| partition_assignment_strategy |   string   | KafkaStrategy::RANGE_ASSIGNOR | 消費者分區分配策略, 可選：範圍分配(`KafkaStrategy::RANGE_ASSIGNOR`) 輪詢分配(`KafkaStrategy::ROUND_ROBIN_ASSIGNOR`)) |
-|             pool              |   object   |                               |                                                      連接池配置                                                      |
+| 配置                          | 類型       | 默認值                        | 備註                                                                                                                 |
+| ----------------------------- | ---------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| connect_timeout               | int｜float | -1                            | 連接超時時間（單位：秒，支持小數），為 - 1 則不限制                                                                  |
+| send_timeout                  | int｜float | -1                            | 發送超時時間（單位：秒，支持小數），為 - 1 則不限制                                                                  |
+| recv_timeout                  | int｜float | -1                            | 接收超時時間（單位：秒，支持小數），為 - 1 則不限制                                                                  |
+| client_id                     | stirng     | null                          | Kafka 客户端標識                                                                                                     |
+| max_write_attempts            | int        | 3                             | 最大寫入嘗試次數                                                                                                     |
+| brokers                       | array      | []                            | 手動配置 brokers 列表，如果要使用手動配置，請把 updateBrokers 設為 true                                              |
+| bootstrap_servers             | array      | '127.0.0.1:9092'              | 引導服務器，如果配置了該值，會自動連接該服務器，並自動更新 brokers                                                   |
+| update_brokers                | bool       | true                          | 是否自動更新 brokers                                                                                                 |
+| acks                          | int        | 0                             | 生產者要求領導者，在確認請求完成之前已收到的確認數值。允許的值：0 表示無確認，1 表示僅領導者，- 1 表示完整的 ISR。   |
+| producer_id                   | int        | -1                            | 生產者 ID                                                                                                            |
+| producer_epoch                | int        | -1                            | 生產者 Epoch                                                                                                         |
+| partition_leader_epoch        | int        | -1                            | 分區 Leader Epoch                                                                                                    |
+| broker                        | string     | ''| broker，格式：'127.0.0.1:9092'                                                                                       |
+| interval                      | int｜float | 0                             | 未獲取消息到消息時，延遲多少秒再次嘗試，默認為 0 則不延遲（單位：秒，支持小數）                                      |
+| session_timeout               | int｜float | 60                            | 如果超時後沒有收到心跳信號，則協調器會認為該用户死亡。（單位：秒，支持小數）                                         |
+| rebalance_timeout             | int｜float | 60                            | 重新平衡組時，協調器等待每個成員重新加入的最長時間（單位：秒，支持小數）。                                           |
+| replica_id                    | int        | -1                            | 副本 ID                                                                                                              |
+| rack_id                       | int        | -1                            | 機架編號                                                                                                             |
+| group_retry                   | int        | 5                             | 分組操作，匹配預設的錯誤碼時，自動重試次數                                                                           |
+| group_retry_sleep             | int        | 1                             | 分組操作重試延遲，單位：秒                                                                                           |
+| group_heartbeat               | int        | 3                             | 分組心跳時間間隔，單位：秒                                                                                           |
+| offset_retry                  | int        | 5                             | 偏移量操作，匹配預設的錯誤碼時，自動重試次數                                                                         |
+| auto_create_topic             | bool       | true                          | 是否需要自動創建 topic                                                                                               |
+| partition_assignment_strategy | string     | KafkaStrategy::RANGE_ASSIGNOR | 消費者分區分配策略, 可選：範圍分配(`KafkaStrategy::RANGE_ASSIGNOR`) 輪詢分配(`KafkaStrategy::ROUND_ROBIN_ASSIGNOR`)) |
+| sasl                          | array      | []                            | SASL 身份認證信息。為空則不發送身份認證信息 phpkafka 版本需 >= 1.2                                                    |
+| ssl                           | array      | []                            | SSL 鏈接相關信息, 為空則不使用 SSL phpkafka 版本需 >= 1.2                                                               |
+| pool                          | object     | []                            | 連接池配置                                                                                                           |
+
 
 
 ```php
@@ -71,7 +74,7 @@ return [
         'brokers' => [
             '127.0.0.1:9092',
         ],
-        'bootstrap_server' => '127.0.0.1:9092',
+        'bootstrap_servers' => '127.0.0.1:9092',
         'update_brokers' => true,
         'acks' => 0,
         'producer_id' => -1,
@@ -89,6 +92,8 @@ return [
         'offset_retry' => 5,
         'auto_create_topic' => true,
         'partition_assignment_strategy' => KafkaStrategy::RANGE_ASSIGNOR,
+        'sasl' => [],
+        'ssl' => [],
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -206,4 +211,31 @@ class IndexController extends AbstractController
 }
 
 ```
+
+### SASL 配置説明
+
+| 參數名   | 説明                                                                | 默認值 |
+| -------- | ------------------------------------------------------------------- | ------ |
+| type     | SASL 授權對應的類。PLAIN 為`\longlang\phpkafka\Sasl\PlainSasl::class` | ''     |
+| username | 賬號                                                                | ''     |
+| password | 密碼                                                                | ''     |
+
+### SSL 配置説明
+
+| 參數名          | 説明                                                                    | 默認值  |
+| --------------- | ----------------------------------------------------------------------- | ------- |
+| open            | 是否開啟 SSL 傳輸加密                                                     | `false` |
+| compression     | 是否開啟壓縮                                                            | `true`  |
+| certFile        | cert 證書存放路徑                                                        | `''`    |
+| keyFile         | 私鑰存放路徑                                                            | `''`    |
+| passphrase      | cert 證書密碼                                                            | `''`    |
+| peerName        | 服務器主機名。默認為鏈接的 host                                          | `''`    |
+| verifyPeer      | 是否校驗遠端證書                                                        | `false` |
+| verifyPeerName  | 是否校驗遠端服務器名稱                                                  | `false` |
+| verifyDepth     | 如果證書鏈條層次太深，超過了本選項的設定值，則終止驗證。 默認不校驗層級 | `0`     |
+| allowSelfSigned | 是否允許自簽證書                                                        | `false` |
+| cafile          | CA 證書路徑                                                              | `''`    |
+| capath          | CA 證書目錄。會自動掃描該路徑下所有 pem 文件                               | `''`    |
+
+
 

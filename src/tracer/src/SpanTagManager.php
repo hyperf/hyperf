@@ -31,6 +31,23 @@ class SpanTagManager
             'path' => 'rpc.path',
             'status' => 'rpc.status',
         ],
+        'exception' => [
+            'class' => 'exception.class',
+            'code' => 'exception.code',
+            'message' => 'exception.message',
+            'stack_trace' => 'exception.stack_trace',
+        ],
+        'request' => [
+            'path' => 'request.path',
+            'method' => 'request.method',
+            'header' => 'request.header',
+        ],
+        'coroutine' => [
+            'id' => 'coroutine.id',
+        ],
+        'response' => [
+            'status_code' => 'response.status_code',
+        ],
     ];
 
     public function apply(array $tags): void

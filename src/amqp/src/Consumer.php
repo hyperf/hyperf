@@ -19,7 +19,6 @@ use Hyperf\Amqp\Exception\MessageException;
 use Hyperf\Amqp\Message\ConsumerMessageInterface;
 use Hyperf\Amqp\Message\MessageInterface;
 use Hyperf\Amqp\Message\Type;
-use Hyperf\Amqp\Pool\PoolFactory;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Process\ProcessManager;
@@ -51,10 +50,10 @@ class Consumer extends Builder
 
     public function __construct(
         ContainerInterface $container,
-        PoolFactory $poolFactory,
+        ConnectionFactory $factory,
         LoggerInterface $logger
     ) {
-        parent::__construct($container, $poolFactory);
+        parent::__construct($container, $factory);
         $this->logger = $logger;
         if ($container->has(EventDispatcherInterface::class)) {
             $this->eventDispatcher = $container->get(EventDispatcherInterface::class);
@@ -63,9 +62,8 @@ class Consumer extends Builder
 
     public function consume(ConsumerMessageInterface $consumerMessage): void
     {
-        $pool = $this->getConnectionPool($consumerMessage->getPoolName());
-        /** @var \Hyperf\Amqp\Connection $connection */
-        $connection = $pool->get();
+        $connection = $this->factory->getConnection($consumerMessage->getPoolName());
+
         try {
             $channel = $connection->getConfirmChannel();
 
@@ -105,12 +103,14 @@ class Consumer extends Builder
                     break;
                 }
             }
-
-            $this->waitConcurrentHandled($concurrent);
-        } finally {
-            $connection->close();
-            $pool->release($connection);
+        } catch (\Throwable $exception) {
+            isset($channel) && $channel->close();
+            throw $exception;
         }
+
+        $this->waitConcurrentHandled($concurrent);
+
+        $connection->releaseChannel($channel, true);
     }
 
     public function declare(MessageInterface $message, ?AMQPChannel $channel = null, bool $release = false): void
@@ -119,39 +119,31 @@ class Consumer extends Builder
             throw new MessageException('Message must instanceof ' . ConsumerMessageInterface::class);
         }
 
-        try {
-            if (! $channel) {
-                $pool = $this->getConnectionPool($message->getPoolName());
-                /** @var \Hyperf\Amqp\Connection $connection */
-                $connection = $pool->get();
-                $channel = $connection->getChannel();
-            }
+        if (! $channel) {
+            $connection = $this->factory->getConnection($message->getPoolName());
+            $channel = $connection->getChannel();
+        }
 
-            parent::declare($message, $channel);
+        parent::declare($message, $channel);
 
-            $builder = $message->getQueueBuilder();
+        $builder = $message->getQueueBuilder();
 
-            $channel->queue_declare($builder->getQueue(), $builder->isPassive(), $builder->isDurable(), $builder->isExclusive(), $builder->isAutoDelete(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
+        $channel->queue_declare($builder->getQueue(), $builder->isPassive(), $builder->isDurable(), $builder->isExclusive(), $builder->isAutoDelete(), $builder->isNowait(), $builder->getArguments(), $builder->getTicket());
 
-            $routineKeys = (array) $message->getRoutingKey();
-            foreach ($routineKeys as $routingKey) {
-                $channel->queue_bind($message->getQueue(), $message->getExchange(), $routingKey);
-            }
+        $routineKeys = (array) $message->getRoutingKey();
+        foreach ($routineKeys as $routingKey) {
+            $channel->queue_bind($message->getQueue(), $message->getExchange(), $routingKey);
+        }
 
-            if (empty($routineKeys) && $message->getType() === Type::FANOUT) {
-                $channel->queue_bind($message->getQueue(), $message->getExchange());
-            }
+        if (empty($routineKeys) && $message->getType() === Type::FANOUT) {
+            $channel->queue_bind($message->getQueue(), $message->getExchange());
+        }
 
-            if (is_array($qos = $message->getQos())) {
-                $size = $qos['prefetch_size'] ?? null;
-                $count = $qos['prefetch_count'] ?? null;
-                $global = $qos['global'] ?? null;
-                $channel->basic_qos($size, $count, $global);
-            }
-        } finally {
-            if (isset($connection) && $release) {
-                $connection->release();
-            }
+        if (is_array($qos = $message->getQos())) {
+            $size = $qos['prefetch_size'] ?? null;
+            $count = $qos['prefetch_count'] ?? null;
+            $global = $qos['global'] ?? null;
+            $channel->basic_qos($size, $count, $global);
         }
     }
 
@@ -212,7 +204,7 @@ class Consumer extends Builder
             }
             if ($result === Result::NACK) {
                 $this->logger->debug($deliveryTag . ' uacked.');
-                return $channel->basic_nack($deliveryTag);
+                return $channel->basic_nack($deliveryTag, false, $consumerMessage->isRequeue());
             }
             if ($consumerMessage->isRequeue() && $result === Result::REQUEUE) {
                 $this->logger->debug($deliveryTag . ' requeued.');

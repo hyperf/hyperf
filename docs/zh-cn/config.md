@@ -66,7 +66,7 @@ return [
 
 此配置文件用于管理 Server 服务，其中的 `settings` 选项可以直接使用由 `Swoole Server` 提供的选项，其他选项可参考 [Swoole 官方文档](https://wiki.swoole.com/#/server/setting) 。
 
-如需要设置守护进程化，可在 `settings` 中增加 `'daemonize' => 1`，执行 `php bin/hyperf.php start`后，程序将转入后台作为守护进程运行
+如需要设置守护进程化，可在 `settings` 中增加 `'daemonize' => true`，执行 `php bin/hyperf.php start`后，程序将转入后台作为守护进程运行
 
 单独的 Server 配置需要添加在对应 `servers` 的 `settings` 当中，如 `jsonrpc` 协议的 TCP Server 配置启用 EOF 自动分包和设置 EOF 字符串
 ```php
@@ -208,7 +208,7 @@ $config->has($key);
 | null    | (null) null  |
 | (null)  | (null) null  |
 
-如果你需要使用包含空格的环境变量，可以通过将值括在双引号中来实现，比如：
+如果你需要使用包含空格或包含其他特殊字符的环境变量，可以通过将值括在双引号中来实现，比如：
 
 ```dotenv
 APP_NAME="Hyperf Skeleton"
@@ -233,7 +233,7 @@ Hyperf 采用组件化设计，在添加一些组件进来骨架项目后，我�
 
 ## 配置中心
 
-Hyperf 为您提供了分布式系统的外部化配置支持，目前支持由携程开源的 `Apollo`、阿里云 ACM 应用配置管理、ETCD 以及 Zookeeper 作为配置中心的支持。
+Hyperf 为您提供了分布式系统的外部化配置支持，目前支持由携程开源的 `Apollo`、阿里云 ACM 应用配置管理、ETCD、Nacos 以及 Zookeeper 作为配置中心的支持。
 关于配置中心的使用细节我们由 [配置中心](zh-cn/config-center.md) 章节来阐述。
 
 

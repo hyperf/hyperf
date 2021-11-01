@@ -21,7 +21,7 @@ class Dispatched
     public $status;
 
     /**
-     * @var Handler
+     * @var null|Handler
      */
     public $handler;
 

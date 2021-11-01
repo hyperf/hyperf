@@ -69,6 +69,12 @@ grpc
 
 ## gRPC server 示例
 
+- 安裝組件
+
+```shell
+composer require hyperf/grpc-server
+```
+
 - gRPC server 服務器配置
 
 `server.php` 文件(參考 [配置](zh-hk/config.md)):
@@ -118,11 +124,17 @@ public function sayHello(HiUser $user)
 
 - 如果想更深入一點
 
-gRPC server 如何對 gRPC 請求進行處理的: `\Hyperf\GrpcServer\CoreMiddleware::process()` (`vendor/hyperf/grpc-server/src/CoreMiddleware.php:46`, 複製後直接使用 phpstorm 打開), 解析出 `request_uri`, 即得到 `/{package}.{service}/{rpc}` 信息, 然後調用好封裝好的 gRPC 編解碼類 `\Hyperf\Grpc\Parser::deserializeMessage`(`vendor/hyperf/grpc-server/src/CoreMiddleware.php:137`), 就可以獲取到請求的明文信息
+gRPC server 如何對 gRPC 請求進行處理的(`vendor/hyperf/grpc-server/src/CoreMiddleware.php)`: `\Hyperf\GrpcServer\CoreMiddleware::process()` 解析出 `request_uri`, 即得到 `/{package}.{service}/{rpc}` 信息, 然後調用封裝好的 gRPC 編解碼類 `\Hyperf\Grpc\Parser::deserializeMessage`, 就可以獲取到請求的明文信息
 
 gRPC server 如何進行 gRPC 響應, 相信你可以根據上面的信息, 自己發現.
 
 ## gRPC client 示例
+
+安裝組件
+
+```shell
+composer require hyperf/grpc-client
+```
 
 示例代碼可以在 `GrpcController` 中找到:
 

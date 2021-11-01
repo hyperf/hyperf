@@ -22,7 +22,7 @@ use Swoole\Coroutine\Http2\Client as SwooleHttp2Client;
 
 class GrpcClient
 {
-    const GRPC_DEFAULT_TIMEOUT = 3.0;
+    public const GRPC_DEFAULT_TIMEOUT = 3.0;
 
     /**
      * @var ChannelPool

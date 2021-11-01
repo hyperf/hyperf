@@ -142,7 +142,7 @@ class ArrTest extends TestCase
         $this->assertSame($array1, $result);
     }
 
-    public function testArrorForget()
+    public function testArrayForget()
     {
         $data = [1, 2];
         Arr::forget($data, [1]);

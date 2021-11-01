@@ -19,5 +19,5 @@ interface OnReceiveInterface
     /**
      * @param Connection|SwooleServer $server
      */
-    public function onReceive($server, int $fd, int $fromId, string $data): void;
+    public function onReceive($server, int $fd, int $reactorId, string $data): void;
 }

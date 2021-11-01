@@ -53,7 +53,11 @@ class ClassInvokerTest extends TestCase
         $invoker = new ClassInvoker(new Caller());
 
         $this->expectException(\ReflectionException::class);
-        $this->expectExceptionMessage('Method zero does not exist');
+        if (version_compare(PHP_VERSION, '8.0', '>=')) {
+            $this->expectExceptionMessage('Method HyperfTest\Utils\Reflection\Caller::zero() does not exist');
+        } else {
+            $this->expectExceptionMessage('Method zero does not exist');
+        }
         $invoker->zero();
     }
 
@@ -62,7 +66,11 @@ class ClassInvokerTest extends TestCase
         $invoker = new ClassInvoker(new Caller());
 
         $this->expectException(\ReflectionException::class);
-        $this->expectExceptionMessage('Property zero does not exist');
+        if (version_compare(PHP_VERSION, '8.0', '>=')) {
+            $this->expectExceptionMessage('Property HyperfTest\Utils\Reflection\Caller::$zero does not exist');
+        } else {
+            $this->expectExceptionMessage('Property zero does not exist');
+        }
         $invoker->zero;
     }
 }

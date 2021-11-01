@@ -39,7 +39,7 @@ class NotIn
     public function __toString(): string
     {
         $values = array_map(function ($value) {
-            return '"' . str_replace('"', '""', $value) . '"';
+            return '"' . str_replace('"', '""', (string) $value) . '"';
         }, $this->values);
 
         return $this->rule . ':' . implode(',', $values);

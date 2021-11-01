@@ -16,6 +16,7 @@ use ArrayIterator;
 use CachingIterator;
 use Countable;
 use Exception;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use IteratorAggregate;
@@ -50,6 +51,8 @@ use Traversable;
  */
 class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
 {
+    use Macroable;
+
     /**
      * The items contained in the collection.
      *

@@ -1,0 +1,43 @@
+{
+    "name": "hyperf/rpc-multiplex",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf"
+    ],
+    "description": "Rpc for multiplexing connection",
+    "require": {
+        "php": ">=7.3",
+        "hyperf/framework": "~2.2.0",
+        "hyperf/http-message": "~2.2.0",
+        "hyperf/load-balancer": "~2.2.0",
+        "hyperf/rpc": "~2.2.0",
+        "hyperf/rpc-client": "~2.2.0",
+        "hyperf/rpc-server": "~2.2.0",
+        "hyperf/server": "~2.2.0",
+        "hyperf/utils": "~2.2.0",
+        "multiplex/socket": "^0.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\RpcMultiplex\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\RpcMultiplex\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "hyperf": {
+            "config": "Hyperf\\RpcMultiplex\\ConfigProvider"
+        },
+        "branch-alias": {
+            "dev-master": "2.2-dev"
+        }
+    }
+}

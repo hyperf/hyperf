@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Constants\Annotation;
 
+use Attribute;
 use Hyperf\Constants\AnnotationReader;
 use Hyperf\Constants\ConstantsCollector;
 use Hyperf\Di\Annotation\AbstractAnnotation;
@@ -19,6 +20,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
  * @Annotation
  * @Target({"CLASS"})
  */
+#[Attribute(Attribute::TARGET_CLASS)]
 class Constants extends AbstractAnnotation
 {
     public function collectClass(string $className): void

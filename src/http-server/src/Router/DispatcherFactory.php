@@ -16,6 +16,7 @@ use FastRoute\Dispatcher;
 use FastRoute\Dispatcher\GroupCountBased;
 use FastRoute\RouteParser\Std;
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Annotation\MultipleAnnotationInterface;
 use Hyperf\Di\Exception\ConflictAnnotationException;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\HttpServer\Annotation\AutoController;
@@ -220,27 +221,23 @@ class DispatcherFactory
 
     protected function handleMiddleware(array $metadata): array
     {
-        $hasMiddlewares = isset($metadata[Middlewares::class]);
-        $hasMiddleware = isset($metadata[Middleware::class]);
-        if (! $hasMiddlewares && ! $hasMiddleware) {
+        /** @var null|Middlewares $middlewares */
+        $middlewares = $metadata[Middlewares::class] ?? null;
+        /** @var null|MultipleAnnotationInterface $middleware */
+        $middleware = $metadata[Middleware::class] ?? null;
+        if ($middleware instanceof MultipleAnnotationInterface) {
+            $middleware = $middleware->toAnnotations();
+        }
+
+        if (! $middlewares && ! $middleware) {
             return [];
         }
-        if ($hasMiddlewares && $hasMiddleware) {
+        if ($middlewares && $middleware) {
             throw new ConflictAnnotationException('Could not use @Middlewares and @Middleware annotation at the same times at same level.');
         }
-        if ($hasMiddlewares) {
-            // @Middlewares
-            /** @var Middlewares $middlewares */
-            $middlewares = $metadata[Middlewares::class];
-            $result = [];
-            foreach ($middlewares->middlewares as $middleware) {
-                $result[] = $middleware->middleware;
-            }
-            return $result;
-        }
-        // @Middleware
-        /** @var Middleware $middleware */
-        $middleware = $metadata[Middleware::class];
-        return [$middleware->middleware];
+
+        return array_map(function (Middleware $middleware) {
+            return $middleware->middleware;
+        }, $middlewares ? $middlewares->middlewares : $middleware);
     }
 }

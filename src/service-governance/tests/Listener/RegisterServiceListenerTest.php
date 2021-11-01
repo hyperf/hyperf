@@ -17,9 +17,13 @@ use Hyperf\Consul\ConsulResponse;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Logger\Logger;
+use Hyperf\ServiceGovernance\DriverManager;
+use Hyperf\ServiceGovernance\IPReader;
+use Hyperf\ServiceGovernance\IPReaderInterface;
 use Hyperf\ServiceGovernance\Listener\RegisterServiceListener;
-use Hyperf\ServiceGovernance\Register\ConsulAgent;
 use Hyperf\ServiceGovernance\ServiceManager;
+use Hyperf\ServiceGovernanceConsul\ConsulAgent;
+use Hyperf\ServiceGovernanceConsul\ConsulDriver;
 use Mockery;
 use Monolog\Handler\StreamHandler;
 use PHPUnit\Framework\TestCase;
@@ -144,6 +148,9 @@ class RegisterServiceListenerTest extends TestCase
                     ],
                 ],
             ]));
+        $container->shouldReceive('get')->with(IPReaderInterface::class)->andReturn(new IPReader());
+        $container->shouldReceive('get')->with(DriverManager::class)->andReturn($manager = new DriverManager());
+        $manager->register('consul', new ConsulDriver($container));
         return $container;
     }
 }

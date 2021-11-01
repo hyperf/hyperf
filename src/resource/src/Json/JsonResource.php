@@ -166,6 +166,7 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
     public function wrap($value)
     {
         $this->wrap = $value;
+        return $this;
     }
 
     /**
@@ -174,6 +175,7 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
     public function withoutWrapping()
     {
         $this->wrap = null;
+        return $this;
     }
 
     /**

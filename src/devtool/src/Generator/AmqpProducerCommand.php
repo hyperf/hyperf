@@ -16,6 +16,7 @@ use Hyperf\Command\Annotation\Command;
 /**
  * @Command
  */
+#[Command]
 class AmqpProducerCommand extends GeneratorCommand
 {
     public function __construct()

@@ -1,22 +1,22 @@
 # QuickStart
 
-In order to let you know more about the use of `Hyperf`, this chapter will introduce `Create an HTTP Server` as an example to implement a simple `Web Service` by defining routes and controllers. Not only that, The features of Hyperf like service governance, `gRPC` services, annotations programming, `AOP` and other features will be explained by specific chapters.
+As an example of how to use `Hyperf`, this page will `create an HTTP Server` to implement a simple `Web Service` by defining routes and controllers. Hyperf can do much more, but features like service governance, `gRPC` services, annotations programming, `AOP`, and other features will be explained in specific chapters.
 
-## Define a route
+## Defining a route
 
-Hyperf use [nikic/fast-route] (https://github.com/nikic/FastRoute) as the default routing component, so you can easily define your route in `config/routes.php`.   
+`Hyperf` uses [nikic/fast-route](https://github.com/nikic/FastRoute) as the default routing component, so you can easily define your routes in `config/routes.php`. `Hyperf` also provides an extremely powerful and convenient `Annotation Routing` feature.
 
-Not only that，Hyperf also provides an extremely powerful and convenient "Annotation Routing" feature, for more information on routing, please refer to the [Router] (en/router.md) section.
+For more information on routing outside of the examples shown below, please refer to the [Router](en/router.md) chapter.
 
-### Define routes by file configuration
+### Define routes via file configuration
 
-The routes file is located in `config/routes.php` of the [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) project . Below are some common usage examples.
+The routes file is located in `config/routes.php` in the [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) project. Below are some common usage examples:
 
 ```php
 <?php
 use Hyperf\HttpServer\Router\Router;
 
-// The code example here provides three different binding definitions for each example. In practice, you just need to define one of them.
+// The code example here provides three different binding definitions for each example. In practice, you only need to define one of them.
 
 // Set the route for a GET request, bind the access address '/get' to App\Controller\IndexController::get()
 Router::get('/get', 'App\Controller\IndexController::get');
@@ -34,15 +34,15 @@ Router::addRoute(['GET', 'POST', 'HEAD'], '/multi', 'App\Controller\IndexControl
 Router::addRoute(['GET', 'POST', 'HEAD'], '/multi', [\App\Controller\IndexController::class, 'multi']);
 ```
 
-### Define routes by annotations
+### Define routes via annotations
 
-`Hyperf` provides an extremely powerful and convenient [annotation] (en/annotation.md) feature, and there is no doubt that the definition of the route also provides a way to define by annotation. Hyperf provides `@Controller` and `@ AutoController` annotations to define a `Controller`. Here is a brief description. For more details, please refer to the [Routing] (en/router.md) section.
+`Hyperf` provides an [Annotations](en/annotation.md) feature which makes it fast and easy to define routes. Hyperf provides `@Controller` and `@AutoController` annotations for use in a `Controller` class. For in-depth instructions, please refer to the [Routing](en/router.md) chapter. Here are some quick examples:
 
-### Define routes by `@AutoController`
-s
-`@AutoController` provides routing binding support for most simple access scenarios. When using `@AutoController`, Hyperf will automatically parse all `public` methods of the class and provide `GET` and `POST` requests at the same time.
+### Define routes via `@AutoController`
 
-> Using `@AutoController` annotation should `use Hyperf\HttpServer\Annotation\AutoController;` namespace；
+`@AutoController` provides automatic routing bindings for most simple routing scenarios. When using `@AutoController`, `Hyperf` will automatically parse all `public` methods of the class and provide `GET` and `POST` requests for each of those methods.
+
+> `@AutoController` annotations require the namespace `use Hyperf\HttpServer\Annotation\AutoController;`
 
 ```php
 <?php
@@ -58,7 +58,7 @@ use Hyperf\HttpServer\Annotation\AutoController;
  */
 class IndexController
 {
-    // Hyperf will automatically generate a `/index/index` route for this method, allows GET or POST requests
+    // Hyperf will automatically generate a `/index/index` route for this method, allowing GET or POST requests
     public function index(RequestInterface $request)
     {
         // Retrieve the id parameter from the request
@@ -68,18 +68,19 @@ class IndexController
 }
 ```
 
-### Define routes by `@Controller`
+### Define routes via `@Controller`
 
-`@Controller` using for more flexiable routing definition requirements, using `@Controller` annotation for current class is means it's a `Controller class`, and with the `@RequestMapping` annotation to define the request method and the request path.
-We also provide a variety of quick and convenient `Mapping annotations`, such as `@GetMapping`, `@PostMapping`, `@PutMapping`, `@PatchMapping`, `@DeleteMapping` 5 convenient annotations to indicate that different allowed request method.
+For more flexible routing definitions, `@Controller` can be used instead of `@AutoController`. Using a `@Controller` annotation in a class makes it a `Controller class`, and the `@RequestMapping` annotation can be used to define the request methods and paths.
 
-> Using `@Controller` annotation should `use Hyperf\HttpServer\Annotation\Controller;` namespace；   
-> Using `@RequestMapping` annotation should `use Hyperf\HttpServer\Annotation\RequestMapping;` namespace；   
-> Using `@GetMapping` annotation should `use Hyperf\HttpServer\Annotation\GetMapping;` namespace；   
-> Using `@PostMapping` annotation should `use Hyperf\HttpServer\Annotation\PostMapping;` namespace；   
-> Using `@PutMapping` annotation should `use Hyperf\HttpServer\Annotation\PutMapping;` namespace；   
-> Using `@PatchMapping` annotation should `use Hyperf\HttpServer\Annotation\PatchMapping;` namespace；   
-> Using `@DeleteMapping` annotation should `use Hyperf\HttpServer\Annotation\DeleteMapping;` namespace；  
+`Hyperf` also provides a variety of quick and convenient `Mapping annotations`, such as `@GetMapping`, `@PostMapping`, `@PutMapping`, `@PatchMapping`, `@DeleteMapping`, which can replace `@RequestMapping` to save you time when a route only needs a single HTTP method.
+
+> `@Controller` annotations require the namespace `use Hyperf\HttpServer\Annotation\Controller;`
+> `@RequestMapping` annotations require the namespace `use Hyperf\HttpServer\Annotation\RequestMapping;` 
+> `@GetMapping` annotations require the namespace `use Hyperf\HttpServer\Annotation\GetMapping;`  
+> `@PostMapping` annotations require the namespace `use Hyperf\HttpServer\Annotation\PostMapping;` 
+> `@PutMapping` annotations require the namespace `use Hyperf\HttpServer\Annotation\PutMapping;`  
+> `@PatchMapping` annotations require the namespace `use Hyperf\HttpServer\Annotation\PatchMapping;`
+> `@DeleteMapping` annotations require the namespace `use Hyperf\HttpServer\Annotation\DeleteMapping;`
 
 ```php
 <?php
@@ -96,7 +97,7 @@ use Hyperf\HttpServer\Annotation\RequestMapping;
  */
 class IndexController
 {
-    // Hyperf will automatically generate a `/index/index` route for this method, allows GET or POST requests
+    // Hyperf will automatically generate a `/index/index` route for this method, allowing GET or POST requests
     /**
      * @RequestMapping(path="index", methods="get,post")
      */
@@ -110,11 +111,11 @@ class IndexController
 ```
 
 
-## Handle HTTP Request
+## Handle HTTP Requests
 
-`Hyperf` is totally open. There is essentially no requirement that you must implement request processing based on some kind of certain mode. You could use the traditional `MVC mode` or the `RequestHandler mode` to handle the request.
-Let's take the example of `MVC mode`:
-Create a `Controller` folder in the `app` folder and create `IndexController.php` as follows. The `index` method gets the `id` parameter from the request and converts it to a `string` type and returns it to the client. .
+`Hyperf` is unopinionated. There is no requirement for you to implement HTTP request processing using any specific format. You can use the traditional `MVC mode` or the `RequestHandler mode` to handle requests. Let's take `MVC mode` as an example:
+
+Create a `Controller` folder in the `app` folder and create a `IndexController.php` file. The `index` method gets the `id` parameter from the request, converts it to a `string` type and returns it to the client.
 
 ```php
 <?php
@@ -130,26 +131,28 @@ use Hyperf\HttpServer\Annotation\AutoController;
  */
 class IndexController
 {
-    // Hyperf will automatically generate a `/index/index` route for this method, allows GET or POST requests
+    // Hyperf will automatically generate a `/index/index` route for this method, allowing GET or POST requests
     public function index(RequestInterface $request)
     {
         // Retrieve the id parameter from the request
         $id = $request->input('id', 1);
-        // Transfer $id parameter fo a string, and return $id to client with Content-Type:plain/text
+        // Transfer $id parameter to a string, and return $id to the client with Content-Type:plain/text
         return (string)$id;
     }
 }
 ```
 
-## Dependencies Auto-injection
+## Dependency Auto-Injection
 
-This is a very powerful feature provided by `Hyperf` and is the foundation for maintaining the flexibility of the framework.
-`Hyperf` provides two injection ways, one is common through the constructor injection, the other is through the `@Inject` annotation injection, below are the examples of the injection in two ways;
-Suppose we have a `\App\Service\UserService` class. There is a `getInfoById(int $id)` method in the class by passing an `id` and eventually returning a user entity. Since the return value is not what we need to pay attention to here. , so do not elaborate too much, we should pay attention to get `UserService` in any class and call the methods of class, the general method is to instantiate the service class through `new UserService()`, but in Hyperf`, we have a better solution.
+Dependency injection is a very powerful feature provided by `Hyperf` and is the foundation for the flexibility of the framework.
 
-### Injection by constructor
+`Hyperf` provides two methods of injection, one is through constructor injection, the other is through the `@Inject` annotation injection, below are examples for both methods:
 
-Simply declare the type of the parameter within the constructor's argument, and `Hyperf` will automatically inject the corresponding object or value.
+Suppose we have an `\App\Service\UserService` class. There is a `getInfoById(int $id)` method in the class that takes an `id` argument and returns a user entity. The return type and internals aren't relevant to this documentation, so we won't pay them too much attention, what we want is to get `UserService` in our class and to use the methods of that class. The normal method is to instantiate the `UserService` class through `new UserService()`, but in `Hyperf` using dependency injection, we have a better solution.
+
+### Injection via constructor
+
+Declare the parameter type within the constructor's arguments, and `Hyperf` will automatically inject the corresponding object or value.
 
 ```php
 <?php
@@ -171,7 +174,7 @@ class IndexController
      */
     private $userService;
     
-    // Simply declare the type of the parameter within the constructor's argument, and `Hyperf` will automatically inject the corresponding object or value.
+    // Declare the parameter type within the constructor's arguments, and Hyperf will automatically inject the corresponding object or value.
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
@@ -186,11 +189,11 @@ class IndexController
 }
 ```
 
-### Injection by `@Inject` annotation
+### Injection via `@Inject` annotation
 
-Simply declare the type of the parameter with the corresponding class property via `@var` and use the `@Inject` annotation to mark the property. `Hyperf` will automatically inject the corresponding object or value.
+Declare the parameter type above the corresponding class property via `@var` and use the `@Inject` annotation. `Hyperf` will automatically inject the corresponding object or value.
 
-> using `@Inject` annotation should `use Hyperf\Di\Annotation\Inject;` namespace；  
+> `@Inject` annotations require the namespace `use Hyperf\Di\Annotation\Inject;`
 
 ```php
 <?php
@@ -223,17 +226,20 @@ class IndexController
 }
 ```
    
-Through the above example, we could easily see that `$userService` is not instantiated manutally, but the class object corresponding to the property is automatically injected.
-However, this case here does not really shows the benefits of dependencies Auto-injection and its power. We assume that there are many dependencies on `UserService`, and that these dependencies have many other dependencies at the same time, so that the class needs to instantiate many objects manually and adjust the corresponding the order of arguments. But in `Hyperf`, we don't need to manually manage these dependencies, just declare the class name of the arguments, we will finished the other works.
-When `UserService` needs to undergo a drastic internal change such as replacement, such as replacing a local service with an RPC remote service, it only needs to adjust the class corresponding to the key value of `UserService` in the dependency to the new RPC service.
+In the above example, we can easily see that `$userService` is not instantiated manually, but the class object corresponding to the property is automatically injected by `Hyperf`.
 
-## Start server
+However, this case does not really show the real power of dependency injection. We assume that `UserService` has its own depencencies, and that those dependencies have many other dependencies as well, so that any class you define needs to instantiate many objects manually and manage the order of each class's arguments. In `Hyperf`, we don't need to manually manage these dependencies, just declare the class name of the arguments we need, and `Hyperf` does all the work for us.
 
-Since `Hyperf` has a built-in coroutine server, it means that `Hyperf` will run as `CLI`, so after defining the routing and writing the actual logic code, we need to run it in root directory of the project and execute the command line `php bin/hyperf.php start` to start the server.
-When the `Console` shows that the server is started, you can initiate access to the server through `cURL` or the browser. By default, the url of above example is  `http://127.0.0.1:9501/index/info?id= 1`.
+When `UserService` needs to undergo a drastic internal change such as replacing a local service with an RPC remote service, we only needs to adjust the class definition of `UserService.php` to replace the old service with the new RPC service in a single file.
+
+## Start the server
+
+Since `Hyperf` has a built-in coroutine server, `Hyperf` will run as a `CLI` process. After defining our routes and writing the application logic code, we can start the server by entering the root directory of the project and executing the command  `php bin/hyperf.php start`.
+
+When the `console` shows that the server has started, you can access the server through `cURL` or via the browser. By default, the url of the above dependency injection examples is  `http://127.0.0.1:9501/index/info?id= 1`.
 
 ## Reload the code
 
-Since `Hyperf` is a persistent `CLI` application, it means that once the process is started, the parsed `PHP` code will be persisted in the process, which means that you cannot modify the `PHP` code after the server started. The code will not be changed in the started server. If you want the server to reload your code, you need to terminate the server by typing `CTRL + C` in the `Console`, and then re-execute the start command to reload.
+`Hyperf` is a persistent `CLI` application. Once the process starts, the parsed `PHP` code will remain unchanged while the process is running, so changes to the `PHP` code after the server starts will have no effect. If you want the server to reload your code, you need to terminate the process by typing `CTRL + C` in the `console` and then re-execute the command `php bin/hyperf.php start`.
 
-> Tips: You can also configure the command to start the Server on the IDE, and you can quickly complete the `Start Server` or `Restart Server` operations directly via the IDE's `Start/Stop` buttons.
+> Tip: You can also configure the commands to manage the Server in your IDE, and you can quickly execute the `Start the Server` or `Reload the code` operations directly via the IDE's `Start/Stop` buttons.

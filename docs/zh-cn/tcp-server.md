@@ -17,7 +17,7 @@ use Hyperf\Contract\OnReceiveInterface;
 
 class TcpServer implements OnReceiveInterface
 {
-    public function onReceive($server, int $fd, int $fromId, string $data): void
+    public function onReceive($server, int $fd, int $reactorId, string $data): void
     {
         $server->send($fd, 'recv:' . $data);
     }
