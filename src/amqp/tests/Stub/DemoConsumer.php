@@ -16,9 +16,9 @@ use Hyperf\Amqp\Result;
 
 class DemoConsumer extends ConsumerMessage
 {
-    protected $exchange = 'hyperf';
+    protected string $exchange = 'hyperf';
 
-    protected $routingKey = [
+    protected array|string $routingKey = [
         'hyperf1',
         'hyperf2',
     ];

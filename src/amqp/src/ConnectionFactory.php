@@ -22,24 +22,12 @@ use Psr\Container\ContainerInterface;
 class ConnectionFactory
 {
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
-
-    /**
      * @var AMQPConnection[][]
      */
     protected $connections = [];
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container, protected ConfigInterface $config)
     {
-        $this->container = $container;
-        $this->config = $this->container->get(ConfigInterface::class);
     }
 
     public function refresh(string $pool)
@@ -107,7 +95,7 @@ class ConnectionFactory
             $vhost,
             $params->isInsist(),
             $params->getLoginMethod(),
-            $params->getLoginResponse(),
+            null,
             $params->getLocale(),
             $io,
             $params->getHeartbeat(),

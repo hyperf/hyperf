@@ -16,11 +16,11 @@ use Hyperf\Amqp\Result;
 
 class QosConsumer extends ConsumerMessage
 {
-    protected $exchange = 'qos';
+    protected string $exchange = 'qos';
 
-    protected $queue = 'qos.rk.queue';
+    protected string $queue = 'qos.rk.queue';
 
-    protected $routingKey = 'qos.rk';
+    protected array|string $routingKey = 'qos.rk';
 
     protected $qos = [
         'prefetch_count' => 10,

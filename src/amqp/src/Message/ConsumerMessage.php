@@ -36,10 +36,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
      */
     protected $requeue = true;
 
-    /**
-     * @var array
-     */
-    protected $routingKey = [];
+    protected array|string $routingKey = [];
 
     /**
      * @var null|array
