@@ -14,6 +14,9 @@
 composer analyse
 ```
 
+- [#4147](https://github.com/hyperf/hyperf/pull/4147) Changed the default `base_uri` for nacos. 
+If you use `base_uri` instead of `host` and `port` to connect `nacos`, you must rewrite your `base_uri` which like `http://127.0.0.1:8848/`.
+
 ## Dependencies Upgrade
 
 - Upgraded `php-amqplib/php-amqplib` to `^3.1`;
