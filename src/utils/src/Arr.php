@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use ArrayAccess;
+use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
-use Hyperf\Utils\Traits\Macroable;
 
 /**
  * Most of the methods in this file come from illuminate/support,
