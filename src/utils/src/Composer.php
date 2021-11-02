@@ -112,10 +112,10 @@ class Composer
             return self::$extra;
         }
         $extra = [];
-        foreach (self::$extra ?? [] as $project => $config) {
+        foreach (self::$extra as $project => $config) {
             foreach ($config ?? [] as $configKey => $item) {
                 if ($key === $configKey && $item) {
-                    foreach ($item ?? [] as $k => $v) {
+                    foreach ($item as $k => $v) {
                         if (is_array($v)) {
                             $extra[$k] = array_merge($extra[$k] ?? [], $v);
                         } else {

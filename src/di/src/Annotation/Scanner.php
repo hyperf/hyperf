@@ -288,7 +288,7 @@ class Scanner
             AspectCollector::clear($aspect);
         }
 
-        foreach ($aspects ?? [] as $key => $value) {
+        foreach ($aspects as $key => $value) {
             if (is_numeric($key)) {
                 $aspect = $value;
                 $priority = null;

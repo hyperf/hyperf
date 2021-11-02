@@ -18,10 +18,10 @@
     "require": {
         "php": ">=7.2",
         "psr/http-message": "^1.0",
-        "hyperf/contract": "~2.2.0",
-        "hyperf/di": "~2.2.0",
-        "hyperf/guzzle": "~2.2.0",
-        "hyperf/utils": "~2.2.0",
+        "hyperf/contract": "~3.0.0",
+        "hyperf/di": "~3.0.0",
+        "hyperf/guzzle": "~3.0.0",
+        "hyperf/utils": "~3.0.0",
         "jcchavezs/zipkin-opentracing":"^1.0",
         "opentracing/opentracing":"^1.0"
     },
@@ -43,7 +43,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Tracer\\ConfigProvider"

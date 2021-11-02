@@ -9,16 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\RpcMultiplex\Cases;
+namespace Hyperf\Amqp\IO;
 
-/**
- * @internal
- * @coversNothing
- */
-class ExampleTest extends AbstractTestCase
+use Hyperf\Amqp\Params;
+use PhpAmqpLib\Wire\IO\AbstractIO;
+
+interface IOFactoryInterface
 {
-    public function testExample()
-    {
-        $this->assertTrue(true);
-    }
+    public function create(array $config, Params $params): AbstractIO;
 }

@@ -99,6 +99,6 @@ class SocketFactory
 
     protected function getCount(): int
     {
-        return (int) $this->config['client_count'] ?? 4;
+        return (int) ($this->config['client_count'] ?? 4);
     }
 }

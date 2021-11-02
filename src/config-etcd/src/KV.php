@@ -14,7 +14,7 @@ namespace Hyperf\ConfigEtcd;
 class KV
 {
     /**
-     * @var string
+     * @var null|string
      */
     public $key;
 
@@ -34,7 +34,7 @@ class KV
     public $version;
 
     /**
-     * @var string
+     * @var null|string
      */
     public $value;
 

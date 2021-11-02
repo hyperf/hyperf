@@ -15,12 +15,12 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "psr/container": "^1.0|^2.0",
         "psr/event-dispatcher": "^1.0",
-        "hyperf/contract": "~2.2.8",
-        "hyperf/command": "~2.2.0",
-        "hyperf/utils": "~2.2.0"
+        "hyperf/contract": "~3.0.0",
+        "hyperf/command": "~3.0.0",
+        "hyperf/utils": "~3.0.0"
     },
     "suggest": {
         "hyperf/di": "Required to use annotations.",
@@ -43,7 +43,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\AsyncQueue\\ConfigProvider"

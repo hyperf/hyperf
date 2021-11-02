@@ -12,12 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use Closure;
+use Hyperf\Macroable\Macroable;
 use JsonSerializable;
 
 class Stringable implements JsonSerializable
 {
     use Traits\Conditionable;
-    use Traits\Macroable;
+    use Macroable;
     use Traits\Tappable;
 
     /**
@@ -83,7 +84,7 @@ class Stringable implements JsonSerializable
     /**
      * Append the given values to the string.
      *
-     * @param array $values
+     * @param string $values
      * @return static
      */
     public function append(...$values)
@@ -464,7 +465,7 @@ class Stringable implements JsonSerializable
     /**
      * Prepend the given values to the string.
      *
-     * @param array $values
+     * @param string $values
      * @return static
      */
     public function prepend(...$values)

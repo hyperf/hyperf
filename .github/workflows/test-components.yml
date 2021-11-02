@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: '0 2 * * *'
 env:
-  SW_VERSION: 'v4.7.1'
+  SW_VERSION: 'v4.8.1'
   YASD_VERSION: 'v0.3.9'
 jobs:
   database:
@@ -16,9 +16,9 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '7.4', '8.0' ]
+        php-version: [ '8.0' ]
         mysql-version: [ '5.7', '8.0' ]
-      max-parallel: 6
+      max-parallel: 2
       fail-fast: false
     steps:
       - name: Checkout
@@ -53,8 +53,8 @@ jobs:
     strategy:
       matrix:
         version: [ '^1.0', '^2.0' ]
-        php-version: [ '7.4', '8.0' ]
-      max-parallel: 6
+        php-version: [ '8.0' ]
+      max-parallel: 2
       fail-fast: false
     steps:
       - name: Checkout
@@ -134,13 +134,14 @@ jobs:
 
 
   container:
-    name: Test for Psr Container V2.0
+    name: Test for Psr Container V1.0 ~ V2.0
     runs-on: 'ubuntu-latest'
     env:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '7.4', '8.0' ]
+        php-version: [ '8.0' ]
+        version: [ '^1.0', '^2.0' ]
       max-parallel: 6
       fail-fast: false
     steps:
@@ -162,8 +163,53 @@ jobs:
           cp .travis/.env.example .env
           composer remove friendsofphp/php-cs-fixer --dev -W
           composer remove symfony/console --dev -W
+          composer require "psr/container:${{ matrix.version }}"
           composer update -oW
       - name: Run Test Cases
         run: |
           composer analyse src/di
           vendor/bin/phpunit src/di
+  log:
+    name: Test for Psr Log V1.0 ~ V3.0
+    runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+    strategy:
+      matrix:
+        php-version: [ '8.0' ]
+        log-version: [ '^1.0', '^2.0', '^3.0' ]
+      max-parallel: 3
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          ini-values: opcache.enable_cli=0
+          coverage: none
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Removed conflict Packages
+        run: |
+          composer remove elasticsearch/elasticsearch --dev -W
+          composer remove jonahgeorge/jaeger-client-php --dev -W
+          composer remove bandwidth-throttle/token-bucket --dev -W
+          composer remove friendsofphp/php-cs-fixer --dev -W
+          composer remove symfony/console --dev -W
+      - name: Run Test Cases
+        run: |
+          composer require "psr/log:${{ matrix.log-version }}"
+          composer update -oW
+          if [ ${{ matrix.log-version }} != '^3.0' ]
+          then
+            composer require symfony/console --dev -W
+            composer analyse src/framework
+          fi
+          composer analyse src/server/src/Entry/Logger.php
+          composer analyse src/logger
+          composer test src/framework
+          composer test src/logger
+          composer info | grep psr/log

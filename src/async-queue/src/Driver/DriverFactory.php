@@ -18,26 +18,17 @@ use Psr\Container\ContainerInterface;
 class DriverFactory
 {
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * @var DriverInterface[]
      */
-    protected $drivers = [];
+    protected array $drivers = [];
 
-    /**
-     * @var array
-     */
-    protected $configs = [];
+    protected array $configs = [];
 
     /**
      * @throws InvalidDriverException when the driver class not exist or the class is not implemented DriverInterface
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $config = $container->get(ConfigInterface::class);
 
         $this->configs = $config->get('async_queue', []);
@@ -69,7 +60,7 @@ class DriverFactory
     public function get(string $name): DriverInterface
     {
         $driver = $this->drivers[$name] ?? null;
-        if (! $driver || ! $driver instanceof DriverInterface) {
+        if (! $driver instanceof DriverInterface) {
             throw new InvalidDriverException(sprintf('[Error]  %s is a invalid driver.', $name));
         }
 

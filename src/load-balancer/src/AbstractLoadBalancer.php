@@ -21,7 +21,7 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
     /**
      * @var Node[]
      */
-    protected $nodes;
+    protected $nodes = [];
 
     /**
      * @param \Hyperf\LoadBalancer\Node[] $nodes

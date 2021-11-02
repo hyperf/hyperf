@@ -19,6 +19,7 @@ interface OnOpenInterface
 {
     /**
      * @param Response|Server $server
+     * @param Request $request
      */
-    public function onOpen($server, Request $request): void;
+    public function onOpen($server, $request): void;
 }

@@ -33,7 +33,7 @@ class NacosDriver extends AbstractDriver
     protected function updateConfig(array $config)
     {
         $root = $this->config->get('config_center.drivers.nacos.default_key');
-        foreach ($config ?? [] as $key => $conf) {
+        foreach ($config as $key => $conf) {
             if (is_int($key)) {
                 $key = $root;
             }

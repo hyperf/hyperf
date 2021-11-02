@@ -82,14 +82,14 @@ abstract class AbstractPaginator implements PaginatorInterface
     /**
      * The current path resolver callback.
      *
-     * @var \Closure
+     * @var null|\Closure
      */
     protected static $currentPathResolver;
 
     /**
      * The current page resolver callback.
      *
-     * @var \Closure
+     * @var null|\Closure
      */
     protected static $currentPageResolver;
 

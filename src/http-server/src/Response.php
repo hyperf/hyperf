@@ -19,6 +19,7 @@ use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\Http\EncodingException;
 use Hyperf\HttpServer\Exception\Http\FileException;
 use Hyperf\HttpServer\Exception\Http\InvalidResponseException;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ClearStatCache;
 use Hyperf\Utils\Codec\Json;
@@ -29,7 +30,6 @@ use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Contracts\Xmlable;
 use Hyperf\Utils\MimeTypeExtensionGuesser;
 use Hyperf\Utils\Str;
-use Hyperf\Utils\Traits\Macroable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
@@ -158,6 +158,7 @@ class Response implements PsrResponseInterface, ResponseInterface
             $ifMatch = $request->getHeaderLine('if-match');
             $ifNoneMatch = $request->getHeaderLine('if-none-match');
             $clientEtags = explode(',', $ifMatch ?: $ifNoneMatch);
+            /* @phpstan-ignore-next-line */
             array_walk($clientEtags, 'trim');
             if (in_array($etag, $clientEtags, true)) {
                 return $this->withStatus(304)->withAddedHeader('content-type', $contentType);
