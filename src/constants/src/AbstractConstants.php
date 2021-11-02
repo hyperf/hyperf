@@ -17,7 +17,7 @@ use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Str;
 
 /**
- * @method static getMessage(int $code, $translate = null)
+ * @method static string getMessage(int $code, $translate = null)
  */
 abstract class AbstractConstants
 {
