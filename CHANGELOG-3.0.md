@@ -14,9 +14,6 @@
 composer analyse
 ```
 
-- [#4147](https://github.com/hyperf/hyperf/pull/4147) Changed the default `base_uri` for nacos. 
-If you use `base_uri` instead of `host` and `port` to connect `nacos`, you must rewrite your `base_uri` which like `http://127.0.0.1:8848/`.
-
 ## Dependencies Upgrade
 
 - Upgraded `php-amqplib/php-amqplib` to `^3.1`;
@@ -25,6 +22,10 @@ If you use `base_uri` instead of `host` and `port` to connect `nacos`, you must 
 ## Added
 
 - [#4196](https://github.com/hyperf/hyperf/pull/4196) Added `Hyperf\Amqp\IO\IOFactory` which used to create amqp io by yourself.
+
+## Optimized
+
+- [#4147](https://github.com/hyperf/hyperf/pull/4147) Optimized code for nacos which you can use `http://xxx.com/yyy/` instead of `http://xxx.com:8848/` to connect `nacos`.
 
 ## Removed
 
