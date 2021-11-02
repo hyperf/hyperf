@@ -25,4 +25,4 @@ composer analyse
 
 ## Removed
 
-- []() Removed deprecated handler `Hyperf\AsyncQueue\Signal\DriverStopHandler`.
+- [#4199](https://github.com/hyperf/hyperf/pull/4199) Removed deprecated handler `Hyperf\AsyncQueue\Signal\DriverStopHandler`.
