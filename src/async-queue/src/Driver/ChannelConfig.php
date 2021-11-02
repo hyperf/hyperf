@@ -15,45 +15,32 @@ use Hyperf\AsyncQueue\Exception\InvalidQueueException;
 
 class ChannelConfig
 {
-    /**
-     * @var string
-     */
-    protected $channel;
+    protected string $channel;
 
     /**
      * Key for waiting message.
-     *
-     * @var string
      */
-    protected $waiting;
+    protected string $waiting;
 
     /**
      * Key for reserved message.
-     *
-     * @var string
      */
-    protected $reserved;
+    protected string $reserved;
 
     /**
      * Key for reserve timeout message.
-     *
-     * @var string
      */
-    protected $timeout;
+    protected string $timeout;
 
     /**
      * Key for delayed message.
-     *
-     * @var string
      */
-    protected $delayed;
+    protected string $delayed;
 
     /**
      * Key for failed message.
-     *
-     * @var string
      */
-    protected $failed;
+    protected string $failed;
 
     public function __construct(string $channel)
     {
@@ -79,7 +66,7 @@ class ChannelConfig
         return $this->channel;
     }
 
-    public function setChannel(string $channel): self
+    public function setChannel(string $channel): static
     {
         $this->channel = $channel;
         return $this;
@@ -90,7 +77,7 @@ class ChannelConfig
         return $this->waiting;
     }
 
-    public function setWaiting(string $waiting): self
+    public function setWaiting(string $waiting): static
     {
         $this->waiting = $waiting;
         return $this;
@@ -101,7 +88,7 @@ class ChannelConfig
         return $this->reserved;
     }
 
-    public function setReserved(string $reserved): self
+    public function setReserved(string $reserved): static
     {
         $this->reserved = $reserved;
         return $this;
@@ -112,7 +99,7 @@ class ChannelConfig
         return $this->timeout;
     }
 
-    public function setTimeout(string $timeout): self
+    public function setTimeout(string $timeout): static
     {
         $this->timeout = $timeout;
         return $this;
@@ -123,7 +110,7 @@ class ChannelConfig
         return $this->delayed;
     }
 
-    public function setDelayed(string $delayed): self
+    public function setDelayed(string $delayed): static
     {
         $this->delayed = $delayed;
         return $this;
@@ -134,7 +121,7 @@ class ChannelConfig
         return $this->failed;
     }
 
-    public function setFailed(string $failed): self
+    public function setFailed(string $failed): static
     {
         $this->failed = $failed;
         return $this;

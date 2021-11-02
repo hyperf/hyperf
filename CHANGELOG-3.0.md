@@ -22,3 +22,7 @@ composer analyse
 ## Added
 
 - [#4196](https://github.com/hyperf/hyperf/pull/4196) Added `Hyperf\Amqp\IO\IOFactory` which used to create amqp io by yourself.
+
+## Removed
+
+- []() Removed deprecated handler `Hyperf\AsyncQueue\Signal\DriverStopHandler`.

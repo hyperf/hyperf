@@ -18,20 +18,14 @@ use Hyperf\Event\Contract\ListenerInterface;
 class ReloadChannelListener implements ListenerInterface
 {
     /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    /**
      * @var string[]
      */
     protected $channels = [
         'timeout',
     ];
 
-    public function __construct(StdoutLoggerInterface $logger)
+    public function __construct(protected StdoutLoggerInterface $logger)
     {
-        $this->logger = $logger;
     }
 
     public function listen(): array
