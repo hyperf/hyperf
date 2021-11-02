@@ -1,5 +1,9 @@
 # v2.2.15 - TBD
 
+## Added
+
+- [#4157](https://github.com/hyperf/hyperf/pull/4157) Added `Macroable` for `Hyperf\Utils\Arr`.
+
 # v2.2.14 - 2021-11-01
 
 ## Added
