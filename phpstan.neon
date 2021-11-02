@@ -52,3 +52,5 @@ parameters:
     - '#Unsafe access to private property .* through static::#'
     - '#Unsafe call to private method .* through static::#'
     - '#Property .* is never read, only written#'
+    - message: '#Match arm is unreachable because previous comparison is always true#'
+      path: src/amqp/src/IO/IOFactory.php

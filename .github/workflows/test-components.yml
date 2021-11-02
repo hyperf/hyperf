@@ -16,7 +16,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '7.4', '8.0' ]
+        php-version: [ '8.0' ]
         mysql-version: [ '5.7', '8.0' ]
       max-parallel: 2
       fail-fast: false
@@ -53,7 +53,7 @@ jobs:
     strategy:
       matrix:
         version: [ '^1.0', '^2.0' ]
-        php-version: [ '7.4', '8.0' ]
+        php-version: [ '8.0' ]
       max-parallel: 2
       fail-fast: false
     steps:
@@ -134,13 +134,14 @@ jobs:
 
 
   container:
-    name: Test for Psr Container V2.0
+    name: Test for Psr Container V1.0 ~ V2.0
     runs-on: 'ubuntu-latest'
     env:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '7.4', '8.0' ]
+        php-version: [ '8.0' ]
+        version: [ '^1.0', '^2.0' ]
       max-parallel: 6
       fail-fast: false
     steps:
@@ -162,6 +163,7 @@ jobs:
           cp .travis/.env.example .env
           composer remove friendsofphp/php-cs-fixer --dev -W
           composer remove symfony/console --dev -W
+          composer require "psr/container:${{ matrix.version }}"
           composer update -oW
       - name: Run Test Cases
         run: |

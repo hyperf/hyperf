@@ -12,9 +12,9 @@
         "ext-json": "*",
         "ext-redis": "*",
         "ext-swoole": ">=4.4",
-        "hyperf/di": "~2.2.0",
-        "hyperf/redis": "~2.2.0",
-        "hyperf/websocket-server": "~2.2.0",
+        "hyperf/di": "~3.0.0",
+        "hyperf/redis": "~3.0.0",
+        "hyperf/websocket-server": "~3.0.0",
         "mix/redis-subscribe": "^2.1"
     },
     "suggest": {
@@ -37,7 +37,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\SocketIOServer\\ConfigProvider"

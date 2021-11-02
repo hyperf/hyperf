@@ -18,22 +18,8 @@ use Psr\Container\ContainerInterface;
 
 class Builder
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    protected $poolFactory;
-
-    /**
-     * @var ConnectionFactory
-     */
-    protected $factory;
-
-    public function __construct(ContainerInterface $container, ConnectionFactory $factory)
+    public function __construct(protected ContainerInterface $container, protected ConnectionFactory $factory)
     {
-        $this->container = $container;
-        $this->factory = $factory;
     }
 
     /**

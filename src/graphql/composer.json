@@ -11,8 +11,8 @@
     "require": {
         "php": ">=7.2",
         "thecodingmachine/graphqlite": "^3.0",
-        "hyperf/contract": "~2.2.0",
-        "hyperf/di": "~2.2.0"
+        "hyperf/contract": "~3.0.0",
+        "hyperf/di": "~3.0.0"
     },
     "suggest": {
         "hyperf/http-server": "Required to use GraphQLMiddleware.",
@@ -25,7 +25,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\GraphQL\\ConfigProvider"
