@@ -39,7 +39,7 @@ class Cacheable extends AbstractAnnotation
     public $ttl;
 
     /**
-     * @var string
+     * @var null|string
      */
     public $listener;
 

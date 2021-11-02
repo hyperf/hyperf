@@ -120,8 +120,7 @@ class Request implements RequestInterface
      */
     public function all(): array
     {
-        $data = $this->getInputData();
-        return $data ?? [];
+        return $this->getInputData();
     }
 
     /**

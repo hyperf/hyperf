@@ -145,7 +145,7 @@ class Aspect
             return $mapping;
         });
         $aspects = array_keys($collection);
-        foreach ($aspects ?? [] as $aspect) {
+        foreach ($aspects as $aspect) {
             $rules = AspectCollector::getRule($aspect);
             foreach ($rules['annotations'] ?? [] as $rule) {
                 // If exist class level annotation, then all methods should rewrite, so return an empty array directly.
@@ -163,7 +163,7 @@ class Aspect
     private static function parseClasses(array $collection, string $class, RewriteCollection $rewriteCollection)
     {
         $aspects = array_keys($collection);
-        foreach ($aspects ?? [] as $aspect) {
+        foreach ($aspects as $aspect) {
             $rules = AspectCollector::getRule($aspect);
             foreach ($rules['classes'] ?? [] as $rule) {
                 [$isMatch, $method] = static::isMatchClassRule($class, $rule);

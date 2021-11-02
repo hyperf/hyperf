@@ -141,7 +141,7 @@ class Server implements ServerInterface
     {
         $sortServers = [];
         foreach ($servers as $server) {
-            switch ($server->getType() ?? 0) {
+            switch ($server->getType()) {
                 case ServerInterface::SERVER_HTTP:
                     $this->enableHttpServer = true;
                     if (! $this->enableWebsocketServer) {

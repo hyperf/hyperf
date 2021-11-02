@@ -38,7 +38,7 @@ class RetryBudget implements RetryBudgetInterface
     private $budget;
 
     /**
-     * @var int
+     * @var null|int
      */
     private $timerId;
 

@@ -27,7 +27,7 @@ class DepthGuard
     protected $depthLimit = 500;
 
     /**
-     * @var DepthGuard
+     * @var null|DepthGuard
      */
     private static $instance;
 

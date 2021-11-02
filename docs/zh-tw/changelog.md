@@ -4,7 +4,7 @@
 
 ## 新增
 
-- [#4181](https://github.com/hyperf/hyperf/pull/4181) 為框架增加 `psr/log` 元件版本 `v1.0`、`v2.0`、`v3.0` 的支援。
+- [#4181](https://github.com/hyperf/hyperf/pull/4181) [#4192](https://github.com/hyperf/hyperf/pull/4192) 為框架增加 `psr/log` 元件版本 `v1.0`、`v2.0`、`v3.0` 的支援。
 
 ## 修復
 

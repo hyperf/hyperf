@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: '0 2 * * *'
 env:
-  SW_VERSION: 'v4.8.0'
+  SW_VERSION: 'v4.8.1'
   YASD_VERSION: 'v0.3.9'
 jobs:
   database:
@@ -186,7 +186,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          ini-values: opcache.enable_cli=1
+          ini-values: opcache.enable_cli=0
           coverage: none
       - name: Setup Swoole
         run: ./.travis/swoole.install.sh

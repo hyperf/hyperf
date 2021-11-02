@@ -89,11 +89,14 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
         return json_encode($this->toArray());
     }
 
+    /**
+     * TODO: ?string => string.
+     */
     public function getExtension(): ?string
     {
         $clientName = $this->getClientFilename();
         $segments = explode('.', $clientName);
-        return end($segments) ?? null;
+        return end($segments);
     }
 
     public function getMimeType(): string
