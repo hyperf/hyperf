@@ -57,7 +57,6 @@ class AsyncQueueAspect extends AbstractAspect
         $maxAttempts = 0;
 
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
-        /** @var AsyncQueueMessage $annotation */
         $annotation = $metadata->method[AsyncQueueMessage::class] ?? $metadata->class[AsyncQueueMessage::class] ?? null;
         if ($annotation instanceof AsyncQueueMessage) {
             $pool = $annotation->pool;
