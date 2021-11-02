@@ -18,11 +18,11 @@ class QosConsumer extends ConsumerMessage
 {
     protected string $exchange = 'qos';
 
-    protected string $queue = 'qos.rk.queue';
+    protected ?string $queue = 'qos.rk.queue';
 
     protected array|string $routingKey = 'qos.rk';
 
-    protected $qos = [
+    protected ?array $qos = [
         'prefetch_count' => 10,
     ];
 

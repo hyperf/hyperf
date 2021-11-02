@@ -23,7 +23,7 @@ class DemoConsumer extends ConsumerMessage
         'hyperf2',
     ];
 
-    protected $queue = 'hyperf';
+    protected ?string $queue = 'hyperf';
 
     public function consume($data): string
     {

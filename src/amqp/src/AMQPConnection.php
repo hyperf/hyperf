@@ -35,11 +35,11 @@ class AMQPConnection extends AbstractConnection
 
     protected Channel $confirmPool;
 
-    protected null|LoggerInterface $logger;
+    protected ?LoggerInterface $logger = null;
 
     protected int $lastChannelId = 0;
 
-    protected null|Params $params;
+    protected ?Params $params = null;
 
     protected bool $loop = false;
 

@@ -17,7 +17,7 @@ use Hyperf\Utils\ApplicationContext;
 
 abstract class ProducerMessage extends Message implements ProducerMessageInterface
 {
-    protected $payload = '';
+    protected mixed $payload = '';
 
     protected array|string $routingKey = '';
 

@@ -25,7 +25,7 @@ class Builder
 
     protected AMQPTable|array $arguments = [];
 
-    protected null|int $ticket;
+    protected ?int $ticket = null;
 
     public function isPassive(): bool
     {

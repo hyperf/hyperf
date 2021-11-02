@@ -17,11 +17,11 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 class RpcChannel
 {
-    protected ?Channel $chan;
+    protected ?Channel $chan = null;
 
     protected string $correlationId;
 
-    protected ?string $queue;
+    protected ?string $queue = null;
 
     public function __construct(protected AMQPChannel $channel)
     {

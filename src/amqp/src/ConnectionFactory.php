@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Amqp;
 
-use Hyperf\Amqp\IO\SwooleIO;
+use Hyperf\Amqp\IO\SwooleIOFactory;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\Arr;
@@ -21,13 +21,16 @@ use Psr\Container\ContainerInterface;
 
 class ConnectionFactory
 {
+    protected ConfigInterface $config;
+
     /**
      * @var AMQPConnection[][]
      */
     protected $connections = [];
 
-    public function __construct(protected ContainerInterface $container, protected ConfigInterface $config)
+    public function __construct(protected ContainerInterface $container)
     {
+        $this->config = $this->container->get(ConfigInterface::class);
     }
 
     public function refresh(string $pool)
@@ -76,18 +79,16 @@ class ConnectionFactory
 
     public function make(array $config): AMQPConnection
     {
-        $host = $config['host'] ?? 'localhost';
-        $port = $config['port'] ?? 5672;
         $user = $config['user'] ?? 'guest';
         $password = $config['password'] ?? 'guest';
         $vhost = $config['vhost'] ?? '/';
+        $ioFactory = $config['io'] ?? SwooleIOFactory::class;
+        if (is_string($ioFactory)) {
+            $ioFactory = new $ioFactory();
+        }
 
         $params = new Params(Arr::get($config, 'params', []));
-        $io = new SwooleIO(
-            $host,
-            $port,
-            $params->getConnectionTimeout()
-        );
+        $io = $ioFactory($config, $params);
 
         $connection = new AMQPConnection(
             $user,

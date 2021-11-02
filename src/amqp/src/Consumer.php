@@ -33,7 +33,7 @@ use Throwable;
 
 class Consumer extends Builder
 {
-    protected ?EventDispatcherInterface $eventDispatcher;
+    protected ?EventDispatcherInterface $eventDispatcher = null;
 
     public function __construct(
         ContainerInterface $container,

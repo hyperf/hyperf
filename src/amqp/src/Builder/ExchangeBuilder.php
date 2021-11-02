@@ -13,9 +13,9 @@ namespace Hyperf\Amqp\Builder;
 
 class ExchangeBuilder extends Builder
 {
-    protected ?string $exchange;
+    protected ?string $exchange = null;
 
-    protected ?string $type;
+    protected ?string $type = null;
 
     protected bool $internal = false;
 

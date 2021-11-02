@@ -15,7 +15,7 @@ use PhpAmqpLib\Wire\AMQPTable;
 
 class QueueBuilder extends Builder
 {
-    protected ?string $queue;
+    protected ?string $queue = null;
 
     protected bool $exclusive = false;
 
