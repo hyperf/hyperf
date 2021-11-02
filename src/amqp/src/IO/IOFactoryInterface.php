@@ -14,17 +14,7 @@ namespace Hyperf\Amqp\IO;
 use Hyperf\Amqp\Params;
 use PhpAmqpLib\Wire\IO\AbstractIO;
 
-class SwooleIOFactory
+interface IOFactoryInterface
 {
-    public function __invoke(array $config, Params $params): AbstractIO
-    {
-        $host = $config['host'] ?? 'localhost';
-        $port = $config['port'] ?? 5672;
-
-        return new SwooleIO(
-            $host,
-            $port,
-            $params->getConnectionTimeout()
-        );
-    }
+    public function create(array $config, Params $params): AbstractIO;
 }

@@ -11,12 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\Amqp;
 
-use Hyperf\Amqp\IO\SwooleIOFactory;
+use Hyperf\Amqp\Exception\NotSupportedException;
+use Hyperf\Amqp\IO\IOFactory;
+use Hyperf\Amqp\IO\IOFactoryInterface;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Coroutine\Locker;
 use InvalidArgumentException;
+use PhpAmqpLib\Wire\IO\AbstractIO;
 use Psr\Container\ContainerInterface;
 
 class ConnectionFactory
@@ -82,13 +85,8 @@ class ConnectionFactory
         $user = $config['user'] ?? 'guest';
         $password = $config['password'] ?? 'guest';
         $vhost = $config['vhost'] ?? '/';
-        $ioFactory = $config['io'] ?? SwooleIOFactory::class;
-        if (is_string($ioFactory)) {
-            $ioFactory = new $ioFactory();
-        }
-
         $params = new Params(Arr::get($config, 'params', []));
-        $io = $ioFactory($config, $params);
+        $io = $this->makeIO($config, $params);
 
         $connection = new AMQPConnection(
             $user,
@@ -116,5 +114,21 @@ class ConnectionFactory
         }
 
         return $this->config->get($key);
+    }
+
+    private function makeIO(array $config, Params $params): AbstractIO
+    {
+        $callable = $config['io'] ?? IOFactory::class;
+
+        if (is_callable($callable)) {
+            return $callable($config, $params);
+        }
+
+        $ioFactory = $this->container->get((string) $callable);
+        if (! $ioFactory instanceof IOFactoryInterface) {
+            throw new NotSupportedException(sprintf('%s must instanceof %s', $callable, IOFactoryInterface::class));
+        }
+
+        return $ioFactory->create($config, $params);
     }
 }

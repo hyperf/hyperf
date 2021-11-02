@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-use Hyperf\Amqp\IO\SwooleIOFactory;
+use Hyperf\Amqp\IO\IOFactory;
 
 return [
     'default' => [
@@ -24,7 +24,7 @@ return [
         'pool' => [
             'connections' => 2,
         ],
-        'io' => SwooleIOFactory::class,
+        'io' => IOFactory::class,
         'params' => [
             'insist' => false,
             'login_method' => 'AMQPLAIN',
