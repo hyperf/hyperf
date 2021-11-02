@@ -30,7 +30,7 @@ abstract class AbstractRequestHandler
     protected $offset = 0;
 
     /**
-     * @var MiddlewareInterface|object
+     * @var null|MiddlewareInterface|object
      */
     protected $coreHandler;
 

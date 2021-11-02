@@ -158,6 +158,7 @@ class Response implements PsrResponseInterface, ResponseInterface
             $ifMatch = $request->getHeaderLine('if-match');
             $ifNoneMatch = $request->getHeaderLine('if-none-match');
             $clientEtags = explode(',', $ifMatch ?: $ifNoneMatch);
+            /* @phpstan-ignore-next-line */
             array_walk($clientEtags, 'trim');
             if (in_array($etag, $clientEtags, true)) {
                 return $this->withStatus(304)->withAddedHeader('content-type', $contentType);

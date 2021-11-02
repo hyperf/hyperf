@@ -33,11 +33,6 @@ class MetricFactory implements MetricFactoryInterface
      */
     private $client;
 
-    /**
-     * GuzzleClientFactory.
-     */
-    private $guzzleClientFactory;
-
     public function __construct(ConfigInterface $config)
     {
         $this->config = $config;

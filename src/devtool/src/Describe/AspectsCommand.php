@@ -12,9 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Devtool\Describe;
 
 use Hyperf\Command\Command as HyperfCommand;
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AspectCollector;
-use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputOption;
@@ -22,21 +20,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AspectsCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    public function __construct(ContainerInterface $container, ConfigInterface $config)
+    public function __construct()
     {
         parent::__construct('describe:aspects');
-        $this->container = $container;
-        $this->config = $config;
     }
 
     public function handle()

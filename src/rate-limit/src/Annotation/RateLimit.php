@@ -27,7 +27,7 @@ class RateLimit extends AbstractAnnotation
     public $create;
 
     /**
-     * @var int
+     * @var null|int
      */
     public $consume;
 
