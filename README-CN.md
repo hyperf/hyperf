@@ -59,6 +59,10 @@ Hyperf 还提供了 `基于 PSR-11 的依赖注入容器`、`注解`、`AOP 面�
 感谢所有参与 Hyperf 开发的代码贡献者。 [[contributors](https://github.com/hyperf/hyperf/graphs/contributors)]
 <a href="https://github.com/hyperf/hyperf/graphs/contributors"><img src="https://opencollective.com/hyperf/contributors.svg?width=890&button=false" /></a>
 
+# 代码贡献者趋势
+
+[![代码贡献者趋势](https://contributor-overtime-api.apiseven.com/contributors-svg?chart=contributorOverTime&repo=hyperf/hyperf)](https://www.apiseven.com/en/contributor-graph?chart=contributorOverTime&repo=hyperf/hyperf)
+
 # 资金赞助方
 
 成为我们的资金赞助方，帮助我们维持我们的社区。 [[赞助](https://hyperf.wiki/#/zh/donate)]
@@ -86,6 +90,11 @@ Transfer/sec:     18.83MB
 - 🧬 [Nano](https://github.com/hyperf/nano) 是一款零配置、无骨架、极小化的 Hyperf 发行版，通过 Nano 可以让您仅仅通过 1 个 PHP 文件即可快速搭建一个 Hyperf 应用。
 - ⚡️ [GoTask](https://github.com/hyperf/gotask) 是一款可以启动 Go 进程作为 Swoole 主进程边车(Sidecar) 的一个库，利用 IPC 进程通讯将任务投递给边车处理并接收返回值，可以理解为 Go 语言版的 Swoole TaskWorker。
 - 🚀 [Jet](https://github.com/hyperf/jet) 是一个统一模型的 RPC 客户端，内置 JSONRPC 协议的适配，该组件可适用于所有的 PHP 环境，包括 PHP-FPM 和 Swoole 或 Hyperf。
+
+
+# Star 趋势
+
+[![Star 趋势](https://starchart.cc/hyperf/hyperf.svg)](https://starchart.cc/hyperf/hyperf.svg)
 
 # 开源协议
 

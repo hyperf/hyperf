@@ -397,6 +397,7 @@
         {
           "expr": "sum([[app_name]]_event_num{instance=~'$instance'})",
           "format": "time_series",
+          "instant": true,
           "intervalFactor": 1,
           "refId": "A"
         }
@@ -483,6 +484,7 @@
         {
           "expr": "sum([[app_name]]_coroutine_num{instance=~'$instance'})",
           "format": "time_series",
+          "instant": true,
           "intervalFactor": 1,
           "refId": "A"
         }
@@ -565,6 +567,7 @@
         {
           "expr": "sum([[app_name]]_connection_num{instance=~'$instance'})",
           "format": "time_series",
+          "instant": true,
           "intervalFactor": 1,
           "refId": "A"
         }
@@ -645,6 +648,7 @@
         {
           "expr": "sum([[app_name]]_accept_count{instance=~'$instance'})",
           "format": "time_series",
+          "instant": true,
           "intervalFactor": 1,
           "refId": "A"
         }
@@ -725,6 +729,7 @@
         {
           "expr": "sum([[app_name]]_tasking_num{instance=~'$instance'})",
           "format": "time_series",
+          "instant": true,
           "intervalFactor": 1,
           "refId": "A"
         }
@@ -805,6 +810,7 @@
         {
           "expr": "sum([[app_name]]_signal_listener_num{instance=~'$instance',worker=~'$worker'})",
           "format": "time_series",
+          "instant": true,
           "intervalFactor": 1,
           "refId": "A"
         }
@@ -889,6 +895,7 @@
         {
           "expr": "sum([[app_name]]_timer_num{instance=~'$instance'})",
           "format": "time_series",
+          "instant": true,
           "intervalFactor": 1,
           "refId": "A"
         }
@@ -971,6 +978,7 @@
         {
           "expr": "sum([[app_name]]_close_count{instance=~'$instance'})",
           "format": "time_series",
+          "instant": true,
           "intervalFactor": 1,
           "refId": "A"
         }

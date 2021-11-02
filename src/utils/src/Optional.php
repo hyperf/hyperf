@@ -12,10 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use ArrayAccess;
+use Hyperf\Macroable\Macroable;
 
 class Optional implements ArrayAccess
 {
-    use Traits\Macroable {
+    use Macroable {
         __call as macroCall;
     }
 

@@ -53,6 +53,10 @@ If you discover a security vulnerability within Hyperf, please send an e-mail to
 This project exists thanks to all the people who contribute. [[Contribute](https://github.com/hyperf/hyperf/graphs/contributors)].
 <a href="https://github.com/hyperf/hyperf/graphs/contributors"><img src="https://opencollective.com/hyperf/contributors.svg?width=890&button=false" /></a>
 
+# Code Contributor over time
+
+[![Code Contributor over time](https://contributor-overtime-api.apiseven.com/contributors-svg?chart=contributorOverTime&repo=hyperf/hyperf)](https://www.apiseven.com/en/contributor-graph?chart=contributorOverTime&repo=hyperf/hyperf)
+
 # Financial Contributors
 
 Become a financial contributor and help us sustain our community. [[Contribute](https://hyperf.wiki/#/en/donate)]
@@ -80,6 +84,10 @@ Transfer/sec:     18.83MB
 - 🧬 [Nano](https://github.com/hyperf/nano) is a zero-config, no skeleton, minimal Hyperf distribution that allows you to quickly build a Hyperf application with just a single PHP file.
 - ⚡️ [GoTask](https://github.com/hyperf/gotask) is a library to spawns a go process as a Swoole sidecar and establishes a bi-directional IPC to offload heavy-duties to Go. Think of it as a Swoole Taskworker in Go.
 - 🚀 [Jet](https://github.com/hyperf/jet) is a unification model RPC Client, built-in JSONRPC protocol, available to running in ALL PHP environments, including PHP-FPM and Swoole/Hyperf environments. 
+
+# Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/hyperf/hyperf.svg)](https://starchart.cc/hyperf/hyperf.svg)
 
 # License
 

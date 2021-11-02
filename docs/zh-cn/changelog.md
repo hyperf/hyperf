@@ -1,5 +1,30 @@
 # 版本更新记录
 
+# v2.2.14 - 2021-11-01
+
+## 新增
+
+- [#4181](https://github.com/hyperf/hyperf/pull/4181) [#4192](https://github.com/hyperf/hyperf/pull/4192) 为框架增加 `psr/log` 组件版本 `v1.0`、`v2.0`、`v3.0` 的支持。
+
+## 修复
+
+- [#4171](https://github.com/hyperf/hyperf/pull/4171) 修复使用 `consul` 组件时，开启 `ACL` 验证后，健康检测失败的问题。
+- [#4188](https://github.com/hyperf/hyperf/pull/4188) 修复使用 `composer 1.x` 版本时，打包 `phar` 失败的问题。
+
+# v2.2.13 - 2021-10-25
+
+## 新增
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) 为 `Macroable::mixin` 方法增加参数 `$replace`，当其设置为 `false` 时，会优先判断是否已经存在。
+
+## 修复
+
+- [#4158](https://github.com/hyperf/hyperf/pull/4158) 修复因为使用了 `Union` 类型，导致生成代理类失败的问题。
+
+## 优化
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) [#4166](https://github.com/hyperf/hyperf/pull/4166) 将组件 `hyperf/macroable` 从 `hyperf/utils` 中分离出来。
+
 # v2.2.12 - 2021-10-18
 
 ## 新增

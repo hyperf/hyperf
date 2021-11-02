@@ -123,9 +123,8 @@
 ## 開發除錯
 
 - [swoole/yasd](https://github.com/swoole/yasd) Swoole 偵錯程式，類似 `Xdebug`，完美支援協程，支援斷點除錯、單步追蹤、`watch` 變數
-- [mabu233/sdebug](https://github.com/mabu233/sdebug) 用於協助開發與除錯，`Xdebug`的協程改造版
 - [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 通過 `WebSocket` 實時觀測異常錯誤的開發除錯元件
-- [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支援與 laravel 類似的多 env 配置檔案功能，通過 `APP_ENV=testing` 可以載入 `.env.testing` 配置覆蓋預設的 `.env`
+- [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支援與 laravel 類似的多 env 配置檔案功能，比如通過 `APP_ENV=testing` 可以載入 `.env.testing` 配置覆蓋預設的 `.env`
 - [qiutuleng/hyperf-dump-server](https://github.com/qiutuleng/hyperf-dump-server) 提供一個 `dump` 函式，可以將程式內的變數或資料列印到另一個命令列視窗中，基於 Symfony 的 `Var-Dump Server` 元件
 - [leearvin/hyperf-tinker](https://github.com/Arvin-Lee/hyperf-tinker) 基於 PsySH 提供一個互動式的 Hyperf shell 容器
 
@@ -138,7 +137,8 @@
 - [donjan-deng/hyperf-casbin](https://github.com/donjan-deng/hyperf-casbin) 適配於 Hyperf 的開源訪問控制框架 [Casbin](https://casbin.org/docs/zh-CN/overview)
 
 ## 分散式鎖
-- [lysice/hyperf-redis-lock](https://github.com/Lysice/hyperf-redis-lock) 根據laravel的 lock 組件改寫 適配於 Hyperf框架。
+
+- [lysice/hyperf-redis-lock](https://github.com/Lysice/hyperf-redis-lock) 根據 Laravel 的 lock 元件改寫，適配於 Hyperf 框架。
 
 ## 第三方 SDK
 
