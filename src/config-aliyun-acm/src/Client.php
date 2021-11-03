@@ -17,34 +17,18 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
 use Hyperf\Utils\Codec\Json;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class Client implements ClientInterface
 {
-    /**
-     * @var array
-     */
-    public $fetchConfig;
+    private GuzzleHttp\Client $client;
 
-    /**
-     * @var null|GuzzleHttp\Client
-     */
-    private $client;
+    private ConfigInterface $config;
 
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private LoggerInterface $logger;
 
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var array
-     */
-    private $servers;
+    private array $servers;
 
     /**
      * @var array[]
@@ -61,11 +45,6 @@ class Client implements ClientInterface
 
     public function pull(): array
     {
-        $client = $this->client;
-        if (! $client instanceof GuzzleHttp\Client) {
-            throw new RuntimeException('aliyun acm: Invalid http client.');
-        }
-
         // ACM config
         $endpoint = $this->config->get('config_center.drivers.aliyun_acm.endpoint', 'acm.aliyun.com');
         $namespace = $this->config->get('config_center.drivers.aliyun_acm.namespace', '');
@@ -93,7 +72,7 @@ class Client implements ClientInterface
         try {
             if (! $this->servers) {
                 // server list
-                $response = $client->get("http://{$endpoint}:8080/diamond-server/diamond");
+                $response = $this->client->get("http://{$endpoint}:8080/diamond-server/diamond");
                 if ($response->getStatusCode() !== 200) {
                     throw new RuntimeException('Get server list failed from Aliyun ACM.');
                 }
@@ -102,7 +81,7 @@ class Client implements ClientInterface
             $server = $this->servers[array_rand($this->servers)];
 
             // Get config
-            $response = $client->get("http://{$server}:8080/diamond-server/config.co", [
+            $response = $this->client->get("http://{$server}:8080/diamond-server/config.co", [
                 'headers' => array_merge([
                     'Spas-AccessKey' => $accessKey,
                     'timeStamp' => $timestamp,
