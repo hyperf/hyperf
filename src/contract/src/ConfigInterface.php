@@ -36,5 +36,5 @@ interface ConfigInterface
      * @param string $key identifier of the entry to set
      * @param mixed $value the value that save to container
      */
-    public function set(string $key, mixed $value):void;
+    public function set(string $key, mixed $value): void;
 }
