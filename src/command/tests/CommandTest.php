@@ -48,19 +48,19 @@ class CommandTest extends TestCase
     public function testExitCodeWhenThrowException()
     {
         /** @var FooExceptionCommand $command */
-        $command = new ClassInvoker(new FooExceptionCommand());
+        $command = new ClassInvoker(new FooExceptionCommand('foo'));
         $input = Mockery::mock(InputInterface::class);
         $input->shouldReceive('getOption')->andReturnFalse();
         $exitCode = $command->execute($input, Mockery::mock(OutputInterface::class));
         $this->assertSame(99, $exitCode);
 
         /** @var FooExitCommand $command */
-        $command = new ClassInvoker(new FooExitCommand());
+        $command = new ClassInvoker(new FooExitCommand('foo'));
         $exitCode = $command->execute($input, Mockery::mock(OutputInterface::class));
         $this->assertSame(11, $exitCode);
 
         /** @var FooCommand $command */
-        $command = new ClassInvoker(new FooCommand());
+        $command = new ClassInvoker(new FooCommand('foo'));
         $exitCode = $command->execute($input, Mockery::mock(OutputInterface::class));
         $this->assertSame(0, $exitCode);
     }
