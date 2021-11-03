@@ -149,7 +149,7 @@ class RedisDriver extends Driver implements KeyCollectorInterface
         return $this->redis->sMembers($this->getCacheKey($collector));
     }
 
-    public function delKey(string $collector, ...$key): bool
+    public function delKey(string $collector, string ...$key): bool
     {
         return (bool) $this->redis->sRem($this->getCacheKey($collector), ...$key);
     }
