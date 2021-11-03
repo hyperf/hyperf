@@ -21,14 +21,9 @@ use Psr\Http\Message\ResponseInterface;
 
 class ApolloDriver extends AbstractDriver
 {
-    /**
-     * @var ClientInterface
-     */
-    protected $client;
+    protected string $driverName = 'apollo';
 
-    protected $driverName = 'apollo';
-
-    protected $notifications = [];
+    protected array $notifications = [];
 
     public function __construct(ContainerInterface $container)
     {
@@ -39,11 +34,10 @@ class ApolloDriver extends AbstractDriver
     public function createMessageFetcherLoop(): void
     {
         $pullMode = $this->config->get('config_center.drivers.apollo.pull_mode', PullMode::INTERVAL);
-        if ($pullMode === PullMode::LONG_PULLING) {
-            $this->handleLongPullingLoop();
-        } elseif ($pullMode === PullMode::INTERVAL) {
-            $this->handleIntervalLoop();
-        }
+        match ($pullMode) {
+            PullMode::LONG_PULLING => $this->handleLongPullingLoop(),
+            PullMode::INTERVAL => $this->handleIntervalLoop(),
+        };
     }
 
     protected function handleIntervalLoop(): void
@@ -165,7 +159,7 @@ class ApolloDriver extends AbstractDriver
         return $value;
     }
 
-    protected function updateConfig(array $config)
+    protected function updateConfig(array $config): void
     {
         $mergedConfigs = [];
         foreach ($config as $c) {

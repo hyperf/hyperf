@@ -13,30 +13,15 @@ namespace Hyperf\ConfigEtcd;
 
 class KV
 {
-    /**
-     * @var null|string
-     */
-    public $key;
+    public ?string $key;
 
-    /**
-     * @var string
-     */
-    public $createRevision;
+    public ?string $createRevision;
 
-    /**
-     * @var string
-     */
-    public $modRevision;
+    public ?string $modRevision;
 
-    /**
-     * @var string
-     */
-    public $version;
+    public ?string $version;
 
-    /**
-     * @var null|string
-     */
-    public $value;
+    public ?string $value;
 
     public function __construct($data)
     {
