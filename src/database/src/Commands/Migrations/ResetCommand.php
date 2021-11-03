@@ -22,7 +22,7 @@ class ResetCommand extends BaseCommand
     /**
      * The console command name.
      */
-    protected string $name = 'migrate:reset';
+    protected ?string $name = 'migrate:reset';
 
     /**
      * The console command description.

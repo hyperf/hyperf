@@ -23,7 +23,7 @@ class ImportCommand extends Command
     /**
      * The name and signature of the console command.
      */
-    protected string $name = 'scout:import';
+    protected ?string $name = 'scout:import';
 
     /**
      * The console command description.

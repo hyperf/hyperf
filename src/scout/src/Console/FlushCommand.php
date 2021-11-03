@@ -23,7 +23,7 @@ class FlushCommand extends HyperfCommand
     /**
      * The name and signature of the console command.
      */
-    protected string $name = 'scout:flush';
+    protected ?string $name = 'scout:flush';
 
     /**
      * The console command description.

@@ -22,7 +22,7 @@ class RefreshCommand extends Command
     /**
      * The console command name.
      */
-    protected string $name = 'migrate:refresh';
+    protected ?string $name = 'migrate:refresh';
 
     /**
      * The console command description.

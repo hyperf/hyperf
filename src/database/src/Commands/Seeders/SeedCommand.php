@@ -22,7 +22,7 @@ class SeedCommand extends BaseCommand
     /**
      * The console command name.
      */
-    protected string $name = 'db:seed';
+    protected ?string $name = 'db:seed';
 
     /**
      * The console command description.

@@ -24,7 +24,7 @@ class FreshCommand extends Command
     /**
      * The console command name.
      */
-    protected string $name = 'migrate:fresh';
+    protected ?string $name = 'migrate:fresh';
 
     /**
      * The console command description.

@@ -19,7 +19,7 @@ use const OpenApi\UNDEFINED;
 
 class GenCommand extends Command
 {
-    protected string $name = 'swagger:gen';
+    protected ?string $name = 'swagger:gen';
 
     public function handle()
     {
