@@ -58,16 +58,6 @@ class ModelCommand extends Command
      */
     protected $printer;
 
-    /**
-     * @var SymfonyStyle
-     */
-    protected $output;
-
-    /**
-     * @var InputInterface
-     */
-    protected $input;
-
     public function __construct(ContainerInterface $container)
     {
         parent::__construct('gen:model');
