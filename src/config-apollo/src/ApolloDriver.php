@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\ConfigApollo;
 
 use Hyperf\ConfigCenter\AbstractDriver;
+use Hyperf\ConfigCenter\Contract\ClientInterface;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
@@ -24,6 +25,11 @@ class ApolloDriver extends AbstractDriver
     protected string $driverName = 'apollo';
 
     protected array $notifications = [];
+
+    /**
+     * @var \Hyperf\ConfigApollo\ClientInterface
+     */
+    protected ClientInterface $client;
 
     public function __construct(ContainerInterface $container)
     {
