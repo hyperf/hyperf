@@ -1,5 +1,13 @@
 # v2.2.15 - TBD
 
+## Fixed
+
+- [#4200](https://github.com/hyperf/hyperf/pull/4200) Fixed bug that filesystem cache driver does not work when `runtime/caches` is not a directory. 
+
+## Added
+
+- [#4157](https://github.com/hyperf/hyperf/pull/4157) Added `Macroable` for `Hyperf\Utils\Arr`.
+
 # v2.2.14 - 2021-11-01
 
 ## Added
