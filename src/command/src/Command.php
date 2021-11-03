@@ -55,7 +55,7 @@ abstract class Command extends SymfonyCommand
 
     protected ?EventDispatcherInterface $eventDispatcher = null;
 
-    protected int $hookFlags;
+    protected int $hookFlags = -1;
 
     /**
      * The name and signature of the command.
@@ -85,7 +85,7 @@ abstract class Command extends SymfonyCommand
             $name = $this->name;
         }
 
-        if (! is_int($this->hookFlags)) {
+        if ($this->hookFlags < 0) {
             $this->hookFlags = swoole_hook_flags();
         }
 
