@@ -81,7 +81,7 @@ abstract class Command extends SymfonyCommand
 
     public function __construct(string $name = null)
     {
-        $this->name = $name ?: $this->name;
+        $this->name = $name ?? $this->name;
 
         if ($this->hookFlags < 0) {
             $this->hookFlags = swoole_hook_flags();
