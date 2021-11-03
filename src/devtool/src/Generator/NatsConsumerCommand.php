@@ -13,9 +13,6 @@ namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
 #[Command]
 class NatsConsumerCommand extends GeneratorCommand
 {

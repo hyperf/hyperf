@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Devtool;
 
-use Hyperf\Command\Annotation\Command;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Composer;
 use Hyperf\Utils\Filesystem\Filesystem;
@@ -21,9 +20,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * @Command
- */
 class VendorPublishCommand extends SymfonyCommand
 {
     /**
