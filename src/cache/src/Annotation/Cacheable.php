@@ -16,57 +16,25 @@ use Hyperf\Cache\CacheListenerCollector;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\Annotation\AnnotationCollector;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class Cacheable extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $prefix;
+    public ?string $prefix = null;
 
-    /**
-     * @var string
-     */
-    public $value;
+    public ?string $value = null;
 
-    /**
-     * @var null|int
-     */
-    public $ttl;
+    public ?int $ttl = null;
 
-    /**
-     * @var null|string
-     */
-    public $listener;
+    public ?string $listener = null;
 
     /**
      * The max offset for ttl.
-     * @var int
      */
-    public $offset = 0;
+    public int $offset = 0;
 
-    /**
-     * @var string
-     */
-    public $group = 'default';
+    public string $group = 'default';
 
-    /**
-     * @var bool
-     */
-    public $collect = false;
-
-    public function __construct(...$value)
-    {
-        parent::__construct(...$value);
-        if ($this->ttl !== null) {
-            $this->ttl = (int) $this->ttl;
-        }
-        $this->offset = (int) $this->offset;
-    }
+    public bool $collect = false;
 
     public function collectMethod(string $className, ?string $target): void
     {
