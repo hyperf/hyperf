@@ -55,12 +55,12 @@ class CommandTest extends TestCase
         $this->assertSame(99, $exitCode);
 
         /** @var FooExitCommand $command */
-        $command = new ClassInvoker(new FooExitCommand('foo'));
+        $command = new ClassInvoker(new FooExitCommand());
         $exitCode = $command->execute($input, Mockery::mock(OutputInterface::class));
         $this->assertSame(11, $exitCode);
 
         /** @var FooCommand $command */
-        $command = new ClassInvoker(new FooCommand('foo'));
+        $command = new ClassInvoker(new FooCommand());
         $exitCode = $command->execute($input, Mockery::mock(OutputInterface::class));
         $this->assertSame(0, $exitCode);
     }

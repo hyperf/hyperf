@@ -34,7 +34,7 @@ abstract class Command extends SymfonyCommand
     /**
      * The name of the command.
      */
-    protected string $name;
+    protected ?string $name = null;
 
     protected ?InputInterface $input = null;
 
@@ -81,9 +81,7 @@ abstract class Command extends SymfonyCommand
 
     public function __construct(string $name = null)
     {
-        if (! $name && $this->name) {
-            $name = $this->name;
-        }
+        $this->name = $name ?: $this->name;
 
         if ($this->hookFlags < 0) {
             $this->hookFlags = swoole_hook_flags();
@@ -92,7 +90,7 @@ abstract class Command extends SymfonyCommand
         if (isset($this->signature)) {
             $this->configureUsingFluentDefinition();
         } else {
-            parent::__construct($name);
+            parent::__construct($this->name);
         }
 
         $this->addEnableDispatcherOption();
