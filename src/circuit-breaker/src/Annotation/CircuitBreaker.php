@@ -36,7 +36,7 @@ class CircuitBreaker extends AbstractAnnotation
     public int $successCounter = 10;
 
     /**
-     * The counter required to reset to a open state.
+     * The counter required to reset to an open state.
      */
     public int $failCounter = 10;
 
