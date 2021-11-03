@@ -20,27 +20,16 @@ use Hyperf\CircuitBreaker\FallbackInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 abstract class AbstractHandler implements HandlerInterface
 {
-    /**
-     * @var CircuitBreakerFactory
-     */
-    protected $factory;
+    protected CircuitBreakerFactory $factory;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->factory = $container->get(CircuitBreakerFactory::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
@@ -139,10 +128,7 @@ abstract class AbstractHandler implements HandlerInterface
                 );
                 $this->logger->debug($info);
                 $breaker->halfOpen();
-                return;
             }
-
-            return;
         }
     }
 

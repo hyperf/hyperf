@@ -19,7 +19,7 @@ class MigrateCommand extends BaseCommand
 {
     use ConfirmableTrait;
 
-    protected $name = 'migrate';
+    protected ?string $name = 'migrate';
 
     /**
      * The console command description.
