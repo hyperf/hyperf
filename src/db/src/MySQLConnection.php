@@ -20,7 +20,7 @@ use Swoole\Coroutine\MySQL\Statement;
 
 class MySQLConnection extends AbstractConnection
 {
-    protected MySQL $connection;
+    protected ?MySQL $connection = null;
 
     protected array $config = [
         'driver' => 'pdo',

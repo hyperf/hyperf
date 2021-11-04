@@ -20,7 +20,7 @@ use Psr\Container\ContainerInterface;
 
 class PDOConnection extends AbstractConnection
 {
-    protected PDO $connection;
+    protected ?PDO $connection = null;
 
     protected array $config = [
         'driver' => 'pdo',

@@ -25,7 +25,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 {
     use ScanCaller;
 
-    protected \Redis|\RedisCluster $connection;
+    protected \Redis|\RedisCluster|null $connection = null;
 
     protected array $config = [
         'host' => 'localhost',

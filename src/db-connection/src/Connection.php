@@ -27,7 +27,7 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 {
     use DbConnection;
 
-    protected DbConnectionInterface $connection;
+    protected ?DbConnectionInterface $connection = null;
 
     protected ConnectionFactory $factory;
 
