@@ -143,7 +143,6 @@ class MySQLConnection extends AbstractConnection
             'commit' => $this->connection->commit($timeout),
             default => $this->connection->{$method}(...$argument),
         };
-
     }
 
     public function run(Closure $closure)
