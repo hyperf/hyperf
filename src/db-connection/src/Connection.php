@@ -33,7 +33,7 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
     protected LoggerInterface $logger;
 
-    protected $transaction = false;
+    protected bool $transaction = false;
 
     public function __construct(ContainerInterface $container, DbPool $pool, protected array $config)
     {
