@@ -34,7 +34,7 @@ class Crontab extends AbstractAnnotation
 
     public ?bool $onOneServer = null;
 
-    public array|string|null $callback;
+    public array|string|null $callback = null;
 
     public ?string $memo = null;
 
