@@ -16,23 +16,14 @@ use Psr\Container\ContainerInterface;
 class PoolFactory
 {
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * @var Pool[]
      */
-    protected $pools = [];
+    protected array $pools = [];
 
-    /**
-     * @var array
-     */
-    protected $configs;
+    protected array $configs = [];
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function addConfig(Config $config)

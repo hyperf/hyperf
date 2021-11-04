@@ -19,6 +19,7 @@
         "php": ">=8.0",
         "ext-bcmath": "*",
         "ext-json": "*",
+        "ext-pdo": "*",
         "ext-redis": "*",
         "ext-swoole": ">=4.5",
         "psr/container": "^1.0|^2.0",
