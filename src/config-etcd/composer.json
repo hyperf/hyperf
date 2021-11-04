@@ -20,7 +20,7 @@
         }
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "hyperf/config-center": "~3.0.0",
         "hyperf/etcd": "~3.0.0",
         "hyperf/utils": "~3.0.0"

@@ -23,7 +23,7 @@ use Swoole\Server;
 
 class ConfigFetcherProcess extends AbstractProcess
 {
-    public $name = 'config-center-fetcher';
+    public string $name = 'config-center-fetcher';
 
     /**
      * @var Server
