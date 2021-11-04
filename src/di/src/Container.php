@@ -87,7 +87,7 @@ class Container implements HyperfContainerInterface
      * Useful for testing 'get'.
      * @param mixed $entry
      */
-    public function set(string $name, $entry)
+    public function set(string $name, $entry): void
     {
         $this->resolvedEntries[$name] = $entry;
     }
@@ -98,7 +98,7 @@ class Container implements HyperfContainerInterface
      *
      * @param array|callable|string $definition
      */
-    public function define(string $name, $definition)
+    public function define(string $name, $definition): void
     {
         $this->setDefinition($name, $definition);
     }

@@ -35,10 +35,7 @@ use Swoole\Timer;
 
 abstract class AbstractProcess implements ProcessInterface
 {
-    /**
-     * @var string
-     */
-    public $name = 'process';
+    public string $name = 'process';
 
     /**
      * @var int

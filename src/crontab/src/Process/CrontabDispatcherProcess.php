@@ -14,6 +14,7 @@ namespace Hyperf\Crontab\Process;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Event\CrontabDispatcherStarted;
+use Hyperf\Crontab\LoggerInterface;
 use Hyperf\Crontab\Scheduler;
 use Hyperf\Crontab\Strategy\StrategyInterface;
 use Hyperf\Process\AbstractProcess;
@@ -25,35 +26,20 @@ use Swoole\Server;
 
 class CrontabDispatcherProcess extends AbstractProcess
 {
-    /**
-     * @var string
-     */
-    public $name = 'crontab-dispatcher';
+    public string $name = 'crontab-dispatcher';
 
     /**
      * @var Server
      */
     private $server;
 
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private ConfigInterface $config;
 
-    /**
-     * @var Scheduler
-     */
-    private $scheduler;
+    private Scheduler $scheduler;
 
-    /**
-     * @var StrategyInterface
-     */
-    private $strategy;
+    private StrategyInterface $strategy;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(ContainerInterface $container)
     {
@@ -72,7 +58,7 @@ class CrontabDispatcherProcess extends AbstractProcess
 
     public function isEnable($server): bool
     {
-        return $this->config->get('crontab.enable', false);
+        return (bool) $this->config->get('crontab.enable', false);
     }
 
     public function handle(): void

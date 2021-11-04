@@ -19,7 +19,7 @@
         }
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "hyperf/utils": "~3.0.0",
         "psr/event-dispatcher": "^1.0",
         "symfony/console": "^5.0"

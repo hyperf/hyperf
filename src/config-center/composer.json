@@ -15,7 +15,7 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.3"
+        "php": ">=8.0"
     },
     "suggest": {
         "hyperf/process": "^2.1"
