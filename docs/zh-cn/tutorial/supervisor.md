@@ -67,3 +67,6 @@ supervisorctl update
 # 重新启动所有程序
 supervisorctl reload
 ```
+
+## 备注
+通过supervisor启动的服务，随着并发数增多后，会出现 Failed to open stream: Too many open files 的错误，除了需要根据[swoole文档](https://wiki.swoole.com/#/other/sysctl?id=ulimit)中调整服务器的系统内核配置外，还需要前往`supervisor`的配置文件中调整`minfds`参数，将其调整为与ulimit -n的值相同即可。
