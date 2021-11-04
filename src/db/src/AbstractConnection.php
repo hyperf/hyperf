@@ -20,10 +20,7 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
     use DetectsLostConnections;
     use ManagesTransactions;
 
-    /**
-     * @var array
-     */
-    protected $config = [];
+    protected array $config = [];
 
     public function getConfig(): array
     {
