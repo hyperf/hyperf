@@ -19,10 +19,7 @@ use Hyperf\Utils\Codec\Json;
 
 class DataFormatter implements DataFormatterInterface, DataFetcherInterface
 {
-    /**
-     * @var Context
-     */
-    protected $context;
+    protected Context $context;
 
     public function __construct(Context $context)
     {
