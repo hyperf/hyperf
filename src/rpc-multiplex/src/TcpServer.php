@@ -27,7 +27,7 @@ use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Coroutine;
-use Multiplex\Constract\PackerInterface as PacketPacker;
+use Multiplex\Contract\PackerInterface as PacketPacker;
 use Multiplex\Packet;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
