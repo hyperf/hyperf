@@ -29,20 +29,8 @@ use Throwable;
  */
 class DB
 {
-    /**
-     * @var PoolFactory
-     */
-    protected $factory;
-
-    /**
-     * @var string
-     */
-    protected $poolName;
-
-    public function __construct(PoolFactory $factory, string $poolName = 'default')
+    public function __construct(protected PoolFactory $factory, protected string $poolName = 'default')
     {
-        $this->factory = $factory;
-        $this->poolName = $poolName;
     }
 
     public function __call($name, $arguments)
