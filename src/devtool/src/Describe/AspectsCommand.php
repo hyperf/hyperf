@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Devtool\Describe;
 
+use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Di\Annotation\AspectCollector;
 use Symfony\Component\Console\Helper\Table;
@@ -18,6 +19,7 @@ use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[Command]
 class AspectsCommand extends HyperfCommand
 {
     public function __construct()
@@ -40,8 +42,8 @@ class AspectsCommand extends HyperfCommand
     protected function configure()
     {
         $this->setDescription('Describe the aspects.')
-            ->addOption('classes', 'e', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified information by classes.', null)
-            ->addOption('aspects', 'l', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified information by aspects.', null);
+            ->addOption('classes', 'e', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified information by classes.')
+            ->addOption('aspects', 'l', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified information by aspects.');
     }
 
     protected function handleData(array $collector, ?array $classes, ?array $aspects): array
@@ -65,7 +67,7 @@ class AspectsCommand extends HyperfCommand
     protected function isMatch(string $target, array $keywords = [])
     {
         foreach ($keywords as $keyword) {
-            if (strpos($target, $keyword) !== false) {
+            if (str_contains($target, $keyword)) {
                 return true;
             }
         }

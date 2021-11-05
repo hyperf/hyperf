@@ -19,7 +19,13 @@ class CommandCommand extends GeneratorCommand
     public function __construct()
     {
         parent::__construct('gen:command');
+    }
+
+    public function configure()
+    {
         $this->setDescription('Create a new command class');
+
+        parent::configure();
     }
 
     protected function getStub(): string

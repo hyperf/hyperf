@@ -11,22 +11,18 @@ declare(strict_types=1);
  */
 namespace Hyperf\Devtool;
 
+use Hyperf\Command\Annotation\Command;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[Command]
 class InfoCommand extends SymfonyCommand
 {
-    /**
-     * @var Info
-     */
-    private $info;
-
-    public function __construct(Info $info)
+    public function __construct(private Info $info)
     {
         parent::__construct('info');
-        $this->info = $info;
     }
 
     protected function configure()

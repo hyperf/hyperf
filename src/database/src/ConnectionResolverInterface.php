@@ -16,7 +16,7 @@ interface ConnectionResolverInterface
     /**
      * Get a database connection instance.
      *
-     * @param string|null $name
+     * @param null|string $name
      * @return ConnectionInterface
      */
     public function connection($name = null);

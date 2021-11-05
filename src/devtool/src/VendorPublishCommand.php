@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Devtool;
 
+use Hyperf\Command\Annotation\Command;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Composer;
 use Hyperf\Utils\Filesystem\Filesystem;
@@ -20,27 +21,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[Command]
 class VendorPublishCommand extends SymfonyCommand
 {
-    /**
-     * @var OutputInterface
-     */
-    protected $output;
+    protected ?OutputInterface $output = null;
 
-    /**
-     * @var bool
-     */
-    protected $force = false;
+    protected bool $force = false;
 
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
-
-    public function __construct(Filesystem $filesystem)
+    public function __construct(protected Filesystem $filesystem)
     {
         parent::__construct('vendor:publish');
-        $this->filesystem = $filesystem;
     }
 
     protected function configure()
