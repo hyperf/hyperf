@@ -14,12 +14,12 @@ namespace Hyperf\Metric\Adapter\StatsD;
 use Domnikl\Statsd\Client;
 use Domnikl\Statsd\Connection;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 
 class MetricFactory implements MetricFactoryInterface
 {

@@ -30,8 +30,8 @@ Hyperf 提供了大量便捷的辅助类，这里会列出一些常用的好用�
 
 ```php
 <?php
-use Hyperf\Utils\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Constants;
 use Hyperf\Utils\Coroutine;
 
 Coroutine::create(function() {

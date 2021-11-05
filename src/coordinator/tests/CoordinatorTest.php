@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Coordinator;
 
-use Hyperf\Utils\Coordinator\Coordinator;
+use Hyperf\Coordinator\Coordinator;
 use Hyperf\Utils\WaitGroup;
 use PHPUnit\Framework\TestCase;
 
