@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Mutex;
 
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 
 class RedisServerMutex implements ServerMutex

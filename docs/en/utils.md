@@ -30,8 +30,8 @@ The `CoordinatorManager` is used to schedule the coroutine when events occurred.
 
 ```php
 <?php
-use Hyperf\Utils\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Constants;
 use Hyperf\Utils\Coroutine;
 
 Coroutine::create(function() {

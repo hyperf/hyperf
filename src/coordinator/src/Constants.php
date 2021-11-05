@@ -9,11 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils\Coordinator;
+namespace Hyperf\Coordinator;
 
-/**
- * @deprecated v3.1 use Hyperf\Coordinator\CoordinatorManager instead
- */
-class CoordinatorManager extends \Hyperf\Coordinator\CoordinatorManager
+class Constants
 {
+    /**
+     * Swoole onWorkerStart event.
+     */
+    public const WORKER_START = 'workerStart';
+
+    /**
+     * Swoole onWorkerExit event.
+     */
+    public const WORKER_EXIT = 'workerExit';
 }

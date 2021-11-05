@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Amqp;
 
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\Channel\ChannelManager;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Exception\ChannelClosedException;
 use PhpAmqpLib\Channel\AMQPChannel;

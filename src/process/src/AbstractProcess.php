@@ -13,6 +13,8 @@ namespace Hyperf\Process;
 
 use Hyperf\Contract\ProcessInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Constant;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Process\Event\AfterCoroutineHandle;
@@ -22,8 +24,6 @@ use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Process\Event\PipeMessage;
 use Hyperf\Process\Exception\ServerInvalidException;
 use Hyperf\Process\Exception\SocketAcceptException;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
