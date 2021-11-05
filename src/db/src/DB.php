@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\DB;
 
 use Closure;
+use Hyperf\DB\Exception\DriverNotFoundException;
 use Hyperf\DB\Pool\PoolFactory;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
@@ -93,7 +94,7 @@ class DB
     }
 
     /**
-     * Get a connection from coroutine context, or from mysql connectio pool.
+     * Get a connection from coroutine context, or from mysql connection pool.
      */
     protected function getConnection(bool $hasContextConnection): AbstractConnection
     {
@@ -104,6 +105,9 @@ class DB
         if (! $connection instanceof AbstractConnection) {
             $pool = $this->factory->getPool($this->poolName);
             $connection = $pool->get();
+        }
+        if (! $connection instanceof AbstractConnection) {
+            throw new DriverNotFoundException(sprintf('%s must instance of %s', get_class($connection), AbstractConnection::class));
         }
         return $connection;
     }

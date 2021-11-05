@@ -17,7 +17,7 @@ use Psr\Container\ContainerInterface;
 class PoolFactory
 {
     /**
-     * @var DbPool[]
+     * @var array<string, DbPool>
      */
     protected array $pools = [];
 
