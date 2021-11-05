@@ -19,7 +19,13 @@ class ConstantCommand extends GeneratorCommand
     public function __construct()
     {
         parent::__construct('gen:constant');
+    }
+
+    public function configure()
+    {
         $this->setDescription('Create a new constant class');
+
+        parent::configure();
     }
 
     protected function getStub(): string

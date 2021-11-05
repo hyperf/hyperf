@@ -19,7 +19,13 @@ class AmqpProducerCommand extends GeneratorCommand
     public function __construct()
     {
         parent::__construct('gen:amqp-producer');
+    }
+
+    public function configure()
+    {
         $this->setDescription('Create a new amqp producer class');
+
+        parent::configure();
     }
 
     protected function getStub(): string

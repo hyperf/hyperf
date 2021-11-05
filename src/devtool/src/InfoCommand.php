@@ -20,15 +20,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[Command]
 class InfoCommand extends SymfonyCommand
 {
-    /**
-     * @var Info
-     */
-    private $info;
-
-    public function __construct(Info $info)
+    public function __construct(private Info $info)
     {
         parent::__construct('info');
-        $this->info = $info;
     }
 
     protected function configure()

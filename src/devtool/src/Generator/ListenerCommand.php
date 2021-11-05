@@ -19,7 +19,13 @@ class ListenerCommand extends GeneratorCommand
     public function __construct()
     {
         parent::__construct('gen:listener');
+    }
+
+    public function configure()
+    {
         $this->setDescription('Create a new listener class');
+
+        parent::configure();
     }
 
     protected function getStub(): string

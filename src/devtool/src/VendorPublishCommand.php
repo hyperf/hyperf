@@ -24,25 +24,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[Command]
 class VendorPublishCommand extends SymfonyCommand
 {
-    /**
-     * @var OutputInterface
-     */
-    protected $output;
+    protected ?OutputInterface $output = null;
 
-    /**
-     * @var bool
-     */
-    protected $force = false;
+    protected bool $force = false;
 
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
-
-    public function __construct(Filesystem $filesystem)
+    public function __construct(protected Filesystem $filesystem)
     {
         parent::__construct('vendor:publish');
-        $this->filesystem = $filesystem;
     }
 
     protected function configure()
