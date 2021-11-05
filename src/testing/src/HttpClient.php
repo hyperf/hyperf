@@ -21,24 +21,12 @@ use Psr\Container\ContainerInterface;
 
 class HttpClient
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected Client $client;
 
-    /**
-     * @var Client
-     */
-    protected $client;
+    protected PackerInterface $packer;
 
-    /**
-     * @var PackerInterface
-     */
-    protected $packer;
-
-    public function __construct(ContainerInterface $container, PackerInterface $packer = null, $baseUri = 'http://127.0.0.1:9501')
+    public function __construct(protected ContainerInterface $container, PackerInterface $packer = null, $baseUri = 'http://127.0.0.1:9501')
     {
-        $this->container = $container;
         $this->packer = $packer ?? new JsonPacker();
         $handler = null;
         if (Coroutine::inCoroutine()) {
