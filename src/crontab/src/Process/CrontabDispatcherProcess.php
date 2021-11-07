@@ -16,7 +16,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Crontab\Event\CrontabDispatcherStarted;
-use Hyperf\Crontab\LoggerInterface;
+use Psr\Log\LoggerInterface;
 use Hyperf\Crontab\Scheduler;
 use Hyperf\Crontab\Strategy\StrategyInterface;
 use Hyperf\Process\AbstractProcess;
