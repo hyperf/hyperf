@@ -1,5 +1,15 @@
 # 版本更新记录
 
+# v2.2.15 - 2021-11-08
+
+## 修复
+
+- [#4200](https://github.com/hyperf/hyperf/pull/4200) 修复当 `runtime/caches` 不是目录时，使用文件缓存失败的问题。
+
+## 新增
+
+- [#4157](https://github.com/hyperf/hyperf/pull/4157) 为 `Hyperf\Utils\Arr` 增加 `Macroable` 支持。
+
 # v2.2.14 - 2021-11-01
 
 ## 新增
