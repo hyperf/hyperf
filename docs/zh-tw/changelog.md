@@ -1,10 +1,20 @@
 # 版本更新記錄
 
+# v2.2.15 - 2021-11-08
+
+## 修復
+
+- [#4200](https://github.com/hyperf/hyperf/pull/4200) 修復當 `runtime/caches` 不是目錄時，使用檔案快取失敗的問題。
+
+## 新增
+
+- [#4157](https://github.com/hyperf/hyperf/pull/4157) 為 `Hyperf\Utils\Arr` 增加 `Macroable` 支援。
+
 # v2.2.14 - 2021-11-01
 
 ## 新增
 
-- [#4181](https://github.com/hyperf/hyperf/pull/4181) 為框架增加 `psr/log` 元件版本 `v1.0`、`v2.0`、`v3.0` 的支援。
+- [#4181](https://github.com/hyperf/hyperf/pull/4181) [#4192](https://github.com/hyperf/hyperf/pull/4192) 為框架增加 `psr/log` 元件版本 `v1.0`、`v2.0`、`v3.0` 的支援。
 
 ## 修復
 
