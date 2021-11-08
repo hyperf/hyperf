@@ -1,8 +1,161 @@
 # 版本更新記錄
 
+# v2.2.14 - 2021-11-01
+
+## 新增
+
+- [#4181](https://github.com/hyperf/hyperf/pull/4181) [#4192](https://github.com/hyperf/hyperf/pull/4192) 為框架增加 `psr/log` 元件版本 `v1.0`、`v2.0`、`v3.0` 的支援。
+
+## 修復
+
+- [#4171](https://github.com/hyperf/hyperf/pull/4171) 修復使用 `consul` 元件時，開啟 `ACL` 驗證後，健康檢測失敗的問題。
+- [#4188](https://github.com/hyperf/hyperf/pull/4188) 修復使用 `composer 1.x` 版本時，打包 `phar` 失敗的問題。
+
+# v2.2.13 - 2021-10-25
+
+## 新增
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) 為 `Macroable::mixin` 方法增加引數 `$replace`，當其設定為 `false` 時，會優先判斷是否已經存在。
+
+## 修復
+
+- [#4158](https://github.com/hyperf/hyperf/pull/4158) 修復因為使用了 `Union` 型別，導致生成代理類失敗的問題。
+
+## 優化
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) [#4166](https://github.com/hyperf/hyperf/pull/4166) 將元件 `hyperf/macroable` 從 `hyperf/utils` 中分離出來。
+
+# v2.2.12 - 2021-10-18
+
+## 新增
+
+- [#4129](https://github.com/hyperf/hyperf/pull/4129) 新增方法 `Str::stripTags()` 和 `Stringable::stripTags()`。
+
+## 修復
+
+- [#4130](https://github.com/hyperf/hyperf/pull/4130) 修復生成模型時，因為使用了選項 `--with-ide` 和 `scope` 方法導致報錯的問題。
+- [#4141](https://github.com/hyperf/hyperf/pull/4141) 修復驗證器工廠不支援其他驗證器的問題。
+
+# v2.2.11 - 2021-10-11
+
+## 修復
+
+- [#4101](https://github.com/hyperf/hyperf/pull/4101) 修復 Nacos 使用的密碼攜帶特殊字元時，密碼會被 `urlencode` 導致密碼錯誤的問題。
+
+# 優化
+
+- [#4114](https://github.com/hyperf/hyperf/pull/4114) 優化 WebSocket 客戶端初始化失敗時的錯誤資訊。
+- [#4119](https://github.com/hyperf/hyperf/pull/4119) 優化單測客戶端在上傳檔案時，因為預設的上傳路徑已經存在，導致報錯的問題（只發生在最新的 Swoole 版本中）。
+
+# v2.2.10 - 2021-09-26
+
+## 修復
+
+- [#4088](https://github.com/hyperf/hyperf/pull/4088) 修復使用定時器規則時，會將空字串轉化為 `0` 的問題。
+- [#4096](https://github.com/hyperf/hyperf/pull/4096) 修復當帶有型別的動態引數生成代理類時，會出現型別錯誤的問題。
+
+# v2.2.9 - 2021-09-22
+
+## 修復
+
+- [#4061](https://github.com/hyperf/hyperf/pull/4061) 修復 `hyperf/metric` 元件與最新版本的 `prometheus_client_php` 存在衝突的問題。
+- [#4068](https://github.com/hyperf/hyperf/pull/4068) 修復命令列丟擲錯誤時，退出碼與實際不符的問題。
+- [#4076](https://github.com/hyperf/hyperf/pull/4076) 修復 `HTTP` 服務因返回資料不是標準 `HTTP` 協議時，導致服務宕機的問題。
+
+## 新增
+
+- [#4014](https://github.com/hyperf/hyperf/pull/4014) [#4080](https://github.com/hyperf/hyperf/pull/4080) 為 `kafka` 元件增加 `sasl` 和 `ssl` 的支援。
+- [#4045](https://github.com/hyperf/hyperf/pull/4045) [#4082](https://github.com/hyperf/hyperf/pull/4082) 為 `tracer` 元件新增配置 `opentracing.enable.exception`，用來判斷是否收集異常資訊。
+- [#4086](https://github.com/hyperf/hyperf/pull/4086) 支援收集介面 `Interface` 的註解資訊。
+
+# 優化
+
+- [#4084](https://github.com/hyperf/hyperf/pull/4084) 優化了註解找不到時的錯誤資訊。
+
+# v2.2.8 - 2021-09-14
+
+## 修復
+
+- [#4028](https://github.com/hyperf/hyperf/pull/4028) 修復 `grafana` 面板中，請求數結果計算錯誤的問題。
+- [#4030](https://github.com/hyperf/hyperf/pull/4030) 修復非同步佇列會因為解壓縮模型失敗，導致程序中斷隨後重啟的問題。
+- [#4042](https://github.com/hyperf/hyperf/pull/4042) 修復因 `SocketIO` 服務關閉時清理過期的 `fd`，進而導致協程死鎖的問題。
+
+## 新增
+
+- [#4013](https://github.com/hyperf/hyperf/pull/4013) 為 `Cookies` 增加 `sameSite=None` 的支援。
+- [#4017](https://github.com/hyperf/hyperf/pull/4017) 為 `Hyperf\Utils\Collection` 增加 `Macroable`。
+- [#4021](https://github.com/hyperf/hyperf/pull/4021) 為 `retry()` 方法中 `$callback` 匿名函式增加 `$attempts` 變數。
+- [#4040](https://github.com/hyperf/hyperf/pull/4040) 為 `AMQP` 元件新增方法 `ConsumerDelayedMessageTrait::getDeadLetterExchange()`，可以用來重寫 `x-dead-letter-exchange` 引數。
+
+## 移除
+
+- [#4017](https://github.com/hyperf/hyperf/pull/4017) 從 `Hyperf\Database\Model\Collection` 中移除 `Macroable`，因為它的基類 `Hyperf\Utils\Collection` 已引入了對應的 `Macroable`。
+
+# v2.2.7 - 2021-09-06
+
+# 修復
+
+- [#3997](https://github.com/hyperf/hyperf/pull/3997) 修復 `Nats` 消費者會在連線超時後崩潰的問題。
+- [#3998](https://github.com/hyperf/hyperf/pull/3998) 修復 `Apollo` 不支援 `https` 協議的問題。
+
+## 優化
+
+- [#4009](https://github.com/hyperf/hyperf/pull/4009) 優化方法 `MethodDefinitionCollector::getOrParse()`，避免在 PHP8 環境下，觸發即將廢棄的錯誤。
+
+## 新增
+
+- [#4002](https://github.com/hyperf/hyperf/pull/4002) [#4012](https://github.com/hyperf/hyperf/pull/4012) 為驗證器增加場景功能，允許不同場景下，使用不同的驗證規則。
+- [#4011](https://github.com/hyperf/hyperf/pull/4011) 為工具類 `Hyperf\Utils\Str` 增加了一些新的便捷方法。
+
+# v2.2.6 - 2021-08-30
+
+## 修復
+
+- [#3969](https://github.com/hyperf/hyperf/pull/3969) 修復 PHP8 環境下使用 `Hyperf\Validation\Rules\Unique::__toString()` 導致型別錯誤的問題。
+- [#3979](https://github.com/hyperf/hyperf/pull/3979) 修復熔斷器元件，`timeout` 變數無法使用的問題。 
+- [#3986](https://github.com/hyperf/hyperf/pull/3986) 修復檔案系統元件，開啟 `SWOOLE_HOOK_NATIVE_CURL` 後導致 OSS hook 失敗的問題。
+
+## 新增
+
+- [#3987](https://github.com/hyperf/hyperf/pull/3987) AMQP 元件支援延時佇列。
+- [#3989](https://github.com/hyperf/hyperf/pull/3989) [#3992](https://github.com/hyperf/hyperf/pull/3992) 為熱更新元件新增了配置 `command`，可以用來定義自己的啟動指令碼，支援 [nano](https://github.com/hyperf/nano) 元件。
+
+# v2.2.5 - 2021-08-23
+
+## 修復
+
+- [#3959](https://github.com/hyperf/hyperf/pull/3959) 修復驗證器規則 `date` 在入參為 `string` 時，無法正常使用的問題。
+- [#3960](https://github.com/hyperf/hyperf/pull/3960) 修復協程風格服務下，`Crontab` 無法平滑關閉的問題。
+
+## 新增
+
+- [code-generator](https://github.com/hyperf/code-generator) 新增元件 `code-generator`，可以用來將 `Doctrine` 註解轉化為 `PHP8` 的原生註解。
+
+## 優化
+
+- [#3957](https://github.com/hyperf/hyperf/pull/3957) 使用命令 `gen:model` 生成 `getAttribute` 註釋時，支援基於 `@return` 註釋返回對應的型別。
+
+# v2.2.4 - 2021-08-16
+
+## 修復
+
+- [#3925](https://github.com/hyperf/hyperf/pull/3925) 修復 `Nacos` 開啟 `light beat` 功能後，心跳失敗的問題。
+- [#3926](https://github.com/hyperf/hyperf/pull/3926) 修復配置項 `config_center.drivers.nacos.client` 無法正常工作的問題。
+
+## 新增
+
+- [#3924](https://github.com/hyperf/hyperf/pull/3924) 為 `Consul` 服務註冊中心增加配置項 `services.drivers.consul.check`。
+- [#3932](https://github.com/hyperf/hyperf/pull/3932) 為 `AMQP` 消費者增加重新入佇列的配置，允許使用者返回 `NACK` 後，訊息重入佇列。
+- [#3941](https://github.com/hyperf/hyperf/pull/3941) 允許多路複用的 `RPC` 元件使用註冊中心的能力。
+- [#3947](https://github.com/hyperf/hyperf/pull/3947) 新增方法 `Str::mask`，允許使用者對一段文字某段內容打馬賽克。
+
+## 優化
+
+- [#3944](https://github.com/hyperf/hyperf/pull/3944) 封裝了讀取 `Aspect` 元資料的方法。
+
 # v2.2.3 - 2021-08-09
 
-## Fixed
+## 修復
 
 - [#3897](https://github.com/hyperf/hyperf/pull/3897) 修復因為 `lightBeatEnabled` 導致心跳失敗，進而導致 `Nacos` 服務註冊多次的問題。
 - [#3905](https://github.com/hyperf/hyperf/pull/3905) 修復 `AMQP` 連線在關閉時導致空指標的問題。

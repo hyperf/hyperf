@@ -29,7 +29,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ModelCommand extends Command
 {
@@ -57,16 +56,6 @@ class ModelCommand extends Command
      * @var \PhpParser\PrettyPrinterAbstract
      */
     protected $printer;
-
-    /**
-     * @var SymfonyStyle
-     */
-    protected $output;
-
-    /**
-     * @var InputInterface
-     */
-    protected $input;
 
     public function __construct(ContainerInterface $container)
     {

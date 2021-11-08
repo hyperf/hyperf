@@ -16,10 +16,6 @@ use Hyperf\Constants\AnnotationReader;
 use Hyperf\Constants\ConstantsCollector;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class Constants extends AbstractAnnotation
 {

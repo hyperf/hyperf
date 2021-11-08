@@ -15,9 +15,6 @@ use Hyperf\Di\MetadataCollector;
 
 class CacheListenerCollector extends MetadataCollector
 {
-    /**
-     * @var array
-     */
     protected static $container = [];
 
     public static function setListener(string $listener, array $value)
@@ -30,11 +27,14 @@ class CacheListenerCollector extends MetadataCollector
         return static::$container[$listener] ?? $default;
     }
 
-    public static function clear(?string $className = null): void
+    /**
+     * @param null|string $key className
+     */
+    public static function clear(?string $key = null): void
     {
-        if ($className) {
+        if ($key) {
             foreach (static::$container as $listener => $value) {
-                if (isset($value['className']) && $value['className'] === $className) {
+                if (isset($value['className']) && $value['className'] === $key) {
                     unset(static::$container[$listener]);
                 }
             }

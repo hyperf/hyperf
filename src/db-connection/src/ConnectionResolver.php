@@ -22,31 +22,20 @@ class ConnectionResolver implements ConnectionResolverInterface
 {
     /**
      * The default connection name.
-     *
-     * @var string
      */
-    protected $default = 'default';
+    protected string $default = 'default';
 
-    /**
-     * @var PoolFactory
-     */
-    protected $factory;
+    protected PoolFactory $factory;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->factory = $container->get(PoolFactory::class);
     }
 
     /**
      * Get a database connection instance.
      *
-     * @param string $name
+     * @param null|string $name
      * @return ConnectionInterface
      */
     public function connection($name = null)

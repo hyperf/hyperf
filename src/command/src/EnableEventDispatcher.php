@@ -26,7 +26,8 @@ trait EnableEventDispatcher
     public function enableDispatcher(InputInterface $input)
     {
         if ($input->getOption('enable-event-dispatcher')) {
-            $this->eventDispatcher = ApplicationContext::getContainer()->get(EventDispatcherInterface::class);
+            $dispatcher = ApplicationContext::getContainer()->get(EventDispatcherInterface::class);
+            $this->eventDispatcher = $dispatcher instanceof EventDispatcherInterface ? $dispatcher : null;
         }
     }
 }

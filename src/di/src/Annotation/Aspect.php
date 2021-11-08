@@ -12,8 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Di\Annotation;
 
 use Attribute;
-use Hyperf\Di\ReflectionManager;
-use ReflectionProperty;
 
 /**
  * @Annotation
@@ -45,20 +43,7 @@ class Aspect extends AbstractAnnotation
 
     protected function collect(string $className)
     {
-        // Create the aspect instance without invoking their constructor.
-        $reflectionClass = ReflectionManager::reflectClass($className);
-        $properties = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
-        $instanceClasses = $instanceAnnotations = [];
-        $instancePriority = null;
-        foreach ($properties as $property) {
-            if ($property->getName() === 'classes') {
-                $instanceClasses = ReflectionManager::getPropertyDefaultValue($property);
-            } elseif ($property->getName() === 'annotations') {
-                $instanceAnnotations = ReflectionManager::getPropertyDefaultValue($property);
-            } elseif ($property->getName() === 'priority') {
-                $instancePriority = ReflectionManager::getPropertyDefaultValue($property);
-            }
-        }
+        [$instanceClasses, $instanceAnnotations, $instancePriority] = AspectLoader::load($className);
 
         // Classes
         $classes = $this->classes;

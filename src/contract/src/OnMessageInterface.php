@@ -19,6 +19,7 @@ interface OnMessageInterface
 {
     /**
      * @param Response|Server $server
+     * @param Frame $frame
      */
-    public function onMessage($server, Frame $frame): void;
+    public function onMessage($server, $frame): void;
 }

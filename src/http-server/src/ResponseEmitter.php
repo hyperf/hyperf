@@ -23,34 +23,34 @@ class ResponseEmitter implements ResponseEmitterInterface
      */
     public function emit(ResponseInterface $response, $swooleResponse, bool $withContent = true)
     {
-        if (strtolower($swooleResponse->header['Upgrade'] ?? '') === 'websocket') {
-            return;
-        }
-        $this->buildSwooleResponse($swooleResponse, $response);
-        $content = $response->getBody();
-        if ($content instanceof FileInterface) {
-            return $swooleResponse->sendfile($content->getFilename());
-        }
-        if ($withContent) {
-            $swooleResponse->end((string) $content);
-        } else {
-            $swooleResponse->end();
+        try {
+            if (strtolower($swooleResponse->header['Upgrade'] ?? '') === 'websocket') {
+                return;
+            }
+            $this->buildSwooleResponse($swooleResponse, $response);
+            $content = $response->getBody();
+            if ($content instanceof FileInterface) {
+                return $swooleResponse->sendfile($content->getFilename());
+            }
+
+            if ($withContent) {
+                $swooleResponse->end((string) $content);
+            } else {
+                $swooleResponse->end();
+            }
+        } catch (\Throwable $exception) {
         }
     }
 
     protected function buildSwooleResponse(Response $swooleResponse, ResponseInterface $response): void
     {
-        /*
-         * Headers
-         */
+        // Headers
         foreach ($response->getHeaders() as $key => $value) {
-            $swooleResponse->header($key, implode(';', $value));
+            $swooleResponse->header($key, $value);
         }
 
-        /*
-         * Cookies
-         * This part maybe only supports of hyperf/http-message component.
-         */
+        // Cookies
+        // This part maybe only supports of hyperf/http-message component.
         if (method_exists($response, 'getCookies')) {
             foreach ((array) $response->getCookies() as $domain => $paths) {
                 foreach ($paths ?? [] as $path => $item) {
@@ -66,18 +66,14 @@ class ResponseEmitter implements ResponseEmitterInterface
             }
         }
 
-        /*
-         * Trailers
-         */
+        // Trailers
         if (method_exists($response, 'getTrailers') && method_exists($swooleResponse, 'trailer')) {
             foreach ($response->getTrailers() ?? [] as $key => $value) {
                 $swooleResponse->trailer($key, $value);
             }
         }
 
-        /*
-         * Status code
-         */
+        // Status code
         $swooleResponse->status($response->getStatusCode(), $response->getReasonPhrase());
     }
 

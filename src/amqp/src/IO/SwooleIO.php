@@ -77,7 +77,7 @@ class SwooleIO extends AbstractIO
 
     public function read($len)
     {
-        do {
+        while (true) {
             if ($len <= strlen($this->buffer)) {
                 $data = substr($this->buffer, 0, $len);
                 $this->buffer = substr($this->buffer, $len);
@@ -96,7 +96,7 @@ class SwooleIO extends AbstractIO
             }
 
             $this->buffer .= $buffer;
-        } while (true);
+        }
     }
 
     public function write($data)

@@ -107,7 +107,7 @@ class ConsulDriver implements DriverInterface
                 'Interval' => $interval,
             ];
         }
-        if (in_array($protocol, ['jsonrpc', 'jsonrpc-tcp-length-check'], true)) {
+        if (in_array($protocol, ['jsonrpc', 'jsonrpc-tcp-length-check', 'multiplex.default'], true)) {
             $requestBody['Check'] = [
                 'DeregisterCriticalServiceAfter' => $deregisterCriticalServiceAfter,
                 'TCP' => "{$host}:{$port}",
@@ -204,11 +204,20 @@ class ConsulDriver implements DriverInterface
             throw new ComponentRequiredException('Component of \'hyperf/consul\' is required if you want the client fetch the nodes info from consul.');
         }
 
+        $token = $this->config->get('services.drivers.consul.token', '');
+        $options = [
+            'base_uri' => $baseUri,
+        ];
+
+        if (! empty($token)) {
+            $options['headers'] = [
+                'X-Consul-Token' => $token,
+            ];
+        }
+
         return $this->health = make(Health::class, [
-            'clientFactory' => function () use ($baseUri) {
-                return $this->container->get(ClientFactory::class)->create([
-                    'base_uri' => $baseUri,
-                ]);
+            'clientFactory' => function () use ($options) {
+                return $this->container->get(ClientFactory::class)->create($options);
             },
         ]);
     }

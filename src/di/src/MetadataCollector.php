@@ -17,8 +17,6 @@ abstract class MetadataCollector implements MetadataCollectorInterface
 {
     /**
      * Subclass MUST override this property.
-     *
-     * @var array
      */
     protected static $container = [];
 
@@ -71,8 +69,7 @@ abstract class MetadataCollector implements MetadataCollectorInterface
      */
     public static function deserialize(string $metadata): bool
     {
-        $data = unserialize($metadata);
-        static::$container = $data;
+        static::$container = unserialize($metadata);
         return true;
     }
 

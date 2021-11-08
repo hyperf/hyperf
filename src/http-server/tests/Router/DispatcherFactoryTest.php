@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace HyperfTest\HttpServer\Router;
 
+use FastRoute\Dispatcher;
 use Hyperf\Di\Annotation\MultipleAnnotation;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\GetMapping;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\PostMapping;
+use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\Handler;
 use HyperfTest\HttpServer\Stub\BarMiddleware;
 use HyperfTest\HttpServer\Stub\DemoController;
@@ -116,5 +118,11 @@ class DispatcherFactoryTest extends TestCase
                 }
             }
         }
+    }
+
+    public function testDispatchedHandlerIsNull()
+    {
+        $dispatched = new Dispatched([Dispatcher::NOT_FOUND]);
+        $this->assertNull($dispatched->handler);
     }
 }

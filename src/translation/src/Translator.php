@@ -14,11 +14,11 @@ namespace Hyperf\Translation;
 use Countable;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\TranslatorLoaderInterface;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
-use Hyperf\Utils\Traits\Macroable;
 
 class Translator implements TranslatorInterface
 {
@@ -55,7 +55,7 @@ class Translator implements TranslatorInterface
     /**
      * The message selector.
      *
-     * @var \Hyperf\Translation\MessageSelector
+     * @var null|\Hyperf\Translation\MessageSelector
      */
     protected $selector;
 

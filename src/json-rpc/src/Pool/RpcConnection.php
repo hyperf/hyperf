@@ -25,6 +25,8 @@ use Swoole\Coroutine\Client as SwooleClient;
  * @method bool|string recv(float $timeout)
  * @property int $errCode
  * @property string $errMsg
+ *
+ * TODO: Support Swow, only support Swoole now.
  */
 class RpcConnection extends BaseConnection implements ConnectionInterface
 {
@@ -33,10 +35,7 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
      */
     protected $connection;
 
-    /**
-     * @var array
-     */
-    protected $config = [
+    protected array $config = [
         'node' => null,
         'connect_timeout' => 5.0,
         'settings' => [],

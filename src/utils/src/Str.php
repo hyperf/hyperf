@@ -11,7 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
-use Hyperf\Utils\Traits\Macroable;
+use Hyperf\Macroable\Macroable;
+use Hyperf\Utils\Exception\InvalidArgumentException;
 
 /**
  * Most of the methods in this file come from illuminate/support,
@@ -43,6 +44,17 @@ class Str
     protected static $studlyCache = [];
 
     /**
+     * Get a new stringable object from the given string.
+     *
+     * @param string $string
+     * @return Stringable
+     */
+    public static function of($string)
+    {
+        return new Stringable($string);
+    }
+
+    /**
      * Return the remainder of a string after a given value.
      *
      * @param string $subject
@@ -52,6 +64,28 @@ class Str
     public static function after($subject, $search)
     {
         return $search === '' ? $subject : array_reverse(explode($search, $subject, 2))[0];
+    }
+
+    /**
+     * Return the remainder of a string after the last occurrence of a given value.
+     *
+     * @param string $subject
+     * @param string $search
+     * @return string
+     */
+    public static function afterLast($subject, $search)
+    {
+        if ($search === '') {
+            return $subject;
+        }
+
+        $position = strrpos($subject, (string) $search);
+
+        if ($position === false) {
+            return $subject;
+        }
+
+        return substr($subject, $position + strlen($search));
     }
 
     /**
@@ -89,6 +123,45 @@ class Str
     }
 
     /**
+     * Get the portion of a string before the last occurrence of a given value.
+     *
+     * @param string $subject
+     * @param string $search
+     * @return string
+     */
+    public static function beforeLast($subject, $search)
+    {
+        if ($search === '') {
+            return $subject;
+        }
+
+        $pos = mb_strrpos($subject, $search);
+
+        if ($pos === false) {
+            return $subject;
+        }
+
+        return static::substr($subject, 0, $pos);
+    }
+
+    /**
+     * Get the portion of a string between two given values.
+     *
+     * @param string $subject
+     * @param string $from
+     * @param string $to
+     * @return string
+     */
+    public static function between($subject, $from, $to)
+    {
+        if ($from === '' || $to === '') {
+            return $subject;
+        }
+
+        return static::beforeLast(static::after($subject, $from), $to);
+    }
+
+    /**
      * Convert a value to camel case.
      *
      * @param string $value
@@ -119,6 +192,24 @@ class Str
         }
 
         return false;
+    }
+
+    /**
+     * Determine if a given string contains all array values.
+     *
+     * @param string $haystack
+     * @param string[] $needles
+     * @return bool
+     */
+    public static function containsAll($haystack, array $needles)
+    {
+        foreach ($needles as $needle) {
+            if (! static::contains($haystack, $needle)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -261,6 +352,81 @@ class Str
     }
 
     /**
+     * Get the string matching the given pattern.
+     *
+     * @param string $pattern
+     * @param string $subject
+     * @return string
+     */
+    public static function match($pattern, $subject)
+    {
+        preg_match($pattern, $subject, $matches);
+
+        if (! $matches) {
+            return '';
+        }
+
+        return $matches[1] ?? $matches[0];
+    }
+
+    /**
+     * Get the string matching the given pattern.
+     *
+     * @param string $pattern
+     * @param string $subject
+     * @return Collection
+     */
+    public static function matchAll($pattern, $subject)
+    {
+        preg_match_all($pattern, $subject, $matches);
+
+        if (empty($matches[0])) {
+            return collect();
+        }
+
+        return collect($matches[1] ?? $matches[0]);
+    }
+
+    /**
+     * Pad both sides of a string with another.
+     *
+     * @param string $value
+     * @param int $length
+     * @param string $pad
+     * @return string
+     */
+    public static function padBoth($value, $length, $pad = ' ')
+    {
+        return str_pad($value, $length, $pad, STR_PAD_BOTH);
+    }
+
+    /**
+     * Pad the left side of a string with another.
+     *
+     * @param string $value
+     * @param int $length
+     * @param string $pad
+     * @return string
+     */
+    public static function padLeft($value, $length, $pad = ' ')
+    {
+        return str_pad($value, $length, $pad, STR_PAD_LEFT);
+    }
+
+    /**
+     * Pad the right side of a string with another.
+     *
+     * @param string $value
+     * @param int $length
+     * @param string $pad
+     * @return string
+     */
+    public static function padRight($value, $length, $pad = ' ')
+    {
+        return str_pad($value, $length, $pad, STR_PAD_RIGHT);
+    }
+
+    /**
      * Parse a Class@method style callback into class and method.
      *
      * @param null|string $default
@@ -309,6 +475,16 @@ class Str
     }
 
     /**
+     * Repeat the given string.
+     *
+     * @return string
+     */
+    public static function repeat(string $string, int $times)
+    {
+        return str_repeat($string, $times);
+    }
+
+    /**
      * Replace a given value in the string sequentially with an array.
      */
     public static function replaceArray(string $search, array $replace, string $subject): string
@@ -318,6 +494,19 @@ class Str
         }
 
         return $subject;
+    }
+
+    /**
+     * Replace the given value in the given string.
+     *
+     * @param string|string[] $search
+     * @param string|string[] $replace
+     * @param string|string[] $subject
+     * @return string
+     */
+    public static function replace($search, $replace, $subject)
+    {
+        return str_replace($search, $replace, $subject);
     }
 
     /**
@@ -353,6 +542,21 @@ class Str
     }
 
     /**
+     * Remove any occurrence of the given string in the subject.
+     *
+     * @param array<string>|string $search
+     * @param string $subject
+     * @param bool $caseSensitive
+     * @return string
+     */
+    public static function remove($search, $subject, $caseSensitive = true)
+    {
+        return $caseSensitive
+                    ? str_replace($search, '', $subject)
+                    : str_ireplace($search, '', $subject);
+    }
+
+    /**
      * Begin a string with a single instance of a given value.
      */
     public static function start(string $value, string $prefix): string
@@ -360,6 +564,16 @@ class Str
         $quoted = preg_quote($prefix, '/');
 
         return $prefix . preg_replace('/^(?:' . $quoted . ')+/u', '', $value);
+    }
+
+    /**
+     * Strip HTML and PHP tags from the given string.
+     *
+     * @param null|string|string[] $allowedTags
+     */
+    public static function stripTags(string $value, $allowedTags = null): string
+    {
+        return strip_tags($value, $allowedTags);
     }
 
     /**
@@ -476,11 +690,55 @@ class Str
     }
 
     /**
+     * Returns the number of substring occurrences.
+     *
+     * @param string $haystack
+     * @param string $needle
+     * @param int $offset
+     * @param null|int $length
+     * @return int
+     */
+    public static function substrCount($haystack, $needle, $offset = 0, $length = null)
+    {
+        if (! is_null($length)) {
+            return substr_count($haystack, $needle, $offset, $length);
+        }
+        return substr_count($haystack, $needle, $offset);
+    }
+
+    /**
      * Make a string's first character uppercase.
      */
     public static function ucfirst(string $string): string
     {
         return static::upper(static::substr($string, 0, 1)) . static::substr($string, 1);
+    }
+
+    /**
+     * Replaces the first or the last ones chars from a string by a given char.
+     *
+     * @param int $offset if is negative it starts from the end
+     * @param string $replacement default is *
+     */
+    public static function mask(string $string, int $offset = 0, int $length = 0, string $replacement = '*')
+    {
+        if ($length < 0) {
+            throw new InvalidArgumentException('The length must equal or greater than zero.');
+        }
+
+        $stringLength = mb_strlen($string);
+        $absOffset = abs($offset);
+        if ($absOffset >= $stringLength) {
+            return $string;
+        }
+
+        $hiddenLength = $length ?: $stringLength - $absOffset;
+
+        if ($offset >= 0) {
+            return mb_substr($string, 0, $offset) . str_repeat($replacement, $hiddenLength) . mb_substr($string, $offset + $hiddenLength);
+        }
+
+        return mb_substr($string, 0, max($stringLength - $hiddenLength - $absOffset, 0)) . str_repeat($replacement, $hiddenLength) . mb_substr($string, $offset);
     }
 
     /**

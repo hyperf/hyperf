@@ -3,7 +3,7 @@
 ## Swoole 短名未关闭
 
 ```
-[ERROR] Swoole short name have to disable before start server, please set swoole.use_shortname = 'Off' into your php.ini.
+[ERROR] Swoole short function names must be disabled before the server starts, please set swoole.use_shortname = 'Off' in your php.ini.
 ```
 
 您需要在您的 php.ini 配置文件增加 `swoole.use_shortname = 'Off'` 配置项
@@ -67,7 +67,7 @@ Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line
 
 PHP 默认的 `memory_limit` 只有 `128M`，因为 `Hyperf` 使用了 `BetterReflection`，不使用扫描缓存时，会消耗大量内存，所以可能会出现内存不够的情况。
 
-我们可以使用 `php -dmemory_limit=-1 bin/hyperf.php start` 运行, 或者修改 `php.ini` 配置文件
+我们可以使用 `php -d memory_limit=-1 bin/hyperf.php start` 运行, 或者修改 `php.ini` 配置文件
 
 ```
 # 查看 php.ini 配置文件位置
@@ -91,16 +91,20 @@ memory_limit=-1
 
 ```bash
 PHP Fatal error:  Interface 'Hyperf\Signal\SignalHandlerInterface' not found in vendor/hyperf/process/src/Handler/ProcessStopHandler.php on line 17
+
+PHP Fatal error:  Interface 'Symfony\Component\Serializer\SerializerInterface' not found in vendor/hyperf/utils/src/Serializer/Serializer.php on line 46
 ```
 
 此问题是由于在 `PHP 7.3` 中通过 `子进程扫描` 的方式去获取反射，在某个类中实现了一个不存在的 `Interface` ，就会导致抛出 `Interface not found` 的异常，而高版本的 `PHP` 则不会。
 
-解决方法为创建对应的 `Interface` 并正常引入。上文中的报错解决方法为安装 `hyperf/signal` 组件即可。
+解决方法为创建对应的 `Interface` 并正常引入。上文中的报错解决方法为安装对应所依赖的组件即可。
 
 > 当然，最好还是可以升级到 7.4 或者 8.0 版本
 
 ```bash
 composer require hyperf/signal
+
+composer require symfony/serializer
 ```
 
 ## Trait 内使用 `@Inject` 注入报错 `Error while injecting dependencies into ... No entry or class found ...`
@@ -138,3 +142,30 @@ class IndexController
 
 - 子类通过 `as` 修改别名: `use Psr\Http\Message\ResponseInterface as PsrResponseInterface;`
 - Trait 类`PHP7.4` 以上通过属性类型限制: `protected ResponseInterface $response;`
+
+## Grpc 扩展或未安装 Pcntl 导致项目无法启动
+
+- v2.2 版本的注解扫描使用了 `pcntl` 扩展，所以请先确保您的 `PHP` 安装了此扩展。
+
+```shell
+php --ri pcntl
+
+pcntl
+
+pcntl support => enabled
+```
+
+- 当开启 `grpc` 的时候，需要添加 `grpc.enable_fork_support= 1;` 到 `php.ini` 中，以支持开启子进程。
+
+## HTTP Server 将 `open_websocket_protocol` 设置为 `false` 后启动报错：`Swoole\Server::start(): require onReceive callback`
+
+1. 检查 Swoole 是否编译了 http2
+
+```shell
+php --ri swoole | grep http2
+http2 => enabled
+```
+
+如果没有，需要重新编译 Swoole 并增加 `--enable-http2` 参数。
+
+2. 检查 [server.php](/zh-cn/config?id=serverphp-配置说明) 文件中 `open_http2_protocol` 选项是否为 `true`。

@@ -178,7 +178,8 @@ class PharBuilder
             // Package all of these dependent components into the packages
             foreach ($installedPackages as $package) {
                 // support custom install path
-                $dir = 'composer/' . $package['install-path'] . '/';
+                $dir = 'composer/' . ($package['install-path'] ?? '../' . $package['name']) . '/';
+
                 if (isset($package['target-dir'])) {
                     $dir .= trim($package['target-dir'], '/') . '/';
                 }

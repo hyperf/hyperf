@@ -16,9 +16,9 @@ use Hyperf\AsyncQueue\Event\BeforeHandle;
 use Hyperf\AsyncQueue\Event\FailedHandle;
 use Hyperf\AsyncQueue\Event\QueueLength;
 use Hyperf\AsyncQueue\Event\RetryHandle;
-use Hyperf\AsyncQueue\Exception\InvalidPackerException;
 use Hyperf\AsyncQueue\MessageInterface;
 use Hyperf\Contract\PackerInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\ProcessManager;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Coroutine\Concurrent;
@@ -28,46 +28,18 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 abstract class Driver implements DriverInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected PackerInterface $packer;
 
-    /**
-     * @var PackerInterface
-     */
-    protected $packer;
+    protected ?EventDispatcherInterface $event = null;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $event;
+    protected ?Concurrent $concurrent = null;
 
-    /**
-     * @var null|Concurrent
-     */
-    protected $concurrent;
+    protected int $lengthCheckCount = 500;
 
-    /**
-     * @var array
-     */
-    protected $config;
-
-    /**
-     * @var int
-     */
-    protected $lengthCheckCount = 500;
-
-    public function __construct(ContainerInterface $container, $config)
+    public function __construct(protected ContainerInterface $container, protected array $config)
     {
-        $this->container = $container;
         $this->packer = $container->get($config['packer'] ?? PhpSerializerPacker::class);
         $this->event = $container->get(EventDispatcherInterface::class);
-        $this->config = $config;
-
-        if (! $this->packer instanceof PackerInterface) {
-            throw new InvalidPackerException(sprintf('[Error] %s is not a invalid packer.', $config['packer']));
-        }
 
         $concurrentLimit = $config['concurrent']['limit'] ?? null;
         if ($concurrentLimit && is_numeric($concurrentLimit)) {
@@ -81,33 +53,38 @@ abstract class Driver implements DriverInterface
         $maxMessages = Arr::get($this->config, 'max_messages', 0);
 
         while (ProcessManager::isRunning()) {
-            [$data, $message] = $this->pop();
+            try {
+                [$data, $message] = $this->pop();
 
-            if ($data === false) {
-                continue;
+                if ($data === false) {
+                    continue;
+                }
+
+                $callback = $this->getCallback($data, $message);
+
+                if ($this->concurrent) {
+                    $this->concurrent->create($callback);
+                } else {
+                    parallel([$callback]);
+                }
+
+                if ($messageCount % $this->lengthCheckCount === 0) {
+                    $this->checkQueueLength();
+                }
+
+                if ($maxMessages > 0 && $messageCount >= $maxMessages) {
+                    break;
+                }
+            } catch (\Throwable $exception) {
+                $logger = $this->container->get(StdoutLoggerInterface::class);
+                $logger->error((string) $exception);
+            } finally {
+                ++$messageCount;
             }
-
-            $callback = $this->getCallback($data, $message);
-
-            if ($this->concurrent instanceof Concurrent) {
-                $this->concurrent->create($callback);
-            } else {
-                parallel([$callback]);
-            }
-
-            if ($messageCount % $this->lengthCheckCount === 0) {
-                $this->checkQueueLength();
-            }
-
-            if ($maxMessages > 0 && $messageCount >= $maxMessages) {
-                break;
-            }
-
-            ++$messageCount;
         }
     }
 
-    protected function checkQueueLength()
+    protected function checkQueueLength(): void
     {
         $info = $this->info();
         foreach ($info as $key => $value) {
@@ -147,7 +124,6 @@ abstract class Driver implements DriverInterface
 
     /**
      * Remove data from reserved queue.
-     * @param mixed $data
      */
-    abstract protected function remove($data): bool;
+    abstract protected function remove(mixed $data): bool;
 }

@@ -18,10 +18,8 @@ class InstallCommand extends BaseCommand
 {
     /**
      * The console command name.
-     *
-     * @var string
      */
-    protected $name = 'migrate:install';
+    protected ?string $name = 'migrate:install';
 
     /**
      * The console command description.

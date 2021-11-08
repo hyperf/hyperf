@@ -14,45 +14,19 @@ namespace Hyperf\Cache\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class CachePut extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $prefix;
+    public ?string $prefix = null;
 
-    /**
-     * @var string
-     */
-    public $value;
+    public ?string $value = null;
 
-    /**
-     * @var null|int
-     */
-    public $ttl;
+    public ?int $ttl = null;
 
     /**
      * The max offset for ttl.
-     * @var int
      */
-    public $offset = 0;
+    public int $offset = 0;
 
-    /**
-     * @var string
-     */
-    public $group = 'default';
-
-    public function __construct(...$value)
-    {
-        parent::__construct(...$value);
-        if ($this->ttl !== null) {
-            $this->ttl = (int) $this->ttl;
-        }
-        $this->offset = (int) $this->offset;
-    }
+    public string $group = 'default';
 }

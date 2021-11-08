@@ -34,24 +34,21 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Client extends Server
 {
-    /**
-     * @var PackerInterface
-     */
-    protected $packer;
+    protected PackerInterface $packer;
 
-    /**
-     * @var float
-     */
-    protected $waitTimeout = 10.0;
+    protected float $waitTimeout = 10.0;
 
-    /**
-     * @var string
-     */
-    protected $baseUri = 'http://127.0.0.1/';
+    protected string $baseUri = 'http://127.0.0.1/';
 
     public function __construct(ContainerInterface $container, PackerInterface $packer = null, $server = 'http')
     {
-        parent::__construct($container, $container->get(HttpDispatcher::class), $container->get(ExceptionHandlerDispatcher::class), $container->get(ResponseEmitter::class));
+        parent::__construct(
+            $container,
+            $container->get(HttpDispatcher::class),
+            $container->get(ExceptionHandlerDispatcher::class),
+            $container->get(ResponseEmitter::class)
+        );
+
         $this->packer = $packer ?? new JsonPacker();
 
         $this->initCoreMiddleware($server);
@@ -231,7 +228,9 @@ class Client extends Server
 
                 $dir = BASE_PATH . '/runtime/uploads';
                 $tmpName = $dir . '/' . $filename;
-                $fileSystem->makeDirectory($dir);
+                if (! is_dir($dir)) {
+                    $fileSystem->makeDirectory($dir);
+                }
                 $fileSystem->put($tmpName, $contents);
 
                 $stats = fstat($contents);

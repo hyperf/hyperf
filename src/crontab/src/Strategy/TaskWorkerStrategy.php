@@ -20,19 +20,15 @@ use Swoole\Server;
 
 class TaskWorkerStrategy extends AbstractStrategy
 {
-    /**
-     * @var ServerFactory
-     */
-    protected $serverFactory;
+    protected ServerFactory $serverFactory;
 
-    /**
-     * @var int
-     */
-    protected $currentWorkerId = -1;
+    protected int $currentWorkerId = -1;
 
     public function __construct(ContainerInterface $container)
     {
         $this->serverFactory = $container->get(ServerFactory::class);
+
+        parent::__construct($container);
     }
 
     public function dispatch(Crontab $crontab)

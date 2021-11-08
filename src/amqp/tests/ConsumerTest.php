@@ -18,6 +18,8 @@ use Hyperf\Utils\Exception\ChannelClosedException;
 use Hyperf\Utils\Reflection\ClassInvoker;
 use HyperfTest\Amqp\Stub\AMQPConnectionStub;
 use HyperfTest\Amqp\Stub\ContainerStub;
+use HyperfTest\Amqp\Stub\Delay2Consumer;
+use HyperfTest\Amqp\Stub\DelayConsumer;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -55,5 +57,14 @@ class ConsumerTest extends TestCase
         $this->expectException(ChannelClosedException::class);
         $chan->close();
         $invoker->wait_channel(1);
+    }
+
+    public function testRewriteDelayMessage()
+    {
+        $consumer = new DelayConsumer();
+        $this->assertSame('x-delayed', (new ClassInvoker($consumer))->getDeadLetterExchange());
+
+        $consumer = new Delay2Consumer();
+        $this->assertSame('delayed', (new ClassInvoker($consumer))->getDeadLetterExchange());
     }
 }

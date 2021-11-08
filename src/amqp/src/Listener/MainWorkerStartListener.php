@@ -21,24 +21,11 @@ use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerInterface;
 
 class MainWorkerStartListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    public function __construct(ContainerInterface $container, StdoutLoggerInterface $logger)
+    public function __construct(private ContainerInterface $container, private StdoutLoggerInterface $logger)
     {
-        $this->container = $container;
-        $this->logger = $logger;
     }
 
     /**

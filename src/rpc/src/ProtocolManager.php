@@ -29,13 +29,13 @@ class ProtocolManager
 
     public function register(string $name, array $data)
     {
-        return $this->config->set('protocols.' . $name, $data);
+        $this->config->set('protocols.' . $name, $data);
     }
 
     public function registerOrAppend(string $name, array $data)
     {
         $key = 'protocols.' . $name;
-        return $this->config->set($key, array_merge($this->config->get($key, []), $data));
+        $this->config->set($key, array_merge($this->config->get($key, []), $data));
     }
 
     public function getProtocol(string $name): array

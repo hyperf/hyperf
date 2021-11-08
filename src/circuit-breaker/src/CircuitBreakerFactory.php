@@ -15,13 +15,13 @@ use Psr\Container\ContainerInterface;
 
 class CircuitBreakerFactory
 {
-    protected $container;
+    /**
+     * @var CircuitBreakerInterface[]
+     */
+    protected array $breakers = [];
 
-    protected $breakers = [];
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function get(string $name): ?CircuitBreakerInterface

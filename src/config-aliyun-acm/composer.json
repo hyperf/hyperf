@@ -19,10 +19,10 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
-        "hyperf/config-center": "~2.2.0",
-        "hyperf/contract": "~2.2.0",
-        "hyperf/guzzle": "~2.2.0",
+        "php": ">=8.0",
+        "hyperf/config-center": "~3.0.0",
+        "hyperf/contract": "~3.0.0",
+        "hyperf/guzzle": "~3.0.0",
         "psr/container": "^1.0|^2.0"
     },
     "autoload": {
@@ -35,7 +35,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\ConfigAliyunAcm\\ConfigProvider"

@@ -2,8 +2,6 @@
 
 本元件基於 `TCP` 協議，多路複用的設計借鑑於 `AMQP` 元件。
 
-> 暫不支援註冊中心
-
 ## 安裝
 
 ```
@@ -85,6 +83,11 @@ return [
             'id' => App\JsonRpc\CalculatorServiceInterface::class,
             'protocol' => Hyperf\RpcMultiplex\Constant::PROTOCOL_DEFAULT,
             'load_balancer' => 'random',
+            // 這個消費者要從哪個服務中心獲取節點資訊，如不配置則不會從服務中心獲取節點資訊
+            'registry' => [
+                'protocol' => 'consul',
+                'address' => 'http://127.0.0.1:8500',
+            ],
             'nodes' => [
                 ['host' => '127.0.0.1', 'port' => 9502],
             ],
@@ -110,5 +113,15 @@ return [
 
 ```
 
+### 註冊中心
+
+如果需要使用註冊中心，則需要手動新增以下監聽器
+
+```php
+<?php
+return [
+    Hyperf\RpcMultiplex\Listener\RegisterServiceListener::class,
+];
+```
 
 

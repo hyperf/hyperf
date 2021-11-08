@@ -171,11 +171,7 @@ class LazyLoader
      */
     private function isUnsupportedReflectionType(ReflectionClass $targetReflection): bool
     {
-        // Final class
-        if ($targetReflection->isFinal()) {
-            return true;
-        }
-        return false;
+        return $targetReflection->isFinal();
     }
 
     private function buildNewCode(AbstractLazyProxyBuilder $builder, string $proxy, ReflectionClass $reflectionClass): string

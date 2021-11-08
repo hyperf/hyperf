@@ -108,6 +108,7 @@ class NatsDriver extends AbstractDriver
             } else {
                 $client->queueSubscribe($subject, $queue, $callback);
             }
+            $client->heartbeat();
             $client->wait();
         } finally {
             isset($connection) && $connection->release();

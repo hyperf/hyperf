@@ -26,6 +26,7 @@ class SwitchManager
             'db' => false,
             // beta feature, please donot enable 'method' in production environment
             'method' => false,
+            'error' => false,
         ];
 
     /**

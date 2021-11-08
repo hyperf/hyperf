@@ -14,12 +14,12 @@ namespace Hyperf\Metric\Adapter\StatsD;
 use Domnikl\Statsd\Client;
 use Domnikl\Statsd\Connection;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 
 class MetricFactory implements MetricFactoryInterface
 {
@@ -32,11 +32,6 @@ class MetricFactory implements MetricFactoryInterface
      * @var Client
      */
     private $client;
-
-    /**
-     * GuzzleClientFactory.
-     */
-    private $guzzleClientFactory;
 
     public function __construct(ConfigInterface $config)
     {
@@ -85,14 +80,14 @@ class MetricFactory implements MetricFactoryInterface
         $batchEnabled = $this->config->get("metric.metric.{$name}.enable_batch") == true;
         // Block handle from returning.
         if ($batchEnabled) {
-            do {
+            while (true) {
                 $this->client->startBatch();
                 $workerExited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($interval);
                 $this->client->endBatch();
                 if ($workerExited) {
                     break;
                 }
-            } while (true);
+            }
         } else {
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
         }

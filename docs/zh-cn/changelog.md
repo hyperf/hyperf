@@ -1,8 +1,161 @@
 # 版本更新记录
 
+# v2.2.14 - 2021-11-01
+
+## 新增
+
+- [#4181](https://github.com/hyperf/hyperf/pull/4181) [#4192](https://github.com/hyperf/hyperf/pull/4192) 为框架增加 `psr/log` 组件版本 `v1.0`、`v2.0`、`v3.0` 的支持。
+
+## 修复
+
+- [#4171](https://github.com/hyperf/hyperf/pull/4171) 修复使用 `consul` 组件时，开启 `ACL` 验证后，健康检测失败的问题。
+- [#4188](https://github.com/hyperf/hyperf/pull/4188) 修复使用 `composer 1.x` 版本时，打包 `phar` 失败的问题。
+
+# v2.2.13 - 2021-10-25
+
+## 新增
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) 为 `Macroable::mixin` 方法增加参数 `$replace`，当其设置为 `false` 时，会优先判断是否已经存在。
+
+## 修复
+
+- [#4158](https://github.com/hyperf/hyperf/pull/4158) 修复因为使用了 `Union` 类型，导致生成代理类失败的问题。
+
+## 优化
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) [#4166](https://github.com/hyperf/hyperf/pull/4166) 将组件 `hyperf/macroable` 从 `hyperf/utils` 中分离出来。
+
+# v2.2.12 - 2021-10-18
+
+## 新增
+
+- [#4129](https://github.com/hyperf/hyperf/pull/4129) 新增方法 `Str::stripTags()` 和 `Stringable::stripTags()`。
+
+## 修复
+
+- [#4130](https://github.com/hyperf/hyperf/pull/4130) 修复生成模型时，因为使用了选项 `--with-ide` 和 `scope` 方法导致报错的问题。
+- [#4141](https://github.com/hyperf/hyperf/pull/4141) 修复验证器工厂不支持其他验证器的问题。
+
+# v2.2.11 - 2021-10-11
+
+## 修复
+
+- [#4101](https://github.com/hyperf/hyperf/pull/4101) 修复 Nacos 使用的密码携带特殊字符时，密码会被 `urlencode` 导致密码错误的问题。
+
+# 优化
+
+- [#4114](https://github.com/hyperf/hyperf/pull/4114) 优化 WebSocket 客户端初始化失败时的错误信息。
+- [#4119](https://github.com/hyperf/hyperf/pull/4119) 优化单测客户端在上传文件时，因为默认的上传路径已经存在，导致报错的问题（只发生在最新的 Swoole 版本中）。
+
+# v2.2.10 - 2021-09-26
+
+## 修复
+
+- [#4088](https://github.com/hyperf/hyperf/pull/4088) 修复使用定时器规则时，会将空字符串转化为 `0` 的问题。
+- [#4096](https://github.com/hyperf/hyperf/pull/4096) 修复当带有类型的动态参数生成代理类时，会出现类型错误的问题。
+
+# v2.2.9 - 2021-09-22
+
+## 修复
+
+- [#4061](https://github.com/hyperf/hyperf/pull/4061) 修复 `hyperf/metric` 组件与最新版本的 `prometheus_client_php` 存在冲突的问题。
+- [#4068](https://github.com/hyperf/hyperf/pull/4068) 修复命令行抛出错误时，退出码与实际不符的问题。
+- [#4076](https://github.com/hyperf/hyperf/pull/4076) 修复 `HTTP` 服务因返回数据不是标准 `HTTP` 协议时，导致服务宕机的问题。
+
+## 新增
+
+- [#4014](https://github.com/hyperf/hyperf/pull/4014) [#4080](https://github.com/hyperf/hyperf/pull/4080) 为 `kafka` 组件增加 `sasl` 和 `ssl` 的支持。
+- [#4045](https://github.com/hyperf/hyperf/pull/4045) [#4082](https://github.com/hyperf/hyperf/pull/4082) 为 `tracer` 组件新增配置 `opentracing.enable.exception`，用来判断是否收集异常信息。
+- [#4086](https://github.com/hyperf/hyperf/pull/4086) 支持收集接口 `Interface` 的注解信息。
+
+# 优化
+
+- [#4084](https://github.com/hyperf/hyperf/pull/4084) 优化了注解找不到时的错误信息。
+
+# v2.2.8 - 2021-09-14
+
+## 修复
+
+- [#4028](https://github.com/hyperf/hyperf/pull/4028) 修复 `grafana` 面板中，请求数结果计算错误的问题。
+- [#4030](https://github.com/hyperf/hyperf/pull/4030) 修复异步队列会因为解压缩模型失败，导致进程中断随后重启的问题。
+- [#4042](https://github.com/hyperf/hyperf/pull/4042) 修复因 `SocketIO` 服务关闭时清理过期的 `fd`，进而导致协程死锁的问题。
+
+## 新增
+
+- [#4013](https://github.com/hyperf/hyperf/pull/4013) 为 `Cookies` 增加 `sameSite=None` 的支持。
+- [#4017](https://github.com/hyperf/hyperf/pull/4017) 为 `Hyperf\Utils\Collection` 增加 `Macroable`。
+- [#4021](https://github.com/hyperf/hyperf/pull/4021) 为 `retry()` 方法中 `$callback` 匿名函数增加 `$attempts` 变量。
+- [#4040](https://github.com/hyperf/hyperf/pull/4040) 为 `AMQP` 组件新增方法 `ConsumerDelayedMessageTrait::getDeadLetterExchange()`，可以用来重写 `x-dead-letter-exchange` 参数。
+
+## 移除
+
+- [#4017](https://github.com/hyperf/hyperf/pull/4017) 从 `Hyperf\Database\Model\Collection` 中移除 `Macroable`，因为它的基类 `Hyperf\Utils\Collection` 已引入了对应的 `Macroable`。
+
+# v2.2.7 - 2021-09-06
+
+# 修复
+
+- [#3997](https://github.com/hyperf/hyperf/pull/3997) 修复 `Nats` 消费者会在连接超时后崩溃的问题。
+- [#3998](https://github.com/hyperf/hyperf/pull/3998) 修复 `Apollo` 不支持 `https` 协议的问题。
+
+## 优化
+
+- [#4009](https://github.com/hyperf/hyperf/pull/4009) 优化方法 `MethodDefinitionCollector::getOrParse()`，避免在 PHP8 环境下，触发即将废弃的错误。
+
+## 新增
+
+- [#4002](https://github.com/hyperf/hyperf/pull/4002) [#4012](https://github.com/hyperf/hyperf/pull/4012) 为验证器增加场景功能，允许不同场景下，使用不同的验证规则。
+- [#4011](https://github.com/hyperf/hyperf/pull/4011) 为工具类 `Hyperf\Utils\Str` 增加了一些新的便捷方法。
+
+# v2.2.6 - 2021-08-30
+
+## 修复
+
+- [#3969](https://github.com/hyperf/hyperf/pull/3969) 修复 PHP8 环境下使用 `Hyperf\Validation\Rules\Unique::__toString()` 导致类型错误的问题。
+- [#3979](https://github.com/hyperf/hyperf/pull/3979) 修复熔断器组件，`timeout` 变量无法使用的问题。 
+- [#3986](https://github.com/hyperf/hyperf/pull/3986) 修复文件系统组件，开启 `SWOOLE_HOOK_NATIVE_CURL` 后导致 OSS hook 失败的问题。
+
+## 新增
+
+- [#3987](https://github.com/hyperf/hyperf/pull/3987) AMQP 组件支持延时队列。
+- [#3989](https://github.com/hyperf/hyperf/pull/3989) [#3992](https://github.com/hyperf/hyperf/pull/3992) 为热更新组件新增了配置 `command`，可以用来定义自己的启动脚本，支持 [nano](https://github.com/hyperf/nano) 组件。
+
+# v2.2.5 - 2021-08-23
+
+## 修复
+
+- [#3959](https://github.com/hyperf/hyperf/pull/3959) 修复验证器规则 `date` 在入参为 `string` 时，无法正常使用的问题。
+- [#3960](https://github.com/hyperf/hyperf/pull/3960) 修复协程风格服务下，`Crontab` 无法平滑关闭的问题。
+
+## 新增
+
+- [code-generator](https://github.com/hyperf/code-generator) 新增组件 `code-generator`，可以用来将 `Doctrine` 注解转化为 `PHP8` 的原生注解。
+
+## 优化
+
+- [#3957](https://github.com/hyperf/hyperf/pull/3957) 使用命令 `gen:model` 生成 `getAttribute` 注释时，支持基于 `@return` 注释返回对应的类型。
+
+# v2.2.4 - 2021-08-16
+
+## 修复
+
+- [#3925](https://github.com/hyperf/hyperf/pull/3925) 修复 `Nacos` 开启 `light beat` 功能后，心跳失败的问题。
+- [#3926](https://github.com/hyperf/hyperf/pull/3926) 修复配置项 `config_center.drivers.nacos.client` 无法正常工作的问题。
+
+## 新增
+
+- [#3924](https://github.com/hyperf/hyperf/pull/3924) 为 `Consul` 服务注册中心增加配置项 `services.drivers.consul.check`。
+- [#3932](https://github.com/hyperf/hyperf/pull/3932) 为 `AMQP` 消费者增加重新入队列的配置，允许用户返回 `NACK` 后，消息重入队列。
+- [#3941](https://github.com/hyperf/hyperf/pull/3941) 允许多路复用的 `RPC` 组件使用注册中心的能力。
+- [#3947](https://github.com/hyperf/hyperf/pull/3947) 新增方法 `Str::mask`，允许用户对一段文本某段内容打马赛克。
+
+## 优化
+
+- [#3944](https://github.com/hyperf/hyperf/pull/3944) 封装了读取 `Aspect` 元数据的方法。
+
 # v2.2.3 - 2021-08-09
 
-## Fixed
+## 修复
 
 - [#3897](https://github.com/hyperf/hyperf/pull/3897) 修复因为 `lightBeatEnabled` 导致心跳失败，进而导致 `Nacos` 服务注册多次的问题。
 - [#3905](https://github.com/hyperf/hyperf/pull/3905) 修复 `AMQP` 连接在关闭时导致空指针的问题。

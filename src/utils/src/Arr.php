@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use ArrayAccess;
+use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
 
 /**
@@ -20,6 +21,8 @@ use InvalidArgumentException;
  */
 class Arr
 {
+    use Macroable;
+
     /**
      * Determine whether the given value is array accessible.
      * @param mixed $value
@@ -495,7 +498,7 @@ class Arr
     public static function unique(array $array): array
     {
         $result = [];
-        foreach ($array ?? [] as $key => $item) {
+        foreach ($array as $key => $item) {
             if (is_array($item)) {
                 $result[$key] = self::unique($item);
             } else {

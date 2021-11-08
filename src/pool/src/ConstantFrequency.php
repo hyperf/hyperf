@@ -15,25 +15,13 @@ use Swoole\Timer;
 
 class ConstantFrequency implements LowFrequencyInterface
 {
-    /**
-     * @var Pool
-     */
-    protected $pool;
+    protected ?int $timerId;
 
-    /**
-     * @var null|int
-     */
-    protected $timerId;
+    protected int $interval = 10000;
 
-    /**
-     * @var int
-     */
-    protected $interval = 10000;
-
-    public function __construct(?Pool $pool = null)
+    public function __construct(protected ?Pool $pool = null)
     {
         if ($pool) {
-            $this->pool = $pool;
             $this->timerId = Timer::tick($this->interval, function () {
                 $this->pool->flushOne();
             });
