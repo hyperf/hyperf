@@ -18,6 +18,7 @@ composer analyse
 
 - Upgraded `php-amqplib/php-amqplib` to `^3.1`;
 - Upgraded `phpstan/phpstan` to `^1.0`;
+- Upgraded `mix/redis-subscribe` to `mix/redis-subscriber:^3.0` 
 
 ## Added
 

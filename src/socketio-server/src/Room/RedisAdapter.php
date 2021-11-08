@@ -23,52 +23,31 @@ use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
 use Hyperf\WebSocketServer\Sender;
-use Mix\Redis\Subscribe\Subscriber;
+use Mix\Redis\Subscriber\Subscriber;
 use Redis;
 
 class RedisAdapter implements AdapterInterface, EphemeralInterface
 {
     use Flagger;
 
-    protected $redisPrefix = 'ws';
+    protected string $redisPrefix = 'ws';
 
-    protected $retryInterval = 1000;
+    protected int $retryInterval = 1000;
 
-    protected $cleanUpExpiredInterval = 30000;
+    protected int $cleanUpExpiredInterval = 30000;
 
-    protected $connection = 'default';
-
-    /**
-     * @var NamespaceInterface
-     */
-    protected $nsp;
+    protected string $connection = 'default';
 
     /**
      * @var \Hyperf\Redis\Redis|Redis|RedisProxy
      */
     protected $redis;
 
-    /**
-     * @var SidProviderInterface
-     */
-    protected $sidProvider;
+    protected int $ttl = 0;
 
-    /**
-     * @var Sender
-     */
-    protected $sender;
-
-    /**
-     * @var int time to live
-     */
-    protected $ttl = 0;
-
-    public function __construct(RedisFactory $redis, Sender $sender, NamespaceInterface $nsp, SidProviderInterface $sidProvider)
+    public function __construct(RedisFactory $redis, protected Sender $sender, protected NamespaceInterface $nsp, protected SidProviderInterface $sidProvider)
     {
-        $this->sender = $sender;
-        $this->nsp = $nsp;
         $this->redis = $redis->get($this->connection);
-        $this->sidProvider = $sidProvider;
     }
 
     public function add(string $sid, string ...$rooms)
@@ -340,14 +319,13 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
     private function phpRedisSubscribe()
     {
         $redis = $this->redis;
-        /** @var string $callback */
         $callback = function ($redis, $chan, $msg) {
             Coroutine::create(function () use ($msg) {
                 [$packet, $opts] = unserialize($msg);
                 $this->doBroadcast($packet, $opts);
             });
         };
-        // cast to string because PHPStan asked so.
+        /* @phpstan-ignore-next-line */
         $redis->subscribe([$this->getChannelKey()], $callback);
     }
 

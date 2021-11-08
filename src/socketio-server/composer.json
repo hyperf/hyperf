@@ -8,14 +8,14 @@
     ],
     "description": "Socket.io implementation for hyperf",
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "ext-json": "*",
         "ext-redis": "*",
         "ext-swoole": ">=4.4",
         "hyperf/di": "~3.0.0",
         "hyperf/redis": "~3.0.0",
         "hyperf/websocket-server": "~3.0.0",
-        "mix/redis-subscribe": "^2.1"
+        "mix/redis-subscriber": "^3.0"
     },
     "suggest": {
         "hyperf/command": "Required to use RemoveRedisGarbage command",
