@@ -27,28 +27,17 @@ use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Coroutine;
 use Hyperf\WebSocketServer\Sender;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class RedisNsqAdapter extends RedisAdapter
 {
-    /**
-     * @var Nsq
-     */
-    protected $nsq;
+    protected Nsq $nsq;
 
-    /**
-     * @var string
-     */
-    protected $pool = 'default';
+    protected string $pool = 'default';
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var string
-     */
-    protected $channel;
+    protected string $channel;
 
     public function __construct(ContainerInterface $container, Sender $sender, NamespaceInterface $nsp)
     {
@@ -103,7 +92,7 @@ class RedisNsqAdapter extends RedisAdapter
                             foreach ($topic['channels'] ?? [] as $channel) {
                                 if (empty($channel['clients'])) {
                                     // Delete the channel which don't have clients.
-                                    $res = $channelClient->delete($this->getChannelKey(), $channel['channel_name']);
+                                    $channelClient->delete($this->getChannelKey(), $channel['channel_name']);
                                 }
                             }
                         }
@@ -115,9 +104,9 @@ class RedisNsqAdapter extends RedisAdapter
         });
     }
 
-    protected function publish(string $topic, string $message)
+    protected function publish(string $channel, string $message)
     {
-        $this->nsq->publish($topic, $message);
+        $this->nsq->publish($channel, $message);
     }
 
     protected function getChannelKey(): string

@@ -27,6 +27,7 @@ use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
+use Swoole\Atomic;
 use Swoole\Coroutine\Channel;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -36,9 +37,9 @@ use Swoole\WebSocket\Server;
 /**
  *  packet types
  *  0 open
- *  Sent from the server when a new transport is opened (recheck)
+ *  Sent from the server when new transport is opened (recheck)
  *  1 close
- *  Request the close of this transport but does not shutdown the connection itself.
+ *  Request the close of this transport but does not shut down the connection itself.
  *  2 ping
  *  Sent by the client. Server should answer with a pong packet containing the same data
  *  3 pong
@@ -66,87 +67,30 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
     public static $isMainWorker = false;
 
-    /**
-     * @var string
-     */
-    public static $serverId;
+    public static string $serverId = '';
 
-    /**
-     * @var \Swoole\Atomic
-     */
-    public static $messageId;
+    public static ?Atomic $messageId = null;
 
     /**
      * @var Channel[]
      */
-    protected $clientCallbacks = [];
-
-    /**
-     * @var int
-     * @deprecated
-     */
-    protected $clientCallbackTimeout = 10000;
-
-    /**
-     * @var int
-     * @deprecated
-     */
-    protected $pingInterval = 10000;
-
-    /**
-     * @var int
-     * @deprecated
-     */
-    protected $pingTimeout = 100;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $stdoutLogger;
-
-    /**
-     * @var Decoder
-     */
-    protected $decoder;
-
-    /**
-     * @var SidProviderInterface
-     */
-    protected $sidProvider;
-
-    /**
-     * @var Encoder
-     */
-    protected $encoder;
-
-    /**
-     * @var Sender
-     */
-    protected $sender;
+    protected array $clientCallbacks = [];
 
     /**
      * @var int[]
      */
-    protected $clientCallbackTimers;
+    protected array $clientCallbackTimers = [];
 
-    /**
-     * @var SocketIOConfig
-     */
-    protected $config;
+    protected SocketIOConfig $config;
 
     public function __construct(
-        StdoutLoggerInterface $stdoutLogger,
-        Sender $sender,
-        Decoder $decoder,
-        Encoder $encoder,
-        SidProviderInterface $sidProvider,
+        protected StdoutLoggerInterface $stdoutLogger,
+        protected Sender $sender,
+        protected Decoder $decoder,
+        protected Encoder $encoder,
+        protected SidProviderInterface $sidProvider,
         ?SocketIOConfig $config = null
     ) {
-        $this->stdoutLogger = $stdoutLogger;
-        $this->decoder = $decoder;
-        $this->encoder = $encoder;
-        $this->sender = $sender;
-        $this->sidProvider = $sidProvider;
         $this->config = $config ?? ApplicationContext::getContainer()->get(SocketIOConfig::class);
     }
 
@@ -224,8 +168,8 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         $data = [
             'sid' => $this->sidProvider->getSid($request->fd),
             'upgrades' => ['websocket'],
-            'pingInterval' => $this->getPingInterval(),
-            'pingTimeout' => $this->getPingTimeout(),
+            'pingInterval' => $this->config->getPingInterval(),
+            'pingTimeout' => $this->config->getPingTimeout(),
         ];
         if ($server instanceof Response) {
             $server->push(Engine::OPEN . json_encode($data)); //socket is open
@@ -262,7 +206,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     {
         $this->clientCallbacks[$ackId] = $channel;
         // Clean up using timer to avoid memory leak.
-        $timerId = Timer::after($timeoutMs ?? $this->getClientCallbackTimeout(), function () use ($ackId) {
+        $timerId = Timer::after($timeoutMs ?? $this->config->getClientCallbackTimeout(), function () use ($ackId) {
             if (! isset($this->clientCallbacks[$ackId])) {
                 return;
             }
@@ -272,74 +216,29 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         $this->clientCallbackTimers[$ackId] = $timerId;
     }
 
-    /**
-     * @return $this
-     * @deprecated use SocketIOConfig::setClientCallbackTimeout() instead
-     */
-    public function setClientCallbackTimeout(int $clientCallbackTimeout)
+    public function setClientCallbackTimeout(int $clientCallbackTimeout): static
     {
         $this->config->setClientCallbackTimeout($clientCallbackTimeout);
         return $this;
     }
 
-    /**
-     * @return $this
-     * @deprecated use SocketIOConfig::setPingInterval() instead
-     */
-    public function setPingInterval(int $pingInterval)
+    public function setPingInterval(int $pingInterval): static
     {
         $this->config->setPingInterval($pingInterval);
         return $this;
     }
 
-    /**
-     * @deprecated use SocketIOConfig::getPingInterval() instead
-     */
-    public function getPingInterval(): int
-    {
-        if ($this->pingInterval != 10000) {
-            return $this->pingInterval;
-        }
-        return $this->config->getPingInterval();
-    }
-
-    /**
-     * @deprecated use SocketIOConfig::getPingTimeout() instead
-     */
-    public function getPingTimeout(): int
-    {
-        if ($this->pingTimeout != 100) {
-            return $this->pingTimeout;
-        }
-        return $this->config->getPingTimeout();
-    }
-
-    /**
-     * @return $this
-     * @deprecated use SocketIOConfig::setPingTimeout instead
-     */
-    public function setPingTimeout(int $pingTimeout)
+    public function setPingTimeout(int $pingTimeout): static
     {
         $this->config->setPingTimeout($pingTimeout);
         return $this;
     }
 
-    /**
-     * @deprecated use SocketIOConfig::getClientCallbackTimeout() instead
-     */
-    private function getClientCallbackTimeout(): int
-    {
-        if ($this->clientCallbackTimeout !== 10000) {
-            return $this->clientCallbackTimeout;
-        }
-        return $this->config->getClientCallbackTimeout();
-    }
-
-    private function dispatch(int $fd, string $nsp, string $event, ...$payloads)
+    private function dispatch(int $fd, string $nsp, string $event, ...$payloads): void
     {
         $socket = $this->makeSocket($fd, $nsp);
         if (empty($socket)) {
-            return null;
+            return;
         }
         $ack = null;
 

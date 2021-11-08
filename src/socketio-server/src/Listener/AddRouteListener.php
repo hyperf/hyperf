@@ -17,19 +17,13 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\HttpServer\Router\DispatcherFactory;
-use Hyperf\Server\Server;
+use Hyperf\Server\ServerInterface;
 use Hyperf\SocketIOServer\SocketIO;
 
 class AddRouteListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function listen(): array
@@ -46,7 +40,7 @@ class AddRouteListener implements ListenerInterface
     {
         $serverConfig = $this->container->get(ConfigInterface::class)->get('server.servers', []);
         foreach ($serverConfig as $port) {
-            if ($port['type'] === Server::SERVER_WEBSOCKET) {
+            if ($port['type'] === ServerInterface::SERVER_WEBSOCKET) {
                 $factory = $this->container->get(DispatcherFactory::class);
                 $factory
                     ->getRouter($port['name'])

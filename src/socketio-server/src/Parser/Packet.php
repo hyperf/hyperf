@@ -21,27 +21,15 @@ class Packet implements \ArrayAccess
 
     public const ACK = '3';
 
-    /**
-     * @var string
-     */
-    public $id;
+    public string $id;
 
-    /**
-     * @var string
-     */
-    public $type;
+    public string $type;
 
-    /**
-     * @var string
-     */
-    public $nsp;
+    public string $nsp;
 
-    /**
-     * @var ?array
-     */
-    public $data;
+    public ?array $data;
 
-    public $query;
+    public mixed $query;
 
     private function __construct()
     {
@@ -50,14 +38,15 @@ class Packet implements \ArrayAccess
     public static function create(array $decoded)
     {
         $new = new Packet();
-        $new->id = $decoded['id'] ?? '';
-        $new->type = $decoded['type'];
+        $new->id = (string) ($decoded['id'] ?? '');
+        $new->type = (string) $decoded['type'];
         if (isset($decoded['nsp'])) {
-            $new->nsp = $decoded['nsp'] ?: '/';
+            $new->nsp = (string) ($decoded['nsp'] ?: '/');
         } else {
             $new->nsp = '/';
         }
-        $new->data = $decoded['data'] ?? null;
+        $data = $decoded['data'] ?? null;
+        $new->data = is_array($data) ? $data : null;
         $new->query = $decoded['query'] ?? null;
         return $new;
     }

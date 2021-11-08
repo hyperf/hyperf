@@ -33,7 +33,7 @@ class SubscriberFactory
                 $sub->close();
             });
             return $sub;
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return null;
         }
     }
