@@ -19,7 +19,7 @@ class DemoInject
     private Demo $demo;
 
     #[Inject(required: false)]
-    private Demo1 $demo1;
+    private ?Demo1 $demo1 = null;
 
     public function getDemo()
     {
