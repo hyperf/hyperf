@@ -15,7 +15,7 @@ use Hyperf\Di\ReflectionManager;
 
 class ObjectDefinition implements DefinitionInterface
 {
-    protected MethodInjection $constructorInjection;
+    protected ?MethodInjection $constructorInjection = null;
 
     private ?string $className;
 

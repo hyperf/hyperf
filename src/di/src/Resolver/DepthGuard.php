@@ -25,7 +25,7 @@ class DepthGuard
 
     private static ?DepthGuard $instance = null;
 
-    public static function getInstance(): static
+    public static function getInstance(): self
     {
         if (! isset(self::$instance)) {
             self::$instance = new static();
