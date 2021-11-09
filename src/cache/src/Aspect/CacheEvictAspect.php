@@ -22,7 +22,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 #[Aspect]
 class CacheEvictAspect extends AbstractAspect
 {
-    public $annotations = [
+    public array $annotations = [
         CacheEvict::class,
     ];
 

@@ -18,7 +18,7 @@ abstract class MetadataCollector implements MetadataCollectorInterface
     /**
      * Subclass MUST override this property.
      */
-    protected static $container = [];
+    protected static array $container = [];
 
     /**
      * Retrieve the metadata via key.

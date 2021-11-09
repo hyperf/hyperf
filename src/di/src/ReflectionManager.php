@@ -20,10 +20,7 @@ use Symfony\Component\Finder\Finder;
 
 class ReflectionManager extends MetadataCollector
 {
-    /**
-     * @var array
-     */
-    protected static $container = [];
+    protected static array $container = [];
 
     public static function reflectClass(string $className): ReflectionClass
     {

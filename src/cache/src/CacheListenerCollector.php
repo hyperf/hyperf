@@ -15,7 +15,7 @@ use Hyperf\Di\MetadataCollector;
 
 class CacheListenerCollector extends MetadataCollector
 {
-    protected static $container = [];
+    protected static array $container = [];
 
     public static function setListener(string $listener, array $value)
     {

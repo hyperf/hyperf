@@ -128,7 +128,7 @@ class Dag implements Runner
     }
 
     /**
-     * @deprecated Use checkCircularDependencies() instead
+     * @deprecated v3.1 Use checkCircularDependencies() instead
      */
     public function checkCircularDependences(): array
     {

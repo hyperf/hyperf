@@ -24,10 +24,7 @@ class MethodAspect extends AbstractAspect
 {
     use SpanStarter;
 
-    /**
-     * @var array
-     */
-    public $classes = [
+    public array $classes = [
         'App*',
     ];
 

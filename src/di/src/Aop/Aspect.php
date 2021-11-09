@@ -50,15 +50,15 @@ class Aspect
         $method = null;
         $class = $target;
 
-        if (strpos($rule, '::') !== false) {
+        if (str_contains($rule, '::')) {
             [$ruleClass, $ruleMethod] = explode('::', $rule);
         }
-        if (strpos($target, '::') !== false) {
+        if (str_contains($target, '::')) {
             [$class, $method] = explode('::', $target);
         }
 
         if ($method == null) {
-            if (strpos($ruleClass, '*') === false) {
+            if (! str_contains($ruleClass, '*')) {
                 /*
                  * Match [rule] Foo/Bar::ruleMethod [target] Foo/Bar [return] true,ruleMethod
                  * Match [rule] Foo/Bar [target] Foo/Bar [return] true,null
@@ -85,7 +85,7 @@ class Aspect
             return [false, null];
         }
 
-        if (strpos($rule, '*') === false) {
+        if (! str_contains($rule, '*')) {
             /*
              * Match [rule] Foo/Bar::ruleMethod [target] Foo/Bar::ruleMethod [return] true,ruleMethod
              * Match [rule] Foo/Bar [target] Foo/Bar::ruleMethod [return] false,null
@@ -128,7 +128,7 @@ class Aspect
         return $isMatch;
     }
 
-    private static function parseAnnotations(array $collection, string $class, RewriteCollection $rewriteCollection)
+    private static function parseAnnotations(array $collection, string $class, RewriteCollection $rewriteCollection): void
     {
         // Get the annotations of class and method.
         $annotations = AnnotationCollector::get($class);
@@ -150,17 +150,17 @@ class Aspect
             foreach ($rules['annotations'] ?? [] as $rule) {
                 // If exist class level annotation, then all methods should rewrite, so return an empty array directly.
                 if (isset($classMapping[$rule])) {
-                    return $rewriteCollection->setLevel(RewriteCollection::CLASS_LEVEL);
+                    $rewriteCollection->setLevel(RewriteCollection::CLASS_LEVEL);
+                    return;
                 }
                 if (isset($methodMapping[$rule])) {
                     $rewriteCollection->add($methodMapping[$rule]);
                 }
             }
         }
-        return $rewriteCollection;
     }
 
-    private static function parseClasses(array $collection, string $class, RewriteCollection $rewriteCollection)
+    private static function parseClasses(array $collection, string $class, RewriteCollection $rewriteCollection): void
     {
         $aspects = array_keys($collection);
         foreach ($aspects as $aspect) {
@@ -169,7 +169,8 @@ class Aspect
                 [$isMatch, $method] = static::isMatchClassRule($class, $rule);
                 if ($isMatch) {
                     if ($method === null) {
-                        return $rewriteCollection->setLevel(RewriteCollection::CLASS_LEVEL);
+                        $rewriteCollection->setLevel(RewriteCollection::CLASS_LEVEL);
+                        return;
                     }
                     $rewriteCollection->add($method);
                 }

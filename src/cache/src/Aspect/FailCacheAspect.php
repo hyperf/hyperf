@@ -22,9 +22,9 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 #[Aspect]
 class FailCacheAspect extends AbstractAspect
 {
-    public $classes = [];
+    public array $classes = [];
 
-    public $annotations = [
+    public array $annotations = [
         FailCache::class,
     ];
 

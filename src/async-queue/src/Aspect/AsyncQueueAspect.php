@@ -23,7 +23,7 @@ use Psr\Container\ContainerInterface;
 #[Aspect]
 class AsyncQueueAspect extends AbstractAspect
 {
-    public $annotations = [
+    public array $annotations = [
         AsyncQueueMessage::class,
     ];
 

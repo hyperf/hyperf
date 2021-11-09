@@ -17,7 +17,7 @@ use Stub\Ast\FooTrait;
 
 class BarAspect extends AbstractAspect
 {
-    public $classes = [
+    public array $classes = [
         Bar3::class,
         FooTrait::class,
     ];

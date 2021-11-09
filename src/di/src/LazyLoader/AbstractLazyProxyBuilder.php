@@ -27,25 +27,17 @@ abstract class AbstractLazyProxyBuilder
 
     /**
      * The BuilderFactory.
-     * @var BuilderFactory
      */
-    public $factory;
+    public BuilderFactory $factory;
 
     /**
      * Class Namespace.
-     * @var string
      */
-    protected $namespace;
+    protected string $namespace;
 
-    /**
-     * @var string
-     */
-    protected $proxyClassName;
+    protected string $proxyClassName;
 
-    /**
-     * @var string
-     */
-    protected $originalClassName;
+    protected string $originalClassName;
 
     public function __construct()
     {

@@ -23,30 +23,12 @@ use ReflectionClass;
 
 class Scanner
 {
-    /**
-     * @var \Hyperf\Di\ClassLoader
-     */
-    protected $classloader;
+    protected Filesystem $filesystem;
 
-    /**
-     * @var ScanConfig
-     */
-    protected $scanConfig;
+    protected string $path = BASE_PATH . '/runtime/container/scan.cache';
 
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
-
-    /**
-     * @var string
-     */
-    protected $path = BASE_PATH . '/runtime/container/scan.cache';
-
-    public function __construct(ClassLoader $classloader, ScanConfig $scanConfig)
+    public function __construct(protected ClassLoader $classloader, protected ScanConfig $scanConfig)
     {
-        $this->classloader = $classloader;
-        $this->scanConfig = $scanConfig;
         $this->filesystem = new Filesystem();
 
         foreach ($scanConfig->getIgnoreAnnotations() as $annotation) {
@@ -283,7 +265,7 @@ class Scanner
         $aspects = array_merge($providerConfig['aspects'], $baseConfig['aspects'], $aspects);
 
         [$removed, $changed] = $this->getChangedAspects($aspects, $lastCacheModified);
-        // When the aspect removed from config, it should removed from AspectCollector.
+        // When the aspect removed from config, it should be removed from AspectCollector.
         foreach ($removed as $aspect) {
             AspectCollector::clear($aspect);
         }

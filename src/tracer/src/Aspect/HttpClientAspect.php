@@ -23,9 +23,7 @@ use OpenTracing\Tracer;
 use Psr\Http\Message\ResponseInterface;
 use const OpenTracing\Formats\TEXT_MAP;
 
-/**
- * @Aspect
- */
+#[Aspect]
 class HttpClientAspect implements AroundInterface
 {
     use SpanStarter;

@@ -18,9 +18,7 @@ use Hyperf\Tracer\Annotation\Trace;
 use Hyperf\Tracer\SpanStarter;
 use OpenTracing\Tracer;
 
-/**
- * @Aspect
- */
+#[Aspect]
 class TraceAnnotationAspect implements AroundInterface
 {
     use SpanStarter;

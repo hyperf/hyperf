@@ -15,10 +15,7 @@ use Hyperf\Di\MetadataCollector;
 
 class AnnotationCollector extends MetadataCollector
 {
-    /**
-     * @var array
-     */
-    protected static $container = [];
+    protected static array $container = [];
 
     public static function collectClass(string $class, string $annotation, $value): void
     {
@@ -44,14 +41,6 @@ class AnnotationCollector extends MetadataCollector
         }
     }
 
-    /**
-     * @deprecated v3.0
-     */
-    public static function getClassByAnnotation(string $annotation): array
-    {
-        return self::getClassesByAnnotation($annotation);
-    }
-
     public static function getClassesByAnnotation(string $annotation): array
     {
         $result = [];
@@ -62,14 +51,6 @@ class AnnotationCollector extends MetadataCollector
             $result[$class] = $metadata['_c'][$annotation];
         }
         return $result;
-    }
-
-    /**
-     * @deprecated v3.0
-     */
-    public static function getMethodByAnnotation(string $annotation): array
-    {
-        return static::getMethodsByAnnotation($annotation);
     }
 
     public static function getMethodsByAnnotation(string $annotation): array

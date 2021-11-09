@@ -15,9 +15,6 @@ use Hyperf\Di\Annotation\Inject;
 
 trait Foo2Trait
 {
-    /**
-     * @Inject
-     * @var Tar
-     */
-    protected $foo;
+    #[Inject]
+    protected Tar $foo;
 }
