@@ -306,7 +306,7 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
