@@ -34,7 +34,7 @@ class LazyLoader
     protected static ?LazyLoader $instance = null;
 
     /**
-     * @param array $config The Configuration object.
+     * @param array $config the Configuration object
      */
     private function __construct(protected array $config)
     {
