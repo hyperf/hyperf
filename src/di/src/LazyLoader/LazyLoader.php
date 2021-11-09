@@ -31,16 +31,13 @@ class LazyLoader
     /**
      * The singleton instance of the loader.
      */
-    protected static ?LazyLoader $instance;
+    protected static ?LazyLoader $instance = null;
 
     /**
-     * The Configuration object.
+     * @param array $config The Configuration object.
      */
-    protected array $config;
-
-    private function __construct(array $config)
+    private function __construct(protected array $config)
     {
-        $this->config = $config;
         $this->register();
     }
 

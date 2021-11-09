@@ -33,11 +33,11 @@ abstract class AbstractLazyProxyBuilder
     /**
      * Class Namespace.
      */
-    protected string $namespace;
+    protected ?string $namespace = null;
 
-    protected string $proxyClassName;
+    protected ?string $proxyClassName = null;
 
-    protected string $originalClassName;
+    protected ?string $originalClassName = null;
 
     public function __construct()
     {
