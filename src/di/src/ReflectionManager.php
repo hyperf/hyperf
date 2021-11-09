@@ -105,7 +105,7 @@ class ReflectionManager extends MetadataCollector
                     continue;
                 }
                 $reflectionClasses[$className] = static::reflectClass($className);
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
             }
         }
         return $reflectionClasses;

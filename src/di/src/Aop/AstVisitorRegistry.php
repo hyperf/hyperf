@@ -31,7 +31,7 @@ class AstVisitorRegistry
         throw new \InvalidArgumentException('Invalid method for ' . __CLASS__);
     }
 
-    public static function insert($value, $priority)
+    public static function insert($value, $priority = 0)
     {
         static::$values[] = $value;
         return static::getQueue()->insert($value, $priority);

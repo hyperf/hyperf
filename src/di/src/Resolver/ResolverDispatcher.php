@@ -21,24 +21,12 @@ use RuntimeException;
 
 class ResolverDispatcher implements ResolverInterface
 {
-    /**
-     * @var null|ObjectResolver
-     */
-    protected $objectResolver;
+    protected ?ObjectResolver $objectResolver = null;
 
-    /**
-     * @var null|FactoryResolver
-     */
-    protected $factoryResolver;
+    protected ?FactoryResolver $factoryResolver = null;
 
-    /**
-     * @var \Psr\Container\ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     /**
