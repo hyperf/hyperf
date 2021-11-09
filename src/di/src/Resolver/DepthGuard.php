@@ -21,17 +21,11 @@ use Hyperf\Utils\Context;
  */
 class DepthGuard
 {
-    /**
-     * @var int
-     */
-    protected $depthLimit = 500;
+    protected int $depthLimit = 500;
 
-    /**
-     * @var null|DepthGuard
-     */
-    private static $instance;
+    private static ?DepthGuard $instance = null;
 
-    public static function getInstance()
+    public static function getInstance(): self
     {
         if (! isset(self::$instance)) {
             self::$instance = new static();

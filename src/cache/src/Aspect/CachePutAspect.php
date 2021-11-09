@@ -21,7 +21,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 #[Aspect]
 class CachePutAspect extends AbstractAspect
 {
-    public $annotations = [
+    public array $annotations = [
         CachePut::class,
     ];
 

@@ -17,11 +17,8 @@ trait Foo3Trait
 {
     use FooTrait;
 
-    /**
-     * @Inject
-     * @var Bar
-     */
-    protected $bar;
+    #[Inject]
+    protected Bar $bar;
 
     public function getValue()
     {

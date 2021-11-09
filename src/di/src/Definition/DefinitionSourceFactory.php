@@ -16,20 +16,10 @@ use Hyperf\Di\Exception\Exception;
 
 class DefinitionSourceFactory
 {
-    /**
-     * @var bool
-     */
-    protected $enableCache = false;
+    protected string $baseUri;
 
-    /**
-     * @var string
-     */
-    protected $baseUri;
-
-    public function __construct(bool $enableCache = false)
+    public function __construct(protected bool $enableCache = false)
     {
-        $this->enableCache = $enableCache;
-
         if (! defined('BASE_PATH')) {
             throw new Exception('BASE_PATH is not defined.');
         }

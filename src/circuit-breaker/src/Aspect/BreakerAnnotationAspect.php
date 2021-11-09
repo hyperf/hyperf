@@ -21,7 +21,7 @@ use Psr\Container\ContainerInterface;
 #[Aspect]
 class BreakerAnnotationAspect extends AbstractAspect
 {
-    public $annotations = [
+    public array $annotations = [
         CircuitBreaker::class,
     ];
 

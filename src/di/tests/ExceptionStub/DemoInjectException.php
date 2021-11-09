@@ -18,11 +18,8 @@ use Hyperf\Di\Annotation\Inject;
  */
 class DemoInjectException
 {
-    /**
-     * @Inject(required=true)
-     * @var Demo1
-     */
-    private $demo;
+    #[Inject(required: true)]
+    private Demo1 $demo;
 
     public function getDemo()
     {

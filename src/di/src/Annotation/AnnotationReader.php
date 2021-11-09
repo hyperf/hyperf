@@ -24,6 +24,7 @@ use ReflectionProperty;
 
 /**
  * A reader for docblock annotations.
+ * @deprecated
  */
 class AnnotationReader implements Reader
 {

@@ -9,11 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Di\Aop;
+namespace Hyperf\Di\Exception;
 
-class AnnotationMetadata
+class NotCallableException extends Exception
 {
-    public function __construct(public array $class, public array $method)
-    {
-    }
 }

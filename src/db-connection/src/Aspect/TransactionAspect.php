@@ -22,7 +22,7 @@ use Hyperf\Di\Exception\AnnotationException;
 #[Aspect]
 class TransactionAspect extends AbstractAspect
 {
-    public $annotations = [
+    public array $annotations = [
         Transactional::class,
     ];
 

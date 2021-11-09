@@ -20,7 +20,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class SessionAspect extends AbstractAspect
 {
-    public $classes = [
+    public array $classes = [
         'Hyperf\SocketIOServer\SocketIO::onClose',
         'Hyperf\SocketIOServer\SocketIO::onOpen',
         'Hyperf\SocketIOServer\SocketIO::onMessage',
