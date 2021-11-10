@@ -26,6 +26,7 @@ abstract class AbstractRequestHandler
      */
     public function __construct(protected array $middlewares, protected $coreHandler, protected ContainerInterface $container)
     {
+        $this->middlewares = array_values($this->middlewares);
     }
 
     protected function handleRequest($request)
