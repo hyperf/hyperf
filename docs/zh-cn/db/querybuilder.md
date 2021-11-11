@@ -100,7 +100,7 @@ use Hyperf\DbConnection\Db;
 $names = Db::table('user')->pluck('name');
 
 foreach ($names as $name) {
-    echo $names;
+    echo $name;
 }
 
 ```
