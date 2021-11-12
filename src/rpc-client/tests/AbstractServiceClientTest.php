@@ -90,5 +90,6 @@ class AbstractServiceClientTest extends TestCase
         [$nodes] = $client->createNodes();
         $this->assertSame(1, count($nodes));
         $this->assertSame('192.168.1.2', $nodes[0]->host);
+        $this->assertSame('FooService', $client->getServiceName());
     }
 }
