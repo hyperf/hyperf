@@ -1,5 +1,9 @@
 # v2.2.16 - TBD
 
+## Added
+
+- [#4252](https://github.com/hyperf/hyperf/pull/4252) Added method `getServiceName` for rpc client.
+
 # v2.2.15 - 2021-11-08
 
 ## Fixed
