@@ -343,6 +343,9 @@ class Scanner
         }
         foreach ($classes as $class) {
             $file = $this->classloader->getComposerClassLoader()->findFile($class);
+            if ($file === false) {
+                continue;
+            }
             if ($lastCacheModified <= $this->filesystem->lastModified($file)) {
                 $changed[] = $class;
             }
