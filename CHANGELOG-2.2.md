@@ -4,6 +4,10 @@
 
 - [#4252](https://github.com/hyperf/hyperf/pull/4252) Added method `getServiceName` for rpc client.
 
+## Optimized
+
+- [#4253](https://github.com/hyperf/hyperf/pull/4253) Skip class which is not found by class loader at scan time.
+
 # v2.2.15 - 2021-11-08
 
 ## Fixed
