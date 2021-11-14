@@ -63,6 +63,8 @@ class ClassLoader
 
     public static function init(?string $proxyFileDirPath = null, ?string $configDir = null): void
     {
+        self::checkEnvironment();
+
         if (! $proxyFileDirPath) {
             // This dir is the default proxy file dir path of Hyperf
             $proxyFileDirPath = BASE_PATH . '/runtime/container/proxy/';
@@ -132,5 +134,17 @@ class ClassLoader
             ->make();
 
         Dotenv::create($repository, [BASE_PATH])->load();
+    }
+
+    private static function checkEnvironment()
+    {
+        if (extension_loaded('grpc')) {
+            $grpcForkSupport = ini_get_all('grpc')['grpc.enable_fork_support']['local_value'];
+            $grpcForkSupport = strtolower(trim(str_replace('0', '', $grpcForkSupport)));
+            if (in_array($grpcForkSupport, ['', 'off', 'false'], true)) {
+                echo "\033[37;41mERROR\033[0m Grpc fork support must be enabled before the server starts, please set grpc.enable_fork_support = 1 in your php.ini.";
+                exit(SIGTERM);
+            }
+        }
     }
 }
