@@ -3,6 +3,7 @@
 ## Added
 
 - [#4252](https://github.com/hyperf/hyperf/pull/4252) Added method `getServiceName` for rpc client.
+- [#4254](https://github.com/hyperf/hyperf/pull/4254) Added check of `grpc.enable_fork_support` option.
 
 ## Optimized
 
