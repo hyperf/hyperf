@@ -32,11 +32,15 @@ class AliyunHookTest extends TestCase
             $rs = curl_init();
             if (version_compare(SWOOLE_VERSION, '4.6.0', '<')) {
                 $this->assertInstanceOf(\Swoole\Curl\Handler::class, $rs);
+                $this->assertTrue(\Oss\OssClient\is_resource($rs));
             } elseif (PHP_VERSION_ID > 80000) {
-                $this->assertInstanceOf(\Swoole\Coroutine\Curl\Handle::class, $rs);
+                if (SWOOLE_VERSION_ID >= 40900) {
+                    $this->assertInstanceOf(\CurlHandle::class, $rs);
+                } else {
+                    $this->assertInstanceOf(\Swoole\Coroutine\Curl\Handle::class, $rs);
+                    $this->assertTrue(\Oss\OssClient\is_resource($rs));
+                }
             }
-
-            $this->assertTrue(\Oss\OssClient\is_resource($rs));
         });
 
         run(function () {
