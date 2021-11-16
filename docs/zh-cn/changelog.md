@@ -1,5 +1,15 @@
 # 版本更新记录
 
+# v2.2.16 - 2021-11-15
+
+## 新增
+
+- [#4252](https://github.com/hyperf/hyperf/pull/4252) 为 `Hyperf\RpcClient\AbstractServiceClient` 新增 `getServiceName()` 方法。
+
+## 优化
+
+- [#4253](https://github.com/hyperf/hyperf/pull/4253) 在扫描阶段时，如果类库找不到，则跳过且报出警告。
+
 # v2.2.15 - 2021-11-08
 
 ## 修复

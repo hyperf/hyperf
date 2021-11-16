@@ -343,6 +343,10 @@ class Scanner
         }
         foreach ($classes as $class) {
             $file = $this->classloader->getComposerClassLoader()->findFile($class);
+            if ($file === false) {
+                echo sprintf('Skip class %s, because it does not exist in composer class loader.', $class) . PHP_EOL;
+                continue;
+            }
             if ($lastCacheModified <= $this->filesystem->lastModified($file)) {
                 $changed[] = $class;
             }

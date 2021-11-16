@@ -1,4 +1,18 @@
-# v2.2.16 - TBD
+# v2.2.17 - TBD
+
+## Added
+
+- [#4260](https://github.com/hyperf/hyperf/pull/4260) Added force index for `hyperf/database`.
+
+# v2.2.16 - 2021-11-15
+
+## Added
+
+- [#4252](https://github.com/hyperf/hyperf/pull/4252) Added method `getServiceName` for rpc client.
+
+## Optimized
+
+- [#4253](https://github.com/hyperf/hyperf/pull/4253) Skip class which is not found by class loader at scan time.
 
 # v2.2.15 - 2021-11-08
 
