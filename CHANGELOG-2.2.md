@@ -1,5 +1,9 @@
 # v2.2.17 - TBD
 
+## Fixed
+
+- [#4243](https://github.com/hyperf/hyperf/pull/4243) Fixed the bug that key sort of the result is inconsistent with `$callables` for `parallel`.
+
 ## Added
 
 - [#4260](https://github.com/hyperf/hyperf/pull/4260) Added force index for `hyperf/database`.

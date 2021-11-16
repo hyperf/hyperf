@@ -52,11 +52,13 @@ class Parallel
         $wg->add(count($this->callbacks));
         foreach ($this->callbacks as $key => $callback) {
             $this->concurrentChannel && $this->concurrentChannel->push(true);
+            $result[$key] = null;
             Coroutine::create(function () use ($callback, $key, $wg, &$result, &$throwables) {
                 try {
                     $result[$key] = call($callback);
                 } catch (\Throwable $throwable) {
                     $throwables[$key] = $throwable;
+                    unset($result[$key]);
                 } finally {
                     $this->concurrentChannel && $this->concurrentChannel->pop();
                     $wg->done();
