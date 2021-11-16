@@ -352,7 +352,6 @@ class DelayCommand extends HyperfCommand
         $message->setDelayMs(5000);
         $producer = ApplicationContext::getContainer()->get(Producer::class);
         $producer->produce($message);
-
     }
 }
 
