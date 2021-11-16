@@ -262,7 +262,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
     private function getInjections(array $definitions, string $callableName, array $arguments): array
     {
         $injections = [];
-        foreach ($definitions ?? [] as $pos => $definition) {
+        foreach ($definitions as $pos => $definition) {
             $value = $arguments[$pos] ?? $arguments[$definition->getMeta('name')] ?? null;
             if ($value === null) {
                 if ($definition->getMeta('defaultValueAvailable')) {

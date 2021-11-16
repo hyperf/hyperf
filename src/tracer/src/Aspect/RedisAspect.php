@@ -20,9 +20,7 @@ use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use OpenTracing\Tracer;
 
-/**
- * @Aspect
- */
+#[Aspect]
 class RedisAspect implements AroundInterface
 {
     use SpanStarter;

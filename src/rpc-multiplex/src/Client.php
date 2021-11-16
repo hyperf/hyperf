@@ -23,25 +23,16 @@ use Psr\Container\ContainerInterface;
 
 class Client extends AbstractServiceClient
 {
-    /**
-     * @var MethodDefinitionCollectorInterface
-     */
-    protected $methodDefinitionCollector;
+    protected MethodDefinitionCollectorInterface $methodDefinitionCollector;
+
+    protected string $serviceInterface;
 
     /**
-     * @var string
-     */
-    protected $serviceInterface;
-
-    /**
-     * @var DataFetcherInterface|DataFormatterInterface
+     * @var DataFetcherInterface & DataFormatterInterface
      */
     protected $dataFormatter;
 
-    /**
-     * @var NormalizerInterface
-     */
-    private $normalizer;
+    private NormalizerInterface $normalizer;
 
     /**
      * @param $options = [

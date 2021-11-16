@@ -21,10 +21,8 @@ class RollbackCommand extends BaseCommand
 
     /**
      * The console command name.
-     *
-     * @var string
      */
-    protected $name = 'migrate:rollback';
+    protected ?string $name = 'migrate:rollback';
 
     /**
      * The console command description.

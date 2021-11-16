@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Framework\Bootstrap;
 
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Framework\Event\OnWorkerExit;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;

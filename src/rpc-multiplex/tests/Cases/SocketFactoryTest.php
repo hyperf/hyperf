@@ -56,9 +56,9 @@ class SocketFactoryTest extends AbstractTestCase
         $client = $clients[0];
         $invoker = new ClassInvoker($client);
         $this->assertSame(9501, $invoker->port);
-        $this->assertSame($lenght, $invoker->config->get('package_max_length'));
-        $this->assertSame($connectTimeout, $invoker->config->get('connect_timeout'));
-        $this->assertSame($recvTimeout, $invoker->config->get('recv_timeout'));
+        $this->assertSame($lenght, $invoker->config['package_max_length']);
+        $this->assertSame($connectTimeout, $invoker->config['connect_timeout']);
+        $this->assertSame($recvTimeout, $invoker->config['recv_timeout']);
     }
 
     public function testSocketRefreshInMoreThanOneCoroutine()

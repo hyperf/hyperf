@@ -16,14 +16,8 @@ use Hyperf\Contract\ConfigInterface;
 
 class DriverFactory
 {
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
-
-    public function __construct(ConfigInterface $config)
+    public function __construct(protected ConfigInterface $config)
     {
-        $this->config = $config;
     }
 
     public function create(string $driver, array $properties = []): DriverInterface

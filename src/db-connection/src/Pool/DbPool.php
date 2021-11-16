@@ -21,13 +21,10 @@ use Psr\Container\ContainerInterface;
 
 class DbPool extends Pool
 {
-    protected $name;
+    protected array $config;
 
-    protected $config;
-
-    public function __construct(ContainerInterface $container, string $name)
+    public function __construct(ContainerInterface $container, protected string $name)
     {
-        $this->name = $name;
         $config = $container->get(ConfigInterface::class);
         $key = sprintf('databases.%s', $this->name);
         if (! $config->has($key)) {

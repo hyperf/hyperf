@@ -16,7 +16,7 @@ class Config
     /**
      * @var string
      */
-    protected $baseUri = 'http://127.0.0.1:8848';
+    protected $baseUri = 'http://127.0.0.1:8848/';
 
     /**
      * @var null|string
@@ -40,7 +40,7 @@ class Config
 
     /**
      * @param $config = [
-     *     'base_uri' => 'http://127.0.0.1:8848',
+     *     'base_uri' => 'http://127.0.0.1:8848/',
      *     'username' => null,
      *     'password' => null,
      *     'guzzle_config' => [],

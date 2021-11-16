@@ -16,21 +16,16 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\NodeTraverser;
+use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\PrettyPrinterAbstract;
 
 class Ast
 {
-    /**
-     * @var \PhpParser\Parser
-     */
-    private $astParser;
+    private Parser $astParser;
 
-    /**
-     * @var PrettyPrinterAbstract
-     */
-    private $printer;
+    private PrettyPrinterAbstract $printer;
 
     public function __construct()
     {
@@ -49,9 +44,8 @@ class Ast
         $code = $this->getCodeByClassName($className);
         $stmts = $this->astParser->parse($code);
         $traverser = new NodeTraverser();
-        $visitorMetadata = new VisitorMetadata();
-        $visitorMetadata->className = $className;
-        // User could modify or replace the node vistors by Hyperf\Di\Aop\AstVisitorRegistry.
+        $visitorMetadata = new VisitorMetadata($className);
+        // User could modify or replace the node visitors by Hyperf\Di\Aop\AstVisitorRegistry.
         $queue = clone AstVisitorRegistry::getQueue();
         foreach ($queue as $string) {
             $visitor = new $string($visitorMetadata);

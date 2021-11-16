@@ -18,9 +18,9 @@ use Hyperf\ConfigCenter\Mode;
 use Hyperf\ConfigCenter\PipeMessage;
 use Hyperf\ConfigEtcd\EtcdDriver;
 use Hyperf\ConfigNacos;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 

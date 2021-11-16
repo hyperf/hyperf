@@ -23,15 +23,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 {
-    /**
-     * @var HttpMessageBuilderInterface
-     */
-    protected $responseBuilder;
+    protected HttpMessageBuilderInterface $responseBuilder;
 
-    /**
-     * @var DataFormatterInterface
-     */
-    protected $dataFormatter;
+    protected DataFormatterInterface $dataFormatter;
 
     public function __construct(ContainerInterface $container, Protocol $protocol, HttpMessageBuilderInterface $builder, string $serverName)
     {

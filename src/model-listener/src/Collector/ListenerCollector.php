@@ -19,10 +19,8 @@ class ListenerCollector extends MetadataCollector
      * User exposed listeners.
      *
      * These are extra user-defined events listeners may subscribe to.
-     *
-     * @var array
      */
-    protected static $container = [];
+    protected static array $container = [];
 
     /**
      * Register a single listener with the model.

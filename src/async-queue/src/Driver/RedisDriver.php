@@ -101,15 +101,15 @@ class RedisDriver extends Driver
         return [$data, $message];
     }
 
-    public function ack($data): bool
+    public function ack(mixed $data): bool
     {
         return $this->remove($data);
     }
 
-    public function fail($data): bool
+    public function fail(mixed $data): bool
     {
         if ($this->remove($data)) {
-            return (bool) $this->redis->lPush($this->channel->getFailed(), $data);
+            return (bool) $this->redis->lPush($this->channel->getFailed(), (string) $data);
         }
         return false;
     }
@@ -176,11 +176,10 @@ class RedisDriver extends Driver
 
     /**
      * Remove data from reserved queue.
-     * @param string $data
      */
-    protected function remove($data): bool
+    protected function remove(mixed $data): bool
     {
-        return $this->redis->zrem($this->channel->getReserved(), $data) > 0;
+        return $this->redis->zrem($this->channel->getReserved(), (string) $data) > 0;
     }
 
     /**

@@ -18,11 +18,11 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/di": "~2.2.0",
-        "hyperf/utils": "~2.2.0",
-        "hyperf/http-server": "~2.2.0",
-        "hyperf/http-message": "~2.2.0",
-        "hyperf/grpc": "~2.2.0"
+        "hyperf/di": "~3.0.0",
+        "hyperf/utils": "~3.0.0",
+        "hyperf/http-server": "~3.0.0",
+        "hyperf/http-message": "~3.0.0",
+        "hyperf/grpc": "~3.0.0"
     },
     "autoload": {
         "psr-4": {
@@ -39,7 +39,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\GrpcServer\\ConfigProvider"

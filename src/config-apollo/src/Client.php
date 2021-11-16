@@ -20,41 +20,14 @@ use RuntimeException;
 
 class Client implements ClientInterface
 {
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
-
-    /**
-     * @var Option
-     */
-    protected $option;
-
-    /**
-     * @var array
-     */
-    protected $cache = [];
-
-    /**
-     * @var Closure
-     */
-    protected $httpClientFactory;
-
-    /**
-     * @var \Hyperf\Contract\StdoutLoggerInterface
-     */
-    protected $logger;
+    protected array $cache = [];
 
     public function __construct(
-        Option $option,
-        Closure $httpClientFactory,
-        ConfigInterface $config,
-        StdoutLoggerInterface $logger
+        protected Option $option,
+        protected Closure $httpClientFactory,
+        protected ConfigInterface $config,
+        protected StdoutLoggerInterface $logger
     ) {
-        $this->option = $option;
-        $this->httpClientFactory = $httpClientFactory;
-        $this->config = $config;
-        $this->logger = $logger;
     }
 
     public function pull(): array
@@ -95,7 +68,7 @@ class Client implements ClientInterface
                     'query' => $query,
                     'headers' => $headers,
                 ]);
-                if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
+                if ($response->getStatusCode() === 200 && str_contains($response->getHeaderLine('Content-Type'), 'application/json')) {
                     $body = json_decode((string) $response->getBody(), true);
                     $result = $body['configurations'] ?? [];
                     $this->cache[$cacheKey] = [
@@ -133,7 +106,7 @@ class Client implements ClientInterface
                     'notifications' => json_encode(array_values($notifications)),
                 ],
             ]);
-        } catch (\Exception $exceptiosn) {
+        } catch (\Exception) {
             // Do nothing
             return null;
         }

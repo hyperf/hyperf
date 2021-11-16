@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\LoadBalancer;
 
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Swoole\Timer;
 
@@ -21,7 +21,7 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
     /**
      * @var Node[]
      */
-    protected $nodes;
+    protected $nodes = [];
 
     /**
      * @param \Hyperf\LoadBalancer\Node[] $nodes

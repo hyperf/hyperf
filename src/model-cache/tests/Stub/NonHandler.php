@@ -41,6 +41,7 @@ class NonHandler implements HandlerInterface
 
     public function getMultiple($keys, $default = null)
     {
+        return [];
     }
 
     public function setMultiple($values, $ttl = null)

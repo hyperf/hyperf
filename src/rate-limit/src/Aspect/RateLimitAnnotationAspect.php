@@ -22,9 +22,7 @@ use Hyperf\RateLimit\Exception\RateLimitException;
 use Hyperf\RateLimit\Handler\RateLimitHandler;
 use Swoole\Coroutine;
 
-/**
- * @Aspect
- */
+#[Aspect]
 class RateLimitAnnotationAspect implements AroundInterface
 {
     public $classes = [];

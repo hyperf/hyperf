@@ -14,25 +14,12 @@ namespace Hyperf\AsyncQueue\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS", "METHOD"})
- */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class AsyncQueueMessage extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $pool = 'default';
+    public string $pool = 'default';
 
-    /**
-     * @var int
-     */
-    public $delay = 0;
+    public int $delay = 0;
 
-    /**
-     * @var int
-     */
-    public $maxAttempts = 0;
+    public int $maxAttempts = 0;
 }

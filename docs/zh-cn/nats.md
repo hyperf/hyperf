@@ -29,7 +29,7 @@ use Hyperf\Nats\AbstractConsumer;
 use Hyperf\Nats\Annotation\Consumer;
 use Hyperf\Nats\Message;
 
-#[Consumer(subject: "hyperf.demo", queue: 'hyperf.demo', name: "DemoConsumer", nums: 1)]
+#[Consumer(subject: 'hyperf.demo', queue: 'hyperf.demo', name: 'DemoConsumer', nums: 1)]
 class DemoConsumer extends AbstractConsumer
 {
     public function consume(Message $payload)

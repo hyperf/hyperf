@@ -130,7 +130,7 @@ class Manager
             $data = $handler->getMultiple($keys);
             $items = [];
             $fetchIds = [];
-            foreach ($data ?? [] as $item) {
+            foreach ($data as $item) {
                 if (isset($item[$primaryKey])) {
                     $items[] = $item;
                     $fetchIds[] = $item[$primaryKey];

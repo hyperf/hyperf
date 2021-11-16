@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace Jaeger;
 
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;

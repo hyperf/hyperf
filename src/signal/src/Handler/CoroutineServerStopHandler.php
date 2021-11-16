@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\Signal\Handler;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Process\ProcessManager;
 use Hyperf\Server\ServerManager;
 use Hyperf\Signal\SignalHandlerInterface;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 
 class CoroutineServerStopHandler implements SignalHandlerInterface

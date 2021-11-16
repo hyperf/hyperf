@@ -21,43 +21,24 @@ use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
 
 class Connection extends BaseConnection implements ConnectionInterface, DbConnectionInterface
 {
     use DbConnection;
 
-    /**
-     * @var DbPool
-     */
-    protected $pool;
+    protected ?DbConnectionInterface $connection = null;
 
-    /**
-     * @var DbConnectionInterface
-     */
-    protected $connection;
+    protected ConnectionFactory $factory;
 
-    /**
-     * @var ConnectionFactory
-     */
-    protected $factory;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var array
-     */
-    protected $config;
+    protected bool $transaction = false;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    protected $transaction = false;
-
-    public function __construct(ContainerInterface $container, DbPool $pool, array $config)
+    public function __construct(ContainerInterface $container, DbPool $pool, protected array $config)
     {
         parent::__construct($container, $pool);
         $this->factory = $container->get(ConnectionFactory::class);
-        $this->config = $config;
         $this->logger = $container->get(StdoutLoggerInterface::class);
 
         $this->reconnect();

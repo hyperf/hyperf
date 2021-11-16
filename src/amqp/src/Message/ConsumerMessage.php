@@ -21,30 +21,15 @@ use Psr\Container\ContainerInterface;
 
 abstract class ConsumerMessage extends Message implements ConsumerMessageInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    public $container;
+    public ?ContainerInterface $container = null;
 
-    /**
-     * @var string
-     */
-    protected $queue;
+    protected ?string $queue = null;
 
-    /**
-     * @var bool
-     */
-    protected $requeue = true;
+    protected bool $requeue = true;
 
-    /**
-     * @var array
-     */
-    protected $routingKey = [];
+    protected array|string $routingKey = [];
 
-    /**
-     * @var null|array
-     */
-    protected $qos = [
+    protected ?array $qos = [
         'prefetch_size' => 0,
         'prefetch_count' => 1,
         'global' => false,

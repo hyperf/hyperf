@@ -15,11 +15,8 @@ use Hyperf\Di\Annotation\Inject;
 
 class Origin6Class extends Parent4Class
 {
-    /**
-     * @Inject
-     * @var Bar
-     */
-    private $bar;
+    #[Inject]
+    private Bar $bar;
 
     public function getBar()
     {

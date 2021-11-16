@@ -27,7 +27,7 @@ class RetryFalsy extends Retry
      *
      * Ignoring an Throwable has priority over retrying an exception.
      *
-     * @var array<string|\Throwable>
+     * @var array<string>
      */
     public $retryThrowables = [];
 

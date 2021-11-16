@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Cache\Cases;
 
 use Hyperf\Cache\CacheManager;
+use Hyperf\Cache\Driver\KeyCollectorInterface;
 use Hyperf\Cache\Driver\RedisDriver;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
@@ -125,6 +126,21 @@ class RedisDriverTest extends TestCase
 
         $this->assertNull($driver->get('xxx'));
         $this->assertNotNull($driver->get('xxx3'));
+    }
+
+    public function testKeys()
+    {
+        $container = $this->getContainer();
+        $driver = $container->get(CacheManager::class)->getDriver();
+
+        $this->assertInstanceOf(KeyCollectorInterface::class, $driver);
+        $collector = 'test:keys:' . uniqid();
+        $driver->addKey($collector, '1');
+        $driver->addKey($collector, '2');
+        $this->assertSame(['1', '2'], $driver->keys($collector));
+
+        $collector = 'test:keys:' . uniqid();
+        $this->assertSame([], $driver->keys($collector));
     }
 
     protected function getContainer()

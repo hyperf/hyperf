@@ -17,9 +17,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Metric\Annotation\Histogram;
 use Hyperf\Metric\Timer;
 
-/**
- * @Aspect
- */
+#[Aspect]
 class HistogramAnnotationAspect implements AroundInterface
 {
     public $classes = [];

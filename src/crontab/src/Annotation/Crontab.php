@@ -17,62 +17,28 @@ use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\Str;
 use ReflectionMethod;
 
-/**
- * @Annotation
- * @Target({"CLASS", "METHOD"})
- */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Crontab extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $name;
+    public ?string $name = null;
 
-    /**
-     * @var string
-     */
-    public $type = 'callback';
+    public string $type = 'callback';
 
-    /**
-     * @var string
-     */
-    public $rule;
+    public ?string $rule = null;
 
-    /**
-     * @var bool
-     */
-    public $singleton;
+    public ?bool $singleton = null;
 
-    /**
-     * @var string
-     */
-    public $mutexPool;
+    public ?string $mutexPool = null;
 
-    /**
-     * @var int
-     */
-    public $mutexExpires;
+    public ?int $mutexExpires = null;
 
-    /**
-     * @var bool
-     */
-    public $onOneServer;
+    public ?bool $onOneServer = null;
 
-    /**
-     * @var array|string
-     */
-    public $callback;
+    public array|string|null $callback = null;
 
-    /**
-     * @var null|string
-     */
-    public $memo = '';
+    public ?string $memo = null;
 
-    /**
-     * @var array|bool|string
-     */
-    public $enable = true;
+    public array|bool|string $enable = true;
 
     public function __construct(...$value)
     {
@@ -139,7 +105,7 @@ class Crontab extends AbstractAnnotation
             } elseif ($hasInvokeMagicMethod) {
                 $this->callback = [$className, '__invoke'];
             } else {
-                throw new \InvalidArgumentException(sprintf('Missing argument $callback of @Crontab annotation.'));
+                throw new \InvalidArgumentException('Missing argument $callback of @Crontab annotation.');
             }
         } elseif (is_string($this->callback)) {
             $this->callback = [$className, $this->callback];
@@ -148,12 +114,12 @@ class Crontab extends AbstractAnnotation
 
     protected function parseEnable(string $className): void
     {
-        if (is_string($this->enable) && $this->enable === 'true') {
+        if ($this->enable === 'true') {
             $this->enable = true;
             return;
         }
 
-        if (is_string($this->enable) && $this->enable === 'false') {
+        if ($this->enable === 'false') {
             $this->enable = false;
             return;
         }

@@ -18,9 +18,9 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class RemoveRedisGarbage extends Command
 {
-    protected $redisPrefix = 'ws';
+    protected string $redisPrefix = 'ws';
 
-    protected $connection = 'default';
+    protected string $connection = 'default';
 
     /**
      * @var \Redis|Redis

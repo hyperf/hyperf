@@ -20,7 +20,7 @@ class Environment
         return (bool) Context::get($this->getKey(), false);
     }
 
-    public function setAsyncQueue(bool $asyncQueue): self
+    public function setAsyncQueue(bool $asyncQueue): static
     {
         Context::set($this->getKey(), $asyncQueue);
         return $this;
