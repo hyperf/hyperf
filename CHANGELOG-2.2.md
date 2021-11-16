@@ -2,7 +2,7 @@
 
 ## Fixed
 
-- [#4243](https://github.com/hyperf/hyperf/pull/4243) Fixed 
+- [#4243](https://github.com/hyperf/hyperf/pull/4243) Fixed the bug that key sort of the result is inconsistent with `$callables` for `parallel`.
 
 ## Added
 

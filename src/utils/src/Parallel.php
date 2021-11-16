@@ -58,6 +58,7 @@ class Parallel
                     $result[$key] = call($callback);
                 } catch (\Throwable $throwable) {
                     $throwables[$key] = $throwable;
+                    unset($result[$key]);
                 } finally {
                     $this->concurrentChannel && $this->concurrentChannel->pop();
                     $wg->done();
