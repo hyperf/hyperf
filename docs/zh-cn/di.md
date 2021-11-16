@@ -79,10 +79,7 @@ use App\Service\UserService;
 
 class IndexController
 {
-    /**
-     * @var null|UserService
-     */
-    private $userService;
+    private ?UserService $userService;
     
     // 通过设置参数为 nullable，表明该参数为一个可选参数
     public function __construct(?UserService $userService)
