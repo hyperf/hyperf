@@ -104,6 +104,13 @@ class Builder
     public $from;
 
     /**
+     * The force indexes.
+     *
+     * @var string[]
+     */
+    public $forceIndexes = [];
+
+    /**
      * The table joins for the query.
      *
      * @var array
@@ -380,6 +387,17 @@ class Builder
     {
         $this->from = $table;
 
+        return $this;
+    }
+
+    /**
+     * Set the force indexes which the query should be used.
+     *
+     * @return $this
+     */
+    public function forceIndexes(array $forceIndexes)
+    {
+        $this->forceIndexes = $forceIndexes;
         return $this;
     }
 
