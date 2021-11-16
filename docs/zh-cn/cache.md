@@ -56,7 +56,6 @@ use Hyperf\Cache\Annotation\Cacheable;
 
 class UserService
 {
-
     #[Cacheable(prefix: "user", ttl: 9000, listener: "user-update")]
     public function user($id)
     {
@@ -88,12 +87,8 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 class SystemService
 {
-
     #[Inject]
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
+    protected EventDispatcherInterface $dispatcher;
 
     public function flushCache($userId)
     {
@@ -141,12 +136,8 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 class SystemService
 {
-
     #[Inject]
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
+    protected EventDispatcherInterface $dispatcher;
 
     public function flushCache($userId)
     {
@@ -175,7 +166,6 @@ use Hyperf\Cache\Annotation\Cacheable;
 
 class UserService
 {
-
     #[Cacheable(prefix: "user", ttl: 7200, listener: "USER_CACHE")]
     public function user(int $id): array
     {
@@ -203,7 +193,6 @@ use Hyperf\Cache\Annotation\Cacheable;
 
 class UserBookService
 {
-
     #[Cacheable(prefix: "userBook", ttl: 6666, value: "_#{user.id}")]
     public function userBook(User $user): array
     {
@@ -231,7 +220,6 @@ use Hyperf\Cache\Annotation\CachePut;
 
 class UserService
 {
-
     #[CachePut(prefix: "user", ttl: 3601)]
     public function updateUser(int $id)
     {
@@ -262,7 +250,6 @@ use Hyperf\Cache\Annotation\CacheEvict;
 
 class UserBookService
 {
-
     #[CacheEvict(prefix: "userBook", value: "_#{id}")]
     public function updateUserBook(int $id)
     {
@@ -285,8 +272,8 @@ class UserBookService
 <?php
 use Hyperf\Cache\Annotation\Cacheable;
 
-class Demo {
-    
+class Demo
+{    
     public function get($userId, $id)
     {
         return $this->getArray($userId)[$id] ?? 0;

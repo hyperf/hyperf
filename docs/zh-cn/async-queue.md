@@ -253,12 +253,8 @@ use Hyperf\HttpServer\Annotation\AutoController;
 #[AutoController]
 class QueueController extends AbstractController
 {
-
     #[Inject]
-    /**
-     * @var QueueService
-     */
-    protected $service;
+    protected QueueService $service;
 
     /**
      * 传统模式投递消息
@@ -326,11 +322,10 @@ use Hyperf\HttpServer\Annotation\AutoController;
 #[AutoController]
 class QueueController extends AbstractController
 {
-
-    #[Inject]
     /**
      * @var QueueService
      */
+    #[Inject]
     protected $service;
 
     /**
