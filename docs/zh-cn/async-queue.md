@@ -109,9 +109,7 @@ namespace App\Process;
 use Hyperf\AsyncQueue\Process\ConsumerProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="async-queue")
- */
+#[Process(name: "async-queue")]
 class AsyncQueueConsumer extends ConsumerProcess
 {
 }
@@ -252,13 +250,12 @@ use App\Service\QueueService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class QueueController extends AbstractController
 {
+
+    #[Inject]
     /**
-     * @Inject
      * @var QueueService
      */
     protected $service;
@@ -299,9 +296,8 @@ use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
 
 class QueueService
 {
-    /**
-     * @AsyncQueueMessage
-     */
+
+    #[AsyncQueueMessage]
     public function example($params)
     {
         // 需要异步执行的代码逻辑
@@ -327,13 +323,12 @@ use App\Service\QueueService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class QueueController extends AbstractController
 {
+
+    #[Inject]
     /**
-     * @Inject
      * @var QueueService
      */
     protected $service;
@@ -468,9 +463,7 @@ namespace App\Process;
 use Hyperf\AsyncQueue\Process\ConsumerProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process()
- */
+#[Process]
 class OtherConsumerProcess extends ConsumerProcess
 {
     /**

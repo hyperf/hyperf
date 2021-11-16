@@ -84,9 +84,7 @@ use Hyperf\Amqp\Annotation\Producer;
 use Hyperf\Amqp\Message\ProducerMessage;
 use App\Models\User;
 
-/**
- * @Producer(exchange="hyperf", routingKey="hyperf")
- */
+#[Producer(exchange: "hyperf", routingKey: "hyperf")]
 class DemoProducer extends ProducerMessage
 {
     public function __construct($id)
@@ -144,9 +142,7 @@ use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
-/**
- * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1)
- */
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1)]
 class DemoConsumer extends ConsumerMessage
 {
     public function consumeMessage($data, AMQPMessage $message): string
@@ -176,9 +172,7 @@ use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
-/**
- * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1, enable=false)
- */
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1, enable: false)]
 class DemoConsumer extends ConsumerMessage
 {
     public function consumeMessage($data, AMQPMessage $message): string
@@ -242,9 +236,7 @@ use Hyperf\Amqp\Message\ProducerDelayedMessageTrait;
 use Hyperf\Amqp\Message\ProducerMessage;
 use Hyperf\Amqp\Message\Type;
 
-/**
- * @Producer()
- */
+#[Producer]
 class DelayDirectProducer extends ProducerMessage
 {
     use ProducerDelayedMessageTrait;
@@ -286,9 +278,7 @@ use Hyperf\Amqp\Message\Type;
 use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
-/**
- * @Consumer(nums=1)
- */
+#[Consumer(nums: 1)]
 class DelayDirectConsumer extends ConsumerMessage
 {
     use ProducerDelayedMessageTrait;
@@ -333,9 +323,7 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Command
- */
+#[Command]
 class DelayCommand extends HyperfCommand
 {
     /**
@@ -398,9 +386,7 @@ use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
-/**
- * @Consumer(exchange="hyperf", routingKey="hyperf", queue="rpc.reply", name="ReplyConsumer", nums=1, enable=true)
- */
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "rpc.reply", name: "ReplyConsumer", nums: 1, enable: true)]
 class ReplyConsumer extends ConsumerMessage
 {
     public function consumeMessage($data, AMQPMessage $message): string

@@ -27,15 +27,14 @@ use Hyperf\Di\Annotation\Inject;
 
 class UserService
 {
+
+    #[Inject]
     /**
-     * @Inject
      * @var UserServiceClient
      */
     private $client;
 
-    /**
-     * @CircuitBreaker(timeout=0.05, failCounter=1, successCounter=1, fallback="App\Service\UserService::searchFallback")
-     */
+    #[CircuitBreaker(timeout: 0.05, failCounter: 1, successCounter: 1, fallback: "App\Service\UserService::searchFallback")]
     public function search($offset, $limit)
     {
         return $this->client->users($offset, $limit);

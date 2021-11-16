@@ -73,13 +73,12 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Annotation\Crontab;
 use Hyperf\Di\Annotation\Inject;
 
-/**
- * @Crontab(name="Foo", rule="* * * * *", callback="execute", memo="这是一个示例的定时任务")
- */
+#[Crontab(name: "Foo", rule: "* * * * *", callback: "execute", memo: "这是一个示例的定时任务")]
 class FooTask
 {
+
+    #[Inject]
     /**
-     * @Inject()
      * @var \Hyperf\Contract\StdoutLoggerInterface
      */
     private $logger;
@@ -88,10 +87,8 @@ class FooTask
     {
         $this->logger->info(date('Y-m-d H:i:s', time()));
     }
-    
-    /**
-     * @Crontab(rule="* * * * * *", memo="foo")
-     */
+
+    #[Crontab(rule: "* * * * *", memo: "foo")]
     public function foo()
     {
         var_dump('foo');
@@ -149,9 +146,7 @@ namespace App\Crontab;
 use Carbon\Carbon;
 use Hyperf\Crontab\Annotation\Crontab;
 
-/**
- * @Crontab(name="Echo", rule="* * * * * *", callback="execute", enable="isEnable", memo="这是一个示例的定时任务")
- */
+#[Crontab(name: "Echo", rule: "* * * * *", callback: "execute", enable: "isEnable", memo: "这是一个示例的定时任务")]
 class EchoCrontab
 {
     public function execute()
@@ -190,9 +185,7 @@ namespace App\Crontab;
 use Carbon\Carbon;
 use Hyperf\Crontab\Annotation\Crontab;
 
-/**
- * @Crontab(name="Echo", rule="* * * * * *", callback="execute", enable={EnableChecker::class, "isEnable"}, memo="这是一个示例的定时任务")
- */
+#[Crontab(name: "Echo", rule: "* * * * *", callback: "execute", enable: [EnableChecker::class, "isEnable"] ,memo: "这是一个示例的定时任务")]
 class EchoCrontab
 {
     public function execute()

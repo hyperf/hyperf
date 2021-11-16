@@ -49,9 +49,7 @@ namespace App\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="foo_process")
- */
+#[Process(name: "foo_process")]
 class FooProcess extends AbstractProcess
 {
     public function handle(): void
@@ -76,9 +74,7 @@ namespace App\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="foo_process")
- */
+#[Process(name: "foo_process")]
 class FooProcess extends AbstractProcess
 {
     public function handle(): void
@@ -107,9 +103,7 @@ namespace App\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="user-process"，redirectStdinStdout=false, pipeType=2, enableCoroutine=true)
- */
+#[Process(name: "user-process", redirectStdinStdout: false, pipeType: 2, enableCoroutine: true)]
 class FooProcess extends AbstractProcess
 {
     /**
@@ -158,9 +152,7 @@ use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 use Hyperf\Contract\StdoutLoggerInterface;
 
-/**
- * @Process(name="demo_process")
- */
+#[Process(name: "demo_process")]
 class DemoProcess extends AbstractProcess
 {
     public function handle(): void

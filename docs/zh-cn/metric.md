@@ -232,12 +232,14 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Order;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 
 class IndexController extends AbstractController
 {
+
+    #[Inject]
     /**
-     * @Inject
      * @var MetricFactoryInterface
      */
     private $metricFactory;

@@ -170,8 +170,9 @@ use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 
 class IndexController
 {
+
+    #[Inject]
     /**
-     * @Inject()
      * @var ValidatorFactoryInterface
      */
     protected $validationFactory;
@@ -264,8 +265,9 @@ use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 
 class IndexController
 {
+
+    #[Inject]
     /**
-     * @Inject()
      * @var ValidatorFactoryInterface
      */
     protected $validationFactory;
@@ -966,9 +968,7 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Event\ValidatorFactoryResolved;
 
-/**
- * @Listener
- */
+#[Listener]
 class ValidatorFactoryResolvedListener implements ListenerInterface
 {
 

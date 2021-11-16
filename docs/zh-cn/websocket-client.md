@@ -24,8 +24,9 @@ use Hyperf\WebSocketClient\Frame;
 
 class IndexController
 {
+
+    #[Inject]
     /**
-     * @Inject
      * @var ClientFactory
      */
     protected $clientFactory;

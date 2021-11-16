@@ -56,8 +56,9 @@ use Hyperf\Di\Annotation\Inject;
 
 class IndexController
 {
+
+    #[Inject]
     /**
-     * @Inject()
      * @var \Hyperf\Contract\SessionInterface
      */
     private $session;

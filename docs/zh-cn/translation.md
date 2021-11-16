@@ -64,8 +64,8 @@ use Hyperf\Contract\TranslatorInterface;
 
 class FooController
 {
+    #[Inject]
     /**
-     * @Inject
      * @var TranslatorInterface
      */
     private $translator;
@@ -92,8 +92,9 @@ use Hyperf\Contract\TranslatorInterface;
 
 class FooController
 {
+
+    #[Inject]
     /**
-     * @Inject
      * @var TranslatorInterface
      */
     private $translator;

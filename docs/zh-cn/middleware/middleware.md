@@ -79,10 +79,10 @@ use App\Middleware\FooMiddleware;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
 
-/**
- * @AutoController()
- * @Middleware(FooMiddleware::class)
- */
+#[
+    AutoController,
+    Middleware(FooMiddleware::class)
+]
 class IndexController
 {
     public function index()
@@ -104,13 +104,12 @@ use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 
-/**
- * @AutoController()
- * @Middlewares({
- *     @Middleware(FooMiddleware::class),
- *     @Middleware(BarMiddleware::class)
- * })
- */
+#[
+    AutoController,
+    Middlewares([
+        Middleware(FooMiddleware::class, BarMiddleware::class)
+    ])
+]
 class IndexController
 {
     public function index()
@@ -136,20 +135,15 @@ use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 
-/**
- * @AutoController()
- * @Middlewares({
- *     @Middleware(FooMiddleware::class)
- * })
- */
+#[
+    AutoController,
+    Middlewares([
+        Middleware(FooMiddleware::class, BarMiddleware::class)
+    ])
+]
 class IndexController
 {
-    
-    /**
-     * @Middlewares({
-     *     @Middleware(BarMiddleware::class)
-     * })
-     */
+
     public function index()
     {
         return 'Hello Hyperf.';

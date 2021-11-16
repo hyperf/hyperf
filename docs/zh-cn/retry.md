@@ -13,13 +13,13 @@ composer require hyperf/retry
 
 ## Hello World
 
-在需要重试的方法上加入注解 `@Retry`。
+在需要重试的方法上加入注解 `#[Retry]`。
 
 ```php
 /**
  * 异常时重试该方法
- * @Retry
  */
+#[Retry]
 public function foo()
 {
     // 发起一次远程调用
@@ -47,10 +47,7 @@ namespace App\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
+#[Attribute(Attribute::TARGET_METHOD)]
 class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 {
 }
@@ -67,10 +64,7 @@ namespace App\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
+#[Attribute(Attribute::TARGET_METHOD)]
 class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 {
     public $policies = [
@@ -91,10 +85,7 @@ namespace App\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
+#[Attribute(Attribute::TARGET_METHOD)]
 class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 {
     public $policies = [
@@ -116,10 +107,7 @@ namespace App\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
+#[Attribute(Attribute::TARGET_METHOD)]
 class MyRetry extends \Hyperf\Retry\Annotation\Retry
 {
     public $policies = [

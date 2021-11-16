@@ -345,9 +345,10 @@ use Hyperf\Di\Annotation\Inject;
 
 class DemoLogic
 {
+
+    #[Inject]
     /**
      * @var DemoApi $demoApi
-     * @Inject()
      */
     private $demoApi;
 

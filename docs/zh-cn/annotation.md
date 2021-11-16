@@ -100,19 +100,13 @@ namespace App\Annotation;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"METHOD","PROPERTY"})
- */
+#[Attribute(Attribute::TARGET_PROPERTY)]
 class Bar extends AbstractAnnotation
 {
     // some code
 }
 
-/**
- * @Annotation
- * @Target("CLASS")
- */
+#[Attribute(Attribute::TARGET_CLASS)]
 class Foo extends AbstractAnnotation
 {
     // some code

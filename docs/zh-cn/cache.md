@@ -56,9 +56,8 @@ use Hyperf\Cache\Annotation\Cacheable;
 
 class UserService
 {
-    /**
-     * @Cacheable(prefix="user", ttl=9000, listener="user-update")
-     */
+
+    #[Cacheable(prefix: "user", ttl: 9000, listener: "user-update")]
     public function user($id)
     {
         $user = User::query()->where('id',$id)->first();
@@ -89,8 +88,9 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 class SystemService
 {
+
+    #[Inject]
     /**
-     * @Inject
      * @var EventDispatcherInterface
      */
     protected $dispatcher;
@@ -117,9 +117,8 @@ use Hyperf\Cache\Annotation\Cacheable;
 
 class DemoService
 {
-    /**
-     * @Cacheable(prefix="cache", value="_#{id}", listener="user-update")
-     */
+
+    #[Cacheable(prefix: "cache", value: "_#{id}", listener: "user-update")]
     public function getCache(int $id)
     {
         return $id . '_' . uniqid();
@@ -142,8 +141,9 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 class SystemService
 {
+
+    #[Inject]
     /**
-     * @Inject
      * @var EventDispatcherInterface
      */
     protected $dispatcher;
@@ -164,38 +164,54 @@ class SystemService
 例如以下配置，缓存前缀为 `user`, 超时时间为 `7200`, 删除事件名为 `USER_CACHE`。生成对应缓存 KEY 为 `c:user:1`。
 
 ```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
 use App\Models\User;
 use Hyperf\Cache\Annotation\Cacheable;
 
-/**
- * @Cacheable(prefix="user", ttl=7200, listener="USER_CACHE")
- */
-public function user(int $id): array
+class UserService
 {
-    $user = User::query()->find($id);
 
-    return [
-        'user' => $user->toArray(),
-        'uuid' => $this->unique(),
-    ];
+    #[Cacheable(prefix: "user", ttl: 7200, listener: "USER_CACHE")]
+    public function user(int $id): array
+    {
+        $user = User::query()->find($id);
+
+        return [
+            'user' => $user->toArray(),
+            'uuid' => $this->unique(),
+        ];
+    }
 }
 ```
 
 当设置 `value` 后，框架会根据设置的规则，进行缓存 `KEY` 键命名。如下实例，当 `$user->id = 1` 时，缓存 `KEY` 为 `c:userBook:_1`
 
 ```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
 use App\Models\User;
 use Hyperf\Cache\Annotation\Cacheable;
 
-/**
- * @Cacheable(prefix="userBook", ttl=6666, value="_#{user.id}")
- */
-public function userBook(User $user): array
+class UserBookService
 {
-    return [
-        'book' => $user->book->toArray(),
-        'uuid' => $this->unique(),
-    ];
+
+    #[Cacheable(prefix: "userBook", ttl: 6666, value: "_#{user.id}")]
+    public function userBook(User $user): array
+    {
+        return [
+            'book' => $user->book->toArray(),
+            'uuid' => $this->unique(),
+        ];
+    }
 }
 ```
 
@@ -204,22 +220,30 @@ public function userBook(User $user): array
 `CachePut` 不同于 `Cacheable`，它每次调用都会执行函数体，然后再对缓存进行重写。所以当我们想更新缓存时，可以调用相关方法。
 
 ```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
 use App\Models\User;
 use Hyperf\Cache\Annotation\CachePut;
 
-/**
- * @CachePut(prefix="user", ttl=3601)
- */
-public function updateUser(int $id)
+class UserService
 {
-    $user = User::query()->find($id);
-    $user->name = 'HyperfDoc';
-    $user->save();
 
-    return [
-        'user' => $user->toArray(),
-        'uuid' => $this->unique(),
-    ];
+    #[CachePut(prefix: "user", ttl: 3601)]
+    public function updateUser(int $id)
+    {
+        $user = User::query()->find($id);
+        $user->name = 'HyperfDoc';
+        $user->save();
+
+        return [
+            'user' => $user->toArray(),
+            'uuid' => $this->unique(),
+        ];
+    }
 }
 ```
 
@@ -228,14 +252,22 @@ public function updateUser(int $id)
 CacheEvict 更容易理解了，当执行方法体后，会主动清理缓存。
 
 ```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
 use Hyperf\Cache\Annotation\CacheEvict;
 
-/**
- * @CacheEvict(prefix="userBook", value="_#{id}")
- */
-public function updateUserBook(int $id)
+class UserBookService
 {
-    return true;
+
+    #[CacheEvict(prefix: "userBook", value: "_#{id}")]
+    public function updateUserBook(int $id)
+    {
+        return true;
+    }
 }
 ```
 
@@ -260,9 +292,7 @@ class Demo {
         return $this->getArray($userId)[$id] ?? 0;
     }
 
-    /**
-     * @Cacheable(prefix="test", group="co")
-     */
+    #[Cacheable(prefix: "test", group: "co")]
     public function getArray(int $userId): array
     {
         return $this->redis->hGetAll($userId);

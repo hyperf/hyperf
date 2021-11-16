@@ -1177,13 +1177,11 @@
   - 配置中心、Crontab、服务监控、消息队列消费者现在可以通过协程模式来运行，且在使用协程服务模式时，也必须以协程模式来运行；
   - `Hyperf\AsyncQueue\Environment` 的作用域改为当前协程内，而不是整个进程；
   - 协程模式下不再支持 Task 机制；
-- [#1877](https://github.com/hyperf/hyperf/pull/1877) 在 PHP 8 下使用 `@Inject` 注解时支持通过成员属性强类型声明来替代 `@var` 声明，如下所示：
+- [#1877](https://github.com/hyperf/hyperf/pull/1877) 在 PHP 8 下使用 `#[Inject]` 注解时支持通过成员属性强类型声明来替代 `@var` 声明，如下所示：
 
 ```
 class Example {
-    /**
-    * @Inject
-    */
+    #[Inject]
     private ExampleService $exampleService;
 }
 ```

@@ -113,10 +113,11 @@ use Hyperf\Di\Annotation\Inject;
 
 class IndexController
 {
+
+    #[Inject]
     /**
-     * 通过 `@Inject` 注解注入由 `@var` 注解声明的属性类型对象
+     * 通过 `#[Inject]` 注解注入由 `@var` 注解声明的属性类型对象
      * 
-     * @Inject 
      * @var UserService
      */
     private $userService;
@@ -148,11 +149,12 @@ use Hyperf\Di\Annotation\Inject;
 
 class IndexController
 {
+
+    #[Inject(required: false)]
     /**
-     * 通过 `@Inject` 注解注入由 `@var` 注解声明的属性类型对象
+     * 通过 `#[Inject]` 注解注入由 `@var` 注解声明的属性类型对象
      * 当 UserService 不存在于 DI 容器内或不可创建时，则注入 null
      * 
-     * @Inject(required=false) 
      * @var UserService
      */
     private $userService;
@@ -222,8 +224,9 @@ use Hyperf\Di\Annotation\Inject;
 
 class IndexController
 {
+
+    #[Inject]
     /**
-     * @Inject 
      * @var UserServiceInterface
      */
     private $userService;
@@ -347,15 +350,16 @@ class Foo{
 }
 ````
 
-您还可以通过注解 `@Inject(lazy=true)` 注入懒加载代理。通过注解实现懒加载不用创建配置文件。
+您还可以通过注解 `#[Inject(lazy: true)]` 注入懒加载代理。通过注解实现懒加载不用创建配置文件。
 
 ```php
 use Hyperf\Di\Annotation\Inject;
 use App\Service\UserServiceInterface;
 
 class Foo{
+
+    #[Inject(lazy: true)]
     /**
-     * @Inject(lazy=true)
      * @var UserServiceInterface
      */
     public $service;
@@ -395,7 +399,7 @@ $userService = make(UserService::class, ['enableCache' => true]);
 ## 获取容器对象
 
 有些时候我们可能希望去实现一些更动态的需求时，会希望可以直接获取到 `容器(Container)` 对象，在绝大部分情况下，框架的入口类（比如命令类、控制器、RPC 服务提供者等）都是由 `容器(Container)`
-创建并维护的，也就意味着您所写的绝大部分业务代码都是在 `容器(Container)` 的管理作用之下的，也就意味着在绝大部分情况下您都可以通过在 `构造函数(Constructor)` 声明或通过 `@Inject`
+创建并维护的，也就意味着您所写的绝大部分业务代码都是在 `容器(Container)` 的管理作用之下的，也就意味着在绝大部分情况下您都可以通过在 `构造函数(Constructor)` 声明或通过 `#[Inject]`
 注解注入 `Psr\Container\ContainerInterface` 接口类都能够获得 `Hyperf\Di\Container` 容器对象，我们通过代码来演示一下：
 
 ```php
@@ -434,9 +438,9 @@ $container = \Hyperf\Utils\ApplicationContext::getContainer();
 换种方式理解就是容器内管理的对象**都是单例**，这样的设计对于长生命周期的应用来说会更加的高效，减少了大量无意义的对象创建和销毁，这样的设计也就意味着所有需要交由 DI 容器管理的对象**均不能包含** `状态` 值。   
 `状态` 可直接理解为会随着请求而变化的值，事实上在 [协程](zh-cn/coroutine.md) 编程中，这些状态值也是应该存放于 `协程上下文` 中的，即 `Hyperf\Utils\Context`。
 
-### @Inject 注入覆盖顺序
+### #[Inject] 注入覆盖顺序
 
-`@Inject` 覆盖顺序为子类覆盖 `Trait` 覆盖 父类，即 下述 `Origin` 的 `foo` 变量为本身注入的 `Foo1`。
+`#[Inject]` 覆盖顺序为子类覆盖 `Trait` 覆盖 父类，即 下述 `Origin` 的 `foo` 变量为本身注入的 `Foo1`。
 
 同理，假如 `Origin` 不存在变量 `$foo` 时，`$foo` 会被第一个 `Trait` 完成注入，注入类 `Foo2`。
 
@@ -445,24 +449,27 @@ use Hyperf\Di\Annotation\Inject;
 
 class ParentClass
 {
+
+    #[Inject]
     /**
-     * @Inject
      * @var Foo4 
      */
     protected $foo;
 }
 
 trait Foo1{
+
+    #[Inject]
     /**
-     * @Inject
      * @var Foo2 
      */
     protected $foo;
 }
 
 trait Foo2{
+
+    #[Inject]
     /**
-     * @Inject
      * @var Foo3
      */
     protected $foo;
@@ -472,8 +479,9 @@ class Origin extends ParentClass
 {
     use Foo1;
     use Foo2;
+
+    #[Inject]
     /**
-     * @Inject
      * @var Foo1
      */
     protected $foo;

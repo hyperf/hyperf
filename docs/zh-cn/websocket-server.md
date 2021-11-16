@@ -195,13 +195,12 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\WebSocketServer\Sender;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class ServerController
 {
+
+    #[Inject]
     /**
-     * @Inject
      * @var Sender
      */
     protected $sender;

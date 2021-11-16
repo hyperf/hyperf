@@ -43,13 +43,12 @@ use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
 use Hyperf\Utils\Codec\Json;
 
-/**
- * @SocketIONamespace("/")
- */
+#[SocketIONamespace("/")]
 class WebSocketController extends BaseNamespace
 {
+
+    #[Event("event")]
     /**
-     * @Event("event")
      * @param string $data
      */
     public function onEvent(Socket $socket, $data)
@@ -58,8 +57,8 @@ class WebSocketController extends BaseNamespace
         return 'Event Received: ' . $data;
     }
 
+    #[Event("join-room")]
     /**
-     * @Event("join-room")
      * @param string $data
      */
     public function onJoinRoom(Socket $socket, $data)
@@ -72,8 +71,8 @@ class WebSocketController extends BaseNamespace
         $this->emit('event', 'There are ' . count($socket->getAdapter()->clients($data)) . " players in {$data}");
     }
 
+    #[Event("say")]
     /**
-     * @Event("say")
      * @param string $data
      */
     public function onSay(Socket $socket, $data)
@@ -116,9 +115,7 @@ class WebSocketController extends BaseNamespace
 
 ```php
 <?php
-/**
- * @Event("SomeEvent")
- */
+#[Event("SomeEvent")]
 function onSomeEvent(\Hyperf\SocketIOServer\Socket $socket){
 
   // sending to the client
@@ -193,8 +190,8 @@ $io->of('/foo')->emit();
 
 /**
  * class内使用也等价
- * @SocketIONamespace("/foo")
  */
+#[SocketIONamespace("/foo")]
 class FooNamespace extends BaseNamespace {
     public function onEvent(){
         $this->emit(); 
@@ -326,10 +323,10 @@ use Hyperf\SocketIOServer\Annotation\Event;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
 
-/**
- * @SocketIONamespace("/")
- * @Event()
- */
+#[
+    SocketIONamespace("/"),
+    Event
+]
 class WebSocketController extends BaseNamespace
 {
     public function echo(Socket $socket, $data)
