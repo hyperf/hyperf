@@ -1,5 +1,9 @@
 # v2.2.17 - TBD
 
+## Added
+
+- [#4260](https://github.com/hyperf/hyperf/pull/4260) Added force index for `hyperf/database`.
+
 # v2.2.16 - 2021-11-15
 
 ## Added
