@@ -27,11 +27,10 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 #[Controller]
 class GraphQLController
 {
-
-    #[Inject]
     /**
      * @var Schema
      */
+    #[Inject]
     protected $schema;
 
     #[PostMapping(path: "/graphql")]
@@ -43,7 +42,6 @@ class GraphQLController
         $variableValues = isset($input['variables']) ? $input['variables'] : null;
         return GraphQL::executeQuery($this->schema, $query, null, null, $variableValues)->toArray();
     }
-    
 
     #[Query]
     public function hello(string $name): string

@@ -64,10 +64,10 @@ use Hyperf\Contract\TranslatorInterface;
 
 class FooController
 {
-    #[Inject]
     /**
      * @var TranslatorInterface
      */
+    #[Inject]
     private $translator;
     
     public function index()
@@ -92,11 +92,10 @@ use Hyperf\Contract\TranslatorInterface;
 
 class FooController
 {
-
-    #[Inject]
     /**
      * @var TranslatorInterface
      */
+    #[Inject]
     private $translator;
     
     public function index()

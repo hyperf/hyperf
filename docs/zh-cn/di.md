@@ -46,10 +46,7 @@ use App\Service\UserService;
 
 class IndexController
 {
-    /**
-     * @var UserService
-     */
-    private $userService;
+    private UserService $userService;
     
     // 通过在构造函数的参数上声明参数类型完成自动注入
     public function __construct(UserService $userService)
@@ -110,13 +107,12 @@ use Hyperf\Di\Annotation\Inject;
 
 class IndexController
 {
-
-    #[Inject]
     /**
      * 通过 `#[Inject]` 注解注入由 `@var` 注解声明的属性类型对象
      * 
      * @var UserService
      */
+    #[Inject]
     private $userService;
     
     public function index()
@@ -146,14 +142,13 @@ use Hyperf\Di\Annotation\Inject;
 
 class IndexController
 {
-
-    #[Inject(required: false)]
     /**
      * 通过 `#[Inject]` 注解注入由 `@var` 注解声明的属性类型对象
      * 当 UserService 不存在于 DI 容器内或不可创建时，则注入 null
      * 
      * @var UserService
      */
+    #[Inject(required: false)]
     private $userService;
     
     public function index()
@@ -221,11 +216,10 @@ use Hyperf\Di\Annotation\Inject;
 
 class IndexController
 {
-
-    #[Inject]
     /**
      * @var UserServiceInterface
      */
+    #[Inject]
     private $userService;
     
     public function index()
@@ -272,11 +266,7 @@ namespace App\Service;
 
 class UserService implements UserServiceInterface
 {
-    
-    /**
-     * @var bool
-     */
-    private $enableCache;
+    private bool $enableCache;
     
     public function __construct(bool $enableCache)
     {
@@ -353,12 +343,12 @@ class Foo{
 use Hyperf\Di\Annotation\Inject;
 use App\Service\UserServiceInterface;
 
-class Foo{
-
-    #[Inject(lazy: true)]
+class Foo
+{
     /**
      * @var UserServiceInterface
      */
+    #[Inject(lazy: true)]
     public $service;
 }
 ````
@@ -408,10 +398,7 @@ use Psr\Container\ContainerInterface;
 
 class IndexController
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
     
     // 通过在构造函数的参数上声明参数类型完成自动注入
     public function __construct(ContainerInterface $container)
@@ -446,29 +433,28 @@ use Hyperf\Di\Annotation\Inject;
 
 class ParentClass
 {
-
-    #[Inject]
     /**
      * @var Foo4 
      */
+    #[Inject]
     protected $foo;
 }
 
-trait Foo1{
-
-    #[Inject]
+trait Foo1
+{
     /**
      * @var Foo2 
      */
+    #[Inject]
     protected $foo;
 }
 
-trait Foo2{
-
-    #[Inject]
+trait Foo2
+{
     /**
      * @var Foo3
      */
+    #[Inject]
     protected $foo;
 }
 
@@ -477,10 +463,10 @@ class Origin extends ParentClass
     use Foo1;
     use Foo2;
 
-    #[Inject]
     /**
      * @var Foo1
      */
+    #[Inject]
     protected $foo;
 }
 ```

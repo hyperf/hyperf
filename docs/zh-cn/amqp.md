@@ -326,10 +326,7 @@ use Psr\Container\ContainerInterface;
 #[Command]
 class DelayCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {

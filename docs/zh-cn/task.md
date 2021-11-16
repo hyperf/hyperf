@@ -81,7 +81,6 @@ use Hyperf\Task\Annotation\Task;
 
 class AnnotationTask
 {
-
     #[Task]
     public function handle($cid)
     {
@@ -141,10 +140,7 @@ use MongoDB\Driver\WriteConcern;
 
 class MongoTask
 {
-    /**
-     * @var Manager
-     */
-    public $manager;
+    public Manager $manager;
 
     #[Task]
     public function insert(string $namespace, array $document)

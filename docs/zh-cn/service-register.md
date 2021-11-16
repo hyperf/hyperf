@@ -161,10 +161,7 @@ use Hyperf\ServiceGovernance\DriverManager;
 #[Listener]
 class RegisterDriverListener implements ListenerInterface
 {
-    /**
-     * @var DriverManager
-     */
-    protected $driverManager;
+    protected DriverManager $driverManager;
 
     public function __construct(DriverManager $manager)
     {

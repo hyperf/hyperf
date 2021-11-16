@@ -46,10 +46,8 @@ class FooCommand extends HyperfCommand
 {
     /**
      * 执行的命令行
-     *
-     * @var string
      */
-    protected $name = 'foo:hello';
+    protected string $name = 'foo:hello';
 }
 ```
 
@@ -94,10 +92,8 @@ class FooCommand extends HyperfCommand
 {
     /**
      * 执行的命令行
-     *
-     * @var string
      */
-    protected $name = 'foo:hello';
+    protected string $name = 'foo:hello';
 
     public function handle()
     {
@@ -131,10 +127,8 @@ class FooCommand extends HyperfCommand
 {
     /**
      * 执行的命令行
-     *
-     * @var string
      */
-    protected $name = 'foo:hello';
+    protected string $name = 'foo:hello';
 
     public function handle()
     {
@@ -382,10 +376,7 @@ use Psr\Container\ContainerInterface;
 #[Command]
 class DebugCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     protected $signature = 'test:test {id : user_id} {--name= : user_name}';
 
@@ -436,10 +427,7 @@ use Psr\Container\ContainerInterface;
 #[Command]
 class FooCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {

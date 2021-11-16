@@ -200,7 +200,6 @@ class IndexController extends AbstractController
             new ProduceMessage('hyperf2', 'hyperf2_value', 'hyperf2_key'),
             new ProduceMessage('hyperf3', 'hyperf3_value', 'hyperf3_key'),
         ]);
-
     }
 }
 

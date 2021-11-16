@@ -170,11 +170,10 @@ use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 
 class IndexController
 {
-
-    #[Inject]
     /**
      * @var ValidatorFactoryInterface
      */
+    #[Inject]
     protected $validationFactory;
 
     public function foo(RequestInterface $request)
@@ -265,11 +264,10 @@ use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 
 class IndexController
 {
-
-    #[Inject]
     /**
      * @var ValidatorFactoryInterface
      */
+    #[Inject]
     protected $validationFactory;
 
     public function foo(RequestInterface $request)

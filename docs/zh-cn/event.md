@@ -141,11 +141,10 @@ use App\Event\UserRegistered;
 
 class UserService
 {
-
-    #[Inject]
     /**
      * @var EventDispatcherInterface
      */
+    #[Inject]
     private $eventDispatcher;
     
     public function register()

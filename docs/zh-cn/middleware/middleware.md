@@ -143,7 +143,6 @@ use Hyperf\HttpServer\Annotation\Middlewares;
 ]
 class IndexController
 {
-
     public function index()
     {
         return 'Hello Hyperf.';
@@ -175,20 +174,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class FooMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
-    /**
-     * @var RequestInterface
-     */
-    protected $request;
+    protected RequestInterface $request;
 
-    /**
-     * @var HttpResponse
-     */
-    protected $response;
+    protected HttpResponse $response;
 
     public function __construct(ContainerInterface $container, HttpResponse $response, RequestInterface $request)
     {

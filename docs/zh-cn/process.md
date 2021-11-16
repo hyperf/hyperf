@@ -108,33 +108,28 @@ class FooProcess extends AbstractProcess
 {
     /**
      * 进程数量
-     * @var int
      */
-    public $nums = 1;
+    public int $nums = 1;
 
     /**
      * 进程名称
-     * @var string
      */
-    public $name = 'user-process';
+    public string $name = 'user-process';
 
     /**
      * 重定向自定义进程的标准输入和输出
-     * @var bool
      */
-    public $redirectStdinStdout = false;
+    public bool $redirectStdinStdout = false;
 
     /**
      * 管道类型
-     * @var int
      */
-    public $pipeType = 2;
+    public int $pipeType = 2;
 
     /**
      * 是否启用协程
-     * @var bool
      */
-    public $enableCoroutine = true;
+    public bool $enableCoroutine = true;
 }
 ```
 

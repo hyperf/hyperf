@@ -27,11 +27,10 @@ use Hyperf\Di\Annotation\Inject;
 
 class UserService
 {
-
-    #[Inject]
     /**
      * @var UserServiceClient
      */
+    #[Inject]
     private $client;
 
     #[CircuitBreaker(timeout: 0.05, failCounter: 1, successCounter: 1, fallback: "App\Service\UserService::searchFallback")]

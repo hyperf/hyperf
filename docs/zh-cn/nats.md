@@ -57,11 +57,10 @@ use Hyperf\Nats\Driver\DriverInterface;
 #[AutoController(prefix: "nats")]
 class NatsController extends AbstractController
 {
-
-    #[Inject]
     /**
      * @var DriverInterface
      */
+    #[Inject]
     protected $nats;
 
     public function publish()
@@ -93,11 +92,10 @@ use Hyperf\Nats\Message;
 #[AutoController(prefix: "nats")]
 class NatsController extends AbstractController
 {
-
-    #[Inject]
     /**
      * @var DriverInterface
      */
+    #[Inject]
     protected $nats;
 
     public function request()
@@ -131,11 +129,10 @@ use Hyperf\Nats\Message;
 #[AutoController(prefix: "nats")]
 class NatsController extends AbstractController
 {
-
-    #[Inject]
     /**
      * @var DriverInterface
      */
+    #[Inject]
     protected $nats;
 
     public function sync()

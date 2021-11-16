@@ -46,21 +46,20 @@ use Hyperf\Utils\Codec\Json;
 #[SocketIONamespace("/")]
 class WebSocketController extends BaseNamespace
 {
-
-    #[Event("event")]
     /**
      * @param string $data
      */
+    #[Event("event")]
     public function onEvent(Socket $socket, $data)
     {
         // 应答
         return 'Event Received: ' . $data;
     }
 
-    #[Event("join-room")]
     /**
      * @param string $data
      */
+    #[Event("join-room")]
     public function onJoinRoom(Socket $socket, $data)
     {
         // 将当前用户加入房间
@@ -71,10 +70,10 @@ class WebSocketController extends BaseNamespace
         $this->emit('event', 'There are ' . count($socket->getAdapter()->clients($data)) . " players in {$data}");
     }
 
-    #[Event("say")]
     /**
      * @param string $data
      */
+    #[Event("say")]
     public function onSay(Socket $socket, $data)
     {
         $data = Json::decode($data);
@@ -411,10 +410,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class WebSocketAuthMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {

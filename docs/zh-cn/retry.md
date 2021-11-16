@@ -143,22 +143,20 @@ public $policies = [
 
 /**
  * The algorithm for retry intervals.
- * @var string
  */
-public $sleepStrategyClass = SleepStrategyInterface::class;
+public string $sleepStrategyClass = SleepStrategyInterface::class;
 
 /**
  * Max Attampts.
- * @var int
  */
-public $maxAttempts = 10;
+public int $maxAttempts = 10;
 
 /**
  * Retry Budget.
  * ttl: Seconds of token lifetime.
  * minRetriesPerSec: Base retry token generation speed.
  * percentCanRetry: Generate new token at this ratio of the request volume.
- *
+ * 
  * @var array|RetryBudgetInterface
  */
 public $retryBudget = [
@@ -170,9 +168,8 @@ public $retryBudget = [
 /**
  * Base time inteval (ms) for each try. For backoff strategy this is the interval for the first try
  * while for flat strategy this is the interval for every try.
- * @var int
  */
-public $base = 0;
+public int $base = 0;
 
 /**
  * Configures a Predicate which evaluates if an exception should be retried.

@@ -38,10 +38,7 @@ use Psr\Log\LoggerInterface;
 #[Listener]
 class DbQueryExecutedListener implements ListenerInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(ContainerInterface $container)
     {
@@ -122,19 +119,15 @@ class User extends Model
 {
     /**
      * The table associated with the model.
-     *
-     * @var string
      */
-    protected $table = 'user';
+    protected string $table = 'user';
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
+    protected array $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
 
-    protected $casts = ['id' => 'integer', 'gender' => 'integer'];
+    protected array $casts = ['id' => 'integer', 'gender' => 'integer'];
 
     public function saving(Saving $event)
     {

@@ -53,14 +53,14 @@ return [
 namespace App\Controller;
 
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\Contract\SessionInterface;
 
 class IndexController
 {
-
-    #[Inject]
     /**
-     * @var \Hyperf\Contract\SessionInterface
+     * @var SessionInterface
      */
+    #[Inject]
     private $session;
 
     public function index()

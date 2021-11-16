@@ -83,7 +83,6 @@ use Hyperf\RateLimit\Annotation\RateLimit;
 ]
 class RateLimitController
 {
-
     #[
         RequestMapping(path: "test"),
         RateLimit(create: 1, capacity: 3)
