@@ -77,7 +77,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
         classes: [
             SomeClass::class,
             "App\Service\SomeClass::someMethod",
-            "App\Service\SomeClass::*Method",
+            "App\Service\SomeClass::*Method"
         ],
         annotations: [
             SomeAnnotation::class
