@@ -34,7 +34,7 @@ class AliyunHookTest extends TestCase
                 $this->assertInstanceOf(\Swoole\Curl\Handler::class, $rs);
                 $this->assertTrue(\Oss\OssClient\is_resource($rs));
             } elseif (PHP_VERSION_ID > 80000) {
-                if (SWOOLE_VERSION_ID >= 40900) {
+                if (SWOOLE_VERSION_ID >= 40802) {
                     $this->assertInstanceOf(\CurlHandle::class, $rs);
                 } else {
                     $this->assertInstanceOf(\Swoole\Coroutine\Curl\Handle::class, $rs);
