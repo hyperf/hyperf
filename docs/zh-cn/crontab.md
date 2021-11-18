@@ -181,7 +181,7 @@ namespace App\Crontab;
 use Carbon\Carbon;
 use Hyperf\Crontab\Annotation\Crontab;
 
-#[Crontab(name: "Echo", rule: "* * * * *", callback: "execute", enable: [EnableChecker::class, "isEnable"] ,memo: "这是一个示例的定时任务")]
+#[Crontab(name: "Echo", rule: "* * * * *", callback: "execute", enable: [EnableChecker::class, "isEnable"], memo: "这是一个示例的定时任务")]
 class EchoCrontab
 {
     public function execute()

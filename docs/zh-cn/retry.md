@@ -156,7 +156,7 @@ public int $maxAttempts = 10;
  * ttl: Seconds of token lifetime.
  * minRetriesPerSec: Base retry token generation speed.
  * percentCanRetry: Generate new token at this ratio of the request volume.
- * 
+ *
  * @var array|RetryBudgetInterface
  */
 public $retryBudget = [

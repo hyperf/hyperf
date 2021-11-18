@@ -108,7 +108,7 @@ class UserDefinedIdGenerator
 {
     protected SnowflakeIdGenerator $idGenerator;
 
-    public function __construct($idGenerator)
+    public function __construct(SnowflakeIdGenerator $idGenerator)
     {
         $this->idGenerator = $idGenerator;
     }
