@@ -40,7 +40,7 @@ class ThriftUdpTransport extends TTransport
     private $logger;
 
     /**
-     * @var ?resource
+     * @var null|\Socket|resource
      */
     private $socket;
 

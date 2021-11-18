@@ -22,7 +22,6 @@ parameters:
     - %currentWorkingDirectory%/src/grpc-server/*
     - %currentWorkingDirectory%/src/ide-helper/*
     - %currentWorkingDirectory%/src/swagger/*
-    - %currentWorkingDirectory%/src/tracer/*
     - %currentWorkingDirectory%/src/validation/*
     - %currentWorkingDirectory%/src/view/src/Engine/*
     - %currentWorkingDirectory%/src/server/src/SwowServer.php
