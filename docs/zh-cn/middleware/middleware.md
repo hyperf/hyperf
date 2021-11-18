@@ -104,12 +104,8 @@ use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 
-#[
-    AutoController,
-    Middlewares([
-        Middleware(FooMiddleware::class, BarMiddleware::class)
-    ])
-]
+#[AutoController]
+#[Middlewares(FooMiddleware::class, BarMiddleware::class)]
 class IndexController
 {
     public function index()
@@ -118,7 +114,6 @@ class IndexController
     }
 }
 ```
-> 注意: 使用 `PHP8` 的 `Attributes` 语法时, 应简化为`#[Middlewares(FooMiddleware::class, BarMiddleware::class)]`这种格式, 下同。
 
 #### 定义方法级别的中间件
 
@@ -138,17 +133,20 @@ use Hyperf\HttpServer\Annotation\Middlewares;
 #[
     AutoController,
     Middlewares([
-        Middleware(FooMiddleware::class, BarMiddleware::class)
+        Middleware(FooMiddleware::class)
     ])
 ]
 class IndexController
 {
+
+    #[Middleware(BarMiddleware::class)]
     public function index()
     {
         return 'Hello Hyperf.';
     }
 }
 ```
+
 #### 中间件相关的代码
 
 生成中间件
@@ -227,7 +225,7 @@ $response = \Hyperf\Utils\Context::set(ResponseInterface::class, $response);
 
 ## 自定义 CoreMiddleWare 的行为
 
-默认情况下，Hyperf 在处理路由找不到或 HTTP 方法不允许时，即 HTTP 状态码为 `404` `405` 的时候，是由 `CoreMiddleware` 直接处理并返回对应的响应对象的，得益于 Hyperf 依赖注入的设计，您可以通过替换对象的方式来把 `CoreMiddleware` 指向由您自己实现的 `CoreMiddleware` 去。
+默认情况下，Hyperf 在处理路由找不到或 HTTP 方法不允许时，即 HTTP 状态码为 `404`、`405` 的时候，是由 `CoreMiddleware` 直接处理并返回对应的响应对象的，得益于 Hyperf 依赖注入的设计，您可以通过替换对象的方式来把 `CoreMiddleware` 指向由您自己实现的 `CoreMiddleware` 去。
 
 比如我们希望定义一个 `App\Middleware\CoreMiddleware` 类来重写默认的行为，我们可以先定义一个 `App\Middleware\CoreMiddleware` 类如下，这里我们仅以 HTTP Server 为例，其它 Server 也可采用同样的做法来达到同样的目的。
 

@@ -339,11 +339,8 @@ use Hyperf\Di\Annotation\Inject;
 
 class DemoLogic
 {
-    /**
-     * @var DemoApi
-     */
     #[Inject]
-    private $demoApi;
+    private DemoApi $demoApi;
 
     public function test()
     {
@@ -465,6 +462,3 @@ class DemoLogicTest extends HttpTestCase
 ```shell
 phpdbg -dmemory_limit=1024M -qrr ./vendor/bin/co-phpunit -c phpunit.xml --colors=always
 ```
-
-
-

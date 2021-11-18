@@ -57,17 +57,13 @@ use Hyperf\Contract\SessionInterface;
 
 class IndexController
 {
-    /**
-     * @var SessionInterface
-     */
     #[Inject]
-    private $session;
+    private SessionInterface $session;
 
     public function index()
     {
         // 直接通过 $this->session 来使用
     } 
-
 }
 ```
 
