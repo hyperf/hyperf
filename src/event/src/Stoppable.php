@@ -13,10 +13,7 @@ namespace Hyperf\Event;
 
 trait Stoppable
 {
-    /**
-     * @var bool
-     */
-    protected $propagation = false;
+    protected bool $propagation = false;
 
     /**
      * Is propagation stopped?
