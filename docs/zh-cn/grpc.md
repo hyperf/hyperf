@@ -69,6 +69,12 @@ grpc
 
 ## gRPC server 示例
 
+- 安装组件
+
+```shell
+composer require hyperf/grpc-server
+```
+
 - gRPC server 服务器配置
 
 `server.php` 文件(参考 [配置](zh-cn/config.md)):
@@ -123,6 +129,12 @@ gRPC server 如何对 gRPC 请求进行处理的(`vendor/hyperf/grpc-server/src/
 gRPC server 如何进行 gRPC 响应, 相信你可以根据上面的信息, 自己发现.
 
 ## gRPC client 示例
+
+安装组件
+
+```shell
+composer require hyperf/grpc-client
+```
 
 示例代码可以在 `GrpcController` 中找到:
 

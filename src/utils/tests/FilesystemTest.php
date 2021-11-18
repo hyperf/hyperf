@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
+use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Parallel;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\Channel;
@@ -64,6 +65,23 @@ class FilesystemTest extends TestCase
 
             $this->assertSame([2, 1], $result);
         });
+    }
+
+    public function testMakeDirection()
+    {
+        $system = new Filesystem();
+        if (SWOOLE_VERSION_ID > 40701) {
+            try {
+                $system->makeDirectory(BASE_PATH . '/runtime/test');
+                $system->makeDirectory(BASE_PATH . '/runtime/test');
+            } catch (\Throwable $exception) {
+                $this->assertSame('mkdir(): File exists', $exception->getMessage());
+            }
+        } else {
+            $system->makeDirectory(BASE_PATH . '/runtime/test');
+            $system->makeDirectory(BASE_PATH . '/runtime/test');
+            $this->assertTrue(true);
+        }
     }
 
     /**

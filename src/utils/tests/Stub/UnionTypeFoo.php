@@ -9,16 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\RpcMultiplex\Cases;
+namespace HyperfTest\Utils\Stub;
 
-/**
- * @internal
- * @coversNothing
- */
-class ExampleTest extends AbstractTestCase
+class UnionTypeFoo
 {
-    public function testExample()
+    public function __construct(Bar|Foo|string $attr)
     {
-        $this->assertTrue(true);
     }
 }

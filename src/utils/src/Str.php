@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Exception\InvalidArgumentException;
-use Hyperf\Utils\Traits\Macroable;
 
 /**
  * Most of the methods in this file come from illuminate/support,
@@ -564,6 +564,16 @@ class Str
         $quoted = preg_quote($prefix, '/');
 
         return $prefix . preg_replace('/^(?:' . $quoted . ')+/u', '', $value);
+    }
+
+    /**
+     * Strip HTML and PHP tags from the given string.
+     *
+     * @param null|string|string[] $allowedTags
+     */
+    public static function stripTags(string $value, $allowedTags = null): string
+    {
+        return strip_tags($value, $allowedTags);
     }
 
     /**

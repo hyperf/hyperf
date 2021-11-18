@@ -1,8 +1,79 @@
-# v2.2.11 - TBD
+# v2.2.17 - TBD
 
 ## Fixed
 
-- [#4101](https://github.com/hyperf/hyperf/pull/4101) Fixed bug that auth failed when password has special charsets.
+- [#4243](https://github.com/hyperf/hyperf/pull/4243) Fixed the bug that key sort of the result is inconsistent with `$callables` for `parallel`.
+
+## Added
+
+- [#4260](https://github.com/hyperf/hyperf/pull/4260) Added force index for `hyperf/database`.
+
+# v2.2.16 - 2021-11-15
+
+## Added
+
+- [#4252](https://github.com/hyperf/hyperf/pull/4252) Added method `getServiceName` for rpc client.
+
+## Optimized
+
+- [#4253](https://github.com/hyperf/hyperf/pull/4253) Skip class which is not found by class loader at scan time.
+
+# v2.2.15 - 2021-11-08
+
+## Fixed
+
+- [#4200](https://github.com/hyperf/hyperf/pull/4200) Fixed bug that filesystem cache driver does not work when `runtime/caches` is not a directory. 
+
+## Added
+
+- [#4157](https://github.com/hyperf/hyperf/pull/4157) Added `Macroable` for `Hyperf\Utils\Arr`.
+
+# v2.2.14 - 2021-11-01
+
+## Added
+
+- [#4181](https://github.com/hyperf/hyperf/pull/4181) [#4192](https://github.com/hyperf/hyperf/pull/4192) Added versions (v1.0, v2.0, v3.0) support for `psr/log`.
+
+## Fixed
+
+- [#4171](https://github.com/hyperf/hyperf/pull/4171) Fixed health check failed when using consul with token.
+- [#4188](https://github.com/hyperf/hyperf/pull/4188) Fixed bug that build phar failed when using composer `1.x`.
+
+# v2.2.13 - 2021-10-25
+
+## Added
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) Allow `Macroable::mixin` to only add macros that do not exist yet.
+
+## Fixed
+
+- [#4158](https://github.com/hyperf/hyperf/pull/4158) Fixed bug that generate proxy class failed when using union type.
+
+## Optimized
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) [#4166](https://github.com/hyperf/hyperf/pull/4166) Split `hyperf/macroable` from `hyperf/utils`.
+
+# v2.2.12 - 2021-10-18
+
+## Added
+
+- [#4129](https://github.com/hyperf/hyperf/pull/4129) Added methods `Str::stripTags()` and `Stringable::stripTags()`.
+
+## Fixed
+
+- [#4130](https://github.com/hyperf/hyperf/pull/4130) Fixed bug that generate model failed when using option `--with-ide` and `scope` methods.
+- [#4141](https://github.com/hyperf/hyperf/pull/4141) Fixed bug that validator factory does not support other validators.
+
+# v2.2.11 - 2021-10-11
+
+## Fixed
+
+- [#4101](https://github.com/hyperf/hyperf/pull/4101) Fixed bug that auth failed when password has special charsets for nacos.
+
+# Optimized
+
+- [#4114](https://github.com/hyperf/hyperf/pull/4114) Optimized get error code after Websocket upgrade failed.
+- [#4119](https://github.com/hyperf/hyperf/pull/4119) Optimized testing client which create the directory again when the directory does not exist.
 
 # v2.2.10 - 2021-09-26
 

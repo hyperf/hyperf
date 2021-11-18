@@ -126,6 +126,24 @@ class ModelRealBuilderTest extends TestCase
         }
     }
 
+    public function testForceIndexes()
+    {
+        $this->getContainer();
+
+        User::query()->get();
+        User::query()->forceIndexes(['PRIMARY'])->where('id', '>', 1)->get();
+
+        $sqls = [
+            ['select * from `user`', []],
+            ['select * from `user` force index (`PRIMARY`) where `id` > ?', [1]],
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
+            }
+        }
+    }
+
     public function testIncrement()
     {
         $this->getContainer();

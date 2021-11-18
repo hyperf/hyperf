@@ -231,7 +231,9 @@ class Client extends Server
 
                 $dir = BASE_PATH . '/runtime/uploads';
                 $tmpName = $dir . '/' . $filename;
-                $fileSystem->makeDirectory($dir);
+                if (! is_dir($dir)) {
+                    $fileSystem->makeDirectory($dir);
+                }
                 $fileSystem->put($tmpName, $contents);
 
                 $stats = fstat($contents);

@@ -1,5 +1,72 @@
 # 版本更新記錄
 
+# v2.2.16 - 2021-11-15
+
+## 新增
+
+- [#4252](https://github.com/hyperf/hyperf/pull/4252) 為 `Hyperf\RpcClient\AbstractServiceClient` 新增 `getServiceName()` 方法。
+
+## 優化
+
+- [#4253](https://github.com/hyperf/hyperf/pull/4253) 在掃描階段時，如果類庫找不到，則跳過且報出警告。
+
+# v2.2.15 - 2021-11-08
+
+## 修復
+
+- [#4200](https://github.com/hyperf/hyperf/pull/4200) 修復當 `runtime/caches` 不是目錄時，使用文件緩存失敗的問題。
+
+## 新增
+
+- [#4157](https://github.com/hyperf/hyperf/pull/4157) 為 `Hyperf\Utils\Arr` 增加 `Macroable` 支持。
+
+# v2.2.14 - 2021-11-01
+
+## 新增
+
+- [#4181](https://github.com/hyperf/hyperf/pull/4181) [#4192](https://github.com/hyperf/hyperf/pull/4192) 為框架增加 `psr/log` 組件版本 `v1.0`、`v2.0`、`v3.0` 的支持。
+
+## 修復
+
+- [#4171](https://github.com/hyperf/hyperf/pull/4171) 修復使用 `consul` 組件時，開啟 `ACL` 驗證後，健康檢測失敗的問題。
+- [#4188](https://github.com/hyperf/hyperf/pull/4188) 修復使用 `composer 1.x` 版本時，打包 `phar` 失敗的問題。
+
+# v2.2.13 - 2021-10-25
+
+## 新增
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) 為 `Macroable::mixin` 方法增加參數 `$replace`，當其設置為 `false` 時，會優先判斷是否已經存在。
+
+## 修復
+
+- [#4158](https://github.com/hyperf/hyperf/pull/4158) 修復因為使用了 `Union` 類型，導致生成代理類失敗的問題。
+
+## 優化
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) [#4166](https://github.com/hyperf/hyperf/pull/4166) 將組件 `hyperf/macroable` 從 `hyperf/utils` 中分離出來。
+
+# v2.2.12 - 2021-10-18
+
+## 新增
+
+- [#4129](https://github.com/hyperf/hyperf/pull/4129) 新增方法 `Str::stripTags()` 和 `Stringable::stripTags()`。
+
+## 修復
+
+- [#4130](https://github.com/hyperf/hyperf/pull/4130) 修復生成模型時，因為使用了選項 `--with-ide` 和 `scope` 方法導致報錯的問題。
+- [#4141](https://github.com/hyperf/hyperf/pull/4141) 修復驗證器工廠不支持其他驗證器的問題。
+
+# v2.2.11 - 2021-10-11
+
+## 修復
+
+- [#4101](https://github.com/hyperf/hyperf/pull/4101) 修復 Nacos 使用的密碼攜帶特殊字符時，密碼會被 `urlencode` 導致密碼錯誤的問題。
+
+# 優化
+
+- [#4114](https://github.com/hyperf/hyperf/pull/4114) 優化 WebSocket 客户端初始化失敗時的錯誤信息。
+- [#4119](https://github.com/hyperf/hyperf/pull/4119) 優化單測客户端在上傳文件時，因為默認的上傳路徑已經存在，導致報錯的問題（只發生在最新的 Swoole 版本中）。
+
 # v2.2.10 - 2021-09-26
 
 ## 修復

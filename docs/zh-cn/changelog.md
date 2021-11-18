@@ -1,5 +1,72 @@
 # 版本更新记录
 
+# v2.2.16 - 2021-11-15
+
+## 新增
+
+- [#4252](https://github.com/hyperf/hyperf/pull/4252) 为 `Hyperf\RpcClient\AbstractServiceClient` 新增 `getServiceName()` 方法。
+
+## 优化
+
+- [#4253](https://github.com/hyperf/hyperf/pull/4253) 在扫描阶段时，如果类库找不到，则跳过且报出警告。
+
+# v2.2.15 - 2021-11-08
+
+## 修复
+
+- [#4200](https://github.com/hyperf/hyperf/pull/4200) 修复当 `runtime/caches` 不是目录时，使用文件缓存失败的问题。
+
+## 新增
+
+- [#4157](https://github.com/hyperf/hyperf/pull/4157) 为 `Hyperf\Utils\Arr` 增加 `Macroable` 支持。
+
+# v2.2.14 - 2021-11-01
+
+## 新增
+
+- [#4181](https://github.com/hyperf/hyperf/pull/4181) [#4192](https://github.com/hyperf/hyperf/pull/4192) 为框架增加 `psr/log` 组件版本 `v1.0`、`v2.0`、`v3.0` 的支持。
+
+## 修复
+
+- [#4171](https://github.com/hyperf/hyperf/pull/4171) 修复使用 `consul` 组件时，开启 `ACL` 验证后，健康检测失败的问题。
+- [#4188](https://github.com/hyperf/hyperf/pull/4188) 修复使用 `composer 1.x` 版本时，打包 `phar` 失败的问题。
+
+# v2.2.13 - 2021-10-25
+
+## 新增
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) 为 `Macroable::mixin` 方法增加参数 `$replace`，当其设置为 `false` 时，会优先判断是否已经存在。
+
+## 修复
+
+- [#4158](https://github.com/hyperf/hyperf/pull/4158) 修复因为使用了 `Union` 类型，导致生成代理类失败的问题。
+
+## 优化
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) [#4166](https://github.com/hyperf/hyperf/pull/4166) 将组件 `hyperf/macroable` 从 `hyperf/utils` 中分离出来。
+
+# v2.2.12 - 2021-10-18
+
+## 新增
+
+- [#4129](https://github.com/hyperf/hyperf/pull/4129) 新增方法 `Str::stripTags()` 和 `Stringable::stripTags()`。
+
+## 修复
+
+- [#4130](https://github.com/hyperf/hyperf/pull/4130) 修复生成模型时，因为使用了选项 `--with-ide` 和 `scope` 方法导致报错的问题。
+- [#4141](https://github.com/hyperf/hyperf/pull/4141) 修复验证器工厂不支持其他验证器的问题。
+
+# v2.2.11 - 2021-10-11
+
+## 修复
+
+- [#4101](https://github.com/hyperf/hyperf/pull/4101) 修复 Nacos 使用的密码携带特殊字符时，密码会被 `urlencode` 导致密码错误的问题。
+
+# 优化
+
+- [#4114](https://github.com/hyperf/hyperf/pull/4114) 优化 WebSocket 客户端初始化失败时的错误信息。
+- [#4119](https://github.com/hyperf/hyperf/pull/4119) 优化单测客户端在上传文件时，因为默认的上传路径已经存在，导致报错的问题（只发生在最新的 Swoole 版本中）。
+
 # v2.2.10 - 2021-09-26
 
 ## 修复

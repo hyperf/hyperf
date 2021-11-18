@@ -32,7 +32,7 @@ class FileSystemDriver extends Driver
     public function __construct(ContainerInterface $container, array $config)
     {
         parent::__construct($container, $config);
-        if (! file_exists($this->storePath)) {
+        if (! is_dir($this->storePath)) {
             $results = mkdir($this->storePath, 0777, true);
             if (! $results) {
                 throw new CacheException('Has no permission to create cache directory!');
