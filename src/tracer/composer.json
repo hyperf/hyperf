@@ -35,7 +35,9 @@
         }
     },
     "autoload-dev": {
-        "psr-4": {}
+        "psr-4": {
+            "HyperfTest\\Tracer\\": "tests/"
+        }
     },
     "config": {
         "sort-packages": true
