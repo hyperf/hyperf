@@ -40,7 +40,7 @@ class ThriftUdpTransport extends TTransport
     private $logger;
 
     /**
-     * @var ?resource
+     * @var null|\Socket|resource
      */
     private $socket;
 
@@ -49,10 +49,6 @@ class ThriftUdpTransport extends TTransport
      */
     private $chan;
 
-    /**
-     * ThriftUdpTransport constructor.
-     * @param LoggerInterface $logger
-     */
     public function __construct(string $host, int $port, LoggerInterface $logger = null)
     {
         $this->host = $host;
