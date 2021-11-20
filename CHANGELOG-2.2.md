@@ -1,5 +1,14 @@
 # v2.2.17 - TBD
 
+## Fixed
+
+- [#4243](https://github.com/hyperf/hyperf/pull/4243) Fixed the bug that key sort of the result is inconsistent with `$callables` for `parallel`.
+
+## Added
+
+- [#4109](https://github.com/hyperf/hyperf/pull/4109) Added PHP8 support for `hyperf/tracer`.
+- [#4260](https://github.com/hyperf/hyperf/pull/4260) Added force index for `hyperf/database`.
+
 # v2.2.16 - 2021-11-15
 
 ## Added
