@@ -46,9 +46,10 @@ class OnTaskListenerTest extends TestCase
         $event->task = new Server\Task();
         $event->task->data = new Task([Foo::class, 'get'], [$id]);
 
-        $event->shouldReceive('setResult')->with(Mockery::any())->andReturnUsing(function ($result) use ($id) {
+        $event->shouldReceive('setResult')->with(Mockery::any())->andReturnUsing(function ($result) use ($id, $event) {
             $this->assertInstanceOf(Finish::class, $result);
             $this->assertSame($id, $result->data);
+            return $event;
         });
 
         $listener->process($event);
