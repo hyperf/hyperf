@@ -201,6 +201,7 @@ jobs:
           composer remove "symfony/*"
       - name: Run Test Cases
         run: |
+          composer update -oW
           composer require "psr/log:${{ matrix.log-version }}"
           if [ ${{ matrix.log-version }} == '^3.0' ]
           then
@@ -208,7 +209,7 @@ jobs:
           else
             composer require "symfony/console:^5.0" --dev -W
           fi
-          composer require symfony/event-dispatcher
+          composer require symfony/event-dispatcher -W
           composer update -oW
           composer analyse src/framework
           composer analyse src/server/src/Entry/Logger.php
