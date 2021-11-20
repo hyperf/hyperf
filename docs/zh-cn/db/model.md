@@ -6,14 +6,8 @@
 
 Hyperf 提供了创建模型的命令，您可以很方便的根据数据表创建对应模型。命令通过 `AST` 生成模型，所以当您增加了某些方法后，也可以使用脚本方便的重置模型。
 
-1.1.0 + 版本：
 ```
 $ php bin/hyperf.php gen:model table_name
-```
-
-1.0.* 版本：
-```
-$ php bin/hyperf.php db:model table_name
 ```
 
 可选参数如下：
@@ -86,16 +80,22 @@ class User extends Model
 {
     /**
      * The table associated with the model.
+     *
+     * @var string
      */
     protected $table = 'user';
 
     /**
      * The attributes that are mass assignable.
+     *
+     * @var array
      */
     protected $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
 
     /**
      * The attributes that should be cast to native types.
+     *
+     * @var array
      */
     protected $casts = ['id' => 'integer', 'gender' => 'integer'];
 }

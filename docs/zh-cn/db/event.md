@@ -119,15 +119,19 @@ class User extends Model
 {
     /**
      * The table associated with the model.
+     *
+     * @var string
      */
-    protected string $table = 'user';
+    protected $table = 'user';
 
     /**
      * The attributes that are mass assignable.
+     *
+     * @var array
      */
-    protected array $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
+    protected $fillable = ['id', 'name', 'gender', 'created_at', 'updated_at'];
 
-    protected array $casts = ['id' => 'integer', 'gender' => 'integer'];
+    protected $casts = ['id' => 'integer', 'gender' => 'integer'];
 
     public function saving(Saving $event)
     {

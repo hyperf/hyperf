@@ -217,8 +217,10 @@ class User extends JsonResource
 {
     /**
      * 指示是否应保留资源的集合键。
+     *
+     * @var bool
      */
-    public bool $preserveKeys = true;
+    public $preserveKeys = true;
 
     /**
      * Transform the resource into an array.
@@ -274,8 +276,10 @@ class UserCollection extends ResourceCollection
 {
     /**
      * collects 属性定义了资源类。
+     *
+     * @var string
      */
-    public string $collects = 'App\Resource\Member';
+    public $collects = 'App\Resource\Member';
 
     /**
      * Transform the resource collection into an array.

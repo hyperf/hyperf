@@ -22,9 +22,10 @@ class User extends Model
     /**
      * 获取用户的姓名.
      *
+     * @param  string  $value
      * @return string
      */
-    public function getFirstNameAttribute(string $value)
+    public function getFirstNameAttribute($value)
     {
         return ucfirst($value);
     }
@@ -76,9 +77,10 @@ class User extends Model
     /**
      * 设置用户的姓名.
      *
+     * @param  string  $value
      * @return void
      */
-    public function setFirstNameAttribute(string $value)
+    public function setFirstNameAttribute($value)
     {
         $this->attributes['first_name'] = strtolower($value);
     }
@@ -110,8 +112,10 @@ class User extends Model
 {
     /**
      * 应该转换为日期格式的属性.
+     *
+     * @var array
      */
-    protected array $dates = [
+    protected $dates = [
         'seen_at',
     ];
 }
@@ -145,8 +149,10 @@ class Flight extends Model
 {
     /**
      * 这个属性应该被转化为原生类型.
+     *
+     * @var string
      */
-    protected string $dateFormat = 'U';
+    protected $dateFormat = 'U';
 }
 ```
 
@@ -168,8 +174,10 @@ class User extends Model
 {
     /**
      * The attributes that should be cast.
+     *
+     * @var array
      */
-    protected array $casts = [
+    protected $casts = [
         'is_admin' => 'boolean',
     ];
 }
@@ -232,8 +240,10 @@ class User extends Model
 {
     /**
      * 应进行类型转换的属性
+     *
+     * @var array
      */
-    protected array $casts = [
+    protected $casts = [
         'options' => Json::class,
     ];
 }
@@ -406,8 +416,10 @@ class Hash implements CastsInboundAttributes
 {
     /**
      * 哈希算法
+     *
+     * @var string
      */
-    protected string $algorithm;
+    protected $algorithm;
 
     /**
      * 创建一个新的类型转换类实例
@@ -442,8 +454,10 @@ class User extends Model
 {
     /**
      * 应进行类型转换的属性
+     *
+     * @var array
      */
-    protected array $casts = [
+    protected $casts = [
         'secret' => Hash::class.':sha256',
     ];
 }
@@ -464,8 +478,10 @@ class User extends Model
 {
     /**
      * 应进行类型转换的属性
+     *
+     * @var array
      */
-    protected array $casts = [
+    protected $casts = [
         'options' => 'array',
     ];
 }
@@ -500,8 +516,10 @@ class User extends Model
 {
     /**
      * 应进行类型转换的属性
+     *
+     * @var array
      */
-    protected array $casts = [
+    protected $casts = [
          'created_at' => 'datetime:Y-m-d',
     ];
 }

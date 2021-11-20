@@ -237,23 +237,31 @@ class User extends Model
 {
     /**
      * The table associated with the model.
+     *
+     * @var string
      */
-    protected string $table = 'user';
+    protected $table = 'user';
 
     /**
      * The connection name for the model.
+     *
+     * @var string
      */
-    protected string $connection = 'test';
+    protected $connection = 'test';
 
     /**
      * The attributes that are mass assignable.
+     *
+     * @var array
      */
-    protected array $fillable = ['id', 'mobile', 'realname'];
+    protected $fillable = ['id', 'mobile', 'realname'];
 
     /**
      * The attributes that should be cast to native types.
+     *
+     * @var array
      */
-    protected array $casts = ['id' => 'integer'];
+    protected $casts = ['id' => 'integer'];
 }
 
 ```
