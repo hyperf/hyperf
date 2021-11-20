@@ -13,47 +13,26 @@ namespace Hyperf\Tracer\Aspect;
 
 use GuzzleHttp\Client;
 use Hyperf\Di\Annotation\Aspect;
-use Hyperf\Di\Aop\AroundInterface;
+use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use Hyperf\Utils\Context;
 use OpenTracing\Tracer;
 use Psr\Http\Message\ResponseInterface;
 use const OpenTracing\Formats\TEXT_MAP;
 
 #[Aspect]
-class HttpClientAspect implements AroundInterface
+class HttpClientAspect extends AbstractAspect
 {
     use SpanStarter;
 
-    public $classes = [
+    public array $classes = [
         Client::class . '::requestAsync',
     ];
 
-    public $annotations = [];
-
-    /**
-     * @var Tracer
-     */
-    private $tracer;
-
-    /**
-     * @var SwitchManager
-     */
-    private $switchManager;
-
-    /**
-     * @var SpanTagManager
-     */
-    private $spanTagManager;
-
-    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
+    public function __construct(private Tracer $tracer, private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
     {
-        $this->tracer = $tracer;
-        $this->switchManager = $switchManager;
-        $this->spanTagManager = $spanTagManager;
     }
 
     /**

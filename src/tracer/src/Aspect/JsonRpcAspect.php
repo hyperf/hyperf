@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer\Aspect;
 
-use Hyperf\Di\Aop\AroundInterface;
+use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Rpc\Context;
 use Hyperf\RpcClient\AbstractServiceClient;
@@ -20,48 +20,30 @@ use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use Hyperf\Utils\Context as CT;
+use OpenTracing\Span;
 use OpenTracing\Tracer;
 use Psr\Container\ContainerInterface;
-use Zipkin\Span;
 use const OpenTracing\Formats\TEXT_MAP;
 
-class JsonRpcAspect implements AroundInterface
+class JsonRpcAspect extends AbstractAspect
 {
     use SpanStarter;
 
-    public $classes = [
+    public array $classes = [
         AbstractServiceClient::class . '::__generateRpcPath',
         Client::class . '::send',
     ];
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private Tracer $tracer;
 
-    /**
-     * @var Tracer
-     */
-    private $tracer;
+    private SwitchManager $switchManager;
 
-    /**
-     * @var SwitchManager
-     */
-    private $switchManager;
+    private SpanTagManager $spanTagManager;
 
-    /**
-     * @var SpanTagManager
-     */
-    private $spanTagManager;
+    private Context $context;
 
-    /**
-     * @var Context
-     */
-    private $context;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
         $this->tracer = $container->get(Tracer::class);
         $this->switchManager = $container->get(SwitchManager::class);
         $this->spanTagManager = $container->get(SpanTagManager::class);
