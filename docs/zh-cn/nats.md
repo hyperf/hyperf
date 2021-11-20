@@ -29,9 +29,6 @@ use Hyperf\Nats\AbstractConsumer;
 use Hyperf\Nats\Annotation\Consumer;
 use Hyperf\Nats\Message;
 
-/**
- * @Consumer(subject="hyperf.demo", queue="hyperf.demo", name="DemoConsumer", nums=1)
- */
 #[Consumer(subject: 'hyperf.demo', queue: 'hyperf.demo', name: 'DemoConsumer', nums: 1)]
 class DemoConsumer extends AbstractConsumer
 {
@@ -57,16 +54,11 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\Nats\Driver\DriverInterface;
 
-/**
- * @AutoController(prefix="nats")
- */
+#[AutoController(prefix: "nats")]
 class NatsController extends AbstractController
 {
-    /**
-     * @Inject
-     * @var DriverInterface
-     */
-    protected $nats;
+    #[Inject]
+    protected DriverInterface $nats;
 
     public function publish()
     {
@@ -94,16 +86,11 @@ use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\Nats\Driver\DriverInterface;
 use Hyperf\Nats\Message;
 
-/**
- * @AutoController(prefix="nats")
- */
+#[AutoController(prefix: "nats")]
 class NatsController extends AbstractController
 {
-    /**
-     * @Inject
-     * @var DriverInterface
-     */
-    protected $nats;
+    #[Inject]
+    protected DriverInterface $nats;
 
     public function request()
     {
@@ -133,16 +120,11 @@ use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\Nats\Driver\DriverInterface;
 use Hyperf\Nats\Message;
 
-/**
- * @AutoController(prefix="nats")
- */
+#[AutoController(prefix: "nats")]
 class NatsController extends AbstractController
 {
-    /**
-     * @Inject
-     * @var DriverInterface
-     */
-    protected $nats;
+    #[Inject]
+    protected DriverInterface $nats;
 
     public function sync()
     {

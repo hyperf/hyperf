@@ -1182,8 +1182,8 @@
 ```
 class Example {
     /**
-    * @Inject
-    */
+     * @Inject
+     */
     private ExampleService $exampleService;
 }
 ```

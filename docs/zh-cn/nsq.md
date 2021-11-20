@@ -67,14 +67,7 @@ use Hyperf\Nsq\Annotation\Consumer;
 use Hyperf\Nsq\Message;
 use Hyperf\Nsq\Result;
 
-/**
- * @Consumer(
- *     topic="hyperf", 
- *     channel="hyperf", 
- *     name ="DemoNsqConsumer", 
- *     nums=1
- * )
- */
+#[Consumer(topic: "hyperf", channel: "hyperf", name: "DemoNsqConsumer", nums: 1)]
 class DemoNsqConsumer extends AbstractConsumer
 {
     public function consume(Message $payload): string 
@@ -113,14 +106,7 @@ use Hyperf\Nsq\Message;
 use Hyperf\Nsq\Result;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Consumer(
- *     topic="demo_topic", 
- *     channel="demo_channel", 
- *     name ="DemoConsumer", 
- *     nums=1
- * )
- */
+#[Consumer(topic: "demo_topic", channel: "demo_channel", name: "DemoConsumer", nums: 1)]
 class DemoConsumer extends AbstractConsumer
 {
     public function __construct(ContainerInterface $container)
@@ -157,9 +143,7 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Nsq\Nsq;
 
-/**
- * @Command
- */
+#[Command]
 class NsqCommand extends HyperfCommand
 {
     protected $name = 'nsq:pub';
@@ -192,9 +176,7 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Nsq\Nsq;
 
-/**
- * @Command
- */
+#[Command]
 class NsqCommand extends HyperfCommand
 {
     protected $name = 'nsq:pub';
@@ -231,9 +213,7 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Nsq\Nsq;
 
-/**
- * @Command
- */
+#[Command]
 class NsqCommand extends HyperfCommand
 {
     protected $name = 'nsq:pub';
