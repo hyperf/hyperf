@@ -77,16 +77,12 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use Hyperf\RateLimit\Annotation\RateLimit;
 
-#[
-    Controller(prefix: "rate-limit"),
-    RateLimit(limitCallback: [RateLimitController::class, "limitCallback"])
-]
+#[Controller(prefix: "rate-limit")]
+#[RateLimit(limitCallback: [RateLimitController::class, "limitCallback"])]
 class RateLimitController
 {
-    #[
-        RequestMapping(path: "test"),
-        RateLimit(create: 1, capacity: 3)
-    ]
+    #[RequestMapping(path: "test")]
+    #[RateLimit(create: 1, capacity: 3)]
     public function test()
     {
         return ["QPS 1, 峰值3"];
