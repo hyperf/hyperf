@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Tracer\Aspect;
 
 use Hyperf\Di\Annotation\Aspect;
-use Hyperf\Di\Aop\AroundInterface;
+use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Redis\Redis;
 use Hyperf\Tracer\SpanStarter;
@@ -21,43 +21,16 @@ use Hyperf\Tracer\SwitchManager;
 use OpenTracing\Tracer;
 
 #[Aspect]
-class RedisAspect implements AroundInterface
+class RedisAspect extends AbstractAspect
 {
     use SpanStarter;
 
-    /**
-     * @var array
-     */
-    public $classes
-        = [
-            Redis::class . '::__call',
-        ];
+    public array $classes = [
+        Redis::class . '::__call',
+    ];
 
-    /**
-     * @var array
-     */
-    public $annotations = [];
-
-    /**
-     * @var Tracer
-     */
-    private $tracer;
-
-    /**
-     * @var SwitchManager
-     */
-    private $switchManager;
-
-    /**
-     * @var SpanTagManager
-     */
-    private $spanTagManager;
-
-    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
+    public function __construct(private Tracer $tracer, private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
     {
-        $this->tracer = $tracer;
-        $this->switchManager = $switchManager;
-        $this->spanTagManager = $spanTagManager;
     }
 
     /**
