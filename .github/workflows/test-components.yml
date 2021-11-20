@@ -204,9 +204,10 @@ jobs:
           composer require "psr/log:${{ matrix.log-version }}"
           composer update -oW
           if [ ${{ matrix.log-version }} == '^3.0' ]
-            composer require "symfony/console:^5.0" --dev -W
           then
             composer require "symfony/console:^6.0" --dev -W
+          else
+            composer require "symfony/console:^5.0" --dev -W
           fi
           composer analyse src/framework
           composer analyse src/server/src/Entry/Logger.php
