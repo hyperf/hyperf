@@ -322,10 +322,8 @@ use Hyperf\SocketIOServer\Annotation\Event;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
 
-#[
-    SocketIONamespace("/"),
-    Event
-]
+#[SocketIONamespace("/")]
+#[Event]
 class WebSocketController extends BaseNamespace
 {
     public function echo(Socket $socket, $data)
