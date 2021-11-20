@@ -198,16 +198,20 @@ jobs:
           composer remove jonahgeorge/jaeger-client-php --dev -W
           composer remove bandwidth-throttle/token-bucket --dev -W
           composer remove friendsofphp/php-cs-fixer --dev -W
-          composer remove symfony/console --dev -W
+          composer remove "symfony/*" --dev -W
       - name: Run Test Cases
         run: |
-          composer require "psr/log:${{ matrix.log-version }}"
           composer update -oW
-          if [ ${{ matrix.log-version }} != '^3.0' ]
+          composer require "psr/log:${{ matrix.log-version }}"
+          if [ ${{ matrix.log-version }} == '^3.0' ]
           then
-            composer require symfony/console --dev -W
-            composer analyse src/framework
+            composer require "symfony/console:^6.0" --dev -W
+          else
+            composer require "symfony/console:^5.0" --dev -W
           fi
+          composer require symfony/event-dispatcher -W
+          composer update -oW
+          composer analyse src/framework
           composer analyse src/server/src/Entry/Logger.php
           composer analyse src/logger
           composer test src/framework

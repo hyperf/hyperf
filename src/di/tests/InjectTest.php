@@ -241,7 +241,7 @@ class InjectTest extends TestCase
     public function testInjectException()
     {
         try {
-            $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
+            $scanner = new Scanner(Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
             $reader = new AnnotationReader();
             $scanner->collect($reader, ReflectionManager::reflectClass(DemoInjectException::class));
         } catch (\Exception $e) {

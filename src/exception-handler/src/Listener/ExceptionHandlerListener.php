@@ -22,19 +22,10 @@ class ExceptionHandlerListener implements ListenerInterface
 {
     public const HANDLER_KEY = 'exceptions.handler';
 
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private int $serial = PHP_INT_MAX;
 
-    /**
-     * @var int
-     */
-    private $serial = PHP_INT_MAX;
-
-    public function __construct(ConfigInterface $config)
+    public function __construct(private ConfigInterface $config)
     {
-        $this->config = $config;
     }
 
     public function listen(): array
