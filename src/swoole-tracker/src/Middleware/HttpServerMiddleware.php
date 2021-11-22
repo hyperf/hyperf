@@ -20,10 +20,7 @@ use SwooleTracker\Stats;
 
 class HttpServerMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var string
-     */
-    protected $name;
+    protected ?string $name = null;
 
     public function __construct(ConfigInterface $config)
     {
