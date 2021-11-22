@@ -408,8 +408,8 @@ if (! function_exists('parallel')) {
 
 if (! function_exists('make')) {
     /**
-     * Create a object instance, if the DI container exist in ApplicationContext,
-     * then the object will be create by DI container via `make()` method, if not,
+     * Create an object instance, if the DI container exist in ApplicationContext,
+     * then the object will be created by DI container via `make()` method, if not,
      * the object will create by `new` keyword.
      */
     function make(string $name, array $parameters = [])
@@ -482,5 +482,26 @@ if (! function_exists('wait')) {
             return $waiter->wait($closure, $timeout);
         }
         return (new Waiter())->wait($closure, $timeout);
+    }
+}
+
+if (! function_exists('swoole_get_local_ip')) {
+    function swoole_get_local_ip()
+    {
+        if (! function_exists('net_get_interfaces')) {
+            throw new RuntimeException('Failed to get local IP.');
+        }
+        $ip = [];
+        foreach (net_get_interfaces() ?: [] as $name => $value) {
+            foreach ($value['unicast'] as $item) {
+                if (! isset($item['address'])) {
+                    continue;
+                }
+                if (! Str::contains($item['address'], '::') && $item['address'] !== '127.0.0.1') {
+                    $ip[$name] = $item['address'];
+                }
+            }
+        }
+        return $ip;
     }
 }
