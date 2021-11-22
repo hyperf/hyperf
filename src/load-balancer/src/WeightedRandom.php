@@ -21,7 +21,7 @@ class WeightedRandom extends AbstractLoadBalancer
         $totalWeight = 0;
         $isSameWeight = true;
         $lastWeight = null;
-        $nodes = $this->nodes ?? [];
+        $nodes = $this->nodes;
         foreach ($nodes as $node) {
             if (! $node instanceof Node) {
                 continue;

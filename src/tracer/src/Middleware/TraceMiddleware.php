@@ -27,26 +27,8 @@ class TraceMiddleware implements MiddlewareInterface
 {
     use SpanStarter;
 
-    /**
-     * @var SwitchManager
-     */
-    protected $switchManager;
-
-    /**
-     * @var SpanTagManager
-     */
-    protected $spanTagManager;
-
-    /**
-     * @var Tracer
-     */
-    private $tracer;
-
-    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
+    public function __construct(private Tracer $tracer, private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
     {
-        $this->tracer = $tracer;
-        $this->switchManager = $switchManager;
-        $this->spanTagManager = $spanTagManager;
     }
 
     /**
@@ -62,7 +44,7 @@ class TraceMiddleware implements MiddlewareInterface
         defer(function () {
             try {
                 $this->tracer->flush();
-            } catch (\Throwable $exception) {
+            } catch (\Throwable) {
             }
         });
         try {

@@ -15,25 +15,7 @@ use Hyperf\AsyncQueue\Driver\DriverInterface;
 
 class QueueLength
 {
-    /**
-     * @var DriverInterface
-     */
-    public $driver;
-
-    /**
-     * @var string
-     */
-    public $key;
-
-    /**
-     * @var int
-     */
-    public $length;
-
-    public function __construct(DriverInterface $driver, string $key, int $length)
+    public function __construct(public DriverInterface $driver, public string $key, public int $length)
     {
-        $this->driver = $driver;
-        $this->key = $key;
-        $this->length = $length;
     }
 }

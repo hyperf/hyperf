@@ -48,6 +48,7 @@ class RunInCoroutineVisitor extends NodeVisitorAbstract
                                 $main
                             )),
                             $this->getTimerClearAll()[0],
+                            $this->getCoordinatorResume()[0],
                         ],
                         'uses' => [
                             new Node\Expr\ClosureUse(new Node\Expr\Variable('code'), true),
@@ -73,7 +74,12 @@ Swoole\\Coroutine::set([
 
     protected function getTimerClearAll(): array
     {
-        return $this->parser->parse("<?php Swoole\Timer::clearAll();");
+        return $this->parser->parse('<?php Swoole\\Timer::clearAll();');
+    }
+
+    protected function getCoordinatorResume(): array
+    {
+        return $this->parser->parse('<?php Hyperf\\Coordinator\\CoordinatorManager::until(Hyperf\\Coordinator\\Constants::WORKER_EXIT)->resume();');
     }
 }
 

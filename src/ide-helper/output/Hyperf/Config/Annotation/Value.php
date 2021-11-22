@@ -14,10 +14,6 @@ namespace Hyperf\Config\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"PROPERTY"})
- */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Value extends AbstractAnnotation
 {

@@ -19,20 +19,11 @@ use Psr\Container\ContainerInterface;
 
 class ConsumerProcess extends AbstractProcess
 {
-    /**
-     * @var string
-     */
-    protected $queue = 'default';
+    protected string $queue = 'default';
 
-    /**
-     * @var DriverInterface
-     */
-    protected $driver;
+    protected DriverInterface $driver;
 
-    /**
-     * @var array
-     */
-    protected $config;
+    protected array $config;
 
     public function __construct(ContainerInterface $container)
     {

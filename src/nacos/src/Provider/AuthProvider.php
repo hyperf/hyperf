@@ -19,7 +19,7 @@ class AuthProvider extends AbstractProvider
 {
     public function login(string $username, string $password): ResponseInterface
     {
-        return $this->client()->request('POST', '/nacos/v1/auth/users/login', [
+        return $this->client()->request('POST', 'nacos/v1/auth/users/login', [
             RequestOptions::QUERY => [
                 'username' => $username,
             ],

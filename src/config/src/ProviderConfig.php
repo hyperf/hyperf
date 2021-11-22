@@ -21,10 +21,7 @@ use function method_exists;
  */
 class ProviderConfig
 {
-    /**
-     * @var array
-     */
-    private static $providerConfigs = [];
+    private static array $providerConfigs = [];
 
     /**
      * Load and merge all provider configs from components.

@@ -21,7 +21,7 @@ class Connection extends AbstractConnection
      */
     public $callback;
 
-    public $connection;
+    public mixed $connection = null;
 
     public function __construct(ContainerInterface $container, Pool $pool, callable $callback)
     {

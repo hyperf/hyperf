@@ -15,67 +15,34 @@ use Carbon\Carbon;
 
 class Crontab
 {
-    /**
-     * @var null|string
-     */
-    protected $name;
+    protected ?string $name = null;
 
-    /**
-     * @var string
-     */
-    protected $type = 'callback';
+    protected string $type = 'callback';
 
-    /**
-     * @var null|string
-     */
-    protected $rule;
+    protected ?string $rule = null;
 
-    /**
-     * @var bool
-     */
-    protected $singleton = false;
+    protected bool $singleton = false;
 
-    /**
-     * @var string
-     */
-    protected $mutexPool = 'default';
+    protected string $mutexPool = 'default';
 
-    /**
-     * @var int
-     */
-    protected $mutexExpires = 3600;
+    protected int $mutexExpires = 3600;
 
-    /**
-     * @var bool
-     */
-    protected $onOneServer = false;
+    protected bool $onOneServer = false;
 
-    /**
-     * @var mixed
-     */
-    protected $callback;
+    protected mixed $callback = null;
 
-    /**
-     * @var null|string
-     */
-    protected $memo;
+    protected ?string $memo = null;
 
-    /**
-     * @var null|\Carbon\Carbon
-     */
-    protected $executeTime;
+    protected ?Carbon $executeTime = null;
 
-    /**
-     * @var bool
-     */
-    protected $enable = true;
+    protected bool $enable = true;
 
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setName(?string $name): Crontab
+    public function setName(?string $name): static
     {
         $this->name = $name;
         return $this;
@@ -86,7 +53,7 @@ class Crontab
         return $this->rule;
     }
 
-    public function setRule(?string $rule): Crontab
+    public function setRule(?string $rule): static
     {
         $this->rule = $rule;
         return $this;
@@ -97,7 +64,7 @@ class Crontab
         return $this->singleton;
     }
 
-    public function setSingleton(bool $singleton): Crontab
+    public function setSingleton(bool $singleton): static
     {
         $this->singleton = $singleton;
         return $this;
@@ -108,7 +75,7 @@ class Crontab
         return $this->mutexPool;
     }
 
-    public function setMutexPool(string $mutexPool): Crontab
+    public function setMutexPool(string $mutexPool): static
     {
         $this->mutexPool = $mutexPool;
         return $this;
@@ -119,7 +86,7 @@ class Crontab
         return $this->mutexExpires;
     }
 
-    public function setMutexExpires(int $mutexExpires): Crontab
+    public function setMutexExpires(int $mutexExpires): static
     {
         $this->mutexExpires = $mutexExpires;
         return $this;
@@ -130,18 +97,18 @@ class Crontab
         return $this->onOneServer;
     }
 
-    public function setOnOneServer(bool $onOneServer): Crontab
+    public function setOnOneServer(bool $onOneServer): static
     {
         $this->onOneServer = $onOneServer;
         return $this;
     }
 
-    public function getCallback()
+    public function getCallback(): mixed
     {
         return $this->callback;
     }
 
-    public function setCallback($callback): Crontab
+    public function setCallback(mixed $callback): static
     {
         $this->callback = $callback;
         return $this;
@@ -152,7 +119,7 @@ class Crontab
         return $this->memo;
     }
 
-    public function setMemo(?string $memo): Crontab
+    public function setMemo(?string $memo): static
     {
         $this->memo = $memo;
         return $this;
@@ -163,7 +130,7 @@ class Crontab
         return $this->type;
     }
 
-    public function setType(string $type): Crontab
+    public function setType(string $type): static
     {
         $this->type = $type;
         return $this;
@@ -174,7 +141,7 @@ class Crontab
         return $this->executeTime;
     }
 
-    public function setExecuteTime(Carbon $executeTime): Crontab
+    public function setExecuteTime(Carbon $executeTime): static
     {
         $this->executeTime = $executeTime;
         return $this;
@@ -185,7 +152,7 @@ class Crontab
         return $this->enable;
     }
 
-    public function setEnable(bool $enable): Crontab
+    public function setEnable(bool $enable): static
     {
         $this->enable = $enable;
         return $this;

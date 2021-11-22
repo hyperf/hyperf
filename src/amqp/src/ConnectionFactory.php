@@ -11,34 +11,28 @@ declare(strict_types=1);
  */
 namespace Hyperf\Amqp;
 
-use Hyperf\Amqp\IO\SwooleIO;
+use Hyperf\Amqp\Exception\NotSupportedException;
+use Hyperf\Amqp\IO\IOFactory;
+use Hyperf\Amqp\IO\IOFactoryInterface;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Coroutine\Locker;
 use InvalidArgumentException;
+use PhpAmqpLib\Wire\IO\AbstractIO;
 use Psr\Container\ContainerInterface;
 
 class ConnectionFactory
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
+    protected ConfigInterface $config;
 
     /**
      * @var AMQPConnection[][]
      */
     protected $connections = [];
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->config = $this->container->get(ConfigInterface::class);
     }
 
@@ -88,18 +82,11 @@ class ConnectionFactory
 
     public function make(array $config): AMQPConnection
     {
-        $host = $config['host'] ?? 'localhost';
-        $port = $config['port'] ?? 5672;
         $user = $config['user'] ?? 'guest';
         $password = $config['password'] ?? 'guest';
         $vhost = $config['vhost'] ?? '/';
-
         $params = new Params(Arr::get($config, 'params', []));
-        $io = new SwooleIO(
-            $host,
-            $port,
-            $params->getConnectionTimeout()
-        );
+        $io = $this->makeIO($config, $params);
 
         $connection = new AMQPConnection(
             $user,
@@ -107,7 +94,7 @@ class ConnectionFactory
             $vhost,
             $params->isInsist(),
             $params->getLoginMethod(),
-            $params->getLoginResponse(),
+            null,
             $params->getLocale(),
             $io,
             $params->getHeartbeat(),
@@ -127,5 +114,21 @@ class ConnectionFactory
         }
 
         return $this->config->get($key);
+    }
+
+    private function makeIO(array $config, Params $params): AbstractIO
+    {
+        $callable = $config['io'] ?? IOFactory::class;
+
+        if (is_callable($callable)) {
+            return $callable($config, $params);
+        }
+
+        $ioFactory = $this->container->get((string) $callable);
+        if (! $ioFactory instanceof IOFactoryInterface) {
+            throw new NotSupportedException(sprintf('%s must instanceof %s', $callable, IOFactoryInterface::class));
+        }
+
+        return $ioFactory->create($config, $params);
     }
 }

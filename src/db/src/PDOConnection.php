@@ -20,15 +20,9 @@ use Psr\Container\ContainerInterface;
 
 class PDOConnection extends AbstractConnection
 {
-    /**
-     * @var PDO
-     */
-    protected $connection;
+    protected ?PDO $connection = null;
 
-    /**
-     * @var array
-     */
-    protected $config = [
+    protected array $config = [
         'driver' => 'pdo',
         'host' => 'localhost',
         'port' => 3306,
@@ -57,9 +51,8 @@ class PDOConnection extends AbstractConnection
 
     /**
      * Current mysql database.
-     * @var null|int
      */
-    protected $database;
+    protected ?int $database = null;
 
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {

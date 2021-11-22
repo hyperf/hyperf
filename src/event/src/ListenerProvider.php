@@ -19,7 +19,7 @@ class ListenerProvider implements ListenerProviderInterface
     /**
      * @var ListenerData[]
      */
-    public $listeners = [];
+    public array $listeners = [];
 
     /**
      * @param object $event An event for which to return the relevant listeners
@@ -37,7 +37,7 @@ class ListenerProvider implements ListenerProviderInterface
         return $queue;
     }
 
-    public function on(string $event, callable $listener, int $priority = 1): void
+    public function on(string $event, callable $listener, int $priority = ListenerData::DEFAULT_PRIORITY): void
     {
         $this->listeners[] = new ListenerData($event, $listener, $priority);
     }

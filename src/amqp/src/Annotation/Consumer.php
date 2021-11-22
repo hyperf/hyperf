@@ -14,45 +14,20 @@ namespace Hyperf\Amqp\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class Consumer extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $exchange = '';
+    public string $exchange = '';
 
-    /**
-     * @var string
-     */
-    public $routingKey = '';
+    public string $routingKey = '';
 
-    /**
-     * @var string
-     */
-    public $queue = '';
+    public string $queue = '';
 
-    /**
-     * @var string
-     */
-    public $name = 'Consumer';
+    public string $name = 'Consumer';
 
-    /**
-     * @var int
-     */
-    public $nums = 1;
+    public int $nums = 1;
 
-    /**
-     * @var null|bool
-     */
-    public $enable;
+    public ?bool $enable = null;
 
-    /**
-     * @var int
-     */
-    public $maxConsumption = 0;
+    public int $maxConsumption = 0;
 }

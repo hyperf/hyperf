@@ -27,4 +27,6 @@ interface PoolInterface
      * Close and clear the connection pool.
      */
     public function flush(): void;
+
+    public function getOption(): PoolOptionInterface;
 }

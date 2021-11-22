@@ -98,7 +98,7 @@ class CoroutineMemoryDriver extends Driver implements KeyCollectorInterface
         return CoroutineMemoryKey::instance()->get($collector, []);
     }
 
-    public function delKey(string $collector, ...$key): bool
+    public function delKey(string $collector, string ...$key): bool
     {
         $instance = CoroutineMemoryKey::instance();
         $result = [];

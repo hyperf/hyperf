@@ -13,10 +13,7 @@ namespace Hyperf\Dag;
 
 class Vertex
 {
-    /**
-     * @var string
-     */
-    public $key;
+    public ?string $key = null;
 
     /**
      * @var callable
@@ -26,12 +23,12 @@ class Vertex
     /**
      * @var array<Vertex>
      */
-    public $parents = [];
+    public array $parents = [];
 
     /**
      * @var array<Vertex>
      */
-    public $children = [];
+    public array $children = [];
 
     public static function make(callable $job, string $key = null): self
     {

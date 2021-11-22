@@ -55,7 +55,7 @@ class Translator implements TranslatorInterface
     /**
      * The message selector.
      *
-     * @var \Hyperf\Translation\MessageSelector
+     * @var null|\Hyperf\Translation\MessageSelector
      */
     protected $selector;
 

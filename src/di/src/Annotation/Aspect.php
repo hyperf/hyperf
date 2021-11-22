@@ -13,27 +13,14 @@ namespace Hyperf\Di\Annotation;
 
 use Attribute;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class Aspect extends AbstractAnnotation
 {
-    /**
-     * @var array
-     */
-    public $classes = [];
+    public array $classes = [];
 
-    /**
-     * @var array
-     */
-    public $annotations = [];
+    public array $annotations = [];
 
-    /**
-     * @var null|int
-     */
-    public $priority;
+    public ?int $priority = null;
 
     public function collectClass(string $className): void
     {
@@ -53,7 +40,7 @@ class Aspect extends AbstractAnnotation
         $annotations = $instanceAnnotations ? array_merge($annotations, $instanceAnnotations) : $annotations;
         // Priority
         $annotationPriority = $this->priority;
-        $propertyPriority = $instancePriority ? $instancePriority : null;
+        $propertyPriority = $instancePriority ?: null;
         if (! is_null($annotationPriority) && ! is_null($propertyPriority) && $annotationPriority !== $propertyPriority) {
             throw new \InvalidArgumentException('Cannot define two difference priority of Aspect.');
         }

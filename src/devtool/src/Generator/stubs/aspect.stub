@@ -9,9 +9,6 @@ use Hyperf\Di\Aop\AbstractAspect;
 use Psr\Container\ContainerInterface;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
-/**
- * @Aspect
- */
 #[Aspect]
 class %CLASS% extends AbstractAspect
 {

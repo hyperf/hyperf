@@ -20,7 +20,7 @@ interface MultipleAnnotationInterface extends AnnotationInterface
     /**
      * @throws AnnotationException
      */
-    public function insert(AnnotationInterface $annotation);
+    public function insert(AnnotationInterface $annotation): static;
 
     /**
      * @return AnnotationInterface[]

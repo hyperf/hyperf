@@ -17,8 +17,8 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/contract": "~2.2.0",
-        "hyperf/utils": "~2.2.0",
+        "hyperf/contract": "~3.0.0",
+        "hyperf/utils": "~3.0.0",
         "psr/container": "^1.0|^2.0",
         "psr/http-server-middleware": "^1.0"
     },
@@ -36,7 +36,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\SwooleTracker\\ConfigProvider"

@@ -13,14 +13,14 @@ namespace Hyperf\Elasticsearch;
 
 use Elasticsearch\ClientBuilder;
 use Hyperf\Guzzle\RingPHP\CoroutineHandler;
-use Swoole\Coroutine;
+use Hyperf\Utils\Coroutine;
 
 class ClientBuilderFactory
 {
     public function create()
     {
         $builder = ClientBuilder::create();
-        if (Coroutine::getCid() > 0) {
+        if (Coroutine::inCoroutine()) {
             $builder->setHandler(new CoroutineHandler());
         }
 

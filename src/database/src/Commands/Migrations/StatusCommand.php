@@ -19,10 +19,8 @@ class StatusCommand extends BaseCommand
 {
     /**
      * The console command name.
-     *
-     * @var string
      */
-    protected $name = 'migrate:status';
+    protected ?string $name = 'migrate:status';
 
     /**
      * The console command description.

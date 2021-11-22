@@ -18,9 +18,7 @@ use Hyperf\Retry\Annotation\AbstractRetry;
 use Hyperf\Retry\Annotation\Retry;
 use Hyperf\Retry\Policy\HybridRetryPolicy;
 
-/**
- * @Aspect
- */
+#[Aspect]
 class RetryAnnotationAspect implements AroundInterface
 {
     public $classes = [];

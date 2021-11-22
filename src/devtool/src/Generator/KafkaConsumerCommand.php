@@ -13,16 +13,19 @@ namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
 #[Command]
 class KafkaConsumerCommand extends GeneratorCommand
 {
     public function __construct()
     {
         parent::__construct('gen:kafka-consumer');
+    }
+
+    public function configure()
+    {
         $this->setDescription('Create a new kafka consumer class');
+
+        parent::configure();
     }
 
     protected function getStub(): string

@@ -20,10 +20,7 @@ use Hyperf\Process\ProcessManager;
 
 class InstanceBeatProcess extends AbstractProcess
 {
-    /**
-     * @var string
-     */
-    public $name = 'nacos-heartbeat';
+    public string $name = 'nacos-heartbeat';
 
     public function handle(): void
     {

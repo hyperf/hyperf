@@ -20,23 +20,15 @@ use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Aspect
- */
+#[Aspect]
 class AsyncQueueAspect extends AbstractAspect
 {
-    public $annotations = [
+    public array $annotations = [
         AsyncQueueMessage::class,
     ];
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
@@ -65,7 +57,6 @@ class AsyncQueueAspect extends AbstractAspect
         $maxAttempts = 0;
 
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
-        /** @var AsyncQueueMessage $annotation */
         $annotation = $metadata->method[AsyncQueueMessage::class] ?? $metadata->class[AsyncQueueMessage::class] ?? null;
         if ($annotation instanceof AsyncQueueMessage) {
             $pool = $annotation->pool;

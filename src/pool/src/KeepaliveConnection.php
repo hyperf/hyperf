@@ -21,47 +21,26 @@ use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
 use Swoole\Timer;
 
+/**
+ * TODO: Support Swow, only for Swoole now.
+ */
 abstract class KeepaliveConnection implements ConnectionInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var Pool
-     */
-    protected $pool;
-
     /**
      * @var Coroutine\Channel
      */
     protected $channel;
 
-    /**
-     * @var float
-     */
-    protected $lastUseTime = 0.0;
+    protected float $lastUseTime = 0.0;
 
-    /**
-     * @var null|int
-     */
-    protected $timerId;
+    protected ?int $timerId = null;
 
-    /**
-     * @var bool
-     */
-    protected $connected = false;
+    protected bool $connected = false;
 
-    /**
-     * @var string
-     */
-    protected $name = 'keepalive.connection';
+    protected string $name = 'keepalive.connection';
 
-    public function __construct(ContainerInterface $container, Pool $pool)
+    public function __construct(protected ContainerInterface $container, protected Pool $pool)
     {
-        $this->container = $container;
-        $this->pool = $pool;
     }
 
     public function __destruct()
@@ -170,7 +149,7 @@ abstract class KeepaliveConnection implements ConnectionInterface
                 }
 
                 if ($this->isTimeout()) {
-                    // The socket does not used in double of heartbeat.
+                    // The socket does not use in double of heartbeat.
                     $this->close();
                     return;
                 }

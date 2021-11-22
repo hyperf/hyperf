@@ -21,10 +21,7 @@ use function method_exists;
 
 class DefinitionSource implements DefinitionSourceInterface
 {
-    /**
-     * @var array
-     */
-    private $source;
+    private array $source;
 
     public function __construct(array $source)
     {
@@ -50,7 +47,7 @@ class DefinitionSource implements DefinitionSourceInterface
     /**
      * @param array|callable|string $definition
      */
-    public function addDefinition(string $name, $definition): self
+    public function addDefinition(string $name, $definition): static
     {
         $this->source[$name] = $this->normalizeDefinition($name, $definition);
         return $this;
@@ -84,7 +81,7 @@ class DefinitionSource implements DefinitionSourceInterface
     }
 
     /**
-     * Normaliaze the user definition source to a standard definition souce.
+     * Normalize the user definition source to a standard definition source.
      */
     private function normalizeSource(array $source): array
     {

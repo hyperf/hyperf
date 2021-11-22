@@ -15,7 +15,7 @@ use Hyperf\Command\Command as HyperfCommand;
 
 class ViewPublishCommand extends HyperfCommand
 {
-    protected $signature = 'view:publish {--f|force}';
+    protected ?string $signature = 'view:publish {--f|force}';
 
     protected $packages = [
         'hyperf/session',

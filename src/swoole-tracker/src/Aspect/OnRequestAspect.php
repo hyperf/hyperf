@@ -22,18 +22,12 @@ use function trackerHookMalloc;
  */
 class OnRequestAspect extends AbstractAspect
 {
-    public $classes = [
+    public array $classes = [
         Server::class . '::onRequest',
     ];
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)

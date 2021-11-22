@@ -18,7 +18,6 @@ use Hyperf\Di\Aop\Pipeline;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
-use Hyperf\Di\Definition\ScanConfig;
 use Hyperf\Retry\Annotation\AbstractRetry;
 use Hyperf\Retry\Annotation\CircuitBreaker;
 use Hyperf\Retry\Annotation\Retry;
@@ -48,7 +47,7 @@ class RetryAnnotationAspectTest extends TestCase
             RetryBudgetInterface::class => NoOpRetryBudget::class,
             RetryBudget::class => NoOpRetryBudget::class,
             SleepStrategyInterface::class => flatStrategy::class,
-        ], new ScanConfig()));
+        ]));
         ApplicationContext::setContainer($container);
     }
 
@@ -65,7 +64,7 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -92,7 +91,7 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -125,7 +124,7 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -158,7 +157,7 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -185,7 +184,7 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -214,7 +213,7 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -247,7 +246,7 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -277,7 +276,7 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -307,7 +306,7 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -335,7 +334,7 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -362,7 +361,7 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -413,7 +412,7 @@ class RetryAnnotationAspectTest extends TestCase
         $point->shouldReceive('getArguments')->andReturns([]);
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {

@@ -25,7 +25,7 @@ use Swoole\Server;
  */
 class MetricProcess extends AbstractProcess
 {
-    public $name = 'metric';
+    public string $name = 'metric';
 
     public $nums = 1;
 

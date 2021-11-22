@@ -13,10 +13,7 @@ namespace Hyperf\Di\Definition;
 
 class PropertyHandlerManager
 {
-    /**
-     * @var array
-     */
-    private static $container = [];
+    private static array $container = [];
 
     public static function register(string $annotation, callable $callback)
     {
