@@ -4,9 +4,9 @@
     "type": "library",
     "license": "MIT",
     "keywords": [
-      "php",
-      "hyperf",
-      "resource"
+        "php",
+        "hyperf",
+        "resource"
     ],
     "homepage": "https://hyperf.io",
     "support": {

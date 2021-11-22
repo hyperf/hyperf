@@ -1,5 +1,16 @@
 # 版本更新记录
 
+# v2.2.17 - 2021-11-22
+
+## 修复
+
+- [#4243](https://github.com/hyperf/hyperf/pull/4243) 修复使用 `parallel` 时，结果集的顺序与入参不一致的问题。
+
+## 新增
+
+- [#4109](https://github.com/hyperf/hyperf/pull/4109) 为 `hyperf/tracer` 增加 `PHP8` 的支持。
+- [#4260](https://github.com/hyperf/hyperf/pull/4260) 为 `hyperf/database` 增加指定索引的功能。
+
 # v2.2.16 - 2021-11-15
 
 ## 新增
