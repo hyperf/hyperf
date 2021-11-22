@@ -118,10 +118,9 @@ class CoroutineHandler
 
         // 验证服务端证书
         if (isset($options['verify'])) {
-            if ($options['verify'] === false) {
-                $settings['ssl_verify_peer'] = false;
-            } else {
-                $settings['ssl_verify_peer'] = false;
+            $settings['ssl_verify_peer'] = false;
+            if ($options['verify'] !== false) {
+                $settings['ssl_verify_peer'] = true;
                 $settings['ssl_allow_self_signed'] = true;
                 $settings['ssl_host_name'] = $request->getUri()->getHost();
                 if (is_string($options['verify'])) {
