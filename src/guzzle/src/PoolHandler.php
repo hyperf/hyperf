@@ -20,20 +20,8 @@ use Psr\Http\Message\UriInterface;
 
 class PoolHandler extends CoroutineHandler
 {
-    /**
-     * @var PoolFactory
-     */
-    protected $factory;
-
-    /**
-     * @var array
-     */
-    protected $option;
-
-    public function __construct(PoolFactory $factory, array $option = [])
+    public function __construct(protected PoolFactory $factory, protected array $option = [])
     {
-        $this->factory = $factory;
-        $this->option = $option;
     }
 
     public function __invoke(RequestInterface $request, array $options)
@@ -60,7 +48,7 @@ class PoolHandler extends CoroutineHandler
         }, $this->option);
 
         $connection = $pool->get();
-
+        $response = null;
         try {
             $client = $connection->getConnection();
             $headers = $this->initHeaders($request, $options);
