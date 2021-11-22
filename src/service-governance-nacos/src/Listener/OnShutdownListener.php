@@ -12,12 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\ServiceGovernanceNacos\Listener;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\IPReaderInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnShutdown;
 use Hyperf\Nacos\Application;
 use Hyperf\Server\Event\CoroutineServerStop;
-use Hyperf\Contract\IPReaderInterface;
 use Psr\Container\ContainerInterface;
 
 class OnShutdownListener implements ListenerInterface
