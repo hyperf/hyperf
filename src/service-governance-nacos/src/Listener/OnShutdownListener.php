@@ -17,7 +17,7 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnShutdown;
 use Hyperf\Nacos\Application;
 use Hyperf\Server\Event\CoroutineServerStop;
-use Hyperf\ServiceGovernance\IPReaderInterface;
+use Hyperf\Contract\IPReaderInterface;
 use Psr\Container\ContainerInterface;
 
 class OnShutdownListener implements ListenerInterface

@@ -16,7 +16,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Nacos\Application;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
-use Hyperf\ServiceGovernance\IPReaderInterface;
+use Hyperf\Contract\IPReaderInterface;
 
 class InstanceBeatProcess extends AbstractProcess
 {

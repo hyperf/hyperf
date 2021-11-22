@@ -14,7 +14,7 @@ namespace HyperfTest\ConfigNacos;
 use Hyperf\ConfigNacos\Client;
 use Hyperf\ConfigNacos\Constants;
 use Hyperf\ConfigNacos\NacosClient;
-use Hyperf\ConfigNacos\Service\IPReaderInterface;
+use Hyperf\Contract\IPReaderInterface;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Nacos\Application;

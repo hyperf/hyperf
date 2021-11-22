@@ -484,24 +484,3 @@ if (! function_exists('wait')) {
         return (new Waiter())->wait($closure, $timeout);
     }
 }
-
-if (! function_exists('swoole_get_local_ip')) {
-    function swoole_get_local_ip()
-    {
-        if (! function_exists('net_get_interfaces')) {
-            throw new RuntimeException('Failed to get local IP.');
-        }
-        $ip = [];
-        foreach (net_get_interfaces() ?: [] as $name => $value) {
-            foreach ($value['unicast'] as $item) {
-                if (! isset($item['address'])) {
-                    continue;
-                }
-                if (! Str::contains($item['address'], '::') && $item['address'] !== '127.0.0.1') {
-                    $ip[$name] = $item['address'];
-                }
-            }
-        }
-        return $ip;
-    }
-}

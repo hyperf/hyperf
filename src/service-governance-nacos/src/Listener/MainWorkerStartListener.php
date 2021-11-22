@@ -18,7 +18,7 @@ use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Server\Event\MainCoroutineServerStart;
-use Hyperf\ServiceGovernance\IPReaderInterface;
+use Hyperf\Contract\IPReaderInterface;
 use Psr\Container\ContainerInterface;
 
 class MainWorkerStartListener implements ListenerInterface
