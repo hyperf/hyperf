@@ -13,18 +13,14 @@ namespace Hyperf\HttpMessage\Stream;
 
 use Hyperf\HttpServer\Exception\Http\FileException;
 use Psr\Http\Message\StreamInterface;
+use SplFileInfo;
+use Stringable;
 
-class SwooleFileStream implements StreamInterface, FileInterface
+class SwooleFileStream implements StreamInterface, FileInterface, Stringable
 {
-    /**
-     * @var int
-     */
-    protected $size;
+    protected int $size;
 
-    /**
-     * @var \SplFileInfo
-     */
-    protected $file;
+    protected SplFileInfo $file;
 
     /**
      * SwooleFileStream constructor.
@@ -33,8 +29,8 @@ class SwooleFileStream implements StreamInterface, FileInterface
      */
     public function __construct($file)
     {
-        if (! $file instanceof \SplFileInfo) {
-            $file = new \SplFileInfo($file);
+        if (! $file instanceof SplFileInfo) {
+            $file = new SplFileInfo($file);
         }
         if (! $file->isReadable()) {
             throw new FileException('File must be readable.');
@@ -58,7 +54,7 @@ class SwooleFileStream implements StreamInterface, FileInterface
     {
         try {
             return $this->getContents();
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return '';
         }
     }
@@ -117,7 +113,7 @@ class SwooleFileStream implements StreamInterface, FileInterface
     }
 
     /**
-     * Returns whether or not the stream is seekable.
+     * Returns whether the stream is seekable.
      *
      * @return bool
      */
@@ -158,7 +154,7 @@ class SwooleFileStream implements StreamInterface, FileInterface
     }
 
     /**
-     * Returns whether or not the stream is writable.
+     * Returns whether the stream is writable.
      *
      * @return bool
      */
@@ -180,7 +176,7 @@ class SwooleFileStream implements StreamInterface, FileInterface
     }
 
     /**
-     * Returns whether or not the stream is readable.
+     * Returns whether the stream is readable.
      *
      * @return bool
      */
@@ -192,8 +188,8 @@ class SwooleFileStream implements StreamInterface, FileInterface
     /**
      * Read data from the stream.
      *
-     * @param int $length Read up to $length bytes from the object and return
-     *                    them. Fewer than $length bytes may be returned if underlying stream
+     * @param int $length Read up to $length bytes from the object and return them.
+     *                    Fewer than $length bytes may be returned if underlying stream
      *                    call returns fewer bytes.
      * @throws \RuntimeException if an error occurs
      * @return string returns the data read from the stream, or an empty string
