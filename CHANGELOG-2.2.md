@@ -6,7 +6,7 @@
 
 ## Added
 
-- [#4284](https://github.com/hyperf/hyperf/pull/4284) Added get_local_ip method for `hyperf/utils`.
+- [#4284](https://github.com/hyperf/hyperf/pull/4284) Added method `Hyperf\Utils\Network::ip()`.
 
 # v2.2.17 - 2021-11-22
 
