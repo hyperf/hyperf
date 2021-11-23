@@ -12,7 +12,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 #[Aspect]
 class %CLASS% extends AbstractAspect
 {
-    public function __construct(private ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
     }
 

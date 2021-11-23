@@ -14,7 +14,7 @@ use Hyperf\Event\Contract\ListenerInterface;
 #[Listener]
 class %CLASS% implements ListenerInterface
 {
-    public function __construct(private ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
     }
 
