@@ -408,8 +408,8 @@ if (! function_exists('parallel')) {
 
 if (! function_exists('make')) {
     /**
-     * Create a object instance, if the DI container exist in ApplicationContext,
-     * then the object will be create by DI container via `make()` method, if not,
+     * Create an object instance, if the DI container exist in ApplicationContext,
+     * then the object will be created by DI container via `make()` method, if not,
      * the object will create by `new` keyword.
      */
     function make(string $name, array $parameters = [])
@@ -482,5 +482,40 @@ if (! function_exists('wait')) {
             return $waiter->wait($closure, $timeout);
         }
         return (new Waiter())->wait($closure, $timeout);
+    }
+}
+
+if (! function_exists('get_local_ip')) {
+    /**
+     * @deprecated v3.0
+     * @return string
+     */
+    function get_local_ip(): string
+    {
+        $ips = [];
+        if (function_exists('swoole_get_local_ip')) {
+            $ips = swoole_get_local_ip();
+        }
+        if (empty($ips) && function_exists('net_get_interfaces')) {
+            foreach (net_get_interfaces() ?: [] as $name => $value) {
+                foreach ($value['unicast'] as $item) {
+                    if (! isset($item['address'])) {
+                        continue;
+                    }
+                    if (! Str::contains($item['address'], '::') && $item['address'] !== '127.0.0.1') {
+                        $ips[$name] = $item['address'];
+                    }
+                }
+            }
+        }
+        if (is_array($ips) && ! empty($ips)) {
+            return current($ips);
+        }
+        /** @var mixed|string $ip */
+        $ip = gethostbyname(gethostname());
+        if (is_string($ip)) {
+            return $ip;
+        }
+        throw new RuntimeException('Can not get the internal IP.');
     }
 }

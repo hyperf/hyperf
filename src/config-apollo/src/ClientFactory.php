@@ -25,7 +25,7 @@ class ClientFactory
         $option->setServer($config->get('config_center.drivers.apollo.server', 'http://127.0.0.1:8080'))
             ->setAppid($config->get('config_center.drivers.apollo.appid', ''))
             ->setCluster($config->get('config_center.drivers.apollo.cluster', ''))
-            ->setClientIp($config->get('config_center.drivers.apollo.client_ip', current(swoole_get_local_ip())))
+            ->setClientIp($config->get('config_center.drivers.apollo.client_ip', get_local_ip()))
             ->setPullTimeout($config->get('config_center.drivers.apollo.pull_timeout', 10))
             ->setIntervalTimeout($config->get('config_center.drivers.apollo.interval_timeout', 60))
             ->setSecret($config->get('config_center.drivers.apollo.secret', ''));

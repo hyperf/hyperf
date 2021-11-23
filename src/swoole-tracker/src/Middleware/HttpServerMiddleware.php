@@ -34,7 +34,7 @@ class HttpServerMiddleware implements MiddlewareInterface
     {
         if (class_exists(Stats::class)) {
             $path = $request->getUri()->getPath();
-            $ip = current(swoole_get_local_ip());
+            $ip = get_local_ip();
             $traceId = $request->getHeaderLine('x-swoole-traceid') ?: '';
             $spanId = $request->getHeaderLine('x-swoole-spanid') ?: '';
 

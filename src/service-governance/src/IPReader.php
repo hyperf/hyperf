@@ -17,15 +17,10 @@ class IPReader implements IPReaderInterface
 {
     public function read(): string
     {
-        $ips = swoole_get_local_ip();
-        if (is_array($ips) && ! empty($ips)) {
-            return current($ips);
+        try {
+            return get_local_ip();
+        } catch (\Throwable $throwable) {
+            throw new IPReadFailedException($throwable->getMessage());
         }
-        /** @var mixed|string $ip */
-        $ip = gethostbyname(gethostname());
-        if (is_string($ip)) {
-            return $ip;
-        }
-        throw new IPReadFailedException('Can not get the internal IP.');
     }
 }
