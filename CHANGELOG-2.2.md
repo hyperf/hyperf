@@ -1,5 +1,9 @@
 # v2.2.18 - TBD
 
+## Fixed
+
+- [#4283](https://github.com/hyperf/hyperf/pull/4283) Fixed type hint error for `Hyperf\Grpc\Parser::deserializeMessage()` when `$response->data` is null.
+
 # v2.2.17 - 2021-11-22
 
 ## Fixed
