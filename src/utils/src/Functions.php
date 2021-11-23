@@ -408,8 +408,8 @@ if (! function_exists('parallel')) {
 
 if (! function_exists('make')) {
     /**
-     * Create a object instance, if the DI container exist in ApplicationContext,
-     * then the object will be create by DI container via `make()` method, if not,
+     * Create an object instance, if the DI container exist in ApplicationContext,
+     * then the object will be created by DI container via `make()` method, if not,
      * the object will create by `new` keyword.
      */
     function make(string $name, array $parameters = [])
