@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\ModelCache\Handler;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\ModelCache\Config;
 use Hyperf\ModelCache\Exception\CacheException;
 use Hyperf\ModelCache\Redis\HashGetMultiple;
 use Hyperf\ModelCache\Redis\HashIncr;
 use Hyperf\ModelCache\Redis\LuaManager;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\InteractsWithTime;
 use Psr\Container\ContainerInterface;
 

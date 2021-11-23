@@ -13,8 +13,8 @@ namespace Hyperf\ViewEngine;
 
 use ArrayAccess;
 use BadMethodCallException;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\MessageBag;
 use Hyperf\Utils\Contracts\MessageProvider;
 use Hyperf\Utils\Str;

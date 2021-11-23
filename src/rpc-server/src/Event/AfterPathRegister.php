@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcServer\Event;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\RpcServer\Annotation\RpcService as Annotation;
-use Hyperf\Utils\Contracts\Arrayable;
 
 class AfterPathRegister implements Arrayable
 {

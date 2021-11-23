@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Contracts\Arrayable;
 
 class Rule
 {

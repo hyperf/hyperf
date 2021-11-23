@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\HttpServer;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
@@ -20,7 +21,6 @@ use Hyperf\HttpServer\Response;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Xmlable;
 use Mockery;
 use PHPUnit\Framework\TestCase;

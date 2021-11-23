@@ -12,13 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\Resource\Json;
 
 use ArrayAccess;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Database\Model\Model;
 use Hyperf\HttpMessage\Server\ResponseProxyTrait;
 use Hyperf\Resource\Concerns\ConditionallyLoadsAttributes;
 use Hyperf\Resource\Concerns\DelegatesToResource;
 use Hyperf\Resource\JsonEncodingException;
 use Hyperf\Resource\Response\Response;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use JsonSerializable;
 use Psr\Http\Message\ResponseInterface;

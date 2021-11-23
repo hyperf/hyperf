@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\ModelCache\Handler;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\ModelCache\Config;
 use Hyperf\ModelCache\Exception\CacheException;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\InteractsWithTime;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Psr\Container\ContainerInterface;
