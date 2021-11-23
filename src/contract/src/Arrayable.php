@@ -9,10 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils\Contracts;
+namespace Hyperf\Contract;
 
-use Hyperf\Contract;
-
-interface Arrayable extends Contract\Arrayable
+interface Arrayable
 {
+    public function toArray(): array;
 }
