@@ -15,7 +15,6 @@ use Hyperf\Utils\Backoff;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\HigherOrderTapProxy;
-use Hyperf\Utils\Network;
 use Hyperf\Utils\Optional;
 use Hyperf\Utils\Parallel;
 use Hyperf\Utils\Str;
@@ -483,15 +482,5 @@ if (! function_exists('wait')) {
             return $waiter->wait($closure, $timeout);
         }
         return (new Waiter())->wait($closure, $timeout);
-    }
-}
-
-if (! function_exists('get_local_ip')) {
-    /**
-     * @deprecated v3.0
-     */
-    function get_local_ip(): string
-    {
-        return Network::ip();
     }
 }

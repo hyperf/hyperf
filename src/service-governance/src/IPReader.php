@@ -12,13 +12,14 @@ declare(strict_types=1);
 namespace Hyperf\ServiceGovernance;
 
 use Hyperf\ServiceGovernance\Exception\IPReadFailedException;
+use Hyperf\Utils\Network;
 
 class IPReader implements IPReaderInterface
 {
     public function read(): string
     {
         try {
-            return get_local_ip();
+            return Network::ip();
         } catch (\Throwable $throwable) {
             throw new IPReadFailedException($throwable->getMessage());
         }
