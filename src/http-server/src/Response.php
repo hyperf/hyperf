@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
+use Hyperf\Contract\Arrayable;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Stream\SwooleFileStream;
 use Hyperf\HttpMessage\Stream\SwooleStream;
@@ -25,7 +26,6 @@ use Hyperf\Utils\ClearStatCache;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Codec\Xml;
 use Hyperf\Utils\Context;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Contracts\Xmlable;
 use Hyperf\Utils\MimeTypeExtensionGuesser;

@@ -13,6 +13,9 @@ namespace Hyperf\Utils\Contracts;
 
 use Hyperf\Contract;
 
+/**
+ * @deprecated v3.1
+ */
 interface Arrayable extends Contract\Arrayable
 {
 }

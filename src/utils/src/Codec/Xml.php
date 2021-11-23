@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Codec;
 
-use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Utils\Contracts\Xmlable;
 use Hyperf\Utils\Exception\InvalidArgumentException;
 use SimpleXMLElement;

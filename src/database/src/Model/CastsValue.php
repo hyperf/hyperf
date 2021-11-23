@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Synchronized;
-use Hyperf\Utils\Contracts\Arrayable;
 
 abstract class CastsValue implements Synchronized, Arrayable
 {
