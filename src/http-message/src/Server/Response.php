@@ -97,7 +97,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response
 
     public function write(string $content): bool
     {
-        if ($this->swooleResponse) {
+        if ($this->swooleResponse !== null) {
             return $this->swooleResponse->write($content);
         }
 
