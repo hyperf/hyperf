@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\HttpMessage;
 
 use Hyperf\HttpMessage\Cookie\Cookie;
+use Hyperf\HttpMessage\Server\Connection\SwooleConnection;
 use Hyperf\HttpMessage\Server\Response;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -61,7 +62,7 @@ class ResponseTest extends TestCase
         $swooleResponse->shouldReceive('write')->with($content)->once()->andReturn(true);
 
         $response = $this->newResponse();
-        $response->setSwooleResponse($swooleResponse);
+        $response->setConnection(new SwooleConnection($swooleResponse));
         $status = $response->write($content);
         $this->assertTrue($status);
     }
