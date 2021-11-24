@@ -27,6 +27,11 @@ class Response extends \Hyperf\HttpMessage\Base\Response
     protected $trailers = [];
 
     /**
+     * @var null|\Swoole\Http\Response
+     */
+    protected $swooleResponse;
+
+    /**
      * Returns an instance with body content.
      */
     public function withContent(string $content): self
@@ -79,5 +84,10 @@ class Response extends \Hyperf\HttpMessage\Base\Response
     public function getTrailers(): array
     {
         return $this->trailers;
+    }
+
+    public function setSwooleResponse(\Swoole\Http\Response $response): void
+    {
+        $this->swooleResponse = $response;
     }
 }

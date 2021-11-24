@@ -169,7 +169,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
      */
     protected function initRequestAndResponse($request, $response): array
     {
-        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
+        $psr7Response = new Psr7Response();
 
         if ($request instanceof ServerRequestInterface) {
             $psr7Request = $request;
@@ -177,7 +177,12 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             $psr7Request = Psr7Request::loadFromSwooleRequest($request);
         }
 
+        if ($response instanceof \Swoole\Http\Response) {
+            $psr7Response->setSwooleResponse($response);
+        }
+
         Context::set(ServerRequestInterface::class, $psr7Request);
+        Context::set(ResponseInterface::class, $psr7Response);
         return [$psr7Request, $psr7Response];
     }
 }
