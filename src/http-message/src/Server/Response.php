@@ -12,10 +12,14 @@ declare(strict_types=1);
 namespace Hyperf\HttpMessage\Server;
 
 use Hyperf\HttpMessage\Cookie\Cookie;
+use Hyperf\HttpMessage\Server\Chunk\Chunkable;
+use Hyperf\HttpMessage\Server\Chunk\HasChunk;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 
-class Response extends \Hyperf\HttpMessage\Base\Response
+class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
 {
+    use HasChunk;
+
     /**
      * @var array
      */
@@ -27,9 +31,9 @@ class Response extends \Hyperf\HttpMessage\Base\Response
     protected $trailers = [];
 
     /**
-     * @var \Swoole\Http\Response
+     * @var ConnectionInterface
      */
-    protected $swooleResponse;
+    protected $connection;
 
     /**
      * Returns an instance with body content.
@@ -86,21 +90,9 @@ class Response extends \Hyperf\HttpMessage\Base\Response
         return $this->trailers;
     }
 
-    /**
-     * @return $this
-     */
-    public function setSwooleResponse(\Swoole\Http\Response $response)
+    public function setConnection(ConnectionInterface $connection)
     {
-        $this->swooleResponse = $response;
+        $this->connection = $connection;
         return $this;
-    }
-
-    public function write(string $content): bool
-    {
-        if ($this->swooleResponse !== null) {
-            return $this->swooleResponse->write($content);
-        }
-
-        return false;
     }
 }
