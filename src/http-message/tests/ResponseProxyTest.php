@@ -42,7 +42,7 @@ class ResponseProxyTest extends ResponseTest
 
     public function testWrite()
     {
-        parent::testWrite();
+        $this->markTestSkipped('Response proxy does not support chunk.');
     }
 
     protected function newResponse()

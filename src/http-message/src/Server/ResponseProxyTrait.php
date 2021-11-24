@@ -12,15 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\HttpMessage\Server;
 
 use Hyperf\HttpMessage\Cookie\Cookie;
-use Hyperf\HttpMessage\Server\Chunk\HasChunk;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 
 trait ResponseProxyTrait
 {
-    use HasChunk;
-
     /**
      * @var null|ResponseInterface
      */

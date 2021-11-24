@@ -31,7 +31,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
     protected $trailers = [];
 
     /**
-     * @var ConnectionInterface
+     * @var null|ConnectionInterface
      */
     protected $connection;
 
@@ -94,5 +94,10 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
     {
         $this->connection = $connection;
         return $this;
+    }
+
+    public function getConnection(): ?ConnectionInterface
+    {
+        return $this->connection;
     }
 }
