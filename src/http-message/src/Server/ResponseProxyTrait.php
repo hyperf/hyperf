@@ -23,9 +23,19 @@ trait ResponseProxyTrait
      */
     protected $response;
 
+    /**
+     * @var null|\Swoole\Http\Response
+     */
+    protected $swooleResponse;
+
     public function setResponse(ResponseInterface $response)
     {
         $this->response = $response;
+    }
+
+    public function setSwooleResponse(\Swoole\Http\Response $response)
+    {
+        $this->swooleResponse = $response;
     }
 
     public function getResponse(): ResponseInterface
@@ -174,5 +184,15 @@ trait ResponseProxyTrait
             throw new RuntimeException('Method getTrailers is invalid.');
         }
         return $response->getTrailers();
+    }
+
+    public function write(string $content): bool
+    {
+        $response = $this->swooleResponse;
+        if (! method_exists($response, 'write')) {
+            throw new RuntimeException('Method write is invalid.');
+        }
+
+        return $this->swooleResponse->write($content);
     }
 }

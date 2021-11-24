@@ -40,6 +40,11 @@ class ResponseProxyTest extends ResponseTest
         parent::testCookies();
     }
 
+    public function testWrite()
+    {
+        parent::testWrite();
+    }
+
     protected function newResponse()
     {
         $response = new ResponseStub();
