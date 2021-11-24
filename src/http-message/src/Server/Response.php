@@ -27,7 +27,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response
     protected $trailers = [];
 
     /**
-     * @var null|\Swoole\Http\Response
+     * @var \Swoole\Http\Response
      */
     protected $swooleResponse;
 
@@ -86,8 +86,17 @@ class Response extends \Hyperf\HttpMessage\Base\Response
         return $this->trailers;
     }
 
-    public function setSwooleResponse(\Swoole\Http\Response $response): void
+    /**
+     * @return $this
+     */
+    public function setSwooleResponse(\Swoole\Http\Response $response)
     {
         $this->swooleResponse = $response;
+        return $this;
+    }
+
+    public function write(string $content): bool
+    {
+        return $this->swooleResponse->write($content);
     }
 }

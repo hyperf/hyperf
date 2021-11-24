@@ -412,6 +412,11 @@ class Response implements PsrResponseInterface, ResponseInterface
         return $this->getResponse()->getReasonPhrase();
     }
 
+    public function write(string $content): bool
+    {
+        return $this->getResponse()->write($content);
+    }
+
     protected function call($name, $arguments)
     {
         $response = $this->getResponse();
