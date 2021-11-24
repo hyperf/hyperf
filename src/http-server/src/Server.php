@@ -17,6 +17,7 @@ use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Contract\OnRequestInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
+use Hyperf\HttpMessage\Server\Connection\SwooleConnection;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
@@ -165,24 +166,20 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     /**
      * Initialize PSR-7 Request and Response objects.
      * @param mixed $request swoole request or psr server request
-     * @param mixed $response swoole response or swow session
+     * @param mixed $response swoole response or swow connection
      */
     protected function initRequestAndResponse($request, $response): array
     {
-        $psr7Response = new Psr7Response();
+        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
 
         if ($request instanceof ServerRequestInterface) {
             $psr7Request = $request;
         } else {
             $psr7Request = Psr7Request::loadFromSwooleRequest($request);
-        }
-
-        if ($response instanceof \Swoole\Http\Response) {
-            $psr7Response->setSwooleResponse($response);
+            $psr7Response->setConnection(new SwooleConnection($response));
         }
 
         Context::set(ServerRequestInterface::class, $psr7Request);
-        Context::set(ResponseInterface::class, $psr7Response);
         return [$psr7Request, $psr7Response];
     }
 }

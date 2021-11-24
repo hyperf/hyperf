@@ -15,7 +15,7 @@ trait HasChunk
 {
     public function write(string $content): bool
     {
-        if ($this->connection instanceof Chunkable) {
+        if (isset($this->connection) && $this->connection instanceof Chunkable) {
             return $this->connection->write($content);
         }
 
