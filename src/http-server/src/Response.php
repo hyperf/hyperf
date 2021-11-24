@@ -13,6 +13,7 @@ namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
 use Hyperf\HttpMessage\Cookie\Cookie;
+use Hyperf\HttpMessage\Server\Chunk\Chunkable;
 use Hyperf\HttpMessage\Stream\SwooleFileStream;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
@@ -412,9 +413,14 @@ class Response implements PsrResponseInterface, ResponseInterface
         return $this->getResponse()->getReasonPhrase();
     }
 
-    public function write(string $content): bool
+    public function write(string $data): bool
     {
-        return $this->getResponse()->write($content);
+        $response = $this->getResponse();
+        if ($response instanceof Chunkable) {
+            return $response->write($data);
+        }
+
+        return false;
     }
 
     protected function call($name, $arguments)

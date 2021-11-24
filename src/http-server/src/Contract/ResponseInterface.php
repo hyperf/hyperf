@@ -56,7 +56,7 @@ interface ResponseInterface
     /**
      * Chunked transfer encoding.
      */
-    public function write(string $content): bool;
+    public function write(string $data): bool;
 
     /**
      * Override a response with a cookie.
