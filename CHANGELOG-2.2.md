@@ -7,6 +7,7 @@
 ## Added
 
 - [#4284](https://github.com/hyperf/hyperf/pull/4284) Added method `Hyperf\Utils\Network::ip()`.
+- [#4290](https://github.com/hyperf/hyperf/pull/4290) Add HTTP chunk support for `hyperf/http-message`.
 
 # v2.2.17 - 2021-11-22
 
