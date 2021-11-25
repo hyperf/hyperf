@@ -9,14 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\Validation\Cases\fixtures;
+namespace Hyperf\Contract;
 
-use Hyperf\Contract\Arrayable;
-
-class Values implements Arrayable
+interface Arrayable
 {
-    public function toArray(): array
-    {
-        return [1, 2, 3, 4];
-    }
+    public function toArray(): array;
 }

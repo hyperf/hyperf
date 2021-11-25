@@ -9,14 +9,19 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\Validation\Cases\fixtures;
+namespace HyperfTest\Utils;
 
-use Hyperf\Contract\Arrayable;
+use Hyperf\Utils\Network;
+use PHPUnit\Framework\TestCase;
 
-class Values implements Arrayable
+/**
+ * @internal
+ * @coversNothing
+ */
+class NetworkTest extends TestCase
 {
-    public function toArray(): array
+    public function testNetworkIp()
     {
-        return [1, 2, 3, 4];
+        $this->assertIsString(Network::ip());
     }
 }

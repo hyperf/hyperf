@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Server;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\Server\Exception\InvalidArgumentException;
-use Hyperf\Utils\Contracts\Arrayable;
 
 /**
  * @method ServerConfig setType(string $type)

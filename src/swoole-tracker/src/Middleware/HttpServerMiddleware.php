@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\SwooleTracker\Middleware;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Utils\Network;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -20,10 +21,7 @@ use SwooleTracker\Stats;
 
 class HttpServerMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var string
-     */
-    protected $name;
+    protected ?string $name = null;
 
     public function __construct(ConfigInterface $config)
     {
@@ -34,7 +32,7 @@ class HttpServerMiddleware implements MiddlewareInterface
     {
         if (class_exists(Stats::class)) {
             $path = $request->getUri()->getPath();
-            $ip = current(swoole_get_local_ip());
+            $ip = Network::ip();
             $traceId = $request->getHeaderLine('x-swoole-traceid') ?: '';
             $spanId = $request->getHeaderLine('x-swoole-spanid') ?: '';
 

@@ -1,5 +1,15 @@
 # v2.2.18 - TBD
 
+## Fixed
+
+- [#4283](https://github.com/hyperf/hyperf/pull/4283) Fixed type hint error for `Hyperf\Grpc\Parser::deserializeMessage()` when `$response->data` is null.
+
+## Added
+
+- [#4284](https://github.com/hyperf/hyperf/pull/4284) Added method `Hyperf\Utils\Network::ip()`.
+- [#4290](https://github.com/hyperf/hyperf/pull/4290) Added HTTP chunk support for `hyperf/http-message`.
+- [#4291](https://github.com/hyperf/hyperf/pull/4291) Support dynamic `$arguments` for function `value()`.
+
 # v2.2.17 - 2021-11-22
 
 ## Fixed

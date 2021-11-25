@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use ArrayAccess;
-use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use JsonSerializable;
 

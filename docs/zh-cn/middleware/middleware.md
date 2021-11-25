@@ -228,8 +228,8 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\Contracts\Arrayable;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

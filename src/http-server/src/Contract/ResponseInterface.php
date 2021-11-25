@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpServer\Contract;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\HttpMessage\Cookie\Cookie;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Contracts\Xmlable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
@@ -52,6 +52,11 @@ interface ResponseInterface
      * @param string $name the alias name of the file that client receive
      */
     public function download(string $file, string $name = ''): PsrResponseInterface;
+
+    /**
+     * Chunked transfer encoding.
+     */
+    public function write(string $data): bool;
 
     /**
      * Override a response with a cookie.

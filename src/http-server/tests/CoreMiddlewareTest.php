@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\HttpServer;
 
 use FastRoute\Dispatcher;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\ClosureDefinitionCollector;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
@@ -27,7 +28,6 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
 use Hyperf\Utils\Context;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use HyperfTest\HttpServer\Stub\CoreMiddlewareStub;

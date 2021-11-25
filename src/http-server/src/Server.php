@@ -19,6 +19,7 @@ use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
+use Hyperf\HttpMessage\Server\Connection\SwooleConnection;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
@@ -165,7 +166,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     /**
      * Initialize PSR-7 Request and Response objects.
      * @param mixed $request swoole request or psr server request
-     * @param mixed $response swoole response or swow session
+     * @param mixed $response swoole response or swow connection
      */
     protected function initRequestAndResponse($request, $response): array
     {
@@ -175,6 +176,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             $psr7Request = $request;
         } else {
             $psr7Request = Psr7Request::loadFromSwooleRequest($request);
+            $psr7Response->setConnection(new SwooleConnection($response));
         }
 
         Context::set(ServerRequestInterface::class, $psr7Request);

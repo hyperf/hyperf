@@ -15,7 +15,7 @@ use Hyperf\HttpMessage\Server\RequestParserInterface;
 
 class Parser implements RequestParserInterface
 {
-    protected $parsers = [];
+    protected array $parsers = [];
 
     public function __construct()
     {

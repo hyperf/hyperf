@@ -9,14 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\Validation\Cases\fixtures;
+namespace HyperfTest\Utils\Stub;
 
-use Hyperf\Contract\Arrayable;
-
-class Values implements Arrayable
+class FooClosure
 {
-    public function toArray(): array
+    public function __invoke($id)
     {
-        return [1, 2, 3, 4];
+        return $id . $id;
     }
 }

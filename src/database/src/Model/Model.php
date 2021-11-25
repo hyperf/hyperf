@@ -13,6 +13,7 @@ namespace Hyperf\Database\Model;
 
 use ArrayAccess;
 use Exception;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\CompressInterface;
 use Hyperf\Contract\UnCompressInterface;
 use Hyperf\Database\ConnectionInterface;
@@ -20,7 +21,6 @@ use Hyperf\Database\Model\Relations\Pivot;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection as BaseCollection;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Str;
 use JsonSerializable;

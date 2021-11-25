@@ -17,23 +17,17 @@ class Response implements ResponseInterface
 {
     use MessageTrait;
 
-    /**
-     * @var string
-     */
-    protected $reasonPhrase = '';
+    protected string $reasonPhrase = '';
+
+    protected int $statusCode = 200;
+
+    protected string $charset = 'utf-8';
 
     /**
-     * @var int
+     * Map of standard HTTP status code/reason phrases.
+     * @var array<int, string>
      */
-    protected $statusCode = 200;
-
-    /**
-     * @var string
-     */
-    protected $charset = 'utf-8';
-
-    /** @var array Map of standard HTTP status code/reason phrases */
-    private static $phrases
+    private static array $phrases
         = [
             100 => 'Continue',
             101 => 'Switching Protocols',
@@ -95,10 +89,7 @@ class Response implements ResponseInterface
             511 => 'Network Authentication Required',
         ];
 
-    /**
-     * @var array
-     */
-    private $attributes = [];
+    private array $attributes = [];
 
     public function __toString()
     {
@@ -115,7 +106,7 @@ class Response implements ResponseInterface
      *
      * @return array attributes derived from the request
      */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -332,7 +323,7 @@ class Response implements ResponseInterface
             303,
             307,
             308,
-        ]) && ($location === null ?: $location == $this->getHeaderLine('Location'));
+        ]) && ($location === null || $location == $this->getHeaderLine('Location'));
     }
 
     /**
