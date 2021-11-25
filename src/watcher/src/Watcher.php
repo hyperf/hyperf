@@ -138,7 +138,7 @@ class Watcher
 
     public function dumpautoload()
     {
-        $ret = System::exec('composer dump-autoload -o --no-scripts');
+        $ret = System::exec('composer dump-autoload -o --no-scripts -d ' . BASE_PATH);
         $this->output->writeln($ret['output'] ?? '');
     }
 
