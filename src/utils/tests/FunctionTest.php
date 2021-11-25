@@ -179,4 +179,22 @@ class FunctionTest extends TestCase
         $this->assertSame(2, $channel->pop(0.001));
         $this->assertSame(0, $channel->pop(0.001));
     }
+
+    public function testFunctionValue()
+    {
+        $id = uniqid();
+        $num = rand(1000, 9999);
+        $assert = value(static function () use ($id) {
+            return $id;
+        });
+        $this->assertSame($assert, $id);
+
+        $assert = value($id);
+        $this->assertSame($assert, $id);
+
+        $assert = value(static function ($id, $num) {
+            return $id . $num;
+        }, $id, $num);
+        $this->assertSame($assert, $id . $num);
+    }
 }
