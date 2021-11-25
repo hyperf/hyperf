@@ -4,10 +4,10 @@
     "type": "library",
     "license": "MIT",
     "keywords": [
-      "php",
-      "hyperf",
-      "resource",
-      "grpc"
+        "php",
+        "hyperf",
+        "resource",
+        "grpc"
     ],
     "homepage": "https://hyperf.io",
     "support": {

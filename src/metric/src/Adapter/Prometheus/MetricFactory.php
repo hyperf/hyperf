@@ -172,7 +172,7 @@ class MetricFactory implements MetricFactoryInterface
         if (! Str::contains($address, ['https://', 'http://'])) {
             $address = 'http://' . $address;
         }
-        return $address . '/metrics/job/' . $job . '/ip/' . current(swoole_get_local_ip()) . '/pid/' . getmypid();
+        return $address . '/metrics/job/' . $job . '/ip/' . Network::ip() . '/pid/' . getmypid();
     }
 
     private function doRequest(string $address, string $job, string $method)

@@ -12,20 +12,16 @@ declare(strict_types=1);
 namespace Hyperf\ServiceGovernance;
 
 use Hyperf\ServiceGovernance\Exception\IPReadFailedException;
+use Hyperf\Utils\Network;
 
 class IPReader implements IPReaderInterface
 {
     public function read(): string
     {
-        $ips = swoole_get_local_ip();
-        if (is_array($ips) && ! empty($ips)) {
-            return current($ips);
+        try {
+            return Network::ip();
+        } catch (\Throwable $throwable) {
+            throw new IPReadFailedException($throwable->getMessage());
         }
-        /** @var mixed|string $ip */
-        $ip = gethostbyname(gethostname());
-        if (is_string($ip)) {
-            return $ip;
-        }
-        throw new IPReadFailedException('Can not get the internal IP.');
     }
 }
