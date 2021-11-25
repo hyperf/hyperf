@@ -26,9 +26,9 @@ if (! function_exists('value')) {
      *
      * @param mixed $value
      */
-    function value($value)
+    function value($value, ...$args)
     {
-        return $value instanceof \Closure ? $value() : $value;
+        return $value instanceof Closure ? $value(...$args) : $value;
     }
 }
 if (! function_exists('env')) {
