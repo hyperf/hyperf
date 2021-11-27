@@ -8,9 +8,6 @@ use Hyperf\Event\Annotation\Listener;
 use Psr\Container\ContainerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 
-/**
- * @Listener
- */
 #[Listener]
 class %CLASS% implements ListenerInterface
 {
