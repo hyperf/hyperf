@@ -10,6 +10,7 @@
 - [#4290](https://github.com/hyperf/hyperf/pull/4290) Added HTTP chunk support for `hyperf/http-message`.
 - [#4291](https://github.com/hyperf/hyperf/pull/4291) Support dynamic `$arguments` for function `value()`.
 - [#4293](https://github.com/hyperf/hyperf/pull/4293) Support run with absolute paths for `server:watch`.
+- [#4295](https://github.com/hyperf/hyperf/pull/4295) Added alias `id()` for `Hyperf\Database\Schema\Blueprint::bigIncrements()`.
 
 # v2.2.17 - 2021-11-22
 

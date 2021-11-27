@@ -947,14 +947,14 @@ class Blueprint
     /**
      * Create a new auto-incrementing big integer (8-byte) column on the table.
      *
-     * @param  string  $column
+     * @param string $column
      * @return \Hyperf\Database\Schema\ColumnDefinition
      */
     public function id($column = 'id')
     {
         return $this->bigIncrements($column);
     }
-    
+
     /**
      * Create a new uuid column on the table.
      *
