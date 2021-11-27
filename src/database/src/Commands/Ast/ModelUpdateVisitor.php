@@ -264,7 +264,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                         ++$loop;
                         $expr = $expr->var;
                     }
-                    $name = $expr->name->name;
+                    $name = $this->getMethodRelationName($method) ?? $expr->name->name;
                     if (array_key_exists($name, self::RELATION_METHODS)) {
                         if ($name === 'morphTo') {
                             // Model isn't specified because relation is polymorphic
@@ -299,6 +299,17 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 }
             }
         }
+    }
+
+    protected function getMethodRelationName(\ReflectionMethod $method): ?string
+    {
+        $returnType = $method->getReturnType();
+        if ($returnType instanceof \ReflectionNamedType) {
+            $array = explode('\\', $returnType->getName());
+            return Str::camel(array_pop($array));
+        }
+
+        return null;
     }
 
     protected function setProperty(string $name, array $type = null, bool $read = null, bool $write = null, string $comment = '', bool $nullable = false, int $priority = 0)
