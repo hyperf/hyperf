@@ -43,7 +43,7 @@ class SocketFactory
     protected $config;
 
     /**
-     * @var null|LoggerInterface
+     * @var null|StdoutLoggerInterface
      */
     protected $logger;
 
