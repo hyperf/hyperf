@@ -282,10 +282,7 @@ use Swoole\WebSocket\Server as WebSocketServer;
 
 class WebSocketController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
-    /**
-     * @var IpcSubject
-     */
-    private $subject;
+    private IpcSubject $subject;
 
     private $subscriber = [];
 

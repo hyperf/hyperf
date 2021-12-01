@@ -121,9 +121,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Annotation\AutoController;
 use function Hyperf\ViewEngine\view;
 
-/**
- * @AutoController(prefix="view")
- */
+#[AutoController(prefix: "view")]
 class ViewController extends AbstractController
 {
     public function child()
@@ -210,15 +208,10 @@ use Hyperf\Framework\Event\BootApplication;
 use Hyperf\ViewEngine\Blade;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
+#[Listener]
 class BladeWithoutDoubleEncodingListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {

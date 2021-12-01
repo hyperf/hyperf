@@ -151,8 +151,8 @@ public function hello()
     $request->setSex(1);
 
     /**
-        * @var \Grpc\HiReply $reply
-        */
+     * @var \Grpc\HiReply $reply
+     */
     list($reply, $status) = $client->sayHello($request);
 
     $message = $reply->getMessage();
