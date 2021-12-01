@@ -14,18 +14,9 @@ namespace Hyperf\HttpServer\Router;
 class Handler
 {
     /**
-     * @var array|callable|string
+     * @param array|callable|string $callback
      */
-    public mixed $callback;
-
-    public string $route;
-
-    public array $options;
-
-    public function __construct($callback, string $route, array $options = [])
+    public function __construct(public mixed $callback, public string $route, public array $options = [])
     {
-        $this->callback = $callback;
-        $this->route = $route;
-        $this->options = $options;
     }
 }
