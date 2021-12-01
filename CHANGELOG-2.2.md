@@ -1,5 +1,9 @@
 # v2.2.19 - TBD
 
+## Fixed
+
+- [#4308](https://github.com/hyperf/hyperf/pull/4308) Fix `collector-reload` file not found when running `server:watch` with absolute path.
+
 # v2.2.18 - 2021-11-29
 
 ## Fixed
