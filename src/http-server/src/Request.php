@@ -62,7 +62,7 @@ class Request implements RequestInterface
      */
     public function route(string $key, mixed $default = null): mixed
     {
-        /** @var Dispatched $route */
+        /** @var null|Dispatched $route */
         $route = $this->getAttribute(Dispatched::class);
         if (is_null($route)) {
             return $default;
