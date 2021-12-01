@@ -18,5 +18,5 @@ interface ResponseEmitterInterface
     /**
      * @param mixed $connection swoole response or swow session
      */
-    public function emit(ResponseInterface $response, $connection, bool $withContent = true);
+    public function emit(ResponseInterface $response, mixed $connection, bool $withContent = true): void;
 }

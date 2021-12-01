@@ -16,17 +16,11 @@ class Handler
     /**
      * @var array|callable|string
      */
-    public $callback;
+    public mixed $callback;
 
-    /**
-     * @var string
-     */
-    public $route;
+    public string $route;
 
-    /**
-     * @var array
-     */
-    public $options;
+    public array $options;
 
     public function __construct($callback, string $route, array $options = [])
     {

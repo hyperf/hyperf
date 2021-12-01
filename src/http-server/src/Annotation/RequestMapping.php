@@ -14,10 +14,6 @@ namespace Hyperf\HttpServer\Annotation;
 use Attribute;
 use Hyperf\Utils\Str;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class RequestMapping extends Mapping
 {
@@ -35,10 +31,7 @@ class RequestMapping extends Mapping
 
     public const OPTIONS = 'OPTIONS';
 
-    /**
-     * @var array
-     */
-    public $methods = ['GET', 'POST'];
+    public array $methods = ['GET', 'POST'];
 
     public function __construct(...$value)
     {
@@ -46,7 +39,7 @@ class RequestMapping extends Mapping
         $formattedValue = $this->formatParams($value);
         if (isset($formattedValue['methods'])) {
             if (is_string($formattedValue['methods'])) {
-                // Explode a string to a array
+                // Explode a string to an array
                 $this->methods = explode(',', Str::upper(str_replace(' ', '', $formattedValue['methods'])));
             } else {
                 $methods = [];

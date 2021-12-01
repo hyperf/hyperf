@@ -34,57 +34,22 @@ use Throwable;
 
 class Server implements OnRequestInterface, MiddlewareInitializerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected array $middlewares = [];
 
-    /**
-     * @var HttpDispatcher
-     */
-    protected $dispatcher;
+    protected ?CoreMiddlewareInterface $coreMiddleware = null;
 
-    /**
-     * @var ExceptionHandlerDispatcher
-     */
-    protected $exceptionHandlerDispatcher;
+    protected array $exceptionHandlers = [];
 
-    /**
-     * @var array
-     */
-    protected $middlewares;
+    protected ?Dispatcher $routerDispatcher = null;
 
-    /**
-     * @var CoreMiddlewareInterface
-     */
-    protected $coreMiddleware;
+    protected ?string $serverName = null;
 
-    /**
-     * @var array
-     */
-    protected $exceptionHandlers;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $routerDispatcher;
-
-    /**
-     * @var \Hyperf\HttpServer\ResponseEmitter
-     */
-    protected $responseEmitter;
-
-    /**
-     * @var string
-     */
-    protected $serverName;
-
-    public function __construct(ContainerInterface $container, HttpDispatcher $dispatcher, ExceptionHandlerDispatcher $exceptionHandlerDispatcher, ResponseEmitter $responseEmitter)
-    {
-        $this->container = $container;
-        $this->dispatcher = $dispatcher;
-        $this->exceptionHandlerDispatcher = $exceptionHandlerDispatcher;
-        $this->responseEmitter = $responseEmitter;
+    public function __construct(
+        protected ContainerInterface $container,
+        protected HttpDispatcher $dispatcher,
+        protected ExceptionHandlerDispatcher $exceptionHandlerDispatcher,
+        protected ResponseEmitter $responseEmitter
+    ) {
     }
 
     public function initCoreMiddleware(string $serverName): void
@@ -126,7 +91,7 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             if (isset($psr7Request) && $psr7Request->getMethod() === 'HEAD') {
                 $this->responseEmitter->emit($psr7Response, $response, false);
             } else {
-                $this->responseEmitter->emit($psr7Response, $response, true);
+                $this->responseEmitter->emit($psr7Response, $response);
             }
         }
     }

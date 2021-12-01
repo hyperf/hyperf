@@ -47,7 +47,7 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
         return $factory->getDispatcher($serverName);
     }
 
-    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request)
+    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request): mixed
     {
         if ($dispatched->handler->callback instanceof Closure) {
             $response = call($dispatched->handler->callback);
