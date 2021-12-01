@@ -11,8 +11,12 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils\Traits;
 
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
+use Hyperf\Utils\Waiter;
+use Mockery;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 /**
  * @internal
@@ -20,8 +24,17 @@ use PHPUnit\Framework\TestCase;
  */
 class StaticInstanceTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        Mockery::close();
+    }
+
     public function testGetInstance()
     {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
+        ApplicationContext::setContainer($container);
+
         $id = uniqid();
         $foo = wait(function () use ($id) {
             $this->assertTrue(Context::get(FooContext::class) === null);
