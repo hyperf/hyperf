@@ -14,17 +14,13 @@ namespace Hyperf\HttpServer\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"ALL"})
- */
 #[Attribute]
 class Middlewares extends AbstractAnnotation
 {
     /**
      * @var Middleware[]
      */
-    public $middlewares = [];
+    public array $middlewares = [];
 
     public function __construct(...$value)
     {

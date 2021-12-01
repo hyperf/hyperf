@@ -34,41 +34,23 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * Core middleware of Hyperf, main responsibility is use to handle route info
+ * Core middleware of Hyperf, main responsibility is used to handle route info
  * and then delegate to the specified handler (which is Controller) to handle the request,
  * generate a response object and delegate to next middleware (Because this middleware is the
  * core middleware, then the next middleware also means it's the previous middlewares object) .
  */
 class CoreMiddleware implements CoreMiddlewareInterface
 {
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
+    protected Dispatcher $dispatcher;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    private MethodDefinitionCollectorInterface $methodDefinitionCollector;
 
-    /**
-     * @var MethodDefinitionCollectorInterface
-     */
-    private $methodDefinitionCollector;
+    private ?ClosureDefinitionCollectorInterface $closureDefinitionCollector = null;
 
-    /**
-     * @var null|ClosureDefinitionCollectorInterface
-     */
-    private $closureDefinitionCollector;
+    private NormalizerInterface $normalizer;
 
-    /**
-     * @var NormalizerInterface
-     */
-    private $normalizer;
-
-    public function __construct(ContainerInterface $container, string $serverName)
+    public function __construct(protected ContainerInterface $container, string $serverName)
     {
-        $this->container = $container;
         $this->dispatcher = $this->createDispatcher($serverName);
         $this->normalizer = $this->container->get(NormalizerInterface::class);
         $this->methodDefinitionCollector = $this->container->get(MethodDefinitionCollectorInterface::class);
@@ -101,18 +83,13 @@ class CoreMiddleware implements CoreMiddlewareInterface
             throw new ServerException(sprintf('The dispatched object is not a %s object.', Dispatched::class));
         }
 
-        $response = null;
-        switch ($dispatched->status) {
-            case Dispatcher::NOT_FOUND:
-                $response = $this->handleNotFound($request);
-                break;
-            case Dispatcher::METHOD_NOT_ALLOWED:
-                $response = $this->handleMethodNotAllowed($dispatched->params, $request);
-                break;
-            case Dispatcher::FOUND:
-                $response = $this->handleFound($dispatched, $request);
-                break;
-        }
+        $response = match ($dispatched->status) {
+            Dispatcher::NOT_FOUND => $this->handleNotFound($request),
+            Dispatcher::METHOD_NOT_ALLOWED => $this->handleMethodNotAllowed($dispatched->params, $request),
+            Dispatcher::FOUND => $this->handleFound($dispatched, $request),
+            default => null,
+        };
+
         if (! $response instanceof ResponseInterface) {
             $response = $this->transferToResponse($response, $request);
         }
@@ -145,7 +122,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
      *
      * @return array|Arrayable|mixed|ResponseInterface|string
      */
-    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request)
+    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request): mixed
     {
         if ($dispatched->handler->callback instanceof Closure) {
             $parameters = $this->parseClosureParameters($dispatched->handler->callback, $dispatched->params);
@@ -165,31 +142,24 @@ class CoreMiddleware implements CoreMiddlewareInterface
 
     /**
      * Handle the response when cannot found any routes.
-     *
-     * @return array|Arrayable|mixed|ResponseInterface|string
      */
-    protected function handleNotFound(ServerRequestInterface $request)
+    protected function handleNotFound(ServerRequestInterface $request): mixed
     {
         throw new NotFoundHttpException();
     }
 
     /**
      * Handle the response when the routes found but doesn't match any available methods.
-     *
-     * @return array|Arrayable|mixed|ResponseInterface|string
      */
-    protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request)
+    protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request): mixed
     {
         throw new MethodNotAllowedHttpException('Allow: ' . implode(', ', $methods));
     }
 
-    /**
-     * @param array|string $handler
-     */
-    protected function prepareHandler($handler): array
+    protected function prepareHandler(string|array $handler): array
     {
         if (is_string($handler)) {
-            if (strpos($handler, '@') !== false) {
+            if (str_contains($handler, '@')) {
                 return explode('@', $handler);
             }
             return explode('::', $handler);
@@ -236,7 +206,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
 
     /**
      * Parse the parameters of method definitions, and then bind the specified arguments or
-     * get the value from DI container, combine to a argument array that should be injected
+     * get the value from DI container, combine to an argument array that should be injected
      * and return the array.
      */
     protected function parseMethodParameters(string $controller, string $action, array $arguments): array
@@ -247,7 +217,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
 
     /**
      * Parse the parameters of closure definitions, and then bind the specified arguments or
-     * get the value from DI container, combine to a argument array that should be injected
+     * get the value from DI container, combine to an argument array that should be injected
      * and return the array.
      */
     protected function parseClosureParameters(Closure $closure, array $arguments): array

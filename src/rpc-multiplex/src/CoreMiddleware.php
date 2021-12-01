@@ -35,7 +35,7 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
         $this->dataFormatter = $protocol->getDataFormatter();
     }
 
-    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request)
+    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request): mixed
     {
         if ($dispatched->handler->callback instanceof Closure) {
             $response = call($dispatched->handler->callback);
@@ -68,14 +68,14 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
         return $this->buildData($request, $response);
     }
 
-    protected function handleNotFound(ServerRequestInterface $request)
+    protected function handleNotFound(ServerRequestInterface $request): mixed
     {
         $data = $this->buildErrorData($request, 404, 'Not Found.');
 
         return $this->responseBuilder->buildResponse($request, $data);
     }
 
-    protected function handleMethodNotAllowed(array $routes, ServerRequestInterface $request)
+    protected function handleMethodNotAllowed(array $routes, ServerRequestInterface $request): mixed
     {
         return $this->handleNotFound($request);
     }

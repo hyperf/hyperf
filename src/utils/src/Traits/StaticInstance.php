@@ -15,8 +15,6 @@ use Hyperf\Utils\Context;
 
 trait StaticInstance
 {
-    protected ?string $instanceKey = null;
-
     public static function instance(array $params = [], bool $refresh = false, string $suffix = ''): static
     {
         $key = get_called_class() . $suffix;

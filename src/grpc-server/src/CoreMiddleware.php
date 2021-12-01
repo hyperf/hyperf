@@ -22,7 +22,6 @@ use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Exception\ServerException;
 use Hyperf\Utils\Context;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,16 +29,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class CoreMiddleware extends HttpCoreMiddleware
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
-
     /**
      * Process an incoming server request and return a response, optionally delegating
      * response creation to a handler.
