@@ -30,15 +30,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class CoreMiddleware extends HttpCoreMiddleware
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
+    protected Dispatcher $dispatcher;
 
     /**
      * Process an incoming server request and return a response, optionally delegating
