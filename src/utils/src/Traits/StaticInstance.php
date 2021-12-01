@@ -15,22 +15,17 @@ use Hyperf\Utils\Context;
 
 trait StaticInstance
 {
-    protected $instanceKey;
+    protected ?string $instanceKey = null;
 
-    /**
-     * @param array $params
-     * @param bool $refresh
-     * @return static
-     */
-    public static function instance($params = [], $refresh = false)
+    public static function instance(array $params = [], bool $refresh = false, string $suffix = ''): static
     {
-        $key = get_called_class();
+        $key = get_called_class() . $suffix;
         $instance = null;
         if (Context::has($key)) {
             $instance = Context::get($key);
         }
 
-        if ($refresh || is_null($instance) || ! $instance instanceof static) {
+        if ($refresh || ! $instance instanceof static) {
             $instance = new static(...$params);
             Context::set($key, $instance);
         }
