@@ -17,7 +17,7 @@ abstract class Mapping extends AbstractAnnotation
 {
     public array $methods = [];
 
-    public string $path = '';
+    public ?string $path = null;
 
     public array $options = [];
 
