@@ -15,9 +15,9 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 
 abstract class Mapping extends AbstractAnnotation
 {
-    public array $methods;
+    public array $methods = [];
 
-    public string $path;
+    public string $path = '';
 
     public array $options = [];
 
