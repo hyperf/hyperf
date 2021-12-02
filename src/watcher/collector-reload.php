@@ -16,7 +16,7 @@ error_reporting(E_ALL);
 date_default_timezone_set('Asia/Shanghai');
 
 $basePath = getcwd();
-$dir = dirname(dirname(dirname(__DIR__)));
+$dir = dirname(__DIR__, 3);
 
 if (file_exists($dir . '/vendor/autoload.php')) {
     $basePath = $dir;

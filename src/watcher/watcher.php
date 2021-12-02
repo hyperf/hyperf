@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 putenv('SCAN_CACHEABLE=(true)');
 
-$dir = dirname(dirname(__DIR__));
+$dir = dirname(__DIR__, 2);
 $cwd = getcwd();
 
 switch (true) {
