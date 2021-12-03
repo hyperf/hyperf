@@ -32,20 +32,8 @@ class ResponseBuilder
 
     public const PARSE_ERROR = -32700;
 
-    /**
-     * @var \Hyperf\Rpc\Contract\DataFormatterInterface
-     */
-    protected $dataFormatter;
-
-    /**
-     * @var PackerInterface
-     */
-    protected $packer;
-
-    public function __construct(DataFormatterInterface $dataFormatter, PackerInterface $packer)
+    public function __construct(protected DataFormatterInterface $dataFormatter, protected PackerInterface $packer)
     {
-        $this->dataFormatter = $dataFormatter;
-        $this->packer = $packer;
     }
 
     public function buildErrorResponse(ServerRequestInterface $request, int $code, \Throwable $error = null): ResponseInterface
@@ -75,7 +63,7 @@ class ResponseBuilder
 
     protected function formatErrorResponse(ServerRequestInterface $request, int $code, \Throwable $error = null): string
     {
-        [$code, $message] = $this->error($code, $error ? $error->getMessage() : null);
+        [$code, $message] = $this->error($code, $error?->getMessage());
         $response = $this->dataFormatter->formatErrorResponse([$request->getAttribute('request_id'), $code, $message, $error]);
         return $this->packer->pack($response);
     }

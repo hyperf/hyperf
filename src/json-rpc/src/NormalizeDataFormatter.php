@@ -16,15 +16,8 @@ use Hyperf\Rpc\Context;
 
 class NormalizeDataFormatter extends DataFormatter
 {
-    /**
-     * @var NormalizerInterface
-     */
-    private $normalizer;
-
-    public function __construct(NormalizerInterface $normalizer, Context $context)
+    public function __construct(private NormalizerInterface $normalizer, Context $context)
     {
-        $this->normalizer = $normalizer;
-
         parent::__construct($context);
     }
 

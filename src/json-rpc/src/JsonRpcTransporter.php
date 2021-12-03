@@ -22,10 +22,7 @@ class JsonRpcTransporter implements TransporterInterface
 {
     use RecvTrait;
 
-    /**
-     * @var null|LoadBalancerInterface
-     */
-    private $loadBalancer;
+    private ?LoadBalancerInterface $loadBalancer;
 
     /**
      * If $loadBalancer is null, will select a node in $nodes to request,
@@ -33,22 +30,13 @@ class JsonRpcTransporter implements TransporterInterface
      *
      * @var Node[]
      */
-    private $nodes = [];
+    private array $nodes = [];
 
-    /**
-     * @var float
-     */
-    private $connectTimeout = 5;
+    private float $connectTimeout;
 
-    /**
-     * @var float
-     */
-    private $recvTimeout = 5;
+    private float $recvTimeout;
 
-    /**
-     * @var array
-     */
-    private $config = [];
+    private array $config = [];
 
     public function __construct(array $config = [])
     {
