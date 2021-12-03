@@ -16,14 +16,8 @@ use Hyperf\Rpc\Contract\DataFormatterInterface;
 
 class DataFormatter implements DataFormatterInterface
 {
-    /**
-     * @var Context
-     */
-    protected $context;
-
-    public function __construct(Context $context)
+    public function __construct(protected Context $context)
     {
-        $this->context = $context;
     }
 
     public function formatRequest($data)

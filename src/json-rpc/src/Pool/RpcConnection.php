@@ -30,10 +30,7 @@ use Swoole\Coroutine\Client as SwooleClient;
  */
 class RpcConnection extends BaseConnection implements ConnectionInterface
 {
-    /**
-     * @var SwooleClient
-     */
-    protected $connection;
+    protected SwooleClient $connection;
 
     protected array $config = [
         'node' => null,
