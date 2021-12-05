@@ -726,10 +726,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Group an associative array by a field or using a callback.
-     *
-     * @param  callable(TValue, TKey): array-key|array|string  $groupBy
-     * @param  bool  $preserveKeys
-     * @return static<TKey, array<TKey, TValue>>
      */
     public function groupBy($groupBy, bool $preserveKeys = false): self
     {
@@ -938,12 +934,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Run a grouping map over the items.
      * The callback should return an associative array with a single key/value pair.
-     *
-     * @template TMapToGroupsKey of array-key
-     * @template TMapToGroupsValue
-     *
-     * @param  callable(TValue, TKey): array<TMapToGroupsKey, TMapToGroupsValue>  $callback
-     * @return static<TMapToGroupsKey, static<int, TMapToGroupsValue>>
      */
     public function mapToGroups(callable $callback): self
     {
@@ -1714,6 +1704,10 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     public function offsetSet($key, $value)
     {
         if (is_null($key)) {
+            /**
+             * @var int $this->items
+             * @phpstan-ignore-next-line
+             */
             $this->items[] = $value;
         } else {
             $this->items[$key] = $value;
