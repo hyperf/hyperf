@@ -33,8 +33,8 @@ use Traversable;
  * @template TValue
  *
  * @implements ArrayAccess<TKey, TValue>
- * @extends Arrayable<TKey, TValue>
- * @extends IteratorAggregate<TKey, TValue>
+ * @implements Arrayable<TKey, TValue>
+ * @implements IteratorAggregate<TKey, TValue>
  *
  * @property HigherOrderCollectionProxy $average
  * @property HigherOrderCollectionProxy $avg
@@ -211,7 +211,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Get the average value of a given key.
      *
      * @param  (callable(TValue): float|int)|string|null  $callback
-     * @return float|int|null
      */
     public function avg($callback = null)
     {
@@ -241,7 +240,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Get the median of a given key.
      *
      * @param  string|array<array-key, string>|null  $key
-     * @return float|int|null
      */
     public function median($key = null)
     {
@@ -274,6 +272,11 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
             return null;
         }
         $collection = isset($key) ? $this->pluck($key) : $this;
+
+        /**
+         * @template TValue of array-key
+         * @var static<TValue, int> $counts
+         */
         $counts = new self();
         $collection->each(function ($value) use ($counts) {
             $counts[$value] = isset($counts[$value]) ? $counts[$value] + 1 : 1;
@@ -335,12 +338,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Cross join with the given lists, returning all possible permutations.
-     *
-     * @template TCrossJoinKey
-     * @template TCrossJoinValue
-     *
-     * @param  Arrayable<TCrossJoinKey, TCrossJoinValue>|iterable<TCrossJoinKey, TCrossJoinValue>  ...$lists
-     * @return static<int, array<int, TValue|TCrossJoinValue>>
      */
     public function crossJoin(...$lists): self
     {
@@ -361,7 +358,11 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      */
     public function dump(): self
     {
-        (new static(func_get_args()))->push($this)->each(function ($item) {
+        /**
+         * @var static<int, mixed> $params
+         */
+        $params = (new static(func_get_args()));
+        $params->push($this)->each(function ($item) {
             if (! class_exists(VarDumper::class)) {
                 throw new \RuntimeException('symfony/var-dumper package required, please require the package via "composer require symfony/var-dumper"');
             }
@@ -441,7 +442,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Execute a callback over each item.
-     * @param  callable(TValue): mixed  $callback
+     * @param  callable(TValue,TKey): mixed  $callback
      */
     public function each(callable $callback): self
     {
@@ -507,7 +508,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Run a filter over each of the items.
      *
-     * @param (callable(TValue): bool)|null  $callback
+     * @param callable(TValue, TKey): bool|null  $callback
      * @return static<TKey, TValue>
      */
     public function filter(callable $callback = null): self
@@ -521,12 +522,10 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Apply the callback if the value is truthy.
      *
-     * @template TWhenReturnType as null
-     *
      * @param  bool  $value
-     * @param  (callable($this): TWhenReturnType)|null  $callback
-     * @param  (callable($this): TWhenReturnType)|null  $default
-     * @return $this|TWhenReturnType
+     * @param  callable($this): $this  $callback
+     * @param  callable($this): $this  $default
+     * @return $this
      */
     public function when(bool $value, callable $callback, callable $default = null): self
     {
@@ -542,12 +541,10 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Apply the callback if the value is falsy.
      *
-     * @template TUnlessReturnType
-     *
      * @param  bool  $value
-     * @param  (callable($this): TUnlessReturnType)  $callback
-     * @param  (callable($this): TUnlessReturnType)|null  $default
-     * @return $this|TUnlessReturnType
+     * @param  callable($this): $this  $callback
+     * @param  callable($this): $this|null  $default
+     * @return $this
      */
     public function unless(bool $value, callable $callback, callable $default = null): self
     {
@@ -638,7 +635,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Filter the items, removing any items that don't match the given type.
      *
-     * @param  class-string|array<array-key, class-string>  $type
+     * @param  class-string  $type
      * @return static<TKey, TValue>
      */
     public function whereInstanceOf(string $type): self
@@ -653,8 +650,8 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @template TFirstDefault
      *
-     * @param  (callable(TValue, TKey): bool)|null  $callback
-     * @param  TFirstDefault|(\Closure(): TFirstDefault)  $default
+     * @param  callable(TValue, TKey): bool|null  $callback
+     * @param  TFirstDefault|callable(): TFirstDefault  $default
      * @return TValue|TFirstDefault
      */
     public function first(callable $callback = null, $default = null)
@@ -678,7 +675,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get a flattened array of the items in the collection.
      *
-     * @param  int  $depth
+     * @param  int|float  $depth
      * @return static<int, mixed>
      */
     public function flatten($depth = INF): self
@@ -689,7 +686,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Flip the items in the collection.
      *
-     * @return static<TValue, TKey>
+     * @return static<TKey, TValue>
      */
     public function flip(): self
     {
@@ -730,7 +727,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Group an associative array by a field or using a callback.
      *
-     * @param  (callable(TValue, TKey): array-key)|array|string  $groupBy
+     * @param  callable(TValue, TKey): array-key|array|string  $groupBy
      * @param  bool  $preserveKeys
      * @return static<TKey, array<TKey, TValue>>
      */
@@ -1090,7 +1087,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get the items with the specified keys.
      *
-     * @param  static<array-key, TKey>|array<array-key, TKey>  $keys
+     * @param  static<array-key, TKey>|array<array-key, TKey>|null|string  $keys
      * @return static<TKey, TValue>
      */
     public function only($keys): self
@@ -1117,10 +1114,10 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Partition the collection into two arrays using the given callback or key.
      *
-     * @param  (callable(TValue, TKey): bool)|TValue|string  $key
+     * @param  callable(TValue, TKey) bool)|TValue|string  $key
      * @param  TValue|string|null  $operator
      * @param  TValue|null  $value
-     * @return array<int, static<TKey, TValue>>
+     * @return static<int, static<TKey, TValue>>
      */
     public function partition($key, $operator = null, $value = null): self
     {
@@ -1157,7 +1154,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Push an item onto the beginning of the collection.
      *
      * @param  TValue  $value
-     * @param  TKey  $key
+     * @param  TKey|null  $key
      * @return $this
      */
     public function prepend($value, $key = null): self
@@ -1169,7 +1166,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Push an item onto the end of the collection.
      *
-     * @param TValue  $values
+     * @param TValue  $value
      * @return $this
      */
     public function push($value): self
@@ -1244,7 +1241,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @param  callable(TReduceInitial|TReduceReturnType, TValue): TReduceReturnType  $callback
      * @param  TReduceInitial  $initial
-     * @return TReduceReturnType
+     * @return TReduceInitial|TReduceReturnType
      */
     public function reduce(callable $callback, $initial = null)
     {
@@ -1254,7 +1251,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Create a collection of all elements that do not pass a given truth test.
      *
-     * @param  (callable(TValue): bool)|bool  $callback
+     * @param  callable(TValue, TKey): bool|bool  $callback
      * @return static<TKey, TValue>
      */
     public function reject($callback): self
@@ -1343,6 +1340,9 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         if ($this->isEmpty()) {
             return new static();
         }
+        /**
+         * @var static<int, static<TKey, TValue>> $groups
+         */
         $groups = new static();
         $groupSize = (int) floor($this->count() / $numberOfGroups);
         $remain = $this->count() % $numberOfGroups;
@@ -1381,7 +1381,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Sort through each item with a callback.
      *
-     * @param  (callable(TValue, TValue): bool)|null|int  $callback
+     * @param  callable(TValue, TValue): int  $callback
      * @return static<TKey, TValue>
      */
     public function sort(callable $callback = null): self
@@ -1506,7 +1506,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Pass the collection to the given callback and then return it.
      *
-     * @param  callable($this): mixed  $callback
+     * @param  callable(static<TKey,TValue>): mixed  $callback
      * @return $this
      */
     public function tap(callable $callback): self
@@ -1811,7 +1811,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
     /**
      * Results array of items from Collection or Arrayable.
-     * @param iterable<TKey,TValue>|Jsonable|JsonSerializable|null $items
+     * @param iterable<TKey,TValue>|static<TKey,TValue>|Arrayable<TKey,TValue>|Jsonable|JsonSerializable|null $items
      * @return array<TKey,TValue>
      */
     protected function getArrayableItems($items): array
@@ -1820,9 +1820,15 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
             return $items;
         }
         if ($items instanceof self) {
+            /**
+             * @var static<TKey,TValue> $items
+             */
             return $items->all();
         }
         if ($items instanceof Arrayable) {
+            /**
+             * @var Arrayable<TKey,TValue> $items
+             */
             return $items->toArray();
         }
         if ($items instanceof Jsonable) {
