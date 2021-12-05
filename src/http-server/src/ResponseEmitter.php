@@ -39,6 +39,7 @@ class ResponseEmitter implements ResponseEmitterInterface
                 $swooleResponse->end();
             }
         } catch (\Throwable $exception) {
+            var_dump((string) $exception);
         }
     }
 
