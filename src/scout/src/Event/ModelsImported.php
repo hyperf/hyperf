@@ -18,7 +18,7 @@ class ModelsImported
     /**
      * The model collection.
      *
-     * @var Collection
+     * @param Collection<int, \Hyperf\Scout\Searchable&\Hyperf\Database\Model\Model>
      */
     public $models;
 

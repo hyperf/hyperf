@@ -48,3 +48,4 @@ parameters:
     - '#getSwooleTracker.* not found#'
     - '#trackerHookMalloc not found#'
     - '#separator of function explode expects non-empty-string, string given#'
+    - '#.*TKey.*TValue#'
