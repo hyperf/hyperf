@@ -357,9 +357,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      */
     public function dump(): self
     {
-        /**
-         * @var static<int, mixed> $params
-         */
         $params = (new static(func_get_args()));
         $params->push($this)->each(function ($item) {
             if (! class_exists(VarDumper::class)) {
