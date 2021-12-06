@@ -43,7 +43,7 @@ class SwooleStreamTest extends TestCase
     {
         $swooleResponse = Mockery::mock(SwooleResponse::class);
         $content = '{"id":1}';
-        $swooleResponse->shouldReceive('end')->with($content)->once()->andReturn(null);
+        $swooleResponse->shouldReceive('end')->with($content)->once()->andReturn(true);
         $swooleResponse->shouldReceive('status')->with(200, '')->once()->andReturn(200);
         $swooleResponse->shouldReceive('header')->with('TOKEN', 'xxx')->once()->andReturn(true);
 
