@@ -1309,9 +1309,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         if ($this->isEmpty()) {
             return new static();
         }
-        /**
-         * @var static<int, static<TKey, TValue>> $groups
-         */
         $groups = new static();
         $groupSize = (int) floor($this->count() / $numberOfGroups);
         $remain = $this->count() % $numberOfGroups;
@@ -1670,10 +1667,6 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     public function offsetSet($key, $value)
     {
         if (is_null($key)) {
-            /*
-             * @var int $this->items
-             * @phpstan-ignore-next-line
-             */
             $this->items[] = $value;
         } else {
             $this->items[$key] = $value;
@@ -1779,15 +1772,9 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
             return $items;
         }
         if ($items instanceof self) {
-            /*
-             * @var static<TKey,TValue> $items
-             */
             return $items->all();
         }
         if ($items instanceof Arrayable) {
-            /*
-             * @var Arrayable<TKey,TValue> $items
-             */
             return $items->toArray();
         }
         if ($items instanceof Jsonable) {
