@@ -1,5 +1,15 @@
 # 版本更新記錄
 
+# v2.2.19 - 2021-12-06
+
+## 修復
+
+- [#4308](https://github.com/hyperf/hyperf/pull/4308) 修復執行 `server:watch` 時，因為使用相對路徑導致 `collector-reload` 文件找不到的問題。
+
+## 優化
+
+- [#4317](https://github.com/hyperf/hyperf/pull/4317) 為 `Hyperf\Utils\Collection` 和 `Hyperf\Database\Model\Collection` 增強類型提示功能。
+
 # v2.2.18 - 2021-11-29
 
 ## 修復
