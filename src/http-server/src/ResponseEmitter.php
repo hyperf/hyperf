@@ -30,7 +30,8 @@ class ResponseEmitter implements ResponseEmitterInterface
             $this->buildSwooleResponse($swooleResponse, $response);
             $content = $response->getBody();
             if ($content instanceof FileInterface) {
-                return $swooleResponse->sendfile($content->getFilename());
+                $swooleResponse->sendfile($content->getFilename());
+                return;
             }
 
             if ($withContent) {
@@ -38,7 +39,7 @@ class ResponseEmitter implements ResponseEmitterInterface
             } else {
                 $swooleResponse->end();
             }
-        } catch (\Throwable $exception) {
+        } catch (\Throwable) {
         }
     }
 
