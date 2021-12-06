@@ -39,7 +39,7 @@ class ResponseEmitter implements ResponseEmitterInterface
             } else {
                 $swooleResponse->end();
             }
-        } catch (\Throwable) {
+        } catch (\Throwable $exception) {
         }
     }
 
