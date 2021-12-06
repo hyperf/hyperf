@@ -2,7 +2,11 @@
 
 ## Fixed
 
-- [#4308](https://github.com/hyperf/hyperf/pull/4308) Fix `collector-reload` file not found when running `server:watch` with absolute path.
+- [#4308](https://github.com/hyperf/hyperf/pull/4308) Fixed bug that `collector-reload` file not found when running `server:watch` with absolute path.
+
+## Optimized
+
+- [#4317](https://github.com/hyperf/hyperf/pull/4317) Improves `Hyperf\Utils\Collection` and `Hyperf\Database\Model\Collection` type definitions.
 
 # v2.2.18 - 2021-11-29
 
