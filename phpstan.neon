@@ -54,3 +54,4 @@ parameters:
     - '#Property .* is never read, only written#'
     - message: '#Match arm is unreachable because previous comparison is always true#'
       path: src/amqp/src/IO/IOFactory.php
+    - '#.*TKey.*TValue#'

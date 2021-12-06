@@ -1,5 +1,29 @@
 # 版本更新记录
 
+# v2.2.19 - 2021-12-06
+
+## 修复
+
+- [#4308](https://github.com/hyperf/hyperf/pull/4308) 修复执行 `server:watch` 时，因为使用相对路径导致 `collector-reload` 文件找不到的问题。
+
+## 优化
+
+- [#4317](https://github.com/hyperf/hyperf/pull/4317) 为 `Hyperf\Utils\Collection` 和 `Hyperf\Database\Model\Collection` 增强类型提示功能。
+
+# v2.2.18 - 2021-11-29
+
+## 修复
+
+- [#4283](https://github.com/hyperf/hyperf/pull/4283) 修复当 `GRPC` 结果为 `null` 时，`Hyperf\Grpc\Parser::deserializeMessage()` 报错的问题。
+
+## 新增
+
+- [#4284](https://github.com/hyperf/hyperf/pull/4284) 新增方法 `Hyperf\Utils\Network::ip()` 获取本地 `IP`。
+- [#4290](https://github.com/hyperf/hyperf/pull/4290) 为 `HTTP` 服务增加 `chunk` 功能。
+- [#4291](https://github.com/hyperf/hyperf/pull/4291) 为 `value()` 方法增加动态参数功能。
+- [#4293](https://github.com/hyperf/hyperf/pull/4293) 为 `server:watch` 命令增加相对路径支持。
+- [#4295](https://github.com/hyperf/hyperf/pull/4295) 为 `Hyperf\Database\Schema\Blueprint::bigIncrements()` 增加别名 `id()`。
+
 # v2.2.17 - 2021-11-22
 
 ## 修复

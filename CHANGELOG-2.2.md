@@ -1,4 +1,16 @@
-# v2.2.18 - TBD
+# v2.2.20 - TBD
+
+# v2.2.19 - 2021-12-06
+
+## Fixed
+
+- [#4308](https://github.com/hyperf/hyperf/pull/4308) Fixed bug that `collector-reload` file not found when running `server:watch` with absolute path.
+
+## Optimized
+
+- [#4317](https://github.com/hyperf/hyperf/pull/4317) Improves `Hyperf\Utils\Collection` and `Hyperf\Database\Model\Collection` type definitions.
+
+# v2.2.18 - 2021-11-29
 
 ## Fixed
 
@@ -9,6 +21,8 @@
 - [#4284](https://github.com/hyperf/hyperf/pull/4284) Added method `Hyperf\Utils\Network::ip()`.
 - [#4290](https://github.com/hyperf/hyperf/pull/4290) Added HTTP chunk support for `hyperf/http-message`.
 - [#4291](https://github.com/hyperf/hyperf/pull/4291) Support dynamic `$arguments` for function `value()`.
+- [#4293](https://github.com/hyperf/hyperf/pull/4293) Support run with absolute paths for `server:watch`.
+- [#4295](https://github.com/hyperf/hyperf/pull/4295) Added alias `id()` for `Hyperf\Database\Schema\Blueprint::bigIncrements()`.
 
 # v2.2.17 - 2021-11-22
 
