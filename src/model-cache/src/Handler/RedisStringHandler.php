@@ -24,35 +24,17 @@ class RedisStringHandler implements HandlerInterface
 {
     use InteractsWithTime;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected RedisProxy $redis;
 
-    /**
-     * @var RedisProxy
-     */
-    protected $redis;
+    protected PackerInterface $packer;
 
-    /**
-     * @var Config
-     */
-    protected $config;
-
-    /**
-     * @var PackerInterface
-     */
-    protected $packer;
-
-    public function __construct(ContainerInterface $container, Config $config)
+    public function __construct(protected ContainerInterface $container, protected Config $config)
     {
-        $this->container = $container;
         if (! $container->has(RedisProxy::class)) {
             throw new CacheException(sprintf('Entry[%s] of the container is not exist.', RedisProxy::class));
         }
 
         $this->redis = make(RedisProxy::class, ['pool' => $config->getPool()]);
-        $this->config = $config;
         $this->packer = $container->get(PhpSerializerPacker::class);
     }
 
@@ -73,7 +55,7 @@ class RedisStringHandler implements HandlerInterface
         } elseif ($value instanceof Arrayable) {
             $data = $value->toArray();
         } else {
-            throw new CacheException(sprintf('The value must is array.'));
+            throw new CacheException('The value must is array.');
         }
 
         $serialized = $this->packer->pack($data);
@@ -98,7 +80,7 @@ class RedisStringHandler implements HandlerInterface
 
     public function getMultiple($keys, $default = null)
     {
-        $data = $this->redis->mget($keys);
+        $data = $this->redis->mget((array) $keys);
         $result = [];
         foreach ($data as $item) {
             if (! empty($item)) {
