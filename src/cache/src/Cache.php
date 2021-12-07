@@ -27,42 +27,42 @@ class Cache implements CacheInterface
         return $this->driver->{$name}(...$arguments);
     }
 
-    public function get($key, $default = null)
+    public function get($key, $default = null): mixed
     {
         return $this->__call(__FUNCTION__, func_get_args());
     }
 
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value, $ttl = null): bool
     {
         return $this->__call(__FUNCTION__, func_get_args());
     }
 
-    public function delete($key)
+    public function delete($key): bool
     {
         return $this->__call(__FUNCTION__, func_get_args());
     }
 
-    public function clear()
+    public function clear(): bool
     {
         return $this->__call(__FUNCTION__, func_get_args());
     }
 
-    public function getMultiple($keys, $default = null)
+    public function getMultiple($keys, $default = null): iterable
     {
         return $this->__call(__FUNCTION__, func_get_args());
     }
 
-    public function setMultiple($values, $ttl = null)
+    public function setMultiple($values, $ttl = null): bool
     {
         return $this->__call(__FUNCTION__, func_get_args());
     }
 
-    public function deleteMultiple($keys)
+    public function deleteMultiple($keys): bool
     {
         return $this->__call(__FUNCTION__, func_get_args());
     }
 
-    public function has($key)
+    public function has($key): bool
     {
         return $this->__call(__FUNCTION__, func_get_args());
     }

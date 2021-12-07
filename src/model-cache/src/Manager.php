@@ -207,10 +207,7 @@ class Manager
         return false;
     }
 
-    /**
-     * @return \DateInterval|int
-     */
-    protected function getCacheTTL(Model $instance, HandlerInterface $handler)
+    protected function getCacheTTL(Model $instance, HandlerInterface $handler): \DateInterval|int
     {
         if ($instance instanceof CacheableInterface) {
             return $instance->getCacheTTL() ?? $handler->getConfig()->getTtl();

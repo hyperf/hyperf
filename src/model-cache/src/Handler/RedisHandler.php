@@ -43,7 +43,7 @@ class RedisHandler implements HandlerInterface
         $this->manager = make(LuaManager::class, [$config]);
     }
 
-    public function get($key, $default = null)
+    public function get($key, $default = null): mixed
     {
         $data = $this->redis->hGetAll($key);
         if (! $data) {
@@ -59,7 +59,7 @@ class RedisHandler implements HandlerInterface
         return $data;
     }
 
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value, $ttl = null): bool
     {
         if (is_array($value)) {
             $data = $value;
@@ -81,17 +81,22 @@ class RedisHandler implements HandlerInterface
         return $res;
     }
 
-    public function delete($key)
+    public function delete($key): bool
     {
         return (bool) $this->redis->del($key);
     }
 
-    public function clear()
+    public function clear(): bool
     {
         throw new CacheException('Method clear is forbidden.');
     }
 
-    public function getMultiple($keys, $default = null)
+    /**
+     * @param iterable $keys
+     * @param mixed $default
+     * @return array|iterable
+     */
+    public function getMultiple($keys, $default = null): iterable
     {
         $data = $this->manager->handle(HashGetMultiple::class, (array) $keys);
         $result = [];
@@ -104,17 +109,17 @@ class RedisHandler implements HandlerInterface
         return $result;
     }
 
-    public function setMultiple($values, $ttl = null)
+    public function setMultiple($values, $ttl = null): bool
     {
         throw new CacheException('Method setMultiple is forbidden.');
     }
 
-    public function deleteMultiple($keys)
+    public function deleteMultiple($keys): bool
     {
         return $this->redis->del(...$keys) > 0;
     }
 
-    public function has($key)
+    public function has($key): bool
     {
         return (bool) $this->redis->exists($key);
     }
