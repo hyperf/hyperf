@@ -217,3 +217,36 @@ jobs:
           composer test src/framework
           composer test src/logger
           composer info | grep psr/log
+  simple-cache:
+    name: Test for Psr SimpleCache V1.0 ~ V3.0
+    runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+    strategy:
+      matrix:
+        php-version: [ '8.0' ]
+        psr-version: [ '^1.0', '^2.0', '^3.0' ]
+      max-parallel: 3
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          ini-values: opcache.enable_cli=0
+          coverage: none
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Run Test Cases
+        run: |
+          composer update -oW
+          composer require "psr/simple-cache:${{ matrix.psr-version }}"
+          composer update -oW
+          composer analyse src/cache
+          composer test src/cache
+          composer analyse src/model-cache
+          composer test src/model-cache
+          composer info | grep psr/simple-cache
