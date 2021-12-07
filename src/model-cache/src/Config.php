@@ -17,20 +17,13 @@ class Config
      * Model cache key.
      *
      * mc:$prefix:m:$model:$pk:$id
-     * You can rewrite it in Redis cluster, for examqple {mc:$prefix:m:$model}:$pk:$id
-     * @var string
+     * You can rewrite it in Redis cluster, for example {mc:$prefix:m:$model}:$pk:$id
      */
-    protected $cacheKey = 'mc:%s:m:%s:%s:%s';
+    protected string $cacheKey = 'mc:%s:m:%s:%s:%s';
 
-    /**
-     * @var string
-     */
-    protected $prefix = 'hyperf';
+    protected string $prefix = 'hyperf';
 
-    /**
-     * @var string
-     */
-    protected $pool = 'default';
+    protected string $pool = 'default';
 
     /**
      * The lifetime of model cache.
@@ -40,20 +33,15 @@ class Config
 
     /**
      * The lifetime of empty model cache.
-     * @var int
      */
-    protected $emptyModelTtl = 60;
+    protected int $emptyModelTtl = 60;
 
     /**
      * Whether to use default value when resolved from cache.
-     * @var bool
      */
-    protected $useDefaultValue = false;
+    protected bool $useDefaultValue = false;
 
-    /**
-     * @var bool
-     */
-    protected $loadScript = true;
+    protected bool $loadScript = true;
 
     public function __construct(array $values, string $name)
     {

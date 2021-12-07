@@ -17,10 +17,8 @@ class TableManager
 {
     /**
      * A container that use to store atomic.
-     *
-     * @var array
      */
-    private static $container = [];
+    private static array $container = [];
 
     /**
      * You should initialize a Table with the identifier before use it.
@@ -32,7 +30,7 @@ class TableManager
     }
 
     /**
-     * Get a initialized Table from container by the identifier.
+     * Get an initialized Table from container by the identifier.
      *
      * @throws \RuntimeException when the Table with the identifier has not initialization
      */
@@ -46,7 +44,7 @@ class TableManager
     }
 
     /**
-     * determire if the initialized Table is exist in container by the identifier ?
+     * determine if the initialized Table is existed in container by the identifier ?
      */
     public static function has(string $identifier): bool
     {

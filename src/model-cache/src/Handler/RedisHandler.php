@@ -25,39 +25,21 @@ class RedisHandler implements HandlerInterface
 {
     use InteractsWithTime;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected RedisProxy $redis;
 
-    /**
-     * @var RedisProxy
-     */
-    protected $redis;
+    protected LuaManager $manager;
 
-    /**
-     * @var Config
-     */
-    protected $config;
+    protected string $defaultKey = 'HF-DATA';
 
-    /**
-     * @var LuaManager
-     */
-    protected $manager;
+    protected string $defaultValue = 'DEFAULT';
 
-    protected $defaultKey = 'HF-DATA';
-
-    protected $defaultValue = 'DEFAULT';
-
-    public function __construct(ContainerInterface $container, Config $config)
+    public function __construct(protected ContainerInterface $container, protected Config $config)
     {
-        $this->container = $container;
         if (! $container->has(RedisProxy::class)) {
             throw new CacheException(sprintf('Entry[%s] of the container is not exist.', RedisProxy::class));
         }
 
         $this->redis = make(RedisProxy::class, ['pool' => $config->getPool()]);
-        $this->config = $config;
         $this->manager = make(LuaManager::class, [$config]);
     }
 
@@ -84,7 +66,7 @@ class RedisHandler implements HandlerInterface
         } elseif ($value instanceof Arrayable) {
             $data = $value->toArray();
         } else {
-            throw new CacheException(sprintf('The value must is array.'));
+            throw new CacheException('The value must is array.');
         }
 
         $data = array_merge($data, [$this->defaultKey => $this->defaultValue]);
@@ -111,7 +93,7 @@ class RedisHandler implements HandlerInterface
 
     public function getMultiple($keys, $default = null)
     {
-        $data = $this->manager->handle(HashGetMultiple::class, $keys);
+        $data = $this->manager->handle(HashGetMultiple::class, (array) $keys);
         $result = [];
         foreach ($data as $item) {
             unset($item[$this->defaultKey]);
