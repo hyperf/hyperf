@@ -1,6 +1,6 @@
 # v3.0.0 - TBD
 
-- [#4238](https://github.com/hyperf/hyperf/issues/4238) Upgraded the minimum php version to `^8.0` for all components (31/89);
+- [#4238](https://github.com/hyperf/hyperf/issues/4238) Upgraded the minimum php version to `^8.0` for all components (39/89);
 
 ## BC breaks
 
