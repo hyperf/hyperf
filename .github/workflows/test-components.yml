@@ -245,6 +245,7 @@ jobs:
         run: |
           docker run --name mysql -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql:8.0 --bind-address=0.0.0.0 --default-authentication-plugin=mysql_native_password
           docker run --name redis -p 6379:6379 -d redis
+          sleep 20
       - name: Setup Mysql
         run: export TRAVIS_BUILD_DIR=$(pwd) && bash ./.travis/setup.mysql.sh
       - name: Run Test Cases
