@@ -252,6 +252,11 @@ class AnnotationReader implements Reader
                     $className = $reflection->getDeclaringClass()->getName();
                     $propertyName = $reflection->getName();
                 }
+                // phpstorm @see https://blog.jetbrains.com/phpstorm/2020/10/phpstorm-2020-3-eap-4/ and https://www.jetbrains.com/help/phpstorm/code-inspections-in-php.html?q=ArrayShape#Attributes
+                if (strpos($attribute->getName(), 'JetBrains\PhpStorm')  !== false) {
+                    continue;
+                }
+
                 $message = sprintf(
                     "No attribute class found for '%s' in %s",
                     $attribute->getName(),
