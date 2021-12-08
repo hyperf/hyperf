@@ -64,7 +64,7 @@ class DemoService
 
     public function method()
     {
-        // Do somthing.
+        // Do something.
         $this->logger->info("Your log message.");
     }
 }
@@ -135,14 +135,14 @@ $log->alert('czl');
 ```php
 namespace App;
 
-use Hyperf\Logger\Logger;
+use Hyperf\Logger\LoggerFactory;
 use Hyperf\Utils\ApplicationContext;
 
 class Log
 {
     public static function get(string $name = 'app')
     {
-        return ApplicationContext::getContainer()->get(\Hyperf\Logger\LoggerFactory::class)->get($name);
+        return ApplicationContext::getContainer()->get(LoggerFactory::class)->get($name);
     }
 }
 ```
@@ -174,7 +174,7 @@ class StdoutLoggerFactory
 }
 ```
 
-- 申明依賴, 使用 `StdoutLoggerInterface` 的地方, 由實際依賴的 `StdoutLoggerFactory` 實例化的類來完成
+- 聲明依賴, 使用 `StdoutLoggerInterface` 的地方, 由實際依賴的 `StdoutLoggerFactory` 實例化的類來完成
 
 ```php
 // config/autoload/dependencies.php
@@ -217,7 +217,7 @@ return [
         ],
         'formatter' => $formatter,
     ],
-]
+];
 ```
 
 - 默認配置了名為 `default` 的 `Handler`, 幷包含了此 `Handler` 及其 `Formatter` 的信息
@@ -259,8 +259,8 @@ return [
 
 ### 配置多個 `Handler`
 
-用户可以修改 `handlers` 讓對應日誌組支持多個 `handler`。比如以下配置，當用户投遞一個 `INFO` 級別以上的日誌時，只會在 `hyperf.log` 中寫入日誌。
-當用户投遞一個 `DEBUG` 級別以上日誌時，會在 `hyperf.log` 和 `hyperf-debug.log` 寫入日誌。
+用户可以修改 `handlers` 讓對應日誌組支持多個 `handler`。比如以下配置，當用户投遞一個 `INFO` 級別以上的日誌時，會在 `hyperf.log` 和 `hyperf-debug.log`  寫入日誌。
+當用户投遞一個 `DEBUG` 級別日誌時，只會在 `hyperf-debug.log` 中寫入日誌。
 
 ```php
 <?php
@@ -306,7 +306,6 @@ return [
         ],
     ],
 ];
-
 ```
 
 結果如下

@@ -21,6 +21,7 @@ use Hyperf\Database\Exception\InvalidBindingException;
 use Hyperf\Database\Model\Builder as ModelBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
@@ -28,7 +29,6 @@ use Hyperf\Utils\Collection;
 use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\ForwardsCalls;
-use Hyperf\Utils\Traits\Macroable;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -102,6 +102,13 @@ class Builder
      * @var string
      */
     public $from;
+
+    /**
+     * The force indexes.
+     *
+     * @var string[]
+     */
+    public $forceIndexes = [];
 
     /**
      * The table joins for the query.
@@ -324,7 +331,7 @@ class Builder
     {
         [$query, $bindings] = $this->createSub($query);
 
-        return $this->fromRaw('(' . $query . ') as ' . $this->grammar->wrap($as), $bindings);
+        return $this->fromRaw('(' . $query . ') as ' . $this->grammar->wrapTable($as), $bindings);
     }
 
     /**
@@ -380,6 +387,17 @@ class Builder
     {
         $this->from = $table;
 
+        return $this;
+    }
+
+    /**
+     * Set the force indexes which the query should be used.
+     *
+     * @return $this
+     */
+    public function forceIndexes(array $forceIndexes)
+    {
+        $this->forceIndexes = $forceIndexes;
         return $this;
     }
 
@@ -455,7 +473,7 @@ class Builder
     {
         [$query, $bindings] = $this->createSub($query);
 
-        $expression = '(' . $query . ') as ' . $this->grammar->wrap($as);
+        $expression = '(' . $query . ') as ' . $this->grammar->wrapTable($as);
 
         $this->addBinding($bindings, 'join');
 
@@ -480,7 +498,7 @@ class Builder
      * Add a "join where" clause to the query.
      *
      * @param string $table
-     * @param string $first
+     * @param \Closure|string $first
      * @param string $operator
      * @param string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -495,7 +513,7 @@ class Builder
      *
      * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @param string $first
+     * @param \Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -523,7 +541,7 @@ class Builder
      * Add a "right join where" clause to the query.
      *
      * @param string $table
-     * @param string $first
+     * @param \Closure|string $first
      * @param string $operator
      * @param string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -538,7 +556,7 @@ class Builder
      *
      * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @param string $first
+     * @param \Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder|static

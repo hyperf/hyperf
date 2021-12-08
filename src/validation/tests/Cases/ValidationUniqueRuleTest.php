@@ -59,6 +59,10 @@ class ValidationUniqueRuleTest extends TestCase
         $rule = new Unique('table');
         $rule->where('foo', '"bar"');
         $this->assertEquals('unique:table,NULL,NULL,id,foo,"""bar"""', (string) $rule);
+
+        $rule = new Unique('table');
+        $rule->where('foo', 1);
+        $this->assertEquals('unique:table,NULL,NULL,id,foo,"1"', (string) $rule);
     }
 }
 

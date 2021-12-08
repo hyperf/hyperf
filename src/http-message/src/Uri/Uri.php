@@ -21,7 +21,7 @@ class Uri implements UriInterface
      * we apply this default host when no host is given yet to form a
      * valid URI.
      */
-    const DEFAULT_HTTP_HOST = 'localhost';
+    public const DEFAULT_HTTP_HOST = 'localhost';
 
     /**
      * @var array
@@ -642,7 +642,7 @@ class Uri implements UriInterface
         }
 
         $port = (int) $port;
-        if (1 > $port || 0xffff < $port) {
+        if (1 > $port || 0xFFFF < $port) {
             throw new \InvalidArgumentException(sprintf('Invalid port: %d. Must be between 1 and 65535', $port));
         }
 

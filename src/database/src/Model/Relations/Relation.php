@@ -16,9 +16,9 @@ use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Query\Expression;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Traits\ForwardsCalls;
-use Hyperf\Utils\Traits\Macroable;
 
 /**
  * @mixin \Hyperf\Database\Model\Builder
@@ -331,6 +331,18 @@ abstract class Relation
     public static function getMorphedModel($alias)
     {
         return self::$morphMap[$alias] ?? null;
+    }
+
+    /**
+     * Get a relationship join table hash.
+     *
+     * For safety, The relationship ensures this method is only used in the same coroutine.
+     *
+     * @return string
+     */
+    public function getRelationCountHash(bool $incrementJoinCount = true)
+    {
+        return 'hyperf_reserved_' . ($incrementJoinCount ? static::$selfJoinCount++ : static::$selfJoinCount);
     }
 
     /**

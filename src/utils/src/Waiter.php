@@ -50,7 +50,7 @@ class Waiter
             } catch (Throwable $exception) {
                 $result = new ExceptionThrower($exception);
             } finally {
-                $channel->push($result, $this->pushTimeout);
+                $channel->push($result ?? null, $this->pushTimeout);
             }
         });
 

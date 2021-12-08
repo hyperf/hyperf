@@ -142,7 +142,7 @@ class ArrTest extends TestCase
         $this->assertSame($array1, $result);
     }
 
-    public function testArrorForget()
+    public function testArrayForget()
     {
         $data = [1, 2];
         Arr::forget($data, [1]);
@@ -169,5 +169,15 @@ class ArrTest extends TestCase
         $data = [1, 2];
         Arr::forget($data, [2]);
         $this->assertSame([1, 2], $data);
+    }
+
+    public function testArrMacroable()
+    {
+        Arr::macro('foo', function () {
+            return 'foo';
+        });
+
+        $this->assertTrue(Arr::hasMacro('foo'));
+        $this->assertFalse(Arr::hasMacro('bar'));
     }
 }

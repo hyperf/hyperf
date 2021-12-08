@@ -35,7 +35,7 @@
 ## 數據庫
 
 - [hyperf/database](https://github.com/hyperf/database) Hyperf 官方提供的基於 Eloquent 衍生的數據庫 ORM，可複用於其它框架
-- [hyperf/model](https://github.com/hyperf/model) Hyperf 官方提供的基於 [hyperf/database](https://github.com/hyperf/database) 組件的自動模型緩存組件
+- [hyperf/model-cache](https://github.com/hyperf/model-cache) Hyperf 官方提供的基於 [hyperf/database](https://github.com/hyperf/database) 組件的自動模型緩存組件
 - [reasno/fastmongo](https://github.com/Reasno/fastmongo) 基於 `hyperf/gotask` 實現的協程化 `MongoDB` 客户端
 - [hyperf-ext/translatable](https://github.com/hyperf-ext/translatable) 為模型提供多語言能力
 
@@ -123,20 +123,22 @@
 ## 開發調試
 
 - [swoole/yasd](https://github.com/swoole/yasd) Swoole 調試器，類似 `Xdebug`，完美支持協程，支持斷點調試、單步追蹤、`watch` 變量
-- [mabu233/sdebug](https://github.com/mabu233/sdebug) 用於協助開發與調試，`Xdebug`的協程改造版
 - [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 通過 `WebSocket` 實時觀測異常錯誤的開發調試組件
-- [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支持與 laravel 類似的多 env 配置文件功能，通過 `APP_ENV=testing` 可以加載 `.env.testing` 配置覆蓋默認的 `.env`
+- [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支持與 laravel 類似的多 env 配置文件功能，比如通過 `APP_ENV=testing` 可以加載 `.env.testing` 配置覆蓋默認的 `.env`
 - [qiutuleng/hyperf-dump-server](https://github.com/qiutuleng/hyperf-dump-server) 提供一個 `dump` 函數，可以將程序內的變量或數據打印到另一個命令行窗口中，基於 Symfony 的 `Var-Dump Server` 組件
 - [leearvin/hyperf-tinker](https://github.com/Arvin-Lee/hyperf-tinker) 基於 PsySH 提供一個交互式的 Hyperf shell 容器
 
 ## 權限認證
 
-- [donjan-deng/hyperf-permission](https://github.com/donjan-deng/hyperf-permission) 基於 [spatie/laravel-permission](https://github.com/spatie/laravel-permission) 開發的適配 Hyperf 的權限組件
 - [fx/hyperf-http-auth](https://github.com/nfangxu/hyperf-http-auth) 根據 laravel 中的 auth 組件改寫的, 適配 hyperf 框架
-- [96qbhy/hyperf-auth](https://github.com/qbhy/hyperf-auth) 參考 laravel 的 auth 組件設計，支持 jwt 和 session 驅動，更輕巧更好用
+- [96qbhy/hyperf-auth](https://github.com/qbhy/hyperf-auth) 參考 laravel 的 auth 組件設計，支持 jwt、session、sso(單點多設備登錄) 驅動
 - [hyperf-ext/jwt](https://github.com/hyperf-ext/jwt) JWT 組件，實現了完整用於 JWT 認證的能力
 - [hyperf-ext/auth](https://github.com/hyperf-ext/auth) 移植自 `illuminate/auth`，基本完整的實現了 Laravel Auth 的功能特性
 - [donjan-deng/hyperf-casbin](https://github.com/donjan-deng/hyperf-casbin) 適配於 Hyperf 的開源訪問控制框架 [Casbin](https://casbin.org/docs/zh-CN/overview)
+
+## 分佈式鎖
+
+- [lysice/hyperf-redis-lock](https://github.com/Lysice/hyperf-redis-lock) 根據 Laravel 的 lock 組件改寫，適配於 Hyperf 框架。
 
 ## 第三方 SDK
 
@@ -144,3 +146,4 @@
 - [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支持 Swoole 協程的第三方登錄授權 SDK（QQ、微信、微博、Github、Gitee 等）
 - [overtrue/wechat](zh-hk/sdks/wechat) EasyWeChat，一個流行的非官方微信 SDK
 - [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole 協程環境下的可用的 PHPMailer
+- [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 支持 `支付寶/微信` 的支付組件，基於 [yansongda/pay](https://github.com/yansongda/pay) 實現，適配於 `Hyperf` 框架。

@@ -16,7 +16,6 @@ use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\SocketIOServer\Collector\SocketIORouter;
 use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\Room\RedisAdapter;
-use Hyperf\SocketIOServer\SocketIO;
 use Psr\Container\ContainerInterface;
 
 class StartSubscriberListener implements ListenerInterface
@@ -47,8 +46,6 @@ class StartSubscriberListener implements ListenerInterface
                 $adapter->subscribe();
             }
             if ($adapter instanceof EphemeralInterface) {
-                $io = $this->container->get(SocketIO::class);
-                $adapter->setTtl($io->getPingInterval() + $io->getPingTimeout());
                 $adapter->cleanUpExpired();
             }
         }

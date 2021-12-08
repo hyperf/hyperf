@@ -130,4 +130,22 @@ class RouteCollectorTest extends TestCase
         $res = $collector->mergeOptions($origin, $options);
         $this->assertSame(['A', 'B', 'C', 'B'], $res['middleware']);
     }
+
+    public function testMiddlewareInOptionalRoute()
+    {
+        $parser = new Std();
+        $generator = new DataGenerator();
+        $collector = new RouteCollectorStub($parser, $generator, 'test');
+
+        $routes = [
+            '/user/[{id:\d+}]',
+            '/role/{id:\d+}',
+            '/user',
+        ];
+
+        foreach ($routes as $route) {
+            $collector->addRoute('GET', $route, 'User::Info', ['middleware' => $middlewares = ['FooMiddleware']]);
+            $this->assertSame($middlewares, MiddlewareManager::get('test', $route, 'GET'));
+        }
+    }
 }

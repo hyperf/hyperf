@@ -1,13 +1,25 @@
 # Introduction
 
-Hyperf is a high-performance, highly flexible PHP CLI framework based on `Swoole 4.5+`. It has a built-in coroutine server with a large number of commonly used components. It provides ultra-high and better performance than the traditional PHP-FPM-based framework and also maintains extremely flexible scalability at the same time. Standard components are implemented in the latest PSR standards, and a powerful dependency injection design ensures that most components or classes within the framework are replaceable.
+Hyperf is an extremely performant and flexible PHP CLI framework, powered by a state-of-the-art coroutine server and a large number of battle-tested components. Aside from decisively beating PHP-FPM frameworks in benchmarks, Hyperf is unique in its focus on flexibility and composition. Hyperf ships with an AOP-enabling (aspect-oriented programming) dependency injector to ensure components and classes are pluggable and meta-programmable. All of Hyperf's core components strictly follow [PSR](https://www.php-fig.org/psr) standards and can be used in other frameworks.
 
-In addition to providing `MySQL coroutine client` and `Redis coroutine client`, common coroutine clients, the Hyperf component libraries are also prepared for the coroutine version of `Eloquent ORM`, `GRPC server and client`, `Zipkin (OpenTracing) client`, `Guzzle HTTP client`, `Elasticsearch client`, `Consul client`, `ETCD client`, `AMQP component`, `Apollo configuration center`, `Token bucket algorithm-based limiter`, and `Universal connection pool`, etc. Therefore, the trouble of implementing the corresponding coroutine version client by yourself can be avoided. Hyperf also provides convenient functions such as `Dependency injection`, `Annotation`, `AOP (aspect-oriented programming)`, `Middleware`, `Custom Processes`, `Event Manager`, `Simply Redis message queue`, and `Full-featured RabbitMQ message queue` to meet a wide range of technical and business scenarios.
+Hyperf's architecture is built using a combination of `Coroutines`, `Dependency injection`, `Events`, `Annotations`, and `AOP`. In addition to providing `MySQL`, `Redis` and other common coroutine clients, `Hyperf` also provides coroutine compatible versions of `WebSocket server / client`, `JSON RPC server / client`, `gRPC server / client`, `Zipkin/Jaeger (OpenTracing) client`, `Guzzle HTTP client`, `Elasticsearch client`, `Consul client`, `ETCD client`, `AMQP component`, `Apollo configuration center`, `Aliyun ACM`, `ETCD configuration center`, `Token bucket algorithm-based limiter`, `Universal connection pool`, `Circuit breaker`, `Swagger`, `Swoole Tracker`, `Snowflake`, `Simply Redis MQ`, `RabbitMQ`, `NSQ`, `Nats`, `Seconds level crontab`, `Custom Processes`, etc. Therefore, developers can entirely avoid implementing coroutine compatible versions of these libraries.
 
-# Original intention
+Rest assured, Hyperf is still a PHP framework. Hyperf provides all the packages you expect: `Middleware`, `Event Manager`, `Coroutine-optimized Eloquent ORM` (and Model Cache!), `Translation`, `Validation`, `View engine (Blade/Smarty/Twig/Plates/ThinkTemplate)` and more.
 
-Although there are many new PHP frameworks have been appeared, but we still has not seen a perfect framework which has the coexistence of elegant design and ultra-high performance, nor would we find a framework that really paves the way for PHP microservices. For the original intention of Hyperf
+# Origin
 
-# Production available
+Although there are many new PHP frameworks, we still haven't found a framework that matches an elegant design with ultra-high performance, nor have we found a framework that paves the way for PHP microservices. With this vision in mind, we will continue to invest in the future of this framework, and you are welcome to join us in contributing to the open-source development of Hyperf.
 
-We performed a large number of unit tests on the components to ensure the correctness of the logic, while maintaining high-quality documentation. Before Hyperf officially opened to the public (2019-06-20), it had already launched multiple services in a C-round and a B-round Internet companies, and it has been running perfectly for more than half a year. After the test of the harsh production environment, we officially published this project.
+# Design Goals
+
+`Hyperspeed + Flexibility = Hyperf`. The equation hidden in our name exhibits Hyperf's founding ambition.
+
+Hyperspeed: Leveraging `Swoole` and `Swow` coroutines, Hyperf is capable of handling massive amounts of traffic. The Hyperf team made many optimizations to the framework to eliminate every bottleneck between the end-user and our blazing engine.
+
+Flexibility: We believe our Dependency Injection component is best in class. With the help of `Hyperf DI`, components and classes are all pluggable and meta-programmable. Inversely, all Hyperf components are meant to be shared with the world. Our commitment to PSR standards means that you can use Hyperf components in any compatible framework.
+
+Via these traits, Hyperf has discovered the untapped potential in many fields: implementing Web servers, gateway servers, distributed middleware software, microservices architecture, game servers, and Internet-of-Things (IoT).
+
+# Production ready
+
+Alongside our well-maintained, multilingual documentation, a large number of unit tests for each component ensure logical correctness. Before `Hyperf` was released to the public (2019-06-20), it was used privately for multiple services in series-C and series-B Internet companies, which have been running without incident for years in harsh production environments.

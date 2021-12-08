@@ -101,12 +101,18 @@ $result = $task->handle(Coroutine::id());
 
 > 使用 `@Task` 注解时需 `use Hyperf\Task\Annotation\Task;`
 
+注解支持以下参数
+
+|   配置   | 类型  | 默认值 |                        备注                        |
+| :------: | :---: | :----: | :------------------------------------------------: |
+| timeout  |  int  |   10   |                  任务执行超时时间                  |
+| workerId |  int  |   -1   | 指定投递的 Task 进程 ID (-1 代表随机投递到空闲进程) |
+
 ## 附录
 
 Swoole 暂时没有协程化的函数列表
 
 - mysql，底层使用 libmysqlclient, 不推荐使用, 推荐使用已经实现协程化的 pdo_mysql/mysqli
-- curl，底层使用 libcurl，在 Swoole 4.4 后底层进行了协程化(beta)
 - mongo，底层使用 mongo-c-client
 - pdo_pgsql
 - pdo_ori

@@ -102,14 +102,14 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
         $this->exceptionHandlers = $config->get('exceptions.handler.' . $serverName, $this->getDefaultExceptionHandler());
     }
 
-    public function onReceive($server, int $fd, int $fromId, string $data): void
+    public function onReceive($server, int $fd, int $reactorId, string $data): void
     {
         $request = $response = null;
         try {
             CoordinatorManager::until(Constants::WORKER_START)->yield();
 
             // Initialize PSR-7 Request and Response objects.
-            Context::set(ServerRequestInterface::class, $request = $this->buildRequest($fd, $fromId, $data));
+            Context::set(ServerRequestInterface::class, $request = $this->buildRequest($fd, $reactorId, $data));
             Context::set(ResponseInterface::class, $this->buildResponse($fd, $server));
 
             // $middlewares = array_merge($this->middlewares, MiddlewareManager::get());
@@ -161,7 +161,7 @@ abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterf
 
     abstract protected function createCoreMiddleware(): CoreMiddlewareInterface;
 
-    abstract protected function buildRequest(int $fd, int $fromId, string $data): ServerRequestInterface;
+    abstract protected function buildRequest(int $fd, int $reactorId, string $data): ServerRequestInterface;
 
     abstract protected function buildResponse(int $fd, $server): ResponseInterface;
 

@@ -1,0 +1,44 @@
+{
+    "name": "hyperf/config-center",
+    "description": "The abstraction component of config center",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf",
+        "config-center"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=7.3"
+    },
+    "suggest": {
+        "hyperf/process": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\ConfigCenter\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\ConfigCenter\\": "tests"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\ConfigCenter\\ConfigProvider"
+        }
+    }
+}

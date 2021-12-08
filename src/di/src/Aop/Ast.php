@@ -12,6 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Di\Aop;
 
 use Hyperf\Utils\Composer;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Interface_;
+use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
@@ -56,6 +59,23 @@ class Ast
         }
         $modifiedStmts = $traverser->traverse($stmts);
         return $this->printer->prettyPrintFile($modifiedStmts);
+    }
+
+    public function parseClassByStmts(array $stmts): string
+    {
+        $namespace = $className = '';
+        foreach ($stmts as $stmt) {
+            if ($stmt instanceof Namespace_ && $stmt->name) {
+                $namespace = $stmt->name->toString();
+                foreach ($stmt->stmts as $node) {
+                    if (($node instanceof Class_ || $node instanceof Interface_) && $node->name) {
+                        $className = $node->name->toString();
+                        break;
+                    }
+                }
+            }
+        }
+        return ($namespace && $className) ? $namespace . '\\' . $className : '';
     }
 
     private function getCodeByClassName(string $className): string

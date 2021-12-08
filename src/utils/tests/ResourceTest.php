@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
-use Hyperf\Utils\Resource;
+use Hyperf\Utils\ResourceGenerator;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -23,7 +23,7 @@ class ResourceTest extends TestCase
     public function testFrom()
     {
         $data = '123123';
-        $resource = Resource::from($data);
+        $resource = ResourceGenerator::from($data);
         $this->assertSame('1', fread($resource, 1));
         $this->assertSame('23', fread($resource, 2));
         $this->assertSame('123', fread($resource, 10));
@@ -34,7 +34,7 @@ class ResourceTest extends TestCase
         $data = str_repeat('1', 1024 * 1024);
         $memory = memory_get_usage(true);
         for ($i = 0; $i < 100; ++$i) {
-            Resource::fromMemory($data);
+            ResourceGenerator::fromMemory($data);
             $current = memory_get_usage(true);
             $leak = $current - $memory;
             $memory = $current;

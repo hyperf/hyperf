@@ -21,8 +21,10 @@ use GuzzleHttp\RequestOptions;
 use GuzzleHttp\TransferStats;
 use Hyperf\Engine\Http\Client;
 use Hyperf\Engine\Http\RawResponse;
+use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 use function GuzzleHttp\is_host_in_noproxy;
 
 /**
@@ -31,20 +33,25 @@ use function GuzzleHttp\is_host_in_noproxy;
 class CoroutineHandler
 {
     /**
+     * @see \GuzzleHttp\Psr7\Uri::$defaultPorts
+     */
+    private static $defaultPorts = [
+        'http' => 80,
+        'https' => 443,
+    ];
+
+    /**
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function __invoke(RequestInterface $request, array $options)
     {
         $uri = $request->getUri();
         $host = $uri->getHost();
-        $port = $uri->getPort();
+        $port = $this->getPort($uri);
         $ssl = $uri->getScheme() === 'https';
         $path = $uri->getPath();
         $query = $uri->getQuery();
 
-        if (empty($port)) {
-            $port = $ssl ? 443 : 80;
-        }
         if (empty($path)) {
             $path = '/';
         }
@@ -140,7 +147,7 @@ class CoroutineHandler
         }
 
         // Proxy
-        if (isset($options['proxy'])) {
+        if (! empty($options['proxy'])) {
             $uri = null;
             if (is_array($options['proxy'])) {
                 $scheme = $request->getUri()->getScheme();
@@ -156,11 +163,13 @@ class CoroutineHandler
 
             if ($uri) {
                 $settings['http_proxy_host'] = $uri->getHost();
-                $settings['http_proxy_port'] = $uri->getPort();
+                $settings['http_proxy_port'] = $this->getPort($uri);
                 if ($uri->getUserInfo()) {
                     [$user, $password] = explode(':', $uri->getUserInfo());
                     $settings['http_proxy_user'] = $user;
-                    $settings['http_proxy_password'] = $password;
+                    if (! empty($password)) {
+                        $settings['http_proxy_password'] = $password;
+                    }
                 }
             }
         }
@@ -224,5 +233,19 @@ class CoroutineHandler
         }
 
         return $stream;
+    }
+
+    /**
+     * @throws \InvalidArgumentException
+     */
+    protected function getPort(UriInterface $uri): int
+    {
+        if ($port = $uri->getPort()) {
+            return $port;
+        }
+        if (isset(self::$defaultPorts[$uri->getScheme()])) {
+            return self::$defaultPorts[$uri->getScheme()];
+        }
+        throw new InvalidArgumentException("Unsupported scheme from the URI {$uri->__toString()}");
     }
 }

@@ -38,4 +38,9 @@ class ProcessCollector
         }
         return $result;
     }
+
+    public static function isEmpty(): bool
+    {
+        return static::$processes === [];
+    }
 }

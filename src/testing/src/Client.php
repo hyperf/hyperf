@@ -18,12 +18,12 @@ use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Server;
+use Hyperf\Testing\HttpMessage\Upload\UploadedFile;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Filesystem\Filesystem;
@@ -137,29 +137,44 @@ class Client extends Server
     public function request(string $method, string $path, array $options = [])
     {
         return wait(function () use ($method, $path, $options) {
-            /*
-             * @var Psr7Request
-             */
-            [$psr7Request, $psr7Response] = $this->init($method, $path, $options);
-
-            $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
-            /** @var Dispatched $dispatched */
-            $dispatched = $psr7Request->getAttribute(Dispatched::class);
-            $middlewares = $this->middlewares;
-            if ($dispatched->isFound()) {
-                $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
-                $middlewares = array_merge($middlewares, $registeredMiddlewares);
-            }
-
-            try {
-                $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
-            } catch (\Throwable $throwable) {
-                // Delegate the exception to exception handler.
-                $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
-            }
-
-            return $psr7Response;
+            return $this->execute($this->init($method, $path, $options));
         }, $this->waitTimeout);
+    }
+
+    public function sendRequest(ServerRequestInterface $psr7Request): ResponseInterface
+    {
+        return wait(function () use ($psr7Request) {
+            return $this->execute($psr7Request);
+        }, $this->waitTimeout);
+    }
+
+    protected function execute(ServerRequestInterface $psr7Request): ResponseInterface
+    {
+        $this->persistToContext($psr7Request, new Psr7Response());
+
+        $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
+        /** @var Dispatched $dispatched */
+        $dispatched = $psr7Request->getAttribute(Dispatched::class);
+        $middlewares = $this->middlewares;
+        if ($dispatched->isFound()) {
+            $registeredMiddlewares = MiddlewareManager::get($this->serverName, $dispatched->handler->route, $psr7Request->getMethod());
+            $middlewares = array_merge($middlewares, $registeredMiddlewares);
+        }
+
+        try {
+            $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
+        } catch (\Throwable $throwable) {
+            // Delegate the exception to exception handler.
+            $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+        }
+
+        return $psr7Response;
+    }
+
+    protected function persistToContext(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        Context::set(ServerRequestInterface::class, $request);
+        Context::set(ResponseInterface::class, $response);
     }
 
     protected function initBaseUri($server): void
@@ -176,7 +191,7 @@ class Client extends Server
         }
     }
 
-    protected function init(string $method, string $path, array $options = []): array
+    protected function init(string $method, string $path, array $options = []): ServerRequestInterface
     {
         $query = $options['query'] ?? [];
         $params = $options['form_params'] ?? [];
@@ -198,14 +213,9 @@ class Client extends Server
         $body = new SwooleStream($content);
 
         $request = new Psr7Request($method, $uri, $headers, $body);
-        $request = $request->withQueryParams($query)
+        return $request->withQueryParams($query)
             ->withParsedBody($data)
             ->withUploadedFiles($this->normalizeFiles($multipart));
-
-        Context::set(ServerRequestInterface::class, $psr7Request = $request);
-        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
-
-        return [$psr7Request, $psr7Response];
     }
 
     protected function normalizeFiles(array $multipart): array
@@ -221,7 +231,9 @@ class Client extends Server
 
                 $dir = BASE_PATH . '/runtime/uploads';
                 $tmpName = $dir . '/' . $filename;
-                $fileSystem->makeDirectory($dir);
+                if (! is_dir($dir)) {
+                    $fileSystem->makeDirectory($dir);
+                }
                 $fileSystem->put($tmpName, $contents);
 
                 $stats = fstat($contents);

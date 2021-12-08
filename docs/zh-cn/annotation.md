@@ -156,6 +156,26 @@ return [
 
 ```
 
+### 原生注解(Attributes)
+
+众所周知，在 PHP 8 增加了 `原生注解(Attributes)` 的特性，Hyperf 2.2 版本开始也支持了原生注解的写法，文档内的所有注解都可做对应的转换，如下：
+
+#### PHPDoc 注解
+
+```php
+/**
+ * @ClassAnnotation()
+ */
+class Foo {}
+```
+
+#### PHP 原生注解
+
+```php
+#[ClassAnnotation()]
+class Foo {}
+```
+
 ### 利用注解数据
 
 在没有自定义注解收集方法时，默认会将注解的元数据统一收集在 `Hyperf\Di\Annotation\AnnotationCollector` 类内，通过该类的静态方法可以方便的获取对应的元数据用于逻辑判断或实现。
@@ -359,7 +379,7 @@ return [
 
 ## IDE 注解插件
 
-因为 `PHP` 并不是原生支持 `注解`，所以 `IDE` 不会默认增加注解支持。但我们可以添加第三方插件，来让 `IDE` 支持 `注解`。
+因为 `PHP8.0` 以下并不是原生支持 `注解`，所以 `IDE` 不会默认增加注解支持。但我们可以添加第三方插件，来让 `IDE` 支持 `注解`。
 
 ### PhpStorm
 

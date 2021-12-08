@@ -41,6 +41,13 @@ class FormRequest extends Request implements ValidatesWhenResolved
     protected $errorBag = 'default';
 
     /**
+     * The scenes defined by developer.
+     *
+     * @var array
+     */
+    protected $scenes = [];
+
+    /**
      * The input keys that should not be flashed on redirect.
      *
      * @var array
@@ -50,6 +57,20 @@ class FormRequest extends Request implements ValidatesWhenResolved
     public function __construct(ContainerInterface $container)
     {
         $this->setContainer($container);
+    }
+
+    /**
+     * @return $this
+     */
+    public function scene(string $scene)
+    {
+        Context::set($this->getContextValidatorKey('scene'), $scene);
+        return $this;
+    }
+
+    public function getScene(): ?string
+    {
+        return Context::get($this->getContextValidatorKey('scene'));
     }
 
     /**
@@ -104,7 +125,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     protected function getValidatorInstance(): ValidatorInterface
     {
-        return Context::getOrSet($this->getContextValidatorKey(), function () {
+        return Context::getOrSet($this->getContextValidatorKey(ValidatorInterface::class), function () {
             $factory = $this->container->get(ValidationFactory::class);
 
             if (method_exists($this, 'validator')) {
@@ -128,7 +149,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
     {
         return $factory->make(
             $this->validationData(),
-            call_user_func_array([$this, 'rules'], []),
+            $this->getRules(),
             $this->messages(),
             $this->attributes()
         );
@@ -183,8 +204,27 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Get context validator key.
      */
-    protected function getContextValidatorKey(): string
+    protected function getContextValidatorKey(string $key): string
     {
-        return sprintf('%s:%s', get_called_class(), ValidatorInterface::class);
+        return sprintf('%s:%s', spl_object_hash($this), $key);
+    }
+
+    /**
+     * Get scene rules.
+     */
+    protected function getRules()
+    {
+        $rules = call_user_func_array([$this, 'rules'], []);
+        $scene = $this->getScene();
+        if ($scene && isset($this->scenes[$scene]) && is_array($this->scenes[$scene])) {
+            $newRules = [];
+            foreach ($this->scenes[$scene] as $field) {
+                if (array_key_exists($field, $rules)) {
+                    $newRules[$field] = $rules[$field];
+                }
+            }
+            return $newRules;
+        }
+        return $rules;
     }
 }

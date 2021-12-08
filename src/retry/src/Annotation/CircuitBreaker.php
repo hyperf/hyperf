@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Retry\Annotation;
 
+use Attribute;
 use Hyperf\Retry\CircuitBreakerState;
 use Hyperf\Retry\Policy\CircuitBreakerRetryPolicy;
 use Hyperf\Retry\Policy\ClassifierRetryPolicy;
@@ -23,6 +24,7 @@ use Hyperf\Retry\SleepStrategyInterface;
  * @Annotation
  * @Target({"METHOD"})
  */
+#[Attribute(Attribute::TARGET_METHOD)]
 class CircuitBreaker extends AbstractRetry
 {
     /**

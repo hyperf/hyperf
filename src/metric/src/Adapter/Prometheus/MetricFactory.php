@@ -23,6 +23,7 @@ use Hyperf\Metric\Exception\RuntimeException;
 use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Utils\Coordinator\Constants as Coord;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Network;
 use Hyperf\Utils\Str;
 use Prometheus\CollectorRegistry;
 use Prometheus\RenderTextFormat;
@@ -172,7 +173,7 @@ class MetricFactory implements MetricFactoryInterface
         if (! Str::contains($address, ['https://', 'http://'])) {
             $address = 'http://' . $address;
         }
-        return $address . '/metrics/job/' . $job . '/ip/' . current(swoole_get_local_ip()) . '/pid/' . getmypid();
+        return $address . '/metrics/job/' . $job . '/ip/' . Network::ip() . '/pid/' . getmypid();
     }
 
     private function doRequest(string $address, string $job, string $method)

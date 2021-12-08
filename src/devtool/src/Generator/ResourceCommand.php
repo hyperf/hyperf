@@ -18,6 +18,7 @@ use Symfony\Component\Console\Input\InputOption;
 /**
  * @Command
  */
+#[Command]
 class ResourceCommand extends GeneratorCommand
 {
     public function __construct()

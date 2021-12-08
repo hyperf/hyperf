@@ -18,7 +18,6 @@ use function interface_exists;
 use function is_callable;
 use function is_string;
 use function method_exists;
-use function print_r;
 
 class DefinitionSource implements DefinitionSourceInterface
 {
@@ -37,10 +36,7 @@ class DefinitionSource implements DefinitionSourceInterface
      */
     public function getDefinition(string $name): ?DefinitionInterface
     {
-        if (! isset($this->source[$name])) {
-            $this->source[$name] = $this->autowire($name);
-        }
-        return $this->source[$name];
+        return $this->source[$name] ?? $this->source[$name] = $this->autowire($name);
     }
 
     /**
@@ -78,10 +74,9 @@ class DefinitionSource implements DefinitionSourceInterface
                 continue;
             }
 
-            $parameterClass = $parameter->getClass();
-
-            if ($parameterClass) {
-                $parameters[$index] = new Reference($parameterClass->getName());
+            $parameterType = $parameter->getType();
+            if ($parameterType instanceof \ReflectionNamedType && ! $parameterType->isBuiltin()) {
+                $parameters[$index] = new Reference($parameterType->getName());
             }
         }
 
@@ -140,10 +135,5 @@ class DefinitionSource implements DefinitionSourceInterface
         }
 
         return $definition;
-    }
-
-    private function printLn(string $message): void
-    {
-        print_r($message . PHP_EOL);
     }
 }

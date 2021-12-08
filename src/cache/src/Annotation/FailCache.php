@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Cache\Annotation;
 
+use Attribute;
 use Hyperf\Cache\CacheListenerCollector;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\Annotation\AnnotationCollector;
@@ -19,6 +20,7 @@ use Hyperf\Di\Annotation\AnnotationCollector;
  * @Annotation
  * @Target({"METHOD"})
  */
+#[Attribute(Attribute::TARGET_METHOD)]
 class FailCache extends AbstractAnnotation
 {
     public $prefix;

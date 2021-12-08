@@ -1,60 +1,62 @@
-# 快速开始
+# Quick start
 
-## 前言
+## Foreword
 
-> [hyperf/database](https://github.com/hyperf-cloud/database) 衍生于 [illuminate/database](https://github.com/illuminate/database)，我们对它进行了一些改造，大部分功能保持了相同。在这里感谢一下 Laravel 开发组，实现了如此强大好用的 ORM 组件。
+> [hyperf/database](https://github.com/hyperf/database) is derived from [illuminate/database](https://github.com/illuminate/database), we have made some modifications to it but most methods remain the same. Thanks to the Laravel development team for implementing such a powerful and easy-to-use ORM component.
 
-[hyperf/database](https://github.com/hyperf-cloud/database) 组件是基于 [illuminate/database](https://github.com/illuminate/database) 衍生出来的组件，我们对它进行了一些改造，从设计上是允许用于其它 PHP-FPM 框架或基于 Swoole 的框架中的，而在 Hyperf 里就需要提一下 [hyperf/db-connection](https://github.com/hyperf-cloud/db-connection) 组件，它基于 [hyperf/pool](https://github.com/hyperf-cloud/pool) 实现了数据库连接池并对模型进行了新的抽象，以它作为桥梁，Hyperf 才能把数据库组件及事件组件接入进来。
+The [hyperf/database](https://github.com/hyperf/database) component is based on the components derived from [illuminate/database](https://github.com/illuminate/database) with some The changes to allow usage in both PHP-FPM frameworks or Swoole-based frameworks. In Hyperf, you need to use the [hyperf/db-connection](https://github.com/hyperf/db-connection) component, which implements database connection pool based on [hyperf/pool](https://github.com/hyperf/pool). With it as a bridge, Hyperf can integrate database connections and events.
 
 ## Installation
 
-### Hyperf 框架
+### Hyperf framework
 
 ```bash
 composer require hyperf/db-connection
 ```
 
-### 其它框架
+### Other frameworks
 
 ```bash
 composer require hyperf/database
 ```
 
-## 配置
+## Configuration
 
-默认配置如下，数据库支持多库配置，默认为 `default`。
+The default configuration is as follows, the configuration supports configuring multiple database connections. The default connection that is used when no connection is specified is called `default`.
 
-|        配置项        |  类型  |     默认值      |        备注        |
-|:--------------------:|:------:|:---------------:|:------------------:|
-|        driver        | string |       无        |     数据库引擎     |
-|         host         | string |       无        |     数据库地址     |
-|       database       | string |       无        |    数据库默认DB    |
-|       username       | string |       无        |    数据库用户名    |
-|       password       | string |      null       |     数据库密码     |
-|       charset        | string |      utf8       |     数据库编码     |
-|      collation       | string | utf8_unicode_ci |     数据库编码     |
-|        prefix        | string |       ''        |   数据库模型前缀   |
-| pool.min_connections |  int   |        1        | 连接池内最少连接数 |
-| pool.max_connections |  int   |       10        | 连接池内最大连接数 |
-| pool.connect_timeout | float  |      10.0       |  连接等待超时时间  |
-|  pool.wait_timeout   | float  |       3.0       |      超时时间      |
-|    pool.heartbeat    |  int   |       -1        |        心跳        |
-|  pool.max_idle_time  | float  |      60.0       |    最大闲置时间    |
-|       options        | array  |                 |      PDO 配置      |
+| Name                 | Type   | Default value   | Description                                          |
+| :------------------: | :----: | :-------------: | :--------------------------------------------------: |
+| driver               | string | none            | Database type                                        |
+| host                 | string | none            | Database host                                        |
+| database             | string | none            | Database name                                        |
+| username             | string | none            | Database username                                    |
+| password             | string | null            | Database password                                    |
+| charset              | string | utf8            | Database string charset                              |
+| collation            | string | utf8_unicode_ci | Database string collation                            |
+| prefix               | string | ''              | Database table prefix                                |
+| timezone             | string | null            | Database time zone                                   |
+| pool.min_connections | int    | 1               | Minimum number of connections in the connection pool |
+| pool.max_connections | int    | 10              | Maximum number of connections in the connection pool |
+| pool.connect_timeout | float  | 10.0            | Connection waiting timeout                           |
+| pool.wait_timeout    | float  | 3.0             | Timeout time in seconds                              |
+| pool.heartbeat       | int    | -1              | Connection heartbeat (-1 equals disabled)            |
+| pool.max_idle_time   | float  | 60.0            | Connection maximum idle time before closing          |
+| options              | array  |                 | PDO configuration options                            |
 
 ```php
 <?php
 
 return [
     'default' => [
-        'driver' => env('DB_DRIVER', 'mysql'),
-        'host' => env('DB_HOST', 'localhost'),
-        'database' => env('DB_DATABASE', 'hyperf'),
-        'username' => env('DB_USERNAME', 'root'),
-        'password' => env('DB_PASSWORD', ''),
-        'charset' => env('DB_CHARSET', 'utf8'),
-        'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
-        'prefix' => env('DB_PREFIX', ''),
+        'driver' => env('DB_DRIVER','mysql'),
+        'host' => env('DB_HOST','localhost'),
+        'port' => env('DB_PORT', 3306),
+        'database' => env('DB_DATABASE','hyperf'),
+        'username' => env('DB_USERNAME','root'),
+        'password' => env('DB_PASSWORD',''),
+        'charset' => env('DB_CHARSET','utf8'),
+        'collation' => env('DB_COLLATION','utf8_unicode_ci'),
+        'prefix' => env('DB_PREFIX',''),
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -67,21 +69,22 @@ return [
 ];
 ```
 
-有时候用户需要修改 PDO 默认配置，比如所有字段需要返回为 string。这时候就需要修改 PDO 配置项 `ATTR_STRINGIFY_FETCHES` 为 true。
+Sometimes users need to modify the default PDO configuration. For example, if you want to return all fields as strings, you need to set the PDO configuration item `ATTR_STRINGIFY_FETCHES` to `true`.
 
 ```php
 <?php
 
 return [
     'default' => [
-        'driver' => env('DB_DRIVER', 'mysql'),
-        'host' => env('DB_HOST', 'localhost'),
-        'database' => env('DB_DATABASE', 'hyperf'),
-        'username' => env('DB_USERNAME', 'root'),
-        'password' => env('DB_PASSWORD', ''),
-        'charset' => env('DB_CHARSET', 'utf8'),
-        'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
-        'prefix' => env('DB_PREFIX', ''),
+        'driver' => env('DB_DRIVER','mysql'),
+        'host' => env('DB_HOST','localhost'),
+        'port' => env('DB_PORT', 3306),
+        'database' => env('DB_DATABASE','hyperf'),
+        'username' => env('DB_USERNAME','root'),
+        'password' => env('DB_PASSWORD',''),
+        'charset' => env('DB_CHARSET','utf8'),
+        'collation' => env('DB_COLLATION','utf8_unicode_ci'),
+        'prefix' => env('DB_PREFIX',''),
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -91,43 +94,43 @@ return [
             'max_idle_time' => (float) env('DB_MAX_IDLE_TIME', 60),
         ],
         'options' => [
-            // 框架默认配置
+            // Framework default configuration
             PDO::ATTR_CASE => PDO::CASE_NATURAL,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
             PDO::ATTR_STRINGIFY_FETCHES => false,
+            // If you are using a non-native MySQL or a DB provided by a cloud vendor, such as a database/analytic instance that does not support the MySQL prepare protocol, set this to true
             PDO::ATTR_EMULATE_PREPARES => false,
         ],
     ],
 ];
-
 ```
 
-### 读写分离
+### Read and write separation
 
-有时候你希望 `SELECT` 语句使用一个数据库连接，而 `INSERT`，`UPDATE`，和 `DELETE` 语句使用另一个数据库连接。在 `Hyperf` 中，无论你是使用原生查询，查询构造器，或者是模型，都能轻松的实现
+Sometimes you want the `SELECT` statement to use one database connection and the `INSERT`, `UPDATE`, and `DELETE` statements to use another database connection. This is easy to implement in Hyperf, regardless whether you are using a native query, query builder, or model.
 
-为了弄明白读写分离是如何配置的，我们先来看个例子：
+In order to understand how the read-write separation is configured, let's first look at an example:
 
 ```php
 <?php
 
 return [
     'default' => [
-        'driver' => env('DB_DRIVER', 'mysql'),
+        'driver' => env('DB_DRIVER','mysql'),
         'read' => [
             'host' => ['192.168.1.1'],
         ],
         'write' => [
             'host' => ['196.168.1.2'],
         ],
-        'sticky'    => true,
-        'database' => env('DB_DATABASE', 'hyperf'),
-        'username' => env('DB_USERNAME', 'root'),
-        'password' => env('DB_PASSWORD', ''),
-        'charset' => env('DB_CHARSET', 'utf8'),
-        'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
-        'prefix' => env('DB_PREFIX', ''),
+        'sticky' => true,
+        'database' => env('DB_DATABASE','hyperf'),
+        'username' => env('DB_USERNAME','root'),
+        'password' => env('DB_PASSWORD',''),
+        'charset' => env('DB_CHARSET','utf8'),
+        'collation' => env('DB_COLLATION','utf8_unicode_ci'),
+        'prefix' => env('DB_PREFIX',''),
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -138,32 +141,31 @@ return [
         ],
     ],
 ];
-
 ```
 
-注意在以上的例子中，配置数组中增加了三个键，分别是 `read`， `write` 和 `sticky`。 `read` 和 `write` 的键都包含一个键为 `host` 的数组。而 `read` 和 `write` 的其他数据库都在键为 mysql 的数组中。
+Note that in the above example, three keys have been added to the configuration array, namely `read`, `write` and `sticky`. The keys of `read` and `write` both contain an array with the key `host`.
 
-如果你想重写主数组中的配置，只需要修改 `read` 和 `write` 数组即可。所以，这个例子中： 192.168.1.1 将作为 「读」 连接主机，而 192.168.1.2 将作为 「写」 连接主机。这两个连接会共享 mysql 数组的各项配置，如数据库的凭据（用户名 / 密码），前缀，字符编码等。
+If you want to rewrite the configuration in the main array, you only need to modify the `read` and `write` arrays. So, in this example: 192.168.1.1 will be used as the "read" connection host, and 192.168.1.2 will be used as the "write" connection host. The two connections will share various configurations of the mysql array, such as database credentials (username/password), prefix, character encoding, etc.
 
-`sticky` 是一个 可选值，它可用于立即读取在当前请求周期内已写入数据库的记录。若 `sticky` 选项被启用，并且当前请求周期内执行过 「写」 操作，那么任何 「读」 操作都将使用 「写」 连接。这样可确保同一个请求周期内写入的数据可以被立即读取到，从而避免主从延迟导致数据不一致的问题。不过是否启用它，取决于应用程序的需求。
+`sticky` is an optional value that can be used to immediately read the records that have been written to the database during the current request cycle. If the `sticky` option is enabled and a "write" operation has been performed in the current request cycle, then any "read" operation will use the "write" connection. This ensures that the data written in the same request cycle can be read immediately, thereby avoiding the problem of data inconsistency caused by master-slave delay. However, whether this option should be enabled depends on the needs of the application.
 
-### 多库配置
+### Configuring multiple database connections
 
-多库配置如下。
+The multi-database configuration is as follows.
 
 ```php
 <?php
 
 return [
     'default' => [
-        'driver' => env('DB_DRIVER', 'mysql'),
-        'host' => env('DB_HOST', 'localhost'),
-        'database' => env('DB_DATABASE', 'hyperf'),
-        'username' => env('DB_USERNAME', 'root'),
-        'password' => env('DB_PASSWORD', ''),
-        'charset' => env('DB_CHARSET', 'utf8'),
-        'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
-        'prefix' => env('DB_PREFIX', ''),
+        'driver' => env('DB_DRIVER','mysql'),
+        'host' => env('DB_HOST','localhost'),
+        'database' => env('DB_DATABASE','hyperf'),
+        'username' => env('DB_USERNAME','root'),
+        'password' => env('DB_PASSWORD',''),
+        'charset' => env('DB_CHARSET','utf8'),
+        'collation' => env('DB_COLLATION','utf8_unicode_ci'),
+        'prefix' => env('DB_PREFIX',''),
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -174,14 +176,14 @@ return [
         ],
     ],
     'test'=>[
-        'driver' => env('DB_DRIVER', 'mysql'),
-        'host' => env('DB_HOST2', 'localhost'),
-        'database' => env('DB_DATABASE', 'hyperf'),
-        'username' => env('DB_USERNAME', 'root'),
-        'password' => env('DB_PASSWORD', ''),
-        'charset' => env('DB_CHARSET', 'utf8'),
-        'collation' => env('DB_COLLATION', 'utf8_unicode_ci'),
-        'prefix' => env('DB_PREFIX', ''),
+        'driver' => env('DB_DRIVER','mysql'),
+        'host' => env('DB_HOST2','localhost'),
+        'database' => env('DB_DATABASE','hyperf'),
+        'username' => env('DB_USERNAME','root'),
+        'password' => env('DB_PASSWORD',''),
+        'charset' => env('DB_CHARSET','utf8'),
+        'collation' => env('DB_COLLATION','utf8_unicode_ci'),
+        'prefix' => env('DB_PREFIX',''),
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -192,9 +194,8 @@ return [
         ],
     ],
 ];
-
 ```
-使用时，只需要规定 `connection` 为 `test`，就可以使用 `test` 中的配置，如下。
+To use different connections, you only need to specify `connection` via the query builder:
 
 ```php
 <?php
@@ -208,7 +209,9 @@ Db::connection('default')->select('SELECT * FROM user;');
 Db::connection('test')->select('SELECT * FROM user;');
 ```
 
-模型中修改 `connection` 字段，即可使用对应配置，例如一下 `Model` 使用 `test` 配置。
+You can change the default connection used by a certain model by setting the value of `$connection` inside the model class:
+
+> Note that the property visibility must be set as `protected`
 
 ```php
 <?php
@@ -217,10 +220,10 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://www.hyperf.io
+ * @link https://www.hyperf.io
  * @document https://doc.hyperf.io
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf-cloud/hyperf/blob/master/LICENSE
+ * @contact group@hyperf.io
+ * @license https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace App\Model;
@@ -237,76 +240,74 @@ class User extends Model
      *
      * @var string
      */
-    protected $table = 'user';
+    protected $table ='user';
 
     /**
      * The connection name for the model.
      *
      * @var string
      */
-    protected $connection = 'test';
+    protected $connection ='test';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['id', 'mobile', 'realname'];
+    protected $fillable = ['id','mobile','realname'];
 
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer'];
+    protected $casts = ['id' =>'integer'];
 }
-
 ```
 
-## 执行原生 SQL 语句
+## Executing native SQL statements
 
-配置好数据库后，便可以使用 `Hyperf\DbConnection\Db` 进行查询。
+After configuring the database, you can use `Hyperf\DbConnection\Db` to query.
 
-### Query 查询类
+### Querying data
 
-这里主要包括 `Select`、属性为 `READS SQL DATA` 的存储过程、函数等查询语句。   
+This includes query statements such as `select`, stored procedures and functions that read SQL data.
 
-`select` 方法将始终返回一个数组，数组中的每个结果都是一个 `StdClass` 对象
+The `select` method will always return an array, and each result in the array is a `StdClass` object.
 
 ```php
 <?php
 
 use Hyperf\DbConnection\Db;
 
-$users = Db::select('SELECT * FROM `user` WHERE gender = ?',[1]);  //  返回array 
+$users = Db::select('SELECT * FROM `user` WHERE gender = ?',[1]); // return array
 
 foreach($users as $user){
     echo $user->name;
 }
-
 ```
 
-### Execute 执行类
+### Modifying data
 
-这里主要包括 `Insert`、`Update`、`Delete`，属性为 `MODIFIES SQL DATA` 的存储过程等执行语句。
+This includes execution statements such as `Insert`, `Update`, `Delete`, and stored procedures that modify SQL data.
 
 ```php
 <?php
 
 use Hyperf\DbConnection\Db;
 
-$inserted = Db::insert('INSERT INTO user (id, name) VALUES (?, ?)', [1, 'Hyperf']); // 返回是否成功 bool
+$inserted = Db::insert('INSERT INTO user (id, name) VALUES (?, ?)', [1,'Hyperf']); // Returns whether it is successful bool
 
-$affected = Db::update('UPDATE user set name = ? WHERE id = ?', ['John', 1]); // 返回受影响的行数 int
+$affected = Db::update('UPDATE user set name =? WHERE id = ?', ['John', 1]); // Returns the number of affected rows int
 
-$affected = Db::delete('DELETE FROM user WHERE id = ?', [1]); // 返回受影响的行数 int
+$affected = Db::delete('DELETE FROM user WHERE id = ?', [1]); // Returns the number of affected rows int
 
-$result = Db::statement("CALL pro_test(?, '?')", [1, 'your words']);  // 返回 bool  CALL pro_test(?，?) 为存储过程，属性为 MODIFIES SQL DATA
+$result = Db::statement("CALL pro_test(?,'?')", [1,'your words']); // return bool CALL pro_test(?,?) is a stored procedure, the attribute is MODIFIES SQL DATA
 ```
 
-### 自动管理数据库事务
+### Automatically manage database transactions
 
-你可以使用 `Db` 的 `transaction` 方法在数据库事务中运行一组操作。如果事务的闭包 `Closure` 中出现一个异常，事务将会回滚。如果事务闭包 `Closure` 执行成功，事务将自动提交。一旦你使用了 `transaction` ， 就不再需要担心手动回滚或提交的问题：
+You can use the `transaction` method of `Db` to run a set of operations as a database transaction. If an exception occurs in the transaction closure, the transaction will be rolled back. If the transaction closure is executed successfully, the transaction will be committed automatically. This means that you don't have to worry about rollbacks or commits when using the `transaction` method:
 
 ```php
 <?php
@@ -320,9 +321,9 @@ Db::transaction(function () {
 
 ```
 
-### 手动管理数据库事务
+### Manually manage database transactions
 
-如果你想要手动开始一个事务，并且对回滚和提交能够完全控制，那么你可以使用 `Db` 的 `beginTransaction`, `commit`, `rollBack`:
+If you want to manually start a transaction and have complete control over rollback and commit, you can use `beginTransaction`, `commit`, `rollBack` methods:
 
 ```php
 use Hyperf\DbConnection\Db;
@@ -336,4 +337,27 @@ try{
 } catch(\Throwable $ex){
     Db::rollBack();
 }
+```
+
+## Logging the raw SQL queries
+
+> The current method can only be used in the development environment and must be removed before online deployment, otherwise it will cause serious memory leaks and data consistency issues.
+
+You can use the [database event listener](en/db/event) to record the SQL queries:
+
+```php
+<?php
+
+use Hyperf\DbConnection\Db;
+use Hyperf\Utils\Arr;
+use App\Model\Book;
+
+// Enable SQL data logging function
+// WARNING: causes a memory leak and data consistency problems in the Swoole CLI environment, local development and debugging only!
+Db::enableQueryLog();
+
+$book = Book::query()->find(1);
+
+// Print the last SQL query
+var_dump(Arr::last(Db::getQueryLog()));
 ```

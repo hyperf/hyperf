@@ -118,6 +118,11 @@ class Sender
         }
     }
 
+    public function getResponse(int $fd): ?Response
+    {
+        return $this->responses[$fd] ?? null;
+    }
+
     public function getFdAndMethodFromProxyMethod(string $method, array $arguments): array
     {
         if (! in_array($method, ['push', 'disconnect'])) {

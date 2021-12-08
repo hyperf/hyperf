@@ -60,13 +60,15 @@ class TaskAspect extends AbstractAspect
         }
 
         $timeout = 10;
+        $workerId = -1;
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
         /** @var Task $annotation */
         $annotation = $metadata->method[Task::class] ?? $metadata->class[Task::class] ?? null;
         if ($annotation instanceof Task) {
             $timeout = $annotation->timeout;
+            $workerId = $annotation->workerId;
         }
 
-        return $executor->execute(new TaskMessage([$class, $method], $arguments), $timeout);
+        return $executor->execute(new TaskMessage([$class, $method], $arguments, $workerId), $timeout);
     }
 }

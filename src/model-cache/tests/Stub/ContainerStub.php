@@ -22,6 +22,7 @@ use Hyperf\Database\Model\Events\Deleted;
 use Hyperf\Database\Model\Events\Saved;
 use Hyperf\DbConnection\Collector\TableCollector;
 use Hyperf\DbConnection\ConnectionResolver;
+use Hyperf\DbConnection\Db;
 use Hyperf\DbConnection\Frequency;
 use Hyperf\DbConnection\Pool\DbPool;
 use Hyperf\DbConnection\Pool\PoolFactory;
@@ -42,6 +43,7 @@ use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
+use Hyperf\Utils\Waiter;
 use Mockery;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LogLevel;
@@ -168,6 +170,8 @@ class ContainerStub
         $container->shouldReceive('get')->with(Manager::class)->andReturn(new Manager($container));
         $container->shouldReceive('get')->with(PhpSerializerPacker::class)->andReturn(new PhpSerializerPacker());
         $container->shouldReceive('get')->with(EagerLoader::class)->andReturn(new EagerLoader());
+        $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
         return $container;
     }
 }

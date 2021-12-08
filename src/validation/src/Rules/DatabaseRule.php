@@ -159,7 +159,7 @@ trait DatabaseRule
     protected function formatWheres(): string
     {
         return collect($this->wheres)->map(function ($where) {
-            return $where['column'] . ',' . '"' . str_replace('"', '""', $where['value']) . '"';
+            return $where['column'] . ',' . '"' . str_replace('"', '""', (string) $where['value']) . '"';
         })->implode(',');
     }
 }

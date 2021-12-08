@@ -36,6 +36,7 @@ class NatsDriver extends AbstractDriver
 
         $factory = $this->container->get(PoolFactory::class);
         $poolConfig = $config['pool'] ?? [];
+        $poolConfig['max_idle_time'] = $this->getMaxIdleTime($config);
 
         $this->pool = $factory->get('nats' . $this->name, function () use ($config) {
             $option = new ConnectionOptions($config['options'] ?? []);
@@ -56,7 +57,7 @@ class NatsDriver extends AbstractDriver
             $client = $connection->getConnection();
             $client->publish($subject, $payload, $inbox);
         } finally {
-            $connection && $connection->release();
+            isset($connection) && $connection->release();
         }
     }
 
@@ -69,7 +70,7 @@ class NatsDriver extends AbstractDriver
             $client = $connection->getConnection();
             $client->request($subject, $payload, $callback);
         } finally {
-            $connection && $connection->release();
+            isset($connection) && $connection->release();
         }
     }
 
@@ -91,7 +92,7 @@ class NatsDriver extends AbstractDriver
             }
             return $message;
         } finally {
-            $connection && $connection->release();
+            isset($connection) && $connection->release();
         }
     }
 
@@ -107,9 +108,23 @@ class NatsDriver extends AbstractDriver
             } else {
                 $client->queueSubscribe($subject, $queue, $callback);
             }
+            $client->heartbeat();
             $client->wait();
         } finally {
-            $connection && $connection->release();
+            isset($connection) && $connection->release();
         }
+    }
+
+    protected function getMaxIdleTime(array $config = []): int
+    {
+        $timeout = $config['timeout'] ?? intval(ini_get('default_socket_timeout'));
+
+        $maxIdleTime = $config['pool']['max_idle_time'];
+
+        if ($timeout < 0) {
+            return $maxIdleTime;
+        }
+
+        return (int) min($timeout, $maxIdleTime);
     }
 }
