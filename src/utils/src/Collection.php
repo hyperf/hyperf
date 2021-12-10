@@ -1573,6 +1573,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @return array<TKey, mixed>
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize(): array
     {
         return array_map(function ($value) {

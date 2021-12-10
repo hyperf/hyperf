@@ -20,6 +20,7 @@ class JsonSerializableResource implements \JsonSerializable
         $this->resource = $resource;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return [

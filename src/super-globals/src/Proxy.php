@@ -23,6 +23,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 abstract class Proxy implements Arrayable, ArrayAccess, JsonSerializable
 {
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->toArray();

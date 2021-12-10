@@ -25,6 +25,7 @@ trait CamelCase
         return parent::setAttribute(Str::snake($key), $value);
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $array = [];
