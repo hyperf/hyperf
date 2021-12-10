@@ -13,14 +13,22 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        php-version: [ '7.4', '8.0' ]
+        php-version: [ '7.4', '8.0', '8.1' ]
         sw-version: [ 'v4.5.11', 'v4.6.7', 'v4.7.1', 'v4.8.3', 'master' ]
+        exclude:
+          - php-version: '8.1'
+            sw-version: 'v4.5.11'
+          - php-version: '8.1'
+            sw-version: 'v4.6.7'
+          - php-version: '8.1'
+            sw-version: 'v4.7.1'
+          - php-version: '8.1'
+            sw-version: 'v4.8.3'
       max-parallel: 12
       fail-fast: false
     env:
       SW_VERSION: ${{ matrix.sw-version }}
       MYSQL_VERSION: '5.7'
-      YASD_VERSION: 'v0.3.9'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -48,21 +56,6 @@ jobs:
           sudo sh -c "echo extension=swoole > /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
           sudo sh -c "echo swoole.use_shortname='Off' >> /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
           php --ri swoole
-      - name: Setup Yasd
-        run: |
-          sudo apt-get update
-          sudo apt-get install libboost-all-dev
-          wget https://github.com/swoole/yasd/archive/${YASD_VERSION}.tar.gz -O yasd.tar.gz
-          mkdir -p yasd
-          tar -xf yasd.tar.gz -C yasd --strip-components=1
-          rm yasd.tar.gz
-          cd yasd
-          phpize
-          ./configure
-          make -j$(nproc)
-          sudo make install
-          sudo sh -c "echo extension=yasd > /etc/php/${{ matrix.php-version }}/cli/conf.d/yasd.ini"
-          php --ri yasd
       - name: Setup Packages
         run: composer update -o
       - name: Setup Services
