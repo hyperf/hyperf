@@ -172,7 +172,7 @@ class DatabaseConnectionTest extends TestCase
             ->withConsecutive([], [])
             ->willReturnOnConsecutiveCalls(
                 $this->throwException(new ErrorException('server has gone away')),
-                null
+                true
             );
         $connection = $this->getMockConnection(['reconnect'], $pdo);
         $connection->expects($this->once())->method('reconnect');
