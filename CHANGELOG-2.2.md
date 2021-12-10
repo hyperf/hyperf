@@ -3,6 +3,7 @@
 ## Added
 
 - [#4330](https://github.com/hyperf/hyperf/pull/4330) Support pack vendor/bin files for `hyperf/phar`.
+- [#4331](https://github.com/hyperf/hyperf/pull/4331) Added method `Debug::getRefCount($object)`.
 
 # v2.2.19 - 2021-12-06
 
