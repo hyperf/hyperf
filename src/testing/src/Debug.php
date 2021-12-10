@@ -20,6 +20,10 @@ class Debug
         $data = ob_get_clean();
 
         preg_match('/refcount\((\w+)\)/U', $data, $matched);
+        $result = $matched[1];
+        if(is_numeric($result)){
+            return bcsub($result, '1');
+        }
 
         return $matched[1];
     }
