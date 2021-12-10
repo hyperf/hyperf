@@ -1600,9 +1600,9 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get an iterator for the items.
      *
-     * @return ArrayIterator<TKey, TValue>
+     * @return Traversable<TKey, TValue>
      */
-    public function getIterator(): ArrayIterator
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->items);
     }

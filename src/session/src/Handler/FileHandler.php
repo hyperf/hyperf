@@ -84,11 +84,13 @@ class FileHandler implements SessionHandlerInterface
             ->ignoreDotFiles(true)
             ->date('<= now - ' . $max_lifetime . ' seconds');
 
+        $count = 0;
         /** @var \SplFileInfo $file */
         foreach ($files as $file) {
             $this->files->delete($file->getRealPath());
+            $count++;
         }
-        return true;
+        return $count;
     }
 
     /**

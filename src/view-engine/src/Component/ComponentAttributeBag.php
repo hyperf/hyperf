@@ -19,6 +19,7 @@ use Hyperf\Utils\Str;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use Hyperf\ViewEngine\HtmlString;
 use IteratorAggregate;
+use Traversable;
 
 class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
 {
@@ -329,7 +330,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
      *
      * @return ArrayIterator
      */
-    public function getIterator()
+    public function getIterator():Traversable
     {
         return new ArrayIterator($this->attributes);
     }

@@ -63,7 +63,7 @@ class RedisHandler implements SessionHandlerInterface
      */
     public function gc(int $max_lifetime): int|false
     {
-        return true;
+        return 0;
     }
 
     /**
