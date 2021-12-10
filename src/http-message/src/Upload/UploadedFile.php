@@ -73,7 +73,7 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
     {
         $clientName = $this->getClientFilename();
         $segments = explode('.', $clientName);
-        return end($segments) ?? '';
+        return (string) end($segments);
     }
 
     public function getMimeType(): string
