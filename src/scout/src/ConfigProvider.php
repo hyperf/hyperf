@@ -11,8 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Scout;
 
+use Hyperf\Scout\Console\CreateCommand;
+use Hyperf\Scout\Console\DropCommand;
 use Hyperf\Scout\Console\FlushCommand;
 use Hyperf\Scout\Console\ImportCommand;
+use Hyperf\Scout\Console\ReImportCommand;
 use Hyperf\Scout\Engine\Engine;
 
 class ConfigProvider
@@ -26,6 +29,9 @@ class ConfigProvider
             'commands' => [
                 ImportCommand::class,
                 FlushCommand::class,
+                ReImportCommand::class,
+                CreateCommand::class,
+                DropCommand::class,
             ],
             'publish' => [
                 [

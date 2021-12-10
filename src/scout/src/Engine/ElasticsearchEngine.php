@@ -292,4 +292,58 @@ class ElasticsearchEngine extends Engine
             return [$order['column'] => $order['direction']];
         })->toArray();
     }
+
+    public function createStruct(Model $model): void
+    {
+        $index = $model->searchableAs();
+
+        $params = [
+            'index' => $index,
+            'body' => [
+                'settings' => [
+                    'number_of_shards' => 3,
+                    'number_of_replicas' => 2
+                ],
+                'mappings' => [
+                    '_source' => [
+                        'enabled' => false
+                    ],
+                    'properties' => [
+                    ]
+                ]
+            ]
+        ];
+
+        $object = $model->searchableStruct();
+
+        // 如果为空则开启原文档存储，不配置任何字段
+        if (empty($object)) {
+            $params['body']['mappings']['__source']['enabled'] = true;
+            // 如果存在 settings 和 mappings 则覆盖 body
+        } else if (array_key_exists('properties', $object)) {
+            $params['body']['mappings'] = $object;
+            // 其他情况则设置为 body
+        } else if (array_key_exists('settings',$object) && array_key_exists('mappings',$object)){
+            $params['body'] = $object;
+        } else {
+            $params = $object;
+        }
+
+        // replace index
+        $object['index'] = $index;
+
+        $this->elastic->indices()->create($params);
+    }
+
+    public function dropStruct(Model $model): void
+    {
+        // TODO: Implement dropStruct() method.
+    }
+
+    public function regenStruct(Model $model): void
+    {
+        // TODO: Implement regenStruct() method.
+    }
+
+
 }

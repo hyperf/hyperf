@@ -81,4 +81,18 @@ class NullEngine extends Engine
     public function flush(Model $model): void
     {
     }
+
+    public function createStruct(Model $model): void
+    {
+    }
+
+    public function dropStruct(Model $model): void
+    {
+    }
+
+    public function regenStruct(Model $model): void
+    {
+    }
+
+
 }

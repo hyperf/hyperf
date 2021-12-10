@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Scout\Console;
 
 use Hyperf\Command\Annotation\Command;
@@ -18,21 +19,21 @@ use Symfony\Component\Console\Input\InputArgument;
 /**
  * @Command
  */
-class FlushCommand extends HyperfCommand
+class DropCommand extends HyperfCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $name = 'scout:flush';
+    protected $name = 'scout:drop';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = "Flush all of the model's records from the index";
+    protected $description = "remove elasticsearch index mapping";
 
     /**
      * Execute the console command.
@@ -42,9 +43,8 @@ class FlushCommand extends HyperfCommand
         define('SCOUT_COMMAND', true);
         $class = $this->input->getArgument('model');
         $model = new $class();
-        $model::removeAllFromSearch();
         $model->searchableDropStruct();
-        $this->info('All [' . $class . '] records have been flushed.');
+        $this->info(' [' . $class . '] index has been deleted');
     }
 
     protected function getArguments()
