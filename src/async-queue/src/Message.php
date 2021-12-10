@@ -16,7 +16,7 @@ use Hyperf\Contract\UnCompressInterface;
 use Serializable;
 
 /**
- * @deprecated use JobMessage instead
+ * @deprecated in v3.1, please use JobMessage instead
  */
 class Message implements MessageInterface, Serializable
 {
