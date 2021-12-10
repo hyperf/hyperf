@@ -13,12 +13,8 @@ namespace Hyperf\AsyncQueue;
 
 use Hyperf\Contract\CompressInterface;
 use Hyperf\Contract\UnCompressInterface;
-use Serializable;
 
-/**
- * @deprecated in v3.1, please use JobMessage instead
- */
-class Message implements MessageInterface, Serializable
+class JobMessage implements MessageInterface
 {
     protected int $attempts = 0;
 
@@ -63,26 +59,5 @@ class Message implements MessageInterface, Serializable
     public function getAttempts(): int
     {
         return $this->attempts;
-    }
-
-    public function serialize()
-    {
-        if ($this->job instanceof CompressInterface) {
-            /* @phpstan-ignore-next-line */
-            $this->job = $this->job->compress();
-        }
-
-        return serialize([$this->job, $this->attempts]);
-    }
-
-    public function unserialize($serialized)
-    {
-        [$job, $attempts] = unserialize($serialized);
-        if ($job instanceof UnCompressInterface) {
-            $job = $job->uncompress();
-        }
-
-        $this->job = $job;
-        $this->attempts = $attempts;
     }
 }
