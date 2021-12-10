@@ -25,7 +25,7 @@ class FooHandler implements SessionHandlerInterface
      *                  </p>
      * @since 5.4.0
      */
-    public function close():bool
+    public function close(): bool
     {
         return true;
     }
@@ -96,7 +96,7 @@ class FooHandler implements SessionHandlerInterface
      */
     public function read(string $id): string|false
     {
-        return  '';
+        return '';
     }
 
     /**

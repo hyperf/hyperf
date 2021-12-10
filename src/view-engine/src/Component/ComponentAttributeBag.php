@@ -330,7 +330,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
      *
      * @return ArrayIterator
      */
-    public function getIterator():Traversable
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->attributes);
     }

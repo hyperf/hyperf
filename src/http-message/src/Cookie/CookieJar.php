@@ -209,12 +209,12 @@ class CookieJar implements CookieJarInterface
         return true;
     }
 
-    public function count():int
+    public function count(): int
     {
         return count($this->cookies);
     }
 
-    public function getIterator():Traversable
+    public function getIterator(): Traversable
     {
         return new \ArrayIterator(array_values($this->cookies));
     }

@@ -51,7 +51,7 @@ class ResourceCollection extends JsonResource implements Countable, IteratorAggr
     /**
      * Return the count of items in the resource collection.
      */
-    public function count():int
+    public function count(): int
     {
         return $this->collection->count();
     }

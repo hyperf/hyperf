@@ -51,7 +51,6 @@ class FileHandler implements SessionHandlerInterface
      * Close the session.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.close.php
-     * @return bool
      */
     public function close(): bool
     {
@@ -63,7 +62,6 @@ class FileHandler implements SessionHandlerInterface
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.destroy.php
      * @param string $id the session ID being destroyed
-     * @return bool
      */
     public function destroy(string $id): bool
     {
@@ -88,7 +86,7 @@ class FileHandler implements SessionHandlerInterface
         /** @var \SplFileInfo $file */
         foreach ($files as $file) {
             $this->files->delete($file->getRealPath());
-            $count++;
+            ++$count;
         }
         return $count;
     }
@@ -99,7 +97,6 @@ class FileHandler implements SessionHandlerInterface
      * @see https://php.net/manual/en/sessionhandlerinterface.open.php
      * @param string $path the path where to store/retrieve the session
      * @param string $name the session name
-     * @return bool
      */
     public function open(string $path, string $name): bool
     {
@@ -129,8 +126,6 @@ class FileHandler implements SessionHandlerInterface
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.write.php
      * @param string $id the session id
-     * @param string $data
-     * @return bool
      */
     public function write(string $id, string $data): bool
     {

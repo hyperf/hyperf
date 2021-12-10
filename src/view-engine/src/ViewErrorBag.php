@@ -126,7 +126,7 @@ class ViewErrorBag implements Countable
     /**
      * Get the number of messages in the default bag.
      */
-    public function count():int
+    public function count(): int
     {
         return $this->getBag('default')->count();
     }

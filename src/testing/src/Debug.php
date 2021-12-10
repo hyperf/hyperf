@@ -21,7 +21,7 @@ class Debug
 
         preg_match('/refcount\((\w+)\)/U', $data, $matched);
         $result = $matched[1];
-        if(is_numeric($result)){
+        if (is_numeric($result)) {
             return bcsub($result, '1');
         }
 

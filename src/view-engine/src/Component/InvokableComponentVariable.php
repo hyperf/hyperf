@@ -92,7 +92,7 @@ class InvokableComponentVariable implements DeferringDisplayableValue, IteratorA
     /**
      * Get an interator instance for the variable.
      */
-    public function getIterator():Traversable
+    public function getIterator(): Traversable
     {
         $result = $this->__invoke();
 
