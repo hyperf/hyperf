@@ -280,6 +280,7 @@ class Factory implements ArrayAccess
      * @param string $offset
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return isset($this->definitions[$offset]);
@@ -290,6 +291,7 @@ class Factory implements ArrayAccess
      *
      * @param string $offset
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->make($offset);
@@ -301,6 +303,7 @@ class Factory implements ArrayAccess
      * @param string $offset
      * @param callable $value
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         return $this->define($offset, $value);
@@ -311,6 +314,7 @@ class Factory implements ArrayAccess
      *
      * @param string $offset
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         unset($this->definitions[$offset]);

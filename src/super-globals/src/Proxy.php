@@ -29,17 +29,20 @@ abstract class Proxy implements Arrayable, ArrayAccess, JsonSerializable
         return $this->toArray();
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         $data = $this->toArray();
         return isset($data[$offset]);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->toArray()[$offset] ?? null;
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         Context::override(ServerRequestInterface::class, function (ServerRequestInterface $request) use ($offset, $value) {
@@ -49,6 +52,7 @@ abstract class Proxy implements Arrayable, ArrayAccess, JsonSerializable
         });
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         Context::override(ServerRequestInterface::class, function (ServerRequestInterface $request) use ($offset) {

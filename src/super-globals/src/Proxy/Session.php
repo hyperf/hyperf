@@ -24,21 +24,25 @@ class Session extends Proxy
         return $this->getSession()->all();
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return $this->getSession()->has($offset);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->getSession()->get($offset);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->getSession()->set($offset, $value);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         $this->getSession()->remove($offset);
