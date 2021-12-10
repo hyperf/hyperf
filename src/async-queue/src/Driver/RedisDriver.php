@@ -13,6 +13,7 @@ namespace Hyperf\AsyncQueue\Driver;
 
 use Hyperf\AsyncQueue\Exception\InvalidQueueException;
 use Hyperf\AsyncQueue\JobInterface;
+use Hyperf\AsyncQueue\JobMessage;
 use Hyperf\AsyncQueue\Message;
 use Hyperf\AsyncQueue\MessageInterface;
 use Hyperf\Redis\RedisFactory;
@@ -62,7 +63,7 @@ class RedisDriver extends Driver
 
     public function push(JobInterface $job, int $delay = 0): bool
     {
-        $message = make(Message::class, [$job]);
+        $message = make(JobMessage::class, [$job]);
         $data = $this->packer->pack($message);
 
         if ($delay === 0) {
@@ -74,7 +75,7 @@ class RedisDriver extends Driver
 
     public function delete(JobInterface $job): bool
     {
-        $message = make(Message::class, [$job]);
+        $message = make(JobMessage::class, [$job]);
         $data = $this->packer->pack($message);
 
         return (bool) $this->redis->zRem($this->channel->getDelayed(), $data);
