@@ -25,7 +25,7 @@ class FooHandler implements SessionHandlerInterface
      *                  </p>
      * @since 5.4.0
      */
-    public function close()
+    public function close():bool
     {
     }
 
@@ -40,7 +40,7 @@ class FooHandler implements SessionHandlerInterface
      *                  </p>
      * @since 5.4.0
      */
-    public function destroy($session_id)
+    public function destroy(string $id): bool
     {
     }
 
@@ -58,8 +58,9 @@ class FooHandler implements SessionHandlerInterface
      *                  </p>
      * @since 5.4.0
      */
-    public function gc($maxlifetime)
+    public function gc(int $max_lifetime): int|false
     {
+        return false;
     }
 
     /**
@@ -74,7 +75,7 @@ class FooHandler implements SessionHandlerInterface
      *                  </p>
      * @since 5.4.0
      */
-    public function open($save_path, $name)
+    public function open(string $path, string $name): bool
     {
     }
 
@@ -90,7 +91,7 @@ class FooHandler implements SessionHandlerInterface
      *                    </p>
      * @since 5.4.0
      */
-    public function read($session_id)
+    public function read(string $id): string|false
     {
     }
 
@@ -112,7 +113,7 @@ class FooHandler implements SessionHandlerInterface
      *                  </p>
      * @since 5.4.0
      */
-    public function write($session_id, $session_data)
+    public function write(string $id, string $data): bool
     {
     }
 }
