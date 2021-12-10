@@ -1,5 +1,9 @@
 # v2.2.20 - TBD
 
+## Added
+
+- [#4330](https://github.com/hyperf/hyperf/pull/4330) Support pack vendor/bin files for `hyperf/phar`.
+
 # v2.2.19 - 2021-12-06
 
 ## Fixed

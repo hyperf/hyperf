@@ -320,6 +320,16 @@ EOD;
             $targetPhar->addFile($this->package->getDirectory() . '.env');
         }
 
+        // Add vendor/bin files.
+        if (is_dir($vendorPath . 'bin/')) {
+            $this->logger->info('Adding vendor/bin files');
+            $binIterator = new GlobIterator($vendorPath . 'bin/*');
+            while ($binIterator->valid()) {
+                $targetPhar->addFile($binIterator->getPathname());
+                $binIterator->next();
+            }
+        }
+
         $this->logger->info('Adding composer base files');
         // Add composer autoload file.
         $targetPhar->addFile($vendorPath . 'autoload.php');
