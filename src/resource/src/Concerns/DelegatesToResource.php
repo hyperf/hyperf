@@ -129,10 +129,8 @@ trait DelegatesToResource
 
     /**
      * Unset the value for a given offset.
-     *
-     * @param mixed $offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->resource[$offset]);
     }

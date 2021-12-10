@@ -327,10 +327,8 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
 
     /**
      * Remove the value at the given offset.
-     *
-     * @param string $offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->attributes[$offset]);
     }

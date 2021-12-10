@@ -308,10 +308,8 @@ class Factory implements ArrayAccess
 
     /**
      * Unset the value at the given offset.
-     *
-     * @param string $offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->definitions[$offset]);
     }

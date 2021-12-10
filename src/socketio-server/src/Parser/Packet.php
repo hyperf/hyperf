@@ -66,7 +66,7 @@ class Packet implements \ArrayAccess
         $this->{$offset} = $value;
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->{$offset});
     }

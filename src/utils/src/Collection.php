@@ -1673,11 +1673,11 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Unset the item at a given offset.
      *
-     * @param TKey $key
+     * @param TKey $offset
      */
-    public function offsetUnset($key)
+    public function offsetUnset(mixed $offset): void
     {
-        unset($this->items[$key]);
+        unset($this->items[$offset]);
     }
 
     /**

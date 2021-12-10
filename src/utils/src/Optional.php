@@ -122,13 +122,11 @@ class Optional implements ArrayAccess
 
     /**
      * Unset the item at a given offset.
-     *
-     * @param string $key
      */
-    public function offsetUnset($key)
+    public function offsetUnset(mixed $offset): void
     {
         if (Arr::accessible($this->value)) {
-            unset($this->value[$key]);
+            unset($this->value[$offset]);
         }
     }
 }

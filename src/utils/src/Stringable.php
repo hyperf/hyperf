@@ -793,10 +793,8 @@ class Stringable implements JsonSerializable
 
     /**
      * Convert the object to a string when JSON encoded.
-     *
-     * @return string
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->__toString();
     }

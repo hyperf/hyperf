@@ -48,7 +48,7 @@ abstract class Proxy implements Arrayable, ArrayAccess, JsonSerializable
         });
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         Context::override(ServerRequestInterface::class, function (ServerRequestInterface $request) use ($offset) {
             $data = $this->toArray();

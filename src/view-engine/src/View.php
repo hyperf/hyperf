@@ -353,12 +353,10 @@ class View implements ArrayAccess, Htmlable, ViewInterface
 
     /**
      * Unset a piece of data from the view.
-     *
-     * @param string $key
      */
-    public function offsetUnset($key)
+    public function offsetUnset(mixed $offset): void
     {
-        unset($this->data[$key]);
+        unset($this->data[$offset]);
     }
 
     /**

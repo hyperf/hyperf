@@ -39,7 +39,7 @@ class Session extends Proxy
         $this->getSession()->set($offset, $value);
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         $this->getSession()->remove($offset);
     }
