@@ -90,9 +90,7 @@ class NullEngine extends Engine
     {
     }
 
-    public function regenStruct(Model $model): void
+    public function regenerateStruct(Model $model): void
     {
     }
-
-
 }

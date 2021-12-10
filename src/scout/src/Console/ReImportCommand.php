@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Scout\Console;
 
 use Hyperf\Command\Command;
@@ -42,8 +41,8 @@ class ReImportCommand extends Command
     {
         define('SCOUT_COMMAND', true);
         $class = $this->input->getArgument('model');
-        $chunk = (int)$this->input->getOption('chunk');
-        $column = (string)$this->input->getOption('column');
+        $chunk = (int) $this->input->getOption('chunk');
+        $column = (string) $this->input->getOption('column');
         $model = new $class();
         $model->searchableRegenerateStruct();
         $this->info('regenerate [' . $class . '] index success.');

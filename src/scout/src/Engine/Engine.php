@@ -62,22 +62,19 @@ abstract class Engine
     abstract public function flush(Model $model): void;
 
     /**
-     * create elasticsearch index mapping
-     * @param Model $model
+     * create elasticsearch index mapping.
      */
     abstract public function createStruct(Model $model): void;
 
     /**
-     * remove elasticsearch index mapping
-     * @param Model $model
+     * remove elasticsearch index mapping.
      */
     abstract public function dropStruct(Model $model): void;
 
     /**
-     * regenerate elasticsearch index mapping
-     * @param Model $model
+     * regenerate elasticsearch index mapping.
      */
-    abstract public function regenStruct(Model $model): void;
+    abstract public function regenerateStruct(Model $model): void;
 
     /**
      * Get the results of the query as a Collection of primary keys.

@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Scout\Console;
 
 use Hyperf\Command\Annotation\Command;
@@ -33,7 +32,7 @@ class DropCommand extends HyperfCommand
      *
      * @var string
      */
-    protected $description = "remove elasticsearch index mapping";
+    protected $description = 'remove elasticsearch index mapping';
 
     /**
      * Execute the console command.

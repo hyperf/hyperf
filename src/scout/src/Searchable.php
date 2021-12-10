@@ -291,6 +291,38 @@ trait Searchable
     }
 
     /**
+     * elasticsearch index mapping.
+     */
+    public function searchableStruct(): array
+    {
+        return [];
+    }
+
+    /**
+     * create elasticsearch index mapping.
+     */
+    public function searchableCreateStruct(): void
+    {
+        $this->searchableUsing()->createStruct($this);
+    }
+
+    /**
+     * remove elasticsearch index mapping.
+     */
+    public function searchableDropStruct(): void
+    {
+        $this->searchableUsing()->dropStruct($this);
+    }
+
+    /**
+     * remove and create elasticsearch index mapping.
+     */
+    public function searchableRegenerateStruct(): void
+    {
+        $this->searchableUsing()->regenerateStruct($this);
+    }
+
+    /**
      * Dispatch the coroutine to scout the given models.
      */
     protected static function dispatchSearchableJob(callable $job)
@@ -317,38 +349,5 @@ trait Searchable
     protected static function usesSoftDelete()
     {
         return in_array(SoftDeletes::class, class_uses_recursive(get_called_class()));
-    }
-
-    /**
-     * elasticsearch index mapping
-     * @return array
-     */
-    public function searchableStruct(): array
-    {
-        return [];
-    }
-
-    /**
-     * create elasticsearch index mapping
-     */
-    public function searchableCreateStruct(): void
-    {
-        $this->searchableUsing()->createStruct($this);
-    }
-
-    /**
-     * remove elasticsearch index mapping
-     */
-    public function searchableDropStruct(): void
-    {
-        $this->searchableUsing()->dropStruct($this);
-    }
-
-    /**
-     * remove and create elasticsearch index mapping
-     */
-    public function searchableRegenerateStruct(): void
-    {
-        $this->searchableUsing()->regenStruct($this);
     }
 }
