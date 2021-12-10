@@ -27,6 +27,7 @@ class FooHandler implements SessionHandlerInterface
      */
     public function close():bool
     {
+        return true;
     }
 
     /**
@@ -42,6 +43,7 @@ class FooHandler implements SessionHandlerInterface
      */
     public function destroy(string $id): bool
     {
+        return true;
     }
 
     /**
@@ -77,6 +79,7 @@ class FooHandler implements SessionHandlerInterface
      */
     public function open(string $path, string $name): bool
     {
+        return true;
     }
 
     /**
@@ -93,6 +96,7 @@ class FooHandler implements SessionHandlerInterface
      */
     public function read(string $id): string|false
     {
+        return  '';
     }
 
     /**
@@ -115,5 +119,6 @@ class FooHandler implements SessionHandlerInterface
      */
     public function write(string $id, string $data): bool
     {
+        return true;
     }
 }
