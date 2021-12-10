@@ -294,33 +294,24 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
 
     /**
      * Determine if the given offset exists.
-     *
-     * @param string $offset
-     * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->attributes[$offset]);
     }
 
     /**
      * Get the value at the given offset.
-     *
-     * @param string $offset
-     * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->get($offset);
     }
 
     /**
      * Set the value at a given offset.
-     *
-     * @param string $offset
-     * @param mixed $value
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->attributes[$offset] = $value;
     }
