@@ -180,10 +180,8 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
 
     /**
      * Prepare the resource for JSON serialization.
-     *
-     * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->resolve();
     }
