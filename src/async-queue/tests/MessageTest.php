@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\AsyncQueue;
 
 use Hyperf\AsyncQueue\JobInterface;
+use Hyperf\AsyncQueue\JobMessage;
 use Hyperf\AsyncQueue\MessageInterface;
 use HyperfTest\AsyncQueue\Stub\DemoJob;
 use PHPUnit\Framework\TestCase;
@@ -22,9 +23,6 @@ use PHPUnit\Framework\TestCase;
  */
 class MessageTest extends TestCase
 {
-    /**
-     * @group NonCoroutine
-     */
     public function testMessageSerialize()
     {
         system(__DIR__ . '/async_queue2.2.php');
@@ -44,5 +42,19 @@ class MessageTest extends TestCase
         $this->assertInstanceOf(JobInterface::class, $message->job());
         $this->assertInstanceOf(DemoJob::class, $message->job());
         $this->assertSame(9501, $message->job()->id);
+    }
+
+    public function testJobMessageSerialize()
+    {
+        $id = rand(0, 9999);
+        $message = new JobMessage(
+            new DemoJob($id)
+        );
+
+        $this->assertInstanceOf(MessageInterface::class, $message);
+        $this->assertInstanceOf(JobInterface::class, $message->job());
+        $this->assertInstanceOf(JobInterface::class, $message->job());
+        $this->assertInstanceOf(DemoJob::class, $message->job());
+        $this->assertSame($id, $message->job()->id);
     }
 }
