@@ -1600,7 +1600,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get an iterator for the items.
      *
-     * @return Traversable<TKey, TValue>
+     * @return ArrayIterator<TKey, TValue>
      */
     public function getIterator(): ArrayIterator
     {
