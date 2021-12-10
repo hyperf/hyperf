@@ -15,10 +15,10 @@ use Hyperf\Di\Aop\PropertyHandlerVisitor;
 use Hyperf\Di\Aop\ProxyCallVisitor;
 use Hyperf\Di\Aop\RegisterInjectPropertyHandler;
 
-ini_set('display_errors', 'on');
-ini_set('display_startup_errors', 'on');
-
-error_reporting(E_ALL);
+// ini_set('display_errors', 'on');
+// ini_set('display_startup_errors', 'on');
+//
+// error_reporting(E_ALL);
 
 ! defined('BASE_PATH') && define('BASE_PATH', __DIR__);
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);
