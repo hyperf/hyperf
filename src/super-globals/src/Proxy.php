@@ -28,18 +28,18 @@ abstract class Proxy implements Arrayable, ArrayAccess, JsonSerializable
         return $this->toArray();
     }
 
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         $data = $this->toArray();
         return isset($data[$offset]);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->toArray()[$offset] ?? null;
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         Context::override(ServerRequestInterface::class, function (ServerRequestInterface $request) use ($offset, $value) {
             $data = $this->toArray();
@@ -48,7 +48,7 @@ abstract class Proxy implements Arrayable, ArrayAccess, JsonSerializable
         });
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         Context::override(ServerRequestInterface::class, function (ServerRequestInterface $request) use ($offset) {
             $data = $this->toArray();

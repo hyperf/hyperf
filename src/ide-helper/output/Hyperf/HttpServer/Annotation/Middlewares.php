@@ -14,10 +14,6 @@ namespace Hyperf\HttpServer\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"ALL"})
- */
 #[Attribute]
 class Middlewares extends AbstractAnnotation
 {

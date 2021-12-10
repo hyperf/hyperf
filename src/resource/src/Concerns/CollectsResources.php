@@ -15,13 +15,14 @@ use Hyperf\Paginator\AbstractPaginator;
 use Hyperf\Resource\Value\MissingValue;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Str;
+use Traversable;
 
 trait CollectsResources
 {
     /**
      * Get an iterator for the resource collection.
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): Traversable
     {
         return $this->collection->getIterator();
     }
