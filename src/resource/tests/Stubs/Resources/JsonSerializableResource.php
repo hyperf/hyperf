@@ -20,7 +20,7 @@ class JsonSerializableResource implements \JsonSerializable
         $this->resource = $resource;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'id' => $this->resource->id,
