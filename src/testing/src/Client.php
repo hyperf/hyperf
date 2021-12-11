@@ -199,6 +199,14 @@ class Client extends Server
         $headers = $options['headers'] ?? [];
         $multipart = $options['multipart'] ?? [];
 
+        $parsePath = parse_url($path);
+        $path = $parsePath['path'];
+        $uriPathQuery = $parsePath['query'] ?? [];
+        if (! empty($uriPathQuery)) {
+            parse_str($uriPathQuery, $pathQuery);
+            $query = array_merge($pathQuery, $query);
+        }
+
         $data = $params;
 
         // Initialize PSR-7 Request and Response objects.
