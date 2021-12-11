@@ -1,5 +1,9 @@
 # v2.2.20 - TBD
 
+## Fixed
+
+- [#4338](https://github.com/hyperf/hyperf/pull/4338) Fixed bug that the path with query params won't match route when using testing client.
+
 ## Added
 
 - [#4330](https://github.com/hyperf/hyperf/pull/4330) Support pack vendor/bin files for `hyperf/phar`.
