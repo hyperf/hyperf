@@ -32,15 +32,9 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 class ConsumerManager
 {
-    /**
-     * @var LongLangConsumer
-     */
-    protected $consumer;
+    protected LongLangConsumer $consumer;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -77,30 +71,16 @@ class ConsumerManager
     protected function createProcess(AbstractConsumer $consumer): AbstractProcess
     {
         return new class($this->container, $consumer) extends AbstractProcess {
-            /**
-             * @var AbstractConsumer
-             */
-            private $consumer;
 
-            /**
-             * @var ConfigInterface
-             */
-            private $config;
+            private AbstractConsumer $consumer;
 
-            /**
-             * @var null|EventDispatcherInterface
-             */
-            private $dispatcher;
+            private ConfigInterface $config;
 
-            /**
-             * @var StdoutLoggerInterface
-             */
-            protected $stdoutLogger;
+            private ?EventDispatcherInterface $dispatcher;
 
-            /**
-             * @var Producer
-             */
-            protected $producer;
+            protected StdoutLoggerInterface $stdoutLogger;
+
+            protected Producer $producer;
 
             public function __construct(ContainerInterface $container, AbstractConsumer $consumer)
             {

@@ -18,12 +18,9 @@ class ProducerManager
     /**
      * @var array<string, Producer>
      */
-    private $producers = [];
+    private array $producers = [];
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {

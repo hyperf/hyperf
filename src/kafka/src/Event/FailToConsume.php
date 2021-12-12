@@ -15,10 +15,7 @@ use Hyperf\Kafka\AbstractConsumer;
 
 class FailToConsume extends Consume
 {
-    /**
-     * @var \Throwable
-     */
-    protected $throwable;
+    protected \Throwable $throwable;
 
     public function __construct(AbstractConsumer $consumer, $data, \Throwable $throwable)
     {

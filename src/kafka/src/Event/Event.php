@@ -15,10 +15,7 @@ use Hyperf\Kafka\AbstractConsumer;
 
 abstract class Event
 {
-    /**
-     * @var AbstractConsumer
-     */
-    protected $consumer;
+    protected AbstractConsumer $consumer;
 
     public function __construct(AbstractConsumer $consumer)
     {

@@ -24,30 +24,15 @@ use Swoole\Coroutine;
 
 class Producer
 {
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
+    protected ConfigInterface $config;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
-    /**
-     * @var ?Channel
-     */
-    protected $chan;
+    protected ?Channel $chan;
 
-    /**
-     * @var LongLangProducer
-     */
-    protected $producer;
+    protected LongLangProducer $producer;
 
-    /**
-     * @var int
-     */
-    protected $timeout;
+    protected int $timeout;
 
     public function __construct(ConfigInterface $config, string $name = 'default', int $timeout = 10)
     {

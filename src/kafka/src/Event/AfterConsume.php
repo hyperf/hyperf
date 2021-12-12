@@ -15,10 +15,7 @@ use Hyperf\Kafka\AbstractConsumer;
 
 class AfterConsume extends Consume
 {
-    /**
-     * @var null|string
-     */
-    protected $result;
+    protected ?string $result;
 
     public function __construct(AbstractConsumer $consumer, $data, ?string $result)
     {
