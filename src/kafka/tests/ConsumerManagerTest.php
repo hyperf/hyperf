@@ -46,11 +46,12 @@ class ConsumerManagerTest extends TestCase
         $topic = Arr::random([uniqid(), [uniqid(), uniqid()]]);
         AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
             'topic' => $topic,
-            'name' => $name = uniqid(),
+            'name' => uniqid(),
             'groupId' => $groupId = uniqid(),
             'nums' => $nums = rand(1, 10),
             'isEnable' => true,
             'autoCommit' => true,
+            'memberId' => $memberId = uniqid(),
         ]));
         $manager = new ConsumerManager($container);
         $manager->run();
@@ -88,6 +89,7 @@ class ConsumerManagerTest extends TestCase
                 $this->assertSame($config['offset_retry'], $consumer->getOffsetRetry());
                 $this->assertSame($config['auto_create_topic'], $consumer->getAutoCreateTopic());
                 $this->assertSame($config['partition_assignment_strategy'], $consumer->getPartitionAssignmentStrategy());
+                $this->assertSame($memberId, $consumer->getMemberId());
                 $this->assertSame($nums, $item->nums);
                 break;
             }
