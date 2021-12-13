@@ -13,7 +13,7 @@ namespace Hyperf\Kafka;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Engine\Channel;
-use Hyperf\Kafka\Exception\ConnectionCLosedException;
+use Hyperf\Kafka\Exception\ConnectionClosedException;
 use Hyperf\Kafka\Exception\TimeoutException;
 use longlang\phpkafka\Broker;
 use longlang\phpkafka\Producer\ProduceMessage;
@@ -24,21 +24,12 @@ use Swoole\Coroutine;
 
 class Producer
 {
-    protected ConfigInterface $config;
-
-    protected string $name;
-
     protected ?Channel $chan;
 
     protected LongLangProducer $producer;
 
-    protected int $timeout;
-
-    public function __construct(ConfigInterface $config, string $name = 'default', int $timeout = 10)
+    public function __construct(protected ConfigInterface $config, protected string $name = 'default', protected int $timeout = 10)
     {
-        $this->config = $config;
-        $this->name = $name;
-        $this->timeout = $timeout;
     }
 
     public function send(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null): void
@@ -56,7 +47,7 @@ class Producer
             }
         });
         if ($chan->isClosing()) {
-            throw new ConnectionCLosedException('Connection closed.');
+            throw new ConnectionClosedException('Connection closed.');
         }
         if ($e = $ack->pop($this->timeout)) {
             throw $e;
@@ -84,7 +75,7 @@ class Producer
             }
         });
         if ($chan->isClosing()) {
-            throw new ConnectionCLosedException('Connection closed.');
+            throw new ConnectionClosedException('Connection closed.');
         }
         if ($e = $ack->pop()) {
             throw $e;
@@ -96,9 +87,7 @@ class Producer
 
     public function close(): void
     {
-        if ($this->chan) {
-            $this->chan->close();
-        }
+        $this->chan?->close();
     }
 
     public function getConfig(): ProducerConfig
@@ -127,7 +116,7 @@ class Producer
                     }
                     try {
                         $closure->call($this);
-                    } catch (\Throwable $e) {
+                    } catch (\Throwable) {
                         $this->producer->close();
                         break;
                     }

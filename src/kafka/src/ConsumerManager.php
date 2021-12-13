@@ -34,11 +34,8 @@ class ConsumerManager
 {
     protected LongLangConsumer $consumer;
 
-    private ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function run()
@@ -71,7 +68,6 @@ class ConsumerManager
     protected function createProcess(AbstractConsumer $consumer): AbstractProcess
     {
         return new class($this->container, $consumer) extends AbstractProcess {
-
             private AbstractConsumer $consumer;
 
             private ConfigInterface $config;

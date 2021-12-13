@@ -15,12 +15,9 @@ use Hyperf\Kafka\AbstractConsumer;
 
 abstract class Consume extends Event
 {
-    protected mixed $data;
-
-    public function __construct(AbstractConsumer $consumer, mixed $data)
+    public function __construct(AbstractConsumer $consumer, protected mixed $data)
     {
         parent::__construct($consumer);
-        $this->data = $data;
     }
 
     public function getData(): mixed
