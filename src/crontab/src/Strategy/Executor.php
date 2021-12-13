@@ -16,6 +16,7 @@ use Closure;
 use Hyperf\Contract\ApplicationInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Crontab;
+use Hyperf\Crontab\Event\FailToExecute;
 use Hyperf\Crontab\LoggerInterface;
 use Hyperf\Crontab\Mutex\RedisServerMutex;
 use Hyperf\Crontab\Mutex\RedisTaskMutex;
@@ -23,6 +24,7 @@ use Hyperf\Crontab\Mutex\ServerMutex;
 use Hyperf\Crontab\Mutex\TaskMutex;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use Swoole\Timer;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -36,12 +38,17 @@ class Executor
 
     protected ?ServerMutex $serverMutex = null;
 
+    protected ?EventDispatcherInterface $dispatcher = null;
+
     public function __construct(protected ContainerInterface $container)
     {
         if ($container->has(LoggerInterface::class)) {
             $this->logger = $container->get(LoggerInterface::class);
         } elseif ($container->has(StdoutLoggerInterface::class)) {
             $this->logger = $container->get(StdoutLoggerInterface::class);
+        }
+        if ($container->has(EventDispatcherInterface::class)) {
+            $this->dispatcher = $container->get(EventDispatcherInterface::class);
         }
     }
 
@@ -69,6 +76,7 @@ class Executor
                                 }
                             } catch (\Throwable $throwable) {
                                 $result = false;
+                                $this->dispatcher && $this->dispatcher->dispatch(new FailToExecute($crontab, $throwable));
                             } finally {
                                 $this->logResult($crontab, $result, $throwable ?? null);
                             }
@@ -125,8 +133,8 @@ class Executor
     {
         if (! $this->taskMutex) {
             $this->taskMutex = $this->container->has(TaskMutex::class)
-            ? $this->container->get(TaskMutex::class)
-            : $this->container->get(RedisTaskMutex::class);
+                ? $this->container->get(TaskMutex::class)
+                : $this->container->get(RedisTaskMutex::class);
         }
         return $this->taskMutex;
     }
@@ -149,8 +157,8 @@ class Executor
     {
         if (! $this->serverMutex) {
             $this->serverMutex = $this->container->has(ServerMutex::class)
-            ? $this->container->get(ServerMutex::class)
-            : $this->container->get(RedisServerMutex::class);
+                ? $this->container->get(ServerMutex::class)
+                : $this->container->get(RedisServerMutex::class);
         }
         return $this->serverMutex;
     }

@@ -11,6 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Amqp;
 
+use Hyperf\Amqp\Exception\LoopBrokenException;
+use Hyperf\Amqp\Exception\SendChannelClosedException;
+use Hyperf\Amqp\Exception\SendChannelTimeoutException;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Channel;
@@ -49,6 +52,8 @@ class AMQPConnection extends AbstractConnection
 
     protected bool $exited = false;
 
+    protected Channel $chan;
+
     public function __construct(
         string $user,
         string $password,
@@ -64,6 +69,7 @@ class AMQPConnection extends AbstractConnection
     ) {
         $this->channelManager = new ChannelManager(16);
         $this->channelManager->get(0, true);
+        $this->chan = $this->channelManager->make(65535);
 
         parent::__construct($user, $password, $vhost, $insist, $login_method, $login_response, $locale, $io, $heartbeat, $connection_timeout, $channel_rpc_timeout);
 
@@ -75,7 +81,13 @@ class AMQPConnection extends AbstractConnection
     {
         $this->loop();
 
-        parent::write($data);
+        $this->chan->push($data, 5);
+        if ($this->chan->isClosing()) {
+            throw new SendChannelClosedException('Writing data failed, because send channel closed.');
+        }
+        if ($this->chan->isTimeout()) {
+            throw new SendChannelTimeoutException('Writing data failed, because send channel timeout.');
+        }
     }
 
     public function setLogger(?LoggerInterface $logger): static
@@ -159,6 +171,8 @@ class AMQPConnection extends AbstractConnection
         try {
             $res = parent::close($reply_code, $reply_text, $method_sig);
         } finally {
+            $this->setIsConnected(false);
+            $this->chan->close();
             $this->channelManager->flush();
         }
         return $res;
@@ -189,7 +203,35 @@ class AMQPConnection extends AbstractConnection
         Coroutine::create(function () {
             try {
                 while (true) {
-                    [$frame_type, $channel, $payload] = $this->wait_frame();
+                    $data = $this->chan->pop(-1);
+                    if ($this->chan->isClosing()) {
+                        throw new SendChannelClosedException('Write failed, because send channel closed.');
+                    }
+
+                    if ($data === false || $data === '') {
+                        throw new LoopBrokenException('Push channel broken or write empty string for connection.');
+                    }
+
+                    parent::write($data);
+                }
+            } catch (\Throwable $exception) {
+                $level = $this->exited ? 'warning' : 'error';
+                $this->logger && $this->logger->log($level, 'Send loop broken. The reason is ' . (string) $exception);
+            } finally {
+                $this->loop = false;
+                if (! $this->exited) {
+                    // When loop broken, AMQPConnection will not be able to communicate with AMQP server.
+                    // So flush all recv channels to ensure closing AMQP connections quickly.
+                    $this->channelManager->flush();
+                    $this->close();
+                }
+            }
+        });
+
+        Coroutine::create(function () {
+            try {
+                while (true) {
+                    [$frame_type, $channel, $payload] = $this->wait_frame(0);
                     $this->channelManager->get($channel)->push([$frame_type, $payload], 0.001);
                 }
             } catch (\Throwable $exception) {
@@ -242,13 +284,13 @@ class AMQPConnection extends AbstractConnection
 
                     try {
                         // PING
-                        if ($this->isConnected()) {
+                        if ($this->isConnected() && $this->chan->isEmpty()) {
                             $pkt = new AMQPWriter();
                             $pkt->write_octet(8);
                             $pkt->write_short(0);
                             $pkt->write_long(0);
                             $pkt->write_octet(0xCE);
-                            $this->getIO()->write($pkt->getvalue());
+                            $this->chan->push($pkt->getvalue(), 0.001);
                         }
                     } catch (\Throwable $exception) {
                         $this->logger && $this->logger->error((string) $exception);

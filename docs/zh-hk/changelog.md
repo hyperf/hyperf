@@ -1,5 +1,17 @@
 # 版本更新記錄
 
+# v2.2.20 - 2021-12-13
+
+## 修復
+
+- [#4338](https://github.com/hyperf/hyperf/pull/4338) 修復使用單測客户端時，路徑中帶有參數會導致無法正確匹配路由的問題。
+- [#4346](https://github.com/hyperf/hyperf/pull/4346) 修復使用組件 `php-amqplib/php-amqplib:3.1.1` 時，啟動報錯的問題。
+
+## 新增
+
+- [#4330](https://github.com/hyperf/hyperf/pull/4330) 為 `phar` 組件支持打包 `vendor/bin` 目錄。
+- [#4331](https://github.com/hyperf/hyperf/pull/4331) 新增方法 `Hyperf\Testing\Debug::getRefCount($object)`。
+
 # v2.2.19 - 2021-12-06
 
 ## 修復
