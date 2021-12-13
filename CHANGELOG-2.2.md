@@ -6,7 +6,7 @@
 
 ## Added
 
-- [#4344](https://github.com/hyperf/hyperf/pull/4344) Added `CrontabFail` event.
+- [#4344](https://github.com/hyperf/hyperf/pull/4344) Added `Hyperf\Crontab\Event\FailToExecute` event which will be dispatched when executing crontab failed.
 
 # v2.2.20 - 2021-12-13
 
