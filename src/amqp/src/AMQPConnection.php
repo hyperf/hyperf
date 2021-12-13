@@ -13,6 +13,7 @@ namespace Hyperf\Amqp;
 
 use Hyperf\Amqp\Exception\LoopBrokenException;
 use Hyperf\Amqp\Exception\SendChannelClosedException;
+use Hyperf\Amqp\Exception\SendChannelTimeoutException;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\Channel\ChannelManager;
 use Hyperf\Utils\Coordinator\Constants;
@@ -107,9 +108,12 @@ class AMQPConnection extends AbstractConnection
     {
         $this->loop();
 
-        $this->chan->push($data, -1);
+        $this->chan->push($data, 5);
         if ($this->chan->isClosing()) {
             throw new SendChannelClosedException('Write failed, because send channel closed.');
+        }
+        if ($this->chan->isTimeout()) {
+            throw new SendChannelTimeoutException('Write failed, because send channel timeout.');
         }
     }
 
