@@ -110,10 +110,10 @@ class AMQPConnection extends AbstractConnection
 
         $this->chan->push($data, 5);
         if ($this->chan->isClosing()) {
-            throw new SendChannelClosedException('Write failed, because send channel closed.');
+            throw new SendChannelClosedException('Writing data failed, because send channel closed.');
         }
         if ($this->chan->isTimeout()) {
-            throw new SendChannelTimeoutException('Write failed, because send channel timeout.');
+            throw new SendChannelTimeoutException('Writing data failed, because send channel timeout.');
         }
     }
 
