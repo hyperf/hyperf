@@ -9,7 +9,7 @@
 ## 新增
 
 - [#4330](https://github.com/hyperf/hyperf/pull/4330) 為 `phar` 組件支持打包 `vendor/bin` 目錄。
-- [#4331](https://github.com/hyperf/hyperf/pull/4331) 新增方法 `Debug::getRefCount($object)`。
+- [#4331](https://github.com/hyperf/hyperf/pull/4331) 新增方法 `Hyperf\Testing\Debug::getRefCount($object)`。
 
 # v2.2.19 - 2021-12-06
 
