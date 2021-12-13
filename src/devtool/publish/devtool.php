@@ -15,7 +15,7 @@ return [
      *        "vscode", "vscode-insiders", "vscode-remote", "vscode-insiders-remote",
      *        "atom", "nova", "netbeans", "xdebug"
      */
-    'ide' => (string) env('DEVTOOL_IDE', ''),
+    'ide' => env('DEVTOOL_IDE', ''),
 
     'generator' => [
         'amqp' => [
