@@ -17,7 +17,7 @@ use Hyperf\Di\Annotation\AbstractMultipleAnnotation;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 class Middleware extends AbstractMultipleAnnotation
 {
-    public function __construct($middleware)
+    public function __construct(string $middleware = '')
     {
     }
 }

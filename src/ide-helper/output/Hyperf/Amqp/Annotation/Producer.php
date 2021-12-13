@@ -17,7 +17,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS)]
 class Producer extends AbstractAnnotation
 {
-    public function __construct($exchange, $routingKey)
+    public function __construct(string $exchange = '', string $routingKey = '')
     {
     }
 }

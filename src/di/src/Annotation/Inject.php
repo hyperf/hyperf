@@ -17,27 +17,14 @@ use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\CodeGen\PhpDocReaderManager;
 use PhpDocReader\AnnotationException as DocReaderAnnotationException;
 
-/**
- * @Annotation
- * @Target({"PROPERTY"})
- */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Inject extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $value;
+    public ?string $value = null;
 
-    /**
-     * @var bool
-     */
-    public $required = true;
+    public bool $required = true;
 
-    /**
-     * @var bool
-     */
-    public $lazy = false;
+    public bool $lazy = false;
 
     public function collectProperty(string $className, ?string $target): void
     {

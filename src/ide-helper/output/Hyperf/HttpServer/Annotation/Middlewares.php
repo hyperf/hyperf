@@ -17,7 +17,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute]
 class Middlewares extends AbstractAnnotation
 {
-    public function __construct($middlewares)
+    public function __construct(array $middlewares = [])
     {
     }
 }

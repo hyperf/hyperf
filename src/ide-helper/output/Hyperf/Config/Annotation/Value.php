@@ -17,7 +17,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Value extends AbstractAnnotation
 {
-    public function __construct($key)
+    public function __construct(?string $key = null)
     {
     }
 }

@@ -21,7 +21,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS)]
 class ModelListener extends AbstractAnnotation
 {
-    public function __construct($models)
+    public function __construct($models = [])
     {
     }
 }
