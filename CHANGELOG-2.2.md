@@ -1,9 +1,24 @@
-# v2.2.20 - TBD
+# v2.2.21 - TBD
+
+## Fixed
+
+- [#4347](https://github.com/hyperf/hyperf/pull/4347) Fixed bug that amqp io has been bound to more than one coroutine when out of buffer.
+
+## Added
+
+- [#4344](https://github.com/hyperf/hyperf/pull/4344) Added `Hyperf\Crontab\Event\FailToExecute` event which will be dispatched when executing crontab failed.
+
+# v2.2.20 - 2021-12-13
+
+## Fixed
+
+- [#4338](https://github.com/hyperf/hyperf/pull/4338) Fixed bug that the path with query params won't match route when using testing client.
+- [#4346](https://github.com/hyperf/hyperf/pull/4346) Fixed fatal error for declaration when using amqplib `3.1.1`.
 
 ## Added
 
 - [#4330](https://github.com/hyperf/hyperf/pull/4330) Support pack vendor/bin files for `hyperf/phar`.
-- [#4331](https://github.com/hyperf/hyperf/pull/4331) Added method `Debug::getRefCount($object)`.
+- [#4331](https://github.com/hyperf/hyperf/pull/4331) Added method `Hyperf\Testing\Debug::getRefCount($object)`.
 
 # v2.2.19 - 2021-12-06
 

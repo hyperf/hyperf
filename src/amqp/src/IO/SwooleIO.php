@@ -117,7 +117,7 @@ class SwooleIO extends AbstractIO
         $this->sock && $this->sock->close();
     }
 
-    public function select($sec, $usec)
+    public function select($sec, $usec = 0)
     {
         return 1;
     }
