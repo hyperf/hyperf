@@ -5,6 +5,7 @@
 ## 修复
 
 - [#4338](https://github.com/hyperf/hyperf/pull/4338) 修复使用单测客户端时，路径中带有参数会导致无法正确匹配路由的问题。
+- [#4346](https://github.com/hyperf/hyperf/pull/4346) 修复使用组件 `php-amqplib/php-amqplib:3.1.1` 时，启动报错的问题。
 
 ## 新增
 
