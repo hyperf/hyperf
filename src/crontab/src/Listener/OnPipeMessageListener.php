@@ -13,7 +13,7 @@ namespace Hyperf\Crontab\Listener;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Crontab;
-use Hyperf\Crontab\Event\CrontabFail;
+use Hyperf\Crontab\Event\FailToHandle;
 use Hyperf\Crontab\PipeMessage;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
@@ -66,7 +66,7 @@ class OnPipeMessageListener implements ListenerInterface
                         break;
                 }
             } catch (\Throwable $throwable) {
-                $this->container->get(EventDispatcherInterface::class)->dispatch(new CrontabFail($throwable));
+                $this->container->get(EventDispatcherInterface::class)->dispatch($data, new FailToHandle($throwable));
                 if ($this->logger) {
                     $this->logger->error($throwable->getMessage());
                 }
