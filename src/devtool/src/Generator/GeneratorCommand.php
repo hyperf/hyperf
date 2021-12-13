@@ -301,7 +301,7 @@ abstract class GeneratorCommand extends Command
      */
     protected function openWithIde(string $path): void
     {
-        $ide = $this->getContainer()->get(ConfigInterface::class)->get('devtool.ide');
+        $ide = (string) $this->getContainer()->get(ConfigInterface::class)->get('devtool.ide');
         $openEditorUrl = $this->getEditorUrl($ide);
 
         if (! $openEditorUrl) {
