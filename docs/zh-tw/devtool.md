@@ -29,7 +29,7 @@ php bin/hyperf.php
   vendor:publish     Publish any publishable configs from vendor packages.
 ```
 
-# 快速開啟
+## 快速開啟
 
 增加了一個非常簡單的功能，用內建的 `gen` 命令快速開啟建立的檔案，支援 `sublime`, `textmate`, `emacs`, `macvim`, `phpstorm`, `idea`, `vscode`, `vscode-insiders`, `vscode-remote`, `vscode-insiders-remote`, `atom`, `nova`, `netbeans`, `xdebug`。
 
