@@ -11,24 +11,24 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Event;
 
-use Hyperf\Crontab\PipeMessage;
+use Hyperf\Crontab\Crontab;
 use Throwable;
 
-class FailToHandle
+class FailToExecute
 {
     /**
-     * @var PipeMessage
+     * @var Crontab
      */
-    public $pipeMessage;
+    public $crontab;
 
     /**
      * @var Throwable
      */
     public $throwable;
 
-    public function __construct(PipeMessage $pipeMessage, Throwable $throwable)
+    public function __construct(Crontab $crontab, Throwable $throwable)
     {
-        $this->pipeMessage = $pipeMessage;
+        $this->crontab = $crontab;
         $this->throwable = $throwable;
     }
 }
