@@ -6,7 +6,7 @@
 composer require hyperf/devtool
 ```
 
-# 支持的命令
+## 支持的命令
 
 ```bash
 php bin/hyperf.php
@@ -31,7 +31,7 @@ php bin/hyperf.php
 
 ## 快速打开
 
-增加了一个非常简单的功能，用内置的 `gen` 命令快速打开创建的文件，支持 `sublime`, `textmate`, `emacs`, `macvim`, `phpstorm`, `idea`, `vscode`, `vscode-insiders`, `vscode-remote`, `vscode-insiders-remote`, `atom`, `nova`, `netbeans`, `xdebug`。
+增加了一个非常简单的功能，用内置的 `gen` 命令快速打开创建的文件，支持 `sublime`、`textmate`、`emacs`、`macvim`、`phpstorm`、`idea`、`vscode`、`vscode-insiders`、`vscode-remote`、`vscode-insiders-remote`、`atom`、`nova`、`netbeans`、`xdebug`。
 
 还需要在 `config/autoload/devtool.php` 上添加这个配置块：
 
