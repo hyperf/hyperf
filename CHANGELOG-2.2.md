@@ -1,4 +1,6 @@
-# v2.2.20 - TBD
+# v2.2.21 - TBD
+
+# v2.2.20 - 2021-12-13
 
 ## Fixed
 
@@ -7,7 +9,7 @@
 ## Added
 
 - [#4330](https://github.com/hyperf/hyperf/pull/4330) Support pack vendor/bin files for `hyperf/phar`.
-- [#4331](https://github.com/hyperf/hyperf/pull/4331) Added method `Debug::getRefCount($object)`.
+- [#4331](https://github.com/hyperf/hyperf/pull/4331) Added method `Hyperf\Testing\Debug::getRefCount($object)`.
 
 # v2.2.19 - 2021-12-06
 
