@@ -21,7 +21,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS)]
 class RpcService extends AbstractAnnotation
 {
-    public function __construct($name, $server, $protocol, $publishTo)
+    public function __construct($name = '', $server = 'jsonrpc-http', $protocol = 'jsonrpc-http', $publishTo = '')
     {
     }
 }

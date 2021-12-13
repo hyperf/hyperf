@@ -20,7 +20,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Inject extends AbstractAnnotation
 {
-    public function __construct($value, $required, $lazy)
+    public function __construct($value = null, $required = true, $lazy = false)
     {
     }
 }

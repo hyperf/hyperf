@@ -22,7 +22,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS)]
 class Process extends AbstractAnnotation
 {
-    public function __construct($nums, $name, $redirectStdinStdout, $pipeType, $enableCoroutine)
+    public function __construct($nums = null, $name = null, $redirectStdinStdout = null, $pipeType = null, $enableCoroutine = null)
     {
     }
 }

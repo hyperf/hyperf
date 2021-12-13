@@ -22,7 +22,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Histogram extends AbstractAnnotation
 {
-    public function __construct($name)
+    public function __construct($name = '')
     {
     }
 }

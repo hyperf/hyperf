@@ -21,7 +21,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS)]
 class Consumer extends AbstractAnnotation
 {
-    public function __construct($pool, $topic, $groupId, $memberId, $autoCommit, $nums, $enable)
+    public function __construct($pool = 'default', $topic = null, $groupId = null, $memberId = null, $autoCommit = true, $nums = 1, $enable = true)
     {
     }
 }

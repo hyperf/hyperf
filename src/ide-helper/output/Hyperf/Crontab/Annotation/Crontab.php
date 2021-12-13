@@ -17,7 +17,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Crontab extends AbstractAnnotation
 {
-    public function __construct($name, $type, $rule, $singleton, $mutexPool, $mutexExpires, $onOneServer, $callback, $memo, $enable)
+    public function __construct($name = null, $type = 'callback', $rule = null, $singleton = null, $mutexPool = null, $mutexExpires = null, $onOneServer = null, $callback = null, $memo = null, $enable = true)
     {
     }
 }
