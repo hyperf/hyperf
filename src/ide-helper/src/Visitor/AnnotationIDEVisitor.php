@@ -60,7 +60,7 @@ class AnnotationIDEVisitor extends NodeVisitorAbstract
         }
     }
 
-    private function getType(?\ReflectionType $type): mixed
+    private function getType(?\ReflectionType $type): Node\NullableType|Node\Identifier|null|Node\UnionType
     {
         if ($type === null) {
             return null;
@@ -69,12 +69,12 @@ class AnnotationIDEVisitor extends NodeVisitorAbstract
             if ($type->allowsNull()) {
                 return new Node\NullableType($type->getName());
             }
-            return $type->getName();
+            return new Node\Identifier($type->getName());
         }
         if ($type instanceof \ReflectionUnionType) {
             $result = [];
             foreach ($type->getTypes() as $type) {
-                $result[] = $type->getName();
+                $result[] = new Node\Identifier($type->getName());
             }
             return new Node\UnionType($result);
         }

@@ -55,7 +55,8 @@ class AnnotationGenerator
                             file_put_contents($target . '.php', $code);
                         }
                     }
-                } catch (\Throwable) {
+                } catch (\Throwable $e) {
+                    var_dump((string) $e);
                 }
             }
         }
