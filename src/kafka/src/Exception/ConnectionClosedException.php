@@ -11,6 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Kafka\Exception;
 
-class ConnectionCLosedException extends KafkaException
+class ConnectionClosedException extends KafkaException
 {
 }
