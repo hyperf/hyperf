@@ -9,6 +9,10 @@
 - [#4344](https://github.com/hyperf/hyperf/pull/4344) Added `Hyperf\Crontab\Event\FailToExecute` event which will be dispatched when executing crontab failed.
 - [#4348](https://github.com/hyperf/hyperf/pull/4348) Support to open the generated file with your IDE automatically.
 
+## Optimized
+
+- [#4350](https://github.com/hyperf/hyperf/pull/4350) Optimized the error message for `swoole.use_shortname`.
+
 # v2.2.20 - 2021-12-13
 
 ## Fixed
