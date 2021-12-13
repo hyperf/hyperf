@@ -17,7 +17,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_METHOD)]
 class CacheEvict extends AbstractAnnotation
 {
-    public function __construct($prefix, $value, $all, $group, $collect)
+    public function __construct(?string $prefix = null, ?string $value = null, bool $all = false, string $group = 'default', bool $collect = false)
     {
     }
 }

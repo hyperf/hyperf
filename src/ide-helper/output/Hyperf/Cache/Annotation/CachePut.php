@@ -17,7 +17,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_METHOD)]
 class CachePut extends AbstractAnnotation
 {
-    public function __construct($prefix, $value, $ttl, $offset, $group)
+    public function __construct(?string $prefix = null, ?string $value = null, ?int $ttl = null, int $offset = 0, string $group = 'default')
     {
     }
 }

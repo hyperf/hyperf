@@ -16,7 +16,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_CLASS)]
 class Aspect extends AbstractAnnotation
 {
-    public function __construct($classes, $annotations, $priority)
+    public function __construct(array $classes = [], array $annotations = [], ?int $priority = null)
     {
     }
 }

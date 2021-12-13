@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\IDEHelper\Visitor;
 
 use Hyperf\IDEHelper\Metadata;
+use Hyperf\Utils\CodeGen\PhpParser;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 use ReflectionClass;
@@ -20,9 +21,12 @@ class AnnotationIDEVisitor extends NodeVisitorAbstract
 {
     protected ReflectionClass $reflection;
 
+    protected PhpParser $parser;
+
     public function __construct(public Metadata $metadata)
     {
         $this->reflection = $this->metadata->reflection;
+        $this->parser = PhpParser::getInstance();
     }
 
     public function afterTraverse(array $nodes)
@@ -39,7 +43,11 @@ class AnnotationIDEVisitor extends NodeVisitorAbstract
 
                     $properties = [];
                     foreach ($this->reflection->getProperties() as $property) {
-                        $properties[] = new Node\Param(new Node\Expr\Variable($property->getName()));
+                        $properties[] = new Node\Param(
+                            new Node\Expr\Variable($property->getName()),
+                            $this->parser->getExprFromValue($property->getDefaultValue()),
+                            $this->getType($property->getType()),
+                        );
                     }
                     $class->stmts = [
                         new Node\Stmt\ClassMethod('__construct', [
@@ -49,6 +57,26 @@ class AnnotationIDEVisitor extends NodeVisitorAbstract
                     ];
                 }
             }
+        }
+    }
+
+    private function getType(?\ReflectionType $type): Node\NullableType|Node\Identifier|null|Node\UnionType
+    {
+        if ($type === null) {
+            return null;
+        }
+        if ($type instanceof \ReflectionNamedType) {
+            if ($type->allowsNull()) {
+                return new Node\NullableType($type->getName());
+            }
+            return new Node\Identifier($type->getName());
+        }
+        if ($type instanceof \ReflectionUnionType) {
+            $result = [];
+            foreach ($type->getTypes() as $type) {
+                $result[] = new Node\Identifier($type->getName());
+            }
+            return new Node\UnionType($result);
         }
     }
 }

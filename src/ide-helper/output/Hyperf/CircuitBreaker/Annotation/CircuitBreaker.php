@@ -20,7 +20,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_METHOD)]
 class CircuitBreaker extends AbstractAnnotation
 {
-    public function __construct($handler, $fallback, $duration, $successCounter, $failCounter, $value)
+    public function __construct(string $handler = 'Hyperf\\CircuitBreaker\\Handler\\TimeoutHandler', ?string $fallback = null, float $duration = 10.0, int $successCounter = 10, int $failCounter = 10, array $value = null)
     {
     }
 }
