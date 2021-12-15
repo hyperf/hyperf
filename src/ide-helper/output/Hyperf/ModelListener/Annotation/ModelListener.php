@@ -14,14 +14,10 @@ namespace Hyperf\ModelListener\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class ModelListener extends AbstractAnnotation
 {
-    public function __construct($models = [])
+    public function __construct(array $models = [])
     {
     }
 }
