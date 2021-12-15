@@ -16,6 +16,10 @@ use Hyperf\Utils\Context;
 
 class Redis extends RedisProxy
 {
+    public function __construct()
+    {
+    }
+
     public function lPush($key, ...$values)
     {
         Context::set('test.async-queue.lpush.key', $key);
