@@ -16,12 +16,12 @@ use Psr\Container\ContainerInterface;
 
 class Connection extends AbstractConnection
 {
+    public mixed $connection = null;
+
     /**
      * @var callable
      */
-    public $callback;
-
-    public mixed $connection = null;
+    protected $callback;
 
     public function __construct(ContainerInterface $container, Pool $pool, callable $callback)
     {

@@ -35,7 +35,7 @@ abstract class Connection implements ConnectionInterface
             return $this->getActiveConnection();
         } catch (\Throwable $exception) {
             if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
-                $logger->warning('Get connection failed, try again. ' . (string) $exception);
+                $logger->warning('Get connection failed, try again. ' . $exception);
             }
             return $this->getActiveConnection();
         }

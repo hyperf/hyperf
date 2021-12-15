@@ -16,17 +16,10 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\ModelListener\Collector\ListenerCollector;
 use Hyperf\Utils\Arr;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class ModelListener extends AbstractAnnotation
 {
-    /**
-     * @var array
-     */
-    public $models = [];
+    public array $models = [];
 
     public function __construct(...$value)
     {
