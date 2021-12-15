@@ -19,23 +19,16 @@ use Swoole\Timer;
 abstract class AbstractLoadBalancer implements LoadBalancerInterface
 {
     /**
-     * @var Node[]
+     * @param Node[] $nodes
      */
-    protected $nodes = [];
-
-    /**
-     * @param \Hyperf\LoadBalancer\Node[] $nodes
-     */
-    public function __construct(array $nodes = [])
+    public function __construct(protected array $nodes = [])
     {
-        $this->nodes = $nodes;
     }
 
     /**
-     * @param \Hyperf\LoadBalancer\Node[] $nodes
-     * @return $this
+     * @param Node[] $nodes
      */
-    public function setNodes(array $nodes)
+    public function setNodes(array $nodes): static
     {
         $this->nodes = $nodes;
         return $this;
@@ -60,7 +53,7 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
         return false;
     }
 
-    public function refresh(callable $callback, int $tickMs = 5000)
+    public function refresh(callable $callback, int $tickMs = 5000): void
     {
         $timerId = Timer::tick($tickMs, function () use ($callback) {
             $nodes = call($callback);

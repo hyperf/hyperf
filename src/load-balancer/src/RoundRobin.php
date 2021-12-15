@@ -15,10 +15,7 @@ use Hyperf\LoadBalancer\Exception\RuntimeException;
 
 class RoundRobin extends AbstractLoadBalancer
 {
-    /**
-     * @var int
-     */
-    private static $current = 0;
+    private static int $current = 0;
 
     /**
      * Select an item via the load balancer.
