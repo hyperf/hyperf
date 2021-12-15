@@ -11,9 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\AsyncQueue\Stub;
 
+use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\Context;
 
-class Redis
+class Redis extends RedisProxy
 {
     public function lPush($key, ...$values)
     {
