@@ -71,4 +71,21 @@ class AnnotationTest extends TestCase
 
         $this->assertSame([], $method->invokeArgs($scanner, [[]]));
     }
+
+    public function testVariadicParams()
+    {
+        $foo = new FooParams(id: 1, name: 'Hyperf');
+
+        $this->assertSame(['id' => 1, 'name' => 'Hyperf'], $foo->param);
+    }
+}
+
+class FooParams
+{
+    public array $param;
+
+    public function __construct(...$params)
+    {
+        $this->param = $params;
+    }
 }
