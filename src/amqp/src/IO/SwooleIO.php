@@ -52,11 +52,6 @@ class SwooleIO extends AbstractIO
     private $sock;
 
     /**
-     * @var string
-     */
-    private $buffer = '';
-
-    /**
      * @throws \InvalidArgumentException when readWriteTimeout argument does not 2x the heartbeat
      */
     public function __construct(
@@ -95,6 +90,7 @@ class SwooleIO extends AbstractIO
     {
         $len = $this->sock->sendAll($data, $this->readWriteTimeout);
 
+        /* @phpstan-ignore-next-line */
         if ($data === false || strlen($data) !== $len) {
             throw new AMQPConnectionClosedException('Send data failed, The reason is ' . $this->sock->errMsg);
         }
