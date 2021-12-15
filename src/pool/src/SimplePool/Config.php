@@ -16,7 +16,7 @@ class Config
     /**
      * @var callable
      */
-    public $callback;
+    protected $callback;
 
     public function __construct(protected string $name, callable $callback, protected array $option)
     {

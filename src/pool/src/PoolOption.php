@@ -20,24 +20,24 @@ class PoolOption implements PoolOptionInterface
      * This means the pool will create $minConnections connections when
      * pool initialization.
      */
-    private int $minConnections = 1;
+    private int $minConnections;
 
     /**
      * Max connections of pool.
      */
-    private int $maxConnections = 10;
+    private int $maxConnections;
 
     /**
      * The timeout of connect the connection.
      * Default value is 10 seconds.
      */
-    private float $connectTimeout = 10.0;
+    private float $connectTimeout;
 
     /**
      * The timeout of pop a connection.
      * Default value is 3 seconds.
      */
-    private float $waitTimeout = 3.0;
+    private float $waitTimeout;
 
     /**
      * Heartbeat of connection.
@@ -45,15 +45,21 @@ class PoolOption implements PoolOptionInterface
      * If the value is -1, then means does not need the heartbeat.
      * Default value is -1.
      */
-    private float $heartbeat = -1;
+    private float $heartbeat;
 
     /**
      * The max idle time for connection.
      */
-    private float $maxIdleTime = 60.0;
+    private float $maxIdleTime;
 
-    public function __construct(int $minConnections, int $maxConnections, float $connectTimeout, float $waitTimeout, float $heartbeat, float $maxIdleTime)
-    {
+    public function __construct(
+        int $minConnections = 1,
+        int $maxConnections = 10,
+        float $connectTimeout = 10.0,
+        float $waitTimeout = 3.0,
+        float $heartbeat = -1,
+        float $maxIdleTime = 60.0
+    ) {
         $this->minConnections = $minConnections;
         $this->maxConnections = $maxConnections;
         $this->connectTimeout = $connectTimeout;
@@ -67,7 +73,7 @@ class PoolOption implements PoolOptionInterface
         return $this->maxConnections;
     }
 
-    public function setMaxConnections(int $maxConnections): self
+    public function setMaxConnections(int $maxConnections): static
     {
         $this->maxConnections = $maxConnections;
         return $this;
@@ -78,7 +84,7 @@ class PoolOption implements PoolOptionInterface
         return $this->minConnections;
     }
 
-    public function setMinConnections(int $minConnections): self
+    public function setMinConnections(int $minConnections): static
     {
         $this->minConnections = $minConnections;
         return $this;
@@ -89,7 +95,7 @@ class PoolOption implements PoolOptionInterface
         return $this->connectTimeout;
     }
 
-    public function setConnectTimeout(float $connectTimeout): self
+    public function setConnectTimeout(float $connectTimeout): static
     {
         $this->connectTimeout = $connectTimeout;
         return $this;
@@ -100,7 +106,7 @@ class PoolOption implements PoolOptionInterface
         return $this->heartbeat;
     }
 
-    public function setHeartbeat(float $heartbeat): self
+    public function setHeartbeat(float $heartbeat): static
     {
         $this->heartbeat = $heartbeat;
         return $this;
@@ -111,7 +117,7 @@ class PoolOption implements PoolOptionInterface
         return $this->waitTimeout;
     }
 
-    public function setWaitTimeout(float $waitTimeout): self
+    public function setWaitTimeout(float $waitTimeout): static
     {
         $this->waitTimeout = $waitTimeout;
         return $this;
@@ -122,7 +128,7 @@ class PoolOption implements PoolOptionInterface
         return $this->maxIdleTime;
     }
 
-    public function setMaxIdleTime(float $maxIdleTime): self
+    public function setMaxIdleTime(float $maxIdleTime): static
     {
         $this->maxIdleTime = $maxIdleTime;
         return $this;
