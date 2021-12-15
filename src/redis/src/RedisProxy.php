@@ -18,7 +18,7 @@ use Hyperf\Redis\Pool\PoolFactory;
  */
 class RedisProxy extends Redis
 {
-    protected $poolName;
+    protected string $poolName;
 
     public function __construct(PoolFactory $factory, string $pool)
     {
