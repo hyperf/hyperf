@@ -19,7 +19,7 @@
         }
     },
     "require": {
-        "php": ">=7.3",
+        "php": ">=8.0",
         "guzzlehttp/guzzle": "^6.5|^7.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/utils": "~3.0.0"
