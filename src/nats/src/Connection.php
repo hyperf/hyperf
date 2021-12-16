@@ -14,7 +14,6 @@ namespace Hyperf\Nats;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
-use RandomLib\Generator;
 
 /**
  * Connection Class.
