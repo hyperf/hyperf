@@ -30,7 +30,7 @@ class Client extends AbstractServiceClient
     /**
      * @var DataFetcherInterface & DataFormatterInterface
      */
-    protected $dataFormatter;
+    protected DataFormatterInterface $dataFormatter;
 
     private NormalizerInterface $normalizer;
 

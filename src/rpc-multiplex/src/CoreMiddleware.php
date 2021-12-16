@@ -75,7 +75,7 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
         return $this->responseBuilder->buildResponse($request, $data);
     }
 
-    protected function handleMethodNotAllowed(array $routes, ServerRequestInterface $request): mixed
+    protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request): mixed
     {
         return $this->handleNotFound($request);
     }

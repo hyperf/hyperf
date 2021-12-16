@@ -69,7 +69,7 @@ class DataFormatter implements DataFormatterInterface, DataFetcherInterface
         ];
     }
 
-    public function fetch(array $data)
+    public function fetch(array $data): mixed
     {
         if (array_key_exists(Constant::DATA, $data)) {
             $this->context->setData($data[Constant::CONTEXT] ?? []);
