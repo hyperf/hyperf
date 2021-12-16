@@ -11,20 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\Rpc\Contract;
 
+use Hyperf\Rpc\ErrorResponse;
+use Hyperf\Rpc\Request;
+use Hyperf\Rpc\Response;
+
 interface DataFormatterInterface
 {
-    /**
-     * @param array $data [$path, $params, $id]
-     */
-    public function formatRequest(array $data): array;
+    public function formatRequest(Request $request): array;
 
-    /**
-     * @param array $data [$id, $result]
-     */
-    public function formatResponse(array $data): array;
+    public function formatResponse(Response $response): array;
 
-    /**
-     * @param array $data [$id, $code, $message, $exception]
-     */
-    public function formatErrorResponse(array $data): array;
+    public function formatErrorResponse(ErrorResponse $response): array;
 }

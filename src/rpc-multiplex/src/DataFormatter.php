@@ -13,6 +13,9 @@ namespace Hyperf\RpcMultiplex;
 
 use Hyperf\Rpc\Context;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
+use Hyperf\Rpc\ErrorResponse;
+use Hyperf\Rpc\Request;
+use Hyperf\Rpc\Response;
 use Hyperf\RpcClient\Exception\RequestException;
 use Hyperf\RpcMultiplex\Contract\DataFetcherInterface;
 use Hyperf\Utils\Codec\Json;
@@ -26,44 +29,41 @@ class DataFormatter implements DataFormatterInterface, DataFetcherInterface
         $this->context = $context;
     }
 
-    public function formatRequest(array $data): array
+    public function formatRequest(Request $request): array
     {
-        [$path, $params, $id] = $data;
         return [
-            Constant::ID => $id,
-            Constant::PATH => $path,
-            Constant::DATA => $params,
+            Constant::ID => $request->getId(),
+            Constant::PATH => $request->getPath(),
+            Constant::DATA => $request->getParams(),
             Constant::CONTEXT => $this->context->getData(),
         ];
     }
 
-    public function formatResponse(array $data): array
+    public function formatResponse(Response $response): array
     {
-        [$id, $result] = $data;
         return [
-            Constant::ID => $id,
-            Constant::RESULT => $result,
+            Constant::ID => $response->getId(),
+            Constant::RESULT => $response->getResult(),
             Constant::CONTEXT => $this->context->getData(),
         ];
     }
 
-    public function formatErrorResponse(array $data): array
+    public function formatErrorResponse(ErrorResponse $response): array
     {
-        [$id, $code, $message, $data] = $data;
-
-        if (isset($data) && $data instanceof \Throwable) {
-            $data = [
-                'class' => get_class($data),
-                'code' => $data->getCode(),
-                'message' => $data->getMessage(),
+        $exception = $response->getException();
+        if ($exception instanceof \Throwable) {
+            $exception = [
+                'class' => get_class($exception),
+                'code' => $exception->getCode(),
+                'message' => $exception->getMessage(),
             ];
         }
         return [
-            Constant::ID => $id ?? null,
+            Constant::ID => $response->getId(),
             Constant::ERROR => [
-                Constant::CODE => $code,
-                Constant::MESSAGE => $message,
-                Constant::DATA => $data,
+                Constant::CODE => $response->getCode(),
+                Constant::MESSAGE => $response->getMessage(),
+                Constant::DATA => $exception,
             ],
             Constant::CONTEXT => $this->context->getData(),
         ];
