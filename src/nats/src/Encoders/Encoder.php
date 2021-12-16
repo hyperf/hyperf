@@ -20,10 +20,8 @@ interface Encoder
      * Encodes a message.
      *
      * @param string $payload message to decode
-     *
-     * @return mixed
      */
-    public function encode($payload);
+    public function encode($payload): string;
 
     /**
      * Decodes a message.

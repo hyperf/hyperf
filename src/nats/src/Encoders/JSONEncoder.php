@@ -25,7 +25,7 @@ class JSONEncoder implements Encoder
      *
      * @return mixed
      */
-    public function encode($payload)
+    public function encode($payload): string
     {
         return json_encode($payload);
     }
