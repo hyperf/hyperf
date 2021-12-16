@@ -335,7 +335,7 @@ class ConnectionOptions implements Stringable
     /**
      * Initialize the parameters.
      *
-     * @param array|mixed|Traversable $options the connection options
+     * @param array|Traversable $options the connection options
      *
      * @throws Exception when $options are an invalid type
      */

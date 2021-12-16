@@ -328,7 +328,7 @@ class Connection
      *
      * @param int $quantity number of messages to wait for
      *
-     * @return null|Connection $connection Connection object
+     * @return null|static $connection Connection object
      */
     public function wait(int $quantity = 0): ?static
     {
