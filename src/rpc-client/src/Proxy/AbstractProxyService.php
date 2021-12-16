@@ -16,10 +16,7 @@ use Psr\Container\ContainerInterface;
 
 abstract class AbstractProxyService
 {
-    /**
-     * @var ServiceClient
-     */
-    protected $client;
+    protected ServiceClient $client;
 
     public function __construct(ContainerInterface $container, string $serviceName, string $protocol, array $options = [])
     {

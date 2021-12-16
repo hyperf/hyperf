@@ -32,60 +32,33 @@ abstract class AbstractServiceClient
 {
     /**
      * The service name of the target service.
-     *
-     * @var string
      */
-    protected $serviceName = '';
+    protected string $serviceName = '';
 
     /**
      * The protocol of the target service, this protocol name
      * needs to register into \Hyperf\Rpc\ProtocolManager.
-     *
-     * @var string
      */
-    protected $protocol = 'jsonrpc-http';
+    protected string $protocol = 'jsonrpc-http';
 
     /**
      * The load balancer of the client, this name of the load balancer
      * needs to register into \Hyperf\LoadBalancer\LoadBalancerManager.
-     *
-     * @var string
      */
-    protected $loadBalancer = 'random';
+    protected string $loadBalancer = 'random';
 
-    /**
-     * @var \Hyperf\RpcClient\Client
-     */
-    protected $client;
+    protected Client $client;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected LoadBalancerManager $loadBalancerManager;
 
-    /**
-     * @var \Hyperf\LoadBalancer\LoadBalancerManager
-     */
-    protected $loadBalancerManager;
+    protected ?IdGeneratorInterface $idGenerator;
 
-    /**
-     * @var null|\Hyperf\Contract\IdGeneratorInterface
-     */
-    protected $idGenerator;
+    protected PathGeneratorInterface $pathGenerator;
 
-    /**
-     * @var PathGeneratorInterface
-     */
-    protected $pathGenerator;
+    protected DataFormatterInterface $dataFormatter;
 
-    /**
-     * @var DataFormatterInterface
-     */
-    protected $dataFormatter;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->loadBalancerManager = $container->get(LoadBalancerManager::class);
         $protocol = new Protocol($container, $container->get(ProtocolManager::class), $this->protocol, $this->getOptions());
         $loadBalancer = $this->createLoadBalancer(...$this->createNodes());
