@@ -21,19 +21,19 @@ class NormalizeDataFormatter extends DataFormatter
         parent::__construct($context);
     }
 
-    public function formatRequest($data)
+    public function formatRequest(array $data): array
     {
         $data[1] = $this->normalizer->normalize($data[1]);
         return parent::formatRequest($data);
     }
 
-    public function formatResponse($data)
+    public function formatResponse(array $data): array
     {
         $data[1] = $this->normalizer->normalize($data[1]);
         return parent::formatResponse($data);
     }
 
-    public function formatErrorResponse($data)
+    public function formatErrorResponse(array $data): array
     {
         if (isset($data[3]) && $data[3] instanceof \Throwable) {
             $data[3] = [

@@ -20,7 +20,7 @@ class DataFormatter implements DataFormatterInterface
     {
     }
 
-    public function formatRequest($data)
+    public function formatRequest(array $data): array
     {
         [$path, $params, $id] = $data;
         return [
@@ -32,7 +32,7 @@ class DataFormatter implements DataFormatterInterface
         ];
     }
 
-    public function formatResponse($data)
+    public function formatResponse(array $data): array
     {
         [$id, $result] = $data;
         return [
@@ -43,7 +43,7 @@ class DataFormatter implements DataFormatterInterface
         ];
     }
 
-    public function formatErrorResponse($data)
+    public function formatErrorResponse(array $data): array
     {
         [$id, $code, $message, $data] = $data;
 
