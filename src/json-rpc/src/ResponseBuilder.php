@@ -14,6 +14,8 @@ namespace Hyperf\JsonRpc;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
+use Hyperf\Rpc\ErrorResponse;
+use Hyperf\Rpc\Response;
 use Hyperf\Utils\Context;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -57,14 +59,18 @@ class ResponseBuilder
 
     protected function formatResponse($response, ServerRequestInterface $request): string
     {
-        $response = $this->dataFormatter->formatResponse([$request->getAttribute('request_id'), $response]);
+        $response = $this->dataFormatter->formatResponse(
+            new Response($request->getAttribute('request_id'), $response)
+        );
         return $this->packer->pack($response);
     }
 
     protected function formatErrorResponse(ServerRequestInterface $request, int $code, \Throwable $error = null): string
     {
         [$code, $message] = $this->error($code, $error?->getMessage());
-        $response = $this->dataFormatter->formatErrorResponse([$request->getAttribute('request_id'), $code, $message, $error]);
+        $response = $this->dataFormatter->formatErrorResponse(
+            new ErrorResponse($request->getAttribute('request_id'), $code, $message, $error)
+        );
         return $this->packer->pack($response);
     }
 

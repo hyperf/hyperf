@@ -21,6 +21,7 @@ use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\Rpc\IdGenerator;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
+use Hyperf\Rpc\Request;
 use Hyperf\RpcClient\Exception\RequestException;
 use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\ServiceGovernance\DriverManager;
@@ -100,7 +101,7 @@ abstract class AbstractServiceClient
 
     protected function __generateData(string $methodName, array $params, ?string $id)
     {
-        return $this->dataFormatter->formatRequest([$this->__generateRpcPath($methodName), $params, $id]);
+        return $this->dataFormatter->formatRequest(new Request($this->__generateRpcPath($methodName), $params, $id));
     }
 
     public function getServiceName(): string

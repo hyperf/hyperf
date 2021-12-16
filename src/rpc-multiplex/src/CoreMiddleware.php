@@ -15,7 +15,9 @@ use Closure;
 use Hyperf\HttpMessage\Base\Response;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
+use Hyperf\Rpc\ErrorResponse;
 use Hyperf\Rpc\Protocol;
+use Hyperf\Rpc\Response as RPCResponse;
 use Hyperf\RpcMultiplex\Contract\HttpMessageBuilderInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -89,13 +91,15 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
     {
         $id = $request->getAttribute(Constant::REQUEST_ID);
 
-        return $this->dataFormatter->formatErrorResponse([$id, $code, $message ?? Response::getReasonPhraseByCode($code), $throwable]);
+        return $this->dataFormatter->formatErrorResponse(
+            new ErrorResponse($id, $code, $message ?? Response::getReasonPhraseByCode($code), $throwable)
+        );
     }
 
     protected function buildData(ServerRequestInterface $request, $response): array
     {
         $id = $request->getAttribute(Constant::REQUEST_ID);
 
-        return $this->dataFormatter->formatResponse([$id, $response]);
+        return $this->dataFormatter->formatResponse(new RPCResponse($id, $response));
     }
 }
