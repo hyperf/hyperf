@@ -21,14 +21,12 @@ interface Encoder
      *
      * @param string $payload message to decode
      */
-    public function encode($payload): string;
+    public function encode(mixed $payload): string;
 
     /**
      * Decodes a message.
      *
      * @param string $payload message to decode
-     *
-     * @return mixed
      */
-    public function decode($payload);
+    public function decode(string $payload): mixed;
 }
