@@ -11,11 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nats;
 
-/**
- * Class Php71RandomGenerator.
- * @deprecated
- */
-class Php71RandomGenerator
+class RandomGenerator
 {
     /**
      * A simple wrapper on random_bytes.
@@ -24,7 +20,7 @@ class Php71RandomGenerator
      *
      * @return string random string
      */
-    public function generateString($len)
+    public function generateString($len): string
     {
         return bin2hex(random_bytes($len));
     }

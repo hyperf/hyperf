@@ -11,38 +11,32 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nats;
 
+use Stringable;
+
 /**
  * Message Class.
  */
-class Message
+class Message implements Stringable
 {
     /**
      * Message Body.
-     *
-     * @var string
      */
-    public $body;
+    public string $body;
 
     /**
      * Message Subject.
-     *
-     * @var string
      */
-    private $subject;
+    private string $subject;
 
     /**
      * Message Ssid.
-     *
-     * @var string
      */
-    private $sid;
+    private string $sid;
 
     /**
      * Message related connection.
-     *
-     * @var Connection
      */
-    private $conn;
+    private Connection $conn;
 
     /**
      * Message constructor.
@@ -52,7 +46,7 @@ class Message
      * @param string $sid message Sid
      * @param Connection $conn message Connection
      */
-    public function __construct($subject, $body, $sid, Connection $conn)
+    public function __construct(string $subject, string $body, string $sid, Connection $conn)
     {
         $this->setSubject($subject);
         $this->setBody($body);
@@ -62,10 +56,8 @@ class Message
 
     /**
      * String representation of a message.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getBody();
     }
@@ -77,7 +69,7 @@ class Message
      *
      * @return $this
      */
-    public function setSubject($subject)
+    public function setSubject(string $subject): static
     {
         $this->subject = $subject;
 
@@ -86,10 +78,8 @@ class Message
 
     /**
      * Get subject.
-     *
-     * @return string
      */
-    public function getSubject()
+    public function getSubject(): string
     {
         return $this->subject;
     }
@@ -101,7 +91,7 @@ class Message
      *
      * @return $this
      */
-    public function setBody($body)
+    public function setBody(string $body): static
     {
         $this->body = $body;
         return $this;
@@ -109,10 +99,8 @@ class Message
 
     /**
      * Get body.
-     *
-     * @return string
      */
-    public function getBody()
+    public function getBody(): string
     {
         return $this->body;
     }
@@ -124,7 +112,7 @@ class Message
      *
      * @return $this
      */
-    public function setSid($sid)
+    public function setSid(string $sid): static
     {
         $this->sid = $sid;
         return $this;
@@ -132,10 +120,8 @@ class Message
 
     /**
      * Get Ssid.
-     *
-     * @return string
      */
-    public function getSid()
+    public function getSid(): string
     {
         return $this->sid;
     }
@@ -147,7 +133,7 @@ class Message
      *
      * @return $this
      */
-    public function setConn(Connection $conn)
+    public function setConn(Connection $conn): static
     {
         $this->conn = $conn;
         return $this;
@@ -155,10 +141,8 @@ class Message
 
     /**
      * Get Conn.
-     *
-     * @return Connection
      */
-    public function getConn()
+    public function getConn(): Connection
     {
         return $this->conn;
     }
@@ -168,7 +152,7 @@ class Message
      *
      * @param string $body body to be set
      */
-    public function reply($body)
+    public function reply(string $body)
     {
         $this->conn->publish(
             $this->subject,
