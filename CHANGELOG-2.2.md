@@ -1,5 +1,7 @@
 # v2.2.21 - TBD
 
+# v2.2.21 - 2021-12-20
+
 ## Fixed
 
 - [#4347](https://github.com/hyperf/hyperf/pull/4347) Fixed bug that amqp io has been bound to more than one coroutine when out of buffer.
