@@ -1,5 +1,22 @@
 # 版本更新記錄
 
+# v2.2.21 - 2021-12-20
+
+## 修復
+
+- [#4347](https://github.com/hyperf/hyperf/pull/4347) 修復使用 `AMQP` 元件時，如果連線緩衝區溢位，會導致連線被繫結到多個協程從而報錯的問題。
+- [#4373](https://github.com/hyperf/hyperf/pull/4373) 修復使用 `Snowflake` 元件時，由於 `getWorkerId()` 中存在 `IO` 操作進而導致協程切換，最終導致元資料生成重複的問題。
+
+## 新增
+
+- [#4344](https://github.com/hyperf/hyperf/pull/4344) 新增事件 `Hyperf\Crontab\Event\FailToExecute`，此事件會在 `Crontab` 任務執行失敗時觸發。
+- [#4348](https://github.com/hyperf/hyperf/pull/4348) 支援使用 `gen:*` 命令建立檔案時，自動吊起對應的 `IDE`，並開啟當前檔案。
+
+## 優化
+
+- [#4350](https://github.com/hyperf/hyperf/pull/4350) 優化了未開啟 `swoole.use_shortname` 時的錯誤資訊。
+- [#4360](https://github.com/hyperf/hyperf/pull/4360) 將 `Hyperf\Amqp\IO\SwooleIO` 進行重構，使用更加穩定和高效的 `Swoole\Coroutine\Socket` 而非 `Swoole\Coroutine\Client`。
+
 # v2.2.20 - 2021-12-13
 
 ## 修復

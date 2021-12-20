@@ -1,8 +1,11 @@
-# v2.2.21 - TBD
+# v2.2.22 - TBD
+
+# v2.2.21 - 2021-12-20
 
 ## Fixed
 
 - [#4347](https://github.com/hyperf/hyperf/pull/4347) Fixed bug that amqp io has been bound to more than one coroutine when out of buffer.
+- [#4373](https://github.com/hyperf/hyperf/pull/4373) Fixed the metadata generation error caused by switching coroutine for snowflake.
 
 ## Added
 
@@ -12,6 +15,7 @@
 ## Optimized
 
 - [#4350](https://github.com/hyperf/hyperf/pull/4350) Optimized the error message for `swoole.use_shortname`.
+- [#4360](https://github.com/hyperf/hyperf/pull/4360) No longer uses `Swoole\Coroutine\Client`, but uses `Swoole\Coroutine\Socket`, which is more stable and has better performance in `Hyperf\Amqp\IO\SwooleIO`.
 
 # v2.2.20 - 2021-12-13
 

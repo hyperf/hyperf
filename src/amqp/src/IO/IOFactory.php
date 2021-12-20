@@ -27,7 +27,8 @@ class IOFactory implements IOFactoryInterface
             'Swoole' => new SwooleIO(
                 $host,
                 $port,
-                $params->getConnectionTimeout()
+                $params->getConnectionTimeout(),
+                $params->getReadWriteTimeout()
             ),
             default => throw new NotSupportedException()
         };

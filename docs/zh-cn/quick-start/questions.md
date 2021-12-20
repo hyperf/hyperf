@@ -169,3 +169,15 @@ http2 => enabled
 如果没有，需要重新编译 Swoole 并增加 `--enable-http2` 参数。
 
 2. 检查 [server.php](/zh-cn/config?id=serverphp-配置说明) 文件中 `open_http2_protocol` 选项是否为 `true`。
+
+## Command 无法正常关闭
+
+在 Command 中使用 AMQP 等多路复用技术后，会导致无法正常关闭，碰到这种情况只需要在执行逻辑最后增加以下代码即可。
+
+```php
+<?php
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coordinator\Constants;
+
+CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
+```
