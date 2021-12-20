@@ -79,7 +79,10 @@ class AMQPConnection extends AbstractConnection
      */
     protected $exited = false;
 
-    protected Channel $chan;
+    /**
+     * @var Channel
+     */
+    protected $chan;
 
     public function __construct(
         string $user,
