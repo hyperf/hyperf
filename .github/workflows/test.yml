@@ -22,8 +22,6 @@ jobs:
             sw-version: 'v4.6.7'
           - php-version: '8.1'
             sw-version: 'v4.7.1'
-          - php-version: '8.1'
-            sw-version: 'v4.8.3'
       max-parallel: 12
       fail-fast: false
     env:
