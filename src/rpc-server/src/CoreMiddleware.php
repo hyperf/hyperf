@@ -20,15 +20,9 @@ use Hyperf\RpcServer\Router\DispatcherFactory;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * {@inheritdoc}
- */
 class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
 {
-    /**
-     * @var Protocol
-     */
-    protected $protocol;
+    protected Protocol $protocol;
 
     public function __construct(ContainerInterface $container, Protocol $protocol, string $serverName)
     {
@@ -36,9 +30,6 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
         parent::__construct($container, $serverName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function createDispatcher(string $serverName): Dispatcher
     {
         $factory = make(DispatcherFactory::class, [

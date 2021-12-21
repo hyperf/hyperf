@@ -16,32 +16,8 @@ use Hyperf\RpcServer\Annotation\RpcService as Annotation;
 
 class AfterPathRegister implements Arrayable
 {
-    /**
-     * @var string
-     */
-    public $path;
-
-    /**
-     * @var string
-     */
-    public $className;
-
-    /**
-     * @var string
-     */
-    public $methodName;
-
-    /**
-     * @var Annotation
-     */
-    public $annotation;
-
-    public function __construct(string $path, string $className, string $methodName, Annotation $annotation)
+    public function __construct(public string $path, public string $className, public string $methodName, public Annotation $annotation)
     {
-        $this->path = $path;
-        $this->className = $className;
-        $this->methodName = $methodName;
-        $this->annotation = $annotation;
     }
 
     public function toArray(): array
