@@ -35,61 +35,22 @@ use Throwable;
 
 abstract class Server implements OnReceiveInterface, MiddlewareInitializerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected array $middlewares = [];
 
-    /**
-     * @var DispatcherInterface
-     */
-    protected $dispatcher;
+    protected array $exceptionHandlers = [];
 
-    /**
-     * @var ExceptionHandlerDispatcher
-     */
-    protected $exceptionHandlerDispatcher;
+    protected ?CoreMiddlewareInterface $coreMiddleware = null;
 
-    /**
-     * @var array
-     */
-    protected $middlewares;
+    protected ?string $serverName = null;
 
-    /**
-     * @var CoreMiddlewareInterface
-     */
-    protected $coreMiddleware;
-
-    /**
-     * @var array
-     */
-    protected $exceptionHandlers;
-
-    /**
-     * @var string
-     */
-    protected $serverName;
-
-    /**
-     * @var Protocol
-     */
-    protected $protocol;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected ?Protocol $protocol = null;
 
     public function __construct(
-        ContainerInterface $container,
-        DispatcherInterface $dispatcher,
-        ExceptionHandlerDispatcher $exceptionDispatcher,
-        LoggerInterface $logger
+        protected ContainerInterface $container,
+        protected DispatcherInterface $dispatcher,
+        protected ExceptionHandlerDispatcher $exceptionHandlerDispatcher,
+        protected LoggerInterface $logger
     ) {
-        $this->container = $container;
-        $this->dispatcher = $dispatcher;
-        $this->exceptionHandlerDispatcher = $exceptionDispatcher;
-        $this->logger = $logger;
     }
 
     public function initCoreMiddleware(string $serverName): void
