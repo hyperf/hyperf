@@ -14,14 +14,10 @@ namespace Hyperf\Nats\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class Consumer extends AbstractAnnotation
 {
-    public function __construct($subject = '', $queue = '', $name = '', $nums = 1, $pool = '')
+    public function __construct(string $subject = '', string $queue = '', string $name = '', int $nums = 1, string $pool = '')
     {
     }
 }
