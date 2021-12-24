@@ -18,11 +18,6 @@ class ServerManager
     use Container;
 
     /**
-     * @var array
-     */
-    protected static $container = [];
-
-    /**
      * @param array $value [$serverType, $server]
      */
     public static function add(string $name, array $value)

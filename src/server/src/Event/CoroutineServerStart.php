@@ -16,24 +16,9 @@ use Swoole\Coroutine\Server;
 class CoroutineServerStart
 {
     /**
-     * @var string
+     * @param mixed|Server $server
      */
-    public $name = '';
-
-    /**
-     * @var object|Server
-     */
-    public $server;
-
-    /**
-     * @var array
-     */
-    public $serverConfig;
-
-    public function __construct(string $name, $server, array $serverConfig)
+    public function __construct(public string $name, public mixed $server, public array $serverConfig)
     {
-        $this->name = $name;
-        $this->server = $server;
-        $this->serverConfig = $serverConfig;
     }
 }
