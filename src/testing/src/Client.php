@@ -55,7 +55,7 @@ class Client extends Server
         $this->initBaseUri($server);
     }
 
-    public function get($uri, $data = [], $headers = [])
+    public function get(string $uri, array $data = [], array $headers = [])
     {
         $response = $this->request('GET', $uri, [
             'headers' => $headers,
@@ -65,7 +65,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function post($uri, $data = [], $headers = [])
+    public function post(string $uri, array $data = [], array $headers = [])
     {
         $response = $this->request('POST', $uri, [
             'headers' => $headers,
@@ -75,7 +75,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function put($uri, $data = [], $headers = [])
+    public function put(string $uri, array $data = [], array $headers = [])
     {
         $response = $this->request('PUT', $uri, [
             'headers' => $headers,
@@ -85,7 +85,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function delete($uri, $data = [], $headers = [])
+    public function delete(string $uri, array $data = [], array $headers = [])
     {
         $response = $this->request('DELETE', $uri, [
             'headers' => $headers,
@@ -95,7 +95,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function json($uri, $data = [], $headers = [])
+    public function json(string $uri, array $data = [], array $headers = [])
     {
         $headers['Content-Type'] = 'application/json';
         $response = $this->request('POST', $uri, [
@@ -105,7 +105,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function file($uri, $data = [], $headers = [])
+    public function file(string $uri, array $data = [], array $headers = [])
     {
         $multipart = [];
         if (Arr::isAssoc($data)) {
@@ -174,7 +174,7 @@ class Client extends Server
         Context::set(ResponseInterface::class, $response);
     }
 
-    protected function initBaseUri($server): void
+    protected function initBaseUri(string $server): void
     {
         if ($this->container->has(ConfigInterface::class)) {
             $config = $this->container->get(ConfigInterface::class);
