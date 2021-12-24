@@ -18,38 +18,21 @@ use Hyperf\Nsq\Pool\NsqConnection;
 use Hyperf\Nsq\Pool\NsqPoolFactory;
 use Hyperf\Pool\Exception\ConnectionException;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use Swoole\Coroutine\Socket;
 
 class Nsq
 {
-    /**
-     * @var \Swoole\Coroutine\Socket
-     */
-    protected $socket;
+    protected ?Socket $socket = null;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected Pool\NsqPool $pool;
 
-    /**
-     * @var Pool\NsqPool
-     */
-    protected $pool;
+    protected MessageBuilder $builder;
 
-    /**
-     * @var MessageBuilder
-     */
-    protected $builder;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    public function __construct(ContainerInterface $container, string $pool = 'default')
+    public function __construct(protected ContainerInterface $container, string $pool = 'default')
     {
-        $this->container = $container;
         $this->pool = $container->get(NsqPoolFactory::class)->getPool($pool);
         $this->builder = $container->get(MessageBuilder::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
@@ -57,9 +40,8 @@ class Nsq
 
     /**
      * @param string|string[] $message
-     * @throws \Throwable
      */
-    public function publish(string $topic, $message, float $deferTime = 0.0): bool
+    public function publish(string $topic, string|array $message, float $deferTime = 0.0): bool
     {
         if (is_array($message)) {
             if ($deferTime > 0) {
