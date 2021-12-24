@@ -18,6 +18,7 @@ use Hyperf\Utils\Arr;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\UriInterface;
 
 class HttpClient
 {
@@ -39,7 +40,7 @@ class HttpClient
         ]);
     }
 
-    public function get($uri, $data = [], $headers = [])
+    public function get(string|UriInterface $uri, array $data = [], array $headers = [])
     {
         $response = $this->client->get($uri, [
             'headers' => $headers,
@@ -48,7 +49,7 @@ class HttpClient
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function post($uri, $data = [], $headers = [])
+    public function post(string|UriInterface $uri, array $data = [], array $headers = [])
     {
         $response = $this->client->post($uri, [
             'headers' => $headers,
@@ -58,7 +59,7 @@ class HttpClient
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function json($uri, $data = [], $headers = [])
+    public function json(string|UriInterface $uri, array $data = [], array $headers = [])
     {
         $headers['Content-Type'] = 'application/json';
         $response = $this->client->post($uri, [
@@ -69,7 +70,7 @@ class HttpClient
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function file($uri, $data = [], $headers = [])
+    public function file(string|UriInterface $uri, array $data = [], array $headers = [])
     {
         $multipart = [];
         if (Arr::isAssoc($data)) {
@@ -95,7 +96,7 @@ class HttpClient
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function client()
+    public function client(): Client
     {
         return $this->client;
     }
