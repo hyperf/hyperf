@@ -16,7 +16,7 @@ use Hyperf\Utils\Context;
 
 class InitProcessTitleListenerStub2 extends InitProcessTitleListener
 {
-    protected $dot = '#';
+    protected string $dot = '#';
 
     public function setTitle(string $title)
     {
