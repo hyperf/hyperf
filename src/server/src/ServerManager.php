@@ -17,10 +17,7 @@ class ServerManager
 {
     use Container;
 
-    /**
-     * @var array
-     */
-    protected static $container = [];
+    protected static array $container = [];
 
     /**
      * @param array $value [$serverType, $server]
