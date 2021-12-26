@@ -18,14 +18,8 @@ use Hyperf\ServiceGovernanceNacos\NacosDriver;
 
 class RegisterDriverListener implements ListenerInterface
 {
-    /**
-     * @var DriverManager
-     */
-    protected $driverManager;
-
-    public function __construct(DriverManager $manager)
+    public function __construct(protected DriverManager $driverManager)
     {
-        $this->driverManager = $manager;
     }
 
     public function listen(): array

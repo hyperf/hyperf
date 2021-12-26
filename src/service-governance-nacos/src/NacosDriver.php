@@ -21,52 +21,26 @@ use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 
 class NacosDriver implements DriverInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected Client $client;
 
-    /**
-     * @var Client
-     */
-    protected $client;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
+    protected ConfigInterface $config;
 
-    /**
-     * @var array
-     */
-    protected $serviceRegistered = [];
+    protected array $serviceRegistered = [];
 
-    /**
-     * @var array
-     */
-    protected $serviceCreated = [];
+    protected array $serviceCreated = [];
 
-    /**
-     * @var array
-     */
-    protected $registerHeartbeat = [];
+    protected array $registerHeartbeat = [];
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
+    private array $metadata = [];
 
-    /**
-     * @var array
-     */
-    private $metadata = [];
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->client = $container->get(Client::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->config = $container->get(ConfigInterface::class);
@@ -109,7 +83,7 @@ class NacosDriver implements DriverInterface
             ]);
 
             if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
-                throw new RequestException(sprintf('Failed to create nacos service %s , %s !', $name, (string) $response->getBody()));
+                throw new RequestException(sprintf('Failed to create nacos service %s , %s !', $name, $response->getBody()));
             }
 
             $this->serviceCreated[$name] = true;
@@ -121,7 +95,7 @@ class NacosDriver implements DriverInterface
         ]);
 
         if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
-            throw new RequestException(sprintf('Failed to create nacos instance %s:%d! for %s , %s ', $host, $port, $name, (string) $response->getBody()));
+            throw new RequestException(sprintf('Failed to create nacos instance %s:%d! for %s , %s ', $host, $port, $name, $response->getBody()));
         }
 
         $this->serviceRegistered[$name] = true;
@@ -184,7 +158,7 @@ class NacosDriver implements DriverInterface
             ];
             $body = (string) $response->getBody();
             foreach ($messages as $message) {
-                if (strpos($body, $message) !== false) {
+                if (str_contains($body, $message)) {
                     return true;
                 }
             }
@@ -239,7 +213,7 @@ class NacosDriver implements DriverInterface
                         $lightBeatEnabled
                     );
 
-                    $result = json_decode($response->getBody()->getContents(), true);
+                    $result = Json::decode((string) $response->getBody());
 
                     if ($response->getStatusCode() === 200) {
                         $this->logger->debug(sprintf('Instance %s:%d heartbeat successfully, result code:%s', $host, $port, $result['code']));
