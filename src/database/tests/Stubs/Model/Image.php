@@ -33,8 +33,6 @@ class Image extends Model
 
     /**
      * The attributes that should be cast to native types.
-     *
-     * @var array
      */
     protected array $casts = ['id' => 'integer', 'imageable_id' => 'integer', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
 

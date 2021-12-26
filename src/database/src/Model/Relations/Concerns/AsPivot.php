@@ -105,8 +105,6 @@ trait AsPivot
 
     /**
      * Get the table associated with the model.
-     *
-     * @return string
      */
     public function getTable(): string
     {
@@ -200,7 +198,7 @@ trait AsPivot
     /**
      * Get a new query to restore one or more models by their queueable IDs.
      *
-     * @param array<int> $ids
+     * @param array<int>|string $ids
      * @return \Hyperf\Database\Model\Builder
      */
     public function newQueryForRestoration($ids)
