@@ -81,5 +81,5 @@ interface MigrationRepositoryInterface
      *
      * @param string $name
      */
-    public function setSource($name);
+    public function setSource(?string $name);
 }

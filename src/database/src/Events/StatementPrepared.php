@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Events;
 
-use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Connection;
+use Hyperf\Database\ConnectionInterface;
 use PDOStatement;
 
 class StatementPrepared
