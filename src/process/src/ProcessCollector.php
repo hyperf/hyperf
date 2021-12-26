@@ -18,7 +18,7 @@ use Swoole\Process;
  */
 class ProcessCollector
 {
-    protected static $processes = [];
+    protected static array $processes = [];
 
     public static function add($name, Process $process)
     {
@@ -33,7 +33,7 @@ class ProcessCollector
     public static function all(): array
     {
         $result = [];
-        foreach (static::$processes as $name => $processes) {
+        foreach (static::$processes as $processes) {
             $result = array_merge($result, $processes);
         }
         return $result;

@@ -27,7 +27,7 @@ class MetricProcess extends AbstractProcess
 {
     public string $name = 'metric';
 
-    public $nums = 1;
+    public int $nums = 1;
 
     /**
      * @var MetricFactoryInterface
