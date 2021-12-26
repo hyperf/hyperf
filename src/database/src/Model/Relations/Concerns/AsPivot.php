@@ -108,7 +108,7 @@ trait AsPivot
      *
      * @return string
      */
-    public function getTable()
+    public function getTable(): string
     {
         if (! isset($this->table)) {
             $this->setTable(str_replace(
