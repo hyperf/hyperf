@@ -15,6 +15,9 @@ use Hyperf\Contract\LengthAwarePaginatorInterface;
 
 class UrlWindow
 {
+    /**
+     * @param LengthAwarePaginatorInterface|AbstractPaginator $paginator
+     */
     public function __construct(protected LengthAwarePaginatorInterface $paginator)
     {
     }
