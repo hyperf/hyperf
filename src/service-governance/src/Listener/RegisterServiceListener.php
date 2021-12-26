@@ -21,33 +21,19 @@ use Hyperf\ServiceGovernance\DriverManager;
 use Hyperf\ServiceGovernance\IPReaderInterface;
 use Hyperf\ServiceGovernance\ServiceManager;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class RegisterServiceListener implements ListenerInterface
 {
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var ServiceManager
-     */
-    protected $serviceManager;
+    protected ServiceManager $serviceManager;
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
+    protected ConfigInterface $config;
 
-    /**
-     * @var IPReaderInterface
-     */
-    protected $ipReader;
+    protected IPReaderInterface $ipReader;
 
-    /**
-     * @var DriverManager
-     */
-    protected $governanceManager;
+    protected DriverManager $governanceManager;
 
     public function __construct(ContainerInterface $container)
     {
@@ -93,7 +79,7 @@ class RegisterServiceListener implements ListenerInterface
                 }
                 $continue = false;
             } catch (ServerException $throwable) {
-                if (strpos($throwable->getMessage(), 'Connection failed') !== false) {
+                if (str_contains($throwable->getMessage(), 'Connection failed')) {
                     $this->logger->warning('Cannot register service, connection of service center failed, re-register after 10 seconds.');
                     sleep(10);
                 } else {
