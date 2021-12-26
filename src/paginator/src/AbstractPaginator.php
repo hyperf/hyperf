@@ -25,73 +25,53 @@ abstract class AbstractPaginator implements PaginatorInterface
 
     /**
      * The number of links to display on each side of current page link.
-     *
-     * @var int
      */
-    public $onEachSide = 3;
+    public int $onEachSide = 3;
 
     /**
-     * All of the items being paginated.
-     *
-     * @var \Hyperf\Utils\Collection
+     * All the items being paginated.
      */
-    protected $items;
+    protected Collection $items;
 
     /**
      * The number of items to be shown per page.
-     *
-     * @var int
      */
-    protected $perPage;
+    protected int $perPage;
 
     /**
      * The current page being "viewed".
-     *
-     * @var int
      */
-    protected $currentPage;
+    protected int $currentPage;
 
     /**
      * The base path to assign to all URLs.
-     *
-     * @var string
      */
-    protected $path = '/';
+    protected string $path = '/';
 
     /**
      * The query parameters to add to all URLs.
-     *
-     * @var array
      */
-    protected $query = [];
+    protected array $query = [];
 
     /**
      * The URL fragment to add to all URLs.
-     *
-     * @var null|string
      */
-    protected $fragment;
+    protected ?string $fragment = null;
 
     /**
      * The query string variable used to store the page.
-     *
-     * @var string
      */
-    protected $pageName = 'page';
+    protected string $pageName = 'page';
 
     /**
      * The current path resolver callback.
-     *
-     * @var null|\Closure
      */
-    protected static $currentPathResolver;
+    protected static ?Closure $currentPathResolver = null;
 
     /**
      * The current page resolver callback.
-     *
-     * @var null|\Closure
      */
-    protected static $currentPageResolver;
+    protected static ?Closure $currentPageResolver = null;
 
     /**
      * Make dynamic calls into the collection.
@@ -106,7 +86,7 @@ abstract class AbstractPaginator implements PaginatorInterface
      */
     public function __toString(): string
     {
-        return (string) $this->render();
+        return $this->render();
     }
 
     /**
