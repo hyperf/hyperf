@@ -969,7 +969,7 @@ class Connection implements ConnectionInterface
     /**
      * Configure the PDO prepared statement.
      *
-     * @return \PDOStatement
+     * @return PDOStatement
      */
     protected function prepared(PDOStatement $statement)
     {
