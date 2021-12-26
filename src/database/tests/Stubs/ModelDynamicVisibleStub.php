@@ -19,7 +19,7 @@ class ModelDynamicVisibleStub extends Model
 
     protected array $guarded = [];
 
-    public function getVisible()
+    public function getVisible(): array
     {
         return ['name', 'id'];
     }

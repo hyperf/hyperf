@@ -86,7 +86,7 @@ class ModelStub extends Model
         return 'foo';
     }
 
-    public function getDates()
+    public function getDates(): array
     {
         return [];
     }

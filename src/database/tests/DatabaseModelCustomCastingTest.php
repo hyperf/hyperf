@@ -249,17 +249,13 @@ class TestModelWithCustomCast extends Model
 {
     /**
      * The attributes that aren't mass assignable.
-     *
-     * @var array
      */
-    protected $guarded = [];
+    protected array $guarded = [];
 
     /**
      * The attributes that should be cast to native types.
-     *
-     * @var array
      */
-    protected $casts = [
+    protected array $casts = [
         'address' => AddressCaster::class,
         'user' => UserInfoCaster::class,
         'password' => HashCaster::class,

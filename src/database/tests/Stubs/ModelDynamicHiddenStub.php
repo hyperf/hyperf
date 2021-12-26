@@ -19,7 +19,7 @@ class ModelDynamicHiddenStub extends Model
 
     protected array $guarded = [];
 
-    public function getHidden()
+    public function getHidden(): array
     {
         return ['age', 'id'];
     }

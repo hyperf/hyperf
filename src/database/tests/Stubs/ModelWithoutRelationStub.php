@@ -17,7 +17,7 @@ class ModelWithoutRelationStub extends Model
 {
     public $with = ['foo'];
 
-    protected $guarded = [];
+    protected array $guarded = [];
 
     public function getEagerLoads()
     {

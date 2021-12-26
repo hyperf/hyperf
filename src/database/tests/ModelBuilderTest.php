@@ -1233,7 +1233,7 @@ class ModelBuilderTestNestedStub extends Model
 
 class ModelBuilderTestPluckStub
 {
-    protected $attributes;
+    protected array $attributes;
 
     public function __construct($attributes)
     {
@@ -1248,7 +1248,7 @@ class ModelBuilderTestPluckStub
 
 class ModelBuilderTestPluckDatesStub extends Model
 {
-    protected $attributes;
+    protected array $attributes;
 
     public function __construct($attributes)
     {
