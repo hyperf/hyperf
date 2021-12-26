@@ -70,5 +70,5 @@ class DatabaseModelStub extends Model
 {
     protected $primaryKey = 'id_column';
 
-    protected $guarded = [];
+    protected array $guarded = [];
 }
