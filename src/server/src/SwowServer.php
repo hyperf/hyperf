@@ -34,11 +34,10 @@ class SwowServer implements ServerInterface
     protected bool $mainServerStarted = false;
 
     public function __construct(
-        protected ContainerInterface       $container,
-        protected LoggerInterface          $logger,
+        protected ContainerInterface $container,
+        protected LoggerInterface $logger,
         protected EventDispatcherInterface $eventDispatcher
-    )
-    {
+    ) {
     }
 
     public function init(ServerConfig $config): ServerInterface

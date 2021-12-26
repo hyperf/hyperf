@@ -37,59 +37,26 @@ abstract class AbstractProcess implements ProcessInterface
 {
     public string $name = 'process';
 
-    /**
-     * @var int
-     */
-    public $nums = 1;
+    public int $nums = 1;
 
-    /**
-     * @var bool
-     */
-    public $redirectStdinStdout = false;
+    public bool $redirectStdinStdout = false;
 
-    /**
-     * @var int
-     */
-    public $pipeType = SOCK_DGRAM;
+    public int $pipeType = SOCK_DGRAM;
 
-    /**
-     * @var bool
-     */
-    public $enableCoroutine = true;
+    public bool $enableCoroutine = true;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ?EventDispatcherInterface $event = null;
 
-    /**
-     * @var null|EventDispatcherInterface
-     */
-    protected $event;
+    protected ?SwooleProcess $process = null;
 
-    /**
-     * @var null|SwooleProcess
-     */
-    protected $process;
+    protected int $recvLength = 65535;
 
-    /**
-     * @var int
-     */
-    protected $recvLength = 65535;
+    protected float $recvTimeout = 10.0;
 
-    /**
-     * @var float
-     */
-    protected $recvTimeout = 10.0;
+    protected int $restartInterval = 5;
 
-    /**
-     * @var int
-     */
-    protected $restartInterval = 5;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         if ($container->has(EventDispatcherInterface::class)) {
             $this->event = $container->get(EventDispatcherInterface::class);
         }
