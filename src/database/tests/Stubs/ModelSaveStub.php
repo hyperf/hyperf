@@ -21,9 +21,9 @@ use Mockery;
 
 class ModelSaveStub extends Model
 {
-    protected $table = 'save_stub';
+    protected ?string $table = 'save_stub';
 
-    protected $guarded = ['id'];
+    protected array $guarded = ['id'];
 
     public function save(array $options = []): bool
     {

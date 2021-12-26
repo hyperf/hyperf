@@ -140,7 +140,7 @@ class ManagerTest extends TestCase
         $manager = new ClassInvoker(new ManagerStub($container));
         $handler = $manager->handlers['default'];
         $model = new class() extends ModelStub {
-            protected $table = 'model';
+            protected ?string $table = 'model';
         };
         $data = $manager->getAttributes($handler->getConfig(), $model, ['id' => 1]);
 

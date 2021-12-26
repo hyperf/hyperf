@@ -1208,7 +1208,7 @@ class ModelBuilderTest extends TestCase
 
 class ModelBuilderTestStub extends Model
 {
-    protected $table = 'table';
+    protected ?string $table = 'table';
 }
 
 class ModelBuilderTestScopeStub extends Model
@@ -1223,7 +1223,7 @@ class ModelBuilderTestNestedStub extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'table';
+    protected ?string $table = 'table';
 
     public function scopeEmpty($query)
     {
@@ -1298,7 +1298,7 @@ class ModelBuilderTestModelFarRelatedStub extends Model
 
 class ModelBuilderTestModelSelfRelatedStub extends Model
 {
-    protected $table = 'self_related_stubs';
+    protected ?string $table = 'self_related_stubs';
 
     public function parentFoo()
     {
@@ -1335,5 +1335,5 @@ class ModelBuilderTestStubWithoutTimestamp extends Model
 {
     public const UPDATED_AT = null;
 
-    protected $table = 'table';
+    protected ?string $table = 'table';
 }

@@ -17,7 +17,7 @@ class ModelNonIncrementingStub extends Model
 {
     public $incrementing = false;
 
-    protected $table = 'stub';
+    protected ?string $table = 'stub';
 
-    protected $guarded = [];
+    protected array $guarded = [];
 }

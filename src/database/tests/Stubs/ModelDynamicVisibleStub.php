@@ -15,9 +15,9 @@ use Hyperf\Database\Model\Model;
 
 class ModelDynamicVisibleStub extends Model
 {
-    protected $table = 'stub';
+    protected ?string $table = 'stub';
 
-    protected $guarded = [];
+    protected array $guarded = [];
 
     public function getVisible()
     {

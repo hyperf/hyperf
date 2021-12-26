@@ -20,9 +20,9 @@ class ModelStub extends Model
 
     public $scopesCalled = [];
 
-    protected $table = 'stub';
+    protected ?string $table = 'stub';
 
-    protected $guarded = [];
+    protected array $guarded = [];
 
     protected $morph_to_stub_type = ModelSaveStub::class;
 
