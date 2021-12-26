@@ -40,8 +40,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     use Concerns\HidesAttributes;
     use Concerns\GuardsAttributes;
 
-    protected array $guarded = ['*'];
-
     /**
      * The name of the "created at" column.
      *
