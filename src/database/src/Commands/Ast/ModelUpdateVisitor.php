@@ -52,36 +52,18 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         'morphedByMany' => MorphToMany::class,
     ];
 
-    /**
-     * @var Model
-     */
-    protected $class;
-
-    /**
-     * @var array
-     */
-    protected $columns = [];
-
-    /**
-     * @var ModelOption
-     */
-    protected $option;
+    protected Model $class;
 
     /**
      * @var Node\Stmt\ClassMethod[]
      */
-    protected $methods = [];
+    protected array $methods = [];
 
-    /**
-     * @var array
-     */
-    protected $properties = [];
+    protected array $properties = [];
 
-    public function __construct($class, $columns, ModelOption $option)
+    public function __construct(string $class, protected array $columns, protected ModelOption $option)
     {
         $this->class = new $class();
-        $this->columns = $columns;
-        $this->option = $option;
     }
 
     public function beforeTraverse(array $nodes)
@@ -108,6 +90,8 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 $node->setDocComment(new Doc($this->parse()));
                 return $node;
         }
+
+        return null;
     }
 
     protected function rewriteFillable(Node\Stmt\PropertyProperty $node): Node\Stmt\PropertyProperty
@@ -271,7 +255,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                             $this->setProperty($method->getName(), ['\\' . Model::class], true);
                         } elseif (isset($expr->args[0]) && $expr->args[0]->value instanceof Node\Expr\ClassConstFetch) {
                             $related = $expr->args[0]->value->class->toCodeString();
-                            if (strpos($name, 'Many') !== false) {
+                            if (str_contains($name, 'Many')) {
                                 // Collection or array of models (because Collection is Arrayable)
                                 $this->setProperty($method->getName(), [$this->getCollectionClass($related), $related . '[]'], true);
                             } else {
@@ -319,7 +303,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             $this->properties[$name]['type'] = 'mixed';
             $this->properties[$name]['read'] = false;
             $this->properties[$name]['write'] = false;
-            $this->properties[$name]['comment'] = (string) $comment;
+            $this->properties[$name]['comment'] = $comment;
             $this->properties[$name]['priority'] = 0;
         }
         if ($this->properties[$name]['priority'] > $priority) {
@@ -353,19 +337,11 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
     protected function formatDatabaseType(string $type): ?string
     {
-        switch ($type) {
-            case 'tinyint':
-            case 'smallint':
-            case 'mediumint':
-            case 'int':
-            case 'bigint':
-                return 'integer';
-            case 'bool':
-            case 'boolean':
-                return 'boolean';
-            default:
-                return null;
-        }
+        return match ($type) {
+            'tinyint', 'smallint', 'mediumint', 'int', 'bigint' => 'integer',
+            'bool', 'boolean' => 'boolean',
+            default => null,
+        };
     }
 
     protected function formatPropertyType(string $type, ?string $cast): ?string
@@ -374,17 +350,12 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
             $cast = $this->formatDatabaseType($type) ?? 'string';
         }
 
-        switch ($cast) {
-            case 'integer':
-                return 'int';
-            case 'date':
-            case 'datetime':
-                return '\Carbon\Carbon';
-            case 'json':
-                return 'array';
-        }
-
-        return $cast;
+        return match ($cast) {
+            'integer' => 'int',
+            'date', 'datetime' => '\Carbon\Carbon',
+            'json' => 'array',
+            default => $cast,
+        };
     }
 
     protected function getCollectionClass($className): string

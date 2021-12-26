@@ -20,15 +20,9 @@ use PhpParser\NodeTraverser;
 
 class ModelRewriteTimestampsVisitor extends AbstractVisitor
 {
-    /**
-     * @var Model
-     */
-    protected $class;
+    protected Model $class;
 
-    /**
-     * @var bool
-     */
-    protected $hasTimestamps = false;
+    protected bool $hasTimestamps = false;
 
     public function __construct(ModelOption $option, ModelData $data)
     {
@@ -50,6 +44,8 @@ class ModelRewriteTimestampsVisitor extends AbstractVisitor
                 }
                 return $node;
         }
+
+        return null;
     }
 
     public function afterTraverse(array $nodes)

@@ -19,20 +19,11 @@ use PhpParser\NodeTraverser;
 
 class ModelRewriteKeyInfoVisitor extends AbstractVisitor
 {
-    /**
-     * @var bool
-     */
-    protected $hasPrimaryKey = false;
+    protected bool $hasPrimaryKey = false;
 
-    /**
-     * @var bool
-     */
-    protected $hasKeyType = false;
+    protected bool $hasKeyType = false;
 
-    /**
-     * @var bool
-     */
-    protected $hasIncrementing = false;
+    protected bool $hasIncrementing = false;
 
     public function leaveNode(Node $node)
     {
@@ -58,6 +49,8 @@ class ModelRewriteKeyInfoVisitor extends AbstractVisitor
                 }
                 return $node;
         }
+
+        return null;
     }
 
     public function afterTraverse(array $nodes)
@@ -91,14 +84,12 @@ class ModelRewriteKeyInfoVisitor extends AbstractVisitor
         }
     }
 
-    protected function rewrite($property = 'primaryKey', ?Node\Stmt\Property $node = null): ?Node\Stmt\Property
+    protected function rewrite(string $property, ?Node\Stmt\Property $node = null): ?Node\Stmt\Property
     {
         $data = $this->getKeyInfo();
         if ($data === null) {
             return $node;
         }
-
-        [$primaryKey, $keyType, $incrementing] = $data;
 
         if ($this->shouldRemoveProperty($property, ${$property})) {
             return null;
