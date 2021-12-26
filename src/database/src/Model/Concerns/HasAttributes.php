@@ -1330,7 +1330,7 @@ trait HasAttributes
      * @param string $key
      * @param mixed $value
      */
-    protected function normalizeCastClassResponse($key, $value):array
+    protected function normalizeCastClassResponse($key, $value): array
     {
         return is_array($value) ? $value : [$key => $value];
     }
