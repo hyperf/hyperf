@@ -83,10 +83,8 @@ class ConnectionResolver implements ConnectionResolverInterface
 
     /**
      * Set the default connection name.
-     *
-     * @param string $name
      */
-    public function setDefaultConnection($name)
+    public function setDefaultConnection(string $name)
     {
         $this->default = $name;
     }
