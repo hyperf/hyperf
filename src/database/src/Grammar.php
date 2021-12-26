@@ -143,10 +143,8 @@ abstract class Grammar
 
     /**
      * Get the format for database stored dates.
-     *
-     * @return string
      */
-    public function getDateFormat()
+    public function getDateFormat(): string
     {
         return 'Y-m-d H:i:s';
     }

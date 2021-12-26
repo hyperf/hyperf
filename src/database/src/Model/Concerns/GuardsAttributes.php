@@ -17,8 +17,6 @@ trait GuardsAttributes
 {
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
     protected array $fillable = [];
 
@@ -71,6 +69,7 @@ trait GuardsAttributes
 
     /**
      * Disable all mass assignable restrictions.
+     * @param mixed $state
      */
     public static function unguard($state = true): void
     {
