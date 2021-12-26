@@ -19,29 +19,12 @@ use Symfony\Component\Finder\Finder;
 class FileHandler implements SessionHandlerInterface
 {
     /**
-     * The number of minutes the session should be valid.
-     *
-     * @var int
+     * @param Filesystem $files
+     * @param string $path the path where sessions should be stored
+     * @param int $minutes the number of minutes the session should be valid
      */
-    protected $minutes;
-
-    /**
-     * @var Filesystem
-     */
-    private $files;
-
-    /**
-     * The path where sessions should be stored.
-     *
-     * @var string
-     */
-    private $path;
-
-    public function __construct(Filesystem $files, string $path, int $minutes)
+    public function __construct(private Filesystem $files, private string $path, protected int $minutes)
     {
-        $this->files = $files;
-        $this->path = $path;
-        $this->minutes = $minutes;
         if (! file_exists($path)) {
             $files->makeDirectory($path, 0755, true);
         }
