@@ -21,16 +21,13 @@ class RedisHandler implements SessionHandlerInterface
      */
     protected $redis;
 
-    protected int $gcMaxLifeTime = 1200;
-
-    public function __construct($redis, int $gcMaxLifeTime)
+    public function __construct($redis, protected int $gcMaxLifeTime = 1200)
     {
         if (! $redis instanceof \Redis && ! $redis instanceof \RedisArray && ! $redis instanceof \RedisCluster && ! $redis instanceof \Predis\Client && ! $redis instanceof RedisProxy) {
             throw new \InvalidArgumentException(sprintf('%s() expects parameter 1 to be Redis, RedisArray, RedisCluster, Predis\Client or Hyperf\Redis\Redis, %s given', __METHOD__, \is_object($redis) ? \get_class($redis) : \gettype($redis)));
         }
 
         $this->redis = $redis;
-        $this->gcMaxLifeTime = $gcMaxLifeTime;
     }
 
     /**

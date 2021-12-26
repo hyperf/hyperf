@@ -21,12 +21,12 @@ class SessionProxy extends Session
         // Do nothing
     }
 
-    public function flash(string $key, $value = true): void
+    public function flash(string $key, mixed $value = true): void
     {
         $this->getSession()->flash($key, $value);
     }
 
-    public function now(string $key, $value): void
+    public function now(string $key, mixed $value): void
     {
         $this->getSession()->now($key, $value);
     }
