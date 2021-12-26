@@ -14,14 +14,10 @@ namespace Hyperf\Task\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS", "METHOD"})
- */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Task extends AbstractAnnotation
 {
-    public function __construct($workerId = -1, $timeout = 10)
+    public function __construct(int $workerId = -1, int $timeout = 10)
     {
     }
 }
