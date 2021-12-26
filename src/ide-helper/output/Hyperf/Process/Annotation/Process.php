@@ -12,17 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\Process\Annotation;
 
 use Attribute;
-use Doctrine\Common\Annotations\Annotation\Target;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target("CLASS")
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class Process extends AbstractAnnotation
 {
-    public function __construct($nums = null, $name = null, $redirectStdinStdout = null, $pipeType = null, $enableCoroutine = null)
+    public function __construct(?int $nums = null, ?string $name = null, ?bool $redirectStdinStdout = null, ?int $pipeType = null, ?bool $enableCoroutine = null)
     {
     }
 }

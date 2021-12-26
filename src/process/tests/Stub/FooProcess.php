@@ -17,7 +17,7 @@ class FooProcess extends AbstractProcess
 {
     public bool $enableCoroutine = false;
 
-    public $restartInterval = 0;
+    public int $restartInterval = 0;
 
     public static $handled = false;
 
