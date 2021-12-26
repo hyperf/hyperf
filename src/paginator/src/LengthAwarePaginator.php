@@ -24,28 +24,20 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
 {
     /**
      * The total number of items before slicing.
-     *
-     * @var int
      */
-    protected $total;
+    protected int $total;
 
     /**
      * The last available page.
-     *
-     * @var int
      */
-    protected $lastPage;
+    protected int $lastPage;
 
     /**
      * Create a new paginator instance.
      *
-     * @param mixed $items
-     * @param int $total
-     * @param int $perPage
-     * @param null|int $currentPage
      * @param array $options (path, query, fragment, pageName)
      */
-    public function __construct($items, $total, $perPage, $currentPage = 1, array $options = [])
+    public function __construct(mixed $items, int $total, int $perPage, ?int $currentPage = 1, array $options = [])
     {
         foreach ($options as $key => $value) {
             $this->{$key} = $value;
@@ -163,7 +155,7 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
     {
         $currentPage = $currentPage ?: static::resolveCurrentPage($pageName);
 
-        return $this->isValidPageNumber($currentPage) ? (int) $currentPage : 1;
+        return $this->isValidPageNumber($currentPage) ? $currentPage : 1;
     }
 
     /**
