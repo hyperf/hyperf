@@ -1,5 +1,9 @@
 # v2.2.22 - TBD
 
+## Fixed
+
+- [#4399](https://github.com/hyperf/hyperf/pull/4399) Fixed bug that `Redis::scan` does not work when using redis cluster.
+
 # v2.2.21 - 2021-12-20
 
 ## Fixed
