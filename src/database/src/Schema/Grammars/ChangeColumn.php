@@ -26,7 +26,6 @@ class ChangeColumn
      * Compile a change column command into a series of SQL statements.
      *
      * @param \Hyperf\Database\Schema\Grammars\Grammar $grammar
-     * @return array
      * @throws \RuntimeException
      */
     public static function compile($grammar, Blueprint $blueprint, Fluent $command, Connection $connection): array

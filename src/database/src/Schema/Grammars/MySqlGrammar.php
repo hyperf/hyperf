@@ -32,8 +32,6 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile the query to determine the list of tables.
-     *
-     * @return string
      */
     public function compileTableExists(): string
     {
@@ -950,7 +948,6 @@ class MySqlGrammar extends Grammar
      * Wrap a single string in keyword identifiers.
      *
      * @param string $value
-     * @return string
      */
     protected function wrapValue($value): string
     {
