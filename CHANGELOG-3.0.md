@@ -20,7 +20,7 @@ composer analyse
 
 ```shell
 composer require hyperf/code-generator
-php bin/hyperf.php code:regenerate-models
+php vendor/bin/regenerate-models.php $PWD/app/Model
 ```
 
 ## Dependencies Upgrade
@@ -34,6 +34,7 @@ php bin/hyperf.php code:regenerate-models
 
 - [#4196](https://github.com/hyperf/hyperf/pull/4196) Added `Hyperf\Amqp\IO\IOFactory` which used to create amqp io by yourself.
 - [#4304](https://github.com/hyperf/hyperf/pull/4304) Support `$suffix` for trait `Hyperf\Utils\Traits\StaticInstance`.
+- [#4400](https://github.com/hyperf/hyperf/pull/4400) Added `$description` which used to set command description easily for `Hyperf\Command\Command`.
 
 ## Optimized
 

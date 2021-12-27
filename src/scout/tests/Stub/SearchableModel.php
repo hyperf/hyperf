@@ -28,12 +28,12 @@ class SearchableModel extends Model
      */
     protected $queryCallback;
 
-    public function searchableAs()
+    public function searchableAs(): string
     {
         return 'table';
     }
 
-    public function scoutMetadata()
+    public function scoutMetadata(): array
     {
         return [];
     }
