@@ -14,6 +14,15 @@
 composer analyse
 ```
 
+升级模型脚本
+
+> 因为模型基类增加了成员变量的类型支持，所以需要使用以下脚本，将其升级为新版本。
+
+```shell
+composer require hyperf/code-generator
+php bin/hyperf.php code:regenerate-models
+```
+
 ## Dependencies Upgrade
 
 - Upgraded `php-amqplib/php-amqplib` to `^3.1`;

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Commands\Ast;
 
 use PhpParser\Node;
+use PhpParser\Node\Identifier;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 
@@ -35,6 +36,7 @@ class ModelRewriteConnectionVisitor extends NodeVisitorAbstract
                     }
 
                     $node->props[0]->default = new Node\Scalar\String_($this->connection);
+                    $node->type = new Node\NullableType(new Identifier('string'));
                 }
 
                 return $node;
