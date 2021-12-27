@@ -17,25 +17,10 @@ use PhpParser\NodeVisitorAbstract;
 
 class ModelRewriteConnectionVisitor extends NodeVisitorAbstract
 {
-    /**
-     * @var string
-     */
-    protected $class;
+    protected bool $hasConnection = false;
 
-    /**
-     * @var string
-     */
-    protected $connection;
-
-    /**
-     * @var bool
-     */
-    protected $hasConnection = false;
-
-    public function __construct(string $class, string $connection)
+    public function __construct(protected string $class, protected string $connection)
     {
-        $this->class = $class;
-        $this->connection = $connection;
     }
 
     public function leaveNode(Node $node)
@@ -54,6 +39,8 @@ class ModelRewriteConnectionVisitor extends NodeVisitorAbstract
 
                 return $node;
         }
+
+        return null;
     }
 
     public function afterTraverse(array $nodes)

@@ -18,7 +18,7 @@ use Hyperf\Utils\ApplicationContext;
 
 class User extends Model
 {
-    protected $table = 'user';
+    protected ?string $table = 'user';
 
     public function getConnection(): ConnectionInterface
     {

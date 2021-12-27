@@ -20,10 +20,8 @@ class SearchableModel extends Model
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = ['id'];
+    protected array $fillable = ['id'];
 
     /**
      * @var \Closure

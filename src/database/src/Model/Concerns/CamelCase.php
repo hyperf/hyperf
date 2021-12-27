@@ -34,7 +34,7 @@ trait CamelCase
         return $array;
     }
 
-    public function getFillable()
+    public function getFillable(): array
     {
         $fillable = [];
         foreach (parent::getFillable() as $key) {

@@ -19,17 +19,11 @@ class RefreshCommand extends Command
 {
     use ConfirmableTrait;
 
-    /**
-     * The console command name.
-     */
-    protected ?string $name = 'migrate:refresh';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Reset and re-run all migrations';
+    public function __construct()
+    {
+        parent::__construct('migrate:refresh');
+        $this->setDescription('Reset and re-run all migrations');
+    }
 
     /**
      * Execute the console command.

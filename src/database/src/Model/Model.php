@@ -56,80 +56,62 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
     /**
      * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
      */
-    public $incrementing = true;
+    public bool $incrementing = true;
 
     /**
      * Indicates if the model exists.
-     *
-     * @var bool
      */
-    public $exists = false;
+    public bool $exists = false;
 
     /**
      * Indicates if the model was inserted during the current request lifecycle.
-     *
-     * @var bool
      */
-    public $wasRecentlyCreated = false;
+    public bool $wasRecentlyCreated = false;
+
+    protected array $guarded = ['*'];
 
     /**
      * The connection name for the model.
      *
      * @var string
      */
-    protected $connection = 'default';
+    protected ?string $connection = 'default';
 
     /**
      * The table associated with the model.
-     *
-     * @var string
      */
-    protected $table;
+    protected ?string $table = null;
 
     /**
      * The primary key for the model.
-     *
-     * @var string
      */
-    protected $primaryKey = 'id';
+    protected string $primaryKey = 'id';
 
     /**
      * The "type" of the auto-incrementing ID.
-     *
-     * @var string
      */
-    protected $keyType = 'int';
+    protected string $keyType = 'int';
 
     /**
      * The relations to eager load on every query.
-     *
-     * @var array
      */
-    protected $with = [];
+    protected array $with = [];
 
     /**
      * The relationship counts that should be eager loaded on every query.
-     *
-     * @var array
      */
-    protected $withCount = [];
+    protected array $withCount = [];
 
     /**
      * The number of models to return for pagination.
-     *
-     * @var int
      */
-    protected $perPage = 15;
+    protected int $perPage = 15;
 
     /**
      * The array of trait initializers that will be called on each new instance.
-     *
-     * @var array
      */
-    protected $traitInitializers = [];
+    protected array $traitInitializers = [];
 
     /**
      * Create a new Model model instance.
@@ -611,9 +593,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Destroy the models for the given IDs.
      *
      * @param array|\Hyperf\Utils\Collection|int $ids
-     * @return int
      */
-    public static function destroy($ids)
+    public static function destroy($ids): int
     {
         // We'll initialize a count here so we will return the total number of deletes
         // for the operation. The developers can then check this number as a boolean
@@ -975,10 +956,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
     /**
      * Get the table associated with the model.
-     *
-     * @return string
      */
-    public function getTable()
+    public function getTable(): string
     {
         return $this->table ?? Str::snake(Str::pluralStudly(class_basename($this)));
     }
@@ -1124,10 +1103,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
     /**
      * Get the number of models to return per page.
-     *
-     * @return int
      */
-    public function getPerPage()
+    public function getPerPage(): int
     {
         return $this->perPage;
     }

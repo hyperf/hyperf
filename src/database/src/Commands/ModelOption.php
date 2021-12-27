@@ -17,77 +17,38 @@ class ModelOption
 
     public const PROPERTY_CAMEL_CASE = 1;
 
-    /**
-     * @var string
-     */
-    protected $pool;
+    protected ?string $pool = null;
 
-    /**
-     * @var string
-     */
-    protected $path;
+    protected ?string $path = null;
 
-    /**
-     * @var bool
-     */
-    protected $forceCasts;
+    protected ?bool $forceCasts = null;
 
-    /**
-     * @var string
-     */
-    protected $prefix;
+    protected ?string $prefix = null;
 
-    /**
-     * @var string
-     */
-    protected $inheritance;
+    protected ?string $inheritance = null;
 
-    /**
-     * @var string
-     */
-    protected $uses;
+    protected ?string $uses = null;
 
-    /**
-     * @var bool
-     */
-    protected $refreshFillable;
+    protected ?bool $refreshFillable = null;
 
-    /**
-     * @var bool
-     */
-    protected $withComments;
+    protected ?bool $withComments = null;
 
-    /**
-     * @var bool
-     */
-    protected $withIde;
+    protected ?bool $withIde = null;
 
-    /**
-     * @var array
-     */
-    protected $tableMapping = [];
+    protected array $tableMapping = [];
 
-    /**
-     * @var array
-     */
-    protected $ignoreTables = [];
+    protected array $ignoreTables = [];
 
-    /**
-     * @var array
-     */
-    protected $visitors = [];
+    protected array $visitors = [];
 
-    /**
-     * @var int
-     */
-    protected $propertyCase = self::PROPERTY_SNAKE_CASE;
+    protected int $propertyCase = self::PROPERTY_SNAKE_CASE;
 
     public function getPool(): string
     {
         return $this->pool;
     }
 
-    public function setPool(string $pool): self
+    public function setPool(string $pool): static
     {
         $this->pool = $pool;
         return $this;
@@ -98,7 +59,7 @@ class ModelOption
         return $this->path;
     }
 
-    public function setPath(string $path): self
+    public function setPath(string $path): static
     {
         $this->path = $path;
         return $this;
@@ -109,7 +70,7 @@ class ModelOption
         return $this->forceCasts;
     }
 
-    public function setForceCasts(bool $forceCasts): self
+    public function setForceCasts(bool $forceCasts): static
     {
         $this->forceCasts = $forceCasts;
         return $this;
@@ -120,7 +81,7 @@ class ModelOption
         return $this->prefix;
     }
 
-    public function setPrefix(string $prefix): self
+    public function setPrefix(string $prefix): static
     {
         $this->prefix = $prefix;
         return $this;
@@ -131,7 +92,7 @@ class ModelOption
         return $this->inheritance;
     }
 
-    public function setInheritance(string $inheritance): self
+    public function setInheritance(string $inheritance): static
     {
         $this->inheritance = $inheritance;
         return $this;
@@ -142,7 +103,7 @@ class ModelOption
         return $this->uses;
     }
 
-    public function setUses(string $uses): self
+    public function setUses(string $uses): static
     {
         $this->uses = $uses;
         return $this;
@@ -153,7 +114,7 @@ class ModelOption
         return $this->refreshFillable;
     }
 
-    public function setRefreshFillable(bool $refreshFillable): self
+    public function setRefreshFillable(bool $refreshFillable): static
     {
         $this->refreshFillable = $refreshFillable;
         return $this;
@@ -164,7 +125,7 @@ class ModelOption
         return $this->tableMapping;
     }
 
-    public function setTableMapping(array $tableMapping): self
+    public function setTableMapping(array $tableMapping): static
     {
         foreach ($tableMapping as $item) {
             [$key, $name] = explode(':', $item);
@@ -179,7 +140,7 @@ class ModelOption
         return $this->ignoreTables;
     }
 
-    public function setIgnoreTables(array $ignoreTables): self
+    public function setIgnoreTables(array $ignoreTables): static
     {
         $this->ignoreTables = $ignoreTables;
         return $this;
@@ -190,7 +151,7 @@ class ModelOption
         return $this->withComments;
     }
 
-    public function setWithComments(bool $withComments): self
+    public function setWithComments(bool $withComments): static
     {
         $this->withComments = $withComments;
         return $this;
@@ -212,7 +173,7 @@ class ModelOption
         return $this->visitors;
     }
 
-    public function setVisitors(array $visitors): self
+    public function setVisitors(array $visitors): static
     {
         $this->visitors = $visitors;
         return $this;
@@ -223,7 +184,7 @@ class ModelOption
         return $this->propertyCase === self::PROPERTY_CAMEL_CASE;
     }
 
-    public function setPropertyCase($propertyCase): self
+    public function setPropertyCase($propertyCase): static
     {
         $this->propertyCase = (int) $propertyCase;
         return $this;

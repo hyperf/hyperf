@@ -451,9 +451,9 @@ class ModelCollectionTest extends TestCase
 
 class TestEloquentCollectionModel extends Model
 {
-    protected $visible = ['visible'];
+    protected array $visible = ['visible'];
 
-    protected $hidden = ['hidden'];
+    protected array $hidden = ['hidden'];
 
     public function getTestAttribute()
     {

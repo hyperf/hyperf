@@ -15,5 +15,5 @@ use Hyperf\Database\Model\Model;
 
 class ModelStub extends Model
 {
-    protected $fillable = ['id'];
+    protected array $fillable = ['id'];
 }

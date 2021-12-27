@@ -16,13 +16,13 @@ use Hyperf\Database\Model\Model;
 
 class ModelStub extends Model
 {
-    public $connection;
+    public ?string $connection = null;
 
     public $scopesCalled = [];
 
-    protected $table = 'stub';
+    protected ?string $table = 'stub';
 
-    protected $guarded = [];
+    protected array $guarded = [];
 
     protected $morph_to_stub_type = ModelSaveStub::class;
 
@@ -86,7 +86,7 @@ class ModelStub extends Model
         return 'foo';
     }
 
-    public function getDates()
+    public function getDates(): array
     {
         return [];
     }
