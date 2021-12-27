@@ -20,7 +20,7 @@ composer analyse
 
 ```shell
 composer require hyperf/code-generator
-php bin/hyperf.php code:regenerate-models
+php vendor/bin/regenerate-models.php $PWD/app/Model
 ```
 
 ## Dependencies Upgrade
