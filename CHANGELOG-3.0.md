@@ -14,6 +14,13 @@
 composer analyse
 ```
 
+升级模型脚本
+
+```shell
+composer require hyperf/code-generator
+php bin/hyperf.php code:regenerate-models
+```
+
 ## Dependencies Upgrade
 
 - Upgraded `php-amqplib/php-amqplib` to `^3.1`;
