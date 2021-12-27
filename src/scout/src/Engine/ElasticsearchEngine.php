@@ -23,33 +23,23 @@ class ElasticsearchEngine extends Engine
 {
     /**
      * Elastic server version.
-     *
-     * @var string
      */
-    public static $version;
+    public static ?string $version = null;
 
     /**
      * Index where the models will be saved.
-     *
-     * @var null|string
      */
-    protected $index;
-
-    /**
-     * Elastic where the instance of Elastic|\Elasticsearch\Client is stored.
-     *
-     * @var object
-     */
-    protected $elastic;
+    protected ?string $index = null;
 
     /**
      * Create a new engine instance.
+     *
+     * @param Elastic $elastic elastic where the instance of Elastic|\Elasticsearch\Client is stored
      */
-    public function __construct(Client $client, ?string $index = null)
+    public function __construct(protected Client $elastic, ?string $index = null)
     {
-        $this->elastic = $client;
         if ($index) {
-            $this->index = $this->initIndex($client, $index);
+            $this->index = $this->initIndex($elastic, $index);
         }
     }
 
@@ -188,7 +178,7 @@ class ElasticsearchEngine extends Engine
     }
 
     /**
-     * Flush all of the model's records from the engine.
+     * Flush all the model's records from the engine.
      */
     public function flush(Model $model): void
     {

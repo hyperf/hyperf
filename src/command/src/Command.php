@@ -36,6 +36,8 @@ abstract class Command extends SymfonyCommand
      */
     protected ?string $name = null;
 
+    protected string $description = '';
+
     protected ?InputInterface $input = null;
 
     /**
@@ -91,6 +93,7 @@ abstract class Command extends SymfonyCommand
             $this->configureUsingFluentDefinition();
         } else {
             parent::__construct($this->name);
+            ! empty($this->description) && $this->setDescription($this->description);
         }
 
         $this->addEnableDispatcherOption();

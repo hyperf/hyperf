@@ -18,7 +18,6 @@ use Hyperf\Database\Query\Builder;
 use Hyperf\Validation\DatabasePresenceVerifier;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 /**
  * @internal

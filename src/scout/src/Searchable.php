@@ -22,10 +22,8 @@ trait Searchable
 {
     /**
      * Additional metadata attributes managed by Scout.
-     *
-     * @var array
      */
-    protected $scoutMetadata = [];
+    protected array $scoutMetadata = [];
 
     /**
      * @var Coroutine\Concurrent

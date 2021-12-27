@@ -25,46 +25,19 @@ class Builder
     use Macroable;
 
     /**
-     * The model instance.
-     *
-     * @var Model|SearchableInterface
-     */
-    public $model;
-
-    /**
-     * The query expression.
-     *
-     * @var string
-     */
-    public $query;
-
-    /**
-     * Optional callback before search execution.
-     *
-     * @var null|Closure
-     */
-    public $callback;
-
-    /**
      * Optional callback before model query execution.
-     *
-     * @var null|Closure
      */
-    public $queryCallback;
+    public ?Closure $queryCallback = null;
 
     /**
      * The custom index specified for the search.
-     *
-     * @var string
      */
-    public $index;
+    public ?string $index = null;
 
     /**
      * The "where" constraints added to the query.
-     *
-     * @var array
      */
-    public $wheres = [];
+    public array $wheres = [];
 
     /**
      * The "limit" that should be applied to the search.
@@ -83,11 +56,13 @@ class Builder
     /**
      * Create a new search builder instance.
      */
-    public function __construct(Model $model, string $query, ?Closure $callback = null, ?bool $softDelete = false)
+    /**
+     * @param Model&SearchableInterface $model
+     * @param string $query the query expression
+     * @param null|Closure $callback optional callback before search execution
+     */
+    public function __construct(public Model $model, public string $query, public ?Closure $callback = null, ?bool $softDelete = false)
     {
-        $this->model = $model;
-        $this->query = $query;
-        $this->callback = $callback;
         if ($softDelete) {
             $this->wheres['__soft_deleted'] = 0;
         }
