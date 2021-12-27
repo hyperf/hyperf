@@ -435,7 +435,7 @@ class Address
  */
 class UserInfo extends CastsValue
 {
-    protected $items = [
+    protected array $items = [
         'role_id' => 0,
     ];
 }

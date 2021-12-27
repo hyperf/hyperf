@@ -43,7 +43,7 @@ class ConnectionResolver implements ConnectionResolverInterface
      * @param string $name
      * @return \Hyperf\Database\ConnectionInterface
      */
-    public function connection($name = null)
+    public function connection(?string $name = null): ConnectionInterface
     {
         if (is_null($name)) {
             $name = $this->getDefaultConnection();
@@ -76,10 +76,8 @@ class ConnectionResolver implements ConnectionResolverInterface
 
     /**
      * Get the default connection name.
-     *
-     * @return string
      */
-    public function getDefaultConnection()
+    public function getDefaultConnection(): string
     {
         return $this->default;
     }
@@ -87,7 +85,7 @@ class ConnectionResolver implements ConnectionResolverInterface
     /**
      * Set the default connection name.
      */
-    public function setDefaultConnection(string $name)
+    public function setDefaultConnection(string $name): void
     {
         $this->default = $name;
     }

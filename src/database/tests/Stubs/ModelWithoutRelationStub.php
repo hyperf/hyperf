@@ -15,7 +15,7 @@ use Hyperf\Database\Model\Model;
 
 class ModelWithoutRelationStub extends Model
 {
-    public $with = ['foo'];
+    public array $with = ['foo'];
 
     protected array $guarded = [];
 
