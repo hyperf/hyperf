@@ -16,7 +16,7 @@ use Hyperf\Database\Model\Model;
 
 class ModelStub extends Model
 {
-    public ?string $connection;
+    public ?string $connection = null;
 
     public $scopesCalled = [];
 
