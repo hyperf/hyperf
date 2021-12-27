@@ -15,6 +15,7 @@ use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Str;
 use PhpParser\Node;
+use PhpParser\Node\Identifier;
 use PhpParser\NodeTraverser;
 
 class ModelRewriteKeyInfoVisitor extends AbstractVisitor
@@ -103,6 +104,10 @@ class ModelRewriteKeyInfoVisitor extends AbstractVisitor
                 $property == 'incrementing' ? Node\Stmt\Class_::MODIFIER_PUBLIC : Node\Stmt\Class_::MODIFIER_PROTECTED,
                 [$prop]
             );
+            $node->type = match ($property) {
+                'incrementing' => new Identifier('bool'),
+                default => new Identifier('string'),
+            };
         }
 
         return $node;
