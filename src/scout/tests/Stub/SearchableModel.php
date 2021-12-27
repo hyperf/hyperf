@@ -23,7 +23,7 @@ class SearchableModel extends Model
      *
      * @var array
      */
-    protected $fillable = ['id'];
+    protected array $fillable = ['id'];
 
     /**
      * @var \Closure
