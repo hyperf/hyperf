@@ -39,7 +39,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     use Concerns\HasTimestamps;
     use Concerns\HidesAttributes;
     use Concerns\GuardsAttributes;
-    protected array $guarded = ['*'];
+
     /**
      * The name of the "created at" column.
      *
@@ -74,6 +74,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * @var bool
      */
     public $wasRecentlyCreated = false;
+
+    protected array $guarded = ['*'];
 
     /**
      * The connection name for the model.
