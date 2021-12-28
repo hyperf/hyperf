@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\HttpServer;
 
 use Hyperf\HttpMessage\Cookie\Cookie;
+use Hyperf\HttpMessage\Stream\ChunkStream;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\Contract\RequestInterface;
@@ -250,5 +251,30 @@ class ResponseTest extends TestCase
         $responseEmitter->emit($response, $swooleResponse, true);
 
         $this->assertSame($psrResponse, Context::get(PsrResponseInterface::class));
+    }
+
+    public function testWrite()
+    {
+        $psrResponse = new Response(new \Hyperf\HttpMessage\Base\Response());
+        $response = new Response();
+
+        $bodyResponse = $psrResponse->withBody(new SwooleStream("123"));
+        Context::set(PsrResponseInterface::class, $bodyResponse);
+        $result = $response->write("456");
+        self::assertEquals('123', $result->getBody()->getContents());
+
+        $bodyResponse = $psrResponse->withBody(new SwooleStream());
+        Context::set(PsrResponseInterface::class, $bodyResponse);
+        $result = $response->write("789");
+        self::assertInstanceOf(ChunkStream::class, $result->getBody());
+        self::assertCount(1, $result->getBody()->getStreams());
+        self::assertEquals('789', $result->getBody()->getContents());
+
+        $bodyResponse = $psrResponse->withBody(new ChunkStream());
+        Context::set(PsrResponseInterface::class, $bodyResponse);
+        $result = $response->write("abc")->write("def");
+        self::assertInstanceOf(ChunkStream::class, $result->getBody());
+        self::assertCount(2, $result->getBody()->getStreams());
+        self::assertEquals('abcdef', $result->getBody()->getContents());
     }
 }
