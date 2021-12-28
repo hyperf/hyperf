@@ -21,10 +21,7 @@ class RateLimitHandler
 {
     public const RATE_LIMIT_BUCKETS = 'rateLimit:buckets';
 
-    /**
-     * @var \Redis
-     */
-    private $redis;
+    private mixed $redis;
 
     public function __construct(ContainerInterface $container)
     {

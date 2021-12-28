@@ -25,45 +25,27 @@ use Swoole\Coroutine;
 #[Aspect]
 class RateLimitAnnotationAspect implements AroundInterface
 {
-    public $classes = [];
+    public array $classes = [];
 
-    public $annotations = [
+    public array $annotations = [
         RateLimit::class,
     ];
 
-    /**
-     * @var array
-     */
-    private $annotationProperty;
+    private array $annotationProperty;
 
-    /**
-     * @var array
-     */
-    private $config;
+    private mixed $config;
 
-    /**
-     * @var RequestInterface
-     */
-    private $request;
-
-    /**
-     * @var RateLimitHandler
-     */
-    private $rateLimitHandler;
-
-    public function __construct(ConfigInterface $config, RequestInterface $request, RateLimitHandler $rateLimitHandler)
+    public function __construct(ConfigInterface $config,private RequestInterface $request, private RateLimitHandler $rateLimitHandler)
     {
         $this->annotationProperty = get_object_vars(new RateLimit());
         $this->config = $this->parseConfig($config);
-        $this->request = $request;
-        $this->rateLimitHandler = $rateLimitHandler;
     }
 
     /**
      * @throws RateLimitException limit but without handle
      * @throws StorageException when the storage driver bootstrap failed
      */
-    public function process(ProceedingJoinPoint $proceedingJoinPoint)
+    public function process(ProceedingJoinPoint $proceedingJoinPoint): mixed
     {
         $annotation = $this->getWeightingAnnotation($this->getAnnotations($proceedingJoinPoint));
 
@@ -129,7 +111,7 @@ class RateLimitAnnotationAspect implements AroundInterface
         return $this->config;
     }
 
-    protected function parseConfig(ConfigInterface $config)
+    protected function parseConfig(ConfigInterface $config): mixed
     {
         if ($config->has('rate_limit')) {
             return $config->get('rate_limit');
