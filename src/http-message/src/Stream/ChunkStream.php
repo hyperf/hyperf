@@ -107,7 +107,9 @@ class ChunkStream implements StreamInterface
      */
     public function eof()
     {
-        return empty($this->streams) || ($this->currentStream >= count($this->streams) - 1 && $this->streams[$this->currentStream]->eof());
+        return empty($this->streams) ||
+            empty($this->streams[$this->currentStream]) ||
+            $this->streams[$this->currentStream]->eof();
     }
 
     /**
@@ -199,10 +201,15 @@ class ChunkStream implements StreamInterface
         $remainLength = $length;
 
         while ($remainLength > 0) {
-            foreach ($this->streams as $stream) {
-                $data .= $stream->read($remainLength);
+            $stream = $this->streams[$this->currentStream];
 
-                // todo
+            $currentStreamSize = $stream->getSize();
+            $data .= $stream->read($remainLength);
+
+            $remainLength -= $currentStreamSize;
+
+            if ($stream->eof()) {
+                ++$this->currentStream;
             }
         }
 
@@ -246,6 +253,16 @@ class ChunkStream implements StreamInterface
     public function appendStream(SwooleStream $stream): ChunkStream
     {
         $this->streams[] = $stream;
+
+        return $this;
+    }
+
+    /**
+     * @param \Hyperf\HttpMessage\Stream\SwooleStream[] $streams
+     */
+    public function setStreams(array $streams = []): ChunkStream
+    {
+        $this->streams = $streams;
 
         return $this;
     }

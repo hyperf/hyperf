@@ -418,11 +418,11 @@ class Response implements PsrResponseInterface, ResponseInterface
         $response = $this->getResponse();
         $stream = $response->getBody();
 
-        if (0 !== intval($stream->getSize())) {
-            return $response;
-        }
-
         if (! $stream instanceof ChunkStream) {
+            if (0 !== intval($stream->getSize())) {
+                return $response;
+            }
+
             $stream = new ChunkStream();
         }
 
