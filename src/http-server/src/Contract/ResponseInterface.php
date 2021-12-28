@@ -17,7 +17,7 @@ use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Contracts\Xmlable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
-interface ResponseInterface
+interface ResponseInterface extends PsrResponseInterface
 {
     /**
      * Format data to JSON and return data with Content-Type:application/json header.
@@ -56,7 +56,7 @@ interface ResponseInterface
     /**
      * Chunked transfer encoding.
      */
-    public function write(string $data): bool;
+    public function write(string $data): PsrResponseInterface;
 
     /**
      * Override a response with a cookie.

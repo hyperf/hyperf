@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use Hyperf\Contract\ResponseEmitterInterface;
+use Hyperf\HttpMessage\Stream\ChunkStream;
 use Hyperf\HttpMessage\Stream\FileInterface;
 use Psr\Http\Message\ResponseInterface;
 use Swoole\Http\Response;
@@ -19,31 +20,22 @@ use Swoole\Http\Response;
 class ResponseEmitter implements ResponseEmitterInterface
 {
     /**
-     * @param Response $swooleResponse
+     * @param Response $connection
      */
-    public function emit(ResponseInterface $response, $swooleResponse, bool $withContent = true)
+    public function emit(ResponseInterface $response, $connection, bool $withContent = true)
     {
         try {
-            if (strtolower($swooleResponse->header['Upgrade'] ?? '') === 'websocket') {
-                return;
-            }
-            $this->buildSwooleResponse($swooleResponse, $response);
-            $content = $response->getBody();
-            if ($content instanceof FileInterface) {
-                $swooleResponse->sendfile($content->getFilename());
+            if (strtolower($connection->header['Upgrade'] ?? '') === 'websocket') {
                 return;
             }
 
-            if ($withContent) {
-                $swooleResponse->end((string) $content);
-            } else {
-                $swooleResponse->end();
-            }
+            $this->emitProtocolHeaders($connection, $response);
+            $this->emitProtocolBody($connection, $response, $withContent);
         } catch (\Throwable $exception) {
         }
     }
 
-    protected function buildSwooleResponse(Response $swooleResponse, ResponseInterface $response): void
+    protected function emitProtocolHeaders(Response $swooleResponse, ResponseInterface $response): void
     {
         /*
          * Headers
@@ -84,6 +76,26 @@ class ResponseEmitter implements ResponseEmitterInterface
          * Status code
          */
         $swooleResponse->status($response->getStatusCode(), $response->getReasonPhrase());
+    }
+
+    protected function emitProtocolBody(Response $swooleResponse, ResponseInterface $response, bool $withContent = true): void
+    {
+        $stream = $response->getBody();
+
+        switch (true) {
+            case ($stream instanceof FileInterface):
+                $swooleResponse->sendfile($stream->getFilename());
+                return;
+            case ($stream instanceof ChunkStream):
+                foreach ($stream->getStreams() as $chunk) {
+                    $content = $chunk->getContents();
+                    $swooleResponse->write($content);
+                }
+                $swooleResponse->end();
+                return;
+            default:
+                $swooleResponse->end($withContent ? (string) $stream : null);
+        }
     }
 
     protected function isMethodsExists(object $object, array $methods): bool
