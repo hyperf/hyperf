@@ -18,6 +18,7 @@ use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ChannelPool;
 use InvalidArgumentException;
+use Swoole\Http2\Response;
 
 /**
  * @method int send(Request $request)
@@ -91,7 +92,7 @@ class BaseClient
      * @param Message $argument The argument to the method
      * @param callable $deserialize A function that deserializes the response
      * @throws GrpcClientException
-     * @return array|\Google\Protobuf\Internal\Message[]|\swoole_http2_response[]
+     * @return array|\Google\Protobuf\Internal\Message[]|Response[]
      */
     protected function _simpleRequest(
         string $method,
