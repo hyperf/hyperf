@@ -21,20 +21,17 @@ use Psr\Http\Message\ResponseInterface;
 class Response
 {
     /**
-     * The underlying resource.
-     *
-     * @var mixed
-     */
-    public $resource;
-
-    /**
      * Create a new resource response.
      *
      * @param mixed $resource
      */
-    public function __construct($resource)
+    public function __construct(
+        /**
+         * The underlying resource.
+         */
+        public $resource
+    )
     {
-        $this->resource = $resource;
     }
 
     public function toResponse(): ResponseInterface
@@ -51,10 +48,8 @@ class Response
 
     /**
      * Wrap the given data if necessary.
-     *
-     * @param array|Collection $data
      */
-    protected function wrap($data, array $with = [], array $additional = []): array
+    protected function wrap(array|\Hyperf\Utils\Collection $data, array $with = [], array $additional = []): array
     {
         if ($data instanceof Collection) {
             $data = $data->all();

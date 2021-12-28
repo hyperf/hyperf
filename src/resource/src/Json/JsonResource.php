@@ -23,18 +23,11 @@ use Hyperf\Utils\Contracts\Jsonable;
 use JsonSerializable;
 use Psr\Http\Message\ResponseInterface;
 
-class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable, ResponseInterface
+class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable, ResponseInterface, \Stringable
 {
     use ConditionallyLoadsAttributes;
     use DelegatesToResource;
     use ResponseProxyTrait;
-
-    /**
-     * The resource instance.
-     *
-     * @var mixed
-     */
-    public $resource;
 
     /**
      * The additional data that should be added to the top-level resource array.
@@ -64,9 +57,13 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
      *
      * @param mixed $resource
      */
-    public function __construct($resource)
+    public function __construct(
+        /**
+         * The resource instance.
+         */
+        public $resource
+    )
     {
-        $this->resource = $resource;
     }
 
     public function __toString(): string
