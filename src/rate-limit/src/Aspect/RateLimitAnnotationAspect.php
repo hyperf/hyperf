@@ -72,7 +72,7 @@ class RateLimitAnnotationAspect implements AroundInterface
             if (microtime(true) + $seconds > $maxTime) {
                 break;
             }
-            Coroutine::sleep($seconds > 0.001 ? $seconds : 0.001);
+            Coroutine::sleep(max($seconds, 0.001));
         }
 
         if (! $annotation->limitCallback || ! is_callable($annotation->limitCallback)) {
