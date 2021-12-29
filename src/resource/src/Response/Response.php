@@ -30,8 +30,7 @@ class Response
          * The underlying resource.
          */
         public $resource
-    )
-    {
+    ) {
     }
 
     public function toResponse(): ResponseInterface
@@ -49,7 +48,7 @@ class Response
     /**
      * Wrap the given data if necessary.
      */
-    protected function wrap(array|\Hyperf\Utils\Collection $data, array $with = [], array $additional = []): array
+    protected function wrap(array|Collection $data, array $with = [], array $additional = []): array
     {
         if ($data instanceof Collection) {
             $data = $data->all();

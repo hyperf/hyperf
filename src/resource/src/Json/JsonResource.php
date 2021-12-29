@@ -62,8 +62,7 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
          * The resource instance.
          */
         public $resource
-    )
-    {
+    ) {
     }
 
     public function __toString(): string

@@ -17,12 +17,11 @@ class AnonymousResourceCollection extends ResourceCollection
      * Create a new anonymous resource collection.
      *
      * @param mixed $resource
+     * @param string $collects the name of the resource being collected
      */
-    public function __construct($resource, /**
-     * The name of the resource being collected.
-     */
-    public string $collects)
+    public function __construct($resource, string $collects)
     {
         parent::__construct($resource);
+        $this->collects = $collects;
     }
 }
