@@ -55,6 +55,7 @@ class ResourceCollection extends JsonResource implements Countable, IteratorAggr
      */
     public function toArray(): array
     {
+        /** @var Collection $collection */
         $collection = $this->collection->map->toArray();
         return $collection->all();
     }
