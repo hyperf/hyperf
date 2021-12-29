@@ -23,14 +23,10 @@ class Response
     /**
      * Create a new resource response.
      *
-     * @param mixed $resource
+     * @param mixed $resource the underlying resource
      */
-    public function __construct(
-        /**
-         * The underlying resource.
-         */
-        public $resource
-    ) {
+    public function __construct(public mixed $resource)
+    {
     }
 
     public function toResponse(): ResponseInterface
