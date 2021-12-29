@@ -24,17 +24,13 @@ class ResourceCollection extends JsonResource implements Countable, IteratorAggr
 
     /**
      * The resource that this resource collects.
-     *
-     * @var string
      */
-    public $collects;
+    public ?string $collects = null;
 
     /**
      * The mapped collection instance.
-     *
-     * @var Collection
      */
-    public $collection;
+    public ?Collection $collection = null;
 
     /**
      * Create a new resource instance.
@@ -61,7 +57,6 @@ class ResourceCollection extends JsonResource implements Countable, IteratorAggr
      */
     public function toArray(): array
     {
-        /** @var Collection $collection */
         $collection = $this->collection->map->toArray();
         return $collection->all();
     }
