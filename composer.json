@@ -71,6 +71,7 @@
         "predis/predis": "^1.1",
         "promphp/prometheus_client_php": "2.2.*",
         "reactivex/rxphp": "^2.0",
+        "rector/rector": "^0.12.9",
         "slickdeals/statsd": "^3.0.1",
         "smarty/smarty": "^3.1",
         "squizlabs/php_codesniffer": "^3.4",
@@ -470,6 +471,7 @@
         "license-check": "docheader check src/ test/",
         "cs-fix": "php-cs-fixer fix $1",
         "json-fix": "./bin/composer-json-fixer",
-        "analyse": "phpstan analyse --memory-limit=-1 -l 5 -c phpstan.neon"
+        "analyse": "phpstan analyse --memory-limit=-1 -l 5 -c phpstan.neon",
+        "rector": "rector process --clear-cache"
     }
 }

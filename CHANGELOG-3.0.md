@@ -14,6 +14,15 @@
 composer analyse
 ```
 
+升级模型脚本
+
+> 因为模型基类增加了成员变量的类型支持，所以需要使用以下脚本，将其升级为新版本。
+
+```shell
+composer require hyperf/code-generator
+php vendor/bin/regenerate-models.php $PWD/app/Model
+```
+
 ## Dependencies Upgrade
 
 - Upgraded `php-amqplib/php-amqplib` to `^3.1`;
@@ -25,6 +34,7 @@ composer analyse
 
 - [#4196](https://github.com/hyperf/hyperf/pull/4196) Added `Hyperf\Amqp\IO\IOFactory` which used to create amqp io by yourself.
 - [#4304](https://github.com/hyperf/hyperf/pull/4304) Support `$suffix` for trait `Hyperf\Utils\Traits\StaticInstance`.
+- [#4400](https://github.com/hyperf/hyperf/pull/4400) Added `$description` which used to set command description easily for `Hyperf\Command\Command`.
 
 ## Optimized
 

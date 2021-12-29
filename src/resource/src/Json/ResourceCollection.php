@@ -24,24 +24,18 @@ class ResourceCollection extends JsonResource implements Countable, IteratorAggr
 
     /**
      * The resource that this resource collects.
-     *
-     * @var string
      */
-    public $collects;
+    public ?string $collects = null;
 
     /**
      * The mapped collection instance.
-     *
-     * @var Collection
      */
-    public $collection;
+    public ?Collection $collection = null;
 
     /**
      * Create a new resource instance.
-     *
-     * @param mixed $resource
      */
-    public function __construct($resource)
+    public function __construct(mixed $resource)
     {
         parent::__construct($resource);
 
