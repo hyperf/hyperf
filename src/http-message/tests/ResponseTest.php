@@ -55,18 +55,6 @@ class ResponseTest extends TestCase
         $this->assertSame(['hyperf.io' => ['/' => ['test' => $cookie]]], $response->getCookies());
     }
 
-    public function testWrite()
-    {
-        $content = 'hello';
-        $swooleResponse = Mockery::mock(SwooleResponse::class);
-        $swooleResponse->shouldReceive('write')->with($content)->once()->andReturn(true);
-
-        $response = $this->newResponse();
-        $response->setConnection(new SwooleConnection($swooleResponse));
-        $status = $response->write($content);
-        $this->assertTrue($status);
-    }
-
     protected function newResponse()
     {
         return new Response();
