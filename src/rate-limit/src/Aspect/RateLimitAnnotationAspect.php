@@ -67,7 +67,7 @@ class RateLimitAnnotationAspect implements AroundInterface
                 if ($bucket->consume($annotation->consume ?? 1, $seconds)) {
                     return $proceedingJoinPoint->process();
                 }
-            } catch (StorageException $exception) {
+            } catch (StorageException) {
             }
             if (microtime(true) + $seconds > $maxTime) {
                 break;
