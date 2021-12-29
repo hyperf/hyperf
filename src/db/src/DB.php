@@ -84,7 +84,7 @@ class DB
     /**
      * Make a new connection with the pool name.
      */
-    public static function connection(string $poolName)
+    public static function connection(string $poolName): self
     {
         return make(static::class, [
             'poolName' => $poolName,
