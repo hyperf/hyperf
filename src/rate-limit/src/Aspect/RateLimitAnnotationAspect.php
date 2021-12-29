@@ -35,7 +35,7 @@ class RateLimitAnnotationAspect implements AroundInterface
 
     private mixed $config;
 
-    public function __construct(ConfigInterface $config,private RequestInterface $request, private RateLimitHandler $rateLimitHandler)
+    public function __construct(ConfigInterface $config, private RequestInterface $request, private RateLimitHandler $rateLimitHandler)
     {
         $this->annotationProperty = get_object_vars(new RateLimit());
         $this->config = $this->parseConfig($config);

@@ -23,9 +23,9 @@ class RateLimit extends AbstractAnnotation
 
     public int $capacity;
 
-    public mixed $limitCallback;
+    public mixed $limitCallback = null;
 
-    public mixed $key;
+    public mixed $key = null;
 
     public int $waitTimeout;
 }
