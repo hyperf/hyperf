@@ -27,10 +27,8 @@ trait ConditionallyLoadsAttributes
 {
     /**
      * Indicates if the resource's collection keys should be preserved.
-     *
-     * @var bool
      */
-    public $preserveKeys = false;
+    public bool $preserveKeys = false;
 
     /**
      * Filter the given data, removing any optional values.

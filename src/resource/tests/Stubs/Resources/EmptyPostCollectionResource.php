@@ -15,5 +15,5 @@ use Hyperf\Resource\Json\ResourceCollection;
 
 class EmptyPostCollectionResource extends ResourceCollection
 {
-    public $collects = PostResource::class;
+    public ?string $collects = PostResource::class;
 }
