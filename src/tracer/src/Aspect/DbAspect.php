@@ -21,7 +21,7 @@ use Hyperf\Tracer\SwitchManager;
 use OpenTracing\Tracer;
 
 /**
- * @Aspect
+ * 
  */
 class DbAspect extends AbstractAspect
 {
