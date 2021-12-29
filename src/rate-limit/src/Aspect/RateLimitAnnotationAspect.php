@@ -33,7 +33,7 @@ class RateLimitAnnotationAspect implements AroundInterface
 
     private array $annotationProperty;
 
-    private mixed $config;
+    private array $config;
 
     public function __construct(ConfigInterface $config, private RequestInterface $request, private RateLimitHandler $rateLimitHandler)
     {
@@ -45,7 +45,7 @@ class RateLimitAnnotationAspect implements AroundInterface
      * @throws RateLimitException limit but without handle
      * @throws StorageException when the storage driver bootstrap failed
      */
-    public function process(ProceedingJoinPoint $proceedingJoinPoint): mixed
+    public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $annotation = $this->getWeightingAnnotation($this->getAnnotations($proceedingJoinPoint));
 
@@ -111,10 +111,10 @@ class RateLimitAnnotationAspect implements AroundInterface
         return $this->config;
     }
 
-    protected function parseConfig(ConfigInterface $config): mixed
+    protected function parseConfig(ConfigInterface $config): array
     {
         if ($config->has('rate_limit')) {
-            return $config->get('rate_limit');
+            return $config->get('rate_limit', []);
         }
 
         return [
