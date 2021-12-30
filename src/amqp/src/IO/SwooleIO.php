@@ -42,9 +42,9 @@ class SwooleIO extends AbstractIO
     protected $readWriteTimeout;
 
     /**
-     * @var bool
+     * @var array
      */
-    protected $openSSL;
+    protected $protocol;
 
     /**
      * @var int
@@ -64,13 +64,13 @@ class SwooleIO extends AbstractIO
         int $port,
         int $connectionTimeout,
         int $readWriteTimeout = 3,
-        bool $openSSL = false
+        array $protocol = []
     ) {
         $this->host = $host;
         $this->port = $port;
         $this->connectionTimeout = $connectionTimeout;
         $this->readWriteTimeout = $readWriteTimeout;
-        $this->openSSL = $openSSL;
+        $this->protocol = $protocol;
     }
 
     /**
@@ -131,8 +131,8 @@ class SwooleIO extends AbstractIO
     {
         $sock = new Socket(AF_INET, SOCK_STREAM, 0);
 
-        if ($this->openSSL === true) {
-            $sock->setProtocol(['open_ssl' => true]);
+        if(! empty($this->protocol)) {
+            $sock->setProtocol($this->protocol);
         }
 
         if (! $sock->connect($this->host, $this->port, $this->connectionTimeout)) {
