@@ -6,6 +6,7 @@
 
 ## Added
 
+- [#4409](https://github.com/hyperf/hyperf/pull/4409) Added database handler for `session`.
 - [#4411](https://github.com/hyperf/hyperf/pull/4411) Added `Hyperf\Tracer\Aspect\DbAspect` to log db records when using `hyperf/db`. 
 - [#4420](https://github.com/hyperf/hyperf/pull/4420) Support `SSL` for `Hyperf\Amqp\IO\SwooleIO`.
 
