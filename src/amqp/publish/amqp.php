@@ -16,7 +16,7 @@ return [
         'user' => env('AMQP_USER', 'guest'),
         'password' => env('AMQP_PASSWORD', 'guest'),
         'vhost' => env('AMQP_VHOST', '/'),
-        'open_ssl'   => env('AMQP_OPEN_SSL', false),
+        'open_ssl' => false,
         'concurrent' => [
             'limit' => 1,
         ],

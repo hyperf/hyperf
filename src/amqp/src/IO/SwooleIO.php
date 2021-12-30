@@ -131,7 +131,7 @@ class SwooleIO extends AbstractIO
     {
         $sock = new Socket(AF_INET, SOCK_STREAM, 0);
 
-        if($this->openSSL === true) {
+        if ($this->openSSL === true) {
             $sock->setProtocol(['open_ssl' => true]);
         }
 
