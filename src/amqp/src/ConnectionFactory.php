@@ -93,6 +93,7 @@ class ConnectionFactory
         $user = $config['user'] ?? 'guest';
         $password = $config['password'] ?? 'guest';
         $vhost = $config['vhost'] ?? '/';
+        $openSSL = $config['open_ssl'] ?? false;
 
         $params = new Params(Arr::get($config, 'params', []));
         $io = new SwooleIO(
@@ -100,6 +101,7 @@ class ConnectionFactory
             $port,
             $params->getConnectionTimeout(),
             $params->getReadWriteTimeout(),
+            $openSSL,
         );
 
         $connection = new AMQPConnection(
