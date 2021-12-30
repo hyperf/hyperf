@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Session\Handler;
 
 use Hyperf\Contract\ConfigInterface;
-//use Hyperf\DbConnection\Db;
 use Psr\Container\ContainerInterface;
 
 class DatabaseHandlerFactory
