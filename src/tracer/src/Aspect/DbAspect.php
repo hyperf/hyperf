@@ -20,9 +20,6 @@ use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use OpenTracing\Tracer;
 
-/**
- * 
- */
 class DbAspect extends AbstractAspect
 {
     use SpanStarter;
@@ -30,10 +27,9 @@ class DbAspect extends AbstractAspect
     /**
      * @var array
      */
-    public $classes
-        = [
-            DB::class . '::__call',
-        ];
+    public $classes = [
+        DB::class . '::__call',
+    ];
 
     /**
      * @var array
