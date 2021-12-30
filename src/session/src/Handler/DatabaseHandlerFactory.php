@@ -1,7 +1,14 @@
 <?php
 
 declare(strict_types=1);
-
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 namespace Hyperf\Session\Handler;
 
 use Hyperf\Contract\ConfigInterface;
@@ -16,7 +23,6 @@ class DatabaseHandlerFactory
         $connection = $config->get('session.options.connection');
         $table = $config->get('session.options.table');
         $minutes = $config->get('session.options.lifetime', 1200);
-        //return new DatabaseHandler(Db::connection($connection), $table, $minutes);
         return new DatabaseHandler($connection, $table, $minutes);
     }
 }
