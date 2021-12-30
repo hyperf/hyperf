@@ -22,13 +22,15 @@ class IOFactory implements IOFactoryInterface
     {
         $host = $config['host'] ?? 'localhost';
         $port = $config['port'] ?? 5672;
+        $openSSL = $config['open_ssl'] ?? false;
 
         return match (Constant::ENGINE) {
             'Swoole' => new SwooleIO(
                 $host,
                 $port,
                 $params->getConnectionTimeout(),
-                $params->getReadWriteTimeout()
+                $params->getReadWriteTimeout(),
+                $openSSL
             ),
             default => throw new NotSupportedException()
         };

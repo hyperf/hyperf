@@ -36,10 +36,7 @@ class SwooleIO extends AbstractIO
      */
     protected $heartbeat;
 
-    /**
-     * @var null|Socket
-     */
-    private $sock;
+    private ?Socket $sock = null;
 
     /**
      * @throws \InvalidArgumentException when readWriteTimeout argument does not 2x the heartbeat
@@ -48,7 +45,8 @@ class SwooleIO extends AbstractIO
         string $host,
         int $port,
         protected int $connectionTimeout,
-        protected int $readWriteTimeout = 3
+        protected int $readWriteTimeout = 3,
+        protected bool $openSSL = false
     ) {
         $this->host = $host;
         $this->port = $port;
@@ -111,6 +109,11 @@ class SwooleIO extends AbstractIO
     protected function makeClient()
     {
         $sock = new Socket(AF_INET, SOCK_STREAM, 0);
+
+        if ($this->openSSL === true) {
+            $sock->setProtocol(['open_ssl' => true]);
+        }
+
         if (! $sock->connect($this->host, $this->port, $this->connectionTimeout)) {
             throw new AMQPRuntimeException(
                 sprintf('Error Connecting to server: %s ', $sock->errMsg),

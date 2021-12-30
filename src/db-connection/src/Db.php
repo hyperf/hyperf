@@ -23,7 +23,7 @@ use Psr\Container\ContainerInterface;
  * DB Helper.
  * @method static Builder table(string $table)
  * @method static Expression raw($value)
- * @method static selectOne(string $query, array $bindings = [], bool $useReadPdo = true)
+ * @method static mixed selectOne(string $query, array $bindings = [], bool $useReadPdo = true)
  * @method static array select(string $query, array $bindings = [], bool $useReadPdo = true)
  * @method static Generator cursor(string $query, array $bindings = [], bool $useReadPdo = true)
  * @method static bool insert(string $query, array $bindings = [])
