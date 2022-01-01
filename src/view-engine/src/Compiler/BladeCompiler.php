@@ -167,7 +167,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
             $this->files->put(
                 $this->getCompiledPath($this->getPath()),
-                $contents
+                $contents,
+                true
             );
         }
     }
