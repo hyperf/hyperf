@@ -221,8 +221,12 @@ class Client extends Server
         $body = new SwooleStream($content);
 
         $request = new Psr7Request($method, $uri, $headers, $body);
+        
+        $cookies = $headers['Cookie'] ?? [];
+        
         return $request->withQueryParams($query)
             ->withParsedBody($data)
+            ->withCookieParams($cookies)
             ->withUploadedFiles($this->normalizeFiles($multipart));
     }
 
