@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Retry\Annotation;
 
 use Attribute;
-use Doctrine\Common\Annotations\Annotation\Target;
 use Hyperf\Retry\Policy\BudgetRetryPolicy;
 use Hyperf\Retry\Policy\ClassifierRetryPolicy;
 use Hyperf\Retry\Policy\FallbackRetryPolicy;
@@ -22,10 +21,6 @@ use Hyperf\Retry\RetryBudget;
 use Hyperf\Retry\RetryBudgetInterface;
 use Hyperf\Retry\SleepStrategyInterface;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class Retry extends AbstractRetry
 {

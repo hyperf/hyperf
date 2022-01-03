@@ -20,10 +20,6 @@ use Hyperf\Retry\Policy\MaxAttemptsRetryPolicy;
 use Hyperf\Retry\Policy\SleepRetryPolicy;
 use Hyperf\Retry\SleepStrategyInterface;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class CircuitBreaker extends AbstractRetry
 {
