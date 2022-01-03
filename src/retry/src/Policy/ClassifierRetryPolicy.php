@@ -17,16 +17,6 @@ use Hyperf\Utils\Arr;
 class ClassifierRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
     /**
-     * @var string[]
-     */
-    private $ignoreThrowables;
-
-    /**
-     * @var string[]
-     */
-    private $retryThrowables;
-
-    /**
      * @var callable|string
      */
     private $retryOnThrowablePredicate;
@@ -37,13 +27,11 @@ class ClassifierRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterf
     private $retryOnResultPredicate;
 
     public function __construct(
-        array $ignoreThrowables = [],
-        array $retryThrowables = [\Throwable::class],
+        private array $ignoreThrowables = [],
+        private array $retryThrowables = [\Throwable::class],
         $retryOnThrowablePredicate = '',
         $retryOnResultPredicate = ''
     ) {
-        $this->ignoreThrowables = $ignoreThrowables;
-        $this->retryThrowables = $retryThrowables;
         $this->retryOnThrowablePredicate = $retryOnThrowablePredicate;
         $this->retryOnResultPredicate = $retryOnResultPredicate;
     }
@@ -69,9 +57,7 @@ class ClassifierRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterf
     {
         return Arr::first(
             $arr,
-            function ($v) use ($t) {
-                return $t instanceof $v;
-            }
+            fn($v) => $t instanceof $v
         ) ? true : false;
     }
 

@@ -15,10 +15,7 @@ use Hyperf\Utils\Backoff;
 
 class BackoffStrategy implements SleepStrategyInterface
 {
-    /**
-     * @var Backoff
-     */
-    private $backoff;
+    private \Hyperf\Utils\Backoff $backoff;
 
     public function __construct(int $base)
     {

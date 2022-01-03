@@ -16,11 +16,8 @@ use Hyperf\Retry\RetryContext;
 
 class BudgetRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
-    private $budget;
-
-    public function __construct(RetryBudgetInterface $retryBudget)
+    public function __construct(private RetryBudgetInterface $budget)
     {
-        $this->budget = $retryBudget;
     }
 
     public function canRetry(RetryContext &$retryContext): bool

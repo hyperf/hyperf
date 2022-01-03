@@ -15,20 +15,8 @@ use Hyperf\Retry\RetryContext;
 
 class SleepRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
-    /**
-     * @var int
-     */
-    private $base;
-
-    /**
-     * @var string
-     */
-    private $sleepStrategyClass;
-
-    public function __construct(int $base, string $sleepStrategyClass)
+    public function __construct(private int $base, private string $sleepStrategyClass)
     {
-        $this->base = $base;
-        $this->sleepStrategyClass = $sleepStrategyClass;
     }
 
     public function canRetry(RetryContext &$retryContext): bool

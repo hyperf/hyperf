@@ -16,14 +16,8 @@ use Hyperf\Retry\RetryContext;
 
 class CircuitBreakerRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
-    /**
-     * @var CircuitBreakerState
-     */
-    private $state;
-
-    public function __construct(CircuitBreakerState $circuitBreakerState)
+    public function __construct(private CircuitBreakerState $state)
     {
-        $this->state = $circuitBreakerState;
     }
 
     public function canRetry(RetryContext &$retryContext): bool
