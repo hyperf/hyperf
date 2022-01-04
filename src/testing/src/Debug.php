@@ -13,7 +13,10 @@ namespace Hyperf\Testing;
 
 class Debug
 {
-    public static function getRefCount($object): string
+    /**
+     * Get object's ref count.
+     */
+    public static function getRefCount(object $object): string
     {
         ob_start();
         debug_zval_dump($object);

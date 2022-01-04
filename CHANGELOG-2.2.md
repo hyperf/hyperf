@@ -13,6 +13,7 @@
 ## Optimized
 
 - [#4406](https://github.com/hyperf/hyperf/pull/4406) Adapt swoole 5.0 by removing swoole classes with `PSR-0`.
+- [#4429](https://github.com/hyperf/hyperf/pull/4429) Added type hint for `Debug::getRefCount()` which only support `object`.
 
 # v2.2.21 - 2021-12-20
 
