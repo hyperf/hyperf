@@ -130,6 +130,11 @@ abstract class AbstractServiceClient
         return $this->dataFormatter->formatRequest([$this->__generateRpcPath($methodName), $params, $id]);
     }
 
+    public function getServiceName(): string
+    {
+        return $this->serviceName;
+    }
+
     protected function getIdGenerator(): IdGeneratorInterface
     {
         if ($this->container->has(IdGenerator\IdGeneratorInterface::class)) {

@@ -22,6 +22,8 @@ class AuthProvider extends AbstractProvider
         return $this->client()->request('POST', '/nacos/v1/auth/users/login', [
             RequestOptions::QUERY => [
                 'username' => $username,
+            ],
+            RequestOptions::FORM_PARAMS => [
                 'password' => $password,
             ],
         ]);

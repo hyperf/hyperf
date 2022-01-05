@@ -2,15 +2,17 @@
     "dom": "nacos.test.1",
     "cacheMillis": 1000,
     "useSpecifiedURL": false,
-    "hosts": [{
-        "valid": true,
-        "marked": false,
-        "instanceId": "10.10.10.10-8888-DEFAULT-nacos.test.1",
-        "port": 8888,
-        "ip": "10.10.10.10",
-        "weight": 1.0,
-        "metadata": {}
-    }],
+    "hosts": [
+        {
+            "valid": true,
+            "marked": false,
+            "instanceId": "10.10.10.10-8888-DEFAULT-nacos.test.1",
+            "port": 8888,
+            "ip": "10.10.10.10",
+            "weight": 1.0,
+            "metadata": {}
+        }
+    ],
     "checksum": "3bbcf6dd1175203a8afdade0e77a27cd1528787794594",
     "lastRefTime": 1528787794594,
     "env": "",

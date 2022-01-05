@@ -13,6 +13,7 @@
         "hyperf/contract": "~2.2.0",
         "hyperf/database": "~2.2.0",
         "hyperf/event": "~2.2.0",
+        "hyperf/macroable": "~2.2.0",
         "hyperf/model-listener": "~2.2.0",
         "hyperf/utils": "~2.2.0",
         "psr/event-dispatcher": "^1.0"

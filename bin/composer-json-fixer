@@ -32,10 +32,20 @@ foreach ($files as $file) {
         $autoloadFiles[] = "src/{$component}/" . preg_replace('#^./#', '', $file);
     }
     foreach ($composerJson['autoload']['psr-4'] ?? [] as $ns => $dir) {
-        $autoload[$ns] = "src/{$component}/" . trim($dir, '/') . '/';
+        $value = "src/{$component}/" . trim($dir, '/') . '/';
+        if (isset($autoload[$ns])) {
+            $autoload[$ns] = [$value, ...(array) $autoload[$ns]];
+        } else {
+            $autoload[$ns] = $value;
+        }
     }
     foreach ($composerJson['autoload-dev']['psr-4'] ?? [] as $ns => $dir) {
-        $autoloadDev[$ns] = "src/{$component}/" . trim($dir, '/') . '/';
+        $value = "src/{$component}/" . trim($dir, '/') . '/';
+        if(isset($autoloadDev[$ns])){
+            $autoloadDev[$ns] = [$value, ...(array) $autoloadDev[$ns]];
+        }else{
+            $autoloadDev[$ns] = $value;
+        }
     }
     if (isset($composerJson['extra']['hyperf']['config'])) {
         $configProviders = array_merge($configProviders, (array)$composerJson['extra']['hyperf']['config']);

@@ -9,16 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\RpcMultiplex\Cases;
+namespace HyperfTest\Amqp\Stub;
 
-/**
- * @internal
- * @coversNothing
- */
-class ExampleTest extends AbstractTestCase
+use Hyperf\Amqp\Message\ConsumerDelayedMessageTrait;
+use Hyperf\Amqp\Message\ConsumerMessage;
+
+class Delay2Consumer extends ConsumerMessage
 {
-    public function testExample()
-    {
-        $this->assertTrue(true);
-    }
+    use ConsumerDelayedMessageTrait;
 }

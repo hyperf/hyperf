@@ -16,8 +16,8 @@ use Closure;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Grammars\Grammar;
 use Hyperf\Database\SQLiteConnection;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Fluent;
-use Hyperf\Utils\Traits\Macroable;
 
 class Blueprint
 {
@@ -942,6 +942,17 @@ class Blueprint
     public function binary($column)
     {
         return $this->addColumn('binary', $column);
+    }
+
+    /**
+     * Create a new auto-incrementing big integer (8-byte) column on the table.
+     *
+     * @param string $column
+     * @return \Hyperf\Database\Schema\ColumnDefinition
+     */
+    public function id($column = 'id')
+    {
+        return $this->bigIncrements($column);
     }
 
     /**

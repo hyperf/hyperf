@@ -13,11 +13,11 @@ namespace HyperfTest\Di\Aop;
 
 use Hyperf\Di\Aop\Pipeline;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\Testing\Debug;
 use HyperfTest\Di\Stub\Aspect\NoProcessAspect;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use function Yasd\Zval\getRefCount;
 
 /**
  * @internal
@@ -45,6 +45,6 @@ class PipelineTest extends TestCase
         });
 
         $this->assertTrue($res);
-        $this->assertEquals(2, getRefCount($pipeline));
+        $this->assertEquals('2', Debug::getRefCount($pipeline));
     }
 }
