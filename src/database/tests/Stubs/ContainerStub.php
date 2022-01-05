@@ -33,10 +33,10 @@ class ContainerStub
 
         $dbConfig = [
             'driver' => 'mysql',
-            'host' => '172.18.60.177',
+            'host' => '127.0.0.1',
             'database' => 'hyperf',
             'username' => 'root',
-            'password' => '123456',
+            'password' => '',
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
