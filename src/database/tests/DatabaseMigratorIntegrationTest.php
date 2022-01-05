@@ -43,11 +43,11 @@ class DatabaseMigratorIntegrationTest extends TestCase
 
         $dbConfig = [
             'driver' => 'mysql',
-            'host' => '127.0.0.1',
+            'host' => '172.18.60.177',
             'port' => 3306,
             'database' => 'hyperf',
             'username' => 'root',
-            'password' => '',
+            'password' => '123456',
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
