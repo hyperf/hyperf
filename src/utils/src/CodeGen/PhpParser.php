@@ -66,7 +66,7 @@ class PhpParser
         return $this->parser->parse($code);
     }
 
-    public function getNodeFromReflectionType(ReflectionType $reflection): Node\ComplexType|Node\Identifier
+    public function getNodeFromReflectionType(ReflectionType $reflection): Node\ComplexType|Node\Identifier|Node\Name
     {
         if ($reflection instanceof \ReflectionUnionType) {
             $unionType = [];
@@ -155,7 +155,7 @@ class PhpParser
         return $methods;
     }
 
-    private function getTypeWithNullableOrNot(\ReflectionNamedType $reflection): Node\ComplexType|Node\Identifier
+    private function getTypeWithNullableOrNot(\ReflectionNamedType $reflection): Node\ComplexType|Node\Identifier|Node\Name
     {
         $name = $reflection->getName();
 
