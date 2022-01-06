@@ -43,6 +43,9 @@ class AnnotationIDEVisitor extends NodeVisitorAbstract
 
                     $properties = [];
                     foreach ($this->reflection->getProperties() as $property) {
+                        if ($property->class !== $this->reflection->getName()) {
+                            continue;
+                        }
                         $properties[] = new Node\Param(
                             new Node\Expr\Variable($property->getName()),
                             $this->parser->getExprFromValue($property->getDefaultValue()),
