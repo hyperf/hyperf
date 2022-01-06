@@ -47,7 +47,7 @@ class FluentRetry
 
     public function whenReturns($when): FluentRetry
     {
-        $this->policies[] = new ClassifierRetryPolicy([], [], null, fn($r) => $r === $when);
+        $this->policies[] = new ClassifierRetryPolicy([], [], null, fn ($r) => $r === $when);
         return $this;
     }
 

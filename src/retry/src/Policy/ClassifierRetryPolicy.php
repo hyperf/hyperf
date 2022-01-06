@@ -57,7 +57,7 @@ class ClassifierRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterf
     {
         return Arr::first(
             $arr,
-            fn($v) => $t instanceof $v
+            fn ($v) => $t instanceof $v
         ) ? true : false;
     }
 

@@ -40,7 +40,7 @@ class HybridRetryPolicy implements RetryPolicyInterface
             $parentRetryContext = new RetryContext([]);
         }
         return $this->policyCollection
-            ->reduce(fn($context, $policy) => $policy->start($context), $parentRetryContext);
+            ->reduce(fn ($context, $policy) => $policy->start($context), $parentRetryContext);
     }
 
     public function beforeRetry(RetryContext &$retryContext): void

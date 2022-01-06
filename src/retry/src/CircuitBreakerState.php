@@ -22,8 +22,8 @@ class CircuitBreakerState
     public function __construct(/**
      * timeout to reset CircuitBreaker back to close.
      */
-    protected float $resetTimeout)
-    {
+    protected float $resetTimeout
+    ) {
         $this->openTime = null;
     }
 

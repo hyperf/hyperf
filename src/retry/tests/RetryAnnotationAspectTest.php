@@ -219,7 +219,7 @@ class RetryAnnotationAspectTest extends TestCase
                 {
                     $retry = new Retry();
                     $retry->sleepStrategyClass = FlatStrategy::class;
-                    $retry->retryOnThrowablePredicate = fn($t) => $t->getMessage() === 'ok';
+                    $retry->retryOnThrowablePredicate = fn ($t) => $t->getMessage() === 'ok';
                     $retry->retryThrowables = [];
                     $retry->maxAttempts = 5;
                     $this->method = [
@@ -250,7 +250,7 @@ class RetryAnnotationAspectTest extends TestCase
                 {
                     $retry = new Retry();
                     $retry->sleepStrategyClass = FlatStrategy::class;
-                    $retry->retryOnResultPredicate = fn($r) => $r <= 0;
+                    $retry->retryOnResultPredicate = fn ($r) => $r <= 0;
                     $retry->retryThrowables = [];
                     $retry->maxAttempts = 5;
                     $this->method = [
@@ -337,7 +337,7 @@ class RetryAnnotationAspectTest extends TestCase
                     $retry = new class() extends Retry {
                         public $timeout = 0.001;
 
-                        public $policies = [TimeoutRetryPolicy::class];
+                        public array $policies = [TimeoutRetryPolicy::class];
                     };
                     $this->method = [
                         AbstractRetry::class => $retry,
@@ -363,7 +363,7 @@ class RetryAnnotationAspectTest extends TestCase
                 {
                     $retry = new Retry();
                     $retry->maxAttempts = 1;
-                    $retry->fallback = fn() => 1;
+                    $retry->fallback = fn () => 1;
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $this->method = [
                         AbstractRetry::class => $retry,
@@ -412,7 +412,7 @@ class RetryAnnotationAspectTest extends TestCase
                 {
                     $retry = new Retry();
                     $retry->maxAttempts = 2;
-                    $retry->fallback = fn() => 'fallback';
+                    $retry->fallback = fn () => 'fallback';
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $this->method = [
                         AbstractRetry::class => $retry,
@@ -424,7 +424,7 @@ class RetryAnnotationAspectTest extends TestCase
         $res = $pipeline->via('process')
             ->through([$aspect, $aspect2])
             ->send($point)
-            ->then(fn(ProceedingJoinPoint $proceedingJoinPoint) => $proceedingJoinPoint->processOriginalMethod());
+            ->then(fn (ProceedingJoinPoint $proceedingJoinPoint) => $proceedingJoinPoint->processOriginalMethod());
 
         $this->assertSame('pass_aspect', $res);
     }

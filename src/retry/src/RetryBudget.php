@@ -25,8 +25,10 @@ class RetryBudget implements RetryBudgetInterface
     public function __construct(/**
      * Seconds.
      */
-    private int $ttl, private int $minRetriesPerSec, private float $percentCanRetry)
-    {
+    private int $ttl,
+        private int $minRetriesPerSec,
+        private float $percentCanRetry
+    ) {
         $this->maxToken = ($this->minRetriesPerSec / $this->percentCanRetry) * $this->ttl;
         $this->budget = new SplQueue();
     }

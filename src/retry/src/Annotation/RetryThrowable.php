@@ -20,9 +20,9 @@ class RetryThrowable extends Retry
      * Configures a list of Throwable classes that are recorded as a failure and thus are retried.
      * Any Throwable matching or inheriting from one of the list will be retried, unless ignored via ignoreExceptions.
      *
-     * Ignoring an Throwable has priority over retrying an exception.
+     * Ignoring a Throwable has priority over retrying an exception.
      *
      * @var array<string>
      */
-    public $retryThrowables = [\Throwable::class];
+    public array $retryThrowables = [\Throwable::class];
 }

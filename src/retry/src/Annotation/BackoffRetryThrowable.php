@@ -17,7 +17,7 @@ use Hyperf\Retry\BackoffStrategy;
 #[Attribute(Attribute::TARGET_METHOD)]
 class BackoffRetryThrowable extends RetryThrowable
 {
-    public $base = 100;
+    public int $base = 100;
 
-    public $sleepStrategyClass = BackoffStrategy::class;
+    public string $sleepStrategyClass = BackoffStrategy::class;
 }

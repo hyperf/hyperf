@@ -87,7 +87,7 @@ class RetryTest extends TestCase
     public function testFallback()
     {
         $i = 0;
-        $result = Retry::max(2)->fallback(fn() => 10)->call(function () use (&$i) {
+        $result = Retry::max(2)->fallback(fn () => 10)->call(function () use (&$i) {
             return $i;
         });
         $this->assertEquals(10, $result);
@@ -122,6 +122,6 @@ class RetryTest extends TestCase
         $instance->shouldReceive('test')->twice()->andThrowExceptions([new \RuntimeException()]);
         Retry::whenThrows()->max(2)->fallback(function ($throwable) {
             $this->assertInstanceOf(\RuntimeException::class, $throwable);
-        })->call(fn() => $instance->test());
+        })->call(fn () => $instance->test());
     }
 }
