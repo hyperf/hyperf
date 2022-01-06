@@ -155,8 +155,12 @@ class PhpParser
         return $methods;
     }
 
-    private function getTypeWithNullableOrNot(\ReflectionNamedType $reflection): Node\ComplexType|Node\Identifier|Node\Name
+    private function getTypeWithNullableOrNot(ReflectionType $reflection): Node\ComplexType|Node\Identifier|Node\Name
     {
+        if (! $reflection instanceof \ReflectionNamedType) {
+            throw new \ReflectionException('ReflectionType must be ReflectionNamedType.');
+        }
+
         $name = $reflection->getName();
 
         if ($reflection->allowsNull() && $name !== 'mixed') {
