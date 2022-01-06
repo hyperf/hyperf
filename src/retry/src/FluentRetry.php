@@ -26,12 +26,12 @@ class FluentRetry
     /**
      * @var RetryPolicyInterface[]
      */
-    protected $policies = [];
+    protected array $policies = [];
 
     /**
      * @var callable
      */
-    protected $callable;
+    protected mixed $callable;
 
     public function with(RetryPolicyInterface ...$policies): FluentRetry
     {

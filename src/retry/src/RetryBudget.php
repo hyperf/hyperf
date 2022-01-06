@@ -16,19 +16,19 @@ use Swoole\Timer;
 
 class RetryBudget implements RetryBudgetInterface
 {
-    private \SplQueue $budget;
+    private SplQueue $budget;
 
     private ?int $timerId = null;
 
-    private float|int $maxToken;
+    private float $maxToken;
 
-    public function __construct(/**
-     * Seconds.
+    /**
+     * @param int $ttl Seconds
+     * @param int $minRetriesPerSec
+     * @param float $percentCanRetry
      */
-    private int $ttl,
-        private int $minRetriesPerSec,
-        private float $percentCanRetry
-    ) {
+    public function __construct(private int $ttl, private int $minRetriesPerSec, private float $percentCanRetry)
+    {
         $this->maxToken = ($this->minRetriesPerSec / $this->percentCanRetry) * $this->ttl;
         $this->budget = new SplQueue();
     }

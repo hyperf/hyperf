@@ -19,7 +19,7 @@ class HybridRetryPolicy implements RetryPolicyInterface
     /**
      * A collection of policies.
      */
-    private \Hyperf\Utils\Collection $policyCollection;
+    private Collection $policyCollection;
 
     public function __construct(RetryPolicyInterface ...$policies)
     {
