@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
@@ -12,6 +12,7 @@ declare (strict_types=1);
 namespace Hyperf\Retry\Annotation;
 
 use Attribute;
+
 #[Attribute(Attribute::TARGET_METHOD)]
 class RetryThrowable extends Retry
 {

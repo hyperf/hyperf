@@ -30,6 +30,7 @@ class PhpParser
         'object',
         'resource',
         'mixed',
+        'null',
     ];
 
     /**
@@ -79,11 +80,8 @@ class PhpParser
             }
             return new Node\UnionType($unionType);
         }
-        $type = $reflection->getName();
-        if (! in_array($type, static::TYPES)) {
-            return new Node\Name('\\' . $type);
-        }
-        return new Node\Identifier($type);
+
+        return $this->getTypeWithNullableOrNot($reflection);
     }
 
     public function getNodeFromReflectionParameter(ReflectionParameter $parameter): Node\Param
@@ -119,7 +117,7 @@ class PhpParser
                 foreach ($value as $item) {
                     $result[] = new Node\Expr\ArrayItem($this->getExprFromValue($item));
                 }
-                return new Node\Expr\Array_($result,[
+                return new Node\Expr\Array_($result, [
                     'kind' => Node\Expr\Array_::KIND_SHORT,
                 ]);
             }, $value),
@@ -155,5 +153,19 @@ class PhpParser
         }
 
         return $methods;
+    }
+
+    private function getTypeWithNullableOrNot(\ReflectionNamedType $reflection): Node\ComplexType|Node\Identifier
+    {
+        $name = $reflection->getName();
+
+        if ($reflection->allowsNull()) {
+            return new Node\NullableType($name);
+        }
+
+        if (! in_array($name, static::TYPES)) {
+            return new Node\Name('\\' . $name);
+        }
+        return new Node\Identifier($name);
     }
 }

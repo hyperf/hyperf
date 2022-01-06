@@ -49,7 +49,7 @@ class AnnotationIDEVisitor extends NodeVisitorAbstract
                         $properties[] = new Node\Param(
                             new Node\Expr\Variable($property->getName()),
                             $this->parser->getExprFromValue($property->getDefaultValue()),
-                            $this->parser->getNodeFromReflectionType($property->getType()),
+                            $property->hasType() ? $this->parser->getNodeFromReflectionType($property->getType()) : null,
                         );
                     }
                     $class->stmts = [
