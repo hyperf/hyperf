@@ -159,7 +159,7 @@ class PhpParser
     {
         $name = $reflection->getName();
 
-        if ($reflection->allowsNull()) {
+        if ($reflection->allowsNull() && $name !== 'mixed') {
             return new Node\NullableType($name);
         }
 
