@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
 /**
  * This file is part of Hyperf.
  *
@@ -12,16 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\Retry\Annotation;
 
 use Attribute;
-use Doctrine\Common\Annotations\Annotation\Target;
-
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
+use Hyperf\Retry\BackoffStrategy;
 #[Attribute(Attribute::TARGET_METHOD)]
 class BackoffRetryFalsy extends RetryFalsy
 {
-    public function __construct($base, $sleepStrategyClass, $retryThrowables, $retryOnResultPredicate, $policies, $maxAttempts, $retryBudget, $retryOnThrowablePredicate, $ignoreThrowables, $fallback)
+    public function __construct(int $base = 100, string $sleepStrategyClass = 'Hyperf\\Retry\\BackoffStrategy')
     {
     }
 }
