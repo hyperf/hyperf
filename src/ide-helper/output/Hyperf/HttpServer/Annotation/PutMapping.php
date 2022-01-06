@@ -16,7 +16,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD)]
 class PutMapping extends Mapping
 {
-    public function __construct($methods, $path, $options)
+    public function __construct(array $methods = ['PUT'])
     {
     }
 }

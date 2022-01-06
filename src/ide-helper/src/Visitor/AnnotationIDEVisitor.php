@@ -43,10 +43,13 @@ class AnnotationIDEVisitor extends NodeVisitorAbstract
 
                     $properties = [];
                     foreach ($this->reflection->getProperties() as $property) {
+                        if ($property->class !== $this->reflection->getName()) {
+                            continue;
+                        }
                         $properties[] = new Node\Param(
                             new Node\Expr\Variable($property->getName()),
                             $this->parser->getExprFromValue($property->getDefaultValue()),
-                            $this->getType($property->getType()),
+                            $property->hasType() ? $this->parser->getNodeFromReflectionType($property->getType()) : null,
                         );
                     }
                     $class->stmts = [
@@ -57,26 +60,6 @@ class AnnotationIDEVisitor extends NodeVisitorAbstract
                     ];
                 }
             }
-        }
-    }
-
-    private function getType(?\ReflectionType $type): Node\NullableType|Node\Identifier|null|Node\UnionType
-    {
-        if ($type === null) {
-            return null;
-        }
-        if ($type instanceof \ReflectionNamedType) {
-            if ($type->allowsNull()) {
-                return new Node\NullableType($type->getName());
-            }
-            return new Node\Identifier($type->getName());
-        }
-        if ($type instanceof \ReflectionUnionType) {
-            $result = [];
-            foreach ($type->getTypes() as $type) {
-                $result[] = new Node\Identifier($type->getName());
-            }
-            return new Node\UnionType($result);
         }
     }
 }
