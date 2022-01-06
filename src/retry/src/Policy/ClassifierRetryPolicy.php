@@ -17,8 +17,6 @@ use Hyperf\Utils\Arr;
 class ClassifierRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
     /**
-     * @param array $ignoreThrowables
-     * @param array $retryThrowables
      * @param callable|mixed $retryOnThrowablePredicate
      * @param callable|mixed $retryOnResultPredicate
      */

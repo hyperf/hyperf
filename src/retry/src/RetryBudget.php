@@ -24,8 +24,6 @@ class RetryBudget implements RetryBudgetInterface
 
     /**
      * @param int $ttl Seconds
-     * @param int $minRetriesPerSec
-     * @param float $percentCanRetry
      */
     public function __construct(private int $ttl, private int $minRetriesPerSec, private float $percentCanRetry)
     {
