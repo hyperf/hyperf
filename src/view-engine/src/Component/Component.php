@@ -12,13 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine\Component;
 
 use Closure;
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use Hyperf\ViewEngine\Blade;
-use Hyperf\Utils\Filesystem\Filesystem;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\ViewEngine\Contract\FactoryInterface;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use Hyperf\ViewEngine\View;
-use Hyperf\ViewEngine\Contract\FactoryInterface;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -159,7 +159,7 @@ abstract class Component
         if (! is_file($viewFile = Blade::config('config.cache_path') . '/' . sha1($contents) . '.blade.php')) {
             $container = ApplicationContext::getContainer();
             $filesystem = $container->get(Filesystem::class);
-            $filesystem->put($viewFile, $contents,true);
+            $filesystem->put($viewFile, $contents, true);
         }
 
         return '__components::' . basename($viewFile, '.blade.php');
