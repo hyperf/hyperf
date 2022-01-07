@@ -187,7 +187,7 @@ class Client extends Server
     /**
      * @deprecated It will be removed in v3.0
      */
-    protected function init(string $method, string $path, array $options = []): ResponseInterface
+    protected function init(string $method, string $path, array $options = []): ServerRequestInterface
     {
         return $this->initRequest($method, $path, $options);
     }
