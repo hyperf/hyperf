@@ -1,4 +1,21 @@
-# v2.2.22 - TBD
+# v2.2.23 - TBD
+
+# v2.2.22 - 2022-01-04
+
+## Fixed
+
+- [#4399](https://github.com/hyperf/hyperf/pull/4399) Fixed bug that `Redis::scan` does not work when using redis cluster.
+
+## Added
+
+- [#4409](https://github.com/hyperf/hyperf/pull/4409) Added database handler for `session`.
+- [#4411](https://github.com/hyperf/hyperf/pull/4411) Added `Hyperf\Tracer\Aspect\DbAspect` to log db records when using `hyperf/db`. 
+- [#4420](https://github.com/hyperf/hyperf/pull/4420) Support `SSL` for `Hyperf\Amqp\IO\SwooleIO`.
+
+## Optimized
+
+- [#4406](https://github.com/hyperf/hyperf/pull/4406) Adapt swoole 5.0 by removing swoole classes with `PSR-0`.
+- [#4429](https://github.com/hyperf/hyperf/pull/4429) Added type hint for `Debug::getRefCount()` which only support `object`.
 
 # v2.2.21 - 2021-12-20
 
