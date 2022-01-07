@@ -137,7 +137,7 @@ class Client extends Server
     public function request(string $method, string $path, array $options = [])
     {
         return wait(function () use ($method, $path, $options) {
-            return $this->execute($this->getRequest($method, $path, $options));
+            return $this->execute($this->initRequest($method, $path, $options));
         }, $this->waitTimeout);
     }
 
@@ -148,7 +148,7 @@ class Client extends Server
         }, $this->waitTimeout);
     }
 
-    public function getRequest(string $method, string $path, array $options = []): ServerRequestInterface
+    public function initRequest(string $method, string $path, array $options = []): ServerRequestInterface
     {
         $query = $options['query'] ?? [];
         $params = $options['form_params'] ?? [];
@@ -184,9 +184,12 @@ class Client extends Server
             ->withUploadedFiles($this->normalizeFiles($multipart));
     }
 
+    /**
+     * @deprecated It will be removed in v3.0
+     */
     protected function init(string $method, string $path, array $options = []): ResponseInterface
     {
-        return $this->getRequest($method, $path, $options);
+        return $this->initRequest($method, $path, $options);
     }
 
     protected function execute(ServerRequestInterface $psr7Request): ResponseInterface
