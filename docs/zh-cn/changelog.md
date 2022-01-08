@@ -1,5 +1,22 @@
 # 版本更新记录
 
+# v2.2.22 - 2022-01-04
+
+## Fixed
+
+- [#4399](https://github.com/hyperf/hyperf/pull/4399) 修复使用 `RedisCluster` 时，无法使用 `scan` 方法的问题。
+
+## Added
+
+- [#4409](https://github.com/hyperf/hyperf/pull/4409) 为 `session` 增加数据库支持。
+- [#4411](https://github.com/hyperf/hyperf/pull/4411) 为 `tracer` 组件，新增 `Hyperf\Tracer\Aspect\DbAspect`，用于记录 `hyperf/db` 组件产生的 `SQL` 日志。
+- [#4420](https://github.com/hyperf/hyperf/pull/4420) 为 `Hyperf\Amqp\IO\SwooleIO` 增加 `SSL` 支持。
+
+## Optimized
+
+- [#4406](https://github.com/hyperf/hyperf/pull/4406) 删除 `Swoole PSR-0` 风格代码，更加友好的支持 `Swoole 5.0` 版本。
+- [#4429](https://github.com/hyperf/hyperf/pull/4429) 为 `Debug::getRefCount()` 方法增加类型检测，只能用于输出对象的 `RefCount`。
+
 # v2.2.21 - 2021-12-20
 
 ## 修复
