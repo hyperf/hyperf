@@ -75,10 +75,8 @@ abstract class Grammar
 
     /**
      * Convert an array of column names into a delimited string.
-     *
-     * @return string
      */
-    public function columnize(array $columns)
+    public function columnize(array $columns): string
     {
         return implode(', ', array_map([$this, 'wrap'], $columns));
     }
@@ -143,10 +141,8 @@ abstract class Grammar
 
     /**
      * Get the format for database stored dates.
-     *
-     * @return string
      */
-    public function getDateFormat()
+    public function getDateFormat(): string
     {
         return 'Y-m-d H:i:s';
     }
@@ -218,9 +214,8 @@ abstract class Grammar
      * Wrap a single string in keyword identifiers.
      *
      * @param string $value
-     * @return string
      */
-    protected function wrapValue($value)
+    protected function wrapValue($value): string
     {
         if ($value !== '*') {
             return '"' . str_replace('"', '""', $value) . '"';

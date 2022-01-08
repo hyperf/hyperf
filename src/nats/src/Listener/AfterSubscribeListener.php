@@ -17,14 +17,8 @@ use Hyperf\Nats\Event\AfterSubscribe;
 
 class AfterSubscribeListener implements ListenerInterface
 {
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    public function __construct(StdoutLoggerInterface $logger)
+    public function __construct(protected StdoutLoggerInterface $logger)
     {
-        $this->logger = $logger;
     }
 
     public function listen(): array

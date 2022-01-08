@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\ModelCache\Handler;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\ModelCache\Config;
 use Hyperf\ModelCache\Exception\CacheException;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\InteractsWithTime;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Psr\Container\ContainerInterface;
@@ -24,39 +24,21 @@ class RedisStringHandler implements HandlerInterface
 {
     use InteractsWithTime;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected RedisProxy $redis;
 
-    /**
-     * @var RedisProxy
-     */
-    protected $redis;
+    protected PackerInterface $packer;
 
-    /**
-     * @var Config
-     */
-    protected $config;
-
-    /**
-     * @var PackerInterface
-     */
-    protected $packer;
-
-    public function __construct(ContainerInterface $container, Config $config)
+    public function __construct(protected ContainerInterface $container, protected Config $config)
     {
-        $this->container = $container;
         if (! $container->has(RedisProxy::class)) {
             throw new CacheException(sprintf('Entry[%s] of the container is not exist.', RedisProxy::class));
         }
 
         $this->redis = make(RedisProxy::class, ['pool' => $config->getPool()]);
-        $this->config = $config;
         $this->packer = $container->get(PhpSerializerPacker::class);
     }
 
-    public function get($key, $default = null)
+    public function get($key, $default = null): mixed
     {
         $data = $this->redis->get($key);
         if (! $data) {
@@ -66,14 +48,14 @@ class RedisStringHandler implements HandlerInterface
         return $this->packer->unpack($data);
     }
 
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value, $ttl = null): bool
     {
         if (is_array($value)) {
             $data = $value;
         } elseif ($value instanceof Arrayable) {
             $data = $value->toArray();
         } else {
-            throw new CacheException(sprintf('The value must is array.'));
+            throw new CacheException('The value must is array.');
         }
 
         $serialized = $this->packer->pack($data);
@@ -86,19 +68,24 @@ class RedisStringHandler implements HandlerInterface
         return $this->redis->set($key, $serialized);
     }
 
-    public function delete($key)
+    public function delete($key): bool
     {
         return (bool) $this->redis->del($key);
     }
 
-    public function clear()
+    public function clear(): bool
     {
         throw new CacheException('Method clear is forbidden.');
     }
 
-    public function getMultiple($keys, $default = null)
+    /**
+     * @param iterable $keys
+     * @param mixed $default
+     * @return array|iterable
+     */
+    public function getMultiple($keys, $default = null): iterable
     {
-        $data = $this->redis->mget($keys);
+        $data = $this->redis->mget((array) $keys);
         $result = [];
         foreach ($data as $item) {
             if (! empty($item)) {
@@ -108,17 +95,17 @@ class RedisStringHandler implements HandlerInterface
         return $result;
     }
 
-    public function setMultiple($values, $ttl = null)
+    public function setMultiple($values, $ttl = null): bool
     {
         throw new CacheException('Method setMultiple is forbidden.');
     }
 
-    public function deleteMultiple($keys)
+    public function deleteMultiple($keys): bool
     {
         return $this->redis->del(...$keys) > 0;
     }
 
-    public function has($key)
+    public function has($key): bool
     {
         return (bool) $this->redis->exists($key);
     }

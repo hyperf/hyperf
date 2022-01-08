@@ -15,7 +15,7 @@ use Hyperf\Database\Model\Model;
 
 class ModelEventObjectStub extends Model
 {
-    protected $events = [
+    protected array $events = [
         'saving' => ModelSavingEventStub::class,
     ];
 }

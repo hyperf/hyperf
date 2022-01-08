@@ -17,15 +17,15 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
-        "hyperf/contract": "~2.2.0",
-        "hyperf/dispatcher": "~2.2.0",
-        "hyperf/event": "~2.2.0",
-        "hyperf/exception-handler": "~2.2.0",
-        "hyperf/http-message": "~2.2.0",
-        "hyperf/macroable": "~2.2.0",
-        "hyperf/server": "~2.2.0",
-        "hyperf/utils": "~2.2.0",
+        "php": ">=8.0",
+        "hyperf/contract": "~3.0.0",
+        "hyperf/dispatcher": "~3.0.0",
+        "hyperf/event": "~3.0.0",
+        "hyperf/exception-handler": "~3.0.0",
+        "hyperf/http-message": "~3.0.0",
+        "hyperf/macroable": "~3.0.0",
+        "hyperf/server": "~3.0.0",
+        "hyperf/utils": "~3.0.0",
         "nikic/fast-route": "^1.3",
         "psr/container": "^1.0|^2.0"
     },
@@ -47,7 +47,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\HttpServer\\ConfigProvider"

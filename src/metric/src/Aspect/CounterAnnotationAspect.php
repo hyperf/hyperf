@@ -17,9 +17,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Metric\Annotation\Counter;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 
-/**
- * @Aspect
- */
+#[Aspect]
 class CounterAnnotationAspect implements AroundInterface
 {
     public $classes = [];

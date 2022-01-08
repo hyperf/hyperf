@@ -45,9 +45,8 @@ trait HasGlobalScopes
      * Determine if a model has a global scope.
      *
      * @param \Hyperf\Database\Model\Scope|string $scope
-     * @return bool
      */
-    public static function hasGlobalScope($scope)
+    public static function hasGlobalScope($scope): bool
     {
         return ! is_null(static::getGlobalScope($scope));
     }

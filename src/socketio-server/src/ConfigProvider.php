@@ -22,7 +22,7 @@ use Hyperf\SocketIOServer\Room\RedisAdapter;
 use Hyperf\SocketIOServer\Room\SubscriberFactory;
 use Hyperf\SocketIOServer\SidProvider\DistributedSidProvider;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
-use Mix\Redis\Subscribe\Subscriber;
+use Mix\Redis\Subscriber\Subscriber;
 
 class ConfigProvider
 {

@@ -29,39 +29,30 @@ trait Emitter
 {
     use Flagger;
 
-    /**
-     * @var AdapterInterface
-     */
-    protected $adapter;
+    protected ?AdapterInterface $adapter = null;
 
     /**
      * @var callable
      */
     protected $addCallback;
 
-    /**
-     * @var Sender
-     */
-    protected $sender;
+    protected ?Sender $sender = null;
 
-    /**
-     * @var SidProviderInterface
-     */
-    protected $sidProvider;
+    protected ?SidProviderInterface $sidProvider = null;
 
-    private $fd = -1;
+    private int $fd = -1;
 
-    private $to = [];
+    private array $to = [];
 
-    private $broadcast = false;
+    private bool $broadcast = false;
 
-    private $local = false;
+    private bool $local = false;
 
-    private $compress = false;
+    private bool $compress = false;
 
-    private $volatile = false;
+    private bool $volatile = false;
 
-    private $binary = false;
+    private bool $binary = false;
 
     public function __get($flag)
     {

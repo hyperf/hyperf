@@ -14,14 +14,10 @@ namespace Hyperf\Event\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class Listener extends AbstractAnnotation
 {
-    public function __construct($priority)
+    public function __construct(int $priority = 0)
     {
     }
 }

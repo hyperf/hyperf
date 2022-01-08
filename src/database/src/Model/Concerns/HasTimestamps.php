@@ -12,15 +12,14 @@ declare(strict_types=1);
 namespace Hyperf\Database\Model\Concerns;
 
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 
 trait HasTimestamps
 {
     /**
      * Indicates if the model should be timestamped.
-     *
-     * @var bool
      */
-    public $timestamps = true;
+    public bool $timestamps = true;
 
     /**
      * Update the model's update timestamp.
@@ -40,9 +39,8 @@ trait HasTimestamps
      * Set the value of the "created at" attribute.
      *
      * @param mixed $value
-     * @return $this
      */
-    public function setCreatedAt($value)
+    public function setCreatedAt($value): static
     {
         $this->{static::CREATED_AT} = $value;
 
@@ -53,9 +51,8 @@ trait HasTimestamps
      * Set the value of the "updated at" attribute.
      *
      * @param mixed $value
-     * @return $this
      */
-    public function setUpdatedAt($value)
+    public function setUpdatedAt($value): static
     {
         $this->{static::UPDATED_AT} = $value;
 
@@ -64,10 +61,8 @@ trait HasTimestamps
 
     /**
      * Get a fresh timestamp for the model.
-     *
-     * @return Carbon
      */
-    public function freshTimestamp()
+    public function freshTimestamp(): CarbonInterface
     {
         return Carbon::now();
     }
@@ -107,7 +102,7 @@ trait HasTimestamps
     /**
      * Update the creation and update timestamps.
      */
-    protected function updateTimestamps()
+    protected function updateTimestamps(): void
     {
         $time = $this->freshTimestamp();
 

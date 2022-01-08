@@ -17,6 +17,7 @@ use Hyperf\ViewEngine\Contract\DeferringDisplayableValue;
 use Hyperf\ViewEngine\Contract\Enumerable;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use IteratorAggregate;
+use Traversable;
 
 class InvokableComponentVariable implements DeferringDisplayableValue, IteratorAggregate
 {
@@ -90,10 +91,8 @@ class InvokableComponentVariable implements DeferringDisplayableValue, IteratorA
 
     /**
      * Get an interator instance for the variable.
-     *
-     * @return ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         $result = $this->__invoke();
 

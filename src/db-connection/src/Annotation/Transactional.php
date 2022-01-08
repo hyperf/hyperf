@@ -14,20 +14,10 @@ namespace Hyperf\DbConnection\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class Transactional extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $connection = 'default';
+    public string $connection = 'default';
 
-    /**
-     * @var int
-     */
-    public $attempts = 1;
+    public int $attempts = 1;
 }

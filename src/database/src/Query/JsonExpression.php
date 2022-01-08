@@ -39,19 +39,11 @@ class JsonExpression extends Expression
             return $value->getValue();
         }
 
-        switch ($type = gettype($value)) {
-            case 'boolean':
-                return $value ? 'true' : 'false';
-            case 'NULL':
-            case 'integer':
-            case 'double':
-            case 'string':
-                return '?';
-            case 'object':
-            case 'array':
-                return '?';
-        }
-
-        throw new InvalidArgumentException("JSON value is of illegal type: {$type}");
+        $type = gettype($value);
+        return match ($type) {
+            'boolean' => $value ? 'true' : 'false',
+            'NULL', 'integer', 'double', 'string', 'object', 'array' => '?',
+            default => throw new InvalidArgumentException("JSON value is of illegal type: {$type}")
+        };
     }
 }

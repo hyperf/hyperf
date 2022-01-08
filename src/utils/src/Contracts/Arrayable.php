@@ -11,14 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Contracts;
 
+use Hyperf\Contract;
+
 /**
- * @template TKey of array-key
- * @template TValue
+ * @deprecated v3.1
  */
-interface Arrayable
+interface Arrayable extends Contract\Arrayable
 {
-    /**
-     * @return array<TKey, TValue>
-     */
-    public function toArray(): array;
 }

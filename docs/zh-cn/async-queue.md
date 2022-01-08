@@ -109,9 +109,7 @@ namespace App\Process;
 use Hyperf\AsyncQueue\Process\ConsumerProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="async-queue")
- */
+#[Process(name: "async-queue")]
 class AsyncQueueConsumer extends ConsumerProcess
 {
 }
@@ -176,10 +174,8 @@ class ExampleJob extends Job
     
     /**
      * 任务执行失败后的重试次数，即最大执行次数为 $maxAttempts+1 次
-     *
-     * @var int
      */
-    protected $maxAttempts = 2;
+    protected int $maxAttempts = 2;
 
     public function __construct($params)
     {
@@ -212,10 +208,7 @@ use Hyperf\AsyncQueue\Driver\DriverInterface;
 
 class QueueService
 {
-    /**
-     * @var DriverInterface
-     */
-    protected $driver;
+    protected DriverInterface $driver;
 
     public function __construct(DriverFactory $driverFactory)
     {
@@ -252,16 +245,11 @@ use App\Service\QueueService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class QueueController extends AbstractController
 {
-    /**
-     * @Inject
-     * @var QueueService
-     */
-    protected $service;
+    #[Inject]
+    protected QueueService $service;
 
     /**
      * 传统模式投递消息
@@ -299,9 +287,7 @@ use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
 
 class QueueService
 {
-    /**
-     * @AsyncQueueMessage
-     */
+    #[AsyncQueueMessage]
     public function example($params)
     {
         // 需要异步执行的代码逻辑
@@ -327,15 +313,13 @@ use App\Service\QueueService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class QueueController extends AbstractController
 {
     /**
-     * @Inject
      * @var QueueService
      */
+    #[Inject]
     protected $service;
 
     /**
@@ -468,15 +452,10 @@ namespace App\Process;
 use Hyperf\AsyncQueue\Process\ConsumerProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process()
- */
+#[Process]
 class OtherConsumerProcess extends ConsumerProcess
 {
-    /**
-     * @var string
-     */
-    protected $queue = 'other';
+    protected string $queue = 'other';
 }
 ```
 

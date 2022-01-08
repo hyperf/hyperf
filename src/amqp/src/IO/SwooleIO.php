@@ -34,27 +34,9 @@ class SwooleIO extends AbstractIO
     /**
      * @var int
      */
-    protected $connectionTimeout;
-
-    /**
-     * @var int
-     */
-    protected $readWriteTimeout;
-
-    /**
-     * @var bool
-     */
-    protected $openSSL;
-
-    /**
-     * @var int
-     */
     protected $heartbeat;
 
-    /**
-     * @var null|Socket
-     */
-    private $sock;
+    private ?Socket $sock = null;
 
     /**
      * @throws \InvalidArgumentException when readWriteTimeout argument does not 2x the heartbeat
@@ -62,15 +44,12 @@ class SwooleIO extends AbstractIO
     public function __construct(
         string $host,
         int $port,
-        int $connectionTimeout,
-        int $readWriteTimeout = 3,
-        bool $openSSL = false
+        protected int $connectionTimeout,
+        protected int $readWriteTimeout = 3,
+        protected bool $openSSL = false
     ) {
         $this->host = $host;
         $this->port = $port;
-        $this->connectionTimeout = $connectionTimeout;
-        $this->readWriteTimeout = $readWriteTimeout;
-        $this->openSSL = $openSSL;
     }
 
     /**
@@ -112,7 +91,7 @@ class SwooleIO extends AbstractIO
         $this->sock && $this->sock->close();
     }
 
-    public function select($sec, $usec = 0)
+    public function select(?int $sec, int $usec = 0)
     {
         return 1;
     }

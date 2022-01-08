@@ -15,7 +15,7 @@ use Hyperf\Database\Model\Model;
 
 class ModelAppendsStub extends Model
 {
-    protected $appends = ['is_admin', 'camelCased', 'StudlyCased'];
+    protected array $appends = ['is_admin', 'camelCased', 'StudlyCased'];
 
     public function getIsAdminAttribute()
     {

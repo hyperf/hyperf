@@ -20,24 +20,12 @@ use SessionHandlerInterface;
 
 class SessionSidProvider implements SidProviderInterface
 {
-    /**
-     * @var \Hyperf\Contract\SessionInterface
-     */
-    private $session;
+    private SessionInterface $session;
 
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private ConfigInterface $config;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
         $this->session = $container->get(SessionInterface::class);
     }

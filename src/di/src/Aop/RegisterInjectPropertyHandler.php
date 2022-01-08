@@ -19,13 +19,10 @@ use Hyperf\Utils\ApplicationContext;
 
 class RegisterInjectPropertyHandler
 {
-    /**
-     * @var bool
-     */
-    public static $registered = false;
+    public static bool $registered = false;
 
     /**
-     * Even the Inject has been handled by constructor of proxy class, but the Aspect class does not works,
+     * Even the Inject has been handled by constructor of proxy class, but the Aspect class does not work,
      * So inject the value one more time here.
      */
     public static function register()

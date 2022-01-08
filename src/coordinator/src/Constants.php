@@ -9,8 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Kafka\Exception;
+namespace Hyperf\Coordinator;
 
-class ConnectionCLosedException extends KafkaException
+class Constants
 {
+    /**
+     * Swoole onWorkerStart event.
+     */
+    public const WORKER_START = 'workerStart';
+
+    /**
+     * Swoole onWorkerExit event.
+     */
+    public const WORKER_EXIT = 'workerExit';
 }

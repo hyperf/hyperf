@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\View\RenderInterface;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 use Hyperf\ViewEngine\Contract\ViewInterface;

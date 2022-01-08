@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use Countable;
-use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Contracts\MessageBag as MessageBagContract;
 use Hyperf\Utils\Contracts\MessageProvider;
@@ -286,7 +286,7 @@ class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, Me
     /**
      * Convert the object into something JSON serializable.
      */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }

@@ -25,40 +25,23 @@ use Hyperf\Crontab\Mutex\TaskMutex;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use Swoole\Timer;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 
 class Executor
 {
-    /**
-     * @var \Psr\Container\ContainerInterface
-     */
-    protected $container;
+    protected ?PsrLoggerInterface $logger = null;
 
-    /**
-     * @var null|\Hyperf\Crontab\LoggerInterface
-     */
-    protected $logger;
+    protected ?TaskMutex $taskMutex = null;
 
-    /**
-     * @var \Hyperf\Crontab\Mutex\TaskMutex
-     */
-    protected $taskMutex;
+    protected ?ServerMutex $serverMutex = null;
 
-    /**
-     * @var \Hyperf\Crontab\Mutex\ServerMutex
-     */
-    protected $serverMutex;
+    protected ?EventDispatcherInterface $dispatcher = null;
 
-    /**
-     * @var null|EventDispatcherInterface
-     */
-    protected $dispatcher;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         if ($container->has(LoggerInterface::class)) {
             $this->logger = $container->get(LoggerInterface::class);
         } elseif ($container->has(StdoutLoggerInterface::class)) {
@@ -71,7 +54,7 @@ class Executor
 
     public function execute(Crontab $crontab)
     {
-        if (! $crontab instanceof Crontab || ! $crontab->getExecuteTime()) {
+        if (! $crontab->getExecuteTime()) {
             return;
         }
         $diff = $crontab->getExecuteTime()->diffInRealSeconds(new Carbon());
@@ -95,7 +78,7 @@ class Executor
                                 $result = false;
                                 $this->dispatcher && $this->dispatcher->dispatch(new FailToExecute($crontab, $throwable));
                             } finally {
-                                $this->logResult($crontab, $result);
+                                $this->logResult($crontab, $result, $throwable ?? null);
                             }
                         };
 
@@ -134,7 +117,7 @@ class Executor
             $taskMutex = $this->getTaskMutex();
 
             if ($taskMutex->exists($crontab) || ! $taskMutex->create($crontab)) {
-                $this->logger->info(sprintf('Crontab task [%s] skipped execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+                $this->logger?->info(sprintf('Crontab task [%s] skipped execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
                 return;
             }
 
@@ -162,7 +145,7 @@ class Executor
             $taskMutex = $this->getServerMutex();
 
             if (! $taskMutex->attempt($crontab)) {
-                $this->logger->info(sprintf('Crontab task [%s] skipped execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+                $this->logger?->info(sprintf('Crontab task [%s] skipped execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
                 return;
             }
 
@@ -193,14 +176,13 @@ class Executor
         return $runnable;
     }
 
-    protected function logResult(Crontab $crontab, bool $isSuccess)
+    protected function logResult(Crontab $crontab, bool $isSuccess, ?\Throwable $throwable = null)
     {
-        if ($this->logger) {
-            if ($isSuccess) {
-                $this->logger->info(sprintf('Crontab task [%s] executed successfully at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
-            } else {
-                $this->logger->error(sprintf('Crontab task [%s] failed execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
-            }
+        if ($isSuccess) {
+            $this->logger?->info(sprintf('Crontab task [%s] executed successfully at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+        } else {
+            $this->logger?->error(sprintf('Crontab task [%s] failed execution at %s.', $crontab->getName(), date('Y-m-d H:i:s')));
+            $throwable && $this->logger?->error((string) $throwable);
         }
     }
 }

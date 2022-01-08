@@ -84,7 +84,7 @@ class Stringable implements JsonSerializable
     /**
      * Append the given values to the string.
      *
-     * @param array $values
+     * @param string $values
      * @return static
      */
     public function append(...$values)
@@ -465,7 +465,7 @@ class Stringable implements JsonSerializable
     /**
      * Prepend the given values to the string.
      *
-     * @param array $values
+     * @param string $values
      * @return static
      */
     public function prepend(...$values)
@@ -793,10 +793,8 @@ class Stringable implements JsonSerializable
 
     /**
      * Convert the object to a string when JSON encoded.
-     *
-     * @return string
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->__toString();
     }

@@ -15,7 +15,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class ModelStub extends Model
 {
-    public $fillable = ['id', 'json_data', 'str', 'float_num'];
+    public array $fillable = ['id', 'json_data', 'str', 'float_num'];
 
-    public $casts = ['id' => 'integer', 'json_data' => 'json', 'str' => 'string', 'float_num' => 'float'];
+    public array $casts = ['id' => 'integer', 'json_data' => 'json', 'str' => 'string', 'float_num' => 'float'];
 }

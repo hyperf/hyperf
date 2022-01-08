@@ -13,16 +13,19 @@ namespace Hyperf\Devtool\Generator;
 
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
 #[Command]
 class RequestCommand extends GeneratorCommand
 {
     public function __construct()
     {
         parent::__construct('gen:request');
+    }
+
+    public function configure()
+    {
         $this->setDescription('Create a new form request class');
+
+        parent::configure();
     }
 
     protected function getStub(): string

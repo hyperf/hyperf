@@ -23,18 +23,13 @@ use Hyperf\Utils\Composer;
 
 class ClassLoader
 {
-    /**
-     * @var \Composer\Autoload\ClassLoader
-     */
-    protected $composerClassLoader;
+    protected ComposerClassLoader $composerClassLoader;
 
     /**
      * The container to collect all the classes that would be proxy.
      * [ OriginalClassName => ProxyFileAbsolutePath ].
-     *
-     * @var array
      */
-    protected $proxies = [];
+    protected array $proxies = [];
 
     public function __construct(ComposerClassLoader $classLoader, string $proxyFileDir, string $configDir)
     {

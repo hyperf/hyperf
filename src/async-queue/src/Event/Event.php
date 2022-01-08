@@ -15,14 +15,8 @@ use Hyperf\AsyncQueue\MessageInterface;
 
 class Event
 {
-    /**
-     * @var MessageInterface
-     */
-    public $message;
-
-    public function __construct(MessageInterface $message)
+    public function __construct(protected MessageInterface $message)
     {
-        $this->message = $message;
     }
 
     public function getMessage(): MessageInterface

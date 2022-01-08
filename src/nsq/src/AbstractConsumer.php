@@ -15,39 +15,18 @@ use Psr\Container\ContainerInterface;
 
 abstract class AbstractConsumer
 {
-    /**
-     * @var string
-     */
-    protected $pool = 'default';
+    protected string $pool = 'default';
 
-    /**
-     * @var string
-     */
-    protected $topic = '';
+    protected string $topic = '';
 
-    /**
-     * @var string
-     */
-    protected $channel = '';
+    protected string $channel = '';
 
-    /**
-     * @var string
-     */
-    protected $name = 'NsqConsumer';
+    protected string $name = 'NsqConsumer';
 
-    /**
-     * @var int
-     */
-    protected $nums = 1;
+    protected int $nums = 1;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     abstract public function consume(Message $message): ?string;
@@ -57,7 +36,7 @@ abstract class AbstractConsumer
         return $this->topic;
     }
 
-    public function setTopic(string $topic): self
+    public function setTopic(string $topic): static
     {
         $this->topic = $topic;
         return $this;
@@ -68,7 +47,7 @@ abstract class AbstractConsumer
         return $this->channel;
     }
 
-    public function setChannel(string $channel): self
+    public function setChannel(string $channel): static
     {
         $this->channel = $channel;
         return $this;
@@ -79,7 +58,7 @@ abstract class AbstractConsumer
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): static
     {
         $this->name = $name;
         return $this;
@@ -90,7 +69,7 @@ abstract class AbstractConsumer
         return $this->nums;
     }
 
-    public function setNums(int $nums): self
+    public function setNums(int $nums): static
     {
         $this->nums = $nums;
         return $this;
@@ -101,7 +80,7 @@ abstract class AbstractConsumer
         return $this->pool;
     }
 
-    public function setPool(string $pool): self
+    public function setPool(string $pool): static
     {
         $this->pool = $pool;
         return $this;

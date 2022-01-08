@@ -28,15 +28,9 @@ class Socket
 {
     use Emitter;
 
-    /**
-     * @var string
-     */
-    private $nsp;
+    private string $nsp;
 
-    /**
-     * @var Encoder
-     */
-    private $encoder;
+    private Encoder $encoder;
 
     public function __construct(
         AdapterInterface $adapter,

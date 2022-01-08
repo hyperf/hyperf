@@ -14,25 +14,13 @@ namespace Hyperf\Di\Resolver;
 use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\FactoryDefinition;
 use Hyperf\Di\Exception\InvalidDefinitionException;
-use Invoker\Exception\NotCallableException;
+use Hyperf\Di\Exception\NotCallableException;
 use Psr\Container\ContainerInterface;
 
 class FactoryResolver implements ResolverInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @var ResolverInterface
-     */
-    private $resolver;
-
-    public function __construct(ContainerInterface $container, ResolverInterface $resolver)
+    public function __construct(private ContainerInterface $container, private ResolverInterface $resolver)
     {
-        $this->container = $container;
-        $this->resolver = $resolver;
     }
 
     /**

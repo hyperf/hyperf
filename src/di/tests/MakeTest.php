@@ -13,7 +13,6 @@ namespace HyperfTest\Di;
 
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
-use Hyperf\Di\Definition\ScanConfig;
 use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Di\Stub\Bar;
 use HyperfTest\Di\Stub\Demo;
@@ -28,7 +27,7 @@ class MakeTest extends TestCase
 {
     protected function setUp(): void
     {
-        $container = new Container(new DefinitionSource([], new ScanConfig()));
+        $container = new Container(new DefinitionSource([]));
         ApplicationContext::setContainer($container);
     }
 

@@ -748,7 +748,7 @@ class EtcdClient
         }
 
         $map = [];
-        foreach ($data as $index => $value) {
+        foreach ($data as $value) {
             $key = $value['key'];
             $map[$key] = $value['value'];
         }

@@ -13,10 +13,7 @@ namespace Hyperf\Utils\Traits;
 
 trait Container
 {
-    /**
-     * @var array
-     */
-    protected static $container = [];
+    protected static array $container = [];
 
     /**
      * Add a value to container by identifier.

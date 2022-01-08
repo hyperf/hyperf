@@ -18,31 +18,23 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use Swoole\Server;
 
 class ConfigFetcherProcess extends AbstractProcess
 {
-    public $name = 'config-center-fetcher';
+    public string $name = 'config-center-fetcher';
 
     /**
      * @var Server
      */
     protected $server;
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
+    protected ConfigInterface $config;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var \Hyperf\ConfigCenter\DriverFactory
-     */
-    protected $driverFactory;
+    protected DriverFactory $driverFactory;
 
     public function __construct(ContainerInterface $container)
     {

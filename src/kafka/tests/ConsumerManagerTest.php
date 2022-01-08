@@ -46,11 +46,12 @@ class ConsumerManagerTest extends TestCase
         $topic = Arr::random([uniqid(), [uniqid(), uniqid()]]);
         AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
             'topic' => $topic,
-            'name' => $name = uniqid(),
+            'name' => uniqid(),
             'groupId' => $groupId = uniqid(),
             'nums' => $nums = rand(1, 10),
             'isEnable' => true,
             'autoCommit' => true,
+            'memberId' => $memberId = uniqid(),
         ]));
         $manager = new ConsumerManager($container);
         $manager->run();
@@ -72,7 +73,7 @@ class ConsumerManagerTest extends TestCase
                 $this->assertSame((float) $config['send_timeout'], $consumer->getSendTimeout());
                 $this->assertSame($groupId, $consumer->getGroupId());
                 $this->assertTrue(strpos($consumer->getGroupInstanceId(), $groupId) !== false);
-                $this->assertSame('', $consumer->getMemberId());
+                $this->assertSame($memberId, $consumer->getMemberId());
                 $this->assertSame((float) $config['interval'], $consumer->getInterval());
                 $this->assertTrue(in_array($config['bootstrap_servers'], $consumer->getBootstrapServers()));
                 $this->assertSame(SwooleSocket::class, $consumer->getSocket());

@@ -15,20 +15,14 @@ class CircuitBreakerState
 {
     /**
      * Circuit Breaker State. A float value means open; null means close.
-     * @var null|float
      */
-    protected $openTime;
+    protected ?float $openTime = null;
 
     /**
-     * timeout to reset CircuitBreaker back to close.
-     * @var float
+     * @param float $resetTimeout timeout to reset CircuitBreaker back to close
      */
-    protected $resetTimeout;
-
-    public function __construct(float $resetTimeout)
+    public function __construct(protected float $resetTimeout)
     {
-        $this->resetTimeout = $resetTimeout;
-        $this->openTime = null;
     }
 
     public function isOpen(): bool

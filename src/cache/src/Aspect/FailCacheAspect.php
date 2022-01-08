@@ -19,37 +19,17 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
-/**
- * @Aspect
- */
+#[Aspect]
 class FailCacheAspect extends AbstractAspect
 {
-    public $classes = [];
+    public array $classes = [];
 
-    public $annotations = [
+    public array $annotations = [
         FailCache::class,
     ];
 
-    /**
-     * @var CacheManager
-     */
-    protected $manager;
-
-    /**
-     * @var AnnotationManager
-     */
-    protected $annotationManager;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    private $logger;
-
-    public function __construct(CacheManager $manager, AnnotationManager $annotationManager, StdoutLoggerInterface $logger)
+    public function __construct(protected CacheManager $manager, protected AnnotationManager $annotationManager, private StdoutLoggerInterface $logger)
     {
-        $this->manager = $manager;
-        $this->annotationManager = $annotationManager;
-        $this->logger = $logger;
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)

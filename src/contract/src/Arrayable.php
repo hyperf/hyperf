@@ -9,11 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Server;
+namespace Hyperf\Contract;
 
 /**
- * @deprecated v3.0
+ * @template TKey of array-key
+ * @template TValue
  */
-class SwooleEvent extends Event
+interface Arrayable
 {
+    /**
+     * @return array<TKey, TValue>
+     */
+    public function toArray(): array;
 }

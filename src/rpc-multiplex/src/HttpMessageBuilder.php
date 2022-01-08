@@ -24,14 +24,8 @@ use Psr\Http\Message\UriInterface;
 
 class HttpMessageBuilder implements HttpMessageBuilderInterface
 {
-    /**
-     * @var PackerInterface
-     */
-    protected $packer;
-
-    public function __construct(PackerInterface $packer)
+    public function __construct(protected PackerInterface $packer)
     {
-        $this->packer = $packer;
     }
 
     public function buildRequest(array $data): ServerRequestInterface

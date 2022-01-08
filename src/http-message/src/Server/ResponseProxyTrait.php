@@ -18,10 +18,7 @@ use RuntimeException;
 
 trait ResponseProxyTrait
 {
-    /**
-     * @var null|ResponseInterface
-     */
-    protected $response;
+    protected ?ResponseInterface $response = null;
 
     public function setResponse(ResponseInterface $response)
     {
@@ -115,7 +112,7 @@ trait ResponseProxyTrait
     /**
      * Returns an instance with specified cookies.
      */
-    public function withCookie(Cookie $cookie): self
+    public function withCookie(Cookie $cookie): static
     {
         $response = $this->getResponse();
         if (! method_exists($response, 'withCookie')) {
@@ -142,7 +139,7 @@ trait ResponseProxyTrait
      * Returns an instance with specified trailer.
      * @param string $value
      */
-    public function withTrailer(string $key, $value): self
+    public function withTrailer(string $key, $value): static
     {
         $response = $this->getResponse();
         if (! method_exists($response, 'withTrailer')) {

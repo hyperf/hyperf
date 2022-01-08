@@ -55,6 +55,7 @@ class DriverTest extends TestCase
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('has')->andReturn(false);
         $container->shouldReceive('get')->with(\Redis::class)->andReturn(new Redis());
+        $container->shouldReceive('get')->with(Redis::class)->andReturn(new Redis());
         $container->shouldReceive('get')->with(PhpSerializerPacker::class)->andReturn(new PhpSerializerPacker());
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(null);
         $container->shouldReceive('make')->with(ChannelConfig::class, Mockery::any())->andReturnUsing(function ($class, $args) {

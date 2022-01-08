@@ -12,50 +12,35 @@ declare(strict_types=1);
 namespace Hyperf\CircuitBreaker\Annotation;
 
 use Attribute;
-use Doctrine\Common\Annotations\Annotation\Target;
 use Hyperf\CircuitBreaker\Handler\TimeoutHandler;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
 /**
- * @Annotation
- * @Target({"METHOD"})
  * @property float $timeout
  */
 #[Attribute(Attribute::TARGET_METHOD)]
 class CircuitBreaker extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $handler = TimeoutHandler::class;
+    public string $handler = TimeoutHandler::class;
 
-    /**
-     * @var string
-     */
-    public $fallback;
+    public ?string $fallback = null;
 
     /**
      * The duration required to reset to a half open or close state.
-     * @var float
      */
-    public $duration = 10;
+    public float $duration = 10;
 
     /**
      * The counter required to reset to a close state.
-     * @var int
      */
-    public $successCounter = 10;
+    public int $successCounter = 10;
 
     /**
-     * The counter required to reset to a open state.
-     * @var int
+     * The counter required to reset to an open state.
      */
-    public $failCounter = 10;
+    public int $failCounter = 10;
 
-    /**
-     * @var array
-     */
-    public $value;
+    public array $value;
 
     public function __construct(...$value)
     {

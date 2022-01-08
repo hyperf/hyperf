@@ -51,7 +51,7 @@ class Parser
     }
 
     /**
-     * Extract all of the parameters from the tokens.
+     * Extract all the parameters from the tokens.
      */
     protected static function parameters(array $tokens): array
     {

@@ -18,74 +18,26 @@ use Swoole\Coroutine\Channel;
 class Future
 {
     /**
-     * @var Sender
-     */
-    private $sender;
-
-    /**
-     * @var int
-     */
-    private $fd;
-
-    /**
-     * @var array
-     */
-    private $data;
-
-    /**
-     * @var bool|int
-     */
-    private $flag;
-
-    /**
-     * @var int
-     */
-    private $opcode;
-
-    /**
-     * @var string
-     */
-    private $event;
-
-    /**
      * @var callable
      */
     private $encode;
 
-    /**
-     * @var string
-     */
-    private $id;
+    private string $id;
 
-    /**
-     * @var SocketIO
-     */
-    private $socketIO;
-
-    /**
-     * @var bool
-     */
-    private $sent;
+    private bool $sent;
 
     public function __construct(
-        SocketIO $socketIO,
-        Sender $sender,
-        int $fd,
-        string $event,
-        array $data,
+        private SocketIO $socketIO,
+        private Sender $sender,
+        private int $fd,
+        private string $event,
+        private array $data,
         callable $encode,
-        int $opcode,
-        int $flag
+        private int $opcode,
+        private int $flag
     ) {
-        $this->socketIO = $socketIO;
-        $this->sender = $sender;
-        $this->fd = $fd;
         $this->id = '';
-        $this->event = $event;
-        $this->data = $data;
         $this->encode = $encode;
-        $this->opcode = $opcode;
-        $this->flag = $flag;
         $this->sent = false;
     }
 

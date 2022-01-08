@@ -17,12 +17,7 @@ use Psr\Container\ContainerInterface;
 
 class NacosDriver extends AbstractDriver
 {
-    /**
-     * @var Client
-     */
-    protected $client;
-
-    protected $driverName = 'nacos';
+    protected string $driverName = 'nacos';
 
     public function __construct(ContainerInterface $container)
     {
@@ -30,10 +25,10 @@ class NacosDriver extends AbstractDriver
         $this->client = $container->get(ClientInterface::class);
     }
 
-    protected function updateConfig(array $config)
+    protected function updateConfig(array $config): void
     {
         $root = $this->config->get('config_center.drivers.nacos.default_key');
-        foreach ($config ?? [] as $key => $conf) {
+        foreach ($config as $key => $conf) {
             if (is_int($key)) {
                 $key = $root;
             }

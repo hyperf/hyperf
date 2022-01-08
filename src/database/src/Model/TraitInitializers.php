@@ -15,8 +15,6 @@ class TraitInitializers
 {
     /**
      * The list of trait initializers.
-     *
-     * @var array
      */
-    public static $container = [];
+    public static array $container = [];
 }

@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Metric\Adapter\InfluxDB;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
 use Hyperf\Metric\Adapter\Prometheus\Counter;
 use Hyperf\Metric\Adapter\Prometheus\Gauge;
@@ -20,8 +22,6 @@ use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\HistogramInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Str;
 use InfluxDB\Client;
 use InfluxDB\Database;

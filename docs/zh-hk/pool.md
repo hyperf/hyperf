@@ -79,21 +79,18 @@ class Frequency extends \Hyperf\Pool\Frequency
 {
     /**
      * 被計算頻率的時間間隔
-     * @var int
      */
-    protected $time = 10;
+    protected int $time = 10;
 
     /**
      * 觸發低頻的頻率
-     * @var int
      */
-    protected $lowFrequency = 5;
+    protected int $lowFrequency = 5;
 
     /**
      * 連續觸發低頻的最小時間間隔
-     * @var int
      */
-    protected $lowFrequencyInterval = 60;
+    protected int $lowFrequencyInterval = 60;
 }
 
 ```

@@ -151,9 +151,7 @@ use App\Service\QueueService;
 use Hyperf\Di\Annotation\Inject;~~~~~~~~
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class QueueController extends Controller
 {
     /**

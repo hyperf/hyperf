@@ -20,25 +20,16 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
 {
     use HasChunk;
 
-    /**
-     * @var array
-     */
-    protected $cookies = [];
+    protected array $cookies = [];
 
-    /**
-     * @var array
-     */
-    protected $trailers = [];
+    protected array $trailers = [];
 
-    /**
-     * @var null|ConnectionInterface
-     */
-    protected $connection;
+    protected ?ConnectionInterface $connection = null;
 
     /**
      * Returns an instance with body content.
      */
-    public function withContent(string $content): self
+    public function withContent(string $content): static
     {
         $new = clone $this;
         $new->stream = new SwooleStream($content);
@@ -48,7 +39,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
     /**
      * Returns an instance with specified cookies.
      */
-    public function withCookie(Cookie $cookie): self
+    public function withCookie(Cookie $cookie): static
     {
         $clone = clone $this;
         $clone->cookies[$cookie->getDomain()][$cookie->getPath()][$cookie->getName()] = $cookie;
@@ -67,7 +58,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
      * Returns an instance with specified trailer.
      * @param string $value
      */
-    public function withTrailer(string $key, $value): self
+    public function withTrailer(string $key, $value): static
     {
         $new = clone $this;
         $new->trailers[$key] = $value;

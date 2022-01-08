@@ -19,11 +19,6 @@ class Locker
 {
     use Container;
 
-    /**
-     * @var array
-     */
-    protected static $container = [];
-
     public static function add($key, $id): void
     {
         self::$container[$key][] = $id;

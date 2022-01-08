@@ -15,10 +15,7 @@ use InvalidArgumentException;
 
 class LoadBalancerManager
 {
-    /**
-     * @var array
-     */
-    private $algorithms = [
+    private array $algorithms = [
         'random' => Random::class,
         'round-robin' => RoundRobin::class,
         'weighted-random' => WeightedRandom::class,
@@ -26,9 +23,9 @@ class LoadBalancerManager
     ];
 
     /**
-     * @var \Hyperf\LoadBalancer\LoadBalancerInterface[]
+     * @var LoadBalancerInterface[]
      */
-    private $instances = [];
+    private array $instances = [];
 
     /**
      * Retrieve a class name of load balancer.
@@ -42,7 +39,7 @@ class LoadBalancerManager
     }
 
     /**
-     * Retrieve a class name of load balancer and create a object instance,
+     * Retrieve a class name of load balancer and create an object instance,
      * If $container object exists, then the class will create via container.
      *
      * @param string $key key of the load balancer instance
@@ -64,7 +61,7 @@ class LoadBalancerManager
     }
 
     /**
-     * Determire if the algorithm is exists.
+     * Determine if the algorithm is exists.
      */
     public function has(string $name): bool
     {
@@ -74,7 +71,7 @@ class LoadBalancerManager
     /**
      * Override the algorithms.
      */
-    public function set(array $algorithms): self
+    public function set(array $algorithms): static
     {
         foreach ($algorithms as $algorithm) {
             if (! class_exists($algorithm)) {
@@ -86,7 +83,7 @@ class LoadBalancerManager
     }
 
     /**
-     * Register a algorithm to the manager.
+     * Register an algorithm to the manager.
      */
     public function register(string $key, string $algorithm): self
     {

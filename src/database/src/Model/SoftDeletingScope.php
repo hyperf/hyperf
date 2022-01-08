@@ -14,11 +14,9 @@ namespace Hyperf\Database\Model;
 class SoftDeletingScope implements Scope
 {
     /**
-     * All of the extensions to be added to the builder.
-     *
-     * @var array
+     * All the extensions to be added to the builder.
      */
-    protected $extensions = ['Restore', 'WithTrashed', 'WithoutTrashed', 'OnlyTrashed'];
+    protected array $extensions = ['Restore', 'WithTrashed', 'WithoutTrashed', 'OnlyTrashed'];
 
     /**
      * Apply the scope to a given Model query builder.

@@ -21,20 +21,11 @@ class ProxyFactory
 {
     use Container;
 
-    /**
-     * @var Ast
-     */
-    protected $ast;
+    protected Ast $ast;
 
-    /**
-     * @var \Hyperf\RpcClient\Proxy\CodeLoader
-     */
-    protected $codeLoader;
+    protected CodeLoader $codeLoader;
 
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
+    protected Filesystem $filesystem;
 
     public function __construct()
     {

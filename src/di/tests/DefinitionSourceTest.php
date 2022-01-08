@@ -13,7 +13,6 @@ namespace HyperfTest\Di;
 
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
-use Hyperf\Di\Definition\ScanConfig;
 use HyperfTest\Di\Stub\Foo;
 use HyperfTest\Di\Stub\FooFactory;
 use PHPUnit\Framework\TestCase;
@@ -35,7 +34,7 @@ class DefinitionSourceTest extends TestCase
 
     public function testDefinitionFactory()
     {
-        $container = new Container(new DefinitionSource([], new ScanConfig()));
+        $container = new Container(new DefinitionSource([]));
         $container->getDefinitionSource()->addDefinition('Foo', FooFactory::class);
 
         $foo = $container->get('Foo');

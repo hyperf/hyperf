@@ -18,14 +18,8 @@ use Hyperf\ServiceGovernance\ServiceManager;
 
 class RegisterServiceListener implements ListenerInterface
 {
-    /**
-     * @var ServiceManager
-     */
-    private $serviceManager;
-
-    public function __construct(ServiceManager $serviceManager)
+    public function __construct(private ServiceManager $serviceManager)
     {
-        $this->serviceManager = $serviceManager;
     }
 
     public function listen(): array

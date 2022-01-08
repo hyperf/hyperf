@@ -170,11 +170,8 @@ use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 
 class IndexController
 {
-    /**
-     * @Inject()
-     * @var ValidatorFactoryInterface
-     */
-    protected $validationFactory;
+    #[Inject]
+    protected ValidatorFactoryInterface $validationFactory;
 
     public function foo(RequestInterface $request)
     {
@@ -264,11 +261,8 @@ use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 
 class IndexController
 {
-    /**
-     * @Inject()
-     * @var ValidatorFactoryInterface
-     */
-    protected $validationFactory;
+    #[Inject]
+    protected ValidatorFactoryInterface $validationFactory;
 
     public function foo(RequestInterface $request)
     {
@@ -966,9 +960,7 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Event\ValidatorFactoryResolved;
 
-/**
- * @Listener
- */
+#[Listener]
 class ValidatorFactoryResolvedListener implements ListenerInterface
 {
 
