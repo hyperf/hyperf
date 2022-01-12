@@ -13,8 +13,8 @@ namespace Hyperf\ViewEngine\Concern;
 
 use Closure;
 use Hyperf\Utils\Arr;
+use Hyperf\Utils\HtmlString;
 use Hyperf\ViewEngine\Contract\Htmlable;
-use Hyperf\ViewEngine\HtmlString;
 use Hyperf\ViewEngine\View;
 use InvalidArgumentException;
 

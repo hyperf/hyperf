@@ -9,13 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\ViewEngine\Contract;
+namespace Hyperf\Utils\Contracts;
 
-use Hyperf\Utils\Contracts\Htmlable as HtmlableContract;
-
-/**
- * @deprecated
- */
-interface Htmlable extends HtmlableContract
+interface Htmlable
 {
+    /**
+     * Get content as a string of HTML.
+     */
+    public function toHtml();
 }
