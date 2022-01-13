@@ -30,9 +30,7 @@ use Hyperf\Cache\Annotation\Cacheable;
 
 class UserService
 {
-    /**
-     * @Cacheable(key="user", ttl=9000, listener="user-update")
-     */
+    #[Cacheable(key: "user", ttl: 9000, listener: "user-update")]
     public function user($id)
     {
         $user =  User::query()->where('id',$id)->first();
@@ -64,9 +62,9 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 class SystemService
 {
     /**
-     * @Inject
      * @var EventDispatcherInterface
      */
+    #[Inject]
     protected $dispatcher;
 
     public function flushCache($userId)

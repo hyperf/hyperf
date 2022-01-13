@@ -15,11 +15,9 @@ Before interpreting the annotation, we need to define the difference between `an
 Hyperf uses the [doctrine/annotations](https://github.com/doctrine/annotations) package to parse the annotations in the code. The annotations must be written in the standard comment block below to be parsed correctly. Other formats cannot correctly parsed.
 Example:
 ```php
-/**
- * @AnnotationClass()
- */
+#[AnnotationClass]
 ```
-The syntax of writing `@AnnotationClass()` in the standard comment block indicates that the object (class, class method, class attribute) of the current comment block is annotated, and `AnnotationClass` corresponds to an `annotation class`. The class name of the class can be written in the namespace of the whole class, or just the class name, but the annotation class needs to be in the current class `use` to ensure that the correct annotation class can be found according to the namespace.
+The syntax of writing `#[AnnotationClass]` in the standard comment block indicates that the object (class, class method, class attribute) of the current comment block is annotated, and `AnnotationClass` corresponds to an `annotation class`. The class name of the class can be written in the namespace of the whole class, or just the class name, but the annotation class needs to be in the current class `use` to ensure that the correct annotation class can be found according to the namespace.
 
 ### How is works ?
 
@@ -49,9 +47,7 @@ There are three apply types of annotation, `class`, `method of class` and `prope
 Class level annotation definitions are in the comment block above the `class` keyword. For example, the commonly used `@Controller` and `@AutoController` are examples of the use of class level annotation. The following code example is an example of correctly using class level annotation, indicating The `@ClassAnnotation` annotation is applied to the `Foo` class.
  
 ```php
-/**
- * @ClassAnnotation()
- */
+#[ClassAnnotation]
 class Foo {}
 ```
 
@@ -62,9 +58,7 @@ Method level annotation definitions are in the comment block above the class met
 ```php
 class Foo
 {
-    /**
-     * @MethodAnnotation()
-     */
+    #[MethodAnnotation]
     public function bar()
     {
         // some code
@@ -79,18 +73,16 @@ Property level annotation definitions are in the comment block above the propert
 ```php
 class Foo
 {
-    /**
-     * @PropertyAnnotation()
-     */
+    #[PropertyAnnotation]
     private $bar;
 }
 ```
 
 ### The passing of annotation parameter
 
-- Pass the main single parameter `@DemoAnnotation("value")`
-- Pass the string parameter `@DemoAnnotation(key1="value1", key2="value2")`
-- Pass the array parameter `@DemoAnnotation(key={"value1", "value2"})`
+- Pass the main single parameter `#[DemoAnnotation("value")]`
+- Pass the string parameter `#[DemoAnnotation(key1: "value1", key2: "value2")]`
+- Pass the array parameter `#[DemoAnnotation(key: {"value1", "value2"})]`
 
 ## Custom Annotation
 
@@ -103,28 +95,24 @@ namespace App\Annotation;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"METHOD","PROPERTY"})
- */
+#[Annotation]
+#[Target({"METHOD", "PROPERTY"})]
 class Bar extends AbstractAnnotation
 {
     // some code
 }
 
-/**
- * @Annotation
- * @Target("CLASS")
- */
+#[Annotation]
+#[Target("CLASS")]
 class Foo extends AbstractAnnotation
 {
     // some code
 }
 ```
 
-> Notice that `@Annotation` and `@Target` annotations in Annotation Class are Global Annotation，no need fo `use` keyword to define the namespace.
+> Notice that `#[Annotation]` and `#[Target]` annotations in Annotation Class are Global Annotation，no need fo `use` keyword to define the namespace.
 
-`@Target` has the following parameters:
+`#[Target]` has the following parameters:
 - `METHOD` annotation means allows define on class methods
 - `PROPERTY` annotation means allows define on class properties
 - `CLASS` annotation means allows define on class
