@@ -76,11 +76,8 @@ use Hyperf\Di\Annotation\Inject;
 #[Crontab(name: "Foo", rule: "* * * * *", callback: "execute", memo: "This is an example scheduled task")]
 class FooTask
 {
-    /**
-     * @var \Hyperf\Contract\StdoutLoggerInterface
-     */
      #[Inject]
-    private $logger;
+    private StdoutLoggerInterface $logger;
 
     public function execute()
     {

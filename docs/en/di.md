@@ -220,11 +220,8 @@ use Hyperf\HttpServer\Annotation\AutoController;
 
 class IndexController
 {
-    /**
-     * @var UserServiceInterface
-     */
     #[Inject]
-    private $userService;
+    private UserServiceInterface $userService;
     
     public function index()
     {

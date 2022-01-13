@@ -33,11 +33,8 @@ use Hyperf\Di\Annotation\Inject;
 
 class UserService
 {
-    /**
-     * @var UserServiceClient
-     */
     #[Inject]
-    private $client;
+    private UserServiceClient $client;
 
     #[CircuitBreaker(timeout: 0.05, failCounter: 1, successCounter: 1, fallback: "App\UserService::searchFallback")]
     public function search($offset, $limit)

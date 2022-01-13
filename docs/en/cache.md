@@ -61,11 +61,8 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 class SystemService
 {
-    /**
-     * @var EventDispatcherInterface
-     */
     #[Inject]
-    protected $dispatcher;
+    protected EventDispatcherInterface $dispatcher;
 
     public function flushCache($userId)
     {
