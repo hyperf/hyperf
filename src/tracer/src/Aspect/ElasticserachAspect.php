@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer\Aspect;
 
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Elasticsearch\Client;
@@ -77,15 +76,17 @@ class ElasticserachAspect extends AbstractAspect
      */
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        if ($this->switchManager->isEnable('elasticsearch') === false) {
-            return $proceedingJoinPoint->process();
+        $key = $proceedingJoinPoint->className . '::' . $proceedingJoinPoint->methodName;
+        $span = $this->startSpan($key);
+        try {
+            $result = $proceedingJoinPoint->process();
+        } catch (\Throwable $e) {
+            $span->setTag('error', true);
+            $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+            throw $e;
+        } finally {
+            $span->finish();
         }
-
-        $arguments = $proceedingJoinPoint->arguments['keys'];
-        $span = $this->startSpan('Elasticsearch' . '::' . $arguments['name']);
-        $span->setTag( $arguments['name'], json_encode($arguments['arguments']));
-        $result = $proceedingJoinPoint->process();
-        $span->finish();
         return $result;
     }
 }
