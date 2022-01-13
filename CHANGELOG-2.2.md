@@ -1,5 +1,9 @@
 # v2.2.23 - TBD
 
+## Added
+
+- [#4449](https://github.com/hyperf/hyperf/pull/4449) Allow sorting on multiple criteria for `Hyperf\Utils\Collection`.
+
 # v2.2.22 - 2022-01-04
 
 ## Fixed
