@@ -48,9 +48,8 @@ return [
 
 类注解定义是在 `class` 关键词上方的注释块内，比如常用的 `@Controller` 和 `@AutoController` 就是类注解的使用典范，下面的代码示例则为一个正确使用类注解的示例，表明 `@ClassAnnotation` 注解应用于 `Foo` 类。   
 ```php
-/**
- * @ClassAnnotation()
- */
+
+#[ClassAnnotation]
 class Foo {}
 ```
 
