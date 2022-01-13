@@ -20,9 +20,6 @@ use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use OpenTracing\Tracer;
 
-/**
- * @Aspect
- */
 class ElasticserachAspect extends AbstractAspect
 {
     use SpanStarter;
