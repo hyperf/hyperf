@@ -36,7 +36,7 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use Hyperf\RateLimit\Annotation\RateLimit;
 
-#[Controller(prefix="rate-limit")]
+#[Controller(prefix: "rate-limit")]
 class RateLimitController
 {
     #[RequestMapping(path: "test")]

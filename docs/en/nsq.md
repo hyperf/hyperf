@@ -67,10 +67,10 @@ use Hyperf\Nsq\Message;
 use Hyperf\Nsq\Result;
 
 #[Consumer(
-    topic="hyperf", 
-    channel="hyperf", 
-    name ="DemoNsqConsumer", 
-    nums=1
+    topic: "hyperf", 
+    channel: "hyperf", 
+    name: "DemoNsqConsumer", 
+    nums: 1
 )]
 class DemoNsqConsumer extends AbstractConsumer
 {
@@ -111,10 +111,10 @@ use Hyperf\Nsq\Result;
 use Psr\Container\ContainerInterface;
 
 #[Consumer(
-    topic="demo_topic", 
-    channel="demo_channel", 
-    name ="DemoConsumer", 
-    nums=1
+    topic: "demo_topic", 
+    channel: "demo_channel", 
+    name: "DemoConsumer", 
+    nums: 1
 )]
 class DemoConsumer extends AbstractConsumer
 {
