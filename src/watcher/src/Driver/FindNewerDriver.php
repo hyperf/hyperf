@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Watcher\Driver;
 
 use Hyperf\Utils\Str;
@@ -58,16 +59,21 @@ class FindNewerDriver implements DriverInterface
         Timer::tick($ms, function () use ($channel) {
             if ($this->scaning == false) {
                 $this->scaning = true;
-
-                System::exec('echo 1 > ' . $this->getToModifyFile());
                 $changedFiles = $this->scan();
-
-                $this->scaning = false;
                 ++$this->count;
+                // update mtime
+                if ($changedFiles) {
+                    System::exec('echo 1 > ' . $this->getToModifyFile());
+                    System::exec('echo 1 > ' . $this->getToScanFile());
+                }
+
                 foreach ($changedFiles as $file) {
                     $channel->push($file);
+                    $this->scaning = false;
+
                     return;
                 }
+                $this->scaning = false;
             }
         });
     }
@@ -95,7 +101,7 @@ class FindNewerDriver implements DriverInterface
                     continue;
                 }
 
-                if (! empty($ext) && ! Str::endsWith($pathName, $ext)) {
+                if (!empty($ext) && !Str::endsWith($pathName, $ext)) {
                     continue;
                 }
                 $changedFiles[] = $pathName;
