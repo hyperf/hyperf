@@ -86,6 +86,7 @@
   * [AMQP](en/amqp.md)
   * [Nats](en/nats.md)
   * [NSQ](en/nsq.md)
+  * [Kafka](en/kafka.md)
   
 * Clients
   

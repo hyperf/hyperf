@@ -27,7 +27,7 @@ php bin/hyperf.php gen:command FooCommand
 
 ### 定義命令
 
-定義該命令類所對應的命令有兩種形式，一種是通過 `$name` 屬性定義，另一種是通過構造函數傳參來定義，我們通過代碼示例來演示一下，假設我們希望定義該命令類的命令為 `foo:hello`：   
+定義該命令類所對應的命令有兩種形式，一種是通過 `$name` 屬性定義，另一種是通過構造函數傳參來定義，我們通過代碼示例來演示一下，假設我們希望定義該命令類的命令為 `foo:hello`：
 
 #### `$name` 屬性定義：
 
@@ -74,7 +74,7 @@ class FooCommand extends HyperfCommand
 {
     public function __construct()
     {
-        parent::__construct('foo:hello');    
+        parent::__construct('foo:hello');
     }
 }
 ```
@@ -104,7 +104,7 @@ class FooCommand extends HyperfCommand
      * @var string
      */
     protected $name = 'foo:hello';
-    
+
     public function handle()
     {
         // 通過內置方法 line 在 Console 輸出 Hello Hyperf.
@@ -150,7 +150,7 @@ class FooCommand extends HyperfCommand
         $argument = $this->input->getArgument('name') ?? 'World';
         $this->line('Hello ' . $argument, 'info');
     }
-    
+
     protected function getArguments()
     {
         return [
@@ -158,7 +158,7 @@ class FooCommand extends HyperfCommand
         ];
     }
 }
-``` 
+```
 
 執行 `php bin/hyperf.php foo:hello Hyperf` 我們就能看到輸出了 `Hello Hyperf` 了。
 
@@ -363,8 +363,6 @@ array(2) {
 
 命令行除了上述配置方法外，還支持使用 `$signature` 配置。
 
-> 需要 command 版本 >= 2.0.5
-
 `$signature` 為字符串，分為三部分，分別是 `command` `argument` 和 `option`，如下：
 
 ```
@@ -423,6 +421,8 @@ class DebugCommand extends HyperfCommand
 ```
 
 # 運行命令
+
+!> 注意：在運行命令時，默認不會觸發事件分發，可通過添加 `--enable-event-dispatcher` 參數來開啟。
 
 ## 命令行中運行
 

@@ -34,6 +34,7 @@ use Hyperf\Validation\Middleware\ValidationMiddleware;
 use Hyperf\Validation\ValidatorFactory;
 use HyperfTest\Validation\Cases\Stub\DemoController;
 use HyperfTest\Validation\Cases\Stub\DemoRequest;
+use HyperfTest\Validation\Cases\Stub\FooMiddleware;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -52,6 +53,31 @@ class ValidationMiddlewareTest extends TestCase
         Context::set(DemoRequest::class . ':' . ValidatorInterface::class, null);
         Context::set('test.validation.DemoRequest.number', 0);
         Context::set('http.request.parsedData', null);
+    }
+
+    public function testValidationMiddlewareGetTheLatestInputData()
+    {
+        $container = $this->createContainer();
+        $factory = $container->get(DispatcherFactory::class);
+
+        $router = $factory->getRouter('http');
+        $router->addRoute('POST', '/sign-up', 'HyperfTest\Validation\Cases\Stub\DemoController@signUp');
+
+        $dispatcher = $factory->getDispatcher('http');
+        $fooMiddleware = new FooMiddleware();
+        $middleware = new ValidationMiddleware($container);
+        $coreMiddleware = new CoreMiddleware($container, 'http');
+        $handler = new HttpRequestHandler([$fooMiddleware, $middleware], $coreMiddleware, $container);
+        Context::set(ResponseInterface::class, new Response());
+
+        $request = (new Request('POST', new Uri('/sign-up')))
+            ->withParsedBody(['username' => 'Hyperf']);
+        $routes = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
+        $request = Context::set(ServerRequestInterface::class, $request->withAttribute(Dispatched::class, new Dispatched($routes)));
+
+        $response = $handler->handle($request);
+
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testProcess()

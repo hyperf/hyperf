@@ -13,11 +13,11 @@ namespace Hyperf\CircuitBreaker;
 
 class State
 {
-    const CLOSE = 0;
+    public const CLOSE = 0;
 
-    const HALF_OPEN = 1;
+    public const HALF_OPEN = 1;
 
-    const OPEN = 2;
+    public const OPEN = 2;
 
     protected $state;
 

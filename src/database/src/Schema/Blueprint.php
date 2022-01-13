@@ -16,8 +16,8 @@ use Closure;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Grammars\Grammar;
 use Hyperf\Database\SQLiteConnection;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Fluent;
-use Hyperf\Utils\Traits\Macroable;
 
 class Blueprint
 {
@@ -46,6 +46,13 @@ class Blueprint
      * @var bool
      */
     public $temporary = false;
+
+    /**
+     * The comment of the table.
+     *
+     * @var string
+     */
+    protected $comment = '';
 
     /**
      * The table the blueprint describes.
@@ -161,6 +168,14 @@ class Blueprint
     public function create()
     {
         return $this->addCommand('create');
+    }
+
+    /**
+     * Set the table comment.
+     */
+    public function comment(string $comment)
+    {
+        $this->comment = $comment;
     }
 
     /**
@@ -930,6 +945,17 @@ class Blueprint
     }
 
     /**
+     * Create a new auto-incrementing big integer (8-byte) column on the table.
+     *
+     * @param string $column
+     * @return \Hyperf\Database\Schema\ColumnDefinition
+     */
+    public function id($column = 'id')
+    {
+        return $this->bigIncrements($column);
+    }
+
+    /**
      * Create a new uuid column on the table.
      *
      * @param string $column
@@ -1130,6 +1156,16 @@ class Blueprint
     public function getTable()
     {
         return $this->table;
+    }
+
+    /**
+     * Get the comment on the blueprint.
+     *
+     * @return string
+     */
+    public function getComment()
+    {
+        return $this->comment;
     }
 
     /**

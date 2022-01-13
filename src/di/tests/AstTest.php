@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Di;
 
 use Hyperf\Di\Aop\Ast;
-use Hyperf\Di\BetterReflectionManager;
+use Hyperf\Di\ReflectionManager;
 use HyperfTest\Di\Stub\AspectCollector;
 use HyperfTest\Di\Stub\Ast\Bar2;
 use HyperfTest\Di\Stub\Ast\Bar3;
@@ -44,13 +44,11 @@ declare (strict_types=1);
 
     protected function tearDown(): void
     {
-        BetterReflectionManager::clear();
+        ReflectionManager::clear();
     }
 
     public function testAstProxy()
     {
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
-
         $ast = new Ast();
         $code = $ast->proxy(Foo::class);
 
@@ -70,8 +68,6 @@ class Foo
 
     public function testParentMethods()
     {
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
-
         $ast = new Ast();
         $code = $ast->proxy(Bar2::class);
         $this->assertEquals($this->license . '
@@ -95,8 +91,6 @@ class Bar2 extends Bar
 
     public function testParentConstructor()
     {
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
-
         $ast = new Ast();
         $code = $ast->proxy(Bar5::class);
         $this->assertEquals($this->license . '
@@ -122,12 +116,13 @@ class Bar5
 
     public function testMagicMethods()
     {
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
-
         $aspect = BarAspect::class;
 
         AspectCollector::setAround($aspect, [
-            Bar4::class . '::toRewriteMethodString',
+            Bar4::class . '::toRewriteMethodString1',
+            Bar4::class . '::toRewriteMethodString2',
+            Bar4::class . '::toRewriteMethodString3',
+            Bar4::class . '::toRewriteMethodString4',
         ], []);
 
         $ast = new Ast();
@@ -147,11 +142,47 @@ class Bar4
     {
         return __METHOD__;
     }
-    public function toRewriteMethodString() : string
+    /**
+     * To test method parameters (with type declaration in use).
+     */
+    public function toRewriteMethodString1(int $count) : string
     {
         $__function__ = __FUNCTION__;
         $__method__ = __METHOD__;
-        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function () use($__function__, $__method__) {
+        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function (int $count) use($__function__, $__method__) {
+            return $__method__;
+        });
+    }
+    /**
+     * To test passing by references.
+     */
+    public function toRewriteMethodString2(int &$count) : string
+    {
+        $__function__ = __FUNCTION__;
+        $__method__ = __METHOD__;
+        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function (int &$count) use($__function__, $__method__) {
+            return $__method__;
+        });
+    }
+    /**
+     * To test variadic parameters (without type declaration).
+     */
+    public function toRewriteMethodString3(...$params) : string
+    {
+        $__function__ = __FUNCTION__;
+        $__method__ = __METHOD__;
+        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function ($params) use($__function__, $__method__) {
+            return $__method__;
+        });
+    }
+    /**
+     * To test variadic parameters with type declaration.
+     */
+    public function toRewriteMethodString4(int &$count, string ...$params) : string
+    {
+        $__function__ = __FUNCTION__;
+        $__method__ = __METHOD__;
+        return self::__proxyCall(__CLASS__, __FUNCTION__, self::__getParamsMap(__CLASS__, __FUNCTION__, func_get_args()), function (int &$count, $params) use($__function__, $__method__) {
             return $__method__;
         });
     }
@@ -160,8 +191,6 @@ class Bar4
 
     public function testRewriteMethods()
     {
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub']);
-
         $aspect = BarAspect::class;
 
         AspectCollector::setAround($aspect, [

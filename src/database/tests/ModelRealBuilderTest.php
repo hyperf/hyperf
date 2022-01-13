@@ -12,12 +12,14 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Carbon\Carbon;
+use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\Schema\Column;
 use Hyperf\Database\Schema\MySqlBuilder;
+use Hyperf\Paginator\LengthAwarePaginator;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\Model\User;
 use HyperfTest\Database\Stubs\Model\UserExt;
@@ -116,6 +118,24 @@ class ModelRealBuilderTest extends TestCase
             ['select * from `user` where `id` > ? order by `id` asc limit 2', [0]],
             ['select * from `user` order by `id` asc limit 2', []],
             ['select * from `user` where `id` > ? order by `id` asc limit 2', [1]],
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
+            }
+        }
+    }
+
+    public function testForceIndexes()
+    {
+        $this->getContainer();
+
+        User::query()->get();
+        User::query()->forceIndexes(['PRIMARY'])->where('id', '>', 1)->get();
+
+        $sqls = [
+            ['select * from `user`', []],
+            ['select * from `user` force index (`PRIMARY`) where `id` > ?', [1]],
         ];
         while ($event = $this->channel->pop(0.001)) {
             if ($event instanceof QueryExecuted) {
@@ -326,6 +346,24 @@ class ModelRealBuilderTest extends TestCase
         foreach ($binds as $bind) {
             $res = $conn->select($sql, $bind);
             $this->assertNotEmpty($res);
+        }
+    }
+
+    public function testPaginationCountQuery()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('make')->with(LengthAwarePaginatorInterface::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new LengthAwarePaginator(...array_values($args));
+        });
+        User::query()->select('gender')->groupBy('gender')->paginate(10, ['*'], 'page', 0);
+        $sqls = [
+            'select count(*) as aggregate from (select `gender` from `user` group by `gender`) as `aggregate_table`',
+            'select `gender` from `user` group by `gender` limit 10 offset 0',
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame($event->sql, array_shift($sqls));
+            }
         }
     }
 

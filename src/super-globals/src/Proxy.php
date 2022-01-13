@@ -76,5 +76,10 @@ abstract class Proxy implements Arrayable, ArrayAccess, JsonSerializable
         return $request;
     }
 
+    protected function hasRequest(): bool
+    {
+        return Context::has(ServerRequestInterface::class);
+    }
+
     abstract protected function override(ServerRequestInterface $request, array $data): ServerRequestInterface;
 }

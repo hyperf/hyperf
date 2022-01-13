@@ -108,6 +108,23 @@ $ vim /etc/gitlab-runner/config.toml
 concurrent = 5
 ```
 
+### 修改郵箱
+
+如果需要 `Gitlab` 發送郵件（比如用户創建的郵件等），可以嘗試修改 `/srv/gitlab/config/gitlab.rb`
+
+```
+gitlab_rails['smtp_enable'] = true
+gitlab_rails['smtp_address'] = "smtp.exmail.qq.com"
+gitlab_rails['smtp_port'] = 465
+gitlab_rails['smtp_user_name'] = "git@xxxx.com"
+gitlab_rails['smtp_password'] = "xxxx"
+gitlab_rails['smtp_authentication'] = "login"
+gitlab_rails['smtp_enable_starttls_auto'] = true
+gitlab_rails['smtp_tls'] = true
+gitlab_rails['gitlab_email_from'] = 'git@xxxx.com'
+gitlab_rails['smtp_domain'] = "exmail.qq.com"
+```
+
 ## 初始化 Swarm 集羣
 
 登錄另外一台機器，初始化集羣
@@ -121,7 +138,7 @@ $ docker swarm init
 ```
 docker network create \
 --driver overlay \
---subnet 10.0.0.0/24 \
+--subnet 12.0.0.0/8 \
 --opt encrypted \
 --attachable \
 default-network
@@ -273,6 +290,7 @@ docker run -d --name kong-database \
   -p 5432:5432 \
   -e "POSTGRES_USER=kong" \
   -e "POSTGRES_DB=kong" \
+  -e "POSTGRES_PASSWORD=kong" \
   postgres:9.6
 ```
 
@@ -285,6 +303,7 @@ docker run --rm \
   --network=default-network \
   -e "KONG_DATABASE=postgres" \
   -e "KONG_PG_HOST=kong-database" \
+  -e "KONG_PG_PASSWORD=kong" \
   -e "KONG_CASSANDRA_CONTACT_POINTS=kong-database" \
   kong:latest kong migrations bootstrap
 ```
@@ -296,6 +315,7 @@ docker run -d --name kong \
   --network=default-network \
   -e "KONG_DATABASE=postgres" \
   -e "KONG_PG_HOST=kong-database" \
+  -e "KONG_PG_PASSWORD=kong" \
   -e "KONG_CASSANDRA_CONTACT_POINTS=kong-database" \
   -e "KONG_PROXY_ACCESS_LOG=/dev/stdout" \
   -e "KONG_ADMIN_ACCESS_LOG=/dev/stdout" \
@@ -311,7 +331,7 @@ docker run -d --name kong \
 
 ### 安裝 KONG Dashboard
 
-> 暫時 `Docker` 中沒有更新 `v3.6.0` 所以最新版的 `KONG` 可能無法使用
+> 暫時 `Docker` 中沒有更新 `v3.6.0` 所以最新版的 `KONG` 可能無法使用，可以使用 0.14.1 版本的 KONG
 
 ```
 docker run --rm --network=default-network -p 8080:8080 -d --name kong-dashboard pgbi/kong-dashboard start \
@@ -404,4 +424,43 @@ $ git version
 
 # 重新安裝 gitlab-runner 並重新註冊 gitlab-runner
 $ yum install gitlab-runner
+```
+
+### Service 重啟後，內網出現偶發的，容器無法觸達的問題，比如多次在其他容器，訪問此服務的接口，會出現 Connection refused
+
+這是由於 IP 不夠用導致，可以修改網段，增加可用 IP
+
+創建新的 Network
+
+```
+docker network create \
+--driver overlay \
+--subnet 12.0.0.0/8 \
+--opt encrypted \
+--attachable \
+default-network
+```
+
+為服務增加新的 Network
+
+```
+docker service update --network-add default-network service_name
+```
+
+刪除原來的 Network
+
+```
+docker service update --network-rm old-network service_name
+```
+
+### 為 Service 增加節點，發現一直卡在 create 階段
+
+原因和解決辦法同上
+
+### 當在 Portainer 中修改了倉庫密碼後，更新 Service 失敗
+
+這是因為 Portainer 修改後，不能作用於已經創建的服務，所以手動更新即可
+
+```
+docker service update --with-registry-auth service_name   
 ```

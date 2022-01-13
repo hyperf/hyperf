@@ -28,7 +28,8 @@ return [
             'connect_timeout' => 10.0,
             'wait_timeout' => 3.0,
             'heartbeat' => -1,
-            'max_idle_time' => 60.0,
+            // 因为 Nsq 服务默认的闲置时间是 60s，故框架维护的最大闲置时间应小于 60s
+            'max_idle_time' => 30.0,
         ],
     ],
 ];

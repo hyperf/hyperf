@@ -43,7 +43,7 @@ php bin/hyperf.php gen:amqp-producer DemoProducer
 ```
 
 We can modify the Producer annotation to replace exchange and routingKey.
-Payloload is the data that is finally delivered to the message queue, so we can rewrite the _construct method easyly,just make sure payload is assigned.
+Payload is the data that is finally delivered to the message queue, so we can rewrite the _construct method easily,just make sure payload is assigned.
 
 ```php
 <?php
@@ -56,10 +56,7 @@ use Hyperf\Amqp\Annotation\Producer;
 use Hyperf\Amqp\Message\ProducerMessage;
 use App\Models\User;
 
-/**
- * DemoProducer
- * @Producer(exchange="hyperf", routingKey="hyperf")
- */
+#[Producer(exchange: 'hyperf', routingKey: 'hyperf')]
 class DemoProducer extends ProducerMessage
 {
     public function __construct($id)
@@ -109,9 +106,7 @@ use Hyperf\Amqp\Annotation\Consumer;
 use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
 
-/**
- * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1)
- */
+#[Consumer(exchange: 'hyperf', routingKey: 'hyperf', queue: 'hyperf', nums: 1)]
 class DemoConsumer extends ConsumerMessage
 {
     public function consume($data): string

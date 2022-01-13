@@ -13,9 +13,9 @@ namespace Hyperf\ViewEngine\Component;
 
 use ArrayAccess;
 use ArrayIterator;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
-use Hyperf\Utils\Traits\Macroable;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use Hyperf\ViewEngine\HtmlString;
 use IteratorAggregate;

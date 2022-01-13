@@ -65,6 +65,11 @@ class Crontab
      */
     protected $executeTime;
 
+    /**
+     * @var bool
+     */
+    protected $enable = true;
+
     public function getName(): ?string
     {
         return $this->name;
@@ -172,6 +177,17 @@ class Crontab
     public function setExecuteTime(Carbon $executeTime): Crontab
     {
         $this->executeTime = $executeTime;
+        return $this;
+    }
+
+    public function isEnable(): bool
+    {
+        return $this->enable;
+    }
+
+    public function setEnable(bool $enable): Crontab
+    {
+        $this->enable = $enable;
         return $this;
     }
 }

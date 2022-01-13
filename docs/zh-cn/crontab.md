@@ -78,7 +78,6 @@ use Hyperf\Di\Annotation\Inject;
  */
 class FooTask
 {
-
     /**
      * @Inject()
      * @var \Hyperf\Contract\StdoutLoggerInterface
@@ -88,6 +87,14 @@ class FooTask
     public function execute()
     {
         $this->logger->info(date('Y-m-d H:i:s', time()));
+    }
+    
+    /**
+     * @Crontab(rule="* * * * * *", memo="foo")
+     */
+    public function foo()
+    {
+        var_dump('foo');
     }
 }
 ```
@@ -125,6 +132,81 @@ class FooTask
 #### memo
 
 定时任务的备注，该属性为可选属性，没有任何逻辑上的意义，仅供开发人员查阅帮助对该定时任务的理解。
+
+#### enable
+
+当前任务是否生效。
+
+> 除了 bool 类型，还支持 string 和 array
+
+如果 `enable` 是 `string`，则会调用当前类对应的方法，来判断此定时任务是否运行
+
+```php
+<?php
+
+namespace App\Crontab;
+
+use Carbon\Carbon;
+use Hyperf\Crontab\Annotation\Crontab;
+
+/**
+ * @Crontab(name="Echo", rule="* * * * * *", callback="execute", enable="isEnable", memo="这是一个示例的定时任务")
+ */
+class EchoCrontab
+{
+    public function execute()
+    {
+        var_dump(Carbon::now()->toDateTimeString());
+    }
+
+    public function isEnable(): bool
+    {
+        return true;
+    }
+}
+```
+
+如果 `enable` 是 `array`，则会调用 `array[0]` 对应的 `array[1]`，来判断此定时任务是否运行
+
+```php
+<?php
+
+namespace App\Crontab;
+
+class EnableChecker
+{
+    public function isEnable(): bool
+    {
+        return false;
+    }
+}
+```
+
+```php
+<?php
+
+namespace App\Crontab;
+
+use Carbon\Carbon;
+use Hyperf\Crontab\Annotation\Crontab;
+
+/**
+ * @Crontab(name="Echo", rule="* * * * * *", callback="execute", enable={EnableChecker::class, "isEnable"}, memo="这是一个示例的定时任务")
+ */
+class EchoCrontab
+{
+    public function execute()
+    {
+        var_dump(Carbon::now()->toDateTimeString());
+    }
+
+    public function isEnable(): bool
+    {
+        return true;
+    }
+}
+
+```
 
 ### 调度分发策略
 
@@ -171,3 +253,40 @@ return [
 
 当您完成上述的配置后，以及定义了定时任务后，只需要直接启动 `Server`，定时任务便会一同启动。   
 在您启动后，即便您定义了足够短周期的定时任务，定时任务也不会马上开始执行，所有定时任务都会等到下一个分钟周期时才会开始执行，比如您启动的时候是 `10 时 11 分 12 秒`，那么定时任务会在 `10 时 12 分 00 秒` 才会正式开始执行。
+
+### FailToExecute 事件
+
+当定时任务执行失败时，会触发 `FailToExecute` 事件，所以我们可以编写以下监听器，拿到对应的 `Crontab` 和 `Throwable`。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Hyperf\Crontab\Event\FailToExecute;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Psr\Container\ContainerInterface;
+
+#[Listener]
+class FailToExecuteCrontabListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            FailToExecute::class,
+        ];
+    }
+
+    /**
+     * @param FailToExecute $event
+     */
+    public function process(object $event)
+    {
+        var_dump($event->crontab->getName());
+        var_dump($event->throwable->getMessage());
+    }
+}
+```

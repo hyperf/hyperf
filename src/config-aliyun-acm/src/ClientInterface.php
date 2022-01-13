@@ -11,10 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigAliyunAcm;
 
-interface ClientInterface
+interface ClientInterface extends \Hyperf\ConfigCenter\Contract\ClientInterface
 {
-    /**
-     * Pull the config values from configuration center, and then update the Config values.
-     */
-    public function pull(): array;
 }

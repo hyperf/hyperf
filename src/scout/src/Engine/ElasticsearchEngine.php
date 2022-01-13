@@ -56,7 +56,7 @@ class ElasticsearchEngine extends Engine
     /**
      * Update the given model in the index.
      *
-     * @param Collection $models
+     * @param Collection<int, \Hyperf\Scout\Searchable&\Hyperf\Database\Model\Model> $models
      */
     public function update($models): void
     {
@@ -86,7 +86,7 @@ class ElasticsearchEngine extends Engine
     /**
      * Remove the given model from the index.
      *
-     * @param Collection $models
+     * @param Collection<int, \Hyperf\Scout\Searchable&\Hyperf\Database\Model\Model> $models
      */
     public function delete($models): void
     {
@@ -190,6 +190,7 @@ class ElasticsearchEngine extends Engine
      */
     public function flush(Model $model): void
     {
+        // @phpstan-ignore-next-line
         $model->newQuery()
             ->orderBy($model->getKeyName())
             ->unsearchable();

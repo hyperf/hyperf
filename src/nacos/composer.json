@@ -1,49 +1,35 @@
 {
     "name": "hyperf/nacos",
-    "description": "A PHP implementation of Nacos OpenAPI, particularly adapt for Hyperf.",
+    "type": "library",
     "license": "MIT",
     "keywords": [
         "php",
-        "swoole",
         "hyperf",
         "nacos"
     ],
-    "type": "library",
-    "homepage": "https://hyperf.io",
-    "support": {
-        "docs": "https://hyperf.wiki",
-        "issues": "https://github.com/hyperf/hyperf/issues",
-        "pull-request": "https://github.com/hyperf/hyperf/pulls",
-        "source": "https://github.com/hyperf/hyperf"
-    },
+    "description": "Nacos SDK",
     "autoload": {
         "psr-4": {
             "Hyperf\\Nacos\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Nacos\\": "tests"
+        }
+    },
     "require": {
-        "hyperf/contract": "~2.1.0",
-        "hyperf/guzzle": "~2.1.0",
-        "hyperf/load-balancer": "~2.1.0",
-        "hyperf/utils": "~2.1.0"
-    },
-    "require-dev": {
-    },
-    "suggest": {
-        "ext-json": "*",
-        "ext-simplexml": "*",
-        "ext-yaml": "*",
-        "hyperf/event": "~2.1.0",
-        "hyperf/process": "~2.1.0",
-        "hyperf/framework": "~2.1.0",
-        "hyperf/logger": "~2.1.0"
+        "php": ">=7.3",
+        "guzzlehttp/guzzle": "^6.5|^7.0",
+        "hyperf/contract": "~2.2.0",
+        "hyperf/utils": "~2.2.0"
     },
     "config": {
         "sort-packages": true
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.1-dev"
+            "dev-master": "2.2-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Nacos\\ConfigProvider"

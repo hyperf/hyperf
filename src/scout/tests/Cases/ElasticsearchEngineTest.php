@@ -16,6 +16,7 @@ use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Builder;
 use Hyperf\Scout\Engine\ElasticsearchEngine;
 use HyperfTest\Scout\Stub\ElasticsearchEngineTestModel;
+use HyperfTest\Scout\Stub\SearchableModel;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -117,6 +118,22 @@ class ElasticsearchEngineTest extends TestCase
             }
         );
         $engine->search($builder);
+    }
+
+    public function testGetScoutModelsByIds()
+    {
+        $model = new SearchableModel();
+        $query = Mockery::mock(\Hyperf\Database\Model\Builder::class);
+        $query->shouldReceive('whereIn->get')->andReturn(new Collection([
+            new SearchableModel(['id' => 1]),
+            new SearchableModel(['id' => 2]),
+        ]));
+        $model->setQueryCallback(static function () use ($query) {
+            return $query;
+        });
+        $builder = Mockery::mock(Builder::class);
+        $res = $model->getScoutModelsByIds($builder, [2, 1]);
+        $this->assertSame([['id' => 2], ['id' => 1]], $res->toArray());
     }
 
     public function testMapCorrectlyMapsResultsToModels()

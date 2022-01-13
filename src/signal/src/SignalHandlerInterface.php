@@ -13,9 +13,9 @@ namespace Hyperf\Signal;
 
 interface SignalHandlerInterface
 {
-    const WORKER = 1;
+    public const WORKER = 1;
 
-    const PROCESS = 2;
+    public const PROCESS = 2;
 
     /**
      * @return array [[ WOKKER, SIGNAL ]]

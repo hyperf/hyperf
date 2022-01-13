@@ -6,8 +6,8 @@
 # 创建适配 Hyperf 最新版本的组件包
 composer create-project hyperf/component-creater your_component dev-master
 
-# 创建适配 Hyperf 1.1 版本的组件包
-composer create-project hyperf/component-creater your_component "1.1.*"
+# 创建适配 Hyperf 2.0 版本的组件包
+composer create-project hyperf/component-creater your_component "2.0.*"
 ```
 
 ## 在项目中使用未发布的组件包

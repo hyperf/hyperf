@@ -123,6 +123,7 @@ class MetricFactoryPickerTest extends TestCase
                 ],
             ],
         ]);
+        ProcessCollector::add('dummy', Mockery::mock(\Swoole\Process::class));
         $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
         $container->shouldReceive('get')->with(PrometheusFactory::class)->andReturn(Mockery::mock(PrometheusFactory::class));

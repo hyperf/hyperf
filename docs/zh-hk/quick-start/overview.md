@@ -8,7 +8,9 @@ Hyperf 使用 [nikic/fast-route](https://github.com/nikic/FastRoute) 作為默�
 不僅如此，框架還提供了極其強大和方便靈活的 `註解路由` 功能，關於路由的詳情文檔請查閲 [路由](zh-hk/router.md) 章節
 
 ### 通過配置文件定義路由
+
 路由的文件位於 [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) 項目的 `config/routes.php` ，下面是一些常用的用法示例。
+
 ```php
 <?php
 use Hyperf\HttpServer\Router\Router;
@@ -36,9 +38,18 @@ Router::addRoute(['GET', 'POST', 'HEAD'], '/multi', [\App\Controller\IndexContro
 `Hyperf` 提供了極其強大和方便靈活的 [註解](zh-hk/annotation.md) 功能，在路由的定義上也毫無疑問地提供了註解定義的方式，Hyperf 提供了 `@Controller` 和 `@AutoController` 兩種註解來定義一個 `Controller`，此處僅做簡單的説明，更多細節請查閲 [路由](zh-hk/router.md) 章節。
 
 ### 通過 `@AutoController` 註解定義路由
+
 `@AutoController` 為絕大多數簡單的訪問場景提供路由綁定支持，使用 `@AutoController` 時則 Hyperf 會自動解析所在類的所有 `public` 方法並提供 `GET` 和 `POST` 兩種請求方式。
 
 > 使用 `@AutoController` 註解時需 `use Hyperf\HttpServer\Annotation\AutoController;` 命名空間；
+
+駝峯命名的控制器，會自動轉化為蛇形路由，以下為控制器與實際路由的對應關係示例：
+
+|      控制器      |              註解               |    訪問路由    |
+| :--------------: | :-----------------------------: | :------------: |
+| MyDataController |        @AutoController()        | /my_data/index |
+| MydataController |        @AutoController()        | /mydata/index  |
+| MyDataController | @AutoController(prefix="/data") |  /data/index   |
 
 ```php
 <?php
@@ -261,7 +272,7 @@ return [
             'port' => 9501,
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
-                SwooleEvent::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
+                Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
             ],
         ],
         [
@@ -271,33 +282,69 @@ return [
             'port' => 9502,
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
-                SwooleEvent::ON_REQUEST => ['InnerHttp', 'onRequest'],
+                Event::ON_REQUEST => ['InnerHttp', 'onRequest'],
             ],
         ],
     ]
 ];
 ```
 
+同時 `路由文件`，或者 `註解` 也需要指定對應的 `server`，如下：
+
+- 路由文件 `config/routes.php`
+
+```php
+<?php
+Router::addServer('innerHttp', function () {
+    Router::get('/', 'App\Controller\IndexController@index');
+});
+```
+
+- 註解
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller;
+
+use Hyperf\HttpServer\Annotation\AutoController;
+
+/**
+ * @AutoController(server="innerHttp")
+ */
+class IndexController
+{
+    public function index()
+    {
+        return 'Hello World.';
+    }
+}
+
+```
+
+
 ## 事件
 
-除上述提到的 `SwooleEvent::ON_REQUEST` 事件，框架還支持其他事件，所有事件名如下。
+除上述提到的 `Event::ON_REQUEST` 事件，框架還支持其他事件，所有事件名如下。
 
-|            事件名              |                備註                 |
-|:-----------------------------:|:-----------------------------------:|
-|    SwooleEvent::ON_REQUEST    |                                     |
-|     SwooleEvent::ON_START     |   該事件在 `SWOOLE_BASE` 模式下無效    |
-| SwooleEvent::ON_WORKER_START  |                                     |
-|  SwooleEvent::ON_WORKER_EXIT  |                                     |
-| SwooleEvent::ON_PIPE_MESSAGE  |                                     |
-|    SwooleEvent::ON_RECEIVE    |                                     |
-|    SwooleEvent::ON_CONNECT    |                                     |
-|  SwooleEvent::ON_HAND_SHAKE   |                                     |
-|     SwooleEvent::ON_OPEN      |                                     |
-|    SwooleEvent::ON_MESSAGE    |                                     |
-|     SwooleEvent::ON_CLOSE     |                                     |
-|     SwooleEvent::ON_TASK      |                                     |
-|    SwooleEvent::ON_FINISH     |                                     |
-|   SwooleEvent::ON_SHUTDOWN    |                                     |
-|    SwooleEvent::ON_PACKET     |                                     |
-| SwooleEvent::ON_MANAGER_START |                                     |
-| SwooleEvent::ON_MANAGER_STOP  |                                     |
+|         事件名          |               備註                |
+| :---------------------: | :-------------------------------: |
+|    Event::ON_REQUEST    |                                   |
+|     Event::ON_START     | 該事件在 `SWOOLE_BASE` 模式下無效 |
+| Event::ON_WORKER_START  |                                   |
+|  Event::ON_WORKER_EXIT  |                                   |
+| Event::ON_PIPE_MESSAGE  |                                   |
+|    Event::ON_RECEIVE    |                                   |
+|    Event::ON_CONNECT    |                                   |
+|  Event::ON_HAND_SHAKE   |                                   |
+|     Event::ON_OPEN      |                                   |
+|    Event::ON_MESSAGE    |                                   |
+|     Event::ON_CLOSE     |                                   |
+|     Event::ON_TASK      |                                   |
+|    Event::ON_FINISH     |                                   |
+|   Event::ON_SHUTDOWN    |                                   |
+|    Event::ON_PACKET     |                                   |
+| Event::ON_MANAGER_START |                                   |
+| Event::ON_MANAGER_STOP  |                                   |

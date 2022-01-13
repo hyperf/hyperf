@@ -12,6 +12,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 /**
  * @Aspect
  */
+#[Aspect]
 class %CLASS% extends AbstractAspect
 {
     protected $container;

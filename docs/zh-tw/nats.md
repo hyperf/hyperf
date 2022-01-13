@@ -59,7 +59,7 @@ use Hyperf\Nats\Driver\DriverInterface;
 /**
  * @AutoController(prefix="nats")
  */
-class NatsController extends Controller
+class NatsController extends AbstractController
 {
     /**
      * @Inject
@@ -96,7 +96,7 @@ use Hyperf\Nats\Message;
 /**
  * @AutoController(prefix="nats")
  */
-class NatsController extends Controller
+class NatsController extends AbstractController
 {
     /**
      * @Inject
@@ -135,7 +135,7 @@ use Hyperf\Nats\Message;
 /**
  * @AutoController(prefix="nats")
  */
-class NatsController extends Controller
+class NatsController extends AbstractController
 {
     /**
      * @Inject

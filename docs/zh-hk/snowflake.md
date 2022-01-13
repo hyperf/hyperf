@@ -145,10 +145,32 @@ $id = $generator->generate($userId);
 
 ```php
 <?php
+use Hyperf\Database\Model\Model;
+use Hyperf\Snowflake\Concern\Snowflake;
 
-class User extends \Hyperf\Database\Model\Model {
-    use \Hyperf\Snowflake\Concern\Snowflake;
+class User extends Model {
+    use Snowflake;
 }
 ```
 
 上述 User 模型在創建時便會默認使用 Snowflake 算法生成主鍵。
+
+因為 Snowflake 中會複寫 `creating` 方法，而用户有需要自己設置 `creating` 方法時，就會出現無法生成 `ID` 的問題。這裏需要用户按照以下方式自行處理即可
+
+```php
+<?php
+use Hyperf\Database\Model\Model;
+use Hyperf\Snowflake\Concern\Snowflake;
+
+class User extends Model {
+    use Snowflake {
+        creating as create;
+    }
+
+    public function creating()
+    {
+        $this->create();
+        // Do something ...
+    }
+}
+```

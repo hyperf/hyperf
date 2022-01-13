@@ -11,24 +11,23 @@ declare(strict_types=1);
  */
 namespace Hyperf\Testing;
 
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
-use Hyperf\Engine\Coroutine;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\MiddlewareManager;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Server;
+use Hyperf\Testing\HttpMessage\Upload\UploadedFile;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Packer\JsonPacker;
-use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -36,17 +35,19 @@ use Psr\Http\Message\ServerRequestInterface;
 class Client extends Server
 {
     /**
-     * @var array
-     */
-    public $ignoreContextPrefix = [
-        'database.connection',
-        'redis.connection',
-    ];
-
-    /**
      * @var PackerInterface
      */
     protected $packer;
+
+    /**
+     * @var float
+     */
+    protected $waitTimeout = 10.0;
+
+    /**
+     * @var string
+     */
+    protected $baseUri = 'http://127.0.0.1/';
 
     public function __construct(ContainerInterface $container, PackerInterface $packer = null, $server = 'http')
     {
@@ -54,6 +55,7 @@ class Client extends Server
         $this->packer = $packer ?? new JsonPacker();
 
         $this->initCoreMiddleware($server);
+        $this->initBaseUri($server);
     }
 
     public function get($uri, $data = [], $headers = [])
@@ -134,10 +136,65 @@ class Client extends Server
 
     public function request(string $method, string $path, array $options = [])
     {
-        /*
-         * @var Psr7Request
-         */
-        [$psr7Request, $psr7Response] = $this->init($method, $path, $options);
+        return wait(function () use ($method, $path, $options) {
+            return $this->execute($this->initRequest($method, $path, $options));
+        }, $this->waitTimeout);
+    }
+
+    public function sendRequest(ServerRequestInterface $psr7Request): ResponseInterface
+    {
+        return wait(function () use ($psr7Request) {
+            return $this->execute($psr7Request);
+        }, $this->waitTimeout);
+    }
+
+    public function initRequest(string $method, string $path, array $options = []): ServerRequestInterface
+    {
+        $query = $options['query'] ?? [];
+        $params = $options['form_params'] ?? [];
+        $json = $options['json'] ?? [];
+        $headers = $options['headers'] ?? [];
+        $multipart = $options['multipart'] ?? [];
+
+        $parsePath = parse_url($path);
+        $path = $parsePath['path'];
+        $uriPathQuery = $parsePath['query'] ?? [];
+        if (! empty($uriPathQuery)) {
+            parse_str($uriPathQuery, $pathQuery);
+            $query = array_merge($pathQuery, $query);
+        }
+
+        $data = $params;
+
+        // Initialize PSR-7 Request and Response objects.
+        $uri = (new Uri($this->baseUri . ltrim($path, '/')))->withQuery(http_build_query($query));
+
+        $content = http_build_query($params);
+        if ($method == 'POST' && data_get($headers, 'Content-Type') == 'application/json') {
+            $content = json_encode($json, JSON_UNESCAPED_UNICODE);
+            $data = $json;
+        }
+
+        $body = new SwooleStream($content);
+
+        $request = new Psr7Request($method, $uri, $headers, $body);
+
+        return $request->withQueryParams($query)
+            ->withParsedBody($data)
+            ->withUploadedFiles($this->normalizeFiles($multipart));
+    }
+
+    /**
+     * @deprecated It will be removed in v3.0
+     */
+    protected function init(string $method, string $path, array $options = []): ServerRequestInterface
+    {
+        return $this->initRequest($method, $path, $options);
+    }
+
+    protected function execute(ServerRequestInterface $psr7Request): ResponseInterface
+    {
+        $this->persistToContext($psr7Request, new Psr7Response());
 
         $psr7Request = $this->coreMiddleware->dispatch($psr7Request);
         /** @var Dispatched $dispatched */
@@ -158,49 +215,23 @@ class Client extends Server
         return $psr7Response;
     }
 
-    protected function init(string $method, string $path, array $options = []): array
+    protected function persistToContext(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $this->flushContext();
-
-        $query = $options['query'] ?? [];
-        $params = $options['form_params'] ?? [];
-        $json = $options['json'] ?? [];
-        $headers = $options['headers'] ?? [];
-        $multipart = $options['multipart'] ?? [];
-
-        $data = $params;
-
-        // Initialize PSR-7 Request and Response objects.
-        $uri = (new Uri())->withPath($path)->withQuery(http_build_query($query));
-
-        $content = http_build_query($params);
-        if ($method == 'POST' && data_get($headers, 'Content-Type') == 'application/json') {
-            $content = json_encode($json, JSON_UNESCAPED_UNICODE);
-            $data = $json;
-        }
-
-        $body = new SwooleStream($content);
-
-        $request = new Psr7Request($method, $uri, $headers, $body);
-        $request = $request->withQueryParams($query)
-            ->withParsedBody($data)
-            ->withUploadedFiles($this->normalizeFiles($multipart));
-
-        Context::set(ServerRequestInterface::class, $psr7Request = $request);
-        Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
-
-        return [$psr7Request, $psr7Response];
+        Context::set(ServerRequestInterface::class, $request);
+        Context::set(ResponseInterface::class, $response);
     }
 
-    protected function flushContext()
+    protected function initBaseUri($server): void
     {
-        $context = Coroutine::getContextFor() ?? [];
-
-        foreach ($context as $key => $value) {
-            if (Str::startsWith($key, $this->ignoreContextPrefix)) {
-                continue;
+        if ($this->container->has(ConfigInterface::class)) {
+            $config = $this->container->get(ConfigInterface::class);
+            $servers = $config->get('server.servers', []);
+            foreach ($servers as $item) {
+                if ($item['name'] == $server) {
+                    $this->baseUri = sprintf('http://127.0.0.1:%d/', (int) $item['port']);
+                    break;
+                }
             }
-            $context[$key] = null;
         }
     }
 
@@ -217,7 +248,9 @@ class Client extends Server
 
                 $dir = BASE_PATH . '/runtime/uploads';
                 $tmpName = $dir . '/' . $filename;
-                $fileSystem->makeDirectory($dir);
+                if (! is_dir($dir)) {
+                    $fileSystem->makeDirectory($dir);
+                }
                 $fileSystem->put($tmpName, $contents);
 
                 $stats = fstat($contents);

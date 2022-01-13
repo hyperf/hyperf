@@ -1,0 +1,210 @@
+name: Test for Hyperf Components
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 2 * * *'
+env:
+  SW_VERSION: 'v4.8.5'
+jobs:
+  database:
+    name: Test for Database
+    runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+    strategy:
+      matrix:
+        php-version: [ '7.4', '8.0' ]
+        mysql-version: [ '5.7', '8.0' ]
+      max-parallel: 2
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          extensions: redis, pdo, pdo_mysql, bcmath
+          ini-values: opcache.enable_cli=1
+          coverage: none
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Setup Packages
+        run: composer update -o
+      - name: Setup Services
+        run: |
+          docker run --name mysql -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql:${{ matrix.mysql-version }} --bind-address=0.0.0.0 --default-authentication-plugin=mysql_native_password
+          sleep 20
+      - name: Setup Mysql
+        run: export TRAVIS_BUILD_DIR=$(pwd) && bash ./.travis/setup.mysql.sh
+      - name: Run Test Cases
+        run: |
+          composer test src/database -- --exclude-group NonCoroutine
+          vendor/bin/phpunit src/database --group NonCoroutine
+  filesystem:
+    name: Test for Filesystem
+    runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+    strategy:
+      matrix:
+        version: [ '^1.0', '^2.0' ]
+        php-version: [ '7.4', '8.0' ]
+      max-parallel: 2
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          ini-values: opcache.enable_cli=1
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Setup Packages
+        run: composer require "league/flysystem:${{ matrix.version }}" --dev -o -W
+      - name: Setup Flysystem(v1.0) Adapters
+        if: ${{ matrix.version == '^1.0' }}
+        run: |
+          composer require xxtime/flysystem-aliyun-oss
+          composer require "overtrue/flysystem-cos:^3.0"
+          composer require "overtrue/flysystem-qiniu:^1.0"
+      - name: Setup Flysystem(v2.0) Adapters
+        if: ${{ matrix.version == '^2.0' }}
+        run: |
+          composer require hyperf/flysystem-oss
+          composer require league/flysystem-ftp
+          composer require "overtrue/flysystem-cos:^4.0"
+          composer require "overtrue/flysystem-qiniu:^2.0"
+      - name: Run Test Cases
+        run: |
+          composer test src/filesystem -- --exclude-group NonCoroutine
+  phar:
+    name: Test for Building PHAR ${{ matrix.no-dev }}
+    runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+    strategy:
+      matrix:
+        no-dev: [ '', '--no-dev' ]
+        php-version: [ '8.0' ]
+      max-parallel: 2
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          extensions: redis
+          ini-values: opcache.enable_cli=1, phar.readonly='Off'
+          coverage: none
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Build phar tester
+        run: |
+          git clone https://github.com/limingxinleo/hyperf-phar-tester.git
+          cd hyperf-phar-tester
+          git checkout 2.2
+          composer update -o ${{ matrix.no-dev }}
+          rm -rf vendor/hyperf/phar
+          cp -rf ../src/phar vendor/hyperf/phar
+          composer dump-autoload -o
+      - name: Test
+        run: |
+          cd hyperf-phar-tester
+          php bin/hyperf.php phar:build --name no_env.phar
+          php bin/hyperf.php read:vendor-bin
+          php no_env.phar show:name -N null
+          php no_env.phar read:vendor-bin
+          cp .env.example .env
+          php bin/hyperf.php phar:build --name default_env.phar
+          php default_env.phar show:name -N hyperf-phar-tester
+          php bin/hyperf.php phar:build --name link_env.phar -M .env.link:.env
+          echo APP_NAME=helloworld > .env.link
+          php link_env.phar show:name -N helloworld
+          sudo chmod u+x link_env.phar
+          ./link_env.phar show:name -N helloworld
+  container:
+    name: Test for Psr Container V2.0
+    runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+    strategy:
+      matrix:
+        php-version: [ '7.4', '8.0' ]
+      max-parallel: 6
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          ini-values: opcache.enable_cli=1
+          coverage: none
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Setup Packages
+        run: |
+          cp .travis/.env.example .env
+          composer remove friendsofphp/php-cs-fixer --dev -W
+          composer remove symfony/console --dev -W
+          composer update -oW
+      - name: Run Test Cases
+        run: |
+          composer analyse src/di
+          vendor/bin/phpunit src/di
+  log:
+    name: Test for Psr Log V1.0 ~ V3.0
+    runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+    strategy:
+      matrix:
+        php-version: [ '8.0' ]
+        log-version: [ '^1.0', '^2.0', '^3.0' ]
+      max-parallel: 3
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          ini-values: opcache.enable_cli=1
+          coverage: none
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Removed conflict Packages
+        run: |
+          composer remove elasticsearch/elasticsearch --dev -W
+          composer remove jonahgeorge/jaeger-client-php --dev -W
+          composer remove bandwidth-throttle/token-bucket --dev -W
+          composer remove friendsofphp/php-cs-fixer --dev -W
+          composer remove symfony/console --dev -W
+      - name: Run Test Cases
+        run: |
+          composer require "psr/log:${{ matrix.log-version }}"
+          composer update -oW
+          if [ ${{ matrix.log-version }} != '^3.0' ]
+          then
+            composer require symfony/console --dev -W
+            composer analyse src/framework
+          fi
+          composer analyse src/server/src/Entry/Logger.php
+          composer analyse src/logger
+          composer test src/framework
+          composer test src/logger
+          composer info | grep psr/log

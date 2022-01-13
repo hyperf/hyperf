@@ -503,6 +503,13 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
+    public function clearStoredParsedData(): void
+    {
+        if (Context::has($this->contextkeys['parsedData'])) {
+            Context::set($this->contextkeys['parsedData'], null);
+        }
+    }
+
     /**
      * Check that the given file is a valid SplFileInfo instance.
      * @param mixed $file

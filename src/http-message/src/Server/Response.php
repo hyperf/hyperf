@@ -12,10 +12,14 @@ declare(strict_types=1);
 namespace Hyperf\HttpMessage\Server;
 
 use Hyperf\HttpMessage\Cookie\Cookie;
+use Hyperf\HttpMessage\Server\Chunk\Chunkable;
+use Hyperf\HttpMessage\Server\Chunk\HasChunk;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 
-class Response extends \Hyperf\HttpMessage\Base\Response
+class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
 {
+    use HasChunk;
+
     /**
      * @var array
      */
@@ -25,6 +29,11 @@ class Response extends \Hyperf\HttpMessage\Base\Response
      * @var array
      */
     protected $trailers = [];
+
+    /**
+     * @var null|ConnectionInterface
+     */
+    protected $connection;
 
     /**
      * Returns an instance with body content.
@@ -79,5 +88,16 @@ class Response extends \Hyperf\HttpMessage\Base\Response
     public function getTrailers(): array
     {
         return $this->trailers;
+    }
+
+    public function setConnection(ConnectionInterface $connection)
+    {
+        $this->connection = $connection;
+        return $this;
+    }
+
+    public function getConnection(): ?ConnectionInterface
+    {
+        return $this->connection;
     }
 }

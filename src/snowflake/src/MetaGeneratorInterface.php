@@ -13,7 +13,7 @@ namespace Hyperf\Snowflake;
 
 interface MetaGeneratorInterface
 {
-    const DEFAULT_BEGIN_SECOND = 1560960000;
+    public const DEFAULT_BEGIN_SECOND = 1560960000;
 
     public function generate(): Meta;
 
