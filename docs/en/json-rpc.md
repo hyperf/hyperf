@@ -29,7 +29,7 @@ Services have two roles, one is `ServiceProvider`, which is a service that provi
 ### Define service provider
 
 So far, only the form of annotations is supported to define `ServiceProvider`, and subsequent editions will add more form of configuration.
-We can directly define a class through the `@RpcService` annotation and publish this service:
+We can directly define a class through the `#[RpcService]` annotation and publish this service:
 
 ```php
 <?php
@@ -40,8 +40,8 @@ use Hyperf\RpcServer\Annotation\RpcService;
 
 /**
  * Note that if you want to manage the service through the service center, you need to add the publishTo attribute in the annotation
- * @RpcService(name="CalculatorService", protocol="jsonrpc-http", server="jsonrpc-http")
  */
+#[RpcService(name: "CalculatorService", protocol: "jsonrpc-http", server: "jsonrpc-http")]
 class CalculatorService implements CalculatorServiceInterface
 {
     // Implement an addition method, simply consider that the parameters are int type
@@ -53,13 +53,13 @@ class CalculatorService implements CalculatorServiceInterface
 }
 ```
  
-`@RpcService` has `4` parameters:  
+`#[RpcService]` has `4` parameters:  
 The `name` attribute is the name that defines the service. Just define a globally unique name here. Hyperf will generate a corresponding ID based on this attribute and register it to the service center;
 The `protocol` attribute defines the protocol exposed by the service. Currently, only `jsonrpc-http`, `jsonrpc`, and `jsonrpc-tcp-length-check` are supported, which correspond to the HTTP protocol and two protocols under the TCP protocol respectively. The default value is `jsonrpc-http`, the value here corresponds to the `key` of the protocol registered in `Hyperf\Rpc\ProtocolManager`. They are essentially JSON RPC protocol, the difference lies in data formatting, data packaging, data transmitter.
 The `server` attribute is the `Server` carried by the binded publishing service class, the default value is `jsonrpc-http`. This attribute corresponds to the `name` under `servers` in the `config/autoload/server.php` file, which also means that we need to define a corresponding `Server`, we will elaborate on how to deal with this in the next chapter;
 The `publishTo` attribute defines the service center to be published. Currently only supports `consul` or null. When it is null, it means that the service will not be published to the service center, which also means that you need to manually deal with the service discovery. When the value is `consul`, you need to configure the relevant configuration of the [hyperf/consul](zh-cn/consul.md) component. To use this function, you need to install [hyperf/service-governance](https://github. com/hyperf/service-governance) component, please refer to [Service Registration](zh-cn/service-register.md) section for details.
 
-> To use the `@RpcService` annotation, the `use Hyperf\RpcServer\Annotation\RpcService;` namespace is required.
+> To use the `#[RpcService]` annotation, the `use Hyperf\RpcServer\Annotation\RpcService;` namespace is required.
 
 #### Define JSON RPC Server
 
@@ -165,7 +165,7 @@ return [
 ];
 ```
 
-After the configuration is completed, when the service is started, Hyperf will automatically register the service, which defined with `publishTo` attribute as `consul` by the `@RpcService`, to the service center.
+After the configuration is completed, when the service is started, Hyperf will automatically register the service, which defined with `publishTo` attribute as `consul` by the `#[RpcService]`, to the service center.
 
 > Currently, only the `jsonrpc` and `jsonrpc-http` protocols are supported to publish to the service center, other protocols have not yet implemented service registration
 
