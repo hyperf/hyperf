@@ -48,7 +48,7 @@ return [
 
 类注解定义是在 `class` 关键词上方的注释块内，比如常用的 `@Controller` 和 `@AutoController` 就是类注解的使用典范，下面的代码示例则为一个正确使用类注解的示例，表明 `@ClassAnnotation` 注解应用于 `Foo` 类。   
 
-- PHP版本低于 8.0 时
+- PHP 版本低于 8.0 时
 
 ```php
 <?php
@@ -58,7 +58,7 @@ return [
 class Foo {}
 ```
 
-- PHP版本大于等于 8.0 时
+- PHP 版本大于等于 8.0 时
 
 ```php
 <?php
@@ -70,7 +70,7 @@ class Foo {}
 
 类方法注解定义是在方法上方的注释块内，比如常用的 `@RequestMapping` 就是类方法注解的使用典范，下面的代码示例则为一个正确使用类方法注解的示例，表明 `@MethodAnnotation` 注解应用于 `Foo::bar()` 方法。   
 
-- PHP版本低于 8.0 时
+- PHP 版本低于 8.0 时
 
 ```php
 <?php
@@ -86,7 +86,7 @@ class Foo
 }
 ```
 
-- PHP版本大于等于 8.0 时
+- PHP 版本大于等于 8.0 时
 
 ```php
 <?php
@@ -104,7 +104,7 @@ class Foo
 
 类属性注解定义是在属性上方的注释块内，比如常用的 `@Value` 和 `@Inject` 就是类属性注解的使用典范，下面的代码示例则为一个正确使用类属性注解的示例，表明 `@PropertyAnnotation` 注解应用于 `Foo` 类的 `$bar` 属性。   
 
-- PHP版本低于 8.0 时
+- PHP 版本低于 8.0 时
 
 ```php
 <?php
@@ -117,7 +117,7 @@ class Foo
 }
 ```
 
-- PHP版本大于等于 8.0 时
+- PHP 版本大于等于 8.0 时
 
 ```php
 <?php
@@ -140,7 +140,7 @@ class Foo
 
 在任意地方创建注解类，如下代码示例：    
 
-- PHP版本低于 8.0 时
+- PHP 版本低于 8.0 时
 
 ```php
 <?php
@@ -175,7 +175,7 @@ class Foo extends AbstractAnnotation
 - `CLASS` 注解允许定义在类上
 - `ALL` 注解允许定义在任何地方
 
-- PHP版本大于等于 8.0 时
+- PHP 版本大于等于 8.0 时
 
 ```php
 <?php
