@@ -387,6 +387,18 @@ $users = Db::table('user')->where([
 ])->get();
 ```
 
+你还可以使用闭包的方式创建查询数组
+
+```php
+$users = Db::table('user')->where([
+    ['status', '=', '1'],
+    ['gender', '=', '1'],
+    [function ($query) {
+        $query->where('type', 3)->orWhere('type', 6);
+    }]
+])->get();
+```
+
 ### Or 语句
 
 你可以一起链式调用 `where` 约束，也可以在查询中添加 `or` 字句。 `orWhere` 方法和 `where` 方法接收的参数一样：
