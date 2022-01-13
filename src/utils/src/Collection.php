@@ -1356,7 +1356,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Sort the collection using the given callback.
      *
-     * @param  (callable(TValue, TKey): mixed)|string  $callback
+     * @param (callable(TValue, TKey): mixed)|string|array $callback
      * @return static<TKey, TValue>
      */
     public function sortBy($callback, int $options = SORT_REGULAR, bool $descending = false): self
