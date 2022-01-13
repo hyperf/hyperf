@@ -114,8 +114,10 @@ namespace HyperfTest\Cases;
 use Hyperf\Testing\Client;
 use PHPUnit\Framework\TestCase;
 
-#[internal]
-#[coversNothing] 
+/**
+ * @internal
+ * @coversNothing
+ */
 class ExampleTest extends TestCase
 {
     /**
@@ -206,8 +208,10 @@ namespace HyperfTest\Cases;
 use HyperfTest\HttpTestCase;
 use App\Service\Dao\UserDao;
 
-#[internal]
-#[coversNothing]
+/**
+ * @internal
+ * @coversNothing
+ */
 class UserTest extends HttpTestCase
 {
     public function testUserDaoFirst()

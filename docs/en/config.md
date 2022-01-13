@@ -95,10 +95,13 @@ This way requires the object must be created by the [hyperf/di](https://github.c
 The string in `#[Value()]` corresponds to the `$key` parameter in `$config->get($key)`. When the object instance is created, the corresponding configuration is automatically injected into the defined class property.
 
 ```php
+<?php
+use Hyperf\Config\Annotation\Value;
+
 class IndexController
 {
     
-    #[Value("config.key")]
+    #[Value(key: "config.key")]
     private $configValue;
     
     public function index()
