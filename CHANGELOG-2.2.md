@@ -1,8 +1,13 @@
 # v2.2.23 - TBD
 
+## Fixed
+
+- [#4426](https://github.com/hyperf/hyperf/pull/4426) Fixed bug that view cache generated failed caused by concurrent request.
+
 ## Added
 
 - [#4449](https://github.com/hyperf/hyperf/pull/4449) Allow sorting on multiple criteria for `Hyperf\Utils\Collection`.
+- [#4455](https://github.com/hyperf/hyperf/pull/4455) Added command `gen:view-engine-cache` which used to generate cache files in advance.
 
 # v2.2.22 - 2022-01-04
 
