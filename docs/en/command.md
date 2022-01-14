@@ -41,9 +41,7 @@ namespace App\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
     /**
@@ -67,9 +65,7 @@ namespace App\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
     public function __construct()
@@ -93,9 +89,7 @@ namespace App\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
     /**
@@ -132,9 +126,7 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Symfony\Component\Console\Input\InputArgument;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
     /**
