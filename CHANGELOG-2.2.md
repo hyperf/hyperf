@@ -1,5 +1,9 @@
 # v2.2.23 - TBD
 
+## Fixed
+
+- [#4426](https://github.com/hyperf/hyperf/pull/4426) Fixed bug that view cache generated failed caused by concurrent request.
+
 ## Added
 
 - [#4449](https://github.com/hyperf/hyperf/pull/4449) Allow sorting on multiple criteria for `Hyperf\Utils\Collection`.
