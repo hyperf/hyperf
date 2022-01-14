@@ -26,27 +26,21 @@ class ElasticserachAspect extends AbstractAspect
     /**
      * @var array
      */
-    public $classes
-        = [
-            Client::class . '::bulk',
-            Client::class . '::count',
-            Client::class . '::create',
-            Client::class . '::get',
-            Client::class . '::getSource',
-            Client::class . '::index',
-            Client::class . '::mget',
-            Client::class . '::msearch',
-            Client::class . '::scroll',
-            Client::class . '::search',
-            Client::class . '::update',
-            Client::class . '::updateByQuery',
-            Client::class . '::search',
-        ];
-
-    /**
-     * @var array
-     */
-    public $annotations = [];
+    public $classes = [
+        Client::class . '::bulk',
+        Client::class . '::count',
+        Client::class . '::create',
+        Client::class . '::get',
+        Client::class . '::getSource',
+        Client::class . '::index',
+        Client::class . '::mget',
+        Client::class . '::msearch',
+        Client::class . '::scroll',
+        Client::class . '::search',
+        Client::class . '::update',
+        Client::class . '::updateByQuery',
+        Client::class . '::search',
+    ];
 
     /**
      * @var Tracer
