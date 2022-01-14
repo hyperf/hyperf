@@ -28,7 +28,6 @@ class ElasticserachAspect extends AbstractAspect
      */
     public $classes
         = [
-            Client::class . '::__construct',
             Client::class . '::bulk',
             Client::class . '::count',
             Client::class . '::create',
