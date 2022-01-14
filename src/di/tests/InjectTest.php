@@ -271,7 +271,7 @@ class InjectTest extends TestCase
             throw new Exception('The process fork failed');
         }
         if ($pid === 0) {
-            $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
+            $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'), new NullScanHandler());
             $reader = new AnnotationReader();
 
             if (empty($classes)) {
