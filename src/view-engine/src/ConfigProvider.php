@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine;
 
+use Hyperf\ViewEngine\Command\GenerateViewCacheCommand;
 use Hyperf\ViewEngine\Command\ViewPublishCommand;
 use Hyperf\ViewEngine\Compiler\CompilerInterface;
 use Hyperf\ViewEngine\Component\DynamicComponent;
@@ -34,6 +35,7 @@ class ConfigProvider
             ],
             'commands' => [
                 ViewPublishCommand::class,
+                GenerateViewCacheCommand::class,
             ],
             'annotations' => [
                 'scan' => [
