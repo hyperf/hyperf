@@ -65,6 +65,10 @@ abstract class AbstractAnnotation implements AnnotationInterface, Arrayable
 
     protected function bindMainProperty(string $key, array $value)
     {
+        if (isset($value[$key])) {
+            $this->{$key} = $value[$key];
+            return;
+        }
         $formattedValue = $this->formatParams($value);
         if (isset($formattedValue['value'])) {
             $this->{$key} = $formattedValue['value'];
