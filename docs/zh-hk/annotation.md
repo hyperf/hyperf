@@ -10,7 +10,7 @@
 - 註釋：給程序員看，幫助理解代碼，對代碼起到解釋、説明的作用。
 - 註解：給應用程序看，用於元數據的定義，單獨使用時沒有任何作用，需配合應用程序對其元數據進行利用才有作用。
 
-### 註解解析如何實現？
+### 註釋型註解解析如何實現？
 
 Hyperf 使用了 [doctrine/annotations](https://github.com/doctrine/annotations) 包來對代碼內的註解進行解析，註解必須寫在下面示例的標準註釋塊才能被正確解析，其它格式均不能被正確解析。
 註釋塊示例：
@@ -47,17 +47,33 @@ return [
 ### 使用類註解
 
 類註解定義是在 `class` 關鍵詞上方的註釋塊內，比如常用的 `@Controller` 和 `@AutoController` 就是類註解的使用典範，下面的代碼示例則為一個正確使用類註解的示例，表明 `@ClassAnnotation` 註解應用於 `Foo` 類。   
+
+- PHP 版本低於 8.0 時
+
 ```php
+<?php
 /**
- * @ClassAnnotation()
+ * @ClassAnnotation
  */
+class Foo {}
+```
+
+- PHP 版本大於等於 8.0 時
+
+```php
+<?php
+#[ClassAnnotation]
 class Foo {}
 ```
 
 ### 使用類方法註解
 
 類方法註解定義是在方法上方的註釋塊內，比如常用的 `@RequestMapping` 就是類方法註解的使用典範，下面的代碼示例則為一個正確使用類方法註解的示例，表明 `@MethodAnnotation` 註解應用於 `Foo::bar()` 方法。   
+
+- PHP 版本低於 8.0 時
+
 ```php
+<?php
 class Foo
 {
     /**
@@ -70,10 +86,28 @@ class Foo
 }
 ```
 
+- PHP 版本大於等於 8.0 時
+
+```php
+<?php
+class Foo
+{
+    #[MethodAnnotation]
+    public function bar()
+    {
+        // some code
+    }
+}
+```
+
 ### 使用類屬性註解
 
 類屬性註解定義是在屬性上方的註釋塊內，比如常用的 `@Value` 和 `@Inject` 就是類屬性註解的使用典範，下面的代碼示例則為一個正確使用類屬性註解的示例，表明 `@PropertyAnnotation` 註解應用於 `Foo` 類的 `$bar` 屬性。   
+
+- PHP 版本低於 8.0 時
+
 ```php
+<?php
 class Foo
 {
     /**
@@ -83,7 +117,18 @@ class Foo
 }
 ```
 
-### 註解參數傳遞
+- PHP 版本大於等於 8.0 時
+
+```php
+<?php
+class Foo
+{
+    #[PropertyAnnotation]
+    private $bar;
+}
+```
+
+### 註釋型註解參數傳遞
 
 - 傳遞主要的單個參數 `@DemoAnnotation("value")`
 - 傳遞字符串參數 `@DemoAnnotation(key1="value1", key2="value2")`
@@ -95,7 +140,10 @@ class Foo
 
 在任意地方創建註解類，如下代碼示例：    
 
+- PHP 版本低於 8.0 時
+
 ```php
+<?php
 namespace App\Annotation;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
@@ -119,13 +167,34 @@ class Foo extends AbstractAnnotation
 }
 ```
 
-> 注意註解類的 `@Annotation` 和 `@Target` 註解為全局註解，無需 `use` 
+> 注意註解類的 `@Annotation` 和 `@Target` 註解為全局註解，無需 `use`
 
-其中 `@Target` 有如下參數：   
+其中 `@Target` 有如下參數：
 - `METHOD` 註解允許定義在類方法上
 - `PROPERTY` 註解允許定義在類屬性上
 - `CLASS` 註解允許定義在類上
 - `ALL` 註解允許定義在任何地方
+
+- PHP 版本大於等於 8.0 時
+
+```php
+<?php
+namespace App\Annotation;
+
+use Hyperf\Di\Annotation\AbstractAnnotation;
+
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
+class Bar extends AbstractAnnotation
+{
+    // some code
+}
+
+#[Attribute(Attribute::TARGET_CLASS)]
+class Foo extends AbstractAnnotation
+{
+    // some code
+}
+```
 
 我們注意一下在上面的示例代碼中，註解類都繼承了 `Hyperf\Di\Annotation\AbstractAnnotation` 抽象類，對於註解類來説，這個不是必須的，但對於 Hyperf 的註解類來説，繼承 `Hyperf\Di\Annotation\AnnotationInterface` 接口類是必須的，那麼抽象類在這裏的作用是提供極簡的定義方式，該抽象類已經為您實現了`註解參數自動分配到類屬性`、`根據註解使用位置自動按照規則收集到 AnnotationCollector` 這樣非常便捷的功能。
 

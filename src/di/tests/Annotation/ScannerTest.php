@@ -17,6 +17,7 @@ use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Di\ReflectionManager;
+use Hyperf\Di\ScanHandler\NullScanHandler;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Filesystem\Filesystem;
 use HyperfTest\Di\Stub\AnnotationCollector;
@@ -44,7 +45,7 @@ class ScannerTest extends TestCase
     public function testGetChangedAspects()
     {
         $this->getContainer();
-        $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
+        $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'), new NullScanHandler());
         $loader->shouldReceive('getComposerClassLoader')->andReturnUsing(function () {
             $loader = Mockery::mock(\Composer\Autoload\ClassLoader::class);
             $loader->shouldReceive('findFile')->andReturnUsing(function ($class) {

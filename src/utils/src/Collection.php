@@ -1356,11 +1356,15 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Sort the collection using the given callback.
      *
-     * @param  (callable(TValue, TKey): mixed)|string  $callback
+     * @param (callable(TValue, TKey): mixed)|string|array $callback
      * @return static<TKey, TValue>
      */
     public function sortBy($callback, int $options = SORT_REGULAR, bool $descending = false): self
     {
+        if (is_array($callback) && ! is_callable($callback)) {
+            return $this->sortByMany($callback);
+        }
+
         $results = [];
         $callback = $this->valueRetriever($callback);
         // First we will loop through the items and get the comparator from a callback
@@ -1686,6 +1690,49 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     public static function proxy(string $method): void
     {
         static::$proxies[] = $method;
+    }
+
+    /**
+     * Sort the collection using multiple comparisons.
+     *
+     * @return static
+     */
+    protected function sortByMany(array $comparisons = [])
+    {
+        $items = $this->items;
+
+        usort($items, function ($a, $b) use ($comparisons) {
+            foreach ($comparisons as $comparison) {
+                $comparison = Arr::wrap($comparison);
+
+                $prop = $comparison[0];
+
+                $ascending = Arr::get($comparison, 1, true) === true
+                    || Arr::get($comparison, 1, true) === 'asc';
+
+                $result = 0;
+
+                if (! is_string($prop) && is_callable($prop)) {
+                    $result = $prop($a, $b);
+                } else {
+                    $values = [data_get($a, $prop), data_get($b, $prop)];
+
+                    if (! $ascending) {
+                        $values = array_reverse($values);
+                    }
+
+                    $result = $values[0] <=> $values[1];
+                }
+
+                if ($result === 0) {
+                    continue;
+                }
+
+                return $result;
+            }
+        });
+
+        return new static($items);
     }
 
     /**

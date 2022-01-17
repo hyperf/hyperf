@@ -28,6 +28,7 @@ use Hyperf\Server\Event;
 use Hyperf\Server\Server;
 use Hyperf\Testing\Client;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
@@ -53,6 +54,21 @@ class ClientTest extends TestCase
 
         $this->assertSame(0, $data['code']);
         $this->assertSame('Hello Hyperf!', $data['data']);
+    }
+
+    public function testSendCookies()
+    {
+        $container = $this->getContainer();
+
+        $client = new Client($container);
+
+        $response = $client->sendRequest($client->initRequest('POST', '/request')->withCookieParams([
+            'X-CODE' => $id = uniqid(),
+        ]));
+
+        $data = Json::decode((string) $response->getBody());
+
+        $this->assertSame($id, $data['cookies']['X-CODE']);
     }
 
     public function testClientReturnCoroutineId()
