@@ -1,18 +1,31 @@
 # 版本更新记录
 
+# v2.2.23 - 2022-01-17
+
+## 修复
+
+- [#4426](https://github.com/hyperf/hyperf/pull/4426) 修复 `view-engine` 模板引擎，在并发请求下导致模板缓存生成错误的问题。
+
+## 新增
+
+- [#4449](https://github.com/hyperf/hyperf/pull/4449) 为 `Hyperf\Utils\Collection` 增加多条件排序的能力。
+- [#4455](https://github.com/hyperf/hyperf/pull/4455) 新赠命令 `gen:view-engine-cache` 可以预生成模板缓存，避免并发带来的一系列问题。
+- [#4453](https://github.com/hyperf/hyperf/pull/4453) 新增 `Hyperf\Tracer\Aspect\ElasticserachAspect`，用来记录 `elasticsearch` 客户端的调用记录。
+- [#4458](https://github.com/hyperf/hyperf/pull/4458) 新增 `Hyperf\Di\ScanHandler\ProcScanHandler`，用来支持在 `Windows` + `Swow` 环境下启动服务。
+
 # v2.2.22 - 2022-01-04
 
-## Fixed
+## 修复
 
 - [#4399](https://github.com/hyperf/hyperf/pull/4399) 修复使用 `RedisCluster` 时，无法使用 `scan` 方法的问题。
 
-## Added
+## 新增
 
 - [#4409](https://github.com/hyperf/hyperf/pull/4409) 为 `session` 增加数据库支持。
 - [#4411](https://github.com/hyperf/hyperf/pull/4411) 为 `tracer` 组件，新增 `Hyperf\Tracer\Aspect\DbAspect`，用于记录 `hyperf/db` 组件产生的 `SQL` 日志。
 - [#4420](https://github.com/hyperf/hyperf/pull/4420) 为 `Hyperf\Amqp\IO\SwooleIO` 增加 `SSL` 支持。
 
-## Optimized
+## 优化
 
 - [#4406](https://github.com/hyperf/hyperf/pull/4406) 删除 `Swoole PSR-0` 风格代码，更加友好的支持 `Swoole 5.0` 版本。
 - [#4429](https://github.com/hyperf/hyperf/pull/4429) 为 `Debug::getRefCount()` 方法增加类型检测，只能用于输出对象的 `RefCount`。
