@@ -9,9 +9,9 @@
 ## 新增
 
 - [#4449](https://github.com/hyperf/hyperf/pull/4449) 为 `Hyperf\Utils\Collection` 增加多条件排序的能力。
-- [#4455](https://github.com/hyperf/hyperf/pull/4455) 新赠命令 `gen:view-engine-cache` 可以预生成模板缓存，避免并发带来的一系列问题。
+- [#4455](https://github.com/hyperf/hyperf/pull/4455) 新增命令 `gen:view-engine-cache` 可以预生成模板缓存，避免并发带来的一系列问题。
 - [#4453](https://github.com/hyperf/hyperf/pull/4453) 新增 `Hyperf\Tracer\Aspect\ElasticserachAspect`，用来记录 `elasticsearch` 客户端的调用记录。
-- [#4458](https://github.com/hyperf/hyperf/pull/4458) 新增 `Hyperf\Di\ScanHandler\ProcScanHandler`，用来支持在 `Windows` + `Swow` 环境下启动服务。
+- [#4458](https://github.com/hyperf/hyperf/pull/4458) 新增 `Hyperf\Di\ScanHandler\ProcScanHandler`，用来支持 `Windows` + `Swow` 环境下启动服务。
 
 # v2.2.22 - 2022-01-04
 
