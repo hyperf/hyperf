@@ -20,7 +20,7 @@
         "doctrine/inflector": "^2.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/coordinator": "~3.0.0",
-        "hyperf/engine": "^1.2",
+        "hyperf/engine": "^1.2|^2.0",
         "hyperf/macroable": "~3.0.0"
     },
     "suggest": {

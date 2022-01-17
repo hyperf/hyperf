@@ -46,7 +46,7 @@ class Composer
     private static $classLoader;
 
     /**
-     * @throws \RuntimeException When composer.lock does not exist.
+     * @throws \RuntimeException When `composer.lock` does not exist.
      */
     public static function getLockContent(): Collection
     {
@@ -142,11 +142,21 @@ class Composer
         return $classLoader;
     }
 
+    public static function getScripts(): array
+    {
+        return self::$scripts;
+    }
+
+    public static function getVersions(): array
+    {
+        return self::$versions;
+    }
+
     private static function findLoader(): ClassLoader
     {
         $composerClass = '';
         foreach (get_declared_classes() as $declaredClass) {
-            if (strpos($declaredClass, 'ComposerAutoloaderInit') === 0 && method_exists($declaredClass, 'getLoader')) {
+            if (str_starts_with($declaredClass, 'ComposerAutoloaderInit') && method_exists($declaredClass, 'getLoader')) {
                 $composerClass = $declaredClass;
                 break;
             }
