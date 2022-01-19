@@ -1,14 +1,14 @@
-# 修改器
+# modifier
 
-> 本文档大量借鉴于 [LearnKu](https://learnku.com) 十分感谢 LearnKu 对 PHP 社区做出的贡献。
+> This document borrows heavily from [LearnKu](https://learnku.com) Many thanks to LearnKu for contributing to the PHP community.
 
-当你在模型实例中获取或设置某些属性值的时候，访问器和修改器允许你对模型属性值进行格式化。
+Accessors and modifiers allow you to format model property values ​​when you get or set certain property values ​​on a model instance.
 
-## 访问器 & 修改器
+## Accessors & Modifiers
 
-### 定义一个访问器
+### Define an accessor
 
-若要定义一个访问器， 则需在模型上创建一个 `getFooAttribute` 方法，要访问的 `Foo` 字段需使用「驼峰式」命名。 在这个示例中，我们将为 `first_name` 属性定义一个访问器。当模型尝试获取 `first_name` 属性时，将自动调用此访问器：
+To define an accessor, you need to create a `getFooAttribute` method on the model, and the `Foo` field to be accessed needs to be named in "camel case". In this example, we will define an accessor for the `first_name` property. This accessor is automatically called when the model tries to get the `first_name` property:
 
 ```php
 <?php
@@ -20,9 +20,9 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * 获取用户的姓名.
+     * Get the user's name.
      *
-     * @param  string  $value
+     * @param string $value
      * @return string
      */
     public function getFirstNameAttribute($value)
@@ -32,7 +32,7 @@ class User extends Model
 }
 ```
 
-如你所见，字段的原始值被传递到访问器中，允许你对它进行处理并返回结果。如果想获取被修改后的值，你可以在模型实例上访问 `first_name` 属性:
+As you can see, the raw value of the field is passed into the accessor, allowing you to process it and return the result. To get the modified value, you can access the `first_name` property on the model instance:
 
 ```php
 $user = App\User::find(1);
@@ -40,7 +40,7 @@ $user = App\User::find(1);
 $firstName = $user->first_name;
 ```
 
-当然，你也可以通过已有的属性值，使用访问器返回新的计算值:
+Of course, you can also pass an existing property value and use an accessor to return a new computed value:
 
 ```php
 namespace App;
@@ -50,7 +50,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * 获取用户的姓名.
+     * Get the user's name.
      *
      * @return string
      */
@@ -61,9 +61,9 @@ class User extends Model
 }
 ```
 
-### 定义一个修改器
+### Define a modifier
 
-若要定义一个修改器，则需在模型上面定义 `setFooAttribute` 方法。要访问的 `Foo` 字段使用「驼峰式」命名。让我们再来定义一个 `first_name` 属性的修改器。当我们尝试在模式上在设置 `first_name` 属性值时，该修改器将被自动调用：
+To define a modifier, define the `setFooAttribute` method on the model. The `Foo` fields to be accessed are named using "camel case". Let's define a modifier for the `first_name` property again. This modifier will be called automatically when we try to set the value of the `first_name` property on the schema:
 
 ```php
 <?php
@@ -75,9 +75,9 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * 设置用户的姓名.
+     * Set the user's name.
      *
-     * @param  string  $value
+     * @param string $value
      * @return void
      */
     public function setFirstNameAttribute($value)
@@ -87,7 +87,7 @@ class User extends Model
 }
 ```
 
-修改器会获取属性已经被设置的值，允许你修改并且将其值设置到模型内部的 `$attributes` 属性上。举个例子，如果我们尝试将 `first_name` 属性的值设置为 `Sally`：
+Modifiers take the value of an attribute that has already been set, allowing you to modify and set its value to the `$attributes` property inside the model. For example, if we try to set the value of the `first_name` property to `Sally`:
 
 ```php
 $user = App\User::find(1);
@@ -95,11 +95,11 @@ $user = App\User::find(1);
 $user->first_name = 'Sally';
 ```
 
-在这个例子中，`setFirstNameAttribute` 方法在调用的时候接受 `Sally` 这个值作为参数。接着修改器会应用 `strtolower` 函数并将处理的结果设置到内部的 `$attributes` 数组。
+In this example, the `setFirstNameAttribute` method is called with the value `Sally` as a parameter. The modifier then applies the `strtolower` function and sets the processed result to the internal `$attributes` array.
 
-## 日期转化器
+## date converter
 
-默认情况下，模型会将 `created_at` 和 `updated_at` 字段转换为 `Carbon` 实例，它继承了 `PHP` 原生的 `DateTime` 类并提供了各种有用的方法。你可以通过设置模型的 `$dates` 属性来添加其他日期属性：
+By default, the model converts the `created_at` and `updated_at` fields into `Carbon` instances, which inherit the `PHP` native `DateTime` class and provide various useful methods. You can add other date properties by setting the model's `$dates` property:
 
 ```php
 <?php
@@ -111,7 +111,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * 应该转换为日期格式的属性.
+     * Properties that should be converted to date format.
      *
      * @var array
      */
@@ -122,11 +122,11 @@ class User extends Model
 
 ```
 
-> Tip: 你可以通过将模型的公有属性 $timestamps 值设置为 false 来禁用默认的 created_at 和 updated_at 时间戳。
+> Tip: You can disable the default created_at and updated_at timestamps by setting the model's public $timestamps value to false.
 
-当某个字段是日期格式时，你可以将值设置为一个 `UNIX` 时间戳，日期时间 `(Y-m-d)` 字符串，或者 `DateTime` / `Carbon` 实例。日期值会被正确格式化并保存到你的数据库中：
+When a field is in date format, you can set the value to a `UNIX` timestamp, a datetime `(Y-m-d)` string, or a `DateTime` / `Carbon` instance. The date value will be properly formatted and saved to your database:
 
-就如上面所说，当获取到的属性包含在 `$dates` 属性中时，都会自动转换为 `Carbon` 实例，允许你在属性上使用任意的 `Carbon` 方法：
+As mentioned above, when the fetched property is contained in the `$dates` property, it is automatically converted to a `Carbon` instance, allowing you to use any `Carbon` method on the property:
 
 ```php
 $user = App\User::find(1);
@@ -134,9 +134,9 @@ $user = App\User::find(1);
 return $user->deleted_at->getTimestamp();
 ```
 
-### 时间格式
+### Time format
 
-时间戳都将以 `Y-m-d H:i:s` 形式格式化。如果你需要自定义时间戳格式，可在模型中设置 `$dateFormat` 属性。这个属性决定了日期属性将以何种形式保存在数据库中，以及当模型序列化成数组或 `JSON` 时的格式：
+Timestamps will all be formatted as `Y-m-d H:i:s`. If you need a custom timestamp format, set the `$dateFormat` property in the model. This property determines how the date property will be stored in the database, and the format when the model is serialized into an array or `JSON`:
 
 ```php
 <?php
@@ -148,7 +148,7 @@ use Hyperf\DbConnection\Model\Model;
 class Flight extends Model
 {
     /**
-     * 这个属性应该被转化为原生类型.
+     * This property should be converted to a native type.
      *
      * @var string
      */
@@ -156,12 +156,12 @@ class Flight extends Model
 }
 ```
 
-## 属性类型转换
+## attribute type conversion
 
-模型中的 `$casts` 属性提供了一个便利的方法来将属性转换为常见的数据类型。`$casts` 属性应是一个数组，且数组的键是那些需要被转换的属性名称，值则是你希望转换的数据类型。
-支持转换的数据类型有：`integer`, `real`, `float`, `double`, `decimal:<digits>`, `string`, `boolean`, `object`, `array`, `collection`, `date`, `datetime` 和 `timestamp`。 当需要转换为 `decimal` 类型时，你需要定义小数位的个数，如： `decimal:2`。
+The `$casts` property on the model provides a convenience method to cast properties to common data types. The `$casts` property should be an array whose keys are the names of the properties to be cast, and the values ​​are the data types you wish to cast.
+The supported data types are: `integer`, `real`, `float`, `double`, `decimal:<digits>`, `string`, `boolean`, `object`, `array`, `collection` , `date`, `datetime` and `timestamp`. When converting to `decimal` type, you need to define the number of decimal places, such as: `decimal:2`.
 
-示例， 让我们把以整数（ `0` 或 `1` ）形式存储在数据库中的 `is_admin` 属性转成布尔值：
+As an example, let's convert the `is_admin` property stored in the database as an integer ( `0` or `1` ) to a boolean value:
 
 ```php
 <?php
@@ -183,7 +183,7 @@ class User extends Model
 }
 ```
 
-现在当你访问 `is_admin` 属性时，虽然保存在数据库里的值是一个整数类型，但是返回值总是会被转换成布尔值类型：
+Now when you access the `is_admin` property, although the value stored in the database is an integer type, the return value is always converted to a boolean type:
 
 ```php
 $user = App\User::find(1);
@@ -193,11 +193,11 @@ if ($user->is_admin) {
 }
 ```
 
-### 自定义类型转换
+### Custom type conversion
 
-模型内置了多种常用的类型转换。但是，用户偶尔会需要将数据转换成自定义类型。现在，该需求可以通过定义一个实现 `CastsAttributes` 接口的类来完成
+Models have several common type conversions built into them. However, users occasionally need to convert data into custom types. Now, this requirement can be accomplished by defining a class that implements the `CastsAttributes` interface
 
-实现了该接口的类必须事先定义一个 `get` 和 `set` 方法。 `get` 方法负责将从数据库中获取的原始数据转换成对应的类型，而 `set` 方法则是将数据转换成对应的数据库类型以便存入数据库中。举个例子，下面我们将内置的 `json` 类型转换以自定义类型转换的形式重新实现一遍：
+Classes that implement this interface must define a `get` and `set` method in advance. The `get` method is responsible for converting the raw data obtained from the database into the corresponding type, while the `set` method converts the data into the corresponding database type for storing in the database. For example, let's reimplement the built-in `json` type conversion as a custom type conversion:
 
 ```php
 <?php
@@ -209,7 +209,7 @@ use Hyperf\Contract\CastsAttributes;
 class Json implements CastsAttributes
 {
     /**
-     * 将取出的数据进行转换
+     * Convert the extracted data
      */
     public function get($model, $key, $value, $attributes)
     {
@@ -217,7 +217,7 @@ class Json implements CastsAttributes
     }
 
     /**
-     * 转换成将要进行存储的值
+     * Convert to the value to be stored
      */
     public function set($model, $key, $value, $attributes)
     {
@@ -226,7 +226,7 @@ class Json implements CastsAttributes
 }
 ```
 
-定义好自定义类型转换后，可以使用其类名称将其附加到模型属性：
+Once a custom type cast is defined, it can be attached to a model property using its class name:
 
 ```php
 <?php
@@ -239,7 +239,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * 应进行类型转换的属性
+     * Properties that should be type-converted
      *
      * @var array
      */
@@ -248,12 +248,11 @@ class User extends Model
     ];
 }
 ```
+#### Value Object Type Conversion
 
-#### 值对象类型转换
+Not only can you convert data to native data types, but you can also convert data to objects. The two custom type conversions are defined in a very similar way. But the `set` method in the custom conversion class that converts the data to an object needs to return an array of key-value pairs, which are used to set the original, storable value into the corresponding model.
 
-你不仅可以将数据转换成原生的数据类型，还可以将数据转换成对象。两种自定义类型转换的定义方式非常类似。但是将数据转换成对象的自定义转换类中的 `set` 方法需要返回键值对数组，用于设置原始、可存储的值到对应的模型中。
-
-举个例子，定义一个自定义类型转换类用于将多个模型属性值转换成单个 `Address` 值对象，假设 `Address` 对象有两个公有属性 `lineOne` 和 `lineTwo`：
+As an example, define a custom type conversion class to convert multiple model property values ​​into a single `Address` value object, assuming that the `Address` object has two public properties `lineOne` and `lineTwo`:
 
 ```php
 <?php
@@ -266,7 +265,7 @@ use Hyperf\Contract\CastsAttributes;
 class AddressCaster implements CastsAttributes
 {
     /**
-     * 将取出的数据进行转换
+     * Convert the extracted data
      */
     public function get($model, $key, $value, $attributes): Address
     {
@@ -277,7 +276,7 @@ class AddressCaster implements CastsAttributes
     }
 
     /**
-     * 转换成将要进行存储的值
+     * Convert to the value to be stored
      */
     public function set($model, $key, $value, $attributes)
     {
@@ -289,7 +288,7 @@ class AddressCaster implements CastsAttributes
 }
 ```
 
-进行值对象类型转换后，任何对值对象的数据变更将会自动在模型保存前同步回模型当中：
+After the value object type conversion, any data changes to the value object will be automatically synced back to the model before the model is saved:
 
 ```php
 <?php
@@ -302,42 +301,42 @@ $user->save();
 
 var_dump($user->getAttributes());
 //[
-//    'address_line_one' => 'Updated Address Value',
-//    'address_line_two' => '#10000'
+// 'address_line_one' => 'Updated Address Value',
+// 'address_line_two' => '#10000'
 //];
 ```
 
-**这里的实现与 Laravel 不同，如果出现以下用法，请需要格外注意**
+**The implementation here is different from Laravel, if the following usage occurs, please pay special attention**
 
 ```php
 $user = App\User::find(1);
 
 var_dump($user->getAttributes());
 //[
-//    'address_line_one' => 'Address Value',
-//    'address_line_two' => '#10000'
+// 'address_line_one' => 'Address Value',
+// 'address_line_two' => '#10000'
 //];
 
 $user->address->lineOne = 'Updated Address Value';
 $user->address->lineTwo = '#20000';
 
-// 直接修改 address 的字段后，是无法立马再 attributes 中生效的，但可以直接通过 $user->address 拿到修改后的数据。
+// After directly modifying the field of address, it cannot take effect in attributes immediately, but you can get the modified data directly through $user->address.
 var_dump($user->getAttributes());
 //[
-//    'address_line_one' => 'Address Value',
-//    'address_line_two' => '#10000'
+// 'address_line_one' => 'Address Value',
+// 'address_line_two' => '#10000'
 //];
 
-// 当我们保存数据或者删除数据后，attributes 便会改成修改后的数据。
+// When we save the data or delete the data, the attributes will be changed to the modified data.
 $user->save();
 var_dump($user->getAttributes());
 //[
-//    'address_line_one' => 'Updated Address Value',
-//    'address_line_two' => '#20000'
+// 'address_line_one' => 'Updated Address Value',
+// 'address_line_two' => '#20000'
 //];
 ```
 
-如果修改 `address` 后，不想要保存，也不想通过 `address->lineOne` 获取 `address_line_one` 的数据，还可以使用以下 方法
+If after modifying `address`, you don't want to save it or get the data of `address_line_one` through `address->lineOne`, you can also use the following method
 
 ```php
 $user = App\User::find(1);
@@ -346,7 +345,7 @@ $user->syncAttributes();
 var_dump($user->getAttributes());
 ```
 
-当然，如果您仍然需要修改对应的 `value` 后，同步修改 `attributes` 的功能，可以尝试使用以下方式。首先，我们实现一个 `UserInfo` 并继承 `CastsValue`。
+Of course, if you still need to modify the function of `attributes` synchronously after modifying the corresponding `value`, you can try the following methods. First, we implement a `UserInfo` and inherit `CastsValue`.
 
 ```php
 namespace App\Caster;
@@ -362,7 +361,7 @@ class UserInfo extends CastsValue
 }
 ```
 
-然后实现对应的 `UserInfoCaster`
+Then implement the corresponding `UserInfoCaster`
 
 ```php
 <?php
@@ -392,7 +391,7 @@ class UserInfoCaster implements CastsAttributes
 
 ```
 
-当我们再使用以下方式修改 UserInfo 时，便可以同步修改到 attributes 的数据。
+When we modify UserInfo in the following way, we can synchronize the data modified to attributes.
 
 ```php
 /** @var User $user */
@@ -401,9 +400,9 @@ $user->userInfo->name = 'John1';
 var_dump($user->getAttributes()); // ['name' => 'John1']
 ```
 
-#### 入站类型转换
+#### Inbound type conversion
 
-有时候，你可能只需要对写入模型的属性值进行类型转换而不需要对从模型中获取的属性值进行任何处理。一个典型入站类型转换的例子就是「hashing」。入站类型转换类需要实现 `CastsInboundAttributes` 接口，只需要实现 `set` 方法。
+Sometimes, you may only need to typecast property values ​​written to the model without doing any processing on property values ​​fetched from the model. A typical example of inbound type conversion is "hashing". Inbound type conversion classes need to implement the `CastsInboundAttributes` interface, and only need to implement the `set` method.
 
 ```php
 <?php
@@ -415,14 +414,14 @@ use Hyperf\Contract\CastsInboundAttributes;
 class Hash implements CastsInboundAttributes
 {
     /**
-     * 哈希算法
+     * Hash algorithm
      *
      * @var string
      */
     protected $algorithm;
 
     /**
-     * 创建一个新的类型转换类实例
+     * Create a new instance of the type conversion class
      */
     public function __construct($algorithm = 'md5')
     {
@@ -430,7 +429,7 @@ class Hash implements CastsInboundAttributes
     }
 
     /**
-     * 转换成将要进行存储的值
+     * Convert to the value to be stored
      */
     public function set($model, $key, $value, $attributes)
     {
@@ -439,9 +438,9 @@ class Hash implements CastsInboundAttributes
 }
 ```
 
-#### 类型转换参数
+#### Type conversion parameters
 
-当将自定义类型转换附加到模型时，可以指定传入的类型转换参数。传入类型转换参数需使用 `:` 将参数与类名分隔，多个参数之间使用逗号分隔。这些参数将会传递到类型转换类的构造函数中：
+When attaching a custom cast to a model, you can specify the cast parameter passed in. To pass in type conversion parameters, use `:` to separate the parameters from the class name, and use commas to separate multiple parameters. These parameters will be passed to the constructor of the type conversion class:
 
 ```php
 <?php
@@ -453,7 +452,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * 应进行类型转换的属性
+     * Properties that should be type-converted
      *
      * @var array
      */
@@ -463,9 +462,9 @@ class User extends Model
 }
 ```
 
-### 数组 & `JSON` 转换
+### Array & `JSON` conversion
 
-当你在数据库存储序列化的 `JSON` 的数据时，`array` 类型的转换非常有用。比如：如果你的数据库具有被序列化为 `JSON` 的 `JSON` 或 `TEXT` 字段类型，并且在模型中加入了 `array` 类型转换，那么当你访问的时候就会自动被转换为 `PHP` 数组：
+`array` type conversions are very useful when you store serialized `JSON` data in the database. For example: if your database has a `JSON` or `TEXT` field type that is serialized to `JSON`, and you add an `array` type conversion to the model, it will be automatically converted to ` when you access it PHP` array:
 
 ```php
 <?php
@@ -477,7 +476,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * 应进行类型转换的属性
+     * Properties that should be type-converted
      *
      * @var array
      */
@@ -487,7 +486,7 @@ class User extends Model
 }
 ```
 
-一旦定义了转换，你访问 `options` 属性时他会自动从 `JSON` 类型反序列化为 `PHP` 数组。当你设置了 `options` 属性的值时，给定的数组也会自动序列化为 `JSON` 类型存储：
+Once a conversion is defined, it will be automatically deserialized from a `JSON` type to a `PHP` array when you access the `options` property. When you set the value of the `options` property, the given array is also automatically serialized to `JSON` type storage:
 
 ```php
 $user = App\User::find(1);
@@ -501,9 +500,9 @@ $user->options = $options;
 $user->save();
 ```
 
-### Date 类型转换
+### Date type conversion
 
-当使用 `date` 或 `datetime` 属性时，可以指定日期的格式。 这种格式会被用在模型序列化为数组或者 `JSON`：
+When using the `date` or `datetime` attributes, you can specify the format of the date. This format will be used when models are serialized as arrays or `JSON`:
 
 ```php
 <?php
@@ -515,7 +514,7 @@ use Hyperf\DbConnection\Model\Model;
 class User extends Model
 {
     /**
-     * 应进行类型转换的属性
+     * Properties that should be type-converted
      *
      * @var array
      */
@@ -525,9 +524,9 @@ class User extends Model
 }
 ```
 
-### 查询时类型转换
+### Query-time type conversion
 
-有时候需要在查询执行过程中对特定属性进行类型转换，例如需要从数据库表中获取数据的时候。举个例子，请参考以下查询：
+There are times when you need to typecast specific properties during query execution, such as when you need to fetch data from a database table. As an example, consider the following query:
 
 ```php
 use App\Post;
@@ -540,7 +539,7 @@ $users = User::select([
 ])->get();
 ```
 
-在该查询获取到的结果集中，`last_posted_at` 属性将会是一个字符串。假如我们在执行查询时进行 `date` 类型转换将更方便。你可以通过使用 `withCasts` 方法来完成上述操作：
+In the result set obtained by this query, the `last_posted_at` attribute will be a string. It would be more convenient if we did a `date` type conversion when executing the query. You can do this by using the `withCasts` method:
 
 ```php
 $users = User::select([
@@ -551,4 +550,3 @@ $users = User::select([
     'last_posted_at' => 'date'
 ])->get();
 ```
-
