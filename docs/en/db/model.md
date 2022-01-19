@@ -1,16 +1,16 @@
-# 模型
+# Model
 
-模型组件衍生于 [Eloquent ORM](https://laravel.com/docs/5.8/eloquent)，相关操作均可参考 Eloquent ORM 的文档。
+Model components are derived from [Eloquent ORM](https://laravel.com/docs/5.8/eloquent), and related operations can refer to the documentation of Eloquent ORM.
 
-## 创建模型
+## create model
 
-Hyperf 提供了创建模型的命令，您可以很方便的根据数据表创建对应模型。命令通过 `AST` 生成模型，所以当您增加了某些方法后，也可以使用脚本方便的重置模型。
+Hyperf provides commands for creating models, and you can easily create corresponding models based on data tables. The command generates the model via AST, so when you add some methods, you can also easily reset the model with a script.
 
-```
+````
 $ php bin/hyperf.php db:model table_name
-```
+````
 
-创建的模型如下
+The created model is as follows
 ```php
 <?php
 
@@ -52,21 +52,21 @@ class User extends Model
 }
 ```
 
-## 模型参数
+## model parameters
 
-|    参数    |  类型  | 默认值  |         备注         |
-|:----------:|:------:|:-------:|:--------------------:|
-| connection | string | default |      数据库连接      |
-|   table    | string |   无    |      数据表名称      |
-| primaryKey | string |   id    |       模型主键       |
-|  keyType   | string |   int   |       主键类型       |
-|  fillable  | array  |   []    | 允许被批量复制的属性 |
-|   casts    | string |   无    |    数据格式化配置    |
-| timestamps |  bool  |  true   |  是否自动维护时间戳  |
+| Parameters | Type | Default Value | Remarks |
+|:------------:|:------:|:-------:|:---------------- ----:|
+| connection | string | default | database connection |
+| table | string | none | data table name |
+| primaryKey | string | id | model primary key |
+| keyType | string | int | primary key type |
+| fillable | array | [] | attributes that can be bulk copied |
+| casts | string | None | Data formatting configuration |
+| timestamps | bool | true | Whether to automatically maintain timestamps |
 
-### 数据表名称
+### data table name
 
-如果我们没有指定模型对应的 table，它将使用类的复数形式「蛇形命名」来作为表名。因此，在这种情况下，Hyperf 将假设 User 模型存储的是 users 数据表中的数据。你可以通过在模型上定义 table 属性来指定自定义数据表：
+If we don't specify the table corresponding to the model, it will use the plural form of the class "snake naming" as the table name. So in this case Hyperf will assume that the User model stores data from the users data table. You can specify custom data tables by defining the table attribute on the model:
 
 ```php
 <?php
@@ -83,15 +83,15 @@ class User extends Model
 }
 ```
 
-### 主键
+### Primary key
 
-Hyperf 会假设每个数据表都有一个名为 id 的主键列。你可以定义一个受保护的 $primaryKey 属性来重写约定。
+Hyperf will assume that each data table has a primary key column named id. You can define a protected $primaryKey property to override the convention.
 
-此外，Hyperf 假设主键是一个自增的整数值，这意味着默认情况下主键会自动转换为 int 类型。如果您希望使用非递增或非数字的主键则需要设置公共的 $incrementing 属性设置为 false。如果你的主键不是一个整数，你需要将模型上受保护的 $keyType 属性设置为 string。
+Additionally, Hyperf assumes that the primary key is an auto-incrementing integer value, which means that the primary key is automatically converted to int by default. If you wish to use a non-incrementing or non-numeric primary key then you need to set the public $incrementing property to false. If your primary key is not an integer, you need to set the protected $keyType property on the model to string.
 
-### 时间戳
+### Timestamp
 
-默认情况下，Hyperf 预期你的数据表中存在 `created_at` 和 `updated_at` 。如果你不想让 Hyperf 自动管理这两个列， 请将模型中的 `$timestamps` 属性设置为 `false`：
+By default, Hyperf expects `created_at` and `updated_at` to exist in your data table. If you don't want Hyperf to manage these two columns automatically, set the `$timestamps` property in the model to `false`:
 
 ```php
 <?php
