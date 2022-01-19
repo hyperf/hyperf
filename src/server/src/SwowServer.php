@@ -24,6 +24,7 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Swow\Coroutine;
+use function Swow\Sync\waitAll;
 
 class SwowServer implements ServerInterface
 {
@@ -65,6 +66,8 @@ class SwowServer implements ServerInterface
                 CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
             });
         }
+
+        waitAll();
     }
 
     public function getServer(): HttpServer
