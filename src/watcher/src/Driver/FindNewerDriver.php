@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\Watcher\Driver;
 
 use Hyperf\Utils\Str;
@@ -101,7 +100,7 @@ class FindNewerDriver implements DriverInterface
                     continue;
                 }
 
-                if (!empty($ext) && !Str::endsWith($pathName, $ext)) {
+                if (! empty($ext) && ! Str::endsWith($pathName, $ext)) {
                     continue;
                 }
                 $changedFiles[] = $pathName;
