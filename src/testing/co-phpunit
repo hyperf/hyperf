@@ -40,6 +40,6 @@ Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_ALL, 'exit_condition' => func
 Swoole\Coroutine\run(function () use(&$code) {
     $code = PHPUnit\TextUI\Command::main(false);
     Swoole\Timer::clearAll();
-    Hyperf\Coordinator\CoordinatorManager::until(Hyperf\Coordinator\Constants::WORKER_EXIT)->resume();
+    Hyperf\Utils\Coordinator\CoordinatorManager::until(Hyperf\Utils\Coordinator\Constants::WORKER_EXIT)->resume();
 });
 die($code);
