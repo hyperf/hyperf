@@ -1,5 +1,9 @@
 # v2.2.24 - TBD
 
+## Fixed
+
+- [#4474](https://github.com/hyperf/hyperf/pull/4474) Fixed bug that multiplex connection don't close after running test cases.
+
 # v2.2.23 - 2022-01-17
 
 ## Fixed
