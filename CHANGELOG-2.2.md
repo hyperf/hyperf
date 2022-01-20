@@ -4,6 +4,10 @@
 
 - [#4474](https://github.com/hyperf/hyperf/pull/4474) Fixed bug that multiplex connection don't close after running test cases.
 
+## Optimized
+
+- [#4451](https://github.com/hyperf/hyperf/pull/4451) Optimized code for `Hyperf\Watcher\Driver\FindNewerDriver`.
+
 # v2.2.23 - 2022-01-17
 
 ## Fixed
