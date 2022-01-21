@@ -21,6 +21,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use SplFileInfo;
+use Hyperf\Macroable\Macroable;
 
 /**
  * @property string $pathInfo
@@ -28,6 +29,8 @@ use SplFileInfo;
  */
 class Request implements RequestInterface
 {
+    use Macroable;
+
     /**
      * @var array the keys to identify the data of request in coroutine context
      */
