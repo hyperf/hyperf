@@ -112,7 +112,7 @@ The corresponding Redis data is as follows, where `HF-DATA:DEFAULT` exists as a 
 ```
 127.0.0.1:6379> hgetall "mc:default:m:user:id:1"
   1) "id"
-  twenty one"
+  2) "1"
   3) "name"
   4) "Hyperf"
   5) "gender"
