@@ -1,5 +1,15 @@
 # 版本更新記錄
 
+# v2.2.24 - 2022-01-24
+
+## 修復
+
+- [#4474](https://github.com/hyperf/hyperf/pull/4474) 修復使用多路複用 RPC 時，導致測試指令碼無法正常停止的問題。
+
+## 優化
+
+- [#4451](https://github.com/hyperf/hyperf/pull/4451) 優化了 `Hyperf\Watcher\Driver\FindNewerDriver` 的程式碼。
+
 # v2.2.23 - 2022-01-17
 
 ## 修復
