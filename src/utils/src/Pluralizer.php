@@ -20,10 +20,8 @@ class Pluralizer
 {
     /**
      * Uncountable word forms.
-     *
-     * @var array
      */
-    public static $uncountable
+    public static array $uncountable
         = [
             'audio',
             'bison',
@@ -68,10 +66,7 @@ class Pluralizer
             'wheat',
         ];
 
-    /**
-     * @var null|Inflector
-     */
-    protected static $inflector;
+    protected static ?Inflector $inflector = null;
 
     /**
      * Get the plural form of an English word.

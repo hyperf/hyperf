@@ -15,10 +15,7 @@ use Swoole\Coroutine\Channel;
 
 class ChannelPool extends \SplQueue
 {
-    /**
-     * @var null|ChannelPool
-     */
-    private static $instance;
+    private static ?ChannelPool $instance = null;
 
     public static function getInstance(): self
     {

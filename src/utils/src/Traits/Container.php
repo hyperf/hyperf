@@ -26,7 +26,7 @@ trait Container
 
     /**
      * Finds an entry of the container by its identifier and returns it,
-     * Retunrs $default when does not exists in the container.
+     * Returns $default when does not exist in the container.
      * @param null|mixed $default
      */
     public static function get(string $id, $default = null)

@@ -138,39 +138,39 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
         return $this->denormalize($data, $type, $format, $context);
     }
 
-    public function normalize($data, string $format = null, array $context = [])
+    public function normalize($object, string $format = null, array $context = [])
     {
         // If a normalizer supports the given data, use it
-        if ($normalizer = $this->getNormalizer($data, $format, $context)) {
-            return $normalizer->normalize($data, $format, $context);
+        if ($normalizer = $this->getNormalizer($object, $format, $context)) {
+            return $normalizer->normalize($object, $format, $context);
         }
 
-        if ($data === null || is_scalar($data)) {
-            return $data;
+        if ($object === null || is_scalar($object)) {
+            return $object;
         }
 
-        if (\is_array($data) || $data instanceof \Traversable) {
-            if ($data instanceof \Countable && $data->count() === 0) {
-                return $data;
+        if (\is_array($object) || $object instanceof \Traversable) {
+            if ($object instanceof \Countable && $object->count() === 0) {
+                return $object;
             }
 
             $normalized = [];
-            foreach ($data as $key => $val) {
+            foreach ($object as $key => $val) {
                 $normalized[$key] = $this->normalize($val, $format, $context);
             }
 
             return $normalized;
         }
 
-        if (\is_object($data)) {
+        if (\is_object($object)) {
             if (! $this->normalizers) {
                 throw new LogicException('You must register at least one normalizer to be able to normalize objects.');
             }
 
-            throw new NotNormalizableValueException(sprintf('Could not normalize object of type "%s", no supporting normalizer found.', get_debug_type($data)));
+            throw new NotNormalizableValueException(sprintf('Could not normalize object of type "%s", no supporting normalizer found.', get_debug_type($object)));
         }
 
-        throw new NotNormalizableValueException('An unexpected value could not be normalized: ' . (! \is_resource($data) ? var_export($data, true) : sprintf('%s resource', get_resource_type($data))));
+        throw new NotNormalizableValueException('An unexpected value could not be normalized: ' . (! \is_resource($object) ? var_export($object, true) : sprintf('%s resource', get_resource_type($object))));
     }
 
     /**

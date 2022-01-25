@@ -23,7 +23,7 @@ use JsonSerializable;
 class Fluent implements ArrayAccess, Arrayable, Jsonable, JsonSerializable
 {
     /**
-     * All of the attributes set on the fluent instance.
+     * All the attributes set on the fluent instance.
      *
      * @var array
      */
