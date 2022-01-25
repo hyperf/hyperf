@@ -77,3 +77,4 @@ jobs:
           composer test -- --exclude-group NonCoroutine
           vendor/bin/phpunit --group NonCoroutine
           vendor/bin/phpunit src/filesystem --group NonCoroutine
+          vendor/bin/php-cs-fixer fix src --dry-run
