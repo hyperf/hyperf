@@ -77,7 +77,7 @@ class Optional implements ArrayAccess
             return $this->value->{$method}(...$parameters);
         }
 
-        throw new InvalidArgumentException(sprintf('The method %s is not supported.', $method));
+        return null;
     }
 
     /**
