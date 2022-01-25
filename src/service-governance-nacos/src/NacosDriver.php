@@ -143,16 +143,10 @@ class NacosDriver implements DriverInterface
             return false;
         }
 
-        if ($response->getStatusCode() === 500 && strpos((string) $response->getBody(), 'is not found') > 0) {
+        if ($response->getStatusCode() === 500 && strpos((string) $response->getBody(), 'not found') > 0) {
             return false;
         }
 
-        $result = (string) $response->getBody();
-        
-        if ($response->getStatusCode() === 500 && (strpos($result, 'is not found') > 0 || strpos($result, 'service not found') > 0)) {
-            return false;
-        }
-        
         if ($response->getStatusCode() !== 200) {
             throw new RequestException(sprintf('Failed to get nacos service %s!', $name), $response->getStatusCode());
         }
