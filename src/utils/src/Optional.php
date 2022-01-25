@@ -13,6 +13,7 @@ namespace Hyperf\Utils;
 
 use ArrayAccess;
 use Hyperf\Macroable\Macroable;
+use Hyperf\Utils\Exception\InvalidArgumentException;
 
 class Optional implements ArrayAccess
 {
@@ -21,20 +22,12 @@ class Optional implements ArrayAccess
     }
 
     /**
-     * The underlying object.
-     *
-     * @var mixed
-     */
-    protected $value;
-
-    /**
      * Create a new optional instance.
      *
-     * @param mixed $value
+     * @param mixed $value the underlying object
      */
-    public function __construct($value)
+    public function __construct(protected $value)
     {
-        $this->value = $value;
     }
 
     /**
@@ -83,6 +76,8 @@ class Optional implements ArrayAccess
         if (is_object($this->value)) {
             return $this->value->{$method}(...$parameters);
         }
+
+        return null;
     }
 
     /**

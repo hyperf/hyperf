@@ -65,14 +65,14 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @var array<TKey, TValue>
      */
-    protected $items = [];
+    protected array $items = [];
 
     /**
      * The methods that can be proxied.
      *
      * @var string[]
      */
-    protected static $proxies
+    protected static array $proxies
         = [
             'average',
             'avg',
@@ -222,6 +222,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         if ($count = $items->count()) {
             return $items->sum() / $count;
         }
+        return null;
     }
 
     /**

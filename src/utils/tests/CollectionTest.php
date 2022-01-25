@@ -57,4 +57,10 @@ class CollectionTest extends TestCase
 
         $this->assertSame(['Hyperf', $uuid], $collection->flatten()->toArray());
     }
+
+    public function testCollectionAverage()
+    {
+        $col = new Collection([]);
+        $this->assertNull($col->avg());
+    }
 }

@@ -15,35 +15,17 @@ use Composer\Autoload\ClassLoader;
 
 class Composer
 {
-    /**
-     * @var null|Collection
-     */
-    private static $content;
+    private static ?Collection $content = null;
 
-    /**
-     * @var null|Collection
-     */
-    private static $json;
+    private static ?Collection $json = null;
 
-    /**
-     * @var array
-     */
-    private static $extra = [];
+    private static array $extra = [];
 
-    /**
-     * @var array
-     */
-    private static $scripts = [];
+    private static array $scripts = [];
 
-    /**
-     * @var array
-     */
-    private static $versions = [];
+    private static array $versions = [];
 
-    /**
-     * @var null|ClassLoader
-     */
-    private static $classLoader;
+    private static ?ClassLoader $classLoader = null;
 
     /**
      * @throws \RuntimeException When `composer.lock` does not exist.
