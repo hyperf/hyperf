@@ -13,7 +13,6 @@ namespace Hyperf\Utils;
 
 use ArrayAccess;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Exception\InvalidArgumentException;
 
 class Optional implements ArrayAccess
 {
