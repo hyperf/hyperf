@@ -1,5 +1,9 @@
 # v2.2.25 - TBD
 
+## Fixed
+
+- [#4484](https://github.com/hyperf/hyperf/pull/4484) Fixed bug that `NacosDriver::isRegistered` does not work when using nacos `2.0.4`.
+
 # v2.2.24 - 2022-01-24
 
 ## Fixed
