@@ -4,6 +4,10 @@
 
 - [#4484](https://github.com/hyperf/hyperf/pull/4484) Fixed bug that `NacosDriver::isRegistered` does not work when using nacos `2.0.4`.
 
+## Optimized
+
+- [#4254](https://github.com/hyperf/hyperf/pull/4254) Added check of `grpc.enable_fork_support` option and `pcntl` extension.
+
 # v2.2.24 - 2022-01-24
 
 ## Fixed
