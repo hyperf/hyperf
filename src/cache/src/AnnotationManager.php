@@ -104,8 +104,6 @@ class AnnotationManager
 
     protected function getFormatedKey(string $prefix, array $arguments, ?string $value = null): string
     {
-        $key = StringHelper::format($prefix, $arguments, $value);
-
-        return $key;
+        return StringHelper::format($prefix, $arguments, $value);
     }
 }
