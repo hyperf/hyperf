@@ -75,4 +75,12 @@ class JsonTest extends TestCase
         });
         $this->assertSame([1, 2, 3], $result);
     }
+
+    public function testJsonEncodeNull()
+    {
+        $res = Json::encode(null);
+        $this->assertSame('null', $res);
+
+        $this->assertSame(null, Json::decode('null'));
+    }
 }

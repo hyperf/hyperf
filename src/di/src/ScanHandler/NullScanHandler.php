@@ -9,17 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils\Traits;
+namespace Hyperf\Di\ScanHandler;
 
-trait Tappable
+class NullScanHandler implements ScanHandlerInterface
 {
-    /**
-     * Call the given Closure with this instance then return the instance.
-     *
-     * @return mixed
-     */
-    public function tap(?callable $callback = null)
+    public function scan(): Scanned
     {
-        return tap($this, $callback);
+        return new Scanned(true);
     }
 }

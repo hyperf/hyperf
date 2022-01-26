@@ -9,12 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils\Traits;
+namespace Hyperf\Di\ScanHandler;
 
-/**
- * @deprecated please use `Hyperf\Macroable\Macroable` instead
- */
-trait Macroable
+class Scanned
 {
-    use \Hyperf\Macroable\Macroable;
+    public function __construct(protected bool $scanned)
+    {
+    }
+
+    public function isScanned(): bool
+    {
+        return $this->scanned;
+    }
 }

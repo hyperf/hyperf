@@ -23,10 +23,8 @@ class Stringable implements JsonSerializable
 
     /**
      * The underlying string value.
-     *
-     * @var string
      */
-    protected $value;
+    protected string $value;
 
     /**
      * Create a new instance of the class.
@@ -56,7 +54,7 @@ class Stringable implements JsonSerializable
      */
     public function __toString()
     {
-        return (string) $this->value;
+        return $this->value;
     }
 
     /**

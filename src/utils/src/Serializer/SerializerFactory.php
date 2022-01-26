@@ -17,14 +17,8 @@ use Symfony\Component\Serializer\Serializer;
 
 class SerializerFactory
 {
-    /**
-     * @var string
-     */
-    protected $serializer;
-
-    public function __construct(string $serializer = Serializer::class)
+    public function __construct(protected string $serializer = Serializer::class)
     {
-        $this->serializer = $serializer;
     }
 
     public function __invoke()

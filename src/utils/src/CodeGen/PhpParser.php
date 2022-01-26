@@ -33,15 +33,9 @@ class PhpParser
         'null',
     ];
 
-    /**
-     * @var null|PhpParser
-     */
-    protected static $instance;
+    protected static ?PhpParser $instance = null;
 
-    /**
-     * @var Parser
-     */
-    protected $parser;
+    protected Parser $parser;
 
     public function __construct()
     {

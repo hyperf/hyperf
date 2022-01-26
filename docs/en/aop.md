@@ -29,9 +29,7 @@ use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
-/**
- * @Aspect
- */
+#[Aspect]
 class FooAspect extends AbstractAspect
 {
     // The class to be cut in can be multiple, or can be identified by `::` to the specific method, or use * for fuzzy matching
@@ -58,9 +56,9 @@ class FooAspect extends AbstractAspect
 }
 ```
 
-Each `Aspect` have to define `@Aspect` annotation or configure in `config/autoload/aspects.php` to enable.
+Each `Aspect` have to define `#[Aspect]` annotation or configure in `config/autoload/aspects.php` to enable.
 
-> Use `@Aspect` annotatin have to `use Hyperf\Di\Annotation\Aspect;` namespace;  
+> Use `#[Aspect]` annotatin have to `use Hyperf\Di\Annotation\Aspect;` namespace;  
 
 ## Cache of Proxy Class
 

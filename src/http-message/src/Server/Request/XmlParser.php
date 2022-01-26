@@ -23,7 +23,7 @@ class XmlParser implements RequestParserInterface
     public function parse(string $rawBody, string $contentType): array
     {
         try {
-            return Xml::toArray($rawBody) ?? [];
+            return Xml::toArray($rawBody);
         } catch (InvalidArgumentException $e) {
             if ($this->throwException) {
                 throw new BadRequestHttpException('Invalid XML data in request body: ' . $e->getMessage());

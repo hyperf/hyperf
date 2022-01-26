@@ -61,9 +61,7 @@ namespace App\Process;
 use Hyperf\AsyncQueue\Process\ConsumerProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="async-queue")
- */
+#[Process(name: "async-queue")]
 class AsyncQueueConsumer extends ConsumerProcess
 {
 }
@@ -154,11 +152,8 @@ use Hyperf\HttpServer\Annotation\AutoController;
 #[AutoController]
 class QueueController extends Controller
 {
-    /**
-     * @Inject
-     * @var QueueService
-     */
-    protected $service;
+    #[Inject]
+    protected QueueService $service;
 
     public function index()
     {
