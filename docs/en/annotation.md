@@ -47,11 +47,22 @@ There are three apply types of annotation, `class`, `method of class` and `prope
 ### Use class level annotation
 
 Class level annotation definitions are in the comment block above the `class` keyword. For example, the commonly used `@Controller` and `@AutoController` are examples of the use of class level annotation. The following code example is an example of correctly using class level annotation, indicating The `@ClassAnnotation` annotation is applied to the `Foo` class.
- 
+
+- PHP < 8.0
+
 ```php
+<?php
 /**
- * @ClassAnnotation()
+ * @ClassAnnotation
  */
+class Foo {}
+```
+
+- PHP >= 8.0
+
+```php
+<?php
+#[ClassAnnotation]
 class Foo {}
 ```
 
@@ -59,7 +70,10 @@ class Foo {}
 
 Method level annotation definitions are in the comment block above the class method. For example, the commonly used `@RequestMapping` is example of the use of method level annotation. The following code example is an example of correctly using method level annotation, indicating The `@MethodAnnotation` annotation is applied to the `bar` method of `Foo` class.
 
+- PHP < 8.0
+
 ```php
+<?php
 class Foo
 {
     /**
@@ -72,16 +86,44 @@ class Foo
 }
 ```
 
+- PHP >= 8.0
+
+```php
+<?php
+class Foo
+{
+    #[MethodAnnotation]
+    public function bar()
+    {
+        // some code
+    }
+}
+```
+
 ### Use property level of annotation
 
 Property level annotation definitions are in the comment block above the property. For example, the commonly used `@Value` and `@Inject` are examples of the use of property level annotation. The following code example is an example of correctly using property level annotation, indicating The `@PropertyAnnotation` annotation is applied to the `$bar` property of `Foo` class.
-  
+
+- PHP < 8.0
+
 ```php
+<?php
 class Foo
 {
     /**
      * @PropertyAnnotation()
      */
+    private $bar;
+}
+```
+
+- PHP >= 8.0
+
+```php
+<?php
+class Foo
+{
+    #[PropertyAnnotation]
     private $bar;
 }
 ```
@@ -97,6 +139,8 @@ class Foo
 ### Create a Annotation class
 
 Create an annotation class into anywhere, as in the following code example:
+
+- PHP < 8.0
 
 ```php
 namespace App\Annotation;
@@ -129,6 +173,27 @@ class Foo extends AbstractAnnotation
 - `PROPERTY` annotation means allows define on class properties
 - `CLASS` annotation means allows define on class
 - `ALL` annotation means allows define in all scopes
+
+- PHP >= 8.0
+
+```php
+<?php
+namespace App\Annotation;
+
+use Hyperf\Di\Annotation\AbstractAnnotation;
+
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
+class Bar extends AbstractAnnotation
+{
+    // some code
+}
+
+#[Attribute(Attribute::TARGET_CLASS)]
+class Foo extends AbstractAnnotation
+{
+    // some code
+}
+```
 
 Let's note that in the example code above, the annotation class inherits the `Hyperf\Di\Annotation\AbstractAnnotation` abstract class. This is not required for annotation classes, but for Hyperf annotation classes, inherit `Hyperf\Di\Annotation\AnnotationInterface` interface is required, so the role of the abstract class here is to provide a minimal definition. The abstract class has been implemented for you to `automatically assign annotation parameters to class properties`, `automatically collects the annotation data to AnnotationCollector`.
 

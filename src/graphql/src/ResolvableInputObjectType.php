@@ -31,7 +31,7 @@ class ResolvableInputObjectType extends TheCodingMachineResolvableInputObjectTyp
     private $argumentResolver;
 
     /**
-     * @var callable&array<int, object|string>
+     * @var array<int, object|string>|callable
      */
     private $resolve;
 

@@ -338,8 +338,14 @@ class Arr
 
     /**
      * Push an item onto the beginning of an array.
-     * @param null|mixed $key
-     * @param mixed $value
+     *
+     * @template TKey of array-key
+     * @template TValue
+     *
+     * @param array<TKey, TValue> $array
+     * @param null|TKey $key
+     * @param TValue $value
+     * @return array<TKey, TValue>
      */
     public static function prepend(array $array, $value, $key = null): array
     {

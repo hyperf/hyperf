@@ -1,4 +1,114 @@
-# v2.2.16 - TBD
+# v2.2.25 - TBD
+
+## Fixed
+
+- [#4484](https://github.com/hyperf/hyperf/pull/4484) Fixed bug that `NacosDriver::isRegistered` does not work when using nacos `2.0.4`.
+
+# v2.2.24 - 2022-01-24
+
+## Fixed
+
+- [#4474](https://github.com/hyperf/hyperf/pull/4474) Fixed bug that multiplex connection don't close after running test cases.
+
+## Optimized
+
+- [#4451](https://github.com/hyperf/hyperf/pull/4451) Optimized code for `Hyperf\Watcher\Driver\FindNewerDriver`.
+
+# v2.2.23 - 2022-01-17
+
+## Fixed
+
+- [#4426](https://github.com/hyperf/hyperf/pull/4426) Fixed bug that view cache generated failed caused by concurrent request.
+
+## Added
+
+- [#4449](https://github.com/hyperf/hyperf/pull/4449) Allow sorting on multiple criteria for `Hyperf\Utils\Collection`.
+- [#4455](https://github.com/hyperf/hyperf/pull/4455) Added command `gen:view-engine-cache` which used to generate cache files in advance.
+- [#4453](https://github.com/hyperf/hyperf/pull/4453) Added `Hyperf\Tracer\Aspect\ElasticserachAspect` which used to record traces for elasticsearch.
+- [#4458](https://github.com/hyperf/hyperf/pull/4458) Added `Hyperf\Di\ScanHandler\ProcScanHandler` which used to run application when using swow and windows.
+
+# v2.2.22 - 2022-01-04
+
+## Fixed
+
+- [#4399](https://github.com/hyperf/hyperf/pull/4399) Fixed bug that `Redis::scan` does not work when using redis cluster.
+
+## Added
+
+- [#4409](https://github.com/hyperf/hyperf/pull/4409) Added database handler for `session`.
+- [#4411](https://github.com/hyperf/hyperf/pull/4411) Added `Hyperf\Tracer\Aspect\DbAspect` to log db records when using `hyperf/db`. 
+- [#4420](https://github.com/hyperf/hyperf/pull/4420) Support `SSL` for `Hyperf\Amqp\IO\SwooleIO`.
+
+## Optimized
+
+- [#4406](https://github.com/hyperf/hyperf/pull/4406) Adapt swoole 5.0 by removing swoole classes with `PSR-0`.
+- [#4429](https://github.com/hyperf/hyperf/pull/4429) Added type hint for `Debug::getRefCount()` which only support `object`.
+
+# v2.2.21 - 2021-12-20
+
+## Fixed
+
+- [#4347](https://github.com/hyperf/hyperf/pull/4347) Fixed bug that amqp io has been bound to more than one coroutine when out of buffer.
+- [#4373](https://github.com/hyperf/hyperf/pull/4373) Fixed the metadata generation error caused by switching coroutine for snowflake.
+
+## Added
+
+- [#4344](https://github.com/hyperf/hyperf/pull/4344) Added `Hyperf\Crontab\Event\FailToExecute` event which will be dispatched when executing crontab failed.
+- [#4348](https://github.com/hyperf/hyperf/pull/4348) Support to open the generated file with your IDE automatically.
+
+## Optimized
+
+- [#4350](https://github.com/hyperf/hyperf/pull/4350) Optimized the error message for `swoole.use_shortname`.
+- [#4360](https://github.com/hyperf/hyperf/pull/4360) No longer uses `Swoole\Coroutine\Client`, but uses `Swoole\Coroutine\Socket`, which is more stable and has better performance in `Hyperf\Amqp\IO\SwooleIO`.
+
+# v2.2.20 - 2021-12-13
+
+## Fixed
+
+- [#4338](https://github.com/hyperf/hyperf/pull/4338) Fixed bug that the path with query params won't match route when using testing client.
+- [#4346](https://github.com/hyperf/hyperf/pull/4346) Fixed fatal error for declaration when using amqplib `3.1.1`.
+
+## Added
+
+- [#4330](https://github.com/hyperf/hyperf/pull/4330) Support pack vendor/bin files for `hyperf/phar`.
+- [#4331](https://github.com/hyperf/hyperf/pull/4331) Added method `Hyperf\Testing\Debug::getRefCount($object)`.
+
+# v2.2.19 - 2021-12-06
+
+## Fixed
+
+- [#4308](https://github.com/hyperf/hyperf/pull/4308) Fixed bug that `collector-reload` file not found when running `server:watch` with absolute path.
+
+## Optimized
+
+- [#4317](https://github.com/hyperf/hyperf/pull/4317) Improves `Hyperf\Utils\Collection` and `Hyperf\Database\Model\Collection` type definitions.
+
+# v2.2.18 - 2021-11-29
+
+## Fixed
+
+- [#4283](https://github.com/hyperf/hyperf/pull/4283) Fixed type hint error for `Hyperf\Grpc\Parser::deserializeMessage()` when `$response->data` is null.
+
+## Added
+
+- [#4284](https://github.com/hyperf/hyperf/pull/4284) Added method `Hyperf\Utils\Network::ip()`.
+- [#4290](https://github.com/hyperf/hyperf/pull/4290) Added HTTP chunk support for `hyperf/http-message`.
+- [#4291](https://github.com/hyperf/hyperf/pull/4291) Support dynamic `$arguments` for function `value()`.
+- [#4293](https://github.com/hyperf/hyperf/pull/4293) Support run with absolute paths for `server:watch`.
+- [#4295](https://github.com/hyperf/hyperf/pull/4295) Added alias `id()` for `Hyperf\Database\Schema\Blueprint::bigIncrements()`.
+
+# v2.2.17 - 2021-11-22
+
+## Fixed
+
+- [#4243](https://github.com/hyperf/hyperf/pull/4243) Fixed the bug that key sort of the result is inconsistent with `$callables` for `parallel`.
+
+## Added
+
+- [#4109](https://github.com/hyperf/hyperf/pull/4109) Added PHP8 support for `hyperf/tracer`.
+- [#4260](https://github.com/hyperf/hyperf/pull/4260) Added force index for `hyperf/database`.
+
+# v2.2.16 - 2021-11-15
 
 ## Added
 

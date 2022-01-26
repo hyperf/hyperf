@@ -100,6 +100,23 @@ $result = $client->json('/user/0',[
 ]);
 ```
 
+### 使用 Cookies
+
+```php
+<?php
+
+use Hyperf\Testing\Client;
+use Hyperf\Utils\Codec\Json;
+
+$client = make(Client::class);
+
+$response = $client->sendRequest($client->initRequest('POST', '/request')->withCookieParams([
+    'X-CODE' => $id = uniqid(),
+]));
+
+$data = Json::decode((string) $response->getBody());
+```
+
 ## 示例
 
 让我们写个小 DEMO 来测试一下。

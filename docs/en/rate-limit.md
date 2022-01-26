@@ -36,24 +36,18 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use Hyperf\RateLimit\Annotation\RateLimit;
 
-/**
- * @Controller(prefix="rate-limit")
- */
+#[Controller(prefix: "rate-limit")]
 class RateLimitController
 {
-    /**
-     * @RequestMapping(path="test")
-     * @RateLimit(create=1, capacity=3)
-     */
+    #[RequestMapping(path: "test")]
+    #[RateLimit(create: 1, capacity: 3)]
     public function test()
     {
         return ["QPS 1, Peek3"];
     }
 
-    /**
-     * @RequestMapping(path="test2")
-     * @RateLimit(create=2, consume=2, capacity=4)
-     */
+    #[RequestMapping(path: "test2")]
+    #[RateLimit(create: 2, consume: 2, capacity: 4)]
     public function test2()
     {
         return ["QPS 2, Peek2"];
@@ -78,16 +72,12 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use Hyperf\RateLimit\Annotation\RateLimit;
 
-/**
- * @Controller(prefix="rate-limit")
- * @RateLimit(limitCallback={RateLimitController::class, "limitCallback"})
- */
+#[Controller(prefix: "rate-limit")]
+#[RateLimit(limitCallback: {RateLimitController::class, "limitCallback"})]
 class RateLimitController
 {
-    /**
-     * @RequestMapping(path="test")
-     * @RateLimit(create=1, capacity=3)
-     */
+    #[RequestMapping(path: "test")]
+    #[RateLimit(create: 1, capacity: 3)]
     public function test()
     {
         return ["QPS 1, Peek3"];

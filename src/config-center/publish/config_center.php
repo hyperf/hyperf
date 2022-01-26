@@ -28,7 +28,7 @@ return [
             ],
             'interval' => 5,
             'strict_mode' => false,
-            'client_ip' => current(swoole_get_local_ip()),
+            'client_ip' => \Hyperf\Utils\Network::ip(),
             'pullTimeout' => 10,
             'interval_timeout' => 1,
         ],

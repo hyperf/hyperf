@@ -92,7 +92,7 @@ return [
             // 严格模式，当为 false 时，拉取的配置值均为 string 类型，当为 true 时，拉取的配置值会转化为原配置值的数据类型
             'strict_mode' => false,
             // 客户端IP
-            'client_ip' => current(swoole_get_local_ip()),
+            'client_ip' => \Hyperf\Utils\Network::ip(),
             // 拉取配置超时时间
             'pullTimeout' => 10,
             // 拉取配置间隔

@@ -13,6 +13,7 @@ namespace HyperfTest\Utils;
 
 use Hyperf\Utils\Coroutine;
 use HyperfTest\Utils\Exception\RetryException;
+use HyperfTest\Utils\Stub\FooClosure;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\Channel;
 use Swoole\Runtime;
@@ -178,5 +179,26 @@ class FunctionTest extends TestCase
         $this->assertSame(3, $channel->pop(0.001));
         $this->assertSame(2, $channel->pop(0.001));
         $this->assertSame(0, $channel->pop(0.001));
+    }
+
+    public function testFunctionValue()
+    {
+        $id = uniqid();
+        $num = rand(1000, 9999);
+        $assert = value(static function () use ($id) {
+            return $id;
+        });
+        $this->assertSame($assert, $id);
+
+        $assert = value($id);
+        $this->assertSame($assert, $id);
+
+        $assert = value(static function ($id, $num) {
+            return $id . $num;
+        }, $id, $num);
+        $this->assertSame($assert, $id . $num);
+
+        $assert = value($foo = new FooClosure(), $id);
+        $this->assertSame($assert, $foo);
     }
 }

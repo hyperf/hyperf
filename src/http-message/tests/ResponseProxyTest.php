@@ -40,6 +40,11 @@ class ResponseProxyTest extends ResponseTest
         parent::testCookies();
     }
 
+    public function testWrite()
+    {
+        $this->markTestSkipped('Response proxy does not support chunk.');
+    }
+
     protected function newResponse()
     {
         $response = new ResponseStub();

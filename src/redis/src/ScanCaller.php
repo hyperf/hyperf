@@ -13,23 +13,23 @@ namespace Hyperf\Redis;
 
 trait ScanCaller
 {
-    public function scan(&$cursor, $pattern = null, $count = 0)
+    public function scan(&$cursor, ...$arguments)
     {
-        return $this->__call('scan', [&$cursor, $pattern, $count]);
+        return $this->__call('scan', array_merge([&$cursor], $arguments));
     }
 
-    public function hScan($key, &$cursor, $pattern = null, $count = 0)
+    public function hScan($key, &$cursor, ...$arguments)
     {
-        return $this->__call('hScan', [$key, &$cursor, $pattern, $count]);
+        return $this->__call('hScan', array_merge([$key, &$cursor], $arguments));
     }
 
-    public function zScan($key, &$cursor, $pattern = null, $count = 0)
+    public function zScan($key, &$cursor, ...$arguments)
     {
-        return $this->__call('zScan', [$key, &$cursor, $pattern, $count]);
+        return $this->__call('zScan', array_merge([$key, &$cursor], $arguments));
     }
 
-    public function sScan($key, &$cursor, $pattern = null, $count = 0)
+    public function sScan($key, &$cursor, ...$arguments)
     {
-        return $this->__call('sScan', [$key, &$cursor, $pattern, $count]);
+        return $this->__call('sScan', array_merge([$key, &$cursor], $arguments));
     }
 }

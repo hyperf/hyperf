@@ -1,5 +1,5 @@
 {
-  "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYWNvcyIsImV4cCI6MTYyMTE3NTQyM30.iqwcntBeVGzZDKyF7NoJRSrCDijsBETWrW179LMbEc8",
-  "tokenTtl":  18000,
-  "globalAdmin": true
+    "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYWNvcyIsImV4cCI6MTYyMTE3NTQyM30.iqwcntBeVGzZDKyF7NoJRSrCDijsBETWrW179LMbEc8",
+    "tokenTtl": 18000,
+    "globalAdmin": true
 }

@@ -4,10 +4,10 @@ on: [ push, delete, create ]
 
 jobs:
   git-mirror:
+    if: github.repository == 'hyperf/hyperf'
     runs-on: ubuntu-latest
     steps:
       - name: Configure Private Key
-        if: github.repository_owner == 'hyperf'
         env:
           SSH_PRIVATE_KEY: ${{ secrets.GITEE_PRIVATE_KEY }}
         run: |

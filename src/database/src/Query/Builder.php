@@ -104,6 +104,13 @@ class Builder
     public $from;
 
     /**
+     * The force indexes.
+     *
+     * @var string[]
+     */
+    public $forceIndexes = [];
+
+    /**
      * The table joins for the query.
      *
      * @var array
@@ -380,6 +387,17 @@ class Builder
     {
         $this->from = $table;
 
+        return $this;
+    }
+
+    /**
+     * Set the force indexes which the query should be used.
+     *
+     * @return $this
+     */
+    public function forceIndexes(array $forceIndexes)
+    {
+        $this->forceIndexes = $forceIndexes;
         return $this;
     }
 
@@ -1828,7 +1846,7 @@ class Builder
     /**
      * Execute a query for a single record by ID.
      *
-     * @param int $id
+     * @param mixed $id
      * @param array $columns
      * @return mixed|static
      */

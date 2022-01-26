@@ -156,6 +156,9 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         return $this->of('/')->{$method}(...$args);
     }
 
+    /**
+     * @param Server $server
+     */
     public function onMessage($server, Frame $frame): void
     {
         if ($frame->data[0] === Engine::PING) {

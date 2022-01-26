@@ -196,16 +196,11 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\WebSocketServer\Sender;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class ServerController
 {
-    /**
-     * @Inject
-     * @var Sender
-     */
-    protected $sender;
+    #[Inject]
+    protected Sender $sender;
 
     public function close(int $fd)
     {

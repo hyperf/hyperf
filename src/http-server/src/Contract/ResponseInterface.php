@@ -54,6 +54,11 @@ interface ResponseInterface
     public function download(string $file, string $name = ''): PsrResponseInterface;
 
     /**
+     * Chunked transfer encoding.
+     */
+    public function write(string $data): bool;
+
+    /**
      * Override a response with a cookie.
      */
     public function withCookie(Cookie $cookie): ResponseInterface;
