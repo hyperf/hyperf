@@ -17,7 +17,7 @@ class PcntlScanHandler implements ScanHandlerInterface
 {
     public function __construct()
     {
-        if (! function_exists('pcntl_fork')) {
+        if (! extension_loaded('pcntl')) {
             throw new Exception('Missing pcntl extension.');
         }
         if (extension_loaded('grpc')) {
