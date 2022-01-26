@@ -359,18 +359,4 @@ class Scanner
             array_values(array_unique($changed)),
         ];
     }
-
-    protected function checkEnvironment()
-    {
-        if (! function_exists('pcntl_fork')) {
-            throw new Exception('Missing pcntl extension.');
-        }
-        if (extension_loaded('grpc')) {
-            $grpcForkSupport = ini_get_all('grpc')['grpc.enable_fork_support']['local_value'];
-            $grpcForkSupport = strtolower(trim(str_replace('0', '', $grpcForkSupport)));
-            if (in_array($grpcForkSupport, ['', 'off', 'false'], true)) {
-                throw new Exception(' Grpc fork support must be enabled before the server starts, please set grpc.enable_fork_support = 1 in your php.ini.');
-            }
-        }
-    }
 }
