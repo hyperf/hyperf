@@ -106,10 +106,6 @@ class AnnotationManager
     {
         $key = StringHelper::format($prefix, $arguments, $value);
 
-        if (strlen($key) > 64) {
-            $this->logger->warning('The cache key length is too long. The key is ' . $key);
-        }
-
         return $key;
     }
 }
