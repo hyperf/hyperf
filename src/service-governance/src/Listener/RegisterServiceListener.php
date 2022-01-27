@@ -13,12 +13,12 @@ namespace Hyperf\ServiceGovernance\Listener;
 
 use Hyperf\Consul\Exception\ServerException;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\IPReaderInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\ServiceGovernance\DriverManager;
-use Hyperf\ServiceGovernance\IPReaderInterface;
 use Hyperf\ServiceGovernance\ServiceManager;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;

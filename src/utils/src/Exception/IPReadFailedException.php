@@ -9,14 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\ServiceGovernance;
+namespace Hyperf\Utils\Exception;
 
-use Hyperf\ServiceGovernance\Exception\IPReadFailedException;
-
-interface IPReaderInterface
+class IPReadFailedException extends \RuntimeException
 {
-    /**
-     * @throws IPReadFailedException
-     */
-    public function read(): string;
 }

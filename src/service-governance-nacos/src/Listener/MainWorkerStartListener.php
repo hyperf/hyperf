@@ -12,13 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\ServiceGovernanceNacos\Listener;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\IPReaderInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Nacos\Application;
 use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Server\Event\MainCoroutineServerStart;
-use Hyperf\ServiceGovernance\IPReaderInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 

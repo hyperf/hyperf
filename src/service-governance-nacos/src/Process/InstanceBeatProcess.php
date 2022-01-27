@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\ServiceGovernanceNacos\Process;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\IPReaderInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Nacos\Application;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
-use Hyperf\ServiceGovernance\IPReaderInterface;
 
 class InstanceBeatProcess extends AbstractProcess
 {
