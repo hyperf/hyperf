@@ -124,7 +124,7 @@ class Watcher
                     $this->restart(false);
                 }
             } else {
-                $ret = System::exec($this->option->getBin() . ' vendor/hyperf/watcher/collector-reload.php ' . $file);
+                $ret = System::exec(sprintf('%s %s/vendor/hyperf/watcher/collector-reload.php %s', $this->option->getBin(), BASE_PATH, $file));
                 if ($ret['code'] === 0) {
                     $this->output->writeln('Class reload success.');
                 } else {
@@ -138,7 +138,7 @@ class Watcher
 
     public function dumpautoload()
     {
-        $ret = System::exec('composer dump-autoload -o --no-scripts');
+        $ret = System::exec('composer dump-autoload -o --no-scripts -d ' . BASE_PATH);
         $this->output->writeln($ret['output'] ?? '');
     }
 

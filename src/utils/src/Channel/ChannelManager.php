@@ -18,16 +18,10 @@ class ChannelManager
     /**
      * @var Channel[]
      */
-    protected $channels = [];
+    protected array $channels = [];
 
-    /**
-     * @var int
-     */
-    protected $size = 1;
-
-    public function __construct(int $size = 1)
+    public function __construct(protected int $size = 1)
     {
-        $this->size = $size;
     }
 
     public function get(int $id, bool $initialize = false): ?Channel

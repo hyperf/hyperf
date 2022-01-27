@@ -100,9 +100,7 @@ use App\Event\UserRegistered;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 
-/**
- * @Listener 
- */
+#[Listener]
 class UserRegisteredListener implements ListenerInterface
 {
     public function listen(): array
@@ -144,9 +142,9 @@ use App\Event\UserRegistered;
 class UserService
 {
     /**
-     * @Inject 
      * @var EventDispatcherInterface
      */
+    #[Inject]
     private $eventDispatcher;
     
     public function register()

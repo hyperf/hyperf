@@ -36,7 +36,7 @@ interface ResponseInterface
 
     /**
      * Format data to a string and return data with Content-Type:text/plain header.
-     * @param mixed $data
+     * @param mixed|\Stringable $data
      */
     public function raw($data): PsrResponseInterface;
 

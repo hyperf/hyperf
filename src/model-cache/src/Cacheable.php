@@ -20,10 +20,7 @@ use Hyperf\Utils\ApplicationContext;
 
 trait Cacheable
 {
-    /**
-     * @var bool
-     */
-    protected $useCacheBuilder = false;
+    protected bool $useCacheBuilder = false;
 
     /**
      * Fetch a model from cache.
@@ -40,6 +37,7 @@ trait Cacheable
 
     /**
      * Fetch models from cache.
+     * @return Collection<int, self>
      */
     public static function findManyFromCache(array $ids): Collection
     {
@@ -61,7 +59,7 @@ trait Cacheable
     }
 
     /**
-     * Get the expire time for cache.
+     * Get the expired time for cache.
      */
     public function getCacheTTL(): ?int
     {

@@ -13,40 +13,33 @@ namespace Hyperf\AsyncQueue\Driver;
 
 use Hyperf\AsyncQueue\Exception\InvalidQueueException;
 use Hyperf\AsyncQueue\JobInterface;
+use Hyperf\AsyncQueue\JobMessage;
 use Hyperf\AsyncQueue\Message;
 use Hyperf\AsyncQueue\MessageInterface;
 use Hyperf\Redis\RedisFactory;
+use Hyperf\Redis\RedisProxy;
 use Psr\Container\ContainerInterface;
 
 class RedisDriver extends Driver
 {
-    /**
-     * @var \Redis
-     */
-    protected $redis;
+    protected RedisProxy $redis;
 
-    /**
-     * @var ChannelConfig
-     */
-    protected $channel;
+    protected ChannelConfig $channel;
 
     /**
      * Max polling time.
-     * @var int
      */
-    protected $timeout;
+    protected int $timeout;
 
     /**
      * Retry delay time.
-     * @var array|int
      */
-    protected $retrySeconds;
+    protected array|int $retrySeconds;
 
     /**
      * Handle timeout.
-     * @var int
      */
-    protected $handleTimeout;
+    protected int $handleTimeout;
 
     public function __construct(ContainerInterface $container, $config)
     {
@@ -62,7 +55,7 @@ class RedisDriver extends Driver
 
     public function push(JobInterface $job, int $delay = 0): bool
     {
-        $message = make(Message::class, [$job]);
+        $message = make(JobMessage::class, [$job]);
         $data = $this->packer->pack($message);
 
         if ($delay === 0) {
@@ -74,7 +67,7 @@ class RedisDriver extends Driver
 
     public function delete(JobInterface $job): bool
     {
-        $message = make(Message::class, [$job]);
+        $message = make(JobMessage::class, [$job]);
         $data = $this->packer->pack($message);
 
         return (bool) $this->redis->zRem($this->channel->getDelayed(), $data);

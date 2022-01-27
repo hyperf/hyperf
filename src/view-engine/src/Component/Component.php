@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine\Component;
 
 use Closure;
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use Hyperf\ViewEngine\Blade;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
@@ -155,7 +157,9 @@ abstract class Component
     protected function createBladeViewFromString($contents)
     {
         if (! is_file($viewFile = Blade::config('config.cache_path') . '/' . sha1($contents) . '.blade.php')) {
-            file_put_contents($viewFile, $contents);
+            $container = ApplicationContext::getContainer();
+            $filesystem = $container->get(Filesystem::class);
+            $filesystem->put($viewFile, $contents, true);
         }
 
         return '__components::' . basename($viewFile, '.blade.php');

@@ -34,11 +34,8 @@ class ConnectionResolver implements ConnectionResolverInterface
 
     /**
      * Get a database connection instance.
-     *
-     * @param null|string $name
-     * @return ConnectionInterface
      */
-    public function connection($name = null)
+    public function connection(?string $name = null): ConnectionInterface
     {
         if (is_null($name)) {
             $name = $this->getDefaultConnection();
@@ -73,20 +70,16 @@ class ConnectionResolver implements ConnectionResolverInterface
 
     /**
      * Get the default connection name.
-     *
-     * @return string
      */
-    public function getDefaultConnection()
+    public function getDefaultConnection(): string
     {
         return $this->default;
     }
 
     /**
      * Set the default connection name.
-     *
-     * @param string $name
      */
-    public function setDefaultConnection($name)
+    public function setDefaultConnection(string $name): void
     {
         $this->default = $name;
     }

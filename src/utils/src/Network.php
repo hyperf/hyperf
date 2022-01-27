@@ -36,11 +36,12 @@ class Network
         if (is_array($ips) && ! empty($ips)) {
             return current($ips);
         }
-        /** @var mixed|string $ip */
-        $ip = gethostbyname(gethostname());
-        if (is_string($ip)) {
-            return $ip;
+
+        $name = gethostname();
+        if ($name === false) {
+            throw new RuntimeException('Can not get the internal IP.');
         }
-        throw new RuntimeException('Can not get the internal IP.');
+
+        return gethostbyname($name);
     }
 }

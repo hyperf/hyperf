@@ -219,9 +219,7 @@ class RetryAnnotationAspectTest extends TestCase
                 {
                     $retry = new Retry();
                     $retry->sleepStrategyClass = FlatStrategy::class;
-                    $retry->retryOnThrowablePredicate = function ($t) {
-                        return $t->getMessage() === 'ok';
-                    };
+                    $retry->retryOnThrowablePredicate = fn ($t) => $t->getMessage() === 'ok';
                     $retry->retryThrowables = [];
                     $retry->maxAttempts = 5;
                     $this->method = [
@@ -252,9 +250,7 @@ class RetryAnnotationAspectTest extends TestCase
                 {
                     $retry = new Retry();
                     $retry->sleepStrategyClass = FlatStrategy::class;
-                    $retry->retryOnResultPredicate = function ($r) {
-                        return $r <= 0;
-                    };
+                    $retry->retryOnResultPredicate = fn ($r) => $r <= 0;
                     $retry->retryThrowables = [];
                     $retry->maxAttempts = 5;
                     $this->method = [
@@ -295,7 +291,7 @@ class RetryAnnotationAspectTest extends TestCase
         );
         $point->shouldReceive('process')->times(2)->andThrow(new \RuntimeException('ok'));
         $point->shouldReceive('getArguments')->andReturns([]);
-        $this->expectException('RuntimeException');
+        $this->expectException(\RuntimeException::class);
         $aspect->process($point);
     }
 
@@ -341,7 +337,7 @@ class RetryAnnotationAspectTest extends TestCase
                     $retry = new class() extends Retry {
                         public $timeout = 0.001;
 
-                        public $policies = [TimeoutRetryPolicy::class];
+                        public array $policies = [TimeoutRetryPolicy::class];
                     };
                     $this->method = [
                         AbstractRetry::class => $retry,
@@ -350,7 +346,7 @@ class RetryAnnotationAspectTest extends TestCase
             }
         );
         $point->shouldReceive('process')->atLeast(3)->andThrow(new \RuntimeException('ok'));
-        $this->expectException('RuntimeException');
+        $this->expectException(\RuntimeException::class);
         $aspect->process($point);
     }
 
@@ -367,9 +363,7 @@ class RetryAnnotationAspectTest extends TestCase
                 {
                     $retry = new Retry();
                     $retry->maxAttempts = 1;
-                    $retry->fallback = function () {
-                        return 1;
-                    };
+                    $retry->fallback = fn () => 1;
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $this->method = [
                         AbstractRetry::class => $retry,
@@ -418,9 +412,7 @@ class RetryAnnotationAspectTest extends TestCase
                 {
                     $retry = new Retry();
                     $retry->maxAttempts = 2;
-                    $retry->fallback = function () {
-                        return 'fallback';
-                    };
+                    $retry->fallback = fn () => 'fallback';
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $this->method = [
                         AbstractRetry::class => $retry,
@@ -432,9 +424,7 @@ class RetryAnnotationAspectTest extends TestCase
         $res = $pipeline->via('process')
             ->through([$aspect, $aspect2])
             ->send($point)
-            ->then(function (ProceedingJoinPoint $proceedingJoinPoint) {
-                return $proceedingJoinPoint->processOriginalMethod();
-            });
+            ->then(fn (ProceedingJoinPoint $proceedingJoinPoint) => $proceedingJoinPoint->processOriginalMethod());
 
         $this->assertSame('pass_aspect', $res);
     }

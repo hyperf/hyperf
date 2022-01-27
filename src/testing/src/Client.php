@@ -55,7 +55,7 @@ class Client extends Server
         $this->initBaseUri($server);
     }
 
-    public function get($uri, $data = [], $headers = [])
+    public function get(string $uri, array $data = [], array $headers = [])
     {
         $response = $this->request('GET', $uri, [
             'headers' => $headers,
@@ -65,7 +65,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function post($uri, $data = [], $headers = [])
+    public function post(string $uri, array $data = [], array $headers = [])
     {
         $response = $this->request('POST', $uri, [
             'headers' => $headers,
@@ -75,7 +75,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function put($uri, $data = [], $headers = [])
+    public function put(string $uri, array $data = [], array $headers = [])
     {
         $response = $this->request('PUT', $uri, [
             'headers' => $headers,
@@ -85,7 +85,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function delete($uri, $data = [], $headers = [])
+    public function delete(string $uri, array $data = [], array $headers = [])
     {
         $response = $this->request('DELETE', $uri, [
             'headers' => $headers,
@@ -95,7 +95,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function json($uri, $data = [], $headers = [])
+    public function json(string $uri, array $data = [], array $headers = [])
     {
         $headers['Content-Type'] = 'application/json';
         $response = $this->request('POST', $uri, [
@@ -105,7 +105,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function file($uri, $data = [], $headers = [])
+    public function file(string $uri, array $data = [], array $headers = [])
     {
         $multipart = [];
         if (Arr::isAssoc($data)) {
@@ -134,7 +134,7 @@ class Client extends Server
     public function request(string $method, string $path, array $options = [])
     {
         return wait(function () use ($method, $path, $options) {
-            return $this->execute($this->init($method, $path, $options));
+            return $this->execute($this->initRequest($method, $path, $options));
         }, $this->waitTimeout);
     }
 
@@ -143,6 +143,50 @@ class Client extends Server
         return wait(function () use ($psr7Request) {
             return $this->execute($psr7Request);
         }, $this->waitTimeout);
+    }
+
+    public function initRequest(string $method, string $path, array $options = []): ServerRequestInterface
+    {
+        $query = $options['query'] ?? [];
+        $params = $options['form_params'] ?? [];
+        $json = $options['json'] ?? [];
+        $headers = $options['headers'] ?? [];
+        $multipart = $options['multipart'] ?? [];
+
+        $parsePath = parse_url($path);
+        $path = $parsePath['path'];
+        $uriPathQuery = $parsePath['query'] ?? [];
+        if (! empty($uriPathQuery)) {
+            parse_str($uriPathQuery, $pathQuery);
+            $query = array_merge($pathQuery, $query);
+        }
+
+        $data = $params;
+
+        // Initialize PSR-7 Request and Response objects.
+        $uri = (new Uri($this->baseUri . ltrim($path, '/')))->withQuery(http_build_query($query));
+
+        $content = http_build_query($params);
+        if ($method == 'POST' && data_get($headers, 'Content-Type') == 'application/json') {
+            $content = json_encode($json, JSON_UNESCAPED_UNICODE);
+            $data = $json;
+        }
+
+        $body = new SwooleStream($content);
+
+        $request = new Psr7Request($method, $uri, $headers, $body);
+
+        return $request->withQueryParams($query)
+            ->withParsedBody($data)
+            ->withUploadedFiles($this->normalizeFiles($multipart));
+    }
+
+    /**
+     * @deprecated It will be removed in v3.0
+     */
+    protected function init(string $method, string $path, array $options = []): ServerRequestInterface
+    {
+        return $this->initRequest($method, $path, $options);
     }
 
     protected function execute(ServerRequestInterface $psr7Request): ResponseInterface
@@ -174,7 +218,7 @@ class Client extends Server
         Context::set(ResponseInterface::class, $response);
     }
 
-    protected function initBaseUri($server): void
+    protected function initBaseUri(string $server): void
     {
         if ($this->container->has(ConfigInterface::class)) {
             $config = $this->container->get(ConfigInterface::class);
@@ -186,33 +230,6 @@ class Client extends Server
                 }
             }
         }
-    }
-
-    protected function init(string $method, string $path, array $options = []): ServerRequestInterface
-    {
-        $query = $options['query'] ?? [];
-        $params = $options['form_params'] ?? [];
-        $json = $options['json'] ?? [];
-        $headers = $options['headers'] ?? [];
-        $multipart = $options['multipart'] ?? [];
-
-        $data = $params;
-
-        // Initialize PSR-7 Request and Response objects.
-        $uri = (new Uri($this->baseUri . ltrim($path, '/')))->withQuery(http_build_query($query));
-
-        $content = http_build_query($params);
-        if ($method == 'POST' && data_get($headers, 'Content-Type') == 'application/json') {
-            $content = json_encode($json, JSON_UNESCAPED_UNICODE);
-            $data = $json;
-        }
-
-        $body = new SwooleStream($content);
-
-        $request = new Psr7Request($method, $uri, $headers, $body);
-        return $request->withQueryParams($query)
-            ->withParsedBody($data)
-            ->withUploadedFiles($this->normalizeFiles($multipart));
     }
 
     protected function normalizeFiles(array $multipart): array

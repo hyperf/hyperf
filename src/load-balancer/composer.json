@@ -16,7 +16,7 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "markrogoyski/math-php": "^2.0"
     },
     "autoload": {

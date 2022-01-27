@@ -23,52 +23,27 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
+use Swoole\Coroutine\Http\Server as HttpServer;
+use Swoole\Coroutine\Server;
 
 class CoroutineServer implements ServerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ?ServerConfig $config = null;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @var ServerConfig
-     */
-    protected $config;
-
-    /**
-     * @var \Swoole\Coroutine\Http\Server|\Swoole\Coroutine\Server
-     */
-    protected $server;
+    protected HttpServer|Server|null $server = null;
 
     /**
      * @var callable
      */
     protected $handler;
 
-    /**
-     * @var bool
-     */
-    protected $mainServerStarted = false;
+    protected bool $mainServerStarted = false;
 
     public function __construct(
-        ContainerInterface $container,
-        LoggerInterface $logger,
-        EventDispatcherInterface $dispatcher
+        protected ContainerInterface $container,
+        protected LoggerInterface $logger,
+        protected EventDispatcherInterface $eventDispatcher
     ) {
-        $this->container = $container;
-        $this->logger = $logger;
-        $this->eventDispatcher = $dispatcher;
     }
 
     public function init(ServerConfig $config): ServerInterface
@@ -77,7 +52,7 @@ class CoroutineServer implements ServerInterface
         return $this;
     }
 
-    public function start()
+    public function start(): void
     {
         $this->writePid();
         run(function () {
@@ -100,28 +75,16 @@ class CoroutineServer implements ServerInterface
         }, swoole_hook_flags());
     }
 
-    /**
-     * @return \Swoole\Coroutine\Http\Server|\Swoole\Coroutine\Server
-     */
-    public function getServer()
+    public function getServer(): HttpServer|Server
     {
         return $this->server;
-    }
-
-    /**
-     * @param mixed $server
-     * @deprecated v2.2
-     */
-    public static function isCoroutineServer($server): bool
-    {
-        return $server instanceof Coroutine\Http\Server || $server instanceof Coroutine\Server;
     }
 
     protected function initServer(ServerConfig $config): void
     {
         $servers = $config->getServers();
         foreach ($servers as $server) {
-            if (! $server instanceof \Hyperf\Server\Port) {
+            if (! $server instanceof Port) {
                 continue;
             }
             $name = $server->getName();
@@ -149,7 +112,7 @@ class CoroutineServer implements ServerInterface
                     if ($handler instanceof MiddlewareInitializerInterface) {
                         $handler->initCoreMiddleware($name);
                     }
-                    if ($this->server instanceof \Swoole\Coroutine\Http\Server) {
+                    if ($this->server instanceof HttpServer) {
                         $this->server->handle('/', static function ($request, $response) use ($handler, $method) {
                             Coroutine::create(static function () use ($request, $response, $handler, $method) {
                                 $handler->{$method}($request, $response);
@@ -164,7 +127,7 @@ class CoroutineServer implements ServerInterface
                     if ($handler instanceof MiddlewareInitializerInterface) {
                         $handler->initCoreMiddleware($name);
                     }
-                    if ($this->server instanceof \Swoole\Coroutine\Http\Server) {
+                    if ($this->server instanceof HttpServer) {
                         $this->server->handle('/', [$handler, $method]);
                     }
                 }
@@ -177,8 +140,8 @@ class CoroutineServer implements ServerInterface
                     if ($receiveHandler instanceof MiddlewareInitializerInterface) {
                         $receiveHandler->initCoreMiddleware($name);
                     }
-                    if ($this->server instanceof \Swoole\Coroutine\Server) {
-                        $this->server->handle(function (Coroutine\Server\Connection $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
+                    if ($this->server instanceof Server) {
+                        $this->server->handle(function (Server\Connection $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
                             if ($connectHandler && $connectMethod) {
                                 parallel([static function () use ($connectHandler, $connectMethod, $connection) {
                                     $connectHandler->{$connectMethod}($connection, $connection->exportSocket()->fd);
@@ -209,11 +172,11 @@ class CoroutineServer implements ServerInterface
         throw new RuntimeException('Server type is invalid or the server callback does not exists.');
     }
 
-    protected function getCallbackMethod(string $callack, array $callbacks): array
+    protected function getCallbackMethod(string $callback, array $callbacks): array
     {
         $handler = $method = null;
-        if (isset($callbacks[$callack])) {
-            [$class, $method] = $callbacks[$callack];
+        if (isset($callbacks[$callback])) {
+            [$class, $method] = $callbacks[$callback];
             $handler = $this->container->get($class);
         }
         return [$handler, $method];
@@ -224,9 +187,9 @@ class CoroutineServer implements ServerInterface
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
             case ServerInterface::SERVER_WEBSOCKET:
-                return new Coroutine\Http\Server($host, $port, false, true);
+                return new HttpServer($host, $port, false, true);
             case ServerInterface::SERVER_BASE:
-                return new Coroutine\Server($host, $port, false, true);
+                return new Server($host, $port, false, true);
         }
 
         throw new RuntimeException('Server type is invalid.');

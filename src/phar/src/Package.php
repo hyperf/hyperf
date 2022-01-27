@@ -15,19 +15,10 @@ use Symfony\Component\Finder\Finder;
 
 class Package
 {
-    /**
-     * @var array
-     */
-    protected $package;
+    protected string $directory;
 
-    /**
-     * @var string
-     */
-    protected $directory;
-
-    public function __construct(array $package, string $directory)
+    public function __construct(protected array $package, string $directory)
     {
-        $this->package = $package;
         $this->directory = rtrim($directory, '/') . '/';
     }
 

@@ -1,6 +1,6 @@
 # v3.0.0 - TBD
 
-- [#4238](https://github.com/hyperf/hyperf/issues/4238) Upgraded the minimum php version to `^8.0` for all components (31/89);
+- [#4238](https://github.com/hyperf/hyperf/issues/4238) Upgraded the minimum php version to `^8.0` for all components (43/89);
 
 ## BC breaks
 
@@ -14,20 +14,33 @@
 composer analyse
 ```
 
+升级模型脚本
+
+> 因为模型基类增加了成员变量的类型支持，所以需要使用以下脚本，将其升级为新版本。
+
+```shell
+composer require hyperf/code-generator
+php vendor/bin/regenerate-models.php $PWD/app/Model
+```
+
 ## Dependencies Upgrade
 
 - Upgraded `php-amqplib/php-amqplib` to `^3.1`;
 - Upgraded `phpstan/phpstan` to `^1.0`;
-- Upgraded `mix/redis-subscribe` to `mix/redis-subscriber:^3.0` 
+- Upgraded `mix/redis-subscribe` to `mix/redis-subscriber:^3.0`
+- Upgraded `psr/simple-cache` to `^1.0|^2.0|^3.0`
 
 ## Added
 
 - [#4196](https://github.com/hyperf/hyperf/pull/4196) Added `Hyperf\Amqp\IO\IOFactory` which used to create amqp io by yourself.
+- [#4304](https://github.com/hyperf/hyperf/pull/4304) Support `$suffix` for trait `Hyperf\Utils\Traits\StaticInstance`.
+- [#4400](https://github.com/hyperf/hyperf/pull/4400) Added `$description` which used to set command description easily for `Hyperf\Command\Command`.
 - [#4277](https://github.com/hyperf/hyperf/pull/4277) Added `Hyperf\Utils\IPReader` to get local IP.
 
 ## Optimized
 
 - [#4147](https://github.com/hyperf/hyperf/pull/4147) Optimized code for nacos which you can use `http://xxx.com/yyy/` instead of `http://xxx.com:8848/` to connect `nacos`.
+- [#4367](https://github.com/hyperf/hyperf/pull/4367) Optimized `DataFormatterInterface` which uses object instead of array as inputs.
 
 ## Changed
 
@@ -35,11 +48,16 @@ composer analyse
 - [#4214](https://github.com/hyperf/hyperf/pull/4214) Renamed `$circularDependences` to `$checkCircularDependencies` for `Dag`.
 - [#4225](https://github.com/hyperf/hyperf/pull/4225) Split `hyperf/coordinator` from `hyperf/utils`.
 - [#4269](https://github.com/hyperf/hyperf/pull/4269) Changed the default priority of listener to `0` from `1`.
+- [#4345](https://github.com/hyperf/hyperf/pull/4345) Renamed `Hyperf\Kafka\Exception\ConnectionCLosedException` to `Hyperf\Kafka\Exception\ConnectionClosedException`.
+- [#4434](https://github.com/hyperf/hyperf/pull/4434) The method `Hyperf\Database\Model\Builder::insertOrIgnore` will be return affected count.
 
 ## Removed
 
 - [#4199](https://github.com/hyperf/hyperf/pull/4199) Removed deprecated handler `Hyperf\AsyncQueue\Signal\DriverStopHandler`.
+- [#4482](https://github.com/hyperf/hyperf/pull/4482) Removed deprecated `Hyperf\Utils\Resource`.
+- [#4487](https://github.com/hyperf/hyperf/pull/4487) Removed log warning from cache component when the key is greater than 64 characters.
 
 ## Deprecated
 
 - `Hyperf\Utils\Contracts\Arrayable` will be deprecated, please use `Hyperf\Contract\Arrayable` instead.
+- `Hyperf\AsyncQueue\Message` will be deprecated, please use `Hyperf\AsyncQueue\JobMessage` instead.

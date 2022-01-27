@@ -73,25 +73,18 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Annotation\Crontab;
 use Hyperf\Di\Annotation\Inject;
 
-/**
- * @Crontab(name="Foo", rule="* * * * *", callback="execute", memo="這是一個示例的定時任務")
- */
+#[Crontab(name: "Foo", rule: "* * * * *", callback: "execute", memo: "這是一個示例的定時任務")]
 class FooTask
 {
-    /**
-     * @Inject()
-     * @var \Hyperf\Contract\StdoutLoggerInterface
-     */
-    private $logger;
+    #[Inject]
+    private StdoutLoggerInterface $logger;
 
     public function execute()
     {
         $this->logger->info(date('Y-m-d H:i:s', time()));
     }
-    
-    /**
-     * @Crontab(rule="* * * * * *", memo="foo")
-     */
+
+    #[Crontab(rule: "* * * * *", memo: "foo")]
     public function foo()
     {
         var_dump('foo');
@@ -149,9 +142,7 @@ namespace App\Crontab;
 use Carbon\Carbon;
 use Hyperf\Crontab\Annotation\Crontab;
 
-/**
- * @Crontab(name="Echo", rule="* * * * * *", callback="execute", enable="isEnable", memo="這是一個示例的定時任務")
- */
+#[Crontab(name: "Echo", rule: "* * * * *", callback: "execute", enable: "isEnable", memo: "這是一個示例的定時任務")]
 class EchoCrontab
 {
     public function execute()
@@ -190,9 +181,7 @@ namespace App\Crontab;
 use Carbon\Carbon;
 use Hyperf\Crontab\Annotation\Crontab;
 
-/**
- * @Crontab(name="Echo", rule="* * * * * *", callback="execute", enable={EnableChecker::class, "isEnable"}, memo="這是一個示例的定時任務")
- */
+#[Crontab(name: "Echo", rule: "* * * * *", callback: "execute", enable: [EnableChecker::class, "isEnable"], memo: "這是一個示例的定時任務")]
 class EchoCrontab
 {
     public function execute()
@@ -253,3 +242,40 @@ return [
 
 當您完成上述的配置後，以及定義了定時任務後，只需要直接啟動 `Server`，定時任務便會一同啟動。   
 在您啟動後，即便您定義了足夠短週期的定時任務，定時任務也不會馬上開始執行，所有定時任務都會等到下一個分鐘週期時才會開始執行，比如您啟動的時候是 `10 時 11 分 12 秒`，那麼定時任務會在 `10 時 12 分 00 秒` 才會正式開始執行。
+
+### FailToExecute 事件
+
+當定時任務執行失敗時，會觸發 `FailToExecute` 事件，所以我們可以編寫以下監聽器，拿到對應的 `Crontab` 和 `Throwable`。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Hyperf\Crontab\Event\FailToExecute;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Psr\Container\ContainerInterface;
+
+#[Listener]
+class FailToExecuteCrontabListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            FailToExecute::class,
+        ];
+    }
+
+    /**
+     * @param FailToExecute $event
+     */
+    public function process(object $event)
+    {
+        var_dump($event->crontab->getName());
+        var_dump($event->throwable->getMessage());
+    }
+}
+```

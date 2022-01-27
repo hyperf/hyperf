@@ -14,11 +14,11 @@ namespace Hyperf\Pool;
 use Closure;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Engine\Channel;
 use Hyperf\Pool\Exception\InvalidArgumentException;
 use Hyperf\Pool\Exception\SocketPopException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Swoole\Coroutine;
 use Swoole\Timer;
 
 /**
@@ -26,10 +26,7 @@ use Swoole\Timer;
  */
 abstract class KeepaliveConnection implements ConnectionInterface
 {
-    /**
-     * @var Coroutine\Channel
-     */
-    protected $channel;
+    protected Channel $channel;
 
     protected float $lastUseTime = 0.0;
 
@@ -69,7 +66,7 @@ abstract class KeepaliveConnection implements ConnectionInterface
 
         $connection = $this->getActiveConnection();
 
-        $channel = new Coroutine\Channel(1);
+        $channel = new Channel(1);
         $channel->push($connection);
         $this->channel = $channel;
         $this->lastUseTime = microtime(true);
@@ -158,7 +155,7 @@ abstract class KeepaliveConnection implements ConnectionInterface
             } catch (\Throwable $throwable) {
                 $this->clear();
                 if ($logger = $this->getLogger()) {
-                    $message = sprintf('Socket of %s heartbeat failed, %s', $this->name, (string) $throwable);
+                    $message = sprintf('Socket of %s heartbeat failed, %s', $this->name, $throwable);
                     $logger->error($message);
                 }
             }

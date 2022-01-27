@@ -17,19 +17,7 @@ use PhpParser\NodeVisitorAbstract;
 
 abstract class AbstractVisitor extends NodeVisitorAbstract
 {
-    /**
-     * @var ModelOption
-     */
-    protected $option;
-
-    /**
-     * @var ModelData
-     */
-    protected $data;
-
-    public function __construct(ModelOption $option, ModelData $data)
+    public function __construct(protected ModelOption $option, protected ModelData $data)
     {
-        $this->option = $option;
-        $this->data = $data;
     }
 }

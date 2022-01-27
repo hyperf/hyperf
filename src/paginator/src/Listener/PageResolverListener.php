@@ -65,13 +65,7 @@ class PageResolverListener implements ListenerInterface
             }
 
             $container = ApplicationContext::getContainer();
-            $url = $container->get(RequestInterface::class)->url();
-
-            if (filter_var($url, FILTER_VALIDATE_URL) !== false) {
-                return $url;
-            }
-
-            return $url;
+            return $container->get(RequestInterface::class)->url();
         });
     }
 }

@@ -26,9 +26,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController
 {
     public function info(RequestInterface $request)
@@ -44,10 +42,7 @@ class IndexController
 
 ```php
 // 註解方式
-/**
- * @GetMapping(path="/user/{id:\d+}")
- */
- 
+#[GetMapping(path: "/user/{id:\d+}")]
 // 配置方式
 use Hyperf\HttpServer\Router\Router;
 
@@ -64,9 +59,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController
 {
     public function info(RequestInterface $request, int $id)
@@ -86,9 +79,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController
 {
     public function info(RequestInterface $request)

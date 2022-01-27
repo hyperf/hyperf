@@ -27,10 +27,8 @@ class ImportCommand extends Command
 
     /**
      * The console command description.
-     *
-     * @var string
      */
-    protected $description = 'Import the given model into the search index';
+    protected string $description = 'Import the given model into the search index';
 
     /**
      * Execute the console command.

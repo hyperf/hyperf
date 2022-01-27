@@ -17,10 +17,8 @@ trait SoftDeletes
 {
     /**
      * Indicates if the model is currently force deleting.
-     *
-     * @var bool
      */
-    protected $forceDeleting = false;
+    protected bool $forceDeleting = false;
 
     /**
      * Boot the soft deleting trait for a model.

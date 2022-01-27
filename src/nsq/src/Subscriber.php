@@ -22,29 +22,14 @@ class Subscriber
 
     public const TYPE_MESSAGE = 2;
 
-    /**
-     * @var \Swoole\Coroutine\Socket
-     */
-    protected $socket;
+    protected int $size = 0;
 
-    /**
-     * @var int
-     */
-    protected $size;
+    protected string $type = '';
 
-    /**
-     * @var string
-     */
-    protected $type;
+    protected string $payload = '';
 
-    /**
-     * @var string
-     */
-    protected $payload;
-
-    public function __construct(Socket $socket)
+    public function __construct(protected Socket $socket)
     {
-        $this->socket = $socket;
     }
 
     public function recv()

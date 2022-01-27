@@ -17,14 +17,8 @@ use InvalidArgumentException;
 
 class ProtocolManager
 {
-    /**
-     * @var \Hyperf\Contract\ConfigInterface
-     */
-    private $config;
-
-    public function __construct(ConfigInterface $config)
+    public function __construct(private ConfigInterface $config)
     {
-        $this->config = $config;
     }
 
     public function register(string $name, array $data)

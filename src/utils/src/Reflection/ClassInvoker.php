@@ -15,19 +15,10 @@ use ReflectionClass;
 
 class ClassInvoker
 {
-    /**
-     * @var object
-     */
-    protected $instance;
+    protected ReflectionClass $reflection;
 
-    /**
-     * @var ReflectionClass
-     */
-    protected $reflection;
-
-    public function __construct(object $instance)
+    public function __construct(protected object $instance)
     {
-        $this->instance = $instance;
         $this->reflection = new ReflectionClass($instance);
     }
 

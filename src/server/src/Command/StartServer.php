@@ -24,14 +24,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class StartServer extends Command
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
         parent::__construct('start');
         $this->setDescription('Start hyperf servers.');
     }
@@ -89,7 +83,7 @@ class StartServer extends Command
         $useShortname = ini_get_all('swoole')['swoole.use_shortname']['local_value'];
         $useShortname = strtolower(trim(str_replace('0', '', $useShortname)));
         if (! in_array($useShortname, ['', 'off', 'false'], true)) {
-            $output->writeln("<error>ERROR</error> Swoole short function names must be disabled before the server starts, please set swoole.use_shortname = 'Off' in your php.ini.");
+            $output->writeln("<error>ERROR</error> Swoole short function names must be disabled before the server starts, please set swoole.use_shortname='Off' in your php.ini.");
             exit(SIGTERM);
         }
     }

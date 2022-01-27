@@ -9,8 +9,8 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Kafka\Exception;
+namespace Hyperf\Amqp\Exception;
 
-class ConnectionCLosedException extends KafkaException
+class SendChannelClosedException extends \RuntimeException
 {
 }

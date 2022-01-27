@@ -15,20 +15,11 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 
 abstract class Mapping extends AbstractAnnotation
 {
-    /**
-     * @var array
-     */
-    public $methods;
+    public array $methods = [];
 
-    /**
-     * @var string
-     */
-    public $path;
+    public ?string $path = null;
 
-    /**
-     * @var array
-     */
-    public $options = [];
+    public array $options = [];
 
     public function __construct(...$value)
     {

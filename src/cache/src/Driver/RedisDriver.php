@@ -28,7 +28,7 @@ class RedisDriver extends Driver implements KeyCollectorInterface
         $this->redis = $container->get(\Redis::class);
     }
 
-    public function get($key, $default = null)
+    public function get($key, $default = null): mixed
     {
         $res = $this->redis->get($this->getCacheKey($key));
         if ($res === false) {
@@ -48,7 +48,7 @@ class RedisDriver extends Driver implements KeyCollectorInterface
         return [true, $this->packer->unpack($res)];
     }
 
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value, $ttl = null): bool
     {
         $seconds = $this->secondsUntil($ttl);
         $res = $this->packer->pack($value);
@@ -59,17 +59,17 @@ class RedisDriver extends Driver implements KeyCollectorInterface
         return $this->redis->set($this->getCacheKey($key), $res);
     }
 
-    public function delete($key)
+    public function delete($key): bool
     {
         return (bool) $this->redis->del($this->getCacheKey($key));
     }
 
-    public function clear()
+    public function clear(): bool
     {
         return $this->clearPrefix('');
     }
 
-    public function getMultiple($keys, $default = null)
+    public function getMultiple($keys, $default = null): iterable
     {
         $cacheKeys = array_map(function ($key) {
             return $this->getCacheKey($key);
@@ -84,7 +84,7 @@ class RedisDriver extends Driver implements KeyCollectorInterface
         return $result;
     }
 
-    public function setMultiple($values, $ttl = null)
+    public function setMultiple($values, $ttl = null): bool
     {
         if (! is_array($values)) {
             throw new InvalidArgumentException('The values is invalid!');
@@ -107,7 +107,7 @@ class RedisDriver extends Driver implements KeyCollectorInterface
         return $this->redis->mset($cacheKeys);
     }
 
-    public function deleteMultiple($keys)
+    public function deleteMultiple($keys): bool
     {
         $cacheKeys = array_map(function ($key) {
             return $this->getCacheKey($key);
@@ -116,7 +116,7 @@ class RedisDriver extends Driver implements KeyCollectorInterface
         return (bool) $this->redis->del(...$cacheKeys);
     }
 
-    public function has($key)
+    public function has($key): bool
     {
         return (bool) $this->redis->exists($this->getCacheKey($key));
     }

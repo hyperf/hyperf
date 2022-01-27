@@ -15,12 +15,36 @@ use Hyperf\Contract\CompressInterface;
 use Hyperf\Contract\UnCompressInterface;
 use Serializable;
 
+/**
+ * @deprecated in v3.1, please use JobMessage instead
+ */
 class Message implements MessageInterface, Serializable
 {
     protected int $attempts = 0;
 
     public function __construct(protected JobInterface $job)
     {
+    }
+
+    public function __serialize(): array
+    {
+        if ($this->job instanceof CompressInterface) {
+            /* @phpstan-ignore-next-line */
+            $this->job = $this->job->compress();
+        }
+
+        return [$this->job, $this->attempts];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        [$job, $attempts] = $data;
+        if ($job instanceof UnCompressInterface) {
+            $job = $job->uncompress();
+        }
+
+        $this->job = $job;
+        $this->attempts = $attempts;
     }
 
     public function job(): JobInterface

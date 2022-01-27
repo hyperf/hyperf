@@ -154,20 +154,19 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     public function compile($path = null)
     {
-        if ($path) {
-            $this->setPath($path);
-        }
+        $path = $path ?? $this->getPath();
 
         if (! is_null($this->cachePath)) {
-            $contents = $this->compileString($this->files->get($this->getPath()));
+            $contents = $this->compileString($this->files->get($path));
 
-            if (! empty($this->getPath())) {
-                $contents = $this->appendFilePath($contents);
+            if (! empty($path)) {
+                $contents = $this->appendFilePath($contents, $path);
             }
 
             $this->files->put(
-                $this->getCompiledPath($this->getPath()),
-                $contents
+                $this->getCompiledPath($path),
+                $contents,
+                true
             );
         }
     }
@@ -220,6 +219,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
         // If there are any footer lines that need to get added to a template we will
         // add them here at the end of the template. This gets used mainly for the
         // template inheritance via the extends keyword that should be appended.
+        /* @phpstan-ignore-next-line */
         if (count($this->footer) > 0) {
             $result = $this->addFooters($result);
         }
@@ -479,9 +479,10 @@ class BladeCompiler extends Compiler implements CompilerInterface
      * Append the file path to the compiled string.
      *
      * @param string $contents
+     * @param string $path
      * @return string
      */
-    protected function appendFilePath($contents)
+    protected function appendFilePath($contents, $path)
     {
         $tokens = $this->getOpenAndClosingPhpTokens($contents);
 
@@ -489,7 +490,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
             $contents .= ' ?>';
         }
 
-        return $contents . "<?php /**PATH {$this->getPath()} ENDPATH**/ ?>";
+        return $contents . "<?php /**PATH {$path} ENDPATH**/ ?>";
     }
 
     /**

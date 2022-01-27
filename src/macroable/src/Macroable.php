@@ -24,10 +24,8 @@ trait Macroable
 {
     /**
      * The registered string macros.
-     *
-     * @var array
      */
-    protected static $macros = [];
+    protected static array $macros = [];
 
     /**
      * Dynamically handle calls to the class.

@@ -19,26 +19,27 @@ use Swoole\Http\Response;
 class ResponseEmitter implements ResponseEmitterInterface
 {
     /**
-     * @param Response $swooleResponse
+     * @param Response $connection
      */
-    public function emit(ResponseInterface $response, $swooleResponse, bool $withContent = true)
+    public function emit(ResponseInterface $response, mixed $connection, bool $withContent = true): void
     {
         try {
-            if (strtolower($swooleResponse->header['Upgrade'] ?? '') === 'websocket') {
+            if (strtolower($connection->header['Upgrade'] ?? '') === 'websocket') {
                 return;
             }
-            $this->buildSwooleResponse($swooleResponse, $response);
+            $this->buildSwooleResponse($connection, $response);
             $content = $response->getBody();
             if ($content instanceof FileInterface) {
-                return $swooleResponse->sendfile($content->getFilename());
+                $connection->sendfile($content->getFilename());
+                return;
             }
 
             if ($withContent) {
-                $swooleResponse->end((string) $content);
+                $connection->end((string) $content);
             } else {
-                $swooleResponse->end();
+                $connection->end();
             }
-        } catch (\Throwable $exception) {
+        } catch (\Throwable) {
         }
     }
 

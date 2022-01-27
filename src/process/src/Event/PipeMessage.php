@@ -13,16 +13,7 @@ namespace Hyperf\Process\Event;
 
 class PipeMessage
 {
-    /**
-     * @var mixed
-     */
-    public $data;
-
-    /**
-     * @param mixed $data
-     */
-    public function __construct($data)
+    public function __construct(public mixed $data)
     {
-        $this->data = $data;
     }
 }

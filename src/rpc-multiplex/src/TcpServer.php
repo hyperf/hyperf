@@ -27,6 +27,7 @@ use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Coroutine;
+use Multiplex\Contract\HasHeartbeatInterface as Heartbeat;
 use Multiplex\Contract\PackerInterface as PacketPacker;
 use Multiplex\Packet;
 use Psr\Container\ContainerInterface;
@@ -37,35 +38,17 @@ use Swoole\Server as SwooleServer;
 
 class TcpServer extends Server
 {
-    /**
-     * @var ProtocolManager
-     */
-    protected $protocolManager;
+    protected ProtocolManager $protocolManager;
 
-    /**
-     * @var HttpMessageBuilderInterface
-     */
-    protected $messageBuilder;
+    protected ?HttpMessageBuilderInterface $messageBuilder = null;
 
-    /**
-     * @var PackerInterface
-     */
-    protected $packer;
+    protected ?PackerInterface $packer = null;
 
-    /**
-     * @var array
-     */
-    protected $serverConfig;
+    protected array $serverConfig = [];
 
-    /**
-     * @var string
-     */
-    protected $proto;
+    protected string $proto;
 
-    /**
-     * @var PacketPacker
-     */
-    protected $packetPacker;
+    protected PacketPacker $packetPacker;
 
     public function __construct(
         ContainerInterface $container,
@@ -97,7 +80,7 @@ class TcpServer extends Server
             $packet = $this->packetPacker->unpack($data);
             if ($packet->isHeartbeat()) {
                 $response = new Response();
-                $this->send($server, $fd, $response->withContent(Packet::PONG));
+                $this->send($server, $fd, $response->withContent(Heartbeat::PONG));
                 return;
             }
 

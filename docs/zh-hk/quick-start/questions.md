@@ -118,9 +118,9 @@ use Hyperf\Di\Annotation\Inject;
 trait TestTrait
 {
     /**
-     * @Inject()   
      * @var ResponseInterface
      */
+    #[Inject]
     protected $response;
 }
 ```
@@ -169,3 +169,15 @@ http2 => enabled
 如果沒有，需要重新編譯 Swoole 並增加 `--enable-http2` 參數。
 
 2. 檢查 [server.php](/zh-hk/config?id=serverphp-配置説明) 文件中 `open_http2_protocol` 選項是否為 `true`。
+
+## Command 無法正常關閉
+
+在 Command 中使用 AMQP 等多路複用技術後，會導致無法正常關閉，碰到這種情況只需要在執行邏輯最後增加以下代碼即可。
+
+```php
+<?php
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coordinator\Constants;
+
+CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
+```

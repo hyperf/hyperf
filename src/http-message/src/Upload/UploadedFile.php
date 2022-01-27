@@ -69,11 +69,11 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
     /**
      * TODO: ?string => string.
      */
-    public function getExtension(): ?string
+    public function getExtension(): string
     {
         $clientName = $this->getClientFilename();
         $segments = explode('.', $clientName);
-        return end($segments);
+        return (string) end($segments);
     }
 
     public function getMimeType(): string

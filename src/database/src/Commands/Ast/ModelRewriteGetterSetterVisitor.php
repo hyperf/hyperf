@@ -22,12 +22,12 @@ class ModelRewriteGetterSetterVisitor extends AbstractVisitor
     /**
      * @var string[]
      */
-    protected $getters = [];
+    protected array $getters = [];
 
     /**
      * @var string[]
      */
-    protected $setters = [];
+    protected array $setters = [];
 
     public function __construct(ModelOption $option, ModelData $data)
     {

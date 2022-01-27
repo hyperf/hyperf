@@ -13,10 +13,7 @@ namespace Hyperf\ServiceGovernance;
 
 class ServiceManager
 {
-    /**
-     * @var array
-     */
-    protected $services = [];
+    protected array $services = [];
 
     /**
      * Register a service to the manager.

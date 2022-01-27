@@ -24,44 +24,21 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Swow\Coroutine;
+use function Swow\Sync\waitAll;
 
 class SwowServer implements ServerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ?ServerConfig $config = null;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected ?HttpServer $server = null;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    protected bool $mainServerStarted = false;
 
-    /**
-     * @var ServerConfig
-     */
-    protected $config;
-
-    /**
-     * @var HttpServer
-     */
-    protected $server;
-
-    /**
-     * @var bool
-     */
-    protected $mainServerStarted = false;
-
-    public function __construct(ContainerInterface $container, LoggerInterface $logger, EventDispatcherInterface $dispatcher)
-    {
-        $this->container = $container;
-        $this->logger = $logger;
-        $this->eventDispatcher = $dispatcher;
+    public function __construct(
+        protected ContainerInterface $container,
+        protected LoggerInterface $logger,
+        protected EventDispatcherInterface $eventDispatcher
+    ) {
     }
 
     public function init(ServerConfig $config): ServerInterface
@@ -70,7 +47,7 @@ class SwowServer implements ServerInterface
         return $this;
     }
 
-    public function start()
+    public function start(): void
     {
         $this->writePid();
         $this->initServer($this->config);
@@ -89,18 +66,20 @@ class SwowServer implements ServerInterface
                 CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
             });
         }
+
+        waitAll();
     }
 
-    public function getServer()
+    public function getServer(): HttpServer
     {
-        // TODO: Implement getServer() method.
+        return $this->server;
     }
 
     protected function initServer(ServerConfig $config): void
     {
         $servers = $config->getServers();
         foreach ($servers as $server) {
-            if (! $server instanceof \Hyperf\Server\Port) {
+            if (! $server instanceof Port) {
                 continue;
             }
             $name = $server->getName();

@@ -1,5 +1,88 @@
 # 版本更新記錄
 
+# v2.2.23 - 2022-01-17
+
+## 修復
+
+- [#4426](https://github.com/hyperf/hyperf/pull/4426) 修復 `view-engine` 模板引擎，在併發請求下導致模板緩存生成錯誤的問題。
+
+## 新增
+
+- [#4449](https://github.com/hyperf/hyperf/pull/4449) 為 `Hyperf\Utils\Collection` 增加多條件排序的能力。
+- [#4455](https://github.com/hyperf/hyperf/pull/4455) 新增命令 `gen:view-engine-cache` 可以預生成模板緩存，避免併發帶來的一系列問題。
+- [#4453](https://github.com/hyperf/hyperf/pull/4453) 新增 `Hyperf\Tracer\Aspect\ElasticserachAspect`，用來記錄 `elasticsearch` 客户端的調用記錄。
+- [#4458](https://github.com/hyperf/hyperf/pull/4458) 新增 `Hyperf\Di\ScanHandler\ProcScanHandler`，用來支持 `Windows` + `Swow` 環境下啟動服務。
+
+# v2.2.22 - 2022-01-04
+
+## 修復
+
+- [#4399](https://github.com/hyperf/hyperf/pull/4399) 修復使用 `RedisCluster` 時，無法使用 `scan` 方法的問題。
+
+## 新增
+
+- [#4409](https://github.com/hyperf/hyperf/pull/4409) 為 `session` 增加數據庫支持。
+- [#4411](https://github.com/hyperf/hyperf/pull/4411) 為 `tracer` 組件，新增 `Hyperf\Tracer\Aspect\DbAspect`，用於記錄 `hyperf/db` 組件產生的 `SQL` 日誌。
+- [#4420](https://github.com/hyperf/hyperf/pull/4420) 為 `Hyperf\Amqp\IO\SwooleIO` 增加 `SSL` 支持。
+
+## 優化
+
+- [#4406](https://github.com/hyperf/hyperf/pull/4406) 刪除 `Swoole PSR-0` 風格代碼，更加友好的支持 `Swoole 5.0` 版本。
+- [#4429](https://github.com/hyperf/hyperf/pull/4429) 為 `Debug::getRefCount()` 方法增加類型檢測，只能用於輸出對象的 `RefCount`。
+
+# v2.2.21 - 2021-12-20
+
+## 修復
+
+- [#4347](https://github.com/hyperf/hyperf/pull/4347) 修復使用 `AMQP` 組件時，如果連接緩衝區溢出，會導致連接被綁定到多個協程從而報錯的問題。
+- [#4373](https://github.com/hyperf/hyperf/pull/4373) 修復使用 `Snowflake` 組件時，由於 `getWorkerId()` 中存在 `IO` 操作進而導致協程切換，最終導致元數據生成重複的問題。
+
+## 新增
+
+- [#4344](https://github.com/hyperf/hyperf/pull/4344) 新增事件 `Hyperf\Crontab\Event\FailToExecute`，此事件會在 `Crontab` 任務執行失敗時觸發。
+- [#4348](https://github.com/hyperf/hyperf/pull/4348) 支持使用 `gen:*` 命令創建文件時，自動吊起對應的 `IDE`，並打開當前文件。
+
+## 優化
+
+- [#4350](https://github.com/hyperf/hyperf/pull/4350) 優化了未開啟 `swoole.use_shortname` 時的錯誤信息。
+- [#4360](https://github.com/hyperf/hyperf/pull/4360) 將 `Hyperf\Amqp\IO\SwooleIO` 進行重構，使用更加穩定和高效的 `Swoole\Coroutine\Socket` 而非 `Swoole\Coroutine\Client`。
+
+# v2.2.20 - 2021-12-13
+
+## 修復
+
+- [#4338](https://github.com/hyperf/hyperf/pull/4338) 修復使用單測客户端時，路徑中帶有參數會導致無法正確匹配路由的問題。
+- [#4346](https://github.com/hyperf/hyperf/pull/4346) 修復使用組件 `php-amqplib/php-amqplib:3.1.1` 時，啟動報錯的問題。
+
+## 新增
+
+- [#4330](https://github.com/hyperf/hyperf/pull/4330) 為 `phar` 組件支持打包 `vendor/bin` 目錄。
+- [#4331](https://github.com/hyperf/hyperf/pull/4331) 新增方法 `Hyperf\Testing\Debug::getRefCount($object)`。
+
+# v2.2.19 - 2021-12-06
+
+## 修復
+
+- [#4308](https://github.com/hyperf/hyperf/pull/4308) 修復執行 `server:watch` 時，因為使用相對路徑導致 `collector-reload` 文件找不到的問題。
+
+## 優化
+
+- [#4317](https://github.com/hyperf/hyperf/pull/4317) 為 `Hyperf\Utils\Collection` 和 `Hyperf\Database\Model\Collection` 增強類型提示功能。
+
+# v2.2.18 - 2021-11-29
+
+## 修復
+
+- [#4283](https://github.com/hyperf/hyperf/pull/4283) 修復當 `GRPC` 結果為 `null` 時，`Hyperf\Grpc\Parser::deserializeMessage()` 報錯的問題。
+
+## 新增
+
+- [#4284](https://github.com/hyperf/hyperf/pull/4284) 新增方法 `Hyperf\Utils\Network::ip()` 獲取本地 `IP`。
+- [#4290](https://github.com/hyperf/hyperf/pull/4290) 為 `HTTP` 服務增加 `chunk` 功能。
+- [#4291](https://github.com/hyperf/hyperf/pull/4291) 為 `value()` 方法增加動態參數功能。
+- [#4293](https://github.com/hyperf/hyperf/pull/4293) 為 `server:watch` 命令增加相對路徑支持。
+- [#4295](https://github.com/hyperf/hyperf/pull/4295) 為 `Hyperf\Database\Schema\Blueprint::bigIncrements()` 增加別名 `id()`。
+
 # v2.2.17 - 2021-11-22
 
 ## 修復
@@ -1193,8 +1276,8 @@
 ```
 class Example {
     /**
-    * @Inject
-    */
+     * @Inject
+     */
     private ExampleService $exampleService;
 }
 ```

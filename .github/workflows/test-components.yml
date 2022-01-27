@@ -6,8 +6,7 @@ on:
   schedule:
     - cron: '0 2 * * *'
 env:
-  SW_VERSION: 'v4.8.2'
-  YASD_VERSION: 'v0.3.9'
+  SW_VERSION: 'v4.8.6'
 jobs:
   database:
     name: Test for Database
@@ -34,7 +33,7 @@ jobs:
       - name: Setup Swoole
         run: ./.travis/swoole.install.sh
       - name: Setup Packages
-        run: composer update -o
+        run: ./.travis/requirement.install.sh
       - name: Setup Services
         run: |
           docker run --name mysql -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql:${{ matrix.mysql-version }} --bind-address=0.0.0.0 --default-authentication-plugin=mysql_native_password
@@ -84,6 +83,7 @@ jobs:
           composer require "overtrue/flysystem-qiniu:^2.0"
       - name: Run Test Cases
         run: |
+          ./.travis/requirement.install.sh
           composer test src/filesystem -- --exclude-group NonCoroutine
   phar:
     name: Test for Building PHAR ${{ matrix.no-dev }}
@@ -122,7 +122,9 @@ jobs:
         run: |
           cd hyperf-phar-tester
           php bin/hyperf.php phar:build --name no_env.phar
+          php bin/hyperf.php read:vendor-bin
           php no_env.phar show:name -N null
+          php no_env.phar read:vendor-bin
           cp .env.example .env
           php bin/hyperf.php phar:build --name default_env.phar
           php default_env.phar show:name -N hyperf-phar-tester
@@ -131,8 +133,6 @@ jobs:
           php link_env.phar show:name -N helloworld
           sudo chmod u+x link_env.phar
           ./link_env.phar show:name -N helloworld
-
-
   container:
     name: Test for Psr Container V1.0 ~ V2.0
     runs-on: 'ubuntu-latest'
@@ -152,15 +152,14 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: phpize
-          ini-values: opcache.enable_cli=1
+          ini-values: opcache.enable_cli=0
           coverage: none
       - name: Setup Swoole
         run: ./.travis/swoole.install.sh
-      - name: Setup Yasd
-        run: ./.travis/yasd.install.sh
       - name: Setup Packages
         run: |
           cp .travis/.env.example .env
+          ./.travis/requirement.install.sh
           composer remove friendsofphp/php-cs-fixer --dev -W
           composer remove symfony/console --dev -W
           composer require "psr/container:${{ matrix.version }}"
@@ -201,7 +200,7 @@ jobs:
           composer remove "symfony/*" --dev -W
       - name: Run Test Cases
         run: |
-          composer update -oW
+          ./.travis/requirement.install.sh
           composer require "psr/log:${{ matrix.log-version }}"
           if [ ${{ matrix.log-version }} == '^3.0' ]
           then
@@ -217,3 +216,44 @@ jobs:
           composer test src/framework
           composer test src/logger
           composer info | grep psr/log
+  simple-cache:
+    name: Test for Psr SimpleCache V1.0 ~ V3.0
+    runs-on: 'ubuntu-latest'
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+    strategy:
+      matrix:
+        php-version: [ '8.0' ]
+        psr-version: [ '^1.0', '^2.0', '^3.0' ]
+      max-parallel: 3
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: phpize
+          ini-values: opcache.enable_cli=0
+          extensions: redis, pdo, pdo_mysql, bcmath
+          coverage: none
+      - name: Setup Swoole
+        run: ./.travis/swoole.install.sh
+      - name: Setup Services
+        run: |
+          docker run --name mysql -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql:8.0 --bind-address=0.0.0.0 --default-authentication-plugin=mysql_native_password
+          docker run --name redis -p 6379:6379 -d redis
+          sleep 20
+      - name: Setup Mysql
+        run: export TRAVIS_BUILD_DIR=$(pwd) && bash ./.travis/setup.mysql.sh
+      - name: Run Test Cases
+        run: |
+          ./.travis/requirement.install.sh
+          composer require "psr/simple-cache:${{ matrix.psr-version }}"
+          composer update -oW
+          composer analyse src/cache
+          composer test src/cache
+          composer analyse src/model-cache
+          composer test src/model-cache
+          composer info | grep psr/simple-cache

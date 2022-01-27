@@ -24,7 +24,7 @@ class SocketFactory
     /**
      * @var Socket[]
      */
-    protected $clients = [];
+    protected array $clients = [];
 
     public function __construct(protected ContainerInterface $container, protected array $config)
     {

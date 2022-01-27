@@ -13,6 +13,7 @@ namespace Hyperf\HttpMessage\Cookie;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Traversable;
 
 /**
  * Cookie jar that stores cookies as an array.
@@ -208,12 +209,12 @@ class CookieJar implements CookieJarInterface
         return true;
     }
 
-    public function count()
+    public function count(): int
     {
         return count($this->cookies);
     }
 
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new \ArrayIterator(array_values($this->cookies));
     }

@@ -17,7 +17,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Event extends AbstractAnnotation
 {
-    public function __construct($event)
+    public function __construct(string $event = 'event')
     {
     }
 }

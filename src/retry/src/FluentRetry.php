@@ -26,12 +26,12 @@ class FluentRetry
     /**
      * @var RetryPolicyInterface[]
      */
-    protected $policies = [];
+    protected array $policies = [];
 
     /**
      * @var callable
      */
-    protected $callable;
+    protected mixed $callable;
 
     public function with(RetryPolicyInterface ...$policies): FluentRetry
     {
@@ -47,9 +47,7 @@ class FluentRetry
 
     public function whenReturns($when): FluentRetry
     {
-        $this->policies[] = new ClassifierRetryPolicy([], [], null, function ($r) use ($when) {
-            return $r === $when;
-        });
+        $this->policies[] = new ClassifierRetryPolicy([], [], null, fn ($r) => $r === $when);
         return $this;
     }
 
