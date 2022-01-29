@@ -9,8 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\LoadBalancer;
 
+use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coordinator\Constants;
 use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
@@ -31,6 +34,11 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
         $this->nodes = $nodes;
     }
 
+    public function getNodes(): array
+    {
+        return $this->nodes;
+    }
+
     /**
      * @param \Hyperf\LoadBalancer\Node[] $nodes
      * @return $this
@@ -39,11 +47,6 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
     {
         $this->nodes = $nodes;
         return $this;
-    }
-
-    public function getNodes(): array
-    {
-        return $this->nodes;
     }
 
     /**
@@ -62,13 +65,26 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
 
     public function refresh(callable $callback, int $tickMs = 5000)
     {
+
         $timerId = Timer::tick($tickMs, function () use ($callback) {
-            $nodes = call($callback);
-            is_array($nodes) && $this->setNodes($nodes);
+            try {
+                $nodes = call($callback);
+                is_array($nodes) && $this->setNodes($nodes);
+            } catch (\Throwable $exception) {
+                $this->log($exception);
+            }
         });
         Coroutine::create(function () use ($timerId) {
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
             Timer::clear($timerId);
         });
+    }
+
+    private function log($message)
+    {
+        $container = ApplicationContext::getContainer();
+        if ($container->has(StdoutLoggerInterface::class) && $logger = $container->get(StdoutLoggerInterface::class)) {
+            $logger->error((string)$message);
+        }
     }
 }
