@@ -14,6 +14,7 @@ namespace Hyperf\HttpServer;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Router\Dispatched;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
@@ -28,6 +29,8 @@ use SplFileInfo;
  */
 class Request implements RequestInterface
 {
+    use Macroable;
+
     /**
      * @var array the keys to identify the data of request in coroutine context
      */
