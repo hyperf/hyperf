@@ -117,7 +117,7 @@ class NacosDriver implements DriverInterface
             return false;
         }
 
-        if ($response->getStatusCode() === 500 && strpos((string) $response->getBody(), 'is not found') > 0) {
+        if ($response->getStatusCode() === 500 && strpos((string) $response->getBody(), 'not found') > 0) {
             return false;
         }
 

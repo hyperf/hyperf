@@ -1,5 +1,29 @@
 # 版本更新記錄
 
+# v2.2.25 - 2022-01-30
+
+## 修復
+
+- [#4484](https://github.com/hyperf/hyperf/pull/4484) 修復使用 `Nacos v2.0.4` 版本時，服務是否註冊過，判斷有誤的問題。
+
+## 新增
+
+- [#4477](https://github.com/hyperf/hyperf/pull/4477) 為 `Hyperf\HttpServer\Request` 新增 `Macroable` 支持。
+
+## 優化
+
+- [#4254](https://github.com/hyperf/hyperf/pull/4254) 當使用 `Hyperf\Di\ScanHandlerPcntlScanHandler` 時，增加 `grpc.enable_fork_support` 檢測。
+
+# v2.2.24 - 2022-01-24
+
+## 修復
+
+- [#4474](https://github.com/hyperf/hyperf/pull/4474) 修復使用多路複用 RPC 時，導致測試腳本無法正常停止的問題。
+
+## 優化
+
+- [#4451](https://github.com/hyperf/hyperf/pull/4451) 優化了 `Hyperf\Watcher\Driver\FindNewerDriver` 的代碼。
+
 # v2.2.23 - 2022-01-17
 
 ## 修復
