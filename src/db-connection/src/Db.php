@@ -70,7 +70,7 @@ class Db
         return $db->__connection()->{$name}(...$arguments);
     }
 
-    private function __connection($pool = 'default'): ConnectionInterface
+    private function __connection($pool = null): ConnectionInterface
     {
         $resolver = $this->container->get(ConnectionResolverInterface::class);
         return $resolver->connection($pool);
