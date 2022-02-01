@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\LoadBalancer;
 
 class Node
@@ -33,5 +34,10 @@ class Node
         $this->host = $host;
         $this->port = $port;
         $this->weight = $weight;
+    }
+
+    public function __toString(): string
+    {
+        return $this->host . ":" . $this->port;
     }
 }

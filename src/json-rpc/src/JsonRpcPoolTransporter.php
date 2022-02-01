@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -119,13 +120,6 @@ class JsonRpcPoolTransporter implements TransporterInterface
         return $result;
     }
 
-    public function recv()
-    {
-        $client = $this->getConnection();
-
-        return $this->recvAndCheck($client, $this->recvTimeout);
-    }
-
     /**
      * Get RpcConnection from Context.
      */
@@ -136,7 +130,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
         $connection = Context::get($class);
         if (isset($connection)) {
             try {
-                if (! $connection->check()) {
+                if (!$connection->check()) {
                     // Try to reconnect the target server.
                     $connection->reconnect();
                 }
@@ -155,6 +149,14 @@ class JsonRpcPoolTransporter implements TransporterInterface
         return Context::set($class, $connection->getConnection());
     }
 
+    private function log($message)
+    {
+        $container = ApplicationContext::getContainer();
+        if ($container->has(StdoutLoggerInterface::class) && $logger = $container->get(StdoutLoggerInterface::class)) {
+            $logger->error((string)$message);
+        }
+    }
+
     public function getPool(): Pool
     {
         $name = spl_object_hash($this) . '.Pool';
@@ -165,42 +167,12 @@ class JsonRpcPoolTransporter implements TransporterInterface
             'node' => function () {
                 return $this->getNode();
             },
+            'loadBalancer' => function () {
+                return $this->getLoadBalancer();
+            }
         ];
 
         return $this->factory->getPool($name, $config);
-    }
-
-    public function getLoadBalancer(): ?LoadBalancerInterface
-    {
-        return $this->loadBalancer;
-    }
-
-    public function setLoadBalancer(LoadBalancerInterface $loadBalancer): TransporterInterface
-    {
-        $this->loadBalancer = $loadBalancer;
-        return $this;
-    }
-
-    /**
-     * @param \Hyperf\LoadBalancer\Node[] $nodes
-     */
-    public function setNodes(array $nodes): self
-    {
-        $this->nodes = $nodes;
-        return $this;
-    }
-
-    /**
-     * @return \Hyperf\LoadBalancer\Node[]
-     */
-    public function getNodes(): array
-    {
-        return $this->nodes;
-    }
-
-    public function getConfig(): array
-    {
-        return $this->config;
     }
 
     /**
@@ -215,11 +187,43 @@ class JsonRpcPoolTransporter implements TransporterInterface
         return $this->nodes[array_rand($this->nodes)];
     }
 
-    private function log($message)
+    public function getLoadBalancer(): ?LoadBalancerInterface
     {
-        $container = ApplicationContext::getContainer();
-        if ($container->has(StdoutLoggerInterface::class) && $logger = $container->get(StdoutLoggerInterface::class)) {
-            $logger->error((string) $message);
-        }
+        return $this->loadBalancer;
+    }
+
+    public function setLoadBalancer(LoadBalancerInterface $loadBalancer): TransporterInterface
+    {
+        $this->loadBalancer = $loadBalancer;
+        return $this;
+    }
+
+    public function recv()
+    {
+        $client = $this->getConnection();
+
+        return $this->recvAndCheck($client, $this->recvTimeout);
+    }
+
+    /**
+     * @return \Hyperf\LoadBalancer\Node[]
+     */
+    public function getNodes(): array
+    {
+        return $this->nodes;
+    }
+
+    /**
+     * @param \Hyperf\LoadBalancer\Node[] $nodes
+     */
+    public function setNodes(array $nodes): self
+    {
+        $this->nodes = $nodes;
+        return $this;
+    }
+
+    public function getConfig(): array
+    {
+        return $this->config;
     }
 }

@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\LoadBalancer;
 
 use Hyperf\Utils\Coordinator\Constants;
@@ -24,11 +25,21 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
     protected $nodes;
 
     /**
+     * @var null|string
+     */
+    protected $registryProtocol = null;
+
+    /**
      * @param \Hyperf\LoadBalancer\Node[] $nodes
      */
     public function __construct(array $nodes = [])
     {
         $this->nodes = $nodes;
+    }
+
+    public function getNodes(): array
+    {
+        return $this->nodes;
     }
 
     /**
@@ -41,9 +52,23 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
         return $this;
     }
 
-    public function getNodes(): array
+    /**
+     * @return string
+     */
+
+    public function getRegistryProtocol(): string|null
     {
-        return $this->nodes;
+        return $this->registryProtocol;
+    }
+
+    /**
+     * @param string|null $registryProtocol
+     * @return $this
+     */
+    public function setRegistryProtocol(string $registryProtocol = null)
+    {
+        $this->registryProtocol = $registryProtocol;
+        return $this;
     }
 
     /**

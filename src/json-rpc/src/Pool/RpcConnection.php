@@ -9,10 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\JsonRpc\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\JsonRpc\Exception\ClientException;
+use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
@@ -50,6 +52,45 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
         $this->reconnect();
     }
 
+    public function reconnect(): bool
+    {
+        if (!$this->config['node'] instanceof \Closure) {
+            throw new ConnectionException('Node of Connection is invalid.');
+        }
+
+        /** @var Node $node */
+        $node = value($this->config['node']);
+        $host = $node->host;
+        $port = $node->port;
+        $connectTimeout = $this->config['connect_timeout'];
+        $client = new SwooleClient(SWOOLE_SOCK_TCP);
+        $client->set($this->config['settings'] ?? []);
+        $result = $client->connect($host, $port, $connectTimeout);
+        if ($result === false) {
+            if ($this->config['loadBalancer'] instanceof \Closure) {
+                /** @var LoadBalancerInterface $loadBalance */
+                $loadBalance = value($this->config['loadBalancer']);
+                $loadBalance->removeNode($node);
+                $rpcRegitsrProtocol = $loadBalance->getRegistryProtocol();
+                if (empty($rpcRegitsrProtocol)) {
+                    go(function () use ($loadBalance, $node) {
+                        sleep(10);
+                        $nodes = $loadBalance->getNodes();
+                        array_push($nodes, $node);
+                        $loadBalance->setNodes($nodes);
+                    });
+                }
+            }
+            // Force close and reconnect to server.
+            $client->close();
+            throw new ClientException('Connect to server failed. ' . $client->errMsg, $client->errCode);
+        }
+
+        $this->connection = $client;
+        $this->lastUseTime = microtime(true);
+        return true;
+    }
+
     public function __call($name, $arguments)
     {
         return $this->connection->{$name}(...$arguments);
@@ -61,44 +102,18 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
     }
 
     /**
-     * @throws ConnectionException
      * @return $this
+     * @throws ConnectionException
      */
     public function getActiveConnection()
     {
         if ($this->check()) {
             return $this;
         }
-        if (! $this->reconnect()) {
+        if (!$this->reconnect()) {
             throw new ConnectionException('Connection reconnect failed.');
         }
         return $this;
-    }
-
-    public function reconnect(): bool
-    {
-        if (! $this->config['node'] instanceof \Closure) {
-            throw new ConnectionException('Node of Connection is invalid.');
-        }
-
-        /** @var Node $node */
-        $node = value($this->config['node']);
-        $host = $node->host;
-        $port = $node->port;
-        $connectTimeout = $this->config['connect_timeout'];
-
-        $client = new SwooleClient(SWOOLE_SOCK_TCP);
-        $client->set($this->config['settings'] ?? []);
-        $result = $client->connect($host, $port, $connectTimeout);
-        if ($result === false) {
-            // Force close and reconnect to server.
-            $client->close();
-            throw new ClientException('Connect to server failed. ' . $client->errMsg, $client->errCode);
-        }
-
-        $this->connection = $client;
-        $this->lastUseTime = microtime(true);
-        return true;
     }
 
     public function close(): bool

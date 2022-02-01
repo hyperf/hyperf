@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\LoadBalancer;
 
 interface LoadBalancerInterface
@@ -23,6 +24,17 @@ interface LoadBalancerInterface
      * @return $this
      */
     public function setNodes(array $nodes);
+
+    /**
+     * @param string|null $registryProtocol
+     * @return $this
+     */
+    public function setRegistryProtocol(string $registryProtocol = null);
+
+    /**
+     * @return string $registryProtocol
+     */
+    public function getRegistryProtocol(): string|null;
 
     /**
      * @return Node[] $nodes
