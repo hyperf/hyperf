@@ -22,7 +22,7 @@ class Timer
 
     private int $id = 0;
 
-    public function __construct(private StdoutLoggerInterface $logger)
+    public function __construct(private ?StdoutLoggerInterface $logger = null)
     {
     }
 
@@ -30,7 +30,7 @@ class Timer
     {
         $id = ++$this->id;
         $this->closures[$id] = true;
-        go(static function () use ($timeout, $closure, $identifier, $id) {
+        go(function () use ($timeout, $closure, $identifier, $id) {
             try {
                 $isClosing = CoordinatorManager::until($identifier)->yield($timeout);
                 if (isset($this->closures[$id])) {
@@ -43,11 +43,11 @@ class Timer
         return $id;
     }
 
-    public function tick(float $timeout, Closure $closure, string $identifier = Constants::WORKER_EXIT)
+    public function tick(float $timeout, Closure $closure, string $identifier = Constants::WORKER_EXIT): int
     {
         $id = ++$this->id;
         $this->closures[$id] = true;
-        go(static function () use ($timeout, $closure, $identifier, $id) {
+        go(function () use ($timeout, $closure, $identifier, $id) {
             try {
                 while (true) {
                     $isClosing = CoordinatorManager::until($identifier)->yield($timeout);
@@ -57,11 +57,11 @@ class Timer
 
                     try {
                         $result = $closure($isClosing);
-                        if ($result === self::STOP) {
+                        if ($result === self::STOP || $isClosing) {
                             break;
                         }
                     } catch (\Throwable $exception) {
-                        $this->logger->error((string) $exception);
+                        $this->logger?->error((string) $exception);
                     }
                 }
             } finally {
@@ -71,12 +71,12 @@ class Timer
         return $id;
     }
 
-    public function clear(int $id)
+    public function clear(int $id): void
     {
         unset($this->closures[$id]);
     }
 
-    public function clearAll()
+    public function clearAll(): void
     {
         $this->closures = [];
     }
