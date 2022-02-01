@@ -18,10 +18,8 @@ trait DetectsDeadlocks
 {
     /**
      * Determine if the given exception was caused by a deadlock.
-     *
-     * @return bool
      */
-    protected function causedByDeadlock(Exception $e)
+    protected function causedByDeadlock(Exception $e): bool
     {
         $message = $e->getMessage();
 

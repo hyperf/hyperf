@@ -13,7 +13,7 @@ namespace Hyperf\Di\Aop;
 
 class AspectManager
 {
-    protected static $container;
+    protected static array $container = [];
 
     public static function get($class, $method)
     {

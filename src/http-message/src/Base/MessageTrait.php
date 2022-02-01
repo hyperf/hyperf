@@ -23,22 +23,13 @@ trait MessageTrait
     /**
      * @var array lowercase headers
      */
-    protected $headerNames;
+    protected array $headerNames = [];
 
-    /**
-     * @var array
-     */
-    protected $headers = [];
+    protected array $headers = [];
 
-    /**
-     * @var string
-     */
-    protected $protocol = '1.1';
+    protected string $protocol = '1.1';
 
-    /**
-     * @var null|StreamInterface
-     */
-    protected $stream;
+    protected ?StreamInterface $stream = null;
 
     /**
      * Retrieves the HTTP protocol version as a string.
@@ -190,10 +181,7 @@ trait MessageTrait
         return $new;
     }
 
-    /**
-     * @return static
-     */
-    public function withHeaders(array $headers)
+    public function withHeaders(array $headers): static
     {
         $new = clone $this;
         foreach ($headers as $name => $value) {
@@ -314,7 +302,7 @@ trait MessageTrait
      * @throws \RuntimeException
      * @return array|string wanted part or all parts as array($firstName => firstPart, partname => value)
      */
-    public function getHeaderField($name, $wantedPart = '0', $firstName = '0')
+    public function getHeaderField(string $name, string $wantedPart = '0', string $firstName = '0')
     {
         return Decode::splitHeaderField($this->getHeaderLine($name), $wantedPart, $firstName);
     }
@@ -338,10 +326,7 @@ trait MessageTrait
         }
     }
 
-    /**
-     * @return static
-     */
-    private function setHeaders(array $headers)
+    private function setHeaders(array $headers): static
     {
         $this->headerNames = $this->headers = [];
         foreach ($headers as $header => $value) {
@@ -374,7 +359,7 @@ trait MessageTrait
      * @return string[] Trimmed header values
      * @see https://tools.ietf.org/html/rfc7230#section-3.2.4
      */
-    private function trimHeaderValues(array $values)
+    private function trimHeaderValues(array $values): array
     {
         return array_map(function ($value) {
             return trim((string) $value, " \t");

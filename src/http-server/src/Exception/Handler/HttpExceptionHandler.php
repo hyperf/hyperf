@@ -21,20 +21,8 @@ use Throwable;
 
 class HttpExceptionHandler extends ExceptionHandler
 {
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var FormatterInterface
-     */
-    protected $formatter;
-
-    public function __construct(StdoutLoggerInterface $logger, FormatterInterface $formatter)
+    public function __construct(protected StdoutLoggerInterface $logger, protected FormatterInterface $formatter)
     {
-        $this->logger = $logger;
-        $this->formatter = $formatter;
     }
 
     /**
@@ -51,10 +39,9 @@ class HttpExceptionHandler extends ExceptionHandler
     }
 
     /**
-     * Determine if the current exception handler should handle the exception,.
+     * Determine if the current exception handler should handle the exception.
      *
-     * @return bool
-     *              If return true, then this exception handler will handle the exception,
+     * @return bool If return true, then this exception handler will handle the exception,
      *              If return false, then delegate to next handler
      */
     public function isValid(Throwable $throwable): bool

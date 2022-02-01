@@ -23,9 +23,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\Collection;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class UserController
 {
     public function index(RequestInterface $request)

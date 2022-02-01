@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Server;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\Server\Exception\InvalidArgumentException;
-use Hyperf\Utils\Contracts\Arrayable;
 
 /**
  * @method ServerConfig setType(string $type)
@@ -30,15 +30,8 @@ use Hyperf\Utils\Contracts\Arrayable;
  */
 class ServerConfig implements Arrayable
 {
-    /**
-     * @var array
-     */
-    protected $config;
-
-    public function __construct(array $config = [])
+    public function __construct(protected array $config = [])
     {
-        $this->config = $config;
-
         if (empty($config['servers'] ?? [])) {
             throw new InvalidArgumentException('Config server.servers not exist.');
         }
@@ -79,9 +72,11 @@ class ServerConfig implements Arrayable
             }
             return $prefix === 'set' ? $this->set($propertyName, ...$arguments) : $this->__get($propertyName);
         }
+
+        throw new \InvalidArgumentException(sprintf('Invalid method %s', $name));
     }
 
-    public function addServer(Port $port): ServerConfig
+    public function addServer(Port $port): static
     {
         $this->config['servers'][] = $port;
         return $this;

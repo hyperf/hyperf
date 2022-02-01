@@ -17,22 +17,19 @@ class AtomicManager
 {
     /**
      * A container that use to store atomic.
-     *
-     * @var array
      */
-    private static $container = [];
+    private static array $container = [];
 
     /**
-     * You should initialize a Atomic with the identifier before use it.
-     * @param mixed $value
+     * You should initialize an Atomic with the identifier before use it.
      */
-    public static function initialize(string $identifier, $value = 0): void
+    public static function initialize(string $identifier, int $value = 0): void
     {
         static::$container[$identifier] = new Atomic($value);
     }
 
     /**
-     * Get a initialized Atomic from container by the identifier.
+     * Get an initialized Atomic from container by the identifier.
      *
      * @throws \RuntimeException when the Atomic with the identifier has not initialization
      */

@@ -17,7 +17,7 @@
     },
     "require": {
         "php": ">=7.2",
-        "hyperf/command": "~2.2.0",
+        "hyperf/command": "~3.0.0",
         "zircote/swagger-php": "^3.0"
     },
     "autoload": {
@@ -34,7 +34,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Swagger\\ConfigProvider"

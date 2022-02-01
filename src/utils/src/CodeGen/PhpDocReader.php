@@ -40,24 +40,16 @@ class PhpDocReader
         'iterable' => 'iterable',
     ];
 
-    /**
-     * @var null|PhpDocReader
-     */
-    protected static $instance;
+    protected static ?PhpDocReader $instance = null;
 
-    /** @var UseStatementParser */
-    private $parser;
-
-    /** @var bool */
-    private $ignorePhpDocErrors;
+    private UseStatementParser $parser;
 
     /**
      * @param bool $ignorePhpDocErrors enable or disable throwing errors when PhpDoc errors occur (when parsing annotations)
      */
-    public function __construct(bool $ignorePhpDocErrors = false)
+    public function __construct(private bool $ignorePhpDocErrors = false)
     {
         $this->parser = new UseStatementParser();
-        $this->ignorePhpDocErrors = $ignorePhpDocErrors;
     }
 
     public static function getInstance(): PhpDocReader

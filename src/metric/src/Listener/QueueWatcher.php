@@ -13,10 +13,10 @@ namespace Hyperf\Metric\Listener;
 
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Swoole\Timer;

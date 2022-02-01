@@ -15,45 +15,21 @@ use Hyperf\Utils\Str;
 
 class Option
 {
-    /**
-     * @var string
-     */
-    private $server = '';
+    private string $server = '';
 
-    /**
-     * @var string
-     */
-    private $appid = '';
+    private string $appid = '';
 
-    /**
-     * @var array
-     */
-    private $namespaces = [];
+    private array $namespaces = [];
 
-    /**
-     * @var string
-     */
-    private $cluster = 'default';
+    private string $cluster = 'default';
 
-    /**
-     * @var string
-     */
-    private $clientIp = '127.0.0.1';
+    private string $clientIp = '127.0.0.1';
 
-    /**
-     * @var int
-     */
-    private $pullTimeout = 10;
+    private int $pullTimeout = 10;
 
-    /**
-     * @var int
-     */
-    private $intervalTimeout = 60;
+    private int $intervalTimeout = 60;
 
-    /**
-     * @var string
-     */
-    private $secret;
+    private string $secret = '';
 
     public function buildBaseUrl(): string
     {
@@ -84,7 +60,7 @@ class Option
         return $this->server;
     }
 
-    public function setServer(string $server): self
+    public function setServer(string $server): static
     {
         if (! Str::startsWith($server, ['http://', 'https://'])) {
             $server = 'http://' . $server;
@@ -98,7 +74,7 @@ class Option
         return $this->appid;
     }
 
-    public function setAppid(string $appid): self
+    public function setAppid(string $appid): static
     {
         $this->appid = $appid;
         return $this;
@@ -109,7 +85,7 @@ class Option
         return $this->namespaces;
     }
 
-    public function setNamespaces(array $namespaces): self
+    public function setNamespaces(array $namespaces): static
     {
         $this->namespaces = $namespaces;
         return $this;
@@ -120,7 +96,7 @@ class Option
         return $this->cluster;
     }
 
-    public function setCluster(string $cluster): self
+    public function setCluster(string $cluster): static
     {
         $this->cluster = $cluster;
         return $this;
@@ -131,7 +107,7 @@ class Option
         return $this->clientIp;
     }
 
-    public function setClientIp(string $clientIp): self
+    public function setClientIp(string $clientIp): static
     {
         $this->clientIp = $clientIp;
         return $this;
@@ -142,7 +118,7 @@ class Option
         return $this->pullTimeout;
     }
 
-    public function setPullTimeout(int $pullTimeout): self
+    public function setPullTimeout(int $pullTimeout): static
     {
         $this->pullTimeout = $pullTimeout;
         return $this;
@@ -153,13 +129,13 @@ class Option
         return $this->intervalTimeout;
     }
 
-    public function setIntervalTimeout(int $intervalTimeout): self
+    public function setIntervalTimeout(int $intervalTimeout): static
     {
         $this->intervalTimeout = $intervalTimeout;
         return $this;
     }
 
-    public function setSecret(string $secret): self
+    public function setSecret(string $secret): static
     {
         $this->secret = $secret;
         return $this;

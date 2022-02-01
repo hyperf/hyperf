@@ -21,7 +21,7 @@ class ManagerStub extends \Hyperf\ModelCache\Manager
         return parent::formatModel($model);
     }
 
-    public function getCacheTTL(Model $instance, HandlerInterface $handler)
+    public function getCacheTTL(Model $instance, HandlerInterface $handler): \DateInterval|int
     {
         return parent::getCacheTTL($instance, $handler);
     }

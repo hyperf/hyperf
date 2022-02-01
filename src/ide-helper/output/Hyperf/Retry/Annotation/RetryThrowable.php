@@ -12,16 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\Retry\Annotation;
 
 use Attribute;
-use Doctrine\Common\Annotations\Annotation\Target;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class RetryThrowable extends Retry
 {
-    public function __construct($retryThrowables, $policies, $sleepStrategyClass, $maxAttempts, $retryBudget, $base, $retryOnThrowablePredicate, $retryOnResultPredicate, $ignoreThrowables, $fallback)
+    public function __construct(array $retryThrowables = ['Throwable'])
     {
     }
 }

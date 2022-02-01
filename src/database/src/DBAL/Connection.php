@@ -25,18 +25,10 @@ use PDOStatement;
 class Connection implements ServerInfoAwareConnection
 {
     /**
-     * The underlying PDO connection.
-     *
-     * @var PDO
-     */
-    protected $connection;
-
-    /**
      * Create a new PDO connection instance.
      */
-    public function __construct(PDO $connection)
+    public function __construct(protected PDO $connection)
     {
-        $this->connection = $connection;
     }
 
     /**

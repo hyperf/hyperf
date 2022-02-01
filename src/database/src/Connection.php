@@ -114,38 +114,28 @@ class Connection implements ConnectionInterface
 
     /**
      * The number of active transactions.
-     *
-     * @var int
      */
-    protected $transactions = 0;
+    protected int $transactions = 0;
 
     /**
      * Indicates if changes have been made to the database.
-     *
-     * @var int
      */
-    protected $recordsModified = false;
+    protected bool $recordsModified = false;
 
     /**
-     * All of the queries run against the connection.
-     *
-     * @var array
+     * All the queries run against the connection.
      */
-    protected $queryLog = [];
+    protected array $queryLog = [];
 
     /**
      * Indicates whether queries are being logged.
-     *
-     * @var bool
      */
-    protected $loggingQueries = false;
+    protected bool $loggingQueries = false;
 
     /**
      * Indicates if the connection is in a "dry run".
-     *
-     * @var bool
      */
-    protected $pretending = false;
+    protected bool $pretending = false;
 
     /**
      * The instance of Doctrine connection.
@@ -156,10 +146,8 @@ class Connection implements ConnectionInterface
 
     /**
      * The connection resolvers.
-     *
-     * @var array
      */
-    protected static $resolvers = [];
+    protected static array $resolvers = [];
 
     /**
      * Create a new database connection instance.
@@ -523,10 +511,8 @@ class Connection implements ConnectionInterface
 
     /**
      * Indicate if any records have been modified.
-     *
-     * @param bool $value
      */
-    public function recordsHaveBeenModified($value = true)
+    public function recordsHaveBeenModified(bool $value = true)
     {
         if (! $this->recordsModified) {
             $this->recordsModified = $value;
@@ -969,7 +955,7 @@ class Connection implements ConnectionInterface
     /**
      * Configure the PDO prepared statement.
      *
-     * @return \PDOStatement
+     * @return PDOStatement
      */
     protected function prepared(PDOStatement $statement)
     {

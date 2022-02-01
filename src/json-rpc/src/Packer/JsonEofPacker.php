@@ -15,10 +15,7 @@ use Hyperf\Contract\PackerInterface;
 
 class JsonEofPacker implements PackerInterface
 {
-    /**
-     * @var string
-     */
-    protected $eof;
+    protected string $eof;
 
     public function __construct(array $options = [])
     {

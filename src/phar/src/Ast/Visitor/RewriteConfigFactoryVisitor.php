@@ -36,7 +36,7 @@ class ConfigFactory{
     public function leaveNode(Node $node)
     {
         if ($node instanceof Node\Stmt\Class_) {
-            if (isset($node->stmts) && is_array($node->stmts) && ! empty($node->stmts)) {
+            if (is_array($node->stmts) && ! empty($node->stmts)) {
                 foreach ($node->stmts as $key => $method) {
                     if ($method instanceof Node\Stmt\ClassMethod) {
                         if ($method->name->name == 'readPaths') {

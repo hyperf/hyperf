@@ -63,6 +63,11 @@ class ContainerStub
             $factory = new PoolFactory($container);
             return new Redis($factory);
         });
+        $container->shouldReceive('has')->with(Redis::class)->andReturn(true);
+        $container->shouldReceive('get')->with(Redis::class)->andReturnUsing(function () use ($container) {
+            $factory = new PoolFactory($container);
+            return new Redis($factory);
+        });
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturn(true);
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn(value(function () {
             return Mockery::mock(StdoutLoggerInterface::class);

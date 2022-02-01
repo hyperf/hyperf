@@ -20,20 +20,13 @@ abstract class RedisMetaGenerator extends MetaGenerator
 {
     public const DEFAULT_REDIS_KEY = 'hyperf:snowflake:workerId';
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
+    protected ?int $workerId = null;
 
-    protected $workerId;
+    protected ?int $dataCenterId = null;
 
-    protected $dataCenterId;
-
-    public function __construct(ConfigurationInterface $configuration, int $beginTimestamp, ConfigInterface $config)
+    public function __construct(ConfigurationInterface $configuration, int $beginTimestamp, protected ConfigInterface $config)
     {
         parent::__construct($configuration, $beginTimestamp);
-
-        $this->config = $config;
     }
 
     public function init()
@@ -41,7 +34,6 @@ abstract class RedisMetaGenerator extends MetaGenerator
         if (is_null($this->workerId) || is_null($this->dataCenterId)) {
             $pool = $this->config->get(sprintf('snowflake.%s.pool', static::class), 'default');
 
-            /** @var \Redis $redis */
             $redis = make(RedisProxy::class, [
                 'pool' => $pool,
             ]);

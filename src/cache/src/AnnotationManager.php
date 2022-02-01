@@ -24,20 +24,8 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 
 class AnnotationManager
 {
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    public function __construct(ConfigInterface $config, StdoutLoggerInterface $logger)
+    public function __construct(protected ConfigInterface $config, protected StdoutLoggerInterface $logger)
     {
-        $this->config = $config;
-        $this->logger = $logger;
     }
 
     public function getCacheableValue(string $className, string $method, array $arguments): array
@@ -116,12 +104,6 @@ class AnnotationManager
 
     protected function getFormatedKey(string $prefix, array $arguments, ?string $value = null): string
     {
-        $key = StringHelper::format($prefix, $arguments, $value);
-
-        if (strlen($key) > 64) {
-            $this->logger->warning('The cache key length is too long. The key is ' . $key);
-        }
-
-        return $key;
+        return StringHelper::format($prefix, $arguments, $value);
     }
 }

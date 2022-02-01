@@ -25,15 +25,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class GeneratorCommand extends Command
 {
-    /**
-     * @var InputInterface
-     */
-    protected $input;
+    protected ?InputInterface $input = null;
 
-    /**
-     * @var OutputInterface
-     */
-    protected $output;
+    protected ?OutputInterface $output = null;
 
     public function configure()
     {
@@ -84,11 +78,8 @@ abstract class GeneratorCommand extends Command
 
     /**
      * Parse the class name and format according to the root namespace.
-     *
-     * @param string $name
-     * @return string
      */
-    protected function qualifyClass($name)
+    protected function qualifyClass(string $name): string
     {
         $name = ltrim($name, '\\/');
 
@@ -104,22 +95,16 @@ abstract class GeneratorCommand extends Command
 
     /**
      * Determine if the class already exists.
-     *
-     * @param string $rawName
-     * @return bool
      */
-    protected function alreadyExists($rawName)
+    protected function alreadyExists(string $rawName): bool
     {
         return is_file($this->getPath($this->qualifyClass($rawName)));
     }
 
     /**
      * Get the destination class path.
-     *
-     * @param string $name
-     * @return string
      */
-    protected function getPath($name)
+    protected function getPath(string $name): string
     {
         $project = new Project();
         return BASE_PATH . '/' . $project->path($name);
@@ -127,11 +112,8 @@ abstract class GeneratorCommand extends Command
 
     /**
      * Build the directory for the class if necessary.
-     *
-     * @param string $path
-     * @return string
      */
-    protected function makeDirectory($path)
+    protected function makeDirectory(string $path): string
     {
         if (! is_dir(dirname($path))) {
             mkdir(dirname($path), 0777, true);
@@ -142,11 +124,8 @@ abstract class GeneratorCommand extends Command
 
     /**
      * Build the class with the given name.
-     *
-     * @param string $name
-     * @return string
      */
-    protected function buildClass($name)
+    protected function buildClass(string $name): string
     {
         $stub = file_get_contents($this->getStub());
 
@@ -155,12 +134,8 @@ abstract class GeneratorCommand extends Command
 
     /**
      * Replace the namespace for the given stub.
-     *
-     * @param string $stub
-     * @param string $name
-     * @return $this
      */
-    protected function replaceNamespace(&$stub, $name)
+    protected function replaceNamespace(string &$stub, string $name): static
     {
         $stub = str_replace(
             ['%NAMESPACE%'],
@@ -173,23 +148,16 @@ abstract class GeneratorCommand extends Command
 
     /**
      * Get the full namespace for a given class, without the class name.
-     *
-     * @param string $name
-     * @return string
      */
-    protected function getNamespace($name)
+    protected function getNamespace(string $name): string
     {
         return trim(implode('\\', array_slice(explode('\\', $name), 0, -1)), '\\');
     }
 
     /**
      * Replace the class name for the given stub.
-     *
-     * @param string $stub
-     * @param string $name
-     * @return string
      */
-    protected function replaceClass($stub, $name)
+    protected function replaceClass(string $stub, string $name): string
     {
         $class = str_replace($this->getNamespace($name) . '\\', '', $name);
 
@@ -198,20 +166,16 @@ abstract class GeneratorCommand extends Command
 
     /**
      * Get the desired class name from the input.
-     *
-     * @return string
      */
-    protected function getNameInput()
+    protected function getNameInput(): string
     {
         return trim($this->input->getArgument('name'));
     }
 
     /**
      * Get the console command arguments.
-     *
-     * @return array
      */
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [
             ['name', InputArgument::REQUIRED, 'The name of the class'],
@@ -220,10 +184,8 @@ abstract class GeneratorCommand extends Command
 
     /**
      * Get the console command options.
-     *
-     * @return array
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [
             ['force', 'f', InputOption::VALUE_NONE, 'Whether force to rewrite.'],

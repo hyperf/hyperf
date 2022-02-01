@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model;
 
+use Hyperf\Contract\Arrayable;
+
 class ModelIDE
 {
     /**
@@ -183,7 +185,7 @@ class ModelIDE
     /**
      * Find multiple models by their primary keys.
      *
-     * @param array|\Hyperf\Utils\Contracts\Arrayable $ids
+     * @param array|Arrayable $ids
      * @param array $columns
      * @return Collection
      */
@@ -1226,7 +1228,7 @@ class ModelIDE
      * Add a "where in raw" clause for integer values to the query.
      *
      * @param string $column
-     * @param array|\Hyperf\Utils\Contracts\Arrayable $values
+     * @param array|Arrayable $values
      * @param string $boolean
      * @param bool $not
      * @return \Hyperf\Database\Query\Builder
@@ -1240,7 +1242,7 @@ class ModelIDE
      * Add a "where not in raw" clause for integer values to the query.
      *
      * @param string $column
-     * @param array|\Hyperf\Utils\Contracts\Arrayable $values
+     * @param array|Arrayable $values
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
      */

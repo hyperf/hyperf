@@ -22,19 +22,13 @@ class SimpleNormalizer implements NormalizerInterface
 
     public function denormalize($data, string $class)
     {
-        switch ($class) {
-            case 'int':
-                return (int) $data;
-            case 'string':
-                return (string) $data;
-            case 'float':
-                return (float) $data;
-            case 'array':
-                return (array) $data;
-            case 'bool':
-                return (bool) $data;
-            default:
-                return $data;
-        }
+        return match ($class) {
+            'int' => (int) $data,
+            'string' => (string) $data,
+            'float' => (float) $data,
+            'array' => (array) $data,
+            'bool' => (bool) $data,
+            default => $data,
+        };
     }
 }

@@ -29,7 +29,7 @@ class BaseNamespace implements NamespaceInterface
     /**
      * @var array<string, callable[]>
      */
-    private $eventHandlers = [];
+    private array $eventHandlers = [];
 
     public function __construct(Sender $sender, SidProviderInterface $sidProvider, ?SocketIOConfig $config = null)
     {

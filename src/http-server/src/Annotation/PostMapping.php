@@ -13,12 +13,8 @@ namespace Hyperf\HttpServer\Annotation;
 
 use Attribute;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class PostMapping extends Mapping
 {
-    public $methods = ['POST'];
+    public array $methods = ['POST'];
 }

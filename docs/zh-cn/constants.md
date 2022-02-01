@@ -48,9 +48,7 @@ namespace App\Constants;
 use Hyperf\Constants\AbstractConstants;
 use Hyperf\Constants\Annotation\Constants;
 
-/**
- * @Constants
- */
+#[Constants]
 class ErrorCode extends AbstractConstants
 {
     /**
@@ -128,9 +126,7 @@ class IndexController extends AbstractController
 use Hyperf\Constants\AbstractConstants;
 use Hyperf\Constants\Annotation\Constants;
 
-/**
- * @Constants
- */
+#[Constants]
 class ErrorCode extends AbstractConstants
 {
     /**
@@ -169,9 +165,7 @@ return [
 use Hyperf\Constants\AbstractConstants;
 use Hyperf\Constants\Annotation\Constants;
 
-/**
- * @Constants
- */
+#[Constants]
 class ErrorCode extends AbstractConstants
 {
     /**

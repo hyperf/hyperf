@@ -15,22 +15,16 @@ class UserExtEmpty extends Model
 {
     /**
      * The table associated with the model.
-     *
-     * @var string
      */
-    protected $table = 'user_ext';
+    protected ?string $table = 'user_ext';
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = [];
+    protected array $fillable = [];
 
     /**
      * The attributes that should be cast to native types.
-     *
-     * @var array
      */
-    protected $casts = [];
+    protected array $casts = [];
 }

@@ -20,15 +20,9 @@ use Swoole\Coroutine\MySQL\Statement;
 
 class MySQLConnection extends AbstractConnection
 {
-    /**
-     * @var MySQL
-     */
-    protected $connection;
+    protected ?MySQL $connection = null;
 
-    /**
-     * @var array
-     */
-    protected $config = [
+    protected array $config = [
         'driver' => 'pdo',
         'host' => 'localhost',
         'port' => 3306,
@@ -142,16 +136,13 @@ class MySQLConnection extends AbstractConnection
     public function call(string $method, array $argument = [])
     {
         $timeout = $this->config['pool']['wait_timeout'];
-        switch ($method) {
-            case 'beginTransaction':
-                return $this->connection->begin($timeout);
-            case 'rollBack':
-                return $this->connection->rollback($timeout);
-            case 'commit':
-                return $this->connection->commit($timeout);
-        }
 
-        return $this->connection->{$method}(...$argument);
+        return match ($method) {
+            'beginTransaction' => $this->connection->begin($timeout),
+            'rollBack' => $this->connection->rollback($timeout),
+            'commit' => $this->connection->commit($timeout),
+            default => $this->connection->{$method}(...$argument),
+        };
     }
 
     public function run(Closure $closure)

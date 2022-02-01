@@ -15,6 +15,7 @@ use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Annotation\Listener as ListenerAnnotation;
 use Hyperf\Event\EventDispatcher;
+use Hyperf\Event\ListenerData;
 use Hyperf\Event\ListenerProvider;
 use Hyperf\Event\ListenerProviderFactory;
 use HyperfTest\Event\Event\Alpha;
@@ -149,10 +150,10 @@ class ListenerTest extends TestCase
     {
         // Default value.
         $listenerAnnotation = new ListenerAnnotation();
-        $this->assertSame(1, $listenerAnnotation->priority);
+        $this->assertSame(ListenerData::DEFAULT_PRIORITY, $listenerAnnotation->priority);
         // With a integer.
         $listenerAnnotation = new ListenerAnnotation(2);
-        $this->assertSame(1, $listenerAnnotation->priority);
+        $this->assertSame(ListenerData::DEFAULT_PRIORITY, $listenerAnnotation->priority);
         // Define the priority.
         $listenerAnnotation = new ListenerAnnotation([
             'priority' => 2,
@@ -167,6 +168,6 @@ class ListenerTest extends TestCase
         $listenerAnnotation = new ListenerAnnotation([
             'priority' => 'string',
         ]);
-        $this->assertSame(1, $listenerAnnotation->priority);
+        $this->assertSame(ListenerData::DEFAULT_PRIORITY, $listenerAnnotation->priority);
     }
 }

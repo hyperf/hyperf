@@ -37,7 +37,7 @@ class AnnotationTest extends TestCase
 
         $annotation = new Cacheable([
             'prefix' => 'test',
-            'ttl' => '3600',
+            'ttl' => 3600,
         ]);
 
         $this->assertSame('test', $annotation->prefix);
@@ -45,8 +45,8 @@ class AnnotationTest extends TestCase
 
         $annotation = new CachePut([
             'prefix' => 'test',
-            'ttl' => '3600',
-            'offset' => '100',
+            'ttl' => 3600,
+            'offset' => 100,
         ]);
 
         $this->assertSame('test', $annotation->prefix);

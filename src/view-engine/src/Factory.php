@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine;
 
 use Closure;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
 use Hyperf\ViewEngine\Contract\EngineInterface;
 use Hyperf\ViewEngine\Contract\EngineResolverInterface;

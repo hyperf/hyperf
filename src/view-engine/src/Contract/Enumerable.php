@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine\Contract;
 
 use Countable;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Utils\Collection;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use IteratorAggregate;
 use JsonSerializable;

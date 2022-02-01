@@ -14,36 +14,14 @@ namespace Hyperf\Di\Definition;
 class PropertyDefinition implements DefinitionInterface
 {
     /**
-     * Property name.
-     *
-     * @var string
+     * @param string $propertyName property name
+     * @param mixed $value value that should be injected in the property
+     * @param null|string $className use for injecting in properties of parent classes: the class name
+     *                               must be the name of the parent class because private properties
+     *                               can be attached to the parent classes, not the one we are resolving
      */
-    private $propertyName;
-
-    /**
-     * Value that should be injected in the property.
-     *
-     * @var mixed
-     */
-    private $value;
-
-    /**
-     * Use for injecting in properties of parent classes: the class name
-     * must be the name of the parent class because private properties
-     * can be attached to the parent classes, not the one we are resolving.
-     * @var null|string
-     */
-    private $className;
-
-    /**
-     * PropertyDefinition constructor.
-     * @param mixed $value
-     */
-    public function __construct(string $propertyName, $value, ?string $className = null)
+    public function __construct(private string $propertyName, private $value, private ?string $className = null)
     {
-        $this->propertyName = $propertyName;
-        $this->value = $value;
-        $this->className = $className;
     }
 
     /**

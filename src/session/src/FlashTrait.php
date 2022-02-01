@@ -15,9 +15,8 @@ trait FlashTrait
 {
     /**
      * Flash a key / value pair to the session.
-     * @param mixed $value
      */
-    public function flash(string $key, $value = true): void
+    public function flash(string $key, mixed $value = true): void
     {
         $this->put($key, $value);
 
@@ -28,9 +27,8 @@ trait FlashTrait
 
     /**
      * Flash a key / value pair to the session for immediate use.
-     * @param mixed $value
      */
-    public function now(string $key, $value): void
+    public function now(string $key, mixed $value): void
     {
         $this->put($key, $value);
 
@@ -38,7 +36,7 @@ trait FlashTrait
     }
 
     /**
-     * Reflash all of the session flash data.
+     * Reflash all the session flash data.
      */
     public function reflash(): void
     {

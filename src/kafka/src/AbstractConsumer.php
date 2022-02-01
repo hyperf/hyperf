@@ -15,40 +15,22 @@ use longlang\phpkafka\Consumer\ConsumeMessage;
 
 abstract class AbstractConsumer
 {
-    /**
-     * @var string
-     */
-    public $name = 'kafka';
+    public string $name = 'kafka';
 
-    /**
-     * @var string
-     */
-    public $pool = 'default';
+    public string $pool = 'default';
 
     /**
      * @var string|string[]
      */
-    public $topic;
+    public string|array $topic;
 
-    /**
-     * @var null|string
-     */
-    public $groupId;
+    public ?string $groupId;
 
-    /**
-     * @var null|string
-     */
-    public $memberId;
+    public ?string $memberId;
 
-    /**
-     * @var null|string
-     */
-    public $groupInstanceId;
+    public ?string $groupInstanceId;
 
-    /**
-     * @var bool
-     */
-    public $autoCommit = true;
+    public bool $autoCommit = true;
 
     public function getPool(): string
     {

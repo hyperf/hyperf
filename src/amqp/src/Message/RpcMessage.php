@@ -17,10 +17,7 @@ use Hyperf\Utils\ApplicationContext;
 
 abstract class RpcMessage extends Message implements RpcMessageInterface
 {
-    /**
-     * @var string
-     */
-    protected $queue = '';
+    protected string $queue = '';
 
     /**
      * @var mixed

@@ -15,7 +15,9 @@ use Closure;
 use Hyperf\HttpMessage\Base\Response;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
+use Hyperf\Rpc\ErrorResponse;
 use Hyperf\Rpc\Protocol;
+use Hyperf\Rpc\Response as RPCResponse;
 use Hyperf\RpcMultiplex\Contract\HttpMessageBuilderInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -23,15 +25,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 {
-    /**
-     * @var HttpMessageBuilderInterface
-     */
-    protected $responseBuilder;
+    protected HttpMessageBuilderInterface $responseBuilder;
 
-    /**
-     * @var DataFormatterInterface
-     */
-    protected $dataFormatter;
+    protected DataFormatterInterface $dataFormatter;
 
     public function __construct(ContainerInterface $container, Protocol $protocol, HttpMessageBuilderInterface $builder, string $serverName)
     {
@@ -41,7 +37,7 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
         $this->dataFormatter = $protocol->getDataFormatter();
     }
 
-    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request)
+    protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request): mixed
     {
         if ($dispatched->handler->callback instanceof Closure) {
             $response = call($dispatched->handler->callback);
@@ -74,14 +70,14 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
         return $this->buildData($request, $response);
     }
 
-    protected function handleNotFound(ServerRequestInterface $request)
+    protected function handleNotFound(ServerRequestInterface $request): mixed
     {
         $data = $this->buildErrorData($request, 404, 'Not Found.');
 
         return $this->responseBuilder->buildResponse($request, $data);
     }
 
-    protected function handleMethodNotAllowed(array $routes, ServerRequestInterface $request)
+    protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request): mixed
     {
         return $this->handleNotFound($request);
     }
@@ -95,13 +91,15 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
     {
         $id = $request->getAttribute(Constant::REQUEST_ID);
 
-        return $this->dataFormatter->formatErrorResponse([$id, $code, $message ?? Response::getReasonPhraseByCode($code), $throwable]);
+        return $this->dataFormatter->formatErrorResponse(
+            new ErrorResponse($id, $code, $message ?? Response::getReasonPhraseByCode($code), $throwable)
+        );
     }
 
     protected function buildData(ServerRequestInterface $request, $response): array
     {
         $id = $request->getAttribute(Constant::REQUEST_ID);
 
-        return $this->dataFormatter->formatResponse([$id, $response]);
+        return $this->dataFormatter->formatResponse(new RPCResponse($id, $response));
     }
 }

@@ -13,6 +13,7 @@ namespace HyperfTest\Snowflake;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Di\Container;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
@@ -165,7 +166,7 @@ class RedisMetaGeneratorTest extends TestCase
                 }
             } catch (\Throwable $exception) {
             } finally {
-                $channel->push(true);
+                $channel->push(Mockery::mock(ConnectionInterface::class));
             }
         });
 
@@ -176,7 +177,7 @@ class RedisMetaGeneratorTest extends TestCase
                 }
             } catch (\Throwable $exception) {
             } finally {
-                $channel->push(true);
+                $channel->push(Mockery::mock(ConnectionInterface::class));
             }
         });
 

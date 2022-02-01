@@ -15,14 +15,10 @@ use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\SocketIOServer\Collector\SocketIORouter;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class SocketIONamespace extends AbstractAnnotation
 {
-    public $namespace = '/';
+    public string $namespace = '/';
 
     public function __construct(...$value)
     {

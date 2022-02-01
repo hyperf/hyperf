@@ -24,20 +24,16 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\PostMapping;
 use Hyperf\HttpServer\Contract\RequestInterface;
 
-/**
- * @Controller()
- */
+#[Controller]
 class GraphQLController
 {
     /**
-     * @Inject()
      * @var Schema
      */
+    #[Inject]
     protected $schema;
-    
-    /**
-     * @PostMapping(path="/graphql")
-     */
+
+    #[PostMapping(path: "/graphql")]
     public function test(RequestInterface $request)
     {
         $rawInput = $request->getBody()->getContents();
@@ -46,10 +42,8 @@ class GraphQLController
         $variableValues = isset($input['variables']) ? $input['variables'] : null;
         return GraphQL::executeQuery($this->schema, $query, null, null, $variableValues)->toArray();
     }
-    
-    /**
-     * @Query()
-     */
+
+    #[Query]
     public function hello(string $name): string
     {
         return $name;
@@ -80,9 +74,7 @@ namespace App\Model;
 use Hyperf\GraphQL\Annotation\Type;
 use Hyperf\GraphQL\Annotation\Field;
 
-/**
- * @Type()
- */
+#[Type]
 class Product
 {
     protected $name;
@@ -94,17 +86,13 @@ class Product
         $this->price = $price;
     }
 
-    /**
-     * @Field()
-     */
+    #[Field]
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @Field()
-     */
+    #[Field]
     public function getPrice(): ?float
     {
         return $this->price;
@@ -117,10 +105,9 @@ class Product
 ```php
 <?php
 use App\Model\Product;
+use Hyperf\GraphQL\Annotation\Query;
 
-/**
- * @Query()
- */
+#[Query]
 public function product(string $name, float $price): Product
 {
     return new Product($name, $price);

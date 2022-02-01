@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Crontab\Strategy;
 
 use Carbon\Carbon;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Crontab\Crontab;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 
 class CoroutineStrategy extends AbstractStrategy

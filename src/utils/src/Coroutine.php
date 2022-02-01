@@ -80,7 +80,7 @@ class Coroutine
 
         try {
             return $coroutine->getId();
-        } catch (\Throwable $exception) {
+        } catch (\Throwable) {
             return -1;
         }
     }

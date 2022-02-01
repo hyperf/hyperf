@@ -15,25 +15,7 @@ use Swoole\Server;
 
 class OnFinish
 {
-    /**
-     * @var Server
-     */
-    public $server;
-
-    /**
-     * @var int
-     */
-    public $taskId;
-
-    /**
-     * @var mixed
-     */
-    public $data;
-
-    public function __construct(Server $server, int $taskId, $data)
+    public function __construct(public Server $server, public int $taskId, public mixed $data)
     {
-        $this->server = $server;
-        $this->taskId = $taskId;
-        $this->data = $data;
     }
 }

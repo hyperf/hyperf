@@ -18,9 +18,9 @@ class MultiplyOperator extends Operator
         return '*';
     }
 
-    public function execute(array $paramaters, int $scale): string
+    public function execute(array $parameters, int $scale): string
     {
-        $paramaters[] = $scale;
-        return bcmul(...$paramaters);
+        $parameters[] = $scale;
+        return bcmul(...$parameters);
     }
 }

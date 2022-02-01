@@ -13,6 +13,8 @@ namespace Hyperf\Di;
 
 class ClosureDefinitionCollector extends AbstractCallableDefinitionCollector implements ClosureDefinitionCollectorInterface
 {
+    protected static array $container = [];
+
     public function getParameters(\Closure $closure): array
     {
         $key = spl_object_hash($closure);

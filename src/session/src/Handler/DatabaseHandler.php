@@ -22,41 +22,23 @@ class DatabaseHandler implements SessionHandlerInterface
 {
     use InteractsWithTime;
 
-    /**
-     * @var string
-     */
-    protected $connection;
-
-    /**
-     * @var string
-     */
-    protected $table;
-
-    /**
-     * @var int
-     */
-    protected $minutes;
-
-    public function __construct(string $connection, string $table, int $minutes)
+    public function __construct(protected string $connection, protected string $table, protected int $minutes)
     {
-        $this->table = $table;
-        $this->minutes = $minutes;
-        $this->connection = $connection;
     }
 
-    public function open($savePath, $sessionName)
+    public function open(string $path, string $name): bool
     {
         return true;
     }
 
-    public function close()
+    public function close(): bool
     {
         return true;
     }
 
-    public function read($sessionId)
+    public function read($id): string|false
     {
-        $session = (object) $this->getQuery()->find($sessionId);
+        $session = (object) $this->getQuery()->find($id);
 
         if (isset($session->last_activity)
             && $session->last_activity < Carbon::now()->subMinutes($this->minutes)->getTimestamp()) {
@@ -70,30 +52,30 @@ class DatabaseHandler implements SessionHandlerInterface
         return '';
     }
 
-    public function write($sessionId, $data)
+    public function write(string $id, string $data): bool
     {
         $payload = $this->getDefaultPayload($data);
 
-        if ($this->getQuery()->find($sessionId)) {
-            $this->performUpdate($sessionId, $payload);
+        if ($this->getQuery()->find($id)) {
+            $this->performUpdate($id, $payload);
         } else {
-            $this->performInsert($sessionId, $payload);
+            $this->performInsert($id, $payload);
         }
 
         return true;
     }
 
-    public function destroy($sessionId)
+    public function destroy(string $id): bool
     {
-        $this->getQuery()->where('id', $sessionId)->delete();
+        $this->getQuery()->where('id', $id)->delete();
 
         return true;
     }
 
-    public function gc($lifetime)
+    public function gc(int $max_lifetime): int|false
     {
-        return (bool) $this->getQuery()
-            ->where('last_activity', '<=', $this->currentTime() - $lifetime)
+        return $this->getQuery()
+            ->where('last_activity', '<=', $this->currentTime() - $max_lifetime)
             ->delete();
     }
 
@@ -115,10 +97,8 @@ class DatabaseHandler implements SessionHandlerInterface
 
     /**
      * Get the default payload for the session.
-     *
-     * @param string $data
      */
-    protected function getDefaultPayload($data): array
+    protected function getDefaultPayload(string $data): array
     {
         return [
             'payload' => base64_encode($data),

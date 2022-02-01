@@ -13,11 +13,9 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        php-version: [ '7.4', '8.0', '8.1' ]
+        php-version: [ '8.0', '8.1' ]
         sw-version: [ 'v4.5.11', 'v4.6.7', 'v4.7.1', 'v4.8.6', 'master' ]
         exclude:
-          - php-version: '7.4'
-            sw-version: 'master'
           - php-version: '8.1'
             sw-version: 'v4.5.11'
           - php-version: '8.1'
@@ -38,7 +36,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: phpize
           extensions: redis, pdo, pdo_mysql, bcmath
-          ini-values: opcache.enable_cli=1
+          ini-values: opcache.enable_cli=0
           coverage: none
       - name: Setup Swoole
         run: |
@@ -57,7 +55,7 @@ jobs:
           sudo sh -c "echo swoole.use_shortname='Off' >> /etc/php/${{ matrix.php-version }}/cli/conf.d/swoole.ini"
           php --ri swoole
       - name: Setup Packages
-        run: composer update -o
+        run: ./.travis/requirement.install.sh
       - name: Setup Services
         run: |
           docker run --name mysql -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql:${MYSQL_VERSION} --bind-address=0.0.0.0 --default-authentication-plugin=mysql_native_password
@@ -79,3 +77,4 @@ jobs:
           composer test -- --exclude-group NonCoroutine
           vendor/bin/phpunit --group NonCoroutine
           vendor/bin/phpunit src/filesystem --group NonCoroutine
+          vendor/bin/php-cs-fixer fix src --dry-run

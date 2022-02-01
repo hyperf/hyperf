@@ -14,14 +14,10 @@ namespace Hyperf\SocketIOServer\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class SocketIONamespace extends AbstractAnnotation
 {
-    public function __construct($namespace)
+    public function __construct(string $namespace = '/')
     {
     }
 }

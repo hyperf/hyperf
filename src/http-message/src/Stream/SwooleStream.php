@@ -12,30 +12,19 @@ declare(strict_types=1);
 namespace Hyperf\HttpMessage\Stream;
 
 use Psr\Http\Message\StreamInterface;
+use Stringable;
 
-class SwooleStream implements StreamInterface
+class SwooleStream implements StreamInterface, Stringable
 {
-    /**
-     * @var string
-     */
-    protected $contents;
+    protected int $size;
 
-    /**
-     * @var int
-     */
-    protected $size;
-
-    /**
-     * @var bool
-     */
-    protected $writable;
+    protected bool $writable;
 
     /**
      * SwooleStream constructor.
      */
-    public function __construct(string $contents = '')
+    public function __construct(protected string $contents = '')
     {
-        $this->contents = $contents;
         $this->size = strlen($this->contents);
         $this->writable = true;
     }
@@ -55,7 +44,7 @@ class SwooleStream implements StreamInterface
     {
         try {
             return $this->getContents();
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return '';
         }
     }

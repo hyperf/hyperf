@@ -11,20 +11,16 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
+use SplPriorityQueue;
+
 /**
- * @mixin \SplPriorityQueue
+ * @mixin SplPriorityQueue
  */
 class AstVisitorRegistry
 {
-    /**
-     * @var \SplPriorityQueue
-     */
-    protected static $queue;
+    protected static ?SplPriorityQueue $queue = null;
 
-    /**
-     * @var array
-     */
-    protected static $values = [];
+    protected static array $values = [];
 
     public static function __callStatic($name, $arguments)
     {
@@ -35,7 +31,7 @@ class AstVisitorRegistry
         throw new \InvalidArgumentException('Invalid method for ' . __CLASS__);
     }
 
-    public static function insert($value, $priority)
+    public static function insert($value, $priority = 0)
     {
         static::$values[] = $value;
         return static::getQueue()->insert($value, $priority);
@@ -46,10 +42,10 @@ class AstVisitorRegistry
         return in_array($value, static::$values);
     }
 
-    public static function getQueue(): \SplPriorityQueue
+    public static function getQueue(): SplPriorityQueue
     {
-        if (! static::$queue instanceof \SplPriorityQueue) {
-            static::$queue = new \SplPriorityQueue();
+        if (! static::$queue instanceof SplPriorityQueue) {
+            static::$queue = new SplPriorityQueue();
         }
         return static::$queue;
     }

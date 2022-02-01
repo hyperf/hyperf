@@ -13,6 +13,7 @@ namespace Hyperf\Database\Query;
 
 use Closure;
 use DateTimeInterface;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
@@ -26,7 +27,6 @@ use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\ForwardsCalls;
 use InvalidArgumentException;
