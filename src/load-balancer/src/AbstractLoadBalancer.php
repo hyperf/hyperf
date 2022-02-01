@@ -55,7 +55,7 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
     public function removeNode(Node $node): bool
     {
         foreach ($this->nodes as $key => $activeNode) {
-            if ((string)$activeNode === (string)$node) {
+            if ($activeNode === $node) {
                 unset($this->nodes[$key]);
                 return true;
             }
