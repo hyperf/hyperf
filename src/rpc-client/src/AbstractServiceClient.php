@@ -148,10 +148,11 @@ abstract class AbstractServiceClient
         return $this->container->get(IdGenerator\UniqidIdGenerator::class);
     }
 
-    protected function createLoadBalancer(array $nodes, callable $refresh = null): LoadBalancerInterface
+    protected function createLoadBalancer(array $nodes, callable $refresh = null,string $registryProtocol = null): LoadBalancerInterface
     {
         $loadBalancer = $this->loadBalancerManager->getInstance($this->serviceName, $this->loadBalancer)->setNodes($nodes);
         $refresh && $loadBalancer->refresh($refresh);
+        $registryProtocol && $loadBalancer->setRegistryProtocol($registryProtocol);
         return $loadBalancer;
     }
 
@@ -206,7 +207,7 @@ abstract class AbstractServiceClient
                 return $this->getNodes($governance, $registryAddress);
             };
 
-            return [$nodes, $refreshCallback];
+            return [$nodes, $refreshCallback,$registryProtocol];
         }
 
         // Not exists the registry config, then looking for the 'nodes' property.
@@ -220,7 +221,7 @@ abstract class AbstractServiceClient
                     $nodes[] = new Node($item['host'], $item['port']);
                 }
             }
-            return [$nodes, $refreshCallback];
+            return [$nodes, $refreshCallback,$registryProtocol];
         }
 
         throw new InvalidArgumentException('Config of registry or nodes missing.');
