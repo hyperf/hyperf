@@ -6,11 +6,10 @@ Model events are implemented in the [psr/event-dispatcher](https://github.com/ph
 Thanks to the support of the [hyperf/event](https://github.com/hyperf-cloud/event) component, users can easily monitor the following events.
 For example `QueryExecuted` , `StatementPrepared` , `TransactionBeginning` , `TransactionCommitted` , `TransactionRolledBack` .
 Next, we will implement a listener that records SQL and talk about how to use it.
-First, we define `DbQueryExecutedListener`, implement the `Hyperf\Event\Contract\ListenerInterface` interface and define the `Hyperf\Event\Annotation\Listener` annotation on the class, so that Hyperf will automatically register the listener to the event scheduler, Without any manual configuration, the sample code is as follows:
+First, create a `DbQueryExecutedListener` class ,and implement the `Hyperf\Event\Contract\ListenerInterface` interface, also define the `Hyperf\Event\Annotation\Listener` annotation on the class, so that Hyperf will automatically register the listener to the event scheduler, without any manual configuration, the sample code is as follows:
 
 ```php
 <?php
-
 declare(strict_types=1);
 
 namespace App\Listeners;
@@ -93,7 +92,6 @@ The use of events for a model is very simple, just add the corresponding method 
 
 ```php
 <?php
-
 declare(strict_types=1);
 
 namespace App\Models;
@@ -135,11 +133,10 @@ class User extends Model
 
 ### Event Listener
 
-When you need to monitor all model events, you can easily customize the corresponding `Listener`, such as the listener of the model cache below. When the model is modified and deleted, the corresponding cache will be deleted.
+When you need to listen all model events, you can easily customize the corresponding `Listener`, such as the listener of the model cache below, when the model is modified and deleted, the corresponding cache will be deleted.
 
 ```php
 <?php
-
 declare(strict_types=1);
 
 namespace Hyperf\ModelCache\Listener;
