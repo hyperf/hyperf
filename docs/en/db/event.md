@@ -1,7 +1,7 @@
-# event
+# Event
 Model events are implemented in the [psr/event-dispatcher](https://github.com/php-fig/event-dispatcher) interface.
 
-## custom listener
+## Custom Listener
 
 Thanks to the support of the [hyperf/event](https://github.com/hyperf-cloud/event) component, users can easily monitor the following events.
 For example `QueryExecuted` , `StatementPrepared` , `TransactionBeginning` , `TransactionCommitted` , `TransactionRolledBack` .
@@ -66,11 +66,11 @@ class DbQueryExecutedListener implements ListenerInterface
 
 ```
 
-## model events
+## Model Events
 
 Model events are not consistent with `EloquentORM`, which uses `Observer` to listen for model events. `Hyperf` directly uses `hooks` to handle corresponding events. If you still like the way of `Observer`, you can implement `event listener` by yourself. Of course, you can also let us know under [issue#2](https://github.com/hyperf-cloud/hyperf/issues/2).
 
-### Hook function
+### Hook Function
 
 | Event name | Trigger actual | Whether to block | Remarks |
 |:------------:|:----------------:|:------------:|:--- ----------------------- --:|
@@ -133,7 +133,7 @@ class User extends Model
 
 ```
 
-### event listener
+### Event Listener
 
 When you need to monitor all model events, you can easily customize the corresponding `Listener`, such as the listener of the model cache below. When the model is modified and deleted, the corresponding cache will be deleted.
 
