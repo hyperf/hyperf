@@ -111,4 +111,28 @@ class StringableTest extends TestCase
             $this->assertSame('beforeafter', (string) Str::of('before<br>after')->stripTags(null));
         }
     }
+
+    public function testWhenEmptyAndNot()
+    {
+        $empty = Str::of('');
+        $this->assertTrue($empty->whenEmpty(function ($str, $value) {
+            $this->assertTrue($value);
+            return true;
+        }));
+
+        $this->assertSame($empty, $empty->whenEmpty(function ($str, $value) {
+            $this->assertTrue($value);
+            return null;
+        }, function () {
+            return true;
+        }));
+
+        $notEmpty = Str::of('123');
+        $this->assertTrue($notEmpty->whenEmpty(function ($str, $value) {
+            $this->assertFalse($value);
+            return false;
+        }, function () {
+            return true;
+        }));
+    }
 }

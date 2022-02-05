@@ -20,15 +20,15 @@ trait Conditionable
      * @param callable $callback
      * @param null|callable $default
      *
-     * @return mixed
+     * @return $this|mixed
      */
     public function when($value, $callback, $default = null)
     {
         if ($value) {
-            return $callback($this, $value) ?: $this;
+            return $callback($this, $value) ?? $this;
         }
         if ($default) {
-            return $default($this, $value) ?: $this;
+            return $default($this, $value) ?? $this;
         }
 
         return $this;
