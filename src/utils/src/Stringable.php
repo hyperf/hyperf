@@ -737,7 +737,7 @@ class Stringable implements JsonSerializable
      * Execute the given callback if the string is empty.
      *
      * @param callable $callback
-     * @param callable|null $default
+     * @param null|callable $default
      * @return static
      */
     public function whenEmpty($callback, $default = null)
@@ -749,7 +749,7 @@ class Stringable implements JsonSerializable
      * Execute the given callback if the string is not empty.
      *
      * @param callable $callback
-     * @param callable|null $default
+     * @param null|callable $default
      * @return static
      */
     public function whenNotEmpty($callback, $default = null)
