@@ -15,12 +15,12 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
-        "psr/simple-cache": "^1.0",
+        "php": ">=8.0",
+        "psr/simple-cache": "^1.0|^2.0|^3.0",
         "psr/container": "^1.0|^2.0",
-        "hyperf/contract": "~2.2.0",
-        "hyperf/db-connection": "~2.2.0",
-        "hyperf/utils": "~2.2.0"
+        "hyperf/contract": "~3.0.0",
+        "hyperf/db-connection": "~3.0.0",
+        "hyperf/utils": "~3.0.0"
     },
     "suggest": {
         "hyperf/event": "Required to use DeleteCacheListener."
@@ -40,7 +40,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\ModelCache\\ConfigProvider"

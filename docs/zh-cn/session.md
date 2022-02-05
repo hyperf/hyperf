@@ -53,20 +53,17 @@ return [
 namespace App\Controller;
 
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\Contract\SessionInterface;
 
 class IndexController
 {
-    /**
-     * @Inject()
-     * @var \Hyperf\Contract\SessionInterface
-     */
-    private $session;
+    #[Inject]
+    private SessionInterface $session;
 
     public function index()
     {
         // 直接通过 $this->session 来使用
     } 
-
 }
 ```
 

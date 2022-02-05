@@ -148,19 +148,13 @@ namespace App\Annotation;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"METHOD","PROPERTY"})
- */
+#[Attribute(Attribute::TARGET_PROPERTY)]
 class Bar extends AbstractAnnotation
 {
     // some code
 }
 
-/**
- * @Annotation
- * @Target("CLASS")
- */
+#[Attribute(Attribute::TARGET_CLASS)]
 class Foo extends AbstractAnnotation
 {
     // some code
@@ -284,20 +278,9 @@ use Swoole\Coroutine as SwooleCoroutine;
 
 class Coroutine
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var null|FormatterInterface
-     */
-    protected $formatter;
+    protected StdoutLoggerInterface $logger;
+    
+    protected ?FormatterInterface $formatter = null;
 
     public function __construct(ContainerInterface $container)
     {

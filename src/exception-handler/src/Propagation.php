@@ -19,10 +19,8 @@ class Propagation
 
     /**
      * Determine if the exception should propagate to next handler.
-     *
-     * @var bool
      */
-    protected $propagationStopped = false;
+    protected bool $propagationStopped = false;
 
     public function isPropagationStopped(): bool
     {

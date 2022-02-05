@@ -15,10 +15,7 @@ use Psr\Container\ContainerInterface;
 
 class ApplicationContext
 {
-    /**
-     * @var null|ContainerInterface
-     */
-    private static $container;
+    private static ?ContainerInterface $container = null;
 
     /**
      * @throws \TypeError

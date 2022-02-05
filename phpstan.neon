@@ -8,7 +8,7 @@ parameters:
   inferPrivatePropertyTypeFromConstructor: true
   treatPhpDocTypesAsCertain: true
   reportUnmatchedIgnoredErrors: false
-  excludes_analyse:
+  excludePaths:
     - %currentWorkingDirectory%/src/*/tests/*
     - %currentWorkingDirectory%/src/*/publish/*
     - %currentWorkingDirectory%/src/*/class_map/*
@@ -48,4 +48,10 @@ parameters:
     - '#getSwooleTracker.* not found#'
     - '#trackerHookMalloc not found#'
     - '#separator of function explode expects non-empty-string, string given#'
+    - '#While loop condition is always true#'
+    - '#Unsafe access to private property .* through static::#'
+    - '#Unsafe call to private method .* through static::#'
+    - '#Property .* is never read, only written#'
+    - message: '#Match arm is unreachable because previous comparison is always true#'
+      path: src/amqp/src/IO/IOFactory.php
     - '#.*TKey.*TValue#'

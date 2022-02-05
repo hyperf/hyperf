@@ -87,7 +87,7 @@ class MySqlBuilder extends Builder
     /**
      * Drop all tables from the database.
      */
-    public function dropAllTables()
+    public function dropAllTables(): void
     {
         $tables = [];
 
@@ -113,7 +113,7 @@ class MySqlBuilder extends Builder
     /**
      * Drop all views from the database.
      */
-    public function dropAllViews()
+    public function dropAllViews(): void
     {
         $views = [];
 
@@ -133,7 +133,7 @@ class MySqlBuilder extends Builder
     }
 
     /**
-     * Get all of the table names for the database.
+     * Get all the table names for the database.
      *
      * @return array
      */
@@ -145,7 +145,7 @@ class MySqlBuilder extends Builder
     }
 
     /**
-     * Get all of the view names for the database.
+     * Get all the view names for the database.
      *
      * @return array
      */

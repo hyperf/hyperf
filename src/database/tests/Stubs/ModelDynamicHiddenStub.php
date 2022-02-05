@@ -15,11 +15,11 @@ use Hyperf\Database\Model\Model;
 
 class ModelDynamicHiddenStub extends Model
 {
-    protected $table = 'stub';
+    protected ?string $table = 'stub';
 
-    protected $guarded = [];
+    protected array $guarded = [];
 
-    public function getHidden()
+    public function getHidden(): array
     {
         return ['age', 'id'];
     }

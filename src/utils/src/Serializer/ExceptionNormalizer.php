@@ -19,12 +19,9 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface, CacheableSupportsMethodInterface
 {
-    /**
-     * @var null|Instantiator
-     */
-    protected $instantiator;
+    protected ?Instantiator $instantiator = null;
 
-    public function denormalize($data, string $class, string $format = null, array $context = [])
+    public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         if (is_string($data)) {
             $ex = unserialize($data);
@@ -37,22 +34,22 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
         }
         if (is_array($data) && isset($data['message'], $data['code'])) {
             try {
-                $exception = $this->getInstantiator()->instantiate($class);
+                $exception = $this->getInstantiator()->instantiate($type);
                 foreach (['code', 'message', 'file', 'line'] as $attribute) {
                     if (isset($data[$attribute])) {
-                        $property = ReflectionManager::reflectProperty($class, $attribute);
+                        $property = ReflectionManager::reflectProperty($type, $attribute);
                         $property->setAccessible(true);
                         $property->setValue($exception, $data[$attribute]);
                     }
                 }
                 return $exception;
-            } catch (\ReflectionException $e) {
+            } catch (\ReflectionException) {
                 return new \RuntimeException(sprintf(
                     'Bad data %s: %s',
                     $data['class'],
                     $data['message']
                 ), $data['code']);
-            } catch (\TypeError $e) {
+            } catch (\TypeError) {
                 return new \RuntimeException(sprintf(
                     'Uncaught data %s: %s',
                     $data['class'],

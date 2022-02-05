@@ -16,7 +16,7 @@ use Psr\Container\ContainerInterface;
 
 class ZookeeperDriver extends AbstractDriver
 {
-    protected $driverName = 'zookeeper';
+    protected string $driverName = 'zookeeper';
 
     public function __construct(ContainerInterface $container)
     {

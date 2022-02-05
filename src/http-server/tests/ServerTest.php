@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace HyperfTest\HttpServer;
 
 use Hyperf\Contract\ContainerInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Exception\BadRequestHttpException;
@@ -19,8 +21,6 @@ use Hyperf\HttpMessage\Exception\HttpException;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use HyperfTest\HttpServer\Stub\ServerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;

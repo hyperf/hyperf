@@ -14,45 +14,23 @@ namespace Hyperf\Kafka\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class Consumer extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $pool = 'default';
+    public string $pool = 'default';
 
     /**
      * @var string|string[]
      */
-    public $topic;
+    public string|array $topic = '';
 
-    /**
-     * @var null|string
-     */
-    public $groupId;
+    public ?string $groupId = null;
 
-    /**
-     * @var null|string
-     */
-    public $memberId;
+    public ?string $memberId = null;
 
-    /**
-     * @var bool
-     */
-    public $autoCommit = true;
+    public bool $autoCommit = true;
 
-    /**
-     * @var int
-     */
-    public $nums = 1;
+    public int $nums = 1;
 
-    /**
-     * @var bool
-     */
-    public $enable = true;
+    public bool $enable = true;
 }

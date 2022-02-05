@@ -13,14 +13,8 @@ namespace Hyperf\Di\ScanHandler;
 
 class Scanned
 {
-    /**
-     * @var bool
-     */
-    protected $scanned;
-
-    public function __construct(bool $scanned)
+    public function __construct(protected bool $scanned)
     {
-        $this->scanned = $scanned;
     }
 
     public function isScanned(): bool

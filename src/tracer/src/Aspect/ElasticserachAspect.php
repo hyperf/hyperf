@@ -23,10 +23,7 @@ class ElasticserachAspect extends AbstractAspect
 {
     use SpanStarter;
 
-    /**
-     * @var array
-     */
-    public $classes = [
+    public array $classes = [
         Client::class . '::bulk',
         Client::class . '::count',
         Client::class . '::create',
@@ -42,26 +39,8 @@ class ElasticserachAspect extends AbstractAspect
         Client::class . '::search',
     ];
 
-    /**
-     * @var Tracer
-     */
-    private $tracer;
-
-    /**
-     * @var SwitchManager
-     */
-    private $switchManager;
-
-    /**
-     * @var SpanTagManager
-     */
-    private $spanTagManager;
-
-    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
+    public function __construct(private Tracer $tracer, private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
     {
-        $this->tracer = $tracer;
-        $this->switchManager = $switchManager;
-        $this->spanTagManager = $spanTagManager;
     }
 
     /**

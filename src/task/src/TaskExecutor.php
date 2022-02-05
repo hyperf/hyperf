@@ -18,30 +18,12 @@ use Swoole\Server;
 
 class TaskExecutor
 {
-    /**
-     * @var Server
-     */
-    protected $server;
+    protected ?Server $server = null;
 
-    /**
-     * @var ChannelFactory
-     */
-    protected $factory;
+    protected bool $isTaskEnvironment = true;
 
-    /**
-     * @var ExceptionNormalizer
-     */
-    protected $normalizer;
-
-    /**
-     * @var bool
-     */
-    protected $isTaskEnvironment = true;
-
-    public function __construct(ChannelFactory $factory, ExceptionNormalizer $normalizer)
+    public function __construct(protected ChannelFactory $factory, protected ExceptionNormalizer $normalizer)
     {
-        $this->factory = $factory;
-        $this->normalizer = $normalizer;
     }
 
     public function setServer(Server $server): void

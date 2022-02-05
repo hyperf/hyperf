@@ -31,7 +31,7 @@ class InstanceProvider extends AbstractProvider
      */
     public function register(string $ip, int $port, string $serviceName, array $optional = []): ResponseInterface
     {
-        return $this->request('POST', '/nacos/v1/ns/instance', [
+        return $this->request('POST', 'nacos/v1/ns/instance', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'serviceName' => $serviceName,
                 'ip' => $ip,
@@ -49,7 +49,7 @@ class InstanceProvider extends AbstractProvider
      */
     public function delete(string $serviceName, string $groupName, string $ip, int $port, array $optional = []): ResponseInterface
     {
-        return $this->request('DELETE', '/nacos/v1/ns/instance', [
+        return $this->request('DELETE', 'nacos/v1/ns/instance', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'serviceName' => $serviceName,
                 'groupName' => $groupName,
@@ -72,7 +72,7 @@ class InstanceProvider extends AbstractProvider
      */
     public function update(string $ip, int $port, string $serviceName, array $optional = []): ResponseInterface
     {
-        return $this->request('PUT', '/nacos/v1/ns/instance', [
+        return $this->request('PUT', 'nacos/v1/ns/instance', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'serviceName' => $serviceName,
                 'ip' => $ip,
@@ -91,7 +91,7 @@ class InstanceProvider extends AbstractProvider
      */
     public function list(string $serviceName, array $optional = []): ResponseInterface
     {
-        return $this->request('GET', '/nacos/v1/ns/instance/list', [
+        return $this->request('GET', 'nacos/v1/ns/instance/list', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'serviceName' => $serviceName,
             ])),
@@ -109,7 +109,7 @@ class InstanceProvider extends AbstractProvider
      */
     public function detail(string $ip, int $port, string $serviceName, array $optional = []): ResponseInterface
     {
-        return $this->request('GET', '/nacos/v1/ns/instance', [
+        return $this->request('GET', 'nacos/v1/ns/instance', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'ip' => $ip,
                 'port' => $port,
@@ -129,7 +129,7 @@ class InstanceProvider extends AbstractProvider
      */
     public function beat(string $serviceName, array $beat = [], ?string $groupName = null, ?string $namespaceId = null, ?bool $ephemeral = null, bool $lightBeatEnabled = false): ResponseInterface
     {
-        return $this->request('PUT', '/nacos/v1/ns/instance/beat', [
+        return $this->request('PUT', 'nacos/v1/ns/instance/beat', [
             RequestOptions::QUERY => $this->filter([
                 'serviceName' => $serviceName,
                 'ip' => $beat['ip'] ?? null,
@@ -151,7 +151,7 @@ class InstanceProvider extends AbstractProvider
      */
     public function updateHealth(string $ip, int $port, string $serviceName, bool $healthy, array $optional = []): ResponseInterface
     {
-        return $this->request('PUT', '/nacos/v1/ns/health/instance', [
+        return $this->request('PUT', 'nacos/v1/ns/health/instance', [
             RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'ip' => $ip,
                 'port' => $port,

@@ -19,12 +19,10 @@ use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Di\Exception\AnnotationException;
 
-/**
- * @Aspect
- */
+#[Aspect]
 class TransactionAspect extends AbstractAspect
 {
-    public $annotations = [
+    public array $annotations = [
         Transactional::class,
     ];
 

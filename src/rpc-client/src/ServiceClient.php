@@ -20,27 +20,20 @@ use Psr\Container\ContainerInterface;
 
 class ServiceClient extends AbstractServiceClient
 {
-    /**
-     * @var MethodDefinitionCollectorInterface
-     */
-    protected $methodDefinitionCollector;
+    protected MethodDefinitionCollectorInterface $methodDefinitionCollector;
 
-    /**
-     * @var string
-     */
-    protected $serviceInterface;
+    protected string $serviceInterface;
 
-    /**
-     * @var NormalizerInterface
-     */
-    private $normalizer;
+    private NormalizerInterface $normalizer;
 
     public function __construct(ContainerInterface $container, string $serviceName, string $protocol = 'jsonrpc-http', array $options = [])
     {
         $this->serviceName = $serviceName;
         $this->protocol = $protocol;
         $this->setOptions($options);
+
         parent::__construct($container);
+
         $this->normalizer = $container->get(NormalizerInterface::class);
         $this->methodDefinitionCollector = $container->get(MethodDefinitionCollectorInterface::class);
     }

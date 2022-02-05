@@ -15,7 +15,7 @@ use Hyperf\Engine\Coroutine as Co;
 
 class Context
 {
-    protected static $nonCoContext = [];
+    protected static array $nonCoContext = [];
 
     public static function set(string $id, $value)
     {

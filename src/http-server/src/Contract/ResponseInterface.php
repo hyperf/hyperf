@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpServer\Contract;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\HttpMessage\Cookie\Cookie;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Contracts\Xmlable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
@@ -36,7 +36,7 @@ interface ResponseInterface
 
     /**
      * Format data to a string and return data with Content-Type:text/plain header.
-     * @param mixed $data
+     * @param mixed|\Stringable $data
      */
     public function raw($data): PsrResponseInterface;
 

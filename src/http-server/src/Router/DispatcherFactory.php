@@ -36,17 +36,17 @@ use ReflectionMethod;
 
 class DispatcherFactory
 {
-    protected $routes = [BASE_PATH . '/config/routes.php'];
+    protected array $routes = [BASE_PATH . '/config/routes.php'];
 
     /**
      * @var RouteCollector[]
      */
-    protected $routers = [];
+    protected array $routers = [];
 
     /**
      * @var Dispatcher[]
      */
-    protected $dispatchers = [];
+    protected array $dispatchers = [];
 
     public function __construct()
     {
@@ -119,7 +119,7 @@ class DispatcherFactory
             $options = $annotation->options;
             $path = $this->parsePath($prefix, $method);
             $methodName = $method->getName();
-            if (substr($methodName, 0, 2) === '__') {
+            if (str_starts_with($methodName, '__')) {
                 continue;
             }
 

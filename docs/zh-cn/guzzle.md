@@ -16,12 +16,10 @@ composer require hyperf/guzzle
 <?php 
 use Hyperf\Guzzle\ClientFactory;
 
-class Foo {
-    /**
-     * @var \Hyperf\Guzzle\ClientFactory
-     */
-    private $clientFactory;
-    
+class Foo
+{
+    private ClientFactory $clientFactory;
+
     public function __construct(ClientFactory $clientFactory)
     {
         $this->clientFactory = $clientFactory;

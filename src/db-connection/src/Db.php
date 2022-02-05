@@ -43,14 +43,8 @@ use Psr\Container\ContainerInterface;
  */
 class Db
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function __call($name, $arguments)
@@ -70,9 +64,9 @@ class Db
         return $db->__connection()->{$name}(...$arguments);
     }
 
-    private function __connection($pool = 'default'): ConnectionInterface
+    private function __connection(?string $name = null): ConnectionInterface
     {
         $resolver = $this->container->get(ConnectionResolverInterface::class);
-        return $resolver->connection($pool);
+        return $resolver->connection($name);
     }
 }

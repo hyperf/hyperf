@@ -15,20 +15,11 @@ use FastRoute\Dispatcher;
 
 class Dispatched
 {
-    /**
-     * @var int
-     */
-    public $status;
+    public int $status;
 
-    /**
-     * @var null|Handler
-     */
-    public $handler;
+    public ?Handler $handler = null;
 
-    /**
-     * @var array
-     */
-    public $params = [];
+    public array $params = [];
 
     /**
      * Dispatches against the provided HTTP method verb and URI.

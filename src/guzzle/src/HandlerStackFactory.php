@@ -19,27 +19,18 @@ use Hyperf\Utils\Coroutine;
 
 class HandlerStackFactory
 {
-    /**
-     * @var array
-     */
-    protected $option = [
+    protected array $option = [
         'min_connections' => 1,
         'max_connections' => 30,
         'wait_timeout' => 3.0,
         'max_idle_time' => 60,
     ];
 
-    /**
-     * @var array
-     */
-    protected $middlewares = [
+    protected array $middlewares = [
         'retry' => [RetryMiddleware::class, [1, 10]],
     ];
 
-    /**
-     * @var bool
-     */
-    protected $usePoolHandler = false;
+    protected bool $usePoolHandler = false;
 
     public function __construct()
     {

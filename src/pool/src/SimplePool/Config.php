@@ -14,25 +14,13 @@ namespace Hyperf\Pool\SimplePool;
 class Config
 {
     /**
-     * @var string
-     */
-    public $name;
-
-    /**
      * @var callable
      */
-    public $callback;
+    protected $callback;
 
-    /**
-     * @var array
-     */
-    public $option;
-
-    public function __construct(string $name, callable $callback, array $option)
+    public function __construct(protected string $name, callable $callback, protected array $option)
     {
-        $this->name = $name;
         $this->callback = $callback;
-        $this->option = $option;
     }
 
     public function getName(): string
@@ -40,7 +28,7 @@ class Config
         return $this->name;
     }
 
-    public function setName(string $name): Config
+    public function setName(string $name): static
     {
         $this->name = $name;
         return $this;
@@ -51,7 +39,7 @@ class Config
         return $this->callback;
     }
 
-    public function setCallback(callable $callback): Config
+    public function setCallback(callable $callback): static
     {
         $this->callback = $callback;
         return $this;
@@ -62,7 +50,7 @@ class Config
         return $this->option;
     }
 
-    public function setOption(array $option): Config
+    public function setOption(array $option): static
     {
         $this->option = $option;
         return $this;

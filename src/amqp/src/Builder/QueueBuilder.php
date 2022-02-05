@@ -11,13 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\Amqp\Builder;
 
+use PhpAmqpLib\Wire\AMQPTable;
+
 class QueueBuilder extends Builder
 {
-    protected $queue;
+    protected ?string $queue = null;
 
-    protected $exclusive = false;
+    protected bool $exclusive = false;
 
-    protected $arguments = [
+    protected AMQPTable|array $arguments = [
         'x-ha-policy' => ['S', 'all'],
     ];
 

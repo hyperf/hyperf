@@ -16,10 +16,7 @@ use Hyperf\Utils\Codec\Base62;
 
 class NodeRequestIdGenerator implements IdGeneratorInterface
 {
-    /**
-     * @var string
-     */
-    private $node;
+    private ?string $node = null;
 
     public function generate(): string
     {
@@ -73,7 +70,7 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
      */
     protected function getIfconfig(): string
     {
-        if (strpos(strtolower(ini_get('disable_functions')), 'passthru') !== false) {
+        if (str_contains(strtolower(ini_get('disable_functions')), 'passthru')) {
             return '';
         }
 

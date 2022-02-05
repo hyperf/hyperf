@@ -15,10 +15,10 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
-        "hyperf/contract": "~2.2.0",
-        "hyperf/dispatcher": "~2.2.0",
-        "hyperf/utils": "~2.2.0",
+        "php": ">=8.0",
+        "hyperf/contract": "~3.0.0",
+        "hyperf/dispatcher": "~3.0.0",
+        "hyperf/utils": "~3.0.0",
         "psr/container": "^1.0|^2.0",
         "psr/http-message": "^1.0"
     },
@@ -37,7 +37,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\ExceptionHandler\\ConfigProvider"

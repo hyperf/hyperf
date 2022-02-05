@@ -12,23 +12,24 @@ declare(strict_types=1);
 namespace Hyperf\ConfigApollo;
 
 use Hyperf\ConfigCenter\AbstractDriver;
+use Hyperf\ConfigCenter\Contract\ClientInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Channel;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class ApolloDriver extends AbstractDriver
 {
+    protected string $driverName = 'apollo';
+
+    protected array $notifications = [];
+
     /**
-     * @var ClientInterface
+     * @var \Hyperf\ConfigApollo\ClientInterface
      */
-    protected $client;
-
-    protected $driverName = 'apollo';
-
-    protected $notifications = [];
+    protected ClientInterface $client;
 
     public function __construct(ContainerInterface $container)
     {
@@ -165,7 +166,7 @@ class ApolloDriver extends AbstractDriver
         return $value;
     }
 
-    protected function updateConfig(array $config)
+    protected function updateConfig(array $config): void
     {
         $mergedConfigs = [];
         foreach ($config as $c) {
@@ -174,7 +175,7 @@ class ApolloDriver extends AbstractDriver
             }
         }
         unset($config);
-        foreach ($mergedConfigs ?? [] as $key => $value) {
+        foreach ($mergedConfigs as $key => $value) {
             $this->config->set($key, $this->formatValue($value));
             $this->logger->debug(sprintf('Config [%s] is updated', $key));
         }

@@ -13,14 +13,8 @@ namespace Hyperf\Di;
 
 class MetadataCacheCollector
 {
-    /**
-     * @var array
-     */
-    protected $collectors = [];
-
-    public function __construct(array $collectors)
+    public function __construct(protected array $collectors)
     {
-        $this->collectors = $collectors;
     }
 
     public function addCollector(string $collector)

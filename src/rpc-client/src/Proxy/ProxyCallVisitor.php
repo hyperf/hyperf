@@ -18,24 +18,10 @@ use PhpParser\NodeVisitorAbstract;
 
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
-    /**
-     * @var array
-     */
-    protected $nodes;
+    protected array $nodes = [];
 
-    /**
-     * @var string
-     */
-    private $classname;
-
-    /**
-     * @var string
-     */
-    private $namespace;
-
-    public function __construct(string $classname)
+    public function __construct(private string $classname)
     {
-        $this->classname = $classname;
     }
 
     public function beforeTraverse(array $nodes)
@@ -45,18 +31,10 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         return null;
     }
 
-    public function enterNode(Node $node)
-    {
-        if ($node instanceof Node\Stmt\Namespace_) {
-            $this->namespace = $node->name->toCodeString();
-        }
-        return null;
-    }
-
     public function leaveNode(Node $node)
     {
         if ($node instanceof Interface_) {
-            $node->stmts = $this->generateStmts($node);
+            $node->stmts = $this->generateStmts();
             return new Node\Stmt\Class_($this->classname, [
                 'stmts' => $node->stmts,
                 'extends' => new Node\Name\FullyQualified(AbstractProxyService::class),
@@ -68,7 +46,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         return null;
     }
 
-    public function generateStmts(Interface_ $node): array
+    public function generateStmts(): array
     {
         $methods = PhpParser::getInstance()->getAllMethodsFromStmts($this->nodes);
         $stmts = [];

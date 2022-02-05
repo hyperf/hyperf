@@ -21,11 +21,9 @@ class JSONEncoder implements Encoder
     /**
      * Encodes a message to JSON.
      *
-     * @param string $payload message to decode
-     *
-     * @return mixed
+     * @param mixed $payload message to decode
      */
-    public function encode($payload)
+    public function encode(mixed $payload): string
     {
         return json_encode($payload);
     }
@@ -34,10 +32,8 @@ class JSONEncoder implements Encoder
      * Decodes a message from JSON.
      *
      * @param string $payload message to decode
-     *
-     * @return mixed
      */
-    public function decode($payload)
+    public function decode(string $payload): mixed
     {
         return json_decode($payload, true);
     }

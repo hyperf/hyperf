@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine\Contract;
 
 use Closure;
-use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Contract\Arrayable;
 
 interface FactoryInterface
 {

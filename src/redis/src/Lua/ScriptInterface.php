@@ -15,7 +15,7 @@ interface ScriptInterface
 {
     public function getScript(): string;
 
-    public function format($data);
+    public function format($data): mixed;
 
-    public function eval(array $arguments = [], $sha = true);
+    public function eval(array $arguments = [], $sha = true): mixed;
 }

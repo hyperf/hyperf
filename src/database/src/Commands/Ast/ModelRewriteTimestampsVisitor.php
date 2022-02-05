@@ -16,19 +16,14 @@ use Hyperf\Database\Commands\ModelOption;
 use Hyperf\Database\Model\Model;
 use Hyperf\Utils\Collection;
 use PhpParser\Node;
+use PhpParser\Node\Identifier;
 use PhpParser\NodeTraverser;
 
 class ModelRewriteTimestampsVisitor extends AbstractVisitor
 {
-    /**
-     * @var Model
-     */
-    protected $class;
+    protected Model $class;
 
-    /**
-     * @var bool
-     */
-    protected $hasTimestamps = false;
+    protected bool $hasTimestamps = false;
 
     public function __construct(ModelOption $option, ModelData $data)
     {
@@ -50,6 +45,8 @@ class ModelRewriteTimestampsVisitor extends AbstractVisitor
                 }
                 return $node;
         }
+
+        return null;
     }
 
     public function afterTraverse(array $nodes)
@@ -93,6 +90,7 @@ class ModelRewriteTimestampsVisitor extends AbstractVisitor
         } else {
             $prop = new Node\Stmt\PropertyProperty('timestamps', $expr);
             $node = new Node\Stmt\Property(Node\Stmt\Class_::MODIFIER_PUBLIC, [$prop]);
+            $node->type = new Identifier('bool');
         }
 
         return $node;

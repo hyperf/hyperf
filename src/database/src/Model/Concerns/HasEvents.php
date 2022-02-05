@@ -46,10 +46,8 @@ trait HasEvents
 {
     /**
      * User exposed events.
-     *
-     * @var array
      */
-    protected $events = [];
+    protected array $events = [];
 
     /**
      * Set the user-defined event names.

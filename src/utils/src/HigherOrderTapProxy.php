@@ -14,20 +14,11 @@ namespace Hyperf\Utils;
 class HigherOrderTapProxy
 {
     /**
-     * The target being tapped.
-     *
-     * @var mixed
-     */
-    public $target;
-
-    /**
      * Create a new tap proxy instance.
-     *
-     * @param mixed $target
+     * @param mixed $target the target being tapped
      */
-    public function __construct($target)
+    public function __construct(public mixed $target)
     {
-        $this->target = $target;
     }
 
     /**

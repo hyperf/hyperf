@@ -68,7 +68,7 @@ class FilesystemFactoryTest extends AbstractTestCase
         ]);
         $container = ApplicationContext::getContainer();
         $container->set(ConfigInterface::class, $config);
-        $factory = new FilesystemFactory($container);
+        $factory = new FilesystemFactory($container, $container->get(ConfigInterface::class));
         $this->assertInstanceOf(\League\Flysystem\Filesystem::class, $fileSystem = $factory->get('test'));
         if (Version::isV2()) {
             $invoker = new ClassInvoker($fileSystem);

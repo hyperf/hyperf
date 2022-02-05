@@ -15,7 +15,7 @@ class FileStorage
 {
     protected $data;
 
-    protected $expiredTime;
+    protected ?int $expiredTime = null;
 
     public function __construct($data, $ttl)
     {

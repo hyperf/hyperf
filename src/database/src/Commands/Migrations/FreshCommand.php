@@ -21,29 +21,10 @@ class FreshCommand extends Command
 {
     use ConfirmableTrait;
 
-    /**
-     * The console command name.
-     *
-     * @var string
-     */
-    protected $name = 'migrate:fresh';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Drop all tables and re-run all migrations';
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        parent::__construct();
-        $this->container = $container;
+        parent::__construct('migrate:fresh');
+        $this->setDescription('Drop all tables and re-run all migrations');
     }
 
     /**
@@ -81,7 +62,7 @@ class FreshCommand extends Command
     }
 
     /**
-     * Drop all of the database tables.
+     * Drop all the database tables.
      */
     protected function dropAllTables(string $connection)
     {
@@ -92,7 +73,7 @@ class FreshCommand extends Command
     }
 
     /**
-     * Drop all of the database views.
+     * Drop all the database views.
      */
     protected function dropAllViews(string $connection)
     {

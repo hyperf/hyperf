@@ -19,11 +19,8 @@ use Psr\Container\ContainerInterface;
 
 class EagerLoadListener implements ListenerInterface
 {
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function listen(): array

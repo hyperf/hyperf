@@ -22,26 +22,11 @@ use Hyperf\Process\Event\PipeMessage as UserProcessPipeMessage;
 
 class OnPipeMessageListener implements ListenerInterface
 {
-    /**
-     * @var \Hyperf\ConfigCenter\DriverFactory
-     */
-    protected $driverFactory;
-
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    public function __construct(DriverFactory $driverFactory, ConfigInterface $config, StdoutLoggerInterface $logger)
-    {
-        $this->driverFactory = $driverFactory;
-        $this->config = $config;
-        $this->logger = $logger;
+    public function __construct(
+        protected DriverFactory $driverFactory,
+        protected ConfigInterface $config,
+        protected StdoutLoggerInterface $logger
+    ) {
     }
 
     /**

@@ -23,20 +23,8 @@ use Psr\Container\ContainerInterface;
 
 class BootProcessListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    public function __construct(ContainerInterface $container, ConfigInterface $config)
+    public function __construct(private ContainerInterface $container, private ConfigInterface $config)
     {
-        $this->container = $container;
-        $this->config = $config;
     }
 
     /**

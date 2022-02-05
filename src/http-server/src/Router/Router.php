@@ -23,15 +23,9 @@ namespace Hyperf\HttpServer\Router;
  */
 class Router
 {
-    /**
-     * @var string
-     */
-    protected static $serverName = 'http';
+    protected static string $serverName = 'http';
 
-    /**
-     * @var DispatcherFactory
-     */
-    protected static $factory;
+    protected static ?DispatcherFactory $factory = null;
 
     public static function __callStatic($name, $arguments)
     {

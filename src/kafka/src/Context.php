@@ -18,19 +18,10 @@ use Psr\Container\ContainerInterface;
 
 class Context
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected StdoutLoggerInterface $logger;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
 

@@ -21,18 +21,16 @@ class FooProxy
         Context::set(FooProxy::class, $params);
     }
 
-    /**
-     * @AsyncQueueMessage
-     */
+    #[AsyncQueueMessage]
     public function variadic(...$params)
     {
         Context::set(FooProxy::class, $params);
     }
 
     /**
-     * @AsyncQueueMessage
      * @param mixed $params
      */
+    #[AsyncQueueMessage]
     public function async($params)
     {
         Context::set(FooProxy::class, $params);

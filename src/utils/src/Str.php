@@ -181,9 +181,8 @@ class Str
      *
      * @param string $haystack
      * @param array|string $needles
-     * @return bool
      */
-    public static function contains($haystack, $needles)
+    public static function contains($haystack, $needles): bool
     {
         foreach ((array) $needles as $needle) {
             if ($needle !== '' && mb_strpos($haystack, $needle) !== false) {

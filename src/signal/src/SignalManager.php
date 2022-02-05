@@ -25,26 +25,14 @@ class SignalManager
     /**
      * @var SignalHandlerInterface[][][]
      */
-    protected $handlers = [];
+    protected array $handlers = [];
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ConfigInterface $config;
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
+    protected bool $stopped = false;
 
-    /**
-     * @var bool
-     */
-    protected $stopped = false;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
     }
 
@@ -97,26 +85,10 @@ class SignalManager
         return $this->stopped;
     }
 
-    /**
-     * @deprecated v2.2
-     */
-    public function isStoped(): bool
-    {
-        return $this->isStopped();
-    }
-
     public function setStopped(bool $stopped): self
     {
         $this->stopped = $stopped;
         return $this;
-    }
-
-    /**
-     * @deprecated v2.2
-     */
-    public function setStoped(bool $stopped): self
-    {
-        return $this->setStopped($stopped);
     }
 
     protected function isInvalidProcess(?int $process): bool
