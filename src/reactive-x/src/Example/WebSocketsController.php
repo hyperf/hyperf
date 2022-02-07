@@ -21,15 +21,9 @@ use Swoole\Http\Response;
 
 class WebSocketsController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
-    /**
-     * @var IpcSubject
-     */
-    private $subject;
+    private IpcSubject $subject;
 
-    /**
-     * @var array
-     */
-    private $subscriber = [];
+    private array $subscriber = [];
 
     public function __construct(BroadcasterInterface $broadcaster)
     {
