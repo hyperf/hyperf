@@ -19,19 +19,14 @@ use Hyperf\ReactiveX\Observable;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class SqlListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(ContainerInterface $container)
     {
-        $this->container = $container;
         $this->logger = $container->get(LoggerFactory::class)->get('RxPHP');
     }
 

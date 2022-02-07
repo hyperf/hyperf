@@ -33,7 +33,7 @@ class AllProcessesBroadcaster implements BroadcasterInterface
         $this->userProcessesBroadcaster = $userProcessesBroadcaster;
     }
 
-    public function broadcast(IpcMessageWrapper $message)
+    public function broadcast(IpcMessageWrapper $message): void
     {
         $this->serverBroadcaster->broadcast($message);
         $this->userProcessesBroadcaster->broadcast($message);

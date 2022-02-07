@@ -24,25 +24,16 @@ use Rx\Scheduler\VirtualTimeScheduler;
  */
 final class ConcurrentEventLoopScheduler extends VirtualTimeScheduler
 {
-    /**
-     * @var int
-     */
-    private $nextTimer = PHP_INT_MAX;
+    private int $nextTimer = PHP_INT_MAX;
 
-    /**
-     * @var bool
-     */
-    private $insideInvoke = false;
+    private bool $insideInvoke = false;
 
     /**
      * @var callable
      */
-    private $delayCallback;
+    private mixed $delayCallback;
 
-    /**
-     * @var DisposableInterface
-     */
-    private $currentTimer;
+    private DisposableInterface $currentTimer;
 
     /**
      * EventLoopScheduler constructor.

@@ -32,7 +32,7 @@ class UserProcessesBroadcaster implements BroadcasterInterface
         $this->id = $id;
     }
 
-    public function broadcast(IpcMessageWrapper $message)
+    public function broadcast(IpcMessageWrapper $message): void
     {
         if ($this->id !== null) {
             $processes = ProcessCollector::get($this->name);

@@ -40,7 +40,7 @@ class ServerBroadcaster implements BroadcasterInterface
         $this->id = $id;
     }
 
-    public function broadcast(IpcMessageWrapper $message)
+    public function broadcast(IpcMessageWrapper $message): void
     {
         // Lazy load to avoid causing issue before sever starts.
         if ($this->server === null) {

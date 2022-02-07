@@ -22,20 +22,8 @@ use Rx\SchedulerInterface;
 
 class EventObservable extends Observable
 {
-    /**
-     * @var string
-     */
-    private $eventName;
-
-    /**
-     * @var null|SchedulerInterface
-     */
-    private $scheduler;
-
-    public function __construct(string $eventName, ?SchedulerInterface $scheduler = null)
+    public function __construct(private string $eventName, private ?SchedulerInterface $scheduler = null)
     {
-        $this->eventName = $eventName;
-        $this->scheduler = $scheduler;
     }
 
     protected function _subscribe(ObserverInterface $observer): DisposableInterface

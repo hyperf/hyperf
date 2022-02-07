@@ -29,37 +29,20 @@ use Rx\SchedulerInterface;
 class HttpRouteObservable extends Observable
 {
     /**
-     * @var string|string[]
+     * @param string|string[] $httpMethod
+     * @param string $uri
+     * @param null|callable|string $callback
+     * @param null|SchedulerInterface $scheduler
+     * @param string $serverName
      */
-    private $httpMethod;
-
-    /**
-     * @var string
-     */
-    private $uri;
-
-    /**
-     * @var null|callable|string
-     */
-    private $callback;
-
-    /**
-     * @var null|SchedulerInterface
-     */
-    private $scheduler;
-
-    /**
-     * @var string
-     */
-    private $serverName;
-
-    public function __construct($httpMethod, string $uri, $callback = null, SchedulerInterface $scheduler = null, string $serverName = 'http')
+    public function __construct(
+        private string|array $httpMethod,
+        private string $uri,
+        private mixed $callback = null,
+        private ?SchedulerInterface $scheduler = null,
+        private string $serverName = 'http'
+    )
     {
-        $this->scheduler = $scheduler;
-        $this->httpMethod = $httpMethod;
-        $this->uri = $uri;
-        $this->callback = $callback;
-        $this->serverName = $serverName;
     }
 
     protected function _subscribe(ObserverInterface $observer): DisposableInterface
