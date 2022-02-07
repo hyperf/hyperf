@@ -44,19 +44,13 @@ class SqlListener implements ListenerInterface
     {
         Observable::fromEvent(QueryExecuted::class)
             ->filter(
-                function ($event) {
-                    return $event->time > 100;
-                }
+                fn ($event) => $event->time > 100
             )
             ->groupBy(
-                function ($event) {
-                    return $event->connectionName;
-                }
+                fn ($event) => $event->connectionName
             )
             ->flatMap(
-                function ($group) {
-                    return $group->throttle(1000);
-                }
+                fn ($group) => $group->throttle(1000)
             )
             ->map(
                 function ($event) {

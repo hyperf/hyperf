@@ -62,9 +62,7 @@ class IpcSubjectTest extends TestCase
             $broadcaster = Mockery::mock(BroadcasterInterface::class);
             $event = new IpcMessageWrapper(0, new OnNextNotification(42));
             $broadcaster->shouldReceive('broadcast')->with(
-                Mockery::on(function ($argument) use ($event) {
-                    return $event == $argument;
-                })
+                Mockery::on(fn ($argument) => $event == $argument)
             )->once();
             $container = Mockery::mock(Container::class);
             $container->shouldReceive('get')->with(ListenerProviderInterface::class)

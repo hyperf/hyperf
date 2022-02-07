@@ -34,9 +34,7 @@ class BatchSaveRoute implements ListenerInterface
     {
         Observable::fromHttpRoute('POST', '/save')
             ->map(
-                function (RequestInterface $request) {
-                    return $request->getBody();
-                }
+                fn (RequestInterface $request) => $request->getBody()
             )
             ->bufferWithCount(10)
             ->subscribe(

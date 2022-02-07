@@ -30,10 +30,7 @@ class HttpRouteObservable extends Observable
 {
     /**
      * @param string|string[] $httpMethod
-     * @param string $uri
      * @param null|callable|string $callback
-     * @param null|SchedulerInterface $scheduler
-     * @param string $serverName
      */
     public function __construct(
         private string|array $httpMethod,
@@ -41,8 +38,7 @@ class HttpRouteObservable extends Observable
         private mixed $callback = null,
         private ?SchedulerInterface $scheduler = null,
         private string $serverName = 'http'
-    )
-    {
+    ) {
     }
 
     protected function _subscribe(ObserverInterface $observer): DisposableInterface

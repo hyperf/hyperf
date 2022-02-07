@@ -16,20 +16,8 @@ use Hyperf\ReactiveX\Contract\BroadcasterInterface;
 
 class UserProcessesBroadcaster implements BroadcasterInterface
 {
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var int
-     */
-    protected $id;
-
-    public function __construct(?string $name = null, ?int $id = null)
+    public function __construct(protected ?string $name = null, protected ?int $id = null)
     {
-        $this->name = $name;
-        $this->id = $id;
     }
 
     public function broadcast(IpcMessageWrapper $message): void

@@ -44,7 +44,7 @@ class Observable
      * @param null|callable|string $callback
      * @throws \Exception
      */
-    public static function fromHttpRoute($httpMethod, string $uri, $callback = null, ?SchedulerInterface $scheduler = null, string $serverName = 'http'): HttpRouteObservable
+    public static function fromHttpRoute(array|string $httpMethod, string $uri, $callback = null, ?SchedulerInterface $scheduler = null, string $serverName = 'http'): HttpRouteObservable
     {
         return new HttpRouteObservable($httpMethod, $uri, $callback, $scheduler, $serverName);
     }
@@ -53,7 +53,7 @@ class Observable
      * @param array<callable>|callable $callables
      * @throws \Exception
      */
-    public static function fromCoroutine($callables, ?SchedulerInterface $scheduler = null): CoroutineObservable
+    public static function fromCoroutine(array|callable $callables, ?SchedulerInterface $scheduler = null): CoroutineObservable
     {
         if (is_callable($callables)) {
             $callables = [$callables];

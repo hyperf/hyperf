@@ -42,9 +42,7 @@ final class ConcurrentEventLoopScheduler extends VirtualTimeScheduler
     {
         $this->delayCallback = $timerCallableOrLoop;
         $this->currentTimer = new EmptyDisposable();
-        parent::__construct($this->now(), function ($a, $b) {
-            return $a - $b;
-        });
+        parent::__construct($this->now(), fn ($a, $b) => $a - $b);
     }
 
     public function scheduleAbsoluteWithState($state, int $dueTime, callable $action): DisposableInterface
