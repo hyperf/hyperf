@@ -42,7 +42,7 @@ use Rx\Disposable\EmptyDisposable;
 use Rx\Observable as RxObservable;
 use Rx\Scheduler\EventLoopScheduler;
 use Rx\SchedulerInterface;
-use Swoole\Coroutine\Channel;
+use Swoole\Engine\Channel;
 use Swoole\Event;
 use Swoole\Runtime;
 use Swoole\Timer;

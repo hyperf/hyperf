@@ -28,7 +28,7 @@ use Rx\Notification\OnNextNotification;
 use Rx\Scheduler\EventLoopScheduler;
 use Rx\SchedulerInterface;
 use Rx\Subject\Subject;
-use Swoole\Coroutine\Channel;
+use Swoole\Engine\Channel;
 use Swoole\Runtime;
 
 /**

@@ -15,7 +15,7 @@ use Hyperf\ReactiveX\Observable;
 use Hyperf\ReactiveX\RxSwoole;
 use Hyperf\ReactiveX\Scheduler\ConcurrentEventLoopScheduler;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine\Channel;
+use Swoole\Engine\Channel;
 use Swoole\Runtime;
 
 /**

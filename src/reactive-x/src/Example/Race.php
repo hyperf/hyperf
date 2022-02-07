@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 use Hyperf\ReactiveX\Observable;
-use Swoole\Coroutine\Channel;
+use Swoole\Engine\Channel;
 
 $result = new Channel(1);
 $o = Observable::fromCoroutine([function () {

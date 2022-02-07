@@ -11,13 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\ReactiveX;
 
+use Hyperf\Engine\Channel;
 use Hyperf\ReactiveX\Observable\ChannelObservable;
 use Hyperf\ReactiveX\Observable\CoroutineObservable;
 use Hyperf\ReactiveX\Observable\EventObservable;
 use Hyperf\ReactiveX\Observable\HttpRouteObservable;
 use Rx\Observable as RxObservable;
 use Rx\SchedulerInterface;
-use Swoole\Coroutine\Channel;
 
 class Observable
 {
