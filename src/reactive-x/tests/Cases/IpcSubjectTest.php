@@ -13,6 +13,7 @@ namespace HyperfTest\Cases;
 
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
+use Hyperf\Engine\Channel;
 use Hyperf\Event\EventDispatcher;
 use Hyperf\Event\ListenerProvider;
 use Hyperf\Process\Event\PipeMessage;
@@ -28,7 +29,6 @@ use Rx\Notification\OnNextNotification;
 use Rx\Scheduler\EventLoopScheduler;
 use Rx\SchedulerInterface;
 use Rx\Subject\Subject;
-use Swoole\Engine\Channel;
 use Swoole\Runtime;
 
 /**
