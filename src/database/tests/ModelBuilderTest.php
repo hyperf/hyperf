@@ -1173,7 +1173,7 @@ class ModelBuilderTest extends TestCase
 
     protected function mockConnectionForModel($model, $database)
     {
-        $grammarClass = 'Hyperf\Database\Query\Grammars\\' . $database . 'Grammar';
+        $grammarClass = 'Hyperf\Database\Query\Grammars\\' . $database . 'Grammars';
         $processorClass = 'Hyperf\Database\Query\Processors\\' . $database . 'Processor';
         $grammar = new $grammarClass();
         $processor = new $processorClass();

@@ -510,7 +510,7 @@ class Grammar extends BaseGrammar
     protected function whereIn(Builder $query, $where)
     {
         if (! empty($where['values'])) {
-            return $this->wrap($where['column']) . ' in (' . $this->parameterize($where['values']) . ')';
+            return $this->wrap($where['column']) . ' in (' . $this->parameterize($where['values'], $query) . ')';
         }
 
         return '0 = 1';

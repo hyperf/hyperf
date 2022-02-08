@@ -18,7 +18,7 @@ use RuntimeException;
 class PostgresGrammar extends Grammar
 {
     /**
-     * If this Grammar supports schema changes wrapped in a transaction.
+     * If this Grammars supports schema changes wrapped in a transaction.
      *
      * @var bool
      */

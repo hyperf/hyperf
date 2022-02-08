@@ -25,7 +25,11 @@ use Hyperf\Database\Commands\Seeders\SeedCommand;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\Database\Connectors\PostgresConnector;
 use Hyperf\Database\Migrations\MigrationRepositoryInterface;
+use Hyperf\Database\PostgreSqlConnection;
+use Hyperf\DbConnection\Connections\PostgreSqlSwooleExtConnection;
+use Hyperf\DbConnection\Connectors\PostgresSqlSwooleExtConnector;
 use Hyperf\DbConnection\Listener\RegisterConnectionResolverListener;
 use Hyperf\DbConnection\Pool\PoolFactory;
 
@@ -40,6 +44,8 @@ class ConfigProvider
                 ConnectionResolverInterface::class => ConnectionResolver::class,
                 'db.connector.mysql' => MySqlConnector::class,
                 MigrationRepositoryInterface::class => DatabaseMigrationRepositoryFactory::class,
+                PostgresConnector::class => PostgresSqlSwooleExtConnector::class,
+                PostgreSqlConnection::class => PostgreSqlSwooleExtConnection::class,
             ],
             'commands' => [
                 ModelCommand::class,

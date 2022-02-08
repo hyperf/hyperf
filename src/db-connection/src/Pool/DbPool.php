@@ -15,6 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\DbConnection\Connection;
 use Hyperf\DbConnection\Frequency;
+use Hyperf\DbConnection\PostgreSqlConnection;
 use Hyperf\Pool\Pool;
 use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
@@ -50,6 +51,13 @@ class DbPool extends Pool
 
     protected function createConnection(): ConnectionInterface
     {
-        return new Connection($this->container, $this, $this->config);
+        // TODO 还需要使用classMap将真正的连接类，变成基于swoole/ext-postgresql的连接类
+        // Hyperf\Database\Connectors\PostgresConnector -> Hyperf\DbConnection\Connectors\PostgresSqlSwooleExtConnector
+        switch ($this->config['driver']) {
+            case 'pgsql':
+                return new PostgreSqlConnection($this->container, $this, $this->config);
+            default:
+                return new Connection($this->container, $this, $this->config);
+        }
     }
 }

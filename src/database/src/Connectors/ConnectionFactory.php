@@ -15,6 +15,8 @@ use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\MySqlConnection;
 use Hyperf\Database\PostgreSqlConnection;
+use Hyperf\DbConnection\Connections\PostgreSqlSwooleExtConnection;
+use Hyperf\DbConnection\Connectors\PostgresSqlSwooleExtConnector;
 use Hyperf\Utils\Arr;
 use InvalidArgumentException;
 use PDOException;
@@ -74,7 +76,7 @@ class ConnectionFactory
             case 'mysql':
                 return new MySqlConnector();
             case 'pgsql':
-                return new PostgresConnector();
+                return new PostgresSqlSwooleExtConnector();
         }
 
         throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]");
@@ -250,7 +252,6 @@ class ConnectionFactory
      * @param string $database
      * @param string $prefix
      * @throws \InvalidArgumentException
-     * @return \Hyperf\Database\Connection
      */
     protected function createConnection($driver, $connection, $database, $prefix = '', array $config = [])
     {
@@ -262,7 +263,7 @@ class ConnectionFactory
             case 'mysql':
                 return new MySqlConnection($connection, $database, $prefix, $config);
             case 'pgsql':
-                return new PostgreSqlConnection($connection, $database, $prefix, $config);
+                return new PostgreSqlSwooleExtConnection($connection, $database, $prefix, $config);
         }
 
         throw new InvalidArgumentException("Unsupported driver [{$driver}]");
