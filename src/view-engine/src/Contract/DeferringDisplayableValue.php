@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine\Contract;
 
+use Hyperf\Contract\Htmlable;
+
 interface DeferringDisplayableValue
 {
     /**
