@@ -15,7 +15,7 @@ use ArrayIterator;
 use Closure;
 use Hyperf\ViewEngine\Contract\DeferringDisplayableValue;
 use Hyperf\ViewEngine\Contract\Enumerable;
-use Hyperf\ViewEngine\Contract\Htmlable;
+use Hyperf\Contract\Htmlable;
 use IteratorAggregate;
 use Traversable;
 

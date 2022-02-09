@@ -16,7 +16,7 @@ use ArrayIterator;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
-use Hyperf\ViewEngine\Contract\Htmlable;
+use Hyperf\Contract\Htmlable;
 use Hyperf\ViewEngine\HtmlString;
 use IteratorAggregate;
 use Traversable;

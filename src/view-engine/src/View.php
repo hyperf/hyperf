@@ -19,7 +19,7 @@ use Hyperf\Utils\Contracts\MessageBag;
 use Hyperf\Utils\Contracts\MessageProvider;
 use Hyperf\Utils\Str;
 use Hyperf\ViewEngine\Contract\EngineInterface;
-use Hyperf\ViewEngine\Contract\Htmlable;
+use Hyperf\Contract\Htmlable;
 use Hyperf\ViewEngine\Contract\Renderable;
 use Hyperf\ViewEngine\Contract\ViewInterface;
 use Throwable;
