@@ -17,7 +17,7 @@ use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use Hyperf\ViewEngine\Blade;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
-use Hyperf\ViewEngine\Contract\Htmlable;
+use Hyperf\Contract\Htmlable;
 use Hyperf\ViewEngine\View;
 use ReflectionClass;
 use ReflectionMethod;

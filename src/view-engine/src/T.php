@@ -14,7 +14,7 @@ namespace Hyperf\ViewEngine;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\ViewEngine\Contract\DeferringDisplayableValue;
-use Hyperf\ViewEngine\Contract\Htmlable;
+use Hyperf\Contract\Htmlable;
 
 class T
 {
