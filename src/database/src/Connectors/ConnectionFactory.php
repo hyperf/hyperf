@@ -76,6 +76,8 @@ class ConnectionFactory
             case 'mysql':
                 return new MySqlConnector();
             case 'pgsql':
+                return new PostgresConnector();
+            case 'pgsql-swoole':
                 return new PostgresSqlSwooleExtConnector();
         }
 
@@ -263,6 +265,8 @@ class ConnectionFactory
             case 'mysql':
                 return new MySqlConnection($connection, $database, $prefix, $config);
             case 'pgsql':
+                return new PostgreSqlConnection($connection, $database, $prefix, $config);
+            case 'pgsql-swoole':
                 return new PostgreSqlSwooleExtConnection($connection, $database, $prefix, $config);
         }
 
