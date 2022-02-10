@@ -37,6 +37,11 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
         $this->nodes = $nodes;
     }
 
+    public function getNodeCount(): int
+    {
+        return count($this->nodes);
+    }
+
     public function getNodes(): array
     {
         return $this->nodes;

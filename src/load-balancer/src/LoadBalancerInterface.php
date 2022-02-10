@@ -19,6 +19,8 @@ interface LoadBalancerInterface
      */
     public function select(array ...$parameters): Node;
 
+    public function getNodeCount(): int;
+
     /**
      * @param Node[] $nodes
      * @return $this

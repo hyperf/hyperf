@@ -88,15 +88,22 @@ class JsonRpcPoolTransporter implements TransporterInterface
         $this->factory = $factory;
         $this->config = array_replace_recursive($this->config, $config);
 
+        $this->retryCount = $this->config['retry_count'];
         $this->recvTimeout = $this->config['recv_timeout'] ?? 5.0;
         $this->connectTimeout = $this->config['connect_timeout'] ?? 5.0;
-        $this->retryCount = $this->config['retry_count'] ?? 2;
         $this->retryInterval = $this->config['retry_interval'] ?? 100;
     }
 
     public function send(string $data)
     {
-        $result = retry($this->retryCount, function () use ($data) {
+        $retryCount = 0;
+        if ($this->retryCount <= 0) {
+            $retryCount = $this->retryCount = $this->getLoadBalancer()->getNodeCount();
+        } else {
+            $retryCount = $this->retryCount;
+        }
+
+        $result = retry($retryCount, function () use ($data) {
             try {
                 $client = $this->getConnection();
                 if ($client->send($data) === false) {
@@ -118,6 +125,17 @@ class JsonRpcPoolTransporter implements TransporterInterface
             throw $result->getThrowable();
         }
         return $result;
+    }
+
+    public function getLoadBalancer(): ?LoadBalancerInterface
+    {
+        return $this->loadBalancer;
+    }
+
+    public function setLoadBalancer(LoadBalancerInterface $loadBalancer): TransporterInterface
+    {
+        $this->loadBalancer = $loadBalancer;
+        return $this;
     }
 
     /**
@@ -185,17 +203,6 @@ class JsonRpcPoolTransporter implements TransporterInterface
             return $this->loadBalancer->select();
         }
         return $this->nodes[array_rand($this->nodes)];
-    }
-
-    public function getLoadBalancer(): ?LoadBalancerInterface
-    {
-        return $this->loadBalancer;
-    }
-
-    public function setLoadBalancer(LoadBalancerInterface $loadBalancer): TransporterInterface
-    {
-        $this->loadBalancer = $loadBalancer;
-        return $this;
     }
 
     public function recv()
