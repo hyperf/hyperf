@@ -71,15 +71,6 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
                 /** @var LoadBalancerInterface $loadBalance */
                 $loadBalance = value($this->config['loadBalancer']);
                 $loadBalance->removeNode($node);
-                $rpcRegitsrProtocol = $loadBalance->getRegistryProtocol();
-                if (empty($rpcRegitsrProtocol)) {
-                    go(function () use ($loadBalance, $node) {
-                        sleep(10);
-                        $nodes = $loadBalance->getNodes();
-                        array_push($nodes, $node);
-                        $loadBalance->setNodes($nodes);
-                    });
-                }
             }
             // Force close and reconnect to server.
             $client->close();

@@ -70,7 +70,7 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
      * @param string|null $registryProtocol
      * @return $this
      */
-    public function setRegistryProtocol(string $registryProtocol = null)
+    public function setRegistryProtocol(string $registryProtocol = null): static
     {
         $this->registryProtocol = $registryProtocol;
         return $this;
@@ -82,12 +82,23 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
     public function removeNode(Node $node): bool
     {
         foreach ($this->nodes as $key => $activeNode) {
-            if ($activeNode === $node) {
+            if ((string)$activeNode === (string)$node) {
                 unset($this->nodes[$key]);
+                if (!$this->registryProtocol) {
+                    $this->reJoinLocalNode($node);
+                }
                 return true;
             }
         }
         return false;
+    }
+
+    protected function reJoinLocalNode(Node $node)
+    {
+        Coroutine::create(function () use ($node) {
+            sleep(10);
+            $this->nodes[] = $node;
+        });
     }
 
     public function refresh(callable $callback, int $tickMs = 5000)

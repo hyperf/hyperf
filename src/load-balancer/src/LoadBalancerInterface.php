@@ -31,10 +31,10 @@ interface LoadBalancerInterface
      * @param string|null $registryProtocol
      * @return $this
      */
-    public function setRegistryProtocol(string $registryProtocol = null);
+    public function setRegistryProtocol(string $registryProtocol = null): static;
 
     /**
-     * @return string $registryProtocol
+     * @return string|null $registryProtocol
      */
     public function getRegistryProtocol(): string|null;
 
