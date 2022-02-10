@@ -8,7 +8,7 @@
         "hyperf"
     ],
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/macroable": "~3.0.0",
         "hyperf/utils": "~3.0.0",

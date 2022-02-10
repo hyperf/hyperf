@@ -32,7 +32,7 @@ class GrpcResourceTest extends \PHPUnit\Framework\TestCase
         $msg = HiUserResource::make(new User(['name' => 'nfangxu', 'sex' => 1]))->toMessage();
 
         $this->assertSame('{"name":"nfangxu","sex":1}', $msg->serializeToJsonString());
-        $this->assertSame(HiUser::class, get_class($msg));
+        $this->assertSame(HiUser::class, $msg::class);
     }
 
     public function testCollectionToMessage()
@@ -55,8 +55,8 @@ class GrpcResourceTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(2, $msg);
 
         foreach ($msg as $value) {
-            $this->assertSame(HiReply::class, get_class($value));
-            $this->assertSame(HiUser::class, get_class($value->getUser()));
+            $this->assertSame(HiReply::class, $value::class);
+            $this->assertSame(HiUser::class, $value->getUser()::class);
         }
     }
 
@@ -68,8 +68,8 @@ class GrpcResourceTest extends \PHPUnit\Framework\TestCase
         ]))->toMessage();
 
         $this->assertSame('{"message":"foo","user":{"name":"nfangxu","sex":1}}', $msg->serializeToJsonString());
-        $this->assertSame(HiReply::class, get_class($msg));
-        $this->assertSame(HiUser::class, get_class($msg->getUser()));
+        $this->assertSame(HiReply::class, $msg::class);
+        $this->assertSame(HiUser::class, $msg->getUser()::class);
     }
 
     public function testResourceMayUseCollection()
@@ -88,10 +88,10 @@ class GrpcResourceTest extends \PHPUnit\Framework\TestCase
             $msg->serializeToJsonString()
         );
 
-        $this->assertSame(AllReply::class, get_class($msg));
+        $this->assertSame(AllReply::class, $msg::class);
 
         foreach ($msg->getUsers() as $user) {
-            $this->assertSame(HiUser::class, get_class($user));
+            $this->assertSame(HiUser::class, $user::class);
         }
     }
 }
