@@ -19,7 +19,10 @@ interface LoadBalancerInterface
      */
     public function select(array ...$parameters): Node;
 
-    public function getNodeCount(): int;
+    /**
+     * @return int
+     */
+    public function getNodeCount();
 
     /**
      * @param Node[] $nodes
@@ -31,12 +34,12 @@ interface LoadBalancerInterface
      * @param string|null $registryProtocol
      * @return $this
      */
-    public function setRegistryProtocol(string $registryProtocol = null): static;
+    public function setRegistryProtocol(string $registryProtocol = null);
 
     /**
      * @return string|null $registryProtocol
      */
-    public function getRegistryProtocol(): string|null;
+    public function getRegistryProtocol();
 
     /**
      * @return Node[] $nodes

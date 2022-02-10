@@ -58,10 +58,10 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
 
-    public function getRegistryProtocol(): string|null
+    public function getRegistryProtocol()
     {
         return $this->registryProtocol;
     }
@@ -70,7 +70,7 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
      * @param string|null $registryProtocol
      * @return $this
      */
-    public function setRegistryProtocol(string $registryProtocol = null): static
+    public function setRegistryProtocol(string $registryProtocol = null)
     {
         $this->registryProtocol = $registryProtocol;
         return $this;
@@ -78,8 +78,9 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
 
     /**
      * Remove a node from the node list.
+     * @return bool
      */
-    public function removeNode(Node $node): bool
+    public function removeNode(Node $node):bool
     {
         foreach ($this->nodes as $key => $activeNode) {
             if ((string)$activeNode === (string)$node) {
