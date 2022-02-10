@@ -8,7 +8,7 @@
     ],
     "description": "ReactiveX integration for Swoole and Hyperf",
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "ext-swoole": ">=4.5",
         "hyperf/contract": "~3.0.0",
         "hyperf/utils": "~3.0.0",

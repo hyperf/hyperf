@@ -14,7 +14,7 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "psr/http-server-middleware": "^1.0",
         "hyperf/utils": "~3.0.0"
     },
