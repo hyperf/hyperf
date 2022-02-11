@@ -1,5 +1,9 @@
 # v2.2.26 - TBD
 
+## Optimized
+
+- [#4514](https://github.com/hyperf/hyperf/pull/4514) Improved some performance by using lowercase headers.
+
 # v2.2.25 - 2022-01-30
 
 ## Fixed
