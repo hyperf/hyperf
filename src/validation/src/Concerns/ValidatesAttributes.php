@@ -13,7 +13,6 @@ namespace Hyperf\Validation\Concerns;
 
 use Carbon\Carbon;
 use Carbon\Carbon as Date;
-use Countable;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
@@ -646,7 +645,7 @@ trait ValidatesAttributes
 
         $attributeData = ValidationData::extractDataFromPath($explicitPath, $this->data);
 
-        $otherValues = Arr::where(Arr::dot($attributeData), fn($value, $key) => Str::is($parameters[0], $key));
+        $otherValues = Arr::where(Arr::dot($attributeData), fn ($value, $key) => Str::is($parameters[0], $key));
 
         return in_array($value, $otherValues);
     }
@@ -1315,7 +1314,7 @@ trait ValidatesAttributes
 
         $pattern = str_replace('\*', '[^.]+', preg_quote($attribute, '#'));
 
-        return Arr::where(Arr::dot($attributeData), fn($value, $key) => (bool) preg_match('#^' . $pattern . '\z#u', $key));
+        return Arr::where(Arr::dot($attributeData), fn ($value, $key) => (bool) preg_match('#^' . $pattern . '\z#u', $key));
     }
 
     /**

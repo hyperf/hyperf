@@ -22,8 +22,6 @@ interface Rule
 
     /**
      * Get the validation error message.
-     *
-     * @return array|string
      */
-    public function message();
+    public function message(): array|string;
 }

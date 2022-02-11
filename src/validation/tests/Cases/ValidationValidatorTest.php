@@ -4238,7 +4238,7 @@ class ValidationValidatorTest extends TestCase
                     return $value === 'taylor';
                 }
 
-                public function message()
+                public function message(): array|string
                 {
                     return ':attribute must be taylor';
                 }
@@ -4257,7 +4257,7 @@ class ValidationValidatorTest extends TestCase
                     return $value === 'taylor';
                 }
 
-                public function message()
+                public function message(): array|string
                 {
                     return ':attribute must be taylor';
                 }
@@ -4305,7 +4305,7 @@ class ValidationValidatorTest extends TestCase
                         return in_array($value, ['AK', 'HI']);
                     }
 
-                    public function message()
+                    public function message(): array|string
                     {
                         return ':attribute must be AR or TX';
                     }
@@ -4342,7 +4342,7 @@ class ValidationValidatorTest extends TestCase
                     return $value === 'taylor';
                 }
 
-                public function message()
+                public function message(): array|string
                 {
                     return [':attribute must be taylor', ':attribute must be a first name'];
                 }
@@ -4363,7 +4363,7 @@ class ValidationValidatorTest extends TestCase
                     return $value === 'taylor';
                 }
 
-                public function message()
+                public function message(): array|string
                 {
                     return [':attribute must be taylor', ':attribute must be a first name'];
                 }
@@ -4392,7 +4392,7 @@ class ValidationValidatorTest extends TestCase
                     return true;
                 }
 
-                public function message()
+                public function message(): array|string
                 {
                     return 'message';
                 }
