@@ -27,25 +27,14 @@ class FormRequest extends Request implements ValidatesWhenResolved
     use ValidatesWhenResolvedTrait;
 
     /**
-     * The container instance.
-     *
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * The key to be used for the view error bag.
-     *
-     * @var string
      */
-    protected $errorBag = 'default';
+    protected string $errorBag = 'default';
 
     /**
      * The scenes defined by developer.
-     *
-     * @var array
      */
-    protected $scenes = [];
+    protected array $scenes = [];
 
     /**
      * The input keys that should not be flashed on redirect.
@@ -54,15 +43,11 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     protected $dontFlash = ['password', 'password_confirmation'];
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->setContainer($container);
     }
 
-    /**
-     * @return $this
-     */
-    public function scene(string $scene)
+    public function scene(string $scene): static
     {
         Context::set($this->getContextValidatorKey('scene'), $scene);
         return $this;
@@ -110,10 +95,8 @@ class FormRequest extends Request implements ValidatesWhenResolved
 
     /**
      * Set the container implementation.
-     *
-     * @return $this
      */
-    public function setContainer(ContainerInterface $container)
+    public function setContainer(ContainerInterface $container): static
     {
         $this->container = $container;
 
@@ -212,7 +195,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Get scene rules.
      */
-    protected function getRules()
+    protected function getRules(): array
     {
         $rules = call_user_func_array([$this, 'rules'], []);
         $scene = $this->getScene();
