@@ -1469,7 +1469,7 @@ trait ValidatesAttributes
      *
      * @param mixed $value
      */
-    protected function getSize(string $attribute, $value): float|int
+    protected function getSize(string $attribute, $value): float|int|string
     {
         $hasNumeric = $this->hasRule($attribute, $this->numericRules);
 
