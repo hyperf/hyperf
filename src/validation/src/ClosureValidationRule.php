@@ -19,17 +19,13 @@ class ClosureValidationRule implements RuleContract
 {
     /**
      * Indicates if the validation callback failed.
-     *
-     * @var bool
      */
-    public $failed = false;
+    public bool $failed = false;
 
     /**
      * The validation error message.
-     *
-     * @var null|string
      */
-    public $message;
+    public ?string $message = null;
 
     /**
      * Create a new Closure based validation rule.
@@ -59,7 +55,7 @@ class ClosureValidationRule implements RuleContract
     /**
      * Get the validation error message.
      */
-    public function message(): array|string
+    public function message(): ?string
     {
         return $this->message;
     }
