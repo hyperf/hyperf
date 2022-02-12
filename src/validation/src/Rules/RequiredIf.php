@@ -13,7 +13,7 @@ namespace Hyperf\Validation\Rules;
 
 use InvalidArgumentException;
 
-class RequiredIf
+class RequiredIf implements \Stringable
 {
     /**
      * The condition that validates the attribute.
