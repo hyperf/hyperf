@@ -55,7 +55,7 @@ class ClosureValidationRule implements RuleContract
     /**
      * Get the validation error message.
      */
-    public function message(): ?string
+    public function message(): string
     {
         return $this->message;
     }
