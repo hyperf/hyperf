@@ -13,7 +13,6 @@ namespace Hyperf\Validation\Concerns;
 
 use Carbon\Carbon;
 use Carbon\Carbon as Date;
-use Countable;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
@@ -59,7 +58,7 @@ trait ValidatesAttributes
         if ($url = parse_url($value, PHP_URL_HOST)) {
             try {
                 return count(dns_get_record($url . '.', DNS_A | DNS_AAAA)) > 0;
-            } catch (Exception $e) {
+            } catch (Exception) {
                 return false;
             }
         }
@@ -646,9 +645,7 @@ trait ValidatesAttributes
 
         $attributeData = ValidationData::extractDataFromPath($explicitPath, $this->data);
 
-        $otherValues = Arr::where(Arr::dot($attributeData), function ($value, $key) use ($parameters) {
-            return Str::is($parameters[0], $key);
-        });
+        $otherValues = Arr::where(Arr::dot($attributeData), fn ($value, $key) => Str::is($parameters[0], $key));
 
         return in_array($value, $otherValues);
     }
@@ -872,7 +869,7 @@ trait ValidatesAttributes
         if (is_string($value) && trim($value) === '') {
             return false;
         }
-        if ((is_array($value) || $value instanceof Countable) && count($value) < 1) {
+        if ((is_countable($value)) && count($value) < 1) {
             return false;
         }
         if ($value instanceof SplFileInfo) {
@@ -1057,7 +1054,7 @@ trait ValidatesAttributes
     {
         try {
             new DateTimeZone($value);
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return false;
         }
 
@@ -1177,9 +1174,8 @@ trait ValidatesAttributes
      * Get the date timestamp.
      *
      * @param mixed $value
-     * @return bool|int
      */
-    protected function getDateTimestamp($value)
+    protected function getDateTimestamp($value): bool|int
     {
         if ($value instanceof DateTimeInterface) {
             return $value->getTimestamp();
@@ -1240,7 +1236,7 @@ trait ValidatesAttributes
             }
 
             return new DateTime($value);
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
     }
 
@@ -1318,9 +1314,7 @@ trait ValidatesAttributes
 
         $pattern = str_replace('\*', '[^.]+', preg_quote($attribute, '#'));
 
-        return Arr::where(Arr::dot($attributeData), function ($value, $key) use ($pattern) {
-            return (bool) preg_match('#^' . $pattern . '\z#u', $key);
-        });
+        return Arr::where(Arr::dot($attributeData), fn ($value, $key) => (bool) preg_match('#^' . $pattern . '\z#u', $key));
     }
 
     /**
@@ -1474,9 +1468,8 @@ trait ValidatesAttributes
      * Get the size of an attribute.
      *
      * @param mixed $value
-     * @return float|int
      */
-    protected function getSize(string $attribute, $value)
+    protected function getSize(string $attribute, $value): float|int|string
     {
         $hasNumeric = $this->hasRule($attribute, $this->numericRules);
 
@@ -1506,20 +1499,14 @@ trait ValidatesAttributes
      */
     protected function compare($first, $second, string $operator): bool
     {
-        switch ($operator) {
-            case '<':
-                return $first < $second;
-            case '>':
-                return $first > $second;
-            case '<=':
-                return $first <= $second;
-            case '>=':
-                return $first >= $second;
-            case '=':
-                return $first == $second;
-            default:
-                throw new InvalidArgumentException();
-        }
+        return match ($operator) {
+            '<' => $first < $second,
+            '>' => $first > $second,
+            '<=' => $first <= $second,
+            '>=' => $first >= $second,
+            '=' => $first == $second,
+            default => throw new InvalidArgumentException(),
+        };
     }
 
     /**

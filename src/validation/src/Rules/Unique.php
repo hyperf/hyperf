@@ -13,7 +13,7 @@ namespace Hyperf\Validation\Rules;
 
 use Hyperf\Database\Model\Model;
 
-class Unique
+class Unique implements \Stringable
 {
     use DatabaseRule;
 
