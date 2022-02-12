@@ -21,9 +21,10 @@ class NotIn implements \Stringable
     /**
      * Create a new "not in" rule instance.
      *
-     * @param array $values The accepted values.
+     * @param array $values the accepted values
      */
-    public function __construct(protected array $values) {
+    public function __construct(protected array $values)
+    {
     }
 
     /**
