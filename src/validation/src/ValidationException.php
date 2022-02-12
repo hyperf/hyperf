@@ -21,52 +21,28 @@ use Psr\Http\Message\ResponseInterface;
 class ValidationException extends ServerException
 {
     /**
-     * The validator instance.
-     *
-     * @var ValidatorInterface
-     */
-    public $validator;
-
-    /**
-     * The recommended response to send to the client.
-     *
-     * @var ResponseInterface
-     */
-    public $response;
-
-    /**
      * The status code to use for the response.
-     *
-     * @var int
      */
-    public $status = 422;
-
-    /**
-     * The name of the error bag.
-     *
-     * @var string
-     */
-    public $errorBag;
+    public int $status = 422;
 
     /**
      * The path the client should be redirected to.
-     *
-     * @var string
      */
-    public $redirectTo;
+    public ?string $redirectTo = null;
 
     /**
      * Create a new exception instance.
      *
-     * @param null|ResponseInterface $response
+     * @param ValidatorInterface $validator the validator instance
+     * @param null|ResponseInterface $response the recommended response to send to the client
+     * @param string $errorBag the name of the error bag
      */
-    public function __construct(ValidatorInterface $validator, $response = null, string $errorBag = 'default')
-    {
+    public function __construct(
+        public ValidatorInterface $validator,
+        public ?ResponseInterface $response = null,
+        public string $errorBag = 'default'
+    ) {
         parent::__construct('The given data was invalid.');
-
-        $this->response = $response;
-        $this->errorBag = $errorBag;
-        $this->validator = $validator;
     }
 
     /**

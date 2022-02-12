@@ -15,10 +15,8 @@ interface Rule
 {
     /**
      * Determine if the validation rule passes.
-     *
-     * @param mixed $value
      */
-    public function passes(string $attribute, $value): bool;
+    public function passes(string $attribute, mixed $value): bool;
 
     /**
      * Get the validation error message.
