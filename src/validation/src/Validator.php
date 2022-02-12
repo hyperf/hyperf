@@ -386,8 +386,10 @@ class Validator implements ValidatorContract
 
     /**
      * Determine if the given attribute has a rule in the given set.
+     *
+     * @param array|string|\Stringable $rules
      */
-    public function hasRule(string $attribute, array|string $rules): bool
+    public function hasRule(string $attribute, mixed $rules): bool
     {
         return ! is_null($this->getRule($attribute, $rules));
     }
@@ -927,8 +929,10 @@ class Validator implements ValidatorContract
 
     /**
      * Get a rule and its parameters for a given attribute.
+     *
+     * @param array|string|\Stringable $rules
      */
-    protected function getRule(string $attribute, array|string $rules): ?array
+    protected function getRule(string $attribute, mixed $rules): ?array
     {
         if (! array_key_exists($attribute, $this->rules)) {
             return null;
