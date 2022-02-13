@@ -21,14 +21,8 @@ use Hyperf\Metric\Contract\MetricFactoryInterface;
 
 class MetricFactory implements MetricFactoryInterface
 {
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    public function __construct(ConfigInterface $config)
+    public function __construct(private ConfigInterface $config)
     {
-        $this->config = $config;
     }
 
     public function makeCounter(string $name, ?array $labelNames = []): CounterInterface

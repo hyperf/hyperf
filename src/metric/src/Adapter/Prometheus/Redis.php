@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Metric\Adapter\Prometheus;
 
 use Exception;
+use Hyperf\Utils\Codec\Json;
 use InvalidArgumentException;
 use Prometheus\Counter;
 use Prometheus\Exception\StorageException;
@@ -24,10 +25,7 @@ class Redis implements Adapter
 {
     public const PROMETHEUS_METRIC_KEYS_SUFFIX = '_METRIC_KEYS';
 
-    /**
-     * @var array
-     */
-    private static $defaultOptions = [
+    private static array $defaultOptions = [
         'host' => '127.0.0.1',
         'port' => 6379,
         'timeout' => 0.1,
@@ -36,25 +34,16 @@ class Redis implements Adapter
         'password' => null,
     ];
 
-    /**
-     * @var string
-     */
-    private static $prefix = 'PROMETHEUS_';
+    private static string $prefix = 'PROMETHEUS_';
 
-    /**
-     * @var array
-     */
-    private $options = [];
+    private array $options;
 
     /**
      * @var \Redis
      */
-    private $redis;
+    private mixed $redis;
 
-    /**
-     * @var bool
-     */
-    private $connectionInitialized = false;
+    private bool $connectionInitialized = false;
 
     public function __construct(array $options = [])
     {
@@ -64,9 +53,10 @@ class Redis implements Adapter
 
     /**
      * Create an instance from an established redis connection.
+     *
      * @param \Hyperf\Redis\Redis|\Redis $redis
      */
-    public static function fromExistingConnection($redis): self
+    public static function fromExistingConnection(mixed $redis): self
     {
         if ($redis->isConnected() === false) {
             throw new StorageException('Connection to Redis server not established');
@@ -112,9 +102,7 @@ class Redis implements Adapter
         $metrics = array_merge($metrics, $this->collectGauges());
         $metrics = array_merge($metrics, $this->collectCounters());
         return array_map(
-            function (array $metric) {
-                return new MetricFamilySamples($metric);
-            },
+            fn (array $metric) => new MetricFamilySamples($metric),
             $metrics
         );
     }
@@ -149,10 +137,10 @@ LUA
             [
                 $this->toMetricKey($data) . $redisTag,
                 self::$prefix . Histogram::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $redisTag,
-                json_encode(['b' => 'sum', 'labelValues' => $data['labelValues']]),
-                json_encode(['b' => $bucketToIncrease, 'labelValues' => $data['labelValues']]),
+                Json::encode(['b' => 'sum', 'labelValues' => $data['labelValues']]),
+                Json::encode(['b' => $bucketToIncrease, 'labelValues' => $data['labelValues']]),
                 $data['value'],
-                json_encode($metaData),
+                Json::encode($metaData),
             ],
             2
         );
@@ -188,9 +176,9 @@ LUA
                 $this->toMetricKey($data) . $redisTag,
                 self::$prefix . Gauge::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $redisTag,
                 $this->getRedisCommand($data['command']),
-                json_encode($data['labelValues']),
+                Json::encode($data['labelValues']),
                 $data['value'],
-                json_encode($metaData),
+                Json::encode($metaData),
             ],
             2
         );
@@ -221,8 +209,8 @@ LUA
                 self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $redisTag,
                 $this->getRedisCommand($data['command']),
                 $data['value'],
-                json_encode($data['labelValues']),
-                json_encode($metaData),
+                Json::encode($data['labelValues']),
+                Json::encode($metaData),
             ],
             2
         );
@@ -230,16 +218,12 @@ LUA
 
     protected function getRedisTag(string $metricType): string
     {
-        switch ($metricType) {
-            case Counter::TYPE:
-                return '{counter}';
-            case Histogram::TYPE:
-                return '{histogram}';
-            case Gauge::TYPE:
-                return '{gauge}';
-            default:
-                return '';
-        }
+        return match ($metricType) {
+            Counter::TYPE => '{counter}',
+            Histogram::TYPE => '{histogram}',
+            Gauge::TYPE => '{gauge}',
+            default => '',
+        };
     }
 
     /**
@@ -274,7 +258,7 @@ LUA
                 );
             }
             return $this->redis->connect($this->options['host'], $this->options['port'], $this->options['timeout']);
-        } catch (\RedisException $e) {
+        } catch (\RedisException) {
             return false;
         }
     }
@@ -286,14 +270,14 @@ LUA
         $histograms = [];
         foreach ($keys as $key) {
             $raw = $this->redis->hGetAll(str_replace($this->redis->_prefix(''), '', $key));
-            $histogram = json_decode($raw['__meta'], true);
+            $histogram = Json::decode($raw['__meta']);
             unset($raw['__meta']);
             $histogram['samples'] = [];
             // Add the Inf bucket so we can compute it later on
             $histogram['buckets'][] = '+Inf';
             $allLabelValues = [];
             foreach (array_keys($raw) as $k) {
-                $d = json_decode($k, true);
+                $d = Json::decode($k);
                 if ($d['b'] == 'sum') {
                     continue;
                 }
@@ -312,7 +296,7 @@ LUA
                 // the previous one.
                 $acc = 0;
                 foreach ($histogram['buckets'] as $bucket) {
-                    $bucketKey = json_encode(['b' => $bucket, 'labelValues' => $labelValues]);
+                    $bucketKey = Json::encode(['b' => $bucket, 'labelValues' => $labelValues]);
                     if (! isset($raw[$bucketKey])) {
                         $histogram['samples'][] = [
                             'name' => $histogram['name'] . '_bucket',
@@ -342,7 +326,7 @@ LUA
                     'name' => $histogram['name'] . '_sum',
                     'labelNames' => [],
                     'labelValues' => $labelValues,
-                    'value' => $raw[json_encode(['b' => 'sum', 'labelValues' => $labelValues])],
+                    'value' => $raw[Json::encode(['b' => 'sum', 'labelValues' => $labelValues])],
                 ];
             }
             $histograms[] = $histogram;
@@ -357,7 +341,7 @@ LUA
         $gauges = [];
         foreach ($keys as $key) {
             $raw = $this->redis->hGetAll(str_replace($this->redis->_prefix(''), '', $key));
-            $gauge = json_decode($raw['__meta'], true);
+            $gauge = Json::decode($raw['__meta']);
             unset($raw['__meta']);
             $gauge['samples'] = [];
             foreach ($raw as $k => $value) {
@@ -367,13 +351,11 @@ LUA
                 $gauge['samples'][] = [
                     'name' => $gauge['name'],
                     'labelNames' => [],
-                    'labelValues' => json_decode($k, true),
+                    'labelValues' => Json::decode($k),
                     'value' => $value,
                 ];
             }
-            usort($gauge['samples'], function ($a, $b) {
-                return strcmp(implode('', $a['labelValues']), implode('', $b['labelValues']));
-            });
+            usort($gauge['samples'], fn ($a, $b) => strcmp(implode('', $a['labelValues']), implode('', $b['labelValues'])));
             $gauges[] = $gauge;
         }
         return $gauges;
@@ -386,7 +368,7 @@ LUA
         $counters = [];
         foreach ($keys as $key) {
             $raw = $this->redis->hGetAll(str_replace($this->redis->_prefix(''), '', $key));
-            $counter = json_decode($raw['__meta'], true);
+            $counter = Json::decode($raw['__meta']);
             unset($raw['__meta']);
             $counter['samples'] = [];
             foreach ($raw as $k => $value) {
@@ -396,13 +378,11 @@ LUA
                 $counter['samples'][] = [
                     'name' => $counter['name'],
                     'labelNames' => [],
-                    'labelValues' => json_decode($k, true),
+                    'labelValues' => Json::decode($k),
                     'value' => $value,
                 ];
             }
-            usort($counter['samples'], function ($a, $b) {
-                return strcmp(implode('', $a['labelValues']), implode('', $b['labelValues']));
-            });
+            usort($counter['samples'], fn ($a, $b) => strcmp(implode('', $a['labelValues']), implode('', $b['labelValues'])));
             $counters[] = $counter;
         }
         return $counters;
@@ -410,16 +390,12 @@ LUA
 
     private function getRedisCommand(int $cmd): string
     {
-        switch ($cmd) {
-            case Adapter::COMMAND_INCREMENT_INTEGER:
-                return 'hIncrBy';
-            case Adapter::COMMAND_INCREMENT_FLOAT:
-                return 'hIncrByFloat';
-            case Adapter::COMMAND_SET:
-                return 'hSet';
-            default:
-                throw new InvalidArgumentException('Unknown command');
-        }
+        return match ($cmd) {
+            Adapter::COMMAND_INCREMENT_INTEGER => 'hIncrBy',
+            Adapter::COMMAND_INCREMENT_FLOAT => 'hIncrByFloat',
+            Adapter::COMMAND_SET => 'hSet',
+            default => throw new InvalidArgumentException('Unknown command'),
+        };
     }
 
     private function toMetricKey(array $data): string
@@ -435,15 +411,11 @@ LUA
      */
     private function getMetricGatherKey($metricType): string
     {
-        switch ($metricType) {
-            case Counter::TYPE:
-                return self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Counter::TYPE);
-            case Histogram::TYPE:
-                return self::$prefix . Histogram::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Histogram::TYPE);
-            case Gauge::TYPE:
-                return self::$prefix . Gauge::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Gauge::TYPE);
-            default:
-                throw new Exception('Unknown metric type');
-        }
+        return match ($metricType) {
+            Counter::TYPE => self::$prefix . Counter::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Counter::TYPE),
+            Histogram::TYPE => self::$prefix . Histogram::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Histogram::TYPE),
+            Gauge::TYPE => self::$prefix . Gauge::TYPE . self::PROMETHEUS_METRIC_KEYS_SUFFIX . $this->getRedisTag(Gauge::TYPE),
+            default => throw new Exception('Unknown metric type'),
+        };
     }
 }
