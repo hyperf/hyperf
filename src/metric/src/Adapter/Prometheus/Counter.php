@@ -28,7 +28,7 @@ class Counter implements CounterInterface
         $this->counter = $registry->getOrRegisterCounter($namespace, $name, $help, $labelNames);
     }
 
-    public function with(string ...$labelValues): CounterInterface
+    public function with(string ...$labelValues): static
     {
         $this->labelValues = $labelValues;
         return $this;

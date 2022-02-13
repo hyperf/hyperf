@@ -25,7 +25,7 @@ class Histogram implements HistogramInterface
         $this->histogram = $registry->getOrRegisterHistogram($namespace, $name, $help, $labelNames);
     }
 
-    public function with(string ...$labelValues): HistogramInterface
+    public function with(string ...$labelValues): static
     {
         $this->labelValues = $labelValues;
         return $this;

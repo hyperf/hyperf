@@ -32,7 +32,7 @@ class Counter implements CounterInterface
     {
     }
 
-    public function with(string ...$labelValues): CounterInterface
+    public function with(string ...$labelValues): static
     {
         $this->labelValues = $labelValues;
         return $this;

@@ -27,7 +27,7 @@ class Gauge implements GaugeInterface
         $this->gauge = $registry->getOrRegisterGauge($namespace, $name, $help, $labelNames);
     }
 
-    public function with(string ...$labelValues): GaugeInterface
+    public function with(string ...$labelValues): static
     {
         $this->labelValues = $labelValues;
         return $this;

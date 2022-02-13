@@ -35,7 +35,7 @@ class Histogram implements HistogramInterface
     {
     }
 
-    public function with(string ...$labelValues): HistogramInterface
+    public function with(string ...$labelValues): static
     {
         $this->labelValues = $labelValues;
         return $this;
