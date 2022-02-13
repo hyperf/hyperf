@@ -22,26 +22,14 @@ class Counter implements CounterInterface
     protected const TARGET_PROCESS_NAME = 'metric';
 
     /**
-     * @var string
-     */
-    public $name;
-
-    public $labelNames = [];
-
-    /**
      * @var string[]
      */
-    public $labelValues = [];
+    public array $labelValues = [];
 
-    /**
-     * @var int
-     */
-    public $delta;
+    public ?int $delta = null;
 
-    public function __construct(string $name, array $labelNames)
+    public function __construct(public string $name, public array $labelNames)
     {
-        $this->name = $name;
-        $this->labelNames = $labelNames;
     }
 
     public function with(string ...$labelValues): CounterInterface

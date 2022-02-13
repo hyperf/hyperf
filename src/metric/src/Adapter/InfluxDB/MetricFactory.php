@@ -33,31 +33,13 @@ use Prometheus\Sample;
 
 class MetricFactory implements MetricFactoryInterface
 {
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private string $name;
 
-    /**
-     * @var CollectorRegistry
-     */
-    private $registry;
-
-    /**
-     * @var guzzleClientFactory
-     */
-    private $guzzleClientFactory;
-
-    /**
-     * @var string
-     */
-    private $name;
-
-    public function __construct(ConfigInterface $config, CollectorRegistry $registry, GuzzleClientFactory $guzzleClientFactory)
-    {
-        $this->config = $config;
-        $this->registry = $registry;
-        $this->guzzleClientFactory = $guzzleClientFactory;
+    public function __construct(
+        private ConfigInterface $config,
+        private CollectorRegistry $registry,
+        private GuzzleClientFactory $guzzleClientFactory
+    ) {
         $this->name = $this->config->get('metric.default');
     }
 
