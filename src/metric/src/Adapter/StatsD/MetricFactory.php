@@ -23,7 +23,7 @@ use Hyperf\Metric\Contract\MetricFactoryInterface;
 
 class MetricFactory implements MetricFactoryInterface
 {
-    private \Domnikl\Statsd\Client $client;
+    private Client $client;
 
     public function __construct(private ConfigInterface $config)
     {

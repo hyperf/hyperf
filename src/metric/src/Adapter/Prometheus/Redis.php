@@ -281,7 +281,7 @@ LUA
                 if ($d['b'] == 'sum') {
                     continue;
                 }
-                if ((is_countable($d['labelValues']) ? count($d['labelValues']) : 0) !== (is_countable($histogram['labelNames']) ? count($histogram['labelNames']) : 0)) {
+                if (count($d['labelValues']) !== count($histogram['labelNames'])) {
                     continue;
                 }
                 $allLabelValues[] = $d['labelValues'];
@@ -296,7 +296,7 @@ LUA
                 // the previous one.
                 $acc = 0;
                 foreach ($histogram['buckets'] as $bucket) {
-                    $bucketKey = json_encode(['b' => $bucket, 'labelValues' => $labelValues], JSON_THROW_ON_ERROR);
+                    $bucketKey = Json::encode(['b' => $bucket, 'labelValues' => $labelValues]);
                     if (! isset($raw[$bucketKey])) {
                         $histogram['samples'][] = [
                             'name' => $histogram['name'] . '_bucket',
@@ -326,7 +326,7 @@ LUA
                     'name' => $histogram['name'] . '_sum',
                     'labelNames' => [],
                     'labelValues' => $labelValues,
-                    'value' => $raw[json_encode(['b' => 'sum', 'labelValues' => $labelValues], JSON_THROW_ON_ERROR)],
+                    'value' => $raw[Json::encode(['b' => 'sum', 'labelValues' => $labelValues])],
                 ];
             }
             $histograms[] = $histogram;
@@ -345,7 +345,7 @@ LUA
             unset($raw['__meta']);
             $gauge['samples'] = [];
             foreach ($raw as $k => $value) {
-                if ((is_countable($gauge['labelNames']) ? count($gauge['labelNames']) : 0) !== (is_countable(Json::decode($k)) ? count(Json::decode($k)) : 0)) {
+                if (count($gauge['labelNames']) !== count(json_decode($k, true))) {
                     continue;
                 }
                 $gauge['samples'][] = [
@@ -372,7 +372,7 @@ LUA
             unset($raw['__meta']);
             $counter['samples'] = [];
             foreach ($raw as $k => $value) {
-                if ((is_countable($counter['labelNames']) ? count($counter['labelNames']) : 0) !== (is_countable(Json::decode($k)) ? count(Json::decode($k)) : 0)) {
+                if (count($counter['labelNames']) !== count(json_decode($k, true))) {
                     continue;
                 }
                 $counter['samples'][] = [
