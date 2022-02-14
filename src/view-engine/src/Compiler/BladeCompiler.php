@@ -205,11 +205,11 @@ class BladeCompiler extends Compiler implements CompilerInterface
             $value = call_user_func($precompiler, $value);
         }
 
-        // Here we will loop through all of the tokens returned by the Zend lexer and
+        // Here we will loop through all the tokens returned by the Zend lexer and
         // parse each one into the corresponding valid PHP. We will then have this
         // template as the correctly rendered PHP that can be rendered natively.
         foreach (\PhpToken::tokenize($value) as $token) {
-            $result .= is_array($token) ? $this->parseToken($token) : $token;
+            $result .= $this->parseToken($token);
         }
 
         if (! empty($this->rawBlocks)) {
@@ -583,9 +583,10 @@ class BladeCompiler extends Compiler implements CompilerInterface
     /**
      * Parse the tokens from the template.
      */
-    protected function parseToken(array $token): string
+    protected function parseToken(\PhpToken $token): string
     {
-        [$id, $content] = $token;
+        $id = $token->id;
+        $content = $token->text;
 
         if ((int) $id === T_INLINE_HTML) {
             foreach ($this->compilers as $type) {

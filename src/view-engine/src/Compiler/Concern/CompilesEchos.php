@@ -73,11 +73,8 @@ trait CompilesEchos
 
     /**
      * Compile the escaped echo statements.
-     *
-     * @param string $value
-     * @return string
      */
-    protected function compileEscapedEchos($value)
+    protected function compileEscapedEchos(string $value): string
     {
         $pattern = sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->escapedTags[0], $this->escapedTags[1]);
 

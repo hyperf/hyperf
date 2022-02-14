@@ -18,7 +18,7 @@ trait CompilesJson
      *
      * @var int
      */
-    private $encodingOptions = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
+    private int $encodingOptions = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
 
     /**
      * Compile the JSON statement into valid PHP.
