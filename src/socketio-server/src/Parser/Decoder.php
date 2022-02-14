@@ -53,7 +53,7 @@ class Decoder
         }
 
         // data
-        $data = json_decode(mb_substr($payload, $i)) ?? [];
+        $data = json_decode(mb_substr($payload, $i), true) ?? [];
         return Packet::create([
             'type' => $type,
             'nsp' => $nsp,
