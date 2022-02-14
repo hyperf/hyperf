@@ -18,18 +18,10 @@ use Throwable;
 class PhpEngine implements EngineInterface
 {
     /**
-     * The filesystem instance.
-     *
-     * @var Filesystem
-     */
-    protected $files;
-
-    /**
      * Create a new file engine instance.
      */
-    public function __construct(Filesystem $files)
+    public function __construct(protected Filesystem $files)
     {
-        $this->files = $files;
     }
 
     /**
