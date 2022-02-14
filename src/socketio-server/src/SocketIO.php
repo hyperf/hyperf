@@ -26,7 +26,6 @@ use Hyperf\SocketIOServer\Parser\Packet;
 use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Codec\Json;
 use Hyperf\WebSocketServer\Sender;
 use Swoole\Atomic;
 use Swoole\Coroutine\Channel;
