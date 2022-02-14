@@ -33,46 +33,34 @@ class BladeCompiler extends Compiler implements CompilerInterface
     use Concern\CompilesTranslations;
 
     /**
-     * All of the registered extensions.
-     *
-     * @var array
+     * All the registered extensions.
      */
-    protected $extensions = [];
+    protected array $extensions = [];
 
     /**
      * All custom "directive" handlers.
-     *
-     * @var array
      */
-    protected $customDirectives = [];
+    protected array $customDirectives = [];
 
     /**
      * All custom "condition" handlers.
-     *
-     * @var array
      */
-    protected $conditions = [];
+    protected array $conditions = [];
 
     /**
-     * All of the registered precompilers.
-     *
-     * @var array
+     * All the registered precompilers.
      */
-    protected $precompilers = [];
+    protected array $precompilers = [];
 
     /**
      * The file currently being compiled.
-     *
-     * @var string
      */
-    protected $path;
+    protected ?string $path = null;
 
     /**
-     * All of the available compiler functions.
-     *
-     * @var array
+     * All the available compiler functions.
      */
-    protected $compilers = [
+    protected array $compilers = [
         // 'Comments',
         'Extensions',
         'Statements',
@@ -81,78 +69,55 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Array of opening and closing tags for raw echos.
-     *
-     * @var array
      */
-    protected $rawTags = ['{!!', '!!}'];
+    protected array $rawTags = ['{!!', '!!}'];
 
     /**
      * Array of opening and closing tags for regular echos.
-     *
-     * @var array
      */
-    protected $contentTags = ['{{', '}}'];
+    protected array $contentTags = ['{{', '}}'];
 
     /**
      * Array of opening and closing tags for escaped echos.
-     *
-     * @var array
      */
-    protected $escapedTags = ['{{{', '}}}'];
+    protected array $escapedTags = ['{{{', '}}}'];
 
     /**
      * The "regular" / legacy echo string format.
-     *
-     * @var string
      */
-    protected $echoFormat = '\Hyperf\ViewEngine\T::e(%s)';
+    protected string $echoFormat = '\Hyperf\ViewEngine\T::e(%s)';
 
     /**
      * Array of footer lines to be added to template.
-     *
-     * @var array
      */
-    protected $footer = [];
+    protected array $footer = [];
 
     /**
      * Array to temporary store the raw blocks found in the template.
-     *
-     * @var array
      */
-    protected $rawBlocks = [];
+    protected array $rawBlocks = [];
 
     /**
      * The array of class component aliases and their class names.
-     *
-     * @var array
      */
-    protected $classComponentAliases = [];
+    protected array $classComponentAliases = [];
 
     /**
      * The array of class component namespaces to autoload from.
-     *
-     * @var array
      */
-    protected $classComponentNamespaces = [];
+    protected array $classComponentNamespaces = [];
 
     /**
      * Indicates if component tags should be compiled.
-     *
-     * @var bool
      */
-    protected $compilesComponentTags = true;
+    protected bool $compilesComponentTags = true;
 
-    /**
-     * @var array
-     */
-    protected $componentAutoload = [];
+    protected array $componentAutoload = [];
 
     /**
      * Compile the view at the given path.
-     *
-     * @param null|string $path
      */
-    public function compile($path = null)
+    public function compile(?string $path = null)
     {
         $path ??= $this->getPath();
 
@@ -588,7 +553,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
         $id = $token->id;
         $content = $token->text;
 
-        if ((int) $id === T_INLINE_HTML) {
+        if ($id === T_INLINE_HTML) {
             foreach ($this->compilers as $type) {
                 $content = $this->{"compile{$type}"}($content);
             }
