@@ -15,11 +15,8 @@ trait CompilesInjections
 {
     /**
      * Compile the inject statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileInject($expression)
+    protected function compileInject(string $expression): string
     {
         $segments = explode(',', preg_replace("/[\\(\\)\\\"\\']/", '', $expression));
 

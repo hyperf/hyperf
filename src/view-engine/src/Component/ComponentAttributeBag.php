@@ -21,23 +21,17 @@ use Hyperf\ViewEngine\HtmlString;
 use IteratorAggregate;
 use Traversable;
 
-class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
+class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate, \Stringable
 {
     use Macroable;
 
     /**
-     * The raw array of attributes.
-     *
-     * @var array
-     */
-    protected $attributes = [];
-
-    /**
      * Create a new component attribute bag instance.
+     *
+     * @param array $attributes the raw array of attributes
      */
-    public function __construct(array $attributes = [])
+    public function __construct(protected array $attributes = [])
     {
-        $this->attributes = $attributes;
     }
 
     /**
@@ -52,10 +46,8 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
 
     /**
      * Implode the attributes into a single HTML ready string.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $string = '';
 
@@ -167,9 +159,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
      */
     public function whereStartsWith($string)
     {
-        return $this->filter(function ($value, $key) use ($string) {
-            return Str::startsWith($key, $string);
-        });
+        return $this->filter(fn ($value, $key) => Str::startsWith($key, $string));
     }
 
     /**
@@ -180,9 +170,7 @@ class ComponentAttributeBag implements ArrayAccess, Htmlable, IteratorAggregate
      */
     public function whereDoesntStartWith($string)
     {
-        return $this->reject(function ($value, $key) use ($string) {
-            return Str::startsWith($key, $string);
-        });
+        return $this->reject(fn ($value, $key) => Str::startsWith($key, $string));
     }
 
     /**

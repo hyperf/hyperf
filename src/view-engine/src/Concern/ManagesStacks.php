@@ -16,25 +16,19 @@ use InvalidArgumentException;
 trait ManagesStacks
 {
     /**
-     * All of the finished, captured push sections.
-     *
-     * @var array
+     * All the finished, captured push sections.
      */
-    protected $pushes = [];
+    protected array $pushes = [];
 
     /**
-     * All of the finished, captured prepend sections.
-     *
-     * @var array
+     * All the finished, captured prepend sections.
      */
-    protected $prepends = [];
+    protected array $prepends = [];
 
     /**
      * The stack of in-progress push sections.
-     *
-     * @var array
      */
-    protected $pushStack = [];
+    protected array $pushStack = [];
 
     /**
      * Start injecting content into a push section.

@@ -15,8 +15,6 @@ interface EngineInterface
 {
     /**
      * Get the evaluated contents of the view.
-     *
-     * @return string
      */
-    public function get(string $path, array $data = []);
+    public function get(string $path, array $data = []): string;
 }

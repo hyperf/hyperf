@@ -19,21 +19,15 @@ use Hyperf\ViewEngine\Contract\Htmlable;
 use IteratorAggregate;
 use Traversable;
 
-class InvokableComponentVariable implements DeferringDisplayableValue, IteratorAggregate
+class InvokableComponentVariable implements DeferringDisplayableValue, IteratorAggregate, \Stringable
 {
     /**
-     * The callable instance to resolve the variable value.
-     *
-     * @var Closure
-     */
-    protected $callable;
-
-    /**
      * Create a new variable instance.
+     *
+     * @param Closure $callable the callable instance to resolve the variable value
      */
-    public function __construct(Closure $callable)
+    public function __construct(protected Closure $callable)
     {
-        $this->callable = $callable;
     }
 
     /**
@@ -71,20 +65,16 @@ class InvokableComponentVariable implements DeferringDisplayableValue, IteratorA
 
     /**
      * Resolve the variable as a string.
-     *
-     * @return mixed
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->__invoke();
     }
 
     /**
      * Resolve the displayable value that the class is deferring.
-     *
-     * @return Htmlable|string
      */
-    public function resolveDisplayableValue()
+    public function resolveDisplayableValue(): Htmlable|string
     {
         return $this->__invoke();
     }

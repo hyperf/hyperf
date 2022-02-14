@@ -24,32 +24,11 @@ use Hyperf\ViewEngine\Contract\Renderable;
 use Hyperf\ViewEngine\Contract\ViewInterface;
 use Throwable;
 
-class View implements ArrayAccess, Htmlable, ViewInterface
+class View implements ArrayAccess, Htmlable, ViewInterface, \Stringable
 {
     use Macroable {
         __call as macroCall;
     }
-
-    /**
-     * The view factory instance.
-     *
-     * @var Factory
-     */
-    protected $factory;
-
-    /**
-     * The engine implementation.
-     *
-     * @var EngineInterface
-     */
-    protected $engine;
-
-    /**
-     * The name of the view.
-     *
-     * @var string
-     */
-    protected $view;
 
     /**
      * The array of view data.
@@ -59,26 +38,28 @@ class View implements ArrayAccess, Htmlable, ViewInterface
     protected $data;
 
     /**
-     * The path to the view file.
-     *
-     * @var string
-     */
-    protected $path;
-
-    /**
      * Create a new view instance.
      *
      * @param string $view
      * @param string $path
      * @param mixed $data
      */
-    public function __construct(Factory $factory, EngineInterface $engine, $view, $path, $data = [])
-    {
-        $this->view = $view;
-        $this->path = $path;
-        $this->engine = $engine;
-        $this->factory = $factory;
-
+    /**
+     * Create a new view instance.
+     *
+     * @param Factory $factory the view factory instance
+     * @param EngineInterface $engine the engine implementation
+     * @param string $view the name of the view
+     * @param string $path the path to the view file
+     * @param array|Arrayable $data
+     */
+    public function __construct(
+        protected Factory $factory,
+        protected EngineInterface $engine,
+        protected string $view,
+        protected string $path,
+        $data = []
+    ) {
         $this->data = $data instanceof Arrayable ? $data->toArray() : (array) $data;
     }
 
@@ -143,20 +124,18 @@ class View implements ArrayAccess, Htmlable, ViewInterface
      * Get the string contents of the view.
      *
      * @throws Throwable
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->render();
+        return (string) $this->render();
     }
 
     /**
      * Get the string contents of the view.
      *
      * @throws Throwable
-     * @return array|string
      */
-    public function render(callable $callback = null)
+    public function render(callable $callback = null): array|string
     {
         try {
             $contents = $this->renderContents();
@@ -202,9 +181,7 @@ class View implements ArrayAccess, Htmlable, ViewInterface
      */
     public function renderSections()
     {
-        return $this->render(function () {
-            return $this->factory->getSections();
-        });
+        return $this->render(fn () => $this->factory->getSections());
     }
 
     /**
@@ -240,11 +217,10 @@ class View implements ArrayAccess, Htmlable, ViewInterface
     /**
      * Add validation errors to the view.
      *
-     * @param array|MessageProvider $provider
      * @param string $bag
      * @return $this
      */
-    public function withErrors($provider, $bag = 'default')
+    public function withErrors(array|MessageProvider $provider, $bag = 'default')
     {
         return $this->with('errors', (new ViewErrorBag())->put(
             $bag,
@@ -262,10 +238,8 @@ class View implements ArrayAccess, Htmlable, ViewInterface
 
     /**
      * Get the name of the view.
-     *
-     * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->view;
     }
@@ -280,20 +254,16 @@ class View implements ArrayAccess, Htmlable, ViewInterface
 
     /**
      * Get the path to the view file.
-     *
-     * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
 
     /**
      * Set the path to the view.
-     *
-     * @param string $path
      */
-    public function setPath($path)
+    public function setPath(string $path)
     {
         $this->path = $path;
     }
@@ -407,14 +377,11 @@ class View implements ArrayAccess, Htmlable, ViewInterface
 
     /**
      * Parse the given errors into an appropriate value.
-     *
-     * @param array|MessageProvider|string $provider
-     * @return \Hyperf\Utils\MessageBag|MessageBag
      */
-    protected function formatErrors($provider)
+    protected function formatErrors(array|MessageProvider|string $provider): \Hyperf\Utils\MessageBag|MessageBag
     {
         return $provider instanceof MessageProvider
-                        ? $provider->getMessageBag()
-                        : new \Hyperf\Utils\MessageBag((array) $provider);
+            ? $provider->getMessageBag()
+            : new \Hyperf\Utils\MessageBag((array) $provider);
     }
 }
