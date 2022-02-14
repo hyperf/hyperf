@@ -13,5 +13,5 @@ namespace Hyperf\View\Engine;
 
 interface EngineInterface
 {
-    public function render($template, $data, $config): string;
+    public function render(string $template, array $data, array $config): string;
 }

@@ -15,7 +15,7 @@ use duncan3dc\Laravel\BladeInstance;
 
 class BladeEngine implements EngineInterface
 {
-    public function render($template, $data, $config): string
+    public function render(string $template, array $data, array $config): string
     {
         $blade = new BladeInstance($config['view_path'], $config['cache_path']);
 
