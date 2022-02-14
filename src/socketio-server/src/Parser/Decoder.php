@@ -11,8 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Parser;
 
-use Hyperf\Utils\Codec\Json;
-
 class Decoder
 {
     public function decode($payload): Packet
@@ -55,7 +53,7 @@ class Decoder
         }
 
         // data
-        $data = Json::decode(mb_substr($payload, $i)) ?? [];
+        $data = json_decode(mb_substr($payload, $i)) ?? [];
         return Packet::create([
             'type' => $type,
             'nsp' => $nsp,
