@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Parser;
 
+use Hyperf\Utils\Codec\Json;
+
 class Encoder
 {
     public function encode(Packet $packet): string
@@ -23,7 +25,7 @@ class Encoder
             $packet->type,
             $packet->nsp === '/' ? '' : $packet->nsp . ',',
             $packet->id,
-            $noData ? '' : json_encode($packet->data),
+            $noData ? '' : Json::encode($packet->data),
         ]);
     }
 }

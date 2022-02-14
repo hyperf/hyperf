@@ -26,6 +26,7 @@ use Hyperf\SocketIOServer\Parser\Packet;
 use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Codec\Json;
 use Hyperf\WebSocketServer\Sender;
 use Swoole\Atomic;
 use Swoole\Coroutine\Channel;
@@ -176,10 +177,10 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
             'pingTimeout' => $this->config->getPingTimeout(),
         ];
         if ($server instanceof Response) {
-            $server->push(Engine::OPEN . json_encode($data)); //socket is open
+            $server->push(Engine::OPEN . Json::encode($data)); //socket is open
             $server->push(Engine::MESSAGE . Packet::OPEN); //server open
         } else {
-            $server->push($request->fd, Engine::OPEN . json_encode($data)); //socket is open
+            $server->push($request->fd, Engine::OPEN . Json::encode($data)); //socket is open
             $server->push($request->fd, Engine::MESSAGE . Packet::OPEN); //server open
         }
 

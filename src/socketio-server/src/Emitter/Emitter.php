@@ -99,20 +99,14 @@ trait Emitter
         return $copy;
     }
 
-    /**
-     * @param int|string $room
-     */
-    public function to($room): self
+    public function to(int|string $room): static
     {
         $copy = clone $this;
         $copy->to[] = (string) $room;
         return $copy;
     }
 
-    /**
-     * @param int|string $room
-     */
-    public function in($room): self
+    public function in(int|string $room): static
     {
         return $this->to($room);
     }
@@ -142,9 +136,7 @@ trait Emitter
             'fd' => $this->fd,
             'event' => $event,
             'data' => $data,
-            'encode' => function ($i, $event, $data) {
-                return $this->encode($i, $event, $data);
-            },
+            'encode' => fn ($i, $event, $data) => $this->encode($i, $event, $data),
             'opcode' => SWOOLE_WEBSOCKET_OPCODE_TEXT,
             'flag' => $this->guessFlags($this->compress),
         ]);

@@ -29,10 +29,10 @@ class MemoryAdapter implements AdapterInterface
 
     public function add(string $sid, string ...$rooms)
     {
-        $this->sids[$sid] = $this->sids[$sid] ?? [];
+        $this->sids[$sid] ??= [];
         foreach ($rooms as $room) {
             $this->sids[$sid][$room] = true;
-            $this->rooms[$room] = $this->rooms[$room] ?? make(MemoryRoom::class);
+            $this->rooms[$room] ??= make(MemoryRoom::class);
             $this->rooms[$room]->add($sid);
         }
     }
