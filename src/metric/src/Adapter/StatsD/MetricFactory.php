@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -85,14 +85,14 @@ class MetricFactory implements MetricFactoryInterface
         $batchEnabled = $this->config->get("metric.metric.{$name}.enable_batch") == true;
         // Block handle from returning.
         if ($batchEnabled) {
-            do {
+            while (true) {
                 $this->client->startBatch();
                 $workerExited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($interval);
                 $this->client->endBatch();
                 if ($workerExited) {
                     break;
                 }
-            } while (true);
+            }
         } else {
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
         }

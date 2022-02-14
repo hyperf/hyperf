@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -34,7 +34,7 @@ class Config
 
     /**
      * The lifetime of model cache.
-     * @var int
+     * @var \DateInterval|int
      */
     protected $ttl = 3600;
 
@@ -126,12 +126,18 @@ class Config
         return $this;
     }
 
-    public function getTtl(): int
+    /**
+     * @return \DateInterval|int
+     */
+    public function getTtl()
     {
         return $this->ttl;
     }
 
-    public function setTtl(int $ttl): Config
+    /**
+     * @param \DateInterval|int $ttl
+     */
+    public function setTtl($ttl): Config
     {
         $this->ttl = $ttl;
         return $this;

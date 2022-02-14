@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -16,6 +16,11 @@ use Hyperf\JsonRpc\Pool\RpcConnection;
 class RpcConnectionStub extends RpcConnection
 {
     public $lastData = '';
+
+    /**
+     * @var null|\Closure
+     */
+    public $reconnectCallback;
 
     public function __call($name, $arguments)
     {
@@ -39,6 +44,16 @@ class RpcConnectionStub extends RpcConnection
 
     public function reconnect(): bool
     {
+        if ($this->reconnectCallback) {
+            return $this->reconnectCallback->call($this);
+        }
+        $this->lastUseTime = microtime(true);
+        return true;
+    }
+
+    public function close(): bool
+    {
+        $this->lastUseTime = 0.0;
         return true;
     }
 }

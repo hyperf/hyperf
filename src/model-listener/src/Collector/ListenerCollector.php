@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -52,6 +52,20 @@ class ListenerCollector extends MetadataCollector
      */
     public static function clearListeners(): void
     {
-        static::$container = [];
+        static::clear();
+    }
+
+    public static function clear(?string $listener = null): void
+    {
+        if ($listener) {
+            foreach (static::$container as $model => $listeners) {
+                if ($id = array_search($listener, $listeners)) {
+                    unset($listeners[$id]);
+                    static::$container[$model] = array_values($listeners);
+                }
+            }
+        } else {
+            static::$container = [];
+        }
     }
 }

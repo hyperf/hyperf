@@ -5,13 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\Nsq;
 
-use Jean85\PrettyVersions;
+use Hyperf\Utils\CodeGen\Package;
 
 /**
  * NSQ Protocol https://nsq.io/clients/tcp_protocol_spec.html.
@@ -164,8 +164,9 @@ class MessageBuilder
     public function buildIdentify(): string
     {
         $command = "IDENTIFY\n";
-        $version = PrettyVersions::getVersion('hyperf/nsq') ?? '1.0';
+        $version = Package::getPrettyVersion('hyperf/nsq');
         $hostname = value(function () {
+            /** @var mixed|string $ip */
             $ip = gethostbyname(gethostname());
             if (is_string($ip)) {
                 return $ip;

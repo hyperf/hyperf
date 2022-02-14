@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -30,6 +30,10 @@ class Server extends Proxy
 
     public function toArray(): array
     {
+        if (! $this->hasRequest()) {
+            return [];
+        }
+
         $headers = [];
         foreach ($this->getRequest()->getHeaders() as $key => $value) {
             $headers['HTTP_' . str_replace('-', '_', Str::upper($key))] = $value;

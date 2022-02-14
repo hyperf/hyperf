@@ -1,0 +1,47 @@
+{
+    "name": "hyperf/resource",
+    "description": "A api resource component for hyperf.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf",
+        "resource"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=7.2",
+        "ext-json": "*",
+        "hyperf/http-message": "~2.2.0",
+        "hyperf/paginator": "~2.2.0",
+        "hyperf/utils": "~2.2.0",
+        "psr/container": "^1.0|^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Resource\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Resource\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Resource\\ConfigProvider"
+        }
+    }
+}

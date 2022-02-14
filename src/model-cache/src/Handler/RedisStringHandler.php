@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -16,18 +16,21 @@ use Hyperf\ModelCache\Config;
 use Hyperf\ModelCache\Exception\CacheException;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Utils\InteractsWithTime;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Psr\Container\ContainerInterface;
 
 class RedisStringHandler implements HandlerInterface
 {
+    use InteractsWithTime;
+
     /**
      * @var ContainerInterface
      */
     protected $container;
 
     /**
-     * @var Redis
+     * @var RedisProxy
      */
     protected $redis;
 
@@ -74,13 +77,13 @@ class RedisStringHandler implements HandlerInterface
         }
 
         $serialized = $this->packer->pack($data);
-        if ($ttl && $ttl > 0) {
-            $res = $this->redis->set($key, $serialized, ['EX' => $ttl]);
-        } else {
-            $res = $this->redis->set($key, $serialized);
+        if ($ttl) {
+            $seconds = $this->secondsUntil($ttl);
+            if ($seconds > 0) {
+                return $this->redis->set($key, $serialized, ['EX' => $seconds]);
+            }
         }
-
-        return $res;
+        return $this->redis->set($key, $serialized);
     }
 
     public function delete($key)

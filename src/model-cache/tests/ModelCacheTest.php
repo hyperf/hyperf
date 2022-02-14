@@ -5,15 +5,23 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace HyperfTest\ModelCache;
 
+use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\DbConnection\Db;
 use Hyperf\DbConnection\Listener\InitTableCollectorListener;
+use Hyperf\ModelCache\EagerLoad\EagerLoader;
+use Hyperf\ModelCache\InvalidCacheManager;
+use Hyperf\ModelCache\Listener\EagerLoadListener;
 use Hyperf\Redis\RedisProxy;
+use Hyperf\Utils\Reflection\ClassInvoker;
+use HyperfTest\ModelCache\Stub\BookModel;
 use HyperfTest\ModelCache\Stub\ContainerStub;
+use HyperfTest\ModelCache\Stub\ImageModel;
 use HyperfTest\ModelCache\Stub\UserExtModel;
 use HyperfTest\ModelCache\Stub\UserHiddenModel;
 use HyperfTest\ModelCache\Stub\UserModel;
@@ -26,7 +34,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ModelCacheTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
@@ -193,6 +201,34 @@ class ModelCacheTest extends TestCase
         $this->assertEquals(array_keys($model->getAttributes()), array_keys($model3->getAttributes()));
     }
 
+    public function testModelCacheExpireTime()
+    {
+        $container = ContainerStub::mockContainer();
+
+        /** @var UserExtModel $model */
+        $model = UserExtModel::query()->find(1);
+        $model->deleteCache();
+
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        UserExtModel::findFromCache(1);
+        $this->assertSame(86400, $redis->ttl('{mc:default:m:user_ext}:id:1'));
+    }
+
+    public function testModelCacheExpireTimeWithDateInterval()
+    {
+        $container = ContainerStub::mockContainer(new \DateInterval('P1DT10S'));
+
+        /** @var UserExtModel $model */
+        $model = UserExtModel::query()->find(1);
+        $model->deleteCache();
+
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        UserExtModel::findFromCache(1);
+        $this->assertSame(86410, $redis->ttl('{mc:default:m:user_ext}:id:1'));
+    }
+
     public function testModelCacheWithHidden()
     {
         ContainerStub::mockContainer();
@@ -229,6 +265,56 @@ class ModelCacheTest extends TestCase
         $this->assertEquals(array_keys($model->getAttributes()), array_keys($model3->getAttributes()));
     }
 
+    public function testEagerLoad()
+    {
+        $container = ContainerStub::mockContainer();
+
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        $redis->del('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2');
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2'));
+        $books = BookModel::query()->get();
+        $loader = new EagerLoader();
+        $loader->load($books, ['user']);
+
+        $this->assertSame(2, $redis->exists('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2'));
+    }
+
+    public function testEagerLoadMacro()
+    {
+        $container = ContainerStub::mockContainer();
+        $listener = new EagerLoadListener($container);
+        $listener->process(new \stdClass());
+
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        $redis->del('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2');
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2'));
+        $books = BookModel::query()->get();
+        $books->loadCache(['user']);
+
+        $this->assertSame(2, $redis->exists('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2'));
+    }
+
+    public function testEagerLoadMorphTo()
+    {
+        ContainerStub::mockContainer();
+        Relation::morphMap([
+            'user' => UserModel::class,
+            'book' => BookModel::class,
+        ]);
+
+        $images = ImageModel::findManyFromCache([1, 2, 3]);
+        $loader = new EagerLoader();
+        $loader->load($images, ['imageable']);
+
+        $this->assertInstanceOf(UserModel::class, $images->shift()->imageable);
+        $this->assertInstanceOf(UserModel::class, $images->shift()->imageable);
+        $this->assertInstanceOf(BookModel::class, $images->shift()->imageable);
+    }
+
     public function testWhenAddedNewColumn()
     {
         $container = ContainerStub::mockContainer();
@@ -248,5 +334,154 @@ class ModelCacheTest extends TestCase
         $model = UserModel::findFromCache(1);
 
         $this->assertArrayHasKey('gender', $model->toArray());
+    }
+
+    public function testModelSave()
+    {
+        $container = ContainerStub::mockContainer();
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+
+        $id = 208;
+        UserModel::query()->firstOrCreate(['id' => $id], [
+            'name' => uniqid(),
+            'gender' => 1,
+        ]);
+
+        $model = UserModel::findFromCache($id);
+        $name = uniqid();
+        $model->name = $name;
+        $model->save();
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:' . $id));
+
+        $model = UserModel::findFromCache($id);
+        $this->assertSame($name, $model->name);
+        $connection = $model->getConnection();
+        $connection->transaction(function () use ($id, $redis) {
+            $model = UserModel::findFromCache($id);
+            $name = uniqid();
+            $model->name = $name;
+            $model->save();
+            UserModel::findFromCache($id);
+            $this->assertSame(1, $redis->exists('{mc:default:m:user}:id:' . $id));
+        });
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:' . $id));
+
+        $model->delete();
+    }
+
+    public function testModelCacheTTL()
+    {
+        $container = ContainerStub::mockContainer();
+        $model = new BookModel();
+        $this->assertSame(100, $model->getCacheTTL());
+
+        /** @var \Redis $redis */
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+        $redis->del('{mc:default:m:book}:id:1');
+        BookModel::findFromCache(1);
+        $this->assertSame(100, $redis->ttl('{mc:default:m:book}:id:1'));
+    }
+
+    public function testModelSaveInTransaction()
+    {
+        $container = ContainerStub::mockContainer();
+
+        $id = 209;
+        UserModel::query()->firstOrCreate(['id' => $id], [
+            'name' => uniqid(),
+            'gender' => 1,
+        ]);
+
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+
+        wait(function () use ($redis, $id) {
+            Db::beginTransaction();
+            try {
+                $model = UserModel::findFromCache($id);
+                /* @var \Redis $redis */
+                $this->assertEquals(1, $redis->exists('{mc:default:m:user}:id:' . $id));
+                $model->gender = 2;
+                $model->save();
+                $this->assertEquals(1, $redis->hGet('{mc:default:m:user}:id:' . $id, 'gender'));
+                $invoker = new ClassInvoker(InvalidCacheManager::instance());
+                $this->assertSame(1, count($invoker->models));
+                Db::commit();
+            } catch (\Throwable $exception) {
+                Db::rollBack();
+            }
+        });
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:' . $id));
+
+        UserModel::query(true)->where('id', $id)->delete();
+    }
+
+    public function testModelIncrInTransaction()
+    {
+        $container = ContainerStub::mockContainer();
+
+        $id = 209;
+        UserModel::query()->firstOrCreate(['id' => $id], [
+            'name' => uniqid(),
+            'gender' => 1,
+        ]);
+
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+
+        wait(function () use ($redis, $id) {
+            Db::beginTransaction();
+            try {
+                $model = UserModel::findFromCache($id);
+                /* @var \Redis $redis */
+                $this->assertEquals(1, $redis->exists('{mc:default:m:user}:id:' . $id));
+                $model->increment('gender');
+                $this->assertEquals(1, $redis->hGet('{mc:default:m:user}:id:' . $id, 'gender'));
+                $invoker = new ClassInvoker(InvalidCacheManager::instance());
+                $this->assertSame(1, count($invoker->models));
+                Db::commit();
+            } catch (\Throwable $exception) {
+                Db::rollBack();
+            }
+        });
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:' . $id));
+
+        UserModel::query(true)->where('id', $id)->delete();
+    }
+
+    public function testModelDecrInTransaction()
+    {
+        $container = ContainerStub::mockContainer();
+
+        $id = 209;
+        UserModel::query()->firstOrCreate(['id' => $id], [
+            'name' => uniqid(),
+            'gender' => 1,
+        ]);
+
+        $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
+
+        wait(function () use ($redis, $id) {
+            Db::beginTransaction();
+            try {
+                $model = UserModel::findFromCache($id);
+                /* @var \Redis $redis */
+                $this->assertEquals(1, $redis->exists('{mc:default:m:user}:id:' . $id));
+                $model->decrement('gender');
+                $this->assertEquals(1, $redis->hGet('{mc:default:m:user}:id:' . $id, 'gender'));
+                $invoker = new ClassInvoker(InvalidCacheManager::instance());
+                $this->assertSame(1, count($invoker->models));
+                Db::commit();
+            } catch (\Throwable $exception) {
+                Db::rollBack();
+            }
+        });
+
+        $this->assertSame(0, $redis->exists('{mc:default:m:user}:id:' . $id));
+
+        UserModel::query(true)->where('id', $id)->delete();
     }
 }

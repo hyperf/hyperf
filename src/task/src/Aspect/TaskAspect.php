@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -60,13 +60,15 @@ class TaskAspect extends AbstractAspect
         }
 
         $timeout = 10;
+        $workerId = -1;
         $metadata = $proceedingJoinPoint->getAnnotationMetadata();
         /** @var Task $annotation */
         $annotation = $metadata->method[Task::class] ?? $metadata->class[Task::class] ?? null;
         if ($annotation instanceof Task) {
             $timeout = $annotation->timeout;
+            $workerId = $annotation->workerId;
         }
 
-        return $executor->execute(new TaskMessage([$class, $method], $arguments), $timeout);
+        return $executor->execute(new TaskMessage([$class, $method], $arguments, $workerId), $timeout);
     }
 }

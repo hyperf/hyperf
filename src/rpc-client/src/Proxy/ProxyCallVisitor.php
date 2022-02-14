@@ -5,20 +5,24 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\RpcClient\Proxy;
 
+use Hyperf\Utils\CodeGen\PhpParser;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\NodeVisitorAbstract;
-use ReflectionMethod;
-use Roave\BetterReflection\Reflection\ReflectionClass;
 
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
+    /**
+     * @var array
+     */
+    protected $nodes;
+
     /**
      * @var string
      */
@@ -34,11 +38,19 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         $this->classname = $classname;
     }
 
+    public function beforeTraverse(array $nodes)
+    {
+        $this->nodes = $nodes;
+
+        return null;
+    }
+
     public function enterNode(Node $node)
     {
         if ($node instanceof Node\Stmt\Namespace_) {
             $this->namespace = $node->name->toCodeString();
         }
+        return null;
     }
 
     public function leaveNode(Node $node)
@@ -53,28 +65,31 @@ class ProxyCallVisitor extends NodeVisitorAbstract
                 ],
             ]);
         }
+        return null;
     }
 
     public function generateStmts(Interface_ $node): array
     {
-        $betterReflectionInterface = ReflectionClass::createFromName($this->namespace . '\\' . $node->name);
-        $reflectionMethods = $betterReflectionInterface->getMethods(ReflectionMethod::IS_PUBLIC);
+        $methods = PhpParser::getInstance()->getAllMethodsFromStmts($this->nodes);
         $stmts = [];
-        foreach ($reflectionMethods as $method) {
-            $stmts[] = $this->overrideMethod($method->getAst());
+        foreach ($methods as $method) {
+            $stmts[] = $this->overrideMethod($method);
         }
         return $stmts;
     }
 
-    protected function overrideMethod(Node\Stmt\ClassMethod $stmt): Node\Stmt\ClassMethod
+    protected function overrideMethod(Node\FunctionLike $stmt): Node\Stmt\ClassMethod
     {
+        if (! $stmt instanceof Node\Stmt\ClassMethod) {
+            throw new \InvalidArgumentException('stmt must instanceof Node\Stmt\ClassMethod');
+        }
         $stmt->stmts = value(function () use ($stmt) {
             $methodCall = new Node\Expr\MethodCall(
                 new Node\Expr\PropertyFetch(new Node\Expr\Variable('this'), new Node\Identifier('client')),
                 new Node\Identifier('__call'),
                 [
-                    new Node\Scalar\MagicConst\Function_(),
-                    new Node\Expr\FuncCall(new Node\Name('func_get_args')),
+                    new Node\Arg(new Node\Scalar\MagicConst\Function_()),
+                    new Node\Arg(new Node\Expr\FuncCall(new Node\Name('func_get_args'))),
                 ]
             );
             if ($this->shouldReturn($stmt)) {

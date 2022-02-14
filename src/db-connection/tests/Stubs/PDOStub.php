@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -21,6 +21,8 @@ class PDOStub extends \PDO
 
     public $options;
 
+    public static $destruct = 0;
+
     public function __construct(string $dsn, string $username, string $passwd, array $options)
     {
         $this->dsn = $dsn;
@@ -29,8 +31,16 @@ class PDOStub extends \PDO
         $this->options = $options;
     }
 
+    public function __destruct()
+    {
+        ++self::$destruct;
+    }
+
     public function prepare($statement, $driver_options = null)
     {
+        if (version_compare(PHP_VERSION, '8.0', '>=')) {
+            return new PDOStatementStubPHP8($statement);
+        }
         return new PDOStatementStub($statement);
     }
 

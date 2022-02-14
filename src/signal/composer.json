@@ -1,0 +1,45 @@
+{
+    "name": "hyperf/signal",
+    "description": "A signal library for Hyperf.",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "signal"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=7.2",
+        "psr/container": "^1.0|^2.0",
+        "hyperf/contract": "~2.2.0",
+        "hyperf/utils": "~2.2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Signal\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Signal\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Signal\\ConfigProvider"
+        }
+    }
+}

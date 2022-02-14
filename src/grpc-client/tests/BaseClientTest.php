@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -25,7 +25,6 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\Http\Server;
 use TypeError;
-use function GuzzleHttp\Promise\coroutine;
 
 /**
  * @internal
@@ -35,7 +34,7 @@ class BaseClientTest extends TestCase
 {
     public static $server;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         // Dummy server pretending as gRPC
         Coroutine::create(function () {
@@ -50,14 +49,14 @@ class BaseClientTest extends TestCase
         });
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         Coroutine::create(function () {
             self::$server->shutdown();
         });
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         parent::tearDown();
@@ -68,23 +67,23 @@ class BaseClientTest extends TestCase
         $this->getContainer();
         $client = new BaseClient('127.0.0.1:1111');
         $this->expectException(GrpcClientException::class);
-        $client->getGrpcClient();
+        $client->_getGrpcClient();
     }
 
     public function testGrpcClientLaziness()
     {
         $this->getContainer();
-        $client = new BaseClient('127.0.0.1:2222');
+        $client = new HiClient('127.0.0.1:2222');
         $this->assertTrue(true); // No Exception Occurs
-        $this->assertNotNull($client->getGrpcClient());
+        $this->assertNotNull($client->_getGrpcClient());
     }
 
     public function testGrpcClientAutoClose()
     {
         $this->getContainer();
-        $client = new BaseClient('127.0.0.1:2222');
+        $client = new HiClient('127.0.0.1:2222');
         $this->assertTrue($client->isConnected());
-        $grpcClient = $client->getGrpcClient();
+        $grpcClient = $client->_getGrpcClient();
         unset($client);
         $this->assertFalse($grpcClient->isConnected());
     }
@@ -137,7 +136,7 @@ class BaseClientTest extends TestCase
         }
     }
 
-    public function getContainer()
+    protected function getContainer()
     {
         $container = \Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(ChannelPool::class)->andReturn(new ChannelPool());

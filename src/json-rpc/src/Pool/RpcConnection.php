@@ -5,25 +5,26 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\JsonRpc\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\JsonRpc\Exception\ClientException;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
-use RuntimeException;
 use Swoole\Coroutine\Client as SwooleClient;
 
 /**
  * @method bool|int send($data)
  * @method bool|string recv(float $timeout)
  * @property int $errCode
+ * @property string $errMsg
  */
 class RpcConnection extends BaseConnection implements ConnectionInterface
 {
@@ -89,10 +90,10 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
         $client = new SwooleClient(SWOOLE_SOCK_TCP);
         $client->set($this->config['settings'] ?? []);
         $result = $client->connect($host, $port, $connectTimeout);
-        if ($result === false && ($client->errCode === 114 || $client->errCode === 115)) {
+        if ($result === false) {
             // Force close and reconnect to server.
             $client->close();
-            throw new RuntimeException('Connect to server failed.');
+            throw new ClientException('Connect to server failed. ' . $client->errMsg, $client->errCode);
         }
 
         $this->connection = $client;

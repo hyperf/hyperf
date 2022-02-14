@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -23,7 +23,7 @@ trait LazyProxyTrait
         }
     }
 
-    public function __call(string $method, array $arguments)
+    public function __call($method, $arguments)
     {
         $obj = $this->getInstance();
         return call_user_func([$obj, $method], ...$arguments);

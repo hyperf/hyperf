@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -52,11 +52,13 @@ class Parallel
         $wg->add(count($this->callbacks));
         foreach ($this->callbacks as $key => $callback) {
             $this->concurrentChannel && $this->concurrentChannel->push(true);
+            $result[$key] = null;
             Coroutine::create(function () use ($callback, $key, $wg, &$result, &$throwables) {
                 try {
                     $result[$key] = call($callback);
                 } catch (\Throwable $throwable) {
                     $throwables[$key] = $throwable;
+                    unset($result[$key]);
                 } finally {
                     $this->concurrentChannel && $this->concurrentChannel->pop();
                     $wg->done();
@@ -72,6 +74,11 @@ class Parallel
             throw $executionException;
         }
         return $result;
+    }
+
+    public function count(): int
+    {
+        return count($this->callbacks);
     }
 
     public function clear(): void

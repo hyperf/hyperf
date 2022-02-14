@@ -5,18 +5,21 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+namespace HyperfTest\WebSocketServer;
+
 use Hyperf\Utils\Context as CoContext;
 use Hyperf\WebSocketServer\Context;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-class ContextTest extends \PHPUnit\Framework\TestCase
+class ContextTest extends TestCase
 {
     public function testHas()
     {
@@ -48,11 +51,15 @@ class ContextTest extends \PHPUnit\Framework\TestCase
     {
         CoContext::set(Context::FD, 2);
         Context::set('a', 42);
-        go(function () {
+        parallel([function () {
             CoContext::set(Context::FD, 3);
             Context::copy(2);
             $this->assertEquals(42, Context::get('a'));
-        });
+        }, function () {
+            CoContext::set(Context::FD, 3);
+            Context::copy(2, ['a']);
+            $this->assertEquals(42, Context::get('a'));
+        }]);
         $this->assertEquals(42, Context::get('a', 0, 3));
     }
 

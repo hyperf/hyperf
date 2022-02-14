@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -58,6 +58,10 @@ class ServiceClient extends AbstractServiceClient
         $response = $this->checkRequestIdAndTryAgain($response, $id);
         if (array_key_exists('result', $response)) {
             $type = $this->methodDefinitionCollector->getReturnType($this->serviceInterface, $method);
+            if ($type->allowsNull() && $response['result'] === null) {
+                return null;
+            }
+
             return $this->normalizer->denormalize($response['result'], $type->getName());
         }
 

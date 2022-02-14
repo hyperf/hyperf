@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -64,6 +64,11 @@ class Crontab
      * @var null|\Carbon\Carbon
      */
     protected $executeTime;
+
+    /**
+     * @var bool
+     */
+    protected $enable = true;
 
     public function getName(): ?string
     {
@@ -172,6 +177,17 @@ class Crontab
     public function setExecuteTime(Carbon $executeTime): Crontab
     {
         $this->executeTime = $executeTime;
+        return $this;
+    }
+
+    public function isEnable(): bool
+    {
+        return $this->enable;
+    }
+
+    public function setEnable(bool $enable): Crontab
+    {
+        $this->enable = $enable;
         return $this;
     }
 }

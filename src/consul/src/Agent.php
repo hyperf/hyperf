@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -48,7 +48,7 @@ class Agent extends Client implements AgentInterface
 
     public function forceLeave($node): ConsulResponse
     {
-        return $this->request('GET', '/v1/agent/force-leave/' . $node);
+        return $this->request('PUT', '/v1/agent/force-leave/' . $node);
     }
 
     public function registerCheck($check): ConsulResponse

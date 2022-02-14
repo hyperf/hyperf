@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -49,7 +49,7 @@ abstract class GeneratorCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return null|bool
+     * @return int
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
@@ -65,7 +65,7 @@ abstract class GeneratorCommand extends Command
         // code is untouched. Otherwise, we will continue generating this class' files.
         if (($input->getOption('force') === false) && $this->alreadyExists($this->getNameInput())) {
             $output->writeln(sprintf('<fg=red>%s</>', $name . ' already exists!'));
-            return false;
+            return 0;
         }
 
         // Next, we will generate the path to the location where this class' file should get
@@ -76,6 +76,8 @@ abstract class GeneratorCommand extends Command
         file_put_contents($path, $this->buildClass($name));
 
         $output->writeln(sprintf('<info>%s</info>', $name . ' created successfully.'));
+
+        $this->openWithIde($path);
 
         return 0;
     }
@@ -252,8 +254,71 @@ abstract class GeneratorCommand extends Command
 
     /**
      * Get the default namespace for the class.
-     *
-     * @param string $rootNamespace
      */
     abstract protected function getDefaultNamespace(): string;
+
+    /**
+     * Get the editor file opener URL by its name.
+     */
+    protected function getEditorUrl(string $ide): string
+    {
+        switch ($ide) {
+            case 'sublime':
+                return 'subl://open?url=file://%s';
+            case 'textmate':
+                return 'txmt://open?url=file://%s';
+            case 'emacs':
+                return 'emacs://open?url=file://%s';
+            case 'macvim':
+                return 'mvim://open/?url=file://%s';
+            case 'phpstorm':
+                return 'phpstorm://open?file=%s';
+            case 'idea':
+                return 'idea://open?file=%s';
+            case 'vscode':
+                return 'vscode://file/%s';
+            case 'vscode-insiders':
+                return 'vscode-insiders://file/%s';
+            case 'vscode-remote':
+                return 'vscode://vscode-remote/%s';
+            case 'vscode-insiders-remote':
+                return 'vscode-insiders://vscode-remote/%s';
+            case 'atom':
+                return 'atom://core/open/file?filename=%s';
+            case 'nova':
+                return 'nova://core/open/file?filename=%s';
+            case 'netbeans':
+                return 'netbeans://open/?f=%s';
+            case 'xdebug':
+                return 'xdebug://%s';
+            default:
+                return '';
+        }
+    }
+
+    /**
+     * Open resulted file path with the configured IDE.
+     */
+    protected function openWithIde(string $path): void
+    {
+        $ide = (string) $this->getContainer()->get(ConfigInterface::class)->get('devtool.ide');
+        $openEditorUrl = $this->getEditorUrl($ide);
+
+        if (! $openEditorUrl) {
+            return;
+        }
+
+        $url = sprintf($openEditorUrl, $path);
+        switch (PHP_OS_FAMILY) {
+            case 'Windows':
+                exec('explorer ' . $url);
+                break;
+            case 'Linux':
+                exec('xdg-open ' . $url);
+                break;
+            case 'Darwin':
+                exec('open ' . $url);
+                break;
+        }
+    }
 }

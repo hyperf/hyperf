@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -396,6 +396,14 @@ class Grammar extends BaseGrammar
      */
     protected function compileFrom(Builder $query, $table)
     {
+        if ($query->forceIndexes) {
+            $forceIndexes = [];
+            foreach ($query->forceIndexes as $forceIndex) {
+                $forceIndexes[] = $this->wrapValue($forceIndex);
+            }
+            return 'from ' . $this->wrapTable($table) . ' force index (' . implode(',', $forceIndexes) . ')';
+        }
+
         return 'from ' . $this->wrapTable($table);
     }
 

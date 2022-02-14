@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -30,7 +30,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ConsumerManagerTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         ProcessManager::clear();
@@ -55,13 +55,13 @@ class ConsumerManagerTest extends TestCase
         ]));
         $manager = new ConsumerManager($container);
         $manager->run();
-        $hasRegisted = false;
+        $hasRegistered = false;
         foreach (ProcessManager::all() as $item) {
             if (method_exists($item, 'getConsumer')) {
-                $hasRegisted = true;
+                $hasRegistered = true;
                 /** @var AbstractConsumer $consumer */
                 $consumer = $item->getConsumer();
-                $this->assertTrue($item->isEnable());
+                $this->assertTrue($item->isEnable(new \stdClass()));
                 $this->assertSame($name, $consumer->getName());
                 $this->assertSame($channel, $consumer->getChannel());
                 $this->assertSame($topic, $consumer->getTopic());
@@ -69,7 +69,7 @@ class ConsumerManagerTest extends TestCase
                 break;
             }
         }
-        $this->assertTrue($hasRegisted);
+        $this->assertTrue($hasRegistered);
     }
 
     public function testConsumerAnnotationNotEnableByConfig()
@@ -96,7 +96,7 @@ class ConsumerManagerTest extends TestCase
         foreach (ProcessManager::all() as $item) {
             if (method_exists($item, 'getConsumer')) {
                 /* @var AbstractConsumer $consumer */
-                $this->assertFalse($item->isEnable());
+                $this->assertFalse($item->isEnable(new \stdClass()));
                 break;
             }
         }
@@ -123,7 +123,7 @@ class ConsumerManagerTest extends TestCase
         $manager->run();
         foreach (ProcessManager::all() as $item) {
             if (method_exists($item, 'getConsumer') && ($item->getConsumer() instanceof DisabledDemoConsumer)) {
-                $this->assertFalse($item->isEnable());
+                $this->assertFalse($item->isEnable(new \stdClass()));
                 break;
             }
         }

@@ -5,12 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\WebSocketClient;
 
+use Hyperf\HttpMessage\Server\Response;
 use Hyperf\WebSocketClient\Exception\ConnectException;
 use Psr\Http\Message\UriInterface;
 use Swoole\Coroutine;
@@ -50,8 +51,15 @@ class Client
 
         $ret = $this->client->upgrade($path);
         if (! $ret) {
-            $errCode = $this->client->errCode;
-            throw new ConnectException(sprintf('Websocket upgrade failed by [%s] [%s].', $errCode, swoole_strerror($errCode)));
+            if ($this->client->errCode !== 0) {
+                $errCode = $this->client->errCode;
+                $errMsg = $this->client->errMsg;
+            } else {
+                $errCode = $this->client->statusCode;
+                $errMsg = Response::getReasonPhraseByCode($errCode);
+            }
+
+            throw new ConnectException(sprintf('Websocket upgrade failed by [%s] [%s].', $errCode, $errMsg));
         }
     }
 
@@ -71,14 +79,11 @@ class Client
     }
 
     /**
-     * @param bool|int $finish TODO: When swoole version >= 4.4.12, `finish` is SWOOLE_WEBSOCKET_FLAG_FIN or SWOOLE_WEBSOCKET_FLAG_COMPRESS
+     * @param int $flags SWOOLE_WEBSOCKET_FLAG_FIN or SWOOLE_WEBSOCKET_FLAG_COMPRESS
      */
-    public function push(string $data, int $opcode = WEBSOCKET_OPCODE_TEXT, $finish = null): bool
+    public function push(string $data, int $opcode = WEBSOCKET_OPCODE_TEXT, int $flags = null): bool
     {
-        if (isset($finish)) {
-            return $this->client->push($data, $opcode, $finish);
-        }
-        return $this->client->push($data, $opcode);
+        return $this->client->push($data, $opcode, $flags);
     }
 
     public function close(): bool

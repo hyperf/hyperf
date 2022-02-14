@@ -5,14 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\Etcd;
 
 use GuzzleHttp\HandlerStack;
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Guzzle\HandlerStackFactory;
 use Hyperf\Utils\Coroutine;
 
@@ -43,12 +42,9 @@ abstract class Client
      */
     protected $factory;
 
-    public function __construct(ConfigInterface $config, HandlerStackFactory $factory)
+    public function __construct(string $uri, string $version, array $options, HandlerStackFactory $factory)
     {
-        $uri = $config->get('etcd.uri', 'http://127.0.0.1:2379');
-        $version = $config->get('etcd.version', 'v3beta');
-
-        $this->options = $config->get('etcd.options', []);
+        $this->options = $options;
         $this->baseUri = sprintf('%s/%s/', $uri, $version);
         $this->factory = $factory;
     }

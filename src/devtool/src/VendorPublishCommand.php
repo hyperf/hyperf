@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -14,6 +14,7 @@ namespace Hyperf\Devtool;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Composer;
+use Hyperf\Utils\Filesystem\Filesystem;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -35,9 +36,15 @@ class VendorPublishCommand extends SymfonyCommand
      */
     protected $force = false;
 
-    public function __construct()
+    /**
+     * @var Filesystem
+     */
+    protected $filesystem;
+
+    public function __construct(Filesystem $filesystem)
     {
         parent::__construct('vendor:publish');
+        $this->filesystem = $filesystem;
     }
 
     protected function configure()
@@ -59,7 +66,8 @@ class VendorPublishCommand extends SymfonyCommand
 
         $extra = Composer::getMergedExtra()[$package] ?? null;
         if (empty($extra)) {
-            return $output->writeln(sprintf('<fg=red>package [%s] misses `extra` field in composer.json.</>', $package));
+            $output->writeln(sprintf('<fg=red>package [%s] misses `extra` field in composer.json.</>', $package));
+            return SIGTERM;
         }
 
         $provider = Arr::get($extra, 'hyperf.config');
@@ -67,7 +75,8 @@ class VendorPublishCommand extends SymfonyCommand
 
         $publish = Arr::get($config, 'publish');
         if (empty($publish)) {
-            return $output->writeln(sprintf('<fg=red>No file can be published from package [%s].</>', $package));
+            $output->writeln(sprintf('<fg=red>No file can be published from package [%s].</>', $package));
+            return SIGTERM;
         }
 
         if ($show) {
@@ -87,7 +96,8 @@ class VendorPublishCommand extends SymfonyCommand
             }));
 
             if (empty($item)) {
-                return $output->writeln(sprintf('<fg=red>No file can be published from [%s].</>', $id));
+                $output->writeln(sprintf('<fg=red>No file can be published from [%s].</>', $id));
+                return SIGTERM;
             }
 
             return $this->copy($package, $item);
@@ -107,15 +117,20 @@ class VendorPublishCommand extends SymfonyCommand
             $source = $item['source'];
             $destination = $item['destination'];
 
-            if (! $this->force && file_exists($destination)) {
+            if (! $this->force && $this->filesystem->exists($destination)) {
                 $this->output->writeln(sprintf('<fg=red>[%s] already exists.</>', $destination));
                 continue;
             }
 
-            if (! file_exists(dirname($destination))) {
-                mkdir(dirname($destination), 0755, true);
+            if (! $this->filesystem->exists($dirname = dirname($destination))) {
+                $this->filesystem->makeDirectory($dirname, 0755, true);
             }
-            copy($source, $destination);
+
+            if ($this->filesystem->isDirectory($source)) {
+                $this->filesystem->copyDirectory($source, $destination);
+            } else {
+                $this->filesystem->copy($source, $destination);
+            }
 
             $this->output->writeln(sprintf('<fg=green>[%s] publishes [%s] successfully.</>', $package, $id));
         }

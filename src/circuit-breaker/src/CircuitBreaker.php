@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -67,19 +67,19 @@ class CircuitBreaker implements CircuitBreakerInterface
         return $attempt->attempt();
     }
 
-    public function open()
+    public function open(): void
     {
         $this->init();
         $this->state->open();
     }
 
-    public function close()
+    public function close(): void
     {
         $this->init();
         $this->state->close();
     }
 
-    public function halfOpen()
+    public function halfOpen(): void
     {
         $this->init();
         $this->state->halfOpen();
@@ -105,12 +105,12 @@ class CircuitBreaker implements CircuitBreakerInterface
         return $this->timestamp;
     }
 
-    public function incFailCounter(): int
+    public function incrFailCounter(): int
     {
         return ++$this->failCounter;
     }
 
-    public function incSuccessCounter(): int
+    public function incrSuccessCounter(): int
     {
         return ++$this->successCounter;
     }

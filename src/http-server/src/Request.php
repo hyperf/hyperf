@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -14,6 +14,7 @@ namespace Hyperf\HttpServer;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Router\Dispatched;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
@@ -28,6 +29,8 @@ use SplFileInfo;
  */
 class Request implements RequestInterface
 {
+    use Macroable;
+
     /**
      * @var array the keys to identify the data of request in coroutine context
      */
@@ -107,7 +110,7 @@ class Request implements RequestInterface
     public function inputs(array $keys, $default = null): array
     {
         $data = $this->getInputData();
-
+        $result = [];
         foreach ($keys as $key) {
             $result[$key] = data_get($data, $key, $default[$key] ?? null);
         }
@@ -127,7 +130,7 @@ class Request implements RequestInterface
     /**
      * Determine if the $keys is exist in parameters.
      *
-     * @return []array [found, not-found]
+     * @return array [found, not-found]
      */
     public function hasInput(array $keys): array
     {
@@ -244,7 +247,7 @@ class Request implements RequestInterface
      */
     public function url(): string
     {
-        return rtrim(preg_replace('/\?.*/', '', $this->getUri()), '/');
+        return rtrim(preg_replace('/\?.*/', '', (string) $this->getUri()), '/');
     }
 
     /**
@@ -503,6 +506,13 @@ class Request implements RequestInterface
         return $this->call(__FUNCTION__, func_get_args());
     }
 
+    public function clearStoredParsedData(): void
+    {
+        if (Context::has($this->contextkeys['parsedData'])) {
+            Context::set($this->contextkeys['parsedData'], null);
+        }
+    }
+
     /**
      * Check that the given file is a valid SplFileInfo instance.
      * @param mixed $file
@@ -517,9 +527,7 @@ class Request implements RequestInterface
      */
     protected function preparePathInfo(): string
     {
-        if (($requestUri = $this->getRequestUri()) === null) {
-            return '/';
-        }
+        $requestUri = $this->getRequestUri();
 
         // Remove the query string from REQUEST_URI
         if (false !== $pos = strpos($requestUri, '?')) {

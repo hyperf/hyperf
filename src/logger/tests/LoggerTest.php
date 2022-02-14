@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -46,6 +46,6 @@ class LoggerTest extends TestCase
 
         $logger->error(new \RuntimeException('Invalid Arguments'));
 
-        $this->assertRegExp('/RuntimeException: Invalid Arguments/', $handler->getRecords()[0]['message']);
+        $this->assertMatchesRegularExpression('/RuntimeException: Invalid Arguments/', $handler->getRecords()[0]['message']);
     }
 }

@@ -5,54 +5,35 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\HttpMessage\Server;
 
-use Hyperf\Contract\Sendable;
 use Hyperf\HttpMessage\Cookie\Cookie;
-use Hyperf\HttpMessage\Stream\FileInterface;
+use Hyperf\HttpMessage\Server\Chunk\Chunkable;
+use Hyperf\HttpMessage\Server\Chunk\HasChunk;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 
-class Response extends \Hyperf\HttpMessage\Base\Response implements Sendable
+class Response extends \Hyperf\HttpMessage\Base\Response implements Chunkable
 {
-    /**
-     * @var null|\Swoole\Http\Response
-     */
-    protected $swooleResponse;
+    use HasChunk;
 
     /**
      * @var array
      */
     protected $cookies = [];
 
-    public function __construct(\Swoole\Http\Response $response = null)
-    {
-        $this->swooleResponse = $response;
-    }
+    /**
+     * @var array
+     */
+    protected $trailers = [];
 
     /**
-     * Handle response and send.
+     * @var null|ConnectionInterface
      */
-    public function send(bool $withContent = true)
-    {
-        if (! $this->getSwooleResponse()) {
-            return;
-        }
-
-        $this->buildSwooleResponse($this->swooleResponse, $this);
-        $content = $this->getBody();
-        if ($content instanceof FileInterface) {
-            return $this->swooleResponse->sendfile($content->getFilename());
-        }
-        if ($withContent) {
-            $this->swooleResponse->end($content->getContents());
-        } else {
-            $this->swooleResponse->end();
-        }
-    }
+    protected $connection;
 
     /**
      * Returns an instance with body content.
@@ -65,7 +46,7 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Sendable
     }
 
     /**
-     * Return an instance with specified cookies.
+     * Returns an instance with specified cookies.
      */
     public function withCookie(Cookie $cookie): self
     {
@@ -75,55 +56,48 @@ class Response extends \Hyperf\HttpMessage\Base\Response implements Sendable
     }
 
     /**
-     * Return all cookies.
+     * Retrieves all cookies.
      */
     public function getCookies(): array
     {
         return $this->cookies;
     }
 
-    public function getSwooleResponse(): ?\Swoole\Http\Response
+    /**
+     * Returns an instance with specified trailer.
+     * @param string $value
+     */
+    public function withTrailer(string $key, $value): self
     {
-        return $this->swooleResponse;
-    }
-
-    public function setSwooleResponse(\Swoole\Http\Response $swooleResponse): self
-    {
-        $this->swooleResponse = $swooleResponse;
-        return $this;
+        $new = clone $this;
+        $new->trailers[$key] = $value;
+        return $new;
     }
 
     /**
-     * Keep this method at public level,
-     * allows the proxy class to override this method,
-     * or override the method that used this method.
+     * Retrieves a specified trailer value, returns null if the value does not exists.
      */
-    public function buildSwooleResponse(\Swoole\Http\Response $swooleResponse, Response $response): void
+    public function getTrailer(string $key)
     {
-        /*
-         * Headers
-         */
-        foreach ($response->getHeaders() as $key => $value) {
-            $swooleResponse->header($key, implode(';', $value));
-        }
+        return $this->trailers[$key] ?? null;
+    }
 
-        /*
-         * Cookies
-         */
-        foreach ((array) $this->cookies as $domain => $paths) {
-            foreach ($paths ?? [] as $path => $item) {
-                foreach ($item ?? [] as $name => $cookie) {
-                    if ($cookie instanceof Cookie) {
-                        $value = $cookie->isRaw() ? $cookie->getValue() : rawurlencode($cookie->getValue());
-                        $swooleResponse->rawcookie($cookie->getName(), $value, $cookie->getExpiresTime(), $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly(), (string) $cookie->getSameSite());
-                    }
-                }
-            }
-        }
+    /**
+     * Retrieves all trailers values.
+     */
+    public function getTrailers(): array
+    {
+        return $this->trailers;
+    }
 
-        /*
-         * Status code
-         */
-        $swooleResponse->status($response->getStatusCode());
+    public function setConnection(ConnectionInterface $connection)
+    {
+        $this->connection = $connection;
+        return $this;
+    }
+
+    public function getConnection(): ?ConnectionInterface
+    {
+        return $this->connection;
     }
 }

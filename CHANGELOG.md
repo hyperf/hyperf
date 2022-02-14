@@ -1,18 +1,83 @@
-# v1.1.28 - TBD
+# v1.1.33 - TBD
+
+## Fixed
+
+- [#1917](https://github.com/hyperf/hyperf/pull/1917) Fixed bug that `Request::isXmlHttpRequest` does not work.
+
+## Optimized
+
+- [#1793](https://github.com/hyperf/hyperf/pull/1793) Socket.io server now only dispatch connect/disconnect events in onOpen and onClose. Also upgrade some class members from private to protected, so users can hack them.
+
+# v1.1.32 - 2020-05-21
+
+## Fixed
+
+- [#1734](https://github.com/hyperf/hyperf/pull/1734) Fixed the bug that the morph association is empty and cannot be queried.
+- [#1739](https://github.com/hyperf/hyperf/pull/1739) Fixed the wrong bitwise operator in oss hook.
+- [#1743](https://github.com/hyperf/hyperf/pull/1743) Fixed the wrong `refId` for `grafana.json`.
+- [#1748](https://github.com/hyperf/hyperf/pull/1748) Fixed `concurrent.limit` does not works when using another pool.
+- [#1750](https://github.com/hyperf/hyperf/pull/1750) Fixed the incorrent number of current connections when close failed.
+- [#1754](https://github.com/hyperf/hyperf/pull/1754) Fixed the wrong start info for base server.
+- [#1764](https://github.com/hyperf/hyperf/pull/1764) Fixed datetime validate failed when the value is null.
+- [#1769](https://github.com/hyperf/hyperf/pull/1769) Fixed a notice when client initiate disconnects in `socketio-server`.
+
+## Added
+
+- [#1724](https://github.com/hyperf/hyperf/pull/1724) Added `Model::orWhereHasMorph` ,`Model::whereDoesntHaveMorph` and `Model::orWhereDoesntHaveMorph`.
+- [#1741](https://github.com/hyperf/hyperf/pull/1741) Added `Hyperf\Command\Command::choiceMultiple(): array` method, because the return type of `choice` method is `string`, so the methed cannot handle the multiple selections, even though setted `$multiple` argument.
+- [#1742](https://github.com/hyperf/hyperf/pull/1742) Added Custom Casts for model.
+  - Added interface `Castable`, `CastsAttributes` and `CastsInboundAttributes`.
+  - Added `Model\Builder::withCasts`.
+  - Added `Model::loadMorph`, `Model::loadMorphCount` and `Model::syncAttributes`.
+
+# v1.1.31 - 2020-05-14
+
+## Added
+
+- [#1723](https://github.com/hyperf/hyperf/pull/1723) Added filp/whoops integration in hyperf/exception-handler component.
+- [#1730](https://github.com/hyperf/hyperf/pull/1730) Added shortcut `-R` of `--refresh-fillable` for command `gen:model`.
+
+## Fixed
+
+- [#1696](https://github.com/hyperf/hyperf/pull/1696) Fixed `Context::copy` does not works when use keys.
+- [#1708](https://github.com/hyperf/hyperf/pull/1708) [#1718](https://github.com/hyperf/hyperf/pull/1718) Fixed a series of issues for `hyperf/socketio-server`.
+
+## Optimized
+
+- [#1710](https://github.com/hyperf/hyperf/pull/1710) Don't set process title in Darwin OS.
+
+# v1.1.30 - 2020-05-07
+
+## Added
+
+- [#1616](https://github.com/hyperf/hyperf/pull/1616) Added `morphWith` and `whereHasMorph` for hyperf/database component.
+- [#1651](https://github.com/hyperf/hyperf/pull/1651) Added socket.io-server component.
+- [#1666](https://github.com/hyperf/hyperf/pull/1666) [#1669](https://github.com/hyperf/hyperf/pull/1669) Added support for AMQP RPC mode.
+
+## Fixed
+
+- [#1682](https://github.com/hyperf/hyperf/pull/1682) Fixed the connection pool does not works in JSONRPC pool transporter.
+- [#1683](https://github.com/hyperf/hyperf/pull/1683) Fixed JSONRPC client connection reset failed, when the connection was closed in context.
+
+## Optimized 
+
+- [#1670](https://github.com/hyperf/hyperf/pull/1670) Optimized a meaningless redis delete instruction for cache component.
+
+# v1.1.28 - 2020-04-30
 
 ## Added
 
 - [#1645](https://github.com/hyperf/hyperf/pull/1645) Added parameter injection support for closure route.
-- [#1647](https://github.com/hyperf/hyperf/pull/1647) Added RedisStringHandler for model-cache.
-- [#1654](https://github.com/hyperf/hyperf/pull/1654) Added `RenderException` to catch render exceptions in view.
+- [#1647](https://github.com/hyperf/hyperf/pull/1647) Added `Hyperf\ModelCache\Handler\RedisStringHandler` for [hyperf/model-cache](https://github.com/hyperf/model-cache) component, store the cache data in string type.
+- [#1654](https://github.com/hyperf/hyperf/pull/1654) Added `Hyperf\View\Exception\RenderException` to rethrow render exceptions in view.
 
 ## Fixed
 
 - [#1639](https://github.com/hyperf/hyperf/pull/1639) Fixed bug that the unhealthy node will be got from `consul`.
-- [#1641](https://github.com/hyperf/hyperf/pull/1641) Fixed request exception will be thrown when result is null.
-- [#1641](https://github.com/hyperf/hyperf/pull/1641) Fixed service check do not work for protocol `jsonrpc-tcp-length-check`.
+- [#1641](https://github.com/hyperf/hyperf/pull/1641) Fixed request exception will be thrown when the JSONRPC result is null.
+- [#1641](https://github.com/hyperf/hyperf/pull/1641) Fixed service health check does not works for `jsonrpc-tcp-length-check` protocol.
 - [#1650](https://github.com/hyperf/hyperf/pull/1650) Fixed bug that command `describe:routes` will show the wrong list.
-- [#1655](https://github.com/hyperf/hyperf/pull/1655) Fixed `MysqlProcessor::processColumns` does not work when the server is 8.0.
+- [#1655](https://github.com/hyperf/hyperf/pull/1655) Fixed `MysqlProcessor::processColumns` does not work when the MySQL server is 8.0 version.
 
 ## Optimized 
 

@@ -1,0 +1,44 @@
+{
+    "name": "hyperf/resource-grpc",
+    "description": "A api resource component for hyperf grpc server.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf",
+        "resource",
+        "grpc"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "hyperf/grpc-server": "~2.2.0",
+        "hyperf/resource": "~2.2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\ResourceGrpc\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\ResourceGrpc\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\ResourceGrpc\\ConfigProvider"
+        }
+    }
+}

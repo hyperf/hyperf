@@ -1,0 +1,1 @@
+<x-autoload-alert :message="$message"/>

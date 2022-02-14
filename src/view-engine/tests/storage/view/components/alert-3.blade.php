@@ -1,0 +1,1 @@
+<div {{ $attributes->merge(["class" => 'alert alert-' . $type, "style" => "background-color:red;"]) }}>{{ $message ?? "alert" }}</div>

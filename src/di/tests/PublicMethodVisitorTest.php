@@ -5,21 +5,18 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace HyperfTest\Di;
 
 use Hyperf\Di\LazyLoader\PublicMethodVisitor;
+use Hyperf\Utils\CodeGen\PhpParser;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
-use Roave\BetterReflection\BetterReflection;
-use Roave\BetterReflection\Reflection\Adapter\ReflectionMethod;
-use Roave\BetterReflection\Reflector\ClassReflector;
-use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
 
 /**
  * @internal
@@ -48,7 +45,7 @@ public function hope(bool $a) : int
 {
     return $this->__call(__FUNCTION__, func_get_args());
 }
-public function it(\bar\ConfigInterface $a) : void
+public function it(ConfigInterface $a) : void
 {
     $this->__call(__FUNCTION__, func_get_args());
 }
@@ -64,7 +61,7 @@ CODETEMPLATE;
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $ast = $parser->parse($code);
         $traverser = new NodeTraverser();
-        $visitor = new PublicMethodVisitor(...$this->getStmt($code));
+        $visitor = new PublicMethodVisitor(...$this->getStmt($ast));
         $traverser->addVisitor($visitor);
         $ast = $traverser->traverse($ast);
         $prettyPrinter = new Standard();
@@ -80,6 +77,9 @@ namespace foo;
 
 use bar\ConfigInterface;
 class foo {
+    public function __construct() {}
+    public function __get($name) {}
+    
 	abstract public function hope(bool $a): int;
 
 	public function it(ConfigInterface $a): void{
@@ -100,7 +100,7 @@ public function hope(bool $a) : int
 {
     return $this->__call(__FUNCTION__, func_get_args());
 }
-public function it(\bar\ConfigInterface $a) : void
+public function it(ConfigInterface $a) : void
 {
     $this->__call(__FUNCTION__, func_get_args());
 }
@@ -116,7 +116,7 @@ CODETEMPLATE;
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $ast = $parser->parse($code);
         $traverser = new NodeTraverser();
-        $visitor = new PublicMethodVisitor(...$this->getStmt($code));
+        $visitor = new PublicMethodVisitor(...$this->getStmt($ast));
         $traverser->addVisitor($visitor);
         $ast = $traverser->traverse($ast);
         $prettyPrinter = new Standard();
@@ -125,16 +125,9 @@ CODETEMPLATE;
         $this->assertEquals(4, count($visitor->nodes));
     }
 
-    private function getStmt($code)
+    private function getStmt($ast)
     {
-        $astLocator = (new BetterReflection())->astLocator();
-        $reflector = new ClassReflector(new StringSourceLocator($code, $astLocator));
-        $reflectionClass = $reflector->reflect('foo\\foo');
-        $reflectionMethods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
-        $stmts = [];
-        foreach ($reflectionMethods as $method) {
-            $stmts[] = $method->getAst();
-        }
+        $stmts = PhpParser::getInstance()->getAllMethodsFromStmts($ast);
         return [$stmts, 'foo\\foo'];
     }
 }

@@ -17,18 +17,12 @@
     },
     "require": {
         "php": ">=7.2",
-        "psr/container": "^1.0",
-        "psr/log": "^1.0",
+        "psr/container": "^1.0|^2.0",
+        "psr/log": "^1.0|^2.0|^3.0",
         "psr/event-dispatcher": "^1.0",
-        "symfony/console": "^4.2",
-        "hyperf/contract": "~1.1.0",
-        "hyperf/utils": "~1.1.0"
-    },
-    "require-dev": {
-        "malukenho/docheader": "^0.1.6",
-        "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^7.0.0",
-        "friendsofphp/php-cs-fixer": "^2.9"
+        "symfony/console": "^5.0",
+        "hyperf/contract": "~2.2.0",
+        "hyperf/utils": "~2.2.0"
     },
     "suggest": {
         "hyperf/framework": "Dump the info after server start.",
@@ -49,16 +43,10 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.2-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Server\\ConfigProvider"
         }
-    },
-    "bin": [
-    ],
-    "scripts": {
-        "cs-fix": "php-cs-fixer fix $1",
-        "test": "phpunit --colors=always"
     }
 }

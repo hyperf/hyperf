@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -15,20 +15,9 @@ use Hyperf\Database\Commands\ModelData;
 use Hyperf\Database\Commands\ModelOption;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
-use PhpParser\NodeVisitorAbstract;
 
-class ModelRewriteInheritanceVisitor extends NodeVisitorAbstract
+class ModelRewriteInheritanceVisitor extends AbstractVisitor
 {
-    /**
-     * @var ModelOption
-     */
-    protected $option;
-
-    /**
-     * @var ModelData
-     */
-    protected $data;
-
     /**
      * @var null|string
      */
@@ -41,8 +30,7 @@ class ModelRewriteInheritanceVisitor extends NodeVisitorAbstract
 
     public function __construct(ModelOption $option, ModelData $data)
     {
-        $this->option = $option;
-        $this->data = $data;
+        parent::__construct($option, $data);
 
         if (! empty($option->getUses())) {
             preg_match_all('/\s*([a-z0-9\\\\]+)(as)?([a-z0-9]+)?;?\s*/is', $option->getUses(), $match);

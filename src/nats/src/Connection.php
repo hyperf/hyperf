@@ -5,12 +5,15 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\Nats;
 
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coroutine;
 use RandomLib\Factory;
 use RandomLib\Generator;
 
@@ -445,6 +448,26 @@ class Connection
         $this->streamSocket = null;
     }
 
+    public function heartbeat()
+    {
+        if ($this->timeout > 0) {
+            Coroutine::create(function () {
+                while (true) {
+                    $exited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($this->timeout / 2);
+                    if ($exited) {
+                        break;
+                    }
+
+                    if (is_null($this->streamSocket)) {
+                        break;
+                    }
+
+                    $this->ping();
+                }
+            });
+        }
+    }
+
     /**
      * Indicates whether $response is an error response.
      *
@@ -534,7 +557,7 @@ class Connection
      *
      * @param int $len number of bytes to receive
      *
-     * @return string
+     * @return bool|string
      */
     private function receive(int $len = 0)
     {

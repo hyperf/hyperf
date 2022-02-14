@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -34,7 +34,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  */
 class RedisDriverTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
@@ -81,6 +81,22 @@ class RedisDriverTest extends TestCase
 
         $model2 = $meta->uncompress();
         $this->assertEquals($model, $model2);
+    }
+
+    public function testDemoModelUnCompressToNull()
+    {
+        $content = Str::random(1000);
+
+        $model = new DemoModel(9999, 'Hyperf', 1, $content);
+        $s1 = serialize($model);
+        $this->assertSame(1131, strlen($s1));
+
+        $meta = $model->compress();
+        $s2 = serialize($meta);
+        $this->assertSame(68, strlen($s2));
+        $this->assertInstanceOf(DemoModelMeta::class, $meta);
+
+        $this->assertNull($meta->uncompress());
     }
 
     public function testAsyncQueueJobGenerate()

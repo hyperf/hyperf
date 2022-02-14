@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -41,12 +41,12 @@ class ModelBuilderTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         Register::setConnectionResolver(new ConnectionResolver(['default' => new Connection(Mockery::mock(PDO::class))]));
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
@@ -93,11 +93,10 @@ class ModelBuilderTest extends TestCase
         $this->assertInstanceOf(Model::class, $result);
     }
 
-    /**
-     * @expectedException \Hyperf\Database\Model\ModelNotFoundException
-     */
     public function testFindOrFailMethodThrowsModelNotFoundException()
     {
+        $this->expectException(\Hyperf\Database\Model\ModelNotFoundException::class);
+
         $builder = Mockery::mock(Builder::class . '[first]', [$this->getMockQueryBuilder()]);
         $builder->setModel($this->getMockModel());
         $builder->getQuery()->shouldReceive('where')->once()->with('foo_table.foo', '=', 'bar');
@@ -105,11 +104,10 @@ class ModelBuilderTest extends TestCase
         $builder->findOrFail('bar', ['column']);
     }
 
-    /**
-     * @expectedException \Hyperf\Database\Model\ModelNotFoundException
-     */
     public function testFindOrFailMethodWithManyThrowsModelNotFoundException()
     {
+        $this->expectException(\Hyperf\Database\Model\ModelNotFoundException::class);
+
         $builder = Mockery::mock(Builder::class . '[get]', [$this->getMockQueryBuilder()]);
         $builder->setModel($this->getMockModel());
         $builder->getQuery()->shouldReceive('whereIn')->once()->with('foo_table.foo', [1, 2]);
@@ -117,11 +115,10 @@ class ModelBuilderTest extends TestCase
         $builder->findOrFail([1, 2], ['column']);
     }
 
-    /**
-     * @expectedException \Hyperf\Database\Model\ModelNotFoundException
-     */
     public function testFirstOrFailMethodThrowsModelNotFoundException()
     {
+        $this->expectException(\Hyperf\Database\Model\ModelNotFoundException::class);
+
         $builder = Mockery::mock(Builder::class . '[first]', [$this->getMockQueryBuilder()]);
         $builder->setModel($this->getMockModel());
         $builder->shouldReceive('first')->with(['column'])->andReturn(null);
@@ -442,12 +439,10 @@ class ModelBuilderTest extends TestCase
         $this->assertEquals($builder->bam(), $builder->getQuery());
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Call to undefined method Hyperf\Database\Model\Builder::missingMacro()
-     */
     public function testMissingStaticMacrosThrowsProperException()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Call to undefined method Hyperf\Database\Model\Builder::missingMacro()');
         Builder::missingMacro();
     }
 
@@ -532,11 +527,10 @@ class ModelBuilderTest extends TestCase
         $builder->getRelation('ordersGroups');
     }
 
-    /**
-     * @expectedException \Hyperf\Database\Model\RelationNotFoundException
-     */
     public function testGetRelationThrowsException()
     {
+        $this->expectException(\Hyperf\Database\Model\RelationNotFoundException::class);
+
         $builder = $this->getBuilder();
         $builder->setModel($this->getMockModel());
 
@@ -685,6 +679,15 @@ class ModelBuilderTest extends TestCase
         $builder = $model->withCount('foo');
 
         $this->assertEquals('select "model_builder_test_model_parent_stubs".*, (select count(*) from "model_builder_test_model_close_related_stubs" where "model_builder_test_model_parent_stubs"."foo_id" = "model_builder_test_model_close_related_stubs"."id") as "foo_count" from "model_builder_test_model_parent_stubs"', $builder->toSql());
+    }
+
+    public function testWithMax()
+    {
+        $model = new ModelBuilderTestModelParentStub();
+
+        $builder = $model->withMax('foo', 'id');
+
+        $this->assertEquals('select "model_builder_test_model_parent_stubs".*, (select max("model_builder_test_model_close_related_stubs"."id") from "model_builder_test_model_close_related_stubs" where "model_builder_test_model_parent_stubs"."foo_id" = "model_builder_test_model_close_related_stubs"."id") as "foo_max_id" from "model_builder_test_model_parent_stubs"', $builder->toSql());
     }
 
     public function testWithCountAndSelect()
@@ -868,7 +871,7 @@ class ModelBuilderTest extends TestCase
 
         // alias has a dynamic hash, so replace with a static string for comparison
         $alias = 'self_alias_hash';
-        $aliasRegex = '/\b(laravel_reserved_\d)(\b|$)/i';
+        $aliasRegex = '/\b(hyperf_reserved_\d)(\b|$)/i';
 
         $nestedSql = preg_replace($aliasRegex, $alias, $nestedSql);
         $dotSql = preg_replace($aliasRegex, $alias, $dotSql);
@@ -884,11 +887,11 @@ class ModelBuilderTest extends TestCase
 
         // alias has a dynamic hash, so replace with a static string for comparison
         $alias = 'self_alias_hash';
-        $aliasRegex = '/\b(laravel_reserved_\d)(\b|$)/i';
+        $aliasRegex = '/\b(hyperf_reserved_\d)(\b|$)/i';
 
         $sql = preg_replace($aliasRegex, $alias, $sql);
 
-        $this->assertContains('"self_alias_hash"."id" = "self_related_stubs"."parent_id"', $sql);
+        $this->assertStringContainsString('"self_alias_hash"."id" = "self_related_stubs"."parent_id"', $sql);
     }
 
     public function testDoesntHave()
@@ -1158,6 +1161,16 @@ class ModelBuilderTest extends TestCase
         Carbon::setTestNow(null);
     }
 
+    public function testWithCastsMethod()
+    {
+        $builder = new Builder($this->getMockQueryBuilder());
+        $model = $this->getMockModel();
+        $builder->setModel($model);
+
+        $model->shouldReceive('mergeCasts')->with(['foo' => 'bar'])->once();
+        $builder->withCasts(['foo' => 'bar']);
+    }
+
     protected function mockConnectionForModel($model, $database)
     {
         $grammarClass = 'Hyperf\Database\Query\Grammars\\' . $database . 'Grammar';
@@ -1320,7 +1333,7 @@ class ModelBuilderTestModelSelfRelatedStub extends Model
 
 class ModelBuilderTestStubWithoutTimestamp extends Model
 {
-    const UPDATED_AT = null;
+    public const UPDATED_AT = null;
 
     protected $table = 'table';
 }

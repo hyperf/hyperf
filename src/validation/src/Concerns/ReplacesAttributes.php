@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -164,7 +164,7 @@ trait ReplacesAttributes
             return str_replace(':value', $parameters[0], $message);
         }
 
-        return str_replace(':value', $this->getSize($attribute, $value), $message);
+        return str_replace(':value', (string) $this->getSize($attribute, $value), $message);
     }
 
     /**
@@ -176,7 +176,7 @@ trait ReplacesAttributes
             return str_replace(':value', $parameters[0], $message);
         }
 
-        return str_replace(':value', $this->getSize($attribute, $value), $message);
+        return str_replace(':value', (string) $this->getSize($attribute, $value), $message);
     }
 
     /**
@@ -188,7 +188,7 @@ trait ReplacesAttributes
             return str_replace(':value', $parameters[0], $message);
         }
 
-        return str_replace(':value', $this->getSize($attribute, $value), $message);
+        return str_replace(':value', (string) $this->getSize($attribute, $value), $message);
     }
 
     /**
@@ -200,7 +200,7 @@ trait ReplacesAttributes
             return str_replace(':value', $parameters[0], $message);
         }
 
-        return str_replace(':value', $this->getSize($attribute, $value), $message);
+        return str_replace(':value', (string) $this->getSize($attribute, $value), $message);
     }
 
     /**

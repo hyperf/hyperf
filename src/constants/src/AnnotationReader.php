@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -23,15 +23,16 @@ class AnnotationReader
         foreach ($classConstants as $classConstant) {
             $code = $classConstant->getValue();
             $docComment = $classConstant->getDocComment();
-            if ($docComment) {
-                $result[$code] = $this->parse($docComment);
+            // Not support float and bool, because it will be convert to int.
+            if ($docComment && (is_int($code) || is_string($code))) {
+                $result[$code] = $this->parse($docComment, $result[$code] ?? []);
             }
         }
 
         return $result;
     }
 
-    protected function parse(string $doc)
+    protected function parse(string $doc, array $previous = [])
     {
         $pattern = '/\\@(\\w+)\\(\\"(.+)\\"\\)/U';
         if (preg_match_all($pattern, $doc, $result)) {
@@ -39,16 +40,14 @@ class AnnotationReader
                 $keys = $result[1];
                 $values = $result[2];
 
-                $result = [];
                 foreach ($keys as $i => $key) {
                     if (isset($values[$i])) {
-                        $result[Str::lower($key)] = $values[$i];
+                        $previous[Str::lower($key)] = $values[$i];
                     }
                 }
-                return $result;
             }
         }
 
-        return [];
+        return $previous;
     }
 }

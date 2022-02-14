@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -49,6 +49,15 @@ abstract class MetadataCollector implements MetadataCollectorInterface
         return Arr::has(static::$container, $key);
     }
 
+    public static function clear(?string $key = null): void
+    {
+        if ($key) {
+            Arr::forget(static::$container, [$key]);
+        } else {
+            static::$container = [];
+        }
+    }
+
     /**
      * Serialize the all metadata to a string.
      */
@@ -62,8 +71,7 @@ abstract class MetadataCollector implements MetadataCollectorInterface
      */
     public static function deserialize(string $metadata): bool
     {
-        $data = unserialize($metadata);
-        static::$container = $data;
+        static::$container = unserialize($metadata);
         return true;
     }
 

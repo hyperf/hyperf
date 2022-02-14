@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -38,9 +38,6 @@ abstract class Message implements MessageInterface
 
     public function setType(string $type): self
     {
-        if (! in_array($type, Type::all())) {
-            throw new \InvalidArgumentException(sprintf('Invalid type %s, available valus [%s]', $type, implode(',', Type::all())));
-        }
         $this->type = $type;
         return $this;
     }

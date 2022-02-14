@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -24,7 +24,7 @@ class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, Ca
         return get_class($this) === __CLASS__;
     }
 
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize($data, string $class, string $format = null, array $context = [])
     {
         switch ($class) {
             case 'int':
@@ -40,7 +40,7 @@ class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, Ca
         }
     }
 
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, $type, string $format = null)
     {
         return in_array($type, [
             'int',
@@ -52,12 +52,12 @@ class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, Ca
         ]);
     }
 
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, string $format = null, array $context = [])
     {
         return $object;
     }
 
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, string $format = null)
     {
         return is_scalar($data);
     }

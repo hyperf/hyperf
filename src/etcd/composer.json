@@ -8,6 +8,11 @@
         "etcd"
     ],
     "description": "Etcd Client for Hyperf.",
+    "require": {
+        "php": ">=7.2",
+        "hyperf/guzzle": "~2.2.0",
+        "hyperf/utils": "~2.2.0"
+    },
     "autoload": {
         "psr-4": {
             "Hyperf\\Etcd\\": "src/"
@@ -18,27 +23,12 @@
             "HyperfTest\\Etcd\\": "tests/"
         }
     },
-    "require": {
-        "php": ">=7.2",
-        "hyperf/guzzle": "~1.1.0",
-        "hyperf/utils": "~1.1.0",
-        "start-point/etcd-php": "^1.1"
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.14"
-    },
-    "suggest": {
-    },
     "config": {
         "sort-packages": true
     },
-    "scripts": {
-        "test": "co-phpunit -c phpunit.xml --colors=always",
-        "cs-fix": "php-cs-fixer fix $1"
-    },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.2-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Etcd\\ConfigProvider"

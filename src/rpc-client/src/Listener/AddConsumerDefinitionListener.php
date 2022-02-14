@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -58,11 +58,12 @@ class AddConsumerDefinitionListener implements ListenerInterface
                 if (! interface_exists($serviceClass)) {
                     continue;
                 }
+
+                $proxyClass = $serviceFactory->createProxy($serviceClass);
+
                 $definitions->addDefinition(
                     $consumer['id'] ?? $serviceClass,
-                    function (ContainerInterface $container) use ($serviceFactory, $consumer, $serviceClass) {
-                        $proxyClass = $serviceFactory->createProxy($serviceClass);
-
+                    function (ContainerInterface $container) use ($consumer, $serviceClass, $proxyClass) {
                         return new $proxyClass(
                             $container,
                             $consumer['name'],

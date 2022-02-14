@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -27,7 +27,7 @@ class DatabaseMigrationMigrateCommandTest extends TestCase
 {
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         ! defined('BASE_PATH') && define('BASE_PATH', __DIR__);
@@ -54,7 +54,7 @@ class DatabaseMigrationMigrateCommandTest extends TestCase
     public function testMigrationRepositoryCreatedWhenNecessary()
     {
         $params = [$migrator = Mockery::mock(Migrator::class)];
-        $command = $this->getMockBuilder(MigrateCommand::class)->setMethods(['call'])->setConstructorArgs($params)->getMock();
+        $command = $this->getMockBuilder(MigrateCommand::class)->onlyMethods(['call'])->setConstructorArgs($params)->getMock();
         $migrator->shouldReceive('paths')->once()->andReturn([]);
         $migrator->shouldReceive('setConnection')->once()->with('default');
         $migrator->shouldReceive('setOutput')->once()->andReturn($migrator);

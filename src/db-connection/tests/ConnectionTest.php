@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -28,7 +28,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ConnectionTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set('database.connection.default', null);
@@ -106,6 +106,38 @@ class ConnectionTest extends TestCase
         $this->assertSame('mysql:host=192.168.1.1;dbname=hyperf', $pdo->dsn);
     }
 
+    public function testPdoDontDestruct()
+    {
+        $container = ContainerStub::mockContainer();
+        $pool = $container->get(PoolFactory::class)->getPool('default');
+        $config = $container->get(ConfigInterface::class)->get('databases.default');
+
+        $callables = [function ($connection) {
+            $connection->selectOne('SELECT 1;');
+        }, function ($connection) {
+            $connection->table('user')->leftJoin('user_ext', 'user.id', '=', 'user_ext.id')->get();
+        }];
+
+        $closes = [function ($connection) {
+            $connection->close();
+        }, function ($connection) {
+            $connection->reconnect();
+        }];
+
+        foreach ($callables as $callable) {
+            foreach ($closes as $closure) {
+                $connection = new ConnectionStub($container, $pool, $config);
+                $connection->setPdo(new PDOStub('', '', '', []));
+
+                PDOStub::$destruct = 0;
+                $callable($connection);
+                $this->assertSame(0, PDOStub::$destruct);
+                $closure($connection);
+                $this->assertSame(1, PDOStub::$destruct);
+            }
+        }
+    }
+
     public function testConnectionSticky()
     {
         $container = ContainerStub::mockReadWriteContainer();
@@ -135,6 +167,20 @@ class ConnectionTest extends TestCase
             $this->assertSame('mysql:host=192.168.1.2;dbname=hyperf', $pdo->dsn);
             $pdo = $connection->getReadPdo();
             $this->assertSame('mysql:host=192.168.1.1;dbname=hyperf', $pdo->dsn);
+        }]);
+    }
+
+    public function testDbConnectionUseInDefer()
+    {
+        $container = ContainerStub::mockReadWriteContainer();
+
+        parallel([function () use ($container) {
+            $resolver = $container->get(ConnectionResolverInterface::class);
+
+            defer(function () {
+                $this->assertFalse(Context::has('database.connection.default'));
+            });
+            $resolver->connection();
         }]);
     }
 }

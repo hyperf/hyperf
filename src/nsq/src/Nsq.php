@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -81,7 +81,7 @@ class Nsq
 
     public function subscribe(string $topic, string $channel, callable $callback): void
     {
-        $this->call(function (Socket $socket) use ($topic, $channel,$callback) {
+        $this->call(function (Socket $socket) use ($topic, $channel, $callback) {
             $this->sendSub($socket, $topic, $channel);
             while ($this->sendRdy($socket)) {
                 $reader = new Subscriber($socket);

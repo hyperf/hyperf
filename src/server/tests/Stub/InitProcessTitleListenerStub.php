@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -18,6 +18,13 @@ class InitProcessTitleListenerStub extends InitProcessTitleListener
 {
     public function setTitle(string $title)
     {
-        Context::set('test.server.process.title', $title);
+        if ($this->isSupportedOS()) {
+            Context::set('test.server.process.title', $title);
+        }
+    }
+
+    public function isSupportedOS(): bool
+    {
+        return parent::isSupportedOS();
     }
 }

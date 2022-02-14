@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -20,6 +20,7 @@ use Hyperf\AsyncQueue\Environment;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\Ast;
+use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use HyperfTest\AsyncQueue\Stub\FooProxy;
@@ -33,12 +34,16 @@ use Psr\Container\ContainerInterface;
  */
 class AsyncQueueAspectTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set(FooProxy::class, null);
+        ReflectionManager::clear();
     }
 
+    /**
+     * @group NonCoroutine
+     */
     public function testNotAsyncMessage()
     {
         $container = $this->getContainer();
@@ -51,6 +56,9 @@ class AsyncQueueAspectTest extends TestCase
         $this->assertSame([$id, $uuid, $data], Context::get(FooProxy::class));
     }
 
+    /**
+     * @group NonCoroutine
+     */
     public function testAsyncMessage()
     {
         $container = $this->getContainer();
@@ -63,6 +71,9 @@ class AsyncQueueAspectTest extends TestCase
         $this->assertSame($data, Context::get(FooProxy::class));
     }
 
+    /**
+     * @group NonCoroutine
+     */
     public function testAsyncMessageVariadic()
     {
         $container = $this->getContainer();
@@ -85,24 +96,32 @@ class AsyncQueueAspectTest extends TestCase
         AnnotationCollector::collectMethod(FooProxy::class, 'async', AsyncQueueMessage::class, new AsyncQueueMessage());
         AnnotationCollector::collectMethod(FooProxy::class, 'variadic', AsyncQueueMessage::class, new AsyncQueueMessage());
 
-        $ast = new Ast();
-        $code = $ast->proxy(FooProxy::class, $proxy = FooProxy::class . 'Proxy');
-        if (! is_dir($dir = BASE_PATH . '/runtime/container/proxy/')) {
-            mkdir($dir, 0777, true);
+        $pid = pcntl_fork();
+        if (! $pid) {
+            $ast = new Ast();
+            $code = $ast->proxy(FooProxy::class);
+            if (! is_dir($dir = BASE_PATH . '/runtime/container/proxy/')) {
+                mkdir($dir, 0777, true);
+            }
+            file_put_contents($file = $dir . 'FooProxy.proxy.php', $code);
+            exit;
         }
-        file_put_contents($file = $dir . 'FooProxy.proxy.php', $code);
-        require_once $file;
 
-        $container->shouldReceive('get')->with(FooProxy::class)->andReturn(new $proxy());
+        pcntl_wait($status);
+
+        require_once BASE_PATH . '/runtime/container/proxy/FooProxy.proxy.php';
+
+        $container->shouldReceive('get')->with(FooProxy::class)->andReturn(new FooProxy());
         $container->shouldReceive('get')->with(AsyncQueueAspect::class)->andReturnUsing(function ($_) use ($container) {
             return new AsyncQueueAspect($container);
         });
-        $container->shouldReceive('get')->with(Environment::class)->andReturn(new Environment());
-        $container->shouldReceive('get')->with(DriverFactory::class)->andReturnUsing(function ($_) {
+        $container->shouldReceive('get')->with(Environment::class)->andReturn($environment = new Environment());
+        $container->shouldReceive('get')->with(DriverFactory::class)->andReturnUsing(function ($_) use ($environment) {
             $factory = Mockery::mock(DriverFactory::class);
             $driver = Mockery::mock(DriverInterface::class);
-            $driver->shouldReceive('push')->andReturnUsing(function ($job) {
+            $driver->shouldReceive('push')->andReturnUsing(function ($job) use ($environment) {
                 $this->assertInstanceOf(AnnotationJob::class, $job);
+                $environment->setAsyncQueue(true);
                 $origin = new FooProxy();
                 $origin->{$job->method}(...$job->params);
                 return true;

@@ -5,13 +5,14 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\SwooleTracker\Middleware;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Utils\Network;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -34,7 +35,7 @@ class HttpServerMiddleware implements MiddlewareInterface
     {
         if (class_exists(Stats::class)) {
             $path = $request->getUri()->getPath();
-            $ip = current(swoole_get_local_ip());
+            $ip = Network::ip();
             $traceId = $request->getHeaderLine('x-swoole-traceid') ?: '';
             $spanId = $request->getHeaderLine('x-swoole-spanid') ?: '';
 

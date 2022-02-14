@@ -5,13 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\ConfigAliyunAcm;
 
-use Closure;
+use GuzzleHttp;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
@@ -27,7 +27,7 @@ class Client implements ClientInterface
     public $fetchConfig;
 
     /**
-     * @var Closure
+     * @var null|GuzzleHttp\Client
      */
     private $client;
 
@@ -62,18 +62,18 @@ class Client implements ClientInterface
     public function pull(): array
     {
         $client = $this->client;
-        if (! $client instanceof \GuzzleHttp\Client) {
+        if (! $client instanceof GuzzleHttp\Client) {
             throw new RuntimeException('aliyun acm: Invalid http client.');
         }
 
         // ACM config
-        $endpoint = $this->config->get('aliyun_acm.endpoint', 'acm.aliyun.com');
-        $namespace = $this->config->get('aliyun_acm.namespace', '');
-        $dataId = $this->config->get('aliyun_acm.data_id', '');
-        $group = $this->config->get('aliyun_acm.group', 'DEFAULT_GROUP');
-        $accessKey = $this->config->get('aliyun_acm.access_key', '');
-        $secretKey = $this->config->get('aliyun_acm.secret_key', '');
-        $ecsRamRole = (string) $this->config->get('aliyun_acm.ecs_ram_role', '');
+        $endpoint = $this->config->get('config_center.drivers.aliyun_acm.endpoint', 'acm.aliyun.com');
+        $namespace = $this->config->get('config_center.drivers.aliyun_acm.namespace', '');
+        $dataId = $this->config->get('config_center.drivers.aliyun_acm.data_id', '');
+        $group = $this->config->get('config_center.drivers.aliyun_acm.group', 'DEFAULT_GROUP');
+        $accessKey = $this->config->get('config_center.drivers.aliyun_acm.access_key', '');
+        $secretKey = $this->config->get('config_center.drivers.aliyun_acm.secret_key', '');
+        $ecsRamRole = (string) $this->config->get('config_center.drivers.aliyun_acm.ecs_ram_role', '');
         $securityToken = [];
         if (empty($accessKey) && ! empty($ecsRamRole)) {
             $securityCredentials = $this->getSecurityCredentialsWithEcsRamRole($ecsRamRole);
@@ -97,7 +97,7 @@ class Client implements ClientInterface
                 if ($response->getStatusCode() !== 200) {
                     throw new RuntimeException('Get server list failed from Aliyun ACM.');
                 }
-                $this->servers = array_filter(explode("\n", $response->getBody()->getContents()));
+                $this->servers = array_filter(explode("\n", (string) $response->getBody()));
             }
             $server = $this->servers[array_rand($this->servers)];
 
@@ -118,7 +118,7 @@ class Client implements ClientInterface
             if ($response->getStatusCode() !== 200) {
                 throw new RuntimeException('Get config failed from Aliyun ACM.');
             }
-            $content = $response->getBody()->getContents();
+            $content = (string) $response->getBody();
             if (! $content) {
                 return [];
             }
@@ -145,7 +145,7 @@ class Client implements ClientInterface
             if ($response->getStatusCode() !== 200) {
                 throw new RuntimeException('Get config failed from Aliyun ACM.');
             }
-            $securityCredentials = Json::decode($response->getBody()->getContents());
+            $securityCredentials = Json::decode((string) $response->getBody());
             if (! empty($securityCredentials)) {
                 $this->cachedSecurityCredentials[$ecsRamRole] = $securityCredentials;
             }

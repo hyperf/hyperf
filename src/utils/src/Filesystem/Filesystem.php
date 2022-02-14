@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -13,8 +13,8 @@ namespace Hyperf\Utils\Filesystem;
 
 use ErrorException;
 use FilesystemIterator;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Traits\Macroable;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -115,7 +115,7 @@ class Filesystem
     public function put(string $path, $contents, bool $lock = false)
     {
         if ($lock) {
-            return $this->atomic($path, function ($path) use ($contents, $lock) {
+            return $this->atomic($path, function ($path) use ($contents) {
                 $handle = fopen($path, 'w+');
                 if ($handle) {
                     $wouldBlock = false;
@@ -435,7 +435,7 @@ class Filesystem
             // As we spin through items, we will check to see if the current file is actually
             // a directory or a file. When it is actually a directory we will need to call
             // back into this function recursively to keep copying these nested folders.
-            $target = $destination . '/' . $item->getBasename();
+            $target = $destination . DIRECTORY_SEPARATOR . $item->getBasename();
 
             if ($item->isDir()) {
                 $path = $item->getPathname();

@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -29,9 +29,12 @@ use Hyperf\Database\Model\Events;
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Register;
 use Hyperf\Database\Model\Relations\BelongsTo;
+use Hyperf\Database\Model\Relations\Constraint;
 use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Database\Query\Builder as BaseBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
 use Hyperf\Database\Query\Processors\Processor;
+use Hyperf\Engine\Channel;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Context;
@@ -74,14 +77,14 @@ class ModelTest extends TestCase
 {
     use InteractsWithTime;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         Carbon::setTestNow(Carbon::now());
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -303,7 +306,7 @@ class ModelTest extends TestCase
 
     public function testUpdateProcess()
     {
-        $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps'])->getMock();
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery', 'updateTimestamps'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('where')->once()->with('id', '=', 1);
         $query->shouldReceive('update')->once()->with(['name' => 'hyperf'])->andReturn(1);
@@ -326,7 +329,7 @@ class ModelTest extends TestCase
 
     public function testUpdateProcessDoesntOverrideTimestamps()
     {
-        $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery'])->getMock();
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('where')->once()->with('id', '=', 1);
         $query->shouldReceive('update')->once()->with(['created_at' => 'foo', 'updated_at' => 'bar'])->andReturn(1);
@@ -349,7 +352,7 @@ class ModelTest extends TestCase
         $events->shouldReceive('dispatch')->with(Events\Booting::class)->andReturn(null);
         $events->shouldReceive('dispatch')->with(Events\Booted::class)->andReturn(null);
 
-        $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery'])->getMock();
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery'])->getMock();
         $query = Mockery::mock(Builder::class);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
 
@@ -367,7 +370,7 @@ class ModelTest extends TestCase
         $events->shouldReceive('dispatch')->with(Events\Booting::class)->andReturn(null);
         $events->shouldReceive('dispatch')->with(Events\Booted::class)->andReturn(null);
 
-        $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery'])->getMock();
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery'])->getMock();
         $query = Mockery::mock(Builder::class);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
 
@@ -386,7 +389,7 @@ class ModelTest extends TestCase
         $events->shouldReceive('dispatch')->with(Events\Booting::class)->andReturn(null);
         $events->shouldReceive('dispatch')->with(Events\Booted::class)->andReturn(null);
 
-        $model = $this->getMockBuilder(ModelEventObjectStub::class)->setMethods(['newModelQuery'])->getMock();
+        $model = $this->getMockBuilder(ModelEventObjectStub::class)->onlyMethods(['newModelQuery'])->getMock();
         $query = Mockery::mock(Builder::class);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $events->shouldReceive('dispatch')->with(ModelSavingEventStub::class)->andReturn(new ModelSavingEventStub($model));
@@ -398,7 +401,7 @@ class ModelTest extends TestCase
 
     public function testUpdateProcessWithoutTimestamps()
     {
-        $model = $this->getMockBuilder(ModelEventObjectStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'fireModelEvent'])->getMock();
+        $model = $this->getMockBuilder(ModelEventObjectStub::class)->onlyMethods(['newModelQuery', 'updateTimestamps', 'fireModelEvent'])->getMock();
         $model->timestamps = false;
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('where')->once()->with('id', '=', 1);
@@ -418,7 +421,7 @@ class ModelTest extends TestCase
 
     public function testUpdateUsesOldPrimaryKey()
     {
-        $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps'])->getMock();
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery', 'updateTimestamps'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('where')->once()->with('id', '=', 1);
         $query->shouldReceive('update')->once()->with(['id' => 2, 'foo' => 'bar'])->andReturn(1);
@@ -441,7 +444,7 @@ class ModelTest extends TestCase
         Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
         $events->shouldReceive('dispatch')->times(2)->andReturn(null);
 
-        $model = $this->getMockBuilder(DateModelStub::class)->setMethods(['getDateFormat'])->getMock();
+        $model = $this->getMockBuilder(DateModelStub::class)->onlyMethods(['getDateFormat'])->getMock();
         $model->expects($this->any())->method('getDateFormat')->will($this->returnValue('Y-m-d'));
         $model->setRawAttributes([
             'created_at' => '2012-12-04',
@@ -454,7 +457,7 @@ class ModelTest extends TestCase
 
     public function testTimestampsAreReturnedAsObjectsFromPlainDatesAndTimestamps()
     {
-        $model = $this->getMockBuilder(DateModelStub::class)->setMethods(['getDateFormat'])->getMock();
+        $model = $this->getMockBuilder(DateModelStub::class)->onlyMethods(['getDateFormat'])->getMock();
         $model->expects($this->any())->method('getDateFormat')->will($this->returnValue('Y-m-d H:i:s'));
         $model->setRawAttributes([
             'created_at' => '2012-12-04',
@@ -555,7 +558,7 @@ class ModelTest extends TestCase
 
     public function testInsertProcess()
     {
-        $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('insertGetId')->once()->with(['name' => 'hyperf'], 'id')->andReturn(1);
         $query->shouldReceive('getConnection')->once();
@@ -571,7 +574,7 @@ class ModelTest extends TestCase
         $this->assertEquals(1, $model->id);
         $this->assertTrue($model->exists);
 
-        $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('insert')->once()->with(['name' => 'hyperf']);
         $query->shouldReceive('getConnection')->once();
@@ -594,7 +597,7 @@ class ModelTest extends TestCase
         Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
         $events->shouldReceive('dispatch')->twice()->andReturn(null);
 
-        $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery'])->getMock();
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery'])->getMock();
         $query = Mockery::mock(Builder::class);
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
 
@@ -610,7 +613,7 @@ class ModelTest extends TestCase
         Register::setEventDispatcher($events = Mockery::mock(Dispatcher::class));
         $events->allows('dispatch');
 
-        $model = $this->getMockBuilder(Model::class)->setMethods(['newModelQuery', 'updateTimestamps', 'touchOwners'])->getMock();
+        $model = $this->getMockBuilder(Model::class)->onlyMethods(['newModelQuery', 'updateTimestamps', 'touchOwners'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('where')->once()->with('id', '=', 1)->andReturn($query);
         $query->shouldReceive('delete')->once();
@@ -624,7 +627,7 @@ class ModelTest extends TestCase
 
     public function testPushNoRelations()
     {
-        $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('insertGetId')->once()->with(['name' => 'hyperf'], 'id')->andReturn(1);
         $query->shouldReceive('getConnection')->once();
@@ -641,7 +644,7 @@ class ModelTest extends TestCase
 
     public function testPushEmptyOneRelation()
     {
-        $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('insertGetId')->once()->with(['name' => 'hyperf'], 'id')->andReturn(1);
         $query->shouldReceive('getConnection')->once();
@@ -660,7 +663,7 @@ class ModelTest extends TestCase
 
     public function testPushOneRelation()
     {
-        $related1 = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
+        $related1 = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('insertGetId')->once()->with(['name' => 'related1'], 'id')->andReturn(2);
         $query->shouldReceive('getConnection')->once();
@@ -669,7 +672,7 @@ class ModelTest extends TestCase
         $related1->name = 'related1';
         $related1->exists = false;
 
-        $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('insertGetId')->once()->with(['name' => 'hyperf'], 'id')->andReturn(1);
         $query->shouldReceive('getConnection')->once();
@@ -691,7 +694,7 @@ class ModelTest extends TestCase
 
     public function testPushEmptyManyRelation()
     {
-        $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('insertGetId')->once()->with(['name' => 'hyperf'], 'id')->andReturn(1);
         $query->shouldReceive('getConnection')->once();
@@ -710,7 +713,7 @@ class ModelTest extends TestCase
 
     public function testPushManyRelation()
     {
-        $related1 = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
+        $related1 = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('insertGetId')->once()->with(['name' => 'related1'], 'id')->andReturn(2);
         $query->shouldReceive('getConnection')->once();
@@ -719,7 +722,7 @@ class ModelTest extends TestCase
         $related1->name = 'related1';
         $related1->exists = false;
 
-        $related2 = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
+        $related2 = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('insertGetId')->once()->with(['name' => 'related2'], 'id')->andReturn(3);
         $query->shouldReceive('getConnection')->once();
@@ -728,7 +731,7 @@ class ModelTest extends TestCase
         $related2->name = 'related2';
         $related2->exists = false;
 
-        $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('insertGetId')->once()->with(['name' => 'hyperf'], 'id')->andReturn(1);
         $query->shouldReceive('getConnection')->once();
@@ -1037,12 +1040,11 @@ class ModelTest extends TestCase
         $this->assertEquals('bar', $model->foo);
     }
 
-    /**
-     * @expectedException \Hyperf\Database\Model\MassAssignmentException
-     * @expectedExceptionMessage name
-     */
     public function testGlobalGuarded()
     {
+        $this->expectException(\Hyperf\Database\Model\MassAssignmentException::class);
+        $this->expectExceptionMessage('name');
+
         $model = new ModelStub();
         $model->guard(['*']);
         $model->fill(['name' => 'foo', 'age' => 'bar', 'votes' => 'baz']);
@@ -1393,12 +1395,10 @@ class ModelTest extends TestCase
         $this->assertNotContains('bar', $class->getAvailableEvents());
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage HyperfTest\Database\Stubs\ModelStub::incorrectRelationStub must return a relationship instance.
-     */
     public function testGetModelAttributeMethodThrowsExceptionIfNotRelation()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('HyperfTest\Database\Stubs\ModelStub::incorrectRelationStub must return a relationship instance.');
         $model = new ModelStub();
         $model->incorrectRelationStub;
     }
@@ -1475,7 +1475,7 @@ class ModelTest extends TestCase
         $model->syncOriginalAttribute('id');
         $model->foo = 2;
 
-        $model->shouldReceive('newModelQuery')->andReturn($query = Mockery::mock(stdClass::class));
+        $model->shouldReceive('newModelQuery')->andReturn($query = Mockery::mock(Builder::class));
         $query->shouldReceive('where')->andReturn($query);
         $query->shouldReceive('increment');
 
@@ -1485,12 +1485,12 @@ class ModelTest extends TestCase
         $model->publicIncrement('foo', 1, ['category' => 1]);
         $this->assertEquals(4, $model->foo);
         $this->assertEquals(1, $model->category);
-        $this->assertTrue($model->isDirty('category'));
+        $this->assertFalse($model->isDirty());
     }
 
     public function testRelationshipTouchOwnersIsPropagated()
     {
-        $relation = $this->getMockBuilder(BelongsTo::class)->setMethods(['touch'])->disableOriginalConstructor()->getMock();
+        $relation = $this->getMockBuilder(BelongsTo::class)->onlyMethods(['touch'])->disableOriginalConstructor()->getMock();
         $relation->expects($this->once())->method('touch');
 
         $model = Mockery::mock(ModelStub::class . '[partner]');
@@ -1507,7 +1507,7 @@ class ModelTest extends TestCase
 
     public function testRelationshipTouchOwnersIsNotPropagatedIfNoRelationshipResult()
     {
-        $relation = $this->getMockBuilder(BelongsTo::class)->setMethods(['touch'])->disableOriginalConstructor()->getMock();
+        $relation = $this->getMockBuilder(BelongsTo::class)->onlyMethods(['touch'])->disableOriginalConstructor()->getMock();
         $relation->expects($this->once())->method('touch');
 
         $model = Mockery::mock(ModelStub::class . '[partner]');
@@ -1646,12 +1646,111 @@ class ModelTest extends TestCase
         $this->assertNull($array['timestampAttribute']);
     }
 
-    /**
-     * @expectedException \Hyperf\Database\Model\JsonEncodingException
-     * @expectedExceptionMessage Unable to encode attribute [objectAttribute] for model [HyperfTest\Database\Stubs\ModelCastingStub] to JSON: Malformed UTF-8 characters, possibly incorrectly encoded.
-     */
+    public function testGetOriginalCastsAttributes()
+    {
+        $model = new ModelCastingStub();
+        $model->intAttribute = '1';
+        $model->floatAttribute = '0.1234';
+        $model->stringAttribute = 432;
+        $model->boolAttribute = '1';
+        $model->booleanAttribute = '0';
+        $stdClass = new stdClass();
+        $stdClass->json_key = 'json_value';
+        $model->objectAttribute = $stdClass;
+        $array = [
+            'foo' => 'bar',
+        ];
+        $collection = collect($array);
+        $model->arrayAttribute = $array;
+        $model->jsonAttribute = $array;
+        $model->collectionAttribute = $collection;
+
+        $model->syncOriginal();
+
+        $model->intAttribute = 2;
+        $model->floatAttribute = 0.443;
+        $model->stringAttribute = '12';
+        $model->boolAttribute = true;
+        $model->booleanAttribute = false;
+        $model->objectAttribute = $stdClass;
+        $model->arrayAttribute = [
+            'foo' => 'bar2',
+        ];
+        $model->jsonAttribute = [
+            'foo' => 'bar2',
+        ];
+        $model->collectionAttribute = collect([
+            'foo' => 'bar2',
+        ]);
+
+        $this->assertIsInt($model->getOriginal('intAttribute'));
+        $this->assertEquals(1, $model->getOriginal('intAttribute'));
+        $this->assertEquals(2, $model->intAttribute);
+        $this->assertEquals(2, $model->getAttribute('intAttribute'));
+
+        $this->assertIsFloat($model->getOriginal('floatAttribute'));
+        $this->assertEquals(0.1234, $model->getOriginal('floatAttribute'));
+        $this->assertEquals(0.443, $model->floatAttribute);
+
+        $this->assertIsString($model->getOriginal('stringAttribute'));
+        $this->assertSame('432', $model->getOriginal('stringAttribute'));
+        $this->assertSame('12', $model->stringAttribute);
+
+        $this->assertIsBool($model->getOriginal('boolAttribute'));
+        $this->assertTrue($model->getOriginal('boolAttribute'));
+        $this->assertTrue($model->boolAttribute);
+
+        $this->assertIsBool($model->getOriginal('booleanAttribute'));
+        $this->assertFalse($model->getOriginal('booleanAttribute'));
+        $this->assertFalse($model->booleanAttribute);
+
+        $this->assertEquals($stdClass, $model->getOriginal('objectAttribute'));
+        $this->assertEquals($model->getAttribute('objectAttribute'), $model->getOriginal('objectAttribute'));
+
+        $this->assertEquals($array, $model->getOriginal('arrayAttribute'));
+        $this->assertEquals(['foo' => 'bar'], $model->getOriginal('arrayAttribute'));
+        $this->assertEquals(['foo' => 'bar2'], $model->getAttribute('arrayAttribute'));
+
+        $this->assertEquals($array, $model->getOriginal('jsonAttribute'));
+        $this->assertEquals(['foo' => 'bar'], $model->getOriginal('jsonAttribute'));
+        $this->assertEquals(['foo' => 'bar2'], $model->getAttribute('jsonAttribute'));
+
+        $this->assertEquals(['foo' => 'bar'], $model->getOriginal('collectionAttribute')->toArray());
+        $this->assertEquals(['foo' => 'bar2'], $model->getAttribute('collectionAttribute')->toArray());
+    }
+
+    public function testGetOriginalIncrementWithExtra()
+    {
+        $model = new class() extends ModelCastingStub {
+            public function newBaseQueryBuilder()
+            {
+                $connection = Mockery::mock(Connection::class);
+                $grammar = Mockery::mock(Grammar::class);
+                $processor = Mockery::mock(Processor::class);
+                $builder = Mockery::mock(BaseBuilder::class . '[increment]', [$connection, $grammar, $processor]);
+                $builder->shouldReceive('increment')->withAnyArgs()->andReturn(1);
+                return $builder;
+            }
+        };
+        $model->timestamps = false;
+        $model->intAttribute = '1';
+        $model->floatAttribute = '0.1234';
+        $model->exists = true;
+        $model->syncOriginal();
+
+        $model->increment('intAttribute', 1, [
+            'floatAttribute' => '123.4',
+        ]);
+
+        $this->assertSame(2, $model->getOriginal('intAttribute'));
+        $this->assertSame(123.4, $model->getOriginal('floatAttribute'));
+    }
+
     public function testModelAttributeCastingFailsOnUnencodableData()
     {
+        $this->expectException(\Hyperf\Database\Model\JsonEncodingException::class);
+        $this->expectExceptionMessage('Unable to encode attribute [objectAttribute] for model [HyperfTest\Database\Stubs\ModelCastingStub] to JSON: Malformed UTF-8 characters, possibly incorrectly encoded.');
+
         $model = new ModelCastingStub();
         $model->objectAttribute = ['foo' => "b\xF8r"];
         $obj = new stdClass();
@@ -1729,7 +1828,7 @@ class ModelTest extends TestCase
 
     public function testIntKeyTypePreserved()
     {
-        $model = $this->getMockBuilder(ModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
+        $model = $this->getMockBuilder(ModelStub::class)->onlyMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('insertGetId')->once()->with([], 'id')->andReturn(1);
         $query->shouldReceive('getConnection')->once();
@@ -1741,7 +1840,7 @@ class ModelTest extends TestCase
 
     public function testStringKeyTypePreserved()
     {
-        $model = $this->getMockBuilder(KeyTypeModelStub::class)->setMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
+        $model = $this->getMockBuilder(KeyTypeModelStub::class)->onlyMethods(['newModelQuery', 'updateTimestamps', 'refresh'])->getMock();
         $query = Mockery::mock(Builder::class);
         $query->shouldReceive('insertGetId')->once()->with([], 'id')->andReturn('string id');
         $query->shouldReceive('getConnection')->once();
@@ -1815,7 +1914,7 @@ class ModelTest extends TestCase
 
         $called = false;
 
-        ModelStub::withoutTouching(function () use (&$called, $model) {
+        ModelStub::withoutTouching(function () use (&$called) {
             $called = true;
         });
 
@@ -1828,7 +1927,7 @@ class ModelTest extends TestCase
 
         $called = false;
 
-        Model::withoutTouchingOn([ModelStub::class], function () use (&$called, $model) {
+        Model::withoutTouchingOn([ModelStub::class], function () use (&$called) {
             $called = true;
         });
 
@@ -1877,6 +1976,21 @@ class ModelTest extends TestCase
         $this->assertEquals($users, $users2);
     }
 
+    public function testConstraint()
+    {
+        $chan = new Channel(1);
+        go(function () use ($chan) {
+            Relation::noConstraints(function () {
+                usleep(1000);
+            });
+
+            $chan->push(true);
+        });
+
+        $this->assertTrue(Constraint::isConstraint());
+        $chan->pop();
+    }
+
     protected function getContainer()
     {
         $container = Mockery::mock(ContainerInterface::class);
@@ -1886,7 +2000,7 @@ class ModelTest extends TestCase
 
         $dbConfig = [
             'driver' => 'mysql',
-            'host' => 'localhost',
+            'host' => '127.0.0.1',
             'database' => 'hyperf',
             'username' => 'root',
             'password' => '',

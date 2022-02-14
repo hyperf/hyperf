@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -14,11 +14,11 @@ namespace Hyperf\Translation;
 use Countable;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\TranslatorLoaderInterface;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
-use Hyperf\Utils\Traits\Macroable;
 
 class Translator implements TranslatorInterface
 {
@@ -408,6 +408,8 @@ class Translator implements TranslatorInterface
 
             return $line;
         }
+
+        return null;
     }
 
     /**

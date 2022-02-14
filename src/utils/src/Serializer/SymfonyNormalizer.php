@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -31,7 +31,7 @@ class SymfonyNormalizer implements NormalizerInterface
         return $this->serializer->normalize($object);
     }
 
-    public function denormalize($data, $class)
+    public function denormalize($data, string $class)
     {
         return $this->serializer->denormalize($data, $class);
     }

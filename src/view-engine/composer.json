@@ -1,0 +1,50 @@
+{
+    "name": "hyperf/view-engine",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "hyperf",
+        "view",
+        "engine"
+    ],
+    "description": "",
+    "require": {
+        "php": ">=7.2",
+        "ext-json": "*",
+        "hyperf/config": "~2.2.0",
+        "hyperf/di": "~2.2.0",
+        "hyperf/event": "~2.2.0",
+        "hyperf/macroable": "~2.2.0",
+        "hyperf/utils": "~2.2.0",
+        "hyperf/view": "~2.2.0"
+    },
+    "suggest": {
+        "hyperf/session": "Required to use ShareErrorsFromSession.",
+        "hyperf/validation": "Required to use ShareErrorsFromSession and ValidationExceptionHandle."
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\ViewEngine\\": "src/"
+        },
+        "files": [
+            "src/Functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\ViewEngine\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.2-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\ViewEngine\\ConfigProvider"
+        }
+    }
+}

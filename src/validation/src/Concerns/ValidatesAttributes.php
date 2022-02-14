@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -58,7 +58,7 @@ trait ValidatesAttributes
 
         if ($url = parse_url($value, PHP_URL_HOST)) {
             try {
-                return count(dns_get_record($url, DNS_A | DNS_AAAA)) > 0;
+                return count(dns_get_record($url . '.', DNS_A | DNS_AAAA)) > 0;
             } catch (Exception $e) {
                 return false;
             }
@@ -146,7 +146,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        return preg_match('/^[\pL\pM\pN_-]+$/u', $value) > 0;
+        return preg_match('/^[\pL\pM\pN_-]+$/u', (string) $value) > 0;
     }
 
     /**
@@ -220,7 +220,7 @@ trait ValidatesAttributes
             return true;
         }
 
-        if ((! is_string($value) && ! is_numeric($value)) || strtotime($value) === false) {
+        if ((! is_string($value) && ! is_numeric($value)) || strtotime((string) $value) === false) {
             return false;
         }
 
@@ -301,8 +301,9 @@ trait ValidatesAttributes
     {
         $this->requireParameterCount(1, $parameters, 'digits');
 
+        $value = (string) $value;
         return ! preg_match('/[^0-9]/', $value)
-            && strlen((string) $value) == $parameters[0];
+            && strlen($value) == $parameters[0];
     }
 
     /**
@@ -314,7 +315,8 @@ trait ValidatesAttributes
     {
         $this->requireParameterCount(2, $parameters, 'digits_between');
 
-        $length = strlen((string) $value);
+        $value = (string) $value;
+        $length = strlen($value);
 
         return ! preg_match('/[^0-9]/', $value)
             && $length >= $parameters[0] && $length <= $parameters[1];
@@ -337,8 +339,8 @@ trait ValidatesAttributes
 
         $parameters = $this->parseNamedParameters($parameters);
 
-        if ($this->failsBasicDimensionChecks($parameters, $width, $height) ||
-            $this->failsRatioCheck($parameters, $width, $height)) {
+        if ($this->failsBasicDimensionChecks($parameters, $width, $height)
+            || $this->failsRatioCheck($parameters, $width, $height)) {
             return false;
         }
 
@@ -372,7 +374,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        return (new EmailValidator())->isValid($value, new RFCValidation());
+        return (new EmailValidator())->isValid((string) $value, new RFCValidation());
     }
 
     /**
@@ -628,7 +630,7 @@ trait ValidatesAttributes
             return count(array_diff($value, $parameters)) === 0;
         }
 
-        return ! is_array($value) && in_array((string) $value, $parameters);
+        return ! is_array($value) && in_array((string) $value, $parameters, true);
     }
 
     /**
@@ -768,9 +770,9 @@ trait ValidatesAttributes
             return false;
         }
 
-        return $value->getPath() !== '' &&
-            (in_array($value->getMimeType(), $parameters) ||
-                in_array(explode('/', $value->getMimeType())[0] . '/*', $parameters));
+        return $value->getPath() !== ''
+            && (in_array($value->getMimeType(), $parameters)
+                || in_array(explode('/', $value->getMimeType())[0] . '/*', $parameters));
     }
 
     /**
@@ -1055,8 +1057,6 @@ trait ValidatesAttributes
     {
         try {
             new DateTimeZone($value);
-        } catch (Exception $e) {
-            return false;
         } catch (Throwable $e) {
             return false;
         }
@@ -1215,8 +1215,11 @@ trait ValidatesAttributes
      *
      * @return null|\DateTime
      */
-    protected function getDateTimeWithOptionalFormat(string $format, string $value)
+    protected function getDateTimeWithOptionalFormat(string $format, ?string $value)
     {
+        if (is_null($value)) {
+            return null;
+        }
         if ($date = DateTime::createFromFormat('!' . $format, $value)) {
             return $date;
         }
@@ -1258,12 +1261,12 @@ trait ValidatesAttributes
      */
     protected function failsBasicDimensionChecks(array $parameters, int $width, int $height): bool
     {
-        return (isset($parameters['width']) && $parameters['width'] != $width) ||
-            (isset($parameters['min_width']) && $parameters['min_width'] > $width) ||
-            (isset($parameters['max_width']) && $parameters['max_width'] < $width) ||
-            (isset($parameters['height']) && $parameters['height'] != $height) ||
-            (isset($parameters['min_height']) && $parameters['min_height'] > $height) ||
-            (isset($parameters['max_height']) && $parameters['max_height'] < $height);
+        return (isset($parameters['width']) && $parameters['width'] != $width)
+            || (isset($parameters['min_width']) && $parameters['min_width'] > $width)
+            || (isset($parameters['max_width']) && $parameters['max_width'] < $width)
+            || (isset($parameters['height']) && $parameters['height'] != $height)
+            || (isset($parameters['min_height']) && $parameters['min_height'] > $height)
+            || (isset($parameters['max_height']) && $parameters['max_height'] < $height);
     }
 
     /**
@@ -1471,7 +1474,7 @@ trait ValidatesAttributes
      * Get the size of an attribute.
      *
      * @param mixed $value
-     * @return mixed
+     * @return float|int
      */
     protected function getSize(string $attribute, $value)
     {

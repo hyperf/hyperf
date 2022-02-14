@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -52,6 +52,11 @@ interface ResponseInterface
      * @param string $name the alias name of the file that client receive
      */
     public function download(string $file, string $name = ''): PsrResponseInterface;
+
+    /**
+     * Chunked transfer encoding.
+     */
+    public function write(string $data): bool;
 
     /**
      * Override a response with a cookie.

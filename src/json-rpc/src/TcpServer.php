@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -29,7 +29,6 @@ use Hyperf\Server\ServerManager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoole\Server as SwooleServer;
 
 class TcpServer extends Server
 {
@@ -111,18 +110,18 @@ class TcpServer extends Server
         return new CoreMiddleware($this->container, $this->protocol, $this->responseBuilder, $this->serverName);
     }
 
-    protected function buildResponse(int $fd, SwooleServer $server): ResponseInterface
+    protected function buildResponse(int $fd, $server): ResponseInterface
     {
         $response = new Psr7Response();
         return $response->withAttribute('fd', $fd)->withAttribute('server', $server);
     }
 
-    protected function buildRequest(int $fd, int $fromId, string $data): ServerRequestInterface
+    protected function buildRequest(int $fd, int $reactorId, string $data): ServerRequestInterface
     {
-        return $this->buildJsonRpcRequest($fd, $fromId, $this->packer->unpack($data) ?? ['jsonrpc' => '2.0']);
+        return $this->buildJsonRpcRequest($fd, $reactorId, $this->packer->unpack($data) ?? ['jsonrpc' => '2.0']);
     }
 
-    protected function buildJsonRpcRequest(int $fd, int $fromId, array $data)
+    protected function buildJsonRpcRequest(int $fd, int $reactorId, array $data)
     {
         if (! isset($data['method'])) {
             $data['method'] = '';
@@ -135,7 +134,7 @@ class TcpServer extends Server
 
         $uri = (new Uri())->withPath($data['method'])->withHost($port->host)->withPort($port->port);
         $request = (new Psr7Request('POST', $uri))->withAttribute('fd', $fd)
-            ->withAttribute('fromId', $fromId)
+            ->withAttribute('fromId', $reactorId)
             ->withAttribute('data', $data)
             ->withAttribute('request_id', $data['id'] ?? null)
             ->withParsedBody($data['params'] ?? '');

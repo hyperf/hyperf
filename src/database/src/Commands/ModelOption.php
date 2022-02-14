@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -13,9 +13,9 @@ namespace Hyperf\Database\Commands;
 
 class ModelOption
 {
-    const PROPERTY_SNAKE_CASE = 0;
+    public const PROPERTY_SNAKE_CASE = 0;
 
-    const PROPERTY_CAMEL_CASE = 1;
+    public const PROPERTY_CAMEL_CASE = 1;
 
     /**
      * @var string
@@ -56,6 +56,11 @@ class ModelOption
      * @var bool
      */
     protected $withComments;
+
+    /**
+     * @var bool
+     */
+    protected $withIde;
 
     /**
      * @var array
@@ -188,6 +193,17 @@ class ModelOption
     public function setWithComments(bool $withComments): self
     {
         $this->withComments = $withComments;
+        return $this;
+    }
+
+    public function isWithIde(): bool
+    {
+        return $this->withIde;
+    }
+
+    public function setWithIde(bool $withIde): ModelOption
+    {
+        $this->withIde = $withIde;
         return $this;
     }
 

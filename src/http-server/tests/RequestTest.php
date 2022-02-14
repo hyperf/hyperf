@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -24,7 +24,7 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class RequestTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
         Context::set(ServerRequestInterface::class, null);
@@ -93,5 +93,22 @@ class RequestTest extends TestCase
 
         $psrRequest = new Request();
         $this->assertSame(['id' => 1, 'name' => 'Hyperf'], $psrRequest->inputs(['id', 'name'], ['name' => 'Hyperf']));
+    }
+
+    public function testClearStoredParsedData()
+    {
+        $psrRequest = new \Hyperf\HttpMessage\Server\Request('GET', '/');
+        $psrRequest = $psrRequest->withParsedBody(['id' => 1]);
+        Context::set(ServerRequestInterface::class, $psrRequest);
+
+        $request = new Request();
+        $this->assertSame(['id' => 1], $request->all());
+
+        $psrRequest = $psrRequest->withParsedBody(['id' => 1, 'name' => 'hyperf']);
+        Context::set(ServerRequestInterface::class, $psrRequest);
+        $this->assertSame(['id' => 1], $request->all());
+
+        $request->clearStoredParsedData();
+        $this->assertSame(['id' => 1, 'name' => 'hyperf'], $request->all());
     }
 }

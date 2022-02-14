@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -58,8 +58,15 @@ class TraceAnnotationAspect implements AroundInterface
         }
         $span = $this->startSpan($name);
         $span->setTag($tag, $source);
-        $result = $proceedingJoinPoint->process();
-        $span->finish();
+        try {
+            $result = $proceedingJoinPoint->process();
+        } catch (\Throwable $e) {
+            $span->setTag('error', true);
+            $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+            throw $e;
+        } finally {
+            $span->finish();
+        }
         return $result;
     }
 }

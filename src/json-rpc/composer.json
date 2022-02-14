@@ -17,19 +17,12 @@
     },
     "require": {
         "php": ">=7.2",
-        "psr/container": "^1.0",
-        "psr/log": "^1.0",
-        "hyperf/contract": "~1.1.0",
-        "hyperf/load-balancer": "~1.1.0",
-        "hyperf/http-message": "~1.1.0",
-        "hyperf/rpc": "~1.1.0",
-        "hyperf/utils": "~1.1.0"
-    },
-    "require-dev": {
-        "malukenho/docheader": "^0.1.6",
-        "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^7.0.0",
-        "friendsofphp/php-cs-fixer": "^2.9"
+        "psr/container": "^1.0|^2.0",
+        "hyperf/contract": "~2.2.0",
+        "hyperf/load-balancer": "~2.2.0",
+        "hyperf/http-message": "~2.2.0",
+        "hyperf/rpc": "~2.2.0",
+        "hyperf/utils": "~2.2.0"
     },
     "suggest": {
         "hyperf/event": "Register the objects to ProtocolManager automatically.",
@@ -53,16 +46,10 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.2-dev"
         },
         "hyperf": {
             "config": "Hyperf\\JsonRpc\\ConfigProvider"
         }
-    },
-    "bin": [
-    ],
-    "scripts": {
-        "cs-fix": "php-cs-fixer fix $1",
-        "test": "phpunit --colors=always"
     }
 }

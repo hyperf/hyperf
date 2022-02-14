@@ -5,12 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\DB;
 
+use Closure;
 use Hyperf\DB\Exception\RuntimeException;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
@@ -151,6 +152,11 @@ class MySQLConnection extends AbstractConnection
         }
 
         return $this->connection->{$method}(...$argument);
+    }
+
+    public function run(Closure $closure)
+    {
+        return $closure->call($this, $this->connection);
     }
 
     protected function prepare(string $query): Statement

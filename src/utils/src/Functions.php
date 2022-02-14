@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -15,8 +15,10 @@ use Hyperf\Utils\Backoff;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\HigherOrderTapProxy;
+use Hyperf\Utils\Optional;
 use Hyperf\Utils\Parallel;
 use Hyperf\Utils\Str;
+use Hyperf\Utils\Waiter;
 
 if (! function_exists('value')) {
     /**
@@ -24,9 +26,9 @@ if (! function_exists('value')) {
      *
      * @param mixed $value
      */
-    function value($value)
+    function value($value, ...$args)
     {
-        return $value instanceof \Closure ? $value() : $value;
+        return $value instanceof Closure ? $value(...$args) : $value;
     }
 }
 if (! function_exists('env')) {
@@ -66,20 +68,23 @@ if (! function_exists('retry')) {
     /**
      * Retry an operation a given number of times.
      *
-     * @param int $times
+     * @param float|int $times
      * @param int $sleep millisecond
      * @throws \Throwable
      */
-    function retry($times, callable $callback, $sleep = 0)
+    function retry($times, callable $callback, int $sleep = 0)
     {
+        $attempts = 0;
         $backoff = new Backoff($sleep);
+
         beginning:
         try {
-            return $callback();
+            return $callback(++$attempts);
         } catch (\Throwable $e) {
             if (--$times < 0) {
                 throw $e;
             }
+
             $backoff->sleep();
             goto beginning;
         }
@@ -126,7 +131,7 @@ if (! function_exists('data_get')) {
     /**
      * Get an item from an array or object using "dot" notation.
      *
-     * @param array|int|string $key
+     * @param null|array|int|string $key
      * @param null|mixed $default
      * @param mixed $target
      */
@@ -207,6 +212,7 @@ if (! function_exists('data_set')) {
         } else {
             $target = [];
             if ($segments) {
+                $target[$segment] = [];
                 data_set($target[$segment], $segments, $value, $overwrite);
             } elseif ($overwrite) {
                 $target[$segment] = $value;
@@ -356,6 +362,7 @@ if (! function_exists('class_uses_recursive')) {
 
         $results = [];
 
+        /* @phpstan-ignore-next-line */
         foreach (array_reverse(class_parents($class)) + [$class => $class] as $class) {
             $results += trait_uses_recursive($class);
         }
@@ -387,10 +394,11 @@ if (! function_exists('getter')) {
 if (! function_exists('parallel')) {
     /**
      * @param callable[] $callables
+     * @param int $concurrent if $concurrent is equal to 0, that means unlimit
      */
-    function parallel(array $callables)
+    function parallel(array $callables, int $concurrent = 0)
     {
-        $parallel = new Parallel();
+        $parallel = new Parallel($concurrent);
         foreach ($callables as $key => $callable) {
             $parallel->add($callable, $key);
         }
@@ -400,8 +408,8 @@ if (! function_exists('parallel')) {
 
 if (! function_exists('make')) {
     /**
-     * Create a object instance, if the DI container exist in ApplicationContext,
-     * then the object will be create by DI container via `make()` method, if not,
+     * Create an object instance, if the DI container exist in ApplicationContext,
+     * then the object will be created by DI container via `make()` method, if not,
      * the object will create by `new` keyword.
      */
     function make(string $name, array $parameters = [])
@@ -420,16 +428,18 @@ if (! function_exists('make')) {
 if (! function_exists('run')) {
     /**
      * Run callable in non-coroutine environment, all hook functions by Swoole only available in the callable.
+     *
+     * @param array|callable $callbacks
      */
-    function run(callable $callback, int $flags = SWOOLE_HOOK_ALL): bool
+    function run($callbacks, int $flags = SWOOLE_HOOK_ALL): bool
     {
         if (Coroutine::inCoroutine()) {
             throw new RuntimeException('Function \'run\' only execute in non-coroutine environment.');
         }
 
-        \Swoole\Runtime::enableCoroutine(true, $flags);
+        \Swoole\Runtime::enableCoroutine($flags);
 
-        $result = \Swoole\Coroutine\Run($callback);
+        $result = \Swoole\Coroutine\Run(...(array) $callbacks);
 
         \Swoole\Runtime::enableCoroutine(false);
         return $result;
@@ -443,5 +453,34 @@ if (! function_exists('swoole_hook_flags')) {
     function swoole_hook_flags(): int
     {
         return defined('SWOOLE_HOOK_FLAGS') ? SWOOLE_HOOK_FLAGS : SWOOLE_HOOK_ALL;
+    }
+}
+
+if (! function_exists('optional')) {
+    /**
+     * Provide access to optional objects.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    function optional($value = null, callable $callback = null)
+    {
+        if (is_null($callback)) {
+            return new Optional($value);
+        }
+        if (! is_null($value)) {
+            return $callback($value);
+        }
+    }
+}
+
+if (! function_exists('wait')) {
+    function wait(Closure $closure, ?float $timeout = null)
+    {
+        if (ApplicationContext::hasContainer()) {
+            $waiter = ApplicationContext::getContainer()->get(Waiter::class);
+            return $waiter->wait($closure, $timeout);
+        }
+        return (new Waiter())->wait($closure, $timeout);
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -21,7 +21,7 @@ class Uri implements UriInterface
      * we apply this default host when no host is given yet to form a
      * valid URI.
      */
-    const DEFAULT_HTTP_HOST = 'localhost';
+    public const DEFAULT_HTTP_HOST = 'localhost';
 
     /**
      * @var array
@@ -334,6 +334,7 @@ class Uri implements UriInterface
         $clone = clone $this;
         $clone->userInfo = $user;
         $clone->validateState();
+        return $this;
     }
 
     /**
@@ -367,8 +368,8 @@ class Uri implements UriInterface
      * A null value provided for the port is equivalent to removing the port
      * information.
      *
-     * @param null|int $port the port to use with the new instance; a null value
-     *                       removes the port information
+     * @param null|int|string $port the port to use with the new instance; a null value
+     *                              removes the port information
      * @throws \InvalidArgumentException for invalid ports
      * @return static a new instance with the specified port
      */
@@ -630,7 +631,7 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param null|int $port
+     * @param null|int|string $port
      * @throws \InvalidArgumentException if the port is invalid
      * @return null|int
      */
@@ -641,7 +642,7 @@ class Uri implements UriInterface
         }
 
         $port = (int) $port;
-        if (1 > $port || 0xffff < $port) {
+        if (1 > $port || 0xFFFF < $port) {
             throw new \InvalidArgumentException(sprintf('Invalid port: %d. Must be between 1 and 65535', $port));
         }
 
@@ -653,7 +654,7 @@ class Uri implements UriInterface
      */
     private function removeDefaultPort()
     {
-        if ($this->port !== null && self::isDefaultPort($this)) {
+        if ($this->port !== null && $this->isDefaultPort()) {
             $this->port = null;
         }
     }

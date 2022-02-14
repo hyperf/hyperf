@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -14,6 +14,7 @@ namespace Hyperf\Server\Listener;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Server\Server;
 use Hyperf\Server\ServerManager;
 use Swoole\Server\Port;
@@ -37,6 +38,7 @@ class AfterWorkerStartListener implements ListenerInterface
     {
         return [
             AfterWorkerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 
@@ -46,26 +48,33 @@ class AfterWorkerStartListener implements ListenerInterface
      */
     public function process(object $event)
     {
-        /** @var AfterWorkerStart $event */
-        if ($event->workerId === 0) {
-            /** @var Port $server */
+        /** @var AfterWorkerStart|MainCoroutineServerStart $event */
+        $isCoroutineServer = $event instanceof MainCoroutineServerStart;
+        if ($isCoroutineServer || $event->workerId === 0) {
+            /** @var Port|\Swoole\Coroutine\Server $server */
             foreach (ServerManager::list() as $name => [$type, $server]) {
                 $listen = $server->host . ':' . $server->port;
-                $type = value(function () use ($type) {
+                $type = value(function () use ($type, $server) {
                     switch ($type) {
                         case Server::SERVER_BASE:
-                            return 'TCP';
-                            break;
+                            $sockType = $server->type;
+                            // type of Swoole\Coroutine\Server is equal to SWOOLE_SOCK_UDP
+                            if ($server instanceof \Swoole\Coroutine\Server || in_array($sockType, [SWOOLE_SOCK_TCP, SWOOLE_SOCK_TCP6])) {
+                                return 'TCP';
+                            }
+                            if (in_array($sockType, [SWOOLE_SOCK_UDP, SWOOLE_SOCK_UDP6])) {
+                                return 'UDP';
+                            }
+                            return 'UNKNOWN';
                         case Server::SERVER_WEBSOCKET:
                             return 'WebSocket';
-                            break;
                         case Server::SERVER_HTTP:
                         default:
                             return 'HTTP';
-                            break;
                     }
                 });
-                $this->logger->info(sprintf('%s Server listening at %s', $type, $listen));
+                $serverType = $isCoroutineServer ? ' Coroutine' : '';
+                $this->logger->info(sprintf('%s%s Server listening at %s', $type, $serverType, $listen));
             }
         }
     }

@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -16,7 +16,7 @@ use Hyperf\Snowflake\ConfigurationInterface;
 
 class RedisSecondMetaGenerator extends RedisMetaGenerator
 {
-    public function __construct(ConfigurationInterface $configuration, int $beginTimestamp = self::DEFAULT_BEGIN_SECOND, ConfigInterface $config)
+    public function __construct(ConfigurationInterface $configuration, int $beginTimestamp, ConfigInterface $config)
     {
         parent::__construct($configuration, $beginTimestamp, $config);
     }
@@ -33,5 +33,6 @@ class RedisSecondMetaGenerator extends RedisMetaGenerator
 
     protected function clockMovedBackwards($timestamp, $lastTimestamp)
     {
+        // Don't throw exception
     }
 }

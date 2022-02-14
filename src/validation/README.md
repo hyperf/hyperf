@@ -62,9 +62,7 @@ return [
 ];
 ```
 
-
 ## Usage
-
 
 ### Generate form request
 
@@ -82,8 +80,9 @@ class IndexController
         $request->input('foo');
     }
     
-    public function bar(RequestInterface $request){
-        $factory = $this->container->get(\Hyperf\Validation\Contracts\Validation\Factory::class);
+    public function bar(RequestInterface $request)
+    {
+        $factory = $this->container->get(\Hyperf\Validation\Contract\ValidatorFactoryInterface::class);
 
         $factory->extend('foo', function ($attribute, $value, $parameters, $validator) {
             return $value == 'foo';

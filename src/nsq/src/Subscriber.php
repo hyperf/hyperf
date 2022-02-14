@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -16,11 +16,11 @@ use Swoole\Coroutine\Socket;
 
 class Subscriber
 {
-    const TYPE_RESPONSE = 0;
+    public const TYPE_RESPONSE = 0;
 
-    const TYPE_ERROR = 1;
+    public const TYPE_ERROR = 1;
 
-    const TYPE_MESSAGE = 2;
+    public const TYPE_MESSAGE = 2;
 
     /**
      * @var \Swoole\Coroutine\Socket
@@ -96,6 +96,6 @@ class Subscriber
 
     private function isMatchResponse($response): bool
     {
-        return ! is_null($this->getPayload()) && (int) $this->type === self::TYPE_RESPONSE && $response === $this->getPayload();
+        return (int) $this->type === self::TYPE_RESPONSE && $response === $this->getPayload();
     }
 }

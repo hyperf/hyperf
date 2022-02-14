@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -24,6 +24,8 @@ interface MetadataCollectorInterface
      * @param mixed $value
      */
     public static function set(string $key, $value): void;
+
+    public static function clear(?string $key = null): void;
 
     /**
      * Serialize the all metadata to a string.

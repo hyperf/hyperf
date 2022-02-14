@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -31,7 +31,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RedisProxyTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $redis = $this->getRedis();
         $redis->flushDB();
@@ -49,6 +49,20 @@ class RedisProxyTest extends TestCase
         $this->assertSame('yyy', $redis->get('test'));
 
         $this->assertSame('yyy', $this->getRedis()->get('test:test'));
+    }
+
+    public function testHyperLogLog()
+    {
+        $redis = $this->getRedis();
+        $res = $redis->pfAdd('test:hyperloglog', ['123', 'fff']);
+        $this->assertSame(1, $res);
+        $res = $redis->pfAdd('test:hyperloglog', ['123']);
+        $this->assertSame(0, $res);
+        $this->assertSame(2, $redis->pfCount('test:hyperloglog'));
+        $redis->pfAdd('test:hyperloglog2', [1234]);
+        $redis->pfMerge('test:hyperloglog2', ['test:hyperloglog']);
+        $this->assertSame(3, $redis->pfCount('test:hyperloglog2'));
+        $this->assertFalse($redis->pfAdd('test:hyperloglog3', []));
     }
 
     public function testRedisOptionSerializer()
@@ -113,7 +127,7 @@ class RedisProxyTest extends TestCase
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
             'redis' => [
                 'default' => [
-                    'host' => 'localhost',
+                    'host' => '127.0.0.1',
                     'auth' => null,
                     'port' => 6379,
                     'db' => 0,

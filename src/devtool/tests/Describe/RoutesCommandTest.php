@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -25,7 +25,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RoutesCommandTest extends TestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
@@ -49,7 +49,5 @@ class RoutesCommandTest extends TestCase
         $method->invokeArgs($command, [&$data, 'http', 'POST', null, new Handler(IndexController::class . '::index5', '/index5')]);
 
         $this->assertSame(5, count($data));
-
-        $this->assertTrue(is_callable('HyperfTest\Devtool\Stub\IndexController::index'));
     }
 }

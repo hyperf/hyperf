@@ -5,15 +5,13 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\ServiceGovernance;
 
 use Hyperf\ServiceGovernance\Listener\RegisterServiceListener;
-use Hyperf\ServiceGovernance\Register\ConsulAgent;
-use Hyperf\ServiceGovernance\Register\ConsulAgentFactory;
 
 class ConfigProvider
 {
@@ -21,7 +19,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => [
-                ConsulAgent::class => ConsulAgentFactory::class,
+                IPReaderInterface::class => IPReader::class,
             ],
             'listeners' => [
                 RegisterServiceListener::class,
@@ -31,6 +29,14 @@ class ConfigProvider
                     'paths' => [
                         __DIR__,
                     ],
+                ],
+            ],
+            'publish' => [
+                [
+                    'id' => 'config',
+                    'description' => 'The config of service governance.',
+                    'source' => __DIR__ . '/../publish/services.php',
+                    'destination' => BASE_PATH . '/config/autoload/services.php',
                 ],
             ],
         ];

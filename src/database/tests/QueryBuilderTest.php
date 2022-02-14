@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -20,6 +20,7 @@ use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Hyperf\Database\Query\Processors\MySqlProcessor;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Di\Container;
+use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Collection;
@@ -35,7 +36,7 @@ use RuntimeException;
  */
 class QueryBuilderTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         Mockery::close();
     }
@@ -768,6 +769,19 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals([0 => 1], $builder->getBindings());
     }
 
+    public function testArrayWhereNulls()
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereNull(['id', 'expires_at']);
+        $this->assertSame('select * from "users" where "id" is null and "expires_at" is null', $builder->toSql());
+        $this->assertEquals([], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('id', '=', 1)->orWhereNull(['id', 'expires_at']);
+        $this->assertSame('select * from "users" where "id" = ? or "id" is null or "expires_at" is null', $builder->toSql());
+        $this->assertEquals([0 => 1], $builder->getBindings());
+    }
+
     public function testBasicWhereNotNulls()
     {
         $builder = $this->getBuilder();
@@ -778,6 +792,19 @@ class QueryBuilderTest extends TestCase
         $builder = $this->getBuilder();
         $builder->select('*')->from('users')->where('id', '>', 1)->orWhereNotNull('id');
         $this->assertEquals('select * from "users" where "id" > ? or "id" is not null', $builder->toSql());
+        $this->assertEquals([0 => 1], $builder->getBindings());
+    }
+
+    public function testArrayWhereNotNulls()
+    {
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->whereNotNull(['id', 'expires_at']);
+        $this->assertSame('select * from "users" where "id" is not null and "expires_at" is not null', $builder->toSql());
+        $this->assertEquals([], $builder->getBindings());
+
+        $builder = $this->getBuilder();
+        $builder->select('*')->from('users')->where('id', '>', 1)->orWhereNotNull(['id', 'expires_at']);
+        $this->assertSame('select * from "users" where "id" > ? or "id" is not null or "expires_at" is not null', $builder->toSql());
         $this->assertEquals([0 => 1], $builder->getBindings());
     }
 
@@ -2264,11 +2291,10 @@ class QueryBuilderTest extends TestCase
         $this->assertCount(2, $builder->wheres);
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     */
     public function testBuilderThrowsExpectedExceptionWithUndefinedMethod()
     {
+        $this->expectException(\BadMethodCallException::class);
+
         $builder = $this->getBuilder();
         $builder->getConnection()->shouldReceive('select');
         $builder->getProcessor()->shouldReceive('processSelect')->andReturn([]);
@@ -2607,7 +2633,7 @@ class QueryBuilderTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testPaginate()
+    public function testSimplePaginate()
     {
         $perPage = 16;
         $columns = ['test'];
@@ -2634,7 +2660,7 @@ class QueryBuilderTest extends TestCase
             return Context::get('path');
         });
 
-        $result = $builder->paginate($perPage, $columns, $pageName, $page);
+        $result = $builder->simplePaginate($perPage, $columns, $pageName, $page);
 
         $this->assertEquals(new Paginator($results, $perPage, $page, [
             'path' => $path,
@@ -2642,7 +2668,44 @@ class QueryBuilderTest extends TestCase
         ]), $result);
     }
 
-    public function testPaginateWithDefaultArguments()
+    public function testPaginate()
+    {
+        $perPage = 16;
+        $columns = ['test'];
+        $pageName = 'page-name';
+        $page = 1;
+        $total = 10;
+        $builder = $this->getMockQueryBuilder();
+        $path = 'http://foo.bar?page=3';
+
+        $results = collect([['test' => 'foo'], ['test' => 'bar']]);
+
+        $builder->shouldReceive('get')->once()->andReturn($results);
+        $builder->shouldReceive('getCountForPagination')->andReturn($total);
+
+        Context::set('path', $path);
+        if (! defined('BASE_PATH')) {
+            define('BASE_PATH', __DIR__);
+        }
+
+        $container = Mockery::mock(Container::class);
+        $container->shouldReceive('make')->once()->andReturnUsing(function ($interface, $args) {
+            return new LengthAwarePaginator($args['items'], $args['total'], $args['perPage'], $args['currentPage'], $args['options']);
+        });
+        ApplicationContext::setContainer($container);
+        Paginator::currentPathResolver(function () {
+            return Context::get('path');
+        });
+
+        $result = $builder->paginate($perPage, $columns, $pageName, $page);
+
+        $this->assertEquals(new LengthAwarePaginator($results, $total, $perPage, $page, [
+            'path' => $path,
+            'pageName' => $pageName,
+        ]), $result);
+    }
+
+    public function testSimplePaginateWithDefaultArguments()
     {
         $perPage = 15;
         $columns = ['*'];
@@ -2675,7 +2738,7 @@ class QueryBuilderTest extends TestCase
             return Context::get('path');
         });
 
-        $result = $builder->paginate();
+        $result = $builder->simplePaginate();
 
         $this->assertEquals(new Paginator($results, $perPage, $page, [
             'path' => $path,
@@ -2683,7 +2746,50 @@ class QueryBuilderTest extends TestCase
         ]), $result);
     }
 
-    public function testPaginateWhenNoResults()
+    public function testPaginateWithDefaultArguments()
+    {
+        $perPage = 15;
+        $columns = ['*'];
+        $pageName = 'page';
+        $page = 1;
+        $total = 10;
+        $builder = $this->getMockQueryBuilder();
+        $path = 'http://foo.bar?page=3';
+
+        $results = collect([['test' => 'foo'], ['test' => 'bar']]);
+
+        $builder->shouldReceive('get')->once()->andReturn($results);
+        $builder->shouldReceive('getCountForPagination')->andReturn($total);
+
+        Context::set('path', $path);
+        Context::set('page', $page);
+        if (! defined('BASE_PATH')) {
+            define('BASE_PATH', __DIR__);
+        }
+
+        $container = Mockery::mock(Container::class);
+        $container->shouldReceive('make')->once()->andReturnUsing(function ($interface, $args) {
+            return new LengthAwarePaginator($args['items'], $args['total'], $args['perPage'], $args['currentPage'], $args['options']);
+        });
+        ApplicationContext::setContainer($container);
+
+        Paginator::currentPageResolver(function () {
+            return Context::get('page');
+        });
+
+        Paginator::currentPathResolver(function () {
+            return Context::get('path');
+        });
+
+        $result = $builder->paginate();
+
+        $this->assertEquals(new LengthAwarePaginator($results, $total, $perPage, $page, [
+            'path' => $path,
+            'pageName' => $pageName,
+        ]), $result);
+    }
+
+    public function testSimplePaginateWhenNoResults()
     {
         $perPage = 15;
         $pageName = 'page';
@@ -2717,9 +2823,53 @@ class QueryBuilderTest extends TestCase
             return Context::get('path');
         });
 
-        $result = $builder->paginate();
+        $result = $builder->simplePaginate();
 
         $this->assertEquals(new Paginator($results, $perPage, $page, [
+            'path' => $path,
+            'pageName' => $pageName,
+        ]), $result);
+    }
+
+    public function testPaginateWhenNoResults()
+    {
+        $perPage = 15;
+        $pageName = 'page';
+        $page = 1;
+        $total = 10;
+        $builder = $this->getMockQueryBuilder();
+        $path = 'http://foo.bar?page=3';
+
+        $results = collect();
+
+        $builder->shouldReceive('get')->once()->andReturn($results);
+        $builder->shouldReceive('getCountForPagination')->andReturn($total);
+
+        Context::set('path', $path);
+        Context::set('page', $page);
+        if (! defined('BASE_PATH')) {
+            define('BASE_PATH', __DIR__);
+        }
+
+        $container = Mockery::mock(Container::class);
+        $container->shouldReceive('make')->once()->andReturnUsing(function ($interface, $args) {
+            /** @var Collection $items */
+            $items = $args['items'];
+            return new LengthAwarePaginator(collect($items), $args['total'], $args['perPage'], $args['currentPage'], $args['options']);
+        });
+        ApplicationContext::setContainer($container);
+
+        Paginator::currentPageResolver(function () {
+            return Context::get('page');
+        });
+
+        Paginator::currentPathResolver(function () {
+            return Context::get('path');
+        });
+
+        $result = $builder->paginate();
+
+        $this->assertEquals(new LengthAwarePaginator($results, $total, $perPage, $page, [
             'path' => $path,
             'pageName' => $pageName,
         ]), $result);

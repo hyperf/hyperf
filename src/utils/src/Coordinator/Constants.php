@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -16,20 +16,10 @@ class Constants
     /**
      * Swoole onWorkerStart event.
      */
-    const WORKER_START = 'workerStart';
+    public const WORKER_START = 'workerStart';
 
     /**
      * Swoole onWorkerExit event.
      */
-    const WORKER_EXIT = 'workerExit';
-
-    /**
-     * Swoole onWorkerStart event.
-     */
-    const ON_WORKER_START = 'workerStart';
-
-    /**
-     * Swoole onWorkerExit event.
-     */
-    const ON_WORKER_EXIT = 'workerExit';
+    public const WORKER_EXIT = 'workerExit';
 }

@@ -5,17 +5,18 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\WebSocketServer;
 
+use Hyperf\Utils\Arr;
 use Hyperf\Utils\Context as CoContext;
 
 class Context
 {
-    const FD = 'ws.fd';
+    public const FD = 'ws.fd';
 
     /**
      * @var array
@@ -60,7 +61,7 @@ class Context
     {
         $fd = CoContext::get(Context::FD, 0);
         $from = self::$container[$fromFd];
-        self::$container[$fd] = ($keys ? array_fill_keys($keys, $from) : $from);
+        self::$container[$fd] = ($keys ? Arr::only($from, $keys) : $from);
     }
 
     public static function override(string $id, \Closure $closure)

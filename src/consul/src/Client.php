@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -15,13 +15,12 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\TransferException;
 use Hyperf\Consul\Exception\ClientException;
 use Hyperf\Consul\Exception\ServerException;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 abstract class Client
 {
-    const DEFAULT_URI = 'http://127.0.0.1:8500';
+    public const DEFAULT_URI = 'http://127.0.0.1:8500';
 
     /**
      * Will execute this closure everytime when the consul client send a HTTP request,
@@ -33,7 +32,7 @@ abstract class Client
     private $clientFactory;
 
     /**
-     * @var StdoutLoggerInterface
+     * @var LoggerInterface
      */
     private $logger;
 

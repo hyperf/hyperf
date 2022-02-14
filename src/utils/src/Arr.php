@@ -5,13 +5,14 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\Utils;
 
 use ArrayAccess;
+use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
 
 /**
@@ -20,6 +21,8 @@ use InvalidArgumentException;
  */
 class Arr
 {
+    use Macroable;
+
     /**
      * Determine whether the given value is array accessible.
      * @param mixed $value
@@ -205,7 +208,7 @@ class Arr
                 unset($array[$key]);
                 continue;
             }
-            $parts = explode('.', $key);
+            $parts = explode('.', (string) $key);
             // clean up before each pass
             $array = &$original;
             while (count($parts) > 1) {
@@ -255,7 +258,7 @@ class Arr
      * Check if an item or items exist in an array using "dot" notation.
      *
      * @param array|\ArrayAccess $array
-     * @param array|string $keys
+     * @param null|array|string $keys
      */
     public static function has($array, $keys): bool
     {
@@ -335,8 +338,14 @@ class Arr
 
     /**
      * Push an item onto the beginning of an array.
-     * @param null|mixed $key
-     * @param mixed $value
+     *
+     * @template TKey of array-key
+     * @template TValue
+     *
+     * @param array<TKey, TValue> $array
+     * @param null|TKey $key
+     * @param TValue $value
+     * @return array<TKey, TValue>
      */
     public static function prepend(array $array, $value, $key = null): array
     {
@@ -390,7 +399,6 @@ class Arr
      * Set an array item to a given value using "dot" notation.
      * If no key is given to the method, the entire array will be replaced.
      *
-     * @param array|\ArrayAccess $array
      * @param null|int|string $key
      * @param mixed $value
      */
@@ -509,6 +517,30 @@ class Arr
         }
 
         return $result;
+    }
+
+    public static function merge(array $array1, array $array2, bool $unique = true): array
+    {
+        $isAssoc = static::isAssoc($array1 ?: $array2);
+        if ($isAssoc) {
+            foreach ($array2 as $key => $value) {
+                if (is_array($value)) {
+                    $array1[$key] = static::merge($array1[$key] ?? [], $value, $unique);
+                } else {
+                    $array1[$key] = $value;
+                }
+            }
+        } else {
+            foreach ($array2 as $key => $value) {
+                if ($unique && in_array($value, $array1, true)) {
+                    continue;
+                }
+                $array1[] = $value;
+            }
+
+            $array1 = array_values($array1);
+        }
+        return $array1;
     }
 
     /**

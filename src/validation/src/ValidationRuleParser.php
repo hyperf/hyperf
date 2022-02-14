@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -151,10 +151,10 @@ class ValidationRuleParser
             $rule = new ClosureValidationRule($rule);
         }
 
-        if (! is_object($rule) ||
-            $rule instanceof RuleContract ||
-            ($rule instanceof Exists && $rule->queryCallbacks()) ||
-            ($rule instanceof Unique && $rule->queryCallbacks())) {
+        if (! is_object($rule)
+            || $rule instanceof RuleContract
+            || ($rule instanceof Exists && $rule->queryCallbacks())
+            || ($rule instanceof Unique && $rule->queryCallbacks())) {
             return $rule;
         }
 

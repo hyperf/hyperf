@@ -5,7 +5,7 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
@@ -61,6 +61,14 @@ trait Cacheable
     }
 
     /**
+     * Get the expire time for cache.
+     */
+    public function getCacheTTL(): ?int
+    {
+        return null;
+    }
+
+    /**
      * Increment a column's value by a given amount.
      * @param string $column
      * @param float|int $amount
@@ -70,7 +78,9 @@ trait Cacheable
     {
         $res = parent::increment($column, $amount, $extra);
         if ($res > 0) {
-            if (empty($extra)) {
+            if ($this->getConnection()->transactionLevel() && $this instanceof CacheableInterface) {
+                InvalidCacheManager::instance()->push($this);
+            } elseif (empty($extra)) {
                 // Only increment a column's value.
                 /** @var Manager $manager */
                 $manager = $this->getContainer()->get(Manager::class);
@@ -93,7 +103,9 @@ trait Cacheable
     {
         $res = parent::decrement($column, $amount, $extra);
         if ($res > 0) {
-            if (empty($extra)) {
+            if ($this->getConnection()->transactionLevel() && $this instanceof CacheableInterface) {
+                InvalidCacheManager::instance()->push($this);
+            } elseif (empty($extra)) {
                 // Only decrement a column's value.
                 /** @var Manager $manager */
                 $manager = $this->getContainer()->get(Manager::class);

@@ -5,16 +5,16 @@ declare(strict_types=1);
  * This file is part of Hyperf.
  *
  * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
+ * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace HyperfTest\ConfigZookeeper;
 
 use Hyperf\Config\Config;
+use Hyperf\ConfigCenter\PipeMessage;
 use Hyperf\ConfigZookeeper\ClientInterface;
-use Hyperf\ConfigZookeeper\Listener\OnPipeMessageListener;
-use Hyperf\ConfigZookeeper\PipeMessage;
+use Hyperf\ConfigZookeeper\ZookeeperDriver;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
@@ -49,14 +49,14 @@ class ClientTest extends TestCase
 
             return $logger;
         }));
-        $listener = new OnPipeMessageListener($container->get(ConfigInterface::class), $container->get(StdoutLoggerInterface::class));
+        $driver = new ZookeeperDriver($container);
         $client = $container->get(ClientInterface::class);
         $config = $client->pull();
         $event = Mockery::mock(OnPipeMessage::class);
         $event->data = new PipeMessage($config);
         $config = $container->get(ConfigInterface::class);
         $this->assertSame('pre-value', $config->get('zookeeper.test-key'));
-        $listener->process($event);
+        $driver->onPipeMessage($event->data);
         $this->assertSame('after-value', $config->get('zookeeper.test-key'));
     }
 
