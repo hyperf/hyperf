@@ -154,7 +154,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     public function compile($path = null)
     {
-        $path = $path ?? $this->getPath();
+        $path ??= $this->getPath();
 
         if (! is_null($this->cachePath)) {
             $contents = $this->compileString($this->files->get($path));
@@ -208,7 +208,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
         // Here we will loop through all of the tokens returned by the Zend lexer and
         // parse each one into the corresponding valid PHP. We will then have this
         // template as the correctly rendered PHP that can be rendered natively.
-        foreach (token_get_all($value) as $token) {
+        foreach (\PhpToken::tokenize($value) as $token) {
             $result .= is_array($token) ? $this->parseToken($token) : $token;
         }
 
@@ -262,27 +262,19 @@ class BladeCompiler extends Compiler implements CompilerInterface
     {
         $this->conditions[$name] = $callback;
 
-        $this->directive($name, function ($expression) use ($name) {
-            return $expression !== ''
-                    ? "<?php if (\\Hyperf\\ViewEngine\\Blade::check('{$name}', {$expression})): ?>"
-                    : "<?php if (\\Hyperf\\ViewEngine\\Blade::check('{$name}')): ?>";
-        });
+        $this->directive($name, fn ($expression) => $expression !== ''
+                ? "<?php if (\\Hyperf\\ViewEngine\\Blade::check('{$name}', {$expression})): ?>"
+                : "<?php if (\\Hyperf\\ViewEngine\\Blade::check('{$name}')): ?>");
 
-        $this->directive('unless' . $name, function ($expression) use ($name) {
-            return $expression !== ''
-                ? "<?php if (! \\Hyperf\\ViewEngine\\Blade::check('{$name}', {$expression})): ?>"
-                : "<?php if (! \\Hyperf\\ViewEngine\\Blade::check('{$name}')): ?>";
-        });
+        $this->directive('unless' . $name, fn ($expression) => $expression !== ''
+            ? "<?php if (! \\Hyperf\\ViewEngine\\Blade::check('{$name}', {$expression})): ?>"
+            : "<?php if (! \\Hyperf\\ViewEngine\\Blade::check('{$name}')): ?>");
 
-        $this->directive('else' . $name, function ($expression) use ($name) {
-            return $expression !== ''
-                ? "<?php elseif (\\Hyperf\\ViewEngine\\Blade::check('{$name}', {$expression})): ?>"
-                : "<?php elseif (\\Hyperf\\ViewEngine\\Blade::check('{$name}')): ?>";
-        });
+        $this->directive('else' . $name, fn ($expression) => $expression !== ''
+            ? "<?php elseif (\\Hyperf\\ViewEngine\\Blade::check('{$name}', {$expression})): ?>"
+            : "<?php elseif (\\Hyperf\\ViewEngine\\Blade::check('{$name}')): ?>");
 
-        $this->directive('end' . $name, function () {
-            return '<?php endif; ?>';
-        });
+        $this->directive('end' . $name, fn () => '<?php endif; ?>');
     }
 
     /**
@@ -306,9 +298,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
         if (is_null($alias)) {
             $alias = Str::contains($class, '\\View\\Components\\')
-                            ? collect(explode('\\', Str::after($class, '\\View\\Components\\')))->map(function ($segment) {
-                                return Str::kebab($segment);
-                            })->implode(':')
+                            ? collect(explode('\\', Str::after($class, '\\View\\Components\\')))->map(fn ($segment) => Str::kebab($segment))->implode(':')
                             : Str::kebab(class_basename($class));
         }
 
@@ -380,15 +370,11 @@ class BladeCompiler extends Compiler implements CompilerInterface
     {
         $alias = $alias ?: Arr::last(explode('.', $path));
 
-        $this->directive($alias, function ($expression) use ($path) {
-            return $expression
-                        ? "<?php \$__env->startComponent('{$path}', {$expression}); ?>"
-                        : "<?php \$__env->startComponent('{$path}'); ?>";
-        });
+        $this->directive($alias, fn ($expression) => $expression
+                    ? "<?php \$__env->startComponent('{$path}', {$expression}); ?>"
+                    : "<?php \$__env->startComponent('{$path}'); ?>");
 
-        $this->directive('end' . $alias, function ($expression) {
-            return '<?php echo $__env->renderComponent(); ?>';
-        });
+        $this->directive('end' . $alias, fn ($expression) => '<?php echo $__env->renderComponent(); ?>');
     }
 
     /**
@@ -498,11 +484,9 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     protected function getOpenAndClosingPhpTokens(string $contents): Collection
     {
-        return collect(token_get_all($contents))
+        return collect(\PhpToken::tokenize($contents))
             ->pluck('0')
-            ->filter(function ($token) {
-                return in_array($token, [T_OPEN_TAG, T_OPEN_TAG_WITH_ECHO, T_CLOSE_TAG]);
-            });
+            ->filter(fn ($token) => in_array($token, [T_OPEN_TAG, T_OPEN_TAG_WITH_ECHO, T_CLOSE_TAG]));
     }
 
     /**
@@ -510,11 +494,11 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     protected function storeUncompiledBlocks(string $value): string
     {
-        if (strpos($value, '@verbatim') !== false) {
+        if (str_contains($value, '@verbatim')) {
             $value = $this->storeVerbatimBlocks($value);
         }
 
-        if (strpos($value, '@php') !== false) {
+        if (str_contains($value, '@php')) {
             $value = $this->storePhpBlocks($value);
         }
 
@@ -526,9 +510,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     protected function storeVerbatimBlocks(string $value): string
     {
-        return preg_replace_callback('/(?<!@)@verbatim(.*?)@endverbatim/s', function ($matches) {
-            return $this->storeRawBlock($matches[1]);
-        }, $value);
+        return preg_replace_callback('/(?<!@)@verbatim(.*?)@endverbatim/s', fn ($matches) => $this->storeRawBlock($matches[1]), $value);
     }
 
     /**
@@ -536,9 +518,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     protected function storePhpBlocks(string $value): string
     {
-        return preg_replace_callback('/(?<!@)@php(.*?)@endphp/s', function ($matches) {
-            return $this->storeRawBlock("<?php{$matches[1]}?>");
-        }, $value);
+        return preg_replace_callback('/(?<!@)@php(.*?)@endphp/s', fn ($matches) => $this->storeRawBlock("<?php{$matches[1]}?>"), $value);
     }
 
     /**
@@ -576,9 +556,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     protected function restoreRawContent($result)
     {
-        $result = preg_replace_callback('/' . $this->getRawPlaceholder('(\d+)') . '/', function ($matches) {
-            return $this->rawBlocks[$matches[1]];
-        }, $result);
+        $result = preg_replace_callback('/' . $this->getRawPlaceholder('(\d+)') . '/', fn ($matches) => $this->rawBlocks[$matches[1]], $result);
 
         $this->rawBlocks = [];
 
@@ -587,10 +565,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
 
     /**
      * Get a placeholder to temporary mark the position of raw blocks.
-     *
-     * @param int|string $replace
      */
-    protected function getRawPlaceholder($replace): string
+    protected function getRawPlaceholder(int|string $replace): string
     {
         return str_replace('#', (string) $replace, '@__raw_block_#__@');
     }
@@ -645,9 +621,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
     {
         return preg_replace_callback(
             '/\B@(@?\w+(?:::\w+)?)([ \t]*)(\( ( (?>[^()]+) | (?3) )* \))?/x',
-            function ($match) {
-                return $this->compileStatement($match);
-            },
+            fn ($match) => $this->compileStatement($match),
             $value
         );
     }

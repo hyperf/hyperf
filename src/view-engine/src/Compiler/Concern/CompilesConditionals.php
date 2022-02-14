@@ -17,28 +17,21 @@ trait CompilesConditionals
 {
     /**
      * Identifier for the first case in switch statement.
-     *
-     * @var bool
      */
-    protected $firstCaseInSwitch = true;
+    protected bool $firstCaseInSwitch = true;
 
     /**
      * Compile an end-once block into valid PHP.
-     *
-     * @return string
      */
-    public function compileEndOnce()
+    public function compileEndOnce(): string
     {
         return '<?php endif; ?>';
     }
 
     /**
      * Compile the if-auth statements into valid PHP.
-     *
-     * @param null|string $guard
-     * @return string
      */
-    protected function compileAuth($guard = null)
+    protected function compileAuth(?string $guard = null): string
     {
         $guard = is_null($guard) ? '()' : $guard;
 
@@ -47,11 +40,8 @@ trait CompilesConditionals
 
     /**
      * Compile the else-auth statements into valid PHP.
-     *
-     * @param null|string $guard
-     * @return string
      */
-    protected function compileElseAuth($guard = null)
+    protected function compileElseAuth(?string $guard = null): string
     {
         $guard = is_null($guard) ? '()' : $guard;
 
@@ -60,21 +50,16 @@ trait CompilesConditionals
 
     /**
      * Compile the end-auth statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndAuth()
+    protected function compileEndAuth(): string
     {
         return '<?php endif; ?>';
     }
 
     /**
      * Compile the `@env` statements into valid PHP.
-     *
-     * @param string $environments
-     * @return string
      */
-    protected function compileEnv($environments)
+    protected function compileEnv(string $environments): string
     {
         $config = ConfigInterface::class;
         return "<?php if(\\in_array(\$__env->getContainer()->get({$config}::class)->get('app_env'), {$environments})): ?>";
@@ -82,41 +67,32 @@ trait CompilesConditionals
 
     /**
      * Compile the end-env statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndEnv()
+    protected function compileEndEnv(): string
     {
         return '<?php endif; ?>';
     }
 
     /**
      * Compile the `@production` statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileProduction()
+    protected function compileProduction(): string
     {
         return $this->compileEnv("['prod', 'production']");
     }
 
     /**
      * Compile the end-production statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndProduction()
+    protected function compileEndProduction(): string
     {
         return '<?php endif; ?>';
     }
 
     /**
      * Compile the if-guest statements into valid PHP.
-     *
-     * @param null|string $guard
-     * @return string
      */
-    protected function compileGuest($guard = null)
+    protected function compileGuest(?string $guard = null): string
     {
         $guard = is_null($guard) ? '()' : $guard;
 
@@ -125,11 +101,8 @@ trait CompilesConditionals
 
     /**
      * Compile the else-guest statements into valid PHP.
-     *
-     * @param null|string $guard
-     * @return string
      */
-    protected function compileElseGuest($guard = null)
+    protected function compileElseGuest(?string $guard = null): string
     {
         $guard = is_null($guard) ? '()' : $guard;
 
@@ -138,127 +111,96 @@ trait CompilesConditionals
 
     /**
      * Compile the end-guest statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndGuest()
+    protected function compileEndGuest(): string
     {
         return '<?php endif; ?>';
     }
 
     /**
      * Compile the has-section statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileHasSection($expression)
+    protected function compileHasSection(string $expression): string
     {
         return "<?php if (! empty(trim(\$__env->yieldContent{$expression}))): ?>";
     }
 
     /**
      * Compile the section-missing statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileSectionMissing($expression)
+    protected function compileSectionMissing(string $expression): string
     {
         return "<?php if (empty(trim(\$__env->yieldContent{$expression}))): ?>";
     }
 
     /**
      * Compile the if statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileIf($expression)
+    protected function compileIf(string $expression): string
     {
         return "<?php if{$expression}: ?>";
     }
 
     /**
      * Compile the unless statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileUnless($expression)
+    protected function compileUnless(string $expression): string
     {
         return "<?php if (! {$expression}): ?>";
     }
 
     /**
      * Compile the else-if statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileElseif($expression)
+    protected function compileElseif(string $expression): string
     {
         return "<?php elseif{$expression}: ?>";
     }
 
     /**
      * Compile the else statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileElse()
+    protected function compileElse(): string
     {
         return '<?php else: ?>';
     }
 
     /**
      * Compile the end-if statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndif()
+    protected function compileEndif(): string
     {
         return '<?php endif; ?>';
     }
 
     /**
      * Compile the end-unless statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndunless()
+    protected function compileEndunless(): string
     {
         return '<?php endif; ?>';
     }
 
     /**
      * Compile the if-isset statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileIsset($expression)
+    protected function compileIsset(string $expression): string
     {
         return "<?php if(isset{$expression}): ?>";
     }
 
     /**
      * Compile the end-isset statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndIsset()
+    protected function compileEndIsset(): string
     {
         return '<?php endif; ?>';
     }
 
     /**
      * Compile the switch statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileSwitch($expression)
+    protected function compileSwitch(string $expression): string
     {
         $this->firstCaseInSwitch = true;
 
@@ -267,11 +209,8 @@ trait CompilesConditionals
 
     /**
      * Compile the case statements into valid PHP.
-     *
-     * @param string $expression
-     * @return string
      */
-    protected function compileCase($expression)
+    protected function compileCase(string $expression): string
     {
         if ($this->firstCaseInSwitch) {
             $this->firstCaseInSwitch = false;
@@ -284,31 +223,24 @@ trait CompilesConditionals
 
     /**
      * Compile the default statements in switch case into valid PHP.
-     *
-     * @return string
      */
-    protected function compileDefault()
+    protected function compileDefault(): string
     {
         return '<?php default: ?>';
     }
 
     /**
      * Compile the end switch statements into valid PHP.
-     *
-     * @return string
      */
-    protected function compileEndSwitch()
+    protected function compileEndSwitch(): string
     {
         return '<?php endswitch; ?>';
     }
 
     /**
      * Compile an once block into valid PHP.
-     *
-     * @param null|mixed $id
-     * @return string
      */
-    protected function compileOnce($id = null)
+    protected function compileOnce(?string $id = null): string
     {
         $id = $id ? $this->stripParentheses($id) : "'" . md5((string) microtime(true)) . "'";
 

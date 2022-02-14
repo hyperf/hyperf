@@ -17,13 +17,6 @@ use InvalidArgumentException;
 abstract class Compiler
 {
     /**
-     * The Filesystem instance.
-     *
-     * @var Filesystem
-     */
-    protected $files;
-
-    /**
      * Get the cache path for the compiled views.
      *
      * @var null|string
@@ -37,13 +30,15 @@ abstract class Compiler
      *
      * @throws InvalidArgumentException
      */
-    public function __construct(Filesystem $files, $cachePath)
-    {
+    public function __construct(/**
+     * The Filesystem instance.
+     */
+    protected Filesystem $files,
+        $cachePath
+    ) {
         if (! $cachePath) {
             throw new InvalidArgumentException('Please provide a valid cache path.');
         }
-
-        $this->files = $files;
 
         if (! $this->files->exists($cachePath)) {
             $this->files->makeDirectory($cachePath);
