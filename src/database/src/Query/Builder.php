@@ -404,7 +404,7 @@ class Builder
     /**
      * Add a join clause to the query.
      *
-     * @param string $table
+     * @param string|Expression $table
      * @param \Closure|string $first
      * @param null|string $operator
      * @param null|string $second
