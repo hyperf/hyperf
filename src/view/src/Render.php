@@ -25,27 +25,13 @@ use Psr\Http\Message\ResponseInterface;
 
 class Render implements RenderInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected string $engine;
 
-    /**
-     * @var string
-     */
-    protected $engine;
+    protected string $mode;
 
-    /**
-     * @var string
-     */
-    protected $mode;
+    protected array $config;
 
-    /**
-     * @var array
-     */
-    protected $config;
-
-    public function __construct(ContainerInterface $container, ConfigInterface $config)
+    public function __construct(protected ContainerInterface $container, ConfigInterface $config)
     {
         $engine = $config->get('view.engine', NoneEngine::class);
         if (! $container->has($engine)) {
@@ -55,7 +41,6 @@ class Render implements RenderInterface
         $this->engine = $engine;
         $this->mode = $config->get('view.mode', Mode::TASK);
         $this->config = $config->get('view.config', []);
-        $this->container = $container;
     }
 
     public function render(string $template, array $data = []): ResponseInterface
