@@ -207,23 +207,30 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $retryInterval = $this->config['retry_interval'] ?? 0;
             $readTimeout = $this->config['sentinel']['read_timeout'] ?? 0;
             $masterName = $this->config['sentinel']['master_name'] ?? '';
+            shuffle($nodes);
 
             $host = '';
             $port = 0;
             foreach ($nodes as $node) {
-                [$sentinelHost, $sentinelPort] = explode(':', $node);
-                $sentinel = new \RedisSentinel(
-                    $sentinelHost,
-                    intval($sentinelPort),
-                    $timeout,
-                    $persistent,
-                    $retryInterval,
-                    $readTimeout
-                );
-                $masterInfo = $sentinel->getMasterAddrByName($masterName);
-                if (is_array($masterInfo) && count($masterInfo) >= 2) {
-                    [$host, $port] = $masterInfo;
-                    break;
+                try {
+                    [$sentinelHost, $sentinelPort] = explode(':', $node);
+                    $sentinel = new \RedisSentinel(
+                        $sentinelHost,
+                        intval($sentinelPort),
+                        $timeout,
+                        $persistent,
+                        $retryInterval,
+                        $readTimeout
+                    );
+                    $masterInfo = $sentinel->getMasterAddrByName($masterName);
+                    if (is_array($masterInfo) && count($masterInfo) >= 2) {
+                        [$host, $port] = $masterInfo;
+                        break;
+                    }
+                } catch (\Throwable $e) {
+                    $logger = $this->container->get(StdoutLoggerInterface::class);
+                    $logger->warning(sprintf('Redis sentinel connection failed ' . $e->getMessage()));
+                    continue;
                 }
             }
             $redis = $this->createRedis($host, $port, $timeout);
