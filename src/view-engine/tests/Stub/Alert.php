@@ -17,11 +17,8 @@ use Hyperf\ViewEngine\Contract\FactoryInterface;
 
 class Alert extends Component
 {
-    public $message;
-
-    public function __construct($message)
+    public function __construct(public $message)
     {
-        $this->message = $message;
     }
 
     public function render(): mixed

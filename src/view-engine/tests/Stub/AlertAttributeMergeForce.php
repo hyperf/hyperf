@@ -17,14 +17,8 @@ use Hyperf\ViewEngine\Contract\FactoryInterface;
 
 class AlertAttributeMergeForce extends Component
 {
-    public $message;
-
-    public $type;
-
-    public function __construct($message, $type)
+    public function __construct(public $message, public $type)
     {
-        $this->message = $message;
-        $this->type = $type;
     }
 
     public function render(): mixed
