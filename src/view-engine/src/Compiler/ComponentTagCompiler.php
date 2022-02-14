@@ -24,42 +24,29 @@ class ComponentTagCompiler
 {
     /**
      * The Blade compiler instance.
-     *
-     * @var BladeCompiler
      */
-    protected $blade;
+    protected BladeCompiler $blade;
 
     /**
      * The "bind:" attributes that have been compiled for the current component.
-     *
-     * @var array
      */
-    protected $boundAttributes = [];
+    protected array $boundAttributes = [];
 
-    /**
-     * @var array
-     */
-    protected $autoloadClasses = [];
+    protected array $autoloadClasses = [];
 
-    /**
-     * @var array
-     */
-    protected $autoloadComponents = [];
+    protected array $autoloadComponents = [];
 
     /**
      * Create new component tag compiler.
      *
-     * @param mixed $autoload
+     * @param array $aliases the component class aliases
+     * @param array $namespaces the component class namespaces
      */
-    public function __construct(/**
-     * The component class aliases.
-     */
-    protected array $aliases = [], /**
-     * The component class namespaces.
-     */
-    protected array $namespaces = [],
+    public function __construct(
+        protected array $aliases = [],
+        protected array $namespaces = [],
         ?BladeCompiler $blade = null,
-        $autoload = []
+        array $autoload = []
     ) {
         $this->autoloadClasses = $autoload['classes'] ?? [null];
         $this->autoloadComponents = $autoload['components'] ?? [null];

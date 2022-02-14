@@ -24,7 +24,7 @@ class Alert extends Component
         $this->message = $message;
     }
 
-    public function render()
+    public function render(): mixed
     {
         $factory = ApplicationContext::getContainer()
             ->get(FactoryInterface::class);

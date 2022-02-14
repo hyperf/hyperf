@@ -343,7 +343,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
     }
 
     /**
-     * Register an include alias directive.
+     * Register an included alias directive.
      */
     public function include(string $path, ?string $alias = null)
     {
@@ -351,7 +351,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
     }
 
     /**
-     * Register an include alias directive.
+     * Register an included alias directive.
      */
     public function aliasInclude(string $path, ?string $alias = null)
     {

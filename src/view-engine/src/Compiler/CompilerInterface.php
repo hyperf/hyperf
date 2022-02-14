@@ -20,11 +20,8 @@ interface CompilerInterface
 
     /**
      * Determine if the given view is expired.
-     *
-     * @param string $path
-     * @return bool
      */
-    public function isExpired($path);
+    public function isExpired(string $path): bool;
 
     /**
      * Compile the view at the given path.

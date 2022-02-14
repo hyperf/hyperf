@@ -18,24 +18,18 @@ abstract class Compiler
 {
     /**
      * Get the cache path for the compiled views.
-     *
-     * @var null|string
      */
-    protected $cachePath;
+    protected ?string $cachePath = null;
 
     /**
      * Create a new compiler instance.
      *
-     * @param string $cachePath
+     * @param Filesystem $files the Filesystem instance
      *
      * @throws InvalidArgumentException
      */
-    public function __construct(/**
-     * The Filesystem instance.
-     */
-        protected Filesystem $files,
-        $cachePath
-    ) {
+    public function __construct(protected Filesystem $files, string $cachePath)
+    {
         if (! $cachePath) {
             throw new InvalidArgumentException('Please provide a valid cache path.');
         }

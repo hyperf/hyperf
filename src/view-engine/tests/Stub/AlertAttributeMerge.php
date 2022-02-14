@@ -27,7 +27,7 @@ class AlertAttributeMerge extends Component
         $this->type = $type;
     }
 
-    public function render()
+    public function render(): mixed
     {
         $factory = ApplicationContext::getContainer()
             ->get(FactoryInterface::class);

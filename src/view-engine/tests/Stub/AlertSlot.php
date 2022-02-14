@@ -17,7 +17,7 @@ use Hyperf\ViewEngine\Contract\FactoryInterface;
 
 class AlertSlot extends Component
 {
-    public function render()
+    public function render(): mixed
     {
         $factory = ApplicationContext::getContainer()
             ->get(FactoryInterface::class);
