@@ -1,3 +1,31 @@
 # ETCD
 
-`hyperf/etcd` component will release in `hyperf 1.1`，Please notice to [Project Version 1.1](https://github.com/hyperf/hyperf/projects/2) to know the specific progress.
+## 安装
+
+```
+composer require hyperf/etcd
+```
+
+## 添加配置文件 `etcd.php`
+
+```php
+<?php
+return [
+    'uri' => 'http://192.168.1.200:2379',
+    'version' => 'v3beta',
+    'options' => [
+        'timeout' => 10,
+    ],
+];
+```
+
+## 使用
+
+```php
+<?php
+
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Etcd\KVInterface;
+
+$client = ApplicationContext::getContainer()->get(KVInterface::class);
+```
