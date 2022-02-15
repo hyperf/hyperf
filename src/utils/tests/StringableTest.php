@@ -140,10 +140,10 @@ class StringableTest extends TestCase
     {
         $str = Str::of('Hyperf is the best PHP framework');
 
-        $this->assertSame('Hyperf is the best PHP framework!!!', $str->when(fn($str) => $str->contains('best'), function ($str) {
+        $this->assertSame('Hyperf is the best PHP framework!!!', $str->when(fn ($str) => $str->contains('best'), function ($str) {
             return $str->append('!!!');
         })->__toString());
-        $this->assertSame('Hyperf is the best PHP framework!!!', $str->unless(fn($str) => $str->contains('!!!'), function ($str) {
+        $this->assertSame('Hyperf is the best PHP framework!!!', $str->unless(fn ($str) => $str->contains('!!!'), function ($str) {
             return $str->append('!!!');
         })->__toString());
     }
