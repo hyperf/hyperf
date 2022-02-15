@@ -8,7 +8,7 @@
     ],
     "description": "Hot reload watcher for Hyperf",
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "ext-swoole": ">=4.5",
         "hyperf/command": "~3.0.0",
         "hyperf/di": "~3.0.0",

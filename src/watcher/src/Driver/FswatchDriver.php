@@ -19,19 +19,10 @@ use Swoole\Coroutine\System;
 
 class FswatchDriver implements DriverInterface
 {
-    /**
-     * @var Option
-     */
-    protected $option;
+    protected bool $isDarwin;
 
-    /**
-     * @var bool
-     */
-    protected $isDarwin;
-
-    public function __construct(Option $option)
+    public function __construct(protected Option $option)
     {
-        $this->option = $option;
         $this->isDarwin = PHP_OS === 'Darwin';
         $ret = System::exec('which fswatch');
         if (empty($ret['output'])) {

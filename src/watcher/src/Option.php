@@ -16,47 +16,30 @@ use Hyperf\Watcher\Driver\ScanFileDriver;
 
 class Option
 {
-    /**
-     * @var string
-     */
-    protected $driver = ScanFileDriver::class;
+    protected string $driver = ScanFileDriver::class;
 
-    /**
-     * @var string
-     */
-    protected $bin = 'php';
+    protected string $bin = 'php';
 
-    /**
-     * @var string
-     */
-    protected $command = 'vendor/hyperf/watcher/watcher.php start';
+    protected string $command = 'vendor/hyperf/watcher/watcher.php start';
 
     /**
      * @var string[]
      */
-    protected $watchDir = ['app', 'config'];
+    protected array $watchDir = ['app', 'config'];
 
     /**
      * @var string[]
      */
-    protected $watchFile = ['.env'];
+    protected array $watchFile = ['.env'];
 
     /**
      * @var string[]
      */
-    protected $ext = ['.php', '.env'];
+    protected array $ext = ['.php', '.env'];
 
-    /**
-     * @var int
-     */
-    protected $scanInterval = 2000;
+    protected int $scanInterval = 2000;
 
-    /**
-     * @var bool
-     */
-    protected $restart = true;
-
-    public function __construct(ConfigInterface $config, array $dir, array $file, bool $restart = true)
+    public function __construct(ConfigInterface $config, array $dir, array $file, protected bool $restart = true)
     {
         $options = $config->get('watcher', []);
 
@@ -70,7 +53,6 @@ class Option
 
         $this->watchDir = array_unique(array_merge($this->watchDir, $dir));
         $this->watchFile = array_unique(array_merge($this->watchFile, $file));
-        $this->restart = $restart;
     }
 
     public function getDriver(): string
