@@ -22,7 +22,7 @@ use Hyperf\Utils\Fluent;
 abstract class Grammar extends BaseGrammar
 {
     /**
-     * If this Grammars supports schema changes wrapped in a transaction.
+     * If this Grammar supports schema changes wrapped in a transaction.
      *
      * @var bool
      */
@@ -162,7 +162,7 @@ abstract class Grammar extends BaseGrammar
     }
 
     /**
-     * Check if this Grammars supports schema changes wrapped in a transaction.
+     * Check if this Grammar supports schema changes wrapped in a transaction.
      *
      * @return bool
      */
