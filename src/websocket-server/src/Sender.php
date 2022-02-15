@@ -16,6 +16,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Server\CoroutineServer;
 use Hyperf\WebSocketServer\Exception\InvalidMethodException;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use Swoole\Http\Response;
 use Swoole\Server;
 
@@ -25,34 +26,19 @@ use Swoole\Server;
  */
 class Sender
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var int
-     */
-    protected $workerId;
+    protected ?int $workerId = null;
 
     /**
      * @var Response[]
      */
-    protected $responses = [];
+    protected array $responses = [];
 
-    /**
-     * @var bool
-     */
-    protected $isCoroutineServer = false;
+    protected bool $isCoroutineServer = false;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
         if ($config = $container->get(ConfigInterface::class)) {
             $this->isCoroutineServer = $config->get('server.type') === CoroutineServer::class;

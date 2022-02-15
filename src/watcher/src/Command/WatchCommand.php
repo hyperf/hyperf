@@ -19,13 +19,9 @@ use Symfony\Component\Console\Input\InputOption;
 
 class WatchCommand extends Command
 {
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('server:watch');
-
-        $this->container = $container;
         $this->setDescription('watch command');
         $this->addOption('file', 'F', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, '', []);
         $this->addOption('dir', 'D', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, '', []);
