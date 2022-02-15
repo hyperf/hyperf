@@ -255,6 +255,7 @@ class ConnectionFactory
      * @param string $database
      * @param string $prefix
      * @throws \InvalidArgumentException
+     * @return \Hyperf\Database\Connection
      */
     protected function createConnection($driver, $connection, $database, $prefix = '', array $config = [])
     {

@@ -1848,7 +1848,7 @@ class Builder
     /**
      * Execute a query for a single record by ID.
      *
-     * @param int $id
+     * @param mixed $id
      * @param array $columns
      * @return mixed|static
      */
