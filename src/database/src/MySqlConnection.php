@@ -19,6 +19,8 @@ use Hyperf\Database\Schema\MySqlBuilder;
 
 class MySqlConnection extends Connection
 {
+    use Concerns\ManagesTransactions;
+    
     /**
      * Get a schema builder instance for the connection.
      */

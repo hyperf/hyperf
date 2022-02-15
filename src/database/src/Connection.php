@@ -33,7 +33,6 @@ class Connection implements ConnectionInterface
 {
     use DetectsDeadlocks;
     use DetectsLostConnections;
-    use Concerns\ManagesTransactions;
 
     /**
      * The active PDO connection.
@@ -1179,5 +1178,27 @@ class Connection implements ConnectionInterface
         if (isset($this->events)) {
             $this->events->dispatch($event);
         }
+    }
+
+    public function transaction(Closure $callback, int $attempts = 1)
+    {
+        return 0;
+    }
+
+    public function beginTransaction(): void
+    {
+    }
+
+    public function commit(): void
+    {
+    }
+
+    public function rollBack($toLevel = null): void
+    {
+    }
+
+    public function transactionLevel(): int
+    {
+        return $this->transactions;
     }
 }

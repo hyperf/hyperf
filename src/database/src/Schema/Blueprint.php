@@ -19,6 +19,7 @@ use Hyperf\Database\SQLiteConnection;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Fluent;
 use Hyperf\Database\Query\Expression;
+use Hyperf\Database\PgSQL\Schema\ForeignIdColumnDefinition;
 
 class Blueprint
 {
