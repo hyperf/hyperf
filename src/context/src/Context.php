@@ -9,21 +9,18 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils;
+namespace Hyperf\Context;
 
-use Hyperf\Engine\Coroutine as Co;
+use Hyperf\Engine\Coroutine;
 
-/**
- * @deprecated v3.0 please use `hyperf/context` instead.
- */
 class Context
 {
     protected static $nonCoContext = [];
 
     public static function set(string $id, $value)
     {
-        if (Coroutine::inCoroutine()) {
-            Co::getContextFor()[$id] = $value;
+        if (Coroutine::id() > 0) {
+            Coroutine::getContextFor()[$id] = $value;
         } else {
             static::$nonCoContext[$id] = $value;
         }
@@ -32,8 +29,8 @@ class Context
 
     public static function get(string $id, $default = null, $coroutineId = null)
     {
-        if (Coroutine::inCoroutine()) {
-            return Co::getContextFor($coroutineId)[$id] ?? $default;
+        if (Coroutine::id() > 0) {
+            return Coroutine::getContextFor($coroutineId)[$id] ?? $default;
         }
 
         return static::$nonCoContext[$id] ?? $default;
@@ -41,8 +38,8 @@ class Context
 
     public static function has(string $id, $coroutineId = null)
     {
-        if (Coroutine::inCoroutine()) {
-            return isset(Co::getContextFor($coroutineId)[$id]);
+        if (Coroutine::id() > 0) {
+            return isset(Coroutine::getContextFor($coroutineId)[$id]);
         }
 
         return isset(static::$nonCoContext[$id]);
@@ -58,16 +55,24 @@ class Context
 
     /**
      * Copy the context from a coroutine to current coroutine.
+     * This method will delete the origin values in current coroutine.
      */
     public static function copy(int $fromCoroutineId, array $keys = []): void
     {
-        $from = Co::getContextFor($fromCoroutineId);
+        $from = Coroutine::getContextFor($fromCoroutineId);
         if ($from === null) {
             return;
         }
 
-        $current = Co::getContextFor();
-        $current->exchangeArray($keys ? Arr::only($from->getArrayCopy(), $keys) : $from->getArrayCopy());
+        $current = Coroutine::getContextFor();
+
+        if ($keys) {
+            $map = array_intersect_key($from->getArrayCopy(), array_flip($keys));
+        } else {
+            $map = $from->getArrayCopy();
+        }
+
+        $current->exchangeArray($map);
     }
 
     /**
@@ -98,8 +103,8 @@ class Context
 
     public static function getContainer()
     {
-        if (Coroutine::inCoroutine()) {
-            return Co::getContextFor();
+        if (Coroutine::id() > 0) {
+            return Coroutine::getContextFor();
         }
 
         return static::$nonCoContext;

@@ -4,6 +4,7 @@
 
 - [#4514](https://github.com/hyperf/hyperf/pull/4514) Improved some performance by using lowercase headers.
 - [#4521](https://github.com/hyperf/hyperf/pull/4521) Try to connect to another one when connected redis sentinel failed.
+- [#4529](https://github.com/hyperf/hyperf/pull/4529) Split `hyperf/context` from `hyperf/utils`.
 
 # v2.2.25 - 2022-01-30
 
