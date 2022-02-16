@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "@grpc/proto-loader": "^0.5.5",
-    "grpc": "^1.24.3",
+    "grpc": "^1.24.11",
     "lodash": "^4.17.20",
     "minimist": "^1.2.5",
     "path": "^0.12.7"
