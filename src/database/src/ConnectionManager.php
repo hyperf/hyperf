@@ -39,6 +39,11 @@ class ConnectionManager
         return $this->config->set($key, array_merge($this->config->get($key, []), $data));
     }
 
+    public function getConfig(string $name)
+    {
+        return $this->config->get('database.' . Str::lower($name));
+    }
+
     /**
      * Create a connector instance based on the configuration.
      *
@@ -65,8 +70,9 @@ class ConnectionManager
     {
         $result = $this->config->get('database.' . Str::lower($name) . '.' . Str::lower($target));
         if (! is_string($result)) {
-            throw new InvalidArgumentException("Unsupported driver [{$target}]");
+            throw new InvalidArgumentException("Unsupported driver [{$name}]");
         }
+
         return new $result(...$arguments);
     }
 }
