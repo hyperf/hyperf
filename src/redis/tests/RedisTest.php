@@ -172,6 +172,16 @@ class RedisTest extends TestCase
         }
     }
 
+    public function testShuffleNodes()
+    {
+        $nodes = ['127.0.0.1:6379', '127.0.0.1:6378', '127.0.0.1:6377'];
+
+        shuffle($nodes);
+
+        $this->assertIsArray($nodes);
+        $this->assertSame(3, count($nodes));
+    }
+
     private function getRedis()
     {
         $container = $this->getContainer();
