@@ -13,7 +13,6 @@ namespace Hyperf\Database\Connectors;
 
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
-use Hyperf\Database\ConnectionManager;
 use Hyperf\Database\MySqlConnection;
 use Hyperf\Utils\Arr;
 use InvalidArgumentException;
@@ -30,17 +29,11 @@ class ConnectionFactory
     protected $container;
 
     /**
-     * @var ConnectionManager
-     */
-    protected $connectionManager;
-
-    /**
      * Create a new connection factory instance.
      */
-    public function __construct(ContainerInterface $container, ConnectionManager $connectionManager)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->connectionManager = $connectionManager;
     }
 
     /**
@@ -79,9 +72,9 @@ class ConnectionFactory
         switch ($config['driver']) {
             case 'mysql':
                 return new MySqlConnector();
-            default:
-                return $this->connectionManager->getConnector($config['driver']);
         }
+
+        throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]");
     }
 
     /**
@@ -265,8 +258,8 @@ class ConnectionFactory
         switch ($driver) {
             case 'mysql':
                 return new MySqlConnection($connection, $database, $prefix, $config);
-            default:
-                return $this->connectionManager->getConnection($config['driver'], [$connection, $database, $prefix, $config]);
         }
+
+        throw new InvalidArgumentException("Unsupported driver [{$driver}]");
     }
 }
