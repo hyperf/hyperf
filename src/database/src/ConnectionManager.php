@@ -33,17 +33,6 @@ class ConnectionManager
         return $this->config->set('database.' . $name, $data);
     }
 
-    public function registerOrAppend(string $name, array $data)
-    {
-        $key = 'database.' . $name;
-        return $this->config->set($key, array_merge($this->config->get($key, []), $data));
-    }
-
-    public function getConfig(string $name)
-    {
-        return $this->config->get('database.' . Str::lower($name));
-    }
-
     /**
      * Create a connector instance based on the configuration.
      *
