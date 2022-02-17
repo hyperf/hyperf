@@ -11,15 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Schema;
 
-use BadMethodCallException;
 use Closure;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Schema\Grammars\Grammar;
-use Hyperf\Database\SQLiteConnection;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Fluent;
 use Hyperf\Database\Query\Expression;
-use Hyperf\Database\PgSQL\Schema\ForeignIdColumnDefinition;
 
 class Blueprint
 {
@@ -127,11 +124,6 @@ class Blueprint
         $this->addImpliedCommands($grammar);
 
         $statements = [];
-
-        // Each type of command has a corresponding compiler function on the schema
-        // grammar which is used to build the necessary SQL statements to build
-        // the blueprint element, so we'll just call that compilers function.
-        $this->ensureCommandsAreValid($connection);
 
         foreach ($this->commands as $command) {
             $method = 'compile' . ucfirst($command->name);
@@ -1222,28 +1214,6 @@ class Blueprint
     }
 
     /**
-     * Ensure the commands on the blueprint are valid for the connection type.
-     *
-     * @throws \BadMethodCallException
-     */
-    protected function ensureCommandsAreValid(Connection $connection)
-    {
-        if ($connection instanceof SQLiteConnection) {
-            if ($this->commandsNamed(['dropColumn', 'renameColumn'])->count() > 1) {
-                throw new BadMethodCallException(
-                    "SQLite doesn't support multiple calls to dropColumn / renameColumn in a single modification."
-                );
-            }
-
-            if ($this->commandsNamed(['dropForeign'])->count() > 0) {
-                throw new BadMethodCallException(
-                    "SQLite doesn't support dropping foreign keys (you would need to re-create the table)."
-                );
-            }
-        }
-    }
-
-    /**
      * Get all of the commands matching the given names.
      *
      * @return \Hyperf\Utils\Collection
@@ -1452,22 +1422,6 @@ class Blueprint
     }
 
     /**
-     * Create a new unsigned big integer (8-byte) column on the table.
-     *
-     * @param  string  $column
-     * @return \Hyperf\Database\Schema\ForeignIdColumnDefinition
-     */
-    public function foreignId($column)
-    {
-        return $this->addColumnDefinition(new ForeignIdColumnDefinition($this, [
-            'type' => 'bigInteger',
-            'name' => $column,
-            'autoIncrement' => false,
-            'unsigned' => true,
-        ]));
-    }
-
-    /**
      * Add a new column definition to the blueprint.
      *
      * @param  \Hyperf\Database\Schema\ColumnDefinition  $definition
@@ -1484,19 +1438,5 @@ class Blueprint
         }
 
         return $definition;
-    }
-
-    /**
-     * Create a new UUID column on the table with a foreign key constraint.
-     *
-     * @param  string  $column
-     * @return \Hyperf\Database\Schema\ForeignIdColumnDefinition
-     */
-    public function foreignUuid($column)
-    {
-        return $this->addColumnDefinition(new ForeignIdColumnDefinition($this, [
-            'type' => 'uuid',
-            'name' => $column,
-        ]));
     }
 }
