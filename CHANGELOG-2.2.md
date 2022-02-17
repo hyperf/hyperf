@@ -2,7 +2,7 @@
 
 ## Fixed
 
-- [#4536](https://github.com/hyperf/hyperf/pull/4536) Fixed bug that response header `content-type` will be set more than once when using json-rpc.
+- [#4536](https://github.com/hyperf/hyperf/pull/4536) Fixed bug that response header `content-type` will be set more than once sometimes when using json-rpc.
 
 ## Optimized
 
