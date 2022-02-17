@@ -19,7 +19,6 @@ use Hyperf\Database\SQLiteConnection;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Fluent;
 use Hyperf\Database\Query\Expression;
-use Hyperf\Database\PgSQL\Schema\ForeignIdColumnDefinition;
 
 class Blueprint
 {
@@ -1449,22 +1448,6 @@ class Blueprint
     public function rawIndex($expression, $name)
     {
         return $this->index([new Expression($expression)], $name);
-    }
-
-    /**
-     * Create a new unsigned big integer (8-byte) column on the table.
-     *
-     * @param  string  $column
-     * @return \Hyperf\Database\Schema\ForeignIdColumnDefinition
-     */
-    public function foreignId($column)
-    {
-        return $this->addColumnDefinition(new ForeignIdColumnDefinition($this, [
-            'type' => 'bigInteger',
-            'name' => $column,
-            'autoIncrement' => false,
-            'unsigned' => true,
-        ]));
     }
 
     /**
