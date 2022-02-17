@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database;
 
-use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Macroable\Macroable;
 
@@ -89,7 +88,7 @@ abstract class Grammar
      *
      * @return string
      */
-    public function parameterize(array $values, ?Builder $query = null)
+    public function parameterize(array $values)
     {
         return implode(', ', array_map([$this, 'parameter'], $values));
     }
@@ -100,7 +99,7 @@ abstract class Grammar
      * @param mixed $value
      * @return string
      */
-    public function parameter($value, ?Builder $query = null)
+    public function parameter($value)
     {
         return $this->isExpression($value) ? $this->getValue($value) : '?';
     }

@@ -239,8 +239,6 @@ class Builder
      */
     public $useWritePdo = false;
 
-    public $prepareNum = 1;
-
     /**
      * Create a new query builder instance.
      *
