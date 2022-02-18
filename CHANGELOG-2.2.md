@@ -1,5 +1,9 @@
 # v2.2.26 - TBD
 
+## Fixed
+
+- [#4536](https://github.com/hyperf/hyperf/pull/4536) Fixed bug that response header `content-type` will be set more than once sometimes when using json-rpc.
+
 ## Added
 
 - [#4527](https://github.com/hyperf/hyperf/pull/4527) Added some useful methods for `Hyperf\Database\Schema\Blueprint`.
