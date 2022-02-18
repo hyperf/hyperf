@@ -14,8 +14,10 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         php-version: [ '7.4', '8.0', '8.1' ]
-        sw-version: [ 'v4.5.11', 'v4.6.7', 'v4.7.1', 'v4.8.5', 'master' ]
+        sw-version: [ 'v4.5.11', 'v4.6.7', 'v4.7.1', 'v4.8.6', 'master' ]
         exclude:
+          - php-version: '7.4'
+            sw-version: 'master'
           - php-version: '8.1'
             sw-version: 'v4.5.11'
           - php-version: '8.1'

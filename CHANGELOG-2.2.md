@@ -1,12 +1,64 @@
-# v2.2.22 - TBD
+# v2.2.26 - TBD
+
+## Optimized
+
+- [#4514](https://github.com/hyperf/hyperf/pull/4514) Improved some performance by using lowercase headers.
+- [#4521](https://github.com/hyperf/hyperf/pull/4521) Try to connect to another one when connected redis sentinel failed.
+- [#4529](https://github.com/hyperf/hyperf/pull/4529) Split `hyperf/context` from `hyperf/utils`.
+
+# v2.2.25 - 2022-01-30
+
+## Fixed
+
+- [#4484](https://github.com/hyperf/hyperf/pull/4484) Fixed bug that `NacosDriver::isRegistered` does not work when using nacos `2.0.4`.
+
+## Added
+
+- [#4477](https://github.com/hyperf/hyperf/pull/4477) Support `Macroable` for `Hyperf\HttpServer\Request`. 
+
+## Optimized
+
+- [#4254](https://github.com/hyperf/hyperf/pull/4254) Added check of `grpc.enable_fork_support` option and `pcntl` extension.
+
+# v2.2.24 - 2022-01-24
+
+## Fixed
+
+- [#4474](https://github.com/hyperf/hyperf/pull/4474) Fixed bug that multiplex connection don't close after running test cases.
+
+## Optimized
+
+- [#4451](https://github.com/hyperf/hyperf/pull/4451) Optimized code for `Hyperf\Watcher\Driver\FindNewerDriver`.
+
+# v2.2.23 - 2022-01-17
+
+## Fixed
+
+- [#4426](https://github.com/hyperf/hyperf/pull/4426) Fixed bug that view cache generated failed caused by concurrent request.
+
+## Added
+
+- [#4449](https://github.com/hyperf/hyperf/pull/4449) Allow sorting on multiple criteria for `Hyperf\Utils\Collection`.
+- [#4455](https://github.com/hyperf/hyperf/pull/4455) Added command `gen:view-engine-cache` which used to generate cache files in advance.
+- [#4453](https://github.com/hyperf/hyperf/pull/4453) Added `Hyperf\Tracer\Aspect\ElasticserachAspect` which used to record traces for elasticsearch.
+- [#4458](https://github.com/hyperf/hyperf/pull/4458) Added `Hyperf\Di\ScanHandler\ProcScanHandler` which used to run application when using swow and windows.
+
+# v2.2.22 - 2022-01-04
 
 ## Fixed
 
 - [#4399](https://github.com/hyperf/hyperf/pull/4399) Fixed bug that `Redis::scan` does not work when using redis cluster.
 
+## Added
+
+- [#4409](https://github.com/hyperf/hyperf/pull/4409) Added database handler for `session`.
+- [#4411](https://github.com/hyperf/hyperf/pull/4411) Added `Hyperf\Tracer\Aspect\DbAspect` to log db records when using `hyperf/db`. 
+- [#4420](https://github.com/hyperf/hyperf/pull/4420) Support `SSL` for `Hyperf\Amqp\IO\SwooleIO`.
+
 ## Optimized
 
 - [#4406](https://github.com/hyperf/hyperf/pull/4406) Adapt swoole 5.0 by removing swoole classes with `PSR-0`.
+- [#4429](https://github.com/hyperf/hyperf/pull/4429) Added type hint for `Debug::getRefCount()` which only support `object`.
 
 # v2.2.21 - 2021-12-20
 

@@ -34,6 +34,7 @@ class FooController
 
     public function request()
     {
+        /** @var ServerRequestInterface $request */
         $request = Context::get(ServerRequestInterface::class);
         $uri = $request->getUri();
         return [
@@ -45,6 +46,7 @@ class FooController
                 'query' => $uri->getQuery(),
             ],
             'params' => $request->getQueryParams(),
+            'cookies' => $request->getCookieParams(),
         ];
     }
 }

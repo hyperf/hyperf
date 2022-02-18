@@ -427,6 +427,30 @@ class IndexController
 $container = \Hyperf\Utils\ApplicationContext::getContainer();
 ```
 
+## 扫描适配器
+
+默认使用 `Hyperf\Di\ScanHandler\PcntlScanHandler`.
+
+- Hyperf\Di\ScanHandler\PcntlScanHandler
+
+使用 Pcntl fork 子进程扫描注解，只支持 Linux 环境
+
+- Hyperf\Di\ScanHandler\NullScanHandler
+
+不进行注解扫描操作
+
+- Hyperf\Di\ScanHandler\ProcScanHandler
+
+使用 proc_open 创建子进程扫描注解，支持 Linux 和 Windows(Swow)
+
+### 更换扫描适配器
+
+我们只需要主动修改 `bin/hyperf.php` 文件中 `Hyperf\Di\ClassLoader::init()` 代码段即可更换适配器。
+
+```php
+Hyperf\Di\ClassLoader::init(handler: new Hyperf\Di\ScanHandler\ProcScanHandler());
+```
+
 ## 注意事项
 
 ### 容器仅管理长生命周期的对象
