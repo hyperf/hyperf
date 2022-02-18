@@ -1,5 +1,9 @@
 # v2.2.26 - TBD
 
+## Added
+
+- [#4527](https://github.com/hyperf/hyperf/pull/4527) Added some useful methods for `Hyperf\Database\Schema\Blueprint`.
+
 ## Optimized
 
 - [#4514](https://github.com/hyperf/hyperf/pull/4514) Improved some performance by using lowercase headers.
