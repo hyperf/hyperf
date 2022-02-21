@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Traits;
 
+use Closure;
+
 trait Conditionable
 {
     /**
@@ -24,9 +26,12 @@ trait Conditionable
      */
     public function when($value, $callback, $default = null)
     {
+        $value = $value instanceof Closure ? $value($this) : $value;
+
         if ($value) {
             return $callback($this, $value) ?? $this;
         }
+
         if ($default) {
             return $default($this, $value) ?? $this;
         }
@@ -45,9 +50,12 @@ trait Conditionable
      */
     public function unless($value, $callback, $default = null)
     {
+        $value = $value instanceof Closure ? $value($this) : $value;
+
         if (! $value) {
             return $callback($this, $value) ?: $this;
         }
+
         if ($default) {
             return $default($this, $value) ?: $this;
         }

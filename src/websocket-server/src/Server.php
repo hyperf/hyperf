@@ -50,68 +50,21 @@ use Throwable;
 
 class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, OnCloseInterface, OnMessageInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ?CoreMiddlewareInterface $coreMiddleware = null;
 
-    /**
-     * @var HttpDispatcher
-     */
-    protected $dispatcher;
+    protected array $exceptionHandlers = [];
 
-    /**
-     * @var ExceptionHandlerDispatcher
-     */
-    protected $exceptionHandlerDispatcher;
+    protected array $middlewares = [];
 
-    /**
-     * @var CoreMiddlewareInterface
-     */
-    protected $coreMiddleware;
-
-    /**
-     * @var array
-     */
-    protected $exceptionHandlers;
-
-    /**
-     * @var ResponseEmitter
-     */
-    protected $responseEmitter;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var array
-     */
-    protected $middlewares = [];
-
-    /**
-     * @var string
-     */
-    protected $serverName = 'websocket';
+    protected string $serverName = 'websocket';
 
     /**
      * @var null|\Swoole\Coroutine\Http\Server|WebSocketServer
      */
-    protected $server;
+    protected mixed $server;
 
-    public function __construct(
-        ContainerInterface $container,
-        HttpDispatcher $dispatcher,
-        ExceptionHandlerDispatcher $exceptionHandlerDispatcher,
-        ResponseEmitter $responseEmitter,
-        StdoutLoggerInterface $logger
-    ) {
-        $this->container = $container;
-        $this->dispatcher = $dispatcher;
-        $this->exceptionHandlerDispatcher = $exceptionHandlerDispatcher;
-        $this->responseEmitter = $responseEmitter;
-        $this->logger = $logger;
+    public function __construct(protected ContainerInterface $container, protected HttpDispatcher $dispatcher, protected ExceptionHandlerDispatcher $exceptionHandlerDispatcher, protected ResponseEmitter $responseEmitter, protected StdoutLoggerInterface $logger)
+    {
     }
 
     public function initCoreMiddleware(string $serverName): void
@@ -126,10 +79,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         ]);
     }
 
-    /**
-     * @return \Swoole\Coroutine\Http\Server|WebSocketServer
-     */
-    public function getServer()
+    public function getServer(): \Swoole\Coroutine\Http\Server|WebSocketServer
     {
         if ($this->server) {
             return $this->server;
@@ -282,10 +232,9 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     }
 
     /**
-     * @param SwooleResponse|WebSocketServer $server
      * @param mixed $request
      */
-    protected function deferOnOpen($request, string $class, $server)
+    protected function deferOnOpen($request, string $class, SwooleResponse|WebSocketServer $server)
     {
         $instance = $this->container->get($class);
         wait(static function () use ($request, $instance, $server) {

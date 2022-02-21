@@ -14,6 +14,7 @@ namespace Hyperf\Database\Schema;
 use BadMethodCallException;
 use Closure;
 use Hyperf\Database\Connection;
+use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Schema\Grammars\Grammar;
 use Hyperf\Database\SQLiteConnection;
 use Hyperf\Macroable\Macroable;
@@ -46,6 +47,13 @@ class Blueprint
      * @var bool
      */
     public $temporary = false;
+
+    /**
+     * The column to add new columns after.
+     *
+     * @var string
+     */
+    public $after;
 
     /**
      * The comment of the table.
@@ -1213,6 +1221,71 @@ class Blueprint
     }
 
     /**
+     * Determine if the blueprint has auto-increment columns.
+     */
+    public function hasAutoIncrementColumn(): bool
+    {
+        return ! is_null(collect($this->getAddedColumns())->first(function ($column) {
+            return $column->autoIncrement === true;
+        }));
+    }
+
+    /**
+     * Get the auto-increment column starting values.
+     */
+    public function autoIncrementingStartingValues(): array
+    {
+        if (! $this->hasAutoIncrementColumn()) {
+            return [];
+        }
+
+        return collect($this->getAddedColumns())->mapWithKeys(function ($column) {
+            return $column->autoIncrement === true
+                ? [$column->name => $column->get('startingValue', $column->get('from'))]
+                : [$column->name => null];
+        })->filter()->all();
+    }
+
+    /**
+     * Specify an fulltext for the table.
+     *
+     * @param array|string $columns
+     * @param null|string $name
+     * @param null|string $algorithm
+     * @return \Hyperf\Utils\Fluent
+     */
+    public function fulltext($columns, $name = null, $algorithm = null)
+    {
+        return $this->indexCommand('fulltext', $columns, $name, $algorithm);
+    }
+
+    /**
+     * Specify a raw index for the table.
+     *
+     * @param string $expression
+     * @param string $name
+     * @return \Hyperf\Utils\Fluent
+     */
+    public function rawIndex($expression, $name)
+    {
+        return $this->index([new Expression($expression)], $name);
+    }
+
+    /**
+     * Create a new UUID column on the table with a foreign key constraint.
+     *
+     * @param string $column
+     * @return \Hyperf\Database\Schema\ForeignIdColumnDefinition
+     */
+    public function foreignUuid($column)
+    {
+        return $this->addColumnDefinition(new ForeignIdColumnDefinition($this, [
+            'type' => 'uuid',
+            'name' => $column,
+        ]));
+    }
+
+    /**
      * Ensure the commands on the blueprint are valid for the connection type.
      *
      * @throws \BadMethodCallException
@@ -1385,5 +1458,24 @@ class Blueprint
     protected function createCommand($name, array $parameters = [])
     {
         return new Fluent(array_merge(compact('name'), $parameters));
+    }
+
+    /**
+     * Add a new column definition to the blueprint.
+     *
+     * @param \Hyperf\Database\Schema\ColumnDefinition $definition
+     * @return \Hyperf\Database\Schema\ColumnDefinition
+     */
+    protected function addColumnDefinition($definition)
+    {
+        $this->columns[] = $definition;
+
+        if ($this->after) {
+            $definition->after($this->after);
+
+            $this->after = $definition->name;
+        }
+
+        return $definition;
     }
 }

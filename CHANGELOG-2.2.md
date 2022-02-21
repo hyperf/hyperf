@@ -1,4 +1,20 @@
-# v2.2.26 - TBD
+# v2.2.27 - TBD
+
+# v2.2.26 - 2022-02-21
+
+## Fixed
+
+- [#4536](https://github.com/hyperf/hyperf/pull/4536) Fixed bug that response header `content-type` will be set more than once sometimes when using json-rpc.
+
+## Added
+
+- [#4527](https://github.com/hyperf/hyperf/pull/4527) Added some useful methods for `Hyperf\Database\Schema\Blueprint`.
+
+## Optimized
+
+- [#4514](https://github.com/hyperf/hyperf/pull/4514) Improved some performance by using lowercase headers.
+- [#4521](https://github.com/hyperf/hyperf/pull/4521) Try to connect to another one when connected redis sentinel failed.
+- [#4529](https://github.com/hyperf/hyperf/pull/4529) Split `hyperf/context` from `hyperf/utils`.
 
 # v2.2.25 - 2022-01-30
 
