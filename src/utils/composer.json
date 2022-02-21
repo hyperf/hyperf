@@ -26,9 +26,9 @@
     },
     "suggest": {
         "ext-swoole": "Required to use methods related to swoole (>=4.5).",
-        "symfony/var-dumper": "Required to use the dd function (^5.0).",
-        "symfony/serializer": "Required to use SymfonyNormalizer (^5.0)",
-        "symfony/property-access": "Required to use SymfonyNormalizer (^5.0)",
+        "symfony/var-dumper": "Required to use the dd function (^5.0|^6.0).",
+        "symfony/serializer": "Required to use SymfonyNormalizer (^5.0|^6.0)",
+        "symfony/property-access": "Required to use SymfonyNormalizer (^5.0|^6.0)",
         "hyperf/di": "Required to use ExceptionNormalizer",
         "nikic/php-parser": "Required to use PhpParser. (^4.0)"
     },
