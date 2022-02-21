@@ -1,6 +1,6 @@
 # v3.0.0 - TBD
 
-- [#4238](https://github.com/hyperf/hyperf/issues/4238) Upgraded the minimum php version to `^8.0` for all components (43/89);
+- [#4238](https://github.com/hyperf/hyperf/issues/4238) Upgraded the minimum php version to `^8.0` for all components;
 
 ## BC breaks
 
@@ -66,3 +66,7 @@ php vendor/bin/regenerate-models.php $PWD/app/Model
 
 - `Hyperf\Utils\Contracts\Arrayable` will be deprecated, please use `Hyperf\Contract\Arrayable` instead.
 - `Hyperf\AsyncQueue\Message` will be deprecated, please use `Hyperf\AsyncQueue\JobMessage` instead.
+
+## Fixed
+
+- [#4549](https://github.com/hyperf/hyperf/pull/4549) Fixed bug that `PhpParser::getExprFromValue()` does not support assoc array.
