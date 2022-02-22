@@ -45,24 +45,35 @@ class Str
 
     /**
      * Get a new stringable object from the given string.
+     *
+     * @param string $string
+     * @return Stringable
      */
-    public static function of(string $string): Stringable
+    public static function of($string)
     {
         return new Stringable($string);
     }
 
     /**
      * Return the remainder of a string after a given value.
+     *
+     * @param string $subject
+     * @param string $search
+     * @return string
      */
-    public static function after(string $subject, string $search): string
+    public static function after($subject, $search)
     {
         return $search === '' ? $subject : array_reverse(explode($search, $subject, 2))[0];
     }
 
     /**
      * Return the remainder of a string after the last occurrence of a given value.
+     *
+     * @param string $subject
+     * @param string $search
+     * @return string
      */
-    public static function afterLast(string $subject, string $search): string
+    public static function afterLast($subject, $search)
     {
         if ($search === '') {
             return $subject;
@@ -79,8 +90,12 @@ class Str
 
     /**
      * Transliterate a UTF-8 value to ASCII.
+     *
+     * @param string $value
+     * @param string $language
+     * @return string
      */
-    public static function ascii(string $value, string $language = 'en'): string
+    public static function ascii($value, $language = 'en')
     {
         $languageSpecific = static::languageSpecificCharsArray($language);
 
@@ -97,16 +112,24 @@ class Str
 
     /**
      * Get the portion of a string before a given value.
+     *
+     * @param string $subject
+     * @param string $search
+     * @return string
      */
-    public static function before(string $subject, string $search): string
+    public static function before($subject, $search)
     {
         return $search === '' ? $subject : explode($search, $subject)[0];
     }
 
     /**
      * Get the portion of a string before the last occurrence of a given value.
+     *
+     * @param string $subject
+     * @param string $search
+     * @return string
      */
-    public static function beforeLast(string $subject, string $search): string
+    public static function beforeLast($subject, $search)
     {
         if ($search === '') {
             return $subject;
@@ -123,8 +146,13 @@ class Str
 
     /**
      * Get the portion of a string between two given values.
+     *
+     * @param string $subject
+     * @param string $from
+     * @param string $to
+     * @return string
      */
-    public static function between(string $subject, string $from, string $to): string
+    public static function between($subject, $from, $to)
     {
         if ($from === '' || $to === '') {
             return $subject;
@@ -135,8 +163,11 @@ class Str
 
     /**
      * Convert a value to camel case.
+     *
+     * @param string $value
+     * @return string
      */
-    public static function camel(string $value): string
+    public static function camel($value)
     {
         if (isset(static::$camelCache[$value])) {
             return static::$camelCache[$value];
@@ -147,11 +178,14 @@ class Str
 
     /**
      * Determine if a given string contains a given substring.
+     *
+     * @param string $haystack
+     * @param array|string $needles
      */
-    public static function contains(string $haystack, array|string $needles): bool
+    public static function contains($haystack, $needles): bool
     {
         foreach ((array) $needles as $needle) {
-            if ($needle !== '' && str_contains($haystack, $needle)) {
+            if ($needle !== '' && mb_strpos($haystack, $needle) !== false) {
                 return true;
             }
         }
@@ -162,9 +196,11 @@ class Str
     /**
      * Determine if a given string contains all array values.
      *
+     * @param string $haystack
      * @param string[] $needles
+     * @return bool
      */
-    public static function containsAll(string $haystack, array $needles): bool
+    public static function containsAll($haystack, array $needles)
     {
         foreach ($needles as $needle) {
             if (! static::contains($haystack, $needle)) {
@@ -177,11 +213,15 @@ class Str
 
     /**
      * Determine if a given string ends with a given substring.
+     *
+     * @param string $haystack
+     * @param array|string $needles
+     * @return bool
      */
-    public static function endsWith(string $haystack, array|string $needles): bool
+    public static function endsWith($haystack, $needles)
     {
         foreach ((array) $needles as $needle) {
-            if ($needle !== '' && str_ends_with($haystack, $needle)) {
+            if (substr($haystack, -strlen($needle)) === (string) $needle) {
                 return true;
             }
         }
@@ -191,8 +231,12 @@ class Str
 
     /**
      * Cap a string with a single instance of a given value.
+     *
+     * @param string $value
+     * @param string $cap
+     * @return string
      */
-    public static function finish(string $value, string $cap): string
+    public static function finish($value, $cap)
     {
         $quoted = preg_quote($cap, '/');
 
@@ -201,8 +245,12 @@ class Str
 
     /**
      * Determine if a given string matches a given pattern.
+     *
+     * @param array|string $pattern
+     * @param string $value
+     * @return bool
      */
-    public static function is(array|string $pattern, string $value): bool
+    public static function is($pattern, $value)
     {
         $patterns = Arr::wrap($pattern);
 
@@ -235,16 +283,23 @@ class Str
 
     /**
      * Convert a string to kebab case.
+     *
+     * @param string $value
+     * @return string
      */
-    public static function kebab(string $value): string
+    public static function kebab($value)
     {
         return static::snake($value, '-');
     }
 
     /**
      * Return the length of the given string.
+     *
+     * @param string $value
+     * @param string $encoding
+     * @return int
      */
-    public static function length(string $value, string|null $encoding = null): int
+    public static function length($value, $encoding = null)
     {
         if ($encoding) {
             return mb_strlen($value, $encoding);
@@ -255,8 +310,13 @@ class Str
 
     /**
      * Limit the number of characters in a string.
+     *
+     * @param string $value
+     * @param int $limit
+     * @param string $end
+     * @return string
      */
-    public static function limit(string $value, int $limit = 100, string $end = '...'): string
+    public static function limit($value, $limit = 100, $end = '...')
     {
         if (mb_strwidth($value, 'UTF-8') <= $limit) {
             return $value;
@@ -267,8 +327,11 @@ class Str
 
     /**
      * Convert the given string to lower-case.
+     *
+     * @param string $value
+     * @return string
      */
-    public static function lower(string $value): string
+    public static function lower($value)
     {
         return mb_strtolower($value, 'UTF-8');
     }
@@ -289,8 +352,12 @@ class Str
 
     /**
      * Get the string matching the given pattern.
+     *
+     * @param string $pattern
+     * @param string $subject
+     * @return string
      */
-    public static function match(string $pattern, string $subject): string
+    public static function match($pattern, $subject)
     {
         preg_match($pattern, $subject, $matches);
 
@@ -303,8 +370,12 @@ class Str
 
     /**
      * Get the string matching the given pattern.
+     *
+     * @param string $pattern
+     * @param string $subject
+     * @return Collection
      */
-    public static function matchAll(string $pattern, string $subject): Collection
+    public static function matchAll($pattern, $subject)
     {
         preg_match_all($pattern, $subject, $matches);
 
@@ -317,32 +388,49 @@ class Str
 
     /**
      * Pad both sides of a string with another.
+     *
+     * @param string $value
+     * @param int $length
+     * @param string $pad
+     * @return string
      */
-    public static function padBoth(string $value, int $length, string $pad = ' '): string
+    public static function padBoth($value, $length, $pad = ' ')
     {
         return str_pad($value, $length, $pad, STR_PAD_BOTH);
     }
 
     /**
      * Pad the left side of a string with another.
+     *
+     * @param string $value
+     * @param int $length
+     * @param string $pad
+     * @return string
      */
-    public static function padLeft(string $value, int $length, string $pad = ' '): string
+    public static function padLeft($value, $length, $pad = ' ')
     {
         return str_pad($value, $length, $pad, STR_PAD_LEFT);
     }
 
     /**
      * Pad the right side of a string with another.
+     *
+     * @param string $value
+     * @param int $length
+     * @param string $pad
+     * @return string
      */
-    public static function padRight(string $value, int $length, string $pad = ' '): string
+    public static function padRight($value, $length, $pad = ' ')
     {
         return str_pad($value, $length, $pad, STR_PAD_RIGHT);
     }
 
     /**
      * Parse a Class@method style callback into class and method.
+     *
+     * @param null|string $default
      */
-    public static function parseCallback(string $callback, string|null $default = null): array
+    public static function parseCallback(string $callback, $default = null): array
     {
         return static::contains($callback, '@') ? explode('@', $callback, 2) : [$callback, $default];
     }
@@ -387,8 +475,10 @@ class Str
 
     /**
      * Repeat the given string.
+     *
+     * @return string
      */
-    public static function repeat(string $string, int $times): string
+    public static function repeat(string $string, int $times)
     {
         return str_repeat($string, $times);
     }
@@ -411,8 +501,9 @@ class Str
      * @param string|string[] $search
      * @param string|string[] $replace
      * @param string|string[] $subject
+     * @return string
      */
-    public static function replace(array|string $search, array|string $replace, array|string $subject): string
+    public static function replace($search, $replace, $subject)
     {
         return str_replace($search, $replace, $subject);
     }
@@ -452,9 +543,12 @@ class Str
     /**
      * Remove any occurrence of the given string in the subject.
      *
-     * @param string|string[] $search
+     * @param array<string>|string $search
+     * @param string $subject
+     * @param bool $caseSensitive
+     * @return string
      */
-    public static function remove(string|array $search, string $subject, bool $caseSensitive = true): string
+    public static function remove($search, $subject, $caseSensitive = true)
     {
         return $caseSensitive
                     ? str_replace($search, '', $subject)
@@ -474,9 +568,9 @@ class Str
     /**
      * Strip HTML and PHP tags from the given string.
      *
-     * @param string|string[]|null $allowedTags
+     * @param null|string|string[] $allowedTags
      */
-    public static function stripTags(string $value, string|array|null $allowedTags = null): string
+    public static function stripTags(string $value, $allowedTags = null): string
     {
         return strip_tags($value, $allowedTags);
     }
@@ -551,11 +645,13 @@ class Str
 
     /**
      * Determine if a given string starts with a given substring.
+     *
+     * @param array|string $needles
      */
-    public static function startsWith(string $haystack, array|string $needles): bool
+    public static function startsWith(string $haystack, $needles): bool
     {
         foreach ((array) $needles as $needle) {
-            if ($needle !== '' && str_starts_with($haystack, $needle)) {
+            if ($needle !== '' && substr($haystack, 0, strlen($needle)) === (string) $needle) {
                 return true;
             }
         }
@@ -581,16 +677,27 @@ class Str
 
     /**
      * Returns the portion of string specified by the start and length parameters.
+     *
+     * @param string $string
+     * @param int $start
+     * @param null|int $length
+     * @return string
      */
-    public static function substr(string $string, int $start, int|null $length = null): string
+    public static function substr($string, $start, $length = null)
     {
         return mb_substr($string, $start, $length, 'UTF-8');
     }
 
     /**
      * Returns the number of substring occurrences.
+     *
+     * @param string $haystack
+     * @param string $needle
+     * @param int $offset
+     * @param null|int $length
+     * @return int
      */
-    public static function substrCount(string $haystack, string $needle, int $offset = 0, int|null $length = null): int
+    public static function substrCount($haystack, $needle, $offset = 0, $length = null)
     {
         if (! is_null($length)) {
             return substr_count($haystack, $needle, $offset, $length);
@@ -612,7 +719,7 @@ class Str
      * @param int $offset if is negative it starts from the end
      * @param string $replacement default is *
      */
-    public static function mask(string $string, int $offset = 0, int $length = 0, string $replacement = '*'): string
+    public static function mask(string $string, int $offset = 0, int $length = 0, string $replacement = '*')
     {
         if ($length < 0) {
             throw new InvalidArgumentException('The length must equal or greater than zero.');
@@ -1188,8 +1295,9 @@ class Str
      * Note: Adapted from Stringy\Stringy.
      *
      * @see https://github.com/danielstjules/Stringy/blob/3.1.0/LICENSE.txt
+     * @return null|array
      */
-    protected static function languageSpecificCharsArray(string $language): array|null
+    protected static function languageSpecificCharsArray(string $language)
     {
         static $languageSpecific;
 
