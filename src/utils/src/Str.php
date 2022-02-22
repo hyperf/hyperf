@@ -185,7 +185,7 @@ class Str
     public static function contains($haystack, $needles): bool
     {
         foreach ((array) $needles as $needle) {
-            if ($needle !== '' && str_contains($haystack, $needle)) {
+            if ($needle !== '' && str_contains((string) $haystack, (string) $needle)) {
                 return true;
             }
         }
@@ -221,7 +221,7 @@ class Str
     public static function endsWith($haystack, $needles)
     {
         foreach ((array) $needles as $needle) {
-            if ($needle !== '' && str_ends_with($haystack, $needle)) {
+            if ($needle !== '' && str_ends_with((string) $haystack, (string) $needle)) {
                 return true;
             }
         }
@@ -651,7 +651,7 @@ class Str
     public static function startsWith(string $haystack, $needles): bool
     {
         foreach ((array) $needles as $needle) {
-            if ($needle !== '' && str_starts_with($haystack, $needle)) {
+            if ($needle !== '' && str_starts_with($haystack, (string) $needle)) {
                 return true;
             }
         }
