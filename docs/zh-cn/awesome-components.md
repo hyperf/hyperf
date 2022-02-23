@@ -148,3 +148,4 @@
 - [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole 协程环境下的可用的 PHPMailer
 - [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 支持 `支付宝/微信` 的支付组件，基于 [yansongda/pay](https://github.com/yansongda/pay) 实现，适配于 `Hyperf` 框架。
 - [alapi/hyperf-meilisearch](https://github.com/anhao/hyperf-meilisearch/) 为 Hyperf Scout 提供的 meilisearch 客户端 
+- [dtm-php/dtm-client](https://github.com/dtm-php/dtm-client) 支持 Hyperf 的 dtm 分布式事务客户端组件
