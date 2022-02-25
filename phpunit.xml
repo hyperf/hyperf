@@ -20,6 +20,7 @@
       <directory suffix=".php">./src/config-nacos/src</directory>
       <directory suffix=".php">./src/constants/src</directory>
       <directory suffix=".php">./src/consul/src</directory>
+      <directory suffix=".php">./src/context/src</directory>
       <directory suffix=".php">./src/crontab/src</directory>
       <directory suffix=".php">./src/dag/src</directory>
       <directory suffix=".php">./src/database/src</directory>
@@ -74,6 +75,7 @@
       <directory suffix="Test.php">./src/config-zookeeper/tests</directory>
       <directory suffix="Test.php">./src/constants/tests</directory>
       <directory suffix="Test.php">./src/consul/tests</directory>
+      <directory suffix="Test.php">./src/context/tests</directory>
       <directory suffix="Test.php">./src/crontab/tests</directory>
       <directory suffix="Test.php">./src/dag/tests</directory>
       <directory suffix="Test.php">./src/database/tests</directory>

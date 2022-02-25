@@ -4,6 +4,7 @@
   * [线上交流](zh-cn/communication.md)
   * [捐献及赞助](zh-cn/donate.md)
   * [参与开发](zh-cn/contribute.md)
+  * [企业服务](zh-cn/enterprise-service.md)
 
 * 版本管理
 
