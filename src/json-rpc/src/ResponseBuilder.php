@@ -14,7 +14,7 @@ namespace Hyperf\JsonRpc;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

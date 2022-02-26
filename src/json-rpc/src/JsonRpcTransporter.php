@@ -14,7 +14,7 @@ namespace Hyperf\JsonRpc;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\TransporterInterface;
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use RuntimeException;
 use Swoole\Coroutine\Client as SwooleClient;
 

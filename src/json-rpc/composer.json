@@ -22,7 +22,8 @@
         "hyperf/load-balancer": "~2.2.0",
         "hyperf/http-message": "~2.2.0",
         "hyperf/rpc": "~2.2.0",
-        "hyperf/utils": "~2.2.0"
+        "hyperf/utils": "~2.2.0",
+        "hyperf/context": "~2.2.0"
     },
     "suggest": {
         "hyperf/event": "Register the objects to ProtocolManager automatically.",
