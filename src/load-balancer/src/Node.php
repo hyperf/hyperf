@@ -28,10 +28,16 @@ class Node
      */
     public $port;
 
-    public function __construct(string $host, int $port, int $weight = 0)
+    /**
+     * @var string
+     */
+    public $path;
+
+    public function __construct(string $host, int $port, int $weight = 0, string $path = '')
     {
         $this->host = $host;
         $this->port = $port;
         $this->weight = $weight;
+        $this->path = $path;
     }
 }
