@@ -23,7 +23,7 @@ use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\RequestDispatcher;
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;

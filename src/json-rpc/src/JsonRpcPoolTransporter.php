@@ -21,7 +21,7 @@ use Hyperf\Pool\Pool;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use Hyperf\Rpc\Exception\RecvException;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use Hyperf\Utils\Exception\ExceptionThrower;
 
 class JsonRpcPoolTransporter implements TransporterInterface
