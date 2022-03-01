@@ -19,7 +19,7 @@ use Hyperf\RpcClient\Client;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use Hyperf\Utils\Context as CT;
+use Hyperf\Context\Context as CT;
 use OpenTracing\Span;
 use OpenTracing\Tracer;
 use Psr\Container\ContainerInterface;

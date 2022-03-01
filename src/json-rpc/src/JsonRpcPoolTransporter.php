@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\JsonRpc\Exception\ClientException;
 use Hyperf\JsonRpc\Pool\PoolFactory;
@@ -21,7 +22,6 @@ use Hyperf\Pool\Pool;
 use Hyperf\Rpc\Contract\TransporterInterface;
 use Hyperf\Rpc\Exception\RecvException;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Context\Context;
 use Hyperf\Utils\Exception\ExceptionThrower;
 
 class JsonRpcPoolTransporter implements TransporterInterface

@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Logger\Stub;
 
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use Monolog\Handler\StreamHandler;
 
 class FooHandler extends StreamHandler

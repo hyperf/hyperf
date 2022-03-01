@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\DB;
 
 use Closure;
+use Hyperf\Context\Context;
 use Hyperf\DB\Exception\DriverNotFoundException;
 use Hyperf\DB\Pool\PoolFactory;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use Throwable;
 
 /**

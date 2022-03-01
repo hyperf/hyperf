@@ -13,7 +13,7 @@ namespace Hyperf\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Utils\Context as CoroutineContext;
+use Hyperf\Context\Context as CoroutineContext;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 

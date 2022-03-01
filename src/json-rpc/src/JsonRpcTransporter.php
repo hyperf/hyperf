@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Context\Context;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\TransporterInterface;
-use Hyperf\Context\Context;
 use RuntimeException;
 use Swoole\Coroutine\Client as SwooleClient;
 

@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\View;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Task\Task;
 use Hyperf\Task\TaskExecutor;
-use Hyperf\Utils\Context;
 use Hyperf\View\Engine\EngineInterface;
 use Hyperf\View\Engine\NoneEngine;
 use Hyperf\View\Exception\EngineNotFindException;

@@ -13,7 +13,7 @@ namespace Hyperf\Kafka;
 
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Utils\Context as RequestContext;
+use Hyperf\Context\Context as RequestContext;
 use Psr\Container\ContainerInterface;
 
 class Context

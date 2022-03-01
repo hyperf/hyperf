@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\ExceptionHandler;
 
+use Hyperf\Context\Context;
 use Hyperf\Dispatcher\AbstractDispatcher;
-use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
