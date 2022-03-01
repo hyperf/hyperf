@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcServer;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\DispatcherInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
@@ -24,7 +25,6 @@ use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Server\ServerManager;
-use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

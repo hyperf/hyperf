@@ -269,6 +269,7 @@ declare(strict_types=1);
  */
 namespace App\Kernel\Context;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Utils;
@@ -301,7 +302,7 @@ class Coroutine
         $result = SwooleCoroutine::create(function () use ($callable, $id) {
             try {
                 // 按需复制，禁止复制 Socket，不然会导致 Socket 跨协程调用从而报错。
-                Utils\Context::copy($id, [
+                Context::copy($id, [
                     ServerRequestInterface::class,
                 ]);
                 call($callable);

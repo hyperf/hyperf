@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Kafka;
 
+use Hyperf\Context\Context as RequestContext;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Utils\Context as RequestContext;
 use Psr\Container\ContainerInterface;
 
 class Context

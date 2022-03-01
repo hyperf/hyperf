@@ -12,12 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\Translation;
 
 use Countable;
+use Hyperf\Context\Context;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\TranslatorLoaderInterface;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
 
 class Translator implements TranslatorInterface

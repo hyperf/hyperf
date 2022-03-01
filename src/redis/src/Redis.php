@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Redis;
 
+use Hyperf\Context\Context;
 use Hyperf\Redis\Exception\InvalidRedisConnectionException;
 use Hyperf\Redis\Pool\PoolFactory;
-use Hyperf\Utils\Context;
 
 /**
  * @mixin \Redis

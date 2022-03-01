@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Validation\Cases;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\ValidatorInterface;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
@@ -27,7 +28,6 @@ use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Middleware\ValidationMiddleware;

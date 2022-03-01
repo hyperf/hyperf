@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Resolver;
 
+use Hyperf\Context\Context;
 use Hyperf\Di\Exception\CircularDependencyException;
-use Hyperf\Utils\Context;
 
 /**
  * Class DepthGuard aborts the resolver after

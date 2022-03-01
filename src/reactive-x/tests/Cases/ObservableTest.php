@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Cases;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
@@ -29,7 +30,6 @@ use Hyperf\HttpServer\Server;
 use Hyperf\ReactiveX\Observable;
 use Hyperf\ReactiveX\RxSwoole;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use HyperfTest\ReactiveX\Stub\TestEvent;

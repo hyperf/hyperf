@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
@@ -23,7 +24,6 @@ use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\RequestDispatcher;
-use Hyperf\Context\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;

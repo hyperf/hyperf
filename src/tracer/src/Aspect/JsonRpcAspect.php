@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer\Aspect;
 
+use Hyperf\Context\Context as CT;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Rpc\Context;
@@ -19,7 +20,6 @@ use Hyperf\RpcClient\Client;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use Hyperf\Utils\Context as CT;
 use OpenTracing\Span;
 use OpenTracing\Tracer;
 use Psr\Container\ContainerInterface;

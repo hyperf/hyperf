@@ -212,8 +212,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 // $request 和 $response 為修改後的對象
-$request = \Hyperf\Utils\Context::set(ServerRequestInterface::class, $request);
-$response = \Hyperf\Utils\Context::set(ResponseInterface::class, $response);
+$request = \Hyperf\Context\Context::set(ServerRequestInterface::class, $request);
+$response = \Hyperf\Context\Context::set(ResponseInterface::class, $response);
 ```
 
 ## 自定義 CoreMiddleWare 的行為
@@ -283,7 +283,7 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;

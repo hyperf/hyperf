@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\ExceptionHandler\Handler;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

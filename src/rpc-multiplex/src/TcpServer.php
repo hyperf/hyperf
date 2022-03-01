@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcMultiplex;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -25,7 +26,6 @@ use Hyperf\RpcServer\RequestDispatcher;
 use Hyperf\RpcServer\Server;
 use Hyperf\Server\Exception\InvalidArgumentException;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Coroutine;
 use Multiplex\Contract\HasHeartbeatInterface as Heartbeat;
 use Multiplex\Contract\PackerInterface as PacketPacker;

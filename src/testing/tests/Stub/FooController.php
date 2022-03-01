@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Testing\Stub;
 
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use Hyperf\Utils\Coroutine;
 use Psr\Http\Message\ServerRequestInterface;
 
