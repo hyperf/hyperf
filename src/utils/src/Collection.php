@@ -275,6 +275,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
         /**
          * @template TValue of array-key
+         * @phpstan-ignore-next-line
          * @var static<TValue, int> $counts
          */
         $counts = new self();
