@@ -61,7 +61,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     /**
      * @var null|\Swoole\Coroutine\Http\Server|WebSocketServer
      */
-    protected mixed $server;
+    protected mixed $server = null;
 
     public function __construct(protected ContainerInterface $container, protected HttpDispatcher $dispatcher, protected ExceptionHandlerDispatcher $exceptionHandlerDispatcher, protected ResponseEmitter $responseEmitter, protected StdoutLoggerInterface $logger)
     {
