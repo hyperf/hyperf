@@ -100,7 +100,7 @@ use Hyperf\DbConnection\Db;
 $names = Db::table('user')->pluck('name');
 
 foreach ($names as $name) {
-    echo $names;
+    echo $name;
 }
 
 ```
@@ -384,6 +384,18 @@ $users = Db::table('users')->where('name', 'like', 'T%')->get();
 $users = Db::table('user')->where([
     ['status', '=', '1'],
     ['gender', '=', '1'],
+])->get();
+```
+
+你還可以使用閉包的方式創建查詢數組
+
+```php
+$users = Db::table('user')->where([
+    ['status', '=', '1'],
+    ['gender', '=', '1'],
+    [function ($query) {
+        $query->where('type', 3)->orWhere('type', 6);
+    }]
 ])->get();
 ```
 

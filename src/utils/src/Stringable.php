@@ -12,12 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use Closure;
+use Hyperf\Macroable\Macroable;
 use JsonSerializable;
 
 class Stringable implements JsonSerializable
 {
     use Traits\Conditionable;
-    use Traits\Macroable;
+    use Macroable;
     use Traits\Tappable;
 
     /**
@@ -567,6 +568,17 @@ class Stringable implements JsonSerializable
     public function start($prefix)
     {
         return new static(Str::start($this->value, $prefix));
+    }
+
+    /**
+     * Strip HTML and PHP tags from the given string.
+     *
+     * @param null|string|string[] $allowedTags
+     * @return static
+     */
+    public function stripTags($allowedTags = null)
+    {
+        return new static(strip_tags($this->value, $allowedTags));
     }
 
     /**

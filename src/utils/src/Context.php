@@ -13,6 +13,9 @@ namespace Hyperf\Utils;
 
 use Hyperf\Engine\Coroutine as Co;
 
+/**
+ * @deprecated v3.0 please use `hyperf/context` instead.
+ */
 class Context
 {
     protected static $nonCoContext = [];

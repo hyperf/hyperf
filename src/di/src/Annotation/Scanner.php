@@ -15,9 +15,9 @@ use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Aop\ProxyManager;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Di\Exception\DirectoryNotExistException;
-use Hyperf\Di\Exception\Exception;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Di\ReflectionManager;
+use Hyperf\Di\ScanHandler\ScanHandlerInterface;
 use Hyperf\Utils\Filesystem\Filesystem;
 use ReflectionClass;
 
@@ -34,6 +34,11 @@ class Scanner
     protected $scanConfig;
 
     /**
+     * @var ScanHandlerInterface
+     */
+    protected $handler;
+
+    /**
      * @var Filesystem
      */
     protected $filesystem;
@@ -43,10 +48,11 @@ class Scanner
      */
     protected $path = BASE_PATH . '/runtime/container/scan.cache';
 
-    public function __construct(ClassLoader $classloader, ScanConfig $scanConfig)
+    public function __construct(ClassLoader $classloader, ScanConfig $scanConfig, ScanHandlerInterface $handler)
     {
         $this->classloader = $classloader;
         $this->scanConfig = $scanConfig;
+        $this->handler = $handler;
         $this->filesystem = new Filesystem();
 
         foreach ($scanConfig->getIgnoreAnnotations() as $annotation) {
@@ -116,12 +122,8 @@ class Scanner
             return $this->deserializeCachedScanData($collectors);
         }
 
-        $pid = pcntl_fork();
-        if ($pid == -1) {
-            throw new Exception('The process fork failed');
-        }
-        if ($pid) {
-            pcntl_wait($status);
+        $scanned = $this->handler->scan();
+        if ($scanned->isScanned()) {
             return $this->deserializeCachedScanData($collectors);
         }
 
@@ -343,6 +345,10 @@ class Scanner
         }
         foreach ($classes as $class) {
             $file = $this->classloader->getComposerClassLoader()->findFile($class);
+            if ($file === false) {
+                echo sprintf('Skip class %s, because it does not exist in composer class loader.', $class) . PHP_EOL;
+                continue;
+            }
             if ($lastCacheModified <= $this->filesystem->lastModified($file)) {
                 $changed[] = $class;
             }

@@ -95,7 +95,7 @@ class Client implements ClientInterface
                     'query' => $query,
                     'headers' => $headers,
                 ]);
-                if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('Content-Type'), 'application/json') !== false) {
+                if ($response->getStatusCode() === 200 && strpos($response->getHeaderLine('content-type'), 'application/json') !== false) {
                     $body = json_decode((string) $response->getBody(), true);
                     $result = $body['configurations'] ?? [];
                     $this->cache[$cacheKey] = [

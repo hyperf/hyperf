@@ -85,7 +85,7 @@ class Parser
         if ($grpcStatus !== 0) {
             return [$response->headers['grpc-message'] ?? 'Unknown error', $grpcStatus, $response];
         }
-        $data = $response->data;
+        $data = $response->data ?? '';
         $reply = self::deserializeMessage($deserialize, $data);
         $status = (int) ($response->headers['grpc-status'] ?? 0 ?: 0);
         return [$reply, $status, $response];

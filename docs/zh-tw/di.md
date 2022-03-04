@@ -427,6 +427,30 @@ class IndexController
 $container = \Hyperf\Utils\ApplicationContext::getContainer();
 ```
 
+## 掃描介面卡
+
+預設使用 `Hyperf\Di\ScanHandler\PcntlScanHandler`.
+
+- Hyperf\Di\ScanHandler\PcntlScanHandler
+
+使用 Pcntl fork 子程序掃描註解，只支援 Linux 環境
+
+- Hyperf\Di\ScanHandler\NullScanHandler
+
+不進行註解掃描操作
+
+- Hyperf\Di\ScanHandler\ProcScanHandler
+
+使用 proc_open 建立子程序掃描註解，支援 Linux 和 Windows(Swow)
+
+### 更換掃描介面卡
+
+我們只需要主動修改 `bin/hyperf.php` 檔案中 `Hyperf\Di\ClassLoader::init()` 程式碼段即可更換介面卡。
+
+```php
+Hyperf\Di\ClassLoader::init(handler: new Hyperf\Di\ScanHandler\ProcScanHandler());
+```
+
 ## 注意事項
 
 ### 容器僅管理長生命週期的物件

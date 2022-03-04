@@ -44,7 +44,7 @@ $db->connect($config, function ($db, $r) {
 > 注意 `MySQL` 等異步模塊已在[4.3.0](https://wiki.swoole.com/#/version/bc?id=430)中移除，並轉移到了[swoole_async](https://github.com/swoole/ext-async)。
 
 從上面的代碼片段可以看出，每一個操作幾乎就需要一個回調函數，在複雜的業務場景中回調的層次感和代碼結構絕對會讓你崩潰，其實不難看出這樣的寫法有點類似 `JavaScript` 上的異步方法的寫法，而 `JavaScript` 也為此提供了不少的解決方案（當然方案是源於其它編程語言），如 `Promise`，`yield + generator`, `async/await`，`Promise` 則是對回調的一種封裝方式，而 `yield + generator` 和 `async/await` 則需要在代碼上顯性的增加一些代碼語法標記，這些相對比回調函數來説，不妨都是一些非常不錯的解決方案，但是你需要另花時間來理解它的實現機制和語法。   
-Swoole 協程也是對異步回調的一種解決方案，在 `PHP` 語言下，`Swoole` 協程與 `yield + generator` 都屬於協程的解決方案，協程的解決方案可以使代碼以近乎於同步代碼的書寫方式來書寫異步代碼，顯性的區別則是 `yield + generator` 的協程機制下，每一處 `I/O` 操作的調用代碼都需要在前面加上 `yield` 語法實現協程切換，每一層調用都需要加上，否則會出現意料之外的錯誤，而 `Swoole` 協程的解決方案對比於此就高明多了，在遇到 `I/O` 時底層自動的進行隱式協程切換，無需添加任何的額外語法，無需在代碼前加上 `yield`，協程切換的過程無聲無息，極大的減輕了維護異步系統的心智負擔。
+`Swoole` 協程也是對異步回調的一種解決方案，在 `PHP` 語言下，`Swoole` 協程與 `yield + generator` 都屬於協程的解決方案，協程的解決方案可以使代碼以近乎於同步代碼的書寫方式來書寫異步代碼，顯性的區別則是 `yield + generator` 的協程機制下，每一處 `I/O` 操作的調用代碼都需要在前面加上 `yield` 語法實現協程切換，每一層調用都需要加上，否則會出現意料之外的錯誤，而 `Swoole` 協程的解決方案對比於此就高明多了，在遇到 `I/O` 時底層自動的進行隱式協程切換，無需添加任何的額外語法，無需在代碼前加上 `yield`，協程切換的過程無聲無息，極大的減輕了維護異步系統的心智負擔。
 
 ### 協程是什麼？
 
@@ -97,7 +97,7 @@ Swoole 協程也是對異步回調的一種解決方案，在 `PHP` 語言下，
 
 ### Channel 通道
 
-類似於 go 語言的 `chan`，`Channel` 可為多生產者協程和多消費者協程模式提供支持。底層自動實現了協程的切換和調度。 `Channel` 與 PHP 的數組類似，僅佔用內存，沒有其他額外的資源申請，所有操作均為內存操作，無 `I/O` 消耗，使用方法與 `SplQueue` 隊列類似。   
+類似於 `Go` 語言的 `chan`，`Channel` 可為多生產者協程和多消費者協程模式提供支持。底層自動實現了協程的切換和調度。 `Channel` 與 `PHP` 的數組類似，僅佔用內存，沒有其他額外的資源申請，所有操作均為內存操作，無 `I/O` 消耗，使用方法與 `SplQueue` 隊列類似。   
 `Channel` 主要用於協程間通訊，當我們希望從一個協程裏返回一些數據到另一個協程時，就可通過 `Channel` 來進行傳遞。   
 
 主要方法：   
@@ -179,7 +179,7 @@ try{
 ```
 > 注意 `Hyperf\Utils\Exception\ParallelExecutionException` 異常僅在 1.1.6 版本和更新的版本下會拋出
 
-通過上面的代碼我們可以看到僅花了 1 秒就得到了兩個不同的協程的 ID，在調用 `add(callable $callable)` 的時候 `Parallel` 類會為之自動創建一個協程，並加入到 `WaitGroup` 的調度去。    
+通過上面的代碼我們可以看到僅花了 `1` 秒就得到了兩個不同的協程的 `ID`，在調用 `add(callable $callable)` 的時候 `Parallel` 類會為之自動創建一個協程，並加入到 `WaitGroup` 的調度去。    
 不僅如此，我們還可以通過 `parallel(array $callables)` 函數進行更進一步的簡化上面的代碼，達到同樣的目的，下面為簡化後的代碼。
 
 ```php
@@ -203,7 +203,7 @@ $result = parallel([
 
 #### 限制 Parallel 最大同時運行的協程數
 
-當我們添加到 Parallel 裏的任務有很多時，假設都是一些請求任務，那麼一瞬間發出全部請求很有可能會導致對端服務因為一瞬間接收到了大量的請求而處理不過來，有宕機的風險，所以需要對對端進行適當的保護，但我們又希望可以通過 Parallel 機制來加速這些請求的耗時，那麼可以通過在實例化 Parallel 對象時傳遞第一個參數，來設置最大運行的協程數，比如我們希望最大設置的協程數為 5 ，也就意味着 Parallel 裏最多隻會有 5 個協程在運行，只有當 5 個裏有協程完成結束後，後續的協程才會繼續啟動，直至所有協程完成任務，示例代碼如下：
+當我們添加到 `Parallel` 裏的任務有很多時，假設都是一些請求任務，那麼一瞬間發出全部請求很有可能會導致對端服務因為一瞬間接收到了大量的請求而處理不過來，有宕機的風險，所以需要對對端進行適當的保護，但我們又希望可以通過 `Parallel` 機制來加速這些請求的耗時，那麼可以通過在實例化 `Parallel` 對象時傳遞第一個參數，來設置最大運行的協程數，比如我們希望最大設置的協程數為 `5` ，也就意味着 `Parallel` 裏最多隻會有 `5` 個協程在運行，只有當 `5` 個裏有協程完成結束後，後續的協程才會繼續啟動，直至所有協程完成任務，示例代碼如下：
 
 ```php
 use Hyperf\Utils\Exception\ParallelExecutionException;
@@ -249,7 +249,7 @@ for ($i = 0; $i < 15; ++$i) {
 ### 協程上下文
 
 由於同一個進程內協程間是內存共享的，但協程的執行/切換是非順序的，也就意味着我們很難掌控當前的協程是哪一個*(事實上可以，但通常沒人這麼幹)*，所以我們需要在發生協程切換時能夠同時切換對應的上下文。   
-在 Hyperf 裏實現協程的上下文管理將非常簡單，基於 `Hyperf\Utils\Context` 類的 `set(string $id, $value)`、`get(string $id, $default = null)`、`has(string $id)`、`override(string $id, \Closure $closure)` 靜態方法即可完成上下文數據的管理，通過這些方法設置和獲取的值，都僅限於當前的協程，在協程結束時，對應的上下文也會自動跟隨釋放掉，無需手動管理，無需擔憂內存泄漏的風險。
+在 `Hyperf` 裏實現協程的上下文管理將非常簡單，基於 `Hyperf\Utils\Context` 類的 `set(string $id, $value)`、`get(string $id, $default = null)`、`has(string $id)`、`override(string $id, \Closure $closure)` 靜態方法即可完成上下文數據的管理，通過這些方法設置和獲取的值，都僅限於當前的協程，在協程結束時，對應的上下文也會自動跟隨釋放掉，無需手動管理，無需擔憂內存泄漏的風險。
 
 #### Hyperf\Utils\Context::set()
 
@@ -266,7 +266,7 @@ $foo = Context::set('foo', 'bar');
 
 #### Hyperf\Utils\Context::get()
 
-通過調用 `get(string $id, $default = null)` 方法可從當前協程的上下文中取出一個以 `$id` 為 key 儲存的值，如不存在則返回 `$default` ，如下：
+通過調用 `get(string $id, $default = null)` 方法可從當前協程的上下文中取出一個以 `$id` 為 `key` 儲存的值，如不存在則返回 `$default` ，如下：
 
 ```php
 <?php
@@ -278,7 +278,7 @@ $foo = Context::get('foo', 'bar');
 
 #### Hyperf\Utils\Context::has()
 
-通過調用 `has(string $id)` 方法可判斷當前協程的上下文中是否存在以 `$id` 為 key 儲存的值，如存在則返回 `true`，不存在則返回 `false`，如下：
+通過調用 `has(string $id)` 方法可判斷當前協程的上下文中是否存在以 `$id` 為 `key` 儲存的值，如存在則返回 `true`，不存在則返回 `false`，如下：
 
 ```php
 <?php
@@ -290,7 +290,7 @@ $foo = Context::has('foo');
 
 #### Hyperf\Utils\Context::override()
 
-當我們需要做一些複雜的上下文處理，比如先判斷一個 key 是否存在，如果存在則取出 value 來再對 value 進行某些修改，然後再將 value 設置回上下文容器中，此時會有比較繁雜的判斷條件，可直接通過調用 `override` 方法來實現這個邏輯，如下：
+當我們需要做一些複雜的上下文處理，比如先判斷一個 `key` 是否存在，如果存在則取出 `value` 來再對 `value` 進行某些修改，然後再將 `value` 設置回上下文容器中，此時會有比較繁雜的判斷條件，可直接通過調用 `override` 方法來實現這個邏輯，如下：
 
 ```php
 <?php
@@ -305,7 +305,7 @@ $request = Context::override(ServerRequestInterface::class, function (ServerRequ
 
 ### Swoole Runtime Hook Level
 
-框架在入口函數中提供了 `SWOOLE_HOOK_FLAGS` 常量，如果您需要修改整個項目的 `Runtime Hook` 等級，比如想要支持 `CURL 協程` 並且 Swoole 版本為 `v4.5.4` 之前的版本，可以修改這裏的代碼，如下。
+框架在入口函數中提供了 `SWOOLE_HOOK_FLAGS` 常量，如果您需要修改整個項目的 `Runtime Hook` 等級，比如想要支持 `CURL 協程` 並且 `Swoole` 版本為 `v4.5.4` 之前的版本，可以修改這裏的代碼，如下。
 
 ```php
 <?php

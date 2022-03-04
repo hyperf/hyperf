@@ -66,7 +66,7 @@ return [
 
 此配置檔案用於管理 Server 服務，其中的 `settings` 選項可以直接使用由 `Swoole Server` 提供的選項，其他選項可參考 [Swoole 官方文件](https://wiki.swoole.com/#/server/setting) 。
 
-如需要設定守護程序化，可在 `settings` 中增加 `'daemonize' => 1`，執行 `php bin/hyperf.php start`後，程式將轉入後臺作為守護程序執行
+如需要設定守護程序化，可在 `settings` 中增加 `'daemonize' => true`，執行 `php bin/hyperf.php start`後，程式將轉入後臺作為守護程序執行
 
 單獨的 Server 配置需要新增在對應 `servers` 的 `settings` 當中，如 `jsonrpc` 協議的 TCP Server 配置啟用 EOF 自動分包和設定 EOF 字串
 ```php

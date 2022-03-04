@@ -11,6 +11,7 @@ parameters:
   excludes_analyse:
     - %currentWorkingDirectory%/src/*/tests/*
     - %currentWorkingDirectory%/src/*/publish/*
+    - %currentWorkingDirectory%/src/*/class_map/*
     - %currentWorkingDirectory%/src/di/src/Resolver/FactoryResolver.php
     - %currentWorkingDirectory%/src/config-zookeeper/src/Client.php
     - %currentWorkingDirectory%/src/contract/*
@@ -22,7 +23,6 @@ parameters:
     - %currentWorkingDirectory%/src/grpc-server/*
     - %currentWorkingDirectory%/src/ide-helper/*
     - %currentWorkingDirectory%/src/swagger/*
-    - %currentWorkingDirectory%/src/tracer/*
     - %currentWorkingDirectory%/src/validation/*
     - %currentWorkingDirectory%/src/view/src/Engine/*
     - %currentWorkingDirectory%/src/server/src/SwowServer.php
@@ -48,3 +48,4 @@ parameters:
     - '#getSwooleTracker.* not found#'
     - '#trackerHookMalloc not found#'
     - '#separator of function explode expects non-empty-string, string given#'
+    - '#.*TKey.*TValue#'

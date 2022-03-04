@@ -1,4 +1,253 @@
-# v2.2.8 - TBD
+# v2.2.27 - TBD
+
+## Optimized
+
+- [#4572](https://github.com/hyperf/hyperf/pull/4572) Use Hyperf\LoadBalancer\Exception\RuntimeException instead of \RuntimeException for `hyperf/load-balancer`.
+
+# v2.2.26 - 2022-02-21
+
+## Fixed
+
+- [#4536](https://github.com/hyperf/hyperf/pull/4536) Fixed bug that response header `content-type` will be set more than once sometimes when using json-rpc.
+
+## Added
+
+- [#4527](https://github.com/hyperf/hyperf/pull/4527) Added some useful methods for `Hyperf\Database\Schema\Blueprint`.
+
+## Optimized
+
+- [#4514](https://github.com/hyperf/hyperf/pull/4514) Improved some performance by using lowercase headers.
+- [#4521](https://github.com/hyperf/hyperf/pull/4521) Try to connect to another one when connected redis sentinel failed.
+- [#4529](https://github.com/hyperf/hyperf/pull/4529) Split `hyperf/context` from `hyperf/utils`.
+
+# v2.2.25 - 2022-01-30
+
+## Fixed
+
+- [#4484](https://github.com/hyperf/hyperf/pull/4484) Fixed bug that `NacosDriver::isRegistered` does not work when using nacos `2.0.4`.
+
+## Added
+
+- [#4477](https://github.com/hyperf/hyperf/pull/4477) Support `Macroable` for `Hyperf\HttpServer\Request`. 
+
+## Optimized
+
+- [#4254](https://github.com/hyperf/hyperf/pull/4254) Added check of `grpc.enable_fork_support` option and `pcntl` extension.
+
+# v2.2.24 - 2022-01-24
+
+## Fixed
+
+- [#4474](https://github.com/hyperf/hyperf/pull/4474) Fixed bug that multiplex connection don't close after running test cases.
+
+## Optimized
+
+- [#4451](https://github.com/hyperf/hyperf/pull/4451) Optimized code for `Hyperf\Watcher\Driver\FindNewerDriver`.
+
+# v2.2.23 - 2022-01-17
+
+## Fixed
+
+- [#4426](https://github.com/hyperf/hyperf/pull/4426) Fixed bug that view cache generated failed caused by concurrent request.
+
+## Added
+
+- [#4449](https://github.com/hyperf/hyperf/pull/4449) Allow sorting on multiple criteria for `Hyperf\Utils\Collection`.
+- [#4455](https://github.com/hyperf/hyperf/pull/4455) Added command `gen:view-engine-cache` which used to generate cache files in advance.
+- [#4453](https://github.com/hyperf/hyperf/pull/4453) Added `Hyperf\Tracer\Aspect\ElasticserachAspect` which used to record traces for elasticsearch.
+- [#4458](https://github.com/hyperf/hyperf/pull/4458) Added `Hyperf\Di\ScanHandler\ProcScanHandler` which used to run application when using swow and windows.
+
+# v2.2.22 - 2022-01-04
+
+## Fixed
+
+- [#4399](https://github.com/hyperf/hyperf/pull/4399) Fixed bug that `Redis::scan` does not work when using redis cluster.
+
+## Added
+
+- [#4409](https://github.com/hyperf/hyperf/pull/4409) Added database handler for `session`.
+- [#4411](https://github.com/hyperf/hyperf/pull/4411) Added `Hyperf\Tracer\Aspect\DbAspect` to log db records when using `hyperf/db`. 
+- [#4420](https://github.com/hyperf/hyperf/pull/4420) Support `SSL` for `Hyperf\Amqp\IO\SwooleIO`.
+
+## Optimized
+
+- [#4406](https://github.com/hyperf/hyperf/pull/4406) Adapt swoole 5.0 by removing swoole classes with `PSR-0`.
+- [#4429](https://github.com/hyperf/hyperf/pull/4429) Added type hint for `Debug::getRefCount()` which only support `object`.
+
+# v2.2.21 - 2021-12-20
+
+## Fixed
+
+- [#4347](https://github.com/hyperf/hyperf/pull/4347) Fixed bug that amqp io has been bound to more than one coroutine when out of buffer.
+- [#4373](https://github.com/hyperf/hyperf/pull/4373) Fixed the metadata generation error caused by switching coroutine for snowflake.
+
+## Added
+
+- [#4344](https://github.com/hyperf/hyperf/pull/4344) Added `Hyperf\Crontab\Event\FailToExecute` event which will be dispatched when executing crontab failed.
+- [#4348](https://github.com/hyperf/hyperf/pull/4348) Support to open the generated file with your IDE automatically.
+
+## Optimized
+
+- [#4350](https://github.com/hyperf/hyperf/pull/4350) Optimized the error message for `swoole.use_shortname`.
+- [#4360](https://github.com/hyperf/hyperf/pull/4360) No longer uses `Swoole\Coroutine\Client`, but uses `Swoole\Coroutine\Socket`, which is more stable and has better performance in `Hyperf\Amqp\IO\SwooleIO`.
+
+# v2.2.20 - 2021-12-13
+
+## Fixed
+
+- [#4338](https://github.com/hyperf/hyperf/pull/4338) Fixed bug that the path with query params won't match route when using testing client.
+- [#4346](https://github.com/hyperf/hyperf/pull/4346) Fixed fatal error for declaration when using amqplib `3.1.1`.
+
+## Added
+
+- [#4330](https://github.com/hyperf/hyperf/pull/4330) Support pack vendor/bin files for `hyperf/phar`.
+- [#4331](https://github.com/hyperf/hyperf/pull/4331) Added method `Hyperf\Testing\Debug::getRefCount($object)`.
+
+# v2.2.19 - 2021-12-06
+
+## Fixed
+
+- [#4308](https://github.com/hyperf/hyperf/pull/4308) Fixed bug that `collector-reload` file not found when running `server:watch` with absolute path.
+
+## Optimized
+
+- [#4317](https://github.com/hyperf/hyperf/pull/4317) Improves `Hyperf\Utils\Collection` and `Hyperf\Database\Model\Collection` type definitions.
+
+# v2.2.18 - 2021-11-29
+
+## Fixed
+
+- [#4283](https://github.com/hyperf/hyperf/pull/4283) Fixed type hint error for `Hyperf\Grpc\Parser::deserializeMessage()` when `$response->data` is null.
+
+## Added
+
+- [#4284](https://github.com/hyperf/hyperf/pull/4284) Added method `Hyperf\Utils\Network::ip()`.
+- [#4290](https://github.com/hyperf/hyperf/pull/4290) Added HTTP chunk support for `hyperf/http-message`.
+- [#4291](https://github.com/hyperf/hyperf/pull/4291) Support dynamic `$arguments` for function `value()`.
+- [#4293](https://github.com/hyperf/hyperf/pull/4293) Support run with absolute paths for `server:watch`.
+- [#4295](https://github.com/hyperf/hyperf/pull/4295) Added alias `id()` for `Hyperf\Database\Schema\Blueprint::bigIncrements()`.
+
+# v2.2.17 - 2021-11-22
+
+## Fixed
+
+- [#4243](https://github.com/hyperf/hyperf/pull/4243) Fixed the bug that key sort of the result is inconsistent with `$callables` for `parallel`.
+
+## Added
+
+- [#4109](https://github.com/hyperf/hyperf/pull/4109) Added PHP8 support for `hyperf/tracer`.
+- [#4260](https://github.com/hyperf/hyperf/pull/4260) Added force index for `hyperf/database`.
+
+# v2.2.16 - 2021-11-15
+
+## Added
+
+- [#4252](https://github.com/hyperf/hyperf/pull/4252) Added method `getServiceName` for rpc client.
+
+## Optimized
+
+- [#4253](https://github.com/hyperf/hyperf/pull/4253) Skip class which is not found by class loader at scan time.
+
+# v2.2.15 - 2021-11-08
+
+## Fixed
+
+- [#4200](https://github.com/hyperf/hyperf/pull/4200) Fixed bug that filesystem cache driver does not work when `runtime/caches` is not a directory. 
+
+## Added
+
+- [#4157](https://github.com/hyperf/hyperf/pull/4157) Added `Macroable` for `Hyperf\Utils\Arr`.
+
+# v2.2.14 - 2021-11-01
+
+## Added
+
+- [#4181](https://github.com/hyperf/hyperf/pull/4181) [#4192](https://github.com/hyperf/hyperf/pull/4192) Added versions (v1.0, v2.0, v3.0) support for `psr/log`.
+
+## Fixed
+
+- [#4171](https://github.com/hyperf/hyperf/pull/4171) Fixed health check failed when using consul with token.
+- [#4188](https://github.com/hyperf/hyperf/pull/4188) Fixed bug that build phar failed when using composer `1.x`.
+
+# v2.2.13 - 2021-10-25
+
+## Added
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) Allow `Macroable::mixin` to only add macros that do not exist yet.
+
+## Fixed
+
+- [#4158](https://github.com/hyperf/hyperf/pull/4158) Fixed bug that generate proxy class failed when using union type.
+
+## Optimized
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) [#4166](https://github.com/hyperf/hyperf/pull/4166) Split `hyperf/macroable` from `hyperf/utils`.
+
+# v2.2.12 - 2021-10-18
+
+## Added
+
+- [#4129](https://github.com/hyperf/hyperf/pull/4129) Added methods `Str::stripTags()` and `Stringable::stripTags()`.
+
+## Fixed
+
+- [#4130](https://github.com/hyperf/hyperf/pull/4130) Fixed bug that generate model failed when using option `--with-ide` and `scope` methods.
+- [#4141](https://github.com/hyperf/hyperf/pull/4141) Fixed bug that validator factory does not support other validators.
+
+# v2.2.11 - 2021-10-11
+
+## Fixed
+
+- [#4101](https://github.com/hyperf/hyperf/pull/4101) Fixed bug that auth failed when password has special charsets for nacos.
+
+# Optimized
+
+- [#4114](https://github.com/hyperf/hyperf/pull/4114) Optimized get error code after Websocket upgrade failed.
+- [#4119](https://github.com/hyperf/hyperf/pull/4119) Optimized testing client which create the directory again when the directory does not exist.
+
+# v2.2.10 - 2021-09-26
+
+## Fixed
+
+- [#4088](https://github.com/hyperf/hyperf/pull/4088) Fixed bug that crontab rule convert `empty string` into `0` accidentally.
+- [#4096](https://github.com/hyperf/hyperf/pull/4096) Fixed bug that generate proxy class failed caused by variadic parameters with type.
+
+# v2.2.9 - 2021-09-22
+
+## Fixed
+
+- [#4061](https://github.com/hyperf/hyperf/pull/4061) Fixed the conflict between the latest version of prometheus_client_php and `hyperf/metric`.
+- [#4068](https://github.com/hyperf/hyperf/pull/4068) Fixed bug that exit code of `Command` is incorrect when throwing an exception.
+- [#4076](https://github.com/hyperf/hyperf/pull/4076) Fixed server broken caused by sending response failed.
+
+## Added
+
+- [#4014](https://github.com/hyperf/hyperf/pull/4014) [#4080](https://github.com/hyperf/hyperf/pull/4080) Support `sasl` and `ssl` for kafka.
+- [#4045](https://github.com/hyperf/hyperf/pull/4045) [#4082](https://github.com/hyperf/hyperf/pull/4082) Support to control whether to report by `tracer` through config `opentracing.enable.exception`.
+- [#4086](https://github.com/hyperf/hyperf/pull/4086) Support annotation for interface.
+
+# Optimized
+
+- [#4084](https://github.com/hyperf/hyperf/pull/4084) Optimized the exception message when the attribute not found.
+
+# v2.2.8 - 2021-09-14
+
+## Fixed
+
+- [#4028](https://github.com/hyperf/hyperf/pull/4028) Fixed the success rate calculation in grafana dashboard.
+- [#4030](https://github.com/hyperf/hyperf/pull/4030) Fixed bug that async-queue broken caused by uncompressing model failed.
+- [#4042](https://github.com/hyperf/hyperf/pull/4042) Fixed coroutines deadlock caused by cleaning up expired fds in socketio-server when stop server.
+
+## Added
+
+- [#4013](https://github.com/hyperf/hyperf/pull/4013) Support `sameSite=None` when return response with cookies.
+- [#4017](https://github.com/hyperf/hyperf/pull/4017) Added `Macroable` into `Hyperf\Utils\Collection`.
+- [#4021](https://github.com/hyperf/hyperf/pull/4021) Added argument `$attempts` into `$callback` when using function `retry()`.
+- [#4040](https://github.com/hyperf/hyperf/pull/4040) Added method `ConsumerDelayedMessageTrait::getDeadLetterExchange()` which used to rewrite `x-dead-letter-exchange` by yourself.
+
+## Removed
+
+- [#4017](https://github.com/hyperf/hyperf/pull/4017) Removed `Macroable` from `Hyperf\Database\Model\Collection` because it already exists in `Hyperf\Utils\Collection`.
 
 # v2.2.7 - 2021-09-06
 

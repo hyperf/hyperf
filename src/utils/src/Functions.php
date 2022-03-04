@@ -26,9 +26,9 @@ if (! function_exists('value')) {
      *
      * @param mixed $value
      */
-    function value($value)
+    function value($value, ...$args)
     {
-        return $value instanceof \Closure ? $value() : $value;
+        return $value instanceof Closure ? $value(...$args) : $value;
     }
 }
 if (! function_exists('env')) {
@@ -74,14 +74,17 @@ if (! function_exists('retry')) {
      */
     function retry($times, callable $callback, int $sleep = 0)
     {
+        $attempts = 0;
         $backoff = new Backoff($sleep);
+
         beginning:
         try {
-            return $callback();
+            return $callback(++$attempts);
         } catch (\Throwable $e) {
             if (--$times < 0) {
                 throw $e;
             }
+
             $backoff->sleep();
             goto beginning;
         }
@@ -405,8 +408,8 @@ if (! function_exists('parallel')) {
 
 if (! function_exists('make')) {
     /**
-     * Create a object instance, if the DI container exist in ApplicationContext,
-     * then the object will be create by DI container via `make()` method, if not,
+     * Create an object instance, if the DI container exist in ApplicationContext,
+     * then the object will be created by DI container via `make()` method, if not,
      * the object will create by `new` keyword.
      */
     function make(string $name, array $parameters = [])

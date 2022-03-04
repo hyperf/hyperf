@@ -3,7 +3,7 @@
 ## Swoole 短名未关闭
 
 ```
-[ERROR] Swoole short name have to disable before start server, please set swoole.use_shortname = 'Off' into your php.ini.
+[ERROR] Swoole short function names must be disabled before the server starts, please set swoole.use_shortname = 'Off' in your php.ini.
 ```
 
 您需要在您的 php.ini 配置文件增加 `swoole.use_shortname = 'Off'` 配置项
@@ -67,7 +67,7 @@ Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line
 
 PHP 默认的 `memory_limit` 只有 `128M`，因为 `Hyperf` 使用了 `BetterReflection`，不使用扫描缓存时，会消耗大量内存，所以可能会出现内存不够的情况。
 
-我们可以使用 `php -dmemory_limit=-1 bin/hyperf.php start` 运行, 或者修改 `php.ini` 配置文件
+我们可以使用 `php -d memory_limit=-1 bin/hyperf.php start` 运行, 或者修改 `php.ini` 配置文件
 
 ```
 # 查看 php.ini 配置文件位置
@@ -156,3 +156,28 @@ pcntl support => enabled
 ```
 
 - 当开启 `grpc` 的时候，需要添加 `grpc.enable_fork_support= 1;` 到 `php.ini` 中，以支持开启子进程。
+
+## HTTP Server 将 `open_websocket_protocol` 设置为 `false` 后启动报错：`Swoole\Server::start(): require onReceive callback`
+
+1. 检查 Swoole 是否编译了 http2
+
+```shell
+php --ri swoole | grep http2
+http2 => enabled
+```
+
+如果没有，需要重新编译 Swoole 并增加 `--enable-http2` 参数。
+
+2. 检查 [server.php](/zh-cn/config?id=serverphp-配置说明) 文件中 `open_http2_protocol` 选项是否为 `true`。
+
+## Command 无法正常关闭
+
+在 Command 中使用 AMQP 等多路复用技术后，会导致无法正常关闭，碰到这种情况只需要在执行逻辑最后增加以下代码即可。
+
+```php
+<?php
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coordinator\Constants;
+
+CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
+```

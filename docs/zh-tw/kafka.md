@@ -51,7 +51,10 @@ composer require hyperf/kafka
 | offset_retry                  | int        | 5                             | 偏移量操作，匹配預設的錯誤碼時，自動重試次數                                                                         |
 | auto_create_topic             | bool       | true                          | 是否需要自動建立 topic                                                                                               |
 | partition_assignment_strategy | string     | KafkaStrategy::RANGE_ASSIGNOR | 消費者分割槽分配策略, 可選：範圍分配(`KafkaStrategy::RANGE_ASSIGNOR`) 輪詢分配(`KafkaStrategy::ROUND_ROBIN_ASSIGNOR`)) |
-| pool                          | object     |                               | 連線池配置                                                                                                           |
+| sasl                          | array      | []                            | SASL 身份認證資訊。為空則不傳送身份認證資訊 phpkafka 版本需 >= 1.2                                                    |
+| ssl                           | array      | []                            | SSL 連結相關資訊, 為空則不使用 SSL phpkafka 版本需 >= 1.2                                                               |
+| pool                          | object     | []                            | 連線池配置                                                                                                           |
+
 
 
 ```php
@@ -89,6 +92,8 @@ return [
         'offset_retry' => 5,
         'auto_create_topic' => true,
         'partition_assignment_strategy' => KafkaStrategy::RANGE_ASSIGNOR,
+        'sasl' => [],
+        'ssl' => [],
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -206,4 +211,31 @@ class IndexController extends AbstractController
 }
 
 ```
+
+### SASL 配置說明
+
+| 引數名   | 說明                                                                | 預設值 |
+| -------- | ------------------------------------------------------------------- | ------ |
+| type     | SASL 授權對應的類。PLAIN 為`\longlang\phpkafka\Sasl\PlainSasl::class` | ''     |
+| username | 賬號                                                                | ''     |
+| password | 密碼                                                                | ''     |
+
+### SSL 配置說明
+
+| 引數名          | 說明                                                                    | 預設值  |
+| --------------- | ----------------------------------------------------------------------- | ------- |
+| open            | 是否開啟 SSL 傳輸加密                                                     | `false` |
+| compression     | 是否開啟壓縮                                                            | `true`  |
+| certFile        | cert 證書存放路徑                                                        | `''`    |
+| keyFile         | 私鑰存放路徑                                                            | `''`    |
+| passphrase      | cert 證書密碼                                                            | `''`    |
+| peerName        | 伺服器主機名。預設為連結的 host                                          | `''`    |
+| verifyPeer      | 是否校驗遠端證書                                                        | `false` |
+| verifyPeerName  | 是否校驗遠端伺服器名稱                                                  | `false` |
+| verifyDepth     | 如果證書鏈條層次太深，超過了本選項的設定值，則終止驗證。 預設不校驗層級 | `0`     |
+| allowSelfSigned | 是否允許自簽證書                                                        | `false` |
+| cafile          | CA 證書路徑                                                              | `''`    |
+| capath          | CA 證書目錄。會自動掃描該路徑下所有 pem 檔案                               | `''`    |
+
+
 

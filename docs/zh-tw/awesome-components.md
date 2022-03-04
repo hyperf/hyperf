@@ -123,9 +123,8 @@
 ## 開發除錯
 
 - [swoole/yasd](https://github.com/swoole/yasd) Swoole 偵錯程式，類似 `Xdebug`，完美支援協程，支援斷點除錯、單步追蹤、`watch` 變數
-- [mabu233/sdebug](https://github.com/mabu233/sdebug) 用於協助開發與除錯，`Xdebug`的協程改造版
 - [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 通過 `WebSocket` 實時觀測異常錯誤的開發除錯元件
-- [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支援與 laravel 類似的多 env 配置檔案功能，通過 `APP_ENV=testing` 可以載入 `.env.testing` 配置覆蓋預設的 `.env`
+- [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支援與 laravel 類似的多 env 配置檔案功能，比如通過 `APP_ENV=testing` 可以載入 `.env.testing` 配置覆蓋預設的 `.env`
 - [qiutuleng/hyperf-dump-server](https://github.com/qiutuleng/hyperf-dump-server) 提供一個 `dump` 函式，可以將程式內的變數或資料列印到另一個命令列視窗中，基於 Symfony 的 `Var-Dump Server` 元件
 - [leearvin/hyperf-tinker](https://github.com/Arvin-Lee/hyperf-tinker) 基於 PsySH 提供一個互動式的 Hyperf shell 容器
 
@@ -137,6 +136,14 @@
 - [hyperf-ext/auth](https://github.com/hyperf-ext/auth) 移植自 `illuminate/auth`，基本完整的實現了 Laravel Auth 的功能特性
 - [donjan-deng/hyperf-casbin](https://github.com/donjan-deng/hyperf-casbin) 適配於 Hyperf 的開源訪問控制框架 [Casbin](https://casbin.org/docs/zh-CN/overview)
 
+## 分散式鎖
+
+- [lysice/hyperf-redis-lock](https://github.com/Lysice/hyperf-redis-lock) 根據 Laravel 的 lock 元件改寫，適配於 Hyperf 框架。
+
+## 分散式事務
+
+- [dtm-php/dtm-client](https://github.com/dtm-php/dtm-client) 支援 Hyperf 的 dtm 分散式事務客戶端元件
+
 ## 第三方 SDK
 
 - [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支援 Swoole 協程的支付寶/微信支付 SDK
@@ -144,3 +151,4 @@
 - [overtrue/wechat](zh-tw/sdks/wechat) EasyWeChat，一個流行的非官方微信 SDK
 - [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole 協程環境下的可用的 PHPMailer
 - [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 支援 `支付寶/微信` 的支付元件，基於 [yansongda/pay](https://github.com/yansongda/pay) 實現，適配於 `Hyperf` 框架。
+- [alapi/hyperf-meilisearch](https://github.com/anhao/hyperf-meilisearch/) 為 Hyperf Scout 提供的 meilisearch 客戶端 
