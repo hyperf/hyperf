@@ -1891,7 +1891,7 @@ class Builder
     {
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
-        $this->skip(($page - 1) * $perPage)->take($perPage + 1);
+        $this->forPage($page, $perPage);
 
         return $this->simplePaginator($this->get($columns), $perPage, $page, [
             'path' => Paginator::resolveCurrentPath(),
