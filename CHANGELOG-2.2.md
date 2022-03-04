@@ -1,5 +1,9 @@
 # v2.2.27 - TBD
 
+## Optimized
+
+- [#4572](https://github.com/hyperf/hyperf/pull/4572) Use Hyperf\LoadBalancer\Exception\RuntimeException instead of \RuntimeException for `hyperf/load-balancer`.
+
 # v2.2.26 - 2022-02-21
 
 ## Fixed
