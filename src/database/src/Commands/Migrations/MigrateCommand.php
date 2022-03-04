@@ -19,30 +19,13 @@ class MigrateCommand extends BaseCommand
 {
     use ConfirmableTrait;
 
-    protected $name = 'migrate';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Run the database migrations';
-
-    /**
-     * The migrator instance.
-     *
-     * @var \Hyperf\Database\Migrations\Migrator
-     */
-    protected $migrator;
-
     /**
      * Create a new migration command instance.
      */
-    public function __construct(Migrator $migrator)
+    public function __construct(protected Migrator $migrator)
     {
-        parent::__construct();
-
-        $this->migrator = $migrator;
+        parent::__construct('migrate');
+        $this->setDescription('Run the database migrations');
     }
 
     /**

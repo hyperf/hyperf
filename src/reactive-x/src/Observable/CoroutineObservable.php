@@ -23,19 +23,10 @@ use Swoole\Coroutine\WaitGroup;
 class CoroutineObservable extends Observable
 {
     /**
-     * @var callable[]
+     * @param callable[] $callables
      */
-    private $callables;
-
-    /**
-     * @var SchedulerInterface
-     */
-    private $scheduler;
-
-    public function __construct($callables, ?SchedulerInterface $scheduler = null)
+    public function __construct(private array $callables, private ?SchedulerInterface $scheduler = null)
     {
-        $this->scheduler = $scheduler;
-        $this->callables = $callables;
     }
 
     protected function _subscribe(ObserverInterface $observer): DisposableInterface

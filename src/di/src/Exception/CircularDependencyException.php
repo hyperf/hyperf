@@ -13,15 +13,9 @@ namespace Hyperf\Di\Exception;
 
 class CircularDependencyException extends \RuntimeException
 {
-    /**
-     * @var array
-     */
-    protected $list = [];
+    protected array $list = [];
 
-    /**
-     * @var bool
-     */
-    protected $sealed = false;
+    protected bool $sealed = false;
 
     public function addDefinitionName(string $name)
     {

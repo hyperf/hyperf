@@ -11,10 +11,10 @@
     ],
     "description": "hyperf metric component",
     "require": {
-        "php": ">=7.3",
-        "hyperf/contract": "~2.2.0",
-        "hyperf/guzzle": "~2.2.0",
-        "hyperf/utils": "~2.2.0",
+        "php": ">=8.0",
+        "hyperf/contract": "~3.0.0",
+        "hyperf/guzzle": "~3.0.0",
+        "hyperf/utils": "~3.0.0",
         "promphp/prometheus_client_php": "2.2.*",
         "psr/container": "^1.0|^2.0",
         "psr/event-dispatcher": "^1.0",
@@ -47,7 +47,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Metric\\ConfigProvider"

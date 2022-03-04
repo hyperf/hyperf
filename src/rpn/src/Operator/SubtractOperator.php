@@ -18,9 +18,9 @@ class SubtractOperator extends Operator
         return '-';
     }
 
-    public function execute(array $paramaters, int $scale): string
+    public function execute(array $parameters, int $scale): string
     {
-        $paramaters[] = $scale;
-        return bcsub(...$paramaters);
+        $parameters[] = $scale;
+        return bcsub(...$parameters);
     }
 }

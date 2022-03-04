@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\DbConnection;
 
+use Hyperf\Context\Context;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\DbConnection\Pool\PoolFactory;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
@@ -22,34 +22,20 @@ class ConnectionResolver implements ConnectionResolverInterface
 {
     /**
      * The default connection name.
-     *
-     * @var string
      */
-    protected $default = 'default';
+    protected string $default = 'default';
 
-    /**
-     * @var PoolFactory
-     */
-    protected $factory;
+    protected PoolFactory $factory;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->factory = $container->get(PoolFactory::class);
     }
 
     /**
      * Get a database connection instance.
-     *
-     * @param string $name
-     * @return ConnectionInterface
      */
-    public function connection($name = null)
+    public function connection(?string $name = null): ConnectionInterface
     {
         if (is_null($name)) {
             $name = $this->getDefaultConnection();
@@ -84,20 +70,16 @@ class ConnectionResolver implements ConnectionResolverInterface
 
     /**
      * Get the default connection name.
-     *
-     * @return string
      */
-    public function getDefaultConnection()
+    public function getDefaultConnection(): string
     {
         return $this->default;
     }
 
     /**
      * Set the default connection name.
-     *
-     * @param string $name
      */
-    public function setDefaultConnection($name)
+    public function setDefaultConnection(string $name): void
     {
         $this->default = $name;
     }

@@ -19,21 +19,12 @@ use Symfony\Component\Console\Input\InputOption;
 class GenSeederCommand extends BaseCommand
 {
     /**
-     * The seeder creator instance.
-     *
-     * @var \Hyperf\Database\Seeders\SeederCreator
-     */
-    protected $creator;
-
-    /**
      * Create a new seeder generator command instance.
      */
-    public function __construct(SeederCreator $creator)
+    public function __construct(protected SeederCreator $creator)
     {
         parent::__construct('gen:seeder');
         $this->setDescription('Create a new seeder class');
-
-        $this->creator = $creator;
     }
 
     /**

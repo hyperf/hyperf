@@ -36,7 +36,7 @@ interface ContainerInterface extends PsrContainerInterface
      *
      * @param mixed $entry
      */
-    public function set(string $name, $entry);
+    public function set(string $name, $entry): void;
 
     /**
      * Bind an arbitrary definition to an identifier.
@@ -44,5 +44,5 @@ interface ContainerInterface extends PsrContainerInterface
      *
      * @param array|callable|string $definition
      */
-    public function define(string $name, $definition);
+    public function define(string $name, $definition): void;
 }

@@ -48,7 +48,7 @@ class CommandTest extends TestCase
     public function testExitCodeWhenThrowException()
     {
         /** @var FooExceptionCommand $command */
-        $command = new ClassInvoker(new FooExceptionCommand());
+        $command = new ClassInvoker(new FooExceptionCommand('foo'));
         $input = Mockery::mock(InputInterface::class);
         $input->shouldReceive('getOption')->andReturnFalse();
         $exitCode = $command->execute($input, Mockery::mock(OutputInterface::class));

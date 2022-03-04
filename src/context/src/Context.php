@@ -15,9 +15,9 @@ use Hyperf\Engine\Coroutine;
 
 class Context
 {
-    protected static $nonCoContext = [];
+    protected static array $nonCoContext = [];
 
-    public static function set(string $id, $value)
+    public static function set(string $id, mixed $value): mixed
     {
         if (Coroutine::id() > 0) {
             Coroutine::getContextFor()[$id] = $value;
@@ -27,7 +27,7 @@ class Context
         return $value;
     }
 
-    public static function get(string $id, $default = null, $coroutineId = null)
+    public static function get(string $id, mixed $default = null, ?int $coroutineId = null): mixed
     {
         if (Coroutine::id() > 0) {
             return Coroutine::getContextFor($coroutineId)[$id] ?? $default;
@@ -36,7 +36,7 @@ class Context
         return static::$nonCoContext[$id] ?? $default;
     }
 
-    public static function has(string $id, $coroutineId = null)
+    public static function has(string $id, ?int $coroutineId = null): bool
     {
         if (Coroutine::id() > 0) {
             return isset(Coroutine::getContextFor($coroutineId)[$id]);
@@ -48,7 +48,7 @@ class Context
     /**
      * Release the context when you are not in coroutine environment.
      */
-    public static function destroy(string $id)
+    public static function destroy(string $id): void
     {
         unset(static::$nonCoContext[$id]);
     }
@@ -78,7 +78,7 @@ class Context
     /**
      * Retrieve the value and override it by closure.
      */
-    public static function override(string $id, \Closure $closure)
+    public static function override(string $id, \Closure $closure): mixed
     {
         $value = null;
         if (self::has($id)) {
@@ -91,9 +91,8 @@ class Context
 
     /**
      * Retrieve the value and store it if not exists.
-     * @param mixed $value
      */
-    public static function getOrSet(string $id, $value)
+    public static function getOrSet(string $id, mixed $value): mixed
     {
         if (! self::has($id)) {
             return self::set($id, value($value));

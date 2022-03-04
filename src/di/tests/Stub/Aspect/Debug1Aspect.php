@@ -16,7 +16,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 
 class Debug1Aspect extends AbstractAspect
 {
-    public $classes = [
+    public array $classes = [
         'Debug1AspectFoo',
     ];
 

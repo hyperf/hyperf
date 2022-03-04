@@ -9,8 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Kafka\Exception;
+namespace Hyperf\Amqp\IO;
 
-class ConnectionCLosedException extends KafkaException
+use Hyperf\Amqp\Params;
+use PhpAmqpLib\Wire\IO\AbstractIO;
+
+interface IOFactoryInterface
 {
+    public function create(array $config, Params $params): AbstractIO;
 }

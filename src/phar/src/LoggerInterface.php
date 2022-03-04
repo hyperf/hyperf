@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Phar;
 
-interface LoggerInterface extends \Psr\Log\LoggerInterface
+use Psr\Log;
+
+interface LoggerInterface extends Log\LoggerInterface
 {
 }

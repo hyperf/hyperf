@@ -20,22 +20,20 @@ class SearchableModel extends Model
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = ['id'];
+    protected array $fillable = ['id'];
 
     /**
      * @var \Closure
      */
     protected $queryCallback;
 
-    public function searchableAs()
+    public function searchableAs(): string
     {
         return 'table';
     }
 
-    public function scoutMetadata()
+    public function scoutMetadata(): array
     {
         return [];
     }

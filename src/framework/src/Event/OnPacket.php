@@ -11,27 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Framework\Event;
 
+use Swoole\Server;
+
 class OnPacket
 {
-    /**
-     * @var \Swoole\Server
-     */
-    public $server;
-
-    /**
-     * @var string
-     */
-    public $data;
-
-    /**
-     * @var array
-     */
-    public $clientInfo;
-
-    public function __construct($server, string $data, array $clientInfo)
+    public function __construct(public Server $server, public string $data, public array $clientInfo)
     {
-        $this->server = $server;
-        $this->data = $data;
-        $this->clientInfo = $clientInfo;
     }
 }

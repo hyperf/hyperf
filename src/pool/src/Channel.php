@@ -17,29 +17,17 @@ use Hyperf\Utils\Coroutine;
 
 class Channel
 {
-    protected $size;
+    protected CoChannel $channel;
 
-    /**
-     * @var CoChannel
-     */
-    protected $channel;
+    protected \SplQueue $queue;
 
-    /**
-     * @var \SplQueue
-     */
-    protected $queue;
-
-    public function __construct(int $size)
+    public function __construct(protected int $size)
     {
-        $this->size = $size;
         $this->channel = new CoChannel($size);
         $this->queue = new \SplQueue();
     }
 
-    /**
-     * @return ConnectionInterface|false
-     */
-    public function pop(float $timeout)
+    public function pop(float $timeout): ConnectionInterface|false
     {
         if ($this->isCoroutine()) {
             return $this->channel->pop($timeout);
@@ -47,11 +35,7 @@ class Channel
         return $this->queue->shift();
     }
 
-    /**
-     * @param ConnectionInterface $data
-     * @return bool
-     */
-    public function push($data)
+    public function push(ConnectionInterface $data): bool
     {
         if ($this->isCoroutine()) {
             return $this->channel->push($data);

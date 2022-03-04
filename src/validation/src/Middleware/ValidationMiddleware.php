@@ -13,10 +13,10 @@ namespace Hyperf\Validation\Middleware;
 
 use Closure;
 use FastRoute\Dispatcher;
+use Hyperf\Context\Context;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Exception\ServerException;
-use Hyperf\Utils\Context;
 use Hyperf\Validation\Contract\ValidatesWhenResolved;
 use Hyperf\Validation\UnauthorizedException;
 use Psr\Container\ContainerInterface;
@@ -27,19 +27,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class ValidationMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var \Psr\Container\ContainerInterface
-     */
-    private $container;
+    private array $implements = [];
 
-    /**
-     * @var array
-     */
-    private $implements = [];
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     /**
@@ -98,9 +89,7 @@ class ValidationMiddleware implements MiddlewareInterface
      */
     protected function handleUnauthorizedException(UnauthorizedException $exception): ResponseInterface
     {
-        return Context::override(ResponseInterface::class, function (ResponseInterface $response) {
-            return $response->withStatus(403);
-        });
+        return Context::override(ResponseInterface::class, fn (ResponseInterface $response) => $response->withStatus(403));
     }
 
     protected function shouldHandle(Dispatched $dispatched): bool
@@ -110,12 +99,11 @@ class ValidationMiddleware implements MiddlewareInterface
 
     /**
      * @see \Hyperf\HttpServer\CoreMiddleware::prepareHandler()
-     * @param array|string $handler
      */
-    protected function prepareHandler($handler): array
+    protected function prepareHandler(array|string $handler): array
     {
         if (is_string($handler)) {
-            if (strpos($handler, '@') !== false) {
+            if (str_contains($handler, '@')) {
                 return explode('@', $handler);
             }
             $array = explode('::', $handler);

@@ -36,7 +36,13 @@ abstract class AbstractCallableDefinitionCollector extends MetadataCollector
      */
     protected function createType(string $name, ?\ReflectionType $type, bool $allowsNull, bool $hasDefault = false, $defaultValue = null): ReflectionType
     {
-        return new ReflectionType($type ? $type->getName() : 'mixed', $allowsNull, [
+        // TODO: Support ReflectionUnionType.
+        $typeName = match (true) {
+            $type instanceof \ReflectionNamedType => $type->getName(),
+            $type instanceof \ReflectionUnionType => $type->getTypes()[0]->getName(),
+            default => 'mixed'
+        };
+        return new ReflectionType($typeName, $allowsNull, [
             'defaultValueAvailable' => $hasDefault,
             'defaultValue' => $defaultValue,
             'name' => $name,

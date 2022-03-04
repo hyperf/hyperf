@@ -24,14 +24,8 @@ use Hyperf\Utils\Packer\JsonPacker;
 
 class RegisterProtocolListener implements ListenerInterface
 {
-    /**
-     * @var ProtocolManager
-     */
-    private $protocolManager;
-
-    public function __construct(ProtocolManager $protocolManager)
+    public function __construct(private ProtocolManager $protocolManager)
     {
-        $this->protocolManager = $protocolManager;
     }
 
     public function listen(): array

@@ -20,11 +20,11 @@ class DatabaseMigrationRepositoryFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        $reslover = $container->get(ConnectionResolverInterface::class);
+        $resolver = $container->get(ConnectionResolverInterface::class);
         $config = $container->get(ConfigInterface::class);
         $table = $config->get('databases.default.migrations', 'migrations');
         return make(DatabaseMigrationRepository::class, [
-            'resolver' => $reslover,
+            'resolver' => $resolver,
             'table' => $table,
         ]);
     }

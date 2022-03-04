@@ -14,6 +14,7 @@ namespace Hyperf\GrpcServer;
 use FastRoute\Dispatcher;
 use Google\Protobuf\Internal\Message;
 use Google\Protobuf\Internal\Message as ProtobufMessage;
+use Hyperf\Context\Context;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Grpc\Parser;
@@ -21,8 +22,6 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Exception\ServerException;
-use Hyperf\Utils\Context;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,16 +29,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class CoreMiddleware extends HttpCoreMiddleware
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
-
     /**
      * Process an incoming server request and return a response, optionally delegating
      * response creation to a handler.

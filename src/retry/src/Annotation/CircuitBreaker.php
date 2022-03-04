@@ -20,10 +20,6 @@ use Hyperf\Retry\Policy\MaxAttemptsRetryPolicy;
 use Hyperf\Retry\Policy\SleepRetryPolicy;
 use Hyperf\Retry\SleepStrategyInterface;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class CircuitBreaker extends AbstractRetry
 {
@@ -31,7 +27,7 @@ class CircuitBreaker extends AbstractRetry
      * Array of retry policies. Think of these as stacked middlewares.
      * @var string[]
      */
-    public $policies = [
+    public array $policies = [
         FallbackRetryPolicy::class,
         ClassifierRetryPolicy::class,
         CircuitBreakerRetryPolicy::class,
@@ -41,32 +37,27 @@ class CircuitBreaker extends AbstractRetry
 
     /**
      * The algorithm for retry intervals.
-     * @var string
      */
-    public $sleepStrategyClass = SleepStrategyInterface::class;
+    public string $sleepStrategyClass = SleepStrategyInterface::class;
 
     /**
-     * Max Attampts.
-     * @var int
+     * Max Attempts.
      */
-    public $maxAttempts = 10;
+    public int $maxAttempts = 10;
 
     /**
      * Circuit-Breaker state
      * resetTimeout: After retry session fails, all future tries will be blocked in this period.
-     *
-     * @var array|CircuitBreakerState
      */
-    public $circuitBreakerState = [
+    public array|CircuitBreakerState $circuitBreakerState = [
         'resetTimeout' => 10,
     ];
 
     /**
-     * Base time inteval (ms) for each try. For backoff strategy this is the interval for the first try
+     * Base time interval (ms) for each try. For backoff strategy this is the interval for the first try
      * while for flat strategy this is the interval for every try.
-     * @var int
      */
-    public $base = 0;
+    public int $base = 0;
 
     /**
      * Configures a Predicate which evaluates if an exception should be retried.
@@ -74,25 +65,25 @@ class CircuitBreaker extends AbstractRetry
      *
      * @var callable|string
      */
-    public $retryOnThrowablePredicate = '';
+    public mixed $retryOnThrowablePredicate = '';
 
     /**
-     * Configures a Predicate which evaluates if an result should be retried.
+     * Configures a Predicate which evaluates if a result should be retried.
      * The Predicate must return true if the result should be retried, otherwise it must return false.
      *
      * @var callable|string
      */
-    public $retryOnResultPredicate = '';
+    public mixed $retryOnResultPredicate = '';
 
     /**
      * Configures a list of Throwable classes that are recorded as a failure and thus are retried.
      * Any Throwable matching or inheriting from one of the list will be retried, unless ignored via ignoreExceptions.
      *
-     * Ignoring an Throwable has priority over retrying an exception.
+     * Ignoring a Throwable has priority over retrying an exception.
      *
      * @var array<string|\Throwable>
      */
-    public $retryThrowables = [\Throwable::class];
+    public array $retryThrowables = [\Throwable::class];
 
     /**
      * Configures a list of error classes that are ignored and thus are not retried.
@@ -100,14 +91,14 @@ class CircuitBreaker extends AbstractRetry
      *
      * @var array<string|\Throwable>
      */
-    public $ignoreThrowables = [];
+    public array $ignoreThrowables = [];
 
     /**
      * The fallback callable when all attempts exhausted.
      *
      * @var callable|string
      */
-    public $fallback = '';
+    public mixed $fallback = '';
 
     public function toArray(): array
     {

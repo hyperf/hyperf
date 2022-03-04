@@ -110,7 +110,7 @@ class Arr
     }
 
     /**
-     * Get all of the given array except for a specified array of keys.
+     * Get all the given array except for a specified array of keys.
      *
      * @param array|string $keys
      */
@@ -241,7 +241,7 @@ class Arr
         if (static::exists($array, $key)) {
             return $array[$key];
         }
-        if (! is_string($key) || strpos($key, '.') === false) {
+        if (! is_string($key) || ! str_contains($key, '.')) {
             return $array[$key] ?? value($default);
         }
         foreach (explode('.', $key) as $segment) {
@@ -321,7 +321,7 @@ class Arr
         foreach ($array as $item) {
             $itemValue = data_get($item, $value);
             // If the key is "null", we will just append the value to the array and keep
-            // looping. Otherwise we will key the array using the value of the key we
+            // looping. Otherwise, we will key the array using the value of the key we
             // received from the developer. Then we'll return the final array form.
             if (is_null($key)) {
                 $results[] = $itemValue;
@@ -384,7 +384,7 @@ class Arr
         if (is_null($number)) {
             return $array[array_rand($array)];
         }
-        if ((int) $number === 0) {
+        if ($number === 0) {
             return [];
         }
         $keys = array_rand($array, $number);
@@ -504,7 +504,7 @@ class Arr
     public static function unique(array $array): array
     {
         $result = [];
-        foreach ($array ?? [] as $key => $item) {
+        foreach ($array as $key => $item) {
             if (is_array($item)) {
                 $result[$key] = self::unique($item);
             } else {
@@ -531,7 +531,7 @@ class Arr
                 }
             }
         } else {
-            foreach ($array2 as $key => $value) {
+            foreach ($array2 as $value) {
                 if ($unique && in_array($value, $array1, true)) {
                     continue;
                 }

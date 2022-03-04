@@ -27,14 +27,8 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 class ConsumerManager
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function run()
@@ -65,35 +59,17 @@ class ConsumerManager
     private function createProcess(AbstractConsumer $consumer): AbstractProcess
     {
         return new class($this->container, $consumer) extends AbstractProcess {
-            /**
-             * @var AbstractConsumer
-             */
-            private $consumer;
+            private Nsq $subscriber;
 
-            /**
-             * @var Nsq
-             */
-            private $subscriber;
+            private ?EventDispatcherInterface $dispatcher = null;
 
-            /**
-             * @var null|EventDispatcherInterface
-             */
-            private $dispatcher;
+            private ConfigInterface $config;
 
-            /**
-             * @var ConfigInterface
-             */
-            private $config;
+            private Waiter $waiter;
 
-            /**
-             * @var Waiter
-             */
-            private $waiter;
-
-            public function __construct(ContainerInterface $container, AbstractConsumer $consumer)
+            public function __construct(ContainerInterface $container, private AbstractConsumer $consumer)
             {
                 parent::__construct($container);
-                $this->consumer = $consumer;
                 $this->config = $container->get(ConfigInterface::class);
                 $this->subscriber = make(Nsq::class, [
                     'container' => $container,

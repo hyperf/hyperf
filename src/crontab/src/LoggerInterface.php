@@ -11,6 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab;
 
-interface LoggerInterface
+interface LoggerInterface extends \Psr\Log\LoggerInterface
 {
 }

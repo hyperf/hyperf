@@ -18,28 +18,15 @@ use PDOException;
 class QueryException extends PDOException
 {
     /**
-     * The SQL for the query.
-     *
-     * @var string
-     */
-    protected $sql;
-
-    /**
-     * The bindings for the query.
-     *
-     * @var array
-     */
-    protected $bindings;
-
-    /**
      * Create a new query exception instance.
+     *
+     * @param string $sql the SQL for the query
+     * @param array $bindings the bindings for the query
      */
-    public function __construct(string $sql, array $bindings, Exception $previous)
+    public function __construct(protected string $sql, protected array $bindings, Exception $previous)
     {
         parent::__construct('', 0, $previous);
 
-        $this->sql = $sql;
-        $this->bindings = $bindings;
         $this->code = $previous->getCode();
         $this->message = $this->formatMessage($sql, $bindings, $previous);
 

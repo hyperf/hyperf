@@ -16,14 +16,10 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\SocketIOServer\Collector\EventAnnotationCollector;
 
-/**
- * @Annotation
- * @Target({"CLASS", "METHOD"})
- */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Event extends AbstractAnnotation
 {
-    public $event = 'event';
+    public string $event = 'event';
 
     public function __construct(...$value)
     {

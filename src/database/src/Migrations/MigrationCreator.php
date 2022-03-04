@@ -19,25 +19,15 @@ use InvalidArgumentException;
 class MigrationCreator
 {
     /**
-     * The filesystem instance.
-     *
-     * @var Filesystem
-     */
-    protected $files;
-
-    /**
      * The registered post create hooks.
-     *
-     * @var array
      */
-    protected $postCreate = [];
+    protected array $postCreate = [];
 
     /**
      * Create a new migration creator instance.
      */
-    public function __construct(Filesystem $files)
+    public function __construct(protected Filesystem $files)
     {
-        $this->files = $files;
     }
 
     /**

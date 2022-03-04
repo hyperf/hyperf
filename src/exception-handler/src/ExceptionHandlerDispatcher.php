@@ -11,22 +11,16 @@ declare(strict_types=1);
  */
 namespace Hyperf\ExceptionHandler;
 
+use Hyperf\Context\Context;
 use Hyperf\Dispatcher\AbstractDispatcher;
-use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
 class ExceptionHandlerDispatcher extends AbstractDispatcher
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function dispatch(...$params)

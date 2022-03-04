@@ -18,14 +18,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Server extends Proxy
 {
-    /**
-     * @var array
-     */
-    protected $default;
-
-    public function __construct(array $default)
+    public function __construct(protected array $default)
     {
-        $this->default = $default;
     }
 
     public function toArray(): array

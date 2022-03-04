@@ -17,14 +17,8 @@ use Zipkin\Reporters\Http\ClientFactory;
 
 class HttpClientFactory implements ClientFactory
 {
-    /**
-     * @var GuzzleClientFactory
-     */
-    private $guzzleClientFactory;
-
-    public function __construct(GuzzleClientFactory $guzzleClientFactory)
+    public function __construct(private GuzzleClientFactory $guzzleClientFactory)
     {
-        $this->guzzleClientFactory = $guzzleClientFactory;
     }
 
     public function build(array $options): callable
@@ -33,7 +27,7 @@ class HttpClientFactory implements ClientFactory
             $url = $options['endpoint_url'];
             unset($options['endpoint_url']);
             $client = $this->guzzleClientFactory->create($options);
-            $additionalHeaders = (isset($options['headers']) ? $options['headers'] : []);
+            $additionalHeaders = $options['headers'] ?? [];
             $requiredHeaders = [
                 'Content-Type' => 'application/json',
                 'Content-Length' => strlen($payload),

@@ -11,30 +11,22 @@ declare(strict_types=1);
  */
 namespace Hyperf\Resource\Response;
 
+use Hyperf\Context\Context;
 use Hyperf\Database\Model\Model;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Collection;
-use Hyperf\Utils\Context;
 use Psr\Http\Message\ResponseInterface;
 
 class Response
 {
     /**
-     * The underlying resource.
-     *
-     * @var mixed
-     */
-    public $resource;
-
-    /**
      * Create a new resource response.
      *
-     * @param mixed $resource
+     * @param mixed $resource the underlying resource
      */
-    public function __construct($resource)
+    public function __construct(public mixed $resource)
     {
-        $this->resource = $resource;
     }
 
     public function toResponse(): ResponseInterface
@@ -51,10 +43,8 @@ class Response
 
     /**
      * Wrap the given data if necessary.
-     *
-     * @param array|Collection $data
      */
-    protected function wrap($data, array $with = [], array $additional = []): array
+    protected function wrap(array|Collection $data, array $with = [], array $additional = []): array
     {
         if ($data instanceof Collection) {
             $data = $data->all();

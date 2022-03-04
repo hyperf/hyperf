@@ -16,15 +16,9 @@ use Throwable;
 
 class RetryHandle extends Event
 {
-    /**
-     * @var Throwable
-     */
-    protected $throwable;
-
-    public function __construct(MessageInterface $message, Throwable $throwable)
+    public function __construct(MessageInterface $message, protected Throwable $throwable)
     {
         parent::__construct($message);
-        $this->throwable = $throwable;
     }
 
     public function getThrowable(): Throwable

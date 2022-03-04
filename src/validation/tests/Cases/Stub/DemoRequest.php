@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Validation\Cases\Stub;
 
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use Hyperf\Validation\Request\FormRequest;
 
 class DemoRequest extends FormRequest

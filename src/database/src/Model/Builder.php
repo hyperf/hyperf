@@ -13,13 +13,13 @@ namespace Hyperf\Database\Model;
 
 use BadMethodCallException;
 use Closure;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\ForwardsCalls;
 
@@ -80,7 +80,7 @@ class Builder
      * @var array
      */
     protected $passthru = [
-        'insert', 'insertGetId', 'getBindings', 'toSql',
+        'insert', 'insertGetId', 'getBindings', 'toSql', 'insertOrIgnore',
         'exists', 'doesntExist', 'count', 'min', 'max', 'avg', 'average', 'sum', 'getConnection',
     ];
 

@@ -13,13 +13,13 @@ namespace Hyperf\SocketIOServer\Room;
 
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Redis\Redis;
-use Mix\Redis\Subscribe\Subscriber;
+use Mix\Redis\Subscriber\Subscriber;
 
 class SubscriberFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        if (! class_exists(\Mix\Redis\Subscribe\Subscriber::class)) {
+        if (! class_exists(\Mix\Redis\Subscriber\Subscriber::class)) {
             return null;
         }
         $redis = $container->get(Redis::class);
@@ -33,7 +33,7 @@ class SubscriberFactory
                 $sub->close();
             });
             return $sub;
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return null;
         }
     }

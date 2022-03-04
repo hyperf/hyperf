@@ -13,9 +13,9 @@ namespace Hyperf\RpcMultiplex;
 
 use Hyperf\RpcMultiplex\Contract\HttpMessageBuilderInterface;
 use Hyperf\RpcMultiplex\Listener\RegisterProtocolListener;
-use Multiplex\Constract\IdGeneratorInterface;
-use Multiplex\Constract\PackerInterface;
-use Multiplex\Constract\SerializerInterface;
+use Multiplex\Contract\IdGeneratorInterface;
+use Multiplex\Contract\PackerInterface;
+use Multiplex\Contract\SerializerInterface;
 use Multiplex\IdGenerator;
 use Multiplex\Packer;
 use Multiplex\Serializer\StringSerializer;

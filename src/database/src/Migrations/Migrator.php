@@ -23,27 +23,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Migrator
 {
     /**
-     * The migration repository implementation.
-     *
-     * @var \Hyperf\Database\Migrations\MigrationRepositoryInterface
-     */
-    protected $repository;
-
-    /**
-     * The filesystem instance.
-     *
-     * @var \Hyperf\Utils\Filesystem\Filesystem
-     */
-    protected $files;
-
-    /**
-     * The connection resolver instance.
-     *
-     * @var \Hyperf\Database\ConnectionResolverInterface
-     */
-    protected $resolver;
-
-    /**
      * The name of the default connection.
      *
      * @var string
@@ -68,13 +47,10 @@ class Migrator
      * Create a new migrator instance.
      */
     public function __construct(
-        MigrationRepositoryInterface $repository,
-        Resolver $resolver,
-        Filesystem $files
+        protected MigrationRepositoryInterface $repository,
+        protected Resolver $resolver,
+        protected Filesystem $files
     ) {
-        $this->files = $files;
-        $this->resolver = $resolver;
-        $this->repository = $repository;
     }
 
     /**
@@ -262,9 +238,7 @@ class Migrator
      */
     public function setConnection(string $name): void
     {
-        if (! is_null($name)) {
-            $this->resolver->setDefaultConnection($name);
-        }
+        $this->resolver->setDefaultConnection($name);
 
         $this->repository->setSource($name);
 
@@ -480,9 +454,9 @@ class Migrator
         };
 
         $this->getSchemaGrammar($connection)->supportsSchemaTransactions()
-            && $migration->withinTransaction
-                    ? $connection->transaction($callback)
-                    : $callback();
+        && $migration->withinTransaction
+            ? $connection->transaction($callback)
+            : $callback();
     }
 
     /**

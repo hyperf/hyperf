@@ -17,7 +17,6 @@ use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
-use Hyperf\Di\Definition\ScanConfig;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
 use Hyperf\JsonRpc\DataFormatter;
@@ -301,7 +300,7 @@ class RpcServiceClientTest extends TestCase
                 return $transporter;
             },
             IdGeneratorInterface::class => UniqidIdGenerator::class,
-        ], new ScanConfig()));
+        ]));
         ApplicationContext::setContainer($container);
         return $container;
     }

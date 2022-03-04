@@ -23,24 +23,18 @@ class UserRole extends Model
 {
     /**
      * The table associated with the model.
-     *
-     * @var string
      */
-    protected $table = 'user_role';
+    protected ?string $table = 'user_role';
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = ['id', 'user_id', 'role_id', 'created_at', 'updated_at'];
+    protected array $fillable = ['id', 'user_id', 'role_id', 'created_at', 'updated_at'];
 
     /**
      * The attributes that should be cast to native types.
-     *
-     * @var array
      */
-    protected $casts = ['id' => 'integer', 'user_id' => 'integer', 'role_id' => 'integer', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
+    protected array $casts = ['id' => 'integer', 'user_id' => 'integer', 'role_id' => 'integer', 'created_at' => 'datetime', 'updated_at' => 'datetime'];
 
     public function users()
     {

@@ -14,7 +14,7 @@
 
 - [#4514](https://github.com/hyperf/hyperf/pull/4514) 通過使用小寫 `key` 獲取 `HTTP` 的 `Header` 資訊，提升一部分效能。
 - [#4521](https://github.com/hyperf/hyperf/pull/4521) 在使用 Redis 的哨兵模式時，如果第一個哨兵節點連線失敗，則嘗試連線其餘哨兵節點。
-- [#4529](https://github.com/hyperf/hyperf/pull/4529) 將元件 `hyperf/context` 從主鍵 `hyperf/utils` 中分離出來。
+- [#4529](https://github.com/hyperf/hyperf/pull/4529) 將元件 `hyperf/context` 從元件 `hyperf/utils` 中分離出來。
 
 # v2.2.25 - 2022-01-30
 
@@ -1316,8 +1316,8 @@
 ```
 class Example {
     /**
-    * @Inject
-    */
+     * @Inject
+     */
     private ExampleService $exampleService;
 }
 ```

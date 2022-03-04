@@ -21,26 +21,8 @@ use Psr\Container\ContainerInterface;
 
 class OnPipeMessageListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var Sender
-     */
-    private $sender;
-
-    public function __construct(ContainerInterface $container, StdoutLoggerInterface $logger, Sender $sender)
+    public function __construct(private ContainerInterface $container, private StdoutLoggerInterface $logger, private Sender $sender)
     {
-        $this->container = $container;
-        $this->logger = $logger;
-        $this->sender = $sender;
     }
 
     /**

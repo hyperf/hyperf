@@ -232,14 +232,15 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Order;
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 
 class IndexController extends AbstractController
 {
     /**
-     * @Inject
      * @var MetricFactoryInterface
      */
+    #[Inject]
     private $metricFactory;
 
     public function create(Order $order)
@@ -278,10 +279,7 @@ use Redis;
 
 class OnMetricFactoryReady implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {

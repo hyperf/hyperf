@@ -14,35 +14,16 @@ namespace Hyperf\Cache\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class CacheEvict extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $prefix;
+    public ?string $prefix = null;
 
-    /**
-     * @var string
-     */
-    public $value;
+    public ?string $value = null;
 
-    /**
-     * @var bool
-     */
-    public $all = false;
+    public bool $all = false;
 
-    /**
-     * @var string
-     */
-    public $group = 'default';
+    public string $group = 'default';
 
-    /**
-     * @var bool
-     */
-    public $collect = false;
+    public bool $collect = false;
 }

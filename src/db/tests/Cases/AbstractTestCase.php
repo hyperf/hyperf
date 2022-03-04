@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\DB\Cases;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\DB\DB;
@@ -23,7 +24,6 @@ use Hyperf\Di\Container;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 

@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
+use Hyperf\Context\Context;
+use Hyperf\Contract\Arrayable;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Server\Chunk\Chunkable;
 use Hyperf\HttpMessage\Stream\SwooleFileStream;
@@ -25,8 +27,6 @@ use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ClearStatCache;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Codec\Xml;
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Contracts\Xmlable;
 use Hyperf\Utils\MimeTypeExtensionGuesser;
@@ -40,32 +40,29 @@ class Response implements PsrResponseInterface, ResponseInterface
 {
     use Macroable;
 
-    /**
-     * @var null|PsrResponseInterface
-     */
-    protected $response;
+    protected ?PsrResponseInterface $response = null;
 
     public function __construct(?PsrResponseInterface $response = null)
     {
         $this->response = $response;
     }
 
-    public function __call($name, $arguments)
+    public function __call($method, $parameters)
     {
         $response = $this->getResponse();
-        if (! method_exists($response, $name)) {
-            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
+        if (! method_exists($response, $method)) {
+            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $method));
         }
-        return $response->{$name}(...$arguments);
+        return $response->{$method}(...$parameters);
     }
 
-    public static function __callStatic($name, $arguments)
+    public static function __callStatic($method, $parameters)
     {
         $response = Context::get(PsrResponseInterface::class);
-        if (! method_exists($response, $name)) {
-            throw new BadMethodCallException(sprintf('Call to undefined static method %s::%s()', self::class, $name));
+        if (! method_exists($response, $method)) {
+            throw new BadMethodCallException(sprintf('Call to undefined static method %s::%s()', self::class, $method));
         }
-        return $response::{$name}(...$arguments);
+        return $response::{$method}(...$parameters);
     }
 
     /**
@@ -97,7 +94,7 @@ class Response implements PsrResponseInterface, ResponseInterface
     /**
      * Format data to a string and return data with content-type:text/plain header.
      *
-     * @param mixed $data will transfer to a string value
+     * @param mixed|\Stringable $data will transfer to a string value
      */
     public function raw($data): PsrResponseInterface
     {
@@ -107,7 +104,7 @@ class Response implements PsrResponseInterface, ResponseInterface
     }
 
     /**
-     * Redirect to a url with a status.
+     * Redirect to an url with a status.
      */
     public function redirect(
         string $toUrl,
@@ -159,6 +156,7 @@ class Response implements PsrResponseInterface, ResponseInterface
             $ifMatch = $request->getHeaderLine('if-match');
             $ifNoneMatch = $request->getHeaderLine('if-none-match');
             $clientEtags = explode(',', $ifMatch ?: $ifNoneMatch);
+            /* @phpstan-ignore-next-line */
             array_walk($clientEtags, 'trim');
             if (in_array($etag, $clientEtags, true)) {
                 return $this->withStatus(304)->withAddedHeader('content-type', $contentType);
@@ -264,7 +262,7 @@ class Response implements PsrResponseInterface, ResponseInterface
 
     /**
      * Retrieves a comma-separated string of the values for a single header.
-     * This method returns all of the header values of the given
+     * This method returns all the header values of the given
      * case-insensitive header name as a string concatenated together using
      * a comma.
      * NOTE: Not all header values may be appropriately represented using

@@ -17,15 +17,9 @@ namespace Hyperf\RpcServer\Router;
  */
 class Router
 {
-    /**
-     * @var string
-     */
-    protected static $serverName = 'rpc';
+    protected static string $serverName = 'rpc';
 
-    /**
-     * @var DispatcherFactory
-     */
-    protected static $factory;
+    protected static ?DispatcherFactory $factory = null;
 
     public static function __callStatic($name, $arguments)
     {

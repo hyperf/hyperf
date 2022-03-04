@@ -148,19 +148,13 @@ namespace App\Annotation;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"METHOD","PROPERTY"})
- */
+#[Attribute(Attribute::TARGET_PROPERTY)]
 class Bar extends AbstractAnnotation
 {
     // some code
 }
 
-/**
- * @Annotation
- * @Target("CLASS")
- */
+#[Attribute(Attribute::TARGET_CLASS)]
 class Foo extends AbstractAnnotation
 {
     // some code
@@ -275,6 +269,7 @@ declare(strict_types=1);
  */
 namespace App\Kernel\Context;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Utils;
@@ -284,20 +279,9 @@ use Swoole\Coroutine as SwooleCoroutine;
 
 class Coroutine
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var null|FormatterInterface
-     */
-    protected $formatter;
+    protected StdoutLoggerInterface $logger;
+    
+    protected ?FormatterInterface $formatter = null;
 
     public function __construct(ContainerInterface $container)
     {
@@ -318,7 +302,7 @@ class Coroutine
         $result = SwooleCoroutine::create(function () use ($callable, $id) {
             try {
                 // 按需复制，禁止复制 Socket，不然会导致 Socket 跨协程调用从而报错。
-                Utils\Context::copy($id, [
+                Context::copy($id, [
                     ServerRequestInterface::class,
                 ]);
                 call($callable);

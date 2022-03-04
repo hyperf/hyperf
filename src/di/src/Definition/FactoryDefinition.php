@@ -13,31 +13,15 @@ namespace Hyperf\Di\Definition;
 
 class FactoryDefinition implements DefinitionInterface
 {
-    /**
-     * @var string
-     */
-    private $name;
+    private bool $needProxy = false;
 
     /**
-     * @var callable|string
+     * @param string $name
+     * @param callable|string $factory
+     * @param array $parameters
      */
-    private $factory;
-
-    /**
-     * @var mixed[]
-     */
-    private $parameters = [];
-
-    /**
-     * @var bool
-     */
-    private $needProxy = false;
-
-    public function __construct(string $name, $factory, array $parameters = [])
+    public function __construct(private string $name, private $factory, private array $parameters = [])
     {
-        $this->name = $name;
-        $this->factory = $factory;
-        $this->parameters = $parameters;
     }
 
     public function __toString(): string
@@ -64,9 +48,6 @@ class FactoryDefinition implements DefinitionInterface
         return $this->factory;
     }
 
-    /**
-     * @return mixed[]
-     */
     public function getParameters(): array
     {
         return $this->parameters;

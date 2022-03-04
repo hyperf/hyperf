@@ -25,26 +25,11 @@ use Hyperf\Utils\ApplicationContext;
 
 class CrontabRegisterListener implements ListenerInterface
 {
-    /**
-     * @var \Hyperf\Crontab\CrontabManager
-     */
-    protected $crontabManager;
-
-    /**
-     * @var \Hyperf\Contract\StdoutLoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var \Hyperf\Contract\ConfigInterface
-     */
-    private $config;
-
-    public function __construct(CrontabManager $crontabManager, StdoutLoggerInterface $logger, ConfigInterface $config)
-    {
-        $this->crontabManager = $crontabManager;
-        $this->logger = $logger;
-        $this->config = $config;
+    public function __construct(
+        protected CrontabManager $crontabManager,
+        protected StdoutLoggerInterface $logger,
+        protected ConfigInterface $config
+    ) {
     }
 
     /**
@@ -116,10 +101,7 @@ class CrontabRegisterListener implements ListenerInterface
         return $crontab;
     }
 
-    /**
-     * @param array|bool $enable
-     */
-    private function resolveCrontabEnableMethod($enable): bool
+    private function resolveCrontabEnableMethod(array|bool $enable): bool
     {
         if (is_bool($enable)) {
             return $enable;
@@ -145,7 +127,7 @@ class CrontabRegisterListener implements ListenerInterface
 
             $this->logger->info('Crontab enable method is not public, skip register.');
         } catch (\ReflectionException $e) {
-            $this->logger->error('Resolve crontab enable failed, skip register.');
+            $this->logger->error('Resolve crontab enable failed, skip register.' . $e);
         }
 
         return false;

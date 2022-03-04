@@ -52,8 +52,8 @@ class RetryTest extends TestCase
     public function testWhenThrows()
     {
         $i = -1;
-        $this->expectException('InvalidArgumentException');
-        $result = Retry::with(new MaxAttemptsRetryPolicy(3))->whenThrows('RuntimeException')->call(function () use (&$i) {
+        $this->expectException(\InvalidArgumentException::class);
+        $result = Retry::with(new MaxAttemptsRetryPolicy(3))->whenThrows(\RuntimeException::class)->call(function () use (&$i) {
             $ex = [new \RuntimeException(), new \InvalidArgumentException()];
             throw $ex[++$i];
         });
@@ -87,9 +87,7 @@ class RetryTest extends TestCase
     public function testFallback()
     {
         $i = 0;
-        $result = Retry::max(2)->fallback(function () {
-            return 10;
-        })->call(function () use (&$i) {
+        $result = Retry::max(2)->fallback(fn () => 10)->call(function () use (&$i) {
             return $i;
         });
         $this->assertEquals(10, $result);
@@ -124,8 +122,6 @@ class RetryTest extends TestCase
         $instance->shouldReceive('test')->twice()->andThrowExceptions([new \RuntimeException()]);
         Retry::whenThrows()->max(2)->fallback(function ($throwable) {
             $this->assertInstanceOf(\RuntimeException::class, $throwable);
-        })->call(function () use ($instance) {
-            return $instance->test();
-        });
+        })->call(fn () => $instance->test());
     }
 }

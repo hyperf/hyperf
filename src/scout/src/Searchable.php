@@ -13,6 +13,7 @@ namespace Hyperf\Scout;
 
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Collection as BaseCollection;
+use Hyperf\Database\Model\SoftDeletes;
 use Hyperf\ModelListener\Collector\ListenerCollector;
 use Hyperf\Scout\Engine\Engine;
 use Hyperf\Utils\ApplicationContext;
@@ -22,20 +23,15 @@ trait Searchable
 {
     /**
      * Additional metadata attributes managed by Scout.
-     *
-     * @var array
      */
-    protected $scoutMetadata = [];
+    protected array $scoutMetadata = [];
 
-    /**
-     * @var Coroutine\Concurrent
-     */
-    protected static $scoutRunner;
+    protected static ?Coroutine\Concurrent $scoutRunner = null;
 
     /**
      * Boot the trait.
      */
-    public static function bootSearchable()
+    public static function bootSearchable(): void
     {
         static::addGlobalScope(make(SearchableScope::class));
         ListenerCollector::register(static::class, ModelObserver::class);
@@ -45,7 +41,7 @@ trait Searchable
     /**
      * Register the searchable macros.
      */
-    public function registerSearchableMacros()
+    public function registerSearchableMacros(): void
     {
         $self = $this;
         BaseCollection::macro('searchable', function () use ($self) {
@@ -74,7 +70,7 @@ trait Searchable
      * Dispatch the coroutine to make the given models unsearchable.
      * @param mixed $models
      */
-    public function queueRemoveFromSearch($models)
+    public function queueRemoveFromSearch($models): void
     {
         if ($models->isEmpty()) {
             return;
@@ -87,10 +83,8 @@ trait Searchable
 
     /**
      * Determine if the model should be searchable.
-     *
-     * @return bool
      */
-    public function shouldBeSearchable()
+    public function shouldBeSearchable(): bool
     {
         return true;
     }
@@ -111,7 +105,7 @@ trait Searchable
     /**
      * Make all instances of the model searchable.
      */
-    public static function makeAllSearchable(?int $chunk = null, ?string $column = null)
+    public static function makeAllSearchable(?int $chunk = null, ?string $column = null): void
     {
         $self = new static();
         $softDelete = static::usesSoftDelete() && config('scout.soft_delete', false);
@@ -201,20 +195,16 @@ trait Searchable
 
     /**
      * Get the index name for the model.
-     *
-     * @return string
      */
-    public function searchableAs()
+    public function searchableAs(): string
     {
         return config('scout.prefix') . $this->getTable();
     }
 
     /**
      * Get the indexable data array for the model.
-     *
-     * @return array
      */
-    public function toSearchableArray()
+    public function toSearchableArray(): array
     {
         return $this->toArray();
     }
@@ -249,10 +239,8 @@ trait Searchable
 
     /**
      * Get all Scout related metadata.
-     *
-     * @return array
      */
-    public function scoutMetadata()
+    public function scoutMetadata(): array
     {
         return $this->scoutMetadata;
     }
@@ -262,9 +250,8 @@ trait Searchable
      *
      * @param string $key
      * @param mixed $value
-     * @return $this
      */
-    public function withScoutMetadata($key, $value)
+    public function withScoutMetadata($key, $value): static
     {
         $this->scoutMetadata[$key] = $value;
         return $this;
@@ -293,7 +280,7 @@ trait Searchable
     /**
      * Dispatch the coroutine to scout the given models.
      */
-    protected static function dispatchSearchableJob(callable $job)
+    protected static function dispatchSearchableJob(callable $job): void
     {
         if (! Coroutine::inCoroutine()) {
             $job();
@@ -311,10 +298,8 @@ trait Searchable
 
     /**
      * Determine if the current class should use soft deletes with searching.
-     *
-     * @return bool
      */
-    protected static function usesSoftDelete()
+    protected static function usesSoftDelete(): bool
     {
         return in_array(SoftDeletes::class, class_uses_recursive(get_called_class()));
     }

@@ -78,22 +78,22 @@ class Parser
             for ($i = $start; $i <= $max; ++$i) {
                 $result[] = $i;
             }
-        } elseif (strpos($string, ',') !== false) {
+        } elseif (str_contains($string, ',')) {
             $exploded = explode(',', $string);
             foreach ($exploded as $value) {
-                if (strpos($value, '/') !== false || strpos($string, '-') !== false) {
+                if (str_contains($value, '/') || str_contains($string, '-')) {
                     $result = array_merge($result, $this->parseSegment($value, $min, $max, $start));
                     continue;
                 }
 
-                if (trim($value) === '' || ! $this->between((int) $value, (int) ($min > $start ? $min : $start), (int) $max)) {
+                if (trim($value) === '' || ! $this->between((int) $value, ($min > $start ? $min : $start), $max)) {
                     continue;
                 }
                 $result[] = (int) $value;
             }
-        } elseif (strpos($string, '/') !== false) {
+        } elseif (str_contains($string, '/')) {
             $exploded = explode('/', $string);
-            if (strpos($exploded[0], '-') !== false) {
+            if (str_contains($exploded[0], '-')) {
                 [$nMin, $nMax] = explode('-', $exploded[0]);
                 $nMin > $min && $min = (int) $nMin;
                 $nMax < $max && $max = (int) $nMax;
@@ -104,7 +104,7 @@ class Parser
                 $result[] = $i;
                 $i += $exploded[1];
             }
-        } elseif (strpos($string, '-') !== false) {
+        } elseif (str_contains($string, '-')) {
             $result = array_merge($result, $this->parseSegment($string . '/1', $min, $max, $start));
         } elseif ($this->between((int) $string, $min > $start ? $min : $start, $max)) {
             $result[] = (int) $string;
@@ -113,7 +113,7 @@ class Parser
     }
 
     /**
-     * Determire if the $value is between in $min and $max ?
+     * Determine if the $value is between in $min and $max ?
      */
     private function between(int $value, int $min, int $max): bool
     {

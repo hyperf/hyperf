@@ -17,6 +17,7 @@ use HyperfTest\Utils\Stub\UnionTypeFoo;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\ParserFactory;
+use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -54,6 +55,30 @@ class PhpParserTest extends TestCase
             $parameters = $foo->getMethod('__construct')->getParameters();
             $this->assertNodeParam($name, $parser->getNodeFromReflectionParameter($parameters[0]));
         }
+    }
+
+    public function testGetExprFromArray()
+    {
+        $parser = new PhpParser();
+        $printer = new Standard();
+
+        $stmts = $parser->getExprFromValue([]);
+        $this->assertInstanceOf(Node\Expr\Array_::class, $stmts);
+        $this->assertSame([], $stmts->items);
+        $res = $printer->prettyPrint([$stmts]);
+        $this->assertSame('[]', $res);
+
+        $stmts = $parser->getExprFromValue([1, 2, 3]);
+        $res = $printer->prettyPrint([$stmts]);
+        $this->assertSame('[1, 2, 3]', $res);
+
+        $stmts = $parser->getExprFromValue(['a' => 1, 2, 3]);
+        $res = $printer->prettyPrint([$stmts]);
+        $this->assertSame("['a' => 1, 0 => 2, 1 => 3]", $res);
+
+        $stmts = $parser->getExprFromValue(['a' => 1, 'b' => 2]);
+        $res = $printer->prettyPrint([$stmts]);
+        $this->assertSame("['a' => 1, 'b' => 2]", $res);
     }
 
     protected function assertNodeParam(Node\Param $param, Node\Param $param2)

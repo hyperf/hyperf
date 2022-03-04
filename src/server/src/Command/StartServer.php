@@ -24,14 +24,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class StartServer extends Command
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
         parent::__construct('start');
         $this->setDescription('Start hyperf servers.');
     }

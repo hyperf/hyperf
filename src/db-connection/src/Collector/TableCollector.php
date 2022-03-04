@@ -16,20 +16,20 @@ use Hyperf\Database\Schema\Column;
 class TableCollector
 {
     /**
-     * @var array
+     * @var array<string, array<string, Column>>
      */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * @param Column[] $columns
      */
-    public function set(string $pool, string $table, array $columns)
+    public function set(string $pool, string $table, array $columns): void
     {
         $this->validateColumns($columns);
         $this->data[$pool][$table] = $columns;
     }
 
-    public function add(string $pool, Column $column)
+    public function add(string $pool, Column $column): void
     {
         $this->data[$pool][$column->getTable()][$column->getName()] = $column;
     }

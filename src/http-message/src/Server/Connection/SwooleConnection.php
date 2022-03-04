@@ -17,14 +17,8 @@ use Swoole\Http\Response;
 
 class SwooleConnection implements ConnectionInterface, Chunkable
 {
-    /**
-     * @var Response
-     */
-    protected $response;
-
-    public function __construct(Response $response)
+    public function __construct(protected Response $response)
     {
-        $this->response = $response;
     }
 
     public function write(string $data): bool

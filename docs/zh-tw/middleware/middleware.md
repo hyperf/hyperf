@@ -79,10 +79,8 @@ use App\Middleware\FooMiddleware;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
 
-/**
- * @AutoController()
- * @Middleware(FooMiddleware::class)
- */
+#[AutoController]
+#[Middleware(FooMiddleware::class)]
 class IndexController
 {
     public function index()
@@ -104,13 +102,8 @@ use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 
-/**
- * @AutoController()
- * @Middlewares({
- *     @Middleware(FooMiddleware::class),
- *     @Middleware(BarMiddleware::class)
- * })
- */
+#[AutoController]
+#[Middlewares(FooMiddleware::class, BarMiddleware::class)]
 class IndexController
 {
     public function index()
@@ -119,7 +112,6 @@ class IndexController
     }
 }
 ```
-> 注意: 使用 `PHP8` 的 `Attributes` 語法時, 應簡化為`#[Middlewares(FooMiddleware::class, BarMiddleware::class)]`這種格式, 下同。
 
 #### 定義方法級別的中介軟體
 
@@ -136,26 +128,18 @@ use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 
-/**
- * @AutoController()
- * @Middlewares({
- *     @Middleware(FooMiddleware::class)
- * })
- */
+#[AutoController]
+#[Middlewares([FooMiddleware::class])]
 class IndexController
 {
-    
-    /**
-     * @Middlewares({
-     *     @Middleware(BarMiddleware::class)
-     * })
-     */
+    #[Middleware(BarMiddleware::class)]
     public function index()
     {
         return 'Hello Hyperf.';
     }
 }
 ```
+
 #### 中介軟體相關的程式碼
 
 生成中介軟體
@@ -181,20 +165,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class FooMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
-    /**
-     * @var RequestInterface
-     */
-    protected $request;
+    protected RequestInterface $request;
 
-    /**
-     * @var HttpResponse
-     */
-    protected $response;
+    protected HttpResponse $response;
 
     public function __construct(ContainerInterface $container, HttpResponse $response, RequestInterface $request)
     {
@@ -237,13 +212,13 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 // $request 和 $response 為修改後的物件
-$request = \Hyperf\Utils\Context::set(ServerRequestInterface::class, $request);
-$response = \Hyperf\Utils\Context::set(ResponseInterface::class, $response);
+$request = \Hyperf\Context\Context::set(ServerRequestInterface::class, $request);
+$response = \Hyperf\Context\Context::set(ResponseInterface::class, $response);
 ```
 
 ## 自定義 CoreMiddleWare 的行為
 
-預設情況下，Hyperf 在處理路由找不到或 HTTP 方法不允許時，即 HTTP 狀態碼為 `404` `405` 的時候，是由 `CoreMiddleware` 直接處理並返回對應的響應物件的，得益於 Hyperf 依賴注入的設計，您可以通過替換物件的方式來把 `CoreMiddleware` 指向由您自己實現的 `CoreMiddleware` 去。
+預設情況下，Hyperf 在處理路由找不到或 HTTP 方法不允許時，即 HTTP 狀態碼為 `404`、`405` 的時候，是由 `CoreMiddleware` 直接處理並返回對應的響應物件的，得益於 Hyperf 依賴注入的設計，您可以通過替換物件的方式來把 `CoreMiddleware` 指向由您自己實現的 `CoreMiddleware` 去。
 
 比如我們希望定義一個 `App\Middleware\CoreMiddleware` 類來重寫預設的行為，我們可以先定義一個 `App\Middleware\CoreMiddleware` 類如下，這裡我們僅以 HTTP Server 為例，其它 Server 也可採用同樣的做法來達到同樣的目的。
 
@@ -253,8 +228,8 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\HttpMessage\Stream\SwooleStream;
-use Hyperf\Utils\Contracts\Arrayable;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -308,7 +283,7 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;

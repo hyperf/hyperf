@@ -13,12 +13,8 @@ namespace Hyperf\HttpServer\Annotation;
 
 use Attribute;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class PatchMapping extends Mapping
 {
-    public $methods = ['PATCH'];
+    public array $methods = ['PATCH'];
 }

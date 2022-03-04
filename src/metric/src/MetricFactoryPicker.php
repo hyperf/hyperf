@@ -22,15 +22,9 @@ use Psr\Container\ContainerInterface;
 
 class MetricFactoryPicker
 {
-    /**
-     * @var bool
-     */
-    public static $inMetricProcess = false;
+    public static bool $inMetricProcess = false;
 
-    /**
-     * @var bool
-     */
-    public static $isCommand = false;
+    public static bool $isCommand = false;
 
     public function __invoke(ContainerInterface $container)
     {

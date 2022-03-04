@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Testing;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
@@ -25,7 +26,6 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Server;
 use Hyperf\Testing\HttpMessage\Upload\UploadedFile;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
@@ -34,31 +34,28 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Client extends Server
 {
-    /**
-     * @var PackerInterface
-     */
-    protected $packer;
+    protected PackerInterface $packer;
 
-    /**
-     * @var float
-     */
-    protected $waitTimeout = 10.0;
+    protected float $waitTimeout = 10.0;
 
-    /**
-     * @var string
-     */
-    protected $baseUri = 'http://127.0.0.1/';
+    protected string $baseUri = 'http://127.0.0.1/';
 
     public function __construct(ContainerInterface $container, PackerInterface $packer = null, $server = 'http')
     {
-        parent::__construct($container, $container->get(HttpDispatcher::class), $container->get(ExceptionHandlerDispatcher::class), $container->get(ResponseEmitter::class));
+        parent::__construct(
+            $container,
+            $container->get(HttpDispatcher::class),
+            $container->get(ExceptionHandlerDispatcher::class),
+            $container->get(ResponseEmitter::class)
+        );
+
         $this->packer = $packer ?? new JsonPacker();
 
         $this->initCoreMiddleware($server);
         $this->initBaseUri($server);
     }
 
-    public function get($uri, $data = [], $headers = [])
+    public function get(string $uri, array $data = [], array $headers = [])
     {
         $response = $this->request('GET', $uri, [
             'headers' => $headers,
@@ -68,7 +65,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function post($uri, $data = [], $headers = [])
+    public function post(string $uri, array $data = [], array $headers = [])
     {
         $response = $this->request('POST', $uri, [
             'headers' => $headers,
@@ -78,7 +75,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function put($uri, $data = [], $headers = [])
+    public function put(string $uri, array $data = [], array $headers = [])
     {
         $response = $this->request('PUT', $uri, [
             'headers' => $headers,
@@ -88,7 +85,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function delete($uri, $data = [], $headers = [])
+    public function delete(string $uri, array $data = [], array $headers = [])
     {
         $response = $this->request('DELETE', $uri, [
             'headers' => $headers,
@@ -98,7 +95,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function json($uri, $data = [], $headers = [])
+    public function json(string $uri, array $data = [], array $headers = [])
     {
         $headers['Content-Type'] = 'application/json';
         $response = $this->request('POST', $uri, [
@@ -108,7 +105,7 @@ class Client extends Server
         return $this->packer->unpack((string) $response->getBody());
     }
 
-    public function file($uri, $data = [], $headers = [])
+    public function file(string $uri, array $data = [], array $headers = [])
     {
         $multipart = [];
         if (Arr::isAssoc($data)) {
@@ -221,7 +218,7 @@ class Client extends Server
         Context::set(ResponseInterface::class, $response);
     }
 
-    protected function initBaseUri($server): void
+    protected function initBaseUri(string $server): void
     {
         if ($this->container->has(ConfigInterface::class)) {
             $config = $this->container->get(ConfigInterface::class);

@@ -20,9 +20,8 @@ interface LoadBalancerInterface
 
     /**
      * @param Node[] $nodes
-     * @return $this
      */
-    public function setNodes(array $nodes);
+    public function setNodes(array $nodes): static;
 
     /**
      * @return Node[] $nodes
@@ -34,5 +33,5 @@ interface LoadBalancerInterface
      */
     public function removeNode(Node $node): bool;
 
-    public function refresh(callable $callback, int $tickMs = 5000);
+    public function refresh(callable $callback, int $tickMs = 5000): void;
 }
