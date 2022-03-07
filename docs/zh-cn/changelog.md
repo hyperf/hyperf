@@ -1,5 +1,11 @@
 # 版本更新记录
 
+# v2.2.27 - 2022-03-07
+
+## 优化
+
+- [#4572](https://github.com/hyperf/hyperf/pull/4572) 当负载均衡器 `hyperf/load-balancer` 选择节点失败时，使用 `Hyperf\LoadBalancer\Exception\RuntimeException` 代替 `\RuntimeException`。
+
 # v2.2.26 - 2022-02-21
 
 ## 修复
