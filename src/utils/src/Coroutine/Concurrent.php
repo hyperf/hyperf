@@ -66,6 +66,16 @@ class Concurrent
         return $this->getLength();
     }
 
+    public function stats(): array
+    {
+        return $this->getStats();
+    }
+
+    public function getStats(): array
+    {
+        return $this->channel->stats();
+    }
+
     public function create(callable $callable): void
     {
         $this->channel->push(true);
