@@ -363,7 +363,7 @@ class ModelRealBuilderTest extends TestCase
         $this->assertTrue($res->hasMorePages());
         while ($event = $this->channel->pop(0.001)) {
             if ($event instanceof QueryExecuted) {
-                $this->assertSame('select * from `user` limit 1 offset 0', $event->sql);
+                $this->assertSame('select * from `user` limit 2 offset 0', $event->sql);
             }
         }
 
@@ -371,7 +371,7 @@ class ModelRealBuilderTest extends TestCase
         $this->assertTrue($res->hasMorePages());
         while ($event = $this->channel->pop(0.001)) {
             if ($event instanceof QueryExecuted) {
-                $this->assertSame('select * from `user` limit 1 offset 0', $event->sql);
+                $this->assertSame('select * from `user` limit 2 offset 0', $event->sql);
             }
         }
     }
