@@ -1,4 +1,20 @@
-# v2.2.26 - TBD
+# v2.2.28 - TBD
+
+# v2.2.27 - 2022-03-07
+
+## Optimized
+
+- [#4572](https://github.com/hyperf/hyperf/pull/4572) Use Hyperf\LoadBalancer\Exception\RuntimeException instead of \RuntimeException for `hyperf/load-balancer`.
+
+# v2.2.26 - 2022-02-21
+
+## Fixed
+
+- [#4536](https://github.com/hyperf/hyperf/pull/4536) Fixed bug that response header `content-type` will be set more than once sometimes when using json-rpc.
+
+## Added
+
+- [#4527](https://github.com/hyperf/hyperf/pull/4527) Added some useful methods for `Hyperf\Database\Schema\Blueprint`.
 
 ## Optimized
 
