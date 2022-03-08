@@ -1,5 +1,9 @@
 # v2.2.28 - TBD
 
+## Added
+
+- [#4580](https://github.com/hyperf/hyperf/pull/4580) Added method `Hyperf\Utils\Coroutine\Concurrent::getChannel()`.
+
 # v2.2.27 - 2022-03-07
 
 ## Optimized
