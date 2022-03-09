@@ -2,6 +2,7 @@
 
 ## Fixed
 
+- [#4588](https://github.com/hyperf/hyperf/pull/4588) Fixed bug that `database` does not support `bit`.
 - [#4589](https://github.com/hyperf/hyperf/pull/4589) Fixed bug that ephemeral instance register failed when using nacos.
 
 ## Added
