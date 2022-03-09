@@ -53,6 +53,7 @@ class FileHandler implements SessionHandlerInterface
      * @see https://php.net/manual/en/sessionhandlerinterface.close.php
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function close()
     {
         return true;
@@ -65,6 +66,7 @@ class FileHandler implements SessionHandlerInterface
      * @param string $session_id the session ID being destroyed
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function destroy($session_id)
     {
         $this->files->delete($this->path . '/' . $session_id);
@@ -78,6 +80,7 @@ class FileHandler implements SessionHandlerInterface
      * @param int $maxlifetime
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function gc($maxlifetime)
     {
         $files = Finder::create()
@@ -101,6 +104,7 @@ class FileHandler implements SessionHandlerInterface
      * @param string $name the session name
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function open($save_path, $name)
     {
         return true;
@@ -113,6 +117,7 @@ class FileHandler implements SessionHandlerInterface
      * @param string $session_id the session id to read data for
      * @return string
      */
+    #[\ReturnTypeWillChange]
     public function read($session_id)
     {
         if ($this->files->isFile($path = $this->path . '/' . $session_id)) {
@@ -132,6 +137,7 @@ class FileHandler implements SessionHandlerInterface
      * @param string $session_data
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function write($session_id, $session_data)
     {
         $this->files->put($this->path . '/' . $session_id, $session_data, true);

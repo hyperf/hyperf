@@ -44,16 +44,19 @@ class DatabaseHandler implements SessionHandlerInterface
         $this->connection = $connection;
     }
 
+    #[\ReturnTypeWillChange]
     public function open($savePath, $sessionName)
     {
         return true;
     }
 
+    #[\ReturnTypeWillChange]
     public function close()
     {
         return true;
     }
 
+    #[\ReturnTypeWillChange]
     public function read($sessionId)
     {
         $session = (object) $this->getQuery()->find($sessionId);
@@ -70,6 +73,7 @@ class DatabaseHandler implements SessionHandlerInterface
         return '';
     }
 
+    #[\ReturnTypeWillChange]
     public function write($sessionId, $data)
     {
         $payload = $this->getDefaultPayload($data);
@@ -83,6 +87,7 @@ class DatabaseHandler implements SessionHandlerInterface
         return true;
     }
 
+    #[\ReturnTypeWillChange]
     public function destroy($sessionId)
     {
         $this->getQuery()->where('id', $sessionId)->delete();
@@ -90,6 +95,7 @@ class DatabaseHandler implements SessionHandlerInterface
         return true;
     }
 
+    #[\ReturnTypeWillChange]
     public function gc($lifetime)
     {
         return (bool) $this->getQuery()

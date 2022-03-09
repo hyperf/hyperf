@@ -42,6 +42,7 @@ class RedisHandler implements SessionHandlerInterface
      * @see https://php.net/manual/en/sessionhandlerinterface.close.php
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function close()
     {
         return true;
@@ -54,6 +55,7 @@ class RedisHandler implements SessionHandlerInterface
      * @param string $session_id the session ID being destroyed
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function destroy($session_id)
     {
         $this->redis->del($session_id);
@@ -67,6 +69,7 @@ class RedisHandler implements SessionHandlerInterface
      * @param int $maxlifetime
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function gc($maxlifetime)
     {
         return true;
@@ -80,6 +83,7 @@ class RedisHandler implements SessionHandlerInterface
      * @param string $name the session name
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function open($save_path, $name)
     {
         return true;
@@ -92,6 +96,7 @@ class RedisHandler implements SessionHandlerInterface
      * @param string $session_id the session id to read data for
      * @return string
      */
+    #[\ReturnTypeWillChange]
     public function read($session_id)
     {
         return $this->redis->get($session_id) ?: '';
@@ -105,6 +110,7 @@ class RedisHandler implements SessionHandlerInterface
      * @param string $session_data
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function write($session_id, $session_data)
     {
         return (bool) $this->redis->setEx($session_id, (int) $this->gcMaxLifeTime, $session_data);
