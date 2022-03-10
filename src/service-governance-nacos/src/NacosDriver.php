@@ -13,7 +13,6 @@ namespace Hyperf\ServiceGovernanceNacos;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Nacos\Constant\ConsistencyType;
 use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\Utils\Codec\Json;
@@ -101,13 +100,13 @@ class NacosDriver implements DriverInterface
     public function register(string $name, string $host, int $port, array $metadata): void
     {
         $this->setMetadata($name, $metadata);
-        if (! array_key_exists($name, $this->serviceCreated)) {
+        $ephemeral = (bool) $this->config->get('services.drivers.nacos.ephemeral');
+        if (! $ephemeral && ! array_key_exists($name, $this->serviceCreated)) {
             $response = $this->client->service->create($name, [
                 'groupName' => $this->config->get('services.drivers.nacos.group_name'),
                 'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
                 'metadata' => $this->getMetadata($name),
                 'protectThreshold' => (float) $this->config->get('services.drivers.nacos.protect_threshold', 0),
-                'consistencyType' => $this->config->get('services.drivers.nacos.consistency_type'),
             ]);
 
             if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
@@ -121,7 +120,7 @@ class NacosDriver implements DriverInterface
             'groupName' => $this->config->get('services.drivers.nacos.group_name'),
             'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
             'metadata' => $this->getMetadata($name),
-            'ephemeral' => $this->config->get('services.drivers.nacos.consistency_type') === ConsistencyType::EPHEMERAL ? 'true' : null,
+            'ephemeral' => $ephemeral ? 'true' : null,
         ]);
 
         if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
@@ -143,6 +142,7 @@ class NacosDriver implements DriverInterface
             $this->config->get('services.drivers.nacos.group_name'),
             $this->config->get('services.drivers.nacos.namespace_id')
         );
+
         if ($response->getStatusCode() === 404) {
             return false;
         }
