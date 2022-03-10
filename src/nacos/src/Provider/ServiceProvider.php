@@ -24,6 +24,7 @@ class ServiceProvider extends AbstractProvider
      *     'protectThreshold' => 0.99,
      *     'metadata' => '',
      *     'selector' => '', // json字符串
+     *     'consistencyType' => 'persist', // persist, ephemeral
      * ]
      */
     public function create(string $serviceName, array $optional = []): ResponseInterface

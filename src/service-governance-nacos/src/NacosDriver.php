@@ -106,6 +106,7 @@ class NacosDriver implements DriverInterface
                 'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
                 'metadata' => $this->getMetadata($name),
                 'protectThreshold' => (float) $this->config->get('services.drivers.nacos.protect_threshold', 0),
+                'consistencyType' => $this->config->get('services.drivers.nacos.consistency_type'),
             ]);
 
             if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
@@ -114,10 +115,12 @@ class NacosDriver implements DriverInterface
 
             $this->serviceCreated[$name] = true;
         }
+
         $response = $this->client->instance->register($host, $port, $name, [
             'groupName' => $this->config->get('services.drivers.nacos.group_name'),
             'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
             'metadata' => $this->getMetadata($name),
+            'ephemeral' => $this->config->get('services.drivers.nacos.consistency_type') === 'ephemeral' ? 'true' : null,
         ]);
 
         if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
