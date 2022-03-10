@@ -30,7 +30,7 @@ class ServiceProvider extends AbstractProvider
     public function create(string $serviceName, array $optional = []): ResponseInterface
     {
         return $this->request('POST', '/nacos/v1/ns/service', [
-            RequestOptions::QUERY => $this->filter(array_merge($optional, [
+            RequestOptions::FORM_PARAMS => $this->filter(array_merge($optional, [
                 'serviceName' => $serviceName,
             ])),
         ]);
