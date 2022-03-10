@@ -13,6 +13,7 @@ namespace Hyperf\ServiceGovernanceNacos;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Nacos\Constant\ConsistencyType;
 use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\Utils\Codec\Json;
@@ -120,7 +121,7 @@ class NacosDriver implements DriverInterface
             'groupName' => $this->config->get('services.drivers.nacos.group_name'),
             'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
             'metadata' => $this->getMetadata($name),
-            'ephemeral' => $this->config->get('services.drivers.nacos.consistency_type') === 'ephemeral' ? 'true' : null,
+            'ephemeral' => $this->config->get('services.drivers.nacos.consistency_type') === ConsistencyType::EPHEMERAL ? 'true' : null,
         ]);
 
         if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
