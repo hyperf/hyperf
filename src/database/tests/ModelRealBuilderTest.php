@@ -442,6 +442,16 @@ class ModelRealBuilderTest extends TestCase
         $this->assertTrue($model->save());
     }
 
+    public function testSelectForBindingIntegerWhenUsingVarcharIndex()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+        $res = Db::select('EXPLAIN SELECT * FROM `user` WHERE `name` = ?;', ['1']);
+        $this->assertSame('ref', $res[0]->type);
+        $res = Db::select('EXPLAIN SELECT * FROM `user` WHERE `name` = ?;', [1]);
+        $this->assertSame('ref', $res[0]->type);
+    }
+
     protected function getContainer()
     {
         $dispatcher = Mockery::mock(EventDispatcherInterface::class);
