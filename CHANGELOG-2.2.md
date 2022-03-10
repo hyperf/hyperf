@@ -1,5 +1,9 @@
 # v2.2.28 - TBD
 
+## Fixed
+
+- [#4589](https://github.com/hyperf/hyperf/pull/4589) Fixed bug that ephemeral instance register failed when using nacos.
+
 ## Added
 
 - [#4580](https://github.com/hyperf/hyperf/pull/4580) Added method `Hyperf\Utils\Coroutine\Concurrent::getChannel()`.
