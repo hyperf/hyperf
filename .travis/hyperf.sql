@@ -60,7 +60,8 @@ CREATE TABLE `user` (
   `gender` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '0:unknow 1:male 2:female',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `INDEX_NAME` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `user` (`id`, `name`, `gender`, `created_at`, `updated_at`)
