@@ -32,7 +32,7 @@ class InstanceProvider extends AbstractProvider
     public function register(string $ip, int $port, string $serviceName, array $optional = []): ResponseInterface
     {
         return $this->request('POST', '/nacos/v1/ns/instance', [
-            RequestOptions::FORM_PARAMS => $this->filter(array_merge($optional, [
+            RequestOptions::QUERY => $this->filter(array_merge($optional, [
                 'serviceName' => $serviceName,
                 'ip' => $ip,
                 'port' => $port,
@@ -130,7 +130,7 @@ class InstanceProvider extends AbstractProvider
     public function beat(string $serviceName, array $beat = [], ?string $groupName = null, ?string $namespaceId = null, ?bool $ephemeral = null, bool $lightBeatEnabled = false): ResponseInterface
     {
         return $this->request('PUT', '/nacos/v1/ns/instance/beat', [
-            RequestOptions::FORM_PARAMS => $this->filter([
+            RequestOptions::QUERY => $this->filter([
                 'serviceName' => $serviceName,
                 'ip' => $beat['ip'] ?? null,
                 'port' => $beat['port'] ?? null,
