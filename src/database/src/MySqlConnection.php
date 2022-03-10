@@ -39,7 +39,8 @@ class MySqlConnection extends Connection
         foreach ($bindings as $key => $value) {
             $statement->bindValue(
                 is_string($key) ? $key : $key + 1,
-                $value
+                $value,
+                is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR
             );
         }
     }
