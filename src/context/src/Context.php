@@ -81,10 +81,12 @@ class Context
     /**
      * Retrieve the value and override it by closure.
      */
-    public static function override(string $id, mixed $value, ?int $coroutineId = null): mixed
+    public static function override(string $id, Closure $closure, ?int $coroutineId = null): mixed
     {
-        if ($value instanceof Closure) {
-            $value = $value(self::has($id, $coroutineId) ? self::get($id, $coroutineId) : null);
+        $value = null;
+
+        if (self::has($id, $coroutineId)) {
+            $value = $closure(self::get($id, $coroutineId));
         }
 
         self::set($id, $value, $coroutineId);

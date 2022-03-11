@@ -25,13 +25,11 @@ class ContextTest extends TestCase
     {
         Context::set('override.id', 1);
 
-        $this->assertSame(2, Context::override('override.id', 2));
-
-        $this->assertSame(3, Context::override('override.id', function ($id) {
+        $this->assertSame(2, Context::override('override.id', function ($id) {
             return $id + 1;
         }));
 
-        $this->assertSame(3, Context::get('override.id'));
+        $this->assertSame(2, Context::get('override.id'));
     }
 
     public function testGetOrSet()
