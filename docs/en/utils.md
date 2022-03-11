@@ -20,9 +20,9 @@ The static method `create(callable $callable)` can be used to create a coroutine
 
 `inCoroutine()` is a static method to determine whether it is currently in a coroutine environment.
 
-### Hyperf\Utils\Context
+### Hyperf\Context\Context
 
-The `Context` is used to handle coroutine context. It is basically an encapsulation of `Swoole\Coroutine::getContext()`. However, the `Hyperf\Utils\Context` is compatible with running in a non-coroutine environment.
+The `Context` is used to handle coroutine context. It is basically an encapsulation of `Swoole\Coroutine::getContext()`. However, the `Hyperf\Context\Context` is compatible with running in a non-coroutine environment.
 
 ### Hyperf\Utils\Coordinator\CoordinatorManager
 

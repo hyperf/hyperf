@@ -2147,7 +2147,7 @@ Config Provider 内数据结构的变化：
 
 ## 新增
 
-- [#405](https://github.com/hyperf/hyperf/pull/405) 增加 `Hyperf\Utils\Context::override()` 方法，现在你可以通过 `override` 方法获取某些协程上下文的值并修改覆盖它；
+- [#405](https://github.com/hyperf/hyperf/pull/405) 增加 `Hyperf\Context\Context::override()` 方法，现在你可以通过 `override` 方法获取某些协程上下文的值并修改覆盖它；
 - [#415](https://github.com/hyperf/hyperf/pull/415) 对 Logger 的配置文件增加多个 Handler 的配置支持；
 
 ## 变更
