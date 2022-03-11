@@ -18,7 +18,7 @@
         }
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "egulias/email-validator": "^3.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/database": "~3.0.0",

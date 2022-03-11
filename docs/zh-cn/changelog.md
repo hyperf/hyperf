@@ -1,5 +1,21 @@
 # 版本更新记录
 
+# v2.2.26 - 2022-02-21
+
+## 修复
+
+- [#4536](https://github.com/hyperf/hyperf/pull/4536) 修复使用 `JsonRPC` 时，会设置多次 `content-type` 的问题。
+
+## 新增
+
+- [#4527](https://github.com/hyperf/hyperf/pull/4527) 为 `Hyperf\Database\Schema\Blueprint` 增加了一些比较有用的方法。
+
+## 优化
+
+- [#4514](https://github.com/hyperf/hyperf/pull/4514) 通过使用小写 `key` 获取 `HTTP` 的 `Header` 信息，提升一部分性能。
+- [#4521](https://github.com/hyperf/hyperf/pull/4521) 在使用 Redis 的哨兵模式时，如果第一个哨兵节点连接失败，则尝试连接其余哨兵节点。
+- [#4529](https://github.com/hyperf/hyperf/pull/4529) 将组件 `hyperf/context` 从组件 `hyperf/utils` 中分离出来。
+
 # v2.2.25 - 2022-01-30
 
 ## 修复

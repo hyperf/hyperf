@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\WebSocketServer;
 
+use Hyperf\Context\Context;
 use Hyperf\HttpMessage\Base\Response;
 use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
-use Hyperf\Utils\Context;
 use Hyperf\WebSocketServer\Exception\WebSocketHandeShakeException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

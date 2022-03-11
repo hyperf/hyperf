@@ -19,13 +19,6 @@ use Hyperf\Validation\Contract\PresenceVerifierInterface;
 class DatabasePresenceVerifier implements PresenceVerifierInterface
 {
     /**
-     * The database connection instance.
-     *
-     * @var \Hyperf\Database\ConnectionResolverInterface
-     */
-    protected $db;
-
-    /**
      * The database connection to use.
      *
      * @var string
@@ -34,10 +27,11 @@ class DatabasePresenceVerifier implements PresenceVerifierInterface
 
     /**
      * Create a new database presence verifier.
+     *
+     * @param ConnectionResolverInterface $db the database connection instance
      */
-    public function __construct(ConnectionResolverInterface $db)
+    public function __construct(protected ConnectionResolverInterface $db)
     {
-        $this->db = $db;
     }
 
     /**

@@ -16,28 +16,16 @@ use Prometheus\CollectorRegistry;
 
 class Histogram implements HistogramInterface
 {
-    /**
-     * @var \Prometheus\CollectorRegistry
-     */
-    protected $registry;
+    protected \Prometheus\Histogram $histogram;
 
-    /**
-     * @var \Prometheus\Histogram
-     */
-    protected $histogram;
+    protected array $labelValues = [];
 
-    /**
-     * @var string[]
-     */
-    protected $labelValues = [];
-
-    public function __construct(CollectorRegistry $registry, string $namespace, string $name, string $help, array $labelNames)
+    public function __construct(protected CollectorRegistry $registry, string $namespace, string $name, string $help, array $labelNames)
     {
-        $this->registry = $registry;
         $this->histogram = $registry->getOrRegisterHistogram($namespace, $name, $help, $labelNames);
     }
 
-    public function with(string ...$labelValues): HistogramInterface
+    public function with(string ...$labelValues): static
     {
         $this->labelValues = $labelValues;
         return $this;

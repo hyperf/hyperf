@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\AsyncQueue\Stub;
 
 use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 class FooProxy
 {

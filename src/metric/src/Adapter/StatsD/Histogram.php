@@ -17,39 +17,22 @@ use Hyperf\Metric\Contract\HistogramInterface;
 class Histogram implements HistogramInterface
 {
     /**
-     * @var \Domnikl\Statsd\Client
-     */
-    protected $client;
-
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var float
-     */
-    protected $sampleRate;
-
-    /**
      * @var string[]
      */
-    protected $labelNames = [];
+    protected array $labelValues = [];
 
     /**
-     * @var string[]
+     * @param string[] $labelNames
      */
-    protected $labelValues = [];
-
-    public function __construct(Client $client, string $name, float $sampleRate, array $labelNames)
-    {
-        $this->client = $client;
-        $this->name = $name;
-        $this->sampleRate = $sampleRate;
-        $this->labelNames = $labelNames;
+    public function __construct(
+        protected Client $client,
+        protected string $name,
+        protected float $sampleRate,
+        protected array $labelNames
+    ) {
     }
 
-    public function with(string ...$labelValues): HistogramInterface
+    public function with(string ...$labelValues): static
     {
         $this->labelValues = $labelValues;
         return $this;

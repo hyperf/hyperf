@@ -15,7 +15,7 @@ use Hyperf\Metric\Contract\HistogramInterface;
 
 class Histogram implements HistogramInterface
 {
-    public function with(string ...$labelValues): HistogramInterface
+    public function with(string ...$labelValues): static
     {
         return $this;
     }

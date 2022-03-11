@@ -36,24 +36,12 @@ class OnWorkerStart implements ListenerInterface
 {
     use MetricSetter;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected MetricFactoryInterface $factory;
 
-    /**
-     * @var MetricFactoryInterface
-     */
-    protected $factory;
+    private ConfigInterface $config;
 
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
     }
 

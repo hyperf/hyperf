@@ -20,12 +20,8 @@ trait ManagesEvents
 {
     /**
      * Register a view creator event.
-     *
-     * @param array|string $views
-     * @param Closure|string $callback
-     * @return array
      */
-    public function creator($views, $callback)
+    public function creator(array|string $views, Closure|string $callback): array
     {
         $creators = [];
 
@@ -38,10 +34,8 @@ trait ManagesEvents
 
     /**
      * Register multiple view composers via an array.
-     *
-     * @return array
      */
-    public function composers(array $composers)
+    public function composers(array $composers): array
     {
         $registered = [];
 
@@ -54,12 +48,8 @@ trait ManagesEvents
 
     /**
      * Register a view composer event.
-     *
-     * @param array|string $views
-     * @param Closure|string $callback
-     * @return array
      */
-    public function composer($views, $callback)
+    public function composer(array|string $views, Closure|string $callback): array
     {
         $composers = [];
 
@@ -92,11 +82,10 @@ trait ManagesEvents
      * Add an event for a given view.
      *
      * @param string $view
-     * @param Closure|string $callback
      * @param string $prefix
      * @return null|Closure
      */
-    protected function addViewEvent($view, $callback, $prefix = 'composing: ')
+    protected function addViewEvent($view, Closure|string $callback, $prefix = 'composing: ')
     {
         $view = $this->normalizeName($view);
 
@@ -105,9 +94,8 @@ trait ManagesEvents
 
             return $callback;
         }
-        if (is_string($callback)) {
-            return $this->addClassEvent($view, $callback, $prefix);
-        }
+
+        return $this->addClassEvent($view, $callback, $prefix);
     }
 
     /**
@@ -149,12 +137,10 @@ trait ManagesEvents
         // Once we have the class and method name, we can build the Closure to resolve
         // the instance out of the IoC container and call the method on it with the
         // given arguments that are passed to the Closure as the composer's data.
-        return function () use ($class, $method) {
-            return call_user_func_array(
-                [Blade::container()->make($class), $method],
-                func_get_args()
-            );
-        };
+        return fn () => call_user_func_array(
+            [Blade::container()->make($class), $method],
+            func_get_args()
+        );
     }
 
     /**
@@ -189,9 +175,7 @@ trait ManagesEvents
     protected function addEventListener($name, $callback)
     {
         if (Str::contains($name, '*')) {
-            $callback = function ($name, array $data) use ($callback) {
-                return $callback($data[0]);
-            };
+            $callback = fn ($name, array $data) => $callback($data[0]);
         }
 
         // @TODO

@@ -27,7 +27,7 @@ class Packet implements \ArrayAccess
 
     public string $nsp;
 
-    public ?array $data;
+    public ?array $data = null;
 
     public mixed $query;
 

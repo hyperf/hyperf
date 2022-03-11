@@ -16,6 +16,7 @@ use Hyperf\Contract\PoolInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
+use Hyperf\Redis\Exception\InvalidRedisConnectionException;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -193,25 +194,37 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $retryInterval = $this->config['retry_interval'] ?? 0;
             $readTimeout = $this->config['sentinel']['read_timeout'] ?? 0;
             $masterName = $this->config['sentinel']['master_name'] ?? '';
+            shuffle($nodes);
 
-            $host = '';
-            $port = 0;
+            $host = null;
+            $port = null;
             foreach ($nodes as $node) {
-                [$sentinelHost, $sentinelPort] = explode(':', $node);
-                $sentinel = new \RedisSentinel(
-                    $sentinelHost,
-                    intval($sentinelPort),
-                    $timeout,
-                    $persistent,
-                    $retryInterval,
-                    $readTimeout
-                );
-                $masterInfo = $sentinel->getMasterAddrByName($masterName);
-                if (is_array($masterInfo) && count($masterInfo) >= 2) {
-                    [$host, $port] = $masterInfo;
-                    break;
+                try {
+                    [$sentinelHost, $sentinelPort] = explode(':', $node);
+                    $sentinel = new \RedisSentinel(
+                        $sentinelHost,
+                        intval($sentinelPort),
+                        $timeout,
+                        $persistent,
+                        $retryInterval,
+                        $readTimeout
+                    );
+                    $masterInfo = $sentinel->getMasterAddrByName($masterName);
+                    if (is_array($masterInfo) && count($masterInfo) >= 2) {
+                        [$host, $port] = $masterInfo;
+                        break;
+                    }
+                } catch (\Throwable $exception) {
+                    $logger = $this->container->get(StdoutLoggerInterface::class);
+                    $logger->warning('Redis sentinel connection failed, caused by ' . $exception->getMessage());
+                    continue;
                 }
             }
+
+            if ($host === null && $port === null) {
+                throw new InvalidRedisConnectionException('Connect sentinel redis server failed.');
+            }
+
             $redis = $this->createRedis($host, $port, $timeout);
         } catch (\Throwable $e) {
             throw new ConnectionException('Connection reconnect failed ' . $e->getMessage());

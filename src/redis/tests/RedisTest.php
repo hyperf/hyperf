@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Redis;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
 use Hyperf\Pool\Channel;
@@ -23,7 +24,6 @@ use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Coroutine;
 use HyperfTest\Redis\Stub\RedisPoolFailedStub;
 use HyperfTest\Redis\Stub\RedisPoolStub;
@@ -170,6 +170,16 @@ class RedisTest extends TestCase
             $this->assertInstanceOf(ConnectionException::class, $exception);
             $this->assertStringNotContainsString('RedisCluster::__construct() expects parameter', $exception->getMessage());
         }
+    }
+
+    public function testShuffleNodes()
+    {
+        $nodes = ['127.0.0.1:6379', '127.0.0.1:6378', '127.0.0.1:6377'];
+
+        shuffle($nodes);
+
+        $this->assertIsArray($nodes);
+        $this->assertSame(3, count($nodes));
     }
 
     private function getRedis()

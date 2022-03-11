@@ -29,10 +29,7 @@ class MetricProcess extends AbstractProcess
 
     public int $nums = 1;
 
-    /**
-     * @var MetricFactoryInterface
-     */
-    protected $factory;
+    protected MetricFactoryInterface $factory;
 
     public function isEnable($server): bool
     {

@@ -188,7 +188,7 @@ abstract class Command extends SymfonyCommand
         array $choices,
         $default = null,
         ?int $attempts = null
-    ): string {
+    ): mixed {
         return $this->choiceMultiple($question, $choices, $default, $attempts)[0];
     }
 

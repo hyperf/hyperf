@@ -257,7 +257,7 @@ for ($i = 0; $i < 15; ++$i) {
 
 ```php
 <?php
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 // 将 bar 字符串以 foo 为 key 储存到当前协程上下文中
 $foo = Context::set('foo', 'bar');
@@ -270,7 +270,7 @@ $foo = Context::set('foo', 'bar');
 
 ```php
 <?php
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 // 从当前协程上下文中取出 key 为 foo 的值，如不存在则返回 bar 字符串
 $foo = Context::get('foo', 'bar');
@@ -282,7 +282,7 @@ $foo = Context::get('foo', 'bar');
 
 ```php
 <?php
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 // 从当前协程上下文中判断 key 为 foo 的值是否存在
 $foo = Context::has('foo');
@@ -295,7 +295,7 @@ $foo = Context::has('foo');
 ```php
 <?php
 use Psr\Http\Message\ServerRequestInterface;
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 // 从协程上下文取出 $request 对象并设置 key 为 foo 的 Header，然后再保存到协程上下文中
 $request = Context::override(ServerRequestInterface::class, function (ServerRequestInterface $request) {

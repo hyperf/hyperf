@@ -11,12 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpServer;
 
+use Hyperf\Context\Context;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
@@ -85,8 +85,7 @@ class Request implements RequestInterface
     }
 
     /**
-     * Retrieve the input data from request, include query parameters, parsed body and json body,
-     * if $key is null, will return all the parameters.
+     * Retrieve the input data from request, include query parameters, parsed body and json body.
      */
     public function input(string $key, mixed $default = null): mixed
     {

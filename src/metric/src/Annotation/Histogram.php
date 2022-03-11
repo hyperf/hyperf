@@ -12,18 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\Metric\Annotation;
 
 use Attribute;
-use Doctrine\Common\Annotations\Annotation\Target;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS", "METHOD"})
- */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Histogram extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $name = '';
+    public string $name = '';
 }

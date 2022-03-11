@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Signal\Stub;
 
+use Hyperf\Context\Context;
 use Hyperf\Signal\SignalHandlerInterface;
-use Hyperf\Utils\Context;
 
 class SignalHandlerStub implements SignalHandlerInterface
 {

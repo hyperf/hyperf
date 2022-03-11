@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\DbConnection;
 
+use Hyperf\Context\Context;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\DbConnection\Pool\PoolFactory;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 

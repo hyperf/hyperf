@@ -27,17 +27,13 @@ abstract class Component
 {
     /**
      * The component alias name.
-     *
-     * @var string
      */
-    public $componentName;
+    public ?string $componentName = null;
 
     /**
      * The component attributes.
-     *
-     * @var null|ComponentAttributeBag
      */
-    public $attributes;
+    public ?ComponentAttributeBag $attributes = null;
 
     /**
      * The cache of public property names, keyed by class.
@@ -65,14 +61,14 @@ abstract class Component
      *
      * @return Closure|Htmlable|string|View
      */
-    abstract public function render();
+    abstract public function render(): mixed;
 
     /**
      * Resolve the Blade view or view file that should be used when rendering the component.
      *
      * @return Closure|Htmlable|string|View
      */
-    public function resolveView()
+    public function resolveView(): mixed
     {
         $view = $this->render();
 
@@ -93,18 +89,14 @@ abstract class Component
         };
 
         return $view instanceof Closure
-            ? function (array $data = []) use ($view, $resolver) {
-                return $resolver($view($data));
-            }
+            ? fn (array $data = []) => $resolver($view($data))
         : $resolver($view);
     }
 
     /**
      * Get the data that should be supplied to the view.
-     *
-     * @return array
      */
-    public function data()
+    public function data(): array
     {
         $this->attributes = $this->attributes ?: new ComponentAttributeBag();
 
@@ -114,10 +106,9 @@ abstract class Component
     /**
      * Set the component alias name.
      *
-     * @param string $name
      * @return $this
      */
-    public function withName($name)
+    public function withName(string $name): static
     {
         $this->componentName = $name;
 
@@ -129,7 +120,7 @@ abstract class Component
      *
      * @return $this
      */
-    public function withAttributes(array $attributes)
+    public function withAttributes(array $attributes): static
     {
         $this->attributes = $this->attributes ?: new ComponentAttributeBag();
 
@@ -140,21 +131,16 @@ abstract class Component
 
     /**
      * Determine if the component should be rendered.
-     *
-     * @return bool
      */
-    public function shouldRender()
+    public function shouldRender(): bool
     {
         return true;
     }
 
     /**
      * Create a Blade view with the raw component string content.
-     *
-     * @param string $contents
-     * @return string
      */
-    protected function createBladeViewFromString($contents)
+    protected function createBladeViewFromString(string $contents): string
     {
         if (! is_file($viewFile = Blade::config('config.cache_path') . '/' . sha1($contents) . '.blade.php')) {
             $container = ApplicationContext::getContainer();
@@ -167,26 +153,18 @@ abstract class Component
 
     /**
      * Extract the public properties for the component.
-     *
-     * @return array
      */
-    protected function extractPublicProperties()
+    protected function extractPublicProperties(): array
     {
-        $class = get_class($this);
+        $class = $this::class;
 
         if (! isset(static::$propertyCache[$class])) {
             $reflection = new ReflectionClass($this);
 
             static::$propertyCache[$class] = collect($reflection->getProperties(ReflectionProperty::IS_PUBLIC))
-                ->reject(function (ReflectionProperty $property) {
-                    return $property->isStatic();
-                })
-                ->reject(function (ReflectionProperty $property) {
-                    return $this->shouldIgnore($property->getName());
-                })
-                ->map(function (ReflectionProperty $property) {
-                    return $property->getName();
-                })->all();
+                ->reject(fn (ReflectionProperty $property) => $property->isStatic())
+                ->reject(fn (ReflectionProperty $property) => $this->shouldIgnore($property->getName()))
+                ->map(fn (ReflectionProperty $property) => $property->getName())->all();
         }
 
         $values = [];
@@ -200,23 +178,17 @@ abstract class Component
 
     /**
      * Extract the public methods for the component.
-     *
-     * @return array
      */
-    protected function extractPublicMethods()
+    protected function extractPublicMethods(): array
     {
-        $class = get_class($this);
+        $class = $this::class;
 
         if (! isset(static::$methodCache[$class])) {
             $reflection = new ReflectionClass($this);
 
             static::$methodCache[$class] = collect($reflection->getMethods(ReflectionMethod::IS_PUBLIC))
-                ->reject(function (ReflectionMethod $method) {
-                    return $this->shouldIgnore($method->getName());
-                })
-                ->map(function (ReflectionMethod $method) {
-                    return $method->getName();
-                });
+                ->reject(fn (ReflectionMethod $method) => $this->shouldIgnore($method->getName()))
+                ->map(fn (ReflectionMethod $method) => $method->getName());
         }
 
         $values = [];
@@ -247,18 +219,15 @@ abstract class Component
      */
     protected function createInvokableVariable(string $method)
     {
-        return new InvokableComponentVariable(function () use ($method) {
-            return $this->{$method}();
-        });
+        return new InvokableComponentVariable(fn () => $this->{$method}());
     }
 
     /**
      * Determine if the given property / method should be ignored.
      *
      * @param string $name
-     * @return bool
      */
-    protected function shouldIgnore($name)
+    protected function shouldIgnore($name): bool
     {
         return Str::startsWith($name, '__')
             || in_array($name, $this->ignoredMethods());
@@ -266,10 +235,8 @@ abstract class Component
 
     /**
      * Get the methods that should be ignored.
-     *
-     * @return array
      */
-    protected function ignoredMethods()
+    protected function ignoredMethods(): array
     {
         return array_merge([
             'data',

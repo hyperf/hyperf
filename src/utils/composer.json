@@ -18,6 +18,7 @@
     "require": {
         "php": ">=7.2",
         "doctrine/inflector": "^2.0",
+        "hyperf/context": "~3.0.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/coordinator": "~3.0.0",
         "hyperf/engine": "^1.2|^2.0",
@@ -25,9 +26,9 @@
     },
     "suggest": {
         "ext-swoole": "Required to use methods related to swoole (>=4.5).",
-        "symfony/var-dumper": "Required to use the dd function (^5.0).",
-        "symfony/serializer": "Required to use SymfonyNormalizer (^5.0)",
-        "symfony/property-access": "Required to use SymfonyNormalizer (^5.0)",
+        "symfony/var-dumper": "Required to use the dd function (^5.0|^6.0).",
+        "symfony/serializer": "Required to use SymfonyNormalizer (^5.0|^6.0)",
+        "symfony/property-access": "Required to use SymfonyNormalizer (^5.0|^6.0)",
         "hyperf/di": "Required to use ExceptionNormalizer",
         "nikic/php-parser": "Required to use PhpParser. (^4.0)"
     },

@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Pool;
 
+use Hyperf\Context\Context as CoroutineContext;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Utils\Context as CoroutineContext;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 

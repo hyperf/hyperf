@@ -13,20 +13,11 @@ namespace Hyperf\Watcher\Ast;
 
 class Metadata
 {
-    /**
-     * @var string
-     */
-    public $namespace;
+    public ?string $namespace = null;
 
-    /**
-     * @var string
-     */
-    public $className;
+    public ?string $className = null;
 
-    /**
-     * @var string
-     */
-    public $path;
+    public ?string $path = null;
 
     public function isClass(): bool
     {

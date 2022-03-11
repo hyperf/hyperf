@@ -13,6 +13,7 @@ namespace Hyperf\HttpServer;
 
 use Closure;
 use FastRoute\Dispatcher;
+use Hyperf\Context\Context;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
@@ -26,7 +27,6 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Server\Exception\ServerException;
 use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Jsonable;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;

@@ -19,19 +19,10 @@ use Swoole\WebSocket\Frame as SwFrame;
 
 class Client
 {
-    /**
-     * @var UriInterface
-     */
-    protected $uri;
+    protected Coroutine\Http\Client $client;
 
-    /**
-     * @var Coroutine\Http\Client
-     */
-    protected $client;
-
-    public function __construct(UriInterface $uri)
+    public function __construct(protected UriInterface $uri)
     {
-        $this->uri = $uri;
         $host = $uri->getHost();
         $port = $uri->getPort();
         $ssl = $uri->getScheme() === 'wss';

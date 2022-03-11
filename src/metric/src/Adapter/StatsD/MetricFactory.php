@@ -23,19 +23,10 @@ use Hyperf\Metric\Contract\MetricFactoryInterface;
 
 class MetricFactory implements MetricFactoryInterface
 {
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private Client $client;
 
-    /**
-     * @var Client
-     */
-    private $client;
-
-    public function __construct(ConfigInterface $config)
+    public function __construct(private ConfigInterface $config)
     {
-        $this->config = $config;
         $this->client = make(Client::class, [
             'connection' => $this->getConnection(),
             'namespace' => $this->getNamespace(),

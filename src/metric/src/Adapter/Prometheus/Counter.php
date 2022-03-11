@@ -16,28 +16,19 @@ use Prometheus\CollectorRegistry;
 
 class Counter implements CounterInterface
 {
-    /**
-     * @var \Prometheus\CollectorRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var \Prometheus\Counter
-     */
-    protected $counter;
+    protected \Prometheus\Counter $counter;
 
     /**
      * @var string[]
      */
-    protected $labelValues = [];
+    protected array $labelValues = [];
 
-    public function __construct(CollectorRegistry $registry, string $namespace, string $name, string $help, array $labelNames)
+    public function __construct(protected CollectorRegistry $registry, string $namespace, string $name, string $help, array $labelNames)
     {
-        $this->registry = $registry;
         $this->counter = $registry->getOrRegisterCounter($namespace, $name, $help, $labelNames);
     }
 
-    public function with(string ...$labelValues): CounterInterface
+    public function with(string ...$labelValues): static
     {
         $this->labelValues = $labelValues;
         return $this;
