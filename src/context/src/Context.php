@@ -86,8 +86,10 @@ class Context
         $value = null;
 
         if (self::has($id, $coroutineId)) {
-            $value = $closure(self::get($id, $coroutineId));
+            $value = self::get($id, $coroutineId);
         }
+
+        $value = $closure($value);
 
         self::set($id, $value, $coroutineId);
 
