@@ -13,10 +13,10 @@ namespace Hyperf\ViewEngine\Component;
 
 use ArrayAccess;
 use ArrayIterator;
+use Hyperf\Contract\Htmlable;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
-use Hyperf\Contract\Htmlable;
 use Hyperf\ViewEngine\HtmlString;
 use IteratorAggregate;
 use Traversable;

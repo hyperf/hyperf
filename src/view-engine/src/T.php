@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine;
 
+use Hyperf\Contract\Htmlable;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\ViewEngine\Contract\DeferringDisplayableValue;
-use Hyperf\Contract\Htmlable;
 
 class T
 {
