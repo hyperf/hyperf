@@ -444,7 +444,7 @@ Hyperf\Di\ClassLoader::init(handler: new Hyperf\Di\ScanHandler\ProcScanHandler()
 ### 容器僅管理長生命週期的物件
 
 換種方式理解就是容器內管理的物件**都是單例**，這樣的設計對於長生命週期的應用來說會更加的高效，減少了大量無意義的物件建立和銷燬，這樣的設計也就意味著所有需要交由 DI 容器管理的物件**均不能包含** `狀態` 值。   
-`狀態` 可直接理解為會隨著請求而變化的值，事實上在 [協程](zh-tw/coroutine.md) 程式設計中，這些狀態值也是應該存放於 `協程上下文` 中的，即 `Hyperf\Utils\Context`。
+`狀態` 可直接理解為會隨著請求而變化的值，事實上在 [協程](zh-tw/coroutine.md) 程式設計中，這些狀態值也是應該存放於 `協程上下文` 中的，即 `Hyperf\Context\Context`。
 
 ### #[Inject] 注入覆蓋順序
 
