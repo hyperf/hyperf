@@ -11,19 +11,21 @@ declare(strict_types=1);
  */
 namespace Hyperf\Context;
 
+use Closure;
 use Hyperf\Engine\Coroutine;
 
 class Context
 {
     protected static array $nonCoContext = [];
 
-    public static function set(string $id, mixed $value): mixed
+    public static function set(string $id, mixed $value, ?int $coroutineId = null): mixed
     {
         if (Coroutine::id() > 0) {
-            Coroutine::getContextFor()[$id] = $value;
+            Coroutine::getContextFor($coroutineId)[$id] = $value;
         } else {
             static::$nonCoContext[$id] = $value;
         }
+
         return $value;
     }
 
@@ -60,6 +62,7 @@ class Context
     public static function copy(int $fromCoroutineId, array $keys = []): void
     {
         $from = Coroutine::getContextFor($fromCoroutineId);
+
         if ($from === null) {
             return;
         }
@@ -78,26 +81,27 @@ class Context
     /**
      * Retrieve the value and override it by closure.
      */
-    public static function override(string $id, \Closure $closure): mixed
+    public static function override(string $id, mixed $value, ?int $coroutineId = null): mixed
     {
-        $value = null;
-        if (self::has($id)) {
-            $value = self::get($id);
+        if ($value instanceof Closure && self::has($id, $coroutineId)) {
+            $value = value($value, self::get($id, $coroutineId));
         }
-        $value = $closure($value);
-        self::set($id, $value);
+
+        self::set($id, $value, $coroutineId);
+
         return $value;
     }
 
     /**
      * Retrieve the value and store it if not exists.
      */
-    public static function getOrSet(string $id, mixed $value): mixed
+    public static function getOrSet(string $id, mixed $value, ?int $coroutineId = null): mixed
     {
-        if (! self::has($id)) {
-            return self::set($id, value($value));
+        if (! self::has($id, $coroutineId)) {
+            return self::set($id, value($value), $coroutineId);
         }
-        return self::get($id);
+
+        return self::get($id, $coroutineId);
     }
 
     public static function getContainer()
