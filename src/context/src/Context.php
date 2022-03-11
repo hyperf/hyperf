@@ -104,10 +104,10 @@ class Context
         return self::get($id, $coroutineId);
     }
 
-    public static function getContainer()
+    public static function getContainer(?int $coroutineId = null)
     {
         if (Coroutine::id() > 0) {
-            return Coroutine::getContextFor();
+            return Coroutine::getContextFor($coroutineId);
         }
 
         return static::$nonCoContext;
