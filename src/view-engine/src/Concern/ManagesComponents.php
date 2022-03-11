@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine\Concern;
 
 use Closure;
-use Hyperf\Utils\Arr;
 use Hyperf\Contract\Htmlable;
+use Hyperf\Utils\Arr;
 use Hyperf\ViewEngine\HtmlString;
 use Hyperf\ViewEngine\View;
 use InvalidArgumentException;

@@ -12,12 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine\Component;
 
 use Closure;
+use Hyperf\Contract\Htmlable;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use Hyperf\ViewEngine\Blade;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
-use Hyperf\Contract\Htmlable;
 use Hyperf\ViewEngine\View;
 use ReflectionClass;
 use ReflectionMethod;
