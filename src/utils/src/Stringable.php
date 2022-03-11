@@ -169,7 +169,7 @@ class Stringable implements JsonSerializable
     /**
      * Determine if a given string contains a given substring.
      *
-     * @param string[]|string $needles
+     * @param string|string[] $needles
      * @return bool
      */
     public function contains($needles)
@@ -201,7 +201,7 @@ class Stringable implements JsonSerializable
     /**
      * Determine if a given string ends with a given substring.
      *
-     * @param string[]|string $needles
+     * @param string|string[] $needles
      * @return bool
      */
     public function endsWith($needles)
@@ -265,7 +265,7 @@ class Stringable implements JsonSerializable
     /**
      * Determine if a given string matches a given pattern.
      *
-     * @param string[]|string $pattern
+     * @param string|string[] $pattern
      * @return bool
      */
     public function is($pattern)
@@ -474,7 +474,7 @@ class Stringable implements JsonSerializable
     /**
      * Remove any occurrence of the given string in the subject.
      *
-     * @param string[]|string $search
+     * @param string|string[] $search
      * @param bool $caseSensitive
      * @return static
      */
@@ -635,7 +635,7 @@ class Stringable implements JsonSerializable
     /**
      * Determine if a given string starts with a given substring.
      *
-     * @param string[]|string $needles
+     * @param string|string[] $needles
      * @return bool
      */
     public function startsWith($needles)
