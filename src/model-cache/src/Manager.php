@@ -244,12 +244,12 @@ class Manager
         );
     }
 
-    protected function formatModel(Model $model): array
+    public function formatModel(Model $model): array
     {
         return $model->getAttributes();
     }
 
-    protected function formatModels($models): array
+    public function formatModels($models): array
     {
         $result = [];
         foreach ($models as $model) {

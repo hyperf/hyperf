@@ -1,4 +1,6 @@
-# v2.2.28 - TBD
+# v2.2.29 - TBD
+
+# v2.2.28 - 2022-03-14
 
 ## Fixed
 
@@ -8,6 +10,10 @@
 ## Added
 
 - [#4580](https://github.com/hyperf/hyperf/pull/4580) Added method `Hyperf\Utils\Coroutine\Concurrent::getChannel()`.
+
+## Optimized
+
+- [#4602](https://github.com/hyperf/hyperf/pull/4602) Make public for method `Hyperf\ModelCache\Manager::formatModels()`.
 
 # v2.2.27 - 2022-03-07
 
