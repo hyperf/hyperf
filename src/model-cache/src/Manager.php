@@ -218,6 +218,21 @@ class Manager
         return false;
     }
 
+    public function formatModel(Model $model): array
+    {
+        return $model->getAttributes();
+    }
+
+    public function formatModels($models): array
+    {
+        $result = [];
+        foreach ($models as $model) {
+            $result[] = $this->formatModel($model);
+        }
+
+        return $result;
+    }
+
     /**
      * @return \DateInterval|int
      */
@@ -242,21 +257,6 @@ class Manager
             $model->getKeyName(),
             $id
         );
-    }
-
-    public function formatModel(Model $model): array
-    {
-        return $model->getAttributes();
-    }
-
-    public function formatModels($models): array
-    {
-        $result = [];
-        foreach ($models as $model) {
-            $result[] = $this->formatModel($model);
-        }
-
-        return $result;
     }
 
     protected function getAttributes(Config $config, Model $model, array $data)
