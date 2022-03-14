@@ -1,4 +1,25 @@
-# v2.2.27 - TBD
+# v2.2.29 - TBD
+
+# v2.2.28 - 2022-03-14
+
+## Fixed
+
+- [#4588](https://github.com/hyperf/hyperf/pull/4588) Fixed bug that `database` does not support `bit`.
+- [#4589](https://github.com/hyperf/hyperf/pull/4589) Fixed bug that ephemeral instance register failed when using nacos.
+
+## Added
+
+- [#4580](https://github.com/hyperf/hyperf/pull/4580) Added method `Hyperf\Utils\Coroutine\Concurrent::getChannel()`.
+
+## Optimized
+
+- [#4603](https://github.com/hyperf/hyperf/pull/4603) Make public for method `Hyperf\ModelCache\Manager::formatModels()`.
+
+# v2.2.27 - 2022-03-07
+
+## Optimized
+
+- [#4572](https://github.com/hyperf/hyperf/pull/4572) Use Hyperf\LoadBalancer\Exception\RuntimeException instead of \RuntimeException for `hyperf/load-balancer`.
 
 # v2.2.26 - 2022-02-21
 

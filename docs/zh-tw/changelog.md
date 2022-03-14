@@ -1,5 +1,26 @@
 # 版本更新記錄
 
+# v2.2.28 - 2022-03-14
+
+## 修復
+
+- [#4588](https://github.com/hyperf/hyperf/pull/4588) 修復 `database` 元件不支援 `bit` 型別的問題。
+- [#4589](https://github.com/hyperf/hyperf/pull/4589) 修復使用 `Nacos` 時，無法正確的註冊臨時例項的問題。
+
+## 新增
+
+- [#4580](https://github.com/hyperf/hyperf/pull/4580) 新增方法 `Hyperf\Utils\Coroutine\Concurrent::getChannel()`。
+
+## 優化
+
+- [#4602](https://github.com/hyperf/hyperf/pull/4602) 將方法 `Hyperf\ModelCache\Manager::formatModels()` 更改為公共方法。
+
+# v2.2.27 - 2022-03-07
+
+## 優化
+
+- [#4572](https://github.com/hyperf/hyperf/pull/4572) 當負載均衡器 `hyperf/load-balancer` 選擇節點失敗時，使用 `Hyperf\LoadBalancer\Exception\RuntimeException` 代替 `\RuntimeException`。
+
 # v2.2.26 - 2022-02-21
 
 ## 修復

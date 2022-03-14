@@ -207,6 +207,21 @@ class Manager
         return false;
     }
 
+    public function formatModel(Model $model): array
+    {
+        return $model->getAttributes();
+    }
+
+    public function formatModels($models): array
+    {
+        $result = [];
+        foreach ($models as $model) {
+            $result[] = $this->formatModel($model);
+        }
+
+        return $result;
+    }
+
     protected function getCacheTTL(Model $instance, HandlerInterface $handler): \DateInterval|int
     {
         if ($instance instanceof CacheableInterface) {
@@ -228,21 +243,6 @@ class Manager
             $model->getKeyName(),
             $id
         );
-    }
-
-    protected function formatModel(Model $model): array
-    {
-        return $model->getAttributes();
-    }
-
-    protected function formatModels($models): array
-    {
-        $result = [];
-        foreach ($models as $model) {
-            $result[] = $this->formatModel($model);
-        }
-
-        return $result;
     }
 
     protected function getAttributes(Config $config, Model $model, array $data)
