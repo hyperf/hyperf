@@ -30,6 +30,6 @@ class ModelEventListenerStub implements ListenerInterface
      */
     public function process(object $event): void
     {
-        return $event->handle();
+        $event->handle();
     }
 }
