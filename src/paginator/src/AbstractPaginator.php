@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Paginator;
 
+use ArrayAccess;
 use ArrayIterator;
 use Closure;
 use Hyperf\Contract\PaginatorInterface;
@@ -19,7 +20,7 @@ use Hyperf\Utils\Collection;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\ForwardsCalls;
 
-abstract class AbstractPaginator implements PaginatorInterface
+abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess
 {
     use ForwardsCalls;
 
@@ -370,41 +371,27 @@ abstract class AbstractPaginator implements PaginatorInterface
         return $this;
     }
 
-    /**
-     * Determine if the given item exists.
-     * @param mixed $key
-     */
-    public function offsetExists($key): bool
+    public function offsetExists(mixed $offset): bool
     {
-        return $this->items->has($key);
+        return $this->items->has($offset);
     }
 
-    /**
-     * Get the item at the given offset.
-     * @param mixed $key
-     */
-    public function offsetGet($key)
+    public function offsetGet(mixed $offset): mixed
     {
-        return $this->items->get($key);
+        return $this->items->get($offset);
     }
 
-    /**
-     * Set the item at the given offset.
-     * @param mixed $key
-     * @param mixed $value
-     */
-    public function offsetSet($key, $value): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
-        $this->items->put($key, $value);
+        $this->items->put($offset, $value);
     }
 
     /**
      * Unset the item at the given key.
-     * @param mixed $key
      */
-    public function offsetUnset($key): void
+    public function offsetUnset(mixed $offset): void
     {
-        $this->items->forget($key);
+        $this->items->forget($offset);
     }
 
     /**

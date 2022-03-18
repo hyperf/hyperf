@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Paginator;
 
-use ArrayAccess;
 use Countable;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Utils\Collection;
@@ -19,7 +18,7 @@ use Hyperf\Utils\Contracts\Jsonable;
 use IteratorAggregate;
 use JsonSerializable;
 
-class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Countable, IteratorAggregate, JsonSerializable, Jsonable
+class Paginator extends AbstractPaginator implements Arrayable, Countable, IteratorAggregate, JsonSerializable, Jsonable
 {
     /**
      * Determine if there are more items in the data source.
