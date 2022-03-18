@@ -33,7 +33,7 @@ class SignalDeregisterListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         $manager = $this->container->get(SignalManager::class);
         $manager->setStopped(true);

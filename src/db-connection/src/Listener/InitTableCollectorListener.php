@@ -47,7 +47,7 @@ class InitTableCollectorListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         try {
             $databases = $this->config->get('databases', []);

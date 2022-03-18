@@ -33,7 +33,7 @@ class DeleteListener implements ListenerInterface
     /**
      * @param DeleteEvent $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $className = $event->getClassName();
         $method = $event->getMethod();

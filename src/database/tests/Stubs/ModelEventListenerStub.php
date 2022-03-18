@@ -28,7 +28,7 @@ class ModelEventListenerStub implements ListenerInterface
     /**
      * @param Event $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         return $event->handle();
     }

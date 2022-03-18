@@ -31,7 +31,7 @@ class StartSubscriberListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         foreach (SocketIORouter::get('forward') ?? [] as $class) {
             $instance = $this->container->get($class);

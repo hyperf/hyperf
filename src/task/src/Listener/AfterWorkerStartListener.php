@@ -32,7 +32,7 @@ class AfterWorkerStartListener implements ListenerInterface
     /**
      * @param AfterWorkerStart $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($event instanceof AfterWorkerStart) {
             if (! $event->server->taskworker) {

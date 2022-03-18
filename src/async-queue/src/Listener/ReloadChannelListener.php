@@ -38,7 +38,7 @@ class ReloadChannelListener implements ListenerInterface
     /**
      * @param QueueLength $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         if (! $event instanceof QueueLength) {
             return;

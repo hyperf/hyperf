@@ -31,7 +31,7 @@ class OnTaskListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($event instanceof OnTask && $data = $event->task->data) {
             if (! $data instanceof Task) {

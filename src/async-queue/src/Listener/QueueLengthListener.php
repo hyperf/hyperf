@@ -37,7 +37,7 @@ class QueueLengthListener implements ListenerInterface
     /**
      * @param QueueLength $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $value = 0;
         foreach ($this->level as $level => $value) {

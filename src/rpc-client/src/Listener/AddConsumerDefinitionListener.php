@@ -36,7 +36,7 @@ class AddConsumerDefinitionListener implements ListenerInterface
      *
      * @param BootApplication $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         /** @var Container $container */
         $container = $this->container;

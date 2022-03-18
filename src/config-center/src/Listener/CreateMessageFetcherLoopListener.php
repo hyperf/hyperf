@@ -29,7 +29,7 @@ class CreateMessageFetcherLoopListener extends OnPipeMessageListener
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         $mode = strtolower($this->config->get('config_center.mode', Mode::PROCESS));
         if ($mode === Mode::COROUTINE) {
