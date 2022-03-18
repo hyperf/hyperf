@@ -150,13 +150,13 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
                 // TODO: Support SWOW
                 $response instanceof SwooleResponse && $this->getSender()->setResponse($fd, $response);
-                $this->deferOnOpen($request, $class, $response);
+                $this->deferOnOpen($request, $class, $response, $fd);
 
                 $upgrade->on(WebSocket::ON_MESSAGE, $this->getOnMessageCallback());
                 $upgrade->on(WebSocket::ON_CLOSE, $this->getOnCloseCallback());
                 $upgrade->start();
             } else {
-                $this->deferOnOpen($request, $class, $server);
+                $this->deferOnOpen($request, $class, $server, $fd);
             }
         } catch (Throwable $throwable) {
             // Delegate the exception to exception handler.
@@ -234,10 +234,11 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     /**
      * @param mixed $request
      */
-    protected function deferOnOpen($request, string $class, SwooleResponse|WebSocketServer $server)
+    protected function deferOnOpen($request, string $class, SwooleResponse|WebSocketServer $server, int $fd)
     {
         $instance = $this->container->get($class);
-        wait(static function () use ($request, $instance, $server) {
+        wait(static function () use ($request, $instance, $server, $fd) {
+            Context::set(WsContext::FD, $fd);
             if ($instance instanceof OnOpenInterface) {
                 $instance->onOpen($server, $request);
             }
