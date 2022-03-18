@@ -29,7 +29,7 @@ class RegisterDriverListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         $this->driverManager->register('nacos', make(NacosDriver::class));
     }

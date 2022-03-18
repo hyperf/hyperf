@@ -30,7 +30,7 @@ class EagerLoadListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         $eagerLoader = $this->container->get(EagerLoader::class);
         Collection::macro('loadCache', function ($parameters) use ($eagerLoader) {

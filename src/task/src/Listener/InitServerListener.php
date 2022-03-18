@@ -29,7 +29,7 @@ class InitServerListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($event instanceof BeforeMainServerStart) {
             if (! $this->container->has(TaskExecutor::class)) {

@@ -33,7 +33,7 @@ class SuperGlobalsInitializeListener implements ListenerInterface
     /**
      * @param AfterWorkerStart $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $_COOKIE = make(Proxy\Cookie::class);
         $_FILES = make(Proxy\File::class);
