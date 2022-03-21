@@ -56,6 +56,7 @@ class Client implements ClientInterface
         $config = [];
         foreach ($listener as $key => $item) {
             $dataId = $item['data_id'];
+            $dataIds = $item['data_ids'] ?? [];
             $group = $item['group'];
             $tenant = $item['tenant'] ?? null;
             $type = $item['type'] ?? null;
@@ -64,7 +65,16 @@ class Client implements ClientInterface
                 $this->logger->error(sprintf('The config of %s read failed from Nacos.', $key));
                 continue;
             }
-            $config[$key] = $this->decode((string) $response->getBody(), $type);
+            if ($dataId === '*' || count($dataIds) > 0) {
+                $result = json_decode($response->getBody()->getContents(), true);
+                foreach ($result['pageItems'] ?? [] as $configItem) {
+                    if ($dataId === '*' || in_array($configItem['dataId'], $dataIds)) {
+                        $config[$configItem['dataId']] = $this->decode($configItem['content'], $configItem['type']);
+                    }
+                }
+            } else {
+                $config[$key] = $this->decode((string)$response->getBody(), $type);
+            }
         }
 
         return $config;

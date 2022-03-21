@@ -81,7 +81,12 @@ abstract class AbstractProvider
                 $result[$key] = $value;
             }
         }
-
+        if ($result['dataId'] == '*' || $result['dataId'] === '') {
+            $result['dataId'] = '';
+            $result['search'] = 'accurate';
+            $result['pageNo'] = 1;
+            $result['pageSize'] = 200;
+        }
         return $result;
     }
 }
