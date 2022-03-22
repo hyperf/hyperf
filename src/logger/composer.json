@@ -25,7 +25,10 @@
     "autoload": {
         "psr-4": {
             "Hyperf\\Logger\\": "src/"
-        }
+        },
+        "files": [
+            "src/Adapter/UdpSocketHook.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
