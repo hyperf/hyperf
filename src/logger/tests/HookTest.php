@@ -20,11 +20,17 @@ use PHPUnit\Framework\TestCase;
  */
 class HookTest extends TestCase
 {
+    /**
+     * @group NonCoroutine
+     */
     public function testUdpSocketHook()
     {
-        $socket = Mockery::mock(\Swoole\Coroutine\Socket::class);
+        run(function () {
+            // $socket = Mockery::mock(\Swoole\Coroutine\Socket::class);
+            $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 
-        $this->assertTrue(\Monolog\Handler\SyslogUdp\is_resource($socket));
-        $this->assertFalse(\is_resource($socket));
+            $this->assertTrue(\Monolog\Handler\SyslogUdp\is_resource($socket));
+            $this->assertFalse(\is_resource($socket));
+        });
     }
 }
