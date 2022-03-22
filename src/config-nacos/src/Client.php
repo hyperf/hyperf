@@ -55,7 +55,7 @@ class Client implements ClientInterface
 
         $config = [];
         foreach ($listener as $key => $item) {
-            $dataId = $item['data_id'];
+            $dataId = $item['data_id'] ?? '';
             $dataIds = $item['data_ids'] ?? [];
             $group = $item['group'];
             $tenant = $item['tenant'] ?? null;
