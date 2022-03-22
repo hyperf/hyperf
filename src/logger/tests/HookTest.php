@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Logger;
 
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,10 +22,8 @@ class HookTest extends TestCase
 {
     public function testUdpSocketHook()
     {
-        co(function () {
-            $socket = socket_create(AF_UNIX, SOCK_DGRAM, 0);
+        $socket = Mockery::mock(\Swoole\Coroutine\Socket::class);
 
-            $this->assertTrue(\Monolog\Handler\SyslogUdp\is_resource($socket));
-        });
+        $this->assertTrue(\Monolog\Handler\SyslogUdp\is_resource($socket));
     }
 }
