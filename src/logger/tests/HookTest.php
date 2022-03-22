@@ -25,5 +25,6 @@ class HookTest extends TestCase
         $socket = Mockery::mock(\Swoole\Coroutine\Socket::class);
 
         $this->assertTrue(\Monolog\Handler\SyslogUdp\is_resource($socket));
+        $this->assertFalse(\is_resource($socket));
     }
 }
