@@ -21,7 +21,7 @@ class HookTest extends TestCase
 {
     public function testUdpSocketHook()
     {
-        run(function () {
+        co(function () {
             $socket = socket_create(AF_UNIX, SOCK_DGRAM, 0);
 
             $this->assertTrue(\Monolog\Handler\SyslogUdp\is_resource($socket));
