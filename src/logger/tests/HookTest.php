@@ -22,6 +22,7 @@ class HookTest extends TestCase
 {
     /**
      * @group NonCoroutine
+     * @covers \Monolog\Handler\SyslogUdp\is_resource
      */
     public function testUdpSocketHook()
     {
@@ -31,6 +32,8 @@ class HookTest extends TestCase
 
             $this->assertTrue(\Monolog\Handler\SyslogUdp\is_resource($socket));
             $this->assertFalse(\is_resource($socket));
+
+            socket_close($socket);
         });
     }
 }
