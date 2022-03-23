@@ -1,13 +1,5 @@
 <?php
 
-namespace ;
-
-class HookTest
-{
-    
-}@@ -1,39 +0,0 @@
-<?php
-
 declare(strict_types=1);
 /**
  * This file is part of Hyperf.
