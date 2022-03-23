@@ -184,7 +184,6 @@
     "autoload": {
         "files": [
             "src/config/src/Functions.php",
-            "src/filesystem/src/Adapter/AliyunOssHook.php",
             "src/nats/src/Functions.php",
             "src/translation/src/Functions.php",
             "src/utils/src/Functions.php",
