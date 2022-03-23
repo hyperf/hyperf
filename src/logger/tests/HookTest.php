@@ -27,7 +27,6 @@ class HookTest extends TestCase
     public function testUdpSocketHook()
     {
         run(function () {
-            // $socket = Mockery::mock(\Swoole\Coroutine\Socket::class);
             $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 
             $this->assertTrue(\Monolog\Handler\SyslogUdp\is_resource($socket));
@@ -35,5 +34,11 @@ class HookTest extends TestCase
 
             socket_close($socket);
         });
+
+        $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+
+        $this->assertTrue(\Monolog\Handler\SyslogUdp\is_resource($socket));
+
+        socket_close($socket);
     }
 }

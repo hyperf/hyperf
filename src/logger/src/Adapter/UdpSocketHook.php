@@ -11,11 +11,13 @@ declare(strict_types=1);
  */
 namespace Monolog\Handler\SyslogUdp;
 
-    function is_resource(mixed $value): bool
-    {
-        if ($value instanceof \Swoole\Coroutine\Socket) {
-            return true;
-        }
+use Swoole;
 
-        return false;
+function is_resource(mixed $value): bool
+{
+    if ($value instanceof Swoole\Coroutine\Socket) {
+        return true;
     }
+
+    return \is_resource($value);
+}
