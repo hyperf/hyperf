@@ -1,5 +1,11 @@
 # 版本更新記錄
 
+# v2.2.29 - 2022-03-28
+
+## 修復
+
+- [#4620](https://github.com/hyperf/hyperf/pull/4620) 修復 `Hyperf\Memory\LockManager::initialize()` 方法中，`$filename` 預設值錯誤的問題。
+
 # v2.2.28 - 2022-03-14
 
 ## 修復
