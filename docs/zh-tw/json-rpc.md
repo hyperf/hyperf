@@ -247,6 +247,8 @@ return [
                 'retry_count' => 2,
                 // 重試間隔，毫秒
                 'retry_interval' => 100,
+                // 使用多路複用 RPC 時的心跳間隔，null 為不觸發心跳
+                'heartbeat' => 30,
                 // 當使用 JsonRpcPoolTransporter 時會用到以下配置
                 'pool' => [
                     'min_connections' => 1,

@@ -219,3 +219,25 @@ class SupportMySQLBitListener implements ListenerInterface
 }
 
 ```
+
+## OSS 上傳組件報 iconv 錯誤
+
+- fix aliyun oss wrong charset: https://github.com/aliyun/aliyun-oss-php-sdk/issues/101
+- https://github.com/docker-library/php/issues/240#issuecomment-762438977
+- https://github.com/docker-library/php/pull/1264
+
+當使用 `aliyuncs/oss-sdk-php` 組件上傳時，會報 iconv 錯誤，可以嘗試使用以下方式規避：
+
+使用 `hyperf/hyperf:8.0-alpine-v3.12-swoole` 鏡像時
+
+```
+RUN apk --no-cache --allow-untrusted --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ add gnu-libiconv=1.15-r2
+ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so
+```
+
+使用 `hyperf/hyperf:8.0-alpine-v3.13-swoole` 鏡像時
+
+```dockerfile
+RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.13/community/ gnu-libiconv=1.15-r3
+ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
+```

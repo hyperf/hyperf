@@ -1,4 +1,10 @@
-# v2.2.29 - TBD
+# v2.2.30 - TBD
+
+# v2.2.29 - 2022-03-28
+
+## Fixed
+
+- [#4620](https://github.com/hyperf/hyperf/pull/4620) Fixed bug that the file name should be an empty string by default for `Hyperf\Memory\LockManager`.
 
 # v2.2.28 - 2022-03-14
 
