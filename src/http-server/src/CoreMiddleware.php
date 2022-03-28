@@ -229,6 +229,9 @@ class CoreMiddleware implements CoreMiddlewareInterface
         return $this->getInjections($definitions, 'Closure', $arguments);
     }
 
+    /**
+     * @param \Hyperf\Di\ReflectionType[] $definitions
+     */
     private function getInjections(array $definitions, string $callableName, array $arguments): array
     {
         $injections = [];
