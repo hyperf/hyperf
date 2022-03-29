@@ -13,7 +13,7 @@ namespace HyperfTest\Tracer;
 
 use Hyperf\Config\Config;
 use Hyperf\Di\Container;
-use Hyperf\Tracer\TracerFactory;
+use Hyperf\Tracer\SpanStarter;
 use Hyperf\Utils\ApplicationContext;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -25,6 +25,8 @@ use Zipkin\Samplers\BinarySampler;
  */
 class TracerFactoryTest extends TestCase
 {
+    use SpanStarter;
+
     protected function tearDown(): void
     {
         Mockery::close();
@@ -50,10 +52,9 @@ class TracerFactoryTest extends TestCase
                 ],
             ],
         ]);
-        $container = $this->getContainer($config);
-        $factory = new TracerFactory();
+        $this->getContainer($config);
 
-        $this->assertInstanceOf(\ZipkinOpenTracing\Tracer::class, $factory($container));
+        $this->assertInstanceOf(\ZipkinOpenTracing\Tracer::class, $this->getTracer());
     }
 
     public function testZipkinFactory()
@@ -86,10 +87,9 @@ class TracerFactoryTest extends TestCase
                 ],
             ],
         ]);
-        $container = $this->getContainer($config);
-        $factory = new TracerFactory();
+        $this->getContainer($config);
 
-        $this->assertInstanceOf(\ZipkinOpenTracing\Tracer::class, $factory($container));
+        $this->assertInstanceOf(\ZipkinOpenTracing\Tracer::class, $this->getTracer());
     }
 
     public function testJaegerFactory()
@@ -122,10 +122,9 @@ class TracerFactoryTest extends TestCase
                 ],
             ],
         ]);
-        $container = $this->getContainer($config);
-        $factory = new TracerFactory();
+        $this->getContainer($config);
 
-        $this->assertInstanceOf(\Jaeger\Tracer::class, $factory($container));
+        $this->assertInstanceOf(\Jaeger\Tracer::class, $this->getTracer());
     }
 
     protected function getContainer($config)
