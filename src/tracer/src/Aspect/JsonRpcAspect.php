@@ -20,7 +20,6 @@ use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use Hyperf\Utils\Context as CT;
-use OpenTracing\Tracer;
 use Psr\Container\ContainerInterface;
 use Zipkin\Span;
 use const OpenTracing\Formats\TEXT_MAP;
@@ -40,11 +39,6 @@ class JsonRpcAspect implements AroundInterface
     private $container;
 
     /**
-     * @var Tracer
-     */
-    private $tracer;
-
-    /**
      * @var SwitchManager
      */
     private $switchManager;
@@ -62,7 +56,6 @@ class JsonRpcAspect implements AroundInterface
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->tracer = $container->get(Tracer::class);
         $this->switchManager = $container->get(SwitchManager::class);
         $this->spanTagManager = $container->get(SpanTagManager::class);
         $this->context = $container->get(Context::class);
@@ -79,7 +72,7 @@ class JsonRpcAspect implements AroundInterface
             }
             $carrier = [];
             // Injects the context into the wire
-            $this->tracer->inject(
+            $this->getTracer()->inject(
                 $span->getContext(),
                 TEXT_MAP,
                 $carrier
@@ -95,7 +88,7 @@ class JsonRpcAspect implements AroundInterface
             } catch (\Throwable $e) {
                 if ($span = CT::get('tracer.span.' . static::class)) {
                     $span->setTag('error', true);
-                    $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+                    $span->log(['message' => $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
                     CT::set('tracer.span.' . static::class, $span);
                 }
                 throw $e;

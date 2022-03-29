@@ -17,7 +17,6 @@ use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use Hyperf\Utils\Coroutine;
 use OpenTracing\Span;
-use OpenTracing\Tracer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -37,14 +36,8 @@ class TraceMiddleware implements MiddlewareInterface
      */
     protected $spanTagManager;
 
-    /**
-     * @var Tracer
-     */
-    private $tracer;
-
-    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
+    public function __construct(SwitchManager $switchManager, SpanTagManager $spanTagManager)
     {
-        $this->tracer = $tracer;
         $this->switchManager = $switchManager;
         $this->spanTagManager = $spanTagManager;
     }
@@ -61,7 +54,7 @@ class TraceMiddleware implements MiddlewareInterface
 
         defer(function () {
             try {
-                $this->tracer->flush();
+                $this->getTracer()->flush();
             } catch (\Throwable $exception) {
             }
         });

@@ -18,8 +18,6 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use Hyperf\Utils\Context;
-use OpenTracing\Tracer;
 use Psr\Http\Message\ResponseInterface;
 use const OpenTracing\Formats\TEXT_MAP;
 
@@ -37,11 +35,6 @@ class HttpClientAspect implements AroundInterface
     public $annotations = [];
 
     /**
-     * @var Tracer
-     */
-    private $tracer;
-
-    /**
      * @var SwitchManager
      */
     private $switchManager;
@@ -51,9 +44,8 @@ class HttpClientAspect implements AroundInterface
      */
     private $spanTagManager;
 
-    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
+    public function __construct(SwitchManager $switchManager, SpanTagManager $spanTagManager)
     {
-        $this->tracer = $tracer;
         $this->switchManager = $switchManager;
         $this->spanTagManager = $spanTagManager;
     }
@@ -84,7 +76,7 @@ class HttpClientAspect implements AroundInterface
         }
         $appendHeaders = [];
         // Injects the context into the wire
-        $this->tracer->inject(
+        $this->getTracer()->inject(
             $span->getContext(),
             TEXT_MAP,
             $appendHeaders
@@ -99,7 +91,7 @@ class HttpClientAspect implements AroundInterface
             }
         } catch (\Throwable $e) {
             $span->setTag('error', true);
-            $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+            $span->log(['message' => $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
             throw $e;
         } finally {
             $span->finish();

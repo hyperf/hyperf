@@ -18,7 +18,6 @@ use Hyperf\Redis\Redis;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use OpenTracing\Tracer;
 
 /**
  * @Aspect
@@ -41,11 +40,6 @@ class RedisAspect implements AroundInterface
     public $annotations = [];
 
     /**
-     * @var Tracer
-     */
-    private $tracer;
-
-    /**
      * @var SwitchManager
      */
     private $switchManager;
@@ -55,9 +49,8 @@ class RedisAspect implements AroundInterface
      */
     private $spanTagManager;
 
-    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
+    public function __construct(SwitchManager $switchManager, SpanTagManager $spanTagManager)
     {
-        $this->tracer = $tracer;
         $this->switchManager = $switchManager;
         $this->spanTagManager = $spanTagManager;
     }
@@ -79,7 +72,7 @@ class RedisAspect implements AroundInterface
             $span->setTag($this->spanTagManager->get('redis', 'result'), json_encode($result));
         } catch (\Throwable $e) {
             $span->setTag('error', true);
-            $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+            $span->log(['message' => $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
             throw $e;
         } finally {
             $span->finish();

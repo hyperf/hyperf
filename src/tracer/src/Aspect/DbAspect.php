@@ -17,7 +17,6 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
-use OpenTracing\Tracer;
 
 class DbAspect extends AbstractAspect
 {
@@ -36,11 +35,6 @@ class DbAspect extends AbstractAspect
     public $annotations = [];
 
     /**
-     * @var Tracer
-     */
-    private $tracer;
-
-    /**
      * @var SwitchManager
      */
     private $switchManager;
@@ -50,9 +44,8 @@ class DbAspect extends AbstractAspect
      */
     private $spanTagManager;
 
-    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
+    public function __construct(SwitchManager $switchManager, SpanTagManager $spanTagManager)
     {
-        $this->tracer = $tracer;
         $this->switchManager = $switchManager;
         $this->spanTagManager = $spanTagManager;
     }
@@ -73,7 +66,7 @@ class DbAspect extends AbstractAspect
             $result = $proceedingJoinPoint->process();
         } catch (\Throwable $e) {
             $span->setTag('error', true);
-            $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
+            $span->log(['message' => $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);
             throw $e;
         } finally {
             $span->finish();

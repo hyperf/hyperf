@@ -18,16 +18,10 @@ use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
-use OpenTracing\Tracer;
 
 class DbQueryExecutedListener implements ListenerInterface
 {
     use SpanStarter;
-
-    /**
-     * @var Tracer
-     */
-    private $tracer;
 
     /**
      * @var SwitchManager
@@ -39,9 +33,8 @@ class DbQueryExecutedListener implements ListenerInterface
      */
     private $spanTagManager;
 
-    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
+    public function __construct(SwitchManager $switchManager, SpanTagManager $spanTagManager)
     {
-        $this->tracer = $tracer;
         $this->switchManager = $switchManager;
         $this->spanTagManager = $spanTagManager;
     }
