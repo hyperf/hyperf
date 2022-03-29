@@ -13,6 +13,7 @@ namespace HyperfTest\Tracer;
 
 use Hyperf\Config\Config;
 use Hyperf\Di\Container;
+use Hyperf\Engine\Coroutine;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
@@ -55,8 +56,7 @@ class TracerFactoryTest extends TestCase
             ],
         ]);
         $this->getContainer($config);
-
-        Context::destroy(Tracer::class);
+        $this->cleanContext();
         $this->assertInstanceOf(\ZipkinOpenTracing\Tracer::class, $this->getTracer());
     }
 
@@ -91,8 +91,7 @@ class TracerFactoryTest extends TestCase
             ],
         ]);
         $this->getContainer($config);
-
-        Context::destroy(Tracer::class);
+        $this->cleanContext();
         $this->assertInstanceOf(\ZipkinOpenTracing\Tracer::class, $this->getTracer());
     }
 
@@ -127,7 +126,7 @@ class TracerFactoryTest extends TestCase
             ],
         ]);
         $this->getContainer($config);
-        Context::destroy(Tracer::class);
+        $this->cleanContext();
         $this->assertInstanceOf(\Jaeger\Tracer::class, $this->getTracer());
     }
 
@@ -149,5 +148,13 @@ class TracerFactoryTest extends TestCase
         ApplicationContext::setContainer($container);
 
         return $container;
+    }
+
+    private function cleanContext()
+    {
+        if (Context::has(Tracer::class)) {
+            unset(Coroutine::getContextFor()[Tracer::class]);
+        }
+        Context::destroy(Tracer::class);
     }
 }
