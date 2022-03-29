@@ -15,7 +15,9 @@ use Hyperf\Config\Config;
 use Hyperf\Di\Container;
 use Hyperf\Tracer\SpanStarter;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Context;
 use Mockery;
+use OpenTracing\Tracer;
 use PHPUnit\Framework\TestCase;
 use Zipkin\Samplers\BinarySampler;
 
@@ -54,6 +56,7 @@ class TracerFactoryTest extends TestCase
         ]);
         $this->getContainer($config);
 
+        Context::destroy(Tracer::class);
         $this->assertInstanceOf(\ZipkinOpenTracing\Tracer::class, $this->getTracer());
     }
 
@@ -89,6 +92,7 @@ class TracerFactoryTest extends TestCase
         ]);
         $this->getContainer($config);
 
+        Context::destroy(Tracer::class);
         $this->assertInstanceOf(\ZipkinOpenTracing\Tracer::class, $this->getTracer());
     }
 
@@ -124,6 +128,7 @@ class TracerFactoryTest extends TestCase
         ]);
         $this->getContainer($config);
 
+        Context::destroy(Tracer::class);
         $this->assertInstanceOf(\Jaeger\Tracer::class, $this->getTracer());
     }
 
