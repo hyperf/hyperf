@@ -127,7 +127,6 @@ class TracerFactoryTest extends TestCase
             ],
         ]);
         $this->getContainer($config);
-
         Context::destroy(Tracer::class);
         $this->assertInstanceOf(\Jaeger\Tracer::class, $this->getTracer());
     }
