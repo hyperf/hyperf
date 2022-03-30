@@ -208,6 +208,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $retryInterval = $this->config['retry_interval'] ?? 0;
             $readTimeout = $this->config['sentinel']['read_timeout'] ?? 0;
             $masterName = $this->config['sentinel']['master_name'] ?? '';
+            $auth = $this->config['sentinel']['auth'] ?? null;
             shuffle($nodes);
 
             $host = null;
@@ -221,7 +222,8 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
                         $timeout,
                         $persistent,
                         $retryInterval,
-                        $readTimeout
+                        $readTimeout,
+                        $auth
                     );
                     $masterInfo = $sentinel->getMasterAddrByName($masterName);
                     if (is_array($masterInfo) && count($masterInfo) >= 2) {
