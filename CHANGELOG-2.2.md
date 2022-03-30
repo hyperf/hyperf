@@ -1,5 +1,9 @@
 # v2.2.30 - TBD
 
+## Added
+
+- [#4646](https://github.com/hyperf/hyperf/pull/4646) Added auth config item to RedisSentinel.
+
 # v2.2.29 - 2022-03-28
 
 ## Fixed
