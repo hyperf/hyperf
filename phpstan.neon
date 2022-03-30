@@ -8,7 +8,7 @@ parameters:
   inferPrivatePropertyTypeFromConstructor: true
   treatPhpDocTypesAsCertain: true
   reportUnmatchedIgnoredErrors: false
-  exclude_paths:
+  excludes_analyse:
     - %currentWorkingDirectory%/src/*/tests/*
     - %currentWorkingDirectory%/src/*/publish/*
     - %currentWorkingDirectory%/src/*/class_map/*
