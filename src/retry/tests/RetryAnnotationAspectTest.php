@@ -270,64 +270,6 @@ class RetryAnnotationAspectTest extends TestCase
         $this->assertEquals(1, $aspect->process($point));
     }
 
-    public function testCircuitBreaker()
-    {
-        $aspect = new RetryAnnotationAspect();
-        $point = Mockery::mock(ProceedingJoinPoint::class);
-
-        $point->shouldReceive('getAnnotationMetadata')->andReturns(
-            new class() extends AnnotationMetadata {
-                public $method;
-
-                public function __construct()
-                {
-                    $state = Mockery::mock(
-                        \Hyperf\Retry\CircuitBreakerState::class
-                    );
-                    $state->shouldReceive('isOpen')->twice()->andReturns(false);
-                    $state->shouldReceive('isOpen')->once()->andReturns(true);
-                    $retry = new CircuitBreaker(['circuitBreakerState' => $state]);
-                    $retry->sleepStrategyClass = FlatStrategy::class;
-                    $this->method = [
-                        AbstractRetry::class => $retry,
-                    ];
-                }
-            }
-        );
-        $point->shouldReceive('process')->times(2)->andThrow(new \RuntimeException('ok'));
-        $point->shouldReceive('getArguments')->andReturns([]);
-        $this->expectException('RuntimeException');
-        $aspect->process($point);
-    }
-
-    public function testFallbackForCircuitBreaker()
-    {
-        $aspect = new RetryAnnotationAspect();
-        $point = Mockery::mock(ProceedingJoinPoint::class);
-
-        $point->shouldReceive('getAnnotationMetadata')->andReturns(
-            new class() extends AnnotationMetadata {
-                public $method;
-
-                public function __construct()
-                {
-                    $state = new \Hyperf\Retry\CircuitBreakerState(10);
-                    $retry = new CircuitBreaker(['circuitBreakerState' => $state]);
-                    $retry->sleepStrategyClass = FlatStrategy::class;
-                    $retry->fallback = Foo::class . '@fallbackWithThrowable';
-                    $retry->maxAttempts = 2;
-                    $this->method = [
-                        AbstractRetry::class => $retry,
-                    ];
-                }
-            }
-        );
-        $point->shouldReceive('process')->times(2)->andThrow(new \RuntimeException('ok'));
-        $point->shouldReceive('getArguments')->andReturns([$string = uniqid()]);
-        $result = $aspect->process($point);
-        $this->assertSame($string . ':ok', $result);
-    }
-
     public function testTimeout()
     {
         $aspect = new RetryAnnotationAspect();
