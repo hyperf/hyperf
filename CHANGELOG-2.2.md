@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#4646](https://github.com/hyperf/hyperf/pull/4646) Added auth config item to RedisSentinel.
+- [#4646](https://github.com/hyperf/hyperf/pull/4646) Support setting `auth` for `RedisSentinel`.
 
 # v2.2.29 - 2022-03-28
 
