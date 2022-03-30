@@ -13,6 +13,9 @@ namespace Hyperf\Di;
 
 interface ClosureDefinitionCollectorInterface
 {
+    /**
+     * @return ReflectionType[]
+     */
     public function getParameters(\Closure $closure): array;
 
     public function getReturnType(\Closure $closure): ReflectionType;
