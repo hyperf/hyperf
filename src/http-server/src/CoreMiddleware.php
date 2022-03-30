@@ -18,6 +18,7 @@ use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
+use Hyperf\Di\ReflectionType;
 use Hyperf\HttpMessage\Exception\MethodNotAllowedHttpException;
 use Hyperf\HttpMessage\Exception\NotFoundHttpException;
 use Hyperf\HttpMessage\Exception\ServerErrorHttpException;
@@ -230,7 +231,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
     }
 
     /**
-     * @param \Hyperf\Di\ReflectionType[] $definitions
+     * @param ReflectionType[] $definitions
      */
     private function getInjections(array $definitions, string $callableName, array $arguments): array
     {
