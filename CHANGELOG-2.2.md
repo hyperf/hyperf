@@ -1,5 +1,9 @@
 # v2.2.30 - TBD
 
+## Fixed
+
+- [#4648](https://github.com/hyperf/hyperf/pull/4648) Fixed bug that circuit breaker couldn't call fallback on `open` state when using `hyperf/retry`.
+
 ## Added
 
 - [#4646](https://github.com/hyperf/hyperf/pull/4646) Support setting `auth` for `RedisSentinel`.
