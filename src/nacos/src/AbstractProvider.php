@@ -81,7 +81,7 @@ abstract class AbstractProvider
                 $result[$key] = $value;
             }
         }
-        if ($result['dataId'] == '*' || $result['dataId'] === '') {
+        if (isset($result['dataId']) && ($result['dataId'] === '*' || $result['dataId'] === '')) {
             $result['dataId'] = '';
             $result['search'] = 'accurate';
             $result['pageNo'] = 1;
