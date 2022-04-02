@@ -114,6 +114,7 @@ class Filesystem
      */
     public function put(string $path, $contents, bool $lock = false)
     {
+        clearstatcache(true, $path);
         if ($lock) {
             return $this->atomic($path, function ($path) use ($contents) {
                 $handle = fopen($path, 'w+');

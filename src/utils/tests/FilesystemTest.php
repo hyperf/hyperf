@@ -118,4 +118,20 @@ class FilesystemTest extends TestCase
             );
         });
     }
+
+    public function testLastModified()
+    {
+        $path = BASE_PATH . '/runtime/data.log';
+        $fs = new \Hyperf\Utils\Filesystem\Filesystem();
+
+        $this->assertNotFalse($fs->put($path, 'hello'));
+        $lastModified = $fs->lastModified($path);
+
+        sleep(1);
+
+        $this->assertNotFalse($fs->put($path, 'world'));
+        $this->assertNotSame($lastModified, $fs->lastModified($path));
+
+        unlink($path);
+    }
 }
