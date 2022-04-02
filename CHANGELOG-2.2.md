@@ -2,7 +2,7 @@
 
 ## Fixed
 
-- [#4648](https://github.com/hyperf/hyperf/pull/4648) Fixed bug that circuit breaker couldn't call fallback on `open` state when using `hyperf/retry`
+- [#4648](https://github.com/hyperf/hyperf/pull/4648) Fixed bug that circuit breaker couldn't call fallback on `open` state when using `hyperf/retry`.
 
 ## Added
 
