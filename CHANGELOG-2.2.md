@@ -1,8 +1,11 @@
-# v2.2.30 - TBD
+# v2.2.31 - TBD
+
+# v2.2.30 - 2022-04-04
 
 ## Fixed
 
 - [#4648](https://github.com/hyperf/hyperf/pull/4648) Fixed bug that circuit breaker couldn't call fallback on `open` state when using `hyperf/retry`.
+- [#4657](https://github.com/hyperf/hyperf/pull/4657) Fixed bug that last modified time was not updated after write session again when using `hyperf/session`.
 
 ## Added
 
