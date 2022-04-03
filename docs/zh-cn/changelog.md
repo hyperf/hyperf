@@ -1,5 +1,16 @@
 # 版本更新记录
 
+# v2.2.30 - 2022-04-04
+
+## 修复
+
+- [#4648](https://github.com/hyperf/hyperf/pull/4648) 当使用 `retry` 组件中的熔断器时，修复在 `open` 状态下，无法自动调用 `fallback` 方法的问题。
+- [#4657](https://github.com/hyperf/hyperf/pull/4657) 修复使用 `session` 中的文件适配器时，相同的 `Session ID` 在被重写后，最后修改时间仍是上次修改时间的问题。
+
+## 新增
+
+- [#4646](https://github.com/hyperf/hyperf/pull/4646) 为 `Redis` 哨兵模式增加设置密码的功能。
+
 # v2.2.29 - 2022-03-28
 
 ## 修复
