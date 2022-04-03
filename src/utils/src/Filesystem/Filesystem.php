@@ -107,6 +107,14 @@ class Filesystem
     }
 
     /**
+     * Clears file status cache.
+     */
+    public function clearStatCache(string $path): void
+    {
+        clearstatcache(true, $path);
+    }
+
+    /**
      * Write the contents of a file.
      *
      * @param resource|string $contents
@@ -114,7 +122,6 @@ class Filesystem
      */
     public function put(string $path, $contents, bool $lock = false)
     {
-        clearstatcache(true, $path);
         if ($lock) {
             return $this->atomic($path, function ($path) use ($contents) {
                 $handle = fopen($path, 'w+');

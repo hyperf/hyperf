@@ -130,6 +130,9 @@ class FilesystemTest extends TestCase
         sleep(1);
 
         $this->assertNotFalse($fs->put($path, 'world'));
+        $this->assertSame($lastModified, $fs->lastModified($path));
+
+        $fs->clearStatCache($path);
         $this->assertNotSame($lastModified, $fs->lastModified($path));
 
         unlink($path);
