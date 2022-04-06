@@ -176,16 +176,18 @@ class DispatcherFactory
             foreach ($mappingAnnotations as $mappingAnnotation) {
                 /** @var Mapping $mapping */
                 if ($mapping = $values[$mappingAnnotation] ?? null) {
-                    if (! isset($mapping->path) || ! isset($mapping->methods) || ! isset($mapping->options)) {
+                    if (! isset($mapping->methods) || ! isset($mapping->options)) {
                         continue;
                     }
                     $methodOptions = Arr::merge($options, $mapping->options);
                     // Rewrite by annotation @Middleware for method.
                     $methodOptions['middleware'] = $options['middleware'];
-                    $path = $mapping->path;
+                    $path = $mapping->path ?? null;
 
                     if ($path === '') {
                         $path = $prefix;
+                    } elseif (is_null($path)) {
+                        $path = $prefix . '/' . $methodName;
                     } elseif ($path[0] !== '/') {
                         $path = $prefix . '/' . $path;
                     }
