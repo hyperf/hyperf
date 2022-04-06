@@ -182,15 +182,17 @@ class DispatcherFactory
                     $methodOptions = Arr::merge($options, $mapping->options);
                     // Rewrite by annotation @Middleware for method.
                     $methodOptions['middleware'] = $options['middleware'];
-                    $path = $mapping->path ?? null;
 
-                    if ($path === '') {
-                        $path = $prefix;
-                    } elseif (is_null($path)) {
+                    if (! isset($mapping->path)) {
                         $path = $prefix . '/' . $methodName;
-                    } elseif ($path[0] !== '/') {
-                        $path = $prefix . '/' . $path;
+                    } elseif ($mapping->path === '') {
+                        $path = $prefix;
+                    } elseif ($mapping->path[0] !== '/') {
+                        $path = $prefix . '/' . $mapping->path;
+                    } else {
+                        $path = $mapping->path;
                     }
+
                     $router->addRoute($mapping->methods, $path, [$className, $methodName], $methodOptions);
                 }
             }
