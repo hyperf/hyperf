@@ -15,7 +15,7 @@ use Closure;
 use Hyperf\Macroable\Macroable;
 use JsonSerializable;
 
-class Stringable implements JsonSerializable
+class Stringable implements JsonSerializable, \Stringable
 {
     use Traits\Conditionable;
     use Macroable;
@@ -212,11 +212,15 @@ class Stringable implements JsonSerializable
     /**
      * Determine if the string is an exact match with the given value.
      *
-     * @param string $value
+     * @param string|\Stringable $value
      * @return bool
      */
     public function exactly($value)
     {
+        if ($value instanceof \Stringable) {
+            $value = $value->__toString();
+        }
+
         return $this->value === $value;
     }
 
