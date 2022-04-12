@@ -89,8 +89,8 @@ class DispatcherFactoryTest extends TestCase
             DemoController::class,
             $annotation,
             ['index' => [
-                GetMapping::class => new GetMapping(['path' => '/index', 'options' => ['name' => 'index.get', 'id' => 1]]),
-                PostMapping::class => new PostMapping(['path' => '/index', 'options' => ['name' => 'index.post']]),
+                GetMapping::class => new GetMapping('/index', ['name' => 'index.get', 'id' => 1]),
+                PostMapping::class => new PostMapping('/index', ['name' => 'index.post']),
                 Middleware::class => new MultipleAnnotation(new Middleware(FooMiddleware::class)),
             ]],
             [SetHeaderMiddleware::class]

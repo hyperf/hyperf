@@ -23,10 +23,6 @@ class CircuitBreakerTest extends TestCase
 {
     public function testAttributeCollect()
     {
-        if (PHP_VERSION_ID >= 80000) {
-            $breaker = CircuitBreakerStub::makeCircuitBreaker();
-            $this->assertSame(['timeout' => 1], $breaker->value);
-        }
         $breaker = new CircuitBreaker(value: ['timeout' => 1]);
         $this->assertSame(['timeout' => 1], $breaker->value);
     }
