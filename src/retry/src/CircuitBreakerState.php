@@ -14,14 +14,10 @@ namespace Hyperf\Retry;
 class CircuitBreakerState
 {
     /**
-     * Circuit Breaker State. A float value means open; null means close.
-     */
-    protected ?float $openTime = null;
-
-    /**
      * @param float $resetTimeout timeout to reset CircuitBreaker back to close
+     * @param float|null $openTime Circuit Breaker State. A float value means open; null means close.
      */
-    public function __construct(protected float $resetTimeout)
+    public function __construct(public float $resetTimeout, public ?float $openTime = null)
     {
     }
 
