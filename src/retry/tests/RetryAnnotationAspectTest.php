@@ -281,7 +281,7 @@ class RetryAnnotationAspectTest extends TestCase
                     );
                     $state->shouldReceive('isOpen')->twice()->andReturns(false);
                     $state->shouldReceive('isOpen')->once()->andReturns(true);
-                    $retry = new CircuitBreaker(['circuitBreakerState' => $state]);
+                    $retry = new CircuitBreaker(circuitBreakerState: $state);
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $this->method = [
                         AbstractRetry::class => $retry,

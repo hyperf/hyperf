@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace HyperfTest\CircuitBreaker\Annotation;
 
 use Hyperf\CircuitBreaker\Annotation\CircuitBreaker;
-use HyperfTest\CircuitBreaker\Stub\CircuitBreakerStub;
 use PHPUnit\Framework\TestCase;
 
 /**
