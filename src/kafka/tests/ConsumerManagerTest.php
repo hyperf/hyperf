@@ -59,7 +59,7 @@ class ConsumerManagerTest extends TestCase
         foreach (ProcessManager::all() as $item) {
             if (method_exists($item, 'getConsumerConfig')) {
                 $hasRegistered = true;
-                $config = $container->get(ConfigInterface::class)->get('kafka .default');
+                $config = $container->get(ConfigInterface::class)->get('kafka.default');
 
                 /** @var ConsumerConfig $consumer */
                 $consumer = $item->getConsumerConfig();
