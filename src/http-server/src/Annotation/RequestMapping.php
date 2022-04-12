@@ -31,16 +31,17 @@ class RequestMapping extends Mapping
 
     public const OPTIONS = 'OPTIONS';
 
-    public array $methods = ['GET', 'POST'];
-
-    public function __construct(array|string $methods = ['GET', 'POST'])
+    public function __construct(?string $path = null, array|string $methods = ['GET', 'POST'], array $options = [])
     {
+        $formatted = [];
         if (is_string($methods)) {
-            $this->methods = explode(',', Str::upper(str_replace(' ', '', $methods)));
+            $formatted = explode(',', Str::upper(str_replace(' ', '', $methods)));
         } else {
             foreach ($methods as $method) {
-                $this->methods[] = Str::upper(str_replace(' ', '', $method));
+                $formatted[] = Str::upper(str_replace(' ', '', $method));
             }
         }
+
+        parent::__construct($path, $formatted, $options);
     }
 }

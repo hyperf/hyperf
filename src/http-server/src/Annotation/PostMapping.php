@@ -16,7 +16,8 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD)]
 class PostMapping extends Mapping
 {
-    public function __construct(public array $methods = ['POST'])
+    public function __construct(?string $path = null, array $options = [])
     {
+        parent::__construct($path, ['POST'], $options);
     }
 }

@@ -15,15 +15,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 
 abstract class Mapping extends AbstractAnnotation
 {
-    public array $methods = [];
-
-    public ?string $path = null;
-
-    public array $options = [];
-
-    public function __construct(...$value)
+    public function __construct(public ?string $path = null, public array $methods = [], public array $options = [])
     {
-        parent::__construct(...$value);
-        $this->bindMainProperty('path', $value);
     }
 }

@@ -27,7 +27,7 @@ class CircuitBreakerTest extends TestCase
             $breaker = CircuitBreakerStub::makeCircuitBreaker();
             $this->assertSame(['timeout' => 1], $breaker->value);
         }
-        $breaker = new CircuitBreaker(['timeout' => 1]);
+        $breaker = new CircuitBreaker(value: ['timeout' => 1]);
         $this->assertSame(['timeout' => 1], $breaker->value);
     }
 }

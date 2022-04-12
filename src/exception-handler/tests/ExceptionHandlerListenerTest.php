@@ -61,7 +61,7 @@ class ExceptionHandlerListenerTest extends TestCase
                 ],
             ],
         ]);
-        AnnotationCollector::collectClass('Bar1', ExceptionHandler::class, new ExceptionHandler(['server' => 'http', 'priority' => 1]));
+        AnnotationCollector::collectClass('Bar1', ExceptionHandler::class, new ExceptionHandler('http', 1));
         $listener = new ExceptionHandlerListener($config);
         $listener->process(new \stdClass());
         $this->assertSame([
@@ -85,8 +85,8 @@ class ExceptionHandlerListenerTest extends TestCase
                 ],
             ],
         ]);
-        AnnotationCollector::collectClass('Bar1', ExceptionHandler::class, new ExceptionHandler(['server' => 'http', 'priority' => 0]));
-        AnnotationCollector::collectClass('Bar', ExceptionHandler::class, new ExceptionHandler(['server' => 'ws', 'priority' => 1]));
+        AnnotationCollector::collectClass('Bar1', ExceptionHandler::class, new ExceptionHandler('http', 0));
+        AnnotationCollector::collectClass('Bar', ExceptionHandler::class, new ExceptionHandler('ws', 1));
         $listener = new ExceptionHandlerListener($config);
         $listener->process(new \stdClass());
         $this->assertEquals(['Foo', 'Bar', 'Bar1'], $config->get('exceptions.handler', [])['http']);
@@ -104,7 +104,7 @@ class ExceptionHandlerListenerTest extends TestCase
                 ],
             ],
         ]);
-        AnnotationCollector::collectClass('Tar', ExceptionHandler::class, new ExceptionHandler(['server' => 'http', 'priority' => 1]));
+        AnnotationCollector::collectClass('Tar', ExceptionHandler::class, new ExceptionHandler('http', 1));
         $listener = new ExceptionHandlerListener($config);
         $listener->process(new \stdClass());
         $this->assertSame([
