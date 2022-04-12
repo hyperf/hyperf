@@ -20,30 +20,18 @@ use ReflectionMethod;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Crontab extends AbstractAnnotation
 {
-    public ?string $name = null;
-
-    public string $type = 'callback';
-
-    public ?string $rule = null;
-
-    public ?bool $singleton = null;
-
-    public ?string $mutexPool = null;
-
-    public ?int $mutexExpires = null;
-
-    public ?bool $onOneServer = null;
-
-    public array|string|null $callback = null;
-
-    public ?string $memo = null;
-
-    public array|bool|string $enable = true;
-
-    public function __construct(...$value)
-    {
-        parent::__construct(...$value);
-        $this->bindMainProperty('rule', $value);
+    public function __construct(
+        public ?string $rule = null,
+        public ?string $name = null,
+        public string $type = 'callback',
+        public ?bool $singleton = null,
+        public ?string $mutexPool = null,
+        public ?int $mutexExpires = null,
+        public ?bool $onOneServer = null,
+        public array|string|null $callback = null,
+        public ?string $memo = null,
+        public array|string|bool $enable = true
+    ) {
         if (! empty($this->rule)) {
             $this->rule = str_replace('\\', '', $this->rule);
         }

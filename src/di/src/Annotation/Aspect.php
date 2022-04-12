@@ -16,11 +16,9 @@ use Attribute;
 #[Attribute(Attribute::TARGET_CLASS)]
 class Aspect extends AbstractAnnotation
 {
-    public array $classes = [];
-
-    public array $annotations = [];
-
-    public ?int $priority = null;
+    public function __construct(public array $classes = [], public array $annotations = [], public ?int $priority = null)
+    {
+    }
 
     public function collectClass(string $className): void
     {
