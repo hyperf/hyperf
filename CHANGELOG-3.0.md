@@ -6,7 +6,9 @@
 
 - 框架移除了 `@Annotation` 的支持，全部使用 `PHP8` 原生注解 `Attribute`，更新前务必检查项目中，是否已经全部替换为 `Attribute`。
 
-可以执行以下脚本，将 Doctrine Annotations 转化为 PHP8 Attributes.
+可以执行以下脚本，将 `Doctrine Annotations` 转化为 `PHP8 Attributes`.
+
+**注意: 这个脚本只能在 2.2 版本下执行**
 
 ```shell
 composer require hyperf/code-generator
@@ -16,8 +18,6 @@ php bin/hyperf.php code:generate -D app
 - 升级模型脚本
 
 > 因为模型基类增加了成员变量的类型支持，所以需要使用以下脚本，将其升级为新版本。
-
-**注意: 这个脚本只能在 2.2 版本下执行**
 
 ```shell
 composer require hyperf/code-generator
