@@ -94,7 +94,11 @@ class RateLimitAnnotationAspect implements AroundInterface
             }
             $property = array_merge($property, array_filter(get_object_vars($annotation)));
         }
-        return new RateLimit($property);
+        return tap(new RateLimit(), static function (RateLimit $rateLimit) use ($property) {
+            foreach ($property as $key => $value) {
+                $rateLimit->{$key} = $value;
+            }
+        });
     }
 
     public function getAnnotations(ProceedingJoinPoint $proceedingJoinPoint): array

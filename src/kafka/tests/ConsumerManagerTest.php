@@ -44,15 +44,14 @@ class ConsumerManagerTest extends TestCase
         $container = ContainerStub::getContainer();
 
         $topic = Arr::random([uniqid(), [uniqid(), uniqid()]]);
-        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
-            'topic' => $topic,
-            'name' => uniqid(),
-            'groupId' => $groupId = uniqid(),
-            'nums' => $nums = rand(1, 10),
-            'isEnable' => true,
-            'autoCommit' => true,
-            'memberId' => $memberId = uniqid(),
-        ]));
+        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer(
+            topic: $topic,
+            groupId: $groupId = uniqid(),
+            memberId: $memberId = uniqid(),
+            autoCommit: true,
+            nums: $nums = rand(1, 10),
+            enable: true,
+        ));
         $manager = new ConsumerManager($container);
         $manager->run();
         $hasRegistered = false;
@@ -100,14 +99,14 @@ class ConsumerManagerTest extends TestCase
     {
         $container = ContainerStub::getContainer();
 
-        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
-            'topic' => $topic = uniqid(),
-            'name' => $name = uniqid(),
-            'groupId' => $groupId = uniqid(),
-            'nums' => $nums = rand(1, 10),
-            'enable' => false,
-            'autoCommit' => true,
-        ]));
+        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer(
+            topic: $topic = uniqid(),
+            groupId: $groupId = uniqid(),
+            memberId: $memberId = uniqid(),
+            autoCommit: true,
+            nums: $nums = rand(1, 10),
+            enable: false,
+        ));
 
         $manager = new ConsumerManager($container);
         $manager->run();

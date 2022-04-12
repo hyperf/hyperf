@@ -22,45 +22,40 @@ class MappingAnnotationTest extends TestCase
 {
     public function testRequestMapping()
     {
-        $mapping = new RequestMapping([]);
+        $mapping = new RequestMapping();
         // Assert default methods
         $this->assertSame(['GET', 'POST'], $mapping->methods);
         $this->assertNull($mapping->path);
 
         // Normal case
-        $mapping = new RequestMapping([
-            'methods' => 'get,post,put',
-            'path' => $path = '/foo',
-            'options' => ['id' => $id = uniqid()],
-        ]);
+        $mapping = new RequestMapping(
+            $path = '/foo',
+            'get,post,put',
+            ['id' => $id = uniqid()]
+        );
         $this->assertSame(['GET', 'POST', 'PUT'], $mapping->methods);
         $this->assertSame($path, $mapping->path);
         $this->assertSame($id, $mapping->options['id']);
 
         // The methods have space
-        $mapping = new RequestMapping([
-            'methods' => 'get, post,  put',
-            'path' => $path,
-        ]);
+        $mapping = new RequestMapping($path, 'get, post,  put');
         $this->assertSame(['GET', 'POST', 'PUT'], $mapping->methods);
         $this->assertSame($path, $mapping->path);
     }
 
     public function testRequestMappingWithArrayMethods()
     {
-        $mapping = new RequestMapping([
-            'methods' => [
-                'GET', 'POST ', 'put',
-            ],
-            'path' => $path = '/foo',
-        ]);
+        $mapping = new RequestMapping(
+            $path = '/foo',
+            ['GET', 'POST ', 'put']
+        );
         $this->assertSame(['GET', 'POST', 'PUT'], $mapping->methods);
         $this->assertSame($path, $mapping->path);
     }
 
     public function testRequestMappingBindMainProperty()
     {
-        $mapping = new RequestMapping(['value' => '/foo']);
+        $mapping = new RequestMapping('/foo');
         $this->assertSame(['GET', 'POST'], $mapping->methods);
         $this->assertSame('/foo', $mapping->path);
     }

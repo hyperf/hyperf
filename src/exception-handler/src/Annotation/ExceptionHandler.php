@@ -17,7 +17,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS)]
 class ExceptionHandler extends AbstractAnnotation
 {
-    public string $server = 'http';
-
-    public int $priority = 0;
+    public function __construct(public string $server = 'http', public int $priority = 0)
+    {
+    }
 }

@@ -17,16 +17,15 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_METHOD)]
 class CachePut extends AbstractAnnotation
 {
-    public ?string $prefix = null;
-
-    public ?string $value = null;
-
-    public ?int $ttl = null;
-
     /**
-     * The max offset for ttl.
+     * @param null|int $ttl the max offset for ttl
      */
-    public int $offset = 0;
-
-    public string $group = 'default';
+    public function __construct(
+        public ?string $prefix = null,
+        public ?string $value = null,
+        public ?int $ttl = null,
+        public int $offset = 0,
+        public string $group = 'default'
+    ) {
+    }
 }

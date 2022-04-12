@@ -17,11 +17,11 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS)]
 class RpcService extends AbstractAnnotation
 {
-    public string $name = '';
-
-    public string $server = 'jsonrpc-http';
-
-    public string $protocol = 'jsonrpc-http';
-
-    public string $publishTo = '';
+    public function __construct(
+        public string $name = '',
+        public string $server = 'jsonrpc-http',
+        public string $protocol = 'jsonrpc-http',
+        public string $publishTo = ''
+    ) {
+    }
 }

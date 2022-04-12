@@ -16,5 +16,8 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD)]
 class GetMapping extends Mapping
 {
-    public array $methods = ['GET'];
+    public function __construct(?string $path = null, array $options = [])
+    {
+        parent::__construct($path, ['GET'], $options);
+    }
 }

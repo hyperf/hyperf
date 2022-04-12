@@ -19,22 +19,19 @@ use Hyperf\Di\Annotation\AnnotationCollector;
 #[Attribute(Attribute::TARGET_METHOD)]
 class Cacheable extends AbstractAnnotation
 {
-    public ?string $prefix = null;
-
-    public ?string $value = null;
-
-    public ?int $ttl = null;
-
-    public ?string $listener = null;
-
     /**
-     * The max offset for ttl.
+     * @param null|int $ttl the max offset for ttl
      */
-    public int $offset = 0;
-
-    public string $group = 'default';
-
-    public bool $collect = false;
+    public function __construct(
+        public ?string $prefix = null,
+        public ?string $value = null,
+        public ?int $ttl = null,
+        public ?string $listener = null,
+        public int $offset = 0,
+        public string $group = 'default',
+        public bool $collect = false
+    ) {
+    }
 
     public function collectMethod(string $className, ?string $target): void
     {

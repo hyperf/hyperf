@@ -47,7 +47,7 @@ class DispatcherFactoryTest extends TestCase
     public function testRemoveMagicMethods()
     {
         $factory = new DispatcherFactory();
-        $annotation = new AutoController(['prefix' => 'test']);
+        $annotation = new AutoController('test');
         $factory->handleAutoController(DemoController::class, $annotation);
 
         $router = $factory->getRouter('http');
@@ -64,7 +64,7 @@ class DispatcherFactoryTest extends TestCase
     public function testOptionsInAutoController()
     {
         $factory = new DispatcherFactory();
-        $annotation = new AutoController(['prefix' => 'test', 'options' => ['name' => 'Hyperf']]);
+        $annotation = new AutoController('test', options: ['name' => 'Hyperf']);
         $factory->handleAutoController(DemoController::class, $annotation);
         $router = $factory->getRouter('http');
 
@@ -84,14 +84,14 @@ class DispatcherFactoryTest extends TestCase
     {
         $factory = new DispatcherFactory();
         // Middleware in options should not works.
-        $annotation = new Controller(['prefix' => 'test', 'options' => ['name' => 'Hyperf', 'middleware' => [BarMiddleware::class]]]);
+        $annotation = new Controller('test', options: ['name' => 'Hyperf', 'middleware' => [BarMiddleware::class]]);
         $factory->handleController(
             DemoController::class,
             $annotation,
             ['index' => [
-                GetMapping::class => new GetMapping(['path' => '/index', 'options' => ['name' => 'index.get', 'id' => 1]]),
-                PostMapping::class => new PostMapping(['path' => '/index', 'options' => ['name' => 'index.post']]),
-                Middleware::class => new MultipleAnnotation(new Middleware(['middleware' => FooMiddleware::class])),
+                GetMapping::class => new GetMapping('/index', ['name' => 'index.get', 'id' => 1]),
+                PostMapping::class => new PostMapping('/index', ['name' => 'index.post']),
+                Middleware::class => new MultipleAnnotation(new Middleware(FooMiddleware::class)),
             ]],
             [SetHeaderMiddleware::class]
         );

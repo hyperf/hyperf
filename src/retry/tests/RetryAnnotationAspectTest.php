@@ -281,7 +281,7 @@ class RetryAnnotationAspectTest extends TestCase
                     );
                     $state->shouldReceive('isOpen')->twice()->andReturns(false);
                     $state->shouldReceive('isOpen')->once()->andReturns(true);
-                    $retry = new CircuitBreaker(['circuitBreakerState' => $state]);
+                    $retry = new CircuitBreaker(circuitBreakerState: $state);
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $this->method = [
                         AbstractRetry::class => $retry,
@@ -307,7 +307,7 @@ class RetryAnnotationAspectTest extends TestCase
                 public function __construct()
                 {
                     $state = new \Hyperf\Retry\CircuitBreakerState(10);
-                    $retry = new CircuitBreaker(['circuitBreakerState' => $state]);
+                    $retry = new CircuitBreaker(circuitBreakerState: $state);
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $retry->fallback = Foo::class . '@fallbackWithThrowable';
                     $retry->maxAttempts = 2;

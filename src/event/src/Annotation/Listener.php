@@ -18,13 +18,7 @@ use Hyperf\Event\ListenerData;
 #[Attribute(Attribute::TARGET_CLASS)]
 class Listener extends AbstractAnnotation
 {
-    public int $priority = ListenerData::DEFAULT_PRIORITY;
-
-    public function __construct(...$value)
+    public function __construct(public int $priority = ListenerData::DEFAULT_PRIORITY)
     {
-        $value = $this->formatParams($value);
-        if (is_numeric($value['priority'] ?? null)) {
-            $this->priority = (int) $value['priority'];
-        }
     }
 }

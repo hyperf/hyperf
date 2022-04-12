@@ -44,7 +44,7 @@ class RouterDispatcherFactoryTest extends TestCase
             $dispatcher = Mockery::mock(EventDispatcherInterface::class);
             $dispatcher->shouldReceive('dispatch')->withAnyArgs()->once()->andReturnUsing(function ($object) {
                 $this->assertInstanceOf(AfterPathRegister::class, $object);
-                $this->assertSame('/id_generator_stub/generate', $object->path);
+                $this->assertSame('/id_generator/generate', $object->path);
                 return $object;
             });
             return $dispatcher;
@@ -74,15 +74,15 @@ class RouterDispatcherFactoryTest extends TestCase
         $ref = new \ReflectionClass($factory);
         $m = $ref->getMethod('handleRpcService');
         $m->setAccessible(true);
-        $m->invokeArgs($factory, [MiddlewareStub::class, new RpcService('IdGenerator'), [
+        $m->invokeArgs($factory, [MiddlewareStub::class, new RpcService('Middleware'), [
             'generate' => [
-                Middleware::class => new Middleware(['value' => 'Bar']),
+                Middleware::class => new Middleware('Bar'),
             ],
         ], [
             'Foo',
         ]]);
 
-        $this->assertSame(['Foo'], MiddlewareManager::get('jsonrpc-http', '/middleware_stub/foo', 'POST'));
-        $this->assertSame(['Bar', 'Foo'], MiddlewareManager::get('jsonrpc-http', '/middleware_stub/generate', 'POST'));
+        $this->assertSame(['Foo'], MiddlewareManager::get('jsonrpc-http', '/middleware/foo', 'POST'));
+        $this->assertSame(['Bar', 'Foo'], MiddlewareManager::get('jsonrpc-http', '/middleware/generate', 'POST'));
     }
 }

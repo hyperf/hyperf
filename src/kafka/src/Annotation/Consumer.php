@@ -17,20 +17,17 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS)]
 class Consumer extends AbstractAnnotation
 {
-    public string $pool = 'default';
-
     /**
-     * @var string|string[]
+     * @param string|string[] $topic
      */
-    public string|array $topic = '';
-
-    public ?string $groupId = null;
-
-    public ?string $memberId = null;
-
-    public bool $autoCommit = true;
-
-    public int $nums = 1;
-
-    public bool $enable = true;
+    public function __construct(
+        public string $pool = 'default',
+        public array|string $topic = '',
+        public ?string $groupId = null,
+        public ?string $memberId = null,
+        public bool $autoCommit = true,
+        public int $nums = 1,
+        public bool $enable = true
+    ) {
+    }
 }

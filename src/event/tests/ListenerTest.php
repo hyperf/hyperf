@@ -148,26 +148,10 @@ class ListenerTest extends TestCase
 
     public function testListenerAnnotationWithPriority()
     {
-        // Default value.
         $listenerAnnotation = new ListenerAnnotation();
         $this->assertSame(ListenerData::DEFAULT_PRIORITY, $listenerAnnotation->priority);
-        // With a integer.
+
         $listenerAnnotation = new ListenerAnnotation(2);
-        $this->assertSame(ListenerData::DEFAULT_PRIORITY, $listenerAnnotation->priority);
-        // Define the priority.
-        $listenerAnnotation = new ListenerAnnotation([
-            'priority' => 2,
-        ]);
         $this->assertSame(2, $listenerAnnotation->priority);
-        // String number
-        $listenerAnnotation = new ListenerAnnotation([
-            'priority' => '2',
-        ]);
-        $this->assertSame(2, $listenerAnnotation->priority);
-        // Non-number
-        $listenerAnnotation = new ListenerAnnotation([
-            'priority' => 'string',
-        ]);
-        $this->assertSame(ListenerData::DEFAULT_PRIORITY, $listenerAnnotation->priority);
     }
 }
