@@ -23,7 +23,6 @@ class Consumer extends AbstractAnnotation
         public string $name = '',
         public int $nums = 1,
         public string $pool = ''
-    )
-    {
+    ) {
     }
 }

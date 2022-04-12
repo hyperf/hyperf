@@ -28,7 +28,6 @@ class Consumer extends AbstractAnnotation
         public bool $autoCommit = true,
         public int $nums = 1,
         public bool $enable = true
-    )
-    {
+    ) {
     }
 }
