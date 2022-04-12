@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Di;
 
-use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
 use Hyperf\Di\Annotation\AnnotationReader;
 use HyperfTest\Di\Stub\NotFoundAttributeTarget;
 use PHPUnit\Framework\TestCase;
@@ -23,20 +22,6 @@ use ReflectionClass;
  */
 class AnnotationReaderTest extends TestCase
 {
-    public function testAddGlobalImports()
-    {
-        AnnotationReader::addGlobalImports('AnnotationStub', 'AnnotationStub');
-        $ref = new \ReflectionClass(AnnotationReader::class);
-        $properties = $ref->getStaticProperties();
-        $this->assertSame([
-            'ignoreannotation' => IgnoreAnnotation::class,
-            'annotationstub' => 'AnnotationStub',
-        ], $properties['globalImports']);
-    }
-
-    /**
-     * @requires PHP 8.0
-     */
     public function testGetNotFoundAttributesOfClass()
     {
         $reflectionClass = new ReflectionClass(NotFoundAttributeTarget::class);
