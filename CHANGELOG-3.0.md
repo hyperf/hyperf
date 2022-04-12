@@ -6,21 +6,28 @@
 
 - 框架移除了 `@Annotation` 的支持，全部使用 `PHP8` 原生注解 `Attribute`，更新前务必检查项目中，是否已经全部替换为 `Attribute`。
 
-> TODO: 提供检测注解的脚本
+可以执行以下脚本，将 `Doctrine Annotations` 转化为 `PHP8 Attributes`.
 
-- 框架为类库增加了更多的类型限制，所以从 `2.2` 更新到 `3.0` 版本时，需要跑一遍静态检测。
+**注意: 这个脚本只能在 2.2 版本下执行**
 
 ```shell
-composer analyse
+composer require hyperf/code-generator
+php bin/hyperf.php code:generate -D app
 ```
 
-升级模型脚本
+- 升级模型脚本
 
 > 因为模型基类增加了成员变量的类型支持，所以需要使用以下脚本，将其升级为新版本。
 
 ```shell
 composer require hyperf/code-generator
 php vendor/bin/regenerate-models.php $PWD/app/Model
+```
+
+- 框架为类库增加了更多的类型限制，所以从 `2.2` 更新到 `3.0` 版本时，需要跑一遍静态检测。
+
+```shell
+composer analyse
 ```
 
 ## Dependencies Upgrade
@@ -59,6 +66,7 @@ php vendor/bin/regenerate-models.php $PWD/app/Model
 - [#4460](https://github.com/hyperf/hyperf/pull/4460) Use `??` instead of `?:` for `$callback` when using `Stringable::when()`.
 - [#4502](https://github.com/hyperf/hyperf/pull/4502) Use `Hyperf\Engine\Channel` instead of `Hyperf\Coroutine\Channel` in `hyperf/reactive-x`.
 - [#4611](https://github.com/hyperf/hyperf/pull/4611) Changed return type to `void` for `Hyperf\Event\Contract\ListenerInterface::process()`.
+- [#4669](https://github.com/hyperf/hyperf/pull/4669) Changed all annotations which only support `PHP` >= `8.0`.
 
 ## Removed
 
