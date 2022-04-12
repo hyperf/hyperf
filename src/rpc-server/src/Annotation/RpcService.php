@@ -22,7 +22,6 @@ class RpcService extends AbstractAnnotation
         public string $server = 'jsonrpc-http',
         public string $protocol = 'jsonrpc-http',
         public string $publishTo = ''
-    )
-    {
+    ) {
     }
 }
