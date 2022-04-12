@@ -17,7 +17,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Trace extends AbstractAnnotation
 {
-    public string $name = '';
-
-    public array|string $tag = 'source';
+    public function __construct(public string $name = '', public array|string $tag = 'source')
+    {
+    }
 }

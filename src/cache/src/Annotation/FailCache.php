@@ -25,8 +25,7 @@ class FailCache extends AbstractAnnotation
         public ?int $ttl = null,
         public ?string $listener = null,
         public string $group = 'default'
-    )
-    {
+    ) {
     }
 
     public function collectMethod(string $className, ?string $target): void

@@ -19,8 +19,9 @@ class AsyncQueueMessage extends AbstractAnnotation
 {
     public function __construct(
         public string $pool = 'default',
-        public int    $delay = 0,
-        public int    $maxAttempts = 0)
+        public int $delay = 0,
+        public int $maxAttempts = 0
+    )
     {
     }
 }

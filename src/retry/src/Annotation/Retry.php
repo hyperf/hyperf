@@ -105,9 +105,19 @@ class Retry extends AbstractRetry
      */
     public mixed $fallback = '';
 
-    public function __construct(...$value)
+    public function __construct(?array $policies = null, ?string $sleepStrategyClass = null, ?int $maxAttempts = null, array|RetryBudgetInterface|null $retryBudget = null, ?int $base = null, mixed $retryOnThrowablePredicate = null, mixed $retryOnResultPredicate = null, array $retryThrowables = null, array $ignoreThrowables = null, mixed $fallback = null)
     {
-        parent::__construct(...$value);
+        $policies !== null && $this->policies = $policies;
+        $sleepStrategyClass !== null && $this->sleepStrategyClass = $sleepStrategyClass;
+        $maxAttempts !== null && $this->maxAttempts = $maxAttempts;
+        $retryBudget !== null && $this->retryBudget = $retryBudget;
+        $base !== null && $this->base = $base;
+        $retryOnThrowablePredicate !== null && $this->retryOnThrowablePredicate = $retryOnThrowablePredicate;
+        $retryOnResultPredicate !== null && $this->retryOnResultPredicate = $retryOnResultPredicate;
+        $retryThrowables !== null && $this->retryThrowables = $retryThrowables;
+        $ignoreThrowables !== null && $this->ignoreThrowables = $ignoreThrowables;
+        $fallback !== null && $this->fallback = $fallback;
+
         $this->retryBudget = make(RetryBudget::class, $this->retryBudget);
     }
 }

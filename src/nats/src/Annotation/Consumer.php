@@ -21,8 +21,9 @@ class Consumer extends AbstractAnnotation
         public string $subject = '',
         public string $queue = '',
         public string $name = '',
-        public int    $nums = 1,
-        public string $pool = '')
+        public int $nums = 1,
+        public string $pool = ''
+    )
     {
     }
 }

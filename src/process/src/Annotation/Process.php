@@ -22,7 +22,8 @@ class Process extends AbstractAnnotation
         public ?string $name = null,
         public ?bool $redirectStdinStdout = null,
         public ?int $pipeType = null,
-        public ?bool $enableCoroutine = null)
+        public ?bool $enableCoroutine = null
+    )
     {
     }
 }

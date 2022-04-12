@@ -27,7 +27,8 @@ class Consumer extends AbstractAnnotation
         public ?string $memberId = null,
         public bool $autoCommit = true,
         public int $nums = 1,
-        public bool $enable = true)
+        public bool $enable = true
+    )
     {
     }
 }

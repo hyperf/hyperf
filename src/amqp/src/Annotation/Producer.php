@@ -20,7 +20,6 @@ class Producer extends AbstractAnnotation
     public function __construct(
         public string $exchange = '',
         public string $routingKey = ''
-    )
-    {
+    ) {
     }
 }
