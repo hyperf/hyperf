@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Di;
 
 use Composer\Autoload\ClassLoader as ComposerClassLoader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use Dotenv\Dotenv;
 use Dotenv\Repository\Adapter;
 use Dotenv\Repository\RepositoryBuilder;
@@ -82,9 +81,6 @@ class ClassLoader
             if (is_array($loader) && $loader[0] instanceof ComposerClassLoader) {
                 /** @var ComposerClassLoader $composerClassLoader */
                 $composerClassLoader = $loader[0];
-                AnnotationRegistry::registerLoader(function ($class) use ($composerClassLoader) {
-                    return (bool) $composerClassLoader->findFile($class);
-                });
                 $loader[0] = new static($composerClassLoader, $proxyFileDirPath, $configDir, $handler);
             }
             spl_autoload_unregister($unregisterLoader);

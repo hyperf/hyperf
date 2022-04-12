@@ -30,13 +30,6 @@ class Scanner
     public function __construct(protected ClassLoader $classloader, protected ScanConfig $scanConfig, protected ScanHandlerInterface $handler)
     {
         $this->filesystem = new Filesystem();
-
-        foreach ($scanConfig->getIgnoreAnnotations() as $annotation) {
-            AnnotationReader::addGlobalIgnoredName($annotation);
-        }
-        foreach ($scanConfig->getGlobalImports() as $alias => $annotation) {
-            AnnotationReader::addGlobalImports($alias, $annotation);
-        }
     }
 
     public function collect(AnnotationReader $reader, ReflectionClass $reflection)

@@ -18,7 +18,6 @@
     },
     "require": {
         "php": ">=8.0",
-        "doctrine/annotations": "^1.6",
         "doctrine/instantiator": "^1.0",
         "nikic/php-parser": "^4.1",
         "php-di/phpdoc-reader": "^2.2",
