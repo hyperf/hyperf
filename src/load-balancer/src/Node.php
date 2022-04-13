@@ -31,13 +31,13 @@ class Node
     /**
      * @var string
      */
-    public $prefixPath = '';
+    public $pathPrefix = '';
 
-    public function __construct(string $host, int $port, int $weight = 0, string $prefixPath = '')
+    public function __construct(string $host, int $port, int $weight = 0, string $pathPrefix = '')
     {
         $this->host = $host;
         $this->port = $port;
         $this->weight = $weight;
-        $this->prefixPath = $prefixPath;
+        $this->pathPrefix = $pathPrefix;
     }
 }
