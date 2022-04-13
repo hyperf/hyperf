@@ -26,8 +26,10 @@ trait EnableEventDispatcher
     public function disableDispatcher(InputInterface $input)
     {
         if (! $input->getOption('disable-event-dispatcher')) {
-            $dispatcher = ApplicationContext::getContainer()->get(EventDispatcherInterface::class);
-            $this->eventDispatcher = $dispatcher instanceof EventDispatcherInterface ? $dispatcher : null;
+            if (ApplicationContext::hasContainer()) {
+                $dispatcher = ApplicationContext::getContainer()->get(EventDispatcherInterface::class);
+                $this->eventDispatcher = $dispatcher instanceof EventDispatcherInterface ? $dispatcher : null;
+            }
         }
     }
 }
