@@ -16,6 +16,7 @@ use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Http\Server as HttpServer;
+use Hyperf\Server\Event\AllCoroutineServersClosed;
 use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
 use Hyperf\Server\Event\MainCoroutineServerStart;
@@ -84,6 +85,8 @@ class SwowServer implements ServerInterface
         foreach ($servers as [$type, $server]) {
             $server->close();
         }
+
+        $this->eventDispatcher->dispatch(new AllCoroutineServersClosed());
     }
 
     protected function initServer(ServerConfig $config): void

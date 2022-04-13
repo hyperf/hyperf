@@ -15,6 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Server\Event\AllCoroutineServersClosed;
 use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
 use Hyperf\Server\Event\MainCoroutineServerStart;
@@ -25,7 +26,6 @@ use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Http\Server as HttpServer;
 use Swoole\Coroutine\Server;
-use Swoole\Timer;
 
 class CoroutineServer implements ServerInterface
 {
@@ -94,7 +94,7 @@ class CoroutineServer implements ServerInterface
             $server->shutdown();
         }
 
-        class_exists(Timer::class) && Timer::clearAll();
+        $this->eventDispatcher->dispatch(new AllCoroutineServersClosed());
     }
 
     protected function initServer(ServerConfig $config): void
