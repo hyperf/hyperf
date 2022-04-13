@@ -28,10 +28,17 @@ class Node
      */
     public $port;
 
-    public function __construct(string $host, int $port, int $weight = 0)
+    /**
+     * The path prefix, only support protocol `jsonrpc-http`.
+     * @var string
+     */
+    public $pathPrefix = '';
+
+    public function __construct(string $host, int $port, int $weight = 0, string $pathPrefix = '')
     {
         $this->host = $host;
         $this->port = $port;
         $this->weight = $weight;
+        $this->pathPrefix = $pathPrefix;
     }
 }

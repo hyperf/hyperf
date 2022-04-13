@@ -217,7 +217,7 @@ abstract class AbstractServiceClient
                     if (! is_int($item['port'])) {
                         throw new InvalidArgumentException(sprintf('Invalid node config [%s], the port option has to a integer.', implode(':', $item)));
                     }
-                    $nodes[] = new Node($item['host'], $item['port']);
+                    $nodes[] = new Node($item['host'], $item['port'], $item['weight'] ?? 0, $item['path_prefix'] ?? '');
                 }
             }
             return [$nodes, $refreshCallback];
@@ -233,8 +233,7 @@ abstract class AbstractServiceClient
         ]);
         $nodes = [];
         foreach ($nodeArray as $node) {
-            // @TODO Get and set the weight property.
-            $nodes[] = new Node($node['host'], $node['port']);
+            $nodes[] = new Node($node['host'], $node['port'], $node['weight'] ?? 0, $node['path_prefix'] ?? '');
         }
 
         return $nodes;

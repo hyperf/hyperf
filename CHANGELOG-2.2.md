@@ -4,6 +4,9 @@
 
 - [#4677](https://github.com/hyperf/hyperf/pull/4677) Fixed bug that process exit failed when using kafka producer.
 
+## Added
+
+- [#4576](https://github.com/hyperf/hyperf/pull/4576) Support `path_prefix` for `node` when using `rpc-client`.
 
 # v2.2.30 - 2022-04-04
 
