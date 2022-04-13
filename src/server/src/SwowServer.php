@@ -58,21 +58,33 @@ class SwowServer implements ServerInterface
                 if (! $this->mainServerStarted) {
                     $this->mainServerStarted = true;
                     $this->eventDispatcher->dispatch(new MainCoroutineServerStart($name, $server, $config));
+                    CoordinatorManager::until(Constants::WORKER_START)->resume();
                 }
                 $this->eventDispatcher->dispatch(new CoroutineServerStart($name, $server, $config));
-                CoordinatorManager::until(Constants::WORKER_START)->resume();
                 $server->start();
                 $this->eventDispatcher->dispatch(new CoroutineServerStop($name, $server));
                 CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
             });
         }
 
-        waitAll();
+        if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield()) {
+            $this->stop($servers);
+        }
     }
 
     public function getServer(): HttpServer
     {
         return $this->server;
+    }
+
+    protected function stop(array $servers = []): void
+    {
+        /**
+         * @var HttpServer $server
+         */
+        foreach ($servers as [$type, $server]) {
+            $server->close();
+        }
     }
 
     protected function initServer(ServerConfig $config): void
