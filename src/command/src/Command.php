@@ -96,7 +96,7 @@ abstract class Command extends SymfonyCommand
             ! empty($this->description) && $this->setDescription($this->description);
         }
 
-        $this->addEnableDispatcherOption();
+        $this->addDisableDispatcherOption();
     }
 
     /**
@@ -413,7 +413,8 @@ abstract class Command extends SymfonyCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->enableDispatcher($input);
+        $this->disableDispatcher($input);
+
         $callback = function () {
             try {
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\BeforeHandle($this));

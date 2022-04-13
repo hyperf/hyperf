@@ -18,14 +18,14 @@ use Symfony\Component\Console\Input\InputOption;
 
 trait EnableEventDispatcher
 {
-    public function addEnableDispatcherOption()
+    public function addDisableDispatcherOption()
     {
-        $this->addOption('enable-event-dispatcher', null, InputOption::VALUE_NONE, 'Whether enable event dispatcher.');
+        $this->addOption('disable-event-dispatcher', null, InputOption::VALUE_NONE, 'Whether disable event dispatcher.');
     }
 
-    public function enableDispatcher(InputInterface $input)
+    public function disableDispatcher(InputInterface $input)
     {
-        if ($input->getOption('enable-event-dispatcher')) {
+        if (! $input->getOption('disable-event-dispatcher')) {
             $dispatcher = ApplicationContext::getContainer()->get(EventDispatcherInterface::class);
             $this->eventDispatcher = $dispatcher instanceof EventDispatcherInterface ? $dispatcher : null;
         }
