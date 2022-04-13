@@ -69,6 +69,7 @@ composer analyse
 - [#4611](https://github.com/hyperf/hyperf/pull/4611) Changed return type to `void` for `Hyperf\Event\Contract\ListenerInterface::process()`.
 - [#4669](https://github.com/hyperf/hyperf/pull/4669) Changed all annotations which only support `PHP` >= `8.0`.
 - [#4678](https://github.com/hyperf/hyperf/pull/4678) Support event dispatcher for command by default.
+- [#4680](https://github.com/hyperf/hyperf/pull/4680) Stop processes which controlled by `ProcessManager` when server shutdown.
 
 ## Removed
 
