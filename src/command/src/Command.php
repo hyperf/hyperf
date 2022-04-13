@@ -29,7 +29,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 abstract class Command extends SymfonyCommand
 {
-    use EnableEventDispatcher;
+    use DisableEventDispatcher;
 
     /**
      * The name of the command.

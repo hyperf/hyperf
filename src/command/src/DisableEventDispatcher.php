@@ -16,7 +16,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
-trait EnableEventDispatcher
+trait DisableEventDispatcher
 {
     public function addDisableDispatcherOption()
     {
