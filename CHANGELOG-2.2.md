@@ -1,5 +1,10 @@
 # v2.2.31 - TBD
 
+## Fixed
+
+- [#4677](https://github.com/hyperf/hyperf/pull/4677) Fixed bug that process exit failed when using kafka producer.
+
+
 # v2.2.30 - 2022-04-04
 
 ## Fixed
