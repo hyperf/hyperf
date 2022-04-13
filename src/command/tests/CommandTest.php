@@ -50,6 +50,9 @@ class CommandTest extends TestCase
      */
     public function testExitCodeWhenThrowException()
     {
+        ApplicationContext::setContainer($container = Mockery::mock(ContainerInterface::class));
+        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
+
         /** @var FooExceptionCommand $command */
         $command = new ClassInvoker(new FooExceptionCommand('foo'));
         $input = Mockery::mock(InputInterface::class);
@@ -70,9 +73,6 @@ class CommandTest extends TestCase
 
     public function testExitCodeWhenThrowExceptionInCoroutine()
     {
-        ApplicationContext::setContainer($container = Mockery::mock(ContainerInterface::class));
-        $container->shouldReceive('has')->with(EventDispatcherInterface::class)->andReturnFalse();
-
         $this->testExitCodeWhenThrowException();
     }
 }
