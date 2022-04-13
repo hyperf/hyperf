@@ -18,7 +18,7 @@ use Hyperf\Database\Commands\Ast\ModelRewriteConnectionVisitor;
 use Hyperf\Database\Commands\Ast\ModelUpdateVisitor;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Model;
-use Hyperf\Database\Schema\MySqlBuilder;
+use Hyperf\Database\Schema\Builder;
 use Hyperf\Utils\CodeGen\Project;
 use Hyperf\Utils\Str;
 use PhpParser\NodeTraverser;
@@ -130,7 +130,7 @@ class ModelCommand extends Command
         $this->addOption('property-case', null, InputOption::VALUE_OPTIONAL, 'Which property case you want use, 0: snake case, 1: camel case.');
     }
 
-    protected function getSchemaBuilder(string $poolName): MySqlBuilder
+    protected function getSchemaBuilder(string $poolName): Builder
     {
         $connection = $this->resolver->connection($poolName);
         return $connection->getSchemaBuilder();

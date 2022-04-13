@@ -90,8 +90,7 @@ class Request implements RequestInterface
     }
 
     /**
-     * Retrieve the input data from request, include query parameters, parsed body and json body,
-     * if $key is null, will return all the parameters.
+     * Retrieve the input data from request, include query parameters, parsed body and json body.
      *
      * @param mixed $default
      */

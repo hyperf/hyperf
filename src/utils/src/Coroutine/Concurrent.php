@@ -66,6 +66,11 @@ class Concurrent
         return $this->getLength();
     }
 
+    public function getChannel(): Channel
+    {
+        return $this->channel;
+    }
+
     public function create(callable $callable): void
     {
         $this->channel->push(true);

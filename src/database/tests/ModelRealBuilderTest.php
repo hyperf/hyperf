@@ -13,15 +13,26 @@ namespace HyperfTest\Database;
 
 use Carbon\Carbon;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
+use Hyperf\Contract\PaginatorInterface;
+use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Database\Connectors\ConnectionFactory;
+use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\Events\Saved;
+use Hyperf\Database\MySqlBitConnection;
 use Hyperf\Database\Schema\Column;
 use Hyperf\Database\Schema\MySqlBuilder;
+use Hyperf\DbConnection\Db;
+use Hyperf\Di\Container;
 use Hyperf\Paginator\LengthAwarePaginator;
+use Hyperf\Paginator\Paginator;
+use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\Model\User;
+use HyperfTest\Database\Stubs\Model\UserBit;
 use HyperfTest\Database\Stubs\Model\UserExt;
 use HyperfTest\Database\Stubs\Model\UserExtCamel;
 use HyperfTest\Database\Stubs\Model\UserRole;
@@ -349,6 +360,30 @@ class ModelRealBuilderTest extends TestCase
         }
     }
 
+    public function testSimplePaginate()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('make')->with(PaginatorInterface::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new Paginator(...array_values($args));
+        });
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+        $res = Db::table('user')->simplePaginate(1);
+        $this->assertTrue($res->hasMorePages());
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame('select * from `user` limit 2 offset 0', $event->sql);
+            }
+        }
+
+        $res = User::query()->simplePaginate(1);
+        $this->assertTrue($res->hasMorePages());
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame('select * from `user` limit 2 offset 0', $event->sql);
+            }
+        }
+    }
+
     public function testPaginationCountQuery()
     {
         $container = $this->getContainer();
@@ -365,6 +400,56 @@ class ModelRealBuilderTest extends TestCase
                 $this->assertSame($event->sql, array_shift($sqls));
             }
         }
+    }
+
+    public function testSaveBitValue()
+    {
+        $container = Mockery::mock(Container::class);
+        ApplicationContext::setContainer($container);
+
+        $container->shouldReceive('has')->andReturn(true);
+        $container->shouldReceive('get')->with('db.connector.mysql.bit')->andReturn(new MySqlConnector());
+        $connector = new ConnectionFactory($container);
+
+        Connection::resolverFor('mysql.bit', static function ($connection, $database, $prefix, $config) {
+            return new MySqlBitConnection($connection, $database, $prefix, $config);
+        });
+
+        $dbConfig = [
+            'driver' => 'mysql.bit',
+            'host' => '127.0.0.1',
+            'database' => 'hyperf',
+            'username' => 'root',
+            'password' => '',
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+        ];
+
+        $connection = $connector->make($dbConfig);
+
+        $resolver = new ConnectionResolver(['default' => $connection]);
+
+        $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(null);
+
+        /** @var UserBit $model */
+        $model = UserBit::query()->find(1);
+        $model->bit = (int) (! $model->bit);
+        $this->assertTrue($model->save());
+
+        $model->bit = ! $model->bit;
+        $this->assertTrue($model->save());
+    }
+
+    public function testSelectForBindingIntegerWhenUsingVarcharIndex()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+        $res = Db::select('EXPLAIN SELECT * FROM `user` WHERE `name` = ?;', ['1']);
+        $this->assertSame('ref', $res[0]->type);
+        $res = Db::select('EXPLAIN SELECT * FROM `user` WHERE `name` = ?;', [1]);
+        $this->assertSame('ref', $res[0]->type);
     }
 
     protected function getContainer()
