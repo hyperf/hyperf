@@ -16,6 +16,7 @@ use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Http\Server as HttpServer;
+use Hyperf\Server\Event\AllCoroutineServersClosed;
 use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
 use Hyperf\Server\Event\MainCoroutineServerStart;
@@ -24,7 +25,6 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Swow\Coroutine;
-use function Swow\Sync\waitAll;
 
 class SwowServer implements ServerInterface
 {
@@ -58,21 +58,35 @@ class SwowServer implements ServerInterface
                 if (! $this->mainServerStarted) {
                     $this->mainServerStarted = true;
                     $this->eventDispatcher->dispatch(new MainCoroutineServerStart($name, $server, $config));
+                    CoordinatorManager::until(Constants::WORKER_START)->resume();
                 }
                 $this->eventDispatcher->dispatch(new CoroutineServerStart($name, $server, $config));
-                CoordinatorManager::until(Constants::WORKER_START)->resume();
                 $server->start();
                 $this->eventDispatcher->dispatch(new CoroutineServerStop($name, $server));
                 CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
             });
         }
 
-        waitAll();
+        if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield()) {
+            $this->closeAll($servers);
+        }
     }
 
     public function getServer(): HttpServer
     {
         return $this->server;
+    }
+
+    protected function closeAll(array $servers = []): void
+    {
+        /**
+         * @var HttpServer $server
+         */
+        foreach ($servers as [$type, $server]) {
+            $server->close();
+        }
+
+        $this->eventDispatcher->dispatch(new AllCoroutineServersClosed());
     }
 
     protected function initServer(ServerConfig $config): void
