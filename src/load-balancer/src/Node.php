@@ -29,6 +29,7 @@ class Node
     public $port;
 
     /**
+     * The path prefix, only support protocol `jsonrpc-http`.
      * @var string
      */
     public $pathPrefix = '';
