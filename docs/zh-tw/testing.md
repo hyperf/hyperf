@@ -463,23 +463,38 @@ class DemoLogicTest extends HttpTestCase
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false">
+    <php>
+        <!-- other PHP.ini or environment variables -->
+        <ini name="memory_limit" value="-1" />
+    </php>
     <testsuites>
         <testsuite name="Tests">
+            // 需要執行單測的測試案例目錄
             <directory suffix="Test.php">./test</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        // 需要生成單元測試覆蓋率的檔案
-        <whitelist processUncoveredFilesFromWhitelist="false">
+    <coverage includeUncoveredFiles="true"
+              processUncoveredFiles="true"
+              pathCoverage="false"
+              ignoreDeprecatedCodeUnits="true"
+              disableCodeCoverageIgnore="false">
+        <include>
+            // 需要統計單元測試覆蓋率的檔案
             <directory suffix=".php">./app</directory>
-        </whitelist>
-    </filter>
-
+        </include>
+        <exclude>
+            // 生產單元測試覆蓋率時，需要忽略的檔案
+            <directory suffix=".php">./app/excludeFile</directory>
+        </exclude>
+        <report>
+            <html outputDirectory="test/cover/" lowUpperBound="50" highLowerBound="90"/>
+        </report>
+    </coverage>
     <logging>
-        <log type="coverage-html" target="cover/"/>
+        <junit outputFile="test/junit.xml"/>
     </logging>
-</phpunit>
 
+</phpunit>
 ```
 
 

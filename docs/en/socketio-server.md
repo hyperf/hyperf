@@ -92,7 +92,7 @@ class WebSocketController extends BaseNamespace
 Since the server only implements WebSocket communication, the client must add `{transports:["websocket"]}`.
 
 ```html
-<script src="https://cdn.bootcss.com/socket.io/2.3.0/socket.io.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
 <script>
     var socket = io('ws://127.0.0.1:9502', {transports: ["websocket"] });
     socket.on('connect', data => {

@@ -107,6 +107,14 @@ class Filesystem
     }
 
     /**
+     * Clears file status cache.
+     */
+    public function clearStatCache(string $path): void
+    {
+        clearstatcache(true, $path);
+    }
+
+    /**
      * Write the contents of a file.
      *
      * @param resource|string $contents

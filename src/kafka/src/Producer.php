@@ -114,6 +114,7 @@ class Producer
         if ($this->chan) {
             $this->chan->close();
         }
+        $this->producer->close();
     }
 
     public function getConfig(): ProducerConfig
