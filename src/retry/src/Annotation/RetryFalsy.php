@@ -17,28 +17,13 @@ use Attribute;
 class RetryFalsy extends Retry
 {
     /**
-     * Configures a list of Throwable classes that are recorded as a failure and thus are retried.
-     * Any Throwable matching or inheriting from one of the list will be retried, unless ignored via ignoreExceptions.
-     *
-     * Ignoring a Throwable has priority over retrying an exception.
-     *
-     * @var array<string>
+     * @param array $retryThrowables Configures a list of Throwable classes that are recorded as a failure and thus are retried. Any Throwable matching or inheriting from one of the list will be retried, unless ignored via ignoreExceptions. Ignoring a Throwable has priority over retrying an exception.
+     * @param mixed $retryOnResultPredicate Configures a Predicate which evaluates if a result should be retried. The Predicate must return true if the result should be retried, otherwise it must return false.
      */
-    public array $retryThrowables = [];
-
-    /**
-     * Configures a Predicate which evaluates if a result should be retried.
-     * The Predicate must return true if the result should be retried, otherwise it must return false.
-     *
-     * @var callable|string
-     */
-    public mixed $retryOnResultPredicate = [self::class, 'isFalsy'];
-
-    public function __construct(array $retryThrowables = [], mixed $retryOnResultPredicate = null)
-    {
-        $this->retryThrowables = $retryThrowables;
-        $retryOnResultPredicate !== null && $this->retryOnResultPredicate = $retryOnResultPredicate;
-    }
+    public function __construct(
+        public array $retryThrowables = [],
+        public mixed $retryOnResultPredicate = [self::class, 'isFalsy']
+    ) {}
 
     public static function isFalsy($result)
     {
