@@ -75,7 +75,7 @@ class CoroutineServer implements ServerInterface
             }
 
             if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield()) {
-                $this->stop($servers);
+                $this->closeAll($servers);
             }
         }, swoole_hook_flags());
     }
@@ -85,7 +85,7 @@ class CoroutineServer implements ServerInterface
         return $this->server;
     }
 
-    protected function stop(array $servers = []): void
+    protected function closeAll(array $servers = []): void
     {
         /**
          * @var HttpServer|Server $server

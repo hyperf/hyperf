@@ -24,7 +24,6 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Swow\Coroutine;
-use function Swow\Sync\waitAll;
 
 class SwowServer implements ServerInterface
 {
@@ -68,7 +67,7 @@ class SwowServer implements ServerInterface
         }
 
         if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield()) {
-            $this->stop($servers);
+            $this->closeAll($servers);
         }
     }
 
@@ -77,7 +76,7 @@ class SwowServer implements ServerInterface
         return $this->server;
     }
 
-    protected function stop(array $servers = []): void
+    protected function closeAll(array $servers = []): void
     {
         /**
          * @var HttpServer $server
