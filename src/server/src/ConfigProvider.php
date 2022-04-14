@@ -32,6 +32,9 @@ class ConfigProvider
             ],
             'commands' => [
                 StartServer::class,
+                StopServer::class,
+                ReloadServer::class,
+                RestartServer::class,
             ],
             'annotations' => [
                 'scan' => [
