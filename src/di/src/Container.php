@@ -94,8 +94,6 @@ class Container implements HyperfContainerInterface
 
     /**
      * Unbind an arbitrary resolved entry.
-     * Useful for testing when mock.
-     * @param string $name
      */
     public function unset(string $name)
     {
