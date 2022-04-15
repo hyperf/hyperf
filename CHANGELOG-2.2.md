@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#4677](https://github.com/hyperf/hyperf/pull/4677) Fixed bug that process exit failed when using kafka producer.
+- [#4686](https://github.com/hyperf/hyperf/pull/4686) Added `SafeCaller` to avoid server shutdown which caused by parsing request failed.
 
 ## Added
 
