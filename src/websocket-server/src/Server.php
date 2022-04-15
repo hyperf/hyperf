@@ -36,6 +36,7 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server as AsyncStyleServer;
 use Hyperf\Server\ServerManager;
+use Hyperf\Utils\SafeCaller;
 use Hyperf\WebSocketServer\Collector\FdCollector;
 use Hyperf\WebSocketServer\Context as WsContext;
 use Hyperf\WebSocketServer\Exception\Handler\WebSocketExceptionHandler;
@@ -160,9 +161,15 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             }
         } catch (Throwable $throwable) {
             // Delegate the exception to exception handler.
-            $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
-            isset($fd) && FdCollector::del($fd);
-            isset($fd) && WsContext::release($fd);
+            $psr7Response = $this->container->get(SafeCaller::class)->call(function () use ($throwable) {
+                $psr7Response = null;
+                if (isset($psr7Request)) {
+                    $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+                }
+                isset($fd) && FdCollector::del($fd);
+                isset($fd) && WsContext::release($fd);
+                return $psr7Response;
+            });
         } finally {
             isset($fd) && $this->getSender()->setResponse($fd, null);
             // Send the Response to client.
