@@ -93,6 +93,18 @@ class Container implements HyperfContainerInterface
     }
 
     /**
+     * Unbind an arbitrary resolved entry.
+     * Useful for testing when mock.
+     * @param string $name
+     */
+    public function unset(string $name)
+    {
+        if ($this->has($name)) {
+            unset($this->resolvedEntries[$name]);
+        }
+    }
+
+    /**
      * Bind an arbitrary definition to an identifier.
      * Useful for testing 'make'.
      *
