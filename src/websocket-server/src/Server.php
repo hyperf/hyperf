@@ -155,6 +155,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
     public function onHandShake(SwooleRequest $request, SwooleResponse $response): void
     {
+        $fd = null;
         try {
             CoordinatorManager::until(Constants::WORKER_START)->yield();
             $fd = $request->fd;
@@ -223,7 +224,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             }
         } catch (Throwable $throwable) {
             // Delegate the exception to exception handler.
-            $psr7Response = $this->container->get(SafeCaller::class)->call(function () use ($throwable) {
+            $psr7Response = $this->container->get(SafeCaller::class)->call(function () use ($throwable, $fd) {
                 $psr7Response = null;
                 if (isset($psr7Request)) {
                     $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
