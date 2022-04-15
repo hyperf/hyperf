@@ -279,6 +279,7 @@ class RetryAnnotationAspectTest extends TestCase
                     $state = Mockery::mock(
                         \Hyperf\Retry\CircuitBreakerState::class
                     );
+                    $state->shouldReceive('open')->andReturnNull();
                     $state->shouldReceive('isOpen')->twice()->andReturns(false);
                     $state->shouldReceive('isOpen')->once()->andReturns(true);
                     $retry = new CircuitBreaker(circuitBreakerState: $state);

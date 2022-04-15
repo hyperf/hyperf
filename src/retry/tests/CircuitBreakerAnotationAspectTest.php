@@ -50,7 +50,7 @@ class CircuitBreakerAnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -60,7 +60,7 @@ class CircuitBreakerAnotationAspectTest extends TestCase
                     $state->shouldReceive('isOpen')->twice()->andReturns(false);
                     $state->shouldReceive('isOpen')->once()->andReturns(true);
                     $state->shouldReceive('open')->andReturns();
-                    $retry = new CircuitBreaker(['circuitBreakerState' => $state]);
+                    $retry = new CircuitBreaker(circuitBreakerState: $state);
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $this->method = [
                         AbstractRetry::class => $retry,
@@ -81,12 +81,12 @@ class CircuitBreakerAnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
                     $state = new CircuitBreakerState(10);
-                    $retry = new CircuitBreaker(['circuitBreakerState' => $state]);
+                    $retry = new CircuitBreaker(circuitBreakerState: $state);
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $retry->fallback = Foo::class . '@fallbackWithThrowable';
                     $retry->maxAttempts = 2;
@@ -109,7 +109,7 @@ class CircuitBreakerAnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -118,7 +118,7 @@ class CircuitBreakerAnotationAspectTest extends TestCase
                     );
                     $state->shouldReceive('isOpen')->andReturns(true);
                     $state->shouldReceive('open')->andReturns();
-                    $retry = new CircuitBreaker(['circuitBreakerState' => $state]);
+                    $retry = new CircuitBreaker(circuitBreakerState: $state);
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $retry->fallback = Foo::class . '@fallbackWithThrowable';
                     $this->method = [
