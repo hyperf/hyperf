@@ -160,8 +160,8 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             Context::set(WsContext::FD, $fd);
             $security = $this->container->get(Security::class);
 
-            $psr7Request = $this->initRequest($request);
             $psr7Response = $this->initResponse();
+            $psr7Request = $this->initRequest($request);
 
             $this->logger->debug(sprintf('WebSocket: fd[%d] start a handshake request.', $fd));
 
