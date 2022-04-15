@@ -95,7 +95,7 @@ class Container implements HyperfContainerInterface
     /**
      * Unbind an arbitrary resolved entry.
      */
-    public function unset(string $name)
+    public function unbind(string $name)
     {
         if ($this->has($name)) {
             unset($this->resolvedEntries[$name]);

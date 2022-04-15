@@ -75,7 +75,7 @@ class ContainerTest extends TestCase
         $this->assertTrue($container->has('test'));
         $this->assertSame($id, $container->get('test'));
 
-        $container->unset('test');
+        $container->unbind('test');
         $this->assertFalse($container->has('test'));
     }
 }

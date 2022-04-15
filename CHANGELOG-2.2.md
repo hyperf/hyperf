@@ -8,7 +8,7 @@
 ## Added
 
 - [#4576](https://github.com/hyperf/hyperf/pull/4576) Support `path_prefix` for `node` when using `rpc-client`.
-- [#4683](https://github.com/hyperf/hyperf/pull/4683) Added `Container::unset()` to unbind an arbitrary resolved entry.
+- [#4683](https://github.com/hyperf/hyperf/pull/4683) Added `Container::unbind()` to unbind an arbitrary resolved entry.
 
 # v2.2.30 - 2022-04-04
 

@@ -41,7 +41,7 @@ interface ContainerInterface extends PsrContainerInterface
     /**
      * Unbind an arbitrary resolved entry.
      */
-    public function unset(string $name);
+    public function unbind(string $name);
 
     /**
      * Bind an arbitrary definition to an identifier.
