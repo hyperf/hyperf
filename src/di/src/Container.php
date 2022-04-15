@@ -82,6 +82,16 @@ class Container implements HyperfContainerInterface
     }
 
     /**
+     * Unbind an arbitrary resolved entry.
+     */
+    public function unbind(string $name): void
+    {
+        if ($this->has($name)) {
+            unset($this->resolvedEntries[$name]);
+        }
+    }
+
+    /**
      * Bind an arbitrary definition to an identifier.
      * Useful for testing 'make'.
      *
