@@ -23,7 +23,7 @@ class SafeCaller
     {
     }
 
-    public function call(Closure $closure, string $level = LogLevel::CRITICAL): mixed
+    public function call(Closure $closure, ?Closure $default = null, string $level = LogLevel::CRITICAL): mixed
     {
         try {
             return $closure();
@@ -33,6 +33,6 @@ class SafeCaller
             }
         }
 
-        return null;
+        return value($default);
     }
 }

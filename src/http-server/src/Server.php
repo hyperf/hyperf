@@ -85,6 +85,8 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             // Delegate the exception to exception handler.
             $psr7Response = $this->container->get(SafeCaller::class)->call(function () use ($throwable) {
                 return $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+            }, static function () {
+                return (new Psr7Response())->withStatus(400);
             });
         } finally {
             // Send the Response to client.
