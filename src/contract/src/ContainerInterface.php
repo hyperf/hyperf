@@ -39,6 +39,11 @@ interface ContainerInterface extends PsrContainerInterface
     public function set(string $name, $entry);
 
     /**
+     * Unbind an arbitrary resolved entry.
+     */
+    public function unbind(string $name);
+
+    /**
      * Bind an arbitrary definition to an identifier.
      * Useful for testing 'make'.
      *
