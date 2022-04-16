@@ -92,6 +92,8 @@ class ModelRewriteKeyInfoVisitor extends AbstractVisitor
             return $node;
         }
 
+        [$primaryKey, $keyType, $incrementing] = $data;
+
         if ($this->shouldRemoveProperty($property, ${$property})) {
             return null;
         }
