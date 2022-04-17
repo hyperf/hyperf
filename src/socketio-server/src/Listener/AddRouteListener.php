@@ -36,7 +36,7 @@ class AddRouteListener implements ListenerInterface
     /**
      * @param BeforeMainServerStart $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $serverConfig = $this->container->get(ConfigInterface::class)->get('server.servers', []);
         foreach ($serverConfig as $port) {

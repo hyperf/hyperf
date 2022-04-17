@@ -17,7 +17,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_METHOD)]
 class Transactional extends AbstractAnnotation
 {
-    public string $connection = 'default';
-
-    public int $attempts = 1;
+    public function __construct(public string $connection = 'default', public int $attempts = 1)
+    {
+    }
 }

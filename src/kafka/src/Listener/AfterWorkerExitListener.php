@@ -28,7 +28,7 @@ class AfterWorkerExitListener implements ListenerInterface
         return [OnWorkerExit::class];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($this->container->has(Producer::class)) {
             $this->container->get(Producer::class)->close();

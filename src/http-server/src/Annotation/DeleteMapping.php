@@ -16,5 +16,8 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD)]
 class DeleteMapping extends Mapping
 {
-    public array $methods = ['DELETE'];
+    public function __construct(?string $path = null, array $options = [])
+    {
+        parent::__construct($path, ['DELETE'], $options);
+    }
 }

@@ -45,7 +45,7 @@ class QueueWatcher implements ListenerInterface
     /**
      * Periodically scan metrics.
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $queue = $this->container->get(DriverFactory::class)->get('default');
         $waiting = $event

@@ -54,7 +54,7 @@ class ServerTest extends TestCase
         );
 
         $server = new ClassInvoker($server);
-        $server->deferOnOpen(new SwooleRequest(), WebSocketStub::class, new SwooleResponse());
+        $server->deferOnOpen(new SwooleRequest(), WebSocketStub::class, new SwooleResponse(), 1);
         $this->assertNotEquals(Coroutine::id(), WebSocketStub::$coroutineId);
         $this->assertFalse(\Swoole\Coroutine::exists(WebSocketStub::$coroutineId));
     }

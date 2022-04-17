@@ -31,7 +31,6 @@
     },
     "require-dev": {
         "bandwidth-throttle/token-bucket": "^2.0",
-        "doctrine/annotations": "^1.6",
         "doctrine/inflector": "^2.0",
         "doctrine/instantiator": "^1.0",
         "egulias/email-validator": "^3.0",
@@ -184,7 +183,6 @@
     "autoload": {
         "files": [
             "src/config/src/Functions.php",
-            "src/filesystem/src/Adapter/AliyunOssHook.php",
             "src/nats/src/Functions.php",
             "src/translation/src/Functions.php",
             "src/utils/src/Functions.php",

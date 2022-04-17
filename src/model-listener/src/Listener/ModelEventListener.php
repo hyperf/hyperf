@@ -32,7 +32,7 @@ class ModelEventListener implements ListenerInterface
     /**
      * @param Event $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $model = $event->getModel();
         $modelName = get_class($model);

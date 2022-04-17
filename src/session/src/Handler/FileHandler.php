@@ -114,6 +114,8 @@ class FileHandler implements SessionHandlerInterface
     {
         $this->files->put($this->path . '/' . $id, $data, true);
 
+        $this->files->clearStatCache($this->path);
+
         return true;
     }
 }

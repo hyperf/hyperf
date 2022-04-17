@@ -17,11 +17,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Value extends AbstractAnnotation
 {
-    public ?string $key = null;
-
-    public function __construct(...$value)
+    public function __construct(public string $key)
     {
-        parent::__construct(...$value);
-        $this->bindMainProperty('key', $value);
     }
 }

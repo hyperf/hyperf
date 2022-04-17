@@ -28,7 +28,7 @@ class FetchConfigOnBootListener extends OnPipeMessageListener
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         $instance = $this->createDriverInstance();
         $instance && $instance->fetchConfig();

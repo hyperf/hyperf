@@ -34,7 +34,7 @@ class RegisterServiceListener implements ListenerInterface
      *
      * @param AfterPathRegister $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $annotation = $event->annotation;
         if (! in_array($annotation->protocol, ['jsonrpc', 'jsonrpc-http', 'jsonrpc-tcp-length-check'])) {

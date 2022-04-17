@@ -17,15 +17,13 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class RateLimit extends AbstractAnnotation
 {
-    public ?int $create = null;
-
-    public ?int $consume = null;
-
-    public ?int $capacity = null;
-
-    public mixed $limitCallback = null;
-
-    public mixed $key = null;
-
-    public ?int $waitTimeout = null;
+    public function __construct(
+        public ?int $create = null,
+        public ?int $consume = null,
+        public ?int $capacity = null,
+        public mixed $limitCallback = null,
+        public mixed $key = null,
+        public ?int $waitTimeout = null
+    ) {
+    }
 }

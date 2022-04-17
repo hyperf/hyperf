@@ -27,6 +27,7 @@ use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
+use Hyperf\Utils\SafeCaller;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -82,7 +83,11 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
             // Delegate the exception to exception handler.
-            $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+            $psr7Response = $this->container->get(SafeCaller::class)->call(function () use ($throwable) {
+                return $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+            }, static function () {
+                return (new Psr7Response())->withStatus(400);
+            });
         } finally {
             // Send the Response to client.
             if (! isset($psr7Response) || ! $psr7Response instanceof ResponseInterface) {

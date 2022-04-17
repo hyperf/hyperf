@@ -37,7 +37,7 @@ class BeforeMainServerStartListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         // Init the consumer process.
         $this->container->get(ConsumerManager::class)->run();

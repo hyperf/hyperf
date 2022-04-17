@@ -43,7 +43,7 @@ class OnShutdownListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($this->processed) {
             return;

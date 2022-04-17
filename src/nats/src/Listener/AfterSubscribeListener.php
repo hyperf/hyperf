@@ -31,7 +31,7 @@ class AfterSubscribeListener implements ListenerInterface
     /**
      * @param AfterSubscribe $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $this->logger->warning(sprintf(
             'NatsConsumer[%s] subscribe timeout. Try again after 1 ms.',

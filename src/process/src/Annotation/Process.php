@@ -17,13 +17,12 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS)]
 class Process extends AbstractAnnotation
 {
-    public ?int $nums = null;
-
-    public ?string $name = null;
-
-    public ?bool $redirectStdinStdout = null;
-
-    public ?int $pipeType = null;
-
-    public ?bool $enableCoroutine = null;
+    public function __construct(
+        public ?int $nums = null,
+        public ?string $name = null,
+        public ?bool $redirectStdinStdout = null,
+        public ?int $pipeType = null,
+        public ?bool $enableCoroutine = null
+    ) {
+    }
 }

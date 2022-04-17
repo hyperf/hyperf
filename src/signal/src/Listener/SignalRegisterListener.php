@@ -34,7 +34,7 @@ class SignalRegisterListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         $manager = $this->container->get(SignalManager::class);
 

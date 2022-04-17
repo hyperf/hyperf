@@ -42,7 +42,7 @@ class MainWorkerStartListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         $config = $this->container->get(ConfigInterface::class);
 

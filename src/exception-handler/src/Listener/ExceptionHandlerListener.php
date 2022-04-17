@@ -35,7 +35,7 @@ class ExceptionHandlerListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         $queue = new SplPriorityQueue();
         $handlers = $this->config->get(self::HANDLER_KEY, []);

@@ -34,6 +34,12 @@ class RetryFalsy extends Retry
      */
     public mixed $retryOnResultPredicate = [self::class, 'isFalsy'];
 
+    public function __construct(array $retryThrowables = [], mixed $retryOnResultPredicate = null)
+    {
+        $this->retryThrowables = $retryThrowables;
+        $retryOnResultPredicate !== null && $this->retryOnResultPredicate = $retryOnResultPredicate;
+    }
+
     public static function isFalsy($result)
     {
         return ! $result;

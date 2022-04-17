@@ -25,4 +25,9 @@ class RetryThrowable extends Retry
      * @var array<string>
      */
     public array $retryThrowables = [\Throwable::class];
+
+    public function __construct(array $retryThrowables = [\Throwable::class])
+    {
+        $this->retryThrowables = $retryThrowables;
+    }
 }

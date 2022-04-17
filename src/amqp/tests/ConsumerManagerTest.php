@@ -36,13 +36,13 @@ class ConsumerManagerTest extends TestCase
     {
         $container = ContainerStub::getContainer();
 
-        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
-            'exchange' => $exchange = uniqid(),
-            'routingKey' => $routingKey = uniqid(),
-            'queue' => $queue = uniqid(),
-            'nums' => $nums = rand(1, 10),
-            'maxConsumption' => $maxConsumption = rand(1, 10),
-        ]));
+        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer(
+            $exchange = uniqid(),
+            $routingKey = uniqid(),
+            $queue = uniqid(),
+            nums: $nums = rand(1, 10),
+            maxConsumption: $maxConsumption = rand(1, 10),
+        ));
 
         $manager = new ConsumerManager($container);
         $manager->run();
@@ -72,13 +72,13 @@ class ConsumerManagerTest extends TestCase
     {
         $container = ContainerStub::getContainer();
 
-        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
-            'exchange' => $exchange = uniqid(),
-            'routingKey' => $routingKey = uniqid(),
-            'queue' => $queue = uniqid(),
-            'nums' => $nums = rand(1, 10),
-            'enable' => false,
-        ]));
+        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer(
+            $exchange = uniqid(),
+            $routingKey = uniqid(),
+            $queue = uniqid(),
+            nums: $nums = rand(1, 10),
+            enable: false,
+        ));
 
         $manager = new ConsumerManager($container);
         $manager->run();
