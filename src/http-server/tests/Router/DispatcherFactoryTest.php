@@ -133,9 +133,15 @@ class DispatcherFactoryTest extends TestCase
         $annotation = new Controller('test');
         $methodMetadata = [
             'demo' => [
-                GetMapping::class => new GetMapping(['path' => '']),
-                PostMapping::class => new PostMapping(['path' => null]),
-                PutMapping::class => new PutMapping(['path' => '/demo']),
+                GetMapping::class => new GetMapping(''),
+                PostMapping::class => new PostMapping(),
+                PutMapping::class => new PutMapping('/demo'),
+            ],
+            'userInfo' => [
+                GetMapping::class => new GetMapping(),
+            ],
+            'BookInfo' => [
+                GetMapping::class => new GetMapping(),
             ],
         ];
 
@@ -155,15 +161,22 @@ class DispatcherFactoryTest extends TestCase
             foreach ($items as $value) {
                 if ($method === 'GET') {
                     // When the path is an empty string, the route contains only the prefix.
-                    $this->assertSame('/test', $value->route);
+                    $methodValue = $value->callback[1];
+                    $expected = match ($methodValue) {
+                        'demo' => '/test',
+                        'userInfo' => '/test/user_info',
+                        'BookInfo' => '/test/book_info',
+                    };
+                    $this->assertSame($expected, $value->route);
                 } elseif ($method === 'POST') {
                     // When the path is null, the route is prefix + method name.
                     $this->assertSame('/test/demo', $value->route);
+                    $this->assertSame([DemoController::class, 'demo'], $value->callback);
                 } elseif ($method === 'PUT') {
                     // When the path contains the "/" character, the route is path
                     $this->assertSame('/demo', $value->route);
+                    $this->assertSame([DemoController::class, 'demo'], $value->callback);
                 }
-                $this->assertSame([DemoController::class, 'demo'], $value->callback);
             }
         }
     }
