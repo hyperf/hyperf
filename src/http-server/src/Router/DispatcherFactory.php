@@ -184,7 +184,7 @@ class DispatcherFactory
                     $methodOptions['middleware'] = $options['middleware'];
 
                     if (! isset($mapping->path)) {
-                        $path = $prefix . '/' . $methodName;
+                        $path = $prefix . '/' . Str::snake($methodName);
                     } elseif ($mapping->path === '') {
                         $path = $prefix;
                     } elseif ($mapping->path[0] !== '/') {
