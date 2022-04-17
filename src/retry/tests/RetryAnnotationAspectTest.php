@@ -338,7 +338,10 @@ class RetryAnnotationAspectTest extends TestCase
                     $retry = new class() extends Retry {
                         public $timeout = 0.001;
 
-                        public array $policies = [TimeoutRetryPolicy::class];
+                        public function __construct()
+                        {
+                            parent::__construct(policies: [TimeoutRetryPolicy::class]);
+                        }
                     };
                     $this->method = [
                         AbstractRetry::class => $retry,
