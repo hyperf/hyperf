@@ -30,7 +30,7 @@ class OnFinishListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($event instanceof OnFinish && $event->data instanceof Finish) {
             $factory = $this->container->get(ChannelFactory::class);

@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Pool;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use HyperfTest\Pool\Stub\HeartbeatPoolStub;
 use HyperfTest\Pool\Stub\KeepaliveConnectionStub;
 use Mockery;

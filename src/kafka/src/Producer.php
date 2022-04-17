@@ -88,6 +88,7 @@ class Producer
     public function close(): void
     {
         $this->chan?->close();
+        $this->producer->close();
     }
 
     public function getConfig(): ProducerConfig

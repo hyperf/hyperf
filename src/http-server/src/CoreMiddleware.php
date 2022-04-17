@@ -13,10 +13,12 @@ namespace Hyperf\HttpServer;
 
 use Closure;
 use FastRoute\Dispatcher;
+use Hyperf\Context\Context;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
+use Hyperf\Di\ReflectionType;
 use Hyperf\HttpMessage\Exception\MethodNotAllowedHttpException;
 use Hyperf\HttpMessage\Exception\NotFoundHttpException;
 use Hyperf\HttpMessage\Exception\ServerErrorHttpException;
@@ -26,7 +28,6 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Server\Exception\ServerException;
 use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Jsonable;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -229,6 +230,9 @@ class CoreMiddleware implements CoreMiddlewareInterface
         return $this->getInjections($definitions, 'Closure', $arguments);
     }
 
+    /**
+     * @param ReflectionType[] $definitions
+     */
     private function getInjections(array $definitions, string $callableName, array $arguments): array
     {
         $injections = [];

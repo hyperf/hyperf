@@ -67,6 +67,7 @@ return [
             'group_name' => 'api',
             'namespace_id' => 'namespace_id',
             'heartbeat' => 5,
+            'ephemeral' => false, // 是否注册临时实例
         ],
     ],
 ];

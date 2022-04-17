@@ -15,7 +15,7 @@ use Closure;
 use Hyperf\Macroable\Macroable;
 use JsonSerializable;
 
-class Stringable implements JsonSerializable
+class Stringable implements JsonSerializable, \Stringable
 {
     use Traits\Conditionable;
     use Macroable;
@@ -169,7 +169,7 @@ class Stringable implements JsonSerializable
     /**
      * Determine if a given string contains a given substring.
      *
-     * @param array|string $needles
+     * @param string|string[] $needles
      * @return bool
      */
     public function contains($needles)
@@ -201,7 +201,7 @@ class Stringable implements JsonSerializable
     /**
      * Determine if a given string ends with a given substring.
      *
-     * @param array|string $needles
+     * @param string|string[] $needles
      * @return bool
      */
     public function endsWith($needles)
@@ -212,11 +212,15 @@ class Stringable implements JsonSerializable
     /**
      * Determine if the string is an exact match with the given value.
      *
-     * @param string $value
+     * @param string|\Stringable $value
      * @return bool
      */
     public function exactly($value)
     {
+        if ($value instanceof \Stringable) {
+            $value = $value->__toString();
+        }
+
         return $this->value === $value;
     }
 
@@ -265,7 +269,7 @@ class Stringable implements JsonSerializable
     /**
      * Determine if a given string matches a given pattern.
      *
-     * @param array|string $pattern
+     * @param string|string[] $pattern
      * @return bool
      */
     public function is($pattern)
@@ -474,7 +478,7 @@ class Stringable implements JsonSerializable
     /**
      * Remove any occurrence of the given string in the subject.
      *
-     * @param array<string>|string $search
+     * @param string|string[] $search
      * @param bool $caseSensitive
      * @return static
      */
@@ -635,7 +639,7 @@ class Stringable implements JsonSerializable
     /**
      * Determine if a given string starts with a given substring.
      *
-     * @param array|string $needles
+     * @param string|string[] $needles
      * @return bool
      */
     public function startsWith($needles)

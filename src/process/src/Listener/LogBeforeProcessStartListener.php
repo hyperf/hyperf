@@ -34,7 +34,7 @@ class LogBeforeProcessStartListener implements ListenerInterface
     /**
      * @param BeforeProcessHandle $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $message = sprintf('Process[%s.%d] start.', $event->process->name, $event->index);
         if ($this->container->has(StdoutLoggerInterface::class)) {

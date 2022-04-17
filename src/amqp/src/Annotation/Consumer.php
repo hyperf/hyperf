@@ -17,17 +17,14 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS)]
 class Consumer extends AbstractAnnotation
 {
-    public string $exchange = '';
-
-    public string $routingKey = '';
-
-    public string $queue = '';
-
-    public string $name = 'Consumer';
-
-    public int $nums = 1;
-
-    public ?bool $enable = null;
-
-    public int $maxConsumption = 0;
+    public function __construct(
+        public string $exchange = '',
+        public string $routingKey = '',
+        public string $queue = '',
+        public string $name = 'Consumer',
+        public int $nums = 1,
+        public ?bool $enable = null,
+        public int $maxConsumption = 0
+    ) {
+    }
 }

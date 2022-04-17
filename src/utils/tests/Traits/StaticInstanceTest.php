@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils\Traits;
 
+use Hyperf\Context\Context;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Waiter;
 use Mockery;
 use PHPUnit\Framework\TestCase;

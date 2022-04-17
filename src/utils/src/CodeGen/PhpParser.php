@@ -107,9 +107,14 @@ class PhpParser
     {
         return match (gettype($value)) {
             'array' => value(function ($value) {
+                $isList = array_is_list($value);
                 $result = [];
-                foreach ($value as $item) {
-                    $result[] = new Node\Expr\ArrayItem($this->getExprFromValue($item));
+                foreach ($value as $i => $item) {
+                    $key = null;
+                    if (! $isList) {
+                        $key = is_int($i) ? new Node\Scalar\LNumber($i) : new Node\Scalar\String_($i);
+                    }
+                    $result[] = new Node\Expr\ArrayItem($this->getExprFromValue($item), $key);
                 }
                 return new Node\Expr\Array_($result, [
                     'kind' => Node\Expr\Array_::KIND_SHORT,

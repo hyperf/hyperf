@@ -53,7 +53,7 @@ class OnBeforeHandle implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($event instanceof AfterExecute) {
             CoordinatorManager::until(Constants::WORKER_EXIT)->resume();

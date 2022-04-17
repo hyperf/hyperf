@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\AsyncQueue\Stub;
 
+use Hyperf\Context\Context;
 use Hyperf\Redis\RedisProxy;
-use Hyperf\Utils\Context;
 
 class Redis extends RedisProxy
 {

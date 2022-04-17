@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Testing;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Dispatcher\HttpDispatcher;
@@ -25,7 +26,6 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Server;
 use Hyperf\Testing\HttpMessage\Upload\UploadedFile;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;

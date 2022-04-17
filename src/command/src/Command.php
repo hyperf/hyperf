@@ -29,7 +29,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 abstract class Command extends SymfonyCommand
 {
-    use EnableEventDispatcher;
+    use DisableEventDispatcher;
 
     /**
      * The name of the command.
@@ -96,7 +96,7 @@ abstract class Command extends SymfonyCommand
             ! empty($this->description) && $this->setDescription($this->description);
         }
 
-        $this->addEnableDispatcherOption();
+        $this->addDisableDispatcherOption();
     }
 
     /**
@@ -188,7 +188,7 @@ abstract class Command extends SymfonyCommand
         array $choices,
         $default = null,
         ?int $attempts = null
-    ): string {
+    ): mixed {
         return $this->choiceMultiple($question, $choices, $default, $attempts)[0];
     }
 
@@ -413,7 +413,8 @@ abstract class Command extends SymfonyCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->enableDispatcher($input);
+        $this->disableDispatcher($input);
+
         $callback = function () {
             try {
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\BeforeHandle($this));

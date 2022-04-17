@@ -181,3 +181,63 @@ use Hyperf\Utils\Coordinator\Constants;
 
 CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
 ```
+
+
+## ORM 不支持 bit 类型
+
+若想要使 `ORM` 支持 `bit` 类型，只需要增加以下监听器代码即可。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Hyperf\Database\Connection;
+use Hyperf\Database\MySqlBitConnection;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Framework\Event\BootApplication;
+
+#[Listener]
+class SupportMySQLBitListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            BootApplication::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        Connection::resolverFor('mysql', static function ($connection, $database, $prefix, $config) {
+            return new MySqlBitConnection($connection, $database, $prefix, $config);
+        });
+    }
+}
+
+```
+
+## OSS 上传组件报 iconv 错误
+
+- fix aliyun oss wrong charset: https://github.com/aliyun/aliyun-oss-php-sdk/issues/101
+- https://github.com/docker-library/php/issues/240#issuecomment-762438977
+- https://github.com/docker-library/php/pull/1264
+
+当使用 `aliyuncs/oss-sdk-php` 组件上传时，会报 iconv 错误，可以尝试使用以下方式规避：
+
+使用 `hyperf/hyperf:8.0-alpine-v3.12-swoole` 镜像时
+
+```
+RUN apk --no-cache --allow-untrusted --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ add gnu-libiconv=1.15-r2
+ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so
+```
+
+使用 `hyperf/hyperf:8.0-alpine-v3.13-swoole` 镜像时
+
+```dockerfile
+RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.13/community/ gnu-libiconv=1.15-r3
+ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
+```

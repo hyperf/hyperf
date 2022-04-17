@@ -175,9 +175,9 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
      * the file in the $_FILES array if available, as PHP calculates this based
      * on the actual size transmitted.
      *
-     * @return null|int the file size in bytes or null if unknown
+     * @return false|int the file size in bytes or null if unknown
      */
-    public function getSize()
+    public function getSize(): int|false
     {
         return $this->size;
     }

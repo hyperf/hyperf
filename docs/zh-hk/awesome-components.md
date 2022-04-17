@@ -140,11 +140,15 @@
 
 - [lysice/hyperf-redis-lock](https://github.com/Lysice/hyperf-redis-lock) 根據 Laravel 的 lock 組件改寫，適配於 Hyperf 框架。
 
+## 分佈式事務
+
+- [dtm-php/dtm-client](https://github.com/dtm-php/dtm-client) 支持 Hyperf 的 dtm 分佈式事務客户端組件
+
 ## 第三方 SDK
 
 - [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支持 Swoole 協程的支付寶/微信支付 SDK
 - [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支持 Swoole 協程的第三方登錄授權 SDK（QQ、微信、微博、Github、Gitee 等）
-- [overtrue/wechat](zh-hk/sdks/wechat) EasyWeChat，一個流行的非官方微信 SDK
+- [w7corp/wechat](zh-hk/sdks/wechat) EasyWeChat，一個流行的非官方微信 SDK
 - [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole 協程環境下的可用的 PHPMailer
 - [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 支持 `支付寶/微信` 的支付組件，基於 [yansongda/pay](https://github.com/yansongda/pay) 實現，適配於 `Hyperf` 框架。
-- [alapi/hyperf-meilisearch](https://github.com/anhao/hyperf-meilisearch/) 為 Hyperf Scout 提供的 meilisearch 客户端 
+- [alapi/hyperf-meilisearch](https://github.com/anhao/hyperf-meilisearch) 為 Hyperf Scout 提供的 meilisearch 客户端 

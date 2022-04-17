@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Redis;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
 use Hyperf\Pool\Channel;
@@ -23,7 +24,6 @@ use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Coroutine;
 use HyperfTest\Redis\Stub\RedisPoolFailedStub;
 use HyperfTest\Redis\Stub\RedisPoolStub;
@@ -180,6 +180,18 @@ class RedisTest extends TestCase
 
         $this->assertIsArray($nodes);
         $this->assertSame(3, count($nodes));
+    }
+
+    public function testRedisSentinelParams()
+    {
+        $rel = new \ReflectionClass(\RedisSentinel::class);
+        $method = $rel->getMethod('__construct');
+        $count = count($method->getParameters());
+        if ($count === 6) {
+            $this->markTestIncomplete('RedisSentinel don\'t support auth.');
+        }
+
+        $this->assertSame(7, $count);
     }
 
     private function getRedis()

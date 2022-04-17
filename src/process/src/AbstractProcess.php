@@ -119,6 +119,12 @@ abstract class AbstractProcess implements ProcessInterface
     protected function bindCoroutineServer($server): void
     {
         $num = $this->nums;
+        Coroutine::create(static function () {
+            if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield()) {
+                ProcessManager::setRunning(false);
+            }
+        });
+
         for ($i = 0; $i < $num; ++$i) {
             $handler = function () use ($i) {
                 $this->event && $this->event->dispatch(new BeforeCoroutineHandle($this, $i));

@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\WebSocketServer;
 
+use Hyperf\Context\Context as CoContext;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Context as CoContext;
 
 class Context
 {

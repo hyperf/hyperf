@@ -17,9 +17,10 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class AsyncQueueMessage extends AbstractAnnotation
 {
-    public string $pool = 'default';
-
-    public int $delay = 0;
-
-    public int $maxAttempts = 0;
+    public function __construct(
+        public string $pool = 'default',
+        public int $delay = 0,
+        public int $maxAttempts = 0
+    ) {
+    }
 }

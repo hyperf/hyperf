@@ -27,44 +27,38 @@ class AnnotationTest extends TestCase
 {
     public function testIntCacheableAndCachePut()
     {
-        $annotation = new Cacheable([
-            'prefix' => 'test',
-            'ttl' => 3600,
-        ]);
+        $annotation = new Cacheable(
+            'test',
+            ttl: 3600,
+        );
 
         $this->assertSame('test', $annotation->prefix);
         $this->assertSame(3600, $annotation->ttl);
 
-        $annotation = new Cacheable([
-            'prefix' => 'test',
-            'ttl' => 3600,
-        ]);
+        $annotation = new Cacheable(
+            'test',
+            ttl: 3600,
+        );
 
         $this->assertSame('test', $annotation->prefix);
         $this->assertSame(3600, $annotation->ttl);
 
-        $annotation = new CachePut([
-            'prefix' => 'test',
-            'ttl' => 3600,
-            'offset' => 100,
-        ]);
+        $annotation = new CachePut(
+            'test',
+            ttl: 3600,
+            offset: 100,
+        );
 
         $this->assertSame('test', $annotation->prefix);
         $this->assertSame(3600, $annotation->ttl);
         $this->assertSame(100, $annotation->offset);
 
-        $annotation = new Cacheable([
-            'prefix' => 'test',
-            'ttl' => null,
-        ]);
+        $annotation = new Cacheable('test');
 
         $this->assertSame('test', $annotation->prefix);
         $this->assertSame(null, $annotation->ttl);
 
-        $annotation = new CachePut([
-            'prefix' => 'test',
-            'ttl' => null,
-        ]);
+        $annotation = new CachePut('test');
 
         $this->assertSame('test', $annotation->prefix);
         $this->assertSame(null, $annotation->ttl);
@@ -72,9 +66,9 @@ class AnnotationTest extends TestCase
 
     public function testAnnotationManager()
     {
-        $cacheable = new Cacheable(['prefix' => 'test', 'ttl' => 3600, 'offset' => 100]);
-        $cacheable2 = new Cacheable(['prefix' => 'test', 'ttl' => 3600]);
-        $cacheput = new CachePut(['prefix' => 'test', 'ttl' => 3600, 'offset' => 100]);
+        $cacheable = new Cacheable('test', ttl: 3600, offset: 100);
+        $cacheable2 = new Cacheable('test', ttl: 3600);
+        $cacheput = new CachePut('test', ttl: 3600, offset: 100);
         $config = Mockery::mock(ConfigInterface::class);
         $logger = Mockery::mock(StdoutLoggerInterface::class);
         /** @var AnnotationManager $manager */

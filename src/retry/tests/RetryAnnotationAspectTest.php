@@ -279,9 +279,10 @@ class RetryAnnotationAspectTest extends TestCase
                     $state = Mockery::mock(
                         \Hyperf\Retry\CircuitBreakerState::class
                     );
+                    $state->shouldReceive('open')->andReturnNull();
                     $state->shouldReceive('isOpen')->twice()->andReturns(false);
                     $state->shouldReceive('isOpen')->once()->andReturns(true);
-                    $retry = new CircuitBreaker(['circuitBreakerState' => $state]);
+                    $retry = new CircuitBreaker(circuitBreakerState: $state);
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $this->method = [
                         AbstractRetry::class => $retry,
@@ -307,7 +308,7 @@ class RetryAnnotationAspectTest extends TestCase
                 public function __construct()
                 {
                     $state = new \Hyperf\Retry\CircuitBreakerState(10);
-                    $retry = new CircuitBreaker(['circuitBreakerState' => $state]);
+                    $retry = new CircuitBreaker(circuitBreakerState: $state);
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $retry->fallback = Foo::class . '@fallbackWithThrowable';
                     $retry->maxAttempts = 2;
@@ -337,7 +338,10 @@ class RetryAnnotationAspectTest extends TestCase
                     $retry = new class() extends Retry {
                         public $timeout = 0.001;
 
-                        public array $policies = [TimeoutRetryPolicy::class];
+                        public function __construct()
+                        {
+                            parent::__construct(policies: [TimeoutRetryPolicy::class]);
+                        }
                     };
                     $this->method = [
                         AbstractRetry::class => $retry,

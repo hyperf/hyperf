@@ -1,5 +1,43 @@
 # 版本更新記錄
 
+# v2.2.30 - 2022-04-04
+
+## 修復
+
+- [#4648](https://github.com/hyperf/hyperf/pull/4648) 當使用 `retry` 組件中的熔斷器時，修復在 `open` 狀態下，無法自動調用 `fallback` 方法的問題。
+- [#4657](https://github.com/hyperf/hyperf/pull/4657) 修復使用 `session` 中的文件適配器時，相同的 `Session ID` 在被重寫後，最後修改時間仍是上次修改時間的問題。
+
+## 新增
+
+- [#4646](https://github.com/hyperf/hyperf/pull/4646) 為 `Redis` 哨兵模式增加設置密碼的功能。
+
+# v2.2.29 - 2022-03-28
+
+## 修復
+
+- [#4620](https://github.com/hyperf/hyperf/pull/4620) 修復 `Hyperf\Memory\LockManager::initialize()` 方法中，`$filename` 默認值錯誤的問題。
+
+# v2.2.28 - 2022-03-14
+
+## 修復
+
+- [#4588](https://github.com/hyperf/hyperf/pull/4588) 修復 `database` 組件不支持 `bit` 類型的問題。
+- [#4589](https://github.com/hyperf/hyperf/pull/4589) 修復使用 `Nacos` 時，無法正確的註冊臨時實例的問題。
+
+## 新增
+
+- [#4580](https://github.com/hyperf/hyperf/pull/4580) 新增方法 `Hyperf\Utils\Coroutine\Concurrent::getChannel()`。
+
+## 優化
+
+- [#4602](https://github.com/hyperf/hyperf/pull/4602) 將方法 `Hyperf\ModelCache\Manager::formatModels()` 更改為公共方法。
+
+# v2.2.27 - 2022-03-07
+
+## 優化
+
+- [#4572](https://github.com/hyperf/hyperf/pull/4572) 當負載均衡器 `hyperf/load-balancer` 選擇節點失敗時，使用 `Hyperf\LoadBalancer\Exception\RuntimeException` 代替 `\RuntimeException`。
+
 # v2.2.26 - 2022-02-21
 
 ## 修復
@@ -14,7 +52,7 @@
 
 - [#4514](https://github.com/hyperf/hyperf/pull/4514) 通過使用小寫 `key` 獲取 `HTTP` 的 `Header` 信息，提升一部分性能。
 - [#4521](https://github.com/hyperf/hyperf/pull/4521) 在使用 Redis 的哨兵模式時，如果第一個哨兵節點連接失敗，則嘗試連接其餘哨兵節點。
-- [#4529](https://github.com/hyperf/hyperf/pull/4529) 將組件 `hyperf/context` 從主鍵 `hyperf/utils` 中分離出來。
+- [#4529](https://github.com/hyperf/hyperf/pull/4529) 將組件 `hyperf/context` 從組件 `hyperf/utils` 中分離出來。
 
 # v2.2.25 - 2022-01-30
 

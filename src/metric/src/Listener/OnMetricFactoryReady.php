@@ -53,7 +53,7 @@ class OnMetricFactoryReady implements ListenerInterface
     /**
      * Periodically scan metrics.
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         if (! $this->config->get('metric.enable_default_metric')) {
             return;

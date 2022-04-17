@@ -21,31 +21,19 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_METHOD)]
 class CircuitBreaker extends AbstractAnnotation
 {
-    public string $handler = TimeoutHandler::class;
-
-    public ?string $fallback = null;
-
     /**
-     * The duration required to reset to a half open or close state.
+     * @param float $duration the duration required to reset to a half open or close state
+     * @param int $successCounter the counter required to reset to a close state
+     * @param int $failCounter the counter required to reset to an open state
+     * @param array $value ['timeout' => 1]
      */
-    public float $duration = 10;
-
-    /**
-     * The counter required to reset to a close state.
-     */
-    public int $successCounter = 10;
-
-    /**
-     * The counter required to reset to an open state.
-     */
-    public int $failCounter = 10;
-
-    public array $value;
-
-    public function __construct(...$value)
-    {
-        parent::__construct(...$value);
-
-        $this->value = $this->formatParams($value);
+    public function __construct(
+        public string $handler = TimeoutHandler::class,
+        public ?string $fallback = null,
+        public float $duration = 10.0,
+        public int $successCounter = 10,
+        public int $failCounter = 10,
+        public array $value = []
+    ) {
     }
 }

@@ -39,12 +39,12 @@ class ConsumerManagerTest extends TestCase
     public function testConsumerAnnotation()
     {
         $container = ContainerStub::getContainer();
-        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
-            'topic' => $topic = uniqid(),
-            'channel' => $channel = uniqid(),
-            'name' => $name = uniqid(),
-            'nums' => $nums = rand(1, 10),
-        ]));
+        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer(
+            $topic = uniqid(),
+            $channel = uniqid(),
+            $name = uniqid(),
+            $nums = rand(1, 10),
+        ));
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'nsq' => [
@@ -75,12 +75,12 @@ class ConsumerManagerTest extends TestCase
     public function testConsumerAnnotationNotEnableByConfig()
     {
         $container = ContainerStub::getContainer();
-        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
-            'topic' => $topic = uniqid(),
-            'channel' => $channel = uniqid(),
-            'name' => $name = uniqid(),
-            'nums' => $nums = rand(1, 10),
-        ]));
+        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer(
+            $topic = uniqid(),
+            $channel = uniqid(),
+            $name = uniqid(),
+            $nums = rand(1, 10),
+        ));
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'nsq' => [
@@ -105,12 +105,12 @@ class ConsumerManagerTest extends TestCase
     public function testConsumerAnnotationNotEnableByConsumer()
     {
         $container = ContainerStub::getContainer();
-        AnnotationCollector::collectClass(DisabledDemoConsumer::class, Consumer::class, new Consumer([
-            'topic' => $topic = uniqid(),
-            'channel' => $channel = uniqid(),
-            'name' => $name = uniqid(),
-            'nums' => $nums = rand(1, 10),
-        ]));
+        AnnotationCollector::collectClass(DisabledDemoConsumer::class, Consumer::class, new Consumer(
+            $topic = uniqid(),
+            $channel = uniqid(),
+            $name = uniqid(),
+            $nums = rand(1, 10),
+        ));
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'nsq' => [

@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Paginator;
 
-use ArrayAccess;
 use Countable;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
@@ -20,7 +19,7 @@ use Hyperf\Utils\Contracts\Jsonable;
 use IteratorAggregate;
 use JsonSerializable;
 
-class LengthAwarePaginator extends AbstractPaginator implements Arrayable, ArrayAccess, Countable, IteratorAggregate, JsonSerializable, Jsonable, LengthAwarePaginatorInterface
+class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Countable, IteratorAggregate, JsonSerializable, Jsonable, LengthAwarePaginatorInterface
 {
     /**
      * The total number of items before slicing.

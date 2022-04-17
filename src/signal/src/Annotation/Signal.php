@@ -17,5 +17,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_CLASS)]
 class Signal extends AbstractAnnotation
 {
-    public ?int $priority = null;
+    public function __construct(public ?int $priority = null)
+    {
+    }
 }

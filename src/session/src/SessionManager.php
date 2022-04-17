@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Session;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\SessionInterface;
-use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use SessionHandlerInterface;

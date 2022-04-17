@@ -146,13 +146,6 @@ class Process
 
     protected function initScanConfig(): ScanConfig
     {
-        $config = ScanConfig::instance(BASE_PATH . '/config/');
-        foreach ($config->getIgnoreAnnotations() as $annotation) {
-            AnnotationReader::addGlobalIgnoredName($annotation);
-        }
-        foreach ($config->getGlobalImports() as $alias => $annotation) {
-            AnnotationReader::addGlobalImports($alias, $annotation);
-        }
-        return $config;
+        return ScanConfig::instance(BASE_PATH . '/config/');
     }
 }

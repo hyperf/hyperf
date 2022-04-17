@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Session;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\SessionInterface;
-use Hyperf\Utils\Context;
 
 class SessionProxy extends Session
 {

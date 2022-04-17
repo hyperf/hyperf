@@ -32,7 +32,7 @@ class InitSenderListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($this->container->has(Sender::class)) {
             $sender = $this->container->get(Sender::class);

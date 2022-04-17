@@ -22,15 +22,10 @@ class Middlewares extends AbstractAnnotation
      */
     public array $middlewares = [];
 
-    public function __construct(...$value)
+    public function __construct(array $middlewares = [])
     {
-        if (is_string($value[0])) {
-            $middlewares = [];
-            foreach ($value as $middlewareName) {
-                $middlewares[] = new Middleware($middlewareName);
-            }
-            $value = ['value' => $middlewares];
+        foreach ($middlewares as $middleware) {
+            $this->middlewares[] = $middleware instanceof Middlewares ? $middleware : new Middleware((string) $middleware);
         }
-        $this->bindMainProperty('middlewares', $value);
     }
 }
