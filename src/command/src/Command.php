@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Command;
 
-use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Str;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -19,6 +19,7 @@ use Swoole\ExitException;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableStyle;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,62 +29,45 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 abstract class Command extends SymfonyCommand
 {
-    use EnableEventDispatcher;
+    use DisableEventDispatcher;
 
     /**
      * The name of the command.
-     *
-     * @var string
      */
-    protected $name;
+    protected ?string $name = null;
+
+    protected string $description = '';
+
+    protected ?InputInterface $input = null;
 
     /**
-     * @var InputInterface
+     * @var null|SymfonyStyle
      */
-    protected $input;
-
-    /**
-     * @var SymfonyStyle
-     */
-    protected $output;
+    protected ?OutputInterface $output = null;
 
     /**
      * The default verbosity of output commands.
-     *
-     * @var int
      */
-    protected $verbosity = OutputInterface::VERBOSITY_NORMAL;
+    protected int $verbosity = OutputInterface::VERBOSITY_NORMAL;
 
     /**
      * Execution in a coroutine environment.
-     *
-     * @var bool
      */
-    protected $coroutine = true;
+    protected bool $coroutine = true;
 
-    /**
-     * @var null|EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    protected ?EventDispatcherInterface $eventDispatcher = null;
 
-    /**
-     * @var int
-     */
-    protected $hookFlags;
+    protected int $hookFlags = -1;
 
     /**
      * The name and signature of the command.
-     *
-     * @var null|string
      */
-    protected $signature;
+    protected ?string $signature = null;
 
     /**
-     * The mapping between human readable verbosity levels and Symfony's OutputInterface.
-     *
-     * @var array
+     * The mapping between human-readable verbosity levels and Symfony's OutputInterface.
      */
-    protected $verbosityMap
+    protected array $verbosityMap
         = [
             'v' => OutputInterface::VERBOSITY_VERBOSE,
             'vv' => OutputInterface::VERBOSITY_VERY_VERBOSE,
@@ -94,28 +78,25 @@ abstract class Command extends SymfonyCommand
 
     /**
      * The exit code of the command.
-     *
-     * @var int
      */
-    protected $exitCode = 0;
+    protected int $exitCode = 0;
 
     public function __construct(string $name = null)
     {
-        if (! $name && $this->name) {
-            $name = $this->name;
-        }
+        $this->name = $name ?? $this->name;
 
-        if (! is_int($this->hookFlags)) {
+        if ($this->hookFlags < 0) {
             $this->hookFlags = swoole_hook_flags();
         }
 
         if (isset($this->signature)) {
             $this->configureUsingFluentDefinition();
         } else {
-            parent::__construct($name);
+            parent::__construct($this->name);
+            ! empty($this->description) && $this->setDescription($this->description);
         }
 
-        $this->addEnableDispatcherOption();
+        $this->addDisableDispatcherOption();
     }
 
     /**
@@ -138,18 +119,16 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Prompt the user for input.
-     *
-     * @param null|mixed $default
      */
-    public function ask(string $question, $default = null)
+    public function ask(string $question, string $default = null)
     {
         return $this->output->ask($question, $default);
     }
 
     /**
-     * Prompt the user for input with auto completion.
+     * Prompt the user for input with auto-completion.
      *
-     * @param null|mixed $default
+     * @param null|bool|float|int|string $default
      */
     public function anticipate(string $question, array $choices, $default = null)
     {
@@ -157,9 +136,9 @@ abstract class Command extends SymfonyCommand
     }
 
     /**
-     * Prompt the user for input with auto completion.
+     * Prompt the user for input with auto-completion.
      *
-     * @param null|mixed $default
+     * @param null|bool|float|int|string $default
      */
     public function askWithCompletion(string $question, array $choices, $default = null)
     {
@@ -184,7 +163,7 @@ abstract class Command extends SymfonyCommand
 
     /**
      * Give the user a multiple choice from an array of answers.
-     * @param null|mixed $default
+     * @param mixed $default
      */
     public function choiceMultiple(
         string $question,
@@ -202,24 +181,21 @@ abstract class Command extends SymfonyCommand
     /**
      * Give the user a single choice from an array of answers.
      *
-     * @param null|mixed $default
+     * @param mixed $default
      */
     public function choice(
         string $question,
         array $choices,
         $default = null,
         ?int $attempts = null
-    ): string {
+    ): mixed {
         return $this->choiceMultiple($question, $choices, $default, $attempts)[0];
     }
 
     /**
      * Format input to textual table.
-     *
-     * @param mixed $rows
-     * @param mixed $tableStyle
      */
-    public function table(array $headers, $rows, $tableStyle = 'default', array $columnStyles = []): void
+    public function table(array $headers, array|Arrayable $rows, TableStyle|string $tableStyle = 'default', array $columnStyles = []): void
     {
         $table = new Table($this->output);
 
@@ -227,7 +203,7 @@ abstract class Command extends SymfonyCommand
             $rows = $rows->toArray();
         }
 
-        $table->setHeaders((array) $headers)->setRows($rows)->setStyle($tableStyle);
+        $table->setHeaders($headers)->setRows($rows)->setStyle($tableStyle);
 
         foreach ($columnStyles as $columnIndex => $columnStyle) {
             $table->setColumnStyle($columnIndex, $columnStyle);
@@ -375,7 +351,7 @@ abstract class Command extends SymfonyCommand
     }
 
     /**
-     * Get all of the context passed to the command.
+     * Get all the context passed to the command.
      */
     protected function context(): array
     {
@@ -395,9 +371,9 @@ abstract class Command extends SymfonyCommand
      */
     protected function specifyParameters(): void
     {
-        // We will loop through all of the arguments and options for the command and
+        // We will loop through all the arguments and options for the command and
         // set them all on the base command instance. This specifies what can get
-        // passed into these commands as "parameters" to control the execution.
+        // past into these commands as "parameters" to control the execution.
         if (method_exists($this, 'getArguments')) {
             foreach ($this->getArguments() ?? [] as $arguments) {
                 call_user_func_array([$this, 'addArgument'], $arguments);
@@ -437,7 +413,8 @@ abstract class Command extends SymfonyCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->enableDispatcher($input);
+        $this->disableDispatcher($input);
+
         $callback = function () {
             try {
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\BeforeHandle($this));

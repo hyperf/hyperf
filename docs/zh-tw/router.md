@@ -107,9 +107,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class UserController
 {
     // Hyperf 會自動為此方法生成一個 /user/index 的路由，允許通過 GET 或 POST 方式請求
@@ -145,15 +143,11 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
-/**
- * @Controller()
- */
+#[Controller]
 class UserController
 {
     // Hyperf 會自動為此方法生成一個 /user/index 的路由，允許通過 GET 或 POST 方式請求
-    /**
-     * @RequestMapping(path="index", methods="get,post")
-     */
+    #[RequestMapping(path: "index", methods: "get,post")]
     public function index(RequestInterface $request)
     {
         // 從請求中獲得 id 引數

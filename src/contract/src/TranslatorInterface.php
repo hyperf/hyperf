@@ -16,7 +16,7 @@ interface TranslatorInterface
     /**
      * Get the translation for a given key.
      */
-    public function trans(string $key, array $replace = [], ?string $locale = null);
+    public function trans(string $key, array $replace = [], ?string $locale = null): array|string;
 
     /**
      * Get a translation according to an integer value.

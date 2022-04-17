@@ -14,20 +14,12 @@ namespace Hyperf\Amqp\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class Producer extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $exchange = '';
-
-    /**
-     * @var string
-     */
-    public $routingKey = '';
+    public function __construct(
+        public string $exchange = '',
+        public string $routingKey = ''
+    ) {
+    }
 }

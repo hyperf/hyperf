@@ -28,23 +28,14 @@ use Throwable;
 class ValidationExceptionHandle implements MiddlewareInterface
 {
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * @var Session
      */
-    protected $session;
+    protected SessionInterface $session;
 
-    /**
-     * @var FactoryInterface
-     */
-    protected $view;
+    protected FactoryInterface $view;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->session = $container->get(SessionInterface::class);
         $this->view = $container->get(FactoryInterface::class);
     }

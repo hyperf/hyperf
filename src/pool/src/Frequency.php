@@ -15,45 +15,23 @@ use Hyperf\Contract\FrequencyInterface;
 
 class Frequency implements FrequencyInterface, LowFrequencyInterface
 {
-    /**
-     * @var array
-     */
-    protected $hits = [];
+    protected array $hits = [];
 
     /**
      * How much time do you want to calculate the frequency ?
-     * @var int
      */
-    protected $time = 10;
+    protected int $time = 10;
 
-    /**
-     * @var int
-     */
-    protected $lowFrequency = 5;
+    protected int $lowFrequency = 5;
 
-    /**
-     * @var int
-     */
-    protected $beginTime;
+    protected int $beginTime;
 
-    /**
-     * @var int
-     */
-    protected $lowFrequencyTime;
+    protected int $lowFrequencyTime;
 
-    /**
-     * @var int
-     */
-    protected $lowFrequencyInterval = 60;
+    protected int $lowFrequencyInterval = 60;
 
-    /**
-     * @var null|Pool
-     */
-    protected $pool;
-
-    public function __construct(?Pool $pool = null)
+    public function __construct(protected ?Pool $pool = null)
     {
-        $this->pool = $pool;
         $this->beginTime = time();
         $this->lowFrequencyTime = time();
     }

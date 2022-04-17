@@ -13,10 +13,7 @@ namespace Hyperf\WebSocketServer\Collector;
 
 class FdCollector
 {
-    /**
-     * @var array
-     */
-    protected static $fds = [];
+    protected static array $fds = [];
 
     public static function set(int $id, string $class): void
     {

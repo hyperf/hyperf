@@ -22,18 +22,12 @@ use Swoole\Coroutine\Socket;
 
 class NsqConnection extends KeepaliveConnection
 {
-    /**
-     * @var array
-     */
-    protected $config = [
+    protected array $config = [
         'host' => 'localhost',
         'port' => 4150,
     ];
 
-    /**
-     * @var MessageBuilder
-     */
-    protected $builder;
+    protected MessageBuilder $builder;
 
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {

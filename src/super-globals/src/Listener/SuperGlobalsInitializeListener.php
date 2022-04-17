@@ -19,14 +19,8 @@ use Hyperf\SuperGlobals\Proxy;
 
 class SuperGlobalsInitializeListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function listen(): array
@@ -39,7 +33,7 @@ class SuperGlobalsInitializeListener implements ListenerInterface
     /**
      * @param AfterWorkerStart $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $_COOKIE = make(Proxy\Cookie::class);
         $_FILES = make(Proxy\File::class);

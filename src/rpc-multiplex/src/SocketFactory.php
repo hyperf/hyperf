@@ -19,30 +19,15 @@ use Psr\Container\ContainerInterface;
 
 class SocketFactory
 {
-    /**
-     * @var null|LoadBalancerInterface
-     */
-    protected $loadBalancer;
+    protected ?LoadBalancerInterface $loadBalancer = null;
 
     /**
      * @var Socket[]
      */
-    protected $clients = [];
+    protected array $clients = [];
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var array
-     */
-    protected $config;
-
-    public function __construct(ContainerInterface $container, array $config)
+    public function __construct(protected ContainerInterface $container, protected array $config)
     {
-        $this->container = $container;
-        $this->config = $config;
     }
 
     public function getLoadBalancer(): ?LoadBalancerInterface
@@ -99,6 +84,6 @@ class SocketFactory
 
     protected function getCount(): int
     {
-        return (int) $this->config['client_count'] ?? 4;
+        return (int) ($this->config['client_count'] ?? 4);
     }
 }

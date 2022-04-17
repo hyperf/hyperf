@@ -15,9 +15,7 @@ use Hyperf\Database\Model\Events\Event;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 
-/**
- * @Listener
- */
+#[Listener]
 class ModelEventListenerStub implements ListenerInterface
 {
     public function listen(): array
@@ -30,8 +28,8 @@ class ModelEventListenerStub implements ListenerInterface
     /**
      * @param Event $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
-        return $event->handle();
+        $event->handle();
     }
 }

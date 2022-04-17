@@ -17,11 +17,11 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
-        "hyperf/contract": "~2.2.0",
-        "hyperf/nacos": "~2.2.0",
-        "hyperf/service-governance": "~2.2.0",
-        "hyperf/utils": "~2.2.0"
+        "php": ">=8.0",
+        "hyperf/contract": "~3.0.0",
+        "hyperf/nacos": "~3.0.0",
+        "hyperf/service-governance": "~3.0.0",
+        "hyperf/utils": "~3.0.0"
     },
     "autoload": {
         "psr-4": {
@@ -38,7 +38,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\ServiceGovernanceNacos\\ConfigProvider"

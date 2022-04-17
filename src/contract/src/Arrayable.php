@@ -9,14 +9,16 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\ServiceGovernance;
+namespace Hyperf\Contract;
 
-use Hyperf\ServiceGovernance\Exception\IPReadFailedException;
-
-interface IPReaderInterface
+/**
+ * @template TKey of array-key
+ * @template TValue
+ */
+interface Arrayable
 {
     /**
-     * @throws IPReadFailedException
+     * @return array<TKey, TValue>
      */
-    public function read(): string;
+    public function toArray(): array;
 }

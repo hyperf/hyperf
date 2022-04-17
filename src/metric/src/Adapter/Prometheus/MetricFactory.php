@@ -13,6 +13,8 @@ namespace Hyperf\Metric\Adapter\Prometheus;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coordinator\Constants as Coord;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
 use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
@@ -21,8 +23,6 @@ use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Exception\InvalidArgumentException;
 use Hyperf\Metric\Exception\RuntimeException;
 use Hyperf\Metric\MetricFactoryPicker;
-use Hyperf\Utils\Coordinator\Constants as Coord;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Network;
 use Hyperf\Utils\Str;
 use Prometheus\CollectorRegistry;
@@ -31,38 +31,15 @@ use Swoole\Coroutine\Http\Server;
 
 class MetricFactory implements MetricFactoryInterface
 {
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private string $name;
 
-    /**
-     * @var CollectorRegistry
-     */
-    private $registry;
-
-    /**
-     * @var guzzleClientFactory
-     */
-    private $guzzleClientFactory;
-
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    private $logger;
-
-    public function __construct(ConfigInterface $config, CollectorRegistry $registry, GuzzleClientFactory $guzzleClientFactory, StdoutLoggerInterface $logger)
-    {
-        $this->config = $config;
-        $this->registry = $registry;
-        $this->guzzleClientFactory = $guzzleClientFactory;
+    public function __construct(
+        private ConfigInterface $config,
+        private CollectorRegistry $registry,
+        private GuzzleClientFactory $guzzleClientFactory,
+        private StdoutLoggerInterface $logger
+    ) {
         $this->name = $this->config->get('metric.default');
-        $this->logger = $logger;
         $this->guardConfig();
     }
 

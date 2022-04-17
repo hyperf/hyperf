@@ -165,7 +165,7 @@ class Builder
      *
      * @param string $table
      */
-    public function table($table, Closure $callback)
+    public function table($table, Closure $callback): void
     {
         $this->build($this->createBlueprint($table, $callback));
     }
@@ -175,7 +175,7 @@ class Builder
      *
      * @param string $table
      */
-    public function create($table, Closure $callback)
+    public function create($table, Closure $callback): void
     {
         $this->build(tap($this->createBlueprint($table), function ($blueprint) use ($callback) {
             $blueprint->create();
@@ -189,7 +189,7 @@ class Builder
      *
      * @param string $table
      */
-    public function drop($table)
+    public function drop($table): void
     {
         $this->build(tap($this->createBlueprint($table), function ($blueprint) {
             $blueprint->drop();
@@ -201,7 +201,7 @@ class Builder
      *
      * @param string $table
      */
-    public function dropIfExists($table)
+    public function dropIfExists($table): void
     {
         $this->build(tap($this->createBlueprint($table), function ($blueprint) {
             $blueprint->dropIfExists();
@@ -213,7 +213,7 @@ class Builder
      *
      * @throws \LogicException
      */
-    public function dropAllTables()
+    public function dropAllTables(): void
     {
         throw new LogicException('This database driver does not support dropping all tables.');
     }
@@ -223,7 +223,7 @@ class Builder
      *
      * @throws \LogicException
      */
-    public function dropAllViews()
+    public function dropAllViews(): void
     {
         throw new LogicException('This database driver does not support dropping all views.');
     }
@@ -234,7 +234,7 @@ class Builder
      * @param string $from
      * @param string $to
      */
-    public function rename($from, $to)
+    public function rename($from, $to): void
     {
         $this->build(tap($this->createBlueprint($from), function ($blueprint) use ($to) {
             $blueprint->rename($to);
@@ -243,10 +243,8 @@ class Builder
 
     /**
      * Enable foreign key constraints.
-     *
-     * @return bool
      */
-    public function enableForeignKeyConstraints()
+    public function enableForeignKeyConstraints(): bool
     {
         return $this->connection->statement(
             $this->grammar->compileEnableForeignKeyConstraints()
@@ -255,10 +253,8 @@ class Builder
 
     /**
      * Disable foreign key constraints.
-     *
-     * @return bool
      */
-    public function disableForeignKeyConstraints()
+    public function disableForeignKeyConstraints(): bool
     {
         return $this->connection->statement(
             $this->grammar->compileDisableForeignKeyConstraints()

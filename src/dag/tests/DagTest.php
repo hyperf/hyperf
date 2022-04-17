@@ -266,7 +266,7 @@ class DagTest extends TestCase
             ->addEdge($h, $i)
             ->addEdge($i, $g);
 
-        $ret = $dag->checkCircularDependences();
+        $ret = $dag->checkCircularDependencies();
 
         $this->assertEquals(['3', '2', '1'], $ret[0]);
         $this->assertEquals(['6', '5', '4'], $ret[1]);

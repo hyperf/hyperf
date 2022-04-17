@@ -16,7 +16,7 @@ use Swoole\Coroutine\Channel;
 
 class ChannelFactory
 {
-    protected $channels = [];
+    protected array $channels = [];
 
     public function get(int $taskId): ?Channel
     {

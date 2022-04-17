@@ -14,21 +14,14 @@ namespace Hyperf\Di\Aop;
 abstract class AbstractAspect implements AroundInterface
 {
     /**
-     * The classes that you want to weaving.
-     *
-     * @var array
+     * The classes that you want to weave.
      */
-    public $classes = [];
+    public array $classes = [];
 
     /**
-     * The annotations that you want to weaving.
-     *
-     * @var array
+     * The annotations that you want to weave.
      */
-    public $annotations = [];
+    public array $annotations = [];
 
-    /**
-     * @var null|int
-     */
-    public $priority;
+    public ?int $priority = null;
 }

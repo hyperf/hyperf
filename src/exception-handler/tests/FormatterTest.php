@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\ExceptionHandler;
 
 use Hyperf\ExceptionHandler\Formatter\DefaultFormatter;
-use PHPStan\Testing\TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @internal

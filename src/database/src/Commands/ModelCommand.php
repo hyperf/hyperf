@@ -22,56 +22,30 @@ use Hyperf\Database\Schema\Builder;
 use Hyperf\Utils\CodeGen\Project;
 use Hyperf\Utils\Str;
 use PhpParser\NodeTraverser;
+use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
+use PhpParser\PrettyPrinterAbstract;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ModelCommand extends Command
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ?ConnectionResolverInterface $resolver = null;
 
-    /**
-     * @var ConnectionResolverInterface
-     */
-    protected $resolver;
+    protected ?ConfigInterface $config = null;
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
+    protected ?Parser $astParser = null;
 
-    /**
-     * @var \PhpParser\Parser
-     */
-    protected $astParser;
+    protected ?PrettyPrinterAbstract $printer = null;
 
-    /**
-     * @var \PhpParser\PrettyPrinterAbstract
-     */
-    protected $printer;
-
-    /**
-     * @var SymfonyStyle
-     */
-    protected $output;
-
-    /**
-     * @var InputInterface
-     */
-    protected $input;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
         parent::__construct('gen:model');
-        $this->container = $container;
+        $this->setDescription('Create new model classes.');
     }
 
     public function run(InputInterface $input, OutputInterface $output): int
@@ -121,7 +95,7 @@ class ModelCommand extends Command
         $this->addOption('prefix', 'P', InputOption::VALUE_OPTIONAL, 'What prefix that you want the Model set.');
         $this->addOption('inheritance', 'i', InputOption::VALUE_OPTIONAL, 'The inheritance that you want the Model extends.');
         $this->addOption('uses', 'U', InputOption::VALUE_OPTIONAL, 'The default class uses of the Model.');
-        $this->addOption('refresh-fillable', 'R', InputOption::VALUE_NONE, 'Whether generate fillable argement for model.');
+        $this->addOption('refresh-fillable', 'R', InputOption::VALUE_NONE, 'Whether generate fillable argument for model.');
         $this->addOption('table-mapping', 'M', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Table mappings for model.');
         $this->addOption('ignore-tables', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Ignore tables for creating models.');
         $this->addOption('with-comments', null, InputOption::VALUE_NONE, 'Whether generate the property comments for model.');
@@ -181,7 +155,7 @@ class ModelCommand extends Command
 
         $columns = $this->getColumns($class, $columns, $option->isForceCasts());
 
-        $stms = $this->astParser->parse(file_get_contents($path));
+        $stmts = $this->astParser->parse(file_get_contents($path));
         $traverser = new NodeTraverser();
         $traverser->addVisitor(make(ModelUpdateVisitor::class, [
             'class' => $class,
@@ -189,12 +163,12 @@ class ModelCommand extends Command
             'option' => $option,
         ]));
         $traverser->addVisitor(make(ModelRewriteConnectionVisitor::class, [$class, $option->getPool()]));
-        $data = make(ModelData::class)->setClass($class)->setColumns($columns);
+        $data = make(ModelData::class, ['class' => $class, 'columns' => $columns]);
         foreach ($option->getVisitors() as $visitorClass) {
             $traverser->addVisitor(make($visitorClass, [$option, $data]));
         }
-        $stms = $traverser->traverse($stms);
-        $code = $this->printer->prettyPrintFile($stms);
+        $stmts = $traverser->traverse($stmts);
+        $code = $this->printer->prettyPrintFile($stmts);
 
         file_put_contents($path, $code);
         $this->output->writeln(sprintf('<info>Model %s was created.</info>', $class));
@@ -206,11 +180,11 @@ class ModelCommand extends Command
 
     protected function generateIDE(string $code, ModelOption $option, ModelData $data)
     {
-        $stms = $this->astParser->parse($code);
+        $stmts = $this->astParser->parse($code);
         $traverser = new NodeTraverser();
         $traverser->addVisitor(make(GenerateModelIDEVisitor::class, [$option, $data]));
-        $stms = $traverser->traverse($stms);
-        $code = $this->printer->prettyPrintFile($stms);
+        $stmts = $traverser->traverse($stmts);
+        $code = $this->printer->prettyPrintFile($stmts);
         $class = str_replace('\\', '_', $data->getClass());
         $path = BASE_PATH . '/runtime/ide/' . $class . '.php';
         $this->mkdir($path);

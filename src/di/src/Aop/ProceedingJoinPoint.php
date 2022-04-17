@@ -19,41 +19,18 @@ use Hyperf\Di\ReflectionManager;
 class ProceedingJoinPoint
 {
     /**
-     * @var string
-     */
-    public $className;
-
-    /**
-     * @var string
-     */
-    public $methodName;
-
-    /**
-     * @var mixed[]
-     */
-    public $arguments;
-
-    /**
      * @var mixed
      */
     public $result;
 
-    /**
-     * @var Closure
-     */
-    public $originalMethod;
+    public ?Closure $pipe = null;
 
-    /**
-     * @var null|Closure
-     */
-    public $pipe;
-
-    public function __construct(Closure $originalMethod, string $className, string $methodName, array $arguments)
-    {
-        $this->originalMethod = $originalMethod;
-        $this->className = $className;
-        $this->methodName = $methodName;
-        $this->arguments = $arguments;
+    public function __construct(
+        public Closure $originalMethod,
+        public string $className,
+        public string $methodName,
+        public array $arguments
+    ) {
     }
 
     /**

@@ -22,30 +22,15 @@ use PhpParser\Node;
 
 class GenerateModelIDEVisitor extends AbstractVisitor
 {
-    /**
-     * @var array
-     */
-    protected $methods = [];
+    protected array $methods = [];
 
-    /**
-     * @var null|Node\Stmt\Namespace_
-     */
-    protected $namespace;
+    protected ?Node\Stmt\Namespace_ $namespace = null;
 
-    /**
-     * @var null|Node\Stmt\Class_
-     */
-    protected $class;
+    protected ?Node\Stmt\Class_ $class = null;
 
-    /**
-     * @var BuilderFactory
-     */
-    protected $factory;
+    protected BuilderFactory $factory;
 
-    /**
-     * @var string
-     */
-    protected $nsp = '';
+    protected string $nsp = '';
 
     public function __construct(ModelOption $option, ModelData $data)
     {

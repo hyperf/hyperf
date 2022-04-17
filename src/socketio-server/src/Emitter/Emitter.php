@@ -29,39 +29,30 @@ trait Emitter
 {
     use Flagger;
 
-    /**
-     * @var AdapterInterface
-     */
-    protected $adapter;
+    protected ?AdapterInterface $adapter = null;
 
     /**
      * @var callable
      */
     protected $addCallback;
 
-    /**
-     * @var Sender
-     */
-    protected $sender;
+    protected ?Sender $sender = null;
 
-    /**
-     * @var SidProviderInterface
-     */
-    protected $sidProvider;
+    protected ?SidProviderInterface $sidProvider = null;
 
-    private $fd = -1;
+    private int $fd = -1;
 
-    private $to = [];
+    private array $to = [];
 
-    private $broadcast = false;
+    private bool $broadcast = false;
 
-    private $local = false;
+    private bool $local = false;
 
-    private $compress = false;
+    private bool $compress = false;
 
-    private $volatile = false;
+    private bool $volatile = false;
 
-    private $binary = false;
+    private bool $binary = false;
 
     public function __get($flag)
     {
@@ -108,20 +99,14 @@ trait Emitter
         return $copy;
     }
 
-    /**
-     * @param int|string $room
-     */
-    public function to($room): self
+    public function to(int|string $room): static
     {
         $copy = clone $this;
         $copy->to[] = (string) $room;
         return $copy;
     }
 
-    /**
-     * @param int|string $room
-     */
-    public function in($room): self
+    public function in(int|string $room): static
     {
         return $this->to($room);
     }
@@ -151,9 +136,7 @@ trait Emitter
             'fd' => $this->fd,
             'event' => $event,
             'data' => $data,
-            'encode' => function ($i, $event, $data) {
-                return $this->encode($i, $event, $data);
-            },
+            'encode' => fn ($i, $event, $data) => $this->encode($i, $event, $data),
             'opcode' => SWOOLE_WEBSOCKET_OPCODE_TEXT,
             'flag' => $this->guessFlags($this->compress),
         ]);

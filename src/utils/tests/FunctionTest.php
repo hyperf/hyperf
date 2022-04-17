@@ -201,4 +201,12 @@ class FunctionTest extends TestCase
         $assert = value($foo = new FooClosure(), $id);
         $this->assertSame($assert, $foo);
     }
+
+    public function testEnv()
+    {
+        $id = 'NULL_' . uniqid();
+        putenv("{$id}=(null)");
+
+        $this->assertNull(env($id));
+    }
 }

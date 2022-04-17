@@ -21,24 +21,15 @@ use function call;
 class CacheManager
 {
     /**
-     * @var ConfigInterface
+     * @var DriverInterface[]
      */
-    protected $config;
+    protected array $drivers = [];
 
-    protected $drivers = [];
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    public function __construct(ConfigInterface $config, StdoutLoggerInterface $logger)
+    public function __construct(protected ConfigInterface $config, protected StdoutLoggerInterface $logger)
     {
-        $this->config = $config;
-        $this->logger = $logger;
     }
 
-    public function getDriver($name = 'default'): DriverInterface
+    public function getDriver(string $name = 'default'): DriverInterface
     {
         if (isset($this->drivers[$name]) && $this->drivers[$name] instanceof DriverInterface) {
             return $this->drivers[$name];

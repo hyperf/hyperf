@@ -17,6 +17,9 @@ use Psr\Container\ContainerInterface;
 
 class Pool extends AbstractPool
 {
+    /**
+     * @var callable
+     */
     protected $callback;
 
     public function __construct(ContainerInterface $container, callable $callback, array $option)

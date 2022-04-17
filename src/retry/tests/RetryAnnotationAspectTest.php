@@ -18,7 +18,6 @@ use Hyperf\Di\Aop\Pipeline;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
-use Hyperf\Di\Definition\ScanConfig;
 use Hyperf\Retry\Annotation\AbstractRetry;
 use Hyperf\Retry\Annotation\CircuitBreaker;
 use Hyperf\Retry\Annotation\Retry;
@@ -48,7 +47,7 @@ class RetryAnnotationAspectTest extends TestCase
             RetryBudgetInterface::class => NoOpRetryBudget::class,
             RetryBudget::class => NoOpRetryBudget::class,
             SleepStrategyInterface::class => flatStrategy::class,
-        ], new ScanConfig()));
+        ]));
         ApplicationContext::setContainer($container);
     }
 
@@ -65,7 +64,7 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -92,7 +91,7 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -125,7 +124,7 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -158,7 +157,7 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -185,7 +184,7 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -214,15 +213,13 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
                     $retry = new Retry();
                     $retry->sleepStrategyClass = FlatStrategy::class;
-                    $retry->retryOnThrowablePredicate = function ($t) {
-                        return $t->getMessage() === 'ok';
-                    };
+                    $retry->retryOnThrowablePredicate = fn ($t) => $t->getMessage() === 'ok';
                     $retry->retryThrowables = [];
                     $retry->maxAttempts = 5;
                     $this->method = [
@@ -247,15 +244,13 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
                     $retry = new Retry();
                     $retry->sleepStrategyClass = FlatStrategy::class;
-                    $retry->retryOnResultPredicate = function ($r) {
-                        return $r <= 0;
-                    };
+                    $retry->retryOnResultPredicate = fn ($r) => $r <= 0;
                     $retry->retryThrowables = [];
                     $retry->maxAttempts = 5;
                     $this->method = [
@@ -270,6 +265,65 @@ class RetryAnnotationAspectTest extends TestCase
         $this->assertEquals(1, $aspect->process($point));
     }
 
+    public function testCircuitBreaker()
+    {
+        $aspect = new RetryAnnotationAspect();
+        $point = Mockery::mock(ProceedingJoinPoint::class);
+
+        $point->shouldReceive('getAnnotationMetadata')->andReturns(
+            new class() extends AnnotationMetadata {
+                public array $method;
+
+                public function __construct()
+                {
+                    $state = Mockery::mock(
+                        \Hyperf\Retry\CircuitBreakerState::class
+                    );
+                    $state->shouldReceive('open')->andReturnNull();
+                    $state->shouldReceive('isOpen')->twice()->andReturns(false);
+                    $state->shouldReceive('isOpen')->once()->andReturns(true);
+                    $retry = new CircuitBreaker(circuitBreakerState: $state);
+                    $retry->sleepStrategyClass = FlatStrategy::class;
+                    $this->method = [
+                        AbstractRetry::class => $retry,
+                    ];
+                }
+            }
+        );
+        $point->shouldReceive('process')->times(2)->andThrow(new \RuntimeException('ok'));
+        $point->shouldReceive('getArguments')->andReturns([]);
+        $this->expectException(\RuntimeException::class);
+        $aspect->process($point);
+    }
+
+    public function testFallbackForCircuitBreaker()
+    {
+        $aspect = new RetryAnnotationAspect();
+        $point = Mockery::mock(ProceedingJoinPoint::class);
+
+        $point->shouldReceive('getAnnotationMetadata')->andReturns(
+            new class() extends AnnotationMetadata {
+                public array $method;
+
+                public function __construct()
+                {
+                    $state = new \Hyperf\Retry\CircuitBreakerState(10);
+                    $retry = new CircuitBreaker(circuitBreakerState: $state);
+                    $retry->sleepStrategyClass = FlatStrategy::class;
+                    $retry->fallback = Foo::class . '@fallbackWithThrowable';
+                    $retry->maxAttempts = 2;
+                    $this->method = [
+                        AbstractRetry::class => $retry,
+                    ];
+                }
+            }
+        );
+        $point->shouldReceive('process')->times(2)->andThrow(new \RuntimeException('ok'));
+        $point->shouldReceive('getArguments')->andReturns([$string = uniqid()]);
+        $result = $aspect->process($point);
+        $this->assertSame($string . ':ok', $result);
+    }
+
     public function testTimeout()
     {
         $aspect = new RetryAnnotationAspect();
@@ -277,14 +331,17 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
                     $retry = new class() extends Retry {
                         public $timeout = 0.001;
 
-                        public $policies = [TimeoutRetryPolicy::class];
+                        public function __construct()
+                        {
+                            parent::__construct(policies: [TimeoutRetryPolicy::class]);
+                        }
                     };
                     $this->method = [
                         AbstractRetry::class => $retry,
@@ -293,7 +350,7 @@ class RetryAnnotationAspectTest extends TestCase
             }
         );
         $point->shouldReceive('process')->atLeast(3)->andThrow(new \RuntimeException('ok'));
-        $this->expectException('RuntimeException');
+        $this->expectException(\RuntimeException::class);
         $aspect->process($point);
     }
 
@@ -304,15 +361,13 @@ class RetryAnnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
                     $retry = new Retry();
                     $retry->maxAttempts = 1;
-                    $retry->fallback = function () {
-                        return 1;
-                    };
+                    $retry->fallback = fn () => 1;
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $this->method = [
                         AbstractRetry::class => $retry,
@@ -355,15 +410,13 @@ class RetryAnnotationAspectTest extends TestCase
         $point->shouldReceive('getArguments')->andReturns([]);
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
                     $retry = new Retry();
                     $retry->maxAttempts = 2;
-                    $retry->fallback = function () {
-                        return 'fallback';
-                    };
+                    $retry->fallback = fn () => 'fallback';
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $this->method = [
                         AbstractRetry::class => $retry,
@@ -375,9 +428,7 @@ class RetryAnnotationAspectTest extends TestCase
         $res = $pipeline->via('process')
             ->through([$aspect, $aspect2])
             ->send($point)
-            ->then(function (ProceedingJoinPoint $proceedingJoinPoint) {
-                return $proceedingJoinPoint->processOriginalMethod();
-            });
+            ->then(fn (ProceedingJoinPoint $proceedingJoinPoint) => $proceedingJoinPoint->processOriginalMethod());
 
         $this->assertSame('pass_aspect', $res);
     }

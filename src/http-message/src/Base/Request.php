@@ -21,27 +21,13 @@ class Request implements RequestInterface
 {
     use MessageTrait;
 
-    /**
-     * @var array
-     */
-    protected $server = [];
+    protected array $server = [];
 
-    /**
-     * @var UriInterface
-     */
-    protected $uri;
+    protected UriInterface $uri;
 
-    /**
-     * Http Method.
-     *
-     * @var string
-     */
-    protected $method;
+    protected string $method;
 
-    /**
-     * @var string
-     */
-    protected $requestTarget;
+    protected ?string $requestTarget = null;
 
     /**
      * @param string $method HTTP method
@@ -52,9 +38,9 @@ class Request implements RequestInterface
      */
     public function __construct(
         string $method,
-        $uri,
+        string|UriInterface $uri,
         array $headers = [],
-        $body = null,
+        mixed $body = null,
         string $version = '1.1'
     ) {
         if (! $uri instanceof UriInterface) {
@@ -185,7 +171,7 @@ class Request implements RequestInterface
      * default if the URI contains a host component. If the URI does not
      * contain a host component, any pre-existing Host header MUST be carried
      * over to the returned request.
-     * You can opt-in to preserving the original state of the Host header by
+     * You can opt in to preserving the original state of the Host header by
      * setting `$preserveHost` to `true`. When `$preserveHost` is set to
      * `true`, this method interacts with the Host header in the following ways:
      * - If the Host header is missing or empty, and the new URI contains
@@ -226,7 +212,7 @@ class Request implements RequestInterface
      *
      * @see http://tools.ietf.org/html/rfc7230#section-5.4
      */
-    private function updateHostFromUri()
+    private function updateHostFromUri(): void
     {
         $host = $this->uri->getHost();
 

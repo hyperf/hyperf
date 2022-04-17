@@ -28,32 +28,20 @@ class Socket
 {
     use Emitter;
 
-    /**
-     * @var string
-     */
-    private $nsp;
-
-    /**
-     * @var Encoder
-     */
-    private $encoder;
-
     public function __construct(
         AdapterInterface $adapter,
         Sender $sender,
         SidProviderInterface $sidProvider,
-        Encoder $encoder,
+        private Encoder $encoder,
         int $fd,
-        string $nsp,
+        private string $nsp,
         ?callable $addCallback = null
     ) {
         $this->adapter = $adapter;
         $this->sender = $sender;
         $this->addCallback = $addCallback;
         $this->fd = $fd;
-        $this->nsp = $nsp;
         $this->sidProvider = $sidProvider;
-        $this->encoder = $encoder;
     }
 
     public function getFd(): int

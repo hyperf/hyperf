@@ -11,39 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Framework\Event;
 
+use Swoole\Server;
+
 class OnWorkerError
 {
-    /**
-     * @var \Swoole\Server
-     */
-    public $server;
-
-    /**
-     * @var int
-     */
-    public $workerId;
-
-    /**
-     * @var int
-     */
-    public $workerPid;
-
-    /**
-     * @var int
-     */
-    public $exitCode;
-
-    /**
-     * @var int
-     */
-    public $signal;
-
-    public function __construct($server, int $workerId, int $workerPid, int $exitCode, int $signal)
+    public function __construct(public Server $server, public int $workerId, public int $workerPid, public int $exitCode, public int $signal)
     {
-        $this->server = $server;
-        $this->workerId = $workerId;
-        $this->workerPid = $workerPid;
-        $this->exitCode = $exitCode;
-        $this->signal = $signal;
     }
 }

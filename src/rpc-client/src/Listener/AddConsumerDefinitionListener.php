@@ -20,14 +20,8 @@ use Psr\Container\ContainerInterface;
 
 class AddConsumerDefinitionListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function listen(): array
@@ -42,7 +36,7 @@ class AddConsumerDefinitionListener implements ListenerInterface
      *
      * @param BootApplication $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         /** @var Container $container */
         $container = $this->container;

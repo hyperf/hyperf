@@ -19,30 +19,14 @@ use Swoole\Timer;
 
 class FindNewerDriver implements DriverInterface
 {
-    /**
-     * @var Option
-     */
-    protected $option;
+    protected string $tmpFile = '/tmp/hyperf_find.php';
 
-    /**
-     * @var string
-     */
-    protected $tmpFile = '/tmp/hyperf_find.php';
+    protected bool $scaning = false;
 
-    /**
-     * @var bool
-     */
-    protected $scaning = false;
+    protected int $count = 0;
 
-    /**
-     * @var int
-     */
-    protected $count = 0;
-
-    public function __construct(Option $option)
+    public function __construct(protected Option $option)
     {
-        $this->option = $option;
-
         $ret = System::exec('which find');
         if (empty($ret['output'])) {
             throw new \InvalidArgumentException('find not exists.');
@@ -114,13 +98,9 @@ class FindNewerDriver implements DriverInterface
     {
         $ext = $this->option->getExt();
 
-        $dirs = array_map(function ($dir) {
-            return BASE_PATH . '/' . $dir;
-        }, $this->option->getWatchDir());
+        $dirs = array_map(fn ($dir) => BASE_PATH . '/' . $dir, $this->option->getWatchDir());
 
-        $files = array_map(function ($file) {
-            return BASE_PATH . '/' . $file;
-        }, $this->option->getWatchFile());
+        $files = array_map(fn ($file) => BASE_PATH . '/' . $file, $this->option->getWatchFile());
 
         if ($files) {
             $dirs[] = implode(' ', $files);

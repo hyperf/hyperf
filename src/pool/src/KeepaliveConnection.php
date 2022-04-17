@@ -14,54 +14,30 @@ namespace Hyperf\Pool;
 use Closure;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Engine\Channel;
 use Hyperf\Pool\Exception\InvalidArgumentException;
 use Hyperf\Pool\Exception\SocketPopException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Swoole\Coroutine;
 use Swoole\Timer;
 
+/**
+ * TODO: Support Swow, only for Swoole now.
+ */
 abstract class KeepaliveConnection implements ConnectionInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected Channel $channel;
 
-    /**
-     * @var Pool
-     */
-    protected $pool;
+    protected float $lastUseTime = 0.0;
 
-    /**
-     * @var Coroutine\Channel
-     */
-    protected $channel;
+    protected ?int $timerId = null;
 
-    /**
-     * @var float
-     */
-    protected $lastUseTime = 0.0;
+    protected bool $connected = false;
 
-    /**
-     * @var null|int
-     */
-    protected $timerId;
+    protected string $name = 'keepalive.connection';
 
-    /**
-     * @var bool
-     */
-    protected $connected = false;
-
-    /**
-     * @var string
-     */
-    protected $name = 'keepalive.connection';
-
-    public function __construct(ContainerInterface $container, Pool $pool)
+    public function __construct(protected ContainerInterface $container, protected Pool $pool)
     {
-        $this->container = $container;
-        $this->pool = $pool;
     }
 
     public function __destruct()
@@ -90,7 +66,7 @@ abstract class KeepaliveConnection implements ConnectionInterface
 
         $connection = $this->getActiveConnection();
 
-        $channel = new Coroutine\Channel(1);
+        $channel = new Channel(1);
         $channel->push($connection);
         $this->channel = $channel;
         $this->lastUseTime = microtime(true);
@@ -170,7 +146,7 @@ abstract class KeepaliveConnection implements ConnectionInterface
                 }
 
                 if ($this->isTimeout()) {
-                    // The socket does not used in double of heartbeat.
+                    // The socket does not use in double of heartbeat.
                     $this->close();
                     return;
                 }
@@ -179,7 +155,7 @@ abstract class KeepaliveConnection implements ConnectionInterface
             } catch (\Throwable $throwable) {
                 $this->clear();
                 if ($logger = $this->getLogger()) {
-                    $message = sprintf('Socket of %s heartbeat failed, %s', $this->name, (string) $throwable);
+                    $message = sprintf('Socket of %s heartbeat failed, %s', $this->name, $throwable);
                     $logger->error($message);
                 }
             }

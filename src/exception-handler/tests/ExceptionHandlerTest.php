@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\ExceptionHandler;
 
+use Hyperf\Context\Context;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Base\Response;
-use Hyperf\Utils\Context;
 use HyperfTest\ExceptionHandler\Stub\BarExceptionHandler;
 use HyperfTest\ExceptionHandler\Stub\FooExceptionHandler;
 use Mockery;

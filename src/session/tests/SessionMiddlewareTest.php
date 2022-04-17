@@ -13,6 +13,7 @@ namespace HyperfTest\Session;
 
 use Carbon\Carbon;
 use Hyperf\Config\Config;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\HttpMessage\Cookie\Cookie;
@@ -23,7 +24,6 @@ use Hyperf\Session\Handler\FileHandler;
 use Hyperf\Session\Middleware\SessionMiddleware;
 use Hyperf\Session\Session;
 use Hyperf\Session\SessionManager;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use HyperfTest\Session\Stub\FooHandler;

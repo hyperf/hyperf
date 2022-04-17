@@ -22,43 +22,23 @@ use Hyperf\RateLimit\Exception\RateLimitException;
 use Hyperf\RateLimit\Handler\RateLimitHandler;
 use Swoole\Coroutine;
 
-/**
- * @Aspect
- */
+#[Aspect]
 class RateLimitAnnotationAspect implements AroundInterface
 {
-    public $classes = [];
+    public array $classes = [];
 
-    public $annotations = [
+    public array $annotations = [
         RateLimit::class,
     ];
 
-    /**
-     * @var array
-     */
-    private $annotationProperty;
+    private array $annotationProperty;
 
-    /**
-     * @var array
-     */
-    private $config;
+    private array $config;
 
-    /**
-     * @var RequestInterface
-     */
-    private $request;
-
-    /**
-     * @var RateLimitHandler
-     */
-    private $rateLimitHandler;
-
-    public function __construct(ConfigInterface $config, RequestInterface $request, RateLimitHandler $rateLimitHandler)
+    public function __construct(ConfigInterface $config, private RequestInterface $request, private RateLimitHandler $rateLimitHandler)
     {
         $this->annotationProperty = get_object_vars(new RateLimit());
         $this->config = $this->parseConfig($config);
-        $this->request = $request;
-        $this->rateLimitHandler = $rateLimitHandler;
     }
 
     /**
@@ -87,12 +67,12 @@ class RateLimitAnnotationAspect implements AroundInterface
                 if ($bucket->consume($annotation->consume ?? 1, $seconds)) {
                     return $proceedingJoinPoint->process();
                 }
-            } catch (StorageException $exception) {
+            } catch (StorageException) {
             }
             if (microtime(true) + $seconds > $maxTime) {
                 break;
             }
-            Coroutine::sleep($seconds > 0.001 ? $seconds : 0.001);
+            Coroutine::sleep(max($seconds, 0.001));
         }
 
         if (! $annotation->limitCallback || ! is_callable($annotation->limitCallback)) {
@@ -114,7 +94,11 @@ class RateLimitAnnotationAspect implements AroundInterface
             }
             $property = array_merge($property, array_filter(get_object_vars($annotation)));
         }
-        return new RateLimit($property);
+        return tap(new RateLimit(), static function (RateLimit $rateLimit) use ($property) {
+            foreach ($property as $key => $value) {
+                $rateLimit->{$key} = $value;
+            }
+        });
     }
 
     public function getAnnotations(ProceedingJoinPoint $proceedingJoinPoint): array
@@ -131,10 +115,10 @@ class RateLimitAnnotationAspect implements AroundInterface
         return $this->config;
     }
 
-    protected function parseConfig(ConfigInterface $config)
+    protected function parseConfig(ConfigInterface $config): array
     {
         if ($config->has('rate_limit')) {
-            return $config->get('rate_limit');
+            return $config->get('rate_limit', []);
         }
 
         return [

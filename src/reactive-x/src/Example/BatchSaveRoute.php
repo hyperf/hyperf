@@ -30,13 +30,11 @@ class BatchSaveRoute implements ListenerInterface
      * @param QueryExecuted $event
      * @throws \Exception
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         Observable::fromHttpRoute('POST', '/save')
             ->map(
-                function (RequestInterface $request) {
-                    return $request->getBody();
-                }
+                fn (RequestInterface $request) => $request->getBody()
             )
             ->bufferWithCount(10)
             ->subscribe(

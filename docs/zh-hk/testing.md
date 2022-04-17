@@ -137,10 +137,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ExampleTest extends TestCase
 {
-    /**
-     * @var Client
-     */
-    protected $client;
+    protected Client $client;
 
     public function __construct($name = null, array $data = [], $dataName = '')
     {
@@ -270,10 +267,7 @@ use App\Api\DemoApi;
 
 class DemoLogic
 {
-    /**
-     * @var DemoApi $demoApi
-     */
-    private $demoApi;
+    private DemoApi $demoApi;
 
     public function __construct(DemoApi $demoApi)
     {
@@ -362,11 +356,8 @@ use Hyperf\Di\Annotation\Inject;
 
 class DemoLogic
 {
-    /**
-     * @var DemoApi $demoApi
-     * @Inject()
-     */
-    private $demoApi;
+    #[Inject]
+    private DemoApi $demoApi;
 
     public function test()
     {
@@ -503,6 +494,3 @@ class DemoLogicTest extends HttpTestCase
 ```shell
 phpdbg -dmemory_limit=1024M -qrr ./vendor/bin/co-phpunit -c phpunit.xml --colors=always
 ```
-
-
-

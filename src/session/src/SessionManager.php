@@ -11,29 +11,17 @@ declare(strict_types=1);
  */
 namespace Hyperf\Session;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\SessionInterface;
-use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use SessionHandlerInterface;
 
 class SessionManager
 {
-    /**
-     * @var \Psr\Container\ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
-
-    public function __construct(ContainerInterface $container, ConfigInterface $config)
+    public function __construct(protected ContainerInterface $container, protected ConfigInterface $config)
     {
-        $this->container = $container;
-        $this->config = $config;
     }
 
     public function getSessionName(): string
@@ -63,7 +51,7 @@ class SessionManager
         return Context::get(SessionInterface::class);
     }
 
-    public function setSession(SessionInterface $session): self
+    public function setSession(SessionInterface $session): static
     {
         Context::set(SessionInterface::class, $session);
         return $this;

@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace HyperfTest\Logger;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use HyperfTest\Logger\Stub\BarProcessor;
 use HyperfTest\Logger\Stub\FooHandler;
 use HyperfTest\Logger\Stub\FooProcessor;
@@ -165,7 +165,7 @@ class LoggerFactoryTest extends TestCase
     {
         $container = Mockery::mock(ContainerInterface::class);
 
-        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config = new Config([
             'logger' => [
                 'default' => [
                     'handler' => [
@@ -261,7 +261,7 @@ class LoggerFactoryTest extends TestCase
 
         $container->shouldReceive('get')
             ->with(LoggerFactory::class)
-            ->andReturn(new LoggerFactory($container));
+            ->andReturn(new LoggerFactory($container, $config));
 
         return $container;
     }

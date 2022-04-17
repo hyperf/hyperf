@@ -19,32 +19,8 @@ use Psr\Container\ContainerInterface;
 
 class Protocol
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @var ProtocolManager
-     */
-    private $protocolManager;
-
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var array
-     */
-    private $options;
-
-    public function __construct(ContainerInterface $container, ProtocolManager $protocolManager, string $name, array $options = [])
+    public function __construct(private ContainerInterface $container, private ProtocolManager $protocolManager, private string $name, private array $options = [])
     {
-        $this->container = $container;
-        $this->name = $name;
-        $this->protocolManager = $protocolManager;
-        $this->options = $options;
     }
 
     public function getName(): string

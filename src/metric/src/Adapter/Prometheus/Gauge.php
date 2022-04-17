@@ -15,28 +15,19 @@ use Hyperf\Metric\Contract\GaugeInterface;
 
 class Gauge implements GaugeInterface
 {
-    /**
-     * @var \Prometheus\CollectorRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var \Prometheus\Gauge
-     */
-    protected $gauge;
+    protected \Prometheus\Gauge $gauge;
 
     /**
      * @var string[]
      */
-    protected $labelValues = [];
+    protected array $labelValues = [];
 
-    public function __construct(\Prometheus\CollectorRegistry $registry, string $namespace, string $name, string $help, array $labelNames)
+    public function __construct(protected \Prometheus\CollectorRegistry $registry, string $namespace, string $name, string $help, array $labelNames)
     {
-        $this->registry = $registry;
         $this->gauge = $registry->getOrRegisterGauge($namespace, $name, $help, $labelNames);
     }
 
-    public function with(string ...$labelValues): GaugeInterface
+    public function with(string ...$labelValues): static
     {
         $this->labelValues = $labelValues;
         return $this;

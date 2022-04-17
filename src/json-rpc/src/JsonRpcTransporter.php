@@ -11,10 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Context\Context;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\TransporterInterface;
-use Hyperf\Utils\Context;
 use RuntimeException;
 use Swoole\Coroutine\Client as SwooleClient;
 
@@ -22,10 +22,7 @@ class JsonRpcTransporter implements TransporterInterface
 {
     use RecvTrait;
 
-    /**
-     * @var null|LoadBalancerInterface
-     */
-    private $loadBalancer;
+    private ?LoadBalancerInterface $loadBalancer;
 
     /**
      * If $loadBalancer is null, will select a node in $nodes to request,
@@ -33,22 +30,13 @@ class JsonRpcTransporter implements TransporterInterface
      *
      * @var Node[]
      */
-    private $nodes = [];
+    private array $nodes = [];
 
-    /**
-     * @var float
-     */
-    private $connectTimeout = 5;
+    private float $connectTimeout;
 
-    /**
-     * @var float
-     */
-    private $recvTimeout = 5;
+    private float $recvTimeout;
 
-    /**
-     * @var array
-     */
-    private $config = [];
+    private array $config = [];
 
     public function __construct(array $config = [])
     {

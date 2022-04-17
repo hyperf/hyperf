@@ -17,38 +17,23 @@ use Hyperf\Consul\HealthInterface;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Guzzle\ClientFactory;
-use Hyperf\LoadBalancer\Node;
 use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\ServiceGovernance\Exception\ComponentRequiredException;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class ConsulDriver implements DriverInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
+    protected ConfigInterface $config;
 
-    /**
-     * @var array
-     */
-    protected $registeredServices = [];
+    protected array $registeredServices = [];
 
-    protected $health;
+    protected ?HealthInterface $health = null;
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->config = $container->get(ConfigInterface::class);
     }
@@ -123,10 +108,10 @@ class ConsulDriver implements DriverInterface
         }
     }
 
-    public function isRegistered(string $name, string $address, int $port, array $metadata): bool
+    public function isRegistered(string $name, string $host, int $port, array $metadata): bool
     {
         $protocol = $metadata['protocol'];
-        if (isset($this->registeredServices[$name][$protocol][$address][$port])) {
+        if (isset($this->registeredServices[$name][$protocol][$host][$port])) {
             return true;
         }
         $client = $this->client();
@@ -137,8 +122,8 @@ class ConsulDriver implements DriverInterface
         }
         $services = $response->json();
         $glue = ',';
-        $tag = implode($glue, [$name, $address, $port, $protocol]);
-        foreach ($services as $serviceId => $service) {
+        $tag = implode($glue, [$name, $host, $port, $protocol]);
+        foreach ($services as $service) {
             if (! isset($service['Service'], $service['Address'], $service['Port'], $service['Meta']['Protocol'])) {
                 continue;
             }
@@ -149,7 +134,7 @@ class ConsulDriver implements DriverInterface
                 $service['Meta']['Protocol'],
             ]);
             if ($currentTag === $tag) {
-                $this->registeredServices[$name][$protocol][$address][$port] = true;
+                $this->registeredServices[$name][$protocol][$host][$port] = true;
                 return true;
             }
         }

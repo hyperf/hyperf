@@ -84,9 +84,7 @@ namespace App\JsonRpc;
 
 use Hyperf\RpcServer\Annotation\RpcService;
 
-/**
- * @RpcService(name="CalculatorService", protocol="jsonrpc-http", server="jsonrpc-http")
- */
+#[RpcService(name: "CalculatorService", protocol: "jsonrpc-http", server: "jsonrpc-http")]
 class CalculatorService implements CalculatorServiceInterface
 {
     // 實現一個加法方法，這裡簡單的認為引數都是 int 型別
@@ -161,15 +159,10 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\ServiceGovernance\DriverManager;
 
-/**
- * @Listener 
- */
+#[Listener]
 class RegisterDriverListener implements ListenerInterface
 {
-    /**
-     * @var DriverManager
-     */
-    protected $driverManager;
+    protected DriverManager $driverManager;
 
     public function __construct(DriverManager $manager)
     {

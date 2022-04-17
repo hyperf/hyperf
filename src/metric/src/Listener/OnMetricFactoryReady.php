@@ -12,13 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Metric\MetricSetter;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine;
 use Swoole\Server;
@@ -31,24 +31,12 @@ class OnMetricFactoryReady implements ListenerInterface
 {
     use MetricSetter;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected MetricFactoryInterface $factory;
 
-    /**
-     * @var MetricFactoryInterface
-     */
-    protected $factory;
+    private ConfigInterface $config;
 
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
     }
 
@@ -65,7 +53,7 @@ class OnMetricFactoryReady implements ListenerInterface
     /**
      * Periodically scan metrics.
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         if (! $this->config->get('metric.enable_default_metric')) {
             return;

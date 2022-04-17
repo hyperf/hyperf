@@ -22,34 +22,16 @@ use Throwable;
 
 abstract class Pool implements PoolInterface
 {
-    /**
-     * @var Channel
-     */
-    protected $channel;
+    protected Channel $channel;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected PoolOptionInterface $option;
 
-    /**
-     * @var PoolOptionInterface
-     */
-    protected $option;
+    protected int $currentConnections = 0;
 
-    /**
-     * @var int
-     */
-    protected $currentConnections = 0;
+    protected null|LowFrequencyInterface|FrequencyInterface $frequency = null;
 
-    /**
-     * @var LowFrequencyInterface
-     */
-    protected $frequency;
-
-    public function __construct(ContainerInterface $container, array $config = [])
+    public function __construct(protected ContainerInterface $container, array $config = [])
     {
-        $this->container = $container;
         $this->initOption($config);
 
         $this->channel = make(Channel::class, ['size' => $this->option->getMaxConnections()]);

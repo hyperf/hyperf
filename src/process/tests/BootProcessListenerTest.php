@@ -34,9 +34,7 @@ class BootProcessListenerTest extends TestCase
 
     public function testGetAnnotationProcesses()
     {
-        $annotation = new Process([
-            'name' => 'foo',
-        ]);
+        $annotation = new Process(name: 'foo');
         $annotation->collectClass(FooProcess::class);
         $listener = new BootProcessListener(Mockery::mock(ContainerInterface::class), Mockery::mock(ConfigInterface::class));
         $ref = new \ReflectionClass($listener);

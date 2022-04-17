@@ -22,19 +22,10 @@ class ExceptionHandlerListener implements ListenerInterface
 {
     public const HANDLER_KEY = 'exceptions.handler';
 
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private int $serial = PHP_INT_MAX;
 
-    /**
-     * @var int
-     */
-    private $serial = PHP_INT_MAX;
-
-    public function __construct(ConfigInterface $config)
+    public function __construct(private ConfigInterface $config)
     {
-        $this->config = $config;
     }
 
     public function listen(): array
@@ -44,7 +35,7 @@ class ExceptionHandlerListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         $queue = new SplPriorityQueue();
         $handlers = $this->config->get(self::HANDLER_KEY, []);

@@ -16,7 +16,7 @@ use Hyperf\ModelCache\Handler\HandlerInterface;
 
 class ManagerStub extends \Hyperf\ModelCache\Manager
 {
-    public function getCacheTTL(Model $instance, HandlerInterface $handler)
+    public function getCacheTTL(Model $instance, HandlerInterface $handler): \DateInterval|int
     {
         return parent::getCacheTTL($instance, $handler);
     }

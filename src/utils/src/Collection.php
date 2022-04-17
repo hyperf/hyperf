@@ -16,8 +16,8 @@ use ArrayIterator;
 use CachingIterator;
 use Countable;
 use Exception;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Contracts\Jsonable;
 use IteratorAggregate;
 use JsonSerializable;
@@ -65,14 +65,14 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @var array<TKey, TValue>
      */
-    protected $items = [];
+    protected array $items = [];
 
     /**
      * The methods that can be proxied.
      *
      * @var string[]
      */
-    protected static $proxies
+    protected static array $proxies
         = [
             'average',
             'avg',
@@ -222,6 +222,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         if ($count = $items->count()) {
             return $items->sum() / $count;
         }
+        return null;
     }
 
     /**
@@ -274,6 +275,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
         /**
          * @template TValue of array-key
+         * @phpstan-ignore-next-line
          * @var static<TValue, int> $counts
          */
         $counts = new self();
@@ -1577,7 +1579,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @return array<TKey, mixed>
      */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return array_map(function ($value) {
             if ($value instanceof JsonSerializable) {
@@ -1640,48 +1642,47 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Determine if an item exists at an offset.
      *
-     * @param TKey $key
-     * @return bool
+     * @param TKey $offset
      */
-    public function offsetExists($key)
+    public function offsetExists(mixed $offset): bool
     {
-        return array_key_exists($key, $this->items);
+        return array_key_exists($offset, $this->items);
     }
 
     /**
      * Get an item at a given offset.
      *
-     * @param TKey $key
+     * @param TKey $offset
      * @return TValue
      */
-    public function offsetGet($key)
+    public function offsetGet(mixed $offset): mixed
     {
-        return $this->items[$key];
+        return $this->items[$offset];
     }
 
     /**
      * Set the item at a given offset.
      *
-     * @param null|TKey $key
+     * @param null|TKey $offset
      * @param TValue $value
      */
-    public function offsetSet($key, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
-        if (is_null($key)) {
+        if (is_null($offset)) {
             $this->items[] = $value;
         } else {
-            $this->items[$key] = $value;
+            $this->items[$offset] = $value;
         }
     }
 
     /**
      * Unset the item at a given offset.
      *
-     * @param TKey $key
+     * @param TKey $offset
      */
-    public function offsetUnset($key)
+    public function offsetUnset(mixed $offset): void
     {
-        unset($this->items[$key]);
+        unset($this->items[$offset]);
     }
 
     /**

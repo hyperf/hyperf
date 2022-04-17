@@ -20,7 +20,7 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
     /**
      * @var int[]
      */
-    private static $errors = [
+    private static array $errors = [
         UPLOAD_ERR_OK,
         UPLOAD_ERR_INI_SIZE,
         UPLOAD_ERR_FORM_SIZE,
@@ -31,53 +31,30 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
         UPLOAD_ERR_EXTENSION,
     ];
 
-    /**
-     * @var null|string
-     */
-    private $clientFilename;
+    private ?string $tmpFile = null;
 
-    /**
-     * @var null|string
-     */
-    private $clientMediaType;
-
-    /**
-     * @var int
-     */
-    private $error;
-
-    /**
-     * @var string
-     */
-    private $tmpFile;
-
-    /**
-     * @var bool
-     */
-    private $moved = false;
-
-    /**
-     * @var null|int
-     */
-    private $size;
+    private bool $moved = false;
 
     /**
      * @var null|string
      */
     private $mimeType;
 
+    /**
+     * @param int $size The file size
+     * @param int $error The error associated with the uploaded file
+     * @param null|string $clientFilename The filename sent by the client
+     * @param null|string $clientMediaType The media type sent by the client
+     */
     public function __construct(
         string $tmpFile,
-        ?int $size,
-        int $errorStatus,
-        ?string $clientFilename = null,
-        ?string $clientMediaType = null
+        private int $size,
+        private int $error,
+        private ?string $clientFilename = null,
+        private ?string $clientMediaType = null
     ) {
-        $this->setError($errorStatus)
-            ->setSize($size)
-            ->setClientFilename($clientFilename)
-            ->setClientMediaType($clientMediaType);
-        $this->isOk() && $this->setFile($tmpFile);
+        $this->checkError($this->error);
+        $this->isOk() && $this->tmpFile = $tmpFile;
         parent::__construct($tmpFile);
     }
 
@@ -89,11 +66,14 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
         return json_encode($this->toArray());
     }
 
-    public function getExtension(): ?string
+    /**
+     * TODO: ?string => string.
+     */
+    public function getExtension(): string
     {
         $clientName = $this->getClientFilename();
         $segments = explode('.', $clientName);
-        return end($segments) ?? null;
+        return (string) end($segments);
     }
 
     public function getMimeType(): string
@@ -117,7 +97,7 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
     }
 
     /**
-     * Determire if the temp file is moved.
+     * Determine if the temp file is moved.
      */
     public function isMoved(): bool
     {
@@ -195,9 +175,9 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
      * the file in the $_FILES array if available, as PHP calculates this based
      * on the actual size transmitted.
      *
-     * @return null|int the file size in bytes or null if unknown
+     * @return false|int the file size in bytes or null if unknown
      */
-    public function getSize(): ?int
+    public function getSize(): int|false
     {
         return $this->size;
     }
@@ -261,71 +241,11 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
         ];
     }
 
-    /**
-     * Depending on the value set file or stream variable.
-     */
-    private function setFile(string $file): self
-    {
-        $this->tmpFile = $file;
-        return $this;
-    }
-
-    /**
-     * @throws \InvalidArgumentException If invalid error status for UploadedFile
-     */
-    private function setError(int $error): self
+    private function checkError(int $error): void
     {
         if (in_array($error, UploadedFile::$errors) === false) {
             throw new \InvalidArgumentException('Invalid error status for UploadedFile');
         }
-
-        $this->error = $error;
-        return $this;
-    }
-
-    /**
-     * @param null|int $size the file size in bytes or null if unknown
-     * @throws \InvalidArgumentException if the size is not a interger
-     */
-    private function setSize($size): self
-    {
-        if (is_int($size) === false) {
-            throw new \InvalidArgumentException('Upload file size must be an integer');
-        }
-
-        $this->size = $size;
-        return $this;
-    }
-
-    /**
-     * @throws \InvalidArgumentException
-     */
-    private function setClientFilename(?string $clientFilename): self
-    {
-        if ($this->isStringOrNull($clientFilename) === false) {
-            throw new \InvalidArgumentException('Upload file client filename must be a string or null');
-        }
-
-        $this->clientFilename = $clientFilename;
-        return $this;
-    }
-
-    /**
-     * @throws \InvalidArgumentException
-     */
-    private function setClientMediaType(?string $clientMediaType): self
-    {
-        if ($this->isStringOrNull($clientMediaType) === false) {
-            throw new \InvalidArgumentException('Upload file client media type must be a string or null');
-        }
-
-        $this->clientMediaType = $clientMediaType;
-        return $this;
-    }
-
-    private function isStringOrNull($param): bool
-    {
-        return in_array(gettype($param), ['string', 'NULL']);
     }
 
     private function isStringNotEmpty($param): bool

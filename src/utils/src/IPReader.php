@@ -9,10 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\ServiceGovernance;
+namespace Hyperf\Utils;
 
-use Hyperf\ServiceGovernance\Exception\IPReadFailedException;
-use Hyperf\Utils\Network;
+use Hyperf\Contract\IPReaderInterface;
+use Hyperf\Utils\Exception\IPReadFailedException;
 
 class IPReader implements IPReaderInterface
 {

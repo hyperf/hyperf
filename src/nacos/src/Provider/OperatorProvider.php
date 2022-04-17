@@ -19,12 +19,12 @@ class OperatorProvider extends AbstractProvider
 {
     public function getSwitches(): ResponseInterface
     {
-        return $this->request('GET', '/nacos/v1/ns/operator/switches');
+        return $this->request('GET', 'nacos/v1/ns/operator/switches');
     }
 
     public function updateSwitches(string $entry, string $value, ?bool $debug = null): ResponseInterface
     {
-        return $this->request('PUT', '/nacos/v1/ns/operator/switches', [
+        return $this->request('PUT', 'nacos/v1/ns/operator/switches', [
             RequestOptions::QUERY => $this->filter([
                 'entry' => $entry,
                 'value' => $value,
@@ -35,12 +35,12 @@ class OperatorProvider extends AbstractProvider
 
     public function getMetrics(): ResponseInterface
     {
-        return $this->request('GET', '/nacos/v1/ns/operator/metrics');
+        return $this->request('GET', 'nacos/v1/ns/operator/metrics');
     }
 
     public function getServers(?bool $healthy = null): ResponseInterface
     {
-        return $this->request('GET', '/nacos/v1/ns/operator/servers', [
+        return $this->request('GET', 'nacos/v1/ns/operator/servers', [
             RequestOptions::QUERY => $this->filter([
                 'healthy' => $healthy,
             ]),
@@ -49,6 +49,6 @@ class OperatorProvider extends AbstractProvider
 
     public function getLeader(): ResponseInterface
     {
-        return $this->request('GET', '/nacos/v1/ns/raft/leader');
+        return $this->request('GET', 'nacos/v1/ns/raft/leader');
     }
 }

@@ -118,9 +118,9 @@ use Hyperf\Di\Annotation\Inject;
 trait TestTrait
 {
     /**
-     * @Inject()   
      * @var ResponseInterface
      */
+    #[Inject]
     protected $response;
 }
 ```

@@ -9,11 +9,17 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Server;
+namespace Hyperf\Coordinator;
 
-/**
- * @deprecated v3.0
- */
-class SwooleEvent extends Event
+class Constants
 {
+    /**
+     * Swoole onWorkerStart event.
+     */
+    public const WORKER_START = 'workerStart';
+
+    /**
+     * Swoole onWorkerExit event.
+     */
+    public const WORKER_EXIT = 'workerExit';
 }

@@ -60,9 +60,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController
 {
     // Hyperf 会自动为此方法生成一个 /index/index 的路由，允许通过 GET 或 POST 方式请求
@@ -97,15 +95,11 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
-/**
- * @Controller()
- */
+#[Controller]
 class IndexController
 {
     // Hyperf 会自动为此方法生成一个 /index/index 的路由，允许通过 GET 或 POST 方式请求
-    /**
-     * @RequestMapping(path="index", methods="get,post")
-     */
+    #[RequestMapping(path: "index", methods: "get,post")]
     public function index(RequestInterface $request)
     {
         // 从请求中获得 id 参数
@@ -130,9 +124,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController
 {
     // Hyperf 会自动为此方法生成一个 /index/index 的路由，允许通过 GET 或 POST 方式请求
@@ -149,7 +141,7 @@ class IndexController
 ## 依赖自动注入
 
 依赖自动注入是 `Hyperf` 提供的一个非常强大的功能，也是保持框架灵活性的根基。   
-`Hyperf` 提供了两种注入方式，一种是大家常见的通过构造函数注入，另一种是通过 `@Inject` 注解注入，下面我们举个例子并分别以两种方式展示注入的实现；   
+`Hyperf` 提供了两种注入方式，一种是大家常见的通过构造函数注入，另一种是通过 `#[Inject]` 注解注入，下面我们举个例子并分别以两种方式展示注入的实现；   
 假设我们存在一个 `\App\Service\UserService` 类，类中存在一个 `getInfoById(int $id)` 方法通过传递一个 `id` 并最终返回一个用户实体，由于返回值并不是我们这里所需要关注的，所以不做过多阐述，我们要关注的是在任意的类中获取 `UserService` 并调用里面的方法，一般的方法是通过 `new UserService()` 来实例化该服务类，但在 `Hyperf` 下，我们有更优的解决方法。
 
 ### 通过构造函数注入
@@ -164,15 +156,10 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\AutoController;
 use App\Service\UserService;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController
 {
-    /**
-     * @var UserService
-     */
-    private $userService;
+    private UserService $userService;
     
     // 在构造函数声明参数的类型，Hyperf 会自动注入对应的对象或值
     public function __construct(UserService $userService)
@@ -190,9 +177,9 @@ class IndexController
 ```
 
 ### 通过 `@Inject` 注解注入
-只需对对应的类属性通过 `@var` 声明参数的类型，并使用 `@Inject` 注解标记属性 ，`Hyperf` 会自动注入对应的对象或值。
+只需对对应的类属性通过 `@var` 声明参数的类型，并使用 `#[Inject]` 注解标记属性 ，`Hyperf` 会自动注入对应的对象或值。
 
-> 使用 `@Inject` 注解时需 `use Hyperf\Di\Annotation\Inject;` 命名空间；  
+> 使用 `#[Inject]` 注解时需 `use Hyperf\Di\Annotation\Inject;` 命名空间；
 
 ```php
 <?php
@@ -205,15 +192,13 @@ use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\Di\Annotation\Inject;
 use App\Service\UserService;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController
 {
     /**
-     * @Inject()
      * @var UserService
      */
+    #[Inject]
     private $userService;
     
     // /index/info
@@ -311,9 +296,7 @@ namespace App\Controller;
 
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController(server="innerHttp")
- */
+#[AutoController(server: "innerHttp")]
 class IndexController
 {
     public function index()

@@ -26,39 +26,18 @@ use ReflectionClass;
 
 class Process
 {
-    /**
-     * @var string
-     */
-    protected $file;
+    protected AnnotationReader $reader;
 
-    /**
-     * @var AnnotationReader
-     */
-    protected $reader;
+    protected ScanConfig $config;
 
-    /**
-     * @var ScanConfig
-     */
-    protected $config;
+    protected Filesystem $filesystem;
 
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
+    protected Ast $ast;
 
-    /**
-     * @var Ast
-     */
-    protected $ast;
+    protected string $path = BASE_PATH . '/runtime/container/scan.cache';
 
-    /**
-     * @var string
-     */
-    protected $path = BASE_PATH . '/runtime/container/scan.cache';
-
-    public function __construct(string $file)
+    public function __construct(protected string $file)
     {
-        $this->file = $file;
         $this->ast = new Ast();
         $this->config = $this->initScanConfig();
         $this->reader = new AnnotationReader();
@@ -167,13 +146,6 @@ class Process
 
     protected function initScanConfig(): ScanConfig
     {
-        $config = ScanConfig::instance(BASE_PATH . '/config/');
-        foreach ($config->getIgnoreAnnotations() as $annotation) {
-            AnnotationReader::addGlobalIgnoredName($annotation);
-        }
-        foreach ($config->getGlobalImports() as $alias => $annotation) {
-            AnnotationReader::addGlobalImports($alias, $annotation);
-        }
-        return $config;
+        return ScanConfig::instance(BASE_PATH . '/config/');
     }
 }

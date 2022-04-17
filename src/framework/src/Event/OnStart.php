@@ -15,13 +15,7 @@ use Swoole\Server;
 
 class OnStart
 {
-    /**
-     * @var Server
-     */
-    public $server;
-
-    public function __construct(Server $server)
+    public function __construct(public Server $server)
     {
-        $this->server = $server;
     }
 }

@@ -49,9 +49,7 @@ namespace App\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="foo_process")
- */
+#[Process(name: "foo_process")]
 class FooProcess extends AbstractProcess
 {
     public function handle(): void
@@ -76,9 +74,7 @@ namespace App\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="foo_process")
- */
+#[Process(name: "foo_process")]
 class FooProcess extends AbstractProcess
 {
     public function handle(): void
@@ -107,40 +103,33 @@ namespace App\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="user-process"，redirectStdinStdout=false, pipeType=2, enableCoroutine=true)
- */
+#[Process(name: "user-process", redirectStdinStdout: false, pipeType: 2, enableCoroutine: true)]
 class FooProcess extends AbstractProcess
 {
     /**
      * 进程数量
-     * @var int
      */
-    public $nums = 1;
+    public int $nums = 1;
 
     /**
      * 进程名称
-     * @var string
      */
-    public $name = 'user-process';
+    public string $name = 'user-process';
 
     /**
      * 重定向自定义进程的标准输入和输出
-     * @var bool
      */
-    public $redirectStdinStdout = false;
+    public bool $redirectStdinStdout = false;
 
     /**
      * 管道类型
-     * @var int
      */
-    public $pipeType = 2;
+    public int $pipeType = 2;
 
     /**
      * 是否启用协程
-     * @var bool
      */
-    public $enableCoroutine = true;
+    public bool $enableCoroutine = true;
 }
 ```
 
@@ -158,9 +147,7 @@ use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 use Hyperf\Contract\StdoutLoggerInterface;
 
-/**
- * @Process(name="demo_process")
- */
+#[Process(name: "demo_process")]
 class DemoProcess extends AbstractProcess
 {
     public function handle(): void

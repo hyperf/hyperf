@@ -11,10 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
-use Hyperf\Utils\Context;
+use Hyperf\Rpc\ErrorResponse;
+use Hyperf\Rpc\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -32,20 +34,8 @@ class ResponseBuilder
 
     public const PARSE_ERROR = -32700;
 
-    /**
-     * @var \Hyperf\Rpc\Contract\DataFormatterInterface
-     */
-    protected $dataFormatter;
-
-    /**
-     * @var PackerInterface
-     */
-    protected $packer;
-
-    public function __construct(DataFormatterInterface $dataFormatter, PackerInterface $packer)
+    public function __construct(protected DataFormatterInterface $dataFormatter, protected PackerInterface $packer)
     {
-        $this->dataFormatter = $dataFormatter;
-        $this->packer = $packer;
     }
 
     public function buildErrorResponse(ServerRequestInterface $request, int $code, \Throwable $error = null): ResponseInterface
@@ -69,14 +59,18 @@ class ResponseBuilder
 
     protected function formatResponse($response, ServerRequestInterface $request): string
     {
-        $response = $this->dataFormatter->formatResponse([$request->getAttribute('request_id'), $response]);
+        $response = $this->dataFormatter->formatResponse(
+            new Response($request->getAttribute('request_id'), $response)
+        );
         return $this->packer->pack($response);
     }
 
     protected function formatErrorResponse(ServerRequestInterface $request, int $code, \Throwable $error = null): string
     {
-        [$code, $message] = $this->error($code, $error ? $error->getMessage() : null);
-        $response = $this->dataFormatter->formatErrorResponse([$request->getAttribute('request_id'), $code, $message, $error]);
+        [$code, $message] = $this->error($code, $error?->getMessage());
+        $response = $this->dataFormatter->formatErrorResponse(
+            new ErrorResponse($request->getAttribute('request_id'), $code, $message, $error)
+        );
         return $this->packer->pack($response);
     }
 

@@ -90,10 +90,8 @@ class Filesystem
 
     /**
      * Require the given file once.
-     *
-     * @return mixed
      */
-    public function requireOnce(string $file)
+    public function requireOnce(string $file): void
     {
         require_once $file;
     }
@@ -212,7 +210,7 @@ class Filesystem
                 if (! @unlink($path)) {
                     $success = false;
                 }
-            } catch (ErrorException $e) {
+            } catch (ErrorException) {
                 $success = false;
             }
         }
@@ -239,7 +237,7 @@ class Filesystem
     /**
      * Create a hard link to the target file or directory.
      */
-    public function link(string $target, string $link)
+    public function link(string $target, string $link): bool
     {
         if (! $this->windowsOs()) {
             return symlink($target, $link);
@@ -248,6 +246,7 @@ class Filesystem
         $mode = $this->isDirectory($target) ? 'J' : 'H';
 
         exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
+        return true;
     }
 
     /**

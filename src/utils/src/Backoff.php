@@ -19,20 +19,14 @@ class Backoff
     private const CAP = 60 * 1000; // 1 minute
 
     /**
-     * @var int
-     */
-    private $firstMs;
-
-    /**
      * Backoff interval.
-     * @var int
      */
-    private $currentMs;
+    private int $currentMs;
 
     /**
      * @param int the first backoff in milliseconds
      */
-    public function __construct(int $firstMs = 0)
+    public function __construct(private int $firstMs = 0)
     {
         if ($firstMs < 0) {
             throw new \InvalidArgumentException(
@@ -49,7 +43,6 @@ class Backoff
             );
         }
 
-        $this->firstMs = $firstMs;
         $this->currentMs = $firstMs;
     }
 

@@ -23,7 +23,7 @@ abstract class Client
     public const DEFAULT_URI = 'http://127.0.0.1:8500';
 
     /**
-     * Will execute this closure everytime when the consul client send a HTTP request,
+     * Will execute this closure everytime when the consul client send an HTTP request,
      * and the closure should return a GuzzleHttp\ClientInterface instance.
      * $clientFactory(array $options).
      *
@@ -57,7 +57,7 @@ abstract class Client
     {
         $this->logger->debug(sprintf('Consul Request [%s] %s', strtoupper($method), $url));
         try {
-            // Create a HTTP Client by $clientFactory closure.
+            // Create an HTTP Client by $clientFactory closure.
             $clientFactory = $this->clientFactory;
             $client = $clientFactory($options);
             if (! $client instanceof ClientInterface) {
@@ -73,7 +73,7 @@ abstract class Client
         if ($response->getStatusCode() >= 400) {
             $message = sprintf('Something went wrong when calling consul (%s - %s).', $response->getStatusCode(), $response->getReasonPhrase());
             $this->logger->error($message);
-            $message .= PHP_EOL . (string) $response->getBody();
+            $message .= PHP_EOL . $response->getBody();
             if ($response->getStatusCode() >= 500) {
                 throw new ServerException($message, $response->getStatusCode());
             }

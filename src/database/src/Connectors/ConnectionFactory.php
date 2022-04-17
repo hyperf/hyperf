@@ -22,18 +22,10 @@ use Psr\Container\ContainerInterface;
 class ConnectionFactory
 {
     /**
-     * The IoC container instance.
-     *
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * Create a new connection factory instance.
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     /**

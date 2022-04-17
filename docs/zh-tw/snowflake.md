@@ -102,16 +102,13 @@ $meta = $generator->degenerate($id);
 
 declare(strict_types=1);
 
-use Hyperf\Snowflake\IdGenerator;
+use Hyperf\Snowflake\IdGenerator\SnowflakeIdGenerator;
 
 class UserDefinedIdGenerator
 {
-    /**
-     * @var IdGenerator\SnowflakeIdGenerator
-     */
-    protected $idGenerator;
+    protected SnowflakeIdGenerator $idGenerator;
 
-    public function __construct(IdGenerator\SnowflakeIdGenerator $idGenerator)
+    public function __construct(SnowflakeIdGenerator $idGenerator)
     {
         $this->idGenerator = $idGenerator;
     }

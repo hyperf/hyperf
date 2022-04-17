@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Devtool\Describe;
 
+use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\ListenerData;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
@@ -21,23 +21,12 @@ use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[Command]
 class ListenersCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    public function __construct(ContainerInterface $container, ConfigInterface $config)
+    public function __construct(private ContainerInterface $container)
     {
         parent::__construct('describe:listeners');
-        $this->container = $container;
-        $this->config = $config;
     }
 
     public function handle()
@@ -54,8 +43,8 @@ class ListenersCommand extends HyperfCommand
     protected function configure()
     {
         $this->setDescription('Describe the events and listeners.')
-            ->addOption('events', 'e', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified information by events.', null)
-            ->addOption('listeners', 'l', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified information by listeners.', null);
+            ->addOption('events', 'e', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified information by events.')
+            ->addOption('listeners', 'l', InputOption::VALUE_OPTIONAL, 'Get the detail of the specified information by listeners.');
     }
 
     protected function handleData(ListenerProviderInterface $provider, ?array $events, ?array $listeners): array
@@ -67,6 +56,9 @@ class ListenersCommand extends HyperfCommand
         foreach ($provider->listeners as $listener) {
             if ($listener instanceof ListenerData) {
                 $event = $listener->event;
+                if (! is_array($listener->listener)) {
+                    continue;
+                }
                 [$object, $method] = $listener->listener;
                 $listenerClassName = get_class($object);
                 if ($events && ! $this->isMatch($event, $events)) {
@@ -90,7 +82,7 @@ class ListenersCommand extends HyperfCommand
     protected function isMatch(string $target, array $keywords = [])
     {
         foreach ($keywords as $keyword) {
-            if (strpos($target, $keyword) !== false) {
+            if (str_contains($target, $keyword)) {
                 return true;
             }
         }

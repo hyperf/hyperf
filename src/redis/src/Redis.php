@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Redis;
 
+use Hyperf\Context\Context;
 use Hyperf\Redis\Exception\InvalidRedisConnectionException;
 use Hyperf\Redis\Pool\PoolFactory;
-use Hyperf\Utils\Context;
 
 /**
  * @mixin \Redis
@@ -22,19 +22,10 @@ class Redis
 {
     use ScanCaller;
 
-    /**
-     * @var PoolFactory
-     */
-    protected $factory;
+    protected string $poolName = 'default';
 
-    /**
-     * @var string
-     */
-    protected $poolName = 'default';
-
-    public function __construct(PoolFactory $factory)
+    public function __construct(protected PoolFactory $factory)
     {
-        $this->factory = $factory;
     }
 
     public function __call($name, $arguments)
@@ -71,7 +62,7 @@ class Redis
     }
 
     /**
-     * Define the commands that needs same connection to execute.
+     * Define the commands that need same connection to execute.
      * When these commands executed, the connection will storage to coroutine context.
      */
     private function shouldUseSameConnection(string $methodName): bool
