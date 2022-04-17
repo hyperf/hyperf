@@ -93,7 +93,7 @@ class PropertyHandlerVisitor extends NodeVisitorAbstract
                     $constructor->params[] = PhpParser::getInstance()->getNodeFromReflectionParameter($parameter);
                 }
             } catch (\ReflectionException $exception) {
-                // Cannot found __construct method in parent class or traits, do noting.
+                // Cannot found __construct method in parent class or traits, do nothing.
             }
         }
         return $constructor;
