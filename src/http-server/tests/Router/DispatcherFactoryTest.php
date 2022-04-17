@@ -18,6 +18,7 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\GetMapping;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\PostMapping;
+use Hyperf\HttpServer\Annotation\PutMapping;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\Handler;
 use HyperfTest\HttpServer\Stub\BarMiddleware;
@@ -124,5 +125,59 @@ class DispatcherFactoryTest extends TestCase
     {
         $dispatched = new Dispatched([Dispatcher::NOT_FOUND]);
         $this->assertNull($dispatched->handler);
+    }
+
+    public function testMappingPathIsNullInController()
+    {
+        $factory = new DispatcherFactory();
+        $annotation = new Controller('test');
+        $methodMetadata = [
+            'demo' => [
+                GetMapping::class => new GetMapping(''),
+                PostMapping::class => new PostMapping(),
+                PutMapping::class => new PutMapping('/demo'),
+            ],
+            'userInfo' => [
+                GetMapping::class => new GetMapping(),
+            ],
+            'BookInfo' => [
+                GetMapping::class => new GetMapping(),
+            ],
+        ];
+
+        $factory->handleController(DemoController::class, $annotation, $methodMetadata);
+        $router = $factory->getRouter('http');
+
+        [$routers] = $router->getData();
+
+        // The routers array must contain the GET and PUT key.
+        $this->assertArrayHasKey('GET', $routers);
+        $this->assertArrayHasKey('PUT', $routers);
+        // When the path in the old logic is null, the routers array does not contain the POST key.
+        $this->assertArrayHasKey('POST', $routers);
+
+        foreach ($routers as $method => $items) {
+            /** @var Handler $value */
+            foreach ($items as $value) {
+                if ($method === 'GET') {
+                    // When the path is an empty string, the route contains only the prefix.
+                    $methodValue = $value->callback[1];
+                    $expected = match ($methodValue) {
+                        'demo' => '/test',
+                        'userInfo' => '/test/user_info',
+                        'BookInfo' => '/test/book_info',
+                    };
+                    $this->assertSame($expected, $value->route);
+                } elseif ($method === 'POST') {
+                    // When the path is null, the route is prefix + method name.
+                    $this->assertSame('/test/demo', $value->route);
+                    $this->assertSame([DemoController::class, 'demo'], $value->callback);
+                } elseif ($method === 'PUT') {
+                    // When the path contains the "/" character, the route is path
+                    $this->assertSame('/demo', $value->route);
+                    $this->assertSame([DemoController::class, 'demo'], $value->callback);
+                }
+            }
+        }
     }
 }
