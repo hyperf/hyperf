@@ -18,7 +18,7 @@ use Throwable;
 class RetryThrowable extends Retry
 {
     /**
-     * @param array $retryThrowables Configures a list of Throwable classes that are recorded as a failure and thus are retried. Any Throwable matching or inheriting from one of the list will be retried, unless ignored via ignoreExceptions. Ignoring a Throwable has priority over retrying an exception.
+     * @param array<string|Throwable> $retryThrowables Configures a list of Throwable classes that are recorded as a failure and thus are retried. Any Throwable matching or inheriting from one of the list will be retried, unless ignored via ignoreExceptions. Ignoring a Throwable has priority over retrying an exception.
      */
     public function __construct(public array $retryThrowables = [Throwable::class])
     {

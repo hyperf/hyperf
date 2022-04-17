@@ -12,13 +12,14 @@ declare(strict_types=1);
 namespace Hyperf\Retry\Annotation;
 
 use Attribute;
+use Throwable;
 
 #[Attribute(Attribute::TARGET_METHOD)]
 class RetryFalsy extends Retry
 {
     /**
-     * @param array $retryThrowables Configures a list of Throwable classes that are recorded as a failure and thus are retried. Any Throwable matching or inheriting from one of the list will be retried, unless ignored via ignoreExceptions. Ignoring a Throwable has priority over retrying an exception.
-     * @param mixed $retryOnResultPredicate Configures a Predicate which evaluates if a result should be retried. The Predicate must return true if the result should be retried, otherwise it must return false.
+     * @param array<string|Throwable> $retryThrowables Configures a list of Throwable classes that are recorded as a failure and thus are retried. Any Throwable matching or inheriting from one of the list will be retried, unless ignored via ignoreExceptions. Ignoring a Throwable has priority over retrying an exception.
+     * @param callable|string $retryOnResultPredicate Configures a Predicate which evaluates if a result should be retried. The Predicate must return true if the result should be retried, otherwise it must return false.
      */
     public function __construct(
         public array $retryThrowables = [],
