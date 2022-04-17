@@ -19,7 +19,7 @@
         "hyperf/pool": "~2.2.0",
         "hyperf/process": "~2.2.0",
         "hyperf/utils": "~2.2.0",
-        "longlang/phpkafka": "^1.1.4",
+        "longlang/phpkafka": "^1.2.1",
         "psr/container": "^1.0|^2.0"
     },
     "autoload": {
