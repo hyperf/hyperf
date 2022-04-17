@@ -66,4 +66,16 @@ class ContainerTest extends TestCase
     {
         $this->assertInstanceOf(Container::class, new ContainerProxy());
     }
+
+    public function testUnset()
+    {
+        $container = new Container(new DefinitionSource([]));
+
+        $container->set('test', $id = uniqid());
+        $this->assertTrue($container->has('test'));
+        $this->assertSame($id, $container->get('test'));
+
+        $container->unbind('test');
+        $this->assertFalse($container->has('test'));
+    }
 }

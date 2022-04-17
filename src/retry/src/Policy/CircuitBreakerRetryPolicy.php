@@ -25,6 +25,7 @@ class CircuitBreakerRetryPolicy extends BaseRetryPolicy implements RetryPolicyIn
         if (! $this->circuitBreakerState->isOpen()) {
             return true;
         }
+        $retryContext['retryExhausted'] = true;
         return false;
     }
 

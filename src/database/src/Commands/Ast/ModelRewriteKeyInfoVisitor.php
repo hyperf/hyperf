@@ -92,14 +92,21 @@ class ModelRewriteKeyInfoVisitor extends AbstractVisitor
             return $node;
         }
 
-        if ($this->shouldRemoveProperty($property, ${$property})) {
+        $propertyValue = match ($property) {
+            'primaryKey' => $data[0],
+            'keyType' => $data[1],
+            'incrementing' => $data[2],
+            default => throw new \InvalidArgumentException("property {$property} is invalid.")
+        };
+
+        if ($this->shouldRemoveProperty($property, $propertyValue)) {
             return null;
         }
 
         if ($node) {
-            $node->props[0]->default = $this->getExpr($property, ${$property});
+            $node->props[0]->default = $this->getExpr($property, $propertyValue);
         } else {
-            $prop = new Node\Stmt\PropertyProperty($property, $this->getExpr($property, ${$property}));
+            $prop = new Node\Stmt\PropertyProperty($property, $this->getExpr($property, $propertyValue));
             $node = new Node\Stmt\Property(
                 $property == 'incrementing' ? Node\Stmt\Class_::MODIFIER_PUBLIC : Node\Stmt\Class_::MODIFIER_PROTECTED,
                 [$prop]

@@ -1,4 +1,25 @@
-# v2.2.30 - TBD
+# v2.2.31 - TBD
+
+## Fixed
+
+- [#4677](https://github.com/hyperf/hyperf/pull/4677) Fixed bug that process exit failed when using kafka producer.
+- [#4686](https://github.com/hyperf/hyperf/pull/4687) Fixed bug that server shutdown when parse request failed for websocket server.
+
+## Added
+
+- [#4576](https://github.com/hyperf/hyperf/pull/4576) Support `path_prefix` for `node` when using `rpc-client`.
+- [#4683](https://github.com/hyperf/hyperf/pull/4683) Added `Container::unbind()` to unbind an arbitrary resolved entry.
+
+# v2.2.30 - 2022-04-04
+
+## Fixed
+
+- [#4648](https://github.com/hyperf/hyperf/pull/4648) Fixed bug that circuit breaker couldn't call fallback on `open` state when using `hyperf/retry`.
+- [#4657](https://github.com/hyperf/hyperf/pull/4657) Fixed bug that last modified time was not updated after write session again when using `hyperf/session`.
+
+## Added
+
+- [#4646](https://github.com/hyperf/hyperf/pull/4646) Support setting `auth` for `RedisSentinel`.
 
 # v2.2.29 - 2022-03-28
 

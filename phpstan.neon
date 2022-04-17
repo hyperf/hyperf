@@ -56,3 +56,4 @@ parameters:
       path: src/amqp/src/IO/IOFactory.php
     - '#.*TKey.*TValue#'
     - '#Method Hyperf\\Utils\\Serializer\\Serializer::normalize\(\) should return array\|ArrayObject\|bool\|float\|int\|string\|null#'
+    - '#Class RedisSentinel constructor invoked with .*#'
