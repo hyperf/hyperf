@@ -26,15 +26,15 @@ class Retry extends AbstractRetry
 {
     /**
      * @param array $policies Array of retry policies. Think of these as stacked middlewares.
-     * @param string $sleepStrategyClass The algorithm for retry intervals.
-     * @param int $maxAttempts Max Attempts.
+     * @param string $sleepStrategyClass the algorithm for retry intervals
+     * @param int $maxAttempts max Attempts
      * @param array|RetryBudgetInterface $retryBudget Retry Budget. ttl: Seconds of token lifetime. minRetriesPerSec: Base retry token generation speed. percentCanRetry: Generate new token at this ratio of the request volume.
      * @param int $base Base time interval (ms) for each try. For backoff strategy this is the interval for the first try while for flat strategy this is the interval for every try.
      * @param mixed $retryOnThrowablePredicate Configures a Predicate which evaluates if an exception should be retried. The Predicate must return true if the exception should be retried, otherwise it must return false.
      * @param mixed $retryOnResultPredicate Configures a Predicate which evaluates if a result should be retried. The Predicate must return true if the result should be retried, otherwise it must return false.
      * @param array $retryThrowables Configures a list of Throwable classes that are recorded as a failure and thus are retried. Any Throwable matching or inheriting from one of the list will be retried, unless ignored via ignoreExceptions. Ignoring a Throwable has priority over retrying an exception.
      * @param array $ignoreThrowables Configures a list of error classes that are ignored and thus are not retried. Any exception matching or inheriting from one of the list will not be retried, even if marked via retryExceptions.
-     * @param mixed $fallback The fallback callable when all attempts exhausted.
+     * @param mixed $fallback the fallback callable when all attempts exhausted
      */
     public function __construct(
         public array $policies = [
@@ -57,5 +57,6 @@ class Retry extends AbstractRetry
         public array $retryThrowables = [Throwable::class],
         public array $ignoreThrowables = [],
         public mixed $fallback = ''
-    ) {}
+    ) {
+    }
 }
