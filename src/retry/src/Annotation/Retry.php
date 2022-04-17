@@ -17,6 +17,7 @@ use Hyperf\Retry\Policy\ClassifierRetryPolicy;
 use Hyperf\Retry\Policy\FallbackRetryPolicy;
 use Hyperf\Retry\Policy\MaxAttemptsRetryPolicy;
 use Hyperf\Retry\Policy\SleepRetryPolicy;
+use Hyperf\Retry\RetryBudget;
 use Hyperf\Retry\RetryBudgetInterface;
 use Hyperf\Retry\SleepStrategyInterface;
 use Throwable;
@@ -58,5 +59,6 @@ class Retry extends AbstractRetry
         public array $ignoreThrowables = [],
         public mixed $fallback = ''
     ) {
+        $this->retryBudget = make(RetryBudget::class, $this->retryBudget);
     }
 }
