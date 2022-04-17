@@ -179,13 +179,12 @@ class Str
     /**
      * Determine if a given string contains a given substring.
      *
-     * @param string $haystack
      * @param array|string $needles
      */
-    public static function contains($haystack, $needles): bool
+    public static function contains(string $haystack, $needles): bool
     {
         foreach ((array) $needles as $needle) {
-            if ($needle !== '' && str_contains((string) $haystack, (string) $needle)) {
+            if ($needle !== '' && str_contains($haystack, (string) $needle)) {
                 return true;
             }
         }
@@ -214,14 +213,13 @@ class Str
     /**
      * Determine if a given string ends with a given substring.
      *
-     * @param string $haystack
      * @param array|string $needles
      * @return bool
      */
-    public static function endsWith($haystack, $needles)
+    public static function endsWith(string $haystack, $needles)
     {
         foreach ((array) $needles as $needle) {
-            if ($needle !== '' && str_ends_with((string) $haystack, (string) $needle)) {
+            if ($needle !== '' && str_ends_with($haystack, (string) $needle)) {
                 return true;
             }
         }
