@@ -130,7 +130,7 @@ class DispatcherFactoryTest extends TestCase
     public function testMappingPathIsNullInController()
     {
         $factory = new DispatcherFactory();
-        $annotation = new Controller(['prefix' => 'test']);
+        $annotation = new Controller('test');
         $methodMetadata = [
             'demo' => [
                 GetMapping::class => new GetMapping(['path' => '']),
