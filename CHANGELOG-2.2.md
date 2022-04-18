@@ -1,5 +1,11 @@
 # v2.2.32 - TBD
 
+# v2.2.31.1 - 2022-04-18
+
+## Fixed
+
+- [#4692](https://github.com/hyperf/hyperf/pull/4692) Fixed type hint error for node `$weight` cased by nacos driver.
+
 # v2.2.31 - 2022-04-18
 
 ## Fixed
