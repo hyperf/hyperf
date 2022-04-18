@@ -90,7 +90,7 @@ class NacosDriver implements DriverInterface
                 $nodes[] = [
                     'host' => $node['ip'],
                     'port' => $node['port'],
-                    'weight' => $node['weight'] ?? 1,
+                    'weight' => $this->getWeight($node['weight'] ?? 1),
                 ];
             }
         }
@@ -267,5 +267,10 @@ class NacosDriver implements DriverInterface
                 }
             });
         });
+    }
+
+    private function getWeight($weight): int
+    {
+        return intval(100 * $weight);
     }
 }
