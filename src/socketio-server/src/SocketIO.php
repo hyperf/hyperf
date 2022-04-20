@@ -99,11 +99,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         return $this->of('/')->{$method}(...$args);
     }
 
-    /**
-     * @param Response|Server $server
-     * @param mixed $frame
-     */
-    public function onMessage($server, $frame): void
+    public function onMessage(Response|Server $server, mixed $frame): void
     {
         if ($frame->data[0] === Engine::PING) {
             $this->renewInAllNamespaces($frame->fd);
@@ -179,11 +175,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         }
     }
 
-    /**
-     * @param Response|Server $server
-     * @param Request $request
-     */
-    public function onOpen($server, $request): void
+    public function onOpen(Response|Server $server, Request $request): void
     {
         $data = [
             'sid' => $this->sidProvider->getSid($request->fd),
