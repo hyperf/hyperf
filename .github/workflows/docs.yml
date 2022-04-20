@@ -1,6 +1,7 @@
 name: Translate docs
 
 on:
+  pull_request:
   push:
     branches:
       - release-*
