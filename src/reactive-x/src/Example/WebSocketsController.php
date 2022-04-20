@@ -39,7 +39,7 @@ class WebSocketsController implements OnMessageInterface, OnOpenInterface, OnClo
         $this->subject->onNext($frame->data);
     }
 
-    public function onClose(Response|Server $server, int $fd, int $reactorId): void
+    public function onClose(Response|\Swoole\Server $server, int $fd, int $reactorId): void
     {
         $this->subscriber[$fd]->dispose();
     }

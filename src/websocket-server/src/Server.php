@@ -179,7 +179,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         }
     }
 
-    public function onMessage(SwooleResponse|SwooleServer $server, Frame $frame): void
+    public function onMessage(SwooleResponse|WebSocketServer $server, Frame $frame): void
     {
         if ($server instanceof WebSocketServer) {
             $fd = $frame->fd;
