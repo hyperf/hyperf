@@ -13,6 +13,7 @@ namespace HyperfTest\WebSocketServer\Stub;
 
 use Hyperf\Contract\OnOpenInterface;
 use Hyperf\Utils\Coroutine;
+use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server;
