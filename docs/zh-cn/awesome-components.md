@@ -79,6 +79,9 @@
 ## RPC
 
 - [hyperf/json-rpc](https://github.com/hyperf/json-rpc) Hyperf 官方提供的 JSON-RPC 协议组件
+- [hyperf/rpc-multiplex](https://github.com/hyperf/rpc-multiplex) Hyperf 官方提供的多路复用 RPC 组件
+- [hyperf/roc](https://github.com/hyperf/roc) Hyperf 官方提供的 Golang 版本的多路复用 RPC Server 组件
+- [limingxinleo/roc-skeleton](https://github.com/limingxinleo/roc-skeleton) Golang 版本多路复用 RPC Server 骨架包
 
 ## 服务治理
 
@@ -146,10 +149,10 @@
 
 ## 第三方 SDK
 
-- [vinchan/message-notice](https://github.com/VinchanGit/message-notice) Hyperf 异常监控报警通知组件(钉钉群机器人、飞书群机器人、邮件、QQ 频道机器人、企业微信群机器人)
 - [yurunsoft/pay-sdk](https://github.com/Yurunsoft/PaySDK) 支持 Swoole 协程的支付宝/微信支付 SDK
 - [yurunsoft/yurun-oauth-login](https://github.com/Yurunsoft/YurunOAuthLogin) 支持 Swoole 协程的第三方登录授权 SDK（QQ、微信、微博、Github、Gitee 等）
 - [w7corp/wechat](zh-cn/sdks/wechat) EasyWeChat，一个流行的非官方微信 SDK
 - [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole 协程环境下的可用的 PHPMailer
 - [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 支持 `支付宝/微信` 的支付组件，基于 [yansongda/pay](https://github.com/yansongda/pay) 实现，适配于 `Hyperf` 框架。
-- [alapi/hyperf-meilisearch](https://github.com/anhao/hyperf-meilisearch) 为 Hyperf Scout 提供的 meilisearch 客户端 
+- [alapi/hyperf-meilisearch](https://github.com/anhao/hyperf-meilisearch) 为 Hyperf Scout 提供的 meilisearch 客户端
+- [vinchan/message-notice](https://github.com/VinchanGit/message-notice) Hyperf 异常监控报警通知组件(钉钉群机器人、飞书群机器人、邮件、QQ 频道机器人、企业微信群机器人)
