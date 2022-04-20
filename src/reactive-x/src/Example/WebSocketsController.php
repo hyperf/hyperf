@@ -17,7 +17,10 @@ use Hyperf\Contract\OnOpenInterface;
 use Hyperf\ReactiveX\Contract\BroadcasterInterface;
 use Hyperf\ReactiveX\IpcSubject;
 use Rx\Subject\ReplaySubject;
+use Swoole\Http\Request;
 use Swoole\Http\Response;
+use Swoole\WebSocket\Frame;
+use Swoole\WebSocket\Server;
 
 class WebSocketsController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
@@ -31,17 +34,17 @@ class WebSocketsController implements OnMessageInterface, OnOpenInterface, OnClo
         $this->subject = new IpcSubject($relaySubject, $broadcaster, 1);
     }
 
-    public function onMessage($server, $frame): void
+    public function onMessage(Response|Server $server, Frame $frame): void
     {
         $this->subject->onNext($frame->data);
     }
 
-    public function onClose($server, int $fd, int $reactorId): void
+    public function onClose(Response|Server $server, int $fd, int $reactorId): void
     {
         $this->subscriber[$fd]->dispose();
     }
 
-    public function onOpen($server, $request): void
+    public function onOpen(Response|Server $server, Request $request): void
     {
         $this->subscriber[$request->fd] = $this->subject->subscribe(function ($data) use ($server, $request) {
             if ($server instanceof Response) {

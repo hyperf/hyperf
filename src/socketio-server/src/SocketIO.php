@@ -195,7 +195,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         $this->dispatchEventInAllNamespaces($request->fd, 'connect');
     }
 
-    public function onClose($server, int $fd, int $reactorId): void
+    public function onClose(Response|Server $server, int $fd, int $reactorId): void
     {
         $this->dispatchEventInAllNamespaces($fd, 'disconnect');
     }
