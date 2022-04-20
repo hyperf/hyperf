@@ -17,9 +17,5 @@ use Swoole\WebSocket\Server;
 
 interface OnMessageInterface
 {
-    /**
-     * @param Response|Server $server
-     * @param Frame $frame
-     */
-    public function onMessage($server, $frame): void;
+    public function onMessage(Response|Server $server, Frame $frame): void;
 }

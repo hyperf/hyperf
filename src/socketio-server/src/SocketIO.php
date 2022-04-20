@@ -32,6 +32,7 @@ use Swoole\Coroutine\Channel;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Timer;
+use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server;
 
 /**
@@ -99,7 +100,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         return $this->of('/')->{$method}(...$args);
     }
 
-    public function onMessage(Response|Server $server, mixed $frame): void
+    public function onMessage(Response|Server $server, Frame $frame): void
     {
         if ($frame->data[0] === Engine::PING) {
             $this->renewInAllNamespaces($frame->fd);
