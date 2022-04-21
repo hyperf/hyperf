@@ -46,11 +46,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoole\Http\Response as SwooleResponse;
 use Swoole\Server as SwooleServer;
-use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 use Throwable;
 
-class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, OnMessageInterface, OnCloseInterface
+class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, OnCloseInterface, OnMessageInterface
 {
     protected ?CoreMiddlewareInterface $coreMiddleware = null;
 
@@ -179,7 +178,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         }
     }
 
-    public function onMessage(SwooleResponse|WebSocketServer $server, Frame $frame): void
+    public function onMessage($server, $frame): void
     {
         if ($server instanceof WebSocketServer) {
             $fd = $frame->fd;
@@ -207,7 +206,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         }
     }
 
-    public function onClose(SwooleResponse|SwooleServer $server, int $fd, int $reactorId): void
+    public function onClose($server, int $fd, int $reactorId): void
     {
         $fdObj = FdCollector::get($fd);
         if (! $fdObj) {

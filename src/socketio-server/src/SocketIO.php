@@ -32,7 +32,6 @@ use Swoole\Coroutine\Channel;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Timer;
-use Swoole\WebSocket\Frame;
 use Swoole\WebSocket\Server;
 
 /**
@@ -100,7 +99,11 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         return $this->of('/')->{$method}(...$args);
     }
 
-    public function onMessage(Response|Server $server, Frame $frame): void
+    /**
+     * @param Response|Server $server
+     * @param mixed $frame
+     */
+    public function onMessage($server, $frame): void
     {
         if ($frame->data[0] === Engine::PING) {
             $this->renewInAllNamespaces($frame->fd);
@@ -176,7 +179,11 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         }
     }
 
-    public function onOpen(Response|Server $server, Request $request): void
+    /**
+     * @param Response|Server $server
+     * @param Request $request
+     */
+    public function onOpen($server, $request): void
     {
         $data = [
             'sid' => $this->sidProvider->getSid($request->fd),
@@ -195,7 +202,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         $this->dispatchEventInAllNamespaces($request->fd, 'connect');
     }
 
-    public function onClose(Response|\Swoole\Server $server, int $fd, int $reactorId): void
+    public function onClose($server, int $fd, int $reactorId): void
     {
         $this->dispatchEventInAllNamespaces($fd, 'disconnect');
     }
