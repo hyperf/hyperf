@@ -241,10 +241,10 @@ class CoreMiddleware implements CoreMiddlewareInterface
             if ($value === null) {
                 if ($definition->getMeta('defaultValueAvailable')) {
                     $injections[] = $definition->getMeta('defaultValue');
-                } elseif ($definition->allowsNull()) {
-                    $injections[] = null;
                 } elseif ($this->container->has($definition->getName())) {
                     $injections[] = $this->container->get($definition->getName());
+                } elseif ($definition->allowsNull()) {
+                    $injections[] = null;
                 } else {
                     throw new \InvalidArgumentException("Parameter '{$definition->getMeta('name')}' "
                         . "of {$callableName} should not be null");
