@@ -58,6 +58,7 @@ composer analyse
 - [#4668](https://github.com/hyperf/hyperf/pull/4668) Optimized class `Hyperf\Utils\Str` whose methods `padBoth` `padLeft` and `padRight` support `multibyte`.
 - [#4678](https://github.com/hyperf/hyperf/pull/4679) Close all another servers when one of them closed.
 - [#4688](https://github.com/hyperf/hyperf/pull/4688) Added `SafeCaller` to avoid server shutdown which caused by exceptions.
+- [#4715](https://github.com/hyperf/hyperf/pull/4715) Adjust the order of injections for controllers to avoid inject null preferentially.
 
 ## Changed
 
