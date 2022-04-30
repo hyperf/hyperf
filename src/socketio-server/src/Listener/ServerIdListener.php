@@ -13,6 +13,7 @@ namespace Hyperf\SocketIOServer\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\SocketIOServer\SocketIO;
 use Swoole\Atomic;
 
@@ -22,6 +23,7 @@ class ServerIdListener implements ListenerInterface
     {
         return [
             BeforeMainServerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 

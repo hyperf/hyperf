@@ -100,18 +100,26 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
     }
 
     /**
-     * @param Server $server
+     * @param Response|Server $server
      * @param mixed $frame
      */
     public function onMessage($server, $frame): void
     {
         if ($frame->data[0] === Engine::PING) {
             $this->renewInAllNamespaces($frame->fd);
-            $server->push($frame->fd, Engine::PONG); //sever pong
+            if ($server instanceof Response) {
+                $server->push(Engine::PONG); //sever pong
+            } else {
+                $server->push($frame->fd, Engine::PONG); //sever pong
+            }
             return;
         }
         if ($frame->data[0] === Engine::CLOSE) {
-            $server->disconnect($frame->fd);
+            if ($server instanceof Response) {
+                $server->close();
+            } else {
+                $server->disconnect($frame->fd);
+            }
             return;
         }
         if ($frame->data[0] !== Engine::MESSAGE) {
@@ -125,10 +133,18 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
                     'type' => Packet::OPEN,
                     'nsp' => $packet->nsp,
                 ]);
-                $server->push($frame->fd, Engine::MESSAGE . $this->encoder->encode($responsePacket)); //sever open
+                if ($server instanceof Response) {
+                    $server->push(Engine::MESSAGE . $this->encoder->encode($responsePacket)); //sever open
+                } else {
+                    $server->push($frame->fd, Engine::MESSAGE . $this->encoder->encode($responsePacket)); //sever open
+                }
                 break;
             case Packet::CLOSE: //client disconnect
-                $server->disconnect($frame->fd);
+                if ($server instanceof Response) {
+                    $server->close();
+                } else {
+                    $server->disconnect($frame->fd);
+                }
                 break;
             case Packet::EVENT: // client message with ack
                 if ($packet->id !== '') {
