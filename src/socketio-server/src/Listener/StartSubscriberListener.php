@@ -13,6 +13,7 @@ namespace Hyperf\SocketIOServer\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\MainWorkerStart;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\SocketIOServer\Collector\SocketIORouter;
 use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\Room\RedisAdapter;
@@ -28,6 +29,7 @@ class StartSubscriberListener implements ListenerInterface
     {
         return [
             MainWorkerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 
