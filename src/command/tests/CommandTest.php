@@ -57,17 +57,20 @@ class CommandTest extends TestCase
         $command = new ClassInvoker(new FooExceptionCommand('foo'));
         $input = Mockery::mock(InputInterface::class);
         $input->shouldReceive('getOption')->andReturnFalse();
-        $exitCode = $command->execute($input, Mockery::mock(OutputInterface::class));
+        $output = Mockery::mock(OutputInterface::class);
+        $output->shouldReceive('writeln')->withAnyArgs()->andReturnNull();
+
+        $exitCode = $command->execute($input, $output);
         $this->assertSame(99, $exitCode);
 
         /** @var FooExitCommand $command */
         $command = new ClassInvoker(new FooExitCommand());
-        $exitCode = $command->execute($input, Mockery::mock(OutputInterface::class));
+        $exitCode = $command->execute($input, $output);
         $this->assertSame(11, $exitCode);
 
         /** @var FooCommand $command */
         $command = new ClassInvoker(new FooCommand());
-        $exitCode = $command->execute($input, Mockery::mock(OutputInterface::class));
+        $exitCode = $command->execute($input, $output);
         $this->assertSame(0, $exitCode);
     }
 
