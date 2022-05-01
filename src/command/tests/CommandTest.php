@@ -57,6 +57,7 @@ class CommandTest extends TestCase
         $command = new ClassInvoker(new FooExceptionCommand('foo'));
         $input = Mockery::mock(InputInterface::class);
         $input->shouldReceive('getOption')->andReturnFalse();
+        $input->shouldReceive('writeln')->withAnyArgs()->andReturnNull();
         $exitCode = $command->execute($input, Mockery::mock(OutputInterface::class));
         $this->assertSame(99, $exitCode);
 
