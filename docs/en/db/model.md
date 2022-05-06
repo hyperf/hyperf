@@ -1,16 +1,15 @@
-# 模型
+# Model
 
-模型组件衍生于 [Eloquent ORM](https://laravel.com/docs/5.8/eloquent)，相关操作均可参考 Eloquent ORM 的文档。
+Model components are derived from [Eloquent ORM](https://laravel.com/docs/5.8/eloquent), and related operations can refer to the Eloquent ORM documentation.
 
-## 创建模型
+## Create a model
 
-Hyperf 提供了创建模型的命令，您可以很方便的根据数据表创建对应模型。命令通过 `AST` 生成模型，所以当您增加了某些方法后，也可以使用脚本方便的重置模型。
-
+Hyperf provides commands to create models, and you can easily create corresponding models based on data tables. The command generates the model via `AST`, so when you add certain methods, you can also easily reset the model with a script.
 ```
 $ php bin/hyperf.php db:model table_name
 ```
 
-创建的模型如下
+The created model is as follows
 ```php
 <?php
 
@@ -52,22 +51,21 @@ class User extends Model
 }
 ```
 
-## 模型参数
+## Model parameters
 
-|    参数    |  类型  | 默认值  |         备注         |
+| parameter  |  type  | defaults  |         Notes         |
 |:----------:|:------:|:-------:|:--------------------:|
-| connection | string | default |      数据库连接      |
-|   table    | string |   无    |      数据表名称      |
-| primaryKey | string |   id    |       模型主键       |
-|  keyType   | string |   int   |       主键类型       |
-|  fillable  | array  |   []    | 允许被批量复制的属性 |
-|   casts    | string |   无    |    数据格式化配置    |
-| timestamps |  bool  |  true   |  是否自动维护时间戳  |
+| connection | string | default |      Database Connectivity      |
+|   table    | string |   null    |      data table name      |
+| primaryKey | string |   id    |       model primary key      |
+|  keyType   | string |   int   |       primary key type       |
+|  fillable  | array  |   []    | properties that are allowed to be bulk copied |
+|   casts    | string |   null    |    data formatting configuration    |
+| timestamps |  bool  |  true   |  whether to automatically maintain timestamps  |
 
-### 数据表名称
+### data table name
 
-如果我们没有指定模型对应的 table，它将使用类的复数形式「蛇形命名」来作为表名。因此，在这种情况下，Hyperf 将假设 User 模型存储的是 users 数据表中的数据。你可以通过在模型上定义 table 属性来指定自定义数据表：
-
+If we don't specify the table corresponding to the model, it will use the plural form of the class "snake name" as the table name. So in this case Hyperf will assume that the User model stores data from the users data table. You can specify custom data tables by defining the table attribute on the model:
 ```php
 <?php
 
@@ -83,15 +81,15 @@ class User extends Model
 }
 ```
 
-### 主键
+### Primary key
 
-Hyperf 会假设每个数据表都有一个名为 id 的主键列。你可以定义一个受保护的 $primaryKey 属性来重写约定。
+Hyperf will assume that each data table has a primary key column named id. You can define a protected $primaryKey property to override the convention.
 
-此外，Hyperf 假设主键是一个自增的整数值，这意味着默认情况下主键会自动转换为 int 类型。如果您希望使用非递增或非数字的主键则需要设置公共的 $incrementing 属性设置为 false。如果你的主键不是一个整数，你需要将模型上受保护的 $keyType 属性设置为 string。
+Additionally, Hyperf assumes that the primary key is an auto-incrementing integer value, which means that the primary key is automatically converted to int by default. If you wish to use a non-incrementing or non-numeric primary key then you need to set the public $incrementing property to false. If your primary key is not an integer, you need to set the protected $keyType property on the model to string.
 
-### 时间戳
+### Timestamp
 
-默认情况下，Hyperf 预期你的数据表中存在 `created_at` 和 `updated_at` 。如果你不想让 Hyperf 自动管理这两个列， 请将模型中的 `$timestamps` 属性设置为 `false`：
+By default, Hyperf expects `created_at` and `updated_at` to exist in your data table. If you don't want Hyperf to manage these two columns automatically, set the `$timestamps` property in the model to `false`:
 
 ```php
 <?php
@@ -108,7 +106,7 @@ class User extends Model
 }
 ```
 
-如果需要自定义时间戳的格式，在你的模型中设置 `$dateFormat` 属性。这个属性决定日期属性在数据库的存储方式，以及模型序列化为数组或者 JSON 的格式：
+If you need a custom timestamp format, set the `$dateFormat` property on your model. This property determines how the date property is stored in the database, and the format in which the model is serialized as an array or JSON:
 
 ```php
 <?php
@@ -125,9 +123,9 @@ class User extends Model
 }
 ```
 
-如果您需要不希望保持 `datetime` 格式的储存，或者希望对时间做进一步的处理，您可以通过在模型内重写 `fromDateTime($value)` 方法实现。   
+If you need storage that you don't want to keep in `datetime` format, or want to do further processing of the time, you can do it by overriding the `fromDateTime($value)` method in the model.
 
-如果你需要自定义存储时间戳的字段名，可以在模型中设置 `CREATED_AT` 和 `UPDATED_AT` 常量的值来实现，其中一个为 `null`，则表明不希望 ORM 处理该字段：
+If you need to customize the field name for storing timestamps, you can do so by setting the values of the `CREATED_AT` and `UPDATED_AT` constants in the model, one of which is `null`, indicating that you do not want the ORM to process this field:
 
 ```php
 <?php
@@ -146,10 +144,9 @@ class User extends Model
 }
 ```
 
-### 数据库连接
+### Database Connectivity
 
-默认情况下，Hyperf 模型将使用你的应用程序配置的默认数据库连接 `default`。如果你想为模型指定一个不同的连接，设置 `$connection` 属性：当然，`connection-name` 作为 `key`，必须在 `databases.php` 配置文件中存在。
-
+By default, the Hyperf model will use the default database connection `default` configured by your application. If you want to specify a different connection for the model, set the `$connection` property: of course, the `connection-name` as the `key` must exist in the `databases.php` configuration file.
 ```php
 <?php
 
@@ -165,10 +162,9 @@ class User extends Model
 }
 ```
 
-### 默认属性值
+### Default property value
 
-如果要为模型的某些属性定义默认值，可以在模型上定义 `$attributes` 属性：
-
+If you want to define default values for some attributes of the model, you can define the `$attributes` attribute on the model:
 ```php
 <?php
 
@@ -186,7 +182,7 @@ class User extends Model
 }
 ```
 
-## 模型查询
+## Model query
 
 ```php
 use App\Models\User;
@@ -198,10 +194,9 @@ $user->save();
 
 ```
 
-### 重新加载模型
+### Reload model
 
-你可以使用 `fresh` 和 `refresh` 方法重新加载模型。 `fresh` 方法会重新从数据库中检索模型。现有的模型实例不受影响：
-
+You can reload the model using the `fresh` and `refresh` methods. The `fresh` method will retrieve the model from the database again. Existing model instances are not affected:
 ```php
 use App\Models\User;
 
@@ -211,8 +206,7 @@ $user = User::query()->find(1);
 $freshUser = $user->fresh();
 ```
 
-`refresh` 方法使用数据库中的新数据重新赋值现有模型。此外，已经加载的关系会被重新加载：
-
+The `refresh` method reassigns an existing model with new data from the database. Additionally, already loaded relationships are reloaded:
 ```php
 use App\Models\User;
 
@@ -226,21 +220,19 @@ $user->refresh();
 echo $user->name; // Hyperf
 ```
 
-### 集合
+### Gather
 
-对于模型中的 `all` 和 `get` 方法可以查询多个结果，返回一个 `Hyperf\Database\Model\Collection` 实例。 `Collection` 类提供了很多辅助函数来处理查询结果：
-
+For the `all` and `get` methods on the model to query multiple results, a `Hyperf\Database\Model\Collection` instance is returned. The `Collection` class provides a number of helper functions to process query results:
 ```php
 $users = $users->reject(function ($user) {
-    // 排除所有已删除的用户
+    // Exclude all deleted users
     return $user->deleted;
 });
 ```
 
-### 检索单个模型
+### Retrieve a single model
 
-除了从指定的数据表检索所有记录外，你可以使用 `find` 或 `first` 方法来检索单条记录。这些方法返回单个模型实例，而不是返回模型集合：
-
+In addition to retrieving all records from a specified data table, you can use the `find` or `first` methods to retrieve a single record. Instead of returning a collection of models, these methods return a single model instance:
 ```php
 use App\Models\User;
 
@@ -249,32 +241,29 @@ $user = User::query()->where('id', 1)->first();
 $user = User::query()->find(1);
 ```
 
-### 检索多个模型
+### Retrieve multiple models
 
-当然 `find` 的方法不止支持单个模型。
-
+Of course the `find` method supports more than just a single model.
 ```php
 use App\Models\User;
 
 $users = User::query()->find([1, 2, 3]);
 ```
 
-### 聚合函数
+### Aggregate function
 
-你还可以使用 查询构造器 提供的 `count`，`sum`, `max`, 和其他的聚合函数。这些方法只会返回适当的标量值而不是一个模型实例：
-
+You can also use the `count`, `sum`, `max`, and other aggregate functions provided by the query builder. These methods will just return the appropriate scalar value instead of a model instance:
 ```php
 use App\Models\User;
 
 $count = User::query()->where('gender', 1)->count();
 ```
 
-## 插入&更新模型
+## Insert & Update Model
 
-### 插入
+### Insert
 
-要往数据库新增一条记录，先创建新模型实例，给实例设置属性，然后调用 `save` 方法：
-
+To add a new record to the database, first create a new model instance, set properties on the instance, and then call the `save` method:
 ```php
 use App\Models\User;
 
@@ -286,12 +275,10 @@ $user->name = 'Hi Hyperf';
 $user->save();
 ```
 
-在这个示例中，我们赋值给了 `App\Models\User` 模型实例的 `name` 属性。当调用 `save` 方法时，将会插入一条新记录。 `created_at` 和 `updated_at` 时间戳将会自动设置，不需要手动赋值。
+In this example, we assign to the `name` property of the `App\Models\User` model instance. When the `save` method is called, a new record will be inserted. `created_at` and `updated_at` timestamps will be set automatically, no manual assignment is required.
+### Update
 
-### 更新
-
-`save` 方法也可以用来更新数据库已经存在的模型。更新模型，你需要先检索出来，设置要更新的属性，然后调用 `save` 方法。同样， `updated_at` 时间戳会自动更新，所以也不需要手动赋值：
-
+The `save` method can also be used to update models that already exist in the database. To update the model, you need to retrieve it, set the properties to update, and then call the `save` method. Also, the `updated_at` timestamp is updated automatically, so no manual assignment is required:
 ```php
 use App\Models\User;
 
@@ -303,25 +290,23 @@ $user->name = 'Hi Hyperf';
 $user->save();
 ```
 
-### 批量更新
+### Bulk update
 
-也可以更新匹配查询条件的多个模型。在这个示例中，所有的 `gender` 为1的用户，修改 `gender_show` 为 男性：
-
+Multiple models matching the query criteria can also be updated. In this example, all users whose `gender` is 1, modify `gender_show` to be male:
 ```php
 use App\Models\User;
 
-User::query()->where('gender', 1)->update(['gender_show' => '男性']);
+User::query()->where('gender', 1)->update(['gender_show' => 'male']);
 ```
 
-> 批量更新时， 更新的模型不会触发 saved 和 updated 事件。因为在批量更新时，从不会去检索模型。
+> When batch updating, the updated model will not trigger saved and updated events. Because during batch updates, the model is never retrieved.
+### Mass assignment
 
-### 批量赋值
+You can also save a new model using the `create` method, which returns a model instance. However, you need to specify the `fillable` or `guarded` attribute on the model before using it, as all models are not mass-assignable by default.
 
-你也可以使用 `create` 方法来保存新模型，此方法会返回模型实例。不过，在使用之前，你需要在模型上指定 `fillable` 或 `guarded` 属性，因为所有的模型都默认不可进行批量赋值。
+When a user passes in an unexpected parameter through an HTTP request, and that parameter changes a field in the database that you don't need to change. For example, a malicious user might pass the `is_admin` parameter in an HTTP request and then pass it to the `create` method, which allows the user to escalate themselves to admin.
 
-当用户通过 HTTP 请求传入一个意外的参数，并且该参数更改了数据库中你不需要更改的字段时。比如：恶意用户可能会通过 HTTP 请求传入 `is_admin` 参数，然后将其传给 `create` 方法，此操作能让用户将自己升级成管理员。
-
-所以，在开始之前，你应该定义好模型上的哪些属性是可以被批量赋值的。你可以通过模型上的 `$fillable` 属性来实现。 例如：让 `User` 模型的 `name` 属性可以被批量赋值：
+So, before you start, you should define which properties on the model can be mass-assigned. You can do this via the `$fillable` property on the model. For example, to make the `name` property of the `User` model mass assignable:
 
 ```php
 <?php
@@ -338,7 +323,7 @@ class User extends Model
 }
 ```
 
-一旦我们设置好了可以批量赋值的属性，就可以通过 `create` 方法插入新数据到数据库中了。 `create` 方法将返回保存的模型实例：
+Once we have set the properties that can be mass-assigned, we can insert new data into the database via the `create` method. The `create` method will return the saved model instance:
 
 ```php
 use App\Models\User;
@@ -346,15 +331,15 @@ use App\Models\User;
 $user = User::create(['name' => 'Hyperf']);
 ```
 
-如果你已经有一个模型实例，你可以传递一个数组给 fill 方法来赋值：
+If you already have a model instance, you can pass an array to the fill method to assign:
 
 ```php
 $user->fill(['name' => 'Hyperf']);
 ```
 
-### 保护属性
+### Protected properties
 
-`$fillable` 可以看作批量赋值的「白名单」, 你也可以使用 `$guarded` 属性来实现。 `$guarded` 属性包含的是不允许批量赋值的数组。也就是说， `$guarded` 从功能上将更像是一个「黑名单」。注意：你只能使用 `$fillable` 或 `$guarded` 二者中的一个，不可同时使用。下面这个例子中，除了 `gender_show` 属性，其他的属性都可以批量赋值：
+`$fillable` can be seen as a "whitelist" for mass assignment, and you can also use the `$guarded` attribute to achieve this. The `$guarded` property contains arrays that do not allow mass assignment. That is, `$guarded` will function more like a "blacklist". Note: You can only use either `$fillable` or `$guarded`, not both. In the following example, except for the `gender_show` attribute, all other attributes can be mass-assigned:
 
 ```php
 <?php
@@ -371,9 +356,9 @@ class User extends Model
 }
 ```
 
-### 删除模型
+### Delete model
 
-可以在模型实例上调用 `delete` 方法来删除实例：
+Instances can be deleted by calling the `delete` method on a model instance:
 
 ```php
 use App\Models\User;
@@ -383,21 +368,20 @@ $user = User::query()->find(1);
 $user->delete();
 ```
 
-### 通过查询删除模型
+### Delete model by query
 
-您可通过在查询上调用 `delete` 方法来删除模型数据，在这个例子中，我们将删除所有 `gender` 为 `1` 的用户。与批量更新一样，批量删除不会为删除的模型启动任何模型事件：
+You can delete model data by calling the `delete` method on the query, in this example we will delete all users whose `gender` is `1`. Like bulk updates, bulk deletes do not fire any model events for the deleted model:
 
 ```php
 use App\Models\User;
 
-// 注意使用 delete 方法时必须建立在某些查询条件基础之上才能安全删除数据，不存在 where 条件，会导致删除整个数据表
+// Note that when using the delete method, certain query conditions must be used to safely delete data. There is no where condition, which will cause the entire data table to be deleted.
 User::query()->where('gender', 1)->delete(); 
 ```
 
-### 通过主键直接删除数据
+### Delete data directly by primary key
 
-在上面的例子中，在调用 `delete` 之前需要先去数据库中查找对应的模型。事实上，如果你知道了模型的主键，您可以直接通过 `destroy` 静态方法来删除模型数据，而不用先去数据库中查找。 `destroy` 方法除了接受单个主键作为参数之外，还接受多个主键，或者使用数组，集合来保存多个主键：
-
+In the above example, before calling `delete`, you need to look up the corresponding model in the database. In fact, if you know the primary key of the model, you can delete the model data directly through the `destroy` static method without first looking in the database. In addition to accepting a single primary key as a parameter, the `destroy` method also accepts multiple primary keys, or uses arrays, collections to store multiple primary keys:
 ```php
 use App\Models\User;
 
@@ -406,11 +390,11 @@ User::destroy(1);
 User::destroy([1,2,3]);
 ```
 
-### 软删除
+### Soft delete
 
-除了真实删除数据库记录，`Hyperf` 也可以「软删除」模型。软删除的模型并不是真的从数据库中删除了。事实上，是在模型上设置了 `deleted_at` 属性并将其值写入数据库。如果 `deleted_at` 值非空，代表这个模型已被软删除。如果要开启模型软删除功能，你需要在模型上使用 `Hyperf\Database\Model\SoftDeletes` trait
+In addition to actually deleting database records, `Hyperf` can also "soft delete" the model. Soft deleted models are not really deleted from the database. In fact, the `deleted_at` attribute is set on the model and its value is written to the database. If the `deleted_at` value is non-null, it means the model has been soft deleted. To enable model soft deletes, you need to use the `Hyperf\Database\Model\SoftDeletes` trait on the model
 
-> `SoftDeletes` trait 会自动将 `deleted_at` 属性转换成 `DateTime / Carbon` 实例
+> `SoftDeletes` trait will automatically convert `deleted_at` attributes to `DateTime / Carbon` instances
 
 ```php
 <?php
