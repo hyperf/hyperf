@@ -240,8 +240,12 @@ class DispatcherFactory
             throw new ConflictAnnotationException('Could not use @Middlewares and @Middleware annotation at the same times at same level.');
         }
 
-        return array_map(function (Middleware $middleware) {
-            return $middleware->middleware;
-        }, $middlewares ? $middlewares->middlewares : $middleware);
+        $result = [];
+        $middlewares = $middlewares ? $middlewares->middlewares : $middleware;
+        /** @var Middleware $middleware */
+        foreach ($middlewares as $middleware) {
+            $result[] = $middleware->middleware;
+        }
+        return $result;
     }
 }
