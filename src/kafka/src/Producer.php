@@ -24,7 +24,7 @@ use Swoole\Coroutine;
 
 class Producer
 {
-    protected ?Channel $chan;
+    protected ?Channel $chan = null;
 
     protected LongLangProducer $producer;
 
