@@ -168,7 +168,7 @@ class ConsumerManager
                 $consumerConfig->setTopic($this->consumer->getTopic());
                 $consumerConfig->setRebalanceTimeout($config['rebalance_timeout']);
                 $consumerConfig->setSendTimeout($config['send_timeout']);
-                $consumerConfig->setGroupId($this->consumer->getGroupId());
+                $consumerConfig->setGroupId($this->consumer->getGroupId() ?? uniqid('hyperf-kafka-'));
                 $consumerConfig->setGroupInstanceId(sprintf('%s-%s', $this->consumer->getGroupId(), uniqid()));
                 $consumerConfig->setMemberId($this->consumer->getMemberId() ?: '');
                 $consumerConfig->setInterval($config['interval']);
