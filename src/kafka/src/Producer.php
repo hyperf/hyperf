@@ -114,6 +114,7 @@ class Producer
         if ($this->chan) {
             $this->chan->close();
         }
+        /* @phpstan-ignore-next-line */
         if ($this->producer) {
             $this->producer->close();
         }
