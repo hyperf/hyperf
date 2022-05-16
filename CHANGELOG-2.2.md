@@ -9,7 +9,7 @@
 
 ## Optimized
 
-- [#4738](https://github.com/hyperf/hyperf/pull/4738) Configuring a default groupId when it is null.
+- [#4738](https://github.com/hyperf/hyperf/pull/4738) Configuring a default groupId when it is null when using `hyperf/kafka`.
 
 # v2.2.31.1 - 2022-04-18
 
