@@ -76,6 +76,10 @@ composer analyse
 - [#4678](https://github.com/hyperf/hyperf/pull/4678) Support event dispatcher for command by default.
 - [#4680](https://github.com/hyperf/hyperf/pull/4680) Stop processes which controlled by `ProcessManager` when server shutdown.
 
+## Swow Supported
+
+- [#4756](https://github.com/hyperf/hyperf/pull/4756) Support `Hyperf\Utils\Coroutine\Locker`.
+
 ## Removed
 
 - [#4199](https://github.com/hyperf/hyperf/pull/4199) Removed deprecated handler `Hyperf\AsyncQueue\Signal\DriverStopHandler`.

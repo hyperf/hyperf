@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Coroutine;
 
+use Hyperf\Engine\Constant;
+use Hyperf\Engine\Coroutine as Co;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Traits\Container;
 use Swoole\Coroutine as SwooleCoroutine;
@@ -36,7 +38,11 @@ class Locker
             return true;
         }
         self::add($key, Coroutine::id());
-        SwooleCoroutine::suspend();
+        // When the verion of `hyperf/engine` >= 2.0, use `Co::yield()` instead.
+        match (Constant::ENGINE) {
+            'Swoole' => SwooleCoroutine::yield(),
+            default => Co::yield(),
+        };
         return false;
     }
 
@@ -46,7 +52,11 @@ class Locker
             $ids = self::get($key);
             foreach ($ids as $id) {
                 if ($id > 0) {
-                    SwooleCoroutine::resume($id);
+                    // When the verion of `hyperf/engine` >= 2.0, use `Co::resumeById()` instead.
+                    match (Constant::ENGINE) {
+                        'Swoole' => SwooleCoroutine::resume($id),
+                        default => Co::resumeById($id),
+                    };
                 }
             }
             self::clear($key);
