@@ -114,7 +114,10 @@ class Producer
         if ($this->chan) {
             $this->chan->close();
         }
-        $this->producer->close();
+        /* @phpstan-ignore-next-line */
+        if ($this->producer) {
+            $this->producer->close();
+        }
     }
 
     public function getConfig(): ProducerConfig
