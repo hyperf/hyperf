@@ -26,7 +26,7 @@ class Producer
 {
     protected ?Channel $chan = null;
 
-    protected LongLangProducer $producer;
+    protected ?LongLangProducer $producer = null;
 
     public function __construct(protected ConfigInterface $config, protected string $name = 'default', protected int $timeout = 10)
     {
