@@ -1,4 +1,23 @@
-# v2.2.31 - TBD
+# v2.2.33 - TBD
+
+# v2.2.32 - 2022-05-16
+
+## Fixed
+
+- [#4745](https://github.com/hyperf/hyperf/pull/4745) Fixed null pointer exception when using `Producer::close`.
+- [#4754](https://github.com/hyperf/hyperf/pull/4754) Fixed the bug that monolog does not work in `2.6.0` by configuring `conflict` with `monolog>=2.6.0`.
+
+## Optimized
+
+- [#4738](https://github.com/hyperf/hyperf/pull/4738) Configuring a default groupId when it is null when using `hyperf/kafka`.
+
+# v2.2.31.1 - 2022-04-18
+
+## Fixed
+
+- [#4692](https://github.com/hyperf/hyperf/pull/4692) Fixed type hint error for node `$weight` cased by nacos driver.
+
+# v2.2.31 - 2022-04-18
 
 ## Fixed
 

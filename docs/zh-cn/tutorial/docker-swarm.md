@@ -15,6 +15,12 @@ curl -sSL https://get.daocloud.io/docker | sh
 ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375
 ```
 
+如果不是使用的 `root` 账户，可以通过以下命令，让每次执行 `docker` 时，不需要增加 `sudo`
+
+```
+usermod -aG docker $USER
+```
+
 ### 配置仓库镜像地址
 
 基于跨国线路访问速度过慢等问题，我们可以为 Docker 配置仓库镜像地址，来改善这些网络问题，如 [阿里云(Aliyun) Docker 镜像加速器](https://help.aliyun.com/document_detail/60750.html)，我们可以申请一个 `Docker` 加速器，然后配置到服务器上的 `/etc/docker/daemon.json` 文件，添加以下内容，然后重启 `Docker`，下面的地址请填写您自己获得的加速器地址。
@@ -44,12 +50,14 @@ $ systemctl restart sshd.service
 重新登录机器
 
 ```
-ssh -p 2222 root@host 
+ssh -p 2222 root@host
 ```
 
 #### 安装 Gitlab
 
 我们来通过 Docker 启动一个 Gitlab 服务，如下：
+
+> hostname 一定要加，如果没有域名可以直接填外网地址
 
 ```
 sudo docker run -d --hostname gitlab.xxx.cn \
@@ -60,7 +68,11 @@ sudo docker run -d --hostname gitlab.xxx.cn \
 gitlab/gitlab-ce:latest
 ```
 
-首次登录 `Gitlab` 需要重置密码，默认用户名为 `root`。
+默认用户名为 `root`，初始密码通过以下方式获得
+
+```shell
+docker exec gitlab cat /etc/gitlab/initial_root_password
+```
 
 ### 安装 gitlab-runner
 
@@ -87,7 +99,7 @@ $ yum install gitlab-runner
 通过 `gitlab-runner register --clone-url http://your-ip/` 命令来将 gitlab-runner 注册到 Gitlab 上，注意要替换 `your-ip` 为您的 Gitlab 的内网 IP，如下：
 
 ```
-$ gitlab-runner register --clone-url http://your-ip/
+$ sudo gitlab-runner register --clone-url http://your-ip/
 
 Please enter the gitlab-ci coordinator URL (e.g. https://gitlab.com/):
 http://gitlab.xxx.cc/
@@ -107,6 +119,23 @@ shell
 $ vim /etc/gitlab-runner/config.toml
 concurrent = 5
 ```
+
+### 为 gitlab-runner 增加权限
+
+- 免 sudo 执行 docker 的权限
+
+```shell
+sudo usermod -aG docker gitlab-runner
+```
+
+- 镜像仓库的权限
+
+```shell
+su gitlab-runner
+docker login -u username your-docker-repository
+```
+
+###
 
 ### 修改邮箱
 
@@ -162,7 +191,7 @@ $ docker swarm join --token <token> ip:2377
 
 > 其他与 builder 一致，但是 tag 却不能一样。线上环境可以设置为 tags，测试环境设置为 test
 
-## 安装其他应用 
+## 安装其他应用
 
 以下以 `Mysql` 为例，直接使用上述 `network`，支持容器内使用 name 互调。
 
@@ -294,7 +323,7 @@ docker run -d --name kong-database \
   postgres:9.6
 ```
 
-### 安装网关 
+### 安装网关
 
 初始化数据库
 
@@ -367,7 +396,7 @@ docker run --rm -i -v $basepath/.env:/opt/www/.env \
 - 指定 TLinux 源
 
 ```
-tee /etc/yum.repos.d/CentOS-TLinux.repo <<-'EOF' 
+tee /etc/yum.repos.d/CentOS-TLinux.repo <<-'EOF'
 [Tlinux]
 name=Tlinux for redhat/centos $releasever - $basearch
 failovermethod=priority
@@ -462,5 +491,5 @@ docker service update --network-rm old-network service_name
 这是因为 Portainer 修改后，不能作用于已经创建的服务，所以手动更新即可
 
 ```
-docker service update --with-registry-auth service_name   
+docker service update --with-registry-auth service_name
 ```

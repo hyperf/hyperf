@@ -1,5 +1,17 @@
 # 版本更新記錄
 
+# v2.2.31 - 2022-04-18
+
+## 修復
+
+- [#4677](https://github.com/hyperf/hyperf/pull/4677) 修復使用 `kafka` 發佈者後，會導致進程無法正常退出的問題。
+- [#4686](https://github.com/hyperf/hyperf/pull/4687) 修復使用 `WebSocket` 服務時，因為解析 `Request` 失敗會導致進程崩潰的問題。
+
+## 新增
+
+- [#4576](https://github.com/hyperf/hyperf/pull/4576) 為 `RPC` 客户端的節點，增加路由前綴 `path_prefix`。
+- [#4683](https://github.com/hyperf/hyperf/pull/4683) 新增容器方法 `unbind()` 用來從容器中解綁對象。
+
 # v2.2.30 - 2022-04-04
 
 ## 修復
