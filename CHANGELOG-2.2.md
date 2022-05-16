@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#4745](https://github.com/hyperf/hyperf/pull/4745) Fixed null pointer exception when using `Producer::close`.
+- [#4754](https://github.com/hyperf/hyperf/pull/4754) Fixed bug that monolog does not work in `2.6.0` by making conflict for `monolog:>=2.6.0`.
 
 # v2.2.31.1 - 2022-04-18
 
