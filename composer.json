@@ -176,6 +176,9 @@
         "hyperf/websocket-client": "*",
         "hyperf/websocket-server": "*"
     },
+    "conflict": {
+        "monolog/monolog": ">=2.6.0"
+    },
     "suggest": {},
     "autoload": {
         "files": [

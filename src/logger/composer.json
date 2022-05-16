@@ -22,6 +22,9 @@
         "hyperf/utils": "~2.2.0",
         "monolog/monolog": "^2.0"
     },
+    "conflict": {
+        "monolog/monolog": ">=2.6.0"
+    },
     "autoload": {
         "psr-4": {
             "Hyperf\\Logger\\": "src/"
