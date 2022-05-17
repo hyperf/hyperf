@@ -256,7 +256,7 @@ class AMQPConnection extends AbstractConnection
             throw new ChannelClosedException('Wait channel was already closed.');
         }
 
-        $data = $chan->pop($timeout);
+        $data = $chan->pop($timeout ?: -1);
         if ($data === false) {
             if ($chan->isTimeout()) {
                 throw new AMQPTimeoutException('Timeout waiting on channel');
