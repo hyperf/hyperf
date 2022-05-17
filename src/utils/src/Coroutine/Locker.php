@@ -38,7 +38,7 @@ class Locker
             return true;
         }
         self::add($key, Coroutine::id());
-        // When the verion of `hyperf/engine` >= 2.0, use `Co::yield()` instead.
+        // TODO: When the verion of `hyperf/engine` >= 2.0, use `Co::yield()` instead.
         match (Constant::ENGINE) {
             'Swoole' => SwooleCoroutine::yield(),
             default => Co::yield(),
@@ -52,7 +52,7 @@ class Locker
             $ids = self::get($key);
             foreach ($ids as $id) {
                 if ($id > 0) {
-                    // When the verion of `hyperf/engine` >= 2.0, use `Co::resumeById()` instead.
+                    // TODO: When the verion of `hyperf/engine` >= 2.0, use `Co::resumeById()` instead.
                     match (Constant::ENGINE) {
                         'Swoole' => SwooleCoroutine::resume($id),
                         default => Co::resumeById($id),
