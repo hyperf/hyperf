@@ -178,7 +178,7 @@ trait ValidatesAttributes
             return true;
         }
 
-        return empty(array_diff_key(array_fill_keys($parameters, ''), $value));
+        return empty(array_diff_key($value, array_fill_keys($parameters, '')));
     }
 
     /**
