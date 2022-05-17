@@ -41,6 +41,7 @@ class Locker
         // TODO: When the verion of `hyperf/engine` >= 2.0, use `Co::yield()` instead.
         match (Constant::ENGINE) {
             'Swoole' => SwooleCoroutine::yield(),
+            /* @phpstan-ignore-next-line */
             default => Co::yield(),
         };
         return false;
@@ -55,6 +56,7 @@ class Locker
                     // TODO: When the verion of `hyperf/engine` >= 2.0, use `Co::resumeById()` instead.
                     match (Constant::ENGINE) {
                         'Swoole' => SwooleCoroutine::resume($id),
+                        /* @phpstan-ignore-next-line */
                         default => Co::resumeById($id),
                     };
                 }
