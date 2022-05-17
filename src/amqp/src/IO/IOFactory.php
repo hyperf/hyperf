@@ -32,6 +32,12 @@ class IOFactory implements IOFactoryInterface
                 $params->getReadWriteTimeout(),
                 $openSSL
             ),
+            'Swow' => new SwowIO(
+                $host,
+                $port,
+                $params->getConnectionTimeout(),
+                $params->getReadWriteTimeout()
+            ),
             default => throw new NotSupportedException()
         };
     }
