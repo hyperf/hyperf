@@ -21,17 +21,17 @@ class Locker
 {
     use Container;
 
-    public static function add($key, $id): void
+    public static function add(string $key, int $id): void
     {
         self::$container[$key][] = $id;
     }
 
-    public static function clear($key): void
+    public static function clear(string $key): void
     {
         unset(self::$container[$key]);
     }
 
-    public static function lock($key): bool
+    public static function lock(string $key): bool
     {
         if (! self::has($key)) {
             self::add($key, 0);
@@ -46,7 +46,7 @@ class Locker
         return false;
     }
 
-    public static function unlock($key): void
+    public static function unlock(string $key): void
     {
         if (self::has($key)) {
             $ids = self::get($key);
