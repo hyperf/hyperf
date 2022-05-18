@@ -3489,10 +3489,10 @@ class ValidationValidatorTest extends TestCase
         // multiple items fields fails
         $v = new Validator(
             $trans,
-            ['foo' => [['name' => 'first'], ['name' => 'second']]],
-            ['foo' => 'Array', 'foo.*' => 'Array:name,votes', 'foo.*.name' => ['Required']]
+            ['foo' => [['name' => 'first', 'votes' => 1], ['name' => 'second', 'votes' => 2]]],
+            ['foo' => 'Array', 'foo.*' => 'Array:name', 'foo.*.name' => ['Required']]
         );
-        $this->assertTrue($v->passes());
+        $this->assertFalse($v->passes());
     }
 
     public function testSometimesOnArraysInImplicitRules()
