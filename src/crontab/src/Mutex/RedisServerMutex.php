@@ -14,12 +14,12 @@ namespace Hyperf\Crontab\Mutex;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 
 class RedisServerMutex implements ServerMutex
 {
+    use RenewalMutex;
+
     /**
      * @var RedisFactory
      */
@@ -52,10 +52,8 @@ class RedisServerMutex implements ServerMutex
         $result = (bool) $redis->set($mutexName, $this->macAddress, ['NX', 'EX' => $crontab->getMutexExpires()]);
 
         if ($result === true) {
-            Coroutine::create(function () use ($crontab, $redis, $mutexName) {
-                $exited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($crontab->getMutexExpires());
-                $exited && $redis->del($mutexName);
-            });
+            // The coroutine renews the mutex
+            Coroutine::create($this->renewalClosure($crontab, $redis));
             return $result;
         }
 
@@ -68,6 +66,16 @@ class RedisServerMutex implements ServerMutex
     public function get(Crontab $crontab): string
     {
         return (string) $this->redisFactory->get($crontab->getMutexPool())->get(
+            $this->getMutexName($crontab)
+        );
+    }
+
+    /**
+     * Clear the task mutex for the given crontab.
+     */
+    public function remove(Crontab $crontab)
+    {
+        $this->redisFactory->get($crontab->getMutexPool())->del(
             $this->getMutexName($crontab)
         );
     }

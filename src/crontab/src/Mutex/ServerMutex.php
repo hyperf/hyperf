@@ -24,4 +24,9 @@ interface ServerMutex
      * Get the server mutex for the given crontab.
      */
     public function get(Crontab $crontab): string;
+
+    /**
+     * Clear the task mutex for the given crontab.
+     */
+    public function remove(Crontab $crontab);
 }
