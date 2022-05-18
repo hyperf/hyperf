@@ -23,7 +23,10 @@ abstract class Job implements JobInterface, CompressInterface, UnCompressInterfa
         return $this->maxAttempts;
     }
 
-    public function uncompress(): static
+    /**
+     * @return static 
+     */
+    public function uncompress(): CompressInterface
     {
         foreach ($this as $key => $value) {
             if ($value instanceof UnCompressInterface) {
@@ -34,7 +37,10 @@ abstract class Job implements JobInterface, CompressInterface, UnCompressInterfa
         return $this;
     }
 
-    public function compress(): static
+    /**
+     * @return static 
+     */
+    public function compress(): UnCompressInterface
     {
         foreach ($this as $key => $value) {
             if ($value instanceof CompressInterface) {
