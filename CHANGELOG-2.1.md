@@ -6,10 +6,6 @@
 
 - [#3787](https://github.com/hyperf/hyperf/pull/3787) Initialize PSR Response first to avoid problems caused by the failure of building PSR Request.
 
-## Optimized
-
-- [#3787](https://github.com/hyperf/hyperf/pull/3787) Initialize PSR Response first to avoid problems caused by the failure of building PSR Request.
-
 # v2.1.22 - 2021-06-28
 
 ## Security
