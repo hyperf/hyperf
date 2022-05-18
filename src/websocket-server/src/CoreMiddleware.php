@@ -21,7 +21,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class CoreMiddleware extends HttpCoreMiddleware
 {
-    const HANDLER_NAME = 'class';
+    public const HANDLER_NAME = 'class';
 
     /**
      * Handle the response when found.

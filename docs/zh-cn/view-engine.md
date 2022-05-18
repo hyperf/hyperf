@@ -1,6 +1,6 @@
 # 视图引擎
 
-> 基于 laravel blade 模板引擎改写, 支持原始 blade 模板引擎的语法.
+> 基于 Laravel blade 模板引擎改写, 支持原始 blade 模板引擎的语法.
 
 ```bash
 composer require hyperf/view-engine
@@ -242,7 +242,7 @@ class BladeWithoutDoubleEncodingListener implements ListenerInterface
 
 #### Blade & JavaScript 框架
 
-由于许多 `JavaScript` 框架也使用「花括号」来标识将显示在浏览器中的表达式，因此，您可以使用 `@` 符号来表示 `Blade` 渲染引擎应当保持不便。例如：
+由于许多 `JavaScript` 框架也使用「花括号」来标识将显示在浏览器中的表达式，因此，您可以使用 `@` 符号来表示 `Blade` 渲染引擎应当保持不变。例如：
 
 ```blade
 <h1>Laravel</h1>

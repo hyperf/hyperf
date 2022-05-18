@@ -66,7 +66,7 @@ return [
 
 此配置文件用於管理 Server 服務，其中的 `settings` 選項可以直接使用由 `Swoole Server` 提供的選項，其他選項可參考 [Swoole 官方文檔](https://wiki.swoole.com/#/server/setting) 。
 
-如需要設置守護進程化，可在 `settings` 中增加 `'daemonize' => 1`，執行 `php bin/hyperf.php start`後，程序將轉入後台作為守護進程運行
+如需要設置守護進程化，可在 `settings` 中增加 `'daemonize' => true`，執行 `php bin/hyperf.php start`後，程序將轉入後台作為守護進程運行
 
 單獨的 Server 配置需要添加在對應 `servers` 的 `settings` 當中，如 `jsonrpc` 協議的 TCP Server 配置啟用 EOF 自動分包和設置 EOF 字符串
 ```php
@@ -233,7 +233,7 @@ Hyperf 採用組件化設計，在添加一些組件進來骨架項目後，我�
 
 ## 配置中心
 
-Hyperf 為您提供了分佈式系統的外部化配置支持，目前支持由攜程開源的 `Apollo`、阿里雲 ACM 應用配置管理、ETCD 以及 Zookeeper 作為配置中心的支持。
+Hyperf 為您提供了分佈式系統的外部化配置支持，目前支持由攜程開源的 `Apollo`、阿里雲 ACM 應用配置管理、ETCD、Nacos 以及 Zookeeper 作為配置中心的支持。
 關於配置中心的使用細節我們由 [配置中心](zh-hk/config-center.md) 章節來闡述。
 
 

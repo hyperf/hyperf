@@ -47,6 +47,20 @@ Router::addServer('ws', function () {
 });
 ```
 
+## 配置中介軟體
+
+在 `config/autoload/middlewares.php` 檔案內增加對應 `ws` 的 Server 的全域性中介軟體配置，這裡的 `ws` 值取決於您在 `config/autoload/server.php` 內配置的 WebSocket Server 的 `name` 值。
+
+```php
+<?php
+
+return [
+    'ws' => [
+        yourMiddleware::class
+    ]
+];
+```
+
 ## 建立對應控制器
 
 ```php

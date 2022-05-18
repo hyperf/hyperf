@@ -55,8 +55,9 @@ abstract class MetaGenerator implements MetaGeneratorInterface
         }
 
         $this->lastTimestamp = $timestamp;
+        $sequence = $this->sequence;
 
-        return new Meta($this->getDataCenterId(), $this->getWorkerId(), $this->sequence, $timestamp, $this->beginTimestamp);
+        return new Meta($this->getDataCenterId(), $this->getWorkerId(), $sequence, $timestamp, $this->beginTimestamp);
     }
 
     public function getBeginTimestamp(): int

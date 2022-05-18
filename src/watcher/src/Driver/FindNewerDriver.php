@@ -58,16 +58,21 @@ class FindNewerDriver implements DriverInterface
         Timer::tick($ms, function () use ($channel) {
             if ($this->scaning == false) {
                 $this->scaning = true;
-
-                System::exec('echo 1 > ' . $this->getToModifyFile());
                 $changedFiles = $this->scan();
-
-                $this->scaning = false;
                 ++$this->count;
+                // update mtime
+                if ($changedFiles) {
+                    System::exec('echo 1 > ' . $this->getToModifyFile());
+                    System::exec('echo 1 > ' . $this->getToScanFile());
+                }
+
                 foreach ($changedFiles as $file) {
                     $channel->push($file);
+                    $this->scaning = false;
+
                     return;
                 }
+                $this->scaning = false;
             }
         });
     }

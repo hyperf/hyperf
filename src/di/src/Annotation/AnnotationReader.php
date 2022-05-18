@@ -17,6 +17,7 @@ use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\DocParser;
 use Doctrine\Common\Annotations\PhpParser;
 use Doctrine\Common\Annotations\Reader;
+use Hyperf\Di\Exception\NotFoundException;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -71,7 +72,8 @@ class AnnotationReader implements Reader
         'example' => true,
         'filesource' => true,
         'global' => true,
-        'ignore' => true, /* Can we enable this? 'index' => true, */ 'internal' => true,
+        'ignore' => true, /* Can we enable this? 'index' => true, */
+        'internal' => true,
         'license' => true, 'link' => true,
         'method' => true,
         'package' => true, 'param' => true, 'property' => true, 'property-read' => true, 'property-write' => true,
@@ -205,6 +207,11 @@ class AnnotationReader implements Reader
 
     public function getClassAnnotations(ReflectionClass $class)
     {
+        if (\PHP_VERSION_ID >= 80000) {
+            if ($attributes = $this->getAttributes($class)) {
+                return $attributes;
+            }
+        }
         $this->parser->setTarget(Target::TARGET_CLASS);
         $this->parser->setImports($this->getClassImports($class));
         $this->parser->setIgnoredAnnotationNames($this->getIgnoredAnnotationNames($class));
@@ -226,8 +233,50 @@ class AnnotationReader implements Reader
         return null;
     }
 
+    public function getAttributes(\Reflector $reflection): array
+    {
+        $result = [];
+        if (! method_exists($reflection, 'getAttributes')) {
+            return $result;
+        }
+        $attributes = $reflection->getAttributes();
+        foreach ($attributes as $attribute) {
+            if (! class_exists($attribute->getName())) {
+                $className = $methodName = $propertyName = '';
+                if ($reflection instanceof ReflectionClass) {
+                    $className = $reflection->getName();
+                } elseif ($reflection instanceof ReflectionMethod) {
+                    $className = $reflection->getDeclaringClass()->getName();
+                    $methodName = $reflection->getName();
+                } elseif ($reflection instanceof ReflectionProperty) {
+                    $className = $reflection->getDeclaringClass()->getName();
+                    $propertyName = $reflection->getName();
+                }
+                $message = sprintf(
+                    "No attribute class found for '%s' in %s",
+                    $attribute->getName(),
+                    $className
+                );
+                if ($methodName) {
+                    $message .= sprintf('->%s() method', $methodName);
+                }
+                if ($propertyName) {
+                    $message .= sprintf('::$%s property', $propertyName);
+                }
+                throw new NotFoundException($message);
+            }
+            $result[] = $attribute->newInstance();
+        }
+        return $result;
+    }
+
     public function getPropertyAnnotations(ReflectionProperty $property)
     {
+        if (\PHP_VERSION_ID >= 80000) {
+            if ($attributes = $this->getAttributes($property)) {
+                return $attributes;
+            }
+        }
         $class = $property->getDeclaringClass();
         $context = 'property ' . $class->getName() . '::$' . $property->getName();
 
@@ -254,6 +303,11 @@ class AnnotationReader implements Reader
 
     public function getMethodAnnotations(ReflectionMethod $method)
     {
+        if (\PHP_VERSION_ID >= 80000) {
+            if ($attributes = $this->getAttributes($method)) {
+                return $attributes;
+            }
+        }
         $class = $method->getDeclaringClass();
         $context = 'method ' . $class->getName() . '::' . $method->getName() . '()';
 

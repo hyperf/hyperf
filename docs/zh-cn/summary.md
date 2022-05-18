@@ -4,6 +4,7 @@
   * [线上交流](zh-cn/communication.md)
   * [捐献及赞助](zh-cn/donate.md)
   * [参与开发](zh-cn/contribute.md)
+  * [企业服务](zh-cn/enterprise-service.md)
 
 * 版本管理
 
@@ -70,6 +71,7 @@
   * [架构理念](zh-cn/microservice.md)
   * [JSON RPC 服务](zh-cn/json-rpc.md)
   * [gRPC 服务](zh-cn/grpc.md)
+  * [多路复用 RPC 服务](zh-cn/rpc-multiplex.md) 
   * [服务注册](zh-cn/service-register.md)
   * [服务重试](zh-cn/retry.md)
   * [服务熔断及降级](zh-cn/circuit-breaker.md)
@@ -119,6 +121,8 @@
   * [开发者工具](zh-cn/devtool.md)
   * [Swoole Tracker](zh-cn/swoole-tracker.md)
   * [Phar 打包器](zh-cn/phar.md)
+  * [DAG](zh-cn/dag.md)
+  * [RPN - 逆波兰表示法](zh-cn/rpn.md)
 
 * 应用部署
 
@@ -143,3 +147,4 @@
   * [1.1 升级指南](zh-cn/upgrade/1.1.md)
   * [2.0 升级指南](zh-cn/upgrade/2.0.md)
   * [2.1 升级指南](zh-cn/upgrade/2.1.md)
+  * [2.2 升级指南](zh-cn/upgrade/2.2.md)

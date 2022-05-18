@@ -19,5 +19,6 @@ class ParentClass
      * @Inject
      * @var Foo
      */
+    #[Inject]
     protected $foo;
 }

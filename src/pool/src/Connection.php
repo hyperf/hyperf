@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerInterface;
 
 abstract class Connection implements ConnectionInterface
@@ -44,7 +45,14 @@ abstract class Connection implements ConnectionInterface
 
     public function getConnection()
     {
-        return $this->getActiveConnection();
+        try {
+            return $this->getActiveConnection();
+        } catch (\Throwable $exception) {
+            if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
+                $logger->warning('Get connection failed, try again. ' . (string) $exception);
+            }
+            return $this->getActiveConnection();
+        }
     }
 
     public function check(): bool

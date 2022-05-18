@@ -11,11 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcClient;
 
-use Hyperf\Consul\Health;
-use Hyperf\Consul\HealthInterface;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\IdGeneratorInterface;
-use Hyperf\Guzzle\ClientFactory;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\LoadBalancerManager;
 use Hyperf\LoadBalancer\Node;
@@ -25,6 +22,8 @@ use Hyperf\Rpc\IdGenerator;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcClient\Exception\RequestException;
+use Hyperf\ServiceGovernance\DriverInterface;
+use Hyperf\ServiceGovernance\DriverManager;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -131,6 +130,11 @@ abstract class AbstractServiceClient
         return $this->dataFormatter->formatRequest([$this->__generateRpcPath($methodName), $params, $id]);
     }
 
+    public function getServiceName(): string
+    {
+        return $this->serviceName;
+    }
+
     protected function getIdGenerator(): IdGeneratorInterface
     {
         if ($this->container->has(IdGenerator\IdGeneratorInterface::class)) {
@@ -189,20 +193,19 @@ abstract class AbstractServiceClient
         $refreshCallback = null;
         $consumer = $this->getConsumerConfig();
 
+        $registryProtocol = $consumer['registry']['protocol'] ?? null;
+        $registryAddress = $consumer['registry']['address'] ?? null;
         // Current $consumer is the config of the specified consumer.
-        if (isset($consumer['registry']['protocol'], $consumer['registry']['address'])) {
-            // According to the protocol and address of the registry, retrieve the nodes.
-            switch ($registryProtocol = $consumer['registry']['protocol'] ?? '') {
-                case 'consul':
-                    $registry = $consumer['registry'] ?? [];
-                    $nodes = $this->getNodesFromConsul($registry);
-                    $refreshCallback = function () use ($registry) {
-                        return $this->getNodesFromConsul($registry);
-                    };
-                    break;
-                default:
-                    throw new InvalidArgumentException(sprintf('Invalid protocol of registry %s', $registryProtocol));
+        if (! empty($registryProtocol) && $this->container->has(DriverManager::class)) {
+            $governance = $this->container->get(DriverManager::class)->get($registryProtocol);
+            if (! $governance) {
+                throw new InvalidArgumentException(sprintf('Invalid protocol of registry %s', $registryProtocol));
             }
+            $nodes = $this->getNodes($governance, $registryAddress);
+            $refreshCallback = function () use ($governance, $registryAddress) {
+                return $this->getNodes($governance, $registryAddress);
+            };
+
             return [$nodes, $refreshCallback];
         }
 
@@ -214,7 +217,7 @@ abstract class AbstractServiceClient
                     if (! is_int($item['port'])) {
                         throw new InvalidArgumentException(sprintf('Invalid node config [%s], the port option has to a integer.', implode(':', $item)));
                     }
-                    $nodes[] = new Node($item['host'], $item['port']);
+                    $nodes[] = new Node($item['host'], $item['port'], $item['weight'] ?? 0, $item['path_prefix'] ?? '');
                 }
             }
             return [$nodes, $refreshCallback];
@@ -223,50 +226,17 @@ abstract class AbstractServiceClient
         throw new InvalidArgumentException('Config of registry or nodes missing.');
     }
 
-    protected function getNodesFromConsul(array $config): array
+    protected function getNodes(DriverInterface $governance, string $address): array
     {
-        $health = $this->createConsulHealth($config);
-        $services = $health->service($this->serviceName)->json();
-        $nodes = [];
-        foreach ($services as $node) {
-            $passing = true;
-            $service = $node['Service'] ?? [];
-            $checks = $node['Checks'] ?? [];
-
-            if (isset($service['Meta']['Protocol']) && $this->protocol !== $service['Meta']['Protocol']) {
-                // The node is invalid, if the protocol is not equal with the client's protocol.
-                continue;
-            }
-
-            foreach ($checks as $check) {
-                $status = $check['Status'] ?? false;
-                if ($status !== 'passing') {
-                    $passing = false;
-                }
-            }
-
-            if ($passing) {
-                $address = $service['Address'] ?? '';
-                $port = (int) ($service['Port'] ?? 0);
-                // @TODO Get and set the weight property.
-                $address && $port && $nodes[] = new Node($address, $port);
-            }
-        }
-        return $nodes;
-    }
-
-    protected function createConsulHealth(array $config): HealthInterface
-    {
-        if (! $this->container->has(Health::class)) {
-            throw new InvalidArgumentException('Component of \'hyperf/consul\' is required if you want the client fetch the nodes info from consul.');
-        }
-        return make(Health::class, [
-            'clientFactory' => function () use ($config) {
-                return $this->container->get(ClientFactory::class)->create([
-                    'base_uri' => $config['address'] ?? Health::DEFAULT_URI,
-                ]);
-            },
+        $nodeArray = $governance->getNodes($address, $this->serviceName, [
+            'protocol' => $this->protocol,
         ]);
+        $nodes = [];
+        foreach ($nodeArray as $node) {
+            $nodes[] = new Node($node['host'], $node['port'], $node['weight'] ?? 0, $node['path_prefix'] ?? '');
+        }
+
+        return $nodes;
     }
 
     protected function checkRequestIdAndTryAgain(array $response, $id, int $again = 1): array

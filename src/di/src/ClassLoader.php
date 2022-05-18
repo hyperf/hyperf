@@ -18,8 +18,9 @@ use Dotenv\Repository\Adapter;
 use Dotenv\Repository\RepositoryBuilder;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
-use Hyperf\Di\Aop\ProxyManager;
 use Hyperf\Di\LazyLoader\LazyLoader;
+use Hyperf\Di\ScanHandler\PcntlScanHandler;
+use Hyperf\Di\ScanHandler\ScanHandlerInterface;
 use Hyperf\Utils\Composer;
 
 class ClassLoader
@@ -37,7 +38,7 @@ class ClassLoader
      */
     protected $proxies = [];
 
-    public function __construct(ComposerClassLoader $classLoader, string $proxyFileDir, string $configDir)
+    public function __construct(ComposerClassLoader $classLoader, string $proxyFileDir, string $configDir, ScanHandlerInterface $handler)
     {
         $this->setComposerClassLoader($classLoader);
         if (file_exists(BASE_PATH . '/.env')) {
@@ -47,12 +48,10 @@ class ClassLoader
         // Scan by ScanConfig to generate the reflection class map
         $config = ScanConfig::instance($configDir);
         $classLoader->addClassMap($config->getClassMap());
-        $scanner = new Scanner($this, $config);
-        $reflectionClassMap = $scanner->scan();
-        // Get the class map of Composer loader
-        $composerLoaderClassMap = $this->getComposerClassLoader()->getClassMap();
-        $proxyManager = new ProxyManager($reflectionClassMap, $composerLoaderClassMap, $proxyFileDir);
-        $this->proxies = $proxyManager->getProxies();
+
+        $scanner = new Scanner($this, $config, $handler);
+
+        $this->proxies = $scanner->scan($this->getComposerClassLoader()->getClassMap(), $proxyFileDir);
     }
 
     public function loadClass(string $class): void
@@ -64,7 +63,7 @@ class ClassLoader
         }
     }
 
-    public static function init(?string $proxyFileDirPath = null, ?string $configDir = null): void
+    public static function init(?string $proxyFileDirPath = null, ?string $configDir = null, ?ScanHandlerInterface $handler = null): void
     {
         if (! $proxyFileDirPath) {
             // This dir is the default proxy file dir path of Hyperf
@@ -74,6 +73,10 @@ class ClassLoader
         if (! $configDir) {
             // This dir is the default proxy file dir path of Hyperf
             $configDir = BASE_PATH . '/config/';
+        }
+
+        if (! $handler) {
+            $handler = new PcntlScanHandler();
         }
 
         $loaders = spl_autoload_functions();
@@ -87,7 +90,7 @@ class ClassLoader
                 AnnotationRegistry::registerLoader(function ($class) use ($composerClassLoader) {
                     return (bool) $composerClassLoader->findFile($class);
                 });
-                $loader[0] = new static($composerClassLoader, $proxyFileDirPath, $configDir);
+                $loader[0] = new static($composerClassLoader, $proxyFileDirPath, $configDir, $handler);
             }
             spl_autoload_unregister($unregisterLoader);
         }

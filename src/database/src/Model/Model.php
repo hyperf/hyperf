@@ -43,16 +43,16 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * The name of the "created at" column.
      *
-     * @var string
+     * @var null|string
      */
-    const CREATED_AT = 'created_at';
+    public const CREATED_AT = 'created_at';
 
     /**
      * The name of the "updated at" column.
      *
-     * @var string
+     * @var null|string
      */
-    const UPDATED_AT = 'updated_at';
+    public const UPDATED_AT = 'updated_at';
 
     /**
      * Indicates if the IDs are auto-incrementing.

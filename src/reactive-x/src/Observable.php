@@ -50,7 +50,7 @@ class Observable
     }
 
     /**
-     * @param array<Callable>|callable $callables
+     * @param array<callable>|callable $callables
      * @throws \Exception
      */
     public static function fromCoroutine($callables, ?SchedulerInterface $scheduler = null): CoroutineObservable

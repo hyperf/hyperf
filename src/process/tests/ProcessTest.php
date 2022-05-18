@@ -73,6 +73,7 @@ class ProcessTest extends TestCase
             $property->setAccessible(true);
             $callback = $property->getValue($process);
             $callback($process);
+            return 1;
         });
         return $server;
     }

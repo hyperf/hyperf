@@ -49,9 +49,18 @@ class Xml
 
     public static function toArray($xml)
     {
-        $disableLibxmlEntityLoader = libxml_disable_entity_loader(true);
-        $respObject = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOERROR);
-        libxml_disable_entity_loader($disableLibxmlEntityLoader);
+        // For PHP 8.0, libxml_disable_entity_loader() has been deprecated.
+        // As libxml 2.9.0 is now required, external entity loading is guaranteed to be disabled by default.
+        // And this function is no longer needed to protect against XXE attacks, unless the (still vulnerable). LIBXML_NOENT is used.
+        // In that case, it is recommended to refactor the code using libxml_set_external_entity_loader() to suppress loading of external entities.
+        if (\PHP_VERSION_ID < 80000) {
+            $disableLibxmlEntityLoader = libxml_disable_entity_loader(true);
+            $respObject = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOERROR);
+            libxml_disable_entity_loader($disableLibxmlEntityLoader);
+        } else {
+            $respObject = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOERROR);
+        }
+
         if ($respObject === false) {
             throw new InvalidArgumentException('Syntax error.');
         }

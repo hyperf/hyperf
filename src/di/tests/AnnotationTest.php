@@ -14,9 +14,10 @@ namespace HyperfTest\Di;
 use Hyperf\Di\Annotation\AnnotationReader;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
-use Hyperf\Di\BetterReflectionManager;
 use Hyperf\Di\ClassLoader;
 use Hyperf\Di\Exception\DirectoryNotExistException;
+use Hyperf\Di\ReflectionManager;
+use Hyperf\Di\ScanHandler\NullScanHandler;
 use HyperfTest\Di\Stub\AnnotationCollector;
 use HyperfTest\Di\Stub\Ignore;
 use HyperfTest\Di\Stub\IgnoreDemoAnnotation;
@@ -36,17 +37,15 @@ class AnnotationTest extends TestCase
 
     public function testIgnoreAnnotations()
     {
-        BetterReflectionManager::initClassReflector([__DIR__ . '/Stub/']);
-
-        $scaner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
+        $scaner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'), new NullScanHandler());
         $reader = new AnnotationReader();
-        $scaner->collect($reader, $ref = BetterReflectionManager::reflectClass(Ignore::class));
+        $scaner->collect($reader, $ref = ReflectionManager::reflectClass(Ignore::class));
         $annotations = AnnotationCollector::get(Ignore::class . '._c');
         $this->assertArrayHasKey(IgnoreDemoAnnotation::class, $annotations);
 
         AnnotationCollector::clear();
 
-        $scaner = new Scanner($loader, new ScanConfig(false, '/', [], [], ['IgnoreDemoAnnotation']));
+        $scaner = new Scanner($loader, new ScanConfig(false, '/', [], [], ['IgnoreDemoAnnotation']), new NullScanHandler());
         $reader = new AnnotationReader();
         $scaner->collect($reader, $ref);
         $annotations = AnnotationCollector::get(Ignore::class . '._c');
@@ -55,7 +54,7 @@ class AnnotationTest extends TestCase
 
     public function testScanAnnotationsDirectoryNotExist()
     {
-        $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
+        $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'), new NullScanHandler());
         $ref = new \ReflectionClass($scanner);
         $method = $ref->getMethod('normalizeDir');
         $method->setAccessible(true);
@@ -66,7 +65,7 @@ class AnnotationTest extends TestCase
 
     public function testScanAnnotationsDirectoryEmpty()
     {
-        $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'));
+        $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'), new NullScanHandler());
         $ref = new \ReflectionClass($scanner);
         $method = $ref->getMethod('normalizeDir');
         $method->setAccessible(true);

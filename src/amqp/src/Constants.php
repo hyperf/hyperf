@@ -13,7 +13,7 @@ namespace Hyperf\Amqp;
 
 class Constants
 {
-    const DELIVERY_MODE_NON_PERSISTENT = 1;
+    public const DELIVERY_MODE_NON_PERSISTENT = 1;
 
-    const DELIVERY_MODE_PERSISTENT = 2;
+    public const DELIVERY_MODE_PERSISTENT = 2;
 }

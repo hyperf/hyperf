@@ -49,6 +49,10 @@ class FilesystemFactory
             ],
         ]);
         $adapter = $this->getAdapter($options, $adapterName);
+        if (Version::isV2()) {
+            return new Filesystem($adapter, $options['storage'][$adapterName] ?? []);
+        }
+
         return new Filesystem($adapter, new Config($options['storage'][$adapterName]));
     }
 

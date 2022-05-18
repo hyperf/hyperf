@@ -13,8 +13,8 @@ namespace Hyperf\Utils\Filesystem;
 
 use ErrorException;
 use FilesystemIterator;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Coroutine;
-use Hyperf\Utils\Traits\Macroable;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -104,6 +104,14 @@ class Filesystem
     public function hash(string $path): string
     {
         return md5_file($path);
+    }
+
+    /**
+     * Clears file status cache.
+     */
+    public function clearStatCache(string $path): void
+    {
+        clearstatcache(true, $path);
     }
 
     /**

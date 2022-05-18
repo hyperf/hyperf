@@ -100,6 +100,23 @@ $result = $client->json('/user/0',[
 ]);
 ```
 
+### 使用 Cookies
+
+```php
+<?php
+
+use Hyperf\Testing\Client;
+use Hyperf\Utils\Codec\Json;
+
+$client = make(Client::class);
+
+$response = $client->sendRequest($client->initRequest('POST', '/request')->withCookieParams([
+    'X-CODE' => $id = uniqid(),
+]));
+
+$data = Json::decode((string) $response->getBody());
+```
+
 ## 示例
 
 讓我們寫個小 DEMO 來測試一下。
@@ -301,7 +318,7 @@ use Mockery;
 
 class DemoLogicTest extends HttpTestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close();
     }
@@ -390,7 +407,10 @@ use Mockery;
 
 class DemoLogicTest extends HttpTestCase
 {
-    public function tearDown()
+    /**
+     * @after
+     */
+    public function tearDownAfterMethod()
     {
         Mockery::close();
     }
@@ -443,23 +463,38 @@ class DemoLogicTest extends HttpTestCase
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false">
+    <php>
+        <!-- other PHP.ini or environment variables -->
+        <ini name="memory_limit" value="-1" />
+    </php>
     <testsuites>
         <testsuite name="Tests">
+            // 需要執行單測的測試案例目錄
             <directory suffix="Test.php">./test</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        // 需要生成單元測試覆蓋率的檔案
-        <whitelist processUncoveredFilesFromWhitelist="false">
+    <coverage includeUncoveredFiles="true"
+              processUncoveredFiles="true"
+              pathCoverage="false"
+              ignoreDeprecatedCodeUnits="true"
+              disableCodeCoverageIgnore="false">
+        <include>
+            // 需要統計單元測試覆蓋率的檔案
             <directory suffix=".php">./app</directory>
-        </whitelist>
-    </filter>
-
+        </include>
+        <exclude>
+            // 生產單元測試覆蓋率時，需要忽略的檔案
+            <directory suffix=".php">./app/excludeFile</directory>
+        </exclude>
+        <report>
+            <html outputDirectory="test/cover/" lowUpperBound="50" highLowerBound="90"/>
+        </report>
+    </coverage>
     <logging>
-        <log type="coverage-html" target="cover/"/>
+        <junit outputFile="test/junit.xml"/>
     </logging>
-</phpunit>
 
+</phpunit>
 ```
 
 

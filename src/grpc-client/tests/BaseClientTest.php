@@ -25,7 +25,6 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\Http\Server;
 use TypeError;
-use function GuzzleHttp\Promise\coroutine;
 
 /**
  * @internal

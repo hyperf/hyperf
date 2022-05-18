@@ -51,6 +51,20 @@ class RedisProxyTest extends TestCase
         $this->assertSame('yyy', $this->getRedis()->get('test:test'));
     }
 
+    public function testHyperLogLog()
+    {
+        $redis = $this->getRedis();
+        $res = $redis->pfAdd('test:hyperloglog', ['123', 'fff']);
+        $this->assertSame(1, $res);
+        $res = $redis->pfAdd('test:hyperloglog', ['123']);
+        $this->assertSame(0, $res);
+        $this->assertSame(2, $redis->pfCount('test:hyperloglog'));
+        $redis->pfAdd('test:hyperloglog2', [1234]);
+        $redis->pfMerge('test:hyperloglog2', ['test:hyperloglog']);
+        $this->assertSame(3, $redis->pfCount('test:hyperloglog2'));
+        $this->assertFalse($redis->pfAdd('test:hyperloglog3', []));
+    }
+
     public function testRedisOptionSerializer()
     {
         $redis = $this->getRedis([

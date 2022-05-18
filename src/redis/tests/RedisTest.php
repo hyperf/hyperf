@@ -172,6 +172,28 @@ class RedisTest extends TestCase
         }
     }
 
+    public function testShuffleNodes()
+    {
+        $nodes = ['127.0.0.1:6379', '127.0.0.1:6378', '127.0.0.1:6377'];
+
+        shuffle($nodes);
+
+        $this->assertIsArray($nodes);
+        $this->assertSame(3, count($nodes));
+    }
+
+    public function testRedisSentinelParams()
+    {
+        $rel = new \ReflectionClass(\RedisSentinel::class);
+        $method = $rel->getMethod('__construct');
+        $count = count($method->getParameters());
+        if ($count === 6) {
+            $this->markTestIncomplete('RedisSentinel don\'t support auth.');
+        }
+
+        $this->assertSame(7, $count);
+    }
+
     private function getRedis()
     {
         $container = $this->getContainer();

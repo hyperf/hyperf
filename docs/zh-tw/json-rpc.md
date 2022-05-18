@@ -56,8 +56,8 @@ class CalculatorService implements CalculatorServiceInterface
 `@RpcService` 共有 `4` 個引數：   
 `name` 屬性為定義該服務的名稱，這裡定義一個全域性唯一的名字即可，Hyperf 會根據該屬性生成對應的 ID 註冊到服務中心去；   
 `protocol` 屬性為定義該服務暴露的協議，目前僅支援 `jsonrpc-http`, `jsonrpc`, `jsonrpc-tcp-length-check` ，分別對應於 HTTP 協議和 TCP 協議下的兩種協議，預設值為 `jsonrpc-http`，這裡的值對應在 `Hyperf\Rpc\ProtocolManager` 裡面註冊的協議的 `key`，它們本質上都是 JSON RPC 協議，區別在於資料格式化、資料打包、資料傳輸器等不同。   
-`server` 屬性為繫結該服務類釋出所要承載的 `Server`，預設值為 `jsonrpc-http`，該屬性對應 `config/autoload/server.php` 檔案內 `servers` 下所對應的 `name`，這裡也就意味著我們需要定義一個對應的 `Server`，我們下一章節具體闡述這裡應該怎樣去處理；   
-`publishTo` 屬性為定義該服務所要釋出的服務中心，目前僅支援 `consul` 或為空，為空時代表不釋出該服務到服務中心去，但也就意味著您需要手動處理服務發現的問題，當值為 `consul` 時需要對應配置好 [hyperf/consul](zh-tw/consul.md) 元件的相關配置，要使用此功能需安裝 [hyperf/service-governance](https://github.com/hyperf/service-governance) 元件，具體可參考 [服務註冊](zh-tw/service-register.md) 章節；
+`server` 屬性為繫結該服務類釋出所要承載的 `Server`，預設值為 `jsonrpc-http`，該屬性對應 `config/autoload/server.php` 檔案內 `servers` 下所對應的 `name`，這裡也就意味著我們需要定義一個對應的 `Server`；   
+`publishTo` 屬性為定義該服務所要釋出的服務中心，目前僅支援 `consul`、`nacos` 或為空，為空時代表不釋出該服務到服務中心去，但也就意味著您需要手動處理服務發現的問題，要使用此功能需安裝 [hyperf/service-governance](https://github.com/hyperf/service-governance) 元件及對應的驅動依賴，具體可參考 [服務註冊](zh-tw/service-register.md) 章節；
 
 > 使用 `@RpcService` 註解需 `use Hyperf\RpcServer\Annotation\RpcService;` 名稱空間。
 
@@ -154,18 +154,45 @@ return [
 
 ### 釋出到服務中心
 
-目前僅支援釋出服務到 `consul`，後續會增加其它服務中心。   
-釋出服務到 `consul` 在 Hyperf 也是非常容易的一件事情，通過 `composer require hyperf/consul` 載入 Consul 元件（如果已安裝則可忽略該步驟），然後再在 `config/autoload/consul.php` 配置檔案內配置您的 `Consul` 配置即可，示例如下：
+目前僅支援釋出服務到 `consul`、`nacos`，後續會增加其它服務中心。   
+釋出服務到 `consul` 在 Hyperf 也是非常容易的一件事情，通過 `composer require hyperf/service-governance-consul` 引用元件（如果已安裝則可忽略該步驟），然後再在 `config/autoload/services.php` 配置檔案內配置 `drivers.consul` 配置即可。
+釋出服務到 `nacos` 在也是類似，通過 `composer require hyperf/service-governance-nacos` 引用元件（如果已安裝則可忽略該步驟），然後再在 `config/autoload/services.php` 配置檔案內配置 `drivers.nacos` 配置即可，示例如下：
 
 ```php
 <?php
-
 return [
-    'uri' => 'http://127.0.0.1:8500',
+    'enable' => [
+        'discovery' => true,
+        'register' => true,
+    ],
+    'consumers' => [],
+    'providers' => [],
+    'drivers' => [
+        'consul' => [
+            'uri' => 'http://127.0.0.1:8500',
+            'token' => '',
+        ],
+        'nacos' => [
+            // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
+            // 'url' => '',
+            // The nacos host info
+            'host' => '127.0.0.1',
+            'port' => 8848,
+            // The nacos account info
+            'username' => null,
+            'password' => null,
+            'guzzle' => [
+                'config' => null,
+            ],
+            'group_name' => 'api',
+            'namespace_id' => 'namespace_id',
+            'heartbeat' => 5,
+        ],
+    ],
 ];
 ```
 
-配置完成後，在啟動服務時，Hyperf 會自動地將 `@RpcService` 定義了 `publishTo` 屬性為 `consul` 的服務註冊到服務中心去。
+配置完成後，在啟動服務時，Hyperf 會自動地將 `@RpcService` 定義了 `publishTo` 屬性為 `consul` 或 `nacos` 的服務註冊到對應的服務中心去。
 
 > 目前僅支援 `jsonrpc` 和 `jsonrpc-http` 協議釋出到服務中心去，其它協議尚未實現服務註冊
 
@@ -180,6 +207,7 @@ return [
 ```php
 <?php
 return [
+    // 此處省略了其它同層級的配置
     'consumers' => [
         [
             // name 需與服務提供者的 name 屬性相同
@@ -219,6 +247,8 @@ return [
                 'retry_count' => 2,
                 // 重試間隔，毫秒
                 'retry_interval' => 100,
+                // 使用多路複用 RPC 時的心跳間隔，null 為不觸發心跳
+                'heartbeat' => 30,
                 // 當使用 JsonRpcPoolTransporter 時會用到以下配置
                 'pool' => [
                     'min_connections' => 1,
@@ -275,6 +305,7 @@ class CalculatorServiceConsumer extends AbstractServiceClient implements Calcula
 ```php
 <?php
 return [
+    // 此處省略了其它同層級的配置
     'consumers' => [
         [
             // 對應消費者類的 $serviceName
@@ -336,6 +367,7 @@ return [
 ```php
 <?php
 return [
+    // 此處省略了其它同層級的配置
     'consumers' => value(function () {
         $consumers = [];
         // 這裡示例自動建立代理消費者類的配置形式，顧存在 name 和 service 兩個配置項，這裡的做法不是唯一的，僅說明可以通過 PHP 程式碼來生成配置

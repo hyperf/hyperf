@@ -220,7 +220,7 @@ trait ValidatesAttributes
             return true;
         }
 
-        if ((! is_string($value) && ! is_numeric($value)) || strtotime($value) === false) {
+        if ((! is_string($value) && ! is_numeric($value)) || strtotime((string) $value) === false) {
             return false;
         }
 
@@ -374,7 +374,7 @@ trait ValidatesAttributes
             return false;
         }
 
-        return (new EmailValidator())->isValid($value, new RFCValidation());
+        return (new EmailValidator())->isValid((string) $value, new RFCValidation());
     }
 
     /**
@@ -1057,8 +1057,6 @@ trait ValidatesAttributes
     {
         try {
             new DateTimeZone($value);
-        } catch (Exception $e) {
-            return false;
         } catch (Throwable $e) {
             return false;
         }
@@ -1476,7 +1474,7 @@ trait ValidatesAttributes
      * Get the size of an attribute.
      *
      * @param mixed $value
-     * @return mixed
+     * @return float|int
      */
     protected function getSize(string $attribute, $value)
     {

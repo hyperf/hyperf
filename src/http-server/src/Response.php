@@ -13,12 +13,14 @@ namespace Hyperf\HttpServer;
 
 use BadMethodCallException;
 use Hyperf\HttpMessage\Cookie\Cookie;
+use Hyperf\HttpMessage\Server\Chunk\Chunkable;
 use Hyperf\HttpMessage\Stream\SwooleFileStream;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Exception\Http\EncodingException;
 use Hyperf\HttpServer\Exception\Http\FileException;
 use Hyperf\HttpServer\Exception\Http\InvalidResponseException;
+use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ClearStatCache;
 use Hyperf\Utils\Codec\Json;
@@ -29,7 +31,6 @@ use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Contracts\Xmlable;
 use Hyperf\Utils\MimeTypeExtensionGuesser;
 use Hyperf\Utils\Str;
-use Hyperf\Utils\Traits\Macroable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
@@ -166,7 +167,7 @@ class Response implements PsrResponseInterface, ResponseInterface
 
         return $this->withHeader('content-description', 'File Transfer')
             ->withHeader('content-type', $contentType)
-            ->withHeader('content-disposition', "attachment; filename={$filename}")
+            ->withHeader('content-disposition', "attachment; filename={$filename}; filename*=UTF-8''" . rawurlencode($filename))
             ->withHeader('content-transfer-encoding', 'binary')
             ->withHeader('pragma', 'public')
             ->withHeader('etag', $etag)
@@ -410,6 +411,16 @@ class Response implements PsrResponseInterface, ResponseInterface
     public function getReasonPhrase(): string
     {
         return $this->getResponse()->getReasonPhrase();
+    }
+
+    public function write(string $data): bool
+    {
+        $response = $this->getResponse();
+        if ($response instanceof Chunkable) {
+            return $response->write($data);
+        }
+
+        return false;
     }
 
     protected function call($name, $arguments)

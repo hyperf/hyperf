@@ -1,86 +1,9 @@
 # 常見問題
 
-## `Inject` 或 `Value` 註解不生效
-
-`2.0` 使用了構造函數中注入 `Inject` 和 `Value` 的功能，以下兩種場景，可能會導致注入失效，請注意使用。
-
-1. 原類沒有使用 `Inject` 或 `Value`，但父類使用了 `Inject` 或 `Value`，且原類寫了構造函數，同時又沒有調用父類構造函數的情況。
-
-這樣就會導致原類不會生成代理類，而實例化的時候又調用了自身的構造函數，故沒辦法執行到父類的構造函數。
-所以父類代理類中的方法 `__handlePropertyHandler` 就不會執行，那麼 `Inject` 或 `Value` 註解就不會生效。
-
-```php
-class ParentClass {
-    /**
-     * @Inject
-     * @var Service
-     */
-    protected $value;
-}
-
-class Origin extends ParentClass
-{
-    public function __construct() {}
-}
-```
-
-2. 原類沒有使用 `Inject` 或 `Value`，但 `Trait` 中使用了 `Inject` 或 `Value`。
-
-這樣就會導致原類不會生成代理類，故沒辦法執行構造函數裏的 `__handlePropertyHandler`，所以 `Trait` 的 `Inject` 或 `Value` 註解就不會生效。
-
-```php
-trait OriginTrait {
-    /**
-     * @Inject
-     * @var Service
-     */
-    protected $value;
-}
-
-class Origin
-{
-    use OriginTrait;
-}
-```
-
-基於上述兩種情況，可見 `原類` 是否生成代理類至關重要，所以，如果使用了帶有 `Inject` 或 `Value` 的 `Trait` 和 `父類` 時，給原類添加一個 `Inject`，即可解決上述兩種情況。
-
-```php
-
-use Hyperf\Contract\StdoutLoggerInterface;
-
-trait OriginTrait {
-    /**
-     * @Inject
-     * @var Service
-     */
-    protected $trait;
-}
-
-class ParentClass {
-    /**
-     * @Inject
-     * @var Service
-     */
-    protected $value;
-}
-
-class Origin extends ParentClass
-{
-    use OriginTrait;
-
-    /**
-     * @Inject
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-}
-```
-
 ## Swoole 短名未關閉
 
 ```
-[ERROR] Swoole short name have to disable before start server, please set swoole.use_shortname = 'Off' into your php.ini.
+[ERROR] Swoole short function names must be disabled before the server starts, please set swoole.use_shortname = 'Off' in your php.ini.
 ```
 
 您需要在您的 php.ini 配置文件增加 `swoole.use_shortname = 'Off'` 配置項
@@ -144,7 +67,7 @@ Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line
 
 PHP 默認的 `memory_limit` 只有 `128M`，因為 `Hyperf` 使用了 `BetterReflection`，不使用掃描緩存時，會消耗大量內存，所以可能會出現內存不夠的情況。
 
-我們可以使用 `php -dmemory_limit=-1 bin/hyperf.php start` 運行, 或者修改 `php.ini` 配置文件
+我們可以使用 `php -d memory_limit=-1 bin/hyperf.php start` 運行, 或者修改 `php.ini` 配置文件
 
 ```
 # 查看 php.ini 配置文件位置
@@ -152,4 +75,169 @@ php --ini
 
 # 修改 memory_limit 配置
 memory_limit=-1
+```
+
+## PHP 7.3 版本對 DI 的兼容性有所下降
+
+在 `2.0` - `2.1` 版本時，為了實現 `AOP` 作用於非 `DI` 管理的對象（如 `new` 關鍵詞實例化的對象時），底層實現採用了 `BetterReflection` 組件來實現相關功能，帶來新的編程體驗的同時，也帶來了一些很難攻克的問題，如下:
+
+- 無掃描緩存時項目啟動很慢
+- 特殊場景下 `Inject` 和 `Value` 不生效
+- `BetterReflection` 尚未支持 PHP 8 (截止 2.2 發版時)
+
+在新的版本里，棄用了 `BetterReflection` 的應用，採用了 `子進程掃描` 的方式來解決以上這些痛點，但在低版本的 `PHP` 中也有一些不兼容的情況：
+
+使用 `PHP 7.3` 啟動應用後遇到類似如下錯誤：
+
+```bash
+PHP Fatal error:  Interface 'Hyperf\Signal\SignalHandlerInterface' not found in vendor/hyperf/process/src/Handler/ProcessStopHandler.php on line 17
+
+PHP Fatal error:  Interface 'Symfony\Component\Serializer\SerializerInterface' not found in vendor/hyperf/utils/src/Serializer/Serializer.php on line 46
+```
+
+此問題是由於在 `PHP 7.3` 中通過 `子進程掃描` 的方式去獲取反射，在某個類中實現了一個不存在的 `Interface` ，就會導致拋出 `Interface not found` 的異常，而高版本的 `PHP` 則不會。
+
+解決方法為創建對應的 `Interface` 並正常引入。上文中的報錯解決方法為安裝對應所依賴的組件即可。
+
+> 當然，最好還是可以升級到 7.4 或者 8.0 版本
+
+```bash
+composer require hyperf/signal
+
+composer require symfony/serializer
+```
+
+## Trait 內使用 `@Inject` 注入報錯 `Error while injecting dependencies into ... No entry or class found ...`
+
+若 Trait 通過 `@Inject @var` 注入屬性, 同時子類裏 `use` 了不同命名空間的同名類, 會導致 Trait 裏類名被覆蓋，進而導致注入失效:
+
+```php
+use Hyperf\HttpServer\Contract\ResponseInterface;
+use Hyperf\Di\Annotation\Inject;
+
+trait TestTrait
+{
+    /**
+     * @Inject()   
+     * @var ResponseInterface
+     */
+    protected $response;
+}
+```
+
+如上 Trait 類注入 `Hyperf\HttpServer\Contract\ResponseInterface`, 若子類使用不同命名空間的`ResponseInterface` 類, 如`use Psr\Http\Message\ResponseInterface`, 會導致 Trait 原類名被覆蓋:
+
+```php
+// use 同類名會覆蓋Trait
+use Psr\Http\Message\ResponseInterface;
+
+class IndexController
+{
+    use TestTrait;
+}
+// Error while injecting dependencies into App\Controller\IndexController: No entry or class found for 'Psr\Http\Message\ResponseInterface'
+```
+
+上述問題可以通過以下兩個方法解決:
+
+- 子類通過 `as` 修改別名: `use Psr\Http\Message\ResponseInterface as PsrResponseInterface;`
+- Trait 類`PHP7.4` 以上通過屬性類型限制: `protected ResponseInterface $response;`
+
+## Grpc 擴展或未安裝 Pcntl 導致項目無法啟動
+
+- v2.2 版本的註解掃描使用了 `pcntl` 擴展，所以請先確保您的 `PHP` 安裝了此擴展。
+
+```shell
+php --ri pcntl
+
+pcntl
+
+pcntl support => enabled
+```
+
+- 當開啟 `grpc` 的時候，需要添加 `grpc.enable_fork_support= 1;` 到 `php.ini` 中，以支持開啟子進程。
+
+## HTTP Server 將 `open_websocket_protocol` 設置為 `false` 後啟動報錯：`Swoole\Server::start(): require onReceive callback`
+
+1. 檢查 Swoole 是否編譯了 http2
+
+```shell
+php --ri swoole | grep http2
+http2 => enabled
+```
+
+如果沒有，需要重新編譯 Swoole 並增加 `--enable-http2` 參數。
+
+2. 檢查 [server.php](/zh-hk/config?id=serverphp-配置説明) 文件中 `open_http2_protocol` 選項是否為 `true`。
+
+## Command 無法正常關閉
+
+在 Command 中使用 AMQP 等多路複用技術後，會導致無法正常關閉，碰到這種情況只需要在執行邏輯最後增加以下代碼即可。
+
+```php
+<?php
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coordinator\Constants;
+
+CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
+```
+
+
+## ORM 不支持 bit 類型
+
+若想要使 `ORM` 支持 `bit` 類型，只需要增加以下監聽器代碼即可。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Hyperf\Database\Connection;
+use Hyperf\Database\MySqlBitConnection;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Framework\Event\BootApplication;
+
+#[Listener]
+class SupportMySQLBitListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            BootApplication::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        Connection::resolverFor('mysql', static function ($connection, $database, $prefix, $config) {
+            return new MySqlBitConnection($connection, $database, $prefix, $config);
+        });
+    }
+}
+
+```
+
+## OSS 上傳組件報 iconv 錯誤
+
+- fix aliyun oss wrong charset: https://github.com/aliyun/aliyun-oss-php-sdk/issues/101
+- https://github.com/docker-library/php/issues/240#issuecomment-762438977
+- https://github.com/docker-library/php/pull/1264
+
+當使用 `aliyuncs/oss-sdk-php` 組件上傳時，會報 iconv 錯誤，可以嘗試使用以下方式規避：
+
+使用 `hyperf/hyperf:8.0-alpine-v3.12-swoole` 鏡像時
+
+```
+RUN apk --no-cache --allow-untrusted --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ add gnu-libiconv=1.15-r2
+ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so
+```
+
+使用 `hyperf/hyperf:8.0-alpine-v3.13-swoole` 鏡像時
+
+```dockerfile
+RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.13/community/ gnu-libiconv=1.15-r3
+ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 ```

@@ -47,6 +47,20 @@ Router::addServer('ws', function () {
 });
 ```
 
+## 配置中间件
+
+在 `config/autoload/middlewares.php` 文件内增加对应 `ws` 的 Server 的全局中间件配置，这里的 `ws` 值取决于您在 `config/autoload/server.php` 内配置的 WebSocket Server 的 `name` 值。
+
+```php
+<?php
+
+return [
+    'ws' => [
+        yourMiddleware::class
+    ]
+];
+```
+
 ## 创建对应控制器
 
 ```php

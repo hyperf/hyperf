@@ -13,9 +13,9 @@ namespace Hyperf\Database\Commands;
 
 class ModelOption
 {
-    const PROPERTY_SNAKE_CASE = 0;
+    public const PROPERTY_SNAKE_CASE = 0;
 
-    const PROPERTY_CAMEL_CASE = 1;
+    public const PROPERTY_CAMEL_CASE = 1;
 
     /**
      * @var string

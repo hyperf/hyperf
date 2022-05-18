@@ -20,17 +20,17 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class ResponseBuilder
 {
-    const SERVER_ERROR = -32000;
+    public const SERVER_ERROR = -32000;
 
-    const INVALID_REQUEST = -32600;
+    public const INVALID_REQUEST = -32600;
 
-    const METHOD_NOT_FOUND = -32601;
+    public const METHOD_NOT_FOUND = -32601;
 
-    const INVALID_PARAMS = -32602;
+    public const INVALID_PARAMS = -32602;
 
-    const INTERNAL_ERROR = -32603;
+    public const INTERNAL_ERROR = -32603;
 
-    const PARSE_ERROR = -32700;
+    public const PARSE_ERROR = -32700;
 
     /**
      * @var \Hyperf\Rpc\Contract\DataFormatterInterface
@@ -51,14 +51,14 @@ class ResponseBuilder
     public function buildErrorResponse(ServerRequestInterface $request, int $code, \Throwable $error = null): ResponseInterface
     {
         $body = new SwooleStream($this->formatErrorResponse($request, $code, $error));
-        return $this->response()->withAddedHeader('content-type', 'application/json')->withBody($body);
+        return $this->response()->withHeader('content-type', 'application/json')->withBody($body);
     }
 
     public function buildResponse(ServerRequestInterface $request, $response): ResponseInterface
     {
         $body = new SwooleStream($this->formatResponse($response, $request));
         return $this->response()
-            ->withAddedHeader('content-type', 'application/json')
+            ->withHeader('content-type', 'application/json')
             ->withBody($body);
     }
 

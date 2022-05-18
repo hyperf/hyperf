@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Kafka\Annotation;
 
+use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
 /**
  * @Annotation
  * @Target({"CLASS"})
  */
+#[Attribute(Attribute::TARGET_CLASS)]
 class Consumer extends AbstractAnnotation
 {
     /**

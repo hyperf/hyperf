@@ -57,7 +57,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
     private $methodDefinitionCollector;
 
     /**
-     * @var ClosureDefinitionCollectorInterface | null
+     * @var null|ClosureDefinitionCollectorInterface
      */
     private $closureDefinitionCollector;
 

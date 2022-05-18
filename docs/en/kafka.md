@@ -131,9 +131,7 @@ use Hyperf\Kafka\AbstractConsumer;
 use Hyperf\Kafka\Annotation\Consumer;
 use longlang\phpkafka\Consumer\ConsumeMessage;
 
-/**
- * @Consumer(topic="hyperf", nums=5, groupId="hyperf", autoCommit=true)
- */
+#[Consumer(topic: "hyperf", nums: 5, groupId: "hyperf", autoCommit: true)]
 class KafkaConsumer extends AbstractConsumer
 {
     public function consume(ConsumeMessage $message): string
@@ -157,9 +155,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\Kafka\Producer;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController extends AbstractController
 {
     public function index(Producer $producer)
@@ -185,9 +181,7 @@ use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\Kafka\Producer;
 use longlang\phpkafka\Producer\ProduceMessage;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController extends AbstractController
 {
     public function index(Producer $producer)
