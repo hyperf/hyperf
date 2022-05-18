@@ -3482,7 +3482,7 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator(
             $trans,
             ['foo' => [['name' => 'first'], ['name' => 'second']]],
-            ['foo' => 'Array', 'foo.*' => 'Array:name', 'foo.*.name' => ['Required', 'Numeric']]
+            ['foo' => 'Array', 'foo.*' => 'Array:name', 'foo.*.name' => ['Required']]
         );
         $this->assertTrue($v->passes());
 
@@ -3490,9 +3490,9 @@ class ValidationValidatorTest extends TestCase
         $v = new Validator(
             $trans,
             ['foo' => [['name' => 'first'], ['name' => 'second']]],
-            ['foo' => 'Array', 'foo.*' => 'Array:name,votes', 'foo.*.name' => ['Required', 'Numeric']]
+            ['foo' => 'Array', 'foo.*' => 'Array:name,votes', 'foo.*.name' => ['Required']]
         );
-        $this->assertFalse($v->passes());
+        $this->assertTrue($v->passes());
     }
 
     public function testSometimesOnArraysInImplicitRules()
