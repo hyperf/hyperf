@@ -24,7 +24,7 @@ abstract class Job implements JobInterface, CompressInterface, UnCompressInterfa
     }
 
     /**
-     * @return static 
+     * @return static
      */
     public function uncompress(): CompressInterface
     {
@@ -38,7 +38,7 @@ abstract class Job implements JobInterface, CompressInterface, UnCompressInterfa
     }
 
     /**
-     * @return static 
+     * @return static
      */
     public function compress(): UnCompressInterface
     {
