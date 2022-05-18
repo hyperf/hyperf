@@ -31,11 +31,7 @@ trait RenewalMutex
                     break;
                 }
                 if ($ttl < 2) {
-                    $redis->set(
-                        $this->getMutexName($crontab),
-                        $crontab->getName(),
-                        ['EX' => $crontab->getMutexExpires()]
-                    );
+                    $redis->expire($this->getMutexName($crontab), $crontab->getMutexExpires());
                 }
                 Coroutine::sleep(1);
             }
