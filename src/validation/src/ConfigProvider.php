@@ -35,6 +35,9 @@ class ConfigProvider
                     'paths' => [
                         __DIR__,
                     ],
+                    'collectors' => [
+                        SceneCollector::class,
+                    ],
                 ],
             ],
             'publish' => [

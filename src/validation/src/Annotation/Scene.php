@@ -13,6 +13,7 @@ namespace Hyperf\Validation\Annotation;
 
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
+use Hyperf\Validation\SceneCollector;
 
 /**
  * @Annotation
@@ -21,13 +22,16 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 #[Attribute(Attribute::TARGET_METHOD)]
 class Scene extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
     public $scene;
 
-    public function __construct($scene)
+    public function __construct(...$value)
     {
-        $this->scene = $scene;
+        parent::__construct(...$value);
+        $this->bindMainProperty('scene', $value);
+    }
+
+    public function collectMethod(string $className, ?string $target): void
+    {
+        SceneCollector::set($className . ':' . $target, $this->scene);
     }
 }

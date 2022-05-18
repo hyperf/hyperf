@@ -24,8 +24,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Validation\Annotation\Scene;
+use Hyperf\Validation\SceneCollector;
 
 class ValidationMiddleware implements MiddlewareInterface
 {
@@ -73,7 +73,7 @@ class ValidationMiddleware implements MiddlewareInterface
                         if ($this->isImplementedValidatesWhenResolved($classname)) {
                             /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved $formRequest */
                             $formRequest = $this->container->get($classname);
-                            $scene = $this->getScene($requestHandler, $method);
+                            $scene = SceneCollector::get($requestHandler . ':' . $method);
                             if($scene){
                                 $formRequest->scene($scene);
                             }
@@ -133,14 +133,4 @@ class ValidationMiddleware implements MiddlewareInterface
         throw new \RuntimeException('Handler not exist.');
     }
 
-    private function getScene($class, $method)
-    {
-        $annotations = AnnotationCollector::getMethodsByAnnotation(Scene::class);
-        foreach ($annotations as $annotation){
-            if ($annotation['class'] == $class && $annotation['method'] == $method && $annotation['annotation']->scene['value']){
-                return $annotation['annotation']->scene['value'];
-            }
-        }
-        return null;
-    }
 }
