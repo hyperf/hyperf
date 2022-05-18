@@ -1,5 +1,9 @@
 # v2.2.33 - TBD
 
+## Added
+
+- [#4763](https://github.com/hyperf/hyperf/pull/4763) Added validation rule `array:key1,key2`.
+
 # v2.2.32 - 2022-05-16
 
 ## Fixed
