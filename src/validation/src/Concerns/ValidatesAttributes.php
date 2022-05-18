@@ -168,7 +168,7 @@ trait ValidatesAttributes
      *
      * @param mixed $value
      */
-    public function validateArray(string $attribute, $value, array $parameters): bool
+    public function validateArray(string $attribute, $value, array $parameters = []): bool
     {
         if (! is_array($value)) {
             return false;
