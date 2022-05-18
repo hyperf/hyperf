@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Crontab\Mutex;
 
+use Closure;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\Coroutine;
@@ -20,12 +21,13 @@ trait RenewalMutex
     /**
      * Mutex renews in less than 2 seconds.
      */
-    public function renewalClosure(Crontab $crontab, RedisProxy $redis): \Closure
+    public function renewalClosure(Crontab $crontab, RedisProxy $redis): Closure
     {
         return function () use ($crontab, $redis) {
             while (true) {
                 $ttl = $redis->ttl($this->getMutexName($crontab));
-                if ($ttl === false) {
+                // expire or never expire
+                if ($ttl === -2 || $ttl === -1) {
                     break;
                 }
                 if ($ttl < 2) {
