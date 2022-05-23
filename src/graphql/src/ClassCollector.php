@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\GraphQL;
 
+use Hyperf\Utils\Filesystem\Filesystem;
+
 class ClassCollector
 {
     private static $classes = [];
@@ -20,10 +22,16 @@ class ClassCollector
         if (! in_array($class, self::$classes)) {
             self::$classes[] = $class;
         }
+        $filesystem = new Filesystem();
+        $filesystem->put(BASE_PATH . '/runtime/container/graphql.cache', serialize(self::$classes));
     }
 
     public static function getClasses()
     {
+        $filesystem = new Filesystem();
+        if ($filesystem->exists(BASE_PATH . '/runtime/container/graphql.cache')) {
+            return unserialize($filesystem->get(BASE_PATH . '/runtime/container/graphql.cache'));
+        }
         return self::$classes;
     }
 }
