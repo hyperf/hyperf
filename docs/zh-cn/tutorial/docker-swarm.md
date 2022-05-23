@@ -216,8 +216,10 @@ docker service create \
 
 ### 备份 Portainer 的数据
 
+> portainer_container 为对应的容器名，按实际情况填写
+
 ```
-docker run -it --volumes-from portainer -v $(pwd):/backup --name backup --rm nginx tar -cf /backup/data.tar /data/
+docker run -it --volumes-from portainer_container -v $(pwd):/backup --name backup --rm nginx tar -cf /backup/data.tar /data/
 ```
 
 ### 恢复 Portainer 的数据
@@ -227,7 +229,7 @@ docker run -it --volumes-from portainer -v $(pwd):/backup --name backup --rm ngi
 然后使用以下方法，将备份重载到容器中
 
 ```
-docker run -it --volumes-from portainer -v $(pwd):/backup --name importer --rm nginx bash
+docker run -it --volumes-from portainer_container -v $(pwd):/backup --name importer --rm nginx bash
 cd /backup
 tar xf data.tar -C /
 ```
