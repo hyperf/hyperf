@@ -44,6 +44,9 @@ class ConfigProvider
                         __DIR__,
                     ],
                 ],
+                'collectors' => [
+                    ClassCollector::class,
+                ],
             ],
         ];
     }

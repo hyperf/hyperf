@@ -11,27 +11,24 @@ declare(strict_types=1);
  */
 namespace Hyperf\GraphQL;
 
-use Hyperf\Utils\Filesystem\Filesystem;
+use Hyperf\Di\MetadataCollector;
 
-class ClassCollector
+class ClassCollector extends MetadataCollector
 {
-    private static $classes = [];
+    /**
+     * @var array
+     */
+    protected static $container = [];
 
     public static function collect(string $class)
     {
-        if (! in_array($class, self::$classes)) {
-            self::$classes[] = $class;
+        if (! in_array($class, self::$container)) {
+            self::$container[] = $class;
         }
-        $filesystem = new Filesystem();
-        $filesystem->put(BASE_PATH . '/runtime/container/graphql.cache', serialize(self::$classes));
     }
 
     public static function getClasses()
     {
-        $filesystem = new Filesystem();
-        if ($filesystem->exists(BASE_PATH . '/runtime/container/graphql.cache')) {
-            return unserialize($filesystem->get(BASE_PATH . '/runtime/container/graphql.cache'));
-        }
-        return self::$classes;
+        return self::$container;
     }
 }
