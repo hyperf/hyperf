@@ -214,6 +214,28 @@ docker service create \
     portainer/portainer
 ```
 
+### 备份 Portainer 的数据
+
+> portainer_container 为对应的容器名，按实际情况填写
+
+```
+docker run -it --volumes-from portainer_container -v $(pwd):/backup --name backup --rm nginx tar -cf /backup/data.tar /data/
+```
+
+### 恢复 Portainer 的数据
+
+首先使用创建命令，重新创建 portainer 服务
+
+然后使用以下方法，将备份重载到容器中
+
+```
+docker run -it --volumes-from portainer_container -v $(pwd):/backup --name importer --rm nginx bash
+cd /backup
+tar xf data.tar -C /
+```
+
+最后只需要重启容器即可
+
 ## 创建一个 Demo 项目
 
 登录 Gitlab 创建一个 Demo 项目。并导入我们的项目 [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton)
