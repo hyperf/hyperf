@@ -1,5 +1,9 @@
 # v2.2.33 - TBD
 
+## Fixed
+
+- [#4776](https://github.com/hyperf/hyperf/pull/4776) Fixed bug that graphql event collect failed.
+
 ## Added
 
 - [#4763](https://github.com/hyperf/hyperf/pull/4763) Added validation rule `array:key1,key2` which make sure the array has no keys other than `key1` and `key2`.
