@@ -8,7 +8,7 @@ Various Dockerfiles have been prepared for in the [hyperf/hyperf-docker](https:/
 
 If you don't use Docker as the basis for your system environment, you need to make sure that your native environment meets the following requirements:
 
- - PHP >= 7.3
+ - PHP >= 7.3 and <= 8.0
  - Swoole PHP extension >= 4.5，with `swoole.use_shortname` set to `Off` in your `php.ini`
  - OpenSSL PHP extension
  - JSON PHP extension
