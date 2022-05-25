@@ -1,5 +1,16 @@
 # 版本更新記錄
 
+# v2.2.32 - 2022-05-16
+
+## 修復
+
+- [#4745](https://github.com/hyperf/hyperf/pull/4745) 當使用 `kafka` 元件的 `Producer::close` 方法時，修復可能丟擲空指標異常的問題。
+- [#4754](https://github.com/hyperf/hyperf/pull/4754) 通過配置 `monolog>=2.6.0` 解決新版本的 `monolog` 無法正常工作的問題。
+
+## 優化
+
+- [#4738](https://github.com/hyperf/hyperf/pull/4738) 當使用 `kafka` 元件時，如果沒有設定 `GroupID` 則自動配置一個。
+
 # v2.2.31 - 2022-04-18
 
 ## 修復

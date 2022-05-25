@@ -15,6 +15,12 @@ curl -sSL https://get.daocloud.io/docker | sh
 ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375
 ```
 
+如果不是使用的 `root` 賬户，可以通過以下命令，讓每次執行 `docker` 時，不需要增加 `sudo`
+
+```
+usermod -aG docker $USER
+```
+
 ### 配置倉庫鏡像地址
 
 基於跨國線路訪問速度過慢等問題，我們可以為 Docker 配置倉庫鏡像地址，來改善這些網絡問題，如 [阿里雲(Aliyun) Docker 鏡像加速器](https://help.aliyun.com/document_detail/60750.html)，我們可以申請一個 `Docker` 加速器，然後配置到服務器上的 `/etc/docker/daemon.json` 文件，添加以下內容，然後重啟 `Docker`，下面的地址請填寫您自己獲得的加速器地址。
@@ -44,12 +50,14 @@ $ systemctl restart sshd.service
 重新登錄機器
 
 ```
-ssh -p 2222 root@host 
+ssh -p 2222 root@host
 ```
 
 #### 安裝 Gitlab
 
 我們來通過 Docker 啟動一個 Gitlab 服務，如下：
+
+> hostname 一定要加，如果沒有域名可以直接填外網地址
 
 ```
 sudo docker run -d --hostname gitlab.xxx.cn \
@@ -60,7 +68,11 @@ sudo docker run -d --hostname gitlab.xxx.cn \
 gitlab/gitlab-ce:latest
 ```
 
-首次登錄 `Gitlab` 需要重置密碼，默認用户名為 `root`。
+默認用户名為 `root`，初始密碼通過以下方式獲得
+
+```shell
+docker exec gitlab cat /etc/gitlab/initial_root_password
+```
 
 ### 安裝 gitlab-runner
 
@@ -87,7 +99,7 @@ $ yum install gitlab-runner
 通過 `gitlab-runner register --clone-url http://your-ip/` 命令來將 gitlab-runner 註冊到 Gitlab 上，注意要替換 `your-ip` 為您的 Gitlab 的內網 IP，如下：
 
 ```
-$ gitlab-runner register --clone-url http://your-ip/
+$ sudo gitlab-runner register --clone-url http://your-ip/
 
 Please enter the gitlab-ci coordinator URL (e.g. https://gitlab.com/):
 http://gitlab.xxx.cc/
@@ -107,6 +119,23 @@ shell
 $ vim /etc/gitlab-runner/config.toml
 concurrent = 5
 ```
+
+### 為 gitlab-runner 增加權限
+
+- 免 sudo 執行 docker 的權限
+
+```shell
+sudo usermod -aG docker gitlab-runner
+```
+
+- 鏡像倉庫的權限
+
+```shell
+su gitlab-runner
+docker login -u username your-docker-repository
+```
+
+###
 
 ### 修改郵箱
 
@@ -162,7 +191,7 @@ $ docker swarm join --token <token> ip:2377
 
 > 其他與 builder 一致，但是 tag 卻不能一樣。線上環境可以設置為 tags，測試環境設置為 test
 
-## 安裝其他應用 
+## 安裝其他應用
 
 以下以 `Mysql` 為例，直接使用上述 `network`，支持容器內使用 name 互調。
 
@@ -184,6 +213,28 @@ docker service create \
     --mount type=bind,src=//var/run/docker.sock,dst=/var/run/docker.sock \
     portainer/portainer
 ```
+
+### 備份 Portainer 的數據
+
+> portainer_container 為對應的容器名，按實際情況填寫
+
+```
+docker run -it --volumes-from portainer_container -v $(pwd):/backup --name backup --rm nginx tar -cf /backup/data.tar /data/
+```
+
+### 恢復 Portainer 的數據
+
+首先使用創建命令，重新創建 portainer 服務
+
+然後使用以下方法，將備份重載到容器中
+
+```
+docker run -it --volumes-from portainer_container -v $(pwd):/backup --name importer --rm nginx bash
+cd /backup
+tar xf data.tar -C /
+```
+
+最後只需要重啟容器即可
 
 ## 創建一個 Demo 項目
 
@@ -294,7 +345,7 @@ docker run -d --name kong-database \
   postgres:9.6
 ```
 
-### 安裝網關 
+### 安裝網關
 
 初始化數據庫
 
@@ -367,7 +418,7 @@ docker run --rm -i -v $basepath/.env:/opt/www/.env \
 - 指定 TLinux 源
 
 ```
-tee /etc/yum.repos.d/CentOS-TLinux.repo <<-'EOF' 
+tee /etc/yum.repos.d/CentOS-TLinux.repo <<-'EOF'
 [Tlinux]
 name=Tlinux for redhat/centos $releasever - $basearch
 failovermethod=priority
@@ -462,5 +513,5 @@ docker service update --network-rm old-network service_name
 這是因為 Portainer 修改後，不能作用於已經創建的服務，所以手動更新即可
 
 ```
-docker service update --with-registry-auth service_name   
+docker service update --with-registry-auth service_name
 ```
