@@ -18,7 +18,7 @@
   * [快速開始](zh-tw/quick-start/overview.md)
   * [常見問題](zh-tw/quick-start/questions.md)
   * [程式設計須知](zh-tw/quick-start/important.md)
-  * [視訊教程](https://course.swoole-cloud.com/videos/5/new?from=hyperf.io)
+  * [視訊教程](https://space.bilibili.com/1176880220/channel/seriesdetail?sid=2121560)
 
 * 核心架構
 
