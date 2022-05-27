@@ -78,6 +78,11 @@ class QueryException extends PDOException
      */
     protected function formatMessage($sql, $bindings, $previous)
     {
+        foreach ($bindings as &$binding) {
+            if (is_string($binding)) {
+                $binding = "'$binding'";
+            }
+        }
         return $previous->getMessage() . ' (SQL: ' . Str::replaceArray('?', $bindings, $sql) . ')';
     }
 }
