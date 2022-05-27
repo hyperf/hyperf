@@ -80,7 +80,7 @@ class QueryException extends PDOException
     {
         foreach ($bindings as &$binding) {
             if (is_string($binding)) {
-                $binding = "'$binding'";
+                $binding = "'{$binding}'";
             }
         }
         return $previous->getMessage() . ' (SQL: ' . Str::replaceArray('?', $bindings, $sql) . ')';
