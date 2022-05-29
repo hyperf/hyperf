@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\CodeGen;
 
+use Hyperf\Utils\Arr;
 use Hyperf\Utils\Exception\InvalidArgumentException;
 use PhpParser\Node;
 use PhpParser\Parser;
@@ -107,7 +108,7 @@ class PhpParser
     {
         return match (gettype($value)) {
             'array' => value(function ($value) {
-                $isList = array_is_list($value);
+                $isList = ! Arr::isAssoc($value);
                 $result = [];
                 foreach ($value as $i => $item) {
                     $key = null;
