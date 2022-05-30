@@ -1,5 +1,17 @@
 # 版本更新记录
 
+# v2.2.33 - 2022-05-30
+
+## 修复
+
+- [#4776](https://github.com/hyperf/hyperf/pull/4776) 修复 `GraphQL` 事件收集失败的问题。
+- [#4790](https://github.com/hyperf/hyperf/pull/4790) 修复 `RPN` 组件中方法 `toRPNExpression` 在某些场景无法正常工作的问题。
+
+## Added
+
+- [#4763](https://github.com/hyperf/hyperf/pull/4763) 新增验证规则 `array:key1,key2`，确保数组中除 `key1` `key2` 以外无其他 `key` 键。
+- [#4781](https://github.com/hyperf/hyperf/pull/4781) 新增配置 `close-pull-request.yml`，用来自动关闭只读的仓库。
+
 # v2.2.32 - 2022-05-16
 
 ## 修复
