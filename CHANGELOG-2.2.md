@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#4776](https://github.com/hyperf/hyperf/pull/4776) Fixed bug that graphql event collect failed.
+- [#4790](https://github.com/hyperf/hyperf/pull/4790) Fixed bug that rpn method `toRPNExpression` does not work in some cases.
 
 ## Added
 
