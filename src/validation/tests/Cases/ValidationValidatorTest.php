@@ -650,6 +650,15 @@ class ValidationValidatorTest extends TestCase
 
         $v = new Validator($trans, ['foo' => new SplFileInfo('/tmp/foo')], ['foo' => 'Array']);
         $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => ['name' => 'foo', 'gender' => 1, 'vote' => 1]], ['foo' => 'Array:name,gender']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => ['name' => 'foo', 'gender' => 1]], ['foo' => 'Array:name,gender']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => ['name' => 'foo', 'gender' => 1]], ['foo' => 'Array:name,gender,vote']);
+        $this->assertTrue($v->passes());
     }
 
     public function testValidateFilled()
@@ -3466,6 +3475,22 @@ class ValidationValidatorTest extends TestCase
             $trans,
             ['foo' => [['name' => 'first', 'votes' => [1, 2]], ['name' => 'second', 'votes' => ['something', 2]]]],
             ['foo' => 'Array', 'foo.*.name' => ['Required', 'String'], 'foo.*.votes.*' => ['Required', 'Integer']]
+        );
+        $this->assertFalse($v->passes());
+
+        // multiple items fields passes
+        $v = new Validator(
+            $trans,
+            ['foo' => [['name' => 'first'], ['name' => 'second']]],
+            ['foo' => 'Array', 'foo.*' => 'Array:name', 'foo.*.name' => ['Required']]
+        );
+        $this->assertTrue($v->passes());
+
+        // multiple items fields fails
+        $v = new Validator(
+            $trans,
+            ['foo' => [['name' => 'first', 'votes' => 1], ['name' => 'second', 'votes' => 2]]],
+            ['foo' => 'Array', 'foo.*' => 'Array:name', 'foo.*.name' => ['Required']]
         );
         $this->assertFalse($v->passes());
     }

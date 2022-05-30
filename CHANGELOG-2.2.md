@@ -1,4 +1,16 @@
-# v2.2.33 - TBD
+# v2.2.34 - TBD
+
+# v2.2.33 - 2022-05-30
+
+## Fixed
+
+- [#4776](https://github.com/hyperf/hyperf/pull/4776) Fixed bug that graphql event collect failed.
+- [#4790](https://github.com/hyperf/hyperf/pull/4790) Fixed bug that rpn method `toRPNExpression` does not work in some cases.
+
+## Added
+
+- [#4763](https://github.com/hyperf/hyperf/pull/4763) Added validation rule `array:key1,key2` which make sure the array has no keys other than `key1` and `key2`.
+- [#4781](https://github.com/hyperf/hyperf/pull/4781) Added `close-pull-request.yml` to close pr for `read-only` repositories.
 
 # v2.2.32 - 2022-05-16
 

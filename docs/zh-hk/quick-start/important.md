@@ -26,3 +26,59 @@ composer dump-autoload -o
 # 生成代理類和註解緩存
 php bin/hyperf.php
 ```
+
+
+## 避免在魔術方法中切換協程
+
+> __call __callStatic 除外
+
+儘量避免在 `__get` `__set` 和 `__isset` 中切換協程，因為可能會出現不符合預期的情況
+
+```php
+<?php
+
+require_once 'vendor/autoload.php';
+Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_ALL]);
+
+class Foo
+{
+    public function __get(string $name)
+    {
+        sleep(1);
+        return $name;
+    }
+
+    public function __set(string $name, mixed $value)
+    {
+        sleep(1);
+        var_dump($name, $value);
+    }
+
+    public function __isset(string $name): bool
+    {
+        sleep(1);
+        var_dump($name);
+        return true;
+    }
+}
+
+$foo = new Foo();
+go(static function () use ($foo) {
+    var_dump(isset($foo->xxx));
+});
+
+go(static function () use ($foo) {
+    var_dump(isset($foo->xxx));
+});
+
+\Swoole\Event::wait();
+
+```
+
+當我們執行上述代碼時，會返回以下結果
+
+```shell
+bool(false)
+string(3) "xxx"
+bool(true
+```

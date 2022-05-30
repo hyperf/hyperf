@@ -79,6 +79,9 @@
 ## RPC
 
 - [hyperf/json-rpc](https://github.com/hyperf/json-rpc) Hyperf 官方提供的 JSON-RPC 協議元件
+- [hyperf/rpc-multiplex](https://github.com/hyperf/rpc-multiplex) Hyperf 官方提供的多路複用 RPC 元件
+- [hyperf/roc](https://github.com/hyperf/roc) Hyperf 官方提供的 Golang 版本的多路複用 RPC Server 元件
+- [limingxinleo/roc-skeleton](https://github.com/limingxinleo/roc-skeleton) Golang 版本多路複用 RPC Server 骨架包
 
 ## 服務治理
 
@@ -152,3 +155,4 @@
 - [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole 協程環境下的可用的 PHPMailer
 - [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 支援 `支付寶/微信` 的支付元件，基於 [yansongda/pay](https://github.com/yansongda/pay) 實現，適配於 `Hyperf` 框架。
 - [alapi/hyperf-meilisearch](https://github.com/anhao/hyperf-meilisearch) 為 Hyperf Scout 提供的 meilisearch 客戶端
+- [vinchan/message-notice](https://github.com/VinchanGit/message-notice) Hyperf 異常監控報警通知元件(釘釘群機器人、飛書群機器人、郵件、QQ 頻道機器人、企業微信群機器人)
