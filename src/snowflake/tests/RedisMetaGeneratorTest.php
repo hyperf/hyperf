@@ -149,6 +149,25 @@ class RedisMetaGeneratorTest extends TestCase
         $this->assertSame($time + 1, $nextTime);
     }
 
+    public function testCollisionWhenInitManyTimes()
+    {
+        $container = $this->getContainer();
+        $hConfig = $container->get(ConfigInterface::class);
+        $config = new SnowflakeConfig();
+        $metaGenerator = new RedisSecondMetaGenerator($config, MetaGeneratorInterface::DEFAULT_BEGIN_SECOND, $hConfig);
+        $result = [];
+        $tasks = [];
+        for ($i = 0; $i < 2000; ++$i) {
+            $tasks[] = static function () use (&$result, $metaGenerator) {
+                $result[] = $metaGenerator->getDataCenterId();
+            };
+        }
+
+        parallel($tasks);
+
+        $this->assertSame(1, count(array_unique($result)));
+    }
+
     public function testGenerateSameMetaForRedisSecond()
     {
         $container = $this->getContainer();
