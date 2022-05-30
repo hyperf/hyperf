@@ -1,5 +1,9 @@
 # v2.2.34 - TBD
 
+## Fixed
+
+- [#4796](https://github.com/hyperf/hyperf/pull/4796) Fixed id repeat when generate snowflake id caused by calling `init` more than once.
+
 # v2.2.33 - 2022-05-30
 
 ## Fixed

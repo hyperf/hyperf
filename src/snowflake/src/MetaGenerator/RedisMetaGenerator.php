@@ -66,17 +66,19 @@ abstract class RedisMetaGenerator extends MetaGenerator
 
     private function initDataCenterIdAndWorkerId(): void
     {
-        $pool = $this->config->get(sprintf('snowflake.%s.pool', static::class), 'default');
+        if (is_null($this->workerId) || is_null($this->dataCenterId)) {
+            $pool = $this->config->get(sprintf('snowflake.%s.pool', static::class), 'default');
 
-        /** @var \Redis $redis */
-        $redis = make(RedisProxy::class, [
-            'pool' => $pool,
-        ]);
+            /** @var \Redis $redis */
+            $redis = make(RedisProxy::class, [
+                'pool' => $pool,
+            ]);
 
-        $key = $this->config->get(sprintf('snowflake.%s.key', static::class), static::DEFAULT_REDIS_KEY);
-        $id = $redis->incr($key);
+            $key = $this->config->get(sprintf('snowflake.%s.key', static::class), static::DEFAULT_REDIS_KEY);
+            $id = $redis->incr($key);
 
-        $this->workerId = $id % $this->configuration->maxWorkerId();
-        $this->dataCenterId = intval($id / $this->configuration->maxWorkerId()) % $this->configuration->maxDataCenterId();
+            $this->workerId = $id % $this->configuration->maxWorkerId();
+            $this->dataCenterId = intval($id / $this->configuration->maxWorkerId()) % $this->configuration->maxDataCenterId();
+        }
     }
 }
