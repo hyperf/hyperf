@@ -166,7 +166,11 @@ class Executor
                 return;
             }
 
-            $runnable();
+            try {
+                $runnable();
+            } finally {
+                $taskMutex->remove($crontab);
+            }
         };
     }
 

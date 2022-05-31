@@ -43,7 +43,7 @@ class Crontab
     /**
      * @var int
      */
-    protected $mutexExpires = 3600;
+    protected $mutexExpires = 10;
 
     /**
      * @var bool

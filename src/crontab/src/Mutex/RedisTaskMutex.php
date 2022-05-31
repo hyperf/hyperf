@@ -13,9 +13,12 @@ namespace Hyperf\Crontab\Mutex;
 
 use Hyperf\Crontab\Crontab;
 use Hyperf\Redis\RedisFactory;
+use Hyperf\Utils\Coroutine;
 
 class RedisTaskMutex implements TaskMutex
 {
+    use RenewalMutex;
+
     /**
      * @var RedisFactory
      */
@@ -31,11 +34,18 @@ class RedisTaskMutex implements TaskMutex
      */
     public function create(Crontab $crontab): bool
     {
-        return (bool) $this->redisFactory->get($crontab->getMutexPool())->set(
+        $redis = $this->redisFactory->get($crontab->getMutexPool());
+        $result = (bool) $redis->set(
             $this->getMutexName($crontab),
             $crontab->getName(),
             ['NX', 'EX' => $crontab->getMutexExpires()]
         );
+        if ($result === false) {
+            return $result;
+        }
+        // The coroutine renews the mutex
+        Coroutine::create($this->renewalClosure($crontab, $redis));
+        return $result;
     }
 
     /**
