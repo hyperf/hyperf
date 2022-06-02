@@ -20,7 +20,7 @@ return [
         'vhost' => env('AMQP_VHOST', '/'),
         'open_ssl' => false,
         'concurrent' => [
-            'limit' => 1,
+            'limit' => 2,
         ],
         'pool' => [
             'connections' => 2,
