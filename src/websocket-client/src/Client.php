@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\WebSocketClient;
 
 use Hyperf\HttpMessage\Server\Response;
@@ -29,18 +30,19 @@ class Client
      */
     protected $client;
 
-    public function __construct(UriInterface $uri)
+    public function __construct(UriInterface $uri, array $options = [])
     {
         $this->uri = $uri;
-        $host = $uri->getHost();
-        $port = $uri->getPort();
-        $ssl = $uri->getScheme() === 'wss';
+        $host      = $uri->getHost();
+        $port      = $uri->getPort();
+        $ssl       = $uri->getScheme() === 'wss';
 
         if (empty($port)) {
             $port = $ssl ? 443 : 80;
         }
 
         $this->client = new Coroutine\Http\Client($host, $port, $ssl);
+        $this->client->set($options);
 
         parse_str($this->uri->getQuery(), $query);
 
@@ -50,13 +52,13 @@ class Client
         $path = empty($query) ? $path : $path . '?' . $query;
 
         $ret = $this->client->upgrade($path);
-        if (! $ret) {
+        if (!$ret) {
             if ($this->client->errCode !== 0) {
                 $errCode = $this->client->errCode;
-                $errMsg = $this->client->errMsg;
+                $errMsg  = $this->client->errMsg;
             } else {
                 $errCode = $this->client->statusCode;
-                $errMsg = Response::getReasonPhraseByCode($errCode);
+                $errMsg  = Response::getReasonPhraseByCode($errCode);
             }
 
             throw new ConnectException(sprintf('Websocket upgrade failed by [%s] [%s].', $errCode, $errMsg));
@@ -89,5 +91,10 @@ class Client
     public function close(): bool
     {
         return $this->client->close();
+    }
+
+    public function isConnected(): bool
+    {
+        return $this->client->connected;
     }
 }
