@@ -14,6 +14,7 @@ namespace Hyperf\GrpcServer;
 use FastRoute\Dispatcher;
 use Google\Protobuf\Internal\Message;
 use Google\Protobuf\Internal\Message as ProtobufMessage;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Grpc\Parser;
@@ -21,6 +22,7 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Exception\ServerException;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
@@ -46,6 +48,7 @@ class CoreMiddleware extends HttpCoreMiddleware
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $this->checkGrpcWebProxy();
         $request = Context::set(ServerRequestInterface::class, $request);
 
         /** @var Dispatched $dispatched */
@@ -135,7 +138,7 @@ class CoreMiddleware extends HttpCoreMiddleware
                         $parentClass = $class->getParentClass();
                         if ($parentClass && $parentClass->getName() === ProtobufMessage::class) {
                             $request = $this->request();
-                            $stream = $request->getBody();
+                            $stream = $this->isGrpcWebText() ? @base64_decode((string) $request->getBody()) : $request->getBody();
                             return Parser::deserializeMessage([$class->getName(), null], (string) $stream);
                         }
 
@@ -153,6 +156,24 @@ class CoreMiddleware extends HttpCoreMiddleware
         return $injections;
     }
 
+    protected function checkGrpcWebProxy()
+    {
+        $isGrpcWebText = $this->isGrpcWebText();
+        $accet = $this->request()->getHeaderLine('accept') == 'application/grpc-web-text';
+        $xGrpcWeb = $this->request()->getHeaderLine('x-grpc-web') == '1';
+        if ($isGrpcWebText || $accet || $xGrpcWeb) {
+            $httpCompression = ApplicationContext::getContainer()->get(ConfigInterface::class)->get('server.settings.http_compression');
+            if ($httpCompression !== false) {
+                throw new \RuntimeException('Grpc Web Text setting http_compression must is false in config/server.php');
+            }
+        }
+    }
+
+    protected function isGrpcWebText(): bool
+    {
+        return $this->request()->getHeaderLine('content-type') == 'application/grpc-web-text';
+    }
+
     /**
      * @return RequestInterface
      */
@@ -167,10 +188,13 @@ class CoreMiddleware extends HttpCoreMiddleware
      */
     protected function handleResponse(?Message $message, $httpStatus = 200, string $grpcStatus = '0', string $grpcMessage = ''): ResponseInterface
     {
+        $responseContentType = $this->isGrpcWebText() ? 'application/grpc-web-text+proto' : 'application/grpc';
+        $responseContent = $this->isGrpcWebText() ? base64_encode(Parser::serializeMessage($message)) : Parser::serializeMessage($message);
+
         return $this->response()->withStatus($httpStatus)
-            ->withBody(new SwooleStream(Parser::serializeMessage($message)))
+            ->withBody(new SwooleStream($responseContent))
             ->withAddedHeader('Server', 'Hyperf')
-            ->withAddedHeader('Content-Type', 'application/grpc')
+            ->withAddedHeader('Content-Type', $responseContentType)
             ->withAddedHeader('trailer', 'grpc-status, grpc-message')
             ->withTrailer('grpc-status', $grpcStatus)
             ->withTrailer('grpc-message', $grpcMessage);
