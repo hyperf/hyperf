@@ -15,6 +15,9 @@ use BadMethodCallException;
 use Hyperf\Engine\Channel;
 use InvalidArgumentException;
 
+/**
+ * This file mostly code come from `swoole/library`.
+ */
 class WaitGroup
 {
     protected Channel $chan;
