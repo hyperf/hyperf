@@ -15,6 +15,7 @@ use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Relations\MorphTo;
 use Hyperf\Database\Model\Relations\Relation;
+use Hyperf\Engine\Channel;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\Model\Book;
 use HyperfTest\Database\Stubs\Model\Image;
@@ -22,7 +23,6 @@ use HyperfTest\Database\Stubs\Model\User;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Swoole\Coroutine\Channel;
 
 /**
  * @internal

@@ -27,6 +27,7 @@ use Hyperf\Database\Schema\Column;
 use Hyperf\Database\Schema\MySqlBuilder;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Container;
+use Hyperf\Engine\Channel;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\ApplicationContext;
@@ -41,7 +42,6 @@ use HyperfTest\Database\Stubs\Model\UserRolePivot;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Swoole\Coroutine\Channel;
 
 /**
  * @internal

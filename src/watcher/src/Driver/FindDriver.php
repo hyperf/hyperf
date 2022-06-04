@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Watcher\Driver;
 
+use Hyperf\Engine\Channel;
 use Hyperf\Utils\Str;
 use Hyperf\Watcher\Option;
-use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\System;
 use Swoole\Timer;
 

@@ -18,6 +18,7 @@ use Hyperf\Di\Aop\Pipeline;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
+use Hyperf\Engine\Channel;
 use Hyperf\Retry\Annotation\AbstractRetry;
 use Hyperf\Retry\Annotation\CircuitBreaker;
 use Hyperf\Retry\Annotation\Retry;
@@ -32,7 +33,6 @@ use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Retry\Stub\Foo;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine\Channel;
 use Swoole\Timer;
 
 /**

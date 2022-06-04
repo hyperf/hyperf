@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Nats\Driver;
 
 use Closure;
+use Hyperf\Engine\Channel;
 use Hyperf\Nats\Connection as NatsConnection;
 use Hyperf\Nats\ConnectionOptions;
 use Hyperf\Nats\EncodedConnection;
@@ -22,7 +23,6 @@ use Hyperf\Pool\SimplePool\Connection;
 use Hyperf\Pool\SimplePool\Pool;
 use Hyperf\Pool\SimplePool\PoolFactory;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine\Channel;
 
 class NatsDriver extends AbstractDriver
 {

@@ -15,6 +15,7 @@ use Hyperf\Config\Config;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
+use Hyperf\Engine\Channel as Chan;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\PoolOption;
@@ -78,7 +79,7 @@ class RedisTest extends TestCase
 
     public function testHasAlreadyBeenBoundToAnotherCoroutine()
     {
-        $chan = new \Swoole\Coroutine\Channel(1);
+        $chan = new Chan(1);
         $redis = $this->getRedis();
         $ref = new \ReflectionClass($redis);
         $method = $ref->getMethod('getConnection');

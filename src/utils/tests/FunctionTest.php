@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
+use Hyperf\Engine\Channel;
 use Hyperf\Utils\Coroutine;
 use HyperfTest\Utils\Exception\RetryException;
 use HyperfTest\Utils\Stub\FooClosure;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine\Channel;
 use Swoole\Runtime;
 
 /**

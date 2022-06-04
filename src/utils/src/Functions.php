@@ -440,7 +440,7 @@ if (! function_exists('run')) {
         \Swoole\Runtime::enableCoroutine($flags);
 
         /* @phpstan-ignore-next-line */
-        $result = \Swoole\Coroutine\Run(...(array) $callbacks);
+        $result = \Swoole\Coroutine\run(...(array) $callbacks);
 
         \Swoole\Runtime::enableCoroutine(false);
         return $result;

@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 
 class ChannelPool extends \SplQueue
 {

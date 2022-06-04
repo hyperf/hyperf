@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Emitter;
 
+use Hyperf\Engine\Channel;
 use Hyperf\SocketIOServer\SocketIO;
 use Hyperf\WebSocketServer\Sender;
-use Swoole\Coroutine\Channel;
 
 class Future
 {
