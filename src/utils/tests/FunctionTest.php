@@ -15,7 +15,7 @@ use Hyperf\Utils\Coroutine;
 use HyperfTest\Utils\Exception\RetryException;
 use HyperfTest\Utils\Stub\FooClosure;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 use Swoole\Runtime;
 
 /**

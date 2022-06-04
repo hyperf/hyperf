@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Task;
 
 use Hyperf\Task\Exception\TaskExecuteTimeoutException;
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 
 class ChannelFactory
 {

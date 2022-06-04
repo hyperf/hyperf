@@ -14,7 +14,7 @@ namespace HyperfTest\Utils;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Parallel;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 use Swoole\Runtime;
 
 /**

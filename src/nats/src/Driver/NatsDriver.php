@@ -22,7 +22,7 @@ use Hyperf\Pool\SimplePool\Connection;
 use Hyperf\Pool\SimplePool\Pool;
 use Hyperf\Pool\SimplePool\PoolFactory;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 
 class NatsDriver extends AbstractDriver
 {

@@ -16,7 +16,7 @@ use Hyperf\SocketIOServer\Emitter\Future;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
 use Mockery;
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 
 /**
  * @internal

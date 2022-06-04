@@ -22,7 +22,7 @@ use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Watcher\Driver\DriverInterface;
 use PhpParser\PrettyPrinter\Standard;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 use Swoole\Coroutine\System;
 use Swoole\Process;
 use Symfony\Component\Console\Output\OutputInterface;

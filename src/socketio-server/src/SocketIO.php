@@ -28,7 +28,7 @@ use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
 use Swoole\Atomic;
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Timer;

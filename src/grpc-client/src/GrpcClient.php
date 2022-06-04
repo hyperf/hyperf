@@ -17,7 +17,7 @@ use Hyperf\Utils\ChannelPool;
 use Hyperf\Utils\Coroutine;
 use InvalidArgumentException;
 use RuntimeException;
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 use Swoole\Coroutine\Http2\Client as SwooleHttp2Client;
 
 class GrpcClient

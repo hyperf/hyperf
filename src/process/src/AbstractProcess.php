@@ -27,7 +27,7 @@ use Hyperf\Process\Exception\SocketAcceptException;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 use Swoole\Event;
 use Swoole\Process as SwooleProcess;
 use Swoole\Server;

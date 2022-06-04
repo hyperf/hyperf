@@ -13,7 +13,7 @@ namespace Hyperf\SocketIOServer\Emitter;
 
 use Hyperf\SocketIOServer\SocketIO;
 use Hyperf\WebSocketServer\Sender;
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 
 class Future
 {

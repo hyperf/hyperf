@@ -13,7 +13,7 @@ namespace HyperfTest\Task;
 
 use Hyperf\Task\ChannelFactory;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 
 /**
  * @internal

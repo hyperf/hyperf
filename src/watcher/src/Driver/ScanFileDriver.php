@@ -15,7 +15,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use Hyperf\Watcher\Option;
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 use Swoole\Timer;
 use Symfony\Component\Finder\SplFileInfo;
 

@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use Hyperf\Utils\Exception\ParallelExecutionException;
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 
 class Parallel
 {

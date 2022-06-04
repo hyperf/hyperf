@@ -13,7 +13,7 @@ namespace Hyperf\Watcher\Driver;
 
 use Hyperf\Utils\Str;
 use Hyperf\Watcher\Option;
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 use Swoole\Coroutine\System;
 use Swoole\Timer;
 

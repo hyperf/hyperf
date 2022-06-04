@@ -32,7 +32,7 @@ use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Retry\Stub\Foo;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 use Swoole\Timer;
 
 /**
