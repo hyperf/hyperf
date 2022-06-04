@@ -81,6 +81,7 @@ composer analyse
 - [#4756](https://github.com/hyperf/hyperf/pull/4756) Support `hyperf/amqp`.
 - [#4757](https://github.com/hyperf/hyperf/pull/4757) Support `Hyperf\Utils\Coroutine\Locker`.
 - [#4804](https://github.com/hyperf/hyperf/pull/4804) Support `Hyperf\Utils\WaitGroup`.
+- [#4808](https://github.com/hyperf/hyperf/pull/4808) Replaced `Swoole\Coroutine\Channel` by `Hyperf\Engine\Channel` for all components.
 
 ## Removed
 
