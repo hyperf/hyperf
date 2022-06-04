@@ -15,6 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Snowflake\ConfigurationInterface;
 use Hyperf\Snowflake\MetaGenerator;
+use Hyperf\Utils\Coroutine\Locker;
 
 abstract class RedisMetaGenerator extends MetaGenerator
 {
@@ -32,17 +33,13 @@ abstract class RedisMetaGenerator extends MetaGenerator
     public function init()
     {
         if (is_null($this->workerId) || is_null($this->dataCenterId)) {
-            $pool = $this->config->get(sprintf('snowflake.%s.pool', static::class), 'default');
-
-            $redis = make(RedisProxy::class, [
-                'pool' => $pool,
-            ]);
-
-            $key = $this->config->get(sprintf('snowflake.%s.key', static::class), static::DEFAULT_REDIS_KEY);
-            $id = $redis->incr($key);
-
-            $this->workerId = $id % $this->configuration->maxWorkerId();
-            $this->dataCenterId = intval($id / $this->configuration->maxWorkerId()) % $this->configuration->maxDataCenterId();
+            if (Locker::lock(static::class)) {
+                try {
+                    $this->initDataCenterIdAndWorkerId();
+                } finally {
+                    Locker::unlock(static::class);
+                }
+            }
         }
     }
 
@@ -58,5 +55,23 @@ abstract class RedisMetaGenerator extends MetaGenerator
         $this->init();
 
         return $this->workerId;
+    }
+
+    private function initDataCenterIdAndWorkerId(): void
+    {
+        if (is_null($this->workerId) || is_null($this->dataCenterId)) {
+            $pool = $this->config->get(sprintf('snowflake.%s.pool', static::class), 'default');
+
+            /** @var \Redis $redis */
+            $redis = make(RedisProxy::class, [
+                'pool' => $pool,
+            ]);
+
+            $key = $this->config->get(sprintf('snowflake.%s.key', static::class), static::DEFAULT_REDIS_KEY);
+            $id = $redis->incr($key);
+
+            $this->workerId = $id % $this->configuration->maxWorkerId();
+            $this->dataCenterId = intval($id / $this->configuration->maxWorkerId()) % $this->configuration->maxDataCenterId();
+        }
     }
 }
