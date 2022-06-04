@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Task;
 
-use Hyperf\Task\Exception\TaskExecuteTimeoutException;
 use Hyperf\Engine\Channel;
+use Hyperf\Task\Exception\TaskExecuteTimeoutException;
 
 class ChannelFactory
 {

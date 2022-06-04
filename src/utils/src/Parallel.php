@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
-use Hyperf\Utils\Exception\ParallelExecutionException;
 use Hyperf\Engine\Channel;
+use Hyperf\Utils\Exception\ParallelExecutionException;
 
 class Parallel
 {
