@@ -152,6 +152,16 @@ class Client extends Server
         $json = $options['json'] ?? [];
         $headers = $options['headers'] ?? [];
         $multipart = $options['multipart'] ?? [];
+        $cookies = [];
+        // HTTP headers add Cookie support; For example: $headers = ['Cookie' => 'swoole=1;hyperf=2'];
+        if (!empty($headers) && isset($headers['Cookie'])) {
+            foreach (explode(';', $headers['Cookie']) as $cookieItem) {
+                $cookieItemArr = explode('=', $cookieItem);
+                if ($cookieItemArr && $cookieItemArr[0] && $cookieItemArr[1]) {
+                    $cookies[$cookieItemArr[0]] = $cookieItemArr[1];
+                }
+            }
+        }
 
         $parsePath = parse_url($path);
         $path = $parsePath['path'];
@@ -178,6 +188,7 @@ class Client extends Server
 
         return $request->withQueryParams($query)
             ->withParsedBody($data)
+            ->withCookieParams($cookies)
             ->withUploadedFiles($this->normalizeFiles($multipart));
     }
 
