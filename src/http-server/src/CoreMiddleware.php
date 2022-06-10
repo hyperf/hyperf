@@ -24,6 +24,7 @@ use Hyperf\HttpMessage\Exception\NotFoundHttpException;
 use Hyperf\HttpMessage\Exception\ServerErrorHttpException;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
+use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Server\Exception\ServerException;
@@ -235,9 +236,12 @@ class CoreMiddleware implements CoreMiddlewareInterface
      */
     private function getInjections(array $definitions, string $callableName, array $arguments): array
     {
+        /** @var RequestInterface $request */
+        $request = $this->container->get(RequestInterface::class);
         $injections = [];
+
         foreach ($definitions as $pos => $definition) {
-            $value = $arguments[$pos] ?? $arguments[$definition->getMeta('name')] ?? null;
+            $value = $arguments[$pos] ?? $arguments[$definition->getMeta('name')] ?? $request->input($definition->getName()) ?? null;
             if ($value === null) {
                 if ($definition->getMeta('defaultValueAvailable')) {
                     $injections[] = $definition->getMeta('defaultValue');
