@@ -20,10 +20,7 @@
         "psr/container": "^1.0|^2.0",
         "hyperf/contract": "~3.0.0",
         "hyperf/utils": "~3.0.0",
-        "monolog/monolog": "^2.0"
-    },
-    "conflict": {
-        "monolog/monolog": ">=2.6.0"
+        "monolog/monolog": "^2.7|^3.1"
     },
     "autoload": {
         "psr-4": {

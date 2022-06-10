@@ -48,4 +48,31 @@ class LoggerTest extends TestCase
 
         $this->assertMatchesRegularExpression('/RuntimeException: Invalid Arguments/', $handler->getRecords()[0]['message']);
     }
+
+    public function testLoggingLoopDetection()
+    {
+        $logger = new Logger('test', [
+            $handler = new class() extends TestHandler {
+                protected function write(array $record): void
+                {
+                    usleep(1);
+                    parent::write($record);
+                }
+            },
+        ]);
+
+        $callbacks = [];
+        for ($i = 0; $i < 4; ++$i) {
+            $callbacks[] = static function () use ($logger) {
+                $logger->info('Hello World.');
+            };
+        }
+
+        parallel($callbacks);
+
+        $messages = array_column($handler->getRecords(), 'message');
+        foreach ($messages as $message) {
+            $this->assertSame('Hello World.', $message);
+        }
+    }
 }
