@@ -137,6 +137,7 @@ trait Cacheable
 
     /**
      * @param bool $cache Whether to delete the model cache when batch update
+     * @return Builder|static
      */
     public static function query(bool $cache = false): Builder
     {
