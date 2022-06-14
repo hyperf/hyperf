@@ -93,8 +93,9 @@ abstract class Command extends SymfonyCommand
             $this->configureUsingFluentDefinition();
         } else {
             parent::__construct($this->name);
-            ! empty($this->description) && $this->setDescription($this->description);
         }
+
+        ! empty($this->description) && $this->setDescription($this->description);
 
         $this->addDisableDispatcherOption();
     }
