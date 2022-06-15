@@ -13,9 +13,9 @@ namespace Hyperf\ViewEngine\Component;
 
 use ArrayIterator;
 use Closure;
+use Hyperf\Contract\Htmlable;
 use Hyperf\ViewEngine\Contract\DeferringDisplayableValue;
 use Hyperf\ViewEngine\Contract\Enumerable;
-use Hyperf\ViewEngine\Contract\Htmlable;
 use IteratorAggregate;
 use Traversable;
 
