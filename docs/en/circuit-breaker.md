@@ -36,7 +36,7 @@ class UserService
     #[Inject]
     private UserServiceClient $client;
 
-    #[CircuitBreaker(timeout: 0.05, failCounter: 1, successCounter: 1, fallback: "App\UserService::searchFallback")]
+    #[CircuitBreaker(value: ['timeout': 0.05], failCounter: 1, successCounter: 1, fallback: "App\UserService::searchFallback")]
     public function search($offset, $limit)
     {
         return $this->client->users($offset, $limit);
