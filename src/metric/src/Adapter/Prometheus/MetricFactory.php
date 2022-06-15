@@ -102,7 +102,7 @@ class MetricFactory implements MetricFactoryInterface
         $port = $this->config->get("metric.metric.{$this->name}.scrape_port");
         $path = $this->config->get("metric.metric.{$this->name}.scrape_path");
         $renderer = new RenderTextFormat();
-        $server = new Server($host, (int) $port, false);
+        $server = new Server($host, (int) $port, false, true);
         $server->handle($path, function ($request, $response) use ($renderer) {
             $response->header('Content-Type', RenderTextFormat::MIME_TYPE);
             $response->end($renderer->render($this->registry->getMetricFamilySamples()));
