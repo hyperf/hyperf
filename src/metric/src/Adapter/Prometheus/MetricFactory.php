@@ -23,6 +23,7 @@ use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Exception\InvalidArgumentException;
 use Hyperf\Metric\Exception\RuntimeException;
 use Hyperf\Metric\MetricFactoryPicker;
+use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Network;
 use Hyperf\Utils\Str;
 use Prometheus\CollectorRegistry;
@@ -103,6 +104,10 @@ class MetricFactory implements MetricFactoryInterface
         $path = $this->config->get("metric.metric.{$this->name}.scrape_path");
         $renderer = new RenderTextFormat();
         $server = new Server($host, (int) $port, false);
+        Coroutine::create(static function () use ($server) {
+            CoordinatorManager::until(Coord::WORKER_EXIT)->yield();
+            $server->shutdown();
+        });
         $server->handle($path, function ($request, $response) use ($renderer) {
             $response->header('Content-Type', RenderTextFormat::MIME_TYPE);
             $response->end($renderer->render($this->registry->getMetricFamilySamples()));
