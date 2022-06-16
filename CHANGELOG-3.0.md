@@ -76,6 +76,7 @@ composer analyse
 - [#4669](https://github.com/hyperf/hyperf/pull/4669) Changed all annotations which only support `PHP` >= `8.0`.
 - [#4678](https://github.com/hyperf/hyperf/pull/4678) Support event dispatcher for command by default.
 - [#4680](https://github.com/hyperf/hyperf/pull/4680) Stop processes which controlled by `ProcessManager` when server shutdown.
+- [#4848](https://github.com/hyperf/hyperf/pull/4848) Changed `$value.timeout` to `$options.timeout` for `CircuitBreaker`.
 
 ## Swow Supported
 
