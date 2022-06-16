@@ -18,7 +18,7 @@ use Symfony\Component\Console\Input\InputOption;
 
 trait DisableEventDispatcher
 {
-    public function addDisableDispatcherOption()
+    public function addDisableDispatcherOption(): void
     {
         $this->addOption('disable-event-dispatcher', null, InputOption::VALUE_NONE, 'Whether disable event dispatcher.');
     }
