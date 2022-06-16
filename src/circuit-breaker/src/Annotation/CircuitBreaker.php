@@ -25,7 +25,7 @@ class CircuitBreaker extends AbstractAnnotation
      * @param float $duration the duration required to reset to a half open or close state
      * @param int $successCounter the counter required to reset to a close state
      * @param int $failCounter the counter required to reset to an open state
-     * @param array $value ['timeout' => 1]
+     * @param array $options ['timeout' => 1]
      */
     public function __construct(
         public string $handler = TimeoutHandler::class,
@@ -33,7 +33,7 @@ class CircuitBreaker extends AbstractAnnotation
         public float $duration = 10.0,
         public int $successCounter = 10,
         public int $failCounter = 10,
-        public array $value = []
+        public array $options = []
     ) {
     }
 }
