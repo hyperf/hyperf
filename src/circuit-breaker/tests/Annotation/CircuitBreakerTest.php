@@ -22,7 +22,7 @@ class CircuitBreakerTest extends TestCase
 {
     public function testAttributeCollect()
     {
-        $breaker = new CircuitBreaker(value: ['timeout' => 1]);
-        $this->assertSame(['timeout' => 1], $breaker->value);
+        $breaker = new CircuitBreaker(options: ['timeout' => 1]);
+        $this->assertSame(['timeout' => 1], $breaker->options);
     }
 }
