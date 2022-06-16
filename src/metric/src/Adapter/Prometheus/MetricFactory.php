@@ -103,7 +103,7 @@ class MetricFactory implements MetricFactoryInterface
         $port = $this->config->get("metric.metric.{$this->name}.scrape_port");
         $path = $this->config->get("metric.metric.{$this->name}.scrape_path");
         $renderer = new RenderTextFormat();
-        $server = new Server($host, (int) $port, false);
+        $server = new Server($host, (int) $port, false, true);
         Coroutine::create(static function () use ($server) {
             CoordinatorManager::until(Coord::WORKER_EXIT)->yield();
             $server->shutdown();
