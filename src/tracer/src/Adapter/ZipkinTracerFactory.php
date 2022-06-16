@@ -21,7 +21,7 @@ use ZipkinOpenTracing\Tracer;
 
 class ZipkinTracerFactory implements NamedFactoryInterface
 {
-    private string $prefix = 'opentracing.zipkin.';
+    private string $prefix = 'opentracing.tracer.';
 
     private string $name = '';
 
