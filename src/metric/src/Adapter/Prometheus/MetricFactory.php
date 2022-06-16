@@ -13,7 +13,6 @@ namespace Hyperf\Metric\Adapter\Prometheus;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\Constants as Coord;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
