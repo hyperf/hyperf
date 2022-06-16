@@ -106,7 +106,7 @@ class MetricFactory implements MetricFactoryInterface
         $renderer = new RenderTextFormat();
         $server = new Server($host, (int) $port, false);
         Coroutine::create(static function () use ($server) {
-            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
+            CoordinatorManager::until(Coord::WORKER_EXIT)->yield();
             $server->shutdown();
         });
         $server->handle($path, function ($request, $response) use ($renderer) {
