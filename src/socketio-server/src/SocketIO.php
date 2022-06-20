@@ -27,6 +27,7 @@ use Hyperf\SocketIOServer\Parser\Packet;
 use Hyperf\SocketIOServer\Room\EphemeralInterface;
 use Hyperf\SocketIOServer\SidProvider\SidProviderInterface;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\WebSocketServer\Constant\Opcode;
 use Hyperf\WebSocketServer\Sender;
 use Swoole\Atomic;
 use Swoole\Http\Request;
@@ -105,6 +106,15 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
      */
     public function onMessage($server, $frame): void
     {
+        if ($frame->opcode == Opcode::PING) {
+            if ($server instanceof Response) {
+                $server->push('', Opcode::PONG);
+            } else {
+                $server->push($frame->fd, '', Opcode::PONG);
+            }
+            return;
+        }
+
         if ($frame->data[0] === Engine::PING) {
             $this->renewInAllNamespaces($frame->fd);
             if ($server instanceof Response) {
