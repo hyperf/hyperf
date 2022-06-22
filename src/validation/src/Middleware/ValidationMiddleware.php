@@ -14,11 +14,14 @@ namespace Hyperf\Validation\Middleware;
 use Closure;
 use FastRoute\Dispatcher;
 use Hyperf\Context\Context;
+use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Di\Annotation\MultipleAnnotation;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Exception\ServerException;
-use Hyperf\Validation\Annotation\SceneCollector;
+use Hyperf\Validation\Annotation\Scene;
 use Hyperf\Validation\Contract\ValidatesWhenResolved;
+use Hyperf\Validation\Request\FormRequest;
 use Hyperf\Validation\UnauthorizedException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -63,10 +66,7 @@ class ValidationMiddleware implements MiddlewareInterface
                         if ($this->isImplementedValidatesWhenResolved($className)) {
                             /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved|\Hyperf\Validation\Request\FormRequest $formRequest */
                             $formRequest = $this->container->get($className);
-                            $scene = SceneCollector::get($requestHandler . '@' . $method);
-                            if ($scene) {
-                                $formRequest->scene($scene);
-                            }
+                            $this->handleSceneAnnotation($formRequest, $requestHandler, $method, $parameter->getName());
                             $formRequest->validateResolved();
                         }
                     }
@@ -86,6 +86,28 @@ class ValidationMiddleware implements MiddlewareInterface
             $this->implements[$classname] = in_array(ValidatesWhenResolved::class, $implements, true);
         }
         return $this->implements[$classname] ?? false;
+    }
+
+    protected function handleSceneAnnotation(FormRequest $request, string $class, string $method, string $argument): void
+    {
+        /** @var null|MultipleAnnotation $scene */
+        $scene = AnnotationCollector::getClassMethodAnnotation($class, $method)[Scene::class] ?? null;
+        if (! $scene) {
+            return;
+        }
+
+        $annotations = $scene->toAnnotations();
+        if (empty($annotations)) {
+            return;
+        }
+
+        /** @var Scene $annotation */
+        foreach ($annotations as $annotation) {
+            if ($annotation->argument === null || $annotation->argument === $argument) {
+                $request->scene($annotation->scene);
+                return;
+            }
+        }
     }
 
     /**

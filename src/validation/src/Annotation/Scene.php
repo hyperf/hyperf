@@ -12,17 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\Validation\Annotation;
 
 use Attribute;
-use Hyperf\Di\Annotation\AbstractAnnotation;
+use Hyperf\Di\Annotation\AbstractMultipleAnnotation;
 
-#[Attribute(Attribute::TARGET_METHOD)]
-class Scene extends AbstractAnnotation
+#[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
+class Scene extends AbstractMultipleAnnotation
 {
-    public function __construct(public string $scene)
+    public function __construct(public string $scene, public ?string $argument = null)
     {
-    }
-
-    public function collectMethod(string $className, ?string $target): void
-    {
-        SceneCollector::set($className . '@' . $target, $this->scene);
     }
 }
