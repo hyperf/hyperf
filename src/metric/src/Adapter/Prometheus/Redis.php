@@ -58,9 +58,6 @@ class Redis implements Adapter
      */
     public static function fromExistingConnection(mixed $redis): self
     {
-        if ($redis->isConnected() === false) {
-            throw new StorageException('Connection to Redis server not established');
-        }
         $self = new self();
         $self->connectionInitialized = true;
         $self->redis = $redis;
