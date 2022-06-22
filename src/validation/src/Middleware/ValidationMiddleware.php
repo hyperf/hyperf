@@ -64,7 +64,7 @@ class ValidationMiddleware implements MiddlewareInterface
                         }
                         $className = $parameter->getType()->getName();
                         if ($this->isImplementedValidatesWhenResolved($className)) {
-                            /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved $formRequest */
+                            /** @var ValidatesWhenResolved $formRequest */
                             $formRequest = $this->container->get($className);
                             if ($formRequest instanceof FormRequest) {
                                 $this->handleSceneAnnotation($formRequest, $requestHandler, $method, $parameter->getName());
@@ -81,13 +81,13 @@ class ValidationMiddleware implements MiddlewareInterface
         return $handler->handle($request);
     }
 
-    public function isImplementedValidatesWhenResolved(string $classname): bool
+    public function isImplementedValidatesWhenResolved(string $className): bool
     {
-        if (! isset($this->implements[$classname]) && class_exists($classname)) {
-            $implements = class_implements($classname);
-            $this->implements[$classname] = in_array(ValidatesWhenResolved::class, $implements, true);
+        if (! isset($this->implements[$className]) && class_exists($className)) {
+            $implements = class_implements($className);
+            $this->implements[$className] = in_array(ValidatesWhenResolved::class, $implements, true);
         }
-        return $this->implements[$classname] ?? false;
+        return $this->implements[$className] ?? false;
     }
 
     protected function handleSceneAnnotation(FormRequest $request, string $class, string $method, string $argument): void
