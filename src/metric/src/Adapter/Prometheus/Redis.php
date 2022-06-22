@@ -39,7 +39,7 @@ class Redis implements Adapter
     private array $options;
 
     /**
-     * @var \Redis|\RedisCluster
+     * @var \Redis
      */
     private mixed $redis;
 
@@ -54,11 +54,11 @@ class Redis implements Adapter
     /**
      * Create an instance from an established redis connection.
      *
-     * @param \Hyperf\Redis\Redis|\Redis|\RedisCluster $redis
+     * @param \Hyperf\Redis\Redis|\Redis $redis
      */
     public static function fromExistingConnection(mixed $redis): self
     {
-        if ($redis instanceof \Redis && $redis->isConnected() === false) {
+        if ($redis->isConnected() === false) {
             throw new StorageException('Connection to Redis server not established');
         }
         $self = new self();
