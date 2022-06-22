@@ -12,8 +12,9 @@ AOP 為 `Aspect Oriented Programming` 的縮寫，意為：`面向切面程式�
 
 相對於其它框架實現的 AOP 功能的使用方式，我們進一步簡化了該功能的使用不做過細的劃分，僅存在 `環繞(Around)` 一種通用的形式：
 
-- `切面(Aspect)` 為對流程織入的定義類，包括要介入的目標，以及實現對原方法的修改加強處理
-- `代理類(ProxyClass)` ，每個被介入的目標類最終都會生成一個代理類，來達到執行 `切面(Aspect)` 方法的目的
+*   `切面(Aspect)` 為對流程織入的定義類，包括要介入的目標，以及實現對原方法的修改加強處理
+
+*   `代理類(ProxyClass)` ，每個被介入的目標類最終都會生成一個代理類，來達到執行 `切面(Aspect)` 方法的目的
 
 ## 定義切面(Aspect)
 
@@ -33,14 +34,14 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 class FooAspect extends AbstractAspect
 {
     // 要切入的類或 Trait，可以多個，亦可通過 :: 標識到具體的某個方法，通過 * 可以模糊匹配
-    public $classes = [
+    public array $classes = [
         SomeClass::class,
         'App\Service\SomeClass::someMethod',
         'App\Service\SomeClass::*Method',
     ];
 
     // 要切入的註解，具體切入的還是使用了這些註解的類，僅可切入類註解和類方法註解
-    public $annotations = [
+    public array $annotations = [
         SomeAnnotation::class,
     ];
 
