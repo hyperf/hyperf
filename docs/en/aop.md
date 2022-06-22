@@ -33,14 +33,14 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 class FooAspect extends AbstractAspect
 {
     // The class to be cut in can be multiple, or can be identified by `::` to the specific method, or use * for fuzzy matching
-    public $classes = [
+    public array $classes = [
         SomeClass::class,
         'App\Service\SomeClass::someMethod',
         'App\Service\SomeClass::*Method',
     ];
     
     // The annotations to be cut into, means the classes that use these annotations to be cut into, can only cut into class annotations and class method annotations.
-    public $annotations = [
+    public array $annotations = [
         SomeAnnotation::class,
     ];
 

@@ -33,14 +33,14 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 class FooAspect extends AbstractAspect
 {
     // 要切入的類或 Trait，可以多個，亦可通過 :: 標識到具體的某個方法，通過 * 可以模糊匹配
-    public $classes = [
+    public array $classes = [
         SomeClass::class,
         'App\Service\SomeClass::someMethod',
         'App\Service\SomeClass::*Method',
     ];
 
     // 要切入的註解，具體切入的還是使用了這些註解的類，僅可切入類註解和類方法註解
-    public $annotations = [
+    public array $annotations = [
         SomeAnnotation::class,
     ];
 
