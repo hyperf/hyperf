@@ -11,8 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation\Annotation;
 
+use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
+#[Attribute(Attribute::TARGET_METHOD)]
 class Scene extends AbstractAnnotation
 {
     public function __construct(public string $scene)
