@@ -362,7 +362,7 @@ use Hyperf\Validation\Request\FormRequest;
 
 class SceneRequest extends FormRequest
 {
-    protected $scenes = [
+    protected array $scenes = [
         'foo' => ['username'],
         'bar' => ['username', 'password'],
     ];
