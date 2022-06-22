@@ -64,7 +64,7 @@ class ValidationMiddleware implements MiddlewareInterface
                         }
                         $className = $parameter->getType()->getName();
                         if ($this->isImplementedValidatesWhenResolved($className)) {
-                            /** @var ValidatesWhenResolved $formRequest */
+                            /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved $formRequest */
                             $formRequest = $this->container->get($className);
                             if ($formRequest instanceof FormRequest) {
                                 $this->handleSceneAnnotation($formRequest, $requestHandler, $method, $parameter->getName());
