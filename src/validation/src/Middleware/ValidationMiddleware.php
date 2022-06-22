@@ -17,6 +17,7 @@ use Hyperf\Context\Context;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Exception\ServerException;
+use Hyperf\Validation\Annotation\SceneCollector;
 use Hyperf\Validation\Contract\ValidatesWhenResolved;
 use Hyperf\Validation\UnauthorizedException;
 use Psr\Container\ContainerInterface;
@@ -58,10 +59,14 @@ class ValidationMiddleware implements MiddlewareInterface
                         if ($parameter->getType() === null) {
                             continue;
                         }
-                        $classname = $parameter->getType()->getName();
-                        if ($this->isImplementedValidatesWhenResolved($classname)) {
-                            /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved $formRequest */
-                            $formRequest = $this->container->get($classname);
+                        $className = $parameter->getType()->getName();
+                        if ($this->isImplementedValidatesWhenResolved($className)) {
+                            /** @var \Hyperf\Validation\Contract\ValidatesWhenResolved|\Hyperf\Validation\Request\FormRequest $formRequest */
+                            $formRequest = $this->container->get($className);
+                            $scene = SceneCollector::get($requestHandler . '@' . $method);
+                            if ($scene) {
+                                $formRequest->scene($scene);
+                            }
                             $formRequest->validateResolved();
                         }
                     }

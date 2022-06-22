@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation;
 
+use Hyperf\Validation\Annotation\SceneCollector;
 use Hyperf\Validation\Contract\PresenceVerifierInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface as FactoryInterface;
 
@@ -34,6 +35,9 @@ class ConfigProvider
                 'scan' => [
                     'paths' => [
                         __DIR__,
+                    ],
+                    'collectors' => [
+                        SceneCollector::class,
                     ],
                 ],
             ],
