@@ -416,6 +416,48 @@ class FooController extends Controller
 }
 ```
 
+通過 `Scene` 註解切換場景
+
+```php
+<?php
+
+namespace App\Controller;
+
+use App\Request\DebugRequest;
+use App\Request\SceneRequest;
+use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\Validation\Annotation\Scene;
+
+#[AutoController(prefix: 'foo')]
+class FooController extends Controller
+{
+    #[Scene(scene:'bar1')]
+    public function bar1(SceneRequest $request)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene(scene:'bar2', argument: 'request')] // 繫結到 $request
+    public function bar2(SceneRequest $request)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene(scene:'bar3', argument: 'request')]
+    #[Scene(scene:'bar3', argument: 'req')] // 支援多個參數
+    public function bar3(SceneRequest $request, DebugRequest $req)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene()] // 預設 scene 為方法名，效果等於 #[Scene(scene: 'bar1')]
+    public function bar1(SceneRequest $request)
+    {
+        return $this->response->success($request->all());
+    }
+}
+```
+
 ## 驗證規則
 
 下面是有效規則及其函式列表：
