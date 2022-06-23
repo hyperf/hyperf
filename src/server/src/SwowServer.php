@@ -21,6 +21,7 @@ use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Server\Exception\RuntimeException;
+use Hyperf\Utils\Waiter;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
@@ -34,11 +35,14 @@ class SwowServer implements ServerInterface
 
     protected bool $mainServerStarted = false;
 
+    private Waiter $waiter;
+
     public function __construct(
         protected ContainerInterface $container,
         protected LoggerInterface $logger,
         protected EventDispatcherInterface $eventDispatcher
     ) {
+        $this->waiter = new Waiter(-1);
     }
 
     public function init(ServerConfig $config): ServerInterface
@@ -154,31 +158,25 @@ class SwowServer implements ServerInterface
                     if ($this->server instanceof \Swoole\Coroutine\Server) {
                         $this->server->handle(function (Coroutine\Server\Connection $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
                             if ($connectHandler && $connectMethod) {
-                                parallel([
-                                    static function () use ($connectHandler, $connectMethod, $connection) {
-                                        $connectHandler->{$connectMethod}($connection, $connection->exportSocket()->fd);
-                                    },
-                                ]);
+                                $this->waiter->wait(static function () use ($connectHandler, $connectMethod, $connection) {
+                                    $connectHandler->{$connectMethod}($connection, $connection->exportSocket()->fd);
+                                });
                             }
                             while (true) {
                                 $data = $connection->recv();
                                 if (empty($data)) {
                                     if ($closeHandler && $closeMethod) {
-                                        parallel([
-                                            static function () use ($closeHandler, $closeMethod, $connection) {
-                                                $closeHandler->{$closeMethod}($connection, $connection->exportSocket()->fd);
-                                            },
-                                        ]);
+                                        $this->waiter->wait(static function () use ($closeHandler, $closeMethod, $connection) {
+                                            $closeHandler->{$closeMethod}($connection, $connection->exportSocket()->fd);
+                                        });
                                     }
                                     $connection->close();
                                     break;
                                 }
                                 // One coroutine at a time, consistent with other servers
-                                parallel([
-                                    static function () use ($receiveHandler, $receiveMethod, $connection, $data) {
-                                        $receiveHandler->{$receiveMethod}($connection, $connection->exportSocket()->fd, 0, $data);
-                                    },
-                                ]);
+                                $this->waiter->wait(static function () use ($receiveHandler, $receiveMethod, $connection, $data) {
+                                    $receiveHandler->{$receiveMethod}($connection, $connection->exportSocket()->fd, 0, $data);
+                                });
                             }
                         });
                     }

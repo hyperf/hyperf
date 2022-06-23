@@ -12,11 +12,12 @@ declare(strict_types=1);
 namespace HyperfTest\WebSocketServer\Stub;
 
 use Hyperf\Engine\Http\Server as HttpServer;
+use Swow\Http\Server\Connection;
 
 class FooServer
 {
-    public function getServer(): HttpServer|int
+    public function getServer(int|Connection $id): HttpServer|int
     {
-        return 1;
+        return $id;
     }
 }
