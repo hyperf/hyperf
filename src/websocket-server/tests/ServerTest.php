@@ -20,6 +20,7 @@ use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Reflection\ClassInvoker;
 use Hyperf\Utils\Waiter;
 use Hyperf\WebSocketServer\Server;
+use HyperfTest\WebSocketServer\Stub\FooServer;
 use HyperfTest\WebSocketServer\Stub\WebSocketStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -57,5 +58,11 @@ class ServerTest extends TestCase
         $server->deferOnOpen(new SwooleRequest(), WebSocketStub::class, new SwooleResponse(), 1);
         $this->assertNotEquals(Coroutine::id(), WebSocketStub::$coroutineId);
         $this->assertFalse(\Swoole\Coroutine::exists(WebSocketStub::$coroutineId));
+    }
+
+    public function testEngineServer()
+    {
+        $serv = new FooServer();
+        $this->assertSame(1, $serv->getServer());
     }
 }

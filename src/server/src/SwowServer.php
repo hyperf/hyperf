@@ -134,8 +134,12 @@ class SwowServer implements ServerInterface
                     if ($handler instanceof MiddlewareInitializerInterface) {
                         $handler->initCoreMiddleware($name);
                     }
-                    if ($this->server instanceof \Swoole\Coroutine\Http\Server) {
-                        $this->server->handle('/', [$handler, $method]);
+                    if ($this->server instanceof HttpServer) {
+                        $server->handle(static function ($request, $session) use ($handler, $method) {
+                            wait(static function () use ($request, $session, $handler, $method) {
+                                $handler->{$method}($request, $session);
+                            });
+                        });
                     }
                 }
                 return;
@@ -150,25 +154,31 @@ class SwowServer implements ServerInterface
                     if ($this->server instanceof \Swoole\Coroutine\Server) {
                         $this->server->handle(function (Coroutine\Server\Connection $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
                             if ($connectHandler && $connectMethod) {
-                                parallel([static function () use ($connectHandler, $connectMethod, $connection) {
-                                    $connectHandler->{$connectMethod}($connection, $connection->exportSocket()->fd);
-                                }]);
+                                parallel([
+                                    static function () use ($connectHandler, $connectMethod, $connection) {
+                                        $connectHandler->{$connectMethod}($connection, $connection->exportSocket()->fd);
+                                    },
+                                ]);
                             }
                             while (true) {
                                 $data = $connection->recv();
                                 if (empty($data)) {
                                     if ($closeHandler && $closeMethod) {
-                                        parallel([static function () use ($closeHandler, $closeMethod, $connection) {
-                                            $closeHandler->{$closeMethod}($connection, $connection->exportSocket()->fd);
-                                        }]);
+                                        parallel([
+                                            static function () use ($closeHandler, $closeMethod, $connection) {
+                                                $closeHandler->{$closeMethod}($connection, $connection->exportSocket()->fd);
+                                            },
+                                        ]);
                                     }
                                     $connection->close();
                                     break;
                                 }
                                 // One coroutine at a time, consistent with other servers
-                                parallel([static function () use ($receiveHandler, $receiveMethod, $connection, $data) {
-                                    $receiveHandler->{$receiveMethod}($connection, $connection->exportSocket()->fd, 0, $data);
-                                }]);
+                                parallel([
+                                    static function () use ($receiveHandler, $receiveMethod, $connection, $data) {
+                                        $receiveHandler->{$receiveMethod}($connection, $connection->exportSocket()->fd, 0, $data);
+                                    },
+                                ]);
                             }
                         });
                     }
@@ -193,11 +203,10 @@ class SwowServer implements ServerInterface
     {
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
+            case ServerInterface::SERVER_WEBSOCKET:
                 $server = new HttpServer($this->logger);
                 $server->bind($host, $port);
                 return $server;
-            case ServerInterface::SERVER_WEBSOCKET:
-                // return new Coroutine\Http\Server($host, $port, false, true);
             case ServerInterface::SERVER_BASE:
                 // return new Coroutine\Server($host, $port, false, true);
         }

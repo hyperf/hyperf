@@ -24,6 +24,7 @@ use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\Engine\Constant;
 use Hyperf\Engine\Http\FdGetter;
+use Hyperf\Engine\Http\Server as HttpServer;
 use Hyperf\Engine\WebSocket\WebSocket;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Base\Response;
@@ -44,9 +45,11 @@ use Hyperf\WebSocketServer\Exception\WebSocketHandeShakeException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Swoole\Coroutine\Http\Server as SwCoServer;
 use Swoole\Http\Response as SwooleResponse;
 use Swoole\Server as SwooleServer;
 use Swoole\WebSocket\Server as WebSocketServer;
+use Swow\Http\Server\Connection;
 use Throwable;
 
 class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, OnCloseInterface, OnMessageInterface
@@ -60,7 +63,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     protected string $serverName = 'websocket';
 
     /**
-     * @var null|\Swoole\Coroutine\Http\Server|WebSocketServer
+     * @var null|HttpServer|SwCoServer|WebSocketServer
      */
     protected mixed $server = null;
 
@@ -80,7 +83,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         ]);
     }
 
-    public function getServer(): \Swoole\Coroutine\Http\Server|WebSocketServer
+    public function getServer(): SwCoServer|WebSocketServer|HttpServer
     {
         if ($this->server) {
             return $this->server;
@@ -105,7 +108,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
     /**
      * @param \Swoole\Http\Request|\Swow\Http\Server\Request $request
-     * @param SwooleResponse $response
+     * @param Connection|SwooleResponse $response
      */
     public function onHandShake($request, $response): void
     {
@@ -149,8 +152,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             if (Constant::isCoroutineServer($server)) {
                 $upgrade = new WebSocket($response, $request);
 
-                // TODO: Support SWOW
-                $response instanceof SwooleResponse && $this->getSender()->setResponse($fd, $response);
+                $this->getSender()->setResponse($fd, $response);
                 $this->deferOnOpen($request, $class, $response, $fd);
 
                 $upgrade->on(WebSocket::ON_MESSAGE, $this->getOnMessageCallback());
@@ -240,7 +242,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     /**
      * @param mixed $request
      */
-    protected function deferOnOpen($request, string $class, SwooleResponse|WebSocketServer $server, int $fd)
+    protected function deferOnOpen($request, string $class, SwooleResponse|WebSocketServer|Connection $server, int $fd)
     {
         $instance = $this->container->get($class);
         if ($server instanceof WebSocketServer) {
