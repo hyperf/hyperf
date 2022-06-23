@@ -243,12 +243,20 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
     protected function deferOnOpen($request, string $class, SwooleResponse|WebSocketServer $server, int $fd)
     {
         $instance = $this->container->get($class);
-        wait(static function () use ($request, $instance, $server, $fd) {
-            Context::set(WsContext::FD, $fd);
-            if ($instance instanceof OnOpenInterface) {
-                $instance->onOpen($server, $request);
-            }
-        });
+        if ($server instanceof WebSocketServer) {
+            defer(static function () use ($request, $instance, $server) {
+                if ($instance instanceof OnOpenInterface) {
+                    $instance->onOpen($server, $request);
+                }
+            });
+        } else {
+            wait(static function () use ($request, $instance, $server, $fd) {
+                Context::set(WsContext::FD, $fd);
+                if ($instance instanceof OnOpenInterface) {
+                    $instance->onOpen($server, $request);
+                }
+            });
+        }
     }
 
     /**
