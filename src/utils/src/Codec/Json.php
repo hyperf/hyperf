@@ -45,7 +45,7 @@ class Json
     public static function decode(string $json, bool $assoc = true, int $depth = 512, int $flags = 0): mixed
     {
         try {
-            $decode = json_decode($json, $assoc, $depth, $flags | JSON_THROW_ON_ERROR);
+            $decode = json_decode($json, $assoc, $depth, $flags | JSON_THROW_ON_ERROR | JSON_BIGINT_AS_STRING);
         } catch (\Throwable $exception) {
             throw new InvalidArgumentException($exception->getMessage(), $exception->getCode());
         }
