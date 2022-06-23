@@ -106,7 +106,7 @@ class ValidationMiddleware implements MiddlewareInterface
         /** @var Scene $annotation */
         foreach ($annotations as $annotation) {
             if ($annotation->argument === null || $annotation->argument === $argument) {
-                $request->scene($annotation->scene);
+                $request->scene($annotation->scene ?? $method);
                 return;
             }
         }
