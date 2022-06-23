@@ -63,6 +63,7 @@ class ServerTest extends TestCase
     public function testEngineServer()
     {
         $serv = new FooServer();
-        $this->assertSame(1, $serv->getServer());
+        $id = rand(0, 99999);
+        $this->assertSame($id, $serv->getServer($id));
     }
 }
