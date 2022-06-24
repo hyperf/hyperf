@@ -41,7 +41,7 @@ class ModelCommand extends Command
 
     protected ?ConfigInterface $config = null;
 
-    protected Lexer $lexer;
+    protected ?Lexer $lexer = null;
 
     protected ?Parser $astParser = null;
 
@@ -181,10 +181,10 @@ class ModelCommand extends Command
 
         $traverser->addVisitor(new CloningVisitor());
 
-        $oldStmts = $this->astParser->parse(file_get_contents($path));
-        $oldTokens = $this->lexer->getTokens();
-        $newStmts = $traverser->traverse($oldStmts);
-        $code = $this->printer->printFormatPreserving($newStmts, $oldStmts, $oldTokens);
+        $originStmts = $this->astParser->parse(file_get_contents($path));
+        $originTokens = $this->lexer->getTokens();
+        $newStmts = $traverser->traverse($originStmts);
+        $code = $this->printer->printFormatPreserving($newStmts, $originStmts, $originTokens);
 
         file_put_contents($path, $code);
         $this->output->writeln(sprintf('<info>Model %s was created.</info>', $class));
