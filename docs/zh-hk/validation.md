@@ -64,7 +64,7 @@ php bin/hyperf.php vendor:publish hyperf/validation
 
 執行上面的命令會將驗證器的語言文件 `validation.php` 發佈到對應的語言文件目錄，`en` 指英文語言文件，`zh_CN` 指中文簡體的語言文件，您可以按照實際需要對 `validation.php` 文件內容進行修改和自定義。
 
-```
+```shell
 /storage
     /languages
         /en
