@@ -98,7 +98,7 @@ class Scanner
 
         $this->deserializeCachedScanData($collectors);
 
-        $annotationReader = new AnnotationReader();
+        $annotationReader = new AnnotationReader($this->scanConfig->getIgnoreAnnotations());
 
         $paths = $this->normalizeDir($paths);
 

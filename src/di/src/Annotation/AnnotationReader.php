@@ -21,6 +21,10 @@ use ReflectionProperty;
  */
 class AnnotationReader
 {
+    public function __construct(protected array $ignoreAnnotations = [])
+    {
+    }
+
     public function getClassAnnotations(ReflectionClass $class)
     {
         return $this->getAttributes($class);
@@ -84,6 +88,10 @@ class AnnotationReader
         $attributes = $reflection->getAttributes();
         foreach ($attributes as $attribute) {
             if (! class_exists($attribute->getName())) {
+                if (in_array($attribute->getName(), $this->ignoreAnnotations, true)) {
+                    continue;
+                }
+
                 $className = $methodName = $propertyName = '';
                 if ($reflection instanceof ReflectionClass) {
                     $className = $reflection->getName();
