@@ -65,6 +65,7 @@ composer analyse
 - [#4865](https://github.com/hyperf/hyperf/pull/4865) No need to check `Redis::isConnected()`, because it could be connected defer or reconnected after disconnected.
 - [#4874](https://github.com/hyperf/hyperf/pull/4874) Use `wait` instead of `parallel` for coroutine style tcp server.
 - [#4875](https://github.com/hyperf/hyperf/pull/4875) Use the original style when regenerating models.
+- [#4880](https://github.com/hyperf/hyperf/pull/4880) Support `ignoreAnnotations` for `Annotation Reader`.
 
 ## Changed
 
