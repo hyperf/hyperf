@@ -48,6 +48,26 @@ class ProxyTraitTest extends TestCase
         $this->assertEquals(['id', 'str', 'num'], $obj->get3(1, 'hy')['order']);
     }
 
+    public function testGetParamsMapOnTraitAlias()
+    {
+        $obj = new ProxyTraitObject();
+
+        $this->assertEquals(['id' => null, 'str' => ''], $obj->getOnTrait(null)['keys']);
+        $this->assertEquals(['id', 'str'], $obj->getOnTrait(null)['order']);
+
+        $this->assertEquals(['id' => 1, 'str' => ''], $obj->get2OnTrait()['keys']);
+        $this->assertEquals(['id', 'str'], $obj->get2OnTrait()['order']);
+
+        $this->assertEquals(['id' => null, 'str' => ''], $obj->get2OnTrait(null)['keys']);
+        $this->assertEquals(['id', 'str'], $obj->get2OnTrait(null)['order']);
+
+        $this->assertEquals(['id' => 1, 'str' => '', 'num' => 1.0], $obj->get3OnTrait()['keys']);
+        $this->assertEquals(['id', 'str', 'num'], $obj->get3OnTrait()['order']);
+
+        $this->assertEquals(['id' => 1, 'str' => 'hy', 'num' => 1.0], $obj->get3OnTrait(1, 'hy')['keys']);
+        $this->assertEquals(['id', 'str', 'num'], $obj->get3OnTrait(1, 'hy')['order']);
+    }
+
     public function testProceedingJoinPointGetInstance()
     {
         $aspect = [];

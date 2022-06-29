@@ -38,7 +38,7 @@ class ReflectionManager extends MetadataCollector
         $key = $className . '::' . $method;
         if (! isset(static::$container['method'][$key])) {
             // TODO check interface_exist
-            if (! class_exists($className)) {
+            if (! class_exists($className) && ! trait_exists($className)) {
                 throw new InvalidArgumentException("Class {$className} not exist");
             }
             static::$container['method'][$key] = static::reflectClass($className)->getMethod($method);
