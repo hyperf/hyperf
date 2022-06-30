@@ -74,7 +74,7 @@ trait ProxyTrait
             unset($annotationAspects, $aspects, $queue);
         }
 
-        if (empty(AspectManager::get($className, $methodName))) {
+        if (! AspectManager::has($className, $methodName)) {
             return $proceedingJoinPoint->processOriginalMethod();
         }
 
