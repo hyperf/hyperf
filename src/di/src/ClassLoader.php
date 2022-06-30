@@ -38,9 +38,9 @@ class ClassLoader
         $classLoader->addClassMap($config->getClassMap());
 
         $scanner = new Scanner($this, $config, $handler);
-
-        $proxies = $scanner->scan($classLoader->getClassMap(), $proxyFileDir);
-        $classLoader->addClassMap($proxies);
+        $classLoader->addClassMap(
+            $scanner->scan($classLoader->getClassMap(), $proxyFileDir)
+        );
     }
 
     public function loadClass(string $class): void
