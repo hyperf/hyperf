@@ -44,21 +44,21 @@ trait ProxyTraitOnTrait
 
     public function incr()
     {
-        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__TRAIT__, __FUNCTION__, func_get_args()), function () {
+        return self::__proxyCall(__TRAIT__, __FUNCTION__, func_get_args(), function () {
             return 1;
         });
     }
 
     public function getName()
     {
-        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__TRAIT__, __FUNCTION__, func_get_args()), function () {
+        return self::__proxyCall(__TRAIT__, __FUNCTION__, func_get_args(), function () {
             return 'HyperfCloud';
         });
     }
 
     public function getName2()
     {
-        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__TRAIT__, __FUNCTION__, func_get_args()), function () {
+        return self::__proxyCall(__TRAIT__, __FUNCTION__, func_get_args(), function () {
             return 'HyperfCloud';
         });
     }
