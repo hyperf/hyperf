@@ -1618,6 +1618,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      */
     public function getCachingIterator(int $flags = CachingIterator::CALL_TOSTRING): CachingIterator
     {
+        /* @phpstan-ignore-next-line */
         return new CachingIterator($this->getIterator(), $flags);
     }
 

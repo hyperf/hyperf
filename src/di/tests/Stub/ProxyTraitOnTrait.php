@@ -13,17 +13,9 @@ namespace HyperfTest\Di\Stub;
 
 use Hyperf\Di\Aop\ProxyTrait;
 
-class ProxyTraitObject
+trait ProxyTraitOnTrait
 {
     use ProxyTrait;
-    use ProxyTraitOnTrait {
-        ProxyTraitOnTrait::get as getOnTrait;
-        ProxyTraitOnTrait::get2 as get2OnTrait;
-        ProxyTraitOnTrait::get3 as get3OnTrait;
-        ProxyTraitOnTrait::incr as incrOnTrait;
-        ProxyTraitOnTrait::getName as getNameOnTrait;
-        ProxyTraitOnTrait::getName2 as getName2OnTrait;
-    }
 
     /**
      * @var string
@@ -37,36 +29,36 @@ class ProxyTraitObject
 
     public function get(?int $id, string $str = '')
     {
-        return self::__getParamsMap(__CLASS__, 'get', func_get_args());
+        return $this->__getParamsMap(__TRAIT__, 'get', func_get_args());
     }
 
     public function get2(?int $id = 1, string $str = '')
     {
-        return self::__getParamsMap(__CLASS__, 'get2', func_get_args());
+        return $this->__getParamsMap(__TRAIT__, 'get2', func_get_args());
     }
 
     public function get3(?int $id = 1, string $str = '', float $num = 1.0)
     {
-        return self::__getParamsMap(__CLASS__, 'get3', func_get_args());
+        return $this->__getParamsMap(__TRAIT__, 'get3', func_get_args());
     }
 
     public function incr()
     {
-        return self::__proxyCall(__CLASS__, __FUNCTION__, func_get_args(), function () {
+        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__TRAIT__, __FUNCTION__, func_get_args()), function () {
             return 1;
         });
     }
 
     public function getName()
     {
-        return self::__proxyCall(__CLASS__, __FUNCTION__, func_get_args(), function () {
+        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__TRAIT__, __FUNCTION__, func_get_args()), function () {
             return 'HyperfCloud';
         });
     }
 
     public function getName2()
     {
-        return self::__proxyCall(__CLASS__, __FUNCTION__, func_get_args(), function () {
+        return self::__proxyCall(__TRAIT__, __FUNCTION__, self::__getParamsMap(__TRAIT__, __FUNCTION__, func_get_args()), function () {
             return 'HyperfCloud';
         });
     }
