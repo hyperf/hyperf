@@ -343,6 +343,112 @@ if ($errors->has('foo')) {
 }
 ```
 
+### Scene
+
+The validator adds a scenario function, so we can easily modify the validation rules on demand.
+
+> This feature requires a version of this component greater than or equal to 2.2.7
+Create a `SceneRequest` as follows：
+
+```php
+<?php
+declare(strict_types=1);
+namespace App\Request;
+use Hyperf\Validation\Request\FormRequest;
+class SceneRequest extends FormRequest
+{
+    protected array $scenes = [
+        'foo' => ['username'],
+        'bar' => ['username', 'password'],
+    ];
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+    /**
+     * Get the validation rules that apply to the request.
+     */
+    public function rules(): array
+    {
+        return [
+            'username' => 'required',
+            'gender' => 'required',
+        ];
+    }
+}
+```
+
+When we use it normally, all validation rules are used, i.e. `username` and `gender` are required.
+
+We can set the scenario so that this request only validates the `username` mandatory field.
+
+If we configure `Hyperf\Validation\Middleware\ValidationMiddleware` and inject `SceneRequest` to the method,
+it will cause the entry to be validated directly in the middleware,
+so we need to get the `SceneRequest` from the container in the method to switch the scene.
+
+```php
+<?php
+namespace App\Controller;
+use App\Request\DebugRequest;
+use App\Request\SceneRequest;
+use Hyperf\HttpServer\Annotation\AutoController;
+#[AutoController(prefix: 'foo')]
+class FooController extends Controller
+{
+    public function scene()
+    {
+        $request = $this->container->get(SceneRequest::class);
+        $request->scene('foo')->validateResolved();
+        return $this->response->success($request->all());
+    }
+}
+```
+
+But, we can use annotation `Scene` to switch it.
+
+```php
+<?php
+
+namespace App\Controller;
+
+use App\Request\DebugRequest;
+use App\Request\SceneRequest;
+use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\Validation\Annotation\Scene;
+
+#[AutoController(prefix: 'foo')]
+class FooController extends Controller
+{
+    #[Scene(scene:'bar1')]
+    public function bar1(SceneRequest $request)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene(scene:'bar2', argument: 'request')] // bind $request
+    public function bar2(SceneRequest $request)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene(scene:'bar3', argument: 'request')] // bind $request
+    #[Scene(scene:'bar3', argument: 'req')] // bind $req
+    public function bar3(SceneRequest $request, DebugRequest $req)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene()] // the default scene is method name, The effect is equivalent to #[Scene(scene: 'bar1')]
+    public function bar1(SceneRequest $request)
+    {
+        return $this->response->success($request->all());
+    }
+}
+```
+
 ## Validation rules
 
 The following is a list of valid rules and their functions:
