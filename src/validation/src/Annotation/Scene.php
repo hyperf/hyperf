@@ -17,7 +17,7 @@ use Hyperf\Di\Annotation\AbstractMultipleAnnotation;
 #[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 class Scene extends AbstractMultipleAnnotation
 {
-    public function __construct(public string $scene, public ?string $argument = null)
+    public function __construct(public ?string $scene = null, public ?string $argument = null)
     {
     }
 }

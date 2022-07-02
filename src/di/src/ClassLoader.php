@@ -26,12 +26,6 @@ class ClassLoader
 {
     protected ComposerClassLoader $composerClassLoader;
 
-    /**
-     * The container to collect all the classes that would be proxy.
-     * [ OriginalClassName => ProxyFileAbsolutePath ].
-     */
-    protected array $proxies = [];
-
     public function __construct(ComposerClassLoader $classLoader, string $proxyFileDir, string $configDir, ScanHandlerInterface $handler)
     {
         $this->setComposerClassLoader($classLoader);
@@ -44,8 +38,9 @@ class ClassLoader
         $classLoader->addClassMap($config->getClassMap());
 
         $scanner = new Scanner($this, $config, $handler);
-
-        $this->proxies = $scanner->scan($this->getComposerClassLoader()->getClassMap(), $proxyFileDir);
+        $classLoader->addClassMap(
+            $scanner->scan($classLoader->getClassMap(), $proxyFileDir)
+        );
     }
 
     public function loadClass(string $class): void
@@ -112,12 +107,7 @@ class ClassLoader
 
     protected function locateFile(string $className): ?string
     {
-        if (isset($this->proxies[$className]) && file_exists($this->proxies[$className])) {
-            $file = $this->proxies[$className];
-        } else {
-            $file = $this->getComposerClassLoader()->findFile($className);
-        }
-
+        $file = $this->getComposerClassLoader()->findFile($className);
         return is_string($file) ? $file : null;
     }
 

@@ -331,7 +331,9 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
 
     private function mixSubscribe(Subscriber $sub)
     {
-        $sub->subscribe($this->getChannelKey());
+        $prefix = config('redis.' . $this->connection . '.options.' . Redis::OPT_PREFIX);
+        $channelKey = $prefix ? $prefix . $this->getChannelKey() : $this->getChannelKey();
+        $sub->subscribe($channelKey);
         $chan = $sub->channel();
         Coroutine::create(function () use ($sub) {
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
