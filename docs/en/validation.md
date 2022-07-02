@@ -385,7 +385,10 @@ When we use it normally, all validation rules are used, i.e. `username` and `gen
 
 We can set the scenario so that this request only validates the `username` mandatory field.
 
-> If we configure `Hyperf\Validation\Middleware\ValidationMiddleware` and inject `SceneRequest` to the method, it will cause the entry to be validated directly in the middleware, so the scene value cannot be validated, so we need to get the corresponding `SceneRequest` from the container in the method to switch the scene.
+If we configure `Hyperf\Validation\Middleware\ValidationMiddleware` and inject `SceneRequest` to the method,
+it will cause the entry to be validated directly in the middleware,
+so we need to get the `SceneRequest` from the container in the method to switch the scene.
+
 ```php
 <?php
 namespace App\Controller;
@@ -399,6 +402,48 @@ class FooController extends Controller
     {
         $request = $this->container->get(SceneRequest::class);
         $request->scene('foo')->validateResolved();
+        return $this->response->success($request->all());
+    }
+}
+```
+
+But, we can use annotation `Scene` to switch it.
+
+```php
+<?php
+
+namespace App\Controller;
+
+use App\Request\DebugRequest;
+use App\Request\SceneRequest;
+use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\Validation\Annotation\Scene;
+
+#[AutoController(prefix: 'foo')]
+class FooController extends Controller
+{
+    #[Scene(scene:'bar1')]
+    public function bar1(SceneRequest $request)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene(scene:'bar2', argument: 'request')] // bind $request
+    public function bar2(SceneRequest $request)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene(scene:'bar3', argument: 'request')] // bind $request
+    #[Scene(scene:'bar3', argument: 'req')] // bind $req
+    public function bar3(SceneRequest $request, DebugRequest $req)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene()] // the default scene is method name, The effect is equivalent to #[Scene(scene: 'bar1')]
+    public function bar1(SceneRequest $request)
+    {
         return $this->response->success($request->all());
     }
 }
