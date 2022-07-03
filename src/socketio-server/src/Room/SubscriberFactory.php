@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Room;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Redis\Redis;
 use Mix\Redis\Subscriber\Subscriber;
@@ -22,13 +23,26 @@ class SubscriberFactory
         if (! class_exists(\Mix\Redis\Subscriber\Subscriber::class)) {
             return null;
         }
-        $redis = $container->get(Redis::class);
+        /** @var Redis|\Redis $redis */
+        $redis = Context::get(Redis::class) ?? $container->get(Redis::class);
         $host = $redis->getHost();
         $port = $redis->getPort();
         $pass = $redis->getAuth();
+        $prefix = $redis->getOption(\Redis::OPT_PREFIX);
 
         try {
-            $sub = new Subscriber($host, $port, $pass ?? '', 5);
+            $sub = new class($host, $port, $pass ?? '', 5) extends Subscriber {
+                public string $prefix = '';
+
+                public function subscribe(string ...$channels)
+                {
+                    $channels = array_map(fn ($channel) => $this->prefix . $channel, $channels);
+                    parent::subscribe(...$channels);
+                }
+            };
+            if ($prefix) {
+                $sub->prefix = $prefix;
+            }
             defer(function () use ($sub) {
                 $sub->close();
             });
