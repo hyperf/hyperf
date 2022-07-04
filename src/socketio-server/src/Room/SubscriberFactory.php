@@ -41,7 +41,7 @@ class SubscriberFactory
                 }
             };
             if ($prefix) {
-                $sub->prefix = $prefix;
+                $sub->prefix = (string) $prefix;
             }
             defer(function () use ($sub) {
                 $sub->close();
