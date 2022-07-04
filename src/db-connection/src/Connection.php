@@ -125,6 +125,47 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
     }
 
     /**
+     * Start a new XA database transaction.
+     */
+    public function xaBeginTransaction(string $gid)
+    {
+        $this->getPdo()->exec(sprintf("xa start '%s'", $gid));
+
+    }
+
+    /**
+     * End the XA database transaction.
+     */
+    public function xaEnd(string $gid)
+    {
+        $this->getPdo()->exec(sprintf("xa end '%s'", $gid));
+    }
+
+    /**
+     * Prepare the XA active database transaction.
+     */
+    public function xaPrepare(string $gid)
+    {
+        $this->getPdo()->exec(sprintf("xa prepare '%s'", $gid));
+    }
+
+    /**
+     * Commit the XA active database transaction.
+     */
+    public function xaCommit(string $gid)
+    {
+        $this->getPdo()->exec(sprintf("xa commit '%s'", $gid));
+    }
+
+    /**
+     * RollBack the XA active database transaction.
+     */
+    public function xaRollBack(string $gid)
+    {
+        $this->getPdo()->exec(sprintf("xa rollback '%s'", $gid));
+    }
+
+    /**
      * Refresh pdo and readPdo for current connection.
      */
     protected function refresh(\Hyperf\Database\Connection $connection)

@@ -40,6 +40,11 @@ use Psr\Container\ContainerInterface;
  * @method static int transactionLevel()
  * @method static array pretend(\Closure $callback)
  * @method static ConnectionInterface connection(string $pool)
+ * @method static void xaBeginTransaction(string $gid)
+ * @method static void xaEnd(string $gid)
+ * @method static void xaPrepare(string $gid)
+ * @method static void xaCommit(string $gid)
+ * @method static void xaRollBack(string $gid)
  */
 class Db
 {

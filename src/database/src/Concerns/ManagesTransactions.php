@@ -127,9 +127,8 @@ trait ManagesTransactions
      */
     public function xaBeginTransaction(string $gid)
     {
-        $statement = $this->getPdo()->prepare('xa start ?;');
+        $this->getPdo()->exec(sprintf("xa start '%s'", $gid));
 
-        $statement->execute([$gid]);
     }
 
     /**
@@ -137,9 +136,7 @@ trait ManagesTransactions
      */
     public function xaEnd(string $gid)
     {
-        $statement = $this->getPdo()->prepare('xa end ?;');
-
-        $statement->execute([$gid]);
+        $this->getPdo()->exec(sprintf("xa end '%s'", $gid));
     }
 
     /**
@@ -147,9 +144,7 @@ trait ManagesTransactions
      */
     public function xaPrepare(string $gid)
     {
-        $statement = $this->getPdo()->prepare('xa prepare ?;');
-
-        $statement->execute([$gid]);
+        $this->getPdo()->exec(sprintf("xa prepare '%s'", $gid));
     }
 
     /**
@@ -157,9 +152,7 @@ trait ManagesTransactions
      */
     public function xaCommit(string $gid)
     {
-        $statement = $this->getPdo()->prepare('xa commit ?;');
-
-        $statement->execute([$gid]);
+        $this->getPdo()->exec(sprintf("xa commit '%s'", $gid));
     }
 
     /**
@@ -167,9 +160,7 @@ trait ManagesTransactions
      */
     public function xaRollBack(string $gid)
     {
-        $statement = $this->getPdo()->prepare('xa rollback ?;');
-
-        $statement->execute([$gid]);
+        $this->getPdo()->exec(sprintf("xa rollback '%s'", $gid));
     }
 
     /**
