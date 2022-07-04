@@ -123,6 +123,56 @@ trait ManagesTransactions
     }
 
     /**
+     * Start a new XA database transaction.
+     */
+    public function xaBeginTransaction(string $gid)
+    {
+        $statement = $this->getPdo()->prepare('xa start ?;');
+
+        $statement->execute([$gid]);
+    }
+
+    /**
+     * End the XA database transaction.
+     */
+    public function xaEnd(string $gid)
+    {
+        $statement = $this->getPdo()->prepare('xa end ?;');
+
+        $statement->execute([$gid]);
+    }
+
+    /**
+     * Prepare the XA active database transaction.
+     */
+    public function xaPrepare(string $gid)
+    {
+        $statement = $this->getPdo()->prepare('xa prepare ?;');
+
+        $statement->execute([$gid]);
+    }
+
+    /**
+     * Commit the XA active database transaction.
+     */
+    public function xaCommit(string $gid)
+    {
+        $statement = $this->getPdo()->prepare('xa commit ?;');
+
+        $statement->execute([$gid]);
+    }
+
+    /**
+     * RollBack the XA active database transaction.
+     */
+    public function xaRollBack(string $gid)
+    {
+        $statement = $this->getPdo()->prepare('xa rollback ?;');
+
+        $statement->execute([$gid]);
+    }
+
+    /**
      * Handle an exception encountered when running a transacted statement.
      *
      * @param \Exception $e

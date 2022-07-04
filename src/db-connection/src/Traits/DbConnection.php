@@ -113,4 +113,28 @@ trait DbConnection
     {
         return $this->__call(__FUNCTION__, func_get_args());
     }
+
+    public function XABeginTransaction(): void
+    {
+        $this->setTransaction(true);
+        $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function xaPrepare(): void
+    {
+        $this->setTransaction(true);
+        $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function xaCommit(): void
+    {
+        $this->setTransaction(false);
+        $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function xaRollBack(): void
+    {
+        $this->setTransaction(false);
+        $this->__call(__FUNCTION__, func_get_args());
+    }
 }

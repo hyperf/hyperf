@@ -111,4 +111,29 @@ interface ConnectionInterface
      * Execute the given callback in "dry run" mode.
      */
     public function pretend(Closure $callback): array;
+
+    /**
+     * Start a new XA database transaction.
+     */
+    public function xaBeginTransaction(string $gid);
+
+    /**
+     * End the XA database transaction.
+     */
+    public function xaEnd(string $gid);
+
+    /**
+     * Prepare the XA active database transaction.
+     */
+    public function xaPrepare(string $gid);
+
+    /**
+     * Commit the XA active database transaction.
+     */
+    public function xaCommit(string $gid);
+
+    /**
+     * RollBack the XA active database transaction.
+     */
+    public function xaRollBack(string $gid);
 }
