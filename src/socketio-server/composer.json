@@ -22,6 +22,9 @@
         "hyperf/nsq": "Required to use RedisNsqAdapter",
         "mix/redis-subscriber": "Suggest to use RedisAdapter (^3.0.4)"
     },
+    "conflict": {
+        "mix/redis-subscriber": "<3.0.4"
+    },
     "autoload": {
         "psr-4": {
             "Hyperf\\SocketIOServer\\": "src/"
