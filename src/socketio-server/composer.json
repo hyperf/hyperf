@@ -14,13 +14,16 @@
         "ext-swoole": ">=4.4",
         "hyperf/di": "~3.0.0",
         "hyperf/redis": "~3.0.0",
-        "hyperf/websocket-server": "~3.0.0",
-        "mix/redis-subscriber": "^3.0"
+        "hyperf/websocket-server": "~3.0.0"
     },
     "suggest": {
         "hyperf/command": "Required to use RemoveRedisGarbage command",
         "hyperf/session": "Required to use session",
-        "hyperf/nsq": "Required to use RedisNsqAdapter"
+        "hyperf/nsq": "Required to use RedisNsqAdapter",
+        "mix/redis-subscriber": "Suggest to use RedisAdapter (^3.0.4)"
+    },
+    "conflict": {
+        "mix/redis-subscriber": "<3.0.4"
     },
     "autoload": {
         "psr-4": {
