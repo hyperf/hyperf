@@ -20,7 +20,7 @@
         "hyperf/command": "Required to use RemoveRedisGarbage command",
         "hyperf/session": "Required to use session",
         "hyperf/nsq": "Required to use RedisNsqAdapter",
-        "mix/redis-subscriber": "Suggest to use (^3.0.4)"
+        "mix/redis-subscriber": "Suggest to use RedisAdapter (^3.0.4)"
     },
     "autoload": {
         "psr-4": {
