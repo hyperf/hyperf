@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Room;
 
-use Hyperf\Context\Context;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
@@ -331,7 +330,7 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
 
     private function mixSubscribe()
     {
-        $sub = make(Subscriber::class,[
+        $sub = make(Subscriber::class, [
             'host' => $this->redis->getHost(),
             'port' => $this->redis->getPort(),
             'password' => $this->redis->getAuth(),
