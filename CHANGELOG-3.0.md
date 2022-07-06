@@ -37,6 +37,7 @@ composer analyse
 - Upgraded `mix/redis-subscribe` to `mix/redis-subscriber:^3.0`
 - Upgraded `psr/simple-cache` to `^1.0|^2.0|^3.0`
 - Upgraded `monolog/monolog` to `^2.7|^3.1`
+- Upgraded `league/flysystem` to `^1.0|^2.0|^3.0`
 
 ## Added
 

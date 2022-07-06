@@ -10,7 +10,7 @@
     "require": {
         "php": ">=8.0",
         "hyperf/di": "~3.0.0",
-        "league/flysystem": "^1.0|^2.0"
+        "league/flysystem": "^1.0|^2.0|^3.0"
     },
     "suggest": {
         "xxtime/flysystem-aliyun-oss": "Required to use aliyun oss adapter when use `league/flysystem` v1.0",
