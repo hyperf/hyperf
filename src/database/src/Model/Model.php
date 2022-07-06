@@ -357,7 +357,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
         $model->setConnection($connection ?: $this->getConnectionName());
 
-        $model->fireModelEvent('retrieved', false);
+        $model->fireModelEvent('retrieved');
 
         return $model;
     }

@@ -492,7 +492,7 @@ trait HasRelationships
             $this->{$relation}()->touch();
 
             if ($this->{$relation} instanceof self) {
-                $this->{$relation}->fireModelEvent('saved', false);
+                $this->{$relation}->fireModelEvent('saved');
 
                 $this->{$relation}->touchOwners();
             } elseif ($this->{$relation} instanceof Collection) {
