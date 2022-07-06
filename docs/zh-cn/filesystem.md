@@ -18,7 +18,7 @@ composer require hyperf/filesystem
 composer require xxtime/flysystem-aliyun-oss
 ```
 
-`Flysystem v2.0` 版本
+`Flysystem v2.0` 和 `Flysystem v3.0` 版本
 
 ```shell
 composer require hyperf/flysystem-oss
