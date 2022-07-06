@@ -32,8 +32,6 @@ class Server implements ServerInterface
 
     protected ?SwooleServer $server = null;
 
-    protected array $onRequestCallbacks = [];
-
     public function __construct(protected ContainerInterface $container, protected LoggerInterface $logger, protected EventDispatcherInterface $eventDispatcher)
     {
     }
@@ -156,12 +154,8 @@ class Server implements ServerInterface
             }
             if (is_array($callback)) {
                 [$className, $method] = $callback;
-                if (array_key_exists($className . $method, $this->onRequestCallbacks)) {
-                    $this->logger->warning(sprintf('%s will be replaced by %s. Each server should have its own onRequest callback. Please check your configs.', $this->onRequestCallbacks[$className . $method], $serverName));
-                }
 
-                $this->onRequestCallbacks[$className . $method] = $serverName;
-                $class = $this->container->get($className);
+                $class = make($className);
                 if (method_exists($class, 'setServerName')) {
                     // Override the server name.
                     $class->setServerName($serverName);
