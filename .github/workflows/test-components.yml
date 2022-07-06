@@ -51,7 +51,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        version: [ '^1.0', '^2.0' ]
+        version: [ '^1.0', '^2.0', '^3.0' ]
         php-version: [ '8.0' ]
       max-parallel: 2
       fail-fast: false
@@ -81,6 +81,13 @@ jobs:
           composer require league/flysystem-ftp
           composer require "overtrue/flysystem-cos:^4.0"
           composer require "overtrue/flysystem-qiniu:^2.0"
+      - name: Setup Flysystem(v3.0) Adapters
+        if: ${{ matrix.version == '^3.0' }}
+        run: |
+          composer require hyperf/flysystem-oss
+          composer require league/flysystem-ftp
+          composer require "overtrue/flysystem-cos:^5.0"
+          composer require "overtrue/flysystem-qiniu:^3.0"
       - name: Run Test Cases
         run: |
           ./.travis/requirement.install.sh

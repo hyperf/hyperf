@@ -90,6 +90,12 @@ composer require "overtrue/flysystem-cos:^3.0"
 composer require "overtrue/flysystem-cos:^4.0"
 ```
 
+`Flysystem v3.0` 版本
+
+```shell
+composer require "overtrue/flysystem-cos:^5.0"
+```
+
 安装完成后，执行
 
 ```bash
