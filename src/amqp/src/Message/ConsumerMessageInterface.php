@@ -47,4 +47,8 @@ interface ConsumerMessageInterface extends MessageInterface
      * @param float|int $timeout
      */
     public function setWaitTimeout($timeout);
+
+    public function setNums(int $nums);
+
+    public function getNums(): int;
 }

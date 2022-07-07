@@ -50,6 +50,8 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
      */
     protected $waitTimeout = 0;
 
+    protected int $nums = 1;
+
     public function consumeMessage($data, AMQPMessage $message): string
     {
         return $this->consume($data);
@@ -130,6 +132,16 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
     {
         $this->waitTimeout = $timeout;
         return $this;
+    }
+
+    public function getNums(): int
+    {
+        return $this->nums;
+    }
+
+    public function setNums(int $nums): void
+    {
+        $this->nums = $nums;
     }
 
     protected function reply($data, AMQPMessage $message)
