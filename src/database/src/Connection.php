@@ -499,7 +499,7 @@ class Connection implements ConnectionInterface
     /**
      * Register a hook to be run just before a database query is executed.
      */
-    public static function beforeExecuting(Closure $callback): void
+    public function beforeExecuting(Closure $callback): void
     {
         static::$beforeExecutingCallbacks[] = $callback;
     }
@@ -507,7 +507,7 @@ class Connection implements ConnectionInterface
     /**
      * Clear all hooks which will be run before a database query.
      */
-    public static function clearBeforeExecutingCallbacks(): void
+    public function clearBeforeExecutingCallbacks(): void
     {
         static::$beforeExecutingCallbacks = [];
     }
