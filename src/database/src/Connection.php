@@ -501,7 +501,7 @@ class Connection implements ConnectionInterface
      */
     public static function beforeExecuting(Closure $callback): void
     {
-        self::$beforeExecutingCallbacks[] = $callback;
+        static::$beforeExecutingCallbacks[] = $callback;
     }
 
     /**
@@ -509,7 +509,7 @@ class Connection implements ConnectionInterface
      */
     public static function clearBeforeExecutingCallbacks(): void
     {
-        self::$beforeExecutingCallbacks = [];
+        static::$beforeExecutingCallbacks = [];
     }
 
     /**
@@ -1037,7 +1037,7 @@ class Connection implements ConnectionInterface
      */
     protected function run(string $query, array $bindings, Closure $callback)
     {
-        foreach (self::$beforeExecutingCallbacks as $beforeExecutingCallback) {
+        foreach (static::$beforeExecutingCallbacks as $beforeExecutingCallback) {
             $beforeExecutingCallback($query, $bindings, $this);
         }
 
