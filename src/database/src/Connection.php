@@ -38,14 +38,14 @@ class Connection implements ConnectionInterface
     /**
      * The active PDO connection.
      *
-     * @var \Closure|\PDO
+     * @var Closure|PDO
      */
     protected $pdo;
 
     /**
      * The active PDO connection used for reads.
      *
-     * @var \Closure|\PDO
+     * @var Closure|PDO
      */
     protected $readPdo;
 
@@ -138,13 +138,6 @@ class Connection implements ConnectionInterface
     protected bool $pretending = false;
 
     /**
-     * All of the callbacks that should be invoked before a query is executed.
-     *
-     * @var \Closure[]
-     */
-    protected $beforeExecutingCallbacks = [];
-
-    /**
      * The instance of Doctrine connection.
      *
      * @var \Doctrine\DBAL\Connection
@@ -157,9 +150,16 @@ class Connection implements ConnectionInterface
     protected static array $resolvers = [];
 
     /**
+     * All the callbacks that should be invoked before a query is executed.
+     *
+     * @var Closure[]
+     */
+    protected static array $beforeExecutingCallbacks = [];
+
+    /**
      * Create a new database connection instance.
      *
-     * @param \Closure|\PDO $pdo
+     * @param Closure|PDO $pdo
      * @param string $database
      * @param string $tablePrefix
      */
@@ -503,9 +503,17 @@ class Connection implements ConnectionInterface
      */
     public function beforeExecuting(Closure $callback)
     {
-        $this->beforeExecutingCallbacks[] = $callback;
+        self::$beforeExecutingCallbacks[] = $callback;
 
         return $this;
+    }
+
+    /**
+     * Clear all hooks which will be run before a database query.
+     */
+    public function clearBeforeExecutingCallbacks(): void
+    {
+        self::$beforeExecutingCallbacks = [];
     }
 
     /**
@@ -642,7 +650,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the PDO connection.
      *
-     * @param null|\Closure|\PDO $pdo
+     * @param null|Closure|PDO $pdo
      * @return $this
      */
     public function setPdo($pdo)
@@ -657,7 +665,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the PDO connection used for reading.
      *
-     * @param null|\Closure|\PDO $pdo
+     * @param null|Closure|PDO $pdo
      * @return $this
      */
     public function setReadPdo($pdo)
@@ -1002,7 +1010,7 @@ class Connection implements ConnectionInterface
     /**
      * Execute the given callback in "dry run" mode.
      *
-     * @param \Closure $callback
+     * @param Closure $callback
      * @return array
      */
     protected function withFreshQueryLog($callback)
@@ -1033,7 +1041,7 @@ class Connection implements ConnectionInterface
      */
     protected function run(string $query, array $bindings, Closure $callback)
     {
-        foreach ($this->beforeExecutingCallbacks as $beforeExecutingCallback) {
+        foreach (self::$beforeExecutingCallbacks as $beforeExecutingCallback) {
             $beforeExecutingCallback($query, $bindings, $this);
         }
 
