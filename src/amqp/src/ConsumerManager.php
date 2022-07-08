@@ -43,7 +43,7 @@ class ConsumerManager
             ! is_null($annotation->enable) && $instance->setEnable($annotation->enable);
             property_exists($instance, 'container') && $instance->container = $this->container;
             $annotation->maxConsumption && $instance->setMaxConsumption($annotation->maxConsumption);
-            is_numeric($annotation->nums) && $instance->setNums((int) $annotation->nums);
+            ! is_null($annotation->nums) && $instance->setNums($annotation->nums);
             $process = $this->createProcess($instance);
             $process->nums = $instance->getNums();
             $process->name = $annotation->name . '-' . $instance->getQueue();
