@@ -37,6 +37,8 @@ use Psr\Container\ContainerInterface;
  * @method static array prepareBindings(array $bindings)
  * @method static mixed transaction(Closure $callback, int $attempts = 1)
  * @method static void beginTransaction()
+ * @method static void beforeExecuting(\Closure $callback)
+ * @method static void clearBeforeExecutingCallbacks()
  * @method static void rollBack()
  * @method static void commit()
  * @method static int transactionLevel()
