@@ -507,7 +507,7 @@ class Connection implements ConnectionInterface
     /**
      * Clear all hooks which will be run before a database query.
      */
-    public function clearBeforeExecutingCallbacks(): void
+    public static function clearBeforeExecutingCallbacks(): void
     {
         self::$beforeExecutingCallbacks = [];
     }
