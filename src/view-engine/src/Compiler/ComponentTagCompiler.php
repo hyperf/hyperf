@@ -481,14 +481,8 @@ class ComponentTagCompiler
      */
     protected function escapeSingleQuotesOutsideOfPhpBlocks(string $value): string
     {
-        return collect(\PhpToken::tokenize($value))->map(function ($token) {
-            if (! is_array($token)) {
-                return $token;
-            }
-
-            return $token[0] === T_INLINE_HTML
-                ? str_replace("'", "\\'", $token[1])
-                : $token[1];
+        return collect(\PhpToken::tokenize($value))->map(function (\PhpToken $token) {
+            return $token->id === T_INLINE_HTML ? str_replace("'", "\\'", $token->text) : $token->text;
         })->implode('');
     }
 
