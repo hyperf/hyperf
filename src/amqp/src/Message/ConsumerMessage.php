@@ -130,9 +130,10 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return $this->nums;
     }
 
-    public function setNums(int $nums): void
+    public function setNums(int $nums)
     {
         $this->nums = $nums;
+        return $this;
     }
 
     protected function reply($data, AMQPMessage $message)
