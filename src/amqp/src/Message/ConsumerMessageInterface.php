@@ -38,15 +38,9 @@ interface ConsumerMessageInterface extends MessageInterface
 
     public function setMaxConsumption(int $maxConsumption);
 
-    /**
-     * @return float|int
-     */
-    public function getWaitTimeout();
+    public function getWaitTimeout(): int|float;
 
-    /**
-     * @param float|int $timeout
-     */
-    public function setWaitTimeout($timeout);
+    public function setWaitTimeout(int|float $timeout);
 
     public function setNums(int $nums);
 
