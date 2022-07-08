@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\DbConnection;
 
+use Closure;
 use Generator;
+use Hyperf\Database\Connection as Conn;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Query\Builder;
@@ -33,12 +35,12 @@ use Psr\Container\ContainerInterface;
  * @method static int affectingStatement(string $query, array $bindings = [])
  * @method static bool unprepared(string $query)
  * @method static array prepareBindings(array $bindings)
- * @method static mixed transaction(\Closure $callback, int $attempts = 1)
+ * @method static mixed transaction(Closure $callback, int $attempts = 1)
  * @method static void beginTransaction()
  * @method static void rollBack()
  * @method static void commit()
  * @method static int transactionLevel()
- * @method static array pretend(\Closure $callback)
+ * @method static array pretend(Closure $callback)
  * @method static ConnectionInterface connection(string $pool)
  */
 class Db
@@ -68,5 +70,10 @@ class Db
     {
         $resolver = $this->container->get(ConnectionResolverInterface::class);
         return $resolver->connection($name);
+    }
+
+    public static function beforeExecuting(Closure $closure): void
+    {
+        Conn::beforeExecuting($closure);
     }
 }
