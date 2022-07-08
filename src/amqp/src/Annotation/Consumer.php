@@ -22,7 +22,7 @@ class Consumer extends AbstractAnnotation
         public string $routingKey = '',
         public string $queue = '',
         public string $name = 'Consumer',
-        public int $nums = 1,
+        public ?int $nums = null,
         public ?bool $enable = null,
         public int $maxConsumption = 0
     ) {
