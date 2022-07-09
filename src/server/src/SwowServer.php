@@ -124,8 +124,8 @@ class SwowServer implements ServerInterface
                         $handler->initCoreMiddleware($name);
                     }
                     if ($server instanceof HttpServer) {
-                        $server->handle(static function ($request, $session) use ($handler, $method) {
-                            wait(static function () use ($request, $session, $handler, $method) {
+                        $server->handle(function ($request, $session) use ($handler, $method) {
+                            $this->waiter->wait(static function () use ($request, $session, $handler, $method) {
                                 $handler->{$method}($request, $session);
                             });
                         });
@@ -139,8 +139,8 @@ class SwowServer implements ServerInterface
                         $handler->initCoreMiddleware($name);
                     }
                     if ($this->server instanceof HttpServer) {
-                        $server->handle(static function ($request, $session) use ($handler, $method) {
-                            wait(static function () use ($request, $session, $handler, $method) {
+                        $server->handle(function ($request, $session) use ($handler, $method) {
+                            $this->waiter->wait(static function () use ($request, $session, $handler, $method) {
                                 $handler->{$method}($request, $session);
                             });
                         });
