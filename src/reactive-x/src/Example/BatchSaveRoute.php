@@ -39,7 +39,7 @@ class BatchSaveRoute implements ListenerInterface
             ->bufferWithCount(10)
             ->subscribe(
                 function (array $bodies) {
-                    echo count($bodies); //10
+                    echo count($bodies); // 10
                 }
             );
     }

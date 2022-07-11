@@ -1,7 +1,14 @@
 #!/usr/bin/env php
 <?php
 declare(strict_types=1);
-
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 namespace HyperfTest\AsyncQueue\Stub {
     require_once __DIR__ . '/../../contract/src/UnCompressInterface.php';
     require_once __DIR__ . '/../../contract/src/CompressInterface.php';

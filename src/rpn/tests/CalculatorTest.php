@@ -66,7 +66,7 @@ class CalculatorTest extends AbstractTestCase
     {
         $this->expectException(InvalidOperatorException::class);
 
-        new Calculator([new \StdClass()]);
+        new Calculator([new \stdClass()]);
     }
 
     public function testToRPNExpression()
