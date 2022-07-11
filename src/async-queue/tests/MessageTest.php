@@ -25,7 +25,7 @@ class MessageTest extends TestCase
 {
     public function testMessageSerialize()
     {
-        system(__DIR__ . '/async_queue2.2.php');
+        system(__DIR__ . '/async_queue2.2');
 
         $message = unserialize(file_get_contents(__DIR__ . '/message2.2.cache'));
 

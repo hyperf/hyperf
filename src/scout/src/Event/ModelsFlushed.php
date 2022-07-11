@@ -18,7 +18,7 @@ use Hyperf\Scout\Searchable;
 class ModelsFlushed
 {
     /**
-     * @param Collection<int, Searchable&Model>
+     * @param Collection<int, Model&Searchable>
      */
     public $models;
 

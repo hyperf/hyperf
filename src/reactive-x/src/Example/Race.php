@@ -25,4 +25,4 @@ $o->take(1)->subscribe(
         $result->push($x);
     }
 );
-echo $result->pop(); //2;
+echo $result->pop(); // 2;

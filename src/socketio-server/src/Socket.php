@@ -75,7 +75,7 @@ class Socket
             'type' => Packet::CLOSE,
             'nsp' => $this->nsp,
         ]);
-        //notice client is about to disconnect
+        // notice client is about to disconnect
         $this->sender->push($this->fd, Engine::MESSAGE . $this->encoder->encode($closePacket));
         /** @var \Swoole\WebSocket\Server $server */
         $server = ApplicationContext::getContainer()->get(Server::class);

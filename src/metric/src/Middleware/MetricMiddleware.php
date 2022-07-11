@@ -29,7 +29,7 @@ class MetricMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $labels = [
-            'request_status' => '500', //default to 500 in case uncaught exception occur
+            'request_status' => '500', // default to 500 in case uncaught exception occur
             'request_path' => $this->getPath($request),
             'request_method' => $request->getMethod(),
         ];

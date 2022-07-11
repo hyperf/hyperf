@@ -367,7 +367,7 @@ class TypeMapper implements TypeMapperInterface
 
         $map = $this->getMapNameToExtendType($recursiveTypeMapper);
 
-        return isset($map[$typeName])/* || isset($this->mapInputNameToFactory[$typeName])*/;
+        return isset($map[$typeName])/* || isset($this->mapInputNameToFactory[$typeName]) */;
     }
 
     /**
@@ -387,7 +387,7 @@ class TypeMapper implements TypeMapperInterface
             }
             $extendTypeClassNames = $map[$typeName];
 
-            //}
+            // }
         }
 
         foreach ($extendTypeClassNames as $extendedTypeClass) {
