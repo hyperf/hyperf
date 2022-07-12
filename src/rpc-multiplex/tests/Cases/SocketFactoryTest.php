@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\RpcMultiplex\Cases;
 
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\LoadBalancer\Random;
@@ -40,7 +42,9 @@ class SocketFactoryTest extends AbstractTestCase
             'client_count' => 4,
         ]);
 
-        $factory->setLoadBalancer($balancer = \Mockery::mock(LoadBalancerInterface::class));
+        $balancer = \Mockery::mock(LoadBalancerInterface::class);
+        $balancer->shouldReceive('isAutoRefresh')->andReturnFalse();
+        $factory->setLoadBalancer($balancer);
         $balancer->shouldReceive('getNodes')->andReturn([
             new Node('192.168.0.1', 9501),
             new Node('192.168.0.2', 9501),
@@ -99,6 +103,10 @@ class SocketFactoryTest extends AbstractTestCase
             $client = (new ClassInvoker($client));
             $this->assertTrue(in_array($client->name, ['192.168.0.1', '192.168.0.2']));
         }
+
+        CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
+        CoordinatorManager::clear(Constants::WORKER_EXIT);
+        $balancer->clearAfterRefreshedCallbacks();
     }
 
     public function testLoadBalancerNodeRefreshed()
@@ -138,6 +146,10 @@ class SocketFactoryTest extends AbstractTestCase
             $client = (new ClassInvoker($client));
             $this->assertTrue(in_array($client->name, ['192.168.0.2', '192.168.0.3']));
         }
+
+        CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
+        CoordinatorManager::clear(Constants::WORKER_EXIT);
+        $balancer->clearAfterRefreshedCallbacks();
     }
 
     public function testSocketRefreshInMoreThanOneCoroutine()
@@ -156,7 +168,9 @@ class SocketFactoryTest extends AbstractTestCase
         ]);
 
         go(function () use ($factory) {
-            $factory->setLoadBalancer($balancer = \Mockery::mock(LoadBalancerInterface::class));
+            $balancer = \Mockery::mock(LoadBalancerInterface::class);
+            $balancer->shouldReceive('isAutoRefresh')->andReturnFalse();
+            $factory->setLoadBalancer($balancer);
             $balancer->shouldReceive('getNodes')->andReturn([
                 new Node('192.168.0.1', 9501),
                 new Node('192.168.0.2', 9501),
