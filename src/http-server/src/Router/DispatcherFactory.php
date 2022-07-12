@@ -193,6 +193,8 @@ class DispatcherFactory
                         $path = $mapping->path;
                     }
 
+                    $path = Str::replaceFirst('//', '/', $path);
+
                     $router->addRoute($mapping->methods, $path, [$className, $methodName], $methodOptions);
                 }
             }
