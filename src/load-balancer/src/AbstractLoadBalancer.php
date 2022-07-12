@@ -13,13 +13,20 @@ namespace Hyperf\LoadBalancer;
 
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coroutine;
+use Psr\Log\LoggerInterface;
 
 abstract class AbstractLoadBalancer implements LoadBalancerInterface
 {
     /**
+     * @var array<string, callable>
+     */
+    protected array $afterRefreshCallbacks = [];
+
+    /**
      * @param Node[] $nodes
      */
-    public function __construct(protected array $nodes = [])
+    public function __construct(protected array $nodes = [], protected ?LoggerInterface $logger = null)
     {
     }
 
@@ -53,17 +60,36 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
 
     public function refresh(callable $callback, int $tickMs = 5000): void
     {
-        while (true) {
-            try {
-                $exited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($tickMs / 1000);
-                if ($exited) {
-                    break;
-                }
+        Coroutine::create(function () use ($callback, $tickMs) {
+            while (true) {
+                try {
+                    $exited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($tickMs / 1000);
+                    if ($exited) {
+                        break;
+                    }
 
-                $nodes = call($callback);
-                is_array($nodes) && $this->setNodes($nodes);
-            } catch (\Throwable) {
+                    $origin = $this->getNodes();
+                    $nodes = call($callback);
+                    if (is_array($nodes)) {
+                        $this->setNodes($nodes);
+                        foreach ($this->afterRefreshCallbacks as $refreshCallback) {
+                            $refreshCallback($origin, $nodes);
+                        }
+                    }
+                } catch (\Throwable $exception) {
+                    $this->logger?->error((string) $exception);
+                }
             }
-        }
+        });
+    }
+
+    public function afterRefreshed(callable $callback): void
+    {
+        $this->afterRefreshCallbacks[] = $callback;
+    }
+
+    public function clearAfterRefreshedCallbacks(): void
+    {
+        $this->afterRefreshCallbacks = [];
     }
 }
