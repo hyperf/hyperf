@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\LoadBalancer;
 
+use Closure;
+
 interface LoadBalancerInterface
 {
     /**
@@ -34,4 +36,10 @@ interface LoadBalancerInterface
     public function removeNode(Node $node): bool;
 
     public function refresh(callable $callback, int $tickMs = 5000): void;
+
+    public function isAutoRefresh(): bool;
+
+    public function afterRefreshed(string $key, ?Closure $callback): void;
+
+    public function clearAfterRefreshedCallbacks(): void;
 }
