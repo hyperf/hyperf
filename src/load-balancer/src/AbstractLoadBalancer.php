@@ -92,9 +92,9 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
         return $this->autoRefresh;
     }
 
-    public function afterRefreshed(callable $callback): void
+    public function afterRefreshed(string $key, callable $callback): void
     {
-        $this->afterRefreshCallbacks[] = $callback;
+        $this->afterRefreshCallbacks[$key] = $callback;
     }
 
     public function clearAfterRefreshedCallbacks(): void

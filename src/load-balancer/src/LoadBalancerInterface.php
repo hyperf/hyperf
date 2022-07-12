@@ -37,7 +37,7 @@ interface LoadBalancerInterface
 
     public function isAutoRefresh(): bool;
 
-    public function afterRefreshed(callable $callback): void;
+    public function afterRefreshed(string $key, callable $callback): void;
 
     public function clearAfterRefreshedCallbacks(): void;
 }

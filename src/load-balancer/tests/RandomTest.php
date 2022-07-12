@@ -54,7 +54,7 @@ class RandomTest extends TestCase
             ];
         }, 200);
         $chan = new Channel(1);
-        $random->afterRefreshed(function ($old, $new) use ($chan) {
+        $random->afterRefreshed('test', function ($old, $new) use ($chan) {
             $this->assertSame('127.0.0.1', $old[0]->host);
             $this->assertSame('127.0.0.4', $new[1]->host);
             $chan->push(true);
