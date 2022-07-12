@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\LoadBalancer;
 
+use Closure;
+
 interface LoadBalancerInterface
 {
     /**
@@ -37,7 +39,7 @@ interface LoadBalancerInterface
 
     public function isAutoRefresh(): bool;
 
-    public function afterRefreshed(string $key, callable $callback): void;
+    public function afterRefreshed(string $key, ?Closure $callback): void;
 
     public function clearAfterRefreshedCallbacks(): void;
 }

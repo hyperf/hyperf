@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\LoadBalancer;
 
+use Closure;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
@@ -19,7 +20,7 @@ use Psr\Log\LoggerInterface;
 abstract class AbstractLoadBalancer implements LoadBalancerInterface
 {
     /**
-     * @var array<string, callable>
+     * @var array<string, ?Closure>
      */
     protected array $afterRefreshCallbacks = [];
 
@@ -76,7 +77,7 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
                     if (is_array($nodes)) {
                         $this->setNodes($nodes);
                         foreach ($this->afterRefreshCallbacks as $refreshCallback) {
-                            $refreshCallback($origin, $nodes);
+                            ! is_null($refreshCallback) && $refreshCallback($origin, $nodes);
                         }
                     }
                 } catch (\Throwable $exception) {
@@ -92,7 +93,7 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
         return $this->autoRefresh;
     }
 
-    public function afterRefreshed(string $key, callable $callback): void
+    public function afterRefreshed(string $key, ?Closure $callback): void
     {
         $this->afterRefreshCallbacks[$key] = $callback;
     }
