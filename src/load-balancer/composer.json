@@ -17,6 +17,7 @@
     },
     "require": {
         "php": ">=8.0",
+        "hyperf/coordinator": "~3.0.0",
         "markrogoyski/math-php": "^2.0"
     },
     "autoload": {
