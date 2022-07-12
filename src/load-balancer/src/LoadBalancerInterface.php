@@ -40,12 +40,12 @@ interface LoadBalancerInterface
     public function isAutoRefresh(): bool;
 
     /**
-     * Register a hook which to be running after refresh nodes.
+     * Register a hook which will be executed after refresh nodes.
      */
     public function afterRefreshed(string $key, ?Closure $callback): void;
 
     /**
-     * Clear all hooks which will be running after refresh nodes.
+     * Clear all hooks which will be executed after refresh nodes.
      */
     public function clearAfterRefreshedCallbacks(): void;
 }
