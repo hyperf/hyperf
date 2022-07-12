@@ -13,6 +13,7 @@ namespace HyperfTest\RpcMultiplex\Cases;
 
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
+use Hyperf\LoadBalancer\Random;
 use Hyperf\RpcMultiplex\Socket;
 use Hyperf\RpcMultiplex\SocketFactory;
 use Hyperf\Utils\Reflection\ClassInvoker;
@@ -59,6 +60,84 @@ class SocketFactoryTest extends AbstractTestCase
         $this->assertSame($lenght, $invoker->config['package_max_length']);
         $this->assertSame($connectTimeout, $invoker->config['connect_timeout']);
         $this->assertSame($recvTimeout, $invoker->config['recv_timeout']);
+    }
+
+    public function testLoadBalancerNodeRefreshedButDontChanged()
+    {
+        $container = ContainerStub::mockContainer();
+
+        $factory = new SocketFactory($container, [
+            'client_count' => 2,
+        ]);
+
+        $balancer = new Random();
+        $balancer->setNodes([
+            new Node('192.168.0.1', 9501),
+            new Node('192.168.0.2', 9501),
+        ]);
+        $balancer->refresh(function () {
+            return [
+                new Node('192.168.0.1', 9501),
+                new Node('192.168.0.2', 9501),
+            ];
+        }, 100);
+        $factory->setLoadBalancer($balancer);
+
+        $factory->refresh();
+
+        $clients = (new ClassInvoker($factory))->clients;
+        /** @var Socket $client */
+        foreach ($clients as $client) {
+            $client = (new ClassInvoker($client));
+            $this->assertTrue(in_array($client->name, ['192.168.0.1', '192.168.0.2']));
+        }
+
+        sleep(1);
+
+        /** @var Socket $client */
+        foreach ($clients as $client) {
+            $client = (new ClassInvoker($client));
+            $this->assertTrue(in_array($client->name, ['192.168.0.1', '192.168.0.2']));
+        }
+    }
+
+    public function testLoadBalancerNodeRefreshed()
+    {
+        $container = ContainerStub::mockContainer();
+
+        $factory = new SocketFactory($container, [
+            'client_count' => 2,
+        ]);
+
+        $balancer = new Random();
+        $balancer->setNodes([
+            new Node('192.168.0.1', 9501),
+            new Node('192.168.0.2', 9501),
+        ]);
+        $balancer->refresh(function () {
+            return [
+                new Node('192.168.0.2', 9501),
+                new Node('192.168.0.3', 9501),
+            ];
+        }, 100);
+        $factory->setLoadBalancer($balancer);
+
+        $factory->refresh();
+
+        $clients = (new ClassInvoker($factory))->clients;
+        /** @var Socket $client */
+        foreach ($clients as $client) {
+            $client = (new ClassInvoker($client));
+            $this->assertTrue(in_array($client->name, ['192.168.0.1', '192.168.0.2']));
+        }
+
+        sleep(1);
+
+        /** @var Socket $client */
+        foreach ($clients as $client) {
+            $client = (new ClassInvoker($client));
+            $this->assertTrue(in_array($client->name, ['192.168.0.2', '192.168.0.3']));
+        }
     }
 
     public function testSocketRefreshInMoreThanOneCoroutine()
