@@ -23,6 +23,8 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
      */
     protected array $afterRefreshCallbacks = [];
 
+    protected bool $autoRefresh = false;
+
     /**
      * @param Node[] $nodes
      */
@@ -60,6 +62,7 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
 
     public function refresh(callable $callback, int $tickMs = 5000): void
     {
+        $this->autoRefresh = true;
         Coroutine::create(function () use ($callback, $tickMs) {
             while (true) {
                 try {
@@ -80,7 +83,13 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
                     $this->logger?->error((string) $exception);
                 }
             }
+            $this->autoRefresh = false;
         });
+    }
+
+    public function isAutoRefresh(): bool
+    {
+        return $this->autoRefresh;
     }
 
     public function afterRefreshed(callable $callback): void

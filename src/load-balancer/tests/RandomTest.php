@@ -45,6 +45,7 @@ class RandomTest extends TestCase
             new Node('127.0.0.3', 82),
         ];
         $random = new Random($nodes);
+        $this->assertFalse($random->isAutoRefresh());
         $random->refresh(static function () {
             return [
                 new Node('127.0.0.1', 80),
@@ -60,6 +61,8 @@ class RandomTest extends TestCase
         });
 
         $chan->pop(-1);
+
+        $this->assertTrue($random->isAutoRefresh());
         CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
         CoordinatorManager::clear(Constants::WORKER_EXIT);
         $random->clearAfterRefreshedCallbacks();

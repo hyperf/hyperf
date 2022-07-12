@@ -35,6 +35,8 @@ interface LoadBalancerInterface
 
     public function refresh(callable $callback, int $tickMs = 5000): void;
 
+    public function isAutoRefresh(): bool;
+
     public function afterRefreshed(callable $callback): void;
 
     public function clearAfterRefreshedCallbacks(): void;
