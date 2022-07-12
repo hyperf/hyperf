@@ -83,12 +83,12 @@ class SocketFactory
             $items = [];
             /** @var Node $node */
             foreach ($beforeNodes as $node) {
-                $key = $node->host . $node->host . $node->weight . $node->pathPrefix;
+                $key = $node->host . $node->port . $node->weight . $node->pathPrefix;
                 $items[$key] = true;
             }
 
             foreach ($nodes as $node) {
-                $key = $node->host . $node->host . $node->weight . $node->pathPrefix;
+                $key = $node->host . $node->port . $node->weight . $node->pathPrefix;
                 if (array_key_exists($key, $items)) {
                     unset($items[$key]);
                 }
