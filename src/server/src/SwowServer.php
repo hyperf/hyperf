@@ -16,6 +16,7 @@ use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Http\Server as HttpServer;
+use Hyperf\Engine\Server as BaseServer;
 use Hyperf\Server\Event\AllCoroutineServersClosed;
 use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
@@ -25,13 +26,15 @@ use Hyperf\Utils\Waiter;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Swow\Buffer;
 use Swow\Coroutine;
+use Swow\Socket;
 
 class SwowServer implements ServerInterface
 {
     protected ?ServerConfig $config = null;
 
-    protected ?HttpServer $server = null;
+    protected ?Socket $server = null;
 
     protected bool $mainServerStarted = false;
 
@@ -76,7 +79,7 @@ class SwowServer implements ServerInterface
         }
     }
 
-    public function getServer(): HttpServer
+    public function getServer(): Socket
     {
         return $this->server;
     }
@@ -155,27 +158,27 @@ class SwowServer implements ServerInterface
                     if ($receiveHandler instanceof MiddlewareInitializerInterface) {
                         $receiveHandler->initCoreMiddleware($name);
                     }
-                    if ($this->server instanceof \Swoole\Coroutine\Server) {
-                        $this->server->handle(function (Coroutine\Server\Connection $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
+                    if ($this->server instanceof BaseServer) {
+                        $this->server->handle(function (Socket $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
                             if ($connectHandler && $connectMethod) {
                                 $this->waiter->wait(static function () use ($connectHandler, $connectMethod, $connection) {
-                                    $connectHandler->{$connectMethod}($connection, $connection->exportSocket()->fd);
+                                    $connectHandler->{$connectMethod}($connection, $connection->getId());
                                 });
                             }
                             while (true) {
-                                $data = $connection->recv();
-                                if (empty($data)) {
+                                $byte = $connection->recv($buffer = new Buffer(Buffer::COMMON_SIZE));
+                                if ($byte === 0) {
                                     if ($closeHandler && $closeMethod) {
                                         $this->waiter->wait(static function () use ($closeHandler, $closeMethod, $connection) {
-                                            $closeHandler->{$closeMethod}($connection, $connection->exportSocket()->fd);
+                                            $closeHandler->{$closeMethod}($connection, $connection->getId());
                                         });
                                     }
                                     $connection->close();
                                     break;
                                 }
                                 // One coroutine at a time, consistent with other servers
-                                $this->waiter->wait(static function () use ($receiveHandler, $receiveMethod, $connection, $data) {
-                                    $receiveHandler->{$receiveMethod}($connection, $connection->exportSocket()->fd, 0, $data);
+                                $this->waiter->wait(static function () use ($receiveHandler, $receiveMethod, $connection, $buffer) {
+                                    $receiveHandler->{$receiveMethod}($connection, $connection->getId(), 0, (string) $buffer);
                                 });
                             }
                         });
@@ -206,7 +209,9 @@ class SwowServer implements ServerInterface
                 $server->bind($host, $port);
                 return $server;
             case ServerInterface::SERVER_BASE:
-                // return new Coroutine\Server($host, $port, false, true);
+                $server = new BaseServer($this->logger);
+                $server->bind($host, $port);
+                return $server;
         }
 
         throw new RuntimeException('Server type is invalid.');

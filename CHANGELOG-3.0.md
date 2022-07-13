@@ -98,6 +98,7 @@ composer analyse
 - [#4808](https://github.com/hyperf/hyperf/pull/4808) Replaced `Swoole\Coroutine\Channel` by `Hyperf\Engine\Channel` for all components.
 - [#4873](https://github.com/hyperf/hyperf/pull/4873) Support `hyperf/websocket-server`.
 - [#4917](https://github.com/hyperf/hyperf/pull/4917) Support `hyperf/load-balancer`.
+- [#4924](https://github.com/hyperf/hyperf/pull/4924) Support TcpServer for `hyperf/server`.
 
 ## Removed
 
