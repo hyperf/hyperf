@@ -81,7 +81,7 @@ class DispatcherFactoryTest extends TestCase
         }
     }
 
-    public function testHandleControllerWithBackslash()
+    public function testHandleControllerWithSlash()
     {
         $factory = new DispatcherFactory();
         $annotation = new Controller('/');
