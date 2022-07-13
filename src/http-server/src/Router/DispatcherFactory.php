@@ -188,12 +188,10 @@ class DispatcherFactory
                     } elseif ($mapping->path === '') {
                         $path = $prefix;
                     } elseif ($mapping->path[0] !== '/') {
-                        $path = $prefix . '/' . $mapping->path;
+                        $path = rtrim($prefix, '/') . '/' . $mapping->path;
                     } else {
                         $path = $mapping->path;
                     }
-
-                    $path = Str::replaceFirst('//', '/', $path);
 
                     $router->addRoute($mapping->methods, $path, [$className, $methodName], $methodOptions);
                 }
