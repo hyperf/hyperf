@@ -72,12 +72,12 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
                         break;
                     }
 
-                    $origin = $this->getNodes();
+                    $beforeNodes = $this->getNodes();
                     $nodes = call($callback);
                     if (is_array($nodes)) {
                         $this->setNodes($nodes);
                         foreach ($this->afterRefreshCallbacks as $refreshCallback) {
-                            ! is_null($refreshCallback) && $refreshCallback($origin, $nodes);
+                            ! is_null($refreshCallback) && $refreshCallback($beforeNodes, $nodes);
                         }
                     }
                 } catch (\Throwable $exception) {
