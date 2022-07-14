@@ -40,7 +40,7 @@ class Process
     {
         $this->ast = new Ast();
         $this->config = $this->initScanConfig();
-        $this->reader = new AnnotationReader();
+        $this->reader = new AnnotationReader($this->config->getIgnoreAnnotations());
         $this->filesystem = new Filesystem();
     }
 

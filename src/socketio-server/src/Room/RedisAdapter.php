@@ -133,9 +133,8 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
             CoordinatorManager::until(Constants::WORKER_START)->yield();
             retry(PHP_INT_MAX, function () {
                 try {
-                    $sub = make(Subscriber::class);
-                    if ($sub) {
-                        $this->mixSubscribe($sub);
+                    if (class_exists(Subscriber::class)) {
+                        $this->mixSubscribe();
                     } else {
                         // Fallback to PhpRedis, which has a very bad blocking subscribe model.
                         $this->phpRedisSubscribe();
@@ -329,8 +328,18 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
         $redis->subscribe([$this->getChannelKey()], $callback);
     }
 
-    private function mixSubscribe(Subscriber $sub)
+    private function mixSubscribe()
     {
+        $sub = make(Subscriber::class, [
+            'host' => $this->redis->getHost(),
+            'port' => $this->redis->getPort(),
+            'password' => $this->redis->getAuth(),
+            'timeout' => 5,
+        ]);
+        $prefix = $this->redis->getOption(\Redis::OPT_PREFIX);
+        if ($prefix) {
+            $sub->prefix = (string) $prefix;
+        }
         $sub->subscribe($this->getChannelKey());
         $chan = $sub->channel();
         Coroutine::create(function () use ($sub) {

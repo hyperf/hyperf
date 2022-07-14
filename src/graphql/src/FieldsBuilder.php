@@ -213,7 +213,7 @@ class FieldsBuilder
     public function getInputFields(ReflectionMethod $refMethod): array
     {
         $docBlockObj = $this->cachedDocBlockFactory->getDocBlock($refMethod);
-        //$docBlockComment = $docBlockObj->getSummary()."\n".$docBlockObj->getDescription()->render();
+        // $docBlockComment = $docBlockObj->getSummary()."\n".$docBlockObj->getDescription()->render();
 
         $parameters = $refMethod->getParameters();
 

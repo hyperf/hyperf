@@ -13,6 +13,7 @@ namespace Hyperf\RpcMultiplex;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
+use Hyperf\LoadBalancer\Node;
 use Hyperf\RpcMultiplex\Exception\NoAvailableNodesException;
 use Hyperf\Utils\Arr;
 use Psr\Container\ContainerInterface;
@@ -37,6 +38,10 @@ class SocketFactory
 
     public function setLoadBalancer(LoadBalancerInterface $loadBalancer)
     {
+        if ($loadBalancer->isAutoRefresh()) {
+            $this->bindAfterRefreshed($loadBalancer);
+        }
+
         $this->loadBalancer = $loadBalancer;
     }
 
@@ -70,6 +75,29 @@ class SocketFactory
         }
 
         return Arr::random($this->clients);
+    }
+
+    protected function bindAfterRefreshed(LoadBalancerInterface $loadBalancer): void
+    {
+        $loadBalancer->afterRefreshed(static::class, function ($beforeNodes, $nodes) {
+            $items = [];
+            /** @var Node $node */
+            foreach ($beforeNodes as $node) {
+                $key = $node->host . $node->port . $node->weight . $node->pathPrefix;
+                $items[$key] = true;
+            }
+
+            foreach ($nodes as $node) {
+                $key = $node->host . $node->port . $node->weight . $node->pathPrefix;
+                if (array_key_exists($key, $items)) {
+                    unset($items[$key]);
+                }
+            }
+
+            if (! empty($items)) {
+                $this->refresh();
+            }
+        });
     }
 
     protected function getNodes(): array

@@ -35,20 +35,13 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         'global' => false,
     ];
 
-    /**
-     * @var bool
-     */
-    protected $enable = true;
+    protected bool $enable = true;
 
-    /**
-     * @var int
-     */
-    protected $maxConsumption = 0;
+    protected int $maxConsumption = 0;
 
-    /**
-     * @var float|int
-     */
-    protected $waitTimeout = 0;
+    protected int|float $waitTimeout = 0;
+
+    protected int $nums = 1;
 
     public function consumeMessage($data, AMQPMessage $message): string
     {
@@ -121,14 +114,25 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return $this;
     }
 
-    public function getWaitTimeout()
+    public function getWaitTimeout(): int|float
     {
         return $this->waitTimeout;
     }
 
-    public function setWaitTimeout($timeout)
+    public function setWaitTimeout(int|float $timeout)
     {
         $this->waitTimeout = $timeout;
+        return $this;
+    }
+
+    public function getNums(): int
+    {
+        return $this->nums;
+    }
+
+    public function setNums(int $nums)
+    {
+        $this->nums = $nums;
         return $this;
     }
 

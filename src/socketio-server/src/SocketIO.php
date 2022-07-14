@@ -118,9 +118,9 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         if ($frame->data[0] === Engine::PING) {
             $this->renewInAllNamespaces($frame->fd);
             if ($server instanceof Response) {
-                $server->push(Engine::PONG); //sever pong
+                $server->push(Engine::PONG); // sever pong
             } else {
-                $server->push($frame->fd, Engine::PONG); //sever pong
+                $server->push($frame->fd, Engine::PONG); // sever pong
             }
             return;
         }
@@ -138,18 +138,18 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
         }
         $packet = $this->decoder->decode(substr($frame->data, 1));
         switch ($packet->type) {
-            case Packet::OPEN: //client open
+            case Packet::OPEN: // client open
                 $responsePacket = Packet::create([
                     'type' => Packet::OPEN,
                     'nsp' => $packet->nsp,
                 ]);
                 if ($server instanceof Response) {
-                    $server->push(Engine::MESSAGE . $this->encoder->encode($responsePacket)); //sever open
+                    $server->push(Engine::MESSAGE . $this->encoder->encode($responsePacket)); // sever open
                 } else {
-                    $server->push($frame->fd, Engine::MESSAGE . $this->encoder->encode($responsePacket)); //sever open
+                    $server->push($frame->fd, Engine::MESSAGE . $this->encoder->encode($responsePacket)); // sever open
                 }
                 break;
-            case Packet::CLOSE: //client disconnect
+            case Packet::CLOSE: // client disconnect
                 if ($server instanceof Response) {
                     $server->close();
                 } else {
@@ -202,11 +202,11 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
             'pingTimeout' => $this->config->getPingTimeout(),
         ];
         if ($server instanceof Response) {
-            $server->push(Engine::OPEN . json_encode($data)); //socket is open
-            $server->push(Engine::MESSAGE . Packet::OPEN); //server open
+            $server->push(Engine::OPEN . json_encode($data)); // socket is open
+            $server->push(Engine::MESSAGE . Packet::OPEN); // server open
         } else {
-            $server->push($request->fd, Engine::OPEN . json_encode($data)); //socket is open
-            $server->push($request->fd, Engine::MESSAGE . Packet::OPEN); //server open
+            $server->push($request->fd, Engine::OPEN . json_encode($data)); // socket is open
+            $server->push($request->fd, Engine::MESSAGE . Packet::OPEN); // server open
         }
 
         $this->dispatchEventInAllNamespaces($request->fd, 'connect');

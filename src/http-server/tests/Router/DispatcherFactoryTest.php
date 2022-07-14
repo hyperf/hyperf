@@ -81,6 +81,27 @@ class DispatcherFactoryTest extends TestCase
         }
     }
 
+    public function testHandleControllerWithSlash()
+    {
+        $factory = new DispatcherFactory();
+        $annotation = new Controller('/');
+        $methodMetadata = [
+            'demo' => [
+                GetMapping::class => new GetMapping(''),
+                PostMapping::class => new PostMapping('demo2'),
+                PutMapping::class => new PutMapping('/demo'),
+            ],
+        ];
+
+        $factory->handleController(DemoController::class, $annotation, $methodMetadata);
+        $router = $factory->getRouter('http');
+
+        [$routers] = $router->getData();
+        $this->assertSame('/demo', $routers['PUT']['/demo']->route);
+        $this->assertSame('/demo2', $routers['POST']['/demo2']->route);
+        $this->assertSame('/', $routers['GET']['/']->route);
+    }
+
     public function testMiddlewareInController()
     {
         $factory = new DispatcherFactory();

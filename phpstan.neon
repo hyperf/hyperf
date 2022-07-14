@@ -58,3 +58,5 @@ parameters:
     - '#.*TKey.*TValue#'
     - '#Method Hyperf\\Utils\\Serializer\\Serializer::normalize\(\) should return array\|ArrayObject\|bool\|float\|int\|string\|null#'
     - '#Class RedisSentinel constructor invoked with .*#'
+    - '#Hyperf\\Engine\\Http\\Server#'
+    - '#Swow\\Socket#'

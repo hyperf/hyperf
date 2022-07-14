@@ -11,17 +11,25 @@ declare(strict_types=1);
  */
 namespace Hyperf\LoadBalancer;
 
+use Closure;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
-use Swoole\Timer;
+use Psr\Log\LoggerInterface;
 
 abstract class AbstractLoadBalancer implements LoadBalancerInterface
 {
     /**
+     * @var array<string, ?Closure>
+     */
+    protected array $afterRefreshCallbacks = [];
+
+    protected bool $autoRefresh = false;
+
+    /**
      * @param Node[] $nodes
      */
-    public function __construct(protected array $nodes = [])
+    public function __construct(protected array $nodes = [], protected ?LoggerInterface $logger = null)
     {
     }
 
@@ -55,13 +63,43 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
 
     public function refresh(callable $callback, int $tickMs = 5000): void
     {
-        $timerId = Timer::tick($tickMs, function () use ($callback) {
-            $nodes = call($callback);
-            is_array($nodes) && $this->setNodes($nodes);
+        $this->autoRefresh = true;
+        Coroutine::create(function () use ($callback, $tickMs) {
+            while (true) {
+                try {
+                    $exited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($tickMs / 1000);
+                    if ($exited) {
+                        break;
+                    }
+
+                    $beforeNodes = $this->getNodes();
+                    $nodes = call($callback);
+                    if (is_array($nodes)) {
+                        $this->setNodes($nodes);
+                        foreach ($this->afterRefreshCallbacks as $refreshCallback) {
+                            ! is_null($refreshCallback) && $refreshCallback($beforeNodes, $nodes);
+                        }
+                    }
+                } catch (\Throwable $exception) {
+                    $this->logger?->error((string) $exception);
+                }
+            }
+            $this->autoRefresh = false;
         });
-        Coroutine::create(function () use ($timerId) {
-            CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
-            Timer::clear($timerId);
-        });
+    }
+
+    public function isAutoRefresh(): bool
+    {
+        return $this->autoRefresh;
+    }
+
+    public function afterRefreshed(string $key, ?Closure $callback): void
+    {
+        $this->afterRefreshCallbacks[$key] = $callback;
+    }
+
+    public function clearAfterRefreshedCallbacks(): void
+    {
+        $this->afterRefreshCallbacks = [];
     }
 }

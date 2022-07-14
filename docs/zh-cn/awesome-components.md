@@ -102,6 +102,7 @@
 ## 文档生成
 
 - [hyperf/swagger](https://github.com/hyperf/swagger) Hyperf 官方提供的 Swagger 文档自动生成组件 (beta)
+- [tangwei/swagger](https://github.com/tw2066/api-docs) 一个基于PHP类型(DTO)自动生成swagger文档组件，启动自动扫描、自动生成路由(UI)、注解验证
 
 ## Graphql
 

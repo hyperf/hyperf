@@ -13,6 +13,7 @@ namespace HyperfTest\Di;
 
 use Hyperf\Di\ReflectionManager;
 use HyperfTest\Di\Stub\Ast\Bar;
+use HyperfTest\Di\Stub\Ast\FooTrait;
 use HyperfTest\Di\Stub\Foo;
 use HyperfTest\Di\Stub\FooInterface;
 use HyperfTest\Di\Stub\Inject\Foo3Trait;
@@ -87,6 +88,14 @@ class ReflectionTest extends TestCase
         $this->assertInstanceOf(ReflectionMethod::class, $reflection);
         $this->assertTrue($reflection->isPublic());
         $this->assertSame(ReflectionManager::getContainer()['method'][Foo::class . '::getFoo'], $reflection);
+    }
+
+    public function testReflectionTraitMethod()
+    {
+        $reflection = ReflectionManager::reflectMethod(FooTrait::class, 'getString');
+        $this->assertInstanceOf(ReflectionMethod::class, $reflection);
+        $this->assertTrue($reflection->isPublic());
+        $this->assertSame(ReflectionManager::getContainer()['method'][FooTrait::class . '::getString'], $reflection);
     }
 
     public function testReflectionManagerGetAllClasses()

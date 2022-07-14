@@ -28,7 +28,7 @@ class QueryExecuted
      * @param string $sql the SQL query that was executed
      * @param array $bindings the array of query bindings
      * @param null|float $time the number of milliseconds it took to execute the query
-     * @param ConnectionInterface&Connection $connection the database connection instance
+     * @param Connection&ConnectionInterface $connection the database connection instance
      * @param null|array|int|Throwable $result the result of query
      */
     public function __construct(

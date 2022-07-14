@@ -505,7 +505,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Run a filter over each of the items.
      *
-     * @param callable(TValue, TKey): bool|null $callback
+     * @param (callable(TValue, TKey): bool)|null $callback
      * @return static<TKey, TValue>
      */
     public function filter(callable $callback = null): self
@@ -538,7 +538,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Apply the callback if the value is falsy.
      *
      * @param callable($this): $this $callback
-     * @param callable($this): $this|null $default
+     * @param callable($this): null|$this $default
      * @return $this
      */
     public function unless(bool $value, callable $callback, callable $default = null): self
@@ -637,8 +637,8 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @template TFirstDefault
      *
-     * @param callable(TValue, TKey): bool|null $callback
-     * @param  TFirstDefault|callable(): TFirstDefault  $default
+     * @param (callable(TValue, TKey): bool)|null $callback
+     * @param TFirstDefault|(\Closure(): TFirstDefault)  $default
      * @return TFirstDefault|TValue
      */
     public function first(callable $callback = null, $default = null)
@@ -1618,6 +1618,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      */
     public function getCachingIterator(int $flags = CachingIterator::CALL_TOSTRING): CachingIterator
     {
+        /* @phpstan-ignore-next-line */
         return new CachingIterator($this->getIterator(), $flags);
     }
 

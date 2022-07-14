@@ -47,7 +47,7 @@ class ElasticsearchEngine extends Engine
      * Update the given model in the index.
      *
      * @phpstan-ignore-next-line
-     * @param Collection<int, \Hyperf\Scout\Searchable&\Hyperf\Database\Model\Model> $models
+     * @param Collection<int, \Hyperf\Database\Model\Model&\Hyperf\Scout\Searchable> $models
      */
     public function update($models): void
     {
@@ -78,7 +78,7 @@ class ElasticsearchEngine extends Engine
      * Remove the given model from the index.
      *
      * @phpstan-ignore-next-line
-     * @param Collection<int, \Hyperf\Scout\Searchable&\Hyperf\Database\Model\Model> $models
+     * @param Collection<int, \Hyperf\Database\Model\Model&\Hyperf\Scout\Searchable> $models
      */
     public function delete($models): void
     {

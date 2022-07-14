@@ -28,7 +28,7 @@ class Client extends AbstractServiceClient
     protected string $serviceInterface;
 
     /**
-     * @var DataFetcherInterface & DataFormatterInterface
+     * @var DataFetcherInterface&DataFormatterInterface
      */
     protected DataFormatterInterface $dataFormatter;
 

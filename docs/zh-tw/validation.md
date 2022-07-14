@@ -64,7 +64,7 @@ php bin/hyperf.php vendor:publish hyperf/validation
 
 執行上面的命令會將驗證器的語言檔案 `validation.php` 釋出到對應的語言檔案目錄，`en` 指英文語言檔案，`zh_CN` 指中文簡體的語言檔案，您可以按照實際需要對 `validation.php` 檔案內容進行修改和自定義。
 
-```
+```shell
 /storage
     /languages
         /en
@@ -411,6 +411,48 @@ class FooController extends Controller
         $request = $this->container->get(SceneRequest::class);
         $request->scene('foo')->validateResolved();
 
+        return $this->response->success($request->all());
+    }
+}
+```
+
+通過 `Scene` 註解切換場景
+
+```php
+<?php
+
+namespace App\Controller;
+
+use App\Request\DebugRequest;
+use App\Request\SceneRequest;
+use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\Validation\Annotation\Scene;
+
+#[AutoController(prefix: 'foo')]
+class FooController extends Controller
+{
+    #[Scene(scene:'bar1')]
+    public function bar1(SceneRequest $request)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene(scene:'bar2', argument: 'request')] // 繫結到 $request
+    public function bar2(SceneRequest $request)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene(scene:'bar3', argument: 'request')]
+    #[Scene(scene:'bar3', argument: 'req')] // 支援多個引數
+    public function bar3(SceneRequest $request, DebugRequest $req)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene()] // 預設 scene 為方法名，效果等於 #[Scene(scene: 'bar1')]
+    public function bar1(SceneRequest $request)
+    {
         return $this->response->success($request->all());
     }
 }

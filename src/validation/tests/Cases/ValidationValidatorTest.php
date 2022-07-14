@@ -318,7 +318,7 @@ class ValidationValidatorTest extends TestCase
         $v->messages()->setFormat(':message');
         $this->assertEquals('Name is required!', $v->messages()->first('name'));
 
-        //set customAttributes by setter
+        // set customAttributes by setter
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.required' => ':attribute is required!'], 'en');
         $customAttributes = ['name' => 'Name'];
@@ -425,7 +425,7 @@ class ValidationValidatorTest extends TestCase
 
     public function testDisplayableValuesAreReplaced()
     {
-        //required_if:foo,bar
+        // required_if:foo,bar
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.required_if' => 'The :attribute field is required when :other is :value.'], 'en');
         $trans->addLines(['validation.values.color.1' => 'red'], 'en');
@@ -434,7 +434,7 @@ class ValidationValidatorTest extends TestCase
         $v->messages()->setFormat(':message');
         $this->assertEquals('The bar field is required when color is red.', $v->messages()->first('bar'));
 
-        //required_unless:foo,bar
+        // required_unless:foo,bar
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.required_unless' => 'The :attribute field is required unless :other is in :values.'], 'en');
         $trans->addLines(['validation.values.color.1' => 'red'], 'en');
@@ -443,7 +443,7 @@ class ValidationValidatorTest extends TestCase
         $v->messages()->setFormat(':message');
         $this->assertEquals('The bar field is required unless color is in red.', $v->messages()->first('bar'));
 
-        //in:foo,bar,...
+        // in:foo,bar,...
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.in' => ':attribute must be included in :values.'], 'en');
         $trans->addLines(['validation.values.type.5' => 'Short'], 'en');
@@ -453,7 +453,7 @@ class ValidationValidatorTest extends TestCase
         $v->messages()->setFormat(':message');
         $this->assertEquals('type must be included in Short, Long.', $v->messages()->first('type'));
 
-        //date_equals:tomorrow
+        // date_equals:tomorrow
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.date_equals' => 'The :attribute must be a date equal to :date.'], 'en');
         $trans->addLines(['validation.values.date.tomorrow' => 'the day after today'], 'en');
