@@ -33,7 +33,7 @@ class AnnotationManager
         /** @var Cacheable $annotation */
         $annotation = $this->getAnnotation(Cacheable::class, $className, $method);
 
-        $key = $this->getFormatedKey($annotation->prefix, $arguments, $annotation->value);
+        $key = $this->getFormattedKey($annotation->prefix, $arguments, $annotation->value);
         $group = $annotation->group;
         $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
 
@@ -49,7 +49,7 @@ class AnnotationManager
         $all = $annotation->all;
         $group = $annotation->group;
         if (! $all) {
-            $key = $this->getFormatedKey($prefix, $arguments, $annotation->value);
+            $key = $this->getFormattedKey($prefix, $arguments, $annotation->value);
         } else {
             $key = $prefix . ':';
         }
@@ -62,7 +62,7 @@ class AnnotationManager
         /** @var CachePut $annotation */
         $annotation = $this->getAnnotation(CachePut::class, $className, $method);
 
-        $key = $this->getFormatedKey($annotation->prefix, $arguments, $annotation->value);
+        $key = $this->getFormattedKey($annotation->prefix, $arguments, $annotation->value);
         $group = $annotation->group;
         $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
 
@@ -75,7 +75,7 @@ class AnnotationManager
         $annotation = $this->getAnnotation(FailCache::class, $className, $method);
 
         $prefix = $annotation->prefix ?? ($className . '::' . $method);
-        $key = $this->getFormatedKey($prefix, $arguments, $annotation->value);
+        $key = $this->getFormattedKey($prefix, $arguments, $annotation->value);
         $group = $annotation->group;
         $ttl = $annotation->ttl ?? $this->config->get("cache.{$group}.ttl", 3600);
 
@@ -102,7 +102,7 @@ class AnnotationManager
         return $result;
     }
 
-    protected function getFormatedKey(string $prefix, array $arguments, ?string $value = null): string
+    protected function getFormattedKey(string $prefix, array $arguments, ?string $value = null): string
     {
         return StringHelper::format($prefix, $arguments, $value);
     }
