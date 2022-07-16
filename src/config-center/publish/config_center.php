@@ -44,6 +44,20 @@ return [
                 //     'data_id' => 'hyperf-service-config',
                 //     'group' => 'DEFAULT_GROUP',
                 // ],
+                // 'nacos_config' => [
+                //     'tenant' => 'tenant', // corresponding with service.namespaceId
+                //     'data_id' => '*',
+                //     'group' => 'DEFAULT_GROUP',
+                // ],
+                // 'nacos_config' => [
+                //     'tenant' => 'tenant', // corresponding with service.namespaceId
+                //     'data_ids' => [
+                //        'databases',
+                //        'amqp',
+                //        'redis',
+                //      ],
+                //     'group' => 'DEFAULT_GROUP',
+                // ],
                 // 'nacos_config.data' => [
                 //     'data_id' => 'hyperf-service-config-yml',
                 //     'group' => 'DEFAULT_GROUP',
