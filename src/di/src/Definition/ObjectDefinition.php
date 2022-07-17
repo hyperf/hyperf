@@ -53,11 +53,7 @@ class ObjectDefinition implements DefinitionInterface
 
     public function getClassName(): string
     {
-        if ($this->className !== null) {
-            return $this->className;
-        }
-
-        return $this->name;
+        return $this->className ?? $this->name;
     }
 
     public function isClassExists(): bool

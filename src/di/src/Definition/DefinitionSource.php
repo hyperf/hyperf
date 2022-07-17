@@ -33,7 +33,7 @@ class DefinitionSource implements DefinitionSourceInterface
      */
     public function getDefinition(string $name): ?DefinitionInterface
     {
-        return $this->source[$name] ?? $this->source[$name] = $this->autowire($name);
+        return $this->source[$name] ??= $this->autowire($name);
     }
 
     /**

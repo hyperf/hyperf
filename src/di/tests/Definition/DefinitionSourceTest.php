@@ -29,7 +29,8 @@ class DefinitionSourceTest extends TestCase
     public function testGetDefinition()
     {
         $source = new DefinitionSource([]);
-        $source->getDefinition(Bar::class);
+        $bar = $source->getDefinition(Bar::class);
         $this->assertSame(1, count($source->getDefinitions()));
+        $this->assertSame($bar, $source->getDefinition(Bar::class));
     }
 }

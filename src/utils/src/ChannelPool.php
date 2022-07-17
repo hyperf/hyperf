@@ -19,7 +19,7 @@ class ChannelPool extends \SplQueue
 
     public static function getInstance(): self
     {
-        return static::$instance ?? (static::$instance = new self());
+        return static::$instance ??= new self();
     }
 
     public function get(): Channel
