@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\LoadBalancer;
 
 use MathPHP\Algebra;
-use RuntimeException;
+use Hyperf\LoadBalancer\Exception\RuntimeException;
 
 class WeightedRoundRobin extends AbstractLoadBalancer
 {
