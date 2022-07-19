@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\LoadBalancer;
 
-use Hyperf\LoadBalancer\Exception\RuntimeException;
+use Hyperf\LoadBalancer\Exception\NoNodesAvailableException;
 
 class RoundRobin extends AbstractLoadBalancer
 {
@@ -24,7 +24,7 @@ class RoundRobin extends AbstractLoadBalancer
     {
         $count = count($this->nodes);
         if ($count <= 0) {
-            throw new RuntimeException('Nodes missing.');
+            throw new NoNodesAvailableException('Cannot select any node from load balancer.');
         }
         $item = $this->nodes[self::$current % $count];
         ++self::$current;

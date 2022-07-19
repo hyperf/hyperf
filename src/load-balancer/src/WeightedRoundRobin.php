@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\LoadBalancer;
 
+use Hyperf\LoadBalancer\Exception\NoNodesAvailableException;
 use MathPHP\Algebra;
-use RuntimeException;
 
 class WeightedRoundRobin extends AbstractLoadBalancer
 {
@@ -27,7 +27,7 @@ class WeightedRoundRobin extends AbstractLoadBalancer
     {
         $count = count($this->nodes);
         if ($count <= 0) {
-            throw new RuntimeException('Nodes missing.');
+            throw new NoNodesAvailableException('Cannot select any node from load balancer.');
         }
         $maxWeight = $this->maxWeight($this->nodes);
         while (true) {

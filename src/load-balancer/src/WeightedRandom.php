@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\LoadBalancer;
 
+use Hyperf\LoadBalancer\Exception\NoNodesAvailableException;
+
 class WeightedRandom extends AbstractLoadBalancer
 {
     /**
@@ -42,6 +44,11 @@ class WeightedRandom extends AbstractLoadBalancer
                 }
             }
         }
+
+        if (! $nodes) {
+            throw new NoNodesAvailableException('Cannot select any node from load balancer.');
+        }
+
         return $nodes[array_rand($nodes)];
     }
 }
