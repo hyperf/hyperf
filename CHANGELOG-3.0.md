@@ -127,4 +127,4 @@ composer analyse
 - [#4912](https://github.com/hyperf/hyperf/pull/4912) Fixed bug that websocket connection will be closed after 10s when using `Swow`.
 - [#4919](https://github.com/hyperf/hyperf/pull/4919) [#4921](https://github.com/hyperf/hyperf/pull/4921) Fixed bug that rpc connections can't refresh themselves after nodes changed when using `rpc-multiplex`.
 - [#4920](https://github.com/hyperf/hyperf/pull/4920) Fixed bug that the routing path is wrong (like `//foo`) when the routing prefix is end of '/'.
-- [#4935](https://github.com/hyperf/hyperf/pull/4935) Fixed bug that memory leak when an exception occurred in the closure of Parallel.
+- [#4940](https://github.com/hyperf/hyperf/pull/4940) Fixed bug that memory leak when an exception occurred in the closure of Parallel.
