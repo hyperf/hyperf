@@ -107,9 +107,9 @@ class RateLimitController
 
 ## 自定义令牌桶限流 key
 
-默认的 key 是获取当前请求的地址，相当于全局限流，当需要自定义限流 key ，可以参考以下示例
+默认的 key 是根据当前请求的`url`，当一个用户触发限流时，其他用户也被限流请求此`url`；
 
-场景：针对用户 ID 进行限流，使用用户 ID 作为自定义 key 进行限流
+若需要不同颗粒度的限流， 如用户纬度的限流，可以针对用户`ID`进行限流，达到 A 用户被限流，B 用户正常请求：
 
 ```php
 <?php
@@ -119,43 +119,27 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Service\TestService;
-use App\Request\TestRequest;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\RateLimit\Annotation\RateLimit;
 use Hyperf\Utils\ApplicationContext;
-
+use Hyperf\HttpServer\Contract\RequestInterface;
 
 class TestController
 {
     /**
-     * @var TestService
-     */
-    private $TestService;
-
-    public function __construct(TestService $TestService)
-    {
-        $this->TestService = $TestService;
-    }
-
-    /**
-     * 1 小时 6 次
-     * @RateLimit(create=1, capacity=3600, consume=600, key={TestController::class, "rateLimit"})
+     * @RateLimit(create=1, capacity=3, key={TestController::class, "getUserId"})
      */
     public function test(TestRequest $request)
     {
-        $params = $request->validated();
 
-        return $this->TestService->getToken($params);
+        return ["QPS 1, 峰值3"];
     }
 
-    public function rateLimit(ProceedingJoinPoint $proceedingJoinPoint)
+    public function getUserId(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        $request = ApplicationContext::getContainer()->get(TestRequest::class);
-        
-        $params = $request->validated();
-
-        return $params['id'];
+        $request = ApplicationContext::getContainer()->get(RequestInterface::class);
+        // 同理可以根据手机号、IP地址等不同纬度进行限流
+        return $request->input('user_id');
     }
 
 }
