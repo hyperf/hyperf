@@ -23,6 +23,13 @@ class Parallel
 
     private ?Channel $concurrentChannel = null;
 
+    private array $results = [];
+
+    /**
+     * @var \Throwable[]
+     */
+    private array $throwables = [];
+
     /**
      * @param int $concurrent if $concurrent is equal to 0, that means unlimit
      */
@@ -44,33 +51,33 @@ class Parallel
 
     public function wait(bool $throw = true): array
     {
-        $result = $throwables = [];
         $wg = new WaitGroup();
         $wg->add(count($this->callbacks));
         foreach ($this->callbacks as $key => $callback) {
-            ($chan = $this->concurrentChannel) && $chan->push(true);
-            $result[$key] = null;
-            Coroutine::create(static function () use ($callback, $key, $wg, &$result, &$throwables, $chan) {
+            $this->concurrentChannel && $this->concurrentChannel->push(true);
+            $this->results[$key] = null;
+            Coroutine::create(function () use ($callback, $key, $wg) {
                 try {
-                    $result[$key] = call($callback);
+                    $this->results[$key] = call($callback);
                 } catch (\Throwable $throwable) {
-                    $throwables[$key] = $throwable;
-                    unset($result[$key]);
+                    $this->throwables[$key] = $throwable;
+                    unset($this->results[$key]);
                 } finally {
-                    $chan && $chan->pop();
+                    $this->concurrentChannel && $this->concurrentChannel->pop();
                     $wg->done();
                 }
             });
         }
         $wg->wait();
-        if ($throw && ($throwableCount = count($throwables)) > 0) {
-            $message = 'Detecting ' . $throwableCount . ' throwable occurred during parallel execution:' . PHP_EOL . $this->formatThrowables($throwables);
+        if ($throw && ($throwableCount = count($this->throwables)) > 0) {
+            $message = 'Detecting ' . $throwableCount . ' throwable occurred during parallel execution:' . PHP_EOL . $this->formatThrowables($this->throwables);
             $executionException = new ParallelExecutionException($message);
-            $executionException->setResults($result);
-            $executionException->setThrowables($throwables);
+            $executionException->setResults($this->results);
+            $executionException->setThrowables($this->throwables);
+            unset($this->results, $this->throwables);
             throw $executionException;
         }
-        return $result;
+        return $this->results;
     }
 
     public function count(): int
