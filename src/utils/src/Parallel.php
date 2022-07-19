@@ -50,15 +50,15 @@ class Parallel
         foreach ($this->callbacks as $key => $callback) {
             $this->concurrentChannel && $this->concurrentChannel->push(true);
             $result[$key] = null;
-            $then = $this;
-            Coroutine::create(static function () use ($callback, $key, $wg, &$result, &$throwables, $then) {
+            $that = $this;
+            Coroutine::create(static function () use ($callback, $key, $wg, &$result, &$throwables, $that) {
                 try {
                     $result[$key] = call($callback);
                 } catch (\Throwable $throwable) {
                     $throwables[$key] = $throwable;
                     unset($result[$key]);
                 } finally {
-                    $then->concurrentChannel && $then->concurrentChannel->pop();
+                    $that->concurrentChannel && $that->concurrentChannel->pop();
                     $wg->done();
                 }
             });
