@@ -12,11 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\LoadBalancer;
 
 use Closure;
+use Hyperf\LoadBalancer\Exception\NoNodesAvailableException;
 
 interface LoadBalancerInterface
 {
     /**
      * Select an item via the load balancer.
+     * @throws NoNodesAvailableException
      */
     public function select(array ...$parameters): Node;
 
