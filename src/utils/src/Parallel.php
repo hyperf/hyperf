@@ -48,9 +48,8 @@ class Parallel
         $wg = new WaitGroup();
         $wg->add(count($this->callbacks));
         foreach ($this->callbacks as $key => $callback) {
-            $this->concurrentChannel && $this->concurrentChannel->push(true);
+            ($chan = $this->concurrentChannel) && $chan->push(true);
             $result[$key] = null;
-            $chan = $this->concurrentChannel;
             Coroutine::create(static function () use ($callback, $key, $wg, &$result, &$throwables, $chan) {
                 try {
                     $result[$key] = call($callback);
