@@ -135,7 +135,7 @@ class TestController
         return ["QPS 1, 峰值3"];
     }
 
-    public function getUserId(ProceedingJoinPoint $proceedingJoinPoint)
+    public static function getUserId(ProceedingJoinPoint $proceedingJoinPoint)
     {
         $request = ApplicationContext::getContainer()->get(RequestInterface::class);
         // 同理可以根据手机号、IP地址等不同纬度进行限流
