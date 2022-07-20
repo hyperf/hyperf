@@ -16,13 +16,14 @@ php bin/hyperf.php vendor:publish hyperf/rate-limit
 
 ### 配置说明
 
-|  配置          | 默认值 |         备注        |
-|:--------------:|:------:|:-------------------:|
-| create         | 1      | 每秒生成令牌数      |
-| consume        | 1      | 每次请求消耗令牌数  |
-| capacity       | 2      | 令牌桶最大容量      |
-| limitCallback  | `[]`   | 触发限流时回调方法  |
-| waitTimeout    | 1      | 排队超时时间        |
+|  配置          | 默认值 | 类型 |       备注        |
+|:--------------:|:------:|:--------------:|:-------------------:|
+| create         | 1      |int| 每秒生成令牌数      |
+| consume        | 1      |int| 每次请求消耗令牌数  |
+| capacity       | 2      |int| 令牌桶最大容量      |
+| limitCallback  | `[]`   |null\|callable| 触发限流时回调方法  |
+| waitTimeout    | 1      |int| 排队超时时间        |
+| key            | 当前请求 url 地址     |callable\|string| 限流的 key        |
 
 ## 使用限流器
 
@@ -92,4 +93,45 @@ class RateLimitController
         return $proceedingJoinPoint->process();
     }
 }
+```
+
+## 自定义令牌桶限流 key
+
+默认的 key 是根据当前请求的 `url` ，当一个用户触发限流时，其他用户也被限流请求此`url`；
+
+若需要不同颗粒度的限流， 如用户纬度的限流，可以针对用户 `ID` 进行限流，达到 A 用户被限流，B 用户正常请求：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+
+namespace App\Controller;
+
+use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\RateLimit\Annotation\RateLimit;
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\HttpServer\Contract\RequestInterface;
+
+class TestController
+{
+    /**
+     * @RateLimit(create=1, capacity=3, key={TestController::class, "getUserId"})
+     */
+    public function test(TestRequest $request)
+    {
+
+        return ["QPS 1, 峰值3"];
+    }
+
+    public static function getUserId(ProceedingJoinPoint $proceedingJoinPoint)
+    {
+        $request = ApplicationContext::getContainer()->get(RequestInterface::class);
+        // 同理可以根据手机号、IP地址等不同纬度进行限流
+        return $request->input('user_id');
+    }
+
+}
+
 ```
