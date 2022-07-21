@@ -388,7 +388,7 @@ trait QueriesRelationships
             $types = $this->model->newModelQuery()->distinct()->pluck($relation->getMorphType())->filter()->all();
 
             foreach ($types as &$type) {
-                $type = $this->model::getActualClassNameForMorph($type) ?? Relation::getMorphedModel($type) ?? $type;
+                $type = $this->model::getActualClassNameForMorph($type);
             }
         }
 
