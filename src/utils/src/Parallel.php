@@ -61,7 +61,7 @@ class Parallel
             $this->results[$key] = null;
             Coroutine::create(function () use ($callback, $key, $wg, &$result, &$throwables) {
                 try {
-                    $this->results[$key] = call($callback);
+                    $this->results[$key] = $callback();
                 } catch (\Throwable $throwable) {
                     $this->throwables[$key] = $throwable;
                     unset($this->results[$key]);
@@ -75,12 +75,12 @@ class Parallel
         if ($throw && ($throwableCount = count($this->throwables)) > 0) {
             $message = 'Detecting ' . $throwableCount . ' throwable occurred during parallel execution:' . PHP_EOL . $this->formatThrowables($this->throwables);
             $executionException = new ParallelExecutionException($message);
-            $executionException->setResults($this->result);
+            $executionException->setResults($this->results);
             $executionException->setThrowables($this->throwables);
             unset($this->results, $this->throwables);
             throw $executionException;
         }
-        return $this->result;
+        return $this->results;
     }
 
     public function count(): int
