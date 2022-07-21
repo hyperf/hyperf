@@ -91,6 +91,8 @@ class Parallel
     public function clear(): void
     {
         $this->callbacks = [];
+        $this->results = [];
+        $this->throwables = [];
     }
 
     /**
