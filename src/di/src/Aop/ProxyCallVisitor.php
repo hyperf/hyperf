@@ -37,10 +37,9 @@ class ProxyCallVisitor extends NodeVisitorAbstract
     /**
      * Define the proxy handler trait here.
      */
-    private array $proxyTraits
-        = [
-            ProxyTrait::class,
-        ];
+    private array $proxyTraits = [
+        ProxyTrait::class,
+    ];
 
     private bool $shouldRewrite = false;
 
@@ -73,11 +72,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
     {
         switch ($node) {
             case $node instanceof ClassMethod:
-                if ($this->shouldRewrite($node)) {
-                    $this->shouldRewrite = true;
-                } else {
-                    $this->shouldRewrite = false;
-                }
+                $this->shouldRewrite = $this->shouldRewrite($node);
                 break;
         }
 
@@ -213,9 +208,9 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         };
     }
 
-    private function shouldRewrite(ClassMethod $node)
+    private function shouldRewrite(ClassMethod $node): bool
     {
-        if (in_array($this->visitorMetadata->classLike, [Node\Stmt\Interface_::class])) {
+        if ($this->visitorMetadata->classLike == Node\Stmt\Interface_::class) {
             return false;
         }
 
