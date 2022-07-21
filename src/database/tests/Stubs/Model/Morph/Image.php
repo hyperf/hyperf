@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database\Stubs\Model\Morph;
 
+use Hyperf\Utils\Arr;
 use HyperfTest\Database\Stubs\Model\Model;
 
 /**
@@ -45,9 +46,11 @@ class Image extends Model
 
     public static function getActualClassNameForMorph($class)
     {
-        return [
+        $morphMap = [
             'user' => User::class,
             'book' => Book::class,
-        ][$class] ?? $class;
+        ];
+
+        return Arr::get($morphMap, $class, $class);
     }
 }
