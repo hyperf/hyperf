@@ -1,5 +1,9 @@
 # v2.2.34 - TBD
 
+## Fixed
+
+- [#4948](https://github.com/hyperf/hyperf/pull/4948) Fixed memory leak caused by an exception which occurred in `Parallel`.
+
 # v2.2.33.1 - 2022-05-30
 
 ## Fixed
