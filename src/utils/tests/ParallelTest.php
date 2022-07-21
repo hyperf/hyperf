@@ -255,6 +255,25 @@ class ParallelTest extends TestCase
         $this->assertSame(['a' => 1, 'b' => null], $res);
     }
 
+    public function testThrowExceptionInParallel()
+    {
+        try {
+            parallel([
+                static function () {
+                    throw new \Exception();
+                },
+            ]);
+        } catch (ParallelExecutionException $exception) {
+            /** @var \Throwable $exception */
+            $exception = $exception->getThrowables()[0];
+            $traces = $exception->getTrace();
+            ob_start();
+            var_dump($traces);
+            $content = ob_get_clean();
+            $this->assertStringNotContainsString('*RECURSION*', $content);
+        }
+    }
+
     public function returnCoId()
     {
         return Coroutine::id();
