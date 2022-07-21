@@ -57,9 +57,9 @@ class Coroutine
      */
     public static function create(callable $callable): int
     {
-        $coroutine = Co::create(function () use ($callable) {
+        $coroutine = Co::create(static function () use ($callable) {
             try {
-                call($callable);
+                $callable();
             } catch (Throwable $throwable) {
                 if (ApplicationContext::hasContainer()) {
                     $container = ApplicationContext::getContainer();
