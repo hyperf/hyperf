@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database\Stubs\Model\Morph;
 
 use HyperfTest\Database\Stubs\Model\Model;
+use HyperfTest\Database\Stubs\Model\UserRolePivot;
 
 /**
  * @property int $id
