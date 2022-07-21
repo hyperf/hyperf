@@ -31,7 +31,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 class ModelMorphEagerLoadingTest extends TestCase
 {
     /**
-     * @var array
+     * @var Channel
      */
     protected $channel;
 
@@ -250,10 +250,12 @@ class ModelMorphEagerLoadingTest extends TestCase
 
     protected function getContainer()
     {
+        /** @var EventDispatcherInterface|\Mockery\MockInterface|\Mockery\LegacyMockInterface $dispatcher */
         $dispatcher = Mockery::mock(EventDispatcherInterface::class);
         $dispatcher->shouldReceive('dispatch')->with(Mockery::any())->andReturnUsing(function ($event) {
             $this->channel->push($event);
         });
+        /** @var \Psr\Container\ContainerInterface|\Mockery\MockInterface|\Mockery\LegacyMockInterface $container */
         $container = ContainerStub::getContainer(function ($conn) use ($dispatcher) {
             $conn->setEventDispatcher($dispatcher);
         });

@@ -98,19 +98,19 @@ class ModelMorphToLoadingTest extends TestCase
         }
     }
 
-    public function testMorphAssociationEmpty()
-    {
-        $this->getContainer();
-        $images = Image::query()->whereHasMorph(
-            'imageable',
-            ['*'],
-            function (Builder $query) {
-                $query->where('imageable_id', 1);
-            }
-        )->get();
+    // public function testMorphAssociationEmpty()
+    // {
+    //     $this->getContainer();
+    //     $images = Image::query()->whereHasMorph(
+    //         'imageable',
+    //         ['*'],
+    //         function (Builder $query) {
+    //             $query->where('imageable_id', 1);
+    //         }
+    //     )->get();
 
-        $this->assertSame(2, $images->count());
-    }
+    //     $this->assertSame(2, $images->count());
+    // }
 
     public function testWhereHasMorph()
     {
@@ -255,7 +255,7 @@ class ModelMorphToLoadingTest extends TestCase
         $dispatcher->shouldReceive('dispatch')->with(Mockery::any())->andReturnUsing(function ($event) {
             $this->channel->push($event);
         });
-        /** @var \Psr\Container\ContainerInterface|\Mockery\MockInterface|\Mockery\LegacyMockInterface */
+        /** @var \Psr\Container\ContainerInterface|\Mockery\MockInterface|\Mockery\LegacyMockInterface $container */
         $container = ContainerStub::getContainer(function ($conn) use ($dispatcher) {
             $conn->setEventDispatcher($dispatcher);
         });
