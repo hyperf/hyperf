@@ -78,7 +78,7 @@ jobs:
         if: ${{ matrix.version == '^2.0' }}
         run: |
           composer require hyperf/flysystem-oss
-          composer require league/flysystem-ftp
+          composer require "league/flysystem-ftp:^3.0"
           composer require "overtrue/flysystem-cos:^4.0"
           composer require "overtrue/flysystem-qiniu:^2.0"
       - name: Run Test Cases
