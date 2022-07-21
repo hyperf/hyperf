@@ -13,6 +13,7 @@ namespace Hyperf\Database\Model\Concerns;
 
 use Closure;
 use Hyperf\Database\Model\Builder;
+use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\Relations\MorphTo;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
@@ -387,7 +388,7 @@ trait QueriesRelationships
             $types = $this->model->newModelQuery()->distinct()->pluck($relation->getMorphType())->filter()->all();
 
             foreach ($types as &$type) {
-                $type = Relation::getMorphedModel($type) ?? $type;
+                $type = $relation->getChild()::getActualClassNameForMorph($type) ?? Relation::getMorphedModel($type) ?? $type;
             }
         }
 
