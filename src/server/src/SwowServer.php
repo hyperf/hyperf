@@ -110,6 +110,7 @@ class SwowServer implements ServerInterface
             $callbacks = array_replace($config->getCallbacks(), $server->getCallbacks());
 
             $this->server = $this->makeServer($type, $host, $port);
+            $this->serverExt($this->server, $config, $server);
 
             $this->bindServerCallbacks($this->server, $type, $name, $callbacks);
 
@@ -215,6 +216,21 @@ class SwowServer implements ServerInterface
         }
 
         throw new RuntimeException('Server type is invalid.');
+    }
+
+    protected function serverExt(HttpServer|BaseServer $server, ServerConfig $config, Port $serverConfig): void
+    {
+        $settings = array_replace($config->getSettings(), $serverConfig->getSettings());
+
+        $serverHttpExt = $settings['swow_http_server_ext'] ?? null;
+        if ($serverHttpExt instanceof \Closure && $server instanceof HttpServer) {
+            $serverHttpExt($server);
+        }
+
+        $serverBaseExt = $settings['swow_base_server_ext'] ?? null;
+        if ($serverBaseExt instanceof \Closure && $server instanceof BaseServer) {
+            $serverBaseExt($server);
+        }
     }
 
     private function writePid(): void
