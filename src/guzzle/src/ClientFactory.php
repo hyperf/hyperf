@@ -25,7 +25,8 @@ class ClientFactory
     public function create(array $options = []): Client
     {
         $stack = null;
-        if (Coroutine::inCoroutine()) {
+
+        if (extension_loaded('swoole') && Coroutine::inCoroutine()) {
             $stack = HandlerStack::create(new CoroutineHandler());
         }
 
@@ -35,6 +36,7 @@ class ClientFactory
             // Create by DI for AOP.
             return $this->container->make(Client::class, ['config' => $config]);
         }
+
         return new Client($config);
     }
 }
