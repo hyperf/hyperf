@@ -114,7 +114,7 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
         $this->decoder = new ChainDecoder($decoders);
     }
 
-    final public function serialize($data, string $format, array $context = []): string
+    final public function serialize(mixed $data, string $format, array $context = []): string
     {
         if (! $this->supportsEncoding($format, $context)) {
             throw new NotEncodableValueException(sprintf('Serialization for the format "%s" is not supported.', $format));
@@ -127,7 +127,7 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
         return $this->encode($data, $format, $context);
     }
 
-    final public function deserialize($data, string $type, string $format, array $context = []): mixed
+    final public function deserialize(mixed $data, string $type, string $format, array $context = []): mixed
     {
         if (! $this->supportsDecoding($format, $context)) {
             throw new NotEncodableValueException(sprintf('Deserialization for the format "%s" is not supported.', $format));
