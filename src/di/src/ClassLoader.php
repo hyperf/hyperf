@@ -45,11 +45,7 @@ class ClassLoader
 
     public function loadClass(string $class): void
     {
-        $path = $this->locateFile($class);
-
-        if ($path) {
-            include $path;
-        }
+        $this->composerClassLoader->loadClass($class);
     }
 
     public static function init(?string $proxyFileDirPath = null, ?string $configDir = null, ?ScanHandlerInterface $handler = null): void
@@ -103,12 +99,6 @@ class ClassLoader
     public function getComposerClassLoader(): ComposerClassLoader
     {
         return $this->composerClassLoader;
-    }
-
-    protected function locateFile(string $className): ?string
-    {
-        $file = $this->getComposerClassLoader()->findFile($className);
-        return is_string($file) ? $file : null;
     }
 
     protected function loadDotenv(): void
