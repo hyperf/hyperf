@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Watcher;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Di\ClassLoader;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Coroutine;
@@ -31,8 +30,6 @@ class Watcher
     protected DriverInterface $driver;
 
     protected Filesystem $filesystem;
-
-    protected ClassLoader $loader;
 
     protected array $autoload;
 

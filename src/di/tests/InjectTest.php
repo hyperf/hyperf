@@ -18,7 +18,6 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\Aop\Ast;
-use Hyperf\Di\ClassLoader;
 use Hyperf\Di\Exception\AnnotationException;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Di\ScanHandler\NullScanHandler;
@@ -242,7 +241,7 @@ class InjectTest extends TestCase
     public function testInjectException()
     {
         try {
-            $scanner = new Scanner(Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'), new NullScanHandler());
+            $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
             $reader = new AnnotationReader();
             $scanner->collect($reader, ReflectionManager::reflectClass(DemoInjectException::class));
         } catch (\Exception $e) {
@@ -271,7 +270,7 @@ class InjectTest extends TestCase
             throw new Exception('The process fork failed');
         }
         if ($pid === 0) {
-            $scanner = new Scanner($loader = Mockery::mock(ClassLoader::class), new ScanConfig(false, '/'), new NullScanHandler());
+            $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
             $reader = new AnnotationReader();
 
             if (empty($classes)) {
