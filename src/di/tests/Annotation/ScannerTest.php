@@ -40,6 +40,9 @@ class ScannerTest extends TestCase
         AnnotationCollector::clear();
         Mockery::close();
         ReflectionManager::clear();
+        (function () {
+            self::$classLoader = null;
+        })->call(new Composer());
     }
 
     public function testGetChangedAspects()
