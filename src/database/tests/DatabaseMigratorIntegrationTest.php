@@ -43,7 +43,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
 
         $dbConfig = [
             'driver' => 'mysql',
-            'host' => '127.0.0.1',
+            'host' => '10.11.108.128',
             'port' => 3306,
             'database' => 'hyperf',
             'username' => 'root',
@@ -89,7 +89,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
 
         $res = (array) $schema->connection()->selectOne('SHOW CREATE TABLE users;');
         $sql = $res['Create Table'];
-        $asserts = [
+        $asserts = str_replace("\r", "", [
             "CREATE TABLE `users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
@@ -112,13 +112,13 @@ class DatabaseMigratorIntegrationTest extends TestCase
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci COMMENT='Users Table'",
-        ];
+        ]);
 
         $this->assertTrue(in_array($sql, $asserts, true));
 
         $res = (array) $schema->connection()->selectOne('SHOW CREATE TABLE password_resets;');
         $sql = $res['Create Table'];
-        $asserts = [
+        $asserts = str_replace("\r", "", [
             'CREATE TABLE `password_resets` (
   `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `token` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
@@ -133,7 +133,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
   KEY `password_resets_email_index` (`email`),
   KEY `password_resets_token_index` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci',
-        ];
+        ]);
         $this->assertTrue(in_array($sql, $asserts, true));
     }
 
