@@ -25,7 +25,10 @@
     "autoload": {
         "psr-4": {
             "Hyperf\\ExceptionHandler\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
