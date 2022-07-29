@@ -136,16 +136,13 @@ class Composer
 
     private static function findLoader(): ClassLoader
     {
-        $composerClass = '';
-        foreach (get_declared_classes() as $declaredClass) {
-            if (str_starts_with($declaredClass, 'ComposerAutoloaderInit') && method_exists($declaredClass, 'getLoader')) {
-                $composerClass = $declaredClass;
-                break;
+        $loaders = spl_autoload_functions();
+        foreach ($loaders as $loader) {
+            if (is_array($loader) && $loader[0] instanceof ClassLoader) {
+                return $loader[0];
             }
         }
-        if (! $composerClass) {
-            throw new \RuntimeException('Composer loader not found.');
-        }
-        return $composerClass::getLoader();
+
+        throw new \RuntimeException('Composer loader not found.');
     }
 }
