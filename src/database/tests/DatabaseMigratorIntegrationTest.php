@@ -114,6 +114,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci COMMENT='Users Table'",
         ];
 
+        echo $sql;
         $this->assertTrue(in_array($sql, $asserts, true));
 
         $res = (array) $schema->connection()->selectOne('SHOW CREATE TABLE password_resets;');
