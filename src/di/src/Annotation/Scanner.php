@@ -13,11 +13,11 @@ namespace Hyperf\Di\Annotation;
 
 use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Aop\ProxyManager;
-use Hyperf\Di\ClassLoader;
 use Hyperf\Di\Exception\DirectoryNotExistException;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Di\ScanHandler\ScanHandlerInterface;
+use Hyperf\Utils\Composer;
 use Hyperf\Utils\Filesystem\Filesystem;
 use ReflectionClass;
 
@@ -27,7 +27,7 @@ class Scanner
 
     protected string $path = BASE_PATH . '/runtime/container/scan.cache';
 
-    public function __construct(protected ClassLoader $classloader, protected ScanConfig $scanConfig, protected ScanHandlerInterface $handler)
+    public function __construct(protected ScanConfig $scanConfig, protected ScanHandlerInterface $handler)
     {
         $this->filesystem = new Filesystem();
     }
@@ -313,7 +313,7 @@ class Scanner
             }
         }
         foreach ($classes as $class) {
-            $file = $this->classloader->getComposerClassLoader()->findFile($class);
+            $file = Composer::getLoader()->findFile($class);
             if ($file === false) {
                 echo sprintf('Skip class %s, because it does not exist in composer class loader.', $class) . PHP_EOL;
                 continue;
