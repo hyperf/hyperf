@@ -134,6 +134,7 @@ class DatabaseMigratorIntegrationTest extends TestCase
   KEY `password_resets_token_index` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci',
         ];
+        echo $sql;
         $this->assertTrue(in_array($sql, $asserts, true));
     }
 
