@@ -132,9 +132,8 @@ class DatabaseMigratorIntegrationTest extends TestCase
   `created_at` timestamp NOT NULL,
   KEY `password_resets_email_index` (`email`),
   KEY `password_resets_token_index` (`token`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci',
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci',
         ];
-        echo $sql;
         $this->assertTrue(in_array($sql, $asserts, true));
     }
 
