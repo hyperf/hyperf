@@ -47,6 +47,7 @@ class Parallel
         } else {
             $this->callbacks[$key] = $callable;
         }
+        return $this;
     }
 
     public function wait(bool $throw = true): array
