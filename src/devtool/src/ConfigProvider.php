@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Devtool;
 
+use Hyperf\Database\Commands\CommandCollector;
+
 class ConfigProvider
 {
     public function __invoke()
@@ -23,6 +25,9 @@ class ConfigProvider
                     ],
                 ],
             ],
+            'commands' => [
+                ...$this->getDatabaseCommands(),
+            ],
             'publish' => [
                 [
                     'id' => 'config',
@@ -32,5 +37,14 @@ class ConfigProvider
                 ],
             ],
         ];
+    }
+
+    private function getDatabaseCommands(): array
+    {
+        if (! class_exists(CommandCollector::class)) {
+            return [];
+        }
+
+        return CommandCollector::getAllCommands();
     }
 }
