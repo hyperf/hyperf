@@ -45,9 +45,7 @@ class ApplicationFactory
         }
 
         foreach ($commands as $command) {
-            if ($container->has($command)) {
-                $application->add($container->get($command));
-            }
+            $application->add($container->get($command));
         }
         return $application;
     }
