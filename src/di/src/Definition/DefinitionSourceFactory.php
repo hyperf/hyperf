@@ -29,7 +29,6 @@ class DefinitionSourceFactory
 
         $serverDependencies = $configFromProviders['dependencies'] ?? [];
         $dependenciesPath = BASE_PATH . '/config/autoload/dependencies.php';
-
         if (file_exists($dependenciesPath)) {
             $definitions = include $dependenciesPath;
             $serverDependencies = array_replace($serverDependencies, $definitions ?? []);
