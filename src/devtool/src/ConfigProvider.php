@@ -45,6 +45,6 @@ class ConfigProvider
             return [];
         }
 
-        return CommandCollector::commands();
+        return CommandCollector::getAllCommands();
     }
 }

@@ -24,7 +24,7 @@ use Hyperf\Database\Commands\Seeders\SeedCommand;
 
 class CommandCollector
 {
-    public static function commands(): array
+    public static function getAllCommands(): array
     {
         return [
             ModelCommand::class,
