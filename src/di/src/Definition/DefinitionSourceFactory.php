@@ -27,10 +27,10 @@ class DefinitionSourceFactory
             $configFromProviders = ProviderConfig::load();
         }
 
-        $configDir = BASE_PATH . '/config/autoload/dependencies.php';
+        $dependenciesPath = BASE_PATH . '/config/autoload/dependencies.php';
 
-        if (file_exists($configDir)) {
-            $definitions = include $configDir;
+        if (file_exists($dependenciesPath)) {
+            $definitions = include $dependenciesPath;
             $serverDependencies = array_replace($configFromProviders['dependencies'] ?? [], $definitions ?? []);
         }
 
