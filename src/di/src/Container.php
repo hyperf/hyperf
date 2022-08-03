@@ -146,6 +146,9 @@ class Container implements HyperfContainerInterface
         return true;
     }
 
+    /**
+     * @deprecated
+     */
     public function getDefinitionSource(): Definition\DefinitionSourceInterface
     {
         return $this->definitionSource;

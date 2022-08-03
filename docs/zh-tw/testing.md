@@ -428,7 +428,7 @@ class DemoLogicTest extends HttpTestCase
             'status' => 11
         ]);
 
-        $container->getDefinitionSource()->addDefinition(DemoApi::class, function () use ($apiStub) {
+        $container->define(DemoApi::class, function () use ($apiStub) {
             return $apiStub;
         });
         

@@ -119,6 +119,7 @@ composer analyse
 
 - `Hyperf\Utils\Contracts\Arrayable` will be deprecated, please use `Hyperf\Contract\Arrayable` instead.
 - `Hyperf\AsyncQueue\Message` will be deprecated, please use `Hyperf\AsyncQueue\JobMessage` instead.
+- `Hyperf\Di\Container::getDefinitionSource()` will be deprecated.
 
 ## Fixed
 
