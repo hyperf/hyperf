@@ -22,7 +22,7 @@ class DefinitionSourceFactory
             throw new Exception('BASE_PATH is not defined.');
         }
 
-        $serverDependencies = $configFromProviders = [];
+        $configFromProviders = [];
         if (class_exists(ProviderConfig::class)) {
             $configFromProviders = ProviderConfig::load();
         }
