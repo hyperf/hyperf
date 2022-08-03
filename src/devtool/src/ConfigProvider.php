@@ -11,17 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Devtool;
 
-use Hyperf\Database\Commands\Migrations\FreshCommand;
-use Hyperf\Database\Commands\Migrations\GenMigrateCommand;
-use Hyperf\Database\Commands\Migrations\InstallCommand;
-use Hyperf\Database\Commands\Migrations\MigrateCommand;
-use Hyperf\Database\Commands\Migrations\RefreshCommand;
-use Hyperf\Database\Commands\Migrations\ResetCommand;
-use Hyperf\Database\Commands\Migrations\RollbackCommand;
-use Hyperf\Database\Commands\Migrations\StatusCommand;
-use Hyperf\Database\Commands\ModelCommand;
-use Hyperf\Database\Commands\Seeders\GenSeederCommand;
-use Hyperf\Database\Commands\Seeders\SeedCommand;
+use Hyperf\Database\Commands\CommandCollector;
 
 class ConfigProvider
 {
@@ -51,18 +41,10 @@ class ConfigProvider
 
     private function getDatabaseCommands(): array
     {
-        return [
-            ModelCommand::class,
-            GenMigrateCommand::class,
-            GenSeederCommand::class,
-            InstallCommand::class,
-            MigrateCommand::class,
-            FreshCommand::class,
-            RefreshCommand::class,
-            ResetCommand::class,
-            RollbackCommand::class,
-            StatusCommand::class,
-            SeedCommand::class,
-        ];
+        if (! class_exists(CommandCollector::class)) {
+            return [];
+        }
+
+        return CommandCollector::commands();
     }
 }
