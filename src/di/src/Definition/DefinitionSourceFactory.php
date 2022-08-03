@@ -16,30 +16,22 @@ use Hyperf\Di\Exception\Exception;
 
 class DefinitionSourceFactory
 {
-    protected string $baseUri;
-
-    public function __construct(protected bool $enableCache = false)
+    public function __invoke(): DefinitionSource
     {
         if (! defined('BASE_PATH')) {
             throw new Exception('BASE_PATH is not defined.');
         }
 
-        $this->baseUri = BASE_PATH;
-    }
-
-    public function __invoke()
-    {
-        $configDir = $this->baseUri . '/config';
-
-        $configFromProviders = [];
+        $serverDependencies = $configFromProviders = [];
         if (class_exists(ProviderConfig::class)) {
             $configFromProviders = ProviderConfig::load();
         }
 
-        $serverDependencies = $configFromProviders['dependencies'] ?? [];
-        if (file_exists($configDir . '/autoload/dependencies.php')) {
-            $definitions = include $configDir . '/autoload/dependencies.php';
-            $serverDependencies = array_replace($serverDependencies, $definitions ?? []);
+        $configDir = BASE_PATH . '/config/autoload/dependencies.php';
+
+        if (file_exists($configDir)) {
+            $definitions = include $configDir;
+            $serverDependencies = array_replace($configFromProviders['dependencies'] ?? [], $definitions ?? []);
         }
 
         return new DefinitionSource($serverDependencies);
