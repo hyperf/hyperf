@@ -11,8 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Command;
 
-use Closure;
-
 trait ConfirmableTrait
 {
     /**
@@ -26,7 +24,7 @@ trait ConfirmableTrait
      */
     public function confirmToProceed($warning = 'Application In Production!', $callback = null)
     {
-        $callback = is_null($callback) ? $this->getDefaultConfirmCallback() : $callback;
+        $callback ??= $this->getDefaultConfirmCallback();
 
         $shouldConfirm = value($callback);
 
@@ -56,11 +54,9 @@ trait ConfirmableTrait
      */
     protected function getDefaultConfirmCallback()
     {
-        return function () {
-            return (
-                is_callable(['Composer\InstalledVersions', 'getRootPackage'])
+        return fn () => (
+            is_callable(['Composer\InstalledVersions', 'getRootPackage'])
                 && \Composer\InstalledVersions::getRootPackage()['dev'] === false
-            );
-        };
+        );
     }
 }
