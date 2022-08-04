@@ -24,9 +24,11 @@ trait ConfirmableTrait
      * @param null|bool|\Closure $callback
      * @return bool
      */
-    public function confirmToProceed($warning = 'Application In Production!', $callback = false)
+    public function confirmToProceed($warning = 'Application In Production!', $callback = null)
     {
-        $shouldConfirm = $callback instanceof Closure ? call_user_func($callback) : $callback;
+        $callback = is_null($callback) ? $this->getDefaultConfirmCallback() : $callback;
+
+        $shouldConfirm = value($callback);
 
         if ($shouldConfirm) {
             if ($this->input->getOption('force')) {
@@ -45,5 +47,20 @@ trait ConfirmableTrait
         }
 
         return true;
+    }
+
+    /**
+     * Get the default confirmation callback.
+     *
+     * @return \Closure
+     */
+    protected function getDefaultConfirmCallback()
+    {
+        return function () {
+            return (
+                is_callable(['Composer\InstalledVersions', 'getRootPackage'])
+                && \Composer\InstalledVersions::getRootPackage()['dev'] === false
+            );
+        };
     }
 }
