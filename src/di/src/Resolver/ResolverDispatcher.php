@@ -45,10 +45,10 @@ class ResolverDispatcher implements ResolverInterface
 
         $guard = DepthGuard::getInstance();
 
-        return $guard->call($definition->getName(), function () use ($definition, $parameters) {
-            $resolver = $this->getDefinitionResolver($definition);
-            return $resolver->resolve($definition, $parameters);
-        });
+        return $guard->call(
+            $definition->getName(),
+            fn () => $this->getDefinitionResolver($definition)->resolve($definition, $parameters)
+        );
     }
 
     /**
@@ -65,10 +65,10 @@ class ResolverDispatcher implements ResolverInterface
 
         $guard = DepthGuard::getInstance();
 
-        return $guard->call($definition->getName(), function () use ($definition, $parameters) {
-            $resolver = $this->getDefinitionResolver($definition);
-            return $resolver->isResolvable($definition, $parameters);
-        });
+        return $guard->call(
+            $definition->getName(),
+            fn () => $this->getDefinitionResolver($definition)->isResolvable($definition, $parameters)
+        );
     }
 
     /**
@@ -78,19 +78,10 @@ class ResolverDispatcher implements ResolverInterface
      */
     private function getDefinitionResolver(DefinitionInterface $definition): ResolverInterface
     {
-        switch (true) {
-            case $definition instanceof ObjectDefinition:
-                if (! $this->objectResolver) {
-                    $this->objectResolver = new ObjectResolver($this->container, $this);
-                }
-                return $this->objectResolver;
-            case $definition instanceof FactoryDefinition:
-                if (! $this->factoryResolver) {
-                    $this->factoryResolver = new FactoryResolver($this->container, $this);
-                }
-                return $this->factoryResolver;
-            default:
-                throw new RuntimeException('No definition resolver was configured for definition of type ' . get_class($definition));
-        }
+        return match (true) {
+            $definition instanceof ObjectDefinition => $this->objectResolver ??= new ObjectResolver($this->container, $this),
+            $definition instanceof FactoryDefinition => $this->factoryResolver ??= new FactoryResolver($this->container, $this),
+            default => throw new RuntimeException('No definition resolver was configured for definition of type ' . get_class($definition)),
+        };
     }
 }
