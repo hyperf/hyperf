@@ -11,18 +11,16 @@ declare(strict_types=1);
  */
 namespace Hyperf\Command;
 
+use Closure;
+
 trait ConfirmableTrait
 {
     /**
      * Confirm before proceeding with the action.
      *
      * This method only asks for confirmation in production.
-     *
-     * @param string $warning
-     * @param null|bool|\Closure $callback
-     * @return bool
      */
-    public function confirmToProceed($warning = 'Application In Production!', $callback = null)
+    public function confirmToProceed(string $warning = 'Application In Production!', null|bool|Closure $callback = null): bool
     {
         $callback ??= $this->getDefaultConfirmCallback();
 
@@ -49,14 +47,12 @@ trait ConfirmableTrait
 
     /**
      * Get the default confirmation callback.
-     *
-     * @return \Closure
      */
-    protected function getDefaultConfirmCallback()
+    protected function getDefaultConfirmCallback(): Closure
     {
         return fn () => (
             is_callable(['Composer\InstalledVersions', 'getRootPackage'])
-                && \Composer\InstalledVersions::getRootPackage()['dev'] === false
+            && \Composer\InstalledVersions::getRootPackage()['dev'] === false
         );
     }
 }
