@@ -22,7 +22,7 @@ trait ConfirmableTrait
      */
     public function confirmToProceed(string $warning = 'Application In Production!', null|bool|Closure $callback = null): bool
     {
-        $callback ??= $this->getDefaultConfirmCallback();
+        $callback ??= $this->getDefaultConfirm();
 
         $shouldConfirm = value($callback);
 
@@ -48,11 +48,9 @@ trait ConfirmableTrait
     /**
      * Get the default confirmation callback.
      */
-    protected function getDefaultConfirmCallback(): Closure
+    protected function getDefaultConfirm(): bool
     {
-        return fn () => (
-            is_callable(['Composer\InstalledVersions', 'getRootPackage'])
-            && \Composer\InstalledVersions::getRootPackage()['dev'] === false
-        );
+        return is_callable(['Composer\InstalledVersions', 'getRootPackage'])
+            && \Composer\InstalledVersions::getRootPackage()['dev'] === false;
     }
 }
