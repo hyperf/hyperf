@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Retry;
 
+use Hyperf\Coordinator\Timer;
 use SplQueue;
-use Swoole\Timer;
 
 class RetryBudget implements RetryBudgetInterface
 {
@@ -22,6 +22,8 @@ class RetryBudget implements RetryBudgetInterface
 
     private float $maxToken;
 
+    private Timer $timer;
+
     /**
      * @param int $ttl Seconds
      */
@@ -29,6 +31,7 @@ class RetryBudget implements RetryBudgetInterface
     {
         $this->maxToken = ($this->minRetriesPerSec / $this->percentCanRetry) * $this->ttl;
         $this->budget = new SplQueue();
+        $this->timer = new Timer();
     }
 
     public function __destruct()
@@ -36,7 +39,7 @@ class RetryBudget implements RetryBudgetInterface
         if (! isset($this->timerId)) {
             return;
         }
-        Timer::clear($this->timerId);
+        $this->timer->clear($this->timerId);
     }
 
     public function init()
@@ -47,7 +50,7 @@ class RetryBudget implements RetryBudgetInterface
         for ($i = 0; $i < $this->minRetriesPerSec / $this->percentCanRetry; ++$i) {
             $this->produce();
         }
-        $this->timerId = Timer::tick(1000, function () {
+        $this->timerId = $this->timer->tick(1, function () {
             for ($i = 0; $i < $this->minRetriesPerSec / $this->percentCanRetry; ++$i) {
                 $this->produce();
             }
