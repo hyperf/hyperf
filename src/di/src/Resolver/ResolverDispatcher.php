@@ -34,8 +34,8 @@ class ResolverDispatcher implements ResolverInterface
      *
      * @param DefinitionInterface $definition object that defines how the value should be obtained
      * @param array $parameters optional parameters to use to build the entry
-     * @return mixed value obtained from the definition
      * @throws InvalidDefinitionException if the definition cannot be resolved
+     * @return mixed value obtained from the definition
      */
     public function resolve(DefinitionInterface $definition, array $parameters = [])
     {
@@ -45,8 +45,9 @@ class ResolverDispatcher implements ResolverInterface
 
         $guard = DepthGuard::getInstance();
 
-        return $guard->call($definition->getName(),
-            fn() => $this->getDefinitionResolver($definition)->resolve($definition, $parameters)
+        return $guard->call(
+            $definition->getName(),
+            fn () => $this->getDefinitionResolver($definition)->resolve($definition, $parameters)
         );
     }
 
@@ -64,8 +65,9 @@ class ResolverDispatcher implements ResolverInterface
 
         $guard = DepthGuard::getInstance();
 
-        return $guard->call($definition->getName(),
-            fn() => $this->getDefinitionResolver($definition)->isResolvable($definition, $parameters)
+        return $guard->call(
+            $definition->getName(),
+            fn () => $this->getDefinitionResolver($definition)->isResolvable($definition, $parameters)
         );
     }
 
