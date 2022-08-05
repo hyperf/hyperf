@@ -74,6 +74,7 @@ composer analyse
 - [#4905](https://github.com/hyperf/hyperf/pull/4905) Removed the redundant parameters of method `Hyperf\Database\Model\Concerns\HasEvents::fireModelEvent()`.
 - [#4949](https://github.com/hyperf/hyperf/pull/4949) Removed useless `call()` from `Coroutine::create()`.
 - [#4961](https://github.com/hyperf/hyperf/pull/4961) Removed proxy mode from `Hyperf\Di\ClassLoader` and Optimized `Composer::getLoader()`.
+- [#4981](https://github.com/hyperf/hyperf/pull/4981) Confirm before proceeding with the action when using `ConfirmableTrait`, such as `migrate` command.
 
 ## Changed
 
@@ -105,6 +106,7 @@ composer analyse
 - [#4873](https://github.com/hyperf/hyperf/pull/4873) Support `hyperf/websocket-server`.
 - [#4917](https://github.com/hyperf/hyperf/pull/4917) Support `hyperf/load-balancer`.
 - [#4924](https://github.com/hyperf/hyperf/pull/4924) Support TcpServer for `hyperf/server`.
+- [#4984](https://github.com/hyperf/hyperf/pull/4984) Support `hyperf/retry`.
 
 ## Removed
 

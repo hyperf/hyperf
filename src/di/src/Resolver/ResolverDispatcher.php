@@ -45,8 +45,9 @@ class ResolverDispatcher implements ResolverInterface
 
         $guard = DepthGuard::getInstance();
 
-        return $guard->call($definition->getName(),
-            fn() => $this->getDefinitionResolver($definition)->resolve($definition, $parameters)
+        return $guard->call(
+            $definition->getName(),
+            fn () => $this->getDefinitionResolver($definition)->resolve($definition, $parameters)
         );
     }
 
@@ -64,8 +65,9 @@ class ResolverDispatcher implements ResolverInterface
 
         $guard = DepthGuard::getInstance();
 
-        return $guard->call($definition->getName(),
-            fn() => $this->getDefinitionResolver($definition)->isResolvable($definition, $parameters)
+        return $guard->call(
+            $definition->getName(),
+            fn () => $this->getDefinitionResolver($definition)->isResolvable($definition, $parameters)
         );
     }
 
