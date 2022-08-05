@@ -48,7 +48,7 @@ class ValidationExistsRuleTest extends TestCase
         $connector = new ConnectionFactory($container);
         $dbConfig = [
             'driver' => 'mysql',
-            'host' => '127.0.0.1',
+            'host' => '10.11.108.128',
             'database' => 'hyperf',
             'username' => 'root',
             'password' => '',

@@ -51,13 +51,9 @@ class ContainerStub
         $frequency = Mockery::mock(LowFrequencyInterface::class);
         $frequency->shouldReceive('isLowFrequency')->andReturn(false);
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn($frequency);
-        $container->shouldReceive('make')->with(RedisPool::class, ['name' => 'default'])->andReturnUsing(function () use ($container) {
-            return new RedisPool($container, 'default');
-        });
+        $container->shouldReceive('make')->with(RedisPool::class, ['name' => 'default'])->andReturnUsing(fn() => new RedisPool($container, 'default'));
         $container->shouldReceive('make')->with(Channel::class, ['size' => 30])->andReturn(new Channel(30));
-        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new PoolOption(...array_values($args));
-        });
+        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(fn($class, $args) => new PoolOption(...array_values($args)));
         $container->shouldReceive('has')->with(\Redis::class)->andReturn(true);
         $container->shouldReceive('get')->with(\Redis::class)->andReturnUsing(function () use ($container) {
             $factory = new PoolFactory($container);
@@ -69,9 +65,7 @@ class ContainerStub
             return new Redis($factory);
         });
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturn(true);
-        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn(value(function () {
-            return Mockery::mock(StdoutLoggerInterface::class);
-        }));
+        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn(value(fn() => Mockery::mock(StdoutLoggerInterface::class)));
 
         ApplicationContext::setContainer($container);
         return $container;

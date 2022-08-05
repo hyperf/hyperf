@@ -79,9 +79,6 @@ class Connection
      */
     public function __construct(private ?ConnectionOptions $options = null)
     {
-        $this->pings = 0;
-        $this->pubs = 0;
-        $this->subscriptions = [];
         $this->randomGenerator = new RandomGenerator();
 
         if ($options === null) {

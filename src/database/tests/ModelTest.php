@@ -1052,9 +1052,7 @@ class ModelTest extends TestCase
 
     public function testUnguardedRunsCallbackWhileBeingUnguarded()
     {
-        $model = Model::unguarded(function () {
-            return (new ModelStub())->guard(['*'])->fill(['name' => 'Taylor']);
-        });
+        $model = Model::unguarded(fn() => (new ModelStub())->guard(['*'])->fill(['name' => 'Taylor']));
         $this->assertEquals('Taylor', $model->name);
         $this->assertFalse(Model::isUnguarded());
     }
@@ -1062,9 +1060,7 @@ class ModelTest extends TestCase
     public function testUnguardedCallDoesNotChangeUnguardedState()
     {
         Model::unguard();
-        $model = Model::unguarded(function () {
-            return (new ModelStub())->guard(['*'])->fill(['name' => 'Taylor']);
-        });
+        $model = Model::unguarded(fn() => (new ModelStub())->guard(['*'])->fill(['name' => 'Taylor']));
         $this->assertEquals('Taylor', $model->name);
         $this->assertTrue(Model::isUnguarded());
         Model::reguard();
@@ -1076,7 +1072,7 @@ class ModelTest extends TestCase
             Model::unguarded(function () {
                 throw new Exception();
             });
-        } catch (Exception $e) {
+        } catch (Exception) {
             // ignore the exception
         }
         $this->assertFalse(Model::isUnguarded());
@@ -1556,7 +1552,7 @@ class ModelTest extends TestCase
         $this->assertInstanceOf(Carbon::class, $model->datetimeAttribute);
         $this->assertEquals('1969-07-20', $model->dateAttribute->toDateString());
         $this->assertEquals('1969-07-20 22:56:00', $model->datetimeAttribute->toDateTimeString());
-        $this->assertEquals(-14173440, $model->timestampAttribute);
+        $this->assertEquals(-14_173_440, $model->timestampAttribute);
 
         $arr = $model->toArray();
 
@@ -1575,7 +1571,7 @@ class ModelTest extends TestCase
         $this->assertEquals(['foo' => 'bar'], $arr['jsonAttribute']);
         $this->assertEquals('1969-07-20 00:00:00', $arr['dateAttribute']);
         $this->assertEquals('1969-07-20 22:56:00', $arr['datetimeAttribute']);
-        $this->assertEquals(-14173440, $arr['timestampAttribute']);
+        $this->assertEquals(-14_173_440, $arr['timestampAttribute']);
     }
 
     public function testModelDateAttributeCastingResetsTime()

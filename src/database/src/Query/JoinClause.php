@@ -16,20 +16,6 @@ use Closure;
 class JoinClause extends Builder
 {
     /**
-     * The type of join being performed.
-     *
-     * @var string
-     */
-    public $type;
-
-    /**
-     * The table the join clause is joining to.
-     *
-     * @var string
-     */
-    public $table;
-
-    /**
      * The connection of the parent query builder.
      *
      * @var \Hyperf\Database\ConnectionInterface
@@ -63,11 +49,9 @@ class JoinClause extends Builder
      * @param string $type
      * @param string $table
      */
-    public function __construct(Builder $parentQuery, $type, $table)
+    public function __construct(Builder $parentQuery, public $type, public $table)
     {
-        $this->type = $type;
-        $this->table = $table;
-        $this->parentClass = get_class($parentQuery);
+        $this->parentClass = $parentQuery::class;
         $this->parentGrammar = $parentQuery->getGrammar();
         $this->parentProcessor = $parentQuery->getProcessor();
         $this->parentConnection = $parentQuery->getConnection();

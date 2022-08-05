@@ -28,10 +28,7 @@ use Psr\Log\NullLogger;
  */
 class AgentTest extends TestCase
 {
-    /**
-     * @var AgentInterface
-     */
-    private $agent;
+    private \Hyperf\Consul\AgentInterface $agent;
 
     protected function setUp(): void
     {
@@ -77,10 +74,8 @@ class AgentTest extends TestCase
             }
         });
         ApplicationContext::setContainer($container);
-        return new Agent(function () use ($container) {
-            return $container->get(ClientFactory::class)->create([
-                'base_uri' => Agent::DEFAULT_URI,
-            ]);
-        }, $container->get(StdoutLoggerInterface::class));
+        return new Agent(fn() => $container->get(ClientFactory::class)->create([
+            'base_uri' => Agent::DEFAULT_URI,
+        ]), $container->get(StdoutLoggerInterface::class));
     }
 }

@@ -165,7 +165,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
         $doc = '/**' . PHP_EOL;
         $doc = $this->parseProperty($doc);
         if ($this->option->isWithIde()) {
-            $doc .= ' * @mixin \\' . GenerateModelIDEVisitor::toIDEClass(get_class($this->class)) . PHP_EOL;
+            $doc .= ' * @mixin \\' . GenerateModelIDEVisitor::toIDEClass($this->class::class) . PHP_EOL;
         }
         $doc .= ' */';
         return $doc;
@@ -203,13 +203,13 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
     protected function initPropertiesFromMethods()
     {
-        $reflection = new \ReflectionClass(get_class($this->class));
+        $reflection = new \ReflectionClass($this->class::class);
         $casts = $this->class->getCasts();
 
         foreach ($this->methods as $methodStmt) {
             $methodName = $methodStmt->name->name;
             $method = $reflection->getMethod($methodName);
-            if (Str::startsWith($method->getName(), 'get') && Str::endsWith($method->getName(), 'Attribute')) {
+            if (Str::startsWith($method->getName(), 'get') && Str::endsWith($method->getName(), \Attribute::class)) {
                 // Magic get<name>Attribute
                 $name = Str::snake(substr($method->getName(), 3, -9));
                 if (! empty($name)) {
@@ -219,7 +219,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
                 continue;
             }
 
-            if (Str::startsWith($method->getName(), 'set') && Str::endsWith($method->getName(), 'Attribute')) {
+            if (Str::startsWith($method->getName(), 'set') && Str::endsWith($method->getName(), \Attribute::class)) {
                 // Magic set<name>Attribute
                 $name = Str::snake(substr($method->getName(), 3, -9));
                 if (! empty($name)) {
@@ -352,7 +352,7 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
         return match ($cast) {
             'integer' => 'int',
-            'date', 'datetime' => '\Carbon\Carbon',
+            'date', 'datetime' => \Carbon\Carbon::class,
             'json' => 'array',
             default => $cast,
         };
@@ -368,6 +368,6 @@ class ModelUpdateVisitor extends NodeVisitorAbstract
 
         /** @var Model $model */
         $model = new $className();
-        return '\\' . get_class($model->newCollection());
+        return '\\' . $model->newCollection()::class;
     }
 }

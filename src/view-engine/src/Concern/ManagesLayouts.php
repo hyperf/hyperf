@@ -83,6 +83,7 @@ trait ManagesLayouts
      */
     public function stopSection($overwrite = false)
     {
+        $last = null;
         if (empty($this->sectionStack)) {
             throw new InvalidArgumentException('Cannot end a section without first starting one.');
         }
@@ -106,6 +107,7 @@ trait ManagesLayouts
      */
     public function appendSection()
     {
+        $last = null;
         if (empty($this->sectionStack)) {
             throw new InvalidArgumentException('Cannot end a section without first starting one.');
         }

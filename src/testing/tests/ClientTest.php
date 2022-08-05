@@ -155,9 +155,7 @@ class ClientTest extends TestCase
         $container->shouldReceive('get')->with(FooController::class)->andReturn(new FooController());
         $container->shouldReceive('has')->andReturn(true);
         $container->shouldReceive('get')->with(FooExceptionHandler::class)->andReturn(new FooExceptionHandler());
-        $container->shouldReceive('make')->with(CoreMiddleware::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new CoreMiddleware(...array_values($args));
-        });
+        $container->shouldReceive('make')->with(CoreMiddleware::class, Mockery::any())->andReturnUsing(fn($class, $args) => new CoreMiddleware(...array_values($args)));
         $container->shouldReceive('get')->with(Waiter::class)->andReturn(new Waiter());
         ApplicationContext::setContainer($container);
 

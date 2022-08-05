@@ -72,7 +72,7 @@ class NullEngine extends Engine
      */
     public function getTotalCount($results): int
     {
-        return count($results);
+        return is_countable($results) ? count($results) : 0;
     }
 
     /**

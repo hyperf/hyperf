@@ -60,7 +60,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
             foreach ($namespace->stmts as $class) {
                 if ($class instanceof Node\Stmt\ClassLike) {
-                    $this->visitorMetadata->classLike = get_class($class);
+                    $this->visitorMetadata->classLike = $class::class;
                 }
             }
         }

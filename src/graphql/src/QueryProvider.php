@@ -21,26 +21,8 @@ use TheCodingMachine\GraphQLite\QueryProviderInterface;
 
 class QueryProvider implements QueryProviderInterface
 {
-    /**
-     * @var FieldsBuilderFactory
-     */
-    private $fieldsBuilderFactory;
-
-    /**
-     * @var RecursiveTypeMapperInterface
-     */
-    private $recursiveTypeMapper;
-
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(FieldsBuilderFactory $fieldsBuilderFactory, RecursiveTypeMapperInterface $recursiveTypeMapper, ContainerInterface $container)
+    public function __construct(private FieldsBuilderFactory $fieldsBuilderFactory, private RecursiveTypeMapperInterface $recursiveTypeMapper, private ContainerInterface $container)
     {
-        $this->fieldsBuilderFactory = $fieldsBuilderFactory;
-        $this->recursiveTypeMapper = $recursiveTypeMapper;
-        $this->container = $container;
     }
 
     /**

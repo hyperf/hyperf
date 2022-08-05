@@ -18,16 +18,12 @@ class Builder extends ModelBuilder
 {
     public function delete()
     {
-        return $this->deleteCache(function () {
-            return parent::delete();
-        });
+        return $this->deleteCache(fn() => parent::delete());
     }
 
     public function update(array $values)
     {
-        return $this->deleteCache(function () use ($values) {
-            return parent::update($values);
-        });
+        return $this->deleteCache(fn() => parent::update($values));
     }
 
     protected function deleteCache(\Closure $closure)
@@ -47,7 +43,7 @@ class Builder extends ModelBuilder
 
         $manger = ApplicationContext::getContainer()->get(Manager::class);
 
-        $manger->destroy($ids, get_class($this->model));
+        $manger->destroy($ids, $this->model::class);
 
         return $result;
     }

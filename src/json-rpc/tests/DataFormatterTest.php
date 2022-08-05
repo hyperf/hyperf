@@ -48,7 +48,7 @@ class DataFormatterTest extends TestCase
                 'code' => 500,
                 'message' => 'Error',
                 'data' => [
-                    'class' => 'RuntimeException',
+                    'class' => \RuntimeException::class,
                     'code' => 1000,
                     'message' => 'test case',
                 ],
@@ -88,7 +88,7 @@ class DataFormatterTest extends TestCase
                 'code' => 500,
                 'message' => 'Error',
                 'data' => [
-                    'class' => 'RuntimeException',
+                    'class' => \RuntimeException::class,
                     'attributes' => [
                         'code' => 1000,
                         'message' => 'test case',

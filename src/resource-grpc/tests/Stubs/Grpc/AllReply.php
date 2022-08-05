@@ -23,7 +23,7 @@ class AllReply extends \Google\Protobuf\Internal\Message
     /**
      * Generated from protobuf field <code>string message = 1;</code>.
      */
-    private $message = '';
+    private string $message = '';
 
     /**
      * Generated from protobuf field <code>repeated .HyperfTest.ResourceGrpc.Stubs.Grpc.HiUser users = 2;</code>.

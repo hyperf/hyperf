@@ -37,20 +37,6 @@ abstract class Relation
     public static $morphMap = [];
 
     /**
-     * The Model query builder instance.
-     *
-     * @var \Hyperf\Database\Model\Builder
-     */
-    protected $query;
-
-    /**
-     * The parent model instance.
-     *
-     * @var \Hyperf\Database\Model\Model
-     */
-    protected $parent;
-
-    /**
      * The related model instance.
      *
      * @var \Hyperf\Database\Model\Model
@@ -60,10 +46,14 @@ abstract class Relation
     /**
      * Create a new relation instance.
      */
-    public function __construct(Builder $query, Model $parent)
+    public function __construct(/**
+     * The Model query builder instance.
+     */
+    protected Builder $query, /**
+     * The parent model instance.
+     */
+    protected Model $parent)
     {
-        $this->query = $query;
-        $this->parent = $parent;
         $this->related = $query->getModel();
 
         $this->addConstraints();
@@ -353,9 +343,7 @@ abstract class Relation
      */
     protected function getKeys(array $models, $key = null)
     {
-        return collect($models)->map(function ($value) use ($key) {
-            return $key ? $value->getAttribute($key) : $value->getKey();
-        })->values()->unique(null, true)->sort()->all();
+        return collect($models)->map(fn($value) => $key ? $value->getAttribute($key) : $value->getKey())->values()->unique(null, true)->sort()->all();
     }
 
     /**
@@ -385,8 +373,6 @@ abstract class Relation
             return $models;
         }
 
-        return array_combine(array_map(function ($model) {
-            return (new $model())->getTable();
-        }, $models), $models);
+        return array_combine(array_map(fn($model) => (new $model())->getTable(), $models), $models);
     }
 }

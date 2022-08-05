@@ -37,41 +37,26 @@ class AnnotationReader
     public const STRICT_MODE = 'STRICT_MODE';
 
     /**
-     * @var Reader
-     */
-    private $reader;
-
-    /**
-     * Classes in those namespaces MUST have valid annotations (otherwise, an error is thrown).
-     *
-     * @var string[]
-     */
-    private $strictNamespaces;
-
-    /**
      * If true, no exceptions will be thrown for incorrect annotations in code coming from the "vendor/" directory.
-     *
-     * @var string
      */
-    private $mode;
+    private string $mode;
 
-    /**
-     * @var array
-     */
-    private $methodAnnotationCache = [];
+    private array $methodAnnotationCache = [];
 
     /**
      * AnnotationReader constructor.
      * @param string $mode One of self::LAX_MODE or self::STRICT_MODE
+     * @param string[] $strictNamespaces
      */
-    public function __construct(Reader $reader, string $mode = self::STRICT_MODE, array $strictNamespaces = [])
+    public function __construct(private Reader $reader, string $mode = self::STRICT_MODE, /**
+     * Classes in those namespaces MUST have valid annotations (otherwise, an error is thrown).
+     */
+    private array $strictNamespaces = [])
     {
-        $this->reader = $reader;
         if (! in_array($mode, [self::LAX_MODE, self::STRICT_MODE], true)) {
             throw new \InvalidArgumentException('The mode passed must be one of AnnotationReader::LAX_MODE, AnnotationReader::STRICT_MODE');
         }
         $this->mode = $mode;
-        $this->strictNamespaces = $strictNamespaces;
     }
 
     public function getTypeAnnotation(ReflectionClass $refClass): ?Type
@@ -143,9 +128,7 @@ class AnnotationReader
         do {
             try {
                 $allAnnotations = $this->reader->getClassAnnotations($refClass);
-                $toAddAnnotations[] = \array_filter($allAnnotations, function ($annotation) use ($annotationClass): bool {
-                    return $annotation instanceof $annotationClass;
-                });
+                $toAddAnnotations[] = \array_filter($allAnnotations, fn($annotation): bool => $annotation instanceof $annotationClass);
             } catch (AnnotationException $e) {
                 if ($this->mode === self::STRICT_MODE) {
                     throw $e;
@@ -232,11 +215,11 @@ class AnnotationReader
     private function isErrorImportant(string $annotationClass, string $docComment, string $className): bool
     {
         foreach ($this->strictNamespaces as $strictNamespace) {
-            if (strpos($className, $strictNamespace) === 0) {
+            if (str_starts_with($className, $strictNamespace)) {
                 return true;
             }
         }
         $shortAnnotationClass = substr($annotationClass, strrpos($annotationClass, '\\') + 1);
-        return strpos($docComment, '@' . $shortAnnotationClass) !== false;
+        return str_contains($docComment, '@' . $shortAnnotationClass);
     }
 }

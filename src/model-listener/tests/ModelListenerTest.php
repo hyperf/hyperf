@@ -52,7 +52,7 @@ class ModelListenerTest extends TestCase
         $model->expects($this->once())->method('newModelQuery')->will($this->returnValue($query));
         $model->expects($this->once())->method('updateTimestamps');
 
-        ListenerCollector::register(get_class($model), ModelListenerStub::class);
+        ListenerCollector::register($model::class, ModelListenerStub::class);
 
         $model->id = 1;
         $model->syncOriginal();

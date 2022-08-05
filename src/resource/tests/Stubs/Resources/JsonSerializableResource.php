@@ -13,11 +13,8 @@ namespace HyperfTest\Resource\Stubs\Resources;
 
 class JsonSerializableResource implements \JsonSerializable
 {
-    public $resource;
-
-    public function __construct($resource)
+    public function __construct(public $resource)
     {
-        $this->resource = $resource;
     }
 
     public function jsonSerialize(): mixed

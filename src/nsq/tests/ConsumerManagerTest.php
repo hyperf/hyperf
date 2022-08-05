@@ -43,7 +43,7 @@ class ConsumerManagerTest extends TestCase
             $topic = uniqid(),
             $channel = uniqid(),
             $name = uniqid(),
-            $nums = rand(1, 10),
+            $nums = random_int(1, 10),
         ));
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
@@ -79,7 +79,7 @@ class ConsumerManagerTest extends TestCase
             $topic = uniqid(),
             $channel = uniqid(),
             $name = uniqid(),
-            $nums = rand(1, 10),
+            $nums = random_int(1, 10),
         ));
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
@@ -109,7 +109,7 @@ class ConsumerManagerTest extends TestCase
             $topic = uniqid(),
             $channel = uniqid(),
             $name = uniqid(),
-            $nums = rand(1, 10),
+            $nums = random_int(1, 10),
         ));
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([

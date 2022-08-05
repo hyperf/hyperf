@@ -19,7 +19,7 @@ class Package
     {
         try {
             return (string) PrettyVersions::getVersion($package);
-        } catch (\Throwable $exception) {
+        } catch (\Throwable) {
             return 'unknown';
         }
     }

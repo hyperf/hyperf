@@ -40,9 +40,7 @@ class PipelineTest extends TestCase
         $result = (new Pipeline($this->getContainer()))
             ->send('foo')
             ->through([PipelineTestPipeOne::class, $pipeTwo])
-            ->then(function ($piped) {
-                return $piped;
-            });
+            ->then(fn($piped) => $piped);
 
         $this->assertSame('foo', $result);
         $this->assertSame('foo', $_SERVER['__test.pipe.one']);
@@ -56,9 +54,7 @@ class PipelineTest extends TestCase
         $result = (new Pipeline($this->getContainer()))
             ->send('foo')
             ->through([new PipelineTestPipeOne()])
-            ->then(function ($piped) {
-                return $piped;
-            });
+            ->then(fn($piped) => $piped);
 
         $this->assertSame('foo', $result);
         $this->assertSame('foo', $_SERVER['__test.pipe.one']);
@@ -72,9 +68,7 @@ class PipelineTest extends TestCase
             ->send('foo')
             ->through([new PipelineTestPipeTwo()])
             ->then(
-                function ($piped) {
-                    return $piped;
-                }
+                fn($piped) => $piped
             );
 
         $this->assertSame('foo', $result);
@@ -95,9 +89,7 @@ class PipelineTest extends TestCase
             ->send('foo')
             ->through([$function])
             ->then(
-                function ($piped) {
-                    return $piped;
-                }
+                fn($piped) => $piped
             );
 
         $this->assertSame('foo', $result);
@@ -108,9 +100,7 @@ class PipelineTest extends TestCase
         $result = (new Pipeline($this->getContainer()))
             ->send('bar')
             ->through($function)
-            ->then(static function ($passable) {
-                return $passable;
-            });
+            ->then(static fn($passable) => $passable);
 
         $this->assertSame('bar', $result);
         $this->assertSame('foo', $_SERVER['__test.pipe.one']);
@@ -124,9 +114,7 @@ class PipelineTest extends TestCase
             ->send('foo')
             ->through([PipelineTestPipeTwo::class])
             ->then(
-                function ($piped) {
-                    return $piped;
-                }
+                fn($piped) => $piped
             );
 
         $this->assertSame('foo', $result);
@@ -142,9 +130,7 @@ class PipelineTest extends TestCase
         $result = (new Pipeline($this->getContainer()))
             ->send('foo')
             ->through(PipelineTestParameterPipe::class . ':' . implode(',', $parameters))
-            ->then(function ($piped) {
-                return $piped;
-            });
+            ->then(fn($piped) => $piped);
 
         $this->assertSame('foo', $result);
         $this->assertEquals($parameters, $_SERVER['__test.pipe.parameters']);
@@ -158,9 +144,7 @@ class PipelineTest extends TestCase
         $result = $pipelineInstance->send('data')
             ->through(PipelineTestPipeOne::class)
             ->via('differentMethod')
-            ->then(function ($piped) {
-                return $piped;
-            });
+            ->then(fn($piped) => $piped);
         $this->assertSame('data', $result);
     }
 
@@ -169,9 +153,7 @@ class PipelineTest extends TestCase
         $result = (new Pipeline($this->getContainer()))
             ->send('foo')
             ->through([PipelineTestPipeOne::class])
-            ->then(static function ($passable) {
-                return $passable;
-            });
+            ->then(static fn($passable) => $passable);
 
         $this->assertSame('foo', $result);
         $this->assertSame('foo', $_SERVER['__test.pipe.one']);
@@ -182,7 +164,7 @@ class PipelineTest extends TestCase
     public function testHandleCarry()
     {
         $result = (new FooPipeline($this->getContainer()))
-            ->send($id = rand(0, 99))
+            ->send($id = random_int(0, 99))
             ->through([PipelineTestPipeOne::class])
             ->via('incr')
             ->then(static function ($passable) {

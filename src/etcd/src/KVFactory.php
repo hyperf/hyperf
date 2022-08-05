@@ -37,14 +37,9 @@ class KVFactory
             'options' => $options,
             'factory' => $factory,
         ];
-
-        switch ($version) {
-            case 'v3':
-            case 'v3alpha':
-            case 'v3beta':
-                return make(V3\KV::class, $params);
-        }
-
-        throw new ClientNotFindException("KV of {$version} is not find.");
+        return match ($version) {
+            'v3', 'v3alpha', 'v3beta' => make(V3\KV::class, $params),
+            default => throw new ClientNotFindException("KV of {$version} is not find."),
+        };
     }
 }

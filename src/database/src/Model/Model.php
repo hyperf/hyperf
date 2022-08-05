@@ -30,7 +30,7 @@ use Psr\EventDispatcher\StoppableEventInterface;
 /**
  * @mixin ModelIDE
  */
-abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable, CompressInterface
+abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializable, CompressInterface, \Stringable
 {
     use Concerns\HasAttributes;
     use Concerns\HasEvents;
@@ -283,7 +283,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
             if ($this->isFillable($key)) {
                 $this->setAttribute($key, $value);
             } elseif ($totallyGuarded) {
-                throw new MassAssignmentException(sprintf('Add [%s] to fillable property to allow mass assignment on [%s].', $key, get_class($this)));
+                throw new MassAssignmentException(sprintf('Add [%s] to fillable property to allow mass assignment on [%s].', $key, $this::class));
             }
         }
 
@@ -297,9 +297,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     public function forceFill(array $attributes)
     {
-        return static::unguarded(function () use ($attributes) {
-            return $this->fill($attributes);
-        });
+        return static::unguarded(fn() => $this->fill($attributes));
     }
 
     /**
@@ -436,7 +434,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     public function loadMorph($relation, $relations)
     {
-        $className = get_class($this->{$relation});
+        $className = $this->{$relation}::class;
 
         $this->{$relation}->load($relations[$className] ?? []);
 
@@ -482,7 +480,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     public function loadMorphCount($relation, $relations)
     {
-        $className = get_class($this->{$relation});
+        $className = $this->{$relation}::class;
 
         $this->{$relation}->loadCount($relations[$className] ?? []);
 
@@ -582,9 +580,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      */
     public function saveOrFail(array $options = [])
     {
-        return $this->getConnection()->transaction(function () use ($options) {
-            return $this->save($options);
-        });
+        return $this->getConnection()->transaction(fn() => $this->save($options));
     }
 
     /**
@@ -1155,7 +1151,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     public function compress(): UnCompressInterface
     {
         $key = $this->getKey();
-        $class = get_class($this);
+        $class = $this::class;
 
         return new ModelMeta($class, $key);
     }
@@ -1266,7 +1262,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
         $this->forceFill($extra);
 
-        $columns = array_merge(array_keys($extra), [$column]);
+        $columns = [...array_keys($extra), ...[$column]];
         return tap($this->setKeysForSaveQuery($query)->{$method}($column, $amount, $extra), function () use ($columns) {
             $this->syncChanges($columns);
 

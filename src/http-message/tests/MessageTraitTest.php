@@ -24,7 +24,7 @@ class MessageTraitTest extends TestCase
     public function testSetHeaders()
     {
         $token = uniqid();
-        $id = rand(1000, 9999);
+        $id = random_int(1000, 9999);
         $request = new Request('GET', '/', [
             'X-Token' => $token,
             'X-Id' => $id,

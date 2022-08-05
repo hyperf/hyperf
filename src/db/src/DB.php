@@ -107,7 +107,7 @@ class DB
             $connection = $pool->get();
         }
         if (! $connection instanceof AbstractConnection) {
-            throw new DriverNotFoundException(sprintf('%s must instance of %s', get_class($connection), AbstractConnection::class));
+            throw new DriverNotFoundException(sprintf('%s must instance of %s', $connection::class, AbstractConnection::class));
         }
         return $connection;
     }

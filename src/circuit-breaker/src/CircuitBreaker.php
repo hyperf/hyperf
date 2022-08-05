@@ -15,8 +15,6 @@ use Psr\Container\ContainerInterface;
 
 class CircuitBreaker implements CircuitBreakerInterface
 {
-    protected string $name;
-
     protected State $state;
 
     protected float $timestamp;
@@ -31,9 +29,8 @@ class CircuitBreaker implements CircuitBreakerInterface
      */
     protected int $successCounter;
 
-    public function __construct(protected ContainerInterface $container, string $name)
+    public function __construct(protected ContainerInterface $container, protected string $name)
     {
-        $this->name = $name;
         $this->state = make(State::class);
         $this->init();
     }

@@ -56,7 +56,7 @@ class ContextTest extends TestCase
             'name' => $name = Str::random(8),
         ]);
 
-        $context->set('gender', $gender = rand(0, 1));
+        $context->set('gender', $gender = random_int(0, 1));
 
         $this->assertSame([
             'id' => $id,

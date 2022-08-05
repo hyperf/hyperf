@@ -25,6 +25,6 @@ class Client implements ClientInterface
         $zk = new Zookeeper($this->config->get('config_center.drivers.zookeeper.server'), 2.5);
         $path = $this->config->get('config_center.drivers.zookeeper.path', '/conf');
         $config = $zk->get($path);
-        return json_decode($config, true);
+        return json_decode($config, true, 512, JSON_THROW_ON_ERROR);
     }
 }

@@ -146,12 +146,8 @@ class ModelCollectionTest extends TestCase
         $mockModel2->shouldReceive('getKey')->andReturn(2);
         $c = new Collection([$mockModel1, $mockModel2]);
 
-        $this->assertTrue($c->contains(function ($model) {
-            return $model->getKey() < 2;
-        }));
-        $this->assertFalse($c->contains(function ($model) {
-            return $model->getKey() > 2;
-        }));
+        $this->assertTrue($c->contains(fn($model) => $model->getKey() < 2));
+        $this->assertFalse($c->contains(fn($model) => $model->getKey() > 2));
     }
 
     public function testFindMethodFindsModelById()
@@ -241,9 +237,7 @@ class ModelCollectionTest extends TestCase
 
         $c = new Collection([$one, $two]);
 
-        $cAfterMap = $c->map(function ($item) {
-            return $item;
-        });
+        $cAfterMap = $c->map(fn($item) => $item);
 
         $this->assertEquals($c->all(), $cAfterMap->all());
         $this->assertInstanceOf(Collection::class, $cAfterMap);
@@ -254,11 +248,9 @@ class ModelCollectionTest extends TestCase
         $one = m::mock(Model::class);
         $two = m::mock(Model::class);
 
-        $c = (new Collection([$one, $two]))->map(function ($item) {
-            return 'not-a-model';
-        });
+        $c = (new Collection([$one, $two]))->map(fn($item) => 'not-a-model');
 
-        $this->assertEquals(BaseCollection::class, get_class($c));
+        $this->assertEquals(BaseCollection::class, $c::class);
     }
 
     public function testMapWithKeys()
@@ -417,12 +409,12 @@ class ModelCollectionTest extends TestCase
     {
         $a = new Collection([['foo' => 'bar'], ['foo' => 'baz']]);
         $b = new Collection(['a', 'b', 'c']);
-        $this->assertEquals(BaseCollection::class, get_class($a->pluck('foo')));
-        $this->assertEquals(BaseCollection::class, get_class($a->keys()));
-        $this->assertEquals(BaseCollection::class, get_class($a->collapse()));
-        $this->assertEquals(BaseCollection::class, get_class($a->flatten()));
-        $this->assertEquals(BaseCollection::class, get_class($a->zip(['a', 'b'], ['c', 'd'])));
-        $this->assertEquals(BaseCollection::class, get_class($b->flip()));
+        $this->assertEquals(BaseCollection::class, $a->pluck('foo')::class);
+        $this->assertEquals(BaseCollection::class, $a->keys()::class);
+        $this->assertEquals(BaseCollection::class, $a->collapse()::class);
+        $this->assertEquals(BaseCollection::class, $a->flatten()::class);
+        $this->assertEquals(BaseCollection::class, $a->zip(['a', 'b'], ['c', 'd'])::class);
+        $this->assertEquals(BaseCollection::class, $b->flip()::class);
     }
 
     public function testMakeVisibleRemovesHiddenAndIncludesVisible()

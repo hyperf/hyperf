@@ -23,12 +23,12 @@ class HiUser extends \Google\Protobuf\Internal\Message
     /**
      * Generated from protobuf field <code>string name = 1;</code>.
      */
-    private $name = '';
+    private string $name = '';
 
     /**
      * Generated from protobuf field <code>int32 sex = 2;</code>.
      */
-    private $sex = 0;
+    private int $sex = 0;
 
     /**
      * Constructor.

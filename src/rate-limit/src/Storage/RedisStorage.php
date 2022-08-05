@@ -30,7 +30,7 @@ class RedisStorage implements Storage, GlobalScope
     /**
      * @var string the key
      */
-    private $key;
+    private string $key;
 
     public function __construct(string $key, private Redis $redis, $timeout = 0)
     {

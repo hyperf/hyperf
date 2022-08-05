@@ -32,11 +32,11 @@ class SocketFactoryTest extends AbstractTestCase
         $container = ContainerStub::mockContainer();
 
         $factory = new SocketFactory($container, [
-            'connect_timeout' => $connectTimeout = rand(5, 10),
+            'connect_timeout' => $connectTimeout = random_int(5, 10),
             'settings' => [
-                'package_max_length' => $lenght = rand(1000, 9999),
+                'package_max_length' => $lenght = random_int(1000, 9999),
             ],
-            'recv_timeout' => $recvTimeout = rand(5, 10),
+            'recv_timeout' => $recvTimeout = random_int(5, 10),
             'retry_count' => 2,
             'retry_interval' => 100,
             'client_count' => 4,
@@ -55,7 +55,7 @@ class SocketFactoryTest extends AbstractTestCase
         $this->assertSame($connectTimeout, (new ClassInvoker($factory))->config['connect_timeout']);
 
         $clients = (new ClassInvoker($factory))->clients;
-        $this->assertSame(4, count($clients));
+        $this->assertSame(4, is_countable($clients) ? count($clients) : 0);
 
         /** @var Socket $client */
         $client = $clients[0];
@@ -79,12 +79,10 @@ class SocketFactoryTest extends AbstractTestCase
             new Node('192.168.0.1', 9501),
             new Node('192.168.0.2', 9501),
         ]);
-        $balancer->refresh(function () {
-            return [
-                new Node('192.168.0.1', 9501),
-                new Node('192.168.0.2', 9501),
-            ];
-        }, 100);
+        $balancer->refresh(fn() => [
+            new Node('192.168.0.1', 9501),
+            new Node('192.168.0.2', 9501),
+        ], 100);
         $factory->setLoadBalancer($balancer);
 
         $factory->refresh();
@@ -122,12 +120,10 @@ class SocketFactoryTest extends AbstractTestCase
             new Node('192.168.0.1', 9501),
             new Node('192.168.0.2', 9501),
         ]);
-        $balancer->refresh(function () {
-            return [
-                new Node('192.168.0.2', 9501),
-                new Node('192.168.0.3', 9501),
-            ];
-        }, 100);
+        $balancer->refresh(fn() => [
+            new Node('192.168.0.2', 9501),
+            new Node('192.168.0.3', 9501),
+        ], 100);
         $factory->setLoadBalancer($balancer);
 
         $factory->refresh();
@@ -157,11 +153,11 @@ class SocketFactoryTest extends AbstractTestCase
         $container = ContainerStub::mockContainer();
 
         $factory = new SocketFactory($container, [
-            'connect_timeout' => $connectTimeout = rand(5, 10),
+            'connect_timeout' => $connectTimeout = random_int(5, 10),
             'settings' => [
-                'package_max_length' => $lenght = rand(1000, 9999),
+                'package_max_length' => $lenght = random_int(1000, 9999),
             ],
-            'recv_timeout' => $recvTimeout = rand(5, 10),
+            'recv_timeout' => $recvTimeout = random_int(5, 10),
             'retry_count' => 2,
             'retry_interval' => 100,
             'client_count' => 4,
@@ -180,6 +176,6 @@ class SocketFactoryTest extends AbstractTestCase
         });
 
         $class = new ClassInvoker($factory);
-        $this->assertSame(4, count($class->clients));
+        $this->assertSame(4, is_countable($class->clients) ? count($class->clients) : 0);
     }
 }

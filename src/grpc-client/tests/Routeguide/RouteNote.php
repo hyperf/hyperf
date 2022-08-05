@@ -34,7 +34,7 @@ class RouteNote extends \Google\Protobuf\Internal\Message
      *
      * Generated from protobuf field <code>string message = 2;</code>
      */
-    private $message = '';
+    private string $message = '';
 
     /**
      * Constructor.

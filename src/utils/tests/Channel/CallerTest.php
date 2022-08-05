@@ -23,19 +23,13 @@ class CallerTest extends TestCase
 {
     public function testCallerWithNull()
     {
-        $caller = new Caller(static function () {
-            return null;
-        });
+        $caller = new Caller(static fn() => null);
 
-        $id = $caller->call(static function ($instance) {
-            return 1;
-        });
+        $id = $caller->call(static fn($instance) => 1);
 
         $this->assertSame(1, $id);
 
-        $id = $caller->call(static function ($instance) {
-            return 2;
-        });
+        $id = $caller->call(static fn($instance) => 2);
 
         $this->assertSame(2, $id);
     }
@@ -44,13 +38,9 @@ class CallerTest extends TestCase
     {
         $obj = new \stdClass();
         $obj->id = uniqid();
-        $caller = new Caller(static function () use ($obj) {
-            return $obj;
-        });
+        $caller = new Caller(static fn() => $obj);
 
-        $id = $caller->call(static function ($instance) {
-            return $instance->id;
-        });
+        $id = $caller->call(static fn($instance) => $instance->id);
 
         $this->assertSame($obj->id, $id);
 
@@ -63,9 +53,7 @@ class CallerTest extends TestCase
     {
         $obj = new \stdClass();
         $obj->id = uniqid();
-        $caller = new Caller(static function () use ($obj) {
-            return $obj;
-        }, 0.001);
+        $caller = new Caller(static fn() => $obj, 0.001);
 
         go(static function () use ($caller) {
             $caller->call(static function ($instance) {
@@ -75,8 +63,6 @@ class CallerTest extends TestCase
 
         $this->expectException(WaitTimeoutException::class);
 
-        $caller->call(static function ($instance) {
-            return 1;
-        });
+        $caller->call(static fn($instance) => 1);
     }
 }

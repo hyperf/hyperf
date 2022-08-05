@@ -152,9 +152,7 @@ class OptionalTest extends TestCase
             );
         }));
 
-        $this->assertEquals(10, optional(5, function ($number) {
-            return $number * 2;
-        }));
+        $this->assertEquals(10, optional(5, fn($number) => $number * 2));
     }
 
     public function testOptionalWithArray()

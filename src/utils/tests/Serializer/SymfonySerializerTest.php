@@ -64,6 +64,8 @@ class SymfonySerializerTest extends TestCase
 
     public function testDenormalizeWithWrongType()
     {
+        $serializer = null;
+        $ret = null;
         $this->markTestSkipped('The test cases skipped, when `symfony/serializer` >= v5.1.9');
 
         $this->expectException(NotNormalizableValueException::class);

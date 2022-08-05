@@ -168,7 +168,7 @@ class MessageBuilder
         $hostname = value(function () {
             $hostname = gethostname();
             if (! is_string($hostname)) {
-                return 'consumer-' . rand(0, 9999);
+                return 'consumer-' . random_int(0, 9999);
             }
 
             return gethostbyname($hostname);
@@ -177,7 +177,7 @@ class MessageBuilder
             'hostname' => $hostname,
             'user_agent' => 'hyperf-nsq/' . $version,
             'feature_negotiation' => true,
-        ]);
+        ], JSON_THROW_ON_ERROR);
         $size = Packer::packUInt32(strlen($message));
         return $command . $size . $message;
     }

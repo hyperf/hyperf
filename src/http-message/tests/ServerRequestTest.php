@@ -123,7 +123,7 @@ class ServerRequestTest extends TestCase
     public function testOverrideRequestParser()
     {
         $this->getContainer();
-        $this->assertSame(Parser::class, get_class(RequestStub::getParser()));
+        $this->assertSame(Parser::class, RequestStub::getParser()::class);
 
         RequestStub::setParser(new ParserStub());
         $json = ['name' => 'Hyperf'];
@@ -132,7 +132,7 @@ class ServerRequestTest extends TestCase
         $request->shouldReceive('getHeaderLine')->with('content-type')->andReturn('application/JSON');
         $request->shouldReceive('getBody')->andReturn(new SwooleStream(json_encode($json)));
         $this->assertSame(['mock' => true], RequestStub::normalizeParsedBody([], $request));
-        $this->assertSame(ParserStub::class, get_class(RequestStub::getParser()));
+        $this->assertSame(ParserStub::class, RequestStub::getParser()::class);
     }
 
     public function testGetUriFromGlobals()

@@ -108,7 +108,7 @@ class ModelRewriteTimestampsVisitor extends AbstractVisitor
     protected function shouldRemovedTimestamps(): bool
     {
         $useTimestamps = $this->usesTimestamps();
-        $ref = new \ReflectionClass(get_class($this->class));
+        $ref = new \ReflectionClass($this->class::class);
 
         if (! $ref->getParentClass()) {
             return false;

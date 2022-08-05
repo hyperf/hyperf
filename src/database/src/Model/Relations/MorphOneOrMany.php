@@ -17,13 +17,6 @@ use Hyperf\Database\Model\Model;
 abstract class MorphOneOrMany extends HasOneOrMany
 {
     /**
-     * The foreign key type for the relationship.
-     *
-     * @var string
-     */
-    protected $morphType;
-
-    /**
      * The class name of the parent model.
      *
      * @var string
@@ -33,14 +26,12 @@ abstract class MorphOneOrMany extends HasOneOrMany
     /**
      * Create a new morph one or many relationship instance.
      *
-     * @param string $type
+     * @param string $morphType
      * @param string $id
      * @param string $localKey
      */
-    public function __construct(Builder $query, Model $parent, $type, $id, $localKey)
+    public function __construct(Builder $query, Model $parent, protected $morphType, $id, $localKey)
     {
-        $this->morphType = $type;
-
         $this->morphClass = $parent->getMorphClass();
 
         parent::__construct($query, $parent, $id, $localKey);

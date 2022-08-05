@@ -23,12 +23,12 @@ class Info extends \Google\Protobuf\Internal\Message
     /**
      * Generated from protobuf field <code>int32 id = 1;</code>.
      */
-    private $id = 0;
+    private int $id = 0;
 
     /**
      * Generated from protobuf field <code>string name = 2;</code>.
      */
-    private $name = '';
+    private string $name = '';
 
     /**
      * Constructor.

@@ -36,20 +36,16 @@ class TcpServer extends Server
 
     protected ?PackerInterface $packer = null;
 
-    protected ProtocolManager $protocolManager;
-
     protected array $serverConfig = [];
 
     public function __construct(
         ContainerInterface $container,
         RequestDispatcher $dispatcher,
         ExceptionHandlerDispatcher $exceptionDispatcher,
-        ProtocolManager $protocolManager,
+        protected ProtocolManager $protocolManager,
         StdoutLoggerInterface $logger
     ) {
         parent::__construct($container, $dispatcher, $exceptionDispatcher, $logger);
-
-        $this->protocolManager = $protocolManager;
     }
 
     public function initCoreMiddleware(string $serverName): void

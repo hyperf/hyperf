@@ -164,16 +164,10 @@ class JsonRpcPoolTransporterTest extends TestCase
 
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
         $container->shouldReceive('get')->with(PoolFactory::class)->andReturn(new PoolFactory($container));
-        $container->shouldReceive('make')->with(RpcPool::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($container) {
-            return new RpcPoolStub($container, $args['name'], $args['config']);
-        });
+        $container->shouldReceive('make')->with(RpcPool::class, Mockery::any())->andReturnUsing(fn($_, $args) => new RpcPoolStub($container, $args['name'], $args['config']));
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn(null);
-        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new PoolOption(...array_values($args));
-        });
-        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new Channel(10);
-        });
+        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(fn($_, $args) => new PoolOption(...array_values($args)));
+        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(fn($_, $args) => new Channel(10));
 
         return $container;
     }

@@ -18,7 +18,7 @@ use Hyperf\Utils\Contracts\MessageBag as MessageBagContract;
 use Hyperf\Utils\Contracts\MessageProvider;
 use JsonSerializable;
 
-class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, MessageBagContract, MessageProvider
+class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, MessageBagContract, MessageProvider, \Stringable
 {
     /**
      * All the registered messages.
@@ -311,16 +311,12 @@ class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, Me
     protected function getMessagesForWildcardKey(string $key, ?string $format): array
     {
         return collect($this->messages)
-            ->filter(function ($messages, $messageKey) use ($key) {
-                return Str::is($key, $messageKey);
-            })
-            ->map(function ($messages, $messageKey) use ($format) {
-                return $this->transform(
-                    $messages,
-                    $this->checkFormat($format),
-                    $messageKey
-                );
-            })->all();
+            ->filter(fn($messages, $messageKey) => Str::is($key, $messageKey))
+            ->map(fn($messages, $messageKey) => $this->transform(
+                $messages,
+                $this->checkFormat($format),
+                $messageKey
+            ))->all();
     }
 
     /**
@@ -329,12 +325,10 @@ class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, Me
     protected function transform(array $messages, string $format, string $messageKey): array
     {
         return collect($messages)
-            ->map(function ($message) use ($format, $messageKey) {
-                // We will simply spin through the given messages and transform each one
-                // replacing the :message placeholder with the real message allowing
-                // the messages to be easily formatted to each developer's desires.
-                return str_replace([':message', ':key'], [$message, $messageKey], $format);
-            })->all();
+            ->map(fn($message) => // We will simply spin through the given messages and transform each one
+// replacing the :message placeholder with the real message allowing
+// the messages to be easily formatted to each developer's desires.
+str_replace([':message', ':key'], [$message, $messageKey], $format))->all();
     }
 
     /**

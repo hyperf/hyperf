@@ -29,7 +29,7 @@ class Exception
 
     public function __construct(ContainerInterface $container, Throwable $throwable)
     {
-        $this->class = get_class($throwable);
+        $this->class = $throwable::class;
         $this->attributes = $container->get(ExceptionNormalizer::class)->normalize($throwable);
     }
 }

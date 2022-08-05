@@ -26,13 +26,6 @@ class Builder
     public static $defaultStringLength = 255;
 
     /**
-     * The database connection instance.
-     *
-     * @var \Hyperf\Database\Connection
-     */
-    protected $connection;
-
-    /**
      * The schema grammar instance.
      *
      * @var \Hyperf\Database\Schema\Grammars\MySqlGrammar
@@ -51,9 +44,8 @@ class Builder
      *
      * @param \Hyperf\Database\Connection $connection
      */
-    public function __construct(ConnectionInterface $connection)
+    public function __construct(protected ConnectionInterface $connection)
     {
-        $this->connection = $connection;
         $this->grammar = $connection->getSchemaGrammar();
     }
 
@@ -139,9 +131,7 @@ class Builder
      */
     public function getColumnListing($table)
     {
-        $results = $this->connection->selectFromWriteConnection($this->grammar->compileColumnListing(
-            $this->connection->getTablePrefix() . $table
-        ));
+        $results = $this->connection->selectFromWriteConnection($this->grammar->compileColumnListing());
 
         return $this->connection->getPostProcessor()->processColumnListing($results);
     }

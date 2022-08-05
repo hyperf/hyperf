@@ -63,7 +63,7 @@ class AbstractServiceClientTest extends TestCase
 
         $client = new FooServiceClient($container);
         [$nodes] = $client->createNodes();
-        $this->assertSame(2, count($nodes));
+        $this->assertSame(2, is_countable($nodes) ? count($nodes) : 0);
         $this->assertSame('192.168.1.1', $nodes[0]->host);
     }
 
@@ -88,7 +88,7 @@ class AbstractServiceClientTest extends TestCase
 
         $client = new FooServiceClient($container);
         [$nodes] = $client->createNodes();
-        $this->assertSame(1, count($nodes));
+        $this->assertSame(1, is_countable($nodes) ? count($nodes) : 0);
         $this->assertSame('192.168.1.2', $nodes[0]->host);
         $this->assertSame('FooService', $client->getServiceName());
     }

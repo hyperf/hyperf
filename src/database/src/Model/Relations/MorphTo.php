@@ -19,13 +19,6 @@ use Hyperf\Database\Model\Model;
 class MorphTo extends BelongsTo
 {
     /**
-     * The type of the polymorphic relation.
-     *
-     * @var string
-     */
-    protected $morphType;
-
-    /**
      * The models whose relations are being eager loaded.
      *
      * @var \Hyperf\Database\Model\Collection
@@ -58,13 +51,11 @@ class MorphTo extends BelongsTo
      *
      * @param string $foreignKey
      * @param string $ownerKey
-     * @param string $type
+     * @param string $morphType
      * @param string $relation
      */
-    public function __construct(Builder $query, Model $parent, $foreignKey, $ownerKey, $type, $relation)
+    public function __construct(Builder $query, Model $parent, $foreignKey, $ownerKey, protected $morphType, $relation)
     {
-        $this->morphType = $type;
-
         parent::__construct($query, $parent, $foreignKey, $ownerKey, $relation);
     }
 
@@ -89,7 +80,7 @@ class MorphTo extends BelongsTo
         // If we tried to call a method that does not exist on the parent Builder instance,
         // we'll assume that we want to call a query macro (e.g. withTrashed) that only
         // exists on related models. We will just store the call and replay it later.
-        catch (BadMethodCallException $e) {
+        catch (BadMethodCallException) {
             $this->macroBuffer[] = compact('method', 'parameters');
 
             return $this;
@@ -258,7 +249,7 @@ class MorphTo extends BelongsTo
             ->mergeConstraintsFrom($this->getQuery())
             ->with(array_merge(
                 $this->getQuery()->getEagerLoads(),
-                (array) ($this->morphableEagerLoads[get_class($instance)] ?? [])
+                (array) ($this->morphableEagerLoads[$instance::class] ?? [])
             ));
 
         $whereIn = $this->whereInMethod($instance, $ownerKey);
@@ -277,9 +268,7 @@ class MorphTo extends BelongsTo
      */
     protected function gatherKeysByType($type)
     {
-        return collect($this->dictionary[$type])->map(function ($models) {
-            return head($models)->{$this->foreignKey};
-        })->values()->unique()->all();
+        return collect($this->dictionary[$type])->map(fn($models) => head($models)->{$this->foreignKey})->values()->unique()->all();
     }
 
     /**

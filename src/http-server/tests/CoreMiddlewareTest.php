@@ -50,7 +50,7 @@ class CoreMiddlewareTest extends TestCase
     public function testParseParameters()
     {
         $middleware = new CoreMiddlewareStub($container = $this->getContainer(), 'http');
-        $id = rand(0, 99999);
+        $id = random_int(0, 99999);
 
         $params = $middleware->parseMethodParameters(DemoController::class, 'index', ['id' => $id]);
 
@@ -164,9 +164,7 @@ class CoreMiddlewareTest extends TestCase
         $container->shouldReceive('get')->with(SetHeaderMiddleware::class)->andReturn(new SetHeaderMiddleware($id = uniqid()));
 
         $router = $container->get(DispatcherFactory::class)->getRouter('http');
-        $router->addRoute('GET', '/request', function () {
-            return Context::get(ServerRequestInterface::class)->getHeaders();
-        });
+        $router->addRoute('GET', '/request', fn() => Context::get(ServerRequestInterface::class)->getHeaders());
 
         $response = Mockery::mock(ResponseInterface::class);
         $response->shouldReceive('withAddedHeader')->andReturn($response);

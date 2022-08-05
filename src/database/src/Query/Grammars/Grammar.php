@@ -83,7 +83,7 @@ class Grammar extends BaseGrammar
      */
     public function prepareBindingForJsonContains($binding)
     {
-        return json_encode($binding);
+        return json_encode($binding, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -133,9 +133,7 @@ class Grammar extends BaseGrammar
         // We need to build a list of parameter place-holders of values that are bound
         // to the query. Each insert should have the exact same amount of parameter
         // bindings so we will loop through the record and parameterize them all.
-        $parameters = collect($values)->map(function ($record) {
-            return '(' . $this->parameterize($record) . ')';
-        })->implode(', ');
+        $parameters = collect($values)->map(fn($record) => '(' . $this->parameterize($record) . ')')->implode(', ');
 
         return "insert into {$table} ({$columns}) values {$parameters}";
     }
@@ -171,9 +169,7 @@ class Grammar extends BaseGrammar
         // Each one of the columns in the update statements needs to be wrapped in the
         // keyword identifiers, also a place-holder needs to be created for each of
         // the values in the list of bindings so we can make the sets statements.
-        $columns = collect($values)->map(function ($value, $key) {
-            return $this->wrap($key) . ' = ' . $this->parameter($value);
-        })->implode(', ');
+        $columns = collect($values)->map(fn($value, $key) => $this->wrap($key) . ' = ' . $this->parameter($value))->implode(', ');
 
         // If the query has any "join" clauses, we will setup the joins on the builder
         // and compile them so we can attach them to this update, as update queries
@@ -343,6 +339,7 @@ class Grammar extends BaseGrammar
      */
     protected function compileColumns(Builder $query, $columns): ?string
     {
+        $select = null;
         // If the query is actually performing an aggregating select, we will let that
         // compiler handle the building of the select clauses, as it will need some
         // more syntax that is best handled by that function to keep things neat.
@@ -420,9 +417,7 @@ class Grammar extends BaseGrammar
      */
     protected function compileWheresToArray($query): array
     {
-        return collect($query->wheres)->map(function ($where) use ($query) {
-            return $where['boolean'] . ' ' . $this->{"where{$where['type']}"}($query, $where);
-        })->all();
+        return collect($query->wheres)->map(fn($where) => $where['boolean'] . ' ' . $this->{"where{$where['type']}"}($query, $where))->all();
     }
 
     /**
@@ -858,11 +853,9 @@ class Grammar extends BaseGrammar
      */
     protected function compileOrdersToArray(Builder $query, $orders): array
     {
-        return array_map(function ($order) {
-            return ! isset($order['sql'])
-                ? $this->wrap($order['column']) . ' ' . $order['direction']
-                : $order['sql'];
-        }, $orders);
+        return array_map(fn($order) => ! isset($order['sql'])
+            ? $this->wrap($order['column']) . ' ' . $order['direction']
+            : $order['sql'], $orders);
     }
 
     /**
@@ -997,9 +990,7 @@ class Grammar extends BaseGrammar
      */
     protected function concatenate($segments): string
     {
-        return implode(' ', array_filter($segments, function ($value) {
-            return (string) $value !== '';
-        }));
+        return implode(' ', array_filter($segments, fn($value) => (string) $value !== ''));
     }
 
     /**

@@ -24,11 +24,12 @@ class CollectionTest extends TestCase
     public function testMacroForCollection()
     {
         Collection::macro('getModelClassName', function () {
+            $item = null;
             if ($this->isEmpty()) {
                 return null;
             }
             $item = $this->first();
-            return get_class($item);
+            return $item::class;
         });
 
         $this->assertNull(Collection::make()->getModelClassName());

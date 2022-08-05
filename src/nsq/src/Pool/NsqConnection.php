@@ -78,7 +78,7 @@ class NsqConnection extends KeepaliveConnection
     {
         try {
             $connection->send($this->builder->buildCls());
-        } catch (\Throwable $throwable) {
+        } catch (\Throwable) {
             // Do nothing
         }
     }

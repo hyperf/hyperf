@@ -47,7 +47,7 @@ class NormalizeDataFormatter extends DataFormatter
         $exception = $response->getException();
         if ($exception instanceof \Throwable) {
             $exception = [
-                'class' => get_class($exception),
+                'class' => $exception::class,
                 'attributes' => $this->normalizer->normalize($exception),
             ];
         }

@@ -59,7 +59,7 @@ namespace Lazy;
  */
 class SomeClass extends \App\SomeClass
 {
-    use \Hyperf\Di\LazyLoader\LazyProxyTrait;
+    use Hyperf\Di\LazyLoader\LazyProxyTrait;
     const PROXY_TARGET = 'App\\SomeClass';
     public function hope(bool $a) : int
     {

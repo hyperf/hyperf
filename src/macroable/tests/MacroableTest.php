@@ -30,29 +30,21 @@ class MacroableTest extends TestCase
     public function testRegisterMacro()
     {
         $macroable = $this->macroable;
-        $macroable::macro(__CLASS__, function () {
-            return 'Taylor';
-        });
-        $this->assertSame('Taylor', $macroable::{__CLASS__}());
+        $macroable::macro(self::class, fn() => 'Taylor');
+        $this->assertSame('Taylor', $macroable::{self::class}());
     }
 
     public function testRegisterMacroAndCallWithoutStatic()
     {
         $macroable = $this->macroable;
-        $macroable::macro(__CLASS__, function () {
-            return 'Taylor';
-        });
-        $this->assertSame('Taylor', $macroable->{__CLASS__}());
+        $macroable::macro(self::class, fn() => 'Taylor');
+        $this->assertSame('Taylor', $macroable->{self::class}());
     }
 
     public function testWhenCallingMacroClosureIsBoundToObject()
     {
-        TestMacroable::macro('tryInstance', function () {
-            return $this->protectedVariable;
-        });
-        TestMacroable::macro('tryStatic', function () {
-            return static::getProtectedStatic();
-        });
+        TestMacroable::macro('tryInstance', fn() => $this->protectedVariable);
+        TestMacroable::macro('tryStatic', fn() => static::getProtectedStatic());
         $instance = new TestMacroable();
 
         $result = $instance->tryInstance();
@@ -71,9 +63,7 @@ class MacroableTest extends TestCase
 
     public function testClassBasedMacrosNoReplace()
     {
-        TestMacroable::macro('methodThree', function () {
-            return 'bar';
-        });
+        TestMacroable::macro('methodThree', fn() => 'bar');
         TestMacroable::mixin(new TestMixin(), false);
         $instance = new TestMacroable();
         $this->assertSame('bar', $instance->methodThree());
@@ -109,22 +99,16 @@ class TestMixin
 {
     public function methodOne()
     {
-        return function ($value) {
-            return $this->methodTwo($value);
-        };
+        return fn($value) => $this->methodTwo();
     }
 
     protected function methodTwo()
     {
-        return function ($value) {
-            return $this->protectedVariable . '-' . $value;
-        };
+        return fn($value) => $this->protectedVariable . '-' . $value;
     }
 
     protected function methodThree()
     {
-        return function () {
-            return 'foo';
-        };
+        return fn() => 'foo';
     }
 }

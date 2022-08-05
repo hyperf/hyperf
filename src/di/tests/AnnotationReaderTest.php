@@ -89,7 +89,7 @@ class AnnotationReaderTest extends TestCase
 
         $res = $reader->getClassAnnotations(new \ReflectionClass(FooWithNotExistAnnotation::class));
 
-        $this->assertSame(1, count($res));
+        $this->assertSame(1, is_countable($res) ? count($res) : 0);
         $this->assertInstanceOf(IgnoreDemoAnnotation::class, $res[0]);
 
         $reader = new AnnotationReader(['NotExistAnnotation', IgnoreDemoAnnotation::class]);

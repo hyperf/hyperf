@@ -63,7 +63,7 @@ class KVTest extends TestCase
 
     public function testSetGetWithFlagsOption()
     {
-        $flags = mt_rand();
+        $flags = random_int(0, mt_getrandmax());
         $this->kv->put('test/my/key', 'hello', ['flags' => $flags]);
 
         $response = $this->kv->get('test/my/key');
@@ -96,7 +96,7 @@ class KVTest extends TestCase
             $this->kv->get('test/my/key');
             $this->fail('fail because the key does not exist anymore.');
         } catch (\Exception $e) {
-            $this->assertInstanceOf('Hyperf\Consul\Exception\ServerException', $e);
+            $this->assertInstanceOf(\Hyperf\Consul\Exception\ServerException::class, $e);
             $this->assertStringContainsString('404 Not Found', $e->getMessage());
         }
     }
@@ -118,7 +118,7 @@ class KVTest extends TestCase
                 $this->kv->get('test/my/key' . $i);
                 $this->fail('fail because the key does not exist anymore.');
             } catch (\Exception $e) {
-                $this->assertInstanceOf('Hyperf\Consul\Exception\ServerException', $e);
+                $this->assertInstanceOf(\Hyperf\Consul\Exception\ServerException::class, $e);
                 $this->assertStringContainsString('404 Not Found', $e->getMessage());
             }
         }
@@ -135,10 +135,8 @@ class KVTest extends TestCase
             }
         });
         ApplicationContext::setContainer($container);
-        return new KV(function () use ($container) {
-            return $container->get(ClientFactory::class)->create([
-                'base_uri' => KV::DEFAULT_URI,
-            ]);
-        }, $container->get(StdoutLoggerInterface::class));
+        return new KV(fn() => $container->get(ClientFactory::class)->create([
+            'base_uri' => KV::DEFAULT_URI,
+        ]), $container->get(StdoutLoggerInterface::class));
     }
 }

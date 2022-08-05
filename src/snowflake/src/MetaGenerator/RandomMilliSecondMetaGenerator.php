@@ -23,12 +23,12 @@ class RandomMilliSecondMetaGenerator extends MetaGenerator
 
     public function getDataCenterId(): int
     {
-        return rand(0, 31);
+        return random_int(0, 31);
     }
 
     public function getWorkerId(): int
     {
-        return rand(0, 31);
+        return random_int(0, 31);
     }
 
     public function getTimestamp(): int

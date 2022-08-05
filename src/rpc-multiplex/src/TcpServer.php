@@ -38,8 +38,6 @@ use Swoole\Server as SwooleServer;
 
 class TcpServer extends Server
 {
-    protected ProtocolManager $protocolManager;
-
     protected ?HttpMessageBuilderInterface $messageBuilder = null;
 
     protected ?PackerInterface $packer = null;
@@ -54,13 +52,11 @@ class TcpServer extends Server
         ContainerInterface $container,
         RequestDispatcher $dispatcher,
         ExceptionHandlerDispatcher $exceptionDispatcher,
-        ProtocolManager $protocolManager,
+        protected ProtocolManager $protocolManager,
         StdoutLoggerInterface $logger,
         string $protocol = null
     ) {
         parent::__construct($container, $dispatcher, $exceptionDispatcher, $logger);
-
-        $this->protocolManager = $protocolManager;
         $this->proto = $protocol ?? Constant::PROTOCOL_DEFAULT;
         $this->packetPacker = $container->get(PacketPacker::class);
     }

@@ -80,9 +80,7 @@ class ProviderConfigTest extends TestCase
         ];
 
         $c2 = [
-            'listeners' => [value(function () {
-                return null;
-            })],
+            'listeners' => [value(fn() => null)],
         ];
 
         $result = ProviderConfig::merge($c1, $c2);
@@ -91,7 +89,7 @@ class ProviderConfigTest extends TestCase
 
     public function testProviderConfigLoadProviders()
     {
-        $config = json_decode(file_get_contents(BASE_PATH . '/composer.json'), true);
+        $config = json_decode(file_get_contents(BASE_PATH . '/composer.json'), true, 512, JSON_THROW_ON_ERROR);
 
         $providers = $config['extra']['hyperf']['config'];
 

@@ -47,7 +47,7 @@ trait ConfirmableTrait
 
     protected function isShouldConfirm(): bool
     {
-        return is_callable(['Composer\InstalledVersions', 'getRootPackage'])
+        return is_callable([\Composer\InstalledVersions::class, 'getRootPackage'])
             && \Composer\InstalledVersions::getRootPackage()['dev'] === false;
     }
 }

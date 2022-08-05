@@ -176,9 +176,7 @@ abstract class AbstractServiceClient
                 throw new InvalidArgumentException(sprintf('Invalid protocol of registry %s', $registryProtocol));
             }
             $nodes = $this->getNodes($governance, $registryAddress);
-            $refreshCallback = function () use ($governance, $registryAddress) {
-                return $this->getNodes($governance, $registryAddress);
-            };
+            $refreshCallback = fn() => $this->getNodes($governance, $registryAddress);
 
             return [$nodes, $refreshCallback];
         }

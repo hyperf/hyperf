@@ -240,7 +240,7 @@ EOD;
         // Get file path which could be written for phar.
         $target = $this->getTarget();
         do {
-            $tmp = $target . '.' . mt_rand() . '.phar';
+            $tmp = $target . '.' . random_int(0, mt_getrandmax()) . '.phar';
         } while (file_exists($tmp));
 
         $main = $this->getMain();

@@ -46,18 +46,15 @@ class Factory implements ArrayAccess
     protected $afterCreating = [];
 
     /**
-     * The Faker instance for the builder.
-     *
-     * @var \Faker\Generator
-     */
-    protected $faker;
-
-    /**
      * Create a new factory instance.
      */
-    public function __construct(Faker $faker)
+    public function __construct(
+        /**
+         * The Faker instance for the builder.
+         */
+        protected Faker $faker
+    )
     {
-        $this->faker = $faker;
     }
 
     /**

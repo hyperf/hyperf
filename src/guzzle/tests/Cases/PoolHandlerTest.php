@@ -73,21 +73,11 @@ class PoolHandlerTest extends TestCase
     protected function getContainer()
     {
         $container = Mockery::mock(Container::class);
-        $container->shouldReceive('make')->with(PoolOption::class, Mockery::andAnyOtherArgs())->andReturnUsing(function ($_, $args) {
-            return new PoolOption(...array_values($args));
-        });
-        $container->shouldReceive('make')->with(Pool::class, Mockery::andAnyOtherArgs())->andReturnUsing(function ($_, $args) use ($container) {
-            return new Pool($container, $args['callback'], $args['option']);
-        });
-        $container->shouldReceive('get')->with(PoolFactory::class)->andReturnUsing(function () use ($container) {
-            return new PoolFactory($container);
-        });
-        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new Channel($args['size']);
-        });
-        $container->shouldReceive('make')->with(Connection::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($container) {
-            return new Connection($container, $args['pool'], $args['callback']);
-        });
+        $container->shouldReceive('make')->with(PoolOption::class, Mockery::andAnyOtherArgs())->andReturnUsing(fn($_, $args) => new PoolOption(...array_values($args)));
+        $container->shouldReceive('make')->with(Pool::class, Mockery::andAnyOtherArgs())->andReturnUsing(fn($_, $args) => new Pool($container, $args['callback'], $args['option']));
+        $container->shouldReceive('get')->with(PoolFactory::class)->andReturnUsing(fn() => new PoolFactory($container));
+        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(fn($_, $args) => new Channel($args['size']));
+        $container->shouldReceive('make')->with(Connection::class, Mockery::any())->andReturnUsing(fn($_, $args) => new Connection($container, $args['pool'], $args['callback']));
 
         ApplicationContext::setContainer($container);
         return $container;

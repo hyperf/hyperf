@@ -18,11 +18,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class SetHeaderMiddleware implements MiddlewareInterface
 {
-    protected $id;
-
-    public function __construct($id)
+    public function __construct(protected $id)
     {
-        $this->id = $id;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

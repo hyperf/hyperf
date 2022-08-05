@@ -38,16 +38,14 @@ class SignalManagerTest extends TestCase
     public function testGetHandlers()
     {
         $container = $this->getContainer();
-        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturnUsing(function () {
-            return new Config([
-                'signal' => [
-                    'handlers' => [
-                        SignalHandlerStub::class,
-                        SignalHandler2Stub::class => 1,
-                    ],
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturnUsing(fn() => new Config([
+            'signal' => [
+                'handlers' => [
+                    SignalHandlerStub::class,
+                    SignalHandler2Stub::class => 1,
                 ],
-            ]);
-        });
+            ],
+        ]));
         $manager = new SignalManager($container);
         $manager->init();
 
@@ -63,12 +61,8 @@ class SignalManagerTest extends TestCase
         $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
 
-        $container->shouldReceive('get')->with(SignalHandlerStub::class)->andReturnUsing(function () {
-            return new SignalHandlerStub();
-        });
-        $container->shouldReceive('get')->with(SignalHandler2Stub::class)->andReturnUsing(function () {
-            return new SignalHandler2Stub();
-        });
+        $container->shouldReceive('get')->with(SignalHandlerStub::class)->andReturnUsing(fn() => new SignalHandlerStub());
+        $container->shouldReceive('get')->with(SignalHandler2Stub::class)->andReturnUsing(fn() => new SignalHandler2Stub());
 
         return $container;
     }

@@ -77,15 +77,12 @@ class ClassInvokerTest extends TestCase
 
 class Caller
 {
-    public $id;
-
     protected $sha;
 
     private $md5;
 
-    public function __construct($id = null)
+    public function __construct(public $id = null)
     {
-        $this->id = $id;
         $this->md5 = md5($id ?? '');
         $this->sha = sha1($id ?? '');
     }

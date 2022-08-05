@@ -41,9 +41,7 @@ class PoolHandler extends CoroutineHandler
             $path .= '?' . $params['query'];
         }
 
-        $pool = $this->factory->get($this->getPoolName($host, $port), function () use ($host, $port, $ssl) {
-            return $this->makeClient($host, $port, $ssl);
-        }, $this->options);
+        $pool = $this->factory->get($this->getPoolName($host, $port), fn() => $this->makeClient($host, $port, $ssl), $this->options);
 
         $connection = $pool->get();
         $response = null;

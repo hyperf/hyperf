@@ -136,16 +136,12 @@ class Server implements ServerInterface
 
     protected function makeServer(int $type, string $host, int $port, int $mode, int $sockType): SwooleServer
     {
-        switch ($type) {
-            case ServerInterface::SERVER_HTTP:
-                return new SwooleHttpServer($host, $port, $mode, $sockType);
-            case ServerInterface::SERVER_WEBSOCKET:
-                return new SwooleWebSocketServer($host, $port, $mode, $sockType);
-            case ServerInterface::SERVER_BASE:
-                return new SwooleServer($host, $port, $mode, $sockType);
-        }
-
-        throw new RuntimeException('Server type is invalid.');
+        return match ($type) {
+            ServerInterface::SERVER_HTTP => new SwooleHttpServer($host, $port, $mode, $sockType),
+            ServerInterface::SERVER_WEBSOCKET => new SwooleWebSocketServer($host, $port, $mode, $sockType),
+            ServerInterface::SERVER_BASE => new SwooleServer($host, $port, $mode, $sockType),
+            default => throw new RuntimeException('Server type is invalid.'),
+        };
     }
 
     protected function registerSwooleEvents(SwoolePort|SwooleServer $server, array $events, string $serverName): void

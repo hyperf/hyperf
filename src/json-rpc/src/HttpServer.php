@@ -67,6 +67,7 @@ class HttpServer extends Server
 
     protected function initRequestAndResponse($request, $response): array
     {
+        $content = [];
         Context::set(ResponseInterface::class, $psr7Response = new Psr7Response());
         // Initialize PSR-7 Request and Response objects.
         $psr7Request = Psr7Request::loadFromSwooleRequest($request);

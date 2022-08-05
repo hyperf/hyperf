@@ -293,9 +293,7 @@ class DatabaseQueryBuilderTest extends TestCase
 
     public function testTapCallback(): void
     {
-        $callback = function ($query) {
-            return $query->where('id', '=', 1);
-        };
+        $callback = fn($query) => $query->where('id', '=', 1);
 
         $builder = $this->getBuilder();
         $builder->select('*')->from('users')->tap($callback)->where('email', 'foo');

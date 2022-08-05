@@ -71,7 +71,7 @@ class InjectTest extends TestCase
         require_once BASE_PATH . '/runtime/container/proxy/' . md5(DemoInject::class) . '.proxy.php';
 
         $demoInject = new DemoInject();
-        $this->assertSame(Demo::class, get_class($demoInject->getDemo()));
+        $this->assertSame(Demo::class, $demoInject->getDemo()::class);
         $this->assertSame(null, $demoInject->getDemo1());
     }
 
@@ -100,6 +100,7 @@ class InjectTest extends TestCase
      */
     public function testInjectTraitAndParent()
     {
+        $origin = null;
         $this->markTestSkipped('@var does not works as expect.');
         $this->getContainer();
         $classes = [
@@ -141,6 +142,7 @@ class InjectTest extends TestCase
      */
     public function testInject2Trait()
     {
+        $origin = null;
         $this->markTestSkipped('@var does not works as expect.');
 
         $this->getContainer();

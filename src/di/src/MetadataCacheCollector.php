@@ -39,12 +39,12 @@ class MetadataCacheCollector
             }
         }
 
-        return json_encode($metadata);
+        return json_encode($metadata, JSON_THROW_ON_ERROR);
     }
 
     public function unserialize($serialized): void
     {
-        $metadatas = json_decode($serialized, true) ?? [];
+        $metadatas = json_decode($serialized, true, 512, JSON_THROW_ON_ERROR) ?? [];
         $collectors = [];
         foreach ($metadatas as $collector => $metadata) {
             if (method_exists($collector, 'deserialize')) {

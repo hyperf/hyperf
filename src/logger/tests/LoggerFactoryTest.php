@@ -128,7 +128,7 @@ class LoggerFactoryTest extends TestCase
         $handlersProperty = $reflectionClass->getProperty('processors');
         $handlersProperty->setAccessible(true);
         $processors = $handlersProperty->getValue($logger);
-        $this->assertSame(3, count($processors));
+        $this->assertSame(3, is_countable($processors) ? count($processors) : 0);
         $this->assertInstanceOf(FooProcessor::class, $processors[0]);
 
         $logger->info('Hello world.');
@@ -150,7 +150,7 @@ class LoggerFactoryTest extends TestCase
         $handlersProperty = $reflectionClass->getProperty('processors');
         $handlersProperty->setAccessible(true);
         $processors = $handlersProperty->getValue($logger);
-        $this->assertSame(1, count($processors));
+        $this->assertSame(1, is_countable($processors) ? count($processors) : 0);
         $this->assertInstanceOf(FooProcessor::class, $processors[0]);
 
         $logger->info('Hello world.');

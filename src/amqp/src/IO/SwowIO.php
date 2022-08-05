@@ -23,16 +23,6 @@ class SwowIO extends AbstractIO
     public const READ_BUFFER_WAIT_INTERVAL = 100000;
 
     /**
-     * @var string
-     */
-    protected $host;
-
-    /**
-     * @var int
-     */
-    protected $port;
-
-    /**
      * @var int
      */
     protected $heartbeat;
@@ -40,17 +30,12 @@ class SwowIO extends AbstractIO
     private ?Socket $sock = null;
 
     /**
+     * @param string $host
+     * @param int $port
      * @throws \InvalidArgumentException when readWriteTimeout argument does not 2x the heartbeat
      */
-    public function __construct(
-        string $host,
-        int $port,
-        protected int $connectionTimeout,
-        protected int $readWriteTimeout = 3,
-        protected bool $openSSL = false
-    ) {
-        $this->host = $host;
-        $this->port = $port;
+    public function __construct(protected $host, protected $port, protected int $connectionTimeout, protected int $readWriteTimeout = 3, protected bool $openSSL = false)
+    {
     }
 
     /**

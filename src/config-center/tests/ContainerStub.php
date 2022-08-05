@@ -38,15 +38,11 @@ class ContainerStub
             return $logger;
         });
         $container->shouldReceive('get')->with(DriverFactory::class)->andReturn(new DriverFactory($config));
-        $container->shouldReceive('make')->with(ConfigEtcd\EtcdDriver::class, Mockery::any())->andReturnUsing(function () use ($container) {
-            return new ConfigEtcd\EtcdDriver($container);
-        });
-        $container->shouldReceive('get')->with(ConfigEtcd\ClientInterface::class)->andReturnUsing(function () use ($container) {
-            return new ConfigEtcd\Client(
-                $container->get(KVInterface::class),
-                $container->get(ConfigInterface::class)
-            );
-        });
+        $container->shouldReceive('make')->with(ConfigEtcd\EtcdDriver::class, Mockery::any())->andReturnUsing(fn() => new ConfigEtcd\EtcdDriver($container));
+        $container->shouldReceive('get')->with(ConfigEtcd\ClientInterface::class)->andReturnUsing(fn() => new ConfigEtcd\Client(
+            $container->get(KVInterface::class),
+            $container->get(ConfigInterface::class)
+        ));
         $container->shouldReceive('get')->with(KVInterface::class)->andReturnUsing(function () {
             $kv = Mockery::mock(KVInterface::class);
             $kv->shouldReceive('fetchByPrefix')->withAnyArgs()->andReturn(
@@ -54,9 +50,7 @@ class ContainerStub
             );
             return $kv;
         });
-        $container->shouldReceive('make')->with(ConfigNacos\NacosDriver::class)->withAnyArgs()->andReturnUsing(function () use ($container) {
-            return new ConfigNacos\NacosDriver($container);
-        });
+        $container->shouldReceive('make')->with(ConfigNacos\NacosDriver::class)->withAnyArgs()->andReturnUsing(fn() => new ConfigNacos\NacosDriver($container));
         $container->shouldReceive('get')->with(ConfigNacos\ClientInterface::class)->andReturnUsing(function () {
             $client = Mockery::mock(ConfigNacos\ClientInterface::class);
             $client->shouldReceive('pull')->andReturn([

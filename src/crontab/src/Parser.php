@@ -139,7 +139,7 @@ class Parser
     private function parseDate(string $crontabString): array
     {
         $cron = preg_split('/[\\s]+/i', trim($crontabString));
-        if (count($cron) == 6) {
+        if ((is_countable($cron) ? count($cron) : 0) == 6) {
             $date = [
                 'second' => $this->parseSegment($cron[0], 0, 59),
                 'minutes' => $this->parseSegment($cron[1], 0, 59),

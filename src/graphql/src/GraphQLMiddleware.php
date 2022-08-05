@@ -23,14 +23,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class GraphQLMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var Schema
-     */
-    protected $schema;
-
-    public function __construct(Schema $schema)
+    public function __construct(protected Schema $schema)
     {
-        $this->schema = $schema;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -41,7 +35,7 @@ class GraphQLMiddleware implements MiddlewareInterface
 
         $input = $request->getParsedBody();
         $query = $input['query'];
-        $variableValues = isset($input['variables']) ? $input['variables'] : null;
+        $variableValues = $input['variables'] ?? null;
 
         $result = GraphQL::executeQuery($this->schema, $query, null, null, $variableValues);
         return $this->getResponse()->withBody(new SwooleStream(Json::encode($result)));

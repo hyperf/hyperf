@@ -48,9 +48,7 @@ class MetaGeneratorTest extends TestCase
 
         $callbacks = [];
         for ($i = 0; $i < 10; ++$i) {
-            $callbacks[] = static function () use ($class) {
-                return $class->generate()->getSequence();
-            };
+            $callbacks[] = static fn() => $class->generate()->getSequence();
         }
 
         $res = parallel($callbacks);

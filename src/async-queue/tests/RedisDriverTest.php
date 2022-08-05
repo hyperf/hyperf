@@ -136,12 +136,8 @@ class RedisDriverTest extends TestCase
         $container->shouldReceive('get')->with(PhpSerializerPacker::class)->andReturn($packer);
         $container->shouldReceive('get')->once()->with(EventDispatcherInterface::class)->andReturn(null);
         $container->shouldReceive('get')->with(\Redis::class)->andReturn(new Redis());
-        $container->shouldReceive('make')->with(ChannelConfig::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new ChannelConfig($args['channel']);
-        });
-        $container->shouldReceive('make')->with(JobMessage::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new JobMessage(...$args);
-        });
+        $container->shouldReceive('make')->with(ChannelConfig::class, Mockery::any())->andReturnUsing(fn($class, $args) => new ChannelConfig($args['channel']));
+        $container->shouldReceive('make')->with(JobMessage::class, Mockery::any())->andReturnUsing(fn($class, $args) => new JobMessage(...$args));
         $container->shouldReceive('get')->with(RedisFactory::class)->andReturnUsing(function ($_) {
             $factory = Mockery::mock(RedisFactory::class);
             $factory->shouldReceive('get')->with('default')->andReturn(new Redis());

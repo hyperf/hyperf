@@ -88,7 +88,7 @@ class RedisProxyTest extends TestCase
         $it = null;
         $result = [];
         while (false !== $res = $redis->scan($it, 'scan:*', 2)) {
-            $result = array_merge($result, $res);
+            $result = [...$result, ...$res];
         }
 
         sort($result);
@@ -108,7 +108,7 @@ class RedisProxyTest extends TestCase
         $it = null;
         $result = [];
         while (false !== $res = $redis->hScan('scaner', $it, 'scan:*', 2)) {
-            $result = array_merge($result, array_keys($res));
+            $result = [...$result, ...array_keys($res)];
         }
 
         sort($result);
@@ -149,9 +149,7 @@ class RedisProxyTest extends TestCase
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn($frequency);
         $container->shouldReceive('make')->with(RedisPool::class, ['name' => 'default'])->andReturn($pool);
         $container->shouldReceive('make')->with(Channel::class, ['size' => 30])->andReturn(new Channel(30));
-        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new PoolOption(...array_values($args));
-        });
+        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(fn($class, $args) => new PoolOption(...array_values($args)));
         ApplicationContext::setContainer($container);
 
         $factory = new PoolFactory($container);

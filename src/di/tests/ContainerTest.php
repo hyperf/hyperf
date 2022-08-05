@@ -56,9 +56,7 @@ class ContainerTest extends TestCase
         $this->assertTrue($container->has(FooInterface::class));
         $this->assertInstanceOf(Foo::class, $container->make(FooInterface::class));
 
-        $container->define(FooInterface::class, function () {
-            return Mockery::mock(Bar::class);
-        });
+        $container->define(FooInterface::class, fn() => Mockery::mock(Bar::class));
         $this->assertInstanceOf(Bar::class, $foo = $container->make(FooInterface::class));
     }
 

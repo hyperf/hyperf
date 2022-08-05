@@ -34,9 +34,7 @@ class PageResolverListenerTest extends TestCase
     {
         Context::set(PsrServerRequestInterface::class, null);
         Context::set('http.request.parsedData', null);
-        Paginator::currentPathResolver(function () {
-            return '/';
-        });
+        Paginator::currentPathResolver(fn() => '/');
     }
 
     protected function tearDown(): void

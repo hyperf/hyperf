@@ -278,7 +278,7 @@ LUA
                 if ($d['b'] == 'sum') {
                     continue;
                 }
-                if (count($d['labelValues']) !== count($histogram['labelNames'])) {
+                if ((is_countable($d['labelValues']) ? count($d['labelValues']) : 0) !== (is_countable($histogram['labelNames']) ? count($histogram['labelNames']) : 0)) {
                     continue;
                 }
                 $allLabelValues[] = $d['labelValues'];
@@ -342,7 +342,7 @@ LUA
             unset($raw['__meta']);
             $gauge['samples'] = [];
             foreach ($raw as $k => $value) {
-                if (count($gauge['labelNames']) !== count(json_decode($k, true))) {
+                if ((is_countable($gauge['labelNames']) ? count($gauge['labelNames']) : 0) !== (is_countable(json_decode($k, true, 512, JSON_THROW_ON_ERROR)) ? count(json_decode($k, true, 512, JSON_THROW_ON_ERROR)) : 0)) {
                     continue;
                 }
                 $gauge['samples'][] = [
@@ -369,7 +369,7 @@ LUA
             unset($raw['__meta']);
             $counter['samples'] = [];
             foreach ($raw as $k => $value) {
-                if (count($counter['labelNames']) !== count(json_decode($k, true))) {
+                if ((is_countable($counter['labelNames']) ? count($counter['labelNames']) : 0) !== (is_countable(json_decode($k, true, 512, JSON_THROW_ON_ERROR)) ? count(json_decode($k, true, 512, JSON_THROW_ON_ERROR)) : 0)) {
                     continue;
                 }
                 $counter['samples'][] = [

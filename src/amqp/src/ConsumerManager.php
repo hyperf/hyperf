@@ -59,16 +59,10 @@ class ConsumerManager
              */
             private $consumer;
 
-            /**
-             * @var ConsumerMessageInterface
-             */
-            private $consumerMessage;
-
-            public function __construct(ContainerInterface $container, ConsumerMessageInterface $consumerMessage)
+            public function __construct(ContainerInterface $container, private ConsumerMessageInterface $consumerMessage)
             {
                 parent::__construct($container);
                 $this->consumer = $container->get(Consumer::class);
-                $this->consumerMessage = $consumerMessage;
             }
 
             public function handle(): void

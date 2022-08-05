@@ -15,11 +15,10 @@ use Monolog\Processor\ProcessorInterface;
 
 class FooProcessor implements ProcessorInterface
 {
-    protected $repeat;
+    protected $repeat = 2;
 
     public function __construct(int $repeat)
     {
-        $this->repeat = 2;
     }
 
     public function __invoke(array $records)

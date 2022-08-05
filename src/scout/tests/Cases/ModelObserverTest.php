@@ -45,7 +45,7 @@ class ModelObserverTest extends TestCase
     {
         $observer = new ModelObserver();
         $model = m::mock(Model::class);
-        $observer->disableSyncingFor(get_class($model));
+        $observer->disableSyncingFor($model::class);
         $model->shouldReceive('searchable')->never();
         $observer->saved(new Saved($model));
     }

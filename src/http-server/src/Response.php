@@ -40,18 +40,15 @@ class Response implements PsrResponseInterface, ResponseInterface
 {
     use Macroable;
 
-    protected ?PsrResponseInterface $response = null;
-
-    public function __construct(?PsrResponseInterface $response = null)
+    public function __construct(protected ?PsrResponseInterface $response = null)
     {
-        $this->response = $response;
     }
 
     public function __call($method, $parameters)
     {
         $response = $this->getResponse();
         if (! method_exists($response, $method)) {
-            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $method));
+            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', $this::class, $method));
         }
         return $response->{$method}(...$parameters);
     }
@@ -430,7 +427,7 @@ class Response implements PsrResponseInterface, ResponseInterface
         }
 
         if (! method_exists($response, $name)) {
-            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
+            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', $this::class, $name));
         }
 
         return new static($response->{$name}(...$arguments));

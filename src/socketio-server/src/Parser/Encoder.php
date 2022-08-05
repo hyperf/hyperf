@@ -23,7 +23,7 @@ class Encoder
             $packet->type,
             $packet->nsp === '/' ? '' : $packet->nsp . ',',
             $packet->id,
-            $noData ? '' : json_encode($packet->data),
+            $noData ? '' : json_encode($packet->data, JSON_THROW_ON_ERROR),
         ]);
     }
 }

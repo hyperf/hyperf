@@ -101,21 +101,19 @@ class ConsumerManager
                 $this->subscriber->subscribe(
                     $this->consumer->getTopic(),
                     $this->consumer->getChannel(),
-                    function ($data) {
-                        return $this->waiter->wait(function () use ($data) {
-                            $result = null;
-                            try {
-                                $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($this->consumer, $data));
-                                $result = $this->consumer->consume($data);
-                                $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($this->consumer, $data, $result));
-                            } catch (\Throwable $throwable) {
-                                $result = Result::DROP;
-                                $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, $data, $throwable));
-                            }
+                    fn($data) => $this->waiter->wait(function () use ($data) {
+                        $result = null;
+                        try {
+                            $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($this->consumer, $data));
+                            $result = $this->consumer->consume($data);
+                            $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($this->consumer, $data, $result));
+                        } catch (\Throwable $throwable) {
+                            $result = Result::DROP;
+                            $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, $data, $throwable));
+                        }
 
-                            return $result;
-                        });
-                    }
+                        return $result;
+                    })
                 );
 
                 $this->dispatcher && $this->dispatcher->dispatch(new AfterSubscribe($this->consumer));

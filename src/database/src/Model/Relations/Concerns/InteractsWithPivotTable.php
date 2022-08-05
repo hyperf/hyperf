@@ -398,6 +398,7 @@ trait InteractsWithPivotTable
      */
     protected function baseAttachRecord($id, $timed)
     {
+        $record = [];
         $record[$this->relatedPivotKey] = $id;
 
         $record[$this->foreignPivotKey] = $this->parent->{$this->parentKey};
@@ -513,9 +514,7 @@ trait InteractsWithPivotTable
      */
     protected function castKeys(array $keys)
     {
-        return array_map(function ($v) {
-            return $this->castKey($v);
-        }, $keys);
+        return array_map(fn($v) => $this->castKey($v), $keys);
     }
 
     /**
@@ -551,18 +550,11 @@ trait InteractsWithPivotTable
      */
     protected function getTypeSwapValue($type, $value)
     {
-        switch (strtolower($type)) {
-            case 'int':
-            case 'integer':
-                return (int) $value;
-            case 'real':
-            case 'float':
-            case 'double':
-                return (float) $value;
-            case 'string':
-                return (string) $value;
-            default:
-                return $value;
-        }
+        return match (strtolower($type)) {
+            'int', 'integer' => (int) $value,
+            'real', 'float', 'double' => (float) $value,
+            'string' => (string) $value,
+            default => $value,
+        };
     }
 }

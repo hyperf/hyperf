@@ -43,9 +43,7 @@ class RoutesCommandTest extends TestCase
         $method->invokeArgs($command, [&$data, 'http', 'GET', null, new Handler(IndexController::class . '::index', '/')]);
         $method->invokeArgs($command, [&$data, 'http', 'GET', null, new Handler([IndexController::class, 'index2'], '/index2')]);
         $method->invokeArgs($command, [&$data, 'http', 'GET', null, new Handler(IndexController::class . '@index3', '/index3')]);
-        $method->invokeArgs($command, [&$data, 'http', 'GET', null, new Handler(function () {
-            return '';
-        }, '/index4')]);
+        $method->invokeArgs($command, [&$data, 'http', 'GET', null, new Handler(fn() => '', '/index4')]);
         $method->invokeArgs($command, [&$data, 'http', 'POST', null, new Handler(IndexController::class . '::index5', '/index5')]);
 
         $this->assertSame(5, count($data));

@@ -84,9 +84,9 @@ class PhpParserTest extends TestCase
     protected function assertNodeParam(Node\Param $param, Node\Param $param2)
     {
         if ($param->type) {
-            $this->assertSame(get_class($param->type), get_class($param2->type));
+            $this->assertSame($param->type::class, $param2->type::class);
             if ($param->type instanceof Node\Name) {
-                $this->assertSame(get_class($param->type), get_class($param2->type));
+                $this->assertSame($param->type::class, $param2->type::class);
             } elseif ($param->type instanceof Node\Identifier) {
                 $this->assertSame($param->type->name, $param2->type->name);
             }
@@ -96,9 +96,9 @@ class PhpParserTest extends TestCase
         $this->assertSame($param2->byRef, $param->byRef);
         $this->assertSame($param->variadic, $param2->variadic);
         $this->assertSame($param->var->name, $param2->var->name);
-        $this->assertSame(get_class($param->var), get_class($param2->var));
+        $this->assertSame($param->var::class, $param2->var::class);
         if ($param->default) {
-            $this->assertSame(get_class($param->default), get_class($param2->default));
+            $this->assertSame($param->default::class, $param2->default::class);
             if ($param->default instanceof Node\Expr\Array_) {
                 $this->assertSame($param->default->items, $param2->default->items);
             } elseif ($param->default instanceof Node\Scalar) {

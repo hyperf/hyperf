@@ -22,7 +22,7 @@ class FooExceptionHandler extends ExceptionHandler
     {
         $data = ['code' => $throwable->getCode(), 'message' => $throwable->getMessage()];
 
-        return $response->withBody(new SwooleStream(json_encode($data)));
+        return $response->withBody(new SwooleStream(json_encode($data, JSON_THROW_ON_ERROR)));
     }
 
     public function isValid(Throwable $throwable): bool

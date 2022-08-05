@@ -15,16 +15,10 @@ use Hyperf\AsyncQueue\Job;
 
 class DemoJob extends Job
 {
-    public $id;
-
-    public $model;
-
     protected int $maxAttempts = 1;
 
-    public function __construct($id, $model = null)
+    public function __construct(public $id, public $model = null)
     {
-        $this->id = $id;
-        $this->model = $model;
     }
 
     public function handle()

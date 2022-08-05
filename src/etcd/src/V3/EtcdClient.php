@@ -80,11 +80,6 @@ class EtcdClient
     public const PERMISSION_READWRITE = 2;
 
     /**
-     * @var HttpClient
-     */
-    protected $httpClient;
-
-    /**
      * @var bool 友好输出, 只返回所需字段
      */
     protected $pretty = false;
@@ -94,9 +89,8 @@ class EtcdClient
      */
     protected $token;
 
-    public function __construct(HttpClient $client)
+    public function __construct(protected HttpClient $httpClient)
     {
-        $this->httpClient = $client;
     }
 
     public function setPretty($enabled)
@@ -362,9 +356,7 @@ class EtcdClient
         $body = $this->request(self::URI_TIMETOLIVE, $params);
 
         if (isset($body['keys'])) {
-            $body['keys'] = array_map(function ($value) {
-                return base64_decode($value);
-            }, $body['keys']);
+            $body['keys'] = array_map(fn($value) => base64_decode($value), $body['keys']);
         }
 
         return $body;
@@ -684,7 +676,7 @@ class EtcdClient
         $response = $this->httpClient->request('post', $uri, $data);
         $content = (string) $response->getBody();
 
-        $body = json_decode($content, true);
+        $body = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         if ($this->pretty && isset($body['header'])) {
             unset($body['header']);
         }

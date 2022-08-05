@@ -20,9 +20,7 @@ class MySqlProcessor extends Processor
      */
     public function processColumnListing(array $results): array
     {
-        return array_map(function ($result) {
-            return ((object) $result)->column_name;
-        }, $results);
+        return array_map(fn($result) => ((object) $result)->column_name, $results);
     }
 
     public function processColumns(array $results): array
@@ -50,8 +48,6 @@ class MySqlProcessor extends Processor
      */
     public function processListing(array $results): array
     {
-        return array_map(function ($result) {
-            return (array) $result;
-        }, $results);
+        return array_map(fn($result) => (array) $result, $results);
     }
 }

@@ -59,17 +59,12 @@ class Client implements ClientInterface
     public function decode(string $body, ?string $type = null): array|string
     {
         $type = strtolower((string) $type);
-        switch ($type) {
-            case 'json':
-                return Json::decode($body);
-            case 'yml':
-            case 'yaml':
-                return yaml_parse($body);
-            case 'xml':
-                return Xml::toArray($body);
-            default:
-                return $body;
-        }
+        return match ($type) {
+            'json' => Json::decode($body),
+            'yml', 'yaml' => yaml_parse($body),
+            'xml' => Xml::toArray($body),
+            default => $body,
+        };
     }
 
     /**
@@ -89,8 +84,6 @@ class Client implements ClientInterface
 
         $data = Json::decode((string) $response->getBody());
         $hosts = $data['hosts'] ?? [];
-        return array_filter($hosts, function ($item) {
-            return $item['valid'] ?? false;
-        });
+        return array_filter($hosts, fn($item) => $item['valid'] ?? false);
     }
 }

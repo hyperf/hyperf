@@ -17,9 +17,7 @@ class FooConfigProvider
     {
         return [
             'dependencies' => [
-                'Foo' => function () {
-                    return new Foo(1);
-                },
+                'Foo' => fn() => new Foo(1),
                 'Foo2' => [Foo::class, 'make'],
                 'Foo3' => Foo::class,
             ],

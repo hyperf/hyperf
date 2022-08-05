@@ -40,16 +40,12 @@ class WaiterTest extends TestCase
     public function testWait()
     {
         $id = uniqid();
-        $result = wait(function () use ($id) {
-            return $id;
-        });
+        $result = wait(fn() => $id);
 
         $this->assertSame($id, $result);
 
-        $id = rand(0, 9999);
-        $result = wait(function () use ($id) {
-            return $id + 1;
-        });
+        $id = random_int(0, 9999);
+        $result = wait(fn() => $id + 1);
 
         $this->assertSame($id + 1, $result);
     }
@@ -62,9 +58,7 @@ class WaiterTest extends TestCase
         $this->assertSame($result, $callback());
         $this->assertSame(null, $result);
 
-        $callback = function () {
-            return null;
-        };
+        $callback = fn() => null;
         $result = wait($callback);
         $this->assertSame($result, $callback());
         $this->assertSame(null, $result);
@@ -85,9 +79,7 @@ class WaiterTest extends TestCase
     public function testWaitReturnException()
     {
         $message = uniqid();
-        $callback = function () use ($message) {
-            return new \RuntimeException($message);
-        };
+        $callback = fn() => new \RuntimeException($message);
 
         $result = wait($callback);
         $this->assertInstanceOf(\RuntimeException::class, $result);

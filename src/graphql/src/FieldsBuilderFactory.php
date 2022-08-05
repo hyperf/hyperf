@@ -22,57 +22,8 @@ use TheCodingMachine\GraphQLite\Types\TypeResolver;
 
 class FieldsBuilderFactory
 {
-    /**
-     * @var AnnotationReader
-     */
-    private $annotationReader;
-
-    /**
-     * @var HydratorInterface
-     */
-    private $hydrator;
-
-    /**
-     * @var AuthenticationServiceInterface
-     */
-    private $authenticationService;
-
-    /**
-     * @var AuthorizationServiceInterface
-     */
-    private $authorizationService;
-
-    /**
-     * @var CachedDocBlockFactory
-     */
-    private $cachedDocBlockFactory;
-
-    /**
-     * @var TypeResolver
-     */
-    private $typeResolver;
-
-    /**
-     * @var NamingStrategyInterface
-     */
-    private $namingStrategy;
-
-    public function __construct(
-        AnnotationReader $annotationReader,
-        HydratorInterface $hydrator,
-        AuthenticationServiceInterface $authenticationService,
-        AuthorizationServiceInterface $authorizationService,
-        TypeResolver $typeResolver,
-        CachedDocBlockFactory $cachedDocBlockFactory,
-        NamingStrategyInterface $namingStrategy
-    ) {
-        $this->annotationReader = $annotationReader;
-        $this->hydrator = $hydrator;
-        $this->authenticationService = $authenticationService;
-        $this->authorizationService = $authorizationService;
-        $this->typeResolver = $typeResolver;
-        $this->cachedDocBlockFactory = $cachedDocBlockFactory;
-        $this->namingStrategy = $namingStrategy;
+    public function __construct(private AnnotationReader $annotationReader, private HydratorInterface $hydrator, private AuthenticationServiceInterface $authenticationService, private AuthorizationServiceInterface $authorizationService, private TypeResolver $typeResolver, private CachedDocBlockFactory $cachedDocBlockFactory, private NamingStrategyInterface $namingStrategy)
+    {
     }
 
     public function buildFieldsBuilder(RecursiveTypeMapperInterface $typeMapper): FieldsBuilder

@@ -22,22 +22,8 @@ use TheCodingMachine\GraphQLite\NamingStrategyInterface;
 
 class InputTypeUtils
 {
-    /**
-     * @var AnnotationReader
-     */
-    private $annotationReader;
-
-    /**
-     * @var NamingStrategyInterface
-     */
-    private $namingStrategy;
-
-    public function __construct(
-        AnnotationReader $annotationReader,
-        NamingStrategyInterface $namingStrategy
-    ) {
-        $this->annotationReader = $annotationReader;
-        $this->namingStrategy = $namingStrategy;
+    public function __construct(private AnnotationReader $annotationReader, private NamingStrategyInterface $namingStrategy)
+    {
     }
 
     /**
@@ -66,7 +52,7 @@ class InputTypeUtils
             throw MissingTypeHintException::nullableReturnType($refMethod);
         }
 
-        $type = (string) $returnType;
+        $type = $returnType->getName();
 
         $typeResolver = new \phpDocumentor\Reflection\TypeResolver();
 

@@ -19,9 +19,7 @@ class PostResourceWithOptionalRelationship extends PostResource
             'id' => $this->id,
             'comments' => new CommentCollection($this->whenLoaded('comments')),
             'author' => new AuthorResource($this->whenLoaded('author')),
-            'author_name' => $this->whenLoaded('author', function () {
-                return $this->author->name;
-            }),
+            'author_name' => $this->whenLoaded('author', fn() => $this->author->name),
         ];
     }
 }

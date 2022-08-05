@@ -69,24 +69,14 @@ abstract class AbstractTestCase extends TestCase
                 ],
             ],
         ]));
-        $container->shouldReceive('make')->with(PDOPool::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new PDOPool(...array_values($args));
-        });
-        $container->shouldReceive('make')->with(MySQLPool::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new MySQLPool(...array_values($args));
-        });
+        $container->shouldReceive('make')->with(PDOPool::class, Mockery::any())->andReturnUsing(fn($_, $args) => new PDOPool(...array_values($args)));
+        $container->shouldReceive('make')->with(MySQLPool::class, Mockery::any())->andReturnUsing(fn($_, $args) => new MySQLPool(...array_values($args)));
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn(new Frequency());
-        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new PoolOption(...array_values($args));
-        });
-        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new Channel(...array_values($args));
-        });
+        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(fn($_, $args) => new PoolOption(...array_values($args)));
+        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(fn($_, $args) => new Channel(...array_values($args)));
         $container->shouldReceive('get')->with(PoolFactory::class)->andReturn($factory = new PoolFactory($container));
         $container->shouldReceive('get')->with(DB::class)->andReturn(new DB($factory, 'default'));
-        $container->shouldReceive('make')->with(DB::class, Mockery::any())->andReturnUsing(function ($_, $params) use ($factory) {
-            return new DB($factory, $params['poolName']);
-        });
+        $container->shouldReceive('make')->with(DB::class, Mockery::any())->andReturnUsing(fn($_, $params) => new DB($factory, $params['poolName']));
         $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturn(false);
         return $container;
     }

@@ -23,7 +23,7 @@ class UserReply extends \Google\Protobuf\Internal\Message
     /**
      * Generated from protobuf field <code>string message = 1;</code>.
      */
-    private $message = '';
+    private string $message = '';
 
     /**
      * Generated from protobuf field <code>.grpc.Info info = 2;</code>.

@@ -26,9 +26,7 @@ class DefinitionSourceTest extends TestCase
     public function testAddDefinition()
     {
         $container = new Container(new DefinitionSource([]));
-        $container->define('Foo', function () {
-            return 'bar';
-        });
+        $container->define('Foo', fn() => 'bar');
         $this->assertEquals('bar', $container->get('Foo'));
     }
 

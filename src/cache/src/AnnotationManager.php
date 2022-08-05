@@ -85,7 +85,7 @@ class AnnotationManager
     protected function getRandomOffset(int $offset): int
     {
         if ($offset > 0) {
-            return rand(0, $offset);
+            return random_int(0, $offset);
         }
 
         return 0;

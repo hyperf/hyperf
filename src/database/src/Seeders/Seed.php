@@ -146,13 +146,7 @@ class Seed
      */
     public function getSeederFiles($paths)
     {
-        return Collection::make($paths)->flatMap(function ($path) {
-            return Str::endsWith($path, '.php') ? [$path] : $this->files->glob($path . '/*.php');
-        })->filter()->sortBy(function ($file) {
-            return $this->getSeederName($file);
-        })->values()->keyBy(function ($file) {
-            return $this->getSeederName($file);
-        })->all();
+        return Collection::make($paths)->flatMap(fn($path) => Str::endsWith($path, '.php') ? [$path] : $this->files->glob($path . '/*.php'))->filter()->sortBy(fn($file) => $this->getSeederName($file))->values()->keyBy(fn($file) => $this->getSeederName($file))->all();
     }
 
     /**

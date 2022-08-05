@@ -16,7 +16,7 @@ class Session extends Client implements SessionInterface
     public function create($body = null, array $options = []): ConsulResponse
     {
         $params = [
-            'body' => json_encode($body),
+            'body' => json_encode($body, JSON_THROW_ON_ERROR),
             'query' => $this->resolveOptions($options, ['dc']),
         ];
 

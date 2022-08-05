@@ -20,27 +20,6 @@ class FactoryBuilder
     use Macroable;
 
     /**
-     * The model definitions in the container.
-     *
-     * @var array
-     */
-    protected $definitions;
-
-    /**
-     * The model being built.
-     *
-     * @var string
-     */
-    protected $class;
-
-    /**
-     * The name of the model being built.
-     *
-     * @var string
-     */
-    protected $name = 'default';
-
-    /**
      * The database connection on which the model instance should be persisted.
      *
      * @var string
@@ -48,39 +27,11 @@ class FactoryBuilder
     protected $connection;
 
     /**
-     * The model states.
-     *
-     * @var array
-     */
-    protected $states;
-
-    /**
-     * The model after making callbacks.
-     *
-     * @var array
-     */
-    protected $afterMaking = [];
-
-    /**
-     * The model after creating callbacks.
-     *
-     * @var array
-     */
-    protected $afterCreating = [];
-
-    /**
      * The states to apply.
      *
      * @var array
      */
     protected $activeStates = [];
-
-    /**
-     * The Faker instance for the builder.
-     *
-     * @var \Faker\Generator
-     */
-    protected $faker;
 
     /**
      * The number of models to build.
@@ -96,21 +47,30 @@ class FactoryBuilder
      * @param string $name
      */
     public function __construct(
-        $class,
-        $name,
-        array $definitions,
-        array $states,
-        array $afterMaking,
-        array $afterCreating,
-        Faker $faker
-    ) {
-        $this->name = $name;
-        $this->class = $class;
-        $this->faker = $faker;
-        $this->states = $states;
-        $this->definitions = $definitions;
-        $this->afterMaking = $afterMaking;
-        $this->afterCreating = $afterCreating;
+        protected $class,
+        protected $name,
+        /**
+         * The model definitions in the container.
+         */
+        protected array $definitions,
+        /**
+         * The model states.
+         */
+        protected array $states,
+        /**
+         * The model after making callbacks.
+         */
+        protected array $afterMaking,
+        /**
+         * The model after creating callbacks.
+         */
+        protected array $afterCreating,
+        /**
+         * The Faker instance for the builder.
+         */
+        protected Faker $faker
+    )
+    {
     }
 
     /**
@@ -170,9 +130,7 @@ class FactoryBuilder
      */
     public function lazy(array $attributes = [])
     {
-        return function () use ($attributes) {
-            return $this->create($attributes);
-        };
+        return fn() => $this->create($attributes);
     }
 
     /**
@@ -210,9 +168,7 @@ class FactoryBuilder
             return (new $this->class())->newCollection();
         }
 
-        $instances = (new $this->class())->newCollection(array_map(function () use ($attributes) {
-            return $this->makeInstance($attributes);
-        }, range(1, $this->amount)));
+        $instances = (new $this->class())->newCollection(array_map(fn() => $this->makeInstance($attributes), range(1, $this->amount)));
 
         $this->callAfterMaking($instances);
 
@@ -232,9 +188,7 @@ class FactoryBuilder
             return [];
         }
 
-        return array_map(function () use ($attributes) {
-            return $this->getRawAttributes($attributes);
-        }, range(1, $this->amount));
+        return array_map(fn() => $this->getRawAttributes($attributes), range(1, $this->amount));
     }
 
     /**

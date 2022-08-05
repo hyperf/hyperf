@@ -24,15 +24,13 @@ class BarSceneRequest extends FormRequest
     {
         $scene = $this->getScene();
 
-        switch ($scene) {
-            case 'required':
-                return [
-                    'name' => 'required',
-                ];
-            default:
-                return [
-                    'name' => 'required|integer',
-                ];
-        }
+        return match ($scene) {
+            'required' => [
+                'name' => 'required',
+            ],
+            default => [
+                'name' => 'required|integer',
+            ],
+        };
     }
 }

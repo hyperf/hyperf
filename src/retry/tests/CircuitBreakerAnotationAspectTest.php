@@ -70,7 +70,7 @@ class CircuitBreakerAnotationAspectTest extends TestCase
         );
         $point->shouldReceive('process')->times(2)->andThrow(new \RuntimeException('ok'));
         $point->shouldReceive('getArguments')->andReturns([]);
-        $this->expectException('RuntimeException');
+        $this->expectException(\RuntimeException::class);
         $aspect->process($point);
     }
 

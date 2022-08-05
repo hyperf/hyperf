@@ -26,13 +26,13 @@ abstract class AbstractConstants
             throw new ConstantsException('The function is not defined!');
         }
 
-        if (! isset($arguments) || count($arguments) === 0) {
+        if (! isset($arguments) || (is_countable($arguments) ? count($arguments) : 0) === 0) {
             throw new ConstantsException('The Code is required');
         }
 
         $code = $arguments[0];
         $name = strtolower(substr($name, 3));
-        $class = get_called_class();
+        $class = static::class;
 
         $message = ConstantsCollector::getValue($class, $code, $name);
 
@@ -44,7 +44,7 @@ abstract class AbstractConstants
             return $result;
         }
 
-        $count = count($arguments);
+        $count = is_countable($arguments) ? count($arguments) : 0;
         if ($count > 0) {
             return sprintf($message, ...(array) $arguments[0]);
         }

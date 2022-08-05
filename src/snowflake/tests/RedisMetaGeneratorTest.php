@@ -129,7 +129,7 @@ class RedisMetaGeneratorTest extends TestCase
         $generator = new SnowflakeIdGenerator($metaGenerator);
         $generator = new UserDefinedIdGenerator($generator);
 
-        $userId = 20190620;
+        $userId = 20_190_620;
 
         $id = $generator->generate($userId);
 
@@ -183,7 +183,7 @@ class RedisMetaGeneratorTest extends TestCase
                 for ($i = 0; $i < 4100; ++$i) {
                     $result[] = $generator->generate();
                 }
-            } catch (\Throwable $exception) {
+            } catch (\Throwable) {
             } finally {
                 $channel->push(Mockery::mock(ConnectionInterface::class));
             }
@@ -194,7 +194,7 @@ class RedisMetaGeneratorTest extends TestCase
                 for ($i = 0; $i < 900; ++$i) {
                     $result[] = $generator->generate();
                 }
-            } catch (\Throwable $exception) {
+            } catch (\Throwable) {
             } finally {
                 $channel->push(Mockery::mock(ConnectionInterface::class));
             }
@@ -243,20 +243,12 @@ class RedisMetaGeneratorTest extends TestCase
         ApplicationContext::setContainer($container);
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
-        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new Channel($args['size']);
-        });
-        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new PoolOption(...array_values($args));
-        });
+        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(fn($class, $args) => new Channel($args['size']));
+        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(fn($class, $args) => new PoolOption(...array_values($args)));
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn(new Frequency());
-        $container->shouldReceive('make')->with(RedisPool::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($container) {
-            return new RedisPool($container, $args['name']);
-        });
+        $container->shouldReceive('make')->with(RedisPool::class, Mockery::any())->andReturnUsing(fn($class, $args) => new RedisPool($container, $args['name']));
         $factory = new PoolFactory($container);
-        $container->shouldReceive('make')->with(RedisProxy::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($factory) {
-            return new RedisProxy($factory, $args['pool']);
-        });
+        $container->shouldReceive('make')->with(RedisProxy::class, Mockery::any())->andReturnUsing(fn($class, $args) => new RedisProxy($factory, $args['pool']));
 
         return $container;
     }

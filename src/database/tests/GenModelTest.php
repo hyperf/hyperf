@@ -105,8 +105,6 @@ class UserExtEmpty extends Model
      */
     protected function formatColumns(array $columns): array
     {
-        return array_map(function ($item) {
-            return array_change_key_case($item, CASE_LOWER);
-        }, $columns);
+        return array_map(fn($item) => array_change_key_case($item, CASE_LOWER), $columns);
     }
 }

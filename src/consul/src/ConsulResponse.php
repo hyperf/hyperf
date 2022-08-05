@@ -37,7 +37,7 @@ class ConsulResponse
         if ($this->response->getHeaderLine('content-type') !== 'application/json') {
             throw new ServerException('The Content-Type of response is not equal application/json');
         }
-        $data = json_decode((string) $this->response->getBody(), true);
+        $data = json_decode((string) $this->response->getBody(), true, 512, JSON_THROW_ON_ERROR);
         if (! $key) {
             return $data;
         }

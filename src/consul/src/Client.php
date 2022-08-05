@@ -31,10 +31,7 @@ abstract class Client
      */
     private $clientFactory;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private \Psr\Log\LoggerInterface $logger;
 
     public function __construct(\Closure $clientFactory, LoggerInterface $logger = null)
     {

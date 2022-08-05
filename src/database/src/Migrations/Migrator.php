@@ -182,13 +182,7 @@ class Migrator
      */
     public function getMigrationFiles($paths): array
     {
-        return Collection::make($paths)->flatMap(function ($path) {
-            return Str::endsWith($path, '.php') ? [$path] : $this->files->glob($path . '/*_*.php');
-        })->filter()->sortBy(function ($file) {
-            return $this->getMigrationName($file);
-        })->values()->keyBy(function ($file) {
-            return $this->getMigrationName($file);
-        })->all();
+        return Collection::make($paths)->flatMap(fn($path) => Str::endsWith($path, '.php') ? [$path] : $this->files->glob($path . '/*_*.php'))->filter()->sortBy(fn($file) => $this->getMigrationName($file))->values()->keyBy(fn($file) => $this->getMigrationName($file))->all();
     }
 
     /**
@@ -297,9 +291,7 @@ class Migrator
     protected function pendingMigrations(array $files, array $ran): array
     {
         return Collection::make($files)
-            ->reject(function ($file) use ($ran) {
-                return in_array($this->getMigrationName($file), $ran);
-            })->values()->all();
+            ->reject(fn($file) => in_array($this->getMigrationName($file), $ran))->values()->all();
     }
 
     /**
@@ -389,9 +381,7 @@ class Migrator
         // Since the getRan method that retrieves the migration name just gives us the
         // migration name, we will format the names into objects with the name as a
         // property on the objects so that we can pass it to the rollback method.
-        $migrations = collect($migrations)->map(function ($m) {
-            return (object) ['migration' => $m];
-        })->all();
+        $migrations = collect($migrations)->map(fn($m) => (object) ['migration' => $m])->all();
 
         return $this->rollbackMigrations(
             $migrations,
@@ -465,7 +455,7 @@ class Migrator
     protected function pretendToRun(object $migration, string $method): void
     {
         foreach ($this->getQueries($migration, $method) as $query) {
-            $name = get_class($migration);
+            $name = $migration::class;
 
             $this->note("<info>{$name}:</info> {$query['query']}");
         }

@@ -30,28 +30,28 @@ class RouteSummary extends \Google\Protobuf\Internal\Message
      *
      * Generated from protobuf field <code>int32 point_count = 1;</code>
      */
-    private $point_count = 0;
+    private int $point_count = 0;
 
     /**
      * The number of known features passed while traversing the route.
      *
      * Generated from protobuf field <code>int32 feature_count = 2;</code>
      */
-    private $feature_count = 0;
+    private int $feature_count = 0;
 
     /**
      * The distance covered in metres.
      *
      * Generated from protobuf field <code>int32 distance = 3;</code>
      */
-    private $distance = 0;
+    private int $distance = 0;
 
     /**
      * The duration of the traversal in seconds.
      *
      * Generated from protobuf field <code>int32 elapsed_time = 4;</code>
      */
-    private $elapsed_time = 0;
+    private int $elapsed_time = 0;
 
     /**
      * Constructor.

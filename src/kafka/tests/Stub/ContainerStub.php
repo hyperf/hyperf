@@ -37,20 +37,12 @@ class ContainerStub
             $logger->shouldReceive('debug')->andReturn(null);
             return $logger;
         });
-        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturnUsing(function () {
-            return Mockery::mock(EventDispatcherInterface::class);
-        });
-        $container->shouldReceive('has')->andReturnUsing(function ($class) {
-            return true;
-        });
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturnUsing(fn() => Mockery::mock(EventDispatcherInterface::class));
+        $container->shouldReceive('has')->andReturnUsing(fn($class) => true);
 
-        $container->shouldReceive('get')->with(Producer::class)->andReturnUsing(function () {
-            return Mockery::mock(Producer::class);
-        });
+        $container->shouldReceive('get')->with(Producer::class)->andReturnUsing(fn() => Mockery::mock(Producer::class));
 
-        $container->shouldReceive('make')->with(DemoConsumer::class, Mockery::any())->andReturnUsing(function () use ($container) {
-            return new DemoConsumer($container);
-        });
+        $container->shouldReceive('make')->with(DemoConsumer::class, Mockery::any())->andReturnUsing(fn() => new DemoConsumer($container));
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'kafka' => [

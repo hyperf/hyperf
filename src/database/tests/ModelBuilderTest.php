@@ -427,9 +427,7 @@ class ModelBuilderTest extends TestCase
 
     public function testGlobalMacrosAreCalledOnBuilder()
     {
-        Builder::macro('foo', function ($bar) {
-            return $bar;
-        });
+        Builder::macro('foo', fn($bar) => $bar);
 
         Builder::macro('bam', [Builder::class, 'getQuery']);
 
@@ -448,6 +446,7 @@ class ModelBuilderTest extends TestCase
 
     public function testGetModelsProperlyHydratesModels()
     {
+        $records = [];
         $builder = Mockery::mock(Builder::class . '[get]', [$this->getMockQueryBuilder()]);
         $records[] = ['name' => 'taylor', 'age' => 26];
         $records[] = ['name' => 'dayle', 'age' => 28];
@@ -564,17 +563,13 @@ class ModelBuilderTest extends TestCase
         $this->assertInstanceOf(Closure::class, $eagers['orders.lines']);
 
         $builder = $this->getBuilder();
-        $builder->with(['orders' => function () {
-            return 'foo';
-        }]);
+        $builder->with(['orders' => fn() => 'foo']);
         $eagers = $builder->getEagerLoads();
 
         $this->assertEquals('foo', $eagers['orders']());
 
         $builder = $this->getBuilder();
-        $builder->with(['orders.lines' => function () {
-            return 'foo';
-        }]);
+        $builder->with(['orders.lines' => fn() => 'foo']);
         $eagers = $builder->getEagerLoads();
 
         $this->assertInstanceOf(Closure::class, $eagers['orders']);
@@ -666,9 +661,7 @@ class ModelBuilderTest extends TestCase
     public function testDeleteOverride()
     {
         $builder = $this->getBuilder();
-        $builder->onDelete(function ($builder) {
-            return ['foo' => $builder];
-        });
+        $builder->onDelete(fn($builder) => ['foo' => $builder]);
         $this->assertEquals(['foo' => $builder], $builder->delete());
     }
 
@@ -714,9 +707,7 @@ class ModelBuilderTest extends TestCase
     public function testWithCountAndGlobalScope()
     {
         $model = new ModelBuilderTestModelParentStub();
-        ModelBuilderTestModelCloseRelatedStub::addGlobalScope('withCount', function ($query) {
-            return $query->addSelect('id');
-        });
+        ModelBuilderTestModelCloseRelatedStub::addGlobalScope('withCount', fn($query) => $query->addSelect('id'));
 
         $builder = $model->select('id')->withCount(['foo']);
 
@@ -1233,11 +1224,8 @@ class ModelBuilderTestNestedStub extends Model
 
 class ModelBuilderTestPluckStub
 {
-    protected array $attributes;
-
-    public function __construct($attributes)
+    public function __construct(protected $attributes)
     {
-        $this->attributes = $attributes;
     }
 
     public function __get($key)
@@ -1248,11 +1236,8 @@ class ModelBuilderTestPluckStub
 
 class ModelBuilderTestPluckDatesStub extends Model
 {
-    protected array $attributes;
-
-    public function __construct($attributes)
+    public function __construct(protected array $attributes = [])
     {
-        $this->attributes = $attributes;
     }
 
     protected function asDateTime($value)
@@ -1312,7 +1297,7 @@ class ModelBuilderTestModelSelfRelatedStub extends Model
 
     public function childFoos()
     {
-        return $this->hasMany(ModelBuilderTestModelSelfRelatedStub::class, 'parent_id', 'id', 'children');
+        return $this->hasMany(ModelBuilderTestModelSelfRelatedStub::class, 'parent_id', 'id');
     }
 
     public function parentBars()
@@ -1327,7 +1312,7 @@ class ModelBuilderTestModelSelfRelatedStub extends Model
 
     public function bazes()
     {
-        return $this->hasMany(ModelBuilderTestModelFarRelatedStub::class, 'foreign_key', 'id', 'bar');
+        return $this->hasMany(ModelBuilderTestModelFarRelatedStub::class, 'foreign_key', 'id');
     }
 }
 

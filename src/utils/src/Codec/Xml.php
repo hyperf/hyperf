@@ -49,12 +49,12 @@ class Xml
 
     public static function toArray($xml): array
     {
-        $respObject = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NOERROR);
+        $respObject = simplexml_load_string($xml, \SimpleXMLElement::class, LIBXML_NOCDATA | LIBXML_NOERROR);
 
         if ($respObject === false) {
             throw new InvalidArgumentException('Syntax error.');
         }
 
-        return json_decode(json_encode($respObject), true);
+        return json_decode(json_encode($respObject, JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR);
     }
 }

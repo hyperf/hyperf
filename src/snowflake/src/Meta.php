@@ -13,38 +13,29 @@ namespace Hyperf\Snowflake;
 
 class Meta
 {
-    /**
-     * @var int [0, 31]
-     */
-    protected int $dataCenterId;
-
-    /**
-     * @var int [0, 31]
-     */
-    protected int $workerId;
-
-    /**
-     * @var int [0, 4095]
-     */
-    protected int $sequence;
-
-    /**
-     * @var int seconds or milliseconds
-     */
-    protected int $timestamp = 0;
-
-    /**
-     * @var int seconds or milliseconds
-     */
-    protected int $beginTimestamp = 0;
-
-    public function __construct(int $dataCenterId, int $workerId, int $sequence, int $timestamp, int $beginTimestamp = 1560960000)
+    public function __construct(
+        /**
+         * @var int [0, 31]
+         */
+        protected int $dataCenterId,
+        /**
+         * @var int [0, 31]
+         */
+        protected int $workerId,
+        /**
+         * @var int [0, 4095]
+         */
+        protected int $sequence,
+        /**
+         * @var int seconds or milliseconds
+         */
+        protected int $timestamp,
+        /**
+         * @var int seconds or milliseconds
+         */
+        protected int $beginTimestamp = 1_560_960_000
+    )
     {
-        $this->dataCenterId = $dataCenterId;
-        $this->workerId = $workerId;
-        $this->sequence = $sequence;
-        $this->timestamp = $timestamp;
-        $this->beginTimestamp = $beginTimestamp;
     }
 
     public function getTimeInterval(): int

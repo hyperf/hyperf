@@ -69,7 +69,7 @@ class Client implements ClientInterface
                     'headers' => $headers,
                 ]);
                 if ($response->getStatusCode() === 200 && str_contains($response->getHeaderLine('content-type'), 'application/json')) {
-                    $body = json_decode((string) $response->getBody(), true);
+                    $body = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
                     $result = $body['configurations'] ?? [];
                     $this->cache[$cacheKey] = [
                         'releaseKey' => $body['releaseKey'] ?? '',
@@ -103,7 +103,7 @@ class Client implements ClientInterface
                 'query' => [
                     'appId' => $this->option->getAppid(),
                     'cluster' => $this->option->getCluster(),
-                    'notifications' => json_encode(array_values($notifications)),
+                    'notifications' => json_encode(array_values($notifications), JSON_THROW_ON_ERROR),
                 ],
             ]);
         } catch (\Exception) {

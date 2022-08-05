@@ -28,9 +28,7 @@ class RetryMiddleware implements MiddlewareInterface
                 return true;
             }
             return false;
-        }, function () {
-            return $this->delay;
-        });
+        }, fn() => $this->delay);
     }
 
     /**

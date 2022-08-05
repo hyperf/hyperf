@@ -68,20 +68,17 @@ class ConsumerManager
     protected function createProcess(AbstractConsumer $consumer): AbstractProcess
     {
         return new class($this->container, $consumer) extends AbstractProcess {
-            private AbstractConsumer $consumer;
-
             private ConfigInterface $config;
 
-            private ?EventDispatcherInterface $dispatcher;
+            private ?EventDispatcherInterface $dispatcher = null;
 
             protected StdoutLoggerInterface $stdoutLogger;
 
             protected Producer $producer;
 
-            public function __construct(ContainerInterface $container, AbstractConsumer $consumer)
+            public function __construct(ContainerInterface $container, private AbstractConsumer $consumer)
             {
                 parent::__construct($container);
-                $this->consumer = $consumer;
                 $this->config = $container->get(ConfigInterface::class);
                 $this->stdoutLogger = $container->get(StdoutLoggerInterface::class);
                 $this->producer = $container->get(Producer::class);

@@ -52,6 +52,7 @@ class JsonRpcAspect extends AbstractAspect
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
+        $result = [];
         if ($proceedingJoinPoint->methodName === '__generateRpcPath') {
             $path = $proceedingJoinPoint->process();
             $key = "JsonRPC send [{$path}]";

@@ -58,7 +58,7 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
             }
         }
 
-        return new \RuntimeException('Bad data data: ' . json_encode($data));
+        return new \RuntimeException('Bad data data: ' . json_encode($data, JSON_THROW_ON_ERROR));
     }
 
     public function supportsDenormalization($data, $type, $format = null)
@@ -87,7 +87,7 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
 
     public function hasCacheableSupportsMethod(): bool
     {
-        return \get_class($this) === __CLASS__;
+        return $this::class === self::class;
     }
 
     protected function getInstantiator(): Instantiator

@@ -310,7 +310,7 @@ class SetCookie implements Stringable, Arrayable
         }
 
         // Match if the last character of the cookie-path is "/"
-        if (substr($cookiePath, -1, 1) === '/') {
+        if (str_ends_with($cookiePath, '/')) {
             return true;
         }
 

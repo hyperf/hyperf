@@ -445,9 +445,7 @@ class Uri implements UriInterface, Stringable
             $result = [];
         } else {
             $decodedKey = rawurldecode($key);
-            $result = array_filter(explode('&', $current), function ($part) use ($decodedKey) {
-                return rawurldecode(explode('=', $part)[0]) !== $decodedKey;
-            });
+            $result = array_filter(explode('&', $current), fn($part) => rawurldecode(explode('=', $part)[0]) !== $decodedKey);
         }
 
         // Query string separators ("=", "&") within the key or value need to be encoded

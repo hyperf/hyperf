@@ -26,9 +26,7 @@ class FunctionTest extends TestCase
 {
     public function testCall()
     {
-        $result = call(function ($i) {
-            return ++$i;
-        }, [1]);
+        $result = call(fn($i) => ++$i, [1]);
 
         $this->assertSame(2, $result);
     }
@@ -184,18 +182,14 @@ class FunctionTest extends TestCase
     public function testFunctionValue()
     {
         $id = uniqid();
-        $num = rand(1000, 9999);
-        $assert = value(static function () use ($id) {
-            return $id;
-        });
+        $num = random_int(1000, 9999);
+        $assert = value(static fn() => $id);
         $this->assertSame($assert, $id);
 
         $assert = value($id);
         $this->assertSame($assert, $id);
 
-        $assert = value(static function ($id, $num) {
-            return $id . $num;
-        }, $id, $num);
+        $assert = value(static fn($id, $num) => $id . $num, $id, $num);
         $this->assertSame($assert, $id . $num);
 
         $assert = value($foo = new FooClosure(), $id);

@@ -93,12 +93,8 @@ class DagTest extends TestCase
 
     public function testAccessResults()
     {
-        $a = Vertex::make(function () {
-            return 1;
-        }, 'a');
-        $b = Vertex::make(function ($results) use ($a) {
-            return $results[$a->key] + 1;
-        }, 'b');
+        $a = Vertex::make(fn() => 1, 'a');
+        $b = Vertex::make(fn($results) => $results[$a->key] + 1, 'b');
         $dag = new Dag();
         $dag->addVertex($a)->addVertex($b)->addEdge($a, $b);
         $result = $dag->run();

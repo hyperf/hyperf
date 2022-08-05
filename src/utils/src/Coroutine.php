@@ -71,7 +71,7 @@ class Coroutine
                             $formatter = $container->get(FormatterInterface::class);
                             $logger->warning($formatter->format($throwable));
                         } else {
-                            $logger->warning(sprintf('Uncaptured exception[%s] detected in %s::%d.', get_class($throwable), $throwable->getFile(), $throwable->getLine()));
+                            $logger->warning(sprintf('Uncaptured exception[%s] detected in %s::%d.', $throwable::class, $throwable->getFile(), $throwable->getLine()));
                         }
                     }
                 }

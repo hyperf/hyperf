@@ -18,7 +18,7 @@ class SwooleStream implements StreamInterface, Stringable
 {
     protected int $size;
 
-    protected bool $writable;
+    protected bool $writable = true;
 
     /**
      * SwooleStream constructor.
@@ -26,7 +26,6 @@ class SwooleStream implements StreamInterface, Stringable
     public function __construct(protected string $contents = '')
     {
         $this->size = strlen($this->contents);
-        $this->writable = true;
     }
 
     /**

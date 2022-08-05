@@ -193,9 +193,7 @@ class ModelMorphEagerLoadingTest extends TestCase
                 }
             )
             ->get();
-        $res = $images->every(function ($item, $key) {
-            return $item->imageable->id == 1;
-        });
+        $res = $images->every(fn($item, $key) => $item->imageable->id == 1);
         $this->assertSame(true, $res);
         $sqls = [
             ['select * from `images` where ((`imageable_type` = ? and not exists (select * from `user` where `images`.`imageable_id` = `user`.`id` and `id` <> ?)) or (`imageable_type` = ? and not exists (select * from `book` where `images`.`imageable_id` = `book`.`id` and `id` <> ?)))', ['user', 1, 'book', 1]],
@@ -232,9 +230,7 @@ class ModelMorphEagerLoadingTest extends TestCase
                 }
             )
             ->get();
-        $res = $images->every(function ($item, $key) {
-            return $item->imageable->id == 1;
-        });
+        $res = $images->every(fn($item, $key) => $item->imageable->id == 1);
         $this->assertSame(true, $res);
         $sqls = [
             ['select * from `images` where ((`imageable_type` = ? and not exists (select * from `user` where `images`.`imageable_id` = `user`.`id` and `id` <> ?))) or ((`imageable_type` = ? and not exists (select * from `book` where `images`.`imageable_id` = `book`.`id` and `id` <> ?)))', ['user', 1, 'book', 1]],

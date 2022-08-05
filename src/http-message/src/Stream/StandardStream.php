@@ -20,7 +20,7 @@ use Psr\Http\Message\StreamInterface;
  * Author: Martijn van der Ven <martijn@vanderven.se>.
  * @license https://github.com/Nyholm/psr7/blob/master/LICENSE
  */
-final class StandardStream implements StreamInterface
+final class StandardStream implements StreamInterface, \Stringable
 {
     /** @var array Hash of readable and writable stream types */
     private const READ_WRITE_HASH = [
@@ -41,20 +41,16 @@ final class StandardStream implements StreamInterface
     /** @var null|resource A resource reference */
     private $stream;
 
-    /** @var bool */
-    private $seekable;
+    private ?bool $seekable = null;
 
-    /** @var bool */
-    private $readable;
+    private ?bool $readable = null;
 
-    /** @var bool */
-    private $writable;
+    private ?bool $writable = null;
 
     /** @var null|array|mixed|void */
     private $uri;
 
-    /** @var null|int */
-    private $size;
+    private ?int $size = null;
 
     private function __construct()
     {
@@ -76,7 +72,7 @@ final class StandardStream implements StreamInterface
             }
 
             return $this->getContents();
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return '';
         }
     }

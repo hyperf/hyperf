@@ -22,14 +22,12 @@ class ContainerStub
     {
         $container = Mockery::mock(ContainerInterface::class);
 
-        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturnUsing(function () {
-            return new Config([
-                'middlewares' => [
-                    'http' => [
-                    ],
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturnUsing(fn() => new Config([
+            'middlewares' => [
+                'http' => [
                 ],
-            ]);
-        });
+            ],
+        ]));
         return $container;
     }
 }

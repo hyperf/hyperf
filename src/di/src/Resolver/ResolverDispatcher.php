@@ -81,7 +81,7 @@ class ResolverDispatcher implements ResolverInterface
         return match (true) {
             $definition instanceof ObjectDefinition => $this->objectResolver ??= new ObjectResolver($this->container, $this),
             $definition instanceof FactoryDefinition => $this->factoryResolver ??= new FactoryResolver($this->container, $this),
-            default => throw new RuntimeException('No definition resolver was configured for definition of type ' . get_class($definition)),
+            default => throw new RuntimeException('No definition resolver was configured for definition of type ' . $definition::class),
         };
     }
 }

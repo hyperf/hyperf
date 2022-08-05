@@ -63,20 +63,6 @@ class Blueprint
     protected $comment = '';
 
     /**
-     * The table the blueprint describes.
-     *
-     * @var string
-     */
-    protected $table;
-
-    /**
-     * The prefix of the table.
-     *
-     * @var string
-     */
-    protected $prefix;
-
-    /**
      * The columns that should be added to the table.
      *
      * @var \Hyperf\Database\Schema\ColumnDefinition[]
@@ -96,11 +82,8 @@ class Blueprint
      * @param string $table
      * @param string $prefix
      */
-    public function __construct($table, Closure $callback = null, $prefix = '')
+    public function __construct(protected $table, Closure $callback = null, protected $prefix = '')
     {
-        $this->table = $table;
-        $this->prefix = $prefix;
-
         if (! is_null($callback)) {
             $callback($this);
         }
@@ -1149,9 +1132,7 @@ class Blueprint
      */
     public function removeColumn($name)
     {
-        $this->columns = array_values(array_filter($this->columns, function ($c) use ($name) {
-            return $c['attributes']['name'] != $name;
-        }));
+        $this->columns = array_values(array_filter($this->columns, fn($c) => $c['attributes']['name'] != $name));
 
         return $this;
     }
@@ -1203,9 +1184,7 @@ class Blueprint
      */
     public function getAddedColumns()
     {
-        return array_filter($this->columns, function ($column) {
-            return ! $column->change;
-        });
+        return array_filter($this->columns, fn($column) => ! $column->change);
     }
 
     /**
@@ -1215,9 +1194,7 @@ class Blueprint
      */
     public function getChangedColumns()
     {
-        return array_filter($this->columns, function ($column) {
-            return (bool) $column->change;
-        });
+        return array_filter($this->columns, fn($column) => (bool) $column->change);
     }
 
     /**
@@ -1225,9 +1202,7 @@ class Blueprint
      */
     public function hasAutoIncrementColumn(): bool
     {
-        return ! is_null(collect($this->getAddedColumns())->first(function ($column) {
-            return $column->autoIncrement === true;
-        }));
+        return ! is_null(collect($this->getAddedColumns())->first(fn($column) => $column->autoIncrement === true));
     }
 
     /**
@@ -1239,11 +1214,9 @@ class Blueprint
             return [];
         }
 
-        return collect($this->getAddedColumns())->mapWithKeys(function ($column) {
-            return $column->autoIncrement === true
-                ? [$column->name => $column->get('startingValue', $column->get('from'))]
-                : [$column->name => null];
-        })->filter()->all();
+        return collect($this->getAddedColumns())->mapWithKeys(fn($column) => $column->autoIncrement === true
+            ? [$column->name => $column->get('startingValue', $column->get('from'))]
+            : [$column->name => null])->filter()->all();
     }
 
     /**
@@ -1314,9 +1287,7 @@ class Blueprint
      */
     protected function commandsNamed(array $names)
     {
-        return collect($this->commands)->filter(function ($command) use ($names) {
-            return in_array($command->name, $names);
-        });
+        return collect($this->commands)->filter(fn($command) => in_array($command->name, $names));
     }
 
     /**
@@ -1372,9 +1343,7 @@ class Blueprint
      */
     protected function creating()
     {
-        return collect($this->commands)->contains(function ($command) {
-            return $command->name === 'create';
-        });
+        return collect($this->commands)->contains(fn($command) => $command->name === 'create');
     }
 
     /**

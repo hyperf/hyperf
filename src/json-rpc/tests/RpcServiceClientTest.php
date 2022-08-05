@@ -61,11 +61,11 @@ class RpcServiceClientTest extends TestCase
             ->andReturnSelf();
         $transporter->shouldReceive('send')
             ->andReturnUsing(function ($data) {
-                $id = json_decode($data, true)['id'];
+                $id = json_decode($data, true, 512, JSON_THROW_ON_ERROR)['id'];
                 return json_encode([
                     'id' => $id,
                     'result' => 3,
-                ]);
+                ], JSON_THROW_ON_ERROR);
             });
         $service = new CalculatorProxyServiceClient($container, CalculatorServiceInterface::class, 'jsonrpc');
         $ret = $service->add(1, 2);
@@ -82,11 +82,11 @@ class RpcServiceClientTest extends TestCase
             ->andReturnSelf();
         $transporter->shouldReceive('send')
             ->andReturnUsing(function ($data) {
-                $id = json_decode($data, true)['id'];
+                $id = json_decode($data, true, 512, JSON_THROW_ON_ERROR)['id'];
                 return json_encode([
                     'id' => $id,
                     'result' => ['params' => [1, 2], 'sum' => 3],
-                ]);
+                ], JSON_THROW_ON_ERROR);
             });
         $service = new CalculatorProxyServiceClient($container, CalculatorServiceInterface::class, 'jsonrpc');
         $ret = $service->array(1, 2);
@@ -103,11 +103,11 @@ class RpcServiceClientTest extends TestCase
             ->andReturnSelf();
         $transporter->shouldReceive('send')
             ->andReturnUsing(function ($data) {
-                $id = json_decode($data, true)['id'];
+                $id = json_decode($data, true, 512, JSON_THROW_ON_ERROR)['id'];
                 return json_encode([
                     'id' => $id,
                     'result' => null,
-                ]);
+                ], JSON_THROW_ON_ERROR);
             });
         $service = new CalculatorProxyServiceClient($container, CalculatorServiceInterface::class, 'jsonrpc');
         $ret = $service->null();
@@ -123,11 +123,11 @@ class RpcServiceClientTest extends TestCase
             ->andReturnSelf();
         $transporter->shouldReceive('send')
             ->andReturnUsing(function ($data) {
-                $id = json_decode($data, true)['id'];
+                $id = json_decode($data, true, 512, JSON_THROW_ON_ERROR)['id'];
                 return json_encode([
                     'id' => $id,
                     'result' => 3,
-                ]);
+                ], JSON_THROW_ON_ERROR);
             });
         $factory = new ProxyFactory();
         $proxyClass = $factory->createProxy(CalculatorServiceInterface::class);
@@ -147,11 +147,11 @@ class RpcServiceClientTest extends TestCase
         $uniqid = uniqid();
         $transporter->shouldReceive('send')
             ->andReturnUsing(function ($data) use ($uniqid) {
-                $id = json_decode($data, true)['id'];
+                $id = json_decode($data, true, 512, JSON_THROW_ON_ERROR)['id'];
                 return json_encode([
                     'id' => $id,
                     'result' => $uniqid,
-                ]);
+                ], JSON_THROW_ON_ERROR);
             });
         $factory = new ProxyFactory();
         $proxyClass = $factory->createProxy(CalculatorServiceInterface::class);
@@ -170,11 +170,11 @@ class RpcServiceClientTest extends TestCase
             ->andReturnSelf();
         $transporter->shouldReceive('send')
             ->andReturnUsing(function ($data) {
-                $id = json_decode($data, true)['id'];
+                $id = json_decode($data, true, 512, JSON_THROW_ON_ERROR)['id'];
                 return json_encode([
                     'id' => $id,
                     'result' => null,
-                ]);
+                ], JSON_THROW_ON_ERROR);
             });
         $factory = new ProxyFactory();
         $proxyClass = $factory->createProxy(CalculatorServiceInterface::class);
@@ -193,11 +193,11 @@ class RpcServiceClientTest extends TestCase
             ->andReturnSelf();
         $transporter->shouldReceive('send')
             ->andReturnUsing(function ($data) {
-                $data = json_decode($data, true);
+                $data = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
                 return json_encode([
                     'id' => $data['id'],
                     'result' => $data['params'],
-                ]);
+                ], JSON_THROW_ON_ERROR);
             });
         $factory = new ProxyFactory();
         $proxyClass = $factory->createProxy(CalculatorServiceInterface::class);
@@ -248,11 +248,11 @@ class RpcServiceClientTest extends TestCase
             ->andReturnSelf();
         $transporter->shouldReceive('send')
             ->andReturnUsing(function ($data) {
-                $id = json_decode($data, true)['id'];
+                $id = json_decode($data, true, 512, JSON_THROW_ON_ERROR)['id'];
                 return json_encode([
                     'id' => $id,
                     'result' => ['value' => 3],
-                ]);
+                ], JSON_THROW_ON_ERROR);
             });
         $factory = new ProxyFactory();
         $proxyClass = $factory->createProxy(CalculatorServiceInterface::class);
@@ -271,34 +271,28 @@ class RpcServiceClientTest extends TestCase
             Serializer::class => SerializerFactory::class,
             DataFormatter::class => NormalizeDataFormatter::class,
             MethodDefinitionCollectorInterface::class => MethodDefinitionCollector::class,
-            StdoutLoggerInterface::class => function () {
-                return new Logger('App', [new StreamHandler('php://stderr')]);
-            },
-            ConfigInterface::class => function () {
-                return new Config([
-                    'services' => [
-                        'consumers' => [
-                            [
-                                'name' => CalculatorServiceInterface::class,
-                                'nodes' => [
-                                    ['host' => '0.0.0.0', 'port' => 1234],
-                                ],
+            StdoutLoggerInterface::class => fn() => new Logger('App', [new StreamHandler('php://stderr')]),
+            ConfigInterface::class => fn() => new Config([
+                'services' => [
+                    'consumers' => [
+                        [
+                            'name' => CalculatorServiceInterface::class,
+                            'nodes' => [
+                                ['host' => '0.0.0.0', 'port' => 1234],
                             ],
                         ],
                     ],
-                    'protocols' => [
-                        'jsonrpc' => [
-                            'packer' => JsonPacker::class,
-                            'transporter' => JsonRpcTransporter::class,
-                            'path-generator' => PathGenerator::class,
-                            'data-formatter' => DataFormatter::class,
-                        ],
+                ],
+                'protocols' => [
+                    'jsonrpc' => [
+                        'packer' => JsonPacker::class,
+                        'transporter' => JsonRpcTransporter::class,
+                        'path-generator' => PathGenerator::class,
+                        'data-formatter' => DataFormatter::class,
                     ],
-                ]);
-            },
-            JsonRpcTransporter::class => function () use ($transporter) {
-                return $transporter;
-            },
+                ],
+            ]),
+            JsonRpcTransporter::class => fn() => $transporter,
             IdGeneratorInterface::class => UniqidIdGenerator::class,
         ]));
         ApplicationContext::setContainer($container);

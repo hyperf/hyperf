@@ -16,11 +16,8 @@ use HyperfTest\Event\Event\PriorityEvent;
 
 class PriorityListener implements ListenerInterface
 {
-    protected $id;
-
-    public function __construct($id)
+    public function __construct(protected $id)
     {
-        $this->id = $id;
     }
 
     public function listen(): array

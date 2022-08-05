@@ -139,34 +139,18 @@ class ContainerStub
         $container->shouldReceive('get')->with('db.connector.mysql')->andReturn(new MySqlConnector());
         $container->shouldReceive('has')->andReturn(true);
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn(new Frequency());
-        $container->shouldReceive('make')->with(DbPool::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($container) {
-            return new DbPool($container, $args['name']);
-        });
+        $container->shouldReceive('make')->with(DbPool::class, Mockery::any())->andReturnUsing(fn($_, $args) => new DbPool($container, $args['name']));
 
         ApplicationContext::setContainer($container);
-        $container->shouldReceive('make')->with(LuaManager::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new LuaManager(...$args);
-        });
-        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new Channel($args['size']);
-        });
-        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new PoolOption(...array_values($args));
-        });
+        $container->shouldReceive('make')->with(LuaManager::class, Mockery::any())->andReturnUsing(fn($_, $args) => new LuaManager(...$args));
+        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(fn($_, $args) => new Channel($args['size']));
+        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(fn($_, $args) => new PoolOption(...array_values($args)));
         $container->shouldReceive('make')->with(\Hyperf\Redis\Frequency::class, Mockery::any())->andReturn(new \Hyperf\Redis\Frequency());
-        $container->shouldReceive('make')->with(RedisPool::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($container) {
-            return new RedisPool($container, $args['name']);
-        });
+        $container->shouldReceive('make')->with(RedisPool::class, Mockery::any())->andReturnUsing(fn($_, $args) => new RedisPool($container, $args['name']));
         $poolFactory = new \Hyperf\Redis\Pool\PoolFactory($container);
-        $container->shouldReceive('make')->with(RedisProxy::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($poolFactory) {
-            return new RedisProxy($poolFactory, $args['pool']);
-        });
-        $container->shouldReceive('make')->with(RedisHandler::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($container) {
-            return new RedisHandler($container, $args['config']);
-        });
-        $container->shouldReceive('make')->with(RedisStringHandler::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($container) {
-            return new RedisStringHandler($container, $args['config']);
-        });
+        $container->shouldReceive('make')->with(RedisProxy::class, Mockery::any())->andReturnUsing(fn($_, $args) => new RedisProxy($poolFactory, $args['pool']));
+        $container->shouldReceive('make')->with(RedisHandler::class, Mockery::any())->andReturnUsing(fn($_, $args) => new RedisHandler($container, $args['config']));
+        $container->shouldReceive('make')->with(RedisStringHandler::class, Mockery::any())->andReturnUsing(fn($_, $args) => new RedisStringHandler($container, $args['config']));
         $container->shouldReceive('get')->with(Manager::class)->andReturn(new Manager($container));
         $container->shouldReceive('get')->with(PhpSerializerPacker::class)->andReturn(new PhpSerializerPacker());
         $container->shouldReceive('get')->with(EagerLoader::class)->andReturn(new EagerLoader());

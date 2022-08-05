@@ -41,13 +41,11 @@ class ResourceTest extends TestCase
 {
     public function testResourcesMayBeConvertedToJson()
     {
-        $this->http(function () {
-            return (new PostResource(new Post([
-                'id' => 5,
-                'title' => 'Test Title',
-                'abstract' => 'Test abstract',
-            ])))->toResponse();
-        })->assertJson([
+        $this->http(fn() => (new PostResource(new Post([
+            'id' => 5,
+            'title' => 'Test Title',
+            'abstract' => 'Test abstract',
+        ])))->toResponse())->assertJson([
             'data' => [
                 'id' => 5,
                 'title' => 'Test Title',
@@ -69,11 +67,9 @@ class ResourceTest extends TestCase
 
     public function testAnObjectsMayBeConvertedToJson()
     {
-        $this->http(function () {
-            return (ObjectResource::make(
-                (object) ['first_name' => 'Bob', 'age' => 40]
-            ))->toResponse();
-        })->assertJson([
+        $this->http(fn() => (ObjectResource::make(
+            (object) ['first_name' => 'Bob', 'age' => 40]
+        ))->toResponse())->assertJson([
             'data' => [
                 'name' => 'Bob',
                 'age' => 40,
@@ -105,12 +101,10 @@ class ResourceTest extends TestCase
 
     public function testResourcesMayHaveNoWrap()
     {
-        $this->http(function () {
-            return (new PostResourceWithoutWrap(new Post([
-                'id' => 5,
-                'title' => 'Test Title',
-            ])))->toResponse();
-        })->assertJson([
+        $this->http(fn() => (new PostResourceWithoutWrap(new Post([
+            'id' => 5,
+            'title' => 'Test Title',
+        ])))->toResponse())->assertJson([
             'id' => 5,
             'title' => 'Test Title',
             'custom' => true,
@@ -119,11 +113,9 @@ class ResourceTest extends TestCase
 
     public function testResourcesMayHaveOptionalValues()
     {
-        $this->http(function () {
-            return (new PostResourceWithOptionalData(new Post([
-                'id' => 5,
-            ])))->toResponse();
-        })->assertJson([
+        $this->http(fn() => (new PostResourceWithOptionalData(new Post([
+            'id' => 5,
+        ])))->toResponse())->assertJson([
             'data' => [
                 'id' => 5,
                 'second' => 'value',
@@ -136,11 +128,9 @@ class ResourceTest extends TestCase
 
     public function testResourcesMayHaveOptionalMerges()
     {
-        $this->http(function () {
-            return (new PostResourceWithOptionalMerging(new Post([
-                'id' => 5,
-            ])))->toResponse();
-        })->assertJson([
+        $this->http(fn() => (new PostResourceWithOptionalMerging(new Post([
+            'id' => 5,
+        ])))->toResponse())->assertJson([
             'data' => [
                 'id' => 5,
                 'second' => 'value',
@@ -150,12 +140,10 @@ class ResourceTest extends TestCase
 
     public function testResourcesMayHaveOptionalRelationships()
     {
-        $this->http(function () {
-            return (new PostResourceWithOptionalRelationship(new Post([
-                'id' => 5,
-                'title' => 'Test Title',
-            ])))->toResponse();
-        })->assertJson([
+        $this->http(fn() => (new PostResourceWithOptionalRelationship(new Post([
+            'id' => 5,
+            'title' => 'Test Title',
+        ])))->toResponse())->assertJson([
             'data' => [
                 'id' => 5,
             ],
@@ -204,11 +192,9 @@ class ResourceTest extends TestCase
 
     public function testResourcesMayHaveOptionalRelationshipsWithDefaultValues()
     {
-        $this->http(function () {
-            return (new AuthorResourceWithOptionalRelationship(new Author([
-                'name' => 'jrrmartin',
-            ])))->toResponse();
-        })->assertJson([
+        $this->http(fn() => (new AuthorResourceWithOptionalRelationship(new Author([
+            'name' => 'jrrmartin',
+        ])))->toResponse())->assertJson([
             'data' => [
                 'name' => 'jrrmartin',
                 'posts_count' => 'not loaded',
@@ -253,12 +239,10 @@ class ResourceTest extends TestCase
 
     public function testResourcesMayCustomizeExtraData()
     {
-        $this->http(function () {
-            return (new PostResourceWithExtraData(new Post([
-                'id' => 5,
-                'title' => 'Test Title',
-            ])))->toResponse();
-        })->assertJson([
+        $this->http(fn() => (new PostResourceWithExtraData(new Post([
+            'id' => 5,
+            'title' => 'Test Title',
+        ])))->toResponse())->assertJson([
             'data' => [
                 'id' => 5,
                 'title' => 'Test Title',
@@ -270,12 +254,10 @@ class ResourceTest extends TestCase
 
     public function testResourcesMayCustomizeExtraDataWhenBuildingResponse()
     {
-        $this->http(function () {
-            return (new PostResourceWithExtraData(new Post([
-                'id' => 5,
-                'title' => 'Test Title',
-            ])))->additional(['baz' => 'qux'])->toResponse();
-        })->assertJson([
+        $this->http(fn() => (new PostResourceWithExtraData(new Post([
+            'id' => 5,
+            'title' => 'Test Title',
+        ])))->additional(['baz' => 'qux'])->toResponse())->assertJson([
             'data' => [
                 'id' => 5,
                 'title' => 'Test Title',
@@ -288,12 +270,10 @@ class ResourceTest extends TestCase
 
     public function testCollectionsAreNotDoubledWrapped()
     {
-        $this->http(function () {
-            return (new PostCollectionResource(collect([new Post([
-                'id' => 5,
-                'title' => 'Test Title',
-            ])])))->toResponse();
-        })->assertJson([
+        $this->http(fn() => (new PostCollectionResource(collect([new Post([
+            'id' => 5,
+            'title' => 'Test Title',
+        ])])))->toResponse())->assertJson([
             'data' => [
                 [
                     'id' => 5,
@@ -343,12 +323,10 @@ class ResourceTest extends TestCase
 
     public function testToJsonMayBeLeftOffOfSingleResource()
     {
-        $this->http(function () {
-            return (new ReallyEmptyPostResource(new Post([
-                'id' => 5,
-                'title' => 'Test Title',
-            ])))->toResponse();
-        })->assertJson([
+        $this->http(fn() => (new ReallyEmptyPostResource(new Post([
+            'id' => 5,
+            'title' => 'Test Title',
+        ])))->toResponse())->assertJson([
             'data' => [
                 'id' => 5,
                 'title' => 'Test Title',
@@ -394,9 +372,7 @@ class ResourceTest extends TestCase
             ],
         ];
 
-        $this->http(function () use ($data) {
-            return (new ResourceWithPreservedKeys($data))->toResponse();
-        })->assertJson(['data' => $data]);
+        $this->http(fn() => (new ResourceWithPreservedKeys($data))->toResponse())->assertJson(['data' => $data]);
     }
 
     public function testKeysArePreservedInAnAnonymousCollectionIfTheResourceIsFlaggedToPreserveKeys()
@@ -419,9 +395,7 @@ class ResourceTest extends TestCase
             ],
         ])->keyBy->id;
 
-        $this->http(function () use ($data) {
-            return ResourceWithPreservedKeys::collection($data)->toResponse();
-        })->assertJson(['data' => $data->toArray()]);
+        $this->http(fn() => ResourceWithPreservedKeys::collection($data)->toResponse())->assertJson(['data' => $data->toArray()]);
     }
 
     public function testLeadingMergeKeyedValueIsMergedCorrectly()
@@ -730,12 +704,8 @@ class ResourceTest extends TestCase
 
     private function assertJsonResourceResponse($data, $expectedJson)
     {
-        $this->http(function () use ($data) {
-            return (new JsonResource($data))->toResponse();
-        })->assertJson($expectedJson);
+        $this->http(fn() => (new JsonResource($data))->toResponse())->assertJson($expectedJson);
 
-        $this->http(function () use ($data) {
-            return new JsonResource($data);
-        })->assertJson($expectedJson);
+        $this->http(fn() => new JsonResource($data))->assertJson($expectedJson);
     }
 }

@@ -13,16 +13,7 @@ namespace HyperfTest\Di\Stub;
 
 class Bar
 {
-    public $demo;
-
-    public $id;
-
-    public $name;
-
-    public function __construct(string $id, Demo $demo, $name = null)
+    public function __construct(public string $id, public Demo $demo, public $name = null)
     {
-        $this->demo = $demo;
-        $this->id = $id;
-        $this->name = $name;
     }
 }

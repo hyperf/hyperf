@@ -16,10 +16,7 @@ use Hyperf\GrpcClient\Exception\GrpcClientException;
 
 class ClientStreamingCall extends StreamingCall
 {
-    /**
-     * @var bool
-     */
-    private $received = false;
+    private bool $received = false;
 
     public function recv(float $timeout = GrpcClient::GRPC_DEFAULT_TIMEOUT)
     {

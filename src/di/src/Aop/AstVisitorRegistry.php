@@ -28,7 +28,7 @@ class AstVisitorRegistry
         if (method_exists($queue, $name)) {
             return $queue->{$name}(...$arguments);
         }
-        throw new \InvalidArgumentException('Invalid method for ' . __CLASS__);
+        throw new \InvalidArgumentException('Invalid method for ' . self::class);
     }
 
     public static function insert($value, $priority = 0)

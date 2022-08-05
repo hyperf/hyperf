@@ -54,7 +54,7 @@ class Agent extends Client implements AgentInterface
     public function registerCheck($check): ConsulResponse
     {
         $params = [
-            'body' => json_encode($check),
+            'body' => json_encode($check, JSON_THROW_ON_ERROR),
         ];
 
         return $this->request('PUT', '/v1/agent/check/register', $params);
@@ -95,7 +95,7 @@ class Agent extends Client implements AgentInterface
     public function registerService(array $service): ConsulResponse
     {
         $params = [
-            'body' => json_encode($service),
+            'body' => json_encode($service, JSON_THROW_ON_ERROR),
         ];
 
         return $this->request('PUT', '/v1/agent/service/register', $params);

@@ -22,9 +22,9 @@ class Future
      */
     private $encode;
 
-    private string $id;
+    private string $id = '';
 
-    private bool $sent;
+    private bool $sent = false;
 
     public function __construct(
         private SocketIO $socketIO,
@@ -36,9 +36,7 @@ class Future
         private int $opcode,
         private int $flag
     ) {
-        $this->id = '';
         $this->encode = $encode;
-        $this->sent = false;
     }
 
     public function __destruct()

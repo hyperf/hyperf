@@ -36,7 +36,7 @@ class WeightedRandom extends AbstractLoadBalancer
             $lastWeight = $weight;
         }
         if ($totalWeight > 0 && ! $isSameWeight) {
-            $offset = mt_rand(0, $totalWeight - 1);
+            $offset = random_int(0, $totalWeight - 1);
             foreach ($nodes as $node) {
                 $offset -= $node->weight;
                 if ($offset < 0) {

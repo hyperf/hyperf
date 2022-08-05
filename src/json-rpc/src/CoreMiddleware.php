@@ -20,12 +20,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 {
-    protected ResponseBuilder $responseBuilder;
-
-    public function __construct(ContainerInterface $container, Protocol $protocol, ResponseBuilder $builder, string $serverName)
+    public function __construct(ContainerInterface $container, Protocol $protocol, protected ResponseBuilder $responseBuilder, string $serverName)
     {
         parent::__construct($container, $protocol, $serverName);
-        $this->responseBuilder = $builder;
     }
 
     protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request): mixed

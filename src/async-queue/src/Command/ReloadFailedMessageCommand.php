@@ -21,11 +21,8 @@ use Symfony\Component\Console\Input\InputOption;
 #[Command]
 class ReloadFailedMessageCommand extends HyperfCommand
 {
-    protected ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         parent::__construct('queue:reload');
     }
 

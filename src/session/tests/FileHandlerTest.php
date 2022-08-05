@@ -34,7 +34,7 @@ class FileHandlerTest extends TestCase
 
         // Useless methods of FileHandler.
         $this->assertTrue($handler->open('', ''));
-        $this->assertTrue($handler->close('', ''));
+        $this->assertTrue($handler->close());
 
         $id = Str::random(40);
         $data = [
@@ -80,9 +80,7 @@ class FileHandlerTest extends TestCase
     {
         $fs = \Mockery::mock(Filesystem::class . '[lastModified]');
         $chan = new Channel(1);
-        $fs->shouldReceive('lastModified')->withAnyArgs()->once()->andReturnUsing(function (string $path) {
-            return 0;
-        });
+        $fs->shouldReceive('lastModified')->withAnyArgs()->once()->andReturnUsing(fn(string $path) => 0);
         $fs->shouldReceive('lastModified')->withAnyArgs()->once()->andReturnUsing(function (string $path) use ($chan) {
             $t = filemtime($path);
             $chan->push($t);

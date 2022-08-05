@@ -16,16 +16,10 @@ use Hyperf\Contract\UnCompressInterface;
 class ModelMeta implements UnCompressInterface
 {
     /**
-     * @var int|string
-     */
-    public $key;
-
-    /**
      * @param int|string $key
      */
-    public function __construct(public string $class, $key)
+    public function __construct(public string $class, public $key)
     {
-        $this->key = $key;
     }
 
     public function uncompress()

@@ -40,99 +40,40 @@ use function filemtime;
 class TypeMapper implements TypeMapperInterface
 {
     /**
-     * @var string
-     */
-    private $namespace;
-
-    /**
-     * @var AnnotationReader
-     */
-    private $annotationReader;
-
-    /**
-     * @var CacheInterface
-     */
-    private $cache;
-
-    /**
-     * @var null|int
-     */
-    private $globTtl;
-
-    /**
      * @var array<string,string> Maps a domain class to the GraphQL type annotated class
      */
-    private $mapClassToTypeArray = [];
+    private array $mapClassToTypeArray = [];
 
     /**
      * @var array<string,array<string,string>> Maps a domain class to one or many type extenders (with the ExtendType annotation) The array of type extenders has a key and value equals to FQCN
      */
-    private $mapClassToExtendTypeArray = [];
+    private array $mapClassToExtendTypeArray = [];
 
     /**
      * @var array<string,string> Maps a GraphQL type name to the GraphQL type annotated class
      */
-    private $mapNameToType = [];
+    private array $mapNameToType = [];
 
     /**
      * @var array<string,array<string,string>> Maps a GraphQL type name to one or many type extenders (with the ExtendType annotation) The array of type extenders has a key and value equals to FQCN
      */
-    private $mapNameToExtendType = [];
+    private array $mapNameToExtendType = [];
 
     /**
      * @var array<string,string[]> Maps a domain class to the factory method that creates the input type in the form [classname, methodname]
      */
-    private $mapClassToFactory = [];
+    private array $mapClassToFactory = [];
 
     /**
      * @var array<string,string[]> Maps a GraphQL input type name to the factory method that creates the input type in the form [classname, methodname]
      */
-    private $mapInputNameToFactory = [];
+    private array $mapInputNameToFactory = [];
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private bool $fullMapComputed = false;
 
-    /**
-     * @var TypeGenerator
-     */
-    private $typeGenerator;
+    private bool $fullMapClassToExtendTypeArrayComputed = false;
 
-    /**
-     * @var null|int
-     */
-    private $mapTtl;
-
-    /**
-     * @var bool
-     */
-    private $fullMapComputed = false;
-
-    /**
-     * @var bool
-     */
-    private $fullMapClassToExtendTypeArrayComputed = false;
-
-    /**
-     * @var bool
-     */
-    private $fullMapNameToExtendTypeArrayComputed = false;
-
-    /**
-     * @var NamingStrategyInterface
-     */
-    private $namingStrategy;
-
-    /**
-     * @var InputTypeGenerator
-     */
-    private $inputTypeGenerator;
-
-    /**
-     * @var InputTypeUtils
-     */
-    private $inputTypeUtils;
+    private bool $fullMapNameToExtendTypeArrayComputed = false;
 
     /**
      * The array of globbed classes.
@@ -144,32 +85,10 @@ class TypeMapper implements TypeMapperInterface
     private $classes;
 
     /**
-     * @var bool
-     */
-    private $recursive;
-
-    /**
-     * @var LockFactory
-     */
-    private $lockFactory;
-
-    /**
      * @param string $namespace The namespace that contains the GraphQL types (they must have a `@Type` annotation)
      */
-    public function __construct(string $namespace, TypeGenerator $typeGenerator, InputTypeGenerator $inputTypeGenerator, InputTypeUtils $inputTypeUtils, ContainerInterface $container, AnnotationReader $annotationReader, NamingStrategyInterface $namingStrategy, LockFactory $lockFactory, CacheInterface $cache, ?int $globTtl = 2, ?int $mapTtl = null, bool $recursive = true)
+    public function __construct(private string $namespace, private TypeGenerator $typeGenerator, private InputTypeGenerator $inputTypeGenerator, private InputTypeUtils $inputTypeUtils, private ContainerInterface $container, private AnnotationReader $annotationReader, private NamingStrategyInterface $namingStrategy, private LockFactory $lockFactory, private CacheInterface $cache, private ?int $globTtl = 2, private ?int $mapTtl = null, private bool $recursive = true)
     {
-        $this->namespace = $namespace;
-        $this->typeGenerator = $typeGenerator;
-        $this->container = $container;
-        $this->annotationReader = $annotationReader;
-        $this->namingStrategy = $namingStrategy;
-        $this->cache = $cache;
-        $this->globTtl = $globTtl;
-        $this->mapTtl = $mapTtl;
-        $this->inputTypeGenerator = $inputTypeGenerator;
-        $this->inputTypeUtils = $inputTypeUtils;
-        $this->recursive = $recursive;
-        $this->lockFactory = $lockFactory;
     }
 
     /**

@@ -17,20 +17,8 @@ use Hyperf\Contract\UnCompressInterface;
 
 class DemoModel implements CompressInterface
 {
-    public $id;
-
-    public $name;
-
-    public $gendar;
-
-    public $signature;
-
-    public function __construct($id, $name, $gendar, $signature)
+    public function __construct(public $id, public $name, public $gendar, public $signature)
     {
-        $this->id = $id;
-        $this->name = $name;
-        $this->gendar = $gendar;
-        $this->signature = $signature;
     }
 
     public function compress(): UnCompressInterface

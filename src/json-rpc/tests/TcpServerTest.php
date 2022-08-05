@@ -155,16 +155,10 @@ class TcpServerTest extends TestCase
         $container->shouldReceive('make')->with(JsonEofPacker::class, Mockery::any())->andReturn(new JsonEofPacker());
         $container->shouldReceive('get')->with(DataFormatter::class)->andReturn(new DataFormatter($context));
         $container->shouldReceive('get')->with(PathGenerator::class)->andReturn(new PathGenerator());
-        $container->shouldReceive('make')->with(ResponseBuilder::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new ResponseBuilder(...array_values($args));
-        });
-        $container->shouldReceive('make')->with(DispatcherFactory::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new DispatcherFactory(Mockery::mock(EventDispatcherInterface::class), ...array_values($args));
-        });
+        $container->shouldReceive('make')->with(ResponseBuilder::class, Mockery::any())->andReturnUsing(fn($_, $args) => new ResponseBuilder(...array_values($args)));
+        $container->shouldReceive('make')->with(DispatcherFactory::class, Mockery::any())->andReturnUsing(fn($_, $args) => new DispatcherFactory(Mockery::mock(EventDispatcherInterface::class), ...array_values($args)));
         $container->shouldReceive('get')->with(NormalizerInterface::class)->andReturn(new SimpleNormalizer());
-        $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)->andReturnUsing(function () {
-            return Mockery::mock(MethodDefinitionCollectorInterface::class);
-        });
+        $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)->andReturnUsing(fn() => Mockery::mock(MethodDefinitionCollectorInterface::class));
         $container->shouldReceive('get')->with(ClosureDefinitionCollectorInterface::class)->andReturn(null);
         return $container;
     }

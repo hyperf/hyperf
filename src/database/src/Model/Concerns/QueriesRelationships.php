@@ -285,7 +285,7 @@ trait QueriesRelationships
             // Finally, we will make the proper column alias to the query and run this sub-select on
             // the query builder. Then, we will return the builder instance back to the developer
             // for further constraint chaining that needs to take place on the query as needed.
-            $alias = $alias ?? Str::snake(
+            $alias ??= Str::snake(
                 preg_replace('/[^[:alnum:][:space:]_]/u', '', "{$name} {$function} {$column}")
             );
 
@@ -397,9 +397,7 @@ trait QueriesRelationships
                     $belongsTo = $this->getBelongsToRelation($relation, $type);
 
                     if ($callback) {
-                        $callback = function ($query) use ($callback, $type) {
-                            return $callback($query, $type);
-                        };
+                        $callback = fn($query) => $callback($query, $type);
                     }
 
                     $query->where($relation->getMorphType(), '=', (new $type())->getMorphClass())
@@ -501,9 +499,7 @@ trait QueriesRelationships
      */
     protected function getRelationWithoutConstraints($relation)
     {
-        return Relation::noConstraints(function () use ($relation) {
-            return $this->getModel()->{$relation}();
-        });
+        return Relation::noConstraints(fn() => $this->getModel()->{$relation}());
     }
 
     /**
@@ -526,13 +522,11 @@ trait QueriesRelationships
      */
     protected function getBelongsToRelation(MorphTo $relation, $type)
     {
-        $belongsTo = Relation::noConstraints(function () use ($relation, $type) {
-            return $this->model->belongsTo(
-                $type,
-                $relation->getForeignKeyName(),
-                $relation->getOwnerKeyName()
-            );
-        });
+        $belongsTo = Relation::noConstraints(fn() => $this->model->belongsTo(
+            $type,
+            $relation->getForeignKeyName(),
+            $relation->getOwnerKeyName()
+        ));
 
         $belongsTo->getQuery()->mergeConstraintsFrom($relation->getQuery());
 

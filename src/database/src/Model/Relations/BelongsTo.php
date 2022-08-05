@@ -21,32 +21,6 @@ class BelongsTo extends Relation
     use SupportsDefaultModels;
 
     /**
-     * The child model instance of the relation.
-     */
-    protected $child;
-
-    /**
-     * The foreign key of the parent model.
-     *
-     * @var string
-     */
-    protected $foreignKey;
-
-    /**
-     * The associated key on the parent model.
-     *
-     * @var string
-     */
-    protected $ownerKey;
-
-    /**
-     * The name of the relationship.
-     *
-     * @var string
-     */
-    protected $relationName;
-
-    /**
      * The count of self joins.
      *
      * @var int
@@ -60,17 +34,11 @@ class BelongsTo extends Relation
      * @param string $ownerKey
      * @param string $relationName
      */
-    public function __construct(Builder $query, Model $child, $foreignKey, $ownerKey, $relationName)
+    public function __construct(Builder $query, /**
+     * The child model instance of the relation.
+     */
+    protected Model $child, protected $foreignKey, protected $ownerKey, protected $relationName)
     {
-        $this->ownerKey = $ownerKey;
-        $this->relationName = $relationName;
-        $this->foreignKey = $foreignKey;
-
-        // In the underlying base relationship class, this variable is referred to as
-        // the "parent" since most relationships are not inversed. But, since this
-        // one is we will create a "child" variable for much better readability.
-        $this->child = $child;
-
         parent::__construct($query, $child);
     }
 

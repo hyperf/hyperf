@@ -134,11 +134,8 @@ class ResponseTest extends TestCase
 
         // Xmlable
         $xmlable = new class($expected) implements Xmlable {
-            private $result;
-
-            public function __construct($result)
+            public function __construct(private $result)
             {
-                $this->result = $result;
             }
 
             public function __toString(): string

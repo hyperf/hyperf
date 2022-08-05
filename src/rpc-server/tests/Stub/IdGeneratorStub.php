@@ -13,14 +13,8 @@ namespace HyperfTest\RpcServer\Stub;
 
 class IdGeneratorStub
 {
-    /**
-     * @var string
-     */
-    public $prefix;
-
-    public function __construct(string $prefix)
+    public function __construct(public string $prefix)
     {
-        $this->prefix = $prefix;
     }
 
     public function generate(): string

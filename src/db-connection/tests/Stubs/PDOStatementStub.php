@@ -15,11 +15,8 @@ use PDO;
 
 class PDOStatementStub extends \PDOStatement
 {
-    public $statement;
-
-    public function __construct($statement)
+    public function __construct(public $statement)
     {
-        $this->statement = $statement;
     }
 
     public function execute($input_parameters = null)
@@ -62,7 +59,7 @@ class PDOStatementStub extends \PDOStatement
         return [];
     }
 
-    public function fetchObject($class_name = 'stdClass', $ctor_args = null)
+    public function fetchObject($class_name = \stdClass::class, $ctor_args = null)
     {
         parent::fetchObject($class_name, $ctor_args);
     }

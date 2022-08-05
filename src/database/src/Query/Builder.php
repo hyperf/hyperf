@@ -39,13 +39,6 @@ class Builder
     }
 
     /**
-     * The database connection instance.
-     *
-     * @var ConnectionInterface
-     */
-    public $connection;
-
-    /**
      * The database query grammar instance.
      *
      * @var \Hyperf\Database\Query\Grammars\Grammar
@@ -246,11 +239,13 @@ class Builder
      * @param \Hyperf\Database\Query\Processors\Processor $processor
      */
     public function __construct(
-        ConnectionInterface $connection,
+        /**
+         * The database connection instance.
+         */
+        public ConnectionInterface $connection,
         Grammar $grammar = null,
         Processor $processor = null
     ) {
-        $this->connection = $connection;
         $this->grammar = $grammar ?: $connection->getQueryGrammar();
         $this->processor = $processor ?: $connection->getPostProcessor();
     }
@@ -1874,9 +1869,7 @@ class Builder
      */
     public function get($columns = ['*']): Collection
     {
-        return collect($this->onceWithColumns(Arr::wrap($columns), function () {
-            return $this->processor->processSelect($this, $this->runSelect());
-        }));
+        return collect($this->onceWithColumns(Arr::wrap($columns), fn() => $this->processor->processSelect($this, $this->runSelect())));
     }
 
     /**
@@ -2010,9 +2003,7 @@ class Builder
         // First, we will need to select the results of the query accounting for the
         // given columns / key. Once we have the results, we will be able to take
         // the results and get the exact data that was requested for the query.
-        $queryResult = $this->onceWithColumns(is_null($key) ? [$column] : [$column, $key], function () {
-            return $this->processor->processSelect($this, $this->runSelect());
-        });
+        $queryResult = $this->onceWithColumns(is_null($key) ? [$column] : [$column, $key], fn() => $this->processor->processSelect($this, $this->runSelect()));
 
         if (empty($queryResult)) {
             return collect();
@@ -2177,7 +2168,7 @@ class Builder
         // If the result doesn't contain a decimal place, we will assume it is an int then
         // cast it to one. When it does we will cast it to a float since it needs to be
         // cast to the expected data type for the developers out of pure convenience.
-        return strpos((string) $result, '.') === false ? (int) $result : (float) $result;
+        return !str_contains((string) $result, '.') ? (int) $result : (float) $result;
     }
 
     /**
@@ -2721,9 +2712,7 @@ class Builder
      */
     protected function removeExistingOrdersFor($column)
     {
-        return Collection::make($this->orders)->reject(function ($order) use ($column) {
-            return isset($order['column']) ? $order['column'] === $column : false;
-        })->values()->all();
+        return Collection::make($this->orders)->reject(fn($order) => isset($order['column']) ? $order['column'] === $column : false)->values()->all();
     }
 
     /**
@@ -2785,9 +2774,7 @@ class Builder
      */
     protected function withoutSelectAliases(array $columns)
     {
-        return array_map(function ($column) {
-            return is_string($column) && ($aliasPosition = stripos($column, ' as ')) !== false ? substr($column, 0, $aliasPosition) : $column;
-        }, $columns);
+        return array_map(fn($column) => is_string($column) && ($aliasPosition = stripos($column, ' as ')) !== false ? substr($column, 0, $aliasPosition) : $column, $columns);
     }
 
     /**
@@ -2922,9 +2909,7 @@ class Builder
      */
     protected function cleanBindings(array $bindings)
     {
-        return array_values(array_filter($bindings, function ($binding) {
-            return ! $binding instanceof Expression;
-        }));
+        return array_values(array_filter($bindings, fn($binding) => ! $binding instanceof Expression));
     }
 
     /**
@@ -2971,7 +2956,7 @@ class Builder
             return $value;
         }
 
-        if (count($value) !== $limit) {
+        if ((is_countable($value) ? count($value) : 0) !== $limit) {
             throw new InvalidBindingException(sprintf(
                 'The value length of column %s is not equal with %d.',
                 (string) $column,

@@ -583,13 +583,13 @@ class Request implements RequestInterface
 
     protected function storeRequestProperty(string $key, mixed $value): static
     {
-        Context::set(__CLASS__ . '.properties.' . $key, value($value));
+        Context::set(self::class . '.properties.' . $key, value($value));
         return $this;
     }
 
     protected function getRequestProperty(string $key): mixed
     {
-        return Context::get(__CLASS__ . '.properties.' . $key);
+        return Context::get(self::class . '.properties.' . $key);
     }
 
     protected function call($name, $arguments)

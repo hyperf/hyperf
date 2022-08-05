@@ -15,7 +15,7 @@ use Hyperf\HttpMessage\Stream\StandardStream;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
-class UploadedFile extends \SplFileInfo implements UploadedFileInterface
+class UploadedFile extends \SplFileInfo implements UploadedFileInterface, \Stringable
 {
     /**
      * @var int[]
@@ -61,9 +61,9 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
-        return json_encode($this->toArray());
+        return (string) json_encode($this->toArray(), JSON_THROW_ON_ERROR);
     }
 
     /**

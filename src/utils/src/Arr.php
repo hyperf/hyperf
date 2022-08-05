@@ -434,10 +434,8 @@ class Arr
         if (is_null($seed)) {
             shuffle($array);
         } else {
-            srand($seed);
-            usort($array, function () {
-                return rand(-1, 1);
-            });
+            mt_srand($seed);
+            usort($array, fn() => random_int(-1, 1));
         }
         return $array;
     }

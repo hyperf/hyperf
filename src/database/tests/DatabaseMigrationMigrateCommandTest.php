@@ -109,10 +109,7 @@ class DatabaseMigrationMigrateCommandTest extends TestCase
 
 class ApplicationDatabaseMigrationStub
 {
-    /**
-     * @var \Psr\Container\ContainerInterface
-     */
-    private $container;
+    private \Psr\Container\ContainerInterface $container;
 
     public function __construct(array $data = [])
     {

@@ -84,8 +84,8 @@ class DatabaseModelCustomCastingTest extends TestCase
         $this->assertSame('117 Spencer St.', $model->toArray()['address_line_one']);
         $this->assertSame('My Childhood House', $model->toArray()['address_line_two']);
 
-        $this->assertSame('117 Spencer St.', json_decode($model->toJson(), true)['address_line_one']);
-        $this->assertSame('My Childhood House', json_decode($model->toJson(), true)['address_line_two']);
+        $this->assertSame('117 Spencer St.', json_decode($model->toJson(), true, 512, JSON_THROW_ON_ERROR)['address_line_one']);
+        $this->assertSame('My Childhood House', json_decode($model->toJson(), true, 512, JSON_THROW_ON_ERROR)['address_line_two']);
 
         $model->address = null;
 
@@ -183,11 +183,9 @@ class DatabaseModelCustomCastingTest extends TestCase
 
             return $obj;
         });
-        $mockery->shouldReceive('set')->withAnyArgs()->once()->andReturnUsing(function ($_, $key, $value, $attributes) {
-            return [
-                $key . '_origin' => $value->value + 1,
-            ];
-        });
+        $mockery->shouldReceive('set')->withAnyArgs()->once()->andReturnUsing(fn($_, $key, $value, $attributes) => [
+            $key . '_origin' => $value->value + 1,
+        ]);
         MockeryAttribute::$attribute = $mockery;
 
         $std = new \stdClass();
@@ -348,22 +346,19 @@ class JsonCaster implements CastsAttributes
 {
     public function get($model, $key, $value, $attributes)
     {
-        return json_decode($value, true);
+        return json_decode($value, true, 512, JSON_THROW_ON_ERROR);
     }
 
     public function set($model, $key, $value, $attributes)
     {
-        return json_encode($value);
+        return json_encode($value, JSON_THROW_ON_ERROR);
     }
 }
 
 class ValueObjectCaster implements CastsAttributes
 {
-    private $argument;
-
-    public function __construct($argument = null)
+    public function __construct(private $argument = null)
     {
-        $this->argument = $argument;
     }
 
     public function get($model, $key, $value, $attributes)
@@ -417,14 +412,8 @@ class ValueObjectWithCasterInstance extends ValueObject
 
 class Address
 {
-    public $lineOne;
-
-    public $lineTwo;
-
-    public function __construct($lineOne, $lineTwo)
+    public function __construct(public $lineOne, public $lineTwo)
     {
-        $this->lineOne = $lineOne;
-        $this->lineTwo = $lineTwo;
     }
 }
 

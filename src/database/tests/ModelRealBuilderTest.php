@@ -70,6 +70,7 @@ class ModelRealBuilderTest extends TestCase
 
     public function testPivot()
     {
+        $hit = null;
         $this->getContainer();
 
         $user = User::query()->find(1);
@@ -297,6 +298,7 @@ class ModelRealBuilderTest extends TestCase
 
     public function testGetColumns()
     {
+        $column = null;
         $container = $this->getContainer();
         $connection = $container->get(ConnectionResolverInterface::class)->connection();
         /** @var MySqlBuilder $builder */
@@ -363,9 +365,7 @@ class ModelRealBuilderTest extends TestCase
     public function testSimplePaginate()
     {
         $container = $this->getContainer();
-        $container->shouldReceive('make')->with(PaginatorInterface::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new Paginator(...array_values($args));
-        });
+        $container->shouldReceive('make')->with(PaginatorInterface::class, Mockery::any())->andReturnUsing(fn($_, $args) => new Paginator(...array_values($args)));
         $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
         $res = Db::table('user')->simplePaginate(1);
         $this->assertTrue($res->hasMorePages());
@@ -387,9 +387,7 @@ class ModelRealBuilderTest extends TestCase
     public function testPaginationCountQuery()
     {
         $container = $this->getContainer();
-        $container->shouldReceive('make')->with(LengthAwarePaginatorInterface::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new LengthAwarePaginator(...array_values($args));
-        });
+        $container->shouldReceive('make')->with(LengthAwarePaginatorInterface::class, Mockery::any())->andReturnUsing(fn($_, $args) => new LengthAwarePaginator(...array_values($args)));
         User::query()->select('gender')->groupBy('gender')->paginate(10, ['*'], 'page', 0);
         $sqls = [
             'select count(*) as aggregate from (select `gender` from `user` group by `gender`) as `aggregate_table`',
@@ -411,9 +409,7 @@ class ModelRealBuilderTest extends TestCase
         $container->shouldReceive('get')->with('db.connector.mysql.bit')->andReturn(new MySqlConnector());
         $connector = new ConnectionFactory($container);
 
-        Connection::resolverFor('mysql.bit', static function ($connection, $database, $prefix, $config) {
-            return new MySqlBitConnection($connection, $database, $prefix, $config);
-        });
+        Connection::resolverFor('mysql.bit', static fn($connection, $database, $prefix, $config) => new MySqlBitConnection($connection, $database, $prefix, $config));
 
         $dbConfig = [
             'driver' => 'mysql.bit',

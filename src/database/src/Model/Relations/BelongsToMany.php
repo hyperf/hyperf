@@ -31,48 +31,6 @@ class BelongsToMany extends Relation
     public $withTimestamps = false;
 
     /**
-     * The intermediate table for the relation.
-     *
-     * @var string
-     */
-    protected $table;
-
-    /**
-     * The foreign key of the parent model.
-     *
-     * @var string
-     */
-    protected $foreignPivotKey;
-
-    /**
-     * The associated key of the relation.
-     *
-     * @var string
-     */
-    protected $relatedPivotKey;
-
-    /**
-     * The key name of the parent model.
-     *
-     * @var string
-     */
-    protected $parentKey;
-
-    /**
-     * The key name of the related model.
-     *
-     * @var string
-     */
-    protected $relatedKey;
-
-    /**
-     * The "name" of the relationship.
-     *
-     * @var string
-     */
-    protected $relationName;
-
-    /**
      * The pivot table columns to retrieve.
      *
      * @var array
@@ -148,20 +106,13 @@ class BelongsToMany extends Relation
     public function __construct(
         Builder $query,
         Model $parent,
-        $table,
-        $foreignPivotKey,
-        $relatedPivotKey,
-        $parentKey,
-        $relatedKey,
-        $relationName = null
+        protected $table,
+        protected $foreignPivotKey,
+        protected $relatedPivotKey,
+        protected $parentKey,
+        protected $relatedKey,
+        protected $relationName = null
     ) {
-        $this->table = $table;
-        $this->parentKey = $parentKey;
-        $this->relatedKey = $relatedKey;
-        $this->relationName = $relationName;
-        $this->relatedPivotKey = $relatedPivotKey;
-        $this->foreignPivotKey = $foreignPivotKey;
-
         parent::__construct($query, $parent);
     }
 
@@ -459,14 +410,14 @@ class BelongsToMany extends Relation
         $result = $this->find($id, $columns);
 
         if (is_array($id)) {
-            if (count($result) === count(array_unique($id))) {
+            if (($result === null ? 0 : count($result)) === count(array_unique($id))) {
                 return $result;
             }
         } elseif (! is_null($result)) {
             return $result;
         }
 
-        throw (new ModelNotFoundException())->setModel(get_class($this->related), $id);
+        throw (new ModelNotFoundException())->setModel($this->related::class, $id);
     }
 
     /**
@@ -494,7 +445,7 @@ class BelongsToMany extends Relation
             return $model;
         }
 
-        throw (new ModelNotFoundException())->setModel(get_class($this->related));
+        throw (new ModelNotFoundException())->setModel($this->related::class);
     }
 
     /**
@@ -529,7 +480,7 @@ class BelongsToMany extends Relation
         // If we actually found models we will also eager load any relationships that
         // have been specified as needing to be eager loaded. This will solve the
         // n + 1 query problem for the developer and also increase performance.
-        if (count($models) > 0) {
+        if ((is_countable($models) ? count($models) : 0) > 0) {
             $models = $builder->eagerLoadRelations($models);
         }
 
@@ -980,9 +931,7 @@ class BelongsToMany extends Relation
     {
         $defaults = [$this->foreignPivotKey, $this->relatedPivotKey];
 
-        return collect(array_merge($defaults, $this->pivotColumns))->map(function ($column) {
-            return $this->table . '.' . $column . ' as pivot_' . $column;
-        })->unique()->all();
+        return collect(array_merge($defaults, $this->pivotColumns))->map(fn($column) => $this->table . '.' . $column . ' as pivot_' . $column)->unique()->all();
     }
 
     /**
@@ -1013,7 +962,7 @@ class BelongsToMany extends Relation
             // To get the pivots attributes we will just take any of the attributes which
             // begin with "pivot_" and add those to this arrays, as well as unsetting
             // them from the parent's models since they exist in a different table.
-            if (strpos($key, 'pivot_') === 0) {
+            if (str_starts_with($key, 'pivot_')) {
                 $values[substr($key, 6)] = $value;
 
                 unset($model->{$key});

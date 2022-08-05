@@ -16,7 +16,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD)]
 class RetryThrowable extends Retry
 {
-    public function __construct(array $retryThrowables = ['Throwable'])
+    public function __construct(array $retryThrowables = [\Throwable::class])
     {
     }
 }

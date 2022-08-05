@@ -19,15 +19,8 @@ use TheCodingMachine\GraphQLite\Types\MutableObjectType;
  */
 class TypeAnnotatedObjectType extends MutableObjectType
 {
-    /**
-     * @var string
-     */
-    private $className;
-
-    public function __construct(string $className, array $config)
+    public function __construct(private string $className, array $config)
     {
-        $this->className = $className;
-
         parent::__construct($config);
     }
 
@@ -59,9 +52,7 @@ class TypeAnnotatedObjectType extends MutableObjectType
                 }
                 return $fields;
             },
-            'interfaces' => function () use ($className, $recursiveTypeMapper) {
-                return $recursiveTypeMapper->findInterfaces($className);
-            },
+            'interfaces' => fn() => $recursiveTypeMapper->findInterfaces($className),
         ]);
     }
 

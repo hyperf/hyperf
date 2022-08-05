@@ -19,7 +19,7 @@ class DefaultFormatter implements FormatterInterface
     {
         return sprintf(
             "%s: %s(%s) in %s:%s\nStack trace:\n%s",
-            get_class($throwable),
+            $throwable::class,
             $throwable->getMessage(),
             $throwable->getCode(),
             $throwable->getFile(),

@@ -85,7 +85,7 @@ class RoutesCommand extends HyperfCommand
         } elseif (is_string($handler->callback)) {
             $action = $handler->callback;
         } elseif (is_callable($handler->callback)) {
-            $action = 'Closure';
+            $action = \Closure::class;
         } else {
             $action = (string) $handler->callback;
         }

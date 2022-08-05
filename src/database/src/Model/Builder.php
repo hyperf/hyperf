@@ -33,13 +33,6 @@ class Builder
     use Concerns\QueriesRelationships;
 
     /**
-     * The base query builder instance.
-     *
-     * @var \Hyperf\Database\Query\Builder
-     */
-    protected $query;
-
-    /**
      * The model being queried.
      *
      * @var \Hyperf\Database\Model\Model
@@ -101,9 +94,13 @@ class Builder
     /**
      * Create a new Model query builder instance.
      */
-    public function __construct(QueryBuilder $query)
+    public function __construct(
+        /**
+         * The base query builder instance.
+         */
+        protected QueryBuilder $query
+    )
     {
-        $this->query = $query;
     }
 
     /**
@@ -219,7 +216,7 @@ class Builder
     public function withoutGlobalScope($scope)
     {
         if (! is_string($scope)) {
-            $scope = get_class($scope);
+            $scope = $scope::class;
         }
 
         unset($this->scopes[$scope]);
@@ -375,9 +372,7 @@ class Builder
     {
         $instance = $this->newModelInstance();
 
-        return $instance->newCollection(array_map(function ($item) use ($instance) {
-            return $instance->newFromBuilder($item);
-        }, $items));
+        return $instance->newCollection(array_map(fn($item) => $instance->newFromBuilder($item), $items));
     }
 
     /**
@@ -439,7 +434,7 @@ class Builder
         $result = $this->find($id, $columns);
 
         if (is_array($id)) {
-            if (count($result) === count(array_unique($id))) {
+            if (($result === null ? 0 : count($result)) === count(array_unique($id))) {
                 return $result;
             }
         } elseif (! is_null($result)) {
@@ -447,7 +442,7 @@ class Builder
         }
 
         throw (new ModelNotFoundException())->setModel(
-            get_class($this->model),
+            $this->model::class,
             $id
         );
     }
@@ -523,7 +518,7 @@ class Builder
             return $model;
         }
 
-        throw (new ModelNotFoundException())->setModel(get_class($this->model));
+        throw (new ModelNotFoundException())->setModel($this->model::class);
     }
 
     /**
@@ -603,7 +598,7 @@ class Builder
             // For nested eager loads we'll skip loading them here and they will be set as an
             // eager load on the query to retrieve the relation so that they will be eager
             // loaded on that query, because that is where they get hydrated as models.
-            if (strpos($name, '.') === false) {
+            if (!str_contains($name, '.')) {
                 $models = $this->eagerLoadRelation($models, $name, $constraints);
             }
         }
@@ -625,7 +620,7 @@ class Builder
         $relation = Relation::noConstraints(function () use ($name) {
             try {
                 return $this->getModel()->newInstance()->{$name}();
-            } catch (BadMethodCallException $e) {
+            } catch (BadMethodCallException) {
                 throw RelationNotFoundException::make($this->getModel(), $name);
             }
         });
@@ -664,9 +659,9 @@ class Builder
      */
     public function chunkById($count, callable $callback, $column = null, $alias = null)
     {
-        $column = $column ?? $this->getModel()->getKeyName();
+        $column ??= $this->getModel()->getKeyName();
 
-        $alias = $alias ?? $column;
+        $alias ??= $column;
 
         $lastId = null;
 
@@ -719,9 +714,7 @@ class Builder
             return $results;
         }
 
-        return $results->map(function ($value) use ($column) {
-            return $this->model->newFromBuilder([$column => $value])->{$column};
-        });
+        return $results->map(fn($value) => $this->model->newFromBuilder([$column => $value])->{$column});
     }
 
     /**
@@ -790,9 +783,7 @@ class Builder
      */
     public function forceCreate(array $attributes)
     {
-        return $this->model->unguarded(function () use ($attributes) {
-            return $this->newModelInstance()->create($attributes);
-        });
+        return $this->model->unguarded(fn() => $this->newModelInstance()->create($attributes));
     }
 
     /**

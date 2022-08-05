@@ -237,6 +237,7 @@ trait MessageTrait
      */
     public function withoutHeader($name)
     {
+        $new = null;
         $normalized = strtolower($name);
 
         if (! isset($this->headerNames[$normalized])) {
@@ -321,7 +322,7 @@ trait MessageTrait
     {
         try {
             return stripos($this->getContentType(), 'multipart/') === 0;
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return false;
         }
     }
@@ -361,8 +362,6 @@ trait MessageTrait
      */
     private function trimHeaderValues(array $values): array
     {
-        return array_map(function ($value) {
-            return trim((string) $value, " \t");
-        }, $values);
+        return array_map(fn($value) => trim((string) $value, " \t"), $values);
     }
 }

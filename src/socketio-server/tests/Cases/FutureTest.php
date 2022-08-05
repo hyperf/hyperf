@@ -40,9 +40,7 @@ class FutureTest extends AbstractTestCase
         $future = make(Future::class, ['fd' => 1,
             'event' => 'event',
             'data' => [''],
-            'encode' => function () {
-                return '';
-            },
+            'encode' => fn() => '',
             'opcode' => 0,
             'flag' => 0, ]);
         unset($future);
@@ -60,9 +58,7 @@ class FutureTest extends AbstractTestCase
         $future = make(Future::class, ['fd' => 1,
             'event' => 'event',
             'data' => [''],
-            'encode' => function () {
-                return '';
-            },
+            'encode' => fn() => '',
             'opcode' => 0,
             'flag' => 0, ]);
         $ch = $future->channel();
@@ -80,9 +76,7 @@ class FutureTest extends AbstractTestCase
         $future = make(Future::class, ['fd' => 1,
             'event' => 'event',
             'data' => [''],
-            'encode' => function () {
-                return '';
-            },
+            'encode' => fn() => '',
             'opcode' => 0,
             'flag' => 0, ]);
         $ch = $future->reply(1);

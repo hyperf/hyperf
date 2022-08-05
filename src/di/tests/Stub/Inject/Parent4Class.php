@@ -15,11 +15,8 @@ use Hyperf\Di\Annotation\Inject;
 
 class Parent4Class
 {
-    /**
-     * @var Foo
-     */
     #[Inject]
-    private $foo;
+    private ?\HyperfTest\Di\Stub\Inject\Foo $foo = null;
 
     public function getFoo()
     {

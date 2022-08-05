@@ -25,7 +25,7 @@ class JSONEncoder implements Encoder
      */
     public function encode(mixed $payload): string
     {
-        return json_encode($payload);
+        return json_encode($payload, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -35,6 +35,6 @@ class JSONEncoder implements Encoder
      */
     public function decode(string $payload): mixed
     {
-        return json_decode($payload, true);
+        return json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
     }
 }

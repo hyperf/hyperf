@@ -49,7 +49,7 @@ class ConsumerManagerTest extends TestCase
             groupId: $groupId = uniqid(),
             memberId: $memberId = uniqid(),
             autoCommit: true,
-            nums: $nums = rand(1, 10),
+            nums: $nums = random_int(1, 10),
             enable: true,
         ));
         $manager = new ConsumerManager($container);
@@ -71,14 +71,14 @@ class ConsumerManagerTest extends TestCase
                 $this->assertSame((float) $config['rebalance_timeout'], $consumer->getRebalanceTimeout());
                 $this->assertSame((float) $config['send_timeout'], $consumer->getSendTimeout());
                 $this->assertSame($groupId, $consumer->getGroupId());
-                $this->assertTrue(strpos($consumer->getGroupInstanceId(), $groupId) !== false);
+                $this->assertTrue(str_contains($consumer->getGroupInstanceId(), $groupId));
                 $this->assertSame($memberId, $consumer->getMemberId());
                 $this->assertSame((float) $config['interval'], $consumer->getInterval());
                 $this->assertTrue(in_array($config['bootstrap_servers'], $consumer->getBootstrapServers()));
                 $this->assertSame(SwooleSocket::class, $consumer->getSocket());
                 $this->assertSame(SwooleClient::class, $consumer->getClient());
                 $this->assertSame($config['max_write_attempts'], $consumer->getMaxWriteAttempts());
-                $this->assertTrue(strpos($consumer->getClientId(), $config['client_id']) !== false);
+                $this->assertTrue(str_contains($consumer->getClientId(), $config['client_id']));
                 $this->assertSame((float) $config['recv_timeout'], $consumer->getRecvTimeout());
                 $this->assertSame((float) $config['connect_timeout'], $consumer->getConnectTimeout());
                 $this->assertSame((float) $config['session_timeout'], $consumer->getSessionTimeout());
@@ -104,7 +104,7 @@ class ConsumerManagerTest extends TestCase
             groupId: $groupId = uniqid(),
             memberId: $memberId = uniqid(),
             autoCommit: true,
-            nums: $nums = rand(1, 10),
+            nums: $nums = random_int(1, 10),
             enable: false,
         ));
 

@@ -49,12 +49,8 @@ class ClientTest extends TestCase
                 }
             },
         ];
-        $client = new Client($option, $callbacks, function (array $options = []) use ($container) {
-            return (new ClientFactory($container))->create($options);
-        });
-        $client->pull([
-            'application',
-        ]);
+        $client = new Client($option, $callbacks, fn(array $options = []) => (new ClientFactory($container))->create($options));
+        $client->pull();
         $config = $container->get(ConfigInterface::class);
         $this->assertSame('after-value', $config->get('apollo.test-key'));
         $this->assertSame([

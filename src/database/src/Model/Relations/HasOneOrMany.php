@@ -18,20 +18,6 @@ use Hyperf\Database\Model\Model;
 abstract class HasOneOrMany extends Relation
 {
     /**
-     * The foreign key of the parent model.
-     *
-     * @var string
-     */
-    protected $foreignKey;
-
-    /**
-     * The local key of the parent model.
-     *
-     * @var string
-     */
-    protected $localKey;
-
-    /**
      * The count of self joins.
      *
      * @var int
@@ -44,11 +30,8 @@ abstract class HasOneOrMany extends Relation
      * @param string $foreignKey
      * @param string $localKey
      */
-    public function __construct(Builder $query, Model $parent, $foreignKey, $localKey)
+    public function __construct(Builder $query, Model $parent, protected $foreignKey, protected $localKey)
     {
-        $this->localKey = $localKey;
-        $this->foreignKey = $foreignKey;
-
         parent::__construct($query, $parent);
     }
 
@@ -386,9 +369,7 @@ abstract class HasOneOrMany extends Relation
     {
         $foreign = $this->getForeignKeyName();
 
-        return $results->mapToDictionary(function ($result) use ($foreign) {
-            return [$result->{$foreign} => $result];
-        })->all();
+        return $results->mapToDictionary(fn($result) => [$result->{$foreign} => $result])->all();
     }
 
     /**

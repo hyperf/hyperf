@@ -60,7 +60,7 @@ class ListenersCommand extends HyperfCommand
                     continue;
                 }
                 [$object, $method] = $listener->listener;
-                $listenerClassName = get_class($object);
+                $listenerClassName = $object::class;
                 if ($events && ! $this->isMatch($event, $events)) {
                     continue;
                 }

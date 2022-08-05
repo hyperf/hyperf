@@ -13,16 +13,10 @@ namespace HyperfTest\Di\Stub;
 
 class Proxied
 {
-    public $id;
-
-    public $name;
-
     public static $isInitialized = false;
 
-    public function __construct(string $id, $name = null)
+    public function __construct(public string $id, public $name = null)
     {
-        $this->id = $id;
-        $this->name = $name;
         self::$isInitialized = true;
     }
 

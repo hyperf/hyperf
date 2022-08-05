@@ -62,11 +62,11 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
      */
     protected $decoder;
 
-    private $normalizers = [];
+    private array $normalizers = [];
 
-    private $denormalizerCache = [];
+    private array $denormalizerCache = [];
 
-    private $normalizerCache = [];
+    private array $normalizerCache = [];
 
     /**
      * @param (NormalizerInterface|DenormalizerInterface|mixed)[] $normalizers
@@ -149,7 +149,7 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
             return $object;
         }
 
-        if (\is_array($object) || $object instanceof \Traversable) {
+        if (is_iterable($object)) {
             if ($object instanceof \Countable && $object->count() === 0) {
                 return $object;
             }
@@ -244,7 +244,7 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
      */
     private function getNormalizer($data, ?string $format, array $context): ?NormalizerInterface
     {
-        $type = \is_object($data) ? \get_class($data) : 'native-' . \gettype($data);
+        $type = \is_object($data) ? $data::class : 'native-' . \gettype($data);
 
         if (! isset($this->normalizerCache[$format][$type])) {
             $this->normalizerCache[$format][$type] = [];

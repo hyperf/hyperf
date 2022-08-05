@@ -25,15 +25,11 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 {
-    protected HttpMessageBuilderInterface $responseBuilder;
-
     protected DataFormatterInterface $dataFormatter;
 
-    public function __construct(ContainerInterface $container, Protocol $protocol, HttpMessageBuilderInterface $builder, string $serverName)
+    public function __construct(ContainerInterface $container, Protocol $protocol, protected HttpMessageBuilderInterface $responseBuilder, string $serverName)
     {
         parent::__construct($container, $protocol, $serverName);
-
-        $this->responseBuilder = $builder;
         $this->dataFormatter = $protocol->getDataFormatter();
     }
 

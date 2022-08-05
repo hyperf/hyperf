@@ -51,6 +51,7 @@ class ElasticsearchEngine extends Engine
      */
     public function update($models): void
     {
+        $params = [];
         $params['body'] = [];
         $models->each(function ($model) use (&$params) {
             if ($this->index) {
@@ -82,6 +83,7 @@ class ElasticsearchEngine extends Engine
      */
     public function delete($models): void
     {
+        $params = [];
         $params['body'] = [];
         $models->each(function ($model) use (&$params) {
             if ($this->index) {
@@ -157,9 +159,7 @@ class ElasticsearchEngine extends Engine
         return $model->getScoutModelsByIds(
             $builder,
             $keys
-        )->filter(function ($model) use ($keys) {
-            return in_array($model->getScoutKey(), $keys);
-        });
+        )->filter(fn($model) => in_array($model->getScoutKey(), $keys));
     }
 
     /**
@@ -193,7 +193,7 @@ class ElasticsearchEngine extends Engine
         if (! static::$version) {
             try {
                 static::$version = $client->info()['version']['number'];
-            } catch (\Throwable $exception) {
+            } catch (\Throwable) {
                 static::$version = '0.0.0';
             }
         }
@@ -237,7 +237,7 @@ class ElasticsearchEngine extends Engine
         if (isset($options['size'])) {
             $params['body']['size'] = $options['size'];
         }
-        if (isset($options['numericFilters']) && count($options['numericFilters'])) {
+        if (isset($options['numericFilters']) && (is_countable($options['numericFilters']) ? count($options['numericFilters']) : 0)) {
             $params['body']['query']['bool']['must'] = array_merge(
                 $params['body']['query']['bool']['must'],
                 $options['numericFilters']
@@ -280,8 +280,6 @@ class ElasticsearchEngine extends Engine
         if (count($builder->orders) == 0) {
             return null;
         }
-        return collect($builder->orders)->map(function ($order) {
-            return [$order['column'] => $order['direction']];
-        })->toArray();
+        return collect($builder->orders)->map(fn($order) => [$order['column'] => $order['direction']])->toArray();
     }
 }

@@ -49,7 +49,7 @@ class DataFormatter implements DataFormatterInterface
         $exception = $response->getException();
         if ($exception instanceof \Throwable) {
             $exception = [
-                'class' => get_class($exception),
+                'class' => $exception::class,
                 'code' => $exception->getCode(),
                 'message' => $exception->getMessage(),
             ];

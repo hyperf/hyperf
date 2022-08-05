@@ -42,23 +42,24 @@ class RouteGuideClientTest extends TestCase
         $client = new RouteGuideClient('127.0.0.1:50051', ['retry_attempts' => 0]);
 
         $point = new Point();
-        $point->setLatitude(407838351);
-        $point->setLongitude(-746143763);
+        $point->setLatitude(407_838_351);
+        $point->setLongitude(-746_143_763);
         [$feature,] = $client->getFeature($point);
         $this->assertEquals('Patriots Path, Mendham, NJ 07945, USA', $feature->getName());
     }
 
     public function testGrpcRouteGuideListFeatures()
     {
+        $result = [];
         $client = new RouteGuideClient('127.0.0.1:50051', ['retry_attempts' => 0]);
 
         $hi = new Point();
-        $hi->setLatitude(420000000);
-        $hi->setLongitude(-730000000);
+        $hi->setLatitude(420_000_000);
+        $hi->setLongitude(-730_000_000);
 
         $lo = new Point();
-        $lo->setLatitude(400000000);
-        $lo->setLongitude(-750000000);
+        $lo->setLatitude(400_000_000);
+        $lo->setLongitude(-750_000_000);
 
         $rect = new Rectangle();
         $rect->setHi($hi);
@@ -104,7 +105,7 @@ class RouteGuideClientTest extends TestCase
     public function testGrpcRouteGuideRouteChat()
     {
         $client = new RouteGuideClient('127.0.0.1:50051', ['retry_attempts' => 0]);
-        $num = rand(0, 1000000);
+        $num = random_int(0, 1_000_000);
 
         $first = new Point();
         $first->setLatitude($num);
