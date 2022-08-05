@@ -20,7 +20,6 @@ use HyperfTest\Pool\Stub\HeartbeatPoolStub;
 use HyperfTest\Pool\Stub\KeepaliveConnectionStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Swoole\Timer;
 
 /**
  * @internal
@@ -30,7 +29,6 @@ class HeartbeatConnectionTest extends TestCase
 {
     protected function tearDown(): void
     {
-        Timer::clearAll();
         Mockery::close();
         Context::set('test.pool.heartbeat_connection', []);
     }
@@ -84,10 +82,8 @@ class HeartbeatConnectionTest extends TestCase
         /** @var KeepaliveConnectionStub $connection */
         $connection = $pool->get();
         $connection->reconnect();
-        $this->assertSame(1, count(Timer::list()));
         $this->assertTrue($connection->check());
         $connection->close();
-        $this->assertSame(0, count(Timer::list()));
         $this->assertFalse($connection->check());
         $this->assertSame('close protocol', Context::get('test.pool.heartbeat_connection')['close']);
     }
