@@ -21,18 +21,15 @@ interface ResponseInterface
 {
     /**
      * Format data to JSON and return data with Content-Type:application/json header.
-     *
-     * @param array|Arrayable|Jsonable $data
      */
-    public function json($data): PsrResponseInterface;
+    public function json(array|\Hyperf\Contract\Arrayable|\Hyperf\Utils\Contracts\Jsonable $data): PsrResponseInterface;
 
     /**
      * Format data to XML and return data with Content-Type:application/xml header.
      *
-     * @param array|Arrayable|Xmlable $data
      * @param string $root the name of the root node
      */
-    public function xml($data, string $root = 'root'): PsrResponseInterface;
+    public function xml(array|\Hyperf\Contract\Arrayable|\Hyperf\Utils\Contracts\Xmlable $data, string $root = 'root'): PsrResponseInterface;
 
     /**
      * Format data to a string and return data with Content-Type:text/plain header.

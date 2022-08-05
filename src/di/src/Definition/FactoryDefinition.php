@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Definition;
 
-class FactoryDefinition implements DefinitionInterface
+class FactoryDefinition implements DefinitionInterface, \Stringable
 {
     private bool $needProxy = false;
 
@@ -40,10 +40,7 @@ class FactoryDefinition implements DefinitionInterface
         return $this;
     }
 
-    /**
-     * @return callable|string
-     */
-    public function getFactory()
+    public function getFactory(): callable|string
     {
         return $this->factory;
     }

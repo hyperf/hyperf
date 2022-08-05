@@ -22,11 +22,8 @@ use Hyperf\Utils\Codec\Json;
 
 class DataFormatter implements DataFormatterInterface, DataFetcherInterface
 {
-    protected Context $context;
-
-    public function __construct(Context $context)
+    public function __construct(protected Context $context)
     {
-        $this->context = $context;
     }
 
     public function formatRequest(Request $request): array
@@ -53,7 +50,7 @@ class DataFormatter implements DataFormatterInterface, DataFetcherInterface
         $exception = $response->getException();
         if ($exception instanceof \Throwable) {
             $exception = [
-                'class' => get_class($exception),
+                'class' => $exception::class,
                 'code' => $exception->getCode(),
                 'message' => $exception->getMessage(),
             ];

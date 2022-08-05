@@ -11,22 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Query;
 
-class Expression
+class Expression implements \Stringable
 {
-    /**
-     * The value of the expression.
-     *
-     * @var mixed
-     */
-    protected $value;
-
     /**
      * Create a new raw query expression.
      * @param mixed $value
      */
-    public function __construct($value)
+    public function __construct(protected $value)
     {
-        $this->value = $value;
     }
 
     /**
@@ -34,7 +26,7 @@ class Expression
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->getValue();
     }

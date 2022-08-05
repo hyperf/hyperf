@@ -230,10 +230,7 @@ class Manager
         return $handler->getConfig()->getTtl();
     }
 
-    /**
-     * @param int|string $id
-     */
-    protected function getCacheKey($id, Model $model, Config $config): string
+    protected function getCacheKey(int|string $id, Model $model, Config $config): string
     {
         // mc:$prefix:m:$model:$pk:$id
         return sprintf(

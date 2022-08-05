@@ -20,7 +20,7 @@ use Hyperf\Utils\Collection;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\ForwardsCalls;
 
-abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess
+abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess, \Stringable
 {
     use ForwardsCalls;
 
@@ -106,9 +106,7 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess
      */
     public function getUrlRange(int $start, int $end): array
     {
-        return collect(range($start, $end))->mapWithKeys(function ($page) {
-            return [$page => $this->url($page)];
-        })->all();
+        return collect(range($start, $end))->mapWithKeys(fn($page) => [$page => $this->url($page)])->all();
     }
 
     /**
@@ -135,9 +133,9 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess
     /**
      * Get / set the URL fragment to be appended to URLs.
      *
-     * @return null|$this|string
+     * @return $this|string
      */
-    public function fragment(?string $fragment = null)
+    public function fragment(?string $fragment = null): static|string
     {
         if (is_null($fragment)) {
             return $this->fragment;

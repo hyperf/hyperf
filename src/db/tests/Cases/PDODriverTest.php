@@ -62,7 +62,7 @@ class PDODriverTest extends AbstractTestCase
     {
         $db = $this->getContainer()->get(DB::class);
 
-        $id = $db->insert('INSERT INTO `user` (`name`, `gender`) VALUES (?,?);', [$name = uniqid(), $gender = rand(0, 2)]);
+        $id = $db->insert('INSERT INTO `user` (`name`, `gender`) VALUES (?,?);', [$name = uniqid(), $gender = random_int(0, 2)]);
         $this->assertTrue($id > 0);
 
         $res = $db->fetch('SELECT * FROM `user` WHERE id = ?;', [$id]);
@@ -79,7 +79,7 @@ class PDODriverTest extends AbstractTestCase
     {
         $db = $this->getContainer()->get(DB::class);
         $db->beginTransaction();
-        $id = $db->insert('INSERT INTO `user` (`name`, `gender`) VALUES (?,?);', [$name = uniqid(), $gender = rand(0, 2)]);
+        $id = $db->insert('INSERT INTO `user` (`name`, `gender`) VALUES (?,?);', [$name = uniqid(), $gender = random_int(0, 2)]);
         $this->assertTrue($id > 0);
         $db->commit();
 
@@ -88,7 +88,7 @@ class PDODriverTest extends AbstractTestCase
         $this->assertSame($gender, $res['gender']);
 
         $db->beginTransaction();
-        $id = $db->insert('INSERT INTO `user` (`name`, `gender`) VALUES (?,?);', [$name = uniqid(), $gender = rand(0, 2)]);
+        $id = $db->insert('INSERT INTO `user` (`name`, `gender`) VALUES (?,?);', [$name = uniqid(), $gender = random_int(0, 2)]);
         $this->assertTrue($id > 0);
         $db->rollBack();
 
@@ -105,7 +105,7 @@ class PDODriverTest extends AbstractTestCase
         $this->assertSame([], $pool->getConfig()['options']);
 
         $connection = $pool->get();
-        $this->assertSame(6, count($connection->getConfig()['pool']));
+        $this->assertSame(6, is_countable($connection->getConfig()['pool']) ? count($connection->getConfig()['pool']) : 0);
         $this->assertSame(20, $connection->getConfig()['pool']['max_connections']);
     }
 
@@ -113,10 +113,10 @@ class PDODriverTest extends AbstractTestCase
     {
         $db = $this->getContainer()->get(DB::class);
         $db->beginTransaction();
-        $id = $db->insert('INSERT INTO `user` (`name`, `gender`) VALUES (?,?);', [$name = 'trans' . uniqid(), $gender = rand(0, 2)]);
+        $id = $db->insert('INSERT INTO `user` (`name`, `gender`) VALUES (?,?);', [$name = 'trans' . uniqid(), $gender = random_int(0, 2)]);
         $this->assertTrue($id > 0);
         $db->beginTransaction();
-        $id2 = $db->insert('INSERT INTO `user` (`name`, `gender`) VALUES (?,?);', ['rollback' . uniqid(), rand(0, 2)]);
+        $id2 = $db->insert('INSERT INTO `user` (`name`, `gender`) VALUES (?,?);', ['rollback' . uniqid(), random_int(0, 2)]);
         $this->assertTrue($id2 > 0);
         $db->rollBack();
         $db->commit();

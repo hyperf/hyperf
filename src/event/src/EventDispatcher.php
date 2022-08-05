@@ -51,14 +51,14 @@ class EventDispatcher implements EventDispatcherInterface
         if (! $this->logger) {
             return;
         }
-        $eventName = get_class($event);
+        $eventName = $event::class;
         $listenerName = '[ERROR TYPE]';
         if (is_array($listener)) {
-            $listenerName = is_string($listener[0]) ? $listener[0] : get_class($listener[0]);
+            $listenerName = is_string($listener[0]) ? $listener[0] : $listener[0]::class;
         } elseif (is_string($listener)) {
             $listenerName = $listener;
         } elseif (is_object($listener)) {
-            $listenerName = get_class($listener);
+            $listenerName = $listener::class;
         }
         $this->logger->debug(sprintf('Event %s handled by %s listener.', $eventName, $listenerName));
     }

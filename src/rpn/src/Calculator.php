@@ -39,7 +39,7 @@ class Calculator
         $operators = array_merge($this->getDefaultOperators(), $operators);
         foreach ($operators as $operator) {
             if (! $operator instanceof OperatorInterface) {
-                throw new InvalidOperatorException(sprintf('%s is not instanceof %s.', get_class($operator), OperatorInterface::class));
+                throw new InvalidOperatorException(sprintf('%s is not instanceof %s.', $operator::class, OperatorInterface::class));
             }
             $this->operators[$operator->getOperator()] = $operator;
         }

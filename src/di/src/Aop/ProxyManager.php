@@ -83,7 +83,7 @@ class ProxyManager
 
     protected function isModified(string $className, string $proxyFilePath = null): bool
     {
-        $proxyFilePath = $proxyFilePath ?? $this->getProxyFilePath($className);
+        $proxyFilePath ??= $this->getProxyFilePath($className);
         $time = $this->filesystem->lastModified($proxyFilePath);
         $origin = $this->classMap[$className];
         if ($time >= $this->filesystem->lastModified($origin)) {
@@ -168,7 +168,7 @@ class ProxyManager
             if (is_object($annotation)) {
                 $defined[] = $name;
             } else {
-                $defined = array_merge($defined, array_keys($annotation));
+                $defined = [...$defined, ...array_keys($annotation)];
             }
         }
         return $defined;

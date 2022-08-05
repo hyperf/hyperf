@@ -28,7 +28,7 @@ class Feature extends \Google\Protobuf\Internal\Message
      *
      * Generated from protobuf field <code>string name = 1;</code>
      */
-    private $name = '';
+    private string $name = '';
 
     /**
      * The point where the feature is detected.

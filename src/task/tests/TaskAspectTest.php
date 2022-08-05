@@ -40,16 +40,12 @@ class TaskAspectTest extends TestCase
         $container = $this->getContainer();
 
         $aspect = new TaskAspect($container);
-        $closure = function ($id, $name) {
-            return ['id' => $id, 'name' => $name];
-        };
+        $closure = fn($id, $name) => ['id' => $id, 'name' => $name];
         $point = new ProceedingJoinPoint($closure, Foo::class, 'getIdAndName', [
             'keys' => $data = ['id' => uniqid(), 'name' => 'Hyperf'],
             'order' => ['id', 'name'],
         ]);
-        $point->pipe = function (ProceedingJoinPoint $point) {
-            return $point->processOriginalMethod();
-        };
+        $point->pipe = fn(ProceedingJoinPoint $point) => $point->processOriginalMethod();
 
         $res = $aspect->process($point);
         $this->assertSame($data, $res);
@@ -64,16 +60,12 @@ class TaskAspectTest extends TestCase
         $container = $this->getContainer();
 
         $aspect = new TaskAspect($container);
-        $closure = function ($id, $arguments) {
-            return ['id' => $id, 'arguments' => $arguments];
-        };
+        $closure = fn($id, $arguments) => ['id' => $id, 'arguments' => $arguments];
         $point = new ProceedingJoinPoint($closure, Foo::class, 'dump', [
             'keys' => $data = ['id' => 1, 'arguments' => [1, 2, 3]],
             'order' => ['id', 'arguments'],
         ]);
-        $point->pipe = function (ProceedingJoinPoint $point) {
-            return $point->processOriginalMethod();
-        };
+        $point->pipe = fn(ProceedingJoinPoint $point) => $point->processOriginalMethod();
 
         $res = $aspect->process($point);
         $this->assertSame($data, $res);

@@ -116,7 +116,7 @@ class RoomAdapterTest extends AbstractTestCase
         // Test empty room
         try {
             $room->del('non-exist');
-        } catch (\Throwable $t) {
+        } catch (\Throwable) {
             $this->assertTrue(false);
         }
 
@@ -178,9 +178,7 @@ class RoomAdapterTest extends AbstractTestCase
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn($frequency);
         $container->shouldReceive('make')->with(RedisPool::class, ['name' => 'default'])->andReturn($pool);
         $container->shouldReceive('make')->with(Channel::class, ['size' => 30])->andReturn(new Channel(30));
-        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new PoolOption(...array_values($args));
-        });
+        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(fn($class, $args) => new PoolOption(...array_values($args)));
         ApplicationContext::setContainer($container);
         $factory = new PoolFactory($container);
         $mock = Mockery::mock(RedisFactory::class);

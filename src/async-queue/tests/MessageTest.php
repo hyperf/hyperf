@@ -46,7 +46,7 @@ class MessageTest extends TestCase
 
     public function testJobMessageSerialize()
     {
-        $id = rand(0, 9999);
+        $id = random_int(0, 9999);
         $message = new JobMessage(
             new DemoJob($id)
         );

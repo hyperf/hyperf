@@ -17,7 +17,7 @@ use Hyperf\HttpServer\Router\Handler;
 
 class RouteCollector
 {
-    protected string $currentGroupPrefix;
+    protected string $currentGroupPrefix = '';
 
     protected array $currentGroupOptions = [];
 
@@ -26,7 +26,6 @@ class RouteCollector
      */
     public function __construct(protected RouteParser $routeParser, protected DataGenerator $dataGenerator)
     {
-        $this->currentGroupPrefix = '';
     }
 
     /**

@@ -55,7 +55,7 @@ trait Cacheable
     {
         $manager = $this->getContainer()->get(Manager::class);
 
-        return $manager->destroy([$this->getKey()], get_called_class());
+        return $manager->destroy([$this->getKey()], static::class);
     }
 
     /**
@@ -69,10 +69,9 @@ trait Cacheable
     /**
      * Increment a column's value by a given amount.
      * @param string $column
-     * @param float|int $amount
      * @return int
      */
-    public function increment($column, $amount = 1, array $extra = [])
+    public function increment($column, float|int $amount = 1, array $extra = [])
     {
         $res = parent::increment($column, $amount, $extra);
         if ($res > 0) {
@@ -82,7 +81,7 @@ trait Cacheable
                 // Only increment a column's value.
                 /** @var Manager $manager */
                 $manager = $this->getContainer()->get(Manager::class);
-                $manager->increment($this->getKey(), $column, $amount, get_called_class());
+                $manager->increment($this->getKey(), $column, $amount, static::class);
             } else {
                 // Update other columns, when increment a column's value.
                 $this->deleteCache();
@@ -94,10 +93,9 @@ trait Cacheable
     /**
      * Decrement a column's value by a given amount.
      * @param string $column
-     * @param float|int $amount
      * @return int
      */
-    public function decrement($column, $amount = 1, array $extra = [])
+    public function decrement($column, float|int $amount = 1, array $extra = [])
     {
         $res = parent::decrement($column, $amount, $extra);
         if ($res > 0) {
@@ -107,7 +105,7 @@ trait Cacheable
                 // Only decrement a column's value.
                 /** @var Manager $manager */
                 $manager = $this->getContainer()->get(Manager::class);
-                $manager->increment($this->getKey(), $column, -$amount, get_called_class());
+                $manager->increment($this->getKey(), $column, -$amount, static::class);
             } else {
                 // Update other columns, when decrement a column's value.
                 $this->deleteCache();

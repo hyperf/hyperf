@@ -21,17 +21,16 @@ interface PaginatorInterface
     /**
      * Add a set of query string values to the paginator.
      *
-     * @param array|string $key
      * @return $this
      */
-    public function appends($key, ?string $value = null);
+    public function appends(array|string $key, ?string $value = null);
 
     /**
      * Get / set the URL fragment to be appended to URLs.
      *
      * @return $this|string
      */
-    public function fragment(?string $fragment = null);
+    public function fragment(?string $fragment = null): static|string;
 
     /**
      * The URL for the next page, or null.

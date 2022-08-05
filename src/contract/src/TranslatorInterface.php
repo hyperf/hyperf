@@ -20,10 +20,8 @@ interface TranslatorInterface
 
     /**
      * Get a translation according to an integer value.
-     *
-     * @param array|\Countable|int $number
      */
-    public function transChoice(string $key, $number, array $replace = [], ?string $locale = null): string;
+    public function transChoice(string $key, array|\Countable|int $number, array $replace = [], ?string $locale = null): string;
 
     /**
      * Get the default locale being used.

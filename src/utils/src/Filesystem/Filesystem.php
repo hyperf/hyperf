@@ -116,9 +116,8 @@ class Filesystem
      * Write the contents of a file.
      *
      * @param resource|string $contents
-     * @return bool|int
      */
-    public function put(string $path, $contents, bool $lock = false)
+    public function put(string $path, $contents, bool $lock = false): bool|int
     {
         if ($lock) {
             return $this->atomic($path, function ($path) use ($contents) {
@@ -196,10 +195,8 @@ class Filesystem
 
     /**
      * Delete the file at a given path.
-     *
-     * @param array|string $paths
      */
-    public function delete($paths): bool
+    public function delete(array|string $paths): bool
     {
         $paths = is_array($paths) ? $paths : func_get_args();
 
@@ -291,10 +288,8 @@ class Filesystem
 
     /**
      * Get the mime-type of a given file.
-     *
-     * @return false|string
      */
-    public function mimeType(string $path)
+    public function mimeType(string $path): false|string
     {
         return finfo_file(finfo_open(FILEINFO_MIME_TYPE), $path);
     }

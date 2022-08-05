@@ -24,35 +24,17 @@ use Thrift\Transport\TTransport;
 
 class ThriftUdpTransport extends TTransport
 {
-    /**
-     * @var string
-     */
-    private $host;
-
-    /**
-     * @var int
-     */
-    private $port;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private \Psr\Log\LoggerInterface $logger;
 
     /**
      * @var null|resource|\Socket
      */
     private $socket;
 
-    /**
-     * @var ?Channel
-     */
-    private $chan;
+    private ?\Hyperf\Engine\Channel $chan = null;
 
-    public function __construct(string $host, int $port, LoggerInterface $logger = null)
+    public function __construct(private string $host, private int $port, LoggerInterface $logger = null)
     {
-        $this->host = $host;
-        $this->port = $port;
         $this->logger = $logger ?? new NullLogger();
     }
 

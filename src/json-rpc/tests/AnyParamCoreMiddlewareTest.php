@@ -79,7 +79,7 @@ class AnyParamCoreMiddlewareTest extends TestCase
 
         $response = $middleware->process($request, $handler);
         $this->assertEquals(200, $response->getStatusCode());
-        $ret = json_decode((string) $response->getBody(), true);
+        $ret = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
         $this->assertArrayHasKey('result', $ret);
         $this->assertEquals(['value' => 3], $ret['result']);
     }
@@ -106,7 +106,7 @@ class AnyParamCoreMiddlewareTest extends TestCase
 
         $response = $middleware->process($request, $handler);
         $this->assertEquals(200, $response->getStatusCode());
-        $ret = json_decode((string) $response->getBody(), true);
+        $ret = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
         $this->assertArrayHasKey('result', $ret);
         $this->assertEquals(['params' => [1, 2], 'sum' => 3], $ret['result']);
     }
@@ -132,11 +132,11 @@ class AnyParamCoreMiddlewareTest extends TestCase
         $request = $middleware->dispatch($request);
         try {
             $response = $middleware->process($request, $handler);
-        } catch (\Throwable $exception) {
+        } catch (\Throwable) {
             $response = Context::get(ResponseInterface::class);
         }
         $this->assertEquals(200, $response->getStatusCode());
-        $ret = json_decode((string) $response->getBody(), true);
+        $ret = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('error', $ret);
         $this->assertArrayHasKey('data', $ret['error']);
@@ -167,11 +167,11 @@ class AnyParamCoreMiddlewareTest extends TestCase
         $request = $middleware->dispatch($request);
         try {
             $response = $middleware->process($request, $handler);
-        } catch (\Throwable $exception) {
+        } catch (\Throwable) {
             $response = Context::get(ResponseInterface::class);
         }
         $this->assertEquals(200, $response->getStatusCode());
-        $ret = json_decode((string) $response->getBody(), true);
+        $ret = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertArrayHasKey('error', $ret);
         $this->assertArrayHasKey('data', $ret['error']);
@@ -228,14 +228,10 @@ class AnyParamCoreMiddlewareTest extends TestCase
         $container->shouldReceive('make')->with(DispatcherFactory::class, \Mockery::any())
             ->andReturn(new DispatcherFactory($eventDispatcher, new PathGenerator()));
         $container->shouldReceive('make')->with(ResponseBuilder::class, \Mockery::any())
-            ->andReturnUsing(function ($class, $args) {
-                return new ResponseBuilder(...array_values($args));
-            });
+            ->andReturnUsing(fn($class, $args) => new ResponseBuilder(...array_values($args)));
         $container->shouldReceive('get')->with(RequestDispatcher::class)->andReturn(new RequestDispatcher($container));
         $container->shouldReceive('make')->with(JsonPacker::class, \Mockery::any())->andReturn(new JsonPacker());
-        $container->shouldReceive('make')->with(JsonEofPacker::class, \Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new JsonEofPacker(...array_values($args));
-        });
+        $container->shouldReceive('make')->with(JsonEofPacker::class, \Mockery::any())->andReturnUsing(fn($_, $args) => new JsonEofPacker(...array_values($args)));
         $container->shouldReceive('get')->with(RpcContext::class)->andReturn(new RpcContext());
 
         ApplicationContext::setContainer($container);

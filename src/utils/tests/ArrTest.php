@@ -173,9 +173,7 @@ class ArrTest extends TestCase
 
     public function testArrMacroable()
     {
-        Arr::macro('foo', function () {
-            return 'foo';
-        });
+        Arr::macro('foo', fn() => 'foo');
 
         $this->assertTrue(Arr::hasMacro('foo'));
         $this->assertFalse(Arr::hasMacro('bar'));

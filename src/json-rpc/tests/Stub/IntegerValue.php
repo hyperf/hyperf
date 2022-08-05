@@ -13,10 +13,7 @@ namespace HyperfTest\JsonRpc\Stub;
 
 class IntegerValue
 {
-    /**
-     * @var int
-     */
-    private $value;
+    private ?int $value = null;
 
     public function getValue(): int
     {

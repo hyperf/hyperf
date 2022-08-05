@@ -15,6 +15,6 @@ class Attempt
 {
     public function attempt(): bool
     {
-        return rand(0, 100) >= 50;
+        return random_int(0, 100) >= 50;
     }
 }

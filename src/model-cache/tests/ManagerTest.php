@@ -75,11 +75,9 @@ class ManagerTest extends TestCase
 
         ApplicationContext::setContainer($container);
         $handler = Mockery::mock(HandlerInterface::class);
-        $handler->shouldReceive('getConfig')->andReturnUsing(function () {
-            return new ModelCache\Config([
-                'ttl' => 1000,
-            ], 'default');
-        });
+        $handler->shouldReceive('getConfig')->andReturnUsing(fn() => new ModelCache\Config([
+            'ttl' => 1000,
+        ], 'default'));
         $manager = new ManagerStub($container);
 
         $model = new ModelStub();

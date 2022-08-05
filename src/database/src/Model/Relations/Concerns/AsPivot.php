@@ -201,7 +201,7 @@ trait AsPivot
      * @param array<int>|string $ids
      * @return \Hyperf\Database\Model\Builder
      */
-    public function newQueryForRestoration($ids)
+    public function newQueryForRestoration(array|string $ids)
     {
         if (is_array($ids)) {
             return $this->newQueryForCollectionRestoration($ids);
@@ -256,10 +256,9 @@ trait AsPivot
     /**
      * Get a new query to restore multiple models by their queueable IDs.
      *
-     * @param array|int $ids
      * @return \Hyperf\Database\Model\Builder
      */
-    protected function newQueryForCollectionRestoration(array $ids)
+    protected function newQueryForCollectionRestoration(array|int $ids)
     {
         if (! Str::contains($ids[0], ':')) {
             return parent::newQueryForRestoration($ids);
@@ -270,10 +269,8 @@ trait AsPivot
         foreach ($ids as $id) {
             $segments = explode(':', $id);
 
-            $query->orWhere(function ($query) use ($segments) {
-                return $query->where($segments[0], $segments[1])
-                    ->where($segments[2], $segments[3]);
-            });
+            $query->orWhere(fn($query) => $query->where($segments[0], $segments[1])
+                ->where($segments[2], $segments[3]));
         }
 
         return $query;

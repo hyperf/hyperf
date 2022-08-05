@@ -16,8 +16,5 @@ use Swoole\Server;
 
 interface OnCloseInterface
 {
-    /**
-     * @param Response|Server $server
-     */
-    public function onClose($server, int $fd, int $reactorId): void;
+    public function onClose(\Swoole\Http\Response|\Swoole\Server $server, int $fd, int $reactorId): void;
 }

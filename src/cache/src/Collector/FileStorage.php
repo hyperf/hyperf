@@ -13,13 +13,10 @@ namespace Hyperf\Cache\Collector;
 
 class FileStorage
 {
-    protected $data;
-
     protected ?int $expiredTime = null;
 
-    public function __construct($data, $ttl)
+    public function __construct(protected $data, $ttl)
     {
-        $this->data = $data;
         if (is_numeric($ttl) && $ttl > 0) {
             $this->expiredTime = time() + $ttl;
         }

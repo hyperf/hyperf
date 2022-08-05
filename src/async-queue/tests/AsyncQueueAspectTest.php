@@ -49,8 +49,8 @@ class AsyncQueueAspectTest extends TestCase
         $container = $this->getContainer();
         $proxy = $container->get(FooProxy::class);
 
-        $proxy->dump($id = rand(10000, 99999), $uuid = uniqid(), $data = [
-            'id' => rand(0, 9999),
+        $proxy->dump($id = random_int(10000, 99999), $uuid = uniqid(), $data = [
+            'id' => random_int(0, 9999),
         ]);
 
         $this->assertSame([$id, $uuid, $data], Context::get(FooProxy::class));
@@ -65,7 +65,7 @@ class AsyncQueueAspectTest extends TestCase
         $proxy = $container->get(FooProxy::class);
 
         $proxy->async($data = [
-            'id' => rand(0, 9999),
+            'id' => random_int(0, 9999),
         ]);
 
         $this->assertSame($data, Context::get(FooProxy::class));
@@ -79,8 +79,8 @@ class AsyncQueueAspectTest extends TestCase
         $container = $this->getContainer();
         $proxy = $container->get(FooProxy::class);
 
-        $proxy->variadic($id = rand(10000, 99999), $uuid = uniqid(), $data = [
-            'id' => rand(0, 9999),
+        $proxy->variadic($id = random_int(10000, 99999), $uuid = uniqid(), $data = [
+            'id' => random_int(0, 9999),
         ]);
 
         $this->assertSame([$id, $uuid, $data], Context::get(FooProxy::class));
@@ -112,9 +112,7 @@ class AsyncQueueAspectTest extends TestCase
         require_once BASE_PATH . '/runtime/container/proxy/FooProxy.proxy.php';
 
         $container->shouldReceive('get')->with(FooProxy::class)->andReturn(new FooProxy());
-        $container->shouldReceive('get')->with(AsyncQueueAspect::class)->andReturnUsing(function ($_) use ($container) {
-            return new AsyncQueueAspect($container);
-        });
+        $container->shouldReceive('get')->with(AsyncQueueAspect::class)->andReturnUsing(fn($_) => new AsyncQueueAspect($container));
         $container->shouldReceive('get')->with(Environment::class)->andReturn($environment = new Environment());
         $container->shouldReceive('get')->with(DriverFactory::class)->andReturnUsing(function ($_) use ($environment) {
             $factory = Mockery::mock(DriverFactory::class);

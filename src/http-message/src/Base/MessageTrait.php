@@ -237,6 +237,7 @@ trait MessageTrait
      */
     public function withoutHeader($name)
     {
+        $new = null;
         $normalized = strtolower($name);
 
         if (! isset($this->headerNames[$normalized])) {
@@ -302,7 +303,7 @@ trait MessageTrait
      * @throws \RuntimeException
      * @return array|string wanted part or all parts as array($firstName => firstPart, partname => value)
      */
-    public function getHeaderField(string $name, string $wantedPart = '0', string $firstName = '0')
+    public function getHeaderField(string $name, string $wantedPart = '0', string $firstName = '0'): array|string
     {
         return Decode::splitHeaderField($this->getHeaderLine($name), $wantedPart, $firstName);
     }
@@ -321,7 +322,7 @@ trait MessageTrait
     {
         try {
             return stripos($this->getContentType(), 'multipart/') === 0;
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return false;
         }
     }
@@ -361,8 +362,6 @@ trait MessageTrait
      */
     private function trimHeaderValues(array $values): array
     {
-        return array_map(function ($value) {
-            return trim((string) $value, " \t");
-        }, $values);
+        return array_map(fn($value) => trim((string) $value, " \t"), $values);
     }
 }

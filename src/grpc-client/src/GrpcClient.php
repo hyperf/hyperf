@@ -24,96 +24,51 @@ class GrpcClient
 {
     public const GRPC_DEFAULT_TIMEOUT = 3.0;
 
-    /**
-     * @var ChannelPool
-     */
-    private $channelPool;
+    private ?string $host = null;
 
-    /**
-     * @var string
-     */
-    private $host;
+    private array $options = [];
 
-    /**
-     * @var array
-     */
-    private $options = [];
+    private ?int $port = null;
 
-    /**
-     * @var int
-     */
-    private $port;
+    private ?int $timeout = null;
 
-    /**
-     * @var int
-     */
-    private $timeout;
+    private bool $sendYield = false;
 
-    /**
-     * @var bool
-     */
-    private $sendYield = false;
-
-    /**
-     * @var bool
-     */
-    private $ssl = false;
+    private bool $ssl = false;
 
     /**
      * The main coroutine id of the client.
-     *
-     * @var int
      */
-    private $mainCoroutineId = 0;
+    private int $mainCoroutineId = 0;
 
-    /**
-     * @var null|SwooleHttp2Client
-     */
-    private $httpClient;
+    private ?SwooleHttp2Client $httpClient = null;
 
-    /**
-     * @var int
-     */
-    private $recvCoroutineId = 0;
+    private int $recvCoroutineId = 0;
 
-    /**
-     * @var int
-     */
-    private $sendCoroutineId = 0;
+    private int $sendCoroutineId = 0;
 
     /**
      * The hashMap of channels [streamId => response channel].
      * @var Channel[]
      */
-    private $recvChannelMap = [];
+    private array $recvChannelMap = [];
 
-    /**
-     * @var int
-     */
-    private $waitStatus = Status::WAIT_PENDDING;
+    private int $waitStatus = Status::WAIT_PENDDING;
 
-    /**
-     * @var null|Channel
-     */
-    private $waitYield;
+    private ?\Hyperf\Engine\Channel $waitYield = null;
 
     /**
      * The channel to proxy send data from all of the coroutine.
-     *
-     * @var Channel
      */
-    private $sendChannel;
+    private ?\Hyperf\Engine\Channel $sendChannel = null;
 
     /**
      * The channel to get the current send stream id (as ret val).
-     *
-     * @var Channel
      */
-    private $sendResultChannel;
+    private ?\Hyperf\Engine\Channel $sendResultChannel = null;
 
-    public function __construct(ChannelPool $channelPool)
+    public function __construct(private ChannelPool $channelPool)
     {
-        $this->channelPool = $channelPool;
     }
 
     public function set(string $hostname, array $options = [])
@@ -280,7 +235,7 @@ class GrpcClient
         }
         $channel = $this->recvChannelMap[$streamId] ?? null;
         if ($channel instanceof Channel) {
-            $response = $channel->pop($timeout === null ? $this->timeout : $timeout);
+            $response = $channel->pop($timeout ?? $this->timeout);
             // Pop timeout
             if ($response === false && $channel->errCode === SWOOLE_CHANNEL_TIMEOUT) {
                 unset($this->recvChannelMap[$streamId]);
@@ -297,10 +252,7 @@ class GrpcClient
         return $this->httpClient ? $this->httpClient->errCode : 0;
     }
 
-    /**
-     * @param bool|float $yield
-     */
-    private function wait(int $type, $yield = true): bool
+    private function wait(int $type, bool|float $yield = true): bool
     {
         if (! $this->isConnected()) {
             return false;
@@ -317,10 +269,7 @@ class GrpcClient
         return $result;
     }
 
-    /**
-     * @param bool|float $yield
-     */
-    private function yield($yield = true)
+    private function yield(bool|float $yield = true)
     {
         $yield = $yield === true ? -1 : $yield;
         if ($yield) {

@@ -18,10 +18,7 @@ use Hyperf\Utils\Collection;
 
 class GrpcResponse extends Response
 {
-    /**
-     * @param Collection|false|JsonResource $resource
-     */
-    public function toMessage(mixed $resource = false): Message
+    public function toMessage(\Hyperf\Utils\Collection|false|\Hyperf\Resource\Json\JsonResource $resource = false): Message
     {
         if ($resource === false) {
             $resource = $this->resource;

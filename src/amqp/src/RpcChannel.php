@@ -61,10 +61,7 @@ class RpcChannel
         return $this;
     }
 
-    /**
-     * @return AMQPMessage|false
-     */
-    public function wait(int $timeout)
+    public function wait(int $timeout): \PhpAmqpLib\Message\AMQPMessage|false
     {
         $this->channel->wait(null, false, $timeout);
 

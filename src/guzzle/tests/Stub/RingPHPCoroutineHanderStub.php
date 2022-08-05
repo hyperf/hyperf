@@ -33,7 +33,7 @@ class RingPHPCoroutineHanderStub extends CoroutineHandler
                 'setting' => [],
                 'uri' => $path,
                 'body' => $body,
-            ]);
+            ], JSON_THROW_ON_ERROR);
             return new RawResponse(200, [], $body, '1.1');
         });
         return $client;

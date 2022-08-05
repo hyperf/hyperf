@@ -127,7 +127,7 @@ class Container implements HyperfContainerInterface
     public function has($id): bool
     {
         if (! is_string($id)) {
-            throw new InvalidArgumentException(sprintf('The name parameter must be of type string, %s given', is_object($id) ? get_class($id) : gettype($id)));
+            throw new InvalidArgumentException(sprintf('The name parameter must be of type string, %s given', get_debug_type($id)));
         }
 
         if (array_key_exists($id, $this->resolvedEntries)) {
@@ -154,10 +154,7 @@ class Container implements HyperfContainerInterface
         return $this->definitionSource;
     }
 
-    /**
-     * @param array|callable|string $definition
-     */
-    private function setDefinition(string $name, $definition): void
+    private function setDefinition(string $name, array|callable|string $definition): void
     {
         // Clear existing entry if it exists
         if (array_key_exists($name, $this->resolvedEntries)) {

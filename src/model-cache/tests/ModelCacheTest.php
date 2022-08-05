@@ -407,9 +407,9 @@ class ModelCacheTest extends TestCase
                 $model->save();
                 $this->assertEquals(1, $redis->hGet('{mc:default:m:user}:id:' . $id, 'gender'));
                 $invoker = new ClassInvoker(InvalidCacheManager::instance());
-                $this->assertSame(1, count($invoker->models));
+                $this->assertSame(1, is_countable($invoker->models) ? count($invoker->models) : 0);
                 Db::commit();
-            } catch (\Throwable $exception) {
+            } catch (\Throwable) {
                 Db::rollBack();
             }
         });
@@ -440,9 +440,9 @@ class ModelCacheTest extends TestCase
                 $model->increment('gender');
                 $this->assertEquals(1, $redis->hGet('{mc:default:m:user}:id:' . $id, 'gender'));
                 $invoker = new ClassInvoker(InvalidCacheManager::instance());
-                $this->assertSame(1, count($invoker->models));
+                $this->assertSame(1, is_countable($invoker->models) ? count($invoker->models) : 0);
                 Db::commit();
-            } catch (\Throwable $exception) {
+            } catch (\Throwable) {
                 Db::rollBack();
             }
         });
@@ -473,9 +473,9 @@ class ModelCacheTest extends TestCase
                 $model->decrement('gender');
                 $this->assertEquals(1, $redis->hGet('{mc:default:m:user}:id:' . $id, 'gender'));
                 $invoker = new ClassInvoker(InvalidCacheManager::instance());
-                $this->assertSame(1, count($invoker->models));
+                $this->assertSame(1, is_countable($invoker->models) ? count($invoker->models) : 0);
                 Db::commit();
-            } catch (\Throwable $exception) {
+            } catch (\Throwable) {
                 Db::rollBack();
             }
         });

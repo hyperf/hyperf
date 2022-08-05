@@ -22,11 +22,10 @@ trait HasGlobalScopes
     /**
      * Register a new global scope on the model.
      *
-     * @param \Closure|\Hyperf\Database\Model\Scope|string $scope
      *
      * @throws \InvalidArgumentException
      */
-    public static function addGlobalScope($scope, Closure $implementation = null)
+    public static function addGlobalScope(\Closure|\Hyperf\Database\Model\Scope|string $scope, Closure $implementation = null)
     {
         if (is_string($scope) && ! is_null($implementation)) {
             return GlobalScope::$container[static::class][$scope] = $implementation;
@@ -35,7 +34,7 @@ trait HasGlobalScopes
             return GlobalScope::$container[static::class][spl_object_hash($scope)] = $scope;
         }
         if ($scope instanceof Scope) {
-            return GlobalScope::$container[static::class][get_class($scope)] = $scope;
+            return GlobalScope::$container[static::class][$scope::class] = $scope;
         }
 
         throw new InvalidArgumentException('Global scope must be an instance of Closure or Scope.');
@@ -43,10 +42,8 @@ trait HasGlobalScopes
 
     /**
      * Determine if a model has a global scope.
-     *
-     * @param \Hyperf\Database\Model\Scope|string $scope
      */
-    public static function hasGlobalScope($scope): bool
+    public static function hasGlobalScope(\Hyperf\Database\Model\Scope|string $scope): bool
     {
         return ! is_null(static::getGlobalScope($scope));
     }
@@ -54,10 +51,9 @@ trait HasGlobalScopes
     /**
      * Get a global scope registered with the model.
      *
-     * @param \Hyperf\Database\Model\Scope|string $scope
      * @return null|\Closure|\Hyperf\Database\Model\Scope
      */
-    public static function getGlobalScope($scope)
+    public static function getGlobalScope(\Hyperf\Database\Model\Scope|string $scope)
     {
         if (is_string($scope)) {
             return Arr::get(GlobalScope::$container, static::class . '.' . $scope);
@@ -65,7 +61,7 @@ trait HasGlobalScopes
 
         return Arr::get(
             GlobalScope::$container,
-            static::class . '.' . get_class($scope)
+            static::class . '.' . $scope::class
         );
     }
 

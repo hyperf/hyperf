@@ -46,8 +46,6 @@ interface ContainerInterface extends PsrContainerInterface
     /**
      * Bind an arbitrary definition to an identifier.
      * Useful for testing 'make'.
-     *
-     * @param array|callable|string $definition
      */
-    public function define(string $name, $definition): void;
+    public function define(string $name, array|callable|string $definition): void;
 }

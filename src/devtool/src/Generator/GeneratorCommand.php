@@ -224,38 +224,23 @@ abstract class GeneratorCommand extends Command
      */
     protected function getEditorUrl(string $ide): string
     {
-        switch ($ide) {
-            case 'sublime':
-                return 'subl://open?url=file://%s';
-            case 'textmate':
-                return 'txmt://open?url=file://%s';
-            case 'emacs':
-                return 'emacs://open?url=file://%s';
-            case 'macvim':
-                return 'mvim://open/?url=file://%s';
-            case 'phpstorm':
-                return 'phpstorm://open?file=%s';
-            case 'idea':
-                return 'idea://open?file=%s';
-            case 'vscode':
-                return 'vscode://file/%s';
-            case 'vscode-insiders':
-                return 'vscode-insiders://file/%s';
-            case 'vscode-remote':
-                return 'vscode://vscode-remote/%s';
-            case 'vscode-insiders-remote':
-                return 'vscode-insiders://vscode-remote/%s';
-            case 'atom':
-                return 'atom://core/open/file?filename=%s';
-            case 'nova':
-                return 'nova://core/open/file?filename=%s';
-            case 'netbeans':
-                return 'netbeans://open/?f=%s';
-            case 'xdebug':
-                return 'xdebug://%s';
-            default:
-                return '';
-        }
+        return match ($ide) {
+            'sublime' => 'subl://open?url=file://%s',
+            'textmate' => 'txmt://open?url=file://%s',
+            'emacs' => 'emacs://open?url=file://%s',
+            'macvim' => 'mvim://open/?url=file://%s',
+            'phpstorm' => 'phpstorm://open?file=%s',
+            'idea' => 'idea://open?file=%s',
+            'vscode' => 'vscode://file/%s',
+            'vscode-insiders' => 'vscode-insiders://file/%s',
+            'vscode-remote' => 'vscode://vscode-remote/%s',
+            'vscode-insiders-remote' => 'vscode-insiders://vscode-remote/%s',
+            'atom' => 'atom://core/open/file?filename=%s',
+            'nova' => 'nova://core/open/file?filename=%s',
+            'netbeans' => 'netbeans://open/?f=%s',
+            'xdebug' => 'xdebug://%s',
+            default => '',
+        };
     }
 
     /**

@@ -16,11 +16,8 @@ use Hyperf\Contract\UnCompressInterface;
 
 class DemoModelMeta implements UnCompressInterface
 {
-    public $id;
-
-    public function __construct($id)
+    public function __construct(public $id)
     {
-        $this->id = $id;
     }
 
     public function uncompress()

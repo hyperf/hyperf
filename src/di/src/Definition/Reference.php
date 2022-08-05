@@ -13,7 +13,7 @@ namespace Hyperf\Di\Definition;
 
 use Psr\Container\ContainerInterface;
 
-class Reference implements DefinitionInterface, SelfResolvingDefinitionInterface
+class Reference implements DefinitionInterface, SelfResolvingDefinitionInterface, \Stringable
 {
     /**
      * Entry name.

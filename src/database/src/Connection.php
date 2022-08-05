@@ -50,27 +50,6 @@ class Connection implements ConnectionInterface
     protected $readPdo;
 
     /**
-     * The name of the connected database.
-     *
-     * @var string
-     */
-    protected $database;
-
-    /**
-     * The table prefix for the connection.
-     *
-     * @var string
-     */
-    protected $tablePrefix = '';
-
-    /**
-     * The database connection configuration options.
-     *
-     * @var array
-     */
-    protected $config = [];
-
-    /**
      * The reconnector instance for the connection.
      *
      * @var callable
@@ -163,18 +142,12 @@ class Connection implements ConnectionInterface
      * @param string $database
      * @param string $tablePrefix
      */
-    public function __construct($pdo, $database = '', $tablePrefix = '', array $config = [])
+    public function __construct($pdo, protected $database = '', protected $tablePrefix = '', /**
+     * The database connection configuration options.
+     */
+    protected array $config = [])
     {
         $this->pdo = $pdo;
-
-        // First we will setup the default properties. We keep track of the DB
-        // name we are connected to since it is needed when some reflective
-        // type commands are run such as checking whether a table exists.
-        $this->database = $database;
-
-        $this->tablePrefix = $tablePrefix;
-
-        $this->config = $config;
 
         // We need to initialize a query grammar and the query post processors
         // which are both very important parts of the database abstractions
@@ -726,7 +699,6 @@ class Connection implements ConnectionInterface
     /**
      * Set the query grammar used by the connection.
      *
-     * @param \Hyperf\Database\Query\Grammars\Grammar $grammar
      * @return $this
      */
     public function setQueryGrammar(Query\Grammars\Grammar $grammar)
@@ -749,7 +721,6 @@ class Connection implements ConnectionInterface
     /**
      * Set the schema grammar used by the connection.
      *
-     * @param \Hyperf\Database\Schema\Grammars\Grammar $grammar
      * @return $this
      */
     public function setSchemaGrammar(Schema\Grammars\Grammar $grammar)
@@ -916,7 +887,6 @@ class Connection implements ConnectionInterface
     /**
      * Set the table prefix and return the grammar.
      *
-     * @param \Hyperf\Database\Grammar $grammar
      * @return \Hyperf\Database\Grammar
      */
     public function withTablePrefix(Grammar $grammar)

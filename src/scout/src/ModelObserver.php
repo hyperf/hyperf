@@ -50,7 +50,7 @@ class ModelObserver
      */
     public static function syncingDisabledFor($class): bool
     {
-        $class = is_object($class) ? get_class($class) : $class;
+        $class = is_object($class) ? $class::class : $class;
         $syncingDisabled = (array) Context::get('syncing_disabled', []);
         return array_key_exists($class, $syncingDisabled);
     }
@@ -85,7 +85,7 @@ class ModelObserver
         if (static::syncingDisabledFor($model)) {
             return;
         }
-        if ($this->usesSoftDelete($model) && config('scout.soft_delete', false)) {
+        if ($this->usesSoftDelete($model) && config('scout.soft_delete')) {
             $this->saved(new Saved($model));
         } else {
             $model->unsearchable();

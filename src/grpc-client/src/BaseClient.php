@@ -27,30 +27,12 @@ use Swoole\Http2\Response;
  */
 class BaseClient
 {
-    /**
-     * @var null|GrpcClient
-     */
-    private $grpcClient;
+    private ?\Hyperf\GrpcClient\GrpcClient $grpcClient = null;
 
-    /**
-     * @var array
-     */
-    private $options;
+    private bool $initialized = false;
 
-    /**
-     * @var string
-     */
-    private $hostname;
-
-    /**
-     * @var bool
-     */
-    private $initialized = false;
-
-    public function __construct(string $hostname, array $options = [])
+    public function __construct(private string $hostname, private array $options = [])
     {
-        $this->hostname = $hostname;
-        $this->options = $options;
     }
 
     public function __destruct()

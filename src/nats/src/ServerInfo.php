@@ -79,7 +79,7 @@ class ServerInfo
     public function __construct($connectionResponse)
     {
         $parts = explode(' ', $connectionResponse);
-        $data = json_decode($parts[1], true);
+        $data = json_decode($parts[1], true, 512, JSON_THROW_ON_ERROR);
 
         $this->setServerID($data['server_id']);
         $this->setHost($data['host']);

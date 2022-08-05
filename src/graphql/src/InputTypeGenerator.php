@@ -23,33 +23,12 @@ use TheCodingMachine\GraphQLite\Types\ArgumentResolver;
 class InputTypeGenerator
 {
     /**
-     * @var FieldsBuilderFactory
-     */
-    private $fieldsBuilderFactory;
-
-    /**
      * @var array<string, InputObjectType>
      */
-    private $cache = [];
+    private array $cache = [];
 
-    /**
-     * @var ArgumentResolver
-     */
-    private $argumentResolver;
-
-    /**
-     * @var InputTypeUtils
-     */
-    private $inputTypeUtils;
-
-    public function __construct(
-        InputTypeUtils $inputTypeUtils,
-        FieldsBuilderFactory $fieldsBuilderFactory,
-        ArgumentResolver $argumentResolver
-    ) {
-        $this->inputTypeUtils = $inputTypeUtils;
-        $this->fieldsBuilderFactory = $fieldsBuilderFactory;
-        $this->argumentResolver = $argumentResolver;
+    public function __construct(private InputTypeUtils $inputTypeUtils, private FieldsBuilderFactory $fieldsBuilderFactory, private ArgumentResolver $argumentResolver)
+    {
     }
 
     public function mapFactoryMethod(string $factory, string $methodName, RecursiveTypeMapperInterface $recursiveTypeMapper, ContainerInterface $container): InputObjectType

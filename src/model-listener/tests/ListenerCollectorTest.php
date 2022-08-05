@@ -29,14 +29,14 @@ class ListenerCollectorTest extends TestCase
 
     public function testRegisterObserver()
     {
-        $class = 'HyperfTest\ModelListener\Stub\ModelStub';
+        $class = \HyperfTest\ModelListener\Stub\ModelStub::class;
         ListenerCollector::register($class, 'ObserverClass');
         $this->assertSame(['ObserverClass'], ListenerCollector::getListenersForModel($class));
     }
 
     public function testRegisterMoreThanOneObserver()
     {
-        $class = 'HyperfTest\ModelListener\Stub\ModelStub';
+        $class = \HyperfTest\ModelListener\Stub\ModelStub::class;
         ListenerCollector::register($class, 'ObserverClass');
         ListenerCollector::register($class, 'ObserverClass2');
         ListenerCollector::register($class, 'ObserverClass3');
@@ -45,7 +45,7 @@ class ListenerCollectorTest extends TestCase
 
     public function testClearObservables()
     {
-        $class = 'HyperfTest\ModelListener\Stub\ModelStub';
+        $class = \HyperfTest\ModelListener\Stub\ModelStub::class;
         ListenerCollector::register($class, 'ObserverClass');
 
         ListenerCollector::clearListeners();

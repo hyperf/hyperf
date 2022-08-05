@@ -21,11 +21,8 @@ use Symfony\Component\Console\Input\InputOption;
 #[Command]
 class FlushFailedMessageCommand extends HyperfCommand
 {
-    protected ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         parent::__construct('queue:flush');
     }
 

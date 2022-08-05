@@ -13,11 +13,8 @@ namespace HyperfTest\Config\Stub;
 
 class Foo
 {
-    public $id;
-
-    public function __construct($id = 0)
+    public function __construct(public $id = 0)
     {
-        $this->id = $id;
     }
 
     public static function make()

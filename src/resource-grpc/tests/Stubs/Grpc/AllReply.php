@@ -23,7 +23,7 @@ class AllReply extends \Google\Protobuf\Internal\Message
     /**
      * Generated from protobuf field <code>string message = 1;</code>.
      */
-    private $message = '';
+    private string $message = '';
 
     /**
      * Generated from protobuf field <code>repeated .HyperfTest.ResourceGrpc.Stubs.Grpc.HiUser users = 2;</code>.
@@ -82,7 +82,7 @@ class AllReply extends \Google\Protobuf\Internal\Message
      * @param \Google\Protobuf\Internal\RepeatedField|\HyperfTest\ResourceGrpc\Stubs\Grpc\HiUser[] $var
      * @return $this
      */
-    public function setUsers($var)
+    public function setUsers(\Google\Protobuf\Internal\RepeatedField|array $var)
     {
         $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \HyperfTest\ResourceGrpc\Stubs\Grpc\HiUser::class);
         $this->users = $arr;

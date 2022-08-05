@@ -47,10 +47,9 @@ class Seed
     /**
      * Run the pending seeders at a given path.
      *
-     * @param array|string $paths
      * @return array
      */
-    public function run($paths = [], array $options = [])
+    public function run(array|string $paths = [], array $options = [])
     {
         $files = $this->getSeederFiles($paths);
 
@@ -141,18 +140,11 @@ class Seed
     /**
      * Get all the seeder files in a given path.
      *
-     * @param array|string $paths
      * @return array
      */
-    public function getSeederFiles($paths)
+    public function getSeederFiles(array|string $paths)
     {
-        return Collection::make($paths)->flatMap(function ($path) {
-            return Str::endsWith($path, '.php') ? [$path] : $this->files->glob($path . '/*.php');
-        })->filter()->sortBy(function ($file) {
-            return $this->getSeederName($file);
-        })->values()->keyBy(function ($file) {
-            return $this->getSeederName($file);
-        })->all();
+        return Collection::make($paths)->flatMap(fn($path) => Str::endsWith($path, '.php') ? [$path] : $this->files->glob($path . '/*.php'))->filter()->sortBy(fn($file) => $this->getSeederName($file))->values()->keyBy(fn($file) => $this->getSeederName($file))->all();
     }
 
     /**

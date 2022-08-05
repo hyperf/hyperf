@@ -95,7 +95,7 @@ class Cookie implements Stringable
         $str = ($this->isRaw() ? $this->getName() : urlencode($this->getName())) . '=';
 
         if ($this->getValue() === '') {
-            $str .= 'deleted; expires=' . gmdate('D, d-M-Y H:i:s T', time() - 31536001) . '; max-age=-31536001';
+            $str .= 'deleted; expires=' . gmdate('D, d-M-Y H:i:s T', time() - 31_536_001) . '; max-age=-31536001';
         } else {
             $str .= $this->isRaw() ? $this->getValue() : rawurlencode($this->getValue());
 

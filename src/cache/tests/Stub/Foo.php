@@ -13,10 +13,7 @@ namespace HyperfTest\Cache\Stub;
 
 class Foo
 {
-    public $id;
-
-    public function __construct($id)
+    public function __construct(public $id)
     {
-        $this->id = $id;
     }
 }

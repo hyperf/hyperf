@@ -24,36 +24,13 @@ use TheCodingMachine\GraphQLite\TypeRegistry;
 
 class RecursiveTypeMapperFactory
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @var CacheInterface
-     */
-    private $cache;
-
-    /**
-     * @var NamingStrategyInterface
-     */
-    private $namingStrategy;
-
-    /**
-     * @var TypeRegistry
-     */
-    private $typeRegistry;
-
-    public function __construct(ContainerInterface $container, CacheInterface $cache, NamingStrategyInterface $namingStrategy, TypeRegistry $typeRegistry)
+    public function __construct(private ContainerInterface $container, private CacheInterface $cache, private NamingStrategyInterface $namingStrategy, private TypeRegistry $typeRegistry)
     {
-        $this->cache = $cache;
-        $this->container = $container;
-        $this->namingStrategy = $namingStrategy;
-        $this->typeRegistry = $typeRegistry;
     }
 
     public function __invoke()
     {
+        $typeMappers = [];
         $annotationReader = new AnnotationReader($this->container->get(Reader::class), AnnotationReader::LAX_MODE);
         $typeGenerator = $this->container->get(TypeGenerator::class);
         $inputTypeGenerator = $this->container->get(InputTypeGenerator::class);

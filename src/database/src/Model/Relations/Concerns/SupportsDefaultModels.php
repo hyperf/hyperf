@@ -27,10 +27,9 @@ trait SupportsDefaultModels
     /**
      * Return a new model instance in case the relationship does not exist.
      *
-     * @param array|bool|\Closure $callback
      * @return $this
      */
-    public function withDefault($callback = true)
+    public function withDefault(array|bool|\Closure $callback = true)
     {
         $this->withDefault = $callback;
 

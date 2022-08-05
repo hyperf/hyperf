@@ -30,9 +30,7 @@ class ClientFactory
             ->setPullTimeout($config->get('config_center.drivers.apollo.pull_timeout', 10))
             ->setIntervalTimeout($config->get('config_center.drivers.apollo.interval_timeout', 60))
             ->setSecret($config->get('config_center.drivers.apollo.secret', ''));
-        $httpClientFactory = function (array $options = []) use ($container) {
-            return $container->get(GuzzleClientFactory::class)->create($options);
-        };
+        $httpClientFactory = fn(array $options = []) => $container->get(GuzzleClientFactory::class)->create($options);
         return make(Client::class, compact('option', 'httpClientFactory'));
     }
 }

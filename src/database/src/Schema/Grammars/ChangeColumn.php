@@ -54,9 +54,8 @@ class ChangeColumn
      * Get the Doctrine table difference for the given changes.
      *
      * @param \Hyperf\Database\Schema\Grammars\Grammar $grammar
-     * @return bool|\Doctrine\DBAL\Schema\TableDiff
      */
-    protected static function getChangedDiff($grammar, Blueprint $blueprint, SchemaManager $schema)
+    protected static function getChangedDiff($grammar, Blueprint $blueprint, SchemaManager $schema): bool|\Doctrine\DBAL\Schema\TableDiff
     {
         $current = $schema->listTableDetails($grammar->getTablePrefix() . $blueprint->getTable());
 
@@ -165,14 +164,11 @@ class ChangeColumn
      */
     protected static function calculateDoctrineTextLength($type)
     {
-        switch ($type) {
-            case 'mediumText':
-                return 65535 + 1;
-            case 'longText':
-                return 16777215 + 1;
-            default:
-                return 255 + 1;
-        }
+        return match ($type) {
+            'mediumText' => 65535 + 1,
+            'longText' => 16_777_215 + 1,
+            default => 255 + 1,
+        };
     }
 
     /**

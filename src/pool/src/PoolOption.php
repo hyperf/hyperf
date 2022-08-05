@@ -15,57 +15,40 @@ use Hyperf\Contract\PoolOptionInterface;
 
 class PoolOption implements PoolOptionInterface
 {
-    /**
-     * Min connections of pool.
-     * This means the pool will create $minConnections connections when
-     * pool initialization.
-     */
-    private int $minConnections;
-
-    /**
-     * Max connections of pool.
-     */
-    private int $maxConnections;
-
-    /**
-     * The timeout of connect the connection.
-     * Default value is 10 seconds.
-     */
-    private float $connectTimeout;
-
-    /**
-     * The timeout of pop a connection.
-     * Default value is 3 seconds.
-     */
-    private float $waitTimeout;
-
-    /**
-     * Heartbeat of connection.
-     * If the value is 10, then means 10 seconds.
-     * If the value is -1, then means does not need the heartbeat.
-     * Default value is -1.
-     */
-    private float $heartbeat;
-
-    /**
-     * The max idle time for connection.
-     */
-    private float $maxIdleTime;
-
     public function __construct(
-        int $minConnections = 1,
-        int $maxConnections = 10,
-        float $connectTimeout = 10.0,
-        float $waitTimeout = 3.0,
-        float $heartbeat = -1,
-        float $maxIdleTime = 60.0
-    ) {
-        $this->minConnections = $minConnections;
-        $this->maxConnections = $maxConnections;
-        $this->connectTimeout = $connectTimeout;
-        $this->waitTimeout = $waitTimeout;
-        $this->heartbeat = $heartbeat;
-        $this->maxIdleTime = $maxIdleTime;
+        /**
+         * Min connections of pool.
+         * This means the pool will create $minConnections connections when
+         * pool initialization.
+         */
+        private int $minConnections = 1,
+        /**
+         * Max connections of pool.
+         */
+        private int $maxConnections = 10,
+        /**
+         * The timeout of connect the connection.
+         * Default value is 10 seconds.
+         */
+        private float $connectTimeout = 10.0,
+        /**
+         * The timeout of pop a connection.
+         * Default value is 3 seconds.
+         */
+        private float $waitTimeout = 3.0,
+        /**
+         * Heartbeat of connection.
+         * If the value is 10, then means 10 seconds.
+         * If the value is -1, then means does not need the heartbeat.
+         * Default value is -1.
+         */
+        private float $heartbeat = -1,
+        /**
+         * The max idle time for connection.
+         */
+        private float $maxIdleTime = 60.0
+    )
+    {
     }
 
     public function getMaxConnections(): int

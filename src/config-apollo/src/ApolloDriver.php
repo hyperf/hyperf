@@ -118,7 +118,7 @@ class ApolloDriver extends AbstractDriver
         $this->loop(function () use ($channel) {
             $response = $this->client->longPulling($this->notifications);
             if ($response instanceof ResponseInterface && $response->getStatusCode() === 200) {
-                $body = json_decode((string) $response->getBody(), true);
+                $body = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
                 foreach ($body as $item) {
                     if (isset($item['namespaceName'], $item['notificationId']) && $item['notificationId'] > $this->notifications[$item['namespaceName']]['notificationId']) {
                         $prevId = $this->notifications[$item['namespaceName']]['notificationId'];
@@ -160,7 +160,7 @@ class ApolloDriver extends AbstractDriver
         }
 
         if (is_numeric($value)) {
-            $value = (strpos($value, '.') === false) ? (int) $value : (float) $value;
+            $value = (!str_contains($value, '.')) ? (int) $value : (float) $value;
         }
 
         return $value;

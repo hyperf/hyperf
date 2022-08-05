@@ -17,8 +17,5 @@ use Swow\Socket;
 
 interface OnReceiveInterface
 {
-    /**
-     * @param Connection|Socket|SwooleServer $server
-     */
-    public function onReceive($server, int $fd, int $reactorId, string $data): void;
+    public function onReceive(\Swoole\Coroutine\Server\Connection|\Socket|SwooleServer $server, int $fd, int $reactorId, string $data): void;
 }

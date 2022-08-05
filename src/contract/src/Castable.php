@@ -15,8 +15,6 @@ interface Castable
 {
     /**
      * Get the name of the caster class to use when casting from / to this cast target.
-     *
-     * @return CastsAttributes|CastsInboundAttributes|string
      */
-    public static function castUsing();
+    public static function castUsing(): \Hyperf\Contract\CastsAttributes|\Hyperf\Contract\CastsInboundAttributes|string;
 }

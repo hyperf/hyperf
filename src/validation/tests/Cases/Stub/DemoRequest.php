@@ -42,8 +42,6 @@ class DemoRequest extends FormRequest
 
     protected function withValidator($request)
     {
-        Context::override('test.validation.DemoRequest.number', function ($id) {
-            return ++$id;
-        });
+        Context::override('test.validation.DemoRequest.number', fn($id) => ++$id);
     }
 }

@@ -172,7 +172,7 @@ class Stringable implements JsonSerializable, \Stringable
      * @param string|string[] $needles
      * @return bool
      */
-    public function contains($needles)
+    public function contains(string|array $needles)
     {
         return Str::contains($this->value, $needles);
     }
@@ -204,7 +204,7 @@ class Stringable implements JsonSerializable, \Stringable
      * @param string|string[] $needles
      * @return bool
      */
-    public function endsWith($needles)
+    public function endsWith(string|array $needles)
     {
         return Str::endsWith($this->value, $needles);
     }
@@ -212,10 +212,9 @@ class Stringable implements JsonSerializable, \Stringable
     /**
      * Determine if the string is an exact match with the given value.
      *
-     * @param string|\Stringable $value
      * @return bool
      */
-    public function exactly($value)
+    public function exactly(string|\Hyperf\Utils\Stringable $value)
     {
         if ($value instanceof \Stringable) {
             $value = $value->__toString();
@@ -239,12 +238,11 @@ class Stringable implements JsonSerializable, \Stringable
     /**
      * Split a string using a regular expression or by length.
      *
-     * @param int|string $pattern
      * @param int $limit
      * @param int $flags
      * @return \Hyperf\Utils\Collection
      */
-    public function split($pattern, $limit = -1, $flags = 0)
+    public function split(int|string $pattern, $limit = -1, $flags = 0)
     {
         if (filter_var($pattern, FILTER_VALIDATE_INT) !== false) {
             return collect(mb_str_split($this->value, $pattern));
@@ -272,7 +270,7 @@ class Stringable implements JsonSerializable, \Stringable
      * @param string|string[] $pattern
      * @return bool
      */
-    public function is($pattern)
+    public function is(string|array $pattern)
     {
         return Str::is($pattern, $this->value);
     }
@@ -482,7 +480,7 @@ class Stringable implements JsonSerializable, \Stringable
      * @param bool $caseSensitive
      * @return static
      */
-    public function remove($search, $caseSensitive = true)
+    public function remove(string|array $search, $caseSensitive = true)
     {
         return new static(Str::remove($search, $this->value, $caseSensitive));
     }
@@ -504,7 +502,7 @@ class Stringable implements JsonSerializable, \Stringable
      * @param string|string[] $replace
      * @return static
      */
-    public function replace($search, $replace)
+    public function replace(string|array $search, string|array $replace)
     {
         return new static(Str::replace($search, $replace, $this->value));
     }
@@ -548,11 +546,10 @@ class Stringable implements JsonSerializable, \Stringable
      * Replace the patterns matching the given regular expression.
      *
      * @param string $pattern
-     * @param \Closure|string $replace
      * @param int $limit
      * @return static
      */
-    public function replaceMatches($pattern, $replace, $limit = -1)
+    public function replaceMatches($pattern, \Closure|string $replace, $limit = -1)
     {
         if ($replace instanceof Closure) {
             return new static(preg_replace_callback($pattern, $replace, $this->value, $limit));
@@ -642,7 +639,7 @@ class Stringable implements JsonSerializable, \Stringable
      * @param string|string[] $needles
      * @return bool
      */
-    public function startsWith($needles)
+    public function startsWith(string|array $needles)
     {
         return Str::startsWith($this->value, $needles);
     }

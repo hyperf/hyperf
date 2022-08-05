@@ -42,7 +42,7 @@ class RingPHPCoroutineHandlerTest extends TestCase
             ],
         ]);
 
-        $json = json_decode(stream_get_contents($res['body']), true);
+        $json = json_decode(stream_get_contents($res['body']), true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertEquals('Basic ' . base64_encode('username:password'), $json['headers']['Authorization']);
     }
@@ -61,13 +61,13 @@ class RingPHPCoroutineHandlerTest extends TestCase
         $this->assertNull($response['reason']);
         $this->assertEquals([], $response['headers']);
         $this->assertInstanceOf(
-            'GuzzleHttp\Ring\Exception\RingException',
+            \GuzzleHttp\Ring\Exception\RingException::class,
             $response['error']
         );
 
         $this->assertEquals(
             0,
-            strpos('Connection timed out errCode=', $response['error']->getMessage())
+            strpos('Connection timed out errCode=', (string) $response['error']->getMessage())
         );
     }
 
@@ -81,7 +81,7 @@ class RingPHPCoroutineHandlerTest extends TestCase
             'uri' => '/echo?a=1&b=2',
         ]);
 
-        $json = json_decode(stream_get_contents($res['body']), true);
+        $json = json_decode(stream_get_contents($res['body']), true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertEquals('/echo?a=1&b=2', $json['uri']);
     }

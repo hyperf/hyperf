@@ -42,7 +42,7 @@ class AnnotationGenerator
                     $reflection = new ReflectionClass($value);
                     $attributes = $reflection->getAttributes();
                     foreach ($attributes as $attribute) {
-                        if ($attribute->getName() === 'Attribute') {
+                        if ($attribute->getName() === \Attribute::class) {
                             $code = $this->ast->generate($reflection, file_get_contents($path), [
                                 AnnotationIDEVisitor::class,
                             ]);

@@ -23,7 +23,6 @@ class RenameColumn
     /**
      * Compile a rename column command.
      *
-     * @param \Hyperf\Database\Schema\Grammars\Grammar $grammar
      * @return array
      */
     public static function compile(Grammar $grammar, Blueprint $blueprint, Fluent $command, Connection $connection)
@@ -47,7 +46,6 @@ class RenameColumn
     /**
      * Get a new column instance with the new column name.
      *
-     * @param \Hyperf\Database\Schema\Grammars\Grammar $grammar
      * @return \Doctrine\DBAL\Schema\TableDiff
      */
     protected static function getRenamedDiff(Grammar $grammar, Blueprint $blueprint, Fluent $command, Column $column, SchemaManager $schema)
@@ -79,8 +77,6 @@ class RenameColumn
      */
     private static function getWritableColumnOptions(Column $column)
     {
-        return array_filter($column->toArray(), function (string $name) use ($column) {
-            return method_exists($column, 'set' . $name);
-        }, ARRAY_FILTER_USE_KEY);
+        return array_filter($column->toArray(), fn(string $name) => method_exists($column, 'set' . $name), ARRAY_FILTER_USE_KEY);
     }
 }

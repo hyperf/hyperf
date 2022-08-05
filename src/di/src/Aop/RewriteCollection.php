@@ -43,7 +43,7 @@ class RewriteCollection
     /**
      * @param string|string[] $methods
      */
-    public function add($methods): self
+    public function add(string|array $methods): self
     {
         $methods = (array) $methods;
         foreach ($methods as $method) {

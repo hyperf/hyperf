@@ -45,7 +45,7 @@ trait ManagesComponents
      *
      * @param Closure|Htmlable|string|View $view
      */
-    public function startComponent(mixed $view, array $data = [])
+    public function startComponent(\Closure|\Hyperf\ViewEngine\Contract\Htmlable|string|\Hyperf\ViewEngine\View $view, array $data = [])
     {
         if (ob_start()) {
             $this->componentStack[] = $view;

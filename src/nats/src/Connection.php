@@ -79,9 +79,6 @@ class Connection
      */
     public function __construct(private ?ConnectionOptions $options = null)
     {
-        $this->pings = 0;
-        $this->pubs = 0;
-        $this->subscriptions = [];
         $this->randomGenerator = new RandomGenerator();
 
         if ($options === null) {
@@ -489,10 +486,8 @@ class Connection
      * Receives a message thought the stream.
      *
      * @param int $len number of bytes to receive
-     *
-     * @return bool|string
      */
-    private function receive(int $len = 0)
+    private function receive(int $len = 0): bool|string
     {
         if ($len > 0) {
             $chunkSize = $this->chunkSize;

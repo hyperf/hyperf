@@ -67,64 +67,8 @@ use function get_parent_class;
  */
 class FieldsBuilder
 {
-    /**
-     * @var AnnotationReader
-     */
-    private $annotationReader;
-
-    /**
-     * @var RecursiveTypeMapperInterface
-     */
-    private $typeMapper;
-
-    /**
-     * @var ArgumentResolver
-     */
-    private $argumentResolver;
-
-    /**
-     * @var AuthenticationServiceInterface
-     */
-    private $authenticationService;
-
-    /**
-     * @var AuthorizationServiceInterface
-     */
-    private $authorizationService;
-
-    /**
-     * @var CachedDocBlockFactory
-     */
-    private $cachedDocBlockFactory;
-
-    /**
-     * @var TypeResolver
-     */
-    private $typeResolver;
-
-    /**
-     * @var NamingStrategyInterface
-     */
-    private $namingStrategy;
-
-    public function __construct(
-        AnnotationReader $annotationReader,
-        RecursiveTypeMapperInterface $typeMapper,
-        ArgumentResolver $argumentResolver,
-        AuthenticationServiceInterface $authenticationService,
-        AuthorizationServiceInterface $authorizationService,
-        TypeResolver $typeResolver,
-        CachedDocBlockFactory $cachedDocBlockFactory,
-        NamingStrategyInterface $namingStrategy
-    ) {
-        $this->annotationReader = $annotationReader;
-        $this->typeMapper = $typeMapper;
-        $this->argumentResolver = $argumentResolver;
-        $this->authenticationService = $authenticationService;
-        $this->authorizationService = $authorizationService;
-        $this->typeResolver = $typeResolver;
-        $this->cachedDocBlockFactory = $cachedDocBlockFactory;
-        $this->namingStrategy = $namingStrategy;
+    public function __construct(private AnnotationReader $annotationReader, private RecursiveTypeMapperInterface $typeMapper, private ArgumentResolver $argumentResolver, private AuthenticationServiceInterface $authenticationService, private AuthorizationServiceInterface $authorizationService, private TypeResolver $typeResolver, private CachedDocBlockFactory $cachedDocBlockFactory, private NamingStrategyInterface $namingStrategy)
+    {
     }
 
     // TODO: Add RecursiveTypeMapper in the list of parameters for getQueries and REMOVE the ControllerQueryProviderFactory.
@@ -294,9 +238,7 @@ class FieldsBuilder
 
                 if ($unauthorized) {
                     $failWithValue = $failWith->getValue();
-                    $callable = function () use ($failWithValue) {
-                        return $failWithValue;
-                    };
+                    $callable = fn() => $failWithValue;
                     if ($failWithValue === null && $type instanceof NonNull) {
                         $type = $type->getWrappedType();
                     }
@@ -323,7 +265,7 @@ class FieldsBuilder
         $returnType = $refMethod->getReturnType();
         if ($returnType !== null) {
             $typeResolver = new \phpDocumentor\Reflection\TypeResolver();
-            $phpdocType = $typeResolver->resolve((string) $returnType);
+            $phpdocType = $typeResolver->resolve($returnType->getName());
             $phpdocType = $this->resolveSelf($phpdocType, $refMethod->getDeclaringClass());
         } else {
             $phpdocType = new Mixed_();
@@ -430,9 +372,7 @@ class FieldsBuilder
                 $queryList[] = new QueryField($sourceField->getName(), $type, $args, null, $methodName, $this->argumentResolver, $docBlockComment, false);
             } else {
                 $failWithValue = $sourceField->getFailWith();
-                $callable = function () use ($failWithValue) {
-                    return $failWithValue;
-                };
+                $callable = fn() => $failWithValue;
                 if ($failWithValue === null && $type instanceof NonNull) {
                     $type = $type->getWrappedType();
                 }
@@ -701,12 +641,12 @@ class FieldsBuilder
         if ($type instanceof Object_) {
             $fqcn = (string) $type->getFqsen();
             switch ($fqcn) {
-                case '\\DateTimeImmutable':
-                case '\\DateTimeInterface':
+                case \DateTimeImmutable::class:
+                case \DateTimeInterface::class:
                     return DateTimeType::getInstance();
                 case '\\' . UploadedFileInterface::class:
                     return CustomTypesRegistry::getUploadType();
-                case '\\DateTime':
+                case \DateTime::class:
                     throw new GraphQLException('Type-hinting a parameter against DateTime is not allowed. Please use the DateTimeImmutable type instead.');
                 case '\\' . ID::class:
                     return GraphQLType::id();
@@ -734,9 +674,7 @@ class FieldsBuilder
         } else {
             $docBlockTypeHints = [$docBlockTypeHint];
         }
-        return array_filter($docBlockTypeHints, function ($item) {
-            return ! $item instanceof Null_;
-        });
+        return array_filter($docBlockTypeHints, fn($item) => ! $item instanceof Null_);
     }
 
     /**

@@ -39,7 +39,7 @@ class TransporterTest extends AbstractTestCase
         $container = ContainerStub::mockContainer();
 
         $transporter = new Transporter($container, [
-            'connect_timeout' => $timeout = rand(50, 100),
+            'connect_timeout' => $timeout = random_int(50, 100),
             'retry_interval' => 123,
         ]);
 

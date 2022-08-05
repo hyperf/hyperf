@@ -294,9 +294,7 @@ class QueryBuilderTest extends TestCase
 
     public function testTapCallback()
     {
-        $callback = function ($query) {
-            return $query->where('id', '=', 1);
-        };
+        $callback = fn($query) => $query->where('id', '=', 1);
 
         $builder = $this->getBuilder();
         $builder->select('*')->from('users')->tap($callback)->where('email', 'foo');
@@ -907,9 +905,7 @@ class QueryBuilderTest extends TestCase
             ->once()
             ->with($query, ['popular', 3], true)
             ->andReturn([['category' => 'rock', 'total' => 5]]);
-        $builder->getProcessor()->shouldReceive('processSelect')->andReturnUsing(function ($builder, $results) {
-            return $results;
-        });
+        $builder->getProcessor()->shouldReceive('processSelect')->andReturnUsing(fn($builder, $results) => $results);
         $builder->from('item');
         $result = $builder->select(['category', new Raw('count(*) as "total"')])
             ->where('department', '=', 'popular')
@@ -926,9 +922,7 @@ class QueryBuilderTest extends TestCase
             ->once()
             ->with($query, ['popular'], true)
             ->andReturn([['category' => 'rock', 'total' => 5]]);
-        $builder->getProcessor()->shouldReceive('processSelect')->andReturnUsing(function ($builder, $results) {
-            return $results;
-        });
+        $builder->getProcessor()->shouldReceive('processSelect')->andReturnUsing(fn($builder, $results) => $results);
         $builder->from('item');
         $result = $builder->select(['category', new Raw('count(*) as "total"')])
             ->where('department', '=', 'popular')
@@ -1014,9 +1008,7 @@ class QueryBuilderTest extends TestCase
             ->once()
             ->with('select count(*) as aggregate from "users"', [], true)
             ->andReturn([['aggregate' => 1]]);
-        $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(function ($builder, $results) {
-            return $results;
-        });
+        $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(fn($builder, $results) => $results);
 
         $count = $builder->getCountForPagination();
         $this->assertEquals(1, $count);
@@ -1034,9 +1026,7 @@ class QueryBuilderTest extends TestCase
             ->once()
             ->with('select count("body", "teaser", "posts"."created") as aggregate from "posts"', [], true)
             ->andReturn([['aggregate' => 1]]);
-        $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(function ($builder, $results) {
-            return $results;
-        });
+        $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(fn($builder, $results) => $results);
 
         $count = $builder->getCountForPagination($columns);
         $this->assertEquals(1, $count);
@@ -1052,9 +1042,7 @@ class QueryBuilderTest extends TestCase
             ->once()
             ->with('select count(*) as aggregate from (select "id" from "posts" union select "id" from "videos") as "temp_table"', [], true)
             ->andReturn([['aggregate' => 1]]);
-        $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(function ($builder, $results) {
-            return $results;
-        });
+        $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(fn($builder, $results) => $results);
 
         $count = $builder->getCountForPagination();
         $this->assertEquals(1, $count);
@@ -1485,9 +1473,7 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('processSelect')
             ->once()
             ->with($builder, [['foo' => 'bar']])
-            ->andReturnUsing(function ($query, $results) {
-                return $results;
-            });
+            ->andReturnUsing(fn($query, $results) => $results);
         $results = $builder->from('users')->find(1);
         $this->assertEquals(['foo' => 'bar'], $results);
     }
@@ -1504,9 +1490,7 @@ class QueryBuilderTest extends TestCase
             ->shouldReceive('processSelect')
             ->once()
             ->with($builder, [['foo' => 'bar']])
-            ->andReturnUsing(function ($query, $results) {
-                return $results;
-            });
+            ->andReturnUsing(fn($query, $results) => $results);
         $results = $builder->from('users')->where('id', '=', 1)->first();
         $this->assertEquals(['foo' => 'bar'], $results);
     }
@@ -1518,9 +1502,7 @@ class QueryBuilderTest extends TestCase
         $builder->getProcessor()->shouldReceive('processSelect')->once()->with($builder, [
             ['foo' => 'bar'],
             ['foo' => 'baz'],
-        ])->andReturnUsing(function ($query, $results) {
-            return $results;
-        });
+        ])->andReturnUsing(fn($query, $results) => $results);
         $results = $builder->from('users')->where('id', '=', 1)->pluck('foo');
         $this->assertEquals(['bar', 'baz'], $results->all());
 
@@ -1532,9 +1514,7 @@ class QueryBuilderTest extends TestCase
         $builder->getProcessor()->shouldReceive('processSelect')->once()->with($builder, [
             ['id' => 1, 'foo' => 'bar'],
             ['id' => 10, 'foo' => 'baz'],
-        ])->andReturnUsing(function ($query, $results) {
-            return $results;
-        });
+        ])->andReturnUsing(fn($query, $results) => $results);
         $results = $builder->from('users')->where('id', '=', 1)->pluck('foo', 'id');
         $this->assertEquals([1 => 'bar', 10 => 'baz'], $results->all());
     }
@@ -1547,9 +1527,7 @@ class QueryBuilderTest extends TestCase
         $builder->getProcessor()->shouldReceive('processSelect')->once()->with($builder, [
             ['foo' => 'bar'],
             ['foo' => 'baz'],
-        ])->andReturnUsing(function ($query, $results) {
-            return $results;
-        });
+        ])->andReturnUsing(fn($query, $results) => $results);
         $results = $builder->from('users')->where('id', '=', 1)->implode('foo');
         $this->assertEquals('barbaz', $results);
 
@@ -1559,9 +1537,7 @@ class QueryBuilderTest extends TestCase
         $builder->getProcessor()->shouldReceive('processSelect')->once()->with($builder, [
             ['foo' => 'bar'],
             ['foo' => 'baz'],
-        ])->andReturnUsing(function ($query, $results) {
-            return $results;
-        });
+        ])->andReturnUsing(fn($query, $results) => $results);
         $results = $builder->from('users')->where('id', '=', 1)->implode('foo', ',');
         $this->assertEquals('bar,baz', $results);
     }
@@ -1591,9 +1567,7 @@ class QueryBuilderTest extends TestCase
             ->once()
             ->with('select count(*) as aggregate from "users"', [], true)
             ->andReturn([['aggregate' => 1]]);
-        $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(function ($builder, $results) {
-            return $results;
-        });
+        $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(fn($builder, $results) => $results);
         $results = $builder->from('users')->count();
         $this->assertEquals(1, $results);
 
@@ -1621,9 +1595,7 @@ class QueryBuilderTest extends TestCase
             ->once()
             ->with('select max("id") as aggregate from "users"', [], true)
             ->andReturn([['aggregate' => 1]]);
-        $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(function ($builder, $results) {
-            return $results;
-        });
+        $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(fn($builder, $results) => $results);
         $results = $builder->from('users')->max('id');
         $this->assertEquals(1, $results);
 
@@ -1633,9 +1605,7 @@ class QueryBuilderTest extends TestCase
             ->once()
             ->with('select min("id") as aggregate from "users"', [], true)
             ->andReturn([['aggregate' => 1]]);
-        $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(function ($builder, $results) {
-            return $results;
-        });
+        $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(fn($builder, $results) => $results);
         $results = $builder->from('users')->min('id');
         $this->assertEquals(1, $results);
 
@@ -1645,9 +1615,7 @@ class QueryBuilderTest extends TestCase
             ->once()
             ->with('select sum("id") as aggregate from "users"', [], true)
             ->andReturn([['aggregate' => 1]]);
-        $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(function ($builder, $results) {
-            return $results;
-        });
+        $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(fn($builder, $results) => $results);
         $results = $builder->from('users')->sum('id');
         $this->assertEquals(1, $results);
     }
@@ -1670,9 +1638,7 @@ class QueryBuilderTest extends TestCase
             ->once()
             ->with('select "column1", "column2" from "users"', [], true)
             ->andReturn([['column1' => 'foo', 'column2' => 'bar']]);
-        $builder->getProcessor()->shouldReceive('processSelect')->andReturnUsing(function ($builder, $results) {
-            return $results;
-        });
+        $builder->getProcessor()->shouldReceive('processSelect')->andReturnUsing(fn($builder, $results) => $results);
         $builder->from('users')->select('column1', 'column2');
         $count = $builder->count();
         $this->assertEquals(1, $count);
@@ -1695,9 +1661,7 @@ class QueryBuilderTest extends TestCase
             ->once()
             ->with('select "column2", "column3" from "users"', [], true)
             ->andReturn([['column2' => 'foo', 'column3' => 'bar']]);
-        $builder->getProcessor()->shouldReceive('processSelect')->andReturnUsing(function ($builder, $results) {
-            return $results;
-        });
+        $builder->getProcessor()->shouldReceive('processSelect')->andReturnUsing(fn($builder, $results) => $results);
         $builder->from('users');
         $count = $builder->count('column1');
         $this->assertEquals(1, $count);
@@ -1718,9 +1682,7 @@ class QueryBuilderTest extends TestCase
             ->once()
             ->with('select "column2", "column3" from "users"', [], true)
             ->andReturn([['column2' => 'foo', 'column3' => 'bar']]);
-        $builder->getProcessor()->shouldReceive('processSelect')->andReturnUsing(function ($builder, $results) {
-            return $results;
-        });
+        $builder->getProcessor()->shouldReceive('processSelect')->andReturnUsing(fn($builder, $results) => $results);
         $builder->from('users');
         $count = $builder->count('column1');
         $this->assertEquals(1, $count);
@@ -1736,9 +1698,7 @@ class QueryBuilderTest extends TestCase
             ->once()
             ->with('select count(*) as aggregate from "users"', [], true)
             ->andReturn([['aggregate' => 1]]);
-        $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(function ($builder, $results) {
-            return $results;
-        });
+        $builder->getProcessor()->shouldReceive('processSelect')->once()->andReturnUsing(fn($builder, $results) => $results);
         $builder->from('users')->selectSub(function ($query) {
             $query->from('posts')->select('foo', 'bar')->where('title', 'foo');
         }, 'post');
@@ -2652,13 +2612,9 @@ class QueryBuilderTest extends TestCase
         }
 
         $container = Mockery::mock(Container::class);
-        $container->shouldReceive('make')->once()->andReturnUsing(function ($interface, $args) {
-            return new Paginator($args['items'], $args['perPage'], $args['currentPage'], $args['options']);
-        });
+        $container->shouldReceive('make')->once()->andReturnUsing(fn($interface, $args) => new Paginator($args['items'], $args['perPage'], $args['currentPage'], $args['options']));
         ApplicationContext::setContainer($container);
-        Paginator::currentPathResolver(function () {
-            return Context::get('path');
-        });
+        Paginator::currentPathResolver(fn() => Context::get('path'));
 
         $result = $builder->simplePaginate($perPage, $columns, $pageName, $page);
 
@@ -2689,13 +2645,9 @@ class QueryBuilderTest extends TestCase
         }
 
         $container = Mockery::mock(Container::class);
-        $container->shouldReceive('make')->once()->andReturnUsing(function ($interface, $args) {
-            return new LengthAwarePaginator($args['items'], $args['total'], $args['perPage'], $args['currentPage'], $args['options']);
-        });
+        $container->shouldReceive('make')->once()->andReturnUsing(fn($interface, $args) => new LengthAwarePaginator($args['items'], $args['total'], $args['perPage'], $args['currentPage'], $args['options']));
         ApplicationContext::setContainer($container);
-        Paginator::currentPathResolver(function () {
-            return Context::get('path');
-        });
+        Paginator::currentPathResolver(fn() => Context::get('path'));
 
         $result = $builder->paginate($perPage, $columns, $pageName, $page);
 
@@ -2725,18 +2677,12 @@ class QueryBuilderTest extends TestCase
         }
 
         $container = Mockery::mock(Container::class);
-        $container->shouldReceive('make')->once()->andReturnUsing(function ($interface, $args) {
-            return new Paginator($args['items'], $args['perPage'], $args['currentPage'], $args['options']);
-        });
+        $container->shouldReceive('make')->once()->andReturnUsing(fn($interface, $args) => new Paginator($args['items'], $args['perPage'], $args['currentPage'], $args['options']));
         ApplicationContext::setContainer($container);
 
-        Paginator::currentPageResolver(function () {
-            return Context::get('page');
-        });
+        Paginator::currentPageResolver(fn() => Context::get('page'));
 
-        Paginator::currentPathResolver(function () {
-            return Context::get('path');
-        });
+        Paginator::currentPathResolver(fn() => Context::get('path'));
 
         $result = $builder->simplePaginate();
 
@@ -2768,18 +2714,12 @@ class QueryBuilderTest extends TestCase
         }
 
         $container = Mockery::mock(Container::class);
-        $container->shouldReceive('make')->once()->andReturnUsing(function ($interface, $args) {
-            return new LengthAwarePaginator($args['items'], $args['total'], $args['perPage'], $args['currentPage'], $args['options']);
-        });
+        $container->shouldReceive('make')->once()->andReturnUsing(fn($interface, $args) => new LengthAwarePaginator($args['items'], $args['total'], $args['perPage'], $args['currentPage'], $args['options']));
         ApplicationContext::setContainer($container);
 
-        Paginator::currentPageResolver(function () {
-            return Context::get('page');
-        });
+        Paginator::currentPageResolver(fn() => Context::get('page'));
 
-        Paginator::currentPathResolver(function () {
-            return Context::get('path');
-        });
+        Paginator::currentPathResolver(fn() => Context::get('path'));
 
         $result = $builder->paginate();
 
@@ -2815,13 +2755,9 @@ class QueryBuilderTest extends TestCase
         });
         ApplicationContext::setContainer($container);
 
-        Paginator::currentPageResolver(function () {
-            return Context::get('page');
-        });
+        Paginator::currentPageResolver(fn() => Context::get('page'));
 
-        Paginator::currentPathResolver(function () {
-            return Context::get('path');
-        });
+        Paginator::currentPathResolver(fn() => Context::get('path'));
 
         $result = $builder->simplePaginate();
 
@@ -2859,13 +2795,9 @@ class QueryBuilderTest extends TestCase
         });
         ApplicationContext::setContainer($container);
 
-        Paginator::currentPageResolver(function () {
-            return Context::get('page');
-        });
+        Paginator::currentPageResolver(fn() => Context::get('page'));
 
-        Paginator::currentPathResolver(function () {
-            return Context::get('path');
-        });
+        Paginator::currentPathResolver(fn() => Context::get('path'));
 
         $result = $builder->paginate();
 
@@ -3011,10 +2943,7 @@ class QueryBuilderTest extends TestCase
         return new Builder(Mockery::mock(ConnectionInterface::class), $grammar, $processor);
     }
 
-    /**
-     * @return Builder|\Mockery\MockInterface
-     */
-    protected function getMockQueryBuilder()
+    protected function getMockQueryBuilder(): \Hyperf\Database\Query\Builder|\Mockery\MockInterface
     {
         return Mockery::mock(Builder::class, [
             Mockery::mock(ConnectionInterface::class),

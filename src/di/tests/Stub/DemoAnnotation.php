@@ -15,10 +15,7 @@ use Hyperf\Di\Annotation\AbstractAnnotation;
 
 class DemoAnnotation extends AbstractAnnotation
 {
-    public $id;
-
-    public function __construct($id)
+    public function __construct(public $id)
     {
-        $this->id = $id;
     }
 }

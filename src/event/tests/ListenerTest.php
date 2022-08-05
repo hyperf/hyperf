@@ -103,7 +103,7 @@ class ListenerTest extends TestCase
             ->andReturn((new ListenerProviderFactory())($container));
         $listenerProvider = $container->get(ListenerProviderInterface::class);
         $this->assertInstanceOf(ListenerProviderInterface::class, $listenerProvider);
-        $this->assertSame(2, count($listenerProvider->listeners));
+        $this->assertSame(2, is_countable($listenerProvider->listeners) ? count($listenerProvider->listeners) : 0);
 
         $dispatcher = new EventDispatcher($listenerProvider);
         $this->assertSame(1, $alphaListener->value);
@@ -117,8 +117,8 @@ class ListenerTest extends TestCase
     public function testListnerInvokeByFactoryWithAnnotationConfig()
     {
         $listenerAnnotation = new ListenerAnnotation();
-        $listenerAnnotation->collectClass(AlphaListener::class, ListenerAnnotation::class);
-        $listenerAnnotation->collectClass(BetaListener::class, ListenerAnnotation::class);
+        $listenerAnnotation->collectClass(AlphaListener::class);
+        $listenerAnnotation->collectClass(BetaListener::class);
 
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([]));
@@ -135,7 +135,7 @@ class ListenerTest extends TestCase
 
         $listenerProvider = $container->get(ListenerProviderInterface::class);
         $this->assertInstanceOf(ListenerProviderInterface::class, $listenerProvider);
-        $this->assertSame(2, count($listenerProvider->listeners));
+        $this->assertSame(2, is_countable($listenerProvider->listeners) ? count($listenerProvider->listeners) : 0);
 
         $dispatcher = new EventDispatcher($listenerProvider);
         $this->assertSame(1, $alphaListener->value);

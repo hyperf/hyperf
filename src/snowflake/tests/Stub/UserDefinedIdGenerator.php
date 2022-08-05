@@ -15,14 +15,8 @@ use Hyperf\Snowflake\IdGenerator;
 
 class UserDefinedIdGenerator
 {
-    /**
-     * @var IdGenerator\SnowflakeIdGenerator
-     */
-    protected $idGenerator;
-
-    public function __construct(IdGenerator\SnowflakeIdGenerator $idGenerator)
+    public function __construct(protected IdGenerator\SnowflakeIdGenerator $idGenerator)
     {
-        $this->idGenerator = $idGenerator;
     }
 
     public function generate(int $userId)

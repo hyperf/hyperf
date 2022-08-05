@@ -33,12 +33,8 @@ class BuilderTest extends TestCase
 
     public function testPaginationCorrectlyHandlesPaginatedResults()
     {
-        Paginator::currentPageResolver(function () {
-            return 1;
-        });
-        Paginator::currentPathResolver(function () {
-            return 'http://localhost/foo';
-        });
+        Paginator::currentPageResolver(fn() => 1);
+        Paginator::currentPathResolver(fn() => 'http://localhost/foo');
         $builder = new Builder($model = m::mock(Model::class), 'zonda');
         $model->shouldReceive('getPerPage')->andReturn(15);
         $model->shouldReceive('searchableUsing')->andReturn($engine = m::mock());
@@ -51,9 +47,7 @@ class BuilderTest extends TestCase
 
     public function testMacroable()
     {
-        Builder::macro('foo', function () {
-            return 'bar';
-        });
+        Builder::macro('foo', fn() => 'bar');
         $builder = new Builder($model = m::mock(Model::class), 'zonda');
         $this->assertEquals(
             'bar',

@@ -81,9 +81,7 @@ trait ProxyTrait
         return static::makePipeline()->via('process')
             ->through(AspectManager::get($className, $methodName))
             ->send($proceedingJoinPoint)
-            ->then(function (ProceedingJoinPoint $proceedingJoinPoint) {
-                return $proceedingJoinPoint->processOriginalMethod();
-            });
+            ->then(fn(ProceedingJoinPoint $proceedingJoinPoint) => $proceedingJoinPoint->processOriginalMethod());
     }
 
     protected static function makePipeline(): Pipeline
@@ -119,7 +117,7 @@ trait ProxyTrait
 
         $classAnnotations = AnnotationCollector::get($className . '._c', []);
         $methodAnnotations = AnnotationCollector::get($className . '._m.' . $method, []);
-        $annotations = array_unique(array_merge(array_keys($classAnnotations), array_keys($methodAnnotations)));
+        $annotations = array_unique([...array_keys($classAnnotations), ...array_keys($methodAnnotations)]);
         if (! $annotations) {
             return $matchedAspect;
         }

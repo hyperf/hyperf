@@ -107,6 +107,7 @@ trait ManagesStacks
      */
     public function yieldPushContent($section, $default = '')
     {
+        $output = null;
         if (! isset($this->pushes[$section]) && ! isset($this->prepends[$section])) {
             return $default;
         }

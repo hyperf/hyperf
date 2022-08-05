@@ -91,9 +91,7 @@ class StdoutLogger implements StdoutLoggerInterface
                 unset($keys[$k]);
             }
         }
-        $search = array_map(function ($key) {
-            return sprintf('{%s}', $key);
-        }, $keys);
+        $search = array_map(fn($key) => sprintf('{%s}', $key), $keys);
         $message = str_replace($search, $context, $this->getMessage((string) $message, $level, $tags));
 
         $this->output->writeln($message);

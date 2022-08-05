@@ -71,9 +71,7 @@ class RedisDriver extends Driver implements KeyCollectorInterface
 
     public function getMultiple($keys, $default = null): iterable
     {
-        $cacheKeys = array_map(function ($key) {
-            return $this->getCacheKey($key);
-        }, $keys);
+        $cacheKeys = array_map(fn($key) => $this->getCacheKey($key), $keys);
 
         $values = $this->redis->mget($cacheKeys);
         $result = [];
@@ -109,9 +107,7 @@ class RedisDriver extends Driver implements KeyCollectorInterface
 
     public function deleteMultiple($keys): bool
     {
-        $cacheKeys = array_map(function ($key) {
-            return $this->getCacheKey($key);
-        }, $keys);
+        $cacheKeys = array_map(fn($key) => $this->getCacheKey($key), $keys);
 
         return (bool) $this->redis->del(...$cacheKeys);
     }

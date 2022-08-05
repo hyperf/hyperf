@@ -46,13 +46,11 @@ class RandomTest extends TestCase
         ];
         $random = new Random($nodes);
         $this->assertFalse($random->isAutoRefresh());
-        $random->refresh(static function () {
-            return [
-                new Node('127.0.0.1', 80),
-                new Node('127.0.0.4', 81),
-                new Node('127.0.0.3', 81),
-            ];
-        }, 200);
+        $random->refresh(static fn() => [
+            new Node('127.0.0.1', 80),
+            new Node('127.0.0.4', 81),
+            new Node('127.0.0.3', 81),
+        ], 200);
         $chan = new Channel(1);
         $random->afterRefreshed('test', function ($old, $new) use ($chan) {
             $this->assertSame('127.0.0.1', $old[0]->host);

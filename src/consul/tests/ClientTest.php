@@ -22,21 +22,13 @@ use ReflectionClass;
  */
 class ClientTest extends TestCase
 {
-    /**
-     * @var Client
-     */
-    private $client;
+    private \HyperfTest\Consul\Stub\Client $client;
 
-    /**
-     * @var \ReflectionMethod
-     */
-    private $method;
+    private \ReflectionMethod $method;
 
     protected function setUp(): void
     {
-        $this->client = new Client(function () {
-            return Mockery::mock(\GuzzleHttp\Client::class);
-        });
+        $this->client = new Client(fn() => Mockery::mock(\GuzzleHttp\Client::class));
         $reflectionClass = new ReflectionClass(Client::class);
         $method = $reflectionClass->getMethod('resolveOptions');
         $method->setAccessible(true);

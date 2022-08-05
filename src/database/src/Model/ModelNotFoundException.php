@@ -29,10 +29,9 @@ class ModelNotFoundException extends RuntimeException
     /**
      * Set the affected Model model and instance ids.
      *
-     * @param array|int|string $ids
      * @return $this
      */
-    public function setModel(string $model, $ids = [])
+    public function setModel(string $model, array|int|string $ids = [])
     {
         $this->model = $model;
         $this->ids = Arr::wrap($ids);

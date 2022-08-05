@@ -28,12 +28,12 @@ class Point extends \Google\Protobuf\Internal\Message
     /**
      * Generated from protobuf field <code>int32 latitude = 1;</code>.
      */
-    private $latitude = 0;
+    private int $latitude = 0;
 
     /**
      * Generated from protobuf field <code>int32 longitude = 2;</code>.
      */
-    private $longitude = 0;
+    private int $longitude = 0;
 
     /**
      * Constructor.

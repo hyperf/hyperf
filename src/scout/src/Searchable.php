@@ -98,7 +98,7 @@ trait Searchable
             'model' => new static(),
             'query' => $query,
             'callback' => $callback,
-            'softDelete' => static::usesSoftDelete() && config('scout.soft_delete', false),
+            'softDelete' => static::usesSoftDelete() && config('scout.soft_delete'),
         ]);
     }
 
@@ -108,7 +108,7 @@ trait Searchable
     public static function makeAllSearchable(?int $chunk = null, ?string $column = null): void
     {
         $self = new static();
-        $softDelete = static::usesSoftDelete() && config('scout.soft_delete', false);
+        $softDelete = static::usesSoftDelete() && config('scout.soft_delete');
         $self->newQuery()
             ->when($softDelete, function ($query) {
                 $query->withTrashed();
@@ -157,9 +157,7 @@ trait Searchable
         return $query->whereIn(
             $this->getScoutKeyName(),
             $ids
-        )->get()->sortBy(static function ($model) use ($modelIdPositions) {
-            return $modelIdPositions[$model->getScoutKey()];
-        })->values();
+        )->get()->sortBy(static fn($model) => $modelIdPositions[$model->getScoutKey()])->values();
     }
 
     /**
@@ -167,7 +165,7 @@ trait Searchable
      */
     public static function enableSearchSyncing(): void
     {
-        ModelObserver::enableSyncingFor(get_called_class());
+        ModelObserver::enableSyncingFor(static::class);
     }
 
     /**
@@ -175,7 +173,7 @@ trait Searchable
      */
     public static function disableSearchSyncing(): void
     {
-        ModelObserver::disableSyncingFor(get_called_class());
+        ModelObserver::disableSyncingFor(static::class);
     }
 
     /**
@@ -224,7 +222,7 @@ trait Searchable
      */
     public function syncWithSearchUsingConcurency(): int
     {
-        return (int) config('scout.concurrency', 100);
+        return (int) config('scout.concurrency');
     }
 
     /**
@@ -301,6 +299,6 @@ trait Searchable
      */
     protected static function usesSoftDelete(): bool
     {
-        return in_array(SoftDeletes::class, class_uses_recursive(get_called_class()));
+        return in_array(SoftDeletes::class, class_uses_recursive(static::class));
     }
 }

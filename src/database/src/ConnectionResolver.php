@@ -37,7 +37,6 @@ class ConnectionResolver implements ConnectionResolverInterface
      * Get a database connection instance.
      *
      * @param string $name
-     * @return \Hyperf\Database\ConnectionInterface
      */
     public function connection(?string $name = null): ConnectionInterface
     {
@@ -52,7 +51,6 @@ class ConnectionResolver implements ConnectionResolverInterface
      * Add a connection to the resolver.
      *
      * @param string $name
-     * @param \Hyperf\Database\ConnectionInterface $connection
      */
     public function addConnection($name, ConnectionInterface $connection)
     {

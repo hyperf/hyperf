@@ -84,7 +84,7 @@ class Frequency implements FrequencyInterface, LowFrequencyInterface
         if (count($this->hits) < $this->time) {
             $beginTime = max($this->beginTime, $latest);
             for ($i = $beginTime; $i < $now; ++$i) {
-                $this->hits[$i] = $this->hits[$i] ?? 0;
+                $this->hits[$i] ??= 0;
             }
         }
     }

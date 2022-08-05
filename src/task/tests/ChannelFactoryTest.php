@@ -31,9 +31,7 @@ class ChannelFactoryTest extends TestCase
         $this->assertTrue($facotry->has(1));
 
         $id = uniqid();
-        $result = parallel([function () use ($facotry) {
-            return $facotry->pop(2);
-        }, function () use ($facotry, $id) {
+        $result = parallel([fn() => $facotry->pop(2), function () use ($facotry, $id) {
             $facotry->push(2, $id);
         }]);
 

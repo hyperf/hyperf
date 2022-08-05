@@ -34,7 +34,7 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testUpdateAddsObjectsToIndex()
     {
-        $client = Mockery::mock('Elasticsearch\Client');
+        $client = Mockery::mock(\Elasticsearch\Client::class);
         $client->shouldReceive('bulk')->with([
             'body' => [
                 [
@@ -56,7 +56,7 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testDeleteRemovesObjectsToIndex()
     {
-        $client = Mockery::mock('Elasticsearch\Client');
+        $client = Mockery::mock(\Elasticsearch\Client::class);
         $client->shouldReceive('bulk')->with([
             'body' => [
                 [
@@ -74,7 +74,7 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testSearchSendsCorrectParametersToElasticsearch()
     {
-        $client = Mockery::mock('Elasticsearch\Client');
+        $client = Mockery::mock(\Elasticsearch\Client::class);
         $client->shouldReceive('search')->with([
             'index' => 'scout',
             'type' => 'table',
@@ -128,9 +128,7 @@ class ElasticsearchEngineTest extends TestCase
             new SearchableModel(['id' => 1]),
             new SearchableModel(['id' => 2]),
         ]));
-        $model->setQueryCallback(static function () use ($query) {
-            return $query;
-        });
+        $model->setQueryCallback(static fn() => $query);
         $builder = Mockery::mock(Builder::class);
         $res = $model->getScoutModelsByIds($builder, [2, 1]);
         $this->assertSame([['id' => 2], ['id' => 1]], $res->toArray());
@@ -138,7 +136,7 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testMapCorrectlyMapsResultsToModels()
     {
-        $client = Mockery::mock('Elasticsearch\Client');
+        $client = Mockery::mock(\Elasticsearch\Client::class);
         $engine = new ElasticsearchEngine($client, 'scout');
         $builder = Mockery::mock(Builder::class);
         $model = Mockery::mock(Model::class);
@@ -160,7 +158,7 @@ class ElasticsearchEngineTest extends TestCase
 
     public function testGetTotalCount()
     {
-        $client = Mockery::mock('Elasticsearch\Client');
+        $client = Mockery::mock(\Elasticsearch\Client::class);
         $engine = new ElasticsearchEngine($client, 'scout');
         $this->assertSame(1, $engine->getTotalCount([
             'hits' => [

@@ -13,13 +13,10 @@ namespace HyperfTest\Di\Stub\Ast;
 
 class Bar
 {
-    public $id = 0;
-
     public static $items = [];
 
-    public function __construct(int $id)
+    public function __construct(public int $id)
     {
-        $this->id = $id;
     }
 
     public function getId(): int

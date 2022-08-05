@@ -163,11 +163,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
             }
         } catch (Throwable $throwable) {
             // Delegate the exception to exception handler.
-            $psr7Response = $this->container->get(SafeCaller::class)->call(function () use ($throwable) {
-                return $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
-            }, static function () {
-                return (new Psr7Response())->withStatus(400);
-            });
+            $psr7Response = $this->container->get(SafeCaller::class)->call(fn() => $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers), static fn() => (new Psr7Response())->withStatus(400));
 
             isset($fd) && FdCollector::del($fd);
             isset($fd) && WsContext::release($fd);

@@ -16,11 +16,8 @@ use Hyperf\ModelCache\Handler\HandlerInterface;
 
 class NonHandler implements HandlerInterface
 {
-    public $config;
-
-    public function __construct(Config $config)
+    public function __construct(public Config $config)
     {
-        $this->config = $config;
     }
 
     public function get($key, $default = null): mixed

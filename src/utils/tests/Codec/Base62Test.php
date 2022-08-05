@@ -22,7 +22,7 @@ class Base62Test extends TestCase
 {
     public function testEncode()
     {
-        $this->assertEquals('fMYsmVDc', Base62::encode(145667762035560));
-        $this->assertEquals(145667762035560, Base62::decode('fMYsmVDc'));
+        $this->assertEquals('fMYsmVDc', Base62::encode(145_667_762_035_560));
+        $this->assertEquals(145_667_762_035_560, Base62::decode('fMYsmVDc'));
     }
 }

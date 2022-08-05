@@ -38,9 +38,7 @@ class ReflectionTest extends TestCase
         $return = ReflectionManager::reflectClass(Bar::class)->getMethod('getId')->getReturnType();
         $this->assertTrue($return instanceof \ReflectionNamedType);
 
-        $callback = function (int $id): int {
-            return $id + 1;
-        };
+        $callback = fn(int $id): int => $id + 1;
 
         $func = new \ReflectionFunction($callback);
         $this->assertTrue($func->getReturnType() instanceof \ReflectionNamedType);

@@ -40,18 +40,15 @@ class Response implements PsrResponseInterface, ResponseInterface
 {
     use Macroable;
 
-    protected ?PsrResponseInterface $response = null;
-
-    public function __construct(?PsrResponseInterface $response = null)
+    public function __construct(protected ?PsrResponseInterface $response = null)
     {
-        $this->response = $response;
     }
 
     public function __call($method, $parameters)
     {
         $response = $this->getResponse();
         if (! method_exists($response, $method)) {
-            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $method));
+            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', $this::class, $method));
         }
         return $response->{$method}(...$parameters);
     }
@@ -430,7 +427,7 @@ class Response implements PsrResponseInterface, ResponseInterface
         }
 
         if (! method_exists($response, $name)) {
-            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', get_class($this), $name));
+            throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', $this::class, $name));
         }
 
         return new static($response->{$name}(...$arguments));
@@ -457,10 +454,9 @@ class Response implements PsrResponseInterface, ResponseInterface
     }
 
     /**
-     * @param array|Arrayable|Jsonable $data
      * @throws EncodingException when the data encoding error
      */
-    protected function toJson($data): string
+    protected function toJson(array|\Hyperf\Contract\Arrayable|\Hyperf\Utils\Contracts\Jsonable $data): string
     {
         try {
             $result = Json::encode($data);
@@ -472,12 +468,11 @@ class Response implements PsrResponseInterface, ResponseInterface
     }
 
     /**
-     * @param array|Arrayable|Xmlable $data
      * @param null|mixed $parentNode
      * @param mixed $root
      * @throws EncodingException when the data encoding error
      */
-    protected function toXml($data, $parentNode = null, $root = 'root'): string
+    protected function toXml(array|\Hyperf\Contract\Arrayable|\Hyperf\Utils\Contracts\Xmlable $data, $parentNode = null, $root = 'root'): string
     {
         return Xml::toXml($data, $parentNode, $root);
     }
@@ -487,7 +482,7 @@ class Response implements PsrResponseInterface, ResponseInterface
      *
      * @return object|PsrResponseInterface it's an object that implemented PsrResponseInterface, or maybe it's a proxy class
      */
-    protected function getResponse()
+    protected function getResponse(): object|PsrResponseInterface
     {
         if ($this->response instanceof PsrResponseInterface) {
             return $this->response;

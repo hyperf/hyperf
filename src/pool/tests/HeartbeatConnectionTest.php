@@ -70,9 +70,7 @@ class HeartbeatConnectionTest extends TestCase
             }
         });
         $str = uniqid();
-        $result = $connection->call(function ($connection) use ($str) {
-            return $connection->send($str);
-        });
+        $result = $connection->call(fn($connection) => $connection->send($str));
 
         $this->assertSame($result, str_repeat($str, 2));
     }
@@ -115,15 +113,9 @@ class HeartbeatConnectionTest extends TestCase
         $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
 
-        $container->shouldReceive('get')->with(HeartbeatPoolStub::class)->andReturnUsing(function () use ($container) {
-            return new HeartbeatPoolStub($container, []);
-        });
-        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new Channel(...array_values($args));
-        });
-        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($_, $args) {
-            return new PoolOption(...array_values($args));
-        });
+        $container->shouldReceive('get')->with(HeartbeatPoolStub::class)->andReturnUsing(fn() => new HeartbeatPoolStub($container, []));
+        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(fn($_, $args) => new Channel(...array_values($args)));
+        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(fn($_, $args) => new PoolOption(...array_values($args)));
 
         return $container;
     }

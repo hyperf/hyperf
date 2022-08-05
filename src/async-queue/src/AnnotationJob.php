@@ -17,16 +17,10 @@ use Hyperf\Utils\ApplicationContext;
 
 class AnnotationJob extends Job
 {
-    public string $class;
-
-    public string $method;
-
     public array $params = [];
 
-    public function __construct(string $class, string $method, array $params, int $maxAttempts = 0)
+    public function __construct(public string $class, public string $method, array $params, int $maxAttempts = 0)
     {
-        $this->class = $class;
-        $this->method = $method;
         $this->maxAttempts = $maxAttempts;
         foreach ($params as $key => $value) {
             if ($value instanceof CompressInterface) {

@@ -18,18 +18,15 @@ use InvalidArgumentException;
 class SeederCreator
 {
     /**
-     * The filesystem instance.
-     *
-     * @var Filesystem
-     */
-    protected $files;
-
-    /**
      * Create a new seeder creator instance.
      */
-    public function __construct(Filesystem $files)
+    public function __construct(
+        /**
+         * The filesystem instance.
+         */
+        protected Filesystem $files
+    )
     {
-        $this->files = $files;
     }
 
     /**

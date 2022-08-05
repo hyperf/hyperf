@@ -113,9 +113,7 @@ class FileSystemDriverTest extends TestCase
 
         $container->shouldReceive('get')->with(CacheManager::class)->andReturn(new CacheManager($config, $logger));
         $container->shouldReceive('get')->with(Filesystem::class)->andReturn(new Filesystem());
-        $container->shouldReceive('make')->with(FileSystemDriver::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($container) {
-            return new FileSystemDriver($container, $args['config']);
-        });
+        $container->shouldReceive('make')->with(FileSystemDriver::class, Mockery::any())->andReturnUsing(fn($class, $args) => new FileSystemDriver($container, $args['config']));
         $container->shouldReceive('get')->with(PhpSerializerPacker::class)->andReturn(new PhpSerializerPacker());
 
         ApplicationContext::setContainer($container);

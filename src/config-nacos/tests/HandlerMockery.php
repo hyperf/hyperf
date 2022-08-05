@@ -44,20 +44,12 @@ class HandlerMockery
         switch ($uri) {
             case '/nacos/v1/cs/configs':
                 $query = $request->getUri()->getQuery();
-                switch (static::parse($query)['dataId']) {
-                    case 'json':
-                        $data = '{"id": 1}';
-                        break;
-                    case 'json2':
-                        $data = '{"ids": [1,2,3]}';
-                        break;
-                    case 'text':
-                        $data = 'Hello World';
-                        break;
-                    default:
-                        $data = '{}';
-                        break;
-                }
+                $data = match (static::parse($query)['dataId']) {
+                    'json' => '{"id": 1}',
+                    'json2' => '{"ids": [1,2,3]}',
+                    'text' => 'Hello World',
+                    default => '{}',
+                };
         }
 
         return new FulfilledPromise(new Psr7\Response(

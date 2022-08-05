@@ -33,7 +33,7 @@ class Client implements ClientInterface
     /**
      * @var array[]
      */
-    private $cachedSecurityCredentials = [];
+    private array $cachedSecurityCredentials = [];
 
     public function __construct(ContainerInterface $container)
     {

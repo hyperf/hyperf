@@ -59,7 +59,7 @@ class Backoff
 
         // update backoff using Decorrelated Jitter
         // see: https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
-        $this->currentMs = rand($this->firstMs, $this->currentMs * 3);
+        $this->currentMs = random_int($this->firstMs, $this->currentMs * 3);
 
         if ($this->currentMs > self::CAP) {
             $this->currentMs = self::CAP;

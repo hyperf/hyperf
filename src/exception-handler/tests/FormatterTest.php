@@ -25,7 +25,7 @@ class FormatterTest extends TestCase
         $formatter = new DefaultFormatter();
 
         $message = uniqid();
-        $code = rand(1000, 9999);
+        $code = random_int(1000, 9999);
         $exception = new \RuntimeException($message, $code);
         $expected = str_replace($message, $message . "({$code})", (string) $exception);
         $this->assertSame($expected, $formatter->format($exception));

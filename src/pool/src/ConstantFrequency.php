@@ -15,7 +15,7 @@ use Swoole\Timer;
 
 class ConstantFrequency implements LowFrequencyInterface
 {
-    protected ?int $timerId;
+    protected ?int $timerId = null;
 
     protected int $interval = 10000;
 

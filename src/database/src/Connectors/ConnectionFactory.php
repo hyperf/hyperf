@@ -60,13 +60,10 @@ class ConnectionFactory
         if ($this->container->has($key = "db.connector.{$config['driver']}")) {
             return $this->container->get($key);
         }
-
-        switch ($config['driver']) {
-            case 'mysql':
-                return new MySqlConnector();
-        }
-
-        throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]");
+        return match ($config['driver']) {
+            'mysql' => new MySqlConnector(),
+            default => throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]"),
+        };
     }
 
     /**
@@ -189,6 +186,7 @@ class ConnectionFactory
     protected function createPdoResolverWithHosts(array $config)
     {
         return function () use ($config) {
+            $e = null;
             foreach (Arr::shuffle($hosts = $this->parseHosts($config)) as $key => $host) {
                 $config['host'] = $host;
 
@@ -226,32 +224,26 @@ class ConnectionFactory
      */
     protected function createPdoResolverWithoutHosts(array $config)
     {
-        return function () use ($config) {
-            return $this->createConnector($config)->connect($config);
-        };
+        return fn() => $this->createConnector($config)->connect($config);
     }
 
     /**
      * Create a new connection instance.
      *
      * @param string $driver
-     * @param \Closure|\PDO $connection
      * @param string $database
      * @param string $prefix
      * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Connection
      */
-    protected function createConnection($driver, $connection, $database, $prefix = '', array $config = [])
+    protected function createConnection($driver, \Closure|\PDO $connection, $database, $prefix = '', array $config = [])
     {
         if ($resolver = Connection::getResolver($driver)) {
             return $resolver($connection, $database, $prefix, $config);
         }
-
-        switch ($driver) {
-            case 'mysql':
-                return new MySqlConnection($connection, $database, $prefix, $config);
-        }
-
-        throw new InvalidArgumentException("Unsupported driver [{$driver}]");
+        return match ($driver) {
+            'mysql' => new MySqlConnection($connection, $database, $prefix, $config),
+            default => throw new InvalidArgumentException("Unsupported driver [{$driver}]"),
+        };
     }
 }

@@ -45,7 +45,7 @@ class QueueHandleListener implements ListenerInterface
     {
         if ($event instanceof Event && $event->getMessage()->job()) {
             $job = $event->getMessage()->job();
-            $jobClass = get_class($job);
+            $jobClass = $job::class;
             if ($job instanceof AnnotationJob) {
                 $jobClass = sprintf('Job[%s@%s]', $job->class, $job->method);
             }

@@ -51,7 +51,7 @@ class SessionCookieJar extends CookieJar
             }
         }
 
-        $_SESSION[$this->sessionKey] = json_encode($json);
+        $_SESSION[$this->sessionKey] = json_encode($json, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -62,7 +62,7 @@ class SessionCookieJar extends CookieJar
         if (! isset($_SESSION[$this->sessionKey])) {
             return;
         }
-        $data = json_decode($_SESSION[$this->sessionKey], true);
+        $data = json_decode($_SESSION[$this->sessionKey], true, 512, JSON_THROW_ON_ERROR);
         if (is_array($data)) {
             foreach ($data as $cookie) {
                 $this->setCookie(new SetCookie($cookie));

@@ -204,35 +204,21 @@ class RedisDriverTest extends TestCase
         $logger->shouldReceive(Mockery::any())->andReturn(null);
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
         $container->shouldReceive('get')->with(CacheManager::class)->andReturn(new CacheManager($config, $logger));
-        $container->shouldReceive('make')->with(RedisDriver::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($container) {
-            return new RedisDriver($container, $args['config']);
-        });
+        $container->shouldReceive('make')->with(RedisDriver::class, Mockery::any())->andReturnUsing(fn($class, $args) => new RedisDriver($container, $args['config']));
         $container->shouldReceive('get')->with(PhpSerializerPacker::class)->andReturn(new PhpSerializerPacker());
         $frequency = Mockery::mock(LowFrequencyInterface::class);
         $frequency->shouldReceive('isLowFrequency')->andReturn(true);
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn($frequency);
-        $container->shouldReceive('make')->with(RedisPool::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($container) {
-            return new RedisPool($container, $args['name']);
-        });
-        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new PoolOption(...array_values($args));
-        });
-        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new Channel($args['size']);
-        });
+        $container->shouldReceive('make')->with(RedisPool::class, Mockery::any())->andReturnUsing(fn($class, $args) => new RedisPool($container, $args['name']));
+        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(fn($class, $args) => new PoolOption(...array_values($args)));
+        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(fn($class, $args) => new Channel($args['size']));
 
         $poolFactory = new PoolFactory($container);
         $container->shouldReceive('get')->with(\Redis::class)->andReturn(new Redis($poolFactory));
 
-        $container->shouldReceive('make')->with(RedisProxy::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($poolFactory) {
-            return new RedisProxy($poolFactory, $args['pool']);
-        });
-        $container->shouldReceive('get')->with(RedisFactory::class)->andReturnUsing(function () use ($config) {
-            return new RedisFactory($config);
-        });
-        $container->shouldReceive('make')->with(SerializeRedisDriver::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($container) {
-            return new SerializeRedisDriver($container, $args['config']);
-        });
+        $container->shouldReceive('make')->with(RedisProxy::class, Mockery::any())->andReturnUsing(fn($_, $args) => new RedisProxy($poolFactory, $args['pool']));
+        $container->shouldReceive('get')->with(RedisFactory::class)->andReturnUsing(fn() => new RedisFactory($config));
+        $container->shouldReceive('make')->with(SerializeRedisDriver::class, Mockery::any())->andReturnUsing(fn($_, $args) => new SerializeRedisDriver($container, $args['config']));
         ApplicationContext::setContainer($container);
 
         return $container;

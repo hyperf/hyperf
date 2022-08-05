@@ -21,7 +21,7 @@ class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, Ca
 {
     public function hasCacheableSupportsMethod(): bool
     {
-        return get_class($this) === __CLASS__;
+        return $this::class === self::class;
     }
 
     public function denormalize($data, string $type, string $format = null, array $context = [])

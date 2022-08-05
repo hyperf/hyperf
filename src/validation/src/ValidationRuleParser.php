@@ -53,10 +53,8 @@ class ValidationRuleParser
 
     /**
      * Merge additional rules into a given attribute(s).
-     *
-     * @param array|string|\Stringable $rules
      */
-    public function mergeRules(array $results, array|string $attribute, mixed $rules = []): array
+    public function mergeRules(array $results, array|string $attribute, array|string|\Stringable $rules = []): array
     {
         if (is_array($attribute)) {
             foreach ($attribute as $innerAttribute => $innerRules) {
@@ -75,10 +73,8 @@ class ValidationRuleParser
 
     /**
      * Extract the rule name and parameters from a rule.
-     *
-     * @param array|string $rules
      */
-    public static function parse(mixed $rules): array
+    public static function parse(array|string $rules): array
     {
         if ($rules instanceof RuleContract) {
             return [$rules, []];
@@ -154,10 +150,8 @@ class ValidationRuleParser
 
     /**
      * Define a set of rules that apply to each element in an array attribute.
-     *
-     * @param array|string|\Stringable $rules
      */
-    protected function explodeWildcardRules(array $results, string $attribute, mixed $rules): array
+    protected function explodeWildcardRules(array $results, string $attribute, array|string|\Stringable $rules): array
     {
         $pattern = str_replace('\*', '[^\.]*', preg_quote($attribute));
 
@@ -178,10 +172,8 @@ class ValidationRuleParser
 
     /**
      * Merge additional rules into a given attribute.
-     *
-     * @param array|string|\Stringable $rules
      */
-    protected function mergeRulesForAttribute(array $results, string $attribute, mixed $rules): array
+    protected function mergeRulesForAttribute(array $results, string $attribute, array|string|\Stringable $rules): array
     {
         $merge = head($this->explodeRules([$rules]));
 

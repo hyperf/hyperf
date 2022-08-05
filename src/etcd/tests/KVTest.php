@@ -80,30 +80,14 @@ class KVTest extends TestCase
         $container = Mockery::mock(Container::class);
         ApplicationContext::setContainer($container);
 
-        $container->shouldReceive('make')->with(EtcdClient::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new EtcdClient($args['client']);
-        });
-        $container->shouldReceive('make')->with(Client::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new GuzzleClientStub($args['config']);
-        });
-        $container->shouldReceive('make')->with(PoolHandler::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($container) {
-            return new PoolHandler(new PoolFactory($container), $args['option']);
-        });
-        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new Channel($args['size']);
-        });
-        $container->shouldReceive('make')->with(Connection::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($container) {
-            return new Connection($container, $args['pool'], $args['callback']);
-        });
-        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new PoolOption(...array_values($args));
-        });
-        $container->shouldReceive('make')->with(Pool::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($container) {
-            return new Pool($container, $args['callback'], $args['option']);
-        });
-        $container->shouldReceive('make')->with(KV::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new KV(...array_values($args));
-        });
+        $container->shouldReceive('make')->with(EtcdClient::class, Mockery::any())->andReturnUsing(fn($class, $args) => new EtcdClient($args['client']));
+        $container->shouldReceive('make')->with(Client::class, Mockery::any())->andReturnUsing(fn($class, $args) => new GuzzleClientStub($args['config']));
+        $container->shouldReceive('make')->with(PoolHandler::class, Mockery::any())->andReturnUsing(fn($class, $args) => new PoolHandler(new PoolFactory($container), $args['option']));
+        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(fn($class, $args) => new Channel($args['size']));
+        $container->shouldReceive('make')->with(Connection::class, Mockery::any())->andReturnUsing(fn($class, $args) => new Connection($container, $args['pool'], $args['callback']));
+        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(fn($class, $args) => new PoolOption(...array_values($args)));
+        $container->shouldReceive('make')->with(Pool::class, Mockery::any())->andReturnUsing(fn($class, $args) => new Pool($container, $args['callback'], $args['option']));
+        $container->shouldReceive('make')->with(KV::class, Mockery::any())->andReturnUsing(fn($class, $args) => new KV(...array_values($args)));
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
         $container->shouldReceive('get')->with(HandlerStackFactory::class)->andReturn(new HandlerStackFactory());
 

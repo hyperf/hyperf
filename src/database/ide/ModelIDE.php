@@ -26,7 +26,7 @@ class ModelIDE
      * @param array $attributes
      * @return Model|static
      */
-    public static function make($attributes = [])
+    public static function make($attributes = []): \Hyperf\Database\Model\Model|static
     {
         return static::$instance->make($attributes);
     }
@@ -35,11 +35,10 @@ class ModelIDE
      * Register a new global scope.
      *
      * @param string $identifier
-     * @param \Closure|Scope $scope
      *
      * @return Builder
      */
-    public static function withGlobalScope($identifier, $scope)
+    public static function withGlobalScope($identifier, \Closure|\Hyperf\Database\Model\Scope $scope)
     {
         return static::$instance->withGlobalScope($identifier, $scope);
     }
@@ -47,10 +46,9 @@ class ModelIDE
     /**
      * Remove a registered global scope.
      *
-     * @param Scope|string $scope
      * @return Builder
      */
-    public static function withoutGlobalScope($scope)
+    public static function withoutGlobalScope(\Hyperf\Database\Model\Scope|string $scope)
     {
         return static::$instance->withoutGlobalScope($scope);
     }
@@ -101,13 +99,12 @@ class ModelIDE
     /**
      * Add a basic where clause to the query.
      *
-     * @param array|\Closure|string $column
      * @param mixed $operator
      * @param mixed $value
      * @param string $boolean
      * @return Builder
      */
-    public static function where($column, $operator = null, $value = null, $boolean = 'and')
+    public static function where(array|\Closure|string $column, $operator = null, $value = null, $boolean = 'and')
     {
         return static::$instance->where($column, $operator, $value, $boolean);
     }
@@ -115,12 +112,11 @@ class ModelIDE
     /**
      * Add an "or where" clause to the query.
      *
-     * @param array|\Closure|string $column
      * @param mixed $operator
      * @param mixed $value
      * @return Builder
      */
-    public static function orWhere($column, $operator = null, $value = null)
+    public static function orWhere(array|\Closure|string $column, $operator = null, $value = null)
     {
         return static::$instance->orWhere($column, $operator, $value);
     }
@@ -185,11 +181,10 @@ class ModelIDE
     /**
      * Find multiple models by their primary keys.
      *
-     * @param array|Arrayable $ids
      * @param array $columns
      * @return Collection
      */
-    public static function findMany($ids, $columns = [])
+    public static function findMany(array|\Hyperf\Contract\Arrayable $ids, $columns = [])
     {
         return static::$instance->findMany($ids, $columns);
     }
@@ -202,7 +197,7 @@ class ModelIDE
      * @throws ModelNotFoundException
      * @return Collection|Model|static|static[]
      */
-    public static function findOrFail($id, $columns = [])
+    public static function findOrFail($id, $columns = []): \Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model|static|array
     {
         return static::$instance->findOrFail($id, $columns);
     }
@@ -214,7 +209,7 @@ class ModelIDE
      * @param array $columns
      * @return Model|static
      */
-    public static function findOrNew($id, $columns = [])
+    public static function findOrNew($id, $columns = []): \Hyperf\Database\Model\Model|static
     {
         return static::$instance->findOrNew($id, $columns);
     }
@@ -226,7 +221,7 @@ class ModelIDE
      * @param array $values
      * @return Model|static
      */
-    public static function firstOrNew($attributes = [], $values = [])
+    public static function firstOrNew($attributes = [], $values = []): \Hyperf\Database\Model\Model|static
     {
         return static::$instance->firstOrNew($attributes, $values);
     }
@@ -238,7 +233,7 @@ class ModelIDE
      * @param array $values
      * @return Model|static
      */
-    public static function firstOrCreate($attributes, $values = [])
+    public static function firstOrCreate($attributes, $values = []): \Hyperf\Database\Model\Model|static
     {
         return static::$instance->firstOrCreate($attributes, $values);
     }
@@ -250,7 +245,7 @@ class ModelIDE
      * @param array $values
      * @return Model|static
      */
-    public static function updateOrCreate($attributes, $values = [])
+    public static function updateOrCreate($attributes, $values = []): \Hyperf\Database\Model\Model|static
     {
         return static::$instance->updateOrCreate($attributes, $values);
     }
@@ -262,7 +257,7 @@ class ModelIDE
      * @throws ModelNotFoundException
      * @return Model|static
      */
-    public static function firstOrFail($columns = [])
+    public static function firstOrFail($columns = []): \Hyperf\Database\Model\Model|static
     {
         return static::$instance->firstOrFail($columns);
     }
@@ -270,11 +265,10 @@ class ModelIDE
     /**
      * Execute the query and get the first result or call a callback.
      *
-     * @param array|\Closure $columns
      * @param null|\Closure $callback
      * @return mixed|Model|static
      */
-    public static function firstOr($columns = [], $callback = null)
+    public static function firstOr(array|\Closure $columns = [], $callback = null)
     {
         return static::$instance->firstOr($columns, $callback);
     }
@@ -293,10 +287,9 @@ class ModelIDE
     /**
      * Execute the query as a "select" statement.
      *
-     * @param array|string $columns
      * @return Collection|static[]
      */
-    public static function get($columns = [])
+    public static function get(array|string $columns = []): \Hyperf\Database\Model\Collection|array
     {
         return static::$instance->get($columns);
     }
@@ -304,10 +297,9 @@ class ModelIDE
     /**
      * Get the hydrated models without eager loading.
      *
-     * @param array|string $columns
      * @return Model[]|static[]
      */
-    public static function getModels($columns = [])
+    public static function getModels(array|string $columns = [])
     {
         return static::$instance->getModels($columns);
     }
@@ -380,7 +372,7 @@ class ModelIDE
      * @param array $attributes
      * @return $this|Model
      */
-    public static function create($attributes = [])
+    public static function create($attributes = []): static|\Hyperf\Database\Model\Model
     {
         return static::$instance->create($attributes);
     }
@@ -391,7 +383,7 @@ class ModelIDE
      * @param array $attributes
      * @return $this|Model
      */
-    public static function forceCreate($attributes)
+    public static function forceCreate($attributes): static|\Hyperf\Database\Model\Model
     {
         return static::$instance->forceCreate($attributes);
     }
@@ -409,10 +401,9 @@ class ModelIDE
     /**
      * Call the given local model scopes.
      *
-     * @param array|string $scopes
      * @return mixed|static
      */
-    public static function scopes($scopes)
+    public static function scopes(array|string $scopes)
     {
         return static::$instance->scopes($scopes);
     }
@@ -444,7 +435,7 @@ class ModelIDE
      * @param array $attributes
      * @return Model|static
      */
-    public static function newModelInstance($attributes = [])
+    public static function newModelInstance($attributes = []): \Hyperf\Database\Model\Model|static
     {
         return static::$instance->newModelInstance($attributes);
     }
@@ -517,7 +508,7 @@ class ModelIDE
      *
      * @return Model|static
      */
-    public static function getModel()
+    public static function getModel(): \Hyperf\Database\Model\Model|static
     {
         return static::$instance->getModel();
     }
@@ -596,10 +587,9 @@ class ModelIDE
     /**
      * Execute the query and get the first result.
      *
-     * @param array|string $columns
      * @return null|Model|object|static
      */
-    public static function first($columns = [])
+    public static function first(array|string $columns = [])
     {
         return static::$instance->first($columns);
     }
@@ -644,7 +634,6 @@ class ModelIDE
     /**
      * Add a relationship count / exists condition to the query.
      *
-     * @param \Hyperf\Database\Model\Relations\Relation|string $relation
      * @param string $operator
      * @param int $count
      * @param string $boolean
@@ -652,7 +641,7 @@ class ModelIDE
      * @throws \RuntimeException
      * @return Builder|static
      */
-    public static function has($relation, $operator = '>=', $count = 1, $boolean = 'and', $callback = null)
+    public static function has(\Hyperf\Database\Model\Relations\Relation|string $relation, $operator = '>=', $count = 1, $boolean = 'and', $callback = null): \Hyperf\Database\Model\Builder|static
     {
         return static::$instance->has($relation, $operator, $count, $boolean, $callback);
     }
@@ -665,7 +654,7 @@ class ModelIDE
      * @param int $count
      * @return Builder|static
      */
-    public static function orHas($relation, $operator = '>=', $count = 1)
+    public static function orHas($relation, $operator = '>=', $count = 1): \Hyperf\Database\Model\Builder|static
     {
         return static::$instance->orHas($relation, $operator, $count);
     }
@@ -678,7 +667,7 @@ class ModelIDE
      * @param null|\Closure $callback
      * @return Builder|static
      */
-    public static function doesntHave($relation, $boolean = 'and', $callback = null)
+    public static function doesntHave($relation, $boolean = 'and', $callback = null): \Hyperf\Database\Model\Builder|static
     {
         return static::$instance->doesntHave($relation, $boolean, $callback);
     }
@@ -689,7 +678,7 @@ class ModelIDE
      * @param string $relation
      * @return Builder|static
      */
-    public static function orDoesntHave($relation)
+    public static function orDoesntHave($relation): \Hyperf\Database\Model\Builder|static
     {
         return static::$instance->orDoesntHave($relation);
     }
@@ -703,7 +692,7 @@ class ModelIDE
      * @param int $count
      * @return Builder|static
      */
-    public static function whereHas($relation, $callback = null, $operator = '>=', $count = 1)
+    public static function whereHas($relation, $callback = null, $operator = '>=', $count = 1): \Hyperf\Database\Model\Builder|static
     {
         return static::$instance->whereHas($relation, $callback, $operator, $count);
     }
@@ -717,7 +706,7 @@ class ModelIDE
      * @param int $count
      * @return Builder|static
      */
-    public static function orWhereHas($relation, $callback = null, $operator = '>=', $count = 1)
+    public static function orWhereHas($relation, $callback = null, $operator = '>=', $count = 1): \Hyperf\Database\Model\Builder|static
     {
         return static::$instance->orWhereHas($relation, $callback, $operator, $count);
     }
@@ -729,7 +718,7 @@ class ModelIDE
      * @param null|\Closure $callback
      * @return Builder|static
      */
-    public static function whereDoesntHave($relation, $callback = null)
+    public static function whereDoesntHave($relation, $callback = null): \Hyperf\Database\Model\Builder|static
     {
         return static::$instance->whereDoesntHave($relation, $callback);
     }
@@ -741,7 +730,7 @@ class ModelIDE
      * @param null|\Closure $callback
      * @return Builder|static
      */
-    public static function orWhereDoesntHave($relation, $callback = null)
+    public static function orWhereDoesntHave($relation, $callback = null): \Hyperf\Database\Model\Builder|static
     {
         return static::$instance->orWhereDoesntHave($relation, $callback);
     }
@@ -750,14 +739,13 @@ class ModelIDE
      * Add a polymorphic relationship count / exists condition to the query.
      *
      * @param string $relation
-     * @param array|string $types
      * @param string $operator
      * @param int $count
      * @param string $boolean
      * @param null|\Closure $callback
      * @return Builder|static
      */
-    public static function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', $callback = null)
+    public static function hasMorph($relation, array|string $types, $operator = '>=', $count = 1, $boolean = 'and', $callback = null): \Hyperf\Database\Model\Builder|static
     {
         return static::$instance->hasMorph($relation, $types, $operator, $count, $boolean, $callback);
     }
@@ -766,12 +754,11 @@ class ModelIDE
      * Add a polymorphic relationship count / exists condition to the query.
      *
      * @param string $relation
-     * @param array|string $types
      * @param string $boolean
      * @param null|\Closure $callback
      * @return Builder|static
      */
-    public static function doesntHaveMorph($relation, $types, $boolean = 'and', $callback = null)
+    public static function doesntHaveMorph($relation, array|string $types, $boolean = 'and', $callback = null): \Hyperf\Database\Model\Builder|static
     {
         return static::$instance->doesntHaveMorph($relation, $types, $boolean, $callback);
     }
@@ -780,13 +767,12 @@ class ModelIDE
      * Add a polymorphic relationship count / exists condition to the query with where clauses.
      *
      * @param string $relation
-     * @param array|string $types
      * @param null|\Closure $callback
      * @param string $operator
      * @param int $count
      * @return Builder|static
      */
-    public static function whereHasMorph($relation, $types, $callback = null, $operator = '>=', $count = 1)
+    public static function whereHasMorph($relation, array|string $types, $callback = null, $operator = '>=', $count = 1): \Hyperf\Database\Model\Builder|static
     {
         return static::$instance->whereHasMorph($relation, $types, $callback, $operator, $count);
     }
@@ -795,13 +781,12 @@ class ModelIDE
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param string $relation
-     * @param array|string $types
      * @param null|\Closure $callback
      * @param string $operator
      * @param int $count
      * @return Builder|static
      */
-    public static function orWhereHasMorph($relation, $types, $callback = null, $operator = '>=', $count = 1)
+    public static function orWhereHasMorph($relation, array|string $types, $callback = null, $operator = '>=', $count = 1): \Hyperf\Database\Model\Builder|static
     {
         return static::$instance->orWhereHasMorph($relation, $types, $callback, $operator, $count);
     }
@@ -810,11 +795,10 @@ class ModelIDE
      * Add a polymorphic relationship count / exists condition to the query with where clauses.
      *
      * @param string $relation
-     * @param array|string $types
      * @param null|\Closure $callback
      * @return Builder|static
      */
-    public static function whereDoesntHaveMorph($relation, $types, $callback = null)
+    public static function whereDoesntHaveMorph($relation, array|string $types, $callback = null): \Hyperf\Database\Model\Builder|static
     {
         return static::$instance->whereDoesntHaveMorph($relation, $types, $callback);
     }
@@ -823,11 +807,10 @@ class ModelIDE
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param string $relation
-     * @param array|string $types
      * @param null|\Closure $callback
      * @return Builder|static
      */
-    public static function orWhereDoesntHaveMorph($relation, $types, $callback = null)
+    public static function orWhereDoesntHaveMorph($relation, array|string $types, $callback = null): \Hyperf\Database\Model\Builder|static
     {
         return static::$instance->orWhereDoesntHaveMorph($relation, $types, $callback);
     }
@@ -849,7 +832,7 @@ class ModelIDE
      * @param Builder $from
      * @return Builder|static
      */
-    public static function mergeConstraintsFrom($from)
+    public static function mergeConstraintsFrom($from): \Hyperf\Database\Model\Builder|static
     {
         return static::$instance->mergeConstraintsFrom($from);
     }
@@ -868,12 +851,11 @@ class ModelIDE
     /**
      * Add a subselect expression to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
      * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function selectSub($query, $as)
+    public static function selectSub(\Closure|\Hyperf\Database\Query\Builder|string $query, $as)
     {
         return static::$instance->selectSub($query, $as);
     }
@@ -893,12 +875,11 @@ class ModelIDE
     /**
      * Makes "from" fetch from a subquery.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
      * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function fromSub($query, $as)
+    public static function fromSub(\Closure|\Hyperf\Database\Query\Builder|string $query, $as)
     {
         return static::$instance->fromSub($query, $as);
     }
@@ -939,10 +920,9 @@ class ModelIDE
     /**
      * Set the table which the query is targeting.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $table
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function from($table)
+    public static function from(\Closure|\Hyperf\Database\Query\Builder|string $table)
     {
         return static::$instance->from($table);
     }
@@ -951,14 +931,13 @@ class ModelIDE
      * Add a join clause to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @param string $type
      * @param bool $where
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function join($table, $first, $operator = null, $second = null, $type = 'inner', $where = false)
+    public static function join($table, \Closure|string $first, $operator = null, $second = null, $type = 'inner', $where = false)
     {
         return static::$instance->join($table, $first, $operator, $second, $type, $where);
     }
@@ -967,13 +946,12 @@ class ModelIDE
      * Add a "join where" clause to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
      * @param string $operator
      * @param string $second
      * @param string $type
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function joinWhere($table, $first, $operator, $second, $type = 'inner')
+    public static function joinWhere($table, \Closure|string $first, $operator, $second, $type = 'inner')
     {
         return static::$instance->joinWhere($table, $first, $operator, $second, $type);
     }
@@ -981,9 +959,7 @@ class ModelIDE
     /**
      * Add a subquery join clause to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @param \Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @param string $type
@@ -991,7 +967,7 @@ class ModelIDE
      * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function joinSub($query, $as, $first, $operator = null, $second = null, $type = 'inner', $where = false)
+    public static function joinSub(\Closure|\Hyperf\Database\Query\Builder|string $query, $as, \Closure|string $first, $operator = null, $second = null, $type = 'inner', $where = false)
     {
         return static::$instance->joinSub($query, $as, $first, $operator, $second, $type, $where);
     }
@@ -1000,12 +976,11 @@ class ModelIDE
      * Add a left join to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function leftJoin($table, $first, $operator = null, $second = null)
+    public static function leftJoin($table, \Closure|string $first, $operator = null, $second = null)
     {
         return static::$instance->leftJoin($table, $first, $operator, $second);
     }
@@ -1014,12 +989,11 @@ class ModelIDE
      * Add a "join where" clause to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
      * @param string $operator
      * @param string $second
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function leftJoinWhere($table, $first, $operator, $second)
+    public static function leftJoinWhere($table, \Closure|string $first, $operator, $second)
     {
         return static::$instance->leftJoinWhere($table, $first, $operator, $second);
     }
@@ -1027,14 +1001,12 @@ class ModelIDE
     /**
      * Add a subquery left join to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @param \Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function leftJoinSub($query, $as, $first, $operator = null, $second = null)
+    public static function leftJoinSub(\Closure|\Hyperf\Database\Query\Builder|string $query, $as, \Closure|string $first, $operator = null, $second = null)
     {
         return static::$instance->leftJoinSub($query, $as, $first, $operator, $second);
     }
@@ -1043,12 +1015,11 @@ class ModelIDE
      * Add a right join to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function rightJoin($table, $first, $operator = null, $second = null)
+    public static function rightJoin($table, \Closure|string $first, $operator = null, $second = null)
     {
         return static::$instance->rightJoin($table, $first, $operator, $second);
     }
@@ -1057,12 +1028,11 @@ class ModelIDE
      * Add a "right join where" clause to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
      * @param string $operator
      * @param string $second
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function rightJoinWhere($table, $first, $operator, $second)
+    public static function rightJoinWhere($table, \Closure|string $first, $operator, $second)
     {
         return static::$instance->rightJoinWhere($table, $first, $operator, $second);
     }
@@ -1070,14 +1040,12 @@ class ModelIDE
     /**
      * Add a subquery right join to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @param \Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function rightJoinSub($query, $as, $first, $operator = null, $second = null)
+    public static function rightJoinSub(\Closure|\Hyperf\Database\Query\Builder|string $query, $as, \Closure|string $first, $operator = null, $second = null)
     {
         return static::$instance->rightJoinSub($query, $as, $first, $operator, $second);
     }
@@ -1124,13 +1092,12 @@ class ModelIDE
     /**
      * Add a "where" clause comparing two columns to the query.
      *
-     * @param array|string $first
      * @param null|string $operator
      * @param null|string $second
      * @param null|string $boolean
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function whereColumn($first, $operator = null, $second = null, $boolean = 'and')
+    public static function whereColumn(array|string $first, $operator = null, $second = null, $boolean = 'and')
     {
         return static::$instance->whereColumn($first, $operator, $second, $boolean);
     }
@@ -1138,12 +1105,11 @@ class ModelIDE
     /**
      * Add an "or where" clause comparing two columns to the query.
      *
-     * @param array|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function orWhereColumn($first, $operator = null, $second = null)
+    public static function orWhereColumn(array|string $first, $operator = null, $second = null)
     {
         return static::$instance->orWhereColumn($first, $operator, $second);
     }
@@ -1228,12 +1194,11 @@ class ModelIDE
      * Add a "where in raw" clause for integer values to the query.
      *
      * @param string $column
-     * @param array|Arrayable $values
      * @param string $boolean
      * @param bool $not
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function whereIntegerInRaw($column, $values, $boolean = 'and', $not = false)
+    public static function whereIntegerInRaw($column, array|\Hyperf\Contract\Arrayable $values, $boolean = 'and', $not = false)
     {
         return static::$instance->whereIntegerInRaw($column, $values, $boolean, $not);
     }
@@ -1242,11 +1207,10 @@ class ModelIDE
      * Add a "where not in raw" clause for integer values to the query.
      *
      * @param string $column
-     * @param array|Arrayable $values
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function whereIntegerNotInRaw($column, $values, $boolean = 'and')
+    public static function whereIntegerNotInRaw($column, array|\Hyperf\Contract\Arrayable $values, $boolean = 'and')
     {
         return static::$instance->whereIntegerNotInRaw($column, $values, $boolean);
     }
@@ -1254,12 +1218,11 @@ class ModelIDE
     /**
      * Add a "where null" clause to the query.
      *
-     * @param array|string $columns
      * @param string $boolean
      * @param bool $not
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function whereNull($columns, $boolean = 'and', $not = false)
+    public static function whereNull(array|string $columns, $boolean = 'and', $not = false)
     {
         return static::$instance->whereNull($columns, $boolean, $not);
     }
@@ -1278,11 +1241,10 @@ class ModelIDE
     /**
      * Add a "where not null" clause to the query.
      *
-     * @param array|string $columns
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function whereNotNull($columns, $boolean = 'and')
+    public static function whereNotNull(array|string $columns, $boolean = 'and')
     {
         return static::$instance->whereNotNull($columns, $boolean);
     }
@@ -1701,10 +1663,9 @@ class ModelIDE
     /**
      * Add a "group by" clause to the query.
      *
-     * @param array|string $groups
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function groupBy(...$groups)
+    public static function groupBy(array|string ...$groups)
     {
         return static::$instance->groupBy(...$groups);
     }
@@ -1778,12 +1739,11 @@ class ModelIDE
     /**
      * Add an "order by" clause to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $column
      * @param string $direction
      * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function orderBy($column, $direction = 'asc')
+    public static function orderBy(\Closure|\Hyperf\Database\Query\Builder|string $column, $direction = 'asc')
     {
         return static::$instance->orderBy($column, $direction);
     }
@@ -1907,12 +1867,10 @@ class ModelIDE
     /**
      * Add a union statement to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder $query
      * @param bool $all
-     *
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function union($query, $all = false)
+    public static function union(\Closure|\Hyperf\Database\Query\Builder $query, $all = false)
     {
         return static::$instance->union($query, $all);
     }
@@ -1920,11 +1878,10 @@ class ModelIDE
     /**
      * Add a union all statement to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder $query
      *
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function unionAll($query)
+    public static function unionAll(\Closure|\Hyperf\Database\Query\Builder $query)
     {
         return static::$instance->unionAll($query);
     }
@@ -1932,10 +1889,9 @@ class ModelIDE
     /**
      * Lock the selected rows in the table.
      *
-     * @param bool|string $value
      * @return \Hyperf\Database\Query\Builder
      */
-    public static function lock($value = true)
+    public static function lock(bool|string $value = true)
     {
         return static::$instance->lock($value);
     }
@@ -2096,9 +2052,8 @@ class ModelIDE
      *
      * @param string $function
      * @param array $columns
-     * @return float|int
      */
-    public static function numericAggregate($function, $columns = [])
+    public static function numericAggregate($function, $columns = []): float|int
     {
         return static::$instance->numericAggregate($function, $columns);
     }
@@ -2141,10 +2096,9 @@ class ModelIDE
      * Insert new records into the table using a subquery.
      *
      * @param array $columns
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @return int
      */
-    public static function insertUsing($columns, $query)
+    public static function insertUsing($columns, \Closure|\Hyperf\Database\Query\Builder|string $query)
     {
         return static::$instance->insertUsing($columns, $query);
     }

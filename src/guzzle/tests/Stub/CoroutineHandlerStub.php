@@ -19,11 +19,8 @@ class CoroutineHandlerStub extends CoroutineHandler
 {
     public $count = 0;
 
-    protected $statusCode;
-
-    public function __construct($statusCode = 200)
+    public function __construct(protected $statusCode = 200)
     {
-        $this->statusCode = $statusCode;
     }
 
     public function createSink(string $body, $sink)
@@ -50,7 +47,7 @@ class CoroutineHandlerStub extends CoroutineHandler
                 'setting' => $client->setting,
                 'uri' => $path,
                 'body' => $body,
-            ]);
+            ], JSON_THROW_ON_ERROR);
             return new RawResponse($this->statusCode, [], $body, '1.1');
         });
         return $client;

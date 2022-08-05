@@ -80,7 +80,7 @@ class ModelCommand extends Command
             ->setPath($this->getOption('path', 'commands.gen:model.path', $pool, 'app/Model'))
             ->setPrefix($this->getOption('prefix', 'prefix', $pool, ''))
             ->setInheritance($this->getOption('inheritance', 'commands.gen:model.inheritance', $pool, 'Model'))
-            ->setUses($this->getOption('uses', 'commands.gen:model.uses', $pool, 'Hyperf\DbConnection\Model\Model'))
+            ->setUses($this->getOption('uses', 'commands.gen:model.uses', $pool, \Hyperf\DbConnection\Model\Model::class))
             ->setForceCasts($this->getOption('force-casts', 'commands.gen:model.force_casts', $pool, false))
             ->setRefreshFillable($this->getOption('refresh-fillable', 'commands.gen:model.refresh_fillable', $pool, false))
             ->setTableMapping($this->getOption('table-mapping', 'commands.gen:model.table_mapping', $pool, []))
@@ -221,9 +221,7 @@ class ModelCommand extends Command
      */
     protected function formatColumns(array $columns): array
     {
-        return array_map(function ($item) {
-            return array_change_key_case($item, CASE_LOWER);
-        }, $columns);
+        return array_map(fn($item) => array_change_key_case($item, CASE_LOWER), $columns);
     }
 
     protected function getColumns($className, $columns, $forceCasts): array

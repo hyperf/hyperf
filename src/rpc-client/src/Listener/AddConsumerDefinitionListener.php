@@ -54,17 +54,15 @@ class AddConsumerDefinitionListener implements ListenerInterface
 
                 $container->define(
                     $consumer['id'] ?? $serviceClass,
-                    function (ContainerInterface $container) use ($consumer, $serviceClass, $proxyClass) {
-                        return new $proxyClass(
-                            $container,
-                            $consumer['name'],
-                            $consumer['protocol'] ?? 'jsonrpc-http',
-                            [
-                                'load_balancer' => $consumer['load_balancer'] ?? 'random',
-                                'service_interface' => $serviceClass,
-                            ]
-                        );
-                    }
+                    fn(ContainerInterface $container) => new $proxyClass(
+                        $container,
+                        $consumer['name'],
+                        $consumer['protocol'] ?? 'jsonrpc-http',
+                        [
+                            'load_balancer' => $consumer['load_balancer'] ?? 'random',
+                            'service_interface' => $serviceClass,
+                        ]
+                    )
                 );
             }
         }

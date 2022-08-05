@@ -201,9 +201,7 @@ class ConsulDriver implements DriverInterface
         }
 
         return $this->health = make(Health::class, [
-            'clientFactory' => function () use ($options) {
-                return $this->container->get(ClientFactory::class)->create($options);
-            },
+            'clientFactory' => fn() => $this->container->get(ClientFactory::class)->create($options),
         ]);
     }
 }

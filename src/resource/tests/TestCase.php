@@ -79,10 +79,9 @@ class TestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array|callable|string $except
      * @return HttpResponse
      */
-    public function http($except)
+    public function http(array|callable|string $except)
     {
         $core = new HttpServerCore($container = $this->container(), 'http');
 

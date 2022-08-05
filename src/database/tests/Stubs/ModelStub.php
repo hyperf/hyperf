@@ -28,12 +28,12 @@ class ModelStub extends Model
 
     public function getListItemsAttribute($value)
     {
-        return json_decode($value, true);
+        return json_decode($value, true, 512, JSON_THROW_ON_ERROR);
     }
 
     public function setListItemsAttribute($value)
     {
-        $this->attributes['list_items'] = json_encode($value);
+        $this->attributes['list_items'] = json_encode($value, JSON_THROW_ON_ERROR);
     }
 
     public function getPasswordAttribute()

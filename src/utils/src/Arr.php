@@ -111,10 +111,8 @@ class Arr
 
     /**
      * Get all the given array except for a specified array of keys.
-     *
-     * @param array|string $keys
      */
-    public static function except(array $array, $keys): array
+    public static function except(array $array, array|string $keys): array
     {
         static::forget($array, $keys);
         return $array;
@@ -122,16 +120,13 @@ class Arr
 
     /**
      * Determine if the given key exists in the provided array.
-     *
-     * @param array|\ArrayAccess $array
-     * @param int|string $key
      */
-    public static function exists($array, $key): bool
+    public static function exists(array|object $array, int|string $key): bool
     {
         if ($array instanceof ArrayAccess) {
             return $array->offsetExists($key);
         }
-        return array_key_exists($key, $array);
+        return property_exists($array, $key);
     }
 
     /**
@@ -172,9 +167,8 @@ class Arr
 
     /**
      * Flatten a multi-dimensional array into a single level.
-     * @param float|int $depth
      */
-    public static function flatten(array $array, $depth = INF): array
+    public static function flatten(array $array, float|int $depth = INF): array
     {
         $result = [];
         foreach ($array as $item) {
@@ -192,10 +186,8 @@ class Arr
 
     /**
      * Remove one or many array items from a given array using "dot" notation.
-     *
-     * @param array|string $keys
      */
-    public static function forget(array &$array, $keys): void
+    public static function forget(array &$array, array|string $keys): void
     {
         $original = &$array;
         $keys = (array) $keys;
@@ -226,11 +218,10 @@ class Arr
     /**
      * Get an item from an array using "dot" notation.
      *
-     * @param array|\ArrayAccess $array
      * @param null|int|string $key
      * @param mixed $default
      */
-    public static function get($array, $key = null, $default = null)
+    public static function get(array|\ArrayAccess $array, $key = null, $default = null)
     {
         if (! static::accessible($array)) {
             return value($default);
@@ -257,10 +248,9 @@ class Arr
     /**
      * Check if an item or items exist in an array using "dot" notation.
      *
-     * @param array|\ArrayAccess $array
      * @param null|array|string $keys
      */
-    public static function has($array, $keys): bool
+    public static function has(array|\ArrayAccess $array, $keys): bool
     {
         if (is_null($keys)) {
             return false;
@@ -300,10 +290,8 @@ class Arr
 
     /**
      * Get a subset of the items from the given array.
-     *
-     * @param array|string $keys
      */
-    public static function only(array $array, $keys): array
+    public static function only(array $array, array|string $keys): array
     {
         return array_intersect_key($array, array_flip((array) $keys));
     }
@@ -311,10 +299,9 @@ class Arr
     /**
      * Pluck an array of values from an array.
      *
-     * @param array|string $value
      * @param null|array|string $key
      */
-    public static function pluck(array $array, $value, $key = null): array
+    public static function pluck(array $array, array|string $value, $key = null): array
     {
         $results = [];
         [$value, $key] = static::explodePluckParameters($value, $key);
@@ -434,10 +421,8 @@ class Arr
         if (is_null($seed)) {
             shuffle($array);
         } else {
-            srand($seed);
-            usort($array, function () {
-                return rand(-1, 1);
-            });
+            mt_srand($seed);
+            usort($array, fn() => random_int(-1, 1));
         }
         return $array;
     }
@@ -546,10 +531,9 @@ class Arr
     /**
      * Explode the "value" and "key" arguments passed to "pluck".
      *
-     * @param array|string $value
      * @param null|array|string $key
      */
-    protected static function explodePluckParameters($value, $key): array
+    protected static function explodePluckParameters(array|string $value, $key): array
     {
         $value = is_string($value) ? explode('.', $value) : $value;
         $key = is_null($key) || is_array($key) ? $key : explode('.', $key);

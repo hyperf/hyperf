@@ -30,5 +30,5 @@ interface ClientInterface
      * @throws \Throwable
      * @return ResponseInterface
      */
-    public function request($method, $uri, array $options = []);
+    public function request($method, string|\Psr\Http\Message\UriInterface $uri, array $options = []);
 }

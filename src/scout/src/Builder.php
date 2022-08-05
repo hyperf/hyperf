@@ -194,7 +194,7 @@ class Builder
      * Paginate the given query into a simple paginator.
      * @return AbstractPaginator|LengthAwarePaginator
      */
-    public function paginate(?int $perPage = null, ?string $pageName = 'page', ?int $page = null)
+    public function paginate(?int $perPage = null, ?string $pageName = 'page', ?int $page = null): \Hyperf\Paginator\AbstractPaginator|\Hyperf\Paginator\LengthAwarePaginator
     {
         $engine = $this->engine();
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
@@ -215,7 +215,7 @@ class Builder
      * Paginate the given query into a simple paginator with raw data.
      * @return AbstractPaginator|LengthAwarePaginator
      */
-    public function paginateRaw(?int $perPage = null, ?string $pageName = 'page', ?int $page = null)
+    public function paginateRaw(?int $perPage = null, ?string $pageName = 'page', ?int $page = null): \Hyperf\Paginator\AbstractPaginator|\Hyperf\Paginator\LengthAwarePaginator
     {
         $engine = $this->engine();
         $page = $page ?: Paginator::resolveCurrentPage($pageName);

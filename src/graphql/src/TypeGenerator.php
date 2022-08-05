@@ -24,43 +24,8 @@ use TheCodingMachine\GraphQLite\Types\MutableObjectType;
  */
 class TypeGenerator
 {
-    /**
-     * @var AnnotationReader
-     */
-    private $annotationReader;
-
-    /**
-     * @var FieldsBuilderFactory
-     */
-    private $fieldsBuilderFactory;
-
-    /**
-     * @var NamingStrategyInterface
-     */
-    private $namingStrategy;
-
-    /**
-     * @var TypeRegistry
-     */
-    private $typeRegistry;
-
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(
-        AnnotationReader $annotationReader,
-        FieldsBuilderFactory $fieldsBuilderFactory,
-        NamingStrategyInterface $namingStrategy,
-        TypeRegistry $typeRegistry,
-        ContainerInterface $container
-    ) {
-        $this->annotationReader = $annotationReader;
-        $this->fieldsBuilderFactory = $fieldsBuilderFactory;
-        $this->namingStrategy = $namingStrategy;
-        $this->typeRegistry = $typeRegistry;
-        $this->container = $container;
+    public function __construct(private AnnotationReader $annotationReader, private FieldsBuilderFactory $fieldsBuilderFactory, private NamingStrategyInterface $namingStrategy, private TypeRegistry $typeRegistry, private ContainerInterface $container)
+    {
     }
 
     /**

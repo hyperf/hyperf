@@ -21,16 +21,6 @@ abstract class Driver implements DriverInterface
     use InteractsWithTime;
 
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var array
-     */
-    protected $config;
-
-    /**
      * @var PackerInterface
      */
     protected $packer;
@@ -40,10 +30,8 @@ abstract class Driver implements DriverInterface
      */
     protected $prefix;
 
-    public function __construct(ContainerInterface $container, array $config)
+    public function __construct(protected ContainerInterface $container, protected array $config)
     {
-        $this->container = $container;
-        $this->config = $config;
         $this->prefix = $config['prefix'] ?? 'cache:';
 
         $packerClass = $config['packer'] ?? PhpSerializerPacker::class;

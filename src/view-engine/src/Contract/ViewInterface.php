@@ -21,11 +21,10 @@ interface ViewInterface extends Renderable
     /**
      * Add a piece of data to the view.
      *
-     * @param array|string $key
      * @param mixed $value
      * @return $this
      */
-    public function with($key, $value = null);
+    public function with(array|string $key, $value = null);
 
     /**
      * Get the array of view data.

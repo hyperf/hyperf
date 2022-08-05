@@ -22,7 +22,7 @@ class MultipleAnnotation implements MultipleAnnotationInterface
     public function __construct(AnnotationInterface $annotation)
     {
         $this->annotations = [$annotation];
-        $this->className = get_class($annotation);
+        $this->className = $annotation::class;
     }
 
     public function __get(string $name)
@@ -42,7 +42,7 @@ class MultipleAnnotation implements MultipleAnnotationInterface
     public function insert(AnnotationInterface $annotation): static
     {
         if (! $annotation instanceof $this->className) {
-            throw new AnnotationException(get_class($annotation) . ' must instanceof ' . $this->className);
+            throw new AnnotationException($annotation::class . ' must instanceof ' . $this->className);
         }
 
         $this->annotations[] = $annotation;

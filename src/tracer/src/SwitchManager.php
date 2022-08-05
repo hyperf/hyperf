@@ -16,10 +16,7 @@ use OpenTracing\Span;
 
 class SwitchManager
 {
-    /**
-     * @var array
-     */
-    private $config
+    private array $config
         = [
             'guzzle' => false,
             'redis' => false,

@@ -41,8 +41,8 @@ class ConsumerManagerTest extends TestCase
             $exchange = uniqid(),
             $routingKey = uniqid(),
             $queue = uniqid(),
-            nums: $nums = rand(1, 10),
-            maxConsumption: $maxConsumption = rand(1, 10),
+            nums: $nums = random_int(1, 10),
+            maxConsumption: $maxConsumption = random_int(1, 10),
         ));
 
         $manager = new ConsumerManager($container);
@@ -77,7 +77,7 @@ class ConsumerManagerTest extends TestCase
             $exchange = uniqid(),
             $routingKey = uniqid(),
             $queue = uniqid(),
-            nums: $nums = rand(1, 10),
+            nums: $nums = random_int(1, 10),
             enable: false,
         ));
 
@@ -105,7 +105,7 @@ class ConsumerManagerTest extends TestCase
             exchange: uniqid(),
             routingKey: uniqid(),
             queue: uniqid(),
-            nums: rand(1, 10),
+            nums: random_int(1, 10),
         ));
 
         $manager = new ConsumerManager($container);

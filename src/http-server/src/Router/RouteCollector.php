@@ -36,7 +36,7 @@ class RouteCollector
      * @param string|string[] $httpMethod
      * @param array|string $handler
      */
-    public function addRoute(array|string $httpMethod, string $route, mixed $handler, array $options = []): void
+    public function addRoute(array|string $httpMethod, string $route, array|string $handler, array $options = []): void
     {
         $route = $this->currentGroupPrefix . $route;
         $routeDataList = $this->routeParser->parse($route);
@@ -75,7 +75,7 @@ class RouteCollector
      * This is simply an alias of $this->addRoute('GET', $route, $handler)
      * @param array|string $handler
      */
-    public function get(string $route, mixed $handler, array $options = []): void
+    public function get(string $route, array|string $handler, array $options = []): void
     {
         $this->addRoute('GET', $route, $handler, $options);
     }
@@ -86,7 +86,7 @@ class RouteCollector
      * This is simply an alias of $this->addRoute('POST', $route, $handler)
      * @param array|string $handler
      */
-    public function post(string $route, mixed $handler, array $options = []): void
+    public function post(string $route, array|string $handler, array $options = []): void
     {
         $this->addRoute('POST', $route, $handler, $options);
     }
@@ -97,7 +97,7 @@ class RouteCollector
      * This is simply an alias of $this->addRoute('PUT', $route, $handler)
      * @param array|string $handler
      */
-    public function put(string $route, mixed $handler, array $options = []): void
+    public function put(string $route, array|string $handler, array $options = []): void
     {
         $this->addRoute('PUT', $route, $handler, $options);
     }
@@ -108,7 +108,7 @@ class RouteCollector
      * This is simply an alias of $this->addRoute('DELETE', $route, $handler)
      * @param array|string $handler
      */
-    public function delete(string $route, mixed $handler, array $options = []): void
+    public function delete(string $route, array|string $handler, array $options = []): void
     {
         $this->addRoute('DELETE', $route, $handler, $options);
     }
@@ -119,7 +119,7 @@ class RouteCollector
      * This is simply an alias of $this->addRoute('PATCH', $route, $handler)
      * @param array|string $handler
      */
-    public function patch(string $route, mixed $handler, array $options = []): void
+    public function patch(string $route, array|string $handler, array $options = []): void
     {
         $this->addRoute('PATCH', $route, $handler, $options);
     }
@@ -130,7 +130,7 @@ class RouteCollector
      * This is simply an alias of $this->addRoute('HEAD', $route, $handler)
      * @param array|string $handler
      */
-    public function head(string $route, mixed $handler, array $options = []): void
+    public function head(string $route, array|string $handler, array $options = []): void
     {
         $this->addRoute('HEAD', $route, $handler, $options);
     }

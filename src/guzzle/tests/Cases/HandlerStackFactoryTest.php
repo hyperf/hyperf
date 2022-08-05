@@ -175,9 +175,7 @@ class HandlerStackFactoryTest extends TestCase
     {
         $container = Mockery::mock(Container::class);
         $factory = new PoolFactory($container);
-        $container->shouldReceive('make')->with(PoolHandler::class, Mockery::any())->andReturnUsing(function ($class, $args) use ($factory) {
-            return new PoolHandler($factory, $args['option']);
-        });
+        $container->shouldReceive('make')->with(PoolHandler::class, Mockery::any())->andReturnUsing(fn($class, $args) => new PoolHandler($factory, $args['option']));
 
         ApplicationContext::setContainer($container);
     }

@@ -45,7 +45,7 @@ class DepthGuard
     public function increment()
     {
         Context::override('di.depth', function ($depth) {
-            $depth = $depth ?? 0;
+            $depth ??= 0;
             if (++$depth > $this->depthLimit) {
                 throw new CircularDependencyException();
             }
@@ -55,9 +55,7 @@ class DepthGuard
 
     public function decrement()
     {
-        Context::override('di.depth', function ($depth) {
-            return --$depth;
-        });
+        Context::override('di.depth', fn($depth) => --$depth);
     }
 
     public function call(string $name, callable $callable)

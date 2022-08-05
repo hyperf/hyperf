@@ -68,10 +68,8 @@ trait HasEvents
 
     /**
      * Add some observable event.
-     *
-     * @param array|string $events
      */
-    public function addEvents($events): void
+    public function addEvents(array|string $events): void
     {
         $this->events = array_unique(array_merge($this->events, is_array($events) ? $events : func_get_args()));
     }
@@ -127,8 +125,6 @@ trait HasEvents
 
     /**
      * Fire the given event for the model.
-     *
-     * @return null|object|StoppableEventInterface
      */
     protected function fireModelEvent(string $event): ?object
     {

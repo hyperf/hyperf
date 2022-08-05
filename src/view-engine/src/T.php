@@ -21,11 +21,10 @@ class T
     /**
      * Encode HTML special characters in a string.
      *
-     * @param DeferringDisplayableValue|Htmlable|string $value
      * @param bool $doubleEncode
      * @return string
      */
-    public static function e($value, $doubleEncode = true)
+    public static function e(\Hyperf\ViewEngine\Contract\DeferringDisplayableValue|\Hyperf\ViewEngine\Contract\Htmlable|string $value, $doubleEncode = true)
     {
         if ($value instanceof DeferringDisplayableValue) {
             $value = $value->resolveDisplayableValue();

@@ -20,11 +20,8 @@ use Symfony\Component\Console\Input\InputArgument;
 #[Command]
 class InfoCommand extends HyperfCommand
 {
-    protected ContainerInterface $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         parent::__construct('queue:info');
     }
 

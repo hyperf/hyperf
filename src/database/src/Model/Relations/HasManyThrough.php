@@ -21,48 +21,6 @@ use Hyperf\Database\Model\SoftDeletes;
 class HasManyThrough extends Relation
 {
     /**
-     * The "through" parent model instance.
-     *
-     * @var \Hyperf\Database\Model\Model
-     */
-    protected $throughParent;
-
-    /**
-     * The far parent model instance.
-     *
-     * @var \Hyperf\Database\Model\Model
-     */
-    protected $farParent;
-
-    /**
-     * The near key on the relationship.
-     *
-     * @var string
-     */
-    protected $firstKey;
-
-    /**
-     * The far key on the relationship.
-     *
-     * @var string
-     */
-    protected $secondKey;
-
-    /**
-     * The local key on the relationship.
-     *
-     * @var string
-     */
-    protected $localKey;
-
-    /**
-     * The local key on the intermediary model.
-     *
-     * @var string
-     */
-    protected $secondLocalKey;
-
-    /**
      * The count of self joins.
      *
      * @var int
@@ -77,15 +35,14 @@ class HasManyThrough extends Relation
      * @param string $localKey
      * @param string $secondLocalKey
      */
-    public function __construct(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
+    public function __construct(Builder $query, /**
+     * The far parent model instance.
+     */
+    protected Model $farParent, /**
+     * The "through" parent model instance.
+     */
+    protected Model $throughParent, protected $firstKey, protected $secondKey, protected $localKey, protected $secondLocalKey)
     {
-        $this->localKey = $localKey;
-        $this->firstKey = $firstKey;
-        $this->secondKey = $secondKey;
-        $this->farParent = $farParent;
-        $this->throughParent = $throughParent;
-        $this->secondLocalKey = $secondLocalKey;
-
         parent::__construct($query, $throughParent);
     }
 
@@ -223,13 +180,13 @@ class HasManyThrough extends Relation
      * @throws \Hyperf\Database\Model\ModelNotFoundException
      * @return \Hyperf\Database\Model\Model|static
      */
-    public function firstOrFail($columns = ['*'])
+    public function firstOrFail($columns = ['*']): \Hyperf\Database\Model\Model|static
     {
         if (! is_null($model = $this->first($columns))) {
             return $model;
         }
 
-        throw (new ModelNotFoundException())->setModel(get_class($this->related));
+        throw (new ModelNotFoundException())->setModel($this->related::class);
     }
 
     /**
@@ -277,21 +234,20 @@ class HasManyThrough extends Relation
      * @param array $columns
      * @param mixed $id
      * @throws \Hyperf\Database\Model\ModelNotFoundException
-     * @return \Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
      */
-    public function findOrFail($id, $columns = ['*'])
+    public function findOrFail($id, $columns = ['*']): \Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
     {
         $result = $this->find($id, $columns);
 
         if (is_array($id)) {
-            if (count($result) === count(array_unique($id))) {
+            if (($result === null ? 0 : count($result)) === count(array_unique($id))) {
                 return $result;
             }
         } elseif (! is_null($result)) {
             return $result;
         }
 
-        throw (new ModelNotFoundException())->setModel(get_class($this->related), $id);
+        throw (new ModelNotFoundException())->setModel($this->related::class, $id);
     }
 
     /**

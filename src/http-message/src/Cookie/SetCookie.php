@@ -206,10 +206,8 @@ class SetCookie implements Stringable, Arrayable
 
     /**
      * The UNIX timestamp when the cookie Expires.
-     *
-     * @return int|string
      */
-    public function getExpires()
+    public function getExpires(): int|string
     {
         return $this->data['Expires'];
     }
@@ -219,7 +217,7 @@ class SetCookie implements Stringable, Arrayable
      *
      * @param float|int|string $timestamp Unix timestamp
      */
-    public function setExpires($timestamp)
+    public function setExpires(float|int|string $timestamp)
     {
         $this->data['Expires'] = is_numeric($timestamp)
             ? (int) $timestamp
@@ -310,7 +308,7 @@ class SetCookie implements Stringable, Arrayable
         }
 
         // Match if the last character of the cookie-path is "/"
-        if (substr($cookiePath, -1, 1) === '/') {
+        if (str_ends_with($cookiePath, '/')) {
             return true;
         }
 

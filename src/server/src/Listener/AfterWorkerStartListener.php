@@ -22,11 +22,8 @@ use Swoole\Server\Port;
 
 class AfterWorkerStartListener implements ListenerInterface
 {
-    private LoggerInterface $logger;
-
-    public function __construct(StdoutLoggerInterface $logger)
+    public function __construct(private StdoutLoggerInterface $logger)
     {
-        $this->logger = $logger;
     }
 
     /**

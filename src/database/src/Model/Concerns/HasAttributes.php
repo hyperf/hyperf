@@ -247,7 +247,7 @@ trait HasAttributes
      */
     public function hasGetMutator($key): bool
     {
-        return method_exists($this, 'get' . Str::studly($key) . 'Attribute');
+        return method_exists($this, 'get' . Str::studly($key) . \Attribute::class);
     }
 
     /**
@@ -311,7 +311,7 @@ trait HasAttributes
      */
     public function hasSetMutator($key): bool
     {
-        return method_exists($this, 'set' . Str::studly($key) . 'Attribute');
+        return method_exists($this, 'set' . Str::studly($key) . \Attribute::class);
     }
 
     /**
@@ -341,7 +341,7 @@ trait HasAttributes
      */
     public function fromJson($value, $asObject = false)
     {
-        return json_decode($value, ! $asObject);
+        return json_decode($value, ! $asObject, 512, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -474,9 +474,7 @@ trait HasAttributes
             );
         }
 
-        return collect($this->original)->mapWithKeys(function ($value, $key) {
-            return [$key => $this->transformModelValue($key, $value)];
-        })->all();
+        return collect($this->original)->mapWithKeys(fn($value, $key) => [$key => $this->transformModelValue($key, $value)])->all();
     }
 
     /**
@@ -518,10 +516,9 @@ trait HasAttributes
     /**
      * Sync multiple original attribute with their current values.
      *
-     * @param array|string $attributes
      * @return $this
      */
-    public function syncOriginalAttributes($attributes): static
+    public function syncOriginalAttributes(array|string $attributes): static
     {
         $attributes = is_array($attributes) ? $attributes : func_get_args();
 
@@ -644,10 +641,8 @@ trait HasAttributes
 
     /**
      * Append attributes to query when building a query.
-     *
-     * @param array|string $attributes
      */
-    public function append($attributes): static
+    public function append(array|string $attributes): static
     {
         $this->appends = array_unique(
             array_merge($this->appends, is_string($attributes) ? func_get_args() : $attributes)
@@ -687,9 +682,7 @@ trait HasAttributes
      */
     public static function cacheMutatedAttributes($class): void
     {
-        static::$mutatorCache[$class] = collect(static::getMutatorMethods($class))->map(function ($match) {
-            return lcfirst(static::$snakeAttributes ? Str::snake($match) : $match);
-        })->all();
+        static::$mutatorCache[$class] = collect(static::getMutatorMethods($class))->map(fn($match) => lcfirst(static::$snakeAttributes ? Str::snake($match) : $match))->all();
     }
 
     /**
@@ -871,7 +864,7 @@ trait HasAttributes
      */
     protected function mutateAttribute($key, $value)
     {
-        return $this->{'get' . Str::studly($key) . 'Attribute'}($value);
+        return $this->{'get' . Str::studly($key) . \Attribute::class}($value);
     }
 
     /**
@@ -994,8 +987,8 @@ trait HasAttributes
      */
     protected function isCustomDateTimeCast($cast): bool
     {
-        return strncmp($cast, 'date:', 5) === 0
-            || strncmp($cast, 'datetime:', 9) === 0;
+        return str_starts_with($cast, 'date:')
+            || str_starts_with($cast, 'datetime:');
     }
 
     /**
@@ -1005,7 +998,7 @@ trait HasAttributes
      */
     protected function isDecimalCast($cast): bool
     {
-        return strncmp($cast, 'decimal:', 8) === 0;
+        return str_starts_with($cast, 'decimal:');
     }
 
     /**
@@ -1016,7 +1009,7 @@ trait HasAttributes
      */
     protected function setMutatedAttributeValue($key, $value)
     {
-        return $this->{'set' . Str::studly($key) . 'Attribute'}($value);
+        return $this->{'set' . Str::studly($key) . \Attribute::class}($value);
     }
 
     /**
@@ -1126,7 +1119,7 @@ trait HasAttributes
      */
     protected function asJson($value): string|false
     {
-        return json_encode($value);
+        return json_encode($value, JSON_THROW_ON_ERROR);
     }
 
     /**

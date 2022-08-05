@@ -37,7 +37,7 @@ class Composer
             if (! $path) {
                 throw new \RuntimeException('composer.lock not found.');
             }
-            self::$content = collect(json_decode(file_get_contents($path), true));
+            self::$content = collect(json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR));
             $packages = self::$content->offsetGet('packages') ?? [];
             $packagesDev = self::$content->offsetGet('packages-dev') ?? [];
             foreach (array_merge($packages, $packagesDev) as $package) {
@@ -71,7 +71,7 @@ class Composer
             if (! is_readable($path)) {
                 throw new \RuntimeException('composer.json is not readable.');
             }
-            self::$json = collect(json_decode(file_get_contents($path), true));
+            self::$json = collect(json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR));
         }
         return self::$json;
     }

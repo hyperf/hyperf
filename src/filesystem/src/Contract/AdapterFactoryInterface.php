@@ -16,8 +16,5 @@ use League\Flysystem\FilesystemAdapter;
 
 interface AdapterFactoryInterface
 {
-    /**
-     * @return AdapterInterface|FilesystemAdapter
-     */
-    public function make(array $options);
+    public function make(array $options): \AdapterInterface|\League\Flysystem\FilesystemAdapter;
 }

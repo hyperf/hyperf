@@ -227,7 +227,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
             return [];
         }
         $definitions = $this->getClosureDefinitionCollector()->getParameters($closure);
-        return $this->getInjections($definitions, 'Closure', $arguments);
+        return $this->getInjections($definitions, \Closure::class, $arguments);
     }
 
     /**

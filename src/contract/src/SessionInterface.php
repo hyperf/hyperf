@@ -107,10 +107,9 @@ interface SessionInterface
     /**
      * Put a key / value pair or array of key / value pairs in the session.
      *
-     * @param array|string $key
      * @param null|mixed $value
      */
-    public function put($key, $value = null): void;
+    public function put(array|string $key, $value = null): void;
 
     /**
      * Returns attributes.
@@ -131,10 +130,8 @@ interface SessionInterface
 
     /**
      * Remove one or many items from the session.
-     *
-     * @param array|string $keys
      */
-    public function forget($keys): void;
+    public function forget(array|string $keys): void;
 
     /**
      * Clears all attributes.

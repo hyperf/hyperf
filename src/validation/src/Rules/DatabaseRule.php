@@ -57,10 +57,8 @@ trait DatabaseRule
 
     /**
      * Set a "where not" constraint on the query.
-     *
-     * @param array|string $value
      */
-    public function whereNot(string $column, mixed $value): static
+    public function whereNot(string $column, array|string $value): static
     {
         if (is_array($value)) {
             return $this->whereNotIn($column, $value);

@@ -73,10 +73,9 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs without detaching.
      *
-     * @param array|\Hyperf\Database\Model\Model|\Hyperf\Utils\Collection $ids
      * @return array
      */
-    public function syncWithoutDetaching($ids)
+    public function syncWithoutDetaching(array|\Hyperf\Database\Model\Model|BaseCollection $ids)
     {
         return $this->sync($ids, false);
     }
@@ -84,11 +83,10 @@ trait InteractsWithPivotTable
     /**
      * Sync the intermediate tables with a list of IDs or collection of models.
      *
-     * @param array|\Hyperf\Database\Model\Model|\Hyperf\Utils\Collection $ids
      * @param bool $detaching
      * @return array
      */
-    public function sync($ids, $detaching = true)
+    public function sync(array|\Hyperf\Database\Model\Model|BaseCollection $ids, $detaching = true)
     {
         $changes = [
             'attached' => [], 'detached' => [], 'updated' => [],
@@ -398,6 +396,7 @@ trait InteractsWithPivotTable
      */
     protected function baseAttachRecord($id, $timed)
     {
+        $record = [];
         $record[$this->relatedPivotKey] = $id;
 
         $record[$this->foreignPivotKey] = $this->parent->{$this->parentKey};
@@ -513,9 +512,7 @@ trait InteractsWithPivotTable
      */
     protected function castKeys(array $keys)
     {
-        return array_map(function ($v) {
-            return $this->castKey($v);
-        }, $keys);
+        return array_map(fn($v) => $this->castKey($v), $keys);
     }
 
     /**
@@ -551,18 +548,11 @@ trait InteractsWithPivotTable
      */
     protected function getTypeSwapValue($type, $value)
     {
-        switch (strtolower($type)) {
-            case 'int':
-            case 'integer':
-                return (int) $value;
-            case 'real':
-            case 'float':
-            case 'double':
-                return (float) $value;
-            case 'string':
-                return (string) $value;
-            default:
-                return $value;
-        }
+        return match (strtolower($type)) {
+            'int', 'integer' => (int) $value,
+            'real', 'float', 'double' => (float) $value,
+            'string' => (string) $value,
+            default => $value,
+        };
     }
 }

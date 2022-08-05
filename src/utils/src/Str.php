@@ -178,10 +178,8 @@ class Str
 
     /**
      * Determine if a given string contains a given substring.
-     *
-     * @param array|string $needles
      */
-    public static function contains(string $haystack, $needles): bool
+    public static function contains(string $haystack, array|string $needles): bool
     {
         foreach ((array) $needles as $needle) {
             if ($needle !== '' && str_contains($haystack, (string) $needle)) {
@@ -213,10 +211,9 @@ class Str
     /**
      * Determine if a given string ends with a given substring.
      *
-     * @param array|string $needles
      * @return bool
      */
-    public static function endsWith(string $haystack, $needles)
+    public static function endsWith(string $haystack, array|string $needles)
     {
         foreach ((array) $needles as $needle) {
             if ($needle !== '' && str_ends_with($haystack, (string) $needle)) {
@@ -244,11 +241,10 @@ class Str
     /**
      * Determine if a given string matches a given pattern.
      *
-     * @param array|string $pattern
      * @param string $value
      * @return bool
      */
-    public static function is($pattern, $value)
+    public static function is(array|string $pattern, $value)
     {
         $patterns = Arr::wrap($pattern);
 
@@ -501,7 +497,7 @@ class Str
      * @param string|string[] $subject
      * @return string
      */
-    public static function replace($search, $replace, $subject)
+    public static function replace(string|array $search, string|array $replace, string|array $subject)
     {
         return str_replace($search, $replace, $subject);
     }
@@ -546,7 +542,7 @@ class Str
      * @param bool $caseSensitive
      * @return string
      */
-    public static function remove($search, $subject, $caseSensitive = true)
+    public static function remove(array|string $search, $subject, $caseSensitive = true)
     {
         return $caseSensitive
                     ? str_replace($search, '', $subject)
@@ -643,10 +639,8 @@ class Str
 
     /**
      * Determine if a given string starts with a given substring.
-     *
-     * @param array|string $needles
      */
-    public static function startsWith(string $haystack, $needles): bool
+    public static function startsWith(string $haystack, array|string $needles): bool
     {
         foreach ((array) $needles as $needle) {
             if ($needle !== '' && str_starts_with($haystack, (string) $needle)) {

@@ -22,15 +22,11 @@ class ValidationRequiredIfTest extends TestCase
 {
     public function testItClousureReturnsFormatsAStringVersionOfTheRule()
     {
-        $rule = new RequiredIf(function () {
-            return true;
-        });
+        $rule = new RequiredIf(fn() => true);
 
         $this->assertEquals('required', (string) $rule);
 
-        $rule = new RequiredIf(function () {
-            return false;
-        });
+        $rule = new RequiredIf(fn() => false);
 
         $this->assertEquals('', (string) $rule);
 

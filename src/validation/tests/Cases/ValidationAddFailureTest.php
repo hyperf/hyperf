@@ -46,7 +46,7 @@ class ValidationAddFailureTest extends TestCase
         $attribute = 'Eugene';
         $validator = $this->makeValidator();
         $validator->addFailure($attribute, 'not_in');
-        $messages = json_decode($validator->messages()->toJson());
+        $messages = json_decode($validator->messages()->toJson(), null, 512, JSON_THROW_ON_ERROR);
         $this->assertSame($messages->{'foo.bar.baz'}[0], 'validation.required', 'initial data in messages is lost');
         $this->assertSame($messages->{$attribute}[0], 'validation.not_in', 'new data in messages was not added');
     }

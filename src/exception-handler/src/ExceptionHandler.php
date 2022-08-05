@@ -24,7 +24,6 @@ abstract class ExceptionHandler
     /**
      * Determine if the current exception handler should handle the exception.
      *
-     * @return bool
      *              If return true, then this exception handler will handle the exception,
      *              If return false, then delegate to next handler
      */

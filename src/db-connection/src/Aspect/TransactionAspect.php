@@ -31,9 +31,7 @@ class TransactionAspect extends AbstractAspect
         $transactional = $this->getTransactionalAnnotation($proceedingJoinPoint->className, $proceedingJoinPoint->methodName);
 
         return Db::connection($transactional->connection)->transaction(
-            static function () use ($proceedingJoinPoint) {
-                return $proceedingJoinPoint->process();
-            },
+            static fn() => $proceedingJoinPoint->process(),
             $transactional->attempts
         );
     }

@@ -109,9 +109,7 @@ class ValidationFactoryTest extends TestCase
     {
         $translator = m::mock(TranslatorInterface::class);
         $factory = new ValidatorFactory($translator);
-        $factory->extend('foo', function ($attribute, $value, $parameters, $validator) {
-            return $validator->validateArray($attribute, $value, $parameters);
-        });
+        $factory->extend('foo', fn($attribute, $value, $parameters, $validator) => $validator->validateArray($attribute, $value, $parameters));
 
         $validator = $factory->make(['bar' => ['baz']], ['bar' => 'foo']);
         $this->assertTrue($validator->passes());

@@ -25,7 +25,7 @@ class RequestTest extends TestCase
     public function testRequest()
     {
         $request = new Request($path = 'grpc.service/path', $info = new Info());
-        $this->assertSame(3, count($request->headers));
+        $this->assertSame(3, is_countable($request->headers) ? count($request->headers) : 0);
         $this->assertSame('application/grpc+proto', $request->headers['content-type']);
         $this->assertMatchesRegularExpression('/^grpc-php-hyperf\/1.0 \(hyperf-grpc-client\/.*\)$/', $request->headers['user-agent']);
         $this->assertSame($path, $request->path);
@@ -47,7 +47,7 @@ class RequestTest extends TestCase
             'foo' => 'bar',
         ]);
 
-        $this->assertSame(4, count($request->headers));
+        $this->assertSame(4, is_countable($request->headers) ? count($request->headers) : 0);
         $this->assertSame('application/grpc', $request->headers['content-type']);
         $this->assertMatchesRegularExpression('/^grpc-php-hyperf\/1.0 \(hyperf-grpc-client\/.*\)$/', $request->headers['user-agent']);
         $this->assertSame('bar', $request->headers['foo']);

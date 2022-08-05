@@ -63,7 +63,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param array|static $value
      * @return array
      */
-    public static function unwrap($value);
+    public static function unwrap(array|self $value);
 
     /**
      * Get all items in the enumerable.
@@ -241,7 +241,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param mixed $value
      * @return bool
      */
-    public function every($key, $operator = null, $value = null);
+    public function every(callable|string $key, $operator = null, $value = null);
 
     /**
      * Get all items except for those with the specified keys.
@@ -426,7 +426,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param bool $preserveKeys
      * @return static
      */
-    public function groupBy($groupBy, $preserveKeys = false);
+    public function groupBy(array|callable|string $groupBy, $preserveKeys = false);
 
     /**
      * Key an associative array by a field or using a callback.
@@ -434,7 +434,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param callable|string $keyBy
      * @return static
      */
-    public function keyBy($keyBy);
+    public function keyBy(callable|string $keyBy);
 
     /**
      * Determine if an item exists in the collection by key.
@@ -645,7 +645,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param mixed $value
      * @return static
      */
-    public function partition($key, $operator = null, $value = null);
+    public function partition(callable|string $key, $operator = null, $value = null);
 
     /**
      * Push all of the given items onto the collection.
@@ -769,7 +769,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param bool $descending
      * @return static
      */
-    public function sortBy($callback, $options = SORT_REGULAR, $descending = false);
+    public function sortBy(callable|string $callback, $options = SORT_REGULAR, $descending = false);
 
     /**
      * Sort the collection in descending order using the given callback.
@@ -778,7 +778,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @param int $options
      * @return static
      */
-    public function sortByDesc($callback, $options = SORT_REGULAR);
+    public function sortByDesc(callable|string $callback, $options = SORT_REGULAR);
 
     /**
      * Sort the collection keys.
@@ -830,11 +830,10 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Get the values of a given key.
      *
-     * @param array|string $value
      * @param null|string $key
      * @return static
      */
-    public function pluck($value, $key = null);
+    public function pluck(array|string $value, $key = null);
 
     /**
      * Create a collection of all elements that do not pass a given truth test.

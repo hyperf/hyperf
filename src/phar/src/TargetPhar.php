@@ -15,7 +15,7 @@ use Phar;
 use Symfony\Component\Finder\Finder;
 use Traversable;
 
-class TargetPhar
+class TargetPhar implements \Stringable
 {
     public function __construct(private Phar $phar, private PharBuilder $pharBuilder)
     {

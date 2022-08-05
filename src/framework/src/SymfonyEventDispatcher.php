@@ -20,14 +20,8 @@ if (interface_exists(EventDispatcherInterface::class)) {
      */
     class SymfonyEventDispatcher implements EventDispatcherInterface
     {
-        /**
-         * @var PsrDispatcherInterface
-         */
-        private $psrDispatcher;
-
-        public function __construct(PsrDispatcherInterface $psrDispatcher)
+        public function __construct(private PsrDispatcherInterface $psrDispatcher)
         {
-            $this->psrDispatcher = $psrDispatcher;
         }
 
         public function dispatch(object $event, string $eventName = null): object

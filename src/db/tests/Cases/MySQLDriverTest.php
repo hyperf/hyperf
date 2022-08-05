@@ -38,6 +38,7 @@ class MySQLDriverTest extends PDODriverTest
         $sql = 'SELECT * FROM `user` WHERE id = ?;';
         $bindings = [2];
         $res = $db->run(function () use ($sql, $bindings) {
+            $result = [];
             $statement = $this->prepare($sql);
 
             $statement->execute($bindings);

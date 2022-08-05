@@ -33,10 +33,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
 
     private array $cookieParams = [];
 
-    /**
-     * @var null|array|object
-     */
-    private $parsedBody;
+    private null|array|object $parsedBody = null;
 
     private array $queryParams = [];
 

@@ -43,11 +43,11 @@ class RedisAspect extends AbstractAspect
         }
 
         $arguments = $proceedingJoinPoint->arguments['keys'];
-        $span = $this->startSpan('Redis' . '::' . $arguments['name']);
-        $span->setTag($this->spanTagManager->get('redis', 'arguments'), json_encode($arguments['arguments']));
+        $span = $this->startSpan(\Redis::class . '::' . $arguments['name']);
+        $span->setTag($this->spanTagManager->get('redis', 'arguments'), json_encode($arguments['arguments'], JSON_THROW_ON_ERROR));
         try {
             $result = $proceedingJoinPoint->process();
-            $span->setTag($this->spanTagManager->get('redis', 'result'), json_encode($result));
+            $span->setTag($this->spanTagManager->get('redis', 'result'), json_encode($result, JSON_THROW_ON_ERROR));
         } catch (\Throwable $e) {
             $span->setTag('error', true);
             $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);

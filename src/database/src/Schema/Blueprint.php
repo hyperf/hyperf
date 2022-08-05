@@ -63,20 +63,6 @@ class Blueprint
     protected $comment = '';
 
     /**
-     * The table the blueprint describes.
-     *
-     * @var string
-     */
-    protected $table;
-
-    /**
-     * The prefix of the table.
-     *
-     * @var string
-     */
-    protected $prefix;
-
-    /**
      * The columns that should be added to the table.
      *
      * @var \Hyperf\Database\Schema\ColumnDefinition[]
@@ -96,11 +82,8 @@ class Blueprint
      * @param string $table
      * @param string $prefix
      */
-    public function __construct($table, Closure $callback = null, $prefix = '')
+    public function __construct(protected $table, Closure $callback = null, protected $prefix = '')
     {
-        $this->table = $table;
-        $this->prefix = $prefix;
-
         if (! is_null($callback)) {
             $callback($this);
         }
@@ -242,10 +225,9 @@ class Blueprint
     /**
      * Indicate that the given primary key should be dropped.
      *
-     * @param array|string $index
      * @return \Hyperf\Utils\Fluent
      */
-    public function dropPrimary($index = null)
+    public function dropPrimary(array|string $index = null)
     {
         return $this->dropIndexCommand('dropPrimary', 'primary', $index);
     }
@@ -253,10 +235,9 @@ class Blueprint
     /**
      * Indicate that the given unique key should be dropped.
      *
-     * @param array|string $index
      * @return \Hyperf\Utils\Fluent
      */
-    public function dropUnique($index)
+    public function dropUnique(array|string $index)
     {
         return $this->dropIndexCommand('dropUnique', 'unique', $index);
     }
@@ -264,10 +245,9 @@ class Blueprint
     /**
      * Indicate that the given index should be dropped.
      *
-     * @param array|string $index
      * @return \Hyperf\Utils\Fluent
      */
-    public function dropIndex($index)
+    public function dropIndex(array|string $index)
     {
         return $this->dropIndexCommand('dropIndex', 'index', $index);
     }
@@ -275,10 +255,9 @@ class Blueprint
     /**
      * Indicate that the given spatial index should be dropped.
      *
-     * @param array|string $index
      * @return \Hyperf\Utils\Fluent
      */
-    public function dropSpatialIndex($index)
+    public function dropSpatialIndex(array|string $index)
     {
         return $this->dropIndexCommand('dropSpatialIndex', 'spatialIndex', $index);
     }
@@ -286,10 +265,9 @@ class Blueprint
     /**
      * Indicate that the given foreign key should be dropped.
      *
-     * @param array|string $index
      * @return \Hyperf\Utils\Fluent
      */
-    public function dropForeign($index)
+    public function dropForeign(array|string $index)
     {
         return $this->dropIndexCommand('dropForeign', 'foreign', $index);
     }
@@ -377,12 +355,11 @@ class Blueprint
     /**
      * Specify the primary key(s) for the table.
      *
-     * @param array|string $columns
      * @param string $name
      * @param null|string $algorithm
      * @return \Hyperf\Utils\Fluent
      */
-    public function primary($columns, $name = null, $algorithm = null)
+    public function primary(array|string $columns, $name = null, $algorithm = null)
     {
         return $this->indexCommand('primary', $columns, $name, $algorithm);
     }
@@ -390,12 +367,11 @@ class Blueprint
     /**
      * Specify a unique index for the table.
      *
-     * @param array|string $columns
      * @param string $name
      * @param null|string $algorithm
      * @return \Hyperf\Utils\Fluent
      */
-    public function unique($columns, $name = null, $algorithm = null)
+    public function unique(array|string $columns, $name = null, $algorithm = null)
     {
         return $this->indexCommand('unique', $columns, $name, $algorithm);
     }
@@ -403,12 +379,11 @@ class Blueprint
     /**
      * Specify an index for the table.
      *
-     * @param array|string $columns
      * @param string $name
      * @param null|string $algorithm
      * @return \Hyperf\Utils\Fluent
      */
-    public function index($columns, $name = null, $algorithm = null)
+    public function index(array|string $columns, $name = null, $algorithm = null)
     {
         return $this->indexCommand('index', $columns, $name, $algorithm);
     }
@@ -416,11 +391,10 @@ class Blueprint
     /**
      * Specify a spatial index for the table.
      *
-     * @param array|string $columns
      * @param string $name
      * @return \Hyperf\Utils\Fluent
      */
-    public function spatialIndex($columns, $name = null)
+    public function spatialIndex(array|string $columns, $name = null)
     {
         return $this->indexCommand('spatialIndex', $columns, $name);
     }
@@ -428,11 +402,9 @@ class Blueprint
     /**
      * Specify a foreign key for the table.
      *
-     * @param array|string $columns
      * @param string $name
-     * @return \Hyperf\Database\Schema\ForeignKeyDefinition|\Hyperf\Utils\Fluent
      */
-    public function foreign($columns, $name = null)
+    public function foreign(array|string $columns, $name = null): \Hyperf\Database\Schema\ForeignKeyDefinition|\Hyperf\Utils\Fluent
     {
         return $this->indexCommand('foreign', $columns, $name);
     }
@@ -1149,9 +1121,7 @@ class Blueprint
      */
     public function removeColumn($name)
     {
-        $this->columns = array_values(array_filter($this->columns, function ($c) use ($name) {
-            return $c['attributes']['name'] != $name;
-        }));
+        $this->columns = array_values(array_filter($this->columns, fn($c) => $c['attributes']['name'] != $name));
 
         return $this;
     }
@@ -1203,9 +1173,7 @@ class Blueprint
      */
     public function getAddedColumns()
     {
-        return array_filter($this->columns, function ($column) {
-            return ! $column->change;
-        });
+        return array_filter($this->columns, fn($column) => ! $column->change);
     }
 
     /**
@@ -1215,9 +1183,7 @@ class Blueprint
      */
     public function getChangedColumns()
     {
-        return array_filter($this->columns, function ($column) {
-            return (bool) $column->change;
-        });
+        return array_filter($this->columns, fn($column) => (bool) $column->change);
     }
 
     /**
@@ -1225,9 +1191,7 @@ class Blueprint
      */
     public function hasAutoIncrementColumn(): bool
     {
-        return ! is_null(collect($this->getAddedColumns())->first(function ($column) {
-            return $column->autoIncrement === true;
-        }));
+        return ! is_null(collect($this->getAddedColumns())->first(fn($column) => $column->autoIncrement === true));
     }
 
     /**
@@ -1239,22 +1203,19 @@ class Blueprint
             return [];
         }
 
-        return collect($this->getAddedColumns())->mapWithKeys(function ($column) {
-            return $column->autoIncrement === true
-                ? [$column->name => $column->get('startingValue', $column->get('from'))]
-                : [$column->name => null];
-        })->filter()->all();
+        return collect($this->getAddedColumns())->mapWithKeys(fn($column) => $column->autoIncrement === true
+            ? [$column->name => $column->get('startingValue', $column->get('from'))]
+            : [$column->name => null])->filter()->all();
     }
 
     /**
      * Specify an fulltext for the table.
      *
-     * @param array|string $columns
      * @param null|string $name
      * @param null|string $algorithm
      * @return \Hyperf\Utils\Fluent
      */
-    public function fulltext($columns, $name = null, $algorithm = null)
+    public function fulltext(array|string $columns, $name = null, $algorithm = null)
     {
         return $this->indexCommand('fulltext', $columns, $name, $algorithm);
     }
@@ -1314,9 +1275,7 @@ class Blueprint
      */
     protected function commandsNamed(array $names)
     {
-        return collect($this->commands)->filter(function ($command) use ($names) {
-            return in_array($command->name, $names);
-        });
+        return collect($this->commands)->filter(fn($command) => in_array($command->name, $names));
     }
 
     /**
@@ -1372,21 +1331,18 @@ class Blueprint
      */
     protected function creating()
     {
-        return collect($this->commands)->contains(function ($command) {
-            return $command->name === 'create';
-        });
+        return collect($this->commands)->contains(fn($command) => $command->name === 'create');
     }
 
     /**
      * Add a new index command to the blueprint.
      *
      * @param string $type
-     * @param array|string $columns
      * @param string $index
      * @param null|string $algorithm
      * @return \Hyperf\Utils\Fluent
      */
-    protected function indexCommand($type, $columns, $index, $algorithm = null)
+    protected function indexCommand($type, array|string $columns, $index, $algorithm = null)
     {
         $columns = (array) $columns;
 
@@ -1406,10 +1362,9 @@ class Blueprint
      *
      * @param string $command
      * @param string $type
-     * @param array|string $index
      * @return \Hyperf\Utils\Fluent
      */
-    protected function dropIndexCommand($command, $type, $index)
+    protected function dropIndexCommand($command, $type, array|string $index)
     {
         $columns = [];
 

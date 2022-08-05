@@ -34,24 +34,18 @@ interface FinderInterface
 
     /**
      * Add a namespace hint to the finder.
-     *
-     * @param array|string $hints
      */
-    public function addNamespace(string $namespace, $hints);
+    public function addNamespace(string $namespace, array|string $hints);
 
     /**
      * Prepend a namespace hint to the finder.
-     *
-     * @param array|string $hints
      */
-    public function prependNamespace(string $namespace, $hints);
+    public function prependNamespace(string $namespace, array|string $hints);
 
     /**
      * Replace the namespace hints for the given namespace.
-     *
-     * @param array|string $hints
      */
-    public function replaceNamespace(string $namespace, $hints);
+    public function replaceNamespace(string $namespace, array|string $hints);
 
     /**
      * Add a valid view extension to the finder.

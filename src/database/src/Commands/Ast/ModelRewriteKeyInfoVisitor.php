@@ -121,10 +121,9 @@ class ModelRewriteKeyInfoVisitor extends AbstractVisitor
     }
 
     /**
-     * @param bool|string $value
      * @return Node\Scalar
      */
-    protected function getExpr(string $property, $value): Node\Expr
+    protected function getExpr(string $property, bool|string $value): Node\Expr
     {
         if ($property == 'incrementing') {
             return new Node\Expr\ConstFetch(new Node\Name([$value ? 'true' : 'false']));

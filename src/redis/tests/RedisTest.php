@@ -70,9 +70,7 @@ class RedisTest extends TestCase
 
         $this->assertSame(2, $redis->getDatabase());
 
-        $res = parallel([function () use ($redis) {
-            return $redis->get('xxxx');
-        }]);
+        $res = parallel([fn() => $redis->get('xxxx')]);
 
         $this->assertSame('db:0 name:get argument:xxxx', $res[0]);
     }
@@ -240,12 +238,8 @@ class RedisTest extends TestCase
             ],
         ]));
         $container->shouldReceive('make')->with(Frequency::class, Mockery::any())->andReturn(new Frequency());
-        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new PoolOption(...array_values($args));
-        });
-        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new Channel($args['size']);
-        });
+        $container->shouldReceive('make')->with(PoolOption::class, Mockery::any())->andReturnUsing(fn($class, $args) => new PoolOption(...array_values($args)));
+        $container->shouldReceive('make')->with(Channel::class, Mockery::any())->andReturnUsing(fn($class, $args) => new Channel($args['size']));
         return $container;
     }
 }

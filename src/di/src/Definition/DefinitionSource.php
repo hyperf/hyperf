@@ -95,10 +95,7 @@ class DefinitionSource implements DefinitionSourceInterface
         return $definitions;
     }
 
-    /**
-     * @param array|callable|string $definition
-     */
-    private function normalizeDefinition(string $identifier, $definition): ?DefinitionInterface
+    private function normalizeDefinition(string $identifier, array|callable|string $definition): ?DefinitionInterface
     {
         if (is_string($definition) && class_exists($definition)) {
             if (method_exists($definition, '__invoke')) {

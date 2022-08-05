@@ -13,7 +13,7 @@ namespace Hyperf\HttpMessage\Base;
 
 use Psr\Http\Message\ResponseInterface;
 
-class Response implements ResponseInterface
+class Response implements ResponseInterface, \Stringable
 {
     use MessageTrait;
 
@@ -91,7 +91,7 @@ class Response implements ResponseInterface
 
     private array $attributes = [];
 
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->getBody();
     }

@@ -27,7 +27,6 @@ interface CastsAttributes
      *
      * @param object $model
      * @param mixed $value
-     * @return array|string
      */
-    public function set($model, string $key, $value, array $attributes);
+    public function set($model, string $key, $value, array $attributes): array|string;
 }

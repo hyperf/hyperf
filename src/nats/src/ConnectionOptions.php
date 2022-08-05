@@ -133,7 +133,7 @@ class ConnectionOptions implements Stringable
             $a['auth_token'] = $this->token;
         }
 
-        return json_encode($a);
+        return json_encode($a, JSON_THROW_ON_ERROR);
     }
 
     /**

@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Definition;
 
-class PropertyDefinition implements DefinitionInterface
+class PropertyDefinition implements DefinitionInterface, \Stringable
 {
     /**
      * @param string $propertyName property name

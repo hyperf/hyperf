@@ -25,20 +25,12 @@ use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 class HttpResponse
 {
     /**
-     * The response to delegate to.
-     *
-     * @var PsrResponseInterface
-     */
-    public $baseResponse;
-
-    /**
      * Create a new test response instance.
      *
-     * @param PsrResponseInterface $response
+     * @param PsrResponseInterface $baseResponse
      */
-    public function __construct($response)
+    public function __construct(public $baseResponse)
     {
-        $this->baseResponse = $response;
     }
 
     /**
@@ -211,9 +203,9 @@ class HttpResponse
     {
         $actual = json_encode(Arr::sortRecursive(
             (array) $this->decodeResponseJson()
-        ));
+        ), JSON_THROW_ON_ERROR);
 
-        PHPUnit::assertEquals(json_encode(Arr::sortRecursive($data)), $actual);
+        PHPUnit::assertEquals(json_encode(Arr::sortRecursive($data), JSON_THROW_ON_ERROR), $actual);
 
         return $this;
     }
@@ -227,7 +219,7 @@ class HttpResponse
     {
         $actual = json_encode(Arr::sortRecursive(
             (array) $this->decodeResponseJson()
-        ));
+        ), JSON_THROW_ON_ERROR);
 
         foreach (Arr::sortRecursive($data) as $key => $value) {
             $expected = $this->jsonSearchStrings($key, $value);
@@ -235,7 +227,7 @@ class HttpResponse
             PHPUnit::assertTrue(
                 Str::contains($actual, $expected),
                 'Unable to find JSON fragment: ' . PHP_EOL . PHP_EOL .
-                '[' . json_encode([$key => $value]) . ']' . PHP_EOL . PHP_EOL .
+                '[' . json_encode([$key => $value], JSON_THROW_ON_ERROR) . ']' . PHP_EOL . PHP_EOL .
                 'within' . PHP_EOL . PHP_EOL .
                 "[{$actual}]."
             );
@@ -258,7 +250,7 @@ class HttpResponse
 
         $actual = json_encode(Arr::sortRecursive(
             (array) $this->decodeResponseJson()
-        ));
+        ), JSON_THROW_ON_ERROR);
 
         foreach (Arr::sortRecursive($data) as $key => $value) {
             $unexpected = $this->jsonSearchStrings($key, $value);
@@ -266,7 +258,7 @@ class HttpResponse
             PHPUnit::assertFalse(
                 Str::contains($actual, $unexpected),
                 'Found unexpected JSON fragment: ' . PHP_EOL . PHP_EOL .
-                '[' . json_encode([$key => $value]) . ']' . PHP_EOL . PHP_EOL .
+                '[' . json_encode([$key => $value], JSON_THROW_ON_ERROR) . ']' . PHP_EOL . PHP_EOL .
                 'within' . PHP_EOL . PHP_EOL .
                 "[{$actual}]."
             );
@@ -284,7 +276,7 @@ class HttpResponse
     {
         $actual = json_encode(Arr::sortRecursive(
             (array) $this->decodeResponseJson()
-        ));
+        ), JSON_THROW_ON_ERROR);
 
         foreach (Arr::sortRecursive($data) as $key => $value) {
             $unexpected = $this->jsonSearchStrings($key, $value);
@@ -296,7 +288,7 @@ class HttpResponse
 
         PHPUnit::fail(
             'Found unexpected JSON fragment: ' . PHP_EOL . PHP_EOL .
-            '[' . json_encode($data) . ']' . PHP_EOL . PHP_EOL .
+            '[' . json_encode($data, JSON_THROW_ON_ERROR) . ']' . PHP_EOL . PHP_EOL .
             'within' . PHP_EOL . PHP_EOL .
             "[{$actual}]."
         );
@@ -367,10 +359,9 @@ class HttpResponse
     /**
      * Assert that the response has the given JSON validation errors for the given keys.
      *
-     * @param array|string $keys
      * @return $this
      */
-    public function assertJsonValidationErrors($keys)
+    public function assertJsonValidationErrors(array|string $keys)
     {
         $keys = Arr::wrap($keys);
 
@@ -397,10 +388,9 @@ class HttpResponse
     /**
      * Assert that the response has no JSON validation errors for the given keys.
      *
-     * @param array|string $keys
      * @return $this
      */
-    public function assertJsonMissingValidationErrors($keys = null)
+    public function assertJsonMissingValidationErrors(array|string $keys = null)
     {
         $json = $this->json();
 
@@ -412,7 +402,7 @@ class HttpResponse
 
         $errors = $json['errors'];
 
-        if (is_null($keys) && count($errors) > 0) {
+        if (is_null($keys) && (is_countable($errors) ? count($errors) : 0) > 0) {
             PHPUnit::fail(
                 'Response has unexpected validation errors: ' . PHP_EOL . PHP_EOL .
                 json_encode($errors, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
@@ -437,7 +427,7 @@ class HttpResponse
      */
     public function decodeResponseJson($key = null)
     {
-        $decodedResponse = json_decode((string) $this->getBody(), true);
+        $decodedResponse = json_decode((string) $this->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         if (is_null($decodedResponse) || $decodedResponse === false) {
             if ($this->exception) {
@@ -502,7 +492,7 @@ class HttpResponse
      */
     protected function jsonSearchStrings($key, $value)
     {
-        $needle = substr(json_encode([$key => $value]), 1, -1);
+        $needle = substr(json_encode([$key => $value], JSON_THROW_ON_ERROR), 1, -1);
 
         return [
             $needle . ']',

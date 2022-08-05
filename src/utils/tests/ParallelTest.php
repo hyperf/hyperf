@@ -28,9 +28,7 @@ class ParallelTest extends TestCase
         // Closure
         $parallel = new Parallel();
         for ($i = 0; $i < 3; ++$i) {
-            $parallel->add(function () {
-                return Coroutine::id();
-            });
+            $parallel->add(fn() => Coroutine::id());
         }
         $result = $parallel->wait();
         $id = $result[0];
@@ -92,9 +90,7 @@ class ParallelTest extends TestCase
     public function testParallelCallbackCount()
     {
         $parallel = new Parallel();
-        $callback = function () {
-            return 1;
-        };
+        $callback = fn() => 1;
         for ($i = 0; $i < 4; ++$i) {
             $parallel->add($callback);
         }
@@ -111,9 +107,7 @@ class ParallelTest extends TestCase
     public function testParallelClear()
     {
         $parallel = new Parallel();
-        $callback = function () {
-            return 1;
-        };
+        $callback = fn() => 1;
         for ($i = 0; $i < 4; ++$i) {
             $parallel->add($callback);
         }
@@ -132,9 +126,7 @@ class ParallelTest extends TestCase
     public function testParallelKeys()
     {
         $parallel = new Parallel();
-        $callback = function () {
-            return 1;
-        };
+        $callback = fn() => 1;
         for ($i = 0; $i < 4; ++$i) {
             $parallel->add($callback);
         }
@@ -203,7 +195,7 @@ class ParallelTest extends TestCase
             $parallel->wait();
             throw new \RuntimeException();
         } catch (ParallelExecutionException $exception) {
-            foreach (['Detecting', 'RuntimeException', '#0'] as $keyword) {
+            foreach (['Detecting', \RuntimeException::class, '#0'] as $keyword) {
                 $this->assertTrue(Str::contains($exception->getMessage(), $keyword));
             }
 
@@ -240,9 +232,7 @@ class ParallelTest extends TestCase
         $res = parallel(['a' => function () {
             usleep(1000);
             return 1;
-        }, 'b' => function () {
-            return 2;
-        }]);
+        }, 'b' => fn() => 2]);
 
         $this->assertSame(['a' => 1, 'b' => 2], $res);
 

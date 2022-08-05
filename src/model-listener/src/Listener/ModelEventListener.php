@@ -35,7 +35,7 @@ class ModelEventListener implements ListenerInterface
     public function process(object $event): void
     {
         $model = $event->getModel();
-        $modelName = get_class($model);
+        $modelName = $model::class;
 
         $listeners = ListenerCollector::getListenersForModel($modelName);
         foreach ($listeners as $name) {

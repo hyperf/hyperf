@@ -17,10 +17,7 @@ use Swoole\Coroutine\Client;
 
 trait RecvTrait
 {
-    /**
-     * @param Client|RpcConnection $client
-     */
-    public function recvAndCheck(mixed $client, float $timeout)
+    public function recvAndCheck(\Swoole\Coroutine\Client|\Hyperf\JsonRpc\Pool\RpcConnection $client, float $timeout)
     {
         $data = $client->recv($timeout);
         if ($data === '') {

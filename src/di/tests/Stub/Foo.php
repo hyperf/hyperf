@@ -13,20 +13,8 @@ namespace HyperfTest\Di\Stub;
 
 class Foo
 {
-    /**
-     * @var string
-     */
-    public $string;
-
-    /**
-     * @var int
-     */
-    public $int;
-
-    public function __construct(string $string = '', int $int = 1)
+    public function __construct(public string $string = '', public int $int = 1)
     {
-        $this->string = $string;
-        $this->int = $int;
     }
 
     public function getBar(?int $id, string $bar = 'testBar', array $ext = [], string $constants = BASE_PATH)

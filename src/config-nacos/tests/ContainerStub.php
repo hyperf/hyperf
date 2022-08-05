@@ -29,16 +29,14 @@ class ContainerStub
         $container = \Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
 
-        $container->shouldReceive('get')->with(Application::class)->andReturnUsing(function () use ($handler) {
-            return new Application(new Config([
-                'guzzle_config' => [
-                    'handler' => $handler ?? new HandlerMockery(),
-                    'headers' => [
-                        'charset' => 'UTF-8',
-                    ],
+        $container->shouldReceive('get')->with(Application::class)->andReturnUsing(fn() => new Application(new Config([
+            'guzzle_config' => [
+                'handler' => $handler ?? new HandlerMockery(),
+                'headers' => [
+                    'charset' => 'UTF-8',
                 ],
-            ]));
-        });
+            ],
+        ])));
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new \Hyperf\Config\Config([
             'server' => [
@@ -110,13 +108,9 @@ class ContainerStub
             return $logger;
         });
 
-        $container->shouldReceive('get')->with(NacosClient::class)->andReturnUsing(function () use ($container) {
-            return $container->get(Application::class);
-        });
+        $container->shouldReceive('get')->with(NacosClient::class)->andReturnUsing(fn() => $container->get(Application::class));
 
-        $container->shouldReceive('get')->with(Client::class)->andReturnUsing(function () use ($container) {
-            return new Client($container);
-        });
+        $container->shouldReceive('get')->with(Client::class)->andReturnUsing(fn() => new Client($container));
 
         return $container;
     }

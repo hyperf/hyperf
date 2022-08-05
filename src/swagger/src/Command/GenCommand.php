@@ -34,7 +34,7 @@ class GenCommand extends Command
                 switch ($path) {
                     case isset($path->get):
                         $operationId = $path->get->operationId;
-                        if (strpos($operationId, '::') !== false) {
+                        if (str_contains($operationId, '::')) {
                             [$controller, $action] = explode('::', $operationId);
                             // @TODO Retrieve the path according to controller and action name, and then set the path to $path->path.
                         }

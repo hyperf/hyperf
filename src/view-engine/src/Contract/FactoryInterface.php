@@ -23,26 +23,21 @@ interface FactoryInterface
 
     /**
      * Get the evaluated view contents for the given path.
-     *
-     * @param array|Arrayable $data
      */
-    public function file(string $path, $data = [], array $mergeData = []): ViewInterface;
+    public function file(string $path, array|\Hyperf\Contract\Arrayable $data = [], array $mergeData = []): ViewInterface;
 
     /**
      * Get the evaluated view contents for the given view.
-     *
-     * @param array|Arrayable $data
      */
-    public function make(string $view, $data = [], array $mergeData = []): ViewInterface;
+    public function make(string $view, array|\Hyperf\Contract\Arrayable $data = [], array $mergeData = []): ViewInterface;
 
     /**
      * Add a piece of shared data to the environment.
      *
-     * @param array|string $key
      * @param mixed $value
      * @return mixed
      */
-    public function share($key, $value = null);
+    public function share(array|string $key, $value = null);
 
     /**
      * Register a view composer event.
@@ -57,16 +52,14 @@ interface FactoryInterface
     /**
      * Add a new namespace to the loader.
      *
-     * @param array|string $hints
      * @return $this
      */
-    public function addNamespace(string $namespace, $hints);
+    public function addNamespace(string $namespace, array|string $hints);
 
     /**
      * Replace the namespace hints for the given namespace.
      *
-     * @param array|string $hints
      * @return $this
      */
-    public function replaceNamespace(string $namespace, $hints);
+    public function replaceNamespace(string $namespace, array|string $hints);
 }

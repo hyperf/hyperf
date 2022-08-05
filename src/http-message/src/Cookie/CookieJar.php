@@ -100,9 +100,7 @@ class CookieJar implements CookieJarInterface
 
     public function toArray(): array
     {
-        return array_map(function (SetCookie $cookie) {
-            return $cookie->toArray();
-        }, $this->getIterator()->getArrayCopy());
+        return array_map(fn(SetCookie $cookie) => $cookie->toArray(), $this->getIterator()->getArrayCopy());
     }
 
     public function clear($domain = null, $path = null, $name = null)
@@ -114,26 +112,20 @@ class CookieJar implements CookieJarInterface
         if (! $path) {
             $this->cookies = array_filter(
                 $this->cookies,
-                function (SetCookie $cookie) use ($domain) {
-                    return ! $cookie->matchesDomain($domain);
-                }
+                fn(SetCookie $cookie) => ! $cookie->matchesDomain($domain)
             );
         } elseif (! $name) {
             $this->cookies = array_filter(
                 $this->cookies,
-                function (SetCookie $cookie) use ($path, $domain) {
-                    return ! ($cookie->matchesPath($path)
-                        && $cookie->matchesDomain($domain));
-                }
+                fn(SetCookie $cookie) => ! ($cookie->matchesPath($path)
+                    && $cookie->matchesDomain($domain))
             );
         } else {
             $this->cookies = array_filter(
                 $this->cookies,
-                function (SetCookie $cookie) use ($path, $domain, $name) {
-                    return ! ($cookie->getName() == $name
-                        && $cookie->matchesPath($path)
-                        && $cookie->matchesDomain($domain));
-                }
+                fn(SetCookie $cookie) => ! ($cookie->getName() == $name
+                    && $cookie->matchesPath($path)
+                    && $cookie->matchesDomain($domain))
             );
         }
 
@@ -144,9 +136,7 @@ class CookieJar implements CookieJarInterface
     {
         $this->cookies = array_filter(
             $this->cookies,
-            function (SetCookie $cookie) {
-                return ! $cookie->getDiscard() && $cookie->getExpires();
-            }
+            fn(SetCookie $cookie) => ! $cookie->getDiscard() && $cookie->getExpires()
         );
     }
 

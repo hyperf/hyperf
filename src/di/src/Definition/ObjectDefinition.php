@@ -13,7 +13,7 @@ namespace Hyperf\Di\Definition;
 
 use Hyperf\Di\ReflectionManager;
 
-class ObjectDefinition implements DefinitionInterface
+class ObjectDefinition implements DefinitionInterface, \Stringable
 {
     protected ?MethodInjection $constructorInjection = null;
 

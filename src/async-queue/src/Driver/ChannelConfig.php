@@ -15,8 +15,6 @@ use Hyperf\AsyncQueue\Exception\InvalidQueueException;
 
 class ChannelConfig
 {
-    protected string $channel;
-
     /**
      * Key for waiting message.
      */
@@ -42,9 +40,8 @@ class ChannelConfig
      */
     protected string $failed;
 
-    public function __construct(string $channel)
+    public function __construct(protected string $channel)
     {
-        $this->channel = $channel;
         $this->waiting = "{$channel}:waiting";
         $this->reserved = "{$channel}:reserved";
         $this->delayed = "{$channel}:delayed";

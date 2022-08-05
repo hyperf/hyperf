@@ -17,13 +17,12 @@ use Hyperf\Scout\Searchable;
 
 class ModelsFlushed
 {
-    /**
-     * @param Collection<int, Model&Searchable>
-     */
-    public $models;
-
-    public function __construct(Collection $models)
+    public function __construct(
+        /**
+         * @param Collection<int, Model&Searchable>
+         */
+        public Collection $models
+    )
     {
-        $this->models = $models;
     }
 }

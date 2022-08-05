@@ -26,17 +26,14 @@ interface MessageBag
     /**
      * Merge a new array of messages into the bag.
      *
-     * @param array|MessageProvider $messages
      * @return $this
      */
-    public function merge($messages);
+    public function merge(array|\Hyperf\Utils\Contracts\MessageProvider $messages);
 
     /**
      * Determine if messages exist for a given key.
-     *
-     * @param array|string $key
      */
-    public function has($key): bool;
+    public function has(array|string $key): bool;
 
     /**
      * Get the first message from the bag for a given key.

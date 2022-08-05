@@ -43,9 +43,7 @@ trait SpanStarter
                 Context::set('tracer.root', $root);
                 return $root;
             }
-            $carrier = array_map(function ($header) {
-                return $header[0];
-            }, $request->getHeaders());
+            $carrier = array_map(fn($header) => $header[0], $request->getHeaders());
             if ($container->has(Rpc\Context::class) && $rpcContext = $container->get(Rpc\Context::class)) {
                 $rpcCarrier = $rpcContext->get('tracer.carrier');
                 if (! empty($rpcCarrier)) {

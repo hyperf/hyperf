@@ -28,7 +28,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
 {
     use RecvTrait;
 
-    private ?LoadBalancerInterface $loadBalancer;
+    private ?LoadBalancerInterface $loadBalancer = null;
 
     /**
      * If $loadBalancer is null, will select a node in $nodes to request,
@@ -49,7 +49,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
      */
     private int $retryInterval;
 
-    private $config = [
+    private array $config = [
         'connect_timeout' => 5.0,
         'settings' => [],
         'pool' => [
@@ -144,9 +144,7 @@ class JsonRpcPoolTransporter implements TransporterInterface
             'connect_timeout' => $this->config['connect_timeout'],
             'settings' => $this->config['settings'],
             'pool' => $this->config['pool'],
-            'node' => function () {
-                return $this->getNode();
-            },
+            'node' => fn() => $this->getNode(),
         ];
 
         return $this->factory->getPool($name, $config);

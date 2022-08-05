@@ -53,7 +53,7 @@ class TaskExecutor
                 throw $exception;
             }
 
-            throw new TaskExecuteException(get_class($exception) . ' is not instance of Throwable.');
+            throw new TaskExecuteException($exception::class . ' is not instance of Throwable.');
         }
 
         return $result;

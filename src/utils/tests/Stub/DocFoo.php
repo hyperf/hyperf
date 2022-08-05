@@ -26,10 +26,7 @@ class DocFoo
         return uniqid();
     }
 
-    /**
-     * @return int|string
-     */
-    public function getStringOrInt()
+    public function getStringOrInt(): int|string
     {
         return uniqid();
     }
@@ -42,10 +39,7 @@ class DocFoo
         return $this;
     }
 
-    /**
-     * @return bool|DocFoo
-     */
-    public function getSelfOrNot()
+    public function getSelfOrNot(): bool|\HyperfTest\Utils\Stub\DocFoo
     {
         return $this;
     }

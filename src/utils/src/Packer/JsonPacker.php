@@ -22,6 +22,6 @@ class JsonPacker implements PackerInterface
 
     public function unpack(string $data)
     {
-        return json_decode($data, true);
+        return json_decode($data, true, 512, JSON_THROW_ON_ERROR);
     }
 }

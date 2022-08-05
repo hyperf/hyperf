@@ -26,11 +26,6 @@ use function get_class;
 class ResolvableInputObjectType extends TheCodingMachineResolvableInputObjectType implements ResolvableInputInterface
 {
     /**
-     * @var ArgumentResolver
-     */
-    private $argumentResolver;
-
-    /**
      * @var array<int, object|string>|callable
      */
     private $resolve;
@@ -39,9 +34,8 @@ class ResolvableInputObjectType extends TheCodingMachineResolvableInputObjectTyp
      * QueryField constructor.
      * @param object|string $factory
      */
-    public function __construct(string $name, FieldsBuilderFactory $controllerQueryProviderFactory, RecursiveTypeMapperInterface $recursiveTypeMapper, $factory, string $methodName, ArgumentResolver $argumentResolver, ?string $comment, array $additionalConfig = [])
+    public function __construct(string $name, FieldsBuilderFactory $controllerQueryProviderFactory, RecursiveTypeMapperInterface $recursiveTypeMapper, $factory, string $methodName, private ArgumentResolver $argumentResolver, ?string $comment, array $additionalConfig = [])
     {
-        $this->argumentResolver = $argumentResolver;
         $this->resolve = [$factory, $methodName];
 
         $fields = function () use ($controllerQueryProviderFactory, $factory, $methodName, $recursiveTypeMapper) {
@@ -75,7 +69,7 @@ class ResolvableInputObjectType extends TheCodingMachineResolvableInputObjectTyp
             } elseif ($field->defaultValueExists()) {
                 $val = $field->defaultValue;
             } else {
-                throw new GraphQLException("Expected argument '{$name}' was not provided in GraphQL input type '" . $this->name . "' used in factory '" . get_class($this->resolve[0]) . '::' . $this->resolve[1] . "()'");
+                throw new GraphQLException("Expected argument '{$name}' was not provided in GraphQL input type '" . $this->name . "' used in factory '" . $this->resolve[0]::class . '::' . $this->resolve[1] . "()'");
             }
 
             $toPassArgs[] = $val;
