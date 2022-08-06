@@ -11,9 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\RpcClient;
 
+use Hyperf\Engine\Socket\SocketFactory;
+use Hyperf\Engine\Socket\SocketOption;
 use Hyperf\Utils\Codec\Json;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine\Client;
 
 /**
  * @internal
@@ -23,18 +24,14 @@ class ClientTest extends TestCase
 {
     public function testConnectNotExistPort()
     {
-        $client = new Client(SWOOLE_SOCK_TCP);
-        $result = $client->connect('127.0.0.1', 10000);
+        $client = (new SocketFactory())->make(new SocketOption('127.0.0.1', 10000));
 
-        $this->assertFalse($result);
         $this->assertSame($client->errCode, SOCKET_ECONNREFUSED);
     }
 
     public function testRecvTimeout()
     {
-        $client = new Client(SWOOLE_SOCK_TCP);
-        $result = $client->connect('127.0.0.1', 10001);
-        $this->assertTrue($result);
+        $client = (new SocketFactory())->make(new SocketOption('127.0.0.1', 10000));
 
         $res = $client->send($data = Json::encode([
             'id' => 'timeout',
@@ -48,9 +45,7 @@ class ClientTest extends TestCase
 
     public function testRecvData()
     {
-        $client = new Client(SWOOLE_SOCK_TCP);
-        $result = $client->connect('127.0.0.1', 10001);
-        $this->assertTrue($result);
+        $client = (new SocketFactory())->make(new SocketOption('127.0.0.1', 10000));
 
         $res = $client->send($data = Json::encode([
             'id' => 'ack',
