@@ -31,7 +31,7 @@ class ClientTest extends TestCase
 
     public function testRecvTimeout()
     {
-        $client = (new SocketFactory())->make(new SocketOption('127.0.0.1', 10000));
+        $client = (new SocketFactory())->make(new SocketOption('127.0.0.1', 10001));
 
         $res = $client->send($data = Json::encode([
             'id' => 'timeout',
@@ -45,7 +45,7 @@ class ClientTest extends TestCase
 
     public function testRecvData()
     {
-        $client = (new SocketFactory())->make(new SocketOption('127.0.0.1', 10000));
+        $client = (new SocketFactory())->make(new SocketOption('127.0.0.1', 10001));
 
         $res = $client->send($data = Json::encode([
             'id' => 'ack',
