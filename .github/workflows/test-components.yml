@@ -208,14 +208,14 @@ jobs:
       - name: Run Test Cases
         run: |
           ./.travis/requirement.install.sh
+          composer require "psr/log:${{ matrix.log-version }}"
           if [ ${{ matrix.log-version }} == '^3.0' ]
           then
             composer require "symfony/console:^6.0" --dev -W
           else
             composer require "symfony/console:^5.0" --dev -W
           fi
-          composer require symfony/event-dispatcher -W
-          composer require "psr/log:${{ matrix.log-version }}" -W
+          composer require symfony/event-dispatcher --dev -W
           composer update -oW
           composer analyse src/framework
           composer analyse src/server/src/Entry/Logger.php
