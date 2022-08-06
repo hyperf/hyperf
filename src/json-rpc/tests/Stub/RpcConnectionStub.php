@@ -34,7 +34,7 @@ class RpcConnectionStub extends RpcConnection
         return strlen($data);
     }
 
-    public function recv(float $timeout = 0): string|false
+    public function recvPacket(float $timeout = 0): string|false
     {
         return $this->lastData;
     }
