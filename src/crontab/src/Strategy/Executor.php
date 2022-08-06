@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Closure;
 use Hyperf\Contract\ApplicationInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coordinator\Timer;
 use Hyperf\Crontab\Crontab;
 use Hyperf\Crontab\Event\FailToExecute;
 use Hyperf\Crontab\LoggerInterface;
@@ -26,7 +27,6 @@ use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
-use Swoole\Timer;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 
@@ -40,6 +40,8 @@ class Executor
 
     protected ?EventDispatcherInterface $dispatcher = null;
 
+    protected Timer $timer;
+
     public function __construct(protected ContainerInterface $container)
     {
         if ($container->has(LoggerInterface::class)) {
@@ -50,6 +52,8 @@ class Executor
         if ($container->has(EventDispatcherInterface::class)) {
             $this->dispatcher = $container->get(EventDispatcherInterface::class);
         }
+
+        $this->timer = new Timer($this->logger);
     }
 
     public function execute(Crontab $crontab)
@@ -108,7 +112,7 @@ class Executor
                 };
                 break;
         }
-        $callback && Timer::after($diff > 0 ? $diff * 1000 : 1, $callback);
+        $callback && $this->timer->after($diff > 0 ? $diff : 1, $callback);
     }
 
     protected function runInSingleton(Crontab $crontab, Closure $runnable): Closure
