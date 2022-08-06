@@ -148,7 +148,11 @@ class Nsq
         if ($result === false) {
             throw new SocketSendException('SUB send failed, the errorCode is ' . $socket->errCode);
         }
-        $socket->recv();
+
+        $reader = new Subscriber($socket);
+        if (! $reader->recv()->isOk()) {
+            throw new SocketSendException('SUB send failed, ' . $reader->getPayload());
+        }
     }
 
     protected function sendRdy(Socket $socket)
