@@ -99,7 +99,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        no-dev: [ '', '--no-dev' ]
+        no-dev: [ '--no-dev', '' ]
         php-version: [ '8.0', '8.1' ]
       max-parallel: 2
       fail-fast: false
