@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\RpcClient;
 
+use Hyperf\Engine\Exception\SocketConnectException;
 use Hyperf\Engine\Socket\SocketFactory;
 use Hyperf\Engine\Socket\SocketOption;
 use Hyperf\Utils\Codec\Json;
@@ -24,9 +25,9 @@ class ClientTest extends TestCase
 {
     public function testConnectNotExistPort()
     {
-        $client = (new SocketFactory())->make(new SocketOption('127.0.0.1', 10000));
+        $this->expectException(SocketConnectException::class);
 
-        $this->assertSame($client->errCode, SOCKET_ECONNREFUSED);
+        (new SocketFactory())->make(new SocketOption('127.0.0.1', 10000));
     }
 
     public function testRecvTimeout()
