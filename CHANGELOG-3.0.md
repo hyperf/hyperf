@@ -107,6 +107,7 @@ composer analyse
 - [#4917](https://github.com/hyperf/hyperf/pull/4917) Support `hyperf/load-balancer`.
 - [#4924](https://github.com/hyperf/hyperf/pull/4924) Support TcpServer for `hyperf/server`.
 - [#4984](https://github.com/hyperf/hyperf/pull/4984) Support `hyperf/retry`.
+- [#4988](https://github.com/hyperf/hyperf/pull/4988) Support `hyperf/pool`.
 
 ## Removed
 

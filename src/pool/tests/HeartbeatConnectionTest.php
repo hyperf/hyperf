@@ -16,6 +16,7 @@ use Hyperf\Contract\ContainerInterface;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\PoolOption;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Reflection\ClassInvoker;
 use HyperfTest\Pool\Stub\HeartbeatPoolStub;
 use HyperfTest\Pool\Stub\KeepaliveConnectionStub;
 use Mockery;
@@ -82,8 +83,11 @@ class HeartbeatConnectionTest extends TestCase
         /** @var KeepaliveConnectionStub $connection */
         $connection = $pool->get();
         $connection->reconnect();
+        $timer = $connection->timer;
+        $this->assertSame(1, count((new ClassInvoker($timer))->closures));
         $this->assertTrue($connection->check());
         $connection->close();
+        $this->assertSame(0, count((new ClassInvoker($timer))->closures));
         $this->assertFalse($connection->check());
         $this->assertSame('close protocol', Context::get('test.pool.heartbeat_connection')['close']);
     }
