@@ -11,21 +11,21 @@ declare(strict_types=1);
  */
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Engine\Contract\SocketInterface;
 use Hyperf\JsonRpc\Pool\RpcConnection;
 use Hyperf\Rpc\Exception\RecvException;
-use Swoole\Coroutine\Client;
 
 trait RecvTrait
 {
     /**
-     * @param Client|RpcConnection $client
+     * @param RpcConnection|SocketInterface $client
      */
     public function recvAndCheck(mixed $client, float $timeout)
     {
         $data = $client->recv($timeout);
         if ($data === '') {
             // RpcConnection: When the next time the connection is taken out of the connection pool, it will reconnecting to the target service.
-            // Client: It will reconnecting to the target service in the next request.
+            // Client: It will reconnect to the target service in the next request.
             $client->close();
             throw new RecvException('Connection is closed. ' . $client->errMsg, $client->errCode);
         }
