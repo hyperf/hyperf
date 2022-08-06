@@ -182,7 +182,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0', '8.1' ]
+        php-version: [ '8.0' ]
         log-version: [ '^1.0', '^2.0', '^3.0' ]
       max-parallel: 3
       fail-fast: false
