@@ -22,8 +22,6 @@ use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
 
 /**
- * @method bool|int send($data)
- * @method bool|string recv(float $timeout)
  * @property int $errCode
  * @property string $errMsg
  */
@@ -48,14 +46,24 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
         $this->reconnect();
     }
 
-    public function __call($name, $arguments)
-    {
-        return $this->connection->{$name}(...$arguments);
-    }
-
     public function __get($name)
     {
         return $this->connection->{$name};
+    }
+
+    public function send(string $data): int|false
+    {
+        return $this->connection->sendAll($data);
+    }
+
+    public function recv(float $timeout = 0): string|false
+    {
+        return $this->recvPacket($timeout);
+    }
+
+    public function recvPacket(float $timeout = 0): string|false
+    {
+        return $this->connection->recvPacket($timeout);
     }
 
     /**
