@@ -93,7 +93,7 @@ jobs:
           ./.travis/requirement.install.sh
           composer test src/filesystem -- --exclude-group NonCoroutine
   phar:
-    name: Test for Building PHAR ${{ matrix.no-dev }}
+    name: Test for Building PHAR
     runs-on: 'ubuntu-latest'
     env:
       PHP_VERSION: ${{ matrix.php-version }}
@@ -208,7 +208,6 @@ jobs:
       - name: Run Test Cases
         run: |
           ./.travis/requirement.install.sh
-          composer require "psr/log:${{ matrix.log-version }}"
           if [ ${{ matrix.log-version }} == '^3.0' ]
           then
             composer require "symfony/console:^6.0" --dev -W
@@ -216,6 +215,7 @@ jobs:
             composer require "symfony/console:^5.0" --dev -W
           fi
           composer require symfony/event-dispatcher -W
+          composer require "psr/log:${{ matrix.log-version }}" -W
           composer update -oW
           composer analyse src/framework
           composer analyse src/server/src/Entry/Logger.php
