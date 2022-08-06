@@ -53,7 +53,7 @@ class ClientTest extends TestCase
             'ack' => 2,
         ]));
         $this->assertSame(strlen($data), $res);
-        $data = $client->recv(1);
+        $data = $client->recvAll(6, 1);
         $this->assertSame('ack: 2', $data);
         $this->assertSame(0, $client->errCode);
     }
