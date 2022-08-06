@@ -25,7 +25,7 @@ class FooProcessor implements ProcessorInterface
 
     public function __invoke(array|LogRecord $records)
     {
-        $records['message'] = str_repeat($records['message'], $this->repeat);
+        $records['extra'] = str_repeat($records['extra'], $this->repeat);
         return $records;
     }
 }
