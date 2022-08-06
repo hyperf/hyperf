@@ -171,7 +171,7 @@ class MessageBuilder
                 return 'consumer-' . rand(0, 9999);
             }
 
-            return gethostbyname($hostname);
+            return gethostbyname($hostname) ?: 'unknown';
         });
         $message = json_encode([
             'hostname' => $hostname,
