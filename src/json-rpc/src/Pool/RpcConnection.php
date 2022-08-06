@@ -12,25 +12,26 @@ declare(strict_types=1);
 namespace Hyperf\JsonRpc\Pool;
 
 use Hyperf\Contract\ConnectionInterface;
-use Hyperf\JsonRpc\Exception\ClientException;
+use Hyperf\Engine\Contract\Socket\SocketFactoryInterface;
+use Hyperf\Engine\Contract\SocketInterface;
+use Hyperf\Engine\Socket\SocketOption;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine\Client as SwooleClient;
 
 /**
  * @method bool|int send($data)
  * @method bool|string recv(float $timeout)
  * @property int $errCode
  * @property string $errMsg
- *
- * TODO: Support Swow, only support Swoole now.
  */
 class RpcConnection extends BaseConnection implements ConnectionInterface
 {
-    protected SwooleClient $connection;
+    protected SocketInterface $connection;
+
+    protected SocketFactoryInterface $factory;
 
     protected array $config = [
         'node' => null,
@@ -41,6 +42,7 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {
         parent::__construct($container, $pool);
+        $this->factory = $container->get(SocketFactoryInterface::class);
         $this->config = array_replace($this->config, $config);
 
         $this->reconnect();
@@ -83,16 +85,12 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
         $port = $node->port;
         $connectTimeout = $this->config['connect_timeout'];
 
-        $client = new SwooleClient(SWOOLE_SOCK_TCP);
-        $client->set($this->config['settings'] ?? []);
-        $result = $client->connect($host, $port, $connectTimeout);
-        if ($result === false) {
-            // Force close and reconnect to server.
-            $client->close();
-            throw new ClientException('Connect to server failed. ' . $client->errMsg, $client->errCode);
-        }
-
-        $this->connection = $client;
+        $this->connection = $this->factory->make(new SocketOption(
+            $host,
+            $port,
+            $connectTimeout,
+            $this->config['settings'] ?? []
+        ));
         $this->lastUseTime = microtime(true);
         return true;
     }
