@@ -58,6 +58,11 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
 
     public function recv(float $timeout = 0): string|false
     {
+        return $this->recvPacket($timeout);
+    }
+
+    public function recvPacket(float $timeout = 0): string|false
+    {
         return $this->connection->recvPacket($timeout);
     }
 
