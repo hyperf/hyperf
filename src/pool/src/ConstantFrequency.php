@@ -11,20 +11,24 @@ declare(strict_types=1);
  */
 namespace Hyperf\Pool;
 
-use Swoole\Timer;
+use Hyperf\Coordinator\Timer;
 
 class ConstantFrequency implements LowFrequencyInterface
 {
-    protected ?int $timerId;
+    protected Timer $timer;
+
+    protected ?int $timerId = null;
 
     protected int $interval = 10000;
 
     public function __construct(protected ?Pool $pool = null)
     {
+        $this->timer = new Timer();
         if ($pool) {
-            $this->timerId = Timer::tick($this->interval, function () {
-                $this->pool->flushOne();
-            });
+            $this->timerId = $this->timer->tick(
+                $this->interval / 1000,
+                fn () => $this->pool->flushOne()
+            );
         }
     }
 
@@ -36,7 +40,7 @@ class ConstantFrequency implements LowFrequencyInterface
     public function clear()
     {
         if ($this->timerId) {
-            Timer::clear($this->timerId);
+            $this->timer->clear($this->timerId);
         }
         $this->timerId = null;
     }
