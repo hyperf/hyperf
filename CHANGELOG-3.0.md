@@ -108,6 +108,7 @@ composer analyse
 - [#4924](https://github.com/hyperf/hyperf/pull/4924) Support TcpServer for `hyperf/server`.
 - [#4984](https://github.com/hyperf/hyperf/pull/4984) Support `hyperf/retry`.
 - [#4988](https://github.com/hyperf/hyperf/pull/4988) Support `hyperf/pool`.
+- [#4989](https://github.com/hyperf/hyperf/pull/4989) Support `hyperf/crontab`.
 
 ## Removed
 
