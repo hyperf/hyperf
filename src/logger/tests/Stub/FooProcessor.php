@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Logger\Stub;
 
+use Monolog\LogRecord;
 use Monolog\Processor\ProcessorInterface;
 
 class FooProcessor implements ProcessorInterface
@@ -22,7 +23,7 @@ class FooProcessor implements ProcessorInterface
         $this->repeat = 2;
     }
 
-    public function __invoke(array $records)
+    public function __invoke(array|LogRecord $records)
     {
         $records['message'] = str_repeat($records['message'], $this->repeat);
         return $records;
