@@ -17,7 +17,7 @@ class BarProcessor
 {
     public function __invoke(array|LogRecord $records)
     {
-        $records['bar'] = true;
+        $records['extra']['bar'] = true;
         return $records;
     }
 }

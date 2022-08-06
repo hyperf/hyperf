@@ -135,9 +135,9 @@ class LoggerFactoryTest extends TestCase
 
         $this->assertSame(
             'Hello world.Hello world.',
-            Context::get('test.logger.foo_handler.record')['extra']
+            Context::get('test.logger.foo_handler.record')['extra']['message']
         );
-        $this->assertTrue(Context::get('test.logger.foo_handler.record')['bar']);
+        $this->assertTrue(Context::get('test.logger.foo_handler.record')['extra']['bar']);
         $this->assertTrue(Context::get('test.logger.foo_handler.record')['callback']);
     }
 
@@ -157,7 +157,7 @@ class LoggerFactoryTest extends TestCase
 
         $this->assertSame(
             'Hello world.Hello world.',
-            Context::get('test.logger.foo_handler.record')['extra']
+            Context::get('test.logger.foo_handler.record')['extra']['message']
         );
     }
 
