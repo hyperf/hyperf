@@ -139,7 +139,7 @@ abstract class KeepaliveConnection implements ConnectionInterface
     protected function addHeartbeat()
     {
         $this->connected = true;
-        $this->timerId = $this->timer->tick($this->getHeartbeat(), function () {
+        $this->timerId = $this->timer->tick($this->getHeartbeatSeconds(), function () {
             try {
                 if (! $this->isConnected()) {
                     return;
@@ -163,9 +163,18 @@ abstract class KeepaliveConnection implements ConnectionInterface
     }
 
     /**
-     * @return int seconds
+     * @deprecated
+     * @return int ms
      */
     protected function getHeartbeat(): int
+    {
+        return $this->getHeartbeatSeconds() * 1000;
+    }
+
+    /**
+     * @return int seconds
+     */
+    protected function getHeartbeatSeconds(): int
     {
         $heartbeat = $this->pool->getOption()->getHeartbeat();
 
