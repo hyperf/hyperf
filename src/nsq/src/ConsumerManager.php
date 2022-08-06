@@ -75,7 +75,7 @@ class ConsumerManager
                     'container' => $container,
                     'pool' => $consumer->getPool(),
                 ]);
-                $this->waiter = make(Waiter::class, [0]);
+                $this->waiter = new Waiter(-1);
 
                 if ($container->has(EventDispatcherInterface::class)) {
                     $this->dispatcher = $container->get(EventDispatcherInterface::class);

@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nsq;
 
+use Hyperf\Engine\Contract\SocketInterface;
 use Hyperf\Utils\Codec\Json;
-use Swoole\Coroutine\Socket;
 
 class Subscriber
 {
@@ -28,13 +28,13 @@ class Subscriber
 
     protected string $payload = '';
 
-    public function __construct(protected Socket $socket)
+    public function __construct(protected SocketInterface $socket)
     {
     }
 
     public function recv()
     {
-        $data = $this->socket->recv(8);
+        $data = $this->socket->recvAll(8);
         $this->size = (int) sprintf('%u', unpack('N', substr($data, 0, 4))[1]);
         $this->type = sprintf('%u', unpack('N', substr($data, 4, 4))[1]);
         $length = $this->size - 4;
@@ -43,7 +43,7 @@ class Subscriber
             if ($len <= 0) {
                 break;
             }
-            $data .= $this->socket->recv($len);
+            $data .= $this->socket->recvAll($len);
         }
         $this->payload = Packer::unpackString($data);
         return $this;

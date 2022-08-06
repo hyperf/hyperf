@@ -13,13 +13,13 @@ namespace Hyperf\Nsq;
 
 use Closure;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Engine\Socket;
 use Hyperf\Nsq\Exception\SocketSendException;
 use Hyperf\Nsq\Pool\NsqConnection;
 use Hyperf\Nsq\Pool\NsqPoolFactory;
 use Hyperf\Pool\Exception\ConnectionException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Swoole\Coroutine\Socket;
 
 class Nsq
 {
@@ -99,7 +99,7 @@ class Nsq
     {
         $payload = $this->builder->buildMPub($topic, $messages);
         return $this->call(function (Socket $socket) use ($payload) {
-            if ($socket->send($payload) === false) {
+            if ($socket->sendAll($payload) === false) {
                 throw new ConnectionException('Payload send failed, the errorCode is ' . $socket->errCode);
             }
             return true;
@@ -110,7 +110,7 @@ class Nsq
     {
         $payload = $this->builder->buildPub($topic, $message);
         return $this->call(function (Socket $socket) use ($payload) {
-            if ($socket->send($payload) === false) {
+            if ($socket->sendAll($payload) === false) {
                 throw new ConnectionException('Payload send failed, the errorCode is ' . $socket->errCode);
             }
             return true;
@@ -121,7 +121,7 @@ class Nsq
     {
         $payload = $this->builder->buildDPub($topic, $message, intval($deferTime * 1000));
         return $this->call(function (Socket $socket) use ($payload) {
-            if ($socket->send($payload) === false) {
+            if ($socket->sendAll($payload) === false) {
                 throw new ConnectionException('Payload send failed, the errorCode is ' . $socket->errCode);
             }
             return true;
@@ -148,7 +148,11 @@ class Nsq
         if ($result === false) {
             throw new SocketSendException('SUB send failed, the errorCode is ' . $socket->errCode);
         }
-        $socket->recv();
+
+        $reader = new Subscriber($socket);
+        if (! $reader->recv()->isOk()) {
+            throw new SocketSendException('SUB send failed, ' . $reader->getPayload());
+        }
     }
 
     protected function sendRdy(Socket $socket)
