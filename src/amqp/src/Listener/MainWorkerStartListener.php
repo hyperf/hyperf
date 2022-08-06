@@ -14,6 +14,7 @@ namespace Hyperf\Amqp\Listener;
 use Doctrine\Instantiator\Instantiator;
 use Hyperf\Amqp\Annotation\Producer;
 use Hyperf\Amqp\Message\ProducerMessageInterface;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Contract\ListenerInterface;
@@ -45,6 +46,11 @@ class MainWorkerStartListener implements ListenerInterface
      */
     public function process(object $event): void
     {
+        $enable = $this->container->get(ConfigInterface::class)->get('amqp.enable', true);
+        if (! $enable) {
+            return;
+        }
+
         // Declare exchange and routingKey
         $producerMessages = AnnotationCollector::getClassesByAnnotation(Producer::class);
         if ($producerMessages) {

@@ -12,6 +12,7 @@ declare(strict_types=1);
 use Hyperf\Amqp\IO\IOFactory;
 
 return [
+    'enable' => true,
     'default' => [
         'host' => env('AMQP_HOST', 'localhost'),
         'port' => (int) env('AMQP_PORT', 5672),
