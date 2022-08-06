@@ -38,7 +38,7 @@ class ClientTest extends TestCase
             'timeout' => 2,
         ]));
         $this->assertSame(strlen($data), $res);
-        $data = $client->recv(0.001);
+        $data = $client->recvAll(1, 0.001);
         $this->assertFalse($data);
         $this->assertSame(SOCKET_ETIMEDOUT, $client->errCode);
     }
