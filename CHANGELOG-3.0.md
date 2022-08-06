@@ -109,6 +109,7 @@ composer analyse
 - [#4984](https://github.com/hyperf/hyperf/pull/4984) Support `hyperf/retry`.
 - [#4988](https://github.com/hyperf/hyperf/pull/4988) Support `hyperf/pool`.
 - [#4989](https://github.com/hyperf/hyperf/pull/4989) Support `hyperf/crontab`.
+- [#4990](https://github.com/hyperf/hyperf/pull/4990) Support `hyperf/nsq`.
 
 ## Removed
 
