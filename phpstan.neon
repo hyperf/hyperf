@@ -60,3 +60,4 @@ parameters:
     - '#Class RedisSentinel constructor invoked with .*#'
     - '#Hyperf\\Engine\\Http\\Server#'
     - '#Swow\\Socket#'
+    - '#Class Hyperf\\Logger\\Logger extends @final class Monolog\\Logger'
