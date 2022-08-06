@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nsq;
 
-use Hyperf\Engine\Socket;
+use Hyperf\Engine\Contract\SocketInterface;
 use Hyperf\Utils\Codec\Json;
 
 class Subscriber
@@ -28,7 +28,7 @@ class Subscriber
 
     protected string $payload = '';
 
-    public function __construct(protected Socket $socket)
+    public function __construct(protected SocketInterface $socket)
     {
     }
 
