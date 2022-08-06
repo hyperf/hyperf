@@ -53,10 +53,8 @@ class JsonRpcTransporter implements TransporterInterface
     {
         $client = retry(2, function () use ($data) {
             $client = $this->getClient();
-            if ($client->send($data) === false) {
-                if ($client->errCode == 104) {
-                    throw new RuntimeException('Connect to server failed.');
-                }
+            if ($client->sendAll($data) === false) {
+                throw new RuntimeException('Connect to server failed.');
             }
             return $client;
         });
