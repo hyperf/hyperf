@@ -82,6 +82,18 @@ class MacroableTest extends TestCase
         $this->assertSame('foo', $instance->methodThree());
     }
 
+    public function testSettingMacroUsingStaticClosures()
+    {
+        TestMacroable::macro('staticFn', static function () {
+            return 'I am unbound.';
+        });
+        TestMacroable::macro('speed', static fn () => 'I am speed.');
+        $instance = new TestMacroable();
+
+        $this->assertSame('I am unbound.', $instance->staticFn());
+        $this->assertSame('I am speed.', $instance->speed());
+    }
+
     private function createObjectForTrait()
     {
         return new EmptyMacroable();
