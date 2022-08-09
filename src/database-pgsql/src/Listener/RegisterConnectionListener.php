@@ -21,18 +21,10 @@ use Psr\Container\ContainerInterface;
 class RegisterConnectionListener implements ListenerInterface
 {
     /**
-     * The IoC container instance.
-     *
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * Create a new connection factory instance.
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function listen(): array
@@ -45,12 +37,12 @@ class RegisterConnectionListener implements ListenerInterface
     /**
      * register pgsql and pgsql-swoole need Connector and Connection.
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
-        Connection::resolverFor('pgsql', function ($connection, $database, $prefix, $config) {
+        Connection::resolverFor('pgsql', static function ($connection, $database, $prefix, $config) {
             return new PostgreSqlConnection($connection, $database, $prefix, $config);
         });
-        Connection::resolverFor('pgsql-swoole', function ($connection, $database, $prefix, $config) {
+        Connection::resolverFor('pgsql-swoole', static function ($connection, $database, $prefix, $config) {
             return new PostgreSqlSwooleExtConnection($connection, $database, $prefix, $config);
         });
     }

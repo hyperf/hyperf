@@ -19,9 +19,8 @@ class MySqlBuilder extends Builder
      * Determine if the given table exists.
      *
      * @param string $table
-     * @return bool
      */
-    public function hasTable($table)
+    public function hasTable($table): bool
     {
         $table = $this->connection->getTablePrefix() . $table;
 
@@ -35,9 +34,8 @@ class MySqlBuilder extends Builder
      * Get the column listing for a given table.
      *
      * @param string $table
-     * @return array
      */
-    public function getColumnListing($table)
+    public function getColumnListing($table): array
     {
         $table = $this->connection->getTablePrefix() . $table;
 

@@ -14,19 +14,11 @@ namespace Hyperf\Database\Query;
 class Expression
 {
     /**
-     * The value of the expression.
-     *
-     * @var mixed
-     */
-    protected $value;
-
-    /**
      * Create a new raw query expression.
-     * @param mixed $value
+     * @param mixed $value the value of the expression
      */
-    public function __construct($value)
+    public function __construct(protected mixed $value)
     {
-        $this->value = $value;
     }
 
     /**
