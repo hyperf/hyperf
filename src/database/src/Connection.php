@@ -49,7 +49,7 @@ class Connection implements ConnectionInterface
      *
      * @var Closure|PDO
      */
-    protected mixed $readPdo;
+    protected mixed $readPdo = null;
 
     /**
      * The name of the connected database.
@@ -71,7 +71,7 @@ class Connection implements ConnectionInterface
      *
      * @var callable
      */
-    protected mixed $reconnector;
+    protected mixed $reconnector = null;
 
     /**
      * The query grammar implementation.
@@ -128,7 +128,7 @@ class Connection implements ConnectionInterface
      *
      * @var \Doctrine\DBAL\Connection
      */
-    protected mixed $doctrineConnection;
+    protected mixed $doctrineConnection = null;
 
     /**
      * The connection resolvers.
@@ -148,7 +148,7 @@ class Connection implements ConnectionInterface
      *
      * @param Closure|PDO $pdo
      */
-    public function __construct($pdo, string $database = '', string $tablePrefix = '', array $config = [])
+    public function __construct(mixed $pdo, string $database = '', string $tablePrefix = '', array $config = [])
     {
         $this->pdo = $pdo;
 
