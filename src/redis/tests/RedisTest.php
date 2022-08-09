@@ -70,9 +70,11 @@ class RedisTest extends TestCase
 
         $this->assertSame(2, $redis->getDatabase());
 
-        $res = parallel([function () use ($redis) {
-            return $redis->get('xxxx');
-        }]);
+        $res = parallel([
+            function () use ($redis) {
+                return $redis->get('xxxx');
+            },
+        ]);
 
         $this->assertSame('db:0 name:get argument:xxxx', $res[0]);
     }
