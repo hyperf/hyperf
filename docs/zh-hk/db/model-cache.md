@@ -219,8 +219,8 @@ foreach ($books as $book){
 
 - Hyperf\ModelCache\Handler\RedisHandler
 
-使用 `HASH` 存儲緩存，可以有效的處理 `Model::increament()`，不足是因為數據類型只有 `String`，所以對 `null` 支持較差。
+使用 `HASH` 存儲緩存，可以有效的處理 `Model::increment()`，不足是因為數據類型只有 `String`，所以對 `null` 支持較差。
 
 - Hyperf\ModelCache\Handler\RedisStringHandler
 
-使用 `String` 存儲緩存，因為是序列化的數據，所以支持所有數據類型，不足是無法有效處理 `Model::increament()`，當模型調用累加時，通過刪除緩存，解決一致性的問題。
+使用 `String` 存儲緩存，因為是序列化的數據，所以支持所有數據類型，不足是無法有效處理 `Model::increment()`，當模型調用累加時，通過刪除緩存，解決一致性的問題。

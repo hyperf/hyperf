@@ -156,4 +156,4 @@
 - [Yurunsoft/PHPMailer-Swoole](https://github.com/Yurunsoft/PHPMailer-Swoole) Swoole 協程環境下的可用的 PHPMailer
 - [yansongda/hyperf-pay](https://github.com/yansongda/hyperf-pay) 支持 `支付寶/微信` 的支付組件，基於 [yansongda/pay](https://github.com/yansongda/pay) 實現，適配於 `Hyperf` 框架。
 - [alapi/hyperf-meilisearch](https://github.com/anhao/hyperf-meilisearch) 為 Hyperf Scout 提供的 meilisearch 客户端
-- [vinchan/message-notice](https://github.com/VinchanGit/message-notice) Hyperf 異常監控報警通知組件(釘釘羣機器人、飛書羣機器人、郵件、QQ 頻道機器人、企業微信羣機器人)
+- [vinchan/message-notify](https://github.com/VinchanGit/message-notify) Hyperf 異常監控報警通知組件(釘釘羣機器人、飛書羣機器人、郵件、QQ 頻道機器人、企業微信羣機器人)
