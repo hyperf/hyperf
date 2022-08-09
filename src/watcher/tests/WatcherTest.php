@@ -26,6 +26,9 @@ class WatcherTest extends TestCase
         $config = new Config([
             'watcher' => [
                 'driver' => 'xxx',
+                'watch' => [
+                    'scan_interval' => 1500,
+                ],
             ],
         ]);
 
@@ -34,6 +37,8 @@ class WatcherTest extends TestCase
         $this->assertSame('xxx', $option->getDriver());
         $this->assertSame(['app', 'config', 'src'], $option->getWatchDir());
         $this->assertSame(['.env'], $option->getWatchFile());
+        $this->assertSame(1500, $option->getScanInterval());
+        $this->assertSame(1.5, $option->getScanIntervalSeconds());
     }
 
     protected function getContainer()

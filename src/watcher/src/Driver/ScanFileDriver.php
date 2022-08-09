@@ -16,22 +16,22 @@ use Hyperf\Engine\Channel;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use Hyperf\Watcher\Option;
-use Swoole\Timer;
 use Symfony\Component\Finder\SplFileInfo;
 
-class ScanFileDriver implements DriverInterface
+class ScanFileDriver extends AbstractDriver
 {
     protected Filesystem $filesystem;
 
     public function __construct(protected Option $option, private StdoutLoggerInterface $logger)
     {
+        parent::__construct($option);
         $this->filesystem = new Filesystem();
     }
 
     public function watch(Channel $channel): void
     {
-        $ms = $this->option->getScanInterval();
-        Timer::tick($ms, function () use ($channel) {
+        $seconds = $this->option->getScanIntervalSeconds();
+        $this->timerId = $this->timer->tick($seconds, function () use ($channel) {
             global $lastMD5;
             $files = [];
             $currentMD5 = $this->getWatchMD5($files);

@@ -90,6 +90,11 @@ class Option
         return $this->scanInterval > 0 ? $this->scanInterval : 2000;
     }
 
+    public function getScanIntervalSeconds(): float
+    {
+        return $this->getScanInterval() / 1000;
+    }
+
     public function isRestart(): bool
     {
         return $this->restart;
