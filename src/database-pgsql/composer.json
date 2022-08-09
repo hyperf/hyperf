@@ -19,6 +19,7 @@
     },
     "require": {
         "php": ">=8.0",
+        "ext-swoole": ">=5.0",
         "hyperf/database": "~3.0.0"
     },
     "autoload": {
@@ -36,7 +37,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "2.2-dev"
+            "dev-main": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Database\\PgSQL\\ConfigProvider"

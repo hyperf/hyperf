@@ -20,10 +20,8 @@ class PostgresGrammar extends Grammar
 {
     /**
      * If this Grammars supports schema changes wrapped in a transaction.
-     *
-     * @var bool
      */
-    protected $transactions = true;
+    protected bool $transactions = true;
 
     /**
      * The possible column modifiers.
@@ -44,16 +42,15 @@ class PostgresGrammar extends Grammar
      *
      * @var string[]
      */
-    protected $fluentCommands = ['Comment'];
+    protected array $fluentCommands = ['Comment'];
 
     /**
      * Compile a create database command.
      *
      * @param string $name
      * @param \Hyperf\Database\Connection $connection
-     * @return string
      */
-    public function compileCreateDatabase($name, $connection)
+    public function compileCreateDatabase($name, $connection): string
     {
         return sprintf(
             'create database %s encoding %s',
@@ -66,9 +63,8 @@ class PostgresGrammar extends Grammar
      * Compile a drop database if exists command.
      *
      * @param string $name
-     * @return string
      */
-    public function compileDropDatabaseIfExists($name)
+    public function compileDropDatabaseIfExists($name): string
     {
         return sprintf(
             'drop database if exists %s',
@@ -78,20 +74,16 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile the query to determine if a table exists.
-     *
-     * @return string
      */
-    public function compileTableExists()
+    public function compileTableExists(): string
     {
         return "select * from information_schema.tables where table_schema = ? and table_name = ? and table_type = 'BASE TABLE'";
     }
 
     /**
      * Compile the query to determine the list of columns.
-     *
-     * @return string
      */
-    public function compileColumnListing()
+    public function compileColumnListing(): string
     {
         return 'select column_name as column_name, data_type as data_type from information_schema.columns where table_catalog = ? and table_schema = ? and table_name = ?';
     }
@@ -106,39 +98,37 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile a create table command.
-     *
-     * @return array
      */
-    public function compileCreate(Blueprint $blueprint, Fluent $command)
+    public function compileCreate(Blueprint $blueprint, Fluent $command): array
     {
-        return array_values(array_filter(array_merge([sprintf(
-            '%s table %s (%s)',
-            $blueprint->temporary ? 'create temporary' : 'create',
-            $this->wrapTable($blueprint),
-            implode(', ', $this->getColumns($blueprint))
-        )], $this->compileAutoIncrementStartingValues($blueprint))));
+        return array_values(array_filter(array_merge([
+            sprintf(
+                '%s table %s (%s)',
+                $blueprint->temporary ? 'create temporary' : 'create',
+                $this->wrapTable($blueprint),
+                implode(', ', $this->getColumns($blueprint))
+            ),
+        ], $this->compileAutoIncrementStartingValues($blueprint))));
     }
 
     /**
      * Compile a column addition command.
-     *
-     * @return string
      */
-    public function compileAdd(Blueprint $blueprint, Fluent $command)
+    public function compileAdd(Blueprint $blueprint, Fluent $command): array
     {
-        return array_values(array_filter(array_merge([sprintf(
-            'alter table %s %s',
-            $this->wrapTable($blueprint),
-            implode(', ', $this->prefixArray('add column', $this->getColumns($blueprint)))
-        )], $this->compileAutoIncrementStartingValues($blueprint))));
+        return array_values(array_filter(array_merge([
+            sprintf(
+                'alter table %s %s',
+                $this->wrapTable($blueprint),
+                implode(', ', $this->prefixArray('add column', $this->getColumns($blueprint)))
+            ),
+        ], $this->compileAutoIncrementStartingValues($blueprint))));
     }
 
     /**
      * Compile the auto-incrementing column starting values.
-     *
-     * @return array
      */
-    public function compileAutoIncrementStartingValues(Blueprint $blueprint)
+    public function compileAutoIncrementStartingValues(Blueprint $blueprint): array
     {
         return collect($blueprint->autoIncrementingStartingValues())->map(function ($value, $column) use ($blueprint) {
             return 'alter sequence ' . $blueprint->getTable() . '_' . $column . '_seq restart with ' . $value;
@@ -147,10 +137,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile a primary key command.
-     *
-     * @return string
      */
-    public function compilePrimary(Blueprint $blueprint, Fluent $command)
+    public function compilePrimary(Blueprint $blueprint, Fluent $command): string
     {
         $columns = $this->columnize($command->columns);
 
@@ -225,10 +213,8 @@ class PostgresGrammar extends Grammar
 
     /**
      * Compile a foreign key command.
-     *
-     * @return string
      */
-    public function compileForeign(Blueprint $blueprint, Fluent $command)
+    public function compileForeign(Blueprint $blueprint, Fluent $command): string
     {
         $sql = parent::compileForeign($blueprint, $command);
 

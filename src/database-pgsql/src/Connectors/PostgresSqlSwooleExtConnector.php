@@ -12,23 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\Database\PgSQL\Connectors;
 
 use Hyperf\Database\Connectors\ConnectorInterface;
-use PDO;
 use Swoole\Coroutine\PostgreSQL;
 
 class PostgresSqlSwooleExtConnector implements ConnectorInterface
 {
-    /**
-     * The default PDO connection options.
-     *
-     * @var array
-     */
-    protected $options = [
-        PDO::ATTR_CASE => PDO::CASE_NATURAL,
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_ORACLE_NULLS => PDO::NULL_NATURAL,
-        PDO::ATTR_STRINGIFY_FETCHES => false,
-    ];
-
     /**
      * @return PostgreSQL
      */
@@ -76,67 +63,40 @@ class PostgresSqlSwooleExtConnector implements ConnectorInterface
     }
 
     /**
-     * Get the default PDO connection options.
-     *
-     * @return array
-     */
-    public function getDefaultOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * Set the default PDO connection options.
-     */
-    public function setDefaultOptions(array $options)
-    {
-        $this->options = $options;
-    }
-
-    /**
      * Set the connection character set and collation.
      *
-     * @param $connection
      * @param array $config
      */
-    protected function configureEncoding($connection, $config)
+    protected function configureEncoding(PostgreSQL $connection, $config)
     {
         if (! isset($config['charset'])) {
             return;
         }
-        $id = uniqid();
-        $connection->prepare($id, "set names '{$config['charset']}'");
-        $connection->execute($id, []);
+
+        $connection->prepare("set names '{$config['charset']}'")->execute();
     }
 
     /**
      * Set the timezone on the connection.
-     *
-     * @param $connection
      */
-    protected function configureTimezone($connection, array $config)
+    protected function configureTimezone(PostgreSQL $connection, array $config)
     {
         if (isset($config['timezone'])) {
             $timezone = $config['timezone'];
-            $id = uniqid();
-            $connection->prepare($id, "set time zone '{$timezone}'");
-            $connection->execute($id, []);
+            $connection->prepare("set time zone '{$timezone}'")->execute();
         }
     }
 
     /**
      * Set the schema on the connection.
      *
-     * @param $connection
      * @param array $config
      */
-    protected function configureSchema($connection, $config)
+    protected function configureSchema(PostgreSQL $connection, $config)
     {
         if (isset($config['schema'])) {
             $schema = $this->formatSchema($config['schema']);
-            $id = uniqid();
-            $connection->prepare($id, "set search_path to {$schema}");
-            $connection->execute($id, []);
+            $connection->prepare("set search_path to {$schema}")->execute();
         }
     }
 
@@ -165,9 +125,7 @@ class PostgresSqlSwooleExtConnector implements ConnectorInterface
     {
         if (isset($config['application_name'])) {
             $applicationName = $config['application_name'];
-            $id = uniqid();
-            $connection->prepare($id, "set application_name to '{$applicationName}'");
-            $connection->execute($id, []);
+            $connection->prepare("set application_name to '{$applicationName}'")->execute();
         }
     }
 
@@ -181,8 +139,6 @@ class PostgresSqlSwooleExtConnector implements ConnectorInterface
         if (! isset($config['synchronous_commit'])) {
             return;
         }
-        $id = uniqid();
-        $connection->prepare($id, "set synchronous_commit to '{$config['synchronous_commit']}'");
-        $connection->execute($id, []);
+        $connection->prepare("set synchronous_commit to '{$config['synchronous_commit']}'")->execute();
     }
 }

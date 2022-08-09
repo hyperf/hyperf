@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\PgSQL\Schema;
 
+use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\ColumnDefinition;
 use Hyperf\Utils\Str;
 
@@ -18,15 +19,12 @@ class ForeignIdColumnDefinition extends ColumnDefinition
 {
     /**
      * The schema builder blueprint instance.
-     *
-     * @var \Hyperf\Database\Schema\Blueprint
      */
-    protected $blueprint;
+    protected Blueprint $blueprint;
 
     /**
      * Create a new foreign ID column definition.
      *
-     * @param \Hyperf\Database\Schema\Blueprint $blueprint
      * @param array $attributes
      */
     public function __construct(Blueprint $blueprint, $attributes = [])

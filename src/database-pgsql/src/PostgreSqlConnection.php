@@ -49,7 +49,7 @@ class PostgreSqlConnection extends Connection
      * Get the default query grammar instance.
      * @return \Hyperf\Database\Query\Grammars\PostgresGrammar
      */
-    protected function getDefaultQueryGrammar()
+    protected function getDefaultQueryGrammar(): QueryGrammar
     {
         return $this->withTablePrefix(new QueryGrammar());
     }
@@ -57,7 +57,7 @@ class PostgreSqlConnection extends Connection
     /**
      * Get the default schema grammar instance.
      */
-    protected function getDefaultSchemaGrammar()
+    protected function getDefaultSchemaGrammar(): SchemaGrammar
     {
         return $this->withTablePrefix(new SchemaGrammar());
     }
@@ -67,7 +67,7 @@ class PostgreSqlConnection extends Connection
      *
      * @return \Hyperf\Database\Query\Processors\PostgresProcessor
      */
-    protected function getDefaultPostProcessor()
+    protected function getDefaultPostProcessor(): PostgresProcessor
     {
         return new PostgresProcessor();
     }

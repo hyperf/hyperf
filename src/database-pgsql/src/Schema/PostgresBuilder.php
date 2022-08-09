@@ -20,9 +20,8 @@ class PostgresBuilder extends Builder
      * Create a database in the schema.
      *
      * @param string $name
-     * @return bool
      */
-    public function createDatabase($name)
+    public function createDatabase($name): bool
     {
         return $this->connection->statement(
             $this->grammar->compileCreateDatabase($name, $this->connection)
@@ -33,9 +32,8 @@ class PostgresBuilder extends Builder
      * Drop a database from the schema if the database exists.
      *
      * @param string $name
-     * @return bool
      */
-    public function dropDatabaseIfExists($name)
+    public function dropDatabaseIfExists($name): bool
     {
         return $this->connection->statement(
             $this->grammar->compileDropDatabaseIfExists($name)
@@ -46,9 +44,8 @@ class PostgresBuilder extends Builder
      * Determine if the given table exists.
      *
      * @param string $table
-     * @return bool
      */
-    public function hasTable($table)
+    public function hasTable($table): bool
     {
         [$schema, $table] = $this->parseSchemaAndTable($table);
 
@@ -63,7 +60,7 @@ class PostgresBuilder extends Builder
     /**
      * Drop all tables from the database.
      */
-    public function dropAllTables()
+    public function dropAllTables(): void
     {
         $tables = [];
 
@@ -91,7 +88,7 @@ class PostgresBuilder extends Builder
     /**
      * Drop all views from the database.
      */
-    public function dropAllViews()
+    public function dropAllViews(): void
     {
         $views = [];
 
@@ -134,10 +131,8 @@ class PostgresBuilder extends Builder
 
     /**
      * Get all of the table names for the database.
-     *
-     * @return array
      */
-    public function getAllTables()
+    public function getAllTables(): array
     {
         return $this->connection->select(
             $this->grammar->compileGetAllTables((array) $this->connection->getConfig('schema'))
@@ -146,10 +141,8 @@ class PostgresBuilder extends Builder
 
     /**
      * Get all of the view names for the database.
-     *
-     * @return array
      */
-    public function getAllViews()
+    public function getAllViews(): array
     {
         return $this->connection->select(
             $this->grammar->compileGetAllViews((array) $this->connection->getConfig('schema'))
@@ -172,9 +165,8 @@ class PostgresBuilder extends Builder
      * Get the column listing for a given table.
      *
      * @param string $table
-     * @return array
      */
-    public function getColumnListing($table)
+    public function getColumnListing($table): array
     {
         [$schema, $table] = $this->parseSchemaAndTable($table);
 

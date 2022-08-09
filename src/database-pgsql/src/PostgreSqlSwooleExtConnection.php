@@ -19,10 +19,17 @@ use Hyperf\Database\PgSQL\Query\Grammars\PostgresSqlSwooleExtGrammar as QueryGra
 use Hyperf\Database\PgSQL\Query\Processors\PostgresProcessor;
 use Hyperf\Database\PgSQL\Schema\Grammars\PostgresSqlSwooleExtGrammar as SchemaGrammar;
 use Hyperf\Database\PgSQL\Schema\PostgresBuilder;
+use Swoole\Coroutine\PostgreSQL;
+use Swoole\Coroutine\PostgreSQLStatement;
 
 class PostgreSqlSwooleExtConnection extends Connection
 {
     use PostgreSqlSwooleExtManagesTransactions;
+
+    /**
+     * @var PostgreSQL
+     */
+    protected mixed $pdo;
 
     /**
      * Get a schema builder instance for the connection.
@@ -48,11 +55,11 @@ class PostgreSqlSwooleExtConnection extends Connection
 
             $this->getPdo();
 
-            $id = $this->prepare($query);
+            $statement = $this->prepare($query);
 
             $this->recordsHaveBeenModified();
 
-            return (bool) $this->pdo->execute($id, $this->prepareBindings($bindings));
+            return $statement->execute($this->prepareBindings($bindings));
         });
     }
 
@@ -68,10 +75,10 @@ class PostgreSqlSwooleExtConnection extends Connection
 
             $this->getPdo();
 
-            $id = $this->prepare($query);
+            $statement = $this->prepare($query);
             $this->recordsHaveBeenModified();
 
-            $result = $this->pdo->execute($id, $this->prepareBindings($bindings));
+            $result = $statement->execute($this->prepareBindings($bindings));
 
             $this->recordsHaveBeenModified(
                 ($count = $this->pdo->affectedRows($result)) > 0
@@ -93,9 +100,9 @@ class PostgreSqlSwooleExtConnection extends Connection
 
             $this->getPdoForSelect($useReadPdo);
 
-            $id = $this->prepare($query);
+            $statement = $this->prepare($query);
 
-            $result = $this->pdo->execute($id, $this->prepareBindings($bindings));
+            $result = $statement->execute($this->prepareBindings($bindings));
 
             if ($result === false) {
                 throw new QueryException($query, [], new \Exception($this->pdo->error));
@@ -110,21 +117,21 @@ class PostgreSqlSwooleExtConnection extends Connection
      */
     public function cursor(string $query, array $bindings = [], bool $useReadPdo = true): \Generator
     {
-        $this->run($query, $bindings, function ($query, $bindings) use ($useReadPdo) {
+        $statement = $this->run($query, $bindings, function ($query, $bindings) use ($useReadPdo) {
             if ($this->pretending()) {
                 return [];
             }
 
             $this->getPdoForSelect($useReadPdo);
 
-            $id = $this->prepare($query);
+            $statement = $this->prepare($query);
 
-            $this->pdo->execute($id, $this->prepareBindings($bindings));
+            $statement->execute($this->prepareBindings($bindings));
 
-            return $this->pdo;
+            return $statement;
         });
 
-        while ($record = $this->fetch($query, $bindings)) {
+        while ($record = $statement->fetchRow(0)) {
             yield $record;
         }
     }
@@ -140,12 +147,12 @@ class PostgreSqlSwooleExtConnection extends Connection
     {
         $statement = $this->prepare($query);
 
-        $result = $this->pdo->execute($statement, $bindings);
-        if ($result === false) {
+        $result = $statement->execute($bindings);
+        if (! $result) {
             throw new QueryException($query, [], new \Exception($this->pdo->error));
         }
 
-        return $this->pdo->fetchAll($result) ?: [];
+        return $statement->fetchAll(SW_PGSQL_ASSOC);
     }
 
     public function str_replace_once($needle, $replace, $haystack)
@@ -165,7 +172,7 @@ class PostgreSqlSwooleExtConnection extends Connection
      * Get the default query grammar instance.
      * @return \Hyperf\Database\Grammar
      */
-    protected function getDefaultQueryGrammar()
+    protected function getDefaultQueryGrammar(): QueryGrammar
     {
         return $this->withTablePrefix(new QueryGrammar());
     }
@@ -173,17 +180,15 @@ class PostgreSqlSwooleExtConnection extends Connection
     /**
      * Get the default schema grammar instance.
      */
-    protected function getDefaultSchemaGrammar()
+    protected function getDefaultSchemaGrammar(): SchemaGrammar
     {
         return $this->withTablePrefix(new SchemaGrammar());
     }
 
     /**
      * Get the default post processor instance.
-     *
-     * @return \Hyperf\Database\Query\Processors\PostgresProcessor
      */
-    protected function getDefaultPostProcessor()
+    protected function getDefaultPostProcessor(): PostgresProcessor
     {
         return new PostgresProcessor();
     }
@@ -196,19 +201,18 @@ class PostgreSqlSwooleExtConnection extends Connection
         return new PostgresDriver();
     }
 
-    protected function prepare(string $query): string
+    protected function prepare(string $query): PostgreSQLStatement
     {
         $num = 1;
         while (strpos($query, '?')) {
             $query = $this->str_replace_once('?', '$' . $num++, $query);
         }
 
-        $id = uniqid();
-        $res = $this->pdo->prepare($id, $query);
-        if ($res === false) {
+        $statement = $this->pdo->prepare($query);
+        if (! $statement) {
             throw new QueryException($query, [], new \Exception($this->pdo->error));
         }
 
-        return $id;
+        return $statement;
     }
 }

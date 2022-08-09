@@ -46,30 +46,24 @@ class MySqlConnection extends Connection
 
     /**
      * Get the default query grammar instance.
-     *
-     * @return \Hyperf\Database\Query\Grammars\MySqlGrammar
      */
-    protected function getDefaultQueryGrammar()
+    protected function getDefaultQueryGrammar(): QueryGrammar
     {
         return $this->withTablePrefix(new QueryGrammar());
     }
 
     /**
      * Get the default schema grammar instance.
-     *
-     * @return \Hyperf\Database\Schema\Grammars\MySqlGrammar
      */
-    protected function getDefaultSchemaGrammar()
+    protected function getDefaultSchemaGrammar(): SchemaGrammar
     {
         return $this->withTablePrefix(new SchemaGrammar());
     }
 
     /**
      * Get the default post processor instance.
-     *
-     * @return \Hyperf\Database\Query\Processors\MySqlProcessor
      */
-    protected function getDefaultPostProcessor()
+    protected function getDefaultPostProcessor(): MySqlProcessor
     {
         return new MySqlProcessor();
     }

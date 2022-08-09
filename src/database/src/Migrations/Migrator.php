@@ -497,13 +497,7 @@ class Migrator
      */
     protected function getSchemaGrammar($connection): Grammar
     {
-        if (is_null($grammar = $connection->getSchemaGrammar())) {
-            $connection->useDefaultSchemaGrammar();
-
-            $grammar = $connection->getSchemaGrammar();
-        }
-
-        return $grammar;
+        return $connection->getSchemaGrammar();
     }
 
     /**
