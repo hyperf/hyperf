@@ -28,6 +28,8 @@ trait Macroable
      */
     protected static array $macros = [];
 
+    protected static array $bindable = [];
+
     /**
      * Dynamically handle calls to the class.
      *
@@ -76,11 +78,12 @@ trait Macroable
         $macro = static::$macros[$method];
 
         if ($macro instanceof Closure) {
-            $reflection = new ReflectionFunction($macro);
+            if (! isset(static::$bindable[$method])) {
+                $reflection = new ReflectionFunction($macro);
+                static::$bindable[$method] = $reflection->getClosureScopeClass() === null || $reflection->getClosureThis() !== null;
+            }
 
-            $bindable = $reflection->getClosureScopeClass() === null || $reflection->getClosureThis() !== null;
-
-            if ($bindable) {
+            if (static::$bindable[$method]) {
                 $macro = $macro->bindTo($this, static::class);
             } else {
                 $macro = $macro->bindTo(null, static::class);
