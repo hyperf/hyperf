@@ -53,11 +53,24 @@ class ProxyFactory
             mkdir($dir, 0755, true);
         }
 
-        $proxyFileName = str_replace('\\', '_', $serviceClass);
-        $proxyClassName = $serviceClass . '_' . md5($this->codeLoader->getCodeByClassName($serviceClass));
-        $path = $dir . $proxyFileName . '.rpc-client.proxy.php';
+        $cachePath = BASE_PATH . '/runtime/container/rpc-client.cache';
+        $lastCacheModified = file_exists($cachePath) ? $this->filesystem->lastModified($cachePath) : 0;
+        if ($lastCacheModified > 0) {
+            $this->deserializeCachedData($cachePath);
+        }
 
-        $key = md5($path);
+        if (! MetadataCollector::has($serviceClass)) {
+            $proxyFileName = str_replace('\\', '_', $serviceClass);
+            $proxyClassName = $serviceClass . '_' . md5($this->codeLoader->getCodeByClassName($serviceClass));
+            $path = $dir . $proxyFileName . '.rpc-client.proxy.php';
+
+            $key = md5($path);
+
+            MetadataCollector::set($serviceClass, [$path, $key, $proxyClassName]);
+        }
+
+        [$path, $key, $proxyClassName] = MetadataCollector::get($serviceClass);
+
         // If the proxy file does not exist, then try to acquire the coroutine lock.
         if ($this->isModified($serviceClass, $path) && Locker::lock($key)) {
             $targetPath = $path . '.' . uniqid();
@@ -68,6 +81,7 @@ class ProxyFactory
         }
         include_once $path;
         self::set($serviceClass, $proxyClassName);
+        $this->putCache($cachePath);
         return $proxyClassName;
     }
 
@@ -82,5 +96,26 @@ class ProxyFactory
         );
 
         return $time >= $this->filesystem->lastModified($path);
+    }
+
+    protected function deserializeCachedData(string $cachePath): void
+    {
+        if (! file_exists($cachePath)) {
+            return;
+        }
+
+        $metadataCollector = unserialize(file_get_contents($cachePath));
+        foreach ($metadataCollector as $key => $item) {
+            MetadataCollector::set($key, $item);
+        }
+    }
+
+    protected function putCache(string $cachePath): void
+    {
+        if (! $this->filesystem->isDirectory($dir = dirname($cachePath))) {
+            $this->filesystem->makeDirectory($dir, 0755, true);
+        }
+
+        $this->filesystem->put($cachePath, MetadataCollector::serialize());
     }
 }
