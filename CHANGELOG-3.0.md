@@ -54,6 +54,7 @@ composer analyse
 - [#4908](https://github.com/hyperf/hyperf/pull/4908) Added `Db::beforeExecuting()` to register a hook which to be run just before a database query is executed.
 - [#4909](https://github.com/hyperf/hyperf/pull/4909) Added `ConsumerMessageInterface::getNums()` to change the number of amqp consumer by dynamically.
 - [#4918](https://github.com/hyperf/hyperf/pull/4918) Added `LoadBalancerInterface::afterRefreshed()` to register a hook which to be run after refresh nodes.
+- [#4992](https://github.com/hyperf/hyperf/pull/4992) Added config `amqp.enable` which used to control amqp consumer whether to start automatically and producer whether to declare automatically.
 - [#4994](https://github.com/hyperf/hyperf/pull/4994) Added component `hyperf/database-pgsql` which you can be used to connect pgsql server.
 
 ## Optimized
