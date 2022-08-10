@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcClient;
 
+use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\RpcClient\Proxy\Ast;
 use Hyperf\RpcClient\Proxy\CodeLoader;
 use Hyperf\Utils\Coroutine\Locker;
@@ -75,6 +76,10 @@ class ProxyFactory
     {
         if (! $this->filesystem->exists($path)) {
             return true;
+        }
+
+        if (ScanConfig::instance('')->isCacheable()) {
+            return false;
         }
 
         $time = $this->filesystem->lastModified(
