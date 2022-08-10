@@ -3,6 +3,7 @@
 ## Optimized
 
 - [#5002](https://github.com/hyperf/hyperf/pull/5002) Optimized the generation rules of rpc proxy class suffix, which can be customized more easily.
+- [#5005](https://github.com/hyperf/hyperf/pull/5005) Don't generate rpc proxy again when open `scan cacheable`.
 
 # v2.2.34 - 2022-07-21
 
