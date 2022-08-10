@@ -12,11 +12,14 @@ declare(strict_types=1);
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Context\Context;
+use Hyperf\Engine\Contract\Socket\SocketFactoryInterface;
+use Hyperf\Engine\Contract\SocketInterface;
+use Hyperf\Engine\Socket\SocketOption;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\TransporterInterface;
+use Hyperf\Utils\ApplicationContext;
 use RuntimeException;
-use Swoole\Coroutine\Client as SwooleClient;
 
 class JsonRpcTransporter implements TransporterInterface
 {
@@ -50,10 +53,8 @@ class JsonRpcTransporter implements TransporterInterface
     {
         $client = retry(2, function () use ($data) {
             $client = $this->getClient();
-            if ($client->send($data) === false) {
-                if ($client->errCode == 104) {
-                    throw new RuntimeException('Connect to server failed.');
-                }
+            if ($client->sendAll($data) === false) {
+                throw new RuntimeException('Connect to server failed.');
             }
             return $client;
         });
@@ -68,7 +69,7 @@ class JsonRpcTransporter implements TransporterInterface
         return $this->recvAndCheck($client, $this->recvTimeout);
     }
 
-    public function getClient(): SwooleClient
+    public function getClient(): SocketInterface
     {
         $class = spl_object_hash($this) . '.Connection';
         if (Context::has($class)) {
@@ -76,16 +77,13 @@ class JsonRpcTransporter implements TransporterInterface
         }
 
         return Context::set($class, retry(2, function () {
-            $client = new SwooleClient(SWOOLE_SOCK_TCP);
-            $client->set($this->config['settings'] ?? []);
             $node = $this->getNode();
-            $result = $client->connect($node->host, $node->port, $this->connectTimeout);
-            if ($result === false && ($client->errCode == 114 or $client->errCode == 115)) {
-                // Force close and reconnect to server.
-                $client->close();
-                throw new RuntimeException('Connect to server failed.');
-            }
-            return $client;
+            return $this->getSocketFactory()->make(new SocketOption(
+                $node->host,
+                $node->port,
+                $this->connectTimeout,
+                $this->config['settings'] ?? []
+            ));
         }));
     }
 
@@ -124,5 +122,10 @@ class JsonRpcTransporter implements TransporterInterface
             return $this->loadBalancer->select();
         }
         return $this->nodes[array_rand($this->nodes)];
+    }
+
+    private function getSocketFactory(): SocketFactoryInterface
+    {
+        return ApplicationContext::getContainer()->get(SocketFactoryInterface::class);
     }
 }

@@ -14,6 +14,7 @@ namespace HyperfTest\Logger;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Logger\Logger;
 use Monolog\Handler\TestHandler;
+use Monolog\LogRecord;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -53,7 +54,7 @@ class LoggerTest extends TestCase
     {
         $logger = new Logger('test', [
             $handler = new class() extends TestHandler {
-                protected function write(array $record): void
+                protected function write(array|LogRecord $record): void
                 {
                     usleep(1);
                     parent::write($record);

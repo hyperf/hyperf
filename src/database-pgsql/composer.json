@@ -1,0 +1,46 @@
+{
+    "name": "hyperf/database-pgsql",
+    "type": "library",
+    "description": "A pgsql handler for hyperf/database.",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "hyperf",
+        "database",
+        "pgsql"
+    ],
+    "homepage": "https://hyperf.io",
+    "support": {
+        "docs": "https://hyperf.wiki",
+        "issues": "https://github.com/hyperf/hyperf/issues",
+        "pull-request": "https://github.com/hyperf/hyperf/pulls",
+        "source": "https://github.com/hyperf/hyperf"
+    },
+    "require": {
+        "php": ">=8.0",
+        "ext-swoole": ">=5.0",
+        "hyperf/database": "~3.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Database\\PgSQL\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Database\\PgSQL\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "3.0-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Database\\PgSQL\\ConfigProvider"
+        }
+    }
+}

@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: '0 2 * * *'
 env:
-  SW_VERSION: 'v4.8.11'
+  SW_VERSION: 'v5.0.0'
 jobs:
   database:
     name: Test for Database
@@ -15,7 +15,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0' ]
+        php-version: [ '8.0', '8.1' ]
         mysql-version: [ '5.7', '8.0' ]
       max-parallel: 2
       fail-fast: false
@@ -52,7 +52,7 @@ jobs:
     strategy:
       matrix:
         version: [ '^1.0', '^2.0', '^3.0' ]
-        php-version: [ '8.0' ]
+        php-version: [ '8.0', '8.1' ]
       max-parallel: 2
       fail-fast: false
     steps:
@@ -93,14 +93,14 @@ jobs:
           ./.travis/requirement.install.sh
           composer test src/filesystem -- --exclude-group NonCoroutine
   phar:
-    name: Test for Building PHAR ${{ matrix.no-dev }}
+    name: Test for Building PHAR
     runs-on: 'ubuntu-latest'
     env:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        no-dev: [ '', '--no-dev' ]
-        php-version: [ '8.0' ]
+        no-dev: [ '--no-dev', '' ]
+        php-version: [ '8.0', '8.1' ]
       max-parallel: 2
       fail-fast: false
     steps:
@@ -147,7 +147,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0' ]
+        php-version: [ '8.0', '8.1' ]
         version: [ '^1.0', '^2.0' ]
       max-parallel: 6
       fail-fast: false
@@ -182,9 +182,12 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0' ]
+        php-version: [ '8.0', '8.1' ]
         log-version: [ '^1.0', '^2.0', '^3.0' ]
-      max-parallel: 3
+        exclude:
+          - php-version: '8.1'
+            log-version: '^1.0'
+      max-parallel: 5
       fail-fast: false
     steps:
       - name: Checkout
@@ -215,7 +218,7 @@ jobs:
           else
             composer require "symfony/console:^5.0" --dev -W
           fi
-          composer require symfony/event-dispatcher -W
+          composer require symfony/event-dispatcher --dev -W
           composer update -oW
           composer analyse src/framework
           composer analyse src/server/src/Entry/Logger.php
@@ -230,7 +233,7 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
     strategy:
       matrix:
-        php-version: [ '8.0' ]
+        php-version: [ '8.0', '8.1' ]
         psr-version: [ '^1.0', '^2.0', '^3.0' ]
       max-parallel: 3
       fail-fast: false

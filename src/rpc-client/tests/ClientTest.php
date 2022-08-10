@@ -11,9 +11,11 @@ declare(strict_types=1);
  */
 namespace HyperfTest\RpcClient;
 
+use Hyperf\Engine\Exception\SocketConnectException;
+use Hyperf\Engine\Socket\SocketFactory;
+use Hyperf\Engine\Socket\SocketOption;
 use Hyperf\Utils\Codec\Json;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine\Client;
 
 /**
  * @internal
@@ -23,41 +25,35 @@ class ClientTest extends TestCase
 {
     public function testConnectNotExistPort()
     {
-        $client = new Client(SWOOLE_SOCK_TCP);
-        $result = $client->connect('127.0.0.1', 10000);
+        $this->expectException(SocketConnectException::class);
 
-        $this->assertFalse($result);
-        $this->assertSame($client->errCode, SOCKET_ECONNREFUSED);
+        (new SocketFactory())->make(new SocketOption('127.0.0.1', 10000));
     }
 
     public function testRecvTimeout()
     {
-        $client = new Client(SWOOLE_SOCK_TCP);
-        $result = $client->connect('127.0.0.1', 10001);
-        $this->assertTrue($result);
+        $client = (new SocketFactory())->make(new SocketOption('127.0.0.1', 10001));
 
         $res = $client->send($data = Json::encode([
             'id' => 'timeout',
             'timeout' => 2,
         ]));
         $this->assertSame(strlen($data), $res);
-        $data = $client->recv(0.001);
+        $data = $client->recvAll(1, 0.001);
         $this->assertFalse($data);
         $this->assertSame(SOCKET_ETIMEDOUT, $client->errCode);
     }
 
     public function testRecvData()
     {
-        $client = new Client(SWOOLE_SOCK_TCP);
-        $result = $client->connect('127.0.0.1', 10001);
-        $this->assertTrue($result);
+        $client = (new SocketFactory())->make(new SocketOption('127.0.0.1', 10001));
 
         $res = $client->send($data = Json::encode([
             'id' => 'ack',
             'ack' => 2,
         ]));
         $this->assertSame(strlen($data), $res);
-        $data = $client->recv(1);
+        $data = $client->recvAll(6, 1);
         $this->assertSame('ack: 2', $data);
         $this->assertSame(0, $client->errCode);
     }

@@ -17,6 +17,7 @@ parameters:
     - %currentWorkingDirectory%/src/contract/*
     - %currentWorkingDirectory%/src/crontab/*
     - %currentWorkingDirectory%/src/database/*
+    - %currentWorkingDirectory%/src/database-pgsql/*
     - %currentWorkingDirectory%/src/filesystem/*
     - %currentWorkingDirectory%/src/graphql/*
     - %currentWorkingDirectory%/src/grpc/*
@@ -60,3 +61,4 @@ parameters:
     - '#Class RedisSentinel constructor invoked with .*#'
     - '#Hyperf\\Engine\\Http\\Server#'
     - '#Swow\\Socket#'
+    - '#Class Hyperf\\Logger\\Logger extends @final class Monolog\\Logger#'

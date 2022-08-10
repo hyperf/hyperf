@@ -2,9 +2,9 @@
 
 ## Life cycle
 
-| Version | Status             | End of mainstream support | End of Security-fixes support | Release Date |
-| ------- | ------------------ | ------------------------- | ----------------------------- | ------------ |
-| 3.0  | Developing    | 2023-06-20 | 2023-12-31 | 2022-06-20 |
+| Version | Status             | End of mainstream support | End of Security-fixes support | Release Date (or estimated date) |
+| ------- | ------------------ | ------------------------- | ----------------------------- | -------------------------------- |
+| 3.0  | Developing (RC1 has been released)    | 2023-06-20 | 2023-12-31 | 2022-08-30~2022-09-30 |
 | 2.2  | Mainstream Support  | 2022-06-20 | 2022-12-31 | 2021-07-19 |
 | 2.1  | Deprecated   | 2021-06-30 | 2021-12-31 | 2020-12-28 |
 | 2.0  | Deprecated   | 2020-12-28 | 2021-06-30 | 2020-06-22 |

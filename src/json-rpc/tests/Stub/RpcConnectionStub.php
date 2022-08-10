@@ -22,24 +22,21 @@ class RpcConnectionStub extends RpcConnection
      */
     public $reconnectCallback;
 
-    public function __call($name, $arguments)
-    {
-        if ($name == 'send') {
-            $this->lastData = $arguments[0];
-            return strlen($arguments[0]);
-        }
-
-        if ($name == 'recv') {
-            return $this->lastData;
-        }
-
-        return false;
-    }
-
     public function __get($name)
     {
         return false;
         // return $this->connection->{$name};
+    }
+
+    public function send(string $data): int|false
+    {
+        $this->lastData = $data;
+        return strlen($data);
+    }
+
+    public function recvPacket(float $timeout = 0): string|false
+    {
+        return $this->lastData;
     }
 
     public function reconnect(): bool

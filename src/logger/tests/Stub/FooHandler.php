@@ -13,10 +13,11 @@ namespace HyperfTest\Logger\Stub;
 
 use Hyperf\Context\Context;
 use Monolog\Handler\StreamHandler;
+use Monolog\LogRecord;
 
 class FooHandler extends StreamHandler
 {
-    public function write(array $record): void
+    public function write(array|LogRecord $record): void
     {
         Context::set('test.logger.foo_handler.record', $record);
     }
