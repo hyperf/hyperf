@@ -13,11 +13,11 @@ namespace HyperfTest\Framework;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Framework\Logger\Output\ConsoleOutput;
 use Hyperf\Framework\Logger\StdoutLogger;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * @internal

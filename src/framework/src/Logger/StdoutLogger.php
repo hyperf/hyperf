@@ -13,8 +13,8 @@ namespace Hyperf\Framework\Logger;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Framework\Logger\Output\ConsoleOutput;
 use Psr\Log\LogLevel;
-use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use function sprintf;
 use function str_replace;
