@@ -14,7 +14,6 @@ namespace Hyperf\Amqp\Listener;
 use Doctrine\Instantiator\Instantiator;
 use Hyperf\Amqp\Annotation\Producer;
 use Hyperf\Amqp\Message\ProducerMessageInterface;
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Event\Contract\ListenerInterface;
@@ -25,6 +24,8 @@ use Psr\Container\ContainerInterface;
 
 class MainWorkerStartListener implements ListenerInterface
 {
+    use IsEnable;
+
     public function __construct(private ContainerInterface $container, private StdoutLoggerInterface $logger)
     {
     }
@@ -46,8 +47,7 @@ class MainWorkerStartListener implements ListenerInterface
      */
     public function process(object $event): void
     {
-        $enable = $this->container->get(ConfigInterface::class)->get('amqp.enable', true);
-        if (! $enable) {
+        if (! $this->isEnable()) {
             return;
         }
 

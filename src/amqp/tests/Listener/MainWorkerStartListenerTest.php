@@ -48,6 +48,7 @@ class MainWorkerStartListenerTest extends TestCase
             return $logger;
         });
 
+        $container->shouldReceive('has')->with(ConfigInterface::class)->andReturnTrue();
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturnUsing(function () {
             return new Config([
                 'amqp' => [

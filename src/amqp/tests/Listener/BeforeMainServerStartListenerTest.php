@@ -36,7 +36,7 @@ class BeforeMainServerStartListenerTest extends TestCase
     public function testProcessWithDisabled()
     {
         $container = Mockery::mock(ContainerInterface::class);
-
+        $container->shouldReceive('has')->with(ConfigInterface::class)->andReturnTrue();
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturnUsing(function () {
             return new Config([
                 'amqp' => [
@@ -54,5 +54,61 @@ class BeforeMainServerStartListenerTest extends TestCase
         $listener->process(new \stdClass());
 
         $this->assertTrue(true);
+    }
+
+    public function testProcessEnableDontHaveConfig()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->with(ConfigInterface::class)->andReturnFalse();
+
+        $this->checkEnable($container);
+
+        $listener = new BeforeMainServerStartListener($container);
+        $listener->process(new \stdClass());
+
+        $this->assertTrue(true);
+    }
+
+    public function testProcessEnableByTrue()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->with(ConfigInterface::class)->andReturnTrue();
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturnUsing(function () {
+            return new Config([
+                'amqp' => [
+                    'enable' => true,
+                ],
+            ]);
+        });
+
+        $this->checkEnable($container);
+
+        $listener = new BeforeMainServerStartListener($container);
+        $listener->process(new \stdClass());
+
+        $this->assertTrue(true);
+    }
+
+    public function testProcessEnableByNoValue()
+    {
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->with(ConfigInterface::class)->andReturnTrue();
+        $container->shouldReceive('get')->with(ConfigInterface::class)->andReturnUsing(function () {
+            return new Config([]);
+        });
+
+        $this->checkEnable($container);
+
+        $listener = new BeforeMainServerStartListener($container);
+        $listener->process(new \stdClass());
+
+        $this->assertTrue(true);
+    }
+
+    protected function checkEnable(ContainerInterface $container)
+    {
+        $container->shouldReceive('get')->with(ConsumerManager::class)->andReturn($manager = Mockery::mock(ConsumerManager::class));
+
+        $manager->shouldReceive('run')->andReturnNull()->once();
     }
 }

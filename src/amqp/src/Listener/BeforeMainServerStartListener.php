@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Amqp\Listener;
 
 use Hyperf\Amqp\ConsumerManager;
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Server\Event\MainCoroutineServerStart;
@@ -23,6 +22,8 @@ use Psr\Container\ContainerInterface;
  */
 class BeforeMainServerStartListener implements ListenerInterface
 {
+    use IsEnable;
+
     public function __construct(private ContainerInterface $container)
     {
     }
@@ -44,8 +45,7 @@ class BeforeMainServerStartListener implements ListenerInterface
      */
     public function process(object $event): void
     {
-        $enable = $this->container->get(ConfigInterface::class)->get('amqp.enable', true);
-        if (! $enable) {
+        if (! $this->isEnable()) {
             return;
         }
 
