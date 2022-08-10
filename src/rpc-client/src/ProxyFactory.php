@@ -54,7 +54,7 @@ class ProxyFactory
         }
 
         $proxyFileName = str_replace('\\', '_', $serviceClass);
-        $proxyClassName = $serviceClass . '_' . md5($this->codeLoader->getCodeByClassName($serviceClass));
+        $proxyClassName = $serviceClass . '_' . $this->codeLoader->getMd5ByClassName($serviceClass);
         $path = $dir . $proxyFileName . '.rpc-client.proxy.php';
 
         $key = md5($path);
