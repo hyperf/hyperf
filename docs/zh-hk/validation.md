@@ -362,7 +362,7 @@ use Hyperf\Validation\Request\FormRequest;
 
 class SceneRequest extends FormRequest
 {
-    protected $scenes = [
+    protected array $scenes = [
         'foo' => ['username'],
         'bar' => ['username', 'password'],
     ];
@@ -392,7 +392,8 @@ class SceneRequest extends FormRequest
 
 我們可以設定場景，讓此次請求只驗證 `username` 必填。
 
-> 如果我們配置了 `Hyperf\Validation\Middleware\ValidationMiddleware`，且將 `SceneRequest` 注入到方法上，就會導致入參在中間件中直接進行驗證，故場景值無法生效，所以我們需要在方法裏從容器中獲取對應的 `SceneRequest`，進行場景切換。
+如果我們配置了 `Hyperf\Validation\Middleware\ValidationMiddleware`，且將 `SceneRequest` 注入到方法上，
+就會導致入參在中間件中直接進行驗證，故場景值無法生效，所以我們需要在方法裏從容器中獲取對應的 `SceneRequest`，進行場景切換。
 
 ```php
 <?php
@@ -416,7 +417,7 @@ class FooController extends Controller
 }
 ```
 
-通過 `Scene` 註解切換場景
+當然，我們也可以通過 `Scene` 註解切換場景
 
 ```php
 <?php
