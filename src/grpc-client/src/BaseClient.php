@@ -27,25 +27,13 @@ use Swoole\Http2\Response;
  */
 class BaseClient
 {
-    /**
-     * @var null|GrpcClient
-     */
-    private $grpcClient;
+    protected ?GrpcClient $grpcClient;
 
-    /**
-     * @var array
-     */
-    private $options;
+    protected array $options;
 
-    /**
-     * @var string
-     */
-    private $hostname;
+    protected string $hostname;
 
-    /**
-     * @var bool
-     */
-    private $initialized = false;
+    protected bool $initialized = false;
 
     public function __construct(string $hostname, array $options = [])
     {
@@ -95,15 +83,15 @@ class BaseClient
      * @return array|\Google\Protobuf\Internal\Message[]|Response[]
      */
     protected function _simpleRequest(
-        string $method,
+        string $path,
         Message $argument,
         $deserialize,
         array $metadata = [],
         array $options = []
     ) {
         $options['headers'] = ($options['headers'] ?? []) + $metadata;
-        $streamId = retry($this->options['retry_attempts'] ?? 3, function () use ($method, $argument, $options) {
-            $streamId = $this->send($this->buildRequest($method, $argument, $options));
+        $streamId = retry($this->options['retry_attempts'] ?? 3, function () use ($path, $argument, $options) {
+            $streamId = $this->send($this->buildRequest($path, $argument, $options));
             if ($streamId <= 0) {
                 $this->init();
                 // The client should not be used after this exception
@@ -191,7 +179,7 @@ class BaseClient
         return $client->isRunning() || $client->start();
     }
 
-    private function init()
+    protected function init()
     {
         if (! empty($this->options['client'])) {
             if (! ($this->options['client'] instanceof GrpcClient)) {
@@ -214,9 +202,9 @@ class BaseClient
         $this->initialized = true;
     }
 
-    private function buildRequest(string $method, Message $argument, array $options): Request
+    protected function buildRequest(string $path, Message $argument, array $options): Request
     {
         $headers = $options['headers'] ?? [];
-        return new Request($method, $argument, $headers);
+        return new Request($path, $argument, $headers);
     }
 }

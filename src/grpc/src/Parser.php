@@ -91,7 +91,7 @@ class Parser
         return [$reply, $status, $response];
     }
 
-    private static function isinvalidStatus(int $code)
+    protected static function isInvalidStatus(int $code): bool
     {
         return $code !== 0 && $code !== 200 && $code !== 400;
     }
