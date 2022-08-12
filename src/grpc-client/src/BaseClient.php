@@ -76,7 +76,7 @@ class BaseClient
      * Call a remote method that takes a single argument and has a
      * single output.
      *
-     * @param string $method The name of the method to call
+     * @param string $path The name of the method to call
      * @param Message $argument The argument to the method
      * @param callable $deserialize A function that deserializes the response
      * @throws GrpcClientException
