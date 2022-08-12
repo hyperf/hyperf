@@ -13,6 +13,7 @@ namespace Hyperf\Database\Query\Grammars;
 
 use Hyperf\Database\Grammar as BaseGrammar;
 use Hyperf\Database\Query\Builder;
+use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Query\JoinClause;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
@@ -261,11 +262,10 @@ class Grammar extends BaseGrammar
     /**
      * Wrap a value in keyword identifiers.
      *
-     * @param \Hyperf\Database\Query\Expression|string $value
      * @param bool $prefixAlias
      * @return string
      */
-    public function wrap($value, $prefixAlias = false)
+    public function wrap(Expression|string $value, $prefixAlias = false)
     {
         if ($this->isExpression($value)) {
             return $this->getValue($value);

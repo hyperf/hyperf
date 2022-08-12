@@ -25,6 +25,7 @@
             <directory suffix=".php">./src/crontab/src</directory>
             <directory suffix=".php">./src/dag/src</directory>
             <directory suffix=".php">./src/database/src</directory>
+            <directory suffix=".php">./src/database-pgsql/src</directory>
             <directory suffix=".php">./src/db-connection/src</directory>
             <directory suffix=".php">./src/di/src</directory>
             <directory suffix=".php">./src/dispatcher/src</directory>
@@ -81,6 +82,7 @@
             <directory suffix="Test.php">./src/crontab/tests</directory>
             <directory suffix="Test.php">./src/dag/tests</directory>
             <directory suffix="Test.php">./src/database/tests</directory>
+            <directory suffix="Test.php">./src/database-pgsql/tests</directory>
             <directory suffix="Test.php">./src/db/tests</directory>
             <directory suffix="Test.php">./src/db-connection/tests</directory>
             <directory suffix="Test.php">./src/devtool/tests</directory>

@@ -17,9 +17,8 @@ class JsonExpression extends Expression
 {
     /**
      * Create a new raw query expression.
-     * @param mixed $value
      */
-    public function __construct($value)
+    public function __construct(mixed $value)
     {
         parent::__construct(
             $this->getJsonBindingParameter($value)
@@ -29,11 +28,10 @@ class JsonExpression extends Expression
     /**
      * Translate the given value into the appropriate JSON binding parameter.
      *
-     * @param mixed $value
      * @throws \InvalidArgumentException
      * @return string
      */
-    protected function getJsonBindingParameter($value)
+    protected function getJsonBindingParameter(mixed $value)
     {
         if ($value instanceof Expression) {
             return $value->getValue();

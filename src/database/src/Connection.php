@@ -16,6 +16,7 @@ use DateTimeInterface;
 use Doctrine\DBAL\Connection as DoctrineConnection;
 use Exception;
 use Hyperf\Database\Events\QueryExecuted;
+use Hyperf\Database\Exception\InvalidArgumentException;
 use Hyperf\Database\Exception\QueryException;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Builder as QueryBuilder;
@@ -23,6 +24,7 @@ use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Query\Grammars\Grammar as QueryGrammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Database\Schema\Builder as SchemaBuilder;
+use Hyperf\Database\Schema\Grammars\Grammar as SchemaGrammar;
 use Hyperf\Utils\Arr;
 use LogicException;
 use PDO;
@@ -40,77 +42,61 @@ class Connection implements ConnectionInterface
      *
      * @var Closure|PDO
      */
-    protected $pdo;
+    protected mixed $pdo;
 
     /**
      * The active PDO connection used for reads.
      *
      * @var Closure|PDO
      */
-    protected $readPdo;
+    protected mixed $readPdo = null;
 
     /**
      * The name of the connected database.
-     *
-     * @var string
      */
-    protected $database;
+    protected string $database;
 
     /**
      * The table prefix for the connection.
-     *
-     * @var string
      */
-    protected $tablePrefix = '';
+    protected string $tablePrefix = '';
 
     /**
      * The database connection configuration options.
-     *
-     * @var array
      */
-    protected $config = [];
+    protected array $config = [];
 
     /**
      * The reconnector instance for the connection.
      *
      * @var callable
      */
-    protected $reconnector;
+    protected mixed $reconnector = null;
 
     /**
      * The query grammar implementation.
-     *
-     * @var \Hyperf\Database\Query\Grammars\Grammar
      */
-    protected $queryGrammar;
+    protected QueryGrammar $queryGrammar;
 
     /**
      * The schema grammar implementation.
-     *
-     * @var \Hyperf\Database\Schema\Grammars\Grammar
      */
-    protected $schemaGrammar;
+    protected ?SchemaGrammar $schemaGrammar = null;
 
     /**
      * The query post processor implementation.
-     *
-     * @var \Hyperf\Database\Query\Processors\Processor
      */
-    protected $postProcessor;
+    protected Processor $postProcessor;
 
     /**
      * The event dispatcher instance.
-     *
-     * @var EventDispatcherInterface
      */
-    protected $events;
+    protected ?EventDispatcherInterface $events = null;
 
     /**
      * The default fetch mode of the connection.
-     *
-     * @var int
      */
-    protected $fetchMode = PDO::FETCH_OBJ;
+    protected int $fetchMode = PDO::FETCH_OBJ;
 
     /**
      * The number of active transactions.
@@ -142,10 +128,11 @@ class Connection implements ConnectionInterface
      *
      * @var \Doctrine\DBAL\Connection
      */
-    protected $doctrineConnection;
+    protected mixed $doctrineConnection = null;
 
     /**
      * The connection resolvers.
+     * @var Closure[]
      */
     protected static array $resolvers = [];
 
@@ -160,10 +147,8 @@ class Connection implements ConnectionInterface
      * Create a new database connection instance.
      *
      * @param Closure|PDO $pdo
-     * @param string $database
-     * @param string $tablePrefix
      */
-    public function __construct($pdo, $database = '', $tablePrefix = '', array $config = [])
+    public function __construct(mixed $pdo, string $database = '', string $tablePrefix = '', array $config = [])
     {
         $this->pdo = $pdo;
 
@@ -210,9 +195,8 @@ class Connection implements ConnectionInterface
 
     /**
      * Get a schema builder instance for the connection.
-     * @return SchemaBuilder
      */
-    public function getSchemaBuilder()
+    public function getSchemaBuilder(): SchemaBuilder
     {
         if (is_null($this->schemaGrammar)) {
             $this->useDefaultSchemaGrammar();
@@ -673,10 +657,8 @@ class Connection implements ConnectionInterface
 
     /**
      * Set the reconnect instance on the connection.
-     *
-     * @return $this
      */
-    public function setReconnector(callable $reconnector)
+    public function setReconnector(callable $reconnector): static
     {
         $this->reconnector = $reconnector;
 
@@ -738,11 +720,13 @@ class Connection implements ConnectionInterface
 
     /**
      * Get the schema grammar used by the connection.
-     *
-     * @return \Hyperf\Database\Schema\Grammars\Grammar
      */
-    public function getSchemaGrammar()
+    public function getSchemaGrammar(): SchemaGrammar
     {
+        if (is_null($this->schemaGrammar)) {
+            $this->useDefaultSchemaGrammar();
+        }
+
         return $this->schemaGrammar;
     }
 
@@ -761,20 +745,16 @@ class Connection implements ConnectionInterface
 
     /**
      * Get the query post processor used by the connection.
-     *
-     * @return \Hyperf\Database\Query\Processors\Processor
      */
-    public function getPostProcessor()
+    public function getPostProcessor(): Processor
     {
         return $this->postProcessor;
     }
 
     /**
      * Set the query post processor used by the connection.
-     *
-     * @return $this
      */
-    public function setPostProcessor(Processor $processor)
+    public function setPostProcessor(Processor $processor): static
     {
         $this->postProcessor = $processor;
 
@@ -890,21 +870,16 @@ class Connection implements ConnectionInterface
 
     /**
      * Get the table prefix for the connection.
-     *
-     * @return string
      */
-    public function getTablePrefix()
+    public function getTablePrefix(): string
     {
         return $this->tablePrefix;
     }
 
     /**
      * Set the table prefix in use by the connection.
-     *
-     * @param string $prefix
-     * @return $this
      */
-    public function setTablePrefix($prefix)
+    public function setTablePrefix(string $prefix): static
     {
         $this->tablePrefix = $prefix;
 
@@ -915,11 +890,8 @@ class Connection implements ConnectionInterface
 
     /**
      * Set the table prefix and return the grammar.
-     *
-     * @param \Hyperf\Database\Grammar $grammar
-     * @return \Hyperf\Database\Grammar
      */
-    public function withTablePrefix(Grammar $grammar)
+    public function withTablePrefix(Grammar $grammar): Grammar
     {
         $grammar->setTablePrefix($this->tablePrefix);
 
@@ -928,49 +900,40 @@ class Connection implements ConnectionInterface
 
     /**
      * Register a connection resolver.
-     *
-     * @param string $driver
      */
-    public static function resolverFor($driver, Closure $callback)
+    public static function resolverFor(string $driver, Closure $callback)
     {
         static::$resolvers[$driver] = $callback;
     }
 
     /**
      * Get the connection resolver for the given driver.
-     *
-     * @param string $driver
      */
-    public static function getResolver($driver)
+    public static function getResolver(string $driver): ?Closure
     {
         return static::$resolvers[$driver] ?? null;
     }
 
     /**
      * Get the default query grammar instance.
-     *
-     * @return \Hyperf\Database\Query\Grammars\Grammar
      */
-    protected function getDefaultQueryGrammar()
+    protected function getDefaultQueryGrammar(): QueryGrammar
     {
         return new QueryGrammar();
     }
 
     /**
      * Get the default schema grammar instance.
-     *
-     * @return \Hyperf\Database\Schema\Grammars\Grammar
      */
-    protected function getDefaultSchemaGrammar()
+    protected function getDefaultSchemaGrammar(): SchemaGrammar
     {
+        throw new InvalidArgumentException("Don't has the default grammar.");
     }
 
     /**
      * Get the default post processor instance.
-     *
-     * @return \Hyperf\Database\Query\Processors\Processor
      */
-    protected function getDefaultPostProcessor()
+    protected function getDefaultPostProcessor(): Processor
     {
         return new Processor();
     }

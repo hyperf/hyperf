@@ -1960,7 +1960,7 @@ class ModelTest extends TestCase
         $this->getContainer();
 
         /** @var Collection $users */
-        $users = User::findMany([1, 2]);
+        $users = User::query()->findMany([1, 2]);
         $s1 = serialize($users);
         $meta = $users->compress();
         $s2 = serialize($meta);
