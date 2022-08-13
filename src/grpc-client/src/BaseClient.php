@@ -35,6 +35,8 @@ class BaseClient
 
     protected bool $initialized = false;
 
+    protected string $basePath = '';
+
     public function __construct(string $hostname, array $options = [])
     {
         $this->hostname = $hostname;
@@ -72,6 +74,36 @@ class BaseClient
         return $this->grpcClient;
     }
 
+    public function request(string $path, Message $argument, string $class, array $headers = []): array
+    {
+        $streamId = retry($this->options['retry_attempts'] ?? 3, function () use ($path, $argument, $headers) {
+            $streamId = $this->send($this->buildRequest($path, $argument, $headers));
+            if ($streamId <= 0) {
+                $this->init();
+                // The client should not be used after this exception
+                throw new GrpcClientException('Failed to send the request to server', StatusCode::INTERNAL);
+            }
+            return $streamId;
+        }, $this->options['retry_interval'] ?? 100);
+        // return [$message, $status, $response];
+        return Parser::parseResponse($this->recv($streamId), [$class, 'decode']);
+    }
+
+    public function get(string $path, Message $argument, string $class, array $headers = []): array
+    {
+        return $this->request($path, $argument, $class, ['method' => 'GET'] + $headers);
+    }
+
+    public function post(string $path, Message $argument, string $class, array $headers = []): array
+    {
+        return $this->request($path, $argument, $class, ['method' => 'POST'] + $headers);
+    }
+
+    public function url(string $path): string
+    {
+        return $this->hostname . $this->basePath . $path;
+    }
+
     /**
      * Call a remote method that takes a single argument and has a
      * single output.
@@ -89,17 +121,7 @@ class BaseClient
         array $metadata = [],
         array $options = []
     ) {
-        $options['headers'] = ($options['headers'] ?? []) + $metadata;
-        $streamId = retry($this->options['retry_attempts'] ?? 3, function () use ($path, $argument, $options) {
-            $streamId = $this->send($this->buildRequest($path, $argument, $options));
-            if ($streamId <= 0) {
-                $this->init();
-                // The client should not be used after this exception
-                throw new GrpcClientException('Failed to send the request to server', StatusCode::INTERNAL);
-            }
-            return $streamId;
-        }, $this->options['retry_interval'] ?? 100);
-        return Parser::parseResponse($this->recv($streamId), $deserialize);
+        return $this->request($path, $argument, $deserialize[0], ($options['headers'] ?? []) + $metadata);
     }
 
     /**
@@ -196,9 +218,9 @@ class BaseClient
         $this->initialized = true;
     }
 
-    protected function buildRequest(string $path, Message $argument, array $options): Request
+    protected function buildRequest(string $path, Message $argument, array $headers): Request
     {
-        $headers = $options['headers'] ?? [];
+        $path = $this->basePath . $path;
         return new Request($path, $argument, $headers);
     }
 
