@@ -173,12 +173,6 @@ class BaseClient
         return $call;
     }
 
-    private function start()
-    {
-        $client = $this->grpcClient;
-        return $client->isRunning() || $client->start();
-    }
-
     protected function init()
     {
         if (! empty($this->options['client'])) {
@@ -206,5 +200,11 @@ class BaseClient
     {
         $headers = $options['headers'] ?? [];
         return new Request($path, $argument, $headers);
+    }
+
+    private function start()
+    {
+        $client = $this->grpcClient;
+        return $client->isRunning() || $client->start();
     }
 }
