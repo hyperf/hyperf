@@ -108,7 +108,7 @@ class PostgreSqlSwooleExtConnection extends Connection
                 throw new QueryException($query, [], new \Exception($this->pdo->error));
             }
 
-            return $this->pdo->fetchAll($result) ?: [];
+            return $statement->fetchAll($result) ?: [];
         });
     }
 
