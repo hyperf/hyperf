@@ -96,7 +96,7 @@ class Connection implements ConnectionInterface
     /**
      * The default fetch mode of the connection.
      */
-    protected int $fetchMode = SW_PGSQL_ASSOC;
+    protected int $fetchMode = PDO::FETCH_OBJ;
 
     /**
      * The number of active transactions.

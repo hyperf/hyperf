@@ -31,6 +31,8 @@ class PostgreSqlSwooleExtConnection extends Connection
      */
     protected mixed $pdo;
 
+    protected int $fetchMode = SW_PGSQL_ASSOC;
+
     /**
      * Get a schema builder instance for the connection.
      */
