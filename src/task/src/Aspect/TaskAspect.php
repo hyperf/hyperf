@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Task\Aspect;
 
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Task\Annotation\Task;
@@ -19,7 +18,6 @@ use Hyperf\Task\Task as TaskMessage;
 use Hyperf\Task\TaskExecutor;
 use Psr\Container\ContainerInterface;
 
-#[Aspect]
 class TaskAspect extends AbstractAspect
 {
     public array $annotations = [

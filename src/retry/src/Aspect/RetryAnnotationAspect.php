@@ -11,14 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Retry\Aspect;
 
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Retry\Annotation\AbstractRetry;
 use Hyperf\Retry\Annotation\Retry;
 use Hyperf\Retry\Policy\HybridRetryPolicy;
 
-#[Aspect]
 class RetryAnnotationAspect extends AbstractAspect
 {
     public array $annotations = [

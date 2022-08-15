@@ -30,13 +30,6 @@ class ConfigProvider
                 PresenceVerifierInterface::class => DatabasePresenceVerifierFactory::class,
                 FactoryInterface::class => ValidatorFactoryFactory::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
             'publish' => [
                 [
                     'id' => 'zh_CN',
