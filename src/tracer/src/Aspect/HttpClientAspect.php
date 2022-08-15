@@ -22,7 +22,6 @@ use OpenTracing\Tracer;
 use Psr\Http\Message\ResponseInterface;
 use const OpenTracing\Formats\TEXT_MAP;
 
-#[Aspect]
 class HttpClientAspect extends AbstractAspect
 {
     use SpanStarter;

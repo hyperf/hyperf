@@ -26,13 +26,6 @@ class ConfigProvider
             'listeners' => [
                 RegisterServiceListener::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
             'publish' => [
                 [
                     'id' => 'config',

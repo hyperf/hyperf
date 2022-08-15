@@ -27,13 +27,6 @@ class ConfigProvider
             'listeners' => [
                 RegisterConnectionListener::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
         ];
     }
 }

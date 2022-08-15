@@ -20,7 +20,6 @@ use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use OpenTracing\Tracer;
 
-#[Aspect]
 class RedisAspect extends AbstractAspect
 {
     use SpanStarter;

@@ -19,7 +19,6 @@ use Hyperf\Task\Task as TaskMessage;
 use Hyperf\Task\TaskExecutor;
 use Psr\Container\ContainerInterface;
 
-#[Aspect]
 class TaskAspect extends AbstractAspect
 {
     public array $annotations = [

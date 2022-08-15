@@ -18,7 +18,6 @@ use Hyperf\Tracer\Annotation\Trace;
 use Hyperf\Tracer\SpanStarter;
 use OpenTracing\Tracer;
 
-#[Aspect]
 class TraceAnnotationAspect extends AbstractAspect
 {
     use SpanStarter;
