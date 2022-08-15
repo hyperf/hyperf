@@ -13,7 +13,6 @@ namespace Hyperf\CircuitBreaker\Aspect;
 
 use Hyperf\CircuitBreaker\Annotation\CircuitBreaker;
 use Hyperf\CircuitBreaker\Handler\HandlerInterface;
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Psr\Container\ContainerInterface;
