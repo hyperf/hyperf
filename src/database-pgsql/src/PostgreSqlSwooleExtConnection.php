@@ -31,6 +31,8 @@ class PostgreSqlSwooleExtConnection extends Connection
      */
     protected mixed $pdo;
 
+    protected int $fetchMode = SW_PGSQL_ASSOC;
+
     /**
      * Get a schema builder instance for the connection.
      */
@@ -108,7 +110,7 @@ class PostgreSqlSwooleExtConnection extends Connection
                 throw new QueryException($query, [], new \Exception($this->pdo->error));
             }
 
-            return $this->pdo->fetchAll($result) ?: [];
+            return $statement->fetchAll($this->fetchMode) ?: [];
         });
     }
 
