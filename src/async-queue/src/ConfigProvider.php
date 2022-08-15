@@ -12,6 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\AsyncQueue;
 
 use Hyperf\AsyncQueue\Aspect\AsyncQueueAspect;
+use Hyperf\AsyncQueue\Command\FlushFailedMessageCommand;
+use Hyperf\AsyncQueue\Command\InfoCommand;
+use Hyperf\AsyncQueue\Command\ReloadFailedMessageCommand;
 
 class ConfigProvider
 {
@@ -20,6 +23,11 @@ class ConfigProvider
         return [
             'aspects' => [
                 AsyncQueueAspect::class,
+            ],
+            'commands' => [
+                FlushFailedMessageCommand::class,
+                InfoCommand::class,
+                ReloadFailedMessageCommand::class,
             ],
             'publish' => [
                 [

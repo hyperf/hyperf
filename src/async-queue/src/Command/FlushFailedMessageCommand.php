@@ -18,7 +18,6 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-#[Command]
 class FlushFailedMessageCommand extends HyperfCommand
 {
     protected ContainerInterface $container;

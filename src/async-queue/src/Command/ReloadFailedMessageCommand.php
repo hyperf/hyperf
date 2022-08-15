@@ -18,7 +18,6 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-#[Command]
 class ReloadFailedMessageCommand extends HyperfCommand
 {
     protected ContainerInterface $container;

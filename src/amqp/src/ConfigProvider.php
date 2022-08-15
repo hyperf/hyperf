@@ -30,7 +30,6 @@ class ConfigProvider
                 BeforeMainServerStartListener::class => 99,
                 MainWorkerStartListener::class,
             ],
-
             'publish' => [
                 [
                     'id' => 'config',
