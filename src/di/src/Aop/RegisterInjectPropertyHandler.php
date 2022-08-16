@@ -33,11 +33,10 @@ class RegisterInjectPropertyHandler
         PropertyHandlerManager::register(Inject::class, function ($object, $currentClassName, $targetClassName, $property, $annotation) {
             if ($annotation instanceof Inject) {
                 try {
-                    $reflectionProperty = ReflectionManager::reflectProperty($currentClassName, $property);
-                    $reflectionProperty->setAccessible(true);
                     $container = ApplicationContext::getContainer();
                     if ($container->has($annotation->value)) {
-                        $reflectionProperty->setValue($object, $container->get($annotation->value));
+                        $value = $container->get($annotation->value);
+                        (fn() => $this->$property = $value)->call($object);
                     } elseif ($annotation->required) {
                         throw new NotFoundException("No entry or class found for '{$annotation->value}'");
                     }
