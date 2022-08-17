@@ -16,6 +16,7 @@ use Hyperf\Redis\Exception\InvalidRedisConnectionException;
 use Hyperf\Redis\Pool\PoolFactory;
 
 /**
+ * @method bool isCluster()
  * @mixin \Redis
  */
 class Redis
