@@ -127,7 +127,8 @@ class CoreMiddleware implements CoreMiddlewareInterface
     {
         if ($dispatched->handler->callback instanceof Closure) {
             $parameters = $this->parseClosureParameters($dispatched->handler->callback, $dispatched->params);
-            $response = call($dispatched->handler->callback, $parameters);
+            $callback = $dispatched->handler->callback;
+            $response = $callback(...$parameters);
         } else {
             [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
             $controllerInstance = $this->container->get($controller);
