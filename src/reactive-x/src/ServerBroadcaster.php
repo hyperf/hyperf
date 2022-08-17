@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\ReactiveX;
 
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\ReactiveX\Contract\BroadcasterInterface;
+use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
 class ServerBroadcaster implements BroadcasterInterface

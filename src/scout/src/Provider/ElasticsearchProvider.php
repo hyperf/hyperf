@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\Scout\Provider;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
 use Hyperf\Scout\Engine\ElasticsearchEngine;
 use Hyperf\Scout\Engine\Engine;
+use Psr\Container\ContainerInterface;
 
 class ElasticsearchProvider implements ProviderInterface
 {
