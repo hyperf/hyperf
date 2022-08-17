@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\DbConnection\Listener;
 
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Register;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
+use Psr\Container\ContainerInterface;
 
 class RegisterConnectionResolverListener implements ListenerInterface
 {

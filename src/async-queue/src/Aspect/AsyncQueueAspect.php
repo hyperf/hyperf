@@ -15,12 +15,10 @@ use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
 use Hyperf\AsyncQueue\AnnotationJob;
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\AsyncQueue\Environment;
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Psr\Container\ContainerInterface;
 
-#[Aspect]
 class AsyncQueueAspect extends AbstractAspect
 {
     public array $annotations = [

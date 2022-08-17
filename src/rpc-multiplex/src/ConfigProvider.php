@@ -34,13 +34,6 @@ class ConfigProvider
             'listeners' => [
                 RegisterProtocolListener::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
         ];
     }
 }

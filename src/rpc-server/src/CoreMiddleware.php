@@ -41,7 +41,8 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
     protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request): mixed
     {
         if ($dispatched->handler->callback instanceof Closure) {
-            $response = call($dispatched->handler->callback);
+            $callback = $dispatched->handler->callback;
+            $response = $callback();
         } else {
             [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
             $controllerInstance = $this->container->get($controller);

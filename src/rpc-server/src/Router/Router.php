@@ -31,7 +31,7 @@ class Router
     {
         $temp = $serverName;
         static::$serverName = $serverName;
-        call($callback);
+        $callback();
         static::$serverName = $temp;
         unset($temp);
     }

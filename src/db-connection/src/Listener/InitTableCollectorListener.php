@@ -13,7 +13,6 @@ namespace Hyperf\DbConnection\Listener;
 
 use Hyperf\Command\Event\BeforeHandle;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\MySqlConnection;
@@ -21,6 +20,7 @@ use Hyperf\DbConnection\Collector\TableCollector;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 class InitTableCollectorListener implements ListenerInterface

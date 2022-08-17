@@ -179,7 +179,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
             return $this->{$method}(...$parameters);
         }
 
-        return call([$this->newQuery(), $method], $parameters);
+        return $this->newQuery()->{$method}(...$parameters);
     }
 
     /**
@@ -239,7 +239,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         IgnoreOnTouch::$container = array_values(array_merge(IgnoreOnTouch::$container, $models));
 
         try {
-            call($callback);
+            $callback();
         } finally {
             IgnoreOnTouch::$container = array_values(array_diff(IgnoreOnTouch::$container, $models));
         }
