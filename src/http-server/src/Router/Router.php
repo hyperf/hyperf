@@ -36,7 +36,7 @@ class Router
     public static function addServer(string $serverName, callable $callback)
     {
         static::$serverName = $serverName;
-        call($callback);
+        $callback();
         static::$serverName = 'http';
     }
 

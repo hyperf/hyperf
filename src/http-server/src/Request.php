@@ -576,7 +576,7 @@ class Request implements RequestInterface
     protected function storeParsedData(callable $callback): mixed
     {
         if (! Context::has($this->contextkeys['parsedData'])) {
-            return Context::set($this->contextkeys['parsedData'], call($callback));
+            return Context::set($this->contextkeys['parsedData'], $callback());
         }
         return Context::get($this->contextkeys['parsedData']);
     }
