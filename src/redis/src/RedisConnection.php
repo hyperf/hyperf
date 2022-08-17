@@ -166,7 +166,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             if (isset($this->config['auth'])) {
                 $parameters[] = $this->config['auth'];
             }
-            if ($this->isSupportContext() && ! empty($this->config['cluster']['context'])) {
+            if (! empty($this->config['cluster']['context'])) {
                 $parameters[] = $this->config['cluster']['context'];
             }
 
