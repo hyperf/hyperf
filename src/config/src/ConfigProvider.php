@@ -29,13 +29,6 @@ class ConfigProvider
             'listeners' => [
                 RegisterPropertyHandlerListener::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
         ];
     }
 }

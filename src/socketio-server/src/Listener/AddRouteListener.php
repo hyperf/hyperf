@@ -12,13 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\SocketIOServer\Listener;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeMainServerStart;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Server\ServerInterface;
 use Hyperf\SocketIOServer\SocketIO;
+use Psr\Container\ContainerInterface;
 
 class AddRouteListener implements ListenerInterface
 {

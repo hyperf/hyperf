@@ -48,7 +48,8 @@ class CoreMiddleware extends HttpCoreMiddleware
             case Dispatcher::FOUND:
                 if ($dispatched->handler->callback instanceof \Closure) {
                     $parameters = $this->parseClosureParameters($dispatched->handler->callback, $dispatched->params);
-                    $result = call($dispatched->handler->callback, $parameters);
+                    $callback = $dispatched->handler->callback;
+                    $result = $callback(...$parameters);
                 } else {
                     [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
                     $controllerInstance = $this->container->get($controller);

@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\Tracer\Aspect;
 
 use GuzzleHttp\Client;
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\SpanStarter;
@@ -22,7 +21,6 @@ use OpenTracing\Tracer;
 use Psr\Http\Message\ResponseInterface;
 use const OpenTracing\Formats\TEXT_MAP;
 
-#[Aspect]
 class HttpClientAspect extends AbstractAspect
 {
     use SpanStarter;

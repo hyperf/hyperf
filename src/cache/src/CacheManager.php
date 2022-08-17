@@ -16,7 +16,6 @@ use Hyperf\Cache\Driver\RedisDriver;
 use Hyperf\Cache\Exception\InvalidArgumentException;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use function call;
 
 class CacheManager
 {
@@ -47,7 +46,7 @@ class CacheManager
         return $this->drivers[$name] = $driver;
     }
 
-    public function call($callback, string $key, int $ttl = 3600, $config = 'default')
+    public function call(callable $callback, string $key, int $ttl = 3600, $config = 'default')
     {
         $driver = $this->getDriver($config);
 
@@ -56,7 +55,7 @@ class CacheManager
             return $result;
         }
 
-        $result = call($callback);
+        $result = $callback();
         $driver->set($key, $result, $ttl);
 
         return $result;

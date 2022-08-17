@@ -19,13 +19,6 @@ class ConfigProvider
             'dependencies' => [
                 KVInterface::class => KVFactory::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
             'publish' => [
                 [
                     'id' => 'config',

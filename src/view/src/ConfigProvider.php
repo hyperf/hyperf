@@ -19,13 +19,6 @@ class ConfigProvider
             'dependencies' => [
                 RenderInterface::class => Render::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
             'publish' => [
                 [
                     'id' => 'config',

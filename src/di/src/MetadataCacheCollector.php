@@ -35,7 +35,7 @@ class MetadataCacheCollector
         $metadata = [];
         foreach ($this->collectors as $collector) {
             if (is_string($collector) && method_exists($collector, 'serialize')) {
-                $metadata[$collector] = call([$collector, 'serialize']);
+                $metadata[$collector] = $collector::serialize();
             }
         }
 
@@ -48,7 +48,7 @@ class MetadataCacheCollector
         $collectors = [];
         foreach ($metadatas as $collector => $metadata) {
             if (method_exists($collector, 'deserialize')) {
-                call([$collector, 'deserialize'], [$metadata]);
+                $collector::deserialize($metadata);
                 $collectors[] = $collector;
             }
         }
