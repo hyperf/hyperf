@@ -148,6 +148,11 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         $this->database = $database;
     }
 
+    public function isCluster(): bool
+    {
+        return $this->connection instanceof \RedisCluster;
+    }
+
     protected function createRedisCluster(): \RedisCluster
     {
         try {
