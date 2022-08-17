@@ -34,9 +34,9 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         'auth' => null,
         'db' => 0,
         'timeout' => 0.0,
-        'read_timeout' => 0.0,
         'reserved' => null,
         'retry_interval' => 0,
+        'read_timeout' => 0.0,
         'cluster' => [
             'enable' => false,
             'name' => null,
