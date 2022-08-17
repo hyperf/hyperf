@@ -20,7 +20,7 @@ class FactoryDefinition implements DefinitionInterface
      * @param callable|string $factory
      * @param array $parameters
      */
-    public function __construct(private string $name, private $factory, private array $parameters = [])
+    public function __construct(private string $name, private mixed $factory, private array $parameters = [])
     {
     }
 
@@ -40,10 +40,7 @@ class FactoryDefinition implements DefinitionInterface
         return $this;
     }
 
-    /**
-     * @return callable|string
-     */
-    public function getFactory()
+    public function getFactory(): callable|string
     {
         return $this->factory;
     }

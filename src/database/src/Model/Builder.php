@@ -142,7 +142,7 @@ class Builder
             return $this->toBase()->{$method}(...$parameters);
         }
 
-        call([$this->query, $method], $parameters);
+        $this->query->{$method}(...$parameters);
 
         return $this;
     }
