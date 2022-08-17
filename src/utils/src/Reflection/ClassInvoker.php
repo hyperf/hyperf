@@ -11,24 +11,32 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Reflection;
 
+use ReflectionClass;
+
 class ClassInvoker
 {
+    protected ReflectionClass $reflection;
+
     public function __construct(protected object $instance)
     {
+        $this->reflection = new ReflectionClass($instance);
     }
 
     public function __get($name)
     {
-        return (fn() => $this->$name)->call($this->instance);
-    }
+        $property = $this->reflection->getProperty($name);
 
-    public function __set($name, $value)
-    {
-        return (fn() => $this->$name = $value)->call($this->instance);
+        $property->setAccessible(true);
+
+        return $property->getValue($this->instance);
     }
 
     public function __call($name, $arguments)
     {
-        return (fn() => $this->$name(...$arguments))->call($this->instance);
+        $method = $this->reflection->getMethod($name);
+
+        $method->setAccessible(true);
+
+        return $method->invokeArgs($this->instance, $arguments);
     }
 }
