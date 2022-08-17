@@ -25,6 +25,12 @@ class RedisProxy extends Redis
         $this->poolName = $pool;
     }
 
+    /**
+     * WARN: Can't remove this function, because AOP need it.
+     * @see https://github.com/hyperf/hyperf/issues/1239
+     * @param string $name
+     * @param array $arguments
+     */
     public function __call($name, $arguments)
     {
         return parent::__call($name, $arguments);

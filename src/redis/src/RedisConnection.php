@@ -268,7 +268,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $config['read_timeout'] ?? 0.0,
         ];
 
-        if ($this->isSupportContext() && ! empty($config['context'])) {
+        if (! empty($config['context'])) {
             $parameters[] = $config['context'];
         }
 
@@ -277,10 +277,5 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             throw new ConnectionException('Connection reconnect failed.');
         }
         return $redis;
-    }
-
-    protected function isSupportContext(): bool
-    {
-        return (bool) version_compare(phpversion('redis'), '5.3.2', '>=');
     }
 }
