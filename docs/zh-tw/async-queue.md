@@ -481,7 +481,7 @@ return $driver->push(new ExampleJob());
 composer require hyperf/signal
 ```
 
-新增配置
+新增配置 `autoload/signal.php`
 
 ```php
 <?php
