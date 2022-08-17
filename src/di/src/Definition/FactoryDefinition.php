@@ -40,10 +40,7 @@ class FactoryDefinition implements DefinitionInterface
         return $this;
     }
 
-    /**
-     * @return callable|string
-     */
-    public function getFactory():callable|string
+    public function getFactory(): callable|string
     {
         return $this->factory;
     }
