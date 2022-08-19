@@ -82,7 +82,7 @@ class ListenerTest extends TestCase
         $this->assertInstanceOf(ListenerProviderInterface::class, $listenerProvider);
     }
 
-    public function testListnerInvokeByFactoryWithConfig()
+    public function testListenerInvokeByFactoryWithConfig()
     {
         $container = Mockery::mock(ContainerInterface::class);
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
@@ -114,7 +114,7 @@ class ListenerTest extends TestCase
         $this->assertSame(2, $betaListener->value);
     }
 
-    public function testListnerInvokeByFactoryWithAnnotationConfig()
+    public function testListenerInvokeByFactoryWithAnnotationConfig()
     {
         $listenerAnnotation = new ListenerAnnotation();
         $listenerAnnotation->collectClass(AlphaListener::class, ListenerAnnotation::class);
