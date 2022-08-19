@@ -30,6 +30,8 @@ php vendor/bin/regenerate-models.php $PWD/app/Model
 composer analyse
 ```
 
+- 框架根据 `GRPC` 规范修改了 `GRPC Server` 返回的 `Http status` 固定为为 200， `GRPC Server` 返回对应的 `status code`,更新前如果有使用 `GRPC`,请务必将相关的服务升级到 3.x 版本
+
 ## Dependencies Upgrade
 
 - Upgraded `php-amqplib/php-amqplib` to `^3.1`;
@@ -102,6 +104,7 @@ composer analyse
 - [#4952](https://github.com/hyperf/hyperf/pull/4952) Don't write pid when the `settings.pid_file` is null when using swow server.
 - [#4979](https://github.com/hyperf/hyperf/pull/4979) Don't support database commands by default, please require `hyperf/devtool` or set them in `autoload/commands`.
 - [#5008](https://github.com/hyperf/hyperf/pull/5008) Removed array type of `Trace Annotation`, because don't support array.
+- [#5036](https://github.com/hyperf/hyperf/pull/5036) Changed grpc server StatsCode and serializeMessage.
 
 ## Swow Supported
 
