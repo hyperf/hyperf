@@ -54,7 +54,7 @@ class CoreMiddleware extends HttpCoreMiddleware
                     $controllerInstance = $this->container->get($controller);
                     if (! method_exists($controller, $action)) {
                         $grpcMessage = 'Action not exist.';
-                        return $this->handleResponse(null, 500, '500', $grpcMessage);
+                        return $this->handleResponse(null, 200, '13', $grpcMessage);
                     }
                     $parameters = $this->parseMethodParameters($controller, $action, $dispatched->params);
                     $result = $controllerInstance->{$action}(...$parameters);
@@ -62,14 +62,14 @@ class CoreMiddleware extends HttpCoreMiddleware
 
                 if (! $result instanceof Message) {
                     $grpcMessage = 'The result is not a valid message.';
-                    return $this->handleResponse(null, 500, '500', $grpcMessage);
+                    return $this->handleResponse(null, 200, '13', $grpcMessage);
                 }
 
                 return $this->handleResponse($result, 200);
             case Dispatcher::NOT_FOUND:
             case Dispatcher::METHOD_NOT_ALLOWED:
             default:
-                return $this->handleResponse(null, 404, '404', 'Route Not Found.');
+                return $this->handleResponse(null, 200, '5', 'Route Not Found.');
         }
     }
 

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Grpc;
 
+use Google\Protobuf\GPBEmpty;
 use Google\Protobuf\Internal\Message;
 
 class Parser
@@ -33,6 +34,9 @@ class Parser
 
     public static function serializeMessage($data)
     {
+        if ($data === null) {
+            $data = new GPBEmpty();
+        }
         if (method_exists($data, 'encode')) {
             $data = $data->encode();
         } elseif (method_exists($data, 'serializeToString')) {
