@@ -22,7 +22,7 @@ class CacheListenerCollector extends MetadataCollector
         static::$container[$listener] = $value;
     }
 
-    public static function getListner(string $listener, $default = null)
+    public static function getListener(string $listener, $default = null)
     {
         return static::$container[$listener] ?? $default;
     }
