@@ -62,6 +62,7 @@ class Container implements HyperfContainerInterface
      */
     public function make(string $name, array $parameters = [])
     {
+
         $definition = $this->getDefinition($name);
 
         if (! $definition) {
