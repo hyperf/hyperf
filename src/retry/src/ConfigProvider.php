@@ -11,17 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\Retry;
 
+use Hyperf\Retry\Aspect\RetryAnnotationAspect;
+
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
+            'aspects' => [
+                RetryAnnotationAspect::class,
             ],
             'dependencies' => [
                 SleepStrategyInterface::class => FlatStrategy::class,

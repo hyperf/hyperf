@@ -15,24 +15,18 @@ use Hyperf\Engine\Channel;
 use Hyperf\Utils\Str;
 use Hyperf\Watcher\Option;
 use Swoole\Coroutine\System;
-use Swoole\Timer;
 
-class FindDriver implements DriverInterface
+class FindDriver extends AbstractDriver
 {
-    protected bool $isDarwin = false;
-
     protected bool $isSupportFloatMinutes = true;
 
     protected int $startTime = 0;
 
     public function __construct(protected Option $option)
     {
-        if (PHP_OS === 'Darwin') {
-            $this->isDarwin = true;
-        } else {
-            $this->isDarwin = false;
-        }
-        if ($this->isDarwin) {
+        parent::__construct($option);
+
+        if ($this->isDarwin()) {
             $ret = System::exec('which gfind');
             if (empty($ret['output'])) {
                 throw new \InvalidArgumentException('gfind not exists. You can `brew install findutils` to install it.');
@@ -50,25 +44,29 @@ class FindDriver implements DriverInterface
     public function watch(Channel $channel): void
     {
         $this->startTime = time();
-        $ms = $this->option->getScanInterval();
-        $seconds = ceil(($ms + 1000) / 1000);
-        if ($this->isSupportFloatMinutes) {
-            $minutes = sprintf('-%.2f', $seconds / 60);
-        } else {
-            $minutes = sprintf('-%d', ceil($seconds / 60));
-        }
-        Timer::tick($ms, function () use ($channel, $minutes) {
+        $seconds = $this->option->getScanIntervalSeconds();
+
+        $this->timerId = $this->timer->tick($seconds, function () use ($channel) {
             global $fileModifyTimes;
             if (is_null($fileModifyTimes)) {
                 $fileModifyTimes = [];
             }
 
-            [$fileModifyTimes, $changedFiles] = $this->scan($fileModifyTimes, $minutes);
+            [$fileModifyTimes, $changedFiles] = $this->scan($fileModifyTimes, $this->getScanIntervalMinutes());
 
             foreach ($changedFiles as $file) {
                 $channel->push($file);
             }
         });
+    }
+
+    protected function getScanIntervalMinutes(): string
+    {
+        $minutes = $this->option->getScanIntervalSeconds() / 60;
+        if ($this->isSupportFloatMinutes) {
+            return sprintf('-%.2f', $minutes);
+        }
+        return sprintf('-%d', ceil($minutes));
     }
 
     protected function find(array $fileModifyTimes, array $targets, string $minutes, array $ext = []): array
@@ -104,7 +102,7 @@ class FindDriver implements DriverInterface
 
     protected function getBin(): string
     {
-        return $this->isDarwin ? 'gfind' : 'find';
+        return $this->isDarwin() ? 'gfind' : 'find';
     }
 
     protected function scan(array $fileModifyTimes, string $minutes): array

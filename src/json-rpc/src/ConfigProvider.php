@@ -32,13 +32,6 @@ class ConfigProvider
                     return null;
                 }),
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
         ];
     }
 }

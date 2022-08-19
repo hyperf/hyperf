@@ -23,13 +23,6 @@ class ConfigProvider
                 DeleteCacheListener::class,
                 DeleteCacheInTransactionListener::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
             'publish' => [
                 [
                     'id' => 'config',

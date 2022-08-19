@@ -11,14 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer\Aspect;
 
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Tracer\Annotation\Trace;
 use Hyperf\Tracer\SpanStarter;
 use OpenTracing\Tracer;
 
-#[Aspect]
 class TraceAnnotationAspect extends AbstractAspect
 {
     use SpanStarter;

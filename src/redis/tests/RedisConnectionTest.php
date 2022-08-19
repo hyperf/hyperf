@@ -46,6 +46,9 @@ class RedisConnectionTest extends TestCase
             'auth' => 'redis',
             'db' => 0,
             'timeout' => 0.0,
+            'reserved' => null,
+            'retry_interval' => 5,
+            'read_timeout' => 3.0,
             'cluster' => [
                 'enable' => false,
                 'name' => null,
@@ -54,6 +57,9 @@ class RedisConnectionTest extends TestCase
                 ],
                 'read_timeout' => 0.0,
                 'persistent' => false,
+                'context' => [
+                    'stream' => ['cafile' => 'foo-cafile', 'verify_peer' => true],
+                ],
             ],
             'sentinel' => [
                 'enable' => false,
@@ -63,6 +69,9 @@ class RedisConnectionTest extends TestCase
                 'read_timeout' => 0,
             ],
             'options' => [],
+            'context' => [
+                'stream' => ['cafile' => 'foo-cafile', 'verify_peer' => true],
+            ],
             'pool' => [
                 'min_connections' => 1,
                 'max_connections' => 30,
@@ -122,6 +131,12 @@ class RedisConnectionTest extends TestCase
                     'host' => 'redis',
                     'auth' => 'redis',
                     'port' => 16379,
+                    'read_timeout' => 3.0,
+                    'reserved' => null,
+                    'retry_interval' => 5,
+                    'context' => [
+                        'stream' => ['cafile' => 'foo-cafile', 'verify_peer' => true],
+                    ],
                     'pool' => [
                         'min_connections' => 1,
                         'max_connections' => 30,
@@ -135,6 +150,9 @@ class RedisConnectionTest extends TestCase
                         'name' => null,
                         'seeds' => [
                             '127.0.0.1:6379',
+                        ],
+                        'context' => [
+                            'stream' => ['cafile' => 'foo-cafile', 'verify_peer' => true],
                         ],
                     ],
                     'sentinel' => [

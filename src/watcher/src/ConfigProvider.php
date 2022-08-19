@@ -23,13 +23,6 @@ class ConfigProvider
             'commands' => [
                 WatchCommand::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
             'publish' => [
                 [
                     'id' => 'config',

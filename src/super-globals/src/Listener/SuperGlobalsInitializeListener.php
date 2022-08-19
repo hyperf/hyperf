@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\SuperGlobals\Listener;
 
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\SuperGlobals\Proxy;
+use Psr\Container\ContainerInterface;
 
 class SuperGlobalsInitializeListener implements ListenerInterface
 {

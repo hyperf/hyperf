@@ -165,7 +165,10 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
                             'type' => Packet::ACK,
                             'data' => $data,
                         ]);
-                        $this->sender->push($frame->fd, Engine::MESSAGE . $this->encoder->encode($responsePacket));
+
+                        if ($this->sender->check($frame->fd)) {
+                            $this->sender->push($frame->fd, Engine::MESSAGE . $this->encoder->encode($responsePacket));
+                        }
                     };
                 }
                 $this->dispatch($frame->fd, $packet->nsp, ...$packet->data);

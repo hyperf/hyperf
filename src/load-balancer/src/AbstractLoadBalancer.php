@@ -73,7 +73,7 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
                     }
 
                     $beforeNodes = $this->getNodes();
-                    $nodes = call($callback);
+                    $nodes = $callback();
                     if (is_array($nodes)) {
                         $this->setNodes($nodes);
                         foreach ($this->afterRefreshCallbacks as $refreshCallback) {
