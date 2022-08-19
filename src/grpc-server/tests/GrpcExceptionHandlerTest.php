@@ -45,7 +45,6 @@ class GrpcExceptionHandlerTest extends TestCase
 
         $logger = $container->get(StdoutLoggerInterface::class);
         $formatter = $container->get(FormatterInterface::class);
-        $swooleResponse = Mockery::mock(\Swoole\Http\Response::class);
         $response = new Response();
         $handler = new GrpcExceptionHandlerStub($logger, $formatter);
         $response = $handler->transferToResponse(StatusCode::CANCELLED, 'The operation was cancelled', $response);
