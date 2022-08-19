@@ -1,7 +1,6 @@
 # v3.0.0 - TBD
 
 - [#4238](https://github.com/hyperf/hyperf/issues/4238) Upgraded the minimum php version to `^8.0` for all components;
-- [#5036](https://github.com/hyperf/hyperf/pull/5036) Fixed grpc server StatsCode and serializeMessage;
 
 ## BC breaks
 
@@ -105,6 +104,7 @@ composer analyse
 - [#4952](https://github.com/hyperf/hyperf/pull/4952) Don't write pid when the `settings.pid_file` is null when using swow server.
 - [#4979](https://github.com/hyperf/hyperf/pull/4979) Don't support database commands by default, please require `hyperf/devtool` or set them in `autoload/commands`.
 - [#5008](https://github.com/hyperf/hyperf/pull/5008) Removed array type of `Trace Annotation`, because don't support array.
+- [#5036](https://github.com/hyperf/hyperf/pull/5036) Changed grpc server StatsCode and serializeMessage.
 
 ## Swow Supported
 
