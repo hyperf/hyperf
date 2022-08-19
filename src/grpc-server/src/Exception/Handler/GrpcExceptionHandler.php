@@ -15,6 +15,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Grpc\Parser;
+use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcServer\Exception\GrpcException;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Psr\Http\Message\ResponseInterface;
@@ -39,7 +40,7 @@ class GrpcExceptionHandler extends ExceptionHandler
             $code = $throwable->getCode();
         } else {
             $this->logger->warning($this->formatter->format($throwable));
-            $code = 13;
+            $code = StatusCode::INTERNAL;
         }
 
         return $this->transferToResponse($code, $throwable->getMessage(), $response);
