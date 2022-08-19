@@ -1,6 +1,7 @@
 # v3.0.0 - TBD
 
 - [#4238](https://github.com/hyperf/hyperf/issues/4238) Upgraded the minimum php version to `^8.0` for all components;
+- [#5036](https://github.com/hyperf/hyperf/pull/5036) Fixed grpc server StatsCode and serializeMessage;
 
 ## BC breaks
 
@@ -29,6 +30,8 @@ php vendor/bin/regenerate-models.php $PWD/app/Model
 ```shell
 composer analyse
 ```
+
+- 框架根据 `GRPC` 规范修改了 `GRPC Server` 返回的 `Http status` 固定为为 200， `GRPC Server` 返回对应的 `status code`,更新前如果有使用 `GRPC`,请务必将相关的服务升级到 3.x 版本
 
 ## Dependencies Upgrade
 
