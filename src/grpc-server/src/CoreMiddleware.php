@@ -154,7 +154,6 @@ class CoreMiddleware extends HttpCoreMiddleware
 
     /**
      * Handle GRPC Response.
-     * @param int $httpStatus
      */
     protected function handleResponse(?Message $message, int $httpStatus = 200, int $grpcStatus = StatusCode::OK, string $grpcMessage = ''): ResponseInterface
     {
