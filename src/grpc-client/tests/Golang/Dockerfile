@@ -4,7 +4,7 @@ WORKDIR /go/builder
 
 ADD . .
 
-RUN GOOS=linux CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix cgo -o main main.go
+RUN go mod download && GOOS=linux CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix cgo -o main main.go
 
 FROM scratch
 
