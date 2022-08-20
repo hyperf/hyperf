@@ -17,7 +17,7 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "hyperf/grpc": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "jean85/pretty-package-versions": "^1.2|^2.0"
