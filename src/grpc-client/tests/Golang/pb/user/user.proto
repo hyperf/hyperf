@@ -1,0 +1,18 @@
+syntax = "proto3";
+option go_package ="pb/user";
+
+package UserService;
+
+service UserService {
+  rpc info (UserId) returns (UserInfo){}
+}
+
+message UserId {
+  uint64 id = 1;
+}
+
+message UserInfo {
+  uint64 id = 1;
+  string name = 2;
+  uint32 gender = 3;
+}
