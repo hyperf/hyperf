@@ -129,14 +129,14 @@ class BaseClient
      * @return array|\Google\Protobuf\Internal\Message[]|Response[]
      */
     protected function _simpleRequest(
-        string $path,
+        string $method,
         Message $argument,
         $deserialize,
         array $metadata = [],
         array $options = []
     ) {
         try {
-            $response = $this->request($path, $argument, $deserialize[0], ($options['headers'] ?? []) + $metadata);
+            $response = $this->request($method, $argument, $deserialize[0], ($options['headers'] ?? []) + $metadata);
             return [$response->message, 0, null];
         } catch (GrpcClientException $exception) {
             return [$exception->getMessage(), $exception->getCode(), null];
