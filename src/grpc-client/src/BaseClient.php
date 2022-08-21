@@ -75,13 +75,7 @@ class BaseClient
         return $this->grpcClient;
     }
 
-
-
-    /**
-     * @param null|\Swoole\Http2\Response $response
-     * @param mixed $deserialize
-     */
-    public function parseResponse($response, $deserialize): Response
+    public function parseResponse(?\Swoole\Http2\Response $response, mixed $deserialize): Response
     {
         if (! $response && $response->data) {
             throw new GrpcClientException('No Response', self::GRPC_ERROR_NO_RESPONSE);
@@ -121,7 +115,7 @@ class BaseClient
      * Call a remote method that takes a single argument and has a
      * single output.
      *
-     * @param string $path The name of the method to call
+     * @param string $method The name of the method to call
      * @param Message $argument The argument to the method
      * @param callable $deserialize A function that deserializes the response
      * @throws GrpcClientException
@@ -138,6 +132,9 @@ class BaseClient
             $response = $this->request($method, $argument, $deserialize[0], ($options['headers'] ?? []) + $metadata);
             return [$response->message, 0, null];
         } catch (GrpcClientException $exception) {
+            if ($exception->getMessage() === 'Failed to send the request to server') {
+                throw $exception;
+            }
             return [$exception->getMessage(), $exception->getCode(), null];
         }
     }
