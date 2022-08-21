@@ -106,9 +106,14 @@ class BaseClient
         return $this->parseResponse($this->recv($streamId), [$class, 'decode']);
     }
 
+    public function path(string $method): string
+    {
+        return $this->service . $method;
+    }
+
     public function url(string $method): string
     {
-        return $this->hostname . $this->service . $method;
+        return $this->hostname . $this->path($method);
     }
 
     /**
@@ -235,8 +240,7 @@ class BaseClient
 
     protected function buildRequest(string $method, Message $argument, array $headers): Request
     {
-        $path = $this->service . $method;
-        return new Request($path, $argument, $headers);
+        return new Request($this->path($method), $argument, $headers);
     }
 
     private function start()
