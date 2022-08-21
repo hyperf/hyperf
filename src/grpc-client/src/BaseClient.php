@@ -233,9 +233,9 @@ class BaseClient
         $this->initialized = true;
     }
 
-    protected function buildRequest(string $path, Message $argument, array $headers): Request
+    protected function buildRequest(string $method, Message $argument, array $headers): Request
     {
-        $path = $this->service . $path;
+        $path = $this->service . $method;
         return new Request($path, $argument, $headers);
     }
 
