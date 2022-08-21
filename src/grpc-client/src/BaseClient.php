@@ -77,7 +77,7 @@ class BaseClient
 
     public function parseResponse(?\Swoole\Http2\Response $response, mixed $deserialize): Response
     {
-        if (! $response && $response->data) {
+        if (! $response || empty($response->data)) {
             throw new GrpcClientException('No Response', self::GRPC_ERROR_NO_RESPONSE);
         }
         if ($response->statusCode !== 200) {
@@ -87,7 +87,7 @@ class BaseClient
         if ($code !== 0) {
             throw new GrpcClientException($response->headers['grpc-message'] ?? '', $code);
         }
-        $data = $response->data ?? '';
+        $data = $response->data;
         $reply = Parser::deserializeMessage($deserialize, $data);
         return new Response($reply, $response);
     }
@@ -124,7 +124,7 @@ class BaseClient
      * @param Message $argument The argument to the method
      * @param callable $deserialize A function that deserializes the response
      * @throws GrpcClientException
-     * @return array|\Google\Protobuf\Internal\Message[]|Response[]
+     * @return array|\Google\Protobuf\Internal\Message[]|?\Swoole\Http2\Response[]
      */
     protected function _simpleRequest(
         string $method,
