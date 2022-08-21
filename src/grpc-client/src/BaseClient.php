@@ -87,7 +87,6 @@ class BaseClient
             throw new GrpcClientException('No Response', self::GRPC_ERROR_NO_RESPONSE);
         }
         if ($response->statusCode !== 200) {
-            // 尝试转换为 通过 Http 状态 转换为 gRPC Client 状态
             throw new GrpcClientException('Http Code ' . $this->statusCode, StatusCode::HTTP_GRPC_STATUS_MAPPING[$response->statusCode] ?? StatusCode::UNKNOWN);
         }
         $code = (int) ($response->headers['grpc-status'] ?? 0);
