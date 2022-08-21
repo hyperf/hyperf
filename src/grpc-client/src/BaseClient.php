@@ -18,7 +18,6 @@ use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ChannelPool;
 use InvalidArgumentException;
-use Swoole\Http2\Response;
 
 /**
  * @method int send(Request $request)
@@ -27,6 +26,8 @@ use Swoole\Http2\Response;
  */
 class BaseClient
 {
+    public const GRPC_ERROR_NO_RESPONSE = -1;
+
     protected ?GrpcClient $grpcClient;
 
     protected array $options;
@@ -35,7 +36,7 @@ class BaseClient
 
     protected bool $initialized = false;
 
-    protected string $basePath = '';
+    protected string $service = '';
 
     public function __construct(string $hostname, array $options = [])
     {
@@ -74,10 +75,34 @@ class BaseClient
         return $this->grpcClient;
     }
 
-    public function request(string $path, Message $argument, string $class, array $headers = []): array
+
+
+    /**
+     * @param null|\Swoole\Http2\Response $response
+     * @param mixed $deserialize
+     */
+    public function parseResponse($response, $deserialize): Response
     {
-        $streamId = retry($this->options['retry_attempts'] ?? 3, function () use ($path, $argument, $headers) {
-            $streamId = $this->send($this->buildRequest($path, $argument, $headers));
+        if (! $response && $response->data) {
+            throw new GrpcClientException('No Response', self::GRPC_ERROR_NO_RESPONSE);
+        }
+        if ($response->statusCode !== 200) {
+            // 尝试转换为 通过 Http 状态 转换为 gRPC Client 状态
+            throw new GrpcClientException('Http Code ' . $this->statusCode, StatusCode::HTTP_GRPC_STATUS_MAPPING[$response->statusCode] ?? StatusCode::UNKNOWN);
+        }
+        $code = (int) ($response->headers['grpc-status'] ?? 0);
+        if ($code !== 0) {
+            throw new GrpcClientException($response->headers['grpc-message'] ?? '', $code);
+        }
+        $data = $response->data ?? '';
+        $reply = Parser::deserializeMessage($deserialize, $data);
+        return new Response($reply, $response);
+    }
+
+    public function request(string $method, Message $argument, string $class, array $headers = []): Response
+    {
+        $streamId = retry($this->options['retry_attempts'] ?? 3, function () use ($method, $argument, $headers) {
+            $streamId = $this->send($this->buildRequest($method, $argument, $headers));
             if ($streamId <= 0) {
                 $this->init();
                 // The client should not be used after this exception
@@ -85,23 +110,12 @@ class BaseClient
             }
             return $streamId;
         }, $this->options['retry_interval'] ?? 100);
-        // return [$message, $status, $response];
-        return Parser::parseResponse($this->recv($streamId), [$class, 'decode']);
+        return $this->parseResponse($this->recv($streamId), [$class, 'decode']);
     }
 
-    public function get(string $path, Message $argument, string $class, array $headers = []): array
+    public function url(string $method): string
     {
-        return $this->request($path, $argument, $class, ['method' => 'GET'] + $headers);
-    }
-
-    public function post(string $path, Message $argument, string $class, array $headers = []): array
-    {
-        return $this->request($path, $argument, $class, ['method' => 'POST'] + $headers);
-    }
-
-    public function url(string $path): string
-    {
-        return $this->hostname . $this->basePath . $path;
+        return $this->hostname . $this->service . $method;
     }
 
     /**
@@ -121,7 +135,12 @@ class BaseClient
         array $metadata = [],
         array $options = []
     ) {
-        return $this->request($path, $argument, $deserialize[0], ($options['headers'] ?? []) + $metadata);
+        try {
+            $response = $this->request($path, $argument, $deserialize[0], ($options['headers'] ?? []) + $metadata);
+            return [$response->message, 0, null];
+        } catch (GrpcClientException $exception) {
+            return [$exception->getMessage(), $exception->getCode(), null];
+        }
     }
 
     /**
@@ -220,7 +239,7 @@ class BaseClient
 
     protected function buildRequest(string $path, Message $argument, array $headers): Request
     {
-        $path = $this->basePath . $path;
+        $path = $this->service . $path;
         return new Request($path, $argument, $headers);
     }
 

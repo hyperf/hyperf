@@ -27,7 +27,7 @@ class Request extends BaseRequest
 
     public function __construct(string $path, Message $argument = null, $headers = [])
     {
-        $this->method = $headers['method'] ?? 'POST';
+        $this->method = 'POST';
         $this->headers = array_replace($this->getDefaultHeaders(), $headers);
         $this->path = $path;
         $argument && $this->data = Parser::serializeMessage($argument);
