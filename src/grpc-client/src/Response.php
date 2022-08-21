@@ -27,7 +27,7 @@ class Response
 
     public function __call($name, $arguments)
     {
-        return $this->getMessage()->{$name}(...$arguments);
+        return $this->message->{$name}(...$arguments);
     }
 
 }
