@@ -94,7 +94,7 @@ class BaseClient
      * @param Message $argument The argument to the method
      * @param callable $deserialize A function that deserializes the response
      * @throws GrpcClientException
-     * @return array|\Google\Protobuf\Internal\Message[]|\Swoole\Http2\Response[]
+     * @return array<int, null|int|Message|string|\Swoole\Http2\Response>
      */
     protected function _simpleRequest(
         string $method,
@@ -102,7 +102,7 @@ class BaseClient
         $deserialize,
         array $metadata = [],
         array $options = []
-    ) {
+    ): array {
         try {
             $response = $this->request($method, $argument, $deserialize[0], ($options['headers'] ?? []) + $metadata);
             return [$response->message, 0, $response->rawResponse];
