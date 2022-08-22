@@ -1058,11 +1058,8 @@ trait HasAttributes
 
     /**
      * Encode the given value as JSON.
-     *
-     * @param mixed $value
-     * @return string
      */
-    protected function asJson($value): string|false
+    protected function asJson(mixed $value): string|false
     {
         return json_encode($value);
     }
