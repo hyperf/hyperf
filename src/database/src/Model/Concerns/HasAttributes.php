@@ -242,10 +242,8 @@ trait HasAttributes
 
     /**
      * Determine if a get mutator exists for an attribute.
-     *
-     * @param string $key
      */
-    public function hasGetMutator($key): bool
+    public function hasGetMutator(string $key): bool
     {
         return method_exists($this, 'get' . Str::studly($key) . 'Attribute');
     }
@@ -477,6 +475,16 @@ trait HasAttributes
         return collect($this->original)->mapWithKeys(function ($value, $key) {
             return [$key => $this->transformModelValue($key, $value)];
         })->all();
+    }
+
+    /**
+     * Get the model's raw original attribute values.
+     *
+     * @return array
+     */
+    public function getRawOriginal(?string $key = null, mixed $default = null)
+    {
+        return Arr::get($this->original, $key, $default);
     }
 
     /**
@@ -865,11 +873,8 @@ trait HasAttributes
 
     /**
      * Get the value of an attribute using its mutator.
-     *
-     * @param string $key
-     * @param mixed $value
      */
-    protected function mutateAttribute($key, $value)
+    protected function mutateAttribute(string $key, mixed $value)
     {
         return $this->{'get' . Str::studly($key) . 'Attribute'}($value);
     }
