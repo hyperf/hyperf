@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Closure;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
@@ -1255,7 +1256,7 @@ class ModelBuilderTestPluckDatesStub extends Model
         $this->attributes = $attributes;
     }
 
-    protected function asDateTime(mixed $value)
+    protected function asDateTime(mixed $value): CarbonInterface
     {
         return 'date_' . $value;
     }
