@@ -980,10 +980,8 @@ trait HasAttributes
 
     /**
      * Set the value of a class castable attribute.
-     *
-     * @param mixed $value
      */
-    protected function setClassCastableAttribute(string $key, $value): void
+    protected function setClassCastableAttribute(string $key, mixed $value): void
     {
         $caster = $this->resolveCasterClass($key);
 

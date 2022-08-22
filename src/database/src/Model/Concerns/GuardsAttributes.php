@@ -140,10 +140,9 @@ trait GuardsAttributes
     /**
      * Determine if the given key is guarded.
      *
-     * @param string $key
      * @return bool
      */
-    public function isGuarded($key)
+    public function isGuarded(string $key)
     {
         return in_array($key, $this->getGuarded()) || $this->getGuarded() == ['*'];
     }
