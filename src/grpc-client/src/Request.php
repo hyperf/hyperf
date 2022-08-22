@@ -25,11 +25,11 @@ class Request extends BaseRequest
      */
     public $usePipelineRead;
 
-    public function __construct(string $method, Message $argument = null, $headers = [])
+    public function __construct(string $path, Message $argument = null, $headers = [])
     {
         $this->method = 'POST';
         $this->headers = array_replace($this->getDefaultHeaders(), $headers);
-        $this->path = $method;
+        $this->path = $path;
         $argument && $this->data = Parser::serializeMessage($argument);
     }
 
@@ -42,7 +42,7 @@ class Request extends BaseRequest
         ];
     }
 
-    private function buildDefaultUserAgent(): string
+    protected function buildDefaultUserAgent(): string
     {
         $userAgent = 'grpc-php-hyperf/1.0';
         $grpcClientVersion = Package::getPrettyVersion('hyperf/grpc-client');

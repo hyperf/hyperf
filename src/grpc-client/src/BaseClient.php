@@ -12,13 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\GrpcClient;
 
 use Google\Protobuf\Internal\Message;
-use Hyperf\Grpc\Parser;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ChannelPool;
 use InvalidArgumentException;
-use Swoole\Http2\Response;
 
 /**
  * @method int send(Request $request)
@@ -27,11 +25,13 @@ use Swoole\Http2\Response;
  */
 class BaseClient
 {
-    private ?GrpcClient $grpcClient = null;
+    protected ?GrpcClient $grpcClient = null;
 
-    private bool $initialized = false;
+    protected bool $initialized = false;
 
-    public function __construct(private string $hostname, private array $options = [])
+    protected string $service = '';
+
+    public function __construct(protected string $hostname, protected array $options = [])
     {
     }
 
@@ -62,6 +62,30 @@ class BaseClient
         return $this->grpcClient;
     }
 
+    public function request(string $method, Message $argument, string $class, array $headers = []): Response
+    {
+        $streamId = retry($this->options['retry_attempts'] ?? 3, function () use ($method, $argument, $headers) {
+            $streamId = $this->send($this->buildRequest($this->path($method), $argument, $headers));
+            if ($streamId <= 0) {
+                $this->init();
+                // The client should not be used after this exception
+                throw new GrpcClientException('Failed to send the request to server', StatusCode::INTERNAL);
+            }
+            return $streamId;
+        }, $this->options['retry_interval'] ?? 100);
+        return Parser::parseResponse($this->recv($streamId), [$class, 'decode']);
+    }
+
+    public function path(string $method): string
+    {
+        return $this->service . $method;
+    }
+
+    public function url(string $method): string
+    {
+        return $this->hostname . $this->path($method);
+    }
+
     /**
      * Call a remote method that takes a single argument and has a
      * single output.
@@ -70,7 +94,7 @@ class BaseClient
      * @param Message $argument The argument to the method
      * @param callable $deserialize A function that deserializes the response
      * @throws GrpcClientException
-     * @return array|\Google\Protobuf\Internal\Message[]|Response[]
+     * @return array|\Google\Protobuf\Internal\Message[]|\Swoole\Http2\Response[]
      */
     protected function _simpleRequest(
         string $method,
@@ -79,17 +103,15 @@ class BaseClient
         array $metadata = [],
         array $options = []
     ) {
-        $options['headers'] = ($options['headers'] ?? []) + $metadata;
-        $streamId = retry($this->options['retry_attempts'] ?? 3, function () use ($method, $argument, $options) {
-            $streamId = $this->send($this->buildRequest($method, $argument, $options));
-            if ($streamId <= 0) {
-                $this->init();
-                // The client should not be used after this exception
-                throw new GrpcClientException('Failed to send the request to server', StatusCode::INTERNAL);
+        try {
+            $response = $this->request($method, $argument, $deserialize[0], ($options['headers'] ?? []) + $metadata);
+            return [$response->message, 0, $response->rawResponse];
+        } catch (GrpcClientException $exception) {
+            if ($exception->getMessage() === 'Failed to send the request to server') {
+                throw $exception;
             }
-            return $streamId;
-        }, $this->options['retry_interval'] ?? 100);
-        return Parser::parseResponse($this->recv($streamId), $deserialize);
+            return [$exception->getMessage(), $exception->getCode(), null];
+        }
     }
 
     /**
@@ -109,7 +131,7 @@ class BaseClient
     ): ClientStreamingCall {
         $call = new ClientStreamingCall();
         $call->setClient($this->_getGrpcClient())
-            ->setMethod($method)
+            ->setMethod($this->path($method))
             ->setDeserialize($deserialize)
             ->setMetadata($metadata);
 
@@ -163,13 +185,7 @@ class BaseClient
         return $call;
     }
 
-    private function start()
-    {
-        $client = $this->grpcClient;
-        return $client->isRunning() || $client->start();
-    }
-
-    private function init()
+    protected function init()
     {
         if (! empty($this->options['client'])) {
             if (! ($this->options['client'] instanceof GrpcClient)) {
@@ -192,9 +208,14 @@ class BaseClient
         $this->initialized = true;
     }
 
-    private function buildRequest(string $method, Message $argument, array $options): Request
+    protected function buildRequest(string $path, Message $argument, array $headers): Request
     {
-        $headers = $options['headers'] ?? [];
-        return new Request($method, $argument, $headers);
+        return new Request($path, $argument, $headers);
+    }
+
+    private function start()
+    {
+        $client = $this->grpcClient;
+        return $client->isRunning() || $client->start();
     }
 }

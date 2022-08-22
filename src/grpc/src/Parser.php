@@ -12,11 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Grpc;
 
 use Google\Protobuf\GPBEmpty;
-use Google\Protobuf\Internal\Message;
 
 class Parser
 {
-    public const GRPC_ERROR_NO_RESPONSE = -1;
 
     public static function pack(string $data): string
     {
@@ -68,35 +66,5 @@ class Parser
             return $object;
         }
         return call_user_func($deserialize, $value);
-    }
-
-    /**
-     * @param null|\swoole_http2_response $response
-     * @param mixed $deserialize
-     * @return \Grpc\StringifyAble[]|Message[]|\swoole_http2_response[]
-     */
-    public static function parseResponse($response, $deserialize): array
-    {
-        if (! $response) {
-            return ['No response', self::GRPC_ERROR_NO_RESPONSE, $response];
-        }
-        if (self::isinvalidStatus($response->statusCode)) {
-            $message = $response->headers['grpc-message'] ?? 'Http status Error';
-            $code = $response->headers['grpc-status'] ?? ($response->errCode ?: $response->statusCode);
-            return [$message, (int) $code, $response];
-        }
-        $grpcStatus = (int) ($response->headers['grpc-status'] ?? 0);
-        if ($grpcStatus !== 0) {
-            return [$response->headers['grpc-message'] ?? 'Unknown error', $grpcStatus, $response];
-        }
-        $data = $response->data ?? '';
-        $reply = self::deserializeMessage($deserialize, $data);
-        $status = (int) ($response->headers['grpc-status'] ?? 0);
-        return [$reply, $status, $response];
-    }
-
-    private static function isinvalidStatus(int $code)
-    {
-        return $code !== 0 && $code !== 200 && $code !== 400;
     }
 }
