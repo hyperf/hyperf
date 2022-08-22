@@ -161,7 +161,7 @@ class StatusCode
     public const UNAUTHENTICATED = 16;
 
     /**
-     * @see https://grpc.github.io/grpc/core/md_doc_statuscodes.html
+     * @see https://github.com/googleapis/googleapis/blob/master/google/rpc/code.proto
      */
     public const HTTP_CODE_MAPPING = [
         self::OK => 200,
