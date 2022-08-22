@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Closure;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
@@ -390,7 +391,8 @@ class ModelBuilderTest extends TestCase
         $builder->getModel()->shouldReceive('newFromBuilder')->with(['created_at' => '2010-01-01 00:00:00'])->andReturn(new ModelBuilderTestPluckDatesStub(['created_at' => '2010-01-01 00:00:00']));
         $builder->getModel()->shouldReceive('newFromBuilder')->with(['created_at' => '2011-01-01 00:00:00'])->andReturn(new ModelBuilderTestPluckDatesStub(['created_at' => '2011-01-01 00:00:00']));
 
-        $this->assertEquals(['date_2010-01-01 00:00:00', 'date_2011-01-01 00:00:00'], $builder->pluck('created_at')->all());
+        [$date1, $date2] = $builder->pluck('created_at')->all();
+        $this->assertEquals(['2010-01-01 00:00:00', '2011-01-01 00:00:00'], [$date1->toDateTimeString(), $date2->toDateTimeString()]);
     }
 
     public function testPluckWithoutModelGetterJustReturnsTheAttributesFoundInDatabase()
@@ -1255,9 +1257,9 @@ class ModelBuilderTestPluckDatesStub extends Model
         $this->attributes = $attributes;
     }
 
-    protected function asDateTime($value)
+    protected function asDateTime(mixed $value): CarbonInterface
     {
-        return 'date_' . $value;
+        return Carbon::make($value);
     }
 }
 
