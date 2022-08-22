@@ -977,11 +977,8 @@ class Builder
 
     /**
      * Apply query-time casts to the model instance.
-     *
-     * @param array $casts
-     * @return $this
      */
-    public function withCasts($casts)
+    public function withCasts(array $casts): static
     {
         $this->model->mergeCasts($casts);
 
