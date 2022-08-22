@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\GrpcClient;
 
-use Hyperf\Grpc\Parser;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use RuntimeException;

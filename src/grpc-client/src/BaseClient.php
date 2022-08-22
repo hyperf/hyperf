@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Hyperf\GrpcClient;
 
 use Google\Protobuf\Internal\Message;
-use Hyperf\Grpc\Parser;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\Utils\ApplicationContext;
@@ -26,8 +25,6 @@ use InvalidArgumentException;
  */
 class BaseClient
 {
-    public const GRPC_ERROR_NO_RESPONSE = -1;
-
     protected ?GrpcClient $grpcClient;
 
     protected array $options;
@@ -75,27 +72,10 @@ class BaseClient
         return $this->grpcClient;
     }
 
-    public function parseResponse(?\Swoole\Http2\Response $response, mixed $deserialize): Response
-    {
-        if (! $response || empty($response->data)) {
-            throw new GrpcClientException('No Response', self::GRPC_ERROR_NO_RESPONSE);
-        }
-        if ($response->statusCode !== 200) {
-            throw new GrpcClientException('Http Code ' . $this->statusCode, StatusCode::HTTP_GRPC_STATUS_MAPPING[$response->statusCode] ?? StatusCode::UNKNOWN);
-        }
-        $code = (int) ($response->headers['grpc-status'] ?? 0);
-        if ($code !== 0) {
-            throw new GrpcClientException($response->headers['grpc-message'] ?? '', $code);
-        }
-        $data = $response->data;
-        $reply = Parser::deserializeMessage($deserialize, $data);
-        return new Response($reply, $response);
-    }
-
     public function request(string $method, Message $argument, string $class, array $headers = []): Response
     {
         $streamId = retry($this->options['retry_attempts'] ?? 3, function () use ($method, $argument, $headers) {
-            $streamId = $this->send($this->buildRequest($method, $argument, $headers));
+            $streamId = $this->send($this->buildRequest($this->path($method), $argument, $headers));
             if ($streamId <= 0) {
                 $this->init();
                 // The client should not be used after this exception
@@ -103,7 +83,7 @@ class BaseClient
             }
             return $streamId;
         }, $this->options['retry_interval'] ?? 100);
-        return $this->parseResponse($this->recv($streamId), [$class, 'decode']);
+        return Parser::parseResponse($this->recv($streamId), [$class, 'decode']);
     }
 
     public function path(string $method): string
@@ -124,7 +104,7 @@ class BaseClient
      * @param Message $argument The argument to the method
      * @param callable $deserialize A function that deserializes the response
      * @throws GrpcClientException
-     * @return array|\Google\Protobuf\Internal\Message[]|?\Swoole\Http2\Response[]
+     * @return array|\Google\Protobuf\Internal\Message[]|\Swoole\Http2\Response[]
      */
     protected function _simpleRequest(
         string $method,
@@ -135,7 +115,7 @@ class BaseClient
     ) {
         try {
             $response = $this->request($method, $argument, $deserialize[0], ($options['headers'] ?? []) + $metadata);
-            return [$response->message, 0, null];
+            return [$response->message, 0, $response->rawResponse];
         } catch (GrpcClientException $exception) {
             if ($exception->getMessage() === 'Failed to send the request to server') {
                 throw $exception;
@@ -161,7 +141,7 @@ class BaseClient
     ): ClientStreamingCall {
         $call = new ClientStreamingCall();
         $call->setClient($this->_getGrpcClient())
-            ->setMethod($method)
+            ->setMethod($this->path($method))
             ->setDeserialize($deserialize)
             ->setMetadata($metadata);
 
@@ -188,7 +168,7 @@ class BaseClient
     ) {
         $call = new ServerStreamingCall();
         $call->setClient($this->_getGrpcClient())
-            ->setMethod($method)
+            ->setMethod($this->path($method))
             ->setDeserialize($deserialize)
             ->setMetadata($metadata);
 
@@ -238,9 +218,9 @@ class BaseClient
         $this->initialized = true;
     }
 
-    protected function buildRequest(string $method, Message $argument, array $headers): Request
+    protected function buildRequest(string $path, Message $argument, array $headers): Request
     {
-        return new Request($this->path($method), $argument, $headers);
+        return new Request($path, $argument, $headers);
     }
 
     private function start()
