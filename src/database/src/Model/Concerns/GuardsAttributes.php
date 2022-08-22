@@ -112,10 +112,8 @@ trait GuardsAttributes
 
     /**
      * Determine if the given attribute may be mass assigned.
-     *
-     * @param string $key
      */
-    public function isFillable($key): bool
+    public function isFillable(string $key): bool
     {
         if (static::$unguarded) {
             return true;
