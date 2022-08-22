@@ -17,12 +17,10 @@ use Swoole\Http2\Response as SwooleResponse;
 
 class Parser extends \Hyperf\Grpc\Parser
 {
-    public const GRPC_ERROR_NO_RESPONSE = -1;
-
     public static function parseResponse(?SwooleResponse $response, mixed $deserialize): Response
     {
         if (! $response || empty($response->data)) {
-            throw new GrpcClientException('No Response', self::GRPC_ERROR_NO_RESPONSE);
+            throw new GrpcClientException('No Response', StatusCode::INTERNAL);
         }
         if ($response->statusCode !== 200) {
             throw new GrpcClientException('Http Code ' . $response->statusCode, StatusCode::HTTP_GRPC_STATUS_MAPPING[$response->statusCode] ?? StatusCode::UNKNOWN);
