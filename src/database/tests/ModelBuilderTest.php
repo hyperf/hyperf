@@ -1255,7 +1255,7 @@ class ModelBuilderTestPluckDatesStub extends Model
         $this->attributes = $attributes;
     }
 
-    protected function asDateTime($value)
+    protected function asDateTime(mixed $value)
     {
         return 'date_' . $value;
     }
