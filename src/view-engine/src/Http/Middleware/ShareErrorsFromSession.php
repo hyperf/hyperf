@@ -22,24 +22,12 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class ShareErrorsFromSession implements MiddlewareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected SessionInterface $session;
 
-    /**
-     * @var SessionInterface
-     */
-    protected $session;
+    protected FactoryInterface $view;
 
-    /**
-     * @var FactoryInterface
-     */
-    protected $view;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->session = $container->get(SessionInterface::class);
         $this->view = $container->get(FactoryInterface::class);
     }

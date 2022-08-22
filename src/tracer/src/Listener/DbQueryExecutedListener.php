@@ -24,26 +24,8 @@ class DbQueryExecutedListener implements ListenerInterface
 {
     use SpanStarter;
 
-    /**
-     * @var Tracer
-     */
-    private $tracer;
-
-    /**
-     * @var SwitchManager
-     */
-    private $switchManager;
-
-    /**
-     * @var SpanTagManager
-     */
-    private $spanTagManager;
-
-    public function __construct(Tracer $tracer, SwitchManager $switchManager, SpanTagManager $spanTagManager)
+    public function __construct(private Tracer $tracer, private SwitchManager $switchManager, private SpanTagManager $spanTagManager)
     {
-        $this->tracer = $tracer;
-        $this->switchManager = $switchManager;
-        $this->spanTagManager = $spanTagManager;
     }
 
     public function listen(): array
@@ -56,14 +38,14 @@ class DbQueryExecutedListener implements ListenerInterface
     /**
      * @param QueryExecuted $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($this->switchManager->isEnable('db') === false) {
             return;
         }
         $sql = $event->sql;
         if (! Arr::isAssoc($event->bindings)) {
-            foreach ($event->bindings as $key => $value) {
+            foreach ($event->bindings as $value) {
                 $sql = Str::replaceFirst('?', "'{$value}'", $sql);
             }
         }

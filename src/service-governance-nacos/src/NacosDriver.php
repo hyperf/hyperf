@@ -13,60 +13,34 @@ namespace Hyperf\ServiceGovernanceNacos;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\Utils\Codec\Json;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 
 class NacosDriver implements DriverInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected Client $client;
 
-    /**
-     * @var Client
-     */
-    protected $client;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
+    protected ConfigInterface $config;
 
-    /**
-     * @var array
-     */
-    protected $serviceRegistered = [];
+    protected array $serviceRegistered = [];
 
-    /**
-     * @var array
-     */
-    protected $serviceCreated = [];
+    protected array $serviceCreated = [];
 
-    /**
-     * @var array
-     */
-    protected $registerHeartbeat = [];
+    protected array $registerHeartbeat = [];
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
+    private array $metadata = [];
 
-    /**
-     * @var array
-     */
-    private $metadata = [];
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->client = $container->get(Client::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->config = $container->get(ConfigInterface::class);
@@ -90,7 +64,7 @@ class NacosDriver implements DriverInterface
                 $nodes[] = [
                     'host' => $node['ip'],
                     'port' => $node['port'],
-                    'weight' => $node['weight'] ?? 1,
+                    'weight' => $this->getWeight($node['weight'] ?? 1),
                 ];
             }
         }
@@ -100,7 +74,8 @@ class NacosDriver implements DriverInterface
     public function register(string $name, string $host, int $port, array $metadata): void
     {
         $this->setMetadata($name, $metadata);
-        if (! array_key_exists($name, $this->serviceCreated)) {
+        $ephemeral = (bool) $this->config->get('services.drivers.nacos.ephemeral');
+        if (! $ephemeral && ! array_key_exists($name, $this->serviceCreated)) {
             $response = $this->client->service->create($name, [
                 'groupName' => $this->config->get('services.drivers.nacos.group_name'),
                 'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
@@ -109,19 +84,21 @@ class NacosDriver implements DriverInterface
             ]);
 
             if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
-                throw new RequestException(sprintf('Failed to create nacos service %s , %s !', $name, (string) $response->getBody()));
+                throw new RequestException(sprintf('Failed to create nacos service %s , %s !', $name, $response->getBody()));
             }
 
             $this->serviceCreated[$name] = true;
         }
+
         $response = $this->client->instance->register($host, $port, $name, [
             'groupName' => $this->config->get('services.drivers.nacos.group_name'),
             'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
             'metadata' => $this->getMetadata($name),
+            'ephemeral' => $ephemeral ? 'true' : null,
         ]);
 
         if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
-            throw new RequestException(sprintf('Failed to create nacos instance %s:%d! for %s , %s ', $host, $port, $name, (string) $response->getBody()));
+            throw new RequestException(sprintf('Failed to create nacos instance %s:%d! for %s , %s ', $host, $port, $name, $response->getBody()));
         }
 
         $this->serviceRegistered[$name] = true;
@@ -139,11 +116,12 @@ class NacosDriver implements DriverInterface
             $this->config->get('services.drivers.nacos.group_name'),
             $this->config->get('services.drivers.nacos.namespace_id')
         );
+
         if ($response->getStatusCode() === 404) {
             return false;
         }
 
-        if ($response->getStatusCode() === 500 && strpos((string) $response->getBody(), 'is not found') > 0) {
+        if ($response->getStatusCode() === 500 && strpos((string) $response->getBody(), 'not found') > 0) {
             return false;
         }
 
@@ -184,7 +162,7 @@ class NacosDriver implements DriverInterface
             ];
             $body = (string) $response->getBody();
             foreach ($messages as $message) {
-                if (strpos($body, $message) !== false) {
+                if (str_contains($body, $message)) {
                     return true;
                 }
             }
@@ -239,12 +217,12 @@ class NacosDriver implements DriverInterface
                         $lightBeatEnabled
                     );
 
-                    $result = json_decode($response->getBody()->getContents(), true);
+                    $result = Json::decode((string) $response->getBody());
 
                     if ($response->getStatusCode() === 200) {
                         $this->logger->debug(sprintf('Instance %s:%d heartbeat successfully, result code:%s', $host, $port, $result['code']));
                     } else {
-                        $this->logger->error(sprintf('Instance %s:%d heartbeat failed!', $host, $port));
+                        $this->logger->error(sprintf('Instance %s:%d heartbeat failed! %s', $host, $port, (string) $response->getBody()));
                         continue;
                     }
 
@@ -263,5 +241,10 @@ class NacosDriver implements DriverInterface
                 }
             });
         });
+    }
+
+    private function getWeight($weight): int
+    {
+        return intval(100 * $weight);
     }
 }

@@ -121,9 +121,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Annotation\AutoController;
 use function Hyperf\ViewEngine\view;
 
-/**
- * @AutoController(prefix="view")
- */
+#[AutoController(prefix: "view")]
 class ViewController extends AbstractController
 {
     public function child()
@@ -210,15 +208,10 @@ use Hyperf\Framework\Event\BootApplication;
 use Hyperf\ViewEngine\Blade;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Listener
- */
+#[Listener]
 class BladeWithoutDoubleEncodingListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -242,7 +235,7 @@ class BladeWithoutDoubleEncodingListener implements ListenerInterface
 
 #### Blade & JavaScript 框架
 
-由于许多 `JavaScript` 框架也使用「花括号」来标识将显示在浏览器中的表达式，因此，您可以使用 `@` 符号来表示 `Blade` 渲染引擎应当保持不便。例如：
+由于许多 `JavaScript` 框架也使用「花括号」来标识将显示在浏览器中的表达式，因此，您可以使用 `@` 符号来表示 `Blade` 渲染引擎应当保持不变。例如：
 
 ```blade
 <h1>Laravel</h1>

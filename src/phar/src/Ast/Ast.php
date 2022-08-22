@@ -19,15 +19,9 @@ use PhpParser\PrettyPrinterAbstract;
 
 class Ast
 {
-    /**
-     * @var Parser
-     */
-    private $astParser;
+    private Parser $astParser;
 
-    /**
-     * @var PrettyPrinterAbstract
-     */
-    private $printer;
+    private PrettyPrinterAbstract $printer;
 
     public function __construct()
     {

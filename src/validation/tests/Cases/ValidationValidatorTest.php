@@ -318,7 +318,7 @@ class ValidationValidatorTest extends TestCase
         $v->messages()->setFormat(':message');
         $this->assertEquals('Name is required!', $v->messages()->first('name'));
 
-        //set customAttributes by setter
+        // set customAttributes by setter
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.required' => ':attribute is required!'], 'en');
         $customAttributes = ['name' => 'Name'];
@@ -425,7 +425,7 @@ class ValidationValidatorTest extends TestCase
 
     public function testDisplayableValuesAreReplaced()
     {
-        //required_if:foo,bar
+        // required_if:foo,bar
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.required_if' => 'The :attribute field is required when :other is :value.'], 'en');
         $trans->addLines(['validation.values.color.1' => 'red'], 'en');
@@ -434,7 +434,7 @@ class ValidationValidatorTest extends TestCase
         $v->messages()->setFormat(':message');
         $this->assertEquals('The bar field is required when color is red.', $v->messages()->first('bar'));
 
-        //required_unless:foo,bar
+        // required_unless:foo,bar
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.required_unless' => 'The :attribute field is required unless :other is in :values.'], 'en');
         $trans->addLines(['validation.values.color.1' => 'red'], 'en');
@@ -443,7 +443,7 @@ class ValidationValidatorTest extends TestCase
         $v->messages()->setFormat(':message');
         $this->assertEquals('The bar field is required unless color is in red.', $v->messages()->first('bar'));
 
-        //in:foo,bar,...
+        // in:foo,bar,...
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.in' => ':attribute must be included in :values.'], 'en');
         $trans->addLines(['validation.values.type.5' => 'Short'], 'en');
@@ -453,7 +453,7 @@ class ValidationValidatorTest extends TestCase
         $v->messages()->setFormat(':message');
         $this->assertEquals('type must be included in Short, Long.', $v->messages()->first('type'));
 
-        //date_equals:tomorrow
+        // date_equals:tomorrow
         $trans = $this->getIlluminateArrayTranslator();
         $trans->addLines(['validation.date_equals' => 'The :attribute must be a date equal to :date.'], 'en');
         $trans->addLines(['validation.values.date.tomorrow' => 'the day after today'], 'en');
@@ -650,6 +650,15 @@ class ValidationValidatorTest extends TestCase
 
         $v = new Validator($trans, ['foo' => new SplFileInfo('/tmp/foo')], ['foo' => 'Array']);
         $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => ['name' => 'foo', 'gender' => 1, 'vote' => 1]], ['foo' => 'Array:name,gender']);
+        $this->assertFalse($v->passes());
+
+        $v = new Validator($trans, ['foo' => ['name' => 'foo', 'gender' => 1]], ['foo' => 'Array:name,gender']);
+        $this->assertTrue($v->passes());
+
+        $v = new Validator($trans, ['foo' => ['name' => 'foo', 'gender' => 1]], ['foo' => 'Array:name,gender,vote']);
+        $this->assertTrue($v->passes());
     }
 
     public function testValidateFilled()
@@ -3468,6 +3477,22 @@ class ValidationValidatorTest extends TestCase
             ['foo' => 'Array', 'foo.*.name' => ['Required', 'String'], 'foo.*.votes.*' => ['Required', 'Integer']]
         );
         $this->assertFalse($v->passes());
+
+        // multiple items fields passes
+        $v = new Validator(
+            $trans,
+            ['foo' => [['name' => 'first'], ['name' => 'second']]],
+            ['foo' => 'Array', 'foo.*' => 'Array:name', 'foo.*.name' => ['Required']]
+        );
+        $this->assertTrue($v->passes());
+
+        // multiple items fields fails
+        $v = new Validator(
+            $trans,
+            ['foo' => [['name' => 'first', 'votes' => 1], ['name' => 'second', 'votes' => 2]]],
+            ['foo' => 'Array', 'foo.*' => 'Array:name', 'foo.*.name' => ['Required']]
+        );
+        $this->assertFalse($v->passes());
     }
 
     public function testSometimesOnArraysInImplicitRules()
@@ -4233,12 +4258,12 @@ class ValidationValidatorTest extends TestCase
             $this->getIlluminateArrayTranslator(),
             ['name' => 'taylor'],
             ['name' => new class() implements Rule {
-                public function passes(string $attribute, $value): bool
+                public function passes(string $attribute, mixed $value): bool
                 {
                     return $value === 'taylor';
                 }
 
-                public function message()
+                public function message(): array|string
                 {
                     return ':attribute must be taylor';
                 }
@@ -4252,12 +4277,12 @@ class ValidationValidatorTest extends TestCase
             $this->getIlluminateArrayTranslator(),
             ['name' => 'adam'],
             ['name' => [new class() implements Rule {
-                public function passes(string $attribute, $value): bool
+                public function passes(string $attribute, mixed $value): bool
                 {
                     return $value === 'taylor';
                 }
 
-                public function message()
+                public function message(): array|string
                 {
                     return ':attribute must be taylor';
                 }
@@ -4300,12 +4325,12 @@ class ValidationValidatorTest extends TestCase
             ['name' => 'taylor', 'states' => ['AR', 'TX'], 'number' => 9],
             [
                 'states.*' => new class() implements Rule {
-                    public function passes(string $attribute, $value): bool
+                    public function passes(string $attribute, mixed $value): bool
                     {
                         return in_array($value, ['AK', 'HI']);
                     }
 
-                    public function message()
+                    public function message(): array|string
                     {
                         return ':attribute must be AR or TX';
                     }
@@ -4337,12 +4362,12 @@ class ValidationValidatorTest extends TestCase
             $this->getIlluminateArrayTranslator(),
             ['name' => 42],
             ['name' => new class() implements Rule {
-                public function passes(string $attribute, $value): bool
+                public function passes(string $attribute, mixed $value): bool
                 {
                     return $value === 'taylor';
                 }
 
-                public function message()
+                public function message(): array|string
                 {
                     return [':attribute must be taylor', ':attribute must be a first name'];
                 }
@@ -4358,12 +4383,12 @@ class ValidationValidatorTest extends TestCase
             $this->getIlluminateArrayTranslator(),
             ['name' => 42],
             ['name' => [new class() implements Rule {
-                public function passes(string $attribute, $value): bool
+                public function passes(string $attribute, mixed $value): bool
                 {
                     return $value === 'taylor';
                 }
 
-                public function message()
+                public function message(): array|string
                 {
                     return [':attribute must be taylor', ':attribute must be a first name'];
                 }
@@ -4385,14 +4410,14 @@ class ValidationValidatorTest extends TestCase
             ['name' => $rule = new class() implements ImplicitRule {
                 public $called = false;
 
-                public function passes(string $attribute, $value): bool
+                public function passes(string $attribute, mixed $value): bool
                 {
                     $this->called = true;
 
                     return true;
                 }
 
-                public function message()
+                public function message(): array|string
                 {
                     return 'message';
                 }

@@ -15,14 +15,8 @@ use Hyperf\Amqp\Message\ConsumerMessageInterface;
 
 class ConsumeEvent
 {
-    /**
-     * @var ConsumerMessageInterface
-     */
-    protected $message;
-
-    public function __construct(ConsumerMessageInterface $message)
+    public function __construct(protected ConsumerMessageInterface $message)
     {
-        $this->message = $message;
     }
 
     public function getMessage(): ConsumerMessageInterface

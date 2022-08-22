@@ -13,15 +13,9 @@ namespace Hyperf\Nacos\Provider;
 
 trait AccessToken
 {
-    /**
-     * @var null|string
-     */
-    private $accessToken;
+    private ?string $accessToken = null;
 
-    /**
-     * @var int
-     */
-    private $expireTime = 0;
+    private int $expireTime = 0;
 
     public function getAccessToken(): ?string
     {

@@ -19,10 +19,8 @@ class ListenerCollector extends MetadataCollector
      * User exposed listeners.
      *
      * These are extra user-defined events listeners may subscribe to.
-     *
-     * @var array
      */
-    protected static $container = [];
+    protected static array $container = [];
 
     /**
      * Register a single listener with the model.
@@ -55,11 +53,11 @@ class ListenerCollector extends MetadataCollector
         static::clear();
     }
 
-    public static function clear(?string $listener = null): void
+    public static function clear(?string $key = null): void
     {
-        if ($listener) {
+        if ($key) {
             foreach (static::$container as $model => $listeners) {
-                if ($id = array_search($listener, $listeners)) {
+                if ($id = array_search($key, $listeners)) {
                     unset($listeners[$id]);
                     static::$container[$model] = array_values($listeners);
                 }

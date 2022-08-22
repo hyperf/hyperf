@@ -24,7 +24,10 @@ class FrameTest extends TestCase
 {
     public function testFrame()
     {
-        $frame = new Frame(Mockery::mock(SwFrame::class));
+        $swframe = Mockery::mock(SwFrame::class);
+        $swframe->finish = true;
+        $swframe->opcode = 1;
+        $frame = new Frame($swframe);
 
         $this->assertSame($frame->data, (string) $frame);
     }

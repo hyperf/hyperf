@@ -13,6 +13,9 @@ namespace Hyperf\Process;
 
 use Hyperf\Contract\ProcessInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Engine\Channel;
 use Hyperf\Engine\Constant;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Process\Event\AfterCoroutineHandle;
@@ -22,12 +25,9 @@ use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Process\Event\PipeMessage;
 use Hyperf\Process\Exception\ServerInvalidException;
 use Hyperf\Process\Exception\SocketAcceptException;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Swoole\Coroutine\Channel;
 use Swoole\Event;
 use Swoole\Process as SwooleProcess;
 use Swoole\Server;
@@ -35,64 +35,28 @@ use Swoole\Timer;
 
 abstract class AbstractProcess implements ProcessInterface
 {
-    /**
-     * @var string
-     */
-    public $name = 'process';
+    public string $name = 'process';
 
-    /**
-     * @var int
-     */
-    public $nums = 1;
+    public int $nums = 1;
 
-    /**
-     * @var bool
-     */
-    public $redirectStdinStdout = false;
+    public bool $redirectStdinStdout = false;
 
-    /**
-     * @var int
-     */
-    public $pipeType = SOCK_DGRAM;
+    public int $pipeType = SOCK_DGRAM;
 
-    /**
-     * @var bool
-     */
-    public $enableCoroutine = true;
+    public bool $enableCoroutine = true;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ?EventDispatcherInterface $event = null;
 
-    /**
-     * @var null|EventDispatcherInterface
-     */
-    protected $event;
+    protected ?SwooleProcess $process = null;
 
-    /**
-     * @var null|SwooleProcess
-     */
-    protected $process;
+    protected int $recvLength = 65535;
 
-    /**
-     * @var int
-     */
-    protected $recvLength = 65535;
+    protected float $recvTimeout = 10.0;
 
-    /**
-     * @var float
-     */
-    protected $recvTimeout = 10.0;
+    protected int $restartInterval = 5;
 
-    /**
-     * @var int
-     */
-    protected $restartInterval = 5;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         if ($container->has(EventDispatcherInterface::class)) {
             $this->event = $container->get(EventDispatcherInterface::class);
         }
@@ -155,6 +119,12 @@ abstract class AbstractProcess implements ProcessInterface
     protected function bindCoroutineServer($server): void
     {
         $num = $this->nums;
+        Coroutine::create(static function () {
+            if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield()) {
+                ProcessManager::setRunning(false);
+            }
+        });
+
         for ($i = 0; $i < $num; ++$i) {
             $handler = function () use ($i) {
                 $this->event && $this->event->dispatch(new BeforeCoroutineHandle($this, $i));

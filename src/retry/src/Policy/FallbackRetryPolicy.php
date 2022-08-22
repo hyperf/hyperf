@@ -19,9 +19,9 @@ class FallbackRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterfac
     /**
      * @var callable|string
      */
-    private $fallback;
+    private mixed $fallback;
 
-    public function __construct($fallback)
+    public function __construct(callable|string $fallback)
     {
         $this->fallback = $fallback;
     }

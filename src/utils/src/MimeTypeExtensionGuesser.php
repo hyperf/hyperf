@@ -18,7 +18,7 @@ class MimeTypeExtensionGuesser
      *
      * @see http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types
      */
-    protected $defaultExtensions = [
+    protected array $defaultExtensions = [
         'application/andrew-inset' => 'ez',
         'application/applixware' => 'aw',
         'application/atom+xml' => 'atom',
@@ -804,11 +804,11 @@ class MimeTypeExtensionGuesser
 
     public function guessExtension(string $mimeType): ?string
     {
-        return isset($this->defaultExtensions[$mimeType]) ? $this->defaultExtensions[$mimeType] : null;
+        return $this->defaultExtensions[$mimeType] ?? null;
     }
 
     public function guessMimeType(string $extension): ?string
     {
-        return isset($this->defaultMineTypes[$extension]) ? $this->defaultMineTypes[$extension] : null;
+        return $this->defaultMineTypes[$extension] ?? null;
     }
 }

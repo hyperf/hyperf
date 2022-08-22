@@ -17,22 +17,14 @@ use Hyperf\Crontab\PipeMessage;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\OnPipeMessage;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class OnPipeMessageListener implements ListenerInterface
 {
-    /**
-     * @var \Psr\Container\ContainerInterface
-     */
-    protected $container;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var \Hyperf\Contract\StdoutLoggerInterface
-     */
-    protected $logger;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         if ($container->has(StdoutLoggerInterface::class)) {
             $this->logger = $container->get(StdoutLoggerInterface::class);
         }
@@ -52,10 +44,9 @@ class OnPipeMessageListener implements ListenerInterface
      * Handle the Event when the event is triggered, all listeners will
      * complete before the event is returned to the EventDispatcher.
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($event instanceof OnPipeMessage && $event->data instanceof PipeMessage) {
-            /** @var PipeMessage $data */
             $data = $event->data;
             try {
                 switch ($data->type) {
@@ -64,14 +55,12 @@ class OnPipeMessageListener implements ListenerInterface
                         break;
                 }
             } catch (\Throwable $throwable) {
-                if ($this->logger) {
-                    $this->logger->error($throwable->getMessage());
-                }
+                $this->logger?->error($throwable->getMessage());
             }
         }
     }
 
-    private function handleCallable($data): void
+    private function handleCallable(PipeMessage $data): void
     {
         $instance = $this->container->get($data->callable[0]);
         $method = $data->callable[1] ?? null;

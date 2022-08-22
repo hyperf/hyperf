@@ -16,7 +16,7 @@ use Twig\Loader\FilesystemLoader;
 
 class TwigEngine implements EngineInterface
 {
-    public function render($template, $data, $config): string
+    public function render(string $template, array $data, array $config): string
     {
         $loader = new FilesystemLoader($config['view_path']);
         $twig = new Environment($loader, ['cache' => $config['cache_path']]);

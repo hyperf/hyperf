@@ -13,15 +13,27 @@ namespace HyperfTest\Database;
 
 use Carbon\Carbon;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
+use Hyperf\Contract\PaginatorInterface;
+use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\ConnectionResolver;
 use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Database\Connectors\ConnectionFactory;
+use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\Events\Saved;
+use Hyperf\Database\MySqlBitConnection;
 use Hyperf\Database\Schema\Column;
 use Hyperf\Database\Schema\MySqlBuilder;
+use Hyperf\DbConnection\Db;
+use Hyperf\Di\Container;
+use Hyperf\Engine\Channel;
 use Hyperf\Paginator\LengthAwarePaginator;
+use Hyperf\Paginator\Paginator;
+use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\Model\User;
+use HyperfTest\Database\Stubs\Model\UserBit;
 use HyperfTest\Database\Stubs\Model\UserExt;
 use HyperfTest\Database\Stubs\Model\UserExtCamel;
 use HyperfTest\Database\Stubs\Model\UserRole;
@@ -30,7 +42,6 @@ use HyperfTest\Database\Stubs\Model\UserRolePivot;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Swoole\Coroutine\Channel;
 
 /**
  * @internal
@@ -118,6 +129,24 @@ class ModelRealBuilderTest extends TestCase
             ['select * from `user` where `id` > ? order by `id` asc limit 2', [0]],
             ['select * from `user` order by `id` asc limit 2', []],
             ['select * from `user` where `id` > ? order by `id` asc limit 2', [1]],
+        ];
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame([$event->sql, $event->bindings], array_shift($sqls));
+            }
+        }
+    }
+
+    public function testForceIndexes()
+    {
+        $this->getContainer();
+
+        User::query()->get();
+        User::query()->forceIndexes(['PRIMARY'])->where('id', '>', 1)->get();
+
+        $sqls = [
+            ['select * from `user`', []],
+            ['select * from `user` force index (`PRIMARY`) where `id` > ?', [1]],
         ];
         while ($event = $this->channel->pop(0.001)) {
             if ($event instanceof QueryExecuted) {
@@ -331,6 +360,30 @@ class ModelRealBuilderTest extends TestCase
         }
     }
 
+    public function testSimplePaginate()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('make')->with(PaginatorInterface::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new Paginator(...array_values($args));
+        });
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+        $res = Db::table('user')->simplePaginate(1);
+        $this->assertTrue($res->hasMorePages());
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame('select * from `user` limit 2 offset 0', $event->sql);
+            }
+        }
+
+        $res = User::query()->simplePaginate(1);
+        $this->assertTrue($res->hasMorePages());
+        while ($event = $this->channel->pop(0.001)) {
+            if ($event instanceof QueryExecuted) {
+                $this->assertSame('select * from `user` limit 2 offset 0', $event->sql);
+            }
+        }
+    }
+
     public function testPaginationCountQuery()
     {
         $container = $this->getContainer();
@@ -346,6 +399,85 @@ class ModelRealBuilderTest extends TestCase
             if ($event instanceof QueryExecuted) {
                 $this->assertSame($event->sql, array_shift($sqls));
             }
+        }
+    }
+
+    public function testSaveBitValue()
+    {
+        $container = Mockery::mock(Container::class);
+        ApplicationContext::setContainer($container);
+
+        $container->shouldReceive('has')->andReturn(true);
+        $container->shouldReceive('get')->with('db.connector.mysql.bit')->andReturn(new MySqlConnector());
+        $connector = new ConnectionFactory($container);
+
+        Connection::resolverFor('mysql.bit', static function ($connection, $database, $prefix, $config) {
+            return new MySqlBitConnection($connection, $database, $prefix, $config);
+        });
+
+        $dbConfig = [
+            'driver' => 'mysql.bit',
+            'host' => '127.0.0.1',
+            'database' => 'hyperf',
+            'username' => 'root',
+            'password' => '',
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+        ];
+
+        $connection = $connector->make($dbConfig);
+
+        $resolver = new ConnectionResolver(['default' => $connection]);
+
+        $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(null);
+
+        /** @var UserBit $model */
+        $model = UserBit::query()->find(1);
+        $model->bit = (int) (! $model->bit);
+        $this->assertTrue($model->save());
+
+        $model->bit = ! $model->bit;
+        $this->assertTrue($model->save());
+    }
+
+    public function testSelectForBindingIntegerWhenUsingVarcharIndex()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+        $res = Db::select('EXPLAIN SELECT * FROM `user` WHERE `name` = ?;', ['1']);
+        $this->assertSame('ref', $res[0]->type);
+        $res = Db::select('EXPLAIN SELECT * FROM `user` WHERE `name` = ?;', [1]);
+        $this->assertSame('ref', $res[0]->type);
+    }
+
+    public function testBeforeExecuting()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        $res = Db::selectOne('SELECT * FROM `user` WHERE id = ?;', [1]);
+        $this->assertSame('Hyperf', $res->name);
+
+        try {
+            $chan = new Channel(2);
+            Db::beforeExecuting(function (string $sql, array $bindings, Connection $connection) use ($chan) {
+                $this->assertSame(null, $connection->getConfig('name'));
+                $chan->push(1);
+            });
+            Db::beforeExecuting(function (string $sql, array $bindings, Connection $connection) use ($chan) {
+                $this->assertSame('SELECT * FROM `user` WHERE id = ?;', $sql);
+                $this->assertSame([1], $bindings);
+                $chan->push(2);
+            });
+
+            $res = Db::selectOne('SELECT * FROM `user` WHERE id = ?;', [1]);
+            $this->assertSame('Hyperf', $res->name);
+            $this->assertSame(1, $chan->pop(1));
+            $this->assertSame(2, $chan->pop(1));
+        } finally {
+            Connection::clearBeforeExecutingCallbacks();
         }
     }
 

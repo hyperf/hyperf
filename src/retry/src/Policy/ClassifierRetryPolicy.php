@@ -17,35 +17,15 @@ use Hyperf\Utils\Arr;
 class ClassifierRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
     /**
-     * @var string[]
+     * @param callable|mixed $retryOnThrowablePredicate
+     * @param callable|mixed $retryOnResultPredicate
      */
-    private $ignoreThrowables;
-
-    /**
-     * @var string[]
-     */
-    private $retryThrowables;
-
-    /**
-     * @var callable|string
-     */
-    private $retryOnThrowablePredicate;
-
-    /**
-     * @var callable|string
-     */
-    private $retryOnResultPredicate;
-
     public function __construct(
-        array $ignoreThrowables = [],
-        array $retryThrowables = [\Throwable::class],
-        $retryOnThrowablePredicate = '',
-        $retryOnResultPredicate = ''
+        private array $ignoreThrowables = [],
+        private array $retryThrowables = [\Throwable::class],
+        private mixed $retryOnThrowablePredicate = '',
+        private mixed $retryOnResultPredicate = ''
     ) {
-        $this->ignoreThrowables = $ignoreThrowables;
-        $this->retryThrowables = $retryThrowables;
-        $this->retryOnThrowablePredicate = $retryOnThrowablePredicate;
-        $this->retryOnResultPredicate = $retryOnResultPredicate;
     }
 
     public function canRetry(RetryContext &$retryContext): bool
@@ -67,12 +47,7 @@ class ClassifierRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterf
 
     private function in(\Throwable $t, array $arr): bool
     {
-        return Arr::first(
-            $arr,
-            function ($v) use ($t) {
-                return $t instanceof $v;
-            }
-        ) ? true : false;
+        return (bool) Arr::first($arr, fn ($v) => $t instanceof $v);
     }
 
     private function isRetriable(\Throwable $t): bool

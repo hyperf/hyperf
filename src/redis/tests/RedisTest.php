@@ -12,8 +12,10 @@ declare(strict_types=1);
 namespace HyperfTest\Redis;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
+use Hyperf\Engine\Channel as Chan;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\PoolOption;
@@ -23,7 +25,6 @@ use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Coroutine;
 use HyperfTest\Redis\Stub\RedisPoolFailedStub;
 use HyperfTest\Redis\Stub\RedisPoolStub;
@@ -53,7 +54,7 @@ class RedisTest extends TestCase
         $this->assertSame('timeout', $timeout->getName());
         $this->assertSame('retry_interval', $retryInterval->getName());
 
-        $this->assertTrue($redis->connect('127.0.0.1', 6379, 0.0));
+        $this->assertTrue($redis->connect('127.0.0.1', 6379, 0.0, null, 0, 0));
     }
 
     public function testRedisSelect()
@@ -69,16 +70,18 @@ class RedisTest extends TestCase
 
         $this->assertSame(2, $redis->getDatabase());
 
-        $res = parallel([function () use ($redis) {
-            return $redis->get('xxxx');
-        }]);
+        $res = parallel([
+            function () use ($redis) {
+                return $redis->get('xxxx');
+            },
+        ]);
 
         $this->assertSame('db:0 name:get argument:xxxx', $res[0]);
     }
 
     public function testHasAlreadyBeenBoundToAnotherCoroutine()
     {
-        $chan = new \Swoole\Coroutine\Channel(1);
+        $chan = new Chan(1);
         $redis = $this->getRedis();
         $ref = new \ReflectionClass($redis);
         $method = $ref->getMethod('getConnection');
@@ -170,6 +173,28 @@ class RedisTest extends TestCase
             $this->assertInstanceOf(ConnectionException::class, $exception);
             $this->assertStringNotContainsString('RedisCluster::__construct() expects parameter', $exception->getMessage());
         }
+    }
+
+    public function testShuffleNodes()
+    {
+        $nodes = ['127.0.0.1:6379', '127.0.0.1:6378', '127.0.0.1:6377'];
+
+        shuffle($nodes);
+
+        $this->assertIsArray($nodes);
+        $this->assertSame(3, count($nodes));
+    }
+
+    public function testRedisSentinelParams()
+    {
+        $rel = new \ReflectionClass(\RedisSentinel::class);
+        $method = $rel->getMethod('__construct');
+        $count = count($method->getParameters());
+        if ($count === 6) {
+            $this->markTestIncomplete('RedisSentinel don\'t support auth.');
+        }
+
+        $this->assertSame(7, $count);
     }
 
     private function getRedis()

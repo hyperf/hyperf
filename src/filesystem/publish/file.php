@@ -75,7 +75,7 @@ return [
             'accessKey' => env('QINIU_ACCESS_KEY'),
             'secretKey' => env('QINIU_SECRET_KEY'),
             'bucket' => env('QINIU_BUCKET'),
-            'domain' => env('QINBIU_DOMAIN'),
+            'domain' => env('QINIU_DOMAIN'),
         ],
         'cos' => [
             'driver' => \Hyperf\Filesystem\Adapter\CosAdapterFactory::class,

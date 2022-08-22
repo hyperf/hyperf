@@ -43,7 +43,7 @@ trait ProxyTrait
         $reflectMethod = ReflectionManager::reflectMethod($className, $method);
         $reflectParameters = $reflectMethod->getParameters();
         $leftArgCount = count($args);
-        foreach ($reflectParameters as $key => $reflectionParameter) {
+        foreach ($reflectParameters as $reflectionParameter) {
             $arg = $reflectionParameter->isVariadic() ? $args : array_shift($args);
             if (! isset($arg) && $leftArgCount <= 0) {
                 $arg = $reflectionParameter->getDefaultValue();
@@ -115,7 +115,7 @@ trait ProxyTrait
 
     protected static function getAnnotationAspects(string $className, string $method): array
     {
-        $matchedAspect = $annotations = $rules = [];
+        $matchedAspect = [];
 
         $classAnnotations = AnnotationCollector::get($className . '._c', []);
         $methodAnnotations = AnnotationCollector::get($className . '._m.' . $method, []);
@@ -128,7 +128,7 @@ trait ProxyTrait
         foreach ($aspects as $aspect => $rules) {
             foreach ($rules as $rule) {
                 foreach ($annotations as $annotation) {
-                    if (strpos($rule, '*') !== false) {
+                    if (str_contains($rule, '*')) {
                         $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);
                         $pattern = "/^{$preg}$/";
                         if (! preg_match($pattern, $annotation)) {

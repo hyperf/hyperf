@@ -15,15 +15,9 @@ use Hyperf\Nats\AbstractConsumer;
 
 class FailToConsume extends Consume
 {
-    /**
-     * @var \Throwable
-     */
-    protected $throwable;
-
-    public function __construct(AbstractConsumer $consumer, $data, \Throwable $throwable)
+    public function __construct(AbstractConsumer $consumer, $data, protected \Throwable $throwable)
     {
         parent::__construct($consumer, $data);
-        $this->throwable = $throwable;
     }
 
     public function getThrowable(): \Throwable

@@ -35,7 +35,7 @@ return [
 
 ## 配置路由
 
-> 目前暫時只支援配置檔案的模式配置路由，後續會提供註解模式。   
+> 目前暫時只支援配置檔案的模式配置路由，後續會提供註解模式。
 
 在 `config/routes.php` 檔案內增加對應 `ws` 的 Server 的路由配置，這裡的 `ws` 值取決於您在 `config/autoload/server.php` 內配置的 WebSocket Server 的 `name` 值。
 
@@ -45,6 +45,20 @@ return [
 Router::addServer('ws', function () {
     Router::get('/', 'App\Controller\WebSocketController');
 });
+```
+
+## 配置中介軟體
+
+在 `config/autoload/middlewares.php` 檔案內增加對應 `ws` 的 Server 的全域性中介軟體配置，這裡的 `ws` 值取決於您在 `config/autoload/server.php` 內配置的 WebSocket Server 的 `name` 值。
+
+```php
+<?php
+
+return [
+    'ws' => [
+        yourMiddleware::class
+    ]
+];
 ```
 
 ## 建立對應控制器
@@ -58,6 +72,7 @@ namespace App\Controller;
 use Hyperf\Contract\OnCloseInterface;
 use Hyperf\Contract\OnMessageInterface;
 use Hyperf\Contract\OnOpenInterface;
+use Hyperf\WebSocketServer\Constant\Opcode;
 use Swoole\Http\Request;
 use Swoole\Server;
 use Swoole\Websocket\Frame;
@@ -67,6 +82,12 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
 {
     public function onMessage($server, Frame $frame): void
     {
+        if($frame->opcode == Opcode::PING) {
+            // 如果使用協程 Server，在判斷是 PING 幀後，需要手動處理，返回 PONG 幀。
+            // 非同步風格 Server，可以直接通過 Swoole 配置處理，詳情請見 https://wiki.swoole.com/#/websocket_server?id=open_websocket_ping_frame
+            $server->push('', Opcode::PONG);
+            return;
+        }
         $server->push($frame->fd, 'Recv: ' . $frame->data);
     }
 
@@ -195,15 +216,13 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\WebSocketServer\Sender;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class ServerController
 {
     /**
-     * @Inject
      * @var Sender
      */
+    #[Inject]
     protected $sender;
 
     public function close(int $fd)

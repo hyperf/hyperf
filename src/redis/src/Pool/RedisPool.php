@@ -21,19 +21,10 @@ use Psr\Container\ContainerInterface;
 
 class RedisPool extends Pool
 {
-    /**
-     * @var string
-     */
-    protected $name;
+    protected array $config;
 
-    /**
-     * @var array
-     */
-    protected $config;
-
-    public function __construct(ContainerInterface $container, string $name)
+    public function __construct(ContainerInterface $container, protected string $name)
     {
-        $this->name = $name;
         $config = $container->get(ConfigInterface::class);
         $key = sprintf('redis.%s', $this->name);
         if (! $config->has($key)) {

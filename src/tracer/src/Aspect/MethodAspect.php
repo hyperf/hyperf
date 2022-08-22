@@ -17,34 +17,16 @@ use Hyperf\Tracer\SpanStarter;
 use Hyperf\Tracer\SwitchManager;
 use OpenTracing\Tracer;
 
-/**
- * Aspect.
- */
 class MethodAspect extends AbstractAspect
 {
     use SpanStarter;
 
-    /**
-     * @var array
-     */
-    public $classes = [
+    public array $classes = [
         'App*',
     ];
 
-    /**
-     * @var Tracer
-     */
-    private $tracer;
-
-    /**
-     * @var SwitchManager
-     */
-    private $switchManager;
-
-    public function __construct(Tracer $tracer, SwitchManager $switchManager)
+    public function __construct(private Tracer $tracer, private SwitchManager $switchManager)
     {
-        $this->tracer = $tracer;
-        $this->switchManager = $switchManager;
     }
 
     /**

@@ -13,13 +13,9 @@ namespace Hyperf\ResourceGrpc;
 
 class UndefinedGrpcResourceExpectMessage extends \Exception
 {
-    public $resource;
-
-    public function __construct(GrpcResource $resource)
+    public function __construct(public GrpcResource $resource)
     {
-        $this->resource = $resource;
-
-        $message = sprintf('You must override except() and return the message class that for this resource in class [%s].', get_class($resource));
+        $message = sprintf('You must override except() and return the message class that for this resource in class [%s].', $resource::class);
 
         parent::__construct($message, 500);
     }

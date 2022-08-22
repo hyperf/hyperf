@@ -18,25 +18,10 @@ use Hyperf\Utils\Exception\WaitTimeoutException;
 
 class Caller
 {
-    /**
-     * @var null|Channel
-     */
-    protected $channel;
+    protected ?Channel $channel = null;
 
-    /**
-     * @var float wait seconds
-     */
-    protected $waitTimeout;
-
-    /**
-     * @var null|Closure
-     */
-    protected $closure;
-
-    public function __construct(Closure $closure, float $waitTimeout = 10)
+    public function __construct(protected Closure $closure, protected float $waitTimeout = 10)
     {
-        $this->closure = $closure;
-        $this->waitTimeout = $waitTimeout;
         $this->initInstance();
     }
 
@@ -69,10 +54,7 @@ class Caller
 
     public function initInstance(): void
     {
-        if ($this->channel) {
-            $this->channel->close();
-        }
-
+        $this->channel?->close();
         $this->channel = new Channel(1);
         $this->channel->push($this->closure->__invoke());
     }

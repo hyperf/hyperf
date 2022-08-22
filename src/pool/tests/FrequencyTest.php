@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Pool;
 
+use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\Pool;
 use Hyperf\Utils\Coroutine;
@@ -56,11 +57,11 @@ class FrequencyTest extends TestCase
         $pool = Mockery::mock(Pool::class);
         $channel = new Channel(100);
         $pool->shouldReceive('flushOne')->andReturnUsing(function () use ($channel) {
-            $channel->push(true);
+            $channel->push(Mockery::mock(ConnectionInterface::class));
         });
 
         $stub = new ConstantFrequencyStub($pool);
-        Coroutine::sleep(0.002);
+        Coroutine::sleep(0.005);
         $stub->clear();
         $this->assertGreaterThan(0, $channel->length());
     }

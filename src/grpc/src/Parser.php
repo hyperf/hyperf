@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Grpc;
 
+use Google\Protobuf\GPBEmpty;
 use Google\Protobuf\Internal\Message;
 
 class Parser
@@ -19,7 +20,7 @@ class Parser
 
     public static function pack(string $data): string
     {
-        return $data = pack('CN', 0, strlen($data)) . $data;
+        return pack('CN', 0, strlen($data)) . $data;
     }
 
     public static function unpack(string $data): string
@@ -28,11 +29,14 @@ class Parser
         // 1 + 4 + data
         // $len = unpack('N', substr($data, 1, 4))[1];
         // assert(strlen($data) - 5 === $len);
-        return $data = substr($data, 5);
+        return substr($data, 5);
     }
 
     public static function serializeMessage($data)
     {
+        if ($data === null) {
+            $data = new GPBEmpty();
+        }
         if (method_exists($data, 'encode')) {
             $data = $data->encode();
         } elseif (method_exists($data, 'serializeToString')) {
@@ -85,9 +89,9 @@ class Parser
         if ($grpcStatus !== 0) {
             return [$response->headers['grpc-message'] ?? 'Unknown error', $grpcStatus, $response];
         }
-        $data = $response->data;
+        $data = $response->data ?? '';
         $reply = self::deserializeMessage($deserialize, $data);
-        $status = (int) ($response->headers['grpc-status'] ?? 0 ?: 0);
+        $status = (int) ($response->headers['grpc-status'] ?? 0);
         return [$reply, $status, $response];
     }
 

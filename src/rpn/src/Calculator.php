@@ -29,7 +29,7 @@ class Calculator
     /**
      * @var OperatorInterface[]
      */
-    protected $operators = [];
+    protected array $operators = [];
 
     /**
      * @param OperatorInterface[] $operators
@@ -91,8 +91,8 @@ class Calculator
     {
         $numStack = new \SplStack();
         $operaStack = new \SplStack();
-        preg_match_all('/((?:[0-9\.]+)|(?:[\(\)\+\-\*\/])){1}/', $expression, $matchs);
-        foreach ($matchs[0] as $key => &$match) {
+        preg_match_all('/((?:[0-9\.]+)|(?:[\(\)\+\-\*\/])){1}/', $expression, $matches);
+        foreach ($matches[0] as $key => &$match) {
             if (is_numeric($match)) {
                 $numStack->push($match);
                 continue;
@@ -109,9 +109,9 @@ class Calculator
                 }
                 continue;
             }
-            if ($match === '-' && ($key === 0 || in_array($matchs[0][$key - 1], ['+', '-', '*', '/', '(']))) {
-                $numStack->push($match . ($matchs[0][$key + 1]));
-                unset($matchs[0][$key + 1]);
+            if ($match === '-' && ($key === 0 || (isset($matches[0][$key - 1]) && in_array($matches[0][$key - 1], ['+', '-', '*', '/', '('])))) {
+                $numStack->push($match . ($matches[0][$key + 1]));
+                unset($matches[0][$key + 1]);
                 continue;
             }
             if (in_array($match, ['-', '+'])) {

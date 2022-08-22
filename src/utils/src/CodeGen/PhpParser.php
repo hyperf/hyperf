@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\CodeGen;
 
+use Hyperf\Utils\Arr;
 use Hyperf\Utils\Exception\InvalidArgumentException;
 use PhpParser\Node;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use ReflectionClass;
 use ReflectionParameter;
+use ReflectionType;
 
 class PhpParser
 {
@@ -29,17 +31,12 @@ class PhpParser
         'object',
         'resource',
         'mixed',
+        'null',
     ];
 
-    /**
-     * @var null|PhpParser
-     */
-    protected static $instance;
+    protected static ?PhpParser $instance = null;
 
-    /**
-     * @var Parser
-     */
-    protected $parser;
+    protected Parser $parser;
 
     public function __construct()
     {
@@ -64,6 +61,24 @@ class PhpParser
         return $this->parser->parse($code);
     }
 
+    public function getNodeFromReflectionType(ReflectionType $reflection): Node\ComplexType|Node\Identifier|Node\Name
+    {
+        if ($reflection instanceof \ReflectionUnionType) {
+            $unionType = [];
+            foreach ($reflection->getTypes() as $objType) {
+                $type = $objType->getName();
+                if (! in_array($type, static::TYPES)) {
+                    $unionType[] = new Node\Name('\\' . $type);
+                } else {
+                    $unionType[] = new Node\Identifier($type);
+                }
+            }
+            return new Node\UnionType($unionType);
+        }
+
+        return $this->getTypeWithNullableOrNot($reflection);
+    }
+
     public function getNodeFromReflectionParameter(ReflectionParameter $parameter): Node\Param
     {
         $result = new Node\Param(
@@ -75,12 +90,7 @@ class PhpParser
         }
 
         if ($parameter->hasType()) {
-            $type = $parameter->getType()->getName();
-            if (! in_array($type, static::TYPES)) {
-                $result->type = new Node\Name('\\' . $type);
-            } else {
-                $result->type = new Node\Identifier($parameter->getType()->getName());
-            }
+            $result->type = $this->getNodeFromReflectionType($parameter->getType());
         }
 
         if ($parameter->isPassedByReference()) {
@@ -96,22 +106,28 @@ class PhpParser
 
     public function getExprFromValue($value): Node\Expr
     {
-        switch (gettype($value)) {
-            case 'array':
-                return new Node\Expr\Array_($value);
-            case 'string':
-                return new Node\Scalar\String_($value);
-            case 'integer':
-                return new Node\Scalar\LNumber($value);
-            case 'double':
-                return new Node\Scalar\DNumber($value);
-            case 'NULL':
-                return new Node\Expr\ConstFetch(new Node\Name('null'));
-            case 'boolean':
-                return new Node\Expr\ConstFetch(new Node\Name($value ? 'true' : 'false'));
-            default:
-                throw new InvalidArgumentException($value . ' is invalid');
-        }
+        return match (gettype($value)) {
+            'array' => value(function ($value) {
+                $isList = ! Arr::isAssoc($value);
+                $result = [];
+                foreach ($value as $i => $item) {
+                    $key = null;
+                    if (! $isList) {
+                        $key = is_int($i) ? new Node\Scalar\LNumber($i) : new Node\Scalar\String_($i);
+                    }
+                    $result[] = new Node\Expr\ArrayItem($this->getExprFromValue($item), $key);
+                }
+                return new Node\Expr\Array_($result, [
+                    'kind' => Node\Expr\Array_::KIND_SHORT,
+                ]);
+            }, $value),
+            'string' => new Node\Scalar\String_($value),
+            'integer' => new Node\Scalar\LNumber($value),
+            'double' => new Node\Scalar\DNumber($value),
+            'NULL' => new Node\Expr\ConstFetch(new Node\Name('null')),
+            'boolean' => new Node\Expr\ConstFetch(new Node\Name($value ? 'true' : 'false')),
+            default => throw new InvalidArgumentException($value . ' is invalid'),
+        };
     }
 
     /**
@@ -137,5 +153,23 @@ class PhpParser
         }
 
         return $methods;
+    }
+
+    private function getTypeWithNullableOrNot(ReflectionType $reflection): Node\ComplexType|Node\Identifier|Node\Name
+    {
+        if (! $reflection instanceof \ReflectionNamedType) {
+            throw new \ReflectionException('ReflectionType must be ReflectionNamedType.');
+        }
+
+        $name = $reflection->getName();
+
+        if ($reflection->allowsNull() && $name !== 'mixed') {
+            return new Node\NullableType($name);
+        }
+
+        if (! in_array($name, static::TYPES)) {
+            return new Node\Name('\\' . $name);
+        }
+        return new Node\Identifier($name);
     }
 }

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\WebSocketClient;
 
+use Hyperf\HttpMessage\Server\Response;
 use Hyperf\WebSocketClient\Exception\ConnectException;
 use Psr\Http\Message\UriInterface;
 use Swoole\Coroutine;
@@ -18,19 +19,10 @@ use Swoole\WebSocket\Frame as SwFrame;
 
 class Client
 {
-    /**
-     * @var UriInterface
-     */
-    protected $uri;
+    protected Coroutine\Http\Client $client;
 
-    /**
-     * @var Coroutine\Http\Client
-     */
-    protected $client;
-
-    public function __construct(UriInterface $uri)
+    public function __construct(protected UriInterface $uri)
     {
-        $this->uri = $uri;
         $host = $uri->getHost();
         $port = $uri->getPort();
         $ssl = $uri->getScheme() === 'wss';
@@ -50,8 +42,15 @@ class Client
 
         $ret = $this->client->upgrade($path);
         if (! $ret) {
-            $errCode = $this->client->errCode;
-            throw new ConnectException(sprintf('Websocket upgrade failed by [%s] [%s].', $errCode, swoole_strerror($errCode)));
+            if ($this->client->errCode !== 0) {
+                $errCode = $this->client->errCode;
+                $errMsg = $this->client->errMsg;
+            } else {
+                $errCode = $this->client->statusCode;
+                $errMsg = Response::getReasonPhraseByCode($errCode);
+            }
+
+            throw new ConnectException(sprintf('Websocket upgrade failed by [%s] [%s].', $errCode, $errMsg));
         }
     }
 

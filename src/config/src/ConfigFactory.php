@@ -18,9 +18,9 @@ class ConfigFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        $configPath = BASE_PATH . '/config/';
-        $config = $this->readConfig($configPath . 'config.php');
-        $autoloadConfig = $this->readPaths([BASE_PATH . '/config/autoload']);
+        $configPath = BASE_PATH . '/config';
+        $config = $this->readConfig($configPath . '/config.php');
+        $autoloadConfig = $this->readPaths([$configPath . '/autoload']);
         $merged = array_merge_recursive(ProviderConfig::load(), $config, ...$autoloadConfig);
         return new Config($merged);
     }
@@ -34,7 +34,7 @@ class ConfigFactory
         return is_array($config) ? $config : [];
     }
 
-    private function readPaths(array $paths)
+    private function readPaths(array $paths): array
     {
         $configs = [];
         $finder = new Finder();

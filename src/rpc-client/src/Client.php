@@ -17,15 +17,9 @@ use InvalidArgumentException;
 
 class Client
 {
-    /**
-     * @var null|PackerInterface
-     */
-    private $packer;
+    private ?PackerInterface $packer = null;
 
-    /**
-     * @var null|TransporterInterface
-     */
-    private $transporter;
+    private ?TransporterInterface $transporter = null;
 
     public function send($data)
     {

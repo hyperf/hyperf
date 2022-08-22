@@ -13,48 +13,23 @@ namespace Hyperf\Di\Annotation;
 
 use Hyperf\Config\ProviderConfig;
 use Hyperf\Di\Aop\ProxyManager;
-use Hyperf\Di\ClassLoader;
 use Hyperf\Di\Exception\DirectoryNotExistException;
-use Hyperf\Di\Exception\Exception;
 use Hyperf\Di\MetadataCollector;
 use Hyperf\Di\ReflectionManager;
+use Hyperf\Di\ScanHandler\ScanHandlerInterface;
+use Hyperf\Utils\Composer;
 use Hyperf\Utils\Filesystem\Filesystem;
 use ReflectionClass;
 
 class Scanner
 {
-    /**
-     * @var \Hyperf\Di\ClassLoader
-     */
-    protected $classloader;
+    protected Filesystem $filesystem;
 
-    /**
-     * @var ScanConfig
-     */
-    protected $scanConfig;
+    protected string $path = BASE_PATH . '/runtime/container/scan.cache';
 
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
-
-    /**
-     * @var string
-     */
-    protected $path = BASE_PATH . '/runtime/container/scan.cache';
-
-    public function __construct(ClassLoader $classloader, ScanConfig $scanConfig)
+    public function __construct(protected ScanConfig $scanConfig, protected ScanHandlerInterface $handler)
     {
-        $this->classloader = $classloader;
-        $this->scanConfig = $scanConfig;
         $this->filesystem = new Filesystem();
-
-        foreach ($scanConfig->getIgnoreAnnotations() as $annotation) {
-            AnnotationReader::addGlobalIgnoredName($annotation);
-        }
-        foreach ($scanConfig->getGlobalImports() as $alias => $annotation) {
-            AnnotationReader::addGlobalImports($alias, $annotation);
-        }
     }
 
     public function collect(AnnotationReader $reader, ReflectionClass $reflection)
@@ -116,18 +91,14 @@ class Scanner
             return $this->deserializeCachedScanData($collectors);
         }
 
-        $pid = pcntl_fork();
-        if ($pid == -1) {
-            throw new Exception('The process fork failed');
-        }
-        if ($pid) {
-            pcntl_wait($status);
+        $scanned = $this->handler->scan();
+        if ($scanned->isScanned()) {
             return $this->deserializeCachedScanData($collectors);
         }
 
         $this->deserializeCachedScanData($collectors);
 
-        $annotationReader = new AnnotationReader();
+        $annotationReader = new AnnotationReader($this->scanConfig->getIgnoreAnnotations());
 
         $paths = $this->normalizeDir($paths);
 
@@ -283,12 +254,12 @@ class Scanner
         $aspects = array_merge($providerConfig['aspects'], $baseConfig['aspects'], $aspects);
 
         [$removed, $changed] = $this->getChangedAspects($aspects, $lastCacheModified);
-        // When the aspect removed from config, it should removed from AspectCollector.
+        // When the aspect removed from config, it should be removed from AspectCollector.
         foreach ($removed as $aspect) {
             AspectCollector::clear($aspect);
         }
 
-        foreach ($aspects ?? [] as $key => $value) {
+        foreach ($aspects as $key => $value) {
             if (is_numeric($key)) {
                 $aspect = $value;
                 $priority = null;
@@ -342,7 +313,11 @@ class Scanner
             }
         }
         foreach ($classes as $class) {
-            $file = $this->classloader->getComposerClassLoader()->findFile($class);
+            $file = Composer::getLoader()->findFile($class);
+            if ($file === false) {
+                echo sprintf('Skip class %s, because it does not exist in composer class loader.', $class) . PHP_EOL;
+                continue;
+            }
             if ($lastCacheModified <= $this->filesystem->lastModified($file)) {
                 $changed[] = $class;
             }

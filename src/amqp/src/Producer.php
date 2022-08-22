@@ -19,9 +19,7 @@ class Producer extends Builder
 {
     public function produce(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5): bool
     {
-        return retry(1, function () use ($producerMessage, $confirm, $timeout) {
-            return $this->produceMessage($producerMessage, $confirm, $timeout);
-        });
+        return retry(1, fn () => $this->produceMessage($producerMessage, $confirm, $timeout));
     }
 
     private function produceMessage(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5)

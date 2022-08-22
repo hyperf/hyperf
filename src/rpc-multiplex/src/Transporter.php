@@ -21,20 +21,9 @@ use Psr\Container\ContainerInterface;
 
 class Transporter implements TransporterInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected SocketFactory $factory;
 
-    /**
-     * @var SocketFactory
-     */
-    protected $factory;
-
-    /**
-     * @var array
-     */
-    protected $config = [
+    protected array $config = [
         'connect_timeout' => 5.0,
         'settings' => [
             'package_max_length' => 1024 * 1024 * 2,
@@ -43,11 +32,11 @@ class Transporter implements TransporterInterface
         'retry_count' => 2,
         'retry_interval' => 0,
         'client_count' => 4,
+        'heartbeat' => 20,
     ];
 
-    public function __construct(ContainerInterface $container, array $config = [])
+    public function __construct(protected ContainerInterface $container, array $config = [])
     {
-        $this->container = $container;
         $this->config = array_replace_recursive($this->config, $config);
         $this->factory = make(SocketFactory::class, ['config' => $this->config]);
     }

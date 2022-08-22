@@ -81,9 +81,7 @@ use Hyperf\Task\Annotation\Task;
 
 class AnnotationTask
 {
-    /**
-     * @Task
-     */
+    #[Task]
     public function handle($cid)
     {
         return [
@@ -142,14 +140,9 @@ use MongoDB\Driver\WriteConcern;
 
 class MongoTask
 {
-    /**
-     * @var Manager
-     */
-    public $manager;
+    public Manager $manager;
 
-    /**
-     * @Task
-     */
+    #[Task]
     public function insert(string $namespace, array $document)
     {
         $writeConcern = new WriteConcern(WriteConcern::MAJORITY, 1000);
@@ -160,9 +153,7 @@ class MongoTask
         return $result->getUpsertedCount();
     }
 
-    /**
-     * @Task
-     */
+    #[Task]
     public function query(string $namespace, array $filter = [], array $options = [])
     {
         $query = new Query($filter, $options);

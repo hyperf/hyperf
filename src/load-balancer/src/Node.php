@@ -13,25 +13,7 @@ namespace Hyperf\LoadBalancer;
 
 class Node
 {
-    /**
-     * @var int
-     */
-    public $weight;
-
-    /**
-     * @var string
-     */
-    public $host;
-
-    /**
-     * @var int
-     */
-    public $port;
-
-    public function __construct(string $host, int $port, int $weight = 0)
+    public function __construct(public string $host, public int $port, public int $weight = 0, public string $pathPrefix = '')
     {
-        $this->host = $host;
-        $this->port = $port;
-        $this->weight = $weight;
     }
 }

@@ -19,21 +19,13 @@ use Hyperf\Nats\Encoders\Encoder;
 class EncodedConnection extends Connection
 {
     /**
-     * Encoder for this connection.
-     *
-     * @var null|Encoder
-     */
-    private $encoder;
-
-    /**
      * EncodedConnection constructor.
      *
      * @param ConnectionOptions $options connection options object
-     * @param null|Encoder $encoder encoder to use with the payload
+     * @param Encoder $encoder encoder to use with the payload
      */
-    public function __construct(ConnectionOptions $options = null, Encoder $encoder = null)
+    public function __construct(ConnectionOptions $options, private Encoder $encoder)
     {
-        $this->encoder = $encoder;
         parent::__construct($options);
     }
 
@@ -44,21 +36,19 @@ class EncodedConnection extends Connection
      * @param string $payload message data
      * @param string $inbox message inbox
      */
-    public function publish($subject, $payload = null, $inbox = null)
+    public function publish(string $subject, mixed $payload = null, ?string $inbox = null): void
     {
         $payload = $this->encoder->encode($payload);
         parent::publish($subject, $payload, $inbox);
     }
 
     /**
-     * Subscribes to an specific event given a subject.
+     * Subscribes to a specific event given a subject.
      *
      * @param string $subject message topic
      * @param \Closure $callback closure to be executed as callback
-     *
-     * @return string
      */
-    public function subscribe($subject, \Closure $callback)
+    public function subscribe(string $subject, \Closure $callback): string
     {
         $c = function ($message) use ($callback) {
             $message->setBody($this->encoder->decode($message->getBody()));
@@ -74,7 +64,7 @@ class EncodedConnection extends Connection
      * @param string $queue queue name
      * @param \Closure $callback closure to be executed as callback
      */
-    public function queueSubscribe($subject, $queue, \Closure $callback)
+    public function queueSubscribe(string $subject, string $queue, \Closure $callback): string
     {
         $c = function ($message) use ($callback) {
             $message->setBody($this->encoder->decode($message->getBody()));

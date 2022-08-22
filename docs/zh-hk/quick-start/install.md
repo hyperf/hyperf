@@ -8,7 +8,7 @@ Hyperf 對系統環境有一些要求，當您使用 Swoole 網絡引擎驅動�
 
 當您不想採用 Docker 來作為運行的環境基礎時，您需要確保您的運行環境達到了以下的要求：   
 
- - PHP >= 7.4
+ - PHP >= 8.0 and <= 8.1
  - 以下任一網絡引擎
    - Swoole PHP 擴展 >= 4.5，並關閉了 `Short Name`
    - Swow PHP 擴展 (Beta)
@@ -56,7 +56,7 @@ docker run --name hyperf \
 -p 9501:9501 -it \
 --privileged -u root \
 --entrypoint /bin/sh \
-hyperf/hyperf:7.4-alpine-v3.11-swoole
+hyperf/hyperf:8.0-alpine-v3.15-swoole
 ```
 
 - 將 Composer 鏡像設置為阿里雲鏡像，加速國內下載速度

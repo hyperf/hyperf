@@ -40,8 +40,8 @@ use Hyperf\RpcServer\Annotation\RpcService;
 
 /**
  * 注意，如希望通過服務中心來管理服務，需在註解內增加 publishTo 屬性
- * @RpcService(name="CalculatorService", protocol="jsonrpc-http", server="jsonrpc-http")
  */
+#[RpcService(name: "CalculatorService", protocol: "jsonrpc-http", server: "jsonrpc-http")]
 class CalculatorService implements CalculatorServiceInterface
 {
     // 實現一個加法方法，這裏簡單的認為參數都是 int 類型
@@ -247,6 +247,8 @@ return [
                 'retry_count' => 2,
                 // 重試間隔，毫秒
                 'retry_interval' => 100,
+                // 使用多路複用 RPC 時的心跳間隔，null 為不觸發心跳
+                'heartbeat' => 30,
                 // 當使用 JsonRpcPoolTransporter 時會用到以下配置
                 'pool' => [
                     'min_connections' => 1,
@@ -281,15 +283,13 @@ class CalculatorServiceConsumer extends AbstractServiceClient implements Calcula
 {
     /**
      * 定義對應服務提供者的服務名稱
-     * @var string 
      */
-    protected $serviceName = 'CalculatorService';
+    protected string $serviceName = 'CalculatorService';
     
     /**
      * 定義對應服務提供者的服務協議
-     * @var string 
      */
-    protected $protocol = 'jsonrpc-http';
+    protected string $protocol = 'jsonrpc-http';
 
     public function add(int $a, int $b): int
     {

@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Traits;
 
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 trait CoroutineProxy
 {

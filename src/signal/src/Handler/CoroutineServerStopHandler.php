@@ -12,28 +12,19 @@ declare(strict_types=1);
 namespace Hyperf\Signal\Handler;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Process\ProcessManager;
 use Hyperf\Server\ServerManager;
 use Hyperf\Signal\SignalHandlerInterface;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Psr\Container\ContainerInterface;
 
 class CoroutineServerStopHandler implements SignalHandlerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ConfigInterface $config;
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
     }
 

@@ -11,31 +11,21 @@ declare(strict_types=1);
  */
 namespace Hyperf\Metric\Aspect;
 
-use Hyperf\Di\Annotation\Aspect;
-use Hyperf\Di\Aop\AroundInterface;
+use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Metric\Annotation\Counter;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 
-/**
- * @Aspect
- */
-class CounterAnnotationAspect implements AroundInterface
+class CounterAnnotationAspect extends AbstractAspect
 {
-    public $classes = [];
+    public array $classes = [];
 
-    public $annotations = [
+    public array $annotations = [
         Counter::class,
     ];
 
-    /**
-     * @var MetricFactoryInterface
-     */
-    private $factory;
-
-    public function __construct(MetricFactoryInterface $factory)
+    public function __construct(private MetricFactoryInterface $factory)
     {
-        $this->factory = $factory;
     }
 
     /**

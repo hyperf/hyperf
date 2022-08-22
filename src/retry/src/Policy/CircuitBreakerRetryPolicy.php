@@ -16,21 +16,16 @@ use Hyperf\Retry\RetryContext;
 
 class CircuitBreakerRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
-    /**
-     * @var CircuitBreakerState
-     */
-    private $state;
-
-    public function __construct(CircuitBreakerState $circuitBreakerState)
+    public function __construct(private CircuitBreakerState $circuitBreakerState)
     {
-        $this->state = $circuitBreakerState;
     }
 
     public function canRetry(RetryContext &$retryContext): bool
     {
-        if (! $this->state->isOpen()) {
+        if (! $this->circuitBreakerState->isOpen()) {
             return true;
         }
+        $retryContext['retryExhausted'] = true;
         return false;
     }
 
@@ -39,7 +34,7 @@ class CircuitBreakerRetryPolicy extends BaseRetryPolicy implements RetryPolicyIn
         if (! isset($retryContext['retryExhausted'])) {
             return false;
         }
-        $this->state->open();
+        $this->circuitBreakerState->open();
         return false;
     }
 }

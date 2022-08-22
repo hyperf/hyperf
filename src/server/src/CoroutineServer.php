@@ -13,62 +13,42 @@ namespace Hyperf\Server;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Server\Event\AllCoroutineServersClosed;
 use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Server\Exception\RuntimeException;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Waiter;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Coroutine;
+use Swoole\Coroutine\Http\Server as HttpServer;
+use Swoole\Coroutine\Server;
 
 class CoroutineServer implements ServerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ?ServerConfig $config = null;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @var ServerConfig
-     */
-    protected $config;
-
-    /**
-     * @var \Swoole\Coroutine\Http\Server|\Swoole\Coroutine\Server
-     */
-    protected $server;
+    protected HttpServer|Server|null $server = null;
 
     /**
      * @var callable
      */
     protected $handler;
 
-    /**
-     * @var bool
-     */
-    protected $mainServerStarted = false;
+    protected bool $mainServerStarted = false;
+
+    private Waiter $waiter;
 
     public function __construct(
-        ContainerInterface $container,
-        LoggerInterface $logger,
-        EventDispatcherInterface $dispatcher
+        protected ContainerInterface $container,
+        protected LoggerInterface $logger,
+        protected EventDispatcherInterface $eventDispatcher
     ) {
-        $this->container = $container;
-        $this->logger = $logger;
-        $this->eventDispatcher = $dispatcher;
+        $this->waiter = new Waiter(-1);
     }
 
     public function init(ServerConfig $config): ServerInterface
@@ -77,7 +57,7 @@ class CoroutineServer implements ServerInterface
         return $this;
     }
 
-    public function start()
+    public function start(): void
     {
         $this->writePid();
         run(function () {
@@ -89,39 +69,43 @@ class CoroutineServer implements ServerInterface
                     if (! $this->mainServerStarted) {
                         $this->mainServerStarted = true;
                         $this->eventDispatcher->dispatch(new MainCoroutineServerStart($name, $server, $config));
+                        CoordinatorManager::until(Constants::WORKER_START)->resume();
                     }
                     $this->eventDispatcher->dispatch(new CoroutineServerStart($name, $server, $config));
-                    CoordinatorManager::until(Constants::WORKER_START)->resume();
                     $server->start();
                     $this->eventDispatcher->dispatch(new CoroutineServerStop($name, $server));
                     CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
                 });
             }
+
+            if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield()) {
+                $this->closeAll($servers);
+            }
         }, swoole_hook_flags());
     }
 
-    /**
-     * @return \Swoole\Coroutine\Http\Server|\Swoole\Coroutine\Server
-     */
-    public function getServer()
+    public function getServer(): HttpServer|Server
     {
         return $this->server;
     }
 
-    /**
-     * @param mixed $server
-     * @deprecated v2.2
-     */
-    public static function isCoroutineServer($server): bool
+    protected function closeAll(array $servers = []): void
     {
-        return $server instanceof Coroutine\Http\Server || $server instanceof Coroutine\Server;
+        /**
+         * @var HttpServer|Server $server
+         */
+        foreach ($servers as [$type, $server]) {
+            $server->shutdown();
+        }
+
+        $this->eventDispatcher->dispatch(new AllCoroutineServersClosed());
     }
 
     protected function initServer(ServerConfig $config): void
     {
         $servers = $config->getServers();
         foreach ($servers as $server) {
-            if (! $server instanceof \Hyperf\Server\Port) {
+            if (! $server instanceof Port) {
                 continue;
             }
             $name = $server->getName();
@@ -149,7 +133,7 @@ class CoroutineServer implements ServerInterface
                     if ($handler instanceof MiddlewareInitializerInterface) {
                         $handler->initCoreMiddleware($name);
                     }
-                    if ($this->server instanceof \Swoole\Coroutine\Http\Server) {
+                    if ($this->server instanceof HttpServer) {
                         $this->server->handle('/', static function ($request, $response) use ($handler, $method) {
                             Coroutine::create(static function () use ($request, $response, $handler, $method) {
                                 $handler->{$method}($request, $response);
@@ -164,7 +148,7 @@ class CoroutineServer implements ServerInterface
                     if ($handler instanceof MiddlewareInitializerInterface) {
                         $handler->initCoreMiddleware($name);
                     }
-                    if ($this->server instanceof \Swoole\Coroutine\Http\Server) {
+                    if ($this->server instanceof HttpServer) {
                         $this->server->handle('/', [$handler, $method]);
                     }
                 }
@@ -177,28 +161,28 @@ class CoroutineServer implements ServerInterface
                     if ($receiveHandler instanceof MiddlewareInitializerInterface) {
                         $receiveHandler->initCoreMiddleware($name);
                     }
-                    if ($this->server instanceof \Swoole\Coroutine\Server) {
-                        $this->server->handle(function (Coroutine\Server\Connection $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
+                    if ($this->server instanceof Server) {
+                        $this->server->handle(function (Server\Connection $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
                             if ($connectHandler && $connectMethod) {
-                                parallel([static function () use ($connectHandler, $connectMethod, $connection) {
+                                $this->waiter->wait(static function () use ($connectHandler, $connectMethod, $connection) {
                                     $connectHandler->{$connectMethod}($connection, $connection->exportSocket()->fd);
-                                }]);
+                                });
                             }
                             while (true) {
                                 $data = $connection->recv();
                                 if (empty($data)) {
                                     if ($closeHandler && $closeMethod) {
-                                        parallel([static function () use ($closeHandler, $closeMethod, $connection) {
+                                        $this->waiter->wait(static function () use ($closeHandler, $closeMethod, $connection) {
                                             $closeHandler->{$closeMethod}($connection, $connection->exportSocket()->fd);
-                                        }]);
+                                        });
                                     }
                                     $connection->close();
                                     break;
                                 }
                                 // One coroutine at a time, consistent with other servers
-                                parallel([static function () use ($receiveHandler, $receiveMethod, $connection, $data) {
+                                $this->waiter->wait(static function () use ($receiveHandler, $receiveMethod, $connection, $data) {
                                     $receiveHandler->{$receiveMethod}($connection, $connection->exportSocket()->fd, 0, $data);
-                                }]);
+                                });
                             }
                         });
                     }
@@ -209,11 +193,11 @@ class CoroutineServer implements ServerInterface
         throw new RuntimeException('Server type is invalid or the server callback does not exists.');
     }
 
-    protected function getCallbackMethod(string $callack, array $callbacks): array
+    protected function getCallbackMethod(string $callback, array $callbacks): array
     {
         $handler = $method = null;
-        if (isset($callbacks[$callack])) {
-            [$class, $method] = $callbacks[$callack];
+        if (isset($callbacks[$callback])) {
+            [$class, $method] = $callbacks[$callback];
             $handler = $this->container->get($class);
         }
         return [$handler, $method];
@@ -224,9 +208,9 @@ class CoroutineServer implements ServerInterface
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
             case ServerInterface::SERVER_WEBSOCKET:
-                return new Coroutine\Http\Server($host, $port, false, true);
+                return new HttpServer($host, $port, false, true);
             case ServerInterface::SERVER_BASE:
-                return new Coroutine\Server($host, $port, false, true);
+                return new Server($host, $port, false, true);
         }
 
         throw new RuntimeException('Server type is invalid.');

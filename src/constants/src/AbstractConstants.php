@@ -14,13 +14,15 @@ namespace Hyperf\Constants;
 use Hyperf\Constants\Exception\ConstantsException;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Str;
 
+/**
+ * @method static string getMessage(int $code, $translate = null)
+ */
 abstract class AbstractConstants
 {
     public static function __callStatic($name, $arguments)
     {
-        if (! Str::startsWith($name, 'get')) {
+        if (! str_starts_with($name, 'get')) {
             throw new ConstantsException('The function is not defined!');
         }
 

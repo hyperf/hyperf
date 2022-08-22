@@ -19,14 +19,8 @@ use Psr\Container\ContainerInterface;
 
 class LogBeforeProcessStartListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function listen(): array
@@ -40,7 +34,7 @@ class LogBeforeProcessStartListener implements ListenerInterface
     /**
      * @param BeforeProcessHandle $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $message = sprintf('Process[%s.%d] start.', $event->process->name, $event->index);
         if ($this->container->has(StdoutLoggerInterface::class)) {

@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Annotation;
 
+use Hyperf\Contract\Arrayable;
 use Hyperf\Di\ReflectionManager;
-use Hyperf\Utils\Contracts\Arrayable;
 use ReflectionProperty;
 
 abstract class AbstractAnnotation implements AnnotationInterface, Arrayable

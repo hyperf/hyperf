@@ -14,15 +14,10 @@ namespace Hyperf\Signal\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class Signal extends AbstractAnnotation
 {
-    /**
-     * @var null|int
-     */
-    public $priority;
+    public function __construct(public ?int $priority = null)
+    {
+    }
 }

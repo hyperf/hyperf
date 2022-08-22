@@ -12,32 +12,20 @@ declare(strict_types=1);
 namespace Hyperf\SocketIOServer\SidProvider;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\Session\Session;
 use Hyperf\SocketIOServer\SocketIO;
+use Psr\Container\ContainerInterface;
 use SessionHandlerInterface;
 
 class SessionSidProvider implements SidProviderInterface
 {
-    /**
-     * @var \Hyperf\Contract\SessionInterface
-     */
-    private $session;
+    private SessionInterface $session;
 
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private ConfigInterface $config;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
         $this->session = $container->get(SessionInterface::class);
     }

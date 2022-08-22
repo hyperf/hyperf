@@ -100,7 +100,7 @@ class IndexController
 }
 ```
 
-#### Inject by `@Inject`
+#### Inject by `#[Inject]`
 
 ```php
 <?php
@@ -113,11 +113,11 @@ use Hyperf\HttpServer\Annotation\AutoController;
 class IndexController
 {
     /**
-     * Use `@Inject` to inject the attribute type object declared by `@var` 
+     * Use `#[Inject]` to inject the attribute type object declared by `@var` 
      * 
-     * @Inject 
      * @var UserService
      */
+    #[Inject]
     private $userService;
     
     public function index()
@@ -131,11 +131,11 @@ class IndexController
 
 > Note that the caller, that is, the `IndexController` must be an object created by `DI` to perform automatic injection. Controller is created by `DI` by default.
 
-> The namespace `use Hyperf\Di\Annotation\Inject;` should be used when `@Inject` used.
+> The namespace `use Hyperf\Di\Annotation\Inject;` should be used when `#[Inject]` used.
 
 ##### Required Parameter
 
-The `@Inject` annotation has a `required` parameter, and the default value is `true`. When the parameter is defined as `false`, it indicates that this attribute is an optional dependency. When the object corresponding to `@var` does not exist in DI, a `null` will be injected instead of throwing an exception.
+The `#[Inject]` annotation has a `required` parameter, and the default value is `true`. When the parameter is defined as `false`, it indicates that this attribute is an optional dependency. When the object corresponding to `@var` does not exist in DI, a `null` will be injected instead of throwing an exception.
 
 ```php
 <?php
@@ -147,12 +147,12 @@ use Hyperf\Di\Annotation\Inject;
 class IndexController
 {
     /**
-     * Inject the attribute type object declared by the `@var` annotation through the `@Inject` annotation
+     * Inject the attribute type object declared by the `@var` annotation through the `#[Inject]` annotation
      * Null will be injected when UserService does not exist in the DI container or cannot be created
      *
-     * @Inject(required=false) 
      * @var UserService
      */
+    #[Inject(required: false)]
     private $userService;
     
     public function index()
@@ -220,11 +220,8 @@ use Hyperf\HttpServer\Annotation\AutoController;
 
 class IndexController
 {
-    /**
-     * @Inject 
-     * @var UserServiceInterface
-     */
-    private $userService;
+    #[Inject]
+    private UserServiceInterface $userService;
     
     public function index()
     {
@@ -300,7 +297,7 @@ return [
 
 In this way, when injecting `UserServiceInterface`, the container will hand over the object's creation to `UserServiceFactory`.
 
-> Of course, in this scenario, you can use the `@Value` annotation to inject configuration more conveniently rather than building a factory class. This example is just for explaining.
+> Of course, in this scenario, you can use the `#[Value]` annotation to inject configuration more conveniently rather than building a factory class. This example is just for explaining.
 
 ### Lazy Loading
 
@@ -346,7 +343,7 @@ class Foo{
 }
 ````
 
-You can also inject lazy loading proxy through the annotation `@Inject(lazy=true)`. Implementing lazy loading through annotations does not need to create configuration files.
+You can also inject lazy loading proxy through the annotation `#[Inject(lazy: true)]`. Implementing lazy loading through annotations does not need to create configuration files.
 
 ```php
 use Hyperf\Di\Annotation\Inject;
@@ -354,9 +351,9 @@ use App\Service\UserServiceInterface;
 
 class Foo{
     /**
-     * @Inject(lazy=true)
      * @var UserServiceInterface
      */
+    #[Inject(lazy: true)]
     public $service;
 }
 ````
@@ -392,7 +389,7 @@ $userService = make(UserService::class, ['enableCache' => true]);
 
 ## Get the Container Object
 
-Sometimes we wish to achieve some more dynamic requirements, we would like to be able to directly obtain the `Container` object. In most cases, the entry classes of the framework, such as command classes, controllers, RPC service providers, etc., are created and maintained by `Container`, which means that most of your business codes are all under the management of `Container`. This also means that in most cases you can get the `Hyperf\Di\Container` object by declaring in the `Constructor` or by injecting the `Psr\Container\ContainerInterface` interface class through the `@Inject` annotation. Here is an example:
+Sometimes we wish to achieve some more dynamic requirements, we would like to be able to directly obtain the `Container` object. In most cases, the entry classes of the framework, such as command classes, controllers, RPC service providers, etc., are created and maintained by `Container`, which means that most of your business codes are all under the management of `Container`. This also means that in most cases you can get the `Hyperf\Di\Container` object by declaring in the `Constructor` or by injecting the `Psr\Container\ContainerInterface` interface class through the `#[Inject]` annotation. Here is an example:
 
 ```php
 <?php
@@ -426,4 +423,4 @@ $container = \Hyperf\Utils\ApplicationContext::getContainer();
 
 ### The container only manages long-lived objects
 
-In other words, the objects managed by container are **all singletons**. This design is more efficient for long-life applications, reducing the meaningless creation and destruction of objects. This also means that all objects that need to be managed by the DI container **can not** contain the `state` value. Which `state` represents some values that will change with the request. In fact, in [coroutine](en/coroutine.md) programming, these state values should also be stored in the `coroutine context`, that is, ` Hyperf\Utils\Context`.
+In other words, the objects managed by container are **all singletons**. This design is more efficient for long-life applications, reducing the meaningless creation and destruction of objects. This also means that all objects that need to be managed by the DI container **can not** contain the `state` value. Which `state` represents some values that will change with the request. In fact, in [coroutine](en/coroutine.md) programming, these state values should also be stored in the `coroutine context`, that is, ` Hyperf\Context\Context`.

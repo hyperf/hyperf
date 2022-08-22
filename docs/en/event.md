@@ -87,7 +87,7 @@ return [
 
 ### Registering listeners with annotation
 
-Hyperf also provides an easier way to register listeners by registering with the `@Listener` annotation, as long as the annotation is defined on the listener class and the listener class is automatically completed in the `Hyperf annotation scan domain` Registration, code examples are as follows:
+Hyperf also provides an easier way to register listeners by registering with the `#[Listener]` annotation, as long as the annotation is defined on the listener class and the listener class is automatically completed in the `Hyperf annotation scan domain` Registration, code examples are as follows:
 
 ```php
 <?php
@@ -97,9 +97,7 @@ use App\Event\UserRegistered;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 
-/**
- * @Listener 
- */
+#[Listener]
 class UserRegisteredListener implements ListenerInterface
 {
     public function listen(): array
@@ -122,9 +120,9 @@ class UserRegisteredListener implements ListenerInterface
 }
 ```
 
-When registering the listener via annotations, we can define the order of the current listener by setting the `priority` attribute, such as `@Listener(priority=1)`, the underlying uses the `SplPriorityQueue` structure to store, the `priority` number is the greater, the priority the higher.
+When registering the listener via annotations, we can define the order of the current listener by setting the `priority` attribute, such as `#[Listener(priority: 1)]`, the underlying uses the `SplPriorityQueue` structure to store, the `priority` number is the greater, the priority the higher.
 
-> Use `@Listener` annotation need to `use Hyperf\Event\Annotation\Listener;` namespace；  
+> Use `#[Listener]` annotation need to `use Hyperf\Event\Annotation\Listener;` namespace；  
 
 ### Trigger Event
 
@@ -140,11 +138,8 @@ use App\Event\UserRegistered;
 
 class UserService
 {
-    /**
-     * @Inject 
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    #[Inject]
+    private EventDispatcherInterface $eventDispatcher;
     
     public function register()
     {

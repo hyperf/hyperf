@@ -36,17 +36,17 @@ use ReflectionMethod;
 
 class DispatcherFactory
 {
-    protected $routes = [BASE_PATH . '/config/routes.php'];
+    protected array $routes = [BASE_PATH . '/config/routes.php'];
 
     /**
      * @var RouteCollector[]
      */
-    protected $routers = [];
+    protected array $routers = [];
 
     /**
      * @var Dispatcher[]
      */
-    protected $dispatchers = [];
+    protected array $dispatchers = [];
 
     public function __construct()
     {
@@ -119,7 +119,7 @@ class DispatcherFactory
             $options = $annotation->options;
             $path = $this->parsePath($prefix, $method);
             $methodName = $method->getName();
-            if (substr($methodName, 0, 2) === '__') {
+            if (str_starts_with($methodName, '__')) {
                 continue;
             }
 
@@ -176,19 +176,23 @@ class DispatcherFactory
             foreach ($mappingAnnotations as $mappingAnnotation) {
                 /** @var Mapping $mapping */
                 if ($mapping = $values[$mappingAnnotation] ?? null) {
-                    if (! isset($mapping->path) || ! isset($mapping->methods) || ! isset($mapping->options)) {
+                    if (! isset($mapping->methods) || ! isset($mapping->options)) {
                         continue;
                     }
                     $methodOptions = Arr::merge($options, $mapping->options);
                     // Rewrite by annotation @Middleware for method.
                     $methodOptions['middleware'] = $options['middleware'];
-                    $path = $mapping->path;
 
-                    if ($path === '') {
+                    if (! isset($mapping->path)) {
+                        $path = $prefix . '/' . Str::snake($methodName);
+                    } elseif ($mapping->path === '') {
                         $path = $prefix;
-                    } elseif ($path[0] !== '/') {
-                        $path = $prefix . '/' . $path;
+                    } elseif ($mapping->path[0] !== '/') {
+                        $path = rtrim($prefix, '/') . '/' . $mapping->path;
+                    } else {
+                        $path = $mapping->path;
                     }
+
                     $router->addRoute($mapping->methods, $path, [$className, $methodName], $methodOptions);
                 }
             }
@@ -236,8 +240,12 @@ class DispatcherFactory
             throw new ConflictAnnotationException('Could not use @Middlewares and @Middleware annotation at the same times at same level.');
         }
 
-        return array_map(function (Middleware $middleware) {
-            return $middleware->middleware;
-        }, $middlewares ? $middlewares->middlewares : $middleware);
+        $result = [];
+        $middlewares = $middlewares ? $middlewares->middlewares : $middleware;
+        /** @var Middleware $middleware */
+        foreach ($middlewares as $middleware) {
+            $result[] = $middleware->middleware;
+        }
+        return $result;
     }
 }

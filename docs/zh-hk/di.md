@@ -46,10 +46,7 @@ use App\Service\UserService;
 
 class IndexController
 {
-    /**
-     * @var UserService
-     */
-    private $userService;
+    private UserService $userService;
     
     // 通過在構造函數的參數上聲明參數類型完成自動注入
     public function __construct(UserService $userService)
@@ -79,10 +76,7 @@ use App\Service\UserService;
 
 class IndexController
 {
-    /**
-     * @var null|UserService
-     */
-    private $userService;
+    private ?UserService $userService;
     
     // 通過設置參數為 nullable，表明該參數為一個可選參數
     public function __construct(?UserService $userService)
@@ -102,7 +96,7 @@ class IndexController
 }
 ```
 
-#### 通過 `@Inject` 註解注入
+#### 通過 `#[Inject]` 註解注入
 
 ```php
 <?php
@@ -114,11 +108,11 @@ use Hyperf\Di\Annotation\Inject;
 class IndexController
 {
     /**
-     * 通過 `@Inject` 註解注入由 `@var` 註解聲明的屬性類型對象
+     * 通過 `#[Inject]` 註解注入由 `@var` 註解聲明的屬性類型對象
      * 
-     * @Inject 
      * @var UserService
      */
+    #[Inject]
     private $userService;
     
     public function index()
@@ -130,9 +124,9 @@ class IndexController
 }
 ```
 
-> 通過 `@Inject` 註解注入可作用於 DI 創建的（單例）對象，也可作用於通過 `new` 關鍵詞創建的對象；
+> 通過 `#[Inject]` 註解注入可作用於 DI 創建的（單例）對象，也可作用於通過 `new` 關鍵詞創建的對象；
 
-> 使用 `@Inject` 註解時需 `use Hyperf\Di\Annotation\Inject;` 命名空間；
+> 使用 `#[Inject]` 註解時需 `use Hyperf\Di\Annotation\Inject;` 命名空間；
 
 ##### Required 參數
 
@@ -149,12 +143,12 @@ use Hyperf\Di\Annotation\Inject;
 class IndexController
 {
     /**
-     * 通過 `@Inject` 註解注入由 `@var` 註解聲明的屬性類型對象
+     * 通過 `#[Inject]` 註解注入由 `@var` 註解聲明的屬性類型對象
      * 當 UserService 不存在於 DI 容器內或不可創建時，則注入 null
      * 
-     * @Inject(required=false) 
      * @var UserService
      */
+    #[Inject(required: false)]
     private $userService;
     
     public function index()
@@ -223,9 +217,9 @@ use Hyperf\Di\Annotation\Inject;
 class IndexController
 {
     /**
-     * @Inject 
      * @var UserServiceInterface
      */
+    #[Inject]
     private $userService;
     
     public function index()
@@ -272,11 +266,7 @@ namespace App\Service;
 
 class UserService implements UserServiceInterface
 {
-    
-    /**
-     * @var bool
-     */
-    private $enableCache;
+    private bool $enableCache;
     
     public function __construct(bool $enableCache)
     {
@@ -347,17 +337,18 @@ class Foo{
 }
 ````
 
-您還可以通過註解 `@Inject(lazy=true)` 注入懶加載代理。通過註解實現懶加載不用創建配置文件。
+您還可以通過註解 `#[Inject(lazy: true)]` 注入懶加載代理。通過註解實現懶加載不用創建配置文件。
 
 ```php
 use Hyperf\Di\Annotation\Inject;
 use App\Service\UserServiceInterface;
 
-class Foo{
+class Foo
+{
     /**
-     * @Inject(lazy=true)
      * @var UserServiceInterface
      */
+    #[Inject(lazy: true)]
     public $service;
 }
 ````
@@ -395,7 +386,7 @@ $userService = make(UserService::class, ['enableCache' => true]);
 ## 獲取容器對象
 
 有些時候我們可能希望去實現一些更動態的需求時，會希望可以直接獲取到 `容器(Container)` 對象，在絕大部分情況下，框架的入口類（比如命令類、控制器、RPC 服務提供者等）都是由 `容器(Container)`
-創建並維護的，也就意味着您所寫的絕大部分業務代碼都是在 `容器(Container)` 的管理作用之下的，也就意味着在絕大部分情況下您都可以通過在 `構造函數(Constructor)` 聲明或通過 `@Inject`
+創建並維護的，也就意味着您所寫的絕大部分業務代碼都是在 `容器(Container)` 的管理作用之下的，也就意味着在絕大部分情況下您都可以通過在 `構造函數(Constructor)` 聲明或通過 `#[Inject]`
 註解注入 `Psr\Container\ContainerInterface` 接口類都能夠獲得 `Hyperf\Di\Container` 容器對象，我們通過代碼來演示一下：
 
 ```php
@@ -407,10 +398,7 @@ use Psr\Container\ContainerInterface;
 
 class IndexController
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
     
     // 通過在構造函數的參數上聲明參數類型完成自動注入
     public function __construct(ContainerInterface $container)
@@ -427,16 +415,40 @@ class IndexController
 $container = \Hyperf\Utils\ApplicationContext::getContainer();
 ```
 
+## 掃描適配器
+
+默認使用 `Hyperf\Di\ScanHandler\PcntlScanHandler`.
+
+- Hyperf\Di\ScanHandler\PcntlScanHandler
+
+使用 Pcntl fork 子進程掃描註解，只支持 Linux 環境
+
+- Hyperf\Di\ScanHandler\NullScanHandler
+
+不進行註解掃描操作
+
+- Hyperf\Di\ScanHandler\ProcScanHandler
+
+使用 proc_open 創建子進程掃描註解，支持 Linux 和 Windows(Swow)
+
+### 更換掃描適配器
+
+我們只需要主動修改 `bin/hyperf.php` 文件中 `Hyperf\Di\ClassLoader::init()` 代碼段即可更換適配器。
+
+```php
+Hyperf\Di\ClassLoader::init(handler: new Hyperf\Di\ScanHandler\ProcScanHandler());
+```
+
 ## 注意事項
 
 ### 容器僅管理長生命週期的對象
 
 換種方式理解就是容器內管理的對象**都是單例**，這樣的設計對於長生命週期的應用來説會更加的高效，減少了大量無意義的對象創建和銷燬，這樣的設計也就意味着所有需要交由 DI 容器管理的對象**均不能包含** `狀態` 值。   
-`狀態` 可直接理解為會隨着請求而變化的值，事實上在 [協程](zh-hk/coroutine.md) 編程中，這些狀態值也是應該存放於 `協程上下文` 中的，即 `Hyperf\Utils\Context`。
+`狀態` 可直接理解為會隨着請求而變化的值，事實上在 [協程](zh-hk/coroutine.md) 編程中，這些狀態值也是應該存放於 `協程上下文` 中的，即 `Hyperf\Context\Context`。
 
-### @Inject 注入覆蓋順序
+### #[Inject] 注入覆蓋順序
 
-`@Inject` 覆蓋順序為子類覆蓋 `Trait` 覆蓋 父類，即 下述 `Origin` 的 `foo` 變量為本身注入的 `Foo1`。
+`#[Inject]` 覆蓋順序為子類覆蓋 `Trait` 覆蓋 父類，即 下述 `Origin` 的 `foo` 變量為本身注入的 `Foo1`。
 
 同理，假如 `Origin` 不存在變量 `$foo` 時，`$foo` 會被第一個 `Trait` 完成注入，注入類 `Foo2`。
 
@@ -446,25 +458,27 @@ use Hyperf\Di\Annotation\Inject;
 class ParentClass
 {
     /**
-     * @Inject
      * @var Foo4 
      */
+    #[Inject]
     protected $foo;
 }
 
-trait Foo1{
+trait Foo1
+{
     /**
-     * @Inject
      * @var Foo2 
      */
+    #[Inject]
     protected $foo;
 }
 
-trait Foo2{
+trait Foo2
+{
     /**
-     * @Inject
      * @var Foo3
      */
+    #[Inject]
     protected $foo;
 }
 
@@ -472,10 +486,11 @@ class Origin extends ParentClass
 {
     use Foo1;
     use Foo2;
+
     /**
-     * @Inject
      * @var Foo1
      */
+    #[Inject]
     protected $foo;
 }
 ```

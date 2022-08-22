@@ -19,11 +19,11 @@ class ListenerProvider implements ListenerProviderInterface
     /**
      * @var ListenerData[]
      */
-    public $listeners = [];
+    public array $listeners = [];
 
     /**
      * @param object $event An event for which to return the relevant listeners
-     * @return iterable[callable] An iterable (array, iterator, or generator) of callables.  Each
+     * @return iterable<callable> An iterable (array, iterator, or generator) of callables.  Each
      *                            callable MUST be type-compatible with $event.
      */
     public function getListenersForEvent($event): iterable
@@ -37,7 +37,7 @@ class ListenerProvider implements ListenerProviderInterface
         return $queue;
     }
 
-    public function on(string $event, callable $listener, int $priority = 1): void
+    public function on(string $event, callable $listener, int $priority = ListenerData::DEFAULT_PRIORITY): void
     {
         $this->listeners[] = new ListenerData($event, $listener, $priority);
     }

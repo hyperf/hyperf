@@ -13,5 +13,5 @@ namespace HyperfTest\Database\Stubs;
 
 class ModelCamelStub extends ModelStub
 {
-    public static $snakeAttributes = false;
+    public static bool $snakeAttributes = false;
 }

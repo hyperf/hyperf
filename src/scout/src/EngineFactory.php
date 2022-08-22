@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Scout;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Scout\Provider\ElasticsearchProvider;
 use Hyperf\Scout\Provider\ProviderInterface;
+use Psr\Container\ContainerInterface;
 
 class EngineFactory
 {

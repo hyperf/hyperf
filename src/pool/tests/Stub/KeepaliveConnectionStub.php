@@ -11,11 +11,14 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Pool\Stub;
 
+use Hyperf\Context\Context;
+use Hyperf\Coordinator\Timer;
 use Hyperf\Pool\KeepaliveConnection;
-use Hyperf\Utils\Context;
 
 class KeepaliveConnectionStub extends KeepaliveConnection
 {
+    public Timer $timer;
+
     protected $activeConnection;
 
     public function setActiveConnection($connection)

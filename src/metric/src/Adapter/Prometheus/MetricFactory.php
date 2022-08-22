@@ -13,6 +13,8 @@ namespace Hyperf\Metric\Adapter\Prometheus;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coordinator\Constants as Coord;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
 use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
@@ -21,8 +23,8 @@ use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Exception\InvalidArgumentException;
 use Hyperf\Metric\Exception\RuntimeException;
 use Hyperf\Metric\MetricFactoryPicker;
-use Hyperf\Utils\Coordinator\Constants as Coord;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coroutine;
+use Hyperf\Utils\Network;
 use Hyperf\Utils\Str;
 use Prometheus\CollectorRegistry;
 use Prometheus\RenderTextFormat;
@@ -30,38 +32,15 @@ use Swoole\Coroutine\Http\Server;
 
 class MetricFactory implements MetricFactoryInterface
 {
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
+    private string $name;
 
-    /**
-     * @var CollectorRegistry
-     */
-    private $registry;
-
-    /**
-     * @var guzzleClientFactory
-     */
-    private $guzzleClientFactory;
-
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    private $logger;
-
-    public function __construct(ConfigInterface $config, CollectorRegistry $registry, GuzzleClientFactory $guzzleClientFactory, StdoutLoggerInterface $logger)
-    {
-        $this->config = $config;
-        $this->registry = $registry;
-        $this->guzzleClientFactory = $guzzleClientFactory;
+    public function __construct(
+        private ConfigInterface $config,
+        private CollectorRegistry $registry,
+        private GuzzleClientFactory $guzzleClientFactory,
+        private StdoutLoggerInterface $logger
+    ) {
         $this->name = $this->config->get('metric.default');
-        $this->logger = $logger;
         $this->guardConfig();
     }
 
@@ -124,7 +103,11 @@ class MetricFactory implements MetricFactoryInterface
         $port = $this->config->get("metric.metric.{$this->name}.scrape_port");
         $path = $this->config->get("metric.metric.{$this->name}.scrape_path");
         $renderer = new RenderTextFormat();
-        $server = new Server($host, (int) $port, false);
+        $server = new Server($host, (int) $port, false, true);
+        Coroutine::create(static function () use ($server) {
+            CoordinatorManager::until(Coord::WORKER_EXIT)->yield();
+            $server->shutdown();
+        });
         $server->handle($path, function ($request, $response) use ($renderer) {
             $response->header('Content-Type', RenderTextFormat::MIME_TYPE);
             $response->end($renderer->render($this->registry->getMetricFamilySamples()));
@@ -172,7 +155,7 @@ class MetricFactory implements MetricFactoryInterface
         if (! Str::contains($address, ['https://', 'http://'])) {
             $address = 'http://' . $address;
         }
-        return $address . '/metrics/job/' . $job . '/ip/' . current(swoole_get_local_ip()) . '/pid/' . getmypid();
+        return $address . '/metrics/job/' . $job . '/ip/' . Network::ip() . '/pid/' . getmypid();
     }
 
     private function doRequest(string $address, string $job, string $method)

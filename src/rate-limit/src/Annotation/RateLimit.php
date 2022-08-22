@@ -14,40 +14,16 @@ namespace Hyperf\RateLimit\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS", "METHOD"})
- */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class RateLimit extends AbstractAnnotation
 {
-    /**
-     * @var int
-     */
-    public $create;
-
-    /**
-     * @var int
-     */
-    public $consume;
-
-    /**
-     * @var int
-     */
-    public $capacity;
-
-    /**
-     * @var null|callable
-     */
-    public $limitCallback;
-
-    /**
-     * @var callable|string
-     */
-    public $key;
-
-    /**
-     * @var int
-     */
-    public $waitTimeout;
+    public function __construct(
+        public ?int $create = null,
+        public ?int $consume = null,
+        public ?int $capacity = null,
+        public mixed $limitCallback = null,
+        public mixed $key = null,
+        public ?int $waitTimeout = null
+    ) {
+    }
 }

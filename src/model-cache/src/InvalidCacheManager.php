@@ -20,7 +20,7 @@ class InvalidCacheManager
     /**
      * @var CacheableInterface[]
      */
-    protected $models = [];
+    protected array $models = [];
 
     public function push(CacheableInterface $model): void
     {

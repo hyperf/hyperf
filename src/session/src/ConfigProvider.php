@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Session;
 
 use Hyperf\Contract\SessionInterface;
+use Hyperf\Session\Handler\DatabaseHandler;
+use Hyperf\Session\Handler\DatabaseHandlerFactory;
 use Hyperf\Session\Handler\FileHandler;
 use Hyperf\Session\Handler\FileHandlerFactory;
 use Hyperf\Session\Handler\RedisHandler;
@@ -22,15 +24,9 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
             'dependencies' => [
                 FileHandler::class => FileHandlerFactory::class,
+                DatabaseHandler::class => DatabaseHandlerFactory::class,
                 RedisHandler::class => RedisHandlerFactory::class,
                 SessionInterface::class => SessionProxy::class,
             ],

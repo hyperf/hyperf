@@ -19,6 +19,7 @@ use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\ProcessManager;
 use HyperfTest\Amqp\Stub\ContainerStub;
 use HyperfTest\Amqp\Stub\DemoConsumer;
+use HyperfTest\Amqp\Stub\NumsConsumer;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -36,13 +37,13 @@ class ConsumerManagerTest extends TestCase
     {
         $container = ContainerStub::getContainer();
 
-        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
-            'exchange' => $exchange = uniqid(),
-            'routingKey' => $routingKey = uniqid(),
-            'queue' => $queue = uniqid(),
-            'nums' => $nums = rand(1, 10),
-            'maxConsumption' => $maxConsumption = rand(1, 10),
-        ]));
+        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer(
+            $exchange = uniqid(),
+            $routingKey = uniqid(),
+            $queue = uniqid(),
+            nums: $nums = rand(1, 10),
+            maxConsumption: $maxConsumption = rand(1, 10),
+        ));
 
         $manager = new ConsumerManager($container);
         $manager->run();
@@ -72,13 +73,13 @@ class ConsumerManagerTest extends TestCase
     {
         $container = ContainerStub::getContainer();
 
-        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
-            'exchange' => $exchange = uniqid(),
-            'routingKey' => $routingKey = uniqid(),
-            'queue' => $queue = uniqid(),
-            'nums' => $nums = rand(1, 10),
-            'enable' => false,
-        ]));
+        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer(
+            $exchange = uniqid(),
+            $routingKey = uniqid(),
+            $queue = uniqid(),
+            nums: $nums = rand(1, 10),
+            enable: false,
+        ));
 
         $manager = new ConsumerManager($container);
         $manager->run();
@@ -89,6 +90,33 @@ class ConsumerManagerTest extends TestCase
             if (method_exists($item, 'getConsumerMessage')) {
                 $hasRegistered = true;
                 $this->assertFalse($item->isEnable(new \stdClass()));
+                break;
+            }
+        }
+
+        $this->assertTrue($hasRegistered);
+    }
+
+    public function testConsumerGetNums()
+    {
+        $container = ContainerStub::getContainer();
+
+        AnnotationCollector::collectClass(NumsConsumer::class, Consumer::class, new Consumer(
+            exchange: uniqid(),
+            routingKey: uniqid(),
+            queue: uniqid(),
+            nums: rand(1, 10),
+        ));
+
+        $manager = new ConsumerManager($container);
+        $manager->run();
+
+        $hasRegistered = false;
+        /** @var AbstractProcess $item */
+        foreach (ProcessManager::all() as $item) {
+            if (method_exists($item, 'getConsumerMessage')) {
+                $hasRegistered = true;
+                $this->assertSame($item->getConsumerMessage()->getNums(), $item->nums);
                 break;
             }
         }

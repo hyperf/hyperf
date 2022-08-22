@@ -15,13 +15,13 @@ use Hyperf\Command\Event\AfterExecute;
 use Hyperf\Command\Event\BeforeHandle;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Metric\MetricSetter;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -34,26 +34,14 @@ class OnBeforeHandle implements ListenerInterface
 {
     use MetricSetter;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected MetricFactoryInterface $factory;
 
-    /**
-     * @var MetricFactoryInterface
-     */
-    protected $factory;
+    protected static string $exits = self::class . ' exited';
 
-    protected static $exits = __CLASS__ . ' exited';
+    private ConfigInterface $config;
 
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
     }
 
@@ -65,7 +53,7 @@ class OnBeforeHandle implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($event instanceof AfterExecute) {
             CoordinatorManager::until(Constants::WORKER_EXIT)->resume();

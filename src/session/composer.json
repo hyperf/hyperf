@@ -14,9 +14,9 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "psr/http-server-middleware": "^1.0",
-        "hyperf/utils": "~2.2.0"
+        "hyperf/utils": "~3.0.0"
     },
     "suggest": {
         "psr/container": "Required to use SessionFactory.",
@@ -37,7 +37,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Session\\ConfigProvider"

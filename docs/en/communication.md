@@ -4,10 +4,12 @@ We provide two communication channels: `QQ Group` and `WeChat Group`. Other comm
 
 ## QQ Group
 
-Group Number: `862099724`
+Group 1 Number: `862099724`
+Group 2 Number: `811414891`   
+Group 3 Number: `589051831`
 
 ## WeChat Group
 
-Since the WeChat group can't be added directly, so you can scan the QR code below and add as a WeChat friend, please declare the purpose when you sending the friend request, then I will pull you into the group.
+Since you can't directly join the WeChat group, you can scan the QR code below and add us as a WeChat friend. Please declare the purpose when sending the friend request, after receiving the request we will add you to our group.
 
 ![wechat](imgs/wechat.jpg ':size=375')

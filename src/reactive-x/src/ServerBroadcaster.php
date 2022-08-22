@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\ReactiveX;
 
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\ReactiveX\Contract\BroadcasterInterface;
+use Psr\Container\ContainerInterface;
 use Swoole\Server;
 
 class ServerBroadcaster implements BroadcasterInterface
@@ -23,24 +23,15 @@ class ServerBroadcaster implements BroadcasterInterface
     protected $server;
 
     /**
-     * WorkerId.
-     *
-     * @var int
+     * @param null|int $id WorkerId
      */
-    protected $id;
-
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container, ?int $id = null)
-    {
-        $this->container = $container;
-        $this->id = $id;
+    public function __construct(
+        private ContainerInterface $container,
+        protected ?int $id = null
+    ) {
     }
 
-    public function broadcast(IpcMessageWrapper $message)
+    public function broadcast(IpcMessageWrapper $message): void
     {
         // Lazy load to avoid causing issue before sever starts.
         if ($this->server === null) {

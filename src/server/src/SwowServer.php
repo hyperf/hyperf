@@ -13,55 +13,39 @@ namespace Hyperf\Server;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Http\Server as HttpServer;
+use Hyperf\Engine\Server as BaseServer;
+use Hyperf\Server\Event\AllCoroutineServersClosed;
 use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Server\Exception\RuntimeException;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Waiter;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Swow\Buffer;
 use Swow\Coroutine;
+use Swow\Socket;
 
 class SwowServer implements ServerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ?ServerConfig $config = null;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected ?Socket $server = null;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    protected bool $mainServerStarted = false;
 
-    /**
-     * @var ServerConfig
-     */
-    protected $config;
+    private Waiter $waiter;
 
-    /**
-     * @var HttpServer
-     */
-    protected $server;
-
-    /**
-     * @var bool
-     */
-    protected $mainServerStarted = false;
-
-    public function __construct(ContainerInterface $container, LoggerInterface $logger, EventDispatcherInterface $dispatcher)
-    {
-        $this->container = $container;
-        $this->logger = $logger;
-        $this->eventDispatcher = $dispatcher;
+    public function __construct(
+        protected ContainerInterface $container,
+        protected LoggerInterface $logger,
+        protected EventDispatcherInterface $eventDispatcher
+    ) {
+        $this->waiter = new Waiter(-1);
     }
 
     public function init(ServerConfig $config): ServerInterface
@@ -70,7 +54,7 @@ class SwowServer implements ServerInterface
         return $this;
     }
 
-    public function start()
+    public function start(): void
     {
         $this->writePid();
         $this->initServer($this->config);
@@ -81,26 +65,42 @@ class SwowServer implements ServerInterface
                 if (! $this->mainServerStarted) {
                     $this->mainServerStarted = true;
                     $this->eventDispatcher->dispatch(new MainCoroutineServerStart($name, $server, $config));
+                    CoordinatorManager::until(Constants::WORKER_START)->resume();
                 }
                 $this->eventDispatcher->dispatch(new CoroutineServerStart($name, $server, $config));
-                CoordinatorManager::until(Constants::WORKER_START)->resume();
                 $server->start();
                 $this->eventDispatcher->dispatch(new CoroutineServerStop($name, $server));
                 CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
             });
         }
+
+        if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield()) {
+            $this->closeAll($servers);
+        }
     }
 
-    public function getServer()
+    public function getServer(): Socket
     {
-        // TODO: Implement getServer() method.
+        return $this->server;
+    }
+
+    protected function closeAll(array $servers = []): void
+    {
+        /**
+         * @var HttpServer $server
+         */
+        foreach ($servers as [$type, $server]) {
+            $server->close();
+        }
+
+        $this->eventDispatcher->dispatch(new AllCoroutineServersClosed());
     }
 
     protected function initServer(ServerConfig $config): void
     {
         $servers = $config->getServers();
         foreach ($servers as $server) {
-            if (! $server instanceof \Hyperf\Server\Port) {
+            if (! $server instanceof Port) {
                 continue;
             }
             $name = $server->getName();
@@ -127,8 +127,8 @@ class SwowServer implements ServerInterface
                         $handler->initCoreMiddleware($name);
                     }
                     if ($server instanceof HttpServer) {
-                        $server->handle(static function ($request, $session) use ($handler, $method) {
-                            wait(static function () use ($request, $session, $handler, $method) {
+                        $server->handle(function ($request, $session) use ($handler, $method) {
+                            $this->waiter->wait(static function () use ($request, $session, $handler, $method) {
                                 $handler->{$method}($request, $session);
                             });
                         });
@@ -141,8 +141,12 @@ class SwowServer implements ServerInterface
                     if ($handler instanceof MiddlewareInitializerInterface) {
                         $handler->initCoreMiddleware($name);
                     }
-                    if ($this->server instanceof \Swoole\Coroutine\Http\Server) {
-                        $this->server->handle('/', [$handler, $method]);
+                    if ($this->server instanceof HttpServer) {
+                        $server->handle(function ($request, $session) use ($handler, $method) {
+                            $this->waiter->wait(static function () use ($request, $session, $handler, $method) {
+                                $handler->{$method}($request, $session);
+                            });
+                        });
                     }
                 }
                 return;
@@ -154,28 +158,28 @@ class SwowServer implements ServerInterface
                     if ($receiveHandler instanceof MiddlewareInitializerInterface) {
                         $receiveHandler->initCoreMiddleware($name);
                     }
-                    if ($this->server instanceof \Swoole\Coroutine\Server) {
-                        $this->server->handle(function (Coroutine\Server\Connection $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
+                    if ($this->server instanceof BaseServer) {
+                        $this->server->handle(function (Socket $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
                             if ($connectHandler && $connectMethod) {
-                                parallel([static function () use ($connectHandler, $connectMethod, $connection) {
-                                    $connectHandler->{$connectMethod}($connection, $connection->exportSocket()->fd);
-                                }]);
+                                $this->waiter->wait(static function () use ($connectHandler, $connectMethod, $connection) {
+                                    $connectHandler->{$connectMethod}($connection, $connection->getId());
+                                });
                             }
                             while (true) {
-                                $data = $connection->recv();
-                                if (empty($data)) {
+                                $byte = $connection->recv($buffer = new Buffer(Buffer::COMMON_SIZE));
+                                if ($byte === 0) {
                                     if ($closeHandler && $closeMethod) {
-                                        parallel([static function () use ($closeHandler, $closeMethod, $connection) {
-                                            $closeHandler->{$closeMethod}($connection, $connection->exportSocket()->fd);
-                                        }]);
+                                        $this->waiter->wait(static function () use ($closeHandler, $closeMethod, $connection) {
+                                            $closeHandler->{$closeMethod}($connection, $connection->getId());
+                                        });
                                     }
                                     $connection->close();
                                     break;
                                 }
                                 // One coroutine at a time, consistent with other servers
-                                parallel([static function () use ($receiveHandler, $receiveMethod, $connection, $data) {
-                                    $receiveHandler->{$receiveMethod}($connection, $connection->exportSocket()->fd, 0, $data);
-                                }]);
+                                $this->waiter->wait(static function () use ($receiveHandler, $receiveMethod, $connection, $buffer) {
+                                    $receiveHandler->{$receiveMethod}($connection, $connection->getId(), 0, (string) $buffer);
+                                });
                             }
                         });
                     }
@@ -200,13 +204,14 @@ class SwowServer implements ServerInterface
     {
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
+            case ServerInterface::SERVER_WEBSOCKET:
                 $server = new HttpServer($this->logger);
                 $server->bind($host, $port);
                 return $server;
-            case ServerInterface::SERVER_WEBSOCKET:
-                // return new Coroutine\Http\Server($host, $port, false, true);
             case ServerInterface::SERVER_BASE:
-                // return new Coroutine\Server($host, $port, false, true);
+                $server = new BaseServer($this->logger);
+                $server->bind($host, $port);
+                return $server;
         }
 
         throw new RuntimeException('Server type is invalid.');
@@ -215,7 +220,9 @@ class SwowServer implements ServerInterface
     private function writePid(): void
     {
         $config = $this->container->get(ConfigInterface::class);
-        $file = $config->get('server.settings.pid_file', BASE_PATH . '/runtime/hyperf.pid');
-        file_put_contents($file, getmypid());
+        $file = $config->get('server.settings.pid_file');
+        if ($file) {
+            file_put_contents($file, getmypid());
+        }
     }
 }

@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace HyperfTest\ExceptionHandler;
 
 use GuzzleHttp\Psr7\Response;
+use Hyperf\Context\Context;
 use Hyperf\ExceptionHandler\Handler\WhoopsExceptionHandler;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\Nats\Exception;
-use Hyperf\Utils\Context;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

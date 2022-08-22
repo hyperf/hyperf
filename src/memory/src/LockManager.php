@@ -17,21 +17,19 @@ class LockManager
 {
     /**
      * A container that use to store Lock.
-     *
-     * @var array
      */
-    private static $container = [];
+    private static array $container = [];
 
     /**
      * You should initialize a Lock with the identifier before use it.
      */
-    public static function initialize(string $identifier, int $type = SWOOLE_RWLOCK, string $filename = null): void
+    public static function initialize(string $identifier, int $type = SWOOLE_RWLOCK, string $filename = ''): void
     {
         static::$container[$identifier] = new Lock($type, $filename);
     }
 
     /**
-     * Get a initialized Lock from container by the identifier.
+     * Get an initialized Lock from container by the identifier.
      *
      * @throws \RuntimeException when the Lock with the identifier has not initialization
      */

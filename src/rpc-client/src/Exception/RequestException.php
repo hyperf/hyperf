@@ -14,11 +14,6 @@ namespace Hyperf\RpcClient\Exception;
 class RequestException extends \RuntimeException
 {
     /**
-     * @var array
-     */
-    protected $throwable;
-
-    /**
      * @param $throwable
      * [
      *     'class' => 'RuntimeException', // The exception class name
@@ -34,11 +29,9 @@ class RequestException extends \RuntimeException
      * @param string $message
      * @param int $code
      */
-    public function __construct($message = '', $code = 0, array $throwable = [])
+    public function __construct($message = '', $code = 0, protected array $throwable = [])
     {
         parent::__construct($message, $code);
-
-        $this->throwable = $throwable;
     }
 
     public function getThrowable(): array

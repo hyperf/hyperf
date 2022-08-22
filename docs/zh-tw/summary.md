@@ -4,6 +4,7 @@
   * [線上交流](zh-tw/communication.md)
   * [捐獻及贊助](zh-tw/donate.md)
   * [參與開發](zh-tw/contribute.md)
+  * [企業服務](zh-tw/enterprise-service.md)
 
 * 版本管理
 
@@ -17,7 +18,7 @@
   * [快速開始](zh-tw/quick-start/overview.md)
   * [常見問題](zh-tw/quick-start/questions.md)
   * [程式設計須知](zh-tw/quick-start/important.md)
-  * [視訊教程](https://course.swoole-cloud.com/videos/5/new?from=hyperf.io)
+  * [視訊教程](https://space.bilibili.com/1176880220/channel/seriesdetail?sid=2121560)
 
 * 核心架構
 
@@ -147,3 +148,4 @@
   * [2.0 升級指南](zh-tw/upgrade/2.0.md)
   * [2.1 升級指南](zh-tw/upgrade/2.1.md)
   * [2.2 升級指南](zh-tw/upgrade/2.2.md)
+  * [3.0 升級指南](zh-tw/upgrade/3.0.md)

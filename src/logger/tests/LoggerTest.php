@@ -14,6 +14,7 @@ namespace HyperfTest\Logger;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Logger\Logger;
 use Monolog\Handler\TestHandler;
+use Monolog\LogRecord;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -47,5 +48,32 @@ class LoggerTest extends TestCase
         $logger->error(new \RuntimeException('Invalid Arguments'));
 
         $this->assertMatchesRegularExpression('/RuntimeException: Invalid Arguments/', $handler->getRecords()[0]['message']);
+    }
+
+    public function testLoggingLoopDetection()
+    {
+        $logger = new Logger('test', [
+            $handler = new class() extends TestHandler {
+                protected function write(array|LogRecord $record): void
+                {
+                    usleep(1);
+                    parent::write($record);
+                }
+            },
+        ]);
+
+        $callbacks = [];
+        for ($i = 0; $i < 4; ++$i) {
+            $callbacks[] = static function () use ($logger) {
+                $logger->info('Hello World.');
+            };
+        }
+
+        parallel($callbacks);
+
+        $messages = array_column($handler->getRecords(), 'message');
+        foreach ($messages as $message) {
+            $this->assertSame('Hello World.', $message);
+        }
     }
 }

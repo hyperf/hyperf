@@ -43,15 +43,13 @@ use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
 use Hyperf\Utils\Codec\Json;
 
-/**
- * @SocketIONamespace("/")
- */
+#[SocketIONamespace("/")]
 class WebSocketController extends BaseNamespace
 {
     /**
-     * @Event("event")
      * @param string $data
      */
+    #[Event("event")]
     public function onEvent(Socket $socket, $data)
     {
         // 應答
@@ -59,9 +57,9 @@ class WebSocketController extends BaseNamespace
     }
 
     /**
-     * @Event("join-room")
      * @param string $data
      */
+    #[Event("join-room")]
     public function onJoinRoom(Socket $socket, $data)
     {
         // 將當前用户加入房間
@@ -73,9 +71,9 @@ class WebSocketController extends BaseNamespace
     }
 
     /**
-     * @Event("say")
      * @param string $data
      */
+    #[Event("say")]
     public function onSay(Socket $socket, $data)
     {
         $data = Json::decode($data);
@@ -94,7 +92,7 @@ class WebSocketController extends BaseNamespace
 由於服務端只實現了 WebSocket 通訊，所以客户端要加上 `{transports:["websocket"]}` 。
 
 ```html
-<script src="https://cdn.bootcss.com/socket.io/2.3.0/socket.io.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
 <script>
     var socket = io('ws://127.0.0.1:9502', { transports: ["websocket"] });
     socket.on('connect', data => {
@@ -116,9 +114,7 @@ class WebSocketController extends BaseNamespace
 
 ```php
 <?php
-/**
- * @Event("SomeEvent")
- */
+#[Event("SomeEvent")]
 function onSomeEvent(\Hyperf\SocketIOServer\Socket $socket){
 
   // sending to the client
@@ -193,8 +189,8 @@ $io->of('/foo')->emit();
 
 /**
  * class內使用也等價
- * @SocketIONamespace("/foo")
  */
+#[SocketIONamespace("/foo")]
 class FooNamespace extends BaseNamespace {
     public function onEvent(){
         $this->emit(); 
@@ -326,10 +322,8 @@ use Hyperf\SocketIOServer\Annotation\Event;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
 
-/**
- * @SocketIONamespace("/")
- * @Event()
- */
+#[SocketIONamespace("/")]
+#[Event]
 class WebSocketController extends BaseNamespace
 {
     public function echo(Socket $socket, $data)
@@ -414,10 +408,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class WebSocketAuthMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {

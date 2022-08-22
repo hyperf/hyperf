@@ -27,11 +27,12 @@
         }
     },
     "require": {
-        "hyperf/config-center": "~2.2.0",
-        "hyperf/contract": "~2.2.0",
-        "hyperf/guzzle": "~2.2.0",
-        "hyperf/nacos": "~2.2.0",
-        "hyperf/utils": "~2.2.0"
+        "php": ">=8.0",
+        "hyperf/config-center": "~3.0.0",
+        "hyperf/contract": "~3.0.0",
+        "hyperf/guzzle": "~3.0.0",
+        "hyperf/nacos": "~3.0.0",
+        "hyperf/utils": "~3.0.0"
     },
     "suggest": {
         "ext-json": "*",
@@ -46,7 +47,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\ConfigNacos\\ConfigProvider"

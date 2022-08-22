@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Testing\Stub;
 
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use Hyperf\Utils\Coroutine;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -34,6 +34,7 @@ class FooController
 
     public function request()
     {
+        /** @var ServerRequestInterface $request */
         $request = Context::get(ServerRequestInterface::class);
         $uri = $request->getUri();
         return [
@@ -45,6 +46,7 @@ class FooController
                 'query' => $uri->getQuery(),
             ],
             'params' => $request->getQueryParams(),
+            'cookies' => $request->getCookieParams(),
         ];
     }
 }

@@ -13,12 +13,11 @@ namespace Hyperf\HttpServer\Annotation;
 
 use Attribute;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class DeleteMapping extends Mapping
 {
-    public $methods = ['DELETE'];
+    public function __construct(?string $path = null, array $options = [])
+    {
+        parent::__construct($path, ['DELETE'], $options);
+    }
 }

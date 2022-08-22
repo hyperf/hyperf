@@ -16,8 +16,8 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
-        "hyperf/utils": "~2.2.0",
+        "php": ">=8.0",
+        "hyperf/utils": "~3.0.0",
         "nesbot/carbon": "^2.0"
     },
     "autoload": {
@@ -35,7 +35,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Crontab\\ConfigProvider"

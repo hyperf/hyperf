@@ -19,20 +19,11 @@ use PhpParser\NodeTraverser;
 
 class ModelRewriteSoftDeletesVisitor extends AbstractVisitor
 {
-    /**
-     * @var bool
-     */
-    protected $hasSoftDeletesUse = false;
+    protected bool $hasSoftDeletesUse = false;
 
-    /**
-     * @var bool
-     */
-    protected $hasSoftDeletesTraitUse = false;
+    protected bool $hasSoftDeletesTraitUse = false;
 
-    /**
-     * @var array
-     */
-    protected $columns = [];
+    protected array $columns = [];
 
     public function leaveNode(Node $node)
     {
@@ -56,6 +47,8 @@ class ModelRewriteSoftDeletesVisitor extends AbstractVisitor
                 }
                 return $node;
         }
+
+        return null;
     }
 
     public function afterTraverse(array $nodes)

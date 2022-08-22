@@ -16,27 +16,27 @@ class Meta
     /**
      * @var int [0, 31]
      */
-    protected $dataCenterId;
+    protected int $dataCenterId;
 
     /**
      * @var int [0, 31]
      */
-    protected $workerId;
+    protected int $workerId;
 
     /**
      * @var int [0, 4095]
      */
-    protected $sequence;
+    protected int $sequence;
 
     /**
      * @var int seconds or milliseconds
      */
-    protected $timestamp = 0;
+    protected int $timestamp = 0;
 
     /**
      * @var int seconds or milliseconds
      */
-    protected $beginTimestamp = 0;
+    protected int $beginTimestamp = 0;
 
     public function __construct(int $dataCenterId, int $workerId, int $sequence, int $timestamp, int $beginTimestamp = 1560960000)
     {

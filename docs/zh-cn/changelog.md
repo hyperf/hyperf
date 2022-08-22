@@ -1,5 +1,279 @@
 # 版本更新记录
 
+# v2.2.33 - 2022-05-30
+
+## 修复
+
+- [#4776](https://github.com/hyperf/hyperf/pull/4776) 修复 `GraphQL` 事件收集失败的问题。
+- [#4790](https://github.com/hyperf/hyperf/pull/4790) 修复 `RPN` 组件中方法 `toRPNExpression` 在某些场景无法正常工作的问题。
+
+## Added
+
+- [#4763](https://github.com/hyperf/hyperf/pull/4763) 新增验证规则 `array:key1,key2`，确保数组中除 `key1` `key2` 以外无其他 `key` 键。
+- [#4781](https://github.com/hyperf/hyperf/pull/4781) 新增配置 `close-pull-request.yml`，用来自动关闭只读的仓库。
+
+# v2.2.32 - 2022-05-16
+
+## 修复
+
+- [#4745](https://github.com/hyperf/hyperf/pull/4745) 当使用 `kafka` 组件的 `Producer::close` 方法时，修复可能抛出空指针异常的问题。
+- [#4754](https://github.com/hyperf/hyperf/pull/4754) 通过配置 `monolog>=2.6.0` 解决新版本的 `monolog` 无法正常工作的问题。
+
+## 优化
+
+- [#4738](https://github.com/hyperf/hyperf/pull/4738) 当使用 `kafka` 组件时，如果没有设置 `GroupID` 则自动配置一个。
+
+# v2.2.31 - 2022-04-18
+
+## 修复
+
+- [#4677](https://github.com/hyperf/hyperf/pull/4677) 修复使用 `kafka` 发布者后，会导致进程无法正常退出的问题。
+- [#4686](https://github.com/hyperf/hyperf/pull/4687) 修复使用 `WebSocket` 服务时，因为解析 `Request` 失败会导致进程崩溃的问题。
+
+## 新增
+
+- [#4576](https://github.com/hyperf/hyperf/pull/4576) 为 `RPC` 客户端的节点，增加路由前缀 `path_prefix`。
+- [#4683](https://github.com/hyperf/hyperf/pull/4683) 新增容器方法 `unbind()` 用来从容器中解绑对象。
+
+# v2.2.30 - 2022-04-04
+
+## 修复
+
+- [#4648](https://github.com/hyperf/hyperf/pull/4648) 当使用 `retry` 组件中的熔断器时，修复在 `open` 状态下，无法自动调用 `fallback` 方法的问题。
+- [#4657](https://github.com/hyperf/hyperf/pull/4657) 修复使用 `session` 中的文件适配器时，相同的 `Session ID` 在被重写后，最后修改时间仍是上次修改时间的问题。
+
+## 新增
+
+- [#4646](https://github.com/hyperf/hyperf/pull/4646) 为 `Redis` 哨兵模式增加设置密码的功能。
+
+# v2.2.29 - 2022-03-28
+
+## 修复
+
+- [#4620](https://github.com/hyperf/hyperf/pull/4620) 修复 `Hyperf\Memory\LockManager::initialize()` 方法中，`$filename` 默认值错误的问题。
+
+# v2.2.28 - 2022-03-14
+
+## 修复
+
+- [#4588](https://github.com/hyperf/hyperf/pull/4588) 修复 `database` 组件不支持 `bit` 类型的问题。
+- [#4589](https://github.com/hyperf/hyperf/pull/4589) 修复使用 `Nacos` 时，无法正确的注册临时实例的问题。
+
+## 新增
+
+- [#4580](https://github.com/hyperf/hyperf/pull/4580) 新增方法 `Hyperf\Utils\Coroutine\Concurrent::getChannel()`。
+
+## 优化
+
+- [#4602](https://github.com/hyperf/hyperf/pull/4602) 将方法 `Hyperf\ModelCache\Manager::formatModels()` 更改为公共方法。
+
+# v2.2.27 - 2022-03-07
+
+## 优化
+
+- [#4572](https://github.com/hyperf/hyperf/pull/4572) 当负载均衡器 `hyperf/load-balancer` 选择节点失败时，使用 `Hyperf\LoadBalancer\Exception\RuntimeException` 代替 `\RuntimeException`。
+
+# v2.2.26 - 2022-02-21
+
+## 修复
+
+- [#4536](https://github.com/hyperf/hyperf/pull/4536) 修复使用 `JsonRPC` 时，会设置多次 `content-type` 的问题。
+
+## 新增
+
+- [#4527](https://github.com/hyperf/hyperf/pull/4527) 为 `Hyperf\Database\Schema\Blueprint` 增加了一些比较有用的方法。
+
+## 优化
+
+- [#4514](https://github.com/hyperf/hyperf/pull/4514) 通过使用小写 `key` 获取 `HTTP` 的 `Header` 信息，提升一部分性能。
+- [#4521](https://github.com/hyperf/hyperf/pull/4521) 在使用 Redis 的哨兵模式时，如果第一个哨兵节点连接失败，则尝试连接其余哨兵节点。
+- [#4529](https://github.com/hyperf/hyperf/pull/4529) 将组件 `hyperf/context` 从组件 `hyperf/utils` 中分离出来。
+
+# v2.2.25 - 2022-01-30
+
+## 修复
+
+- [#4484](https://github.com/hyperf/hyperf/pull/4484) 修复使用 `Nacos v2.0.4` 版本时，服务是否注册过，判断有误的问题。
+
+## 新增
+
+- [#4477](https://github.com/hyperf/hyperf/pull/4477) 为 `Hyperf\HttpServer\Request` 新增 `Macroable` 支持。
+
+## 优化
+
+- [#4254](https://github.com/hyperf/hyperf/pull/4254) 当使用 `Hyperf\Di\ScanHandlerPcntlScanHandler` 时，增加 `grpc.enable_fork_support` 检测。
+
+# v2.2.24 - 2022-01-24
+
+## 修复
+
+- [#4474](https://github.com/hyperf/hyperf/pull/4474) 修复使用多路复用 RPC 时，导致测试脚本无法正常停止的问题。
+
+## 优化
+
+- [#4451](https://github.com/hyperf/hyperf/pull/4451) 优化了 `Hyperf\Watcher\Driver\FindNewerDriver` 的代码。
+
+# v2.2.23 - 2022-01-17
+
+## 修复
+
+- [#4426](https://github.com/hyperf/hyperf/pull/4426) 修复 `view-engine` 模板引擎，在并发请求下导致模板缓存生成错误的问题。
+
+## 新增
+
+- [#4449](https://github.com/hyperf/hyperf/pull/4449) 为 `Hyperf\Utils\Collection` 增加多条件排序的能力。
+- [#4455](https://github.com/hyperf/hyperf/pull/4455) 新增命令 `gen:view-engine-cache` 可以预生成模板缓存，避免并发带来的一系列问题。
+- [#4453](https://github.com/hyperf/hyperf/pull/4453) 新增 `Hyperf\Tracer\Aspect\ElasticserachAspect`，用来记录 `elasticsearch` 客户端的调用记录。
+- [#4458](https://github.com/hyperf/hyperf/pull/4458) 新增 `Hyperf\Di\ScanHandler\ProcScanHandler`，用来支持 `Windows` + `Swow` 环境下启动服务。
+
+# v2.2.22 - 2022-01-04
+
+## 修复
+
+- [#4399](https://github.com/hyperf/hyperf/pull/4399) 修复使用 `RedisCluster` 时，无法使用 `scan` 方法的问题。
+
+## 新增
+
+- [#4409](https://github.com/hyperf/hyperf/pull/4409) 为 `session` 增加数据库支持。
+- [#4411](https://github.com/hyperf/hyperf/pull/4411) 为 `tracer` 组件，新增 `Hyperf\Tracer\Aspect\DbAspect`，用于记录 `hyperf/db` 组件产生的 `SQL` 日志。
+- [#4420](https://github.com/hyperf/hyperf/pull/4420) 为 `Hyperf\Amqp\IO\SwooleIO` 增加 `SSL` 支持。
+
+## 优化
+
+- [#4406](https://github.com/hyperf/hyperf/pull/4406) 删除 `Swoole PSR-0` 风格代码，更加友好的支持 `Swoole 5.0` 版本。
+- [#4429](https://github.com/hyperf/hyperf/pull/4429) 为 `Debug::getRefCount()` 方法增加类型检测，只能用于输出对象的 `RefCount`。
+
+# v2.2.21 - 2021-12-20
+
+## 修复
+
+- [#4347](https://github.com/hyperf/hyperf/pull/4347) 修复使用 `AMQP` 组件时，如果连接缓冲区溢出，会导致连接被绑定到多个协程从而报错的问题。
+- [#4373](https://github.com/hyperf/hyperf/pull/4373) 修复使用 `Snowflake` 组件时，由于 `getWorkerId()` 中存在 `IO` 操作进而导致协程切换，最终导致元数据生成重复的问题。
+
+## 新增
+
+- [#4344](https://github.com/hyperf/hyperf/pull/4344) 新增事件 `Hyperf\Crontab\Event\FailToExecute`，此事件会在 `Crontab` 任务执行失败时触发。
+- [#4348](https://github.com/hyperf/hyperf/pull/4348) 支持使用 `gen:*` 命令创建文件时，自动吊起对应的 `IDE`，并打开当前文件。
+
+## 优化
+
+- [#4350](https://github.com/hyperf/hyperf/pull/4350) 优化了未开启 `swoole.use_shortname` 时的错误信息。
+- [#4360](https://github.com/hyperf/hyperf/pull/4360) 将 `Hyperf\Amqp\IO\SwooleIO` 进行重构，使用更加稳定和高效的 `Swoole\Coroutine\Socket` 而非 `Swoole\Coroutine\Client`。
+
+# v2.2.20 - 2021-12-13
+
+## 修复
+
+- [#4338](https://github.com/hyperf/hyperf/pull/4338) 修复使用单测客户端时，路径中带有参数会导致无法正确匹配路由的问题。
+- [#4346](https://github.com/hyperf/hyperf/pull/4346) 修复使用组件 `php-amqplib/php-amqplib:3.1.1` 时，启动报错的问题。
+
+## 新增
+
+- [#4330](https://github.com/hyperf/hyperf/pull/4330) 为 `phar` 组件支持打包 `vendor/bin` 目录。
+- [#4331](https://github.com/hyperf/hyperf/pull/4331) 新增方法 `Hyperf\Testing\Debug::getRefCount($object)`。
+
+# v2.2.19 - 2021-12-06
+
+## 修复
+
+- [#4308](https://github.com/hyperf/hyperf/pull/4308) 修复执行 `server:watch` 时，因为使用相对路径导致 `collector-reload` 文件找不到的问题。
+
+## 优化
+
+- [#4317](https://github.com/hyperf/hyperf/pull/4317) 为 `Hyperf\Utils\Collection` 和 `Hyperf\Database\Model\Collection` 增强类型提示功能。
+
+# v2.2.18 - 2021-11-29
+
+## 修复
+
+- [#4283](https://github.com/hyperf/hyperf/pull/4283) 修复当 `GRPC` 结果为 `null` 时，`Hyperf\Grpc\Parser::deserializeMessage()` 报错的问题。
+
+## 新增
+
+- [#4284](https://github.com/hyperf/hyperf/pull/4284) 新增方法 `Hyperf\Utils\Network::ip()` 获取本地 `IP`。
+- [#4290](https://github.com/hyperf/hyperf/pull/4290) 为 `HTTP` 服务增加 `chunk` 功能。
+- [#4291](https://github.com/hyperf/hyperf/pull/4291) 为 `value()` 方法增加动态参数功能。
+- [#4293](https://github.com/hyperf/hyperf/pull/4293) 为 `server:watch` 命令增加相对路径支持。
+- [#4295](https://github.com/hyperf/hyperf/pull/4295) 为 `Hyperf\Database\Schema\Blueprint::bigIncrements()` 增加别名 `id()`。
+
+# v2.2.17 - 2021-11-22
+
+## 修复
+
+- [#4243](https://github.com/hyperf/hyperf/pull/4243) 修复使用 `parallel` 时，结果集的顺序与入参不一致的问题。
+
+## 新增
+
+- [#4109](https://github.com/hyperf/hyperf/pull/4109) 为 `hyperf/tracer` 增加 `PHP8` 的支持。
+- [#4260](https://github.com/hyperf/hyperf/pull/4260) 为 `hyperf/database` 增加指定索引的功能。
+
+# v2.2.16 - 2021-11-15
+
+## 新增
+
+- [#4252](https://github.com/hyperf/hyperf/pull/4252) 为 `Hyperf\RpcClient\AbstractServiceClient` 新增 `getServiceName()` 方法。
+
+## 优化
+
+- [#4253](https://github.com/hyperf/hyperf/pull/4253) 在扫描阶段时，如果类库找不到，则跳过且报出警告。
+
+# v2.2.15 - 2021-11-08
+
+## 修复
+
+- [#4200](https://github.com/hyperf/hyperf/pull/4200) 修复当 `runtime/caches` 不是目录时，使用文件缓存失败的问题。
+
+## 新增
+
+- [#4157](https://github.com/hyperf/hyperf/pull/4157) 为 `Hyperf\Utils\Arr` 增加 `Macroable` 支持。
+
+# v2.2.14 - 2021-11-01
+
+## 新增
+
+- [#4181](https://github.com/hyperf/hyperf/pull/4181) [#4192](https://github.com/hyperf/hyperf/pull/4192) 为框架增加 `psr/log` 组件版本 `v1.0`、`v2.0`、`v3.0` 的支持。
+
+## 修复
+
+- [#4171](https://github.com/hyperf/hyperf/pull/4171) 修复使用 `consul` 组件时，开启 `ACL` 验证后，健康检测失败的问题。
+- [#4188](https://github.com/hyperf/hyperf/pull/4188) 修复使用 `composer 1.x` 版本时，打包 `phar` 失败的问题。
+
+# v2.2.13 - 2021-10-25
+
+## 新增
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) 为 `Macroable::mixin` 方法增加参数 `$replace`，当其设置为 `false` 时，会优先判断是否已经存在。
+
+## 修复
+
+- [#4158](https://github.com/hyperf/hyperf/pull/4158) 修复因为使用了 `Union` 类型，导致生成代理类失败的问题。
+
+## 优化
+
+- [#4159](https://github.com/hyperf/hyperf/pull/4159) [#4166](https://github.com/hyperf/hyperf/pull/4166) 将组件 `hyperf/macroable` 从 `hyperf/utils` 中分离出来。
+
+# v2.2.12 - 2021-10-18
+
+## 新增
+
+- [#4129](https://github.com/hyperf/hyperf/pull/4129) 新增方法 `Str::stripTags()` 和 `Stringable::stripTags()`。
+
+## 修复
+
+- [#4130](https://github.com/hyperf/hyperf/pull/4130) 修复生成模型时，因为使用了选项 `--with-ide` 和 `scope` 方法导致报错的问题。
+- [#4141](https://github.com/hyperf/hyperf/pull/4141) 修复验证器工厂不支持其他验证器的问题。
+
+# v2.2.11 - 2021-10-11
+
+## 修复
+
+- [#4101](https://github.com/hyperf/hyperf/pull/4101) 修复 Nacos 使用的密码携带特殊字符时，密码会被 `urlencode` 导致密码错误的问题。
+
+# 优化
+
+- [#4114](https://github.com/hyperf/hyperf/pull/4114) 优化 WebSocket 客户端初始化失败时的错误信息。
+- [#4119](https://github.com/hyperf/hyperf/pull/4119) 优化单测客户端在上传文件时，因为默认的上传路径已经存在，导致报错的问题（只发生在最新的 Swoole 版本中）。
+
 # v2.2.10 - 2021-09-26
 
 ## 修复
@@ -1115,8 +1389,8 @@
 ```
 class Example {
     /**
-    * @Inject
-    */
+     * @Inject
+     */
     private ExampleService $exampleService;
 }
 ```

@@ -44,14 +44,14 @@ class ConsumerManagerTest extends TestCase
         $container = ContainerStub::getContainer();
 
         $topic = Arr::random([uniqid(), [uniqid(), uniqid()]]);
-        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
-            'topic' => $topic,
-            'name' => $name = uniqid(),
-            'groupId' => $groupId = uniqid(),
-            'nums' => $nums = rand(1, 10),
-            'isEnable' => true,
-            'autoCommit' => true,
-        ]));
+        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer(
+            topic: $topic,
+            groupId: $groupId = uniqid(),
+            memberId: $memberId = uniqid(),
+            autoCommit: true,
+            nums: $nums = rand(1, 10),
+            enable: true,
+        ));
         $manager = new ConsumerManager($container);
         $manager->run();
         $hasRegistered = false;
@@ -72,7 +72,7 @@ class ConsumerManagerTest extends TestCase
                 $this->assertSame((float) $config['send_timeout'], $consumer->getSendTimeout());
                 $this->assertSame($groupId, $consumer->getGroupId());
                 $this->assertTrue(strpos($consumer->getGroupInstanceId(), $groupId) !== false);
-                $this->assertSame('', $consumer->getMemberId());
+                $this->assertSame($memberId, $consumer->getMemberId());
                 $this->assertSame((float) $config['interval'], $consumer->getInterval());
                 $this->assertTrue(in_array($config['bootstrap_servers'], $consumer->getBootstrapServers()));
                 $this->assertSame(SwooleSocket::class, $consumer->getSocket());
@@ -99,14 +99,14 @@ class ConsumerManagerTest extends TestCase
     {
         $container = ContainerStub::getContainer();
 
-        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
-            'topic' => $topic = uniqid(),
-            'name' => $name = uniqid(),
-            'groupId' => $groupId = uniqid(),
-            'nums' => $nums = rand(1, 10),
-            'enable' => false,
-            'autoCommit' => true,
-        ]));
+        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer(
+            topic: $topic = uniqid(),
+            groupId: $groupId = uniqid(),
+            memberId: $memberId = uniqid(),
+            autoCommit: true,
+            nums: $nums = rand(1, 10),
+            enable: false,
+        ));
 
         $manager = new ConsumerManager($container);
         $manager->run();

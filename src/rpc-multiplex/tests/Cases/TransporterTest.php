@@ -28,8 +28,9 @@ class TransporterTest extends AbstractTestCase
         $container = ContainerStub::mockContainer();
 
         $transporter = new Transporter($container);
-
-        $transporter->setLoadBalancer($balancer = Mockery::mock(LoadBalancerInterface::class));
+        $balancer = Mockery::mock(LoadBalancerInterface::class);
+        $balancer->shouldReceive('isAutoRefresh')->andReturnFalse();
+        $transporter->setLoadBalancer($balancer);
         $this->assertSame($balancer, $transporter->getLoadBalancer());
     }
 

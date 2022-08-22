@@ -18,15 +18,9 @@ use PhpParser\Node\Identifier;
 
 class ModelRewriteInheritanceVisitor extends AbstractVisitor
 {
-    /**
-     * @var null|string
-     */
-    protected $parentClass;
+    protected ?string $parentClass = null;
 
-    /**
-     * @var bool
-     */
-    protected $shouldAddUseUse = true;
+    protected bool $shouldAddUseUse = true;
 
     public function __construct(ModelOption $option, ModelData $data)
     {

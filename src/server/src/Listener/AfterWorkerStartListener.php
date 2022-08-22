@@ -15,16 +15,14 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\Server\Event\MainCoroutineServerStart;
-use Hyperf\Server\Server;
+use Hyperf\Server\ServerInterface;
 use Hyperf\Server\ServerManager;
+use Psr\Log\LoggerInterface;
 use Swoole\Server\Port;
 
 class AfterWorkerStartListener implements ListenerInterface
 {
-    /**
-     * @var StdoutLoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(StdoutLoggerInterface $logger)
     {
@@ -46,17 +44,17 @@ class AfterWorkerStartListener implements ListenerInterface
      * Handle the Event when the event is triggered, all listeners will
      * complete before the event is returned to the EventDispatcher.
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         /** @var AfterWorkerStart|MainCoroutineServerStart $event */
         $isCoroutineServer = $event instanceof MainCoroutineServerStart;
         if ($isCoroutineServer || $event->workerId === 0) {
             /** @var Port|\Swoole\Coroutine\Server $server */
-            foreach (ServerManager::list() as $name => [$type, $server]) {
+            foreach (ServerManager::list() as [$type, $server]) {
                 $listen = $server->host . ':' . $server->port;
                 $type = value(function () use ($type, $server) {
                     switch ($type) {
-                        case Server::SERVER_BASE:
+                        case ServerInterface::SERVER_BASE:
                             $sockType = $server->type;
                             // type of Swoole\Coroutine\Server is equal to SWOOLE_SOCK_UDP
                             if ($server instanceof \Swoole\Coroutine\Server || in_array($sockType, [SWOOLE_SOCK_TCP, SWOOLE_SOCK_TCP6])) {
@@ -66,9 +64,9 @@ class AfterWorkerStartListener implements ListenerInterface
                                 return 'UDP';
                             }
                             return 'UNKNOWN';
-                        case Server::SERVER_WEBSOCKET:
+                        case ServerInterface::SERVER_WEBSOCKET:
                             return 'WebSocket';
-                        case Server::SERVER_HTTP:
+                        case ServerInterface::SERVER_HTTP:
                         default:
                             return 'HTTP';
                     }

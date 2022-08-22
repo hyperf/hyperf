@@ -13,25 +13,13 @@ namespace Hyperf\Nacos;
 
 class Config
 {
-    /**
-     * @var string
-     */
-    protected $baseUri = 'http://127.0.0.1:8848';
+    protected string $baseUri = 'http://127.0.0.1:8848/';
 
-    /**
-     * @var null|string
-     */
-    protected $username;
+    protected ?string $username = null;
 
-    /**
-     * @var null|string
-     */
-    protected $password;
+    protected ?string $password = null;
 
-    /**
-     * @var array
-     */
-    protected $guzzleConfig = [
+    protected array $guzzleConfig = [
         'headers' => [
             'charset' => 'UTF-8',
         ],
@@ -40,7 +28,7 @@ class Config
 
     /**
      * @param $config = [
-     *     'base_uri' => 'http://127.0.0.1:8848',
+     *     'base_uri' => 'http://127.0.0.1:8848/',
      *     'username' => null,
      *     'password' => null,
      *     'guzzle_config' => [],

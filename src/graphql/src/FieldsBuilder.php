@@ -213,7 +213,7 @@ class FieldsBuilder
     public function getInputFields(ReflectionMethod $refMethod): array
     {
         $docBlockObj = $this->cachedDocBlockFactory->getDocBlock($refMethod);
-        //$docBlockComment = $docBlockObj->getSummary()."\n".$docBlockObj->getDescription()->render();
+        // $docBlockComment = $docBlockObj->getSummary()."\n".$docBlockObj->getDescription()->render();
 
         $parameters = $refMethod->getParameters();
 
@@ -316,7 +316,7 @@ class FieldsBuilder
     }
 
     /**
-     * @return GraphQLType&OutputType
+     * @return GraphQLType|OutputType
      */
     private function mapReturnType(ReflectionMethod $refMethod, DocBlock $docBlockObj): GraphQLType
     {
@@ -332,7 +332,7 @@ class FieldsBuilder
         $docBlockReturnType = $this->getDocBlocReturnType($docBlockObj, $refMethod);
 
         try {
-            /** @var GraphQLType&OutputType $type */
+            /** @var GraphQLType|OutputType $type */
             $type = $this->mapType($phpdocType, $docBlockReturnType, $returnType ? $returnType->allowsNull() : false, false);
         } catch (TypeMappingException $e) {
             throw TypeMappingException::wrapWithReturnInfo($e, $refMethod);

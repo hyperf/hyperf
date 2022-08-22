@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\SuperGlobals;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\SuperGlobals\Proxy\Cookie;
 use Hyperf\SuperGlobals\Proxy\File;
@@ -19,7 +20,6 @@ use Hyperf\SuperGlobals\Proxy\Post;
 use Hyperf\SuperGlobals\Proxy\Request;
 use Hyperf\SuperGlobals\Proxy\Server;
 use Hyperf\SuperGlobals\Proxy\Session;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Waiter;
 use HyperfTest\SuperGlobals\Stub\ContainerStub;
 use Mockery;

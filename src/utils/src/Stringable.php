@@ -12,20 +12,19 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use Closure;
+use Hyperf\Macroable\Macroable;
 use JsonSerializable;
 
-class Stringable implements JsonSerializable
+class Stringable implements JsonSerializable, \Stringable
 {
     use Traits\Conditionable;
-    use Traits\Macroable;
+    use Macroable;
     use Traits\Tappable;
 
     /**
      * The underlying string value.
-     *
-     * @var string
      */
-    protected $value;
+    protected string $value;
 
     /**
      * Create a new instance of the class.
@@ -55,7 +54,7 @@ class Stringable implements JsonSerializable
      */
     public function __toString()
     {
-        return (string) $this->value;
+        return $this->value;
     }
 
     /**
@@ -83,7 +82,7 @@ class Stringable implements JsonSerializable
     /**
      * Append the given values to the string.
      *
-     * @param array $values
+     * @param string $values
      * @return static
      */
     public function append(...$values)
@@ -170,7 +169,7 @@ class Stringable implements JsonSerializable
     /**
      * Determine if a given string contains a given substring.
      *
-     * @param array|string $needles
+     * @param string|string[] $needles
      * @return bool
      */
     public function contains($needles)
@@ -202,7 +201,7 @@ class Stringable implements JsonSerializable
     /**
      * Determine if a given string ends with a given substring.
      *
-     * @param array|string $needles
+     * @param string|string[] $needles
      * @return bool
      */
     public function endsWith($needles)
@@ -213,11 +212,15 @@ class Stringable implements JsonSerializable
     /**
      * Determine if the string is an exact match with the given value.
      *
-     * @param string $value
+     * @param string|\Stringable $value
      * @return bool
      */
     public function exactly($value)
     {
+        if ($value instanceof \Stringable) {
+            $value = $value->__toString();
+        }
+
         return $this->value === $value;
     }
 
@@ -266,7 +269,7 @@ class Stringable implements JsonSerializable
     /**
      * Determine if a given string matches a given pattern.
      *
-     * @param array|string $pattern
+     * @param string|string[] $pattern
      * @return bool
      */
     public function is($pattern)
@@ -464,7 +467,7 @@ class Stringable implements JsonSerializable
     /**
      * Prepend the given values to the string.
      *
-     * @param array $values
+     * @param string $values
      * @return static
      */
     public function prepend(...$values)
@@ -475,7 +478,7 @@ class Stringable implements JsonSerializable
     /**
      * Remove any occurrence of the given string in the subject.
      *
-     * @param array<string>|string $search
+     * @param string|string[] $search
      * @param bool $caseSensitive
      * @return static
      */
@@ -570,6 +573,17 @@ class Stringable implements JsonSerializable
     }
 
     /**
+     * Strip HTML and PHP tags from the given string.
+     *
+     * @param null|string|string[] $allowedTags
+     * @return static
+     */
+    public function stripTags($allowedTags = null)
+    {
+        return new static(strip_tags($this->value, $allowedTags));
+    }
+
+    /**
      * Convert the given string to upper-case.
      *
      * @return static
@@ -625,7 +639,7 @@ class Stringable implements JsonSerializable
     /**
      * Determine if a given string starts with a given substring.
      *
-     * @param array|string $needles
+     * @param string|string[] $needles
      * @return bool
      */
     public function startsWith($needles)
@@ -727,34 +741,24 @@ class Stringable implements JsonSerializable
      * Execute the given callback if the string is empty.
      *
      * @param callable $callback
+     * @param null|callable $default
      * @return static
      */
-    public function whenEmpty($callback)
+    public function whenEmpty($callback, $default = null)
     {
-        if ($this->isEmpty()) {
-            $result = $callback($this);
-
-            return is_null($result) ? $this : $result;
-        }
-
-        return $this;
+        return $this->when($this->isEmpty(), $callback, $default);
     }
 
     /**
      * Execute the given callback if the string is not empty.
      *
      * @param callable $callback
+     * @param null|callable $default
      * @return static
      */
-    public function whenNotEmpty($callback)
+    public function whenNotEmpty($callback, $default = null)
     {
-        if ($this->isNotEmpty()) {
-            $result = $callback($this);
-
-            return is_null($result) ? $this : $result;
-        }
-
-        return $this;
+        return $this->when($this->isNotEmpty(), $callback, $default);
     }
 
     /**
@@ -781,10 +785,8 @@ class Stringable implements JsonSerializable
 
     /**
      * Convert the object to a string when JSON encoded.
-     *
-     * @return string
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->__toString();
     }

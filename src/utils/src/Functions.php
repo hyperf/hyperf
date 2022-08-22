@@ -26,9 +26,9 @@ if (! function_exists('value')) {
      *
      * @param mixed $value
      */
-    function value($value)
+    function value($value, ...$args)
     {
-        return $value instanceof \Closure ? $value() : $value;
+        return $value instanceof Closure ? $value(...$args) : $value;
     }
 }
 if (! function_exists('env')) {
@@ -56,7 +56,7 @@ if (! function_exists('env')) {
                 return '';
             case 'null':
             case '(null)':
-                return;
+                return null;
         }
         if (($valueLength = strlen($value)) > 1 && $value[0] === '"' && $value[$valueLength - 1] === '"') {
             return substr($value, 1, -1);
@@ -394,7 +394,7 @@ if (! function_exists('getter')) {
 if (! function_exists('parallel')) {
     /**
      * @param callable[] $callables
-     * @param int $concurrent if $concurrent is equal to 0, that means unlimit
+     * @param int $concurrent if $concurrent is equal to 0, that means unlimited
      */
     function parallel(array $callables, int $concurrent = 0)
     {
@@ -408,8 +408,8 @@ if (! function_exists('parallel')) {
 
 if (! function_exists('make')) {
     /**
-     * Create a object instance, if the DI container exist in ApplicationContext,
-     * then the object will be create by DI container via `make()` method, if not,
+     * Create an object instance, if the DI container exist in ApplicationContext,
+     * then the object will be created by DI container via `make()` method, if not,
      * the object will create by `new` keyword.
      */
     function make(string $name, array $parameters = [])
@@ -439,7 +439,8 @@ if (! function_exists('run')) {
 
         \Swoole\Runtime::enableCoroutine($flags);
 
-        $result = \Swoole\Coroutine\Run(...(array) $callbacks);
+        /* @phpstan-ignore-next-line */
+        $result = \Swoole\Coroutine\run(...(array) $callbacks);
 
         \Swoole\Runtime::enableCoroutine(false);
         return $result;
@@ -471,6 +472,7 @@ if (! function_exists('optional')) {
         if (! is_null($value)) {
             return $callback($value);
         }
+        return null;
     }
 }
 

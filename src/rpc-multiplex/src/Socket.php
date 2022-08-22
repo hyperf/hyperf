@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcMultiplex;
 
-use Multiplex\Constract\IdGeneratorInterface;
-use Multiplex\Constract\PackerInterface;
-use Multiplex\Constract\SerializerInterface;
+use Multiplex\Contract\IdGeneratorInterface;
+use Multiplex\Contract\PackerInterface;
+use Multiplex\Contract\SerializerInterface;
 use Psr\Container\ContainerInterface;
 
 class Socket extends \Multiplex\Socket\Client
@@ -29,19 +29,13 @@ class Socket extends \Multiplex\Socket\Client
         );
     }
 
-    /**
-     * @return $this
-     */
-    public function setName(string $name): Socket
+    public function setName(string $name): static
     {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function setPort(int $port)
+    public function setPort(int $port): static
     {
         $this->port = $port;
         return $this;

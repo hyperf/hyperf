@@ -15,11 +15,8 @@ trait CompilesEchos
 {
     /**
      * Compile Blade echos into valid PHP.
-     *
-     * @param string $value
-     * @return string
      */
-    public function compileEchos($value)
+    public function compileEchos(string $value): string
     {
         foreach ($this->getEchoMethods() as $method) {
             $value = $this->{$method}($value);
@@ -30,10 +27,8 @@ trait CompilesEchos
 
     /**
      * Get the echo methods in the proper order for compilation.
-     *
-     * @return array
      */
-    protected function getEchoMethods()
+    protected function getEchoMethods(): array
     {
         return [
             'compileRawEchos',
@@ -44,11 +39,8 @@ trait CompilesEchos
 
     /**
      * Compile the "raw" echo statements.
-     *
-     * @param string $value
-     * @return string
      */
-    protected function compileRawEchos($value)
+    protected function compileRawEchos(string $value): string
     {
         $pattern = sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->rawTags[0], $this->rawTags[1]);
 
@@ -63,11 +55,8 @@ trait CompilesEchos
 
     /**
      * Compile the "regular" echo statements.
-     *
-     * @param string $value
-     * @return string
      */
-    protected function compileRegularEchos($value)
+    protected function compileRegularEchos(string $value): string
     {
         $pattern = sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->contentTags[0], $this->contentTags[1]);
 
@@ -84,11 +73,8 @@ trait CompilesEchos
 
     /**
      * Compile the escaped echo statements.
-     *
-     * @param string $value
-     * @return string
      */
-    protected function compileEscapedEchos($value)
+    protected function compileEscapedEchos(string $value): string
     {
         $pattern = sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->escapedTags[0], $this->escapedTags[1]);
 

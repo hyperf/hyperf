@@ -11,18 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
-use Swoole\Coroutine\Channel;
+use Hyperf\Engine\Channel;
 
 class ChannelPool extends \SplQueue
 {
-    /**
-     * @var ChannelPool
-     */
-    private static $instance;
+    private static ?ChannelPool $instance = null;
 
     public static function getInstance(): self
     {
-        return static::$instance ?? (static::$instance = new self());
+        return static::$instance ??= new self();
     }
 
     public function get(): Channel

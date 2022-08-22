@@ -13,19 +13,7 @@ namespace Hyperf\WebSocketServer\Collector;
 
 class Fd
 {
-    /**
-     * @var int
-     */
-    public $fd;
-
-    /**
-     * @var string
-     */
-    public $class;
-
-    public function __construct(int $fd, string $class)
+    public function __construct(public int $fd, public string $class)
     {
-        $this->fd = $fd;
-        $this->class = $class;
     }
 }

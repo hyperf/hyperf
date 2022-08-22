@@ -4,9 +4,9 @@
     "type": "library",
     "license": "MIT",
     "keywords": [
-      "php",
-      "hyperf",
-      "resource"
+        "php",
+        "hyperf",
+        "resource"
     ],
     "homepage": "https://hyperf.io",
     "support": {
@@ -16,11 +16,11 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "ext-json": "*",
-        "hyperf/http-message": "~2.2.0",
-        "hyperf/paginator": "~2.2.0",
-        "hyperf/utils": "~2.2.0",
+        "hyperf/http-message": "~3.0.0",
+        "hyperf/paginator": "~3.0.0",
+        "hyperf/utils": "~3.0.0",
         "psr/container": "^1.0|^2.0"
     },
     "autoload": {
@@ -38,7 +38,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Resource\\ConfigProvider"

@@ -32,19 +32,10 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 class ConsumerManager
 {
-    /**
-     * @var LongLangConsumer
-     */
-    protected $consumer;
+    protected LongLangConsumer $consumer;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function run()
@@ -77,30 +68,15 @@ class ConsumerManager
     protected function createProcess(AbstractConsumer $consumer): AbstractProcess
     {
         return new class($this->container, $consumer) extends AbstractProcess {
-            /**
-             * @var AbstractConsumer
-             */
-            private $consumer;
+            private AbstractConsumer $consumer;
 
-            /**
-             * @var ConfigInterface
-             */
-            private $config;
+            private ConfigInterface $config;
 
-            /**
-             * @var null|EventDispatcherInterface
-             */
-            private $dispatcher;
+            private ?EventDispatcherInterface $dispatcher;
 
-            /**
-             * @var StdoutLoggerInterface
-             */
-            protected $stdoutLogger;
+            protected StdoutLoggerInterface $stdoutLogger;
 
-            /**
-             * @var Producer
-             */
-            protected $producer;
+            protected Producer $producer;
 
             public function __construct(ContainerInterface $container, AbstractConsumer $consumer)
             {
@@ -168,7 +144,7 @@ class ConsumerManager
                 $consumerConfig->setTopic($this->consumer->getTopic());
                 $consumerConfig->setRebalanceTimeout($config['rebalance_timeout']);
                 $consumerConfig->setSendTimeout($config['send_timeout']);
-                $consumerConfig->setGroupId($this->consumer->getGroupId());
+                $consumerConfig->setGroupId($this->consumer->getGroupId() ?? uniqid('hyperf-kafka-'));
                 $consumerConfig->setGroupInstanceId(sprintf('%s-%s', $this->consumer->getGroupId(), uniqid()));
                 $consumerConfig->setMemberId($this->consumer->getMemberId() ?: '');
                 $consumerConfig->setInterval($config['interval']);

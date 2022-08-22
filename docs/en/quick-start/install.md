@@ -8,10 +8,13 @@ Various Dockerfiles have been prepared for in the [hyperf/hyperf-docker](https:/
 
 If you don't use Docker as the basis for your system environment, you need to make sure that your native environment meets the following requirements:
 
- - PHP >= 7.3
- - Swoole PHP extension >= 4.5，with `swoole.use_shortname` set to `Off` in your `php.ini`
- - OpenSSL PHP extension
+ - PHP >= 7.3 and <= 8.0
+ - Any of the following network engines
+   - Swoole PHP extension >= 4.5，with `swoole.use_shortname` set to `Off` in your `php.ini`
+   - Swow PHP extension (Beta)
  - JSON PHP extension
+ - Pcntl PHP extension
+ - OpenSSL PHP extension （If you need to use the HTTPS）
  - PDO PHP extension （If you need to use the MySQL Client）
  - Redis PHP extension （If you need to use the Redis Client）
  - Protobuf PHP extension （If you need to use the gRPC Server or Client）
@@ -26,8 +29,14 @@ Hyperf uses [Composer](https://getcomposer.org) to manage project dependencies. 
 The project [hyperf/hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) is a skeleton project that we have prepared for you, with built-in files for common components and related configuration. It is a foundational web project that can be quickly used to get started with professional Hyperf development. At the time of installation, you can choose component dependencies according to your own needs.
 Execute the following command to create a hyperf-skeleton project at the current location
 
+Based on Swoole engine:
 ```
 composer create-project hyperf/hyperf-skeleton 
+```
+
+Based on Swow engine:
+```
+composer create-project hyperf/swow-skeleton 
 ```
 
 ### Develop in Docker

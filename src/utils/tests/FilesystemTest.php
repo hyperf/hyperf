@@ -11,9 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
+use Hyperf\Engine\Channel;
+use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Parallel;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine\Channel;
 use Swoole\Runtime;
 
 /**
@@ -66,6 +67,23 @@ class FilesystemTest extends TestCase
         });
     }
 
+    public function testMakeDirection()
+    {
+        $system = new Filesystem();
+        if (SWOOLE_VERSION_ID > 40701) {
+            try {
+                $system->makeDirectory(BASE_PATH . '/runtime/test');
+                $system->makeDirectory(BASE_PATH . '/runtime/test');
+            } catch (\Throwable $exception) {
+                $this->assertSame('mkdir(): File exists', $exception->getMessage());
+            }
+        } else {
+            $system->makeDirectory(BASE_PATH . '/runtime/test');
+            $system->makeDirectory(BASE_PATH . '/runtime/test');
+            $this->assertTrue(true);
+        }
+    }
+
     /**
      * @group NonCoroutine
      */
@@ -99,5 +117,24 @@ class FilesystemTest extends TestCase
                 str_repeat('a', 70000) == $content || str_repeat('b', 70000) == $content
             );
         });
+    }
+
+    public function testLastModified()
+    {
+        $path = BASE_PATH . '/runtime/data.log';
+        $fs = new \Hyperf\Utils\Filesystem\Filesystem();
+
+        $this->assertNotFalse($fs->put($path, 'hello'));
+        $lastModified = $fs->lastModified($path);
+
+        sleep(1);
+
+        $this->assertNotFalse($fs->put($path, 'world'));
+        $this->assertSame($lastModified, $fs->lastModified($path));
+
+        $fs->clearStatCache($path);
+        $this->assertNotSame($lastModified, $fs->lastModified($path));
+
+        unlink($path);
     }
 }
