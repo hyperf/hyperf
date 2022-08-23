@@ -59,6 +59,7 @@ composer analyse
 - [#4992](https://github.com/hyperf/hyperf/pull/4992) Added config `amqp.enable` which used to control amqp consumer whether to start automatically and producer whether to declare automatically.
 - [#4994](https://github.com/hyperf/hyperf/pull/4994) [#5016](https://github.com/hyperf/hyperf/pull/5016) Added component `hyperf/database-pgsql` which you can be used to connect pgsql server.
 - [#5007](https://github.com/hyperf/hyperf/pull/5007) Support for SSL encrypted connection to Redis.
+- [#5046](https://github.com/hyperf/hyperf/pull/5046) Added `Hyperf\Database\Model\Concerns\HasAttributes::getRawOriginal()`.
 
 ## Optimized
 

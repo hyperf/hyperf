@@ -1212,11 +1212,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
     /**
      * Remove the table name from a given key.
-     *
-     * @param string $key
-     * @return string
      */
-    protected function removeTableFromKey($key)
+    protected function removeTableFromKey(string $key): string
     {
         return Str::contains($key, '.') ? last(explode('.', $key)) : $key;
     }
