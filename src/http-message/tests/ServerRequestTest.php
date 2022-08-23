@@ -155,6 +155,48 @@ class ServerRequestTest extends TestCase
         $this->assertSame(null, $uri->getPort());
     }
 
+    /**
+     * @dataProvider  getIPv6Examples
+     * @param mixed $originHost
+     * @param mixed $host
+     * @param mixed $port
+     */
+    public function testGetUriFromGlobalsForIPv6Host($originHost, $host, $port)
+    {
+        $swooleRequest = Mockery::mock(SwooleRequest::class);
+        $data = ['name' => 'Hyperf'];
+        $swooleRequest->shouldReceive('rawContent')->andReturn(Json::encode($data));
+
+        $swooleRequest->server = [
+            'http_host' => $originHost,
+        ];
+        $request = Request::loadFromSwooleRequest($swooleRequest);
+        $uri = $request->getUri();
+        $this->assertSame($port, $uri->getPort());
+        $this->assertSame($host, $uri->getHost());
+
+        $swooleRequest->server = [];
+        $swooleRequest->header = [
+            'host' => $originHost,
+        ];
+        $request = Request::loadFromSwooleRequest($swooleRequest);
+        $uri = $request->getUri();
+        $this->assertSame($port, $uri->getPort());
+        $this->assertSame($host, $uri->getHost());
+    }
+
+    public function getIPv6Examples(): array
+    {
+        return [
+            ['localhost:9501', 'localhost', 9501],
+            ['localhost:', 'localhost', null],
+            ['localhost', 'localhost', null],
+            ['[2a00:f48:1008::212:183:10]', '[2a00:f48:1008::212:183:10]', null],
+            ['[2a00:f48:1008::212:183:10]:9501', '[2a00:f48:1008::212:183:10]', 9501],
+            ['[2a00:f48:1008::212:183:10]:', '[2a00:f48:1008::212:183:10]', null],
+        ];
+    }
+
     protected function getContainer()
     {
         $container = Mockery::mock(ContainerInterface::class);

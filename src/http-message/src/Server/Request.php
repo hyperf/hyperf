@@ -543,9 +543,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
 
         $hasPort = false;
         if (isset($server['http_host'])) {
-            $hostHeaderParts = explode(':', $server['http_host']);
+            $hostHeaderParts = self::resolveHost($server['http_host']);
             $uri = $uri->withHost($hostHeaderParts[0]);
-            if (isset($hostHeaderParts[1])) {
+            if (! empty($hostHeaderParts[1])) {
                 $hasPort = true;
                 $uri = $uri->withPort($hostHeaderParts[1]);
             }
@@ -555,16 +555,11 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
             $uri = $uri->withHost($server['server_addr']);
         } elseif (isset($header['host'])) {
             $hasPort = true;
-            if (\strpos($header['host'], ':')) {
-                [$host, $port] = explode(':', $header['host'], 2);
-                if ($port != $uri->getDefaultPort()) {
-                    $uri = $uri->withPort($port);
-                }
-            } else {
-                $host = $header['host'];
+            $hostHeaderParts = self::resolveHost($header['host']);
+            if (! empty($hostHeaderParts[1]) && $hostHeaderParts[1] != $uri->getDefaultPort()) {
+                $uri = $uri->withPort($hostHeaderParts[1]);
             }
-
-            $uri = $uri->withHost($host);
+            $uri = $uri->withHost($hostHeaderParts[0]);
         }
 
         if (! $hasPort && isset($server['server_port'])) {
@@ -586,5 +581,25 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         }
 
         return $uri;
+    }
+
+    /**
+     * @param $host
+     * @return array|string[]
+     */
+    private static function resolveHost($host): array
+    {
+        if (preg_match('%(\[[0-9:a-f]+\])(:(\d+))?%', $host, $matches)) {
+            if (! isset($matches[3])) {
+                return [$matches[1]];
+            }
+            return [$matches[1], $matches[3]];
+        }
+
+        if (! \strpos($host, ':')) {
+            return [$host];
+        }
+
+        return explode(':', $host, 2);
     }
 }
