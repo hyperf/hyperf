@@ -543,7 +543,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
 
         $hasPort = false;
         if (isset($server['http_host'])) {
-            $hostHeaderParts = explode(':', $server['http_host']);
+            $hostHeaderParts = self::parseHost($server['http_host']);
             $uri = $uri->withHost($hostHeaderParts[0]);
             if (isset($hostHeaderParts[1])) {
                 $hasPort = true;
@@ -555,8 +555,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
             $uri = $uri->withHost($server['server_addr']);
         } elseif (isset($header['host'])) {
             $hasPort = true;
-            if (\strpos($header['host'], ':')) {
-                [$host, $port] = explode(':', $header['host'], 2);
+            $hostParts = self::parseHost($header['host']);
+            if (isset($hostParts[1])) {
+                [$host, $port] = $hostParts;
                 if ($port != $uri->getDefaultPort()) {
                     $uri = $uri->withPort($port);
                 }
@@ -586,5 +587,18 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         }
 
         return $uri;
+    }
+
+    /**
+     * Get host parts, support ipv6
+     */
+    private static function parseHost(string $httpHost): array
+    {
+        $hostHeaderParts = parse_url('//' . $httpHost);
+        $hostParts = [$hostHeaderParts['host']];
+        if (isset($hostHeaderParts['port'])) {
+            $hostParts[] = $hostHeaderParts['port'];
+        }
+        return $hostParts;
     }
 }
