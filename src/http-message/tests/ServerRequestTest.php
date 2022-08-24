@@ -26,6 +26,7 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
+use ReflectionClass;
 use Swoole\Http\Request as SwooleRequest;
 
 /**
@@ -153,6 +154,27 @@ class ServerRequestTest extends TestCase
         $request = Request::loadFromSwooleRequest($swooleRequest);
         $uri = $request->getUri();
         $this->assertSame(null, $uri->getPort());
+    }
+
+    /**
+     * @group ParseHost
+     * @return void
+     */
+    public function testParseHost()
+    {
+        $hostStrIPv4 = '192.168.119.100:9501';
+        $hostStrIPv6 = '[fe80::a464:1aff:fe88:7b5a]:9502';
+        $objReflectClass = new ReflectionClass('Hyperf\HttpMessage\Server\Request');
+        $method = $objReflectClass->getMethod('parseHost');
+        $method->setAccessible(true);
+
+        $resIPv4 = $method->invokeArgs(null, [$hostStrIPv4]);
+        $this->assertSame('192.168.119.100', $resIPv4[0]);
+        $this->assertSame(9501, $resIPv4[1]);
+
+        $resIPv6 = $method->invokeArgs(null, [$hostStrIPv6]);
+        $this->assertSame('[fe80::a464:1aff:fe88:7b5a]', $resIPv6[0]);
+        $this->assertSame(9502, $resIPv6[1]);
     }
 
     protected function getContainer()

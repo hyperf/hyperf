@@ -599,6 +599,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         if (isset($hostHeaderParts['port'])) {
             $hostParts[] = $hostHeaderParts['port'];
         }
+
         return $hostParts;
     }
 }
