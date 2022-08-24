@@ -543,11 +543,11 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
 
         $hasPort = false;
         if (isset($server['http_host'])) {
-            $hostHeaderParts = self::parseHost($server['http_host']);
-            $uri = $uri->withHost($hostHeaderParts[0]);
-            if (isset($hostHeaderParts[1])) {
+            [$host, $port] = self::parseHost($server['http_host']);
+            $uri = $uri->withHost($host);
+            if (isset($port)) {
                 $hasPort = true;
-                $uri = $uri->withPort($hostHeaderParts[1]);
+                $uri = $uri->withPort($port);
             }
         } elseif (isset($server['server_name'])) {
             $uri = $uri->withHost($server['server_name']);
@@ -555,14 +555,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
             $uri = $uri->withHost($server['server_addr']);
         } elseif (isset($header['host'])) {
             $hasPort = true;
-            $hostParts = self::parseHost($header['host']);
-            if (isset($hostParts[1])) {
-                [$host, $port] = $hostParts;
-                if ($port != $uri->getDefaultPort()) {
-                    $uri = $uri->withPort($port);
-                }
-            } else {
-                $host = $header['host'];
+            [$host, $port] = self::parseHost($header['host']);
+            if ($port != $uri->getDefaultPort()) {
+                $uri = $uri->withPort($port);
             }
 
             $uri = $uri->withHost($host);
@@ -590,7 +585,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
     }
 
     /**
-     * Get host parts, support ipv6
+     * Get host parts, support ipv6.
      */
     private static function parseHost(string $httpHost): array
     {
@@ -598,6 +593,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         $hostParts = [$hostHeaderParts['host']];
         if (isset($hostHeaderParts['port'])) {
             $hostParts[] = $hostHeaderParts['port'];
+        } else {
+            $hostParts[] = null;
         }
 
         return $hostParts;
