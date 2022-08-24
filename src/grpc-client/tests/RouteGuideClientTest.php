@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\GrpcClient;
 
+use Google\Protobuf\Internal\Message;
 use Hyperf\Di\Container;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\GrpcClient\StreamingCall;
@@ -67,17 +68,14 @@ class RouteGuideClientTest extends TestCase
         /** @var StreamingCall $call */
         $call = $client->listFeatures();
         $call->send($rect);
-        [$feature,] = $call->recv();
-        $this->assertEquals('Patriots Path, Mendham, NJ 07945, USA', $feature->getName());
-        [$feature,, $response] = $call->recv();
-        $this->assertEquals('101 New Jersey 10, Whippany, NJ 07981, USA', $feature->getName());
-        [,$status] = $call->recv();
-        $this->assertEquals(0, $status);
-        $result[0] = true;
-        while ($result[0] !== null) {
-            $result = $call->recv();
-        }
-        $this->assertFalse($result[2]->pipeline);
+        $response = $call->recv();
+        $this->assertEquals('Patriots Path, Mendham, NJ 07945, USA', $response->message->getName());
+        $response = $call->recv();
+        $this->assertEquals('101 New Jersey 10, Whippany, NJ 07981, USA', $response->message->getName());
+        $response = $call->recv();
+        $this->assertTrue($response->message instanceof Message);
+        $response = $call->recv();
+        $this->assertFalse($response->rawResponse->pipeline);
     }
 
     public function testGrpcRouteGuideRecordRoute()
@@ -97,7 +95,8 @@ class RouteGuideClientTest extends TestCase
         $call->push($second);
         $call->end();
         /** @var RouteSummary $summary */
-        [$summary,] = $call->recv();
+        $response = $call->recv();
+        $summary = $response->message;
         $this->assertEquals(2, $summary->getPointCount());
     }
 
