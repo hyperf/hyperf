@@ -158,7 +158,6 @@ class ServerRequestTest extends TestCase
 
     /**
      * @group ParseHost
-     * @return void
      */
     public function testParseHost()
     {
