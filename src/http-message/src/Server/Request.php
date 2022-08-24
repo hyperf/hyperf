@@ -556,7 +556,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
         } elseif (isset($header['host'])) {
             $hasPort = true;
             [$host, $port] = self::parseHost($header['host']);
-            if ($port != $uri->getDefaultPort()) {
+            if (isset($port) && $port !== $uri->getDefaultPort()) {
                 $uri = $uri->withPort($port);
             }
 
