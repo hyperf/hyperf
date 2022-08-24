@@ -589,14 +589,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      */
     private static function parseHost(string $httpHost): array
     {
-        $hostHeaderParts = parse_url('//' . $httpHost);
-        $hostParts = [$hostHeaderParts['host']];
-        if (isset($hostHeaderParts['port'])) {
-            $hostParts[] = $hostHeaderParts['port'];
-        } else {
-            $hostParts[] = null;
-        }
+        $parts = parse_url('//' . $httpHost);
 
-        return $hostParts;
+        return [$parts['host'], $parts['port'] ?? null];
     }
 }
