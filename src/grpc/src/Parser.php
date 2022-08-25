@@ -15,7 +15,6 @@ use Google\Protobuf\GPBEmpty;
 
 class Parser
 {
-
     public static function pack(string $data): string
     {
         return pack('CN', 0, strlen($data)) . $data;
