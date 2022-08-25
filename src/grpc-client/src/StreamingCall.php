@@ -120,6 +120,9 @@ class StreamingCall
             return new Response(new GPBEmpty(), $recv);
         }
 
+        if ($recv->statusCode !== 0) {
+            return Parser::parseResponse($recv, $this->deserialize);
+        }
         return new Response(Parser::deserializeMessage($this->deserialize, $recv->data), $recv);
     }
 
