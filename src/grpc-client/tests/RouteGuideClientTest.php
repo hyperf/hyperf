@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\GrpcClient;
 
+use Google\Protobuf\GPBEmpty;
 use Google\Protobuf\Internal\Message;
 use Hyperf\Di\Container;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
@@ -74,7 +75,12 @@ class RouteGuideClientTest extends TestCase
         $this->assertEquals('101 New Jersey 10, Whippany, NJ 07981, USA', $response->message->getName());
         $response = $call->recv();
         $this->assertTrue($response->message instanceof Message);
-        $response = $call->recv();
+        while (true) {
+            $response = $call->recv();
+            if ($response->message instanceof GPBEmpty) {
+                break;
+            }
+        }
         $this->assertFalse($response->rawResponse->pipeline);
     }
 
@@ -128,12 +134,14 @@ class RouteGuideClientTest extends TestCase
         $call->recv(1);
         $call->push($firstNote);
         /** @var RouteNote $note */
-        [$note,] = $call->recv();
+        $response = $call->recv();
+        $note = $response->message;
         $this->assertEquals($first->getLatitude(), $note->getLocation()->getLatitude());
 
         $call->push($secondNote);
         $call->push($secondNote);
-        [$note,] = $call->recv();
+        $response = $call->recv();
+        $note = $response->message;
         $this->assertEquals($second->getLatitude(), $note->getLocation()->getLatitude());
     }
 }

@@ -11,36 +11,22 @@ declare(strict_types=1);
  */
 namespace Hyperf\GrpcClient;
 
+use Google\Protobuf\GPBEmpty;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use RuntimeException;
 
 class StreamingCall
 {
-    /**
-     * @var GrpcClient
-     */
-    protected $client;
+    protected ?GrpcClient $client;
 
-    /**
-     * @var string
-     */
-    protected $method = '';
+    protected string $method = '';
 
-    /**
-     * @var mixed
-     */
-    protected $deserialize;
+    protected mixed $deserialize;
 
-    /**
-     * @var int
-     */
-    protected $streamId = 0;
+    protected int $streamId = 0;
 
-    /**
-     * @var array
-     */
-    protected $metadata;
+    protected array $metadata;
 
     public function setClient(GrpcClient $client): self
     {
@@ -131,10 +117,10 @@ class StreamingCall
         // server ended the stream
         if ($recv->pipeline === false) {
             $this->streamId = 0;
-            return [null, 0, $recv];
+            return new Response(new GPBEmpty(), $recv);
         }
 
-        return Parser::parseResponse($recv, $this->deserialize);
+        return new Response(Parser::deserializeMessage($this->deserialize, $recv->data), $recv);
     }
 
     public function end(): void
