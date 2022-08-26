@@ -127,7 +127,7 @@
 * 應用部署
 
   * [Docker Swarm 叢集搭建](zh-tw/tutorial/docker-swarm.md)
-  * [DaoCloud Devops 搭建](zh-tw/tutorial/daocloud.md)
+  * [寶塔環境 搭建](zh-tw/tutorial/bt.md)
   * [Supervisor 部署](zh-tw/tutorial/supervisor.md)
   * [Nginx 反向代理](zh-tw/tutorial/nginx.md)
   * [阿里雲日誌服務](zh-tw/tutorial/aliyun-logger.md)
