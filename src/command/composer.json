@@ -24,6 +24,9 @@
         "psr/event-dispatcher": "^1.0",
         "symfony/console": "^5.0"
     },
+    "conflict": {
+        "symfony/console": "~5.4.12|~6.0.12"
+    },
     "suggest": {
         "hyperf/di": "Required to use annotations."
     },
