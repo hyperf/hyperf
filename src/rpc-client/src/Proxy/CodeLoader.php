@@ -28,4 +28,9 @@ class CodeLoader
     {
         return Composer::getLoader()->findFile($className);
     }
+
+    public function getMd5ByClassName(string $className): string
+    {
+        return md5($this->getCodeByClassName($className));
+    }
 }

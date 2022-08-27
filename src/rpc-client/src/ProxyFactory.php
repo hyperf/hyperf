@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcClient;
 
+use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\RpcClient\Proxy\Ast;
 use Hyperf\RpcClient\Proxy\CodeLoader;
 use Hyperf\Utils\Coroutine\Locker;
@@ -45,7 +46,7 @@ class ProxyFactory
         }
 
         $proxyFileName = str_replace('\\', '_', $serviceClass);
-        $proxyClassName = $serviceClass . '_' . md5($this->codeLoader->getCodeByClassName($serviceClass));
+        $proxyClassName = $serviceClass . '_' . $this->codeLoader->getMd5ByClassName($serviceClass);
         $path = $dir . $proxyFileName . '.rpc-client.proxy.php';
 
         $key = md5($path);
@@ -66,6 +67,10 @@ class ProxyFactory
     {
         if (! $this->filesystem->exists($path)) {
             return true;
+        }
+
+        if (ScanConfig::instance('')->isCacheable()) {
+            return false;
         }
 
         $time = $this->filesystem->lastModified(

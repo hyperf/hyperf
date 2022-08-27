@@ -1,4 +1,15 @@
-# v2.2.35 - TBD
+# v2.2.36 - TBD
+
+# v2.2.35 - 2022-08-27
+
+## Fixed
+
+- [#5062](https://github.com/hyperf/hyperf/pull/5062) Fixed bug that cannot stop server by `Ctrl C`.
+
+## Optimized
+
+- [#5002](https://github.com/hyperf/hyperf/pull/5002) Optimized the generation rules of rpc proxy class suffix, which can be customized more easily.
+- [#5005](https://github.com/hyperf/hyperf/pull/5005) Don't generate rpc proxy again when open `scan cacheable`.
 
 # v2.2.34 - 2022-07-21
 
