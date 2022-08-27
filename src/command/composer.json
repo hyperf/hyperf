@@ -22,7 +22,7 @@
         "php": ">=7.2",
         "hyperf/utils": "~2.2.0",
         "psr/event-dispatcher": "^1.0",
-        "symfony/console": "^5.0"
+        "symfony/console": ">=5.0 <5.4.12"
     },
     "suggest": {
         "hyperf/di": "Required to use annotations."

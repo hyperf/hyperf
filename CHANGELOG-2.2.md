@@ -1,4 +1,10 @@
-# v2.2.35 - TBD
+# v2.2.36 - TBD
+
+# v2.2.35 - 2022-08-27
+
+## Fixed
+
+- [#5062](https://github.com/hyperf/hyperf/pull/5062) Fixed bug that cannot stop server by `Ctrl C`.
 
 ## Optimized
 
