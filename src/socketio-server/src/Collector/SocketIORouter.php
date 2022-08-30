@@ -61,7 +61,7 @@ class SocketIORouter extends MetadataCollector
 
         $instance = ApplicationContext::getContainer()->get($class);
 
-        if (! ($instance instanceof NamespaceInterface)) {
+        if (! $instance instanceof NamespaceInterface) {
             throw new RouteNotFoundException("namespace {$nsp} must be an instance of NamespaceInterface");
         }
 

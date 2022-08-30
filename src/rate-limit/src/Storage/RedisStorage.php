@@ -19,6 +19,7 @@ use Hyperf\Redis\Redis;
 use malkusch\lock\mutex\Mutex;
 use malkusch\lock\mutex\PHPRedisMutex;
 use Psr\SimpleCache\InvalidArgumentException;
+
 use function make;
 
 class RedisStorage implements Storage, GlobalScope

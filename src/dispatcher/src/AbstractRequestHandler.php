@@ -14,6 +14,7 @@ namespace Hyperf\Dispatcher;
 use Hyperf\Dispatcher\Exceptions\InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\MiddlewareInterface;
+
 use function is_string;
 
 abstract class AbstractRequestHandler

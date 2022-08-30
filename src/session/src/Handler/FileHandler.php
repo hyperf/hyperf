@@ -19,7 +19,6 @@ use Symfony\Component\Finder\Finder;
 class FileHandler implements SessionHandlerInterface
 {
     /**
-     * @param Filesystem $files
      * @param string $path the path where sessions should be stored
      * @param int $minutes the number of minutes the session should be valid
      */

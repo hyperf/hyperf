@@ -17,6 +17,7 @@ use Hyperf\Guzzle\CoroutineHandler;
 use Psr\Container\ContainerInterface;
 use Swoole\Coroutine\Http\Client;
 use SwooleTracker\Stats;
+
 use function getSwooleTrackerSpanId;
 use function getSwooleTrackerTraceId;
 

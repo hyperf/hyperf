@@ -17,6 +17,7 @@ use Jaeger\Config;
 use OpenTracing\Tracer;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
+
 use const Jaeger\SAMPLER_TYPE_CONST;
 
 class JaegerTracerFactory implements NamedFactoryInterface

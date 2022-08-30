@@ -24,6 +24,7 @@ use ReflectionClass;
 use ReflectionMethod;
 use TheCodingMachine\GraphQLite\Annotations\AbstractRequest;
 use TheCodingMachine\GraphQLite\Annotations\Exceptions\ClassNotFoundException;
+
 use function in_array;
 use function strpos;
 use function substr;
@@ -184,7 +185,7 @@ class AnnotationReader
                         if ($this->isErrorImportant($annotationClass, $refClass->getDocComment(), $refClass->getName())) {
                             throw $e;
                         }
-                            return null;
+                        return null;
                     default:
                         throw new \RuntimeException("Unexpected mode '{$this->mode}'."); // @codeCoverageIgnore
                 }
@@ -219,7 +220,7 @@ class AnnotationReader
                     if ($this->isErrorImportant($annotationClass, $refMethod->getDocComment(), $refMethod->getDeclaringClass()->getName())) {
                         throw $e;
                     }
-                        return null;
+                    return null;
                 default:
                     throw new \RuntimeException("Unexpected mode '{$this->mode}'."); // @codeCoverageIgnore
             }

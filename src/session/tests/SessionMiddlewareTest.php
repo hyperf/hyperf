@@ -221,17 +221,17 @@ class SessionMiddlewareTest extends TestCase
         $reflectionClass = new ReflectionClass(SessionMiddleware::class);
         $reflectionMethod = $reflectionClass->getMethod('fullUrl');
         $reflectionMethod->setAccessible(true);
-        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar')))]);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', new Uri($path = '/foo/bar'))]);
         $this->assertSame($path, $result);
-        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar?baz=1')))]);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', new Uri($path = '/foo/bar?baz=1'))]);
         $this->assertSame($path, $result);
-        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar?baz=1&bar=foo')))]);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', new Uri($path = '/foo/bar?baz=1&bar=foo'))]);
         $this->assertSame($path, $result);
-        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar/')))]);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', new Uri($path = '/foo/bar/'))]);
         $this->assertSame($path, $result);
-        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar/?baz=1')))]);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', new Uri($path = '/foo/bar/?baz=1'))]);
         $this->assertSame($path, $result);
-        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', (new Uri($path = '/foo/bar/?baz=1&bar=foo')))]);
+        $result = $reflectionMethod->invokeArgs($middleware, [new Request('get', new Uri($path = '/foo/bar/?baz=1&bar=foo'))]);
         $this->assertSame($path, $result);
     }
 

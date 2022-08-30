@@ -23,6 +23,7 @@ use Hyperf\Tracer\SwitchManager;
 use OpenTracing\Span;
 use OpenTracing\Tracer;
 use Psr\Container\ContainerInterface;
+
 use const OpenTracing\Formats\TEXT_MAP;
 
 class JsonRpcAspect extends AbstractAspect
