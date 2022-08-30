@@ -172,7 +172,7 @@ class BaseClient
     private function init()
     {
         if (! empty($this->options['client'])) {
-            if (! ($this->options['client'] instanceof GrpcClient)) {
+            if (! $this->options['client'] instanceof GrpcClient) {
                 throw new InvalidArgumentException('Parameter client have to instanceof Hyperf\GrpcClient\GrpcClient');
             }
             $this->grpcClient = $this->options['client'];

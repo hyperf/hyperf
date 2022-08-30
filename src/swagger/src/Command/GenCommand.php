@@ -14,7 +14,9 @@ namespace Hyperf\Swagger\Command;
 use Hyperf\Command\Command;
 use OpenApi\Analysis;
 use Symfony\Component\Console\Input\InputOption;
+
 use function OpenApi\scan;
+
 use const OpenApi\UNDEFINED;
 
 class GenCommand extends Command

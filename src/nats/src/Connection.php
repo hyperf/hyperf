@@ -474,7 +474,7 @@ class Connection
 
             $len = ($len - $written);
             if ($len > 0) {
-                $msg = substr($msg, (0 - $len));
+                $msg = substr($msg, 0 - $len);
             } else {
                 break;
             }

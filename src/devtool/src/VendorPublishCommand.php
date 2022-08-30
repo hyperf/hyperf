@@ -77,9 +77,9 @@ class VendorPublishCommand extends SymfonyCommand
         }
 
         if ($id) {
-            $item = (Arr::where($publish, function ($item) use ($id) {
+            $item = Arr::where($publish, function ($item) use ($id) {
                 return $item['id'] == $id;
-            }));
+            });
 
             if (empty($item)) {
                 $output->writeln(sprintf('<fg=red>No file can be published from [%s].</>', $id));

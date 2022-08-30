@@ -36,7 +36,7 @@ class CookieJar implements CookieJarInterface
     public function __construct(private $strictMode = false, $cookieArray = [])
     {
         foreach ($cookieArray as $cookie) {
-            if (! ($cookie instanceof SetCookie)) {
+            if (! $cookie instanceof SetCookie) {
                 $cookie = new SetCookie($cookie);
             }
             $this->setCookie($cookie);

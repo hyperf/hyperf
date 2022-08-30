@@ -110,7 +110,7 @@ class Calculator
                 continue;
             }
             if ($match === '-' && ($key === 0 || (isset($matches[0][$key - 1]) && in_array($matches[0][$key - 1], ['+', '-', '*', '/', '('])))) {
-                $numStack->push($match . ($matches[0][$key + 1]));
+                $numStack->push($match . $matches[0][$key + 1]);
                 unset($matches[0][$key + 1]);
                 continue;
             }

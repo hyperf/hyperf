@@ -19,6 +19,7 @@ use Hyperf\Tracer\SpanTagManager;
 use Hyperf\Tracer\SwitchManager;
 use OpenTracing\Tracer;
 use Psr\Http\Message\ResponseInterface;
+
 use const OpenTracing\Formats\TEXT_MAP;
 
 class HttpClientAspect extends AbstractAspect

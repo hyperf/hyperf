@@ -877,7 +877,7 @@ trait ValidatesAttributes
         if (is_string($value) && trim($value) === '') {
             return false;
         }
-        if ((is_countable($value)) && count($value) < 1) {
+        if (is_countable($value) && count($value) < 1) {
             return false;
         }
         if ($value instanceof SplFileInfo) {
@@ -1211,7 +1211,7 @@ trait ValidatesAttributes
             $secondDate = $this->getDateTimeWithOptionalFormat($format, $this->getValue($second));
         }
 
-        return ($firstDate && $secondDate) && ($this->compare($firstDate, $secondDate, $operator));
+        return ($firstDate && $secondDate) && $this->compare($firstDate, $secondDate, $operator);
     }
 
     /**

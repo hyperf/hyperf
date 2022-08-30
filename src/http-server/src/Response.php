@@ -34,6 +34,7 @@ use Hyperf\Utils\Str;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
+
 use function get_class;
 
 class Response implements PsrResponseInterface, ResponseInterface

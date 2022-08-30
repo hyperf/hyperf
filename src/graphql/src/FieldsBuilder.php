@@ -59,6 +59,7 @@ use TheCodingMachine\GraphQLite\Types\DateTimeType;
 use TheCodingMachine\GraphQLite\Types\ID;
 use TheCodingMachine\GraphQLite\Types\TypeResolver;
 use TheCodingMachine\GraphQLite\Types\UnionType;
+
 use function array_merge;
 use function get_parent_class;
 
@@ -715,7 +716,7 @@ class FieldsBuilder
                     if ($mapToInputType) {
                         return $this->typeMapper->mapClassToInputType($className);
                     }
-                        return $this->typeMapper->mapClassToInterfaceOrType($className, $subType);
+                    return $this->typeMapper->mapClassToInterfaceOrType($className, $subType);
             }
         } elseif ($type instanceof Array_) {
             return GraphQLType::listOf(GraphQLType::nonNull($this->toGraphQlType($type->getValueType(), $subType, $mapToInputType)));

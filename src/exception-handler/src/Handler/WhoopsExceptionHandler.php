@@ -62,10 +62,10 @@ class WhoopsExceptionHandler extends ExceptionHandler
         $accepts = $request->getHeaderLine('accept');
         foreach (self::$preference as $contentType => $handler) {
             if (Str::contains($accepts, $contentType)) {
-                return [$this->setupHandler(new $handler()),  $contentType];
+                return [$this->setupHandler(new $handler()), $contentType];
             }
         }
-        return [new PlainTextHandler(),  'text/plain'];
+        return [new PlainTextHandler(), 'text/plain'];
     }
 
     protected function setupHandler($handler)

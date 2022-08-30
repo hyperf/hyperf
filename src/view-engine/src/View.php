@@ -40,8 +40,6 @@ class View implements ArrayAccess, Htmlable, ViewInterface, \Stringable
     /**
      * Create a new view instance.
      *
-     * @param string $view
-     * @param string $path
      * @param mixed $data
      */
     /**

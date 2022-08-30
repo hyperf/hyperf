@@ -33,6 +33,7 @@ use HyperfTest\ViewEngine\Stub\AlertSlot;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
+
 use function Hyperf\ViewEngine\view;
 
 /**

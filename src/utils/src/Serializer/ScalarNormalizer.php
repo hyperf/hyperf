@@ -14,6 +14,7 @@ namespace Hyperf\Utils\Serializer;
 use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+
 use function get_class;
 use function is_scalar;
 
