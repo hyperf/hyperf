@@ -27,15 +27,17 @@ class Inject extends AbstractAnnotation
     public function collectProperty(string $className, ?string $target): void
     {
         try {
-            $reflectionClass = ReflectionManager::reflectClass($className);
+            if (is_null($this->value)) {
+                $reflectionClass = ReflectionManager::reflectClass($className);
 
-            $reflectionProperty = $reflectionClass->getProperty($target);
+                $reflectionProperty = $reflectionClass->getProperty($target);
 
-            if (method_exists($reflectionProperty, 'hasType') && $reflectionProperty->hasType()) {
-                /* @phpstan-ignore-next-line */
-                $this->value = $reflectionProperty->getType()->getName();
-            } else {
-                $this->value = PhpDocReaderManager::getInstance()->getPropertyClass($reflectionProperty);
+                if (method_exists($reflectionProperty, 'hasType') && $reflectionProperty->hasType()) {
+                    /* @phpstan-ignore-next-line */
+                    $this->value = $reflectionProperty->getType()->getName();
+                } else {
+                    $this->value = PhpDocReaderManager::getInstance()->getPropertyClass($reflectionProperty);
+                }
             }
 
             if (empty($this->value)) {
