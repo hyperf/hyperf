@@ -37,7 +37,11 @@ class RegisterInjectPropertyHandler
                     $reflectionProperty->setAccessible(true);
                     $container = ApplicationContext::getContainer();
                     if ($container->has($annotation->value)) {
-                        $reflectionProperty->setValue($object, $container->get($annotation->value));
+                        $entry = $container->get($annotation->value);
+                        if (method_exists($entry, '__invoke')) {
+                            $entry = $entry($container);
+                        }
+                        $reflectionProperty->setValue($object, $entry);
                     } elseif ($annotation->required) {
                         throw new NotFoundException("No entry or class found for '{$annotation->value}'");
                     }
