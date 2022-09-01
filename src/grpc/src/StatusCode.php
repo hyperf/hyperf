@@ -161,7 +161,7 @@ class StatusCode
     public const UNAUTHENTICATED = 16;
 
     /**
-     * @see https://grpc.github.io/grpc/core/md_doc_statuscodes.html
+     * @see https://github.com/googleapis/googleapis/blob/master/google/rpc/code.proto
      */
     public const HTTP_CODE_MAPPING = [
         self::OK => 200,
@@ -181,5 +181,18 @@ class StatusCode
         self::UNAVAILABLE => 503,
         self::DATA_LOSS => 500,
         self::UNAUTHENTICATED => 401,
+    ];
+
+    /**
+     * @see https://github.com/grpc/grpc/blob/master/doc/http-grpc-status-mapping.md
+     */
+    public const HTTP_GRPC_STATUS_MAPPING = [
+        400 => self::INTERNAL,
+        401 => self::PERMISSION_DENIED,
+        403 => self::UNIMPLEMENTED,
+        404 => self::UNAVAILABLE,
+        429 => self::UNAVAILABLE,
+        502 => self::UNAVAILABLE,
+        504 => self::UNAVAILABLE,
     ];
 }
