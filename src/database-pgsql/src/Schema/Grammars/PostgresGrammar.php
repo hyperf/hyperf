@@ -179,8 +179,8 @@ class PostgresGrammar extends Grammar
     /**
      * Compile a fulltext index key command.
      *
-     * @throws \RuntimeException
      * @return string
+     * @throws \RuntimeException
      */
     public function compileFulltext(Blueprint $blueprint, Fluent $command)
     {

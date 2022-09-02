@@ -1195,8 +1195,8 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get one or a specified number of items randomly from the collection.
      *
-     * @throws \InvalidArgumentException
      * @return static<int, TValue>|TValue
+     * @throws \InvalidArgumentException
      */
     public function random(int $number = null)
     {

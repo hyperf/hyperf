@@ -159,8 +159,8 @@ trait MessageTrait
      *
      * @param string $name case-insensitive header field name
      * @param string|string[] $value header value(s)
-     * @throws \InvalidArgumentException for invalid header names or values
      * @return static
+     * @throws \InvalidArgumentException for invalid header names or values
      */
     public function withHeader($name, $value)
     {
@@ -201,8 +201,8 @@ trait MessageTrait
      *
      * @param string $name case-insensitive header field name to add
      * @param string|string[] $value header value(s)
-     * @throws \InvalidArgumentException for invalid header names or values
      * @return static
+     * @throws \InvalidArgumentException for invalid header names or values
      */
     public function withAddedHeader($name, $value)
     {
@@ -273,8 +273,8 @@ trait MessageTrait
      * new body stream.
      *
      * @param StreamInterface $body body
-     * @throws \InvalidArgumentException when the body is not valid
      * @return static
+     * @throws \InvalidArgumentException when the body is not valid
      */
     public function withBody(StreamInterface $body)
     {
@@ -299,8 +299,8 @@ trait MessageTrait
      * @param string $name name of header, like in getHeader()
      * @param string $wantedPart the wanted part, default is first, if null an array with all parts is returned
      * @param string $firstName key name for the first part
-     * @throws \RuntimeException
      * @return array|string wanted part or all parts as array($firstName => firstPart, partname => value)
+     * @throws \RuntimeException
      */
     public function getHeaderField(string $name, string $wantedPart = '0', string $firstName = '0')
     {

@@ -419,8 +419,8 @@ class Connection
      * @param string $address server url string
      * @param float $timeout number of seconds until the connect() system call should timeout
      *
-     * @throws \Exception exception raised if connection fails
      * @return resource
+     * @throws \Exception exception raised if connection fails
      */
     private function getStream(string $address, float $timeout)
     {

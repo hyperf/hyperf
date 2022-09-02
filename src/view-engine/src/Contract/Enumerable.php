@@ -29,8 +29,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * Dynamically access collection proxies.
      *
      * @param string $key
-     * @throws \Exception
      * @return mixed
+     * @throws \Exception
      */
     public function __get($key);
 
@@ -659,8 +659,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * Get one or a specified number of items randomly from the collection.
      *
      * @param null|int $number
-     * @throws \InvalidArgumentException
      * @return mixed|static
+     * @throws \InvalidArgumentException
      */
     public function random($number = null);
 

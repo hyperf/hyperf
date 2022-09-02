@@ -69,8 +69,8 @@ class BaseClient
      * @param string $method The name of the method to call
      * @param Message $argument The argument to the method
      * @param callable $deserialize A function that deserializes the response
-     * @throws GrpcClientException
      * @return array|\Google\Protobuf\Internal\Message[]|Response[]
+     * @throws GrpcClientException
      */
     protected function _simpleRequest(
         string $method,
