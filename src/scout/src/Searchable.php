@@ -287,7 +287,7 @@ trait Searchable
             return;
         }
         if (defined('SCOUT_COMMAND')) {
-            if (! (static::$scoutRunner instanceof Coroutine\Concurrent)) {
+            if (! static::$scoutRunner instanceof Coroutine\Concurrent) {
                 static::$scoutRunner = new Coroutine\Concurrent((new static())->syncWithSearchUsingConcurency());
             }
             self::$scoutRunner->create($job);

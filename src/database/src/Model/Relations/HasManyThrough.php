@@ -220,8 +220,8 @@ class HasManyThrough extends Relation
      * Execute the query and get the first result or throw an exception.
      *
      * @param array $columns
-     * @throws \Hyperf\Database\Model\ModelNotFoundException
      * @return \Hyperf\Database\Model\Model|static
+     * @throws \Hyperf\Database\Model\ModelNotFoundException
      */
     public function firstOrFail($columns = ['*'])
     {
@@ -276,8 +276,8 @@ class HasManyThrough extends Relation
      *
      * @param array $columns
      * @param mixed $id
-     * @throws \Hyperf\Database\Model\ModelNotFoundException
      * @return \Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model
+     * @throws \Hyperf\Database\Model\ModelNotFoundException
      */
     public function findOrFail($id, $columns = ['*'])
     {

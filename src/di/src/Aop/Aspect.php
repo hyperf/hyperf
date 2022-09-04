@@ -123,7 +123,7 @@ class Aspect
 
     public static function isMatch(string $class, string $method, string $rule): bool
     {
-        [$isMatch,] = self::isMatchClassRule($class . '::' . $method, $rule);
+        [$isMatch] = self::isMatchClassRule($class . '::' . $method, $rule);
 
         return $isMatch;
     }

@@ -89,8 +89,8 @@ class Redis implements Adapter
     }
 
     /**
-     * @throws StorageException
      * @return MetricFamilySamples[]
+     * @throws StorageException
      */
     public function collect(): array
     {

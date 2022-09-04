@@ -318,8 +318,8 @@ class FactoryBuilder
     /**
      * Apply the active states to the model definition array.
      *
-     * @throws \InvalidArgumentException
      * @return array
+     * @throws \InvalidArgumentException
      */
     protected function applyStates(array $definition, array $attributes = [])
     {

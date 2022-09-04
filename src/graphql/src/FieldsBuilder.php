@@ -132,8 +132,8 @@ class FieldsBuilder
 
     /**
      * @param object $controller
-     * @throws \ReflectionException
      * @return QueryField[]
+     * @throws \ReflectionException
      */
     public function getQueries($controller): array
     {
@@ -142,8 +142,8 @@ class FieldsBuilder
 
     /**
      * @param object $controller
-     * @throws \ReflectionException
      * @return QueryField[]
+     * @throws \ReflectionException
      */
     public function getMutations($controller): array
     {
@@ -224,9 +224,9 @@ class FieldsBuilder
     /**
      * @param object $controller
      * @param bool $injectSource whether to inject the source object or not as the first argument
+     * @return QueryField[]
      * @throws CannotMapTypeExceptionInterface
      * @throws \ReflectionException
-     * @return QueryField[]
      */
     private function getFieldsByAnnotations($controller, string $annotationName, bool $injectSource, ?string $sourceClassName = null): array
     {
@@ -359,10 +359,10 @@ class FieldsBuilder
 
     /**
      * @param array<int, SourceFieldInterface> $sourceFields
+     * @return QueryField[]
      * @throws CannotMapTypeException
      * @throws CannotMapTypeExceptionInterface
      * @throws \ReflectionException
-     * @return QueryField[]
      */
     private function getQueryFieldsFromSourceFields(array $sourceFields, ReflectionClass $refClass): array
     {
@@ -485,8 +485,8 @@ class FieldsBuilder
      * Note: there is a bug in $refMethod->allowsNull that forces us to use $standardRefMethod->allowsNull instead.
      *
      * @param \ReflectionParameter[] $refParameters
-     * @throws MissingTypeHintException
      * @return array[] An array of ['type'=>Type, 'defaultValue'=>val]
+     * @throws MissingTypeHintException
      */
     private function mapParameters(array $refParameters, DocBlock $docBlock): array
     {
@@ -682,8 +682,8 @@ class FieldsBuilder
      * Casts a Type to a GraphQL type.
      * Does not deal with nullable.
      *
-     * @throws CannotMapTypeExceptionInterface
      * @return GraphQLType (InputType&GraphQLType)|(OutputType&GraphQLType)
+     * @throws CannotMapTypeExceptionInterface
      */
     private function toGraphQlType(Type $type, ?GraphQLType $subType, bool $mapToInputType): GraphQLType
     {

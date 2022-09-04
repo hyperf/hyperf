@@ -89,8 +89,8 @@ class RedisStorage implements Storage, GlobalScope
 
     /**
      * @SuppressWarnings(PHPMD)
-     * @throws StorageException
      * @return float
+     * @throws StorageException
      */
     public function getMicrotime()
     {

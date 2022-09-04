@@ -201,8 +201,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * updated body parameters.
      *
      * @param array $uploadedFiles an array tree of UploadedFileInterface instances
-     * @throws \InvalidArgumentException if an invalid structure is provided
      * @return static
+     * @throws \InvalidArgumentException if an invalid structure is provided
      */
     public function withUploadedFiles(array $uploadedFiles)
     {
@@ -273,9 +273,9 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      *
      * @param null|array|object $data The deserialized body data. This will
      *                                typically be in an array or object.
+     * @return static
      * @throws \InvalidArgumentException if an unsupported argument type is
      *                                   provided
-     * @return static
      */
     public function withParsedBody($data)
     {

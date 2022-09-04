@@ -78,8 +78,8 @@ trait ManagesLayouts
      * Stop injecting content into a section.
      *
      * @param bool $overwrite
-     * @throws InvalidArgumentException
      * @return string
+     * @throws InvalidArgumentException
      */
     public function stopSection($overwrite = false)
     {
@@ -101,8 +101,8 @@ trait ManagesLayouts
     /**
      * Stop injecting content into a section and append it.
      *
-     * @throws InvalidArgumentException
      * @return string
+     * @throws InvalidArgumentException
      */
     public function appendSection()
     {

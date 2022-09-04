@@ -28,8 +28,8 @@ class JsonExpression extends Expression
     /**
      * Translate the given value into the appropriate JSON binding parameter.
      *
-     * @throws \InvalidArgumentException
      * @return string
+     * @throws \InvalidArgumentException
      */
     protected function getJsonBindingParameter(mixed $value)
     {

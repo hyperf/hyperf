@@ -44,7 +44,7 @@ class RouteGuideClientTest extends TestCase
         $point = new Point();
         $point->setLatitude(407838351);
         $point->setLongitude(-746143763);
-        [$feature,] = $client->getFeature($point);
+        [$feature] = $client->getFeature($point);
         $this->assertEquals('Patriots Path, Mendham, NJ 07945, USA', $feature->getName());
     }
 
@@ -67,7 +67,7 @@ class RouteGuideClientTest extends TestCase
         /** @var StreamingCall $call */
         $call = $client->listFeatures();
         $call->send($rect);
-        [$feature,] = $call->recv();
+        [$feature] = $call->recv();
         $this->assertEquals('Patriots Path, Mendham, NJ 07945, USA', $feature->getName());
         [$feature,, $response] = $call->recv();
         $this->assertEquals('101 New Jersey 10, Whippany, NJ 07981, USA', $feature->getName());
@@ -97,7 +97,7 @@ class RouteGuideClientTest extends TestCase
         $call->push($second);
         $call->end();
         /** @var RouteSummary $summary */
-        [$summary,] = $call->recv();
+        [$summary] = $call->recv();
         $this->assertEquals(2, $summary->getPointCount());
     }
 
@@ -129,12 +129,12 @@ class RouteGuideClientTest extends TestCase
         $call->recv(1);
         $call->push($firstNote);
         /** @var RouteNote $note */
-        [$note,] = $call->recv();
+        [$note] = $call->recv();
         $this->assertEquals($first->getLatitude(), $note->getLocation()->getLatitude());
 
         $call->push($secondNote);
         $call->push($secondNote);
-        [$note,] = $call->recv();
+        [$note] = $call->recv();
         $this->assertEquals($second->getLatitude(), $note->getLocation()->getLatitude());
     }
 }

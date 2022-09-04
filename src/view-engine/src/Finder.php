@@ -238,8 +238,8 @@ class Finder implements FinderInterface
      * Get the segments of a template with a named path.
      *
      * @param string $name
-     * @throws InvalidArgumentException
      * @return array
+     * @throws InvalidArgumentException
      */
     protected function parseNamespaceSegments($name)
     {
@@ -261,8 +261,8 @@ class Finder implements FinderInterface
      *
      * @param string $name
      * @param array $paths
-     * @throws InvalidArgumentException
      * @return string
+     * @throws InvalidArgumentException
      */
     protected function findInPaths($name, $paths)
     {

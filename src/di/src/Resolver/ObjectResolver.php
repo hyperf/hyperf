@@ -36,9 +36,9 @@ class ObjectResolver implements ResolverInterface
      *
      * @param DefinitionInterface $definition object that defines how the value should be obtained
      * @param array $parameters optional parameters to use to build the entry
+     * @return mixed value obtained from the definition
      * @throws InvalidDefinitionException
      * @throws DependencyException
-     * @return mixed value obtained from the definition
      */
     public function resolve(DefinitionInterface $definition, array $parameters = [])
     {
