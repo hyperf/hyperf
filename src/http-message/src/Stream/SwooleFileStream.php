@@ -94,8 +94,8 @@ class SwooleFileStream implements StreamInterface, FileInterface, Stringable
     /**
      * Returns the current position of the file read/write pointer.
      *
-     * @throws \RuntimeException on error
      * @return int Position of the file pointer
+     * @throws \RuntimeException on error
      */
     public function tell()
     {
@@ -167,8 +167,8 @@ class SwooleFileStream implements StreamInterface, FileInterface, Stringable
      * Write data to the stream.
      *
      * @param string $string the string that is to be written
-     * @throws \RuntimeException on failure
      * @return int returns the number of bytes written to the stream
+     * @throws \RuntimeException on failure
      */
     public function write($string)
     {
@@ -191,9 +191,9 @@ class SwooleFileStream implements StreamInterface, FileInterface, Stringable
      * @param int $length Read up to $length bytes from the object and return them.
      *                    Fewer than $length bytes may be returned if underlying stream
      *                    call returns fewer bytes.
-     * @throws \RuntimeException if an error occurs
      * @return string returns the data read from the stream, or an empty string
      *                if no bytes are available
+     * @throws \RuntimeException if an error occurs
      */
     public function read($length)
     {
@@ -203,9 +203,9 @@ class SwooleFileStream implements StreamInterface, FileInterface, Stringable
     /**
      * Returns the remaining contents in a string.
      *
+     * @return string
      * @throws \RuntimeException if unable to read or an error occurs while
      *                           reading
-     * @return string
      */
     public function getContents()
     {

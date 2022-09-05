@@ -292,8 +292,8 @@ class Response implements PsrResponseInterface, ResponseInterface
      *
      * @param string $name case-insensitive header field name
      * @param string|string[] $value header value(s)
-     * @throws \InvalidArgumentException for invalid header names or values
      * @return PsrResponseInterface
+     * @throws \InvalidArgumentException for invalid header names or values
      */
     public function withHeader($name, $value)
     {
@@ -311,8 +311,8 @@ class Response implements PsrResponseInterface, ResponseInterface
      *
      * @param string $name case-insensitive header field name to add
      * @param string|string[] $value header value(s)
-     * @throws \InvalidArgumentException for invalid header names or values
      * @return PsrResponseInterface
+     * @throws \InvalidArgumentException for invalid header names or values
      */
     public function withAddedHeader($name, $value)
     {
@@ -352,8 +352,8 @@ class Response implements PsrResponseInterface, ResponseInterface
      * new body stream.
      *
      * @param StreamInterface $body body
-     * @throws \InvalidArgumentException when the body is not valid
      * @return PsrResponseInterface
+     * @throws \InvalidArgumentException when the body is not valid
      */
     public function withBody(StreamInterface $body)
     {
@@ -387,8 +387,8 @@ class Response implements PsrResponseInterface, ResponseInterface
      * @param string $reasonPhrase the reason phrase to use with the
      *                             provided status code; if none is provided, implementations MAY
      *                             use the defaults as suggested in the HTTP specification
-     * @throws \InvalidArgumentException for invalid status code arguments
      * @return PsrResponseInterface
+     * @throws \InvalidArgumentException for invalid status code arguments
      */
     public function withStatus($code, $reasonPhrase = '')
     {

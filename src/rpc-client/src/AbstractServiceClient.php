@@ -186,7 +186,7 @@ abstract class AbstractServiceClient
         // Not exists the registry config, then looking for the 'nodes' property.
         if (isset($consumer['nodes'])) {
             $nodes = [];
-            foreach ($consumer['nodes'] ?? [] as $item) {
+            foreach ($consumer['nodes'] as $item) {
                 if (isset($item['host'], $item['port'])) {
                     if (! is_int($item['port'])) {
                         throw new InvalidArgumentException(sprintf('Invalid node config [%s], the port option has to a integer.', implode(':', $item)));

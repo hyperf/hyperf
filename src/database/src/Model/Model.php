@@ -267,8 +267,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Fill the model with an array of attributes.
      *
-     * @throws \Hyperf\Database\Model\MassAssignmentException
      * @return $this
+     * @throws \Hyperf\Database\Model\MassAssignmentException
      */
     public function fill(array $attributes)
     {
@@ -577,8 +577,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Save the model to the database using transaction.
      *
-     * @throws \Throwable
      * @return bool
+     * @throws \Throwable
      */
     public function saveOrFail(array $options = [])
     {
@@ -622,8 +622,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Delete the model from the database.
      *
-     * @throws \Exception
      * @return null|bool
+     * @throws \Exception
      */
     public function delete()
     {
@@ -807,8 +807,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Convert the model instance to JSON.
      *
      * @param int $options
-     * @throws \Hyperf\Database\Model\JsonEncodingException
      * @return string
+     * @throws \Hyperf\Database\Model\JsonEncodingException
      */
     public function toJson($options = 0)
     {

@@ -101,7 +101,7 @@ class ProxyManager
     protected function isMatch(string $rule, string $target): bool
     {
         if (str_contains($rule, '::')) {
-            [$rule,] = explode('::', $rule);
+            [$rule] = explode('::', $rule);
         }
         if (! str_contains($rule, '*') && $rule === $target) {
             return true;

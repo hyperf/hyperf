@@ -281,8 +281,8 @@ class Uri implements UriInterface, Stringable
      * An empty scheme is equivalent to removing the scheme.
      *
      * @param string $scheme the scheme to use with the new instance
-     * @throws \InvalidArgumentException for invalid or unsupported schemes
      * @return static a new instance with the specified scheme
+     * @throws \InvalidArgumentException for invalid or unsupported schemes
      */
     public function withScheme($scheme)
     {
@@ -332,8 +332,8 @@ class Uri implements UriInterface, Stringable
      * An empty host value is equivalent to removing the host.
      *
      * @param string $host the hostname to use with the new instance
-     * @throws \InvalidArgumentException for invalid hostnames
      * @return static a new instance with the specified host
+     * @throws \InvalidArgumentException for invalid hostnames
      */
     public function withHost($host)
     {
@@ -358,8 +358,8 @@ class Uri implements UriInterface, Stringable
      *
      * @param null|int|string $port the port to use with the new instance; a null value
      *                              removes the port information
-     * @throws \InvalidArgumentException for invalid ports
      * @return static a new instance with the specified port
+     * @throws \InvalidArgumentException for invalid ports
      */
     public function withPort($port)
     {
@@ -388,8 +388,8 @@ class Uri implements UriInterface, Stringable
      * Implementations ensure the correct encoding as outlined in getPath().
      *
      * @param string $path the path to use with the new instance
-     * @throws \InvalidArgumentException for invalid paths
      * @return static a new instance with the specified path
+     * @throws \InvalidArgumentException for invalid paths
      */
     public function withPath($path)
     {
@@ -412,8 +412,8 @@ class Uri implements UriInterface, Stringable
      * An empty query string value is equivalent to removing the query string.
      *
      * @param string $query the query string to use with the new instance
-     * @throws \InvalidArgumentException for invalid query strings
      * @return static a new instance with the specified query string
+     * @throws \InvalidArgumentException for invalid query strings
      */
     public function withQuery($query)
     {

@@ -201,8 +201,8 @@ class Factory implements FactoryInterface
     /**
      * Get the appropriate view engine for the given path.
      *
-     * @throws InvalidArgumentException
      * @return EngineInterface
+     * @throws InvalidArgumentException
      */
     public function getEngineFromPath(string $path)
     {

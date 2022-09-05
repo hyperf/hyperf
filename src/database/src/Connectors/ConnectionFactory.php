@@ -48,8 +48,8 @@ class ConnectionFactory
     /**
      * Create a connector instance based on the configuration.
      *
-     * @throws \InvalidArgumentException
      * @return ConnectorInterface
+     * @throws \InvalidArgumentException
      */
     public function createConnector(array $config)
     {
@@ -238,8 +238,8 @@ class ConnectionFactory
      * @param \Closure|\PDO $connection
      * @param string $database
      * @param string $prefix
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Connection
+     * @throws \InvalidArgumentException
      */
     protected function createConnection($driver, $connection, $database, $prefix = '', array $config = [])
     {

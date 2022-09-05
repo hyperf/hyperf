@@ -199,8 +199,8 @@ class ModelIDE
      *
      * @param mixed $id
      * @param array $columns
-     * @throws ModelNotFoundException
      * @return Collection|Model|static|static[]
+     * @throws ModelNotFoundException
      */
     public static function findOrFail($id, $columns = [])
     {
@@ -259,8 +259,8 @@ class ModelIDE
      * Execute the query and get the first result or throw an exception.
      *
      * @param array $columns
-     * @throws ModelNotFoundException
      * @return Model|static
+     * @throws ModelNotFoundException
      */
     public static function firstOrFail($columns = [])
     {
@@ -352,8 +352,8 @@ class ModelIDE
      * @param array $columns
      * @param string $pageName
      * @param null|int $page
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Contract\LengthAwarePaginatorInterface
+     * @throws \InvalidArgumentException
      */
     public static function paginate($perPage = null, $columns = [], $pageName = 'page', $page = null)
     {
@@ -649,8 +649,8 @@ class ModelIDE
      * @param int $count
      * @param string $boolean
      * @param null|\Closure $callback
-     * @throws \RuntimeException
      * @return Builder|static
+     * @throws \RuntimeException
      */
     public static function has($relation, $operator = '>=', $count = 1, $boolean = 'and', $callback = null)
     {
@@ -870,8 +870,8 @@ class ModelIDE
      *
      * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
+     * @throws \InvalidArgumentException
      */
     public static function selectSub($query, $as)
     {
@@ -895,8 +895,8 @@ class ModelIDE
      *
      * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
+     * @throws \InvalidArgumentException
      */
     public static function fromSub($query, $as)
     {
@@ -988,8 +988,8 @@ class ModelIDE
      * @param null|string $second
      * @param string $type
      * @param bool $where
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
+     * @throws \InvalidArgumentException
      */
     public static function joinSub($query, $as, $first, $operator = null, $second = null, $type = 'inner', $where = false)
     {
@@ -1113,8 +1113,8 @@ class ModelIDE
      * @param string $value
      * @param string $operator
      * @param bool $useDefault
-     * @throws \InvalidArgumentException
      * @return array
+     * @throws \InvalidArgumentException
      */
     public static function prepareValueAndOperator($value, $operator, $useDefault = false)
     {
@@ -1587,8 +1587,8 @@ class ModelIDE
      * @param string $operator
      * @param array $values
      * @param string $boolean
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
+     * @throws \InvalidArgumentException
      */
     public static function whereRowValues($columns, $operator, $values, $boolean = 'and')
     {
@@ -1780,8 +1780,8 @@ class ModelIDE
      *
      * @param \Closure|\Hyperf\Database\Query\Builder|string $column
      * @param string $direction
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
+     * @throws \InvalidArgumentException
      */
     public static function orderBy($column, $direction = 'asc')
     {
@@ -2205,8 +2205,8 @@ class ModelIDE
      *
      * @param array $bindings
      * @param string $type
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
+     * @throws \InvalidArgumentException
      */
     public static function setBindings($bindings, $type = 'where')
     {
@@ -2218,8 +2218,8 @@ class ModelIDE
      *
      * @param mixed $value
      * @param string $type
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
+     * @throws \InvalidArgumentException
      */
     public static function addBinding($value, $type = 'where')
     {
@@ -2318,8 +2318,8 @@ class ModelIDE
      *
      * @param string $method
      * @param array $parameters
-     * @throws \BadMethodCallException
      * @return mixed
+     * @throws \BadMethodCallException
      */
     public static function macroCall($method, $parameters)
     {

@@ -292,8 +292,8 @@ class Builder
      *
      * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder|static
+     * @throws \InvalidArgumentException
      */
     public function selectSub($query, $as)
     {
@@ -324,8 +324,8 @@ class Builder
      *
      * @param \Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder|static
+     * @throws \InvalidArgumentException
      */
     public function fromSub($query, $as)
     {
@@ -466,8 +466,8 @@ class Builder
      * @param null|string $second
      * @param string $type
      * @param bool $where
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder|static
+     * @throws \InvalidArgumentException
      */
     public function joinSub($query, $as, $first, $operator = null, $second = null, $type = 'inner', $where = false)
     {
@@ -677,8 +677,8 @@ class Builder
      * @param string $value
      * @param string $operator
      * @param bool $useDefault
-     * @throws \InvalidArgumentException
      * @return array
+     * @throws \InvalidArgumentException
      */
     public function prepareValueAndOperator($value, $operator, $useDefault = false)
     {
@@ -2404,8 +2404,8 @@ class Builder
      * Set the bindings on the query builder.
      *
      * @param string $type
-     * @throws \InvalidArgumentException
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function setBindings(array $bindings, $type = 'where')
     {
@@ -2423,8 +2423,8 @@ class Builder
      *
      * @param string $type
      * @param mixed $value
-     * @throws \InvalidArgumentException
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function addBinding($value, $type = 'where')
     {

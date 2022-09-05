@@ -125,7 +125,7 @@ class TcpServer extends Server
             ->withAttribute('fromId', $reactorId)
             ->withAttribute('data', $data)
             ->withAttribute('request_id', $data['id'] ?? null)
-            ->withParsedBody($data['params'] ?? '');
+            ->withParsedBody($data['params']);
 
         $this->getContext()->setData($data['context'] ?? []);
 

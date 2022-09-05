@@ -67,8 +67,8 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
     }
 
     /**
-     * @throws ConnectionException
      * @return $this
+     * @throws ConnectionException
      */
     public function getActiveConnection()
     {

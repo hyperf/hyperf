@@ -176,8 +176,8 @@ class Response implements ResponseInterface
      * @param string $reasonPhrase the reason phrase to use with the
      *                             provided status code; if none is provided, implementations MAY
      *                             use the defaults as suggested in the HTTP specification
-     * @throws \InvalidArgumentException for invalid status code arguments
      * @return static
+     * @throws \InvalidArgumentException for invalid status code arguments
      */
     public function withStatus($code, $reasonPhrase = '')
     {
@@ -201,8 +201,8 @@ class Response implements ResponseInterface
     /**
      * Return an instance with the specified charset content type.
      *
-     * @throws \InvalidArgumentException
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withCharset(string $charset)
     {

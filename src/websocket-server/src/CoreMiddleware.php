@@ -28,7 +28,7 @@ class CoreMiddleware extends HttpCoreMiddleware
      */
     protected function handleFound(Dispatched $dispatched, ServerRequestInterface $request): ResponseInterface
     {
-        [$controller,] = $this->prepareHandler($dispatched->handler->callback);
+        [$controller] = $this->prepareHandler($dispatched->handler->callback);
         if (! $this->container->has($controller)) {
             throw new WebSocketHandeShakeException('Router not exist.');
         }

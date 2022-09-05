@@ -137,8 +137,8 @@ class Request implements RequestInterface
      * changed request method.
      *
      * @param string $method case-sensitive method
-     * @throws \InvalidArgumentException for invalid HTTP methods
      * @return static
+     * @throws \InvalidArgumentException for invalid HTTP methods
      */
     public function withMethod($method)
     {
