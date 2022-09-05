@@ -13,12 +13,12 @@ namespace Hyperf\Signal;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Engine\Signal as EngineSignal;
 use Hyperf\Signal\Annotation\Signal;
 use Hyperf\Signal\SignalHandlerInterface as SignalHandler;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use SplPriorityQueue;
-use Swoole\Coroutine\System;
 
 class SignalManager
 {
@@ -65,7 +65,7 @@ class SignalManager
         foreach ($this->handlers[$process] ?? [] as $signal => $handlers) {
             Coroutine::create(function () use ($signal, $handlers) {
                 while (true) {
-                    $ret = System::waitSignal($signal, $this->config->get('signal.timeout', 5.0));
+                    $ret = EngineSignal::wait($signal, $this->config->get('signal.timeout', 5.0));
                     if ($ret) {
                         foreach ($handlers as $handler) {
                             $handler->handle($signal);

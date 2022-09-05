@@ -123,6 +123,7 @@ composer analyse
 - [#4988](https://github.com/hyperf/hyperf/pull/4988) Support `hyperf/pool`.
 - [#4989](https://github.com/hyperf/hyperf/pull/4989) Support `hyperf/crontab`.
 - [#4990](https://github.com/hyperf/hyperf/pull/4990) Support `hyperf/nsq`.
+- [#5070](https://github.com/hyperf/hyperf/pull/5070) Support `hyperf/signal`.
 
 ## Removed
 
