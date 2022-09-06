@@ -68,7 +68,7 @@ class Render implements RenderInterface
 
             return $result;
         } catch (\Throwable $throwable) {
-            throw new RenderException($throwable->getMessage(), $throwable->getCode(), $throwable);
+            throw new RenderException($throwable->getMessage(), (int) $throwable->getCode(), $throwable);
         }
     }
 

@@ -67,7 +67,7 @@ abstract class Client
         } catch (TransferException $e) {
             $message = sprintf('Something went wrong when calling consul (%s).', $e->getMessage());
             $this->logger->error($message);
-            throw new ServerException($e->getMessage(), $e->getCode(), $e);
+            throw new ServerException($e->getMessage(), (int) $e->getCode(), $e);
         }
 
         if ($response->getStatusCode() >= 400) {

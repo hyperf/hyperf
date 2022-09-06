@@ -466,7 +466,7 @@ class Response implements PsrResponseInterface, ResponseInterface
         try {
             $result = Json::encode($data);
         } catch (\Throwable $exception) {
-            throw new EncodingException($exception->getMessage(), $exception->getCode());
+            throw new EncodingException($exception->getMessage(), (int) $exception->getCode(), $exception);
         }
 
         return $result;

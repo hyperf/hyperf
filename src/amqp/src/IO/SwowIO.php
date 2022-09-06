@@ -118,7 +118,7 @@ class SwowIO extends AbstractIO
         try {
             $sock->connect($this->host, $this->port, $this->connectionTimeout * 1000);
         } catch (Swow\SocketException $exception) {
-            throw new AMQPRuntimeException($exception->getMessage(), $exception->getCode());
+            throw new AMQPRuntimeException($exception->getMessage(), (int) $exception->getCode(), $exception);
         }
 
         return $sock;

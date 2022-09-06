@@ -85,6 +85,7 @@ composer analyse
 - [#4981](https://github.com/hyperf/hyperf/pull/4981) Confirm before proceeding with the action when using `ConfirmableTrait`, such as `migrate` command.
 - [#5017](https://github.com/hyperf/hyperf/pull/5017) Check validity of file descriptor before sending message to it when using `socketio-server`.
 - [#5029](https://github.com/hyperf/hyperf/pull/5029) Removed useless method `call()` from `callable function`.
+- [#5078](https://github.com/hyperf/hyperf/pull/5078) Optimized code about creating exception from another exception.
 
 ## Changed
 
