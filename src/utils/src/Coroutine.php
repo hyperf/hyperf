@@ -32,7 +32,13 @@ class Coroutine
 
     public static function defer(callable $callable)
     {
-        Co::defer($callable);
+        Co::defer(static function () use ($callable) {
+            try {
+                $callable();
+            } catch (Throwable $throwable) {
+                static::printLog($throwable);
+            }
+        });
     }
 
     public static function sleep(float $seconds)
@@ -61,20 +67,7 @@ class Coroutine
             try {
                 $callable();
             } catch (Throwable $throwable) {
-                if (ApplicationContext::hasContainer()) {
-                    $container = ApplicationContext::getContainer();
-                    if ($container->has(StdoutLoggerInterface::class)) {
-                        /* @var LoggerInterface $logger */
-                        $logger = $container->get(StdoutLoggerInterface::class);
-                        /* @var FormatterInterface $formatter */
-                        if ($container->has(FormatterInterface::class)) {
-                            $formatter = $container->get(FormatterInterface::class);
-                            $logger->warning($formatter->format($throwable));
-                        } else {
-                            $logger->warning(sprintf('Uncaptured exception[%s] detected in %s::%d.', get_class($throwable), $throwable->getFile(), $throwable->getLine()));
-                        }
-                    }
-                }
+                static::printLog($throwable);
             }
         });
 
@@ -88,5 +81,23 @@ class Coroutine
     public static function inCoroutine(): bool
     {
         return Co::id() > 0;
+    }
+
+    protected static function printLog(Throwable $throwable): void
+    {
+        if (ApplicationContext::hasContainer()) {
+            $container = ApplicationContext::getContainer();
+            if ($container->has(StdoutLoggerInterface::class)) {
+                /* @var LoggerInterface $logger */
+                $logger = $container->get(StdoutLoggerInterface::class);
+                /* @var FormatterInterface $formatter */
+                if ($container->has(FormatterInterface::class)) {
+                    $formatter = $container->get(FormatterInterface::class);
+                    $logger->warning($formatter->format($throwable));
+                } else {
+                    $logger->warning(sprintf('Uncaptured exception[%s] detected in %s::%d.', get_class($throwable), $throwable->getFile(), $throwable->getLine()));
+                }
+            }
+        }
     }
 }
