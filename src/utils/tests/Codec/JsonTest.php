@@ -12,6 +12,9 @@ declare(strict_types=1);
 namespace HyperfTest\Utils\Codec;
 
 use Hyperf\Utils\Codec\Json;
+use Hyperf\Utils\Exception\InvalidArgumentException;
+use HyperfTest\Utils\Stub\Car;
+use HyperfTest\Utils\Stub\StringCodeException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -82,5 +85,19 @@ class JsonTest extends TestCase
         $this->assertSame('null', $res);
 
         $this->assertSame(null, Json::decode('null'));
+    }
+
+    public function testJsonExceptionWhichCodeIsString()
+    {
+        try {
+            Json::encode(new Car());
+        } catch (\Throwable $exception) {
+            $this->assertInstanceOf(InvalidArgumentException::class, $exception);
+            $this->assertSame(0, $exception->getCode());
+
+            $previous = $exception->getPrevious();
+            $this->assertInstanceOf(StringCodeException::class, $previous);
+            $this->assertSame('A0001', $previous->getCode());
+        }
     }
 }
