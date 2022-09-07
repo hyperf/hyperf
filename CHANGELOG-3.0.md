@@ -86,6 +86,7 @@ composer analyse
 - [#5017](https://github.com/hyperf/hyperf/pull/5017) Check validity of file descriptor before sending message to it when using `socketio-server`.
 - [#5029](https://github.com/hyperf/hyperf/pull/5029) Removed useless method `call()` from `callable function`.
 - [#5078](https://github.com/hyperf/hyperf/pull/5078) Optimized code about creating exception from another exception.
+- [#5079](https://github.com/hyperf/hyperf/pull/5079) Catch exception for function `defer` by default.
 
 ## Changed
 
@@ -110,6 +111,7 @@ composer analyse
 - [#5008](https://github.com/hyperf/hyperf/pull/5008) Removed array type of `Trace Annotation`, because don't support array.
 - [#5036](https://github.com/hyperf/hyperf/pull/5036) Changed grpc server StatsCode and serializeMessage.
 - [#5601](https://github.com/hyperf/hyperf/pull/5061) Don't use `Hyperf\Framework\SymfonyEventDispatcher` by default, if you listen symfony events, you must open `symfony.event.enable`.
+- [#5079](https://github.com/hyperf/hyperf/pull/5079) Use `(string) $throwable` instead of `sprintf` for `Hyperf\ExceptionHandler\Formatter\FormatterInterface::format()`.
 
 ## Swow Supported
 
