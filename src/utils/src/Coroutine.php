@@ -82,7 +82,7 @@ class Coroutine
         return Co::id() > 0;
     }
 
-    protected static function printLog(Throwable $throwable): void
+    private static function printLog(Throwable $throwable): void
     {
         if (ApplicationContext::hasContainer()) {
             $container = ApplicationContext::getContainer();
