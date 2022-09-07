@@ -16,7 +16,6 @@ use Hyperf\Engine\Coroutine as Co;
 use Hyperf\Engine\Exception\CoroutineDestroyedException;
 use Hyperf\Engine\Exception\RunningInNonCoroutineException;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
-use Psr\Log\LoggerInterface;
 use Throwable;
 
 class Coroutine
@@ -30,7 +29,7 @@ class Coroutine
         return Co::id();
     }
 
-    public static function defer(callable $callable)
+    public static function defer(callable $callable): void
     {
         Co::defer(static function () use ($callable) {
             try {
@@ -41,7 +40,7 @@ class Coroutine
         });
     }
 
-    public static function sleep(float $seconds)
+    public static function sleep(float $seconds): void
     {
         usleep(intval($seconds * 1000 * 1000));
     }
@@ -88,14 +87,12 @@ class Coroutine
         if (ApplicationContext::hasContainer()) {
             $container = ApplicationContext::getContainer();
             if ($container->has(StdoutLoggerInterface::class)) {
-                /* @var LoggerInterface $logger */
                 $logger = $container->get(StdoutLoggerInterface::class);
-                /* @var FormatterInterface $formatter */
                 if ($container->has(FormatterInterface::class)) {
                     $formatter = $container->get(FormatterInterface::class);
                     $logger->warning($formatter->format($throwable));
                 } else {
-                    $logger->warning(sprintf('Uncaptured exception[%s] detected in %s::%d.', get_class($throwable), $throwable->getFile(), $throwable->getLine()));
+                    $logger->warning((string) $throwable);
                 }
             }
         }
