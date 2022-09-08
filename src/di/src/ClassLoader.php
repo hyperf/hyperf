@@ -23,7 +23,7 @@ use Hyperf\Utils\Composer;
 
 class ClassLoader
 {
-    public static function init(?string $proxyFileDirPath = null, ?string $configDir = null, ?ScanHandlerInterface $handler = null): void
+    public static function init(?string $proxyFileDirPath = null, ?string $configDir = null, ?ScanHandlerInterface $handler = null, string $envFilename = '.env'): void
     {
         if (! $proxyFileDirPath) {
             // This dir is the default proxy file dir path of Hyperf
@@ -41,8 +41,8 @@ class ClassLoader
 
         $composerLoader = Composer::getLoader();
 
-        if (file_exists(BASE_PATH . '/.env')) {
-            static::loadDotenv();
+        if (file_exists(BASE_PATH . '/' . $envFilename)) {
+            static::loadDotenv($envFilename);
         }
 
         // Scan by ScanConfig to generate the reflection class map
@@ -58,13 +58,13 @@ class ClassLoader
         LazyLoader::bootstrap($configDir);
     }
 
-    protected static function loadDotenv(): void
+    protected static function loadDotenv(string $envFilename): void
     {
         $repository = RepositoryBuilder::createWithNoAdapters()
             ->addAdapter(Adapter\PutenvAdapter::class)
             ->immutable()
             ->make();
 
-        Dotenv::create($repository, [BASE_PATH])->load();
+        Dotenv::create($repository, [BASE_PATH], $envFilename)->load();
     }
 }
