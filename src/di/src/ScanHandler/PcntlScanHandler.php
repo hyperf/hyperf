@@ -37,6 +37,9 @@ class PcntlScanHandler implements ScanHandlerInterface
         }
         if ($pid) {
             pcntl_wait($status);
+            if ($status !== 0) {
+                exit;
+            }
             return new Scanned(true);
         }
 
