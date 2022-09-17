@@ -15,7 +15,7 @@ use Countable;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Utils\Collection;
-use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Contract\Jsonable;
 use IteratorAggregate;
 use JsonSerializable;
 

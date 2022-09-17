@@ -13,7 +13,7 @@ namespace Hyperf\Utils;
 
 use ArrayAccess;
 use Hyperf\Contract\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Contract\Jsonable;
 use JsonSerializable;
 
 /**

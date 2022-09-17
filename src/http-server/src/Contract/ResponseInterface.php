@@ -13,7 +13,7 @@ namespace Hyperf\HttpServer\Contract;
 
 use Hyperf\Contract\Arrayable;
 use Hyperf\HttpMessage\Cookie\Cookie;
-use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Contract\Jsonable;
 use Hyperf\Utils\Contracts\Xmlable;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 

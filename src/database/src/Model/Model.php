@@ -21,7 +21,7 @@ use Hyperf\Database\Model\Relations\Pivot;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection as BaseCollection;
-use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Contract\Jsonable;
 use Hyperf\Utils\Str;
 use JsonSerializable;
 use Psr\EventDispatcher\EventDispatcherInterface;

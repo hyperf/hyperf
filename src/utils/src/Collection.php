@@ -18,7 +18,7 @@ use Countable;
 use Exception;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Contract\Jsonable;
 use IteratorAggregate;
 use JsonSerializable;
 use stdClass;

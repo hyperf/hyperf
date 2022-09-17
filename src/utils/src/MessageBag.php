@@ -13,7 +13,7 @@ namespace Hyperf\Utils;
 
 use Countable;
 use Hyperf\Contract\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Contract\Jsonable;
 use Hyperf\Utils\Contracts\MessageBag as MessageBagContract;
 use Hyperf\Utils\Contracts\MessageProvider;
 use JsonSerializable;

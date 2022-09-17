@@ -27,7 +27,7 @@ use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ClearStatCache;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Codec\Xml;
-use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Contract\Jsonable;
 use Hyperf\Utils\Contracts\Xmlable;
 use Hyperf\Utils\MimeTypeExtensionGuesser;
 use Hyperf\Utils\Str;

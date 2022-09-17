@@ -14,7 +14,7 @@ namespace Hyperf\Paginator;
 use Countable;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Utils\Collection;
-use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Contract\Jsonable;
 use IteratorAggregate;
 use JsonSerializable;
 
