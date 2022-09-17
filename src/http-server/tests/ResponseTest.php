@@ -21,7 +21,7 @@ use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Response;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Contracts\Xmlable;
+use Hyperf\Contract\Xmlable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;

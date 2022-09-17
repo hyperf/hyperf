@@ -28,7 +28,7 @@ use Hyperf\Utils\ClearStatCache;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Codec\Xml;
 use Hyperf\Contract\Jsonable;
-use Hyperf\Utils\Contracts\Xmlable;
+use Hyperf\Contract\Xmlable;
 use Hyperf\Utils\MimeTypeExtensionGuesser;
 use Hyperf\Utils\Str;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
