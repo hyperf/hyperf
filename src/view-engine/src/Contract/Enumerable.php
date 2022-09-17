@@ -13,8 +13,8 @@ namespace Hyperf\ViewEngine\Contract;
 
 use Countable;
 use Hyperf\Contract\Arrayable;
-use Hyperf\Utils\Collection;
 use Hyperf\Contract\Jsonable;
+use Hyperf\Utils\Collection;
 use IteratorAggregate;
 use JsonSerializable;
 

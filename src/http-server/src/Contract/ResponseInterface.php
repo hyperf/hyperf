@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer\Contract;
 
 use Hyperf\Contract\Arrayable;
-use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Contract\Xmlable;
+use Hyperf\HttpMessage\Cookie\Cookie;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 
 interface ResponseInterface
