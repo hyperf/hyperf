@@ -112,6 +112,7 @@ composer analyse
 - [#5036](https://github.com/hyperf/hyperf/pull/5036) Changed grpc server StatsCode and serializeMessage.
 - [#5601](https://github.com/hyperf/hyperf/pull/5061) Don't use `Hyperf\Framework\SymfonyEventDispatcher` by default, if you listen symfony events, you must open `symfony.event.enable`.
 - [#5079](https://github.com/hyperf/hyperf/pull/5079) Use `(string) $throwable` instead of `sprintf` for `Hyperf\ExceptionHandler\Formatter\FormatterInterface::format()`.
+- [#5091](https://github.com/hyperf/hyperf/pull/5091) Replace `Hyperf/Utils/Contracts/Jsonable`、`Hyperf/Utils/Contracts/Xmlable` to `Hyperf/Contract/Jsonable`、`Hyperf/Contract/Xmlable`.
 
 ## Swow Supported
 
