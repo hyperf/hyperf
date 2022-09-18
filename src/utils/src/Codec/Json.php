@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Utils\Codec;
 
 use Hyperf\Contract\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Contract\Jsonable;
 use Hyperf\Utils\Exception\InvalidArgumentException;
 
 class Json

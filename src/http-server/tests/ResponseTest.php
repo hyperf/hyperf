@@ -13,6 +13,7 @@ namespace HyperfTest\HttpServer;
 
 use Hyperf\Context\Context;
 use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Xmlable;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
@@ -21,7 +22,6 @@ use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Response;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Contracts\Xmlable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;

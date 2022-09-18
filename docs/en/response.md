@@ -29,7 +29,7 @@ class IndexController
 
 ## Return XML
 
-You could return a `XML` format content quickly by method `xml($data)` of `Hyperf\HttpServer\Contract\ResponseInterface`, and also the `Content-Type` of response object will be set to `application/xml`, `$data` accept an array or an object that implemented `Hyperf\Utils\Contracts\Xmlable` interface.
+You could return a `XML` format content quickly by method `xml($data)` of `Hyperf\HttpServer\Contract\ResponseInterface`, and also the `Content-Type` of response object will be set to `application/xml`, `$data` accept an array or an object that implemented `Hyperf\Contract\Xmlable` interface.
 
 ```php
 <?php
