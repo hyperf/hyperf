@@ -793,8 +793,8 @@ class Stringable implements JsonSerializable, \Stringable
 
     /**
      * Determine if a given string is a valid ULID.
-     * 
-     * @return bool 
+     *
+     * @return bool
      */
     public function isUlid()
     {
@@ -803,8 +803,8 @@ class Stringable implements JsonSerializable, \Stringable
 
     /**
      * Determine if a given string is a valid UUID.
-     * 
-     * @return bool 
+     *
+     * @return bool
      */
     public function isUuid()
     {
