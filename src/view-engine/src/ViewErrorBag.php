@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine;
 
 use Countable;
+use Hyperf\Contract\MessageBag;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Contracts\MessageBag;
 
 class ViewErrorBag implements Countable, \Stringable
 {

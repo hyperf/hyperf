@@ -12,11 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\Validation;
 
 use BadMethodCallException;
+use Hyperf\Contract\MessageBag as MessageBagContract;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\ValidatorInterface as ValidatorContract;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Contracts\MessageBag as MessageBagContract;
 use Hyperf\Utils\Fluent;
 use Hyperf\Utils\MessageBag;
 use Hyperf\Utils\Str;
