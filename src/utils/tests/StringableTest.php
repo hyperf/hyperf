@@ -11,9 +11,10 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
-use Hyperf\Utils\Exception\InvalidArgumentException;
+use Hyperf\Utils\Str;
 use Hyperf\Utils\Stringable;
 use PHPUnit\Framework\TestCase;
+use Hyperf\Utils\Exception\InvalidArgumentException;
 
 /**
  * @internal
@@ -142,5 +143,19 @@ class StringableTest extends TestCase
     protected function stringable($string = '')
     {
         return new Stringable($string);
+    }
+
+
+
+    public function testUlid()
+    {
+        $str = $this->stringable(Str::ulid());
+        $this->assertTrue($str->isUlid());
+    }
+
+    public function testUuid()
+    {
+        $str = $this->stringable(Str::uuid());
+        $this->assertTrue($str->isUuid());
     }
 }
