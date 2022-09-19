@@ -790,4 +790,24 @@ class Stringable implements JsonSerializable, \Stringable
     {
         return $this->__toString();
     }
+
+    /**
+     * Determine if a given string is a valid ULID.
+     * 
+     * @return bool 
+     */
+    public function isUlid()
+    {
+        return Str::isUlid($this->value);
+    }
+
+    /**
+     * Determine if a given string is a valid UUID.
+     * 
+     * @return bool 
+     */
+    public function isUuid()
+    {
+        return Str::isUuid($this->value);
+    }
 }

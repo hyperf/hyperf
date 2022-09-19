@@ -742,6 +742,7 @@ class Str
 
     /**
      * Generate a ULID.
+     * 
      * @return Ulid
      */
     public static function ulid()
@@ -750,6 +751,8 @@ class Str
     }
 
     /**
+     * Determine if a given string is a valid ULID.
+     * 
      * @param string|Ulid $value
      * @return bool
      */
@@ -769,6 +772,8 @@ class Str
     }
 
     /**
+     * Determine if a given string is a valid UUID.
+     * 
      * @param string|Uuid $value
      * @return bool
      */
