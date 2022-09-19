@@ -82,6 +82,7 @@
         "symfony/finder": "^5.0|^6.0",
         "symfony/property-access": "^5.0|^6.0",
         "symfony/serializer": "^5.0|^6.0",
+        "symfony/uid": "^6.0",
         "symfony/var-dumper": "^5.0|^6.0",
         "twig/twig": "^3.0",
         "vlucas/phpdotenv": "^5.0"

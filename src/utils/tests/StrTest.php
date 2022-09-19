@@ -179,4 +179,16 @@ class StrTest extends TestCase
         $this->assertSame('Alien     ', Str::padRight('Alien', 10));
         $this->assertSame('❤MultiByte☆     ', Str::padRight('❤MultiByte☆', 16));
     }
+
+    public function testUlid()
+    {
+        $ulid = Str::ulid();
+        $this->assertTrue(Str::isUlid($ulid));
+    }
+
+    public function testUuid()
+    {
+        $uuid = Str::uuid();
+        $this->assertTrue(Str::isUuid($uuid));
+    }
 }

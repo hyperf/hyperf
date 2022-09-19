@@ -13,6 +13,8 @@ namespace Hyperf\Utils;
 
 use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Exception\InvalidArgumentException;
+use Symfony\Component\Uid\Ulid;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * Most of the methods in this file come from illuminate/support,
@@ -736,6 +738,43 @@ class Str
         }
 
         return mb_substr($string, 0, max($stringLength - $hiddenLength - $absOffset, 0)) . str_repeat($replacement, $hiddenLength) . mb_substr($string, $offset);
+    }
+
+    /**
+     * Generate a ULID.
+     * @return Ulid
+     */
+    public static function ulid()
+    {
+        return new Ulid();
+    }
+
+    /**
+     * @param string|Ulid $value
+     * @return bool
+     */
+    public static function isUlid($value)
+    {
+        return Ulid::isValid((string) $value);
+    }
+
+    /**
+     * Generate a UUID (version 4).
+     *
+     * @return Uuid
+     */
+    public static function uuid()
+    {
+        return Uuid::v4();
+    }
+
+    /**
+     * @param string|Uuid $value
+     * @return bool
+     */
+    public static function isUuid($value)
+    {
+        return Uuid::isValid((string) $value);
     }
 
     /**
