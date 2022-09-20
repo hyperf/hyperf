@@ -870,6 +870,9 @@ trait HasAttributes
         switch ($castType) {
             case 'int':
             case 'integer':
+                if(is_object($value) && $value instanceof \Hyperf\Database\Query\Expression) {
+                    return $value->getValue();
+                }
                 return (int) $value;
             case 'real':
             case 'float':
