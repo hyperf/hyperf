@@ -14,8 +14,8 @@ namespace Hyperf\Utils;
 use Countable;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
-use Hyperf\Utils\Contracts\MessageBag as MessageBagContract;
-use Hyperf\Utils\Contracts\MessageProvider;
+use Hyperf\Contract\MessageBag as MessageBagContract;
+use Hyperf\Contract\MessageProvider;
 use JsonSerializable;
 
 class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, MessageBagContract, MessageProvider

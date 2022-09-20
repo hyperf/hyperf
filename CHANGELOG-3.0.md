@@ -113,6 +113,7 @@ composer analyse
 - [#5601](https://github.com/hyperf/hyperf/pull/5061) Don't use `Hyperf\Framework\SymfonyEventDispatcher` by default, if you listen symfony events, you must open `symfony.event.enable`.
 - [#5079](https://github.com/hyperf/hyperf/pull/5079) Use `(string) $throwable` instead of `sprintf` for `Hyperf\ExceptionHandler\Formatter\FormatterInterface::format()`.
 - [#5091](https://github.com/hyperf/hyperf/pull/5091) Move `Jsonable` and `Xmlable` to `contract` from `utils`.
+- [#5092](https://github.com/hyperf/hyperf/pull/5092) Move `MessageBag` and `MessageProvider` to `contract` from `utils`.
 
 ## Swow Supported
 

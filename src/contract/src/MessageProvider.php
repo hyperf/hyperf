@@ -9,11 +9,12 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Utils\Contracts;
+namespace Hyperf\Contract;
 
-/**
- * @deprecated v3.1
- */
-interface MessageProvider extends \Hyperf\Contract\MessageProvider
+interface MessageProvider
 {
+    /**
+     * Get the messages for the instance.
+     */
+    public function getMessageBag(): MessageBag;
 }
