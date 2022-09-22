@@ -13,7 +13,7 @@ use Hyperf\Watcher\Driver\ScanFileDriver;
 
 return [
     'driver' => ScanFileDriver::class,
-    'bin' => $_SERVER['_'] ?? 'php',
+    'bin' => 'php',
     'watch' => [
         'dir' => ['app', 'config'],
         'file' => ['.env'],
