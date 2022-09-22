@@ -72,7 +72,7 @@ class Watcher
                     $this->restart(false);
                 }
             } else {
-                $ret = System::exec(sprintf('%s %s/vendor/hyperf/watcher/collector-reload.php %s', $this->option->getBin(), BASE_PATH, $file));
+                $ret = System::exec(sprintf('%s %s %s/vendor/hyperf/watcher/collector-reload.php %s', $this->option->getBin(), '-d swoole.use_shortname=Off', BASE_PATH, $file));
                 if ($ret['code'] === 0) {
                     $this->output->writeln('Class reload success.');
                 } else {
@@ -125,7 +125,7 @@ class Watcher
                 2 => STDERR,
             ];
 
-            proc_open($this->option->getBin() . ' ' . BASE_PATH . '/' . $this->option->getCommand(), $descriptorspec, $pipes);
+            proc_open($this->option->getBin() . ' -d swoole.use_shortname=Off ' . BASE_PATH . '/' . $this->option->getCommand(), $descriptorspec, $pipes);
 
             $this->output->writeln('Stop server success.');
             $this->channel->push(1);
