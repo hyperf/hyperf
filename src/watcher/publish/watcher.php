@@ -13,7 +13,7 @@ use Hyperf\Watcher\Driver\ScanFileDriver;
 
 return [
     'driver' => ScanFileDriver::class,
-    'bin' => 'php',
+    'bin' => sprintf('%s -d swoole.use_shortname=Off', $_SERVER['_'] ?? 'php'),
     'watch' => [
         'dir' => ['app', 'config'],
         'file' => ['.env'],
