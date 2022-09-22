@@ -111,7 +111,7 @@ trait CompilesLoops
     /**
      * Compile the continue statements into valid PHP.
      */
-    protected function compileContinue(string $expression): string
+    protected function compileContinue(?string $expression): string
     {
         if ($expression) {
             preg_match('/\(\s*(-?\d+)\s*\)$/', $expression, $matches);
