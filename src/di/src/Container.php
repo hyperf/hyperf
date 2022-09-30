@@ -17,7 +17,6 @@ use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Exception\InvalidArgumentException;
 use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Di\Resolver\ResolverDispatcher;
-use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 class Container implements HyperfContainerInterface
@@ -172,7 +171,7 @@ class Container implements HyperfContainerInterface
             if (isset($this->resolvedEntries[$id]) || array_key_exists($id, $this->resolvedEntries)) {
                 return $this->resolvedEntries[$id];
             }
-            Coroutine::sleep(0.001);
+            usleep(1000);
         }
     }
 
