@@ -13,10 +13,12 @@ namespace HyperfTest\Di;
 
 use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
+use Hyperf\Engine\Channel;
 use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Di\Stub\Bar;
 use HyperfTest\Di\Stub\Demo;
 use HyperfTest\Di\Stub\Foo;
+use HyperfTest\Di\Stub\LoadSleep;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -73,5 +75,19 @@ class MakeTest extends TestCase
         $this->assertInstanceOf(Demo::class, $bar->demo);
         $this->assertSame(1, $bar->demo->getId());
         $this->assertSame('Hyperf', $bar->name);
+    }
+
+    public function testConcurrentLoad()
+    {
+        $chan = new Channel(2);
+        go(function () use ($chan) {
+            $load = ApplicationContext::getContainer()->get(LoadSleep::class);
+            $chan->push($load);
+        });
+        go(function () use ($chan) {
+            $load = ApplicationContext::getContainer()->get(LoadSleep::class);
+            $chan->push($load);
+        });
+        $this->assertTrue($chan->pop() === $chan->pop());
     }
 }
