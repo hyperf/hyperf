@@ -165,6 +165,9 @@ class Container implements HyperfContainerInterface
 
     private function waitLoading($id)
     {
+        if (! $this->has($id)) {
+            throw new NotFoundException("No entry or class found for '{$id}'");
+        }
         while (true) {
             if (isset($this->resolvedEntries[$id]) || array_key_exists($id, $this->resolvedEntries)) {
                 return $this->resolvedEntries[$id];
