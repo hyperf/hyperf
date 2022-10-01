@@ -15,6 +15,7 @@ use Hyperf\Di\Container;
 use Hyperf\Di\Definition\DefinitionSource;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Coroutine;
 use HyperfTest\Di\Stub\Bar;
 use HyperfTest\Di\Stub\Demo;
 use HyperfTest\Di\Stub\Foo;
@@ -79,15 +80,20 @@ class MakeTest extends TestCase
 
     public function testConcurrentLoad()
     {
-        $chan = new Channel(2);
-        go(function () use ($chan) {
-            $load = ApplicationContext::getContainer()->get(LoadSleep::class);
-            $chan->push($load);
-        });
-        go(function () use ($chan) {
-            $load = ApplicationContext::getContainer()->get(LoadSleep::class);
-            $chan->push($load);
-        });
-        $this->assertTrue($chan->pop() === $chan->pop());
+        if (Coroutine::inCoroutine()) {
+            $chan = new Channel(2);
+            go(function () use ($chan) {
+                $load = ApplicationContext::getContainer()->get(LoadSleep::class);
+                $chan->push($load);
+            });
+            go(function () use ($chan) {
+                $load = ApplicationContext::getContainer()->get(LoadSleep::class);
+                $chan->push($load);
+            });
+            $obj1 = $chan->pop();
+            $obj2 = $chan->pop();
+            $this->assertTrue($obj1 === $obj2);
+        }
+        $this->assertTrue(true);
     }
 }

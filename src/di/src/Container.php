@@ -28,6 +28,8 @@ class Container implements HyperfContainerInterface
 
     private array $loading = [];
 
+    private array $loadingError = [];
+
     /**
      * Map of definitions that are already fetched (local cache).
      */
@@ -116,12 +118,18 @@ class Container implements HyperfContainerInterface
             return $this->resolvedEntries[$id];
         }
 
-        if (! isset($this->loading[$id]) || ! array_key_exists($id, $this->loading)) {
+        if (! isset($this->loading[$id])) {
             $this->loading[$id] = true;
-        } else {
-            return $this->waitLoading($id);
+            unset($this->loadingError[$id]);
+            try {
+                return $this->resolvedEntries[$id] = $this->make($id);
+            } catch (\Throwable $throwable) {
+                $this->loadingError[$id] = (string) $throwable;
+                unset($this->loading[$id]);
+                throw new $throwable();
+            }
         }
-        return $this->resolvedEntries[$id] = $this->make($id);
+        return $this->waitLoading($id);
     }
 
     /**
@@ -164,12 +172,16 @@ class Container implements HyperfContainerInterface
 
     private function waitLoading($id)
     {
-        if (! $this->has($id)) {
-            throw new NotFoundException("No entry or class found for '{$id}'");
-        }
+        $startTime = time();
         while (true) {
             if (isset($this->resolvedEntries[$id]) || array_key_exists($id, $this->resolvedEntries)) {
                 return $this->resolvedEntries[$id];
+            }
+            if (isset($this->loadingError[$id])) {
+                throw new \Exception($this->loadingError[$id]);
+            }
+            if (time() - $startTime > 5) {
+                throw new \Exception("The get entry or class timed out for 5 seconds for {$id}");
             }
             usleep(1000);
         }
