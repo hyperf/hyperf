@@ -132,8 +132,9 @@ class Container implements HyperfContainerInterface
                 return $this->resolvedEntries[$id];
             } catch (\Throwable $throwable) {
                 $this->loading[$id]->close();
-                unset($this->loading[$id]);
                 throw $throwable;
+            } finally {
+                unset($this->loading[$id]);
             }
         }
         return $this->waitLoading($id, $this->loading[$id]);

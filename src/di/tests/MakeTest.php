@@ -80,27 +80,21 @@ class MakeTest extends TestCase
 
     public function testConcurrentLoad()
     {
-
         if (Coroutine::inCoroutine()) {
-            $chan = new Channel(3);
-
-            go(function () use ($chan) {
-                $load = ApplicationContext::getContainer()->get(LoadSleep::class);
-                $chan->push($load);
-            });
-            go(function () use ($chan) {
-                $load = ApplicationContext::getContainer()->get(LoadSleep::class);
-                $chan->push($load);
-            });
-            go(function () use ($chan) {
-                $load = ApplicationContext::getContainer()->get(LoadSleep::class);
-                $chan->push($load);
-            });
-            $obj1 = $chan->pop();
-            $obj2 = $chan->pop();
-            $obj3 = $chan->pop();
-            $this->assertTrue($obj1 === $obj2);
-            $this->assertTrue($obj1 === $obj3);
+            $size = 100;
+            $chan = new Channel($size);
+            for ($i = 0; $i < $size; ++$i) {
+                go(function () use ($chan) {
+                    $load = ApplicationContext::getContainer()->get(LoadSleep::class);
+                    $chan->push($load);
+                });
+            }
+            $obj = $chan->pop();
+            $this->assertIsObject($obj);
+            for ($i = 0; $i < $size - 1; ++$i) {
+                $objTmp = $chan->pop();
+                $this->assertTrue($obj === $objTmp);
+            }
         }
         $this->assertTrue(true);
     }
