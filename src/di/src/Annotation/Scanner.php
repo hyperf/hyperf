@@ -200,7 +200,8 @@ class Scanner
 
         $data = [];
         if ($this->filesystem->exists($path)) {
-            $data = unserialize($this->filesystem->get($path));
+            //fixed: The deserialization failed, resulting in an error in the execution of array_diff
+            $data = unserialize($this->filesystem->get($path)) ?: [];
         }
 
         $this->putCache($path, serialize($classes));
@@ -298,7 +299,8 @@ class Scanner
 
         $data = [];
         if ($this->filesystem->exists($path)) {
-            $data = unserialize($this->filesystem->get($path));
+            //fixed: The deserialization failed, resulting in an error in the execution of array_diff
+            $data = unserialize($this->filesystem->get($path)) ?: [];
         }
 
         $this->putCache($path, serialize($classes));
