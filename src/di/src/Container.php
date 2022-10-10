@@ -16,7 +16,10 @@ use Hyperf\Di\Definition\DefinitionInterface;
 use Hyperf\Di\Definition\ObjectDefinition;
 use Hyperf\Di\Exception\InvalidArgumentException;
 use Hyperf\Di\Exception\NotFoundException;
+use Hyperf\Di\Exception\WaitLoadingException;
 use Hyperf\Di\Resolver\ResolverDispatcher;
+use Hyperf\Engine\Channel;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 class Container implements HyperfContainerInterface
@@ -27,8 +30,6 @@ class Container implements HyperfContainerInterface
     private array $resolvedEntries;
 
     private array $loading = [];
-
-    private array $loadingError = [];
 
     /**
      * Map of definitions that are already fetched (local cache).
@@ -118,18 +119,24 @@ class Container implements HyperfContainerInterface
             return $this->resolvedEntries[$id];
         }
 
+        if (! Coroutine::inCoroutine()) {
+            return $this->resolvedEntries[$id] = $this->make($id);
+        }
+
+        // coroutine
         if (! isset($this->loading[$id])) {
-            $this->loading[$id] = true;
-            unset($this->loadingError[$id]);
+            $this->loading[$id] = new Channel(1);
             try {
-                return $this->resolvedEntries[$id] = $this->make($id);
+                $this->resolvedEntries[$id] = $this->make($id);
+                $this->loading[$id]->push([$this->resolvedEntries[$id]]);
+                return $this->resolvedEntries[$id];
             } catch (\Throwable $throwable) {
-                $this->loadingError[$id] = (string) $throwable;
+                $this->loading[$id]->close();
                 unset($this->loading[$id]);
-                throw new $throwable();
+                throw $throwable;
             }
         }
-        return $this->waitLoading($id);
+        return $this->waitLoading($id, $this->loading[$id]);
     }
 
     /**
@@ -170,21 +177,15 @@ class Container implements HyperfContainerInterface
         return $this->definitionSource;
     }
 
-    private function waitLoading($id)
+    private function waitLoading($id, Channel $channel)
     {
-        $startTime = time();
-        while (true) {
-            if (isset($this->resolvedEntries[$id]) || array_key_exists($id, $this->resolvedEntries)) {
-                return $this->resolvedEntries[$id];
-            }
-            if (isset($this->loadingError[$id])) {
-                throw new \Exception($this->loadingError[$id]);
-            }
-            if (time() - $startTime > 5) {
-                throw new \Exception("The get entry or class timed out for 5 seconds for {$id}");
-            }
-            usleep(1000);
+        $result = $channel->pop(5);
+        if ($result === false) {
+            throw new WaitLoadingException("The get entry or class timed out for 5 seconds or error for {$id}");
         }
+
+        $channel->push($result);
+        return $result[0];
     }
 
     /**
