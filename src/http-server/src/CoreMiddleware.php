@@ -164,7 +164,10 @@ class CoreMiddleware implements CoreMiddlewareInterface
             if (str_contains($handler, '@')) {
                 return explode('@', $handler);
             }
-            return explode('::', $handler);
+            if (str_contains($handler, '::')) {
+                return explode('::', $handler);
+            }
+            return [$handler, '__invoke'];
         }
         if (is_array($handler) && isset($handler[0], $handler[1])) {
             return $handler;
