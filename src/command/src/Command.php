@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace Hyperf\Command;
 
 use Hyperf\Contract\Arrayable;
@@ -69,10 +70,10 @@ abstract class Command extends SymfonyCommand
      */
     protected array $verbosityMap
         = [
-            'v' => OutputInterface::VERBOSITY_VERBOSE,
-            'vv' => OutputInterface::VERBOSITY_VERY_VERBOSE,
-            'vvv' => OutputInterface::VERBOSITY_DEBUG,
-            'quiet' => OutputInterface::VERBOSITY_QUIET,
+            'v'      => OutputInterface::VERBOSITY_VERBOSE,
+            'vv'     => OutputInterface::VERBOSITY_VERY_VERBOSE,
+            'vvv'    => OutputInterface::VERBOSITY_DEBUG,
+            'quiet'  => OutputInterface::VERBOSITY_QUIET,
             'normal' => OutputInterface::VERBOSITY_NORMAL,
         ];
 
@@ -95,7 +96,7 @@ abstract class Command extends SymfonyCommand
             parent::__construct($this->name);
         }
 
-        ! empty($this->description) && $this->setDescription($this->description);
+        !empty($this->description) && $this->setDescription($this->description);
 
         $this->addDisableDispatcherOption();
     }
@@ -168,10 +169,11 @@ abstract class Command extends SymfonyCommand
      */
     public function choiceMultiple(
         string $question,
-        array $choices,
-        $default = null,
-        ?int $attempts = null
-    ): array {
+        array  $choices,
+               $default = null,
+        ?int   $attempts = null
+    ): array
+    {
         $question = new ChoiceQuestion($question, $choices, $default);
 
         $question->setMaxAttempts($attempts)->setMultiselect(true);
@@ -186,10 +188,11 @@ abstract class Command extends SymfonyCommand
      */
     public function choice(
         string $question,
-        array $choices,
-        $default = null,
-        ?int $attempts = null
-    ): mixed {
+        array  $choices,
+               $default = null,
+        ?int   $attempts = null
+    ): mixed
+    {
         return $this->choiceMultiple($question, $choices, $default, $attempts)[0];
     }
 
@@ -278,7 +281,7 @@ abstract class Command extends SymfonyCommand
      */
     public function warn($string, $verbosity = null)
     {
-        if (! $this->output->getFormatter()->hasStyle('warning')) {
+        if (!$this->output->getFormatter()->hasStyle('warning')) {
             $style = new OutputFormatterStyle('yellow');
             $this->output->getFormatter()->setStyle('warning', $style);
         }
@@ -333,7 +336,7 @@ abstract class Command extends SymfonyCommand
     {
         if (isset($this->verbosityMap[$level])) {
             $level = $this->verbosityMap[$level];
-        } elseif (! is_int($level)) {
+        } elseif (!is_int($level)) {
             $level = $this->verbosity;
         }
         return $level;
@@ -407,7 +410,7 @@ abstract class Command extends SymfonyCommand
     protected function configure()
     {
         parent::configure();
-        if (! isset($this->signature)) {
+        if (!isset($this->signature)) {
             $this->specifyParameters();
         }
     }
@@ -423,10 +426,10 @@ abstract class Command extends SymfonyCommand
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\AfterHandle($this));
             } catch (\Throwable $exception) {
                 if (class_exists(ExitException::class) && $exception instanceof ExitException) {
-                    return $this->exitCode = (int) $exception->getStatus();
+                    return $this->exitCode = (int)$exception->getStatus();
                 }
 
-                if (! $this->eventDispatcher) {
+                if (!$this->eventDispatcher) {
                     throw $exception;
                 }
 
@@ -441,7 +444,7 @@ abstract class Command extends SymfonyCommand
             return 0;
         };
 
-        if ($this->coroutine && ! Coroutine::inCoroutine()) {
+        if ($this->coroutine && !Coroutine::inCoroutine()) {
             run($callback, $this->hookFlags);
             return $this->exitCode;
         }
