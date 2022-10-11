@@ -471,14 +471,15 @@ return $driver->push(new ExampleJob());
 
 ## 安全關閉
 
-異步隊列在終止時，如果正在進行消費邏輯，可能會導致出現錯誤。框架提供了 `DriverStopHandler` ，可以讓異步隊列進程安全關閉。
+異步隊列在終止時，如果正在進行消費邏輯，可能會導致出現錯誤。框架提供了 `ProcessStopHandler` ，可以讓異步隊列進程安全關閉。
 
 > 當前信號處理器並不適配於 CoroutineServer，如有需要請自行實現
 
 安裝信號處理器
 
-```
+```shell
 composer require hyperf/signal
+composer require hyperf/process
 ```
 
 添加配置 `autoload/signal.php`
@@ -490,7 +491,7 @@ declare(strict_types=1);
 
 return [
     'handlers' => [
-        Hyperf\AsyncQueue\Signal\DriverStopHandler::class,
+        Hyperf\Process\Handler\ProcessStopHandler::class,
     ],
     'timeout' => 5.0,
 ];
