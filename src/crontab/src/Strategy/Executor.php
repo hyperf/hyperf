@@ -112,7 +112,9 @@ class Executor
                 };
                 break;
         }
-        $callback && $this->timer->after($diff > 0 ? $diff : 1, $callback);
+        // $callback && $this->timer->after($diff > 0 ? $diff : 1, $callback);
+        Coroutine::create($callback);
+        
     }
 
     protected function runInSingleton(Crontab $crontab, Closure $runnable): Closure

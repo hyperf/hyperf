@@ -17,6 +17,7 @@ use Hyperf\Crontab\PipeMessage;
 use Hyperf\Server\ServerFactory;
 use Psr\Container\ContainerInterface;
 use Swoole\Server;
+use Hyperf\Engine\Http\Server as SWowServer;
 
 class WorkerStrategy extends AbstractStrategy
 {
@@ -27,6 +28,7 @@ class WorkerStrategy extends AbstractStrategy
     public function __construct(ContainerInterface $container)
     {
         $this->serverFactory = $container->get(ServerFactory::class);
+        $this->executor = $container->get(Executor::class);
 
         parent::__construct($container);
     }
@@ -34,6 +36,9 @@ class WorkerStrategy extends AbstractStrategy
     public function dispatch(Crontab $crontab)
     {
         $server = $this->serverFactory->getServer()->getServer();
+        if ($server instanceof SWowServer && $crontab->getExecuteTime() instanceof Carbon) {
+            $this->executor->execute($crontab);
+        }
         if ($server instanceof Server && $crontab->getExecuteTime() instanceof Carbon) {
             $workerId = $this->getNextWorkerId($server);
             $server->sendMessage(new PipeMessage(
