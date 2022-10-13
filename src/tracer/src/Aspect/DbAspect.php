@@ -41,7 +41,7 @@ class DbAspect extends AbstractAspect
         }
 
         $arguments = $proceedingJoinPoint->arguments['keys'];
-        $span = $this->startSpan('Db' . '::' . $arguments['name']);
+        $span = $this->startSpan('Db::' . $arguments['name']);
         $span->setTag($this->spanTagManager->get('db', 'db.query'), json_encode($arguments['arguments']));
         try {
             $result = $proceedingJoinPoint->process();
