@@ -119,6 +119,7 @@ class PostgresSqlSwooleExtConnector implements ConnectorInterface
      * Set the schema on the connection.
      *
      * @param array $config
+     * @param mixed $connection
      */
     protected function configureApplicationName($connection, $config)
     {
@@ -130,6 +131,7 @@ class PostgresSqlSwooleExtConnector implements ConnectorInterface
 
     /**
      * Configure the synchronous_commit setting.
+     * @param mixed $connection
      */
     protected function configureSynchronousCommit($connection, array $config)
     {
