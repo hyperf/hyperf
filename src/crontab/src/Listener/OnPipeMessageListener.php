@@ -21,7 +21,7 @@ use Psr\Log\LoggerInterface;
 
 class OnPipeMessageListener implements ListenerInterface
 {
-    protected LoggerInterface $logger;
+    protected ?LoggerInterface $logger = null;
 
     public function __construct(protected ContainerInterface $container)
     {
