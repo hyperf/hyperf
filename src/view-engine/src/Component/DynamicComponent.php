@@ -91,7 +91,7 @@ EOF;
             return '';
         }
 
-        return '@props(' . '[\'' . implode('\',\'', collect($bindings)->map(fn ($dataKey) => Str::camel($dataKey))->all()) . '\']' . ')';
+        return '@props([\'' . implode('\',\'', collect($bindings)->map(fn ($dataKey) => Str::camel($dataKey))->all()) . '\'])';
     }
 
     /**

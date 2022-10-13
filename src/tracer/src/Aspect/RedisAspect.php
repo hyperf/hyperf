@@ -41,7 +41,7 @@ class RedisAspect extends AbstractAspect
         }
 
         $arguments = $proceedingJoinPoint->arguments['keys'];
-        $span = $this->startSpan('Redis' . '::' . $arguments['name']);
+        $span = $this->startSpan('Redis::' . $arguments['name']);
         $span->setTag($this->spanTagManager->get('redis', 'arguments'), json_encode($arguments['arguments']));
         try {
             $result = $proceedingJoinPoint->process();
