@@ -84,6 +84,8 @@ Router::addGroup('/user/',function (){
 
 `Hyperf` 提供了非常便利的 [注解](zh-cn/annotation.md) 路由功能，您可以直接在任意类上通过定义 `@Controller` 或 `@AutoController` 注解来完成一个路由的定义。
 
+> 注意，如果使用 `@Controller` 或 `@AutoController` 注解时没有设置 `prefix` 属性，那么控制器类命名空间中 `\\Controller\\` 之后的部分将被用作路由的前缀。
+
 #### `@AutoController` 注解
 
 `@AutoController` 为绝大多数简单的访问场景提供路由绑定支持，使用 `@AutoController` 时则 `Hyperf` 会自动解析所在类的所有 `public` 方法并提供 `GET` 和 `POST` 两种请求方式。
