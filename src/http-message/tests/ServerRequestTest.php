@@ -174,6 +174,10 @@ class ServerRequestTest extends TestCase
         $resIPv6 = $method->invokeArgs(null, [$hostStrIPv6]);
         $this->assertSame('[fe80::a464:1aff:fe88:7b5a]', $resIPv6[0]);
         $this->assertSame(9502, $resIPv6[1]);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid host: ');
+        $method->invokeArgs(null, ['']);
     }
 
     /**
@@ -215,7 +219,6 @@ class ServerRequestTest extends TestCase
             ['[2a00:f48:1008::212:183:10]', '[2a00:f48:1008::212:183:10]', null],
             ['[2a00:f48:1008::212:183:10]:9501', '[2a00:f48:1008::212:183:10]', 9501],
             ['[2a00:f48:1008::212:183:10]:', '[2a00:f48:1008::212:183:10]', null],
-            ['', 'localhost', null],
         ];
     }
 
