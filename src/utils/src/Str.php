@@ -599,6 +599,7 @@ class Str
 
     /**
      * Generate a URL friendly "slug" from a given string.
+     * @param mixed $dictionary
      */
     public static function slug(string $title, string $separator = '-', ?string $language = 'en', $dictionary = ['@' => 'at']): string
     {
@@ -611,7 +612,7 @@ class Str
 
         // Replace dictionary words
         foreach ($dictionary as $key => $value) {
-            $dictionary[$key] = $separator.$value.$separator;
+            $dictionary[$key] = $separator . $value . $separator;
         }
 
         $title = str_replace(array_keys($dictionary), array_values($dictionary), $title);
