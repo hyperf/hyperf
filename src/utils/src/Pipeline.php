@@ -79,6 +79,14 @@ class Pipeline
 
         return $pipeline($this->passable);
     }
+    
+    /**
+     * Run the pipeline and return the result.
+     */
+    public function thenReturn()
+    {
+        return $this->then(fn ($passable) => $passable);
+    }
 
     /**
      * Get the final piece of the Closure onion.
