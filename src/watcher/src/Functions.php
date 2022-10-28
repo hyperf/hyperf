@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Watcher;
 
+use RuntimeException;
+
 if (function_exists('exec')) {
     /**
      * @return mixed
@@ -21,10 +23,22 @@ if (function_exists('exec')) {
             return \Swoole\Coroutine\System::exec($command);
         }
 
-        \exec($command, $output, $code);
+        if (function_exists('\exec')) {
+            \exec($command, $output, $code);
+            $output = implode(PHP_EOL, $output);
 
-        $output = implode(PHP_EOL, $output);
+            return compact('code', 'output');
+        }
 
-        return compact('code', 'output');
+        if (function_exists('\passthru')) {
+            ob_start();
+            \passthru($command, $code);
+            $output = ob_get_clean();
+            ob_end_clean();
+
+            return compact('code', 'output');
+        }
+
+        throw new RuntimeException('No available function to run command.');
     }
 }
