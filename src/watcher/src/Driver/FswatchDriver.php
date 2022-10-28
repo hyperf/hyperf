@@ -15,7 +15,8 @@ use Hyperf\Engine\Channel;
 use Hyperf\Engine\Coroutine;
 use Hyperf\Utils\Str;
 use Hyperf\Watcher\Option;
-use Swoole\Coroutine\System;
+
+use function Hyperf\Watcher\exec;
 
 class FswatchDriver extends AbstractDriver
 {
@@ -24,7 +25,7 @@ class FswatchDriver extends AbstractDriver
     public function __construct(protected Option $option)
     {
         parent::__construct($option);
-        $ret = System::exec('which fswatch');
+        $ret = exec('which fswatch');
         if (empty($ret['output'])) {
             throw new \InvalidArgumentException('fswatch not exists. You can `brew install fswatch` to install it.');
         }

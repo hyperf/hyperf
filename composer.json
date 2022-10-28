@@ -187,7 +187,8 @@
             "src/nats/src/Functions.php",
             "src/translation/src/Functions.php",
             "src/utils/src/Functions.php",
-            "src/view-engine/src/Functions.php"
+            "src/view-engine/src/Functions.php",
+            "src/watcher/src/Functions.php"
         ],
         "psr-4": {
             "Hyperf\\Amqp\\": "src/amqp/src/",
