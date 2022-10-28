@@ -37,7 +37,7 @@ class FindDriver extends AbstractDriver
             if (empty($ret['output'])) {
                 throw new \InvalidArgumentException('find not exists.');
             }
-            $ret = exec('find --help', true);
+            $ret = exec('find --help');
             $this->isSupportFloatMinutes = ! str_contains($ret['output'] ?? '', 'BusyBox');
         }
     }
