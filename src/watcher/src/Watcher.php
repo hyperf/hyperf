@@ -106,8 +106,8 @@ class Watcher
             $pid = $this->filesystem->get($file);
             try {
                 $this->output->writeln('Stop server...');
-                if (Process::kill((int) $pid, 0)) {
-                    Process::kill((int) $pid, SIGTERM);
+                if (posix_kill((int) $pid, 0)) {
+                    posix_kill((int) $pid, SIGTERM);
                 }
             } catch (\Throwable) {
                 $this->output->writeln('Stop server failed. Please execute `composer dump-autoload -o`');
