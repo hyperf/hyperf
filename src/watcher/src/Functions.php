@@ -21,10 +21,9 @@ if (function_exists('exec')) {
             return \Swoole\Coroutine\System::exec($command);
         }
 
-        ob_start();
-        passthru($command, $code);
-        $output = ob_get_contents();
-        ob_end_clean();
+        \exec($command, $output, $code);
+
+        $output = implode(PHP_EOL, $output);
 
         return compact('code', 'output');
     }
