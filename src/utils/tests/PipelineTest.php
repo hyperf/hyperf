@@ -178,7 +178,7 @@ class PipelineTest extends TestCase
 
         unset($_SERVER['__test.pipe.one']);
     }
-    
+
     public function testPipelineThenReturnMethodRunsPipelineThenReturnsTheResult()
     {
         $result = (new Pipeline($this->getContainer()))

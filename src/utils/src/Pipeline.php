@@ -79,7 +79,7 @@ class Pipeline
 
         return $pipeline($this->passable);
     }
-    
+
     /**
      * Run the pipeline and return the result.
      */
