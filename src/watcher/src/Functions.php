@@ -24,7 +24,7 @@ if (function_exists('exec')) {
         ob_start();
         passthru($command, $code);
         $output = ob_get_contents();
-        ob_flush();
+        ob_end_clean();
 
         return compact('code', 'output');
     }
