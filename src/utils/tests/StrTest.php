@@ -43,7 +43,7 @@ class StrTest extends TestCase
         $this->assertSame('hello-world', Str::slug('hello-world'));
         $this->assertSame('hello-world', Str::slug('hello_world'));
         $this->assertSame('hello_world', Str::slug('hello_world', '_'));
-        $this->assertSame('user-at-host', Str::slug('user@host'));
+        $this->assertSame('user-at-host', Str::slug('user@host', dictionary: ['@' => 'at']));
         $this->assertSame('سلام-دنیا', Str::slug('سلام دنیا', '-', null));
         $this->assertSame('sometext', Str::slug('some text', ''));
         $this->assertSame('', Str::slug('', ''));
