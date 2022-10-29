@@ -52,7 +52,8 @@ class Process
         }
         $class = $meta->toClassName();
         $collectors = $this->config->getCollectors();
-        if (file_exists($this->path)) {[$data, $proxies] = unserialize(file_get_contents($this->path));
+        if (file_exists($this->path)) {
+            [$data, $proxies] = unserialize(file_get_contents($this->path));
         } else {
             [$data, $proxies] = [[], []];
         }
