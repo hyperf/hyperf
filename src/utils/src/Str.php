@@ -601,7 +601,7 @@ class Str
      * Generate a URL friendly "slug" from a given string.
      * @param mixed $dictionary
      */
-    public static function slug(string $title, string $separator = '-', ?string $language = 'en', $dictionary = []): string
+    public static function slug(string $title, string $separator = '-', ?string $language = 'en', $dictionary = ['@' => 'at']): string
     {
         $title = $language ? static::ascii($title, $language) : $title;
 
