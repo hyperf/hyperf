@@ -21,8 +21,6 @@ use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Watcher\Driver\DriverInterface;
 use PhpParser\PrettyPrinter\Standard;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine\System;
-use Swoole\Process;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Watcher
@@ -72,7 +70,7 @@ class Watcher
                     $this->restart(false);
                 }
             } else {
-                $ret = System::exec(sprintf('%s %s/vendor/hyperf/watcher/collector-reload.php %s', $this->option->getBin(), BASE_PATH, $file));
+                $ret = exec(sprintf('%s %s/vendor/hyperf/watcher/collector-reload.php %s', $this->option->getBin(), BASE_PATH, $file));
                 if ($ret['code'] === 0) {
                     $this->output->writeln('Class reload success.');
                 } else {
@@ -86,7 +84,7 @@ class Watcher
 
     public function dumpautoload()
     {
-        $ret = System::exec('composer dump-autoload -o --no-scripts -d ' . BASE_PATH);
+        $ret = exec('composer dump-autoload -o --no-scripts -d ' . BASE_PATH);
         $this->output->writeln($ret['output'] ?? '');
     }
 
@@ -107,8 +105,8 @@ class Watcher
             $pid = $this->filesystem->get($file);
             try {
                 $this->output->writeln('Stop server...');
-                if (Process::kill((int) $pid, 0)) {
-                    Process::kill((int) $pid, SIGTERM);
+                if (posix_kill((int) $pid, 0)) {
+                    posix_kill((int) $pid, SIGTERM);
                 }
             } catch (\Throwable) {
                 $this->output->writeln('Stop server failed. Please execute `composer dump-autoload -o`');
