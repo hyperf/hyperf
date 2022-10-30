@@ -1,5 +1,16 @@
 # Changelogs
 
+# v2.2.33 - 2022-05-30
+
+## fix
+
+- [#4776](https://github.com/hyperf/hyperf/pull/4776) Fix `GraphQL` event collection failure issue.
+- [#4790](https://github.com/hyperf/hyperf/pull/4790) Fix the problem that the method `toRPNExpression` in the `RPN` component does not work properly in some scenarios.
+
+## Added
+
+- [#4763](https://github.com/hyperf/hyperf/pull/4763) Added validation rule `array:key1,key2` to ensure that there is no other `key` in the array except `key1` `key2` key.
+- [#4781](https://github.com/hyperf/hyperf/pull/4781) Added configuration `close-pull-request.yml` to automatically close read-only repositories.
 # v2.2.32 - 2022-05-16
 
 ## Fixed

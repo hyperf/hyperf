@@ -1,30 +1,30 @@
-# API 资源构造器
+# API resource constructor
  
-> 支持返回 Grpc 响应的资源扩展
+> Support for resource extensions that return Grpc responses
 
-## 简介
+## Introduction
 
-当构建 API 时，你往往需要一个转换层来联结你的 Model 模型和实际返回给用户的 JSON 响应。资源类能够让你以更直观简便的方式将模型和模型集合转化成 JSON。
+When building APIs, you often need a translation layer to connect your Model with the actual JSON response returned to the user. Resource classes allow you to convert models and collections of models to JSON in a more intuitive and easy way.
 
-## 安装
+## Install
 
 ```
 composer require hyperf/resource
 ```
 
-## 生成资源
+## Generate resources
 
-你可以使用 `gen:resource` 命令来生成一个资源类。默认情况下生成的资源都会被放置在应用程序的 `app/Resource` 文件夹下。资源继承自 `Hyperf\Resource\Json\JsonResource` 类：
+You can use the `gen:resource` command to generate a resource class. By default generated resources are placed in the application's `app/Resource` folder. Resources inherit from the `Hyperf\Resource\Json\JsonResource` class:
 
 ```bash
 php bin/hyperf.php gen:resource User
 ```
 
-### 资源集合
+### Resource Collection
 
-除了生成资源转换单个模型外，你还可以生成资源集合用来转换模型的集合。这允许你在响应中包含与给定资源相关的链接与其他元信息。
+In addition to generating resources to transform a single model, you can also generate a collection of resources to transform a collection of models. This allows you to include links and other meta information related to a given resource in the response.
 
-你需要在生成资源时添加 `--collection` 标志以生成一个资源集合。或者，你也可以直接在资源的名称中包含 `Collection` 表示应该生成一个资源集合。资源集合继承自 `Hyperf\Resource\Json\ResourceCollection` 类：
+You need to add the `--collection` flag when generating resources to generate a collection of resources. Alternatively, you can include `Collection` directly in the resource name to indicate that a collection of resources should be generated. Resource collections inherit from the `Hyperf\Resource\Json\ResourceCollection` class:
 
 ```bash
 php bin/hyperf.php gen:resource Users --collection
@@ -32,9 +32,9 @@ php bin/hyperf.php gen:resource Users --collection
 php bin/hyperf.php gen:resource UserCollection
 ```
 
-## gRPC 资源
+## gRPC resources
 
-> 需要额外安装 `hyperf/resource-grpc`
+> Requires additional installation of `hyperf/resource-grpc`
 
 ```
 composer require hyperf/resource-grpc
@@ -44,9 +44,9 @@ composer require hyperf/resource-grpc
 php bin/hyperf.php gen:resource User --grpc
 ```
 
-gRPC 资源需要设置 `message` 类. 通过重写该资源类的 `expect()` 方法来实现.
+gRPC resources need to set the `message` class. This is achieved by overriding the `expect()` method of the resource class.
 
-gRPC 服务返回时, 必须调用 `toMessage()`. 该方法会返回一个实例化的 `message` 类.
+When the gRPC service returns, `toMessage()` must be called. This method returns an instantiated `message` class.
 
 ```php
 <?php
@@ -73,13 +73,13 @@ class HiReplyResource extends GrpcResource
 
 ```
 
-默认生成的资源集合, 可通过继承 `Hyperf\ResourceGrpc\GrpcResource` 接口来使其支持 gRPC 返回.
+The default generated resource collection can support gRPC return by extending the `Hyperf\ResourceGrpc\GrpcResource` interface.
 
-## 概念综述
+## Concept overview
 
-> 这是对资源和资源集合的高度概述。强烈建议你阅读本文档的其他部分，以深入了解如何更好地自定义和使用资源。
+> This is a high-level overview of resources and resource collections. It is strongly recommended that you read the rest of this document for an in-depth understanding of how to better customize and use resources.
 
-在深入了解如何定制化编写你的资源之前，让我们先来看看在框架中如何使用资源。一个资源类表示一个单一模型需要被转换成 JSON 格式。例如，现在我们有一个简单的 `User` 资源类：
+Before diving into how to custom write your resources, let's take a look at how resources are used in the framework. A resource class representing a single model needs to be converted into JSON format. For example, now we have a simple `User` resource class:
 
 ```php
 <?php
@@ -107,7 +107,7 @@ class User extends JsonResource
 
 ```
 
-每一个资源类都定义了一个 `toArray` 方法，在发送响应时它会返回应该被转化成 JSON 的属性数组。注意在这里我们可以直接使用 `$this` 变量来访问模型属性。这是因为资源类将自动代理属性和方法到底层模型以方便访问。你可以在控制器中返回已定义的资源：
+Each resource class defines a `toArray` method which returns an array of properties that should be converted to JSON when sending the response. Note that here we can directly use the `$this` variable to access model properties. This is because the resource class will automatically proxy properties and methods to the underlying model for easy access. You can return defined resources in your controller:
 
 ```php
 <?php
@@ -127,9 +127,9 @@ class IndexController extends AbstractController
 
 ```
 
-### 资源集合
+### Resource Collection
 
-你可以在控制器中使用 `collection` 方法来创建资源实例，以返回多个资源的集合或分页响应：
+You can use the `collection` method in a controller to create resource instances to return collections of multiple resources or paginated responses:
 
 ```php
 
@@ -148,13 +148,13 @@ class IndexController extends AbstractController
 
 ```
 
-当然了，使用如上方法你将不能添加任何附加的元数据和集合一起返回。如果你需要自定义资源集合响应，你需要创建一个专用的资源来表示集合：
+Of course, using the above method you will not be able to add any additional metadata to return with the collection. If you need a custom resource collection response, you need to create a dedicated resource to represent the collection:
 
 ```bash
 php bin/hyperf.php gen:resource UserCollection
 ```
 
-你可以轻松的在已生成的资源集合类中定义任何你想在响应中返回的元数据：
+You can easily define any metadata you want returned in the response in the generated resource collection class:
 
 ```php
 <?php
@@ -183,7 +183,7 @@ class UserCollection extends ResourceCollection
 
 ```
 
-你可以在控制器中返回已定义的资源集合：
+You can return a defined collection of resources in your controller:
 
 ```php
 <?php
@@ -202,9 +202,9 @@ class IndexController extends AbstractController
 
 ```
 
-### 保护集合的键
+### Protected collection keys
 
-当从路由返回资源集合时，将重置集合的键，使它们以简单的数字顺序。但是，可以将 `preserveKeys` 属性添加到资源类中，指示是否应保留集合键：
+When a resource collection is returned from a route, the collection's keys are reset so that they are in simple numerical order. However, a `preserveKeys` attribute can be added to a resource class to indicate whether collection keys should be preserved:
 
 ```php
 <?php
@@ -216,7 +216,7 @@ use Hyperf\Resource\Json\JsonResource;
 class User extends JsonResource
 {
     /**
-     * 指示是否应保留资源的集合键。
+     * A collection key indicating whether the resource should be preserved.
      *
      * @var bool
      */
@@ -239,7 +239,7 @@ class User extends JsonResource
 
 ```
 
-当 `preserveKeys` 属性被设置为 `true`，集合的键将会被保护：
+When the `preserveKeys` property is set to `true`, the keys of the collection will be protected:
 
 ```php
 <?php
@@ -259,11 +259,11 @@ class IndexController extends AbstractController
 
 ```
 
-### 自定义基础资源类
+### Custom basic resource class
 
-通常，资源集合的 `$this->collection` 属性会自动填充，结果是将集合的每个项映射到其单个资源类。假定单一资源类是集合的类名，但结尾没有 `Collection` 字符串。
+Typically, the `$this->collection` property of a resource collection is automatically populated, resulting in a mapping of each item of the collection to its individual resource class. The single resource class is assumed to be the class name of the collection without the `Collection` string at the end.
 
-例如，`UserCollection` 将给定的用户实例映射到 `User` 资源中。若要自定义此行为，你可以重写资源集合的 `$collects` 属性：
+For example, `UserCollection` maps a given user instance into a `User` resource. To customize this behavior, you can override the `$collects` property of the resource collection:
 
 ```php
 <?php
@@ -275,7 +275,7 @@ use Hyperf\Resource\Json\ResourceCollection;
 class UserCollection extends ResourceCollection
 {
     /**
-     * collects 属性定义了资源类。
+     * collects properties define resource classes.
      *
      * @var string
      */
@@ -299,11 +299,11 @@ class UserCollection extends ResourceCollection
 
 ```
 
-## 编写资源
+## write resources
 
-> 如果你还没有阅读 [概念综述](#概念综述)，那么在继续阅读本文档前，强烈建议你去阅读一下。
+> If you haven't read [Concept Overview](#Concept Overview), it is strongly recommended that you do so before continuing with this document.
 
-从本质上来说，资源的作用很简单。它们只需要将一个给定的模型转换成一个数组。所以每一个资源都包含一个 `toArray` 方法用来将你的模型属性转换成一个可以返回给用户的 API 友好数组：
+Essentially, the role of resources is simple. They just need to convert a given model into an array. So every resource contains a `toArray` method to convert your model properties into an API-friendly array that can be returned to the user:
 
 ```php
 <?php
@@ -331,7 +331,7 @@ class User extends JsonResource
 
 ```
 
-你可以在控制器中返回已经定义的资源：
+You can return an already defined resource in a controller:
 
 ```php
 <?php
@@ -351,9 +351,10 @@ class IndexController extends AbstractController
 
 ```
 
-### 关联
+### Association
 
-如果你希望在响应中包含关联资源，你只需要将它们添加到 `toArray` 方法返回的数组中。在下面这个例子里，我们将使用 `Post` 资源的 `collection` 方法将用户的文章添加到资源响应中：
+If you wish to include associated resources in the response, you only need to add them to the array returned by the `toArray` method. In the following example, we will use the `collection` method of the `Post` resource to add the user's post to the resource response:
+
 ```php
 <?php
 
@@ -381,11 +382,11 @@ class User extends JsonResource
 
 ```
 
-> 如果你只想在关联已经加载时才添加关联资源，请查看相关文档。
+> If you only want to add an associated resource when the association is already loaded, see the related documentation.
 
-### 资源集合
+### Resource Collection
 
-资源是将单个模型转换成数组，而资源集合是将多个模型的集合转换成数组。所有的资源都提供了一个 `collection` 方法来生成一个 「临时」 资源集合，所以你没有必要为每一个模型类型都编写一个资源集合类：
+A resource converts a single model into an array, and a resource collection converts a collection of multiple models into an array. All resources provide a `collection` method to generate a "temporary" collection of resources, so you don't have to write a resource collection class for each model type:
 
 ```php
 <?php
@@ -404,7 +405,7 @@ class IndexController extends AbstractController
 
 ```
 
-要自定义返回集合的元数据，则仍需要定义一个资源集合：
+To customize the metadata of the returned collection, you still need to define a resource collection:
 
 ```php
 <?php
@@ -433,7 +434,7 @@ class UserCollection extends ResourceCollection
 
 ```
 
-和单个资源一样，你可以在控制器中直接返回资源集合：
+As with individual resources, you can return collections of resources directly in your controller:
 
 ```php
 <?php
@@ -452,9 +453,9 @@ class IndexController extends AbstractController
 
 ```
 
-### 数据包裹
+### Data package
 
-默认情况下，当资源响应被转换成 JSON 时，顶层资源将会被包裹在 `data` 键中。因此一个典型的资源集合响应如下所示：
+By default, when the resource response is converted to JSON, the top-level resource will be wrapped in the `data` key. So a typical resource collection response looks like this:
 
 ```json
 
@@ -475,7 +476,7 @@ class IndexController extends AbstractController
 
 ```
 
-你可以使用资源基类的 `withoutWrapping` 方法来禁用顶层资源的包裹。
+You can disable wrapping of top-level resources using the `withoutWrapping` method of the resource base class.
 
 ```php
 <?php
@@ -494,13 +495,13 @@ class IndexController extends AbstractController
 
 ```
 
-> withoutWrapping 方法只会禁用顶层资源的包裹，不会删除你手动添加到资源集合中的 data 键。而且只会在当前的资源或资源集合中生效，不影响全局。
+> The withoutWrapping method will only disable wrapping of the top-level resource, it will not remove the data key that you manually added to the resource collection. And it will only take effect in the current resource or resource collection, without affecting the global.
 
-#### 包裹嵌套资源
+#### Wrapping nested resources
 
-你可以完全自由地决定资源关联如何被包裹。如果你希望无论怎样嵌套，都将所有资源集合包裹在 `data` 键中，那么你需要为每个资源都定义一个资源集合类，并将返回的集合包裹在 `data` 键中。
+You are completely free to decide how resource associations are wrapped. If you want all resource collections to be wrapped in a `data` key, no matter how nested, then you need to define a resource collection class for each resource and wrap the returned collection in a `data` key.
 
-当然，你可能会担心这样顶层资源将会被包裹在两个 `data `键中。请放心， 组件将永远不会让你的资源被双层包裹，因此你不必担心被转换的资源集合会被多重嵌套：
+Of course, you might worry that the top-level resource would then be wrapped in two `data` keys. Rest assured, components will never have your resources double-wrapped, so you don't have to worry about multiple nesting of transformed resource collections:
 
 ```php
 <?php
@@ -526,9 +527,9 @@ class UserCollection extends ResourceCollection
 
 ```
 
-#### 分页
+#### Pagination
 
-当在资源响应中返回分页集合时，即使你调用了 `withoutWrapping` 方法， 组件也会将你的资源数据包裹在 `data` 键中。这是因为分页响应中总会有 `meta` 和 `links` 键包含着分页状态信息：
+When returning a paginated collection in a resource response, even if you call the `withoutWrapping` method, the component will wrap your resource data in the `data` key. This is because the `meta` and `links` keys in the pagination response always contain pagination status information:
 
 ```json
 
@@ -563,7 +564,7 @@ class UserCollection extends ResourceCollection
     }
 ```
 
-你可以将分页实例传递给资源的 `collection` 方法或者自定义的资源集合：
+You can pass a pagination instance to the resource's collection method or a custom resource collection:
 
 ```php
 <?php
@@ -582,7 +583,7 @@ class IndexController extends AbstractController
 }
 ```
 
-分页响应中总有 `meta` 和 `links` 键包含着分页状态信息：
+There are always `meta` and `links` keys in pagination responses that contain pagination status information:
 
 ```json
 
@@ -617,9 +618,9 @@ class IndexController extends AbstractController
     }
 ```
 
-### 条件属性
+### Conditional properties
 
-有些时候，你可能希望在给定条件满足时添加属性到资源响应里。例如，你可能希望如果当前用户是 「管理员」 时添加某个值到资源响应中。在这种情况下组件提供了一些辅助方法来帮助你解决问题。 `when` 方法可以被用来有条件地向资源响应添加属性：
+Sometimes you may wish to add attributes to the resource response when a given condition is met. For example, you might want to add a value to the resource response if the current user is an "admin". In this case the component provides some helper methods to help you solve the problem. The `when` method can be used to conditionally add attributes to resource responses:
 
 ```php
 <?php
@@ -648,9 +649,9 @@ class User extends JsonResource
 
 ```
 
-在上面这个例子中，只有当 `isAdmin` 方法返回 `true` 时， `secret` 键才会最终在资源响应中被返回。如果该方法返回 `false` ，则 `secret` 键将会在资源响应被发送给客户端之前被删除。 `when` 方法可以使你避免使用条件语句拼接数组，转而用更优雅的方式来编写你的资源。
+In the above example, the `secret` key will eventually be returned in the resource response only if the `isAdmin` method returns `true`. If this method returns `false`, the `secret` key will be deleted before the resource response is sent to the client. The `when` method allows you to avoid concatenating arrays with conditional statements and instead write your resources in a more elegant way.
 
-`when` 方法也接受闭包作为其第二个参数，只有在给定条件为 `true` 时，才从闭包中计算返回的值：
+The `when` method also accepts a closure as its second argument, from which the returned value is computed only if the given condition is `true`:
 
 ```php
 <?php
@@ -681,9 +682,9 @@ class User extends JsonResource
 
 ```
 
-#### 有条件的合并数据
+#### Conditional merge data
 
-有些时候，你可能希望在给定条件满足时添加多个属性到资源响应里。在这种情况下，你可以使用 `mergeWhen` 方法在给定的条件为 `true` 时将多个属性添加到响应中：
+Sometimes, you may wish to add multiple attributes to the resource response when a given condition is met. In this case, you can use the `mergeWhen` method to add multiple properties to the response when a given condition is `true`:
 
 ```php
 <?php
@@ -715,15 +716,15 @@ class User extends JsonResource
 
 ```
 
-同理，如果给定的条件为 `false` 时，则这些属性将会在资源响应被发送给客户端之前被移除。
+Likewise, if the given condition is `false`, these attributes will be removed before the resource response is sent to the client.
 
-> `mergeWhen` 方法不应该被使用在混合字符串和数字键的数组中。此外，它也不应该被使用在不按顺序排列的数字键的数组中。
+> The `mergeWhen` method should not be used on arrays with mixed string and numeric keys. Also, it shouldn't be used in arrays of out-of-order numeric keys.
 
-### 条件关联
+### Conditional association
 
-除了有条件地添加属性之外，你还可以根据模型关联是否已加载来有条件地在你的资源响应中包含关联。这允许你在控制器中决定加载哪些模型关联，这样你的资源可以在模型关联被加载后才添加它们。
+In addition to adding properties conditionally, you can also conditionally include associations in your resource responses based on whether the model association is loaded. This allows you to decide in the controller which model associations to load, so that your resources can add them after the model associations are loaded.
 
-这样做可以避免在你的资源中出现 「N+1」 查询问题。你应该使用 `whenLoaded` 方法来有条件的加载关联。为了避免加载不必要的关联，此方法接受关联的名称而不是关联本身作为其参数：
+Doing this will avoid the "N+1" query problem in your resources. You should use the `whenLoaded` method to conditionally load associations. To avoid loading unnecessary associations, this method accepts the name of the association rather than the association itself as its parameter:
 
 ```php
 <?php
@@ -752,11 +753,11 @@ class User extends JsonResource
 
 ```
 
-在上面这个例子中，如果关联没有被加载，则 `posts` 键将会在资源响应被发送给客户端之前被删除。
+In the above example, if the association is not loaded, the `posts` key will be deleted before the resource response is sent to the client.
 
-#### 条件中间表信息
+#### Conditional intermediate table information
 
-除了在你的资源响应中有条件地包含关联外，你还可以使用 `whenPivotLoaded`  方法有条件地从多对多关联的中间表中添加数据。 `whenPivotLoaded` 方法接受的第一个参数为中间表的名称。第二个参数是一个闭包，它定义了在模型上如果中间表信息可用时要返回的值：
+In addition to conditionally including associations in your resource responses, you can also conditionally add data from intermediate tables in many-to-many associations using the `whenPivotLoaded` method. The first parameter accepted by the `whenPivotLoaded` method is the name of the intermediate table. The second parameter is a closure that defines the value to return on the model if intermediate table information is available:
 
 ```php
 <?php
@@ -786,7 +787,7 @@ class User extends JsonResource
 
 ```
 
-如果你的中间表使用的是 `pivot` 以外的访问器，你可以使用 `whenPivotLoadedAs`方法：
+If your intermediate table uses accessors other than `pivot`, you can use the `whenPivotLoadedAs` method:
 
 ```php
 <?php
@@ -816,9 +817,9 @@ class User extends JsonResource
 
 ```
 
-### 添加元数据
+### Add metadata
 
-一些 JSON API 标准需要你在资源和资源集合响应中添加元数据。这通常包括资源或相关资源的 `links` ，或一些关于资源本身的元数据。如果你需要返回有关资源的其他元数据，只需要将它们包含在 `toArray` 方法中即可。例如在转换资源集合时你可能需要添加 `links` 信息：
+Some JSON API standards require you to add metadata to resource and resource collection responses. This usually includes `links` for the resource or related resources, or some metadata about the resource itself. If you need to return additional metadata about the resource, just include them in the `toArray` method. For example, you may need to add `links` information when converting resource collections:
 
 ```php
 <?php
@@ -847,11 +848,11 @@ class UserCollection extends ResourceCollection
 
 ```
 
-当添加额外的元数据到你的资源中时，你不必担心会覆盖在返回分页响应时自动添加的 `links` 或 `meta` 键。你添加的任何其他 `links` 会与分页响应添加的 `links` 相合并。
+When adding extra metadata to your resource, you don't have to worry about overwriting the `links` or `meta` keys that are automatically added when returning paginated responses. Any other `links` you add will be merged with the `links` added by the pagination response.
 
-#### 顶层元数据
+#### top-level metadata
 
-有时候你可能希望当资源被作为顶层资源返回时添加某些元数据到资源响应中。这通常包括整个响应的元信息。你可以在资源类中添加 `with` 方法来定义元数据。此方法应返回一个元数据数组，当资源被作为顶层资源渲染时，这个数组将会被包含在资源响应中：
+Sometimes you may wish to add certain metadata to the resource response when the resource is returned as a top-level resource. This usually includes meta information for the entire response. You can add a `with` method to your resource class to define metadata. This method should return an array of metadata that will be included in the resource response when the resource is rendered as a top-level resource:
 
 ```php
 <?php
@@ -889,9 +890,9 @@ class UserCollection extends ResourceCollection
 
 ```
 
-#### 构造资源时添加元数据
+#### Add metadata when constructing resources
 
-你还可以在控制器中构造资源实例时添加顶层数据。所有资源都可以使用 `additional` 方法来接受应该被添加到资源响应中的数据数组：
+You can also add top-level data when constructing a resource instance in a controller. All resources can use the `additional` method to accept an array of data that should be added to the resource response:
 
 ```php
 <?php
@@ -914,9 +915,9 @@ class IndexController extends AbstractController
 
 ```
 
-## 响应资源
+## Response resource
 
-就像你知道的那样，资源可以直接在控制器中被返回：
+As you know, resources can be returned directly in the controller:
 
 ```php
 <?php
@@ -941,4 +942,4 @@ class IndexController extends AbstractController
 
 ```
 
-如你想设置响应头信息, 状态码等, 通过调用 `toResponse()` 方法获取到响应对象进行设置.
+If you want to set the response header information, status code, etc., get the response object by calling the `toResponse()` method to set it.
