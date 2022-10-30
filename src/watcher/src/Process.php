@@ -52,11 +52,7 @@ class Process
         }
         $class = $meta->toClassName();
         $collectors = $this->config->getCollectors();
-        if (file_exists($this->path)) {
-            [$data, $proxies] = unserialize(file_get_contents($this->path));
-        } else {
-            [$data, $proxies] = [[], []];
-        }
+        [$data, $proxies] = file_exists($this->path) ? unserialize(file_get_contents($this->path)) : [[], []];
         foreach ($data as $collector => $deserialized) {
             /** @var MetadataCollector $collector */
             if (in_array($collector, $collectors)) {
