@@ -598,7 +598,7 @@ $id = Db::table('users')->insertGetId(
 );
 ```
 
-## Renew
+## Update
 
 Of course, in addition to inserting records into the database, the query builder can also update existing records via the `update` method. The `update` method, like the `insert` method, accepts an array containing the fields and values to update. You can constrain the `update` query with the `where` clause:
 
@@ -606,7 +606,7 @@ Of course, in addition to inserting records into the database, the query builder
 Db::table('users')->where('id', 1)->update(['votes' => 1]);
 ```
 
-### Update or add
+### Update or Insert
 
 Sometimes you may wish to update an existing record in the database, or create a matching record if it does not exist. In this case, the `updateOrInsert` method can be used. The `updateOrInsert` method accepts two parameters: an array of conditions to find the record, and an array of key-value pairs containing the record to update.
 
@@ -665,7 +665,7 @@ If you need to empty the table, you can use the `truncate` method, which will de
 Db::table('users')->truncate();
 ```
 
-## pessimistic lock
+## Pessimistic lock
 
 The query builder also contains some functions that can help you implement `pessimistic locking` on the `select` syntax. To implement a `"shared lock"` in a query, you can use the `sharedLock` method. Shared locks prevent selected data columns from being tampered with until the transaction is committed
 

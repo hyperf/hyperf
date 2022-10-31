@@ -40,7 +40,7 @@ composer require "league/flysystem-aws-s3-v3:^2.0"
 composer require hyperf/guzzle
 ```
 
-- Seven Bull Adapter
+- Qiniu Adapter
 
 `Flysystem v1.0` version
 

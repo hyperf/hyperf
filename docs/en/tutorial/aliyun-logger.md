@@ -34,7 +34,7 @@ registry.cn-hangzhou.aliyuncs.com/log-service/logtail
 
 ### Create Project
 
-Log in to Alibaba Cloud Log Service, click `Create Project`, and fill in the following information
+Login to Alibaba Cloud Log Service, click `Create Project`, and fill in the following information
 
 | Parameters | Fill in the example |
 | :------------: | :------------------: |

@@ -82,7 +82,7 @@ shell
 
 ## Initialize the Swarm cluster
 
-Log in to another machine and initialize the cluster
+Login to another machine and initialize the cluster
 ```
 $ docker swarm init
 ```
@@ -132,7 +132,7 @@ docker service create \
 
 ## Create a demo project
 
-Log in to Gitlab to create a demo project. and import our project [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton)
+Login to Gitlab to create a demo project. and import our project [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton)
 
 
 ## Configure the mirror repository
@@ -141,7 +141,7 @@ Log in to Gitlab to create a demo project. and import our project [hyperf-skelet
 
 First create a namespace test_namespace, then create a mirror warehouse demo, and use the local warehouse.
 
-Then go to the server we use directly for packaging and log in to Alibaba Cloud Docker Registry
+Then go to the server we use directly for packaging and login to Alibaba Cloud Docker Registry
 
 ```
 usermod -aG docker gitlab-runner
@@ -215,7 +215,7 @@ REDIS_DB=0
 
 Because the gitlab-ci.yml we configured will detect the test branch and tags, we merge the modified content into the test branch, and then push it to gitlab.
 
-Next we can access port 9501 of any machine in the cluster. tested
+Next we can access port 9501 of any machine in the cluster.
 
 ```
 curl http://127.0.0.1:9501/
