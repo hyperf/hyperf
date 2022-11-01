@@ -809,7 +809,7 @@ trait HasAttributes
     /**
      * Get a relationship value from a method.
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     protected function getRelationshipFromMethod(string $method)
     {

@@ -16,6 +16,7 @@ use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Retry\Annotation\AbstractRetry;
 use Hyperf\Retry\Annotation\Retry;
 use Hyperf\Retry\Policy\HybridRetryPolicy;
+use Throwable;
 
 class RetryAnnotationAspect extends AbstractAspect
 {
@@ -39,7 +40,7 @@ class RetryAnnotationAspect extends AbstractAspect
         $context['lastResult'] = $context['lastThrowable'] = null;
         try {
             $context['lastResult'] = $proceedingJoinPoint->process();
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             $context['lastThrowable'] = $throwable;
         }
         if ($policy->canRetry($context)) {

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Cache\Cases;
 
+use DateInterval;
 use Hyperf\Cache\CacheManager;
 use Hyperf\Cache\Driver\KeyCollectorInterface;
 use Hyperf\Cache\Driver\RedisDriver;
@@ -87,7 +88,7 @@ class RedisDriverTest extends TestCase
         $redis = $container->get(\Redis::class);
         $this->assertSame(1, $redis->ttl('c:xxx'));
 
-        $dv = new \DateInterval('PT5S');
+        $dv = new DateInterval('PT5S');
         $driver->set('xxx', 'yyy', $dv);
         $this->assertSame(5, $redis->ttl('c:xxx'));
     }

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Aop;
 
+use InvalidArgumentException;
 use SplPriorityQueue;
 
 /**
@@ -28,7 +29,7 @@ class AstVisitorRegistry
         if (method_exists($queue, $name)) {
             return $queue->{$name}(...$arguments);
         }
-        throw new \InvalidArgumentException('Invalid method for ' . __CLASS__);
+        throw new InvalidArgumentException('Invalid method for ' . __CLASS__);
     }
 
     public static function insert($value, $priority = 0)

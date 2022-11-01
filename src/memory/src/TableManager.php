@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Memory;
 
+use RuntimeException;
 use Swoole\Table;
 
 class TableManager
@@ -32,12 +33,12 @@ class TableManager
     /**
      * Get an initialized Table from container by the identifier.
      *
-     * @throws \RuntimeException when the Table with the identifier has not initialization
+     * @throws RuntimeException when the Table with the identifier has not initialization
      */
     public static function get(string $identifier): Table
     {
         if (! isset(static::$container[$identifier])) {
-            throw new \RuntimeException('The Table has not initialization yet.');
+            throw new RuntimeException('The Table has not initialization yet.');
         }
 
         return static::$container[$identifier];

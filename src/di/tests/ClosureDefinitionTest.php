@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Di;
 
+use Closure;
 use Hyperf\Di\ClosureDefinitionCollector;
 use Hyperf\Di\ReflectionType;
 use HyperfTest\Di\Stub\Foo;
@@ -30,7 +31,7 @@ class ClosureDefinitionTest extends TestCase
     public function testGetParameters()
     {
         $collector = new ClosureDefinitionCollector();
-        $closure = \Closure::fromCallable([new Foo(), 'getBar']);
+        $closure = Closure::fromCallable([new Foo(), 'getBar']);
         $definitions = $collector->getParameters($closure);
         $this->assertEquals(4, count($definitions));
         $this->assertEquals('int', $definitions[0]->getName());
@@ -41,7 +42,7 @@ class ClosureDefinitionTest extends TestCase
     public function testGetReturnTypes()
     {
         $collector = new ClosureDefinitionCollector();
-        $closure = \Closure::fromCallable([new Foo(), 'getBar']);
+        $closure = Closure::fromCallable([new Foo(), 'getBar']);
         $type = $collector->getReturnType($closure);
         $this->assertEquals('mixed', $type->getName());
     }
@@ -49,7 +50,7 @@ class ClosureDefinitionTest extends TestCase
     public function testGetParameterOfNoType()
     {
         $collector = new ClosureDefinitionCollector();
-        $closure = \Closure::fromCallable([new Foo(), 'getFoo']);
+        $closure = Closure::fromCallable([new Foo(), 'getFoo']);
         /** @var ReflectionType[] $definitions */
         $definitions = $collector->getParameters($closure);
         $this->assertEquals(1, count($definitions));

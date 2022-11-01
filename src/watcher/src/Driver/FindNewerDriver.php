@@ -14,6 +14,7 @@ namespace Hyperf\Watcher\Driver;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\Str;
 use Hyperf\Watcher\Option;
+use InvalidArgumentException;
 
 use function Hyperf\Watcher\exec;
 
@@ -30,7 +31,7 @@ class FindNewerDriver extends AbstractDriver
         parent::__construct($option);
         $ret = exec('which find');
         if (empty($ret['output'])) {
-            throw new \InvalidArgumentException('find not exists.');
+            throw new InvalidArgumentException('find not exists.');
         }
         // create two files
         exec('echo 1 > ' . $this->getToModifyFile());

@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Contract;
 
+use Countable;
+
 interface TranslatorInterface
 {
     /**
@@ -21,7 +23,7 @@ interface TranslatorInterface
     /**
      * Get a translation according to an integer value.
      *
-     * @param array|\Countable|int $number
+     * @param array|Countable|int $number
      */
     public function transChoice(string $key, $number, array $replace = [], ?string $locale = null): string;
 

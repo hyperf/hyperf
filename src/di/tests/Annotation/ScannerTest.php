@@ -27,6 +27,7 @@ use HyperfTest\Di\Stub\Aspect\Debug3Aspect;
 use HyperfTest\Di\Stub\AspectCollector;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @internal
@@ -56,7 +57,7 @@ class ScannerTest extends TestCase
         Composer::setLoader($loader);
 
         $scanner = new Scanner(new ScanConfig(false, '/'), new NullScanHandler());
-        $ref = new \ReflectionClass($scanner);
+        $ref = new ReflectionClass($scanner);
         $property = $ref->getProperty('filesystem');
         $property->setAccessible(true);
         $property->setValue($scanner, $filesystem = Mockery::mock(Filesystem::class . '[lastModified]'));

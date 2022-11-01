@@ -14,6 +14,7 @@ namespace HyperfTest\Retry;
 use Hyperf\Retry\RetryBudget;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use Swoole\Coroutine\System;
 use Swoole\Timer;
 
@@ -76,7 +77,7 @@ class RetryBudgetTest extends TestCase
             1
         );
         $budget->init();
-        $ref = new \ReflectionClass(RetryBudget::class);
+        $ref = new ReflectionClass(RetryBudget::class);
         $prop = $ref->getProperty('budget');
         $prop->setAccessible(true);
         System::sleep(1.2);

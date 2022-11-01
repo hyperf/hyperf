@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model\Relations\Concerns;
 
+use Closure;
 use Hyperf\Database\Model\Model;
 
 trait SupportsDefaultModels
@@ -20,14 +21,14 @@ trait SupportsDefaultModels
      *
      * Alternatively, may be a Closure or array.
      *
-     * @var array|bool|\Closure
+     * @var array|bool|Closure
      */
     protected $withDefault;
 
     /**
      * Return a new model instance in case the relationship does not exist.
      *
-     * @param array|bool|\Closure $callback
+     * @param array|bool|Closure $callback
      * @return $this
      */
     public function withDefault($callback = true)

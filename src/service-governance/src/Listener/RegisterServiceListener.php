@@ -20,6 +20,7 @@ use Hyperf\Framework\Event\MainWorkerStart;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\ServiceGovernance\DriverManager;
 use Hyperf\ServiceGovernance\ServiceManager;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -98,18 +99,18 @@ class RegisterServiceListener implements ListenerInterface
                 continue;
             }
             if (! $server['name']) {
-                throw new \InvalidArgumentException('Invalid server name');
+                throw new InvalidArgumentException('Invalid server name');
             }
             $host = $server['host'];
             if (in_array($host, ['0.0.0.0', 'localhost'])) {
                 $host = $this->ipReader->read();
             }
             if (! filter_var($host, FILTER_VALIDATE_IP)) {
-                throw new \InvalidArgumentException(sprintf('Invalid host %s', $host));
+                throw new InvalidArgumentException(sprintf('Invalid host %s', $host));
             }
             $port = $server['port'];
             if (! is_numeric($port) || ($port < 0 || $port > 65535)) {
-                throw new \InvalidArgumentException(sprintf('Invalid port %s', $port));
+                throw new InvalidArgumentException(sprintf('Invalid port %s', $port));
             }
             $port = (int) $port;
             $result[$server['name']] = [$host, $port];

@@ -16,6 +16,7 @@ use Hyperf\Utils\Collection;
 use Hyperf\Utils\Str;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
+use ReflectionClass;
 
 class ModelRewriteSoftDeletesVisitor extends AbstractVisitor
 {
@@ -111,7 +112,7 @@ class ModelRewriteSoftDeletesVisitor extends AbstractVisitor
     protected function shouldRemovedSoftDeletes(): bool
     {
         $useSoftDeletes = $this->useSoftDeletes();
-        $ref = new \ReflectionClass($this->data->getClass());
+        $ref = new ReflectionClass($this->data->getClass());
 
         if (! $ref->getParentClass()) {
             return false;
