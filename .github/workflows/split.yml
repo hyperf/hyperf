@@ -1,0 +1,19 @@
+name: Split Repos
+
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      event:
+        description: 'Input your event'
+        required: false
+        default: ''
+
+jobs:
+  split:
+    if: github.repository == 'limingxinleo/hyperf'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Split And Push
+        run: |
+          ./bin/split-linux.sh amqp
