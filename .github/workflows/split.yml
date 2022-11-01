@@ -11,7 +11,7 @@ on:
 
 jobs:
   split:
-    if: github.repository == 'limingxinleo/hyperf'
+    if: github.repository == 'hyperf/hyperf'
     runs-on: ubuntu-latest
     env:
       SSH_PRIVATE_KEY: ${{ secrets.SPLIT_PRIVATE_KEY }}
@@ -29,4 +29,4 @@ jobs:
           git config pull.rebase true
           git config --global user.email "group@hyperf.io"
           git config --global user.name "Hyperf Developers"
-          ./bin/split-linux.sh amqp
+          ./bin/split-linux.sh
