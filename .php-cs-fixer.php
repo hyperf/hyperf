@@ -67,8 +67,8 @@ return (new PhpCsFixer\Config())
         ],
         'global_namespace_import' => [
             'import_classes' => true,
-            'import_constants' => null,
-            'import_functions' => null,
+            'import_constants' => true,
+            'import_functions' => true,
         ],
         'class_attributes_separation' => true,
         'combine_consecutive_unsets' => true,

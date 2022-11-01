@@ -16,6 +16,9 @@ use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 
+use const SEEK_CUR;
+use const SEEK_SET;
+
 /**
  * Code Taken from Nyholm/psr7.
  * Author: Michael Dowling and contributors to guzzlehttp/psr7
@@ -107,7 +110,7 @@ final class StandardStream implements StreamInterface
             $new = new self();
             $new->stream = $body;
             $meta = \stream_get_meta_data($new->stream);
-            $new->seekable = $meta['seekable'] && \fseek($new->stream, 0, \SEEK_CUR) === 0;
+            $new->seekable = $meta['seekable'] && \fseek($new->stream, 0, SEEK_CUR) === 0;
             $new->readable = isset(self::READ_WRITE_HASH['read'][$meta['mode']]);
             $new->writable = isset(self::READ_WRITE_HASH['write'][$meta['mode']]);
             $new->uri = $new->getMetadata('uri');
@@ -186,7 +189,7 @@ final class StandardStream implements StreamInterface
         return $this->seekable;
     }
 
-    public function seek($offset, $whence = \SEEK_SET): void
+    public function seek($offset, $whence = SEEK_SET): void
     {
         if (! $this->seekable) {
             throw new RuntimeException('Stream is not seekable');
