@@ -16,6 +16,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Setup Private Key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SPLIT_PRIVATE_KEY }}
+          run: |
+            mkdir -p ~/.ssh
+            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            echo "StrictHostKeyChecking no" >> ~/.ssh/config
       - name: Split And Push
         run: |
           git config pull.rebase true
