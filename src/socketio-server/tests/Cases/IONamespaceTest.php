@@ -23,6 +23,7 @@ use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
 use HyperfTest\SocketIOServer\Stub\EphemeralAdapter;
 use Mockery;
+use ReflectionClass;
 use Swoole\Atomic;
 
 /**
@@ -130,7 +131,7 @@ class IONamespaceTest extends AbstractTestCase
 
         SocketIORouter::addNamespace('/', BaseNamespace::class);
 
-        $ref = new \ReflectionClass($io);
+        $ref = new ReflectionClass($io);
         $m = $ref->getMethod('renewInAllNamespaces');
         $m->setAccessible(true);
         $this->assertFalse(EphemeralAdapter::$isRenew);

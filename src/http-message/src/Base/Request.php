@@ -13,6 +13,7 @@ namespace Hyperf\HttpMessage\Base;
 
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
+use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
@@ -109,7 +110,7 @@ class Request implements RequestInterface
     public function withRequestTarget($requestTarget)
     {
         if (preg_match('#\s#', $requestTarget)) {
-            throw new \InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
+            throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
         }
 
         $new = clone $this;
@@ -138,14 +139,14 @@ class Request implements RequestInterface
      *
      * @param string $method case-sensitive method
      * @return static
-     * @throws \InvalidArgumentException for invalid HTTP methods
+     * @throws InvalidArgumentException for invalid HTTP methods
      */
     public function withMethod($method)
     {
         $method = strtoupper($method);
         $methods = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'HEAD'];
         if (! in_array($method, $methods)) {
-            throw new \InvalidArgumentException('Invalid Method');
+            throw new InvalidArgumentException('Invalid Method');
         }
         $new = clone $this;
         $new->method = $method;

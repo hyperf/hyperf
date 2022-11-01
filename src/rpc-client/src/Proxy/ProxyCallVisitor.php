@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\RpcClient\Proxy;
 
 use Hyperf\Utils\CodeGen\PhpParser;
+use InvalidArgumentException;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\NodeVisitorAbstract;
@@ -59,7 +60,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
     protected function overrideMethod(Node\FunctionLike $stmt): Node\Stmt\ClassMethod
     {
         if (! $stmt instanceof Node\Stmt\ClassMethod) {
-            throw new \InvalidArgumentException('stmt must instanceof Node\Stmt\ClassMethod');
+            throw new InvalidArgumentException('stmt must instanceof Node\Stmt\ClassMethod');
         }
         $stmt->stmts = value(function () use ($stmt) {
             $methodCall = new Node\Expr\MethodCall(

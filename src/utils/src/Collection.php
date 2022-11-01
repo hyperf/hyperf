@@ -14,13 +14,16 @@ namespace Hyperf\Utils;
 use ArrayAccess;
 use ArrayIterator;
 use CachingIterator;
+use Closure;
 use Countable;
 use Exception;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Macroable\Macroable;
+use InvalidArgumentException;
 use IteratorAggregate;
 use JsonSerializable;
+use RuntimeException;
 use stdClass;
 use Symfony\Component\VarDumper\VarDumper;
 use Traversable;
@@ -115,7 +118,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Dynamically access collection proxies.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function __get(string $key)
     {
@@ -362,7 +365,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         $params = (new static(func_get_args()));
         $params->push($this)->each(function ($item) {
             if (! class_exists(VarDumper::class)) {
-                throw new \RuntimeException('symfony/var-dumper package required, please require the package via "composer require symfony/var-dumper"');
+                throw new RuntimeException('symfony/var-dumper package required, please require the package via "composer require symfony/var-dumper"');
             }
             VarDumper::dump($item);
         });
@@ -1196,7 +1199,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Get one or a specified number of items randomly from the collection.
      *
      * @return static<int, TValue>|TValue
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function random(int $number = null)
     {
@@ -1742,7 +1745,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param mixed|string $operator
      * @param null|TValue $value
      */
-    protected function operatorForWhere(string $key, $operator = null, $value = null): \Closure
+    protected function operatorForWhere(string $key, $operator = null, $value = null): Closure
     {
         if (func_num_args() === 1) {
             $value = true;

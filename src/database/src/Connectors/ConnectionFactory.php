@@ -11,11 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Connectors;
 
+use Closure;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\MySqlConnection;
 use Hyperf\Utils\Arr;
 use InvalidArgumentException;
+use PDO;
 use PDOException;
 use Psr\Container\ContainerInterface;
 
@@ -49,7 +51,7 @@ class ConnectionFactory
      * Create a connector instance based on the configuration.
      *
      * @return ConnectorInterface
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function createConnector(array $config)
     {
@@ -113,7 +115,7 @@ class ConnectionFactory
     /**
      * Create a new PDO instance for reading.
      *
-     * @return \Closure
+     * @return Closure
      */
     protected function createReadPdo(array $config)
     {
@@ -172,7 +174,7 @@ class ConnectionFactory
     /**
      * Create a new Closure that resolves to a PDO instance.
      *
-     * @return \Closure
+     * @return Closure
      */
     protected function createPdoResolver(array $config)
     {
@@ -184,7 +186,7 @@ class ConnectionFactory
     /**
      * Create a new Closure that resolves to a PDO instance with a specific host or an array of hosts.
      *
-     * @return \Closure
+     * @return Closure
      */
     protected function createPdoResolverWithHosts(array $config)
     {
@@ -222,7 +224,7 @@ class ConnectionFactory
     /**
      * Create a new Closure that resolves to a PDO instance where there is no configured host.
      *
-     * @return \Closure
+     * @return Closure
      */
     protected function createPdoResolverWithoutHosts(array $config)
     {
@@ -235,11 +237,11 @@ class ConnectionFactory
      * Create a new connection instance.
      *
      * @param string $driver
-     * @param \Closure|\PDO $connection
+     * @param Closure|PDO $connection
      * @param string $database
      * @param string $prefix
      * @return \Hyperf\Database\Connection
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function createConnection($driver, $connection, $database, $prefix = '', array $config = [])
     {

@@ -16,6 +16,7 @@ use Hyperf\Contract\Jsonable;
 use Hyperf\Contract\Xmlable;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+use Stringable;
 
 interface ResponseInterface
 {
@@ -36,7 +37,7 @@ interface ResponseInterface
 
     /**
      * Format data to a string and return data with Content-Type:text/plain header.
-     * @param mixed|\Stringable $data
+     * @param mixed|Stringable $data
      */
     public function raw($data): PsrResponseInterface;
 

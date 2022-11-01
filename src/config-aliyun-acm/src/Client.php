@@ -19,6 +19,7 @@ use Hyperf\Utils\Codec\Json;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
+use Throwable;
 
 class Client implements ClientInterface
 {
@@ -102,7 +103,7 @@ class Client implements ClientInterface
                 return [];
             }
             return Json::decode($content);
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             $this->logger->error(sprintf('%s[line:%d] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()));
             return [];
         }

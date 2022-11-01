@@ -16,6 +16,7 @@ use Hyperf\Di\Definition\PropertyHandlerManager;
 use Hyperf\Di\Exception\NotFoundException;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\ApplicationContext;
+use Throwable;
 
 class RegisterInjectPropertyHandler
 {
@@ -41,7 +42,7 @@ class RegisterInjectPropertyHandler
                     } elseif ($annotation->required) {
                         throw new NotFoundException("No entry or class found for '{$annotation->value}'");
                     }
-                } catch (\Throwable $throwable) {
+                } catch (Throwable $throwable) {
                     if ($annotation->required) {
                         throw $throwable;
                     }

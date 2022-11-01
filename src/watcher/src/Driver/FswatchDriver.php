@@ -15,6 +15,8 @@ use Hyperf\Engine\Channel;
 use Hyperf\Engine\Coroutine;
 use Hyperf\Utils\Str;
 use Hyperf\Watcher\Option;
+use InvalidArgumentException;
+use RuntimeException;
 
 use function Hyperf\Watcher\exec;
 
@@ -27,7 +29,7 @@ class FswatchDriver extends AbstractDriver
         parent::__construct($option);
         $ret = exec('which fswatch');
         if (empty($ret['output'])) {
-            throw new \InvalidArgumentException('fswatch not exists. You can `brew install fswatch` to install it.');
+            throw new InvalidArgumentException('fswatch not exists. You can `brew install fswatch` to install it.');
         }
     }
 
@@ -36,7 +38,7 @@ class FswatchDriver extends AbstractDriver
         $cmd = $this->getCmd();
         $this->process = proc_open($cmd, [['pipe', 'r'], ['pipe', 'w']], $pipes);
         if (! is_resource($this->process)) {
-            throw new \RuntimeException('fswatch failed.');
+            throw new RuntimeException('fswatch failed.');
         }
 
         while (! $channel->isClosing()) {

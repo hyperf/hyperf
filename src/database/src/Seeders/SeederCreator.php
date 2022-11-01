@@ -100,7 +100,7 @@ class SeederCreator
      *
      * @param string $name
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function ensureSeederDoesntAlreadyExist($name)
     {

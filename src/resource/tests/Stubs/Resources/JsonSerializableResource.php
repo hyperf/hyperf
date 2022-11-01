@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Resource\Stubs\Resources;
 
-class JsonSerializableResource implements \JsonSerializable
+use JsonSerializable;
+
+class JsonSerializableResource implements JsonSerializable
 {
     public $resource;
 

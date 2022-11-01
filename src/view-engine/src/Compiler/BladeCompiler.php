@@ -15,6 +15,7 @@ use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Str;
 use InvalidArgumentException;
+use PhpToken;
 
 class BladeCompiler extends Compiler implements CompilerInterface
 {
@@ -173,7 +174,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
         // Here we will loop through all the tokens returned by the Zend lexer and
         // parse each one into the corresponding valid PHP. We will then have this
         // template as the correctly rendered PHP that can be rendered natively.
-        foreach (\PhpToken::tokenize($value) as $token) {
+        foreach (PhpToken::tokenize($value) as $token) {
             $result .= $this->parseToken($token);
         }
 
@@ -367,7 +368,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
     /**
      * Register a handler for custom directives.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function directive(string $name, callable $handler)
     {
@@ -449,7 +450,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     protected function getOpenAndClosingPhpTokens(string $contents): Collection
     {
-        return collect(\PhpToken::tokenize($contents))
+        return collect(PhpToken::tokenize($contents))
             ->pluck('0')
             ->filter(fn ($token) => in_array($token, [T_OPEN_TAG, T_OPEN_TAG_WITH_ECHO, T_CLOSE_TAG]));
     }
@@ -548,7 +549,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
     /**
      * Parse the tokens from the template.
      */
-    protected function parseToken(\PhpToken $token): string
+    protected function parseToken(PhpToken $token): string
     {
         $id = $token->id;
         $content = $token->text;

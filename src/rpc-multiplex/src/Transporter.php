@@ -18,6 +18,7 @@ use Hyperf\Utils\Exception\ExceptionThrower;
 use Multiplex\Exception\ChannelClosedException;
 use Multiplex\Exception\ClientConnectFailedException;
 use Psr\Container\ContainerInterface;
+use Throwable;
 
 class Transporter implements TransporterInterface
 {
@@ -48,7 +49,7 @@ class Transporter implements TransporterInterface
         $result = retry($retryCount, function () use ($data) {
             try {
                 return $this->factory->get()->request($data);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 if ($this->shouldBeRetry($exception)) {
                     throw $exception;
                 }
@@ -80,7 +81,7 @@ class Transporter implements TransporterInterface
         return $this;
     }
 
-    protected function shouldBeRetry(\Throwable $throwable): bool
+    protected function shouldBeRetry(Throwable $throwable): bool
     {
         return $throwable instanceof ClientConnectFailedException
             || $throwable instanceof ChannelClosedException;

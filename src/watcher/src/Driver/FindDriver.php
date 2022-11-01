@@ -14,6 +14,7 @@ namespace Hyperf\Watcher\Driver;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\Str;
 use Hyperf\Watcher\Option;
+use InvalidArgumentException;
 
 use function Hyperf\Watcher\exec;
 
@@ -30,12 +31,12 @@ class FindDriver extends AbstractDriver
         if ($this->isDarwin()) {
             $ret = exec('which gfind');
             if (empty($ret['output'])) {
-                throw new \InvalidArgumentException('gfind not exists. You can `brew install findutils` to install it.');
+                throw new InvalidArgumentException('gfind not exists. You can `brew install findutils` to install it.');
             }
         } else {
             $ret = exec('which find');
             if (empty($ret['output'])) {
-                throw new \InvalidArgumentException('find not exists.');
+                throw new InvalidArgumentException('find not exists.');
             }
             $ret = exec('find --help');
             $this->isSupportFloatMinutes = ! str_contains($ret['output'] ?? '', 'BusyBox');

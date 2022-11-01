@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation\Rules;
 
-class Dimensions implements \Stringable
+use Stringable;
+
+class Dimensions implements Stringable
 {
     /**
      * Create a new dimensions rule instance.

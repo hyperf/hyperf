@@ -18,6 +18,7 @@ use Hyperf\Framework\Event\OnPipeMessage;
 use Hyperf\WebSocketServer\Sender;
 use Hyperf\WebSocketServer\SenderPipeMessage;
 use Psr\Container\ContainerInterface;
+use Throwable;
 
 class OnPipeMessageListener implements ListenerInterface
 {
@@ -48,7 +49,7 @@ class OnPipeMessageListener implements ListenerInterface
             try {
                 [$fd, $method] = $this->sender->getFdAndMethodFromProxyMethod($message->name, $message->arguments);
                 $this->sender->proxy($fd, $method, $message->arguments);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $formatter = $this->container->get(FormatterInterface::class);
                 $this->logger->warning($formatter->format($exception));
             }

@@ -16,6 +16,7 @@ use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Parallel;
 use PHPUnit\Framework\TestCase;
 use Swoole\Runtime;
+use Throwable;
 
 /**
  * @internal
@@ -74,7 +75,7 @@ class FilesystemTest extends TestCase
             try {
                 $system->makeDirectory(BASE_PATH . '/runtime/test');
                 $system->makeDirectory(BASE_PATH . '/runtime/test');
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $this->assertSame('mkdir(): File exists', $exception->getMessage());
             }
         } else {

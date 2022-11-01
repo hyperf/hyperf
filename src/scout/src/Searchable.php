@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Scout;
 
+use Closure;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Collection as BaseCollection;
 use Hyperf\Database\Model\SoftDeletes;
@@ -92,7 +93,7 @@ trait Searchable
     /**
      * Perform a search against the model's indexed data.
      */
-    public static function search(?string $query = '', ?\Closure $callback = null)
+    public static function search(?string $query = '', ?Closure $callback = null)
     {
         return make(Builder::class, [
             'model' => new static(),

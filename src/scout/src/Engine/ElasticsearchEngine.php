@@ -18,6 +18,7 @@ use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Builder;
 use Hyperf\Scout\SearchableInterface;
 use Hyperf\Utils\Collection as BaseCollection;
+use Throwable;
 
 class ElasticsearchEngine extends Engine
 {
@@ -193,7 +194,7 @@ class ElasticsearchEngine extends Engine
         if (! static::$version) {
             try {
                 static::$version = $client->info()['version']['number'];
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 static::$version = '0.0.0';
             }
         }

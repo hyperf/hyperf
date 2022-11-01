@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\JsonRpc\Stub;
 
+use Closure;
 use Hyperf\JsonRpc\Pool\RpcConnection;
 
 class RpcConnectionStub extends RpcConnection
@@ -18,7 +19,7 @@ class RpcConnectionStub extends RpcConnection
     public $lastData = '';
 
     /**
-     * @var null|\Closure
+     * @var null|Closure
      */
     public $reconnectCallback;
 

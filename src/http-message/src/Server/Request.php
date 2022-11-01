@@ -17,6 +17,7 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\Utils\ApplicationContext;
+use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
@@ -202,7 +203,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      *
      * @param array $uploadedFiles an array tree of UploadedFileInterface instances
      * @return static
-     * @throws \InvalidArgumentException if an invalid structure is provided
+     * @throws InvalidArgumentException if an invalid structure is provided
      */
     public function withUploadedFiles(array $uploadedFiles)
     {
@@ -274,8 +275,8 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * @param null|array|object $data The deserialized body data. This will
      *                                typically be in an array or object.
      * @return static
-     * @throws \InvalidArgumentException if an unsupported argument type is
-     *                                   provided
+     * @throws InvalidArgumentException if an unsupported argument type is
+     *                                  provided
      */
     public function withParsedBody($data)
     {
@@ -442,7 +443,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
             if ($parser->has($contentType) && $content = (string) $request->getBody()) {
                 $data = $parser->parse($content, $contentType);
             }
-        } catch (\InvalidArgumentException $exception) {
+        } catch (InvalidArgumentException $exception) {
             throw new BadRequestHttpException($exception->getMessage());
         }
 
@@ -468,7 +469,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
      * Return an UploadedFile instance array.
      *
      * @param array $files A array which respect $_FILES structure
-     * @throws \InvalidArgumentException for unrecognized values
+     * @throws InvalidArgumentException for unrecognized values
      */
     private static function normalizeFiles(array $files): array
     {
@@ -532,7 +533,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
 
     /**
      * Get a Uri populated with values from $swooleRequest->server.
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private static function getUriFromGlobals(Swoole\Http\Request $swooleRequest): UriInterface
     {

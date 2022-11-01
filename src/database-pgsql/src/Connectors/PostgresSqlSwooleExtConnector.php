@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\PgSQL\Connectors;
 
+use Exception;
 use Hyperf\Database\Connectors\ConnectorInterface;
 use Swoole\Coroutine\PostgreSQL;
 
@@ -56,7 +57,7 @@ class PostgresSqlSwooleExtConnector implements ConnectorInterface
         ));
 
         if ($result === false) {
-            throw new \Exception($connection->error);
+            throw new Exception($connection->error);
         }
 
         return $connection;

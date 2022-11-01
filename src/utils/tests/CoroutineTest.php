@@ -11,14 +11,17 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
+use Exception;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Engine\Channel;
 use Hyperf\Engine\Exception\CoroutineDestroyedException;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Throwable;
 
 /**
  * @internal
@@ -28,7 +31,7 @@ class CoroutineTest extends TestCase
 {
     protected function tearDown(): void
     {
-        \Mockery::close();
+        Mockery::close();
     }
 
     public function testCoroutineParentId()
@@ -56,7 +59,7 @@ class CoroutineTest extends TestCase
         try {
             Coroutine::parentId($id);
             $this->assertTrue(false);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertInstanceOf(CoroutineDestroyedException::class, $exception);
         }
     }
@@ -73,14 +76,14 @@ class CoroutineTest extends TestCase
 
     public function testCoroutineAndDeferWithException()
     {
-        $container = \Mockery::mock(ContainerInterface::class);
+        $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
 
         $container->shouldReceive('has')->withAnyArgs()->andReturnTrue();
-        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn($logger = \Mockery::mock(StdoutLoggerInterface::class));
+        $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturn($logger = Mockery::mock(StdoutLoggerInterface::class));
         $logger->shouldReceive('warning')->with('unit')->twice()->andReturnNull();
-        $container->shouldReceive('get')->with(FormatterInterface::class)->andReturn($formatter = \Mockery::mock(FormatterInterface::class));
-        $formatter->shouldReceive('format')->with($exception = new \Exception())->twice()->andReturn('unit');
+        $container->shouldReceive('get')->with(FormatterInterface::class)->andReturn($formatter = Mockery::mock(FormatterInterface::class));
+        $formatter->shouldReceive('format')->with($exception = new Exception())->twice()->andReturn('unit');
 
         $chan = new Channel(1);
         go(static function () use ($chan, $exception) {

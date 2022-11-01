@@ -23,6 +23,7 @@ use HyperfTest\Task\Stub\Foo;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use RuntimeException;
 use Swoole\Server;
 
 /**
@@ -68,7 +69,7 @@ class OnTaskListenerTest extends TestCase
         $event->shouldReceive('setResult')->with(Mockery::any())->andReturnUsing(function ($result) use ($event) {
             $this->assertInstanceOf(Finish::class, $result);
             $this->assertInstanceOf(Exception::class, $result->data);
-            $this->assertSame(\RuntimeException::class, $result->data->class);
+            $this->assertSame(RuntimeException::class, $result->data->class);
             $this->assertSame('Foo::exception failed.', $result->data->attributes['message']);
             $this->assertSame(0, $result->data->attributes['code']);
             return $event;

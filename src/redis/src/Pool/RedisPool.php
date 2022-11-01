@@ -17,6 +17,7 @@ use Hyperf\Pool\Pool;
 use Hyperf\Redis\Frequency;
 use Hyperf\Redis\RedisConnection;
 use Hyperf\Utils\Arr;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
 class RedisPool extends Pool
@@ -28,7 +29,7 @@ class RedisPool extends Pool
         $config = $container->get(ConfigInterface::class);
         $key = sprintf('redis.%s', $this->name);
         if (! $config->has($key)) {
-            throw new \InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
+            throw new InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
         }
 
         $this->config = $config->get($key);

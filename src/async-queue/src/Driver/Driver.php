@@ -25,6 +25,7 @@ use Hyperf\Utils\Coroutine\Concurrent;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Throwable;
 
 abstract class Driver implements DriverInterface
 {
@@ -75,7 +76,7 @@ abstract class Driver implements DriverInterface
                 if ($maxMessages > 0 && $messageCount >= $maxMessages) {
                     break;
                 }
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $logger = $this->container->get(StdoutLoggerInterface::class);
                 $logger->error((string) $exception);
             } finally {
@@ -103,7 +104,7 @@ abstract class Driver implements DriverInterface
                 }
 
                 $this->ack($data);
-            } catch (\Throwable $ex) {
+            } catch (Throwable $ex) {
                 if (isset($message, $data)) {
                     if ($message->attempts() && $this->remove($data)) {
                         $this->event && $this->event->dispatch(new RetryHandle($message, $ex));

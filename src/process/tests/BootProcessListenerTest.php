@@ -19,6 +19,7 @@ use HyperfTest\Process\Stub\FooProcess;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use ReflectionClass;
 
 /**
  * @internal
@@ -37,7 +38,7 @@ class BootProcessListenerTest extends TestCase
         $annotation = new Process(name: 'foo');
         $annotation->collectClass(FooProcess::class);
         $listener = new BootProcessListener(Mockery::mock(ContainerInterface::class), Mockery::mock(ConfigInterface::class));
-        $ref = new \ReflectionClass($listener);
+        $ref = new ReflectionClass($listener);
         $method = $ref->getMethod('getAnnotationProcesses');
         $method->setAccessible(true);
         $res = $method->invoke($listener);

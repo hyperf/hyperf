@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Stream;
 
+use BadMethodCallException;
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 use Stringable;
 
 class SwooleStream implements StreamInterface, Stringable
@@ -89,11 +91,11 @@ class SwooleStream implements StreamInterface, Stringable
      * Returns the current position of the file read/write pointer.
      *
      * @return int Position of the file pointer
-     * @throws \RuntimeException on error
+     * @throws RuntimeException on error
      */
     public function tell()
     {
-        throw new \RuntimeException('Cannot determine the position of a SwooleStream');
+        throw new RuntimeException('Cannot determine the position of a SwooleStream');
     }
 
     /**
@@ -126,11 +128,11 @@ class SwooleStream implements StreamInterface, Stringable
      *                    PHP $whence values for `fseek()`.  SEEK_SET: Set position equal to
      *                    offset bytes SEEK_CUR: Set position to current location plus offset
      *                    SEEK_END: Set position to end-of-stream plus offset.
-     * @throws \RuntimeException on failure
+     * @throws RuntimeException on failure
      */
     public function seek($offset, $whence = SEEK_SET)
     {
-        throw new \RuntimeException('Cannot seek a SwooleStream');
+        throw new RuntimeException('Cannot seek a SwooleStream');
     }
 
     /**
@@ -140,7 +142,7 @@ class SwooleStream implements StreamInterface, Stringable
      *
      * @see seek()
      * @see http://www.php.net/manual/en/function.fseek.php
-     * @throws \RuntimeException on failure
+     * @throws RuntimeException on failure
      */
     public function rewind()
     {
@@ -162,12 +164,12 @@ class SwooleStream implements StreamInterface, Stringable
      *
      * @param string $string the string that is to be written
      * @return int returns the number of bytes written to the stream
-     * @throws \RuntimeException on failure
+     * @throws RuntimeException on failure
      */
     public function write($string)
     {
         if (! $this->writable) {
-            throw new \RuntimeException('Cannot write to a non-writable stream');
+            throw new RuntimeException('Cannot write to a non-writable stream');
         }
 
         $size = strlen($string);
@@ -196,7 +198,7 @@ class SwooleStream implements StreamInterface, Stringable
      *                    call returns fewer bytes.
      * @return string returns the data read from the stream, or an empty string
      *                if no bytes are available
-     * @throws \RuntimeException if an error occurs
+     * @throws RuntimeException if an error occurs
      */
     public function read($length)
     {
@@ -217,8 +219,8 @@ class SwooleStream implements StreamInterface, Stringable
      * Returns the remaining contents in a string.
      *
      * @return string
-     * @throws \RuntimeException if unable to read or an error occurs while
-     *                           reading
+     * @throws RuntimeException if unable to read or an error occurs while
+     *                          reading
      */
     public function getContents()
     {
@@ -238,6 +240,6 @@ class SwooleStream implements StreamInterface, Stringable
      */
     public function getMetadata($key = null)
     {
-        throw new \BadMethodCallException('Not implemented');
+        throw new BadMethodCallException('Not implemented');
     }
 }

@@ -34,6 +34,7 @@ use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Timer;
 use Swoole\WebSocket\Server;
+use Throwable;
 
 /**
  *  packet types
@@ -323,7 +324,7 @@ class SocketIO implements OnMessageInterface, OnOpenInterface, OnCloseInterface
                 'addCallback' => function (string $ackId, Channel $channel, ?int $timeout = null) {
                     $this->addCallback($ackId, $channel, $timeout);
                 }, ]);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->stdoutLogger->error('Socket.io ' . $exception->getMessage());
             return null;
         }

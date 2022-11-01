@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation\Rules;
 
-class NotIn implements \Stringable
+use Stringable;
+
+class NotIn implements Stringable
 {
     /**
      * The name of the rule.

@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation\Rules;
 
-class In implements \Stringable
+use Stringable;
+
+class In implements Stringable
 {
     /**
      * The name of the rule.

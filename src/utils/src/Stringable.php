@@ -548,7 +548,7 @@ class Stringable implements JsonSerializable, \Stringable
      * Replace the patterns matching the given regular expression.
      *
      * @param string $pattern
-     * @param \Closure|string $replace
+     * @param Closure|string $replace
      * @param int $limit
      * @return static
      */
