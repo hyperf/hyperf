@@ -21,6 +21,7 @@ use longlang\phpkafka\Producer\Producer as LongLangProducer;
 use longlang\phpkafka\Producer\ProducerConfig;
 use longlang\phpkafka\Socket\SwooleSocket;
 use Swoole\Coroutine;
+use Throwable;
 
 class Producer
 {
@@ -41,7 +42,7 @@ class Producer
             try {
                 $this->producer->send($topic, $value, $key, $headers, $partitionIndex);
                 $ack->close();
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $ack->push($e);
                 throw $e;
             }
@@ -69,7 +70,7 @@ class Producer
             try {
                 $this->producer->sendBatch($messages);
                 $ack->close();
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $ack->push($e);
                 throw $e;
             }

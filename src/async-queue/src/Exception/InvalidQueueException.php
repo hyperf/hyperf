@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\AsyncQueue\Exception;
 
-class InvalidQueueException extends \RuntimeException
+use RuntimeException;
+
+class InvalidQueueException extends RuntimeException
 {
 }

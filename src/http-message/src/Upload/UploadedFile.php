@@ -12,10 +12,13 @@ declare(strict_types=1);
 namespace Hyperf\HttpMessage\Upload;
 
 use Hyperf\HttpMessage\Stream\StandardStream;
+use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use RuntimeException;
+use SplFileInfo;
 
-class UploadedFile extends \SplFileInfo implements UploadedFileInterface
+class UploadedFile extends SplFileInfo implements UploadedFileInterface
 {
     /**
      * @var int[]
@@ -115,13 +118,13 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
      * an exception.
      *
      * @return StreamInterface stream representation of the uploaded file
-     * @throws \RuntimeException in cases when no stream is available or can be
-     *                           created
+     * @throws RuntimeException in cases when no stream is available or can be
+     *                          created
      */
     public function getStream()
     {
         if ($this->moved) {
-            throw new \RuntimeException('uploaded file is moved');
+            throw new RuntimeException('uploaded file is moved');
         }
         return StandardStream::create(fopen($this->tmpFile, 'r+'));
     }
@@ -148,16 +151,16 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
      * @see http://php.net/is_uploaded_file
      * @see http://php.net/move_uploaded_file
      * @param string $targetPath path to which to move the uploaded file
-     * @throws \InvalidArgumentException if the $targetPath specified is invalid
-     * @throws \RuntimeException on any error during the move operation, or on
-     *                           the second or subsequent call to the method
+     * @throws InvalidArgumentException if the $targetPath specified is invalid
+     * @throws RuntimeException on any error during the move operation, or on
+     *                          the second or subsequent call to the method
      */
     public function moveTo($targetPath)
     {
         $this->validateActive();
 
         if (! $this->isStringNotEmpty($targetPath)) {
-            throw new \InvalidArgumentException('Invalid path provided for move operation');
+            throw new InvalidArgumentException('Invalid path provided for move operation');
         }
 
         if ($this->tmpFile) {
@@ -165,7 +168,7 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
         }
 
         if (! $this->moved) {
-            throw new \RuntimeException(sprintf('Uploaded file could not be move to %s', $targetPath));
+            throw new RuntimeException(sprintf('Uploaded file could not be move to %s', $targetPath));
         }
     }
 
@@ -244,7 +247,7 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
     private function checkError(int $error): void
     {
         if (in_array($error, UploadedFile::$errors) === false) {
-            throw new \InvalidArgumentException('Invalid error status for UploadedFile');
+            throw new InvalidArgumentException('Invalid error status for UploadedFile');
         }
     }
 
@@ -262,16 +265,16 @@ class UploadedFile extends \SplFileInfo implements UploadedFileInterface
     }
 
     /**
-     * @throws \RuntimeException if is moved or not ok
+     * @throws RuntimeException if is moved or not ok
      */
     private function validateActive()
     {
         if ($this->isOk() === false) {
-            throw new \RuntimeException('Cannot retrieve stream due to upload error');
+            throw new RuntimeException('Cannot retrieve stream due to upload error');
         }
 
         if ($this->isMoved()) {
-            throw new \RuntimeException('Cannot retrieve stream after it has already been moved');
+            throw new RuntimeException('Cannot retrieve stream after it has already been moved');
         }
     }
 }

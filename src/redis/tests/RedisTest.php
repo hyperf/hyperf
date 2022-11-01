@@ -30,6 +30,10 @@ use HyperfTest\Redis\Stub\RedisPoolFailedStub;
 use HyperfTest\Redis\Stub\RedisPoolStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use RedisCluster;
+use RedisSentinel;
+use ReflectionClass;
+use Throwable;
 
 /**
  * @internal
@@ -46,7 +50,7 @@ class RedisTest extends TestCase
     public function testRedisConnect()
     {
         $redis = new \Redis();
-        $class = new \ReflectionClass($redis);
+        $class = new ReflectionClass($redis);
         $params = $class->getMethod('connect')->getParameters();
         [$host, $port, $timeout, $retryInterval] = $params;
         $this->assertSame('host', $host->getName());
@@ -83,7 +87,7 @@ class RedisTest extends TestCase
     {
         $chan = new Chan(1);
         $redis = $this->getRedis();
-        $ref = new \ReflectionClass($redis);
+        $ref = new ReflectionClass($redis);
         $method = $ref->getMethod('getConnection');
         $method->setAccessible(true);
 
@@ -134,7 +138,7 @@ class RedisTest extends TestCase
         $redis = new Redis($factory);
         try {
             $redis->set('xxxx', 'yyyy');
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertSame('Get connection failed.', $exception->getMessage());
         }
 
@@ -144,7 +148,7 @@ class RedisTest extends TestCase
 
     public function testRedisClusterConstructor()
     {
-        $ref = new \ReflectionClass(\RedisCluster::class);
+        $ref = new ReflectionClass(RedisCluster::class);
         $method = $ref->getMethod('__construct');
         $names = [
             'name', 'seeds', 'timeout', 'read_timeout', 'persistent', 'auth',
@@ -169,7 +173,7 @@ class RedisTest extends TestCase
             $redis = new RedisProxy($factory, 'cluster1');
             $redis->get('test');
             $this->assertTrue(false);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertInstanceOf(ConnectionException::class, $exception);
             $this->assertStringNotContainsString('RedisCluster::__construct() expects parameter', $exception->getMessage());
         }
@@ -187,7 +191,7 @@ class RedisTest extends TestCase
 
     public function testRedisSentinelParams()
     {
-        $rel = new \ReflectionClass(\RedisSentinel::class);
+        $rel = new ReflectionClass(RedisSentinel::class);
         $method = $rel->getMethod('__construct');
         $count = count($method->getParameters());
         if ($count === 6) {

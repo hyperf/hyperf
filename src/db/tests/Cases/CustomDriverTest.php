@@ -17,6 +17,7 @@ use Hyperf\Contract\ConnectionInterface;
 use Hyperf\DB\Pool\Pool;
 use Hyperf\DB\Pool\PoolFactory;
 use Hyperf\Utils\ApplicationContext;
+use Mockery;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -27,7 +28,7 @@ class CustomDriverTest extends AbstractTestCase
 {
     public function testCustomDriver()
     {
-        $container = \Mockery::mock(ContainerInterface::class);
+        $container = Mockery::mock(ContainerInterface::class);
         ApplicationContext::setContainer($container);
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'db' => [

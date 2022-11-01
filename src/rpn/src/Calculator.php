@@ -21,6 +21,8 @@ use Hyperf\Rpn\Operator\HasBindings;
 use Hyperf\Rpn\Operator\MultiplyOperator;
 use Hyperf\Rpn\Operator\OperatorInterface;
 use Hyperf\Rpn\Operator\SubtractOperator;
+use SplQueue;
+use SplStack;
 
 class Calculator
 {
@@ -47,7 +49,7 @@ class Calculator
 
     public function calculate(string $expression, array $bindings = [], int $scale = 0): string
     {
-        $queue = new \SplQueue();
+        $queue = new SplQueue();
         $tags = $this->fromBindings(explode(' ', $expression), $bindings);
         foreach ($tags as $tag) {
             if (! $this->isOperator($tag)) {
@@ -89,8 +91,8 @@ class Calculator
 
     public function toRPNExpression(string $expression): string
     {
-        $numStack = new \SplStack();
-        $operaStack = new \SplStack();
+        $numStack = new SplStack();
+        $operaStack = new SplStack();
         preg_match_all('/((?:[0-9\.]+)|(?:[\(\)\+\-\*\/])){1}/', $expression, $matches);
         foreach ($matches[0] as $key => &$match) {
             if (is_numeric($match)) {

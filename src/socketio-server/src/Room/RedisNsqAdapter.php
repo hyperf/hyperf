@@ -28,6 +28,7 @@ use Hyperf\Utils\Coroutine;
 use Hyperf\WebSocketServer\Sender;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class RedisNsqAdapter extends RedisAdapter
 {
@@ -63,7 +64,7 @@ class RedisNsqAdapter extends RedisAdapter
                     try {
                         [$packet, $opts] = unserialize($message->getBody());
                         $this->doBroadcast($packet, $opts);
-                    } catch (\Throwable $exception) {
+                    } catch (Throwable $exception) {
                         $this->logger->error((string) $exception);
                         throw $exception;
                     }
@@ -97,7 +98,7 @@ class RedisNsqAdapter extends RedisAdapter
                             }
                         }
                     }
-                } catch (\Throwable $exception) {
+                } catch (Throwable $exception) {
                     $this->logger->error((string) $exception);
                 }
             }

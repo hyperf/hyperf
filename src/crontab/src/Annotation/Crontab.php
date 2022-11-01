@@ -15,6 +15,7 @@ use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\Str;
+use InvalidArgumentException;
 use ReflectionMethod;
 
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
@@ -93,7 +94,7 @@ class Crontab extends AbstractAnnotation
             } elseif ($hasInvokeMagicMethod) {
                 $this->callback = [$className, '__invoke'];
             } else {
-                throw new \InvalidArgumentException('Missing argument $callback of @Crontab annotation.');
+                throw new InvalidArgumentException('Missing argument $callback of @Crontab annotation.');
             }
         } elseif (is_string($this->callback)) {
             $this->callback = [$className, $this->callback];

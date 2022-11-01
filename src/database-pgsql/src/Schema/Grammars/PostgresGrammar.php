@@ -180,7 +180,7 @@ class PostgresGrammar extends Grammar
      * Compile a fulltext index key command.
      *
      * @return string
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function compileFulltext(Blueprint $blueprint, Fluent $command)
     {

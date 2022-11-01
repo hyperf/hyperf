@@ -11,9 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Nats;
 
+use Closure;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
+use Throwable;
 
 /**
  * Connection Class.
@@ -193,7 +195,7 @@ class Connection
      *
      * @param float $timeout number of seconds until the connect() system call should timeout
      *
-     * @throws \Throwable exception raised if connection fails
+     * @throws Throwable exception raised if connection fails
      */
     public function connect(?float $timeout = null)
     {
@@ -237,9 +239,9 @@ class Connection
      *
      * @param string $subject message topic
      * @param string $payload message data
-     * @param \Closure $callback closure to be executed as callback
+     * @param Closure $callback closure to be executed as callback
      */
-    public function request(string $subject, string $payload, \Closure $callback): void
+    public function request(string $subject, string $payload, Closure $callback): void
     {
         $inbox = uniqid('_INBOX.');
         $sid = $this->subscribe(
@@ -255,9 +257,9 @@ class Connection
      * Subscribes to a specific event given a subject.
      *
      * @param string $subject message topic
-     * @param \Closure $callback closure to be executed as callback
+     * @param Closure $callback closure to be executed as callback
      */
-    public function subscribe(string $subject, \Closure $callback): string
+    public function subscribe(string $subject, Closure $callback): string
     {
         $sid = $this->randomGenerator->generateString(16);
         $msg = 'SUB ' . $subject . ' ' . $sid;
@@ -271,9 +273,9 @@ class Connection
      *
      * @param string $subject message topic
      * @param string $queue queue name
-     * @param \Closure $callback closure to be executed as callback
+     * @param Closure $callback closure to be executed as callback
      */
-    public function queueSubscribe(string $subject, string $queue, \Closure $callback): string
+    public function queueSubscribe(string $subject, string $queue, Closure $callback): string
     {
         $sid = $this->randomGenerator->generateString(16);
         $msg = 'SUB ' . $subject . ' ' . $queue . ' ' . $sid;

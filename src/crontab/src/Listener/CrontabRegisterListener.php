@@ -22,6 +22,7 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Process\Event\BeforeCoroutineHandle;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Hyperf\Utils\ApplicationContext;
+use ReflectionException;
 
 class CrontabRegisterListener implements ListenerInterface
 {
@@ -126,7 +127,7 @@ class CrontabRegisterListener implements ListenerInterface
             }
 
             $this->logger->info('Crontab enable method is not public, skip register.');
-        } catch (\ReflectionException $e) {
+        } catch (ReflectionException $e) {
             $this->logger->error('Resolve crontab enable failed, skip register.' . $e);
         }
 

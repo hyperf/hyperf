@@ -13,6 +13,7 @@ namespace HyperfTest\Phar;
 
 use Hyperf\Phar\Package;
 use Hyperf\Phar\PharBuilder;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -24,7 +25,7 @@ class PackageTest extends TestCase
 {
     protected function tearDown(): void
     {
-        \Mockery::close();
+        Mockery::close();
     }
 
     public function testDefaults()
@@ -100,7 +101,7 @@ class PackageTest extends TestCase
 
     public function testInstallPathWhenGetPackagesDependencies()
     {
-        $logger = \Mockery::mock(LoggerInterface::class);
+        $logger = Mockery::mock(LoggerInterface::class);
         $builder = new PharBuilder(__DIR__ . '/fixtures/07-composer-versions/2.x/composer.lock', $logger);
         $packages = $builder->getPackagesDependencies();
         $this->assertSame('hyperf/engine', $packages[0]->getName());

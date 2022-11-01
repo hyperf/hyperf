@@ -13,6 +13,7 @@ namespace Hyperf\Utils;
 
 use Hyperf\Contract\IPReaderInterface;
 use Hyperf\Utils\Exception\IPReadFailedException;
+use Throwable;
 
 class IPReader implements IPReaderInterface
 {
@@ -20,7 +21,7 @@ class IPReader implements IPReaderInterface
     {
         try {
             return Network::ip();
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             throw new IPReadFailedException($throwable->getMessage());
         }
     }

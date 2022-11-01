@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Process\Exception;
 
-class ServerInvalidException extends \RuntimeException
+use RuntimeException;
+
+class ServerInvalidException extends RuntimeException
 {
 }

@@ -15,6 +15,7 @@ use Hyperf\Task\Exception\TaskException;
 use Hyperf\Task\Exception\TaskExecuteException;
 use Hyperf\Utils\Serializer\ExceptionNormalizer;
 use Swoole\Server;
+use Throwable;
 
 class TaskExecutor
 {
@@ -49,7 +50,7 @@ class TaskExecutor
 
         if ($result instanceof Exception) {
             $exception = $this->normalizer->denormalize($result->attributes, $result->class);
-            if ($exception instanceof \Throwable) {
+            if ($exception instanceof Throwable) {
                 throw $exception;
             }
 

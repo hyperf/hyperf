@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\GrpcServer;
 
+use Closure;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\ClosureDefinitionCollector;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
@@ -48,7 +49,7 @@ class CoreMiddlewareTest extends TestCase
         $this->assertInstanceOf(Request::class, $request);
         $this->assertInstanceOf(Dispatched::class, $dispatched);
         $this->assertInstanceOf(Handler::class, $dispatched->handler);
-        $this->assertInstanceOf(\Closure::class, $dispatched->handler->callback);
+        $this->assertInstanceOf(Closure::class, $dispatched->handler->callback);
         $this->assertSame($dispatched, $request->getAttribute(Dispatched::class));
         $this->assertTrue($dispatched->isFound());
     }

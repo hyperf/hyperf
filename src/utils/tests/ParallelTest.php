@@ -11,11 +11,14 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
+use Exception;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Exception\ParallelExecutionException;
 use Hyperf\Utils\Parallel;
 use Hyperf\Utils\Str;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use Throwable;
 
 /**
  * @internal
@@ -167,7 +170,7 @@ class ParallelTest extends TestCase
         $parallel = new Parallel();
         $err = function () {
             Coroutine::sleep(0.001);
-            throw new \RuntimeException('something bad happened');
+            throw new RuntimeException('something bad happened');
         };
         $ok = function () {
             Coroutine::sleep(0.001);
@@ -187,7 +190,7 @@ class ParallelTest extends TestCase
 
         $err = function () {
             Coroutine::sleep(0.001);
-            throw new \RuntimeException('something bad happened');
+            throw new RuntimeException('something bad happened');
         };
         $parallel->add($err);
 
@@ -201,7 +204,7 @@ class ParallelTest extends TestCase
 
         try {
             $parallel->wait();
-            throw new \RuntimeException();
+            throw new RuntimeException();
         } catch (ParallelExecutionException $exception) {
             foreach (['Detecting', 'RuntimeException', '#0'] as $keyword) {
                 $this->assertTrue(Str::contains($exception->getMessage(), $keyword));
@@ -260,11 +263,11 @@ class ParallelTest extends TestCase
         try {
             parallel([
                 static function () {
-                    throw new \Exception();
+                    throw new Exception();
                 },
             ]);
         } catch (ParallelExecutionException $exception) {
-            /** @var \Throwable $exception */
+            /** @var Throwable $exception */
             $exception = $exception->getThrowables()[0];
             $traces = $exception->getTrace();
             ob_start();

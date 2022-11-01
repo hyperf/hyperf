@@ -20,6 +20,7 @@ use Rx\Notification\OnCompletedNotification;
 use Rx\Notification\OnErrorNotification;
 use Rx\Notification\OnNextNotification;
 use Rx\Subject\Subject;
+use Throwable;
 
 class IpcSubject implements MessageBusInterface
 {
@@ -78,7 +79,7 @@ class IpcSubject implements MessageBusInterface
         $this->subject->onNext($value);
     }
 
-    public function onError(\Throwable $exception)
+    public function onError(Throwable $exception)
     {
         $this->init();
         $this->broadcaster->broadcast(new IpcMessageWrapper(

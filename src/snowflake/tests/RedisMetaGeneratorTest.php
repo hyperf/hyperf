@@ -31,6 +31,7 @@ use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Snowflake\Stub\UserDefinedIdGenerator;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 /**
  * @internal
@@ -183,7 +184,7 @@ class RedisMetaGeneratorTest extends TestCase
                 for ($i = 0; $i < 4100; ++$i) {
                     $result[] = $generator->generate();
                 }
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
             } finally {
                 $channel->push(Mockery::mock(ConnectionInterface::class));
             }
@@ -194,7 +195,7 @@ class RedisMetaGeneratorTest extends TestCase
                 for ($i = 0; $i < 900; ++$i) {
                     $result[] = $generator->generate();
                 }
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
             } finally {
                 $channel->push(Mockery::mock(ConnectionInterface::class));
             }

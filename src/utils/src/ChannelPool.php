@@ -12,8 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use Hyperf\Engine\Channel;
+use SplQueue;
 
-class ChannelPool extends \SplQueue
+class ChannelPool extends SplQueue
 {
     private static ?ChannelPool $instance = null;
 
