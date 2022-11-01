@@ -19,4 +19,6 @@ jobs:
       - name: Split And Push
         run: |
           git config pull.rebase true
+          git config --global user.email "group@hyperf.io"
+          git config --global user.name "Hyperf Developers"
           ./bin/split-linux.sh amqp
