@@ -204,7 +204,7 @@ class Builder
     /**
      * Drop all tables from the database.
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     public function dropAllTables(): void
     {
@@ -214,7 +214,7 @@ class Builder
     /**
      * Drop all views from the database.
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     public function dropAllViews(): void
     {

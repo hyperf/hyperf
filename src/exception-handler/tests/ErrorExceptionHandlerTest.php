@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\ExceptionHandler;
 
+use ErrorException;
 use Hyperf\ExceptionHandler\Listener\ErrorExceptionHandler;
 use PHPUnit\Framework\TestCase;
 
@@ -25,7 +26,7 @@ class ErrorExceptionHandlerTest extends TestCase
         $listener = new ErrorExceptionHandler();
         $listener->process((object) []);
 
-        $this->expectException(\ErrorException::class);
+        $this->expectException(ErrorException::class);
         if (version_compare(PHP_VERSION, '8.0', '>=')) {
             $this->expectExceptionMessage('Undefined array key 1');
         } else {

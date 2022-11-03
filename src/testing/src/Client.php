@@ -31,6 +31,7 @@ use Hyperf\Utils\Packer\JsonPacker;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 class Client extends Server
 {
@@ -204,7 +205,7 @@ class Client extends Server
 
         try {
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             // Delegate the exception to exception handler.
             $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
         }

@@ -29,10 +29,12 @@ use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Server\Exception\ServerException;
 use Hyperf\Utils\Codec\Json;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
 
 /**
  * Core middleware of Hyperf, main responsibility is used to handle route info
@@ -172,7 +174,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
         if (is_array($handler) && isset($handler[0], $handler[1])) {
             return $handler;
         }
-        throw new \RuntimeException('Handler not exist.');
+        throw new RuntimeException('Handler not exist.');
     }
 
     /**
@@ -250,7 +252,7 @@ class CoreMiddleware implements CoreMiddlewareInterface
                 } elseif ($definition->allowsNull()) {
                     $injections[] = null;
                 } else {
-                    throw new \InvalidArgumentException("Parameter '{$definition->getMeta('name')}' "
+                    throw new InvalidArgumentException("Parameter '{$definition->getMeta('name')}' "
                         . "of {$callableName} should not be null");
                 }
             } else {

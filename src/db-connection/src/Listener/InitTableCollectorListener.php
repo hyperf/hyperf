@@ -22,6 +22,7 @@ use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class InitTableCollectorListener implements ListenerInterface
 {
@@ -55,7 +56,7 @@ class InitTableCollectorListener implements ListenerInterface
             foreach ($pools as $name) {
                 $this->initTableCollector($name);
             }
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             $this->logger->error((string) $throwable);
         }
     }

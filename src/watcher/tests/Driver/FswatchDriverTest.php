@@ -17,8 +17,10 @@ use Hyperf\Engine\Coroutine;
 use Hyperf\Watcher\Driver\FswatchDriver;
 use Hyperf\Watcher\Option;
 use HyperfTest\Watcher\Stub\ContainerStub;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine\System;
+
+use function Hyperf\Watcher\exec;
 
 /**
  * @internal
@@ -34,9 +36,9 @@ class FswatchDriverTest extends TestCase
         try {
             $driver = new FswatchDriver($option);
             Coroutine::create(fn () => $driver->watch($channel));
-            System::exec('echo 1 > /tmp/.env');
+            exec('echo 1 > /tmp/.env');
             $this->assertStringEndsWith('.env', $channel->pop($option->getScanIntervalSeconds() + 0.1));
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             if (str_contains($e->getMessage(), 'fswatch not exists')) {
                 $this->markTestSkipped();
             }

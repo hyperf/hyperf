@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcClient\Proxy;
 
+use InvalidArgumentException;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
@@ -36,7 +37,7 @@ class Ast
     public function proxy(string $className, string $proxyClassName)
     {
         if (! interface_exists($className)) {
-            throw new \InvalidArgumentException("'{$className}' should be an interface name");
+            throw new InvalidArgumentException("'{$className}' should be an interface name");
         }
         if (str_contains($proxyClassName, '\\')) {
             $exploded = explode('\\', $proxyClassName);

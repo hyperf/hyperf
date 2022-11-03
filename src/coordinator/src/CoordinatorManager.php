@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Coordinator;
 
+use RuntimeException;
+
 class CoordinatorManager
 {
     /**
@@ -31,7 +33,7 @@ class CoordinatorManager
     /**
      * Get a Coordinator from container by the identifier.
      *
-     * @throws \RuntimeException when the Coordinator with the identifier has not initialization
+     * @throws RuntimeException when the Coordinator with the identifier has not initialization
      */
     public static function until(string $identifier): Coordinator
     {

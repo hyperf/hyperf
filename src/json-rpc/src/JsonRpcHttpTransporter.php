@@ -17,6 +17,7 @@ use Hyperf\Guzzle\ClientFactory;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\TransporterInterface;
+use RuntimeException;
 
 class JsonRpcHttpTransporter implements TransporterInterface
 {
@@ -80,7 +81,7 @@ class JsonRpcHttpTransporter implements TransporterInterface
 
     public function recv()
     {
-        throw new \RuntimeException(__CLASS__ . ' does not support recv method.');
+        throw new RuntimeException(__CLASS__ . ' does not support recv method.');
     }
 
     public function getClient(): Client

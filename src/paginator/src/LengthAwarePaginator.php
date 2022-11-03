@@ -18,6 +18,7 @@ use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Utils\Collection;
 use IteratorAggregate;
 use JsonSerializable;
+use RuntimeException;
 
 class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Countable, IteratorAggregate, JsonSerializable, Jsonable, LengthAwarePaginatorInterface
 {
@@ -69,7 +70,7 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Count
     public function render(?string $view = null, array $data = []): string
     {
         if ($view) {
-            throw new \RuntimeException('WIP.');
+            throw new RuntimeException('WIP.');
         }
         return json_encode(array_merge($data, $this->items()), 0);
     }

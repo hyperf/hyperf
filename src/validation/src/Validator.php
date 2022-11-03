@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Validation;
 
 use BadMethodCallException;
+use Closure;
 use Hyperf\Contract\MessageBag as MessageBagContract;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\ValidatorInterface as ValidatorContract;
@@ -25,6 +26,7 @@ use Hyperf\Validation\Contract\PresenceVerifierInterface;
 use Hyperf\Validation\Contract\Rule as RuleContract;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
+use Stringable;
 
 class Validator implements ValidatorContract
 {
@@ -84,7 +86,7 @@ class Validator implements ValidatorContract
     /**
      * The current rule that is validating.
      *
-     * @var string|\Stringable
+     * @var string|Stringable
      */
     protected mixed $currentRule;
 
@@ -161,7 +163,7 @@ class Validator implements ValidatorContract
      *
      * @param mixed $method
      * @param mixed $parameters
-     * @throws \BadMethodCallException when method does not exist
+     * @throws BadMethodCallException when method does not exist
      */
     public function __call($method, $parameters)
     {
@@ -387,7 +389,7 @@ class Validator implements ValidatorContract
     /**
      * Determine if the given attribute has a rule in the given set.
      *
-     * @param array|string|\Stringable $rules
+     * @param array|string|Stringable $rules
      */
     public function hasRule(string $attribute, mixed $rules): bool
     {
@@ -526,7 +528,7 @@ class Validator implements ValidatorContract
     /**
      * Register a custom validator extension.
      */
-    public function addExtension(string $rule, \Closure|string $extension)
+    public function addExtension(string $rule, Closure|string $extension)
     {
         $this->extensions[Str::snake($rule)] = $extension;
     }
@@ -534,7 +536,7 @@ class Validator implements ValidatorContract
     /**
      * Register a custom implicit validator extension.
      */
-    public function addImplicitExtension(string $rule, \Closure|string $extension)
+    public function addImplicitExtension(string $rule, Closure|string $extension)
     {
         $this->addExtension($rule, $extension);
 
@@ -544,7 +546,7 @@ class Validator implements ValidatorContract
     /**
      * Register a custom dependent validator extension.
      */
-    public function addDependentExtension(string $rule, \Closure|string $extension)
+    public function addDependentExtension(string $rule, Closure|string $extension)
     {
         $this->addExtension($rule, $extension);
 
@@ -568,7 +570,7 @@ class Validator implements ValidatorContract
     /**
      * Register a custom validator message replacer.
      */
-    public function addReplacer(string $rule, \Closure|string $replacer)
+    public function addReplacer(string $rule, Closure|string $replacer)
     {
         $this->replacers[Str::snake($rule)] = $replacer;
     }
@@ -634,7 +636,7 @@ class Validator implements ValidatorContract
     /**
      * Get the Presence Verifier implementation.
      *
-     *@throws \RuntimeException
+     *@throws RuntimeException
      */
     public function getPresenceVerifier(): PresenceVerifierInterface
     {
@@ -648,7 +650,7 @@ class Validator implements ValidatorContract
     /**
      * Get the Presence Verifier implementation.
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function getPresenceVerifierFor(?string $connection): PresenceVerifierInterface
     {
@@ -930,7 +932,7 @@ class Validator implements ValidatorContract
     /**
      * Get a rule and its parameters for a given attribute.
      *
-     * @param array|string|\Stringable $rules
+     * @param array|string|Stringable $rules
      */
     protected function getRule(string $attribute, mixed $rules): ?array
     {

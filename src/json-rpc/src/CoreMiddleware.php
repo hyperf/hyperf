@@ -17,6 +17,7 @@ use Hyperf\Rpc\Protocol;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 {
@@ -49,7 +50,7 @@ class CoreMiddleware extends \Hyperf\RpcServer\CoreMiddleware
 
             try {
                 $response = $controllerInstance->{$action}(...$parameters);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $response = $this->responseBuilder->buildErrorResponse($request, ResponseBuilder::SERVER_ERROR, $exception);
                 $this->responseBuilder->persistToContext($response);
 

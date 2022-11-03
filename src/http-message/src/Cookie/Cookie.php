@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Cookie;
 
+use DateTimeInterface;
+use InvalidArgumentException;
 use Stringable;
 
 class Cookie implements Stringable
@@ -30,7 +32,7 @@ class Cookie implements Stringable
     /**
      * @param string $name The name of the cookie
      * @param string $value The value of the cookie
-     * @param \DateTimeInterface|int|string $expire The time the cookie expires
+     * @param DateTimeInterface|int|string $expire The time the cookie expires
      * @param string $path The path on the server in which the cookie will be available on
      * @param string $domain The domain that the cookie is available to
      * @param bool $secure Whether the cookie should only be transmitted over a secure HTTPS connection from the client
@@ -38,7 +40,7 @@ class Cookie implements Stringable
      * @param bool $raw Whether the cookie value should be sent with no url encoding
      * @param null|string $sameSite Whether the cookie will be available for cross-site requests
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(
         protected string $name,
@@ -53,21 +55,21 @@ class Cookie implements Stringable
     ) {
         // from PHP source code
         if (preg_match("/[=,; \t\r\n\013\014]/", $name)) {
-            throw new \InvalidArgumentException(sprintf('The cookie name "%s" contains invalid characters.', $name));
+            throw new InvalidArgumentException(sprintf('The cookie name "%s" contains invalid characters.', $name));
         }
 
         if (empty($name)) {
-            throw new \InvalidArgumentException('The cookie name cannot be empty.');
+            throw new InvalidArgumentException('The cookie name cannot be empty.');
         }
 
         // convert expiration time to a Unix timestamp
-        if ($expire instanceof \DateTimeInterface) {
+        if ($expire instanceof DateTimeInterface) {
             $expire = $expire->format('U');
         } elseif (! is_numeric($expire)) {
             $expire = strtotime($expire);
 
             if ($expire === false) {
-                throw new \InvalidArgumentException('The cookie expiration time is not valid.');
+                throw new InvalidArgumentException('The cookie expiration time is not valid.');
             }
         }
 
@@ -79,7 +81,7 @@ class Cookie implements Stringable
         }
 
         if (! in_array($sameSite, [self::SAMESITE_LAX, self::SAMESITE_STRICT, self::SAMESITE_NONE, null], true)) {
-            throw new \InvalidArgumentException('The "sameSite" parameter value is not valid.');
+            throw new InvalidArgumentException('The "sameSite" parameter value is not valid.');
         }
 
         $this->sameSite = $sameSite;

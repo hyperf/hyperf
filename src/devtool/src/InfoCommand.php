@@ -35,6 +35,7 @@ class InfoCommand extends SymfonyCommand
         $type = $input->getArgument('type');
         if (! $this->info->has($type)) {
             $output->writeln(sprintf('<error>Error</error> Info type [%s] not exist.', $type));
+            return 0;
         }
         $adapter = $this->info->get($type);
         $adapter->execute($input, $output);

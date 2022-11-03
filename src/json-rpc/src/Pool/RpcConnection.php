@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\JsonRpc\Pool;
 
+use Closure;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Engine\Contract\Socket\SocketFactoryInterface;
 use Hyperf\Engine\Contract\SocketInterface;
@@ -83,7 +84,7 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
 
     public function reconnect(): bool
     {
-        if (! $this->config['node'] instanceof \Closure) {
+        if (! $this->config['node'] instanceof Closure) {
             throw new ConnectionException('Node of Connection is invalid.');
         }
 

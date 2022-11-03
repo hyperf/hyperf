@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils\Stub;
 
-class Car implements \JsonSerializable
+use JsonSerializable;
+
+class Car implements JsonSerializable
 {
     public function jsonSerialize(): mixed
     {

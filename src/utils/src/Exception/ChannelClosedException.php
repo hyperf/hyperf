@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Exception;
 
-class ChannelClosedException extends \RuntimeException
+use RuntimeException;
+
+class ChannelClosedException extends RuntimeException
 {
 }

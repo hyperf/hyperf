@@ -26,6 +26,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Throwable;
 
 abstract class Command extends SymfonyCommand
 {
@@ -421,7 +422,7 @@ abstract class Command extends SymfonyCommand
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\BeforeHandle($this));
                 $this->handle();
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\AfterHandle($this));
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 if (class_exists(ExitException::class) && $exception instanceof ExitException) {
                     return $this->exitCode = (int) $exception->getStatus();
                 }
@@ -433,7 +434,7 @@ abstract class Command extends SymfonyCommand
                 $this->output && $this->error($exception->getMessage());
 
                 $this->eventDispatcher->dispatch(new Event\FailToHandle($this, $exception));
-                return $this->exitCode = $exception->getCode();
+                return $this->exitCode = (int) $exception->getCode();
             } finally {
                 $this->eventDispatcher && $this->eventDispatcher->dispatch(new Event\AfterExecute($this));
             }

@@ -13,6 +13,7 @@ namespace Hyperf\Utils;
 
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\Exception\ParallelExecutionException;
+use Throwable;
 
 class Parallel
 {
@@ -26,7 +27,7 @@ class Parallel
     private array $results = [];
 
     /**
-     * @var \Throwable[]
+     * @var Throwable[]
      */
     private array $throwables = [];
 
@@ -59,7 +60,7 @@ class Parallel
             Coroutine::create(function () use ($callback, $key, $wg) {
                 try {
                     $this->results[$key] = $callback();
-                } catch (\Throwable $throwable) {
+                } catch (Throwable $throwable) {
                     $this->throwables[$key] = $throwable;
                     unset($this->results[$key]);
                 } finally {
@@ -95,7 +96,7 @@ class Parallel
     /**
      * Format throwables into a nice list.
      *
-     * @param \Throwable[] $throwables
+     * @param Throwable[] $throwables
      */
     private function formatThrowables(array $throwables): string
     {

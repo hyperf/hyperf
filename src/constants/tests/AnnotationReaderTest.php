@@ -22,6 +22,7 @@ use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Constants\Stub\ErrorCodeStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @internal
@@ -33,7 +34,7 @@ class AnnotationReaderTest extends TestCase
     {
         $reader = new AnnotationReader();
 
-        $ref = new \ReflectionClass(ErrorCodeStub::class);
+        $ref = new ReflectionClass(ErrorCodeStub::class);
         $classConstants = $ref->getReflectionConstants();
 
         $data = $reader->getAnnotations($classConstants);

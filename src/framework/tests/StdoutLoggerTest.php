@@ -17,6 +17,7 @@ use Hyperf\Framework\Logger\StdoutLogger;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
+use RuntimeException;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
@@ -61,6 +62,6 @@ class StdoutLoggerTest extends TestCase
             ],
         ]), $output);
 
-        $logger->error(new \RuntimeException('Invalid Arguments.'));
+        $logger->error(new RuntimeException('Invalid Arguments.'));
     }
 }

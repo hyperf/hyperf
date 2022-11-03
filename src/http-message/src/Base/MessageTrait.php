@@ -12,8 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\HttpMessage\Base;
 
 use Hyperf\HttpMessage\Stream\SwooleStream;
+use InvalidArgumentException;
 use Laminas\Mime\Decode;
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
+use Throwable;
 
 /**
  * Trait implementing functionality common to requests and responses.
@@ -160,7 +163,7 @@ trait MessageTrait
      * @param string $name case-insensitive header field name
      * @param string|string[] $value header value(s)
      * @return static
-     * @throws \InvalidArgumentException for invalid header names or values
+     * @throws InvalidArgumentException for invalid header names or values
      */
     public function withHeader($name, $value)
     {
@@ -202,7 +205,7 @@ trait MessageTrait
      * @param string $name case-insensitive header field name to add
      * @param string|string[] $value header value(s)
      * @return static
-     * @throws \InvalidArgumentException for invalid header names or values
+     * @throws InvalidArgumentException for invalid header names or values
      */
     public function withAddedHeader($name, $value)
     {
@@ -274,7 +277,7 @@ trait MessageTrait
      *
      * @param StreamInterface $body body
      * @return static
-     * @throws \InvalidArgumentException when the body is not valid
+     * @throws InvalidArgumentException when the body is not valid
      */
     public function withBody(StreamInterface $body)
     {
@@ -300,7 +303,7 @@ trait MessageTrait
      * @param string $wantedPart the wanted part, default is first, if null an array with all parts is returned
      * @param string $firstName key name for the first part
      * @return array|string wanted part or all parts as array($firstName => firstPart, partname => value)
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function getHeaderField(string $name, string $wantedPart = '0', string $firstName = '0')
     {
@@ -321,7 +324,7 @@ trait MessageTrait
     {
         try {
             return stripos($this->getContentType(), 'multipart/') === 0;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return false;
         }
     }

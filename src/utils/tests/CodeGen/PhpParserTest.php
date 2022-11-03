@@ -19,6 +19,7 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @internal
@@ -37,7 +38,7 @@ class PhpParserTest extends TestCase
         $name = $classMethod->getParams()[0];
         $foo = $classMethod->getParams()[1];
         $extra = $classMethod->getParams()[2];
-        $bar = new \ReflectionClass(Bar::class);
+        $bar = new ReflectionClass(Bar::class);
         $parameters = $bar->getMethod('__construct')->getParameters();
         $parser = new PhpParser();
         $this->assertNodeParam($name, $parser->getNodeFromReflectionParameter($parameters[0]));
@@ -51,7 +52,7 @@ class PhpParserTest extends TestCase
             $classMethod = $stmts[1]->stmts[0]->stmts[0];
             $name = $classMethod->getParams()[0];
 
-            $foo = new \ReflectionClass(UnionTypeFoo::class);
+            $foo = new ReflectionClass(UnionTypeFoo::class);
             $parameters = $foo->getMethod('__construct')->getParameters();
             $this->assertNodeParam($name, $parser->getNodeFromReflectionParameter($parameters[0]));
         }

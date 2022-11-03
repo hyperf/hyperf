@@ -24,6 +24,7 @@ use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Retry\Stub\Foo;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 /**
  * @internal
@@ -68,7 +69,7 @@ class CircuitBreakerAnotationAspectTest extends TestCase
                 }
             }
         );
-        $point->shouldReceive('process')->times(2)->andThrow(new \RuntimeException('ok'));
+        $point->shouldReceive('process')->times(2)->andThrow(new RuntimeException('ok'));
         $point->shouldReceive('getArguments')->andReturns([]);
         $this->expectException('RuntimeException');
         $aspect->process($point);
@@ -96,7 +97,7 @@ class CircuitBreakerAnotationAspectTest extends TestCase
                 }
             }
         );
-        $point->shouldReceive('process')->times(2)->andThrow(new \RuntimeException('ok'));
+        $point->shouldReceive('process')->times(2)->andThrow(new RuntimeException('ok'));
         $point->shouldReceive('getArguments')->andReturns([$string = uniqid()]);
         $result = $aspect->process($point);
         static::assertSame($string . ':ok', $result);

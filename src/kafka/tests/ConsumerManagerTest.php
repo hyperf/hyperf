@@ -26,6 +26,7 @@ use longlang\phpkafka\Consumer\ConsumeMessage;
 use longlang\phpkafka\Consumer\ConsumerConfig;
 use longlang\phpkafka\Socket\SwooleSocket;
 use Mockery;
+use stdClass;
 
 /**
  * @internal
@@ -114,7 +115,7 @@ class ConsumerManagerTest extends TestCase
         $hasRegistered = false;
         /** @var AbstractProcess $item */
         foreach (ProcessManager::all() as $item) {
-            $this->assertFalse($item->isEnable(new \stdClass()));
+            $this->assertFalse($item->isEnable(new stdClass()));
             break;
         }
 

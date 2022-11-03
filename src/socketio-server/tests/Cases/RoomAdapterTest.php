@@ -32,6 +32,7 @@ use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
 use Mix\Redis\Subscriber\Subscriber;
 use Mockery;
+use Throwable;
 
 /**
  * @internal
@@ -116,7 +117,7 @@ class RoomAdapterTest extends AbstractTestCase
         // Test empty room
         try {
             $room->del('non-exist');
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             $this->assertTrue(false);
         }
 

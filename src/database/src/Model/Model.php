@@ -26,6 +26,7 @@ use Hyperf\Utils\Str;
 use JsonSerializable;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
+use Throwable;
 
 /**
  * @mixin ModelIDE
@@ -578,7 +579,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Save the model to the database using transaction.
      *
      * @return bool
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function saveOrFail(array $options = [])
     {
@@ -623,7 +624,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Delete the model from the database.
      *
      * @return null|bool
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete()
     {

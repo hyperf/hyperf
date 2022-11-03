@@ -17,6 +17,7 @@ use Hyperf\ExceptionHandler\Annotation\ExceptionHandler;
 use Hyperf\ExceptionHandler\Listener\ExceptionHandlerListener;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @internal
@@ -45,7 +46,7 @@ class ExceptionHandlerListenerTest extends TestCase
             ],
         ]);
         $listener = new ExceptionHandlerListener($config);
-        $listener->process(new \stdClass());
+        $listener->process(new stdClass());
         $this->assertSame($http, $config->get('exceptions.handler', [])['http']);
         $this->assertSame($ws, $config->get('exceptions.handler', [])['ws']);
     }
@@ -63,7 +64,7 @@ class ExceptionHandlerListenerTest extends TestCase
         ]);
         AnnotationCollector::collectClass('Bar1', ExceptionHandler::class, new ExceptionHandler('http', 1));
         $listener = new ExceptionHandlerListener($config);
-        $listener->process(new \stdClass());
+        $listener->process(new stdClass());
         $this->assertSame([
             'http' => [
                 'Bar1', 'Foo', 'Bar',
@@ -88,7 +89,7 @@ class ExceptionHandlerListenerTest extends TestCase
         AnnotationCollector::collectClass('Bar1', ExceptionHandler::class, new ExceptionHandler('http', 0));
         AnnotationCollector::collectClass('Bar', ExceptionHandler::class, new ExceptionHandler('ws', 1));
         $listener = new ExceptionHandlerListener($config);
-        $listener->process(new \stdClass());
+        $listener->process(new stdClass());
         $this->assertEquals(['Foo', 'Bar', 'Bar1'], $config->get('exceptions.handler', [])['http']);
         $this->assertEquals(['Bar', 'Foo'], $config->get('exceptions.handler', [])['ws']);
     }
@@ -106,7 +107,7 @@ class ExceptionHandlerListenerTest extends TestCase
         ]);
         AnnotationCollector::collectClass('Tar', ExceptionHandler::class, new ExceptionHandler('http', 1));
         $listener = new ExceptionHandlerListener($config);
-        $listener->process(new \stdClass());
+        $listener->process(new stdClass());
         $this->assertSame([
             'http' => [
                 'Tar', 'Foo', 'Bar',

@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Guzzle\RingPHP;
 
+use Exception;
 use GuzzleHttp\Ring\Core;
 use GuzzleHttp\Ring\Exception\RingException;
 use GuzzleHttp\Ring\Future\CompletedFutureArray;
 use Hyperf\Engine\Http\Client;
 use Hyperf\Engine\Http\RawResponse;
 use Hyperf\Utils\ResourceGenerator;
+use Throwable;
 
 /**
  * Http handler that uses Swoole Coroutine as a transport layer.
@@ -57,7 +59,7 @@ class CoroutineHandler
 
         try {
             $raw = $client->request($method, $path, $headers, (string) $body);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $exception = new RingException($exception->getMessage());
             return $this->getErrorResponse($exception, $beginTime, $effectiveUrl);
         }
@@ -117,7 +119,7 @@ class CoroutineHandler
         return $headers;
     }
 
-    protected function getErrorResponse(\Throwable $throwable, float $beginTime, string $effectiveUrl)
+    protected function getErrorResponse(Throwable $throwable, float $beginTime, string $effectiveUrl)
     {
         return new CompletedFutureArray([
             'curl' => [

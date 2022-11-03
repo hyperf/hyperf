@@ -13,9 +13,12 @@ namespace Hyperf\Utils\Serializer;
 
 use Doctrine\Instantiator\Instantiator;
 use Hyperf\Di\ReflectionManager;
+use RuntimeException;
+use Serializable;
 use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Throwable;
 
 class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface, CacheableSupportsMethodInterface
 {
@@ -25,7 +28,7 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
     {
         if (is_string($data)) {
             $ex = unserialize($data);
-            if ($ex instanceof \Throwable) {
+            if ($ex instanceof Throwable) {
                 return $ex;
             }
 
@@ -44,13 +47,13 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
                 }
                 return $exception;
             } catch (\ReflectionException) {
-                return new \RuntimeException(sprintf(
+                return new RuntimeException(sprintf(
                     'Bad data %s: %s',
                     $data['class'],
                     $data['message']
                 ), $data['code']);
             } catch (\TypeError) {
-                return new \RuntimeException(sprintf(
+                return new RuntimeException(sprintf(
                     'Uncaught data %s: %s',
                     $data['class'],
                     $data['message']
@@ -58,17 +61,17 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
             }
         }
 
-        return new \RuntimeException('Bad data data: ' . json_encode($data));
+        return new RuntimeException('Bad data data: ' . json_encode($data));
     }
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return class_exists($type) && is_a($type, \Throwable::class, true);
+        return class_exists($type) && is_a($type, Throwable::class, true);
     }
 
     public function normalize($object, string $format = null, array $context = [])
     {
-        if ($object instanceof \Serializable) {
+        if ($object instanceof Serializable) {
             return serialize($object);
         }
         /* @var \Throwable $object */
@@ -82,7 +85,7 @@ class ExceptionNormalizer implements NormalizerInterface, DenormalizerInterface,
 
     public function supportsNormalization($data, string $format = null)
     {
-        return $data instanceof \Throwable;
+        return $data instanceof Throwable;
     }
 
     public function hasCacheableSupportsMethod(): bool

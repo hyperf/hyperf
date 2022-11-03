@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils\Exception;
 
-class RetryException extends \Exception
+use Exception;
+
+class RetryException extends Exception
 {
 }

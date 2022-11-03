@@ -12,8 +12,9 @@ declare(strict_types=1);
 namespace HyperfTest\DbConnection\Stubs;
 
 use PDO;
+use PDOStatement;
 
-class PDOStatementStub extends \PDOStatement
+class PDOStatementStub extends PDOStatement
 {
     public $statement;
 

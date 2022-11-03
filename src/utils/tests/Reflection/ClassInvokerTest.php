@@ -14,6 +14,7 @@ namespace HyperfTest\Utils\Reflection;
 use Hyperf\Utils\Reflection\ClassInvoker;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 /**
  * @internal
@@ -52,7 +53,7 @@ class ClassInvokerTest extends TestCase
     {
         $invoker = new ClassInvoker(new Caller());
 
-        $this->expectException(\ReflectionException::class);
+        $this->expectException(ReflectionException::class);
         if (version_compare(PHP_VERSION, '8.0', '>=')) {
             $this->expectExceptionMessage('Method HyperfTest\Utils\Reflection\Caller::zero() does not exist');
         } else {
@@ -65,7 +66,7 @@ class ClassInvokerTest extends TestCase
     {
         $invoker = new ClassInvoker(new Caller());
 
-        $this->expectException(\ReflectionException::class);
+        $this->expectException(ReflectionException::class);
         if (version_compare(PHP_VERSION, '8.0', '>=')) {
             $this->expectExceptionMessage('Property HyperfTest\Utils\Reflection\Caller::$zero does not exist');
         } else {

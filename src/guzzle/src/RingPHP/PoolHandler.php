@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Guzzle\RingPHP;
 
+use Exception;
 use GuzzleHttp\Ring\Core;
 use GuzzleHttp\Ring\Exception\RingException;
 use Hyperf\Engine\Http\Client;
@@ -61,7 +62,7 @@ class PoolHandler extends CoroutineHandler
 
             try {
                 $raw = $client->request($method, $path, $headers, (string) $body);
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $connection->close();
                 $exception = new RingException($exception->getMessage());
                 return $this->getErrorResponse($exception, $beginTime, $effectiveUrl);

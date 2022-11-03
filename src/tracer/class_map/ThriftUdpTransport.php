@@ -19,8 +19,10 @@ use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Socket;
 use Thrift\Exception\TTransportException;
 use Thrift\Transport\TTransport;
+use Throwable;
 
 class ThriftUdpTransport extends TTransport
 {
@@ -40,7 +42,7 @@ class ThriftUdpTransport extends TTransport
     private $logger;
 
     /**
-     * @var null|resource|\Socket
+     * @var null|resource|Socket
      */
     private $socket;
 
@@ -177,7 +179,7 @@ class ThriftUdpTransport extends TTransport
                             break 2;
                         }
                         $closure->call($this);
-                    } catch (\Throwable $e) {
+                    } catch (Throwable $e) {
                         if (ApplicationContext::hasContainer()) {
                             if (ApplicationContext::getContainer()->has(StdoutLoggerInterface::class)) {
                                 ApplicationContext::getContainer()

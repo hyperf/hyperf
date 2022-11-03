@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Serializer;
 
+use Countable;
 use Hyperf\Contract\NormalizerInterface as Normalizer;
 use Symfony\Component\Serializer\Encoder;
 use Symfony\Component\Serializer\Encoder\ChainDecoder;
@@ -32,6 +33,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerAwareInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Traversable;
 
 /**
  * Serializer serializes and deserializes data.
@@ -149,8 +151,8 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
             return $object;
         }
 
-        if (\is_array($object) || $object instanceof \Traversable) {
-            if ($object instanceof \Countable && $object->count() === 0) {
+        if (\is_array($object) || $object instanceof Traversable) {
+            if ($object instanceof Countable && $object->count() === 0) {
                 return $object;
             }
 

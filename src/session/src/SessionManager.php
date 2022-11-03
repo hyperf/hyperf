@@ -14,8 +14,10 @@ namespace Hyperf\Session;
 use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\SessionInterface;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 use SessionHandlerInterface;
 
 class SessionManager
@@ -35,7 +37,7 @@ class SessionManager
         // @TODO Use make() function to create Session object.
         $session = new Session($this->getSessionName(), $this->buildSessionHandler(), $sessionId);
         if (! $session->start()) {
-            throw new \RuntimeException('Start session failed.');
+            throw new RuntimeException('Start session failed.');
         }
         $this->setSession($session);
         return $session;
@@ -72,7 +74,7 @@ class SessionManager
     {
         $handler = $this->config->get('session.handler');
         if (! $handler || ! class_exists($handler)) {
-            throw new \InvalidArgumentException('Invalid handler of session');
+            throw new InvalidArgumentException('Invalid handler of session');
         }
         return $this->container->get($handler);
     }

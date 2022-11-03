@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Consul;
 
+use Closure;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\TransferException;
 use Hyperf\Consul\Exception\ClientException;
@@ -27,7 +28,7 @@ abstract class Client
      * and the closure should return a GuzzleHttp\ClientInterface instance.
      * $clientFactory(array $options).
      *
-     * @var \Closure
+     * @var Closure
      */
     private $clientFactory;
 
@@ -36,7 +37,7 @@ abstract class Client
      */
     private $logger;
 
-    public function __construct(\Closure $clientFactory, LoggerInterface $logger = null)
+    public function __construct(Closure $clientFactory, LoggerInterface $logger = null)
     {
         $this->clientFactory = $clientFactory;
         $this->logger = $logger ?: new NullLogger();

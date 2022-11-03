@@ -14,6 +14,7 @@ namespace Hyperf\DB;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Pool\Connection;
 use Hyperf\Pool\Exception\ConnectionException;
+use Throwable;
 
 abstract class AbstractConnection extends Connection implements ConnectionInterface
 {
@@ -52,7 +53,7 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
         return $this;
     }
 
-    public function retry(\Throwable $throwable, $name, $arguments)
+    public function retry(Throwable $throwable, $name, $arguments)
     {
         if ($this->transactionLevel() > 0) {
             throw $throwable;
@@ -62,7 +63,7 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
             try {
                 $this->reconnect();
                 return $this->{$name}(...$arguments);
-            } catch (\Throwable $throwable) {
+            } catch (Throwable $throwable) {
                 if ($this->container->has(StdoutLoggerInterface::class)) {
                     $logger = $this->container->get(StdoutLoggerInterface::class);
                     $logger->error('Connection execute retry failed. message = ' . $throwable->getMessage());

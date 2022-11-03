@@ -19,7 +19,8 @@ use Hyperf\Watcher\Option;
 use HyperfTest\Watcher\Stub\ContainerStub;
 use HyperfTest\Watcher\Stub\ScanFileDriverStub;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine\System;
+
+use function Hyperf\Watcher\exec;
 
 /**
  * @internal
@@ -37,7 +38,7 @@ class ScanFileDriverTest extends TestCase
 
         $driver->watch($channel);
 
-        System::exec('echo 1 > /tmp/.env');
+        exec('echo 1 > /tmp/.env');
         $this->assertStringEndsWith('.env', $channel->pop($option->getScanIntervalSeconds() + 0.1));
         $channel->close();
     }

@@ -14,7 +14,9 @@ namespace Hyperf\Watcher\Driver;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\Str;
 use Hyperf\Watcher\Option;
-use Swoole\Coroutine\System;
+use InvalidArgumentException;
+
+use function Hyperf\Watcher\exec;
 
 class FindDriver extends AbstractDriver
 {
@@ -27,16 +29,16 @@ class FindDriver extends AbstractDriver
         parent::__construct($option);
 
         if ($this->isDarwin()) {
-            $ret = System::exec('which gfind');
+            $ret = exec('which gfind');
             if (empty($ret['output'])) {
-                throw new \InvalidArgumentException('gfind not exists. You can `brew install findutils` to install it.');
+                throw new InvalidArgumentException('gfind not exists. You can `brew install findutils` to install it.');
             }
         } else {
-            $ret = System::exec('which find');
+            $ret = exec('which find');
             if (empty($ret['output'])) {
-                throw new \InvalidArgumentException('find not exists.');
+                throw new InvalidArgumentException('find not exists.');
             }
-            $ret = System::exec('find --help', true);
+            $ret = exec('find --help');
             $this->isSupportFloatMinutes = ! str_contains($ret['output'] ?? '', 'BusyBox');
         }
     }
@@ -73,7 +75,7 @@ class FindDriver extends AbstractDriver
     {
         $changedFiles = [];
         $dest = implode(' ', $targets);
-        $ret = System::exec($this->getBin() . ' ' . $dest . ' -mmin ' . $minutes . ' -type f -print');
+        $ret = exec($this->getBin() . ' ' . $dest . ' -mmin ' . $minutes . ' -type f -print');
         if ($ret['code'] === 0 && strlen($ret['output'])) {
             $stdout = trim($ret['output']);
 

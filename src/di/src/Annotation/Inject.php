@@ -16,6 +16,7 @@ use Hyperf\Di\Exception\AnnotationException;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\CodeGen\PhpDocReaderManager;
 use PhpDocReader\AnnotationException as DocReaderAnnotationException;
+use Throwable;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Inject extends AbstractAnnotation
@@ -53,7 +54,7 @@ class Inject extends AbstractAnnotation
                 throw new AnnotationException($exception->getMessage());
             }
             $this->value = '';
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             throw new AnnotationException("The @Inject value is invalid for {$className}->{$target}. Because {$exception->getMessage()}");
         }
     }

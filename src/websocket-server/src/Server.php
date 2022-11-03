@@ -203,7 +203,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
         try {
             $instance->onMessage($server, $frame);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->logger->error((string) $exception);
         }
     }
@@ -228,7 +228,7 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
         if ($instance instanceof OnCloseInterface) {
             try {
                 $instance->onClose($server, $fd, $reactorId);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $this->logger->error((string) $exception);
             }
         }

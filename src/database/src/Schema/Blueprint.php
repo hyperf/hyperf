@@ -1288,7 +1288,7 @@ class Blueprint
     /**
      * Ensure the commands on the blueprint are valid for the connection type.
      *
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     protected function ensureCommandsAreValid(Connection $connection)
     {
