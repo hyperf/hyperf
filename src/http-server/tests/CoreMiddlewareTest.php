@@ -208,7 +208,7 @@ class CoreMiddlewareTest extends TestCase
         $container = $this->getContainer();
         $container->shouldReceive('get')->with(DemoController::class)->andReturn(new DemoController());
         $middleware = new CoreMiddleware($container, 'http');
-        $ref = new \ReflectionClass($middleware);
+        $ref = new ReflectionClass($middleware);
         $method = $ref->getMethod('handleFound');
         $method->setAccessible(true);
 
