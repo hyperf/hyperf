@@ -62,5 +62,6 @@ parameters:
     - '#Hyperf\\Engine\\Http\\Server#'
     - '#Swow\\Socket#'
     - '#Class Hyperf\\Logger\\Logger extends @final class Monolog\\Logger#'
-    - '#Call to function property_exists\(\) with .* and '\w+' will always evaluate to false.#'
-    - '#Access to an undefined property PhpParser\\Node\\Stmt::\$stmts.#'
+    - '#Call to function property_exists\(\) with .* and .* will always evaluate to false#'
+    - '#Access to an undefined property PhpParser\\Node\\Stmt::\$stmts#'
+    
