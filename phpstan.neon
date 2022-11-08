@@ -66,5 +66,5 @@ parameters:
     - '#Access to an undefined property PhpParser\\Node\\Stmt::\$stmts#'
     - message: '#Parameter \$(request|response) of method Hyperf\\WebSocketServer\\Server::.*\(\) has invalid type Swow\\Http\\Server\\(Request|Connection)#'
       path: src/websocket-server/src/Sender.php
-    - message: '#Property Hyperf\\WebSocketServer\\Sender::\$responses has unknown class Swow\\Http\\Server\\Connection as its type#
+    - message: '#Property Hyperf\\WebSocketServer\\Sender::\$responses has unknown class Swow\\Http\\Server\\Connection as its type#'
       path: src/websocket-server/src/Sender.php
