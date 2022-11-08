@@ -65,3 +65,4 @@ parameters:
     - '#Call to function property_exists\(\) with .* and .* will always evaluate to false#'
     - '#Access to an undefined property PhpParser\\Node\\Stmt::\$stmts#'
     - '#Parameter .* of method .* has invalid type Swow\\Http\\Server\\(Request|Connection)#'
+    - '#Property Hyperf\\WebSocketServer\\Sender::\\$responses has unknown class Swow\\Http\\Server\\Connection as its type.#'
