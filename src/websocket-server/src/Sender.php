@@ -19,6 +19,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Http\Response;
 use Swoole\Server;
+use Swow\Http\Server\Connection;
 
 /**
  * @method push(int $fd, $data, int $opcode = null, $finish = null)
@@ -31,7 +32,7 @@ class Sender
     protected ?int $workerId = null;
 
     /**
-     * @var \Swow\Http\Server\Connection[]|Response[]
+     * @var Connection[]|Response[]
      */
     protected array $responses = [];
 
@@ -96,7 +97,7 @@ class Sender
     }
 
     /**
-     * @param null|\Swow\Http\Server\Connection|Response $response
+     * @param null|Connection|Response $response
      */
     public function setResponse(int $fd, mixed $response): void
     {
