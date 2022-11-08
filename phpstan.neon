@@ -64,5 +64,5 @@ parameters:
     - '#Class Hyperf\\Logger\\Logger extends @final class Monolog\\Logger#'
     - '#Call to function property_exists\(\) with .* and .* will always evaluate to false#'
     - '#Access to an undefined property PhpParser\\Node\\Stmt::\$stmts#'
-    - message: '#Parameter \$request of method Hyperf\\WebSocketServer\\Server::onHandShake\(\) has invalid type Swow\\Http\\Server\\Request.#'
+    - message: '#Parameter \$request of method Hyperf\\WebSocketServer\\Server::onHandShake\(\) has invalid type Swow\\Http\\Server\\Request#'
       path: src/websocket-server/src/Sender.php
