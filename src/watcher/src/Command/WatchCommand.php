@@ -13,6 +13,7 @@ namespace Hyperf\Watcher\Command;
 
 use Hyperf\Command\Command;
 use Hyperf\Command\NullDisableEventDispatcher;
+use Hyperf\Watcher\Driver\ScanFileDriver;
 use Hyperf\Watcher\Option;
 use Hyperf\Watcher\Watcher;
 use Psr\Container\ContainerInterface;
@@ -26,6 +27,7 @@ class WatchCommand extends Command
     {
         parent::__construct('server:watch');
         $this->setDescription('watch command');
+        $this->addOption('config', 'C', InputOption::VALUE_OPTIONAL, '', '.watcher.php');
         $this->addOption('file', 'F', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, '', []);
         $this->addOption('dir', 'D', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, '', []);
         $this->addOption('no-restart', 'N', InputOption::VALUE_NONE, 'Whether no need to restart server');
@@ -33,7 +35,23 @@ class WatchCommand extends Command
 
     public function handle()
     {
+        $options = [
+            'driver' => ScanFileDriver::class,
+            'bin' => 'php',
+            'watch' => [
+                'dir' => ['app', 'config'],
+                'file' => ['.env'],
+                'scan_interval' => 2000,
+            ],
+        ];
+
+        if (file_exists($configFile = $this->input->getOption('config'))) {
+            $configs = include $configFile;
+            $options = array_replace($options, (array) $configs);
+        }
+
         $option = make(Option::class, [
+            'options' => $options,
             'dir' => $this->input->getOption('dir'),
             'file' => $this->input->getOption('file'),
             'restart' => ! $this->input->getOption('no-restart'),
