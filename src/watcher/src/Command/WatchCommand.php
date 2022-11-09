@@ -35,19 +35,10 @@ class WatchCommand extends Command
 
     public function handle()
     {
-        $options = [
-            'driver' => ScanFileDriver::class,
-            'bin' => 'php',
-            'watch' => [
-                'dir' => ['app', 'config'],
-                'file' => ['.env'],
-                'scan_interval' => 2000,
-            ],
-        ];
+        $options = (array) include dirname(__DIR__, 2) . '/publish/watcher.php';
 
         if (file_exists($configFile = $this->input->getOption('config'))) {
-            $configs = include $configFile;
-            $options = array_replace($options, (array) $configs);
+            $options = array_replace($options, (array) include $configFile);
         }
 
         $option = make(Option::class, [
