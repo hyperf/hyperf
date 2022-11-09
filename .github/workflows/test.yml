@@ -70,6 +70,8 @@ jobs:
           php --ri swoole
       - name: Setup Packages
         run: ./.travis/requirement.install.sh
+      - name: Run Check
+        run: ./.travis/run.check.sh
       - name: Setup Services
         run: ./.travis/setup.services.sh
       - name: Setup Mysql
