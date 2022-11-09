@@ -63,3 +63,5 @@ parameters:
     - '#Class Hyperf\\Logger\\Logger extends @final class Monolog\\Logger#'
     - '#has invalid type Swow#'
     - '#has unknown class Swow#'
+    - '#will always evaluate to false#'
+    - '#PhpParser\\Node\\Stmt::\$stmts#'
