@@ -59,7 +59,7 @@ jobs:
           phpize
           if [ _${{ matrix.sw-version }} = '_v5.0.1' ] || [ _${{ matrix.sw-version }} = '_master' ]
           then
-            ./configure --enable-openssl --enable-swoole-curl --enable-cares --enable-swoole-pgsql
+            ./configure --enable-openssl --enable-swoole-curl --enable-cares --enable-swoole-pgsql --enable-brotli
           else
             ./configure --enable-openssl --enable-http2 --enable-swoole-curl --enable-swoole-json
           fi
