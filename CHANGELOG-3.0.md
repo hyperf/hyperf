@@ -64,6 +64,7 @@ composer analyse
 - [#5061](https://github.com/hyperf/hyperf/pull/5061) Added config `symfony.event.enable` to control whether to use `SymfonyEventDispatcher`.
 - [#5163](https://github.com/hyperf/hyperf/pull/5163) Added `Pipeline::thenReturn()` method to run pipes and return the result
 - [#5160](https://github.com/hyperf/hyperf/pull/5160) Added `$dictionary` for `Str::slug`, your can rewrite some tags easily.
+- [#5186](https://github.com/hyperf/hyperf/pull/5186) Added option `config` for command `server:watch`.
 
 ## Optimized
 
