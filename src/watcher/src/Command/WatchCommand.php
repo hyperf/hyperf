@@ -39,6 +39,8 @@ class WatchCommand extends Command
 
         if (file_exists($configFile = $this->input->getOption('config'))) {
             $options = array_replace($options, (array) include $configFile);
+        } elseif (file_exists($configFile = BASE_PATH . '/config/autoload/watcher.php')) { // Compatible with old version, will be removed in the v3.1.
+            $options = array_replace($options, (array) include $configFile);
         }
 
         $option = make(Option::class, [
