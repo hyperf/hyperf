@@ -62,3 +62,5 @@ parameters:
     - '#Hyperf\\Engine\\Http\\Server#'
     - '#Swow\\Socket#'
     - '#Class Hyperf\\Logger\\Logger extends @final class Monolog\\Logger#'
+    - '#Parameter $\w+ of method Hyperf\\WebSocketServer\\Sender::\w+\(\) has invalid type Swow\\Http\\Server\\Connection#'
+    = '#Property Hyperf\\WebSocketServer\\Sender::\$responses has unknown class Swow\\Http\\Server\\Connection as its type#'
