@@ -60,5 +60,6 @@ parameters:
     - '#Method Hyperf\\Utils\\Serializer\\Serializer::normalize\(\) should return array\|ArrayObject\|bool\|float\|int\|string\|null#'
     - '#Class RedisSentinel constructor invoked with .*#'
     - '#Hyperf\\Engine\\Http\\Server#'
-    - '#Swow\\Socket#'
     - '#Class Hyperf\\Logger\\Logger extends @final class Monolog\\Logger#'
+    - '#has invalid type Swow#'
+    - '#has unknown class Swow#'
