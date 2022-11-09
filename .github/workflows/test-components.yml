@@ -187,6 +187,8 @@ jobs:
         exclude:
           - php-version: '8.1'
             log-version: '^1.0'
+          - php-version: '8.2'
+            log-version: '^1.0'
       max-parallel: 5
       fail-fast: false
     steps:
