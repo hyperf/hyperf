@@ -43,7 +43,7 @@ class Watcher
     {
         $this->driver = $this->getDriver();
         $this->filesystem = new Filesystem();
-        $json = Json::decode($this->filesystem->get(BASE_PATH . '/composer.json'));
+        $json = Json::decode($option->getComposerJson());
         $this->autoload = array_flip($json['autoload']['psr-4'] ?? []);
         $this->config = $container->get(ConfigInterface::class);
         $this->printer = new Standard();
@@ -70,7 +70,7 @@ class Watcher
                     $this->restart(false);
                 }
             } else {
-                $ret = exec(sprintf('%s %s/vendor/hyperf/watcher/collector-reload.php %s', $this->option->getBin(), BASE_PATH, $file));
+                $ret = exec(sprintf('%s %s/vendor/hyperf/watcher/collector-reload.php %s', $this->option->getBin(), BASE_PATH, $file, $this->option->getConfigFile()));
                 if ($ret['code'] === 0) {
                     $this->output->writeln('Class reload success.');
                 } else {
@@ -93,7 +93,7 @@ class Watcher
         if (! $this->option->isRestart()) {
             return;
         }
-        $file = $this->config->get('server.settings.pid_file');
+        $file = $this->option->getPidFile();
         if (empty($file)) {
             throw new FileNotFoundException('The config of pid_file is not found.');
         }

@@ -99,8 +99,8 @@ class FindNewerDriver extends AbstractDriver
     protected function scan(): array
     {
         $ext = $this->option->getExt();
-        $dirs = array_map(fn ($dir) => BASE_PATH . '/' . $dir, $this->option->getWatchDir());
-        $files = array_map(fn ($file) => BASE_PATH . '/' . $file, $this->option->getWatchFile());
+        $dirs = array_map(fn ($dir) => $this->option->basePath() . '/' . $dir, $this->option->getWatchDir());
+        $files = array_map(fn ($file) => $this->option->basePath() . '/' . $file, $this->option->getWatchFile());
 
         if ($files) {
             $dirs[] = implode(' ', $files);

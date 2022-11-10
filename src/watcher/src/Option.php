@@ -19,6 +19,8 @@ class Option
 
     protected string $bin = 'php';
 
+    protected string $basePath = './';
+
     protected string $command = 'vendor/hyperf/watcher/watcher.php start';
 
     /**
@@ -38,6 +40,12 @@ class Option
 
     protected int $scanInterval = 2000;
 
+    protected string $configFile = '.watcher.php';
+
+    protected string $composerJson = 'composer.json';
+
+    protected string $pidFile = 'runtime/watcher.pid';
+
     public function __construct(array $options = [], array $dir = [], array $file = [], protected bool $restart = true)
     {
         isset($options['driver']) && $this->driver = $options['driver'];
@@ -47,6 +55,7 @@ class Option
         isset($options['watch']['file']) && $this->watchFile = (array) $options['watch']['file'];
         isset($options['watch']['scan_interval']) && $this->scanInterval = (int) $options['watch']['scan_interval'];
         isset($options['ext']) && $this->ext = (array) $options['ext'];
+        isset($options['base_path']) && $this->basePath = rtrim((string) $options['base_path'], '/');
 
         $this->watchDir = array_unique(array_merge($this->watchDir, $dir));
         $this->watchFile = array_unique(array_merge($this->watchFile, $file));
@@ -57,9 +66,33 @@ class Option
         return $this->driver;
     }
 
+    public function basePath(?string $path = null): string
+    {
+        if (is_null($path)) {
+            return $this->basePath;
+        }
+
+        return $this->basePath . '/' . ltrim($path, '/');
+    }
+
     public function getBin(): string
     {
         return $this->bin;
+    }
+
+    public function getComposerJson(): string
+    {
+        return $this->basePath('composer.json');
+    }
+
+    public function getPidFile(): string
+    {
+        return $this->basePath('runtime/hyperf.pid');
+    }
+
+    public function getConfigFile(): string
+    {
+        return $this->configFile;
     }
 
     public function getCommand(): string
