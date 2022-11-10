@@ -47,10 +47,7 @@ class Process
 
         $options = (array) include dirname(__DIR__, 2) . '/publish/watcher.php';
 
-        if (file_exists($configFile = $this->input->getOption('config'))) {
-            $options = array_replace($options, (array) include $configFile);
-            $options['config_file'] = $configFile;
-        } elseif (file_exists($configFile = BASE_PATH . '/config/autoload/watcher.php')) { // Compatible with old version, will be removed in the v3.1.
+        if (file_exists($configFile)) {
             $options = array_replace($options, (array) include $configFile);
             $options['config_file'] = $configFile;
         }
