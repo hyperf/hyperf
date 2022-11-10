@@ -15,7 +15,6 @@ return [
     'bin' => 'php',
     'base_path' => './',
     'driver' => ScanFileDriver::class,
-    'pid_file' => 'runtime/hyperf.pid',
     'watch' => [
         'dir' => ['app', 'config'],
         'file' => ['.env'],
