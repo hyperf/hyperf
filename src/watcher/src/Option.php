@@ -42,10 +42,6 @@ class Option
 
     protected string $configFile = '.watcher.php';
 
-    protected string $composerJson = 'composer.json';
-
-    protected string $pidFile = 'runtime/watcher.pid';
-
     public function __construct(array $options = [], array $dir = [], array $file = [], protected bool $restart = true)
     {
         isset($options['driver']) && $this->driver = $options['driver'];
