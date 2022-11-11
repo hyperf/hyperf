@@ -111,11 +111,11 @@ class FindDriver extends AbstractDriver
     {
         $ext = $this->option->getExt();
 
-        $dirs = array_map(fn ($dir) => $this->option->basePath() . '/' . $dir, $this->option->getWatchDir());
+        $dirs = array_map(fn ($dir) => $this->option->path($dir), $this->option->getWatchDir());
 
         [$fileModifyTimes, $changedFilesInDirs] = $this->find($fileModifyTimes, $dirs, $minutes, $ext);
 
-        $files = array_map(fn ($file) => $this->option->basePath() . '/' . $file, $this->option->getWatchFile());
+        $files = array_map(fn ($file) => $this->option->path($file), $this->option->getWatchFile());
 
         [$fileModifyTimes, $changedFiles] = $this->find($fileModifyTimes, $files, $minutes);
 

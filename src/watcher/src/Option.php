@@ -62,7 +62,7 @@ class Option
         return $this->driver;
     }
 
-    public function basePath(?string $path = null): string
+    public function path(?string $path = null): string
     {
         if (is_null($path)) {
             return $this->basePath;
@@ -78,12 +78,12 @@ class Option
 
     public function getComposerJson(): string
     {
-        return $this->basePath('composer.json');
+        return $this->path('composer.json');
     }
 
     public function getPidFile(): string
     {
-        return $this->basePath('runtime/hyperf.pid');
+        return $this->path('runtime/hyperf.pid');
     }
 
     public function getConfigFile(): string

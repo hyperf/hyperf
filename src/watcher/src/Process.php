@@ -91,7 +91,7 @@ class Process
         }
 
         // Reload the proxy class.
-        $manager = new ProxyManager(array_merge($proxies, [$class => $this->file]), $this->option->basePath('/runtime/container/proxy/'));
+        $manager = new ProxyManager(array_merge($proxies, [$class => $this->file]), $this->option->path('/runtime/container/proxy/'));
         $proxies = $manager->getProxies();
         $this->putCache($this->path, serialize([$data, $proxies]));
     }
@@ -158,6 +158,6 @@ class Process
 
     protected function initScanConfig(): ScanConfig
     {
-        return ScanConfig::instance($this->option->basePath('config'));
+        return ScanConfig::instance($this->option->path('config'));
     }
 }
