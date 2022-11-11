@@ -76,11 +76,6 @@ class Option
         return $this->bin;
     }
 
-    public function getComposerJson(): string
-    {
-        return $this->path('composer.json');
-    }
-
     public function getPidFile(): string
     {
         return $this->path('runtime/hyperf.pid');

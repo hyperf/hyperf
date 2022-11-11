@@ -43,7 +43,7 @@ class Watcher
     {
         $this->driver = $this->getDriver();
         $this->filesystem = new Filesystem();
-        $json = Json::decode($this->filesystem->get($option->getComposerJson()));
+        $json = Json::decode($this->filesystem->get($option->path('composer.json')));
         $this->autoload = array_flip($json['autoload']['psr-4'] ?? []);
         $this->config = $container->get(ConfigInterface::class);
         $this->printer = new Standard();

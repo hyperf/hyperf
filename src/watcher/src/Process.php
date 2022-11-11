@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 /**
- * This file is part of tw591ms/im.
+ * This file is part of Hyperf.
  *
- * @link     https://code.addcn.com/tw591ms/im
- * @document https://code.addcn.com/tw591ms/im
- * @contact  hdj@addcn.com
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 namespace Hyperf\Watcher;
 
