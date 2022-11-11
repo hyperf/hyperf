@@ -48,7 +48,7 @@ class Process
 
         /* @var Option */
         $this->option = make(Option::class, compact('options'));
-        $this->path = $this->option->basePath('runtime/container/scan.cache');
+        $this->path = $this->option->path('runtime/container/scan.cache');
 
         $this->ast = new Ast();
         $this->config = $this->initScanConfig();
