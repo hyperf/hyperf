@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Hyperf.
+ * This file is part of tw591ms/im.
  *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ * @link     https://code.addcn.com/tw591ms/im
+ * @document https://code.addcn.com/tw591ms/im
+ * @contact  hdj@addcn.com
  */
 namespace Hyperf\Watcher;
 
@@ -40,11 +39,6 @@ class Process
 
     public function __construct(protected string $file, protected string $configFile = '.watcher.php')
     {
-        $this->ast = new Ast();
-        $this->config = $this->initScanConfig();
-        $this->reader = new AnnotationReader($this->config->getIgnoreAnnotations());
-        $this->filesystem = new Filesystem();
-
         $options = (array) include dirname(__DIR__, 2) . '/publish/watcher.php';
 
         if (file_exists($configFile)) {
@@ -55,6 +49,11 @@ class Process
         /* @var Option */
         $this->option = make(Option::class, compact('options'));
         $this->path = $this->option->basePath('runtime/container/scan.cache');
+
+        $this->ast = new Ast();
+        $this->config = $this->initScanConfig();
+        $this->reader = new AnnotationReader($this->config->getIgnoreAnnotations());
+        $this->filesystem = new Filesystem();
     }
 
     public function __invoke()
