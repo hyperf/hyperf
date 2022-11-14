@@ -52,7 +52,7 @@ jobs:
     strategy:
       matrix:
         version: [ '^1.0', '^2.0' ]
-        php-version: [ '7.4', '8.0' ]
+        php-version: [ '8.0' ]
       max-parallel: 2
       fail-fast: false
     steps:
