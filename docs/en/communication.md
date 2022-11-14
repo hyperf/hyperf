@@ -6,7 +6,8 @@ We provide two communication channels: `QQ Group` and `WeChat Group`. Other comm
 
 Group 1 Number: `862099724`
 Group 2 Number: `811414891`   
-Group 3 Number: `589051831`
+Group 3 Number: `589051831`   
+Group 4 Number: `571053131`
 
 ## WeChat Group
 
