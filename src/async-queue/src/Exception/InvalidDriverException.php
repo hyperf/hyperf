@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\AsyncQueue\Exception;
 
-class InvalidDriverException extends \RuntimeException
+use RuntimeException;
+
+class InvalidDriverException extends RuntimeException
 {
 }

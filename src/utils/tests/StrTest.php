@@ -38,6 +38,23 @@ class StrTest extends TestCase
             $this->assertIsInt($i);
             break;
         }
+
+        $this->assertSame('hello-world', Str::slug('hello world'));
+        $this->assertSame('hello-world', Str::slug('hello-world'));
+        $this->assertSame('hello-world', Str::slug('hello_world'));
+        $this->assertSame('hello_world', Str::slug('hello_world', '_'));
+        $this->assertSame('user-at-host', Str::slug('user@host'));
+        $this->assertSame('سلام-دنیا', Str::slug('سلام دنیا', '-', null));
+        $this->assertSame('sometext', Str::slug('some text', ''));
+        $this->assertSame('', Str::slug('', ''));
+        $this->assertSame('', Str::slug(''));
+        $this->assertSame('bsm-allah', Str::slug('بسم الله', '-', 'en', ['allh' => 'allah']));
+        $this->assertSame('500-dollar-bill', Str::slug('500$ bill', '-', 'en', ['$' => 'dollar']));
+        $this->assertSame('500-dollar-bill', Str::slug('500--$----bill', '-', 'en', ['$' => 'dollar']));
+        $this->assertSame('500-dollar-bill', Str::slug('500-$-bill', '-', 'en', ['$' => 'dollar']));
+        $this->assertSame('500-dollar-bill', Str::slug('500$--bill', '-', 'en', ['$' => 'dollar']));
+        $this->assertSame('500-dollar-bill', Str::slug('500-$--bill', '-', 'en', ['$' => 'dollar']));
+        $this->assertSame('أحمد-في-المدرسة', Str::slug('أحمد@المدرسة', '-', null, ['@' => 'في']));
     }
 
     public function testMask()
@@ -157,5 +174,26 @@ class StrTest extends TestCase
         if (PHP_VERSION_ID >= 80000) {
             $this->assertSame('beforeafter', Str::stripTags('before<br>after', null));
         }
+    }
+
+    public function testPadBoth()
+    {
+        $this->assertSame('__Alien___', Str::padBoth('Alien', 10, '_'));
+        $this->assertSame('  Alien   ', Str::padBoth('Alien', 10));
+        $this->assertSame('  ❤MultiByte☆   ', Str::padBoth('❤MultiByte☆', 16));
+    }
+
+    public function testPadLeft()
+    {
+        $this->assertSame('-=-=-Alien', Str::padLeft('Alien', 10, '-='));
+        $this->assertSame('     Alien', Str::padLeft('Alien', 10));
+        $this->assertSame('     ❤MultiByte☆', Str::padLeft('❤MultiByte☆', 16));
+    }
+
+    public function testPadRight()
+    {
+        $this->assertSame('Alien-----', Str::padRight('Alien', 10, '-'));
+        $this->assertSame('Alien     ', Str::padRight('Alien', 10));
+        $this->assertSame('❤MultiByte☆     ', Str::padRight('❤MultiByte☆', 16));
     }
 }

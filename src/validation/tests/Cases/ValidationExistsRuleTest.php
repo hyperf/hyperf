@@ -213,9 +213,9 @@ class ValidationExistsRuleTest extends TestCase
  */
 class DatabaseTestUser extends Model
 {
-    public $timestamps = false;
+    public bool $timestamps = false;
 
-    protected $table = 'users';
+    protected ?string $table = 'users';
 
-    protected $guarded = [];
+    protected array $guarded = [];
 }

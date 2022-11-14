@@ -42,7 +42,7 @@ class TransactionalTest extends TestCase
         $resolver->shouldReceive('connection')->with('default')->once()->andReturn($conn = Mockery::mock(ConnectionInterface::class));
         $conn->shouldReceive('transaction')->with(Mockery::any(), 1)->once();
 
-        $transactional = new Transactional([]);
+        $transactional = new Transactional();
         $aspect = new TransactionAspect();
         $point = new ProceedingJoinPoint(static function () {
         }, 'Foo', 'bar', []);
@@ -64,10 +64,7 @@ class TransactionalTest extends TestCase
         $resolver->shouldReceive('connection')->with($pool)->once()->andReturn($conn = Mockery::mock(ConnectionInterface::class));
         $conn->shouldReceive('transaction')->with(Mockery::any(), $attempts)->once();
 
-        $transactional = new Transactional([
-            'connection' => $pool,
-            'attempts' => $attempts,
-        ]);
+        $transactional = new Transactional($pool, $attempts);
         $aspect = new TransactionAspect();
         $point = new ProceedingJoinPoint(static function () {
         }, 'Foo', 'bar', []);

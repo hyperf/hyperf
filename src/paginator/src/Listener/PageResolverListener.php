@@ -11,12 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Paginator\Listener;
 
+use Hyperf\Context\Context;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use Psr\Http\Message\ServerRequestInterface;
 
 class PageResolverListener implements ListenerInterface
@@ -35,7 +35,7 @@ class PageResolverListener implements ListenerInterface
      * Handle the Event when the event is triggered, all listeners will
      * complete before the event is returned to the EventDispatcher.
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         Paginator::currentPageResolver(function ($pageName = 'page') {
             if (! ApplicationContext::hasContainer()
@@ -65,13 +65,7 @@ class PageResolverListener implements ListenerInterface
             }
 
             $container = ApplicationContext::getContainer();
-            $url = $container->get(RequestInterface::class)->url();
-
-            if (filter_var($url, FILTER_VALIDATE_URL) !== false) {
-                return $url;
-            }
-
-            return $url;
+            return $container->get(RequestInterface::class)->url();
         });
     }
 }

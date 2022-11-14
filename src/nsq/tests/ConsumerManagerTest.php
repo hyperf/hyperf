@@ -23,6 +23,7 @@ use HyperfTest\Nsq\Stub\DemoConsumer;
 use HyperfTest\Nsq\Stub\DisabledDemoConsumer;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @internal
@@ -39,12 +40,12 @@ class ConsumerManagerTest extends TestCase
     public function testConsumerAnnotation()
     {
         $container = ContainerStub::getContainer();
-        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
-            'topic' => $topic = uniqid(),
-            'channel' => $channel = uniqid(),
-            'name' => $name = uniqid(),
-            'nums' => $nums = rand(1, 10),
-        ]));
+        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer(
+            $topic = uniqid(),
+            $channel = uniqid(),
+            $name = uniqid(),
+            $nums = rand(1, 10),
+        ));
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'nsq' => [
@@ -61,7 +62,7 @@ class ConsumerManagerTest extends TestCase
                 $hasRegistered = true;
                 /** @var AbstractConsumer $consumer */
                 $consumer = $item->getConsumer();
-                $this->assertTrue($item->isEnable(new \stdClass()));
+                $this->assertTrue($item->isEnable(new stdClass()));
                 $this->assertSame($name, $consumer->getName());
                 $this->assertSame($channel, $consumer->getChannel());
                 $this->assertSame($topic, $consumer->getTopic());
@@ -75,12 +76,12 @@ class ConsumerManagerTest extends TestCase
     public function testConsumerAnnotationNotEnableByConfig()
     {
         $container = ContainerStub::getContainer();
-        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer([
-            'topic' => $topic = uniqid(),
-            'channel' => $channel = uniqid(),
-            'name' => $name = uniqid(),
-            'nums' => $nums = rand(1, 10),
-        ]));
+        AnnotationCollector::collectClass(DemoConsumer::class, Consumer::class, new Consumer(
+            $topic = uniqid(),
+            $channel = uniqid(),
+            $name = uniqid(),
+            $nums = rand(1, 10),
+        ));
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'nsq' => [
@@ -96,7 +97,7 @@ class ConsumerManagerTest extends TestCase
         foreach (ProcessManager::all() as $item) {
             if (method_exists($item, 'getConsumer')) {
                 /* @var AbstractConsumer $consumer */
-                $this->assertFalse($item->isEnable(new \stdClass()));
+                $this->assertFalse($item->isEnable(new stdClass()));
                 break;
             }
         }
@@ -105,12 +106,12 @@ class ConsumerManagerTest extends TestCase
     public function testConsumerAnnotationNotEnableByConsumer()
     {
         $container = ContainerStub::getContainer();
-        AnnotationCollector::collectClass(DisabledDemoConsumer::class, Consumer::class, new Consumer([
-            'topic' => $topic = uniqid(),
-            'channel' => $channel = uniqid(),
-            'name' => $name = uniqid(),
-            'nums' => $nums = rand(1, 10),
-        ]));
+        AnnotationCollector::collectClass(DisabledDemoConsumer::class, Consumer::class, new Consumer(
+            $topic = uniqid(),
+            $channel = uniqid(),
+            $name = uniqid(),
+            $nums = rand(1, 10),
+        ));
 
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn(new Config([
             'nsq' => [
@@ -123,7 +124,7 @@ class ConsumerManagerTest extends TestCase
         $manager->run();
         foreach (ProcessManager::all() as $item) {
             if (method_exists($item, 'getConsumer') && ($item->getConsumer() instanceof DisabledDemoConsumer)) {
-                $this->assertFalse($item->isEnable(new \stdClass()));
+                $this->assertFalse($item->isEnable(new stdClass()));
                 break;
             }
         }

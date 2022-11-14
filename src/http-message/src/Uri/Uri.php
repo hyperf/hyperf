@@ -11,9 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Uri;
 
+use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
+use Stringable;
 
-class Uri implements UriInterface
+class Uri implements UriInterface, Stringable
 {
     /**
      * Absolute http and https URIs require a host per RFC 7230 Section 2.7
@@ -23,74 +25,61 @@ class Uri implements UriInterface
      */
     public const DEFAULT_HTTP_HOST = 'localhost';
 
-    /**
-     * @var array
-     */
-    private static $defaultPorts = [
+    private static array $defaultPorts = [
         'http' => 80,
         'https' => 443,
     ];
 
-    /**
-     * @var string
-     */
-    private static $charUnreserved = 'a-zA-Z0-9_\-\.~';
+    private static string $charUnreserved = 'a-zA-Z0-9_\-\.~';
+
+    private static string $charSubDelims = '!\$&\'\(\)\*\+,;=';
+
+    private static array $replaceQuery = ['=' => '%3D', '&' => '%26'];
 
     /**
-     * @var string
+     * uri scheme.
      */
-    private static $charSubDelims = '!\$&\'\(\)\*\+,;=';
+    private string $scheme = '';
 
     /**
-     * @var array
+     * uri user info.
      */
-    private static $replaceQuery = ['=' => '%3D', '&' => '%26'];
+    private string $userInfo = '';
 
     /**
-     * @var string uri scheme
+     * uri host.
      */
-    private $scheme = '';
+    private string $host = '';
 
     /**
-     * @var string uri user info
+     * uri port.
      */
-    private $userInfo = '';
+    private ?int $port = null;
 
     /**
-     * @var string uri host
+     * uri path.
      */
-    private $host = '';
+    private string $path = '';
 
     /**
-     * @var null|int uri port
+     * uri query string.
      */
-    private $port;
+    private string $query = '';
 
     /**
-     * @var string uri path
+     * uri fragment.
      */
-    private $path = '';
-
-    /**
-     * @var string uri query string
-     */
-    private $query = '';
-
-    /**
-     * @var string uri fragment
-     */
-    private $fragment = '';
+    private string $fragment = '';
 
     /**
      * @param string $uri URI to parse
      */
-    public function __construct($uri = '')
+    public function __construct(string $uri = '')
     {
-        // weak type check to also accept null until we can add scalar type hints
-        if ($uri != '') {
+        if ($uri) {
             $parts = parse_url($uri);
             if ($parts === false) {
-                throw new \InvalidArgumentException("Unable to parse URI: {$uri}");
+                throw new InvalidArgumentException("Unable to parse URI: {$uri}");
             }
 
             $this->applyParts($parts);
@@ -253,7 +242,7 @@ class Uri implements UriInterface
      * The value returned MUST be percent-encoded, but MUST NOT double-encode
      * any characters. To determine what characters to encode, please refer to
      * RFC 3986, Sections 2 and 3.4.
-     * As an example, if a value in a key/value pair of the query string should
+     * As an example, if a value in a key/value a pair of the query string should
      * include an ampersand ("&") not intended as a delimiter between values,
      * that value MUST be passed in encoded form (e.g., "%26") to the instance.
      *
@@ -293,8 +282,8 @@ class Uri implements UriInterface
      * An empty scheme is equivalent to removing the scheme.
      *
      * @param string $scheme the scheme to use with the new instance
-     * @throws \InvalidArgumentException for invalid or unsupported schemes
      * @return static a new instance with the specified scheme
+     * @throws InvalidArgumentException for invalid or unsupported schemes
      */
     public function withScheme($scheme)
     {
@@ -318,7 +307,7 @@ class Uri implements UriInterface
      * user; an empty string for the user is equivalent to removing user
      * information.
      *
-     * @param string $user the user name to use for authority
+     * @param string $user the username to use for authority
      * @param null|string $password the password associated with $user
      * @return static a new instance with the specified user information
      */
@@ -344,8 +333,8 @@ class Uri implements UriInterface
      * An empty host value is equivalent to removing the host.
      *
      * @param string $host the hostname to use with the new instance
-     * @throws \InvalidArgumentException for invalid hostnames
      * @return static a new instance with the specified host
+     * @throws InvalidArgumentException for invalid hostnames
      */
     public function withHost($host)
     {
@@ -370,8 +359,8 @@ class Uri implements UriInterface
      *
      * @param null|int|string $port the port to use with the new instance; a null value
      *                              removes the port information
-     * @throws \InvalidArgumentException for invalid ports
      * @return static a new instance with the specified port
+     * @throws InvalidArgumentException for invalid ports
      */
     public function withPort($port)
     {
@@ -400,8 +389,8 @@ class Uri implements UriInterface
      * Implementations ensure the correct encoding as outlined in getPath().
      *
      * @param string $path the path to use with the new instance
-     * @throws \InvalidArgumentException for invalid paths
      * @return static a new instance with the specified path
+     * @throws InvalidArgumentException for invalid paths
      */
     public function withPath($path)
     {
@@ -424,8 +413,8 @@ class Uri implements UriInterface
      * An empty query string value is equivalent to removing the query string.
      *
      * @param string $query the query string to use with the new instance
-     * @throws \InvalidArgumentException for invalid query strings
      * @return static a new instance with the specified query string
+     * @throws InvalidArgumentException for invalid query strings
      */
     public function withQuery($query)
     {
@@ -448,9 +437,8 @@ class Uri implements UriInterface
      * @param UriInterface $uri URI to use as a base
      * @param string $key key to set
      * @param null|string $value Value to set
-     * @return UriInterface
      */
-    public static function withQueryValue(UriInterface $uri, $key, $value)
+    public static function withQueryValue(UriInterface $uri, string $key, ?string $value): UriInterface
     {
         $current = $uri->getQuery();
 
@@ -512,18 +500,12 @@ class Uri implements UriInterface
      * `file:///` is the more common syntax for the file scheme anyway (Chrome for example redirects to
      * that format).
      *
-     * @param string $scheme
-     * @param string $authority
-     * @param string $path
-     * @param string $query
-     * @param string $fragment
      * @return string
      * @see https://tools.ietf.org/html/rfc3986#section-5.3
      */
-    public static function composeComponents($scheme, $authority, $path, $query, $fragment)
+    public static function composeComponents(string $scheme, string $authority, string $path, string $query, string $fragment)
     {
         $uri = '';
-        // weak type checks to also accept null until we can add scalar type hints
         if ($scheme != '') {
             $uri .= $scheme . ':';
         }
@@ -553,10 +535,8 @@ class Uri implements UriInterface
 
     /**
      * Get default port of the current scheme.
-     *
-     * @return null|int
      */
-    public function getDefaultPort()
+    public function getDefaultPort(): ?int
     {
         return self::$defaultPorts[$this->getScheme()] ?? null;
     }
@@ -570,11 +550,11 @@ class Uri implements UriInterface
             $this->host = self::DEFAULT_HTTP_HOST;
         }
         if ($this->getAuthority() === '') {
-            if (strpos($this->path, '//') === 0) {
-                throw new \InvalidArgumentException('The path of a URI without an authority must not start with two slashes "//"');
+            if (str_starts_with($this->path, '//')) {
+                throw new InvalidArgumentException('The path of a URI without an authority must not start with two slashes "//"');
             }
-            if ($this->scheme === '' && strpos(explode('/', $this->path, 2)[0], ':') !== false) {
-                throw new \InvalidArgumentException('A relative URI must not have a path beginning with a segment containing a colon');
+            if ($this->scheme === '' && str_contains(explode('/', $this->path, 2)[0], ':')) {
+                throw new InvalidArgumentException('A relative URI must not have a path beginning with a segment containing a colon');
             }
         } elseif (isset($this->path[0]) && $this->path[0] !== '/') {
             $this->path = '/' . $this->path;
@@ -589,7 +569,7 @@ class Uri implements UriInterface
     private function applyParts(array $parts)
     {
         $this->scheme = isset($parts['scheme']) ? $this->filterScheme($parts['scheme']) : '';
-        $this->userInfo = isset($parts['user']) ? $parts['user'] : '';
+        $this->userInfo = $parts['user'] ?? '';
         $this->host = isset($parts['host']) ? $this->filterHost($parts['host']) : '';
         $this->port = isset($parts['port']) ? $this->filterPort($parts['port']) : null;
         $this->path = isset($parts['path']) ? $this->filterPath($parts['path']) : '';
@@ -602,40 +582,20 @@ class Uri implements UriInterface
         $this->removeDefaultPort();
     }
 
-    /**
-     * @param string $scheme
-     * @throws \InvalidArgumentException if the scheme is invalid
-     * @return string
-     */
-    private function filterScheme($scheme)
+    private function filterScheme(string $scheme): string
     {
-        if (! is_string($scheme)) {
-            throw new \InvalidArgumentException('Scheme must be a string');
-        }
-
         return strtolower($scheme);
     }
 
-    /**
-     * @param string $host
-     * @throws \InvalidArgumentException if the host is invalid
-     * @return string
-     */
-    private function filterHost($host)
+    private function filterHost(string $host): string
     {
-        if (! is_string($host)) {
-            throw new \InvalidArgumentException('Host must be a string');
-        }
-
         return strtolower($host);
     }
 
     /**
      * @param null|int|string $port
-     * @throws \InvalidArgumentException if the port is invalid
-     * @return null|int
      */
-    private function filterPort($port)
+    private function filterPort($port): ?int
     {
         if ($port === null) {
             return null;
@@ -643,7 +603,7 @@ class Uri implements UriInterface
 
         $port = (int) $port;
         if (1 > $port || 0xFFFF < $port) {
-            throw new \InvalidArgumentException(sprintf('Invalid port: %d. Must be between 1 and 65535', $port));
+            throw new InvalidArgumentException(sprintf('Invalid port: %d. Must be between 1 and 65535', $port));
         }
 
         return $port;
@@ -652,7 +612,7 @@ class Uri implements UriInterface
     /**
      * Remove the port property when the property is a default port.
      */
-    private function removeDefaultPort()
+    private function removeDefaultPort(): void
     {
         if ($this->port !== null && $this->isDefaultPort()) {
             $this->port = null;
@@ -662,16 +622,10 @@ class Uri implements UriInterface
     /**
      * Filters the path of a URI.
      *
-     * @param string $path
-     * @throws \InvalidArgumentException if the path is invalid
-     * @return string
+     * @throws InvalidArgumentException if the path is invalid
      */
-    private function filterPath($path)
+    private function filterPath(string $path): string
     {
-        if (! is_string($path)) {
-            throw new \InvalidArgumentException('Path must be a string');
-        }
-
         return preg_replace_callback(
             '/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/',
             [
@@ -684,17 +638,9 @@ class Uri implements UriInterface
 
     /**
      * Filters the query string or fragment of a URI.
-     *
-     * @param string $str
-     * @throws \InvalidArgumentException if the query or fragment is invalid
-     * @return string
      */
-    private function filterQueryAndFragment($str)
+    private function filterQueryAndFragment(string $str): string
     {
-        if (! is_string($str)) {
-            throw new \InvalidArgumentException('Query and fragment must be a string');
-        }
-
         return preg_replace_callback(
             '/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/',
             [
@@ -705,10 +651,7 @@ class Uri implements UriInterface
         );
     }
 
-    /**
-     * @return string
-     */
-    private function rawurlencodeMatchZero(array $match)
+    private function rawurlencodeMatchZero(array $match): string
     {
         return rawurlencode($match[0]);
     }

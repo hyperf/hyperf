@@ -11,27 +11,20 @@ declare(strict_types=1);
  */
 namespace Hyperf\RpcClient\Proxy;
 
+use InvalidArgumentException;
 use PhpParser\NodeTraverser;
+use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\PrettyPrinterAbstract;
 
 class Ast
 {
-    /**
-     * @var \PhpParser\Parser
-     */
-    protected $astParser;
+    protected Parser $astParser;
 
-    /**
-     * @var PrettyPrinterAbstract
-     */
-    protected $printer;
+    protected PrettyPrinterAbstract $printer;
 
-    /**
-     * @var CodeLoader
-     */
-    protected $codeLoader;
+    protected CodeLoader $codeLoader;
 
     public function __construct()
     {
@@ -44,9 +37,9 @@ class Ast
     public function proxy(string $className, string $proxyClassName)
     {
         if (! interface_exists($className)) {
-            throw new \InvalidArgumentException("'{$className}' should be an interface name");
+            throw new InvalidArgumentException("'{$className}' should be an interface name");
         }
-        if (strpos($proxyClassName, '\\') !== false) {
+        if (str_contains($proxyClassName, '\\')) {
             $exploded = explode('\\', $proxyClassName);
             $proxyClassName = end($exploded);
         }

@@ -18,13 +18,11 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SwooleTracker\Stats;
+use Throwable;
 
 class HttpServerMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var string
-     */
-    protected $name;
+    protected ?string $name = null;
 
     public function __construct(ConfigInterface $config)
     {
@@ -43,7 +41,7 @@ class HttpServerMiddleware implements MiddlewareInterface
             try {
                 $response = $handler->handle($request);
                 Stats::afterExecRpc($tick, true, $response->getStatusCode());
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 Stats::afterExecRpc($tick, false, $exception->getCode());
                 throw $exception;
             }

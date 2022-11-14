@@ -75,7 +75,7 @@ $db->connect($config, function ($db, $r) {
 
 對於 `global` 變量和 `static` 變量，在 `PHP-FPM` 模式下，本質都是存活於一個請求生命週期內的，而在 `Hyperf` 內因為是 `CLI` 應用，會存在 `全局週期` 和 `請求週期(協程週期)` 兩種長生命週期。   
 - 全局週期，我們只需要創建一個靜態變量供全局調用即可，靜態變量意味着在服務啟動後，任意協程和代碼邏輯均共享此靜態變量內的數據，也就意味着存放的數據不能是特別服務於某一個請求或某一個協程；
-- 協程週期，由於 `Hyperf` 會為每個請求自動創建一個協程來處理，那麼一個協程週期在此也可以理解為一個請求週期，在協程內，所有的狀態數據均應存放於 `Hyperf\Utils\Context` 類中，通過該類的 `get`、`set` 來讀取和存儲任意結構的數據，這個 `Context(協程上下文)` 類在執行任意協程時讀取或存儲的數據都是僅限對應的協程的，同時在協程結束時也會自動銷燬相關的上下文數據。
+- 協程週期，由於 `Hyperf` 會為每個請求自動創建一個協程來處理，那麼一個協程週期在此也可以理解為一個請求週期，在協程內，所有的狀態數據均應存放於 `Hyperf\Context\Context` 類中，通過該類的 `get`、`set` 來讀取和存儲任意結構的數據，這個 `Context(協程上下文)` 類在執行任意協程時讀取或存儲的數據都是僅限對應的協程的，同時在協程結束時也會自動銷燬相關的上下文數據。
 
 ### 最大協程數限制
 
@@ -249,53 +249,53 @@ for ($i = 0; $i < 15; ++$i) {
 ### 協程上下文
 
 由於同一個進程內協程間是內存共享的，但協程的執行/切換是非順序的，也就意味着我們很難掌控當前的協程是哪一個**（事實上可以，但通常沒人這麼幹）**，所以我們需要在發生協程切換時能夠同時切換對應的上下文。   
-在 `Hyperf` 裏實現協程的上下文管理將非常簡單，基於 `Hyperf\Utils\Context` 類的 `set(string $id, $value)`、`get(string $id, $default = null)`、`has(string $id)`、`override(string $id, \Closure $closure)` 靜態方法即可完成上下文數據的管理，通過這些方法設置和獲取的值，都僅限於當前的協程，在協程結束時，對應的上下文也會自動跟隨釋放掉，無需手動管理，無需擔憂內存泄漏的風險。
+在 `Hyperf` 裏實現協程的上下文管理將非常簡單，基於 `Hyperf\Context\Context` 類的 `set(string $id, $value)`、`get(string $id, $default = null)`、`has(string $id)`、`override(string $id, \Closure $closure)` 靜態方法即可完成上下文數據的管理，通過這些方法設置和獲取的值，都僅限於當前的協程，在協程結束時，對應的上下文也會自動跟隨釋放掉，無需手動管理，無需擔憂內存泄漏的風險。
 
-#### Hyperf\Utils\Context::set()
+#### Hyperf\Context\Context::set()
 
 通過調用 `set(string $id, $value)` 方法儲存一個值到當前協程的上下文中，如下：
 
 ```php
 <?php
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 // 將 bar 字符串以 foo 為 key 儲存到當前協程上下文中
 $foo = Context::set('foo', 'bar');
 // set 方法會再將 value 作為方法的返回值返回回來，所以 $foo 的值為 bar
 ```
 
-#### Hyperf\Utils\Context::get()
+#### Hyperf\Context\Context::get()
 
 通過調用 `get(string $id, $default = null)` 方法可從當前協程的上下文中取出一個以 `$id` 為 `key` 儲存的值，如不存在則返回 `$default` ，如下：
 
 ```php
 <?php
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 // 從當前協程上下文中取出 key 為 foo 的值，如不存在則返回 bar 字符串
 $foo = Context::get('foo', 'bar');
 ```
 
-#### Hyperf\Utils\Context::has()
+#### Hyperf\Context\Context::has()
 
 通過調用 `has(string $id)` 方法可判斷當前協程的上下文中是否存在以 `$id` 為 `key` 儲存的值，如存在則返回 `true`，不存在則返回 `false`，如下：
 
 ```php
 <?php
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 // 從當前協程上下文中判斷 key 為 foo 的值是否存在
 $foo = Context::has('foo');
 ```
 
-#### Hyperf\Utils\Context::override()
+#### Hyperf\Context\Context::override()
 
 當我們需要做一些複雜的上下文處理，比如先判斷一個 `key` 是否存在，如果存在則取出 `value` 來再對 `value` 進行某些修改，然後再將 `value` 設置回上下文容器中，此時會有比較繁雜的判斷條件，可直接通過調用 `override` 方法來實現這個邏輯，如下：
 
 ```php
 <?php
 use Psr\Http\Message\ServerRequestInterface;
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 // 從協程上下文取出 $request 對象並設置 key 為 foo 的 Header，然後再保存到協程上下文中
 $request = Context::override(ServerRequestInterface::class, function (ServerRequestInterface $request) {

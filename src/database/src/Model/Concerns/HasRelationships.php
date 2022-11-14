@@ -32,26 +32,20 @@ trait HasRelationships
 {
     /**
      * The many to many relationship methods.
-     *
-     * @var array
      */
-    public static $manyMethods = [
+    public static array $manyMethods = [
         'belongsToMany', 'morphToMany', 'morphedByMany',
     ];
 
     /**
      * The loaded relationships for the model.
-     *
-     * @var array
      */
-    protected $relations = [];
+    protected array $relations = [];
 
     /**
      * The relationships that should be touched on save.
-     *
-     * @var array
      */
-    protected $touches = [];
+    protected array $touches = [];
 
     /**
      * Define a one-to-one relationship.
@@ -498,7 +492,7 @@ trait HasRelationships
             $this->{$relation}()->touch();
 
             if ($this->{$relation} instanceof self) {
-                $this->{$relation}->fireModelEvent('saved', false);
+                $this->{$relation}->fireModelEvent('saved');
 
                 $this->{$relation}->touchOwners();
             } elseif ($this->{$relation} instanceof Collection) {

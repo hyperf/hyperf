@@ -18,11 +18,11 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "psr/container": "^1.0|^2.0",
-        "hyperf/rpc": "~2.2.0",
-        "hyperf/load-balancer": "~2.2.0",
-        "hyperf/utils": "~2.2.0"
+        "hyperf/rpc": "~3.0.0",
+        "hyperf/load-balancer": "~3.0.0",
+        "hyperf/utils": "~3.0.0"
     },
     "suggest": {
         "hyperf/service-governance": "Required to fetch the nodes info from service governance.",
@@ -44,7 +44,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\RpcClient\\ConfigProvider"

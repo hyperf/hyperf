@@ -33,28 +33,14 @@ use Throwable;
 
 class Consumer extends Builder
 {
-    /**
-     * @var bool
-     */
-    protected $status = true;
-
-    /**
-     * @var null|EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    protected ?EventDispatcherInterface $eventDispatcher = null;
 
     public function __construct(
         ContainerInterface $container,
         ConnectionFactory $factory,
-        LoggerInterface $logger
+        private LoggerInterface $logger
     ) {
         parent::__construct($container, $factory);
-        $this->logger = $logger;
         if ($container->has(EventDispatcherInterface::class)) {
             $this->eventDispatcher = $container->get(EventDispatcherInterface::class);
         }
@@ -98,12 +84,12 @@ class Consumer extends Builder
                     }
                 } catch (AMQPTimeoutException $exception) {
                     $this->eventDispatcher && $this->eventDispatcher->dispatch(new WaitTimeout($consumerMessage));
-                } catch (\Throwable $exception) {
+                } catch (Throwable $exception) {
                     $this->logger->error((string) $exception);
                     break;
                 }
             }
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             isset($channel) && $channel->close();
             throw $exception;
         }
@@ -174,7 +160,7 @@ class Consumer extends Builder
         return null;
     }
 
-    protected function getCallback(ConsumerMessageInterface $consumerMessage, AMQPMessage $message)
+    protected function getCallback(ConsumerMessageInterface $consumerMessage, AMQPMessage $message): callable
     {
         return function () use ($consumerMessage, $message) {
             $data = $consumerMessage->unserialize($message->getBody());
@@ -200,19 +186,22 @@ class Consumer extends Builder
 
             if ($result === Result::ACK) {
                 $this->logger->debug($deliveryTag . ' acked.');
-                return $channel->basic_ack($deliveryTag);
+                $channel->basic_ack($deliveryTag);
+                return;
             }
             if ($result === Result::NACK) {
                 $this->logger->debug($deliveryTag . ' uacked.');
-                return $channel->basic_nack($deliveryTag, false, $consumerMessage->isRequeue());
+                $channel->basic_nack($deliveryTag, false, $consumerMessage->isRequeue());
+                return;
             }
             if ($consumerMessage->isRequeue() && $result === Result::REQUEUE) {
                 $this->logger->debug($deliveryTag . ' requeued.');
-                return $channel->basic_reject($deliveryTag, true);
+                $channel->basic_reject($deliveryTag, true);
+                return;
             }
 
             $this->logger->debug($deliveryTag . ' rejected.');
-            return $channel->basic_reject($deliveryTag, false);
+            $channel->basic_reject($deliveryTag, false);
         };
     }
 }

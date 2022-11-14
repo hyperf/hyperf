@@ -20,14 +20,8 @@ use Psr\Container\ContainerInterface;
 
 class ConsumerManager
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function run()
@@ -49,9 +43,9 @@ class ConsumerManager
             ! is_null($annotation->enable) && $instance->setEnable($annotation->enable);
             property_exists($instance, 'container') && $instance->container = $this->container;
             $annotation->maxConsumption && $instance->setMaxConsumption($annotation->maxConsumption);
-            $nums = $annotation->nums;
+            ! is_null($annotation->nums) && $instance->setNums($annotation->nums);
             $process = $this->createProcess($instance);
-            $process->nums = (int) $nums;
+            $process->nums = $instance->getNums();
             $process->name = $annotation->name . '-' . $instance->getQueue();
             ProcessManager::register($process);
         }

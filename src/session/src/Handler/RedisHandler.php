@@ -12,37 +12,34 @@ declare(strict_types=1);
 namespace Hyperf\Session\Handler;
 
 use Hyperf\Redis\Redis as RedisProxy;
+use InvalidArgumentException;
+use Redis;
+use RedisArray;
+use RedisCluster;
 use SessionHandlerInterface;
 
 class RedisHandler implements SessionHandlerInterface
 {
     /**
-     * @var \Hyperf\Redis\Redis|\Predis\Client|\Redis|\RedisArray|\RedisCluster
+     * @var \Hyperf\Redis\Redis|\Predis\Client|Redis|RedisArray|RedisCluster
      */
     protected $redis;
 
-    /**
-     * @var int
-     */
-    protected $gcMaxLifeTime = 1200;
-
-    public function __construct($redis, int $gcMaxLifeTime)
+    public function __construct($redis, protected int $gcMaxLifeTime = 1200)
     {
-        if (! $redis instanceof \Redis && ! $redis instanceof \RedisArray && ! $redis instanceof \RedisCluster && ! $redis instanceof \Predis\Client && ! $redis instanceof RedisProxy) {
-            throw new \InvalidArgumentException(sprintf('%s() expects parameter 1 to be Redis, RedisArray, RedisCluster, Predis\Client or Hyperf\Redis\Redis, %s given', __METHOD__, \is_object($redis) ? \get_class($redis) : \gettype($redis)));
+        if (! $redis instanceof Redis && ! $redis instanceof RedisArray && ! $redis instanceof RedisCluster && ! $redis instanceof \Predis\Client && ! $redis instanceof RedisProxy) {
+            throw new InvalidArgumentException(sprintf('%s() expects parameter 1 to be Redis, RedisArray, RedisCluster, Predis\Client or Hyperf\Redis\Redis, %s given', __METHOD__, \is_object($redis) ? \get_class($redis) : \gettype($redis)));
         }
 
         $this->redis = $redis;
-        $this->gcMaxLifeTime = $gcMaxLifeTime;
     }
 
     /**
      * Close the session.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.close.php
-     * @return bool
      */
-    public function close()
+    public function close(): bool
     {
         return true;
     }
@@ -51,12 +48,11 @@ class RedisHandler implements SessionHandlerInterface
      * Destroy a session.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.destroy.php
-     * @param string $session_id the session ID being destroyed
-     * @return bool
+     * @param string $id the session ID being destroyed
      */
-    public function destroy($session_id)
+    public function destroy(string $id): bool
     {
-        $this->redis->del($session_id);
+        $this->redis->del($id);
         return true;
     }
 
@@ -64,23 +60,20 @@ class RedisHandler implements SessionHandlerInterface
      * Cleanup old sessions.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.gc.php
-     * @param int $maxlifetime
-     * @return bool
      */
-    public function gc($maxlifetime)
+    public function gc(int $max_lifetime): int|false
     {
-        return true;
+        return 0;
     }
 
     /**
      * Initialize session.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.open.php
-     * @param string $save_path the path where to store/retrieve the session
+     * @param string $path the path where to store/retrieve the session
      * @param string $name the session name
-     * @return bool
      */
-    public function open($save_path, $name)
+    public function open(string $path, string $name): bool
     {
         return true;
     }
@@ -89,24 +82,22 @@ class RedisHandler implements SessionHandlerInterface
      * Read session data.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.read.php
-     * @param string $session_id the session id to read data for
+     * @param string $id the session id to read data for
      * @return string
      */
-    public function read($session_id)
+    public function read(string $id): string|false
     {
-        return $this->redis->get($session_id) ?: '';
+        return $this->redis->get($id) ?: '';
     }
 
     /**
      * Write session data.
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.write.php
-     * @param string $session_id the session id
-     * @param string $session_data
-     * @return bool
+     * @param string $id the session id
      */
-    public function write($session_id, $session_data)
+    public function write(string $id, string $data): bool
     {
-        return (bool) $this->redis->setEx($session_id, (int) $this->gcMaxLifeTime, $session_data);
+        return (bool) $this->redis->setEx($id, $this->gcMaxLifeTime, $data);
     }
 }

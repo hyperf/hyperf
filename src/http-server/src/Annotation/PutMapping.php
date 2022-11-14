@@ -13,12 +13,11 @@ namespace Hyperf\HttpServer\Annotation;
 
 use Attribute;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class PutMapping extends Mapping
 {
-    public $methods = ['PUT'];
+    public function __construct(?string $path = null, array $options = [])
+    {
+        parent::__construct($path, ['PUT'], $options);
+    }
 }

@@ -23,14 +23,8 @@ use Psr\Http\Message\StreamInterface;
  */
 class ConsulResponse
 {
-    /**
-     * @var ResponseInterface
-     */
-    private $response;
-
-    public function __construct(ResponseInterface $response)
+    public function __construct(private ResponseInterface $response)
     {
-        $this->response = $response;
     }
 
     public function __call($name, $arguments)

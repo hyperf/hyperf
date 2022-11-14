@@ -11,33 +11,19 @@ declare(strict_types=1);
  */
 namespace Hyperf\Pool;
 
+use Hyperf\Context\Context as CoroutineContext;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
-use Hyperf\Utils\Context as CoroutineContext;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class Context
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var string
-     */
-    protected $name;
-
-    public function __construct(ContainerInterface $container, string $name)
+    public function __construct(protected ContainerInterface $container, protected string $name)
     {
-        $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
-        $this->name = $name;
     }
 
     /**

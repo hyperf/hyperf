@@ -24,17 +24,12 @@ use Hyperf\Process\ProcessManager;
 use Hyperf\Utils\Waiter;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Throwable;
 
 class ConsumerManager
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function run()
@@ -65,41 +60,23 @@ class ConsumerManager
     private function createProcess(AbstractConsumer $consumer): AbstractProcess
     {
         return new class($this->container, $consumer) extends AbstractProcess {
-            /**
-             * @var AbstractConsumer
-             */
-            private $consumer;
+            private Nsq $subscriber;
 
-            /**
-             * @var Nsq
-             */
-            private $subscriber;
+            private ?EventDispatcherInterface $dispatcher = null;
 
-            /**
-             * @var null|EventDispatcherInterface
-             */
-            private $dispatcher;
+            private ConfigInterface $config;
 
-            /**
-             * @var ConfigInterface
-             */
-            private $config;
+            private Waiter $waiter;
 
-            /**
-             * @var Waiter
-             */
-            private $waiter;
-
-            public function __construct(ContainerInterface $container, AbstractConsumer $consumer)
+            public function __construct(ContainerInterface $container, private AbstractConsumer $consumer)
             {
                 parent::__construct($container);
-                $this->consumer = $consumer;
                 $this->config = $container->get(ConfigInterface::class);
                 $this->subscriber = make(Nsq::class, [
                     'container' => $container,
                     'pool' => $consumer->getPool(),
                 ]);
-                $this->waiter = make(Waiter::class, [0]);
+                $this->waiter = new Waiter(-1);
 
                 if ($container->has(EventDispatcherInterface::class)) {
                     $this->dispatcher = $container->get(EventDispatcherInterface::class);
@@ -132,7 +109,7 @@ class ConsumerManager
                                 $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($this->consumer, $data));
                                 $result = $this->consumer->consume($data);
                                 $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($this->consumer, $data, $result));
-                            } catch (\Throwable $throwable) {
+                            } catch (Throwable $throwable) {
                                 $result = Result::DROP;
                                 $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, $data, $throwable));
                             }

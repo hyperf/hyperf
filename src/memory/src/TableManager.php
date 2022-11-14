@@ -11,16 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\Memory;
 
+use RuntimeException;
 use Swoole\Table;
 
 class TableManager
 {
     /**
      * A container that use to store atomic.
-     *
-     * @var array
      */
-    private static $container = [];
+    private static array $container = [];
 
     /**
      * You should initialize a Table with the identifier before use it.
@@ -32,21 +31,21 @@ class TableManager
     }
 
     /**
-     * Get a initialized Table from container by the identifier.
+     * Get an initialized Table from container by the identifier.
      *
-     * @throws \RuntimeException when the Table with the identifier has not initialization
+     * @throws RuntimeException when the Table with the identifier has not initialization
      */
     public static function get(string $identifier): Table
     {
         if (! isset(static::$container[$identifier])) {
-            throw new \RuntimeException('The Table has not initialization yet.');
+            throw new RuntimeException('The Table has not initialization yet.');
         }
 
         return static::$container[$identifier];
     }
 
     /**
-     * determire if the initialized Table is exist in container by the identifier ?
+     * determine if the initialized Table is existed in container by the identifier ?
      */
     public static function has(string $identifier): bool
     {

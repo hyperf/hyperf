@@ -13,5 +13,5 @@ namespace Hyperf\Dag;
 
 interface Runner
 {
-    public function Run();
+    public function run();
 }

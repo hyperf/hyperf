@@ -15,5 +15,5 @@ use Hyperf\Pool\ConstantFrequency;
 
 class ConstantFrequencyStub extends ConstantFrequency
 {
-    protected $interval = 1;
+    protected int $interval = 1;
 }

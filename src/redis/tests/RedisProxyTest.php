@@ -13,7 +13,9 @@ namespace HyperfTest\Redis;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Di\Container;
+use Hyperf\Engine\Channel as Chan;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\LowFrequencyInterface;
 use Hyperf\Pool\PoolOption;
@@ -117,6 +119,40 @@ class RedisProxyTest extends TestCase
         $this->assertSame(0, $it);
     }
 
+    public function testRedisPipeline()
+    {
+        $redis = $this->getRedis();
+
+        $redis->rPush('pipeline:list', 'A');
+        $redis->rPush('pipeline:list', 'B');
+        $redis->rPush('pipeline:list', 'C');
+        $redis->rPush('pipeline:list', 'D');
+        $redis->rPush('pipeline:list', 'E');
+
+        $chan = new Chan(1);
+        $chan2 = new Chan(1);
+        go(static function () use ($redis, $chan) {
+            $redis->pipeline();
+            usleep(2000);
+            $redis->lRange('pipeline:list', 0, 1);
+            $redis->lTrim('pipeline:list', 2, -1);
+            usleep(1000);
+            $chan->push($redis->exec());
+        });
+
+        go(static function () use ($redis, $chan2) {
+            $redis->pipeline();
+            usleep(1000);
+            $redis->lRange('pipeline:list', 0, 1);
+            $redis->lTrim('pipeline:list', 2, -1);
+            usleep(10000);
+            $chan2->push($redis->exec());
+        });
+
+        $this->assertSame([['A', 'B'], true], $chan->pop());
+        $this->assertSame([['C', 'D'], true], $chan2->pop());
+    }
+
     /**
      * @param mixed $optinos
      * @return \Redis
@@ -124,6 +160,7 @@ class RedisProxyTest extends TestCase
     private function getRedis($optinos = [])
     {
         $container = Mockery::mock(Container::class);
+        $container->shouldReceive('has')->with(StdoutLoggerInterface::class)->andReturnFalse();
         $container->shouldReceive('get')->once()->with(ConfigInterface::class)->andReturn(new Config([
             'redis' => [
                 'default' => [

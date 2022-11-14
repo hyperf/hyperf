@@ -15,10 +15,7 @@ use Hyperf\Di\MetadataCollector;
 
 class ClassCollector extends MetadataCollector
 {
-    /**
-     * @var array
-     */
-    protected static $container = [];
+    protected static array $container = [];
 
     public static function collect(string $class)
     {

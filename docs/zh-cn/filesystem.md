@@ -8,7 +8,7 @@
 composer require hyperf/filesystem
 ```
 
-`League\Flysystem` 组件 `v1.0` 和 `v2.0` 版本变动较大，所以需要根据不同的版本，安装对应的适配器
+`League\Flysystem` 组件 `v1.0`, `v2.0` 和 `v3.0` 版本变动较大，所以需要根据不同的版本，安装对应的适配器
 
 - 阿里云 OSS 适配器
 
@@ -18,7 +18,7 @@ composer require hyperf/filesystem
 composer require xxtime/flysystem-aliyun-oss
 ```
 
-`Flysystem v2.0` 版本
+`Flysystem v2.0` 和 `Flysystem v3.0` 版本
 
 ```shell
 composer require hyperf/flysystem-oss
@@ -54,6 +54,12 @@ composer require "overtrue/flysystem-qiniu:^1.0"
 composer require "overtrue/flysystem-qiniu:^2.0"
 ```
 
+`Flysystem v3.0` 版本
+
+```shell
+composer require "overtrue/flysystem-qiniu:^3.0"
+```
+
 - 内存适配器
 
 `Flysystem v1.0` 版本
@@ -82,6 +88,12 @@ composer require "overtrue/flysystem-cos:^3.0"
 
 ```shell
 composer require "overtrue/flysystem-cos:^4.0"
+```
+
+`Flysystem v3.0` 版本
+
+```shell
+composer require "overtrue/flysystem-cos:^5.0"
 ```
 
 安装完成后，执行

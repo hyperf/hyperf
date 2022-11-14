@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 namespace HyperfTest\Retry;
 
 use Hyperf\Di\Aop\AnnotationMetadata;
@@ -15,7 +24,12 @@ use Hyperf\Utils\ApplicationContext;
 use HyperfTest\Retry\Stub\Foo;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class CircuitBreakerAnotationAspectTest extends TestCase
 {
     protected function setUp(): void
@@ -37,7 +51,7 @@ class CircuitBreakerAnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -47,7 +61,7 @@ class CircuitBreakerAnotationAspectTest extends TestCase
                     $state->shouldReceive('isOpen')->twice()->andReturns(false);
                     $state->shouldReceive('isOpen')->once()->andReturns(true);
                     $state->shouldReceive('open')->andReturns();
-                    $retry = new CircuitBreaker(['circuitBreakerState' => $state]);
+                    $retry = new CircuitBreaker(circuitBreakerState: $state);
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $this->method = [
                         AbstractRetry::class => $retry,
@@ -55,7 +69,7 @@ class CircuitBreakerAnotationAspectTest extends TestCase
                 }
             }
         );
-        $point->shouldReceive('process')->times(2)->andThrow(new \RuntimeException('ok'));
+        $point->shouldReceive('process')->times(2)->andThrow(new RuntimeException('ok'));
         $point->shouldReceive('getArguments')->andReturns([]);
         $this->expectException('RuntimeException');
         $aspect->process($point);
@@ -68,12 +82,12 @@ class CircuitBreakerAnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
                     $state = new CircuitBreakerState(10);
-                    $retry = new CircuitBreaker(['circuitBreakerState' => $state]);
+                    $retry = new CircuitBreaker(circuitBreakerState: $state);
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $retry->fallback = Foo::class . '@fallbackWithThrowable';
                     $retry->maxAttempts = 2;
@@ -83,7 +97,7 @@ class CircuitBreakerAnotationAspectTest extends TestCase
                 }
             }
         );
-        $point->shouldReceive('process')->times(2)->andThrow(new \RuntimeException('ok'));
+        $point->shouldReceive('process')->times(2)->andThrow(new RuntimeException('ok'));
         $point->shouldReceive('getArguments')->andReturns([$string = uniqid()]);
         $result = $aspect->process($point);
         static::assertSame($string . ':ok', $result);
@@ -96,7 +110,7 @@ class CircuitBreakerAnotationAspectTest extends TestCase
 
         $point->shouldReceive('getAnnotationMetadata')->andReturns(
             new class() extends AnnotationMetadata {
-                public $method;
+                public array $method;
 
                 public function __construct()
                 {
@@ -105,7 +119,7 @@ class CircuitBreakerAnotationAspectTest extends TestCase
                     );
                     $state->shouldReceive('isOpen')->andReturns(true);
                     $state->shouldReceive('open')->andReturns();
-                    $retry = new CircuitBreaker(['circuitBreakerState' => $state]);
+                    $retry = new CircuitBreaker(circuitBreakerState: $state);
                     $retry->sleepStrategyClass = FlatStrategy::class;
                     $retry->fallback = Foo::class . '@fallbackWithThrowable';
                     $this->method = [
@@ -117,6 +131,6 @@ class CircuitBreakerAnotationAspectTest extends TestCase
         $point->shouldReceive('getArguments')->andReturns([$string = uniqid()]);
         $result = $aspect->process($point);
 
-        self::assertEquals($string.':fallback', $result);
+        self::assertEquals($string . ':fallback', $result);
     }
 }

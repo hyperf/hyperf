@@ -34,7 +34,7 @@ trait QueriesRelationships
     public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null)
     {
         if (is_string($relation)) {
-            if (strpos($relation, '.') !== false) {
+            if (str_contains($relation, '.')) {
                 return $this->hasNested($relation, $operator, $count, $boolean, $callback);
             }
 
@@ -126,7 +126,7 @@ trait QueriesRelationships
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param string $relation
-     * @param \Closure $callback
+     * @param Closure $callback
      * @param string $operator
      * @param int $count
      * @return \Hyperf\Database\Model\Builder|static
@@ -151,7 +151,7 @@ trait QueriesRelationships
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param string $relation
-     * @param \Closure $callback
+     * @param Closure $callback
      * @return \Hyperf\Database\Model\Builder|static
      */
     public function orWhereDoesntHave($relation, Closure $callback = null)
@@ -165,7 +165,7 @@ trait QueriesRelationships
      * @param mixed $relations
      * @return $this
      */
-    public function withCount($relations)
+    public function withCount($relations): static
     {
         return $this->withAggregate(is_array($relations) ? $relations : func_get_args(), '*', 'count');
     }
@@ -176,7 +176,7 @@ trait QueriesRelationships
      * @param array|string $relation
      * @return $this
      */
-    public function withMax($relation, string $column)
+    public function withMax($relation, string $column): static
     {
         return $this->withAggregate($relation, $column, 'max');
     }
@@ -187,7 +187,7 @@ trait QueriesRelationships
      * @param array|string $relation
      * @return $this
      */
-    public function withMin($relation, string $column)
+    public function withMin($relation, string $column): static
     {
         return $this->withAggregate($relation, $column, 'min');
     }
@@ -198,7 +198,7 @@ trait QueriesRelationships
      * @param array|string $relation
      * @return $this
      */
-    public function withSum($relation, string $column)
+    public function withSum($relation, string $column): static
     {
         return $this->withAggregate($relation, $column, 'sum');
     }
@@ -209,7 +209,7 @@ trait QueriesRelationships
      * @param array|string $relation
      * @return $this
      */
-    public function withAvg($relation, string $column)
+    public function withAvg($relation, string $column): static
     {
         return $this->withAggregate($relation, $column, 'avg');
     }
@@ -219,9 +219,8 @@ trait QueriesRelationships
      *
      * @param mixed $relations
      * @param string $function
-     * @return $this
      */
-    public function withAggregate($relations, string $column, $function = null)
+    public function withAggregate($relations, string $column, $function = null): static
     {
         if (empty($relations)) {
             return $this;
@@ -337,7 +336,7 @@ trait QueriesRelationships
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param array|string $types
-     * @param \Closure $callback
+     * @param Closure $callback
      * @return $this
      */
     public function orWhereHasMorph(string $relation, $types, Closure $callback = null, string $operator = '>=', int $count = 1)
@@ -360,7 +359,7 @@ trait QueriesRelationships
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param array|string $types
-     * @param \Closure $callback
+     * @param Closure $callback
      * @return $this
      */
     public function orWhereDoesntHaveMorph(string $relation, $types, Closure $callback = null)
@@ -431,7 +430,7 @@ trait QueriesRelationships
      * @param string $operator
      * @param int $count
      * @param string $boolean
-     * @param null|\Closure $callback
+     * @param null|Closure $callback
      * @return \Hyperf\Database\Model\Builder|static
      */
     protected function hasNested($relations, $operator = '>=', $count = 1, $boolean = 'and', $callback = null)

@@ -18,46 +18,30 @@ use InvalidArgumentException;
 class Finder implements FinderInterface
 {
     /**
-     * The filesystem instance.
-     *
-     * @var Filesystem
-     */
-    protected $files;
-
-    /**
      * The array of active view paths.
-     *
-     * @var array
      */
-    protected $paths;
+    protected array $paths;
 
     /**
      * The array of views that have been located.
-     *
-     * @var array
      */
-    protected $views = [];
+    protected array $views = [];
 
     /**
      * The namespace to file path hints.
-     *
-     * @var array
      */
-    protected $hints = [];
+    protected array $hints = [];
 
     /**
      * Register a view extension with the finder.
-     *
-     * @var array
      */
-    protected $extensions = ['blade.php', 'php', 'css', 'html'];
+    protected array $extensions = ['blade.php', 'php', 'css', 'html'];
 
     /**
      * Create a new file view loader instance.
      */
-    public function __construct(Filesystem $files, array $paths, array $extensions = null)
+    public function __construct(protected Filesystem $files, array $paths, array $extensions = null)
     {
-        $this->files = $files;
         $this->paths = array_map([$this, 'resolvePath'], $paths);
 
         if (isset($extensions) && $extensions) {
@@ -68,10 +52,9 @@ class Finder implements FinderInterface
     /**
      * Get the fully qualified location of the view.
      *
-     * @param string $name
      * @return string
      */
-    public function find($name)
+    public function find(string $name)
     {
         if (isset($this->views[$name])) {
             return $this->views[$name];
@@ -86,10 +69,8 @@ class Finder implements FinderInterface
 
     /**
      * Add a location to the finder.
-     *
-     * @param string $location
      */
-    public function addLocation($location)
+    public function addLocation(string $location)
     {
         $this->paths[] = $this->resolvePath($location);
     }
@@ -123,10 +104,9 @@ class Finder implements FinderInterface
     /**
      * Prepend a namespace hint to the finder.
      *
-     * @param string $namespace
      * @param array|string $hints
      */
-    public function prependNamespace($namespace, $hints)
+    public function prependNamespace(string $namespace, $hints)
     {
         $hints = (array) $hints;
 
@@ -140,20 +120,17 @@ class Finder implements FinderInterface
     /**
      * Replace the namespace hints for the given namespace.
      *
-     * @param string $namespace
      * @param array|string $hints
      */
-    public function replaceNamespace($namespace, $hints)
+    public function replaceNamespace(string $namespace, $hints)
     {
         $this->hints[$namespace] = (array) $hints;
     }
 
     /**
      * Register an extension with the view finder.
-     *
-     * @param string $extension
      */
-    public function addExtension($extension)
+    public function addExtension(string $extension)
     {
         if (($index = array_search($extension, $this->extensions)) !== false) {
             unset($this->extensions[$index]);
@@ -261,8 +238,8 @@ class Finder implements FinderInterface
      * Get the segments of a template with a named path.
      *
      * @param string $name
-     * @throws InvalidArgumentException
      * @return array
+     * @throws InvalidArgumentException
      */
     protected function parseNamespaceSegments($name)
     {
@@ -284,8 +261,8 @@ class Finder implements FinderInterface
      *
      * @param string $name
      * @param array $paths
-     * @throws InvalidArgumentException
      * @return string
+     * @throws InvalidArgumentException
      */
     protected function findInPaths($name, $paths)
     {
@@ -308,9 +285,7 @@ class Finder implements FinderInterface
      */
     protected function getPossibleViewFiles($name)
     {
-        return array_map(function ($extension) use ($name) {
-            return str_replace('.', '/', $name) . '.' . $extension;
-        }, $this->extensions);
+        return array_map(fn ($extension) => str_replace('.', '/', $name) . '.' . $extension, $this->extensions);
     }
 
     /**

@@ -9,7 +9,10 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+use Hyperf\Amqp\IO\IOFactory;
+
 return [
+    'enable' => true,
     'default' => [
         'host' => env('AMQP_HOST', 'localhost'),
         'port' => (int) env('AMQP_PORT', 5672),
@@ -18,11 +21,12 @@ return [
         'vhost' => env('AMQP_VHOST', '/'),
         'open_ssl' => false,
         'concurrent' => [
-            'limit' => 1,
+            'limit' => 2,
         ],
         'pool' => [
             'connections' => 2,
         ],
+        'io' => IOFactory::class,
         'params' => [
             'insist' => false,
             'login_method' => 'AMQPLAIN',

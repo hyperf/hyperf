@@ -109,9 +109,7 @@ namespace App\Process;
 use Hyperf\AsyncQueue\Process\ConsumerProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="async-queue")
- */
+#[Process(name: "async-queue")]
 class AsyncQueueConsumer extends ConsumerProcess
 {
 }
@@ -176,10 +174,8 @@ class ExampleJob extends Job
     
     /**
      * 任务执行失败后的重试次数，即最大执行次数为 $maxAttempts+1 次
-     *
-     * @var int
      */
-    protected $maxAttempts = 2;
+    protected int $maxAttempts = 2;
 
     public function __construct($params)
     {
@@ -212,10 +208,7 @@ use Hyperf\AsyncQueue\Driver\DriverInterface;
 
 class QueueService
 {
-    /**
-     * @var DriverInterface
-     */
-    protected $driver;
+    protected DriverInterface $driver;
 
     public function __construct(DriverFactory $driverFactory)
     {
@@ -252,16 +245,11 @@ use App\Service\QueueService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class QueueController extends AbstractController
 {
-    /**
-     * @Inject
-     * @var QueueService
-     */
-    protected $service;
+    #[Inject]
+    protected QueueService $service;
 
     /**
      * 传统模式投递消息
@@ -299,9 +287,7 @@ use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
 
 class QueueService
 {
-    /**
-     * @AsyncQueueMessage
-     */
+    #[AsyncQueueMessage]
     public function example($params)
     {
         // 需要异步执行的代码逻辑
@@ -327,15 +313,13 @@ use App\Service\QueueService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class QueueController extends AbstractController
 {
     /**
-     * @Inject
      * @var QueueService
      */
+    #[Inject]
     protected $service;
 
     /**
@@ -468,15 +452,10 @@ namespace App\Process;
 use Hyperf\AsyncQueue\Process\ConsumerProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process()
- */
+#[Process]
 class OtherConsumerProcess extends ConsumerProcess
 {
-    /**
-     * @var string
-     */
-    protected $queue = 'other';
+    protected string $queue = 'other';
 }
 ```
 
@@ -492,17 +471,18 @@ return $driver->push(new ExampleJob());
 
 ## 安全关闭
 
-异步队列在终止时，如果正在进行消费逻辑，可能会导致出现错误。框架提供了 `DriverStopHandler` ，可以让异步队列进程安全关闭。
+异步队列在终止时，如果正在进行消费逻辑，可能会导致出现错误。框架提供了 `ProcessStopHandler` ，可以让异步队列进程安全关闭。
 
 > 当前信号处理器并不适配于 CoroutineServer，如有需要请自行实现
 
 安装信号处理器
 
-```
+```shell
 composer require hyperf/signal
+composer require hyperf/process
 ```
 
-添加配置
+添加配置 `autoload/signal.php`
 
 ```php
 <?php
@@ -511,7 +491,7 @@ declare(strict_types=1);
 
 return [
     'handlers' => [
-        Hyperf\AsyncQueue\Signal\DriverStopHandler::class,
+        Hyperf\Process\Handler\ProcessStopHandler::class,
     ],
     'timeout' => 5.0,
 ];

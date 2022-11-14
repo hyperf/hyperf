@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\AsyncQueue;
 
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 class Environment
 {
@@ -20,7 +20,7 @@ class Environment
         return (bool) Context::get($this->getKey(), false);
     }
 
-    public function setAsyncQueue(bool $asyncQueue): self
+    public function setAsyncQueue(bool $asyncQueue): static
     {
         Context::set($this->getKey(), $asyncQueue);
         return $this;

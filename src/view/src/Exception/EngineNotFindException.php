@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\View\Exception;
 
-class EngineNotFindException extends \RuntimeException
+use RuntimeException;
+
+class EngineNotFindException extends RuntimeException
 {
 }

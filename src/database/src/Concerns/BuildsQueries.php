@@ -11,11 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Concerns;
 
+use Closure;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Utils\ApplicationContext;
+use RuntimeException;
 
 trait BuildsQueries
 {
@@ -109,7 +111,7 @@ trait BuildsQueries
     /**
      * Pass the query to a given callback.
      *
-     * @param \Closure $callback
+     * @param Closure $callback
      * @return $this|mixed
      */
     public function tap($callback)
@@ -144,7 +146,7 @@ trait BuildsQueries
     {
         $container = ApplicationContext::getContainer();
         if (! method_exists($container, 'make')) {
-            throw new \RuntimeException('The DI container does not support make() method.');
+            throw new RuntimeException('The DI container does not support make() method.');
         }
         return $container->make(LengthAwarePaginatorInterface::class, compact('items', 'total', 'perPage', 'currentPage', 'options'));
     }
@@ -156,7 +158,7 @@ trait BuildsQueries
     {
         $container = ApplicationContext::getContainer();
         if (! method_exists($container, 'make')) {
-            throw new \RuntimeException('The DI container does not support make() method.');
+            throw new RuntimeException('The DI container does not support make() method.');
         }
         return $container->make(PaginatorInterface::class, compact('items', 'perPage', 'currentPage', 'options'));
     }

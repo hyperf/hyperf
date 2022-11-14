@@ -11,8 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di\Resolver;
 
+use Hyperf\Context\Context;
 use Hyperf\Di\Exception\CircularDependencyException;
-use Hyperf\Utils\Context;
 
 /**
  * Class DepthGuard aborts the resolver after
@@ -21,17 +21,11 @@ use Hyperf\Utils\Context;
  */
 class DepthGuard
 {
-    /**
-     * @var int
-     */
-    protected $depthLimit = 500;
+    protected int $depthLimit = 500;
 
-    /**
-     * @var DepthGuard
-     */
-    private static $instance;
+    private static ?DepthGuard $instance = null;
 
-    public static function getInstance()
+    public static function getInstance(): self
     {
         if (! isset(self::$instance)) {
             self::$instance = new static();

@@ -16,13 +16,14 @@ php bin/hyperf.php vendor:publish hyperf/rate-limit
 
 ### 配置說明
 
-|  配置          | 預設值 |         備註        |
-|:--------------:|:------:|:-------------------:|
-| create         | 1      | 每秒生成令牌數      |
-| consume        | 1      | 每次請求消耗令牌數  |
-| capacity       | 2      | 令牌桶最大容量      |
-| limitCallback  | `[]`   | 觸發限流時回撥方法  |
-| waitTimeout    | 1      | 排隊超時時間        |
+|  配置          | 預設值 | 型別 |       備註        |
+|:--------------:|:------:|:--------------:|:-------------------:|
+| create         | 1      |int| 每秒生成令牌數      |
+| consume        | 1      |int| 每次請求消耗令牌數  |
+| capacity       | 2      |int| 令牌桶最大容量      |
+| limitCallback  | `[]`   |null\|callable| 觸發限流時回撥方法  |
+| waitTimeout    | 1      |int| 排隊超時時間        |
+| key            | 當前請求 url 地址     |callable\|string| 限流的 key        |
 
 ## 使用限流器
 
@@ -37,24 +38,18 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use Hyperf\RateLimit\Annotation\RateLimit;
 
-/**
- * @Controller(prefix="rate-limit")
- */
+#[Controller(prefix: "rate-limit")]
 class RateLimitController
 {
-    /**
-     * @RequestMapping(path="test")
-     * @RateLimit(create=1, capacity=3)
-     */
+    #[RequestMapping(path: "test")]
+    #[RateLimit(create: 1, capacity: 3)]
     public function test()
     {
         return ["QPS 1, 峰值3"];
     }
 
-    /**
-     * @RequestMapping(path="test2")
-     * @RateLimit(create=2, consume=2, capacity=4)
-     */
+    #[RequestMapping(path: "test2")]
+    #[RateLimit(create: 2, consume: 2, capacity: 4)]
     public function test2()
     {
         return ["QPS 2, 峰值2"];
@@ -79,16 +74,12 @@ use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 use Hyperf\RateLimit\Annotation\RateLimit;
 
-/**
- * @Controller(prefix="rate-limit")
- * @RateLimit(limitCallback={RateLimitController::class, "limitCallback"})
- */
+#[Controller(prefix: "rate-limit")]
+#[RateLimit(limitCallback: [RateLimitController::class, "limitCallback"])]
 class RateLimitController
 {
-    /**
-     * @RequestMapping(path="test")
-     * @RateLimit(create=1, capacity=3)
-     */
+    #[RequestMapping(path: "test")]
+    #[RateLimit(create: 1, capacity: 3)]
     public function test()
     {
         return ["QPS 1, 峰值3"];
@@ -102,4 +93,45 @@ class RateLimitController
         return $proceedingJoinPoint->process();
     }
 }
+```
+
+## 自定義令牌桶限流 key
+
+預設的 key 是根據當前請求的 `url` ，當一個使用者觸發限流時，其他使用者也被限流請求此`url`；
+
+若需要不同顆粒度的限流， 如使用者緯度的限流，可以針對使用者 `ID` 進行限流，達到 A 使用者被限流，B 使用者正常請求：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+
+namespace App\Controller;
+
+use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\RateLimit\Annotation\RateLimit;
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\HttpServer\Contract\RequestInterface;
+
+class TestController
+{
+    /**
+     * @RateLimit(create=1, capacity=3, key={TestController::class, "getUserId"})
+     */
+    public function test(TestRequest $request)
+    {
+
+        return ["QPS 1, 峰值3"];
+    }
+
+    public static function getUserId(ProceedingJoinPoint $proceedingJoinPoint)
+    {
+        $request = ApplicationContext::getContainer()->get(RequestInterface::class);
+        // 同理可以根據手機號、IP地址等不同緯度進行限流
+        return $request->input('user_id');
+    }
+
+}
+
 ```

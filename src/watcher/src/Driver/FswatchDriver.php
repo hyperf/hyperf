@@ -11,43 +11,37 @@ declare(strict_types=1);
  */
 namespace Hyperf\Watcher\Driver;
 
-use Hyperf\Utils\Coroutine;
+use Hyperf\Engine\Channel;
+use Hyperf\Engine\Coroutine;
 use Hyperf\Utils\Str;
 use Hyperf\Watcher\Option;
-use Swoole\Coroutine\Channel;
-use Swoole\Coroutine\System;
+use InvalidArgumentException;
+use RuntimeException;
 
-class FswatchDriver implements DriverInterface
+use function Hyperf\Watcher\exec;
+
+class FswatchDriver extends AbstractDriver
 {
-    /**
-     * @var Option
-     */
-    protected $option;
+    protected mixed $process = null;
 
-    /**
-     * @var bool
-     */
-    protected $isDarwin;
-
-    public function __construct(Option $option)
+    public function __construct(protected Option $option)
     {
-        $this->option = $option;
-        $this->isDarwin = PHP_OS === 'Darwin';
-        $ret = System::exec('which fswatch');
+        parent::__construct($option);
+        $ret = exec('which fswatch');
         if (empty($ret['output'])) {
-            throw new \InvalidArgumentException('fswatch not exists. You can `brew install fswatch` to install it.');
+            throw new InvalidArgumentException('fswatch not exists. You can `brew install fswatch` to install it.');
         }
     }
 
     public function watch(Channel $channel): void
     {
         $cmd = $this->getCmd();
-        $process = proc_open($cmd, [['pipe', 'r'], ['pipe', 'w']], $pipes);
-        if (! is_resource($process)) {
-            throw new \RuntimeException('fswatch failed.');
+        $this->process = proc_open($cmd, [['pipe', 'r'], ['pipe', 'w']], $pipes);
+        if (! is_resource($this->process)) {
+            throw new RuntimeException('fswatch failed.');
         }
 
-        while (true) {
+        while (! $channel->isClosing()) {
             $ret = fread($pipes[1], 8192);
             Coroutine::create(function () use ($ret, $channel) {
                 if (is_string($ret)) {
@@ -62,13 +56,24 @@ class FswatchDriver implements DriverInterface
         }
     }
 
+    public function stop()
+    {
+        parent::stop();
+
+        if (is_resource($this->process)) {
+            $running = proc_get_status($this->process)['running'];
+            // Kill the child process to exit.
+            $running && proc_terminate($this->process, SIGKILL);
+        }
+    }
+
     protected function getCmd(): string
     {
         $dir = $this->option->getWatchDir();
         $file = $this->option->getWatchFile();
 
         $cmd = 'fswatch ';
-        if (! $this->isDarwin) {
+        if (! $this->isDarwin()) {
             $cmd .= ' -m inotify_monitor';
             $cmd .= " -E --format '%p' -r ";
             $cmd .= ' --event Created --event Updated --event Removed --event Renamed ';

@@ -20,7 +20,7 @@ trait InteractsWithTime
     /**
      * Get the number of seconds until the given DateTime.
      *
-     * @param \DateInterval|\DateTimeInterface|int $delay
+     * @param DateInterval|DateTimeInterface|int $delay
      */
     protected function secondsUntil($delay): int
     {
@@ -34,7 +34,7 @@ trait InteractsWithTime
     /**
      * Get the "available at" UNIX timestamp.
      *
-     * @param \DateInterval|\DateTimeInterface|int $delay
+     * @param DateInterval|DateTimeInterface|int $delay
      */
     protected function availableAt($delay = 0): int
     {
@@ -48,8 +48,8 @@ trait InteractsWithTime
     /**
      * If the given value is an interval, convert it to a DateTime instance.
      *
-     * @param \DateInterval|\DateTimeInterface|int $delay
-     * @return \DateTimeInterface|int
+     * @param DateInterval|DateTimeInterface|int $delay
+     * @return DateTimeInterface|int
      */
     protected function parseDateInterval($delay)
     {

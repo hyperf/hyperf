@@ -20,7 +20,7 @@ Hyperf 提供了大量便捷的輔助類，這裡會列出一些常用的好用�
 
 通過靜態方法 `inCoroutine()` 判斷當前是否處於協程環境下。
 
-### Hyperf\Utils\Context
+### Hyperf\Context\Context
 
 用於處理協程上下文，本質上是對 `Swoole\Coroutine::getContext()` 方法的一個封裝，但區別在於這裡相容了非協程環境下的執行。
 
@@ -30,8 +30,8 @@ Hyperf 提供了大量便捷的輔助類，這裡會列出一些常用的好用�
 
 ```php
 <?php
-use Hyperf\Utils\Coordinator\CoordinatorManager;
-use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Constants;
 use Hyperf\Utils\Coroutine;
 
 Coroutine::create(function() {

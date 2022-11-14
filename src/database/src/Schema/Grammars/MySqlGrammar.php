@@ -19,27 +19,21 @@ class MySqlGrammar extends Grammar
 {
     /**
      * The possible column modifiers.
-     *
-     * @var array
      */
-    protected $modifiers = [
+    protected array $modifiers = [
         'Unsigned', 'VirtualAs', 'StoredAs', 'Charset', 'Collate', 'Nullable',
         'Default', 'Increment', 'Comment', 'After', 'First', 'Srid',
     ];
 
     /**
      * The possible column serials.
-     *
-     * @var array
      */
-    protected $serials = ['bigInteger', 'integer', 'mediumInteger', 'smallInteger', 'tinyInteger'];
+    protected array $serials = ['bigInteger', 'integer', 'mediumInteger', 'smallInteger', 'tinyInteger'];
 
     /**
      * Compile the query to determine the list of tables.
-     *
-     * @return string
      */
-    public function compileTableExists()
+    public function compileTableExists(): string
     {
         return 'select * from information_schema.tables where table_schema = ? and table_name = ?';
     }
@@ -91,7 +85,7 @@ class MySqlGrammar extends Grammar
             $blueprint
         );
 
-        // Finally we will append table comment.
+        // Finally, we will append table comment.
         return $this->compileCreateComment(
             $sql,
             $connection,
@@ -954,9 +948,8 @@ class MySqlGrammar extends Grammar
      * Wrap a single string in keyword identifiers.
      *
      * @param string $value
-     * @return string
      */
-    protected function wrapValue($value)
+    protected function wrapValue($value): string
     {
         if ($value !== '*') {
             return '`' . str_replace('`', '``', $value) . '`';

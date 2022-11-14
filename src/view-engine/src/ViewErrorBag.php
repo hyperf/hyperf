@@ -12,17 +12,16 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine;
 
 use Countable;
+use Hyperf\Contract\MessageBag;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Contracts\MessageBag;
+use Stringable;
 
-class ViewErrorBag implements Countable
+class ViewErrorBag implements Countable, Stringable
 {
     /**
      * The array of the view error bags.
-     *
-     * @var array
      */
-    protected $bags = [];
+    protected array $bags = [];
 
     /**
      * Dynamically call methods on the default bag.
@@ -60,10 +59,8 @@ class ViewErrorBag implements Countable
 
     /**
      * Convert the default bag to its string representation.
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->getBag('default');
     }
@@ -125,10 +122,8 @@ class ViewErrorBag implements Countable
 
     /**
      * Get the number of messages in the default bag.
-     *
-     * @return int
      */
-    public function count()
+    public function count(): int
     {
         return $this->getBag('default')->count();
     }

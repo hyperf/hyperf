@@ -11,21 +11,16 @@ declare(strict_types=1);
  */
 namespace Hyperf\Retry\Aspect;
 
-use Hyperf\Di\Annotation\Aspect;
-use Hyperf\Di\Aop\AroundInterface;
+use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Retry\Annotation\AbstractRetry;
 use Hyperf\Retry\Annotation\Retry;
 use Hyperf\Retry\Policy\HybridRetryPolicy;
+use Throwable;
 
-/**
- * @Aspect
- */
-class RetryAnnotationAspect implements AroundInterface
+class RetryAnnotationAspect extends AbstractAspect
 {
-    public $classes = [];
-
-    public $annotations = [
+    public array $annotations = [
         AbstractRetry::class,
     ];
 
@@ -45,7 +40,7 @@ class RetryAnnotationAspect implements AroundInterface
         $context['lastResult'] = $context['lastThrowable'] = null;
         try {
             $context['lastResult'] = $proceedingJoinPoint->process();
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             $context['lastThrowable'] = $throwable;
         }
         if ($policy->canRetry($context)) {

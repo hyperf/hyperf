@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine;
 
 use Closure;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
 use Hyperf\ViewEngine\Contract\EngineInterface;
 use Hyperf\ViewEngine\Contract\EngineResolverInterface;
@@ -36,46 +36,19 @@ class Factory implements FactoryInterface
     use Concern\ManagesTranslations;
 
     /**
-     * The engine implementation.
-     *
-     * @var EngineResolverInterface
-     */
-    protected $engines;
-
-    /**
-     * The view finder implementation.
-     *
-     * @var FinderInterface
-     */
-    protected $finder;
-
-    /**
-     * The event dispatcher instance.
-     *
-     * @var EventDispatcherInterface
-     */
-    protected $events;
-
-    /**
      * The IoC container instance.
-     *
-     * @var null|ContainerInterface
      */
-    protected $container;
+    protected ?ContainerInterface $container = null;
 
     /**
      * Data that should be available to all templates.
-     *
-     * @var array
      */
-    protected $shared = [];
+    protected array $shared = [];
 
     /**
      * The extension to engine bindings.
-     *
-     * @var array
      */
-    protected $extensions = [
+    protected array $extensions = [
         'blade.php' => 'blade',
         'php' => 'php',
         'css' => 'file',
@@ -84,37 +57,31 @@ class Factory implements FactoryInterface
 
     /**
      * The view composer events.
-     *
-     * @var array
      */
-    protected $composers = [];
+    protected array $composers = [];
 
     /**
      * The number of active rendering operations.
-     *
-     * @var int
      */
-    protected $renderCount = 0;
+    protected int $renderCount = 0;
 
     /**
      * The "once" block IDs that have been rendered.
-     *
-     * @var array
      */
-    protected $renderedOnce = [];
+    protected array $renderedOnce = [];
 
     /**
      * Factory constructor.
+     *
+     * @param EngineResolverInterface $engines the engine implementation
+     * @param FinderInterface $finder the view finder implementation
+     * @param EventDispatcherInterface $events the event dispatcher instance
      */
     public function __construct(
-        EngineResolverInterface $engines,
-        FinderInterface $finder,
-        EventDispatcherInterface $events
+        protected EngineResolverInterface $engines,
+        protected FinderInterface $finder,
+        protected EventDispatcherInterface $events
     ) {
-        $this->finder = $finder;
-        $this->events = $events;
-        $this->engines = $engines;
-
         $this->share('__env', $this);
         $this->share('errors', new ViewErrorBag());
     }
@@ -157,14 +124,11 @@ class Factory implements FactoryInterface
     /**
      * Get the first view that actually exists from the given list.
      *
-     * @param array|Arrayable $data
      * @throws InvalidArgumentException
      */
-    public function first(array $views, $data = [], array $mergeData = []): ViewInterface
+    public function first(array $views, array|Arrayable $data = [], array $mergeData = []): ViewInterface
     {
-        $view = Arr::first($views, function ($view) {
-            return $this->exists($view);
-        });
+        $view = Arr::first($views, fn ($view) => $this->exists($view));
 
         if (! $view) {
             throw new InvalidArgumentException('None of the views in the given array exist.');
@@ -176,10 +140,9 @@ class Factory implements FactoryInterface
     /**
      * Get the rendered content of the view based on a given condition.
      *
-     * @param array|Arrayable $data
      * @return string
      */
-    public function renderWhen(bool $condition, string $view, $data = [], array $mergeData = [])
+    public function renderWhen(bool $condition, string $view, array|Arrayable $data = [], array $mergeData = [])
     {
         if (! $condition) {
             return '';
@@ -228,7 +191,7 @@ class Factory implements FactoryInterface
     {
         try {
             $this->finder->find($view);
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             return false;
         }
 
@@ -238,8 +201,8 @@ class Factory implements FactoryInterface
     /**
      * Get the appropriate view engine for the given path.
      *
-     * @throws InvalidArgumentException
      * @return EngineInterface
+     * @throws InvalidArgumentException
      */
     public function getEngineFromPath(string $path)
     {
@@ -336,10 +299,9 @@ class Factory implements FactoryInterface
     /**
      * Prepend a new namespace to the loader.
      *
-     * @param array|string $hints
      * @return $this
      */
-    public function prependNamespace(string $namespace, $hints)
+    public function prependNamespace(string $namespace, array|string $hints)
     {
         $this->finder->prependNamespace($namespace, $hints);
 
@@ -499,7 +461,7 @@ class Factory implements FactoryInterface
     {
         $delimiter = FinderInterface::HINT_PATH_DELIMITER;
 
-        if (strpos($name, $delimiter) === false) {
+        if (! str_contains($name, $delimiter)) {
             return str_replace('/', '.', $name);
         }
 
@@ -511,10 +473,9 @@ class Factory implements FactoryInterface
     /**
      * Parse the given data into a raw array.
      *
-     * @param array|Arrayable $data
      * @return array
      */
-    protected function parseData($data)
+    protected function parseData(array|Arrayable $data)
     {
         return $data instanceof Arrayable ? $data->toArray() : $data;
     }
@@ -522,10 +483,9 @@ class Factory implements FactoryInterface
     /**
      * Create a new view instance from the given arguments.
      *
-     * @param array|Arrayable $data
      * @return ViewInterface
      */
-    protected function viewInstance(string $view, string $path, $data)
+    protected function viewInstance(string $view, string $path, array|Arrayable $data)
     {
         return new View($this, $this->getEngineFromPath($path), $view, $path, $data);
     }
@@ -539,8 +499,6 @@ class Factory implements FactoryInterface
     {
         $extensions = array_keys($this->extensions);
 
-        return Arr::first($extensions, function ($value) use ($path) {
-            return Str::endsWith($path, '.' . $value);
-        });
+        return Arr::first($extensions, fn ($value) => Str::endsWith($path, '.' . $value));
     }
 }

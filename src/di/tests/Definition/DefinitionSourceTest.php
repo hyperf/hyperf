@@ -13,6 +13,7 @@ namespace HyperfTest\Di\Definition;
 
 use Hyperf\Di\Definition\DefinitionSource;
 use HyperfTest\Di\Stub\Bar;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -23,13 +24,14 @@ class DefinitionSourceTest extends TestCase
 {
     protected function tearDown(): void
     {
-        \Mockery::close();
+        Mockery::close();
     }
 
     public function testGetDefinition()
     {
         $source = new DefinitionSource([]);
-        $source->getDefinition(Bar::class);
+        $bar = $source->getDefinition(Bar::class);
         $this->assertSame(1, count($source->getDefinitions()));
+        $this->assertSame($bar, $source->getDefinition(Bar::class));
     }
 }

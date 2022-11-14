@@ -19,19 +19,14 @@ use Hyperf\ReactiveX\Observable;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class SqlListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(ContainerInterface $container)
     {
-        $this->container = $container;
         $this->logger = $container->get(LoggerFactory::class)->get('RxPHP');
     }
 
@@ -45,23 +40,17 @@ class SqlListener implements ListenerInterface
     /**
      * @param QueryExecuted $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         Observable::fromEvent(QueryExecuted::class)
             ->filter(
-                function ($event) {
-                    return $event->time > 100;
-                }
+                fn ($event) => $event->time > 100
             )
             ->groupBy(
-                function ($event) {
-                    return $event->connectionName;
-                }
+                fn ($event) => $event->connectionName
             )
             ->flatMap(
-                function ($group) {
-                    return $group->throttle(1000);
-                }
+                fn ($group) => $group->throttle(1000)
             )
             ->map(
                 function ($event) {

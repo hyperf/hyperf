@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace HyperfTest\DbConnection;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\DbConnection\Connection;
 use Hyperf\DbConnection\Pool\PoolFactory;
-use Hyperf\Utils\Context;
 use HyperfTest\DbConnection\Stubs\ConnectionStub;
 use HyperfTest\DbConnection\Stubs\ContainerStub;
 use HyperfTest\DbConnection\Stubs\PDOStub;

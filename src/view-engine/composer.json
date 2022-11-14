@@ -12,12 +12,12 @@
     "require": {
         "php": ">=7.2",
         "ext-json": "*",
-        "hyperf/config": "~2.2.0",
-        "hyperf/di": "~2.2.0",
-        "hyperf/event": "~2.2.0",
-        "hyperf/macroable": "~2.2.0",
-        "hyperf/utils": "~2.2.0",
-        "hyperf/view": "~2.2.0"
+        "hyperf/config": "~3.0.0",
+        "hyperf/di": "~3.0.0",
+        "hyperf/event": "~3.0.0",
+        "hyperf/macroable": "~3.0.0",
+        "hyperf/utils": "~3.0.0",
+        "hyperf/view": "~3.0.0"
     },
     "suggest": {
         "hyperf/session": "Required to use ShareErrorsFromSession.",
@@ -41,7 +41,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\ViewEngine\\ConfigProvider"

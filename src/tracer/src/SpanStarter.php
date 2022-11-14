@@ -11,11 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Tracer;
 
+use Hyperf\Context\Context;
 use Hyperf\Rpc;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use OpenTracing\Span;
 use Psr\Http\Message\ServerRequestInterface;
+
 use const OpenTracing\Formats\TEXT_MAP;
 use const OpenTracing\Tags\SPAN_KIND;
 use const OpenTracing\Tags\SPAN_KIND_RPC_SERVER;

@@ -16,7 +16,7 @@ use Hyperf\Command\Command;
 abstract class BaseCommand extends Command
 {
     /**
-     * Get all of the migration paths.
+     * Get all the migration paths.
      */
     protected function getMigrationPaths(): array
     {

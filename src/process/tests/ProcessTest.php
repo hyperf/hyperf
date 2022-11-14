@@ -19,6 +19,7 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use ReflectionClass;
 
 /**
  * @internal
@@ -68,7 +69,7 @@ class ProcessTest extends TestCase
     {
         $server = Mockery::mock(\Swoole\Server::class);
         $server->shouldReceive('addProcess')->withAnyArgs()->andReturnUsing(function ($process) {
-            $ref = new \ReflectionClass($process);
+            $ref = new ReflectionClass($process);
             $property = $ref->getProperty('callback');
             $property->setAccessible(true);
             $callback = $property->getValue($process);

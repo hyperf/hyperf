@@ -18,6 +18,7 @@ use TheCodingMachine\GraphQLite\Mappers\RecursiveTypeMapperInterface;
 use TheCodingMachine\GraphQLite\Types\ArgumentResolver;
 use TheCodingMachine\GraphQLite\Types\ResolvableInputInterface;
 use TheCodingMachine\GraphQLite\Types\ResolvableInputObjectType as TheCodingMachineResolvableInputObjectType;
+
 use function get_class;
 
 /**

@@ -18,10 +18,8 @@ trait DetectsLostConnections
 {
     /**
      * Determine if the given exception was caused by a lost connection.
-     *
-     * @return bool
      */
-    protected function causedByLostConnection(Throwable $e)
+    protected function causedByLostConnection(Throwable $e): bool
     {
         $message = $e->getMessage();
 

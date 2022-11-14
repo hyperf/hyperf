@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model;
 
+use Closure;
 use Faker\Generator as Faker;
 use Hyperf\Macroable\Macroable;
 use InvalidArgumentException;
@@ -166,7 +167,7 @@ class FactoryBuilder
     /**
      * Create a model and persist it in the database if requested.
      *
-     * @return \Closure
+     * @return Closure
      */
     public function lazy(array $attributes = [])
     {
@@ -276,7 +277,7 @@ class FactoryBuilder
     /**
      * Get a raw attributes array for the model.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function getRawAttributes(array $attributes = [])
     {
@@ -318,8 +319,8 @@ class FactoryBuilder
     /**
      * Apply the active states to the model definition array.
      *
-     * @throws \InvalidArgumentException
      * @return array
+     * @throws InvalidArgumentException
      */
     protected function applyStates(array $definition, array $attributes = [])
     {

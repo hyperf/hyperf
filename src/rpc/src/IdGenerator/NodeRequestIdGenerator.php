@@ -11,15 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Rpc\IdGenerator;
 
+use DateTime;
 use Hyperf\Contract\IdGeneratorInterface;
 use Hyperf\Utils\Codec\Base62;
 
 class NodeRequestIdGenerator implements IdGeneratorInterface
 {
-    /**
-     * @var string
-     */
-    private $node;
+    private ?string $node = null;
 
     public function generate(): string
     {
@@ -37,7 +35,7 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
         $node = str_pad(sprintf('%x', Base62::decode($macStr)), 12, '0', STR_PAD_LEFT);
         return [
             'node' => trim(preg_replace('/(..)/', '\1:', $node), ':'),
-            'time' => \DateTime::createFromFormat('U.u', (string) $microtime),
+            'time' => DateTime::createFromFormat('U.u', (string) $microtime),
         ];
     }
 
@@ -73,7 +71,7 @@ class NodeRequestIdGenerator implements IdGeneratorInterface
      */
     protected function getIfconfig(): string
     {
-        if (strpos(strtolower(ini_get('disable_functions')), 'passthru') !== false) {
+        if (str_contains(strtolower(ini_get('disable_functions')), 'passthru')) {
             return '';
         }
 

@@ -11,13 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine;
 
+use Hyperf\Context\Context;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\View\RenderInterface;
 use Hyperf\ViewEngine\Contract\FactoryInterface;
 use Hyperf\ViewEngine\Contract\ViewInterface;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 
 if (! function_exists('Hyperf\\ViewEngine\\view')) {
@@ -25,13 +24,10 @@ if (! function_exists('Hyperf\\ViewEngine\\view')) {
      * Get the evaluated view contents for the given view.
      *
      * @param null|string $view
-     * @param array|Arrayable $data
      * @param array $mergeData
-     * @return FactoryInterface|ViewInterface
      */
-    function view($view = null, $data = [], $mergeData = [])
+    function view($view = null, array|Arrayable $data = [], $mergeData = []): FactoryInterface|ViewInterface
     {
-        /** @var ContainerInterface $container */
         $container = ApplicationContext::getContainer();
         if (interface_exists(ResponseInterface::class) && Context::has(ResponseInterface::class)) {
             $contentType = $container->get(RenderInterface::class)->getContentType();

@@ -14,6 +14,7 @@ namespace Hyperf\Utils\Serializer;
 use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+
 use function get_class;
 use function is_scalar;
 
@@ -24,20 +25,15 @@ class ScalarNormalizer implements NormalizerInterface, DenormalizerInterface, Ca
         return get_class($this) === __CLASS__;
     }
 
-    public function denormalize($data, string $class, string $format = null, array $context = [])
+    public function denormalize($data, string $type, string $format = null, array $context = [])
     {
-        switch ($class) {
-            case 'int':
-                return (int) $data;
-            case 'string':
-                return (string) $data;
-            case 'float':
-                return (float) $data;
-            case 'bool':
-                return (bool) $data;
-            default:
-                return $data;
-        }
+        return match ($type) {
+            'int' => (int) $data,
+            'string' => (string) $data,
+            'float' => (float) $data,
+            'bool' => (bool) $data,
+            default => $data,
+        };
     }
 
     public function supportsDenormalization($data, $type, string $format = null)

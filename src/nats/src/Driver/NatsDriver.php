@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Nats\Driver;
 
 use Closure;
+use Hyperf\Engine\Channel;
 use Hyperf\Nats\Connection as NatsConnection;
 use Hyperf\Nats\ConnectionOptions;
 use Hyperf\Nats\EncodedConnection;
@@ -19,16 +20,13 @@ use Hyperf\Nats\Encoders\JSONEncoder;
 use Hyperf\Nats\Exception\TimeoutException;
 use Hyperf\Nats\Message;
 use Hyperf\Pool\SimplePool\Connection;
+use Hyperf\Pool\SimplePool\Pool;
 use Hyperf\Pool\SimplePool\PoolFactory;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine\Channel;
 
 class NatsDriver extends AbstractDriver
 {
-    /**
-     * @var \Hyperf\Pool\SimplePool\Pool
-     */
-    protected $pool;
+    protected Pool $pool;
 
     public function __construct(ContainerInterface $container, string $name, array $config)
     {
@@ -48,7 +46,7 @@ class NatsDriver extends AbstractDriver
         }, $poolConfig);
     }
 
-    public function publish(string $subject, $payload = null, $inbox = null)
+    public function publish(string $subject, $payload = null, $inbox = null): void
     {
         try {
             /** @var Connection $connection */
@@ -61,7 +59,7 @@ class NatsDriver extends AbstractDriver
         }
     }
 
-    public function request(string $subject, $payload, Closure $callback)
+    public function request(string $subject, $payload, Closure $callback): void
     {
         try {
             /** @var Connection $connection */

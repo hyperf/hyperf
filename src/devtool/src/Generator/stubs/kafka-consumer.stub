@@ -8,9 +8,6 @@ use Hyperf\Kafka\AbstractConsumer;
 use Hyperf\Kafka\Annotation\Consumer;
 use longlang\phpkafka\Consumer\ConsumeMessage;
 
-/**
- * @Consumer(topic="hyperf", groupId="hyperf", autoCommit=true, nums=1)
- */
 #[Consumer(topic: 'hyperf', groupId: 'hyperf', autoCommit: true, nums: 1)]
 class %CLASS% extends AbstractConsumer
 {

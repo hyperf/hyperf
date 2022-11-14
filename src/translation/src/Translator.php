@@ -12,31 +12,17 @@ declare(strict_types=1);
 namespace Hyperf\Translation;
 
 use Countable;
+use Hyperf\Context\Context;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Contract\TranslatorLoaderInterface;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
 
 class Translator implements TranslatorInterface
 {
     use Macroable;
-
-    /**
-     * The loader implementation.
-     *
-     * @var TranslatorLoaderInterface
-     */
-    protected $loader;
-
-    /**
-     * The default locale being used by the translator.
-     *
-     * @var string
-     */
-    protected $locale;
 
     /**
      * The fallback locale used by the translator.
@@ -55,7 +41,7 @@ class Translator implements TranslatorInterface
     /**
      * The message selector.
      *
-     * @var \Hyperf\Translation\MessageSelector
+     * @var null|\Hyperf\Translation\MessageSelector
      */
     protected $selector;
 
@@ -66,10 +52,12 @@ class Translator implements TranslatorInterface
      */
     protected $parsed = [];
 
-    public function __construct(TranslatorLoaderInterface $loader, string $locale)
+    /**
+     * @param TranslatorLoaderInterface $loader the loader implementation
+     * @param string $locale the default locale being used by the translator
+     */
+    public function __construct(protected TranslatorLoaderInterface $loader, protected string $locale)
     {
-        $this->loader = $loader;
-        $this->locale = $locale;
     }
 
     /**
@@ -90,20 +78,16 @@ class Translator implements TranslatorInterface
 
     /**
      * Get the translation for a given key.
-     *
-     * @return array|string
      */
-    public function trans(string $key, array $replace = [], ?string $locale = null)
+    public function trans(string $key, array $replace = [], ?string $locale = null): array|string
     {
         return $this->get($key, $replace, $locale);
     }
 
     /**
      * Get the translation for the given key.
-     *
-     * @return array|string
      */
-    public function get(string $key, array $replace = [], ?string $locale = null, bool $fallback = true)
+    public function get(string $key, array $replace = [], ?string $locale = null, bool $fallback = true): array|string
     {
         [$namespace, $group, $item] = $this->parseKey($key);
 
@@ -133,10 +117,8 @@ class Translator implements TranslatorInterface
 
     /**
      * Get the translation for a given key from the JSON translation files.
-     *
-     * @return array|string
      */
-    public function getFromJson(string $key, array $replace = [], ?string $locale = null)
+    public function getFromJson(string $key, array $replace = [], ?string $locale = null): array|string
     {
         $locale = $locale ?: $this->locale();
 
@@ -164,7 +146,7 @@ class Translator implements TranslatorInterface
     /**
      * Get a translation according to an integer value.
      *
-     * @param array|\Countable|int $number
+     * @param array|Countable|int $number
      */
     public function transChoice(string $key, $number, array $replace = [], ?string $locale = null): string
     {
@@ -173,10 +155,8 @@ class Translator implements TranslatorInterface
 
     /**
      * Get a translation according to an integer value.
-     *
-     * @param array|\Countable|int $number
      */
-    public function choice(string $key, $number, array $replace = [], ?string $locale = null): string
+    public function choice(string $key, array|Countable|int $number, array $replace = [], ?string $locale = null): string
     {
         $line = $this->get(
             $key,
@@ -187,7 +167,7 @@ class Translator implements TranslatorInterface
         // If the given "number" is actually an array or countable we will simply count the
         // number of elements in an instance. This allows developers to pass an array of
         // items without having to count it on their end first which gives bad syntax.
-        if (is_array($number) || $number instanceof Countable) {
+        if (is_countable($number)) {
             $number = count($number);
         }
 
@@ -259,7 +239,7 @@ class Translator implements TranslatorInterface
         // If the key does not contain a double colon, it means the key is not in a
         // namespace, and is just a regular configuration item. Namespaces are a
         // tool for organizing configuration items for things such as modules.
-        if (strpos($key, '::') === false) {
+        if (! str_contains($key, '::')) {
             $segments = explode('.', $key);
 
             $parsed = $this->parseBasicSegments($segments);
@@ -414,11 +394,8 @@ class Translator implements TranslatorInterface
 
     /**
      * Make the place-holder replacements on a line.
-     *
-     * @param array|string $line
-     * @return array|string
      */
-    protected function makeReplacements($line, array $replace)
+    protected function makeReplacements(array|string $line, array $replace): array|string
     {
         if (empty($replace)) {
             return $line;
@@ -444,9 +421,7 @@ class Translator implements TranslatorInterface
      */
     protected function sortReplacements(array $replace): array
     {
-        return (new Collection($replace))->sortBy(function ($value, $key) {
-            return mb_strlen((string) $key) * -1;
-        })->all();
+        return (new Collection($replace))->sortBy(fn ($value, $key) => mb_strlen((string) $key) * -1)->all();
     }
 
     /**

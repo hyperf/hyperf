@@ -13,43 +13,23 @@ namespace Hyperf\ViewEngine;
 
 use ArrayAccess;
 use BadMethodCallException;
+use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\MessageBag;
+use Hyperf\Contract\MessageProvider;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\MessageBag;
-use Hyperf\Utils\Contracts\MessageProvider;
 use Hyperf\Utils\Str;
 use Hyperf\ViewEngine\Contract\EngineInterface;
 use Hyperf\ViewEngine\Contract\Htmlable;
 use Hyperf\ViewEngine\Contract\Renderable;
 use Hyperf\ViewEngine\Contract\ViewInterface;
+use Stringable;
 use Throwable;
 
-class View implements ArrayAccess, Htmlable, ViewInterface
+class View implements ArrayAccess, Htmlable, ViewInterface, Stringable
 {
     use Macroable {
         __call as macroCall;
     }
-
-    /**
-     * The view factory instance.
-     *
-     * @var Factory
-     */
-    protected $factory;
-
-    /**
-     * The engine implementation.
-     *
-     * @var EngineInterface
-     */
-    protected $engine;
-
-    /**
-     * The name of the view.
-     *
-     * @var string
-     */
-    protected $view;
 
     /**
      * The array of view data.
@@ -59,26 +39,26 @@ class View implements ArrayAccess, Htmlable, ViewInterface
     protected $data;
 
     /**
-     * The path to the view file.
+     * Create a new view instance.
      *
-     * @var string
+     * @param mixed $data
      */
-    protected $path;
-
     /**
      * Create a new view instance.
      *
-     * @param string $view
-     * @param string $path
-     * @param mixed $data
+     * @param Factory $factory the view factory instance
+     * @param EngineInterface $engine the engine implementation
+     * @param string $view the name of the view
+     * @param string $path the path to the view file
+     * @param array|Arrayable $data
      */
-    public function __construct(Factory $factory, EngineInterface $engine, $view, $path, $data = [])
-    {
-        $this->view = $view;
-        $this->path = $path;
-        $this->engine = $engine;
-        $this->factory = $factory;
-
+    public function __construct(
+        protected Factory $factory,
+        protected EngineInterface $engine,
+        protected string $view,
+        protected string $path,
+        $data = []
+    ) {
         $this->data = $data instanceof Arrayable ? $data->toArray() : (array) $data;
     }
 
@@ -119,8 +99,8 @@ class View implements ArrayAccess, Htmlable, ViewInterface
      *
      * @param string $method
      * @param array $parameters
-     * @throws BadMethodCallException
      * @return View
+     * @throws BadMethodCallException
      */
     public function __call($method, $parameters)
     {
@@ -143,20 +123,18 @@ class View implements ArrayAccess, Htmlable, ViewInterface
      * Get the string contents of the view.
      *
      * @throws Throwable
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->render();
+        return (string) $this->render();
     }
 
     /**
      * Get the string contents of the view.
      *
      * @throws Throwable
-     * @return array|string
      */
-    public function render(callable $callback = null)
+    public function render(callable $callback = null): array|string
     {
         try {
             $contents = $this->renderContents();
@@ -197,14 +175,12 @@ class View implements ArrayAccess, Htmlable, ViewInterface
     /**
      * Get the sections of the rendered view.
      *
-     * @throws Throwable
      * @return array
+     * @throws Throwable
      */
     public function renderSections()
     {
-        return $this->render(function () {
-            return $this->factory->getSections();
-        });
+        return $this->render(fn () => $this->factory->getSections());
     }
 
     /**
@@ -240,11 +216,10 @@ class View implements ArrayAccess, Htmlable, ViewInterface
     /**
      * Add validation errors to the view.
      *
-     * @param array|MessageProvider $provider
      * @param string $bag
      * @return $this
      */
-    public function withErrors($provider, $bag = 'default')
+    public function withErrors(array|MessageProvider $provider, $bag = 'default')
     {
         return $this->with('errors', (new ViewErrorBag())->put(
             $bag,
@@ -262,10 +237,8 @@ class View implements ArrayAccess, Htmlable, ViewInterface
 
     /**
      * Get the name of the view.
-     *
-     * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->view;
     }
@@ -280,20 +253,16 @@ class View implements ArrayAccess, Htmlable, ViewInterface
 
     /**
      * Get the path to the view file.
-     *
-     * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
 
     /**
      * Set the path to the view.
-     *
-     * @param string $path
      */
-    public function setPath($path)
+    public function setPath(string $path)
     {
         $this->path = $path;
     }
@@ -320,45 +289,34 @@ class View implements ArrayAccess, Htmlable, ViewInterface
 
     /**
      * Determine if a piece of data is bound.
-     *
-     * @param string $key
-     * @return bool
      */
-    public function offsetExists($key)
+    public function offsetExists(mixed $offset): bool
     {
-        return array_key_exists($key, $this->data);
+        return array_key_exists($offset, $this->data);
     }
 
     /**
      * Get a piece of bound data to the view.
-     *
-     * @param string $key
-     * @return mixed
      */
-    public function offsetGet($key)
+    public function offsetGet(mixed $offset): mixed
     {
-        return $this->data[$key];
+        return $this->data[$offset];
     }
 
     /**
      * Set a piece of data on the view.
-     *
-     * @param string $key
-     * @param mixed $value
      */
-    public function offsetSet($key, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
-        $this->with($key, $value);
+        $this->with($offset, $value);
     }
 
     /**
      * Unset a piece of data from the view.
-     *
-     * @param string $key
      */
-    public function offsetUnset($key)
+    public function offsetUnset(mixed $offset): void
     {
-        unset($this->data[$key]);
+        unset($this->data[$offset]);
     }
 
     /**
@@ -418,14 +376,11 @@ class View implements ArrayAccess, Htmlable, ViewInterface
 
     /**
      * Parse the given errors into an appropriate value.
-     *
-     * @param array|MessageProvider|string $provider
-     * @return \Hyperf\Utils\MessageBag|MessageBag
      */
-    protected function formatErrors($provider)
+    protected function formatErrors(array|MessageProvider|string $provider): \Hyperf\Utils\MessageBag|MessageBag
     {
         return $provider instanceof MessageProvider
-                        ? $provider->getMessageBag()
-                        : new \Hyperf\Utils\MessageBag((array) $provider);
+            ? $provider->getMessageBag()
+            : new \Hyperf\Utils\MessageBag((array) $provider);
     }
 }

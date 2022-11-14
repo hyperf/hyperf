@@ -21,20 +21,12 @@ class Optional implements ArrayAccess
     }
 
     /**
-     * The underlying object.
-     *
-     * @var mixed
-     */
-    protected $value;
-
-    /**
      * Create a new optional instance.
      *
-     * @param mixed $value
+     * @param mixed $value the underlying object
      */
-    public function __construct($value)
+    public function __construct(protected $value)
     {
-        $this->value = $value;
     }
 
     /**
@@ -83,52 +75,43 @@ class Optional implements ArrayAccess
         if (is_object($this->value)) {
             return $this->value->{$method}(...$parameters);
         }
+
+        return null;
     }
 
     /**
      * Determine if an item exists at an offset.
-     *
-     * @param mixed $key
-     * @return bool
      */
-    public function offsetExists($key)
+    public function offsetExists(mixed $offset): bool
     {
-        return Arr::accessible($this->value) && Arr::exists($this->value, $key);
+        return Arr::accessible($this->value) && Arr::exists($this->value, $offset);
     }
 
     /**
      * Get an item at a given offset.
-     *
-     * @param mixed $key
-     * @return mixed
      */
-    public function offsetGet($key)
+    public function offsetGet(mixed $offset): mixed
     {
-        return Arr::get($this->value, $key);
+        return Arr::get($this->value, $offset);
     }
 
     /**
      * Set the item at a given offset.
-     *
-     * @param mixed $key
-     * @param mixed $value
      */
-    public function offsetSet($key, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         if (Arr::accessible($this->value)) {
-            $this->value[$key] = $value;
+            $this->value[$offset] = $value;
         }
     }
 
     /**
      * Unset the item at a given offset.
-     *
-     * @param string $key
      */
-    public function offsetUnset($key)
+    public function offsetUnset(mixed $offset): void
     {
         if (Arr::accessible($this->value)) {
-            unset($this->value[$key]);
+            unset($this->value[$offset]);
         }
     }
 }

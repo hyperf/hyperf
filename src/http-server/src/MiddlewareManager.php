@@ -13,10 +13,7 @@ namespace Hyperf\HttpServer;
 
 class MiddlewareManager
 {
-    /**
-     * @var array
-     */
-    public static $container = [];
+    public static array $container = [];
 
     public static function addMiddleware(string $server, string $path, string $method, string $middleware): void
     {

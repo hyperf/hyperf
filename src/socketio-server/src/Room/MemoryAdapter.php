@@ -19,32 +19,20 @@ class MemoryAdapter implements AdapterInterface
 {
     use Flagger;
 
-    protected $rooms = [];
+    protected array $rooms = [];
 
-    protected $sids = [];
+    protected array $sids = [];
 
-    /**
-     * @var SidProviderInterface
-     */
-    private $sidProvider;
-
-    /**
-     * @var Sender
-     */
-    private $sender;
-
-    public function __construct(Sender $sender, SidProviderInterface $sidProvider)
+    public function __construct(private Sender $sender, private SidProviderInterface $sidProvider)
     {
-        $this->sender = $sender;
-        $this->sidProvider = $sidProvider;
     }
 
     public function add(string $sid, string ...$rooms)
     {
-        $this->sids[$sid] = $this->sids[$sid] ?? [];
+        $this->sids[$sid] ??= [];
         foreach ($rooms as $room) {
             $this->sids[$sid][$room] = true;
-            $this->rooms[$room] = $this->rooms[$room] ?? make(MemoryRoom::class);
+            $this->rooms[$room] ??= make(MemoryRoom::class);
             $this->rooms[$room]->add($sid);
         }
     }

@@ -17,7 +17,9 @@ use HyperfTest\Utils\Stub\UnionTypeFoo;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\ParserFactory;
+use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @internal
@@ -36,7 +38,7 @@ class PhpParserTest extends TestCase
         $name = $classMethod->getParams()[0];
         $foo = $classMethod->getParams()[1];
         $extra = $classMethod->getParams()[2];
-        $bar = new \ReflectionClass(Bar::class);
+        $bar = new ReflectionClass(Bar::class);
         $parameters = $bar->getMethod('__construct')->getParameters();
         $parser = new PhpParser();
         $this->assertNodeParam($name, $parser->getNodeFromReflectionParameter($parameters[0]));
@@ -50,10 +52,34 @@ class PhpParserTest extends TestCase
             $classMethod = $stmts[1]->stmts[0]->stmts[0];
             $name = $classMethod->getParams()[0];
 
-            $foo = new \ReflectionClass(UnionTypeFoo::class);
+            $foo = new ReflectionClass(UnionTypeFoo::class);
             $parameters = $foo->getMethod('__construct')->getParameters();
             $this->assertNodeParam($name, $parser->getNodeFromReflectionParameter($parameters[0]));
         }
+    }
+
+    public function testGetExprFromArray()
+    {
+        $parser = new PhpParser();
+        $printer = new Standard();
+
+        $stmts = $parser->getExprFromValue([]);
+        $this->assertInstanceOf(Node\Expr\Array_::class, $stmts);
+        $this->assertSame([], $stmts->items);
+        $res = $printer->prettyPrint([$stmts]);
+        $this->assertSame('[]', $res);
+
+        $stmts = $parser->getExprFromValue([1, 2, 3]);
+        $res = $printer->prettyPrint([$stmts]);
+        $this->assertSame('[1, 2, 3]', $res);
+
+        $stmts = $parser->getExprFromValue(['a' => 1, 2, 3]);
+        $res = $printer->prettyPrint([$stmts]);
+        $this->assertSame("['a' => 1, 0 => 2, 1 => 3]", $res);
+
+        $stmts = $parser->getExprFromValue(['a' => 1, 'b' => 2]);
+        $res = $printer->prettyPrint([$stmts]);
+        $this->assertSame("['a' => 1, 'b' => 2]", $res);
     }
 
     protected function assertNodeParam(Node\Param $param, Node\Param $param2)

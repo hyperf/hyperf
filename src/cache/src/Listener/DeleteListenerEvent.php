@@ -18,7 +18,7 @@ class DeleteListenerEvent extends DeleteEvent
 {
     public function __construct(string $listener, array $arguments)
     {
-        $config = CacheListenerCollector::getListner($listener, null);
+        $config = CacheListenerCollector::getListener($listener);
         if (! $config) {
             throw new CacheException(sprintf('listener %s is not defined.', $listener));
         }

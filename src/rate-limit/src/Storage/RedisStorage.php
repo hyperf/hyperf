@@ -15,36 +15,28 @@ use bandwidthThrottle\tokenBucket\storage\scope\GlobalScope;
 use bandwidthThrottle\tokenBucket\storage\Storage;
 use bandwidthThrottle\tokenBucket\storage\StorageException;
 use bandwidthThrottle\tokenBucket\util\DoublePacker;
+use Hyperf\Redis\Redis;
 use malkusch\lock\mutex\Mutex;
 use malkusch\lock\mutex\PHPRedisMutex;
 use Psr\SimpleCache\InvalidArgumentException;
-use Redis;
+
 use function make;
 
 class RedisStorage implements Storage, GlobalScope
 {
     public const KEY_PREFIX = 'rateLimiter:storage:';
 
-    /**
-     * @var Mutex
-     */
-    private $mutex;
-
-    /**
-     * @var Redis
-     */
-    private $redis;
+    private Mutex $mutex;
 
     /**
      * @var string the key
      */
     private $key;
 
-    public function __construct($key, $redis, $timeout = 0)
+    public function __construct(string $key, private Redis $redis, $timeout = 0)
     {
         $key = self::KEY_PREFIX . $key;
         $this->key = $key;
-        $this->redis = $redis;
         $this->mutex = make(PHPRedisMutex::class, [
             'redisAPIs' => [$redis],
             'name' => $key,
@@ -97,8 +89,8 @@ class RedisStorage implements Storage, GlobalScope
 
     /**
      * @SuppressWarnings(PHPMD)
-     * @throws StorageException
      * @return float
+     * @throws StorageException
      */
     public function getMicrotime()
     {

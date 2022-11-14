@@ -14,12 +14,14 @@ namespace Hyperf\Swagger\Command;
 use Hyperf\Command\Command;
 use OpenApi\Analysis;
 use Symfony\Component\Console\Input\InputOption;
+
 use function OpenApi\scan;
+
 use const OpenApi\UNDEFINED;
 
 class GenCommand extends Command
 {
-    protected $name = 'swagger:gen';
+    protected ?string $name = 'swagger:gen';
 
     public function handle()
     {

@@ -11,6 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model;
 
+use BadMethodCallException;
+use Closure;
+use DateTimeInterface;
+use Generator;
+use Hyperf\Contract\Arrayable;
+use InvalidArgumentException;
+use ReflectionException;
+use RuntimeException;
+
 class ModelIDE
 {
     /**
@@ -33,7 +42,7 @@ class ModelIDE
      * Register a new global scope.
      *
      * @param string $identifier
-     * @param \Closure|Scope $scope
+     * @param Closure|Scope $scope
      *
      * @return Builder
      */
@@ -99,7 +108,7 @@ class ModelIDE
     /**
      * Add a basic where clause to the query.
      *
-     * @param array|\Closure|string $column
+     * @param array|Closure|string $column
      * @param mixed $operator
      * @param mixed $value
      * @param string $boolean
@@ -113,7 +122,7 @@ class ModelIDE
     /**
      * Add an "or where" clause to the query.
      *
-     * @param array|\Closure|string $column
+     * @param array|Closure|string $column
      * @param mixed $operator
      * @param mixed $value
      * @return Builder
@@ -183,7 +192,7 @@ class ModelIDE
     /**
      * Find multiple models by their primary keys.
      *
-     * @param array|\Hyperf\Utils\Contracts\Arrayable $ids
+     * @param array|Arrayable $ids
      * @param array $columns
      * @return Collection
      */
@@ -197,8 +206,8 @@ class ModelIDE
      *
      * @param mixed $id
      * @param array $columns
-     * @throws ModelNotFoundException
      * @return Collection|Model|static|static[]
+     * @throws ModelNotFoundException
      */
     public static function findOrFail($id, $columns = [])
     {
@@ -257,8 +266,8 @@ class ModelIDE
      * Execute the query and get the first result or throw an exception.
      *
      * @param array $columns
-     * @throws ModelNotFoundException
      * @return Model|static
+     * @throws ModelNotFoundException
      */
     public static function firstOrFail($columns = [])
     {
@@ -268,8 +277,8 @@ class ModelIDE
     /**
      * Execute the query and get the first result or call a callback.
      *
-     * @param array|\Closure $columns
-     * @param null|\Closure $callback
+     * @param array|Closure $columns
+     * @param null|Closure $callback
      * @return mixed|Model|static
      */
     public static function firstOr($columns = [], $callback = null)
@@ -324,7 +333,7 @@ class ModelIDE
     /**
      * Get a lazy collection for the given query.
      *
-     * @return \Generator
+     * @return Generator
      */
     public static function cursor()
     {
@@ -350,8 +359,8 @@ class ModelIDE
      * @param array $columns
      * @param string $pageName
      * @param null|int $page
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Contract\LengthAwarePaginatorInterface
+     * @throws InvalidArgumentException
      */
     public static function paginate($perPage = null, $columns = [], $pageName = 'page', $page = null)
     {
@@ -397,7 +406,7 @@ class ModelIDE
     /**
      * Register a replacement for the default delete function.
      *
-     * @param \Closure $callback
+     * @param Closure $callback
      */
     public static function onDelete($callback)
     {
@@ -535,7 +544,7 @@ class ModelIDE
      * Get the given macro by name.
      *
      * @param string $name
-     * @return \Closure
+     * @return Closure
      */
     public static function getMacro($name)
     {
@@ -646,9 +655,9 @@ class ModelIDE
      * @param string $operator
      * @param int $count
      * @param string $boolean
-     * @param null|\Closure $callback
-     * @throws \RuntimeException
+     * @param null|Closure $callback
      * @return Builder|static
+     * @throws RuntimeException
      */
     public static function has($relation, $operator = '>=', $count = 1, $boolean = 'and', $callback = null)
     {
@@ -673,7 +682,7 @@ class ModelIDE
      *
      * @param string $relation
      * @param string $boolean
-     * @param null|\Closure $callback
+     * @param null|Closure $callback
      * @return Builder|static
      */
     public static function doesntHave($relation, $boolean = 'and', $callback = null)
@@ -696,7 +705,7 @@ class ModelIDE
      * Add a relationship count / exists condition to the query with where clauses.
      *
      * @param string $relation
-     * @param null|\Closure $callback
+     * @param null|Closure $callback
      * @param string $operator
      * @param int $count
      * @return Builder|static
@@ -710,7 +719,7 @@ class ModelIDE
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param string $relation
-     * @param null|\Closure $callback
+     * @param null|Closure $callback
      * @param string $operator
      * @param int $count
      * @return Builder|static
@@ -724,7 +733,7 @@ class ModelIDE
      * Add a relationship count / exists condition to the query with where clauses.
      *
      * @param string $relation
-     * @param null|\Closure $callback
+     * @param null|Closure $callback
      * @return Builder|static
      */
     public static function whereDoesntHave($relation, $callback = null)
@@ -736,7 +745,7 @@ class ModelIDE
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param string $relation
-     * @param null|\Closure $callback
+     * @param null|Closure $callback
      * @return Builder|static
      */
     public static function orWhereDoesntHave($relation, $callback = null)
@@ -752,7 +761,7 @@ class ModelIDE
      * @param string $operator
      * @param int $count
      * @param string $boolean
-     * @param null|\Closure $callback
+     * @param null|Closure $callback
      * @return Builder|static
      */
     public static function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', $callback = null)
@@ -766,7 +775,7 @@ class ModelIDE
      * @param string $relation
      * @param array|string $types
      * @param string $boolean
-     * @param null|\Closure $callback
+     * @param null|Closure $callback
      * @return Builder|static
      */
     public static function doesntHaveMorph($relation, $types, $boolean = 'and', $callback = null)
@@ -779,7 +788,7 @@ class ModelIDE
      *
      * @param string $relation
      * @param array|string $types
-     * @param null|\Closure $callback
+     * @param null|Closure $callback
      * @param string $operator
      * @param int $count
      * @return Builder|static
@@ -794,7 +803,7 @@ class ModelIDE
      *
      * @param string $relation
      * @param array|string $types
-     * @param null|\Closure $callback
+     * @param null|Closure $callback
      * @param string $operator
      * @param int $count
      * @return Builder|static
@@ -809,7 +818,7 @@ class ModelIDE
      *
      * @param string $relation
      * @param array|string $types
-     * @param null|\Closure $callback
+     * @param null|Closure $callback
      * @return Builder|static
      */
     public static function whereDoesntHaveMorph($relation, $types, $callback = null)
@@ -822,7 +831,7 @@ class ModelIDE
      *
      * @param string $relation
      * @param array|string $types
-     * @param null|\Closure $callback
+     * @param null|Closure $callback
      * @return Builder|static
      */
     public static function orWhereDoesntHaveMorph($relation, $types, $callback = null)
@@ -866,10 +875,10 @@ class ModelIDE
     /**
      * Add a subselect expression to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
+     * @throws InvalidArgumentException
      */
     public static function selectSub($query, $as)
     {
@@ -891,10 +900,10 @@ class ModelIDE
     /**
      * Makes "from" fetch from a subquery.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
+     * @throws InvalidArgumentException
      */
     public static function fromSub($query, $as)
     {
@@ -937,7 +946,7 @@ class ModelIDE
     /**
      * Set the table which the query is targeting.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $table
+     * @param Closure|\Hyperf\Database\Query\Builder|string $table
      * @return \Hyperf\Database\Query\Builder
      */
     public static function from($table)
@@ -949,7 +958,7 @@ class ModelIDE
      * Add a join clause to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @param string $type
@@ -965,7 +974,7 @@ class ModelIDE
      * Add a "join where" clause to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param string $operator
      * @param string $second
      * @param string $type
@@ -979,15 +988,15 @@ class ModelIDE
     /**
      * Add a subquery join clause to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @param string $type
      * @param bool $where
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
+     * @throws InvalidArgumentException
      */
     public static function joinSub($query, $as, $first, $operator = null, $second = null, $type = 'inner', $where = false)
     {
@@ -998,7 +1007,7 @@ class ModelIDE
      * Add a left join to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder
@@ -1012,7 +1021,7 @@ class ModelIDE
      * Add a "join where" clause to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param string $operator
      * @param string $second
      * @return \Hyperf\Database\Query\Builder
@@ -1025,9 +1034,9 @@ class ModelIDE
     /**
      * Add a subquery left join to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder
@@ -1041,7 +1050,7 @@ class ModelIDE
      * Add a right join to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder
@@ -1055,7 +1064,7 @@ class ModelIDE
      * Add a "right join where" clause to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param string $operator
      * @param string $second
      * @return \Hyperf\Database\Query\Builder
@@ -1068,9 +1077,9 @@ class ModelIDE
     /**
      * Add a subquery right join to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder
@@ -1084,7 +1093,7 @@ class ModelIDE
      * Add a "cross join" clause to the query.
      *
      * @param string $table
-     * @param null|\Closure|string $first
+     * @param null|Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder
@@ -1111,8 +1120,8 @@ class ModelIDE
      * @param string $value
      * @param string $operator
      * @param bool $useDefault
-     * @throws \InvalidArgumentException
      * @return array
+     * @throws InvalidArgumentException
      */
     public static function prepareValueAndOperator($value, $operator, $useDefault = false)
     {
@@ -1226,7 +1235,7 @@ class ModelIDE
      * Add a "where in raw" clause for integer values to the query.
      *
      * @param string $column
-     * @param array|\Hyperf\Utils\Contracts\Arrayable $values
+     * @param array|Arrayable $values
      * @param string $boolean
      * @param bool $not
      * @return \Hyperf\Database\Query\Builder
@@ -1240,7 +1249,7 @@ class ModelIDE
      * Add a "where not in raw" clause for integer values to the query.
      *
      * @param string $column
-     * @param array|\Hyperf\Utils\Contracts\Arrayable $values
+     * @param array|Arrayable $values
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
      */
@@ -1352,7 +1361,7 @@ class ModelIDE
      *
      * @param string $column
      * @param string $operator
-     * @param null|\DateTimeInterface|string $value
+     * @param null|DateTimeInterface|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
      */
@@ -1366,7 +1375,7 @@ class ModelIDE
      *
      * @param string $column
      * @param string $operator
-     * @param null|\DateTimeInterface|string $value
+     * @param null|DateTimeInterface|string $value
      * @return \Hyperf\Database\Query\Builder
      */
     public static function orWhereDate($column, $operator, $value = null)
@@ -1379,7 +1388,7 @@ class ModelIDE
      *
      * @param string $column
      * @param string $operator
-     * @param null|\DateTimeInterface|string $value
+     * @param null|DateTimeInterface|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
      */
@@ -1393,7 +1402,7 @@ class ModelIDE
      *
      * @param string $column
      * @param string $operator
-     * @param null|\DateTimeInterface|string $value
+     * @param null|DateTimeInterface|string $value
      * @return \Hyperf\Database\Query\Builder
      */
     public static function orWhereTime($column, $operator, $value = null)
@@ -1406,7 +1415,7 @@ class ModelIDE
      *
      * @param string $column
      * @param string $operator
-     * @param null|\DateTimeInterface|string $value
+     * @param null|DateTimeInterface|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
      */
@@ -1420,7 +1429,7 @@ class ModelIDE
      *
      * @param string $column
      * @param string $operator
-     * @param null|\DateTimeInterface|string $value
+     * @param null|DateTimeInterface|string $value
      * @return \Hyperf\Database\Query\Builder
      */
     public static function orWhereDay($column, $operator, $value = null)
@@ -1433,7 +1442,7 @@ class ModelIDE
      *
      * @param string $column
      * @param string $operator
-     * @param null|\DateTimeInterface|string $value
+     * @param null|DateTimeInterface|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
      */
@@ -1447,7 +1456,7 @@ class ModelIDE
      *
      * @param string $column
      * @param string $operator
-     * @param null|\DateTimeInterface|string $value
+     * @param null|DateTimeInterface|string $value
      * @return \Hyperf\Database\Query\Builder
      */
     public static function orWhereMonth($column, $operator, $value = null)
@@ -1460,7 +1469,7 @@ class ModelIDE
      *
      * @param string $column
      * @param string $operator
-     * @param null|\DateTimeInterface|int|string $value
+     * @param null|DateTimeInterface|int|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
      */
@@ -1474,7 +1483,7 @@ class ModelIDE
      *
      * @param string $column
      * @param string $operator
-     * @param null|\DateTimeInterface|int|string $value
+     * @param null|DateTimeInterface|int|string $value
      * @return \Hyperf\Database\Query\Builder
      */
     public static function orWhereYear($column, $operator, $value = null)
@@ -1485,7 +1494,7 @@ class ModelIDE
     /**
      * Add a nested where statement to the query.
      *
-     * @param \Closure $callback
+     * @param Closure $callback
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
      */
@@ -1520,7 +1529,7 @@ class ModelIDE
     /**
      * Add an exists clause to the query.
      *
-     * @param \Closure $callback
+     * @param Closure $callback
      * @param string $boolean
      * @param bool $not
      * @return \Hyperf\Database\Query\Builder
@@ -1533,7 +1542,7 @@ class ModelIDE
     /**
      * Add an or exists clause to the query.
      *
-     * @param \Closure $callback
+     * @param Closure $callback
      * @param bool $not
      * @return \Hyperf\Database\Query\Builder
      */
@@ -1545,7 +1554,7 @@ class ModelIDE
     /**
      * Add a where not exists clause to the query.
      *
-     * @param \Closure $callback
+     * @param Closure $callback
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder
      */
@@ -1557,7 +1566,7 @@ class ModelIDE
     /**
      * Add a where not exists clause to the query.
      *
-     * @param \Closure $callback
+     * @param Closure $callback
      * @return \Hyperf\Database\Query\Builder
      */
     public static function orWhereNotExists($callback)
@@ -1585,8 +1594,8 @@ class ModelIDE
      * @param string $operator
      * @param array $values
      * @param string $boolean
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
+     * @throws InvalidArgumentException
      */
     public static function whereRowValues($columns, $operator, $values, $boolean = 'and')
     {
@@ -1776,10 +1785,10 @@ class ModelIDE
     /**
      * Add an "order by" clause to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $column
+     * @param Closure|\Hyperf\Database\Query\Builder|string $column
      * @param string $direction
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
+     * @throws InvalidArgumentException
      */
     public static function orderBy($column, $direction = 'asc')
     {
@@ -1905,7 +1914,7 @@ class ModelIDE
     /**
      * Add a union statement to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder $query
+     * @param Closure|\Hyperf\Database\Query\Builder $query
      * @param bool $all
      *
      * @return \Hyperf\Database\Query\Builder
@@ -1918,7 +1927,7 @@ class ModelIDE
     /**
      * Add a union all statement to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder $query
+     * @param Closure|\Hyperf\Database\Query\Builder $query
      *
      * @return \Hyperf\Database\Query\Builder
      */
@@ -2139,7 +2148,7 @@ class ModelIDE
      * Insert new records into the table using a subquery.
      *
      * @param array $columns
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @return int
      */
     public static function insertUsing($columns, $query)
@@ -2203,8 +2212,8 @@ class ModelIDE
      *
      * @param array $bindings
      * @param string $type
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
+     * @throws InvalidArgumentException
      */
     public static function setBindings($bindings, $type = 'where')
     {
@@ -2216,8 +2225,8 @@ class ModelIDE
      *
      * @param mixed $value
      * @param string $type
-     * @throws \InvalidArgumentException
      * @return \Hyperf\Database\Query\Builder
+     * @throws InvalidArgumentException
      */
     public static function addBinding($value, $type = 'where')
     {
@@ -2304,7 +2313,7 @@ class ModelIDE
      * Mix another object into the class.
      *
      * @param object $mixin
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public static function mixin($mixin)
     {
@@ -2316,8 +2325,8 @@ class ModelIDE
      *
      * @param string $method
      * @param array $parameters
-     * @throws \BadMethodCallException
      * @return mixed
+     * @throws BadMethodCallException
      */
     public static function macroCall($method, $parameters)
     {

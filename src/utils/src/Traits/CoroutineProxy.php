@@ -11,7 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Traits;
 
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
+use RuntimeException;
 
 trait CoroutineProxy
 {
@@ -36,7 +37,7 @@ trait CoroutineProxy
     protected function getTargetObject()
     {
         if (! isset($this->proxyKey)) {
-            throw new \RuntimeException('$proxyKey property of class missing.');
+            throw new RuntimeException('$proxyKey property of class missing.');
         }
         return Context::get($this->proxyKey);
     }

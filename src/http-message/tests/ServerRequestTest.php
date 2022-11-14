@@ -26,6 +26,7 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
+use ReflectionClass;
 use Swoole\Http\Request as SwooleRequest;
 
 /**
@@ -153,6 +154,68 @@ class ServerRequestTest extends TestCase
         $request = Request::loadFromSwooleRequest($swooleRequest);
         $uri = $request->getUri();
         $this->assertSame(null, $uri->getPort());
+    }
+
+    /**
+     * @group ParseHost
+     */
+    public function testParseHost()
+    {
+        $hostStrIPv4 = '192.168.119.100:9501';
+        $hostStrIPv6 = '[fe80::a464:1aff:fe88:7b5a]:9502';
+        $objReflectClass = new ReflectionClass('Hyperf\HttpMessage\Server\Request');
+        $method = $objReflectClass->getMethod('parseHost');
+        $method->setAccessible(true);
+
+        $resIPv4 = $method->invokeArgs(null, [$hostStrIPv4]);
+        $this->assertSame('192.168.119.100', $resIPv4[0]);
+        $this->assertSame(9501, $resIPv4[1]);
+
+        $resIPv6 = $method->invokeArgs(null, [$hostStrIPv6]);
+        $this->assertSame('[fe80::a464:1aff:fe88:7b5a]', $resIPv6[0]);
+        $this->assertSame(9502, $resIPv6[1]);
+    }
+
+    /**
+     * @dataProvider  getIPv6Examples
+     * @param mixed $originHost
+     * @param mixed $host
+     * @param mixed $port
+     */
+    public function testGetUriFromGlobalsForIPv6Host($originHost, $host, $port)
+    {
+        $swooleRequest = Mockery::mock(SwooleRequest::class);
+        $data = ['name' => 'Hyperf'];
+        $swooleRequest->shouldReceive('rawContent')->andReturn(Json::encode($data));
+
+        $swooleRequest->server = [
+            'http_host' => $originHost,
+        ];
+        $request = Request::loadFromSwooleRequest($swooleRequest);
+        $uri = $request->getUri();
+        $this->assertSame($port, $uri->getPort());
+        $this->assertSame($host, $uri->getHost());
+
+        $swooleRequest->server = [];
+        $swooleRequest->header = [
+            'host' => $originHost,
+        ];
+        $request = Request::loadFromSwooleRequest($swooleRequest);
+        $uri = $request->getUri();
+        $this->assertSame($port, $uri->getPort());
+        $this->assertSame($host, $uri->getHost());
+    }
+
+    public function getIPv6Examples(): array
+    {
+        return [
+            ['localhost:9501', 'localhost', 9501],
+            ['localhost:', 'localhost', null],
+            ['localhost', 'localhost', null],
+            ['[2a00:f48:1008::212:183:10]', '[2a00:f48:1008::212:183:10]', null],
+            ['[2a00:f48:1008::212:183:10]:9501', '[2a00:f48:1008::212:183:10]', 9501],
+            ['[2a00:f48:1008::212:183:10]:', '[2a00:f48:1008::212:183:10]', null],
+        ];
     }
 
     protected function getContainer()

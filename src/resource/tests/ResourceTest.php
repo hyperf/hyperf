@@ -70,9 +70,9 @@ class ResourceTest extends TestCase
     public function testAnObjectsMayBeConvertedToJson()
     {
         $this->http(function () {
-            return (ObjectResource::make(
+            return ObjectResource::make(
                 (object) ['first_name' => 'Bob', 'age' => 40]
-            ))->toResponse();
+            )->toResponse();
         })->assertJson([
             'data' => [
                 'name' => 'Bob',
@@ -613,7 +613,7 @@ class ResourceTest extends TestCase
                     'Mohamed',
                     $this->mergeWhen(false, ['Adam', 'Matt']),
                     'Jeffrey',
-                    $this->mergeWhen(false, (['Abigail', 'Lydia'])),
+                    $this->mergeWhen(false, ['Abigail', 'Lydia']),
                 ]);
             }
         };

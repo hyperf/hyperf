@@ -21,49 +21,27 @@ use Psr\Container\ContainerInterface;
 
 abstract class ConsumerMessage extends Message implements ConsumerMessageInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    public $container;
+    public ?ContainerInterface $container = null;
 
-    /**
-     * @var string
-     */
-    protected $queue;
+    protected ?string $queue = null;
 
-    /**
-     * @var bool
-     */
-    protected $requeue = true;
+    protected bool $requeue = true;
 
-    /**
-     * @var array
-     */
-    protected $routingKey = [];
+    protected array|string $routingKey = [];
 
-    /**
-     * @var null|array
-     */
-    protected $qos = [
+    protected ?array $qos = [
         'prefetch_size' => 0,
         'prefetch_count' => 1,
         'global' => false,
     ];
 
-    /**
-     * @var bool
-     */
-    protected $enable = true;
+    protected bool $enable = true;
 
-    /**
-     * @var int
-     */
-    protected $maxConsumption = 0;
+    protected int $maxConsumption = 0;
 
-    /**
-     * @var float|int
-     */
-    protected $waitTimeout = 0;
+    protected int|float $waitTimeout = 0;
+
+    protected int $nums = 1;
 
     public function consumeMessage($data, AMQPMessage $message): string
     {
@@ -136,14 +114,25 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return $this;
     }
 
-    public function getWaitTimeout()
+    public function getWaitTimeout(): int|float
     {
         return $this->waitTimeout;
     }
 
-    public function setWaitTimeout($timeout)
+    public function setWaitTimeout(int|float $timeout)
     {
         $this->waitTimeout = $timeout;
+        return $this;
+    }
+
+    public function getNums(): int
+    {
+        return $this->nums;
+    }
+
+    public function setNums(int $nums)
+    {
+        $this->nums = $nums;
         return $this;
     }
 

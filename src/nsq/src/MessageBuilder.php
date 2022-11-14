@@ -166,12 +166,12 @@ class MessageBuilder
         $command = "IDENTIFY\n";
         $version = Package::getPrettyVersion('hyperf/nsq');
         $hostname = value(function () {
-            /** @var mixed|string $ip */
-            $ip = gethostbyname(gethostname());
-            if (is_string($ip)) {
-                return $ip;
+            $hostname = gethostname();
+            if (! is_string($hostname)) {
+                return 'consumer-' . rand(0, 9999);
             }
-            return 'consumer-' . rand(0, 9999);
+
+            return gethostbyname($hostname) ?: 'unknown';
         });
         $message = json_encode([
             'hostname' => $hostname,

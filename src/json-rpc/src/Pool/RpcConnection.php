@@ -11,32 +11,28 @@ declare(strict_types=1);
  */
 namespace Hyperf\JsonRpc\Pool;
 
+use Closure;
 use Hyperf\Contract\ConnectionInterface;
-use Hyperf\JsonRpc\Exception\ClientException;
+use Hyperf\Engine\Contract\Socket\SocketFactoryInterface;
+use Hyperf\Engine\Contract\SocketInterface;
+use Hyperf\Engine\Socket\SocketOption;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\Pool;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine\Client as SwooleClient;
 
 /**
- * @method bool|int send($data)
- * @method bool|string recv(float $timeout)
  * @property int $errCode
  * @property string $errMsg
  */
 class RpcConnection extends BaseConnection implements ConnectionInterface
 {
-    /**
-     * @var SwooleClient
-     */
-    protected $connection;
+    protected SocketInterface $connection;
 
-    /**
-     * @var array
-     */
-    protected $config = [
+    protected SocketFactoryInterface $factory;
+
+    protected array $config = [
         'node' => null,
         'connect_timeout' => 5.0,
         'settings' => [],
@@ -45,14 +41,10 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
     public function __construct(ContainerInterface $container, Pool $pool, array $config)
     {
         parent::__construct($container, $pool);
+        $this->factory = $container->get(SocketFactoryInterface::class);
         $this->config = array_replace($this->config, $config);
 
         $this->reconnect();
-    }
-
-    public function __call($name, $arguments)
-    {
-        return $this->connection->{$name}(...$arguments);
     }
 
     public function __get($name)
@@ -60,9 +52,24 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
         return $this->connection->{$name};
     }
 
+    public function send(string $data): int|false
+    {
+        return $this->connection->sendAll($data);
+    }
+
+    public function recv(float $timeout = 0): string|false
+    {
+        return $this->recvPacket($timeout);
+    }
+
+    public function recvPacket(float $timeout = 0): string|false
+    {
+        return $this->connection->recvPacket($timeout);
+    }
+
     /**
-     * @throws ConnectionException
      * @return $this
+     * @throws ConnectionException
      */
     public function getActiveConnection()
     {
@@ -77,7 +84,7 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
 
     public function reconnect(): bool
     {
-        if (! $this->config['node'] instanceof \Closure) {
+        if (! $this->config['node'] instanceof Closure) {
             throw new ConnectionException('Node of Connection is invalid.');
         }
 
@@ -87,16 +94,12 @@ class RpcConnection extends BaseConnection implements ConnectionInterface
         $port = $node->port;
         $connectTimeout = $this->config['connect_timeout'];
 
-        $client = new SwooleClient(SWOOLE_SOCK_TCP);
-        $client->set($this->config['settings'] ?? []);
-        $result = $client->connect($host, $port, $connectTimeout);
-        if ($result === false) {
-            // Force close and reconnect to server.
-            $client->close();
-            throw new ClientException('Connect to server failed. ' . $client->errMsg, $client->errCode);
-        }
-
-        $this->connection = $client;
+        $this->connection = $this->factory->make(new SocketOption(
+            $host,
+            $port,
+            $connectTimeout,
+            $this->config['settings'] ?? []
+        ));
         $this->lastUseTime = microtime(true);
         return true;
     }

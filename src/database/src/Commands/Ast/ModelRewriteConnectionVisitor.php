@@ -12,30 +12,17 @@ declare(strict_types=1);
 namespace Hyperf\Database\Commands\Ast;
 
 use PhpParser\Node;
+use PhpParser\Node\Identifier;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
+use ReflectionClass;
 
 class ModelRewriteConnectionVisitor extends NodeVisitorAbstract
 {
-    /**
-     * @var string
-     */
-    protected $class;
+    protected bool $hasConnection = false;
 
-    /**
-     * @var string
-     */
-    protected $connection;
-
-    /**
-     * @var bool
-     */
-    protected $hasConnection = false;
-
-    public function __construct(string $class, string $connection)
+    public function __construct(protected string $class, protected string $connection)
     {
-        $this->class = $class;
-        $this->connection = $connection;
     }
 
     public function leaveNode(Node $node)
@@ -50,10 +37,13 @@ class ModelRewriteConnectionVisitor extends NodeVisitorAbstract
                     }
 
                     $node->props[0]->default = new Node\Scalar\String_($this->connection);
+                    $node->type = new Node\NullableType(new Identifier('string'));
                 }
 
                 return $node;
         }
+
+        return null;
     }
 
     public function afterTraverse(array $nodes)
@@ -84,7 +74,7 @@ class ModelRewriteConnectionVisitor extends NodeVisitorAbstract
 
     protected function shouldRemovedConnection(): bool
     {
-        $ref = new \ReflectionClass($this->class);
+        $ref = new ReflectionClass($this->class);
 
         if (! $ref->getParentClass()) {
             return false;

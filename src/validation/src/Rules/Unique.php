@@ -12,8 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Validation\Rules;
 
 use Hyperf\Database\Model\Model;
+use Stringable;
 
-class Unique
+class Unique implements Stringable
 {
     use DatabaseRule;
 

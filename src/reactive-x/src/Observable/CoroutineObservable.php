@@ -19,23 +19,15 @@ use Rx\Scheduler;
 use Rx\SchedulerInterface;
 use Swoole\Coroutine;
 use Swoole\Coroutine\WaitGroup;
+use Throwable;
 
 class CoroutineObservable extends Observable
 {
     /**
-     * @var callable[]
+     * @param callable[] $callables
      */
-    private $callables;
-
-    /**
-     * @var SchedulerInterface
-     */
-    private $scheduler;
-
-    public function __construct($callables, ?SchedulerInterface $scheduler = null)
+    public function __construct(private array $callables, private ?SchedulerInterface $scheduler = null)
     {
-        $this->scheduler = $scheduler;
-        $this->callables = $callables;
     }
 
     protected function _subscribe(ObserverInterface $observer): DisposableInterface
@@ -53,7 +45,7 @@ class CoroutineObservable extends Observable
                         $this->scheduler->schedule(function () use ($observer, $result) {
                             $observer->onNext($result);
                         });
-                    } catch (\Throwable $throwable) {
+                    } catch (Throwable $throwable) {
                         $this->scheduler->schedule(function () use ($observer, $throwable) {
                             $observer->onError($throwable);
                         });

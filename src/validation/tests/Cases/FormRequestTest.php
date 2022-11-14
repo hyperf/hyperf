@@ -11,11 +11,11 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Validation\Cases;
 
+use Hyperf\Context\Context;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Translation\ArrayLoader;
 use Hyperf\Translation\Translator;
-use Hyperf\Utils\Context;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\ValidationException;
 use Hyperf\Validation\ValidatorFactory;
@@ -27,6 +27,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 /**
  * @internal
@@ -100,7 +101,7 @@ class FormRequestTest extends TestCase
             $request = new BarSceneRequest($container);
             $request->validateResolved();
             $this->assertTrue(false);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertInstanceOf(ValidationException::class, $exception);
             $this->assertSame('validation.integer', $exception->validator->errors()->first());
         }
@@ -131,7 +132,7 @@ class FormRequestTest extends TestCase
             try {
                 $request->validateResolved();
                 $this->assertTrue(false);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $this->assertInstanceOf(ValidationException::class, $exception);
             }
         });
@@ -140,7 +141,7 @@ class FormRequestTest extends TestCase
             $request = new FooSceneRequest($container);
             $request->validateResolved();
             $this->assertTrue(false);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertInstanceOf(ValidationException::class, $exception);
         }
     }

@@ -39,7 +39,7 @@ interface RetryPolicyInterface
     /**
      * Define what would happen when the retry session ultimately failed.
      * @param RetryContext $retryContext the current status object
-     * @return bool whether or not the policy chain should continue
+     * @return bool whether the policy chain should continue
      */
     public function end(RetryContext &$retryContext): bool;
 }

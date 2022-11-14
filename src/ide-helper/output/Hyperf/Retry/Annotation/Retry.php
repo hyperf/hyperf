@@ -12,16 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\Retry\Annotation;
 
 use Attribute;
-use Doctrine\Common\Annotations\Annotation\Target;
+use Hyperf\Retry\RetryBudgetInterface;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
 #[Attribute(Attribute::TARGET_METHOD)]
 class Retry extends AbstractRetry
 {
-    public function __construct($policies, $sleepStrategyClass, $maxAttempts, $retryBudget, $base, $retryOnThrowablePredicate, $retryOnResultPredicate, $retryThrowables, $ignoreThrowables, $fallback)
+    public function __construct(array $policies = ['Hyperf\\Retry\\Policy\\FallbackRetryPolicy', 'Hyperf\\Retry\\Policy\\ClassifierRetryPolicy', 'Hyperf\\Retry\\Policy\\BudgetRetryPolicy', 'Hyperf\\Retry\\Policy\\MaxAttemptsRetryPolicy', 'Hyperf\\Retry\\Policy\\SleepRetryPolicy'], string $sleepStrategyClass = 'Hyperf\\Retry\\SleepStrategyInterface', int $maxAttempts = 10, RetryBudgetInterface|array $retryBudget = [10, 1, 0.2], int $base = 0, mixed $retryOnThrowablePredicate = '', mixed $retryOnResultPredicate = '', array $retryThrowables = ['Throwable'], array $ignoreThrowables = [], mixed $fallback = '')
     {
     }
 }

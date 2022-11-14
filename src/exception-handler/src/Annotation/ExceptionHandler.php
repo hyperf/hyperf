@@ -14,20 +14,10 @@ namespace Hyperf\ExceptionHandler\Annotation;
 use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"CLASS"})
- */
 #[Attribute(Attribute::TARGET_CLASS)]
 class ExceptionHandler extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $server = 'http';
-
-    /**
-     * @var int
-     */
-    public $priority = 0;
+    public function __construct(public string $server = 'http', public int $priority = 0)
+    {
+    }
 }

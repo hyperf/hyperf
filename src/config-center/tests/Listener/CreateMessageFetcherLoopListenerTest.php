@@ -19,6 +19,7 @@ use Hyperf\ConfigCenter\Mode;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @internal
@@ -47,7 +48,7 @@ class CreateMessageFetcherLoopListenerTest extends TestCase
         $factory->shouldReceive('create')->with('test')->once()->andReturn($driver);
 
         $listener = new CreateMessageFetcherLoopListener($factory, $config, Mockery::mock(StdoutLoggerInterface::class));
-        $listener->process(new \stdClass());
+        $listener->process(new stdClass());
 
         $config = new Config([
             'config_center' => [
@@ -55,7 +56,7 @@ class CreateMessageFetcherLoopListenerTest extends TestCase
             ],
         ]);
         $listener = new CreateMessageFetcherLoopListener($factory, $config, Mockery::mock(StdoutLoggerInterface::class));
-        $listener->process(new \stdClass());
+        $listener->process(new stdClass());
         $this->assertTrue(true);
     }
 }

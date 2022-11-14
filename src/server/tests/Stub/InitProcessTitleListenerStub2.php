@@ -11,12 +11,12 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Server\Stub;
 
+use Hyperf\Context\Context;
 use Hyperf\Server\Listener\InitProcessTitleListener;
-use Hyperf\Utils\Context;
 
 class InitProcessTitleListenerStub2 extends InitProcessTitleListener
 {
-    protected $dot = '#';
+    protected string $dot = '#';
 
     public function setTitle(string $title)
     {

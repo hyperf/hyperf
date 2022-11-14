@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Cache\Cases;
 
+use DateInterval;
 use Hyperf\Cache\CacheManager;
+use Hyperf\Cache\Driver\KeyCollectorInterface;
 use Hyperf\Cache\Driver\RedisDriver;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
@@ -86,7 +88,7 @@ class RedisDriverTest extends TestCase
         $redis = $container->get(\Redis::class);
         $this->assertSame(1, $redis->ttl('c:xxx'));
 
-        $dv = new \DateInterval('PT5S');
+        $dv = new DateInterval('PT5S');
         $driver->set('xxx', 'yyy', $dv);
         $this->assertSame(5, $redis->ttl('c:xxx'));
     }
@@ -125,6 +127,21 @@ class RedisDriverTest extends TestCase
 
         $this->assertNull($driver->get('xxx'));
         $this->assertNotNull($driver->get('xxx3'));
+    }
+
+    public function testKeys()
+    {
+        $container = $this->getContainer();
+        $driver = $container->get(CacheManager::class)->getDriver();
+
+        $this->assertInstanceOf(KeyCollectorInterface::class, $driver);
+        $collector = 'test:keys:' . uniqid();
+        $driver->addKey($collector, '1');
+        $driver->addKey($collector, '2');
+        $this->assertSame(['1', '2'], $driver->keys($collector));
+
+        $collector = 'test:keys:' . uniqid();
+        $this->assertSame([], $driver->keys($collector));
     }
 
     protected function getContainer()

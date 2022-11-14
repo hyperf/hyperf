@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\AsyncQueue\Stub;
 
 use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 
 class FooProxy
 {
@@ -21,18 +21,16 @@ class FooProxy
         Context::set(FooProxy::class, $params);
     }
 
-    /**
-     * @AsyncQueueMessage
-     */
+    #[AsyncQueueMessage]
     public function variadic(...$params)
     {
         Context::set(FooProxy::class, $params);
     }
 
     /**
-     * @AsyncQueueMessage
      * @param mixed $params
      */
+    #[AsyncQueueMessage]
     public function async($params)
     {
         Context::set(FooProxy::class, $params);

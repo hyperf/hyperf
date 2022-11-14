@@ -12,9 +12,12 @@ declare(strict_types=1);
 namespace Hyperf\HttpServer;
 
 use FastRoute\Dispatcher;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\MiddlewareInitializerInterface;
 use Hyperf\Contract\OnRequestInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Dispatcher\HttpDispatcher;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Connection\SwooleConnection;
@@ -24,9 +27,7 @@ use Hyperf\HttpServer\Contract\CoreMiddlewareInterface;
 use Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\SafeCaller;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -34,57 +35,22 @@ use Throwable;
 
 class Server implements OnRequestInterface, MiddlewareInitializerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected array $middlewares = [];
 
-    /**
-     * @var HttpDispatcher
-     */
-    protected $dispatcher;
+    protected ?CoreMiddlewareInterface $coreMiddleware = null;
 
-    /**
-     * @var ExceptionHandlerDispatcher
-     */
-    protected $exceptionHandlerDispatcher;
+    protected array $exceptionHandlers = [];
 
-    /**
-     * @var array
-     */
-    protected $middlewares;
+    protected ?Dispatcher $routerDispatcher = null;
 
-    /**
-     * @var CoreMiddlewareInterface
-     */
-    protected $coreMiddleware;
+    protected ?string $serverName = null;
 
-    /**
-     * @var array
-     */
-    protected $exceptionHandlers;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $routerDispatcher;
-
-    /**
-     * @var \Hyperf\HttpServer\ResponseEmitter
-     */
-    protected $responseEmitter;
-
-    /**
-     * @var string
-     */
-    protected $serverName;
-
-    public function __construct(ContainerInterface $container, HttpDispatcher $dispatcher, ExceptionHandlerDispatcher $exceptionHandlerDispatcher, ResponseEmitter $responseEmitter)
-    {
-        $this->container = $container;
-        $this->dispatcher = $dispatcher;
-        $this->exceptionHandlerDispatcher = $exceptionHandlerDispatcher;
-        $this->responseEmitter = $responseEmitter;
+    public function __construct(
+        protected ContainerInterface $container,
+        protected HttpDispatcher $dispatcher,
+        protected ExceptionHandlerDispatcher $exceptionHandlerDispatcher,
+        protected ResponseEmitter $responseEmitter
+    ) {
     }
 
     public function initCoreMiddleware(string $serverName): void
@@ -117,16 +83,20 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
             $psr7Response = $this->dispatcher->dispatch($psr7Request, $middlewares, $this->coreMiddleware);
         } catch (Throwable $throwable) {
             // Delegate the exception to exception handler.
-            $psr7Response = $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+            $psr7Response = $this->container->get(SafeCaller::class)->call(function () use ($throwable) {
+                return $this->exceptionHandlerDispatcher->dispatch($throwable, $this->exceptionHandlers);
+            }, static function () {
+                return (new Psr7Response())->withStatus(400);
+            });
         } finally {
             // Send the Response to client.
-            if (! isset($psr7Response)) {
+            if (! isset($psr7Response) || ! $psr7Response instanceof ResponseInterface) {
                 return;
             }
             if (isset($psr7Request) && $psr7Request->getMethod() === 'HEAD') {
                 $this->responseEmitter->emit($psr7Response, $response, false);
             } else {
-                $this->responseEmitter->emit($psr7Response, $response, true);
+                $this->responseEmitter->emit($psr7Response, $response);
             }
         }
     }

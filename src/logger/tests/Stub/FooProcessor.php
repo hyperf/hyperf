@@ -11,20 +11,18 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Logger\Stub;
 
+use Monolog\LogRecord;
 use Monolog\Processor\ProcessorInterface;
 
 class FooProcessor implements ProcessorInterface
 {
-    protected $repeat;
-
-    public function __construct(int $repeat)
+    public function __construct(protected int $repeat)
     {
-        $this->repeat = 2;
     }
 
-    public function __invoke(array $records)
+    public function __invoke(array|LogRecord $records)
     {
-        $records['message'] = str_repeat($records['message'], $this->repeat);
+        $records['extra']['message'] = str_repeat($records['message'], $this->repeat);
         return $records;
     }
 }

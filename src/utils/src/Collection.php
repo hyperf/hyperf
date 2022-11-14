@@ -14,13 +14,16 @@ namespace Hyperf\Utils;
 use ArrayAccess;
 use ArrayIterator;
 use CachingIterator;
+use Closure;
 use Countable;
 use Exception;
+use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Jsonable;
 use Hyperf\Macroable\Macroable;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
+use InvalidArgumentException;
 use IteratorAggregate;
 use JsonSerializable;
+use RuntimeException;
 use stdClass;
 use Symfony\Component\VarDumper\VarDumper;
 use Traversable;
@@ -65,14 +68,14 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @var array<TKey, TValue>
      */
-    protected $items = [];
+    protected array $items = [];
 
     /**
      * The methods that can be proxied.
      *
      * @var string[]
      */
-    protected static $proxies
+    protected static array $proxies
         = [
             'average',
             'avg',
@@ -115,7 +118,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Dynamically access collection proxies.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function __get(string $key)
     {
@@ -222,6 +225,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         if ($count = $items->count()) {
             return $items->sum() / $count;
         }
+        return null;
     }
 
     /**
@@ -274,6 +278,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
 
         /**
          * @template TValue of array-key
+         * @phpstan-ignore-next-line
          * @var static<TValue, int> $counts
          */
         $counts = new self();
@@ -360,7 +365,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
         $params = (new static(func_get_args()));
         $params->push($this)->each(function ($item) {
             if (! class_exists(VarDumper::class)) {
-                throw new \RuntimeException('symfony/var-dumper package required, please require the package via "composer require symfony/var-dumper"');
+                throw new RuntimeException('symfony/var-dumper package required, please require the package via "composer require symfony/var-dumper"');
             }
             VarDumper::dump($item);
         });
@@ -503,7 +508,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Run a filter over each of the items.
      *
-     * @param callable(TValue, TKey): bool|null $callback
+     * @param (callable(TValue, TKey): bool)|null $callback
      * @return static<TKey, TValue>
      */
     public function filter(callable $callback = null): self
@@ -536,7 +541,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * Apply the callback if the value is falsy.
      *
      * @param callable($this): $this $callback
-     * @param callable($this): $this|null $default
+     * @param callable($this): null|$this $default
      * @return $this
      */
     public function unless(bool $value, callable $callback, callable $default = null): self
@@ -635,8 +640,8 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @template TFirstDefault
      *
-     * @param callable(TValue, TKey): bool|null $callback
-     * @param  TFirstDefault|callable(): TFirstDefault  $default
+     * @param (callable(TValue, TKey): bool)|null $callback
+     * @param TFirstDefault|(\Closure(): TFirstDefault)  $default
      * @return TFirstDefault|TValue
      */
     public function first(callable $callback = null, $default = null)
@@ -1193,8 +1198,8 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Get one or a specified number of items randomly from the collection.
      *
-     * @throws \InvalidArgumentException
      * @return static<int, TValue>|TValue
+     * @throws InvalidArgumentException
      */
     public function random(int $number = null)
     {
@@ -1577,7 +1582,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      *
      * @return array<TKey, mixed>
      */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return array_map(function ($value) {
             if ($value instanceof JsonSerializable) {
@@ -1616,6 +1621,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      */
     public function getCachingIterator(int $flags = CachingIterator::CALL_TOSTRING): CachingIterator
     {
+        /* @phpstan-ignore-next-line */
         return new CachingIterator($this->getIterator(), $flags);
     }
 
@@ -1640,48 +1646,47 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
     /**
      * Determine if an item exists at an offset.
      *
-     * @param TKey $key
-     * @return bool
+     * @param TKey $offset
      */
-    public function offsetExists($key)
+    public function offsetExists(mixed $offset): bool
     {
-        return array_key_exists($key, $this->items);
+        return array_key_exists($offset, $this->items);
     }
 
     /**
      * Get an item at a given offset.
      *
-     * @param TKey $key
+     * @param TKey $offset
      * @return TValue
      */
-    public function offsetGet($key)
+    public function offsetGet(mixed $offset): mixed
     {
-        return $this->items[$key];
+        return $this->items[$offset];
     }
 
     /**
      * Set the item at a given offset.
      *
-     * @param null|TKey $key
+     * @param null|TKey $offset
      * @param TValue $value
      */
-    public function offsetSet($key, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
-        if (is_null($key)) {
+        if (is_null($offset)) {
             $this->items[] = $value;
         } else {
-            $this->items[$key] = $value;
+            $this->items[$offset] = $value;
         }
     }
 
     /**
      * Unset the item at a given offset.
      *
-     * @param TKey $key
+     * @param TKey $offset
      */
-    public function offsetUnset($key)
+    public function offsetUnset(mixed $offset): void
     {
-        unset($this->items[$key]);
+        unset($this->items[$offset]);
     }
 
     /**
@@ -1740,7 +1745,7 @@ class Collection implements ArrayAccess, Arrayable, Countable, IteratorAggregate
      * @param mixed|string $operator
      * @param null|TValue $value
      */
-    protected function operatorForWhere(string $key, $operator = null, $value = null): \Closure
+    protected function operatorForWhere(string $key, $operator = null, $value = null): Closure
     {
         if (func_num_args() === 1) {
             $value = true;

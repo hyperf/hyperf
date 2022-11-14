@@ -44,10 +44,7 @@ use Psr\Container\ContainerInterface;
  */
 class Blade
 {
-    /**
-     * @var null|ContainerInterface
-     */
-    protected static $container;
+    protected static ?ContainerInterface $container = null;
 
     public static function __callStatic($method, $args)
     {

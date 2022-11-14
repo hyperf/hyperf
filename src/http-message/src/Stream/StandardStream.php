@@ -11,7 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Stream;
 
+use Exception;
+use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
+
+use const SEEK_CUR;
+use const SEEK_SET;
 
 /**
  * Code Taken from Nyholm/psr7.
@@ -76,7 +82,7 @@ final class StandardStream implements StreamInterface
             }
 
             return $this->getContents();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return '';
         }
     }
@@ -86,7 +92,7 @@ final class StandardStream implements StreamInterface
      *
      * @param resource|StreamInterface|string $body
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function create($body = ''): StreamInterface
     {
@@ -104,7 +110,7 @@ final class StandardStream implements StreamInterface
             $new = new self();
             $new->stream = $body;
             $meta = \stream_get_meta_data($new->stream);
-            $new->seekable = $meta['seekable'] && \fseek($new->stream, 0, \SEEK_CUR) === 0;
+            $new->seekable = $meta['seekable'] && \fseek($new->stream, 0, SEEK_CUR) === 0;
             $new->readable = isset(self::READ_WRITE_HASH['read'][$meta['mode']]);
             $new->writable = isset(self::READ_WRITE_HASH['write'][$meta['mode']]);
             $new->uri = $new->getMetadata('uri');
@@ -112,7 +118,7 @@ final class StandardStream implements StreamInterface
             return $new;
         }
 
-        throw new \InvalidArgumentException('First argument to Stream::create() must be a string, resource or StreamInterface.');
+        throw new InvalidArgumentException('First argument to Stream::create() must be a string, resource or StreamInterface.');
     }
 
     public function close(): void
@@ -167,7 +173,7 @@ final class StandardStream implements StreamInterface
     public function tell(): int
     {
         if (false === $result = \ftell($this->stream)) {
-            throw new \RuntimeException('Unable to determine stream position');
+            throw new RuntimeException('Unable to determine stream position');
         }
 
         return $result;
@@ -183,14 +189,14 @@ final class StandardStream implements StreamInterface
         return $this->seekable;
     }
 
-    public function seek($offset, $whence = \SEEK_SET): void
+    public function seek($offset, $whence = SEEK_SET): void
     {
         if (! $this->seekable) {
-            throw new \RuntimeException('Stream is not seekable');
+            throw new RuntimeException('Stream is not seekable');
         }
 
         if (\fseek($this->stream, $offset, $whence) === -1) {
-            throw new \RuntimeException('Unable to seek to stream position ' . $offset . ' with whence ' . \var_export($whence, true));
+            throw new RuntimeException('Unable to seek to stream position ' . $offset . ' with whence ' . \var_export($whence, true));
         }
     }
 
@@ -207,14 +213,14 @@ final class StandardStream implements StreamInterface
     public function write($string): int
     {
         if (! $this->writable) {
-            throw new \RuntimeException('Cannot write to a non-writable stream');
+            throw new RuntimeException('Cannot write to a non-writable stream');
         }
 
         // We can't know the size after writing anything
         $this->size = null;
 
         if (false === $result = \fwrite($this->stream, $string)) {
-            throw new \RuntimeException('Unable to write to stream');
+            throw new RuntimeException('Unable to write to stream');
         }
 
         return $result;
@@ -228,7 +234,7 @@ final class StandardStream implements StreamInterface
     public function read($length): string
     {
         if (! $this->readable) {
-            throw new \RuntimeException('Cannot read from non-readable stream');
+            throw new RuntimeException('Cannot read from non-readable stream');
         }
 
         return \fread($this->stream, $length);
@@ -237,11 +243,11 @@ final class StandardStream implements StreamInterface
     public function getContents(): string
     {
         if (! isset($this->stream)) {
-            throw new \RuntimeException('Unable to read stream contents');
+            throw new RuntimeException('Unable to read stream contents');
         }
 
         if (false === $contents = \stream_get_contents($this->stream)) {
-            throw new \RuntimeException('Unable to read stream contents');
+            throw new RuntimeException('Unable to read stream contents');
         }
 
         return $contents;

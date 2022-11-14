@@ -12,61 +12,47 @@ declare(strict_types=1);
 namespace Hyperf\Resource\Json;
 
 use ArrayAccess;
-use Hyperf\Database\Model\Model;
+use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Jsonable;
 use Hyperf\HttpMessage\Server\ResponseProxyTrait;
 use Hyperf\Resource\Concerns\ConditionallyLoadsAttributes;
 use Hyperf\Resource\Concerns\DelegatesToResource;
 use Hyperf\Resource\JsonEncodingException;
 use Hyperf\Resource\Response\Response;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
 use JsonSerializable;
 use Psr\Http\Message\ResponseInterface;
+use Stringable;
 
-class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable, ResponseInterface
+class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable, ResponseInterface, Stringable
 {
     use ConditionallyLoadsAttributes;
     use DelegatesToResource;
     use ResponseProxyTrait;
 
     /**
-     * The resource instance.
-     *
-     * @var mixed
-     */
-    public $resource;
-
-    /**
      * The additional data that should be added to the top-level resource array.
-     *
-     * @var array
      */
-    public $with = [];
+    public array $with = [];
 
     /**
      * The additional meta data that should be added to the resource response.
      *
      * Added during response construction by the developer.
-     *
-     * @var array
      */
-    public $additional = [];
+    public array $additional = [];
 
     /**
      * The "data" wrapper that should be applied.
-     *
-     * @var null|string
      */
-    public $wrap = 'data';
+    public ?string $wrap = 'data';
 
     /**
      * Create a new resource instance.
      *
-     * @param mixed $resource
+     * @param mixed $resource the resource instance
      */
-    public function __construct($resource)
+    public function __construct(public mixed $resource)
     {
-        $this->resource = $resource;
     }
 
     public function __toString(): string
@@ -105,7 +91,7 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
     {
         $data = $this->toArray();
 
-        return $this->filter((array) $data);
+        return $this->filter($data);
     }
 
     /**
@@ -180,10 +166,8 @@ class JsonResource implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
 
     /**
      * Prepare the resource for JSON serialization.
-     *
-     * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->resolve();
     }

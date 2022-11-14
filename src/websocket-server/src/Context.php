@@ -11,17 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\WebSocketServer;
 
+use Closure;
+use Hyperf\Context\Context as CoContext;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Context as CoContext;
 
 class Context
 {
     public const FD = 'ws.fd';
 
-    /**
-     * @var array
-     */
-    protected static $container = [];
+    protected static array $container = [];
 
     public static function set(string $id, $value)
     {
@@ -33,14 +31,14 @@ class Context
 
     public static function get(string $id, $default = null, $fd = null)
     {
-        $fd = $fd ?? CoContext::get(Context::FD, 0);
+        $fd ??= CoContext::get(Context::FD, 0);
         $key = sprintf('%d.%s', $fd, $id);
         return data_get(self::$container, $key, $default);
     }
 
     public static function has(string $id, $fd = null)
     {
-        $fd = $fd ?? CoContext::get(Context::FD, 0);
+        $fd ??= CoContext::get(Context::FD, 0);
         $key = sprintf('%d.%s', $fd, $id);
         return data_get(self::$container, $key) !== null;
     }
@@ -53,7 +51,7 @@ class Context
 
     public static function release(?int $fd = null)
     {
-        $fd = $fd ?? CoContext::get(Context::FD, 0);
+        $fd ??= CoContext::get(Context::FD, 0);
         unset(self::$container[strval($fd)]);
     }
 
@@ -64,7 +62,7 @@ class Context
         self::$container[$fd] = ($keys ? Arr::only($from, $keys) : $from);
     }
 
-    public static function override(string $id, \Closure $closure)
+    public static function override(string $id, Closure $closure)
     {
         $value = null;
         if (self::has($id)) {

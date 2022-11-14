@@ -38,11 +38,9 @@ class ParamsTest extends TestCase
 
         $this->assertFalse($params->isInsist());
         $this->assertSame('AMQPLAIN', $params->getLoginMethod());
-        $this->assertNull($params->getLoginResponse());
         $this->assertSame('en_US', $params->getLocale());
         $this->assertSame(3, $params->getConnectionTimeout());
         $this->assertSame(6, $params->getReadWriteTimeout());
-        $this->assertNull($params->getContext());
         $this->assertFalse($params->isKeepalive());
         $this->assertSame(3, $params->getHeartbeat());
         $this->assertTrue($params->isCloseOnDestruct());

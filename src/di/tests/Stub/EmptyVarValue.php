@@ -15,9 +15,6 @@ use Hyperf\Di\Annotation\Inject;
 
 class EmptyVarValue
 {
-    /**
-     * @Inject
-     * @var
-     */
+    #[Inject]
     private $demo;
 }

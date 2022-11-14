@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
+use InvalidArgumentException;
+
 class Backoff
 {
     /**
@@ -19,29 +21,23 @@ class Backoff
     private const CAP = 60 * 1000; // 1 minute
 
     /**
-     * @var int
-     */
-    private $firstMs;
-
-    /**
      * Backoff interval.
-     * @var int
      */
-    private $currentMs;
+    private int $currentMs;
 
     /**
      * @param int the first backoff in milliseconds
      */
-    public function __construct(int $firstMs = 0)
+    public function __construct(private int $firstMs = 0)
     {
         if ($firstMs < 0) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'first backoff interval must be greater or equal than 0'
             );
         }
 
         if ($firstMs > Backoff::CAP) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf(
                     'first backoff interval must be less or equal than %d milliseconds',
                     self::CAP
@@ -49,7 +45,6 @@ class Backoff
             );
         }
 
-        $this->firstMs = $firstMs;
         $this->currentMs = $firstMs;
     }
 

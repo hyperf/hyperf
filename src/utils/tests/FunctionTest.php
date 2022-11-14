@@ -11,11 +11,12 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
+use Hyperf\Engine\Channel;
 use Hyperf\Utils\Coroutine;
 use HyperfTest\Utils\Exception\RetryException;
 use HyperfTest\Utils\Stub\FooClosure;
 use PHPUnit\Framework\TestCase;
-use Swoole\Coroutine\Channel;
+use stdClass;
 use Swoole\Runtime;
 
 /**
@@ -52,7 +53,7 @@ class FunctionTest extends TestCase
         $result = data_get($data, 'id2', 2);
         $this->assertSame(2, $result);
 
-        $obj = new \stdClass();
+        $obj = new stdClass();
         $obj->name = 'hyperf';
         $data = ['id' => 2, 'obj' => $obj];
         $result = data_get($data, 'obj');
@@ -200,5 +201,13 @@ class FunctionTest extends TestCase
 
         $assert = value($foo = new FooClosure(), $id);
         $this->assertSame($assert, $foo);
+    }
+
+    public function testEnv()
+    {
+        $id = 'NULL_' . uniqid();
+        putenv("{$id}=(null)");
+
+        $this->assertNull(env($id));
     }
 }

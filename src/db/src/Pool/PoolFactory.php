@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\DB\Pool;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\PoolInterface;
 use Hyperf\DB\Exception\DriverNotFoundException;
 use Hyperf\DB\Exception\InvalidDriverException;
 use Psr\Container\ContainerInterface;
@@ -21,19 +22,13 @@ class PoolFactory
     /**
      * @var Pool[]
      */
-    protected $pools = [];
+    protected array $pools = [];
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
-    public function getPool(string $name)
+    public function getPool(string $name): PoolInterface
     {
         if (isset($this->pools[$name])) {
             return $this->pools[$name];
@@ -50,7 +45,7 @@ class PoolFactory
         return $this->pools[$name] = $pool;
     }
 
-    protected function getPoolName(string $driver)
+    protected function getPoolName(string $driver): string
     {
         switch (strtolower($driver)) {
             case 'mysql':

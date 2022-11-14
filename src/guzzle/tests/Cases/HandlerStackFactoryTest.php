@@ -26,6 +26,8 @@ use HyperfTest\Guzzle\Stub\HandlerStackFactoryStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use ReflectionClass;
+use Throwable;
 
 /**
  * @internal
@@ -43,7 +45,7 @@ class HandlerStackFactoryTest extends TestCase
         $this->assertInstanceOf(HandlerStack::class, $stack);
         $this->assertTrue($stack->hasHandler());
 
-        $ref = new \ReflectionClass($stack);
+        $ref = new ReflectionClass($stack);
 
         $handler = $ref->getProperty('handler');
         $handler->setAccessible(true);
@@ -67,7 +69,7 @@ class HandlerStackFactoryTest extends TestCase
         $this->assertInstanceOf(HandlerStack::class, $stack);
         $this->assertTrue($stack->hasHandler());
 
-        $ref = new \ReflectionClass($stack);
+        $ref = new ReflectionClass($stack);
 
         $handler = $ref->getProperty('handler');
         $handler->setAccessible(true);
@@ -89,7 +91,7 @@ class HandlerStackFactoryTest extends TestCase
         $this->assertTrue($stack->hasHandler());
         $this->assertInstanceOf(HandlerStack::class, $stack);
 
-        $ref = new \ReflectionClass($stack);
+        $ref = new ReflectionClass($stack);
 
         $handler = $ref->getProperty('handler');
         $handler->setAccessible(true);
@@ -109,12 +111,12 @@ class HandlerStackFactoryTest extends TestCase
         $factory = new HandlerStackFactory();
         $stack = $factory->create(['max_connections' => 50]);
 
-        $ref = new \ReflectionClass($stack);
+        $ref = new ReflectionClass($stack);
         $handler = $ref->getProperty('handler');
         $handler->setAccessible(true);
         $handler = $handler->getValue($stack);
 
-        $ref = new \ReflectionClass($handler);
+        $ref = new ReflectionClass($handler);
         $option = $ref->getProperty('option');
         $option->setAccessible(true);
 
@@ -128,7 +130,7 @@ class HandlerStackFactoryTest extends TestCase
         $factory = new HandlerStackFactory();
         $stack = $factory->create([], ['retry_again' => [RetryMiddleware::class, [1, 10]]]);
 
-        $ref = new \ReflectionClass($stack);
+        $ref = new ReflectionClass($stack);
         $property = $ref->getProperty('stack');
         $property->setAccessible(true);
         $items = array_column($property->getValue($stack), 1);
@@ -165,7 +167,7 @@ class HandlerStackFactoryTest extends TestCase
 
         try {
             $client->get('/');
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertSame(2, $stub->count);
             throw $exception;
         }

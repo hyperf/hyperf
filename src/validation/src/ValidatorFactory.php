@@ -22,13 +22,6 @@ use Psr\Container\ContainerInterface;
 class ValidatorFactory implements ValidatorFactoryInterface
 {
     /**
-     * The Translator implementation.
-     *
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
      * The Presence Verifier implementation.
      *
      * @var \Hyperf\Validation\Contract\PresenceVerifierInterface
@@ -36,42 +29,35 @@ class ValidatorFactory implements ValidatorFactoryInterface
     protected $verifier;
 
     /**
-     * The IoC container instance.
-     *
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * All of the custom validator extensions.
+     * All the custom validator extensions.
      *
      * @var array
      */
     protected $extensions = [];
 
     /**
-     * All of the custom implicit validator extensions.
+     * All the custom implicit validator extensions.
      *
      * @var array
      */
     protected $implicitExtensions = [];
 
     /**
-     * All of the custom dependent validator extensions.
+     * All the custom dependent validator extensions.
      *
      * @var array
      */
     protected $dependentExtensions = [];
 
     /**
-     * All of the custom validator message replacers.
+     * All the custom validator message replacers.
      *
      * @var array
      */
     protected $replacers = [];
 
     /**
-     * All of the fallback messages for custom rules.
+     * All the fallback messages for custom rules.
      *
      * @var array
      */
@@ -80,17 +66,17 @@ class ValidatorFactory implements ValidatorFactoryInterface
     /**
      * The Validator resolver instance.
      *
-     * @var \Closure
+     * @var Closure
      */
     protected $resolver;
 
     /**
      * Create a new Validator factory instance.
      */
-    public function __construct(TranslatorInterface $translator, ContainerInterface $container = null)
-    {
-        $this->container = $container;
-        $this->translator = $translator;
+    public function __construct(
+        protected TranslatorInterface $translator,
+        protected ?ContainerInterface $container = null
+    ) {
     }
 
     /**
@@ -136,10 +122,8 @@ class ValidatorFactory implements ValidatorFactoryInterface
 
     /**
      * Register a custom validator extension.
-     *
-     * @param \Closure|string $extension
      */
-    public function extend(string $rule, $extension, ?string $message = null)
+    public function extend(string $rule, Closure|string $extension, ?string $message = null)
     {
         $this->extensions[$rule] = $extension;
 
@@ -150,10 +134,8 @@ class ValidatorFactory implements ValidatorFactoryInterface
 
     /**
      * Register a custom implicit validator extension.
-     *
-     * @param \Closure|string $extension
      */
-    public function extendImplicit(string $rule, $extension, ?string $message = null)
+    public function extendImplicit(string $rule, Closure|string $extension, ?string $message = null)
     {
         $this->implicitExtensions[$rule] = $extension;
 
@@ -164,10 +146,8 @@ class ValidatorFactory implements ValidatorFactoryInterface
 
     /**
      * Register a custom dependent validator extension.
-     *
-     * @param \Closure|string $extension
      */
-    public function extendDependent(string $rule, $extension, ?string $message = null)
+    public function extendDependent(string $rule, Closure|string $extension, ?string $message = null)
     {
         $this->dependentExtensions[$rule] = $extension;
 
@@ -178,10 +158,8 @@ class ValidatorFactory implements ValidatorFactoryInterface
 
     /**
      * Register a custom validator message replacer.
-     *
-     * @param \Closure|string $replacer
      */
-    public function replacer(string $rule, $replacer)
+    public function replacer(string $rule, Closure|string $replacer)
     {
         $this->replacers[$rule] = $replacer;
     }

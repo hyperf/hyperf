@@ -23,6 +23,7 @@ use HyperfTest\Amqp\Stub\DelayConsumer;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use ReflectionClass;
 
 /**
  * @internal
@@ -34,7 +35,7 @@ class ConsumerTest extends TestCase
     {
         $container = ContainerStub::getContainer();
         $consumer = new Consumer($container, Mockery::mock(ConnectionFactory::class), Mockery::mock(LoggerInterface::class));
-        $ref = new \ReflectionClass($consumer);
+        $ref = new ReflectionClass($consumer);
         $method = $ref->getMethod('getConcurrent');
         $method->setAccessible(true);
         /** @var Concurrent $concurrent */

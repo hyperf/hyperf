@@ -22,16 +22,17 @@ use Hyperf\Pool\PoolOption;
 use Hyperf\Redis\Frequency;
 use Hyperf\Redis\Pool\PoolFactory;
 use Hyperf\Redis\Pool\RedisPool;
-use Hyperf\Redis\Redis;
 use Hyperf\Redis\RedisFactory;
+use Hyperf\Redis\RedisProxy;
 use Hyperf\SocketIOServer\NamespaceInterface;
 use Hyperf\SocketIOServer\Room\MemoryAdapter;
 use Hyperf\SocketIOServer\Room\RedisAdapter;
 use Hyperf\SocketIOServer\SidProvider\LocalSidProvider;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\WebSocketServer\Sender;
-use Mix\Redis\Subscribe\Subscriber;
+use Mix\Redis\Subscriber\Subscriber;
 use Mockery;
+use Throwable;
 
 /**
  * @internal
@@ -116,7 +117,7 @@ class RoomAdapterTest extends AbstractTestCase
         // Test empty room
         try {
             $room->del('non-exist');
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             $this->assertTrue(false);
         }
 
@@ -184,7 +185,7 @@ class RoomAdapterTest extends AbstractTestCase
         ApplicationContext::setContainer($container);
         $factory = new PoolFactory($container);
         $mock = Mockery::mock(RedisFactory::class);
-        $mock->shouldReceive('get')->andReturn(new Redis($factory));
+        $mock->shouldReceive('get')->andReturn(new RedisProxy($factory, 'default'));
         return $mock;
     }
 }

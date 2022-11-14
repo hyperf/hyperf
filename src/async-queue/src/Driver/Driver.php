@@ -16,7 +16,6 @@ use Hyperf\AsyncQueue\Event\BeforeHandle;
 use Hyperf\AsyncQueue\Event\FailedHandle;
 use Hyperf\AsyncQueue\Event\QueueLength;
 use Hyperf\AsyncQueue\Event\RetryHandle;
-use Hyperf\AsyncQueue\Exception\InvalidPackerException;
 use Hyperf\AsyncQueue\MessageInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -26,49 +25,22 @@ use Hyperf\Utils\Coroutine\Concurrent;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Throwable;
 
 abstract class Driver implements DriverInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected PackerInterface $packer;
 
-    /**
-     * @var PackerInterface
-     */
-    protected $packer;
+    protected ?EventDispatcherInterface $event = null;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $event;
+    protected ?Concurrent $concurrent = null;
 
-    /**
-     * @var null|Concurrent
-     */
-    protected $concurrent;
+    protected int $lengthCheckCount = 500;
 
-    /**
-     * @var array
-     */
-    protected $config;
-
-    /**
-     * @var int
-     */
-    protected $lengthCheckCount = 500;
-
-    public function __construct(ContainerInterface $container, $config)
+    public function __construct(protected ContainerInterface $container, protected array $config)
     {
-        $this->container = $container;
         $this->packer = $container->get($config['packer'] ?? PhpSerializerPacker::class);
         $this->event = $container->get(EventDispatcherInterface::class);
-        $this->config = $config;
-
-        if (! $this->packer instanceof PackerInterface) {
-            throw new InvalidPackerException(sprintf('[Error] %s is not a invalid packer.', $config['packer']));
-        }
 
         $concurrentLimit = $config['concurrent']['limit'] ?? null;
         if ($concurrentLimit && is_numeric($concurrentLimit)) {
@@ -91,7 +63,7 @@ abstract class Driver implements DriverInterface
 
                 $callback = $this->getCallback($data, $message);
 
-                if ($this->concurrent instanceof Concurrent) {
+                if ($this->concurrent) {
                     $this->concurrent->create($callback);
                 } else {
                     parallel([$callback]);
@@ -104,7 +76,7 @@ abstract class Driver implements DriverInterface
                 if ($maxMessages > 0 && $messageCount >= $maxMessages) {
                     break;
                 }
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $logger = $this->container->get(StdoutLoggerInterface::class);
                 $logger->error((string) $exception);
             } finally {
@@ -113,7 +85,7 @@ abstract class Driver implements DriverInterface
         }
     }
 
-    protected function checkQueueLength()
+    protected function checkQueueLength(): void
     {
         $info = $this->info();
         foreach ($info as $key => $value) {
@@ -132,7 +104,7 @@ abstract class Driver implements DriverInterface
                 }
 
                 $this->ack($data);
-            } catch (\Throwable $ex) {
+            } catch (Throwable $ex) {
                 if (isset($message, $data)) {
                     if ($message->attempts() && $this->remove($data)) {
                         $this->event && $this->event->dispatch(new RetryHandle($message, $ex));
@@ -153,7 +125,6 @@ abstract class Driver implements DriverInterface
 
     /**
      * Remove data from reserved queue.
-     * @param mixed $data
      */
-    abstract protected function remove($data): bool;
+    abstract protected function remove(mixed $data): bool;
 }

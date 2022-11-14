@@ -17,17 +17,12 @@ use Hyperf\Task\Exception;
 use Hyperf\Task\Finish;
 use Hyperf\Task\Task;
 use Psr\Container\ContainerInterface;
+use Throwable;
 
 class OnTaskListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function listen(): array
@@ -37,7 +32,7 @@ class OnTaskListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($event instanceof OnTask && $data = $event->task->data) {
             if (! $data instanceof Task) {
@@ -47,7 +42,7 @@ class OnTaskListener implements ListenerInterface
             try {
                 $result = $this->call($data);
                 $this->setResult($event, $result);
-            } catch (\Throwable $throwable) {
+            } catch (Throwable $throwable) {
                 $this->setResult($event, new Exception($this->container, $throwable));
             }
         }

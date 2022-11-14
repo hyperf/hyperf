@@ -11,6 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Contract;
 
+use Hyperf\Framework\ApplicationFactory;
+
+/**
+ * @see ApplicationFactory
+ */
 interface ApplicationInterface
 {
 }

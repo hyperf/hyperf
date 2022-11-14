@@ -22,34 +22,16 @@ use Throwable;
 
 abstract class Pool implements PoolInterface
 {
-    /**
-     * @var Channel
-     */
-    protected $channel;
+    protected Channel $channel;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected PoolOptionInterface $option;
 
-    /**
-     * @var PoolOptionInterface
-     */
-    protected $option;
+    protected int $currentConnections = 0;
 
-    /**
-     * @var int
-     */
-    protected $currentConnections = 0;
+    protected null|LowFrequencyInterface|FrequencyInterface $frequency = null;
 
-    /**
-     * @var LowFrequencyInterface
-     */
-    protected $frequency;
-
-    public function __construct(ContainerInterface $container, array $config = [])
+    public function __construct(protected ContainerInterface $container, array $config = [])
     {
-        $this->container = $container;
         $this->initOption($config);
 
         $this->channel = make(Channel::class, ['size' => $this->option->getMaxConnections()]);
@@ -69,7 +51,7 @@ abstract class Pool implements PoolInterface
                     $this->flush();
                 }
             }
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
                 $logger->error((string) $exception);
             }
@@ -91,7 +73,7 @@ abstract class Pool implements PoolInterface
             while ($this->currentConnections > $this->option->getMinConnections() && $conn = $this->channel->pop(0.001)) {
                 try {
                     $conn->close();
-                } catch (\Throwable $exception) {
+                } catch (Throwable $exception) {
                     if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
                         $logger->error((string) $exception);
                     }
@@ -115,7 +97,7 @@ abstract class Pool implements PoolInterface
             if ($must || ! $conn->check()) {
                 try {
                     $conn->close();
-                } catch (\Throwable $exception) {
+                } catch (Throwable $exception) {
                     if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
                         $logger->error((string) $exception);
                     }

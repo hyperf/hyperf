@@ -18,16 +18,16 @@
         }
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "egulias/email-validator": "^3.0",
-        "hyperf/contract": "~2.2.0",
-        "hyperf/database": "~2.2.0",
-        "hyperf/di": "~2.2.0",
-        "hyperf/framework": "~2.2.0",
-        "hyperf/http-server": "~2.2.0",
-        "hyperf/macroable": "~2.2.0",
-        "hyperf/translation": "~2.2.0",
-        "hyperf/utils": "~2.2.0",
+        "hyperf/contract": "~3.0.0",
+        "hyperf/database": "~3.0.0",
+        "hyperf/di": "~3.0.0",
+        "hyperf/framework": "~3.0.0",
+        "hyperf/http-server": "~3.0.0",
+        "hyperf/macroable": "~3.0.0",
+        "hyperf/translation": "~3.0.0",
+        "hyperf/utils": "~3.0.0",
         "nesbot/carbon": "^2.21",
         "psr/container": "^1.0|^2.0",
         "psr/event-dispatcher": "^1.0",
@@ -38,7 +38,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Validation\\ConfigProvider"

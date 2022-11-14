@@ -30,7 +30,7 @@ class DBPoolWatcher extends PoolWatcher implements ListenerInterface
     /**
      * Periodically scan metrics.
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $config = $this->container->get(ConfigInterface::class);
         $poolNames = array_keys($config->get('databases', ['default' => []]));

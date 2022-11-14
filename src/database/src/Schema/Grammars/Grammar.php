@@ -18,29 +18,24 @@ use Hyperf\Database\Grammar as BaseGrammar;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Utils\Fluent;
+use RuntimeException;
 
 abstract class Grammar extends BaseGrammar
 {
     /**
      * If this Grammar supports schema changes wrapped in a transaction.
-     *
-     * @var bool
      */
-    protected $transactions = false;
+    protected bool $transactions = false;
 
     /**
      * The commands to be executed outside of create or alter command.
-     *
-     * @var array
      */
-    protected $fluentCommands = [];
+    protected array $fluentCommands = [];
 
     /**
      * Compile a rename column command.
-     *
-     * @return array
      */
-    public function compileRenameColumn(Blueprint $blueprint, Fluent $command, Connection $connection)
+    public function compileRenameColumn(Blueprint $blueprint, Fluent $command, Connection $connection): array
     {
         return RenameColumn::compile($this, $blueprint, $command, $connection);
     }
@@ -48,20 +43,17 @@ abstract class Grammar extends BaseGrammar
     /**
      * Compile a change column command into a series of SQL statements.
      *
-     * @throws \RuntimeException
-     * @return array
+     * @throws RuntimeException
      */
-    public function compileChange(Blueprint $blueprint, Fluent $command, Connection $connection)
+    public function compileChange(Blueprint $blueprint, Fluent $command, Connection $connection): array
     {
         return ChangeColumn::compile($this, $blueprint, $command, $connection);
     }
 
     /**
      * Compile a foreign key command.
-     *
-     * @return string
      */
-    public function compileForeign(Blueprint $blueprint, Fluent $command)
+    public function compileForeign(Blueprint $blueprint, Fluent $command): string
     {
         // We need to prepare several of the elements of the foreign key definition
         // before we can create the SQL, such as wrapping the tables and convert
@@ -100,9 +92,8 @@ abstract class Grammar extends BaseGrammar
      * Add a prefix to an array of values.
      *
      * @param string $prefix
-     * @return array
      */
-    public function prefixArray($prefix, array $values)
+    public function prefixArray($prefix, array $values): array
     {
         return array_map(function ($value) use ($prefix) {
             return $prefix . ' ' . $value;
@@ -129,7 +120,7 @@ abstract class Grammar extends BaseGrammar
      * @param bool $prefixAlias
      * @return string
      */
-    public function wrap($value, $prefixAlias = false)
+    public function wrap(Fluent|Expression|string $value, $prefixAlias = false)
     {
         return parent::wrap(
             $value instanceof Fluent ? $value->name : $value,
@@ -153,20 +144,16 @@ abstract class Grammar extends BaseGrammar
 
     /**
      * Get the fluent commands for the grammar.
-     *
-     * @return array
      */
-    public function getFluentCommands()
+    public function getFluentCommands(): array
     {
         return $this->fluentCommands;
     }
 
     /**
      * Check if this Grammar supports schema changes wrapped in a transaction.
-     *
-     * @return bool
      */
-    public function supportsSchemaTransactions()
+    public function supportsSchemaTransactions(): bool
     {
         return $this->transactions;
     }

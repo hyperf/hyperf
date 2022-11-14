@@ -11,27 +11,25 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
+use Hyperf\Engine\Channel;
 use Hyperf\Utils\Exception\ParallelExecutionException;
-use Swoole\Coroutine\Channel;
+use Throwable;
 
 class Parallel
 {
     /**
      * @var callable[]
      */
-    private $callbacks = [];
+    private array $callbacks = [];
+
+    private ?Channel $concurrentChannel = null;
+
+    private array $results = [];
 
     /**
-     * @var null|Channel
+     * @var Throwable[]
      */
-    private $concurrentChannel;
-
-    private $results = [];
-
-    /**
-     * @var \Throwable[]
-     */
-    private $throwables = [];
+    private array $throwables = [];
 
     /**
      * @param int $concurrent if $concurrent is equal to 0, that means unlimit
@@ -62,7 +60,7 @@ class Parallel
             Coroutine::create(function () use ($callback, $key, $wg) {
                 try {
                     $this->results[$key] = $callback();
-                } catch (\Throwable $throwable) {
+                } catch (Throwable $throwable) {
                     $this->throwables[$key] = $throwable;
                     unset($this->results[$key]);
                 } finally {
@@ -98,7 +96,7 @@ class Parallel
     /**
      * Format throwables into a nice list.
      *
-     * @param \Throwable[] $throwables
+     * @param Throwable[] $throwables
      */
     private function formatThrowables(array $throwables): string
     {

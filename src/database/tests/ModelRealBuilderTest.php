@@ -27,6 +27,7 @@ use Hyperf\Database\Schema\Column;
 use Hyperf\Database\Schema\MySqlBuilder;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Container;
+use Hyperf\Engine\Channel;
 use Hyperf\Paginator\LengthAwarePaginator;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\ApplicationContext;
@@ -41,7 +42,6 @@ use HyperfTest\Database\Stubs\Model\UserRolePivot;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Swoole\Coroutine\Channel;
 
 /**
  * @internal
@@ -450,6 +450,35 @@ class ModelRealBuilderTest extends TestCase
         $this->assertSame('ref', $res[0]->type);
         $res = Db::select('EXPLAIN SELECT * FROM `user` WHERE `name` = ?;', [1]);
         $this->assertSame('ref', $res[0]->type);
+    }
+
+    public function testBeforeExecuting()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        $res = Db::selectOne('SELECT * FROM `user` WHERE id = ?;', [1]);
+        $this->assertSame('Hyperf', $res->name);
+
+        try {
+            $chan = new Channel(2);
+            Db::beforeExecuting(function (string $sql, array $bindings, Connection $connection) use ($chan) {
+                $this->assertSame(null, $connection->getConfig('name'));
+                $chan->push(1);
+            });
+            Db::beforeExecuting(function (string $sql, array $bindings, Connection $connection) use ($chan) {
+                $this->assertSame('SELECT * FROM `user` WHERE id = ?;', $sql);
+                $this->assertSame([1], $bindings);
+                $chan->push(2);
+            });
+
+            $res = Db::selectOne('SELECT * FROM `user` WHERE id = ?;', [1]);
+            $this->assertSame('Hyperf', $res->name);
+            $this->assertSame(1, $chan->pop(1));
+            $this->assertSame(2, $chan->pop(1));
+        } finally {
+            Connection::clearBeforeExecutingCallbacks();
+        }
     }
 
     protected function getContainer()

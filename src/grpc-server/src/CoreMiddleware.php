@@ -11,35 +11,27 @@ declare(strict_types=1);
  */
 namespace Hyperf\GrpcServer;
 
+use Closure;
 use FastRoute\Dispatcher;
 use Google\Protobuf\Internal\Message;
 use Google\Protobuf\Internal\Message as ProtobufMessage;
+use Hyperf\Context\Context;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Grpc\Parser;
+use Hyperf\Grpc\StatusCode;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Server\Exception\ServerException;
-use Hyperf\Utils\Context;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
 
 class CoreMiddleware extends HttpCoreMiddleware
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
-
     /**
      * Process an incoming server request and return a response, optionally delegating
      * response creation to a handler.
@@ -57,15 +49,16 @@ class CoreMiddleware extends HttpCoreMiddleware
 
         switch ($dispatched->status) {
             case Dispatcher::FOUND:
-                if ($dispatched->handler->callback instanceof \Closure) {
+                if ($dispatched->handler->callback instanceof Closure) {
                     $parameters = $this->parseClosureParameters($dispatched->handler->callback, $dispatched->params);
-                    $result = call($dispatched->handler->callback, $parameters);
+                    $callback = $dispatched->handler->callback;
+                    $result = $callback(...$parameters);
                 } else {
                     [$controller, $action] = $this->prepareHandler($dispatched->handler->callback);
                     $controllerInstance = $this->container->get($controller);
                     if (! method_exists($controller, $action)) {
                         $grpcMessage = 'Action not exist.';
-                        return $this->handleResponse(null, 500, '500', $grpcMessage);
+                        return $this->handleResponse(null, 200, StatusCode::INTERNAL, $grpcMessage);
                     }
                     $parameters = $this->parseMethodParameters($controller, $action, $dispatched->params);
                     $result = $controllerInstance->{$action}(...$parameters);
@@ -73,14 +66,14 @@ class CoreMiddleware extends HttpCoreMiddleware
 
                 if (! $result instanceof Message) {
                     $grpcMessage = 'The result is not a valid message.';
-                    return $this->handleResponse(null, 500, '500', $grpcMessage);
+                    return $this->handleResponse(null, 200, StatusCode::INTERNAL, $grpcMessage);
                 }
 
                 return $this->handleResponse($result, 200);
             case Dispatcher::NOT_FOUND:
             case Dispatcher::METHOD_NOT_ALLOWED:
             default:
-                return $this->handleResponse(null, 404, '404', 'Route Not Found.');
+                return $this->handleResponse(null, 200, StatusCode::NOT_FOUND, 'Route Not Found.');
         }
     }
 
@@ -121,7 +114,7 @@ class CoreMiddleware extends HttpCoreMiddleware
 
         foreach ($definitions ?? [] as $definition) {
             if (! is_array($definition)) {
-                throw new \RuntimeException('Invalid method definition.');
+                throw new RuntimeException('Invalid method definition.');
             }
             if (! isset($definition['type']) || ! isset($definition['name'])) {
                 $injections[] = null;
@@ -140,12 +133,12 @@ class CoreMiddleware extends HttpCoreMiddleware
                         }
 
                         if (! $this->container->has($definition['ref']) && ! $definition['allowsNull']) {
-                            throw new \RuntimeException(sprintf('Argument %s invalid, object %s not found.', $definition['name'], $definition['ref']));
+                            throw new RuntimeException(sprintf('Argument %s invalid, object %s not found.', $definition['name'], $definition['ref']));
                         }
 
                         return $this->container->get($definition['ref']);
                     default:
-                        throw new \RuntimeException('Invalid method definition detected.');
+                        throw new RuntimeException('Invalid method definition detected.');
                 }
             });
         }
@@ -163,16 +156,15 @@ class CoreMiddleware extends HttpCoreMiddleware
 
     /**
      * Handle GRPC Response.
-     * @param int $httpStatus
      */
-    protected function handleResponse(?Message $message, $httpStatus = 200, string $grpcStatus = '0', string $grpcMessage = ''): ResponseInterface
+    protected function handleResponse(?Message $message, int $httpStatus = 200, int $grpcStatus = StatusCode::OK, string $grpcMessage = ''): ResponseInterface
     {
         return $this->response()->withStatus($httpStatus)
             ->withBody(new SwooleStream(Parser::serializeMessage($message)))
             ->withAddedHeader('Server', 'Hyperf')
             ->withAddedHeader('Content-Type', 'application/grpc')
             ->withAddedHeader('trailer', 'grpc-status, grpc-message')
-            ->withTrailer('grpc-status', $grpcStatus)
+            ->withTrailer('grpc-status', (string) $grpcStatus)
             ->withTrailer('grpc-message', $grpcMessage);
     }
 }

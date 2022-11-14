@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Paginator;
 
+use ArrayAccess;
 use ArrayIterator;
 use Closure;
 use Hyperf\Contract\PaginatorInterface;
@@ -19,79 +20,59 @@ use Hyperf\Utils\Collection;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\ForwardsCalls;
 
-abstract class AbstractPaginator implements PaginatorInterface
+abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess
 {
     use ForwardsCalls;
 
     /**
      * The number of links to display on each side of current page link.
-     *
-     * @var int
      */
-    public $onEachSide = 3;
+    public int $onEachSide = 3;
 
     /**
-     * All of the items being paginated.
-     *
-     * @var \Hyperf\Utils\Collection
+     * All the items being paginated.
      */
-    protected $items;
+    protected Collection $items;
 
     /**
      * The number of items to be shown per page.
-     *
-     * @var int
      */
-    protected $perPage;
+    protected int $perPage;
 
     /**
      * The current page being "viewed".
-     *
-     * @var int
      */
-    protected $currentPage;
+    protected int $currentPage;
 
     /**
      * The base path to assign to all URLs.
-     *
-     * @var string
      */
-    protected $path = '/';
+    protected string $path = '/';
 
     /**
      * The query parameters to add to all URLs.
-     *
-     * @var array
      */
-    protected $query = [];
+    protected array $query = [];
 
     /**
      * The URL fragment to add to all URLs.
-     *
-     * @var null|string
      */
-    protected $fragment;
+    protected ?string $fragment = null;
 
     /**
      * The query string variable used to store the page.
-     *
-     * @var string
      */
-    protected $pageName = 'page';
+    protected string $pageName = 'page';
 
     /**
      * The current path resolver callback.
-     *
-     * @var \Closure
      */
-    protected static $currentPathResolver;
+    protected static ?Closure $currentPathResolver = null;
 
     /**
      * The current page resolver callback.
-     *
-     * @var \Closure
      */
-    protected static $currentPageResolver;
+    protected static ?Closure $currentPageResolver = null;
 
     /**
      * Make dynamic calls into the collection.
@@ -106,7 +87,7 @@ abstract class AbstractPaginator implements PaginatorInterface
      */
     public function __toString(): string
     {
-        return (string) $this->render();
+        return $this->render();
     }
 
     /**
@@ -390,41 +371,27 @@ abstract class AbstractPaginator implements PaginatorInterface
         return $this;
     }
 
-    /**
-     * Determine if the given item exists.
-     * @param mixed $key
-     */
-    public function offsetExists($key): bool
+    public function offsetExists(mixed $offset): bool
     {
-        return $this->items->has($key);
+        return $this->items->has($offset);
     }
 
-    /**
-     * Get the item at the given offset.
-     * @param mixed $key
-     */
-    public function offsetGet($key)
+    public function offsetGet(mixed $offset): mixed
     {
-        return $this->items->get($key);
+        return $this->items->get($offset);
     }
 
-    /**
-     * Set the item at the given offset.
-     * @param mixed $key
-     * @param mixed $value
-     */
-    public function offsetSet($key, $value): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
-        $this->items->put($key, $value);
+        $this->items->put($offset, $value);
     }
 
     /**
      * Unset the item at the given key.
-     * @param mixed $key
      */
-    public function offsetUnset($key): void
+    public function offsetUnset(mixed $offset): void
     {
-        $this->items->forget($key);
+        $this->items->forget($offset);
     }
 
     /**

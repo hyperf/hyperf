@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Amqp\IO;
 
+use InvalidArgumentException;
 use PhpAmqpLib\Exception\AMQPConnectionClosedException;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Wire\AMQPWriter;
@@ -34,43 +35,22 @@ class SwooleIO extends AbstractIO
     /**
      * @var int
      */
-    protected $connectionTimeout;
-
-    /**
-     * @var int
-     */
-    protected $readWriteTimeout;
-
-    /**
-     * @var bool
-     */
-    protected $openSSL;
-
-    /**
-     * @var int
-     */
     protected $heartbeat;
 
-    /**
-     * @var null|Socket
-     */
-    private $sock;
+    private ?Socket $sock = null;
 
     /**
-     * @throws \InvalidArgumentException when readWriteTimeout argument does not 2x the heartbeat
+     * @throws InvalidArgumentException when readWriteTimeout argument does not 2x the heartbeat
      */
     public function __construct(
         string $host,
         int $port,
-        int $connectionTimeout,
-        int $readWriteTimeout = 3,
-        bool $openSSL = false
+        protected int $connectionTimeout,
+        protected int $readWriteTimeout = 3,
+        protected bool $openSSL = false
     ) {
         $this->host = $host;
         $this->port = $port;
-        $this->connectionTimeout = $connectionTimeout;
-        $this->readWriteTimeout = $readWriteTimeout;
-        $this->openSSL = $openSSL;
     }
 
     /**
@@ -112,7 +92,7 @@ class SwooleIO extends AbstractIO
         $this->sock && $this->sock->close();
     }
 
-    public function select($sec, $usec = 0)
+    public function select(?int $sec, int $usec = 0)
     {
         return 1;
     }

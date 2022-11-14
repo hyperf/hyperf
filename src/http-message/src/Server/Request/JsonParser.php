@@ -18,15 +18,9 @@ use InvalidArgumentException;
 
 class JsonParser implements RequestParserInterface
 {
-    /**
-     * @var bool
-     */
-    public $asArray = true;
+    public bool $asArray = true;
 
-    /**
-     * @var bool
-     */
-    public $throwException = true;
+    public bool $throwException = true;
 
     public function parse(string $rawBody, string $contentType): array
     {

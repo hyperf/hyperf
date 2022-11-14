@@ -68,7 +68,7 @@ class ValidationUniqueRuleTest extends TestCase
 
 class DatabaseModelStub extends Model
 {
-    protected $primaryKey = 'id_column';
+    protected string $primaryKey = 'id_column';
 
-    protected $guarded = [];
+    protected array $guarded = [];
 }
