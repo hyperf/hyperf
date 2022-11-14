@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Amqp\IO;
 
 use Hyperf\Engine\Socket;
+use InvalidArgumentException;
 use PhpAmqpLib\Exception\AMQPConnectionClosedException;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Wire\AMQPWriter;
@@ -40,7 +41,7 @@ class SwowIO extends AbstractIO
     private ?Socket $sock = null;
 
     /**
-     * @throws \InvalidArgumentException when readWriteTimeout argument does not 2x the heartbeat
+     * @throws InvalidArgumentException when readWriteTimeout argument does not 2x the heartbeat
      */
     public function __construct(
         string $host,

@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Cookie;
 
+use RuntimeException;
+
 /**
  * Persists cookies in the client session for FPM.
  */
@@ -68,7 +70,7 @@ class SessionCookieJar extends CookieJar
                 $this->setCookie(new SetCookie($cookie));
             }
         } elseif (strlen($data)) {
-            throw new \RuntimeException('Invalid cookie data');
+            throw new RuntimeException('Invalid cookie data');
         }
     }
 }

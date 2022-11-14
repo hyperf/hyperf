@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model\Relations;
 
+use Generator;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
@@ -364,7 +365,7 @@ class HasManyThrough extends Relation
     /**
      * Get a generator for the given query.
      *
-     * @return \Generator
+     * @return Generator
      */
     public function cursor()
     {

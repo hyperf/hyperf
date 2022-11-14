@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\ModelCache\Handler;
 
+use DateInterval;
 use Hyperf\ModelCache\Config;
 use Hyperf\ModelCache\Handler\HandlerInterface;
 use Hyperf\ModelCache\Handler\RedisHandler;
@@ -52,10 +53,10 @@ class RedisHandlerTest extends TestCase
         $redis = ApplicationContext::getContainer()->make(RedisProxy::class, ['pool' => 'default']);
         $this->assertSame(10, $redis->ttl($key));
 
-        $handler->set($key, ['id' => $id = uniqid()], new \DateInterval('PT12S'));
+        $handler->set($key, ['id' => $id = uniqid()], new DateInterval('PT12S'));
         $this->assertSame(12, $redis->ttl($key));
 
-        $handler->set($key, ['id' => $id = uniqid()], new \DateInterval('P1DT12S'));
+        $handler->set($key, ['id' => $id = uniqid()], new DateInterval('P1DT12S'));
         $this->assertSame(86400 + 12, $redis->ttl($key));
     }
 

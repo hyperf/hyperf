@@ -39,12 +39,6 @@ class ConsumerProcess extends AbstractProcess
 
     public function handle(): void
     {
-        if (! $this->driver instanceof DriverInterface) {
-            $logger = $this->container->get(StdoutLoggerInterface::class);
-            $logger->critical(sprintf('[CRITICAL] process %s is not work as expected, please check the config in [%s]', ConsumerProcess::class, 'config/autoload/queue.php'));
-            return;
-        }
-
         $this->driver->consume();
     }
 }

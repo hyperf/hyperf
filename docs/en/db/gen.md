@@ -1,31 +1,30 @@
 # Model creation script
 
-Hyperf provides commands for creating models, and you can easily create corresponding models based on data tables. The command generates the model via AST, so when you add some methods, you can also easily reset the model with a script.
+Hyperf provides commands to create models, and you can easily create corresponding models based on data tables. The command generates the model via `AST`, so when you add certain methods, you can also easily reset the model with a script.
 
 ```bash
 php bin/hyperf.php gen:model table_name
 ```
 
-## Create model
+## Create a model
 
-The optional parameters are as follows:
+The optional parameters are as follows：
 
-|      parameter     |  type  |              defaults             |                                                 remark                                             |
-| :----------------: | :----: | :-------------------------------: | :------------------------------------------------------------------------------------------------: |
-|       --pool       | string |             `default`             |   Connection pool, the script will be created based on the current connection pool configuration   |
-|       --path       | string |            `app/Model`            |                                               model path                                           |
-|   --force-casts    |  bool  |              `false`              |                                Whether to force reset the `casts` parameter                        |
-|      --prefix      | string |            empty string           |                                              table prefix                                          |
-|   --inheritance    | string |              `Model`              |                                              parent class                                          |
-|       --uses       | string | `Hyperf\DbConnection\Model\Model` |                                         Use with `inheritance`                                     |
-| --refresh-fillable |  bool  |              `false`              |                                 whether to refresh the `fillable` parameter                        |
-|  --table-mapping   | array  |               `[]`                |              Add a mapping relationship for table name -> model such as ['users:Account']          |
-|  --ignore-tables   | array  |               `[]`                |                 There is no need to generate the table name of the model e.g. ['users']            |
-|  --with-comments   |  bool  |              `false`              |                                      Whether to add field comments                                 |
-|  --property-case   |  int   |                `0`                |                                     Field Type 0 Serpentine 1 Camel                                |
+|        parameter        |  type  |              defaults               |                       Remark                        |
+| :----------------: | :----: | :-------------------------------: | :-----------------------------------------------: |
+|       --pool       | string |             `default`             |       Connection pool, the script will be created based on the current connection pool configuration        |
+|       --path       | string |            `app/Model`            |                     model path                      |
+|   --force-casts    |  bool  |              `false`              |             Whether to force reset the `casts` parameter             |
+|      --prefix      | string |             empty string              |                      table prefix                       |
+|   --inheritance    | string |              `Model`              |                       father                        |
+|       --uses       | string | `Hyperf\DbConnection\Model\Model` |             Use with `inheritance`             |
+| --refresh-fillable |  bool  |              `false`              |             whether to refresh the `fillable` parameter             |
+|  --table-mapping   | array  |               `[]`                | Add a mapping relationship for table name -> model such as ['users:Account'] |
+|  --ignore-tables   | array  |               `[]`                |        There is no need to generate the table name of the model e.g. ['users']        |
+|  --with-comments   |  bool  |              `false`              |                 Whether to add field comments                  |
+|  --property-case   |  int   |                `0`                |              Field Type 0 snakecase 1 CamelCase               |
 
 When using `--property-case` to convert the field type to camel case, you also need to manually add `Hyperf\Database\Model\Concerns\CamelCase` to the model.
-
 The corresponding configuration can also be configured in `databases.{pool}.commands.gen:model`, as follows
 
 > All underscores need to be converted to underscores
@@ -143,7 +142,6 @@ This `Visitor` can generate corresponding `getters` and `setters` based on datab
 ## Override Visitor
 
 In the Hyperf framework, when `gen:model` is used, `decimal` is converted to `float` by default. as follows:
-
 ```php
 <?php
 

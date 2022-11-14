@@ -17,6 +17,7 @@ use Hyperf\DbConnection\Connection;
 use Hyperf\DbConnection\Frequency;
 use Hyperf\Pool\Pool;
 use Hyperf\Utils\Arr;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 
 class DbPool extends Pool
@@ -28,7 +29,7 @@ class DbPool extends Pool
         $config = $container->get(ConfigInterface::class);
         $key = sprintf('databases.%s', $this->name);
         if (! $config->has($key)) {
-            throw new \InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
+            throw new InvalidArgumentException(sprintf('config[%s] is not exist!', $key));
         }
         // Rewrite the `name` of the configuration item to ensure that the model query builder gets the right connection.
         $config->set("{$key}.name", $name);

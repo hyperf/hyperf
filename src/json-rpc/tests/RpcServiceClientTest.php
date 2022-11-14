@@ -35,6 +35,7 @@ use Hyperf\Utils\Serializer\SymfonyNormalizer;
 use HyperfTest\JsonRpc\Stub\CalculatorProxyServiceClient;
 use HyperfTest\JsonRpc\Stub\CalculatorServiceInterface;
 use HyperfTest\JsonRpc\Stub\IntegerValue;
+use Mockery;
 use Mockery\MockInterface;
 use Monolog\Handler\StreamHandler;
 use PHPUnit\Framework\TestCase;
@@ -265,7 +266,7 @@ class RpcServiceClientTest extends TestCase
 
     public function createContainer()
     {
-        $transporter = \Mockery::mock(JsonRpcTransporter::class);
+        $transporter = Mockery::mock(JsonRpcTransporter::class);
         $container = new Container(new DefinitionSource([
             NormalizerInterface::class => SymfonyNormalizer::class,
             Serializer::class => SerializerFactory::class,

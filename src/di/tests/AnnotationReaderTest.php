@@ -17,6 +17,7 @@ use HyperfTest\Di\Stub\IgnoreDemoAnnotation;
 use HyperfTest\Di\Stub\NotFoundAttributeTarget;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use Throwable;
 
 /**
  * @internal
@@ -33,7 +34,7 @@ class AnnotationReaderTest extends TestCase
         try {
             $annotationReader = new AnnotationReader();
             $annotationReader->getAttributes($reflectionClass);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
         } finally {
             $actual = '';
             if (isset($exception)) {
@@ -53,7 +54,7 @@ class AnnotationReaderTest extends TestCase
         try {
             $annotationReader = new AnnotationReader();
             $annotationReader->getAttributes($reflectionMethod);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
         } finally {
             $actual = '';
             if (isset($exception)) {
@@ -73,7 +74,7 @@ class AnnotationReaderTest extends TestCase
         try {
             $annotationReader = new AnnotationReader();
             $annotationReader->getAttributes($reflectionProperty);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
         } finally {
             $actual = '';
             if (isset($exception)) {
@@ -87,14 +88,14 @@ class AnnotationReaderTest extends TestCase
     {
         $reader = new AnnotationReader(['NotExistAnnotation']);
 
-        $res = $reader->getClassAnnotations(new \ReflectionClass(FooWithNotExistAnnotation::class));
+        $res = $reader->getClassAnnotations(new ReflectionClass(FooWithNotExistAnnotation::class));
 
         $this->assertSame(1, count($res));
         $this->assertInstanceOf(IgnoreDemoAnnotation::class, $res[0]);
 
         $reader = new AnnotationReader(['NotExistAnnotation', IgnoreDemoAnnotation::class]);
 
-        $res = $reader->getClassAnnotations(new \ReflectionClass(FooWithNotExistAnnotation::class));
+        $res = $reader->getClassAnnotations(new ReflectionClass(FooWithNotExistAnnotation::class));
 
         $this->assertSame([], $res);
     }

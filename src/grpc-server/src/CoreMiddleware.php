@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\GrpcServer;
 
+use Closure;
 use FastRoute\Dispatcher;
 use Google\Protobuf\Internal\Message;
 use Google\Protobuf\Internal\Message as ProtobufMessage;
@@ -27,6 +28,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
 
 class CoreMiddleware extends HttpCoreMiddleware
 {
@@ -47,7 +49,7 @@ class CoreMiddleware extends HttpCoreMiddleware
 
         switch ($dispatched->status) {
             case Dispatcher::FOUND:
-                if ($dispatched->handler->callback instanceof \Closure) {
+                if ($dispatched->handler->callback instanceof Closure) {
                     $parameters = $this->parseClosureParameters($dispatched->handler->callback, $dispatched->params);
                     $callback = $dispatched->handler->callback;
                     $result = $callback(...$parameters);
@@ -112,7 +114,7 @@ class CoreMiddleware extends HttpCoreMiddleware
 
         foreach ($definitions ?? [] as $definition) {
             if (! is_array($definition)) {
-                throw new \RuntimeException('Invalid method definition.');
+                throw new RuntimeException('Invalid method definition.');
             }
             if (! isset($definition['type']) || ! isset($definition['name'])) {
                 $injections[] = null;
@@ -131,12 +133,12 @@ class CoreMiddleware extends HttpCoreMiddleware
                         }
 
                         if (! $this->container->has($definition['ref']) && ! $definition['allowsNull']) {
-                            throw new \RuntimeException(sprintf('Argument %s invalid, object %s not found.', $definition['name'], $definition['ref']));
+                            throw new RuntimeException(sprintf('Argument %s invalid, object %s not found.', $definition['name'], $definition['ref']));
                         }
 
                         return $this->container->get($definition['ref']);
                     default:
-                        throw new \RuntimeException('Invalid method definition detected.');
+                        throw new RuntimeException('Invalid method definition detected.');
                 }
             });
         }

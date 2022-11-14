@@ -18,6 +18,7 @@ use Hyperf\Utils\Exception\WaitTimeoutException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use RuntimeException;
 
 /**
  * @internal
@@ -74,10 +75,10 @@ class WaiterTest extends TestCase
     {
         $message = uniqid();
         $callback = function () use ($message) {
-            throw new \RuntimeException($message);
+            throw new RuntimeException($message);
         };
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage($message);
         wait($callback);
     }
@@ -86,11 +87,11 @@ class WaiterTest extends TestCase
     {
         $message = uniqid();
         $callback = function () use ($message) {
-            return new \RuntimeException($message);
+            return new RuntimeException($message);
         };
 
         $result = wait($callback);
-        $this->assertInstanceOf(\RuntimeException::class, $result);
+        $this->assertInstanceOf(RuntimeException::class, $result);
         $this->assertSame($message, $result->getMessage());
     }
 

@@ -15,6 +15,7 @@ use Hyperf\Di\Container;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ChannelPool;
 use HyperfTest\GrpcClient\Stub\UserServiceClient;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 use UserService\UserId;
 
@@ -27,7 +28,7 @@ class GoUserServiceTest extends TestCase
 {
     protected function setUp(): void
     {
-        $container = \Mockery::mock(Container::class);
+        $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(ChannelPool::class)->andReturn(new ChannelPool());
         $container->shouldReceive('has')->andReturn(false);
         ApplicationContext::setContainer($container);

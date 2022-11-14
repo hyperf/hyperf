@@ -17,8 +17,11 @@ use PhpParser\Node;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use ReflectionClass;
+use ReflectionException;
+use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionType;
+use ReflectionUnionType;
 
 class PhpParser
 {
@@ -63,7 +66,7 @@ class PhpParser
 
     public function getNodeFromReflectionType(ReflectionType $reflection): Node\ComplexType|Node\Identifier|Node\Name
     {
-        if ($reflection instanceof \ReflectionUnionType) {
+        if ($reflection instanceof ReflectionUnionType) {
             $unionType = [];
             foreach ($reflection->getTypes() as $objType) {
                 $type = $objType->getName();
@@ -157,8 +160,8 @@ class PhpParser
 
     private function getTypeWithNullableOrNot(ReflectionType $reflection): Node\ComplexType|Node\Identifier|Node\Name
     {
-        if (! $reflection instanceof \ReflectionNamedType) {
-            throw new \ReflectionException('ReflectionType must be ReflectionNamedType.');
+        if (! $reflection instanceof ReflectionNamedType) {
+            throw new ReflectionException('ReflectionType must be ReflectionNamedType.');
         }
 
         $name = $reflection->getName();

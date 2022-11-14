@@ -12,19 +12,23 @@ declare(strict_types=1);
 namespace Hyperf\Session\Handler;
 
 use Hyperf\Redis\Redis as RedisProxy;
+use InvalidArgumentException;
+use Redis;
+use RedisArray;
+use RedisCluster;
 use SessionHandlerInterface;
 
 class RedisHandler implements SessionHandlerInterface
 {
     /**
-     * @var \Hyperf\Redis\Redis|\Predis\Client|\Redis|\RedisArray|\RedisCluster
+     * @var \Hyperf\Redis\Redis|\Predis\Client|Redis|RedisArray|RedisCluster
      */
     protected $redis;
 
     public function __construct($redis, protected int $gcMaxLifeTime = 1200)
     {
-        if (! $redis instanceof \Redis && ! $redis instanceof \RedisArray && ! $redis instanceof \RedisCluster && ! $redis instanceof \Predis\Client && ! $redis instanceof RedisProxy) {
-            throw new \InvalidArgumentException(sprintf('%s() expects parameter 1 to be Redis, RedisArray, RedisCluster, Predis\Client or Hyperf\Redis\Redis, %s given', __METHOD__, \is_object($redis) ? \get_class($redis) : \gettype($redis)));
+        if (! $redis instanceof Redis && ! $redis instanceof RedisArray && ! $redis instanceof RedisCluster && ! $redis instanceof \Predis\Client && ! $redis instanceof RedisProxy) {
+            throw new InvalidArgumentException(sprintf('%s() expects parameter 1 to be Redis, RedisArray, RedisCluster, Predis\Client or Hyperf\Redis\Redis, %s given', __METHOD__, \is_object($redis) ? \get_class($redis) : \gettype($redis)));
         }
 
         $this->redis = $redis;

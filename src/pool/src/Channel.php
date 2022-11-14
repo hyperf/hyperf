@@ -14,17 +14,18 @@ namespace Hyperf\Pool;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Engine\Channel as CoChannel;
 use Hyperf\Utils\Coroutine;
+use SplQueue;
 
 class Channel
 {
     protected CoChannel $channel;
 
-    protected \SplQueue $queue;
+    protected SplQueue $queue;
 
     public function __construct(protected int $size)
     {
         $this->channel = new CoChannel($size);
-        $this->queue = new \SplQueue();
+        $this->queue = new SplQueue();
     }
 
     public function pop(float $timeout): ConnectionInterface|false

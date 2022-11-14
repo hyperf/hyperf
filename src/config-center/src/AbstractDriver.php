@@ -20,9 +20,11 @@ use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Process\ProcessCollector;
 use Hyperf\Utils\Coroutine;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Server;
+use Throwable;
 
 abstract class AbstractDriver implements DriverInterface
 {
@@ -65,7 +67,7 @@ abstract class AbstractDriver implements DriverInterface
                             $this->syncConfig($config);
                         }
                         $prevConfig = $config;
-                    } catch (\Throwable $exception) {
+                    } catch (Throwable $exception) {
                         $this->logger->error((string) $exception);
                         throw $exception;
                     }
@@ -132,7 +134,7 @@ abstract class AbstractDriver implements DriverInterface
         $pipeMessage = $this->pipeMessage;
         $message = new $pipeMessage($config);
         if (! $message instanceof PipeMessageInterface) {
-            throw new \InvalidArgumentException('Invalid pipe message object.');
+            throw new InvalidArgumentException('Invalid pipe message object.');
         }
         $this->shareMessageToWorkers($message);
         $this->shareMessageToUserProcesses($message);

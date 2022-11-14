@@ -22,6 +22,7 @@ if (file_exists($dir . '/vendor/autoload.php')) {
     $basePath = $dir;
 }
 
+! defined('SWOOLE_HOOK_ALL') && define('SWOOLE_HOOK_ALL', 0);
 ! defined('BASE_PATH') && define('BASE_PATH', $basePath);
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);
 

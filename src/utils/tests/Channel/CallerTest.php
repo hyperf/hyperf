@@ -14,6 +14,7 @@ namespace HyperfTest\Utils\Channel;
 use Hyperf\Utils\Channel\Caller;
 use Hyperf\Utils\Exception\WaitTimeoutException;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @internal
@@ -42,7 +43,7 @@ class CallerTest extends TestCase
 
     public function testCaller()
     {
-        $obj = new \stdClass();
+        $obj = new stdClass();
         $obj->id = uniqid();
         $caller = new Caller(static function () use ($obj) {
             return $obj;
@@ -61,7 +62,7 @@ class CallerTest extends TestCase
 
     public function testCallerPopTimeout()
     {
-        $obj = new \stdClass();
+        $obj = new stdClass();
         $obj->id = uniqid();
         $caller = new Caller(static function () use ($obj) {
             return $obj;

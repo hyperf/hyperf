@@ -61,7 +61,10 @@ composer analyse
 - [#5007](https://github.com/hyperf/hyperf/pull/5007) Support for SSL encrypted connection to Redis.
 - [#5046](https://github.com/hyperf/hyperf/pull/5046) Added `Hyperf\Database\Model\Concerns\HasAttributes::getRawOriginal()`.
 - [#5052](https://github.com/hyperf/hyperf/pull/5052) Support parsing IPv6 host.
-- [#5601](https://github.com/hyperf/hyperf/pull/5061) Added config `symfony.event.enable` to control whether to use `SymfonyEventDispatcher`.
+- [#5061](https://github.com/hyperf/hyperf/pull/5061) Added config `symfony.event.enable` to control whether to use `SymfonyEventDispatcher`.
+- [#5163](https://github.com/hyperf/hyperf/pull/5163) Added `Pipeline::thenReturn()` method to run pipes and return the result
+- [#5160](https://github.com/hyperf/hyperf/pull/5160) Added `$dictionary` for `Str::slug`, your can rewrite some tags easily.
+- [#5186](https://github.com/hyperf/hyperf/pull/5186) Added option `config` for command `server:watch`.
 
 ## Optimized
 
@@ -158,3 +161,6 @@ composer analyse
 - [#4919](https://github.com/hyperf/hyperf/pull/4919) [#4921](https://github.com/hyperf/hyperf/pull/4921) Fixed bug that rpc connections can't refresh themselves after nodes changed when using `rpc-multiplex`.
 - [#4920](https://github.com/hyperf/hyperf/pull/4920) Fixed bug that the routing path is wrong (like `//foo`) when the routing prefix is end of '/'.
 - [#4940](https://github.com/hyperf/hyperf/pull/4940) Fixed memory leak caused by an exception which occurred in `Parallel`.
+- [#5100](https://github.com/hyperf/hyperf/pull/5100) Fixed bug that the tag `continue` cannot work when using `view-engine`.
+- [#5121](https://github.com/hyperf/hyperf/pull/5121) Fixed bug that the SQL is not valid but the correct error message cannot be obtained when using `pgsql`.
+- [#5132](https://github.com/hyperf/hyperf/pull/5132) Fixed bug that the exit code of command does not work when the exception code isn't int.

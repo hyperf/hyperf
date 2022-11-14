@@ -18,6 +18,7 @@ use HyperfTest\Devtool\Stub\ContainerStub;
 use HyperfTest\Devtool\Stub\IndexController;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @internal
@@ -35,7 +36,7 @@ class RoutesCommandTest extends TestCase
         $container = ContainerStub::getContainer();
         $command = new RoutesCommand($container, $container->get(ConfigInterface::class));
 
-        $ref = new \ReflectionClass($command);
+        $ref = new ReflectionClass($command);
         $method = $ref->getMethod('analyzeHandler');
         $method->setAccessible(true);
 

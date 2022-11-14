@@ -16,6 +16,7 @@ use Hyperf\Rpc\Contract\DataFormatterInterface;
 use Hyperf\Rpc\ErrorResponse;
 use Hyperf\Rpc\Request;
 use Hyperf\Rpc\Response;
+use Throwable;
 
 class DataFormatter implements DataFormatterInterface
 {
@@ -47,7 +48,7 @@ class DataFormatter implements DataFormatterInterface
     public function formatErrorResponse(ErrorResponse $response): array
     {
         $exception = $response->getException();
-        if ($exception instanceof \Throwable) {
+        if ($exception instanceof Throwable) {
             $exception = [
                 'class' => get_class($exception),
                 'code' => $exception->getCode(),

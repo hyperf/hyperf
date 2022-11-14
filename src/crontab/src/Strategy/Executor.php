@@ -29,6 +29,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
+use Throwable;
 
 class Executor
 {
@@ -78,7 +79,7 @@ class Executor
                                 } else {
                                     $instance->{$method}();
                                 }
-                            } catch (\Throwable $throwable) {
+                            } catch (Throwable $throwable) {
                                 $result = false;
                                 $this->dispatcher && $this->dispatcher->dispatch(new FailToExecute($crontab, $throwable));
                             } finally {
@@ -180,7 +181,7 @@ class Executor
         return $runnable;
     }
 
-    protected function logResult(Crontab $crontab, bool $isSuccess, ?\Throwable $throwable = null)
+    protected function logResult(Crontab $crontab, bool $isSuccess, ?Throwable $throwable = null)
     {
         if ($isSuccess) {
             $this->logger?->info(sprintf('Crontab task [%s] executed successfully at %s.', $crontab->getName(), date('Y-m-d H:i:s')));

@@ -84,12 +84,12 @@ class Consumer extends Builder
                     }
                 } catch (AMQPTimeoutException $exception) {
                     $this->eventDispatcher && $this->eventDispatcher->dispatch(new WaitTimeout($consumerMessage));
-                } catch (\Throwable $exception) {
+                } catch (Throwable $exception) {
                     $this->logger->error((string) $exception);
                     break;
                 }
             }
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             isset($channel) && $channel->close();
             throw $exception;
         }

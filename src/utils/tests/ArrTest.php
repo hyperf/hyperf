@@ -13,6 +13,7 @@ namespace HyperfTest\Utils;
 
 use Hyperf\Utils\Arr;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @internal
@@ -34,7 +35,7 @@ class ArrTest extends TestCase
         $this->assertSame(5, Arr::get($data, 4, 5));
         $this->assertSame(null, Arr::get($data, 5));
 
-        $object = new \stdClass();
+        $object = new stdClass();
         $object->id = 1;
         $this->assertSame(null, Arr::get($object, 'id'));
     }

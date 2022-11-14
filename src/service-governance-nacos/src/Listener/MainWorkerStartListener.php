@@ -21,6 +21,7 @@ use Hyperf\Nacos\Exception\RequestException;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class MainWorkerStartListener implements ListenerInterface
 {
@@ -135,7 +136,7 @@ class MainWorkerStartListener implements ListenerInterface
                     $this->logger->info(sprintf('Nacos instance %s:%d was updated successfully!', $ip, $port));
                 }
             }
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->logger->critical((string) $exception);
         }
     }

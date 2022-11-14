@@ -16,6 +16,7 @@ use Hyperf\Redis\RedisProxy;
 use Hyperf\Snowflake\ConfigurationInterface;
 use Hyperf\Snowflake\MetaGenerator;
 use Hyperf\Utils\Coroutine\Locker;
+use Redis;
 
 abstract class RedisMetaGenerator extends MetaGenerator
 {
@@ -62,7 +63,7 @@ abstract class RedisMetaGenerator extends MetaGenerator
         if (is_null($this->workerId) || is_null($this->dataCenterId)) {
             $pool = $this->config->get(sprintf('snowflake.%s.pool', static::class), 'default');
 
-            /** @var \Redis $redis */
+            /** @var Redis $redis */
             $redis = make(RedisProxy::class, [
                 'pool' => $pool,
             ]);

@@ -62,6 +62,7 @@ use HyperfTest\Database\Stubs\ModelWithoutTableStub;
 use HyperfTest\Database\Stubs\ModelWithStub;
 use HyperfTest\Database\Stubs\NoConnectionModelStub;
 use HyperfTest\Database\Stubs\User;
+use LogicException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -1397,7 +1398,7 @@ class ModelTest extends TestCase
 
     public function testGetModelAttributeMethodThrowsExceptionIfNotRelation()
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage('HyperfTest\Database\Stubs\ModelStub::incorrectRelationStub must return a relationship instance.');
         $model = new ModelStub();
         $model->incorrectRelationStub;

@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di;
 
+use Closure;
+
 interface ClosureDefinitionCollectorInterface
 {
     /**
      * @return ReflectionType[]
      */
-    public function getParameters(\Closure $closure): array;
+    public function getParameters(Closure $closure): array;
 
-    public function getReturnType(\Closure $closure): ReflectionType;
+    public function getReturnType(Closure $closure): ReflectionType;
 }

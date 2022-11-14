@@ -23,6 +23,7 @@ use Hyperf\Tracer\SwitchManager;
 use OpenTracing\Span;
 use OpenTracing\Tracer;
 use Psr\Container\ContainerInterface;
+use Throwable;
 
 use const OpenTracing\Formats\TEXT_MAP;
 
@@ -75,7 +76,7 @@ class JsonRpcAspect extends AbstractAspect
         if ($proceedingJoinPoint->methodName === 'send') {
             try {
                 $result = $proceedingJoinPoint->process();
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 if ($span = CT::get('tracer.span.' . static::class)) {
                     $span->setTag('error', true);
                     $span->log(['message', $e->getMessage(), 'code' => $e->getCode(), 'stacktrace' => $e->getTraceAsString()]);

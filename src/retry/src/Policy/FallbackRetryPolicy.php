@@ -13,6 +13,7 @@ namespace Hyperf\Retry\Policy;
 
 use Hyperf\Retry\RetryContext;
 use Hyperf\Utils\ApplicationContext;
+use Throwable;
 
 class FallbackRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
@@ -53,7 +54,7 @@ class FallbackRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterfac
 
         try {
             $retryContext['lastResult'] = call_user_func($fallback, ...$arguments);
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             $retryContext['lastThrowable'] = $throwable;
         }
         return false;

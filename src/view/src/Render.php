@@ -22,6 +22,7 @@ use Hyperf\View\Exception\EngineNotFindException;
 use Hyperf\View\Exception\RenderException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
+use Throwable;
 
 class Render implements RenderInterface
 {
@@ -67,7 +68,7 @@ class Render implements RenderInterface
             }
 
             return $result;
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             throw new RenderException($throwable->getMessage(), (int) $throwable->getCode(), $throwable);
         }
     }

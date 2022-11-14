@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database;
 
+use BadMethodCallException;
 use Hyperf\Context\Context;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Model\Builder as ModelBuilder;
@@ -2293,7 +2294,7 @@ class QueryBuilderTest extends TestCase
 
     public function testBuilderThrowsExpectedExceptionWithUndefinedMethod()
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
 
         $builder = $this->getBuilder();
         $builder->getConnection()->shouldReceive('select');

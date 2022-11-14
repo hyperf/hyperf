@@ -22,6 +22,7 @@ use HyperfTest\Amqp\Stub\DemoProducer;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use stdClass;
 
 /**
  * @internal
@@ -34,7 +35,7 @@ class MainWorkerStartListenerTest extends TestCase
      */
     public function tearDown(): void
     {
-        \Mockery::close();
+        Mockery::close();
     }
 
     public function testProcessWithDisabled()
@@ -71,7 +72,7 @@ class MainWorkerStartListenerTest extends TestCase
         ));
 
         $listener = new MainWorkerStartListener($container, $container->get(StdoutLoggerInterface::class));
-        $listener->process(new \stdClass());
+        $listener->process(new stdClass());
 
         $this->assertTrue(true);
     }

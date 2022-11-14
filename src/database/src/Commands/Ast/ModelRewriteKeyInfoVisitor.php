@@ -14,9 +14,11 @@ namespace Hyperf\Database\Commands\Ast;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
 use Hyperf\Utils\Str;
+use InvalidArgumentException;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PhpParser\NodeTraverser;
+use ReflectionClass;
 
 class ModelRewriteKeyInfoVisitor extends AbstractVisitor
 {
@@ -96,7 +98,7 @@ class ModelRewriteKeyInfoVisitor extends AbstractVisitor
             'primaryKey' => $data[0],
             'keyType' => $data[1],
             'incrementing' => $data[2],
-            default => throw new \InvalidArgumentException("property {$property} is invalid.")
+            default => throw new InvalidArgumentException("property {$property} is invalid.")
         };
 
         if ($this->shouldRemoveProperty($property, $propertyValue)) {
@@ -150,7 +152,7 @@ class ModelRewriteKeyInfoVisitor extends AbstractVisitor
 
     protected function shouldRemoveProperty($property, $value): bool
     {
-        $ref = new \ReflectionClass($this->data->getClass());
+        $ref = new ReflectionClass($this->data->getClass());
 
         if (! $ref->getParentClass()) {
             return false;

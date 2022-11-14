@@ -66,7 +66,7 @@ class ValidatorFactory implements ValidatorFactoryInterface
     /**
      * The Validator resolver instance.
      *
-     * @var \Closure
+     * @var Closure
      */
     protected $resolver;
 

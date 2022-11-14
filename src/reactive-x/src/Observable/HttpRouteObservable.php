@@ -25,6 +25,7 @@ use Rx\Observable;
 use Rx\ObserverInterface;
 use Rx\Scheduler;
 use Rx\SchedulerInterface;
+use stdClass;
 
 class HttpRouteObservable extends Observable
 {
@@ -56,7 +57,7 @@ class HttpRouteObservable extends Observable
             if ($this->callback !== null) {
                 $serverName = $container->get(Server::class)->getServerName();
                 $middleware = new CoreMiddleware($container, $serverName);
-                $handler = new HttpRequestHandler([], new \stdClass(), $container);
+                $handler = new HttpRequestHandler([], new stdClass(), $container);
                 /** @var Dispatched $dispatched */
                 $dispatched = $request->getAttribute(Dispatched::class);
                 $dispatched->handler->callback = $this->callback;

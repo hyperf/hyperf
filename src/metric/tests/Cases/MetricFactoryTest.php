@@ -20,6 +20,7 @@ use Hyperf\Metric\Exception\RuntimeException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Prometheus\CollectorRegistry;
+use ReflectionClass;
 use ReflectionMethod;
 
 /**
@@ -73,7 +74,7 @@ class MetricFactoryTest extends TestCase
         $c = Mockery::mock(ClientFactory::class);
         $l = Mockery::mock(StdoutLoggerInterface::class);
         $p = new PrometheusFactory($config, $r, $c, $l);
-        $ref = new \ReflectionClass($p);
+        $ref = new ReflectionClass($p);
         $method = $ref->getMethod('getUri');
         $method->setAccessible(true);
         $this->assertStringContainsString('http://127.0.0.1/metrics/job/metric/ip/', $method->invokeArgs($p, ['127.0.0.1', 'metric']));

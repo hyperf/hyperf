@@ -15,6 +15,7 @@ use Closure;
 use DateTimeInterface;
 use Doctrine\DBAL\Connection as DoctrineConnection;
 use Exception;
+use Generator;
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Exception\InvalidArgumentException;
 use Hyperf\Database\Exception\QueryException;
@@ -30,6 +31,7 @@ use LogicException;
 use PDO;
 use PDOStatement;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Throwable;
 
 class Connection implements ConnectionInterface
 {
@@ -271,7 +273,7 @@ class Connection implements ConnectionInterface
     /**
      * Run a select statement against the database and returns a generator.
      */
-    public function cursor(string $query, array $bindings = [], bool $useReadPdo = true): \Generator
+    public function cursor(string $query, array $bindings = [], bool $useReadPdo = true): Generator
     {
         $statement = $this->run($query, $bindings, function ($query, $bindings) use ($useReadPdo) {
             if ($this->pretending()) {
@@ -447,7 +449,7 @@ class Connection implements ConnectionInterface
 
     /**
      * Log a query in the connection's query log.
-     * @param null|array|int|\Throwable $result
+     * @param null|array|int|Throwable $result
      */
     public function logQuery(string $query, array $bindings, ?float $time = null, $result = null)
     {
@@ -461,7 +463,7 @@ class Connection implements ConnectionInterface
     /**
      * Reconnect to the database.
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     public function reconnect()
     {
@@ -594,7 +596,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the current PDO connection.
      *
-     * @return \PDO
+     * @return PDO
      */
     public function getPdo()
     {
@@ -608,7 +610,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the current PDO connection used for reading.
      *
-     * @return \PDO
+     * @return PDO
      */
     public function getReadPdo()
     {
@@ -959,7 +961,7 @@ class Connection implements ConnectionInterface
      * Get the PDO connection to use for a select query.
      *
      * @param bool $useReadPdo
-     * @return \PDO
+     * @return PDO
      */
     protected function getPdoForSelect($useReadPdo = true)
     {
@@ -1076,11 +1078,11 @@ class Connection implements ConnectionInterface
     /**
      * Handle a query exception.
      *
-     * @param \Exception $e
+     * @param Exception $e
      * @param string $query
      * @param array $bindings
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function handleQueryException($e, $query, $bindings, Closure $callback)
     {

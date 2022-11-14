@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Exception;
 
-class ParallelExecutionException extends \RuntimeException
+use RuntimeException;
+
+class ParallelExecutionException extends RuntimeException
 {
     private array $results = [];
 

@@ -14,6 +14,7 @@ namespace Hyperf\Utils\Codec;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Utils\Exception\InvalidArgumentException;
+use Throwable;
 
 class Json
 {
@@ -32,7 +33,7 @@ class Json
 
         try {
             $json = json_encode($data, $flags | JSON_THROW_ON_ERROR, $depth);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             throw new InvalidArgumentException($exception->getMessage(), (int) $exception->getCode(), $exception);
         }
 
@@ -46,7 +47,7 @@ class Json
     {
         try {
             $decode = json_decode($json, $assoc, $depth, $flags | JSON_THROW_ON_ERROR);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             throw new InvalidArgumentException($exception->getMessage(), (int) $exception->getCode(), $exception);
         }
 

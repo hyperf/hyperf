@@ -32,6 +32,7 @@ use Swoole\Event;
 use Swoole\Process as SwooleProcess;
 use Swoole\Server;
 use Swoole\Timer;
+use Throwable;
 
 abstract class AbstractProcess implements ProcessInterface
 {
@@ -96,7 +97,7 @@ abstract class AbstractProcess implements ProcessInterface
                         $this->listen($quit);
                     }
                     $this->handle();
-                } catch (\Throwable $throwable) {
+                } catch (Throwable $throwable) {
                     $this->logThrowable($throwable);
                 } finally {
                     $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
@@ -131,7 +132,7 @@ abstract class AbstractProcess implements ProcessInterface
                 while (true) {
                     try {
                         $this->handle();
-                    } catch (\Throwable $throwable) {
+                    } catch (Throwable $throwable) {
                         $this->logThrowable($throwable);
                     }
 
@@ -168,7 +169,7 @@ abstract class AbstractProcess implements ProcessInterface
                     if ($this->event && $recv !== false && $data = unserialize($recv)) {
                         $this->event->dispatch(new PipeMessage($data));
                     }
-                } catch (\Throwable $exception) {
+                } catch (Throwable $exception) {
                     $this->logThrowable($exception);
                     if ($exception instanceof SocketAcceptException) {
                         // TODO: Reconnect the socket.
@@ -180,7 +181,7 @@ abstract class AbstractProcess implements ProcessInterface
         });
     }
 
-    protected function logThrowable(\Throwable $throwable): void
+    protected function logThrowable(Throwable $throwable): void
     {
         if ($this->container->has(StdoutLoggerInterface::class) && $this->container->has(FormatterInterface::class)) {
             $logger = $this->container->get(StdoutLoggerInterface::class);

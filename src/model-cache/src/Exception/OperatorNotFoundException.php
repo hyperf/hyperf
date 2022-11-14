@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\ModelCache\Exception;
 
-class OperatorNotFoundException extends \RuntimeException
+use RuntimeException;
+
+class OperatorNotFoundException extends RuntimeException
 {
 }

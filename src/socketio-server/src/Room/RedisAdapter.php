@@ -25,6 +25,7 @@ use Hyperf\Utils\Coroutine;
 use Hyperf\WebSocketServer\Sender;
 use Mix\Redis\Subscriber\Subscriber;
 use Redis;
+use Throwable;
 
 class RedisAdapter implements AdapterInterface, EphemeralInterface
 {
@@ -139,7 +140,7 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
                         // Fallback to PhpRedis, which has a very bad blocking subscribe model.
                         $this->phpRedisSubscribe();
                     }
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     $container = ApplicationContext::getContainer();
                     if ($container->has(StdoutLoggerInterface::class)) {
                         $logger = $container->get(StdoutLoggerInterface::class);
@@ -310,7 +311,7 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
         }
     }
 
-    private function formatThrowable(\Throwable $throwable): string
+    private function formatThrowable(Throwable $throwable): string
     {
         return (string) $throwable;
     }
@@ -336,7 +337,7 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
             'password' => $this->redis->getAuth(),
             'timeout' => 5,
         ]);
-        $prefix = $this->redis->getOption(\Redis::OPT_PREFIX);
+        $prefix = $this->redis->getOption(Redis::OPT_PREFIX);
         if ($prefix) {
             $sub->prefix = (string) $prefix;
         }

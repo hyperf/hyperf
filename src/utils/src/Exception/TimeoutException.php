@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Exception;
 
-class TimeoutException extends \RuntimeException
+use RuntimeException;
+
+class TimeoutException extends RuntimeException
 {
 }

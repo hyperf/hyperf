@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\ModelCache;
 
+use DateInterval;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\DbConnection\Db;
 use Hyperf\DbConnection\Listener\InitTableCollectorListener;
@@ -27,6 +28,9 @@ use HyperfTest\ModelCache\Stub\UserHiddenModel;
 use HyperfTest\ModelCache\Stub\UserModel;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Redis;
+use stdClass;
+use Throwable;
 
 /**
  * @internal
@@ -74,7 +78,7 @@ class ModelCacheTest extends TestCase
         }
 
         UserModel::findManyFromCache($ids);
-        /** @var \Redis $redis */
+        /** @var Redis $redis */
         $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
         foreach ($ids as $id) {
             $this->assertEquals(1, $redis->exists('{mc:default:m:user}:id:' . $id));
@@ -103,7 +107,7 @@ class ModelCacheTest extends TestCase
         }
 
         UserModel::findManyFromCache($ids);
-        /** @var \Redis $redis */
+        /** @var Redis $redis */
         $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
         foreach ($ids as $id) {
             $this->assertEquals(1, $redis->exists('{mc:default:m:user}:id:' . $id));
@@ -132,7 +136,7 @@ class ModelCacheTest extends TestCase
         ]);
 
         $model = UserModel::findFromCache($id);
-        /** @var \Redis $redis */
+        /** @var Redis $redis */
         $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
         $this->assertEquals(1, $redis->exists('{mc:default:m:user}:id:' . $id));
 
@@ -152,7 +156,7 @@ class ModelCacheTest extends TestCase
         $id = 207;
 
         $model = UserModel::findFromCache($id);
-        /** @var \Redis $redis */
+        /** @var Redis $redis */
         $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
         $this->assertEquals(1, $redis->exists('{mc:default:m:user}:id:' . $id));
         $this->assertNull($model);
@@ -172,7 +176,7 @@ class ModelCacheTest extends TestCase
         ]);
 
         $model = UserModel::query()->find($id);
-        /** @var \Redis $redis */
+        /** @var Redis $redis */
         $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
         $this->assertEquals(0, $redis->exists('{mc:default:m:user}:id:' . $id));
 
@@ -209,7 +213,7 @@ class ModelCacheTest extends TestCase
         $model = UserExtModel::query()->find(1);
         $model->deleteCache();
 
-        /** @var \Redis $redis */
+        /** @var Redis $redis */
         $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
         UserExtModel::findFromCache(1);
         $this->assertSame(86400, $redis->ttl('{mc:default:m:user_ext}:id:1'));
@@ -217,13 +221,13 @@ class ModelCacheTest extends TestCase
 
     public function testModelCacheExpireTimeWithDateInterval()
     {
-        $container = ContainerStub::mockContainer(new \DateInterval('P1DT10S'));
+        $container = ContainerStub::mockContainer(new DateInterval('P1DT10S'));
 
         /** @var UserExtModel $model */
         $model = UserExtModel::query()->find(1);
         $model->deleteCache();
 
-        /** @var \Redis $redis */
+        /** @var Redis $redis */
         $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
         UserExtModel::findFromCache(1);
         $this->assertSame(86410, $redis->ttl('{mc:default:m:user_ext}:id:1'));
@@ -269,7 +273,7 @@ class ModelCacheTest extends TestCase
     {
         $container = ContainerStub::mockContainer();
 
-        /** @var \Redis $redis */
+        /** @var Redis $redis */
         $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
         $redis->del('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2');
 
@@ -285,9 +289,9 @@ class ModelCacheTest extends TestCase
     {
         $container = ContainerStub::mockContainer();
         $listener = new EagerLoadListener($container);
-        $listener->process(new \stdClass());
+        $listener->process(new stdClass());
 
-        /** @var \Redis $redis */
+        /** @var Redis $redis */
         $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
         $redis->del('{mc:default:m:user}:id:1', '{mc:default:m:user}:id:2');
 
@@ -328,7 +332,7 @@ class ModelCacheTest extends TestCase
         $model = UserModel::findFromCache(1);
         $this->assertArrayHasKey('gender', $model->toArray());
 
-        /** @var \Redis $redis */
+        /** @var Redis $redis */
         $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
         $redis->hDel('{mc:default:m:user}:id:1', 'gender');
         $model = UserModel::findFromCache(1);
@@ -339,7 +343,7 @@ class ModelCacheTest extends TestCase
     public function testModelSave()
     {
         $container = ContainerStub::mockContainer();
-        /** @var \Redis $redis */
+        /** @var Redis $redis */
         $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
 
         $id = 208;
@@ -378,7 +382,7 @@ class ModelCacheTest extends TestCase
         $model = new BookModel();
         $this->assertSame(100, $model->getCacheTTL());
 
-        /** @var \Redis $redis */
+        /** @var Redis $redis */
         $redis = $container->make(RedisProxy::class, ['pool' => 'default']);
         $redis->del('{mc:default:m:book}:id:1');
         BookModel::findFromCache(1);
@@ -409,7 +413,7 @@ class ModelCacheTest extends TestCase
                 $invoker = new ClassInvoker(InvalidCacheManager::instance());
                 $this->assertSame(1, count($invoker->models));
                 Db::commit();
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 Db::rollBack();
             }
         });
@@ -442,7 +446,7 @@ class ModelCacheTest extends TestCase
                 $invoker = new ClassInvoker(InvalidCacheManager::instance());
                 $this->assertSame(1, count($invoker->models));
                 Db::commit();
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 Db::rollBack();
             }
         });
@@ -475,7 +479,7 @@ class ModelCacheTest extends TestCase
                 $invoker = new ClassInvoker(InvalidCacheManager::instance());
                 $this->assertSame(1, count($invoker->models));
                 Db::commit();
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 Db::rollBack();
             }
         });
