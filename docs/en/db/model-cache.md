@@ -1,8 +1,8 @@
-# 模型缓存
+# Model cache
 
-在高频场景下，我们会频繁的查询数据库，虽然有主键加持，但也会影响到数据库性能。这种kv查询方式，我们可以很方便的使用 `模型缓存` 来减缓数据库压力。本模块实现了自动缓存，删除和修改模型时，自动删除缓存。累加、减操作时，直接操作缓存进行对应累加、减。
+In high-frequency scenarios, we will frequently query the database. Although there is a primary key blessing, it will also affect the database performance. With this kv query method, we can easily use `model cache` to reduce database pressure. This module implements automatic caching. When deleting and modifying the model, the cache is automatically deleted. When accumulating and subtracting, directly operate the cache to perform the corresponding accumulation and subtraction.
 
-> 模型缓存暂支持 `Redis`存储，其他存储引擎会慢慢补充。
+> Model cache temporarily supports `Redis` storage, other storage engines will be added gradually.
 
 ## Installation
 
@@ -10,18 +10,18 @@
 composer require hyperf/model-cache
 ```
 
-## 配置
+## configure
 
-模型缓存的配置在 `databases` 中。示例如下
+Model caching is configured in `databases`. Examples are as follows
 
-|      配置       |  类型  |                        默认值                         |                备注                 |
-|:---------------:|:------:|:-----------------------------------------------------:|:-----------------------------------:|
-|     handler     | string | Hyperf\DbConnection\Cache\Handler\RedisHandler::class |                 无                  |
-|    cache_key    | string |                  `mc:%s:m:%s:%s:%s`                   | `mc:缓存前缀:m:表名:主键KEY:主键值` |
-|     prefix      | string |                  db connection name                   |              缓存前缀               |
-|       ttl       |  int   |                         3600                          |              超时时间               |
-| empty_model_ttl |  int   |                          60                           |      查询不到数据时的超时时间       |
-|   load_script   |  bool  |                         true                          | Redis引擎下 是否使用evalSha代替eval |
+|  Configuration  |  Type  |                         Default                        |                Remarks                                           |
+|:---------------:|:------:|:------------------------------------------------------:|:----------------------------------------------------------------:|
+| handler         | string | Hyperf\DbConnection\Cache\Handler\RedisHandler::class  |                               none                               |
+| cache_key       | string |                   `mc:%s:m:%s:%s:%s`                   | `mc:cache prefix:m:table name:primary key KEY:primary key value` |
+| prefix          | string |                   db connection name                   |                           cache prefix                           |
+| ttl             |  int   |                          3600                          |                              timeout                             |
+| empty_model_ttl |  int   |                           60                           |                  Timeout when no data is queried                 |
+| load_script     |  bool  |                          true                          |   Whether to use evalSha instead of eval under the Redis engine  |
 
 ```php
 <?php
@@ -56,9 +56,9 @@ return [
 ];
 ```
 
-## 使用
+## use
 
-模型缓存的使用十分简单，只需要在对应Model中实现 `Hyperf\ModelCache\CacheableInterface` 接口，当然，框架已经提供了对应实现，只需要引入 `Hyperf\ModelCache\Cacheable` Trait 即可。
+The use of the model cache is very simple. You only need to implement the `Hyperf\ModelCache\CacheableInterface` interface in the corresponding Model. Of course, the framework has already provided the corresponding implementation, you only need to introduce the `Hyperf\ModelCache\Cacheable` Trait.
 
 ```php
 <?php
@@ -99,15 +99,15 @@ class User extends Model implements CacheableInterface
     protected $casts = ['id' => 'integer', 'gender' => 'integer'];
 }
 
-// 查询单个缓存
+// Query a single cache
 $model = User::findFromCache($id);
 
-// 批量查询缓存，返回 Hyperf\Database\Model\Collection
+// Batch query cache, return Hyperf\Database\Model\Collection
 $models = User::findManyFromCache($ids);
 
 ```
 
-对应Redis数据如下，其中 `HF-DATA:DEFAULT` 作为占位符存在于 `HASH` 中，*所以用户不要使用 `HF-DATA` 作为数据库字段*。
+The corresponding Redis data is as follows, where `HF-DATA:DEFAULT` exists as a placeholder in `HASH`, *so users do not use `HF-DATA` as a database field*.
 ```
 127.0.0.1:6379> hgetall "mc:default:m:user:id:1"
  1) "id"
@@ -124,5 +124,5 @@ $models = User::findManyFromCache($ids);
 12) "DEFAULT"
 ```
 
-另外一点就是，缓存更新机制，框架内实现了对应的 `Hyperf\ModelCache\Listener\DeleteCacheListener` 监听器，每当数据修改，会主动删除缓存。
-如果用户不想由框架来删除缓存，可以主动覆写 `deleteCache` 方法，然后由自己实现对应监听即可。
+Another point is that the cache update mechanism implements the corresponding `Hyperf\ModelCache\Listener\DeleteCacheListener` listener in the framework. Whenever the data is modified, the cache will be actively deleted.
+If the user does not want the framework to delete the cache, he can actively override the `deleteCache` method, and then implement the corresponding monitoring by yourself.

@@ -1,58 +1,58 @@
-# RPN - 逆波兰表示法
+# RPN - Reverse Polish Notation
 
 ![PHPUnit](https://github.com/hyperf/rpn-incubator/workflows/PHPUnit/badge.svg)
 
-`RPN` 是一种是由波兰数学家扬·武卡谢维奇 1920 年引入的数学表达式方式，在逆波兰记法中，所有操作符置于操作数的后面，因此也被称为后缀表示法。逆波兰记法不需要括号来标识操作符的优先级。
+`RPN` is a mathematical expression method introduced by Polish mathematician Jan Vukasevich in 1920. In reverse Polish notation, all operators are placed after the operand, so it is also called postfix notation. . Reverse Polish notation does not require parentheses to identify operator precedence.
 
 ```
 composer require hyperf/rpn
 ```
 
-## RPN 逻辑
+## RPN logic
 
-基本逻辑
+basic logic
 
-- while 有输入
-    - 读入下一个符号 X
-    - IF X 是一个操作数
-        - 入栈
-    - ELSE IF X 是一个操作符
-        - 有一个先验的表格给出该操作符需要 n 个参数
-        - IF 堆栈中少于 n 个操作数
-            - （错误）用户没有输入足够的操作数
-    - Else，n 个操作数出栈
-    - 计算操作符。
-    - 将计算所得的值入栈
-- IF 栈内只有一个值
-    - 这个值就是整个计算式的结果
-- ELSE 多于一个值
-    - （错误）用户输入了多余的操作数
+- while with input
+    - read in the next symbol X
+    - IF X is an operand
+        - push the stack
+    - ELSE IF X is an operator
+        - there is a table of a priori that the operator takes n arguments
+        - IF less than n operands on stack
+            - (Error) User did not enter enough operands
+    - Else, pop n operands from stack
+    - Computational operators.
+    - push the calculated value onto the stack
+- There is only one value in the IF stack
+    - This value is the result of the entire calculation
+- ELSE more than one value
+    - (Error) User entered redundant operands
 
-实例
+Example
 
-中缀表达式 `5 + ((1 + 2) * 4) - 3` 写作
+The infix expression `5 + ((1 + 2) * 4) - 3` is written
 
 `5 1 2 + 4 * + 3 -`
 
-下表给出了该逆波兰表达式从左至右求值的过程，堆栈栏给出了中间值，用于跟踪算法。
+The following table shows how this Reverse Polish expression is evaluated from left to right, with the intermediate values ​​given in the stack bar, which is used to keep track of the algorithm.
 
-| 输入 | 操作     | 堆栈    | 注释                       |
-| ---- | -------- | ------- | -------------------------- |
-| 5    | 入栈     | 5       |                            |
-| 1    | 入栈     | 5, 1    |                            |
-| 2    | 入栈     | 5, 1, 2 |                            |
-| +    | 加法运算 | 5, 3    | 1, 2 出栈，将结果 3 入栈    |
-| 4    | 入栈     | 5, 3, 4 |                            |
-| *    | 乘法运算 | 5, 12   | 3, 4 出栈，将结果 12 入栈  |
-| +    | 加法运算 | 17      | 5, 12 出栈，将结果 17 入栈 |
-| 3    | 入栈     | 17, 3   |                            |
-| -    | 减法运算 | 14      | 17, 3 出栈，将结果 14 入栈 |
+| input | action | stack | comment |
+| ---- | -------- | ------- | ---------------------------- |
+| 5 | Push | 5 | |
+| 1 | Push | 5, 1 | |
+| 2 | Push | 5, 1, 2 | |
+| + | Addition | 5, 3 | Pop 1, 2, push result 3 |
+| 4 | Push | 5, 3, 4 | |
+| * | Multiplication | 5, 12 | 3, 4 pop, push result 12 |
+| + | Add operation | 17 | 5, 12 pop, push result 17 |
+| 3 | push | 17, 3 | |
+| - | Subtraction | 14 | 17, 3 pop, push result 14 |
 
-计算完成时，栈内只有一个操作数，这就是表达式的结果：14
+When the calculation is complete, there is only one operand on the stack, which is the result of the expression: 14
 
-## 使用
+## use
 
-直接计算 RPN 表达式
+Evaluate RPN expressions directly
 
 ```php
 <?php
@@ -62,7 +62,7 @@ $calculator = new Calculator();
 $calculator->calculate('5 1 2 + 4 * + 3 -', []); // '14'
 ```
 
-设置计算精度
+Set calculation precision
 
 ```php
 <?php
@@ -72,7 +72,7 @@ $calculator = new Calculator();
 $calculator->calculate('5 1 2 + 4 * + 3 -', [], 2); // '14.00'
 ```
 
-设置变量
+set variable
 
 ```php
 <?php
@@ -82,9 +82,9 @@ $calculator = new Calculator();
 $calculator->calculate('[0] 1 2 + 4 * + [1] -', [5, 10]); // '7'
 ```
 
-### 中缀表达式转化为后缀表达式
+### Convert infix expressions to postfix expressions
 
-> 暂时不支持使用变量
+> The use of variables is temporarily not supported
 
 ```php
 <?php

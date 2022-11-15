@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Watcher;
 
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Watcher\Driver\ScanFileDriver;
 
 class Option
@@ -39,10 +38,8 @@ class Option
 
     protected int $scanInterval = 2000;
 
-    public function __construct(ConfigInterface $config, array $dir, array $file, protected bool $restart = true)
+    public function __construct(array $options = [], array $dir = [], array $file = [], protected bool $restart = true)
     {
-        $options = $config->get('watcher', []);
-
         isset($options['driver']) && $this->driver = $options['driver'];
         isset($options['bin']) && $this->bin = $options['bin'];
         isset($options['command']) && $this->command = $options['command'];
