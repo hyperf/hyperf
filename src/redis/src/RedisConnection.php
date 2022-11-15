@@ -273,7 +273,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
     {
         $parameters = [
             $config['host'] ?? '',
-            (int) $config['port'] ?? 6379,
+            (int) ($config['port'] ?? 6379),
             $config['timeout'] ?? 0.0,
             $config['reserved'] ?? null,
             $config['retry_interval'] ?? 0,
