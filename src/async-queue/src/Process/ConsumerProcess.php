@@ -13,7 +13,6 @@ namespace Hyperf\AsyncQueue\Process;
 
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\AsyncQueue\Driver\DriverInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Process\AbstractProcess;
 use Psr\Container\ContainerInterface;
 
