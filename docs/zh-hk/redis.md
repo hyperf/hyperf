@@ -46,6 +46,12 @@ return [
 
 ```
 
+`publish`完整配置文件使用命令
+
+```shell
+php bin/hyperf.php vendor:publish hyperf/redis
+```
+
 ## 使用
 
 `hyperf/redis` 實現了 `ext-redis` 代理和連接池，用户可以直接通過依賴注入容器注入 `\Hyperf\Redis\Redis` 來使用 Redis 客户端，實際獲得的是 `\Redis` 的一個代理對象。
