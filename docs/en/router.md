@@ -159,7 +159,7 @@ class UserController
 
 #### Annotation parameters
 
-Both `#[Controller]` and `#[AutoController]` provide two parameters, `prefix` and `servera.
+Both `#[Controller]` and `#[AutoController]` provide two parameters, `prefix` and `server`.
 
 `prefix` represents the URI prefix for all methods under the controller, the default is the lowercase of the class name. For example, in the case of `UserController`, the `prefix` defaults to `user`, so if the controller method is `index`, then the final route is `/user/index`.
 It should be noted that the `prefix` is not always used: when the `path` of a method in a class starts with `/`, it means that the path is defined as an absolute `URI` and the value of `prefix` will be ignored. At the same time, if the `prefix` attribute is not set, then the part after `\\Controller\\` in the controller class namespace will be used as the route prefix in SnakeCase style.
