@@ -143,6 +143,53 @@ $redis = $container->get(RedisFactory::class)->get('foo');
 $result = $redis->keys('*');
 ```
 
+
+## 哨兵模式
+
+開啟哨兵模式可以在`.env`或`redis.php`配置文件中修改如下
+
+多個哨兵節點使用`;`分割
+
+```
+REDIS_HOST=
+REDIS_AUTH=Redis實例密碼
+REDIS_PORT=
+REDIS_DB=
+REDIS_SENTINEL_ENABLE=true
+REDIS_SENTINEL_PASSWORD=Redis哨兵密碼
+REDIS_SENTINEL_NODE=192.168.89.129:26381;192.168.89.129:26380;
+```
+```
+return [
+    'default' => [
+        'host' => env('REDIS_HOST', 'localhost'),
+        'auth' => env('REDIS_AUTH', null),
+        'port' => (int) env('REDIS_PORT', 6379),
+        'db' => (int) env('REDIS_DB', 0),
+        'timeout' => 30.0,
+        'reserved' => null,
+        'retry_interval' => 0,
+        'sentinel' => [
+            'enable' => (bool) env('REDIS_SENTINEL_ENABLE', false),
+            'master_name' => env('REDIS_MASTER_NAME', 'mymaster'),
+            'nodes' => explode(';', env('REDIS_SENTINEL_NODE', '')),
+            'persistent' => false,
+            'read_timeout' => 30.0,
+            'auth' =>  env('REDIS_SENTINEL_PASSWORD', ''),
+        ],
+        'pool' => [
+            'min_connections' => 1,
+            'max_connections' => 10,
+            'connect_timeout' => 10.0,
+            'wait_timeout' => 3.0,
+            'heartbeat' => -1,
+            'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
+        ],
+    ],
+];
+```
+
+
 ## 集羣模式
 
 ### 使用 `name`
