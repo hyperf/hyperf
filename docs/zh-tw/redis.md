@@ -46,7 +46,7 @@ return [
 
 ```
 
-`publish`完整配置文件使用命令
+`publish`完整配置檔案使用命令
 
 ```shell
 php bin/hyperf.php vendor:publish hyperf/redis
@@ -149,16 +149,15 @@ $redis = $container->get(RedisFactory::class)->get('foo');
 $result = $redis->keys('*');
 ```
 
-
 ## 哨兵模式
 
-開啟哨兵模式可以在`.env`或`redis.php`配置文件中修改如下
+開啟哨兵模式可以在`.env`或`redis.php`配置檔案中修改如下
 
 多個哨兵節點使用`;`分割
 
 ```
 REDIS_HOST=
-REDIS_AUTH=Redis實例密碼
+REDIS_AUTH=Redis例項密碼
 REDIS_PORT=
 REDIS_DB=
 REDIS_SENTINEL_ENABLE=true

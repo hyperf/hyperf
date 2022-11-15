@@ -149,7 +149,6 @@ $redis = $container->get(RedisFactory::class)->get('foo');
 $result = $redis->keys('*');
 ```
 
-
 ## 哨兵模式
 
 開啟哨兵模式可以在`.env`或`redis.php`配置文件中修改如下
@@ -195,11 +194,10 @@ return [
 ];
 ```
 
-
 ## 集羣模式
 
 ### 使用 `name`
- 
+
 配置 `cluster`，修改修改 `redis.ini`，也可以修改 `Dockerfile` 如下
 
 ```
