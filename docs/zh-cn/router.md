@@ -84,8 +84,6 @@ Router::addGroup('/user/',function (){
 
 `Hyperf` 提供了非常便利的 [注解](zh-cn/annotation.md) 路由功能，您可以直接在任意类上通过定义 `@Controller` 或 `@AutoController` 注解来完成一个路由的定义。
 
-> 注意，如果使用 `@Controller` 或 `@AutoController` 注解时没有设置 `prefix` 属性，那么控制器类命名空间中 `\\Controller\\` 之后的部分将被用作路由的前缀。
-
 #### `@AutoController` 注解
 
 `@AutoController` 为绝大多数简单的访问场景提供路由绑定支持，使用 `@AutoController` 时则 `Hyperf` 会自动解析所在类的所有 `public` 方法并提供 `GET` 和 `POST` 两种请求方式。
@@ -164,7 +162,7 @@ class UserController
 `@Controller` 和 `@AutoController` 都提供了 `prefix` 和 `server` 两个参数。   
 
 `prefix` 表示该 `Controller` 下的所有方法路由的前缀，默认为类名的小写，如 `UserController` 则 `prefix` 默认为 `user`，如类内某一方法的 `path` 为 `index`，则最终路由为 `/user/index`。   
-需要注意的是 `prefix` 并非一直有效，当类内的方法的 `path` 以 `/` 开头时，则表明路径从 `URI` 头部开始定义，也就意味着会忽略 `prefix` 的值。
+需要注意的是 `prefix` 并非一直有效，当类内的方法的 `path` 以 `/` 开头时，则表明路径从 `URI` 头部开始定义，也就意味着会忽略 `prefix` 的值，同时如果没有设置 `prefix` 属性，那么控制器类命名空间中 `\\Controller\\` 之后的部分会以蛇形命名法(SnakeCase)被用作路由的前缀。
 
 `server` 表示该路由是定义在哪个 `Server` 之上的，由于 `Hyperf` 支持同时启动多个 `Server`，也就意味着有可能会同时存在多个 `HTTP Server`，则在定义路由是可以通过 `server` 参数来进行区分这个路由是为了哪个 `Server` 定义的，默认为 `http`。
 
