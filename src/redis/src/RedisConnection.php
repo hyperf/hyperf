@@ -215,7 +215,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             // fixes bug for phpredis
             // https://github.com/phpredis/phpredis/issues/2098
             $extendConfig = [];
-            if (!empty($auth)){
+            if (! empty($auth)) {
                 $extendConfig[] = $auth;
             }
 
