@@ -164,7 +164,7 @@ Both `#[Controller]` and `#[AutoController]` provide two parameters, `prefix` an
 `prefix` represents the URI prefix for all methods under the controller, the default is the lowercase of the class name. For example, in the case of `UserController`, the `prefix` defaults to `user`, so if the controller method is `index`, then the final route is `/user/index`.
 It should be noted that the `prefix` is not always used: when the `path` of a method in a class starts with `/`, it means that the path is defined as an absolute `URI` and the value of `prefix` will be ignored. At the same time, if the `prefix` attribute is not set, then the part after `\\Controller\\` in the controller class namespace will be used as the route prefix in SnakeCase style.
 
-`server` indicates which server the route is defined for. Since `Hyperf` supports starting multiple servers at the same time, there may be multiple HTTP servers running at the same time. Therefore defining the `server` parameter can be used to distinguish which server the route is defined for. The default is `http.
+`server` indicates which server the route is defined for. Since `Hyperf` supports starting multiple servers at the same time, there may be multiple HTTP servers running at the same time. Therefore defining the `server` parameter can be used to distinguish which server the route is defined for. The default is `http`.
 
 ### Route parameters
 
