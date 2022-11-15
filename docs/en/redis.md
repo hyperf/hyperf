@@ -19,6 +19,7 @@ composer require hyperf/redis
 | cluster.seeds  |  array  |     []      | The seeds of cluster, format: ['host:port'] |
 |      pool      | object  |     {}      |           The connection pool           |
 |    options     | object  |     {}      |         The options of Redis Client         |
+
 ```php
 <?php
 return [
@@ -45,9 +46,15 @@ return [
 
 ```
 
+`publish` full configuration file using command
+
+```shell
+php bin/hyperf.php vendor:publish hyperf/redis
+```
+
 ## Usage
 
-`hyperf/redis` implemented the proxy of `ext-redis` and the connection pool, you could use `\Redis` class directly.
+`hyperf/redis` implements the proxy of `ext-redis` and connection pool. Users can directly inject `\Hyperf\Redis\Redis` through the dependency injection container to use the Redis client. What they actually get is a proxy of `\Redis` object.
 
 ```php
 <?php
@@ -85,7 +92,7 @@ return [
             'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
         ],
     ],
-    // Added a named `foo` redis connection pool
+    // Add a Redis connection pool named foo
     'foo' => [
         'host' => env('REDIS_HOST', 'localhost'),
         'auth' => env('REDIS_AUTH', ''),
@@ -132,18 +139,64 @@ When each resource corresponds to a static scene, the proxy class is a good way 
 
 ```php
 <?php
-
 use Hyperf\Redis\RedisFactory;
+use Hyperf\Utils\ApplicationContext;
+
+$container = ApplicationContext::getContainer();
 
 // Obtain or directly inject the RedisFactory class through the DI container
-$redis = $this->container->get(RedisFactory::class)->get('foo');
-
+$redis = $container->get(RedisFactory::class)->get('foo');
 $result = $redis->keys('*');
+```
+
+## Sentinel mode
+
+To enable sentinel mode, you can modify the `.env` or `redis.php` configuration file as follows
+
+Use `;` to split multiple sentinel nodes
+
+```
+REDIS_HOST=
+REDIS_AUTH="Redis instance password"
+REDIS_PORT=
+REDIS_DB=
+REDIS_SENTINEL_ENABLE=true
+REDIS_SENTINEL_PASSWORD="Redis sentinel password"
+REDIS_SENTINEL_NODE=192.168.89.129:26381;192.168.89.129:26380;
+```
+```
+return [
+    'default' => [
+        'host' => env('REDIS_HOST', 'localhost'),
+        'auth' => env('REDIS_AUTH', null),
+        'port' => (int) env('REDIS_PORT', 6379),
+        'db' => (int) env('REDIS_DB', 0),
+        'timeout' => 30.0,
+        'reserved' => null,
+        'retry_interval' => 0,
+        'sentinel' => [
+            'enable' => (bool) env('REDIS_SENTINEL_ENABLE', false),
+            'master_name' => env('REDIS_MASTER_NAME', 'mymaster'),
+            'nodes' => explode(';', env('REDIS_SENTINEL_NODE', '')),
+            'persistent' => false,
+            'read_timeout' => 30.0,
+            'auth' =>  env('REDIS_SENTINEL_PASSWORD', ''),
+        ],
+        'pool' => [
+            'min_connections' => 1,
+            'max_connections' => 10,
+            'connect_timeout' => 10.0,
+            'wait_timeout' => 3.0,
+            'heartbeat' => -1,
+            'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
+        ],
+    ],
+];
 ```
 
 ## Cluster mode
 
-### Cluster name
+### Use `name`
  
 Configure `cluster`, modify `redis.ini`, or modify `Dockerfile`, as follows:
 
@@ -165,7 +218,6 @@ The corresponding PHP configuration is as follows
 
 ```php
 <?php
-// ./config/autoload/redis.php
 // Ignore the other irrelevant configurations
 return [
     'default' => [
@@ -178,7 +230,7 @@ return [
 ];
 ```
 
-### Seeds
+### Use seeds
 
 Of course, it is also available to use `seeds` directly without configuring the `name`, as follows:
 
@@ -201,9 +253,9 @@ return [
 
 ## Options
 
-You could define `options` configuration to set the options of Redis Client.
+Users can modify `options` to set `Redis` configuration options.
 
-For example, use PHP Serializer to serialize the result:
+For example, modify `Redis` serialization to `PHP` serialization.
 
 ```php
 <?php
@@ -231,7 +283,7 @@ return [
 ];
 ```
 
-For example, set the redis client never timeout:
+For example, set the `Redis` never timeout:
 
 ```php
 <?php
