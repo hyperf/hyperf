@@ -1,18 +1,18 @@
-# 基于多路复用的 RPC 组件
+# Multiplexed based RPC components
 
-本组件基于 `TCP` 协议，多路复用的设计借鉴于 `AMQP` 组件。
+This component is based on the `TCP` protocol, and the multiplexing design is borrowed from the `AMQP` component.
 
-## 安装
+## Install
 
-```
+````
 composer require hyperf/rpc-multiplex
-```
+````
 
-## Server 配置
+## Server configuration
 
-修改 `config/autoload/server.php` 配置文件，以下配置删除了不相干的配置。
+Modify the `config/autoload/server.php` configuration file, the following configuration deletes irrelevant configuration.
 
-`settings` 设置中，分包规则不允许修改，只可以修改 `package_max_length`，此配置需要 `Server` 和 `Client` 保持一致。
+In the `settings` setting, the subcontracting rules are not allowed to be modified, only `package_max_length` can be modified, this configuration needs to be consistent between `Server` and `Client`.
 
 ```php
 <?php
@@ -46,7 +46,7 @@ return [
 
 ```
 
-创建 `RpcService`
+Create `RpcService`
 
 ```php
 <?php
@@ -66,9 +66,9 @@ class CalculatorService implements CalculatorServiceInterface
 
 ```
 
-## 客户端配置
+## client configuration
 
-修改 `config/autoload/services.php` 配置文件
+Modify the `config/autoload/services.php` configuration file
 
 ```php
 <?php
@@ -83,7 +83,7 @@ return [
             'id' => App\JsonRpc\CalculatorServiceInterface::class,
             'protocol' => Hyperf\RpcMultiplex\Constant::PROTOCOL_DEFAULT,
             'load_balancer' => 'random',
-            // 这个消费者要从哪个服务中心获取节点信息，如不配置则不会从服务中心获取节点信息
+            // Which service center does the consumer want to obtain node information from, if not configured, the node information will not be obtained from the service center
             'registry' => [
                 'protocol' => 'consul',
                 'address' => 'http://127.0.0.1:8500',
@@ -95,16 +95,16 @@ return [
                 'connect_timeout' => 5.0,
                 'recv_timeout' => 5.0,
                 'settings' => [
-                    // 包体最大值，若小于 Server 返回的数据大小，则会抛出异常，故尽量控制包体大小
+                    // The maximum value of the package body. If it is less than the data size returned by the Server, an exception will be thrown, so try to control the package body size as much as possible.
                     'package_max_length' => 1024 * 1024 * 2,
                 ],
-                // 重试次数，默认值为 2
+                // number of retries, default is 2
                 'retry_count' => 2,
-                // 重试间隔，毫秒
+                // retry interval, milliseconds
                 'retry_interval' => 100,
-                // 多路复用客户端数量
+                // Number of multiplexed clients
                 'client_count' => 4,
-                // 心跳间隔 非 numeric 表示不开启心跳
+                // Heartbeat interval non-numeric means no heartbeat
                 'heartbeat' => 30,
             ],
         ],
@@ -113,9 +113,9 @@ return [
 
 ```
 
-### 注册中心
+### Registration Center
 
-如果需要使用注册中心，则需要手动添加以下监听器
+If you need to use the registry, you need to manually add the following listeners
 
 ```php
 <?php
