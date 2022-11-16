@@ -30,7 +30,7 @@ return [
             'nodes' => explode(';', env('REDIS_SENTINEL_NODE', '')),
             'persistent' => '',
             'read_timeout' => 0,
-            'auth' => null,
+            'auth' => env('REDIS_SENTINEL_PASSWORD', ''),
         ],
         'pool' => [
             'min_connections' => 1,
