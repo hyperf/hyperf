@@ -117,6 +117,7 @@ composer analyse
 - [#5079](https://github.com/hyperf/hyperf/pull/5079) Use `(string) $throwable` instead of `sprintf` for `Hyperf\ExceptionHandler\Formatter\FormatterInterface::format()`.
 - [#5091](https://github.com/hyperf/hyperf/pull/5091) Move `Jsonable` and `Xmlable` to `contract` from `utils`.
 - [#5092](https://github.com/hyperf/hyperf/pull/5092) Move `MessageBag` and `MessageProvider` to `contract` from `utils`.
+- [#5204](https://github.com/hyperf/hyperf/pull/5204) Transform the type of param `$server` in `Hyperf\WebSocketServer\Server::deferOnOpen()` to `mixed`.
 
 ## Swow Supported
 
