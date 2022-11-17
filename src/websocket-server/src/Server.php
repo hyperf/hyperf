@@ -241,8 +241,9 @@ class Server implements MiddlewareInitializerInterface, OnHandShakeInterface, On
 
     /**
      * @param mixed $request
+     * @param mixed $server
      */
-    protected function deferOnOpen($request, string $class, SwooleResponse|WebSocketServer|Connection $server, int $fd)
+    protected function deferOnOpen($request, string $class, $server, int $fd)
     {
         $instance = $this->container->get($class);
         if ($server instanceof WebSocketServer) {
