@@ -37,7 +37,7 @@ class Watcher
 
     protected Channel $channel;
 
-    protected string $path = BASE_PATH . '/runtime/container/collectors.cache';
+    protected string $path;
 
     public function __construct(protected ContainerInterface $container, protected Option $option, protected OutputInterface $output)
     {
@@ -49,6 +49,7 @@ class Watcher
         $this->printer = new Standard();
         $this->channel = new Channel(1);
         $this->channel->push(true);
+        $this->path = $this->option->path('runtime/container/collectors.cache');
     }
 
     public function run()
@@ -84,7 +85,7 @@ class Watcher
 
     public function dumpautoload()
     {
-        $ret = exec('composer dump-autoload -o --no-scripts -d ' . BASE_PATH);
+        $ret = exec('composer dump-autoload -o --no-scripts -d ' . $this->option->path());
         $this->output->writeln($ret['output'] ?? '');
     }
 

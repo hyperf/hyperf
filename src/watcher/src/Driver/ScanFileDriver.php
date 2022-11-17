@@ -81,7 +81,7 @@ class ScanFileDriver extends AbstractDriver
         }
         // Scan all watch files.
         $file = $this->option->getWatchFile();
-        $filesObj = $this->filesystem->files(BASE_PATH, true);
+        $filesObj = $this->filesystem->files($this->option->path(), true);
         /** @var SplFileInfo $obj */
         foreach ($filesObj as $obj) {
             $pathName = $obj->getPathName();
