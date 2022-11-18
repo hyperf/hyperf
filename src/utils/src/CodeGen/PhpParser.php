@@ -162,12 +162,16 @@ class PhpParser
     private function getExprFromObject(object $value)
     {
         $ref = new ReflectionClass($value);
-        if ($ref->isEnum()) {
+        if (method_exists($ref, 'isEnum') && $ref->isEnum()) {
             return new Node\Expr\ClassConstFetch(
                 new Node\Name('\\' . $value::class),
                 $value->name
             );
         }
+
+        return new Node\Expr\New_(
+            new Node\Name\FullyQualified($value::class)
+        );
     }
 
     private function getTypeWithNullableOrNot(ReflectionType $reflection): Node\ComplexType|Node\Identifier|Node\Name

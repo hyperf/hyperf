@@ -76,6 +76,22 @@ class PhpParserTest extends TestCase
         $code = $printer->prettyPrint([$stmts]);
 
         $this->assertSame('\HyperfTest\Utils\Stub\FooEnum $enum = \HyperfTest\Utils\Stub\FooEnum::DEFAULT', $code);
+
+        $parameters = $bar->getMethod('stdClass')->getParameters();
+
+        $stmts = $parser->getNodeFromReflectionParameter($parameters[0]);
+
+        $code = $printer->prettyPrint([$stmts]);
+
+        $this->assertSame('object $id = new \\stdClass()', $code);
+
+        $parameters = $bar->getMethod('class')->getParameters();
+
+        $stmts = $parser->getNodeFromReflectionParameter($parameters[0]);
+
+        $code = $printer->prettyPrint([$stmts]);
+
+        $this->assertSame('\HyperfTest\Di\Stub\Ignore $ignore = new \HyperfTest\Di\Stub\Ignore()', $code);
     }
 
     public function testGetExprFromArray()

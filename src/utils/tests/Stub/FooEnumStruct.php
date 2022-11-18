@@ -11,9 +11,20 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils\Stub;
 
+use HyperfTest\Di\Stub\Ignore;
+use stdClass;
+
 class FooEnumStruct
 {
     public function __construct(public FooEnum $enum = FooEnum::DEFAULT)
+    {
+    }
+
+    public function stdClass(object $id = new stdClass()): void
+    {
+    }
+
+    public function class(Ignore $ignore = new Ignore()): void
     {
     }
 }
