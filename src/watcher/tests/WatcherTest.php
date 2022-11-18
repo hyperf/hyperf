@@ -32,7 +32,7 @@ class WatcherTest extends TestCase
             ],
         ]);
 
-        $option = new Option($config, ['src'], []);
+        $option = new Option($config->get('watcher'), ['src'], []);
 
         $this->assertSame('xxx', $option->getDriver());
         $this->assertSame(['app', 'config', 'src'], $option->getWatchDir());
