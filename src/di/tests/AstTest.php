@@ -22,6 +22,7 @@ use HyperfTest\Di\Stub\Ast\BarAspect;
 use HyperfTest\Di\Stub\Ast\BarInterface;
 use HyperfTest\Di\Stub\Ast\Foo;
 use HyperfTest\Di\Stub\Ast\FooTrait;
+use HyperfTest\Di\Stub\FooEnumStruct;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -60,6 +61,29 @@ class Foo
     use \Hyperf\Di\Aop\ProxyTrait;
     use \Hyperf\Di\Aop\PropertyHandlerTrait;
     function __construct()
+    {
+        $this->__handlePropertyHandler(__CLASS__);
+    }
+}', $code);
+    }
+
+    public function testAstProxyForEnum()
+    {
+        if (PHP_VERSION_ID < 80100) {
+            $this->markTestSkipped('The version below 8.1 does not support enum.');
+        }
+
+        $ast = new Ast();
+        $code = $ast->proxy(FooEnumStruct::class);
+
+        $this->assertEquals($this->license . '
+namespace HyperfTest\Di\Stub;
+
+class FooEnumStruct
+{
+    use \Hyperf\Di\Aop\ProxyTrait;
+    use \Hyperf\Di\Aop\PropertyHandlerTrait;
+    public function __construct(public FooEnum $enum = FooEnum::DEFAULT)
     {
         $this->__handlePropertyHandler(__CLASS__);
     }

@@ -13,6 +13,7 @@ namespace HyperfTest\Utils\CodeGen;
 
 use Hyperf\Utils\CodeGen\PhpParser;
 use HyperfTest\Utils\Stub\Bar;
+use HyperfTest\Utils\Stub\FooEnumStruct;
 use HyperfTest\Utils\Stub\UnionTypeFoo;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -56,6 +57,21 @@ class PhpParserTest extends TestCase
             $parameters = $foo->getMethod('__construct')->getParameters();
             $this->assertNodeParam($name, $parser->getNodeFromReflectionParameter($parameters[0]));
         }
+    }
+
+    public function testGetExprFromEnum()
+    {
+        if (PHP_VERSION_ID < 80100) {
+            $this->markTestSkipped('The version below 8.1 does not support enum.');
+        }
+
+        $parser = new PhpParser();
+        $printer = new Standard();
+
+        $bar = new ReflectionClass(Bar::class);
+        $constructor = $bar->getMethod('__construct');
+
+        $stmts = $parser->getExprFromValue($constructor);
     }
 
     public function testGetExprFromArray()
