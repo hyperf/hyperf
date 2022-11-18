@@ -13,6 +13,7 @@ namespace HyperfTest\Utils\CodeGen;
 
 use Hyperf\Utils\CodeGen\PhpParser;
 use HyperfTest\Utils\Stub\Bar;
+use HyperfTest\Utils\Stub\FooEnumStruct;
 use HyperfTest\Utils\Stub\UnionTypeFoo;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -56,6 +57,41 @@ class PhpParserTest extends TestCase
             $parameters = $foo->getMethod('__construct')->getParameters();
             $this->assertNodeParam($name, $parser->getNodeFromReflectionParameter($parameters[0]));
         }
+    }
+
+    public function testGetExprFromEnum()
+    {
+        if (PHP_VERSION_ID < 80100) {
+            $this->markTestSkipped('The version below 8.1 does not support enum.');
+        }
+
+        $parser = new PhpParser();
+        $printer = new Standard();
+
+        $bar = new ReflectionClass(FooEnumStruct::class);
+        $parameters = $bar->getMethod('__construct')->getParameters();
+
+        $stmts = $parser->getNodeFromReflectionParameter($parameters[0]);
+
+        $code = $printer->prettyPrint([$stmts]);
+
+        $this->assertSame('\HyperfTest\Utils\Stub\FooEnum $enum = \HyperfTest\Utils\Stub\FooEnum::DEFAULT', $code);
+
+        $parameters = $bar->getMethod('stdClass')->getParameters();
+
+        $stmts = $parser->getNodeFromReflectionParameter($parameters[0]);
+
+        $code = $printer->prettyPrint([$stmts]);
+
+        $this->assertSame('object $id = new \\stdClass()', $code);
+
+        $parameters = $bar->getMethod('class')->getParameters();
+
+        $stmts = $parser->getNodeFromReflectionParameter($parameters[0]);
+
+        $code = $printer->prettyPrint([$stmts]);
+
+        $this->assertSame('\HyperfTest\Di\Stub\Ignore $ignore = new \HyperfTest\Di\Stub\Ignore()', $code);
     }
 
     public function testGetExprFromArray()

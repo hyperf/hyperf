@@ -129,6 +129,7 @@ class PhpParser
             'double' => new Node\Scalar\DNumber($value),
             'NULL' => new Node\Expr\ConstFetch(new Node\Name('null')),
             'boolean' => new Node\Expr\ConstFetch(new Node\Name($value ? 'true' : 'false')),
+            'object' => $this->getExprFromObject($value),
             default => throw new InvalidArgumentException($value . ' is invalid'),
         };
     }
@@ -156,6 +157,21 @@ class PhpParser
         }
 
         return $methods;
+    }
+
+    private function getExprFromObject(object $value)
+    {
+        $ref = new ReflectionClass($value);
+        if (method_exists($ref, 'isEnum') && $ref->isEnum()) {
+            return new Node\Expr\ClassConstFetch(
+                new Node\Name('\\' . $value::class),
+                $value->name
+            );
+        }
+
+        return new Node\Expr\New_(
+            new Node\Name\FullyQualified($value::class)
+        );
     }
 
     private function getTypeWithNullableOrNot(ReflectionType $reflection): Node\ComplexType|Node\Identifier|Node\Name
