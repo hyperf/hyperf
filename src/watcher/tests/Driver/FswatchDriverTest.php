@@ -31,7 +31,7 @@ class FswatchDriverTest extends TestCase
     public function testWatch()
     {
         $container = ContainerStub::getContainer(FswatchDriver::class);
-        $option = new Option($container->get(ConfigInterface::class), [], []);
+        $option = new Option($container->get(ConfigInterface::class)->get('watcher'), [], []);
         $channel = new Channel(10);
         try {
             $driver = new FswatchDriver($option);

@@ -31,7 +31,7 @@ class ScanFileDriverTest extends TestCase
     public function testWatch()
     {
         $container = ContainerStub::getContainer(ScanFileDriver::class);
-        $option = new Option($container->get(ConfigInterface::class), [], []);
+        $option = new Option($container->get(ConfigInterface::class)->get('watcher'), [], []);
 
         $channel = new Channel(10);
         $driver = new ScanFileDriverStub($option, $container->get(StdoutLoggerInterface::class));
