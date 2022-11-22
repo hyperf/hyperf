@@ -66,6 +66,7 @@ composer analyse
 - [#5160](https://github.com/hyperf/hyperf/pull/5160) Added `$dictionary` for `Str::slug`, your can rewrite some tags easily.
 - [#5186](https://github.com/hyperf/hyperf/pull/5186) Added option `config` for command `server:watch`.
 - [#5206](https://github.com/hyperf/hyperf/pull/5206) Support the transformation of object type to AST nodes.
+- [#5211](https://github.com/hyperf/hyperf/pull/5211) Added Annotation `CacheAhead` which used to cache data ahead.
 
 ## Optimized
 

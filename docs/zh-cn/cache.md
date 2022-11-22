@@ -204,6 +204,60 @@ class UserBookService
 }
 ```
 
+### CacheAhead
+
+例如以下配置，缓存前缀为 `user`, 超时时间为 `7200`, 生成对应缓存 KEY 为 `c:user:1`，并且在 7200 - 600 秒的时候，每 10 秒进行一次缓存初始化，直到首次成功。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use App\Models\User;
+use Hyperf\Cache\Annotation\CacheAhead;
+
+class UserService
+{
+    #[CacheAhead(prefix: "user", ttl: 7200, aheadSeconds: 600, lockSeconds: 10)]
+    public function user(int $id): array
+    {
+        $user = User::query()->find($id);
+
+        return [
+            'user' => $user->toArray(),
+            'uuid' => $this->unique(),
+        ];
+    }
+}
+```
+
+当设置 `value` 后，框架会根据设置的规则，进行缓存 `KEY` 键命名。如下实例，当 `$user->id = 1` 时，缓存 `KEY` 为 `c:userBook:_1`
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use App\Models\User;
+use Hyperf\Cache\Annotation\Cacheable;
+
+class UserBookService
+{
+    #[Cacheable(prefix: "userBook", ttl: 6666, value: "_#{user.id}")]
+    public function userBook(User $user): array
+    {
+        return [
+            'book' => $user->book->toArray(),
+            'uuid' => $this->unique(),
+        ];
+    }
+}
+```
+
 ### CachePut
 
 `CachePut` 不同于 `Cacheable`，它每次调用都会执行函数体，然后再对缓存进行重写。所以当我们想更新缓存时，可以调用相关方法。
