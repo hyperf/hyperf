@@ -47,7 +47,7 @@ class CacheAheadAspect extends AbstractAspect
                 return $result['data'];
             }
 
-            if (! $driver->set($key . ':lock', '1', ['NX', 'EX' => $annotation->lockSeconds])) {
+            if (! $driver->getConnection()->set($key . ':lock', '1', ['NX', 'EX' => $annotation->lockSeconds])) {
                 return $result['data'];
             }
         }
