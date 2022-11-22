@@ -111,7 +111,7 @@ class ContainerStub
         });
 
         $poolFactory = new PoolFactory($container);
-        $container->shouldReceive('get')->with(\Redis::class)->andReturn(new Redis($poolFactory));
+        $container->shouldReceive('get')->with(Redis::class)->andReturn(new Redis($poolFactory));
 
         $container->shouldReceive('make')->with(RedisProxy::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($poolFactory) {
             return new RedisProxy($poolFactory, $args['pool']);

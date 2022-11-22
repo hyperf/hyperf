@@ -85,7 +85,7 @@ class RedisDriverTest extends TestCase
         $this->assertTrue($bool);
         $this->assertSame('yyy', $result);
 
-        $redis = $container->get(\Redis::class);
+        $redis = $container->get(Redis::class);
         $this->assertSame(1, $redis->ttl('c:xxx'));
 
         $dv = new DateInterval('PT5S');
@@ -223,7 +223,7 @@ class RedisDriverTest extends TestCase
         });
 
         $poolFactory = new PoolFactory($container);
-        $container->shouldReceive('get')->with(\Redis::class)->andReturn(new Redis($poolFactory));
+        $container->shouldReceive('get')->with(Redis::class)->andReturn(new Redis($poolFactory));
 
         $container->shouldReceive('make')->with(RedisProxy::class, Mockery::any())->andReturnUsing(function ($_, $args) use ($poolFactory) {
             return new RedisProxy($poolFactory, $args['pool']);
