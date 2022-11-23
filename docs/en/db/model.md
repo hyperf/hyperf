@@ -7,16 +7,65 @@
 Hyperf 提供了创建模型的命令，您可以很方便的根据数据表创建对应模型。命令通过 `AST` 生成模型，所以当您增加了某些方法后，也可以使用脚本方便的重置模型。
 
 ```
-$ php bin/hyperf.php db:model table_name
+php bin/hyperf.php gen:model table_name
 ```
 
-创建的模型如下
+可选参数如下：
+
+|        参数        |  类型  |              默认值               |                       备注                        |
+| :----------------: | :----: | :-------------------------------: | :-----------------------------------------------: |
+|       --pool       | string |             `default`             |       连接池，脚本会根据当前连接池配置创建        |
+|       --path       | string |            `app/Model`            |                     模型路径                      |
+|   --force-casts    |  bool  |              `false`              |             是否强制重置 `casts` 参数             |
+|      --prefix      | string |             空字符串              |                      表前缀                       |
+|   --inheritance    | string |              `Model`              |                       父类                        |
+|       --uses       | string | `Hyperf\DbConnection\Model\Model` |              配合 `inheritance` 使用              |
+| --refresh-fillable |  bool  |              `false`              |             是否刷新 `fillable` 参数              |
+|  --table-mapping   | array  |               `[]`                | 为表名 -> 模型增加映射关系 比如 ['users:Account'] |
+|  --ignore-tables   | array  |               `[]`                |        不需要生成模型的表名 比如 ['users']        |
+|  --with-comments   |  bool  |              `false`              |                 是否增加字段注释                  |
+|  --property-case   |  int   |                `0`                |              字段类型 0 蛇形 1 驼峰               |
+
+当使用 `--property-case` 将字段类型转化为驼峰时，还需要手动在模型中加入 `Hyperf\Database\Model\Concerns\CamelCase`。
+
+对应配置也可以配置到 `databases.{pool}.commands.gen:model` 中，如下
+
+> 中划线都需要转化为下划线
+
 ```php
 <?php
 
 declare(strict_types=1);
 
-namespace App\Models;
+use Hyperf\Database\Commands\ModelOption;
+
+return [
+    'default' => [
+        // 忽略其他配置
+        'commands' => [
+            'gen:model' => [
+                'path' => 'app/Model',
+                'force_casts' => true,
+                'inheritance' => 'Model',
+                'uses' => '',
+                'refresh_fillable' => true,
+                'table_mapping' => [],
+                'with_comments' => true,
+                'property_case' => ModelOption::PROPERTY_SNAKE_CASE,
+            ],
+        ],
+    ],
+];
+```
+
+创建的模型如下
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -52,17 +101,18 @@ class User extends Model
 }
 ```
 
-## 模型参数
+## 模型成员变量
 
-|    参数    |  类型  | 默认值  |         备注         |
-|:----------:|:------:|:-------:|:--------------------:|
-| connection | string | default |      数据库连接      |
-|   table    | string |   无    |      数据表名称      |
-| primaryKey | string |   id    |       模型主键       |
-|  keyType   | string |   int   |       主键类型       |
-|  fillable  | array  |   []    | 允许被批量复制的属性 |
-|   casts    | string |   无    |    数据格式化配置    |
-| timestamps |  bool  |  true   |  是否自动维护时间戳  |
+|     参数     |  类型  | 默认值  |         备注         |
+| :----------: | :----: | :-----: | :------------------: |
+|  connection  | string | default |      数据库连接      |
+|    table     | string |   无    |      数据表名称      |
+|  primaryKey  | string |   id    |       模型主键       |
+|   keyType    | string |   int   |       主键类型       |
+|   fillable   | array  |   []    | 允许被批量赋值的属性 |
+|    casts     | string |   无    |    数据格式化配置    |
+|  timestamps  |  bool  |  true   |  是否自动维护时间戳  |
+| incrementing |  bool  |  true   |     是否自增主键     |
 
 ### 数据表名称
 
@@ -73,7 +123,7 @@ class User extends Model
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -98,7 +148,7 @@ Hyperf 会假设每个数据表都有一个名为 id 的主键列。你可以定
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -115,7 +165,7 @@ class User extends Model
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -125,7 +175,7 @@ class User extends Model
 }
 ```
 
-如果您需要不希望保持 `datetime` 格式的储存，或者希望对时间做进一步的处理，您可以通过在模型内重写 `fromDateTime($value)` 方法实现。   
+如果您需要不希望保持 `datetime` 格式的储存，或者希望对时间做进一步的处理，您可以通过在模型内重写 `fromDateTime($value)` 方法实现。
 
 如果你需要自定义存储时间戳的字段名，可以在模型中设置 `CREATED_AT` 和 `UPDATED_AT` 常量的值来实现，其中一个为 `null`，则表明不希望 ORM 处理该字段：
 
@@ -134,7 +184,7 @@ class User extends Model
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -155,7 +205,7 @@ class User extends Model
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -174,7 +224,7 @@ class User extends Model
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -189,7 +239,8 @@ class User extends Model
 ## 模型查询
 
 ```php
-use App\Models\User;
+<?php
+use App\Model\User;
 
 /** @var User $user */
 $user = User::query()->where('id', 1)->first();
@@ -203,7 +254,8 @@ $user->save();
 你可以使用 `fresh` 和 `refresh` 方法重新加载模型。 `fresh` 方法会重新从数据库中检索模型。现有的模型实例不受影响：
 
 ```php
-use App\Models\User;
+<?php
+use App\Model\User;
 
 /** @var User $user */
 $user = User::query()->find(1);
@@ -214,7 +266,8 @@ $freshUser = $user->fresh();
 `refresh` 方法使用数据库中的新数据重新赋值现有模型。此外，已经加载的关系会被重新加载：
 
 ```php
-use App\Models\User;
+<?php
+use App\Model\User;
 
 /** @var User $user */
 $user = User::query()->where('name','Hyperf')->first();
@@ -242,7 +295,8 @@ $users = $users->reject(function ($user) {
 除了从指定的数据表检索所有记录外，你可以使用 `find` 或 `first` 方法来检索单条记录。这些方法返回单个模型实例，而不是返回模型集合：
 
 ```php
-use App\Models\User;
+<?php
+use App\Model\User;
 
 $user = User::query()->where('id', 1)->first();
 
@@ -254,9 +308,23 @@ $user = User::query()->find(1);
 当然 `find` 的方法不止支持单个模型。
 
 ```php
-use App\Models\User;
+<?php
+use App\Model\User;
 
 $users = User::query()->find([1, 2, 3]);
+```
+
+### 『未找到』异常
+
+有时你希望在未找到模型时抛出异常，这在控制器和路由中非常有用。    
+`findOrFail` 和 `firstOrFail` 方法会检索查询的第一个结果，如果未找到，将抛出 `Hyperf\Database\Model\ModelNotFoundException` 异常：
+
+```php
+<?php
+use App\Model\User;
+
+$model = User::findOrFail(1);
+$model = User::where('age', '>', 18)->firstOrFail();
 ```
 
 ### 聚合函数
@@ -264,36 +332,37 @@ $users = User::query()->find([1, 2, 3]);
 你还可以使用 查询构造器 提供的 `count`，`sum`, `max`, 和其他的聚合函数。这些方法只会返回适当的标量值而不是一个模型实例：
 
 ```php
-use App\Models\User;
+<?php
+use App\Model\User;
 
 $count = User::query()->where('gender', 1)->count();
 ```
 
-## 插入&更新模型
+## 插入 & 更新模型
 
 ### 插入
 
 要往数据库新增一条记录，先创建新模型实例，给实例设置属性，然后调用 `save` 方法：
 
 ```php
-use App\Models\User;
+use App\Model\User;
 
 /** @var User $user */
 $user = new User();
 
-$user->name = 'Hi Hyperf';
+$user->name = 'Hyperf';
 
 $user->save();
 ```
 
-在这个示例中，我们赋值给了 `App\Models\User` 模型实例的 `name` 属性。当调用 `save` 方法时，将会插入一条新记录。 `created_at` 和 `updated_at` 时间戳将会自动设置，不需要手动赋值。
+在这个示例中，我们赋值给了 `App\Model\User` 模型实例的 `name` 属性。当调用 `save` 方法时，将会插入一条新记录。 `created_at` 和 `updated_at` 时间戳将会自动设置，不需要手动赋值。
 
 ### 更新
 
 `save` 方法也可以用来更新数据库已经存在的模型。更新模型，你需要先检索出来，设置要更新的属性，然后调用 `save` 方法。同样， `updated_at` 时间戳会自动更新，所以也不需要手动赋值：
 
 ```php
-use App\Models\User;
+use App\Model\User;
 
 /** @var User $user */
 $user = User::query()->find(1);
@@ -305,15 +374,15 @@ $user->save();
 
 ### 批量更新
 
-也可以更新匹配查询条件的多个模型。在这个示例中，所有的 `gender` 为1的用户，修改 `gender_show` 为 男性：
+也可以更新匹配查询条件的多个模型。在这个示例中，所有的 `gender` 为 `1` 的用户，修改 `gender_show` 为 男性：
 
 ```php
-use App\Models\User;
+use App\Model\User;
 
 User::query()->where('gender', 1)->update(['gender_show' => '男性']);
 ```
 
-> 批量更新时， 更新的模型不会触发 saved 和 updated 事件。因为在批量更新时，从不会去检索模型。
+> 批量更新时， 更新的模型不会触发 `saved` 和 `updated` 事件。因为在批量更新时，并没有实例化模型。同时，也不会执行相应的 `casts`，例如数据库中 `json` 格式，在 Model 类中 `casts` 字段标记为 `array`，若是用批量更新，则插入时不会自动将 `array` 转换为 `json` 字符串格式。
 
 ### 批量赋值
 
@@ -328,7 +397,7 @@ User::query()->where('gender', 1)->update(['gender_show' => '男性']);
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -341,7 +410,7 @@ class User extends Model
 一旦我们设置好了可以批量赋值的属性，就可以通过 `create` 方法插入新数据到数据库中了。 `create` 方法将返回保存的模型实例：
 
 ```php
-use App\Models\User;
+use App\Model\User;
 
 $user = User::create(['name' => 'Hyperf']);
 ```
@@ -361,7 +430,7 @@ $user->fill(['name' => 'Hyperf']);
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Model;
 
 use Hyperf\DbConnection\Model\Model;
 
@@ -371,12 +440,45 @@ class User extends Model
 }
 ```
 
+### 其他创建方法
+
+`firstOrCreate` / `firstOrNew`
+
+这里有两个你可能用来批量赋值的方法： `firstOrCreate` 和 `firstOrNew`。
+
+`firstOrCreate` 方法会通过给定的 列 / 值 来匹配数据库中的数据。如果在数据库中找不到对应的模型， 则会从第一个参数的属性乃至第二个参数的属性中创建一条记录插入到数据库。
+
+`firstOrNew` 方法像 `firstOrCreate` 方法一样尝试通过给定的属性查找数据库中的记录。不同的是，如果 `firstOrNew` 方法找不到对应的模型，会返回一个新的模型实例。注意 `firstOrNew` 返回的模型实例尚未保存到数据库中，你需要手动调用 `save` 方法来保存：
+
+```php
+<?php
+use App\Model\User;
+
+// 通过 name 来查找用户，不存在则创建...
+$user = User::firstOrCreate(['name' => 'Hyperf']);
+
+// 通过 name 查找用户，不存在则使用 name 和 gender, age 属性创建...
+$user = User::firstOrCreate(
+    ['name' => 'Hyperf'],
+    ['gender' => 1, 'age' => 20]
+);
+
+//  通过 name 查找用户，不存在则创建一个实例...
+$user = User::firstOrNew(['name' => 'Hyperf']);
+
+// 通过 name 查找用户，不存在则使用 name 和 gender, age 属性创建一个实例...
+$user = User::firstOrNew(
+    ['name' => 'Hyperf'],
+    ['gender' => 1, 'age' => 20]
+);
+```
+
 ### 删除模型
 
 可以在模型实例上调用 `delete` 方法来删除实例：
 
 ```php
-use App\Models\User;
+use App\Model\User;
 
 $user = User::query()->find(1);
 
@@ -388,7 +490,7 @@ $user->delete();
 您可通过在查询上调用 `delete` 方法来删除模型数据，在这个例子中，我们将删除所有 `gender` 为 `1` 的用户。与批量更新一样，批量删除不会为删除的模型启动任何模型事件：
 
 ```php
-use App\Models\User;
+use App\Model\User;
 
 // 注意使用 delete 方法时必须建立在某些查询条件基础之上才能安全删除数据，不存在 where 条件，会导致删除整个数据表
 User::query()->where('gender', 1)->delete(); 
@@ -399,7 +501,7 @@ User::query()->where('gender', 1)->delete();
 在上面的例子中，在调用 `delete` 之前需要先去数据库中查找对应的模型。事实上，如果你知道了模型的主键，您可以直接通过 `destroy` 静态方法来删除模型数据，而不用先去数据库中查找。 `destroy` 方法除了接受单个主键作为参数之外，还接受多个主键，或者使用数组，集合来保存多个主键：
 
 ```php
-use App\Models\User;
+use App\Model\User;
 
 User::destroy(1);
 
@@ -415,14 +517,52 @@ User::destroy([1,2,3]);
 ```php
 <?php
 
-namespace App;
+namespace App\Model;
 
 use Hyperf\Database\Model\Model;
 use Hyperf\Database\Model\SoftDeletes;
 
-class Flight extends Model
+class User extends Model
 {
     use SoftDeletes;
+}
+```
+
+## Bit 类型
+
+默认情况下，Hyperf 中的数据库模型转 SQL 过程中，会将参数值统一转为 String 类型，以解决 int 在大数问题和使值类型更容易匹配索引，若想要使 `ORM` 支持 `bit` 类型，只需要增加以下事件监听器代码即可。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Hyperf\Database\Connection;
+use Hyperf\Database\MySqlBitConnection;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Framework\Event\BootApplication;
+
+/**
+ * @Listener()
+ */
+class SupportMySQLBitListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            BootApplication::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        Connection::resolverFor('mysql', static function ($connection, $database, $prefix, $config) {
+            return new MySqlBitConnection($connection, $database, $prefix, $config);
+        });
+    }
 }
 
 ```
