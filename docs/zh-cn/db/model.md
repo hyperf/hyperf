@@ -6,14 +6,8 @@
 
 Hyperf 提供了创建模型的命令，您可以很方便的根据数据表创建对应模型。命令通过 `AST` 生成模型，所以当您增加了某些方法后，也可以使用脚本方便的重置模型。
 
-1.1.0 + 版本：
 ```
-$ php bin/hyperf.php gen:model table_name
-```
-
-1.0.* 版本：
-```
-$ php bin/hyperf.php db:model table_name
+php bin/hyperf.php gen:model table_name
 ```
 
 可选参数如下：
@@ -532,4 +526,43 @@ class User extends Model
 {
     use SoftDeletes;
 }
+```
+
+## Bit 类型
+
+默认情况下，Hyperf 中的数据库模型转 SQL 过程中，会将参数值统一转为 String 类型，以解决 int 在大数问题和使值类型更容易匹配索引，若想要使 `ORM` 支持 `bit` 类型，只需要增加以下事件监听器代码即可。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Hyperf\Database\Connection;
+use Hyperf\Database\MySqlBitConnection;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+use Hyperf\Framework\Event\BootApplication;
+
+/**
+ * @Listener()
+ */
+class SupportMySQLBitListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            BootApplication::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        Connection::resolverFor('mysql', static function ($connection, $database, $prefix, $config) {
+            return new MySqlBitConnection($connection, $database, $prefix, $config);
+        });
+    }
+}
+
 ```
