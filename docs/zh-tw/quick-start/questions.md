@@ -182,44 +182,6 @@ use Hyperf\Utils\Coordinator\Constants;
 CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
 ```
 
-
-## ORM 不支援 bit 型別
-
-若想要使 `ORM` 支援 `bit` 型別，只需要增加以下監聽器程式碼即可。
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Listener;
-
-use Hyperf\Database\Connection;
-use Hyperf\Database\MySqlBitConnection;
-use Hyperf\Event\Annotation\Listener;
-use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Event\BootApplication;
-
-#[Listener]
-class SupportMySQLBitListener implements ListenerInterface
-{
-    public function listen(): array
-    {
-        return [
-            BootApplication::class,
-        ];
-    }
-
-    public function process(object $event)
-    {
-        Connection::resolverFor('mysql', static function ($connection, $database, $prefix, $config) {
-            return new MySqlBitConnection($connection, $database, $prefix, $config);
-        });
-    }
-}
-
-```
-
 ## OSS 上傳元件報 iconv 錯誤
 
 - fix aliyun oss wrong charset: https://github.com/aliyun/aliyun-oss-php-sdk/issues/101
