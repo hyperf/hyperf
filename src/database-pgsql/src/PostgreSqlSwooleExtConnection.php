@@ -88,7 +88,7 @@ class PostgreSqlSwooleExtConnection extends Connection
                 ($count = $statement->affectedRows($result)) > 0
             );
 
-            return $count;
+            return (int)$count;
         });
     }
 
