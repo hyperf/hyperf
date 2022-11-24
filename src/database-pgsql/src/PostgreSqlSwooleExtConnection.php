@@ -72,7 +72,7 @@ class PostgreSqlSwooleExtConnection extends Connection
      */
     public function affectingStatement(string $query, array $bindings = []): int
     {
-        return $this->run($query, $bindings, function ($query, $bindings) {
+        return (int)$this->run($query, $bindings, function ($query, $bindings) {
             if ($this->pretending()) {
                 return 0;
             }
@@ -88,7 +88,7 @@ class PostgreSqlSwooleExtConnection extends Connection
                 ($count = $statement->affectedRows($result)) > 0
             );
 
-            return (int)$count;
+            return $count;
         });
     }
 
