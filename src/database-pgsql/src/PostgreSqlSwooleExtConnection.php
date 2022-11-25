@@ -72,7 +72,7 @@ class PostgreSqlSwooleExtConnection extends Connection
      */
     public function affectingStatement(string $query, array $bindings = []): int
     {
-        return (int)$this->run($query, $bindings, function ($query, $bindings) {
+        return $this->run($query, $bindings, function ($query, $bindings) {
             if ($this->pretending()) {
                 return 0;
             }
@@ -82,11 +82,14 @@ class PostgreSqlSwooleExtConnection extends Connection
             $statement = $this->prepare($query);
             $this->recordsHaveBeenModified();
 
-            $result = $statement->execute($this->prepareBindings($bindings));
+            $statement->execute($this->prepareBindings($bindings));
 
-            $this->recordsHaveBeenModified(
-                ($count = $statement->affectedRows($result)) > 0
-            );
+            $count = $statement->affectedRows();
+            if ($count === false) {
+                throw new QueryException($query, $bindings, new Exception($statement->error, $statement->errCode));
+            }
+
+            $this->recordsHaveBeenModified($count > 0);
 
             return $count;
         });
