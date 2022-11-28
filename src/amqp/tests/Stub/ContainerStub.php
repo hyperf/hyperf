@@ -57,6 +57,7 @@ class ContainerStub
             $logger = Mockery::mock(StdoutLoggerInterface::class);
             $logger->shouldReceive('debug')->andReturn(null);
             $logger->shouldReceive('log')->andReturn(null);
+            $logger->shouldReceive('error')->andReturn(null);
             return $logger;
         });
         $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturnUsing(function () {
