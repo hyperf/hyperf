@@ -97,6 +97,9 @@ class Sender
     }
 
     /**
+     * The responses of coroutine style swoole server.
+     * Or connections of swow server.
+     * And so on.
      * @param null|Connection|Response $response
      */
     public function setResponse(int $fd, mixed $response): void
