@@ -144,6 +144,7 @@ composer analyse
 - [#4596](https://github.com/hyperf/hyperf/pull/4596) Removed `Hyperf\Utils\Context`, please use `Hyperf\Context\Context` instead.
 - [#4623](https://github.com/hyperf/hyperf/pull/4623) Removed AliyunOssHook for `hyperf/filesystem`.
 - [#4667](https://github.com/hyperf/hyperf/pull/4667) Removed `doctrine/annotations`, please use `PHP8 Attributes`.
+- [#5226](https://github.com/hyperf/hyperf/pull/5226) Removed `WARNING` log message when amqp connection restart.
 
 ## Deprecated
 
