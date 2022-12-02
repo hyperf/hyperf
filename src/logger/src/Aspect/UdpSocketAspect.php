@@ -11,16 +11,17 @@ declare(strict_types=1);
  */
 namespace Hyperf\Logger\Aspect;
 
-use Hyperf\Di\Aop\AbstractAspect;
-use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Utils\Coroutine;
 use Swoole\Coroutine\Client;
+use Hyperf\Di\Aop\AbstractAspect;
+use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Monolog\Handler\SyslogUdp\UdpSocket;
 
 class UdpSocketAspect extends AbstractAspect
 {
     public array $classes = [
-        \Monolog\Handler\SyslogUdp\UdpSocket::class . '::send',
-        \Monolog\Handler\SyslogUdp\UdpSocket::class . '::close',
+        UdpSocket::class . '::send',
+        UdpSocket::class . '::close',
     ];
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
