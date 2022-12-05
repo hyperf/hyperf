@@ -1994,6 +1994,10 @@ class Builder
             $lastResult = $results->last();
             $lastId = is_array($lastResult) ? $lastResult[$alias] : $lastResult->{$alias};
 
+            if ($lastId === null) {
+                throw new RuntimeException("The chunkById operation was aborted because the [{$alias}] column is not present in the query result.");
+            }
+
             unset($results);
         } while ($countResults == $count);
 
