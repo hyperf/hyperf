@@ -4,7 +4,7 @@
 
 | Version | Status                              | End of mainstream support | End of Security-fixes support | Release Date (or estimated date) |
 | ------- |-------------------------------------|---------------------------|-------------------------------|----------------------------------|
-| 3.0  | Developing (RC13 has been released) | 2023-06-30                | 2023-12-31                    | About 2022-12-31                 |
+| 3.0  | Developing (RC17 has been released) | 2023-06-30                | 2024-06-30                    | About 2022-12-31                 |
 | 2.2  | Security fixes support              | 2022-06-20                | 2023-6-30                     | 2021-07-19                       |
 | 2.1  | Deprecated                          | 2021-06-30                | 2021-12-31                    | 2020-12-28                       |
 | 2.0  | Deprecated                          | 2020-12-28                | 2021-06-30                    | 2020-06-22                       |

@@ -216,8 +216,9 @@ class AMQPConnection extends AbstractConnection
                     parent::write($data);
                 }
             } catch (Throwable $exception) {
-                $level = $this->exited ? 'warning' : 'error';
-                $this->logger && $this->logger->log($level, 'Send loop broken. The reason is ' . (string) $exception);
+                if (! $this->exited) {
+                    $this->logger?->error('Send loop broken. The reason is ' . $exception);
+                }
             } finally {
                 $this->loop = false;
                 if (! $this->exited) {
@@ -236,8 +237,9 @@ class AMQPConnection extends AbstractConnection
                     $this->channelManager->get($channel)->push([$frame_type, $payload], 0.001);
                 }
             } catch (Throwable $exception) {
-                $level = $this->exited ? 'warning' : 'error';
-                $this->logger && $this->logger->log($level, 'Recv loop broken. The reason is ' . $exception);
+                if (! $this->exited) {
+                    $this->logger?->error('Recv loop broken. The reason is ' . $exception);
+                }
             } finally {
                 $this->loop = false;
                 if (! $this->exited) {

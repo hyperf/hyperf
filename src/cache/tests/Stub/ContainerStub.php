@@ -9,11 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace HyperfTest\Cache\Cases;
+namespace HyperfTest\Cache\Stub;
 
-use DateInterval;
 use Hyperf\Cache\CacheManager;
-use Hyperf\Cache\Driver\KeyCollectorInterface;
 use Hyperf\Cache\Driver\RedisDriver;
 use Hyperf\Config\Config;
 use Hyperf\Contract\ConfigInterface;
@@ -30,121 +28,11 @@ use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
-use HyperfTest\Cache\Stub\Foo;
-use HyperfTest\Cache\Stub\SerializeRedisDriver;
 use Mockery;
-use PHPUnit\Framework\TestCase;
 
-/**
- * @internal
- * @coversNothing
- */
-class RedisDriverTest extends TestCase
+class ContainerStub
 {
-    protected function tearDown(): void
-    {
-        $container = $this->getContainer();
-        $driver = $container->get(CacheManager::class)->getDriver();
-        $driver->clear();
-
-        Mockery::close();
-    }
-
-    public function testSetAndGet()
-    {
-        $container = $this->getContainer();
-        $driver = $container->get(CacheManager::class)->getDriver();
-
-        $this->assertNull($driver->get('xxx', null));
-        $this->assertTrue($driver->set('xxx', 'yyy'));
-        $this->assertSame('yyy', $driver->get('xxx'));
-
-        $id = uniqid();
-        $obj = new Foo($id);
-        $driver->set('xxx', $obj);
-        $this->assertSame($id, $driver->get('xxx')->id);
-    }
-
-    public function testFetch()
-    {
-        $container = $this->getContainer();
-        $driver = $container->get(CacheManager::class)->getDriver();
-
-        [$bool, $result] = $driver->fetch('xxx');
-        $this->assertFalse($bool);
-        $this->assertNull($result);
-    }
-
-    public function testExpiredTime()
-    {
-        $container = $this->getContainer();
-        $driver = $container->get(CacheManager::class)->getDriver();
-
-        $driver->set('xxx', 'yyy', 1);
-        [$bool, $result] = $driver->fetch('xxx');
-        $this->assertTrue($bool);
-        $this->assertSame('yyy', $result);
-
-        $redis = $container->get(Redis::class);
-        $this->assertSame(1, $redis->ttl('c:xxx'));
-
-        $dv = new DateInterval('PT5S');
-        $driver->set('xxx', 'yyy', $dv);
-        $this->assertSame(5, $redis->ttl('c:xxx'));
-    }
-
-    public function testSerializeRedisCacheDriver()
-    {
-        $container = $this->getContainer();
-        $driver = $container->get(CacheManager::class)->getDriver('serialize');
-
-        $this->assertNull($driver->get('xxx', null));
-        $this->assertTrue($driver->set('xxx', 'yyy'));
-        $this->assertSame('yyy', $driver->get('xxx'));
-
-        $id = uniqid();
-        $obj = new Foo($id);
-        $driver->set('xxx', $obj);
-        $this->assertSame($id, $driver->get('xxx')->id);
-
-        $redis = $container->get(RedisFactory::class)->get('serialize');
-        $res = $redis->get('c:xxx');
-
-        $redis = $container->get(RedisFactory::class)->get('default');
-        $this->assertSame(unserialize($redis->get('c:xxx')), $res);
-    }
-
-    public function testDelete()
-    {
-        $container = $this->getContainer();
-        $driver = $container->get(CacheManager::class)->getDriver();
-
-        $driver->set('xxx', 'yyy');
-        $driver->set('xxx2', 'yyy');
-        $driver->set('xxx3', 'yyy');
-
-        $driver->deleteMultiple(['xxx', 'xxx2']);
-
-        $this->assertNull($driver->get('xxx'));
-        $this->assertNotNull($driver->get('xxx3'));
-    }
-
-    public function testKeys()
-    {
-        $container = $this->getContainer();
-        $driver = $container->get(CacheManager::class)->getDriver();
-
-        $this->assertInstanceOf(KeyCollectorInterface::class, $driver);
-        $collector = 'test:keys:' . uniqid();
-        $driver->addKey($collector, '1');
-        $driver->addKey($collector, '2');
-        $this->assertSame(['1', '2'], $driver->keys($collector));
-
-        $collector = 'test:keys:' . uniqid();
-        $this->assertSame([], $driver->keys($collector));
-    }
-
-    protected function getContainer()
+    public static function getContainer(): Container
     {
         $container = Mockery::mock(Container::class);
         $config = new Config([

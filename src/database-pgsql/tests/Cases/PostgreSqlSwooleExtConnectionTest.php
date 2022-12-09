@@ -69,4 +69,24 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
         $this->assertIsNumeric($id);
         $this->assertIsNumeric($id2);
     }
+
+    public function testAffectingStatementWithWrongSql()
+    {
+        if (SWOOLE_MAJOR_VERSION < 5) {
+            $this->markTestSkipped('PostgreSql requires Swoole version >= 5.0.0');
+        }
+
+        $connection = $this->connectionFactory->make([
+            'driver' => 'pgsql-swoole',
+            'host' => '127.0.0.1',
+            'port' => 5432,
+            'database' => 'postgres',
+            'username' => 'postgres',
+            'password' => 'postgres',
+        ]);
+
+        $this->expectException(QueryException::class);
+
+        $connection->affectingStatement('UPDATE xx SET x = 1 WHERE id = 1');
+    }
 }
