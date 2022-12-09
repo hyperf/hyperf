@@ -65,3 +65,4 @@ parameters:
     - '#has unknown class Swow#'
     - '#will always evaluate to false#'
     - '#PhpParser\\Node\\Stmt::\$stmts#'
+    - '#PHPDoc @template#'
