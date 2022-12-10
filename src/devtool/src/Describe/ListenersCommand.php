@@ -50,10 +50,7 @@ class ListenersCommand extends HyperfCommand
     protected function handleData(ListenerProviderInterface $provider, ?array $events, ?array $listeners): array
     {
         $data = [];
-        if (! property_exists($provider, 'listeners')) {
-            return $data;
-        }
-        foreach ($provider->listeners as $listener) {
+        foreach ($provider->listeners ?? [] as $listener) {
             if ($listener instanceof ListenerData) {
                 $event = $listener->event;
                 if (! is_array($listener->listener)) {
