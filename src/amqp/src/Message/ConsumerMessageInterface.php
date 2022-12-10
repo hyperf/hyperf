@@ -13,12 +13,13 @@ namespace Hyperf\Amqp\Message;
 
 use Hyperf\Amqp\Builder\QueueBuilder;
 use PhpAmqpLib\Message\AMQPMessage;
+use Psr\Container\ContainerInterface;
 
 interface ConsumerMessageInterface extends MessageInterface
 {
     public function consumeMessage($data, AMQPMessage $message): string;
 
-    public function setQueue(string $queue);
+    public function setQueue(string $queue): static;
 
     public function getQueue(): string;
 
@@ -32,17 +33,21 @@ interface ConsumerMessageInterface extends MessageInterface
 
     public function isEnable(): bool;
 
-    public function setEnable(bool $enable);
+    public function setEnable(bool $enable): static;
 
     public function getMaxConsumption(): int;
 
-    public function setMaxConsumption(int $maxConsumption);
+    public function setMaxConsumption(int $maxConsumption): static;
 
     public function getWaitTimeout(): int|float;
 
-    public function setWaitTimeout(int|float $timeout);
+    public function setWaitTimeout(int|float $timeout): static;
 
-    public function setNums(int $nums);
+    public function setNums(int $nums): static;
 
     public function getNums(): int;
+
+    public function setContainer(ContainerInterface $container): static;
+
+    public function getContainer(): ?ContainerInterface;
 }

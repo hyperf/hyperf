@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        php-version: [ '8.0', '8.1' ]
+        php-version: [ '8.0', '8.1', '8.2' ]
         sw-version: [ 'v4.5.11', 'v4.6.7', 'v4.7.1', 'v4.8.12', 'v5.0.1', 'master' ]
         exclude:
           - php-version: '8.1'
@@ -22,6 +22,14 @@ jobs:
             sw-version: 'v4.6.7'
           - php-version: '8.1'
             sw-version: 'v4.7.1'
+          - php-version: '8.2'
+            sw-version: 'v4.5.11'
+          - php-version: '8.2'
+            sw-version: 'v4.6.7'
+          - php-version: '8.2'
+            sw-version: 'v4.7.1'
+          - php-version: '8.2'
+            sw-version: 'v4.8.12'
       max-parallel: 12
       fail-fast: false
     env:
