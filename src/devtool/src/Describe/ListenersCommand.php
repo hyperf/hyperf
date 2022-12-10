@@ -54,7 +54,7 @@ class ListenersCommand extends HyperfCommand
         if (! $provider instanceof ListenerProvider) {
             return $data;
         }
-        foreach ($provider->listeners ?? [] as $listener) {
+        foreach ($provider->listeners as $listener) {
             if ($listener instanceof ListenerData) {
                 $event = $listener->event;
                 if (! is_array($listener->listener)) {
