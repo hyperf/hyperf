@@ -14,6 +14,7 @@ namespace Hyperf\Devtool\Describe;
 use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Event\ListenerData;
+use Hyperf\Event\ListenerProvider;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Symfony\Component\Console\Helper\Table;
@@ -50,6 +51,9 @@ class ListenersCommand extends HyperfCommand
     protected function handleData(ListenerProviderInterface $provider, ?array $events, ?array $listeners): array
     {
         $data = [];
+        if (! $provider instanceof ListenerProvider) {
+            return $data;
+        }
         foreach ($provider->listeners ?? [] as $listener) {
             if ($listener instanceof ListenerData) {
                 $event = $listener->event;

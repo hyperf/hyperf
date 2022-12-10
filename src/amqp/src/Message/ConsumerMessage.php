@@ -142,7 +142,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return $this;
     }
 
-    public function getContainer(): ContainerInterface
+    public function getContainer(): ?ContainerInterface
     {
         return $this->container;
     }

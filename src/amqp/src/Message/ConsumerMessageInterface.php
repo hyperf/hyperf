@@ -49,5 +49,5 @@ interface ConsumerMessageInterface extends MessageInterface
 
     public function setContainer(ContainerInterface $container): static;
 
-    public function getContainer(): ContainerInterface;
+    public function getContainer(): ?ContainerInterface;
 }
