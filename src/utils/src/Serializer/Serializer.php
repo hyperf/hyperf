@@ -129,6 +129,9 @@ class Serializer implements Normalizer, SerializerInterface, ContextAwareNormali
         return $this->encode($data, $format, $context);
     }
 
+    /**
+     * @phpstan-ignore-next-line
+     */
     final public function deserialize($data, string $type, string $format, array $context = []): mixed
     {
         if (! $this->supportsDecoding($format, $context)) {
