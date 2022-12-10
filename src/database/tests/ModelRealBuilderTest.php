@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Database;
 
 use Carbon\Carbon;
+use Hyperf\Context\Context;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\Connection;
@@ -42,6 +43,7 @@ use HyperfTest\Database\Stubs\Model\UserRolePivot;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use RuntimeException;
 
 /**
  * @internal
@@ -382,6 +384,34 @@ class ModelRealBuilderTest extends TestCase
                 $this->assertSame('select * from `user` limit 2 offset 0', $event->sql);
             }
         }
+    }
+
+    public function testChunkById()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('make')->with(PaginatorInterface::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new Paginator(...array_values($args));
+        });
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+        Context::set($key = 'chunk.by.id.' . uniqid(), 0);
+        Db::table('user')->chunkById(2, function ($data) use ($key) {
+            $id = $data->first()->id;
+            $this->assertNotSame($id, Context::get($key));
+            Context::set($key, $id);
+        });
+    }
+
+    public function testChunkByIdButNotFound()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('make')->with(PaginatorInterface::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new Paginator(...array_values($args));
+        });
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        $this->expectException(RuntimeException::class);
+
+        Db::table('user')->chunkById(1, fn () => 1, 'created_at');
     }
 
     public function testPaginationCountQuery()
