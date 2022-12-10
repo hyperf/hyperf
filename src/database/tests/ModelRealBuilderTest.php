@@ -11,37 +11,39 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database;
 
+use Mockery;
 use Carbon\Carbon;
-use Hyperf\Contract\LengthAwarePaginatorInterface;
-use Hyperf\Contract\PaginatorInterface;
+use RuntimeException;
+use Hyperf\Di\Container;
+use Hyperf\Context\Context;
+use Hyperf\DbConnection\Db;
+use Swoole\Coroutine\Channel;
 use Hyperf\Database\Connection;
-use Hyperf\Database\ConnectionInterface;
+use Hyperf\Paginator\Paginator;
+use PHPUnit\Framework\TestCase;
+use Hyperf\Database\Schema\Column;
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Contract\PaginatorInterface;
 use Hyperf\Database\ConnectionResolver;
-use Hyperf\Database\ConnectionResolverInterface;
-use Hyperf\Database\Connectors\ConnectionFactory;
-use Hyperf\Database\Connectors\MySqlConnector;
-use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Database\Model\Events\Saved;
 use Hyperf\Database\MySqlBitConnection;
-use Hyperf\Database\Schema\Column;
+use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Schema\MySqlBuilder;
-use Hyperf\DbConnection\Db;
-use Hyperf\Di\Container;
-use Hyperf\Paginator\LengthAwarePaginator;
-use Hyperf\Paginator\Paginator;
-use Hyperf\Utils\ApplicationContext;
-use HyperfTest\Database\Stubs\ContainerStub;
+use Hyperf\Database\Events\QueryExecuted;
 use HyperfTest\Database\Stubs\Model\User;
+use Hyperf\Paginator\LengthAwarePaginator;
+use HyperfTest\Database\Stubs\ContainerStub;
 use HyperfTest\Database\Stubs\Model\UserBit;
 use HyperfTest\Database\Stubs\Model\UserExt;
-use HyperfTest\Database\Stubs\Model\UserExtCamel;
 use HyperfTest\Database\Stubs\Model\UserRole;
-use HyperfTest\Database\Stubs\Model\UserRoleMorphPivot;
-use HyperfTest\Database\Stubs\Model\UserRolePivot;
-use Mockery;
-use PHPUnit\Framework\TestCase;
+use Hyperf\Database\Connectors\MySqlConnector;
+use Hyperf\Database\ConnectionResolverInterface;
+use Hyperf\Database\Connectors\ConnectionFactory;
+use HyperfTest\Database\Stubs\Model\UserExtCamel;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Swoole\Coroutine\Channel;
+use Hyperf\Contract\LengthAwarePaginatorInterface;
+use HyperfTest\Database\Stubs\Model\UserRolePivot;
+use HyperfTest\Database\Stubs\Model\UserRoleMorphPivot;
 
 /**
  * @internal
@@ -382,6 +384,34 @@ class ModelRealBuilderTest extends TestCase
                 $this->assertSame('select * from `user` limit 2 offset 0', $event->sql);
             }
         }
+    }
+
+    public function testChunkById()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('make')->with(PaginatorInterface::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new Paginator(...array_values($args));
+        });
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+        Context::set($key = 'chunk.by.id.' . uniqid(), 0);
+        Db::table('user')->chunkById(2, function ($data) use ($key) {
+            $id = $data->first()->id;
+            $this->assertNotSame($id, Context::get($key));
+            Context::set($key, $id);
+        });
+    }
+
+    public function testChunkByIdButNotFound()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('make')->with(PaginatorInterface::class, Mockery::any())->andReturnUsing(function ($_, $args) {
+            return new Paginator(...array_values($args));
+        });
+        $container->shouldReceive('get')->with(Db::class)->andReturn(new Db($container));
+
+        $this->expectException(RuntimeException::class);
+
+        Db::table('user')->chunkById(1, fn () => 1, 'created_at');
     }
 
     public function testPaginationCountQuery()
