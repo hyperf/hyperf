@@ -21,14 +21,17 @@ use PHPUnit\Framework\TestCase;
  */
 class ParserTest extends TestCase
 {
+    protected $timezone;
+
     protected function setUp(): void
     {
+        $this->timezone = ini_get('date.timezone');
         ini_set('date.timezone', 'Asia/Shanghai');
     }
 
     protected function tearDown(): void
     {
-        ini_set('date.timezone', '');
+        ini_set('date.timezone', $this->timezone);
     }
 
     public function testParseSecondLevel()

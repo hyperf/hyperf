@@ -54,7 +54,7 @@ class JsonRpcHttpTransporter implements TransporterInterface
         $uri = $node->host . ':' . $node->port . $node->pathPrefix;
         $schema = value(function () use ($node) {
             $schema = 'http';
-            if (property_exists($node, 'schema')) {
+            if ($node->schema !== null) {
                 $schema = $node->schema;
             }
             if (! in_array($schema, ['http', 'https'])) {
