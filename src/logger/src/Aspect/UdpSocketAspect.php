@@ -14,6 +14,7 @@ namespace Hyperf\Logger\Aspect;
 use Hyperf\Context\Context;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
+use Hyperf\Utils\Coroutine;
 use Monolog\Handler\SyslogUdp\UdpSocket;
 
 class UdpSocketAspect extends AbstractAspect
@@ -24,10 +25,23 @@ class UdpSocketAspect extends AbstractAspect
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        [$ip, $port] = (fn () => [$this->ip, $this->port])->call($proceedingJoinPoint->getInstance());
-        (fn () => $this->socket = null)->call($proceedingJoinPoint->getInstance());
-        $key = sprintf('%s_%s_%s_%s', $proceedingJoinPoint->className, 'Socket', $ip, $port);
+        if (Coroutine::inCoroutine()) {
+            [$ip, $port] = (fn () => [$this->ip, $this->port])->call($proceedingJoinPoint->getInstance());
 
-        return Context::getOrSet($key, fn () => $proceedingJoinPoint->process());
+            $key = sprintf('%s_%s_%s_%s', $proceedingJoinPoint->className, 'Socket', $ip, $port);
+            return Context::getOrSet($key, function () use ($port) {
+                $domain = AF_INET;
+                $protocol = SOL_UDP;
+                // Check if we are using unix sockets.
+                if ($port === 0) {
+                    $domain = AF_UNIX;
+                    $protocol = IPPROTO_IP;
+                }
+
+                return socket_create($domain, SOCK_DGRAM, $protocol);
+            });
+        }
+
+        return $proceedingJoinPoint->process();
     }
 }
