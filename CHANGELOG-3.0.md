@@ -69,6 +69,7 @@ composer analyse
 - [#5206](https://github.com/hyperf/hyperf/pull/5206) Support the transformation of object type to AST nodes.
 - [#5211](https://github.com/hyperf/hyperf/pull/5211) Added Annotation `CacheAhead` which used to cache data ahead.
 - [#5227](https://github.com/hyperf/hyperf/pull/5227) Added `Hyperf\WebSocketServer\Sender::getResponses()`.
+- [#5250](https://github.com/hyperf/hyperf/pull/5250) Added `release_at_once` config in `hyperf/db`
 
 ## Optimized
 
