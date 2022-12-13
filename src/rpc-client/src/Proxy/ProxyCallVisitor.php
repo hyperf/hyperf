@@ -16,6 +16,7 @@ use InvalidArgumentException;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\NodeVisitorAbstract;
+use ReflectionMethod;
 
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
@@ -54,6 +55,12 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         foreach ($methods as $method) {
             $stmts[] = $this->overrideMethod($method);
         }
+
+        $parentMethods = $this->getParentMethods($this->classname);
+        foreach ($parentMethods as $method) {
+            $stmts[] = $this->overrideParentMethod($method);
+        }
+
         return $stmts;
     }
 
@@ -76,7 +83,43 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             }
             return [new Node\Stmt\Expression($methodCall)];
         });
+
         return $stmt;
+    }
+
+    protected function overrideParentMethod(\ReflectionMethod $method)
+    {
+        $methodCall = new Node\Expr\MethodCall(
+            new Node\Expr\PropertyFetch(new Node\Expr\Variable('this'), new Node\Identifier('client')),
+            new Node\Identifier('__call'),
+            [
+                new Node\Arg(new Node\Scalar\MagicConst\Function_()),
+                new Node\Arg(new Node\Expr\FuncCall(new Node\Name('func_get_args'))),
+            ]
+        );
+
+        $hasReturn = true;
+        $methodReturnType = $method->getReturnType();
+        if ($methodReturnType
+            || $methodReturnType?->getName() === 'void'
+            || $methodReturnType instanceof \ReflectionUnionType) {
+            $hasReturn = false;
+        }
+
+        if ($hasReturn) {
+            $stmt = [new Node\Stmt\Return_($methodCall)];
+        } else {
+            $stmt = [new Node\Stmt\Expression($methodCall)];
+        }
+
+        return new Node\Stmt\ClassMethod(
+            $method->getName(),
+            [
+                'flags' => ReflectionMethod::IS_PUBLIC,
+                'params' => $method->getParameters(),
+                'stmts' => $stmt,
+            ]
+        );
     }
 
     protected function shouldReturn(Node\Stmt\ClassMethod $stmt): bool
@@ -85,4 +128,20 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             || $stmt->getReturnType() instanceof Node\UnionType
             || ((string) $stmt->getReturnType()) !== 'void';
     }
+
+    protected function getParentMethods(string $className): array
+    {
+        $parentMethods = [];
+        $currentClass = new \ReflectionClass($className);
+
+        $parentInterface = $currentClass->getInterfaces();
+        foreach ($parentInterface as $interface) {
+            foreach ($interface->getMethods() as $method) {
+                ! isset($parentMethods[$method->getName()]) && $parentMethods[$method->getName()] = $method;
+            }
+        }
+
+        return $parentMethods;
+    }
+
 }
