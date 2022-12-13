@@ -40,7 +40,7 @@ class DB
     {
         $container = ApplicationContext::getContainer();
         $config = $container->get(ConfigInterface::class);
-        $releaseAtOnce = $config->get(sprintf('db.%s.release_at_once', $this->poolName), true);
+        $isDeferRelease = $config->get(sprintf('db.%s.defer_release', $this->poolName), false);
 
         $hasContextConnection = Context::has($this->getContextKey());
         $connection = $this->getConnection($hasContextConnection);
@@ -59,7 +59,7 @@ class DB
                         Context::set($contextKey, null);
                         $connection->release();
                     });
-                } elseif (! $releaseAtOnce) {
+                } elseif (! $isDeferRelease) {
                     // Release the connection after coroutine is exit.
                     defer(function () use ($connection) {
                         $connection->release();

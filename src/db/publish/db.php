@@ -20,7 +20,7 @@ return [
         'charset' => env('DB_CHARSET', 'utf8mb4'),
         'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
         'fetch_mode' => PDO::FETCH_ASSOC,
-        'release_at_once' => true,
+        'defer_release' => false,
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
