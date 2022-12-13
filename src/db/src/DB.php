@@ -59,7 +59,7 @@ class DB
                         Context::set($contextKey, null);
                         $connection->release();
                     });
-                } elseif (! $isDeferRelease) {
+                } elseif ($isDeferRelease) {
                     // Release the connection after coroutine is exit.
                     defer(function () use ($connection) {
                         $connection->release();
