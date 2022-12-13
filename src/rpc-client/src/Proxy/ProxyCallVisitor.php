@@ -22,7 +22,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 {
     protected array $nodes = [];
 
-    public function __construct(private string $classname)
+    public function __construct(private string $classname, private string $originClassname)
     {
     }
 
@@ -56,7 +56,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             $stmts[] = $this->overrideMethod($method);
         }
 
-        $parentMethods = $this->getParentMethods($this->classname);
+        $parentMethods = $this->getParentMethods($this->originClassname);
         foreach ($parentMethods as $method) {
             $stmts[] = $this->overrideParentMethod($method);
         }
@@ -100,9 +100,9 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
         $hasReturn = true;
         $methodReturnType = $method->getReturnType();
-        if ($methodReturnType
-            || $methodReturnType?->getName() === 'void'
-            || $methodReturnType instanceof \ReflectionUnionType) {
+        if ($method->hasReturnType()
+            && ($methodReturnType || $methodReturnType?->getName() === 'void')
+        ) {
             $hasReturn = false;
         }
 
