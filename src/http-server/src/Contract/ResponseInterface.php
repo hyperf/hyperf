@@ -18,6 +18,9 @@ use Hyperf\HttpMessage\Cookie\Cookie;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Stringable;
 
+/**
+ * @mixin PsrResponseInterface
+ */
 interface ResponseInterface
 {
     /**
