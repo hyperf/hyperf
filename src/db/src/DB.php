@@ -13,9 +13,11 @@ namespace Hyperf\DB;
 
 use Closure;
 use Hyperf\Context\Context;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\DB\Exception\DriverNotFoundException;
 use Hyperf\DB\Pool\PoolFactory;
 use Hyperf\Utils\ApplicationContext;
+use InvalidArgumentException;
 use Throwable;
 
 /**
@@ -36,6 +38,10 @@ class DB
 
     public function __call($name, $arguments)
     {
+        $container = ApplicationContext::getContainer();
+        $config = $container->get(ConfigInterface::class);
+        $isDeferRelease = $config->get(sprintf('db.%s.defer_release', $this->poolName), false);
+
         $hasContextConnection = Context::has($this->getContextKey());
         $connection = $this->getConnection($hasContextConnection);
 
@@ -51,6 +57,11 @@ class DB
                     Context::set($contextKey = $this->getContextKey(), $connection);
                     defer(function () use ($connection, $contextKey) {
                         Context::set($contextKey, null);
+                        $connection->release();
+                    });
+                } elseif ($isDeferRelease) {
+                    // Release the connection after coroutine is exit.
+                    defer(function () use ($connection) {
                         $connection->release();
                     });
                 } else {
