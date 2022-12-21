@@ -114,7 +114,7 @@ class RedisDriverTest extends TestCase
         $driver->push(new DemoJob($id, $model));
 
         $serialized = (string) Context::get('test.async-queue.lpush.value');
-        $this->assertSame(231, strlen($serialized));
+        $this->assertSame(266, strlen($serialized));
 
         /** @var Message $class */
         $class = $packer->unpack($serialized);
