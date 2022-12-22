@@ -17,6 +17,7 @@ use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\PrettyPrinterAbstract;
+use ReflectionClass;
 
 class Ast
 {
@@ -46,8 +47,17 @@ class Ast
 
         $code = $this->codeLoader->getCodeByClassName($className);
         $stmts = $this->astParser->parse($code);
+
+        $ref = new ReflectionClass($className);
+        $parentStmts = [];
+        foreach ($ref->getInterfaces() as $class => $reflection) {
+            $parentStmts[] = $this->astParser->parse(
+                $this->codeLoader->getCodeByClassName($class)
+            );
+        }
+
         $traverser = new NodeTraverser();
-        $traverser->addVisitor(new ProxyCallVisitor($proxyClassName));
+        $traverser->addVisitor(new ProxyCallVisitor($proxyClassName, $parentStmts));
         $modifiedStmts = $traverser->traverse($stmts);
         return $this->printer->prettyPrintFile($modifiedStmts);
     }
