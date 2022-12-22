@@ -23,7 +23,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 {
     protected array $nodes = [];
 
-    public function __construct(private string $classname, private string $originClassname)
+    public function __construct(private string $classname, private array $parentStmts)
     {
     }
 
@@ -57,9 +57,12 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             $stmts[] = $this->overrideMethod($method);
         }
 
-        $parentMethods = $this->getParentMethods($this->originClassname);
-        foreach ($parentMethods as $method) {
-            $stmts[] = $this->overrideParentMethod($method);
+        foreach ($this->parentStmts as $stmt) {
+            $methods = PhpParser::getInstance()->getAllMethodsFromStmts($stmt);
+            foreach ($methods as $method) {
+                $stmts[] = $this->overrideMethod($method);
+            }
+
         }
 
         return $stmts;
@@ -87,61 +90,11 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
         return $stmt;
     }
-
-    protected function overrideParentMethod(ReflectionMethod $method)
-    {
-        $methodCall = new Node\Expr\MethodCall(
-            new Node\Expr\PropertyFetch(new Node\Expr\Variable('this'), new Node\Identifier('client')),
-            new Node\Identifier('__call'),
-            [
-                new Node\Arg(new Node\Scalar\MagicConst\Function_()),
-                new Node\Arg(new Node\Expr\FuncCall(new Node\Name('func_get_args'))),
-            ]
-        );
-
-        $hasReturn = true;
-        $methodReturnType = $method->getReturnType();
-        if ($method->hasReturnType()
-            && ($methodReturnType || $methodReturnType?->getName() === 'void')
-        ) {
-            $hasReturn = false;
-        }
-
-        if ($hasReturn) {
-            $stmt = [new Node\Stmt\Return_($methodCall)];
-        } else {
-            $stmt = [new Node\Stmt\Expression($methodCall)];
-        }
-
-        return new Node\Stmt\ClassMethod(
-            $method->getName(),
-            [
-                'flags' => ReflectionMethod::IS_PUBLIC,
-                'params' => $method->getParameters(),
-                'stmts' => $stmt,
-            ]
-        );
-    }
-
+    
     protected function shouldReturn(Node\Stmt\ClassMethod $stmt): bool
     {
         return $stmt->getReturnType() instanceof Node\NullableType
             || $stmt->getReturnType() instanceof Node\UnionType
             || ((string) $stmt->getReturnType()) !== 'void';
-    }
-
-    protected function getParentMethods(string $className): array
-    {
-        $parentMethods = [];
-        $currentClass = new ReflectionClass($className);
-
-        $parentInterface = $currentClass->getInterfaces();
-        foreach ($parentInterface as $interface) {
-            foreach ($interface->getMethods() as $method) {
-                ! isset($parentMethods[$method->getName()]) && $parentMethods[$method->getName()] = $method;
-            }
-        }
-
-        return $parentMethods;
     }
 }
