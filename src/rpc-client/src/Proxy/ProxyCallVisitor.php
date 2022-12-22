@@ -21,7 +21,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 {
     protected array $nodes = [];
 
-    public function __construct(private string $classname)
+    public function __construct(private string $classname, private array $parentStmts)
     {
     }
 
@@ -54,6 +54,14 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         foreach ($methods as $method) {
             $stmts[] = $this->overrideMethod($method);
         }
+
+        foreach ($this->parentStmts as $stmt) {
+            $methods = PhpParser::getInstance()->getAllMethodsFromStmts($stmt);
+            foreach ($methods as $method) {
+                $stmts[] = $this->overrideMethod($method);
+            }
+        }
+
         return $stmts;
     }
 
@@ -76,6 +84,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             }
             return [new Node\Stmt\Expression($methodCall)];
         });
+
         return $stmt;
     }
 
