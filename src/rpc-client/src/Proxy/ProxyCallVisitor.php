@@ -16,8 +16,6 @@ use InvalidArgumentException;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\NodeVisitorAbstract;
-use ReflectionClass;
-use ReflectionMethod;
 
 class ProxyCallVisitor extends NodeVisitorAbstract
 {
@@ -62,7 +60,6 @@ class ProxyCallVisitor extends NodeVisitorAbstract
             foreach ($methods as $method) {
                 $stmts[] = $this->overrideMethod($method);
             }
-
         }
 
         return $stmts;
@@ -90,7 +87,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
         return $stmt;
     }
-    
+
     protected function shouldReturn(Node\Stmt\ClassMethod $stmt): bool
     {
         return $stmt->getReturnType() instanceof Node\NullableType

@@ -176,3 +176,4 @@ composer analyse
 - [#5221](https://github.com/hyperf/hyperf/pull/5221) Fixed bug that `PGSqlSwooleConnection::affectingStatement()` can't work when the `sql` is wrong.
 - [#5223](https://github.com/hyperf/hyperf/pull/5223) Fixed bug that `KeepaliveConnection::isTimeout()` can't work when using swow.
 - [#5229](https://github.com/hyperf/hyperf/pull/5229) Fixed bug that proxy class will be generated failed when using parameters who allow null in constructor.
+- [#5252](https://github.com/hyperf/hyperf/pull/5252) Fixed bug that generate rpc-client failed when the interface has parent interfaces.

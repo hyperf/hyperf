@@ -17,6 +17,7 @@ use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PhpParser\PrettyPrinterAbstract;
+use ReflectionClass;
 
 class Ast
 {
@@ -47,7 +48,7 @@ class Ast
         $code = $this->codeLoader->getCodeByClassName($className);
         $stmts = $this->astParser->parse($code);
 
-        $ref = new \ReflectionClass($className);
+        $ref = new ReflectionClass($className);
         $parentStmts = [];
         foreach ($ref->getInterfaces() as $class => $reflection) {
             $parentStmts[] = $this->astParser->parse(
