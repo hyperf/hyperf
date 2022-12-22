@@ -17,7 +17,6 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\DB\Exception\DriverNotFoundException;
 use Hyperf\DB\Pool\PoolFactory;
 use Hyperf\Utils\ApplicationContext;
-use InvalidArgumentException;
 use Throwable;
 
 /**

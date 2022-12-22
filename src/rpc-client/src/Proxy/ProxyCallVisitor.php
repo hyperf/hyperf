@@ -16,6 +16,7 @@ use InvalidArgumentException;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\NodeVisitorAbstract;
+use ReflectionClass;
 use ReflectionMethod;
 
 class ProxyCallVisitor extends NodeVisitorAbstract
@@ -87,7 +88,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
         return $stmt;
     }
 
-    protected function overrideParentMethod(\ReflectionMethod $method)
+    protected function overrideParentMethod(ReflectionMethod $method)
     {
         $methodCall = new Node\Expr\MethodCall(
             new Node\Expr\PropertyFetch(new Node\Expr\Variable('this'), new Node\Identifier('client')),
@@ -132,7 +133,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
     protected function getParentMethods(string $className): array
     {
         $parentMethods = [];
-        $currentClass = new \ReflectionClass($className);
+        $currentClass = new ReflectionClass($className);
 
         $parentInterface = $currentClass->getInterfaces();
         foreach ($parentInterface as $interface) {
@@ -143,5 +144,4 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
         return $parentMethods;
     }
-
 }
