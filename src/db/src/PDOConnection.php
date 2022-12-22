@@ -33,6 +33,7 @@ class PDOConnection extends AbstractConnection
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
         'fetch_mode' => PDO::FETCH_ASSOC,
+        'defer_release' => false,
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,

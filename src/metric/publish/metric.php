@@ -34,6 +34,8 @@ return [
             'namespace' => env('APP_NAME', 'skeleton'),
             'udp_host' => env('STATSD_UDP_HOST', '127.0.0.1'),
             'udp_port' => env('STATSD_UDP_PORT', '8125'),
+            'timeout' => env('STATSD_CONNECTION_TIMEOUT', null),
+            'persistent' => env('STATSD_CONNECTION_PERSISTENT', true),
             'enable_batch' => env('STATSD_ENABLE_BATCH', true),
             'push_interval' => env('STATSD_PUSH_INTERVAL', 5),
             'sample_rate' => env('STATSD_SAMPLE_RATE', 1.0),
