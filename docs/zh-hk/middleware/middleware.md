@@ -90,7 +90,7 @@ class IndexController
 }
 ```
 
-定義多箇中間件：
+通過 `#[Middlewares]` 註解定義多箇中間件：
 
 ```php
 <?php
@@ -103,7 +103,31 @@ use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 
 #[AutoController]
-#[Middlewares(FooMiddleware::class, BarMiddleware::class)]
+#[Middlewares([FooMiddleware::class, BarMiddleware::class)]]
+class IndexController
+{
+    public function index()
+    {
+        return 'Hello Hyperf.';
+    }
+}
+```
+
+通過 `#[Middleware]` 註解定義多箇中間件：
+
+```php
+<?php
+namespace App\Controller;
+
+use App\Middleware\BarMiddleware;
+use App\Middleware\FooMiddleware;
+use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\HttpServer\Annotation\Middlewares;
+
+#[AutoController]
+#[Middleware(FooMiddleware::class)]
+#[Middleware(BarMiddleware::class)]
 class IndexController
 {
     public function index()
