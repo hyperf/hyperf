@@ -9,6 +9,7 @@
     "description": "Hot reload watcher for Hyperf",
     "require": {
         "php": ">=8.0",
+        "ext-posix": "*",
         "hyperf/command": "~3.0.0",
         "hyperf/di": "~3.0.0",
         "hyperf/framework": "~3.0.0"
