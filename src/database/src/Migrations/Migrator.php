@@ -19,6 +19,7 @@ use Hyperf\Utils\Collection;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 class Migrator
 {
@@ -57,7 +58,7 @@ class Migrator
      * Run the pending migrations at a given path.
      *
      * @param array|string $paths
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function run($paths = [], array $options = []): array
     {
@@ -84,7 +85,7 @@ class Migrator
     /**
      * Run an array of migrations.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function runPending(array $migrations, array $options = []): void
     {
@@ -122,7 +123,7 @@ class Migrator
      * Rollback the last migration operation.
      *
      * @param array|string $paths
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function rollback($paths = [], array $options = []): array
     {
@@ -305,7 +306,7 @@ class Migrator
     /**
      * Run "up" a migration instance.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function runUp(string $file, int $batch, bool $pretend): void
     {
@@ -349,7 +350,7 @@ class Migrator
      * Rollback the given migrations.
      *
      * @param array|string $paths
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function rollbackMigrations(array $migrations, $paths, array $options): array
     {
@@ -403,7 +404,7 @@ class Migrator
     /**
      * Run "down" a migration instance.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function runDown(string $file, object $migration, bool $pretend): void
     {
@@ -434,7 +435,7 @@ class Migrator
     /**
      * Run a migration inside a transaction if the database supports it.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function runMigration(object $migration, string $method): void
     {

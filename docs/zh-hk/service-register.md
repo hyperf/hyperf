@@ -33,9 +33,9 @@ composer require hyperf/service-governance-nacos
 ```php
 return [
     'enable' => [
-        // 開啟服務發現
+        // 開啓服務發現
         'discovery' => true,
-        // 開啟服務註冊
+        // 開啓服務註冊
         'register' => true,
     ],
     // 服務消費者相關配置

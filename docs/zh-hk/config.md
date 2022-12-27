@@ -52,12 +52,12 @@ use Hyperf\Server\Event;
 return [
     // 這裏省略了該文件的其它配置
     'settings' => [
-        'enable_coroutine' => true, // 開啟內置協程
-        'worker_num' => swoole_cpu_num(), // 設置啟動的 Worker 進程數
+        'enable_coroutine' => true, // 開啓內置協程
+        'worker_num' => swoole_cpu_num(), // 設置啓動的 Worker 進程數
         'pid_file' => BASE_PATH . '/runtime/hyperf.pid', // master 進程的 PID
         'open_tcp_nodelay' => true, // TCP 連接發送數據時會關閉 Nagle 合併算法，立即發往客户端連接
         'max_coroutine' => 100000, // 設置當前工作進程最大協程數量
-        'open_http2_protocol' => true, // 啟用 HTTP2 協議解析
+        'open_http2_protocol' => true, // 啓用 HTTP2 協議解析
         'max_request' => 100000, // 設置 worker 進程的最大任務數
         'socket_buffer_size' => 2 * 1024 * 1024, // 配置客户端連接的緩存區長度
     ],
@@ -68,7 +68,7 @@ return [
 
 如需要設置守護進程化，可在 `settings` 中增加 `'daemonize' => true`，執行 `php bin/hyperf.php start`後，程序將轉入後台作為守護進程運行
 
-單獨的 Server 配置需要添加在對應 `servers` 的 `settings` 當中，如 `jsonrpc` 協議的 TCP Server 配置啟用 EOF 自動分包和設置 EOF 字符串
+單獨的 Server 配置需要添加在對應 `servers` 的 `settings` 當中，如 `jsonrpc` 協議的 TCP Server 配置啓用 EOF 自動分包和設置 EOF 字符串
 ```php
 <?php
 
@@ -88,7 +88,7 @@ return [
                 Event::ON_RECEIVE => [\Hyperf\JsonRpc\TcpServer::class, 'onReceive'],
             ],
             'settings' => [
-                'open_eof_split' => true, // 啟用 EOF 自動分包
+                'open_eof_split' => true, // 啓用 EOF 自動分包
                 'package_eof' => "\r\n", // 設置 EOF 字符串
             ],
         ],
@@ -99,7 +99,7 @@ return [
 
 ## `config.php` 與 `autoload` 文件夾內的配置文件的關係
 
-`config.php` 與 `autoload` 文件夾內的配置文件在服務啟動時都會被掃描並注入到 `Hyperf\Contract\ConfigInterface` 對應的對象中，配置的結構為一個鍵值對的大數組，兩種配置形式不同的在於 `autoload`  內配置文件的文件名會作為第一層 鍵(Key) 存在，而 `config.php` 內的則以您定義的為第一層，我們通過下面的例子來演示一下。   
+`config.php` 與 `autoload` 文件夾內的配置文件在服務啓動時都會被掃描並注入到 `Hyperf\Contract\ConfigInterface` 對應的對象中，配置的結構為一個鍵值對的大數組，兩種配置形式不同的在於 `autoload`  內配置文件的文件名會作為第一層 鍵(Key) 存在，而 `config.php` 內的則以您定義的為第一層，我們通過下面的例子來演示一下。   
 我們假設存在一個 `config/autoload/client.php` 文件，文件內容如下：
 ```php
 return [
@@ -127,7 +127,7 @@ return [
 
 ### 設置配置
 
-只需在 `config/config.php` 與 `config/autoload/server.php` 與 `autoload` 文件夾內的配置，都能在服務啟動時被掃描並注入到 `Hyperf\Contract\ConfigInterface` 對應的對象中，這個流程是由 `Hyperf\Config\ConfigFactory` 在 Config 對象實例化時完成的。
+只需在 `config/config.php` 與 `config/autoload/server.php` 與 `autoload` 文件夾內的配置，都能在服務啓動時被掃描並注入到 `Hyperf\Contract\ConfigInterface` 對應的對象中，這個流程是由 `Hyperf\Config\ConfigFactory` 在 Config 對象實例化時完成的。
 
 ### 獲取配置
 

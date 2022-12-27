@@ -11,9 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Exception;
 
+use Throwable;
+
 class ForbiddenHttpException extends HttpException
 {
-    public function __construct($message = null, $code = 0, \Throwable $previous = null)
+    public function __construct($message = null, $code = 0, Throwable $previous = null)
     {
         parent::__construct(403, $message, $code, $previous);
     }

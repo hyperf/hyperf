@@ -15,6 +15,7 @@ use PhpDocReader\AnnotationException;
 use PhpDocReader\PhpParser\UseStatementParser;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionProperty;
 use Reflector;
@@ -84,7 +85,7 @@ class PhpDocReader
     {
         // Use reflection
         $returnType = $method->getReturnType();
-        if ($returnType instanceof \ReflectionNamedType) {
+        if ($returnType instanceof ReflectionNamedType) {
             if (! $returnType->isBuiltin() || $allowPrimitiveTypes) {
                 return [($returnType->allowsNull() ? '?' : '') . $returnType->getName()];
             }

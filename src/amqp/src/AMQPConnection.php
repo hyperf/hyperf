@@ -27,6 +27,7 @@ use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Wire\AMQPWriter;
 use PhpAmqpLib\Wire\IO\AbstractIO;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class AMQPConnection extends AbstractConnection
 {
@@ -214,9 +215,10 @@ class AMQPConnection extends AbstractConnection
 
                     parent::write($data);
                 }
-            } catch (\Throwable $exception) {
-                $level = $this->exited ? 'warning' : 'error';
-                $this->logger && $this->logger->log($level, 'Send loop broken. The reason is ' . (string) $exception);
+            } catch (Throwable $exception) {
+                if (! $this->exited) {
+                    $this->logger?->error('Send loop broken. The reason is ' . $exception);
+                }
             } finally {
                 $this->loop = false;
                 if (! $this->exited) {
@@ -234,9 +236,10 @@ class AMQPConnection extends AbstractConnection
                     [$frame_type, $channel, $payload] = $this->wait_frame(0);
                     $this->channelManager->get($channel)->push([$frame_type, $payload], 0.001);
                 }
-            } catch (\Throwable $exception) {
-                $level = $this->exited ? 'warning' : 'error';
-                $this->logger && $this->logger->log($level, 'Recv loop broken. The reason is ' . $exception);
+            } catch (Throwable $exception) {
+                if (! $this->exited) {
+                    $this->logger?->error('Recv loop broken. The reason is ' . $exception);
+                }
             } finally {
                 $this->loop = false;
                 if (! $this->exited) {
@@ -292,7 +295,7 @@ class AMQPConnection extends AbstractConnection
                             $pkt->write_octet(0xCE);
                             $this->chan->push($pkt->getvalue(), 0.001);
                         }
-                    } catch (\Throwable $exception) {
+                    } catch (Throwable $exception) {
                         $this->logger && $this->logger->error((string) $exception);
                     }
                 }

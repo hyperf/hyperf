@@ -13,6 +13,7 @@ namespace Hyperf\Nsq;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
+use Throwable;
 
 interface ClientInterface
 {
@@ -28,7 +29,7 @@ interface ClientInterface
      * @param array $options request options to apply
      *
      * @return ResponseInterface
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function request($method, $uri, array $options = []);
 }

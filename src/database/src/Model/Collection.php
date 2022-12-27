@@ -17,6 +17,7 @@ use Hyperf\Contract\UnCompressInterface;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Str;
+use RuntimeException;
 
 /**
  * @template TKey of array-key
@@ -534,7 +535,7 @@ class Collection extends BaseCollection implements CompressInterface
 
         $this->each(function ($model) use ($class) {
             if (get_class($model) !== $class) {
-                throw new \RuntimeException('Collections with multiple model types is not supported.');
+                throw new RuntimeException('Collections with multiple model types is not supported.');
             }
         });
 

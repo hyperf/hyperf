@@ -15,6 +15,7 @@ use Closure;
 use Generator;
 use Hyperf\Database\Query\Builder;
 use Hyperf\Database\Query\Expression;
+use Throwable;
 
 interface ConnectionInterface
 {
@@ -83,7 +84,7 @@ interface ConnectionInterface
     /**
      * Execute a Closure within a transaction.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function transaction(Closure $callback, int $attempts = 1);
 

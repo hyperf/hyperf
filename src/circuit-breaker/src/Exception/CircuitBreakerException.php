@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\CircuitBreaker\Exception;
 
-class CircuitBreakerException extends \RuntimeException
+use RuntimeException;
+
+class CircuitBreakerException extends RuntimeException
 {
     public $result;
 

@@ -14,6 +14,7 @@ namespace HyperfTest\Testing\Stub;
 use Hyperf\Context\Context;
 use Hyperf\Utils\Coroutine;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 
 class FooController
 {
@@ -24,7 +25,7 @@ class FooController
 
     public function exception()
     {
-        throw new \RuntimeException('Server Error', 500);
+        throw new RuntimeException('Server Error', 500);
     }
 
     public function id()

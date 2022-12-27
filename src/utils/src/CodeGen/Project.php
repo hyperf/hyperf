@@ -13,6 +13,7 @@ namespace Hyperf\Utils\CodeGen;
 
 use Hyperf\Utils\Composer;
 use Hyperf\Utils\Str;
+use RuntimeException;
 
 /**
  * Read composer.json autoload psr-4 rules to figure out the namespace or path.
@@ -34,7 +35,7 @@ class Project
                 return $prefix . str_replace('/', '\\', substr($path, strlen($prefixPath)));
             }
         }
-        throw new \RuntimeException("Invalid project path: {$path}");
+        throw new RuntimeException("Invalid project path: {$path}");
     }
 
     public function className(string $path): string
@@ -54,7 +55,7 @@ class Project
             }
         }
 
-        throw new \RuntimeException("Invalid class name: {$name}");
+        throw new RuntimeException("Invalid class name: {$name}");
     }
 
     protected function isRootNamespace(string $namespace): bool

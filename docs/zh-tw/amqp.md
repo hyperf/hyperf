@@ -102,7 +102,7 @@ class DemoProducer extends ProducerMessage
 
 ```
 
-通過 DI Container 獲取 `Hyperf\Amqp\Producer` 例項，即可投遞訊息。以下例項直接使用 `ApplicationContext` 獲取 `Hyperf\Amqp\Producer` 其實並不合理，DI Container 具體使用請到 [依賴注入](zh-tw/di.md) 章節中檢視。
+透過 DI Container 獲取 `Hyperf\Amqp\Producer` 例項，即可投遞訊息。以下例項直接使用 `ApplicationContext` 獲取 `Hyperf\Amqp\Producer` 其實並不合理，DI Container 具體使用請到 [依賴注入](zh-tw/di.md) 章節中檢視。
 
 ```php
 <?php
@@ -364,11 +364,11 @@ php bin/hyperf.php demo:command
 
 ## RPC 遠端過程呼叫
 
-除了典型的訊息佇列場景，我們還可以通過 AMQP 來實現 RPC 遠端過程呼叫，本元件也為這個實現提供了對應的支援。
+除了典型的訊息佇列場景，我們還可以透過 AMQP 來實現 RPC 遠端過程呼叫，本元件也為這個實現提供了對應的支援。
 
 ### 建立消費者
 
-RPC 使用的消費者，與典型訊息佇列場景的消費者實現基本無差，唯一的區別是需要通過呼叫 `reply` 方法返回資料給生產者。
+RPC 使用的消費者，與典型訊息佇列場景的消費者實現基本無差，唯一的區別是需要透過呼叫 `reply` 方法返回資料給生產者。
 
 ```php
 <?php
@@ -398,7 +398,7 @@ class ReplyConsumer extends ConsumerMessage
 
 ### 發起 RPC 呼叫
 
-作為生成者發起一次 RPC 遠端過程呼叫也非常的簡單，只需通過依賴注入容器獲得 `Hyperf\Amqp\RpcClient` 物件並呼叫其中的 `call` 方法即可，返回的結果是消費者 reply 的資料，如下所示：
+作為生成者發起一次 RPC 遠端過程呼叫也非常的簡單，只需透過依賴注入容器獲得 `Hyperf\Amqp\RpcClient` 物件並呼叫其中的 `call` 方法即可，返回的結果是消費者 reply 的資料，如下所示：
 
 ```php
 <?php
@@ -419,7 +419,7 @@ $result = $rpcClient->call(new DynamicRpcMessage('hyperf', 'hyperf', ['message' 
 
 ### 抽象 RpcMessage
 
-上面的 RPC 呼叫過程是直接通過 `Hyperf\Amqp\Message\DynamicRpcMessage` 類來完成 Exchange 和 RoutingKey 的定義，並傳遞訊息資料，在生產專案的設計上，我們可以對 RpcMessage 進行一層抽象，以統一 Exchange 和 RoutingKey 的定義。   
+上面的 RPC 呼叫過程是直接透過 `Hyperf\Amqp\Message\DynamicRpcMessage` 類來完成 Exchange 和 RoutingKey 的定義，並傳遞訊息資料，在生產專案的設計上，我們可以對 RpcMessage 進行一層抽象，以統一 Exchange 和 RoutingKey 的定義。   
 
 我們可以建立對應的 RpcMessage 類如 `App\Amqp\FooRpcMessage` 如下：
 

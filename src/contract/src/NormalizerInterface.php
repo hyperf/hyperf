@@ -11,13 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\Contract;
 
+use ArrayObject;
+
 interface NormalizerInterface
 {
     /**
      * Normalizes an object into a set of arrays/scalars.
      *
      * @param mixed $object
-     * @return null|array|\ArrayObject|bool|float|int|string
+     * @return null|array|ArrayObject|bool|float|int|string
      */
     public function normalize($object);
 

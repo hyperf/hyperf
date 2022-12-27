@@ -15,6 +15,7 @@ use Hyperf\Database\Connection;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Query\Grammars\MySqlGrammar;
 use Mockery;
+use PDO;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -30,7 +31,7 @@ class ConnectionTest extends TestCase
 
     public function getConnection(): Connection
     {
-        $connection = new Connection(Mockery::mock(\PDO::class));
+        $connection = new Connection(Mockery::mock(PDO::class));
         return $connection->setQueryGrammar(new MySqlGrammar());
     }
 

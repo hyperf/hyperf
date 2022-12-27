@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\DbConnection\Stubs;
 
-class PDOStub extends \PDO
+use PDO;
+
+class PDOStub extends PDO
 {
     public $dsn;
 

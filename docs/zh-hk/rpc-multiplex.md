@@ -102,7 +102,7 @@ return [
                 'retry_interval' => 100,
                 // 多路複用客户端數量
                 'client_count' => 4,
-                // 心跳間隔 非 numeric 表示不開啟心跳
+                // 心跳間隔 非 numeric 表示不開啓心跳
                 'heartbeat' => 30,
             ],
         ],

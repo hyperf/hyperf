@@ -10,7 +10,7 @@
 
 > 注意該配置必須於 php.ini 內配置，無法通過 ini_set() 函數來重寫
 
-當然，也可以通過以下的命令來啟動服務，在執行 PHP 命令時關閉掉 Swoole 短名功能
+當然，也可以通過以下的命令來啓動服務，在執行 PHP 命令時關閉掉 Swoole 短名功能
 
 ```
 php -d swoole.use_shortname=Off bin/hyperf.php start
@@ -46,13 +46,13 @@ php -d swoole.use_shortname=Off bin/hyperf.php start
 composer dump-autoload -o
 ```
 
-開發階段，請不要設置 `scan_cacheable` 為 `true`，它會導致 `收集器緩存` 存在時，不會再次掃描文件。另外，官方骨架包中的 `Dockerfile` 是默認開啟這個配置的，`Docker` 環境下開發的同學，請注意這裏。
+開發階段，請不要設置 `scan_cacheable` 為 `true`，它會導致 `收集器緩存` 存在時，不會再次掃描文件。另外，官方骨架包中的 `Dockerfile` 是默認開啓這個配置的，`Docker` 環境下開發的同學，請注意這裏。
 
 > 當環境變量存在 SCAN_CACHEABLE 時，.env 中無法修改這個配置。
 
-## 語法錯誤導致服務無法啟動
+## 語法錯誤導致服務無法啓動
 
-當項目啟動時，拋出類似於以下錯誤時
+當項目啓動時，拋出類似於以下錯誤時
 
 ```
 Fatal error: Uncaught PhpParser\Error: Syntax error, unexpected T_STRING on line 27 in vendor/nikic/php-parser/lib/PhpParser/ParserAbstract.php:315
@@ -81,13 +81,13 @@ memory_limit=-1
 
 在 `2.0` - `2.1` 版本時，為了實現 `AOP` 作用於非 `DI` 管理的對象（如 `new` 關鍵詞實例化的對象時），底層實現採用了 `BetterReflection` 組件來實現相關功能，帶來新的編程體驗的同時，也帶來了一些很難攻克的問題，如下:
 
-- 無掃描緩存時項目啟動很慢
+- 無掃描緩存時項目啓動很慢
 - 特殊場景下 `Inject` 和 `Value` 不生效
 - `BetterReflection` 尚未支持 PHP 8 (截止 2.2 發版時)
 
 在新的版本里，棄用了 `BetterReflection` 的應用，採用了 `子進程掃描` 的方式來解決以上這些痛點，但在低版本的 `PHP` 中也有一些不兼容的情況：
 
-使用 `PHP 7.3` 啟動應用後遇到類似如下錯誤：
+使用 `PHP 7.3` 啓動應用後遇到類似如下錯誤：
 
 ```bash
 PHP Fatal error:  Interface 'Hyperf\Signal\SignalHandlerInterface' not found in vendor/hyperf/process/src/Handler/ProcessStopHandler.php on line 17
@@ -143,7 +143,7 @@ class IndexController
 - 子類通過 `as` 修改別名: `use Psr\Http\Message\ResponseInterface as PsrResponseInterface;`
 - Trait 類`PHP7.4` 以上通過屬性類型限制: `protected ResponseInterface $response;`
 
-## Grpc 擴展或未安裝 Pcntl 導致項目無法啟動
+## Grpc 擴展或未安裝 Pcntl 導致項目無法啓動
 
 - v2.2 版本的註解掃描使用了 `pcntl` 擴展，所以請先確保您的 `PHP` 安裝了此擴展。
 
@@ -155,9 +155,9 @@ pcntl
 pcntl support => enabled
 ```
 
-- 當開啟 `grpc` 的時候，需要添加 `grpc.enable_fork_support= 1;` 到 `php.ini` 中，以支持開啟子進程。
+- 當開啓 `grpc` 的時候，需要添加 `grpc.enable_fork_support= 1;` 到 `php.ini` 中，以支持開啓子進程。
 
-## HTTP Server 將 `open_websocket_protocol` 設置為 `false` 後啟動報錯：`Swoole\Server::start(): require onReceive callback`
+## HTTP Server 將 `open_websocket_protocol` 設置為 `false` 後啓動報錯：`Swoole\Server::start(): require onReceive callback`
 
 1. 檢查 Swoole 是否編譯了 http2
 
@@ -180,44 +180,6 @@ use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coordinator\Constants;
 
 CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
-```
-
-
-## ORM 不支持 bit 類型
-
-若想要使 `ORM` 支持 `bit` 類型，只需要增加以下監聽器代碼即可。
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Listener;
-
-use Hyperf\Database\Connection;
-use Hyperf\Database\MySqlBitConnection;
-use Hyperf\Event\Annotation\Listener;
-use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Event\BootApplication;
-
-#[Listener]
-class SupportMySQLBitListener implements ListenerInterface
-{
-    public function listen(): array
-    {
-        return [
-            BootApplication::class,
-        ];
-    }
-
-    public function process(object $event)
-    {
-        Connection::resolverFor('mysql', static function ($connection, $database, $prefix, $config) {
-            return new MySqlBitConnection($connection, $database, $prefix, $config);
-        });
-    }
-}
-
 ```
 
 ## OSS 上傳組件報 iconv 錯誤

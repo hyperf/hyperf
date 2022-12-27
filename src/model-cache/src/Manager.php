@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ModelCache;
 
+use DateInterval;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\Model\Collection;
@@ -222,7 +223,7 @@ class Manager
         return $result;
     }
 
-    protected function getCacheTTL(Model $instance, HandlerInterface $handler): \DateInterval|int
+    protected function getCacheTTL(Model $instance, HandlerInterface $handler): DateInterval|int
     {
         if ($instance instanceof CacheableInterface) {
             return $instance->getCacheTTL() ?? $handler->getConfig()->getTtl();

@@ -41,6 +41,8 @@ use Hyperf\Utils\Str;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use ReflectionClass;
+use stdClass;
 
 /**
  * @internal
@@ -59,7 +61,7 @@ class TcpServerTest extends TestCase
             $container->get(StdoutLoggerInterface::class)
         );
 
-        $ref = new \ReflectionClass($server);
+        $ref = new ReflectionClass($server);
         $method = $ref->getMethod('getDefaultExceptionHandler');
         $method->setAccessible(true);
         $res = $method->invoke($server);
@@ -78,13 +80,13 @@ class TcpServerTest extends TestCase
             $container->get(StdoutLoggerInterface::class)
         );
 
-        ServerManager::set('jsonrpc-tcp-test', [0, $port = new \stdClass()]);
+        ServerManager::set('jsonrpc-tcp-test', [0, $port = new stdClass()]);
         $port->host = '0.0.0.0';
         $port->port = 9504;
 
         $server->initCoreMiddleware('jsonrpc-tcp-test');
 
-        $ref = new \ReflectionClass($server);
+        $ref = new ReflectionClass($server);
         $method = $ref->getMethod('buildRequest');
         $method->setAccessible(true);
         /** @var Request $request */

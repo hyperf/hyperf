@@ -34,11 +34,13 @@ use HyperfTest\HttpServer\Stub\CoreMiddlewareStub;
 use HyperfTest\HttpServer\Stub\DemoController;
 use HyperfTest\HttpServer\Stub\FooController;
 use HyperfTest\HttpServer\Stub\SetHeaderMiddleware;
+use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use ReflectionClass;
 use ReflectionMethod;
 
 /**
@@ -111,7 +113,7 @@ class CoreMiddlewareTest extends TestCase
         $this->assertSame('text/plain', $response->getHeaderLine('content-type'));
 
         // Json encode failed
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Type is not supported');
         $response = $reflectionMethod->invoke($middleware, ['id' => fopen(BASE_PATH . '/.gitignore', 'r+')], $request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -191,7 +193,7 @@ class CoreMiddlewareTest extends TestCase
         $container = $this->getContainer();
         $container->shouldReceive('get')->with(DemoController::class)->andReturn(new DemoController());
         $middleware = new CoreMiddleware($container, 'http');
-        $ref = new \ReflectionClass($middleware);
+        $ref = new ReflectionClass($middleware);
         $method = $ref->getMethod('handleFound');
         $method->setAccessible(true);
 
@@ -201,12 +203,27 @@ class CoreMiddlewareTest extends TestCase
         $this->assertSame('Hello World.', $res);
     }
 
+    public function testHandleFoundWithInvokable()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(DemoController::class)->andReturn(new DemoController());
+        $middleware = new CoreMiddleware($container, 'http');
+        $ref = new ReflectionClass($middleware);
+        $method = $ref->getMethod('handleFound');
+        $method->setAccessible(true);
+
+        $handler = new Handler(DemoController::class, '/');
+        $dispatched = new Dispatched([Dispatcher::FOUND, $handler, []]);
+        $res = $method->invokeArgs($middleware, [$dispatched, Mockery::mock(ServerRequestInterface::class)]);
+        $this->assertSame('Action for an invokable controller.', $res);
+    }
+
     public function testHandleFoundWithNamespace()
     {
         $container = $this->getContainer();
         $container->shouldReceive('get')->with(DemoController::class)->andReturn(new FooController());
         $middleware = new CoreMiddleware($container, 'http');
-        $ref = new \ReflectionClass($middleware);
+        $ref = new ReflectionClass($middleware);
         $method = $ref->getMethod('handleFound');
         $method->setAccessible(true);
 

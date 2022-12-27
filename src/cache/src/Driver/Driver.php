@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Cache\Driver;
 
+use Hyperf\Cache\Exception\InvalidArgumentException;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Utils\InteractsWithTime;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
@@ -48,6 +49,11 @@ abstract class Driver implements DriverInterface
 
         $packerClass = $config['packer'] ?? PhpSerializerPacker::class;
         $this->packer = $container->get($packerClass);
+    }
+
+    public function getConnection(): mixed
+    {
+        throw new InvalidArgumentException('Cannot support method getConnection.');
     }
 
     protected function getCacheKey(string $key)

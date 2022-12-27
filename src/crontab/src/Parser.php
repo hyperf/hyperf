@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Crontab;
 
 use Carbon\Carbon;
+use InvalidArgumentException;
 
 class Parser
 {
@@ -31,12 +32,12 @@ class Parser
      *                              +------------- sec (0-59)
      * @param null|Carbon|int $startTime
      * @return Carbon[]
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function parse(string $crontabString, $startTime = null)
     {
         if (! $this->isValid($crontabString)) {
-            throw new \InvalidArgumentException('Invalid cron string: ' . $crontabString);
+            throw new InvalidArgumentException('Invalid cron string: ' . $crontabString);
         }
         $startTime = $this->parseStartTime($startTime);
         $date = $this->parseDate($crontabString);
@@ -131,7 +132,7 @@ class Parser
             $startTime = time();
         }
         if (! is_numeric($startTime)) {
-            throw new \InvalidArgumentException("\$startTime have to be a valid unix timestamp ({$startTime} given)");
+            throw new InvalidArgumentException("\$startTime have to be a valid unix timestamp ({$startTime} given)");
         }
         return (int) $startTime;
     }

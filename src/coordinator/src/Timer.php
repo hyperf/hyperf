@@ -13,6 +13,7 @@ namespace Hyperf\Coordinator;
 
 use Closure;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Throwable;
 
 class Timer
 {
@@ -60,7 +61,7 @@ class Timer
                         if ($result === self::STOP || $isClosing) {
                             break;
                         }
-                    } catch (\Throwable $exception) {
+                    } catch (Throwable $exception) {
                         $this->logger?->error((string) $exception);
                     }
                 }

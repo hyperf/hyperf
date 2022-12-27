@@ -12,20 +12,18 @@ declare(strict_types=1);
 namespace Hyperf\Cache\Driver;
 
 use Hyperf\Cache\Exception\InvalidArgumentException;
+use Hyperf\Redis\Redis;
 use Psr\Container\ContainerInterface;
 
 class RedisDriver extends Driver implements KeyCollectorInterface
 {
-    /**
-     * @var \Redis
-     */
-    protected $redis;
+    protected Redis $redis;
 
     public function __construct(ContainerInterface $container, array $config)
     {
         parent::__construct($container, $config);
 
-        $this->redis = $container->get(\Redis::class);
+        $this->redis = $container->get(Redis::class);
     }
 
     public function get($key, $default = null): mixed
@@ -152,5 +150,10 @@ class RedisDriver extends Driver implements KeyCollectorInterface
     public function delKey(string $collector, string ...$key): bool
     {
         return (bool) $this->redis->sRem($this->getCacheKey($collector), ...$key);
+    }
+
+    public function getConnection(): mixed
+    {
+        return $this->redis;
     }
 }

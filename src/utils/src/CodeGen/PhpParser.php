@@ -17,8 +17,11 @@ use PhpParser\Node;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use ReflectionClass;
+use ReflectionException;
+use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionType;
+use ReflectionUnionType;
 
 class PhpParser
 {
@@ -63,7 +66,7 @@ class PhpParser
 
     public function getNodeFromReflectionType(ReflectionType $reflection): Node\ComplexType|Node\Identifier|Node\Name
     {
-        if ($reflection instanceof \ReflectionUnionType) {
+        if ($reflection instanceof ReflectionUnionType) {
             $unionType = [];
             foreach ($reflection->getTypes() as $objType) {
                 $type = $objType->getName();
@@ -126,6 +129,7 @@ class PhpParser
             'double' => new Node\Scalar\DNumber($value),
             'NULL' => new Node\Expr\ConstFetch(new Node\Name('null')),
             'boolean' => new Node\Expr\ConstFetch(new Node\Name($value ? 'true' : 'false')),
+            'object' => $this->getExprFromObject($value),
             default => throw new InvalidArgumentException($value . ' is invalid'),
         };
     }
@@ -155,21 +159,44 @@ class PhpParser
         return $methods;
     }
 
+    private function getExprFromObject(object $value)
+    {
+        $ref = new ReflectionClass($value);
+        if (method_exists($ref, 'isEnum') && $ref->isEnum()) {
+            return new Node\Expr\ClassConstFetch(
+                new Node\Name('\\' . $value::class),
+                $value->name
+            );
+        }
+
+        return new Node\Expr\New_(
+            new Node\Name\FullyQualified($value::class)
+        );
+    }
+
     private function getTypeWithNullableOrNot(ReflectionType $reflection): Node\ComplexType|Node\Identifier|Node\Name
     {
-        if (! $reflection instanceof \ReflectionNamedType) {
-            throw new \ReflectionException('ReflectionType must be ReflectionNamedType.');
+        if (! $reflection instanceof ReflectionNamedType) {
+            throw new ReflectionException('ReflectionType must be ReflectionNamedType.');
         }
 
         $name = $reflection->getName();
 
         if ($reflection->allowsNull() && $name !== 'mixed') {
-            return new Node\NullableType($name);
+            return new Node\NullableType($this->getTypeFromString($name));
         }
 
         if (! in_array($name, static::TYPES)) {
             return new Node\Name('\\' . $name);
         }
         return new Node\Identifier($name);
+    }
+
+    private function getTypeFromString(string $name)
+    {
+        if (! in_array($name, static::TYPES)) {
+            return '\\' . $name;
+        }
+        return $name;
     }
 }

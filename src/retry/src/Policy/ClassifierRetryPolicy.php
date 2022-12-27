@@ -13,6 +13,7 @@ namespace Hyperf\Retry\Policy;
 
 use Hyperf\Retry\RetryContext;
 use Hyperf\Utils\Arr;
+use Throwable;
 
 class ClassifierRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterface
 {
@@ -22,7 +23,7 @@ class ClassifierRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterf
      */
     public function __construct(
         private array $ignoreThrowables = [],
-        private array $retryThrowables = [\Throwable::class],
+        private array $retryThrowables = [Throwable::class],
         private mixed $retryOnThrowablePredicate = '',
         private mixed $retryOnResultPredicate = ''
     ) {
@@ -45,12 +46,12 @@ class ClassifierRetryPolicy extends BaseRetryPolicy implements RetryPolicyInterf
         return false;
     }
 
-    private function in(\Throwable $t, array $arr): bool
+    private function in(Throwable $t, array $arr): bool
     {
         return (bool) Arr::first($arr, fn ($v) => $t instanceof $v);
     }
 
-    private function isRetriable(\Throwable $t): bool
+    private function isRetriable(Throwable $t): bool
     {
         if ($this->in($t, $this->ignoreThrowables)) {
             return false;

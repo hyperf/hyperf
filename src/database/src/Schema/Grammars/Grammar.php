@@ -18,6 +18,7 @@ use Hyperf\Database\Grammar as BaseGrammar;
 use Hyperf\Database\Query\Expression;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Utils\Fluent;
+use RuntimeException;
 
 abstract class Grammar extends BaseGrammar
 {
@@ -42,7 +43,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Compile a change column command into a series of SQL statements.
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function compileChange(Blueprint $blueprint, Fluent $command, Connection $connection): array
     {

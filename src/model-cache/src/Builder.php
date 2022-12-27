@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ModelCache;
 
+use Closure;
 use Hyperf\Database\Model\Builder as ModelBuilder;
 use Hyperf\Utils\ApplicationContext;
 
@@ -30,7 +31,7 @@ class Builder extends ModelBuilder
         });
     }
 
-    protected function deleteCache(\Closure $closure)
+    protected function deleteCache(Closure $closure)
     {
         $queryBuilder = clone $this;
         $primaryKey = $this->model->getKeyName();

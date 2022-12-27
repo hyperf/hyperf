@@ -126,7 +126,7 @@ trait QueriesRelationships
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param string $relation
-     * @param \Closure $callback
+     * @param Closure $callback
      * @param string $operator
      * @param int $count
      * @return \Hyperf\Database\Model\Builder|static
@@ -151,7 +151,7 @@ trait QueriesRelationships
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param string $relation
-     * @param \Closure $callback
+     * @param Closure $callback
      * @return \Hyperf\Database\Model\Builder|static
      */
     public function orWhereDoesntHave($relation, Closure $callback = null)
@@ -336,7 +336,7 @@ trait QueriesRelationships
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param array|string $types
-     * @param \Closure $callback
+     * @param Closure $callback
      * @return $this
      */
     public function orWhereHasMorph(string $relation, $types, Closure $callback = null, string $operator = '>=', int $count = 1)
@@ -359,7 +359,7 @@ trait QueriesRelationships
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param array|string $types
-     * @param \Closure $callback
+     * @param Closure $callback
      * @return $this
      */
     public function orWhereDoesntHaveMorph(string $relation, $types, Closure $callback = null)
@@ -430,7 +430,7 @@ trait QueriesRelationships
      * @param string $operator
      * @param int $count
      * @param string $boolean
-     * @param null|\Closure $callback
+     * @param null|Closure $callback
      * @return \Hyperf\Database\Model\Builder|static
      */
     protected function hasNested($relations, $operator = '>=', $count = 1, $boolean = 'and', $callback = null)

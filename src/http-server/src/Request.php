@@ -21,6 +21,7 @@ use Hyperf\Utils\Str;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use RuntimeException;
 use SplFileInfo;
 
 /**
@@ -596,7 +597,7 @@ class Request implements RequestInterface
     {
         $request = $this->getRequest();
         if (! method_exists($request, $name)) {
-            throw new \RuntimeException('Method not exist.');
+            throw new RuntimeException('Method not exist.');
         }
         return $request->{$name}(...$arguments);
     }

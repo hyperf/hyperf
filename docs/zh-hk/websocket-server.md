@@ -103,7 +103,7 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
 }
 ```
 
-接下來啟動 Server，便能看到對應啟動了一個 WebSocket Server 並監聽於 9502 端口，此時您便可以通過各種 WebSocket Client 來進行連接和數據傳輸了。
+接下來啓動 Server，便能看到對應啓動了一個 WebSocket Server 並監聽於 9502 端口，此時您便可以通過各種 WebSocket Client 來進行連接和數據傳輸了。
 
 ```
 $ php bin/hyperf.php start

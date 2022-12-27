@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\SocketIOServer\Exception;
 
-class RouteNotFoundException extends \InvalidArgumentException
+use InvalidArgumentException;
+
+class RouteNotFoundException extends InvalidArgumentException
 {
 }

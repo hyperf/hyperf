@@ -102,7 +102,7 @@
 ## 文件生成
 
 - [hyperf/swagger](https://github.com/hyperf/swagger) Hyperf 官方提供的 Swagger 文件自動生成元件 (beta)
-- [tangwei/swagger](https://github.com/tw2066/api-docs) 一個基於PHP型別(DTO)自動生成swagger文件元件，啟動自動掃描、自動生成路由(UI)、註解驗證
+- [tangwei/swagger](https://github.com/tw2066/api-docs) 一個基於 PHP 型別(DTO)自動生成 swagger 文件元件，啟動自動掃描、自動生成路由(UI)、註解驗證
 
 ## Graphql
 
@@ -122,13 +122,13 @@
 
 - [hyperf/swoole-tracker](https://github.com/hyperf/swoole-tracker) Hyperf 官方提供的對接 Swoole Tracker 的元件，提供阻塞分析、效能分析、記憶體洩漏分析、執行狀態及呼叫統計等功能
 - [hyperf/task](https://github.com/hyperf/task) Hyperf 官方提供的 Task 元件，對 Swoole 的 Task 機制進行了封裝及抽象，提供便捷的註解用法
-- [hyperf/gotask](https://github.com/hyperf/gotask) GoTask 通過 Swoole 程序管理功能啟動 Go 程序作為 Swoole 主程序邊車(Sidecar)，利用程序通訊將任務投遞給邊車處理並接收返回值。可以理解為 Go 版的 Swoole TaskWorker。
+- [hyperf/gotask](https://github.com/hyperf/gotask) GoTask 透過 Swoole 程序管理功能啟動 Go 程序作為 Swoole 主程序邊車(Sidecar)，利用程序通訊將任務投遞給邊車處理並接收返回值。可以理解為 Go 版的 Swoole TaskWorker。
 
 ## 開發除錯
 
 - [swoole/yasd](https://github.com/swoole/yasd) Swoole 偵錯程式，類似 `Xdebug`，完美支援協程，支援斷點除錯、單步追蹤、`watch` 變數
-- [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 通過 `WebSocket` 實時觀測異常錯誤的開發除錯元件
-- [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支援與 laravel 類似的多 env 配置檔案功能，比如通過 `APP_ENV=testing` 可以載入 `.env.testing` 配置覆蓋預設的 `.env`
+- [firstphp/wsdebug](https://github.com/lamplife/wsdebug) 透過 `WebSocket` 實時觀測異常錯誤的開發除錯元件
+- [qbhy/hyperf-multi-env](https://github.com/qbhy/hyperf-multi-env) 支援與 laravel 類似的多 env 配置檔案功能，比如透過 `APP_ENV=testing` 可以載入 `.env.testing` 配置覆蓋預設的 `.env`
 - [qiutuleng/hyperf-dump-server](https://github.com/qiutuleng/hyperf-dump-server) 提供一個 `dump` 函式，可以將程式內的變數或資料列印到另一個命令列視窗中，基於 Symfony 的 `Var-Dump Server` 元件
 - [leearvin/hyperf-tinker](https://github.com/Arvin-Lee/hyperf-tinker) 基於 PsySH 提供一個互動式的 Hyperf shell 容器
 

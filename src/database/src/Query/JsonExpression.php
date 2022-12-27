@@ -29,7 +29,7 @@ class JsonExpression extends Expression
      * Translate the given value into the appropriate JSON binding parameter.
      *
      * @return string
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function getJsonBindingParameter(mixed $value)
     {

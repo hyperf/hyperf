@@ -217,8 +217,8 @@ class IndexController extends AbstractController
 
 | 參數名          | 説明                                                                    | 默認值  |
 | --------------- | ----------------------------------------------------------------------- | ------- |
-| open            | 是否開啟 SSL 傳輸加密                                                     | `false` |
-| compression     | 是否開啟壓縮                                                            | `true`  |
+| open            | 是否開啓 SSL 傳輸加密                                                     | `false` |
+| compression     | 是否開啓壓縮                                                            | `true`  |
 | certFile        | cert 證書存放路徑                                                        | `''`    |
 | keyFile         | 私鑰存放路徑                                                            | `''`    |
 | passphrase      | cert 證書密碼                                                            | `''`    |

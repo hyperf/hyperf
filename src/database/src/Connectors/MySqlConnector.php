@@ -18,7 +18,7 @@ class MySqlConnector extends Connector implements ConnectorInterface
     /**
      * Establish a database connection.
      *
-     * @return \PDO
+     * @return PDO
      */
     public function connect(array $config)
     {
@@ -50,7 +50,7 @@ class MySqlConnector extends Connector implements ConnectorInterface
     /**
      * Set the connection character set and collation.
      *
-     * @param \PDO $connection
+     * @param PDO $connection
      */
     protected function configureEncoding($connection, array $config)
     {
@@ -76,7 +76,7 @@ class MySqlConnector extends Connector implements ConnectorInterface
     /**
      * Set the timezone on the connection.
      *
-     * @param \PDO $connection
+     * @param PDO $connection
      */
     protected function configureTimezone($connection, array $config)
     {

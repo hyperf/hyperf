@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils\Stub;
 
-class StringCodeException extends \Exception
+use Exception;
+
+class StringCodeException extends Exception
 {
     public function __construct(string $message = '', mixed $code = 0, ?Throwable $previous = null)
     {

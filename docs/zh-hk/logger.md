@@ -148,7 +148,7 @@ class Log
 
 ### stdout 日誌
 
-框架組件所輸出的日誌在默認情況下是由 `Hyperf\Contract\StdoutLoggerInterface` 接口的實現類 `Hyperf\Framework\Logger\StdoutLogger` 提供支持的，該實現類只是為了將相關的信息通過 `print_r()` 輸出在 `標準輸出(stdout)`，即為啟動 `Hyperf` 的 `終端(Terminal)` 上，也就意味着其實並沒有使用到 `monolog` 的，那麼如果想要使用 `monolog` 來保持一致要怎麼處理呢？
+框架組件所輸出的日誌在默認情況下是由 `Hyperf\Contract\StdoutLoggerInterface` 接口的實現類 `Hyperf\Framework\Logger\StdoutLogger` 提供支持的，該實現類只是為了將相關的信息通過 `print_r()` 輸出在 `標準輸出(stdout)`，即為啓動 `Hyperf` 的 `終端(Terminal)` 上，也就意味着其實並沒有使用到 `monolog` 的，那麼如果想要使用 `monolog` 來保持一致要怎麼處理呢？
 
 是的, 還是通過強大的 `容器(Container)`.
 

@@ -23,6 +23,7 @@ use Hyperf\Utils\ApplicationContext;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use TypeError;
 
 /**
  * @internal
@@ -340,7 +341,7 @@ class DatabaseQueryBuilderTest extends TestCase
 
     public function testWhereBetweenWithoutArrayValue(): void
     {
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
 
         $builder = $this->getBuilder();
         $builder->select('*')->from('users')->whereBetween('id', 1);

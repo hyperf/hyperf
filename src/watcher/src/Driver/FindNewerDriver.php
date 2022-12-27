@@ -14,7 +14,9 @@ namespace Hyperf\Watcher\Driver;
 use Hyperf\Engine\Channel;
 use Hyperf\Utils\Str;
 use Hyperf\Watcher\Option;
-use Swoole\Coroutine\System;
+use InvalidArgumentException;
+
+use function Hyperf\Watcher\exec;
 
 class FindNewerDriver extends AbstractDriver
 {
@@ -27,13 +29,13 @@ class FindNewerDriver extends AbstractDriver
     public function __construct(protected Option $option)
     {
         parent::__construct($option);
-        $ret = System::exec('which find');
+        $ret = exec('which find');
         if (empty($ret['output'])) {
-            throw new \InvalidArgumentException('find not exists.');
+            throw new InvalidArgumentException('find not exists.');
         }
         // create two files
-        System::exec('echo 1 > ' . $this->getToModifyFile());
-        System::exec('echo 1 > ' . $this->getToScanFile());
+        exec('echo 1 > ' . $this->getToModifyFile());
+        exec('echo 1 > ' . $this->getToScanFile());
     }
 
     public function watch(Channel $channel): void
@@ -48,8 +50,8 @@ class FindNewerDriver extends AbstractDriver
             ++$this->count;
             // update mtime
             if ($changedFiles) {
-                System::exec('echo 1 > ' . $this->getToModifyFile());
-                System::exec('echo 1 > ' . $this->getToScanFile());
+                exec('echo 1 > ' . $this->getToModifyFile());
+                exec('echo 1 > ' . $this->getToScanFile());
             }
 
             foreach ($changedFiles as $file) {
@@ -75,7 +77,7 @@ class FindNewerDriver extends AbstractDriver
             $shell = $shell . sprintf('find %s -newer %s -type f', $dest, $file) . $symbol;
         }
 
-        $ret = System::exec($shell);
+        $ret = exec($shell);
         if ($ret['code'] === 0 && strlen($ret['output'])) {
             $stdout = $ret['output'];
             $lineArr = explode(PHP_EOL, $stdout);

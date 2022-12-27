@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Database\Migrations;
 
 use Closure;
+use Exception;
 use Hyperf\Utils\Filesystem\Filesystem;
 use Hyperf\Utils\Str;
 use InvalidArgumentException;
@@ -33,7 +34,7 @@ class MigrationCreator
     /**
      * Create a new migration at the given path.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function create(string $name, string $path, string $table = null, bool $create = false): string
     {
@@ -88,7 +89,7 @@ class MigrationCreator
     /**
      * Ensure that a migration with the given name doesn't already exist.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function ensureMigrationDoesntAlreadyExist(string $name, ?string $migrationPath = null)
     {

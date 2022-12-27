@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\AsyncQueue\Exception;
 
-class InvalidPackerException extends \RuntimeException
+use RuntimeException;
+
+class InvalidPackerException extends RuntimeException
 {
 }

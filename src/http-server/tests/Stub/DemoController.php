@@ -17,6 +17,11 @@ class DemoController
     {
     }
 
+    public function __invoke()
+    {
+        return 'Action for an invokable controller.';
+    }
+
     public function __return(...$args)
     {
         return $args;

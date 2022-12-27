@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Filesystem;
 
-class FileNotFoundException extends \Exception
+use Exception;
+
+class FileNotFoundException extends Exception
 {
 }

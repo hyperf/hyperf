@@ -53,7 +53,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return Result::ACK;
     }
 
-    public function setQueue(string $queue): self
+    public function setQueue(string $queue): static
     {
         $this->queue = $queue;
         return $this;
@@ -97,7 +97,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return $this->enable;
     }
 
-    public function setEnable(bool $enable): self
+    public function setEnable(bool $enable): static
     {
         $this->enable = $enable;
         return $this;
@@ -108,7 +108,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return $this->maxConsumption;
     }
 
-    public function setMaxConsumption(int $maxConsumption)
+    public function setMaxConsumption(int $maxConsumption): static
     {
         $this->maxConsumption = $maxConsumption;
         return $this;
@@ -119,7 +119,7 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return $this->waitTimeout;
     }
 
-    public function setWaitTimeout(int|float $timeout)
+    public function setWaitTimeout(int|float $timeout): static
     {
         $this->waitTimeout = $timeout;
         return $this;
@@ -130,10 +130,21 @@ abstract class ConsumerMessage extends Message implements ConsumerMessageInterfa
         return $this->nums;
     }
 
-    public function setNums(int $nums)
+    public function setNums(int $nums): static
     {
         $this->nums = $nums;
         return $this;
+    }
+
+    public function setContainer(ContainerInterface $container): static
+    {
+        $this->container = $container;
+        return $this;
+    }
+
+    public function getContainer(): ?ContainerInterface
+    {
+        return $this->container;
     }
 
     protected function reply($data, AMQPMessage $message)

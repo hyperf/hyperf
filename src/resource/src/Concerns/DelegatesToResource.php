@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Resource\Concerns;
 
+use Exception;
 use Hyperf\Resource\Exception\ResourceException;
 use Hyperf\Utils\Traits\ForwardsCalls;
 
@@ -87,7 +88,7 @@ trait DelegatesToResource
      *
      * @param mixed $value
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function resolveRouteBinding($value)
     {

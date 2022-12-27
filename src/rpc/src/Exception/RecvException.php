@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Rpc\Exception;
 
-class RecvException extends \RuntimeException
+use RuntimeException;
+
+class RecvException extends RuntimeException
 {
 }

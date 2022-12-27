@@ -14,6 +14,7 @@ namespace HyperfTest\Utils\CodeGen;
 use Hyperf\Utils\CodeGen\PhpDocReader;
 use HyperfTest\Utils\Stub\DocFoo;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @internal
@@ -24,7 +25,7 @@ class PhpDocReaderTest extends TestCase
     public function testGetReturnClass()
     {
         $reader = PhpDocReader::getInstance();
-        $ref = new \ReflectionClass(DocFoo::class);
+        $ref = new ReflectionClass(DocFoo::class);
         $res = $reader->getReturnType($ref->getMethod('getBuiltinInt'));
         $this->assertSame(['?int'], $res);
         $res = $reader->getReturnType($ref->getMethod('getString'));

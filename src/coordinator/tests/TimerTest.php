@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Coordinator;
 
+use Closure;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
 use Hyperf\Utils\Waiter;
@@ -112,7 +113,7 @@ class TimerTest extends TestCase
         $this->assertTrue(true);
     }
 
-    private function wait(\Closure $closure)
+    private function wait(Closure $closure)
     {
         $waiter = new Waiter();
         $waiter->wait($closure);

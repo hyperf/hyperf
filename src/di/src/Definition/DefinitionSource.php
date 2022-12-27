@@ -13,6 +13,7 @@ namespace Hyperf\Di\Definition;
 
 use Hyperf\Di\ReflectionManager;
 use ReflectionFunctionAbstract;
+use ReflectionNamedType;
 
 use function class_exists;
 use function interface_exists;
@@ -73,7 +74,7 @@ class DefinitionSource implements DefinitionSourceInterface
             }
 
             $parameterType = $parameter->getType();
-            if ($parameterType instanceof \ReflectionNamedType && ! $parameterType->isBuiltin()) {
+            if ($parameterType instanceof ReflectionNamedType && ! $parameterType->isBuiltin()) {
                 $parameters[$index] = new Reference($parameterType->getName());
             }
         }

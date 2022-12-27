@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils;
 
+use ArrayObject;
 use Hyperf\Utils\Optional;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -117,7 +118,7 @@ class OptionalTest extends TestCase
 
     public function testArrayObject()
     {
-        $obj = new \ArrayObject(['id' => $id = uniqid()]);
+        $obj = new ArrayObject(['id' => $id = uniqid()]);
 
         $optional = new Optional($obj);
 

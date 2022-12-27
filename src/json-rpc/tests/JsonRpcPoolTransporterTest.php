@@ -28,6 +28,7 @@ use Hyperf\Utils\ApplicationContext;
 use HyperfTest\JsonRpc\Stub\RpcPoolStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * @internal
@@ -149,7 +150,7 @@ class JsonRpcPoolTransporterTest extends TestCase
 
     public function testsplObjectHash()
     {
-        $class = new \stdClass();
+        $class = new stdClass();
         $class->id = 1;
         $hash = spl_object_hash($class);
 

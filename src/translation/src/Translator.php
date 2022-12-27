@@ -146,7 +146,7 @@ class Translator implements TranslatorInterface
     /**
      * Get a translation according to an integer value.
      *
-     * @param array|\Countable|int $number
+     * @param array|Countable|int $number
      */
     public function transChoice(string $key, $number, array $replace = [], ?string $locale = null): string
     {

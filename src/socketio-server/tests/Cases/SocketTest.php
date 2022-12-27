@@ -20,6 +20,7 @@ use Hyperf\WebSocketServer\Context;
 use Hyperf\WebSocketServer\Sender;
 use Mockery;
 use Psr\Http\Message\ServerRequestInterface;
+use ReflectionClass;
 
 /**
  * @internal
@@ -108,7 +109,7 @@ class SocketTest extends AbstractTestCase
             'fd' => 1,
             'nsp' => '/',
         ]);
-        $reflection = new \ReflectionClass(Socket::class);
+        $reflection = new ReflectionClass(Socket::class);
         $prop = $reflection->getProperty('broadcast');
         $prop->setAccessible(true);
         $this->assertFalse($prop->getValue($socket1));

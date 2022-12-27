@@ -61,6 +61,7 @@ class ConfigFactory{
             return null;
         }
         foreach ($stmts as $node) {
+            /* @phpstan-ignore-next-line */
             if (isset($node->stmts) && is_array($node->stmts) && ! empty($node->stmts)) {
                 foreach ($node->stmts as $val) {
                     return $val;

@@ -26,6 +26,7 @@ use Hyperf\Utils\SafeCaller;
 use HyperfTest\HttpServer\Stub\ServerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
@@ -55,7 +56,7 @@ class ServerTest extends TestCase
         ]);
 
         $dispatcher->shouldReceive('dispatch')->andReturnUsing(function ($exception) {
-            throw new \RuntimeException('Fatal Error');
+            throw new RuntimeException('Fatal Error');
         });
 
         $emitter->shouldReceive('emit')->once()->andReturnUsing(function ($response) {

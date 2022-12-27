@@ -14,6 +14,7 @@ namespace Hyperf\Macroable;
 use BadMethodCallException;
 use Closure;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionMethod;
 
 /**
@@ -33,7 +34,7 @@ trait Macroable
      * @param string $method
      * @param array $parameters
      * @return mixed
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     public static function __callStatic($method, $parameters)
     {
@@ -60,7 +61,7 @@ trait Macroable
      * @param string $method
      * @param array $parameters
      * @return mixed
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     public function __call($method, $parameters)
     {
@@ -98,7 +99,7 @@ trait Macroable
      * @param object $mixin
      * @param bool $replace
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public static function mixin($mixin, $replace = true)
     {

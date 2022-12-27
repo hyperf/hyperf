@@ -16,6 +16,7 @@ use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 abstract class AbstractLoadBalancer implements LoadBalancerInterface
 {
@@ -80,7 +81,7 @@ abstract class AbstractLoadBalancer implements LoadBalancerInterface
                             ! is_null($refreshCallback) && $refreshCallback($beforeNodes, $nodes);
                         }
                     }
-                } catch (\Throwable $exception) {
+                } catch (Throwable $exception) {
                     $this->logger?->error((string) $exception);
                 }
             }

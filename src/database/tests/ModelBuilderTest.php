@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database;
 
+use BadMethodCallException;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Closure;
@@ -443,7 +444,7 @@ class ModelBuilderTest extends TestCase
 
     public function testMissingStaticMacrosThrowsProperException()
     {
-        $this->expectException(\BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Call to undefined method Hyperf\Database\Model\Builder::missingMacro()');
         Builder::missingMacro();
     }

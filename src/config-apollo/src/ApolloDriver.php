@@ -19,6 +19,7 @@ use Hyperf\Engine\Channel;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
+use Throwable;
 
 class ApolloDriver extends AbstractDriver
 {
@@ -76,7 +77,7 @@ class ApolloDriver extends AbstractDriver
                         $this->syncConfig($config);
                         $prevConfig = $config;
                     }
-                } catch (\Throwable $exception) {
+                } catch (Throwable $exception) {
                     $this->logger->error((string) $exception);
                 }
             }
@@ -97,7 +98,7 @@ class ApolloDriver extends AbstractDriver
                             break;
                         }
                         $callable();
-                    } catch (\Throwable $exception) {
+                    } catch (Throwable $exception) {
                         $this->logger->error((string) $exception);
                         throw $exception;
                     }

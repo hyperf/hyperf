@@ -17,6 +17,7 @@ use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Exception\InvalidArgumentException;
+use Throwable;
 
 /**
  * @method bool isFull()
@@ -72,7 +73,7 @@ class Concurrent
         Coroutine::create(function () use ($callable) {
             try {
                 $callable();
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 if (ApplicationContext::hasContainer()) {
                     $container = ApplicationContext::getContainer();
                     if ($container->has(StdoutLoggerInterface::class) && $container->has(FormatterInterface::class)) {

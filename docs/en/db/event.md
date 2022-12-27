@@ -1,12 +1,12 @@
-# 事件
-模型事件实现于 [psr/event-dispatcher](https://github.com/php-fig/event-dispatcher) 接口。
+# Event
+Model events are implemented in the [psr/event-dispatcher](https://github.com/php-fig/event-dispatcher) interface.
 
-## 自定义监听器
+## Custom listener
 
-得益于 [hyperf/event](https://github.com/hyperf-cloud/event) 组件的支撑，用户可以很方便的对以下事件进行监听。
-例如 `QueryExecuted` , `StatementPrepared` , `TransactionBeginning` , `TransactionCommitted` , `TransactionRolledBack` 。
-接下来我们就实现一个记录SQL的监听器，来说一下怎么使用。
-首先我们定义好 `DbQueryExecutedListener` ，实现 `Hyperf\Event\Contract\ListenerInterface` 接口并对类定义 `Hyperf\Event\Annotation\Listener` 注解，这样 Hyperf 就会自动把该监听器注册到事件调度器中，无需任何手动配置，示例代码如下：
+Thanks to the support of the [hyperf/event](https://github.com/hyperf-cloud/event) component, users can easily monitor the following events.
+For example `QueryExecuted` , `StatementPrepared` , `TransactionBeginning` , `TransactionCommitted` , `TransactionRolledBack` .
+Next, we will implement a listener that records SQL and talk about how to use it.
+First, we define `DbQueryExecutedListener`, implement the `Hyperf\Event\Contract\ListenerInterface` interface and define the `Hyperf\Event\Annotation\Listener` annotation on the class, so that Hyperf will automatically register the listener to the event scheduler, Without any manual configuration, the sample code is as follows:
 
 ```php
 <?php
@@ -66,30 +66,30 @@ class DbQueryExecutedListener implements ListenerInterface
 
 ```
 
-## 模型事件
+## Model events
 
-模型事件与 `EloquentORM` 不太一致，`EloquentORM` 使用 `Observer` 监听模型事件。`Hyperf` 直接使用 `钩子函数` 来处理对应的事件。如果你还是喜欢 `Observer` 的方式，可以通过 `事件监听`，自己实现。当然，你也可以在 [issue#2](https://github.com/hyperf-cloud/hyperf/issues/2) 下面告诉我们。
+Model events are not consistent with `EloquentORM`, which uses `Observer` to listen for model events. `Hyperf` directly uses `hooks` to handle corresponding events. If you still like the way of `Observer`, you can implement `event listener` by yourself. Of course, you can also let us know under [issue#2](https://github.com/hyperf-cloud/hyperf/issues/2).
 
-### 钩子函数
+### Hook function
 
-|    事件名    |     触发实际     | 是否阻断 |               备注                |
-|:------------:|:----------------:|:--------:|:-------------------------- --:|
-|   booting    |  模型首次加载前  |    否    |    进程生命周期中只会触发一次         |
-|    booted    |  模型首次加载后  |    否    |    进程生命周期中只会触发一次         |
-|  retrieved   |    填充数据后   |    否    |  每当模型从DB或缓存查询出来后触发      |
-|   creating   |    数据创建时   |    是    |                                  |
-|   created    |    数据创建后   |    否    |                                  |
-|   updating   |    数据更新时   |    是    |                                  |
-|   updated    |    数据更新后   |    否    |                                  |
-|    saving    | 数据创建或更新时 |    是    |                                  |
-|    saved     | 数据创建或更新后 |    否    |                                  |
-|  restoring   | 软删除数据回复时 |    是    |                                  |
-|   restored   | 软删除数据回复后 |    否    |                                  |
-|   deleting   |    数据删除时   |    是    |                                  |
-|   deleted    |    数据删除后   |    否    |                                  |
-| forceDeleted |  数据强制删除后  |    否    |                                  |
+|  Event name  |  Trigger actual                                 | Whether to block |                           Remark                           |
+|:------------:|:-----------------------------------------------:|:----------------:|:----------------------------------------------------------:|
+|   booting    |  Before the model is loaded for the first time  |        no        |    Triggered only once in the life cycle of the process    |
+|    booted    |  After the model is loaded for the first time   |        no        |    Triggered only once in the life cycle of the process    |
+|  retrieved   |            After filling the data               |        no        |  Fired whenever the model is queried from the DB or cache  |
+|   creating   |           When the data was created             |        yes       |                                                            |
+|   created    |           After the data is created             |        no        |                                                            |
+|   updating   |             When data is updated                |        yes       |                                                            |
+|   updated    |               After data update                 |        no        |                                                            |
+|    saving    |       When data is created or updated           |        yes       |                                                            |
+|    saved     |       After data is created or updated          |        no        |                                                            |
+|  restoring   |       When soft deleted data is restored        |        yes       |                                                            |
+|   restored   |       After Soft Deleted Data Recovery          |        no        |                                                            |
+|   deleting   |              When data is deleted               |        yes       |                                                            |
+|   deleted    |              After data deletion                |        no        |                                                            |
+| forceDeleted |       After the data is forcibly deleted        |        no        |                                                            |
 
-针对某个模型的事件使用十分简单，只需要在模型中增加对应的方法即可。例如下方保存数据时，触发 `saving` 事件，主动覆写 `created_at` 字段。
+The use of events for a model is very simple, just add the corresponding method to the model. For example, when the data is saved below, the `saving` event is triggered, and the `created_at` field is actively overwritten.
 
 ```php
 <?php
@@ -133,9 +133,9 @@ class User extends Model
 
 ```
 
-### 事件监听
+### Event listener
 
-当你需要监听所有的模型事件时，可以很方便的自定义对应的 `Listener`，比如下方模型缓存的监听器，当模型修改和删除后，会删除对应缓存。
+When you need to monitor all model events, you can easily customize the corresponding `Listener`, such as the listener of the model cache below. When the model is modified and deleted, the corresponding cache will be deleted.
 
 ```php
 <?php

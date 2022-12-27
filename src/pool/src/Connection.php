@@ -15,6 +15,7 @@ use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\PoolInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerInterface;
+use Throwable;
 
 abstract class Connection implements ConnectionInterface
 {
@@ -33,7 +34,7 @@ abstract class Connection implements ConnectionInterface
     {
         try {
             return $this->getActiveConnection();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
                 $logger->warning('Get connection failed, try again. ' . $exception);
             }

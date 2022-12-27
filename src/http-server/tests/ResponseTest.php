@@ -26,6 +26,7 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+use ReflectionClass;
 use Swoole\Http\Response as SwooleResponse;
 
 /**
@@ -83,7 +84,7 @@ class ResponseTest extends TestCase
         Context::set(PsrResponseInterface::class, $psrResponse);
 
         $response = new Response();
-        $reflectionClass = new \ReflectionClass(Response::class);
+        $reflectionClass = new ReflectionClass(Response::class);
         $reflectionMethod = $reflectionClass->getMethod('toXml');
         $reflectionMethod->setAccessible(true);
 

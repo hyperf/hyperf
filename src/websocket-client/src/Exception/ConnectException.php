@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\WebSocketClient\Exception;
 
-class ConnectException extends \RuntimeException
+use RuntimeException;
+
+class ConnectException extends RuntimeException
 {
 }

@@ -599,8 +599,9 @@ class Str
 
     /**
      * Generate a URL friendly "slug" from a given string.
+     * @param mixed $dictionary
      */
-    public static function slug(string $title, string $separator = '-', string $language = 'en'): string
+    public static function slug(string $title, string $separator = '-', ?string $language = 'en', $dictionary = ['@' => 'at']): string
     {
         $title = $language ? static::ascii($title, $language) : $title;
 
@@ -609,8 +610,12 @@ class Str
 
         $title = preg_replace('![' . preg_quote($flip) . ']+!u', $separator, $title);
 
-        // Replace @ with the word 'at'
-        $title = str_replace('@', $separator . 'at' . $separator, $title);
+        // Replace dictionary words
+        foreach ($dictionary as $key => $value) {
+            $dictionary[$key] = $separator . $value . $separator;
+        }
+
+        $title = str_replace(array_keys($dictionary), array_values($dictionary), $title);
 
         // Remove all characters that are not the separator, letters, numbers, or whitespace.
         $title = preg_replace('![^' . preg_quote($separator) . '\pL\pN\s]+!u', '', mb_strtolower($title));

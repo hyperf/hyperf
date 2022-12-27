@@ -14,7 +14,7 @@ Swoole Tracker 能夠幫助企業自動分析並彙總統計關鍵系統調用�
 > 各種維度統計服務上報的調用信息， 比如總流量、平均耗時、超時率等，並全面分析報告服務狀況
 
 - 擁有強大的調試工具鏈
-> 本系統支持遠程調試，可在系統後台遠程開啟檢測內存泄漏、阻塞檢測、代碼性能分析和查看調用棧；也支持手動埋點進行調試，後台統一查看結果
+> 本系統支持遠程調試，可在系統後台遠程開啓檢測內存泄漏、阻塞檢測、代碼性能分析和查看調用棧；也支持手動埋點進行調試，後台統一查看結果
 
 - 同時支持 FPM 和 Swoole
 > 完美支持 PHP-FPM 環境，不僅限於在 Swoole 中使用
@@ -58,7 +58,7 @@ extension=/opt/.build/swoole_tracker.so
 apm.enable=1
 ;採樣率 例如：100%
 apm.sampling_rate=100
-;開啟內存泄漏檢測時添加 默認0 關閉狀態
+;開啓內存泄漏檢測時添加 默認0 關閉狀態
 apm.enable_memcheck=1
 
 ;Tracker從v3.3.0版本開始修改為了Zend擴展
@@ -193,7 +193,7 @@ Swoole Tracker 本是一款商業產品，擁有進行內存泄漏檢測的能�
 apm.enable_malloc_hook=1
 ```
 
-!> 注意：不要在 composer 安裝依賴時開啟；不要在生成代理類緩存時開啟。
+!> 注意：不要在 composer 安裝依賴時開啓；不要在生成代理類緩存時開啓。
 
 3. 根據自己的業務，在 Swoole 的 onReceive 或者 onRequest 事件開頭加上 `trackerHookMalloc()` 調用：
 

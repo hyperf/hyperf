@@ -17,6 +17,7 @@ use Hyperf\Guzzle\ClientFactory;
 use Hyperf\LoadBalancer\LoadBalancerInterface;
 use Hyperf\LoadBalancer\Node;
 use Hyperf\Rpc\Contract\TransporterInterface;
+use RuntimeException;
 
 class JsonRpcHttpTransporter implements TransporterInterface
 {
@@ -53,7 +54,7 @@ class JsonRpcHttpTransporter implements TransporterInterface
         $uri = $node->host . ':' . $node->port . $node->pathPrefix;
         $schema = value(function () use ($node) {
             $schema = 'http';
-            if (property_exists($node, 'schema')) {
+            if ($node->schema !== null) {
                 $schema = $node->schema;
             }
             if (! in_array($schema, ['http', 'https'])) {
@@ -80,7 +81,7 @@ class JsonRpcHttpTransporter implements TransporterInterface
 
     public function recv()
     {
-        throw new \RuntimeException(__CLASS__ . ' does not support recv method.');
+        throw new RuntimeException(__CLASS__ . ' does not support recv method.');
     }
 
     public function getClient(): Client

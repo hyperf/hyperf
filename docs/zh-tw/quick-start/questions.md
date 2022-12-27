@@ -8,9 +8,9 @@
 
 您需要在您的 php.ini 配置檔案增加 `swoole.use_shortname = 'Off'` 配置項
 
-> 注意該配置必須於 php.ini 內配置，無法通過 ini_set() 函式來重寫
+> 注意該配置必須於 php.ini 內配置，無法透過 ini_set() 函式來重寫
 
-當然，也可以通過以下的命令來啟動服務，在執行 PHP 命令時關閉掉 Swoole 短名功能
+當然，也可以透過以下的命令來啟動服務，在執行 PHP 命令時關閉掉 Swoole 短名功能
 
 ```
 php -d swoole.use_shortname=Off bin/hyperf.php start
@@ -95,7 +95,7 @@ PHP Fatal error:  Interface 'Hyperf\Signal\SignalHandlerInterface' not found in 
 PHP Fatal error:  Interface 'Symfony\Component\Serializer\SerializerInterface' not found in vendor/hyperf/utils/src/Serializer/Serializer.php on line 46
 ```
 
-此問題是由於在 `PHP 7.3` 中通過 `子程序掃描` 的方式去獲取反射，在某個類中實現了一個不存在的 `Interface` ，就會導致丟擲 `Interface not found` 的異常，而高版本的 `PHP` 則不會。
+此問題是由於在 `PHP 7.3` 中透過 `子程序掃描` 的方式去獲取反射，在某個類中實現了一個不存在的 `Interface` ，就會導致丟擲 `Interface not found` 的異常，而高版本的 `PHP` 則不會。
 
 解決方法為建立對應的 `Interface` 並正常引入。上文中的報錯解決方法為安裝對應所依賴的元件即可。
 
@@ -109,7 +109,7 @@ composer require symfony/serializer
 
 ## Trait 內使用 `@Inject` 注入報錯 `Error while injecting dependencies into ... No entry or class found ...`
 
-若 Trait 通過 `@Inject @var` 注入屬性, 同時子類裡 `use` 了不同名稱空間的同名類, 會導致 Trait 裡類名被覆蓋，進而導致注入失效:
+若 Trait 透過 `@Inject @var` 注入屬性, 同時子類裡 `use` 了不同名稱空間的同名類, 會導致 Trait 裡類名被覆蓋，進而導致注入失效:
 
 ```php
 use Hyperf\HttpServer\Contract\ResponseInterface;
@@ -138,10 +138,10 @@ class IndexController
 // Error while injecting dependencies into App\Controller\IndexController: No entry or class found for 'Psr\Http\Message\ResponseInterface'
 ```
 
-上述問題可以通過以下兩個方法解決:
+上述問題可以透過以下兩個方法解決:
 
-- 子類通過 `as` 修改別名: `use Psr\Http\Message\ResponseInterface as PsrResponseInterface;`
-- Trait 類`PHP7.4` 以上通過屬性型別限制: `protected ResponseInterface $response;`
+- 子類透過 `as` 修改別名: `use Psr\Http\Message\ResponseInterface as PsrResponseInterface;`
+- Trait 類`PHP7.4` 以上透過屬性型別限制: `protected ResponseInterface $response;`
 
 ## Grpc 擴充套件或未安裝 Pcntl 導致專案無法啟動
 
@@ -180,44 +180,6 @@ use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coordinator\Constants;
 
 CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
-```
-
-
-## ORM 不支援 bit 型別
-
-若想要使 `ORM` 支援 `bit` 型別，只需要增加以下監聽器程式碼即可。
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Listener;
-
-use Hyperf\Database\Connection;
-use Hyperf\Database\MySqlBitConnection;
-use Hyperf\Event\Annotation\Listener;
-use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Event\BootApplication;
-
-#[Listener]
-class SupportMySQLBitListener implements ListenerInterface
-{
-    public function listen(): array
-    {
-        return [
-            BootApplication::class,
-        ];
-    }
-
-    public function process(object $event)
-    {
-        Connection::resolverFor('mysql', static function ($connection, $database, $prefix, $config) {
-            return new MySqlBitConnection($connection, $database, $prefix, $config);
-        });
-    }
-}
-
 ```
 
 ## OSS 上傳元件報 iconv 錯誤

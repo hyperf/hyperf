@@ -1135,7 +1135,7 @@ trait ValidatesAttributes
     /**
      * Require a certain number of parameters to be present.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function requireParameterCount(int $count, array $parameters, string $rule)
     {
@@ -1217,7 +1217,7 @@ trait ValidatesAttributes
     /**
      * Get a DateTime instance from a string.
      *
-     * @return null|\DateTime
+     * @return null|DateTime
      */
     protected function getDateTimeWithOptionalFormat(string $format, ?string $value)
     {
@@ -1234,7 +1234,7 @@ trait ValidatesAttributes
     /**
      * Get a DateTime instance from a string with no format.
      *
-     * @return null|\DateTime
+     * @return null|DateTime
      */
     protected function getDateTime(string $value)
     {
@@ -1503,7 +1503,7 @@ trait ValidatesAttributes
      *
      * @param mixed $first
      * @param mixed $second
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function compare($first, $second, string $operator): bool
     {

@@ -12,9 +12,11 @@ declare(strict_types=1);
 namespace Hyperf\ViewEngine\Contract;
 
 use Countable;
+use Exception;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\Jsonable;
 use Hyperf\Utils\Collection;
+use InvalidArgumentException;
 use IteratorAggregate;
 use JsonSerializable;
 
@@ -30,7 +32,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      *
      * @param string $key
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function __get($key);
 
@@ -660,7 +662,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      *
      * @param null|int $number
      * @return mixed|static
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function random($number = null);
 

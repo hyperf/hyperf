@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Base;
 
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 
 class Response implements ResponseInterface
@@ -177,7 +178,7 @@ class Response implements ResponseInterface
      *                             provided status code; if none is provided, implementations MAY
      *                             use the defaults as suggested in the HTTP specification
      * @return static
-     * @throws \InvalidArgumentException for invalid status code arguments
+     * @throws InvalidArgumentException for invalid status code arguments
      */
     public function withStatus($code, $reasonPhrase = '')
     {
@@ -202,7 +203,7 @@ class Response implements ResponseInterface
      * Return an instance with the specified charset content type.
      *
      * @return static
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function withCharset(string $charset)
     {

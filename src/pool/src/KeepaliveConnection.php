@@ -20,6 +20,7 @@ use Hyperf\Pool\Exception\InvalidArgumentException;
 use Hyperf\Pool\Exception\SocketPopException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 abstract class KeepaliveConnection implements ConnectionInterface
 {
@@ -133,7 +134,7 @@ abstract class KeepaliveConnection implements ConnectionInterface
     public function isTimeout(): bool
     {
         return $this->lastUseTime < microtime(true) - $this->pool->getOption()->getMaxIdleTime()
-            && $this->channel->length() > 0;
+            && $this->channel->getLength() > 0;
     }
 
     protected function addHeartbeat()
@@ -152,7 +153,7 @@ abstract class KeepaliveConnection implements ConnectionInterface
                 }
 
                 $this->heartbeat();
-            } catch (\Throwable $throwable) {
+            } catch (Throwable $throwable) {
                 $this->clear();
                 if ($logger = $this->getLogger()) {
                     $message = sprintf('Socket of %s heartbeat failed, %s', $this->name, $throwable);

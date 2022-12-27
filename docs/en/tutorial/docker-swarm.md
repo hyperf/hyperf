@@ -1,6 +1,6 @@
-# Docker Swarm集群搭建教程
+# Docker Swarm cluster building tutorial
 
-现阶段，Docker容器技术已经相当成熟，就算是中小型公司也可以基于 Gitlab、Aliyun镜像服务、Docker Swarm 轻松搭建自己的 Docker集群服务。
+At this stage, the Docker container technology is quite mature, and even small and medium-sized companies can easily build their own Docker cluster services based on Gitlab, Aliyun image service, and Docker Swarm.
 
 ## Installation Docker
 
@@ -8,29 +8,29 @@
 curl -sSL https://get.daocloud.io/docker | sh
 ```
 
-## 搭建自己的Gitlab
+## Build your own Gitlab
 
-### InstallationGitlab
+### Installation Gitlab
 
-首先我们修改一下端口号，把 `sshd` 服务的 `22` 端口改为 `2222`，让 `gitlab` 可以使用 `22` 端口。
+First, let's modify the port number and change the `22` port of the `sshd` service to `2222`, so that `gitlab` can use the `22` port.
 
 ```
 $ vim /etc/ssh/sshd_config
 
-# 默认 Port 改为 2222
+# Default Port changed to 2222
 Port 2222
 
-# 重启服务
+# restart the service
 $ systemctl restart sshd.service
 ```
 
-重新登录机器
+Re-login to the machine
 
 ```
 ssh -p 2222 root@host 
 ```
 
-安装 Gitlab
+Install Gitlab
 
 ```
 sudo docker run -d --hostname gitlab.xxx.cn \
@@ -41,20 +41,20 @@ sudo docker run -d --hostname gitlab.xxx.cn \
 gitlab/gitlab-ce:latest
 ```
 
-首次登录 `Gitlab` 会重置密码，用户名是 `root`。
+Logging into `Gitlab` for the first time will reset the password, and the username is `root`.
 
-### Installationgitlab-runner
+### Installation gitlab-runner
 
-[官方地址](https://docs.gitlab.com/runner/install/linux-repository.html)
+[Official address](https://docs.gitlab.com/runner/install/linux-repository.html)
 
-以 `CentOS` 为例
+Take `CentOS` as an example
 
 ```
 curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh | sudo bash
 yum install gitlab-runner
 ```
 
-当然，可以用 `curl https://setup.ius.io | sh` 命令，更新为最新的 `git` 源，然后直接使用 yum 安装 git 和 gitlab-runner。
+Of course, you can use the `curl https://setup.ius.io | sh` command, update to the latest `git` source, and then install git and gitlab-runner directly using yum.
 
 ```
 $ curl https://setup.ius.io | sh
@@ -63,10 +63,10 @@ $ git version
 $ yum install gitlab-runner
 ```
 
-### 注册 gitlab-runner
+### Register gitlab-runner
 
 ```
-$ gitlab-runner register --clone-url http://内网ip/
+$ gitlab-runner register --clone-url http://intranet-ip/
 
 Please enter the gitlab-ci coordinator URL (e.g. https://gitlab.com/):
 http://gitlab.xxx.cc/
@@ -80,14 +80,14 @@ Please enter the executor: docker-ssh, shell, docker+machine, docker-ssh+machine
 shell
 ```
 
-## 初始化 Swarm 集群
+## Initialize the Swarm cluster
 
-登录另外一台机器，初始化集群
+Login to another machine and initialize the cluster
 ```
 $ docker swarm init
 ```
 
-创建自定义 Overlay 网络
+Create a custom overlay network
 
 ```
 docker network create \
@@ -98,22 +98,22 @@ docker network create \
 default-network
 ```
 
-加入集群
+Join the cluster
 ```
-# 显示manager节点的TOKEN
+# Display the token of the manager node
 $ docker swarm join-token manager
-# 加入manager节点到集群
+# Add the manager node to the cluster
 $ docker swarm join --token <token> ip:2377
 
-# 显示worker节点的TOKEN
+# Display the token of the worker node
 $ docker swarm join-token worker
-# 加入worker节点到集群
+# Join the worker node to the cluster
 $ docker swarm join --token <token> ip:2377
 ```
 
-然后配置发布用的 gitlab-runner
+Then configure the gitlab-runner for publishing
 
-> 其他与 builder 一致，但是 tag 却不能一样。线上环境可以设置为 tags，测试环境设置为 test
+> Others are the same as builder, but tag cannot be the same. The online environment can be set to tags, and the test environment can be set to test
 
 ## Installation Portainer
 
@@ -130,18 +130,18 @@ docker service create \
     portainer/portainer
 ```
 
-## 创建一个Demo项目
+## Create a demo project
 
-登录 Gitlab 创建一个 Demo 项目。并导入我们的项目 [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton)
+Login to Gitlab to create a demo project. and import our project [hyperf-skeleton](https://github.com/hyperf-cloud/hyperf-skeleton)
 
 
-## 配置镜像仓库
+## Configure the mirror repository
 
-> 我们直接使用阿里云的即可
+> We can use Alibaba Cloud directly
 
-首先创建一个命名空间 test_namespace，然后创建一个镜像仓库 demo，并使用本地仓库。
+First create a namespace test_namespace, then create a mirror warehouse demo, and use the local warehouse.
 
-然后到我们直接打包用的服务器中，登录阿里云 Docker Registry
+Then go to the server we use directly for packaging and login to Alibaba Cloud Docker Registry
 
 ```
 usermod -aG docker gitlab-runner
@@ -149,7 +149,7 @@ su gitlab-runner
 docker login --username=your_name registry.cn-shanghai.aliyuncs.com
 ```
 
-修改我们项目里的 .gitlab-ci.yml
+Modify .gitlab-ci.yml in our project
 
 ```
 variables:
@@ -157,7 +157,7 @@ variables:
   REGISTRY_URL: registry.cn-shanghai.aliyuncs.com/test_namespace
 ```
 
-还有 deploy.test.yml，需要仔细对比以下文件哦。
+There is also deploy.test.yml, you need to compare the following files carefully.
 
 ```yml
 version: '3.7'
@@ -192,7 +192,7 @@ networks:
     external: true
 ```
 
-然后在我们的 portainer 中，创建对应的 Config demo_v1.0。当然，以下参数需要根据实际情况调整，因为我们的Demo中，没有任何IO操作，所以填默认的即可。
+Then in our portainer, create the corresponding Config demo_v1.0. Of course, the following parameters need to be adjusted according to the actual situation, because there is no IO operation in our Demo, so fill in the default ones.
 
 ```
 APP_NAME=demo
@@ -213,19 +213,19 @@ REDIS_PORT=6379
 REDIS_DB=0
 ```
 
-因为我们配置的 gitlab-ci.yml 会检测 test 分支和 tags，所以我们把修改的内容合并到test分支，然后推到gitlab上。
+Because the gitlab-ci.yml we configured will detect the test branch and tags, we merge the modified content into the test branch, and then push it to gitlab.
 
-接下来我们就可以访问集群任意一台机器的 9501 端口。进行测试了
+Next we can access port 9501 of any machine in the cluster.
 
 ```
 curl http://127.0.0.1:9501/
 ```
 
-## 意外情况
+## Accidents
 
 ### fatal: git fetch-pack: expected shallow list
 
-这种情况是 `gitlab-runner` 使用的 `git` 版本过低，更新 `git` 版本即可。
+In this case, the version of `git` used by `gitlab-runner` is too low, and the version of `git` can be updated.
 
 ```
 $ curl https://setup.ius.io | sh
@@ -233,6 +233,6 @@ $ yum remove -y git
 $ yum -y install git2u
 $ git version
 
-# 重新安装 gitlab-runner 并重新注册 gitlab-runner
+# Reinstall gitlab-runner and re-register gitlab-runner
 $ yum install gitlab-runner
 ```

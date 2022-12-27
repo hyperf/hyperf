@@ -11,8 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Query;
 
+use BadMethodCallException;
 use Closure;
 use DateTimeInterface;
+use Generator;
 use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Contract\PaginatorInterface;
@@ -260,7 +262,7 @@ class Builder
      *
      * @param string $method
      * @param array $parameters
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     public function __call($method, $parameters)
     {
@@ -290,10 +292,10 @@ class Builder
     /**
      * Add a subselect expression to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
      * @return \Hyperf\Database\Query\Builder|static
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function selectSub($query, $as)
     {
@@ -322,10 +324,10 @@ class Builder
     /**
      * Makes "from" fetch from a subquery.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
      * @return \Hyperf\Database\Query\Builder|static
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function fromSub($query, $as)
     {
@@ -405,7 +407,7 @@ class Builder
      * Add a join clause to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @param string $type
@@ -445,7 +447,7 @@ class Builder
      * Add a "join where" clause to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param string $operator
      * @param string $second
      * @param string $type
@@ -459,15 +461,15 @@ class Builder
     /**
      * Add a subquery join clause to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @param string $type
      * @param bool $where
      * @return \Hyperf\Database\Query\Builder|static
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function joinSub($query, $as, $first, $operator = null, $second = null, $type = 'inner', $where = false)
     {
@@ -484,7 +486,7 @@ class Builder
      * Add a left join to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -498,7 +500,7 @@ class Builder
      * Add a "join where" clause to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param string $operator
      * @param string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -511,9 +513,9 @@ class Builder
     /**
      * Add a subquery left join to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -527,7 +529,7 @@ class Builder
      * Add a right join to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -541,7 +543,7 @@ class Builder
      * Add a "right join where" clause to the query.
      *
      * @param string $table
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param string $operator
      * @param string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -554,9 +556,9 @@ class Builder
     /**
      * Add a subquery right join to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @param string $as
-     * @param \Closure|string $first
+     * @param Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -570,7 +572,7 @@ class Builder
      * Add a "cross join" clause to the query.
      *
      * @param string $table
-     * @param null|\Closure|string $first
+     * @param null|Closure|string $first
      * @param null|string $operator
      * @param null|string $second
      * @return \Hyperf\Database\Query\Builder|static
@@ -602,7 +604,7 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param array|\Closure|string $column
+     * @param array|Closure|string $column
      * @param string $boolean
      * @param null|mixed $operator
      * @param null|mixed $value
@@ -678,7 +680,7 @@ class Builder
      * @param string $operator
      * @param bool $useDefault
      * @return array
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function prepareValueAndOperator($value, $operator, $useDefault = false)
     {
@@ -695,7 +697,7 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param array|\Closure|string $column
+     * @param array|Closure|string $column
      * @param null|mixed $operator
      * @param null|mixed $value
      * @return \Hyperf\Database\Query\Builder|static
@@ -1012,7 +1014,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string $value
+     * @param DateTimeInterface|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder|static
      */
@@ -1032,7 +1034,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string $value
+     * @param DateTimeInterface|string $value
      * @return \Hyperf\Database\Query\Builder|static
      */
     public function orWhereDate($column, $operator, $value = null)
@@ -1047,7 +1049,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string $value
+     * @param DateTimeInterface|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder|static
      */
@@ -1067,7 +1069,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string $value
+     * @param DateTimeInterface|string $value
      * @return \Hyperf\Database\Query\Builder|static
      */
     public function orWhereTime($column, $operator, $value = null)
@@ -1082,7 +1084,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string $value
+     * @param DateTimeInterface|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder|static
      */
@@ -1102,7 +1104,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string $value
+     * @param DateTimeInterface|string $value
      * @return \Hyperf\Database\Query\Builder|static
      */
     public function orWhereDay($column, $operator, $value = null)
@@ -1117,7 +1119,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string $value
+     * @param DateTimeInterface|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder|static
      */
@@ -1137,7 +1139,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|string $value
+     * @param DateTimeInterface|string $value
      * @return \Hyperf\Database\Query\Builder|static
      */
     public function orWhereMonth($column, $operator, $value = null)
@@ -1152,7 +1154,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|int|string $value
+     * @param DateTimeInterface|int|string $value
      * @param string $boolean
      * @return \Hyperf\Database\Query\Builder|static
      */
@@ -1172,7 +1174,7 @@ class Builder
      *
      * @param string $column
      * @param string $operator
-     * @param \DateTimeInterface|int|string $value
+     * @param DateTimeInterface|int|string $value
      * @return \Hyperf\Database\Query\Builder|static
      */
     public function orWhereYear($column, $operator, $value = null)
@@ -1768,7 +1770,7 @@ class Builder
     /**
      * Add a union statement to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder $query
+     * @param Closure|\Hyperf\Database\Query\Builder $query
      * @param bool $all
      * @return \Hyperf\Database\Query\Builder|static
      */
@@ -1788,7 +1790,7 @@ class Builder
     /**
      * Add a union all statement to the query.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder $query
+     * @param Closure|\Hyperf\Database\Query\Builder $query
      * @return \Hyperf\Database\Query\Builder|static
      */
     public function unionAll($query)
@@ -1943,7 +1945,7 @@ class Builder
     /**
      * Get a generator for the given query.
      *
-     * @return \Generator
+     * @return Generator
      */
     public function cursor()
     {
@@ -1991,6 +1993,10 @@ class Builder
 
             $lastResult = $results->last();
             $lastId = is_array($lastResult) ? $lastResult[$alias] : $lastResult->{$alias};
+
+            if ($lastId === null) {
+                throw new RuntimeException("The chunkById operation was aborted because the [{$alias}] column is not present in the query result.");
+            }
 
             unset($results);
         } while ($countResults == $count);
@@ -2233,7 +2239,7 @@ class Builder
     /**
      * Insert new records into the table using a subquery.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @return bool
      */
     public function insertUsing(array $columns, $query)
@@ -2405,7 +2411,7 @@ class Builder
      *
      * @param string $type
      * @return $this
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function setBindings(array $bindings, $type = 'where')
     {
@@ -2424,7 +2430,7 @@ class Builder
      * @param string $type
      * @param mixed $value
      * @return $this
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function addBinding($value, $type = 'where')
     {
@@ -2527,7 +2533,7 @@ class Builder
     /**
      * Creates a subquery and parse it.
      *
-     * @param \Closure|\Hyperf\Database\Query\Builder|string $query
+     * @param Closure|\Hyperf\Database\Query\Builder|string $query
      * @return array
      */
     protected function createSub($query)
@@ -2793,7 +2799,7 @@ class Builder
     /**
      * Throw an exception if the query doesn't have an orderBy clause.
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function enforceOrderBy()
     {
@@ -2934,7 +2940,7 @@ class Builder
     {
         $container = ApplicationContext::getContainer();
         if (! method_exists($container, 'make')) {
-            throw new \RuntimeException('The DI container does not support make() method.');
+            throw new RuntimeException('The DI container does not support make() method.');
         }
         return $container->make(LengthAwarePaginatorInterface::class, compact('items', 'total', 'perPage', 'currentPage', 'options'));
     }
@@ -2946,7 +2952,7 @@ class Builder
     {
         $container = ApplicationContext::getContainer();
         if (! method_exists($container, 'make')) {
-            throw new \RuntimeException('The DI container does not support make() method.');
+            throw new RuntimeException('The DI container does not support make() method.');
         }
         return $container->make(PaginatorInterface::class, compact('items', 'perPage', 'currentPage', 'options'));
     }

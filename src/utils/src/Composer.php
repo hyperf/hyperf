@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use Composer\Autoload\ClassLoader;
+use RuntimeException;
 
 class Composer
 {
@@ -28,14 +29,14 @@ class Composer
     private static ?ClassLoader $classLoader = null;
 
     /**
-     * @throws \RuntimeException When `composer.lock` does not exist.
+     * @throws RuntimeException When `composer.lock` does not exist.
      */
     public static function getLockContent(): Collection
     {
         if (! self::$content) {
             $path = self::discoverLockFile();
             if (! $path) {
-                throw new \RuntimeException('composer.lock not found.');
+                throw new RuntimeException('composer.lock not found.');
             }
             self::$content = collect(json_decode(file_get_contents($path), true));
             $packages = self::$content->offsetGet('packages') ?? [];
@@ -69,7 +70,7 @@ class Composer
         if (! self::$json) {
             $path = BASE_PATH . '/composer.json';
             if (! is_readable($path)) {
-                throw new \RuntimeException('composer.json is not readable.');
+                throw new RuntimeException('composer.json is not readable.');
             }
             self::$json = collect(json_decode(file_get_contents($path), true));
         }
@@ -143,6 +144,6 @@ class Composer
             }
         }
 
-        throw new \RuntimeException('Composer loader not found.');
+        throw new RuntimeException('Composer loader not found.');
     }
 }

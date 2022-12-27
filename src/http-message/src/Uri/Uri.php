@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\HttpMessage\Uri;
 
+use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 use Stringable;
 
@@ -78,7 +79,7 @@ class Uri implements UriInterface, Stringable
         if ($uri) {
             $parts = parse_url($uri);
             if ($parts === false) {
-                throw new \InvalidArgumentException("Unable to parse URI: {$uri}");
+                throw new InvalidArgumentException("Unable to parse URI: {$uri}");
             }
 
             $this->applyParts($parts);
@@ -282,7 +283,7 @@ class Uri implements UriInterface, Stringable
      *
      * @param string $scheme the scheme to use with the new instance
      * @return static a new instance with the specified scheme
-     * @throws \InvalidArgumentException for invalid or unsupported schemes
+     * @throws InvalidArgumentException for invalid or unsupported schemes
      */
     public function withScheme($scheme)
     {
@@ -333,7 +334,7 @@ class Uri implements UriInterface, Stringable
      *
      * @param string $host the hostname to use with the new instance
      * @return static a new instance with the specified host
-     * @throws \InvalidArgumentException for invalid hostnames
+     * @throws InvalidArgumentException for invalid hostnames
      */
     public function withHost($host)
     {
@@ -359,7 +360,7 @@ class Uri implements UriInterface, Stringable
      * @param null|int|string $port the port to use with the new instance; a null value
      *                              removes the port information
      * @return static a new instance with the specified port
-     * @throws \InvalidArgumentException for invalid ports
+     * @throws InvalidArgumentException for invalid ports
      */
     public function withPort($port)
     {
@@ -389,7 +390,7 @@ class Uri implements UriInterface, Stringable
      *
      * @param string $path the path to use with the new instance
      * @return static a new instance with the specified path
-     * @throws \InvalidArgumentException for invalid paths
+     * @throws InvalidArgumentException for invalid paths
      */
     public function withPath($path)
     {
@@ -413,7 +414,7 @@ class Uri implements UriInterface, Stringable
      *
      * @param string $query the query string to use with the new instance
      * @return static a new instance with the specified query string
-     * @throws \InvalidArgumentException for invalid query strings
+     * @throws InvalidArgumentException for invalid query strings
      */
     public function withQuery($query)
     {
@@ -550,10 +551,10 @@ class Uri implements UriInterface, Stringable
         }
         if ($this->getAuthority() === '') {
             if (str_starts_with($this->path, '//')) {
-                throw new \InvalidArgumentException('The path of a URI without an authority must not start with two slashes "//"');
+                throw new InvalidArgumentException('The path of a URI without an authority must not start with two slashes "//"');
             }
             if ($this->scheme === '' && str_contains(explode('/', $this->path, 2)[0], ':')) {
-                throw new \InvalidArgumentException('A relative URI must not have a path beginning with a segment containing a colon');
+                throw new InvalidArgumentException('A relative URI must not have a path beginning with a segment containing a colon');
             }
         } elseif (isset($this->path[0]) && $this->path[0] !== '/') {
             $this->path = '/' . $this->path;
@@ -602,7 +603,7 @@ class Uri implements UriInterface, Stringable
 
         $port = (int) $port;
         if (1 > $port || 0xFFFF < $port) {
-            throw new \InvalidArgumentException(sprintf('Invalid port: %d. Must be between 1 and 65535', $port));
+            throw new InvalidArgumentException(sprintf('Invalid port: %d. Must be between 1 and 65535', $port));
         }
 
         return $port;
@@ -621,7 +622,7 @@ class Uri implements UriInterface, Stringable
     /**
      * Filters the path of a URI.
      *
-     * @throws \InvalidArgumentException if the path is invalid
+     * @throws InvalidArgumentException if the path is invalid
      */
     private function filterPath(string $path): string
     {

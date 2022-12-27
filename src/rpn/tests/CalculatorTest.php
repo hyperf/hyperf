@@ -13,6 +13,7 @@ namespace HyperfTest\Rpn;
 
 use Hyperf\Rpn\Calculator;
 use Hyperf\Rpn\Exception\InvalidOperatorException;
+use stdClass;
 
 /**
  * @internal
@@ -66,7 +67,7 @@ class CalculatorTest extends AbstractTestCase
     {
         $this->expectException(InvalidOperatorException::class);
 
-        new Calculator([new \stdClass()]);
+        new Calculator([new stdClass()]);
     }
 
     public function testToRPNExpression()
