@@ -496,10 +496,10 @@ $table->dropForeign('posts_user_id_foreign');
 $table->dropForeign(['user_id'']);
 ```
 
-您可以在遷移文件中使用以下方法來開啟或關閉外鍵約束：
+您可以在遷移文件中使用以下方法來開啓或關閉外鍵約束：
 
 ```php
-// 開啟外鍵約束
+// 開啓外鍵約束
 Schema::enableForeignKeyConstraints();
 // 禁用外鍵約束
 Schema::disableForeignKeyConstraints();

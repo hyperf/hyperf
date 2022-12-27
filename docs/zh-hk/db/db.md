@@ -45,7 +45,7 @@ php bin/hyperf.php vendor:publish hyperf/db
 
 |      方法名      |   返回值類型   |                  備註                   |
 |:----------------:|:--------------:|:------------------------------------:|
-| beginTransaction |     `void`     |          開啟事務 支持事務嵌套          |
+| beginTransaction |     `void`     |          開啓事務 支持事務嵌套          |
 |      commit      |     `void`     |          提交事務 支持事務嵌套          |
 |     rollBack     |     `void`     |          回滾事務 支持事務嵌套          |
 |      insert      |     `int`      | 插入數據，返回主鍵 ID，非自增主鍵返回 0   |

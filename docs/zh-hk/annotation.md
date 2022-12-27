@@ -117,8 +117,8 @@ class Foo extends AbstractAnnotation
 - `public function collectMethod(string $className, ?string $target): void;` 當註解定義在類方法時被掃描時會觸發該方法
 - `public function collectProperty(string $className, ?string $target): void` 當註解定義在類屬性時被掃描時會觸發該方法
 
-因為框架實現了註解收集器緩存功能，所以需要您將自定義收集器配置到 `annotations.scan.collectors` 中，這樣框架才能自動緩存收集好的註解，在下次啟動時進行復用。
-如果沒有配置對應的收集器，就會導致自定義註解只有在首次啟動 `server` 時生效，而再次啟動時不會生效。
+因為框架實現了註解收集器緩存功能，所以需要您將自定義收集器配置到 `annotations.scan.collectors` 中，這樣框架才能自動緩存收集好的註解，在下次啓動時進行復用。
+如果沒有配置對應的收集器，就會導致自定義註解只有在首次啓動 `server` 時生效，而再次啓動時不會生效。
 
 ```php
 <?php

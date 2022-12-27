@@ -20,7 +20,7 @@ composer require hyperf/kafka
 
 ### 配置
 
-`kafka` 元件的配置檔案預設位於 `config/autoload/kafka.php` 內，如該檔案不存在，可通過 `php bin/hyperf.php vendor:publish hyperf/kafka` 命令來將釋出對應的配置檔案。
+`kafka` 元件的配置檔案預設位於 `config/autoload/kafka.php` 內，如該檔案不存在，可透過 `php bin/hyperf.php vendor:publish hyperf/kafka` 命令來將釋出對應的配置檔案。
 
 預設配置檔案如下：
 
@@ -108,13 +108,13 @@ return [
 
 ### 建立消費者
 
-通過 gen:kafka-consumer 命令可以快速的生成一個 消費者(Consumer) 對訊息進行消費。
+透過 gen:kafka-consumer 命令可以快速的生成一個 消費者(Consumer) 對訊息進行消費。
 
 ```bash
 php bin/hyperf.php gen:kafka-consumer KafkaConsumer
 ```
 
-您也可以通過使用 `Hyperf\Kafka\Annotation\Consumer` 註解來對一個 `Hyperf/Kafka/AbstractConsumer` 抽象類的子類進行宣告，來完成一個 `消費者(Consumer)` 的定義，其中 `Hyperf\Kafka\Annotation\Consumer` 註解和抽象類均包含以下屬性：
+您也可以透過使用 `Hyperf\Kafka\Annotation\Consumer` 註解來對一個 `Hyperf/Kafka/AbstractConsumer` 抽象類的子類進行宣告，來完成一個 `消費者(Consumer)` 的定義，其中 `Hyperf\Kafka\Annotation\Consumer` 註解和抽象類均包含以下屬性：
 
 |    配置    |        型別        | 註解或抽象類預設值 |                 備註                 |
 | :--------: | :----------------: | :----------------: | :----------------------------------: |
@@ -151,7 +151,7 @@ class KafkaConsumer extends AbstractConsumer
 
 ### 投遞訊息
 
-您可以通過呼叫 `Hyperf\Kafka\Producer::send(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null)` 方法來向 `kafka` 投遞訊息, 下面是在 `Controller` 進行訊息投遞的一個示例：
+您可以透過呼叫 `Hyperf\Kafka\Producer::send(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null)` 方法來向 `kafka` 投遞訊息, 下面是在 `Controller` 進行訊息投遞的一個示例：
 
 ```php
 <?php
@@ -176,7 +176,7 @@ class IndexController extends AbstractController
 
 ### 一次性投遞多條訊息
 
-`Hyperf\Kafka\Producer::sendBatch(array $messages)` 方法來向 `kafka` 批量的投遞訊息, 下面是在 `Controller` 進行訊息投遞的一個示例：
+`Hyperf\Kafka\Producer::sendBatch(array $messages)` 方法來向 `kafka` 批次的投遞訊息, 下面是在 `Controller` 進行訊息投遞的一個示例：
 
 
 ```php

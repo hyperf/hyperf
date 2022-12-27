@@ -174,4 +174,4 @@ class UserService
 
 ### 最好只在 `Listener` 中注入 `ContainerInterface`。
 
-最好只在 `Listener` 中注入 `ContainerInterface`，而其他的組件在 `process` 中通過 `container` 獲取。框架啟動開始時，會實例化 `EventDispatcherInterface`，這個時候還不是協程環境，如果 `Listener` 中注入了可能會觸發協程切換的類，就會導致框架啟動失敗。
+最好只在 `Listener` 中注入 `ContainerInterface`，而其他的組件在 `process` 中通過 `container` 獲取。框架啓動開始時，會實例化 `EventDispatcherInterface`，這個時候還不是協程環境，如果 `Listener` 中注入了可能會觸發協程切換的類，就會導致框架啓動失敗。

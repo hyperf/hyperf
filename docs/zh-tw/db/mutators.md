@@ -40,7 +40,7 @@ $user = App\User::find(1);
 $firstName = $user->first_name;
 ```
 
-當然，你也可以通過已有的屬性值，使用訪問器返回新的計算值:
+當然，你也可以透過已有的屬性值，使用訪問器返回新的計算值:
 
 ```php
 namespace App;
@@ -99,7 +99,7 @@ $user->first_name = 'Sally';
 
 ## 日期轉化器
 
-預設情況下，模型會將 `created_at` 和 `updated_at` 欄位轉換為 `Carbon` 例項，它繼承了 `PHP` 原生的 `DateTime` 類並提供了各種有用的方法。你可以通過設定模型的 `$dates` 屬性來新增其他日期屬性：
+預設情況下，模型會將 `created_at` 和 `updated_at` 欄位轉換為 `Carbon` 例項，它繼承了 `PHP` 原生的 `DateTime` 類並提供了各種有用的方法。你可以透過設定模型的 `$dates` 屬性來新增其他日期屬性：
 
 ```php
 <?php
@@ -122,7 +122,7 @@ class User extends Model
 
 ```
 
-> Tip: 你可以通過將模型的公有屬性 $timestamps 值設定為 false 來禁用預設的 created_at 和 updated_at 時間戳。
+> Tip: 你可以透過將模型的公有屬性 $timestamps 值設定為 false 來禁用預設的 created_at 和 updated_at 時間戳。
 
 當某個欄位是日期格式時，你可以將值設定為一個 `UNIX` 時間戳，日期時間 `(Y-m-d)` 字串，或者 `DateTime` / `Carbon` 例項。日期值會被正確格式化並儲存到你的資料庫中：
 
@@ -195,7 +195,7 @@ if ($user->is_admin) {
 
 ### 自定義型別轉換
 
-模型內建了多種常用的型別轉換。但是，使用者偶爾會需要將資料轉換成自定義型別。現在，該需求可以通過定義一個實現 `CastsAttributes` 介面的類來完成
+模型內建了多種常用的型別轉換。但是，使用者偶爾會需要將資料轉換成自定義型別。現在，該需求可以透過定義一個實現 `CastsAttributes` 介面的類來完成
 
 實現了該介面的類必須事先定義一個 `get` 和 `set` 方法。 `get` 方法負責將從資料庫中獲取的原始資料轉換成對應的型別，而 `set` 方法則是將資料轉換成對應的資料庫型別以便存入資料庫中。舉個例子，下面我們將內建的 `json` 型別轉換以自定義型別轉換的形式重新實現一遍：
 
@@ -321,7 +321,7 @@ var_dump($user->getAttributes());
 $user->address->lineOne = 'Updated Address Value';
 $user->address->lineTwo = '#20000';
 
-// 直接修改 address 的欄位後，是無法立馬再 attributes 中生效的，但可以直接通過 $user->address 拿到修改後的資料。
+// 直接修改 address 的欄位後，是無法立馬再 attributes 中生效的，但可以直接透過 $user->address 拿到修改後的資料。
 var_dump($user->getAttributes());
 //[
 //    'address_line_one' => 'Address Value',
@@ -337,7 +337,7 @@ var_dump($user->getAttributes());
 //];
 ```
 
-如果修改 `address` 後，不想要儲存，也不想通過 `address->lineOne` 獲取 `address_line_one` 的資料，還可以使用以下 方法
+如果修改 `address` 後，不想要儲存，也不想透過 `address->lineOne` 獲取 `address_line_one` 的資料，還可以使用以下 方法
 
 ```php
 $user = App\User::find(1);
@@ -540,7 +540,7 @@ $users = User::select([
 ])->get();
 ```
 
-在該查詢獲取到的結果集中，`last_posted_at` 屬性將會是一個字串。假如我們在執行查詢時進行 `date` 型別轉換將更方便。你可以通過使用 `withCasts` 方法來完成上述操作：
+在該查詢獲取到的結果集中，`last_posted_at` 屬性將會是一個字串。假如我們在執行查詢時進行 `date` 型別轉換將更方便。你可以透過使用 `withCasts` 方法來完成上述操作：
 
 ```php
 $users = User::select([

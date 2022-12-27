@@ -195,7 +195,7 @@ echo $result->pop(); // 2;
 
 所有的 HTTP 請求其實也是事件驅動的。所以 HTTP 請求路由也可以用 ReactiveX 來接管。
 
-> 由於我們要添加路由，所以務必要在 Server 啟動前執行，如在 `BootApplication` 事件監聽中。
+> 由於我們要添加路由，所以務必要在 Server 啓動前執行，如在 `BootApplication` 事件監聽中。
 
 假設我們有一個上傳路由，流量很大，需要在內存中緩衝，上傳十次以後再批量入庫。
 
@@ -328,7 +328,7 @@ $bus->subscribe(function($message){
 });
 ```
 
-> 由於 ReactiveX 需要使用事件循環，請注意一定要在 Swoole Server 啟動之後再調用 ReactiveX 相關 API 。
+> 由於 ReactiveX 需要使用事件循環，請注意一定要在 Swoole Server 啓動之後再調用 ReactiveX 相關 API 。
 
 ## 參考資料
 

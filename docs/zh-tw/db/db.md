@@ -10,7 +10,7 @@ composer require hyperf/db
 
 ## 釋出元件配置
 
-該元件的配置檔案位於 `config/autoload/db.php`，如果檔案不存在，可通過下面的命令來將配置檔案釋出到骨架去：
+該元件的配置檔案位於 `config/autoload/db.php`，如果檔案不存在，可透過下面的命令來將配置檔案釋出到骨架去：
 
 ```bash
 php bin/hyperf.php vendor:publish hyperf/db
@@ -85,7 +85,7 @@ $res = DB::query('SELECT * FROM `user` WHERE gender = ?;', [1]);
 
 > 此種方式可以允許使用者直接操作底層的 `PDO` 或者 `MySQL`，所以需要自己處理相容問題
 
-比如我們想執行某些查詢，使用不同的 `fetch mode`，則可以通過以下方式，自定義自己的方法
+比如我們想執行某些查詢，使用不同的 `fetch mode`，則可以透過以下方式，自定義自己的方法
 
 ```php
 <?php

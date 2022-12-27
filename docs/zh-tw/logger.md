@@ -127,7 +127,7 @@ $log->alert('czl');
 
 ### 封裝 `Log` 類
 
-可能有些時候您更想保持大多數框架使用日誌的習慣，那麼您可以在 `App` 下建立一個 `Log` 類，並通過 `__callStatic` 魔術方法靜態方法呼叫實現對 `Logger` 的取用以及各個等級的日誌記錄，我們通過程式碼來演示一下：
+可能有些時候您更想保持大多數框架使用日誌的習慣，那麼您可以在 `App` 下建立一個 `Log` 類，並透過 `__callStatic` 魔術方法靜態方法呼叫實現對 `Logger` 的取用以及各個等級的日誌記錄，我們透過程式碼來演示一下：
 
 ```php
 namespace App;
@@ -144,13 +144,13 @@ class Log
 }
 ```
 
-預設使用 `Channel` 名為 `app` 來記錄日誌，您也可以通過使用 `Log::get($name)` 方法獲得不同 `Channel` 的 `Logger`, 強大的 `容器(Container)` 幫您解決了這一切
+預設使用 `Channel` 名為 `app` 來記錄日誌，您也可以透過使用 `Log::get($name)` 方法獲得不同 `Channel` 的 `Logger`, 強大的 `容器(Container)` 幫您解決了這一切
 
 ### stdout 日誌
 
-框架元件所輸出的日誌在預設情況下是由 `Hyperf\Contract\StdoutLoggerInterface` 介面的實現類 `Hyperf\Framework\Logger\StdoutLogger` 提供支援的，該實現類只是為了將相關的資訊通過 `print_r()` 輸出在 `標準輸出(stdout)`，即為啟動 `Hyperf` 的 `終端(Terminal)` 上，也就意味著其實並沒有使用到 `monolog` 的，那麼如果想要使用 `monolog` 來保持一致要怎麼處理呢？
+框架元件所輸出的日誌在預設情況下是由 `Hyperf\Contract\StdoutLoggerInterface` 介面的實現類 `Hyperf\Framework\Logger\StdoutLogger` 提供支援的，該實現類只是為了將相關的資訊透過 `print_r()` 輸出在 `標準輸出(stdout)`，即為啟動 `Hyperf` 的 `終端(Terminal)` 上，也就意味著其實並沒有使用到 `monolog` 的，那麼如果想要使用 `monolog` 來保持一致要怎麼處理呢？
 
-是的, 還是通過強大的 `容器(Container)`.
+是的, 還是透過強大的 `容器(Container)`.
 
 - 首先, 實現一個 `StdoutLoggerFactory` 類，關於 `Factory` 的用法可在 [依賴注入](zh-tw/di.md) 章節獲得更多詳細的說明。
 
@@ -224,7 +224,7 @@ return [
 
 ### 日誌檔案按日期輪轉
 
-如果您希望日誌檔案可以按照日期輪轉，可以通過 `Mongolog` 已經提供了的 `Monolog\Handler\RotatingFileHandler` 來實現，配置如下：
+如果您希望日誌檔案可以按照日期輪轉，可以透過 `Mongolog` 已經提供了的 `Monolog\Handler\RotatingFileHandler` 來實現，配置如下：
 
 修改 `config/autoload/logger.php` 配置檔案，將 `Handler` 改為 `Monolog\Handler\RotatingFileHandler::class`，並將 `stream` 欄位改為 `filename` 即可。
 
@@ -252,7 +252,7 @@ return [
 ];
 ```
 
-如果您希望再進行更細粒度的日誌切割，也可通過繼承 `Monolog\Handler\RotatingFileHandler` 類並重新實現 `rotate()` 方法實現。
+如果您希望再進行更細粒度的日誌切割，也可透過繼承 `Monolog\Handler\RotatingFileHandler` 類並重新實現 `rotate()` 方法實現。
 
 ### 配置多個 `Handler`
 

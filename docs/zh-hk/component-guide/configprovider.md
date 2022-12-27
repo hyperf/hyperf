@@ -4,7 +4,7 @@ ConfigProvider 機制對於 Hyperf 組件化來説是個非常重要的機制，
 
 # 什麼是 ConfigProvider 機制 ？
 
-簡單來説，就是每個組件都會提供一個 `ConfigProvider`，通常是在組件的根目錄提供一個 `ConfigProvider` 的類，`ConfigProvider` 會提供對應組件的所有配置信息，這些信息都會被 Hyperf 框架在啟動時加載，最終`ConfigProvider` 內的配置信息會被合併到 `Hyperf\Contract\ConfigInterface` 對應的實現類去，從而實現各個組件在 Hyperf 框架下使用時要進行的配置初始化。   
+簡單來説，就是每個組件都會提供一個 `ConfigProvider`，通常是在組件的根目錄提供一個 `ConfigProvider` 的類，`ConfigProvider` 會提供對應組件的所有配置信息，這些信息都會被 Hyperf 框架在啓動時加載，最終`ConfigProvider` 內的配置信息會被合併到 `Hyperf\Contract\ConfigInterface` 對應的實現類去，從而實現各個組件在 Hyperf 框架下使用時要進行的配置初始化。   
 
 `ConfigProvider` 本身不具備任何依賴，不繼承任何的抽象類和不要求實現任何的接口，只需提供一個 `__invoke` 方法並返回一個對應配置結構的數組即可。
 

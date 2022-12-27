@@ -5,7 +5,7 @@
 
 ## 安裝
 
-### 通過 Composer 安裝元件
+### 透過 Composer 安裝元件
 
 ```bash
 composer require hyperf/tracer
@@ -31,7 +31,7 @@ php bin/hyperf.php vendor:publish hyperf/tracer
 
 #### 配置追蹤開關
 
-預設提供了對 `Guzzle HTTP` 呼叫、`Redis` 呼叫、`DB` 呼叫進行了監聽或 `AOP` 切面處理，以實現對呼叫鏈的傳播與追蹤，預設情況下這些追蹤不會開啟，您需要通過更改 `config/autoload/opentracing.php` 配置檔案內的 `enable` 項內的開關來開啟對某些遠端呼叫的追蹤。
+預設提供了對 `Guzzle HTTP` 呼叫、`Redis` 呼叫、`DB` 呼叫進行了監聽或 `AOP` 切面處理，以實現對呼叫鏈的傳播與追蹤，預設情況下這些追蹤不會開啟，您需要透過更改 `config/autoload/opentracing.php` 配置檔案內的 `enable` 項內的開關來開啟對某些遠端呼叫的追蹤。
 
 ```php
 <?php
@@ -199,7 +199,7 @@ return [
 
 ### 配置 Span tag
 
-對於一些 Hyperf 自動收集追蹤資訊的 Span Tag 名稱，可以通過更改 Span Tag 配置來更改對應的名稱，只需在配置檔案 `config/autolaod/opentracing.php` 內增加 `tags` 配置即可，參考配置如下。如配置項存在，則以配置項的值為準，如配置項不存在，則以元件的預設值為準。
+對於一些 Hyperf 自動收集追蹤資訊的 Span Tag 名稱，可以透過更改 Span Tag 配置來更改對應的名稱，只需在配置檔案 `config/autolaod/opentracing.php` 內增加 `tags` 配置即可，參考配置如下。如配置項存在，則以配置項的值為準，如配置項不存在，則以元件的預設值為準。
 
 ```php
 return [
@@ -231,7 +231,7 @@ return [
 
 ### 接入阿里雲鏈路追蹤服務
 
-當我們在使用阿里雲的鏈路追蹤服務時，由於對端也是支援 `Zipkin` 的協議的，故可以直接通過在 `config/autoload/opentracing.php` 配置檔案內修改 `endpoint_url` 的值為您對應的阿里雲 `region` 的地址，具體地址可在阿里雲的鏈路追蹤服務內得到，更多細節可參考 [阿里雲鏈路追蹤服務幫助文件](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv)。
+當我們在使用阿里雲的鏈路追蹤服務時，由於對端也是支援 `Zipkin` 的協議的，故可以直接透過在 `config/autoload/opentracing.php` 配置檔案內修改 `endpoint_url` 的值為您對應的阿里雲 `region` 的地址，具體地址可在阿里雲的鏈路追蹤服務內得到，更多細節可參考 [阿里雲鏈路追蹤服務幫助文件](https://help.aliyun.com/document_detail/100031.html?spm=a2c4g.11186623.6.547.68f974dcZlg4Mv)。
 
 ### 使用其他 Tracer 驅動
 

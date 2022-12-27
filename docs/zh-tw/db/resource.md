@@ -44,7 +44,7 @@ composer require hyperf/resource-grpc
 php bin/hyperf.php gen:resource User --grpc
 ```
 
-gRPC 資源需要設定 `message` 類. 通過重寫該資源類的 `expect()` 方法來實現.
+gRPC 資源需要設定 `message` 類. 透過重寫該資源類的 `expect()` 方法來實現.
 
 gRPC 服務返回時, 必須呼叫 `toMessage()`. 該方法會返回一個例項化的 `message` 類.
 
@@ -73,7 +73,7 @@ class HiReplyResource extends GrpcResource
 
 ```
 
-預設生成的資源集合, 可通過繼承 `Hyperf\ResourceGrpc\GrpcResource` 介面來使其支援 gRPC 返回.
+預設生成的資源集合, 可透過繼承 `Hyperf\ResourceGrpc\GrpcResource` 介面來使其支援 gRPC 返回.
 
 ## 概念綜述
 
@@ -941,4 +941,4 @@ class IndexController extends AbstractController
 
 ```
 
-如你想設定響應頭資訊, 狀態碼等, 通過呼叫 `toResponse()` 方法獲取到響應物件進行設定.
+如你想設定響應頭資訊, 狀態碼等, 透過呼叫 `toResponse()` 方法獲取到響應物件進行設定.

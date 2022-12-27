@@ -1,6 +1,6 @@
 # 檔案系統
 
-檔案系統元件集成了 PHP 生態中大名鼎鼎的 `League\Flysystem` (這也是 Laravel 等諸多知名框架的底層庫)。通過合理抽象，程式不必感知儲存引擎究竟是本地硬碟還是雲伺服器，實現解耦。本元件對常用的雲端儲存服務提供了協程化支援。
+檔案系統元件集成了 PHP 生態中大名鼎鼎的 `League\Flysystem` (這也是 Laravel 等諸多知名框架的底層庫)。透過合理抽象，程式不必感知儲存引擎究竟是本地硬碟還是雲伺服器，實現解耦。本元件對常用的雲端儲存服務提供了協程化支援。
 
 ## 安裝
 
@@ -106,7 +106,7 @@ php bin/hyperf.php vendor:publish hyperf/filesystem
 
 ## 使用
 
-通過 DI 注入 `League\Flysystem\Filesystem` 即可使用。
+透過 DI 注入 `League\Flysystem\Filesystem` 即可使用。
 
 API 如下：
 
@@ -192,7 +192,7 @@ class IndexController
 
 ### 配置靜態資源
 
-如果您希望通過 http 訪問上傳到本地的檔案，請在 `config/autoload/server.php` 配置中增加以下配置。
+如果您希望透過 http 訪問上傳到本地的檔案，請在 `config/autoload/server.php` 配置中增加以下配置。
 
 ```
 return [
@@ -210,7 +210,7 @@ return [
 
 1. S3 儲存請確認安裝 `hyperf/guzzle` 元件以提供協程化支援。阿里雲、七牛雲、騰訊云云儲存請[開啟 Curl Hook](/zh-tw/coroutine?id=swoole-runtime-hook-level)來使用協程。因 Curl Hook 的引數支援性問題，請使用 Swoole 4.4.13 以上版本。
 2. minIO, ceph radosgw 等私有物件儲存方案均支援 S3 協議，可以使用 S3 介面卡。
-3. 使用 Local 驅動時，根目錄是配置好的地址，而不是作業系統的根目錄。例如，Local 驅動 `root` 設定為 `/var/www`, 則本地磁碟上的 `/var/www/public/file.txt` 通過 flysystem API 訪問時應使用 `/public/file.txt` 或 `public/file.txt` 。
+3. 使用 Local 驅動時，根目錄是配置好的地址，而不是作業系統的根目錄。例如，Local 驅動 `root` 設定為 `/var/www`, 則本地磁碟上的 `/var/www/public/file.txt` 透過 flysystem API 訪問時應使用 `/public/file.txt` 或 `public/file.txt` 。
 4. 以阿里雲 OSS 為例，1 核 1 程序讀操作效能對比：
 
 ```bash

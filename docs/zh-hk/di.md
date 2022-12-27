@@ -234,7 +234,7 @@ class IndexController
 ### 工廠對象注入
 
 我們假設 `UserService` 的實現會更加複雜一些，在創建 `UserService` 對象時構造函數還需要傳遞進來一些非直接注入型的參數，假設我們需要從配置中取得一個值，然後 `UserService`
-需要根據這個值來決定是否開啟緩存模式（順帶一説 Hyperf 提供了更好用的 [模型緩存](zh-hk/db/model-cache.md) 功能）
+需要根據這個值來決定是否開啓緩存模式（順帶一説 Hyperf 提供了更好用的 [模型緩存](zh-hk/db/model-cache.md) 功能）
 
 我們需要創建一個工廠來生成 `UserService` 對象：
 
@@ -296,11 +296,11 @@ return [
 
 ### 懶加載
 
-Hyperf 的長生命週期依賴注入在項目啟動時完成。這意味着長生命週期的類需要注意：
+Hyperf 的長生命週期依賴注入在項目啓動時完成。這意味着長生命週期的類需要注意：
 
-* 構造函數時還不是協程環境，如果注入了可能會觸發協程切換的類，就會導致框架啟動失敗。
+* 構造函數時還不是協程環境，如果注入了可能會觸發協程切換的類，就會導致框架啓動失敗。
 
-* 構造函數中要避免循環依賴（比較典型的例子為 `Listener` 和 `EventDispatcherInterface`），不然也會啟動失敗。
+* 構造函數中要避免循環依賴（比較典型的例子為 `Listener` 和 `EventDispatcherInterface`），不然也會啓動失敗。
 
 目前解決方案是：只在實例中注入 `Psr\Container\ContainerInterface` ，而其他的組件在非構造函數執行時通過 `container` 獲取。但 PSR-11 中指出:
 
