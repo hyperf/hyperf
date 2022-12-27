@@ -61,7 +61,7 @@ class RateLimitController
 ## 觸發限流
 當限流被觸發時, 預設會丟擲 `Hyperf\RateLimit\Exception\RateLimitException` 異常
 
-可以通過[異常處理](zh-tw/exception-handler.md)或者配置 `limitCallback` 限流回調處理。
+可以透過[異常處理](zh-tw/exception-handler.md)或者配置 `limitCallback` 限流回調處理。
 
 例如:
 ```php
@@ -89,7 +89,7 @@ class RateLimitController
     {
         // $seconds 下次生成Token 的間隔, 單位為秒
         // $proceedingJoinPoint 此次請求執行的切入點
-        // 可以通過呼叫 `$proceedingJoinPoint->process()` 繼續完成執行，或者自行處理
+        // 可以透過呼叫 `$proceedingJoinPoint->process()` 繼續完成執行，或者自行處理
         return $proceedingJoinPoint->process();
     }
 }

@@ -487,7 +487,7 @@ $user->delete();
 
 ### 通過查詢刪除模型
 
-您可通過在查詢上調用 `delete` 方法來刪除模型數據，在這個例子中，我們將刪除所有 `gender` 為 `1` 的用户。與批量更新一樣，批量刪除不會為刪除的模型啟動任何模型事件：
+您可通過在查詢上調用 `delete` 方法來刪除模型數據，在這個例子中，我們將刪除所有 `gender` 為 `1` 的用户。與批量更新一樣，批量刪除不會為刪除的模型啓動任何模型事件：
 
 ```php
 use App\Model\User;
@@ -510,7 +510,7 @@ User::destroy([1,2,3]);
 
 ### 軟刪除
 
-除了真實刪除數據庫記錄，`Hyperf` 也可以「軟刪除」模型。軟刪除的模型並不是真的從數據庫中刪除了。事實上，是在模型上設置了 `deleted_at` 屬性並將其值寫入數據庫。如果 `deleted_at` 值非空，代表這個模型已被軟刪除。如果要開啟模型軟刪除功能，你需要在模型上使用 `Hyperf\Database\Model\SoftDeletes` trait
+除了真實刪除數據庫記錄，`Hyperf` 也可以「軟刪除」模型。軟刪除的模型並不是真的從數據庫中刪除了。事實上，是在模型上設置了 `deleted_at` 屬性並將其值寫入數據庫。如果 `deleted_at` 值非空，代表這個模型已被軟刪除。如果要開啓模型軟刪除功能，你需要在模型上使用 `Hyperf\Database\Model\SoftDeletes` trait
 
 > `SoftDeletes` trait 會自動將 `deleted_at` 屬性轉換成 `DateTime / Carbon` 實例
 

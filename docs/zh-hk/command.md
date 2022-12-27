@@ -403,7 +403,7 @@ class DebugCommand extends HyperfCommand
 
 # 運行命令
 
-!> 注意：在運行命令時，默認不會觸發事件分發，可通過添加 `--enable-event-dispatcher` 參數來開啟。
+!> 注意：在運行命令時，默認會觸發事件分發，可通過添加 `--disable-event-dispatcher` 參數來開啓。
 
 ## 命令行中運行
 

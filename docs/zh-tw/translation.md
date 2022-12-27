@@ -77,9 +77,9 @@ class FooController
 
 # 翻譯字串
 
-## 通過 TranslatorInterface 翻譯
+## 透過 TranslatorInterface 翻譯
 
-可直接通過注入 `Hyperf\Contact\TranslatorInterface` 並呼叫例項的 `trans` 方法實現對字串的翻譯：
+可直接透過注入 `Hyperf\Contact\TranslatorInterface` 並呼叫例項的 `trans` 方法實現對字串的翻譯：
 
 ```php
 <?php
@@ -99,9 +99,9 @@ class FooController
 }
 ```
 
-## 通過全域性函式翻譯
+## 透過全域性函式翻譯
 
-您也可以通過全域性函式 `__()` 或 `trans()` 來對字串進行翻譯。   
+您也可以透過全域性函式 `__()` 或 `trans()` 來對字串進行翻譯。   
 函式的第一個引數使用 `鍵`（指使用翻譯字串作為鍵的鍵） 或者是 `檔案. 鍵` 的形式。
 
 ```php

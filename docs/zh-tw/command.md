@@ -4,7 +4,7 @@ Hyperf 的命令列預設由 [hyperf/command](https://github.com/hyperf/command)
 
 # 安裝
 
-通常來說該元件會預設存在，但如果您希望用於非 Hyperf 專案，也可通過下面的命令依賴 [hyperf/command](https://github.com/hyperf/command) 元件：
+通常來說該元件會預設存在，但如果您希望用於非 Hyperf 專案，也可透過下面的命令依賴 [hyperf/command](https://github.com/hyperf/command) 元件：
 
 ```bash
 composer require hyperf/command
@@ -18,7 +18,7 @@ composer require hyperf/command
 
 ## 生成命令
 
-如果你有安裝 [hyperf/devtool](https://github.com/hyperf/devtool) 元件的話，可以通過 `gen:command` 命令來生成一個自定義命令：
+如果你有安裝 [hyperf/devtool](https://github.com/hyperf/devtool) 元件的話，可以透過 `gen:command` 命令來生成一個自定義命令：
 
 ```bash
 php bin/hyperf.php gen:command FooCommand
@@ -27,7 +27,7 @@ php bin/hyperf.php gen:command FooCommand
 
 ### 定義命令
 
-定義該命令類所對應的命令有兩種形式，一種是通過 `$name` 屬性定義，另一種是通過建構函式傳參來定義，我們通過程式碼示例來演示一下，假設我們希望定義該命令類的命令為 `foo:hello`：
+定義該命令類所對應的命令有兩種形式，一種是透過 `$name` 屬性定義，另一種是透過建構函式傳參來定義，我們透過程式碼示例來演示一下，假設我們希望定義該命令類的命令為 `foo:hello`：
 
 #### `$name` 屬性定義：
 
@@ -97,7 +97,7 @@ class FooCommand extends HyperfCommand
 
     public function handle()
     {
-        // 通過內建方法 line 在 Console 輸出 Hello Hyperf.
+        // 透過內建方法 line 在 Console 輸出 Hello Hyperf.
         $this->line('Hello Hyperf.', 'info');
     }
 }
@@ -105,11 +105,11 @@ class FooCommand extends HyperfCommand
 
 ### 定義命令類的引數
 
-在編寫命令時，通常是通過 `引數` 和 `選項` 來收集使用者的輸入的，在收集一個使用者輸入前，必須對該 `引數` 或 `選項` 進行定義。
+在編寫命令時，通常是透過 `引數` 和 `選項` 來收集使用者的輸入的，在收集一個使用者輸入前，必須對該 `引數` 或 `選項` 進行定義。
 
 #### 引數
 
-假設我們希望定義一個 `name` 引數，然後通過傳遞任意字串如 `Hyperf` 於命令一起並執行 `php bin/hyperf.php foo:hello Hyperf` 輸出 `Hello Hyperf`，我們通過程式碼來演示一下：
+假設我們希望定義一個 `name` 引數，然後透過傳遞任意字串如 `Hyperf` 於命令一起並執行 `php bin/hyperf.php foo:hello Hyperf` 輸出 `Hello Hyperf`，我們透過程式碼來演示一下：
 
 ```php
 <?php
@@ -274,7 +274,7 @@ array(2) {
 public function configure()
 {
     parent::configure();
-    $this->addOption('opt', 'o', InputOption::VALUE_NONE, '是否優化');
+    $this->addOption('opt', 'o', InputOption::VALUE_NONE, '是否最佳化');
 }
 
 public function handle()
@@ -345,7 +345,7 @@ array(2) {
 
 ```
 
-## 通過 `$signature` 配置命令列
+## 透過 `$signature` 配置命令列
 
 命令列除了上述配置方法外，還支援使用 `$signature` 配置。
 
@@ -403,7 +403,7 @@ class DebugCommand extends HyperfCommand
 
 # 執行命令
 
-!> 注意：在執行命令時，預設不會觸發事件分發，可通過新增 `--enable-event-dispatcher` 引數來開啟。
+!> 注意：在執行命令時，預設會觸發事件分發，可透過新增 `--disable-event-dispatcher` 引數來開啟。
 
 ## 命令列中執行
 

@@ -208,7 +208,7 @@ return [
 
 ## 注意事項
 
-1. S3 存儲請確認安裝 `hyperf/guzzle` 組件以提供協程化支持。阿里雲、七牛雲、騰訊云云存儲請[開啟 Curl Hook](/zh-hk/coroutine?id=swoole-runtime-hook-level)來使用協程。因 Curl Hook 的參數支持性問題，請使用 Swoole 4.4.13 以上版本。
+1. S3 存儲請確認安裝 `hyperf/guzzle` 組件以提供協程化支持。阿里雲、七牛雲、騰訊云云存儲請[開啓 Curl Hook](/zh-hk/coroutine?id=swoole-runtime-hook-level)來使用協程。因 Curl Hook 的參數支持性問題，請使用 Swoole 4.4.13 以上版本。
 2. minIO, ceph radosgw 等私有對象存儲方案均支持 S3 協議，可以使用 S3 適配器。
 3. 使用 Local 驅動時，根目錄是配置好的地址，而不是操作系統的根目錄。例如，Local 驅動 `root` 設置為 `/var/www`, 則本地磁盤上的 `/var/www/public/file.txt` 通過 flysystem API 訪問時應使用 `/public/file.txt` 或 `public/file.txt` 。
 4. 以阿里雲 OSS 為例，1 核 1 進程讀操作性能對比：
@@ -217,7 +217,7 @@ return [
 ab -k -c 10 -n 1000 http://127.0.0.1:9501/
 ```
 
-未開啟 CURL HOOK：
+未開啓 CURL HOOK：
 
 ```
 Concurrency Level:      10
@@ -233,7 +233,7 @@ Time per request:       202.902 [ms] (mean, across all concurrent requests)
 Transfer rate:          0.70 [Kbytes/sec] received
 ```
 
-開啟 CURL HOOK 後：
+開啓 CURL HOOK 後：
 
 ```
 Concurrency Level:      10

@@ -110,7 +110,7 @@ class WebSocketController extends BaseNamespace
 
 ### Socket API
 
-通過 SocketAPI 對目標 Socket 進行推送，或以目標 Socket 的身份在房間內發言。需要在事件回撥中使用。
+透過 SocketAPI 對目標 Socket 進行推送，或以目標 Socket 的身份在房間內發言。需要在事件回撥中使用。
 
 ```php
 <?php
@@ -203,11 +203,11 @@ class FooNamespace extends BaseNamespace {
 
 ### 設定 Socket.io 名稱空間
 
-Socket.io 通過自定義名稱空間實現多路複用。（注意：不是 PHP 的名稱空間）
+Socket.io 透過自定義名稱空間實現多路複用。（注意：不是 PHP 的名稱空間）
 
-1. 可以通過 `@SocketIONamespace("/xxx")` 將控制器對映為 xxx 的名稱空間，
+1. 可以透過 `@SocketIONamespace("/xxx")` 將控制器對映為 xxx 的名稱空間，
 
-2. 也可通過
+2. 也可透過
 
 ```php
 <?php
@@ -220,7 +220,7 @@ SocketIORouter::addNamespace('/xxx' , WebSocketController::class);
 
 ### 開啟 Session 
 
-安裝並配置好 hyperf/session 元件及其對應中介軟體，再通過 `SessionAspect` 切入 SocketIO 來使用 Session 。
+安裝並配置好 hyperf/session 元件及其對應中介軟體，再透過 `SessionAspect` 切入 SocketIO 來使用 Session 。
 
 ```php
 <?php
@@ -234,7 +234,7 @@ return [
 
 ### 調整房間介面卡
 
-預設的房間功能通過 Redis 介面卡實現，可以適應多程序乃至分散式場景。
+預設的房間功能透過 Redis 介面卡實現，可以適應多程序乃至分散式場景。
 
 1. 可以替換為記憶體介面卡，只適用於單 worker 場景。
 
@@ -343,7 +343,7 @@ class WebSocketController extends BaseNamespace
 |     $pingInterval      |  int  | 10000  |
 | $clientCallbackTimeout |  int  | 10000  |
 
-有時候，由於推送訊息比較多或者網路較卡，在 100ms 內，無法及時返回 `PONG`，就會導致連線斷開。這時候我們可以通過以下方式，進行重寫：
+有時候，由於推送訊息比較多或者網路較卡，在 100ms 內，無法及時返回 `PONG`，就會導致連線斷開。這時候我們可以透過以下方式，進行重寫：
 
 ```php
 <?php
@@ -391,7 +391,7 @@ return [
 
 ### Auth 鑑權
 
-您可以通過使用中介軟體來攔截 WebSocket 握手，實現鑑權功能，如下：
+您可以透過使用中介軟體來攔截 WebSocket 握手，實現鑑權功能，如下：
 
 ```php
 <?php
@@ -417,7 +417,7 @@ class WebSocketAuthMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // 虛擬碼，通過 isAuth 方法攔截握手請求並實現許可權檢查
+        // 虛擬碼，透過 isAuth 方法攔截握手請求並實現許可權檢查
         if (! $this->isAuth($request)) {
             return $this->container->get(\Hyperf\HttpServer\Contract\ResponseInterface::class)->raw('Forbidden');
         }

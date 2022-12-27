@@ -1,6 +1,6 @@
 # 模型快取
 
-在高頻的業務場景下，我們可能會頻繁的查詢資料庫獲取業務資料，雖然有主鍵索引的加持，但也不可避免的對資料庫效能造成了極大的考驗。而對於這種 kv 的查詢方式，我們可以很方便的通過使用 `模型快取` 來減緩資料庫的壓力。本元件實現了 Model 資料自動快取的功能，且當刪除和修改模型資料時，自動刪除和修改對應的快取。執行累加、累減操作時，快取資料自動進行對應累加、累減變更。
+在高頻的業務場景下，我們可能會頻繁的查詢資料庫獲取業務資料，雖然有主鍵索引的加持，但也不可避免的對資料庫效能造成了極大的考驗。而對於這種 kv 的查詢方式，我們可以很方便的透過使用 `模型快取` 來減緩資料庫的壓力。本元件實現了 Model 資料自動快取的功能，且當刪除和修改模型資料時，自動刪除和修改對應的快取。執行累加、累減操作時，快取資料自動進行對應累加、累減變更。
 
 > 模型快取暫時只支援 `Redis` 儲存驅動，其他儲存引擎歡迎社群提交對應的實現。
 
@@ -104,7 +104,7 @@ class User extends Model implements CacheableInterface
 /** @var int|string $id */
 $model = User::findFromCache($id);
 
-// 批量查詢快取，返回 Hyperf\Database\Model\Collection
+// 批次查詢快取，返回 Hyperf\Database\Model\Collection
 /** @var array $ids */
 $models = User::findManyFromCache($ids);
 
@@ -129,11 +129,11 @@ $models = User::findManyFromCache($ids);
 ```
 
 另外一點需要注意的就是，快取的更新機制，框架內實現了對應的 `Hyperf\ModelCache\Listener\DeleteCacheListener` 監聽器，每當資料修改時，框架會主動刪除對應的快取資料。
-如果您不希望由框架來自動刪除對應的快取，可以通過主動覆寫 Model 的 `deleteCache` 方法，然後自行實現對應監聽即可。
+如果您不希望由框架來自動刪除對應的快取，可以透過主動覆寫 Model 的 `deleteCache` 方法，然後自行實現對應監聽即可。
 
-### 批量修改或刪除
+### 批次修改或刪除
 
-`Hyperf\ModelCache\Cacheable` 會自動接管 `Model::query` 方法，只需要使用者通過以下方式進行資料的刪除，就可以自動清理對應的快取資料。
+`Hyperf\ModelCache\Cacheable` 會自動接管 `Model::query` 方法，只需要使用者透過以下方式進行資料的刪除，就可以自動清理對應的快取資料。
 
 ```php
 <?php
@@ -169,7 +169,7 @@ class User extends Model implements CacheableInterface
 
 ### EagerLoad
 
-當我們使用模型關係時，可以通過 `load` 解決 `N+1` 的問題，但仍然需要查一次資料庫。模型快取通過重寫了 `ModelBuilder`，可以讓使用者儘可能的從快取中拿到對應的模型。
+當我們使用模型關係時，可以透過 `load` 解決 `N+1` 的問題，但仍然需要查一次資料庫。模型快取透過重寫了 `ModelBuilder`，可以讓使用者儘可能的從快取中拿到對應的模型。
 
 > 本功能不支援 `morphTo` 和不是隻有 `whereIn` 查詢的關係模型。
 
@@ -185,7 +185,7 @@ return [
 ];
 ```
 
-通過 `loadCache` 方法，載入對應的模型關係。
+透過 `loadCache` 方法，載入對應的模型關係。
 
 ```php
 $books = Book::findManyFromCache([1,2,3]);
@@ -223,4 +223,4 @@ foreach ($books as $book){
 
 - Hyperf\ModelCache\Handler\RedisStringHandler
 
-使用 `String` 儲存快取，因為是序列化的資料，所以支援所有資料型別，不足是無法有效處理 `Model::increment()`，當模型呼叫累加時，通過刪除快取，解決一致性的問題。
+使用 `String` 儲存快取，因為是序列化的資料，所以支援所有資料型別，不足是無法有效處理 `Model::increment()`，當模型呼叫累加時，透過刪除快取，解決一致性的問題。

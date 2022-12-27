@@ -8,7 +8,7 @@ ReactiveX 是 Reactive Extensions 的縮寫，一般簡寫為 Rx，最初是 LIN
 
 ## 什麼是 ReactiveX
 
-微軟給的定義是，Rx 是一個函式庫，讓開發者可以利用可觀察序列和 LINQ 風格查詢操作符來編寫非同步和基於事件的程式，使用 Rx，開發者可以用 Observables 表示非同步資料流，用 LINQ 操作符查詢非同步資料流， 用 Schedulers 引數化非同步資料流的併發處理，Rx 可以這樣定義：Rx = Observables + LINQ + Schedulers。
+微軟給的定義是，Rx 是一個函式庫，讓開發者可以利用可觀察序列和 LINQ 風格查詢運算子來編寫非同步和基於事件的程式，使用 Rx，開發者可以用 Observables 表示非同步資料流，用 LINQ 運算子查詢非同步資料流， 用 Schedulers 引數化非同步資料流的併發處理，Rx 可以這樣定義：Rx = Observables + LINQ + Schedulers。
 
 [Reactivex.io](http://reactivex.io) 給的定義是，Rx 是一個使用可觀察資料流進行非同步程式設計的程式設計介面，ReactiveX 結合了觀察者模式、迭代器模式和函數語言程式設計的精華。
 
@@ -18,11 +18,11 @@ ReactiveX 是 Reactive Extensions 的縮寫，一般簡寫為 Rx，最初是 LIN
 
 ### 正面
 
-- 通過響應式程式設計的思考方式，可以將一些複雜非同步問題化繁為簡。
+- 透過響應式程式設計的思考方式，可以將一些複雜非同步問題化繁為簡。
 
 - 如果您已經在其他語言有過響應式程式設計經驗(如 RxJS/RxJava)，本元件可以幫助您將這種經驗移植到 Hyperf 上。
 
-- 儘管 Swoole 中推薦通過協程像編寫同步程式一樣編寫非同步程式，但 Swoole 中仍然包含了大量事件，而處理事件正是 Rx 的強項。
+- 儘管 Swoole 中推薦透過協程像編寫同步程式一樣編寫非同步程式，但 Swoole 中仍然包含了大量事件，而處理事件正是 Rx 的強項。
 
 - 如果您業務中包含流處理，如 WebSocket，gRPC streaming 等，Rx 也可以發揮重要作用。
 
@@ -30,7 +30,7 @@ ReactiveX 是 Reactive Extensions 的縮寫，一般簡寫為 Rx，最初是 LIN
 
 - 響應式程式設計的思維方式和傳統面向物件思維方式差異較大，需要開發者適應。
 
-- Rx 只是提供了思維方式，並沒有額外的魔法。通過響應式程式設計能夠解決的問題通過傳統方式一樣能夠解決。
+- Rx 只是提供了思維方式，並沒有額外的魔法。透過響應式程式設計能夠解決的問題透過傳統方式一樣能夠解決。
 
 - RxPHP 並不是 Rx 家族中的佼佼者。
 
@@ -48,13 +48,13 @@ composer require hyperf/reactive-x
 
 `Observable::fromEvent` 將 PSR 標準事件轉為可觀察序列。
 
-在 hyperf-skeleton 骨架包中預設提供了列印 SQL 語句的事件監聽，預設位置於 `app/Listener/DbQueryExecutedListener.php`。下面我們對這個監聽做一些優化：
+在 hyperf-skeleton 骨架包中預設提供了列印 SQL 語句的事件監聽，預設位置於 `app/Listener/DbQueryExecutedListener.php`。下面我們對這個監聽做一些最佳化：
 
 1. 只打印超過 100ms 的 SQL 查詢。
 
 2. 每個連線最多 1 秒列印 1 次，避免硬碟被問題程式刷爆。
 
-如果沒有 ReactiveX，問題 1 還好說，而問題 2 應該就需要動一番腦筋了。而通過 ReactiveX，則可以通過下面的示例程式碼的方式輕鬆解決這些需求：
+如果沒有 ReactiveX，問題 1 還好說，而問題 2 應該就需要動一番腦筋了。而透過 ReactiveX，則可以透過下面的示例程式碼的方式輕鬆解決這些需求：
 
 ```php
 <?php
@@ -129,7 +129,7 @@ class SqlListener implements ListenerInterface
 
 將 Swoole 協程中的 Channel 轉為可觀察序列。
 
-Swoole 協程中的 Channel 是讀寫一對一的。如果我們希望通過 Channel 來做多對多訂閱和釋出在 ReactiveX 下該怎麼做呢？
+Swoole 協程中的 Channel 是讀寫一對一的。如果我們希望透過 Channel 來做多對多訂閱和釋出在 ReactiveX 下該怎麼做呢？
 
 請參閱下面這個例子。
 
@@ -197,7 +197,7 @@ echo $result->pop(); // 2;
 
 > 由於我們要新增路由，所以務必要在 Server 啟動前執行，如在 `BootApplication` 事件監聽中。
 
-假設我們有一個上傳路由，流量很大，需要在記憶體中緩衝，上傳十次以後再批量入庫。
+假設我們有一個上傳路由，流量很大，需要在記憶體中緩衝，上傳十次以後再批次入庫。
 
 ```php
 <?php
@@ -260,7 +260,7 @@ Swoole 的程序間通訊也是事件驅動的。本元件在 RxPHP 提供的四
 
 2. 使用者第一次登入時顯示最新的 5 條訊息。
 
-我們通過 `ReplaySubject` 的跨程序版本來實現。
+我們透過 `ReplaySubject` 的跨程序版本來實現。
 
 ```php
 <?php
@@ -315,7 +315,7 @@ class WebSocketController implements OnMessageInterface, OnOpenInterface, OnClos
 
 ```
 
-為了方便使用，本元件利用 `IpcSubject` 封裝了一條 “訊息匯流排” `MessageBusInterface`。只需要注入 `MessageBusInterface` 就可以收發全程序共享資訊（包括自定義程序）。諸如配置中心一類的功能可以通過它來輕鬆實現。
+為了方便使用，本元件利用 `IpcSubject` 封裝了一條 “訊息匯流排” `MessageBusInterface`。只需要注入 `MessageBusInterface` 就可以收發全程序共享資訊（包括自定義程序）。諸如配置中心一類的功能可以透過它來輕鬆實現。
 
 ```php
 <?php

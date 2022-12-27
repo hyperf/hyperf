@@ -1,5 +1,5 @@
 
-通過 `hyperf/nano` 可以在無骨架、零配置的情況下快速搭建 Hyperf 應用。
+透過 `hyperf/nano` 可以在無骨架、零配置的情況下快速搭建 Hyperf 應用。
 
 ## 安裝
 

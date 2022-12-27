@@ -54,7 +54,7 @@ php bin/hyperf.php vendor:publish hyperf/redis
 
 ## 使用
 
-`hyperf/redis` 實現了 `ext-redis` 代理和連線池，使用者可以直接通過依賴注入容器注入 `\Hyperf\Redis\Redis` 來使用 Redis 客戶端，實際獲得的是 `\Redis` 的一個代理物件。
+`hyperf/redis` 實現了 `ext-redis` 代理和連線池，使用者可以直接透過依賴注入容器注入 `\Hyperf\Redis\Redis` 來使用 Redis 客戶端，實際獲得的是 `\Redis` 的一個代理物件。
 
 ```php
 <?php
@@ -112,7 +112,7 @@ return [
 
 ```
 
-### 通過代理類使用
+### 透過代理類使用
 
 我們可以重寫一個 `FooRedis` 類並繼承 `Hyperf\Redis\Redis` 類，修改 `poolName` 為上述的 `foo`，即可完成對連線池的切換，示例：
 
@@ -126,7 +126,7 @@ class FooRedis extends Redis
     protected $poolName = 'foo';
 }
 
-// 通過 DI 容器獲取或直接注入當前類
+// 透過 DI 容器獲取或直接注入當前類
 $redis = $this->container->get(FooRedis::class);
 
 $result = $redis->keys('*');
@@ -135,7 +135,7 @@ $result = $redis->keys('*');
 
 ### 使用工廠類
 
-在每個庫對應一個固定的使用場景時，通過代理類是一種很好的區分的方法，但有時候需求可能會更加的動態，這時候我們可以通過 `Hyperf\Redis\RedisFactory` 工廠類來動態的傳遞 `poolName` 來獲得對應的連線池的客戶端，而無需為每個庫建立代理類，示例如下：
+在每個庫對應一個固定的使用場景時，透過代理類是一種很好的區分的方法，但有時候需求可能會更加的動態，這時候我們可以透過 `Hyperf\Redis\RedisFactory` 工廠類來動態的傳遞 `poolName` 來獲得對應的連線池的客戶端，而無需為每個庫建立代理類，示例如下：
 
 ```php
 <?php
@@ -144,7 +144,7 @@ use Hyperf\Utils\ApplicationContext;
 
 $container = ApplicationContext::getContainer();
 
-// 通過 DI 容器獲取或直接注入 RedisFactory 類
+// 透過 DI 容器獲取或直接注入 RedisFactory 類
 $redis = $container->get(RedisFactory::class)->get('foo');
 $result = $redis->keys('*');
 ```
