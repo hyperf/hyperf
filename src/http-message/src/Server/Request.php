@@ -592,7 +592,7 @@ class Request extends \Hyperf\HttpMessage\Base\Request implements ServerRequestI
     {
         $parts = parse_url('//' . $httpHost);
         if (! isset($parts['host'])) {
-            throw new \InvalidArgumentException('Invalid host: ' . $httpHost);
+            throw new InvalidArgumentException('Invalid host: ' . $httpHost);
         }
 
         return [$parts['host'], $parts['port'] ?? null];

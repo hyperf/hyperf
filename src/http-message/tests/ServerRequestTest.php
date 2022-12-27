@@ -22,6 +22,7 @@ use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Codec\Xml;
 use HyperfTest\HttpMessage\Stub\ParserStub;
 use HyperfTest\HttpMessage\Stub\Server\RequestStub;
+use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -175,7 +176,7 @@ class ServerRequestTest extends TestCase
         $this->assertSame('[fe80::a464:1aff:fe88:7b5a]', $resIPv6[0]);
         $this->assertSame(9502, $resIPv6[1]);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid host: ');
         $method->invokeArgs(null, ['']);
     }

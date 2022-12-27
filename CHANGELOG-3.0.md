@@ -173,6 +173,7 @@ composer analyse
 - [#5100](https://github.com/hyperf/hyperf/pull/5100) Fixed bug that the tag `continue` cannot work when using `view-engine`.
 - [#5121](https://github.com/hyperf/hyperf/pull/5121) Fixed bug that the SQL is not valid but the correct error message cannot be obtained when using `pgsql`.
 - [#5132](https://github.com/hyperf/hyperf/pull/5132) Fixed bug that the exit code of command does not work when the exception code isn't int.
+- [#5142](https://github.com/hyperf/hyperf/pull/5142) Fixed bug that the method `Request::parseHost` does not work when host is invalid.
 - [#5199](https://github.com/hyperf/hyperf/pull/5199) Fixed bug that `RedisSentinel` can't support empty password.
 - [#5221](https://github.com/hyperf/hyperf/pull/5221) Fixed bug that `PGSqlSwooleConnection::affectingStatement()` can't work when the `sql` is wrong.
 - [#5223](https://github.com/hyperf/hyperf/pull/5223) Fixed bug that `KeepaliveConnection::isTimeout()` can't work when using swow.
