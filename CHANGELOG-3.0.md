@@ -70,6 +70,7 @@ composer analyse
 - [#5211](https://github.com/hyperf/hyperf/pull/5211) Added Annotation `CacheAhead` which used to cache data ahead.
 - [#5227](https://github.com/hyperf/hyperf/pull/5227) Added `Hyperf\WebSocketServer\Sender::getResponses()`.
 - [#5250](https://github.com/hyperf/hyperf/pull/5250) Added `defer_release` config in `hyperf/db`
+- [#5261](https://github.com/hyperf/hyperf/pull/5261) Added requirement `ext-posix` for `watcher`.
 
 ## Optimized
 
