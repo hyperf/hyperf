@@ -76,11 +76,11 @@ abstract class Driver implements DriverInterface
                 if ($maxMessages > 0 && $messageCount >= $maxMessages) {
                     break;
                 }
+                ++$messageCount;
             } catch (Throwable $exception) {
+                ++$messageCount;
                 $logger = $this->container->get(StdoutLoggerInterface::class);
                 $logger->error((string) $exception);
-            } finally {
-                ++$messageCount;
             }
         }
     }
