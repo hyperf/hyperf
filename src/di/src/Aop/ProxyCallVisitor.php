@@ -229,7 +229,7 @@ class ProxyCallVisitor extends NodeVisitorAbstract
 
     private function shouldRewrite(ClassMethod $node)
     {
-        if (in_array($this->visitorMetadata->classLike, [Node\Stmt\Interface_::class])) {
+        if (in_array($this->visitorMetadata->classLike, [Node\Stmt\Interface_::class]) || $node->isAbstract()) {
             return false;
         }
 
