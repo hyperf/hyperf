@@ -81,9 +81,7 @@ use Hyperf\Task\Annotation\Task;
 
 class AnnotationTask
 {
-    /**
-     * @Task
-     */
+    #[Task]
     public function handle($cid)
     {
         return [
@@ -142,14 +140,9 @@ use MongoDB\Driver\WriteConcern;
 
 class MongoTask
 {
-    /**
-     * @var Manager
-     */
-    public $manager;
+    public Manager $manager;
 
-    /**
-     * @Task
-     */
+    #[Task]
     public function insert(string $namespace, array $document)
     {
         $writeConcern = new WriteConcern(WriteConcern::MAJORITY, 1000);
@@ -160,9 +153,7 @@ class MongoTask
         return $result->getUpsertedCount();
     }
 
-    /**
-     * @Task
-     */
+    #[Task]
     public function query(string $namespace, array $filter = [], array $options = [])
     {
         $query = new Query($filter, $options);
@@ -200,5 +191,5 @@ $result = $client->query('hyperf.test', [], [
 
 ## 其他方案
 
-如果 Task 機制無法滿足性能要求，可以嘗試一下 Hyperf 組織下的另一個開源項目[GoTask](https://github.com/hyperf/gotask)。GoTask 通過 Swoole 進程管理功能啟動 Go 進程作為 Swoole 主進程邊車(Sidecar)，利用進程通訊將任務投遞給邊車處理並接收返回值。可以理解為 Go 版的 Swoole TaskWorker。
+如果 Task 機制無法滿足性能要求，可以嘗試一下 Hyperf 組織下的另一個開源項目[GoTask](https://github.com/hyperf/gotask)。GoTask 通過 Swoole 進程管理功能啓動 Go 進程作為 Swoole 主進程邊車(Sidecar)，利用進程通訊將任務投遞給邊車處理並接收返回值。可以理解為 Go 版的 Swoole TaskWorker。
 

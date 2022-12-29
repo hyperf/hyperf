@@ -81,21 +81,21 @@ Router::addGroup('/user/', function (){
 
 ### Define routing via annotations
 
-`Hyperf` provides a very convenient [annotation](en/annotation.md) routing function. You can directly define a route by defining `@Controller` or `@AutoController` annotations on any class.
+`Hyperf` provides a very convenient [annotation](en/annotation.md) routing function. You can directly define a route by defining `#[Controller]` or `#[AutoController]` annotations on any class.
 
 #### AutoController annotation
 
-`@AutoController` provides routing binding support for most simple access scenarios. When using `@AutoController`, `Hyperf` will automatically parse all the `public` methods of the class it is in and provide both `GET` and `POST` Request method.
+`#[AutoController]` provides routing binding support for most simple access scenarios. When using `#[AutoController]`, `Hyperf` will automatically parse all the `public` methods of the class it is in and provide both `GET` and `POST` Request method.
 
-> When using `@AutoController` annotation, `use Hyperf\HttpServer\Annotation\AutoController;` namespace is required.
+> When using `#[AutoController]` annotation, `use Hyperf\HttpServer\Annotation\AutoController;` namespace is required.
 
 Pascal case controller names will be converted to snake_case automatically. The following is an example of the correspondence between the controller, annotation and the resulting route:
 
-|    Controller    |            Annotation           |    Route URI   |
-|:----------------:|:-------------------------------:|:--------------:|
-| MyDataController |        @AutoController()        | /my_data/index |
-| MydataController |        @AutoController()        | /mydata/index  |
-| MyDataController | @AutoController(prefix="/data") | /data/index    |
+|    Controller    |             Annotation             |    Route URI   |
+|:----------------:|:----------------------------------:|:--------------:|
+| MyDataController |         #[AutoController]          | /my_data/index |
+| MydataController |         #[AutoController]          | /mydata/index  |
+| MyDataController | #[AutoController(prefix: "/data")] | /data/index    |
 
 ```php
 <?php
@@ -106,9 +106,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class UserController
 {
     // Hyperf will automatically generate a /user/index route for this method, allowing requests via GET or POST
@@ -123,17 +121,17 @@ class UserController
 
 #### Controller annotation
 
-`@Controller` exists to meet more detailed routing definition requirements. The use of the `@Controller` annotation is used to indicate that the current class is a `controller` class, and the `@RequestMapping` annotation is required to update the detailed definition of request method and URI.
+`#[Controller]` exists to meet more detailed routing definition requirements. The use of the `#[Controller]` annotation is used to indicate that the current class is a `controller` class, and the `#[RequestMapping]` annotation is required to update the detailed definition of request method and URI.
 
-We also provide a variety of quick and convenient `mapping` annotations, such as `@GetMapping`, `@PostMapping`, `@PutMapping`, `@PatchMapping` and `@DeleteMapping`, each corresponding with a matching request method.
+We also provide a variety of quick and convenient `mapping` annotations, such as `#[GetMapping]`, `#[PostMapping]`, `#[PutMapping]`, `#[PatchMapping]` and `#[DeleteMapping]`, each corresponding with a matching request method.
 
-- When using `@Controller` annotation, `use Hyperf\HttpServer\Annotation\Controller` namespace is required.
-- When using `@RequestMapping` annotation, `use Hyperf\HttpServer\Annotation\RequestMapping` namespace is required.
-- When using `@GetMapping` annotation, `use Hyperf\HttpServer\Annotation\GetMapping` namespace is required.
-- When using `@PostMapping` annotation, `use Hyperf\HttpServer\Annotation\PostMapping` namespace is required.
-- When using `@PutMapping` annotation, `use Hyperf\HttpServer\Annotation\PutMapping` namespace is required.
-- When using `@PatchMapping` annotation, `use Hyperf\HttpServer\Annotation\PatchMapping` namespace is required.
-- When using `@DeleteMapping` annotation, `use Hyperf\HttpServer\Annotation\DeleteMapping` namespace is required.
+- When using `#[Controller]` annotation, `use Hyperf\HttpServer\Annotation\Controller` namespace is required.
+- When using `#[RequestMapping]` annotation, `use Hyperf\HttpServer\Annotation\RequestMapping` namespace is required.
+- When using `#[GetMapping]` annotation, `use Hyperf\HttpServer\Annotation\GetMapping` namespace is required.
+- When using `#[PostMapping]` annotation, `use Hyperf\HttpServer\Annotation\PostMapping` namespace is required.
+- When using `#[PutMapping]` annotation, `use Hyperf\HttpServer\Annotation\PutMapping` namespace is required.
+- When using `#[PatchMapping]` annotation, `use Hyperf\HttpServer\Annotation\PatchMapping` namespace is required.
+- When using `#[DeleteMapping]` annotation, `use Hyperf\HttpServer\Annotation\DeleteMapping` namespace is required.
 
 ```php
 <?php
@@ -145,15 +143,11 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
-/**
- * @Controller()
- */
+#[Controller]
 class UserController
 {
     // Hyperf will automatically generate a /user/index route for this method, allowing requests via GET or POST
-    /**
-     * @RequestMapping(path="index", methods="get,post")
-     */
+    #[RequestMapping(path: "index", methods: "get,post")]
     public function index(RequestInterface $request)
     {
         // Obtain the id parameter from the request
@@ -165,10 +159,10 @@ class UserController
 
 #### Annotation parameters
 
-Both `@Controller` and `@AutoController` provide two parameters, `prefix` and `server`.
+Both `#[Controller]` and `#[AutoController]` provide two parameters, `prefix` and `server`.
 
 `prefix` represents the URI prefix for all methods under the controller, the default is the lowercase of the class name. For example, in the case of `UserController`, the `prefix` defaults to `user`, so if the controller method is `index`, then the final route is `/user/index`.
-It should be noted that the `prefix` is not always used: when the `path` of a method in a class starts with `/`, it means that the path is defined as an absolute `URI` and the value of `prefix` will be ignored .
+It should be noted that the `prefix` is not always used: when the `path` of a method in a class starts with `/`, it means that the path is defined as an absolute `URI` and the value of `prefix` will be ignored. At the same time, if the `prefix` attribute is not set, then the part after `\\Controller\\` in the controller class namespace will be used as the route prefix in SnakeCase style.
 
 `server` indicates which server the route is defined for. Since `Hyperf` supports starting multiple servers at the same time, there may be multiple HTTP servers running at the same time. Therefore defining the `server` parameter can be used to distinguish which server the route is defined for. The default is `http`.
 
@@ -216,4 +210,4 @@ If the devtool component is installed, you can use the `php bin/hyperf.php descr
 ## HTTP exceptions
 
 When the route fails to match the route, such as `route not found (404)`, `request method not allowed (405)` and other HTTP exceptions, Hyperf will uniformly throw an exception that inherits the `Hyperf\HttpMessage\Exception\HttpException` class. You need to manage these exceptions through the `ExceptionHandler` mechanism and do the corresponding response processing. By default, you can directly use the `Hyperf\HttpServer\Exception\Handler\HttpExceptionHandler` provided by the component for exception capture and processing. Not that you need to configure this exception handler in the `config/autoload/exceptions.php` configuration file and ensure that the sequence link between multiple exception handlers is correct.
-When you need to customize the response to HTTP exceptions such as `route not found (404)` and `request method not allowed (405)`, you can directly implement your own exception handling based on the code of `HttpExceptionHandler` And configure your own exception handler. For the logic and usage instructions of the exception handler, please refer to [Exception Handling](zh-cn/exception-handler.md).
+When you need to customize the response to HTTP exceptions such as `route not found (404)` and `request method not allowed (405)`, you can directly implement your own exception handling based on the code of `HttpExceptionHandler` And configure your own exception handler. For the logic and usage instructions of the exception handler, please refer to [Exception Handling](en/exception-handler.md).

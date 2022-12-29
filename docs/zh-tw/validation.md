@@ -64,7 +64,7 @@ php bin/hyperf.php vendor:publish hyperf/validation
 
 執行上面的命令會將驗證器的語言檔案 `validation.php` 釋出到對應的語言檔案目錄，`en` 指英文語言檔案，`zh_CN` 指中文簡體的語言檔案，您可以按照實際需要對 `validation.php` 檔案內容進行修改和自定義。
 
-```
+```shell
 /storage
     /languages
         /en
@@ -78,7 +78,7 @@ php bin/hyperf.php vendor:publish hyperf/validation
 
 ### 表單請求驗證
 
-對於複雜的驗證場景，您可以建立一個 `表單請求(FormRequest)`，表單請求是包含驗證邏輯的一個自定義請求類，您可以通過執行下面的命令建立一個名為 `FooRequest` 的表單驗證類：
+對於複雜的驗證場景，您可以建立一個 `表單請求(FormRequest)`，表單請求是包含驗證邏輯的一個自定義請求類，您可以透過執行下面的命令建立一個名為 `FooRequest` 的表單驗證類：
 
 ```bash
 php bin/hyperf.php gen:request FooRequest
@@ -100,7 +100,7 @@ public function rules(): array
 }
 ```
 
-那麼，驗證規則要如何生效呢？您所要做的就是在控制器方法中通過型別提示宣告該請求類為引數。這樣在控制器方法被呼叫之前會驗證傳入的表單請求，這意味著你不需要在控制器中寫任何驗證邏輯並很好的解耦了這兩部分的程式碼：
+那麼，驗證規則要如何生效呢？您所要做的就是在控制器方法中透過型別提示宣告該請求類為引數。這樣在控制器方法被呼叫之前會驗證傳入的表單請求，這意味著你不需要在控制器中寫任何驗證邏輯並很好的解耦了這兩部分的程式碼：
 
 ```php
 <?php
@@ -112,19 +112,19 @@ class IndexController
 {
     public function index(FooRequest $request)
     {
-        // 傳入的請求通過驗證...
+        // 傳入的請求透過驗證...
         
-        // 獲取通過驗證的資料...
+        // 獲取透過驗證的資料...
         $validated = $request->validated();
     }
 }
 ```
 
-如果驗證失敗，驗證器會拋一個 `Hyperf\Validation\ValidationException` 異常，您可以在通過新增一個自定義的異常處理類來處理該異常，與此同時，我們也提供了一個`Hyperf\Validation\ValidationExceptionHandler` 異常處理器來處理該異常，您也可以直接配置我們提供的異常處理器來處理。但預設提供的異常處理器不一定能夠滿足您的需求，您可以根據情況通過自定義異常處理器自定義處理驗證失敗後的行為。
+如果驗證失敗，驗證器會拋一個 `Hyperf\Validation\ValidationException` 異常，您可以在透過新增一個自定義的異常處理類來處理該異常，與此同時，我們也提供了一個`Hyperf\Validation\ValidationExceptionHandler` 異常處理器來處理該異常，您也可以直接配置我們提供的異常處理器來處理。但預設提供的異常處理器不一定能夠滿足您的需求，您可以根據情況透過自定義異常處理器自定義處理驗證失敗後的行為。
 
 #### 自定義錯誤訊息
 
-您可以通過重寫 `messages` 方法來自定義表單請求使用的錯誤訊息，該方法應該返回屬性/規則對陣列及其對應錯誤訊息：
+您可以透過重寫 `messages` 方法來自定義表單請求使用的錯誤訊息，該方法應該返回屬性/規則對陣列及其對應錯誤訊息：
 
 ```php
 /**
@@ -141,7 +141,7 @@ public function messages(): array
 
 #### 自定義驗證屬性
 
-如果您希望將驗證訊息中的 `:attribute` 部分替換為自定義的屬性名，則可以通過重寫 `attributes` 方法來指定自定義的名稱。該方法會返回屬性名及對應自定義名稱鍵值對陣列：
+如果您希望將驗證訊息中的 `:attribute` 部分替換為自定義的屬性名，則可以透過重寫 `attributes` 方法來指定自定義的名稱。該方法會返回屬性名及對應自定義名稱鍵值對陣列：
 
 ```php
 /**
@@ -157,7 +157,7 @@ public function attributes(): array
 
 ### 手動建立驗證器
 
-如果您不想使用 `表單請求(FormRequest)` 的自動驗證功能，可以通過注入 `ValidatorFactoryInterface` 介面類來獲得驗證器工廠類，然後通過 `make` 方法手動建立一個驗證器例項：
+如果您不想使用 `表單請求(FormRequest)` 的自動驗證功能，可以透過注入 `ValidatorFactoryInterface` 介面類來獲得驗證器工廠類，然後透過 `make` 方法手動建立一個驗證器例項：
 
 ```php
 <?php
@@ -170,11 +170,8 @@ use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 
 class IndexController
 {
-    /**
-     * @Inject()
-     * @var ValidatorFactoryInterface
-     */
-    protected $validationFactory;
+    #[Inject]
+    protected ValidatorFactoryInterface $validationFactory;
 
     public function foo(RequestInterface $request)
     {
@@ -264,11 +261,8 @@ use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 
 class IndexController
 {
-    /**
-     * @Inject()
-     * @var ValidatorFactoryInterface
-     */
-    protected $validationFactory;
+    #[Inject]
+    protected ValidatorFactoryInterface $validationFactory;
 
     public function foo(RequestInterface $request)
     {
@@ -299,7 +293,7 @@ class IndexController
 
 ## 處理錯誤訊息
 
-通過 `Validator` 例項呼叫 `errors` 方法，會返回 `Hyperf\Utils\MessageBag` 例項，它擁有各種方便的方法處理錯誤資訊。
+透過 `Validator` 例項呼叫 `errors` 方法，會返回 `Hyperf\Utils\MessageBag` 例項，它擁有各種方便的方法處理錯誤資訊。
 
 ### 檢視特定欄位的第一個錯誤資訊
 
@@ -349,6 +343,122 @@ if ($errors->has('foo')) {
 }
 ```
 
+### 場景
+
+驗證器增加了場景功能，我們可以很方便的按需修改驗證規則。
+
+> 此功能需要本元件版本大於等於 2.2.7
+
+建立一個 `SceneRequest` 如下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Request;
+
+use Hyperf\Validation\Request\FormRequest;
+
+class SceneRequest extends FormRequest
+{
+    protected array $scenes = [
+        'foo' => ['username'],
+        'bar' => ['username', 'password'],
+    ];
+
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     */
+    public function rules(): array
+    {
+        return [
+            'username' => 'required',
+            'gender' => 'required',
+        ];
+    }
+}
+```
+
+當我們正常使用時，會使用所有的驗證規則，即 `username` 和 `gender` 都是必填的。
+
+我們可以設定場景，讓此次請求只驗證 `username` 必填。
+
+如果我們配置了 `Hyperf\Validation\Middleware\ValidationMiddleware`，且將 `SceneRequest` 注入到方法上，
+就會導致入參在中介軟體中直接進行驗證，故場景值無法生效，所以我們需要在方法裡從容器中獲取對應的 `SceneRequest`，進行場景切換。
+
+```php
+<?php
+
+namespace App\Controller;
+
+use App\Request\DebugRequest;
+use App\Request\SceneRequest;
+use Hyperf\HttpServer\Annotation\AutoController;
+
+#[AutoController(prefix: 'foo')]
+class FooController extends Controller
+{
+    public function scene()
+    {
+        $request = $this->container->get(SceneRequest::class);
+        $request->scene('foo')->validateResolved();
+
+        return $this->response->success($request->all());
+    }
+}
+```
+
+當然，我們也可以透過 `Scene` 註解切換場景
+
+```php
+<?php
+
+namespace App\Controller;
+
+use App\Request\DebugRequest;
+use App\Request\SceneRequest;
+use Hyperf\HttpServer\Annotation\AutoController;
+use Hyperf\Validation\Annotation\Scene;
+
+#[AutoController(prefix: 'foo')]
+class FooController extends Controller
+{
+    #[Scene(scene:'bar1')]
+    public function bar1(SceneRequest $request)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene(scene:'bar2', argument: 'request')] // 繫結到 $request
+    public function bar2(SceneRequest $request)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene(scene:'bar3', argument: 'request')]
+    #[Scene(scene:'bar3', argument: 'req')] // 支援多個引數
+    public function bar3(SceneRequest $request, DebugRequest $req)
+    {
+        return $this->response->success($request->all());
+    }
+
+    #[Scene()] // 預設 scene 為方法名，效果等於 #[Scene(scene: 'bar1')]
+    public function bar1(SceneRequest $request)
+    {
+        return $this->response->success($request->all());
+    }
+}
+```
+
 ## 驗證規則
 
 下面是有效規則及其函式列表：
@@ -363,7 +473,7 @@ if ($errors->has('foo')) {
 
 ##### after:date
 
-驗證欄位必須是給定日期之後的一個值，日期將會通過 PHP 函式 strtotime 傳遞：
+驗證欄位必須是給定日期之後的一個值，日期將會透過 PHP 函式 strtotime 傳遞：
 
 ```php
 'start_date' => 'required|date|after:tomorrow'
@@ -455,7 +565,7 @@ if ($errors->has('foo')) {
 
 有效的約束條件包括：`min_width`, `max_width`, `min_height`, `max_height`, `width`, `height`, `ratio`。
 
-`ratio` 約束寬度/高度的比率，這可以通過表示式 `3/2` 或浮點數 `1.5` 來表示：
+`ratio` 約束寬度/高度的比率，這可以透過表示式 `3/2` 或浮點數 `1.5` 來表示：
 
 ```php
 'avatar' => 'dimensions:ratio=3/2'
@@ -506,7 +616,7 @@ return [
 'state' => 'exists:states,abbreviation'
 ```
 
-有時，你可能需要為 `exists` 查詢指定要使用的資料庫連線，這可以在表名前通過`.`前置資料庫連線來實現：
+有時，你可能需要為 `exists` 查詢指定要使用的資料庫連線，這可以在表名前透過`.`前置資料庫連線來實現：
 
 ```php
 'email' => 'exists:connection.staff,email'
@@ -617,7 +727,7 @@ $validator = $this->validationFactory->make($data, [
 'photo' => 'mimes:jpeg,bmp,png'
 ```
 
-儘管你只是指定了副檔名，該規則實際上驗證的是通過讀取檔案內容獲取到的檔案 `MIME` 型別。
+儘管你只是指定了副檔名，該規則實際上驗證的是透過讀取檔案內容獲取到的檔案 `MIME` 型別。
 完整的 `MIME` 型別列表及其相應的擴充套件可以在這裡找到：[mime types](http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types)
 
 ##### min:value
@@ -893,9 +1003,7 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Event\ValidatorFactoryResolved;
 
-/**
- * @Listener
- */
+#[Listener]
 class ValidatorFactoryResolvedListener implements ListenerInterface
 {
 

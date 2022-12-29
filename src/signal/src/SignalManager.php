@@ -13,38 +13,26 @@ namespace Hyperf\Signal;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
+use Hyperf\Engine\Signal as EngineSignal;
 use Hyperf\Signal\Annotation\Signal;
 use Hyperf\Signal\SignalHandlerInterface as SignalHandler;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use SplPriorityQueue;
-use Swoole\Coroutine\System;
 
 class SignalManager
 {
     /**
      * @var SignalHandlerInterface[][][]
      */
-    protected $handlers = [];
+    protected array $handlers = [];
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ConfigInterface $config;
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
+    protected bool $stopped = false;
 
-    /**
-     * @var bool
-     */
-    protected $stopped = false;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
     }
 
@@ -77,7 +65,7 @@ class SignalManager
         foreach ($this->handlers[$process] ?? [] as $signal => $handlers) {
             Coroutine::create(function () use ($signal, $handlers) {
                 while (true) {
-                    $ret = System::waitSignal($signal, $this->config->get('signal.timeout', 5.0));
+                    $ret = EngineSignal::wait($signal, $this->config->get('signal.timeout', 5.0));
                     if ($ret) {
                         foreach ($handlers as $handler) {
                             $handler->handle($signal);
@@ -97,26 +85,10 @@ class SignalManager
         return $this->stopped;
     }
 
-    /**
-     * @deprecated v2.2
-     */
-    public function isStoped(): bool
-    {
-        return $this->isStopped();
-    }
-
     public function setStopped(bool $stopped): self
     {
         $this->stopped = $stopped;
         return $this;
-    }
-
-    /**
-     * @deprecated v2.2
-     */
-    public function setStoped(bool $stopped): self
-    {
-        return $this->setStopped($stopped);
     }
 
     protected function isInvalidProcess(?int $process): bool

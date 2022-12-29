@@ -25,13 +25,6 @@ class ConfigProvider
                 Serializer::class => SerializerFactory::class,
                 NormalizerInterface::class => SimpleNormalizer::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
         ];
     }
 }

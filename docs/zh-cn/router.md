@@ -107,9 +107,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class UserController
 {
     // Hyperf 会自动为此方法生成一个 /user/index 的路由，允许通过 GET 或 POST 方式请求
@@ -145,15 +143,11 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
-/**
- * @Controller()
- */
+#[Controller]
 class UserController
 {
     // Hyperf 会自动为此方法生成一个 /user/index 的路由，允许通过 GET 或 POST 方式请求
-    /**
-     * @RequestMapping(path="index", methods="get,post")
-     */
+    #[RequestMapping(path: "index", methods: "get,post")]
     public function index(RequestInterface $request)
     {
         // 从请求中获得 id 参数
@@ -168,7 +162,7 @@ class UserController
 `@Controller` 和 `@AutoController` 都提供了 `prefix` 和 `server` 两个参数。   
 
 `prefix` 表示该 `Controller` 下的所有方法路由的前缀，默认为类名的小写，如 `UserController` 则 `prefix` 默认为 `user`，如类内某一方法的 `path` 为 `index`，则最终路由为 `/user/index`。   
-需要注意的是 `prefix` 并非一直有效，当类内的方法的 `path` 以 `/` 开头时，则表明路径从 `URI` 头部开始定义，也就意味着会忽略 `prefix` 的值。
+需要注意的是 `prefix` 并非一直有效，当类内的方法的 `path` 以 `/` 开头时，则表明路径从 `URI` 头部开始定义，也就意味着会忽略 `prefix` 的值，同时如果没有设置 `prefix` 属性，那么控制器类命名空间中 `\\Controller\\` 之后的部分会以蛇形命名法(SnakeCase)被用作路由的前缀。
 
 `server` 表示该路由是定义在哪个 `Server` 之上的，由于 `Hyperf` 支持同时启动多个 `Server`，也就意味着有可能会同时存在多个 `HTTP Server`，则在定义路由是可以通过 `server` 参数来进行区分这个路由是为了哪个 `Server` 定义的，默认为 `http`。
 

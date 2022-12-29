@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Config;
 
 use Hyperf\Utils\Composer;
+
 use function class_exists;
 use function is_string;
 use function method_exists;
@@ -21,10 +22,7 @@ use function method_exists;
  */
 class ProviderConfig
 {
-    /**
-     * @var array
-     */
-    private static $providerConfigs = [];
+    private static array $providerConfigs = [];
 
     /**
      * Load and merge all provider configs from components.

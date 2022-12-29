@@ -11,29 +11,23 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation\Rules;
 
-use InvalidArgumentException;
+use Stringable;
 
-class RequiredIf
+class RequiredIf implements Stringable
 {
     /**
      * The condition that validates the attribute.
      *
      * @var bool|callable
      */
-    public $condition;
+    public mixed $condition;
 
     /**
      * Create a new required validation rule based on a condition.
-     *
-     * @param bool|callable $condition
      */
-    public function __construct($condition)
+    public function __construct(bool|callable $condition)
     {
-        if (! is_string($condition)) {
-            $this->condition = $condition;
-        } else {
-            throw new InvalidArgumentException('The provided condition must be a callable or boolean.');
-        }
+        $this->condition = $condition;
     }
 
     /**

@@ -33,7 +33,7 @@ class PriorityListener implements ListenerInterface
     /**
      * @param PriorityEvent $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         PriorityEvent::$result[] = $this->id;
     }

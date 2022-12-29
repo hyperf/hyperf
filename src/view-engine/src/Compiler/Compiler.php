@@ -17,33 +17,22 @@ use InvalidArgumentException;
 abstract class Compiler
 {
     /**
-     * The Filesystem instance.
-     *
-     * @var Filesystem
-     */
-    protected $files;
-
-    /**
      * Get the cache path for the compiled views.
-     *
-     * @var null|string
      */
-    protected $cachePath;
+    protected ?string $cachePath = null;
 
     /**
      * Create a new compiler instance.
      *
-     * @param string $cachePath
+     * @param Filesystem $files the Filesystem instance
      *
      * @throws InvalidArgumentException
      */
-    public function __construct(Filesystem $files, $cachePath)
+    public function __construct(protected Filesystem $files, string $cachePath)
     {
         if (! $cachePath) {
             throw new InvalidArgumentException('Please provide a valid cache path.');
         }
-
-        $this->files = $files;
 
         if (! $this->files->exists($cachePath)) {
             $this->files->makeDirectory($cachePath);
@@ -54,22 +43,16 @@ abstract class Compiler
 
     /**
      * Get the path to the compiled version of a view.
-     *
-     * @param string $path
-     * @return string
      */
-    public function getCompiledPath($path)
+    public function getCompiledPath(string $path): string
     {
         return $this->cachePath . '/' . sha1($path) . '.php';
     }
 
     /**
      * Determine if the view at the given path is expired.
-     *
-     * @param string $path
-     * @return bool
      */
-    public function isExpired($path)
+    public function isExpired(string $path): bool
     {
         $compiled = $this->getCompiledPath($path);
 

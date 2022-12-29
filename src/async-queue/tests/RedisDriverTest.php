@@ -13,11 +13,12 @@ namespace HyperfTest\AsyncQueue;
 
 use Hyperf\AsyncQueue\Driver\ChannelConfig;
 use Hyperf\AsyncQueue\Driver\RedisDriver;
+use Hyperf\AsyncQueue\JobMessage;
 use Hyperf\AsyncQueue\Message;
+use Hyperf\Context\Context;
 use Hyperf\Di\Container;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Packer\PhpSerializerPacker;
 use Hyperf\Utils\Str;
 use HyperfTest\AsyncQueue\Stub\DemoJob;
@@ -83,6 +84,22 @@ class RedisDriverTest extends TestCase
         $this->assertEquals($model, $model2);
     }
 
+    public function testDemoModelUnCompressToNull()
+    {
+        $content = Str::random(1000);
+
+        $model = new DemoModel(9999, 'Hyperf', 1, $content);
+        $s1 = serialize($model);
+        $this->assertSame(1131, strlen($s1));
+
+        $meta = $model->compress();
+        $s2 = serialize($meta);
+        $this->assertSame(68, strlen($s2));
+        $this->assertInstanceOf(DemoModelMeta::class, $meta);
+
+        $this->assertNull($meta->uncompress());
+    }
+
     public function testAsyncQueueJobGenerate()
     {
         $container = $this->getContainer();
@@ -97,7 +114,7 @@ class RedisDriverTest extends TestCase
         $driver->push(new DemoJob($id, $model));
 
         $serialized = (string) Context::get('test.async-queue.lpush.value');
-        $this->assertSame(236, strlen($serialized));
+        $this->assertSame(231, strlen($serialized));
 
         /** @var Message $class */
         $class = $packer->unpack($serialized);
@@ -122,8 +139,8 @@ class RedisDriverTest extends TestCase
         $container->shouldReceive('make')->with(ChannelConfig::class, Mockery::any())->andReturnUsing(function ($class, $args) {
             return new ChannelConfig($args['channel']);
         });
-        $container->shouldReceive('make')->with(Message::class, Mockery::any())->andReturnUsing(function ($class, $args) {
-            return new Message(...$args);
+        $container->shouldReceive('make')->with(JobMessage::class, Mockery::any())->andReturnUsing(function ($class, $args) {
+            return new JobMessage(...$args);
         });
         $container->shouldReceive('get')->with(RedisFactory::class)->andReturnUsing(function ($_) {
             $factory = Mockery::mock(RedisFactory::class);

@@ -11,109 +11,64 @@ declare(strict_types=1);
  */
 namespace Hyperf\GrpcClient;
 
+use Hyperf\Engine\Channel;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\Utils\ChannelPool;
 use Hyperf\Utils\Coroutine;
 use InvalidArgumentException;
 use RuntimeException;
-use Swoole\Coroutine\Channel;
 use Swoole\Coroutine\Http2\Client as SwooleHttp2Client;
 
 class GrpcClient
 {
     public const GRPC_DEFAULT_TIMEOUT = 3.0;
 
-    /**
-     * @var ChannelPool
-     */
-    private $channelPool;
+    private string $host;
 
-    /**
-     * @var string
-     */
-    private $host;
+    private int $port;
 
-    /**
-     * @var array
-     */
-    private $options = [];
+    private array $options = [];
 
-    /**
-     * @var int
-     */
-    private $port;
+    private float $timeout;
 
-    /**
-     * @var int
-     */
-    private $timeout;
+    private bool $sendYield = false;
 
-    /**
-     * @var bool
-     */
-    private $sendYield = false;
-
-    /**
-     * @var bool
-     */
-    private $ssl = false;
+    private bool $ssl = false;
 
     /**
      * The main coroutine id of the client.
-     *
-     * @var int
      */
-    private $mainCoroutineId = 0;
+    private int $mainCoroutineId = 0;
 
-    /**
-     * @var null|SwooleHttp2Client
-     */
-    private $httpClient;
+    private ?SwooleHttp2Client $httpClient = null;
 
-    /**
-     * @var int
-     */
-    private $recvCoroutineId = 0;
+    private int $recvCoroutineId = 0;
 
-    /**
-     * @var int
-     */
-    private $sendCoroutineId = 0;
+    private int $sendCoroutineId = 0;
 
     /**
      * The hashMap of channels [streamId => response channel].
      * @var Channel[]
      */
-    private $recvChannelMap = [];
+    private array $recvChannelMap = [];
 
-    /**
-     * @var int
-     */
-    private $waitStatus = Status::WAIT_PENDDING;
+    private int $waitStatus = Status::WAIT_PENDDING;
 
-    /**
-     * @var null|Channel
-     */
-    private $waitYield;
+    private ?Channel $waitYield = null;
 
     /**
      * The channel to proxy send data from all of the coroutine.
-     *
-     * @var Channel
      */
-    private $sendChannel;
+    private ?Channel $sendChannel = null;
 
     /**
      * The channel to get the current send stream id (as ret val).
-     *
-     * @var Channel
      */
-    private $sendResultChannel;
+    private ?Channel $sendResultChannel = null;
 
-    public function __construct(ChannelPool $channelPool)
+    public function __construct(private ChannelPool $channelPool)
     {
-        $this->channelPool = $channelPool;
     }
 
     public function set(string $hostname, array $options = [])
@@ -135,7 +90,7 @@ class GrpcClient
         $this->options = $options + $defaultOptions;
         $this->timeout = &$this->options['timeout'];
         $this->sendYield = &$this->options['send_yield'];
-        $this->ssl = (bool) $this->options['ssl'] || (bool) $this->options['ssl_host_name'];
+        $this->ssl = $this->options['ssl'] || $this->options['ssl_host_name'];
     }
 
     public function start(): bool
@@ -202,7 +157,7 @@ class GrpcClient
 
     public function isRunning(): bool
     {
-        return $this->recvCoroutineId > 0 && ($this->sendYield === false ?: $this->sendCoroutineId > 0);
+        return $this->recvCoroutineId > 0 && ($this->sendYield === false || $this->sendCoroutineId > 0);
     }
 
     public function getHttpClient(): SwooleHttp2Client

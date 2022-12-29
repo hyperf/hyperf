@@ -18,8 +18,8 @@ composer require hyperf/amqp
 |     password     | string |   guest   |      密碼      |
 |      vhost       | string |     /     |     vhost      |
 | concurrent.limit |  int   |     0     | 同時消費的數量 |
-| pool.connections |  int   |     1     | 進程內保持的連接數 |
 |       pool       | object |           |   連接池配置   |
+| pool.connections |  int   |     1     | 進程內保持的連接數 |
 |      params      | object |           |    基本配置    |
 
 ```php
@@ -84,9 +84,7 @@ use Hyperf\Amqp\Annotation\Producer;
 use Hyperf\Amqp\Message\ProducerMessage;
 use App\Models\User;
 
-/**
- * @Producer(exchange="hyperf", routingKey="hyperf")
- */
+#[Producer(exchange: "hyperf", routingKey: "hyperf")]
 class DemoProducer extends ProducerMessage
 {
     public function __construct($id)
@@ -144,9 +142,7 @@ use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
-/**
- * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1)
- */
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1)]
 class DemoConsumer extends ConsumerMessage
 {
     public function consumeMessage($data, AMQPMessage $message): string
@@ -157,12 +153,12 @@ class DemoConsumer extends ConsumerMessage
 }
 ```
 
-### 禁止消費進程自啟
+### 禁止消費進程自啓
 
-默認情況下，使用了 `@Consumer` 註解後，框架會自動創建子進程啟動消費者，並且會在子進程異常退出後，重新拉起。
+默認情況下，使用了 `@Consumer` 註解後，框架會自動創建子進程啓動消費者，並且會在子進程異常退出後，重新拉起。
 如果出於開發階段，進行消費者調試時，可能會因為消費其他消息而導致調試不便。
 
-這種情況，只需要在 `@Consumer` 註解中配置 `enable=false` (默認為 `true` 跟隨服務啟動)或者在對應的消費者中重寫類方法 `isEnable()` 返回 `false` 即可
+這種情況，只需要在 `@Consumer` 註解中配置 `enable=false` (默認為 `true` 跟隨服務啓動)或者在對應的消費者中重寫類方法 `isEnable()` 返回 `false` 即可
 
 ```php
 <?php
@@ -176,9 +172,7 @@ use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
-/**
- * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1, enable=false)
- */
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "hyperf", nums: 1, enable: false)]
 class DemoConsumer extends ConsumerMessage
 {
     public function consumeMessage($data, AMQPMessage $message): string
@@ -196,7 +190,7 @@ class DemoConsumer extends ConsumerMessage
 
 ### 設置最大消費數
 
-可以修改 `@Consumer` 註解中的 `maxConsumption` 屬性，設置此消費者最大處理的消息數，達到指定消費數後，消費者進程會重啟。
+可以修改 `@Consumer` 註解中的 `maxConsumption` 屬性，設置此消費者最大處理的消息數，達到指定消費數後，消費者進程會重啓。
 
 ### 消費結果
 
@@ -208,6 +202,165 @@ class DemoConsumer extends ConsumerMessage
 | \Hyperf\Amqp\Result::NACK    | 消息沒有被正確消費掉，以 `basic_nack` 方法來響應                     |
 | \Hyperf\Amqp\Result::REQUEUE | 消息沒有被正確消費掉，以 `basic_reject` 方法來響應，並使消息重新入列 |
 | \Hyperf\Amqp\Result::DROP    | 消息沒有被正確消費掉，以 `basic_reject` 方法來響應                   |
+
+## 延時隊列
+
+AMQP 的延時隊列，並不會根據延時時間進行排序，所以，一旦你投遞了一個延時 10s 的任務，又往這個隊列中投遞了一個延時 5s 的任務，那麼也一定會在第一個 10s 任務完成後，才會消費第二個 5s 的任務。
+所以，需要根據時間設置不同的隊列，如果想要更加靈活的延時隊列，可以嘗試 異步隊列(async-queue) 和 AMQP 配合使用。
+
+另外，AMQP 需要下載 [延時插件](https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases)，並激活才能正常使用
+
+```shell
+wget https://github.com/rabbitmq/rabbitmq-delayed-message-exchange/releases/download/3.9.0/rabbitmq_delayed_message_exchange-3.9.0.ez
+cp rabbitmq_delayed_message_exchange-3.9.0.ez /opt/rabbitmq/plugins/
+rabbitmq-plugins enable rabbitmq_delayed_message_exchange
+```
+
+### 生產者
+
+使用 `gen:amqp-producer` 命令創建一個 `producer`。這裏舉例 `direct` 類型，其他類型如 `fanout`、`topic`，改生產者和消費者中的 `type` 即可。
+
+```bash
+php bin/hyperf.php gen:amqp-producer DelayDirectProducer
+```
+
+在 DelayDirectProducer 文件中，加入`use ProducerDelayedMessageTrait;`，示例如下：
+
+```php
+<?php
+
+namespace App\Amqp\Producer;
+
+use Hyperf\Amqp\Annotation\Producer;
+use Hyperf\Amqp\Message\ProducerDelayedMessageTrait;
+use Hyperf\Amqp\Message\ProducerMessage;
+use Hyperf\Amqp\Message\Type;
+
+#[Producer]
+class DelayDirectProducer extends ProducerMessage
+{
+    use ProducerDelayedMessageTrait;
+
+    protected $exchange = 'ext.hyperf.delay';
+
+    protected $type = Type::DIRECT;
+
+    protected $routingKey = '';
+
+    public function __construct($data)
+    {
+        $this->payload = $data;
+    }
+}
+```
+### 消費者
+
+使用 `gen:amqp-consumer` 命令創建一個 `consumer`。
+
+```bash
+php bin/hyperf.php gen:amqp-consumer DelayDirectConsumer
+```
+
+在 `DelayDirectConsumer` 文件中，增加引入`use ProducerDelayedMessageTrait, ConsumerDelayedMessageTrait;`，示例如下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Amqp\Consumer;
+
+use Hyperf\Amqp\Annotation\Consumer;
+use Hyperf\Amqp\Message\ConsumerDelayedMessageTrait;
+use Hyperf\Amqp\Message\ConsumerMessage;
+use Hyperf\Amqp\Message\ProducerDelayedMessageTrait;
+use Hyperf\Amqp\Message\Type;
+use Hyperf\Amqp\Result;
+use PhpAmqpLib\Message\AMQPMessage;
+
+#[Consumer(nums: 1)]
+class DelayDirectConsumer extends ConsumerMessage
+{
+    use ProducerDelayedMessageTrait;
+    use ConsumerDelayedMessageTrait;
+
+    protected $exchange = 'ext.hyperf.delay';
+    
+    protected $queue = 'queue.hyperf.delay';
+    
+    protected $type = Type::DIRECT; //Type::FANOUT;
+    
+    protected $routingKey = '';
+
+    public function consumeMessage($data, AMQPMessage $message): string
+    {
+        var_dump($data, 'delay+direct consumeTime:' . (microtime(true)));
+        return Result::ACK;
+    }
+}
+
+```
+
+### 生產延時消息
+
+> 以下是在 Command 中演示如何使用，具體用法請以實際為準
+
+使用 `gen:command DelayCommand` 命令創建一個 `DelayCommand`。如下：
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Command;
+
+use App\Amqp\Producer\DelayDirectProducer;
+//use App\Amqp\Producer\DelayFanoutProducer;
+//use App\Amqp\Producer\DelayTopicProducer;
+use Hyperf\Amqp\Producer;
+use Hyperf\Command\Annotation\Command;
+use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\Utils\ApplicationContext;
+use Psr\Container\ContainerInterface;
+
+#[Command]
+class DelayCommand extends HyperfCommand
+{
+    protected ContainerInterface $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+
+        parent::__construct('demo:command');
+    }
+
+    public function configure()
+    {
+        parent::configure();
+        $this->setDescription('Hyperf Demo Command');
+    }
+
+    public function handle()
+    {
+        //1.delayed + direct
+        $message = new DelayDirectProducer('delay+direct produceTime:'.(microtime(true)));
+        //2.delayed + fanout
+        //$message = new DelayFanoutProducer('delay+fanout produceTime:'.(microtime(true)));
+        //3.delayed + topic
+        //$message = new DelayTopicProducer('delay+topic produceTime:' . (microtime(true)));
+        $message->setDelayMs(5000);
+        $producer = ApplicationContext::getContainer()->get(Producer::class);
+        $producer->produce($message);
+    }
+}
+
+```
+執行命令行生產消息
+```
+php bin/hyperf.php demo:command
+```
+
 
 ## RPC 遠程過程調用
 
@@ -229,9 +382,7 @@ use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
 use PhpAmqpLib\Message\AMQPMessage;
 
-/**
- * @Consumer(exchange="hyperf", routingKey="hyperf", queue="rpc.reply", name="ReplyConsumer", nums=1, enable=true)
- */
+#[Consumer(exchange: "hyperf", routingKey: "hyperf", queue: "rpc.reply", name: "ReplyConsumer", nums: 1, enable: true)]
 class ReplyConsumer extends ConsumerMessage
 {
     public function consumeMessage($data, AMQPMessage $message): string

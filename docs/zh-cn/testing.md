@@ -100,6 +100,23 @@ $result = $client->json('/user/0',[
 ]);
 ```
 
+### 使用 Cookies
+
+```php
+<?php
+
+use Hyperf\Testing\Client;
+use Hyperf\Utils\Codec\Json;
+
+$client = make(Client::class);
+
+$response = $client->sendRequest($client->initRequest('POST', '/request')->withCookieParams([
+    'X-CODE' => $id = uniqid(),
+]));
+
+$data = Json::decode((string) $response->getBody());
+```
+
 ## 示例
 
 让我们写个小 DEMO 来测试一下。
@@ -120,10 +137,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ExampleTest extends TestCase
 {
-    /**
-     * @var Client
-     */
-    protected $client;
+    protected Client $client;
 
     public function __construct($name = null, array $data = [], $dataName = '')
     {
@@ -253,10 +267,7 @@ use App\Api\DemoApi;
 
 class DemoLogic
 {
-    /**
-     * @var DemoApi $demoApi
-     */
-    private $demoApi;
+    private DemoApi $demoApi;
 
     public function __construct(DemoApi $demoApi)
     {
@@ -345,11 +356,8 @@ use Hyperf\Di\Annotation\Inject;
 
 class DemoLogic
 {
-    /**
-     * @var DemoApi $demoApi
-     * @Inject()
-     */
-    private $demoApi;
+    #[Inject]
+    private DemoApi $demoApi;
 
     public function test()
     {
@@ -420,7 +428,7 @@ class DemoLogicTest extends HttpTestCase
             'status' => 11
         ]);
 
-        $container->getDefinitionSource()->addDefinition(DemoApi::class, function () use ($apiStub) {
+        $container->define(DemoApi::class, function () use ($apiStub) {
             return $apiStub;
         });
         
@@ -446,23 +454,38 @@ class DemoLogicTest extends HttpTestCase
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false">
+    <php>
+        <!-- other PHP.ini or environment variables -->
+        <ini name="memory_limit" value="-1" />
+    </php>
     <testsuites>
         <testsuite name="Tests">
+            // 需要执行单测的测试案例目录
             <directory suffix="Test.php">./test</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        // 需要生成单元测试覆盖率的文件
-        <whitelist processUncoveredFilesFromWhitelist="false">
+    <coverage includeUncoveredFiles="true"
+              processUncoveredFiles="true"
+              pathCoverage="false"
+              ignoreDeprecatedCodeUnits="true"
+              disableCodeCoverageIgnore="false">
+        <include>
+            // 需要统计单元测试覆盖率的文件
             <directory suffix=".php">./app</directory>
-        </whitelist>
-    </filter>
-
+        </include>
+        <exclude>
+            // 生产单元测试覆盖率时，需要忽略的文件
+            <directory suffix=".php">./app/excludeFile</directory>
+        </exclude>
+        <report>
+            <html outputDirectory="test/cover/" lowUpperBound="50" highLowerBound="90"/>
+        </report>
+    </coverage>
     <logging>
-        <log type="coverage-html" target="cover/"/>
+        <junit outputFile="test/junit.xml"/>
     </logging>
-</phpunit>
 
+</phpunit>
 ```
 
 
@@ -471,6 +494,3 @@ class DemoLogicTest extends HttpTestCase
 ```shell
 phpdbg -dmemory_limit=1024M -qrr ./vendor/bin/co-phpunit -c phpunit.xml --colors=always
 ```
-
-
-

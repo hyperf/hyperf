@@ -13,14 +13,17 @@ namespace Hyperf\Database\Model;
 
 use Psr\EventDispatcher\StoppableEventInterface;
 
+/**
+ * @method static static|\Hyperf\Database\Model\Builder|\Hyperf\Database\Query\Builder withTrashed(bool $withTrashed = true)
+ * @method static static|\Hyperf\Database\Model\Builder|\Hyperf\Database\Query\Builder onlyTrashed()
+ * @method static static|\Hyperf\Database\Model\Builder|\Hyperf\Database\Query\Builder withoutTrashed()
+ */
 trait SoftDeletes
 {
     /**
      * Indicates if the model is currently force deleting.
-     *
-     * @var bool
      */
-    protected $forceDeleting = false;
+    protected bool $forceDeleting = false;
 
     /**
      * Boot the soft deleting trait for a model.

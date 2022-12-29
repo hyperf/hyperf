@@ -14,6 +14,7 @@ namespace HyperfTest\Utils\Serializer;
 use Hyperf\Utils\Serializer\ExceptionNormalizer;
 use HyperfTest\Utils\Stub\FooException;
 use HyperfTest\Utils\Stub\SerializableException;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -25,10 +26,10 @@ class ExceptionNormalizerTest extends TestCase
     public function testInvalidArgumentException()
     {
         $normalizer = new ExceptionNormalizer();
-        $ex = new \InvalidArgumentException('invalid param foo');
+        $ex = new InvalidArgumentException('invalid param foo');
         $result = $normalizer->normalize($ex);
-        $ret = $normalizer->denormalize($result, \InvalidArgumentException::class);
-        $this->assertInstanceOf(\InvalidArgumentException::class, $ret);
+        $ret = $normalizer->denormalize($result, InvalidArgumentException::class);
+        $this->assertInstanceOf(InvalidArgumentException::class, $ret);
         $this->assertEquals($ret->getMessage(), $ex->getMessage());
         $this->assertEquals($ret, $ex);
     }

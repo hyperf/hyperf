@@ -28,32 +28,20 @@ class Socket
 {
     use Emitter;
 
-    /**
-     * @var string
-     */
-    private $nsp;
-
-    /**
-     * @var Encoder
-     */
-    private $encoder;
-
     public function __construct(
         AdapterInterface $adapter,
         Sender $sender,
         SidProviderInterface $sidProvider,
-        Encoder $encoder,
+        private Encoder $encoder,
         int $fd,
-        string $nsp,
+        private string $nsp,
         ?callable $addCallback = null
     ) {
         $this->adapter = $adapter;
         $this->sender = $sender;
         $this->addCallback = $addCallback;
         $this->fd = $fd;
-        $this->nsp = $nsp;
         $this->sidProvider = $sidProvider;
-        $this->encoder = $encoder;
     }
 
     public function getFd(): int
@@ -87,7 +75,7 @@ class Socket
             'type' => Packet::CLOSE,
             'nsp' => $this->nsp,
         ]);
-        //notice client is about to disconnect
+        // notice client is about to disconnect
         $this->sender->push($this->fd, Engine::MESSAGE . $this->encoder->encode($closePacket));
         /** @var \Swoole\WebSocket\Server $server */
         $server = ApplicationContext::getContainer()->get(Server::class);

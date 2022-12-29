@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Consul\Exception;
 
-class ServerException extends \RuntimeException implements ConsulException
+use RuntimeException;
+
+class ServerException extends RuntimeException implements ConsulException
 {
 }

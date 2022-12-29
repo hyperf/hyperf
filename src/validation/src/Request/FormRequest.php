@@ -11,9 +11,10 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation\Request;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\ValidatorInterface;
 use Hyperf\HttpServer\Request;
-use Hyperf\Utils\Context;
+use Hyperf\Utils\Arr;
 use Hyperf\Validation\Contract\ValidatesWhenResolved;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface as ValidationFactory;
 use Hyperf\Validation\UnauthorizedException;
@@ -27,18 +28,14 @@ class FormRequest extends Request implements ValidatesWhenResolved
     use ValidatesWhenResolvedTrait;
 
     /**
-     * The container instance.
-     *
-     * @var ContainerInterface
+     * The key to be used for the view error bag.
      */
-    protected $container;
+    protected string $errorBag = 'default';
 
     /**
-     * The key to be used for the view error bag.
-     *
-     * @var string
+     * The scenes defined by developer.
      */
-    protected $errorBag = 'default';
+    protected array $scenes = [];
 
     /**
      * The input keys that should not be flashed on redirect.
@@ -47,9 +44,19 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     protected $dontFlash = ['password', 'password_confirmation'];
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->setContainer($container);
+    }
+
+    public function scene(string $scene): static
+    {
+        Context::set($this->getContextValidatorKey('scene'), $scene);
+        return $this;
+    }
+
+    public function getScene(): ?string
+    {
+        return Context::get($this->getContextValidatorKey('scene'));
     }
 
     /**
@@ -89,10 +96,8 @@ class FormRequest extends Request implements ValidatesWhenResolved
 
     /**
      * Set the container implementation.
-     *
-     * @return $this
      */
-    public function setContainer(ContainerInterface $container)
+    public function setContainer(ContainerInterface $container): static
     {
         $this->container = $container;
 
@@ -104,7 +109,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
      */
     protected function getValidatorInstance(): ValidatorInterface
     {
-        return Context::getOrSet($this->getContextValidatorKey(), function () {
+        return Context::getOrSet($this->getContextValidatorKey(ValidatorInterface::class), function () {
             $factory = $this->container->get(ValidationFactory::class);
 
             if (method_exists($this, 'validator')) {
@@ -128,7 +133,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
     {
         return $factory->make(
             $this->validationData(),
-            call_user_func_array([$this, 'rules'], []),
+            $this->getRules(),
             $this->messages(),
             $this->attributes()
         );
@@ -183,8 +188,21 @@ class FormRequest extends Request implements ValidatesWhenResolved
     /**
      * Get context validator key.
      */
-    protected function getContextValidatorKey(): string
+    protected function getContextValidatorKey(string $key): string
     {
-        return sprintf('%s:%s', get_called_class(), ValidatorInterface::class);
+        return sprintf('%s:%s', spl_object_hash($this), $key);
+    }
+
+    /**
+     * Get scene rules.
+     */
+    protected function getRules(): array
+    {
+        $rules = call_user_func_array([$this, 'rules'], []);
+        $scene = $this->getScene();
+        if ($scene && isset($this->scenes[$scene]) && is_array($this->scenes[$scene])) {
+            return Arr::only($rules, $this->scenes[$scene]);
+        }
+        return $rules;
     }
 }

@@ -15,6 +15,12 @@ curl -sSL https://get.daocloud.io/docker | sh
 ExecStart=/usr/bin/dockerd -H unix:// -H tcp://0.0.0.0:2375
 ```
 
+如果不是使用的 `root` 账户，可以通过以下命令，让每次执行 `docker` 时，不需要增加 `sudo`
+
+```
+usermod -aG docker $USER
+```
+
 ### 配置仓库镜像地址
 
 基于跨国线路访问速度过慢等问题，我们可以为 Docker 配置仓库镜像地址，来改善这些网络问题，如 [阿里云(Aliyun) Docker 镜像加速器](https://help.aliyun.com/document_detail/60750.html)，我们可以申请一个 `Docker` 加速器，然后配置到服务器上的 `/etc/docker/daemon.json` 文件，添加以下内容，然后重启 `Docker`，下面的地址请填写您自己获得的加速器地址。
@@ -44,12 +50,14 @@ $ systemctl restart sshd.service
 重新登录机器
 
 ```
-ssh -p 2222 root@host 
+ssh -p 2222 root@host
 ```
 
 #### 安装 Gitlab
 
 我们来通过 Docker 启动一个 Gitlab 服务，如下：
+
+> hostname 一定要加，如果没有域名可以直接填外网地址
 
 ```
 sudo docker run -d --hostname gitlab.xxx.cn \
@@ -60,7 +68,11 @@ sudo docker run -d --hostname gitlab.xxx.cn \
 gitlab/gitlab-ce:latest
 ```
 
-首次登录 `Gitlab` 需要重置密码，默认用户名为 `root`。
+默认用户名为 `root`，初始密码通过以下方式获得
+
+```shell
+docker exec gitlab cat /etc/gitlab/initial_root_password
+```
 
 ### 安装 gitlab-runner
 
@@ -87,7 +99,7 @@ $ yum install gitlab-runner
 通过 `gitlab-runner register --clone-url http://your-ip/` 命令来将 gitlab-runner 注册到 Gitlab 上，注意要替换 `your-ip` 为您的 Gitlab 的内网 IP，如下：
 
 ```
-$ gitlab-runner register --clone-url http://your-ip/
+$ sudo gitlab-runner register --clone-url http://your-ip/
 
 Please enter the gitlab-ci coordinator URL (e.g. https://gitlab.com/):
 http://gitlab.xxx.cc/
@@ -108,6 +120,40 @@ $ vim /etc/gitlab-runner/config.toml
 concurrent = 5
 ```
 
+### 为 gitlab-runner 增加权限
+
+- 免 sudo 执行 docker 的权限
+
+```shell
+sudo usermod -aG docker gitlab-runner
+```
+
+- 镜像仓库的权限
+
+```shell
+su gitlab-runner
+docker login -u username your-docker-repository
+```
+
+###
+
+### 修改邮箱
+
+如果需要 `Gitlab` 发送邮件（比如用户创建的邮件等），可以尝试修改 `/srv/gitlab/config/gitlab.rb`
+
+```
+gitlab_rails['smtp_enable'] = true
+gitlab_rails['smtp_address'] = "smtp.exmail.qq.com"
+gitlab_rails['smtp_port'] = 465
+gitlab_rails['smtp_user_name'] = "git@xxxx.com"
+gitlab_rails['smtp_password'] = "xxxx"
+gitlab_rails['smtp_authentication'] = "login"
+gitlab_rails['smtp_enable_starttls_auto'] = true
+gitlab_rails['smtp_tls'] = true
+gitlab_rails['gitlab_email_from'] = 'git@xxxx.com'
+gitlab_rails['smtp_domain'] = "exmail.qq.com"
+```
+
 ## 初始化 Swarm 集群
 
 登录另外一台机器，初始化集群
@@ -121,7 +167,7 @@ $ docker swarm init
 ```
 docker network create \
 --driver overlay \
---subnet 10.0.0.0/24 \
+--subnet 12.0.0.0/8 \
 --opt encrypted \
 --attachable \
 default-network
@@ -145,7 +191,7 @@ $ docker swarm join --token <token> ip:2377
 
 > 其他与 builder 一致，但是 tag 却不能一样。线上环境可以设置为 tags，测试环境设置为 test
 
-## 安装其他应用 
+## 安装其他应用
 
 以下以 `Mysql` 为例，直接使用上述 `network`，支持容器内使用 name 互调。
 
@@ -167,6 +213,28 @@ docker service create \
     --mount type=bind,src=//var/run/docker.sock,dst=/var/run/docker.sock \
     portainer/portainer
 ```
+
+### 备份 Portainer 的数据
+
+> portainer_container 为对应的容器名，按实际情况填写
+
+```
+docker run -it --volumes-from portainer_container -v $(pwd):/backup --name backup --rm nginx tar -cf /backup/data.tar /data/
+```
+
+### 恢复 Portainer 的数据
+
+首先使用创建命令，重新创建 portainer 服务
+
+然后使用以下方法，将备份重载到容器中
+
+```
+docker run -it --volumes-from portainer_container -v $(pwd):/backup --name importer --rm nginx bash
+cd /backup
+tar xf data.tar -C /
+```
+
+最后只需要重启容器即可
 
 ## 创建一个 Demo 项目
 
@@ -273,10 +341,11 @@ docker run -d --name kong-database \
   -p 5432:5432 \
   -e "POSTGRES_USER=kong" \
   -e "POSTGRES_DB=kong" \
+  -e "POSTGRES_PASSWORD=kong" \
   postgres:9.6
 ```
 
-### 安装网关 
+### 安装网关
 
 初始化数据库
 
@@ -285,6 +354,7 @@ docker run --rm \
   --network=default-network \
   -e "KONG_DATABASE=postgres" \
   -e "KONG_PG_HOST=kong-database" \
+  -e "KONG_PG_PASSWORD=kong" \
   -e "KONG_CASSANDRA_CONTACT_POINTS=kong-database" \
   kong:latest kong migrations bootstrap
 ```
@@ -296,6 +366,7 @@ docker run -d --name kong \
   --network=default-network \
   -e "KONG_DATABASE=postgres" \
   -e "KONG_PG_HOST=kong-database" \
+  -e "KONG_PG_PASSWORD=kong" \
   -e "KONG_CASSANDRA_CONTACT_POINTS=kong-database" \
   -e "KONG_PROXY_ACCESS_LOG=/dev/stdout" \
   -e "KONG_ADMIN_ACCESS_LOG=/dev/stdout" \
@@ -311,7 +382,7 @@ docker run -d --name kong \
 
 ### 安装 KONG Dashboard
 
-> 暂时 `Docker` 中没有更新 `v3.6.0` 所以最新版的 `KONG` 可能无法使用
+> 暂时 `Docker` 中没有更新 `v3.6.0` 所以最新版的 `KONG` 可能无法使用，可以使用 0.14.1 版本的 KONG
 
 ```
 docker run --rm --network=default-network -p 8080:8080 -d --name kong-dashboard pgbi/kong-dashboard start \
@@ -347,7 +418,7 @@ docker run --rm -i -v $basepath/.env:/opt/www/.env \
 - 指定 TLinux 源
 
 ```
-tee /etc/yum.repos.d/CentOS-TLinux.repo <<-'EOF' 
+tee /etc/yum.repos.d/CentOS-TLinux.repo <<-'EOF'
 [Tlinux]
 name=Tlinux for redhat/centos $releasever - $basearch
 failovermethod=priority
@@ -404,4 +475,43 @@ $ git version
 
 # 重新安装 gitlab-runner 并重新注册 gitlab-runner
 $ yum install gitlab-runner
+```
+
+### Service 重启后，内网出现偶发的，容器无法触达的问题，比如多次在其他容器，访问此服务的接口，会出现 Connection refused
+
+这是由于 IP 不够用导致，可以修改网段，增加可用 IP
+
+创建新的 Network
+
+```
+docker network create \
+--driver overlay \
+--subnet 12.0.0.0/8 \
+--opt encrypted \
+--attachable \
+default-network
+```
+
+为服务增加新的 Network
+
+```
+docker service update --network-add default-network service_name
+```
+
+删除原来的 Network
+
+```
+docker service update --network-rm old-network service_name
+```
+
+### 为 Service 增加节点，发现一直卡在 create 阶段
+
+原因和解决办法同上
+
+### 当在 Portainer 中修改了仓库密码后，更新 Service 失败
+
+这是因为 Portainer 修改后，不能作用于已经创建的服务，所以手动更新即可
+
+```
+docker service update --with-registry-auth service_name
 ```

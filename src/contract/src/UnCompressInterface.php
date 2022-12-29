@@ -13,5 +13,5 @@ namespace Hyperf\Contract;
 
 interface UnCompressInterface
 {
-    public function uncompress(): CompressInterface;
+    public function uncompress();
 }

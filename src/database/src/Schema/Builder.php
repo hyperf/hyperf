@@ -14,6 +14,7 @@ namespace Hyperf\Database\Schema;
 use Closure;
 use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionInterface;
+use Hyperf\Database\Schema\Grammars\Grammar as SchemaGrammar;
 use LogicException;
 
 class Builder
@@ -28,28 +29,24 @@ class Builder
     /**
      * The database connection instance.
      *
-     * @var \Hyperf\Database\Connection
+     * @var Connection
      */
-    protected $connection;
+    protected ConnectionInterface $connection;
 
     /**
      * The schema grammar instance.
-     *
-     * @var \Hyperf\Database\Schema\Grammars\MySqlGrammar
      */
-    protected $grammar;
+    protected SchemaGrammar $grammar;
 
     /**
      * The Blueprint resolver callback.
-     *
-     * @var \Closure
      */
-    protected $resolver;
+    protected ?Closure $resolver = null;
 
     /**
      * Create a new database Schema manager.
      *
-     * @param \Hyperf\Database\Connection $connection
+     * @param Connection $connection
      */
     public function __construct(ConnectionInterface $connection)
     {
@@ -71,9 +68,8 @@ class Builder
      * Determine if the given table exists.
      *
      * @param string $table
-     * @return bool
      */
-    public function hasTable($table)
+    public function hasTable($table): bool
     {
         $table = $this->connection->getTablePrefix() . $table;
 
@@ -88,9 +84,8 @@ class Builder
      *
      * @param string $table
      * @param string $column
-     * @return bool
      */
-    public function hasColumn($table, $column)
+    public function hasColumn($table, $column): bool
     {
         return in_array(
             strtolower($column),
@@ -102,9 +97,8 @@ class Builder
      * Determine if the given table has given columns.
      *
      * @param string $table
-     * @return bool
      */
-    public function hasColumns($table, array $columns)
+    public function hasColumns($table, array $columns): bool
     {
         $tableColumns = array_map('strtolower', $this->getColumnListing($table));
 
@@ -135,9 +129,8 @@ class Builder
      * Get the column listing for a given table.
      *
      * @param string $table
-     * @return array
      */
-    public function getColumnListing($table)
+    public function getColumnListing($table): array
     {
         $results = $this->connection->selectFromWriteConnection($this->grammar->compileColumnListing(
             $this->connection->getTablePrefix() . $table
@@ -165,7 +158,7 @@ class Builder
      *
      * @param string $table
      */
-    public function table($table, Closure $callback)
+    public function table($table, Closure $callback): void
     {
         $this->build($this->createBlueprint($table, $callback));
     }
@@ -175,7 +168,7 @@ class Builder
      *
      * @param string $table
      */
-    public function create($table, Closure $callback)
+    public function create($table, Closure $callback): void
     {
         $this->build(tap($this->createBlueprint($table), function ($blueprint) use ($callback) {
             $blueprint->create();
@@ -189,7 +182,7 @@ class Builder
      *
      * @param string $table
      */
-    public function drop($table)
+    public function drop($table): void
     {
         $this->build(tap($this->createBlueprint($table), function ($blueprint) {
             $blueprint->drop();
@@ -201,7 +194,7 @@ class Builder
      *
      * @param string $table
      */
-    public function dropIfExists($table)
+    public function dropIfExists($table): void
     {
         $this->build(tap($this->createBlueprint($table), function ($blueprint) {
             $blueprint->dropIfExists();
@@ -211,9 +204,9 @@ class Builder
     /**
      * Drop all tables from the database.
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
-    public function dropAllTables()
+    public function dropAllTables(): void
     {
         throw new LogicException('This database driver does not support dropping all tables.');
     }
@@ -221,9 +214,9 @@ class Builder
     /**
      * Drop all views from the database.
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
-    public function dropAllViews()
+    public function dropAllViews(): void
     {
         throw new LogicException('This database driver does not support dropping all views.');
     }
@@ -234,7 +227,7 @@ class Builder
      * @param string $from
      * @param string $to
      */
-    public function rename($from, $to)
+    public function rename($from, $to): void
     {
         $this->build(tap($this->createBlueprint($from), function ($blueprint) use ($to) {
             $blueprint->rename($to);
@@ -243,10 +236,8 @@ class Builder
 
     /**
      * Enable foreign key constraints.
-     *
-     * @return bool
      */
-    public function enableForeignKeyConstraints()
+    public function enableForeignKeyConstraints(): bool
     {
         return $this->connection->statement(
             $this->grammar->compileEnableForeignKeyConstraints()
@@ -255,10 +246,8 @@ class Builder
 
     /**
      * Disable foreign key constraints.
-     *
-     * @return bool
      */
-    public function disableForeignKeyConstraints()
+    public function disableForeignKeyConstraints(): bool
     {
         return $this->connection->statement(
             $this->grammar->compileDisableForeignKeyConstraints()

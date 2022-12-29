@@ -11,6 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\HttpServer;
 
+use Hyperf\Context\Context;
+use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Xmlable;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
@@ -19,13 +22,11 @@ use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\HttpServer\Response;
 use Hyperf\HttpServer\ResponseEmitter;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Xmlable;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+use ReflectionClass;
 use Swoole\Http\Response as SwooleResponse;
 
 /**
@@ -83,7 +84,7 @@ class ResponseTest extends TestCase
         Context::set(PsrResponseInterface::class, $psrResponse);
 
         $response = new Response();
-        $reflectionClass = new \ReflectionClass(Response::class);
+        $reflectionClass = new ReflectionClass(Response::class);
         $reflectionMethod = $reflectionClass->getMethod('toXml');
         $reflectionMethod->setAccessible(true);
 
@@ -218,10 +219,11 @@ class ResponseTest extends TestCase
         $cookie2 = new Cookie('Request-Id', $id);
         $swooleResponse->shouldReceive('status')->with(200, 'OK')->andReturnUsing(function ($code) {
             $this->assertSame($code, 200);
+            return true;
         });
         $swooleResponse->shouldReceive('header')->withAnyArgs()->twice()->andReturnUsing(function ($name, $value) {
             if ($name == 'X-Token') {
-                $this->assertSame($value, 'xxx');
+                $this->assertSame($value, ['xxx']);
             }
             return true;
         });

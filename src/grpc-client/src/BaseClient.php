@@ -18,6 +18,7 @@ use Hyperf\GrpcClient\Exception\GrpcClientException;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\ChannelPool;
 use InvalidArgumentException;
+use Swoole\Http2\Response;
 
 /**
  * @method int send(Request $request)
@@ -26,52 +27,30 @@ use InvalidArgumentException;
  */
 class BaseClient
 {
-    /**
-     * @var null|GrpcClient
-     */
-    private $grpcClient;
+    private ?GrpcClient $grpcClient = null;
 
-    /**
-     * @var array
-     */
-    private $options;
+    private bool $initialized = false;
 
-    /**
-     * @var string
-     */
-    private $hostname;
-
-    /**
-     * @var bool
-     */
-    private $initialized = false;
-
-    public function __construct(string $hostname, array $options = [])
+    public function __construct(private string $hostname, private array $options = [])
     {
-        $this->hostname = $hostname;
-        $this->options = $options;
     }
 
     public function __destruct()
     {
-        if ($this->grpcClient) {
-            $this->grpcClient->close(false);
-        }
+        $this->grpcClient?->close(false);
     }
 
+    /**
+     * @deprecated
+     * @param string $name
+     */
     public function __get($name)
     {
-        if (! $this->initialized) {
-            $this->init();
-        }
         return $this->_getGrpcClient()->{$name};
     }
 
     public function __call($name, $arguments)
     {
-        if (! $this->initialized) {
-            $this->init();
-        }
         return $this->_getGrpcClient()->{$name}(...$arguments);
     }
 
@@ -90,8 +69,8 @@ class BaseClient
      * @param string $method The name of the method to call
      * @param Message $argument The argument to the method
      * @param callable $deserialize A function that deserializes the response
+     * @return array|\Google\Protobuf\Internal\Message[]|Response[]
      * @throws GrpcClientException
-     * @return array|\Google\Protobuf\Internal\Message[]|\swoole_http2_response[]
      */
     protected function _simpleRequest(
         string $method,
@@ -193,7 +172,7 @@ class BaseClient
     private function init()
     {
         if (! empty($this->options['client'])) {
-            if (! ($this->options['client'] instanceof GrpcClient)) {
+            if (! $this->options['client'] instanceof GrpcClient) {
                 throw new InvalidArgumentException('Parameter client have to instanceof Hyperf\GrpcClient\GrpcClient');
             }
             $this->grpcClient = $this->options['client'];

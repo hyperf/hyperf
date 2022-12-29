@@ -43,15 +43,13 @@ use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
 use Hyperf\Utils\Codec\Json;
 
-/**
- * @SocketIONamespace("/")
- */
+#[SocketIONamespace("/")]
 class WebSocketController extends BaseNamespace
 {
     /**
-     * @Event("event")
      * @param string $data
      */
+    #[Event("event")]
     public function onEvent(Socket $socket, $data)
     {
         // response
@@ -59,9 +57,9 @@ class WebSocketController extends BaseNamespace
     }
 
     /**
-     * @Event("join-room")
      * @param string $data
      */
+    #[Event("join-room")]
     public function onJoinRoom(Socket $socket, $data)
     {
         // Add the current user to the room
@@ -73,9 +71,9 @@ class WebSocketController extends BaseNamespace
     }
 
     /**
-     * @Event("say")
      * @param string $data
      */
+    #[Event("say")]
     public function onSay(Socket $socket, $data)
     {
         $data = Json::decode($data);
@@ -94,7 +92,7 @@ class WebSocketController extends BaseNamespace
 Since the server only implements WebSocket communication, the client must add `{transports:["websocket"]}`.
 
 ```html
-<script src="https://cdn.bootcss.com/socket.io/2.3.0/socket.io.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
 <script>
     var socket = io('ws://127.0.0.1:9502', {transports: ["websocket"] });
     socket.on('connect', data => {
@@ -116,9 +114,7 @@ Push the target Socket through SocketAPI, or speak in the room as the target Soc
 
 ```php
 <?php
-/**
- * @Event("SomeEvent")
- */
+#[Event("SomeEvent")]
 function onSomeEvent(\Hyperf\SocketIOServer\Socket $socket){
 
   // sending to the client
@@ -193,8 +189,8 @@ $io->of('/foo')->emit();
 
 /**
  * Use within the class is also equivalent
- * @SocketIONamespace("/foo")
  */
+#[SocketIONamespace("/foo")]
 class FooNamespace extends BaseNamespace {
     public function onEvent(){
         $this->emit();
@@ -209,7 +205,7 @@ class FooNamespace extends BaseNamespace {
 
 Socket.io implements multiplexing through custom namespaces. (Note: It is not a PHP namespace)
 
-1. The controller can be mapped to the xxx namespace through `@SocketIONamespace("/xxx")`,
+1. The controller can be mapped to the xxx namespace through `#[SocketIONamespace("/xxx")]`,
 
 2. Can also be registered through the `SocketIORouter`
 
@@ -311,7 +307,7 @@ class WebSocketController extends BaseNamespace
 }
 ```
 
-2. You can add `@Event()` annotation on the controller, and use the method name as the event name to distribute. At this time, it should be noted that other public methods may conflict with the event name.
+2. You can add `#[Event]` annotation on the controller, and use the method name as the event name to distribute. At this time, it should be noted that other public methods may conflict with the event name.
 
 ```php
 <?php
@@ -324,10 +320,8 @@ use Hyperf\SocketIOServer\Annotation\Event;
 use Hyperf\SocketIOServer\BaseNamespace;
 use Hyperf\SocketIOServer\Socket;
 
-/**
- * @SocketIONamespace("/")
- * @Event()
- */
+#[SocketIONamespace("/")]
+#[Event]
 class WebSocketController extends BaseNamespace
 {
     public function echo(Socket $socket, $data)

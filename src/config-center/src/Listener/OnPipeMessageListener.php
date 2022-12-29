@@ -22,26 +22,11 @@ use Hyperf\Process\Event\PipeMessage as UserProcessPipeMessage;
 
 class OnPipeMessageListener implements ListenerInterface
 {
-    /**
-     * @var \Hyperf\ConfigCenter\DriverFactory
-     */
-    protected $driverFactory;
-
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    public function __construct(DriverFactory $driverFactory, ConfigInterface $config, StdoutLoggerInterface $logger)
-    {
-        $this->driverFactory = $driverFactory;
-        $this->config = $config;
-        $this->logger = $logger;
+    public function __construct(
+        protected DriverFactory $driverFactory,
+        protected ConfigInterface $config,
+        protected StdoutLoggerInterface $logger
+    ) {
     }
 
     /**
@@ -59,7 +44,7 @@ class OnPipeMessageListener implements ListenerInterface
      * Handle the Event when the event is triggered, all listeners will
      * complete before the event is returned to the EventDispatcher.
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($instance = $this->createDriverInstance()) {
             if ($event instanceof OnPipeMessage || $event instanceof UserProcessPipeMessage) {

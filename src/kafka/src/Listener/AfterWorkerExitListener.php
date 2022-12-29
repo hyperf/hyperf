@@ -19,14 +19,8 @@ use Psr\Container\ContainerInterface;
 
 class AfterWorkerExitListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function listen(): array
@@ -34,7 +28,7 @@ class AfterWorkerExitListener implements ListenerInterface
         return [OnWorkerExit::class];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($this->container->has(Producer::class)) {
             $this->container->get(Producer::class)->close();

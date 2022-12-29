@@ -51,7 +51,10 @@ composer require hyperf/kafka
 | offset_retry                  | int        | 5                             | 偏移量操作，匹配預設的錯誤碼時，自動重試次數                                                                         |
 | auto_create_topic             | bool       | true                          | 是否需要自動創建 topic                                                                                               |
 | partition_assignment_strategy | string     | KafkaStrategy::RANGE_ASSIGNOR | 消費者分區分配策略, 可選：範圍分配(`KafkaStrategy::RANGE_ASSIGNOR`) 輪詢分配(`KafkaStrategy::ROUND_ROBIN_ASSIGNOR`)) |
-| pool                          | object     |                               | 連接池配置                                                                                                           |
+| sasl                          | array      | []                            | SASL 身份認證信息。為空則不發送身份認證信息 phpkafka 版本需 >= 1.2                                                    |
+| ssl                           | array      | []                            | SSL 鏈接相關信息, 為空則不使用 SSL phpkafka 版本需 >= 1.2                                                               |
+| pool                          | object     | []                            | 連接池配置                                                                                                           |
+
 
 
 ```php
@@ -89,6 +92,8 @@ return [
         'offset_retry' => 5,
         'auto_create_topic' => true,
         'partition_assignment_strategy' => KafkaStrategy::RANGE_ASSIGNOR,
+        'sasl' => [],
+        'ssl' => [],
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -133,9 +138,7 @@ use Hyperf\Kafka\AbstractConsumer;
 use Hyperf\Kafka\Annotation\Consumer;
 use longlang\phpkafka\Consumer\ConsumeMessage;
 
-/**
- * @Consumer(topic="hyperf", nums=5, groupId="hyperf", autoCommit=true)
- */
+#[Consumer(topic: "hyperf", nums: 5, groupId: "hyperf", autoCommit: true)]
 class KafkaConsumer extends AbstractConsumer
 {
     public function consume(ConsumeMessage $message): string
@@ -160,9 +163,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\Kafka\Producer;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController extends AbstractController
 {
     public function index(Producer $producer)
@@ -189,9 +190,7 @@ use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\Kafka\Producer;
 use longlang\phpkafka\Producer\ProduceMessage;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController extends AbstractController
 {
     public function index(Producer $producer)
@@ -201,9 +200,35 @@ class IndexController extends AbstractController
             new ProduceMessage('hyperf2', 'hyperf2_value', 'hyperf2_key'),
             new ProduceMessage('hyperf3', 'hyperf3_value', 'hyperf3_key'),
         ]);
-
     }
 }
 
 ```
+
+### SASL 配置説明
+
+| 參數名   | 説明                                                                | 默認值 |
+| -------- | ------------------------------------------------------------------- | ------ |
+| type     | SASL 授權對應的類。PLAIN 為`\longlang\phpkafka\Sasl\PlainSasl::class` | ''     |
+| username | 賬號                                                                | ''     |
+| password | 密碼                                                                | ''     |
+
+### SSL 配置説明
+
+| 參數名          | 説明                                                                    | 默認值  |
+| --------------- | ----------------------------------------------------------------------- | ------- |
+| open            | 是否開啓 SSL 傳輸加密                                                     | `false` |
+| compression     | 是否開啓壓縮                                                            | `true`  |
+| certFile        | cert 證書存放路徑                                                        | `''`    |
+| keyFile         | 私鑰存放路徑                                                            | `''`    |
+| passphrase      | cert 證書密碼                                                            | `''`    |
+| peerName        | 服務器主機名。默認為鏈接的 host                                          | `''`    |
+| verifyPeer      | 是否校驗遠端證書                                                        | `false` |
+| verifyPeerName  | 是否校驗遠端服務器名稱                                                  | `false` |
+| verifyDepth     | 如果證書鏈條層次太深，超過了本選項的設定值，則終止驗證。 默認不校驗層級 | `0`     |
+| allowSelfSigned | 是否允許自簽證書                                                        | `false` |
+| cafile          | CA 證書路徑                                                              | `''`    |
+| capath          | CA 證書目錄。會自動掃描該路徑下所有 pem 文件                               | `''`    |
+
+
 

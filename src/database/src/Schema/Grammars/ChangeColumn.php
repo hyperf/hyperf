@@ -26,10 +26,9 @@ class ChangeColumn
      * Compile a change column command into a series of SQL statements.
      *
      * @param \Hyperf\Database\Schema\Grammars\Grammar $grammar
-     * @throws \RuntimeException
-     * @return array
+     * @throws RuntimeException
      */
-    public static function compile($grammar, Blueprint $blueprint, Fluent $command, Connection $connection)
+    public static function compile($grammar, Blueprint $blueprint, Fluent $command, Connection $connection): array
     {
         if (! $connection->isDoctrineAvailable()) {
             throw new RuntimeException(sprintf(

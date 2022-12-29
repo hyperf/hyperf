@@ -11,19 +11,21 @@ declare(strict_types=1);
  */
 namespace Hyperf\GraphQL;
 
-class ClassCollector
+use Hyperf\Di\MetadataCollector;
+
+class ClassCollector extends MetadataCollector
 {
-    private static $classes = [];
+    protected static array $container = [];
 
     public static function collect(string $class)
     {
-        if (! in_array($class, self::$classes)) {
-            self::$classes[] = $class;
+        if (! in_array($class, self::$container)) {
+            self::$container[] = $class;
         }
     }
 
     public static function getClasses()
     {
-        return self::$classes;
+        return self::$container;
     }
 }

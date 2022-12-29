@@ -60,7 +60,7 @@ class PaginatedResponse extends Response
     }
 
     /**
-     * Gather the meta data for the response.
+     * Gather the metadata for the response.
      */
     protected function meta(array $paginated): array
     {

@@ -1,6 +1,6 @@
 # 重試
 
-網路通訊天然是不穩定的，因此在分散式系統中，需要有良好的容錯設計。無差別重試是非常危險的。當通訊出現問題時，每個請求都重試一次，相當於系統 IO 負載增加了 100%，容易誘發雪崩事故。重試還要考慮錯誤的原因，如果是無法通過重試解決的問題，那麼重試只是浪費資源而已。除此之外，如果重試的介面不具備冪等性，還可能造成資料不一致等問題。
+網路通訊天然是不穩定的，因此在分散式系統中，需要有良好的容錯設計。無差別重試是非常危險的。當通訊出現問題時，每個請求都重試一次，相當於系統 IO 負載增加了 100%，容易誘發雪崩事故。重試還要考慮錯誤的原因，如果是無法透過重試解決的問題，那麼重試只是浪費資源而已。除此之外，如果重試的介面不具備冪等性，還可能造成資料不一致等問題。
 
 本元件提供了豐富的重試機制，可以滿足多種場景的重試需求。
 
@@ -13,13 +13,13 @@ composer require hyperf/retry
 
 ## Hello World
 
-在需要重試的方法上加入註解 `@Retry`。
+在需要重試的方法上加入註解 `#[Retry]`。
 
 ```php
 /**
  * 異常時重試該方法
- * @Retry
  */
+#[Retry]
 public function foo()
 {
     // 發起一次遠端呼叫
@@ -30,11 +30,11 @@ public function foo()
 
 ## 深度定製
 
-本元件通過組合多種重試策略實現了可插拔性。每個策略關注重試過程中的不同側面，如重試判斷、重試間隔，結果處理等。通過調整註解中使用的策略就可以配置出適配任意場景下的重試切面。
+本元件透過組合多種重試策略實現了可插拔性。每個策略關注重試過程中的不同側面，如重試判斷、重試間隔，結果處理等。透過調整註解中使用的策略就可以配置出適配任意場景下的重試切面。
 
 建議根據具體業務需要構造自己的註解別名。下面我們演示如何製作最大嘗試次數為 3 的新註解。
 
-> 在預設的 `Retry` 註解中，您可以通過 `@Retry(maxAttempts=3)` 來控制最大重試次數。為了演示需要，先假裝它不存在。
+> 在預設的 `Retry` 註解中，您可以透過 `@Retry(maxAttempts=3)` 來控制最大重試次數。為了演示需要，先假裝它不存在。
 
 首先您要新建一個 `註解類` 並繼承 `\Hyperf\Retry\Annotations\AbstractRetry` 。
 
@@ -47,10 +47,7 @@ namespace App\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
+#[Attribute(Attribute::TARGET_METHOD)]
 class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 {
 }
@@ -67,10 +64,7 @@ namespace App\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
+#[Attribute(Attribute::TARGET_METHOD)]
 class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 {
     public $policies = [
@@ -91,10 +85,7 @@ namespace App\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
+#[Attribute(Attribute::TARGET_METHOD)]
 class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 {
     public $policies = [
@@ -116,10 +107,7 @@ namespace App\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
+#[Attribute(Attribute::TARGET_METHOD)]
 class MyRetry extends \Hyperf\Retry\Annotation\Retry
 {
     public $policies = [
@@ -155,15 +143,13 @@ public $policies = [
 
 /**
  * The algorithm for retry intervals.
- * @var string
  */
-public $sleepStrategyClass = SleepStrategyInterface::class;
+public string $sleepStrategyClass = SleepStrategyInterface::class;
 
 /**
  * Max Attampts.
- * @var int
  */
-public $maxAttempts = 10;
+public int $maxAttempts = 10;
 
 /**
  * Retry Budget.
@@ -182,9 +168,8 @@ public $retryBudget = [
 /**
  * Base time inteval (ms) for each try. For backoff strategy this is the interval for the first try
  * while for flat strategy this is the interval for every try.
- * @var int
  */
-public $base = 0;
+public int $base = 0;
 
 /**
  * Configures a Predicate which evaluates if an exception should be retried.
@@ -239,14 +224,14 @@ public $fallback = '';
 
 ### 錯誤分類策略 `ClassifierRetryPolicy`
 
-通過分類器來判斷錯誤是否可以重試。
+透過分類器來判斷錯誤是否可以重試。
 
 |    引數    | 型別 | 說明 |
 | ---------- | --- | --- |
 | ignoreThrowables |  array | 無視的 `Throwable` 類名 。優先於 `retryThrowables` |
 | retryThrowables | array | 需要重試的 `Throwable` 類名 。優先於 `retryOnThrowablePredicate` |
-| retryOnThrowablePredicate | callable | 通過一個函式來判斷 `Throwable` 是否可以重試。如果可以重試，請返回 true, 反之必須返回 false。 |
-| retryOnResultPredicate | callable | 通過一個函式來判斷返回值是否可以重試。如果可以重試，請返回 true，反之必須返回 false。 |
+| retryOnThrowablePredicate | callable | 透過一個函式來判斷 `Throwable` 是否可以重試。如果可以重試，請返回 true, 反之必須返回 false。 |
+| retryOnResultPredicate | callable | 透過一個函式來判斷返回值是否可以重試。如果可以重試，請返回 true，反之必須返回 false。 |
 
 ### 回退策略 `FallbackRetryPolicy`
 
@@ -311,7 +296,7 @@ public $fallback = '';
 
 ## Fluent 鏈式呼叫
 
-除了註解方法使用本元件外，您還可以通過常規 PHP 函式使用。
+除了註解方法使用本元件外，您還可以透過常規 PHP 函式使用。
 
 ```php
 <?php

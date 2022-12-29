@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Scout\Stub;
 
+use Closure;
 use Hyperf\Database\Model\Model;
 use Hyperf\Scout\Searchable;
 
@@ -20,27 +21,25 @@ class SearchableModel extends Model
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = ['id'];
+    protected array $fillable = ['id'];
 
     /**
-     * @var \Closure
+     * @var Closure
      */
     protected $queryCallback;
 
-    public function searchableAs()
+    public function searchableAs(): string
     {
         return 'table';
     }
 
-    public function scoutMetadata()
+    public function scoutMetadata(): array
     {
         return [];
     }
 
-    public function setQueryCallback(\Closure $closure)
+    public function setQueryCallback(Closure $closure)
     {
         $this->queryCallback = $closure;
     }

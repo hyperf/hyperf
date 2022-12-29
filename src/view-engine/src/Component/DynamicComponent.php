@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\ViewEngine\Component;
 
-use Closure;
 use Hyperf\Utils\Str;
 use Hyperf\ViewEngine\Blade;
 use Hyperf\ViewEngine\Compiler\CompilerInterface;
@@ -21,47 +20,33 @@ use Hyperf\ViewEngine\View;
 class DynamicComponent extends Component
 {
     /**
-     * The name of the component.
-     *
-     * @var string
-     */
-    public $component;
-
-    /**
      * The component tag compiler instance.
-     *
-     * @var null|ComponentTagCompiler
      */
-    protected $compiler;
+    protected ?ComponentTagCompiler $compiler = null;
 
     /**
      * The cached component classes.
-     *
-     * @var array
      */
-    protected $componentClasses = [];
+    protected array $componentClasses = [];
 
     /**
      * The cached binding keys for component classes.
-     *
-     * @var array
      */
-    protected $bindings = [];
+    protected array $bindings = [];
 
     /**
      * Create a new component instance.
+     *
+     * @param string $component the name of the component
      */
-    public function __construct(string $component)
+    public function __construct(public string $component)
     {
-        $this->component = $component;
     }
 
     /**
      * Get the view / contents that represent the component.
-     *
-     * @return Closure|string|View
      */
-    public function render()
+    public function render(): mixed
     {
         $template = <<<'EOF'
 <?php extract(collect($attributes->getAttributes())->mapWithKeys(function ($value, $key) { return [Hyperf\Utils\Str::camel(str_replace(':', ' ', $key)) => $value]; })->all(), EXTR_SKIP); ?>
@@ -99,50 +84,36 @@ EOF;
 
     /**
      * Compile the `@props` directive for the component.
-     *
-     * @return string
      */
-    protected function compileProps(array $bindings)
+    protected function compileProps(array $bindings): string
     {
         if (empty($bindings)) {
             return '';
         }
 
-        return '@props(' . '[\'' . implode('\',\'', collect($bindings)->map(function ($dataKey) {
-            return Str::camel($dataKey);
-        })->all()) . '\']' . ')';
+        return '@props([\'' . implode('\',\'', collect($bindings)->map(fn ($dataKey) => Str::camel($dataKey))->all()) . '\'])';
     }
 
     /**
      * Compile the bindings for the component.
-     *
-     * @return string
      */
-    protected function compileBindings(array $bindings)
+    protected function compileBindings(array $bindings): string
     {
-        return collect($bindings)->map(function ($key) {
-            return ':' . $key . '="$' . Str::camel(str_replace(':', ' ', $key)) . '"';
-        })->implode(' ');
+        return collect($bindings)->map(fn ($key) => ':' . $key . '="$' . Str::camel(str_replace(':', ' ', $key)) . '"')->implode(' ');
     }
 
     /**
      * Compile the slots for the component.
-     *
-     * @return string
      */
-    protected function compileSlots(array $slots)
+    protected function compileSlots(array $slots): string
     {
-        return collect($slots)->map(function ($slot, $name) {
-            return $name === '__default' ? null : '<x-slot name="' . $name . '">{{ $' . $name . ' }}</x-slot>';
-        })->filter()->implode(PHP_EOL);
+        return collect($slots)->map(fn ($slot, $name) => $name === '__default' ? null : '<x-slot name="' . $name . '">{{ $' . $name . ' }}</x-slot>')->filter()->implode(PHP_EOL);
     }
 
     /**
      * Get the class for the current component.
-     *
-     * @return string
      */
-    protected function classForComponent()
+    protected function classForComponent(): string
     {
         if (isset($this->componentClasses[$this->component])) {
             return $this->componentClasses[$this->component];
@@ -154,10 +125,8 @@ EOF;
 
     /**
      * Get the names of the variables that should be bound to the component.
-     *
-     * @return array
      */
-    protected function bindings(string $class)
+    protected function bindings(string $class): array
     {
         if (! isset($this->bindings[$class])) {
             [$data, $attributes] = $this->compiler()->partitionDataAndAttributes($class, $this->attributes->getAttributes());
@@ -170,10 +139,8 @@ EOF;
 
     /**
      * Get an instance of the Blade tag compiler.
-     *
-     * @return ComponentTagCompiler
      */
-    protected function compiler()
+    protected function compiler(): ComponentTagCompiler
     {
         if (! $this->compiler) {
             $this->compiler = new ComponentTagCompiler(

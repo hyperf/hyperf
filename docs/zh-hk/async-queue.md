@@ -24,7 +24,7 @@ composer require hyperf/async-queue
 |  handle_timeout  |    int    |                     10                      |            消息處理超時時間             |
 |    processes     |    int    |                      1                      |               消費進程數                |
 | concurrent.limit |    int    |                      1                      |             同時處理消息數              |
-|   max_messages   |    int    |                      0                      | 進程重啟所需最大處理的消息數 默認不重啟 |
+|   max_messages   |    int    |                      0                      | 進程重啓所需最大處理的消息數 默認不重啓 |
 
 ```php
 <?php
@@ -74,7 +74,7 @@ return [
 
 ```mermaid
 graph LR;
-A[服務啟動]-->B[異步消費進程啟動]
+A[服務啓動]-->B[異步消費進程啓動]
 B-->C[監聽隊列]
 D[投遞任務]-->C
 C-->F[消費任務]
@@ -109,9 +109,7 @@ namespace App\Process;
 use Hyperf\AsyncQueue\Process\ConsumerProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="async-queue")
- */
+#[Process(name: "async-queue")]
 class AsyncQueueConsumer extends ConsumerProcess
 {
 }
@@ -176,10 +174,8 @@ class ExampleJob extends Job
     
     /**
      * 任務執行失敗後的重試次數，即最大執行次數為 $maxAttempts+1 次
-     *
-     * @var int
      */
-    protected $maxAttempts = 2;
+    protected int $maxAttempts = 2;
 
     public function __construct($params)
     {
@@ -212,10 +208,7 @@ use Hyperf\AsyncQueue\Driver\DriverInterface;
 
 class QueueService
 {
-    /**
-     * @var DriverInterface
-     */
-    protected $driver;
+    protected DriverInterface $driver;
 
     public function __construct(DriverFactory $driverFactory)
     {
@@ -252,16 +245,11 @@ use App\Service\QueueService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class QueueController extends AbstractController
 {
-    /**
-     * @Inject
-     * @var QueueService
-     */
-    protected $service;
+    #[Inject]
+    protected QueueService $service;
 
     /**
      * 傳統模式投遞消息
@@ -299,9 +287,7 @@ use Hyperf\AsyncQueue\Annotation\AsyncQueueMessage;
 
 class QueueService
 {
-    /**
-     * @AsyncQueueMessage
-     */
+    #[AsyncQueueMessage]
     public function example($params)
     {
         // 需要異步執行的代碼邏輯
@@ -327,15 +313,13 @@ use App\Service\QueueService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class QueueController extends AbstractController
 {
     /**
-     * @Inject
      * @var QueueService
      */
+    #[Inject]
     protected $service;
 
     /**
@@ -366,7 +350,7 @@ class QueueController extends AbstractController
 
 ### QueueLengthListener
 
-框架自帶了一個記錄隊列長度的監聽器，默認不開啟，您如果需要，可以自行添加到 `listeners` 配置中。
+框架自帶了一個記錄隊列長度的監聽器，默認不開啓，您如果需要，可以自行添加到 `listeners` 配置中。
 
 ```php
 <?php
@@ -380,8 +364,8 @@ return [
 
 ### ReloadChannelListener
 
-當消息執行超時，或項目重啟導致消息執行被中斷，最終都會被移動到 `timeout` 隊列中，只要您可以保證消息執行是冪等的（同一個消息執行一次，或執行多次，最終表現一致），
-就可以開啟以下監聽器，框架會自動將 `timeout` 隊列中消息移動到 `waiting` 隊列中，等待下次消費。
+當消息執行超時，或項目重啓導致消息執行被中斷，最終都會被移動到 `timeout` 隊列中，只要您可以保證消息執行是冪等的（同一個消息執行一次，或執行多次，最終表現一致），
+就可以開啓以下監聽器，框架會自動將 `timeout` 隊列中消息移動到 `waiting` 隊列中，等待下次消費。
 
 > 監聽器監聽 `QueueLength` 事件，默認執行 500 次消息後觸發一次。
 
@@ -468,15 +452,10 @@ namespace App\Process;
 use Hyperf\AsyncQueue\Process\ConsumerProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process()
- */
+#[Process]
 class OtherConsumerProcess extends ConsumerProcess
 {
-    /**
-     * @var string
-     */
-    protected $queue = 'other';
+    protected string $queue = 'other';
 }
 ```
 
@@ -492,17 +471,18 @@ return $driver->push(new ExampleJob());
 
 ## 安全關閉
 
-異步隊列在終止時，如果正在進行消費邏輯，可能會導致出現錯誤。框架提供了 `DriverStopHandler` ，可以讓異步隊列進程安全關閉。
+異步隊列在終止時，如果正在進行消費邏輯，可能會導致出現錯誤。框架提供了 `ProcessStopHandler` ，可以讓異步隊列進程安全關閉。
 
 > 當前信號處理器並不適配於 CoroutineServer，如有需要請自行實現
 
 安裝信號處理器
 
-```
+```shell
 composer require hyperf/signal
+composer require hyperf/process
 ```
 
-添加配置
+添加配置 `autoload/signal.php`
 
 ```php
 <?php
@@ -511,7 +491,7 @@ declare(strict_types=1);
 
 return [
     'handlers' => [
-        Hyperf\AsyncQueue\Signal\DriverStopHandler::class,
+        Hyperf\Process\Handler\ProcessStopHandler::class,
     ],
     'timeout' => 5.0,
 ];

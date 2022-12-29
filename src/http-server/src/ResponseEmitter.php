@@ -19,38 +19,39 @@ use Swoole\Http\Response;
 class ResponseEmitter implements ResponseEmitterInterface
 {
     /**
-     * @param Response $swooleResponse
+     * @param Response $connection
      */
-    public function emit(ResponseInterface $response, $swooleResponse, bool $withContent = true)
+    public function emit(ResponseInterface $response, mixed $connection, bool $withContent = true): void
     {
-        if (strtolower($swooleResponse->header['Upgrade'] ?? '') === 'websocket') {
-            return;
-        }
-        $this->buildSwooleResponse($swooleResponse, $response);
-        $content = $response->getBody();
-        if ($content instanceof FileInterface) {
-            return $swooleResponse->sendfile($content->getFilename());
-        }
-        if ($withContent) {
-            $swooleResponse->end((string) $content);
-        } else {
-            $swooleResponse->end();
+        try {
+            if (strtolower($connection->header['Upgrade'] ?? '') === 'websocket') {
+                return;
+            }
+            $this->buildSwooleResponse($connection, $response);
+            $content = $response->getBody();
+            if ($content instanceof FileInterface) {
+                $connection->sendfile($content->getFilename());
+                return;
+            }
+
+            if ($withContent) {
+                $connection->end((string) $content);
+            } else {
+                $connection->end();
+            }
+        } catch (\Throwable) {
         }
     }
 
     protected function buildSwooleResponse(Response $swooleResponse, ResponseInterface $response): void
     {
-        /*
-         * Headers
-         */
+        // Headers
         foreach ($response->getHeaders() as $key => $value) {
-            $swooleResponse->header($key, implode(';', $value));
+            $swooleResponse->header($key, $value);
         }
 
-        /*
-         * Cookies
-         * This part maybe only supports of hyperf/http-message component.
-         */
+        // Cookies
+        // This part maybe only supports of hyperf/http-message component.
         if (method_exists($response, 'getCookies')) {
             foreach ((array) $response->getCookies() as $domain => $paths) {
                 foreach ($paths ?? [] as $path => $item) {
@@ -66,18 +67,14 @@ class ResponseEmitter implements ResponseEmitterInterface
             }
         }
 
-        /*
-         * Trailers
-         */
+        // Trailers
         if (method_exists($response, 'getTrailers') && method_exists($swooleResponse, 'trailer')) {
             foreach ($response->getTrailers() ?? [] as $key => $value) {
                 $swooleResponse->trailer($key, $value);
             }
         }
 
-        /*
-         * Status code
-         */
+        // Status code
         $swooleResponse->status($response->getStatusCode(), $response->getReasonPhrase());
     }
 

@@ -20,17 +20,13 @@ class EngineResolver implements EngineResolverInterface
 {
     /**
      * The array of engine resolvers.
-     *
-     * @var array
      */
-    protected $resolvers = [];
+    protected array $resolvers = [];
 
     /**
      * The resolved engine instances.
-     *
-     * @var array
      */
-    protected $resolved = [];
+    protected array $resolved = [];
 
     /**
      * Register a new engine resolver.
@@ -67,9 +63,7 @@ class EngineResolver implements EngineResolverInterface
         $resolver = new EngineResolver();
 
         foreach ($resolvers as $engine => $engineResolver) {
-            $resolver->register($engine, function () use ($engineResolver) {
-                return make($engineResolver);
-            });
+            $resolver->register($engine, fn () => make($engineResolver));
         }
 
         return $resolver;

@@ -4,22 +4,13 @@
 
 ## 概念
 
-### 什么是注解什么是注释？
+### 什么是注解？
 
-在解释注解之前我们需要先定义一下 `注解` 与 `注释` 的区别：   
-- 注释：给程序员看，帮助理解代码，对代码起到解释、说明的作用。
-- 注解：给应用程序看，用于元数据的定义，单独使用时没有任何作用，需配合应用程序对其元数据进行利用才有作用。
+注解功能提供了代码中的声明部分都可以添加结构化、机器可读的元数据的能力， 注解的目标可以是类、方法、函数、参数、属性、类常量。 通过 反射 API 可在运行时获取注解所定义的元数据。 因此注解可以成为直接嵌入代码的配置式语言。
 
-### 注解解析如何实现？
+通过注解的使用，在应用中实现功能、使用功能可以相互解耦。 某种程度上讲，它可以和接口（interface）与其实现（implementation）相比较。 但接口与实现是代码相关的，注解则与声明额外信息和配置相关。 接口可以通过类来实现，而注解也可以声明到方法、函数、参数、属性、类常量中。 因此它们比接口更灵活。
 
-Hyperf 使用了 [doctrine/annotations](https://github.com/doctrine/annotations) 包来对代码内的注解进行解析，注解必须写在下面示例的标准注释块才能被正确解析，其它格式均不能被正确解析。
-注释块示例：
-```php
-/**
- * @AnnotationClass()
- */
-```
-在标准注释块内通过书写 `@AnnotationClass()` 这样的语法即表明对当前注释块所在位置的对象(类、类方法、类属性)进行了注解的定义， `AnnotationClass` 对应的是一个 `注解类` 的类名，可写全类的命名空间，亦可只写类名，但需要在当前类 `use` 该注解类以确保能够根据命名空间找到正确的注解类。
+注解使用的一个简单例子：将接口（interface）的可选方法改用注解实现。 我们假设接口 ActionHandler 代表了应用的一个操作： 部分 action handler 的实现需要 setup，部分不需要。 我们可以使用注解，而不用要求所有类必须实现 ActionHandler 接口并实现 setUp() 方法。 因此带来一个好处——可以多次使用注解。
 
 ### 注解是如何发挥作用的？
 
@@ -30,11 +21,13 @@ Hyperf 使用了 [doctrine/annotations](https://github.com/doctrine/annotations)
 在一些情况下我们可能希望忽略某些 注解，比如我们在接入一些自动生成文档的工具时，有不少工具都是通过注解的形式去定义文档的相关结构内容的，而这些注解可能并不符合 Hyperf 的使用方式，我们可以通过在 `config/autoload/annotations.php` 内将相关注解设置为忽略。
 
 ```php
+use JetBrains\PhpStorm\ArrayShape;
+
 return [
     'scan' => [
         // ignore_annotations 数组内的注解都会被注解扫描器忽略
         'ignore_annotations' => [
-            'mixin',
+            ArrayShape::class,
         ],
     ],
 ];
@@ -46,23 +39,23 @@ return [
 
 ### 使用类注解
 
-类注解定义是在 `class` 关键词上方的注释块内，比如常用的 `@Controller` 和 `@AutoController` 就是类注解的使用典范，下面的代码示例则为一个正确使用类注解的示例，表明 `@ClassAnnotation` 注解应用于 `Foo` 类。   
+类注解定义是在 `class` 关键词上方的注释块内，比如常用的 `Controller` 和 `AutoController` 就是类注解的使用典范，下面的代码示例则为一个正确使用类注解的示例，表明 `ClassAnnotation` 注解应用于 `Foo` 类。
+
 ```php
-/**
- * @ClassAnnotation()
- */
+<?php
+#[ClassAnnotation]
 class Foo {}
 ```
 
 ### 使用类方法注解
 
-类方法注解定义是在方法上方的注释块内，比如常用的 `@RequestMapping` 就是类方法注解的使用典范，下面的代码示例则为一个正确使用类方法注解的示例，表明 `@MethodAnnotation` 注解应用于 `Foo::bar()` 方法。   
+类方法注解定义是在方法上方的注释块内，比如常用的 `RequestMapping` 就是类方法注解的使用典范，下面的代码示例则为一个正确使用类方法注解的示例，表明 `MethodAnnotation` 注解应用于 `Foo::bar()` 方法。
+
 ```php
+<?php
 class Foo
 {
-    /**
-     * @MethodAnnotation()
-     */
+    #[MethodAnnotation]
     public function bar()
     {
         // some code
@@ -72,60 +65,47 @@ class Foo
 
 ### 使用类属性注解
 
-类属性注解定义是在属性上方的注释块内，比如常用的 `@Value` 和 `@Inject` 就是类属性注解的使用典范，下面的代码示例则为一个正确使用类属性注解的示例，表明 `@PropertyAnnotation` 注解应用于 `Foo` 类的 `$bar` 属性。   
+类属性注解定义是在属性上方的注释块内，比如常用的 `Value` 和 `Inject` 就是类属性注解的使用典范，下面的代码示例则为一个正确使用类属性注解的示例，表明 `PropertyAnnotation` 注解应用于 `Foo` 类的 `$bar` 属性。
+
 ```php
+<?php
 class Foo
 {
-    /**
-     * @PropertyAnnotation()
-     */
+    #[PropertyAnnotation]
     private $bar;
 }
 ```
 
-### 注解参数传递
+### 注释型注解参数传递
 
-- 传递主要的单个参数 `@DemoAnnotation("value")`
-- 传递字符串参数 `@DemoAnnotation(key1="value1", key2="value2")`
-- 传递数组参数 `@DemoAnnotation(key={"value1", "value2"})`
+- 传递主要的单个参数 `#[DemoAnnotation('value')]`
+- 传递字符串参数 `#[DemoAnnotation(key1: 'value1', key2: 'value2')]`
+- 传递数组参数 `#[DemoAnnotation(key: ['value1', 'value2'])]`
 
 ## 自定义注解
 
 ### 创建一个注解类
 
-在任意地方创建注解类，如下代码示例：    
+在任意地方创建注解类，如下代码示例：
 
 ```php
+<?php
 namespace App\Annotation;
 
 use Hyperf\Di\Annotation\AbstractAnnotation;
 
-/**
- * @Annotation
- * @Target({"METHOD","PROPERTY"})
- */
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Bar extends AbstractAnnotation
 {
     // some code
 }
 
-/**
- * @Annotation
- * @Target("CLASS")
- */
+#[Attribute(Attribute::TARGET_CLASS)]
 class Foo extends AbstractAnnotation
 {
     // some code
 }
 ```
-
-> 注意注解类的 `@Annotation` 和 `@Target` 注解为全局注解，无需 `use` 
-
-其中 `@Target` 有如下参数：   
-- `METHOD` 注解允许定义在类方法上
-- `PROPERTY` 注解允许定义在类属性上
-- `CLASS` 注解允许定义在类上
-- `ALL` 注解允许定义在任何地方
 
 我们注意一下在上面的示例代码中，注解类都继承了 `Hyperf\Di\Annotation\AbstractAnnotation` 抽象类，对于注解类来说，这个不是必须的，但对于 Hyperf 的注解类来说，继承 `Hyperf\Di\Annotation\AnnotationInterface` 接口类是必须的，那么抽象类在这里的作用是提供极简的定义方式，该抽象类已经为您实现了`注解参数自动分配到类属性`、`根据注解使用位置自动按照规则收集到 AnnotationCollector` 这样非常便捷的功能。
 
@@ -154,26 +134,6 @@ return [
     ],
 ];
 
-```
-
-### 原生注解(Attributes)
-
-众所周知，在 PHP 8 增加了 `原生注解(Attributes)` 的特性，Hyperf 2.2 版本开始也支持了原生注解的写法，文档内的所有注解都可做对应的转换，如下：
-
-#### PHPDoc 注解
-
-```php
-/**
- * @ClassAnnotation()
- */
-class Foo {}
-```
-
-#### PHP 原生注解
-
-```php
-#[ClassAnnotation()]
-class Foo {}
 ```
 
 ### 利用注解数据
@@ -206,6 +166,7 @@ declare(strict_types=1);
  */
 namespace App\Kernel\Context;
 
+use Hyperf\Context\Context;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Utils;
@@ -215,20 +176,9 @@ use Swoole\Coroutine as SwooleCoroutine;
 
 class Coroutine
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var null|FormatterInterface
-     */
-    protected $formatter;
+    protected StdoutLoggerInterface $logger;
+    
+    protected ?FormatterInterface $formatter = null;
 
     public function __construct(ContainerInterface $container)
     {
@@ -249,7 +199,7 @@ class Coroutine
         $result = SwooleCoroutine::create(function () use ($callable, $id) {
             try {
                 // 按需复制，禁止复制 Socket，不然会导致 Socket 跨协程调用从而报错。
-                Utils\Context::copy($id, [
+                Context::copy($id, [
                     ServerRequestInterface::class,
                 ]);
                 call($callable);
@@ -376,11 +326,3 @@ return [
 ```
 
 这样 `co()` 和 `parallel()` 等方法，就可以自动拿到父协程，上下文中的数据，比如 `Request`。
-
-## IDE 注解插件
-
-因为 `PHP` 并不是原生支持 `注解`，所以 `IDE` 不会默认增加注解支持。但我们可以添加第三方插件，来让 `IDE` 支持 `注解`。
-
-### PhpStorm
-
-我们到 `Plugins` 中搜索 `PHP Annotations`，就可以找到对应的组件 [PHP Annotations](https://github.com/Haehnchen/idea-php-annotation-plugin)。然后安装组件，重启 `PhpStorm`，就可以愉快的使用注解功能了，主要提供了为注解类增加自动跳转和代码提醒支持，使用注解时自动引用注解对应的命名空间等非常便捷有用的功能。

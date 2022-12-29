@@ -13,7 +13,7 @@ namespace Hyperf\ConfigCenter\Contract;
 
 interface DriverInterface
 {
-    public function fetchConfig();
+    public function fetchConfig(): void;
 
     public function createMessageFetcherLoop(): void;
 

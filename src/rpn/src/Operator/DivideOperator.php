@@ -18,9 +18,9 @@ class DivideOperator extends Operator
         return '/';
     }
 
-    public function execute(array $paramaters, int $scale): string
+    public function execute(array $parameters, int $scale): string
     {
-        $paramaters[] = $scale;
-        return bcdiv(...$paramaters);
+        $parameters[] = $scale;
+        return bcdiv(...$parameters);
     }
 }

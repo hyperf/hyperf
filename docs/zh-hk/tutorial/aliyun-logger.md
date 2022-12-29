@@ -16,11 +16,11 @@
 
 [標準 Docker 日誌採集流程文檔](https://help.aliyun.com/document_detail/66659.html)
 
-|                 參數                  |                    説明                    |
-|:-------------------------------------:|:------------------------------------------:|
-|          ${your_region_name}          |     區域 ID 比如華東 1 區域是 cn-hangzhou     |
+|                 參數                  |                    説明                     |
+| :-----------------------------------: | :-----------------------------------------: |
+|          ${your_region_name}          |    區域 ID 比如華東 1 區域是 cn-hangzhou    |
 |        ${your_aliyun_user_id}         | 用户標識，請替換為您的阿里雲主賬號用户 ID。 |
-| ${your_machine_group_user_defined_id} |   集羣的機器組自定義標識 以下使用 Hyperf   |
+| ${your_machine_group_user_defined_id} |   集羣的機器組自定義標識 以下使用 Hyperf    |
 
 ```
 docker run -d -v /:/logtail_host:ro -v /var/run/docker.sock:/var/run/docker.sock \
@@ -37,19 +37,19 @@ registry.cn-hangzhou.aliyuncs.com/log-service/logtail
 登錄阿里雲日誌服務，點擊 `創建 Project`，填寫以下信息
 
 |     參數     |     填寫示例     |
-|:------------:|:----------------:|
-| Project 名稱  |      hyperf      |
+| :----------: | :--------------: |
+| Project 名稱 |      hyperf      |
 |     註釋     | 用於日誌系統演示 |
-|   所屬區域   |  華東 1（杭州）   |
+|   所屬區域   |  華東 1（杭州）  |
 |   開通服務   |     詳細日誌     |
-| 日誌存儲位置 |   當前 Project    |
+| 日誌存儲位置 |   當前 Project   |
 
 ### 創建 Logstore
 
 除以下參數，按需填寫，其他都使用默認即可
 
-|     參數     |     填寫示例     |
-|:------------:|:---------------:|
+|     參數      |    填寫示例     |
+| :-----------: | :-------------: |
 | Logstore 名稱 | hyperf-demo-api |
 |   永久保存    |      false      |
 | 數據保存時間  |       60        |
@@ -63,10 +63,10 @@ registry.cn-hangzhou.aliyuncs.com/log-service/logtail
 如果已經創建過機器組，可以跳過這一步
 
 |      參數      |    填寫示例    |
-|:-------------:|:-------------:|
-|   機器組名稱    |     Hyperf    |
-|   機器組標識    |  用户自定義標識 |
-|  用户自定義標識  |     Hyperf    |
+| :------------: | :------------: |
+|   機器組名稱   |     Hyperf     |
+|   機器組標識   | 用户自定義標識 |
+| 用户自定義標識 |     Hyperf     |
 
 3. 配置機器組
 
@@ -76,36 +76,36 @@ registry.cn-hangzhou.aliyuncs.com/log-service/logtail
 
 `Label` 白名單，這裏可以按需填寫，以下按照項目名字來配置，而項目名會在 Docker 容器運行時設置。
 
-|      參數      |                     填寫示例                      |    填寫示例     |
-|:--------------:|:-------------------------------------------------:|:---------------:|
-|    配置名稱    |                  hyperf-demo-api                  |                 |
-|    日誌路徑    |               /opt/www/runtime/logs               |      *.log      |
-|  Label 白名單   |                     app.name                      | hyperf-demo-api |
-|      模式      |                   完整正則模式                    |                 |
-|    單行模式    |                       false                       |                 |
+|      參數      |                      填寫示例                       |    填寫示例     |
+| :------------: | :-------------------------------------------------: | :-------------: |
+|    配置名稱    |                   hyperf-demo-api                   |                 |
+|    日誌路徑    |                /opt/www/runtime/logs                |      *.log      |
+|  Label 白名單  |                      app.name                       | hyperf-demo-api |
+|      模式      |                    完整正則模式                     |                 |
+|    單行模式    |                        false                        |                 |
 |    日誌樣例    |     `[2019-03-07 11:58:57] hyperf.WARNING: xxx`     |                 |
-| 首行正則表達式 |         \[\d+-\d+-\d+\s\d+:\d+:\d+\]\s.*          |                 |
-|    提取字段    |                       true                        |                 |
-|   正則表達式   | \[(\d+-\d+-\d+\s\d+:\d+:\d+)\]\s(\w+)\.(\w+):(.*) |                 |
-|  日誌抽取內容  |              time name level content              |                 |
+| 首行正則表達式 |         `\[\d+-\d+-\d+\s\d+:\d+:\d+\]\s.*`          |                 |
+|    提取字段    |                        true                         |                 |
+|   正則表達式   | `\[(\d+-\d+-\d+\s\d+:\d+:\d+)\]\s(\w+)\.(\w+):(.*)` |                 |
+|  日誌抽取內容  |               time name level content               |                 |
 
 5. 查詢分析配置
 
 字段索引屬性
 
-| 字段名稱 | 類型 |  別名   | 中文分詞 | 開啟統計 |
-|:--------:|:----:|:-------:|:--------:|:--------:|
-|   name   | text |  name   |  false   |   true   |
-|  level   | text |  level  |  false   |   true   |
-|   time   | text |  time   |  false   |  false   |
-| content  | text | content |   true   |  false   |
+| 字段名稱 | 類型  |  別名   | 中文分詞 | 開啓統計 |
+| :------: | :---: | :-----: | :------: | :------: |
+|   name   | text  |  name   |  false   |   true   |
+|  level   | text  |  level  |  false   |   true   |
+|   time   | text  |  time   |  false   |  false   |
+| content  | text  | content |   true   |  false   |
 
 ### 運行鏡像
 
 運行鏡像時，只需要設置 Container `labels` 即可。
 
 |   name   |      value      |
-|:--------:|:---------------:|
+| :------: | :-------------: |
 | app.name | hyperf-demo-api |
 
 比如以下 Dockerfile

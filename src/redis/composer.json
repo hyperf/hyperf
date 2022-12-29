@@ -16,11 +16,11 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "ext-redis": "*",
-        "hyperf/contract": "~2.2.0",
-        "hyperf/pool": "~2.2.0",
-        "hyperf/utils": "~2.2.0",
+        "hyperf/contract": "~3.0.0",
+        "hyperf/pool": "~3.0.0",
+        "hyperf/utils": "~3.0.0",
         "psr/container": "^1.0|^2.0"
     },
     "suggest": {
@@ -42,7 +42,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Redis\\ConfigProvider"

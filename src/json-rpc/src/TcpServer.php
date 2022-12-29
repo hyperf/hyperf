@@ -32,25 +32,13 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class TcpServer extends Server
 {
-    /**
-     * @var \Hyperf\JsonRpc\ResponseBuilder
-     */
-    protected $responseBuilder;
+    protected ?ResponseBuilder $responseBuilder = null;
 
-    /**
-     * @var PackerInterface
-     */
-    protected $packer;
+    protected ?PackerInterface $packer = null;
 
-    /**
-     * @var ProtocolManager
-     */
-    protected $protocolManager;
+    protected ProtocolManager $protocolManager;
 
-    /**
-     * @var array
-     */
-    protected $serverConfig;
+    protected array $serverConfig = [];
 
     public function __construct(
         ContainerInterface $container,
@@ -130,14 +118,14 @@ class TcpServer extends Server
             $data['params'] = [];
         }
         /** @var \Swoole\Server\Port $port */
-        [$type, $port] = ServerManager::get($this->serverName);
+        [, $port] = ServerManager::get($this->serverName);
 
         $uri = (new Uri())->withPath($data['method'])->withHost($port->host)->withPort($port->port);
         $request = (new Psr7Request('POST', $uri))->withAttribute('fd', $fd)
             ->withAttribute('fromId', $reactorId)
             ->withAttribute('data', $data)
             ->withAttribute('request_id', $data['id'] ?? null)
-            ->withParsedBody($data['params'] ?? '');
+            ->withParsedBody($data['params']);
 
         $this->getContext()->setData($data['context'] ?? []);
 

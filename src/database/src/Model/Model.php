@@ -13,19 +13,20 @@ namespace Hyperf\Database\Model;
 
 use ArrayAccess;
 use Exception;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\CompressInterface;
+use Hyperf\Contract\Jsonable;
 use Hyperf\Contract\UnCompressInterface;
 use Hyperf\Database\ConnectionInterface;
 use Hyperf\Database\Model\Relations\Pivot;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection as BaseCollection;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Str;
 use JsonSerializable;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
+use Throwable;
 
 /**
  * @mixin ModelIDE
@@ -43,93 +44,73 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * The name of the "created at" column.
      *
-     * @var string
+     * @var null|string
      */
     public const CREATED_AT = 'created_at';
 
     /**
      * The name of the "updated at" column.
      *
-     * @var string
+     * @var null|string
      */
     public const UPDATED_AT = 'updated_at';
 
     /**
      * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
      */
-    public $incrementing = true;
+    public bool $incrementing = true;
 
     /**
      * Indicates if the model exists.
-     *
-     * @var bool
      */
-    public $exists = false;
+    public bool $exists = false;
 
     /**
      * Indicates if the model was inserted during the current request lifecycle.
-     *
-     * @var bool
      */
-    public $wasRecentlyCreated = false;
+    public bool $wasRecentlyCreated = false;
+
+    protected array $guarded = ['*'];
 
     /**
      * The connection name for the model.
-     *
-     * @var string
      */
-    protected $connection = 'default';
+    protected ?string $connection = 'default';
 
     /**
      * The table associated with the model.
-     *
-     * @var string
      */
-    protected $table;
+    protected ?string $table = null;
 
     /**
      * The primary key for the model.
-     *
-     * @var string
      */
-    protected $primaryKey = 'id';
+    protected string $primaryKey = 'id';
 
     /**
      * The "type" of the auto-incrementing ID.
-     *
-     * @var string
      */
-    protected $keyType = 'int';
+    protected string $keyType = 'int';
 
     /**
      * The relations to eager load on every query.
-     *
-     * @var array
      */
-    protected $with = [];
+    protected array $with = [];
 
     /**
      * The relationship counts that should be eager loaded on every query.
-     *
-     * @var array
      */
-    protected $withCount = [];
+    protected array $withCount = [];
 
     /**
      * The number of models to return for pagination.
-     *
-     * @var int
      */
-    protected $perPage = 15;
+    protected int $perPage = 15;
 
     /**
      * The array of trait initializers that will be called on each new instance.
-     *
-     * @var array
      */
-    protected $traitInitializers = [];
+    protected array $traitInitializers = [];
 
     /**
      * Create a new Model model instance.
@@ -199,7 +180,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
             return $this->{$method}(...$parameters);
         }
 
-        return call([$this->newQuery(), $method], $parameters);
+        return $this->newQuery()->{$method}(...$parameters);
     }
 
     /**
@@ -259,7 +240,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         IgnoreOnTouch::$container = array_values(array_merge(IgnoreOnTouch::$container, $models));
 
         try {
-            call($callback);
+            $callback();
         } finally {
             IgnoreOnTouch::$container = array_values(array_diff(IgnoreOnTouch::$container, $models));
         }
@@ -287,8 +268,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Fill the model with an array of attributes.
      *
-     * @throws \Hyperf\Database\Model\MassAssignmentException
      * @return $this
+     * @throws \Hyperf\Database\Model\MassAssignmentException
      */
     public function fill(array $attributes)
     {
@@ -377,7 +358,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
         $model->setConnection($connection ?: $this->getConnectionName());
 
-        $model->fireModelEvent('retrieved', false);
+        $model->fireModelEvent('retrieved');
 
         return $model;
     }
@@ -597,8 +578,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Save the model to the database using transaction.
      *
-     * @throws \Throwable
      * @return bool
+     * @throws Throwable
      */
     public function saveOrFail(array $options = [])
     {
@@ -611,9 +592,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Destroy the models for the given IDs.
      *
      * @param array|\Hyperf\Utils\Collection|int $ids
-     * @return int
      */
-    public static function destroy($ids)
+    public static function destroy($ids): int
     {
         // We'll initialize a count here so we will return the total number of deletes
         // for the operation. The developers can then check this number as a boolean
@@ -643,8 +623,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     /**
      * Delete the model from the database.
      *
-     * @throws \Exception
      * @return null|bool
+     * @throws Exception
      */
     public function delete()
     {
@@ -828,8 +808,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * Convert the model instance to JSON.
      *
      * @param int $options
-     * @throws \Hyperf\Database\Model\JsonEncodingException
      * @return string
+     * @throws \Hyperf\Database\Model\JsonEncodingException
      */
     public function toJson($options = 0)
     {
@@ -844,10 +824,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
     /**
      * Convert the object into something JSON serializable.
-     *
-     * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }
@@ -977,10 +955,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
     /**
      * Get the table associated with the model.
-     *
-     * @return string
      */
-    public function getTable()
+    public function getTable(): string
     {
         return $this->table ?? Str::snake(Str::pluralStudly(class_basename($this)));
     }
@@ -1126,10 +1102,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
     /**
      * Get the number of models to return per page.
-     *
-     * @return int
      */
-    public function getPerPage()
+    public function getPerPage(): int
     {
         return $this->perPage;
     }
@@ -1149,39 +1123,32 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
     /**
      * Determine if the given attribute exists.
-     *
-     * @param mixed $offset
-     * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return ! is_null($this->getAttribute($offset));
     }
 
     /**
      * Get the value for a given offset.
-     * @param mixed $offset
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->getAttribute($offset);
     }
 
     /**
      * Set the value for a given offset.
-     * @param mixed $offset
-     * @param mixed $value
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->setAttribute($offset, $value);
     }
 
     /**
      * Unset the value for a given offset.
-     * @param mixed $offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->attributes[$offset], $this->relations[$offset]);
     }
@@ -1246,11 +1213,8 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
 
     /**
      * Remove the table name from a given key.
-     *
-     * @param string $key
-     * @return string
      */
-    protected function removeTableFromKey($key)
+    protected function removeTableFromKey(string $key): string
     {
         return Str::contains($key, '.') ? last(explode('.', $key)) : $key;
     }

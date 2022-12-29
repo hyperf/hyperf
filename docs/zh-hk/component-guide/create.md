@@ -4,10 +4,10 @@
 
 ```
 # 創建適配 Hyperf 最新版本的組件包
-composer create-project hyperf/component-creater your_component dev-master
+composer create-project hyperf/component-creator your_component dev-master
 
 # 創建適配 Hyperf 2.0 版本的組件包
-composer create-project hyperf/component-creater your_component "2.0.*"
+composer create-project hyperf/component-creator your_component "2.0.*"
 ```
 
 ## 在項目中使用未發佈的組件包

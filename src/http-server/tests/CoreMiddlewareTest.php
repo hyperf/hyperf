@@ -12,6 +12,9 @@ declare(strict_types=1);
 namespace HyperfTest\HttpServer;
 
 use FastRoute\Dispatcher;
+use Hyperf\Context\Context;
+use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Jsonable;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\ClosureDefinitionCollector;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
@@ -26,19 +29,18 @@ use Hyperf\HttpServer\CoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
-use Hyperf\Utils\Context;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use HyperfTest\HttpServer\Stub\CoreMiddlewareStub;
 use HyperfTest\HttpServer\Stub\DemoController;
 use HyperfTest\HttpServer\Stub\FooController;
 use HyperfTest\HttpServer\Stub\SetHeaderMiddleware;
+use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use ReflectionClass;
 use ReflectionMethod;
 
 /**
@@ -111,7 +113,7 @@ class CoreMiddlewareTest extends TestCase
         $this->assertSame('text/plain', $response->getHeaderLine('content-type'));
 
         // Json encode failed
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Type is not supported');
         $response = $reflectionMethod->invoke($middleware, ['id' => fopen(BASE_PATH . '/.gitignore', 'r+')], $request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -191,7 +193,7 @@ class CoreMiddlewareTest extends TestCase
         $container = $this->getContainer();
         $container->shouldReceive('get')->with(DemoController::class)->andReturn(new DemoController());
         $middleware = new CoreMiddleware($container, 'http');
-        $ref = new \ReflectionClass($middleware);
+        $ref = new ReflectionClass($middleware);
         $method = $ref->getMethod('handleFound');
         $method->setAccessible(true);
 
@@ -201,12 +203,27 @@ class CoreMiddlewareTest extends TestCase
         $this->assertSame('Hello World.', $res);
     }
 
+    public function testHandleFoundWithInvokable()
+    {
+        $container = $this->getContainer();
+        $container->shouldReceive('get')->with(DemoController::class)->andReturn(new DemoController());
+        $middleware = new CoreMiddleware($container, 'http');
+        $ref = new ReflectionClass($middleware);
+        $method = $ref->getMethod('handleFound');
+        $method->setAccessible(true);
+
+        $handler = new Handler(DemoController::class, '/');
+        $dispatched = new Dispatched([Dispatcher::FOUND, $handler, []]);
+        $res = $method->invokeArgs($middleware, [$dispatched, Mockery::mock(ServerRequestInterface::class)]);
+        $this->assertSame('Action for an invokable controller.', $res);
+    }
+
     public function testHandleFoundWithNamespace()
     {
         $container = $this->getContainer();
         $container->shouldReceive('get')->with(DemoController::class)->andReturn(new FooController());
         $middleware = new CoreMiddleware($container, 'http');
-        $ref = new \ReflectionClass($middleware);
+        $ref = new ReflectionClass($middleware);
         $method = $ref->getMethod('handleFound');
         $method->setAccessible(true);
 

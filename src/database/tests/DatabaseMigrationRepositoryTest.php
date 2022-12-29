@@ -16,6 +16,7 @@ use Hyperf\Database\Connection;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Migrations\DatabaseMigrationRepository;
 use Hyperf\Database\Query\Builder;
+use Hyperf\Database\Schema\Builder as SchemaBuilder;
 use Hyperf\Utils\Collection;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -120,7 +121,7 @@ class DatabaseMigrationRepositoryTest extends TestCase
     public function testCreateRepositoryCreatesProperDatabaseTable()
     {
         $repo = $this->getRepository();
-        $schema = Mockery::mock(Builder::class);
+        $schema = Mockery::mock(SchemaBuilder::class);
         $connectionMock = Mockery::mock(Connection::class);
         $repo->getConnectionResolver()->shouldReceive('connection')->with(null)->andReturn($connectionMock);
         $repo->getConnection()->shouldReceive('getSchemaBuilder')->once()->andReturn($schema);

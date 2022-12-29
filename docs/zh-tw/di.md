@@ -9,7 +9,7 @@ Hyperf 預設採用 [hyperf/di](https://github.com/hyperf/di) 作為框架的依
 
 ## 安裝
 
-該元件預設存在 [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) 專案中並作為主要元件存在，如希望在其它框架內使用該元件可通過下面的命令安裝。
+該元件預設存在 [hyperf-skeleton](https://github.com/hyperf/hyperf-skeleton) 專案中並作為主要元件存在，如希望在其它框架內使用該元件可透過下面的命令安裝。
 
 ```bash
 composer require hyperf/di
@@ -19,7 +19,7 @@ composer require hyperf/di
 
 ### 簡單物件注入
 
-通常來說，類的關係及注入是無需顯性定義的，這一切 Hyperf 都會默默的為您完成，我們通過一些程式碼示例來說明一下相關的用法。      
+通常來說，類的關係及注入是無需顯性定義的，這一切 Hyperf 都會默默的為您完成，我們透過一些程式碼示例來說明一下相關的用法。      
 假設我們需要在 `IndexController` 內呼叫 `UserService` 類的 `getInfoById(int $id)` 方法。
 
 ```php
@@ -36,7 +36,7 @@ class UserService
 }
 ```
 
-#### 通過構造方法注入
+#### 透過構造方法注入
 
 ```php
 <?php
@@ -46,12 +46,9 @@ use App\Service\UserService;
 
 class IndexController
 {
-    /**
-     * @var UserService
-     */
-    private $userService;
+    private UserService $userService;
     
-    // 通過在建構函式的引數上宣告引數型別完成自動注入
+    // 透過在建構函式的引數上宣告引數型別完成自動注入
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
@@ -68,7 +65,7 @@ class IndexController
 
 > 注意使用建構函式注入時，呼叫方也就是 `IndexController` 必須是由 DI 建立的物件才能完成自動注入，而 Controller 預設是由 DI 建立的，所以可以直接使用建構函式注入
 
-當您希望定義一個可選的依賴項時，可以通過給引數定義為 `nullable` 或將引數的預設值定義為 `null`，即表示該引數如果在 DI 容器中沒有找到或無法建立對應的物件時，不丟擲異常而是直接使用 `null` 來注入。*(該功能僅在
+當您希望定義一個可選的依賴項時，可以透過給引數定義為 `nullable` 或將引數的預設值定義為 `null`，即表示該引數如果在 DI 容器中沒有找到或無法建立對應的物件時，不丟擲異常而是直接使用 `null` 來注入。*(該功能僅在
 1.1.0 或更高版本可用)*
 
 ```php
@@ -79,12 +76,9 @@ use App\Service\UserService;
 
 class IndexController
 {
-    /**
-     * @var null|UserService
-     */
-    private $userService;
+    private ?UserService $userService;
     
-    // 通過設定引數為 nullable，表明該引數為一個可選引數
+    // 透過設定引數為 nullable，表明該引數為一個可選引數
     public function __construct(?UserService $userService)
     {
         $this->userService = $userService;
@@ -102,7 +96,7 @@ class IndexController
 }
 ```
 
-#### 通過 `@Inject` 註解注入
+#### 透過 `#[Inject]` 註解注入
 
 ```php
 <?php
@@ -114,11 +108,11 @@ use Hyperf\Di\Annotation\Inject;
 class IndexController
 {
     /**
-     * 通過 `@Inject` 註解注入由 `@var` 註解宣告的屬性型別物件
+     * 透過 `#[Inject]` 註解注入由 `@var` 註解宣告的屬性型別物件
      * 
-     * @Inject 
      * @var UserService
      */
+    #[Inject]
     private $userService;
     
     public function index()
@@ -130,9 +124,9 @@ class IndexController
 }
 ```
 
-> 通過 `@Inject` 註解注入可作用於 DI 建立的（單例）物件，也可作用於通過 `new` 關鍵詞建立的物件；
+> 透過 `#[Inject]` 註解注入可作用於 DI 建立的（單例）物件，也可作用於透過 `new` 關鍵詞建立的物件；
 
-> 使用 `@Inject` 註解時需 `use Hyperf\Di\Annotation\Inject;` 名稱空間；
+> 使用 `#[Inject]` 註解時需 `use Hyperf\Di\Annotation\Inject;` 名稱空間；
 
 ##### Required 引數
 
@@ -149,12 +143,12 @@ use Hyperf\Di\Annotation\Inject;
 class IndexController
 {
     /**
-     * 通過 `@Inject` 註解注入由 `@var` 註解宣告的屬性型別物件
+     * 透過 `#[Inject]` 註解注入由 `@var` 註解宣告的屬性型別物件
      * 當 UserService 不存在於 DI 容器內或不可建立時，則注入 null
      * 
-     * @Inject(required=false) 
      * @var UserService
      */
+    #[Inject(required: false)]
     private $userService;
     
     public function index()
@@ -172,7 +166,7 @@ class IndexController
 ### 抽象物件注入
 
 基於上面的例子，從合理的角度上來說，Controller 面向的不應該直接是一個 `UserService` 類，可能更多的是一個 `UserServiceInterface`
-的介面類，此時我們可以通過 `config/autoload/dependencies.php` 來繫結物件關係達到目的，我們還是通過程式碼來解釋一下。
+的介面類，此時我們可以透過 `config/autoload/dependencies.php` 來繫結物件關係達到目的，我們還是透過程式碼來解釋一下。
 
 定義一個介面類：
 
@@ -211,7 +205,7 @@ return [
 ];
 ```
 
-這樣配置後就可以直接通過 `UserServiceInterface` 來注入 `UserService` 物件了，我們僅通過註解注入的方式來舉例，建構函式注入也是一樣的：
+這樣配置後就可以直接透過 `UserServiceInterface` 來注入 `UserService` 物件了，我們僅透過註解注入的方式來舉例，建構函式注入也是一樣的：
 
 ```php
 <?php
@@ -223,9 +217,9 @@ use Hyperf\Di\Annotation\Inject;
 class IndexController
 {
     /**
-     * @Inject 
      * @var UserServiceInterface
      */
+    #[Inject]
     private $userService;
     
     public function index()
@@ -272,11 +266,7 @@ namespace App\Service;
 
 class UserService implements UserServiceInterface
 {
-    
-    /**
-     * @var bool
-     */
-    private $enableCache;
+    private bool $enableCache;
     
     public function __construct(bool $enableCache)
     {
@@ -302,7 +292,7 @@ return [
 
 這樣在注入 `UserServiceInterface` 的時候容器就會交由 `UserServiceFactory` 來建立物件了。
 
-> 當然在該場景中可以通過 `@Value` 註解來更便捷的注入配置而無需構建工廠類，此僅為舉例
+> 當然在該場景中可以透過 `@Value` 註解來更便捷的注入配置而無需構建工廠類，此僅為舉例
 
 ### 懶載入
 
@@ -312,9 +302,9 @@ Hyperf 的長生命週期依賴注入在專案啟動時完成。這意味著長�
 
 * 建構函式中要避免迴圈依賴（比較典型的例子為 `Listener` 和 `EventDispatcherInterface`），不然也會啟動失敗。
 
-目前解決方案是：只在例項中注入 `Psr\Container\ContainerInterface` ，而其他的元件在非建構函式執行時通過 `container` 獲取。但 PSR-11 中指出:
+目前解決方案是：只在例項中注入 `Psr\Container\ContainerInterface` ，而其他的元件在非建構函式執行時透過 `container` 獲取。但 PSR-11 中指出:
 
-> 「使用者不應該將容器作為引數傳入物件然後在物件中通過容器獲得物件的依賴。這樣是把容器當作服務定位器來使用，而服務定位器是一種反模式」
+> 「使用者不應該將容器作為引數傳入物件然後在物件中透過容器獲得物件的依賴。這樣是把容器當作服務定位器來使用，而服務定位器是一種反模式」
 
 也就是說這樣的做法雖然有效，但是從設計模式角度來說並不推薦。
 
@@ -347,17 +337,18 @@ class Foo{
 }
 ````
 
-您還可以通過註解 `@Inject(lazy=true)` 注入懶載入代理。通過註解實現懶載入不用建立配置檔案。
+您還可以透過註解 `#[Inject(lazy: true)]` 注入懶載入代理。透過註解實現懶載入不用建立配置檔案。
 
 ```php
 use Hyperf\Di\Annotation\Inject;
 use App\Service\UserServiceInterface;
 
-class Foo{
+class Foo
+{
     /**
-     * @Inject(lazy=true)
      * @var UserServiceInterface
      */
+    #[Inject(lazy: true)]
     public $service;
 }
 ````
@@ -383,20 +374,20 @@ unset($proxy->someProperty);
 
 ## 短生命週期物件
 
-通過 `new` 關鍵詞建立的物件毫無疑問的短生命週期的，那麼如果希望建立一個短生命週期的物件但又希望使用 `建構函式依賴自動注入功能`
-呢？這時我們可以通過 `make(string $name, array $parameters = [])` 函式來建立 `$name` 對應的的例項，程式碼示例如下：
+透過 `new` 關鍵詞建立的物件毫無疑問的短生命週期的，那麼如果希望建立一個短生命週期的物件但又希望使用 `建構函式依賴自動注入功能`
+呢？這時我們可以透過 `make(string $name, array $parameters = [])` 函式來建立 `$name` 對應的的例項，程式碼示例如下：
 
 ```php
 $userService = make(UserService::class, ['enableCache' => true]);
 ```
 
-> 注意僅 `$name` 對應的物件為短生命週期物件，該物件的所有依賴都是通過 `get()` 方法獲取的，即為長生命週期的物件，可理解為該物件是一個淺拷貝的物件
+> 注意僅 `$name` 對應的物件為短生命週期物件，該物件的所有依賴都是透過 `get()` 方法獲取的，即為長生命週期的物件，可理解為該物件是一個淺複製的物件
 
 ## 獲取容器物件
 
 有些時候我們可能希望去實現一些更動態的需求時，會希望可以直接獲取到 `容器(Container)` 物件，在絕大部分情況下，框架的入口類（比如命令類、控制器、RPC 服務提供者等）都是由 `容器(Container)`
-建立並維護的，也就意味著您所寫的絕大部分業務程式碼都是在 `容器(Container)` 的管理作用之下的，也就意味著在絕大部分情況下您都可以通過在 `建構函式(Constructor)` 宣告或通過 `@Inject`
-註解注入 `Psr\Container\ContainerInterface` 介面類都能夠獲得 `Hyperf\Di\Container` 容器物件，我們通過程式碼來演示一下：
+建立並維護的，也就意味著您所寫的絕大部分業務程式碼都是在 `容器(Container)` 的管理作用之下的，也就意味著在絕大部分情況下您都可以透過在 `建構函式(Constructor)` 宣告或透過 `#[Inject]`
+註解注入 `Psr\Container\ContainerInterface` 介面類都能夠獲得 `Hyperf\Di\Container` 容器物件，我們透過程式碼來演示一下：
 
 ```php
 <?php
@@ -407,12 +398,9 @@ use Psr\Container\ContainerInterface;
 
 class IndexController
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
     
-    // 通過在建構函式的引數上宣告引數型別完成自動注入
+    // 透過在建構函式的引數上宣告引數型別完成自動注入
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -421,10 +409,34 @@ class IndexController
 ```   
 
 在某些更極端動態的情況下，或者非 `容器(Container)` 的管理作用之下時，想要獲取到 `容器(Container)`
-物件還可以通過 `\Hyperf\Utils\ApplicationContext::getContaienr()` 方法來獲得 `容器(Container)` 物件。
+物件還可以透過 `\Hyperf\Utils\ApplicationContext::getContaienr()` 方法來獲得 `容器(Container)` 物件。
 
 ```php
 $container = \Hyperf\Utils\ApplicationContext::getContainer();
+```
+
+## 掃描介面卡
+
+預設使用 `Hyperf\Di\ScanHandler\PcntlScanHandler`.
+
+- Hyperf\Di\ScanHandler\PcntlScanHandler
+
+使用 Pcntl fork 子程序掃描註解，只支援 Linux 環境
+
+- Hyperf\Di\ScanHandler\NullScanHandler
+
+不進行註解掃描操作
+
+- Hyperf\Di\ScanHandler\ProcScanHandler
+
+使用 proc_open 建立子程序掃描註解，支援 Linux 和 Windows(Swow)
+
+### 更換掃描介面卡
+
+我們只需要主動修改 `bin/hyperf.php` 檔案中 `Hyperf\Di\ClassLoader::init()` 程式碼段即可更換介面卡。
+
+```php
+Hyperf\Di\ClassLoader::init(handler: new Hyperf\Di\ScanHandler\ProcScanHandler());
 ```
 
 ## 注意事項
@@ -432,11 +444,11 @@ $container = \Hyperf\Utils\ApplicationContext::getContainer();
 ### 容器僅管理長生命週期的物件
 
 換種方式理解就是容器內管理的物件**都是單例**，這樣的設計對於長生命週期的應用來說會更加的高效，減少了大量無意義的物件建立和銷燬，這樣的設計也就意味著所有需要交由 DI 容器管理的物件**均不能包含** `狀態` 值。   
-`狀態` 可直接理解為會隨著請求而變化的值，事實上在 [協程](zh-tw/coroutine.md) 程式設計中，這些狀態值也是應該存放於 `協程上下文` 中的，即 `Hyperf\Utils\Context`。
+`狀態` 可直接理解為會隨著請求而變化的值，事實上在 [協程](zh-tw/coroutine.md) 程式設計中，這些狀態值也是應該存放於 `協程上下文` 中的，即 `Hyperf\Context\Context`。
 
-### @Inject 注入覆蓋順序
+### #[Inject] 注入覆蓋順序
 
-`@Inject` 覆蓋順序為子類覆蓋 `Trait` 覆蓋 父類，即 下述 `Origin` 的 `foo` 變數為本身注入的 `Foo1`。
+`#[Inject]` 覆蓋順序為子類覆蓋 `Trait` 覆蓋 父類，即 下述 `Origin` 的 `foo` 變數為本身注入的 `Foo1`。
 
 同理，假如 `Origin` 不存在變數 `$foo` 時，`$foo` 會被第一個 `Trait` 完成注入，注入類 `Foo2`。
 
@@ -446,25 +458,27 @@ use Hyperf\Di\Annotation\Inject;
 class ParentClass
 {
     /**
-     * @Inject
      * @var Foo4 
      */
+    #[Inject]
     protected $foo;
 }
 
-trait Foo1{
+trait Foo1
+{
     /**
-     * @Inject
      * @var Foo2 
      */
+    #[Inject]
     protected $foo;
 }
 
-trait Foo2{
+trait Foo2
+{
     /**
-     * @Inject
      * @var Foo3
      */
+    #[Inject]
     protected $foo;
 }
 
@@ -472,10 +486,11 @@ class Origin extends ParentClass
 {
     use Foo1;
     use Foo2;
+
     /**
-     * @Inject
      * @var Foo1
      */
+    #[Inject]
     protected $foo;
 }
 ```

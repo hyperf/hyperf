@@ -17,9 +17,9 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
-        "hyperf/http-server": "~2.2.0",
-        "hyperf/rpc": "~2.2.0"
+        "php": ">=8.0",
+        "hyperf/http-server": "~3.0.0",
+        "hyperf/rpc": "~3.0.0"
     },
     "suggest": {
         "hyperf/di": "Required to use annotations."
@@ -39,7 +39,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\RpcServer\\ConfigProvider"

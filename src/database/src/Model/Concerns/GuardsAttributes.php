@@ -17,41 +17,32 @@ trait GuardsAttributes
 {
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = [];
+    protected array $fillable = [];
 
     /**
      * The attributes that aren't mass assignable.
-     *
-     * @var array
      */
-    protected $guarded = ['*'];
+    protected array $guarded = ['*'];
 
     /**
+     * TODO: Support Coroutine, use Context instead of static property.
      * Indicates if all mass assignment is enabled.
-     *
-     * @var bool
      */
-    protected static $unguarded = false;
+    protected static bool $unguarded = false;
 
     /**
      * Get the fillable attributes for the model.
-     *
-     * @return array
      */
-    public function getFillable()
+    public function getFillable(): array
     {
         return $this->fillable;
     }
 
     /**
      * Set the fillable attributes for the model.
-     *
-     * @return $this
      */
-    public function fillable(array $fillable)
+    public function fillable(array $fillable): static
     {
         $this->fillable = $fillable;
 
@@ -60,20 +51,16 @@ trait GuardsAttributes
 
     /**
      * Get the guarded attributes for the model.
-     *
-     * @return array
      */
-    public function getGuarded()
+    public function getGuarded(): array
     {
         return $this->guarded;
     }
 
     /**
      * Set the guarded attributes for the model.
-     *
-     * @return $this
      */
-    public function guard(array $guarded)
+    public function guard(array $guarded): static
     {
         $this->guarded = $guarded;
 
@@ -82,10 +69,9 @@ trait GuardsAttributes
 
     /**
      * Disable all mass assignable restrictions.
-     *
-     * @param bool $state
+     * @param mixed $state
      */
-    public static function unguard($state = true)
+    public static function unguard($state = true): void
     {
         static::$unguarded = $state;
     }
@@ -93,17 +79,15 @@ trait GuardsAttributes
     /**
      * Enable the mass assignment restrictions.
      */
-    public static function reguard()
+    public static function reguard(): void
     {
         static::$unguarded = false;
     }
 
     /**
      * Determine if current state is "unguarded".
-     *
-     * @return bool
      */
-    public static function isUnguarded()
+    public static function isUnguarded(): bool
     {
         return static::$unguarded;
     }
@@ -128,11 +112,8 @@ trait GuardsAttributes
 
     /**
      * Determine if the given attribute may be mass assigned.
-     *
-     * @param string $key
-     * @return bool
      */
-    public function isFillable($key)
+    public function isFillable(string $key): bool
     {
         if (static::$unguarded) {
             return true;
@@ -159,10 +140,9 @@ trait GuardsAttributes
     /**
      * Determine if the given key is guarded.
      *
-     * @param string $key
      * @return bool
      */
-    public function isGuarded($key)
+    public function isGuarded(string $key)
     {
         return in_array($key, $this->getGuarded()) || $this->getGuarded() == ['*'];
     }

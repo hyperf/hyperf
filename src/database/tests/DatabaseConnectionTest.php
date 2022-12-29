@@ -22,6 +22,7 @@ use Hyperf\Database\Events\TransactionRolledBack;
 use Hyperf\Database\Exception\QueryException;
 use Hyperf\Database\Query\Builder as BaseBuilder;
 use Hyperf\Database\Query\Grammars\Grammar;
+use Hyperf\Database\Query\Grammars\Grammar as QueryGrammar;
 use Hyperf\Database\Query\Processors\Processor;
 use Hyperf\Database\Schema\Builder;
 use Mockery as m;
@@ -31,7 +32,6 @@ use PDOStatement;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionClass;
-use stdClass;
 
 /**
  * @internal
@@ -47,7 +47,7 @@ class DatabaseConnectionTest extends TestCase
     public function testSettingDefaultCallsGetDefaultGrammar()
     {
         $connection = $this->getMockConnection();
-        $mock = m::mock(stdClass::class);
+        $mock = m::mock(QueryGrammar::class);
         $connection->expects($this->once())->method('getDefaultQueryGrammar')->willReturn($mock);
         $connection->useDefaultQueryGrammar();
         $this->assertEquals($mock, $connection->getQueryGrammar());
@@ -56,7 +56,7 @@ class DatabaseConnectionTest extends TestCase
     public function testSettingDefaultCallsGetDefaultPostProcessor()
     {
         $connection = $this->getMockConnection();
-        $mock = m::mock(stdClass::class);
+        $mock = m::mock(Processor::class);
         $connection->expects($this->once())->method('getDefaultPostProcessor')->willReturn($mock);
         $connection->useDefaultPostProcessor();
         $this->assertEquals($mock, $connection->getPostProcessor());
@@ -172,7 +172,7 @@ class DatabaseConnectionTest extends TestCase
             ->withConsecutive([], [])
             ->willReturnOnConsecutiveCalls(
                 $this->throwException(new ErrorException('server has gone away')),
-                null
+                true
             );
         $connection = $this->getMockConnection(['reconnect'], $pdo);
         $connection->expects($this->once())->method('reconnect');

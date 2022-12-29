@@ -13,7 +13,7 @@ namespace Hyperf\View\Engine;
 
 class NoneEngine implements EngineInterface
 {
-    public function render($template, $data, $config): string
+    public function render(string $template, array $data, array $config): string
     {
         return <<<'HTML'
 <!DOCTYPE html>

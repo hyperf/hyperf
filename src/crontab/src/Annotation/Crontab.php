@@ -15,69 +15,24 @@ use Attribute;
 use Hyperf\Di\Annotation\AbstractAnnotation;
 use Hyperf\Di\ReflectionManager;
 use Hyperf\Utils\Str;
+use InvalidArgumentException;
 use ReflectionMethod;
 
-/**
- * @Annotation
- * @Target({"CLASS", "METHOD"})
- */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Crontab extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    public $name;
-
-    /**
-     * @var string
-     */
-    public $type = 'callback';
-
-    /**
-     * @var string
-     */
-    public $rule;
-
-    /**
-     * @var bool
-     */
-    public $singleton;
-
-    /**
-     * @var string
-     */
-    public $mutexPool;
-
-    /**
-     * @var int
-     */
-    public $mutexExpires;
-
-    /**
-     * @var bool
-     */
-    public $onOneServer;
-
-    /**
-     * @var array|string
-     */
-    public $callback;
-
-    /**
-     * @var null|string
-     */
-    public $memo = '';
-
-    /**
-     * @var array|bool|string
-     */
-    public $enable = true;
-
-    public function __construct(...$value)
-    {
-        parent::__construct(...$value);
-        $this->bindMainProperty('rule', $value);
+    public function __construct(
+        public ?string $rule = null,
+        public ?string $name = null,
+        public string $type = 'callback',
+        public ?bool $singleton = null,
+        public ?string $mutexPool = null,
+        public ?int $mutexExpires = null,
+        public ?bool $onOneServer = null,
+        public array|string|null $callback = null,
+        public ?string $memo = null,
+        public array|string|bool $enable = true
+    ) {
         if (! empty($this->rule)) {
             $this->rule = str_replace('\\', '', $this->rule);
         }
@@ -139,7 +94,7 @@ class Crontab extends AbstractAnnotation
             } elseif ($hasInvokeMagicMethod) {
                 $this->callback = [$className, '__invoke'];
             } else {
-                throw new \InvalidArgumentException(sprintf('Missing argument $callback of @Crontab annotation.'));
+                throw new InvalidArgumentException('Missing argument $callback of @Crontab annotation.');
             }
         } elseif (is_string($this->callback)) {
             $this->callback = [$className, $this->callback];
@@ -148,12 +103,12 @@ class Crontab extends AbstractAnnotation
 
     protected function parseEnable(string $className): void
     {
-        if (is_string($this->enable) && $this->enable === 'true') {
+        if ($this->enable === 'true') {
             $this->enable = true;
             return;
         }
 
-        if (is_string($this->enable) && $this->enable === 'false') {
+        if ($this->enable === 'false') {
             $this->enable = false;
             return;
         }

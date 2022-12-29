@@ -27,6 +27,6 @@ class Foo
 
     public function fallbackWithThrowable(string $string, ?Throwable $throwable = null)
     {
-        return $string . ':' . $throwable->getMessage();
+        return $string . ':' . (! is_null($throwable) ? $throwable->getMessage() : 'fallback');
     }
 }

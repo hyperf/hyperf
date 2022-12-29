@@ -14,14 +14,13 @@ namespace Hyperf\Amqp;
 use Hyperf\Amqp\Message\ProducerMessageInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use PhpAmqpLib\Message\AMQPMessage;
+use Throwable;
 
 class Producer extends Builder
 {
     public function produce(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5): bool
     {
-        return retry(1, function () use ($producerMessage, $confirm, $timeout) {
-            return $this->produceMessage($producerMessage, $confirm, $timeout);
-        });
+        return retry(1, fn () => $this->produceMessage($producerMessage, $confirm, $timeout));
     }
 
     private function produceMessage(ProducerMessageInterface $producerMessage, bool $confirm = false, int $timeout = 5)
@@ -45,7 +44,7 @@ class Producer extends Builder
             });
             $channel->basic_publish($message, $producerMessage->getExchange(), $producerMessage->getRoutingKey());
             $channel->wait_for_pending_acks_returns($timeout);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             isset($channel) && $channel->close();
             throw $exception;
         }

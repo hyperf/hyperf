@@ -12,16 +12,14 @@ declare(strict_types=1);
 namespace Hyperf\Utils;
 
 use Psr\Container\ContainerInterface;
+use TypeError;
 
 class ApplicationContext
 {
-    /**
-     * @var null|ContainerInterface
-     */
-    private static $container;
+    private static ?ContainerInterface $container = null;
 
     /**
-     * @throws \TypeError
+     * @throws TypeError
      */
     public static function getContainer(): ContainerInterface
     {

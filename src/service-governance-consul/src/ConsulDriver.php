@@ -14,36 +14,28 @@ namespace Hyperf\ServiceGovernanceConsul;
 use Hyperf\Consul\AgentInterface;
 use Hyperf\Consul\Health;
 use Hyperf\Consul\HealthInterface;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Guzzle\ClientFactory;
-use Hyperf\LoadBalancer\Node;
 use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\ServiceGovernance\Exception\ComponentRequiredException;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class ConsulDriver implements DriverInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
+    protected ConfigInterface $config;
 
-    /**
-     * @var array
-     */
-    protected $registeredServices = [];
+    protected array $registeredServices = [];
 
-    protected $health;
+    protected ?HealthInterface $health = null;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->logger = $container->get(StdoutLoggerInterface::class);
+        $this->config = $container->get(ConfigInterface::class);
     }
 
     public function getNodes(string $uri, string $name, array $metadata): array
@@ -82,6 +74,8 @@ class ConsulDriver implements DriverInterface
     {
         $nextId = empty($metadata['id']) ? $this->generateId($this->getLastServiceId($name)) : $metadata['id'];
         $protocol = $metadata['protocol'];
+        $deregisterCriticalServiceAfter = $this->config->get('services.drivers.consul.check.deregister_critical_service_after') ?? '90m';
+        $interval = $this->config->get('services.drivers.consul.check.interval') ?? '1s';
         $requestBody = [
             'Name' => $name,
             'ID' => $nextId,
@@ -93,16 +87,16 @@ class ConsulDriver implements DriverInterface
         ];
         if ($protocol === 'jsonrpc-http') {
             $requestBody['Check'] = [
-                'DeregisterCriticalServiceAfter' => '90m',
+                'DeregisterCriticalServiceAfter' => $deregisterCriticalServiceAfter,
                 'HTTP' => "http://{$host}:{$port}/",
-                'Interval' => '1s',
+                'Interval' => $interval,
             ];
         }
-        if (in_array($protocol, ['jsonrpc', 'jsonrpc-tcp-length-check'], true)) {
+        if (in_array($protocol, ['jsonrpc', 'jsonrpc-tcp-length-check', 'multiplex.default'], true)) {
             $requestBody['Check'] = [
-                'DeregisterCriticalServiceAfter' => '90m',
+                'DeregisterCriticalServiceAfter' => $deregisterCriticalServiceAfter,
                 'TCP' => "{$host}:{$port}",
-                'Interval' => '1s',
+                'Interval' => $interval,
             ];
         }
         $response = $this->client()->registerService($requestBody);
@@ -114,10 +108,10 @@ class ConsulDriver implements DriverInterface
         }
     }
 
-    public function isRegistered(string $name, string $address, int $port, array $metadata): bool
+    public function isRegistered(string $name, string $host, int $port, array $metadata): bool
     {
         $protocol = $metadata['protocol'];
-        if (isset($this->registeredServices[$name][$protocol][$address][$port])) {
+        if (isset($this->registeredServices[$name][$protocol][$host][$port])) {
             return true;
         }
         $client = $this->client();
@@ -128,8 +122,8 @@ class ConsulDriver implements DriverInterface
         }
         $services = $response->json();
         $glue = ',';
-        $tag = implode($glue, [$name, $address, $port, $protocol]);
-        foreach ($services as $serviceId => $service) {
+        $tag = implode($glue, [$name, $host, $port, $protocol]);
+        foreach ($services as $service) {
             if (! isset($service['Service'], $service['Address'], $service['Port'], $service['Meta']['Protocol'])) {
                 continue;
             }
@@ -140,7 +134,7 @@ class ConsulDriver implements DriverInterface
                 $service['Meta']['Protocol'],
             ]);
             if ($currentTag === $tag) {
-                $this->registeredServices[$name][$protocol][$address][$port] = true;
+                $this->registeredServices[$name][$protocol][$host][$port] = true;
                 return true;
             }
         }
@@ -195,11 +189,20 @@ class ConsulDriver implements DriverInterface
             throw new ComponentRequiredException('Component of \'hyperf/consul\' is required if you want the client fetch the nodes info from consul.');
         }
 
+        $token = $this->config->get('services.drivers.consul.token', '');
+        $options = [
+            'base_uri' => $baseUri,
+        ];
+
+        if (! empty($token)) {
+            $options['headers'] = [
+                'X-Consul-Token' => $token,
+            ];
+        }
+
         return $this->health = make(Health::class, [
-            'clientFactory' => function () use ($baseUri) {
-                return $this->container->get(ClientFactory::class)->create([
-                    'base_uri' => $baseUri,
-                ]);
+            'clientFactory' => function () use ($options) {
+                return $this->container->get(ClientFactory::class)->create($options);
             },
         ]);
     }

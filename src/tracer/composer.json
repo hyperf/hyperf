@@ -16,18 +16,18 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.0",
         "psr/http-message": "^1.0",
-        "hyperf/contract": "~2.2.0",
-        "hyperf/di": "~2.2.0",
-        "hyperf/guzzle": "~2.2.0",
-        "hyperf/utils": "~2.2.0",
-        "jcchavezs/zipkin-opentracing":"^1.0",
-        "opentracing/opentracing":"^1.0"
+        "hyperf/contract": "~3.0.0",
+        "hyperf/di": "~3.0.0",
+        "hyperf/guzzle": "~3.0.0",
+        "hyperf/utils": "~3.0.0",
+        "jcchavezs/zipkin-opentracing": "^2.0",
+        "opentracing/opentracing": "^1.0"
     },
     "suggest": {
         "hyperf/event": "Required to use DbQueryExecutedListener.",
-        "jonahgeorge/jaeger-client-php":"Required (^0.6) to use jaeger tracing."
+        "jonahgeorge/jaeger-client-php": "Required (^0.6) to use jaeger tracing."
     },
     "autoload": {
         "psr-4": {
@@ -36,6 +36,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "HyperfTest\\Tracer\\": "tests/"
         }
     },
     "config": {
@@ -43,7 +44,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\Tracer\\ConfigProvider"

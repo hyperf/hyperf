@@ -21,20 +21,8 @@ use Throwable;
 
 class WebSocketExceptionHandler extends ExceptionHandler
 {
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var FormatterInterface
-     */
-    protected $formatter;
-
-    public function __construct(StdoutLoggerInterface $logger, FormatterInterface $formatter)
+    public function __construct(protected StdoutLoggerInterface $logger, protected FormatterInterface $formatter)
     {
-        $this->logger = $logger;
-        $this->formatter = $formatter;
     }
 
     public function handle(Throwable $throwable, ResponseInterface $response)
@@ -43,7 +31,7 @@ class WebSocketExceptionHandler extends ExceptionHandler
         if ($throwable instanceof HttpException) {
             $response = $response->withStatus($throwable->getStatusCode());
         }
-        $stream = new SwooleStream((string) $throwable->getMessage());
+        $stream = new SwooleStream($throwable->getMessage());
         return $response->withBody($stream);
     }
 

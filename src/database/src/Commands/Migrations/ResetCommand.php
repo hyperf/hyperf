@@ -20,34 +20,12 @@ class ResetCommand extends BaseCommand
     use ConfirmableTrait;
 
     /**
-     * The console command name.
-     *
-     * @var string
-     */
-    protected $name = 'migrate:reset';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Rollback all database migrations';
-
-    /**
-     * The migrator instance.
-     *
-     * @var \Hyperf\Database\Migrations\Migrator
-     */
-    protected $migrator;
-
-    /**
      * Create a new migration rollback command instance.
      */
-    public function __construct(Migrator $migrator)
+    public function __construct(protected Migrator $migrator)
     {
-        parent::__construct();
-
-        $this->migrator = $migrator;
+        parent::__construct('migrate:reset');
+        $this->setDescription('Rollback all database migrations');
     }
 
     /**

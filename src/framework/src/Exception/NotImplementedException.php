@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\Framework\Exception;
 
-class NotImplementedException extends \RuntimeException
+use RuntimeException;
+
+class NotImplementedException extends RuntimeException
 {
 }

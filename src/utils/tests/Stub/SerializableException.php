@@ -11,25 +11,17 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Utils\Stub;
 
-class SerializableException extends \RuntimeException implements \Serializable
+use RuntimeException;
+
+class SerializableException extends RuntimeException
 {
-    /**
-     * String representation of object.
-     * @return string the string representation of the object or null
-     */
-    public function serialize()
+    public function __unserialize(array $data): void
     {
-        return \serialize([$this->message, $this->code, $this->file, $this->line]);
+        [$this->message, $this->code, $this->file, $this->line] = $data;
     }
 
-    /**
-     * Constructs the object.
-     * @param string $serialized <p>
-     *                           The string representation of the object.
-     *                           </p>
-     */
-    public function unserialize($serialized)
+    public function __serialize(): array
     {
-        [$this->message, $this->code, $this->file, $this->line] = \unserialize($serialized);
+        return [$this->message, $this->code, $this->file, $this->line];
     }
 }

@@ -38,7 +38,7 @@ return [
 
 ### Register via annotation
 
-Just define the @Process annotation on the custom process class, and Hyperf will collect and automatically complete the registration work:
+Just define the #[Process] annotation on the custom process class, and Hyperf will collect and automatically complete the registration work:
 
 ```php
 <?php
@@ -49,9 +49,7 @@ namespace App\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="foo_process")
- */
+#[Process(name: "foo_process")]
 class FooProcess extends AbstractProcess
 {
     public function handle(): void
@@ -61,7 +59,7 @@ class FooProcess extends AbstractProcess
 }
 ```
 
-> When using `@Process` annotation, `use Hyperf\Process\Annotation\Process;` namespace is required;
+> When using `#[Process]` annotation, `use Hyperf\Process\Annotation\Process;` namespace is required;
 
 ## Add conditions for process startup
 
@@ -76,9 +74,7 @@ namespace App\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="foo_process")
- */
+#[Process(name: "foo_process")]
 class FooProcess extends AbstractProcess
 {
     public function handle(): void
@@ -96,7 +92,7 @@ class FooProcess extends AbstractProcess
 
 ## Configuring a custom process
 
-There are some configurable parameters in the custom process, which can be defined by overriding the attributes corresponding to the parameters on the subclass or defining the corresponding attributes in the `@Process` annotation.
+There are some configurable parameters in the custom process, which can be defined by overriding the attributes corresponding to the parameters on the subclass or defining the corresponding attributes in the `#[Process]` annotation.
 
 ```php
 <?php
@@ -107,9 +103,7 @@ namespace App\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="foo_process", name="user-process", redirectStdinStdout=false, pipeType=2, enableCoroutine=true)
- */
+#[Process(name: "foo_process", name: "user-process", redirectStdinStdout: false, pipeType: 2, enableCoroutine: true)]
 class FooProcess extends AbstractProcess
 {
     /**
@@ -158,9 +152,7 @@ use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 use Hyperf\Contract\StdoutLoggerInterface;
 
-/**
- * @Process(name="demo_process")
- */
+#[Process(name: "demo_process")]
 class DemoProcess extends AbstractProcess
 {
     public function handle(): void

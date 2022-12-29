@@ -23,7 +23,7 @@ class ConfigProviderTest extends TestCase
     public function testConfigProvider()
     {
         $provider = new ConfigProvider();
-        $this->assertArrayHasKey('annotations', $provider());
+        $this->assertArrayHasKey('dependencies', $provider());
         $this->assertArrayHasKey('publish', $provider());
     }
 }

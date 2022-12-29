@@ -13,15 +13,17 @@ namespace Hyperf\Database\Model;
 
 use BadMethodCallException;
 use Closure;
+use Generator;
+use Hyperf\Contract\Arrayable;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Database\Concerns\BuildsQueries;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Database\Query\Builder as QueryBuilder;
 use Hyperf\Paginator\Paginator;
 use Hyperf\Utils\Arr;
-use Hyperf\Utils\Contracts\Arrayable;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\ForwardsCalls;
+use InvalidArgumentException;
 
 /**
  * @mixin \Hyperf\Database\Query\Builder
@@ -70,7 +72,7 @@ class Builder
     /**
      * A replacement for the typical delete function.
      *
-     * @var \Closure
+     * @var Closure
      */
     protected $onDelete;
 
@@ -80,7 +82,7 @@ class Builder
      * @var array
      */
     protected $passthru = [
-        'insert', 'insertGetId', 'getBindings', 'toSql',
+        'insert', 'insertGetId', 'getBindings', 'toSql', 'insertOrIgnore',
         'exists', 'doesntExist', 'count', 'min', 'max', 'avg', 'average', 'sum', 'getConnection',
     ];
 
@@ -142,7 +144,7 @@ class Builder
             return $this->toBase()->{$method}(...$parameters);
         }
 
-        call([$this->query, $method], $parameters);
+        $this->query->{$method}(...$parameters);
 
         return $this;
     }
@@ -153,7 +155,7 @@ class Builder
      * @param string $method
      * @param array $parameters
      *
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     public static function __callStatic($method, $parameters)
     {
@@ -196,7 +198,7 @@ class Builder
      * Register a new global scope.
      *
      * @param string $identifier
-     * @param \Closure|\Hyperf\Database\Model\Scope $scope
+     * @param Closure|\Hyperf\Database\Model\Scope $scope
      * @return $this
      */
     public function withGlobalScope($identifier, $scope)
@@ -294,7 +296,7 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param array|\Closure|string $column
+     * @param array|Closure|string $column
      * @param string $boolean
      * @param null|mixed $operator
      * @param null|mixed $value
@@ -316,7 +318,7 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param array|\Closure|string $column
+     * @param array|Closure|string $column
      * @param null|mixed $operator
      * @param null|mixed $value
      * @return \Hyperf\Database\Model\Builder|static
@@ -431,8 +433,8 @@ class Builder
      *
      * @param array $columns
      * @param mixed $id
-     * @throws \Hyperf\Database\Model\ModelNotFoundException
      * @return \Hyperf\Database\Model\Collection|\Hyperf\Database\Model\Model|static|static[]
+     * @throws \Hyperf\Database\Model\ModelNotFoundException
      */
     public function findOrFail($id, $columns = ['*'])
     {
@@ -514,8 +516,8 @@ class Builder
      * Execute the query and get the first result or throw an exception.
      *
      * @param array $columns
-     * @throws \Hyperf\Database\Model\ModelNotFoundException
      * @return \Hyperf\Database\Model\Model|static
+     * @throws \Hyperf\Database\Model\ModelNotFoundException
      */
     public function firstOrFail($columns = ['*'])
     {
@@ -529,7 +531,7 @@ class Builder
     /**
      * Execute the query and get the first result or call a callback.
      *
-     * @param array|\Closure $columns
+     * @param array|Closure $columns
      * @return \Hyperf\Database\Model\Model|mixed|static
      */
     public function firstOr($columns = ['*'], Closure $callback = null)
@@ -645,7 +647,7 @@ class Builder
     /**
      * Get a generator for the given query.
      *
-     * @return \Generator
+     * @return Generator
      */
     public function cursor()
     {
@@ -727,7 +729,7 @@ class Builder
     /**
      * Paginate the given query.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function paginate(?int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginatorInterface
     {
@@ -977,11 +979,8 @@ class Builder
 
     /**
      * Apply query-time casts to the model instance.
-     *
-     * @param array $casts
-     * @return $this
      */
-    public function withCasts($casts)
+    public function withCasts(array $casts): static
     {
         $this->model->mergeCasts($casts);
 
@@ -1083,7 +1082,7 @@ class Builder
      * Get the given macro by name.
      *
      * @param string $name
-     * @return \Closure
+     * @return Closure
      */
     public function getMacro($name)
     {

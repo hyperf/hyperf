@@ -48,6 +48,21 @@ Router::addServer('ws', function () {
 });
 ```
 
+## Configure Middleware
+
+In the `config/autoload/middlewares.php` file, add the middleware configuration of the Server of corresponding `ws`, where `ws` is the `name` of the WebSocket Server in `config/autoload/server.php`.
+
+
+```php
+<?php
+
+return [
+    'ws' => [
+        yourMiddleware::class
+    ]
+];
+```
+
 ## Create corresponding controller
 
 ```php
@@ -196,16 +211,11 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\WebSocketServer\Sender;
 
-/**
- * @AutoController
- */
+#[AutoController]
 class ServerController
 {
-    /**
-     * @Inject
-     * @var Sender
-     */
-    protected $sender;
+    #[Inject]
+    protected Sender $sender;
 
     public function close(int $fd)
     {

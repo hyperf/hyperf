@@ -18,37 +18,20 @@ use Hyperf\Utils\Filesystem\Filesystem;
 class ProxyManager
 {
     /**
-     * The map to collect the classes whith paths.
-     *
-     * @var array
+     * The classes which be rewritten by proxy.
      */
-    protected $classMap = [];
+    protected array $proxies = [];
+
+    protected Filesystem $filesystem;
 
     /**
-     * The classes which be rewrited by proxy.
-     *
-     * @var array
+     * @param array $classMap the map to collect the classes with paths
+     * @param string $proxyDir the directory which the proxy file places in
      */
-    protected $proxies = [];
-
-    /**
-     * The directory which the proxy file places in.
-     *
-     * @var string
-     */
-    protected $proxyDir;
-
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
-
     public function __construct(
-        array $classMap = [],
-        string $proxyDir = ''
+        protected array $classMap = [],
+        protected string $proxyDir = ''
     ) {
-        $this->classMap = $classMap;
-        $this->proxyDir = $proxyDir;
         $this->filesystem = new Filesystem();
         $this->proxies = $this->generateProxyFiles($this->initProxiesByReflectionClassMap(
             $this->classMap
@@ -117,10 +100,10 @@ class ProxyManager
 
     protected function isMatch(string $rule, string $target): bool
     {
-        if (strpos($rule, '::') !== false) {
-            [$rule,] = explode('::', $rule);
+        if (str_contains($rule, '::')) {
+            [$rule] = explode('::', $rule);
         }
-        if (strpos($rule, '*') === false && $rule === $target) {
+        if (! str_contains($rule, '*') && $rule === $target) {
             return true;
         }
         $preg = str_replace(['*', '\\'], ['.*', '\\\\'], $rule);

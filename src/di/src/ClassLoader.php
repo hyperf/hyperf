@@ -11,57 +11,19 @@ declare(strict_types=1);
  */
 namespace Hyperf\Di;
 
-use Composer\Autoload\ClassLoader as ComposerClassLoader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use Dotenv\Dotenv;
 use Dotenv\Repository\Adapter;
 use Dotenv\Repository\RepositoryBuilder;
 use Hyperf\Di\Annotation\ScanConfig;
 use Hyperf\Di\Annotation\Scanner;
 use Hyperf\Di\LazyLoader\LazyLoader;
+use Hyperf\Di\ScanHandler\PcntlScanHandler;
+use Hyperf\Di\ScanHandler\ScanHandlerInterface;
 use Hyperf\Utils\Composer;
 
 class ClassLoader
 {
-    /**
-     * @var \Composer\Autoload\ClassLoader
-     */
-    protected $composerClassLoader;
-
-    /**
-     * The container to collect all the classes that would be proxy.
-     * [ OriginalClassName => ProxyFileAbsolutePath ].
-     *
-     * @var array
-     */
-    protected $proxies = [];
-
-    public function __construct(ComposerClassLoader $classLoader, string $proxyFileDir, string $configDir)
-    {
-        $this->setComposerClassLoader($classLoader);
-        if (file_exists(BASE_PATH . '/.env')) {
-            $this->loadDotenv();
-        }
-
-        // Scan by ScanConfig to generate the reflection class map
-        $config = ScanConfig::instance($configDir);
-        $classLoader->addClassMap($config->getClassMap());
-
-        $scanner = new Scanner($this, $config);
-
-        $this->proxies = $scanner->scan($this->getComposerClassLoader()->getClassMap(), $proxyFileDir);
-    }
-
-    public function loadClass(string $class): void
-    {
-        $path = $this->locateFile($class);
-
-        if ($path) {
-            include $path;
-        }
-    }
-
-    public static function init(?string $proxyFileDirPath = null, ?string $configDir = null): void
+    public static function init(?string $proxyFileDirPath = null, ?string $configDir = null, ?ScanHandlerInterface $handler = null): void
     {
         if (! $proxyFileDirPath) {
             // This dir is the default proxy file dir path of Hyperf
@@ -73,58 +35,30 @@ class ClassLoader
             $configDir = BASE_PATH . '/config/';
         }
 
-        $loaders = spl_autoload_functions();
-
-        // Proxy the composer class loader
-        foreach ($loaders as &$loader) {
-            $unregisterLoader = $loader;
-            if (is_array($loader) && $loader[0] instanceof ComposerClassLoader) {
-                /** @var ComposerClassLoader $composerClassLoader */
-                $composerClassLoader = $loader[0];
-                AnnotationRegistry::registerLoader(function ($class) use ($composerClassLoader) {
-                    return (bool) $composerClassLoader->findFile($class);
-                });
-                $loader[0] = new static($composerClassLoader, $proxyFileDirPath, $configDir);
-            }
-            spl_autoload_unregister($unregisterLoader);
+        if (! $handler) {
+            $handler = new PcntlScanHandler();
         }
 
-        unset($loader);
+        $composerLoader = Composer::getLoader();
 
-        // Re-register the loaders
-        foreach ($loaders as $loader) {
-            spl_autoload_register($loader);
+        if (file_exists(BASE_PATH . '/.env')) {
+            static::loadDotenv();
         }
+
+        // Scan by ScanConfig to generate the reflection class map
+        $config = ScanConfig::instance($configDir);
+        $composerLoader->addClassMap($config->getClassMap());
+
+        $scanner = new Scanner($config, $handler);
+        $composerLoader->addClassMap(
+            $scanner->scan($composerLoader->getClassMap(), $proxyFileDirPath)
+        );
 
         // Initialize Lazy Loader. This will prepend LazyLoader to the top of autoload queue.
         LazyLoader::bootstrap($configDir);
     }
 
-    public function setComposerClassLoader(ComposerClassLoader $classLoader): self
-    {
-        $this->composerClassLoader = $classLoader;
-        // Set the ClassLoader to Hyperf\Utils\Composer to avoid unnecessary find process.
-        Composer::setLoader($classLoader);
-        return $this;
-    }
-
-    public function getComposerClassLoader(): ComposerClassLoader
-    {
-        return $this->composerClassLoader;
-    }
-
-    protected function locateFile(string $className): ?string
-    {
-        if (isset($this->proxies[$className]) && file_exists($this->proxies[$className])) {
-            $file = $this->proxies[$className];
-        } else {
-            $file = $this->getComposerClassLoader()->findFile($className);
-        }
-
-        return is_string($file) ? $file : null;
-    }
-
-    protected function loadDotenv(): void
+    protected static function loadDotenv(): void
     {
         $repository = RepositoryBuilder::createWithNoAdapters()
             ->addAdapter(Adapter\PutenvAdapter::class)

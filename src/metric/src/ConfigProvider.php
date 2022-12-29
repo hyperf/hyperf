@@ -13,6 +13,8 @@ namespace Hyperf\Metric;
 
 use Domnikl\Statsd\Connection;
 use Domnikl\Statsd\Connection\UdpSocket;
+use Hyperf\Metric\Aspect\CounterAnnotationAspect;
+use Hyperf\Metric\Aspect\HistogramAnnotationAspect;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Listener\OnBeforeHandle;
 use Hyperf\Metric\Listener\OnMetricFactoryReady;
@@ -35,12 +37,9 @@ class ConfigProvider
                 Connection::class => UdpSocket::class,
                 DriverInterface::class => Guzzle::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
+            'aspects' => [
+                CounterAnnotationAspect::class,
+                HistogramAnnotationAspect::class,
             ],
             'publish' => [
                 [

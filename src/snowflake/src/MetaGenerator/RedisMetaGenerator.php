@@ -15,42 +15,32 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Snowflake\ConfigurationInterface;
 use Hyperf\Snowflake\MetaGenerator;
+use Hyperf\Utils\Coroutine\Locker;
+use Redis;
 
 abstract class RedisMetaGenerator extends MetaGenerator
 {
     public const DEFAULT_REDIS_KEY = 'hyperf:snowflake:workerId';
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
+    protected ?int $workerId = null;
 
-    protected $workerId;
+    protected ?int $dataCenterId = null;
 
-    protected $dataCenterId;
-
-    public function __construct(ConfigurationInterface $configuration, int $beginTimestamp, ConfigInterface $config)
+    public function __construct(ConfigurationInterface $configuration, int $beginTimestamp, protected ConfigInterface $config)
     {
         parent::__construct($configuration, $beginTimestamp);
-
-        $this->config = $config;
     }
 
     public function init()
     {
         if (is_null($this->workerId) || is_null($this->dataCenterId)) {
-            $pool = $this->config->get(sprintf('snowflake.%s.pool', static::class), 'default');
-
-            /** @var \Redis $redis */
-            $redis = make(RedisProxy::class, [
-                'pool' => $pool,
-            ]);
-
-            $key = $this->config->get(sprintf('snowflake.%s.key', static::class), static::DEFAULT_REDIS_KEY);
-            $id = $redis->incr($key);
-
-            $this->workerId = $id % $this->configuration->maxWorkerId();
-            $this->dataCenterId = intval($id / $this->configuration->maxWorkerId()) % $this->configuration->maxDataCenterId();
+            if (Locker::lock(static::class)) {
+                try {
+                    $this->initDataCenterIdAndWorkerId();
+                } finally {
+                    Locker::unlock(static::class);
+                }
+            }
         }
     }
 
@@ -66,5 +56,23 @@ abstract class RedisMetaGenerator extends MetaGenerator
         $this->init();
 
         return $this->workerId;
+    }
+
+    private function initDataCenterIdAndWorkerId(): void
+    {
+        if (is_null($this->workerId) || is_null($this->dataCenterId)) {
+            $pool = $this->config->get(sprintf('snowflake.%s.pool', static::class), 'default');
+
+            /** @var Redis $redis */
+            $redis = make(RedisProxy::class, [
+                'pool' => $pool,
+            ]);
+
+            $key = $this->config->get(sprintf('snowflake.%s.key', static::class), static::DEFAULT_REDIS_KEY);
+            $id = $redis->incr($key);
+
+            $this->workerId = $id % $this->configuration->maxWorkerId();
+            $this->dataCenterId = intval($id / $this->configuration->maxWorkerId()) % $this->configuration->maxDataCenterId();
+        }
     }
 }

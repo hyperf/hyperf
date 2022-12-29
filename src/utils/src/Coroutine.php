@@ -16,7 +16,6 @@ use Hyperf\Engine\Coroutine as Co;
 use Hyperf\Engine\Exception\CoroutineDestroyedException;
 use Hyperf\Engine\Exception\RunningInNonCoroutineException;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
-use Psr\Log\LoggerInterface;
 use Throwable;
 
 class Coroutine
@@ -30,12 +29,18 @@ class Coroutine
         return Co::id();
     }
 
-    public static function defer(callable $callable)
+    public static function defer(callable $callable): void
     {
-        Co::defer($callable);
+        Co::defer(static function () use ($callable) {
+            try {
+                $callable();
+            } catch (Throwable $throwable) {
+                static::printLog($throwable);
+            }
+        });
     }
 
-    public static function sleep(float $seconds)
+    public static function sleep(float $seconds): void
     {
         usleep(intval($seconds * 1000 * 1000));
     }
@@ -57,30 +62,17 @@ class Coroutine
      */
     public static function create(callable $callable): int
     {
-        $coroutine = Co::create(function () use ($callable) {
+        $coroutine = Co::create(static function () use ($callable) {
             try {
-                call($callable);
+                $callable();
             } catch (Throwable $throwable) {
-                if (ApplicationContext::hasContainer()) {
-                    $container = ApplicationContext::getContainer();
-                    if ($container->has(StdoutLoggerInterface::class)) {
-                        /* @var LoggerInterface $logger */
-                        $logger = $container->get(StdoutLoggerInterface::class);
-                        /* @var FormatterInterface $formatter */
-                        if ($container->has(FormatterInterface::class)) {
-                            $formatter = $container->get(FormatterInterface::class);
-                            $logger->warning($formatter->format($throwable));
-                        } else {
-                            $logger->warning(sprintf('Uncaptured exception[%s] detected in %s::%d.', get_class($throwable), $throwable->getFile(), $throwable->getLine()));
-                        }
-                    }
-                }
+                static::printLog($throwable);
             }
         });
 
         try {
             return $coroutine->getId();
-        } catch (\Throwable $exception) {
+        } catch (\Throwable) {
             return -1;
         }
     }
@@ -88,5 +80,21 @@ class Coroutine
     public static function inCoroutine(): bool
     {
         return Co::id() > 0;
+    }
+
+    private static function printLog(Throwable $throwable): void
+    {
+        if (ApplicationContext::hasContainer()) {
+            $container = ApplicationContext::getContainer();
+            if ($container->has(StdoutLoggerInterface::class)) {
+                $logger = $container->get(StdoutLoggerInterface::class);
+                if ($container->has(FormatterInterface::class)) {
+                    $formatter = $container->get(FormatterInterface::class);
+                    $logger->warning($formatter->format($throwable));
+                } else {
+                    $logger->warning((string) $throwable);
+                }
+            }
+        }
     }
 }

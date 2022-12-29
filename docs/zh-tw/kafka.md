@@ -20,7 +20,7 @@ composer require hyperf/kafka
 
 ### 配置
 
-`kafka` 元件的配置檔案預設位於 `config/autoload/kafka.php` 內，如該檔案不存在，可通過 `php bin/hyperf.php vendor:publish hyperf/kafka` 命令來將釋出對應的配置檔案。
+`kafka` 元件的配置檔案預設位於 `config/autoload/kafka.php` 內，如該檔案不存在，可透過 `php bin/hyperf.php vendor:publish hyperf/kafka` 命令來將釋出對應的配置檔案。
 
 預設配置檔案如下：
 
@@ -51,7 +51,10 @@ composer require hyperf/kafka
 | offset_retry                  | int        | 5                             | 偏移量操作，匹配預設的錯誤碼時，自動重試次數                                                                         |
 | auto_create_topic             | bool       | true                          | 是否需要自動建立 topic                                                                                               |
 | partition_assignment_strategy | string     | KafkaStrategy::RANGE_ASSIGNOR | 消費者分割槽分配策略, 可選：範圍分配(`KafkaStrategy::RANGE_ASSIGNOR`) 輪詢分配(`KafkaStrategy::ROUND_ROBIN_ASSIGNOR`)) |
-| pool                          | object     |                               | 連線池配置                                                                                                           |
+| sasl                          | array      | []                            | SASL 身份認證資訊。為空則不傳送身份認證資訊 phpkafka 版本需 >= 1.2                                                    |
+| ssl                           | array      | []                            | SSL 連結相關資訊, 為空則不使用 SSL phpkafka 版本需 >= 1.2                                                               |
+| pool                          | object     | []                            | 連線池配置                                                                                                           |
+
 
 
 ```php
@@ -89,6 +92,8 @@ return [
         'offset_retry' => 5,
         'auto_create_topic' => true,
         'partition_assignment_strategy' => KafkaStrategy::RANGE_ASSIGNOR,
+        'sasl' => [],
+        'ssl' => [],
         'pool' => [
             'min_connections' => 1,
             'max_connections' => 10,
@@ -103,13 +108,13 @@ return [
 
 ### 建立消費者
 
-通過 gen:kafka-consumer 命令可以快速的生成一個 消費者(Consumer) 對訊息進行消費。
+透過 gen:kafka-consumer 命令可以快速的生成一個 消費者(Consumer) 對訊息進行消費。
 
 ```bash
 php bin/hyperf.php gen:kafka-consumer KafkaConsumer
 ```
 
-您也可以通過使用 `Hyperf\Kafka\Annotation\Consumer` 註解來對一個 `Hyperf/Kafka/AbstractConsumer` 抽象類的子類進行宣告，來完成一個 `消費者(Consumer)` 的定義，其中 `Hyperf\Kafka\Annotation\Consumer` 註解和抽象類均包含以下屬性：
+您也可以透過使用 `Hyperf\Kafka\Annotation\Consumer` 註解來對一個 `Hyperf/Kafka/AbstractConsumer` 抽象類的子類進行宣告，來完成一個 `消費者(Consumer)` 的定義，其中 `Hyperf\Kafka\Annotation\Consumer` 註解和抽象類均包含以下屬性：
 
 |    配置    |        型別        | 註解或抽象類預設值 |                 備註                 |
 | :--------: | :----------------: | :----------------: | :----------------------------------: |
@@ -133,9 +138,7 @@ use Hyperf\Kafka\AbstractConsumer;
 use Hyperf\Kafka\Annotation\Consumer;
 use longlang\phpkafka\Consumer\ConsumeMessage;
 
-/**
- * @Consumer(topic="hyperf", nums=5, groupId="hyperf", autoCommit=true)
- */
+#[Consumer(topic: "hyperf", nums: 5, groupId: "hyperf", autoCommit: true)]
 class KafkaConsumer extends AbstractConsumer
 {
     public function consume(ConsumeMessage $message): string
@@ -148,7 +151,7 @@ class KafkaConsumer extends AbstractConsumer
 
 ### 投遞訊息
 
-您可以通過呼叫 `Hyperf\Kafka\Producer::send(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null)` 方法來向 `kafka` 投遞訊息, 下面是在 `Controller` 進行訊息投遞的一個示例：
+您可以透過呼叫 `Hyperf\Kafka\Producer::send(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null)` 方法來向 `kafka` 投遞訊息, 下面是在 `Controller` 進行訊息投遞的一個示例：
 
 ```php
 <?php
@@ -160,9 +163,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\Kafka\Producer;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController extends AbstractController
 {
     public function index(Producer $producer)
@@ -175,7 +176,7 @@ class IndexController extends AbstractController
 
 ### 一次性投遞多條訊息
 
-`Hyperf\Kafka\Producer::sendBatch(array $messages)` 方法來向 `kafka` 批量的投遞訊息, 下面是在 `Controller` 進行訊息投遞的一個示例：
+`Hyperf\Kafka\Producer::sendBatch(array $messages)` 方法來向 `kafka` 批次的投遞訊息, 下面是在 `Controller` 進行訊息投遞的一個示例：
 
 
 ```php
@@ -189,9 +190,7 @@ use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\Kafka\Producer;
 use longlang\phpkafka\Producer\ProduceMessage;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController extends AbstractController
 {
     public function index(Producer $producer)
@@ -201,9 +200,35 @@ class IndexController extends AbstractController
             new ProduceMessage('hyperf2', 'hyperf2_value', 'hyperf2_key'),
             new ProduceMessage('hyperf3', 'hyperf3_value', 'hyperf3_key'),
         ]);
-
     }
 }
 
 ```
+
+### SASL 配置說明
+
+| 引數名   | 說明                                                                | 預設值 |
+| -------- | ------------------------------------------------------------------- | ------ |
+| type     | SASL 授權對應的類。PLAIN 為`\longlang\phpkafka\Sasl\PlainSasl::class` | ''     |
+| username | 賬號                                                                | ''     |
+| password | 密碼                                                                | ''     |
+
+### SSL 配置說明
+
+| 引數名          | 說明                                                                    | 預設值  |
+| --------------- | ----------------------------------------------------------------------- | ------- |
+| open            | 是否開啟 SSL 傳輸加密                                                     | `false` |
+| compression     | 是否開啟壓縮                                                            | `true`  |
+| certFile        | cert 證書存放路徑                                                        | `''`    |
+| keyFile         | 私鑰存放路徑                                                            | `''`    |
+| passphrase      | cert 證書密碼                                                            | `''`    |
+| peerName        | 伺服器主機名。預設為連結的 host                                          | `''`    |
+| verifyPeer      | 是否校驗遠端證書                                                        | `false` |
+| verifyPeerName  | 是否校驗遠端伺服器名稱                                                  | `false` |
+| verifyDepth     | 如果證書鏈條層次太深，超過了本選項的設定值，則終止驗證。 預設不校驗層級 | `0`     |
+| allowSelfSigned | 是否允許自簽證書                                                        | `false` |
+| cafile          | CA 證書路徑                                                              | `''`    |
+| capath          | CA 證書目錄。會自動掃描該路徑下所有 pem 檔案                               | `''`    |
+
+
 

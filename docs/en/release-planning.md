@@ -2,14 +2,14 @@
 
 ## Life cycle
 
-| Version | Status             | End of mainstream support | End of Security-fixes support | Release Date |
-| ------- | ------------------ | ------------------------- | ----------------------------- | ------------ |
-| 3.0     | Developing         | /                         | /                             | /            |
-| 2.2     | Developing         | /                         | /                             | 2021-06-30   |
-| 2.1     | Mainstream Support | 2021-06-30                | 2021-12-31                    | 2020-12-28   |
-| 2.0     | Security Fixes     | 2020-12-28                | 2021-06-30                    | 2020-06-22   |
-| 1.1     | Deprecated         | 2020-06-23                | 2020-12-31                    |              |
-| 1.0     | Deprecated         | 2019-10-08                | 2019-12-31                    | 2019-06-20   |
+| Version | Status                              | End of mainstream support | End of Security-fixes support | Release Date (or estimated date) |
+| ------- |-------------------------------------|---------------------------|-------------------------------|----------------------------------|
+| 3.0  | Developing (RC17 has been released) | 2023-06-30                | 2024-06-30                    | About 2022-12-31                 |
+| 2.2  | Security fixes support              | 2022-06-20                | 2023-6-30                     | 2021-07-19                       |
+| 2.1  | Deprecated                          | 2021-06-30                | 2021-12-31                    | 2020-12-28                       |
+| 2.0  | Deprecated                          | 2020-12-28                | 2021-06-30                    | 2020-06-22                       |
+| 1.1  | Deprecated                          | 2020-06-23                | 2020-12-31                    | 2019-10-08                       |
+| 1.0  | Deprecated                          | 2019-10-08                | 2019-12-31                    | 2019-06-20                       |
 
 * Mainstream support including BUG fixes, security fixes, function upgrade and new functions support in a regular iteration cycles;
 * Security fixes support only includes the fixes of security issues;

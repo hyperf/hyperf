@@ -11,7 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\Validation\Rules;
 
-class Exists
+use Stringable;
+
+class Exists implements Stringable
 {
     use DatabaseRule;
 

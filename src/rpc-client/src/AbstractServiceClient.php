@@ -21,6 +21,7 @@ use Hyperf\Rpc\Contract\PathGeneratorInterface;
 use Hyperf\Rpc\IdGenerator;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
+use Hyperf\Rpc\Request;
 use Hyperf\RpcClient\Exception\RequestException;
 use Hyperf\ServiceGovernance\DriverInterface;
 use Hyperf\ServiceGovernance\DriverManager;
@@ -32,60 +33,33 @@ abstract class AbstractServiceClient
 {
     /**
      * The service name of the target service.
-     *
-     * @var string
      */
-    protected $serviceName = '';
+    protected string $serviceName = '';
 
     /**
      * The protocol of the target service, this protocol name
      * needs to register into \Hyperf\Rpc\ProtocolManager.
-     *
-     * @var string
      */
-    protected $protocol = 'jsonrpc-http';
+    protected string $protocol = 'jsonrpc-http';
 
     /**
      * The load balancer of the client, this name of the load balancer
      * needs to register into \Hyperf\LoadBalancer\LoadBalancerManager.
-     *
-     * @var string
      */
-    protected $loadBalancer = 'random';
+    protected string $loadBalancer = 'random';
 
-    /**
-     * @var \Hyperf\RpcClient\Client
-     */
-    protected $client;
+    protected Client $client;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected LoadBalancerManager $loadBalancerManager;
 
-    /**
-     * @var \Hyperf\LoadBalancer\LoadBalancerManager
-     */
-    protected $loadBalancerManager;
+    protected ?IdGeneratorInterface $idGenerator;
 
-    /**
-     * @var null|\Hyperf\Contract\IdGeneratorInterface
-     */
-    protected $idGenerator;
+    protected PathGeneratorInterface $pathGenerator;
 
-    /**
-     * @var PathGeneratorInterface
-     */
-    protected $pathGenerator;
+    protected DataFormatterInterface $dataFormatter;
 
-    /**
-     * @var DataFormatterInterface
-     */
-    protected $dataFormatter;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->loadBalancerManager = $container->get(LoadBalancerManager::class);
         $protocol = new Protocol($container, $container->get(ProtocolManager::class), $this->protocol, $this->getOptions());
         $loadBalancer = $this->createLoadBalancer(...$this->createNodes());
@@ -127,7 +101,12 @@ abstract class AbstractServiceClient
 
     protected function __generateData(string $methodName, array $params, ?string $id)
     {
-        return $this->dataFormatter->formatRequest([$this->__generateRpcPath($methodName), $params, $id]);
+        return $this->dataFormatter->formatRequest(new Request($this->__generateRpcPath($methodName), $params, $id));
+    }
+
+    public function getServiceName(): string
+    {
+        return $this->serviceName;
     }
 
     protected function getIdGenerator(): IdGeneratorInterface
@@ -207,12 +186,12 @@ abstract class AbstractServiceClient
         // Not exists the registry config, then looking for the 'nodes' property.
         if (isset($consumer['nodes'])) {
             $nodes = [];
-            foreach ($consumer['nodes'] ?? [] as $item) {
+            foreach ($consumer['nodes'] as $item) {
                 if (isset($item['host'], $item['port'])) {
                     if (! is_int($item['port'])) {
                         throw new InvalidArgumentException(sprintf('Invalid node config [%s], the port option has to a integer.', implode(':', $item)));
                     }
-                    $nodes[] = new Node($item['host'], $item['port']);
+                    $nodes[] = new Node($item['host'], $item['port'], $item['weight'] ?? 0, $item['path_prefix'] ?? '');
                 }
             }
             return [$nodes, $refreshCallback];
@@ -228,8 +207,7 @@ abstract class AbstractServiceClient
         ]);
         $nodes = [];
         foreach ($nodeArray as $node) {
-            // @TODO Get and set the weight property.
-            $nodes[] = new Node($node['host'], $node['port']);
+            $nodes[] = new Node($node['host'], $node['port'], $node['weight'] ?? 0, $node['path_prefix'] ?? '');
         }
 
         return $nodes;

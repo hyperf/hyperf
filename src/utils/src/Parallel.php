@@ -11,20 +11,25 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
+use Hyperf\Engine\Channel;
 use Hyperf\Utils\Exception\ParallelExecutionException;
-use Swoole\Coroutine\Channel;
+use Throwable;
 
 class Parallel
 {
     /**
      * @var callable[]
      */
-    private $callbacks = [];
+    private array $callbacks = [];
+
+    private ?Channel $concurrentChannel = null;
+
+    private array $results = [];
 
     /**
-     * @var null|Channel
+     * @var Throwable[]
      */
-    private $concurrentChannel;
+    private array $throwables = [];
 
     /**
      * @param int $concurrent if $concurrent is equal to 0, that means unlimit
@@ -47,16 +52,17 @@ class Parallel
 
     public function wait(bool $throw = true): array
     {
-        $result = $throwables = [];
         $wg = new WaitGroup();
         $wg->add(count($this->callbacks));
         foreach ($this->callbacks as $key => $callback) {
             $this->concurrentChannel && $this->concurrentChannel->push(true);
-            Coroutine::create(function () use ($callback, $key, $wg, &$result, &$throwables) {
+            $this->results[$key] = null;
+            Coroutine::create(function () use ($callback, $key, $wg) {
                 try {
-                    $result[$key] = call($callback);
-                } catch (\Throwable $throwable) {
-                    $throwables[$key] = $throwable;
+                    $this->results[$key] = $callback();
+                } catch (Throwable $throwable) {
+                    $this->throwables[$key] = $throwable;
+                    unset($this->results[$key]);
                 } finally {
                     $this->concurrentChannel && $this->concurrentChannel->pop();
                     $wg->done();
@@ -64,14 +70,15 @@ class Parallel
             });
         }
         $wg->wait();
-        if ($throw && ($throwableCount = count($throwables)) > 0) {
-            $message = 'Detecting ' . $throwableCount . ' throwable occurred during parallel execution:' . PHP_EOL . $this->formatThrowables($throwables);
+        if ($throw && ($throwableCount = count($this->throwables)) > 0) {
+            $message = 'Detecting ' . $throwableCount . ' throwable occurred during parallel execution:' . PHP_EOL . $this->formatThrowables($this->throwables);
             $executionException = new ParallelExecutionException($message);
-            $executionException->setResults($result);
-            $executionException->setThrowables($throwables);
+            $executionException->setResults($this->results);
+            $executionException->setThrowables($this->throwables);
+            unset($this->results, $this->throwables);
             throw $executionException;
         }
-        return $result;
+        return $this->results;
     }
 
     public function count(): int
@@ -82,12 +89,14 @@ class Parallel
     public function clear(): void
     {
         $this->callbacks = [];
+        $this->results = [];
+        $this->throwables = [];
     }
 
     /**
      * Format throwables into a nice list.
      *
-     * @param \Throwable[] $throwables
+     * @param Throwable[] $throwables
      */
     private function formatThrowables(array $throwables): string
     {

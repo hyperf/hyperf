@@ -11,20 +11,16 @@ declare(strict_types=1);
  */
 namespace Hyperf\Metric\Aspect;
 
-use Hyperf\Di\Annotation\Aspect;
-use Hyperf\Di\Aop\AroundInterface;
+use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 use Hyperf\Metric\Annotation\Histogram;
 use Hyperf\Metric\Timer;
 
-/**
- * @Aspect
- */
-class HistogramAnnotationAspect implements AroundInterface
+class HistogramAnnotationAspect extends AbstractAspect
 {
-    public $classes = [];
+    public array $classes = [];
 
-    public $annotations = [
+    public array $annotations = [
         Histogram::class,
     ];
 

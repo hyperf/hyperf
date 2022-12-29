@@ -11,22 +11,18 @@ declare(strict_types=1);
  */
 namespace Hyperf\CircuitBreaker\Exception;
 
-class CircuitBreakerException extends \RuntimeException
+use RuntimeException;
+
+class CircuitBreakerException extends RuntimeException
 {
     public $result;
 
-    /**
-     * @param mixed $result
-     */
-    public function setResult($result): self
+    public function setResult($result): static
     {
         $this->result = $result;
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getResult()
     {
         return $this->result;

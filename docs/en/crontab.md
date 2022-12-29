@@ -63,7 +63,7 @@ return [
 
 ### Using annotations
 
-The definition of a task can be quickly completed through the `@Crontab` annotation. The following definition examples and the configuration file definition achieve the same purpose. Define a timed task named `Foo` to execute `App\Task\FooTask::execute()` every minute.
+The definition of a task can be quickly completed through the `#[Crontab]` annotation. The following definition examples and the configuration file definition achieve the same purpose. Define a timed task named `Foo` to execute `App\Task\FooTask::execute()` every minute.
 
 ```php
 <?php
@@ -73,25 +73,18 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Crontab\Annotation\Crontab;
 use Hyperf\Di\Annotation\Inject;
 
-/**
- * @Crontab(name="Foo", rule="* * * * *", callback="execute", memo="This is an example scheduled task")
- */
+#[Crontab(name: "Foo", rule: "* * * * *", callback: "execute", memo: "This is an example scheduled task")]
 class FooTask
 {
-    /**
-     * @Inject()
-     * @var \Hyperf\Contract\StdoutLoggerInterface
-     */
-    private $logger;
+     #[Inject]
+    private StdoutLoggerInterface $logger;
 
     public function execute()
     {
         $this->logger->info(date('Y-m-d H:i:s', time()));
     }
 
-    /**
-     * @Crontab(rule="* * * * * *", memo="foo")
-     */
+    #[Crontab(rule: "* * * * * *", memo: "foo")]
     public function foo()
     {
         var_dump('foo');

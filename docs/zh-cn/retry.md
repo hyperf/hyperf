@@ -13,13 +13,13 @@ composer require hyperf/retry
 
 ## Hello World
 
-在需要重试的方法上加入注解 `@Retry`。
+在需要重试的方法上加入注解 `#[Retry]`。
 
 ```php
 /**
  * 异常时重试该方法
- * @Retry
  */
+#[Retry]
 public function foo()
 {
     // 发起一次远程调用
@@ -47,10 +47,7 @@ namespace App\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
+#[Attribute(Attribute::TARGET_METHOD)]
 class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 {
 }
@@ -67,10 +64,7 @@ namespace App\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
+#[Attribute(Attribute::TARGET_METHOD)]
 class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 {
     public $policies = [
@@ -91,10 +85,7 @@ namespace App\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
+#[Attribute(Attribute::TARGET_METHOD)]
 class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 {
     public $policies = [
@@ -116,10 +107,7 @@ namespace App\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 
-/**
- * @Annotation
- * @Target({"METHOD"})
- */
+#[Attribute(Attribute::TARGET_METHOD)]
 class MyRetry extends \Hyperf\Retry\Annotation\Retry
 {
     public $policies = [
@@ -155,15 +143,13 @@ public $policies = [
 
 /**
  * The algorithm for retry intervals.
- * @var string
  */
-public $sleepStrategyClass = SleepStrategyInterface::class;
+public string $sleepStrategyClass = SleepStrategyInterface::class;
 
 /**
  * Max Attampts.
- * @var int
  */
-public $maxAttempts = 10;
+public int $maxAttempts = 10;
 
 /**
  * Retry Budget.
@@ -182,9 +168,8 @@ public $retryBudget = [
 /**
  * Base time inteval (ms) for each try. For backoff strategy this is the interval for the first try
  * while for flat strategy this is the interval for every try.
- * @var int
  */
-public $base = 0;
+public int $base = 0;
 
 /**
  * Configures a Predicate which evaluates if an exception should be retried.

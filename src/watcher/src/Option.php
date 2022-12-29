@@ -11,52 +11,38 @@ declare(strict_types=1);
  */
 namespace Hyperf\Watcher;
 
-use Hyperf\Contract\ConfigInterface;
 use Hyperf\Watcher\Driver\ScanFileDriver;
 
 class Option
 {
-    /**
-     * @var string
-     */
-    protected $driver = ScanFileDriver::class;
+    protected string $driver = ScanFileDriver::class;
 
-    /**
-     * @var string
-     */
-    protected $bin = 'php';
+    protected string $bin = 'php';
+
+    protected string $command = 'vendor/hyperf/watcher/watcher.php start';
 
     /**
      * @var string[]
      */
-    protected $watchDir = ['app', 'config'];
+    protected array $watchDir = ['app', 'config'];
 
     /**
      * @var string[]
      */
-    protected $watchFile = ['.env'];
+    protected array $watchFile = ['.env'];
 
     /**
      * @var string[]
      */
-    protected $ext = ['.php', '.env'];
+    protected array $ext = ['.php', '.env'];
 
-    /**
-     * @var int
-     */
-    protected $scanInterval = 2000;
+    protected int $scanInterval = 2000;
 
-    /**
-     * @var bool
-     */
-    protected $restart = true;
-
-    public function __construct(ConfigInterface $config, array $dir, array $file, bool $restart = true)
+    public function __construct(array $options = [], array $dir = [], array $file = [], protected bool $restart = true)
     {
-        $options = $config->get('watcher', []);
-
         isset($options['driver']) && $this->driver = $options['driver'];
         isset($options['bin']) && $this->bin = $options['bin'];
+        isset($options['command']) && $this->command = $options['command'];
         isset($options['watch']['dir']) && $this->watchDir = (array) $options['watch']['dir'];
         isset($options['watch']['file']) && $this->watchFile = (array) $options['watch']['file'];
         isset($options['watch']['scan_interval']) && $this->scanInterval = (int) $options['watch']['scan_interval'];
@@ -64,7 +50,6 @@ class Option
 
         $this->watchDir = array_unique(array_merge($this->watchDir, $dir));
         $this->watchFile = array_unique(array_merge($this->watchFile, $file));
-        $this->restart = $restart;
     }
 
     public function getDriver(): string
@@ -75,6 +60,11 @@ class Option
     public function getBin(): string
     {
         return $this->bin;
+    }
+
+    public function getCommand(): string
+    {
+        return $this->command;
     }
 
     public function getWatchDir(): array
@@ -95,6 +85,11 @@ class Option
     public function getScanInterval(): int
     {
         return $this->scanInterval > 0 ? $this->scanInterval : 2000;
+    }
+
+    public function getScanIntervalSeconds(): float
+    {
+        return $this->getScanInterval() / 1000;
     }
 
     public function isRestart(): bool

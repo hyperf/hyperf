@@ -11,6 +11,8 @@ declare(strict_types=1);
  */
 namespace Hyperf\JsonRpc;
 
+use Hyperf\Context\Context;
+use Hyperf\Contract\PackerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandlerDispatcher;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response as Psr7Response;
@@ -22,7 +24,6 @@ use Hyperf\Rpc\Context as RpcContext;
 use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\RequestDispatcher;
-use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -30,20 +31,11 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class HttpServer extends Server
 {
-    /**
-     * @var Protocol
-     */
-    protected $protocol;
+    protected Protocol $protocol;
 
-    /**
-     * @var \Hyperf\Contract\PackerInterface
-     */
-    protected $packer;
+    protected PackerInterface $packer;
 
-    /**
-     * @var \Hyperf\JsonRpc\ResponseBuilder
-     */
-    protected $responseBuilder;
+    protected ResponseBuilder $responseBuilder;
 
     public function __construct(
         ContainerInterface $container,
@@ -79,7 +71,7 @@ class HttpServer extends Server
         // Initialize PSR-7 Request and Response objects.
         $psr7Request = Psr7Request::loadFromSwooleRequest($request);
         if (! $this->isHealthCheck($psr7Request)) {
-            if (strpos($psr7Request->getHeaderLine('content-type'), 'application/json') === false) {
+            if (! str_contains($psr7Request->getHeaderLine('content-type'), 'application/json')) {
                 $psr7Response = $this->responseBuilder->buildErrorResponse($psr7Request, ResponseBuilder::PARSE_ERROR);
             }
             // @TODO Optimize the error handling of encode.

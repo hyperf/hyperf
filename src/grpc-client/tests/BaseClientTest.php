@@ -25,7 +25,6 @@ use Mockery;
 use PHPUnit\Framework\TestCase;
 use Swoole\Coroutine\Http\Server;
 use TypeError;
-use function GuzzleHttp\Promise\coroutine;
 
 /**
  * @internal
@@ -139,7 +138,7 @@ class BaseClientTest extends TestCase
 
     protected function getContainer()
     {
-        $container = \Mockery::mock(Container::class);
+        $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(ChannelPool::class)->andReturn(new ChannelPool());
         $container->shouldReceive('has')->andReturn(false);
         ApplicationContext::setContainer($container);

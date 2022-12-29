@@ -8,7 +8,7 @@ Hyperf 对系统环境有一些要求，当您使用 Swoole 网络引擎驱动�
 
 当您不想采用 Docker 来作为运行的环境基础时，您需要确保您的运行环境达到了以下的要求：   
 
- - PHP >= 7.4
+ - PHP >= 8.0 and <= 8.1
  - 以下任一网络引擎
    - Swoole PHP 扩展 >= 4.5，并关闭了 `Short Name`
    - Swow PHP 扩展 (Beta)
@@ -23,6 +23,8 @@ Hyperf 对系统环境有一些要求，当您使用 Swoole 网络引擎驱动�
 ## 安装 Hyperf
 
 Hyperf 使用 [Composer](https://getcomposer.org) 来管理项目的依赖，在使用 Hyperf 之前，请确保你的运行环境已经安装好了 Composer。
+
+> 安装过程中，对于自己不清楚的选项，请直接使用回车处理，避免因自动添加了部分监听器，但又没有正确配置时，导致服务无法启动的问题。
 
 ### 通过 `Composer` 创建项目
 
@@ -54,7 +56,7 @@ docker run --name hyperf \
 -p 9501:9501 -it \
 --privileged -u root \
 --entrypoint /bin/sh \
-hyperf/hyperf:7.4-alpine-v3.11-swoole
+hyperf/hyperf:8.0-alpine-v3.15-swoole
 ```
 
 - 将 Composer 镜像设置为阿里云镜像，加速国内下载速度

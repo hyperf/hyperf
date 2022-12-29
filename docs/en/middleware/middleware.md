@@ -234,6 +234,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 // $request and $response are the modified objects
-$request = \Hyperf\Utils\Context::set(ServerRequestInterface::class, $request);
-$response = \Hyperf\Utils\Context::set(ResponseInterface::class, $response);
+$request = \Hyperf\Context\Context::set(ServerRequestInterface::class, $request);
+$response = \Hyperf\Context\Context::set(ResponseInterface::class, $response);
 ```

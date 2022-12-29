@@ -16,6 +16,8 @@ use Hyperf\Engine\Channel;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Coroutine;
+use Hyperf\Utils\Exception\InvalidArgumentException;
+use Throwable;
 
 /**
  * @method bool isFull()
@@ -23,19 +25,10 @@ use Hyperf\Utils\Coroutine;
  */
 class Concurrent
 {
-    /**
-     * @var Channel
-     */
-    protected $channel;
+    protected Channel $channel;
 
-    /**
-     * @var int
-     */
-    protected $limit;
-
-    public function __construct(int $limit)
+    public function __construct(protected int $limit)
     {
-        $this->limit = $limit;
         $this->channel = new Channel($limit);
     }
 
@@ -44,6 +37,8 @@ class Concurrent
         if (in_array($name, ['isFull', 'isEmpty'])) {
             return $this->channel->{$name}(...$arguments);
         }
+
+        throw new InvalidArgumentException(sprintf('The method %s is not supported.', $name));
     }
 
     public function getLimit(): int
@@ -66,6 +61,11 @@ class Concurrent
         return $this->getLength();
     }
 
+    public function getChannel(): Channel
+    {
+        return $this->channel;
+    }
+
     public function create(callable $callable): void
     {
         $this->channel->push(true);
@@ -73,7 +73,7 @@ class Concurrent
         Coroutine::create(function () use ($callable) {
             try {
                 $callable();
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 if (ApplicationContext::hasContainer()) {
                     $container = ApplicationContext::getContainer();
                     if ($container->has(StdoutLoggerInterface::class) && $container->has(FormatterInterface::class)) {

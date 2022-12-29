@@ -11,22 +11,16 @@ declare(strict_types=1);
  */
 namespace Hyperf\DbConnection\Listener;
 
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Model\Register;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
+use Psr\Container\ContainerInterface;
 
 class RegisterConnectionResolverListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
     }
 
     public function listen(): array
@@ -36,7 +30,7 @@ class RegisterConnectionResolverListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         if ($this->container->has(ConnectionResolverInterface::class)) {
             Register::setConnectionResolver(

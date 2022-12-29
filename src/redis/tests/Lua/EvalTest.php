@@ -17,6 +17,7 @@ use HyperfTest\Redis\Stub\ContainerStub;
 use HyperfTest\Redis\Stub\HGetAllMultipleStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Redis;
 
 /**
  * @internal
@@ -27,7 +28,7 @@ class EvalTest extends TestCase
     protected function tearDown(): void
     {
         $container = ContainerStub::mockContainer();
-        $redis = $container->get(\Redis::class);
+        $redis = $container->get(Redis::class);
         $redis->flushDB();
 
         Mockery::close();
@@ -41,7 +42,7 @@ class EvalTest extends TestCase
             $this->assertSame('NOSCRIPT No matching script[HyperfTest\\Redis\\Stub\\HGetAllMultipleStub]. Use EVAL instead.', $message);
         });
 
-        $redis = $container->get(\Redis::class);
+        $redis = $container->get(Redis::class);
         $redis->hMSet('{hash}:1', ['id' => 1, 'name' => $name1 = 'Hyperf']);
         $redis->hMSet('{hash}:2', ['id' => 2, 'name' => $name2 = Str::random(16)]);
 

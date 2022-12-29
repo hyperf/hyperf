@@ -20,13 +20,14 @@ class FooHandler implements SessionHandlerInterface
      *
      * @see https://php.net/manual/en/sessionhandlerinterface.close.php
      * @return bool <p>
-     *              The return value (usually TRUE on success, FALSE on failure).
-     *              Note this value is returned internally to PHP for processing.
-     *              </p>
+     *                  The return value (usually TRUE on success, FALSE on failure).
+     *                  Note this value is returned internally to PHP for processing.
+     *                  </p>
      * @since 5.4.0
      */
-    public function close()
+    public function close(): bool
     {
+        return true;
     }
 
     /**
@@ -35,13 +36,14 @@ class FooHandler implements SessionHandlerInterface
      * @see https://php.net/manual/en/sessionhandlerinterface.destroy.php
      * @param string $session_id the session ID being destroyed
      * @return bool <p>
-     *              The return value (usually TRUE on success, FALSE on failure).
-     *              Note this value is returned internally to PHP for processing.
-     *              </p>
+     *                  The return value (usually TRUE on success, FALSE on failure).
+     *                  Note this value is returned internally to PHP for processing.
+     *                  </p>
      * @since 5.4.0
      */
-    public function destroy($session_id)
+    public function destroy(string $id): bool
     {
+        return true;
     }
 
     /**
@@ -53,13 +55,14 @@ class FooHandler implements SessionHandlerInterface
      *                         the last maxlifetime seconds will be removed.
      *                         </p>
      * @return bool <p>
-     *              The return value (usually TRUE on success, FALSE on failure).
-     *              Note this value is returned internally to PHP for processing.
-     *              </p>
+     *                  The return value (usually TRUE on success, FALSE on failure).
+     *                  Note this value is returned internally to PHP for processing.
+     *                  </p>
      * @since 5.4.0
      */
-    public function gc($maxlifetime)
+    public function gc(int $max_lifetime): int|false
     {
+        return 0;
     }
 
     /**
@@ -69,13 +72,14 @@ class FooHandler implements SessionHandlerInterface
      * @param string $save_path the path where to store/retrieve the session
      * @param string $name the session name
      * @return bool <p>
-     *              The return value (usually TRUE on success, FALSE on failure).
-     *              Note this value is returned internally to PHP for processing.
-     *              </p>
+     *                  The return value (usually TRUE on success, FALSE on failure).
+     *                  Note this value is returned internally to PHP for processing.
+     *                  </p>
      * @since 5.4.0
      */
-    public function open($save_path, $name)
+    public function open(string $path, string $name): bool
     {
+        return true;
     }
 
     /**
@@ -84,14 +88,15 @@ class FooHandler implements SessionHandlerInterface
      * @see https://php.net/manual/en/sessionhandlerinterface.read.php
      * @param string $session_id the session id to read data for
      * @return string <p>
-     *                Returns an encoded string of the read data.
-     *                If nothing was read, it must return an empty string.
-     *                Note this value is returned internally to PHP for processing.
-     *                </p>
+     *                    Returns an encoded string of the read data.
+     *                    If nothing was read, it must return an empty string.
+     *                    Note this value is returned internally to PHP for processing.
+     *                    </p>
      * @since 5.4.0
      */
-    public function read($session_id)
+    public function read(string $id): string|false
     {
+        return '';
     }
 
     /**
@@ -107,12 +112,13 @@ class FooHandler implements SessionHandlerInterface
      *                             Please note sessions use an alternative serialization method.
      *                             </p>
      * @return bool <p>
-     *              The return value (usually TRUE on success, FALSE on failure).
-     *              Note this value is returned internally to PHP for processing.
-     *              </p>
+     *                  The return value (usually TRUE on success, FALSE on failure).
+     *                  Note this value is returned internally to PHP for processing.
+     *                  </p>
      * @since 5.4.0
      */
-    public function write($session_id, $session_data)
+    public function write(string $id, string $data): bool
     {
+        return true;
     }
 }

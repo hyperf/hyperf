@@ -41,17 +41,13 @@ namespace App\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
     /**
      * 执行的命令行
-     *
-     * @var string
      */
-    protected $name = 'foo:hello';
+    protected string $name = 'foo:hello';
 }
 ```
 
@@ -67,9 +63,7 @@ namespace App\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
     public function __construct()
@@ -93,17 +87,13 @@ namespace App\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
     /**
      * 执行的命令行
-     *
-     * @var string
      */
-    protected $name = 'foo:hello';
+    protected string $name = 'foo:hello';
 
     public function handle()
     {
@@ -132,17 +122,13 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Symfony\Component\Console\Input\InputArgument;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
     /**
      * 执行的命令行
-     *
-     * @var string
      */
-    protected $name = 'foo:hello';
+    protected string $name = 'foo:hello';
 
     public function handle()
     {
@@ -387,15 +373,10 @@ use Hyperf\Command\Annotation\Command;
 use Hyperf\Command\Command as HyperfCommand;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Command
- */
+#[Command]
 class DebugCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     protected $signature = 'test:test {id : user_id} {--name= : user_name}';
 
@@ -422,7 +403,7 @@ class DebugCommand extends HyperfCommand
 
 # 运行命令
 
-!> 注意：在运行命令时，默认不会触发事件分发，可通过添加 `--enable-event-dispatcher` 参数来开启。
+!> 注意：在运行命令时，默认会触发事件分发，可通过添加 `--disable-event-dispatcher` 参数来开启。
 
 ## 命令行中运行
 
@@ -443,15 +424,10 @@ use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
 use Psr\Container\ContainerInterface;
 
-/**
- * @Command
- */
+#[Command]
 class FooCommand extends HyperfCommand
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {

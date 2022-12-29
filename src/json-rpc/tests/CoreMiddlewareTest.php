@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\JsonRpc;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
@@ -36,15 +37,16 @@ use Hyperf\Rpc\Protocol;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcServer\Router\DispatcherFactory;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Packer\JsonPacker;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use HyperfTest\JsonRpc\Stub\CalculatorService;
+use Mockery;
 use Monolog\Handler\StreamHandler;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Throwable;
 
 /**
  * @internal
@@ -65,7 +67,7 @@ class CoreMiddlewareTest extends TestCase
             'packer' => $protocol->getPacker(),
         ]);
         $middleware = new CoreMiddleware($container, $protocol, $builder, 'jsonrpc');
-        $handler = \Mockery::mock(RequestHandlerInterface::class);
+        $handler = Mockery::mock(RequestHandlerInterface::class);
         $request = (new Request('POST', new Uri('/CalculatorService/add')))
             ->withParsedBody([1, 2]);
         Context::set(ResponseInterface::class, new Response());
@@ -91,7 +93,7 @@ class CoreMiddlewareTest extends TestCase
             'packer' => $protocol->getPacker(),
         ]);
         $middleware = new CoreMiddleware($container, $protocol, $builder, 'jsonrpc');
-        $handler = \Mockery::mock(RequestHandlerInterface::class);
+        $handler = Mockery::mock(RequestHandlerInterface::class);
         $request = (new Request('POST', new Uri('/CalculatorService/array')))
             ->withParsedBody([1, 2]);
         Context::set(ResponseInterface::class, new Response());
@@ -117,7 +119,7 @@ class CoreMiddlewareTest extends TestCase
             'packer' => $protocol->getPacker(),
         ]);
         $middleware = new CoreMiddleware($container, $protocol, $builder, 'jsonrpc');
-        $handler = \Mockery::mock(RequestHandlerInterface::class);
+        $handler = Mockery::mock(RequestHandlerInterface::class);
         $request = (new Request('POST', new Uri('/CalculatorService/divide')))
             ->withParsedBody([3, 0]);
         Context::set(ResponseInterface::class, new Response());
@@ -126,7 +128,7 @@ class CoreMiddlewareTest extends TestCase
 
         try {
             $response = $middleware->process($request, $handler);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $response = Context::get(ResponseInterface::class);
         }
 
@@ -150,7 +152,7 @@ class CoreMiddlewareTest extends TestCase
             'packer' => $protocol->getPacker(),
         ]);
         $middleware = new CoreMiddleware($container, $protocol, $builder, 'jsonrpc');
-        $handler = \Mockery::mock(RequestHandlerInterface::class);
+        $handler = Mockery::mock(RequestHandlerInterface::class);
         $request = (new Request('POST', new Uri('/CalculatorService/divide')))
             ->withParsedBody([3, 0]);
         Context::set(ResponseInterface::class, new Response());
@@ -159,8 +161,8 @@ class CoreMiddlewareTest extends TestCase
 
         try {
             $response = $middleware->process($request, $handler);
-        } catch (\Throwable $exception) {
-            $logger = \Mockery::mock(StdoutLoggerInterface::class);
+        } catch (Throwable $exception) {
+            $logger = Mockery::mock(StdoutLoggerInterface::class);
             $logger->shouldReceive('warning')->andReturn(null);
             $formatter = new DefaultFormatter();
             $handler = new HttpExceptionHandler($logger, $formatter);
@@ -176,8 +178,8 @@ class CoreMiddlewareTest extends TestCase
 
     public function createContainer()
     {
-        $eventDispatcher = \Mockery::mock(EventDispatcherInterface::class);
-        $container = \Mockery::mock(Container::class);
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class);
+        $container = Mockery::mock(Container::class);
         $container->shouldReceive('get')->with(ConfigInterface::class)
             ->andReturn($config = new Config([
                 'protocols' => [
@@ -212,14 +214,14 @@ class CoreMiddlewareTest extends TestCase
             ->andReturn(new JsonPacker());
         $container->shouldReceive('get')->with(CalculatorService::class)
             ->andReturn(new CalculatorService());
-        $container->shouldReceive('make')->with(DispatcherFactory::class, \Mockery::any())
+        $container->shouldReceive('make')->with(DispatcherFactory::class, Mockery::any())
             ->andReturn(new DispatcherFactory($eventDispatcher, new PathGenerator()));
-        $container->shouldReceive('make')->with(ResponseBuilder::class, \Mockery::any())
+        $container->shouldReceive('make')->with(ResponseBuilder::class, Mockery::any())
             ->andReturnUsing(function ($class, $args) {
                 return new ResponseBuilder(...array_values($args));
             });
-        $container->shouldReceive('make')->with(JsonPacker::class, \Mockery::any())->andReturn(new JsonPacker());
-        $container->shouldReceive('make')->with(JsonEofPacker::class, \Mockery::any())->andReturnUsing(function ($_, $args) {
+        $container->shouldReceive('make')->with(JsonPacker::class, Mockery::any())->andReturn(new JsonPacker());
+        $container->shouldReceive('make')->with(JsonEofPacker::class, Mockery::any())->andReturnUsing(function ($_, $args) {
             return new JsonEofPacker(...array_values($args));
         });
         ApplicationContext::setContainer($container);

@@ -56,10 +56,7 @@ use Hyperf\Amqp\Annotation\Producer;
 use Hyperf\Amqp\Message\ProducerMessage;
 use App\Models\User;
 
-/**
- * DemoProducer
- * @Producer(exchange="hyperf", routingKey="hyperf")
- */
+#[Producer(exchange: 'hyperf', routingKey: 'hyperf')]
 class DemoProducer extends ProducerMessage
 {
     public function __construct($id)
@@ -109,9 +106,7 @@ use Hyperf\Amqp\Annotation\Consumer;
 use Hyperf\Amqp\Message\ConsumerMessage;
 use Hyperf\Amqp\Result;
 
-/**
- * @Consumer(exchange="hyperf", routingKey="hyperf", queue="hyperf", nums=1)
- */
+#[Consumer(exchange: 'hyperf', routingKey: 'hyperf', queue: 'hyperf', nums: 1)]
 class DemoConsumer extends ConsumerMessage
 {
     public function consume($data): string

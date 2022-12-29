@@ -13,60 +13,55 @@ namespace Hyperf\JsonRpc;
 
 use Hyperf\Rpc\Context;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
+use Hyperf\Rpc\ErrorResponse;
+use Hyperf\Rpc\Request;
+use Hyperf\Rpc\Response;
+use Throwable;
 
 class DataFormatter implements DataFormatterInterface
 {
-    /**
-     * @var Context
-     */
-    protected $context;
-
-    public function __construct(Context $context)
+    public function __construct(protected Context $context)
     {
-        $this->context = $context;
     }
 
-    public function formatRequest($data)
+    public function formatRequest(Request $request): array
     {
-        [$path, $params, $id] = $data;
         return [
             'jsonrpc' => '2.0',
-            'method' => $path,
-            'params' => $params,
-            'id' => $id,
+            'method' => $request->getPath(),
+            'params' => $request->getParams(),
+            'id' => $request->getId(),
             'context' => $this->context->getData(),
         ];
     }
 
-    public function formatResponse($data)
+    public function formatResponse(Response $response): array
     {
-        [$id, $result] = $data;
         return [
             'jsonrpc' => '2.0',
-            'id' => $id,
-            'result' => $result,
+            'id' => $response->getId(),
+            'result' => $response->getResult(),
             'context' => $this->context->getData(),
         ];
     }
 
-    public function formatErrorResponse($data)
+    public function formatErrorResponse(ErrorResponse $response): array
     {
-        [$id, $code, $message, $data] = $data;
-
-        if (isset($data) && $data instanceof \Throwable) {
-            $data = [
-                'class' => get_class($data),
-                'code' => $data->getCode(),
-                'message' => $data->getMessage(),
+        $exception = $response->getException();
+        if ($exception instanceof Throwable) {
+            $exception = [
+                'class' => get_class($exception),
+                'code' => $exception->getCode(),
+                'message' => $exception->getMessage(),
             ];
         }
         return [
             'jsonrpc' => '2.0',
-            'id' => $id ?? null,
+            'id' => $response->getId(),
             'error' => [
-                'code' => $code,
-                'message' => $message,
-                'data' => $data,
+                'code' => $response->getCode(),
+                'message' => $response->getMessage(),
+                'data' => $exception,
             ],
             'context' => $this->context->getData(),
         ];

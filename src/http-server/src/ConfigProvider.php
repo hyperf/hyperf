@@ -25,13 +25,6 @@ class ConfigProvider
                 ServerRequestInterface::class => Request::class,
                 ResponseInterface::class => Response::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
         ];
     }
 }

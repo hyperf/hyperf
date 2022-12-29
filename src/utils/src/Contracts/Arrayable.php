@@ -11,7 +11,11 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils\Contracts;
 
-interface Arrayable
+use Hyperf\Contract;
+
+/**
+ * @deprecated v3.1
+ */
+interface Arrayable extends Contract\Arrayable
 {
-    public function toArray(): array;
 }

@@ -17,9 +17,9 @@
         "source": "https://github.com/hyperf/hyperf"
     },
     "require": {
-        "php": ">=7.2",
-        "hyperf/grpc": "~2.2.0",
-        "hyperf/utils": "~2.2.0",
+        "php": ">=8.0",
+        "hyperf/grpc": "~3.0.0",
+        "hyperf/utils": "~3.0.0",
         "jean85/pretty-package-versions": "^1.2|^2.0"
     },
     "autoload": {
@@ -32,7 +32,8 @@
             "HyperfTest\\GrpcClient\\": "tests/",
             "GPBMetadata\\": "tests/GPBMetadata",
             "Grpc\\": "tests/Grpc",
-            "Routeguide\\": "tests/Routeguide"
+            "Routeguide\\": "tests/Routeguide",
+            "UserService\\": "tests/UserService"
         }
     },
     "config": {
@@ -40,7 +41,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "3.0-dev"
         },
         "hyperf": {
             "config": "Hyperf\\GrpcClient\\ConfigProvider"

@@ -20,10 +20,13 @@ use Hyperf\GraphQL\Annotation\Logged;
 use Hyperf\GraphQL\Annotation\Right;
 use Hyperf\GraphQL\Annotation\SourceField;
 use Hyperf\GraphQL\Annotation\Type;
+use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionMethod;
+use RuntimeException;
 use TheCodingMachine\GraphQLite\Annotations\AbstractRequest;
 use TheCodingMachine\GraphQLite\Annotations\Exceptions\ClassNotFoundException;
+
 use function in_array;
 use function strpos;
 use function substr;
@@ -68,7 +71,7 @@ class AnnotationReader
     {
         $this->reader = $reader;
         if (! in_array($mode, [self::LAX_MODE, self::STRICT_MODE], true)) {
-            throw new \InvalidArgumentException('The mode passed must be one of AnnotationReader::LAX_MODE, AnnotationReader::STRICT_MODE');
+            throw new InvalidArgumentException('The mode passed must be one of AnnotationReader::LAX_MODE, AnnotationReader::STRICT_MODE');
         }
         $this->mode = $mode;
         $this->strictNamespaces = $strictNamespaces;
@@ -184,9 +187,9 @@ class AnnotationReader
                         if ($this->isErrorImportant($annotationClass, $refClass->getDocComment(), $refClass->getName())) {
                             throw $e;
                         }
-                            return null;
+                        return null;
                     default:
-                        throw new \RuntimeException("Unexpected mode '{$this->mode}'."); // @codeCoverageIgnore
+                        throw new RuntimeException("Unexpected mode '{$this->mode}'."); // @codeCoverageIgnore
                 }
             }
             if ($type !== null) {
@@ -219,9 +222,9 @@ class AnnotationReader
                     if ($this->isErrorImportant($annotationClass, $refMethod->getDocComment(), $refMethod->getDeclaringClass()->getName())) {
                         throw $e;
                     }
-                        return null;
+                    return null;
                 default:
-                    throw new \RuntimeException("Unexpected mode '{$this->mode}'."); // @codeCoverageIgnore
+                    throw new RuntimeException("Unexpected mode '{$this->mode}'."); // @codeCoverageIgnore
             }
         }
     }

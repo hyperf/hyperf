@@ -32,7 +32,7 @@ class FileSystemDriver extends Driver
     public function __construct(ContainerInterface $container, array $config)
     {
         parent::__construct($container, $config);
-        if (! file_exists($this->storePath)) {
+        if (! is_dir($this->storePath)) {
             $results = mkdir($this->storePath, 0777, true);
             if (! $results) {
                 throw new CacheException('Has no permission to create cache directory!');
@@ -46,7 +46,7 @@ class FileSystemDriver extends Driver
         return $this->getPrefix() . $key . '.cache';
     }
 
-    public function get($key, $default = null)
+    public function get($key, $default = null): mixed
     {
         $file = $this->getCacheKey($key);
         if (! file_exists($file)) {
@@ -78,7 +78,7 @@ class FileSystemDriver extends Driver
         return [true, $obj->getData()];
     }
 
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value, $ttl = null): bool
     {
         $seconds = $this->secondsUntil($ttl);
         $file = $this->getCacheKey($key);
@@ -89,7 +89,7 @@ class FileSystemDriver extends Driver
         return (bool) $result;
     }
 
-    public function delete($key)
+    public function delete($key): bool
     {
         $file = $this->getCacheKey($key);
         if (file_exists($file)) {
@@ -102,26 +102,26 @@ class FileSystemDriver extends Driver
         return true;
     }
 
-    public function clear()
+    public function clear(): bool
     {
         return $this->clearPrefix('');
     }
 
-    public function getMultiple($keys, $default = null)
+    public function getMultiple($keys, $default = null): iterable
     {
         if (! is_array($keys)) {
             throw new InvalidArgumentException('The keys is invalid!');
         }
 
         $result = [];
-        foreach ($keys as $i => $key) {
+        foreach ($keys as $key) {
             $result[$key] = $this->get($key, $default);
         }
 
         return $result;
     }
 
-    public function setMultiple($values, $ttl = null)
+    public function setMultiple($values, $ttl = null): bool
     {
         if (! is_array($values)) {
             throw new InvalidArgumentException('The values is invalid!');
@@ -134,20 +134,20 @@ class FileSystemDriver extends Driver
         return true;
     }
 
-    public function deleteMultiple($keys)
+    public function deleteMultiple($keys): bool
     {
         if (! is_array($keys)) {
             throw new InvalidArgumentException('The keys is invalid!');
         }
 
-        foreach ($keys as $index => $key) {
+        foreach ($keys as $key) {
             $this->delete($key);
         }
 
         return true;
     }
 
-    public function has($key)
+    public function has($key): bool
     {
         $file = $this->getCacheKey($key);
 

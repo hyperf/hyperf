@@ -13,6 +13,7 @@ namespace Hyperf\Nats;
 
 /**
  * Class Php71RandomGenerator.
+ * @deprecated
  */
 class Php71RandomGenerator
 {

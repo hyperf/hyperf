@@ -11,23 +11,22 @@ declare(strict_types=1);
  */
 namespace Hyperf\Guzzle\RingPHP;
 
+use Exception;
 use GuzzleHttp\Ring\Core;
 use GuzzleHttp\Ring\Exception\RingException;
 use GuzzleHttp\Ring\Future\CompletedFutureArray;
 use Hyperf\Engine\Http\Client;
 use Hyperf\Engine\Http\RawResponse;
 use Hyperf\Utils\ResourceGenerator;
+use Throwable;
 
 /**
  * Http handler that uses Swoole Coroutine as a transport layer.
  */
 class CoroutineHandler
 {
-    protected $options;
-
-    public function __construct($options = [])
+    public function __construct(protected array $options = [])
     {
-        $this->options = $options;
     }
 
     public function __invoke($request)
@@ -56,16 +55,16 @@ class CoroutineHandler
             $client->set($settings);
         }
 
-        $btime = microtime(true);
+        $beginTime = microtime(true);
 
         try {
             $raw = $client->request($method, $path, $headers, (string) $body);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $exception = new RingException($exception->getMessage());
-            return $this->getErrorResponse($exception, $btime, $effectiveUrl);
+            return $this->getErrorResponse($exception, $beginTime, $effectiveUrl);
         }
 
-        return $this->getResponse($raw, $btime, $effectiveUrl);
+        return $this->getResponse($raw, $beginTime, $effectiveUrl);
     }
 
     protected function makeClient(string $host, int $port, bool $ssl): Client
@@ -73,7 +72,7 @@ class CoroutineHandler
         return new Client($host, $port, $ssl);
     }
 
-    protected function getSettings($options): array
+    protected function getSettings(array $options): array
     {
         $settings = [];
         if (isset($options['delay']) && $options['delay'] > 0) {
@@ -120,14 +119,14 @@ class CoroutineHandler
         return $headers;
     }
 
-    protected function getErrorResponse(\Throwable $throwable, $btime, $effectiveUrl)
+    protected function getErrorResponse(Throwable $throwable, float $beginTime, string $effectiveUrl)
     {
         return new CompletedFutureArray([
             'curl' => [
                 'errno' => 0,
             ],
             'transfer_stats' => [
-                'total_time' => microtime(true) - $btime,
+                'total_time' => microtime(true) - $beginTime,
             ],
             'effective_url' => $effectiveUrl,
             'body' => '',
@@ -138,11 +137,11 @@ class CoroutineHandler
         ]);
     }
 
-    protected function getResponse(RawResponse $response, $btime, $effectiveUrl)
+    protected function getResponse(RawResponse $response, float $beginTime, string $effectiveUrl)
     {
         return new CompletedFutureArray([
             'transfer_stats' => [
-                'total_time' => microtime(true) - $btime,
+                'total_time' => microtime(true) - $beginTime,
             ],
             'effective_url' => $effectiveUrl,
             'headers' => $response->headers,

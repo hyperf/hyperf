@@ -33,9 +33,9 @@ composer require hyperf/service-governance-nacos
 ```php
 return [
     'enable' => [
-        // 開啟服務發現
+        // 開啓服務發現
         'discovery' => true,
-        // 開啟服務註冊
+        // 開啓服務註冊
         'register' => true,
     ],
     // 服務消費者相關配置
@@ -47,6 +47,10 @@ return [
         'consul' => [
             'uri' => 'http://127.0.0.1:8500',
             'token' => '',
+            'check' => [
+                'deregister_critical_service_after' => '90m',
+                'interval' => '1s',
+            ],
         ],
         'nacos' => [
             // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
@@ -63,6 +67,7 @@ return [
             'group_name' => 'api',
             'namespace_id' => 'namespace_id',
             'heartbeat' => 5,
+            'ephemeral' => false, // 是否註冊臨時實例
         ],
     ],
 ];
@@ -79,9 +84,7 @@ namespace App\JsonRpc;
 
 use Hyperf\RpcServer\Annotation\RpcService;
 
-/**
- * @RpcService(name="CalculatorService", protocol="jsonrpc-http", server="jsonrpc-http")
- */
+#[RpcService(name: "CalculatorService", protocol: "jsonrpc-http", server: "jsonrpc-http")]
 class CalculatorService implements CalculatorServiceInterface
 {
     // 實現一個加法方法，這裏簡單的認為參數都是 int 類型
@@ -156,15 +159,10 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\ServiceGovernance\DriverManager;
 
-/**
- * @Listener 
- */
+#[Listener]
 class RegisterDriverListener implements ListenerInterface
 {
-    /**
-     * @var DriverManager
-     */
-    protected $driverManager;
+    protected DriverManager $driverManager;
 
     public function __construct(DriverManager $manager)
     {

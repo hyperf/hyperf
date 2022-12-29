@@ -1,6 +1,6 @@
 # 自定義進程
 
-[hyperf/process](https://github.com/hyperf/process) 可以添加一個用户自定義的工作進程，此函數通常用於創建一個特殊的工作進程，用於監控、上報或者其他特殊的任務。在 Server 啟動時會自動創建進程，並執行指定的子進程函數，進程意外退出時，Server 會重新拉起進程。
+[hyperf/process](https://github.com/hyperf/process) 可以添加一個用户自定義的工作進程，此函數通常用於創建一個特殊的工作進程，用於監控、上報或者其他特殊的任務。在 Server 啓動時會自動創建進程，並執行指定的子進程函數，進程意外退出時，Server 會重新拉起進程。
 
 ## 創建一個自定義進程
 
@@ -49,9 +49,7 @@ namespace App\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="foo_process")
- */
+#[Process(name: "foo_process")]
 class FooProcess extends AbstractProcess
 {
     public function handle(): void
@@ -63,9 +61,9 @@ class FooProcess extends AbstractProcess
 
 > 使用 `@Process` 註解時需 `use Hyperf\Process\Annotation\Process;` 命名空間；   
 
-## 為進程啟動加上條件
+## 為進程啓動加上條件
 
-有些時候，並不是所有時候都應該啟動一個自定義進程，一個自定義進程的啟動與否可能會根據某些配置或者某些條件來決定，我們可以通過在自定義進程類內重寫 `isEnable(): bool` 方法來實現，默認返回 `true`，即會跟隨服務一同啟動，如方法返回 `false`，則服務啟動時不會啟動該自定義進程。
+有些時候，並不是所有時候都應該啓動一個自定義進程，一個自定義進程的啓動與否可能會根據某些配置或者某些條件來決定，我們可以通過在自定義進程類內重寫 `isEnable(): bool` 方法來實現，默認返回 `true`，即會跟隨服務一同啓動，如方法返回 `false`，則服務啓動時不會啓動該自定義進程。
 
 ```php
 <?php
@@ -76,9 +74,7 @@ namespace App\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="foo_process")
- */
+#[Process(name: "foo_process")]
 class FooProcess extends AbstractProcess
 {
     public function handle(): void
@@ -88,7 +84,7 @@ class FooProcess extends AbstractProcess
     
     public function isEnable($server): bool
     {
-        // 不跟隨服務啟動一同啟動
+        // 不跟隨服務啓動一同啓動
         return false;   
     }
 }
@@ -107,40 +103,33 @@ namespace App\Process;
 use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 
-/**
- * @Process(name="user-process"，redirectStdinStdout=false, pipeType=2, enableCoroutine=true)
- */
+#[Process(name: "user-process", redirectStdinStdout: false, pipeType: 2, enableCoroutine: true)]
 class FooProcess extends AbstractProcess
 {
     /**
      * 進程數量
-     * @var int
      */
-    public $nums = 1;
+    public int $nums = 1;
 
     /**
      * 進程名稱
-     * @var string
      */
-    public $name = 'user-process';
+    public string $name = 'user-process';
 
     /**
      * 重定向自定義進程的標準輸入和輸出
-     * @var bool
      */
-    public $redirectStdinStdout = false;
+    public bool $redirectStdinStdout = false;
 
     /**
      * 管道類型
-     * @var int
      */
-    public $pipeType = 2;
+    public int $pipeType = 2;
 
     /**
-     * 是否啟用協程
-     * @var bool
+     * 是否啓用協程
      */
-    public $enableCoroutine = true;
+    public bool $enableCoroutine = true;
 }
 ```
 
@@ -158,9 +147,7 @@ use Hyperf\Process\AbstractProcess;
 use Hyperf\Process\Annotation\Process;
 use Hyperf\Contract\StdoutLoggerInterface;
 
-/**
- * @Process(name="demo_process")
- */
+#[Process(name: "demo_process")]
 class DemoProcess extends AbstractProcess
 {
     public function handle(): void

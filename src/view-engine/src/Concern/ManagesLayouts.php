@@ -18,25 +18,19 @@ use InvalidArgumentException;
 trait ManagesLayouts
 {
     /**
-     * All of the finished, captured sections.
-     *
-     * @var array
+     * All the finished, captured sections.
      */
-    protected $sections = [];
+    protected array $sections = [];
 
     /**
      * The stack of in-progress sections.
-     *
-     * @var array
      */
-    protected $sectionStack = [];
+    protected array $sectionStack = [];
 
     /**
      * The parent placeholder for the request.
-     *
-     * @var mixed
      */
-    protected static $parentPlaceholder = [];
+    protected static array $parentPlaceholder = [];
 
     /**
      * Start injecting content into a section.
@@ -84,8 +78,8 @@ trait ManagesLayouts
      * Stop injecting content into a section.
      *
      * @param bool $overwrite
-     * @throws InvalidArgumentException
      * @return string
+     * @throws InvalidArgumentException
      */
     public function stopSection($overwrite = false)
     {
@@ -107,8 +101,8 @@ trait ManagesLayouts
     /**
      * Stop injecting content into a section and append it.
      *
-     * @throws InvalidArgumentException
      * @return string
+     * @throws InvalidArgumentException
      */
     public function appendSection()
     {
@@ -131,10 +125,9 @@ trait ManagesLayouts
      * Get the string contents of a section.
      *
      * @param string $section
-     * @param string|ViewInterface $default
      * @return string
      */
-    public function yieldContent($section, $default = '')
+    public function yieldContent($section, string|ViewInterface $default = '')
     {
         $sectionContent = $default instanceof ViewInterface ? $default : T::e($default);
 

@@ -14,32 +14,20 @@ namespace Hyperf\Database\Exception;
 use Exception;
 use Hyperf\Utils\Str;
 use PDOException;
+use Throwable;
 
 class QueryException extends PDOException
 {
     /**
-     * The SQL for the query.
-     *
-     * @var string
-     */
-    protected $sql;
-
-    /**
-     * The bindings for the query.
-     *
-     * @var array
-     */
-    protected $bindings;
-
-    /**
      * Create a new query exception instance.
+     *
+     * @param string $sql the SQL for the query
+     * @param array $bindings the bindings for the query
      */
-    public function __construct(string $sql, array $bindings, Exception $previous)
+    public function __construct(protected string $sql, protected array $bindings, Exception $previous)
     {
         parent::__construct('', 0, $previous);
 
-        $this->sql = $sql;
-        $this->bindings = $bindings;
         $this->code = $previous->getCode();
         $this->message = $this->formatMessage($sql, $bindings, $previous);
 
@@ -50,33 +38,24 @@ class QueryException extends PDOException
 
     /**
      * Get the SQL for the query.
-     *
-     * @return string
      */
-    public function getSql()
+    public function getSql(): string
     {
         return $this->sql;
     }
 
     /**
      * Get the bindings for the query.
-     *
-     * @return array
      */
-    public function getBindings()
+    public function getBindings(): array
     {
         return $this->bindings;
     }
 
     /**
      * Format the SQL error message.
-     *
-     * @param string $sql
-     * @param array $bindings
-     * @param \Exception $previous
-     * @return string
      */
-    protected function formatMessage($sql, $bindings, $previous)
+    protected function formatMessage(string $sql, array $bindings, Throwable $previous): string
     {
         return $previous->getMessage() . ' (SQL: ' . Str::replaceArray('?', $bindings, $sql) . ')';
     }

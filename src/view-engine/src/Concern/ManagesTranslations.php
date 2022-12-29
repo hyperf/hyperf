@@ -17,17 +17,13 @@ trait ManagesTranslations
 {
     /**
      * The translation replacements for the translation being rendered.
-     *
-     * @var array
      */
-    protected $translationReplacements = [];
+    protected array $translationReplacements = [];
 
     /**
      * Start a translation block.
-     *
-     * @param array $replacements
      */
-    public function startTranslation($replacements = [])
+    public function startTranslation(array $replacements = [])
     {
         ob_start();
 

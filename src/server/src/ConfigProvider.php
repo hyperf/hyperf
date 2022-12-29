@@ -33,13 +33,6 @@ class ConfigProvider
             'commands' => [
                 StartServer::class,
             ],
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
             'publish' => [
                 [
                     'id' => 'config',

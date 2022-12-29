@@ -22,38 +22,30 @@ trait ManagesComponents
 {
     /**
      * The components being rendered.
-     *
-     * @var array
      */
-    protected $componentStack = [];
+    protected array $componentStack = [];
 
     /**
      * The original data passed to the component.
-     *
-     * @var array
      */
-    protected $componentData = [];
+    protected array $componentData = [];
 
     /**
      * The slot contents for the component.
-     *
-     * @var array
      */
-    protected $slots = [];
+    protected array $slots = [];
 
     /**
      * The names of the slots being rendered.
-     *
-     * @var array
      */
-    protected $slotStack = [];
+    protected array $slotStack = [];
 
     /**
      * Start a component rendering process.
      *
      * @param Closure|Htmlable|string|View $view
      */
-    public function startComponent($view, array $data = [])
+    public function startComponent(mixed $view, array $data = [])
     {
         if (ob_start()) {
             $this->componentStack[] = $view;
@@ -69,9 +61,7 @@ trait ManagesComponents
      */
     public function startComponentFirst(array $names, array $data = [])
     {
-        $name = Arr::first($names, function ($item) {
-            return $this->exists($item);
-        });
+        $name = Arr::first($names, fn ($item) => $this->exists($item));
 
         $this->startComponent($name, $data);
     }

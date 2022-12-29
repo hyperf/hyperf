@@ -134,7 +134,7 @@ return [
 
 - Hyperf\Database\Commands\Ast\ModelRewriteTimestampsVisitor
 
-此 `Visitor` 可以根據 `created_at` 和 `updated_at` 自動判斷，是否啟用默認記錄 `創建和修改時間` 的功能。
+此 `Visitor` 可以根據 `created_at` 和 `updated_at` 自動判斷，是否啓用默認記錄 `創建和修改時間` 的功能。
 
 - Hyperf\Database\Commands\Ast\ModelRewriteGetterSetterVisitor
 

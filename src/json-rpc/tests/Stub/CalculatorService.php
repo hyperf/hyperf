@@ -11,6 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\JsonRpc\Stub;
 
+use Error;
+use InvalidArgumentException;
+
 class CalculatorService implements CalculatorServiceInterface
 {
     public function add(int $a, int $b)
@@ -26,7 +29,7 @@ class CalculatorService implements CalculatorServiceInterface
     public function divide($value, $divider)
     {
         if ($divider == 0) {
-            throw new \InvalidArgumentException('Expected non-zero value of divider');
+            throw new InvalidArgumentException('Expected non-zero value of divider');
         }
         return $value / $divider;
     }
@@ -38,7 +41,7 @@ class CalculatorService implements CalculatorServiceInterface
 
     public function error()
     {
-        throw new \Error('Not only a exception.');
+        throw new Error('Not only a exception.');
     }
 
     public function getString(): ?string

@@ -12,8 +12,10 @@ declare(strict_types=1);
 namespace HyperfTest\Redis;
 
 use Hyperf\Config\Config;
+use Hyperf\Context\Context;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Container;
+use Hyperf\Engine\Channel as Chan;
 use Hyperf\Pool\Channel;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Pool\PoolOption;
@@ -23,12 +25,15 @@ use Hyperf\Redis\Pool\RedisPool;
 use Hyperf\Redis\Redis;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
 use Hyperf\Utils\Coroutine;
 use HyperfTest\Redis\Stub\RedisPoolFailedStub;
 use HyperfTest\Redis\Stub\RedisPoolStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use RedisCluster;
+use RedisSentinel;
+use ReflectionClass;
+use Throwable;
 
 /**
  * @internal
@@ -45,7 +50,7 @@ class RedisTest extends TestCase
     public function testRedisConnect()
     {
         $redis = new \Redis();
-        $class = new \ReflectionClass($redis);
+        $class = new ReflectionClass($redis);
         $params = $class->getMethod('connect')->getParameters();
         [$host, $port, $timeout, $retryInterval] = $params;
         $this->assertSame('host', $host->getName());
@@ -53,7 +58,7 @@ class RedisTest extends TestCase
         $this->assertSame('timeout', $timeout->getName());
         $this->assertSame('retry_interval', $retryInterval->getName());
 
-        $this->assertTrue($redis->connect('127.0.0.1', 6379, 0.0));
+        $this->assertTrue($redis->connect('127.0.0.1', 6379, 0.0, null, 0, 0));
     }
 
     public function testRedisSelect()
@@ -69,18 +74,20 @@ class RedisTest extends TestCase
 
         $this->assertSame(2, $redis->getDatabase());
 
-        $res = parallel([function () use ($redis) {
-            return $redis->get('xxxx');
-        }]);
+        $res = parallel([
+            function () use ($redis) {
+                return $redis->get('xxxx');
+            },
+        ]);
 
         $this->assertSame('db:0 name:get argument:xxxx', $res[0]);
     }
 
     public function testHasAlreadyBeenBoundToAnotherCoroutine()
     {
-        $chan = new \Swoole\Coroutine\Channel(1);
+        $chan = new Chan(1);
         $redis = $this->getRedis();
-        $ref = new \ReflectionClass($redis);
+        $ref = new ReflectionClass($redis);
         $method = $ref->getMethod('getConnection');
         $method->setAccessible(true);
 
@@ -131,7 +138,7 @@ class RedisTest extends TestCase
         $redis = new Redis($factory);
         try {
             $redis->set('xxxx', 'yyyy');
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertSame('Get connection failed.', $exception->getMessage());
         }
 
@@ -141,7 +148,7 @@ class RedisTest extends TestCase
 
     public function testRedisClusterConstructor()
     {
-        $ref = new \ReflectionClass(\RedisCluster::class);
+        $ref = new ReflectionClass(RedisCluster::class);
         $method = $ref->getMethod('__construct');
         $names = [
             'name', 'seeds', 'timeout', 'read_timeout', 'persistent', 'auth',
@@ -166,10 +173,32 @@ class RedisTest extends TestCase
             $redis = new RedisProxy($factory, 'cluster1');
             $redis->get('test');
             $this->assertTrue(false);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->assertInstanceOf(ConnectionException::class, $exception);
             $this->assertStringNotContainsString('RedisCluster::__construct() expects parameter', $exception->getMessage());
         }
+    }
+
+    public function testShuffleNodes()
+    {
+        $nodes = ['127.0.0.1:6379', '127.0.0.1:6378', '127.0.0.1:6377'];
+
+        shuffle($nodes);
+
+        $this->assertIsArray($nodes);
+        $this->assertSame(3, count($nodes));
+    }
+
+    public function testRedisSentinelParams()
+    {
+        $rel = new ReflectionClass(RedisSentinel::class);
+        $method = $rel->getMethod('__construct');
+        $count = count($method->getParameters());
+        if ($count === 6) {
+            $this->markTestIncomplete('RedisSentinel don\'t support auth.');
+        }
+
+        $this->assertSame(7, $count);
     }
 
     private function getRedis()

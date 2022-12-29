@@ -13,6 +13,7 @@ namespace Hyperf\HttpMessage\Base;
 
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpMessage\Uri\Uri;
+use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
@@ -21,27 +22,13 @@ class Request implements RequestInterface
 {
     use MessageTrait;
 
-    /**
-     * @var array
-     */
-    protected $server = [];
+    protected array $server = [];
 
-    /**
-     * @var UriInterface
-     */
-    protected $uri;
+    protected UriInterface $uri;
 
-    /**
-     * Http Method.
-     *
-     * @var string
-     */
-    protected $method;
+    protected string $method;
 
-    /**
-     * @var string
-     */
-    protected $requestTarget;
+    protected ?string $requestTarget = null;
 
     /**
      * @param string $method HTTP method
@@ -52,9 +39,9 @@ class Request implements RequestInterface
      */
     public function __construct(
         string $method,
-        $uri,
+        string|UriInterface $uri,
         array $headers = [],
-        $body = null,
+        mixed $body = null,
         string $version = '1.1'
     ) {
         if (! $uri instanceof UriInterface) {
@@ -123,7 +110,7 @@ class Request implements RequestInterface
     public function withRequestTarget($requestTarget)
     {
         if (preg_match('#\s#', $requestTarget)) {
-            throw new \InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
+            throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
         }
 
         $new = clone $this;
@@ -151,15 +138,15 @@ class Request implements RequestInterface
      * changed request method.
      *
      * @param string $method case-sensitive method
-     * @throws \InvalidArgumentException for invalid HTTP methods
      * @return static
+     * @throws InvalidArgumentException for invalid HTTP methods
      */
     public function withMethod($method)
     {
         $method = strtoupper($method);
         $methods = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'HEAD'];
         if (! in_array($method, $methods)) {
-            throw new \InvalidArgumentException('Invalid Method');
+            throw new InvalidArgumentException('Invalid Method');
         }
         $new = clone $this;
         $new->method = $method;
@@ -185,7 +172,7 @@ class Request implements RequestInterface
      * default if the URI contains a host component. If the URI does not
      * contain a host component, any pre-existing Host header MUST be carried
      * over to the returned request.
-     * You can opt-in to preserving the original state of the Host header by
+     * You can opt in to preserving the original state of the Host header by
      * setting `$preserveHost` to `true`. When `$preserveHost` is set to
      * `true`, this method interacts with the Host header in the following ways:
      * - If the Host header is missing or empty, and the new URI contains
@@ -226,7 +213,7 @@ class Request implements RequestInterface
      *
      * @see http://tools.ietf.org/html/rfc7230#section-5.4
      */
-    private function updateHostFromUri()
+    private function updateHostFromUri(): void
     {
         $host = $this->uri->getHost();
 

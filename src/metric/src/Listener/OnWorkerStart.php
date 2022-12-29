@@ -12,18 +12,19 @@ declare(strict_types=1);
 namespace Hyperf\Metric\Listener;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\MetricSetter;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
 use Swoole\Timer;
+
 use function gc_status;
 use function getrusage;
 use function memory_get_peak_usage;
@@ -36,24 +37,12 @@ class OnWorkerStart implements ListenerInterface
 {
     use MetricSetter;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected MetricFactoryInterface $factory;
 
-    /**
-     * @var MetricFactoryInterface
-     */
-    protected $factory;
+    private ConfigInterface $config;
 
-    /**
-     * @var ConfigInterface
-     */
-    private $config;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
     }
 
@@ -71,7 +60,7 @@ class OnWorkerStart implements ListenerInterface
      * Handle the Event when the event is triggered, all listeners will
      * complete before the event is returned to the EventDispatcher.
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         $workerId = $event->workerId;
 

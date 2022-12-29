@@ -1,6 +1,6 @@
 # 服務註冊
 
-在進行服務拆分之後，服務的數量會變得非常多，而每個服務又可能會有非常多的叢集節點來提供服務，那麼為保障系統的正常執行，必然需要有一箇中心化的元件完成對各個服務的整合，即將分散於各處的服務進行彙總，彙總的資訊可以是提供服務的元件名稱、地址、數量等，每個元件擁有一個監聽裝置，當本元件內的某個服務的狀態變化時報告至中心化的元件進行狀態的更新。服務的呼叫方在請求某項服務時首先到中心化元件獲取可提供該項服務的元件資訊（IP、埠等），通過預設或自定義的策略選擇該服務的某一提供者進行訪問，實現服務的呼叫。那麼這個中心化的元件我們一般稱之為 `服務中心`，在 Hyperf 裡，我們實現了以 `Consul` 和 `Nacos` 為服務中心的元件支援，後續將適配更多的服務中心。
+在進行服務拆分之後，服務的數量會變得非常多，而每個服務又可能會有非常多的叢集節點來提供服務，那麼為保障系統的正常執行，必然需要有一箇中心化的元件完成對各個服務的整合，即將分散於各處的服務進行彙總，彙總的資訊可以是提供服務的元件名稱、地址、數量等，每個元件擁有一個監聽裝置，當本元件內的某個服務的狀態變化時報告至中心化的元件進行狀態的更新。服務的呼叫方在請求某項服務時首先到中心化元件獲取可提供該項服務的元件資訊（IP、埠等），透過預設或自定義的策略選擇該服務的某一提供者進行訪問，實現服務的呼叫。那麼這個中心化的元件我們一般稱之為 `服務中心`，在 Hyperf 裡，我們實現了以 `Consul` 和 `Nacos` 為服務中心的元件支援，後續將適配更多的服務中心。
 
 # 安裝
 
@@ -47,6 +47,10 @@ return [
         'consul' => [
             'uri' => 'http://127.0.0.1:8500',
             'token' => '',
+            'check' => [
+                'deregister_critical_service_after' => '90m',
+                'interval' => '1s',
+            ],
         ],
         'nacos' => [
             // nacos server url like https://nacos.hyperf.io, Priority is higher than host:port
@@ -63,6 +67,7 @@ return [
             'group_name' => 'api',
             'namespace_id' => 'namespace_id',
             'heartbeat' => 5,
+            'ephemeral' => false, // 是否註冊臨時例項
         ],
     ],
 ];
@@ -70,7 +75,7 @@ return [
 
 # 註冊服務
 
-註冊服務可通過 `@RpcService` 註解對一個類進行定義，即為釋出這個服務了，目前 Hyperf 僅適配了 JSON RPC 協議，具體內容也可到 [JSON RPC 服務](zh-tw/json-rpc.md) 章節瞭解詳情。
+註冊服務可透過 `@RpcService` 註解對一個類進行定義，即為釋出這個服務了，目前 Hyperf 僅適配了 JSON RPC 協議，具體內容也可到 [JSON RPC 服務](zh-tw/json-rpc.md) 章節瞭解詳情。
 
 ```php
 <?php
@@ -79,9 +84,7 @@ namespace App\JsonRpc;
 
 use Hyperf\RpcServer\Annotation\RpcService;
 
-/**
- * @RpcService(name="CalculatorService", protocol="jsonrpc-http", server="jsonrpc-http")
- */
+#[RpcService(name: "CalculatorService", protocol: "jsonrpc-http", server: "jsonrpc-http")]
 class CalculatorService implements CalculatorServiceInterface
 {
     // 實現一個加法方法，這裡簡單的認為引數都是 int 型別
@@ -156,15 +159,10 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\ServiceGovernance\DriverManager;
 
-/**
- * @Listener 
- */
+#[Listener]
 class RegisterDriverListener implements ListenerInterface
 {
-    /**
-     * @var DriverManager
-     */
-    protected $driverManager;
+    protected DriverManager $driverManager;
 
     public function __construct(DriverManager $manager)
     {

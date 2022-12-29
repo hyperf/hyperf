@@ -14,18 +14,14 @@ namespace Hyperf\Database;
 class ConnectionResolver implements ConnectionResolverInterface
 {
     /**
-     * All of the registered connections.
-     *
-     * @var array
+     * All the registered connections.
      */
-    protected $connections = [];
+    protected array $connections = [];
 
     /**
      * The default connection name.
-     *
-     * @var string
      */
-    protected $default = 'default';
+    protected string $default = 'default';
 
     /**
      * Create a new connection resolver instance.
@@ -43,7 +39,7 @@ class ConnectionResolver implements ConnectionResolverInterface
      * @param string $name
      * @return \Hyperf\Database\ConnectionInterface
      */
-    public function connection($name = null)
+    public function connection(?string $name = null): ConnectionInterface
     {
         if (is_null($name)) {
             $name = $this->getDefaultConnection();
@@ -67,29 +63,24 @@ class ConnectionResolver implements ConnectionResolverInterface
      * Check if a connection has been registered.
      *
      * @param string $name
-     * @return bool
      */
-    public function hasConnection($name)
+    public function hasConnection($name): bool
     {
         return isset($this->connections[$name]);
     }
 
     /**
      * Get the default connection name.
-     *
-     * @return string
      */
-    public function getDefaultConnection()
+    public function getDefaultConnection(): string
     {
         return $this->default;
     }
 
     /**
      * Set the default connection name.
-     *
-     * @param string $name
      */
-    public function setDefaultConnection($name)
+    public function setDefaultConnection(string $name): void
     {
         $this->default = $name;
     }

@@ -344,6 +344,7 @@ class MessageSelector
             case 'ar_SY':
             case 'ar_TN':
             case 'ar_YE':
+                /* @phpstan-ignore-next-line */
                 return ($number == 0) ? 0 : (($number == 1) ? 1 : (($number == 2) ? 2 : ((($number % 100 >= 3) && ($number % 100 <= 10)) ? 3 : ((($number % 100 >= 11) && ($number % 100 <= 99)) ? 4 : 5))));
             default:
                 return 0;
@@ -405,8 +406,6 @@ class MessageSelector
      */
     private function stripConditions(array $segments): array
     {
-        return collect($segments)->map(function ($part) {
-            return preg_replace('/^[\{\[]([^\[\]\{\}]*)[\}\]]/', '', $part);
-        })->all();
+        return collect($segments)->map(fn ($part) => preg_replace('/^[\{\[]([^\[\]\{\}]*)[\}\]]/', '', $part))->all();
     }
 }

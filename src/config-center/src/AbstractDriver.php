@@ -16,12 +16,15 @@ use Hyperf\ConfigCenter\Contract\DriverInterface;
 use Hyperf\ConfigCenter\Contract\PipeMessageInterface;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Process\ProcessCollector;
-use Hyperf\Utils\Coordinator\Constants;
-use Hyperf\Utils\Coordinator\CoordinatorManager;
 use Hyperf\Utils\Coroutine;
+use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use Swoole\Server;
+use Throwable;
 
 abstract class AbstractDriver implements DriverInterface
 {
@@ -30,39 +33,18 @@ abstract class AbstractDriver implements DriverInterface
      */
     protected $server;
 
-    /**
-     * @var null|ConfigInterface
-     */
-    protected $config;
+    protected ConfigInterface $config;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var ClientInterface
-     */
-    protected $client;
+    protected ClientInterface $client;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected string $pipeMessage = PipeMessage::class;
 
-    /**
-     * @var null|string
-     */
-    protected $pipeMessage = PipeMessage::class;
+    protected string $driverName = '';
 
-    /**
-     * @var string
-     */
-    protected $driverName = '';
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
     }
@@ -85,7 +67,7 @@ abstract class AbstractDriver implements DriverInterface
                             $this->syncConfig($config);
                         }
                         $prevConfig = $config;
-                    } catch (\Throwable $exception) {
+                    } catch (Throwable $exception) {
                         $this->logger->error((string) $exception);
                         throw $exception;
                     }
@@ -94,7 +76,7 @@ abstract class AbstractDriver implements DriverInterface
         });
     }
 
-    public function fetchConfig()
+    public function fetchConfig(): void
     {
         if (method_exists($this->client, 'pull')) {
             $config = $this->pull();
@@ -132,7 +114,7 @@ abstract class AbstractDriver implements DriverInterface
         return $this->client->pull();
     }
 
-    protected function updateConfig(array $config)
+    protected function updateConfig(array $config): void
     {
         foreach ($config as $key => $value) {
             if (is_string($key)) {
@@ -152,7 +134,7 @@ abstract class AbstractDriver implements DriverInterface
         $pipeMessage = $this->pipeMessage;
         $message = new $pipeMessage($config);
         if (! $message instanceof PipeMessageInterface) {
-            throw new \InvalidArgumentException('Invalid pipe message object.');
+            throw new InvalidArgumentException('Invalid pipe message object.');
         }
         $this->shareMessageToWorkers($message);
         $this->shareMessageToUserProcesses($message);

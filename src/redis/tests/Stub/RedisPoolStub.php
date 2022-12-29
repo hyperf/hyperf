@@ -14,6 +14,7 @@ namespace HyperfTest\Redis\Stub;
 use Hyperf\Contract\ConnectionInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Redis\Pool\RedisPool;
+use Throwable;
 
 class RedisPoolStub extends RedisPool
 {
@@ -22,7 +23,7 @@ class RedisPoolStub extends RedisPool
         while ($conn = $this->channel->pop(0.001)) {
             try {
                 $conn->close();
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
                     $logger->error((string) $exception);
                 }

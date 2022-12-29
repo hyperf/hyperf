@@ -22,15 +22,9 @@ use Psr\Container\ContainerInterface;
 
 class MetricFactoryPicker
 {
-    /**
-     * @var bool
-     */
-    public static $inMetricProcess = false;
+    public static bool $inMetricProcess = false;
 
-    /**
-     * @var bool
-     */
-    public static $isCommand = false;
+    public static bool $isCommand = false;
 
     public function __invoke(ContainerInterface $container)
     {
@@ -56,7 +50,7 @@ class MetricFactoryPicker
         $driver = $config->get("metric.metric.{$name}.driver", PrometheusFactory::class);
 
         $factory = $container->get($driver);
-        if (! ($factory instanceof MetricFactoryInterface)) {
+        if (! $factory instanceof MetricFactoryInterface) {
             throw new InvalidArgumentException(
                 sprintf('The driver %s is not a valid factory.', $driver)
             );

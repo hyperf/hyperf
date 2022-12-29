@@ -13,10 +13,14 @@ namespace HyperfTest\Utils\CodeGen;
 
 use Hyperf\Utils\CodeGen\PhpParser;
 use HyperfTest\Utils\Stub\Bar;
+use HyperfTest\Utils\Stub\FooEnumStruct;
+use HyperfTest\Utils\Stub\UnionTypeFoo;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\ParserFactory;
+use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @internal
@@ -27,21 +31,91 @@ class PhpParserTest extends TestCase
     public function testGetAstFromReflectionParameter()
     {
         $parserFactory = new ParserFactory();
-        $parser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $parser7 = $parserFactory->create(ParserFactory::ONLY_PHP7);
 
-        $stmts = $parser->parse(file_get_contents(__DIR__ . '/../Stub/Bar.php'));
+        $stmts = $parser7->parse(file_get_contents(__DIR__ . '/../Stub/Bar.php'));
         /** @var ClassMethod $classMethod */
         $classMethod = $stmts[1]->stmts[0]->stmts[0];
         $name = $classMethod->getParams()[0];
         $foo = $classMethod->getParams()[1];
         $extra = $classMethod->getParams()[2];
-        $bar = new \ReflectionClass(Bar::class);
+        $bar = new ReflectionClass(Bar::class);
         $parameters = $bar->getMethod('__construct')->getParameters();
         $parser = new PhpParser();
         $this->assertNodeParam($name, $parser->getNodeFromReflectionParameter($parameters[0]));
         $this->assertNodeParam($foo, $foo2 = $parser->getNodeFromReflectionParameter($parameters[1]));
         $this->assertSame(['', 'HyperfTest', 'Utils', 'Stub', 'Foo'], $foo2->type->parts);
         $this->assertNodeParam($extra, $parser->getNodeFromReflectionParameter($parameters[2]));
+
+        if (PHP_VERSION_ID > 80000) {
+            $stmts = $parser7->parse(file_get_contents(__DIR__ . '/../Stub/UnionTypeFoo.php'));
+            /** @var ClassMethod $classMethod */
+            $classMethod = $stmts[1]->stmts[0]->stmts[0];
+            $name = $classMethod->getParams()[0];
+
+            $foo = new ReflectionClass(UnionTypeFoo::class);
+            $parameters = $foo->getMethod('__construct')->getParameters();
+            $this->assertNodeParam($name, $parser->getNodeFromReflectionParameter($parameters[0]));
+        }
+    }
+
+    public function testGetExprFromEnum()
+    {
+        if (PHP_VERSION_ID < 80100) {
+            $this->markTestSkipped('The version below 8.1 does not support enum.');
+        }
+
+        $parser = new PhpParser();
+        $printer = new Standard();
+
+        $bar = new ReflectionClass(FooEnumStruct::class);
+        $parameters = $bar->getMethod('__construct')->getParameters();
+
+        $stmts = $parser->getNodeFromReflectionParameter($parameters[0]);
+
+        $code = $printer->prettyPrint([$stmts]);
+
+        $this->assertSame('\HyperfTest\Utils\Stub\FooEnum $enum = \HyperfTest\Utils\Stub\FooEnum::DEFAULT', $code);
+
+        $parameters = $bar->getMethod('stdClass')->getParameters();
+
+        $stmts = $parser->getNodeFromReflectionParameter($parameters[0]);
+
+        $code = $printer->prettyPrint([$stmts]);
+
+        $this->assertSame('object $id = new \\stdClass()', $code);
+
+        $parameters = $bar->getMethod('class')->getParameters();
+
+        $stmts = $parser->getNodeFromReflectionParameter($parameters[0]);
+
+        $code = $printer->prettyPrint([$stmts]);
+
+        $this->assertSame('\HyperfTest\Di\Stub\Ignore $ignore = new \HyperfTest\Di\Stub\Ignore()', $code);
+    }
+
+    public function testGetExprFromArray()
+    {
+        $parser = new PhpParser();
+        $printer = new Standard();
+
+        $stmts = $parser->getExprFromValue([]);
+        $this->assertInstanceOf(Node\Expr\Array_::class, $stmts);
+        $this->assertSame([], $stmts->items);
+        $res = $printer->prettyPrint([$stmts]);
+        $this->assertSame('[]', $res);
+
+        $stmts = $parser->getExprFromValue([1, 2, 3]);
+        $res = $printer->prettyPrint([$stmts]);
+        $this->assertSame('[1, 2, 3]', $res);
+
+        $stmts = $parser->getExprFromValue(['a' => 1, 2, 3]);
+        $res = $printer->prettyPrint([$stmts]);
+        $this->assertSame("['a' => 1, 0 => 2, 1 => 3]", $res);
+
+        $stmts = $parser->getExprFromValue(['a' => 1, 'b' => 2]);
+        $res = $printer->prettyPrint([$stmts]);
+        $this->assertSame("['a' => 1, 'b' => 2]", $res);
     }
 
     protected function assertNodeParam(Node\Param $param, Node\Param $param2)

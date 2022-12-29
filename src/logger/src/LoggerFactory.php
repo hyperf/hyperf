@@ -25,24 +25,12 @@ use Psr\Log\LoggerInterface;
 class LoggerFactory
 {
     /**
-     * @var ContainerInterface
+     * @var LoggerInterface[]
      */
-    protected $container;
+    protected array $loggers = [];
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
-
-    /**
-     * @var array
-     */
-    protected $loggers;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container, protected ConfigInterface $config)
     {
-        $this->container = $container;
-        $this->config = $container->get(ConfigInterface::class);
     }
 
     public function make($name = 'hyperf', $group = 'default'): LoggerInterface

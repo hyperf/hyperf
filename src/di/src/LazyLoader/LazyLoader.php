@@ -25,28 +25,19 @@ class LazyLoader
 
     /**
      * Indicates if a loader has been registered.
-     *
-     * @var bool
      */
-    protected $registered = false;
+    protected bool $registered = false;
 
     /**
      * The singleton instance of the loader.
-     *
-     * @var null|LazyLoader
      */
-    protected static $instance;
+    protected static ?LazyLoader $instance = null;
 
     /**
-     * The Configuration object.
-     *
-     * @var array
+     * @param array $config the Configuration object
      */
-    protected $config;
-
-    private function __construct(array $config)
+    private function __construct(protected array $config)
     {
-        $this->config = $config;
         $this->register();
     }
 
@@ -74,7 +65,7 @@ class LazyLoader
      */
     public function load(string $proxy)
     {
-        if (array_key_exists($proxy, $this->config) || $this->startsWith($proxy, 'HyperfLazy\\')) {
+        if (array_key_exists($proxy, $this->config) || str_starts_with($proxy, 'HyperfLazy\\')) {
             $this->loadProxy($proxy);
             return true;
         }
@@ -155,13 +146,8 @@ class LazyLoader
         spl_autoload_register($load, true, true);
     }
 
-    private function startsWith($haystack, $needle): bool
-    {
-        return substr($haystack, 0, strlen($needle)) === (string) $needle;
-    }
-
     /**
-     * These conditions are really hard to proxy via inheritence.
+     * These conditions are really hard to proxy via inheritance.
      * Luckily these conditions are very rarely met.
      *
      * TODO: implement some of them.
@@ -171,11 +157,7 @@ class LazyLoader
      */
     private function isUnsupportedReflectionType(ReflectionClass $targetReflection): bool
     {
-        // Final class
-        if ($targetReflection->isFinal()) {
-            return true;
-        }
-        return false;
+        return $targetReflection->isFinal();
     }
 
     private function buildNewCode(AbstractLazyProxyBuilder $builder, string $proxy, ReflectionClass $reflectionClass): string

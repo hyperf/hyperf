@@ -13,7 +13,6 @@ namespace Hyperf\DbConnection\Listener;
 
 use Hyperf\Command\Event\BeforeHandle;
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\MySqlConnection;
@@ -21,32 +20,20 @@ use Hyperf\DbConnection\Collector\TableCollector;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
 use Hyperf\Process\Event\BeforeProcessHandle;
+use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
+use Throwable;
 
 class InitTableCollectorListener implements ListenerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ConfigInterface $config;
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $config;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected $logger;
+    protected TableCollector $collector;
 
-    /**
-     * @var TableCollector
-     */
-    protected $collector;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected ContainerInterface $container)
     {
-        $this->container = $container;
         $this->config = $container->get(ConfigInterface::class);
         $this->logger = $container->get(StdoutLoggerInterface::class);
         $this->collector = $container->get(TableCollector::class);
@@ -61,7 +48,7 @@ class InitTableCollectorListener implements ListenerInterface
         ];
     }
 
-    public function process(object $event)
+    public function process(object $event): void
     {
         try {
             $databases = $this->config->get('databases', []);
@@ -69,7 +56,7 @@ class InitTableCollectorListener implements ListenerInterface
             foreach ($pools as $name) {
                 $this->initTableCollector($name);
             }
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             $this->logger->error((string) $throwable);
         }
     }
@@ -85,7 +72,6 @@ class InitTableCollectorListener implements ListenerInterface
         /** @var MySqlConnection $connection */
         $connection = $connectionResolver->connection($pool);
 
-        /** @var \Hyperf\Database\Schema\Builder $schemaBuilder */
         $schemaBuilder = $connection->getSchemaBuilder();
         $columns = $schemaBuilder->getColumns();
 

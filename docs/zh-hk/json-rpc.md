@@ -40,8 +40,8 @@ use Hyperf\RpcServer\Annotation\RpcService;
 
 /**
  * 注意，如希望通過服務中心來管理服務，需在註解內增加 publishTo 屬性
- * @RpcService(name="CalculatorService", protocol="jsonrpc-http", server="jsonrpc-http")
  */
+#[RpcService(name: "CalculatorService", protocol: "jsonrpc-http", server: "jsonrpc-http")]
 class CalculatorService implements CalculatorServiceInterface
 {
     // 實現一個加法方法，這裏簡單的認為參數都是 int 類型
@@ -192,7 +192,7 @@ return [
 ];
 ```
 
-配置完成後，在啟動服務時，Hyperf 會自動地將 `@RpcService` 定義了 `publishTo` 屬性為 `consul` 或 `nacos` 的服務註冊到對應的服務中心去。
+配置完成後，在啓動服務時，Hyperf 會自動地將 `@RpcService` 定義了 `publishTo` 屬性為 `consul` 或 `nacos` 的服務註冊到對應的服務中心去。
 
 > 目前僅支持 `jsonrpc` 和 `jsonrpc-http` 協議發佈到服務中心去，其它協議尚未實現服務註冊
 
@@ -247,6 +247,8 @@ return [
                 'retry_count' => 2,
                 // 重試間隔，毫秒
                 'retry_interval' => 100,
+                // 使用多路複用 RPC 時的心跳間隔，null 為不觸發心跳
+                'heartbeat' => 30,
                 // 當使用 JsonRpcPoolTransporter 時會用到以下配置
                 'pool' => [
                     'min_connections' => 1,
@@ -262,7 +264,7 @@ return [
 ];
 ```
 
-在應用啟動時會自動創建客户端類的代理對象，並在容器中使用配置項 `id` 的值（如果未設置，會使用配置項 `service` 值代替）來添加綁定關係，這樣就和手工編寫的客户端類一樣，通過注入 `CalculatorServiceInterface` 接口來直接使用客户端。
+在應用啓動時會自動創建客户端類的代理對象，並在容器中使用配置項 `id` 的值（如果未設置，會使用配置項 `service` 值代替）來添加綁定關係，這樣就和手工編寫的客户端類一樣，通過注入 `CalculatorServiceInterface` 接口來直接使用客户端。
 
 > 當服務提供者使用接口類名發佈服務名，在服務消費端只需要設置配置項 `name` 值為接口類名，不需要重複設置配置項 `id` 和 `service`。
 
@@ -281,15 +283,13 @@ class CalculatorServiceConsumer extends AbstractServiceClient implements Calcula
 {
     /**
      * 定義對應服務提供者的服務名稱
-     * @var string 
      */
-    protected $serviceName = 'CalculatorService';
+    protected string $serviceName = 'CalculatorService';
     
     /**
      * 定義對應服務提供者的服務協議
-     * @var string 
      */
-    protected $protocol = 'jsonrpc-http';
+    protected string $protocol = 'jsonrpc-http';
 
     public function add(int $a, int $b): int
     {

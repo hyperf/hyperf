@@ -15,35 +15,19 @@ use Hyperf\Cache\Annotation\Cacheable;
 use Hyperf\Cache\AnnotationManager;
 use Hyperf\Cache\CacheManager;
 use Hyperf\Cache\Driver\KeyCollectorInterface;
-use Hyperf\Di\Annotation\Aspect;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
 
-/**
- * @Aspect
- */
 class CacheableAspect extends AbstractAspect
 {
-    public $classes = [];
+    public array $classes = [];
 
-    public $annotations = [
+    public array $annotations = [
         Cacheable::class,
     ];
 
-    /**
-     * @var CacheManager
-     */
-    protected $manager;
-
-    /**
-     * @var AnnotationManager
-     */
-    protected $annotationManager;
-
-    public function __construct(CacheManager $manager, AnnotationManager $annotationManager)
+    public function __construct(protected CacheManager $manager, protected AnnotationManager $annotationManager)
     {
-        $this->manager = $manager;
-        $this->annotationManager = $annotationManager;
     }
 
     public function process(ProceedingJoinPoint $proceedingJoinPoint)
