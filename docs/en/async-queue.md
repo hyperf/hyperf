@@ -146,7 +146,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Service\QueueService;
-use Hyperf\Di\Annotation\Inject;~~~~~~~~
+use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 
 #[AutoController]
