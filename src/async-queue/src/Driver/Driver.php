@@ -69,7 +69,7 @@ abstract class Driver implements DriverInterface
                     parallel([$callback]);
                 }
 
-                if ($messageCount % $this->lengthCheckCount === 0) {
+                if ($messageCount > 0 && $messageCount % $this->lengthCheckCount === 0) {
                     $this->checkQueueLength();
                 }
 
