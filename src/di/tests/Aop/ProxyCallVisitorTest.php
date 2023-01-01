@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\Di\Aop;
 
 use Hyperf\Di\Aop\Ast;
@@ -19,7 +18,12 @@ use HyperfTest\Di\Stub\AspectCollector;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class ProxyCallVisitorTest extends TestCase
 {
     protected function tearDown(): void
@@ -51,7 +55,7 @@ CODETEMPLATE;
 
         $proxyCallVisitor = new ProxyCallVisitor(new VisitorMetadata('SomeClass'));
 
-        $reflectionMethod = new \ReflectionMethod($proxyCallVisitor, 'shouldRewrite');
+        $reflectionMethod = new ReflectionMethod($proxyCallVisitor, 'shouldRewrite');
         $reflectionMethod->setAccessible(true);
         $this->assertFalse($reflectionMethod->invoke($proxyCallVisitor, $stmts->stmts[0]));
         $this->assertTrue($reflectionMethod->invoke($proxyCallVisitor, $stmts->stmts[1]));
@@ -67,7 +71,7 @@ CODETEMPLATE;
         $visitorMetadata = new VisitorMetadata('SomeClass');
         $proxyCallVisitor = new ProxyCallVisitor($visitorMetadata);
 
-        $reflectionMethod = new \ReflectionMethod($proxyCallVisitor, 'shouldRewrite');
+        $reflectionMethod = new ReflectionMethod($proxyCallVisitor, 'shouldRewrite');
         $reflectionMethod->setAccessible(true);
         $this->assertTrue($reflectionMethod->invoke($proxyCallVisitor, new ClassMethod('foo')));
 
