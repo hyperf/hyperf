@@ -179,3 +179,4 @@ composer analyse
 - [#5223](https://github.com/hyperf/hyperf/pull/5223) Fixed bug that `KeepaliveConnection::isTimeout()` can't work when using swow.
 - [#5229](https://github.com/hyperf/hyperf/pull/5229) Fixed bug that proxy class will be generated failed when using parameters who allow null in constructor.
 - [#5252](https://github.com/hyperf/hyperf/pull/5252) Fixed bug that generate rpc-client failed when the interface has parent interfaces.
+- [#5268](https://github.com/hyperf/hyperf/pull/5268) Fixed bug that abstract methods will be written by `di`.
