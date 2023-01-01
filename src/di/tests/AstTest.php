@@ -150,7 +150,7 @@ abstract class Abs
 }", $code);
 
         $code = $ast->proxy(Chi::class);
-        $this->assertSame($this->license .'
+        $this->assertSame($this->license . '
 namespace HyperfTest\Di\Stub\Ast;
 
 class Chi extends Abs
