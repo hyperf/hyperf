@@ -35,13 +35,13 @@ Router::addRoute(['GET', 'POST', 'HEAD'], '/multi', [\App\Controller\IndexContro
 
 ### 透過註解來定義路由
 
-`Hyperf` 提供了極其強大和方便靈活的 [註解](zh-tw/annotation.md) 功能，在路由的定義上也毫無疑問地提供了註解定義的方式，Hyperf 提供了 `@Controller` 和 `@AutoController` 兩種註解來定義一個 `Controller`，此處僅做簡單的說明，更多細節請查閱 [路由](zh-tw/router.md) 章節。
+`Hyperf` 提供了極其強大和方便靈活的 [註解](zh-tw/annotation.md) 功能，在路由的定義上也毫無疑問地提供了註解定義的方式，Hyperf 提供了 `#[Controller]` 和 `#[AutoController]` 兩種註解來定義一個 `Controller`，此處僅做簡單的說明，更多細節請查閱 [路由](zh-tw/router.md) 章節。
 
-### 透過 `@AutoController` 註解定義路由
+### 透過 `#[AutoController]` 註解定義路由
 
-`@AutoController` 為絕大多數簡單的訪問場景提供路由繫結支援，使用 `@AutoController` 時則 Hyperf 會自動解析所在類的所有 `public` 方法並提供 `GET` 和 `POST` 兩種請求方式。
+`#[AutoController]` 為絕大多數簡單的訪問場景提供路由繫結支援，使用 `#[AutoController]` 時則 Hyperf 會自動解析所在類的所有 `public` 方法並提供 `GET` 和 `POST` 兩種請求方式。
 
-> 使用 `@AutoController` 註解時需 `use Hyperf\HttpServer\Annotation\AutoController;` 名稱空間；
+> 使用 `#[AutoController]` 註解時需 `use Hyperf\HttpServer\Annotation\AutoController;` 名稱空間；
 
 駝峰命名的控制器，會自動轉化為蛇形路由，以下為控制器與實際路由的對應關係示例：
 
@@ -73,17 +73,17 @@ class IndexController
 }
 ```
 
-### 透過 `@Controller` 註解定義路由
-`@Controller` 為滿足更細緻的路由定義需求而存在，使用 `@Controller` 註解用於表明當前類為一個 `Controller 類`，同時需配合 `@RequestMapping` 註解來對請求方法和請求路徑進行更詳細的定義。   
-我們也提供了多種快速便捷的 `Mapping 註解`，如 `@GetMapping`、`@PostMapping`、`@PutMapping`、`@PatchMapping`、`@DeleteMapping` 5 種便捷的註解用於表明允許不同的請求方法。
+### 透過 `#[Controller]` 註解定義路由
+`#[Controller]` 為滿足更細緻的路由定義需求而存在，使用 `#[Controller]` 註解用於表明當前類為一個 `Controller 類`，同時需配合 `#[RequestMapping]` 註解來對請求方法和請求路徑進行更詳細的定義。   
+我們也提供了多種快速便捷的 `Mapping 註解`，如 `#[GetMapping]`、`#[PostMapping]`、`#[PutMapping]`、`#[PatchMapping]`、`#[DeleteMapping]` 5 種便捷的註解用於表明允許不同的請求方法。
 
-> 使用 `@Controller` 註解時需 `use Hyperf\HttpServer\Annotation\Controller;` 名稱空間；   
-> 使用 `@RequestMapping` 註解時需 `use Hyperf\HttpServer\Annotation\RequestMapping;` 名稱空間；   
-> 使用 `@GetMapping` 註解時需 `use Hyperf\HttpServer\Annotation\GetMapping;` 名稱空間；   
-> 使用 `@PostMapping` 註解時需 `use Hyperf\HttpServer\Annotation\PostMapping;` 名稱空間；   
-> 使用 `@PutMapping` 註解時需 `use Hyperf\HttpServer\Annotation\PutMapping;` 名稱空間；   
-> 使用 `@PatchMapping` 註解時需 `use Hyperf\HttpServer\Annotation\PatchMapping;` 名稱空間；   
-> 使用 `@DeleteMapping` 註解時需 `use Hyperf\HttpServer\Annotation\DeleteMapping;` 名稱空間；  
+> 使用 `#[Controller]` 註解時需 `use Hyperf\HttpServer\Annotation\Controller;` 名稱空間；   
+> 使用 `#[RequestMapping]` 註解時需 `use Hyperf\HttpServer\Annotation\RequestMapping;` 名稱空間；   
+> 使用 `#[GetMapping]` 註解時需 `use Hyperf\HttpServer\Annotation\GetMapping;` 名稱空間；   
+> 使用 `#[PostMapping]` 註解時需 `use Hyperf\HttpServer\Annotation\PostMapping;` 名稱空間；   
+> 使用 `#[PutMapping]` 註解時需 `use Hyperf\HttpServer\Annotation\PutMapping;` 名稱空間；   
+> 使用 `#[PatchMapping]` 註解時需 `use Hyperf\HttpServer\Annotation\PatchMapping;` 名稱空間；   
+> 使用 `#[DeleteMapping]` 註解時需 `use Hyperf\HttpServer\Annotation\DeleteMapping;` 名稱空間；  
 
 ```php
 <?php
@@ -195,11 +195,9 @@ use App\Service\UserService;
 #[AutoController]
 class IndexController
 {
-    /**
-     * @var UserService
-     */
+
     #[Inject]
-    private $userService;
+    private UserService $userService;
     
     // /index/info
     public function info(RequestInterface $request)

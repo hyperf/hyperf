@@ -66,11 +66,11 @@ return [
 
 ## 工作原理
 
-`ConsumerProcess` 是非同步消費程序，會根據使用者建立的 `Job` 或者使用 `@AsyncQueueMessage` 的程式碼塊，執行消費邏輯。
-`Job` 和 `@AsyncQueueMessage` 都是需要投遞和執行的任務，即資料、消費邏輯都會在任務中定義。
+`ConsumerProcess` 是非同步消費程序，會根據使用者建立的 `Job` 或者使用 `#[AsyncQueueMessage]` 的程式碼塊，執行消費邏輯。
+`Job` 和 `#[AsyncQueueMessage]` 都是需要投遞和執行的任務，即資料、消費邏輯都會在任務中定義。
 
 - `Job` 類中成員變數即為待消費的資料，`handle()` 方法則為消費邏輯。
-- `@AsyncQueueMessage` 註解的方法，建構函式傳入的資料即為待消費的資料，方法體則為消費邏輯。
+- `#[AsyncQueueMessage]` 註解的方法，建構函式傳入的資料即為待消費的資料，方法體則為消費邏輯。
 
 ```mermaid
 graph LR;
@@ -121,7 +121,7 @@ class AsyncQueueConsumer extends ConsumerProcess
 
 這種模式會把物件直接序列化然後存到 `Redis` 等佇列中，所以為了保證序列化後的體積，儘量不要將 `Container`，`Config` 等設定為成員變數。
 
-比如以下 `Job` 的定義，是 **不可取** 的，同理 `@Inject` 也是如此。
+比如以下 `Job` 的定義，是 **不可取** 的，同理 `#[Inject]` 也是如此。
 
 > 因為 Job 會被序列化，所以成員變數不要包含 匿名函式 等 無法被序列化 的內容，如果不清楚哪些內容無法被序列化，儘量使用註解方式。
 

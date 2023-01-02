@@ -70,7 +70,7 @@ $result = $exec->execute(new Task([MethodTask::class, 'handle'], [Coroutine::id(
 
 ### 使用註解
 
-通過 `主動方法投遞` 時，並不是特別直觀，這裏我們實現了對應的 `@Task` 註解，並通過 `AOP` 重寫了方法調用。當在 `Worker` 進程時，自動投遞到 `Task` 進程，並協程等待 數據返回。
+通過 `主動方法投遞` 時，並不是特別直觀，這裏我們實現了對應的 `#[Task]` 註解，並通過 `AOP` 重寫了方法調用。當在 `Worker` 進程時，自動投遞到 `Task` 進程，並協程等待 數據返回。
 
 ```php
 <?php
@@ -97,7 +97,7 @@ $task = $container->get(AnnotationTask::class);
 $result = $task->handle(Coroutine::id());
 ```
 
-> 使用 `@Task` 註解時需 `use Hyperf\Task\Annotation\Task;`
+> 使用 `#[Task]` 註解時需 `use Hyperf\Task\Annotation\Task;`
 
 註解支持以下參數
 
