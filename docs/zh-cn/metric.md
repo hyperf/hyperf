@@ -313,7 +313,7 @@ class OnMetricFactoryReady implements ListenerInterface
 
 ### 注解
 
-您可以使用 `@Counter(name="stat_name_here")` 和 `@Histogram(name="stat_name_here")` 来统计切面的调用次数和运行时间。
+您可以使用 `#[Counter(name="stat_name_here")]` 和 `#[Histogram(name="stat_name_here")]` 来统计切面的调用次数和运行时间。
 
 关于注解的使用请参阅[注解章节](zh-cn/annotation)。
 

@@ -107,13 +107,9 @@ use Hyperf\Di\Annotation\Inject;
 
 class IndexController
 {
-    /**
-     * 通過 `#[Inject]` 註解注入由 `@var` 註解聲明的屬性類型對象
-     * 
-     * @var UserService
-     */
+
     #[Inject]
-    private $userService;
+    private UserService $userService;
     
     public function index()
     {
@@ -130,7 +126,7 @@ class IndexController
 
 ##### Required 參數
 
-`@Inject` 註解存在一個 `required` 參數，默認值為 `true`，當將該參數定義為 `false` 時，則表明該成員屬性為一個可選依賴，當對應 `@var` 的對象不存在於 DI
+`#[Inject]` 註解存在一個 `required` 參數，默認值為 `true`，當將該參數定義為 `false` 時，則表明該成員屬性為一個可選依賴，當對應 `@var` 的對象不存在於 DI
 容器或不可創建時，將不會拋出異常而是注入一個 `null`，如下：
 
 ```php
@@ -143,7 +139,7 @@ use Hyperf\Di\Annotation\Inject;
 class IndexController
 {
     /**
-     * 通過 `#[Inject]` 註解注入由 `@var` 註解聲明的屬性類型對象
+     * 通過 `#[Inject]` 註解注入由註解聲明的屬性類型對象
      * 當 UserService 不存在於 DI 容器內或不可創建時，則注入 null
      * 
      * @var UserService
@@ -292,7 +288,7 @@ return [
 
 這樣在注入 `UserServiceInterface` 的時候容器就會交由 `UserServiceFactory` 來創建對象了。
 
-> 當然在該場景中可以通過 `@Value` 註解來更便捷的注入配置而無需構建工廠類，此僅為舉例
+> 當然在該場景中可以通過 `#[Value]` 註解來更便捷的注入配置而無需構建工廠類，此僅為舉例
 
 ### 懶加載
 

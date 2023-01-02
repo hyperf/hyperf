@@ -313,7 +313,7 @@ class OnMetricFactoryReady implements ListenerInterface
 
 ### Notes
 
-You can use `@Counter(name="stat_name_here")` and `@Histogram(name="stat_name_here")` to count the invocation and running time of the aspect.
+You can use `#[Counter(name="stat_name_here")]` and `#[Histogram(name="stat_name_here")]` to count the invocation and running time of the aspect.
 
 For the use of annotations, please refer to the [Annotation Chapter](zh-cn/annotation).
 

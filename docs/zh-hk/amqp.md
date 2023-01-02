@@ -67,11 +67,11 @@ return [
 php bin/hyperf.php gen:amqp-producer DemoProducer
 ```
 
-在 DemoProducer 文件中，我們可以修改 `@Producer` 註解對應的字段來替換對應的 `exchange` 和 `routingKey`。
+在 DemoProducer 文件中，我們可以修改 `#[Producer]` 註解對應的字段來替換對應的 `exchange` 和 `routingKey`。
 其中 `payload` 就是最終投遞到消息隊列中的數據，所以我們可以隨意改寫 `__construct` 方法，只要最後賦值 `payload` 即可。
 示例如下。
 
-> 使用 `@Producer` 註解時需 `use Hyperf\Amqp\Annotation\Producer;` 命名空間；   
+> 使用 `#[Producer]` 註解時需 `use Hyperf\Amqp\Annotation\Producer;` 命名空間；   
 
 ```php
 <?php
@@ -124,11 +124,11 @@ $result = $producer->produce($message);
 php bin/hyperf.php gen:amqp-consumer DemoConsumer
 ```
 
-在 DemoConsumer 文件中，我們可以修改 `@Consumer` 註解對應的字段來替換對應的 `exchange`、`routingKey` 和 `queue`。
+在 DemoConsumer 文件中，我們可以修改 `#[Consumer]` 註解對應的字段來替換對應的 `exchange`、`routingKey` 和 `queue`。
 其中 `$data` 就是解析後的消息數據。
 示例如下。
 
-> 使用 `@Consumer` 註解時需 `use Hyperf\Amqp\Annotation\Consumer;` 命名空間；   
+> 使用 `#[Consumer]` 註解時需 `use Hyperf\Amqp\Annotation\Consumer;` 命名空間；   
 
 ```php
 <?php
@@ -155,10 +155,10 @@ class DemoConsumer extends ConsumerMessage
 
 ### 禁止消費進程自啓
 
-默認情況下，使用了 `@Consumer` 註解後，框架會自動創建子進程啓動消費者，並且會在子進程異常退出後，重新拉起。
+默認情況下，使用了 `#[Consumer]` 註解後，框架會自動創建子進程啓動消費者，並且會在子進程異常退出後，重新拉起。
 如果出於開發階段，進行消費者調試時，可能會因為消費其他消息而導致調試不便。
 
-這種情況，只需要在 `@Consumer` 註解中配置 `enable=false` (默認為 `true` 跟隨服務啓動)或者在對應的消費者中重寫類方法 `isEnable()` 返回 `false` 即可
+這種情況，只需要在 `#[Consumer]` 註解中配置 `enable=false` (默認為 `true` 跟隨服務啓動)或者在對應的消費者中重寫類方法 `isEnable()` 返回 `false` 即可
 
 ```php
 <?php
@@ -190,7 +190,7 @@ class DemoConsumer extends ConsumerMessage
 
 ### 設置最大消費數
 
-可以修改 `@Consumer` 註解中的 `maxConsumption` 屬性，設置此消費者最大處理的消息數，達到指定消費數後，消費者進程會重啓。
+可以修改 `#[Consumer]` 註解中的 `maxConsumption` 屬性，設置此消費者最大處理的消息數，達到指定消費數後，消費者進程會重啓。
 
 ### 消費結果
 

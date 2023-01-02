@@ -66,6 +66,12 @@
   * [API 資源構造器](zh-tw/db/resource.md)
   * [模型全文檢索](zh-tw/scout.md)
 
+* Hyperf 生態
+
+  * [Nano](https://github.com/hyperf/nano)
+  * [GoTask](https://github.com/hyperf/gotask)
+  * [Box](zh-tw/eco/box.md)
+
 * 微服務
 
   * [架構理念](zh-tw/microservice.md)
@@ -79,6 +85,7 @@
   * [配置中心](zh-tw/config-center.md)
   * [呼叫鏈追蹤](zh-tw/tracer.md)
   * [服務監控](zh-tw/metric.md)
+  * [分散式事務](zh-tw/distributed-transaction.md)
   * [Snowflake](zh-tw/snowflake.md)
 
 * 網路服務

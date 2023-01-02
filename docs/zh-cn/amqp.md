@@ -67,11 +67,11 @@ return [
 php bin/hyperf.php gen:amqp-producer DemoProducer
 ```
 
-在 DemoProducer 文件中，我们可以修改 `@Producer` 注解对应的字段来替换对应的 `exchange` 和 `routingKey`。
+在 DemoProducer 文件中，我们可以修改 `#[Producer]` 注解对应的字段来替换对应的 `exchange` 和 `routingKey`。
 其中 `payload` 就是最终投递到消息队列中的数据，所以我们可以随意改写 `__construct` 方法，只要最后赋值 `payload` 即可。
 示例如下。
 
-> 使用 `@Producer` 注解时需 `use Hyperf\Amqp\Annotation\Producer;` 命名空间；   
+> 使用 `#[Producer]` 注解时需 `use Hyperf\Amqp\Annotation\Producer;` 命名空间；   
 
 ```php
 <?php
@@ -124,11 +124,11 @@ $result = $producer->produce($message);
 php bin/hyperf.php gen:amqp-consumer DemoConsumer
 ```
 
-在 DemoConsumer 文件中，我们可以修改 `@Consumer` 注解对应的字段来替换对应的 `exchange`、`routingKey` 和 `queue`。
+在 DemoConsumer 文件中，我们可以修改 `#[Consumer]` 注解对应的字段来替换对应的 `exchange`、`routingKey` 和 `queue`。
 其中 `$data` 就是解析后的消息数据。
 示例如下。
 
-> 使用 `@Consumer` 注解时需 `use Hyperf\Amqp\Annotation\Consumer;` 命名空间；   
+> 使用 `#[Consumer]` 注解时需 `use Hyperf\Amqp\Annotation\Consumer;` 命名空间；   
 
 ```php
 <?php
@@ -155,10 +155,10 @@ class DemoConsumer extends ConsumerMessage
 
 ### 禁止消费进程自启
 
-默认情况下，使用了 `@Consumer` 注解后，框架会自动创建子进程启动消费者，并且会在子进程异常退出后，重新拉起。
+默认情况下，使用了 `#[Consumer]` 注解后，框架会自动创建子进程启动消费者，并且会在子进程异常退出后，重新拉起。
 如果出于开发阶段，进行消费者调试时，可能会因为消费其他消息而导致调试不便。
 
-这种情况，只需要在 `@Consumer` 注解中配置 `enable=false` (默认为 `true` 跟随服务启动)或者在对应的消费者中重写类方法 `isEnable()` 返回 `false` 即可
+这种情况，只需要在 `#[Consumer]` 注解中配置 `enable=false` (默认为 `true` 跟随服务启动)或者在对应的消费者中重写类方法 `isEnable()` 返回 `false` 即可
 
 ```php
 <?php
@@ -190,7 +190,7 @@ class DemoConsumer extends ConsumerMessage
 
 ### 设置最大消费数
 
-可以修改 `@Consumer` 注解中的 `maxConsumption` 属性，设置此消费者最大处理的消息数，达到指定消费数后，消费者进程会重启。
+可以修改 `#[Consumer]` 注解中的 `maxConsumption` 属性，设置此消费者最大处理的消息数，达到指定消费数后，消费者进程会重启。
 
 ### 消费结果
 

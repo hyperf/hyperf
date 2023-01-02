@@ -5,33 +5,33 @@
 
 ## BC breaks
 
-- 框架移除了 `@Annotation` 的支持，全部使用 `PHP8` 原生注解 `Attribute`，更新前务必检查项目中，是否已经全部替换为 `Attribute`。
+- The framework removes `@Annotation` support, and uses `PHP8` native annotation `Attribute`. Before updating, be sure to check whether the project has been replaced by `Attribute`.
 
-可以执行以下脚本，将 `Doctrine Annotations` 转化为 `PHP8 Attributes`.
+The following script can be executed to convert `Doctrine Annotations` to `PHP8 Attributes`.
 
-**注意: 这个脚本只能在 2.2 版本下执行**
+**Note: This script can only be executed under version 2.2**
 
 ```shell
 composer require hyperf/code-generator
 php bin/hyperf.php code:generate -D app
 ```
 
-- 升级模型脚本
+- Database Model upgrade script
 
-> 因为模型基类增加了成员变量的类型支持，所以需要使用以下脚本，将其升级为新版本。
+> Because the model base class has added type support for member variables, you need to use the following script to upgrade it to a new version.
 
 ```shell
 composer require hyperf/code-generator
 php vendor/bin/regenerate-models.php $PWD/app/Model
 ```
 
-- 框架为类库增加了更多的类型限制，所以从 `2.2` 更新到 `3.0` 版本时，需要跑一遍静态检测。
+- The framework adds more type restrictions to the class library, so when updating from `2.2` to `3.0`, you need to run a static check to make sure it is works.
 
 ```shell
-composer analyse
+composer analysis
 ```
 
-- 框架根据 `GRPC` 规范修改了 `GRPC Server` 返回的 `Http status` 固定为为 200， `GRPC Server` 返回对应的 `status code`,更新前如果有使用 `GRPC`,请务必将相关的服务升级到 3.x 版本
+- The framework modifies the `Http status` returned by `gRPC Server` according to the `gRPC` specification. It is fixed at 200, and `gRPC Server` returns the corresponding `status code`. Service upgrade to version 3.x
 
 ## Dependencies Upgrade
 

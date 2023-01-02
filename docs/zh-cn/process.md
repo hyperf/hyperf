@@ -38,7 +38,7 @@ return [
 
 ### 通过注解注册
 
-只需在自定义进程类上定义 `@Process` 注解，Hyperf 会收集并自动完成注册工作：
+只需在自定义进程类上定义 `#[Process]` 注解，Hyperf 会收集并自动完成注册工作：
 
 ```php
 <?php
@@ -59,7 +59,7 @@ class FooProcess extends AbstractProcess
 }
 ```
 
-> 使用 `@Process` 注解时需 `use Hyperf\Process\Annotation\Process;` 命名空间；   
+> 使用 `#[Process]` 注解时需 `use Hyperf\Process\Annotation\Process;` 命名空间；   
 
 ## 为进程启动加上条件
 
@@ -92,7 +92,7 @@ class FooProcess extends AbstractProcess
 
 ## 设置自定义进程
 
-自定义进程存在一些可设置的参数，均可以通过 在子类上重写参数对应的属性 或 在 `@Process` 注解内定义对应的属性 两种方式来进行定义。
+自定义进程存在一些可设置的参数，均可以通过 在子类上重写参数对应的属性 或 在 `#[Process]` 注解内定义对应的属性 两种方式来进行定义。
 
 ```php
 <?php

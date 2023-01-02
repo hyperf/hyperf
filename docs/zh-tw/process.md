@@ -38,7 +38,7 @@ return [
 
 ### 透過註解註冊
 
-只需在自定義程序類上定義 `@Process` 註解，Hyperf 會收集並自動完成註冊工作：
+只需在自定義程序類上定義 `#[Process]` 註解，Hyperf 會收集並自動完成註冊工作：
 
 ```php
 <?php
@@ -59,7 +59,7 @@ class FooProcess extends AbstractProcess
 }
 ```
 
-> 使用 `@Process` 註解時需 `use Hyperf\Process\Annotation\Process;` 名稱空間；   
+> 使用 `#[Process]` 註解時需 `use Hyperf\Process\Annotation\Process;` 名稱空間；   
 
 ## 為程序啟動加上條件
 
@@ -92,7 +92,7 @@ class FooProcess extends AbstractProcess
 
 ## 設定自定義程序
 
-自定義程序存在一些可設定的引數，均可以透過 在子類上重寫引數對應的屬性 或 在 `@Process` 註解內定義對應的屬性 兩種方式來進行定義。
+自定義程序存在一些可設定的引數，均可以透過 在子類上重寫引數對應的屬性 或 在 `#[Process]` 註解內定義對應的屬性 兩種方式來進行定義。
 
 ```php
 <?php

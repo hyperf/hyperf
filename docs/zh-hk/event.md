@@ -67,7 +67,7 @@ class UserRegisteredListener implements ListenerInterface
     /**
      * @param UserRegistered $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         // 事件觸發後該監聽器要執行的代碼寫在這裏，比如該示例下的發送用户註冊成功短信等
         // 直接訪問 $event 的 user 屬性獲得事件觸發時傳遞的參數值
@@ -90,7 +90,7 @@ return [
 
 ### 通過註解註冊監聽器
 
-Hyperf 還提供了一種更加簡便的監聽器註冊方式，就是通過 `@Listener` 註解註冊，只要將該註解定義在監聽器類上，且監聽器類處於 `Hyperf 註解掃描域` 內即可自動完成註冊，代碼示例如下：
+Hyperf 還提供了一種更加簡便的監聽器註冊方式，就是通過 `#[Listener]` 註解註冊，只要將該註解定義在監聽器類上，且監聽器類處於 `Hyperf 註解掃描域` 內即可自動完成註冊，代碼示例如下：
 
 ```php
 <?php
@@ -114,7 +114,7 @@ class UserRegisteredListener implements ListenerInterface
     /**
      * @param UserRegistered $event
      */
-    public function process(object $event)
+    public function process(object $event): void
     {
         // 事件觸發後該監聽器要執行的代碼寫在這裏，比如該示例下的發送用户註冊成功短信等
         // 直接訪問 $event 的 user 屬性獲得事件觸發時傳遞的參數值
@@ -123,9 +123,9 @@ class UserRegisteredListener implements ListenerInterface
 }
 ```
 
-在通過註解註冊監聽器時，我們可以通過設置 `priority` 屬性定義當前監聽器的順序，如 `@Listener(priority=1)` ，底層使用 `SplPriorityQueue` 結構儲存，`priority` 數字越大優先級越高。
+在通過註解註冊監聽器時，我們可以通過設置 `priority` 屬性定義當前監聽器的順序，如 `#[Listener(priority=1)]` ，底層使用 `SplPriorityQueue` 結構儲存，`priority` 數字越大優先級越高。
 
-> 使用 `@Listener` 註解時需 `use Hyperf\Event\Annotation\Listener;` 命名空間；  
+> 使用 `#[Listener]` 註解時需 `use Hyperf\Event\Annotation\Listener;` 命名空間；  
 
 ### 觸發事件
 

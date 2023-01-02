@@ -70,7 +70,7 @@ $result = $exec->execute(new Task([MethodTask::class, 'handle'], [Coroutine::id(
 
 ### Using annotations
 
-It is not particularly intuitive to use `active method delivery`. Here we implement the corresponding `@Task` annotation and rewrite the method call through `AOP`. When in the `Worker` process, it is automatically delivered to the `Task` process, and the coroutine waits for the data to return.
+It is not particularly intuitive to use `active method delivery`. Here we implement the corresponding `#[Task]` annotation and rewrite the method call through `AOP`. When in the `Worker` process, it is automatically delivered to the `Task` process, and the coroutine waits for the data to return.
 
 ```php
 <?php
@@ -97,7 +97,7 @@ $task = $container->get(AnnotationTask::class);
 $result = $task->handle(Coroutine::id());
 ```
 
-> `use Hyperf\Task\Annotation\Task;` is required when using the `@Task` annotation
+> `use Hyperf\Task\Annotation\Task;` is required when using the `#[Task]` annotation
 
 The annotation supports the following parameters
 
