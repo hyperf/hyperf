@@ -22,4 +22,4 @@ Via these traits, Hyperf has discovered the untapped potential in many fields: i
 
 # Production ready
 
-Alongside our well-maintained, multilingual documentation, a large number of unit tests for each component ensure logical correctness. Before `Hyperf` was released to the public (2019-06-20), it was used privately for multiple services in series-C and series-B Internet companies, which have been running without incident for years in harsh production environments.
+Alongside our well-maintained, multilingual documentation, a large number of unit tests for each component ensure logical correctness. Before `Hyperf` was released to the public (2019-06-20), it had been privately used by some medium and large Internet companies for multiple services, which have been running without incident for years in harsh production environments.
