@@ -36,13 +36,13 @@ Router::addRoute(['GET', 'POST', 'HEAD'], '/multi', [\App\Controller\IndexContro
 
 ### Define routes via annotations
 
-`Hyperf` provides an [Annotations](en/annotation.md) feature which makes it fast and easy to define routes. Hyperf provides `@Controller` and `@AutoController` annotations for use in a `Controller` class. For in-depth instructions, please refer to the [Routing](en/router.md) chapter. Here are some quick examples:
+`Hyperf` provides an [Annotations](en/annotation.md) feature which makes it fast and easy to define routes. Hyperf provides `#[Controller]` and `#[AutoController]` annotations for use in a `Controller` class. For in-depth instructions, please refer to the [Routing](en/router.md) chapter. Here are some quick examples:
 
-### Define routes via `@AutoController`
+### Define routes via `#[AutoController]`
 
-`@AutoController` provides automatic routing bindings for most simple routing scenarios. When using `@AutoController`, `Hyperf` will automatically parse all `public` methods of the class and provide `GET` and `POST` requests for each of those methods.
+`#[AutoController]` provides automatic routing bindings for most simple routing scenarios. When using `#[AutoController]`, `Hyperf` will automatically parse all `public` methods of the class and provide `GET` and `POST` requests for each of those methods.
 
-> `@AutoController` annotations require the namespace `use Hyperf\HttpServer\Annotation\AutoController;`
+> `#[AutoController]` annotations require the namespace `use Hyperf\HttpServer\Annotation\AutoController;`
 
 ```php
 <?php
@@ -53,9 +53,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController
 {
     // Hyperf will automatically generate a `/index/index` route for this method, allowing GET or POST requests
@@ -68,19 +66,19 @@ class IndexController
 }
 ```
 
-### Define routes via `@Controller`
+### Define routes via `#[Controller]`
 
-For more flexible routing definitions, `@Controller` can be used instead of `@AutoController`. Using a `@Controller` annotation in a class makes it a `Controller class`, and the `@RequestMapping` annotation can be used to define the request methods and paths.
+For more flexible routing definitions, `#[Controller]` can be used instead of `#[AutoController]`. Using a `#[Controller]` annotation in a class makes it a `Controller class`, and the `#[RequestMapping]` annotation can be used to define the request methods and paths.
 
-`Hyperf` also provides a variety of quick and convenient `Mapping annotations`, such as `@GetMapping`, `@PostMapping`, `@PutMapping`, `@PatchMapping`, `@DeleteMapping`, which can replace `@RequestMapping` to save you time when a route only needs a single HTTP method.
+`Hyperf` also provides a variety of quick and convenient `Mapping annotations`, such as `#[GetMapping]`, `#[PostMapping]`, `#[PutMapping]`, `#[PatchMapping]`, `#[DeleteMapping]`, which can replace `#[RequestMapping]` to save you time when a route only needs a single HTTP method.
 
-> `@Controller` annotations require the namespace `use Hyperf\HttpServer\Annotation\Controller;`
-> `@RequestMapping` annotations require the namespace `use Hyperf\HttpServer\Annotation\RequestMapping;` 
-> `@GetMapping` annotations require the namespace `use Hyperf\HttpServer\Annotation\GetMapping;`  
-> `@PostMapping` annotations require the namespace `use Hyperf\HttpServer\Annotation\PostMapping;` 
-> `@PutMapping` annotations require the namespace `use Hyperf\HttpServer\Annotation\PutMapping;`  
-> `@PatchMapping` annotations require the namespace `use Hyperf\HttpServer\Annotation\PatchMapping;`
-> `@DeleteMapping` annotations require the namespace `use Hyperf\HttpServer\Annotation\DeleteMapping;`
+> `#[Controller]` annotations require the namespace `use Hyperf\HttpServer\Annotation\Controller;`
+> `#[RequestMapping]` annotations require the namespace `use Hyperf\HttpServer\Annotation\RequestMapping;` 
+> `#[GetMapping]` annotations require the namespace `use Hyperf\HttpServer\Annotation\GetMapping;`  
+> `#[PostMapping]` annotations require the namespace `use Hyperf\HttpServer\Annotation\PostMapping;` 
+> `#[PutMapping]` annotations require the namespace `use Hyperf\HttpServer\Annotation\PutMapping;`  
+> `#[PatchMapping]` annotations require the namespace `use Hyperf\HttpServer\Annotation\PatchMapping;`
+> `#[DeleteMapping]` annotations require the namespace `use Hyperf\HttpServer\Annotation\DeleteMapping;`
 
 ```php
 <?php
@@ -92,15 +90,11 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\Controller;
 use Hyperf\HttpServer\Annotation\RequestMapping;
 
-/**
- * @Controller()
- */
+#[Controller]
 class IndexController
 {
     // Hyperf will automatically generate a `/index/index` route for this method, allowing GET or POST requests
-    /**
-     * @RequestMapping(path="index", methods="get,post")
-     */
+    #[RequestMapping(path: "index", methods: "get,post")]
     public function index(RequestInterface $request)
     {
         // Retrieve the id parameter from the request
@@ -126,9 +120,7 @@ namespace App\Controller;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\AutoController;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController
 {
     // Hyperf will automatically generate a `/index/index` route for this method, allowing GET or POST requests
@@ -146,7 +138,7 @@ class IndexController
 
 Dependency injection is a very powerful feature provided by `Hyperf` and is the foundation for the flexibility of the framework.
 
-`Hyperf` provides two methods of injection, one is through constructor injection, the other is through the `@Inject` annotation injection, below are examples for both methods:
+`Hyperf` provides two methods of injection, one is through constructor injection, the other is through the `#[Inject]` annotation injection, below are examples for both methods:
 
 Suppose we have an `\App\Service\UserService` class. There is a `getInfoById(int $id)` method in the class that takes an `id` argument and returns a user entity. The return type and internals aren't relevant to this documentation, so we won't pay them too much attention, what we want is to get `UserService` in our class and to use the methods of that class. The normal method is to instantiate the `UserService` class through `new UserService()`, but in `Hyperf` using dependency injection, we have a better solution.
 
@@ -164,15 +156,11 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Annotation\AutoController;
 use App\Service\UserService;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController
 {
-    /**
-     * @var UserService
-     */
-    private $userService;
+
+    private UserService $userService;
     
     // Declare the parameter type within the constructor's arguments, and Hyperf will automatically inject the corresponding object or value.
     public function __construct(UserService $userService)
@@ -189,11 +177,11 @@ class IndexController
 }
 ```
 
-### Injection via `@Inject` annotation
+### Injection via `#[Inject]` annotation
 
-Declare the parameter type above the corresponding class property via `@var` and use the `@Inject` annotation. `Hyperf` will automatically inject the corresponding object or value.
+Declare the parameter type above the corresponding class property via `@var` and use the `#[Inject]` annotation. `Hyperf` will automatically inject the corresponding object or value.
 
-> `@Inject` annotations require the namespace `use Hyperf\Di\Annotation\Inject;`
+> `#[Inject]` annotations require the namespace `use Hyperf\Di\Annotation\Inject;`
 
 ```php
 <?php
@@ -206,16 +194,11 @@ use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\Di\Annotation\Inject;
 use App\Service\UserService;
 
-/**
- * @AutoController()
- */
+#[AutoController]
 class IndexController
 {
-    /**
-     * @Inject()
-     * @var UserService
-     */
-    private $userService;
+    #[Inject]
+    private UserService $userService;
     
     // /index/info
     public function info(RequestInterface $request)

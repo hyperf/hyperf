@@ -205,7 +205,7 @@ class FooNamespace extends BaseNamespace {
 
 Socket.io 通过自定义命名空间实现多路复用。（注意：不是 PHP 的命名空间）
 
-1. 可以通过 `@SocketIONamespace("/xxx")` 将控制器映射为 xxx 的命名空间，
+1. 可以通过 `#[SocketIONamespace("/xxx")]` 将控制器映射为 xxx 的命名空间，
 
 2. 也可通过
 
@@ -309,7 +309,7 @@ class WebSocketController extends BaseNamespace
 }
 ```
 
-2. 可以在控制器上添加 `@Event()` 注解，以方法名作为事件名来分发。此时应注意其他公有方法可能会和事件名冲突。
+2. 可以在控制器上添加 `#[Event]` 注解，以方法名作为事件名来分发。此时应注意其他公有方法可能会和事件名冲突。
 
 ```php
 <?php

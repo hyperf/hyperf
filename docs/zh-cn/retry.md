@@ -34,7 +34,7 @@ public function foo()
 
 建议根据具体业务需要构造自己的注解别名。下面我们演示如何制作最大尝试次数为 3 的新注解。
 
-> 在默认的 `Retry` 注解中，您可以通过 `@Retry(maxAttempts=3)` 来控制最大重试次数。为了演示需要，先假装它不存在。
+> 在默认的 `Retry` 注解中，您可以通过 `#[Retry(maxAttempts=3)]` 来控制最大重试次数。为了演示需要，先假装它不存在。
 
 首先您要新建一个 `注解类` 并继承 `\Hyperf\Retry\Annotations\AbstractRetry` 。
 
@@ -74,7 +74,7 @@ class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 }
 ```
 
-现在 `@MyRetry` 这个注解会导致任何方法都会被循环执行三次，我们还需要加入一个新的策略 `ClassifierRetryPolicy` 来控制什么样的错误才能被重试。加入 `ClassifierRetryPolicy` 后默认只会在抛出 `Throwable` 后重试。
+现在 `#[MyRetry]` 这个注解会导致任何方法都会被循环执行三次，我们还需要加入一个新的策略 `ClassifierRetryPolicy` 来控制什么样的错误才能被重试。加入 `ClassifierRetryPolicy` 后默认只会在抛出 `Throwable` 后重试。
 
 ```php
 <?php
@@ -122,11 +122,11 @@ class MyRetry extends \Hyperf\Retry\Annotation\Retry
 }
 ```
 
-只要确保该文件被 Hyperf 扫描，就可以在方法中使用 `@MyRetry` 注解来重试超时错误了。
+只要确保该文件被 Hyperf 扫描，就可以在方法中使用 `#[MyRetry]` 注解来重试超时错误了。
 
 ## 默认配置
 
-`@Retry` 的完整注解默认属性如下：
+`#[Retry]` 的完整注解默认属性如下：
 
 ```php
 /**
@@ -270,7 +270,7 @@ public $fallback = '';
 
 ### 预算策略 `BudgetRetryPolicy`
 
-每一个 `@Retry` 注解处会生成一个对应的令牌桶，每当注解方法被调用时，就在令牌桶中放入一个具有过期时间(ttl)的令牌。如果发生可重试的错误，重试前要消耗掉对应的令牌数量(percentCanRetry)，否则就不会重试（错误继续向下传递）。比如，当 percentCanRetry=0.2，则每次重试要消耗 5 个令牌。如此，遇到对端宕机时，最多只会造成 20% 的额外重试消耗，对于大多数系统都应该可以接受了。
+每一个 `#[Retry]` 注解处会生成一个对应的令牌桶，每当注解方法被调用时，就在令牌桶中放入一个具有过期时间(ttl)的令牌。如果发生可重试的错误，重试前要消耗掉对应的令牌数量(percentCanRetry)，否则就不会重试（错误继续向下传递）。比如，当 percentCanRetry=0.2，则每次重试要消耗 5 个令牌。如此，遇到对端宕机时，最多只会造成 20% 的额外重试消耗，对于大多数系统都应该可以接受了。
 
 为了照顾某些使用频率较低的方法，每秒还会生成一定数量的“低保”令牌(minRetriesPerSec)，确保系统稳定。
 
@@ -286,13 +286,13 @@ public $fallback = '';
 
 因为重试注解配置较为复杂，这里提供了一些预设的别名便于书写。
 
-* `@RetryThrowable` 只重试 `Throwable`。和默认的 `@Retry` 相同。
+* `#[RetryThrowable]` 只重试 `Throwable`。和默认的 `#[Retry]` 相同。
 
-* `@RetryFalsy` 只重试返回值弱等于 false（$result == false)的错误，不重试异常。
+* `#[RetryFalsy]` 只重试返回值弱等于 false（$result == false)的错误，不重试异常。
 
-* `@BackoffRetryThrowable` `@RetryThrowable` 的变长重试间歇版本，重试间歇至少 100 毫秒。
+* `#[BackoffRetryThrowable]` `#[RetryThrowable]` 的变长重试间歇版本，重试间歇至少 100 毫秒。
 
-* `@BackoffRetryFalsy` `@RetryFalsy` 的变长重试间歇版本，重试间歇至少 100 毫秒。
+* `#[BackoffRetryFalsy]` `#[RetryFalsy]` 的变长重试间歇版本，重试间歇至少 100 毫秒。
 
 ## Fluent 链式调用
 

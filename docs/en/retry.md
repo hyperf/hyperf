@@ -34,7 +34,7 @@ This component achieves pluggability by combining multiple retry strategies. Eac
 
 It is recommended to construct your own annotation aliases according to specific business needs. Below we demonstrate how to make a new annotation with a maximum number of attempts of 3.
 
-> In the default `Retry` annotation, you can control the maximum number of retries with `@Retry(maxAttempts=3)`. For the sake of demonstration, pretend it doesn't exist.
+> In the default `Retry` annotation, you can control the maximum number of retries with `#[Retry(maxAttempts=3)]`. For the sake of demonstration, pretend it doesn't exist.
 
 First you need to create an `annotation class` and inherit `\Hyperf\Retry\Annotations\AbstractRetry`.
 
@@ -74,7 +74,7 @@ class MyRetry extends \Hyperf\Retry\Annotation\AbstractRetry
 }
 ```
 
-Now that the `@MyRetry` annotation will cause any method to be executed three times in a loop, we also need to add a new policy `ClassifierRetryPolicy` to control what errors can be retried. Adding `ClassifierRetryPolicy` will only retry after throwing `Throwable` by default.
+Now that the `#[MyRetry]` annotation will cause any method to be executed three times in a loop, we also need to add a new policy `ClassifierRetryPolicy` to control what errors can be retried. Adding `ClassifierRetryPolicy` will only retry after throwing `Throwable` by default.
 
 ```php
 <?php
@@ -122,11 +122,11 @@ class MyRetry extends \Hyperf\Retry\Annotation\Retry
 }
 ```
 
-Just make sure the file is scanned by Hyperf, you can use the `@MyRetry` annotation in the method to retry timeout errors.
+Just make sure the file is scanned by Hyperf, you can use the `#[MyRetry]` annotation in the method to retry timeout errors.
 
 ## default allocation
 
-The full annotation default properties of `@Retry` are as follows:
+The full annotation default properties of `#[Retry]` are as follows:
 
 ```php
 /**
@@ -270,7 +270,7 @@ After the retry fails, the retry session is directly marked as circuit breaker f
 
 ### Budget Policy `BudgetRetryPolicy`
 
-Each `@Retry` annotation will generate a corresponding token bucket, and whenever the annotation method is called, a token with an expiration time (ttl) is placed in the token bucket. If a retryable error occurs, the corresponding number of tokens (percentCanRetry) must be consumed before retrying, otherwise it will not be retried (the error continues to pass down). For example, when percentCanRetry=0.2, each retry consumes 5 tokens. In this way, when the peer is down, at most 20% of the additional retry consumption will be incurred, which should be acceptable for most systems.
+Each `#[Retry]` annotation will generate a corresponding token bucket, and whenever the annotation method is called, a token with an expiration time (ttl) is placed in the token bucket. If a retryable error occurs, the corresponding number of tokens (percentCanRetry) must be consumed before retrying, otherwise it will not be retried (the error continues to pass down). For example, when percentCanRetry=0.2, each retry consumes 5 tokens. In this way, when the peer is down, at most 20% of the additional retry consumption will be incurred, which should be acceptable for most systems.
 
 To take care of some less frequently used methods, a certain number of "mini-guarantee" tokens (minRetriesPerSec) are also generated per second to ensure system stability.
 
@@ -286,13 +286,13 @@ To take care of some less frequently used methods, a certain number of "mini-gua
 
 Because the retry annotation configuration is more complicated, some preset aliases are provided here for easy writing.
 
-* `@RetryThrowable` only retry `Throwable`. Same as default `@Retry`.
+* `#[RetryThrowable]` only retry `Throwable`. Same as default `#[Retry]`.
 
-* `@RetryFalsy` only retry errors whose return value is weakly equal to false ($result == false), not exceptions.
+* `#[RetryFalsy]` only retry errors whose return value is weakly equal to false ($result == false), not exceptions.
 
-* `@BackoffRetryThrowable` A variable length retry interval version of `@RetryThrowable`, with a retry interval of at least 100ms.
+* `#[BackoffRetryThrowable]` A variable length retry interval version of `#[RetryThrowable]`, with a retry interval of at least 100ms.
 
-* `@BackoffRetryFalsy` Variable length retry interval version of `@RetryFalsy`, retry interval is at least 100ms.
+* `#[BackoffRetryFalsy]` Variable length retry interval version of `#[【]RetryFalsy]`, retry interval is at least 100ms.
 
 ## Fluent chain call
 

@@ -957,7 +957,7 @@
 
 ## 新增
 
-- [#2752](https://github.com/hyperf/hyperf/pull/2752) 为注解 `@AutoController` `@Controller` 和 `@Mapping` 添加 `options` 参数，用于设置路由元数据。
+- [#2752](https://github.com/hyperf/hyperf/pull/2752) 为注解 `#[AutoController]` `#[Controller]` 和 `@Mapping` 添加 `options` 参数，用于设置路由元数据。
 
 ## 修复
 
@@ -2208,7 +2208,7 @@ Config Provider 内数据结构的变化：
 
 ## 变更
 
-- [#451](https://github.com/hyperf/hyperf/pull/451) 在使用 `@AutoController` 注解时不再会自动为魔术方法生成对应的路由；
+- [#451](https://github.com/hyperf/hyperf/pull/451) 在使用 `#[AutoController]` 注解时不再会自动为魔术方法生成对应的路由；
 - [#468](https://github.com/hyperf/hyperf/pull/468) 让 GRPC-Server 和 HTTP-Server 提供的异常处理器处理所有的异常，而不只是 `ServerException`；
 
 ## 修复
