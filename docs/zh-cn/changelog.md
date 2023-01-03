@@ -13,7 +13,7 @@
 
 我们提供了脚本，可以更加方便的将 `Doctrine Annotations` 替换为 `PHP8 Attributes`。
 
-**Note: 以下脚本只能在框架 2.2 版本下执行**
+!> Note: 以下脚本只能在框架 2.2 版本下执行
 
 ```shell
 composer require hyperf/code-generator
