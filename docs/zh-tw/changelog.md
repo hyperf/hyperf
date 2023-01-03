@@ -13,7 +13,7 @@
 
 我們提供了指令碼，可以更加方便的將 `Doctrine Annotations` 替換為 `PHP8 Attributes`。
 
-**Note: 以下指令碼只能在框架 2.2 版本下執行**
+!> Note: 以下指令碼只能在框架 2.2 版本下執行
 
 ```shell
 composer require hyperf/code-generator
