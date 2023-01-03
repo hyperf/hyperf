@@ -1,5 +1,42 @@
 # 版本更新記錄
 
+# v3.0.1 - TBD
+
+# v3.0.0 - 2023-01-03
+
+- [#4238](https://github.com/hyperf/hyperf/issues/4238) 更新所有組件PHP最低版本到 8.0
+- [#5087](https://github.com/hyperf/hyperf/pull/5087) 支持 PHP 8.2
+
+## BC breaks
+
+- 框架移除了 `@Annotation` 的使用，全面使用 `PHP8` 的原生註解 `Attribute`。更新框架前，請確保已經全部替換到 PHP8 的原生註解。
+
+我們提供了腳本，可以更加方便的將 `Doctrine Annotations` 替換為 `PHP8 Attributes`。
+
+!> Note: 以下腳本只能在框架 2.2 版本下執行
+
+```shell
+composer require hyperf/code-generator
+php bin/hyperf.php code:generate -D app
+```
+
+- 模型升級腳本
+
+> 因為模型基類，增加了類型限制，所以你需要使用以下腳本，將所有模型更新到新的寫法。
+
+```shell
+composer require hyperf/code-generator
+php vendor/bin/regenerate-models.php $PWD/app/Model
+```
+
+- 框架增加了很多類型限制，所以當你從 `2.2` 升級到 `3.0`版本時，你需要調用靜態檢測腳本，檢查並確保其可以正常工作。
+
+```shell
+composer analysis
+```
+
+- 框架基於 `gRPC` 標準修改了 `gRPC` 服務的 HTTP 返回碼。
+
 # v2.2.33 - 2022-05-30
 
 ## 修復
