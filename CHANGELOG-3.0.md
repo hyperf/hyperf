@@ -1,5 +1,9 @@
 # v3.0.1 - TBD
 
+## Fixed
+
+- [#5287](https://github.com/hyperf/hyperf/pull/5287) Added log records about the exception message when emit failed.
+
 # v3.0.0 - 2023-01-03
 
 - [#4238](https://github.com/hyperf/hyperf/issues/4238) Upgraded the minimum php version to `^8.0` for all components;
