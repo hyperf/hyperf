@@ -46,7 +46,7 @@ class ResponseEmitter implements ResponseEmitterInterface
                 $connection->end();
             }
         } catch (Throwable $exception) {
-            $this->logger->critical((string) $exception);
+            $this->logger?->critical((string) $exception);
         }
     }
 
