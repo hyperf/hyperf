@@ -247,15 +247,20 @@ if (! function_exists('tap')) {
     /**
      * Call the given Closure with the given value then return the value.
      *
+     * @template TValue
+     * 
      * @param null|callable $callback
-     * @param mixed $value
+     * @param TValue $value
+     * @return TValue
      */
     function tap($value, $callback = null)
     {
         if (is_null($callback)) {
             return new HigherOrderTapProxy($value);
         }
+
         $callback($value);
+
         return $value;
     }
 }
