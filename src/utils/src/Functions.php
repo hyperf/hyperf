@@ -248,7 +248,7 @@ if (! function_exists('tap')) {
      * Call the given Closure with the given value then return the value.
      *
      * @template TValue
-     * 
+     *
      * @param null|callable $callback
      * @param TValue $value
      * @return TValue
