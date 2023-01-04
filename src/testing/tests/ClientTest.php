@@ -123,7 +123,7 @@ class ClientTest extends TestCase
 
         $container->shouldReceive('get')->with(HttpDispatcher::class)->andReturn(new HttpDispatcher($container));
         $container->shouldReceive('get')->with(ExceptionHandlerDispatcher::class)->andReturn(new ExceptionHandlerDispatcher($container));
-        $container->shouldReceive('get')->with(ResponseEmitter::class)->andReturn(new ResponseEmitter());
+        $container->shouldReceive('get')->with(ResponseEmitter::class)->andReturn(new ResponseEmitter(null));
         $container->shouldReceive('get')->with(DispatcherFactory::class)->andReturn($factory = new DispatcherFactory());
         $container->shouldReceive('get')->with(NormalizerInterface::class)->andReturn(new SimpleNormalizer());
         $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)->andReturn(new MethodDefinitionCollector());
