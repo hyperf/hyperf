@@ -247,7 +247,7 @@ class ResponseTest extends TestCase
         $this->assertNotInstanceOf(ResponseInterface::class, $response);
         $this->assertInstanceOf(PsrResponseInterface::class, $response);
 
-        $responseEmitter = new ResponseEmitter();
+        $responseEmitter = new ResponseEmitter(null);
         $responseEmitter->emit($response, $swooleResponse, true);
 
         $this->assertSame($psrResponse, Context::get(PsrResponseInterface::class));
