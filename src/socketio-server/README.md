@@ -91,7 +91,7 @@ class WebSocketController extends BaseNamespace
 由于服务端只实现了WebSocket通讯，所以客户端要加上 `{transports:["websocket"]}` 。
 
 ```html
-<script src="https://cdn.bootcdn.net/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
 <script>
     var socket = io('ws://127.0.0.1:9502', { transports: ["websocket"] });
     socket.on('connect', data => {
@@ -174,7 +174,7 @@ SocketIORouter::addNamespace('/xxx' , WebSocketController::class);
 
 在路由中添加。
 
-### 开启 Session 
+### 开启 Session
 
 安装并配置好 hyperf/session 组件及其对应中间件，再通过 `SessionAspect` 切入 SocketIO 来使用 Session 。
 
