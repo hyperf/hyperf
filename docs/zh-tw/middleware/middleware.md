@@ -103,7 +103,7 @@ use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\Middlewares;
 
 #[AutoController]
-#[Middlewares([FooMiddleware::class, BarMiddleware::class)]]
+#[Middlewares([FooMiddleware::class, BarMiddleware::class])]
 class IndexController
 {
     public function index()
