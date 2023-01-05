@@ -5,6 +5,10 @@
 - [#5287](https://github.com/hyperf/hyperf/pull/5287) Added log records about the exception message when emit failed.
 - [#5289](https://github.com/hyperf/hyperf/pull/5289) Fixed bug that server cannot be closed friendly for swow.
 
+## Optimized
+
+- [#5292](https://github.com/hyperf/hyperf/pull/5292) Support Swow for `hyperf/metric`.
+
 # v3.0.0 - 2023-01-03
 
 - [#4238](https://github.com/hyperf/hyperf/issues/4238) Upgraded the minimum php version to `^8.0` for all components;
