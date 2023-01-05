@@ -72,7 +72,7 @@ class SwowServer implements ServerInterface
                     CoordinatorManager::until(Constants::WORKER_START)->resume();
                 }
                 $this->eventDispatcher->dispatch(new CoroutineServerStart($name, $server, $config));
-                $server->start(false);
+                $server->start();
                 $this->eventDispatcher->dispatch(new CoroutineServerStop($name, $server));
                 CoordinatorManager::until(Constants::WORKER_EXIT)->resume();
             });
