@@ -14,6 +14,7 @@ namespace Hyperf\Metric\Listener;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Timer;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
@@ -23,7 +24,6 @@ use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Server;
-use Swoole\Timer;
 
 use function gc_status;
 use function getrusage;
@@ -41,9 +41,12 @@ class OnWorkerStart implements ListenerInterface
 
     private ConfigInterface $config;
 
+    private Timer $timer;
+
     public function __construct(protected ContainerInterface $container)
     {
         $this->config = $container->get(ConfigInterface::class);
+        $this->timer = new Timer();
     }
 
     /**
@@ -121,7 +124,7 @@ class OnWorkerStart implements ListenerInterface
 
         $server = $this->container->get(Server::class);
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        $timerId = Timer::tick($timerInterval * 1000, function () use ($metrics, $server) {
+        $timerId = $this->timer->tick($timerInterval * 1000, function () use ($metrics, $server) {
             $serverStats = $server->stats();
             $this->trySet('gc_', $metrics, gc_status());
             $this->trySet('', $metrics, getrusage());
@@ -133,7 +136,7 @@ class OnWorkerStart implements ListenerInterface
         // Clean up timer on worker exit;
         Coroutine::create(function () use ($timerId) {
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
-            Timer::clear($timerId);
+            $this->timer->clear($timerId);
         });
     }
 
