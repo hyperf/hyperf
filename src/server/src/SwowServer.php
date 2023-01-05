@@ -29,6 +29,7 @@ use Psr\Log\LoggerInterface;
 use Swow\Buffer;
 use Swow\Coroutine;
 use Swow\Socket;
+
 use function Swow\Sync\waitAll;
 
 class SwowServer implements ServerInterface
