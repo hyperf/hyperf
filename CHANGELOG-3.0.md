@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#5287](https://github.com/hyperf/hyperf/pull/5287) Added log records about the exception message when emit failed.
+- [#5289](https://github.com/hyperf/hyperf/pull/5289) Fixed bug that server cannot be closed friendly for swow.
 
 # v3.0.0 - 2023-01-03
 
