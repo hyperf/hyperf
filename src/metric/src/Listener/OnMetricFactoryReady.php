@@ -15,13 +15,14 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
+use Hyperf\Engine\Constant;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Metric\MetricSetter;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine;
 use Swoole\Server;
 
 /**
@@ -93,13 +94,16 @@ class OnMetricFactoryReady implements ListenerInterface
 
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
         $timerId = $this->timer->tick($timerInterval * 1000, function () use ($metrics, $serverStats) {
-            $coroutineStats = Coroutine::stats();
-            $timerStats = \Swoole\Timer::stats(); // todo
-            if ($serverStats) {
-                $this->trySet('', $metrics, $serverStats);
+            if (Constant::ENGINE == 'Swoole') {
+                $coroutineStats = \Swoole\Coroutine::stats();
+                $timerStats = \Swoole\Timer::stats();
+                if ($serverStats) {
+                    $this->trySet('', $metrics, $serverStats);
+                }
+                $this->trySet('', $metrics, $coroutineStats);
+                $this->trySet('timer_', $metrics, $timerStats);
             }
-            $this->trySet('', $metrics, $coroutineStats);
-            $this->trySet('timer_', $metrics, $timerStats);
+
             $load = sys_getloadavg();
             $metrics['sys_load']->set(round($load[0] / swoole_cpu_num(), 2));
             $metrics['metric_process_memory_usage']->set(memory_get_usage());
