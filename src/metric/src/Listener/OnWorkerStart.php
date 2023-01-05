@@ -73,14 +73,14 @@ class OnWorkerStart implements ListenerInterface
 
         $this->factory = $this->container->get(MetricFactoryInterface::class);
 
-        /*
+        /**
          * If no standalone process is started, we have to handle metrics on worker.
          */
         if (! $this->config->get('metric.use_standalone_process', true)) {
             $this->spawnHandle();
         }
 
-        /*
+        /**
          * Allow user to hook up their own metrics logic
          */
         if ($this->shouldFireMetricFactoryReadyEvent($workerId)) {
