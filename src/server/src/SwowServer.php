@@ -29,6 +29,7 @@ use Psr\Log\LoggerInterface;
 use Swow\Buffer;
 use Swow\Coroutine;
 use Swow\Socket;
+use function Swow\Sync\waitAll;
 
 class SwowServer implements ServerInterface
 {
@@ -60,6 +61,9 @@ class SwowServer implements ServerInterface
         $this->initServer($this->config);
         $servers = ServerManager::list();
         $config = $this->config->toArray();
+        /**
+         * @var HttpServer $server
+         */
         foreach ($servers as $name => [$type, $server]) {
             Coroutine::run(function () use ($name, $server, $config) {
                 if (! $this->mainServerStarted) {
@@ -77,6 +81,8 @@ class SwowServer implements ServerInterface
         if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield()) {
             $this->closeAll($servers);
         }
+
+        waitAll();
     }
 
     public function getServer(): Socket
