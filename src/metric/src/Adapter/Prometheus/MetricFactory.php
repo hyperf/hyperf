@@ -46,7 +46,7 @@ class MetricFactory implements MetricFactoryInterface
         private ServerFactory $factory
     ) {
         $this->name = $this->config->get('metric.default');
-        $this->guardConfig();
+        // $this->guardConfig();
     }
 
     public function makeCounter(string $name, ?array $labelNames = []): CounterInterface
