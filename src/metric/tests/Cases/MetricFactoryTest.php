@@ -13,6 +13,7 @@ namespace HyperfTest\Metric\Cases;
 
 use Hyperf\Config\Config;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Engine\Http\ServerFactory;
 use Hyperf\Guzzle\ClientFactory;
 use Hyperf\Metric\Adapter\Prometheus\Constants;
 use Hyperf\Metric\Adapter\Prometheus\MetricFactory as PrometheusFactory;
@@ -73,7 +74,7 @@ class MetricFactoryTest extends TestCase
         $r = Mockery::mock(CollectorRegistry::class);
         $c = Mockery::mock(ClientFactory::class);
         $l = Mockery::mock(StdoutLoggerInterface::class);
-        $p = new PrometheusFactory($config, $r, $c, $l);
+        $p = new PrometheusFactory($config, $r, $c, $l, new ServerFactory($l));
         $ref = new ReflectionClass($p);
         $method = $ref->getMethod('getUri');
         $method->setAccessible(true);
