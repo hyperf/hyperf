@@ -108,9 +108,7 @@ class MetricFactory implements MetricFactoryInterface
 
         Coroutine::create(static function () use ($server) {
             CoordinatorManager::until(Coord::WORKER_EXIT)->yield();
-            if (is_callable([$server, 'close'])) {
-                $server->close();
-            }
+            $server->close();
         });
 
         $server->handle($path, function ($request, $response) use ($renderer) {
