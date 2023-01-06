@@ -29,7 +29,6 @@ use Hyperf\Utils\Network;
 use Hyperf\Utils\Str;
 use Prometheus\CollectorRegistry;
 use Prometheus\RenderTextFormat;
-use Psr\Container\ContainerInterface;
 
 class MetricFactory implements MetricFactoryInterface
 {
