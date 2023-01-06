@@ -120,8 +120,8 @@ class MetricFactory implements MetricFactoryInterface
 
         $server->handle(function (RequestInterface $request, mixed $connection) use ($emitter, $renderer) {
             $response = new HyperfResponse();
-            $response->withHeader('Content-Type', RenderTextFormat::MIME_TYPE);
-            $response->withBody(new Stream($renderer->render($this->registry->getMetricFamilySamples())));
+            $response = $response->withHeader('Content-Type', RenderTextFormat::MIME_TYPE)
+                ->withBody(new Stream($renderer->render($this->registry->getMetricFamilySamples())));
             $emitter->emit($response, $connection);
         });
 
