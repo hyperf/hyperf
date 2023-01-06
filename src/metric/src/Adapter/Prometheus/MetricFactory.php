@@ -36,7 +36,6 @@ class MetricFactory implements MetricFactoryInterface
     private string $name;
 
     public function __construct(
-        private ContainerInterface $container,
         private ConfigInterface $config,
         private CollectorRegistry $registry,
         private GuzzleClientFactory $guzzleClientFactory,
@@ -106,7 +105,7 @@ class MetricFactory implements MetricFactoryInterface
         $path = $this->config->get("metric.metric.{$this->name}.scrape_path");
 
         $renderer = new RenderTextFormat();
-        $server = $this->container->get(ServerFactory::class)->make($host, (int) $port);
+        $server = make(ServerFactory::class)->make($host, (int) $port);
 
         Coroutine::create(static function () use ($server) {
             CoordinatorManager::until(Coord::WORKER_EXIT)->yield();
