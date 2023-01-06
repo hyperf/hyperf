@@ -14,15 +14,16 @@ namespace Hyperf\Metric\Listener;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Timer;
+use Hyperf\Engine\Constant;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Metric\MetricSetter;
+use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
-use Swoole\Coroutine;
-use Swoole\Server;
-use Swoole\Timer;
+use Swoole\Server as SwooleServer;
 
 /**
  * Similar to OnWorkerStart, but this only runs in one process.
@@ -35,9 +36,12 @@ class OnMetricFactoryReady implements ListenerInterface
 
     private ConfigInterface $config;
 
+    private Timer $timer;
+
     public function __construct(protected ContainerInterface $container)
     {
         $this->config = $container->get(ConfigInterface::class);
+        $this->timer = new Timer();
     }
 
     /**
@@ -82,21 +86,28 @@ class OnMetricFactoryReady implements ListenerInterface
             'metric_process_memory_usage',
             'metric_process_memory_peak_usage'
         );
+
         $serverStats = null;
-        if (! MetricFactoryPicker::$isCommand) {
-            $server = $this->container->get(Server::class);
-            $serverStats = $server->stats();
+
+        if (! MetricFactoryPicker::$isCommand && $this->container->has(SwooleServer::class) && $server = $this->container->get(SwooleServer::class)) {
+            if ($server instanceof SwooleServer) {
+                $serverStats = $server->stats();
+            }
         }
 
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        $timerId = Timer::tick($timerInterval * 1000, function () use ($metrics, $serverStats) {
-            $coroutineStats = Coroutine::stats();
-            $timerStats = Timer::stats();
-            if ($serverStats) {
-                $this->trySet('', $metrics, $serverStats);
+        $timerId = $this->timer->tick($timerInterval * 1000, function () use ($metrics, $serverStats) {
+            /* @phpstan-ignore-next-line */
+            if (Constant::ENGINE == 'Swoole') {
+                $coroutineStats = \Swoole\Coroutine::stats();
+                $timerStats = \Swoole\Timer::stats();
+                if ($serverStats) {
+                    $this->trySet('', $metrics, $serverStats);
+                }
+                $this->trySet('', $metrics, $coroutineStats);
+                $this->trySet('timer_', $metrics, $timerStats);
             }
-            $this->trySet('', $metrics, $coroutineStats);
-            $this->trySet('timer_', $metrics, $timerStats);
+
             $load = sys_getloadavg();
             $metrics['sys_load']->set(round($load[0] / swoole_cpu_num(), 2));
             $metrics['metric_process_memory_usage']->set(memory_get_usage());
@@ -106,7 +117,7 @@ class OnMetricFactoryReady implements ListenerInterface
         // Clean up timer on worker exit;
         Coroutine::create(function () use ($timerId) {
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
-            Timer::clear($timerId);
+            $this->timer->clear($timerId);
         });
     }
 }

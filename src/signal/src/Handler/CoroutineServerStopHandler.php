@@ -15,7 +15,6 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Process\ProcessManager;
-use Hyperf\Server\ServerManager;
 use Hyperf\Signal\SignalHandlerInterface;
 use Psr\Container\ContainerInterface;
 

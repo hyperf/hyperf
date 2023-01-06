@@ -13,6 +13,7 @@
     "require": {
         "php": ">=8.0",
         "hyperf/contract": "~3.0.0",
+        "hyperf/engine": "^1.4|^2.2",
         "hyperf/guzzle": "~3.0.0",
         "hyperf/utils": "~3.0.0",
         "promphp/prometheus_client_php": "2.2.*",

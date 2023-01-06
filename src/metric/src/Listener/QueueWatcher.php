@@ -15,11 +15,11 @@ use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Coordinator\Timer;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
-use Swoole\Timer;
 
 /**
  * A simple redis queue watcher served as an example.
@@ -28,8 +28,11 @@ use Swoole\Timer;
  */
 class QueueWatcher implements ListenerInterface
 {
+    private Timer $timer;
+
     public function __construct(protected ContainerInterface $container)
     {
+        $this->timer = new Timer();
     }
 
     /**
@@ -67,7 +70,7 @@ class QueueWatcher implements ListenerInterface
 
         $config = $this->container->get(ConfigInterface::class);
         $timerInterval = $config->get('metric.default_metric_interval', 5);
-        $timerId = Timer::tick($timerInterval * 1000, function () use ($waiting, $delayed, $failed, $timeout, $queue) {
+        $timerId = $this->timer->tick($timerInterval * 1000, function () use ($waiting, $delayed, $failed, $timeout, $queue) {
             $info = $queue->info();
             $waiting->set((float) $info['waiting']);
             $delayed->set((float) $info['delayed']);
@@ -76,7 +79,7 @@ class QueueWatcher implements ListenerInterface
         });
         Coroutine::create(function () use ($timerId) {
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
-            Timer::clear($timerId);
+            $this->timer->clear($timerId);
         });
     }
 }

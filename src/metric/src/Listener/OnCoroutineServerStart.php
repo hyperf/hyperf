@@ -16,10 +16,11 @@ use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
 use Hyperf\Event\Contract\ListenerInterface;
-use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
+use Hyperf\Metric\Exception\RuntimeException;
 use Hyperf\Metric\MetricSetter;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -31,9 +32,9 @@ use function memory_get_usage;
 
 /**
  * Collect and handle metrics before worker start.
- * Only used for swoole process mode.
+ * Only used for swoole coroutine mode or swow mode.
  */
-class OnWorkerStart implements ListenerInterface
+class OnCoroutineServerStart implements ListenerInterface
 {
     use MetricSetter;
 
@@ -42,6 +43,8 @@ class OnWorkerStart implements ListenerInterface
     private ConfigInterface $config;
 
     private Timer $timer;
+
+    private bool $running = false;
 
     public function __construct(protected ContainerInterface $container)
     {
@@ -55,7 +58,7 @@ class OnWorkerStart implements ListenerInterface
     public function listen(): array
     {
         return [
-            BeforeWorkerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 
@@ -65,28 +68,27 @@ class OnWorkerStart implements ListenerInterface
      */
     public function process(object $event): void
     {
-        $workerId = $event->workerId;
-
-        if ($workerId === null) {
+        if ($this->running) {
             return;
         }
+
+        $this->running = true;
 
         $this->factory = $this->container->get(MetricFactoryInterface::class);
 
         /*
          * If no standalone process is started, we have to handle metrics on worker.
          */
-        if (! $this->config->get('metric.use_standalone_process', true)) {
-            $this->spawnHandle();
+        if ($this->config->get('metric.use_standalone_process', true)) {
+            throw new RuntimeException(
+                "Coroutine mode server must be used in conjunction without standalone process. \n Set metric.use_standalone_process to false to avoid this error."
+            );
         }
 
-        /*
-         * Allow user to hook up their own metrics logic
-         */
-        if ($this->shouldFireMetricFactoryReadyEvent($workerId)) {
-            $eventDispatcher = $this->container->get(EventDispatcherInterface::class);
-            $eventDispatcher->dispatch(new MetricFactoryReady($this->factory));
-        }
+        $this->spawnHandle();
+
+        $eventDispatcher = $this->container->get(EventDispatcherInterface::class);
+        $eventDispatcher->dispatch(new MetricFactoryReady($this->factory));
 
         if (! $this->config->get('metric.enable_default_metric', false)) {
             return;
@@ -94,9 +96,9 @@ class OnWorkerStart implements ListenerInterface
 
         // The following metrics MUST be collected in worker.
         $metrics = $this->factoryMetrics(
-            ['worker' => (string) $workerId],
-            'worker_request_count',
-            'worker_dispatch_count',
+            [],
+            // 'worker_request_count',
+            // 'worker_dispatch_count',
             'memory_usage',
             'memory_peak_usage',
             'gc_runs',
@@ -124,12 +126,8 @@ class OnWorkerStart implements ListenerInterface
 
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
         $timerId = $this->timer->tick($timerInterval * 1000, function () use ($metrics) {
-            $server = $this->container->get(\Swoole\Server::class);
-            $serverStats = $server->stats();
             $this->trySet('gc_', $metrics, gc_status());
             $this->trySet('', $metrics, getrusage());
-            $metrics['worker_request_count']->set($serverStats['worker_request_count']);
-            $metrics['worker_dispatch_count']->set($serverStats['worker_dispatch_count']);
 
             $metrics['memory_usage']->set(memory_get_usage());
             $metrics['memory_peak_usage']->set(memory_get_peak_usage());
@@ -139,11 +137,5 @@ class OnWorkerStart implements ListenerInterface
             CoordinatorManager::until(Constants::WORKER_EXIT)->yield();
             $this->timer->clear($timerId);
         });
-    }
-
-    private function shouldFireMetricFactoryReadyEvent(int $workerId): bool
-    {
-        return (! $this->config->get('metric.use_standalone_process', true))
-            && $workerId == 0;
     }
 }
