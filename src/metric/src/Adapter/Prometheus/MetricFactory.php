@@ -15,6 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants as Coord;
 use Hyperf\Coordinator\CoordinatorManager;
+use Hyperf\Engine\Http\ServerFactory;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
 use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
@@ -28,13 +29,14 @@ use Hyperf\Utils\Network;
 use Hyperf\Utils\Str;
 use Prometheus\CollectorRegistry;
 use Prometheus\RenderTextFormat;
-use Swoole\Coroutine\Http\Server;
+use Psr\Container\ContainerInterface;
 
 class MetricFactory implements MetricFactoryInterface
 {
     private string $name;
 
     public function __construct(
+        private ContainerInterface $container,
         private ConfigInterface $config,
         private CollectorRegistry $registry,
         private GuzzleClientFactory $guzzleClientFactory,
@@ -102,16 +104,22 @@ class MetricFactory implements MetricFactoryInterface
         $host = $this->config->get("metric.metric.{$this->name}.scrape_host");
         $port = $this->config->get("metric.metric.{$this->name}.scrape_port");
         $path = $this->config->get("metric.metric.{$this->name}.scrape_path");
+
         $renderer = new RenderTextFormat();
-        $server = new Server($host, (int) $port, false, true);
+        $server = $this->container->get(ServerFactory::class)->make($host, (int) $port);
+
         Coroutine::create(static function () use ($server) {
             CoordinatorManager::until(Coord::WORKER_EXIT)->yield();
-            $server->shutdown();
+            if (is_callable([$server, 'close'])) {
+                $server->close();
+            }
         });
+
         $server->handle($path, function ($request, $response) use ($renderer) {
             $response->header('Content-Type', RenderTextFormat::MIME_TYPE);
-            $response->end($renderer->render($this->registry->getMetricFamilySamples()));
+            $response->emit($renderer->render($this->registry->getMetricFamilySamples()));
         });
+
         $server->start();
     }
 
