@@ -46,7 +46,6 @@ class MetricFactory implements MetricFactoryInterface
         private ServerFactory $factory
     ) {
         $this->name = $this->config->get('metric.default');
-        // $this->guardConfig();
     }
 
     public function makeCounter(string $name, ?array $labelNames = []): CounterInterface
@@ -151,16 +150,6 @@ class MetricFactory implements MetricFactoryInterface
     {
         $name = $this->config->get("metric.metric.{$this->name}.namespace");
         return preg_replace('#[^a-zA-Z0-9:_]#', '_', Str::snake($name));
-    }
-
-    private function guardConfig()
-    {
-        if ($this->config->get("metric.metric.{$this->name}.mode") == Constants::SCRAPE_MODE
-            && $this->config->get('metric.use_standalone_process', true) == false) {
-            throw new RuntimeException(
-                "Prometheus in scrape mode must be used in conjunction with standalone process. \n Set metric.use_standalone_process to true to avoid this error."
-            );
-        }
     }
 
     private function getUri(string $address, string $job): string
