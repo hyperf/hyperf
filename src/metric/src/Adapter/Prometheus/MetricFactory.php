@@ -16,7 +16,10 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants as Coord;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Http\ServerFactory;
+use Hyperf\Engine\Http\Stream;
+use Hyperf\Engine\ResponseEmitter;
 use Hyperf\Guzzle\ClientFactory as GuzzleClientFactory;
+use Hyperf\HttpMessage\Server\Response as HyperfResponse;
 use Hyperf\Metric\Contract\CounterInterface;
 use Hyperf\Metric\Contract\GaugeInterface;
 use Hyperf\Metric\Contract\HistogramInterface;
@@ -29,6 +32,7 @@ use Hyperf\Utils\Network;
 use Hyperf\Utils\Str;
 use Prometheus\CollectorRegistry;
 use Prometheus\RenderTextFormat;
+use Psr\Http\Message\RequestInterface;
 
 class MetricFactory implements MetricFactoryInterface
 {
@@ -38,7 +42,8 @@ class MetricFactory implements MetricFactoryInterface
         private ConfigInterface $config,
         private CollectorRegistry $registry,
         private GuzzleClientFactory $guzzleClientFactory,
-        private StdoutLoggerInterface $logger
+        private StdoutLoggerInterface $logger,
+        private ServerFactory $factory
     ) {
         $this->name = $this->config->get('metric.default');
         $this->guardConfig();
@@ -104,16 +109,20 @@ class MetricFactory implements MetricFactoryInterface
         $path = $this->config->get("metric.metric.{$this->name}.scrape_path");
 
         $renderer = new RenderTextFormat();
-        $server = make(ServerFactory::class)->make($host, (int) $port);
+        $server = $this->factory->make($host, (int) $port);
 
         Coroutine::create(static function () use ($server) {
             CoordinatorManager::until(Coord::WORKER_EXIT)->yield();
             $server->close();
         });
 
-        $server->handle($path, function ($request, $response) use ($renderer) {
-            $response->header('Content-Type', RenderTextFormat::MIME_TYPE);
-            $response->emit($renderer->render($this->registry->getMetricFamilySamples()));
+        $emitter = new ResponseEmitter($this->logger);
+
+        $server->handle(function (RequestInterface $request, mixed $connection) use ($emitter, $renderer) {
+            $response = new HyperfResponse();
+            $response->withHeader('Content-Type', RenderTextFormat::MIME_TYPE);
+            $response->withBody(new Stream($renderer->render($this->registry->getMetricFamilySamples())));
+            $emitter->emit($response, $connection);
         });
 
         $server->start();
