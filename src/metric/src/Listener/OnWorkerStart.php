@@ -125,16 +125,15 @@ class OnWorkerStart implements ListenerInterface
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
         $timerId = $this->timer->tick($timerInterval * 1000, function () use ($metrics) {
             /* @phpstan-ignore-next-line */
-            if (Constant::ENGINE != 'Swoole') {
-                return;
+            if (Constant::ENGINE == 'Swoole') {
+                $server = $this->container->get(\Swoole\Server::class);
+                $serverStats = $server->stats();
+                $this->trySet('gc_', $metrics, gc_status());
+                $this->trySet('', $metrics, getrusage());
+                $metrics['worker_request_count']->set($serverStats['worker_request_count']);
+                $metrics['worker_dispatch_count']->set($serverStats['worker_dispatch_count']);
             }
 
-            $server = $this->container->get(\Swoole\Server::class);
-            $serverStats = $server->stats();
-            $this->trySet('gc_', $metrics, gc_status());
-            $this->trySet('', $metrics, getrusage());
-            $metrics['worker_request_count']->set($serverStats['worker_request_count']);
-            $metrics['worker_dispatch_count']->set($serverStats['worker_dispatch_count']);
             $metrics['memory_usage']->set(memory_get_usage());
             $metrics['memory_peak_usage']->set(memory_get_peak_usage());
         });
