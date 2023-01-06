@@ -53,7 +53,7 @@ class MetricFactoryTest extends TestCase
         $c = Mockery::mock(ClientFactory::class);
         $l = Mockery::mock(StdoutLoggerInterface::class);
         $this->expectException(RuntimeException::class);
-        $p = new PrometheusFactory($config, $r, $c, $l);
+        $p = new PrometheusFactory($config, $r, $c, $l, new ServerFactory($l));
     }
 
     public function testPrometheusGetUri()
@@ -101,7 +101,7 @@ class MetricFactoryTest extends TestCase
         $r = Mockery::mock(CollectorRegistry::class);
         $c = Mockery::mock(ClientFactory::class);
         $l = Mockery::mock(StdoutLoggerInterface::class);
-        $p = new PrometheusFactory($config, $r, $c, $l);
+        $p = new PrometheusFactory($config, $r, $c, $l, new ServerFactory($l));
         $method = new ReflectionMethod(PrometheusFactory::class, 'getNamespace');
         $method->setAccessible(true);
         $this->assertEquals('hello__world_', $method->invoke($p));
