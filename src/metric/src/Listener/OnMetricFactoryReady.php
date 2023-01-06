@@ -88,6 +88,7 @@ class OnMetricFactoryReady implements ListenerInterface
 
         $serverStats = null;
 
+        /* @phpstan-ignore-next-line */
         if (! MetricFactoryPicker::$isCommand && Constant::ENGINE == 'Swoole') {
             $server = $this->container->get(\Swoole\Server::class);
             $serverStats = $server->stats();
