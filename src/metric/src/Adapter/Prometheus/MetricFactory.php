@@ -108,8 +108,8 @@ class MetricFactory implements MetricFactoryInterface
         $path = $this->config->get("metric.metric.{$this->name}.scrape_path");
 
         foreach ($this->config->get('server.servers', []) as $item) {
-            if ($item['port'] === $port) {
-                $this->logger->error(sprintf('Your service has the same port %s as metric scrape mode, which may cause service or scrape mode failure.'), $port);
+            if (isset($item['port']) && $item['port'] == $port) {
+                $this->logger->error(sprintf('Your service has the same port %s as metric scrape mode, which may cause service or scrape mode failure.', $port));
             }
         }
 
