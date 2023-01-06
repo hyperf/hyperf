@@ -1,6 +1,15 @@
 # 版本更新記錄
 
-# v3.0.1 - TBD
+# v3.0.1 - 2023-01-09
+
+## Fixed
+
+- [#5289](https://github.com/hyperf/hyperf/pull/5289) 修復使用 `Swow` 引擎時，`Signal` 組件無法使用的問題。
+
+## Optimized
+
+- [#5287](https://github.com/hyperf/hyperf/pull/5287) 當服務端響應數據時，如果出現異常，則記錄對應日誌。
+- [#5292](https://github.com/hyperf/hyperf/pull/5292) 為組件 `hyperf/metric` 增加 `Swow` 引擎的支持。
 
 # v3.0.0 - 2023-01-03
 
