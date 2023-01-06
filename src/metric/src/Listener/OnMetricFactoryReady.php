@@ -23,6 +23,7 @@ use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Metric\MetricSetter;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
+use Swoole\Server as SwooleServer;
 
 /**
  * Similar to OnWorkerStart, but this only runs in one process.
@@ -88,10 +89,10 @@ class OnMetricFactoryReady implements ListenerInterface
 
         $serverStats = null;
 
-        /* @phpstan-ignore-next-line */
-        if (! MetricFactoryPicker::$isCommand && Constant::ENGINE == 'Swoole') {
-            $server = $this->container->get(\Swoole\Server::class);
-            $serverStats = $server->stats();
+        if (! MetricFactoryPicker::$isCommand && $this->container->has(SwooleServer::class) && $server = $this->container->get(SwooleServer::class)) {
+            if ($server instanceof SwooleServer) {
+                $serverStats = $server->stats();
+            }
         }
 
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
