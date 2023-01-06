@@ -3,6 +3,8 @@
 .project
 *.patch
 .idea/
+.vscode/
+.fleet/
 .git/
 runtime/
 codeCoverage/
