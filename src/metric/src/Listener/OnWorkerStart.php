@@ -15,6 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
+use Hyperf\Engine\Constant;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
@@ -23,7 +24,6 @@ use Hyperf\Metric\MetricSetter;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Swoole\Server;
 
 use function gc_status;
 use function getrusage;
@@ -122,9 +122,13 @@ class OnWorkerStart implements ListenerInterface
             'ru_stime_tv_sec'
         );
 
-        $server = $this->container->get(Server::class);
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        $timerId = $this->timer->tick($timerInterval * 1000, function () use ($metrics, $server) {
+        $timerId = $this->timer->tick($timerInterval * 1000, function () use ($metrics) {
+            if (Constant::ENGINE != 'Swoole') {
+                return;
+            }
+
+            $server = $this->container->get(\Swoole\Server::class);
             $serverStats = $server->stats();
             $this->trySet('gc_', $metrics, gc_status());
             $this->trySet('', $metrics, getrusage());

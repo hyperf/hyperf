@@ -23,7 +23,6 @@ use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Metric\MetricSetter;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
-use Swoole\Server;
 
 /**
  * Similar to OnWorkerStart, but this only runs in one process.
@@ -86,9 +85,11 @@ class OnMetricFactoryReady implements ListenerInterface
             'metric_process_memory_usage',
             'metric_process_memory_peak_usage'
         );
+
         $serverStats = null;
-        if (! MetricFactoryPicker::$isCommand) {
-            $server = $this->container->get(Server::class);
+
+        if (! MetricFactoryPicker::$isCommand && Constant::ENGINE == 'Swoole') {
+            $server = $this->container->get(\Swoole\Server::class);
             $serverStats = $server->stats();
         }
 
