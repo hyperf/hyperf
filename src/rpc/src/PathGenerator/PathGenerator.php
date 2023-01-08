@@ -19,8 +19,7 @@ class PathGenerator implements PathGeneratorInterface
     public function generate(string $service, string $method): string
     {
         $handledNamespace = explode('\\', $service);
-        $handledNamespace = Str::replaceArray('\\', ['/'], end($handledNamespace));
-        $handledNamespace = Str::replaceLast('Service', '', $handledNamespace);
+        $handledNamespace = Str::replaceLast('Service', '', end($handledNamespace));
         $path = Str::snake($handledNamespace);
 
         if ($path[0] !== '/') {
