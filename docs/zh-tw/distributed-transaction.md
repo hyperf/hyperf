@@ -6,7 +6,7 @@
 
 # DTM-Client 介紹
 
-[dtm/dtm-client](https://packagist.org/packages/dtm/dtm-client) 是分散式事務管理器 [DTM](https://github.com/dtm-labs/dtm) 的 PHP 客戶端，已支援 TCC模式、Saga、XA、二階段訊息模式的分散式事務模式，並分別實現了與 DTM Server 以 HTTP 協議或 gRPC 協議通訊，該客戶端可安全運行於 PHP-FPM 和 Swoole 協程環境中，更是對 [Hyperf](https://github.com/hyperf/hyperf) 做了更加易用的功能支援。
+[dtm/dtm-client](https://packagist.org/packages/dtm/dtm-client) 是分散式事務管理器 [DTM](https://github.com/dtm-labs/dtm) 的 PHP 客戶端，已支援 TCC 模式、Saga、XA、二階段訊息模式的分散式事務模式，並分別實現了與 DTM Server 以 HTTP 協議或 gRPC 協議通訊，該客戶端可安全運行於 PHP-FPM 和 Swoole 協程環境中，更是對 [Hyperf](https://github.com/hyperf/hyperf) 做了更加易用的功能支援。
 
 # 關於 DTM
 
@@ -32,16 +32,16 @@ DTM 是一款基於 Go 語言實現的開源分散式事務管理器，提供跨
 |  特性| DTM |                                              SEATA                                               |備註|
 |:-----:|:----:|:------------------------------------------------------------------------------------------------:|:----:|
 |[支援語言](https://dtm.pub/other/opensource.html#lang) |<span style="color:green">Go、C#、Java、Python、PHP...</span>|                            <span style="color:orange">Java、Go</span>                             |DTM 可輕鬆接入一門新語言|
-|[儲存引擎](https://dtm.pub/other/opensource.html#store) |<span style="color:green">支援資料庫、Redis、Mongo等</span>|                              <span style="color:orange">資料庫</span>                               ||
-|[異常處理](https://dtm.pub/other/opensource.html#exception)| <span style="color:green"> 子事務屏障自動處理 </span>|                              <span style="color:orange">手動處理</span>                              |DTM 解決了冪等、懸掛、空補償|
-|[SAGA事務](https://dtm.pub/other/opensource.html#saga) |<span style="color:green">極簡易用</span> |                             <span style="color:orange">複雜狀態機</span>                              ||
+|[儲存引擎](https://dtm.pub/other/opensource.html#store) |<span style="color:green"> 支援資料庫、Redis、Mongo 等 </span>|                              <span style="color:orange"> 資料庫 </span>                               ||
+|[異常處理](https://dtm.pub/other/opensource.html#exception)| <span style="color:green"> 子事務屏障自動處理 </span>|                              <span style="color:orange"> 手動處理 </span>                              |DTM 解決了冪等、懸掛、空補償|
+|[SAGA 事務](https://dtm.pub/other/opensource.html#saga) |<span style="color:green"> 極簡易用 </span> |                             <span style="color:orange"> 複雜狀態機 </span>                              ||
 |[二階段訊息](https://dtm.pub/other/opensource.html#msg)|<span style="color:green">✓</span>|                                 <span style="color:red">✗</span>                                 |最簡訊息最終一致性架構|
-|[TCC事務](https://dtm.pub/other/opensource.html#tcc)| <span style="color:green">✓</span>|                                <span style="color:green">✓</span>                                ||
-|[XA事務](https://dtm.pub/other/opensource.html#xa)|<span style="color:green">✓</span>|                                <span style="color:green">✓</span>                                ||
-|[AT事務](https://dtm.pub/other/opensource.html#at)|<span style="color:orange">建議使用XA</span>|                                <span style="color:green">✓</span>                                |AT 與 XA類似，但有髒回滾|
+|[TCC 事務](https://dtm.pub/other/opensource.html#tcc)| <span style="color:green">✓</span>|                                <span style="color:green">✓</span>                                ||
+|[XA 事務](https://dtm.pub/other/opensource.html#xa)|<span style="color:green">✓</span>|                                <span style="color:green">✓</span>                                ||
+|[AT 事務](https://dtm.pub/other/opensource.html#at)|<span style="color:orange"> 建議使用 XA</span>|                                <span style="color:green">✓</span>                                |AT 與 XA 類似，但有髒回滾|
 |[單服務多資料來源](https://dtm.pub/other/opensource.html#multidb)|<span style="color:green">✓</span>|                                 <span style="color:red">✗</span>                                 ||
-|[通訊協議](https://dtm.pub/other/opensource.html#protocol)|HTTP、gRPC|                                             Dubbo等協議                                             |DTM對雲原生更加友好|
-|[star數量](https://dtm.pub/other/opensource.html#star)|<img src="https://img.shields.io/github/stars/dtm-labs/dtm.svg?style=social" alt="github stars"/>| <img src="https://img.shields.io/github/stars/seata/seata.svg?style=social" alt="github stars"/> |DTM 從 2021-06-04 釋出 0.1版本，發展飛快|
+|[通訊協議](https://dtm.pub/other/opensource.html#protocol)|HTTP、gRPC|                                             Dubbo 等協議                                             |DTM 對雲原生更加友好|
+|[star 數量](https://dtm.pub/other/opensource.html#star)|<img src="https://img.shields.io/github/stars/dtm-labs/dtm.svg?style=social" alt="github stars"/>| <img src="https://img.shields.io/github/stars/seata/seata.svg?style=social" alt="github stars"/> |DTM 從 2021-06-04 釋出 0.1 版本，發展飛快|
 
 從上面對比的特性來看，DTM 在許多方面都具備很大的優勢。如果考慮多語言支援、多儲存引擎支援，那麼 DTM 毫無疑問是您的首選.
 
@@ -105,7 +105,7 @@ return [
 ## 配置中介軟體
 
 在使用之前，需要配置 `DtmClient\Middleware\DtmMiddleware` 中介軟體作為 Server 的全域性中介軟體，該中介軟體支援 PSR-15 規範，可適用於各個支援該規範的的框架。   
-在 Hyperf 中的中介軟體配置可參考 [Hyperf文件 - 中介軟體](https://www.hyperf.wiki/2.2/#/zh-cn/middleware/middleware) 一章。
+在 Hyperf 中的中介軟體配置可參考 [Hyperf 文件 - 中介軟體](https://www.hyperf.wiki/2.2/#/zh-cn/middleware/middleware) 一章。
 
 # 使用
 
@@ -259,15 +259,15 @@ class SagaController
 ```
 
 ## XA 模式
-XA是由X/Open組織提出的分散式事務的規範，XA規範主要定義了(全域性)事務管理器(TM)和(區域性)資源管理器(RM)之間的介面。本地的資料庫如mysql在XA中扮演的是RM角色
+XA 是由 X /Open 組織提出的分散式事務的規範，XA 規範主要定義了(全域性)事務管理器(TM)和(區域性)資源管理器(RM)之間的介面。本地的資料庫如 mysql 在 XA 中扮演的是 RM 角色
 
-XA一共分為兩階段：
+XA 一共分為兩階段：
 
-第一階段（prepare）：即所有的參與者RM準備執行事務並鎖住需要的資源。參與者ready時，向TM報告已準備就緒。 第二階段 (commit/rollback)：當事務管理者(TM)確認所有參與者(RM)都ready後，向所有參與者傳送commit命令。
+第一階段（prepare）：即所有的參與者 RM 準備執行事務並鎖住需要的資源。參與者 ready 時，向 TM 報告已準備就緒。 第二階段 (commit/rollback)：當事務管理者(TM)確認所有參與者(RM)都 ready 後，向所有參與者傳送 commit 命令。
 
-目前主流的資料庫基本都支援XA事務，包括mysql、oracle、sqlserver、postgre
+目前主流的資料庫基本都支援 XA 事務，包括 mysql、oracle、sqlserver、postgre
 
-下面是一個成功完成的XA事物典型的時序圖
+下面是一個成功完成的 XA 事物典型的時序圖
 
 <img src="https://dtm.pub/assets/xa_normal.5a0ce600.jpg" height=600/>
 
@@ -364,4 +364,4 @@ class XAController
 }
 
 ```
-上面的程式碼首先註冊了一個全域性XA事務，然後添加了兩個子事務transIn、transOut。子事務全部執行成功之後，提交給dtm。dtm收到提交的xa全域性事務後，會呼叫所有子事務的xa commit，完成整個xa事務。
+上面的程式碼首先註冊了一個全域性 XA 事務，然後添加了兩個子事務 transIn、transOut。子事務全部執行成功之後，提交給 dtm。dtm 收到提交的 xa 全域性事務後，會呼叫所有子事務的 xa commit，完成整個 xa 事務。

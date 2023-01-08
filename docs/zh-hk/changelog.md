@@ -10,10 +10,11 @@
 
 - [#5287](https://github.com/hyperf/hyperf/pull/5287) 當服務端響應數據時，如果出現異常，則記錄對應日誌。
 - [#5292](https://github.com/hyperf/hyperf/pull/5292) 為組件 `hyperf/metric` 增加 `Swow` 引擎的支持。
+- [#5301](https://github.com/hyperf/hyperf/pull/5301) 優化 `Hyperf\Rpc\PathGenerator\PathGenerator` 的代碼實現。
 
 # v3.0.0 - 2023-01-03
 
-- [#4238](https://github.com/hyperf/hyperf/issues/4238) 更新所有組件PHP最低版本到 8.0
+- [#4238](https://github.com/hyperf/hyperf/issues/4238) 更新所有組件 PHP 最低版本到 8.0
 - [#5087](https://github.com/hyperf/hyperf/pull/5087) 支持 PHP 8.2
 
 ## BC breaks

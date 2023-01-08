@@ -76,7 +76,7 @@ box config set kernel swoole
 - `box config get-php-version <version>`獲取 box 的當前設置的 PHP 版本
 - `box reverse-proxy -u <upsteamHost:upstreamPort>` 啓動一個反向代理 HTTP 服務器，用於將 HTTP 請求轉發到指定的多個上游服務器
 - `box php <argument>` 通過當前 box 的 PHP 版本運行任何 PHP 命令
-- `box composer <argument>`通過當前 box 的 PHP 版本運行任何 Composer 命令，composer bin 的版本取決於最後執行的`get composer`命令
+- `box composer <argument>`通過當前 box 的 PHP 版本運行任何 Composer 命令，composer bin 的版本取決於最後執行的 `get composer` 命令
 - `box php-cs-fixer <argument>` 通過當前 box 的 PHP 版本運行任何 `php-cs-fixer` 命令，composer bin 的版本取決於最後執行的 `get php-cs-fixer` 命令
 - `box cs-fix <argument>` 通過當前 box 的 PHP 版本運行 `php-cs-fixer fix` 命令，composer bin 的版本取決於最後執行的 `get php-cs-fixer` 命令
 - `box phpstan <argument>` 通過當前 box 的 PHP 版本運行任何 `phpstan` 命令，composer bin 的版本取決於最後執行的 `get phpstan` 命令，此命令僅在 box v0.3.0 及以上的版本中可用
