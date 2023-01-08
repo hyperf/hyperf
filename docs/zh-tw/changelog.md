@@ -5,6 +5,7 @@
 ## Fixed
 
 - [#5289](https://github.com/hyperf/hyperf/pull/5289) 修復使用 `Swow` 引擎時，`Signal` 元件無法使用的問題。
+- [#5303](https://github.com/hyperf/hyperf/pull/5303) 修復 `SocketIO` 的 `Redis NSQ 介面卡`，當首次使用，`topics` 為 `null` 時，無法正常工作的問題。
 
 ## Optimized
 
