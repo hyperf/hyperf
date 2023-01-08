@@ -85,4 +85,4 @@ box config set kernel swoole
 
 ### 關於 Swow-Skeleton
 
-希望體驗 Box 完整功能的朋友，需要通過 Swow Kernel 來運行，因此您需要基於 [hyperf/swow-skeleton](https://github.com/hyperf/swow-skeleton) 來運行您的項目，可通過 `box composer create-project hyperf/swow-skeleton:dev-master` 命令來創建一個基於 Hyperf 3.0 RC 版的 Swow 骨架項目。
+希望體驗 Box 完整功能的朋友，需要通過 Swow Kernel 來運行，因此您需要基於 [hyperf/swow-skeleton](https://github.com/hyperf/swow-skeleton) 來運行您的項目，可通過 `box composer create-project hyperf/swow-skeleton` 命令來創建一個基於 Hyperf 3.0 版的 Swow 骨架項目。
