@@ -5,6 +5,7 @@
 ## Fixed
 
 - [#5289](https://github.com/hyperf/hyperf/pull/5289) Fixed bug that `signal` cannot work when using `swow`.
+- [#5303](https://github.com/hyperf/hyperf/pull/5303) Fixed bug that redis nsq adapter cannot work when topics is null.
 
 ## Optimized
 
