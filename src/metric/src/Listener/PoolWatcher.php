@@ -18,6 +18,7 @@ use Hyperf\Coordinator\Timer;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Pool\Pool;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
@@ -37,6 +38,7 @@ abstract class PoolWatcher
     {
         return [
             BeforeWorkerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 
