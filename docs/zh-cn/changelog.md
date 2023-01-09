@@ -4,11 +4,12 @@
 
 # 修复
 
-- [#5305](https://github.com/hyperf/hyperf/pull/5305) Fixed bug that commit failed when has no active transaction for polardb.
+- [#5305](https://github.com/hyperf/hyperf/pull/5305) 使用 `PolarDB` 读写分离时，修复因没有修改数据的情况下，提交事务会导致此链接存在异常，但又被回收进连接池的问题。
+- [#5307](https://github.com/hyperf/hyperf/pull/5307) 修复 `hyperf/metric` 组件中，`Timer::tick()` 的 `$timeout` 参数设置错误的问题。
 
 ## 优化
 
-- [#5306](https://github.com/hyperf/hyperf/pull/5306) Log records when release to pool failed.
+- [#5306](https://github.com/hyperf/hyperf/pull/5306) 当连接池回收连接失败时，记录日志。
 
 # v3.0.1 - 2023-01-09
 

@@ -5,6 +5,7 @@
 # Fixed
 
 - [#5305](https://github.com/hyperf/hyperf/pull/5305) Fixed bug that commit failed when has no active transaction for polardb.
+- [#5307](https://github.com/hyperf/hyperf/pull/5307) Fixed the parameter `$timeout` of `Timer::tick()` in `hyperf/metric`.
 
 ## Optimized
 
