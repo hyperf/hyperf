@@ -1,4 +1,14 @@
-# v3.0.2 - TBD
+# v3.0.3 - TBD
+
+# v3.0.2 - 2023-01-09
+
+# Fixed
+
+- [#5305](https://github.com/hyperf/hyperf/pull/5305) Fixed bug that commit failed when has no active transaction for polardb.
+
+## Optimized
+
+- [#5306](https://github.com/hyperf/hyperf/pull/5306) Log records when release to pool failed.
 
 # v3.0.1 - 2023-01-09
 
@@ -6,14 +16,12 @@
 
 - [#5289](https://github.com/hyperf/hyperf/pull/5289) Fixed bug that `signal` cannot work when using `swow`.
 - [#5303](https://github.com/hyperf/hyperf/pull/5303) Fixed bug that redis nsq adapter cannot work when topics is null.
-- [#5305](https://github.com/hyperf/hyperf/pull/5305) Fixed bug that commit failed when has no active transaction for polardb.
 
 ## Optimized
 
 - [#5287](https://github.com/hyperf/hyperf/pull/5287) Added log records about the exception message when emit failed.
 - [#5292](https://github.com/hyperf/hyperf/pull/5292) Support Swow for `hyperf/metric`.
 - [#5301](https://github.com/hyperf/hyperf/pull/5301) Optimized code for `Hyperf\Rpc\PathGenerator\PathGenerator`.
-- [#5306](https://github.com/hyperf/hyperf/pull/5306) Log records when release to pool failed.
 
 # v3.0.0 - 2023-01-03
 
