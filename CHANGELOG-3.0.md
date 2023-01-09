@@ -1,13 +1,17 @@
-# v3.0.1 - TBD
+# v3.0.2 - TBD
+
+# v3.0.1 - 2023-01-09
 
 ## Fixed
 
-- [#5287](https://github.com/hyperf/hyperf/pull/5287) Added log records about the exception message when emit failed.
-- [#5289](https://github.com/hyperf/hyperf/pull/5289) Fixed bug that server cannot be closed friendly for swow.
+- [#5289](https://github.com/hyperf/hyperf/pull/5289) Fixed bug that `signal` cannot work when using `swow`.
+- [#5303](https://github.com/hyperf/hyperf/pull/5303) Fixed bug that redis nsq adapter cannot work when topics is null.
 
 ## Optimized
 
+- [#5287](https://github.com/hyperf/hyperf/pull/5287) Added log records about the exception message when emit failed.
 - [#5292](https://github.com/hyperf/hyperf/pull/5292) Support Swow for `hyperf/metric`.
+- [#5301](https://github.com/hyperf/hyperf/pull/5301) Optimized code for `Hyperf\Rpc\PathGenerator\PathGenerator`.
 
 # v3.0.0 - 2023-01-03
 
