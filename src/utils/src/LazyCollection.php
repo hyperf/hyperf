@@ -843,6 +843,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
     public function combine($values)
     {
         return new static(function () use ($values) {
+            /** @var Generator $values */
             $values = $this->makeIterator($values);
 
             $errorMessage = 'Both parameters should have an equal number of elements';
@@ -1056,6 +1057,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
     public function sliding($size = 2, $step = 1)
     {
         return new static(function () use ($size, $step) {
+            /** @var Generator $iterator */
             $iterator = $this->getIterator();
 
             $chunk = [];
