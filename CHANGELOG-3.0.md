@@ -6,6 +6,7 @@
 
 - [#5289](https://github.com/hyperf/hyperf/pull/5289) Fixed bug that `signal` cannot work when using `swow`.
 - [#5303](https://github.com/hyperf/hyperf/pull/5303) Fixed bug that redis nsq adapter cannot work when topics is null.
+- [#5305](https://github.com/hyperf/hyperf/pull/5305) Fixed bug that commit failed when has no active transaction for polardb.
 
 ## Optimized
 

@@ -2,12 +2,13 @@
 
 # v3.0.1 - 2023-01-09
 
-## Fixed
+## 修复
 
 - [#5289](https://github.com/hyperf/hyperf/pull/5289) 修复使用 `Swow` 引擎时，`Signal` 组件无法使用的问题。
 - [#5303](https://github.com/hyperf/hyperf/pull/5303) 修复 `SocketIO` 的 `Redis NSQ 适配器`，当首次使用，`topics` 为 `null` 时，无法正常工作的问题。
+- [#5305](https://github.com/hyperf/hyperf/pull/5305) 使用 `PolarDB` 读写分离时，修复因没有修改数据的情况下，提交事务会导致此链接存在异常，但又被回收进连接池的问题。
 
-## Optimized
+## 优化
 
 - [#5287](https://github.com/hyperf/hyperf/pull/5287) 当服务端响应数据时，如果出现异常，则记录对应日志。
 - [#5292](https://github.com/hyperf/hyperf/pull/5292) 为组件 `hyperf/metric` 增加 `Swow` 引擎的支持。
