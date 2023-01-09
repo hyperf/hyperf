@@ -6,7 +6,7 @@ parameters:
   bootstrapFiles:
     - "bootstrap.php"
   inferPrivatePropertyTypeFromConstructor: true
-  treatPhpDocTypesAsCertain: true
+  treatPhpDocTypesAsCertain: false
   reportUnmatchedIgnoredErrors: false
   excludePaths:
     - %currentWorkingDirectory%/src/*/tests/*
