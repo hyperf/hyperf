@@ -33,8 +33,6 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
     protected LoggerInterface $logger;
 
-    protected bool $transaction = false;
-
     public function __construct(ContainerInterface $container, DbPool $pool, protected array $config)
     {
         parent::__construct($container, $pool);
@@ -106,22 +104,12 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
             $this->connection->resetRecordsModified();
         }
 
-        if ($this->isTransaction()) {
+        if ($this->transactionLevel() > 0) {
             $this->rollBack(0);
             $this->logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
         }
 
         parent::release();
-    }
-
-    public function setTransaction(bool $transaction): void
-    {
-        $this->transaction = $transaction;
-    }
-
-    public function isTransaction(): bool
-    {
-        return $this->transaction;
     }
 
     /**
