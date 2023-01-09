@@ -22,6 +22,7 @@ use Hyperf\Pool\Exception\ConnectionException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class Connection extends BaseConnection implements ConnectionInterface, DbConnectionInterface
 {
@@ -111,7 +112,7 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
             }
 
             parent::release();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->logger->critical('Release connection failed, caused by ' . $exception);
         }
     }

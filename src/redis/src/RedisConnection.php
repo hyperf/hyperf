@@ -153,7 +153,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
                 $this->database = null;
             }
             parent::release();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
                 $logger->critical('Release connection failed, caused by ' . $exception);
             }

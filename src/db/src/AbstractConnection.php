@@ -39,7 +39,7 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
                 }
             }
             $this->pool->release($this);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
                 $logger->critical('Release connection failed, caused by ' . $exception);
             }

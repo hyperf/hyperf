@@ -13,6 +13,7 @@
 - [#5287](https://github.com/hyperf/hyperf/pull/5287) Added log records about the exception message when emit failed.
 - [#5292](https://github.com/hyperf/hyperf/pull/5292) Support Swow for `hyperf/metric`.
 - [#5301](https://github.com/hyperf/hyperf/pull/5301) Optimized code for `Hyperf\Rpc\PathGenerator\PathGenerator`.
+- [#5306](https://github.com/hyperf/hyperf/pull/5306) Log records when release to pool failed.
 
 # v3.0.0 - 2023-01-03
 
