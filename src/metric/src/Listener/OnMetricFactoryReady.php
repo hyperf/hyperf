@@ -96,7 +96,7 @@ class OnMetricFactoryReady implements ListenerInterface
         }
 
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        $timerId = $this->timer->tick($timerInterval * 1000, function () use ($metrics, $serverStats) {
+        $timerId = $this->timer->tick($timerInterval, function () use ($metrics, $serverStats) {
             /* @phpstan-ignore-next-line */
             if (Constant::ENGINE == 'Swoole') {
                 $coroutineStats = \Swoole\Coroutine::stats();

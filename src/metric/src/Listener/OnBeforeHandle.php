@@ -111,7 +111,7 @@ class OnBeforeHandle implements ListenerInterface
         );
 
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        $timerId = $this->timer->tick($timerInterval * 1000, function () use ($metrics) {
+        $timerId = $this->timer->tick($timerInterval, function () use ($metrics) {
             $this->trySet('gc_', $metrics, gc_status());
             $this->trySet('', $metrics, getrusage());
             $metrics['memory_usage']->set(memory_get_usage());
