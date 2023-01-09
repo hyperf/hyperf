@@ -65,7 +65,7 @@ abstract class PoolWatcher
 
         $config = $this->container->get(ConfigInterface::class);
         $timerInterval = $config->get('metric.default_metric_interval', 5);
-        $timerId = $this->timer->tick($timerInterval * 1000, function () use (
+        $timerId = $this->timer->tick($timerInterval, function () use (
             $connectionsInUseGauge,
             $connectionsInWaitingGauge,
             $maxConnectionsGauge,
