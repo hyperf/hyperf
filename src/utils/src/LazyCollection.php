@@ -469,6 +469,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      */
     public function first(callable $callback = null, $default = null)
     {
+        /** @var Generator $iterator */
         $iterator = $this->getIterator();
 
         if (is_null($callback)) {
@@ -480,6 +481,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
         }
 
         foreach ($iterator as $key => $value) {
+            /* @phpstan-ignore-next-line */
             if ($callback($value, $key)) {
                 return $value;
             }
