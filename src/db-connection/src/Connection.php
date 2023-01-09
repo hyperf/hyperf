@@ -22,6 +22,7 @@ use Hyperf\Pool\Exception\ConnectionException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class Connection extends BaseConnection implements ConnectionInterface, DbConnectionInterface
 {
@@ -99,17 +100,21 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
 
     public function release(): void
     {
-        if ($this->connection instanceof \Hyperf\Database\Connection) {
-            // Reset $recordsModified property of connection to false before the connection release into the pool.
-            $this->connection->resetRecordsModified();
-        }
+        try {
+            if ($this->connection instanceof \Hyperf\Database\Connection) {
+                // Reset $recordsModified property of connection to false before the connection release into the pool.
+                $this->connection->resetRecordsModified();
+            }
 
-        if ($this->transactionLevel() > 0) {
-            $this->rollBack(0);
-            $this->logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
-        }
+            if ($this->transactionLevel() > 0) {
+                $this->rollBack(0);
+                $this->logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
+            }
 
-        parent::release();
+            parent::release();
+        } catch (Throwable $exception) {
+            $this->logger->critical('Release connection failed, caused by ' . $exception);
+        }
     }
 
     /**

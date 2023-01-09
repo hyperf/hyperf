@@ -13,6 +13,7 @@
 - [#5287](https://github.com/hyperf/hyperf/pull/5287) 当服务端响应数据时，如果出现异常，则记录对应日志。
 - [#5292](https://github.com/hyperf/hyperf/pull/5292) 为组件 `hyperf/metric` 增加 `Swow` 引擎的支持。
 - [#5301](https://github.com/hyperf/hyperf/pull/5301) 优化 `Hyperf\Rpc\PathGenerator\PathGenerator` 的代码实现。
+- [#5306](https://github.com/hyperf/hyperf/pull/5306) 当连接池回收连接失败时，记录日志。
 
 # v3.0.0 - 2023-01-03
 
