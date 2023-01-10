@@ -96,7 +96,7 @@ class OnCoroutineServerStart implements ListenerInterface
 
         // The following metrics MUST be collected in worker.
         $metrics = $this->factoryMetrics(
-            [],
+            ['worker' => '0'],
             // 'worker_request_count',
             // 'worker_dispatch_count',
             'memory_usage',
