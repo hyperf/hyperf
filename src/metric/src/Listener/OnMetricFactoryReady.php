@@ -106,6 +106,8 @@ class OnMetricFactoryReady implements ListenerInterface
                 }
                 $this->trySet('', $metrics, $coroutineStats);
                 $this->trySet('timer_', $metrics, $timerStats);
+            } elseif (Constant::ENGINE == 'Swow') {
+                $metrics['coroutine_num']->set(\Swow\Coroutine::count());
             }
 
             $load = sys_getloadavg();
