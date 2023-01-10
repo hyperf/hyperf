@@ -2,7 +2,7 @@
 
 ## Optimized
 
-- [#5308](https://github.com/hyperf/hyperf/pull/5308) [#5309](https://github.com/hyperf/hyperf/pull/5309) [#5310](https://github.com/hyperf/hyperf/pull/5310) Adds `CoroutineServer` Support for `hyperf/metric`.
+- [#5308](https://github.com/hyperf/hyperf/pull/5308) [#5309](https://github.com/hyperf/hyperf/pull/5309) [#5310](https://github.com/hyperf/hyperf/pull/5310) [#5311](https://github.com/hyperf/hyperf/pull/5311) Adds `CoroutineServer` Support for `hyperf/metric`.
 
 # v3.0.2 - 2023-01-09
 
