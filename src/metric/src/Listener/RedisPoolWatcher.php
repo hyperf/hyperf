@@ -29,6 +29,7 @@ class RedisPoolWatcher extends PoolWatcher implements ListenerInterface
 
     /**
      * Periodically scan metrics.
+     * @param BeforeWorkerStart|MainCoroutineServerStart $event
      */
     public function process(object $event): void
     {
