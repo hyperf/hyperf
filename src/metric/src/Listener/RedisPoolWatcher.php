@@ -28,7 +28,6 @@ class RedisPoolWatcher extends PoolWatcher implements ListenerInterface
     }
 
     /**
-     * Periodically scan metrics.
      * {@inheritdoc}
      */
     public function process(object $event): void
