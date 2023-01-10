@@ -64,7 +64,7 @@ class OnMetricFactoryReady implements ListenerInterface
         }
         $this->factory = $event->factory;
         $metrics = $this->factoryMetrics(
-            [],
+            ['worker' => '0'],
             'sys_load',
             'event_num',
             'signal_listener_num',
