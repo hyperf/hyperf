@@ -1,5 +1,10 @@
 # v3.0.3 - TBD
 
+## Optimized
+
+- [#5308](https://github.com/hyperf/hyperf/pull/5308) Adss `CoroutineServer` Support for `hyperf/metric`.
+- [#5309](https://github.com/hyperf/hyperf/pull/5309) Fix the bug that `Undefined property $workerId` on `CoroutinueServer`.
+
 # v3.0.2 - 2023-01-09
 
 # Fixed
@@ -21,7 +26,7 @@
 ## Optimized
 
 - [#5287](https://github.com/hyperf/hyperf/pull/5287) Added log records about the exception message when emit failed.
-- [#5292](https://github.com/hyperf/hyperf/pull/5292) [#5308](https://github.com/hyperf/hyperf/pull/5308) [#5309](https://github.com/hyperf/hyperf/pull/5309) Support Swow for `hyperf/metric`.
+- [#5292](https://github.com/hyperf/hyperf/pull/5292) Support Swow for `hyperf/metric`.
 - [#5301](https://github.com/hyperf/hyperf/pull/5301) Optimized code for `Hyperf\Rpc\PathGenerator\PathGenerator`.
 
 # v3.0.0 - 2023-01-03
