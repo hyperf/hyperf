@@ -2,8 +2,7 @@
 
 ## Optimized
 
-- [#5308](https://github.com/hyperf/hyperf/pull/5308) Adss `CoroutineServer` Support for `hyperf/metric`.
-- [#5309](https://github.com/hyperf/hyperf/pull/5309) Fix the bug that `Undefined property $workerId` on `CoroutinueServer`.
+- [#5308](https://github.com/hyperf/hyperf/pull/5308) [#5309](https://github.com/hyperf/hyperf/pull/5309) Adss `CoroutineServer` Support for `hyperf/metric`.
 
 # v3.0.2 - 2023-01-09
 
