@@ -183,7 +183,7 @@ class LazyCollectionTest extends TestCase
 
     public function testTakeUntilTimeout()
     {
-        $this->markTestIncomplete('Skip');
+        $this->markTestSkipped('Skip');
 
         $timeout = Carbon::now();
 
@@ -214,7 +214,7 @@ class LazyCollectionTest extends TestCase
 
     public function testTapEach()
     {
-        $this->markTestIncomplete('Skip');
+        $this->markTestSkipped('Skip');
 
         $data = LazyCollection::times(10);
 
@@ -234,7 +234,7 @@ class LazyCollectionTest extends TestCase
 
     public function testUniqueDoubleEnumeration()
     {
-        $this->markTestIncomplete('Skip');
+        $this->markTestSkipped('Skip');
 
         $data = LazyCollection::times(2)->unique();
 
