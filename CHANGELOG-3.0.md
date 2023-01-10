@@ -1,5 +1,9 @@
 # v3.0.3 - TBD
 
+## Optimized
+
+- [#5308](https://github.com/hyperf/hyperf/pull/5308) [#5309](https://github.com/hyperf/hyperf/pull/5309) Adss `CoroutineServer` Support for `hyperf/metric`.
+
 # v3.0.2 - 2023-01-09
 
 # Fixed
