@@ -35,7 +35,7 @@ class DBPoolWatcher extends PoolWatcher implements ListenerInterface
         $config = $this->container->get(ConfigInterface::class);
         $poolNames = array_keys($config->get('databases', ['default' => []]));
         foreach ($poolNames as $poolName) {
-            $workerId = (int) $event?->workerId;
+            $workerId = (int) ($event->workerId ?? 0);
             $pool = $this
                 ->container
                 ->get(PoolFactory::class)
