@@ -35,7 +35,7 @@ class RedisPoolWatcher extends PoolWatcher implements ListenerInterface
         $config = $this->container->get(ConfigInterface::class);
         $poolNames = array_keys($config->get('redis', ['default' => []]));
         foreach ($poolNames as $poolName) {
-            $workerId = $event->workerId;
+            $workerId = (int) $event?->workerId;
             $pool = $this
                 ->container
                 ->get(PoolFactory::class)

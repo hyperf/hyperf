@@ -29,13 +29,14 @@ class DBPoolWatcher extends PoolWatcher implements ListenerInterface
 
     /**
      * Periodically scan metrics.
+     * @param BeforeWorkerStart|MainCoroutineServerStart $event
      */
     public function process(object $event): void
     {
         $config = $this->container->get(ConfigInterface::class);
         $poolNames = array_keys($config->get('databases', ['default' => []]));
         foreach ($poolNames as $poolName) {
-            $workerId = $event->workerId;
+            $workerId = (int) $event?->workerId;
             $pool = $this
                 ->container
                 ->get(PoolFactory::class)
