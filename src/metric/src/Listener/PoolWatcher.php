@@ -44,6 +44,7 @@ abstract class PoolWatcher
 
     /**
      * Periodically scan metrics.
+     * @param BeforeWorkerStart|MainCoroutineServerStart $event
      */
     abstract public function process(object $event);
 
