@@ -98,8 +98,8 @@ class Timer
     public static function stats(): array
     {
         return [
-            'timer_num' => Timer::$count,
-            'timer_round' => Timer::$round,
+            'num' => Timer::$count,
+            'round' => Timer::$round,
         ];
     }
 }
