@@ -15,7 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
-use Hyperf\Engine\Constant;
+use Hyperf\Engine\Coroutine as Co;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
@@ -62,6 +62,7 @@ class OnMetricFactoryReady implements ListenerInterface
         if (! $this->config->get('metric.enable_default_metric')) {
             return;
         }
+
         $this->factory = $event->factory;
         $metrics = $this->factoryMetrics(
             ['worker' => '0'],
@@ -83,6 +84,8 @@ class OnMetricFactoryReady implements ListenerInterface
             'request_count',
             'timer_num',
             'timer_round',
+            'swoole_timer_num',
+            'swoole_timer_round',
             'metric_process_memory_usage',
             'metric_process_memory_peak_usage'
         );
@@ -97,15 +100,15 @@ class OnMetricFactoryReady implements ListenerInterface
 
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
         $timerId = $this->timer->tick($timerInterval, function () use ($metrics, $serverStats) {
-            /* @phpstan-ignore-next-line */
-            if (Constant::ENGINE == 'Swoole') {
-                $coroutineStats = \Swoole\Coroutine::stats();
-                $timerStats = \Swoole\Timer::stats();
-                if ($serverStats) {
-                    $this->trySet('', $metrics, $serverStats);
-                }
-                $this->trySet('', $metrics, $coroutineStats);
-                $this->trySet('timer_', $metrics, $timerStats);
+            $this->trySet('', $metrics, Co::stats());
+            $this->trySet('timer_', $metrics, Timer::stats());
+
+            if ($serverStats) {
+                $this->trySet('', $metrics, $serverStats);
+            }
+
+            if (class_exists('Swoole\Timer')) {
+                $this->trySet('swoole_timer_', $metrics, \Swoole\Timer::stats());
             }
 
             $load = sys_getloadavg();
