@@ -98,6 +98,14 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
         return true;
     }
 
+    /**
+     * @deprecated This method will be removed in v3.1, please use `$this->transactionLevel() > 0`.
+     */
+    public function isTransaction(): bool
+    {
+        return $this->transactionLevel() > 0;
+    }
+
     public function release(): void
     {
         try {
