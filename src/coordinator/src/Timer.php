@@ -25,6 +25,8 @@ class Timer
 
     private static $count = 0;
 
+    private static $round = 0;
+
     public function __construct(private ?StdoutLoggerInterface $logger = null)
     {
     }
@@ -54,6 +56,7 @@ class Timer
         $this->closures[$id] = true;
         go(function () use ($timeout, $closure, $identifier, $id) {
             try {
+                $round = 0;
                 ++Timer::$count;
                 while (true) {
                     $isClosing = CoordinatorManager::until($identifier)->yield($timeout);
@@ -69,9 +72,13 @@ class Timer
                     } catch (Throwable $exception) {
                         $this->logger?->error((string) $exception);
                     }
+
+                    ++$round;
+                    ++Timer::$round;
                 }
             } finally {
                 unset($this->closures[$id]);
+                Timer::$round -= $round;
                 --Timer::$count;
             }
         });
@@ -92,6 +99,7 @@ class Timer
     {
         return [
             'timer_num' => Timer::$count,
+            'timer_round' => Timer::$round,
         ];
     }
 }
