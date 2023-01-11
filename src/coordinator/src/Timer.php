@@ -23,9 +23,9 @@ class Timer
 
     private int $id = 0;
 
-    private static $count = 0;
+    private static int $count = 0;
 
-    private static $round = 0;
+    private static int $round = 0;
 
     public function __construct(private ?StdoutLoggerInterface $logger = null)
     {
