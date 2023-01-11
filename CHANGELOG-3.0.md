@@ -2,11 +2,12 @@
 
 ## Added
 
-- [#5314](https://github.com/hyperf/hyperf/pull/5314) Adds `Hyperf\Coordinator\Timer::stats()`
+- [#5314](https://github.com/hyperf/hyperf/pull/5314) Adds `Hyperf\Coordinator\Timer::stats()`.
 
 ## Optimized
 
 - [#5308](https://github.com/hyperf/hyperf/pull/5308) [#5309](https://github.com/hyperf/hyperf/pull/5309) [#5310](https://github.com/hyperf/hyperf/pull/5310) [#5311](https://github.com/hyperf/hyperf/pull/5311) Adds `CoroutineServer` Support for `hyperf/metric`.
+- [#5315](https://github.com/hyperf/hyperf/pull/5315) Improve `hyperf/metric`.
 
 # v3.0.2 - 2023-01-09
 
