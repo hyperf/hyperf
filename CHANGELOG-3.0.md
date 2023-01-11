@@ -1,5 +1,9 @@
 # v3.0.3 - TBD
 
+## Fixed
+
+- [#5318](https://github.com/hyperf/hyperf/pull/5318) Fixed bug that rate-limit cannot work when using php 8.1
+
 ## Added
 
 - [#5314](https://github.com/hyperf/hyperf/pull/5314) Adds `Hyperf\Coordinator\Timer::stats()`.
