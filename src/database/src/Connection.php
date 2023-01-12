@@ -29,6 +29,7 @@ use Hyperf\Database\Schema\Grammars\Grammar as SchemaGrammar;
 use Hyperf\Utils\Arr;
 use LogicException;
 use PDO;
+use PDOException;
 use PDOStatement;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Throwable;
@@ -639,7 +640,10 @@ class Connection implements ConnectionInterface
     {
         $this->transactions = 0;
 
-        $this->pdo = $pdo;
+        try {
+            $this->pdo = $pdo;
+        } catch (PDOException) {
+        }
 
         return $this;
     }
@@ -652,7 +656,10 @@ class Connection implements ConnectionInterface
      */
     public function setReadPdo($pdo)
     {
-        $this->readPdo = $pdo;
+        try {
+            $this->readPdo = $pdo;
+        } catch (PDOException) {
+        }
 
         return $this;
     }

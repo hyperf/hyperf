@@ -3,10 +3,12 @@
 ## Fixed
 
 - [#5318](https://github.com/hyperf/hyperf/pull/5318) Fixed bug that rate-limit cannot work when using php 8.1
+- [#5324](https://github.com/hyperf/hyperf/pull/5324) Fixed bug that database cannot work when disconnect caused by connection reset by mysql.
 
 ## Added
 
-- [#5314](https://github.com/hyperf/hyperf/pull/5314) Added `Hyperf\Coordinator\Timer::stats()`.
+- [#5314](https://github.com/hyperf/hyperf/pull/5314) Added method `Hyperf\Coordinator\Timer::stats()`.
+- [#5323](https://github.com/hyperf/hyperf/pull/5323) Added method `Hyperf\Nacos\Provider\ConfigProvider::listener()`.
 
 ## Optimized
 
