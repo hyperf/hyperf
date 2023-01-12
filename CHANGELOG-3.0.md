@@ -7,7 +7,8 @@
 
 ## Added
 
-- [#5314](https://github.com/hyperf/hyperf/pull/5314) Added `Hyperf\Coordinator\Timer::stats()`.
+- [#5314](https://github.com/hyperf/hyperf/pull/5314) Added method `Hyperf\Coordinator\Timer::stats()`.
+- [#5323](https://github.com/hyperf/hyperf/pull/5323) Added method `Hyperf\Nacos\Provider\ConfigProvider::listener()`.
 
 ## Optimized
 
