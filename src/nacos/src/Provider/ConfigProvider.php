@@ -51,4 +51,35 @@ class ConfigProvider extends AbstractProvider
             ]),
         ]);
     }
+    
+    public const WORD_SEPARATOR = "\x02";
+
+    public const LINE_SEPARATOR = "\x01";
+
+    /**
+     * @param array $options =  ['dataId' => $dataId,
+     *                          'group' => $group,
+     *                          'contentMD5' => md5(file_get_contents($configPath)),
+     *                          'tenant' => $tenant]
+     * @return ResponseInterface
+     * @Time 2023/1/12 11:27
+     * @author sunsgne
+     */
+    public function listener(array $options = []): ResponseInterface
+    {
+
+        $ListeningConfigs = ($options['dataId'] ?? null) . self::WORD_SEPARATOR .
+            ($options['group'] ?? null) . self::WORD_SEPARATOR .
+            ($options['contentMD5'] ?? null) . self::WORD_SEPARATOR .
+            ($options['tenant'] ?? null) . self::LINE_SEPARATOR;
+        return $this->request('POST', 'nacos/v1/cs/configs/listener', [
+            RequestOptions::QUERY   => [
+                'Listening-Configs' => $ListeningConfigs,
+            ],
+            RequestOptions::HEADERS => [
+                'Long-Pulling-Timeout' => 30,
+            ],
+        ]);
+
+    }
 }
