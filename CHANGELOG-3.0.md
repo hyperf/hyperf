@@ -2,8 +2,9 @@
 
 ## Fixed
 
-- [#5318](https://github.com/hyperf/hyperf/pull/5318) Fixed bug that rate-limit cannot work when using php 8.1
+- [#5318](https://github.com/hyperf/hyperf/pull/5318) Fixed bug that rate-limit cannot work when using php `8.1`.
 - [#5324](https://github.com/hyperf/hyperf/pull/5324) Fixed bug that database cannot work when disconnect caused by connection reset by mysql.
+- [#5322](https://github.com/hyperf/hyperf/pull/5322) Fixed bug that kafka consumer cannot work when don't set `memberId` and so on.
 
 ## Added
 

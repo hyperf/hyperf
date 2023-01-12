@@ -64,7 +64,7 @@ abstract class AbstractConsumer
 
     public function getMemberId(): ?string
     {
-        return $this->memberId ?? null;
+        return $this->memberId;
     }
 
     public function setMemberId(?string $memberId): void
