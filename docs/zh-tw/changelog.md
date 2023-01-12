@@ -1,10 +1,21 @@
 # 版本更新記錄
 
-# v3.0.1 - TBD
+# v3.0.1 - 2023-01-09
+
+## Fixed
+
+- [#5289](https://github.com/hyperf/hyperf/pull/5289) 修復使用 `Swow` 引擎時，`Signal` 元件無法使用的問題。
+- [#5303](https://github.com/hyperf/hyperf/pull/5303) 修復 `SocketIO` 的 `Redis NSQ 介面卡`，當首次使用，`topics` 為 `null` 時，無法正常工作的問題。
+
+## Optimized
+
+- [#5287](https://github.com/hyperf/hyperf/pull/5287) 當服務端響應資料時，如果出現異常，則記錄對應日誌。
+- [#5292](https://github.com/hyperf/hyperf/pull/5292) 為元件 `hyperf/metric` 增加 `Swow` 引擎的支援。
+- [#5301](https://github.com/hyperf/hyperf/pull/5301) 最佳化 `Hyperf\Rpc\PathGenerator\PathGenerator` 的程式碼實現。
 
 # v3.0.0 - 2023-01-03
 
-- [#4238](https://github.com/hyperf/hyperf/issues/4238) 更新所有元件PHP最低版本到 8.0
+- [#4238](https://github.com/hyperf/hyperf/issues/4238) 更新所有元件 PHP 最低版本到 8.0
 - [#5087](https://github.com/hyperf/hyperf/pull/5087) 支援 PHP 8.2
 
 ## BC breaks

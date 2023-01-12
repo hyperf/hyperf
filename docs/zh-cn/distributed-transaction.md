@@ -6,7 +6,7 @@
 
 # DTM-Client 介绍
 
-[dtm/dtm-client](https://packagist.org/packages/dtm/dtm-client) 是分布式事务管理器 [DTM](https://github.com/dtm-labs/dtm) 的 PHP 客户端，已支持 TCC模式、Saga、XA、二阶段消息模式的分布式事务模式，并分别实现了与 DTM Server 以 HTTP 协议或 gRPC 协议通讯，该客户端可安全运行于 PHP-FPM 和 Swoole 协程环境中，更是对 [Hyperf](https://github.com/hyperf/hyperf) 做了更加易用的功能支持。
+[dtm/dtm-client](https://packagist.org/packages/dtm/dtm-client) 是分布式事务管理器 [DTM](https://github.com/dtm-labs/dtm) 的 PHP 客户端，已支持 TCC 模式、Saga、XA、二阶段消息模式的分布式事务模式，并分别实现了与 DTM Server 以 HTTP 协议或 gRPC 协议通讯，该客户端可安全运行于 PHP-FPM 和 Swoole 协程环境中，更是对 [Hyperf](https://github.com/hyperf/hyperf) 做了更加易用的功能支持。
 
 # 关于 DTM
 
@@ -32,16 +32,16 @@ DTM 是一款基于 Go 语言实现的开源分布式事务管理器，提供跨
 |  特性| DTM |                                              SEATA                                               |备注|
 |:-----:|:----:|:------------------------------------------------------------------------------------------------:|:----:|
 |[支持语言](https://dtm.pub/other/opensource.html#lang) |<span style="color:green">Go、C#、Java、Python、PHP...</span>|                            <span style="color:orange">Java、Go</span>                             |DTM 可轻松接入一门新语言|
-|[存储引擎](https://dtm.pub/other/opensource.html#store) |<span style="color:green">支持数据库、Redis、Mongo等</span>|                              <span style="color:orange">数据库</span>                               ||
-|[异常处理](https://dtm.pub/other/opensource.html#exception)| <span style="color:green"> 子事务屏障自动处理 </span>|                              <span style="color:orange">手动处理</span>                              |DTM 解决了幂等、悬挂、空补偿|
-|[SAGA事务](https://dtm.pub/other/opensource.html#saga) |<span style="color:green">极简易用</span> |                             <span style="color:orange">复杂状态机</span>                              ||
+|[存储引擎](https://dtm.pub/other/opensource.html#store) |<span style="color:green"> 支持数据库、Redis、Mongo 等 </span>|                              <span style="color:orange"> 数据库 </span>                               ||
+|[异常处理](https://dtm.pub/other/opensource.html#exception)| <span style="color:green"> 子事务屏障自动处理 </span>|                              <span style="color:orange"> 手动处理 </span>                              |DTM 解决了幂等、悬挂、空补偿|
+|[SAGA 事务](https://dtm.pub/other/opensource.html#saga) |<span style="color:green"> 极简易用 </span> |                             <span style="color:orange"> 复杂状态机 </span>                              ||
 |[二阶段消息](https://dtm.pub/other/opensource.html#msg)|<span style="color:green">✓</span>|                                 <span style="color:red">✗</span>                                 |最简消息最终一致性架构|
-|[TCC事务](https://dtm.pub/other/opensource.html#tcc)| <span style="color:green">✓</span>|                                <span style="color:green">✓</span>                                ||
-|[XA事务](https://dtm.pub/other/opensource.html#xa)|<span style="color:green">✓</span>|                                <span style="color:green">✓</span>                                ||
-|[AT事务](https://dtm.pub/other/opensource.html#at)|<span style="color:orange">建议使用XA</span>|                                <span style="color:green">✓</span>                                |AT 与 XA类似，但有脏回滚|
+|[TCC 事务](https://dtm.pub/other/opensource.html#tcc)| <span style="color:green">✓</span>|                                <span style="color:green">✓</span>                                ||
+|[XA 事务](https://dtm.pub/other/opensource.html#xa)|<span style="color:green">✓</span>|                                <span style="color:green">✓</span>                                ||
+|[AT 事务](https://dtm.pub/other/opensource.html#at)|<span style="color:orange"> 建议使用 XA</span>|                                <span style="color:green">✓</span>                                |AT 与 XA 类似，但有脏回滚|
 |[单服务多数据源](https://dtm.pub/other/opensource.html#multidb)|<span style="color:green">✓</span>|                                 <span style="color:red">✗</span>                                 ||
-|[通信协议](https://dtm.pub/other/opensource.html#protocol)|HTTP、gRPC|                                             Dubbo等协议                                             |DTM对云原生更加友好|
-|[star数量](https://dtm.pub/other/opensource.html#star)|<img src="https://img.shields.io/github/stars/dtm-labs/dtm.svg?style=social" alt="github stars"/>| <img src="https://img.shields.io/github/stars/seata/seata.svg?style=social" alt="github stars"/> |DTM 从 2021-06-04 发布 0.1版本，发展飞快|
+|[通信协议](https://dtm.pub/other/opensource.html#protocol)|HTTP、gRPC|                                             Dubbo 等协议                                             |DTM 对云原生更加友好|
+|[star 数量](https://dtm.pub/other/opensource.html#star)|<img src="https://img.shields.io/github/stars/dtm-labs/dtm.svg?style=social" alt="github stars"/>| <img src="https://img.shields.io/github/stars/seata/seata.svg?style=social" alt="github stars"/> |DTM 从 2021-06-04 发布 0.1 版本，发展飞快|
 
 从上面对比的特性来看，DTM 在许多方面都具备很大的优势。如果考虑多语言支持、多存储引擎支持，那么 DTM 毫无疑问是您的首选.
 
@@ -105,7 +105,7 @@ return [
 ## 配置中间件
 
 在使用之前，需要配置 `DtmClient\Middleware\DtmMiddleware` 中间件作为 Server 的全局中间件，该中间件支持 PSR-15 规范，可适用于各个支持该规范的的框架。   
-在 Hyperf 中的中间件配置可参考 [Hyperf文档 - 中间件](https://www.hyperf.wiki/2.2/#/zh-cn/middleware/middleware) 一章。
+在 Hyperf 中的中间件配置可参考 [Hyperf 文档 - 中间件](https://www.hyperf.wiki/2.2/#/zh-cn/middleware/middleware) 一章。
 
 # 使用
 
@@ -259,15 +259,15 @@ class SagaController
 ```
 
 ## XA 模式
-XA是由X/Open组织提出的分布式事务的规范，XA规范主要定义了(全局)事务管理器(TM)和(局部)资源管理器(RM)之间的接口。本地的数据库如mysql在XA中扮演的是RM角色
+XA 是由 X /Open 组织提出的分布式事务的规范，XA 规范主要定义了(全局)事务管理器(TM)和(局部)资源管理器(RM)之间的接口。本地的数据库如 mysql 在 XA 中扮演的是 RM 角色
 
-XA一共分为两阶段：
+XA 一共分为两阶段：
 
-第一阶段（prepare）：即所有的参与者RM准备执行事务并锁住需要的资源。参与者ready时，向TM报告已准备就绪。 第二阶段 (commit/rollback)：当事务管理者(TM)确认所有参与者(RM)都ready后，向所有参与者发送commit命令。
+第一阶段（prepare）：即所有的参与者 RM 准备执行事务并锁住需要的资源。参与者 ready 时，向 TM 报告已准备就绪。 第二阶段 (commit/rollback)：当事务管理者(TM)确认所有参与者(RM)都 ready 后，向所有参与者发送 commit 命令。
 
-目前主流的数据库基本都支持XA事务，包括mysql、oracle、sqlserver、postgre
+目前主流的数据库基本都支持 XA 事务，包括 mysql、oracle、sqlserver、postgre
 
-下面是一个成功完成的XA事物典型的时序图
+下面是一个成功完成的 XA 事物典型的时序图
 
 <img src="https://dtm.pub/assets/xa_normal.5a0ce600.jpg" height=600/>
 
@@ -364,4 +364,4 @@ class XAController
 }
 
 ```
-上面的代码首先注册了一个全局XA事务，然后添加了两个子事务transIn、transOut。子事务全部执行成功之后，提交给dtm。dtm收到提交的xa全局事务后，会调用所有子事务的xa commit，完成整个xa事务。
+上面的代码首先注册了一个全局 XA 事务，然后添加了两个子事务 transIn、transOut。子事务全部执行成功之后，提交给 dtm。dtm 收到提交的 xa 全局事务后，会调用所有子事务的 xa commit，完成整个 xa 事务。

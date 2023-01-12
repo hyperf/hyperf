@@ -22,6 +22,7 @@ use Hyperf\Pool\Exception\ConnectionException;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 class Connection extends BaseConnection implements ConnectionInterface, DbConnectionInterface
 {
@@ -32,8 +33,6 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
     protected ConnectionFactory $factory;
 
     protected LoggerInterface $logger;
-
-    protected bool $transaction = false;
 
     public function __construct(ContainerInterface $container, DbPool $pool, protected array $config)
     {
@@ -99,29 +98,31 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
         return true;
     }
 
-    public function release(): void
-    {
-        if ($this->connection instanceof \Hyperf\Database\Connection) {
-            // Reset $recordsModified property of connection to false before the connection release into the pool.
-            $this->connection->resetRecordsModified();
-        }
-
-        if ($this->isTransaction()) {
-            $this->rollBack(0);
-            $this->logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
-        }
-
-        parent::release();
-    }
-
-    public function setTransaction(bool $transaction): void
-    {
-        $this->transaction = $transaction;
-    }
-
+    /**
+     * @deprecated This method will be removed in v3.1, please use `$this->transactionLevel() > 0`.
+     */
     public function isTransaction(): bool
     {
-        return $this->transaction;
+        return $this->transactionLevel() > 0;
+    }
+
+    public function release(): void
+    {
+        try {
+            if ($this->connection instanceof \Hyperf\Database\Connection) {
+                // Reset $recordsModified property of connection to false before the connection release into the pool.
+                $this->connection->resetRecordsModified();
+            }
+
+            if ($this->transactionLevel() > 0) {
+                $this->rollBack(0);
+                $this->logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
+            }
+
+            parent::release();
+        } catch (Throwable $exception) {
+            $this->logger->critical('Release connection failed, caused by ' . $exception);
+        }
     }
 
     /**

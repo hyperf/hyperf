@@ -43,6 +43,7 @@ trait DetectsLostConnections
             'Name or service not known',
             'ORA-03114',
             'Packets out of order. Expected',
+            'There is no active transaction',
         ]);
     }
 }

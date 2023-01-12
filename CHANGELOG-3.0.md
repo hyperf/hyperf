@@ -1,13 +1,41 @@
-# v3.0.1 - TBD
+# v3.0.3 - TBD
 
 ## Fixed
 
-- [#5287](https://github.com/hyperf/hyperf/pull/5287) Added log records about the exception message when emit failed.
-- [#5289](https://github.com/hyperf/hyperf/pull/5289) Fixed bug that server cannot be closed friendly for swow.
+- [#5318](https://github.com/hyperf/hyperf/pull/5318) Fixed bug that rate-limit cannot work when using php 8.1
+
+## Added
+
+- [#5314](https://github.com/hyperf/hyperf/pull/5314) Added `Hyperf\Coordinator\Timer::stats()`.
 
 ## Optimized
 
+- [#5308](https://github.com/hyperf/hyperf/pull/5308) [#5309](https://github.com/hyperf/hyperf/pull/5309) [#5310](https://github.com/hyperf/hyperf/pull/5310) [#5311](https://github.com/hyperf/hyperf/pull/5311) Added `CoroutineServer` Support for `hyperf/metric`.
+- [#5315](https://github.com/hyperf/hyperf/pull/5315) Improve `hyperf/metric`.
+
+# v3.0.2 - 2023-01-09
+
+# Fixed
+
+- [#5305](https://github.com/hyperf/hyperf/pull/5305) Fixed bug that commit failed when has no active transaction for polardb.
+- [#5307](https://github.com/hyperf/hyperf/pull/5307) Fixed the parameter `$timeout` of `Timer::tick()` in `hyperf/metric`.
+
+## Optimized
+
+- [#5306](https://github.com/hyperf/hyperf/pull/5306) Log records when release to pool failed.
+
+# v3.0.1 - 2023-01-09
+
+## Fixed
+
+- [#5289](https://github.com/hyperf/hyperf/pull/5289) Fixed bug that `signal` cannot work when using `swow`.
+- [#5303](https://github.com/hyperf/hyperf/pull/5303) Fixed bug that redis nsq adapter cannot work when topics is null.
+
+## Optimized
+
+- [#5287](https://github.com/hyperf/hyperf/pull/5287) Added log records about the exception message when emit failed.
 - [#5292](https://github.com/hyperf/hyperf/pull/5292) Support Swow for `hyperf/metric`.
+- [#5301](https://github.com/hyperf/hyperf/pull/5301) Optimized code for `Hyperf\Rpc\PathGenerator\PathGenerator`.
 
 # v3.0.0 - 2023-01-03
 

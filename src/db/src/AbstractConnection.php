@@ -30,14 +30,21 @@ abstract class AbstractConnection extends Connection implements ConnectionInterf
 
     public function release(): void
     {
-        if ($this->transactionLevel() > 0) {
-            $this->rollBack(0);
-            if ($this->container->has(StdoutLoggerInterface::class)) {
-                $logger = $this->container->get(StdoutLoggerInterface::class);
-                $logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
+        try {
+            if ($this->transactionLevel() > 0) {
+                $this->rollBack(0);
+                if ($this->container->has(StdoutLoggerInterface::class)) {
+                    $logger = $this->container->get(StdoutLoggerInterface::class);
+                    $logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
+                }
             }
+            $this->pool->release($this);
+        } catch (Throwable $exception) {
+            if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
+                $logger->critical('Release connection failed, caused by ' . $exception);
+            }
+            throw $exception;
         }
-        $this->pool->release($this);
     }
 
     public function getActiveConnection()

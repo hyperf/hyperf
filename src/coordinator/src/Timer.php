@@ -23,6 +23,10 @@ class Timer
 
     private int $id = 0;
 
+    private static int $count = 0;
+
+    private static int $round = 0;
+
     public function __construct(private ?StdoutLoggerInterface $logger = null)
     {
     }
@@ -33,12 +37,14 @@ class Timer
         $this->closures[$id] = true;
         go(function () use ($timeout, $closure, $identifier, $id) {
             try {
+                ++Timer::$count;
                 $isClosing = CoordinatorManager::until($identifier)->yield($timeout);
                 if (isset($this->closures[$id])) {
                     $closure($isClosing);
                 }
             } finally {
                 unset($this->closures[$id]);
+                --Timer::$count;
             }
         });
         return $id;
@@ -50,6 +56,8 @@ class Timer
         $this->closures[$id] = true;
         go(function () use ($timeout, $closure, $identifier, $id) {
             try {
+                $round = 0;
+                ++Timer::$count;
                 while (true) {
                     $isClosing = CoordinatorManager::until($identifier)->yield($timeout);
                     if (! isset($this->closures[$id])) {
@@ -64,9 +72,14 @@ class Timer
                     } catch (Throwable $exception) {
                         $this->logger?->error((string) $exception);
                     }
+
+                    ++$round;
+                    ++Timer::$round;
                 }
             } finally {
                 unset($this->closures[$id]);
+                Timer::$round -= $round;
+                --Timer::$count;
             }
         });
         return $id;
@@ -80,5 +93,13 @@ class Timer
     public function clearAll(): void
     {
         $this->closures = [];
+    }
+
+    public static function stats(): array
+    {
+        return [
+            'num' => Timer::$count,
+            'round' => Timer::$round,
+        ];
     }
 }

@@ -2285,7 +2285,7 @@
         "multi": false,
         "name": "instance",
         "options": [],
-        "query": "label_values([[app_name]]_connection_num,instance)",
+        "query": "label_values([[app_name]]_sys_load,instance)",
         "refresh": 1,
         "regex": "",
         "sort": 0,
