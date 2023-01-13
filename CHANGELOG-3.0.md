@@ -15,6 +15,7 @@
 
 - [#5308](https://github.com/hyperf/hyperf/pull/5308) [#5309](https://github.com/hyperf/hyperf/pull/5309) [#5310](https://github.com/hyperf/hyperf/pull/5310) [#5311](https://github.com/hyperf/hyperf/pull/5311) Added `CoroutineServer` Support for `hyperf/metric`.
 - [#5315](https://github.com/hyperf/hyperf/pull/5315) Improve `hyperf/metric`.
+- [#5326](https://github.com/hyperf/hyperf/pull/5326) Collect the metric of `Server::stats()` by loop.
 
 # v3.0.2 - 2023-01-09
 

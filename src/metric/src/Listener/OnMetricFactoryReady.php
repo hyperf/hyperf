@@ -90,21 +90,21 @@ class OnMetricFactoryReady implements ListenerInterface
             'metric_process_memory_peak_usage'
         );
 
-        $serverStats = null;
+        $swooleServer = null;
 
         if (! MetricFactoryPicker::$isCommand && $this->container->has(SwooleServer::class) && $server = $this->container->get(SwooleServer::class)) {
             if ($server instanceof SwooleServer) {
-                $serverStats = $server->stats();
+                $swooleServer = $server;
             }
         }
 
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        $timerId = $this->timer->tick($timerInterval, function () use ($metrics, $serverStats) {
+        $timerId = $this->timer->tick($timerInterval, function () use ($metrics, $swooleServer) {
             $this->trySet('', $metrics, Co::stats());
             $this->trySet('timer_', $metrics, Timer::stats());
 
-            if ($serverStats) {
-                $this->trySet('', $metrics, $serverStats);
+            if ($swooleServer) {
+                $this->trySet('', $metrics, $swooleServer->stats());
             }
 
             if (class_exists('Swoole\Timer')) {
