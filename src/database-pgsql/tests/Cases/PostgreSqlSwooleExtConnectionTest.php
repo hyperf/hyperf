@@ -107,7 +107,7 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
         ]);
 
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Connection timed out, Please check the database configuration.');
+        $this->expectExceptionMessage('Create connection failed, Please check the database configuration.');
 
         $connection->affectingStatement('UPDATE xx SET x = 1 WHERE id = 1');
     }
