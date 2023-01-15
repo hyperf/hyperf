@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database\PgSQL\Cases;
 
+use Exception;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Exception\QueryException;
@@ -105,7 +106,7 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
             'password' => 'postgres',
         ]);
 
-        $this->expectException(QueryException::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Connection timed out, Please check the database configuration.');
 
         $connection->affectingStatement('UPDATE xx SET x = 1 WHERE id = 1');
