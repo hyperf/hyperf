@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Database\PgSQL\Cases;
 
+use Exception;
 use Hyperf\Database\Connection;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Exception\QueryException;
@@ -86,6 +87,27 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
         ]);
 
         $this->expectException(QueryException::class);
+
+        $connection->affectingStatement('UPDATE xx SET x = 1 WHERE id = 1');
+    }
+
+    public function testCreateConnectionTimedOut()
+    {
+        if (SWOOLE_MAJOR_VERSION < 5) {
+            $this->markTestSkipped('PostgreSql requires Swoole version >= 5.0.0');
+        }
+
+        $connection = $this->connectionFactory->make([
+            'driver' => 'pgsql-swoole',
+            'host' => 'non-existent-host.internal',
+            'port' => 5432,
+            'database' => 'postgres',
+            'username' => 'postgres',
+            'password' => 'postgres',
+        ]);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Create connection failed, Please check the database configuration.');
 
         $connection->affectingStatement('UPDATE xx SET x = 1 WHERE id = 1');
     }
