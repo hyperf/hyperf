@@ -89,4 +89,25 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
         $connection->affectingStatement('UPDATE xx SET x = 1 WHERE id = 1');
     }
+
+    public function testCreateConnectionTimedOut()
+    {
+        if (SWOOLE_MAJOR_VERSION < 5) {
+            $this->markTestSkipped('PostgreSql requires Swoole version >= 5.0.0');
+        }
+
+        $connection = $this->connectionFactory->make([
+            'driver' => 'pgsql-swoole',
+            'host' => 'non-existent-host.internal',
+            'port' => 5432,
+            'database' => 'postgres',
+            'username' => 'postgres',
+            'password' => 'postgres',
+        ]);
+
+        $this->expectException(QueryException::class);
+        $this->expectExceptionMessage('Connection timed out, Please check the database configuration.');
+
+        $connection->affectingStatement('UPDATE xx SET x = 1 WHERE id = 1');
+    }
 }
