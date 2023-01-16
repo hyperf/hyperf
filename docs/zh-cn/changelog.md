@@ -1,5 +1,25 @@
 # 版本更新记录
 
+# v3.0.3 - 2023-01-16
+
+## 修复
+
+- [#5318](https://github.com/hyperf/hyperf/pull/5318) 修复在使用 PHP 8.1 版本时，限流器无法使用的问题。
+- [#5324](https://github.com/hyperf/hyperf/pull/5324) 修复 MySQL 连接断开时，数据库组件无法使用的问题。
+- [#5322](https://github.com/hyperf/hyperf/pull/5322) 修复 Kafka 消费者在没有设置 `memberId` 等参数时，无法使用的问题。
+- [#5327](https://github.com/hyperf/hyperf/pull/5327) 修复 PgSQL 在创建连接失败时，导致类型错误的问题。
+
+## 新增
+
+- [#5314](https://github.com/hyperf/hyperf/pull/5314) 新增方法 `Hyperf\Coordinator\Timer::stats()`.
+- [#5323](https://github.com/hyperf/hyperf/pull/5323) 新增方法 `Hyperf\Nacos\Provider\ConfigProvider::listener()`.
+
+## 优化
+
+- [#5308](https://github.com/hyperf/hyperf/pull/5308) [#5309](https://github.com/hyperf/hyperf/pull/5309) [#5310](https://github.com/hyperf/hyperf/pull/5310) [#5311](https://github.com/hyperf/hyperf/pull/5311) 为 `hyperf/metric` 增加协程服务的支持。
+- [#5315](https://github.com/hyperf/hyperf/pull/5315) 增加 `hyperf/metric` 组件的监控指标。
+- [#5326](https://github.com/hyperf/hyperf/pull/5326) 在循环中，收集服务当前的状态。
+
 # v3.0.2 - 2023-01-09
 
 # 修复
