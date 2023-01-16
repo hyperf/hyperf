@@ -21,7 +21,7 @@ class Message implements Stringable
     /**
      * Message Body.
      */
-    public string $body;
+    public mixed $body;
 
     /**
      * Message Subject.
@@ -42,11 +42,11 @@ class Message implements Stringable
      * Message constructor.
      *
      * @param string $subject message subject
-     * @param string $body message body
+     * @param mixed $body message body
      * @param string $sid message Sid
      * @param Connection $conn message Connection
      */
-    public function __construct(string $subject, string $body, string $sid, Connection $conn)
+    public function __construct(string $subject, mixed $body, string $sid, Connection $conn)
     {
         $this->setSubject($subject);
         $this->setBody($body);
@@ -59,7 +59,7 @@ class Message implements Stringable
      */
     public function __toString(): string
     {
-        return $this->getBody();
+        return (string) $this->getBody();
     }
 
     /**
@@ -87,11 +87,11 @@ class Message implements Stringable
     /**
      * Set body.
      *
-     * @param string $body body
+     * @param mixed $body body
      *
      * @return $this
      */
-    public function setBody(string $body): static
+    public function setBody(mixed $body): static
     {
         $this->body = $body;
         return $this;
@@ -100,7 +100,7 @@ class Message implements Stringable
     /**
      * Get body.
      */
-    public function getBody(): string
+    public function getBody(): mixed
     {
         return $this->body;
     }
