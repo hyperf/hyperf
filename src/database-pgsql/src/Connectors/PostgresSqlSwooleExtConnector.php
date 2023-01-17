@@ -57,7 +57,7 @@ class PostgresSqlSwooleExtConnector implements ConnectorInterface
         ));
 
         if ($result === false) {
-            throw new Exception($connection->error);
+            throw new Exception($connection->error ?? 'Create connection failed, Please check the database configuration.');
         }
 
         return $connection;

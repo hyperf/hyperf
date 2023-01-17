@@ -70,7 +70,7 @@ class QueueWatcher implements ListenerInterface
 
         $config = $this->container->get(ConfigInterface::class);
         $timerInterval = $config->get('metric.default_metric_interval', 5);
-        $timerId = $this->timer->tick($timerInterval * 1000, function () use ($waiting, $delayed, $failed, $timeout, $queue) {
+        $timerId = $this->timer->tick($timerInterval, function () use ($waiting, $delayed, $failed, $timeout, $queue) {
             $info = $queue->info();
             $waiting->set((float) $info['waiting']);
             $delayed->set((float) $info['delayed']);

@@ -21,7 +21,7 @@
         "hyperf/utils": "~3.0.0",
         "hyperf/process": "~3.0.0",
         "hyperf/pool": "~3.0.0",
-        "php-amqplib/php-amqplib": "^3.1",
+        "php-amqplib/php-amqplib": "3.4.0",
         "psr/container": "^1.0|^2.0",
         "psr/event-dispatcher": "^1.0",
         "psr/log": "^1.0|^2.0|^3.0"

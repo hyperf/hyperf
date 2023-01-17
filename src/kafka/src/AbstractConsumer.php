@@ -22,13 +22,13 @@ abstract class AbstractConsumer
     /**
      * @var string|string[]
      */
-    public string|array $topic;
+    public string|array $topic = [];
 
-    public ?string $groupId;
+    public ?string $groupId = null;
 
-    public ?string $memberId;
+    public ?string $memberId = null;
 
-    public ?string $groupInstanceId;
+    public ?string $groupInstanceId = null;
 
     public bool $autoCommit = true;
 

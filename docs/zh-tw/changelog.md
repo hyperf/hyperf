@@ -1,10 +1,52 @@
 # 版本更新記錄
 
-# v3.0.1 - TBD
+# v3.0.3 - 2023-01-16
+
+## 修復
+
+- [#5318](https://github.com/hyperf/hyperf/pull/5318) 修復在使用 PHP 8.1 版本時，限流器無法使用的問題。
+- [#5324](https://github.com/hyperf/hyperf/pull/5324) 修復 MySQL 連線斷開時，資料庫元件無法使用的問題。
+- [#5322](https://github.com/hyperf/hyperf/pull/5322) 修復 Kafka 消費者在沒有設定 `memberId` 等引數時，無法使用的問題。
+- [#5327](https://github.com/hyperf/hyperf/pull/5327) 修復 PgSQL 在建立連線失敗時，導致型別錯誤的問題。
+
+## 新增
+
+- [#5314](https://github.com/hyperf/hyperf/pull/5314) 新增方法 `Hyperf\Coordinator\Timer::stats()`.
+- [#5323](https://github.com/hyperf/hyperf/pull/5323) 新增方法 `Hyperf\Nacos\Provider\ConfigProvider::listener()`.
+
+## 最佳化
+
+- [#5308](https://github.com/hyperf/hyperf/pull/5308) [#5309](https://github.com/hyperf/hyperf/pull/5309) [#5310](https://github.com/hyperf/hyperf/pull/5310) [#5311](https://github.com/hyperf/hyperf/pull/5311) 為 `hyperf/metric` 增加協程服務的支援。
+- [#5315](https://github.com/hyperf/hyperf/pull/5315) 增加 `hyperf/metric` 元件的監控指標。
+- [#5326](https://github.com/hyperf/hyperf/pull/5326) 在迴圈中，收集服務當前的狀態。
+
+# v3.0.2 - 2023-01-09
+
+# 修復
+
+- [#5305](https://github.com/hyperf/hyperf/pull/5305) 使用 `PolarDB` 讀寫分離時，修復因沒有修改資料的情況下，提交事務會導致此連結存在異常，但又被回收進連線池的問題。
+- [#5307](https://github.com/hyperf/hyperf/pull/5307) 修復 `hyperf/metric` 元件中，`Timer::tick()` 的 `$timeout` 引數設定錯誤的問題。
+
+## 最佳化
+
+- [#5306](https://github.com/hyperf/hyperf/pull/5306) 當連線池回收連線失敗時，記錄日誌。
+
+# v3.0.1 - 2023-01-09
+
+## 修復
+
+- [#5289](https://github.com/hyperf/hyperf/pull/5289) 修復使用 `Swow` 引擎時，`Signal` 元件無法使用的問題。
+- [#5303](https://github.com/hyperf/hyperf/pull/5303) 修復 `SocketIO` 的 `Redis NSQ 介面卡`，當首次使用，`topics` 為 `null` 時，無法正常工作的問題。
+
+## 最佳化
+
+- [#5287](https://github.com/hyperf/hyperf/pull/5287) 當服務端響應資料時，如果出現異常，則記錄對應日誌。
+- [#5292](https://github.com/hyperf/hyperf/pull/5292) 為元件 `hyperf/metric` 增加 `Swow` 引擎的支援。
+- [#5301](https://github.com/hyperf/hyperf/pull/5301) 最佳化 `Hyperf\Rpc\PathGenerator\PathGenerator` 的程式碼實現。
 
 # v3.0.0 - 2023-01-03
 
-- [#4238](https://github.com/hyperf/hyperf/issues/4238) 更新所有元件PHP最低版本到 8.0
+- [#4238](https://github.com/hyperf/hyperf/issues/4238) 更新所有元件 PHP 最低版本到 8.0
 - [#5087](https://github.com/hyperf/hyperf/pull/5087) 支援 PHP 8.2
 
 ## BC breaks

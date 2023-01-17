@@ -96,7 +96,7 @@ class OnCoroutineServerStart implements ListenerInterface
 
         // The following metrics MUST be collected in worker.
         $metrics = $this->factoryMetrics(
-            [],
+            ['worker' => '0'],
             // 'worker_request_count',
             // 'worker_dispatch_count',
             'memory_usage',
@@ -125,7 +125,7 @@ class OnCoroutineServerStart implements ListenerInterface
         );
 
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        $timerId = $this->timer->tick($timerInterval * 1000, function () use ($metrics) {
+        $timerId = $this->timer->tick($timerInterval, function () use ($metrics) {
             $this->trySet('gc_', $metrics, gc_status());
             $this->trySet('', $metrics, getrusage());
 

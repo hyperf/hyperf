@@ -146,12 +146,18 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 
     public function release(): void
     {
-        if ($this->database && $this->database != $this->config['db']) {
-            // Select the origin db after execute select.
-            $this->select($this->config['db']);
-            $this->database = null;
+        try {
+            if ($this->database && $this->database != $this->config['db']) {
+                // Select the origin db after execute select.
+                $this->select($this->config['db']);
+                $this->database = null;
+            }
+            parent::release();
+        } catch (Throwable $exception) {
+            if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
+                $logger->critical('Release connection failed, caused by ' . $exception);
+            }
         }
-        parent::release();
     }
 
     public function setDatabase(?int $database): void

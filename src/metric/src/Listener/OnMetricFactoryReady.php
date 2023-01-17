@@ -15,7 +15,7 @@ use Hyperf\Contract\ConfigInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Coordinator\Timer;
-use Hyperf\Engine\Constant;
+use Hyperf\Engine\Coroutine as Co;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
@@ -62,9 +62,10 @@ class OnMetricFactoryReady implements ListenerInterface
         if (! $this->config->get('metric.enable_default_metric')) {
             return;
         }
+
         $this->factory = $event->factory;
         $metrics = $this->factoryMetrics(
-            [],
+            ['worker' => '0'],
             'sys_load',
             'event_num',
             'signal_listener_num',
@@ -83,29 +84,31 @@ class OnMetricFactoryReady implements ListenerInterface
             'request_count',
             'timer_num',
             'timer_round',
+            'swoole_timer_num',
+            'swoole_timer_round',
             'metric_process_memory_usage',
             'metric_process_memory_peak_usage'
         );
 
-        $serverStats = null;
+        $swooleServer = null;
 
         if (! MetricFactoryPicker::$isCommand && $this->container->has(SwooleServer::class) && $server = $this->container->get(SwooleServer::class)) {
             if ($server instanceof SwooleServer) {
-                $serverStats = $server->stats();
+                $swooleServer = $server;
             }
         }
 
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        $timerId = $this->timer->tick($timerInterval * 1000, function () use ($metrics, $serverStats) {
-            /* @phpstan-ignore-next-line */
-            if (Constant::ENGINE == 'Swoole') {
-                $coroutineStats = \Swoole\Coroutine::stats();
-                $timerStats = \Swoole\Timer::stats();
-                if ($serverStats) {
-                    $this->trySet('', $metrics, $serverStats);
-                }
-                $this->trySet('', $metrics, $coroutineStats);
-                $this->trySet('timer_', $metrics, $timerStats);
+        $timerId = $this->timer->tick($timerInterval, function () use ($metrics, $swooleServer) {
+            $this->trySet('', $metrics, Co::stats());
+            $this->trySet('timer_', $metrics, Timer::stats());
+
+            if ($swooleServer) {
+                $this->trySet('', $metrics, $swooleServer->stats());
+            }
+
+            if (class_exists('Swoole\Timer')) {
+                $this->trySet('swoole_timer_', $metrics, \Swoole\Timer::stats());
             }
 
             $load = sys_getloadavg();

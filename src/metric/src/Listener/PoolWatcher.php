@@ -18,6 +18,7 @@ use Hyperf\Coordinator\Timer;
 use Hyperf\Framework\Event\BeforeWorkerStart;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Pool\Pool;
+use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
@@ -37,11 +38,13 @@ abstract class PoolWatcher
     {
         return [
             BeforeWorkerStart::class,
+            MainCoroutineServerStart::class,
         ];
     }
 
     /**
      * Periodically scan metrics.
+     * @param BeforeWorkerStart|MainCoroutineServerStart $event
      */
     abstract public function process(object $event);
 
@@ -65,7 +68,7 @@ abstract class PoolWatcher
 
         $config = $this->container->get(ConfigInterface::class);
         $timerInterval = $config->get('metric.default_metric_interval', 5);
-        $timerId = $this->timer->tick($timerInterval * 1000, function () use (
+        $timerId = $this->timer->tick($timerInterval, function () use (
             $connectionsInUseGauge,
             $connectionsInWaitingGauge,
             $maxConnectionsGauge,
