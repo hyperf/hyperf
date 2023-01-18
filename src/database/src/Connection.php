@@ -387,7 +387,7 @@ class Connection implements ConnectionInterface
             }
 
             $this->recordsHaveBeenModified(
-                $change = $this->getPdo()->exec($query) !== false
+                $change = $this->getPdo()->query($query) !== false
             );
 
             return $change;
