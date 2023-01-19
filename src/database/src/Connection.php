@@ -646,7 +646,7 @@ class Connection implements ConnectionInterface
 
         try {
             $this->pdo = $pdo;
-        } catch (\PDOException) {
+        } catch (\Throwable) {
         }
 
         return $this;
@@ -662,7 +662,7 @@ class Connection implements ConnectionInterface
     {
         try {
             $this->readPdo = $pdo;
-        } catch (\PDOException) {
+        } catch (\Throwable) {
         }
 
         return $this;
