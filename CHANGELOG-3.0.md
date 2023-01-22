@@ -1,5 +1,10 @@
 # v3.0.4 - TBD
 
+## Fixed
+
+- [#5332](https://github.com/hyperf/hyperf/pull/5332) Fixed bug that `PgSQLSwooleConnection::unprepared` cannot work.
+- [#5333](https://github.com/hyperf/hyperf/pull/5333) Fixed bug that database cannot work when disconnect failed.
+
 # v3.0.3 - 2023-01-16
 
 ## Fixed

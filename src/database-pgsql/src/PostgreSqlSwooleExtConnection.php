@@ -175,6 +175,21 @@ class PostgreSqlSwooleExtConnection extends Connection
         return substr_replace($haystack, $replace, $pos, strlen($needle));
     }
 
+    public function unprepared(string $query): bool
+    {
+        return $this->run($query, [], function ($query) {
+            if ($this->pretending()) {
+                return true;
+            }
+
+            $this->recordsHaveBeenModified(
+                $change = $this->getPdo()->query($query) !== false
+            );
+
+            return $change;
+        });
+    }
+
     /**
      * Get the default query grammar instance.
      * @return \Hyperf\Database\Grammar
