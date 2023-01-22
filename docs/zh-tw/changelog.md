@@ -1,5 +1,12 @@
 # 版本更新記錄
 
+# v3.0.4 - 2023-01-22
+
+## 修復
+
+- [#5332](https://github.com/hyperf/hyperf/pull/5332) 修復了 `PgSQLSwooleConnection::unprepared` 無法正常使用的問題。
+- [#5333](https://github.com/hyperf/hyperf/pull/5333) 修復資料庫元件在閒置時間過長，連線斷開導致資料庫讀寫報錯的問題。
+
 # v3.0.3 - 2023-01-16
 
 ## 修復
