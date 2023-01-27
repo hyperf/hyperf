@@ -1,5 +1,9 @@
 # v3.0.5 - TBD
 
+## Added
+
+- [#5338](https://github.com/hyperf/hyperf/pull/5338) Adds `addRestoreOrCreate` extension to `SoftDeletingScope`.
+
 # v3.0.4 - 2023-01-22
 
 ## Fixed
