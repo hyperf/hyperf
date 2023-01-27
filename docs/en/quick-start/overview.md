@@ -219,7 +219,7 @@ When `UserService` needs to undergo a drastic internal change such as replacing 
 
 Since `Hyperf` has a built-in coroutine server, `Hyperf` will run as a `CLI` process. After defining our routes and writing the application logic code, we can start the server by entering the root directory of the project and executing the command  `php bin/hyperf.php start`.
 
-When the `console` shows that the server has started, you can access the server through `cURL` or via the browser. By default, the url of the above dependency injection examples is  `http://127.0.0.1:9501/index/info?id= 1`.
+When the `console` shows that the server has started, you can access the server through `cURL` or via the browser. By default, the url of the above dependency injection examples is  `http://127.0.0.1:9501/index/info?id=1`.
 
 ## Reload the code
 
