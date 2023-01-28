@@ -528,10 +528,10 @@ class User extends Model
 }
 ```
 
-`restoreOrCreate` 方法会通过给定的 列 / 值 来匹配数据库中的数据。如果在数据库中找到对应的模型，即执行 `restore` 方法恢复模型，否则会从第一个参数的属性乃至第二个参数的属性中创建一条记录插入到数据库。
+The `restoreOrCreate` method will match the data in the database with the given column/value. If the corresponding model is found in the database, execute the `restore` method to restore the model, otherwise a record will be created from the attributes of the first parameter and even the attributes of the second parameter and inserted into the database.
 
 ```php
-// 通过 name 查找用户，不存在则使用 name 和 gender, age 属性创建...
+// Look up users by name, create them with name and gender, age attributes if they don't exist...
 $user = User::restoreOrCreate(
     ['name' => 'Hyperf'],
     ['gender' => 1, 'age' => 20]
