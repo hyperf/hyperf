@@ -2,7 +2,7 @@
 
 ## Optimized
 
-- [#5342](https://github.com/hyperf/hyperf/pull/5342) Compatible with `tcp://host:port` configuration redis sentry address
+- [#5342](https://github.com/hyperf/hyperf/pull/5342) Compatible with `tcp://host:port` configuration redis sentry address.
 
 # v3.0.4 - 2023-01-22
 
