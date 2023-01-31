@@ -93,7 +93,7 @@ Prometheus 有兩種工作模式，爬模式與推模式（透過 Prometheus Pus
 
 並配置爬取地址 `scrape_host`、爬取埠 `scrape_port`、爬取路徑 `scrape_path`。Prometheus 可以在對應配置下以 HTTP 訪問形式拉取全部指標。
 
-> 注意：爬模式下，必須啟用獨立程序，即 use_standalone_process = true。
+> 注意：非同步風格下，爬模式必須啟用獨立程序，必須啟用獨立程序，即 `use_standalone_process = true`。
 
 使用推模式時需設定：
 
