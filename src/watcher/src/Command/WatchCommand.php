@@ -30,6 +30,10 @@ class WatchCommand extends Command
         $this->addOption('file', 'F', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, '', []);
         $this->addOption('dir', 'D', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, '', []);
         $this->addOption('no-restart', 'N', InputOption::VALUE_NONE, 'Whether no need to restart server');
+        
+        // No pcntl extension installed
+        defined('SIGKILL') or define('SIGKILL', 9);
+        defined('SIGTERM') or define('SIGTERM', 15);
     }
 
     public function handle()
