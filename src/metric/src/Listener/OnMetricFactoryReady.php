@@ -112,7 +112,7 @@ class OnMetricFactoryReady implements ListenerInterface
             }
 
             $load = sys_getloadavg();
-            $metrics['sys_load']->set(round($load[0] / swoole_cpu_num(), 2));
+            $metrics['sys_load']->set(round($load[0] / cpu_num(), 2));
             $metrics['metric_process_memory_usage']->set(memory_get_usage());
             $metrics['metric_process_memory_peak_usage']->set(memory_get_peak_usage());
         });
