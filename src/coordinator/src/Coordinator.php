@@ -40,6 +40,10 @@ class Coordinator
      */
     public function resume(): void
     {
+        if (! $this->channel->isAvailable()) {
+            return;
+        }
+
         $this->channel->close();
     }
 }
