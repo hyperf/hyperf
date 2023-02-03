@@ -223,46 +223,51 @@ class NacosDriver implements DriverInterface
             retry(INF, function () use ($name, $host, $port) {
                 $lightBeatEnabled = false;
                 while (true) {
-                    $heartbeat = $this->config->get('services.drivers.nacos.heartbeat', 5);
-                    if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
-                        break;
-                    }
+                    try {
+                        $heartbeat = $this->config->get('services.drivers.nacos.heartbeat', 5);
+                        if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
+                            break;
+                        }
 
-                    $groupName = $this->config->get('services.drivers.nacos.group_name');
+                        $groupName = $this->config->get('services.drivers.nacos.group_name');
 
-                    $response = $this->client->instance->beat(
-                        $name,
-                        [
-                            'ip' => $host,
-                            'port' => $port,
-                            'serviceName' => $groupName . '@@' . $name,
-                        ],
-                        $groupName,
-                        $this->config->get('services.drivers.nacos.namespace_id'),
-                        null,
-                        $lightBeatEnabled
-                    );
+                        $response = $this->client->instance->beat(
+                            $name,
+                            [
+                                'ip' => $host,
+                                'port' => $port,
+                                'serviceName' => $groupName . '@@' . $name,
+                            ],
+                            $groupName,
+                            $this->config->get('services.drivers.nacos.namespace_id'),
+                            null,
+                            $lightBeatEnabled
+                        );
 
-                    $result = json_decode($response->getBody()->getContents(), true);
+                        $result = json_decode($response->getBody()->getContents(), true);
 
-                    if ($response->getStatusCode() === 200) {
-                        $this->logger->debug(sprintf('Instance %s:%d heartbeat successfully, result code:%s', $host, $port, $result['code']));
-                    } else {
-                        $this->logger->error(sprintf('Instance %s:%d heartbeat failed! %s', $host, $port, (string) $response->getBody()));
-                        continue;
-                    }
+                        if ($response->getStatusCode() === 200) {
+                            $this->logger->debug(sprintf('Instance %s:%d heartbeat successfully, result code:%s', $host, $port, $result['code']));
+                        } else {
+                            $this->logger->error(sprintf('Instance %s:%d heartbeat failed! %s', $host, $port, (string) $response->getBody()));
+                            continue;
+                        }
 
-                    $lightBeatEnabled = false;
-                    if (isset($result['lightBeatEnabled'])) {
-                        $lightBeatEnabled = $result['lightBeatEnabled'];
-                    }
+                        $lightBeatEnabled = false;
+                        if (isset($result['lightBeatEnabled'])) {
+                            $lightBeatEnabled = $result['lightBeatEnabled'];
+                        }
 
-                    if ($result['code'] == 20404) {
-                        $this->client->instance->register($host, $port, $name, [
-                            'groupName' => $this->config->get('services.drivers.nacos.group_name'),
-                            'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
-                            'metadata' => $this->getMetadata($name),
-                        ]);
+                        if ($result['code'] == 20404) {
+                            $this->client->instance->register($host, $port, $name, [
+                                'groupName' => $this->config->get('services.drivers.nacos.group_name'),
+                                'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
+                                'metadata' => $this->getMetadata($name),
+                            ]);
+                        }
+                    } catch (\Throwable $e) {
+                        $this->logger->error(sprintf('Instance %s:%d heartbeat failed! reason:%s', $host, $port, (string) $e));
+                        throw $e;
                     }
                 }
             });
