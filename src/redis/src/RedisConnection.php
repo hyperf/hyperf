@@ -233,7 +233,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
                     $sentinelHost = $nodeUrlArray['host'] ?? null;
                     $sentinelPort = $nodeUrlArray['port'] ?? null;
                     if (! $sentinelHost || ! $sentinelPort) {
-                        $this->log(sprintf('The redis sentinel node [%s] is invalid.', $node));
+                        $this->log(sprintf('The redis sentinel node [%s] is invalid.', $node), LogLevel::ERROR);
                         continue;
                     }
 
