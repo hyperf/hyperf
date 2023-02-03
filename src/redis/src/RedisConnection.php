@@ -234,10 +234,10 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
                     $nodeUrlArray = parse_url($node);
                     $sentinelHost = $nodeUrlArray['host'] ?? null;
                     $sentinelPort = $nodeUrlArray['port'] ?? null;
-                    if (!$sentinelHost || !$sentinelPort){
+                    if (! $sentinelHost || ! $sentinelPort) {
                         continue;
                     }
-                    
+
                     $sentinel = new RedisSentinel(
                         $sentinelHost,
                         intval($sentinelPort),
