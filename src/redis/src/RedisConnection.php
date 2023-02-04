@@ -18,6 +18,7 @@ use Hyperf\Pool\Connection as BaseConnection;
 use Hyperf\Pool\Exception\ConnectionException;
 use Hyperf\Redis\Exception\InvalidRedisConnectionException;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LogLevel;
 use Redis;
 use RedisCluster;
 use RedisException;
@@ -154,9 +155,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             }
             parent::release();
         } catch (Throwable $exception) {
-            if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
-                $logger->critical('Release connection failed, caused by ' . $exception);
-            }
+            $this->log('Release connection failed, caused by ' . $exception, LogLevel::CRITICAL);
         }
     }
 
@@ -191,8 +190,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
 
     protected function retry($name, $arguments, Throwable $exception)
     {
-        $logger = $this->container->get(StdoutLoggerInterface::class);
-        $logger->warning('Redis::__call failed, because ' . $exception->getMessage());
+        $this->log('Redis::__call failed, because ' . $exception->getMessage());
 
         try {
             $this->reconnect();
@@ -231,7 +229,14 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $port = null;
             foreach ($nodes as $node) {
                 try {
-                    [$sentinelHost, $sentinelPort] = explode(':', $node);
+                    $nodeUrlArray = parse_url($node);
+                    $sentinelHost = $nodeUrlArray['host'] ?? null;
+                    $sentinelPort = $nodeUrlArray['port'] ?? null;
+                    if (! $sentinelHost || ! $sentinelPort) {
+                        $this->log(sprintf('The redis sentinel node [%s] is invalid.', $node), LogLevel::ERROR);
+                        continue;
+                    }
+
                     $sentinel = new RedisSentinel(
                         $sentinelHost,
                         intval($sentinelPort),
@@ -247,8 +252,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
                         break;
                     }
                 } catch (Throwable $exception) {
-                    $logger = $this->container->get(StdoutLoggerInterface::class);
-                    $logger->warning('Redis sentinel connection failed, caused by ' . $exception->getMessage());
+                    $this->log('Redis sentinel connection failed, caused by ' . $exception->getMessage());
                     continue;
                 }
             }
@@ -295,5 +299,12 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             throw new ConnectionException('Connection reconnect failed.');
         }
         return $redis;
+    }
+
+    private function log(string $message, string $level = LogLevel::WARNING): void
+    {
+        if ($this->container->has(StdoutLoggerInterface::class) && $logger = $this->container->get(StdoutLoggerInterface::class)) {
+            $logger->log($level, $message);
+        }
     }
 }
