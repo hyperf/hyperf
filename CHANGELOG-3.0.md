@@ -3,6 +3,12 @@
 ## Added
 
 - [#5338](https://github.com/hyperf/hyperf/pull/5338) Adds `addRestoreOrCreate` extension to `SoftDeletingScope`.
+- [#5349](https://github.com/hyperf/hyperf/pull/5349) Added `ResumeExitCoordinatorListener`.
+- [#5355](https://github.com/hyperf/hyperf/pull/5355) Added `System::getCpuCoresNum()`.
+
+## Optimized
+
+- [#5342](https://github.com/hyperf/hyperf/pull/5342) Compatible with `tcp://host:port` configuration redis sentry address.
 
 # v3.0.4 - 2023-01-22
 
