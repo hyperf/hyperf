@@ -3,6 +3,7 @@
 ## Added
 
 - [#5349](https://github.com/hyperf/hyperf/pull/5349) Added `ResumeExitCoordinatorListener`.
+- [#5355](https://github.com/hyperf/hyperf/pull/5355) Added `System::getCpuCoresNum()`.
 
 ## Optimized
 
