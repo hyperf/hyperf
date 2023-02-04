@@ -5,6 +5,10 @@
 - [#5349](https://github.com/hyperf/hyperf/pull/5349) Added `ResumeExitCoordinatorListener`.
 - [#5355](https://github.com/hyperf/hyperf/pull/5355) Added `System::getCpuCoresNum()`.
 
+## Fixed
+
+- [#5357](https://github.com/hyperf/hyperf/pull/5357) Fixed bug that the coordinator timer can't stop when an exception occurs inside `$closure`.
+
 ## Optimized
 
 - [#5342](https://github.com/hyperf/hyperf/pull/5342) Compatible with `tcp://host:port` configuration redis sentry address.
