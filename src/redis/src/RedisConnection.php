@@ -209,6 +209,13 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
             $readTimeout = $this->config['sentinel']['read_timeout'] ?? 0;
             $masterName = $this->config['sentinel']['master_name'] ?? '';
             $auth = $this->config['sentinel']['auth'] ?? null;
+            // fixes bug for phpredis
+            // https://github.com/phpredis/phpredis/issues/2098
+            $extendConfig = [];
+            if (! empty($auth)) {
+                $extendConfig[] = $auth;
+            }
+
             shuffle($nodes);
 
             $host = null;
@@ -223,7 +230,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
                         $persistent,
                         $retryInterval,
                         $readTimeout,
-                        $auth
+                        ...$extendConfig
                     );
                     $masterInfo = $sentinel->getMasterAddrByName($masterName);
                     if (is_array($masterInfo) && count($masterInfo) >= 2) {
