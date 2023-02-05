@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#5338](https://github.com/hyperf/hyperf/pull/5338) Adds `addRestoreOrCreate` extension to `SoftDeletingScope`.
+- [#5338](https://github.com/hyperf/hyperf/pull/5338) Added `addRestoreOrCreate` extension to `SoftDeletingScope`.
 - [#5349](https://github.com/hyperf/hyperf/pull/5349) Added `ResumeExitCoordinatorListener`.
 - [#5355](https://github.com/hyperf/hyperf/pull/5355) Added `System::getCpuCoresNum()`.
 
