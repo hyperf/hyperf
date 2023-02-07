@@ -152,7 +152,9 @@ class CoroutineServer implements ServerInterface
                                 ++$stats->connection_num;
                                 ++$stats->accept_count;
                                 ++$stats->request_count;
+
                                 $handler->{$method}($request, $response);
+
                                 ++$stats->close_count;
                                 --$stats->connection_num;
                             });

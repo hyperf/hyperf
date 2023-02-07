@@ -149,7 +149,9 @@ class SwowServer implements ServerInterface
                                 ++$stats->connection_num;
                                 ++$stats->accept_count;
                                 ++$stats->request_count;
+
                                 $handler->{$method}($request, $session);
+
                                 ++$stats->close_count;
                                 --$stats->connection_num;
                             });
