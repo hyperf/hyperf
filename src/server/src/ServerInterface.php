@@ -35,4 +35,6 @@ interface ServerInterface
      * @return SwooleCoServer|SwooleServer
      */
     public function getServer();
+
+    public function getServerStats(): array;
 }

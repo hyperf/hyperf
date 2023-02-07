@@ -42,12 +42,15 @@ class SwowServer implements ServerInterface
 
     private Waiter $waiter;
 
+    private ServerStats $stats;
+
     public function __construct(
         protected ContainerInterface $container,
         protected LoggerInterface $logger,
         protected EventDispatcherInterface $eventDispatcher
     ) {
         $this->waiter = new Waiter(-1);
+        $this->stats = new ServerStats();
     }
 
     public function init(ServerConfig $config): ServerInterface
@@ -91,6 +94,11 @@ class SwowServer implements ServerInterface
         return $this->server;
     }
 
+    public function getServerStats(): array
+    {
+        return $this->stats->toArray();
+    }
+
     protected function closeAll(array $servers = []): void
     {
         /**
@@ -126,6 +134,8 @@ class SwowServer implements ServerInterface
 
     protected function bindServerCallbacks($server, int $type, string $name, array $callbacks)
     {
+        $stats = $this->stats;
+
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
                 if (isset($callbacks[Event::ON_REQUEST])) {
@@ -134,9 +144,14 @@ class SwowServer implements ServerInterface
                         $handler->initCoreMiddleware($name);
                     }
                     if ($server instanceof HttpServer) {
-                        $server->handle(function ($request, $session) use ($handler, $method) {
-                            $this->waiter->wait(static function () use ($request, $session, $handler, $method) {
+                        $server->handle(function ($request, $session) use ($handler, $method, $stats) {
+                            $this->waiter->wait(static function () use ($request, $session, $handler, $method, $stats) {
+                                ++$stats->connection_num;
+                                ++$stats->accept_count;
+                                ++$stats->request_count;
                                 $handler->{$method}($request, $session);
+                                ++$stats->close_count;
+                                --$stats->connection_num;
                             });
                         });
                     }

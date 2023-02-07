@@ -43,12 +43,15 @@ class CoroutineServer implements ServerInterface
 
     private Waiter $waiter;
 
+    private ServerStats $stats;
+
     public function __construct(
         protected ContainerInterface $container,
         protected LoggerInterface $logger,
         protected EventDispatcherInterface $eventDispatcher
     ) {
         $this->waiter = new Waiter(-1);
+        $this->stats = new ServerStats();
     }
 
     public function init(ServerConfig $config): ServerInterface
@@ -59,7 +62,10 @@ class CoroutineServer implements ServerInterface
 
     public function start(): void
     {
+        $this->stats->start_time = time();
+
         $this->writePid();
+
         run(function () {
             $this->initServer($this->config);
             $servers = ServerManager::list();
@@ -87,6 +93,11 @@ class CoroutineServer implements ServerInterface
     public function getServer(): HttpServer|Server
     {
         return $this->server;
+    }
+
+    public function getServerStats(): array
+    {
+        return $this->stats->toArray();
     }
 
     protected function closeAll(array $servers = []): void
@@ -126,6 +137,8 @@ class CoroutineServer implements ServerInterface
 
     protected function bindServerCallbacks(int $type, string $name, array $callbacks)
     {
+        $stats = $this->stats;
+
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
                 if (isset($callbacks[Event::ON_REQUEST])) {
@@ -134,9 +147,14 @@ class CoroutineServer implements ServerInterface
                         $handler->initCoreMiddleware($name);
                     }
                     if ($this->server instanceof HttpServer) {
-                        $this->server->handle('/', static function ($request, $response) use ($handler, $method) {
-                            Coroutine::create(static function () use ($request, $response, $handler, $method) {
+                        $this->server->handle('/', static function ($request, $response) use ($handler, $method, $stats) {
+                            Coroutine::create(static function () use ($request, $response, $handler, $method, $stats) {
+                                ++$stats->connection_num;
+                                ++$stats->accept_count;
+                                ++$stats->request_count;
                                 $handler->{$method}($request, $response);
+                                ++$stats->close_count;
+                                --$stats->connection_num;
                             });
                         });
                     }

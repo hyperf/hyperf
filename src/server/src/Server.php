@@ -55,6 +55,11 @@ class Server implements ServerInterface
         return $this->server;
     }
 
+    public function getServerStats(): array
+    {
+        return $this->server->stats() ?? [];
+    }
+
     protected function initServers(ServerConfig $config)
     {
         $servers = $this->sortServers($config->getServers());
