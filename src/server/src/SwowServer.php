@@ -61,6 +61,8 @@ class SwowServer implements ServerInterface
 
     public function start(): void
     {
+        $this->stats->start_time = time();
+
         $this->writePid();
         $this->initServer($this->config);
         $servers = ServerManager::list();
