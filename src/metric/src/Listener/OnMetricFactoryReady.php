@@ -19,8 +19,10 @@ use Hyperf\Engine\Coroutine as Co;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
+use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Metric\MetricSetter;
 use Hyperf\Server\ServerFactory;
+use Hyperf\Server\ServerInterface;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\System;
 use Psr\Container\ContainerInterface;
@@ -90,13 +92,19 @@ class OnMetricFactoryReady implements ListenerInterface
             'metric_process_memory_peak_usage'
         );
 
-        $server = $this->container->get(ServerFactory::class)->getServer();
-        $timerInterval = $this->config->get('metric.default_metric_interval', 5);
+        $server = null;
+        if (! MetricFactoryPicker::$isCommand) {
+            $server = $this->container->get(ServerFactory::class)->getServer();
+        }
 
+        $timerInterval = $this->config->get('metric.default_metric_interval', 5);
         $timerId = $this->timer->tick($timerInterval, function () use ($metrics, $server) {
             $this->trySet('', $metrics, Co::stats());
             $this->trySet('timer_', $metrics, Timer::stats());
-            $this->trySet('', $metrics, $server->stats());
+
+            if ($server instanceof ServerInterface) {
+                $this->trySet('', $metrics, $server->stats());
+            }
 
             if (class_exists('Swoole\Timer')) {
                 $this->trySet('swoole_timer_', $metrics, \Swoole\Timer::stats());
