@@ -36,5 +36,5 @@ interface ServerInterface
      */
     public function getServer();
 
-    public function getServerStats(): array;
+    public function stats(): array;
 }

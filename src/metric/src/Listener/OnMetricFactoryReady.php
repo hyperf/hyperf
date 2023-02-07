@@ -96,7 +96,7 @@ class OnMetricFactoryReady implements ListenerInterface
         $timerId = $this->timer->tick($timerInterval, function () use ($metrics, $server) {
             $this->trySet('', $metrics, Co::stats());
             $this->trySet('timer_', $metrics, Timer::stats());
-            $this->trySet('', $metrics, $server->getServerStats());
+            $this->trySet('', $metrics, $server->stats());
 
             if (class_exists('Swoole\Timer')) {
                 $this->trySet('swoole_timer_', $metrics, \Swoole\Timer::stats());

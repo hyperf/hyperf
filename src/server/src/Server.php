@@ -55,7 +55,7 @@ class Server implements ServerInterface
         return $this->server;
     }
 
-    public function getServerStats(): array
+    public function stats(): array
     {
         return $this->server->stats() ?? [];
     }
