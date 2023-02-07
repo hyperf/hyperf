@@ -19,12 +19,11 @@ use Hyperf\Engine\Coroutine as Co;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
-use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Metric\MetricSetter;
+use Hyperf\Server\ServerFactory;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\System;
 use Psr\Container\ContainerInterface;
-use Swoole\Server as SwooleServer;
 
 /**
  * Similar to OnWorkerStart, but this only runs in one process.
@@ -91,22 +90,13 @@ class OnMetricFactoryReady implements ListenerInterface
             'metric_process_memory_peak_usage'
         );
 
-        $swooleServer = null;
-
-        if (! MetricFactoryPicker::$isCommand && $this->container->has(SwooleServer::class) && $server = $this->container->get(SwooleServer::class)) {
-            if ($server instanceof SwooleServer) {
-                $swooleServer = $server;
-            }
-        }
-
+        $server = $this->container->get(ServerFactory::class)->getServer();
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        $timerId = $this->timer->tick($timerInterval, function () use ($metrics, $swooleServer) {
+
+        $timerId = $this->timer->tick($timerInterval, function () use ($metrics, $server) {
             $this->trySet('', $metrics, Co::stats());
             $this->trySet('timer_', $metrics, Timer::stats());
-
-            if ($swooleServer) {
-                $this->trySet('', $metrics, $swooleServer->stats());
-            }
+            $this->trySet('', $metrics, $server->getServerStats());
 
             if (class_exists('Swoole\Timer')) {
                 $this->trySet('swoole_timer_', $metrics, \Swoole\Timer::stats());
