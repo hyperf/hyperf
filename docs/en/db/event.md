@@ -87,6 +87,7 @@ Model events are not consistent with `EloquentORM`, which uses `Observer` to lis
 |   restored   |       After Soft Deleted Data Recovery          |        no        |                                                            |
 |   deleting   |              When data is deleted               |        yes       |                                                            |
 |   deleted    |              After data deletion                |        no        |                                                            |
+|   forceDeleting   |              When data is forcibly deleting         yes    |        yes       |                                                            |
 | forceDeleted |       After the data is forcibly deleted        |        no        |                                                            |
 
 The use of events for a model is very simple, just add the corresponding method to the model. For example, when the data is saved below, the `saving` event is triggered, and the `created_at` field is actively overwritten.

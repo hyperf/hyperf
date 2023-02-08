@@ -528,6 +528,16 @@ class User extends Model
 }
 ```
 
+`restoreOrCreate` 方法會通過給定的 列 / 值 來匹配數據庫中的數據。如果在數據庫中找到對應的模型，即執行 `restore` 方法恢復模型，否則會從第一個參數的屬性乃至第二個參數的屬性中創建一條記錄插入到數據庫。
+
+```php
+// 通過 name 查找用户，不存在則使用 name 和 gender, age 屬性創建...
+$user = User::restoreOrCreate(
+    ['name' => 'Hyperf'],
+    ['gender' => 1, 'age' => 20]
+);
+```
+
 ## Bit 類型
 
 默認情況下，Hyperf 中的數據庫模型轉 SQL 過程中，會將參數值統一轉為 String 類型，以解決 int 在大數問題和使值類型更容易匹配索引，若想要使 `ORM` 支持 `bit` 類型，只需要增加以下事件監聽器代碼即可。
