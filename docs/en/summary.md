@@ -117,7 +117,6 @@
   * [Connection Pool](en/pool.md)
   * [Custom Process](en/process.md)
   * [Utils](en/utils.md)
-  * [Rate Limit](en/rate-limit.md)
   * [Crontab](en/crontab.md)
   * [Task](en/task.md)
   * [Enum](en/constants.md)
@@ -135,6 +134,8 @@
   * [Build Docker Swarm cluster](en/tutorial/docker-swarm.md)
   * [Build DaoCloud Devops](en/tutorial/daocloud.md)
   * [Deploy by Supervisor](en/tutorial/supervisor.md)
+  * [Nginx reverse proxy](en/tutorial/nginx.md)
+  * [Aliyun Logger Service](en/tutorial/aliyun-logger.md)
   
 * Awesome Hyperf
 
@@ -152,3 +153,4 @@
   * [2.0 Upgrade Guide](en/upgrade/2.0.md)
   * [2.1 Upgrade Guide](en/upgrade/2.1.md)
   * [2.2 Upgrade Guide](en/upgrade/2.2.md)
+  * [3.0 Upgrade Guide](en/upgrade/3.0.md)

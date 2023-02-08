@@ -94,7 +94,7 @@ class NacosDriver implements DriverInterface
             'groupName' => $this->config->get('services.drivers.nacos.group_name'),
             'namespaceId' => $this->config->get('services.drivers.nacos.namespace_id'),
             'metadata' => $this->getMetadata($name),
-            'ephemeral' => $ephemeral ? 'true' : null,
+            'ephemeral' => $ephemeral ? 'true' : 'false',
         ]);
 
         if ($response->getStatusCode() !== 200 || (string) $response->getBody() !== 'ok') {
