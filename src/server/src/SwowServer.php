@@ -22,6 +22,7 @@ use Hyperf\Server\Event\CoroutineServerStart;
 use Hyperf\Server\Event\CoroutineServerStop;
 use Hyperf\Server\Event\MainCoroutineServerStart;
 use Hyperf\Server\Exception\RuntimeException;
+use Hyperf\Utils\Str;
 use Hyperf\Utils\Waiter;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -116,7 +117,7 @@ class SwowServer implements ServerInterface
             $port = $server->getPort();
             $callbacks = array_replace($config->getCallbacks(), $server->getCallbacks());
 
-            $this->server = $this->makeServer($type, $host, $port);
+            $this->server = $this->makeServer($type, $host, $port, $server->getSettings());
 
             $this->bindServerCallbacks($this->server, $type, $name, $callbacks);
 
@@ -207,16 +208,18 @@ class SwowServer implements ServerInterface
         return [$handler, $method];
     }
 
-    protected function makeServer($type, $host, $port)
+    protected function makeServer($type, $host, $port, $settings)
     {
         switch ($type) {
             case ServerInterface::SERVER_HTTP:
             case ServerInterface::SERVER_WEBSOCKET:
                 $server = new HttpServer($this->logger);
+                $this->initServerSettings($server, $settings);
                 $server->bind($host, $port);
                 return $server;
             case ServerInterface::SERVER_BASE:
                 $server = new BaseServer($this->logger);
+                $this->initServerSettings($server, $settings);
                 $server->bind($host, $port);
                 return $server;
         }
@@ -230,6 +233,16 @@ class SwowServer implements ServerInterface
         $file = $config->get('server.settings.pid_file');
         if ($file) {
             file_put_contents($file, getmypid());
+        }
+    }
+
+    private function initServerSettings($server, $settings)
+    {
+        foreach ($settings as $key => $value) {
+            $method = Str::camel(sprintf('set_%s', $key));
+            if (method_exists($server, $method)) {
+                $server->{$method}($value);
+            }
         }
     }
 }

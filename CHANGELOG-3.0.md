@@ -7,6 +7,7 @@
 ## Added
 
 - [#5366](https://github.com/hyperf/hyperf/pull/5366) Added `forceDeleting` event to `hyperf/database`.
+- [#5373](https://github.com/hyperf/hyperf/pull/5373) Support server settings for `SwowServer`.
 
 # v3.0.5 - 2023-02-05
 
