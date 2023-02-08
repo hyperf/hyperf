@@ -1,5 +1,9 @@
 # v3.0.6 - TBD
 
+## Fixed
+
+- [#5361](https://github.com/hyperf/hyperf/pull/5361) Fixed bug that the current service XXX is persistent service, can't register ephemeral instance.
+
 ## Added
 
 - [#5366](https://github.com/hyperf/hyperf/pull/5366) Added `forceDeleting` event to `hyperf/database`.
