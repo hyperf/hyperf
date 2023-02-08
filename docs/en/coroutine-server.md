@@ -1,16 +1,18 @@
-# 协程风格服务
+# 英文版
 
-Hyperf 默认使用的是 [Swoole 异步风格](https://wiki.swoole.com/#/server/init)，此类型为多进程模型，自定义进程为单独进程运行。
+# Coroutine Style Server
 
-> 此类型在使用 SWOOLE_BASE 且不使用自定义进程时，会以单进程模型来跑，具体可查看 Swoole 官方文档。
+Hyperf uses [Swoole asynchronous style](https://wiki.swoole.com/#/server/init) by default, which is a multi-process model and custom processes are running in separate processes.
 
-Hyperf 还提供了协程风格服务，此类型为单进程模型，所有的自定义进程会全部以协程模式来跑，不会创建单独的进程。
+> This type will run in single-process mode when using SWOOLE_BASE and not using custom processes. You can check the Swoole official documentation for details.
 
-此两种风格，可以按需选择，**但不推荐将已经在正常使用的服务，进行无脑切换**。
+Hyperf also provides a coroutine style service, which is a single-process model, and all custom processes will run in coroutine mode, without creating separate processes.
 
-## 配置
+Both styles can be selected as needed, **but it is not recommended to switch to an existing service without any consideration**.
 
-修改 `autoload/server.php` 配置文件，设置 `type` 为 `Hyperf\Server\CoroutineServer::class` 即可启动协程风格。
+## Configuration
+
+Modify the `autoload/server.php` configuration file and set `type` to `Hyperf\Server\CoroutineServer::class` to start the coroutine style.
 
 ```php
 <?php
@@ -40,9 +42,9 @@ return [
 
 ## WebSocket
 
-1. 因为协程风格和异步风格，在对应的回调上存在差异，所以需要按需使用
+1. Because of the coroutine style and asynchronous style, there are differences in the corresponding callbacks, so it needs to be used as needed
 
-例如 `onReceive` 回调，异步风格是 `Swoole\Server`，协程风格是 `Swoole\Coroutine\Server\Connection`。
+For example, `onReceive` callback, the asynchronous style is `Swoole\Server`, and the coroutine style is `Swoole\Coroutine\Server\Connection`.
 
 ```php
 <?php
@@ -56,13 +58,13 @@ use Swoole\Server as SwooleServer;
 
 interface OnReceiveInterface
 {
-    /**
-     * @param Connection|SwooleServer $server
-     */
-    public function onReceive($server, int $fd, int $reactorId, string $data): void;
+     /**
+      * @param Connection|SwooleServer $server
+      */
+     public function onReceive($server, int $fd, int $reactorId, string $data): void;
 }
 ```
 
-2. 中间件所在协程只有在 `onClose` 时，才会结束
+2. The coroutine where the middleware is located will only end when `onClose`
 
-因为 `Hyperf` 的数据库实例，是在协程销毁时，返还给连接池，所以如果在 `WebSocket` 的中间件中使用 `Database` 就会导致连接池内的连接无法正常归还。
+Because the database instance of `Hyperf` is returned to the connection pool when the coroutine is destroyed, if `Database` is used in the middleware of `WebSocket`, the connection in the connection pool will not be returned normally.

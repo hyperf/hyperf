@@ -1,16 +1,16 @@
-# ConfigProvider 机制
+# ConfigProvider mechanism
 
-ConfigProvider 机制对于 Hyperf 组件化来说是个非常重要的机制，`组件间的解耦` 和 `组件的独立性` 以及 `组件的可重用性` 都是基于这个机制才得以实现。   
+The ConfigProvider mechanism is a very important mechanism for Hyperf componentization. `Decoupling between components`, `Independence of components` and `Reusability of components` are all realized based on this mechanism.
 
-# 什么是 ConfigProvider 机制 ？
+# What is the ConfigProvider mechanism?
 
-简单来说，就是每个组件都会提供一个 `ConfigProvider`，通常是在组件的根目录提供一个 `ConfigProvider` 的类，`ConfigProvider` 会提供对应组件的所有配置信息，这些信息都会被 Hyperf 框架在启动时加载，最终`ConfigProvider` 内的配置信息会被合并到 `Hyperf\Contract\ConfigInterface` 对应的实现类去，从而实现各个组件在 Hyperf 框架下使用时要进行的配置初始化。   
+To put it simply, each component will provide a `ConfigProvider`, usually a `ConfigProvider` class is provided in the root directory of the component, and `ConfigProvider` will provide all the configuration information of the corresponding component, which will be started by the Hyperf framework When loaded, the final configuration information in `ConfigProvider` will be merged into the corresponding implementation class of `Hyperf\Contract\ConfigInterface`, so as to realize the configuration initialization of each component when used under the Hyperf framework.
 
-`ConfigProvider` 本身不具备任何依赖，不继承任何的抽象类和不要求实现任何的接口，只需提供一个 `__invoke` 方法并返回一个对应配置结构的数组即可。
+`ConfigProvider` itself does not have any dependencies, does not inherit any abstract classes, and does not require the implementation of any interfaces. It only needs to provide an `__invoke` method and return an array of corresponding configuration structures.
 
-# 如何定义一个 ConfigProvider ？
+# How to define a ConfigProvider?
 
-通常来说，`ConfigProvider` 会定义在组件的根目录下，一个 `ConfigProvider` 类通常如下：
+Generally speaking, `ConfigProvider` will be defined in the root directory of the component, and a `ConfigProvider` class is usually as follows:
 
 ```php
 <?php
@@ -19,86 +19,86 @@ namespace Hyperf\Foo;
 
 class ConfigProvider
 {
-    public function __invoke(): array
-    {
-        return [
-            // 合并到  config/autoload/dependencies.php 文件
-            'dependencies' => [],
-            // 合并到  config/autoload/annotations.php 文件
-            'annotations' => [
-                'scan' => [
-                    'paths' => [
-                        __DIR__,
-                    ],
-                ],
-            ],
-            // 默认 Command 的定义，合并到 Hyperf\Contract\ConfigInterface 内，换个方式理解也就是与 config/autoload/commands.php 对应
-            'commands' => [],
-            // 与 commands 类似
-            'listeners' => [],
-            // 组件默认配置文件，即执行命令后会把 source 的对应的文件复制为 destination 对应的的文件
-            'publish' => [
-                [
-                    'id' => 'config',
-                    'description' => 'description of this config file.', // 描述
-                    // 建议默认配置放在 publish 文件夹中，文件命名和组件名称相同
-                    'source' => __DIR__ . '/../publish/file.php',  // 对应的配置文件路径
-                    'destination' => BASE_PATH . '/config/autoload/file.php', // 复制为这个路径下的该文件
-                ],
-            ],
-            // 亦可继续定义其它配置，最终都会合并到与 ConfigInterface 对应的配置储存器中
-        ];
-    }
+     public function __invoke(): array
+     {
+         return [
+             // merged into config/autoload/dependencies.php file
+             'dependencies' => [],
+             // merged into config/autoload/annotations.php file
+             'annotations' => [
+                 'scan' => [
+                     'paths' => [
+                         __DIR__,
+                     ],
+                 ],
+             ],
+             // The definition of the default Command is merged into Hyperf\Contract\ConfigInterface, another way to understand it is corresponding to config/autoload/commands.php
+             'commands' => [],
+             // similar to commands
+             'listeners' => [],
+             // Component default configuration file, that is, after executing the command, the file corresponding to source will be copied to the file corresponding to destination
+             'publish' => [
+                 [
+                     'id' => 'config',
+                     'description' => 'description of this config file.', // description
+                     // It is recommended that the default configuration be placed in the publish folder, and the file name is the same as the component name
+                     'source' => __DIR__ . '/../publish/file.php', // corresponding configuration file path
+                     'destination' => BASE_PATH . '/config/autoload/file.php', // copy as the file under this path
+                 ],
+             ],
+             // You can also continue to define other configurations, which will eventually be merged into the configuration storage corresponding to ConfigInterface
+         ];
+     }
 }
 ```
 
-## 默认配置文件说明
+## Default configuration file description
 
-在 `ConfigProvider` 中定义好 `publish` 后，可以使用如下命令快速生成配置文件
+After defining `publish` in `ConfigProvider`, you can use the following command to quickly generate configuration files
 
 ```bash
-php bin/hyperf.php vendor:publish 包名称
+php bin/hyperf.php vendor:publish package name
 ```
 
-如包名称为 `hyperf/amqp`，可执行命令来生成 `amqp` 默认的配置文件
+If the package name is `hyperf/amqp`, you can execute the command to generate the default configuration file of `amqp`
 ```bash
 php bin/hyperf.php vendor:publish hyperf/amqp
 ```
 
-只创建一个类并不会被 Hyperf 自动的加载，您仍需在组件的 `composer.json` 添加一些定义，告诉 Hyperf 这是一个 ConfigProvider 类需要被加载，您需要在组件内的 `composer.json` 文件内增加 `extra.hyperf.config` 配置，并指定对应的 `ConfigProvider` 类的命名空间，如下所示：
+Just creating a class will not be automatically loaded by Hyperf, you still need to add some definitions in the `composer.json` of the component to tell Hyperf that this is a ConfigProvider class that needs to be loaded, you need to add `composer.json` in the component Add `extra.hyperf.config` configuration in the file, and specify the namespace of the corresponding `ConfigProvider` class, as shown below:
 
 ```json
 {
-    "name": "hyperf/foo",
-    "require": {
-        "php": ">=7.3"
-    },
-    "autoload": {
-        "psr-4": {
-            "Hyperf\\Foo\\": "src/"
-        }
-    },
-    "extra": {
-        "hyperf": {
-            "config": "Hyperf\\Foo\\ConfigProvider"
-        }
-    }
+     "name": "hyperf/foo",
+     "require": {
+         "php": ">=7.3"
+     },
+     "autoload": {
+         "psr-4": {
+             "Hyperf\\Foo\\": "src/"
+         }
+     },
+     "extra": {
+         "hyperf": {
+             "config": "Hyperf\\Foo\\ConfigProvider"
+         }
+     }
 }
 ```
 
-定义了之后需执行 `composer install` 或 `composer update` 或 `composer dump-autoload` 等会让 Composer 重新生成 `composer.lock` 文件的命令，才能被正常读取。   
+After definition, you need to execute commands such as `composer install` or `composer update` or `composer dump-autoload` to allow Composer to regenerate the `composer.lock` file before it can be read normally.
 
-# ConfigProvider 机制的执行流程
+# Execution process of ConfigProvider mechanism
 
-关于 `ConfigProvider` 的配置并非一定就是这样去划分，这是一些约定成俗的格式，实际上最终如何来解析这些配置的决定权也在于用户，用户可通过修改 Skeleton 项目的 `config/container.php` 文件内的代码来调整相关的加载，也就意味着，`config/container.php` 文件决定了 `ConfigProvider` 的扫描和加载。
+The configuration of `ConfigProvider` is not necessarily divided in this way. This is some agreed format. In fact, the final decision on how to parse these configurations is also up to the user. The user can modify `config/container.php of the Skeleton project ` The code in the file to adjust the relevant loading, that is, the `config/container.php` file determines the scanning and loading of `ConfigProvider`.
 
-# 组件设计规范
+# Component design specification
 
-由于 `composer.json` 内的 `extra` 属性在数据不被利用时无其它作用和影响，故这些组件内的定义在其它框架使用时，不会造成任何的干扰和影响，故`ConfigProvider` 是一种仅作用于 Hyperf 框架的机制，对其它没有利用此机制的框架不会造成任何的影响，这也就为组件的复用打下了基础，但这也要求在进行组件设计时，必须遵循以下规范：
+Since the `extra` attribute in `composer.json` has no other effect and influence when the data is not used, the definitions in these components will not cause any interference and influence when used by other frameworks, so `ConfigProvider` is A mechanism that only works on the Hyperf framework, and will not have any impact on other frameworks that do not use this mechanism, which lays the foundation for component reuse, but it also requires that the following must be followed when designing components specification:
 
-- 所有类的设计都必须允许通过标准 `OOP` 的使用方式来使用，所有 Hyperf 专有的功能必须作为增强功能并以单独的类来提供，也就意味着在非 Hyperf 框架下仍能通过标准的手段来实现组件的使用；
-- 组件的依赖设计如果可满足 [PSR 标准](https://www.php-fig.org/psr) 则优先满足且依赖对应的接口而不是实现类；如 [PSR 标准](https://www.php-fig.org/psr) 没有包含的功能，则可满足由 Hyperf 定义的契约库 [Hyperf/contract](https://github.com/hyperf/contract) 内的接口时优先满足且依赖对应的接口而不是实现类；
-- 对于实现 Hyperf 专有功能所增加的增强功能类，通常来说也会对 Hyperf 的一些组件有依赖，那么这些组件的依赖不应该写在 `composer.json` 的 `require` 项，而是写在 `suggest` 项作为建议项存在；
-- 组件设计时不应该通过注解进行任何的依赖注入，注入方式应只使用 `构造函数注入` 的方式，这样同时也能满足在 `OOP` 下的使用；
-- 组件设计时不应该通过注解进行任何的功能定义，功能定义应只通过 `ConfigProvider` 来定义； 
-- 类的设计时应尽可能的不储存状态数据，因为这会导致这个类不能作为长生命周期的对象来提供，也无法很方便的使用依赖注入功能，这样会在一定程度下降低性能，状态数据应都通过 `Hyperf\Utils\Context` 协程上下文来储存；
+- All classes must be designed to allow standard `OOP` usage, and all Hyperf-specific features must be provided as enhancements and in separate classes, which means they can still be used in non-Hyperf frameworks through standard means to realize the use of components;
+- If the dependency design of the component can meet the [PSR standard](https://www.php-fig.org/psr), it will be satisfied first and depend on the corresponding interface instead of the implementation class; such as [PSR standard](https:// www.php-fig.org/psr) does not contain functions, then it can satisfy the interface in the contract library [Hyperf/contract](https://github.com/hyperf/contract) defined by Hyperf, which is satisfied first and depends on The corresponding interface rather than the implementation class;
+- For the enhanced function classes added to implement Hyperf's proprietary functions, generally speaking, they also have dependencies on some components of Hyperf, so the dependencies of these components should not be written in the `require` item of `composer.json`, but write exists as a suggestion in the `suggest` item;
+- Component design should not perform any dependency injection through annotations, and the injection method should only use `constructor injection`, which can also meet the use under `OOP`;
+- Component design should not define any functions through annotations, and function definitions should only be defined through `ConfigProvider`;
+- The design of the class should not store state data as much as possible, because this will cause the class not to be provided as an object with a long life cycle, and the dependency injection function cannot be easily used, which will reduce performance and state to a certain extent Data should all be stored through `Hyperf\Utils\Context` coroutine context;
