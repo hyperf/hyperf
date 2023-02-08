@@ -41,6 +41,12 @@ trait SoftDeletes
      */
     public function forceDelete()
     {
+        if ($event = $this->fireModelEvent('forceDeleting')) {
+            if ($event instanceof StoppableEventInterface && $event->isPropagationStopped()) {
+                return false;
+            }
+        }
+
         $this->forceDeleting = true;
 
         return tap($this->delete(), function ($deleted) {

@@ -1,5 +1,9 @@
 # v3.0.6 - TBD
 
+## Added
+
+- [#5366](https://github.com/hyperf/hyperf/pull/5366) Added `forceDeleting` event to `hyperf/database`.
+
 # v3.0.5 - 2023-02-05
 
 ## Added
