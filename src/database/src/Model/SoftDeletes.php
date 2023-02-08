@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace Hyperf\Database\Model;
 
-use Closure;
 use Psr\EventDispatcher\StoppableEventInterface;
 
 /**
@@ -57,16 +56,6 @@ trait SoftDeletes
                 $this->fireModelEvent('forceDeleted');
             }
         });
-    }
-
-    /**
-     * Register a "forceDeleting" model event callback with the dispatcher.
-     *
-     * @param Closure|string $callback
-     */
-    public static function forceDeleting($callback)
-    {
-        static::registerModelEvent('forceDeleting', $callback);
     }
 
     /**
