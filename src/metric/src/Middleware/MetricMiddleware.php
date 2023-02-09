@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Metric\Middleware;
 
 use Hyperf\HttpServer\Router\Dispatched;
+use Hyperf\Metric\CoroutineServerStats;
 use Hyperf\Metric\Timer;
-use Hyperf\Server\CoroutineServerStats;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
