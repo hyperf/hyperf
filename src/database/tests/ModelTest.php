@@ -1346,8 +1346,8 @@ class ModelTest extends TestCase
         $this->assertFalse($clone->exists);
         $this->assertEquals('hyperf', $clone->first);
         $this->assertEquals('otwell', $clone->last);
-        $this->assertObjectNotHasAttribute('created_at', $clone);
-        $this->assertObjectNotHasAttribute('updated_at', $clone);
+        $this->assertNull($clone->created_at);
+        $this->assertNull($clone->updated_at);
         $this->assertEquals(['bar'], $clone->foo);
     }
 
