@@ -334,7 +334,7 @@ class RedisAdapter implements AdapterInterface, EphemeralInterface
         $sub = make(Subscriber::class, [
             'host' => $this->redis->getHost(),
             'port' => $this->redis->getPort(),
-            'password' => $this->redis->getAuth(),
+            'password' => $this->redis->getAuth() ?: '',
             'timeout' => 5,
         ]);
         $prefix = $this->redis->getOption(Redis::OPT_PREFIX);
