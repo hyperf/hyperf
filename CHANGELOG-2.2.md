@@ -1,4 +1,8 @@
-# v2.2.36 - TBD
+# v2.2.39 - TBD
+
+# v2.2.38 - 2023-02-09
+
+- [#5359](https://github.com/hyperf/hyperf/pull/5359) Fixed the bug that nacos no output error log when heartbeat timed out.
 
 # v2.2.35 - 2022-08-27
 
