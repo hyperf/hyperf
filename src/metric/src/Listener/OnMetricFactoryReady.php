@@ -99,7 +99,9 @@ class OnMetricFactoryReady implements ListenerInterface
                 if ($server instanceof SwooleServer) {
                     $serverStatsFactory = fn (): array => $server->stats();
                 }
-            } else {
+            }
+
+            if (! $serverStatsFactory) {
                 $serverStatsFactory = fn (): array => $this->container->get(CoroutineServerStats::class)->toArray();
             }
         }
