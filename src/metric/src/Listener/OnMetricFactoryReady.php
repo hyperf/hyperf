@@ -21,6 +21,7 @@ use Hyperf\Metric\Contract\MetricFactoryInterface;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Metric\MetricSetter;
+use Hyperf\Server\CoroutineServerStats;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\System;
 use Psr\Container\ContainerInterface;
@@ -91,21 +92,25 @@ class OnMetricFactoryReady implements ListenerInterface
             'metric_process_memory_peak_usage'
         );
 
-        $swooleServer = null;
+        $serverStatsFactory = null;
 
-        if (! MetricFactoryPicker::$isCommand && $this->container->has(SwooleServer::class) && $server = $this->container->get(SwooleServer::class)) {
-            if ($server instanceof SwooleServer) {
-                $swooleServer = $server;
+        if (! MetricFactoryPicker::$isCommand) {
+            if ($this->container->has(SwooleServer::class) && $server = $this->container->get(SwooleServer::class)) {
+                if ($server instanceof SwooleServer) {
+                    $serverStatsFactory = fn (): array => $server->stats();
+                }
+            } else {
+                $serverStatsFactory = fn (): array => $this->container->get(CoroutineServerStats::class)->toArray();
             }
         }
 
         $timerInterval = $this->config->get('metric.default_metric_interval', 5);
-        $timerId = $this->timer->tick($timerInterval, function () use ($metrics, $swooleServer) {
+        $timerId = $this->timer->tick($timerInterval, function () use ($metrics, $serverStatsFactory) {
             $this->trySet('', $metrics, Co::stats());
             $this->trySet('timer_', $metrics, Timer::stats());
 
-            if ($swooleServer) {
-                $this->trySet('', $metrics, $swooleServer->stats());
+            if ($serverStatsFactory) {
+                $this->trySet('', $metrics, $serverStatsFactory());
             }
 
             if (class_exists('Swoole\Timer')) {

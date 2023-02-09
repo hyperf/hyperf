@@ -8,6 +8,7 @@
 
 - [#5366](https://github.com/hyperf/hyperf/pull/5366) Added `forceDeleting` event to `hyperf/database`.
 - [#5373](https://github.com/hyperf/hyperf/pull/5373) Support server settings for `SwowServer`.
+- [#5376](https://github.com/hyperf/hyperf/pull/5376) Support coroutine server stats for `hyperf/metric`.
 
 # v3.0.5 - 2023-02-05
 
