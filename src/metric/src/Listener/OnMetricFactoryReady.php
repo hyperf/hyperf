@@ -18,10 +18,10 @@ use Hyperf\Coordinator\Timer;
 use Hyperf\Engine\Coroutine as Co;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Metric\Contract\MetricFactoryInterface;
+use Hyperf\Metric\CoroutineServerStats;
 use Hyperf\Metric\Event\MetricFactoryReady;
 use Hyperf\Metric\MetricFactoryPicker;
 use Hyperf\Metric\MetricSetter;
-use Hyperf\Server\CoroutineServerStats;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\System;
 use Psr\Container\ContainerInterface;
@@ -99,7 +99,9 @@ class OnMetricFactoryReady implements ListenerInterface
                 if ($server instanceof SwooleServer) {
                     $serverStatsFactory = fn (): array => $server->stats();
                 }
-            } else {
+            }
+
+            if (! $serverStatsFactory) {
                 $serverStatsFactory = fn (): array => $this->container->get(CoroutineServerStats::class)->toArray();
             }
         }
