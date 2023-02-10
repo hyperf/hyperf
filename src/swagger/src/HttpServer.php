@@ -17,15 +17,25 @@ use Hyperf\Engine\Http\Stream;
 use Hyperf\HttpMessage\Server\Request as Psr7Request;
 use Hyperf\HttpMessage\Server\Response;
 use Hyperf\HttpServer\ResponseEmitter;
+use Hyperf\Utils\Codec\Json;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class HttpServer implements OnRequestInterface
 {
-    protected string $json = '';
+    protected array $metadata = [];
+
+    protected array $config;
 
     public function __construct(protected ContainerInterface $container, protected ResponseEmitter $emitter)
     {
+        $this->config = $this->container->get(ConfigInterface::class)->get('swagger', [
+            'enable' => false,
+            'port' => 9500,
+            'json' => '/storage/openapi.json',
+            'html' => null,
+            'url' => '/swagger',
+        ]);
     }
 
     public function onRequest($request, $response): void
@@ -37,10 +47,10 @@ class HttpServer implements OnRequestInterface
         }
 
         $path = $psr7Request->getUri()->getPath();
-        if (str_ends_with($path, '.json')) {
-            $stream = new Stream($this->getJson());
-        } else {
+        if ($path === $this->config['url']) {
             $stream = new Stream($this->getHtml());
+        } else {
+            $stream = new Stream($this->filterJson($path));
         }
 
         $psrResponse = (new Response())->withBody($stream);
@@ -48,19 +58,36 @@ class HttpServer implements OnRequestInterface
         $this->emitter->emit($psrResponse, $response);
     }
 
-    private function getJson(): string
+    protected function filterJson(string $path): string
     {
-        if ($this->json) {
-            return $this->json;
+        $metadata = $this->getMetadata();
+
+        $paths = [];
+        foreach ($metadata['paths'] ?? [] as $key => $value) {
+            if (str_contains($key, $path)) {
+                $paths[$key] = $value;
+            }
         }
 
-        $config = $this->container->get(ConfigInterface::class);
-
-        return $this->json = file_get_contents(BASE_PATH . $config->get('swagger.swagger_json', '/storage/openapi.json'));
+        $metadata['paths'] = $paths;
+        return Json::encode($metadata);
     }
 
-    private function getHtml(): string
+    protected function getMetadata(): array
     {
+        if ($this->metadata) {
+            return $this->metadata;
+        }
+
+        return $this->metadata = Json::decode(file_get_contents(BASE_PATH . $this->config['json']));
+    }
+
+    protected function getHtml(): string
+    {
+        if (! empty($this->config['html'])) {
+            return $this->config['html'];
+        }
+
         return <<<'HTML'
 <!DOCTYPE html>
 <html lang="en">
@@ -81,7 +108,7 @@ class HttpServer implements OnRequestInterface
   <script>
     window.onload = () => {
       window.ui = SwaggerUIBundle({
-        url: '/openapi.json',
+        url: '/',
         dom_id: '#swagger-ui',
         presets: [
           SwaggerUIBundle.presets.apis,
