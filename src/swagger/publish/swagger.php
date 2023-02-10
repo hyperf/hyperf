@@ -12,5 +12,7 @@ declare(strict_types=1);
 return [
     'enable' => env('APP_ENV', 'dev') !== 'prod',
     'port' => 9500,
-    'swagger_json' => '/storage/openapi.json',
+    'json' => '/storage/openapi.json',
+    'html' => null,
+    'url' => '/swagger',
 ];
