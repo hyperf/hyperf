@@ -20,6 +20,7 @@ use Hyperf\Process\ProcessManager;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Server;
+use Swoole\Coroutine\Http\Server as CoroutineHttpServer;
 
 class ConfigFetcherProcess extends AbstractProcess
 {
@@ -52,7 +53,7 @@ class ConfigFetcherProcess extends AbstractProcess
 
     public function isEnable($server): bool
     {
-        return $server instanceof Server
+        return ($server instanceof Server || $server instanceof CoroutineHttpServer)
             && $this->config->get('config_center.enable', false)
             && strtolower($this->config->get('config_center.mode', Mode::PROCESS)) === Mode::PROCESS;
     }
