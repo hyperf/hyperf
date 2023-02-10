@@ -284,12 +284,12 @@ class CalculatorServiceConsumer extends AbstractServiceClient implements Calcula
     /**
      * 定义对应服务提供者的服务名称
      */
-    protected string $serviceName = 'CalculatorService';
+    protected $serviceName = 'CalculatorService';
     
     /**
      * 定义对应服务提供者的服务协议
      */
-    protected string $protocol = 'jsonrpc-http';
+    protected $protocol = 'jsonrpc-http';
 
     public function add(int $a, int $b): int
     {
