@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Swagger;
 
+use Hyperf\Swagger\Command\GenCommand;
 use Hyperf\Swagger\Listener\BootSwaggerListener;
 
 class ConfigProvider
@@ -18,6 +19,9 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
+            'commands' => [
+                GenCommand::class,
+            ],
             'listeners' => [
                 BootSwaggerListener::class,
             ],
