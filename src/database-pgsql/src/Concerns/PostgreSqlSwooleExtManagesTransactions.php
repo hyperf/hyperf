@@ -179,7 +179,7 @@ trait PostgreSqlSwooleExtManagesTransactions
      */
     protected function createSavepoint()
     {
-        $this->getPdo()->exec(
+        $this->getPdo()->query(
             $this->queryGrammar->compileSavepoint('trans' . ($this->transactions + 1))
         );
     }
@@ -212,7 +212,7 @@ trait PostgreSqlSwooleExtManagesTransactions
         if ($toLevel == 0) {
             $this->getPdo()->query('ROLLBACK');
         } elseif ($this->queryGrammar->supportsSavepoints()) {
-            $this->getPdo()->exec(
+            $this->getPdo()->query(
                 $this->queryGrammar->compileSavepointRollBack('trans' . ($toLevel + 1))
             );
         }
