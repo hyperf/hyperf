@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\ConfigApollo;
 
+use Hyperf\ConfigApollo\ClientInterface as ApolloClientInterface;
 use Hyperf\ConfigCenter\AbstractDriver;
 use Hyperf\ConfigCenter\Contract\ClientInterface;
 use Hyperf\Coordinator\Constants;
@@ -28,14 +29,14 @@ class ApolloDriver extends AbstractDriver
     protected array $notifications = [];
 
     /**
-     * @var \Hyperf\ConfigApollo\ClientInterface
+     * @var ApolloClientInterface
      */
     protected ClientInterface $client;
 
     public function __construct(ContainerInterface $container)
     {
         parent::__construct($container);
-        $this->client = $container->get(ClientInterface::class);
+        $this->client = $container->get(ApolloClientInterface::class);
     }
 
     public function createMessageFetcherLoop(): void
