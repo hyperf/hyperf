@@ -25,9 +25,8 @@
             "Hyperf\\Swagger\\": "src/"
         }
     },
-    "autoload-dev": {
-        "psr-4": {
-        }
+    "suggest": {
+        "hyperf/validation": "Required to use SwaggerRequest."
     },
     "config": {
         "sort-packages": true

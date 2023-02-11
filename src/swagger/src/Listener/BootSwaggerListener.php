@@ -28,6 +28,7 @@ use Hyperf\Swagger\Annotation\Post;
 use Hyperf\Swagger\Annotation\Put;
 use Hyperf\Swagger\Generator;
 use Hyperf\Swagger\HttpServer;
+use Hyperf\Swagger\Util;
 use InvalidArgumentException;
 use OpenApi\Annotations\Operation;
 use Psr\Container\ContainerInterface;
@@ -99,13 +100,13 @@ class BootSwaggerListener implements ListenerInterface
                 $classAnnotations = AnnotationCollector::getClassAnnotations($class);
                 $methodAnnotations = AnnotationCollector::getClassMethodAnnotation($class, $method);
 
-                $serverAnnotations = $this->findAnnotations($methodAnnotations, SA\Server::class);
+                $serverAnnotations = Util::findAnnotations($methodAnnotations, SA\Server::class);
                 if (! $serverAnnotations) {
-                    $serverAnnotations = $this->findAnnotations($classAnnotations, SA\Server::class);
+                    $serverAnnotations = Util::findAnnotations($classAnnotations, SA\Server::class);
                 }
 
-                $middlewareAnnotations = $this->findAnnotations($methodAnnotations, Middleware::class);
-                $middlewareAnnotations = array_merge($middlewareAnnotations, $this->findAnnotations($classAnnotations, Middleware::class));
+                $middlewareAnnotations = Util::findAnnotations($methodAnnotations, Middleware::class);
+                $middlewareAnnotations = array_merge($middlewareAnnotations, Util::findAnnotations($classAnnotations, Middleware::class));
 
                 /** @var Operation $opera */
                 foreach ($annotation->toAnnotations() as $opera) {
@@ -131,23 +132,5 @@ class BootSwaggerListener implements ListenerInterface
                 }
             }
         }
-    }
-
-    public function findAnnotations(?array $classAnnotations, string $class): array
-    {
-        $result = [];
-        foreach ((array) $classAnnotations as $annotation) {
-            if ($annotation instanceof $class) {
-                $result[] = $annotation;
-            }
-
-            if ($annotation instanceof MultipleAnnotation) {
-                if ($annotation->className() === $class) {
-                    $result = array_merge($result, $annotation->toAnnotations());
-                }
-            }
-        }
-
-        return $result;
     }
 }
