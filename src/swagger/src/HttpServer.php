@@ -79,7 +79,7 @@ class HttpServer implements OnRequestInterface
             return $this->metadata;
         }
 
-        return $this->metadata = Json::decode(file_get_contents(BASE_PATH . $this->config['json']));
+        return $this->metadata = Json::decode(file_get_contents($this->config['json']));
     }
 
     protected function getHtml(): string
