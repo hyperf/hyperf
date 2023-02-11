@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#5361](https://github.com/hyperf/hyperf/pull/5361) Fixed bug that the current service XXX is persistent service, can't register ephemeral instance.
+- [#5394](https://github.com/hyperf/hyperf/pull/5394) Fixed bug that `hyperf/config-apollo` cannot work.
 
 ## Added
 
