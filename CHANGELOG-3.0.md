@@ -11,6 +11,7 @@
 - [#5376](https://github.com/hyperf/hyperf/pull/5376) Support coroutine server stats for `hyperf/metric`.
 - [#5379](https://github.com/hyperf/hyperf/pull/5379) Added log records when nacos heartbeat failed.
 - [#5389](https://github.com/hyperf/hyperf/pull/5389) Added swagger support.
+- [#5395](https://github.com/hyperf/hyperf/pull/5395) Support validation for swagger.
 
 # v3.0.5 - 2023-02-05
 

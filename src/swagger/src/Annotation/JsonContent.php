@@ -12,10 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Swagger\Annotation;
 
 use Attribute;
-use Hyperf\Di\Annotation\AnnotationInterface;
 
-#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
-class Get extends \OpenApi\Attributes\Get implements AnnotationInterface
+#[Attribute(Attribute::TARGET_CLASS)]
+class JsonContent extends \OpenApi\Attributes\JsonContent
 {
-    use MultipleAnnotationTrait;
 }

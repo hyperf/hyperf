@@ -17,5 +17,5 @@ use Hyperf\Di\Annotation\AnnotationInterface;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 class Head extends \OpenApi\Attributes\Head implements AnnotationInterface
 {
-    use AnnotationTrait;
+    use MultipleAnnotationTrait;
 }
