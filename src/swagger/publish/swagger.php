@@ -15,4 +15,5 @@ return [
     'json' => BASE_PATH . '/openapi.json',
     'html' => null,
     'url' => '/swagger',
+    'auto_generate' => true,
 ];
