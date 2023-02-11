@@ -1,4 +1,33 @@
-# v3.0.5 - TBD
+# v3.0.6 - TBD
+
+## Fixed
+
+- [#5361](https://github.com/hyperf/hyperf/pull/5361) Fixed bug that the current service XXX is persistent service, can't register ephemeral instance.
+
+## Added
+
+- [#5366](https://github.com/hyperf/hyperf/pull/5366) Added `forceDeleting` event to `hyperf/database`.
+- [#5373](https://github.com/hyperf/hyperf/pull/5373) Support server settings for `SwowServer`.
+- [#5376](https://github.com/hyperf/hyperf/pull/5376) Support coroutine server stats for `hyperf/metric`.
+- [#5379](https://github.com/hyperf/hyperf/pull/5379) Added log records when nacos heartbeat failed.
+- [#5389](https://github.com/hyperf/hyperf/pull/5389) Added swagger support.
+- [#5395](https://github.com/hyperf/hyperf/pull/5395) Support validation for swagger.
+
+# v3.0.5 - 2023-02-05
+
+## Added
+
+- [#5338](https://github.com/hyperf/hyperf/pull/5338) Added `addRestoreOrCreate` extension to `SoftDeletingScope`.
+- [#5349](https://github.com/hyperf/hyperf/pull/5349) Added `ResumeExitCoordinatorListener`.
+- [#5355](https://github.com/hyperf/hyperf/pull/5355) Added `System::getCpuCoresNum()`.
+
+## Fixed
+
+- [#5357](https://github.com/hyperf/hyperf/pull/5357) Fixed bug that the coordinator timer can't stop when an exception occurs inside `$closure`.
+
+## Optimized
+
+- [#5342](https://github.com/hyperf/hyperf/pull/5342) Compatible with `tcp://host:port` configuration redis sentry address.
 
 # v3.0.4 - 2023-01-22
 

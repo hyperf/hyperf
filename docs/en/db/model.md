@@ -528,6 +528,16 @@ class User extends Model
 }
 ```
 
+The `restoreOrCreate` method will match the data in the database with the given column/value. If the corresponding model is found in the database, execute the `restore` method to restore the model, otherwise a record will be created from the attributes of the first parameter and even the attributes of the second parameter and inserted into the database.
+
+```php
+// Look up users by name, create them with name and gender, age attributes if they don't exist...
+$user = User::restoreOrCreate(
+    ['name' => 'Hyperf'],
+    ['gender' => 1, 'age' => 20]
+);
+```
+
 ## Bit 类型
 
 默认情况下，Hyperf 中的数据库模型转 SQL 过程中，会将参数值统一转为 String 类型，以解决 int 在大数问题和使值类型更容易匹配索引，若想要使 `ORM` 支持 `bit` 类型，只需要增加以下事件监听器代码即可。

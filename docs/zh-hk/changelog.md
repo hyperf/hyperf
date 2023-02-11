@@ -1,5 +1,21 @@
 # 版本更新記錄
 
+# v3.0.5 - 2023-02-06
+
+## 新增
+
+- [#5338](https://github.com/hyperf/hyperf/pull/5338) 為 `SoftDeletingScope` 新增了 `addRestoreOrCreate` 方法。
+- [#5349](https://github.com/hyperf/hyperf/pull/5349) 新增監聽器 `ResumeExitCoordinatorListener`。
+- [#5355](https://github.com/hyperf/hyperf/pull/5355) 新增方法 `System::getCpuCoresNum()`。
+
+## 修復
+
+- [#5357](https://github.com/hyperf/hyperf/pull/5357) 修復在匿名函數中拋錯時，`coordinator` 定時器無法正常停止的問題。
+
+## 優化
+
+- [#5342](https://github.com/hyperf/hyperf/pull/5342) 優化了 `Redis` 哨兵模式的地址讀取方式。
+
 # v3.0.4 - 2023-01-22
 
 ## 修復

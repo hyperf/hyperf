@@ -64,13 +64,16 @@ class Timer
                         break;
                     }
 
+                    $result = null;
+
                     try {
                         $result = $closure($isClosing);
-                        if ($result === self::STOP || $isClosing) {
-                            break;
-                        }
                     } catch (Throwable $exception) {
                         $this->logger?->error((string) $exception);
+                    }
+
+                    if ($result === self::STOP || $isClosing) {
+                        break;
                     }
 
                     ++$round;
