@@ -3,8 +3,9 @@
 ## Fixed
 
 - [#5361](https://github.com/hyperf/hyperf/pull/5361) Fixed bug that the current service XXX is persistent service, can't register ephemeral instance.
-- [#5394](https://github.com/hyperf/hyperf/pull/5394) Fixed bug that `hyperf/config-apollo` cannot work.
+- [#5382](https://github.com/hyperf/hyperf/pull/5382) Fixed bug that mix-subscriber cannot work caused by the empty auth.
 - [#5386](https://github.com/hyperf/hyperf/pull/5386) Fixed bug that non-existing method `exec` called by `SwoolePostgresqlClient`.
+- [#5394](https://github.com/hyperf/hyperf/pull/5394) Fixed bug that `hyperf/config-apollo` cannot work.
 
 ## Added
 
