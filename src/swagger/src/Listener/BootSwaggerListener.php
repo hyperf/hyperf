@@ -16,6 +16,7 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server;
+use Hyperf\Swagger\Generator;
 use Hyperf\Swagger\HttpServer;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
@@ -61,5 +62,9 @@ class BootSwaggerListener implements ListenerInterface
         ];
 
         $config->set('server.servers', $servers);
+
+        if ($config->get('swagger.auto_generate', false)) {
+            $this->container->get(Generator::class)->generate();
+        }
     }
 }

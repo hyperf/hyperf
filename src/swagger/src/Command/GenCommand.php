@@ -12,8 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Swagger\Command;
 
 use Hyperf\Command\Command as HyperfCommand;
-use Hyperf\Contract\ConfigInterface;
-use OpenApi\Generator;
+use Hyperf\Swagger\Generator;
 use Psr\Container\ContainerInterface;
 
 class GenCommand extends HyperfCommand
@@ -31,17 +30,9 @@ class GenCommand extends HyperfCommand
 
     public function handle()
     {
-        $config = $this->container->get(ConfigInterface::class);
+        $generator = $this->container->get(Generator::class);
 
-        $paths = $config->get('annotations.scan.paths', []);
-
-        $openapi = Generator::scan($paths, [
-            'validate' => false,
-        ]);
-
-        $path = $config->get('swagger.json');
-
-        file_put_contents($path, $openapi->toJson());
+        $generator->generate();
 
         $this->output->writeln('Generate swagger json success.');
     }
