@@ -1,5 +1,24 @@
 # 版本更新记录
 
+# v3.0.6 - 2023-02-12
+
+## Fixed
+
+- [#5361](https://github.com/hyperf/hyperf/pull/5361) 修复 `Nacos` 注入临时实例失败的问题。
+- [#5382](https://github.com/hyperf/hyperf/pull/5382) 修复 `SocketIO` 中使用 `mix-subscriber` 时，因为没有设置密码而报错的问题。
+- [#5386](https://github.com/hyperf/hyperf/pull/5386) 修复 `SwoolePostgresqlClient` 会被执行到不存在的方法 `exec` 的问题。
+- [#5394](https://github.com/hyperf/hyperf/pull/5394) 修复 `hyperf/config-apollo` 无法正常使用的问题。
+
+## Added
+
+- [#5366](https://github.com/hyperf/hyperf/pull/5366) 为 `hyperf/database` 增加 `forceDeleting` 事件。
+- [#5373](https://github.com/hyperf/hyperf/pull/5373) 为 `SwowServer` 增加 `settings` 配置。
+- [#5376](https://github.com/hyperf/hyperf/pull/5376) 为 `hyperf/metric` 增加协程风格下服务状态收集的能力。
+- [#5379](https://github.com/hyperf/hyperf/pull/5379) 当 `Nacos` 心跳失败时，增加日志记录。
+- [#5389](https://github.com/hyperf/hyperf/pull/5389) 增加 `Swagger` 支持。
+- [#5395](https://github.com/hyperf/hyperf/pull/5395) 为 `Swagger` 组件，增加验证器功能。
+- [#5397](https://github.com/hyperf/hyperf/pull/5397) 支持所有已知的 `Swagger` 注解。
+
 # v3.0.5 - 2023-02-06
 
 ## 新增
