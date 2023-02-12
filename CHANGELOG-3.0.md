@@ -15,6 +15,7 @@
 - [#5379](https://github.com/hyperf/hyperf/pull/5379) Added log records when nacos heartbeat failed.
 - [#5389](https://github.com/hyperf/hyperf/pull/5389) Added swagger support.
 - [#5395](https://github.com/hyperf/hyperf/pull/5395) Support validation for swagger.
+- [#5397](https://github.com/hyperf/hyperf/pull/5397) Support all swagger annotations.
 
 # v3.0.5 - 2023-02-05
 

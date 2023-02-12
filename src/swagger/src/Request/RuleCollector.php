@@ -42,10 +42,12 @@ class RuleCollector
         $body = Util::findAnnotations($methodAnnotations, RequestBody::class)[0] ?? null;
         if ($body) {
             if ($body->_content instanceof JsonContent) {
-                foreach ($body->_content->properties as $property) {
-                    if ($property instanceof Property) {
-                        if ($property->rules) {
-                            $rules[$property->property] = $property->rules;
+                if (is_array($body->_content->properties)) {
+                    foreach ($body->_content->properties as $property) {
+                        if ($property instanceof Property) {
+                            if ($property->rules) {
+                                $rules[$property->property] = $property->rules;
+                            }
                         }
                     }
                 }

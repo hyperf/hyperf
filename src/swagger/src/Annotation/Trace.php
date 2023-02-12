@@ -13,7 +13,7 @@ namespace Hyperf\Swagger\Annotation;
 
 use Attribute;
 
-#[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
-class Server extends \OpenApi\Attributes\Server
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
+class Trace extends \OpenApi\Attributes\Trace
 {
 }

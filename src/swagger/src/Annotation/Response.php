@@ -12,8 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\Swagger\Annotation;
 
 use Attribute;
+use Hyperf\Di\Annotation\AnnotationInterface;
 
-#[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
-class Server extends \OpenApi\Attributes\Server
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
+class Response extends \OpenApi\Attributes\Response implements AnnotationInterface
 {
+    use MultipleAnnotationTrait;
 }

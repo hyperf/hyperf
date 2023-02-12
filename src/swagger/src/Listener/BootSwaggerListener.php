@@ -100,9 +100,9 @@ class BootSwaggerListener implements ListenerInterface
                 $classAnnotations = AnnotationCollector::getClassAnnotations($class);
                 $methodAnnotations = AnnotationCollector::getClassMethodAnnotation($class, $method);
 
-                $serverAnnotations = Util::findAnnotations($methodAnnotations, SA\Server::class);
+                $serverAnnotations = Util::findAnnotations($methodAnnotations, SA\HyperfServer::class);
                 if (! $serverAnnotations) {
-                    $serverAnnotations = Util::findAnnotations($classAnnotations, SA\Server::class);
+                    $serverAnnotations = Util::findAnnotations($classAnnotations, SA\HyperfServer::class);
                 }
 
                 $middlewareAnnotations = Util::findAnnotations($methodAnnotations, Middleware::class);
@@ -110,7 +110,7 @@ class BootSwaggerListener implements ListenerInterface
 
                 /** @var Operation $opera */
                 foreach ($annotation->toAnnotations() as $opera) {
-                    /** @var SA\Server $serverAnnotation */
+                    /** @var SA\HyperfServer $serverAnnotation */
                     foreach ($serverAnnotations as $serverAnnotation) {
                         $factory->getRouter($serverAnnotation->name)->addRoute(
                             [$opera->method],
