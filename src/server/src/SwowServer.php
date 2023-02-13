@@ -252,7 +252,6 @@ class SwowServer implements ServerInterface
                 case 'input_buffer_size':
                     $server->setRecvBufferSize($value);
                     break;
-
             }
 
             $method = Str::camel(sprintf('set_%s', $key));
