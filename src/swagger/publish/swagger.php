@@ -16,4 +16,7 @@ return [
     'html' => null,
     'url' => '/swagger',
     'auto_generate' => true,
+    'scan' => [
+        'paths' => null,
+    ],
 ];
