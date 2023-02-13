@@ -238,7 +238,23 @@ class SwowServer implements ServerInterface
 
     private function initServerSettings($server, $settings)
     {
+        // Adapter Swoole server config
         foreach ($settings as $key => $value) {
+            switch ($key) {
+                case 'open_tcp_nodelay':
+                    $server->setTcpNodelay($value);
+                    break;
+                case 'buffer_output_size':
+                case 'output_buffer_size':
+                    $server->setSendBufferSize($value);
+                    break;
+                case 'buffer_input_size':
+                case 'input_buffer_size':
+                    $server->setRecvBufferSize($value);
+                    break;
+
+            }
+
             $method = Str::camel(sprintf('set_%s', $key));
             if (method_exists($server, $method)) {
                 $server->{$method}($value);
