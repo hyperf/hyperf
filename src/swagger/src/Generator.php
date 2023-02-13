@@ -21,7 +21,10 @@ class Generator
 
     public function generate(): void
     {
-        $paths = $this->config->get('annotations.scan.paths', []);
+        $paths = $this->config->get('swagger.scan.paths', null);
+        if ($paths === null) {
+            $paths = $this->config->get('annotations.scan.paths', []);
+        }
 
         $openapi = \OpenApi\Generator::scan($paths, [
             'validate' => false,

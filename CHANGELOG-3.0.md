@@ -1,5 +1,9 @@
 # v3.0.7 - TBD
 
+## Added
+
+- [#5042](https://github.com/hyperf/hyperf/pull/5402) Added `swagger.scan.paths` to rewrite `scan paths` for swagger.
+
 # v3.0.6 - 2023-02-12
 
 ## Fixed

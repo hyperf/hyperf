@@ -14,7 +14,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         php-version: [ '8.0', '8.1', '8.2' ]
-        sw-version: [ 'v4.5.11', 'v4.6.7', 'v4.7.1', 'v4.8.12', 'v5.0.1', 'master' ]
+        sw-version: [ 'v4.5.11', 'v4.6.7', 'v4.7.1', 'v4.8.12', 'v5.0.2', 'master' ]
         exclude:
           - php-version: '8.1'
             sw-version: 'v4.5.11'
@@ -57,7 +57,7 @@ jobs:
           rm swoole.tar.gz
           cd swoole
           phpize
-          if [ _${{ matrix.sw-version }} = '_v5.0.1' ] || [ _${{ matrix.sw-version }} = '_master' ]
+          if [ _${{ matrix.sw-version }} = '_v5.0.2' ] || [ _${{ matrix.sw-version }} = '_master' ]
           then
             ./configure --enable-openssl --enable-swoole-curl --enable-cares --enable-swoole-pgsql --enable-brotli
           else
