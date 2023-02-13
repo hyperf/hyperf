@@ -12,6 +12,9 @@ declare(strict_types=1);
 namespace Hyperf\Swagger;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Swagger\Processor\BuildPathsProcessor;
+use Hyperf\Utils\Codec\Json;
+use OpenApi\Processors;
 
 class Generator
 {
@@ -26,12 +29,49 @@ class Generator
             $paths = $this->config->get('annotations.scan.paths', []);
         }
 
-        $openapi = \OpenApi\Generator::scan($paths, [
-            'validate' => false,
-        ]);
+        $generator = new \OpenApi\Generator();
+        $openapi = $generator->setAliases(\OpenApi\Generator::DEFAULT_ALIASES)
+            ->setNamespaces(\OpenApi\Generator::DEFAULT_NAMESPACES)
+            ->setProcessors([
+                new Processors\DocBlockDescriptions(),
+                new Processors\MergeIntoOpenApi(),
+                new Processors\MergeIntoComponents(),
+                new Processors\ExpandClasses(),
+                new Processors\ExpandInterfaces(),
+                new Processors\ExpandTraits(),
+                new Processors\ExpandEnums(),
+                new Processors\AugmentSchemas(),
+                new Processors\AugmentProperties(),
+                new BuildPathsProcessor(),
+                new Processors\AugmentParameters(),
+                new Processors\AugmentRefs(),
+                new Processors\MergeJsonContent(),
+                new Processors\MergeXmlContent(),
+                new Processors\OperationId(),
+                new Processors\CleanUnmerged(),
+            ])
+            ->generate($paths, validate: false);
 
-        $path = $this->config->get('swagger.json');
+        $jsonArray = Json::decode($openapi->toJson());
+        $paths = $jsonArray['paths'] ?? [];
+        $jsonArray['paths'] = [];
+        $result = [];
+        foreach ($paths as $key => $path) {
+            [$serverName, $key] = explode('|', $key, 2);
+            if (empty($result[$serverName])) {
+                $result[$serverName] = $jsonArray;
+            }
 
-        file_put_contents($path, $openapi->toJson());
+            $result[$serverName]['paths'][$key] = $path;
+        }
+
+        $path = $this->config->get('swagger.json_dir', BASE_PATH . '/storage/swagger');
+
+        foreach ($result as $serverName => $json) {
+            if (! is_dir($path)) {
+                @mkdir($path, 0755, true);
+            }
+            file_put_contents(rtrim($path, '/') . '/' . $serverName . '.json', Json::encode($json));
+        }
     }
 }
