@@ -3,6 +3,7 @@
 ## Added
 
 - [#5042](https://github.com/hyperf/hyperf/pull/5402) Added `swagger.scan.paths` to rewrite `scan paths` for swagger.
+- [#5403](https://github.com/hyperf/hyperf/pull/5403) Added Swoole server config in SwowServer.
 
 # v3.0.6 - 2023-02-12
 
