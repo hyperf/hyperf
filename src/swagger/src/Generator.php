@@ -65,9 +65,12 @@ class Generator
             $result[$serverName]['paths'][$key] = $path;
         }
 
-        $path = $this->config->get('swagger.json_dir');
+        $path = $this->config->get('swagger.json_dir', BASE_PATH . '/storage/swagger');
 
         foreach ($result as $serverName => $json) {
+            if (! is_dir($path)) {
+                @mkdir($path, 0755, true);
+            }
             file_put_contents(rtrim($path, '/') . '/' . $serverName . '.json', Json::encode($json));
         }
     }

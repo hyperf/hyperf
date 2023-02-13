@@ -25,17 +25,21 @@ class HttpServer implements OnRequestInterface
 {
     protected array $metadata = [];
 
-    protected array $config;
+    protected array $config = [
+        'enable' => false,
+        'port' => 9500,
+        'json_dir' => BASE_PATH . '/storage/swagger',
+        'html' => null,
+        'url' => '/swagger',
+        'auto_generate' => false,
+        'scan' => [
+            'paths' => null,
+        ],
+    ];
 
     public function __construct(protected ContainerInterface $container, protected ResponseEmitter $emitter)
     {
-        $this->config = $this->container->get(ConfigInterface::class)->get('swagger', [
-            'enable' => false,
-            'port' => 9500,
-            'json_dir' => '/',
-            'html' => null,
-            'url' => '/swagger',
-        ]);
+        $this->config = array_merge($this->config, $this->container->get(ConfigInterface::class)->get('swagger', []));
     }
 
     public function onRequest($request, $response): void
