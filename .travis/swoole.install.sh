@@ -7,7 +7,7 @@ tar -xf swoole.tar.gz -C swoole --strip-components=1
 rm swoole.tar.gz
 cd swoole
 phpize
-./configure --enable-openssl --enable-http2 --enable-swoole-curl --enable-swoole-json --enable-swoole-pgsql
+./configure --enable-openssl --enable-http2 --enable-swoole-curl --enable-swoole-json
 make -j$(nproc)
 sudo make install
 sudo sh -c "echo extension=swoole > /etc/php/${PHP_VERSION}/cli/conf.d/swoole.ini"
