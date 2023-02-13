@@ -12,7 +12,7 @@ declare(strict_types=1);
 return [
     'enable' => env('APP_ENV', 'dev') !== 'prod',
     'port' => 9500,
-    'json' => BASE_PATH . '/openapi.json',
+    'json_dir' => BASE_PATH . '/storage/swagger',
     'html' => null,
     'url' => '/swagger',
     'auto_generate' => true,

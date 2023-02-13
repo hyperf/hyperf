@@ -32,7 +32,7 @@ class HttpServer implements OnRequestInterface
         $this->config = $this->container->get(ConfigInterface::class)->get('swagger', [
             'enable' => false,
             'port' => 9500,
-            'json' => '/storage/openapi.json',
+            'json_dir' => '/',
             'html' => null,
             'url' => '/swagger',
         ]);
@@ -50,7 +50,7 @@ class HttpServer implements OnRequestInterface
         if ($path === $this->config['url']) {
             $stream = new Stream($this->getHtml());
         } else {
-            $stream = new Stream($this->filterJson($path));
+            $stream = new Stream($this->getMetadata($path));
         }
 
         $psrResponse = (new Response())->withBody($stream);
@@ -58,28 +58,23 @@ class HttpServer implements OnRequestInterface
         $this->emitter->emit($psrResponse, $response);
     }
 
-    protected function filterJson(string $path): string
+    protected function getMetadata(string $path): string
     {
-        $metadata = $this->getMetadata();
-
-        $paths = [];
-        foreach ($metadata['paths'] ?? [] as $key => $value) {
-            if (str_contains($key, $path)) {
-                $paths[$key] = $value;
-            }
+        $path = rtrim($this->config['json_dir'], '/') . $path;
+        $id = md5($path);
+        if (isset($this->metadata[$id])) {
+            return $this->metadata[$id];
         }
 
-        $metadata['paths'] = $paths;
-        return Json::encode($metadata);
-    }
-
-    protected function getMetadata(): array
-    {
-        if ($this->metadata) {
-            return $this->metadata;
+        if (file_exists($path)) {
+            $metadata = file_get_contents($path);
+        } else {
+            $metadata = Json::encode([
+                'openapi' => '3.0.0',
+            ]);
         }
 
-        return $this->metadata = Json::decode(file_get_contents($this->config['json']));
+        return $this->metadata[$id] = $metadata;
     }
 
     protected function getHtml(): string
@@ -108,7 +103,7 @@ class HttpServer implements OnRequestInterface
   <script>
     window.onload = () => {
       window.ui = SwaggerUIBundle({
-        url: '/',
+        url: '/http.json',
         dom_id: '#swagger-ui',
         presets: [
           SwaggerUIBundle.presets.apis,
