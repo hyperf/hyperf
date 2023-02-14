@@ -27,7 +27,7 @@ class Network
                     if (! isset($item['address'])) {
                         continue;
                     }
-                    if (! Str::contains($item['address'], '::') && $item['address'] !== '127.0.0.1') {
+                    if (! Str::contains($item['address'], ':') && $item['address'] !== '127.0.0.1') {
                         $ips[$name] = $item['address'];
                     }
                 }

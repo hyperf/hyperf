@@ -6,6 +6,11 @@
 - [#5403](https://github.com/hyperf/hyperf/pull/5403) Support swoole server settings for swow server.
 - [#5404](https://github.com/hyperf/hyperf/pull/5404) Support multiport server for swagger.
 - [#5406](https://github.com/hyperf/hyperf/pull/5406) Added `mixin` method to `Hyperf\Database\Model\Builder`.
+- [#5047](https://github.com/hyperf/hyperf/pull/5407) Support HTTP methods `Delete` and `Options` for swagger.
+
+## Fixed
+
+- [#5405](https://github.com/hyperf/hyperf/pull/5405) Fixed get local ip error when IPv6 exists.
 
 # v3.0.6 - 2023-02-12
 

@@ -21,11 +21,6 @@ use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\Server\Event;
 use Hyperf\Server\Server;
 use Hyperf\Swagger\Annotation as SA;
-use Hyperf\Swagger\Annotation\Get;
-use Hyperf\Swagger\Annotation\Head;
-use Hyperf\Swagger\Annotation\Patch;
-use Hyperf\Swagger\Annotation\Post;
-use Hyperf\Swagger\Annotation\Put;
 use Hyperf\Swagger\Generator;
 use Hyperf\Swagger\HttpServer;
 use Hyperf\Swagger\Util;
@@ -82,11 +77,13 @@ class BootSwaggerListener implements ListenerInterface
         // Init Router
         $factory = $this->container->get(DispatcherFactory::class);
         $annotations = [
-            Get::class,
-            Head::class,
-            Patch::class,
-            Post::class,
-            Put::class,
+            SA\Get::class,
+            SA\Head::class,
+            SA\Patch::class,
+            SA\Post::class,
+            SA\Put::class,
+            SA\Delete::class,
+            Sa\Options::class,
         ];
 
         foreach ($annotations as $annotation) {
