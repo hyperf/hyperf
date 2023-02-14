@@ -5,6 +5,7 @@
 - [#5042](https://github.com/hyperf/hyperf/pull/5402) Added `swagger.scan.paths` to rewrite `scan paths` for swagger.
 - [#5403](https://github.com/hyperf/hyperf/pull/5403) Support swoole server settings for swow server.
 - [#5404](https://github.com/hyperf/hyperf/pull/5404) Support multiport server for swagger.
+- [#5406](https://github.com/hyperf/hyperf/pull/5406) Added `mixin` method to `Hyperf\Database\Model\Builder`.
 
 # v3.0.6 - 2023-02-12
 
