@@ -1176,7 +1176,10 @@ class ModelBuilderTest extends TestCase
 
     public function testMixin()
     {
-        ModelStub::mixin(new UserMixin());
+        \Hyperf\Database\Model\Builder::macro('testAbc', fn () => 'abc');
+        $this->assertEquals('abc', ModelStub::testAbc());
+
+        \Hyperf\Database\Model\Builder::mixin(new UserMixin());
 
         $this->assertInstanceOf(\Hyperf\Database\Model\Builder::class, ModelStub::whereFoo());
         $this->assertInstanceOf(\Hyperf\Database\Model\Builder::class, ModelStub::whereBar());
