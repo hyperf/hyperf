@@ -24,6 +24,8 @@ use Hyperf\Utils\Arr;
 use Hyperf\Utils\Str;
 use Hyperf\Utils\Traits\ForwardsCalls;
 use InvalidArgumentException;
+use ReflectionClass;
+use ReflectionMethod;
 
 /**
  * @mixin \Hyperf\Database\Query\Builder
@@ -122,6 +124,10 @@ class Builder
             return;
         }
 
+        if ($method === 'mixin') {
+            return static::registerMixin($parameters[0], $parameters[1] ?? true);
+        }
+
         if (isset($this->localMacros[$method])) {
             array_unshift($parameters, $this);
 
@@ -163,6 +169,10 @@ class Builder
             static::$macros[$parameters[0]] = $parameters[1];
 
             return;
+        }
+
+        if ($method === 'mixin') {
+            return static::registerMixin($parameters[0], $parameters[1] ?? true);
         }
 
         if (! isset(static::$macros[$method])) {
@@ -1087,6 +1097,60 @@ class Builder
     public function getMacro($name)
     {
         return Arr::get($this->localMacros, $name);
+    }
+
+    /**
+     * Checks if a macro is registered.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function hasMacro($name)
+    {
+        return isset($this->localMacros[$name]);
+    }
+
+    /**
+     * Get the given global macro by name.
+     *
+     * @param string $name
+     * @return Closure
+     */
+    public static function getGlobalMacro($name)
+    {
+        return Arr::get(static::$macros, $name);
+    }
+
+    /**
+     * Checks if a global macro is registered.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public static function hasGlobalMacro($name)
+    {
+        return isset(static::$macros[$name]);
+    }
+
+    /**
+     * Register the given mixin with the builder.
+     *
+     * @param string $mixin
+     * @param bool $replace
+     */
+    protected static function registerMixin($mixin, $replace)
+    {
+        $methods = (new ReflectionClass($mixin))->getMethods(
+            ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED
+        );
+
+        foreach ($methods as $method) {
+            if ($replace || ! static::hasGlobalMacro($method->name)) {
+                $method->setAccessible(true);
+
+                static::macro($method->name, $method->invoke($mixin));
+            }
+        }
     }
 
     /**
