@@ -128,13 +128,13 @@ class Builder
             return static::registerMixin($parameters[0], $parameters[1] ?? true);
         }
 
-        if (isset($this->localMacros[$method])) {
+        if ($this->hasMacro($method)) {
             array_unshift($parameters, $this);
 
             return $this->localMacros[$method](...$parameters);
         }
 
-        if (isset(static::$macros[$method])) {
+        if (static::hasGlobalMacro($method)) {
             if (static::$macros[$method] instanceof Closure) {
                 return call_user_func_array(static::$macros[$method]->bindTo($this, static::class), $parameters);
             }
@@ -175,7 +175,7 @@ class Builder
             return static::registerMixin($parameters[0], $parameters[1] ?? true);
         }
 
-        if (! isset(static::$macros[$method])) {
+        if (! static::hasGlobalMacro($method)) {
             static::throwBadMethodCallException($method);
         }
 
