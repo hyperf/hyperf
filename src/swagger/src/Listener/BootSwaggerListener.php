@@ -83,7 +83,7 @@ class BootSwaggerListener implements ListenerInterface
             SA\Post::class,
             SA\Put::class,
             SA\Delete::class,
-            Sa\Options::class,
+            SA\Options::class,
         ];
 
         foreach ($annotations as $annotation) {
