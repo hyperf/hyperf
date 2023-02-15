@@ -39,6 +39,8 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Count
      */
     public function __construct(mixed $items, int $total, int $perPage, ?int $currentPage = 1, array $options = [])
     {
+        $this->options = $options;
+
         foreach ($options as $key => $value) {
             $this->{$key} = $value;
         }
