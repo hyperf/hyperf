@@ -195,6 +195,16 @@ class Builder
     }
 
     /**
+     * Clone the Model query builder.
+     *
+     * @return static
+     */
+    public function clone()
+    {
+        return clone $this;
+    }
+
+    /**
      * Create and return an un-saved model instance.
      *
      * @return \Hyperf\Database\Model\Model
