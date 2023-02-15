@@ -13,6 +13,10 @@
 
 - [#5405](https://github.com/hyperf/hyperf/pull/5405) Fixed get local ip error when IPv6 exists.
 
+## Optimized
+
+- [#5411](https://github.com/hyperf/hyperf/pull/5411) Optimized the code of `WebSocketHandeShakeException` which should inheritance `BadRequestHttpException`.
+
 # v3.0.6 - 2023-02-12
 
 ## Fixed
