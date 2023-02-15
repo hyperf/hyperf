@@ -137,7 +137,7 @@ from pg_class c,
      pg_attribute a,
      pg_type t,
      pg_description d
-where c.relname = 'password_resets'
+where c.relname = 'password_resets_for_pgsql'
   and a.attnum > 0
   and a.attrelid = c.oid
   and a.atttypid = t.oid
@@ -150,7 +150,7 @@ where c.relname = 'password_resets'
         $this->migrator->rollback([__DIR__ . '/../migrations/one']);
 
         $this->migrator->run([__DIR__ . '/../migrations/one']);
-        $this->assertTrue($schema->hasTable('password_resets'));
+        $this->assertTrue($schema->hasTable('password_resets_for_pgsql'));
         $this->assertSame('', $schema->connection()->selectOne($queryCommentSQL)['description'] ?? '');
 
         $this->migrator->run([__DIR__ . '/../migrations/two']);

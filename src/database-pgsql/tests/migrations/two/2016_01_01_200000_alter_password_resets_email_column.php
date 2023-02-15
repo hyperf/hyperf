@@ -13,14 +13,14 @@ use Hyperf\Database\Migrations\Migration;
 use Hyperf\Database\Schema\Blueprint;
 use Hyperf\Database\Schema\Schema;
 
-class AlterPasswordResetsEmailColumn extends Migration
+class AlterPasswordResetsForPgsqlEmailColumn extends Migration
 {
     /**
      * Run the migrations.
      */
     public function up()
     {
-        Schema::table('password_resets', function (Blueprint $table) {
+        Schema::table('password_resets_for_pgsql', function (Blueprint $table) {
             $table->string('email')->comment('邮箱')->change();
         });
     }
@@ -30,8 +30,8 @@ class AlterPasswordResetsEmailColumn extends Migration
      */
     public function down()
     {
-        if (Schema::hasTable('password_resets')) {
-            Schema::table('password_resets', function (Blueprint $table) {
+        if (Schema::hasTable('password_resets_for_pgsql')) {
+            Schema::table('password_resets_for_pgsql', function (Blueprint $table) {
                 $table->string('email')->index()->change();
             });
         }
