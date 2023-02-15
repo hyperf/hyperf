@@ -1185,6 +1185,18 @@ class ModelBuilderTest extends TestCase
         $this->assertInstanceOf(\Hyperf\Database\Model\Builder::class, ModelStub::whereBar());
     }
 
+    public function testClone()
+    {
+        $builder = \HyperfTest\Database\Stubs\ModelStub::query();
+        $clone = $builder->clone();
+
+        $clone->select(['id']);
+
+        $this->assertNotEquals($builder->toSql(), $clone->toSql());
+        $this->assertSame('select * from "stub"', $builder->toSql());
+        $this->assertSame('select "id" from "stub"', $clone->toSql());
+    }
+
     protected function mockConnectionForModel($model, $database)
     {
         $grammarClass = 'Hyperf\Database\Query\Grammars\\' . $database . 'Grammar';
