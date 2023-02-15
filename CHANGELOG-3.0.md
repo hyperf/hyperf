@@ -6,7 +6,8 @@
 - [#5403](https://github.com/hyperf/hyperf/pull/5403) Support swoole server settings for swow server.
 - [#5404](https://github.com/hyperf/hyperf/pull/5404) Support multiport server for swagger.
 - [#5406](https://github.com/hyperf/hyperf/pull/5406) Added `mixin` method to `Hyperf\Database\Model\Builder`.
-- [#5047](https://github.com/hyperf/hyperf/pull/5407) Support HTTP methods `Delete` and `Options` for swagger.
+- [#5407](https://github.com/hyperf/hyperf/pull/5407) Support HTTP methods `Delete` and `Options` for swagger.
+- [#5409](https://github.com/hyperf/hyperf/pull/5409) Adds `methods` for `Query\Builder` and `Paginator`.
 
 ## Fixed
 
