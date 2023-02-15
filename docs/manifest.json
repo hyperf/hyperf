@@ -8,7 +8,7 @@
       "type": "image/png"
     }
   ],
-  "start_url": "/",
+  "start_url": "/3.0/",
   "display": "standalone",
   "background_color": "#fff",
   "theme_color": "#3F51B5",
