@@ -7,7 +7,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Hyperf框架官方文档">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-  <link rel="shortcut icon" href="//hyperf.wiki/2.2/favicon.ico" />
+  <link rel="apple-touch-icon" href="//hyperf.wiki/3.0/logo.png">
+  <link rel="manifest" href="//hyperf.wiki/3.0/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="shortcut icon" href="//hyperf.wiki/3.0/favicon.ico" />
   <link rel="stylesheet" href="//unpkg.com/docsify@4/themes/vue.css">
   <style>
     .app-name-link img {
@@ -123,6 +126,11 @@
   <script src="//unpkg.com/docsify-plantuml/dist/docsify-plantuml.min.js"></script>
   <script src="//unpkg.com/docsify@4/lib/plugins/zoom-image.min.js"></script>
   <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1278274447'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "v1.cnzz.com/z_stat.php%3Fid%3D1278274447' type='text/javascript'%3E%3C/script%3E"));</script>
+  <script>
+    if (typeof navigator.serviceWorker !== 'undefined') {
+      navigator.serviceWorker.register('sw.js')
+    }
+  </script>
 </body>
 
 </html>
