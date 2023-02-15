@@ -2503,6 +2503,16 @@ class Builder
     }
 
     /**
+     * Clone the query.
+     *
+     * @return static
+     */
+    public function clone()
+    {
+        return clone $this;
+    }
+
+    /**
      * Clone the query without the given properties.
      *
      * @return static

@@ -2999,6 +2999,15 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals(['1520652582'], $builder->getBindings());
     }
 
+    public function testClone()
+    {
+        $builder = $this->getBuilder();
+        $clone = $builder->clone();
+        $this->assertEquals($builder->toSql(), $clone->toSql());
+        $this->assertEquals($builder->getBindings(), $clone->getBindings());
+        $this->assertNotSame($builder, $clone);
+    }
+
     protected function getBuilderWithProcessor(): Builder
     {
         return new Builder(Mockery::mock(ConnectionInterface::class), new Grammar(), new Processor());
