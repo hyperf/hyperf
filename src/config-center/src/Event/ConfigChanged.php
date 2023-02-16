@@ -13,7 +13,7 @@ namespace Hyperf\ConfigCenter\Event;
 
 class ConfigChanged
 {
-    public function __construct(protected array $current, protected array $previous)
+    public function __construct(public array $current, public array $previous)
     {
     }
 }
