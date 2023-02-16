@@ -656,7 +656,7 @@ class Builder
         // is a boolean. If it is, we'll add the raw boolean string as an actual
         // value to the query to ensure this is properly handled by the query.
         if (Str::contains((string) $column, '->') && is_bool($value)) {
-            $value = new Expression($value ? 'true' : 'false');
+            $value = $value ? 'true' : 'false';
         }
 
         // Now that we are working with just a simple query we can put the elements
