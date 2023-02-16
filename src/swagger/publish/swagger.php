@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 return [
-    'enable' => env('APP_ENV', 'dev') !== 'prod',
+    'enable' => true,
     'port' => 9500,
     'json_dir' => BASE_PATH . '/storage/swagger',
     'html' => null,
