@@ -57,13 +57,10 @@ class Migrator
     /**
      * Run the pending migrations at a given path.
      *
-     * @param array|string $paths
      * @throws Throwable
      */
-    public function run($paths = [], array $options = []): array
+    public function run(array|string $paths = [], array $options = []): array
     {
-        $this->notes = [];
-
         // Once we grab all of the migration files for the path, we will compare them
         // against the migrations that have already been run for this package then
         // run each of the outstanding migrations against a database connection.
@@ -122,13 +119,10 @@ class Migrator
     /**
      * Rollback the last migration operation.
      *
-     * @param array|string $paths
      * @throws Throwable
      */
-    public function rollback($paths = [], array $options = []): array
+    public function rollback(array|string $paths = [], array $options = []): array
     {
-        $this->notes = [];
-
         // We want to pull in the last batch of migrations that ran on the previous
         // migration operation. We'll then reverse those migrations and run each
         // of them "down" to reverse the last migration "operation" which ran.
@@ -145,13 +139,9 @@ class Migrator
 
     /**
      * Rolls all of the currently applied migrations back.
-     *
-     * @param array|string $paths
      */
-    public function reset($paths = [], bool $pretend = false): array
+    public function reset(array|string $paths = [], bool $pretend = false): array
     {
-        $this->notes = [];
-
         // Next, we will reverse the migration list so we can run them back in the
         // correct order for resetting this database. This will allow us to get
         // the database back into its "empty" state ready for the migrations.
@@ -178,10 +168,8 @@ class Migrator
 
     /**
      * Get all of the migration files in a given path.
-     *
-     * @param array|string $paths
      */
-    public function getMigrationFiles($paths): array
+    public function getMigrationFiles(array|string $paths): array
     {
         return Collection::make($paths)->flatMap(function ($path) {
             return Str::endsWith($path, '.php') ? [$path] : $this->files->glob($path . '/*_*.php');
@@ -503,13 +491,9 @@ class Migrator
 
     /**
      * Write a note to the conosle's output.
-     *
-     * @param string $message
      */
-    protected function note($message)
+    protected function note(string $message): void
     {
-        if ($this->output) {
-            $this->output->writeln($message);
-        }
+        $this->output?->writeln($message);
     }
 }
