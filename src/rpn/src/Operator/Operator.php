@@ -13,6 +13,8 @@ namespace Hyperf\Rpn\Operator;
 
 abstract class Operator implements OperatorInterface
 {
+    use HasBindings;
+
     public function length(): ?int
     {
         return 2;
