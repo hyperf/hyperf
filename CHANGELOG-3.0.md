@@ -20,6 +20,7 @@
 
 - [#5411](https://github.com/hyperf/hyperf/pull/5411) Optimized the code of `WebSocketHandeShakeException` which should inheritance `BadRequestHttpException`.
 - [#5419](https://github.com/hyperf/hyperf/pull/5419) Optimized the code of `RPN`.
+- [#5422](https://github.com/hyperf/hyperf/pull/5422) Enable swagger by default when installed swagger component.
 
 # v3.0.6 - 2023-02-12
 
