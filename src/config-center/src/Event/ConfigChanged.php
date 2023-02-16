@@ -9,13 +9,11 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\Rpn\Operator;
+namespace Hyperf\ConfigCenter\Event;
 
-interface OperatorInterface
+class ConfigChanged
 {
-    public function getOperator(): string;
-
-    public function length(): ?int;
-
-    public function execute(array $parameters, int $scale, array $bindings = []): string;
+    public function __construct(public array $current, public array $previous)
+    {
+    }
 }

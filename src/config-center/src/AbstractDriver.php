@@ -14,6 +14,7 @@ namespace Hyperf\ConfigCenter;
 use Hyperf\ConfigCenter\Contract\ClientInterface;
 use Hyperf\ConfigCenter\Contract\DriverInterface;
 use Hyperf\ConfigCenter\Contract\PipeMessageInterface;
+use Hyperf\ConfigCenter\Event\ConfigChanged;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
@@ -22,6 +23,7 @@ use Hyperf\Process\ProcessCollector;
 use Hyperf\Utils\Coroutine;
 use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Swoole\Server;
 use Throwable;
@@ -65,6 +67,7 @@ abstract class AbstractDriver implements DriverInterface
                         $config = $this->pull();
                         if ($config !== $prevConfig) {
                             $this->syncConfig($config);
+                            $this->event(new ConfigChanged($config, $prevConfig));
                         }
                         $prevConfig = $config;
                     } catch (Throwable $exception) {
@@ -98,6 +101,11 @@ abstract class AbstractDriver implements DriverInterface
     {
         $this->server = $server;
         return $this;
+    }
+
+    protected function event(object $event)
+    {
+        $this->container->get(EventDispatcherInterface::class)?->dispatch($event);
     }
 
     protected function syncConfig(array $config)
