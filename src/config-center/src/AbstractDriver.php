@@ -66,8 +66,8 @@ abstract class AbstractDriver implements DriverInterface
                         }
                         $config = $this->pull();
                         if ($config !== $prevConfig) {
-                            $this->event(new ConfigChanged($config, $prevConfig));
                             $this->syncConfig($config);
+                            $this->event(new ConfigChanged($config, $prevConfig));
                         }
                         $prevConfig = $config;
                     } catch (Throwable $exception) {
