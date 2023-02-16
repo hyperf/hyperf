@@ -31,7 +31,12 @@ class ContainerStub
         $container = Mockery::mock(Container::class);
         ApplicationContext::setContainer($container);
 
-        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(null);
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(new class() {
+            public function dispatch()
+            {
+                return true;
+            }
+        });
         $container->shouldReceive('get')->with(ConfigInterface::class)->andReturn($config);
         $container->shouldReceive('get')->with(StdoutLoggerInterface::class)->andReturnUsing(function () {
             $logger = Mockery::mock(StdoutLoggerInterface::class);
