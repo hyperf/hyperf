@@ -17,6 +17,7 @@
 ## Optimized
 
 - [#5411](https://github.com/hyperf/hyperf/pull/5411) Optimized the code of `WebSocketHandeShakeException` which should inheritance `BadRequestHttpException`.
+- [#5419](https://github.com/hyperf/hyperf/pull/5419) Optimized the code of `RPN`.
 
 # v3.0.6 - 2023-02-12
 
