@@ -31,6 +31,14 @@ abstract class AbstractProvider
     {
         $token = $this->getAccessToken();
         $token && $options[RequestOptions::QUERY]['accessToken'] = $token;
+
+        if ($this->config->getAccessKey()) {
+            $options[RequestOptions::HEADERS]['Spas-AccessKey'] = $this->config->getAccessKey();
+            $signHeaders = $this->getMseSignHeaders($options[RequestOptions::QUERY] ?? [], $this->config->getAccessSecret());
+            foreach ($signHeaders as $header => $value) {
+                $options[RequestOptions::HEADERS][$header] = $value;
+            }
+        }
         return $this->client()->request($method, $uri, $options);
     }
 
@@ -72,5 +80,24 @@ abstract class AbstractProvider
         }
 
         return $result;
+    }
+
+    protected function getMseSignHeaders(array $data, string $secretKey): array
+    {
+        $group = $data['group'] ?? '';
+        $tenant = $data['tenant'] ?? '';
+        $timeStamp = round(microtime(true) * 1000);
+        $signStr = '';
+        if ($tenant) {
+            $signStr .= "{$tenant}+";
+        }
+        if ($group) {
+            $signStr .= "{$group}+";
+        }
+        $signStr .= "{$timeStamp}";
+        return [
+            'timeStamp' => $timeStamp,
+            'Spas-Signature' => base64_encode(hash_hmac('sha1', $signStr, $secretKey, true)),
+        ];
     }
 }
