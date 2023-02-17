@@ -67,20 +67,16 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile the random statement into SQL.
-     *
-     * @param string $seed
      */
-    public function compileRandom($seed): string
+    public function compileRandom(string $seed): string
     {
         return 'RAND(' . $seed . ')';
     }
 
     /**
      * Compile an update statement into SQL.
-     *
-     * @param array $values
      */
-    public function compileUpdate(Builder $query, $values): string
+    public function compileUpdate(Builder $query, array $values): string
     {
         $table = $this->wrapTable($query->from);
 
@@ -164,11 +160,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile a "JSON contains" statement into SQL.
-     *
-     * @param string $column
-     * @param string $value
      */
-    protected function compileJsonContains($column, $value): string
+    protected function compileJsonContains(string $column, string $value): string
     {
         [$field, $path] = $this->wrapJsonFieldAndPath($column);
 
@@ -177,12 +170,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile a "JSON length" statement into SQL.
-     *
-     * @param string $column
-     * @param string $operator
-     * @param string $value
      */
-    protected function compileJsonLength($column, $operator, $value): string
+    protected function compileJsonLength(string $column, string $operator, string $value): string
     {
         [$field, $path] = $this->wrapJsonFieldAndPath($column);
 
@@ -201,10 +190,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile the lock into SQL.
-     *
-     * @param bool|string $value
      */
-    protected function compileLock(Builder $query, $value): string
+    protected function compileLock(Builder $query, bool|string $value): string
     {
         if (! is_string($value)) {
             return $value ? 'for update' : 'lock in share mode';
@@ -215,10 +202,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile all of the columns for an update statement.
-     *
-     * @param array $values
      */
-    protected function compileUpdateColumns($values): string
+    protected function compileUpdateColumns(array $values): string
     {
         return collect($values)->map(function ($value, $key) {
             if ($this->isJsonSelector($key)) {
@@ -231,10 +216,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Prepares a JSON column being updated using the JSON_SET function.
-     *
-     * @param string $key
      */
-    protected function compileJsonUpdateColumn($key, JsonExpression $value): string
+    protected function compileJsonUpdateColumn(string $key, JsonExpression $value): string
     {
         [$field, $path] = $this->wrapJsonFieldAndPath($key);
 
@@ -243,12 +226,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile a delete query that does not use joins.
-     *
-     * @param \Hyperf\Database\Query\Builder $query
-     * @param string $table
-     * @param array $where
      */
-    protected function compileDeleteWithoutJoins($query, $table, $where): string
+    protected function compileDeleteWithoutJoins(Builder $query, string $table, string $where): string
     {
         $sql = trim("delete from {$table} {$where}");
 
@@ -268,12 +247,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Compile a delete query that uses joins.
-     *
-     * @param \Hyperf\Database\Query\Builder $query
-     * @param string $table
-     * @param array $where
      */
-    protected function compileDeleteWithJoins($query, $table, $where): string
+    protected function compileDeleteWithJoins(Builder $query, string $table, string $where): string
     {
         $joins = ' ' . $this->compileJoins($query, $query->joins);
 
@@ -295,10 +270,8 @@ class MySqlGrammar extends Grammar
 
     /**
      * Wrap the given JSON selector.
-     *
-     * @param string $value
      */
-    protected function wrapJsonSelector($value): string
+    protected function wrapJsonSelector(string $value): string
     {
         [$field, $path] = $this->wrapJsonFieldAndPath($value);
 
