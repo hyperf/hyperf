@@ -465,7 +465,6 @@ class Grammar extends BaseGrammar
      * Compile a "where JSON boolean" clause.
      *
      * @param string $value
-     * @return string
      */
     protected function whereJsonBoolean(Builder $query, array $where): string
     {
@@ -491,6 +490,7 @@ class Grammar extends BaseGrammar
 
     /**
      * Wrap the given JSON boolean value.
+     * @param mixed $value
      */
     protected function wrapJsonBooleanValue($value)
     {
