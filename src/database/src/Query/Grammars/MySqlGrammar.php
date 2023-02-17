@@ -304,4 +304,17 @@ class MySqlGrammar extends Grammar
 
         return 'json_unquote(json_extract(' . $field . $path . '))';
     }
+
+    /**
+     * Wrap the given JSON selector for boolean values.
+     *
+     * @param string $value
+     * @return string
+     */
+    protected function wrapJsonBooleanSelector($value)
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($value);
+
+        return 'json_extract(' . $field . $path . ')';
+    }
 }

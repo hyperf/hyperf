@@ -2192,14 +2192,14 @@ class QueryBuilderTest extends TestCase
     {
         $builder = $this->getMySqlBuilder();
         $builder->select('*')->from('users')->where('items->available', '=', true);
-        $this->assertEquals('select * from `users` where json_unquote(json_extract(`items`, \'$."available"\')) = true', $builder->toSql());
+        $this->assertEquals('select * from `users` where json_extract(`items`, \'$."available"\') = true', $builder->toSql());
     }
 
     public function testMySqlWrappingJsonWithBooleanAndIntegerThatLooksLikeOne()
     {
         $builder = $this->getMySqlBuilder();
         $builder->select('*')->from('users')->where('items->available', '=', true)->where('items->active', '=', false)->where('items->number_available', '=', 0);
-        $this->assertEquals('select * from `users` where json_unquote(json_extract(`items`, \'$."available"\')) = true and json_unquote(json_extract(`items`, \'$."active"\')) = false and json_unquote(json_extract(`items`, \'$."number_available"\')) = ?', $builder->toSql());
+        $this->assertEquals('select * from `users` where json_extract(`items`, \'$."available"\') = true and json_extract(`items`, \'$."active"\') = false and json_unquote(json_extract(`items`, \'$."number_available"\')) = ?', $builder->toSql());
     }
 
     public function testMySqlWrappingJson()

@@ -15,6 +15,7 @@
 
 - [#5405](https://github.com/hyperf/hyperf/pull/5405) Fixed get local ip error when IPv6 exists.
 - [#5417](https://github.com/hyperf/hyperf/pull/5417) Fixed bug that database-pgsql does not support migration.
+- [#5421](https://github.com/hyperf/hyperf/pull/5421) Fixed database about boolean types for where in the json type
 
 ## Optimized
 
