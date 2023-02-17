@@ -18,6 +18,7 @@
 - [#5417](https://github.com/hyperf/hyperf/pull/5417) Fixed bug that database-pgsql does not support migration.
 - [#5421](https://github.com/hyperf/hyperf/pull/5421) Fixed database about boolean types for where in the json type.
 - [#5428](https://github.com/hyperf/hyperf/pull/5428) Fixed bug that metric middleware cannot work well when encountered an exception.
+- [#5424](https://github.com/hyperf/hyperf/pull/5424) Fixed bug that migrator cannot work when using `PHP8.2`.
 
 ## Optimized
 
