@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Metric\Middleware;
 
+use Hyperf\HttpMessage\Exception\HttpException;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Metric\CoroutineServerStats;
 use Hyperf\Metric\Timer;
@@ -18,6 +19,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Throwable;
 
 class MetricMiddleware implements MiddlewareInterface
 {
@@ -44,14 +46,20 @@ class MetricMiddleware implements MiddlewareInterface
         ++$this->stats->request_count;
         ++$this->stats->connection_num;
 
-        $response = $handler->handle($request);
-
-        $labels['request_status'] = (string) $response->getStatusCode();
-        $timer->end($labels);
-
-        ++$this->stats->close_count;
-        ++$this->stats->response_count;
-        --$this->stats->connection_num;
+        try {
+            $response = $handler->handle($request);
+            $labels['request_status'] = (string) $response->getStatusCode();
+        } catch (Throwable $exception) {
+            if ($exception instanceof HttpException) {
+                $labels['request_status'] = (string) $exception->getStatusCode();
+            }
+            throw $exception;
+        } finally {
+            $timer->end($labels);
+            ++$this->stats->close_count;
+            ++$this->stats->response_count;
+            --$this->stats->connection_num;
+        }
 
         return $response;
     }
