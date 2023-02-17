@@ -1,15 +1,43 @@
 # 版本更新記錄
 
+# v3.0.7 - 2023-02-18
+
+## 新增
+
+- [#5042](https://github.com/hyperf/hyperf/pull/5402) 為 `Swagger` 組件愛你增加配置 `swagger.scan.paths` 可以用來重寫默認的掃描目錄。
+- [#5403](https://github.com/hyperf/hyperf/pull/5403) 為 `Swow` 增加 `Swoole Server` 配置項的適配。
+- [#5404](https://github.com/hyperf/hyperf/pull/5404) 為 `Swagger` 增加多端口服務的支持。
+- [#5406](https://github.com/hyperf/hyperf/pull/5406) 為 `Hyperf\Database\Model\Builder` 增加 `mixin` 方法。
+- [#5407](https://github.com/hyperf/hyperf/pull/5407) 為 `Swagger` 增加請求方法 `Delete` 和 `Options` 的支持。
+- [#5409](https://github.com/hyperf/hyperf/pull/5409) 為數據庫組件中 `Query\Builder` 和 `Paginator` 類增加了一部分方法。
+- [#5414](https://github.com/hyperf/hyperf/pull/5414) 為 `Hyperf\Database\Model\Builder` 增加了 `clone` 方法。
+- [#5418](https://github.com/hyperf/hyperf/pull/5418) 為配置中心增加了 `ConfigChanged` 事件。
+- [#5429](https://github.com/hyperf/hyperf/pull/5429) 在連接 `Aliyun Nacos` 服務時，增加了配置項 `access_key` 和 `access_secret`。
+
+## 修復
+
+- [#5405](https://github.com/hyperf/hyperf/pull/5405) 修復了當系統支持 `IPv6` 時，`get local ip` 無法正常讀取 ip 的問題。
+- [#5417](https://github.com/hyperf/hyperf/pull/5417) 修復 `PgSQL` 無法正常使用數據庫遷移功能的問題。
+- [#5421](https://github.com/hyperf/hyperf/pull/5421) 修復數據庫 `Json` 結構無法正常使用 `boolean` 類型的問題。
+- [#5428](https://github.com/hyperf/hyperf/pull/5428) 修復 `Metric` 中間件遇到異常時，服務端參數統計有誤的問題。
+- [#5424](https://github.com/hyperf/hyperf/pull/5424) 修復數據庫遷移組件，不支持 `PHP8.2` 的問題。
+
+## 優化
+
+- [#5411](https://github.com/hyperf/hyperf/pull/5411) 優化代碼，異常 `WebSocketHandeShakeException` 應繼承 `BadRequestHttpException`。
+- [#5419](https://github.com/hyperf/hyperf/pull/5419) 優化 `RPN` 組件的實現邏輯，可以更好的進行自定義擴展。
+- [#5422](https://github.com/hyperf/hyperf/pull/5422) 當安裝 `Swagger` 組件後，默認啓動 `Swagger` 的能力。
+
 # v3.0.6 - 2023-02-12
 
-## Fixed
+## 修復
 
 - [#5361](https://github.com/hyperf/hyperf/pull/5361) 修復 `Nacos` 注入臨時實例失敗的問題。
 - [#5382](https://github.com/hyperf/hyperf/pull/5382) 修復 `SocketIO` 中使用 `mix-subscriber` 時，因為沒有設置密碼而報錯的問題。
 - [#5386](https://github.com/hyperf/hyperf/pull/5386) 修復 `SwoolePostgresqlClient` 會被執行到不存在的方法 `exec` 的問題。
 - [#5394](https://github.com/hyperf/hyperf/pull/5394) 修復 `hyperf/config-apollo` 無法正常使用的問題。
 
-## Added
+## 新增
 
 - [#5366](https://github.com/hyperf/hyperf/pull/5366) 為 `hyperf/database` 增加 `forceDeleting` 事件。
 - [#5373](https://github.com/hyperf/hyperf/pull/5373) 為 `SwowServer` 增加 `settings` 配置。
