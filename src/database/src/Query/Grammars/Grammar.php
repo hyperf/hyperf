@@ -462,6 +462,44 @@ class Grammar extends BaseGrammar
     }
 
     /**
+     * Compile a "where JSON boolean" clause.
+     *
+     * @param string $value
+     * @param array $where
+     * @return string
+     */
+    protected function whereJsonBoolean(Builder $query, $where)
+    {
+        $column = $this->wrapJsonBooleanSelector($where['column']);
+
+        $value = $this->wrapJsonBooleanValue(
+            $this->parameter($where['value'])
+        );
+
+        return $column . ' ' . $where['operator'] . ' ' . $value;
+    }
+
+    /**
+     * Wrap the given JSON selector for boolean values.
+     *
+     * @param string $value
+     * @return string
+     */
+    protected function wrapJsonBooleanSelector($value)
+    {
+        return $this->wrapJsonSelector($value);
+    }
+
+    /**
+     * Wrap the given JSON boolean value.
+     * @param mixed $value
+     */
+    protected function wrapJsonBooleanValue($value)
+    {
+        return $value;
+    }
+
+    /**
      * Compile a "where in" clause.
      *
      * @param array $where

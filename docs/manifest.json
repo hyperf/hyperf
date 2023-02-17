@@ -3,7 +3,7 @@
   "short_name": "Hyperf",
   "icons": [
     {
-      "src": "https://hyperf.wiki/3.0/logo.png",
+      "src": "/3.0/logo.png",
       "sizes": "150x150",
       "type": "image/png"
     }
