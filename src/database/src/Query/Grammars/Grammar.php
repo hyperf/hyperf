@@ -463,6 +463,9 @@ class Grammar extends BaseGrammar
 
     /**
      * Compile a "where JSON boolean" clause.
+     *
+     * @param string $value
+     * @return string
      */
     protected function whereJsonBoolean(Builder $query, array $where): string
     {
@@ -477,8 +480,11 @@ class Grammar extends BaseGrammar
 
     /**
      * Wrap the given JSON selector for boolean values.
+     *
+     * @param string $value
+     * @return string
      */
-    protected function wrapJsonBooleanSelector(string $value): string
+    protected function wrapJsonBooleanSelector($value)
     {
         return $this->wrapJsonSelector($value);
     }
@@ -486,7 +492,7 @@ class Grammar extends BaseGrammar
     /**
      * Wrap the given JSON boolean value.
      */
-    protected function wrapJsonBooleanValue(string $value): string
+    protected function wrapJsonBooleanValue($value)
     {
         return $value;
     }
