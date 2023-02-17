@@ -18,7 +18,9 @@ class Config
     protected ?string $username = null;
 
     protected ?string $password = null;
+
     protected ?string $accessKey = null;
+
     protected ?string $accessSecret = null;
 
     protected array $guzzleConfig = [
