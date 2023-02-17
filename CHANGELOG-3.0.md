@@ -15,7 +15,7 @@
 
 - [#5405](https://github.com/hyperf/hyperf/pull/5405) Fixed get local ip error when IPv6 exists.
 - [#5417](https://github.com/hyperf/hyperf/pull/5417) Fixed bug that database-pgsql does not support migration.
-- [#5425](https://github.com/hyperf/hyperf/pull/5425) Fixed RedisCluster does not support select.
+- [#5425](https://github.com/hyperf/hyperf/pull/5425) Disabled RedisCluster select db.
 
 ## Optimized
 
