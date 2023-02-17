@@ -35,6 +35,8 @@ class NacosClientFactory
             'base_uri' => $baseUri,
             'username' => $config['username'] ?? null,
             'password' => $config['password'] ?? null,
+            'accessKey' => $config['accessKey'] ?? null,
+            'accessSecret' => $config['accessSecret'] ?? null,
             'guzzle_config' => $config['guzzle']['config'] ?? null,
         ]));
     }
