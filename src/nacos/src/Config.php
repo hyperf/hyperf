@@ -33,8 +33,8 @@ class Config
      *     'base_uri' => 'http://127.0.0.1:8848/',
      *     'username' => null,
      *     'password' => null,
-     *     'accessKey' => null,
-     *     'accessSecret' => null,
+     *     'access_key' => null,
+     *     'access_secret' => null,
      *     'guzzle_config' => [],
      * ]
      */
@@ -43,8 +43,8 @@ class Config
         isset($config['base_uri']) && $this->baseUri = (string) $config['base_uri'];
         isset($config['username']) && $this->username = (string) $config['username'];
         isset($config['password']) && $this->password = (string) $config['password'];
-        isset($config['accessKey']) && $this->accessKey = (string) $config['accessKey'];
-        isset($config['accessSecret']) && $this->accessSecret = (string) $config['accessSecret'];
+        isset($config['access_key']) && $this->accessKey = (string) $config['access_key'];
+        isset($config['access_secret']) && $this->accessSecret = (string) $config['access_secret'];
         isset($config['guzzle_config']) && $this->guzzleConfig = (array) $config['guzzle_config'];
     }
 
