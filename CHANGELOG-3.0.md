@@ -10,11 +10,14 @@
 - [#5409](https://github.com/hyperf/hyperf/pull/5409) Adds `methods` for `Query\Builder` and `Paginator`.
 - [#5414](https://github.com/hyperf/hyperf/pull/5414) Added `clone` method to `Hyperf\Database\Model\Builder`.
 - [#5418](https://github.com/hyperf/hyperf/pull/5418) Added `ConfigChanged` event to `config-center`.
+- [#5429](https://github.com/hyperf/hyperf/pull/5429) Added `access_key` and `access_secret` which used to connect aliyun nacos.
 
 ## Fixed
 
 - [#5405](https://github.com/hyperf/hyperf/pull/5405) Fixed get local ip error when IPv6 exists.
 - [#5417](https://github.com/hyperf/hyperf/pull/5417) Fixed bug that database-pgsql does not support migration.
+- [#5421](https://github.com/hyperf/hyperf/pull/5421) Fixed database about boolean types for where in the json type.
+- [#5428](https://github.com/hyperf/hyperf/pull/5428) Fixed bug that metric middleware cannot work well when encountered an exception.
 
 ## Optimized
 

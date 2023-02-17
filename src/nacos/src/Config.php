@@ -19,6 +19,10 @@ class Config
 
     protected ?string $password = null;
 
+    protected ?string $accessKey = null;
+
+    protected ?string $accessSecret = null;
+
     protected array $guzzleConfig = [
         'headers' => [
             'charset' => 'UTF-8',
@@ -31,6 +35,8 @@ class Config
      *     'base_uri' => 'http://127.0.0.1:8848/',
      *     'username' => null,
      *     'password' => null,
+     *     'access_key' => null,
+     *     'access_secret' => null,
      *     'guzzle_config' => [],
      * ]
      */
@@ -39,6 +45,8 @@ class Config
         isset($config['base_uri']) && $this->baseUri = (string) $config['base_uri'];
         isset($config['username']) && $this->username = (string) $config['username'];
         isset($config['password']) && $this->password = (string) $config['password'];
+        isset($config['access_key']) && $this->accessKey = (string) $config['access_key'];
+        isset($config['access_secret']) && $this->accessSecret = (string) $config['access_secret'];
         isset($config['guzzle_config']) && $this->guzzleConfig = (array) $config['guzzle_config'];
     }
 
@@ -55,6 +63,16 @@ class Config
     public function getPassword(): ?string
     {
         return $this->password;
+    }
+
+    public function getAccessKey(): ?string
+    {
+        return $this->accessKey;
+    }
+
+    public function getAccessSecret(): ?string
+    {
+        return $this->accessSecret;
     }
 
     public function getGuzzleConfig(): array
