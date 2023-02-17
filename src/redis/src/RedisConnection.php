@@ -128,7 +128,7 @@ class RedisConnection extends BaseConnection implements ConnectionInterface
         }
 
         $database = $this->database ?? $db;
-        if ($database > 0) {
+        if ($redis instanceof Redis && $database > 0) {
             $redis->select($database);
         }
 
