@@ -308,7 +308,7 @@ class MySqlGrammar extends Grammar
     /**
      * Wrap the given JSON selector for boolean values.
      */
-    protected function wrapJsonBooleanSelector(string $value): string
+    protected function wrapJsonBooleanSelector($value)
     {
         [$field, $path] = $this->wrapJsonFieldAndPath($value);
 
