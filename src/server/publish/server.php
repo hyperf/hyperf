@@ -27,6 +27,16 @@ return [
                 Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
             ],
         ],
+        [
+            'name'=>'udp',
+            'host' => '0.0.0.0',
+            'type'=>Server::SERVER_BASE,
+            'port' => 1812,
+            'sock_type' => \Swow\Socket::TYPE_UDP,
+            'callbacks' => [
+                Event::ON_PACKET => [\App\Controller\UdpController::class, 'onPacket'],
+            ], 
+        ],
     ],
     'processes' => [
     ],

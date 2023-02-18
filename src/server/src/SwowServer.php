@@ -191,6 +191,15 @@ class SwowServer implements ServerInterface
                             }
                         });
                     }
+                    if (isset($callbacks[Event::ON_PACKET])) {
+                        [$receiveHandler, $receiveMethod] = $this->getCallbackMethod(Event::ON_PACKET, $callbacks);
+                        if ($this->server instanceof BaseServer) {
+                            $this->server->handle(function (Socket $connection, $data, $clinetInfo) use ($receiveHandler, $receiveMethod) {
+                                $receiveHandler->{$receiveMethod}($connection, $data, $clinetInfo);
+                            });
+                        }
+    
+                    }
                 }
                 return;
         }
