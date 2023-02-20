@@ -184,7 +184,6 @@ return [
 
 如配置文件不存在可執行 `php bin/hyperf.php vendor:publish hyperf/config-center` 命令來生成。
 
-
 ## 配置更新的作用範圍
 
 在默認的功能實現下，是由一個 `ConfigFetcherProcess` 進程根據配置的 `interval` 來向 配置中心 Server 拉取對應 `namespace` 的配置，並通過 IPC 通訊將拉取到的新配置傳遞到各個 Worker 中，並更新到 `Hyperf\Contract\ConfigInterface` 對應的對象內。   
