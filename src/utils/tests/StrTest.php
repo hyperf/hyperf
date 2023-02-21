@@ -196,4 +196,10 @@ class StrTest extends TestCase
         $this->assertSame('Alien     ', Str::padRight('Alien', 10));
         $this->assertSame('❤MultiByte☆     ', Str::padRight('❤MultiByte☆', 16));
     }
+
+    public function testLength()
+    {
+        $this->assertEquals(11, Str::length('foo bar baz'));
+        $this->assertEquals(11, Str::length('foo bar baz', 'UTF-8'));
+    }
 }
