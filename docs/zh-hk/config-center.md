@@ -184,12 +184,39 @@ return [
 
 如配置文件不存在可執行 `php bin/hyperf.php vendor:publish hyperf/config-center` 命令來生成。
 
-
 ## 配置更新的作用範圍
 
 在默認的功能實現下，是由一個 `ConfigFetcherProcess` 進程根據配置的 `interval` 來向 配置中心 Server 拉取對應 `namespace` 的配置，並通過 IPC 通訊將拉取到的新配置傳遞到各個 Worker 中，並更新到 `Hyperf\Contract\ConfigInterface` 對應的對象內。   
 需要注意的是，更新的配置只會更新 `Config` 對象，故僅限應用層或業務層的配置，不涉及框架層的配置改動，因為框架層的配置改動需要重啓服務，如果您有這樣的需求，也可以通過自行實現 `ConfigFetcherProcess` 來達到目的。
 
-## 注意事項
+## 配置更新事件
 
-在命令行模式時，默認不會觸發事件分發，導致無法正常獲取到相關配置，可通過添加 `--enable-event-dispatcher` 參數來開啓。
+配置中心運行期間，但配置發生變化會對應觸發 `Hyperf\ConfigCenter\Event\ConfigChanged` 事件，您可以進行對這些事件進行監聽以滿足您的需求。
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Listener;
+
+use Hyperf\ConfigCenter\Event\ConfigChanged;
+use Hyperf\Event\Annotation\Listener;
+use Hyperf\Event\Contract\ListenerInterface;
+
+#[Listener]
+class DbQueryExecutedListener implements ListenerInterface
+{
+    public function listen(): array
+    {
+        return [
+            ConfigChanged::class,
+        ];
+    }
+
+    public function process(object $event)
+    {
+        var_dump($event);
+    }
+}
+```
