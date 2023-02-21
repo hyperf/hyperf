@@ -148,7 +148,7 @@ class NacosDriver implements DriverInterface
         }
         $this->serviceRegistered[$name] = true;
 
-        if($this->config->get('services.drivers.nacos.ephemeral')){
+        if ($this->config->get('services.drivers.nacos.ephemeral')) {
             $this->registerHeartbeat($name, $host, $port);
         }
 
