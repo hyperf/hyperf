@@ -1,5 +1,9 @@
 # v3.0.8 - TBD
 
+## Fixed
+
+- [#5433](https://github.com/hyperf/hyperf/pull/5433) Fixed bug that the persistent service no need to send heartbeat.
+
 # v3.0.7 - 2023-02-18
 
 ## Added

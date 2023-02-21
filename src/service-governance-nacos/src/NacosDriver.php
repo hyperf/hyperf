@@ -103,7 +103,9 @@ class NacosDriver implements DriverInterface
         }
 
         $this->serviceRegistered[$name] = true;
-        $this->registerHeartbeat($name, $host, $port);
+        if ($ephemeral) {
+            $this->registerHeartbeat($name, $host, $port);
+        }
     }
 
     public function isRegistered(string $name, string $host, int $port, array $metadata): bool
