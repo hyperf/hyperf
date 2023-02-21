@@ -8,6 +8,10 @@
 
 - [#5434](https://github.com/hyperf/hyperf/pull/5434) Support UDP Server for Swow.
 
+## Optimized
+
+- [#5437](https://github.com/hyperf/hyperf/pull/5437) Remove unnecessary `if `statement in `Str::length`.
+
 # v3.0.7 - 2023-02-18
 
 ## Added
