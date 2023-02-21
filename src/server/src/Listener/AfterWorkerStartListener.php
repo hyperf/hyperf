@@ -54,7 +54,6 @@ class AfterWorkerStartListener implements ListenerInterface
                 $listen = $server->host . ':' . $server->port;
                 $type = value(function () use ($type, $server) {
                     switch ($type) {
-
                         case ServerInterface::SERVER_BASE:
                             $sockType = $server->type;
                             if (in_array($sockType, [SWOOLE_SOCK_TCP, SWOOLE_SOCK_TCP6])) {
