@@ -4,6 +4,10 @@
 
 - [#5433](https://github.com/hyperf/hyperf/pull/5433) Fixed bug that the persistent service no need to send heartbeat.
 
+## Added
+
+- [#5434](https://github.com/hyperf/hyperf/pull/5434) Support UDP Server for Swow.
+
 # v3.0.7 - 2023-02-18
 
 ## Added
