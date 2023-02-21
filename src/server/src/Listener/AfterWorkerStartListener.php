@@ -56,7 +56,8 @@ class AfterWorkerStartListener implements ListenerInterface
                     switch ($type) {
                         case ServerInterface::SERVER_BASE:
                             $sockType = $server->type;
-                            if (in_array($sockType, [SWOOLE_SOCK_TCP, SWOOLE_SOCK_TCP6])) {
+                            // type of Swoole\Coroutine\Server is AF_INET which is equal to SWOOLE_SOCK_UDP
+                            if ($server instanceof \Swoole\Coroutine\Server || in_array($sockType, [SWOOLE_SOCK_TCP, SWOOLE_SOCK_TCP6])) {
                                 return 'TCP';
                             }
                             if (in_array($sockType, [SWOOLE_SOCK_UDP, SWOOLE_SOCK_UDP6])) {
