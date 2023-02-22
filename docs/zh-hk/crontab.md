@@ -56,8 +56,6 @@ return [
             'fooArgument' => 'barValue',
             // (optional) options
             '--message-limit' => 1,
-            // 記住要加上，否則會導致主程序退出
-            '--disable-event-dispatcher' => true,
         ]),
     ],
 ];
