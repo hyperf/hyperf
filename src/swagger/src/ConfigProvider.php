@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Swagger;
 
 use Hyperf\Swagger\Command\GenCommand;
+use Hyperf\Swagger\Command\GenSchemaCommand;
 use Hyperf\Swagger\Listener\BootSwaggerListener;
 
 class ConfigProvider
@@ -21,6 +22,7 @@ class ConfigProvider
         return [
             'commands' => [
                 GenCommand::class,
+                GenSchemaCommand::class,
             ],
             'listeners' => [
                 BootSwaggerListener::class,
