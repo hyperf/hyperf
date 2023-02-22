@@ -84,6 +84,7 @@ class RoutesCommand extends HyperfCommand
             $action = $handler->callback[0] . '::' . $handler->callback[1];
         } elseif (is_string($handler->callback)) {
             $action = $handler->callback;
+            /* @phpstan-ignore-next-line */
         } elseif (is_callable($handler->callback)) {
             $action = 'Closure';
         } else {

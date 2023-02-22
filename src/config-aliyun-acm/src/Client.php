@@ -117,6 +117,8 @@ class Client implements ClientInterface
     private function getSecurityCredentialsWithEcsRamRole(string $ecsRamRole): ?array
     {
         $securityCredentials = $this->cachedSecurityCredentials[$ecsRamRole] ?? null;
+
+        /* @phpstan-ignore-next-line */
         if (! empty($securityCredentials) && time() > strtotime($securityCredentials['Expiration']) - 60) {
             $securityCredentials = null;
         }
