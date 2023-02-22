@@ -431,15 +431,27 @@ class Arr
      */
     public static function shuffle(array $array, int $seed = null): array
     {
-        if (is_null($seed)) {
-            shuffle($array);
-        } else {
-            srand($seed);
-            usort($array, function () {
-                return rand(-1, 1);
-            });
+        if (empty($array)) {
+            return [];
         }
-        return $array;
+
+        if (! is_null($seed)) {
+            mt_srand($seed);
+            shuffle($array);
+            mt_srand();
+            return $array;
+        }
+
+        $keys = array_keys($array);
+
+        for ($i = count($keys) - 1; $i > 0; --$i) {
+            $j = random_int(0, $i);
+            $shuffled[] = $array[$keys[$j]];
+            $keys[$j] = $keys[$i];
+        }
+        $shuffled[] = $array[$keys[0]];
+
+        return $shuffled;
     }
 
     /**
