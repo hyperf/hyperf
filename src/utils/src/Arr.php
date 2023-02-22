@@ -442,16 +442,9 @@ class Arr
             return $array;
         }
 
-        $keys = array_keys($array);
+        shuffle($array);
 
-        for ($i = count($keys) - 1; $i > 0; --$i) {
-            $j = random_int(0, $i);
-            $shuffled[] = $array[$keys[$j]];
-            $keys[$j] = $keys[$i];
-        }
-        $shuffled[] = $array[$keys[0]];
-
-        return $shuffled;
+        return $array;
     }
 
     /**
