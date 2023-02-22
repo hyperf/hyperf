@@ -56,6 +56,8 @@ return [
             'fooArgument' => 'barValue',
             // (optional) options
             '--message-limit' => 1,
+            // 记住要加上，否则会导致主进程退出
+            '--disable-event-dispatcher' => true,
         ]),
     ],
 ];
