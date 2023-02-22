@@ -11,6 +11,7 @@
 ## Optimized
 
 - [#5437](https://github.com/hyperf/hyperf/pull/5437) Remove unnecessary `if `statement in `Str::length`.
+- [#5439](https://github.com/hyperf/hyperf/pull/5439) Improve `Arr::shuffle`.
 
 # v3.0.7 - 2023-02-18
 
