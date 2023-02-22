@@ -421,6 +421,17 @@ class Collection extends BaseCollection implements CompressInterface
     {
         return $this->each->makeVisible($attributes);
     }
+    
+    /**
+     * Append an attribute across the entire collection.
+     *
+     * @param  array|string  $attributes
+     * @return $this
+     */
+    public function append($attributes)
+    {
+        return $this->each->append($attributes);
+    }
 
     /**
      * Get a dictionary keyed by primary keys.
