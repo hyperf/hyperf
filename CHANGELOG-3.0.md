@@ -7,6 +7,7 @@
 ## Added
 
 - [#5434](https://github.com/hyperf/hyperf/pull/5434) Support UDP Server for Swow.
+- [#5444](https://github.com/hyperf/hyperf/pull/5444) Added `GenSchemaCommand` to generate schemas for swagger.
 
 ## Optimized
 
