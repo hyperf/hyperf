@@ -102,6 +102,10 @@ class ModelCollectionTest extends TestCase
         $m2 = new ModelStub();
 
         $col = new Collection([$m1, $m2]);
+
+        $this->assertSame([], $m1->toArray());
+        $this->assertSame([[], []], $col->toArray());
+
         $col->append(['password']);
 
         $this->assertSame(['password' => '******'], $m1->toArray());
