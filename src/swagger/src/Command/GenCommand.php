@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Swagger\Command;
 
 use Hyperf\Command\Command as HyperfCommand;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Swagger\Generator;
 use Psr\Container\ContainerInterface;
 
@@ -30,9 +31,13 @@ class GenCommand extends HyperfCommand
 
     public function handle()
     {
-        $generator = $this->container->get(Generator::class);
+        $config = $this->container->get(ConfigInterface::class);
 
-        $generator->generate();
+        // are already generated in the listener if Swagger is enabled and automatically generated.
+        if (! ($config->get('swagger.enable', false) && $config->get('swagger.auto_generate', false))) {
+            $generator = $this->container->get(Generator::class);
+            $generator->generate();
+        }
 
         $this->output->writeln('Generate swagger json success.');
     }
