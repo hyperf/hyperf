@@ -147,7 +147,10 @@ class NacosDriver implements DriverInterface
             throw new RequestException(sprintf('Failed to get nacos instance %s:%d for %s!', $host, $port, $name));
         }
         $this->serviceRegistered[$name] = true;
-        $this->registerHeartbeat($name, $host, $port);
+
+        if ($this->config->get('services.drivers.nacos.ephemeral')) {
+            $this->registerHeartbeat($name, $host, $port);
+        }
 
         return true;
     }
