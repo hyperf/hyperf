@@ -4,7 +4,7 @@
 
 ## 新增
 
-- [#5042](https://github.com/hyperf/hyperf/pull/5402) 為 `Swagger` 元件愛你增加配置 `swagger.scan.paths` 可以用來重寫預設的掃描目錄。
+- [#5042](https://github.com/hyperf/hyperf/pull/5402) 為 `Swagger` 元件增加配置 `swagger.scan.paths` 可以用來重寫預設的掃描目錄。
 - [#5403](https://github.com/hyperf/hyperf/pull/5403) 為 `Swow` 增加 `Swoole Server` 配置項的適配。
 - [#5404](https://github.com/hyperf/hyperf/pull/5404) 為 `Swagger` 增加多埠服務的支援。
 - [#5406](https://github.com/hyperf/hyperf/pull/5406) 為 `Hyperf\Database\Model\Builder` 增加 `mixin` 方法。
