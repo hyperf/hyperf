@@ -424,6 +424,17 @@ class Collection extends BaseCollection implements CompressInterface
     }
 
     /**
+     * Append an attribute across the entire collection.
+     *
+     * @param array|string $attributes
+     * @return $this
+     */
+    public function append($attributes)
+    {
+        return $this->each->append($attributes);
+    }
+
+    /**
      * Get a dictionary keyed by primary keys.
      *
      * @param null|iterable<array-key, TModel> $items
