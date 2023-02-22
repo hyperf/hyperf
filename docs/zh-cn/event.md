@@ -164,6 +164,10 @@ class UserService
 
 ![](imgs/hyperf-events.svg)
 
+## Hyperf 协程风格生命周期事件
+
+![](imgs/hyperf-coroutine-events.svg)
+
 ## 注意事项
 
 ### 不要在 `Listener` 中注入 `EventDispatcherInterface`

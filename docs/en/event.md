@@ -153,3 +153,11 @@ class UserService
     }
 }
 ```
+
+## Hyperf Lifecycle events
+
+![](imgs/hyperf-events.svg)
+
+## Hyperf Coroutine Style Server Lifecycle events
+
+![](imgs/hyperf-coroutine-events.svg)
