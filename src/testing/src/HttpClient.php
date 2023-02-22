@@ -58,6 +58,26 @@ class HttpClient
 
         return $this->packer->unpack((string) $response->getBody());
     }
+    
+    public function put(string|UriInterface $uri, array $data = [], array $headers = [])
+    {
+        $response = $this->client->put($uri, [
+            'headers' => $headers,
+            'form_params' => $data,
+        ]);
+
+        return $this->packer->unpack((string) $response->getBody());
+    }
+    
+    public function patch(string|UriInterface $uri, array $data = [], array $headers = [])
+    {
+        $response = $this->client->patch($uri, [
+            'headers' => $headers,
+            'form_params' => $data,
+        ]);
+
+        return $this->packer->unpack((string) $response->getBody());
+    }
 
     public function json(string|UriInterface $uri, array $data = [], array $headers = [])
     {
