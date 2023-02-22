@@ -209,6 +209,11 @@ class ArrTest extends TestCase
         );
 
         $this->assertNotSame(
+            Arr::shuffle(range(0, 100, 10)),
+            Arr::shuffle(range(0, 100, 10))
+        );
+
+        $this->assertNotSame(
             range(0, 100, 10),
             Arr::shuffle(range(0, 100, 10), 1234)
         );
