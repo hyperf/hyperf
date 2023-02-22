@@ -168,7 +168,7 @@ return [
 
 JsonRPC 的鏈路追蹤並不在統一配置當中，暫時還屬於 `Beta` 版本的功能。
 
-我們只需要配置 `aspects.php`，加入以下 `Aspect` 即可開啟。
+我們只需要配置 `aspects.php`，加入以下 `Aspect` 即可開啓。
 
 > 提示：不要忘了在對端，添加對應的 TraceMiddleware
 
@@ -182,8 +182,8 @@ return [
 
 ### 配置中間件
 
-配置完驅動之後，採集信息還需要配置一下中間件才能啟用採集功能。
-打開 `config/autoload/middlewares.php` 文件，在 `http` 節點啟用中間件。
+配置完驅動之後，採集信息還需要配置一下中間件才能啓用採集功能。
+打開 `config/autoload/middlewares.php` 文件，在 `http` 節點啓用中間件。
 
 ```php
 <?php

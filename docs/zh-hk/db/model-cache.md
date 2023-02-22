@@ -145,7 +145,7 @@ User::query(true)->where('gender', '>', 1)->delete();
 
 當生產環境使用了模型緩存時，如果已經建立了對應緩存數據，但此時又因為邏輯變更，添加了新的字段，並且默認值不是 `0`、`空字符`、`null` 這類數據時，就會導致在數據查詢時，從緩存中查出來的數據與數據庫中的數據不一致。
 
-對於這種情況，我們可以修改 `use_default_value` 為 `true`，並添加 `Hyperf\DbConnection\Listener\InitTableCollectorListener` 到 `listener.php` 配置中，使 Hyperf 應用在啟動時主動去獲取數據庫的字段信息，並在獲取緩存數據時與之比較並進行緩存數據修正。
+對於這種情況，我們可以修改 `use_default_value` 為 `true`，並添加 `Hyperf\DbConnection\Listener\InitTableCollectorListener` 到 `listener.php` 配置中，使 Hyperf 應用在啓動時主動去獲取數據庫的字段信息，並在獲取緩存數據時與之比較並進行緩存數據修正。
 
 ### 控制模型中緩存時間
 

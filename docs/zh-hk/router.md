@@ -170,7 +170,7 @@ class UserController
 `prefix` 表示該 `Controller` 下的所有方法路由的前綴，默認為類名的小寫，如 `UserController` 則 `prefix` 默認為 `user`，如類內某一方法的 `path` 為 `index`，則最終路由為 `/user/index`。   
 需要注意的是 `prefix` 並非一直有效，當類內的方法的 `path` 以 `/` 開頭時，則表明路徑從 `URI` 頭部開始定義，也就意味着會忽略 `prefix` 的值。
 
-`server` 表示該路由是定義在哪個 `Server` 之上的，由於 `Hyperf` 支持同時啟動多個 `Server`，也就意味着有可能會同時存在多個 `HTTP Server`，則在定義路由是可以通過 `server` 參數來進行區分這個路由是為了哪個 `Server` 定義的，默認為 `http`。
+`server` 表示該路由是定義在哪個 `Server` 之上的，由於 `Hyperf` 支持同時啓動多個 `Server`，也就意味着有可能會同時存在多個 `HTTP Server`，則在定義路由是可以通過 `server` 參數來進行區分這個路由是為了哪個 `Server` 定義的，默認為 `http`。
 
 ### 路由參數
 

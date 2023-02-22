@@ -192,7 +192,7 @@ return [
 ];
 ```
 
-配置完成後，在啟動服務時，Hyperf 會自動地將 `@RpcService` 定義了 `publishTo` 屬性為 `consul` 或 `nacos` 的服務註冊到對應的服務中心去。
+配置完成後，在啓動服務時，Hyperf 會自動地將 `@RpcService` 定義了 `publishTo` 屬性為 `consul` 或 `nacos` 的服務註冊到對應的服務中心去。
 
 > 目前僅支持 `jsonrpc` 和 `jsonrpc-http` 協議發佈到服務中心去，其它協議尚未實現服務註冊
 
@@ -264,7 +264,7 @@ return [
 ];
 ```
 
-在應用啟動時會自動創建客户端類的代理對象，並在容器中使用配置項 `id` 的值（如果未設置，會使用配置項 `service` 值代替）來添加綁定關係，這樣就和手工編寫的客户端類一樣，通過注入 `CalculatorServiceInterface` 接口來直接使用客户端。
+在應用啓動時會自動創建客户端類的代理對象，並在容器中使用配置項 `id` 的值（如果未設置，會使用配置項 `service` 值代替）來添加綁定關係，這樣就和手工編寫的客户端類一樣，通過注入 `CalculatorServiceInterface` 接口來直接使用客户端。
 
 > 當服務提供者使用接口類名發佈服務名，在服務消費端只需要設置配置項 `name` 值為接口類名，不需要重複設置配置項 `id` 和 `service`。
 

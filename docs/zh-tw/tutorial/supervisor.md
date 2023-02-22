@@ -1,6 +1,6 @@
 # Supervisor 部署
 
-[Supervisor](http://www.supervisord.org/) 是 `Linux/Unix` 系統下的一個程序管理工具。可以很方便的監聽、啟動、停止和重啟一個或多個程序。通過 [Supervisor](http://www.supervisord.org/) 管理的程序，當程序意外被 `Kill` 時，[Supervisor](http://www.supervisord.org/) 會自動將它重啟，可以很方便地做到程序自動恢復的目的，而無需自己編寫 `shell` 指令碼來管理程序。
+[Supervisor](http://www.supervisord.org/) 是 `Linux/Unix` 系統下的一個程序管理工具。可以很方便的監聽、啟動、停止和重啟一個或多個程序。透過 [Supervisor](http://www.supervisord.org/) 管理的程序，當程序意外被 `Kill` 時，[Supervisor](http://www.supervisord.org/) 會自動將它重啟，可以很方便地做到程序自動恢復的目的，而無需自己編寫 `shell` 指令碼來管理程序。
 
 ## 安裝 Supervisor
 

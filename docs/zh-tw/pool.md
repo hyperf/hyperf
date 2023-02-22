@@ -32,7 +32,7 @@ class MyConnectionPool extends Pool
     }
 }
 ``` 
-這樣便可以通過對例項化後的 `MyConnectionPool` 物件呼叫 `get(): ConnectionInterface` 和 `release(ConnectionInterface $connection): void` 方法執行連線的取用和歸還了。   
+這樣便可以透過對例項化後的 `MyConnectionPool` 物件呼叫 `get(): ConnectionInterface` 和 `release(ConnectionInterface $connection): void` 方法執行連線的取用和歸還了。   
 
 ## SimplePool
 
