@@ -222,7 +222,7 @@ SocketIORouter::addNamespace('/xxx' , WebSocketController::class);
 
 在路由中添加。
 
-### 開啟 Session 
+### 開啓 Session 
 
 安裝並配置好 hyperf/session 組件及其對應中間件，再通過 `SessionAspect` 切入 SocketIO 來使用 Session 。
 

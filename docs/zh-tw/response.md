@@ -1,6 +1,6 @@
 # 響應
 
-在 Hyperf 裡可通過 `Hyperf\HttpServer\Contract\ResponseInterface` 介面類來注入 `Response` 代理物件對響應進行處理，預設返回 `Hyperf\HttpServer\Response` 物件，該物件可直接呼叫所有 `Psr\Http\Message\ResponseInterface` 的方法。
+在 Hyperf 裡可透過 `Hyperf\HttpServer\Contract\ResponseInterface` 介面類來注入 `Response` 代理物件對響應進行處理，預設返回 `Hyperf\HttpServer\Response` 物件，該物件可直接呼叫所有 `Psr\Http\Message\ResponseInterface` 的方法。
 
 > 注意 PSR-7 標準為 響應(Response) 進行了 immutable 機制 的設計，所有以 with 開頭的方法的返回值都是一個新物件，不會修改原物件的值
 
@@ -158,7 +158,7 @@ class IndexController
 
 | 引數 |  型別  | 預設值 |                                備註                                 |
 |:----:|:------:|:------:|:-------------------------------------------------------------------:|
-| file | string |   無   | 要返回下載檔案的絕對路徑，同通過 BASE_PATH 常量來定位到專案的根目錄 |
+| file | string |   無   | 要返回下載檔案的絕對路徑，同透過 BASE_PATH 常量來定位到專案的根目錄 |
 | name | string |   無   |         客戶端下載檔案的檔名，為空則會使用下載檔案的原名          |
 
 

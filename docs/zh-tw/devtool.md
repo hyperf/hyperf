@@ -12,7 +12,7 @@ composer require hyperf/devtool
 php bin/hyperf.php
 ```
 
-通過執行上面的命令可獲得 Command 所支援的所有命令，其中返回結果 `gen` 系列命令和 `vendor:publish` 命令主要為 `devtool` 元件提供支援
+透過執行上面的命令可獲得 Command 所支援的所有命令，其中返回結果 `gen` 系列命令和 `vendor:publish` 命令主要為 `devtool` 元件提供支援
 
 ```bash
  gen

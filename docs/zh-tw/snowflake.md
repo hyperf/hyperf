@@ -24,7 +24,7 @@
  - 所有生成的 `ID` 按時間趨勢遞增。
  - 整個分散式系統內不會產生重複 `ID`（因為有 `DatacenterId (5 bits)` 和 `WorkerId (5 bits)` 來做區分）。
  
-Hyperf 的 [hyperf/snowflake](https://github.com/hyperf/snowflake) 元件在設計上提供了很好的可擴充套件性，允許您通過簡單的擴充套件就能實現其它基於 Snowflake 的變體演算法。
+Hyperf 的 [hyperf/snowflake](https://github.com/hyperf/snowflake) 元件在設計上提供了很好的可擴充套件性，允許您透過簡單的擴充套件就能實現其它基於 Snowflake 的變體演算法。
 
 ## 安裝
 
@@ -37,7 +37,7 @@ composer require hyperf/snowflake
 框架提供了 `MetaGeneratorInterface` 和 `IdGeneratorInterface`，`MetaGeneratorInterface` 會生成 `ID` 的 `Meta` 檔案，`IdGeneratorInterface` 則會根據對應的 `Meta` 檔案生成 `分散式 ID`。
 
 框架預設使用的 `MetaGeneratorInterface` 是基於 `Redis` 實現的 `毫秒級別生成器`。    
-配置檔案位於 `config/autoload/snowflake.php`，如配置檔案不存在可通過執行 `php bin/hyperf.php vendor:publish hyperf/snowflake` 命令建立預設配置，配置檔案內容如下：
+配置檔案位於 `config/autoload/snowflake.php`，如配置檔案不存在可透過執行 `php bin/hyperf.php vendor:publish hyperf/snowflake` 命令建立預設配置，配置檔案內容如下：
 
 ```php
 <?php

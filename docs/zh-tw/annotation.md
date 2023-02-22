@@ -1,6 +1,6 @@
 # 註解
 
-註解是 Hyperf 非常強大的一項功能，可以通過註解的形式減少很多的配置，以及實現很多非常方便的功能。
+註解是 Hyperf 非常強大的一項功能，可以透過註解的形式減少很多的配置，以及實現很多非常方便的功能。
 
 ## 概念
 
@@ -19,7 +19,7 @@ Hyperf 使用了 [doctrine/annotations](https://github.com/doctrine/annotations)
  * @AnnotationClass()
  */
 ```
-在標準註釋塊內通過書寫 `@AnnotationClass()` 這樣的語法即表明對當前註釋塊所在位置的物件(類、類方法、類屬性)進行了註解的定義， `AnnotationClass` 對應的是一個 `註解類` 的類名，可寫全類的名稱空間，亦可只寫類名，但需要在當前類 `use` 該註解類以確保能夠根據名稱空間找到正確的註解類。
+在標準註釋塊內透過書寫 `@AnnotationClass()` 這樣的語法即表明對當前註釋塊所在位置的物件(類、類方法、類屬性)進行了註解的定義， `AnnotationClass` 對應的是一個 `註解類` 的類名，可寫全類的名稱空間，亦可只寫類名，但需要在當前類 `use` 該註解類以確保能夠根據名稱空間找到正確的註解類。
 
 ### 註解是如何發揮作用的？
 
@@ -27,7 +27,7 @@ Hyperf 使用了 [doctrine/annotations](https://github.com/doctrine/annotations)
 
 ### 忽略某些註解
 
-在一些情況下我們可能希望忽略某些 註解，比如我們在接入一些自動生成文件的工具時，有不少工具都是通過註解的形式去定義文件的相關結構內容的，而這些註解可能並不符合 Hyperf 的使用方式，我們可以通過在 `config/autoload/annotations.php` 內將相關注解設定為忽略。
+在一些情況下我們可能希望忽略某些 註解，比如我們在接入一些自動生成文件的工具時，有不少工具都是透過註解的形式去定義文件的相關結構內容的，而這些註解可能並不符合 Hyperf 的使用方式，我們可以透過在 `config/autoload/annotations.php` 內將相關注解設定為忽略。
 
 ```php
 return [
@@ -247,7 +247,7 @@ class Foo {}
 
 ### 利用註解資料
 
-在沒有自定義註解收集方法時，預設會將註解的元資料統一收集在 `Hyperf\Di\Annotation\AnnotationCollector` 類內，通過該類的靜態方法可以方便的獲取對應的元資料用於邏輯判斷或實現。
+在沒有自定義註解收集方法時，預設會將註解的元資料統一收集在 `Hyperf\Di\Annotation\AnnotationCollector` 類內，透過該類的靜態方法可以方便的獲取對應的元資料用於邏輯判斷或實現。
 
 ### ClassMap 功能
 

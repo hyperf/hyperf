@@ -190,7 +190,7 @@ class ExampleJob extends Job
     public function handle()
     {
         // 根據引數處理具體邏輯
-        // 通過具體引數獲取模型等
+        // 透過具體引數獲取模型等
         // 這裡的邏輯會在 ConsumerProcess 程序中執行
         var_dump($this->params);
     }
