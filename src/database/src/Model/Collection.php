@@ -61,7 +61,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationships onto the collection.
      *
-     * @param  array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string  $relations
+     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
      * @return $this
      */
     public function load($relations)
@@ -82,7 +82,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationship counts onto the collection.
      *
-     * @param  array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string  $relations
+     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
      * @return $this
      */
     public function loadCount($relations)
@@ -114,7 +114,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Load a set of relationships onto the collection if they are not already eager loaded.
      *
-     * @param  array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string  $relations
+     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
      * @return $this
      */
     public function loadMissing($relations)
@@ -150,7 +150,7 @@ class Collection extends BaseCollection implements CompressInterface
      * Load a set of relationships onto the mixed relationship collection.
      *
      * @param string $relation
-     * @param  array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string  $relations
+     * @param array<array-key, (callable(\Hyperf\Database\Model\Builder): mixed)|string>|string $relations
      * @return $this
      */
     public function loadMorph($relation, $relations)
@@ -187,7 +187,7 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Determine if a key exists in the collection.
      *
-     * @param  (callable(TModel, TKey): bool)|TModel|string  $key
+     * @param (callable(TModel, TKey): bool)|TModel|string $key
      * @param mixed $operator
      * @param mixed $value
      */
@@ -250,7 +250,7 @@ class Collection extends BaseCollection implements CompressInterface
         $result = parent::map($callback);
 
         return $result->contains(function ($item) {
-            return ! $item instanceof Model;
+            return !$item instanceof Model;
         }) ? $result->toBase() : $result;
     }
 
@@ -293,7 +293,7 @@ class Collection extends BaseCollection implements CompressInterface
         $dictionary = $this->getDictionary($items);
 
         foreach ($this->items as $item) {
-            if (! isset($dictionary[$item->getKey()])) {
+            if (!isset($dictionary[$item->getKey()])) {
                 $diff->add($item);
             }
         }
@@ -325,12 +325,12 @@ class Collection extends BaseCollection implements CompressInterface
     /**
      * Return only unique items from the collection.
      *
-     * @param  (callable(TModel, TKey): bool)|string|null  $key
+     * @param (callable(TModel, TKey): bool)|string|null $key
      * @return static<int, TModel>
      */
     public function unique($key = null, bool $strict = false): BaseCollection
     {
-        if (! is_null($key)) {
+        if (!is_null($key)) {
             return parent::unique($key, $strict);
         }
 
@@ -421,11 +421,11 @@ class Collection extends BaseCollection implements CompressInterface
     {
         return $this->each->makeVisible($attributes);
     }
-    
+
     /**
      * Append an attribute across the entire collection.
      *
-     * @param  array|string  $attributes
+     * @param array|string $attributes
      * @return $this
      */
     public function append($attributes)
@@ -570,7 +570,7 @@ class Collection extends BaseCollection implements CompressInterface
         }
 
         $models->filter(function ($model) use ($name) {
-            return ! is_null($model) && ! $model->relationLoaded($name);
+            return !is_null($model) && !$model->relationLoaded($name);
         })->load($relation);
 
         if (empty($path)) {

@@ -15,6 +15,7 @@ use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\Fluent;
+use HyperfTest\Database\Stubs\ModelStub;
 use LogicException;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
@@ -93,6 +94,23 @@ class ModelCollectionTest extends TestCase
         $this->assertTrue($c->contains($mockModel));
         $this->assertTrue($c->contains($mockModel2));
         $this->assertFalse($c->contains($mockModel3));
+    }
+
+    public function testCollectionAppends()
+    {
+        $m1 = new ModelStub();
+        $m2 = new ModelStub();
+
+        $col = new Collection([$m1, $m2]);
+
+        $this->assertSame([], $m1->toArray());
+        $this->assertSame([[], []], $col->toArray());
+
+        $col->append(['password']);
+
+        $this->assertSame(['password' => '******'], $m1->toArray());
+        $this->assertSame(['password' => '******'], $m2->toArray());
+        $this->assertSame([['password' => '******'], ['password' => '******']], $col->toArray());
     }
 
     public function testContainsIndicatesIfDifferentModelInArray()
