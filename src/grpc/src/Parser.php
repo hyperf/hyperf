@@ -13,6 +13,7 @@ namespace Hyperf\Grpc;
 
 use Google\Protobuf\GPBEmpty;
 use Google\Protobuf\Internal\Message;
+use Google\Rpc\Status;
 use swoole_http2_response;
 
 class Parser
@@ -99,5 +100,22 @@ class Parser
     private static function isinvalidStatus(int $code)
     {
         return $code !== 0 && $code !== 200 && $code !== 400;
+    }
+
+    /**
+     * @param swoole_http2_response
+     * @return null|Status
+     */
+    public static function statusFromResponse($response): ?Status
+    {
+        $detailsEncoded = $response->headers['grpc-status-details-bin'] ?? '';
+
+        if (! $detailsEncoded || ! $detailsBin = base64_decode($detailsEncoded, true)) {
+            return null;
+        } else {
+            $status = new Status();
+            $status->mergeFromString($detailsBin);
+            return $status;
+        }
     }
 }
