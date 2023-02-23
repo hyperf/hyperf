@@ -55,21 +55,25 @@ class Parser
         if (empty($value)) {
             return null;
         }
-        $value = self::unpack($value);
 
+        return self::deserializeUnpackedMessage($deserialize, self::unpack($value));
+    }
+
+    private static function deserializeUnpackedMessage($deserialize, string $unpacked)
+    {
         if (is_array($deserialize)) {
             [$className, $deserializeFunc] = $deserialize;
             /** @var \Google\Protobuf\Internal\Message $object */
             $object = new $className();
             if ($deserializeFunc && method_exists($object, $deserializeFunc)) {
-                $object->{$deserializeFunc}($value);
+                $object->{$deserializeFunc}($unpacked);
             } else {
                 // @noinspection PhpUndefinedMethodInspection
-                $object->mergeFromString($value);
+                $object->mergeFromString($unpacked);
             }
             return $object;
         }
-        return call_user_func($deserialize, $value);
+        return call_user_func($deserialize, $unpacked);
     }
 
     /**
@@ -113,9 +117,7 @@ class Parser
         if (! $detailsEncoded || ! $detailsBin = base64_decode($detailsEncoded, true)) {
             return null;
         } else {
-            $status = new Status();
-            $status->mergeFromString($detailsBin);
-            return $status;
+            return self::deserializeUnpackedMessage([Status::class, ''], $detailsBin);
         }
     }
 }
