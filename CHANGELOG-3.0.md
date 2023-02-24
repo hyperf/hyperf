@@ -8,6 +8,8 @@
 
 - [#5434](https://github.com/hyperf/hyperf/pull/5434) Support UDP Server for Swow.
 - [#5444](https://github.com/hyperf/hyperf/pull/5444) Added `GenSchemaCommand` to generate schemas for swagger.
+- [#5451](https://github.com/hyperf/hyperf/pull/5451) Added method `appends($attributes)` to model collections.
+- [#5453](https://github.com/hyperf/hyperf/pull/5453) Added missing methods `put()` and `patch()` to testing HTTP client.
 
 ## Optimized
 
