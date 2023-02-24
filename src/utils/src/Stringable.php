@@ -297,6 +297,16 @@ class Stringable implements JsonSerializable, \Stringable
         return ! $this->isEmpty();
     }
 
+    public function isUlid(): bool
+    {
+        return Str::isUlid($this->value);
+    }
+
+    public function isUuid(): bool
+    {
+        return Str::isUuid($this->value);
+    }
+
     /**
      * Convert a string to kebab case.
      *
