@@ -50,11 +50,7 @@ use Hyperf\Logger\LoggerFactory;
 
 class DemoService
 {
-    
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     public function __construct(LoggerFactory $loggerFactory)
     {
