@@ -14,6 +14,7 @@ namespace HyperfTest\Utils;
 use Hyperf\Utils\Exception\InvalidArgumentException;
 use Hyperf\Utils\Str;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * @internal
@@ -201,5 +202,19 @@ class StrTest extends TestCase
     {
         $this->assertEquals(11, Str::length('foo bar baz'));
         $this->assertEquals(11, Str::length('foo bar baz', 'UTF-8'));
+    }
+
+    public function testUlid()
+    {
+        $this->assertTrue(Str::isUlid((string) Str::ulid()));
+    }
+
+    public function testUuid()
+    {
+        $this->assertInstanceOf(UuidInterface::class, $uuid = Str::uuid());
+        $this->assertTrue(Str::isUuid((string) $uuid));
+
+        $this->assertInstanceOf(UuidInterface::class, $uuid = Str::orderedUuid());
+        $this->assertTrue(Str::isUuid((string) $uuid));
     }
 }
