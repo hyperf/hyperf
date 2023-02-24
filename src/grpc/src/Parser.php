@@ -13,6 +13,8 @@ namespace Hyperf\Grpc;
 
 use Google\Protobuf\GPBEmpty;
 use Google\Protobuf\Internal\Message;
+use Google\Rpc\Status;
+use Swoole\Http\Response;
 use swoole_http2_response;
 
 class Parser
@@ -54,21 +56,8 @@ class Parser
         if (empty($value)) {
             return null;
         }
-        $value = self::unpack($value);
 
-        if (is_array($deserialize)) {
-            [$className, $deserializeFunc] = $deserialize;
-            /** @var \Google\Protobuf\Internal\Message $object */
-            $object = new $className();
-            if ($deserializeFunc && method_exists($object, $deserializeFunc)) {
-                $object->{$deserializeFunc}($value);
-            } else {
-                // @noinspection PhpUndefinedMethodInspection
-                $object->mergeFromString($value);
-            }
-            return $object;
-        }
-        return call_user_func($deserialize, $value);
+        return self::deserializeUnpackedMessage($deserialize, self::unpack($value));
     }
 
     /**
@@ -94,6 +83,37 @@ class Parser
         $reply = self::deserializeMessage($deserialize, $data);
         $status = (int) ($response->headers['grpc-status'] ?? 0);
         return [$reply, $status, $response];
+    }
+
+    /**
+     * @param Response
+     * @param mixed $response
+     */
+    public static function statusFromResponse($response): ?Status
+    {
+        $detailsEncoded = $response->headers['grpc-status-details-bin'] ?? '';
+
+        if (! $detailsEncoded || ! $detailsBin = base64_decode($detailsEncoded, true)) {
+            return null;
+        }
+        return self::deserializeUnpackedMessage([Status::class, ''], $detailsBin);
+    }
+
+    private static function deserializeUnpackedMessage($deserialize, string $unpacked)
+    {
+        if (is_array($deserialize)) {
+            [$className, $deserializeFunc] = $deserialize;
+            /** @var \Google\Protobuf\Internal\Message $object */
+            $object = new $className();
+            if ($deserializeFunc && method_exists($object, $deserializeFunc)) {
+                $object->{$deserializeFunc}($unpacked);
+            } else {
+                // @noinspection PhpUndefinedMethodInspection
+                $object->mergeFromString($unpacked);
+            }
+            return $object;
+        }
+        return call_user_func($deserialize, $unpacked);
     }
 
     private static function isinvalidStatus(int $code)
