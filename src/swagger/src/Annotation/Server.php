@@ -12,12 +12,8 @@ declare(strict_types=1);
 namespace Hyperf\Swagger\Annotation;
 
 use Attribute;
-use Hyperf\Di\Annotation\AbstractMultipleAnnotation;
 
-#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
-class Server extends AbstractMultipleAnnotation
+#[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
+class Server extends \OpenApi\Attributes\Server
 {
-    public function __construct(public string $name)
-    {
-    }
 }

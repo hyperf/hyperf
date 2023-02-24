@@ -149,7 +149,7 @@ class SwowServer implements ServerInterface
                     if ($handler instanceof MiddlewareInitializerInterface) {
                         $handler->initCoreMiddleware($name);
                     }
-                    if ($this->server instanceof HttpServer) {
+                    if ($server instanceof HttpServer) {
                         $server->handle(function ($request, $session) use ($handler, $method) {
                             $this->waiter->wait(static function () use ($request, $session, $handler, $method) {
                                 $handler->{$method}($request, $session);
@@ -166,8 +166,8 @@ class SwowServer implements ServerInterface
                     if ($receiveHandler instanceof MiddlewareInitializerInterface) {
                         $receiveHandler->initCoreMiddleware($name);
                     }
-                    if ($this->server instanceof BaseServer) {
-                        $this->server->handle(function (Socket $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
+                    if ($server instanceof BaseServer) {
+                        $server->handle(function (Socket $connection) use ($connectHandler, $connectMethod, $receiveHandler, $receiveMethod, $closeHandler, $closeMethod) {
                             if ($connectHandler && $connectMethod) {
                                 $this->waiter->wait(static function () use ($connectHandler, $connectMethod, $connection) {
                                     $connectHandler->{$connectMethod}($connection, $connection->getId());
@@ -190,6 +190,14 @@ class SwowServer implements ServerInterface
                                 });
                             }
                         });
+                    }
+                    if (isset($callbacks[Event::ON_PACKET])) {
+                        [$receiveHandler, $receiveMethod] = $this->getCallbackMethod(Event::ON_PACKET, $callbacks);
+                        if ($server instanceof BaseServer) {
+                            $server->handle(function (Socket $connection, $data, $clientInfo) use ($receiveHandler, $receiveMethod) {
+                                $receiveHandler->{$receiveMethod}($connection, $data, $clientInfo);
+                            });
+                        }
                     }
                 }
                 return;
@@ -238,7 +246,19 @@ class SwowServer implements ServerInterface
 
     private function initServerSettings($server, $settings)
     {
+        // Adapter Swoole server settings
+        $mappings = [
+            'open_tcp_nodelay' => 'tcp_nodelay',
+            'buffer_output_size' => 'send_buffer_size',
+            'output_buffer_size' => 'send_buffer_size',
+            'buffer_input_size' => 'recv_buffer_size',
+            'input_buffer_size' => 'recv_buffer_size',
+        ];
         foreach ($settings as $key => $value) {
+            if (array_key_exists($key, $mappings)) {
+                $key = $mappings[$key];
+            }
+
             $method = Str::camel(sprintf('set_%s', $key));
             if (method_exists($server, $method)) {
                 $server->{$method}($value);

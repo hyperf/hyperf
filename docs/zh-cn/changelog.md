@@ -1,5 +1,52 @@
 # 版本更新记录
 
+# v3.0.7 - 2023-02-18
+
+## 新增
+
+- [#5042](https://github.com/hyperf/hyperf/pull/5402) 为 `Swagger` 组件增加配置 `swagger.scan.paths` 可以用来重写默认的扫描目录。
+- [#5403](https://github.com/hyperf/hyperf/pull/5403) 为 `Swow` 增加 `Swoole Server` 配置项的适配。
+- [#5404](https://github.com/hyperf/hyperf/pull/5404) 为 `Swagger` 增加多端口服务的支持。
+- [#5406](https://github.com/hyperf/hyperf/pull/5406) 为 `Hyperf\Database\Model\Builder` 增加 `mixin` 方法。
+- [#5407](https://github.com/hyperf/hyperf/pull/5407) 为 `Swagger` 增加请求方法 `Delete` 和 `Options` 的支持。
+- [#5409](https://github.com/hyperf/hyperf/pull/5409) 为数据库组件中 `Query\Builder` 和 `Paginator` 类增加了一部分方法。
+- [#5414](https://github.com/hyperf/hyperf/pull/5414) 为 `Hyperf\Database\Model\Builder` 增加了 `clone` 方法。
+- [#5418](https://github.com/hyperf/hyperf/pull/5418) 为配置中心增加了 `ConfigChanged` 事件。
+- [#5429](https://github.com/hyperf/hyperf/pull/5429) 在连接 `Aliyun Nacos` 服务时，增加了配置项 `access_key` 和 `access_secret`。
+
+## 修复
+
+- [#5405](https://github.com/hyperf/hyperf/pull/5405) 修复了当系统支持 `IPv6` 时，`get local ip` 无法正常读取 ip 的问题。
+- [#5417](https://github.com/hyperf/hyperf/pull/5417) 修复 `PgSQL` 无法正常使用数据库迁移功能的问题。
+- [#5421](https://github.com/hyperf/hyperf/pull/5421) 修复数据库 `Json` 结构无法正常使用 `boolean` 类型的问题。
+- [#5428](https://github.com/hyperf/hyperf/pull/5428) 修复 `Metric` 中间件遇到异常时，服务端参数统计有误的问题。
+- [#5424](https://github.com/hyperf/hyperf/pull/5424) 修复数据库迁移组件，不支持 `PHP8.2` 的问题。
+
+## 优化
+
+- [#5411](https://github.com/hyperf/hyperf/pull/5411) 优化代码，异常 `WebSocketHandeShakeException` 应继承 `BadRequestHttpException`。
+- [#5419](https://github.com/hyperf/hyperf/pull/5419) 优化 `RPN` 组件的实现逻辑，可以更好的进行自定义扩展。
+- [#5422](https://github.com/hyperf/hyperf/pull/5422) 当安装 `Swagger` 组件后，默认启动 `Swagger` 的能力。
+
+# v3.0.6 - 2023-02-12
+
+## 修复
+
+- [#5361](https://github.com/hyperf/hyperf/pull/5361) 修复 `Nacos` 注入临时实例失败的问题。
+- [#5382](https://github.com/hyperf/hyperf/pull/5382) 修复 `SocketIO` 中使用 `mix-subscriber` 时，因为没有设置密码而报错的问题。
+- [#5386](https://github.com/hyperf/hyperf/pull/5386) 修复 `SwoolePostgresqlClient` 会被执行到不存在的方法 `exec` 的问题。
+- [#5394](https://github.com/hyperf/hyperf/pull/5394) 修复 `hyperf/config-apollo` 无法正常使用的问题。
+
+## 新增
+
+- [#5366](https://github.com/hyperf/hyperf/pull/5366) 为 `hyperf/database` 增加 `forceDeleting` 事件。
+- [#5373](https://github.com/hyperf/hyperf/pull/5373) 为 `SwowServer` 增加 `settings` 配置。
+- [#5376](https://github.com/hyperf/hyperf/pull/5376) 为 `hyperf/metric` 增加协程风格下服务状态收集的能力。
+- [#5379](https://github.com/hyperf/hyperf/pull/5379) 当 `Nacos` 心跳失败时，增加日志记录。
+- [#5389](https://github.com/hyperf/hyperf/pull/5389) 增加 `Swagger` 支持。
+- [#5395](https://github.com/hyperf/hyperf/pull/5395) 为 `Swagger` 组件，增加验证器功能。
+- [#5397](https://github.com/hyperf/hyperf/pull/5397) 支持所有已知的 `Swagger` 注解。
+
 # v3.0.5 - 2023-02-06
 
 ## 新增

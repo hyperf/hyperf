@@ -2192,14 +2192,14 @@ class QueryBuilderTest extends TestCase
     {
         $builder = $this->getMySqlBuilder();
         $builder->select('*')->from('users')->where('items->available', '=', true);
-        $this->assertEquals('select * from `users` where json_unquote(json_extract(`items`, \'$."available"\')) = true', $builder->toSql());
+        $this->assertEquals('select * from `users` where json_extract(`items`, \'$."available"\') = true', $builder->toSql());
     }
 
     public function testMySqlWrappingJsonWithBooleanAndIntegerThatLooksLikeOne()
     {
         $builder = $this->getMySqlBuilder();
         $builder->select('*')->from('users')->where('items->available', '=', true)->where('items->active', '=', false)->where('items->number_available', '=', 0);
-        $this->assertEquals('select * from `users` where json_unquote(json_extract(`items`, \'$."available"\')) = true and json_unquote(json_extract(`items`, \'$."active"\')) = false and json_unquote(json_extract(`items`, \'$."number_available"\')) = ?', $builder->toSql());
+        $this->assertEquals('select * from `users` where json_extract(`items`, \'$."available"\') = true and json_extract(`items`, \'$."active"\') = false and json_unquote(json_extract(`items`, \'$."number_available"\')) = ?', $builder->toSql());
     }
 
     public function testMySqlWrappingJson()
@@ -2997,6 +2997,15 @@ class QueryBuilderTest extends TestCase
             ->where('last_seen_at', '>', '1520652582');
         $this->assertEquals('select * from (select max(last_seen_at) as last_seen_at from "sessions") as "last_seen_at" where "last_seen_at" > ?', $builder->toSql());
         $this->assertEquals(['1520652582'], $builder->getBindings());
+    }
+
+    public function testClone()
+    {
+        $builder = $this->getBuilder();
+        $clone = $builder->clone();
+        $this->assertEquals($builder->toSql(), $clone->toSql());
+        $this->assertEquals($builder->getBindings(), $clone->getBindings());
+        $this->assertNotSame($builder, $clone);
     }
 
     protected function getBuilderWithProcessor(): Builder

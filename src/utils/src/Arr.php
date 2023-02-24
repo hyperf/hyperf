@@ -431,14 +431,19 @@ class Arr
      */
     public static function shuffle(array $array, int $seed = null): array
     {
-        if (is_null($seed)) {
-            shuffle($array);
-        } else {
-            srand($seed);
-            usort($array, function () {
-                return rand(-1, 1);
-            });
+        if (empty($array)) {
+            return [];
         }
+
+        if (! is_null($seed)) {
+            mt_srand($seed);
+            shuffle($array);
+            mt_srand();
+            return $array;
+        }
+
+        shuffle($array);
+
         return $array;
     }
 

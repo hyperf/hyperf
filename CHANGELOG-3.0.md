@@ -1,4 +1,52 @@
-# v3.0.6 - TBD
+# v3.0.8 - TBD
+
+## Fixed
+
+- [#5433](https://github.com/hyperf/hyperf/pull/5433) [#5438](https://github.com/hyperf/hyperf/pull/5438) Fixed bug that the persistent service no need to send heartbeat.
+
+## Added
+
+- [#5434](https://github.com/hyperf/hyperf/pull/5434) Support UDP Server for Swow.
+- [#5444](https://github.com/hyperf/hyperf/pull/5444) Added `GenSchemaCommand` to generate schemas for swagger.
+- [#5451](https://github.com/hyperf/hyperf/pull/5451) Added method `appends($attributes)` to model collections.
+- [#5453](https://github.com/hyperf/hyperf/pull/5453) Added missing methods `put()` and `patch()` to testing HTTP client.
+- [#5454](https://github.com/hyperf/hyperf/pull/5454) Added method `Hyperf\Grpc\Parser::statusFromResponse`.
+- [#5459](https://github.com/hyperf/hyperf/pull/5459) Added some methods of `uuid` and `ulid` for `Str` and `Stringable`.
+
+## Optimized
+
+- [#5437](https://github.com/hyperf/hyperf/pull/5437) Remove unnecessary `if `statement in `Str::length`.
+- [#5439](https://github.com/hyperf/hyperf/pull/5439) Improve `Arr::shuffle`.
+
+# v3.0.7 - 2023-02-18
+
+## Added
+
+- [#5042](https://github.com/hyperf/hyperf/pull/5402) Added `swagger.scan.paths` to rewrite `scan paths` for swagger.
+- [#5403](https://github.com/hyperf/hyperf/pull/5403) Support swoole server settings for swow server.
+- [#5404](https://github.com/hyperf/hyperf/pull/5404) Support multiport server for swagger.
+- [#5406](https://github.com/hyperf/hyperf/pull/5406) Added `mixin` method to `Hyperf\Database\Model\Builder`.
+- [#5407](https://github.com/hyperf/hyperf/pull/5407) Support HTTP methods `Delete` and `Options` for swagger.
+- [#5409](https://github.com/hyperf/hyperf/pull/5409) Adds `methods` for `Query\Builder` and `Paginator`.
+- [#5414](https://github.com/hyperf/hyperf/pull/5414) Added `clone` method to `Hyperf\Database\Model\Builder`.
+- [#5418](https://github.com/hyperf/hyperf/pull/5418) Added `ConfigChanged` event to `config-center`.
+- [#5429](https://github.com/hyperf/hyperf/pull/5429) Added `access_key` and `access_secret` which used to connect aliyun nacos.
+
+## Fixed
+
+- [#5405](https://github.com/hyperf/hyperf/pull/5405) Fixed get local ip error when IPv6 exists.
+- [#5417](https://github.com/hyperf/hyperf/pull/5417) Fixed bug that database-pgsql does not support migration.
+- [#5421](https://github.com/hyperf/hyperf/pull/5421) Fixed database about boolean types for where in the json type.
+- [#5428](https://github.com/hyperf/hyperf/pull/5428) Fixed bug that metric middleware cannot work well when encountered an exception.
+- [#5424](https://github.com/hyperf/hyperf/pull/5424) Fixed bug that migrator cannot work when using `PHP8.2`.
+
+## Optimized
+
+- [#5411](https://github.com/hyperf/hyperf/pull/5411) Optimized the code of `WebSocketHandeShakeException` which should inheritance `BadRequestHttpException`.
+- [#5419](https://github.com/hyperf/hyperf/pull/5419) Optimized the code of `RPN`.
+- [#5422](https://github.com/hyperf/hyperf/pull/5422) Enable swagger by default when installed swagger component.
+
+# v3.0.6 - 2023-02-12
 
 ## Fixed
 
@@ -15,6 +63,7 @@
 - [#5379](https://github.com/hyperf/hyperf/pull/5379) Added log records when nacos heartbeat failed.
 - [#5389](https://github.com/hyperf/hyperf/pull/5389) Added swagger support.
 - [#5395](https://github.com/hyperf/hyperf/pull/5395) Support validation for swagger.
+- [#5397](https://github.com/hyperf/hyperf/pull/5397) Support all swagger annotations.
 
 # v3.0.5 - 2023-02-05
 

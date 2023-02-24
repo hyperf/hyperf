@@ -13,14 +13,22 @@ namespace HyperfTest\Database\PgSQL\Cases;
 
 use Exception;
 use Hyperf\Database\Connection;
+use Hyperf\Database\ConnectionResolver;
+use Hyperf\Database\ConnectionResolverInterface;
 use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Exception\QueryException;
+use Hyperf\Database\Migrations\DatabaseMigrationRepository;
+use Hyperf\Database\Migrations\Migrator;
 use Hyperf\Database\PgSQL\Connectors\PostgresSqlSwooleExtConnector;
 use Hyperf\Database\PgSQL\PostgreSqlSwooleExtConnection;
 use Hyperf\Database\Query\Builder;
+use Hyperf\Database\Schema\Schema;
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Filesystem\Filesystem;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Style\OutputStyle;
 
 /**
  * @internal
@@ -28,28 +36,24 @@ use Psr\Container\ContainerInterface;
  */
 class PostgreSqlSwooleExtConnectionTest extends TestCase
 {
-    protected ConnectionFactory $connectionFactory;
+    protected Migrator $migrator;
 
     public function setUp(): void
-    {
-        $container = Mockery::mock(ContainerInterface::class);
-        $container->shouldReceive('has')->andReturn(true);
-        $container->shouldReceive('get')->with('db.connector.pgsql-swoole')->andReturn(new PostgresSqlSwooleExtConnector());
-
-        $this->connectionFactory = new ConnectionFactory($container);
-
-        Connection::resolverFor('pgsql-swoole', static function ($connection, $database, $prefix, $config) {
-            return new PostgreSqlSwooleExtConnection($connection, $database, $prefix, $config);
-        });
-    }
-
-    public function testSelectMethodDuplicateKeyValueException()
     {
         if (SWOOLE_MAJOR_VERSION < 5) {
             $this->markTestSkipped('PostgreSql requires Swoole version >= 5.0.0');
         }
 
-        $connection = $this->connectionFactory->make([
+        $container = Mockery::mock(ContainerInterface::class);
+        $container->shouldReceive('has')->andReturn(true);
+        $container->shouldReceive('get')->with('db.connector.pgsql-swoole')->andReturn(new PostgresSqlSwooleExtConnector());
+        $connector = new ConnectionFactory($container);
+
+        Connection::resolverFor('pgsql-swoole', static function ($connection, $database, $prefix, $config) {
+            return new PostgreSqlSwooleExtConnection($connection, $database, $prefix, $config);
+        });
+
+        $connection = $connector->make([
             'driver' => 'pgsql-swoole',
             'host' => '127.0.0.1',
             'port' => 5432,
@@ -57,6 +61,32 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
             'username' => 'postgres',
             'password' => 'postgres',
         ]);
+
+        $resolver = new ConnectionResolver(['default' => $connection]);
+
+        $container->shouldReceive('get')->with(ConnectionResolverInterface::class)->andReturn($resolver);
+
+        ApplicationContext::setContainer($container);
+
+        $this->migrator = new Migrator(
+            $repository = new DatabaseMigrationRepository($resolver, 'migrations'),
+            $resolver,
+            new Filesystem()
+        );
+
+        $output = Mockery::mock(OutputStyle::class);
+        $output->shouldReceive('writeln');
+
+        $this->migrator->setOutput($output);
+
+        if (! $repository->repositoryExists()) {
+            $repository->createRepository();
+        }
+    }
+
+    public function testSelectMethodDuplicateKeyValueException()
+    {
+        $connection = ApplicationContext::getContainer()->get(ConnectionResolverInterface::class)->connection();
 
         $builder = new Builder($connection);
 
@@ -73,18 +103,7 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function testAffectingStatementWithWrongSql()
     {
-        if (SWOOLE_MAJOR_VERSION < 5) {
-            $this->markTestSkipped('PostgreSql requires Swoole version >= 5.0.0');
-        }
-
-        $connection = $this->connectionFactory->make([
-            'driver' => 'pgsql-swoole',
-            'host' => '127.0.0.1',
-            'port' => 5432,
-            'database' => 'postgres',
-            'username' => 'postgres',
-            'password' => 'postgres',
-        ]);
+        $connection = ApplicationContext::getContainer()->get(ConnectionResolverInterface::class)->connection();
 
         $this->expectException(QueryException::class);
 
@@ -93,11 +112,9 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
 
     public function testCreateConnectionTimedOut()
     {
-        if (SWOOLE_MAJOR_VERSION < 5) {
-            $this->markTestSkipped('PostgreSql requires Swoole version >= 5.0.0');
-        }
+        $factory = new ConnectionFactory(ApplicationContext::getContainer());
 
-        $connection = $this->connectionFactory->make([
+        $connection = $factory->make([
             'driver' => 'pgsql-swoole',
             'host' => 'non-existent-host.internal',
             'port' => 5432,
@@ -110,5 +127,33 @@ class PostgreSqlSwooleExtConnectionTest extends TestCase
         $this->expectExceptionMessage('Create connection failed, Please check the database configuration.');
 
         $connection->affectingStatement('UPDATE xx SET x = 1 WHERE id = 1');
+    }
+
+    public function testCreateTableForMigration()
+    {
+        $queryCommentSQL = "select a.attname,
+    d.description
+from pg_class c,
+     pg_attribute a,
+     pg_type t,
+     pg_description d
+where c.relname = 'password_resets_for_pgsql'
+  and a.attnum > 0
+  and a.attrelid = c.oid
+  and a.atttypid = t.oid
+  and d.objoid = a.attrelid
+  and d.objsubid = a.attnum";
+
+        $schema = new Schema();
+
+        $this->migrator->rollback([__DIR__ . '/../migrations/two']);
+        $this->migrator->rollback([__DIR__ . '/../migrations/one']);
+
+        $this->migrator->run([__DIR__ . '/../migrations/one']);
+        $this->assertTrue($schema->hasTable('password_resets_for_pgsql'));
+        $this->assertSame('', $schema->connection()->selectOne($queryCommentSQL)['description'] ?? '');
+
+        $this->migrator->run([__DIR__ . '/../migrations/two']);
+        $this->assertSame('邮箱', $schema->connection()->selectOne($queryCommentSQL)['description'] ?? '');
     }
 }

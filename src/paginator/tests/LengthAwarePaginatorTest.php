@@ -58,4 +58,10 @@ class LengthAwarePaginatorTest extends TestCase
 
         $this->assertSame(Json::encode($paginator->toArray()), (string) $paginator);
     }
+
+    public function testGetOptions()
+    {
+        $paginator = new LengthAwarePaginator([1, 2], 10, 2, 2, $options = ['foo' => 'bar']);
+        $this->assertSame($options, $paginator->getOptions());
+    }
 }

@@ -30,6 +30,11 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess
     public int $onEachSide = 3;
 
     /**
+     * The paginator options.
+     */
+    protected array $options = [];
+
+    /**
      * All the items being paginated.
      */
     protected Collection $items;
@@ -369,6 +374,14 @@ abstract class AbstractPaginator implements PaginatorInterface, ArrayAccess
         $this->items = $collection;
 
         return $this;
+    }
+
+    /**
+     * Get the paginator options.
+     */
+    public function getOptions(): array
+    {
+        return $this->options;
     }
 
     public function offsetExists(mixed $offset): bool

@@ -85,6 +85,16 @@ class Client extends Server
 
         return $this->packer->unpack((string) $response->getBody());
     }
+    
+    public function patch(string $uri, array $data = [], array $headers = [])
+    {
+        $response = $this->request('PATCH', $uri, [
+            'headers' => $headers,
+            'form_params' => $data,
+        ]);
+
+        return $this->packer->unpack((string) $response->getBody());
+    }
 
     public function delete(string $uri, array $data = [], array $headers = [])
     {

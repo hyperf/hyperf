@@ -45,7 +45,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use Hyperf\Logger\LoggerFactory;
 
 class DemoService
