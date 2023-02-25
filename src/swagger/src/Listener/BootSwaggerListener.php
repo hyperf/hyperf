@@ -63,6 +63,7 @@ class BootSwaggerListener implements ListenerInterface
             'type' => Server::SERVER_HTTP,
             'host' => '0.0.0.0',
             'port' => $port,
+            'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
                 Event::ON_REQUEST => [HttpServer::class, 'onRequest'],
             ],
