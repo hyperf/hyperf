@@ -1,8 +1,15 @@
-# v3.0.8 - TBD
+# v3.0.9 - TBD
+
+## Optimized
+
+- [#5469](https://github.com/hyperf/hyperf/pull/5469) Ensure that the connection must be reset the next time after broken.
+
+# v3.0.8 - 2023-02-26
 
 ## Fixed
 
 - [#5433](https://github.com/hyperf/hyperf/pull/5433) [#5438](https://github.com/hyperf/hyperf/pull/5438) Fixed bug that the persistent service no need to send heartbeat.
+- [#5464](https://github.com/hyperf/hyperf/pull/5464) Fixed bug that swagger server cannot work when using async style server.
 
 ## Added
 

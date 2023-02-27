@@ -51,7 +51,11 @@ class ProcScanHandler implements ScanHandlerInterface
         do {
             $output .= fread($pipes[1], 8192);
         } while (! feof($pipes[1]));
-        proc_close($proc);
+
+        if (proc_close($proc) !== 0) {
+            echo $output;
+            exit(-1);
+        }
 
         return new Scanned(true);
     }

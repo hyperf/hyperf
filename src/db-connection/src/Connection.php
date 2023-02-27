@@ -118,11 +118,13 @@ class Connection extends BaseConnection implements ConnectionInterface, DbConnec
                 $this->rollBack(0);
                 $this->logger->error('Maybe you\'ve forgotten to commit or rollback the MySQL transaction.');
             }
-
-            parent::release();
         } catch (Throwable $exception) {
-            $this->logger->critical('Release connection failed, caused by ' . $exception);
+            $this->logger->error('Rollback connection failed, caused by ' . $exception);
+            // Ensure that the connection must be reset the next time after broken.
+            $this->lastUseTime = 0.0;
         }
+
+        parent::release();
     }
 
     /**

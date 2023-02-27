@@ -1,5 +1,26 @@
 # 版本更新记录
 
+# v3.0.8 - 2023-02-26
+
+## 修复
+
+- [#5433](https://github.com/hyperf/hyperf/pull/5433) [#5438](https://github.com/hyperf/hyperf/pull/5438) 修复 `Nacos` 临时实例，不需要发送心跳的问题。 
+- [#5464](https://github.com/hyperf/hyperf/pull/5464) 修复 `Swagger` 服务无法在异步风格中，正常启动的问题。
+
+## 新增
+
+- [#5434](https://github.com/hyperf/hyperf/pull/5434) 为 `Swow` 增加 `UDP` 服务的支持。
+- [#5444](https://github.com/hyperf/hyperf/pull/5444) 新增脚本 `GenSchemaCommand` 用来生成 `Swagger Schema`。
+- [#5451](https://github.com/hyperf/hyperf/pull/5451) 为模型集合新增 `appends($attributes)` 方法。
+- [#5453](https://github.com/hyperf/hyperf/pull/5453) 为测试组件增加 `put()` 和 `patch()` 方法。
+- [#5454](https://github.com/hyperf/hyperf/pull/5454) 为 `GRPC` 组件新增方法 `Hyperf\Grpc\Parser::statusFromResponse`。
+- [#5459](https://github.com/hyperf/hyperf/pull/5459) 为 `Str` 和 `Stringable` 新增方法 `uuid` 和 `ulid`。
+
+## 优化
+
+- [#5437](https://github.com/hyperf/hyperf/pull/5437) 为 `Str::length` 移除了没用的 `if` 判断。
+- [#5439](https://github.com/hyperf/hyperf/pull/5439) 优化了 `Arr::shuffle` 的代码。
+
 # v3.0.7 - 2023-02-18
 
 ## 新增
