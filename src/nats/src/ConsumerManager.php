@@ -74,22 +74,22 @@ class ConsumerManager
             public function handle(): void
             {
                 while (true) {
-                    $this->dispatcher && $this->dispatcher->dispatch(new BeforeSubscribe($this->consumer));
+                    $this->dispatcher?->dispatch(new BeforeSubscribe($this->consumer));
                     $this->subscriber->subscribe(
                         $this->consumer->getSubject(),
                         $this->consumer->getQueue(),
                         function ($data) {
                             try {
-                                $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($this->consumer, $data));
+                                $this->dispatcher?->dispatch(new BeforeConsume($this->consumer, $data));
                                 $this->consumer->consume($data);
-                                $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($this->consumer, $data));
+                                $this->dispatcher?->dispatch(new AfterConsume($this->consumer, $data));
                             } catch (Throwable $throwable) {
-                                $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, $data, $throwable));
+                                $this->dispatcher?->dispatch(new FailToConsume($this->consumer, $data, $throwable));
                             }
                         }
                     );
 
-                    $this->dispatcher && $this->dispatcher->dispatch(new AfterSubscribe($this->consumer));
+                    $this->dispatcher?->dispatch(new AfterSubscribe($this->consumer));
                     usleep(1000);
                 }
             }
