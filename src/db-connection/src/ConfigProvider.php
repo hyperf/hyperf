@@ -16,6 +16,7 @@ use Hyperf\Database\Connectors\ConnectionFactory;
 use Hyperf\Database\Connectors\MySqlConnector;
 use Hyperf\Database\Migrations\MigrationRepositoryInterface;
 use Hyperf\DbConnection\Aspect\TransactionAspect;
+use Hyperf\DbConnection\Listener\CreatingListener;
 use Hyperf\DbConnection\Listener\RegisterConnectionResolverListener;
 use Hyperf\DbConnection\Pool\PoolFactory;
 
@@ -33,6 +34,7 @@ class ConfigProvider
             ],
             'listeners' => [
                 RegisterConnectionResolverListener::class,
+                CreatingListener::class,
             ],
             'aspects' => [
                 TransactionAspect::class,
