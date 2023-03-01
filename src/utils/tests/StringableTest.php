@@ -135,6 +135,18 @@ class StringableTest extends TestCase
         })->__toString());
     }
 
+    public function testArrayAccess()
+    {
+        $str = $this->stringable('my string');
+        $this->assertSame('m', $str[0]);
+        $this->assertSame('t', $str[4]);
+        $this->assertTrue(isset($str[2]));
+        $this->assertFalse(isset($str[10]));
+
+        $str[0] = 'M';
+        $this->assertSame('My string', (string) $str);
+    }
+
     /**
      * @param string $string
      * @return Stringable
