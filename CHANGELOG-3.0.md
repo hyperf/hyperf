@@ -3,6 +3,7 @@
 ## Added
 
 - [#5476](https://github.com/hyperf/hyperf/pull/5476) Added ArrayAccess to Stringable.
+- [#5478](https://github.com/hyperf/hyperf/pull/5478) Add isMatch method to Str and Stringable helpers.
 
 ## Optimized
 
