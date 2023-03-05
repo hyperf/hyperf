@@ -11,11 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
+use ArrayAccess;
 use Closure;
 use Hyperf\Macroable\Macroable;
 use JsonSerializable;
 
-class Stringable implements JsonSerializable, \Stringable
+class Stringable implements JsonSerializable, \Stringable, ArrayAccess
 {
     use Traits\Conditionable;
     use Macroable;
@@ -799,5 +800,37 @@ class Stringable implements JsonSerializable, \Stringable
     public function jsonSerialize(): mixed
     {
         return $this->__toString();
+    }
+
+    /**
+     * Determine if the given offset exists.
+     */
+    public function offsetExists(mixed $offset): bool
+    {
+        return isset($this->value[$offset]);
+    }
+
+    /**
+     * Get the value at the given offset.
+     */
+    public function offsetGet(mixed $offset): string
+    {
+        return $this->value[$offset];
+    }
+
+    /**
+     * Set the value at the given offset.
+     */
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        $this->value[$offset] = $value;
+    }
+
+    /**
+     * Unset the value at the given offset.
+     */
+    public function offsetUnset(mixed $offset): void
+    {
+        unset($this->value[$offset]);
     }
 }

@@ -15,6 +15,7 @@ use Closure;
 use FastRoute\Dispatcher;
 use Google\Protobuf\Internal\Message;
 use Google\Protobuf\Internal\Message as ProtobufMessage;
+use Google\Rpc\Status;
 use Hyperf\Context\Context;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\ReflectionManager;
@@ -159,6 +160,10 @@ class CoreMiddleware extends HttpCoreMiddleware
      */
     protected function handleResponse(?Message $message, int $httpStatus = 200, int $grpcStatus = StatusCode::OK, string $grpcMessage = ''): ResponseInterface
     {
+        if ($message instanceof Status) {
+            return $this->handleStatusResponse($message, $httpStatus);
+        }
+
         return $this->response()->withStatus($httpStatus)
             ->withBody(new SwooleStream(Parser::serializeMessage($message)))
             ->withAddedHeader('Server', 'Hyperf')
@@ -166,5 +171,17 @@ class CoreMiddleware extends HttpCoreMiddleware
             ->withAddedHeader('trailer', 'grpc-status, grpc-message')
             ->withTrailer('grpc-status', (string) $grpcStatus)
             ->withTrailer('grpc-message', $grpcMessage);
+    }
+
+    protected function handleStatusResponse(Status $status, int $httpStatus): ResponseInterface
+    {
+        return $this->response()->withStatus($httpStatus)
+            ->withBody(new SwooleStream(Parser::serializeMessage(null)))
+            ->withAddedHeader('Server', 'Hyperf')
+            ->withAddedHeader('Content-Type', 'application/grpc')
+            ->withAddedHeader('trailer', 'grpc-status, grpc-message, grpc-status-details-bin')
+            ->withTrailer('grpc-status', (string) $status->getCode())
+            ->withTrailer('grpc-message', $status->getMessage())
+            ->withTrailer('grpc-status-details-bin', Parser::statusToDetailsBin($status));
     }
 }

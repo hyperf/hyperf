@@ -37,18 +37,7 @@ class Parser
 
     public static function serializeMessage($data)
     {
-        if ($data === null) {
-            $data = new GPBEmpty();
-        }
-        if (method_exists($data, 'encode')) {
-            $data = $data->encode();
-        } elseif (method_exists($data, 'serializeToString')) {
-            $data = $data->serializeToString();
-        } elseif (method_exists($data, 'serialize')) {
-            /** @noinspection PhpUndefinedMethodInspection */
-            $data = $data->serialize();
-        }
-        return self::pack((string) $data);
+        return self::pack(self::serializeUnpackedMessage($data));
     }
 
     public static function deserializeMessage($deserialize, string $value)
@@ -99,6 +88,11 @@ class Parser
         return self::deserializeUnpackedMessage([Status::class, ''], $detailsBin);
     }
 
+    public static function statusToDetailsBin(Status $status): string
+    {
+        return base64_encode(self::serializeUnpackedMessage($status));
+    }
+
     private static function deserializeUnpackedMessage($deserialize, string $unpacked)
     {
         if (is_array($deserialize)) {
@@ -114,6 +108,23 @@ class Parser
             return $object;
         }
         return call_user_func($deserialize, $unpacked);
+    }
+
+    private static function serializeUnpackedMessage($data): string
+    {
+        if ($data === null) {
+            $data = new GPBEmpty();
+        }
+        if (method_exists($data, 'encode')) {
+            $data = $data->encode();
+        } elseif (method_exists($data, 'serializeToString')) {
+            $data = $data->serializeToString();
+        } elseif (method_exists($data, 'serialize')) {
+            /** @noinspection PhpUndefinedMethodInspection */
+            $data = $data->serialize();
+        }
+
+        return (string) $data;
     }
 
     private static function isinvalidStatus(int $code)
