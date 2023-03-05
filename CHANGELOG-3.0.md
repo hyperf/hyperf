@@ -1,5 +1,9 @@
 # v3.0.9 - TBD
 
+## Optimized
+
+- [#5469](https://github.com/hyperf/hyperf/pull/5469) Ensure that the connection must be reset the next time after broken.
+
 # v3.0.8 - 2023-02-26
 
 ## Fixed
