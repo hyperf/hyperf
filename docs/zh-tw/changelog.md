@@ -1,5 +1,18 @@
 # 版本更新記錄
 
+# v3.0.9 - 2023-03-05
+
+## 新增
+
+- [#5467](https://github.com/hyperf/hyperf/pull/5467) 為 `GRPC` 增加 `Google\Rpc\Status` 的支援。
+- [#5472](https://github.com/hyperf/hyperf/pull/5472) 為模型增加 `ulid` 和 `uuid` 的支援。
+- [#5476](https://github.com/hyperf/hyperf/pull/5476) 為 `Stringable` 增加 `ArrayAccess` 的支援。
+- [#5478](https://github.com/hyperf/hyperf/pull/5478) 為 `Stringable` 和 `Str` 增加 `isMatch` 方法。
+
+## 最佳化
+
+- [#5469](https://github.com/hyperf/hyperf/pull/5469) 當資料庫連接出現問題時，確保連線在歸還到連線池前被重置。
+
 # v3.0.8 - 2023-02-26
 
 ## 修復
