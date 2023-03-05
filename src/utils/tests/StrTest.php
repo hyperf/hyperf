@@ -217,4 +217,22 @@ class StrTest extends TestCase
         $this->assertInstanceOf(UuidInterface::class, $uuid = Str::orderedUuid());
         $this->assertTrue(Str::isUuid((string) $uuid));
     }
+
+    public function testIsMatch()
+    {
+        $this->assertTrue(Str::isMatch('/.*,.*!/', 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch('/^.*$(.*)/', 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch('/laravel/i', 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch('/^(.*(.*(.*)))/', 'Hello, Laravel!'));
+
+        $this->assertFalse(Str::isMatch('/H.o/', 'Hello, Laravel!'));
+        $this->assertFalse(Str::isMatch('/^laravel!/i', 'Hello, Laravel!'));
+        $this->assertFalse(Str::isMatch('/laravel!(.*)/', 'Hello, Laravel!'));
+        $this->assertFalse(Str::isMatch('/^[a-zA-Z,!]+$/', 'Hello, Laravel!'));
+
+        $this->assertTrue(Str::isMatch(['/.*,.*!/', '/H.o/'], 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch(['/^laravel!/i', '/^.*$(.*)/'], 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch(['/laravel/i', '/laravel!(.*)/'], 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch(['/^[a-zA-Z,!]+$/', '/^(.*(.*(.*)))/'], 'Hello, Laravel!'));
+    }
 }

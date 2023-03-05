@@ -105,9 +105,9 @@ class GrpcExceptionHandlerTest extends TestCase
         $this->assertSame(
             $stringCases,
             array_map(
-            static fn (Any $detail) => $detail->unpack()->getValue(),
-            iterator_to_array($details->getIterator())
-        )
+                static fn (Any $detail) => $detail->unpack()->getValue(),
+                iterator_to_array($details->getIterator())
+            )
         );
     }
 
