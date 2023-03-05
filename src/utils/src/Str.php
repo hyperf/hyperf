@@ -370,8 +370,8 @@ class Str
     /**
      * Determine if a given string matches a given pattern.
      *
-     * @param  string|iterable<string>  $pattern
-     * @param  string  $value
+     * @param iterable<string>|string $pattern
+     * @param string $value
      * @return bool
      */
     public static function isMatch($pattern, $value)

@@ -371,7 +371,7 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     /**
      * Determine if a given string matches a given pattern.
      *
-     * @param  string|iterable<string>  $pattern
+     * @param iterable<string>|string $pattern
      * @return bool
      */
     public function isMatch($pattern)
