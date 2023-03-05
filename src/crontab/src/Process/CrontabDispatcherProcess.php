@@ -63,7 +63,7 @@ class CrontabDispatcherProcess extends AbstractProcess
 
     public function handle(): void
     {
-        $this->event->dispatch(new CrontabDispatcherStarted());
+        $this->event?->dispatch(new CrontabDispatcherStarted());
         while (ProcessManager::isRunning()) {
             if ($this->sleep()) {
                 break;

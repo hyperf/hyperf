@@ -3,6 +3,7 @@
 ## Added
 
 - [#5467](https://github.com/hyperf/hyperf/pull/5467) Support `Google\Rpc\Status` for `GRPC`.
+- [#5476](https://github.com/hyperf/hyperf/pull/5476) Added ArrayAccess to Stringable.
 
 ## Optimized
 

@@ -504,9 +504,7 @@ class Connection implements ConnectionInterface
     public function listen(Closure $callback)
     {
         // FIXME: Dynamic register query event.
-        if (isset($this->events)) {
-            $this->events->listen(Events\QueryExecuted::class, $callback);
-        }
+        $this->events?->listen(Events\QueryExecuted::class, $callback);
     }
 
     /**
@@ -1140,28 +1138,20 @@ class Connection implements ConnectionInterface
      */
     protected function fireConnectionEvent($event)
     {
-        if (! isset($this->events)) {
-            return;
-        }
-
-        switch ($event) {
-            case 'beganTransaction':
-                return $this->events->dispatch(new Events\TransactionBeginning($this));
-            case 'committed':
-                return $this->events->dispatch(new Events\TransactionCommitted($this));
-            case 'rollingBack':
-                return $this->events->dispatch(new Events\TransactionRolledBack($this));
-        }
+        return match ($event) {
+            'beganTransaction' => $this->event(new Events\TransactionBeginning($this)),
+            'committed' => $this->event(new Events\TransactionCommitted($this)),
+            'rollingBack' => $this->event(new Events\TransactionRolledBack($this)),
+        };
     }
 
     /**
      * Fire the given event if possible.
-     * @param mixed $event
+     * @param object $event
+     * @return object
      */
     protected function event($event)
     {
-        if (isset($this->events)) {
-            $this->events->dispatch($event);
-        }
+        return $this->events?->dispatch($event);
     }
 }
