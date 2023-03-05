@@ -1,5 +1,9 @@
 # v3.0.9 - TBD
 
+## Added
+
+- [#5467](https://github.com/hyperf/hyperf/pull/5467) Support `Google\Rpc\Status` for grpc.
+
 ## Optimized
 
 - [#5469](https://github.com/hyperf/hyperf/pull/5469) Ensure that the connection must be reset the next time after broken.
