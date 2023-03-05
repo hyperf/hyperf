@@ -2,7 +2,7 @@
 
 ## Added
 
-- [#5467](https://github.com/hyperf/hyperf/pull/5467) Support `Google\Rpc\Status` for grpc.
+- [#5467](https://github.com/hyperf/hyperf/pull/5467) Support `Google\Rpc\Status` for `GRPC`.
 
 ## Optimized
 
