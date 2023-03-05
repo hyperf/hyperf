@@ -11,12 +11,14 @@ declare(strict_types=1);
  */
 namespace Hyperf\GrpcServer\Exception\Handler;
 
+use Google\Rpc\Status;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
 use Hyperf\Grpc\Parser;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\GrpcServer\Exception\GrpcException;
+use Hyperf\GrpcServer\Exception\GrpcStatusException;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
@@ -35,6 +37,9 @@ class GrpcExceptionHandler extends ExceptionHandler
 
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
+        if ($throwable instanceof GrpcStatusException) {
+            return $this->transferToStatusResponse($throwable->getStatus(), $response);
+        }
         if ($throwable instanceof GrpcException) {
             $this->logger->debug($this->formatter->format($throwable));
             $code = $throwable->getCode();
@@ -66,5 +71,19 @@ class GrpcExceptionHandler extends ExceptionHandler
         }
 
         return $response;
+    }
+
+    /**
+     * Transfer the non-standard response content to a standard response object with status trailer.
+     */
+    protected function transferToStatusResponse(Status $status, ResponseInterface $response): ResponseInterface
+    {
+        return $response->withStatus(200)
+            ->withAddedHeader('Content-Type', 'application/grpc')
+            ->withAddedHeader('trailer', 'grpc-status, grpc-message, grpc-status-details-bin')
+            ->withBody(new SwooleStream(Parser::serializeMessage(null)))
+            ->withTrailer('grpc-status', (string) $status->getCode())
+            ->withTrailer('grpc-message', $status->getMessage())
+            ->withTrailer('grpc-status-details-bin', Parser::statusToDetailsBin($status));
     }
 }
