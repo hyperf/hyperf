@@ -1,5 +1,188 @@
 # Changelogs
 
+# v3.0.9 - 2023-03-05
+
+## Added
+
+- [#5467](https://github.com/hyperf/hyperf/pull/5467) For `GRPC` add support for `Google\Rpc\Status`.
+- [#5472](https://github.com/hyperf/hyperf/pull/5472) Add `ulid` and `uuid` support for models.
+- [#5476](https://github.com/hyperf/hyperf/pull/5476) Add `ArrayAccess` support for `Stringable`.
+- [#5478](https://github.com/hyperf/hyperf/pull/5478) Add `isMatch` method for `Stringable` and `Str`.
+
+## Optimized
+
+- [#5469](https://github.com/hyperf/hyperf/pull/5469) When there is a problem with the database connection, make sure the connection is reset before being returned to the connection pool.
+
+# v3.0.8 - 2023-02-26
+
+## Fixed
+
+- [#5433](https://github.com/hyperf/hyperf/pull/5433) [#5438](https://github.com/hyperf/hyperf/pull/5438) Fix temporary instance of `Nacos`, don't need to send heartbeat.
+- [#5464](https://github.com/hyperf/hyperf/pull/5464) Fix the problem that `Swagger` service cannot be started normally in asynchronous style.
+
+## Added
+
+- [#5434](https://github.com/hyperf/hyperf/pull/5434) Add support for `UDP` service for `Swow`.
+- [#5444](https://github.com/hyperf/hyperf/pull/5444) New script `GenSchemaCommand` to generate `Swagger Schema`.
+- [#5451](https://github.com/hyperf/hyperf/pull/5451) Added `appends($attributes)` method for model collections.
+- [#5453](https://github.com/hyperf/hyperf/pull/5453) Add `put()` and `patch()` methods for test components.
+- [#5454](https://github.com/hyperf/hyperf/pull/5454) Added method `Hyperf\Grpc\Parser::statusFromResponse` for `GRPC` component.
+- [#5459](https://github.com/hyperf/hyperf/pull/5459) Added methods `uuid` and `ulid` for `Str` and `Stringable`.
+
+## Optimized
+
+- [#5437](https://github.com/hyperf/hyperf/pull/5437) Removed useless `if` for `Str::length`.
+- [#5439](https://github.com/hyperf/hyperf/pull/5439) Optimized the code of `Arr::shuffle`.
+
+# v3.0.7 - 2023-02-18
+
+## Added
+
+- [#5042](https://github.com/hyperf/hyperf/pull/5402) Adding configuration `swagger.scan.paths` to `Swagger` component can be used to override the default scan directory.
+- [#5403](https://github.com/hyperf/hyperf/pull/5403) Add the adaptation of `Swoole Server` configuration item for `Swow`.
+- [#5404](https://github.com/hyperf/hyperf/pull/5404) For `Swagger`, add support for multiple ports.
+- [#5406](https://github.com/hyperf/hyperf/pull/5406) Add `mixin` method for `Hyperf\Database\Model\Builder`.
+- [#5407](https://github.com/hyperf/hyperf/pull/5407) Add support for request methods `Delete` and `Options` for `Swagger`.
+- [#5409](https://github.com/hyperf/hyperf/pull/5409) Added some methods to the `Query\Builder` and `Paginator` classes in the database component.
+- [#5414](https://github.com/hyperf/hyperf/pull/5414) Added `clone` method to `Hyperf\Database\Model\Builder`.
+- [#5418](https://github.com/hyperf/hyperf/pull/5418) Added `ConfigChanged` event to Config Center.
+- [#5429](https://github.com/hyperf/hyperf/pull/5429) When connecting to the `Aliyun Nacos` service, the configuration items `access_key` and `access_secret` are added.
+
+## Fixed
+
+- [#5405](https://github.com/hyperf/hyperf/pull/5405) Fixed the problem that `get local ip` could not read ip normally when the system supports `IPv6`.
+- [#5417](https://github.com/hyperf/hyperf/pull/5417) Fix the problem that `PgSQL` cannot use the database migration function normally.
+- [#5421](https://github.com/hyperf/hyperf/pull/5421) Fix the problem that the `Json` structure of the database cannot properly use the `boolean` type.
+- [#5428](https://github.com/hyperf/hyperf/pull/5428) Fix the problem that the server-side parameter statistics are incorrect when the `Metric` middleware encounters an exception.
+- [#5424](https://github.com/hyperf/hyperf/pull/5424) Fix the problem that the database migration component does not support `PHP8.2`.
+
+## Optimized
+
+- [#5411](https://github.com/hyperf/hyperf/pull/5411) Optimize the code, the exception `WebSocketHandeShakeException` should inherit from `BadRequestHttpException`.
+- [#5419](https://github.com/hyperf/hyperf/pull/5419) Optimize the implementation logic of the `RPN` component for better custom extensions.
+- [#5422](https://github.com/hyperf/hyperf/pull/5422) When the `Swagger` component is installed, the `Swagger` capability is enabled by default.
+
+# v3.0.6 - 2023-02-12
+
+## Fixed
+
+- [#5361](https://github.com/hyperf/hyperf/pull/5361) Fix `Nacos` failing to inject ephemeral instances.
+- [#5382](https://github.com/hyperf/hyperf/pull/5382) Fix the problem that when using `mix-subscriber` in `SocketIO`, an error will be reported because no password is set.
+- [#5386](https://github.com/hyperf/hyperf/pull/5386) Fix the problem that `SwoolePostgresqlClient` will be executed to the non-existent method `exec`.
+- [#5394](https://github.com/hyperf/hyperf/pull/5394) Fix `hyperf/config-apollo` not working properly.
+
+## Added
+
+- [#5366](https://github.com/hyperf/hyperf/pull/5366) Add `forceDeleting` event for `hyperf/database`.
+- [#5373](https://github.com/hyperf/hyperf/pull/5373) For `SwowServer` add `settings` configuration.
+- [#5376](https://github.com/hyperf/hyperf/pull/5376) Added coroutine-style service status collection to `hyperf/metric`.
+- [#5379](https://github.com/hyperf/hyperf/pull/5379) Increase logging when `Nacos` heartbeat fails.
+- [#5389](https://github.com/hyperf/hyperf/pull/5389) Add `Swagger` support.
+- [#5395](https://github.com/hyperf/hyperf/pull/5395) For the `Swagger` component, increase the verification function.
+- [#5397](https://github.com/hyperf/hyperf/pull/5397) Support all known `Swagger` annotations.
+
+# v3.0.5 - 2023-02-06
+
+## Added
+
+- [#5338](https://github.com/hyperf/hyperf/pull/5338) For `SoftDeletingScope` added `addRestoreOrCreate` method.
+- [#5349](https://github.com/hyperf/hyperf/pull/5349) Added listener `ResumeExitCoordinatorListener`.
+- [#5355](https://github.com/hyperf/hyperf/pull/5355) New method `System::getCpuCoresNum()`.
+
+## Fixed
+
+- [#5357](https://github.com/hyperf/hyperf/pull/5357) Fix the problem that the `coordinator` timer cannot be stopped normally when an error is thrown in an anonymous function.
+
+## Optimized
+
+- [#5342](https://github.com/hyperf/hyperf/pull/5342) Optimized the address reading method of `Redis` sentinel mode.
+
+# v3.0.4 - 2023-01-22
+
+## Fixed
+
+- [#5332](https://github.com/hyperf/hyperf/pull/5332) Fixed `PgSQLSwooleConnection::unprepared` not working properly.
+- [#5333](https://github.com/hyperf/hyperf/pull/5333) Fix the problem that the database component is idle for too long and the connection is disconnected, which causes the database to read and write errors.
+
+# v3.0.3 - 2023-01-16
+
+## Fixed
+
+- [#5318](https://github.com/hyperf/hyperf/pull/5318) Fix the problem that the limiter cannot be used when using PHP 8.1 version.
+- [#5324](https://github.com/hyperf/hyperf/pull/5324) Fixed the problem that the database components cannot be used when the MySQL connection is disconnected.
+- [#5322](https://github.com/hyperf/hyperf/pull/5322) Fix the problem that the Kafka consumer cannot be used when parameters such as `memberId` are not set.
+- [#5327](https://github.com/hyperf/hyperf/pull/5327) Fixed the problem that PgSQL caused a type error when creating a connection failed.
+
+## Added
+
+- [#5314](https://github.com/hyperf/hyperf/pull/5314) New method `Hyperf\Coordinator\Timer::stats()`.
+- [#5323](https://github.com/hyperf/hyperf/pull/5323) Added method `Hyperf\Nacos\Provider\ConfigProvider::listener()`.
+
+## Optimized
+
+- [#5308](https://github.com/hyperf/hyperf/pull/5308) [#5309](https://github.com/hyperf/hyperf/pull/5309) [#5310](https://github.com/hyperf/hyperf/pull/5310) [#5311](https://github.com/hyperf/hyperf/pull/5311) Add coroutine service support for `hyperf/metric`.
+- [#5315](https://github.com/hyperf/hyperf/pull/5315) Increase the monitoring metrics of the `hyperf/metric` component.
+- [#5326](https://github.com/hyperf/hyperf/pull/5326) In the loop, collect the current state of the service.
+
+# v3.0.2 - 2023-01-09
+
+## Fixed
+
+- [#5305](https://github.com/hyperf/hyperf/pull/5305) When using `PolarDB` to separate reads and writes, fix the problem that the connection will be abnormal after committing the transaction without modifying the data, but it will be recycled into the connection pool.
+- [#5307](https://github.com/hyperf/hyperf/pull/5307) Fix the problem that the `$timeout` parameter of `Timer::tick()` is incorrectly set in the `hyperf/metric` component.
+
+## Optimized
+
+- [#5306](https://github.com/hyperf/hyperf/pull/5306) When the connection pool fails to recycle the connection, the log is recorded.
+
+# v3.0.1 - 2023-01-09
+
+## Fixed
+
+- [#5289](https://github.com/hyperf/hyperf/pull/5289) Fix the problem that the `Signal` component cannot be used when using the `Swow` engine.
+- [#5303](https://github.com/hyperf/hyperf/pull/5303) Fix the `Redis NSQ Adapter` for `SocketIO`, when it is used for the first time, `topics` is `null`, it does not work properly.
+
+## Optimized
+
+- [#5287](https://github.com/hyperf/hyperf/pull/5287) When the server responds to data, if an exception occurs, the corresponding log will be recorded.
+- [#5292](https://github.com/hyperf/hyperf/pull/5292) Add support for `Swow` engine to `hyperf/metric`.
+- [#5301](https://github.com/hyperf/hyperf/pull/5301) Optimize code implementation of `Hyperf\Rpc\PathGenerator\PathGenerator`.
+
+# v3.0.0 - 2023-01-03
+
+- [#4238](https://github.com/hyperf/hyperf/issues/4238) Update all components to PHP minimum version to 8.0
+- [#5087](https://github.com/hyperf/hyperf/pull/5087) Support PHP 8.2
+
+## BC breaks
+
+- `@Annotation`, and fully uses the native annotation `Attribute` of `PHP8`. Before updating the framework, please make sure to replace all the native annotations of PHP8.
+
+We provide scripts to more easily replace `Doctrine Annotations` with `PHP8 Attributes`.
+
+!> Note: The following scripts can only be executed under framework version 2.2
+
+```shell
+composer require hyperf/code-generator
+php bin/hyperf.php code:generate -D app
+```
+
+- Model upgrade script
+
+> Because the model base class adds type restrictions, you need to use the following script to update all models to the new way of writing.
+
+```shell
+composer require hyperf/code-generator
+php vendor/bin/regenerate-models.php $PWD/app/Model
+```
+
+- The framework adds a lot of type restrictions, so when you upgrade from `2.2` to `3.0`, you need to call the static detection script, check and make sure it works correctly.
+
+```shell
+composer analysis
+```
+
+- The framework modifies the HTTP return code of the `gRPC` service based on the `gRPC` standard.
+
 # v2.2.33 - 2022-05-30
 
 ## fix
