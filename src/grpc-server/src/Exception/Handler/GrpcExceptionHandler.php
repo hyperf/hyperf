@@ -39,7 +39,8 @@ class GrpcExceptionHandler extends ExceptionHandler
     {
         if ($throwable instanceof GrpcStatusException) {
             return $this->transferToStatusResponse($throwable->getStatus(), $response);
-        } elseif ($throwable instanceof GrpcException) {
+        }
+        if ($throwable instanceof GrpcException) {
             $this->logger->debug($this->formatter->format($throwable));
             $code = $throwable->getCode();
         } else {
@@ -66,7 +67,7 @@ class GrpcExceptionHandler extends ExceptionHandler
             ->withStatus(200);
 
         if (method_exists($response, 'withTrailer')) {
-            $response = $response->withTrailer('grpc-status', (string)$code)->withTrailer('grpc-message', (string)$message);
+            $response = $response->withTrailer('grpc-status', (string) $code)->withTrailer('grpc-message', (string) $message);
         }
 
         return $response;
@@ -81,7 +82,7 @@ class GrpcExceptionHandler extends ExceptionHandler
             ->withAddedHeader('Content-Type', 'application/grpc')
             ->withAddedHeader('trailer', 'grpc-status, grpc-message, grpc-status-details-bin')
             ->withBody(new SwooleStream(Parser::serializeMessage(null)))
-            ->withTrailer('grpc-status', (string)$status->getCode())
+            ->withTrailer('grpc-status', (string) $status->getCode())
             ->withTrailer('grpc-message', $status->getMessage())
             ->withTrailer('grpc-status-details-bin', Parser::statusToDetailsBin($status));
     }

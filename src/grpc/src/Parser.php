@@ -88,6 +88,11 @@ class Parser
         return self::deserializeUnpackedMessage([Status::class, ''], $detailsBin);
     }
 
+    public static function statusToDetailsBin(Status $status): string
+    {
+        return base64_encode(self::serializeUnpackedMessage($status));
+    }
+
     private static function deserializeUnpackedMessage($deserialize, string $unpacked)
     {
         if (is_array($deserialize)) {
@@ -105,11 +110,6 @@ class Parser
         return call_user_func($deserialize, $unpacked);
     }
 
-    public static function statusToDetailsBin(Status $status): string
-    {
-        return base64_encode(self::serializeUnpackedMessage($status));
-    }
-
     private static function serializeUnpackedMessage($data): string
     {
         if ($data === null) {
@@ -124,7 +124,7 @@ class Parser
             $data = $data->serialize();
         }
 
-        return (string)$data;
+        return (string) $data;
     }
 
     private static function isinvalidStatus(int $code)

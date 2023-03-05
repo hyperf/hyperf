@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace HyperfTest\GrpcServer;
 
 use Google\Protobuf\Any;
@@ -96,17 +95,19 @@ class GrpcExceptionHandlerTest extends TestCase
         $status = (new Status())->setCode(StatusCode::NOT_FOUND)->setMessage($statusMessage)->setDetails($details);
         $response = $handler->transferToStatusResponse($status, $response);
 
-        $this->assertSame((string)StatusCode::NOT_FOUND, $response->getTrailers()['grpc-status']);
+        $this->assertSame((string) StatusCode::NOT_FOUND, $response->getTrailers()['grpc-status']);
         $this->assertSame($statusMessage, $response->getTrailers()['grpc-message']);
         $this->assertSame(200, $response->getStatusCode());
 
         $respStatus = Parser::statusFromResponse($this->mockSwooleHTTP2Response($response->getTrailers()));
         $details = $respStatus->getDetails();
 
-        $this->assertSame($stringCases, array_map(
-                static fn(Any $detail) => $detail->unpack()->getValue(),
-                iterator_to_array($details->getIterator())
-            )
+        $this->assertSame(
+            $stringCases,
+            array_map(
+            static fn (Any $detail) => $detail->unpack()->getValue(),
+            iterator_to_array($details->getIterator())
+        )
         );
     }
 

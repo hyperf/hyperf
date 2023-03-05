@@ -9,7 +9,6 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-
 namespace Hyperf\GrpcServer\Exception;
 
 use Google\Protobuf\Any;
@@ -22,27 +21,24 @@ class GrpcStatusException extends GrpcException
 {
     /**
      * Represent protobuf field <code>int32 code = 1
-     * extract from Status Message
-     * @var int
+     * extract from Status Message.
      */
     protected int $statusCode = StatusCode::OK;
 
     /**
      * Represent protobuf field <code>string message = 2
-     * extract from Status Message
-     * @var string
+     * extract from Status Message.
      */
     protected string $statusMessage = '';
 
     /**
      * Represent protobuf field <code>repeated .google.protobuf.Any details = 3
-     * extract from Status Message
+     * extract from Status Message.
      * @var Message[] array
      */
     protected array $statusDetails = [];
 
-
-    public function __construct($message = "", $code = 0, Throwable $previous = null, protected ?Status $status = null)
+    public function __construct($message = '', $code = 0, Throwable $previous = null, protected ?Status $status = null)
     {
         parent::__construct($message, $code, $previous);
 
@@ -59,39 +55,16 @@ class GrpcStatusException extends GrpcException
         return $this;
     }
 
-    private function extractFromStatus()
-    {
-        if ($this->status->getCode() == StatusCode::OK) {
-            return;
-        }
-
-        $this->statusCode = $this->status->getCode();
-        $this->statusMessage = $this->status->getMessage();
-        $this->statusDetails = array_map(
-            static fn(Any $detail) => $detail->unpack(),
-            iterator_to_array($this->status->getDetails()->getIterator())
-        );
-    }
-
-    /**
-     * @return Status|null
-     */
     public function getStatus(): ?Status
     {
         return $this->status;
     }
 
-    /**
-     * @return int
-     */
     public function getStatusCode(): int
     {
         return $this->statusCode;
     }
 
-    /**
-     * @return string
-     */
     public function getStatusMessage(): string
     {
         return $this->statusMessage;
@@ -103,5 +76,19 @@ class GrpcStatusException extends GrpcException
     public function getStatusDetails(): array
     {
         return $this->statusDetails;
+    }
+
+    private function extractFromStatus()
+    {
+        if ($this->status->getCode() == StatusCode::OK) {
+            return;
+        }
+
+        $this->statusCode = $this->status->getCode();
+        $this->statusMessage = $this->status->getMessage();
+        $this->statusDetails = array_map(
+            static fn (Any $detail) => $detail->unpack(),
+            iterator_to_array($this->status->getDetails()->getIterator())
+        );
     }
 }

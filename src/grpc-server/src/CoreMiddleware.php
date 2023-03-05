@@ -180,7 +180,7 @@ class CoreMiddleware extends HttpCoreMiddleware
             ->withAddedHeader('Server', 'Hyperf')
             ->withAddedHeader('Content-Type', 'application/grpc')
             ->withAddedHeader('trailer', 'grpc-status, grpc-message, grpc-status-details-bin')
-            ->withTrailer('grpc-status', (string)$status->getCode())
+            ->withTrailer('grpc-status', (string) $status->getCode())
             ->withTrailer('grpc-message', $status->getMessage())
             ->withTrailer('grpc-status-details-bin', Parser::statusToDetailsBin($status));
     }
