@@ -19,6 +19,8 @@ Hyperf 对系统环境有一些要求，当您使用 Swoole 网络引擎驱动�
  - Redis PHP 扩展 （如需要使用到 Redis 客户端）
  - Protobuf PHP 扩展 （如需要使用到 gRPC 服务端或客户端）
 
+[php swoole 官方源码地址](https://github.com/swoole/swoole-src)
+
 
 ## 安装 Hyperf
 
