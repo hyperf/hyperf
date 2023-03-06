@@ -200,7 +200,11 @@ class CoreMiddleware implements CoreMiddlewareInterface
                 ->withBody(new SwooleStream((string) $response));
         }
 
-        return $this->response()->withAddedHeader('content-type', 'text/plain')->withBody(new SwooleStream((string) $response));
+        if ($this->response()->hasHeader('content-type')) {
+            return $this->response()->withBody(new SwooleStream((string) $response));
+        }
+
+        return $this->response()->withHeader('content-type', 'text/plain')->withBody(new SwooleStream((string) $response));
     }
 
     /**

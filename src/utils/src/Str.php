@@ -370,19 +370,19 @@ class Str
     /**
      * Determine if a given string matches a given pattern.
      *
-     * @param iterable<string>|string $pattern
+     * @param iterable<string>|string $patterns
      * @param string $value
      * @return bool
      */
-    public static function isMatch($pattern, $value)
+    public static function isMatch($patterns, $value)
     {
         $value = (string) $value;
 
-        if (! is_iterable($pattern)) {
-            $pattern = [$pattern];
+        if (! is_iterable($patterns)) {
+            $patterns = [$patterns];
         }
 
-        foreach ($pattern as $pattern) {
+        foreach ($patterns as $pattern) {
             $pattern = (string) $pattern;
 
             if (preg_match($pattern, $value) === 1) {
