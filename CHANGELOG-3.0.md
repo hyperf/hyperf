@@ -1,10 +1,13 @@
-# v3.0.9 - TBD
+# v3.0.10 - TBD
+
+# v3.0.9 - 2023-03-05
 
 ## Added
 
 - [#5467](https://github.com/hyperf/hyperf/pull/5467) Support `Google\Rpc\Status` for `GRPC`.
 - [#5472](https://github.com/hyperf/hyperf/pull/5472) Support `ulid` and `uuid` for Model.
 - [#5476](https://github.com/hyperf/hyperf/pull/5476) Added ArrayAccess to Stringable.
+- [#5478](https://github.com/hyperf/hyperf/pull/5478) Add isMatch method to Str and Stringable helpers.
 
 ## Optimized
 
