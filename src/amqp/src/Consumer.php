@@ -83,7 +83,7 @@ class Consumer extends Builder
                         break;
                     }
                 } catch (AMQPTimeoutException $exception) {
-                    $this->eventDispatcher && $this->eventDispatcher->dispatch(new WaitTimeout($consumerMessage));
+                    $this->eventDispatcher?->dispatch(new WaitTimeout($consumerMessage));
                 } catch (Throwable $exception) {
                     $this->logger->error((string) $exception);
                     break;
@@ -169,11 +169,11 @@ class Consumer extends Builder
             $deliveryTag = $message->delivery_info['delivery_tag'];
 
             try {
-                $this->eventDispatcher && $this->eventDispatcher->dispatch(new BeforeConsume($consumerMessage));
+                $this->eventDispatcher?->dispatch(new BeforeConsume($consumerMessage));
                 $result = $consumerMessage->consumeMessage($data, $message);
-                $this->eventDispatcher && $this->eventDispatcher->dispatch(new AfterConsume($consumerMessage, $result));
+                $this->eventDispatcher?->dispatch(new AfterConsume($consumerMessage, $result));
             } catch (Throwable $exception) {
-                $this->eventDispatcher && $this->eventDispatcher->dispatch(new FailToConsume($consumerMessage, $exception));
+                $this->eventDispatcher?->dispatch(new FailToConsume($consumerMessage, $exception));
                 if ($this->container->has(FormatterInterface::class)) {
                     $formatter = $this->container->get(FormatterInterface::class);
                     $this->logger->error($formatter->format($exception));

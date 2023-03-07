@@ -97,7 +97,7 @@ class ConsumerManager
                 $longLangConsumer = new LongLangConsumer(
                     $consumerConfig,
                     function (ConsumeMessage $message) use ($consumer, $consumerConfig) {
-                        $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($consumer, $message));
+                        $this->dispatcher?->dispatch(new BeforeConsume($consumer, $message));
 
                         $result = $consumer->consume($message);
 
@@ -115,7 +115,7 @@ class ConsumerManager
                             }
                         }
 
-                        $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($consumer, $message, $result));
+                        $this->dispatcher?->dispatch(new AfterConsume($consumer, $message, $result));
                     }
                 );
 
@@ -127,7 +127,7 @@ class ConsumerManager
                         } catch (KafkaErrorException $exception) {
                             $this->stdoutLogger->error($exception->getMessage());
 
-                            $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, [], $exception));
+                            $this->dispatcher?->dispatch(new FailToConsume($this->consumer, [], $exception));
                         }
                     },
                     10

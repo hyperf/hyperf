@@ -11,11 +11,16 @@ declare(strict_types=1);
  */
 namespace HyperfTest\GrpcServer;
 
+use Google\Protobuf\Any;
+use Google\Protobuf\StringValue;
+use Google\Rpc\Status;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\Formatter\FormatterInterface;
+use Hyperf\Grpc\Parser;
 use Hyperf\Grpc\StatusCode;
 use Hyperf\HttpMessage\Server\Response;
 use HyperfTest\GrpcServer\Stub\GrpcExceptionHandlerStub;
+use HyperfTest\GrpcServer\Stub\GrpcStatusExceptionHandlerStub;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -65,6 +70,47 @@ class GrpcExceptionHandlerTest extends TestCase
         $this->assertSame(200, $response->getStatusCode());
     }
 
+    public function testTransferToResponseStatusTrailer()
+    {
+        $container = $this->getContainer();
+
+        $logger = $container->get(StdoutLoggerInterface::class);
+        $formatter = $container->get(FormatterInterface::class);
+        $response = new Response();
+        $handler = new GrpcStatusExceptionHandlerStub($logger, $formatter);
+
+        $rawString = 'string deatils1';
+        $diffRawString = 'string deatils2';
+        $emptyRawString = '';
+        $stringCases = [$rawString, $diffRawString, $emptyRawString];
+
+        $details = array_map(static function (string $raw) {
+            $string = new StringValue(['value' => $raw]);
+            $any = new Any();
+            $any->pack($string);
+            return $any;
+        }, $stringCases);
+
+        $statusMessage = 'resource not found';
+        $status = (new Status())->setCode(StatusCode::NOT_FOUND)->setMessage($statusMessage)->setDetails($details);
+        $response = $handler->transferToStatusResponse($status, $response);
+
+        $this->assertSame((string) StatusCode::NOT_FOUND, $response->getTrailers()['grpc-status']);
+        $this->assertSame($statusMessage, $response->getTrailers()['grpc-message']);
+        $this->assertSame(200, $response->getStatusCode());
+
+        $respStatus = Parser::statusFromResponse($this->mockSwooleHTTP2Response($response->getTrailers()));
+        $details = $respStatus->getDetails();
+
+        $this->assertSame(
+            $stringCases,
+            array_map(
+                static fn (Any $detail) => $detail->unpack()->getValue(),
+                iterator_to_array($details->getIterator())
+            )
+        );
+    }
+
     protected function getContainer()
     {
         $container = Mockery::mock(ContainerInterface::class);
@@ -78,5 +124,13 @@ class GrpcExceptionHandlerTest extends TestCase
         $container->shouldReceive('get')->with(FormatterInterface::class)->andReturn($formatter);
 
         return $container;
+    }
+
+    protected function mockSwooleHTTP2Response(array $headers)
+    {
+        $resp = Mockery::mock(\Swoole\Http2\Response::class);
+        $resp->headers = $headers;
+
+        return $resp;
     }
 }

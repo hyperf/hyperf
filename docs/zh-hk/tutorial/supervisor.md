@@ -43,7 +43,7 @@ stderr_logfile=/var/www/hyperf/runtime/stderr.log
 stdout_logfile=/var/www/hyperf/runtime/stdout.log
 ```
 
-!> 建議同時增大配置文件中的 `minfds` 配置項，默認為 `1024`。同時也應該修改系統的 [unlimit](https://wiki.swoole.com/#/other/sysctl?id=ulimit-%e8%ae%be%e7%bd%ae)，防止出現 `Failed to open stream: Too many open files` 的問題。
+!> 建議同時增大配置文件中的 `minfds` 配置項，默認為 `1024`。同時也應該修改系統的 [ulimit](https://wiki.swoole.com/#/other/sysctl?id=ulimit-%e8%ae%be%e7%bd%ae)，防止出現 `Failed to open stream: Too many open files` 的問題。
 
 ## 啓動 Supervisor
 

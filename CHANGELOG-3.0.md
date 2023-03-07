@@ -1,7 +1,116 @@
-# v3.0.4 - TBD
+# v3.0.10 - TBD
+
+## Added
+
+- [#5490](https://github.com/hyperf/hyperf/pull/5490) Allow override of the Builder `paginate()` total.
+- [#5491](https://github.com/hyperf/hyperf/pull/5491) Added `charAt` method to both `Str` and `Stringable`.
+
+## Changed
+
+- [#5492](https://github.com/hyperf/hyperf/pull/5492) Renamed `CreatingListener` to `InitUidOnCreatingListener`.
+
+# v3.0.9 - 2023-03-05
+
+## Added
+
+- [#5467](https://github.com/hyperf/hyperf/pull/5467) Support `Google\Rpc\Status` for `GRPC`.
+- [#5472](https://github.com/hyperf/hyperf/pull/5472) Support `ulid` and `uuid` for Model.
+- [#5476](https://github.com/hyperf/hyperf/pull/5476) Added ArrayAccess to Stringable.
+- [#5478](https://github.com/hyperf/hyperf/pull/5478) Added isMatch method to Str and Stringable helpers.
+
+## Optimized
+
+- [#5469](https://github.com/hyperf/hyperf/pull/5469) Ensure that the connection must be reset the next time after broken.
+
+# v3.0.8 - 2023-02-26
 
 ## Fixed
 
+- [#5433](https://github.com/hyperf/hyperf/pull/5433) [#5438](https://github.com/hyperf/hyperf/pull/5438) Fixed bug that the persistent service no need to send heartbeat.
+- [#5464](https://github.com/hyperf/hyperf/pull/5464) Fixed bug that swagger server cannot work when using async style server.
+
+## Added
+
+- [#5434](https://github.com/hyperf/hyperf/pull/5434) Support UDP Server for Swow.
+- [#5444](https://github.com/hyperf/hyperf/pull/5444) Added `GenSchemaCommand` to generate schemas for swagger.
+- [#5451](https://github.com/hyperf/hyperf/pull/5451) Added method `appends($attributes)` to model collections.
+- [#5453](https://github.com/hyperf/hyperf/pull/5453) Added missing methods `put()` and `patch()` to testing HTTP client.
+- [#5454](https://github.com/hyperf/hyperf/pull/5454) Added method `Hyperf\Grpc\Parser::statusFromResponse`.
+- [#5459](https://github.com/hyperf/hyperf/pull/5459) Added some methods of `uuid` and `ulid` for `Str` and `Stringable`.
+
+## Optimized
+
+- [#5437](https://github.com/hyperf/hyperf/pull/5437) Remove unnecessary `if `statement in `Str::length`.
+- [#5439](https://github.com/hyperf/hyperf/pull/5439) Improve `Arr::shuffle`.
+
+# v3.0.7 - 2023-02-18
+
+## Added
+
+- [#5042](https://github.com/hyperf/hyperf/pull/5402) Added `swagger.scan.paths` to rewrite `scan paths` for swagger.
+- [#5403](https://github.com/hyperf/hyperf/pull/5403) Support swoole server settings for swow server.
+- [#5404](https://github.com/hyperf/hyperf/pull/5404) Support multiport server for swagger.
+- [#5406](https://github.com/hyperf/hyperf/pull/5406) Added `mixin` method to `Hyperf\Database\Model\Builder`.
+- [#5407](https://github.com/hyperf/hyperf/pull/5407) Support HTTP methods `Delete` and `Options` for swagger.
+- [#5409](https://github.com/hyperf/hyperf/pull/5409) Adds `methods` for `Query\Builder` and `Paginator`.
+- [#5414](https://github.com/hyperf/hyperf/pull/5414) Added `clone` method to `Hyperf\Database\Model\Builder`.
+- [#5418](https://github.com/hyperf/hyperf/pull/5418) Added `ConfigChanged` event to `config-center`.
+- [#5429](https://github.com/hyperf/hyperf/pull/5429) Added `access_key` and `access_secret` which used to connect aliyun nacos.
+
+## Fixed
+
+- [#5405](https://github.com/hyperf/hyperf/pull/5405) Fixed get local ip error when IPv6 exists.
+- [#5417](https://github.com/hyperf/hyperf/pull/5417) Fixed bug that database-pgsql does not support migration.
+- [#5421](https://github.com/hyperf/hyperf/pull/5421) Fixed database about boolean types for where in the json type.
+- [#5428](https://github.com/hyperf/hyperf/pull/5428) Fixed bug that metric middleware cannot work well when encountered an exception.
+- [#5424](https://github.com/hyperf/hyperf/pull/5424) Fixed bug that migrator cannot work when using `PHP8.2`.
+
+## Optimized
+
+- [#5411](https://github.com/hyperf/hyperf/pull/5411) Optimized the code of `WebSocketHandeShakeException` which should inheritance `BadRequestHttpException`.
+- [#5419](https://github.com/hyperf/hyperf/pull/5419) Optimized the code of `RPN`.
+- [#5422](https://github.com/hyperf/hyperf/pull/5422) Enable swagger by default when installed swagger component.
+
+# v3.0.6 - 2023-02-12
+
+## Fixed
+
+- [#5361](https://github.com/hyperf/hyperf/pull/5361) Fixed bug that the current service XXX is persistent service, can't register ephemeral instance.
+- [#5382](https://github.com/hyperf/hyperf/pull/5382) Fixed bug that mix-subscriber cannot work caused by the empty auth.
+- [#5386](https://github.com/hyperf/hyperf/pull/5386) Fixed bug that non-existing method `exec` called by `SwoolePostgresqlClient`.
+- [#5394](https://github.com/hyperf/hyperf/pull/5394) Fixed bug that `hyperf/config-apollo` cannot work.
+
+## Added
+
+- [#5366](https://github.com/hyperf/hyperf/pull/5366) Added `forceDeleting` event to `hyperf/database`.
+- [#5373](https://github.com/hyperf/hyperf/pull/5373) Support server settings for `SwowServer`.
+- [#5376](https://github.com/hyperf/hyperf/pull/5376) Support coroutine server stats for `hyperf/metric`.
+- [#5379](https://github.com/hyperf/hyperf/pull/5379) Added log records when nacos heartbeat failed.
+- [#5389](https://github.com/hyperf/hyperf/pull/5389) Added swagger support.
+- [#5395](https://github.com/hyperf/hyperf/pull/5395) Support validation for swagger.
+- [#5397](https://github.com/hyperf/hyperf/pull/5397) Support all swagger annotations.
+
+# v3.0.5 - 2023-02-05
+
+## Added
+
+- [#5338](https://github.com/hyperf/hyperf/pull/5338) Added `addRestoreOrCreate` extension to `SoftDeletingScope`.
+- [#5349](https://github.com/hyperf/hyperf/pull/5349) Added `ResumeExitCoordinatorListener`.
+- [#5355](https://github.com/hyperf/hyperf/pull/5355) Added `System::getCpuCoresNum()`.
+
+## Fixed
+
+- [#5357](https://github.com/hyperf/hyperf/pull/5357) Fixed bug that the coordinator timer can't stop when an exception occurs inside `$closure`.
+
+## Optimized
+
+- [#5342](https://github.com/hyperf/hyperf/pull/5342) Compatible with `tcp://host:port` configuration redis sentry address.
+
+# v3.0.4 - 2023-01-22
+
+## Fixed
+
+- [#5332](https://github.com/hyperf/hyperf/pull/5332) Fixed bug that `PgSQLSwooleConnection::unprepared` cannot work.
 - [#5333](https://github.com/hyperf/hyperf/pull/5333) Fixed bug that database cannot work when disconnect failed.
 
 # v3.0.3 - 2023-01-16

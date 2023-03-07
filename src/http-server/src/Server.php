@@ -41,8 +41,6 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
 
     protected array $exceptionHandlers = [];
 
-    protected ?Dispatcher $routerDispatcher = null;
-
     protected ?string $serverName = null;
 
     public function __construct(
@@ -57,7 +55,6 @@ class Server implements OnRequestInterface, MiddlewareInitializerInterface
     {
         $this->serverName = $serverName;
         $this->coreMiddleware = $this->createCoreMiddleware();
-        $this->routerDispatcher = $this->createDispatcher($serverName);
 
         $config = $this->container->get(ConfigInterface::class);
         $this->middlewares = $config->get('middlewares.' . $serverName, []);

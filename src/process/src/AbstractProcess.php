@@ -89,7 +89,7 @@ abstract class AbstractProcess implements ProcessInterface
         for ($i = 0; $i < $num; ++$i) {
             $process = new SwooleProcess(function (SwooleProcess $process) use ($i) {
                 try {
-                    $this->event && $this->event->dispatch(new BeforeProcessHandle($this, $i));
+                    $this->event?->dispatch(new BeforeProcessHandle($this, $i));
 
                     $this->process = $process;
                     if ($this->enableCoroutine) {
@@ -100,7 +100,7 @@ abstract class AbstractProcess implements ProcessInterface
                 } catch (Throwable $throwable) {
                     $this->logThrowable($throwable);
                 } finally {
-                    $this->event && $this->event->dispatch(new AfterProcessHandle($this, $i));
+                    $this->event?->dispatch(new AfterProcessHandle($this, $i));
                     if (isset($quit)) {
                         $quit->push(true);
                     }
@@ -128,7 +128,7 @@ abstract class AbstractProcess implements ProcessInterface
 
         for ($i = 0; $i < $num; ++$i) {
             $handler = function () use ($i) {
-                $this->event && $this->event->dispatch(new BeforeCoroutineHandle($this, $i));
+                $this->event?->dispatch(new BeforeCoroutineHandle($this, $i));
                 while (true) {
                     try {
                         $this->handle();
@@ -140,7 +140,7 @@ abstract class AbstractProcess implements ProcessInterface
                         break;
                     }
                 }
-                $this->event && $this->event->dispatch(new AfterCoroutineHandle($this, $i));
+                $this->event?->dispatch(new AfterCoroutineHandle($this, $i));
             };
 
             Coroutine::create($handler);

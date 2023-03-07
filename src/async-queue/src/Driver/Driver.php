@@ -89,7 +89,7 @@ abstract class Driver implements DriverInterface
     {
         $info = $this->info();
         foreach ($info as $key => $value) {
-            $this->event && $this->event->dispatch(new QueueLength($this, $key, $value));
+            $this->event?->dispatch(new QueueLength($this, $key, $value));
         }
     }
 
@@ -98,19 +98,19 @@ abstract class Driver implements DriverInterface
         return function () use ($data, $message) {
             try {
                 if ($message instanceof MessageInterface) {
-                    $this->event && $this->event->dispatch(new BeforeHandle($message));
+                    $this->event?->dispatch(new BeforeHandle($message));
                     $message->job()->handle();
-                    $this->event && $this->event->dispatch(new AfterHandle($message));
+                    $this->event?->dispatch(new AfterHandle($message));
                 }
 
                 $this->ack($data);
             } catch (Throwable $ex) {
                 if (isset($message, $data)) {
                     if ($message->attempts() && $this->remove($data)) {
-                        $this->event && $this->event->dispatch(new RetryHandle($message, $ex));
+                        $this->event?->dispatch(new RetryHandle($message, $ex));
                         $this->retry($message);
                     } else {
-                        $this->event && $this->event->dispatch(new FailedHandle($message, $ex));
+                        $this->event?->dispatch(new FailedHandle($message, $ex));
                         $this->fail($data);
                     }
                 }

@@ -1,49 +1,42 @@
-# 创建新的组件
+# create new component
 
-`Hyperf` 官方提供了工具来快速创建组件包。
+`Hyperf` officially provides tools to quickly create component packages.
 
 ```
-# 创建适配 Hyperf 最新版本的组件包
+# Create a component package that adapts to the latest version of Hyperf
 composer create-project hyperf/component-creator your_component dev-master
 
-# 创建适配 Hyperf 2.0 版本的组件包
+# Create a component package that adapts to Hyperf 2.0 version
 composer create-project hyperf/component-creator your_component "2.0.*"
 ```
 
-## 在项目中使用未发布的组件包
+## Use unpublished component packages in the project
 
-假设项目目录如下
+Suppose the project directory is as follows
 
 ```
-/opt/project // 项目目录
-/opt/your_component // 组件包目录
+/opt/project // project directory
+/opt/your_component // component package directory
 ```
 
-假设组件名为 `your_component/your_component`
+Assuming the component is named `your_component/your_component`
 
-修改 /opt/project/composer.json
+Modify /opt/project/composer.json
 
-> 以下省略其他不相干的配置
+> Other irrelevant configurations are omitted below
 
 ```json
 {
-    "require": {
-        "your_component/your_component": "dev-master"
-    },
-    "repositories": {
-        "your_component": {
-            "type": "path",
-            "url": "/opt/your_component"
-        }
-    }
+     "require": {
+         "your_component/your_component": "dev-master"
+     },
+     "repositories": {
+         "your_component": {
+             "type": "path",
+             "url": "/opt/your_component"
+         }
+     }
 }
 ```
 
-最后在目录 `/opt/project` 中执行 `composer update -o` 即可。
-
-
-
-
-
-
-
+Finally, execute `composer update -o` in the directory `/opt/project`.
