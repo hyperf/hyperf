@@ -8,6 +8,7 @@
 ## Optimized
 
 - [#5493](https://github.com/hyperf/hyperf/pull/5493) Optimized code for service registration which support nacos `1.x` and `2.x`.
+- [#5494](https://github.com/hyperf/hyperf/pull/5494) Do not replace `Handler` when `native-curl` is supported.
 
 ## Changed
 
