@@ -1909,12 +1909,13 @@ class Builder
      * @param int $perPage
      * @param string[] $columns
      * @param string $pageName
-     * @param null $page
+     * @param null|int $page
+     * @param null|Closure|int $total
      */
-    public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null): LengthAwarePaginatorInterface
+    public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null, $total = null): LengthAwarePaginatorInterface
     {
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
-        $total = $this->getCountForPagination();
+        $total = value($total) ?? $this->getCountForPagination();
         $results = $total ? $this->forPage($page, $perPage)->get($columns) : collect();
 
         return $this->paginator($results, $total, $perPage, $page, [

@@ -748,16 +748,17 @@ class Builder
 
     /**
      * Paginate the given query.
-     *
+     * @param null|Closure|int $total
      * @throws InvalidArgumentException
      */
-    public function paginate(?int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null): LengthAwarePaginatorInterface
+    public function paginate(?int $perPage = null, array $columns = ['*'], string $pageName = 'page', ?int $page = null, $total = null): LengthAwarePaginatorInterface
     {
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
         $perPage = $perPage ?: $this->model->getPerPage();
+        $total = value($total) ?? $this->toBase()->getCountForPagination();
 
-        $results = ($total = $this->toBase()->getCountForPagination())
+        $results = $total
             ? $this->forPage($page, $perPage)->get($columns)
             : $this->model->newCollection();
 
