@@ -1,5 +1,9 @@
 # v3.0.10 - TBD
 
+## Optimized
+
+- [#5492](https://github.com/hyperf/hyperf/pull/5492) Renamed `CreatingListener` to `InitUidOnCreatingListener`.
+
 # v3.0.9 - 2023-03-05
 
 ## Added

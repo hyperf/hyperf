@@ -16,7 +16,7 @@ use Hyperf\Database\Model\Concerns\HasUuids;
 use Hyperf\Database\Model\Events\Creating;
 use Hyperf\Event\Contract\ListenerInterface;
 
-class CreatingListener implements ListenerInterface
+class InitUidOnCreatingListener implements ListenerInterface
 {
     public function listen(): array
     {
