@@ -1,5 +1,9 @@
 # v3.0.10 - TBD
 
+## Added
+
+- [#5490](https://github.com/hyperf/hyperf/pull/5490) Allow override of the Builder `paginate()` total.
+
 # v3.0.9 - 2023-03-05
 
 ## Added
