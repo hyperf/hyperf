@@ -5,6 +5,10 @@
 - [#5490](https://github.com/hyperf/hyperf/pull/5490) Allow override of the Builder `paginate()` total.
 - [#5491](https://github.com/hyperf/hyperf/pull/5491) Added `charAt` method to both `Str` and `Stringable`.
 
+## Optimized
+
+- [#5493](https://github.com/hyperf/hyperf/pull/5493) Optimized code for service registration which support nacos `1.x` and `2.x`.
+
 ## Changed
 
 - [#5492](https://github.com/hyperf/hyperf/pull/5492) Renamed `CreatingListener` to `InitUidOnCreatingListener`.
