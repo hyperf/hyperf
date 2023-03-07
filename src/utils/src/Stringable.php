@@ -114,6 +114,17 @@ class Stringable implements JsonSerializable, \Stringable, ArrayAccess
     }
 
     /**
+     * Get the character at the specified index.
+     *
+     * @param int $index
+     * @return false|string
+     */
+    public function charAt($index)
+    {
+        return Str::charAt($this->value, $index);
+    }
+
+    /**
      * Get the basename of the class path.
      *
      * @return static
