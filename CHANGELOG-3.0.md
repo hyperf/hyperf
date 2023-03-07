@@ -5,6 +5,10 @@
 - [#5490](https://github.com/hyperf/hyperf/pull/5490) Allow override of the Builder `paginate()` total.
 - [#5491](https://github.com/hyperf/hyperf/pull/5491) Added `charAt` method to both `Str` and `Stringable`.
 
+## Optimized
+
+- [#5494](https://github.com/hyperf/hyperf/pull/5494) Do not replace `Handler` when `native-curl` is supported.
+
 ## Changed
 
 - [#5492](https://github.com/hyperf/hyperf/pull/5492) Renamed `CreatingListener` to `InitUidOnCreatingListener`.
