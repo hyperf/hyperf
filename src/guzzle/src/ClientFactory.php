@@ -21,8 +21,11 @@ use Psr\Container\ContainerInterface;
  */
 class ClientFactory
 {
+    protected bool $runInSwoole = false;
+
     public function __construct(private ContainerInterface $container)
     {
+        $this->runInSwoole = extension_loaded('swoole');
     }
 
     public function create(array $options = []): Client
@@ -30,7 +33,7 @@ class ClientFactory
         $stack = null;
 
         if (
-            extension_loaded('swoole')
+            $this->runInSwoole
             && Coroutine::inCoroutine()
             && (\Swoole\Runtime::getHookFlags() & SWOOLE_HOOK_NATIVE_CURL) == 0
         ) {
