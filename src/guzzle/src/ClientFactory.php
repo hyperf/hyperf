@@ -16,6 +16,9 @@ use GuzzleHttp\HandlerStack;
 use Hyperf\Utils\Coroutine;
 use Psr\Container\ContainerInterface;
 
+/**
+ * @property \Hyperf\Di\Container $container
+ */
 class ClientFactory
 {
     public function __construct(private ContainerInterface $container)
@@ -25,7 +28,12 @@ class ClientFactory
     public function create(array $options = []): Client
     {
         $stack = null;
-        if (Coroutine::inCoroutine()) {
+
+        if (
+            extension_loaded('swoole')
+            && Coroutine::inCoroutine()
+            && (\Swoole\Runtime::getHookFlags() & SWOOLE_HOOK_NATIVE_CURL) == 0
+        ) {
             $stack = HandlerStack::create(new CoroutineHandler());
         }
 
@@ -35,6 +43,7 @@ class ClientFactory
             // Create by DI for AOP.
             return $this->container->make(Client::class, ['config' => $config]);
         }
+
         return new Client($config);
     }
 }
