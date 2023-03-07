@@ -11,35 +11,9 @@ declare(strict_types=1);
  */
 namespace Hyperf\DbConnection\Listener;
 
-use Hyperf\Database\Model\Concerns\HasUlids;
-use Hyperf\Database\Model\Concerns\HasUuids;
-use Hyperf\Database\Model\Events\Creating;
-use Hyperf\Event\Contract\ListenerInterface;
-
-class CreatingListener implements ListenerInterface
+/**
+ * @deprecated It will be removed in v3.1
+ */
+class CreatingListener extends InitUidOnCreatingListener
 {
-    public function listen(): array
-    {
-        return [
-            Creating::class,
-        ];
-    }
-
-    public function process(object $event): void
-    {
-        $model = $event->getModel();
-        $class = get_class($model);
-
-        foreach (class_uses_recursive($class) as $trait) {
-            if (! in_array($trait, [HasUuids::class, HasUlids::class])) {
-                continue;
-            }
-
-            foreach ($model->uniqueIds() as $column) {
-                if (empty($model->{$column})) {
-                    $model->{$column} = $model->newUniqueId();
-                }
-            }
-        }
-    }
 }
