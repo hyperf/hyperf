@@ -3,6 +3,7 @@
 ## Added
 
 - [#5490](https://github.com/hyperf/hyperf/pull/5490) Allow override of the Builder `paginate()` total.
+- [#5491](https://github.com/hyperf/hyperf/pull/5491) Added `charAt` method to both `Str` and `Stringable`.
 
 # v3.0.9 - 2023-03-05
 
@@ -11,7 +12,7 @@
 - [#5467](https://github.com/hyperf/hyperf/pull/5467) Support `Google\Rpc\Status` for `GRPC`.
 - [#5472](https://github.com/hyperf/hyperf/pull/5472) Support `ulid` and `uuid` for Model.
 - [#5476](https://github.com/hyperf/hyperf/pull/5476) Added ArrayAccess to Stringable.
-- [#5478](https://github.com/hyperf/hyperf/pull/5478) Add isMatch method to Str and Stringable helpers.
+- [#5478](https://github.com/hyperf/hyperf/pull/5478) Added isMatch method to Str and Stringable helpers.
 
 ## Optimized
 
