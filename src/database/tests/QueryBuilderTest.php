@@ -2876,6 +2876,49 @@ class QueryBuilderTest extends TestCase
         ]), $result);
     }
 
+    public function testPaginateWithTotalOverride()
+    {
+        $page = 1;
+        $total = 10;
+        $builder = $this->getMockQueryBuilder();
+        $path = 'http://foo.bar?page=3';
+
+        $results = collect();
+
+        $builder->shouldReceive('get')->times(2)->andReturn($results);
+        $builder->shouldReceive('getCountForPagination')->andReturn($total);
+
+        Context::set('path', $path);
+        Context::set('page', $page);
+        if (! defined('BASE_PATH')) {
+            define('BASE_PATH', __DIR__);
+        }
+
+        $container = Mockery::mock(Container::class);
+        $container->shouldReceive('make')->times(2)->andReturnUsing(function ($interface, $args) {
+            /** @var Collection $items */
+            $items = $args['items'];
+            return new LengthAwarePaginator(collect($items), $args['total'], $args['perPage'], $args['currentPage'], $args['options']);
+        });
+        ApplicationContext::setContainer($container);
+
+        Paginator::currentPageResolver(function () {
+            return Context::get('page');
+        });
+
+        Paginator::currentPathResolver(function () {
+            return Context::get('path');
+        });
+
+        $result = $builder->paginate(total: 10);
+
+        $this->assertEquals(10, $result->total());
+
+        $result = $builder->paginate(total: fn () => 10);
+
+        $this->assertEquals(10, $result->total());
+    }
+
     public function testWhereRowValues()
     {
         $builder = $this->getBuilder();
