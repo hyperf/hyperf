@@ -2,7 +2,6 @@
 
 ## Added
 
-- [#5490](https://github.com/hyperf/hyperf/pull/5490) Allow override of the Builder `paginate()` total.
 - [#5491](https://github.com/hyperf/hyperf/pull/5491) Added `charAt` method to both `Str` and `Stringable`.
 
 ## Optimized
