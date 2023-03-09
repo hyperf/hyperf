@@ -32,6 +32,8 @@ class ClientFactory
     {
         $stack = null;
 
+        defined('SWOOLE_HOOK_NATIVE_CURL') or define('SWOOLE_HOOK_NATIVE_CURL', 4096);
+
         if (
             $this->runInSwoole
             && Coroutine::inCoroutine()
