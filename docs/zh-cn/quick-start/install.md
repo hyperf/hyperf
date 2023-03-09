@@ -10,17 +10,14 @@ Hyperf 对系统环境有一些要求，当您使用 Swoole 网络引擎驱动�
 
  - PHP >= 8.0
  - 以下任一网络引擎
-   - Swoole PHP 扩展 >= 4.5，并关闭了 `Short Name`
-   - Swow PHP 扩展 (Beta)
+   - [Swoole PHP 扩展](https://github.com/swoole/swoole-src) >= 4.5，并关闭了 `Short Name`
+   - [Swow PHP 扩展](https://github.com/swow/swow)
  - JSON PHP 扩展
  - Pcntl PHP 扩展
  - OpenSSL PHP 扩展（如需要使用到 HTTPS）
  - PDO PHP 扩展 （如需要使用到 MySQL 客户端）
  - Redis PHP 扩展 （如需要使用到 Redis 客户端）
  - Protobuf PHP 扩展 （如需要使用到 gRPC 服务端或客户端）
-
-[php swoole 官方源码地址](https://github.com/swoole/swoole-src)
-
 
 ## 安装 Hyperf
 
