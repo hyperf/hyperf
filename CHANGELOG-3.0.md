@@ -1,5 +1,9 @@
 # v3.0.10 - TBD
 
+## Fixed
+
+- [#5501](https://github.com/hyperf/hyperf/pull/5501) Fixed bug that undefined `SWOOLE_HOOK_NATIVE_CURL` when swoole < `4.6`.
+
 ## Added
 
 - [#5490](https://github.com/hyperf/hyperf/pull/5490) Allow override of the Builder `paginate()` total.
