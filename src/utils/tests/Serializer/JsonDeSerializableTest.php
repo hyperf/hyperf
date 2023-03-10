@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace HyperfTest\Utils\Serializer;
 
 use Hyperf\Utils\Codec\Json;
+use Hyperf\Utils\Serializer\JsonDeNormalizer;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -27,6 +28,18 @@ class JsonDeSerializableTest extends TestCase
         $this->assertSame($json = '{"id":1,"name":"Hyperf"}', Json::encode($foo));
 
         $foo = Foo::jsonDeSerialize(Json::decode($json));
+
+        $this->assertSame(1, $foo->id);
+        $this->assertSame('Hyperf', $foo->name);
+    }
+
+    public function testJsonDeNormalizer()
+    {
+        $normalizer = new JsonDeNormalizer();
+
+        $json = '{"id":1,"name":"Hyperf"}';
+
+        $foo = $normalizer->denormalize(Json::decode($json), Foo::class);
 
         $this->assertSame(1, $foo->id);
         $this->assertSame('Hyperf', $foo->name);
