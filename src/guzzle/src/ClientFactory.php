@@ -21,21 +21,19 @@ use Psr\Container\ContainerInterface;
  */
 class ClientFactory
 {
-    protected bool $runInSwoole = false;
+    protected bool $isDefinedSwooleHookNativeCurl = false;
 
     public function __construct(private ContainerInterface $container)
     {
-        $this->runInSwoole = extension_loaded('swoole');
+        $this->isDefinedSwooleHookNativeCurl = extension_loaded('swoole') && defined('SWOOLE_HOOK_NATIVE_CURL');
     }
 
     public function create(array $options = []): Client
     {
         $stack = null;
 
-        defined('SWOOLE_HOOK_NATIVE_CURL') or define('SWOOLE_HOOK_NATIVE_CURL', 4096);
-
         if (
-            $this->runInSwoole
+            $this->isDefinedSwooleHookNativeCurl
             && Coroutine::inCoroutine()
             && (\Swoole\Runtime::getHookFlags() & SWOOLE_HOOK_NATIVE_CURL) == 0
         ) {
