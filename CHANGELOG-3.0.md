@@ -1,9 +1,14 @@
 # v3.0.10 - TBD
 
+## Fixed
+
+- [#5501](https://github.com/hyperf/hyperf/pull/5501) Fixed bug that undefined `SWOOLE_HOOK_NATIVE_CURL` when swoole < `4.6`.
+
 ## Added
 
-- [#5490](https://github.com/hyperf/hyperf/pull/5490) Allow override of the Builder `paginate()` total.
 - [#5491](https://github.com/hyperf/hyperf/pull/5491) Added `charAt` method to both `Str` and `Stringable`.
+- [#5503](https://github.com/hyperf/hyperf/pull/5503) Added `Hyperf\Contract\JsonDeSerializable`.
+- [#5504](https://github.com/hyperf/hyperf/pull/5504) Added `Hyperf\Utils\Serializer\JsonDeNormalizer`.
 
 ## Optimized
 
