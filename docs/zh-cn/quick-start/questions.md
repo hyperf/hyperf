@@ -107,9 +107,9 @@ composer require hyperf/signal
 composer require symfony/serializer
 ```
 
-## Trait 内使用 `@Inject` 注入报错 `Error while injecting dependencies into ... No entry or class found ...`
+## Trait 内使用 `#[Inject]` 注入报错 `Error while injecting dependencies into ... No entry or class found ...`
 
-若 Trait 通过 `@Inject @var` 注入属性, 同时子类里 `use` 了不同命名空间的同名类, 会导致 Trait 里类名被覆盖，进而导致注入失效:
+若 Trait 通过 `#[Inject] @var` 注入属性, 同时子类里 `use` 了不同命名空间的同名类, 会导致 Trait 里类名被覆盖，进而导致注入失效:
 
 ```php
 use Hyperf\HttpServer\Contract\ResponseInterface;
