@@ -182,6 +182,24 @@ class Str
     }
 
     /**
+     * Get the character at the specified index.
+     *
+     * @param string $subject
+     * @param int $index
+     * @return null|string
+     */
+    public static function charAt($subject, $index)
+    {
+        $length = mb_strlen($subject);
+
+        if ($index < 0 ? $index < -$length : $index > $length - 1) {
+            return null;
+        }
+
+        return mb_substr($subject, $index, 1);
+    }
+
+    /**
      * Determine if a given string contains a given substring.
      *
      * @param array|string $needles
@@ -370,19 +388,19 @@ class Str
     /**
      * Determine if a given string matches a given pattern.
      *
-     * @param iterable<string>|string $pattern
+     * @param iterable<string>|string $patterns
      * @param string $value
      * @return bool
      */
-    public static function isMatch($pattern, $value)
+    public static function isMatch($patterns, $value)
     {
         $value = (string) $value;
 
-        if (! is_iterable($pattern)) {
-            $pattern = [$pattern];
+        if (! is_iterable($patterns)) {
+            $patterns = [$patterns];
         }
 
-        foreach ($pattern as $pattern) {
+        foreach ($patterns as $pattern) {
             $pattern = (string) $pattern;
 
             if (preg_match($pattern, $value) === 1) {

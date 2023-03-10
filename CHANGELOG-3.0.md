@@ -1,5 +1,24 @@
 # v3.0.10 - TBD
 
+## Fixed
+
+- [#5501](https://github.com/hyperf/hyperf/pull/5501) Fixed bug that undefined `SWOOLE_HOOK_NATIVE_CURL` when swoole < `4.6`.
+
+## Added
+
+- [#5491](https://github.com/hyperf/hyperf/pull/5491) Added `charAt` method to both `Str` and `Stringable`.
+- [#5503](https://github.com/hyperf/hyperf/pull/5503) Added `Hyperf\Contract\JsonDeSerializable`.
+- [#5504](https://github.com/hyperf/hyperf/pull/5504) Added `Hyperf\Utils\Serializer\JsonDeNormalizer`.
+
+## Optimized
+
+- [#5493](https://github.com/hyperf/hyperf/pull/5493) Optimized code for service registration which support nacos `1.x` and `2.x`.
+- [#5494](https://github.com/hyperf/hyperf/pull/5494) Do not replace `Handler` when `native-curl` is supported.
+
+## Changed
+
+- [#5492](https://github.com/hyperf/hyperf/pull/5492) Renamed `CreatingListener` to `InitUidOnCreatingListener`.
+
 # v3.0.9 - 2023-03-05
 
 ## Added
@@ -7,7 +26,7 @@
 - [#5467](https://github.com/hyperf/hyperf/pull/5467) Support `Google\Rpc\Status` for `GRPC`.
 - [#5472](https://github.com/hyperf/hyperf/pull/5472) Support `ulid` and `uuid` for Model.
 - [#5476](https://github.com/hyperf/hyperf/pull/5476) Added ArrayAccess to Stringable.
-- [#5478](https://github.com/hyperf/hyperf/pull/5478) Add isMatch method to Str and Stringable helpers.
+- [#5478](https://github.com/hyperf/hyperf/pull/5478) Added isMatch method to Str and Stringable helpers.
 
 ## Optimized
 

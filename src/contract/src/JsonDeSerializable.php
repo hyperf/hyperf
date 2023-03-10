@@ -9,11 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-namespace Hyperf\DbConnection\Listener;
+namespace Hyperf\Contract;
 
-/**
- * @deprecated It will be removed in v3.1
- */
-class CreatingListener extends InitUidOnCreatingListener
+interface JsonDeSerializable
 {
+    public static function jsonDeSerialize(mixed $data): static;
 }
