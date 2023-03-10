@@ -29,7 +29,16 @@ class JsonDeNormalizer implements NormalizerInterface
             'array' => (array) $data,
             'bool' => (bool) $data,
             'mixed' => $data,
-            default => $class::jsonDeSerialize($data),
+            default => $this->from($data, $class),
         };
+    }
+
+    private function from(mixed $data, string $class): mixed
+    {
+        if (method_exists($class, 'jsonDeSerialize')) {
+            return $class::jsonDeSerialize($data);
+        }
+
+        return $data;
     }
 }
