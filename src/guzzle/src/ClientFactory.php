@@ -23,9 +23,14 @@ class ClientFactory
 {
     protected bool $runInSwoole = false;
 
+    protected int $nativeCurlHook = 0;
+
     public function __construct(private ContainerInterface $container)
     {
         $this->runInSwoole = extension_loaded('swoole');
+        if (defined('SWOOLE_HOOK_NATIVE_CURL')) {
+            $this->nativeCurlHook = SWOOLE_HOOK_NATIVE_CURL;
+        }
     }
 
     public function create(array $options = []): Client
@@ -35,7 +40,7 @@ class ClientFactory
         if (
             $this->runInSwoole
             && Coroutine::inCoroutine()
-            && (\Swoole\Runtime::getHookFlags() & SWOOLE_HOOK_NATIVE_CURL) == 0
+            && (\Swoole\Runtime::getHookFlags() & $this->nativeCurlHook) == 0
         ) {
             $stack = HandlerStack::create(new CoroutineHandler());
         }
