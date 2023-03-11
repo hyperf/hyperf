@@ -57,6 +57,11 @@ class ProtocolManager
         return $this->getTarget($name, 'data-formatter');
     }
 
+    public function getNormalizer(string $name): string
+    {
+        return $this->getTarget($name, 'normalizer');
+    }
+
     private function getTarget(string $name, string $target)
     {
         $result = $this->config->get('protocols.' . Str::lower($name) . '.' . Str::lower($target));

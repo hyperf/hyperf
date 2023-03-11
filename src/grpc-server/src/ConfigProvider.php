@@ -11,11 +11,24 @@ declare(strict_types=1);
  */
 namespace Hyperf\GrpcServer;
 
+use Hyperf\GrpcServer\Listener\RegisterProtocolListener;
+use Hyperf\ServiceGovernance\ServiceManager;
+use Hyperf\GrpcServer\Listener\RegisterServiceListener;
+
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
+            'listeners' => [
+                RegisterProtocolListener::class,
+                value(function () {
+                    if (class_exists(ServiceManager::class)) {
+                        return RegisterServiceListener::class;
+                    }
+                    return null;
+                }),
+            ],
         ];
     }
 }
