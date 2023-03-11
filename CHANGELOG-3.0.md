@@ -1,8 +1,9 @@
-# v3.0.10 - TBD
+# v3.0.11 - TBD
+
+# v3.0.10 - 2023-03-11
 
 ## Fixed
 
-- [#5501](https://github.com/hyperf/hyperf/pull/5501) Fixed bug that undefined `SWOOLE_HOOK_NATIVE_CURL` when swoole < `4.6`.
 - [#5497](https://github.com/hyperf/hyperf/pull/5497) Fixed bug that `ConfigChanged` cannot dispatched when using `apollo`.
 
 ## Added
@@ -14,11 +15,11 @@
 ## Optimized
 
 - [#5493](https://github.com/hyperf/hyperf/pull/5493) Optimized code for service registration which support nacos `1.x` and `2.x`.
-- [#5494](https://github.com/hyperf/hyperf/pull/5494) Do not replace `Handler` when `native-curl` is supported.
+- [#5494](https://github.com/hyperf/hyperf/pull/5494) [#5501](https://github.com/hyperf/hyperf/pull/5501) Do not replace `Handler` when `native-curl` is supported.
 
 ## Changed
 
-- [#5492](https://github.com/hyperf/hyperf/pull/5492) Renamed `CreatingListener` to `InitUidOnCreatingListener`.
+- [#5492](https://github.com/hyperf/hyperf/pull/5492) Renamed `Hyperf\DbConnection\Listener\CreatingListener` to `Hyperf\DbConnection\Listener\InitUidOnCreatingListener`.
 
 # v3.0.9 - 2023-03-05
 

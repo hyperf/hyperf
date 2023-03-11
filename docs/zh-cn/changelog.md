@@ -1,5 +1,26 @@
 # 版本更新记录
 
+# v3.0.10 - 2023-03-11
+
+## 修复
+
+- [#5497](https://github.com/hyperf/hyperf/pull/5497) 修复 `apollo` 配置中心，无法正常触发 `ConfigChanged` 事件的问题。
+
+## 新增
+
+- [#5491](https://github.com/hyperf/hyperf/pull/5491) 为 `Str` 和 `Stringable` 新增 `charAt` 方法。
+- [#5503](https://github.com/hyperf/hyperf/pull/5503) 新增 `Hyperf\Contract\JsonDeSerializable`。
+- [#5504](https://github.com/hyperf/hyperf/pull/5504) 新增 `Hyperf\Utils\Serializer\JsonDeNormalizer`。
+
+## 优化
+
+- [#5493](https://github.com/hyperf/hyperf/pull/5493) 优化 `Nacos` 服务注册器的代码，使其支持 `1.x` 和 `2.x` 版本。
+- [#5494](https://github.com/hyperf/hyperf/pull/5494) [#5501](https://github.com/hyperf/hyperf/pull/5501) 优化 `hyperf/guzzle` 组件，当使用 `Swoole` 且不支持 `native-curl` 时，才会默认替换 `Handler`。
+
+## 变更
+
+- [#5492](https://github.com/hyperf/hyperf/pull/5492) 将 `Hyperf\DbConnection\Listener\CreatingListener` 重命名为 `Hyperf\DbConnection\Listener\InitUidOnCreatingListener`.
+
 # v3.0.9 - 2023-03-05
 
 ## 新增
