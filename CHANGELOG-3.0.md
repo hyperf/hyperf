@@ -4,7 +4,8 @@
 
 - [#5499](https://github.com/hyperf/hyperf/pull/5499) Support `enum` for `hyperf/constants`.
 - [#5508](https://github.com/hyperf/hyperf/pull/5508) Added `Hyperf\Rpc\Protocol::getNormalizer`.
-- [#5509](https://github.com/hyperf/hyperf/pull/5509) Auto register `normalizer` for `json-rpc` and `rpc-multiplex`.
+- [#5509](https://github.com/hyperf/hyperf/pull/5509) Auto register `normalizer` for `json-rpc`.
+- [#5513](https://github.com/hyperf/hyperf/pull/5513) Use default normalizer for `rpc-multiplex` and use `protocol.normalizer` for `rpc-server`.
 
 ## Optimized
 
