@@ -15,6 +15,7 @@ use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\JsonRpc\DataFormatter;
 use Hyperf\JsonRpc\JsonRpcHttpTransporter;
+use Hyperf\JsonRpc\JsonRpcNormalizer;
 use Hyperf\JsonRpc\JsonRpcTransporter;
 use Hyperf\JsonRpc\Packer\JsonEofPacker;
 use Hyperf\JsonRpc\Packer\JsonLengthPacker;
@@ -46,6 +47,7 @@ class RegisterProtocolListener implements ListenerInterface
             'transporter' => JsonRpcTransporter::class,
             'path-generator' => PathGenerator::class,
             'data-formatter' => DataFormatter::class,
+            'normalizer' => JsonRpcNormalizer::class,
         ]);
 
         $this->protocolManager->register('jsonrpc-tcp-length-check', [
@@ -53,6 +55,7 @@ class RegisterProtocolListener implements ListenerInterface
             'transporter' => JsonRpcTransporter::class,
             'path-generator' => PathGenerator::class,
             'data-formatter' => DataFormatter::class,
+            'normalizer' => JsonRpcNormalizer::class,
         ]);
 
         $this->protocolManager->register('jsonrpc-http', [
@@ -60,6 +63,7 @@ class RegisterProtocolListener implements ListenerInterface
             'transporter' => JsonRpcHttpTransporter::class,
             'path-generator' => PathGenerator::class,
             'data-formatter' => DataFormatter::class,
+            'normalizer' => JsonRpcNormalizer::class,
         ]);
     }
 }

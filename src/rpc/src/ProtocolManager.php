@@ -12,6 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\Rpc;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\RpcMultiplex\DataFormatter;
+use Hyperf\RpcMultiplex\Packer\JsonPacker;
+use Hyperf\RpcMultiplex\PathGenerator;
+use Hyperf\RpcMultiplex\Transporter;
 use Hyperf\Utils\Str;
 use InvalidArgumentException;
 
@@ -21,12 +25,21 @@ class ProtocolManager
     {
     }
 
-    public function register(string $name, array $data)
+    /**
+     * @param $data = [
+     *     'packer' => JsonPacker::class,
+     *     'transporter' => Transporter::class,
+     *     'path-generator' => PathGenerator::class,
+     *     'data-formatter' => DataFormatter::class,
+     *     'normalizer' => JsonRpcNormalizer::class,
+     * ]
+     */
+    public function register(string $name, array $data): void
     {
         $this->config->set('protocols.' . $name, $data);
     }
 
-    public function registerOrAppend(string $name, array $data)
+    public function registerOrAppend(string $name, array $data): void
     {
         $key = 'protocols.' . $name;
         $this->config->set($key, array_merge($this->config->get($key, []), $data));
@@ -62,7 +75,7 @@ class ProtocolManager
         return $this->getTarget($name, 'normalizer');
     }
 
-    private function getTarget(string $name, string $target)
+    private function getTarget(string $name, string $target): string
     {
         $result = $this->config->get('protocols.' . Str::lower($name) . '.' . Str::lower($target));
         if (! is_string($result)) {

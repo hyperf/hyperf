@@ -3,6 +3,7 @@
 ## Added
 
 - [#5508](https://github.com/hyperf/hyperf/pull/5508) Added `Hyperf\Rpc\Protocol::getNormalizer`.
+- [#5509](https://github.com/hyperf/hyperf/pull/5509) Auto register `normalizer` for `json-rpc` and `rpc-multiplex`.
 
 # v3.0.10 - 2023-03-11
 
