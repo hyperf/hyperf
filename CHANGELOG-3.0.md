@@ -1,5 +1,9 @@
 # v3.0.11 - TBD
 
+## Added
+
+- [#5508](https://github.com/hyperf/hyperf/pull/5508) Added `Hyperf\Rpc\Protocol::getNormalizer`.
+
 # v3.0.10 - 2023-03-11
 
 ## Fixed
