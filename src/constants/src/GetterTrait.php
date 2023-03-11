@@ -30,7 +30,7 @@ trait GetterTrait
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public static function gotValue(string $name, array $arguments): string|array
+    public static function getValue(string $name, array $arguments): string|array
     {
         if (! str_starts_with($name, 'get')) {
             throw new ConstantsException("The function {$name} is not defined!");

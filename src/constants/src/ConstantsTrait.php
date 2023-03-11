@@ -29,6 +29,6 @@ trait ConstantsTrait
      */
     public static function __callStatic(string $name, array $arguments): string|array
     {
-        return static::gotValue($name, $arguments);
+        return static::getValue($name, $arguments);
     }
 }
