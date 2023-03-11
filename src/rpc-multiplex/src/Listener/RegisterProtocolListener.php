@@ -13,6 +13,7 @@ namespace Hyperf\RpcMultiplex\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
+use Hyperf\JsonRpc\JsonRpcNormalizer;
 use Hyperf\Rpc\ProtocolManager;
 use Hyperf\RpcMultiplex\Constant;
 use Hyperf\RpcMultiplex\DataFormatter;
@@ -44,6 +45,7 @@ class RegisterProtocolListener implements ListenerInterface
             'transporter' => Transporter::class,
             'path-generator' => PathGenerator::class,
             'data-formatter' => DataFormatter::class,
+            'normalizer' => JsonRpcNormalizer::class,
         ]);
     }
 }
