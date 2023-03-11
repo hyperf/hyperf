@@ -22,7 +22,7 @@ class Client
 
     private ?TransporterInterface $transporter = null;
 
-    private ?NormalizerInterface $normalizer =null;
+    private ?NormalizerInterface $normalizer = null;
 
     public function send($data)
     {
@@ -56,12 +56,10 @@ class Client
         return $this;
     }
 
-
     public function getNormalizer(): ?NormalizerInterface
     {
         return $this->normalizer;
     }
-
 
     public function setNormalizer(?NormalizerInterface $normalizer): self
     {
