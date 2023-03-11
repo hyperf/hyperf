@@ -5,6 +5,10 @@
 - [#5508](https://github.com/hyperf/hyperf/pull/5508) Added `Hyperf\Rpc\Protocol::getNormalizer`.
 - [#5509](https://github.com/hyperf/hyperf/pull/5509) Auto register `normalizer` for `json-rpc` and `rpc-multiplex`.
 
+## Optimized
+
+- [#5510](https://github.com/hyperf/hyperf/pull/5510) Allow developers to replace the `normalizer` of `RPC Client` themselves.
+
 # v3.0.10 - 2023-03-11
 
 ## Fixed
