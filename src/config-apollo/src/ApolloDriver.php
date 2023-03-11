@@ -56,9 +56,7 @@ class ApolloDriver extends AbstractDriver
         $this->loop(function () use (&$prevConfig) {
             $config = $this->pull();
             if ($config !== $prevConfig) {
-                $this->syncConfig($config);
-                // 触发配置更新事件
-                $this->event(new ConfigChanged($config, $prevConfig));
+                $this->syncConfig($config, $prevConfig);
                 $prevConfig = $config;
             }
         });
@@ -78,9 +76,7 @@ class ApolloDriver extends AbstractDriver
                     }
                     $config = $this->client->parallelPull($namespaces);
                     if ($config !== $prevConfig) {
-                        $this->syncConfig($config);
-                        // 触发配置更新事件
-                        $this->event(new ConfigChanged($config, $prevConfig));
+                        $this->syncConfig($config, $prevConfig);
                         $prevConfig = $config;
                     }
                 } catch (Throwable $exception) {
