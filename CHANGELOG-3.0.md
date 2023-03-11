@@ -3,6 +3,7 @@
 ## Fixed
 
 - [#5501](https://github.com/hyperf/hyperf/pull/5501) Fixed bug that undefined `SWOOLE_HOOK_NATIVE_CURL` when swoole < `4.6`.
+- [#5497](https://github.com/hyperf/hyperf/pull/5497) Fixed bug that `ConfigChanged` cannot dispatched when using `apollo`.
 
 ## Added
 
