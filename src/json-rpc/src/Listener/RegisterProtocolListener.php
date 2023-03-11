@@ -47,7 +47,7 @@ class RegisterProtocolListener implements ListenerInterface
             'transporter' => JsonRpcTransporter::class,
             'path-generator' => PathGenerator::class,
             'data-formatter' => DataFormatter::class,
-            'normalizer' => JsonRpcNormalizer::class
+            'normalizer' => JsonRpcNormalizer::class,
         ]);
 
         $this->protocolManager->register('jsonrpc-tcp-length-check', [
@@ -55,7 +55,7 @@ class RegisterProtocolListener implements ListenerInterface
             'transporter' => JsonRpcTransporter::class,
             'path-generator' => PathGenerator::class,
             'data-formatter' => DataFormatter::class,
-            'normalizer' => JsonRpcNormalizer::class
+            'normalizer' => JsonRpcNormalizer::class,
         ]);
 
         $this->protocolManager->register('jsonrpc-http', [
@@ -63,7 +63,7 @@ class RegisterProtocolListener implements ListenerInterface
             'transporter' => JsonRpcHttpTransporter::class,
             'path-generator' => PathGenerator::class,
             'data-formatter' => DataFormatter::class,
-            'normalizer' => JsonRpcNormalizer::class
+            'normalizer' => JsonRpcNormalizer::class,
         ]);
     }
 }

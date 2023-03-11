@@ -1,20 +1,31 @@
 <?php
 
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf.
+ *
+ * @link     https://www.hyperf.io
+ * @document https://hyperf.wiki
+ * @contact  group@hyperf.io
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
 namespace Hyperf\JsonRpc;
 
 use Hyperf\Contract\NormalizerInterface;
-use Hyperf\Utils\ApplicationContext;
 
 class JsonRpcNormalizer implements NormalizerInterface
 {
+    public function __construct(private NormalizerInterface $normalizer)
+    {
+    }
+
     public function normalize($object)
     {
-        return ApplicationContext::getContainer()->get(NormalizerInterface::class)->normalize($object);
+        return $this->normalizer->normalize($object);
     }
 
     public function denormalize($data, string $class)
     {
-        return ApplicationContext::getContainer()->get(NormalizerInterface::class)->denormalize($data,$class);
+        return $this->normalizer->denormalize($data, $class);
     }
-
 }
