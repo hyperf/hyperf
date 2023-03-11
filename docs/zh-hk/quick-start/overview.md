@@ -176,7 +176,8 @@ class IndexController
 }
 ```
 
-### 通過 `@Inject` 註解注入
+### 通過 `#[Inject]` 註解注入
+
 只需對對應的類屬性通過 `@var` 聲明參數的類型，並使用 `#[Inject]` 註解標記屬性 ，`Hyperf` 會自動注入對應的對象或值。
 
 > 使用 `#[Inject]` 註解時需 `use Hyperf\Di\Annotation\Inject;` 命名空間；
