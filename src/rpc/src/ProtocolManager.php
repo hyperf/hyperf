@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Hyperf\Rpc;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\NormalizerInterface;
 use Hyperf\RpcMultiplex\DataFormatter;
 use Hyperf\RpcMultiplex\Packer\JsonPacker;
 use Hyperf\RpcMultiplex\PathGenerator;
@@ -72,13 +73,17 @@ class ProtocolManager
 
     public function getNormalizer(string $name): string
     {
-        return $this->getTarget($name, 'normalizer');
+        return $this->getTarget($name, 'normalizer', NormalizerInterface::class);
     }
 
-    private function getTarget(string $name, string $target): string
+    private function getTarget(string $name, string $target, ?string $default = null): string
     {
         $result = $this->config->get('protocols.' . Str::lower($name) . '.' . Str::lower($target));
         if (! is_string($result)) {
+            if ($default) {
+                return $default;
+            }
+
             throw new InvalidArgumentException(sprintf('%s is not exists.', Str::studly($target, ' ')));
         }
         return $result;
