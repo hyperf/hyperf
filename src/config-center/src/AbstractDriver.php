@@ -107,7 +107,7 @@ abstract class AbstractDriver implements DriverInterface
         $this->container->get(EventDispatcherInterface::class)?->dispatch($event);
     }
 
-    protected function syncConfig(array $config, array $prevConfig)
+    protected function syncConfig(array $config, ?array $prevConfig = null)
     {
         if (class_exists(ProcessCollector::class) && ! ProcessCollector::isEmpty()) {
             $this->shareConfigToProcesses($config);
@@ -115,7 +115,7 @@ abstract class AbstractDriver implements DriverInterface
             $this->updateConfig($config);
         }
 
-        $this->event(new ConfigChanged($config, $prevConfig));
+        $prevConfig !== null && $this->event(new ConfigChanged($config, $prevConfig));
     }
 
     protected function pull(): array
