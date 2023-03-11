@@ -14,7 +14,6 @@ namespace Hyperf\ConfigApollo;
 use Hyperf\ConfigApollo\ClientInterface as ApolloClientInterface;
 use Hyperf\ConfigCenter\AbstractDriver;
 use Hyperf\ConfigCenter\Contract\ClientInterface;
-use Hyperf\ConfigCenter\Event\ConfigChanged;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Channel;
