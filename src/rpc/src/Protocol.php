@@ -75,5 +75,4 @@ class Protocol
         }
         return $this->container->get($normalizer);
     }
-
 }
