@@ -12,6 +12,14 @@ class GrpcTransporter implements TransporterInterface
 {
     private ?LoadBalancerInterface $loadBalancer = null;
 
+    /**
+     * If $loadBalancer is null, will select a node in $nodes to request,
+     * otherwise, use the nodes in $loadBalancer.
+     *
+     * @var Node[]
+     */
+    private array $nodes = [];
+
 
     public function send(string $data)
     {
