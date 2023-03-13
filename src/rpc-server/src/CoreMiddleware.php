@@ -13,6 +13,7 @@ namespace Hyperf\RpcServer;
 
 use Closure;
 use FastRoute\Dispatcher;
+use Hyperf\Contract\NormalizerInterface;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Rpc\Protocol;
@@ -28,6 +29,11 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
     {
         $this->protocol = $protocol;
         parent::__construct($container, $serverName);
+    }
+
+    public function getNormalizer(): NormalizerInterface
+    {
+        return $this->protocol->getNormalizer();
     }
 
     protected function createDispatcher(string $serverName): Dispatcher

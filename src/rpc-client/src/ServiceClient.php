@@ -35,7 +35,7 @@ class ServiceClient extends AbstractServiceClient
 
         parent::__construct($container);
 
-        $this->normalizer = $container->get(NormalizerInterface::class);
+        $this->normalizer = $this->client->getNormalizer();
         $this->methodDefinitionCollector = $container->get(MethodDefinitionCollectorInterface::class);
     }
 
