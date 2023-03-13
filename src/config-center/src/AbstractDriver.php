@@ -66,8 +66,7 @@ abstract class AbstractDriver implements DriverInterface
                         }
                         $config = $this->pull();
                         if ($config !== $prevConfig) {
-                            $this->syncConfig($config);
-                            $this->event(new ConfigChanged($config, $prevConfig));
+                            $this->syncConfig($config, $prevConfig);
                         }
                         $prevConfig = $config;
                     } catch (Throwable $exception) {
@@ -108,13 +107,15 @@ abstract class AbstractDriver implements DriverInterface
         $this->container->get(EventDispatcherInterface::class)?->dispatch($event);
     }
 
-    protected function syncConfig(array $config)
+    protected function syncConfig(array $config, ?array $prevConfig = null)
     {
         if (class_exists(ProcessCollector::class) && ! ProcessCollector::isEmpty()) {
             $this->shareConfigToProcesses($config);
         } else {
             $this->updateConfig($config);
         }
+
+        $prevConfig !== null && $this->event(new ConfigChanged($config, $prevConfig));
     }
 
     protected function pull(): array

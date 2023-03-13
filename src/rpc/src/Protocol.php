@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Hyperf\Rpc;
 
+use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Contract\PackerInterface;
 use Hyperf\Rpc\Contract\DataFormatterInterface;
 use Hyperf\Rpc\Contract\PathGeneratorInterface;
@@ -64,5 +65,14 @@ class Protocol
             throw new InvalidArgumentException("DataFormatter {$dataFormatter} for {$this->name} does not exist");
         }
         return $this->container->get($dataFormatter);
+    }
+
+    public function getNormalizer(): NormalizerInterface
+    {
+        $normalizer = $this->protocolManager->getNormalizer($this->name);
+        if (! $this->container->has($normalizer)) {
+            throw new InvalidArgumentException("Normalizer {$normalizer} for {$this->name} does not exist");
+        }
+        return $this->container->get($normalizer);
     }
 }

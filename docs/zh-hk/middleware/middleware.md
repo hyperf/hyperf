@@ -63,11 +63,11 @@ Router::addGroup(
 ### 通過註解定義
 
 在通過註解定義路由時，您僅可通過註解的方式來定義中間件，對中間件的定義有兩個註解，分別為：   
-  - `@Middleware` 註解為定義單箇中間件時使用，在一個地方僅可定義一個該註解，不可重複定義
-  - `@Middlewares` 註解為定義多箇中間件時使用，在一個地方僅可定義一個該註解，然後通過在該註解內定義多個 `@Middleware` 註解實現多箇中間件的定義
+  - `#[Middleware]` 註解為定義單箇中間件時使用，在一個地方僅可定義一個該註解，不可重複定義
+  - `#[Middlewares]` 註解為定義多箇中間件時使用，在一個地方僅可定義一個該註解，然後通過在該註解內定義多個 `#[Middleware]` 註解實現多箇中間件的定義
 
-> 使用 `@Middleware` 註解時需 `use Hyperf\HttpServer\Annotation\Middleware;` 命名空間；   
-> 使用 `@Middlewares` 註解時需 `use Hyperf\HttpServer\Annotation\Middlewares;` 命名空間；
+> 使用 `#[Middleware]` 註解時需 `use Hyperf\HttpServer\Annotation\Middleware;` 命名空間；   
+> 使用 `#[Middlewares]` 註解時需 `use Hyperf\HttpServer\Annotation\Middlewares;` 命名空間；
 
 定義單箇中間件：
 
