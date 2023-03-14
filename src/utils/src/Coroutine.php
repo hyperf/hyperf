@@ -87,9 +87,9 @@ class Coroutine
         return Co::stats();
     }
 
-    public static function exists(int $coroutineId): bool
+    public static function exists(int $id): bool
     {
-        return Co::exists($coroutineId);
+        return Co::exists($id);
     }
 
     private static function printLog(Throwable $throwable): void
