@@ -15,6 +15,7 @@
 ## Optimized
 
 - [#5510](https://github.com/hyperf/hyperf/pull/5510) Allow developers to replace the `normalizer` of `RPC Client` themselves.
+- [#5522](https://github.com/hyperf/hyperf/pull/5522) Change the interval setting default value is `1` for kafka.
 
 # v3.0.10 - 2023-03-11
 
