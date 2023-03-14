@@ -15,6 +15,7 @@
 ## Optimized
 
 - [#5510](https://github.com/hyperf/hyperf/pull/5510) Allow developers to replace the `normalizer` of `RPC Client` themselves.
+- [#5521](https://github.com/hyperf/hyperf/pull/5521) Change the default value for kafka config.
 
 # v3.0.10 - 2023-03-11
 
