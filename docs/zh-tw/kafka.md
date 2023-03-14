@@ -27,9 +27,9 @@ composer require hyperf/kafka
 
 | 配置                          | 型別       | 預設值                        | 備註                                                                                                                 |
 | ----------------------------- | ---------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| connect_timeout               | int｜float | -1                            | 連線超時時間（單位：秒，支援小數），為 - 1 則不限制                                                                  |
-| send_timeout                  | int｜float | -1                            | 傳送超時時間（單位：秒，支援小數），為 - 1 則不限制                                                                  |
-| recv_timeout                  | int｜float | -1                            | 接收超時時間（單位：秒，支援小數），為 - 1 則不限制                                                                  |
+| connect_timeout               | int｜float | 10                            | 連線超時時間（單位：秒，支援小數）制                                                                  |
+| send_timeout                  | int｜float | 10                            | 傳送超時時間（單位：秒，支援小數）制                                                                  |
+| recv_timeout                  | int｜float | 10                            | 接收超時時間（單位：秒，支援小數）制                                                                  |
 | client_id                     | stirng     | null                          | Kafka 客戶端標識                                                                                                     |
 | max_write_attempts            | int        | 3                             | 最大寫入嘗試次數                                                                                                     |
 | brokers                       | array      | []                            | 手動配置 brokers 列表，如果要使用手動配置，請把 updateBrokers 設為 true                                              |
@@ -40,7 +40,7 @@ composer require hyperf/kafka
 | producer_epoch                | int        | -1                            | 生產者 Epoch                                                                                                         |
 | partition_leader_epoch        | int        | -1                            | 分割槽 Leader Epoch                                                                                                    |
 | broker                        | string     | ''| broker，格式：'127.0.0.1:9092'                                                                                       |
-| interval                      | int｜float | 0                             | 未獲取訊息到訊息時，延遲多少秒再次嘗試，預設為 0 則不延遲（單位：秒，支援小數）                                      |
+| interval                      | int｜float | 10                            | 未獲取訊息到訊息時，延遲多少秒再次嘗試，預設為 0 則不延遲（單位：秒，支援小數）                                      |
 | session_timeout               | int｜float | 60                            | 如果超時後沒有收到心跳訊號，則協調器會認為該使用者死亡。（單位：秒，支援小數）                                         |
 | rebalance_timeout             | int｜float | 60                            | 重新平衡組時，協調器等待每個成員重新加入的最長時間（單位：秒，支援小數）。                                           |
 | replica_id                    | int        | -1                            | 副本 ID                                                                                                              |
