@@ -12,6 +12,7 @@
 ## Fixed
 
 - [#5519](https://github.com/hyperf/hyperf/pull/5519) Fixed bug that worker cannot exit caused by kafka `producer->loop()`.
+- [#5523](https://github.com/hyperf/hyperf/pull/5523) Fixed bug that process stopped when kafka rebalance.
 
 ## Optimized
 
