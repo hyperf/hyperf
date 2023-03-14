@@ -13,9 +13,9 @@ use Hyperf\Kafka\Constants\KafkaStrategy;
 
 return [
     'default' => [
-        'connect_timeout' => -1,
-        'send_timeout' => -1,
-        'recv_timeout' => -1,
+        'connect_timeout' => 10,
+        'send_timeout' => 10,
+        'recv_timeout' => 10,
         'client_id' => '',
         'max_write_attempts' => 3,
         'bootstrap_servers' => [
@@ -25,7 +25,7 @@ return [
         'producer_id' => -1,
         'producer_epoch' => -1,
         'partition_leader_epoch' => -1,
-        'interval' => 0,
+        'interval' => 10,
         'session_timeout' => 60,
         'rebalance_timeout' => 60,
         'replica_id' => -1,
