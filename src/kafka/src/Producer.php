@@ -129,12 +129,12 @@ class Producer
 
             $this->chan?->close();
             $this->chan = null;
+            $this->producer->close();
         });
 
         Coroutine::create(function () {
             if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield()) {
                 $this->chan?->close();
-                $this->chan = null;
             }
         });
     }
