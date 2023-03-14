@@ -13,6 +13,8 @@ namespace Hyperf\Kafka;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\StdoutLoggerInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Kafka\Annotation\Consumer as ConsumerAnnotation;
 use Hyperf\Kafka\Event\AfterConsume;
@@ -119,19 +121,18 @@ class ConsumerManager
                     }
                 );
 
-                retry(
-                    3,
-                    function () use ($longLangConsumer) {
-                        try {
-                            $longLangConsumer->start();
-                        } catch (KafkaErrorException $exception) {
-                            $this->stdoutLogger->error($exception->getMessage());
-
-                            $this->dispatcher?->dispatch(new FailToConsume($this->consumer, [], $exception));
+                while (true) {
+                    try {
+                        if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield(10)) {
+                            break;
                         }
-                    },
-                    10
-                );
+
+                        $longLangConsumer->start();
+                    } catch (\Throwable $exception) {
+                        $this->stdoutLogger->warning((string) $exception);
+                        $this->dispatcher?->dispatch(new FailToConsume($this->consumer, [], $exception));
+                    }
+                }
 
                 $longLangConsumer->close();
             }
