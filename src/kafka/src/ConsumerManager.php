@@ -132,6 +132,8 @@ class ConsumerManager
                     },
                     10
                 );
+
+                $longLangConsumer->close();
             }
 
             public function getConsumerConfig(): ConsumerConfig
