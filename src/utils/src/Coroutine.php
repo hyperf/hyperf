@@ -82,6 +82,16 @@ class Coroutine
         return Co::id() > 0;
     }
 
+    public static function stats(): array
+    {
+        return Co::stats();
+    }
+
+    public static function exists(int $coroutineId): bool
+    {
+        return Co::exists($coroutineId);
+    }
+
     private static function printLog(Throwable $throwable): void
     {
         if (ApplicationContext::hasContainer()) {
