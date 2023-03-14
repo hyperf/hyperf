@@ -6,6 +6,7 @@
 - [#5508](https://github.com/hyperf/hyperf/pull/5508) Added `Hyperf\Rpc\Protocol::getNormalizer`.
 - [#5509](https://github.com/hyperf/hyperf/pull/5509) Auto register `normalizer` for `json-rpc`.
 - [#5513](https://github.com/hyperf/hyperf/pull/5513) Use default normalizer for `rpc-multiplex` and use `protocol.normalizer` for `rpc-server`.
+- [#5518](https://github.com/hyperf/hyperf/pull/5518) Added `SwooleConnection::getSocket` to get swoole response.
 
 ## Optimized
 

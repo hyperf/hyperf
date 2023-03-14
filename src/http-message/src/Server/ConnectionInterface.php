@@ -13,4 +13,8 @@ namespace Hyperf\HttpMessage\Server;
 
 interface ConnectionInterface
 {
+    /**
+     * @return mixed|\Swoole\Http\Response
+     */
+    public function getSocket(): mixed;
 }

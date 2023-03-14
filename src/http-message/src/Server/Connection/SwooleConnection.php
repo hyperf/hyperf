@@ -25,4 +25,9 @@ class SwooleConnection implements ConnectionInterface, Chunkable
     {
         return $this->response->write($data);
     }
+
+    public function getSocket(): mixed
+    {
+        return $this->response;
+    }
 }
