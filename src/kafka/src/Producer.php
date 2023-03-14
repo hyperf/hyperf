@@ -12,7 +12,10 @@ declare(strict_types=1);
 namespace Hyperf\Kafka;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Coordinator\Constants;
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Channel;
+use Hyperf\Engine\Coroutine;
 use Hyperf\Kafka\Exception\ConnectionClosedException;
 use Hyperf\Kafka\Exception\TimeoutException;
 use longlang\phpkafka\Broker;
@@ -20,7 +23,6 @@ use longlang\phpkafka\Producer\ProduceMessage;
 use longlang\phpkafka\Producer\Producer as LongLangProducer;
 use longlang\phpkafka\Producer\ProducerConfig;
 use longlang\phpkafka\Socket\SwooleSocket;
-use Swoole\Coroutine;
 use Throwable;
 
 class Producer
@@ -112,7 +114,7 @@ class Producer
             while (true) {
                 $this->producer = $this->makeProducer();
                 while (true) {
-                    $closure = $this->chan->pop();
+                    $closure = $this->chan?->pop();
                     if (! $closure) {
                         break 2;
                     }
@@ -124,9 +126,16 @@ class Producer
                     }
                 }
             }
-            /* @phpstan-ignore-next-line */
-            $this->chan->close();
+
+            $this->chan?->close();
             $this->chan = null;
+        });
+
+        Coroutine::create(function () {
+            if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield()) {
+                $this->chan?->close();
+                $this->chan = null;
+            }
         });
     }
 
