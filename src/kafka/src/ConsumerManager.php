@@ -120,7 +120,7 @@ class ConsumerManager
                             }
 
                             $this->dispatcher?->dispatch(new AfterConsume($consumer, $message, $result));
-                        }, $config['consume_timeout'] ?? 600);
+                        }, $config['consume_timeout'] ?? -1);
                     }
                 );
 
