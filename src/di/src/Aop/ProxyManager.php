@@ -173,4 +173,18 @@ class ProxyManager
         }
         return $defined;
     }
+
+    public function getAspectClasses(): array
+    {
+        $aspectClasses = [];
+        $classesAspects = AspectCollector::get('classes', []);
+        foreach ($classesAspects as $rules) {
+            foreach ($rules as $rule) {
+                if (isset($this->proxies[$rule])) {
+                    $aspectClasses[$rule] = $this->proxies[$rule];
+                }
+            }
+        }
+        return $aspectClasses;
+    }
 }
