@@ -27,10 +27,10 @@ use longlang\phpkafka\Client\SwooleClient;
 use longlang\phpkafka\Consumer\ConsumeMessage;
 use longlang\phpkafka\Consumer\Consumer as LongLangConsumer;
 use longlang\phpkafka\Consumer\ConsumerConfig;
-use longlang\phpkafka\Exception\KafkaErrorException;
 use longlang\phpkafka\Socket\SwooleSocket;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Throwable;
 
 class ConsumerManager
 {
@@ -99,25 +99,28 @@ class ConsumerManager
                 $longLangConsumer = new LongLangConsumer(
                     $consumerConfig,
                     function (ConsumeMessage $message) use ($consumer, $consumerConfig) {
-                        $this->dispatcher?->dispatch(new BeforeConsume($consumer, $message));
+                        $config = $this->getConfig();
+                        wait(function () use ($consumer, $consumerConfig, $message) {
+                            $this->dispatcher?->dispatch(new BeforeConsume($consumer, $message));
 
-                        $result = $consumer->consume($message);
+                            $result = $consumer->consume($message);
 
-                        if (! $consumerConfig->getAutoCommit()) {
-                            if (! is_string($result)) {
-                                throw new InvalidConsumeResultException('The result is invalid.');
+                            if (! $consumerConfig->getAutoCommit()) {
+                                if (! is_string($result)) {
+                                    throw new InvalidConsumeResultException('The result is invalid.');
+                                }
+
+                                if ($result === Result::ACK) {
+                                    $message->getConsumer()->ack($message);
+                                }
+
+                                if ($result === Result::REQUEUE) {
+                                    $this->producer->send($message->getTopic(), $message->getValue(), $message->getKey(), $message->getHeaders());
+                                }
                             }
 
-                            if ($result === Result::ACK) {
-                                $message->getConsumer()->ack($message);
-                            }
-
-                            if ($result === Result::REQUEUE) {
-                                $this->producer->send($message->getTopic(), $message->getValue(), $message->getKey(), $message->getHeaders());
-                            }
-                        }
-
-                        $this->dispatcher?->dispatch(new AfterConsume($consumer, $message, $result));
+                            $this->dispatcher?->dispatch(new AfterConsume($consumer, $message, $result));
+                        }, $config['consume_timeout'] ?? -1);
                     }
                 );
 
@@ -128,7 +131,7 @@ class ConsumerManager
                         }
 
                         $longLangConsumer->start();
-                    } catch (\Throwable $exception) {
+                    } catch (Throwable $exception) {
                         $this->stdoutLogger->warning((string) $exception);
                         $this->dispatcher?->dispatch(new FailToConsume($this->consumer, [], $exception));
                     }
@@ -137,9 +140,14 @@ class ConsumerManager
                 $longLangConsumer->close();
             }
 
+            public function getConfig(): array
+            {
+                return $this->config->get('kafka.' . $this->consumer->getPool());
+            }
+
             public function getConsumerConfig(): ConsumerConfig
             {
-                $config = $this->config->get('kafka.' . $this->consumer->getPool());
+                $config = $this->getConfig();
                 $consumerConfig = new ConsumerConfig();
                 $consumerConfig->setAutoCommit($this->consumer->isAutoCommit());
                 $consumerConfig->setRackId($config['rack_id']);
