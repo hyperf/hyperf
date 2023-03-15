@@ -82,7 +82,7 @@ class Process
 
         $composerLoader = Composer::getLoader();
         $composerLoader->addClassMap($this->config->getClassMap());
-        $this->deleteAspectClasses($aspectClasses, $proxies);
+        $this->deleteAspectClasses($aspectClasses, $proxies, $class);
 
         // Reload the proxy class.
         $manager = new ProxyManager(array_merge($composerLoader->getClassMap(), $proxies, [$class => $this->file]), BASE_PATH . '/runtime/container/proxy/');
@@ -157,16 +157,24 @@ class Process
         return ScanConfig::instance(BASE_PATH . '/config/');
     }
 
-    protected function deleteAspectClasses($aspectClasses, $proxies): void
+    protected function deleteAspectClasses($aspectClasses, $proxies, $class): void
     {
-        foreach ((array)$aspectClasses as $path) {
-            if (file_exists($path)) {
-                unlink($path);
+        foreach ($aspectClasses as $aspect => $classes) {
+            if ($aspect !== $class) {
+                continue;
+            }
+            foreach ($classes as $path) {
+                if (file_exists($path)) {
+                    unlink($path);
+                }
             }
         }
 
         $classesAspects = AspectCollector::get('classes', []);
-        foreach ($classesAspects as $rules) {
+        foreach ($classesAspects as $aspect => $rules) {
+            if ($aspect !== $class) {
+                continue;
+            }
             foreach ($rules as $rule) {
                 if (isset($proxies[$rule]) && file_exists($proxies[$rule])) {
                     unlink($proxies[$rule]);

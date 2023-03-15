@@ -178,10 +178,10 @@ class ProxyManager
     {
         $aspectClasses = [];
         $classesAspects = AspectCollector::get('classes', []);
-        foreach ($classesAspects as $rules) {
+        foreach ($classesAspects as $aspect => $rules) {
             foreach ($rules as $rule) {
                 if (isset($this->proxies[$rule])) {
-                    $aspectClasses[$rule] = $this->proxies[$rule];
+                    $aspectClasses[$aspect][$rule] = $this->proxies[$rule];
                 }
             }
         }
