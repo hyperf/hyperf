@@ -1,5 +1,28 @@
 # 版本更新记录
 
+# v3.0.11 - 2023-03-15
+
+## 新增
+
+- [#5499](https://github.com/hyperf/hyperf/pull/5499) 为 `hyperf/constants` 组件增加枚举(>=PHP8.1)类型支持。
+- [#5508](https://github.com/hyperf/hyperf/pull/5508) 新增方法 `Hyperf\Rpc\Protocol::getNormalizer`。
+- [#5509](https://github.com/hyperf/hyperf/pull/5509) 为 `json-rpc` 组件自动注册 `normalizer`。
+- [#5513](https://github.com/hyperf/hyperf/pull/5513) 组件 `rpc-multiplex` 使用默认的 `normalizer` 并对 `rpc-server` 增加自定义 `protocol.normalizer` 的支持。
+- [#5518](https://github.com/hyperf/hyperf/pull/5518) 增加方法 `SwooleConnection::getSocket` 用来获取 `Swoole` 的 `Response`。
+- [#5520](https://github.com/hyperf/hyperf/pull/5520) 新增方法 `Coroutine::stats()` 和 `Coroutine::exists()`。
+- [#5525](https://github.com/hyperf/hyperf/pull/5525) 新增配置 `kafka.default.consume_timeout` 用来控制消费者消费数据的超时时间。
+- [#5526](https://github.com/hyperf/hyperf/pull/5526) 新增方法 `Hyperf\Kafka\AbstractConsumer::isEnable()` 用来控制 `kafka` 消费者是否启动。
+
+## 修复
+
+- [#5519](https://github.com/hyperf/hyperf/pull/5519) 修复因 `kafka` 生产者 `loop` 方法导致进程无法正常退出的问题。
+- [#5523](https://github.com/hyperf/hyperf/pull/5523) 修复在发生 `kafka rebalance` 的时候，进程无故停止的问题。
+
+## 优化
+
+- [#5510](https://github.com/hyperf/hyperf/pull/5510) 允许开发者自定义 `RPC 客户端` 的 `normalizer` 的实现。
+- [#5525](https://github.com/hyperf/hyperf/pull/5525) 当消费 `kafka` 消息时，每个消息会在独立的协程中进行处理。
+
 # v3.0.10 - 2023-03-11
 
 ## 修复
