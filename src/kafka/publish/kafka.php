@@ -36,17 +36,8 @@ return [
         'offset_retry' => 5,
         'auto_create_topic' => true,
         'partition_assignment_strategy' => KafkaStrategy::RANGE_ASSIGNOR,
-        'sasl' => [
-        ],
-        'ssl' => [
-        ],
-        'pool' => [
-            'min_connections' => 1,
-            'max_connections' => 10,
-            'connect_timeout' => 10.0,
-            'wait_timeout' => 3.0,
-            'heartbeat' => -1,
-            'max_idle_time' => 60.0,
-        ],
+        'sasl' => [],
+        'ssl' => [],
+        'consume_timeout' => 600,
     ],
 ];
