@@ -1,4 +1,6 @@
-# v3.0.11 - TBD
+# v3.0.12 - TBD
+
+# v3.0.11 - 2023-03-15
 
 ## Added
 
@@ -8,14 +10,18 @@
 - [#5513](https://github.com/hyperf/hyperf/pull/5513) Use default normalizer for `rpc-multiplex` and use `protocol.normalizer` for `rpc-server`.
 - [#5518](https://github.com/hyperf/hyperf/pull/5518) Added `SwooleConnection::getSocket` to get swoole response.
 - [#5520](https://github.com/hyperf/hyperf/pull/5520) Added `Coroutine::stats()` and `Coroutine::exists()`.
+- [#5525](https://github.com/hyperf/hyperf/pull/5525) Added `kafka.default.consume_timeout` to control the consumer for consuming messages.
+- [#5526](https://github.com/hyperf/hyperf/pull/5526) Added `Hyperf\Kafka\AbstractConsumer::isEnable()` to control the kafka consumer start or not.
 
 ## Fixed
 
 - [#5519](https://github.com/hyperf/hyperf/pull/5519) Fixed bug that worker cannot exit caused by kafka `producer->loop()`.
+- [#5523](https://github.com/hyperf/hyperf/pull/5523) Fixed bug that process stopped when kafka rebalance.
 
 ## Optimized
 
 - [#5510](https://github.com/hyperf/hyperf/pull/5510) Allow developers to replace the `normalizer` of `RPC Client` themselves.
+- [#5525](https://github.com/hyperf/hyperf/pull/5525) Running in an independent coroutine when consume kafka message. 
 
 # v3.0.10 - 2023-03-11
 

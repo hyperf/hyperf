@@ -102,6 +102,11 @@ abstract class AbstractConsumer
         $this->name = $name;
     }
 
+    public function isEnable(bool $enable): bool
+    {
+        return $enable;
+    }
+
     /**
      * @return null|string
      */
