@@ -86,6 +86,11 @@ class Client implements ClientInterface
         return $streamId;
     }
 
+    public function write(int $streamId, mixed $data, bool $end = false): bool
+    {
+        return $this->client->write($streamId, $data, $end);
+    }
+
     public function recv(int $streamId, ?float $timeout = null): HTTP2ResponseInterface
     {
         $chan = $this->channels[$streamId] ?? null;
