@@ -14,6 +14,7 @@ namespace Hyperf\Swagger\Listener;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\AnnotationCollector;
 use Hyperf\Di\Annotation\MultipleAnnotation;
+use Hyperf\Engine\Constant\SocketType;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\BootApplication;
 use Hyperf\HttpServer\Annotation\Middleware;
@@ -63,6 +64,7 @@ class BootSwaggerListener implements ListenerInterface
             'type' => Server::SERVER_HTTP,
             'host' => '0.0.0.0',
             'port' => $port,
+            'sock_type' => SocketType::TCP,
             'callbacks' => [
                 Event::ON_REQUEST => [HttpServer::class, 'onRequest'],
             ],

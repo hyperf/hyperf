@@ -1,5 +1,83 @@
 # 版本更新记录
 
+# v3.0.11 - 2023-03-15
+
+## 新增
+
+- [#5499](https://github.com/hyperf/hyperf/pull/5499) 为 `hyperf/constants` 组件增加枚举(>=PHP8.1)类型支持。
+- [#5508](https://github.com/hyperf/hyperf/pull/5508) 新增方法 `Hyperf\Rpc\Protocol::getNormalizer`。
+- [#5509](https://github.com/hyperf/hyperf/pull/5509) 为 `json-rpc` 组件自动注册 `normalizer`。
+- [#5513](https://github.com/hyperf/hyperf/pull/5513) 组件 `rpc-multiplex` 使用默认的 `normalizer` 并对 `rpc-server` 增加自定义 `protocol.normalizer` 的支持。
+- [#5518](https://github.com/hyperf/hyperf/pull/5518) 增加方法 `SwooleConnection::getSocket` 用来获取 `Swoole` 的 `Response`。
+- [#5520](https://github.com/hyperf/hyperf/pull/5520) 新增方法 `Coroutine::stats()` 和 `Coroutine::exists()`。
+- [#5525](https://github.com/hyperf/hyperf/pull/5525) 新增配置 `kafka.default.consume_timeout` 用来控制消费者消费数据的超时时间。
+- [#5526](https://github.com/hyperf/hyperf/pull/5526) 新增方法 `Hyperf\Kafka\AbstractConsumer::isEnable()` 用来控制 `kafka` 消费者是否启动。
+
+## 修复
+
+- [#5519](https://github.com/hyperf/hyperf/pull/5519) 修复因 `kafka` 生产者 `loop` 方法导致进程无法正常退出的问题。
+- [#5523](https://github.com/hyperf/hyperf/pull/5523) 修复在发生 `kafka rebalance` 的时候，进程无故停止的问题。
+
+## 优化
+
+- [#5510](https://github.com/hyperf/hyperf/pull/5510) 允许开发者自定义 `RPC 客户端` 的 `normalizer` 的实现。
+- [#5525](https://github.com/hyperf/hyperf/pull/5525) 当消费 `kafka` 消息时，每个消息会在独立的协程中进行处理。
+
+# v3.0.10 - 2023-03-11
+
+## 修复
+
+- [#5497](https://github.com/hyperf/hyperf/pull/5497) 修复 `apollo` 配置中心，无法正常触发 `ConfigChanged` 事件的问题。
+
+## 新增
+
+- [#5491](https://github.com/hyperf/hyperf/pull/5491) 为 `Str` 和 `Stringable` 新增 `charAt` 方法。
+- [#5503](https://github.com/hyperf/hyperf/pull/5503) 新增 `Hyperf\Contract\JsonDeSerializable`。
+- [#5504](https://github.com/hyperf/hyperf/pull/5504) 新增 `Hyperf\Utils\Serializer\JsonDeNormalizer`。
+
+## 优化
+
+- [#5493](https://github.com/hyperf/hyperf/pull/5493) 优化 `Nacos` 服务注册器的代码，使其支持 `1.x` 和 `2.x` 版本。
+- [#5494](https://github.com/hyperf/hyperf/pull/5494) [#5501](https://github.com/hyperf/hyperf/pull/5501) 优化 `hyperf/guzzle` 组件，当使用 `Swoole` 且不支持 `native-curl` 时，才会默认替换 `Handler`。
+
+## 变更
+
+- [#5492](https://github.com/hyperf/hyperf/pull/5492) 将 `Hyperf\DbConnection\Listener\CreatingListener` 重命名为 `Hyperf\DbConnection\Listener\InitUidOnCreatingListener`.
+
+# v3.0.9 - 2023-03-05
+
+## 新增
+
+- [#5467](https://github.com/hyperf/hyperf/pull/5467) 为 `GRPC` 增加 `Google\Rpc\Status` 的支持。
+- [#5472](https://github.com/hyperf/hyperf/pull/5472) 为模型增加 `ulid` 和 `uuid` 的支持。
+- [#5476](https://github.com/hyperf/hyperf/pull/5476) 为 `Stringable` 增加 `ArrayAccess` 的支持。
+- [#5478](https://github.com/hyperf/hyperf/pull/5478) 为 `Stringable` 和 `Str` 增加 `isMatch` 方法。
+
+## 优化
+
+- [#5469](https://github.com/hyperf/hyperf/pull/5469) 当数据库连接出现问题时，确保连接在归还到连接池前被重置。
+
+# v3.0.8 - 2023-02-26
+
+## 修复
+
+- [#5433](https://github.com/hyperf/hyperf/pull/5433) [#5438](https://github.com/hyperf/hyperf/pull/5438) 修复 `Nacos` 临时实例，不需要发送心跳的问题。 
+- [#5464](https://github.com/hyperf/hyperf/pull/5464) 修复 `Swagger` 服务无法在异步风格中，正常启动的问题。
+
+## 新增
+
+- [#5434](https://github.com/hyperf/hyperf/pull/5434) 为 `Swow` 增加 `UDP` 服务的支持。
+- [#5444](https://github.com/hyperf/hyperf/pull/5444) 新增脚本 `GenSchemaCommand` 用来生成 `Swagger Schema`。
+- [#5451](https://github.com/hyperf/hyperf/pull/5451) 为模型集合新增 `appends($attributes)` 方法。
+- [#5453](https://github.com/hyperf/hyperf/pull/5453) 为测试组件增加 `put()` 和 `patch()` 方法。
+- [#5454](https://github.com/hyperf/hyperf/pull/5454) 为 `GRPC` 组件新增方法 `Hyperf\Grpc\Parser::statusFromResponse`。
+- [#5459](https://github.com/hyperf/hyperf/pull/5459) 为 `Str` 和 `Stringable` 新增方法 `uuid` 和 `ulid`。
+
+## 优化
+
+- [#5437](https://github.com/hyperf/hyperf/pull/5437) 为 `Str::length` 移除了没用的 `if` 判断。
+- [#5439](https://github.com/hyperf/hyperf/pull/5439) 优化了 `Arr::shuffle` 的代码。
+
 # v3.0.7 - 2023-02-18
 
 ## 新增

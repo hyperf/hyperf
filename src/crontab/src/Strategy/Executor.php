@@ -81,7 +81,7 @@ class Executor
                                 }
                             } catch (Throwable $throwable) {
                                 $result = false;
-                                $this->dispatcher && $this->dispatcher->dispatch(new FailToExecute($crontab, $throwable));
+                                $this->dispatcher?->dispatch(new FailToExecute($crontab, $throwable));
                             } finally {
                                 $this->logResult($crontab, $result, $throwable ?? null);
                             }

@@ -30,7 +30,9 @@
         "symfony/serializer": "Required to use SymfonyNormalizer (^5.0|^6.0)",
         "symfony/property-access": "Required to use SymfonyNormalizer (^5.0|^6.0)",
         "hyperf/di": "Required to use ExceptionNormalizer",
-        "nikic/php-parser": "Required to use PhpParser. (^4.0)"
+        "nikic/php-parser": "Required to use PhpParser. (^4.0)",
+        "ramsey/uuid": "Required to use uuid and orderedUuid methods",
+        "symfony/uid": "Required to use ulid method"
     },
     "autoload": {
         "files": [

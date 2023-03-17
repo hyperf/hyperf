@@ -98,7 +98,7 @@ class ConsumerManager
 
             public function handle(): void
             {
-                $this->dispatcher && $this->dispatcher->dispatch(new BeforeSubscribe($this->consumer));
+                $this->dispatcher?->dispatch(new BeforeSubscribe($this->consumer));
                 $this->subscriber->subscribe(
                     $this->consumer->getTopic(),
                     $this->consumer->getChannel(),
@@ -106,12 +106,12 @@ class ConsumerManager
                         return $this->waiter->wait(function () use ($data) {
                             $result = null;
                             try {
-                                $this->dispatcher && $this->dispatcher->dispatch(new BeforeConsume($this->consumer, $data));
+                                $this->dispatcher?->dispatch(new BeforeConsume($this->consumer, $data));
                                 $result = $this->consumer->consume($data);
-                                $this->dispatcher && $this->dispatcher->dispatch(new AfterConsume($this->consumer, $data, $result));
+                                $this->dispatcher?->dispatch(new AfterConsume($this->consumer, $data, $result));
                             } catch (Throwable $throwable) {
                                 $result = Result::DROP;
-                                $this->dispatcher && $this->dispatcher->dispatch(new FailToConsume($this->consumer, $data, $throwable));
+                                $this->dispatcher?->dispatch(new FailToConsume($this->consumer, $data, $throwable));
                             }
 
                             return $result;
@@ -119,7 +119,7 @@ class ConsumerManager
                     }
                 );
 
-                $this->dispatcher && $this->dispatcher->dispatch(new AfterSubscribe($this->consumer));
+                $this->dispatcher?->dispatch(new AfterSubscribe($this->consumer));
             }
         };
     }

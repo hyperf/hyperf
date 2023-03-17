@@ -1,12 +1,77 @@
-# v3.0.8 - TBD
+# v3.0.12 - TBD
+
+# v3.0.11 - 2023-03-15
+
+## Added
+
+- [#5499](https://github.com/hyperf/hyperf/pull/5499) Support `enum` for `hyperf/constants`.
+- [#5508](https://github.com/hyperf/hyperf/pull/5508) Added `Hyperf\Rpc\Protocol::getNormalizer`.
+- [#5509](https://github.com/hyperf/hyperf/pull/5509) Auto register `normalizer` for `json-rpc`.
+- [#5513](https://github.com/hyperf/hyperf/pull/5513) Use default normalizer for `rpc-multiplex` and use `protocol.normalizer` for `rpc-server`.
+- [#5518](https://github.com/hyperf/hyperf/pull/5518) Added `SwooleConnection::getSocket` to get swoole response.
+- [#5520](https://github.com/hyperf/hyperf/pull/5520) Added `Coroutine::stats()` and `Coroutine::exists()`.
+- [#5525](https://github.com/hyperf/hyperf/pull/5525) Added `kafka.default.consume_timeout` to control the consumer for consuming messages.
+- [#5526](https://github.com/hyperf/hyperf/pull/5526) Added `Hyperf\Kafka\AbstractConsumer::isEnable()` to control the kafka consumer start or not.
+
+## Fixed
+
+- [#5519](https://github.com/hyperf/hyperf/pull/5519) Fixed bug that worker cannot exit caused by kafka `producer->loop()`.
+- [#5523](https://github.com/hyperf/hyperf/pull/5523) Fixed bug that process stopped when kafka rebalance.
+
+## Optimized
+
+- [#5510](https://github.com/hyperf/hyperf/pull/5510) Allow developers to replace the `normalizer` of `RPC Client` themselves.
+- [#5525](https://github.com/hyperf/hyperf/pull/5525) Running in an independent coroutine when consume kafka message. 
+
+# v3.0.10 - 2023-03-11
+
+## Fixed
+
+- [#5497](https://github.com/hyperf/hyperf/pull/5497) Fixed bug that `ConfigChanged` cannot dispatched when using `apollo`.
+
+## Added
+
+- [#5491](https://github.com/hyperf/hyperf/pull/5491) Added `charAt` method to both `Str` and `Stringable`.
+- [#5503](https://github.com/hyperf/hyperf/pull/5503) Added `Hyperf\Contract\JsonDeSerializable`.
+- [#5504](https://github.com/hyperf/hyperf/pull/5504) Added `Hyperf\Utils\Serializer\JsonDeNormalizer`.
+
+## Optimized
+
+- [#5493](https://github.com/hyperf/hyperf/pull/5493) Optimized code for service registration which support nacos `1.x` and `2.x`.
+- [#5494](https://github.com/hyperf/hyperf/pull/5494) [#5501](https://github.com/hyperf/hyperf/pull/5501) Do not replace `Handler` when `native-curl` is supported.
+
+## Changed
+
+- [#5492](https://github.com/hyperf/hyperf/pull/5492) Renamed `Hyperf\DbConnection\Listener\CreatingListener` to `Hyperf\DbConnection\Listener\InitUidOnCreatingListener`.
+
+# v3.0.9 - 2023-03-05
+
+## Added
+
+- [#5467](https://github.com/hyperf/hyperf/pull/5467) Support `Google\Rpc\Status` for `GRPC`.
+- [#5472](https://github.com/hyperf/hyperf/pull/5472) Support `ulid` and `uuid` for Model.
+- [#5476](https://github.com/hyperf/hyperf/pull/5476) Added ArrayAccess to Stringable.
+- [#5478](https://github.com/hyperf/hyperf/pull/5478) Added isMatch method to Str and Stringable helpers.
+
+## Optimized
+
+- [#5469](https://github.com/hyperf/hyperf/pull/5469) Ensure that the connection must be reset the next time after broken.
+
+# v3.0.8 - 2023-02-26
 
 ## Fixed
 
 - [#5433](https://github.com/hyperf/hyperf/pull/5433) [#5438](https://github.com/hyperf/hyperf/pull/5438) Fixed bug that the persistent service no need to send heartbeat.
+- [#5464](https://github.com/hyperf/hyperf/pull/5464) Fixed bug that swagger server cannot work when using async style server.
 
 ## Added
 
 - [#5434](https://github.com/hyperf/hyperf/pull/5434) Support UDP Server for Swow.
+- [#5444](https://github.com/hyperf/hyperf/pull/5444) Added `GenSchemaCommand` to generate schemas for swagger.
+- [#5451](https://github.com/hyperf/hyperf/pull/5451) Added method `appends($attributes)` to model collections.
+- [#5453](https://github.com/hyperf/hyperf/pull/5453) Added missing methods `put()` and `patch()` to testing HTTP client.
+- [#5454](https://github.com/hyperf/hyperf/pull/5454) Added method `Hyperf\Grpc\Parser::statusFromResponse`.
+- [#5459](https://github.com/hyperf/hyperf/pull/5459) Added some methods of `uuid` and `ulid` for `Str` and `Stringable`.
 
 ## Optimized
 

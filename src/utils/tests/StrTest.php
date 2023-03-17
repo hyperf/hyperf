@@ -14,6 +14,7 @@ namespace HyperfTest\Utils;
 use Hyperf\Utils\Exception\InvalidArgumentException;
 use Hyperf\Utils\Str;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * @internal
@@ -21,6 +22,16 @@ use PHPUnit\Framework\TestCase;
  */
 class StrTest extends TestCase
 {
+    public function testCharAt()
+    {
+        $this->assertEquals('р', Str::charAt('Привет, мир!', 1));
+        $this->assertEquals('ち', Str::charAt('「こんにちは世界」', 4));
+        $this->assertEquals('w', Str::charAt('Привет, world!', 8));
+        $this->assertEquals('界', Str::charAt('「こんにちは世界」', -2));
+        $this->assertEquals(null, Str::charAt('「こんにちは世界」', -200));
+        $this->assertEquals(null, Str::charAt('Привет, мир!', 100));
+    }
+
     public function testSlug()
     {
         $res = Str::slug('hyperf_', '_');
@@ -201,5 +212,37 @@ class StrTest extends TestCase
     {
         $this->assertEquals(11, Str::length('foo bar baz'));
         $this->assertEquals(11, Str::length('foo bar baz', 'UTF-8'));
+    }
+
+    public function testUlid()
+    {
+        $this->assertTrue(Str::isUlid((string) Str::ulid()));
+    }
+
+    public function testUuid()
+    {
+        $this->assertInstanceOf(UuidInterface::class, $uuid = Str::uuid());
+        $this->assertTrue(Str::isUuid((string) $uuid));
+
+        $this->assertInstanceOf(UuidInterface::class, $uuid = Str::orderedUuid());
+        $this->assertTrue(Str::isUuid((string) $uuid));
+    }
+
+    public function testIsMatch()
+    {
+        $this->assertTrue(Str::isMatch('/.*,.*!/', 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch('/^.*$(.*)/', 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch('/laravel/i', 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch('/^(.*(.*(.*)))/', 'Hello, Laravel!'));
+
+        $this->assertFalse(Str::isMatch('/H.o/', 'Hello, Laravel!'));
+        $this->assertFalse(Str::isMatch('/^laravel!/i', 'Hello, Laravel!'));
+        $this->assertFalse(Str::isMatch('/laravel!(.*)/', 'Hello, Laravel!'));
+        $this->assertFalse(Str::isMatch('/^[a-zA-Z,!]+$/', 'Hello, Laravel!'));
+
+        $this->assertTrue(Str::isMatch(['/.*,.*!/', '/H.o/'], 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch(['/^laravel!/i', '/^.*$(.*)/'], 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch(['/laravel/i', '/laravel!(.*)/'], 'Hello, Laravel!'));
+        $this->assertTrue(Str::isMatch(['/^[a-zA-Z,!]+$/', '/^(.*(.*(.*)))/'], 'Hello, Laravel!'));
     }
 }

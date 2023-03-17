@@ -11,8 +11,13 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
+use DateTimeInterface;
 use Hyperf\Macroable\Macroable;
 use Hyperf\Utils\Exception\InvalidArgumentException;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
+use RuntimeException;
+use Symfony\Component\Uid\Ulid;
 
 /**
  * Most of the methods in this file come from illuminate/support,
@@ -174,6 +179,24 @@ class Str
         }
 
         return static::$camelCache[$value] = lcfirst(static::studly($value));
+    }
+
+    /**
+     * Get the character at the specified index.
+     *
+     * @param string $subject
+     * @param int $index
+     * @return null|string
+     */
+    public static function charAt($subject, $index)
+    {
+        $length = mb_strlen($subject);
+
+        if ($index < 0 ? $index < -$length : $index > $length - 1) {
+            return null;
+        }
+
+        return mb_substr($subject, $index, 1);
     }
 
     /**
@@ -360,6 +383,32 @@ class Str
         }
 
         return $matches[1] ?? $matches[0];
+    }
+
+    /**
+     * Determine if a given string matches a given pattern.
+     *
+     * @param iterable<string>|string $patterns
+     * @param string $value
+     * @return bool
+     */
+    public static function isMatch($patterns, $value)
+    {
+        $value = (string) $value;
+
+        if (! is_iterable($patterns)) {
+            $patterns = [$patterns];
+        }
+
+        foreach ($patterns as $pattern) {
+            $pattern = (string) $pattern;
+
+            if (preg_match($pattern, $value) === 1) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -737,6 +786,59 @@ class Str
         }
 
         return mb_substr($string, 0, max($stringLength - $hiddenLength - $absOffset, 0)) . str_repeat($replacement, $hiddenLength) . mb_substr($string, $offset);
+    }
+
+    public static function isUlid($value): bool
+    {
+        if (! is_string($value)) {
+            return false;
+        }
+
+        if (strlen($value) !== 26) {
+            return false;
+        }
+
+        if (strspn($value, '0123456789ABCDEFGHJKMNPQRSTVWXYZabcdefghjkmnpqrstvwxyz') !== 26) {
+            return false;
+        }
+
+        return $value[0] <= '7';
+    }
+
+    public static function ulid(?DateTimeInterface $time = null): Ulid
+    {
+        if (! class_exists(Ulid::class)) {
+            throw new RuntimeException('The "symfony/uid" package is required to use the "ulid" method. Please run "composer require symfony/uid".');
+        }
+
+        return new Ulid(Ulid::generate($time));
+    }
+
+    public static function isUuid($value): bool
+    {
+        if (! is_string($value)) {
+            return false;
+        }
+
+        return preg_match('/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/iD', $value) > 0;
+    }
+
+    public static function uuid(): UuidInterface
+    {
+        if (! class_exists(Uuid::class)) {
+            throw new RuntimeException('The "ramsey/uuid" package is required to use the "uuid" method. Please run "composer require ramsey/uuid".');
+        }
+
+        return Uuid::uuid4();
+    }
+
+    public static function orderedUuid(?DateTimeInterface $time = null): UuidInterface
+    {
+        if (! class_exists(Uuid::class)) {
+            throw new RuntimeException('The "ramsey/uuid" package is required to use the "orderedUuid" method. Please run "composer require ramsey/uuid".');
+        }
+
+        return Uuid::uuid7($time);
     }
 
     /**

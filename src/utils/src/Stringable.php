@@ -11,11 +11,12 @@ declare(strict_types=1);
  */
 namespace Hyperf\Utils;
 
+use ArrayAccess;
 use Closure;
 use Hyperf\Macroable\Macroable;
 use JsonSerializable;
 
-class Stringable implements JsonSerializable, \Stringable
+class Stringable implements JsonSerializable, \Stringable, ArrayAccess
 {
     use Traits\Conditionable;
     use Macroable;
@@ -110,6 +111,17 @@ class Stringable implements JsonSerializable, \Stringable
     public function basename($suffix = '')
     {
         return new static(basename($this->value, $suffix));
+    }
+
+    /**
+     * Get the character at the specified index.
+     *
+     * @param int $index
+     * @return false|string
+     */
+    public function charAt($index)
+    {
+        return Str::charAt($this->value, $index);
     }
 
     /**
@@ -297,6 +309,16 @@ class Stringable implements JsonSerializable, \Stringable
         return ! $this->isEmpty();
     }
 
+    public function isUlid(): bool
+    {
+        return Str::isUlid($this->value);
+    }
+
+    public function isUuid(): bool
+    {
+        return Str::isUuid($this->value);
+    }
+
     /**
      * Convert a string to kebab case.
      *
@@ -355,6 +377,17 @@ class Stringable implements JsonSerializable, \Stringable
         }
 
         return new static($matches[1] ?? $matches[0]);
+    }
+
+    /**
+     * Determine if a given string matches a given pattern.
+     *
+     * @param iterable<string>|string $pattern
+     * @return bool
+     */
+    public function isMatch($pattern)
+    {
+        return Str::isMatch($pattern, $this->value);
     }
 
     /**
@@ -789,5 +822,37 @@ class Stringable implements JsonSerializable, \Stringable
     public function jsonSerialize(): mixed
     {
         return $this->__toString();
+    }
+
+    /**
+     * Determine if the given offset exists.
+     */
+    public function offsetExists(mixed $offset): bool
+    {
+        return isset($this->value[$offset]);
+    }
+
+    /**
+     * Get the value at the given offset.
+     */
+    public function offsetGet(mixed $offset): string
+    {
+        return $this->value[$offset];
+    }
+
+    /**
+     * Set the value at the given offset.
+     */
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        $this->value[$offset] = $value;
+    }
+
+    /**
+     * Unset the value at the given offset.
+     */
+    public function offsetUnset(mixed $offset): void
+    {
+        unset($this->value[$offset]);
     }
 }

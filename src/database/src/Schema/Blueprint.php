@@ -964,6 +964,18 @@ class Blueprint
     }
 
     /**
+     * Create a new ULID column on the table.
+     *
+     * @param string $column
+     * @param null|int $length
+     * @return \Hyperf\Database\Schema\ColumnDefinition
+     */
+    public function ulid($column = 'ulid', $length = 26)
+    {
+        return $this->char($column, $length);
+    }
+
+    /**
      * Create a new uuid column on the table.
      *
      * @param string $column
@@ -1269,6 +1281,22 @@ class Blueprint
     public function rawIndex($expression, $name)
     {
         return $this->index([new Expression($expression)], $name);
+    }
+
+    /**
+     * Create a new ULID column on the table with a foreign key constraint.
+     *
+     * @param string $column
+     * @param null|int $length
+     * @return ForeignIdColumnDefinition
+     */
+    public function foreignUlid($column = 'ulid', $length = 26)
+    {
+        return $this->addColumnDefinition(new ForeignIdColumnDefinition($this, [
+            'type' => 'char',
+            'name' => $column,
+            'length' => $length,
+        ]));
     }
 
     /**

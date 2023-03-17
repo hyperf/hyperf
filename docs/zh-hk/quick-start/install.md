@@ -8,17 +8,16 @@ Hyperf 對系統環境有一些要求，當您使用 Swoole 網絡引擎驅動�
 
 當您不想採用 Docker 來作為運行的環境基礎時，您需要確保您的運行環境達到了以下的要求：   
 
- - PHP >= 8.0 and <= 8.1
+ - PHP >= 8.0
  - 以下任一網絡引擎
-   - Swoole PHP 擴展 >= 4.5，並關閉了 `Short Name`
-   - Swow PHP 擴展 (Beta)
+   - [Swoole PHP 擴展](https://github.com/swoole/swoole-src) >= 4.5，並關閉了 `Short Name`
+   - [Swow PHP 擴展](https://github.com/swow/swow)
  - JSON PHP 擴展
  - Pcntl PHP 擴展
  - OpenSSL PHP 擴展（如需要使用到 HTTPS）
  - PDO PHP 擴展 （如需要使用到 MySQL 客户端）
  - Redis PHP 擴展 （如需要使用到 Redis 客户端）
  - Protobuf PHP 擴展 （如需要使用到 gRPC 服務端或客户端）
-
 
 ## 安裝 Hyperf
 

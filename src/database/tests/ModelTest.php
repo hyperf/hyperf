@@ -39,6 +39,7 @@ use Hyperf\Engine\Channel;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Collection as BaseCollection;
 use Hyperf\Utils\InteractsWithTime;
+use Hyperf\Utils\Str;
 use HyperfTest\Database\Stubs\DateModelStub;
 use HyperfTest\Database\Stubs\DifferentConnectionModelStub;
 use HyperfTest\Database\Stubs\KeyTypeModelStub;
@@ -57,6 +58,8 @@ use HyperfTest\Database\Stubs\ModelSaveStub;
 use HyperfTest\Database\Stubs\ModelSavingEventStub;
 use HyperfTest\Database\Stubs\ModelStub;
 use HyperfTest\Database\Stubs\ModelStubWithTrait;
+use HyperfTest\Database\Stubs\ModelStubWithUlid;
+use HyperfTest\Database\Stubs\ModelStubWithUuid;
 use HyperfTest\Database\Stubs\ModelWithoutRelationStub;
 use HyperfTest\Database\Stubs\ModelWithoutTableStub;
 use HyperfTest\Database\Stubs\ModelWithStub;
@@ -1990,6 +1993,20 @@ class ModelTest extends TestCase
 
         $this->assertTrue(Constraint::isConstraint());
         $chan->pop();
+    }
+
+    public function testUlid()
+    {
+        $model = new ModelStubWithUlid();
+
+        $this->assertTrue(Str::isUlid($model->newUniqueId()));
+    }
+
+    public function testUuid()
+    {
+        $model = new ModelStubWithUuid();
+
+        $this->assertTrue(Str::isUuid($model->newUniqueId()));
     }
 
     protected function getContainer()
