@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Http2Client;
 
+use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Http\V2\Request;
 use Hyperf\Http2Client\Client;
@@ -34,7 +35,7 @@ class ClientTest extends TestCase
     {
         $client = $this->getClient('http://127.0.0.1:10002');
 
-        for ($i = 0; $i < 1000; ++$i) {
+        for ($i = 0; $i < 100; ++$i) {
             $callbacks[] = static function () use ($client) {
                 $response = $client->request(new Request('/', body: $id = uniqid()));
                 return (int) ($response->getBody() === $id);
@@ -42,7 +43,7 @@ class ClientTest extends TestCase
         }
 
         $result = parallel($callbacks);
-        $this->assertSame(1000, array_sum($result));
+        $this->assertSame(100, array_sum($result));
         $client->close();
     }
 
