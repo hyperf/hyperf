@@ -1,5 +1,9 @@
 # v3.0.12 - TBD
 
+## Added
+
+- [#5533](https://github.com/hyperf/hyperf/pull/5533) Added `client` & `socket` config for kafka.
+
 # v3.0.11 - 2023-03-15
 
 ## Added
