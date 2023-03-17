@@ -203,7 +203,9 @@ class Client implements ClientInterface
         $host = $parsed['host'];
         $port = $parsed['port'] ?? ($ssl ? 443 : 80);
 
-        return new HTTP2Client($host, $port, $ssl);
+        $client = new HTTP2Client($host, $port, $ssl);
+        $client->set($this->settings);
+        return $client;
     }
 
     protected function getHeartbeat(): ?float
