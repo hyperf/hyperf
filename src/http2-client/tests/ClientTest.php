@@ -11,6 +11,9 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Http2Client;
 
+use Hyperf\Engine\Http\V2\Request;
+use Hyperf\Http2Client\Client;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -19,9 +22,23 @@ use PHPUnit\Framework\TestCase;
  */
 class ClientTest extends TestCase
 {
-    public function testParseUrl()
+    protected function tearDown(): void
     {
-        $res = parse_url('http://baidu.com');
-        var_dump($res);
+        Mockery::close();
+    }
+
+    public function testHTTP2ClientLoop()
+    {
+        $client = new Client('http://127.0.0.1:10002');
+
+        for ($i = 0; $i < 1000; ++$i) {
+            $callbacks[] = static function () use ($client) {
+                $response = $client->request(new Request('/', body: $id = uniqid()));
+                return (int) ($response->getBody() === $id);
+            };
+        }
+
+        $result = parallel($callbacks);
+        $this->assertSame(1000, array_sum($result));
     }
 }

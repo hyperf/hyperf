@@ -11,15 +11,15 @@ declare(strict_types=1);
  */
 namespace Hyperf\Http2Client;
 
-use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Channel;
 use Hyperf\Engine\Contract\Http\V2\ClientInterface as HTTP2ClientInterface;
+use Hyperf\Engine\Contract\Http\V2\RequestInterface as HTTP2RequestInterface;
+use Hyperf\Engine\Contract\Http\V2\ResponseInterface as HTTP2ResponseInterface;
 use Hyperf\Engine\Http\Stream;
 use Hyperf\Engine\Http\V2\Client as HTTP2Client;
 use Hyperf\Engine\Http\V2\Request;
-use Hyperf\Engine\Http\V2\Response as HTTP2Response;
 use Hyperf\Http2Client\Exception\ClientClosedException;
 use Hyperf\Http2Client\Exception\TimeoutException;
 use Hyperf\HttpMessage\Base\Response;
@@ -27,6 +27,7 @@ use Hyperf\Utils\Coroutine;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 use Throwable;
 
 class Client implements ClientInterface
@@ -44,7 +45,7 @@ class Client implements ClientInterface
      */
     protected array $channels = [];
 
-    protected ?StdoutLoggerInterface $logger = null;
+    protected ?LoggerInterface $logger = null;
 
     protected array $settings = [
         'timeout' => 10,
@@ -58,23 +59,26 @@ class Client implements ClientInterface
         $this->settings = array_replace($this->settings, $settings);
     }
 
-    public function sendRequest(RequestInterface $request): ResponseInterface
+    public function setLogger(?LoggerInterface $logger): static
     {
-        $headers = [];
-        foreach ($request->getHeaders() as $name => $values) {
-            $headers[$name] = implode(',', $values);
+        $this->logger = $logger;
+        return $this;
+    }
+
+    public function request(HTTP2RequestInterface $request): HTTP2ResponseInterface
+    {
+        $this->loop();
+
+        if (! $this->client?->isConnected()) {
+            // Wait the client connect to server.
+            usleep(1000);
         }
-        $streamId = $this->client->send(new Request(
-            $request->getUri()->getPath(),
-            $request->getMethod(),
-            (string) $request->getBody(),
-            $headers
-        ));
+
+        $streamId = $this->client->send($request);
 
         try {
             $this->channels[$streamId] = $chan = new Channel(1);
 
-            /** @var HTTP2Response $response */
             $response = $chan->pop($this->settings['timeout']);
             if ($chan->isClosing()) {
                 throw new ClientClosedException('Recv chan closed.');
@@ -84,12 +88,29 @@ class Client implements ClientInterface
                 throw new TimeoutException('Recv timeout.');
             }
 
-            return (new Response())->withHeaders($response->getHeaders())
-                ->withStatus($response->getStatusCode())
-                ->withBody(new Stream($response->getBody()));
+            return $response;
         } finally {
             unset($this->channels[$streamId]);
         }
+    }
+
+    public function sendRequest(RequestInterface $request): ResponseInterface
+    {
+        $headers = [];
+        foreach ($request->getHeaders() as $name => $values) {
+            $headers[$name] = implode(',', $values);
+        }
+
+        $response = $this->request(new Request(
+            $request->getUri()->getPath(),
+            $request->getMethod(),
+            (string) $request->getBody(),
+            $headers
+        ));
+
+        return (new Response())->withHeaders($response->getHeaders())
+            ->withStatus($response->getStatusCode())
+            ->withBody(new Stream($response->getBody()));
     }
 
     public function close()
@@ -106,6 +127,35 @@ class Client implements ClientInterface
         foreach ($channels as $channel) {
             $channel->close();
         }
+    }
+
+    public function loop(): void
+    {
+        if ($this->loop) {
+            return;
+        }
+
+        $this->loop = true;
+
+        $this->client = $this->makeClient();
+
+        $this->heartbeat();
+
+        Coroutine::create(function () {
+            try {
+                while (true) {
+                    $client = $this->client;
+                    $response = $client->recv(-1);
+                    if (! $client->isConnected()) {
+                        throw new ClientClosedException('Read failed, because the http2 client is closed.');
+                    }
+
+                    $this->channels[$response->getStreamId()]?->push($response);
+                }
+            } finally {
+                $this->close();
+            }
+        });
     }
 
     protected function makeClient(): HTTP2ClientInterface
@@ -156,34 +206,5 @@ class Client implements ClientInterface
                 }
             });
         }
-    }
-
-    protected function loop(): void
-    {
-        if ($this->loop) {
-            return;
-        }
-
-        $this->loop = true;
-
-        $this->client = $this->makeClient();
-
-        $this->heartbeat();
-
-        Coroutine::create(function () {
-            try {
-                while (true) {
-                    $client = $this->client;
-                    $response = $client->recv(-1);
-                    if (! $client->isConnected()) {
-                        throw new ClientClosedException('Read failed, because the http2 client is closed.');
-                    }
-
-                    $this->channels[$response->getStreamId()]?->push($response);
-                }
-            } finally {
-                $this->close();
-            }
-        });
     }
 }
