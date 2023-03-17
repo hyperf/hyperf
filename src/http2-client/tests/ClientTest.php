@@ -11,10 +11,12 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Http2Client;
 
+use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Http\V2\Request;
 use Hyperf\Http2Client\Client;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 /**
  * @internal
@@ -25,11 +27,12 @@ class ClientTest extends TestCase
     protected function tearDown(): void
     {
         Mockery::close();
+        CoordinatorManager::until('HTTP2ClientUnit')->resume();
     }
 
     public function testHTTP2ClientLoop()
     {
-        $client = new Client('http://127.0.0.1:10002');
+        $client = $this->getClient('http://127.0.0.1:10002');
 
         for ($i = 0; $i < 1000; ++$i) {
             $callbacks[] = static function () use ($client) {
@@ -40,5 +43,16 @@ class ClientTest extends TestCase
 
         $result = parallel($callbacks);
         $this->assertSame(1000, array_sum($result));
+        $client->close();
+    }
+
+    protected function getClient(string $baseUri)
+    {
+        $client = new Client($baseUri);
+        $ref = new ReflectionClass($client);
+        $identifier = $ref->getProperty('identifier');
+        $identifier->setAccessible(true);
+        $identifier->setValue($client, 'HTTP2ClientUnit');
+        return $client;
     }
 }

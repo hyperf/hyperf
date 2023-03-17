@@ -38,10 +38,10 @@ class Client implements ClientInterface
 
     protected bool $heartbeat = false;
 
-    protected Channel $chan;
+    protected Channel $wait;
 
     /**
-     * @var Channel[]
+     * @var array<int, null|Channel>
      */
     protected array $channels = [];
 
@@ -53,9 +53,11 @@ class Client implements ClientInterface
         'retry_count' => 2,
     ];
 
+    private string $identifier = Constants::WORKER_EXIT;
+
     public function __construct(protected string $baseUri, array $settings = [])
     {
-        $this->chan = new Channel(65535);
+        $this->wait = new Channel(1);
         $this->settings = array_replace($this->settings, $settings);
     }
 
@@ -69,9 +71,11 @@ class Client implements ClientInterface
     {
         $this->loop();
 
-        if (! $this->client?->isConnected()) {
-            // Wait the client connect to server.
-            usleep(1000);
+        if ($this->wait->isAvailable()) {
+            $this->wait->pop($this->settings['timeout']);
+            if ($this->wait->isTimeout()) {
+                throw new TimeoutException('Connect timeout.');
+            }
         }
 
         $streamId = $this->client->send($request);
@@ -116,14 +120,16 @@ class Client implements ClientInterface
     public function close()
     {
         $this->loop = false;
+        $this->wait = new Channel(1);
         $client = $this->client;
         $this->client = null;
+        $channels = $this->channels;
+        $this->channels = [];
+
         if ($client?->isConnected()) {
             $client->close();
         }
 
-        $channels = $this->channels;
-        $this->channels = [];
         foreach ($channels as $channel) {
             $channel->close();
         }
@@ -152,10 +158,14 @@ class Client implements ClientInterface
 
                     $this->channels[$response->getStreamId()]?->push($response);
                 }
+            } catch (Throwable $throwable) {
+                $this->logger?->error((string) $throwable);
             } finally {
                 $this->close();
             }
         });
+
+        $this->wait->close();
     }
 
     protected function makeClient(): HTTP2ClientInterface
@@ -184,15 +194,13 @@ class Client implements ClientInterface
             go(function () use ($heartbeat) {
                 try {
                     while (true) {
-                        if (CoordinatorManager::until(Constants::WORKER_EXIT)->yield($heartbeat)) {
+                        if (CoordinatorManager::until($this->identifier)->yield($heartbeat)) {
                             break;
                         }
 
                         try {
                             // PING
-                            $this->client?->ping();
-
-                            if ($this->client && ! $this->client->isConnected()) {
+                            if (! $this->client?->ping()) {
                                 $this->logger?->error('HTTP2 Client heartbeat failed.');
                                 break;
                             }
