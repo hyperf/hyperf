@@ -37,18 +37,19 @@ class Watcher
 
     protected Channel $channel;
 
-    protected string $path = BASE_PATH . '/runtime/container/collectors.cache';
+    protected string $path;
 
     public function __construct(protected ContainerInterface $container, protected Option $option, protected OutputInterface $output)
     {
         $this->driver = $this->getDriver();
         $this->filesystem = new Filesystem();
-        $json = Json::decode($this->filesystem->get(BASE_PATH . '/composer.json'));
+        $json = Json::decode($this->filesystem->get($option->path('composer.json')));
         $this->autoload = array_flip($json['autoload']['psr-4'] ?? []);
         $this->config = $container->get(ConfigInterface::class);
         $this->printer = new Standard();
         $this->channel = new Channel(1);
         $this->channel->push(true);
+        $this->path = $this->option->path('runtime/container/collectors.cache');
     }
 
     public function run()
@@ -70,7 +71,7 @@ class Watcher
                     $this->restart(false);
                 }
             } else {
-                $ret = exec(sprintf('%s %s/vendor/hyperf/watcher/collector-reload.php %s', $this->option->getBin(), BASE_PATH, $file));
+                $ret = exec(sprintf('%s %s/vendor/hyperf/watcher/collector-reload.php %s %s', $this->option->getBin(), BASE_PATH, $file, $this->option->getConfigFile()));
                 if ($ret['code'] === 0) {
                     $this->output->writeln('Class reload success.');
                 } else {
@@ -84,7 +85,7 @@ class Watcher
 
     public function dumpautoload()
     {
-        $ret = exec('composer dump-autoload -o --no-scripts -d ' . BASE_PATH);
+        $ret = exec('composer dump-autoload -o --no-scripts -d ' . $this->option->path());
         $this->output->writeln($ret['output'] ?? '');
     }
 
@@ -93,7 +94,7 @@ class Watcher
         if (! $this->option->isRestart()) {
             return;
         }
-        $file = $this->config->get('server.settings.pid_file');
+        $file = $this->option->getPidFile();
         if (empty($file)) {
             throw new FileNotFoundException('The config of pid_file is not found.');
         }
@@ -117,13 +118,13 @@ class Watcher
             $this->channel->pop();
             $this->output->writeln('Start server ...');
 
-            $descriptorspec = [
+            $descriptorSpec = [
                 0 => STDIN,
                 1 => STDOUT,
                 2 => STDERR,
             ];
 
-            proc_open($this->option->getBin() . ' ' . BASE_PATH . '/' . $this->option->getCommand(), $descriptorspec, $pipes);
+            proc_open($this->option->getBin() . ' ' . BASE_PATH . '/' . $this->option->getCommand(), $descriptorSpec, $pipes);
 
             $this->output->writeln('Stop server success.');
             $this->channel->push(1);

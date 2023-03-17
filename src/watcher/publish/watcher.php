@@ -12,8 +12,9 @@ declare(strict_types=1);
 use Hyperf\Watcher\Driver\ScanFileDriver;
 
 return [
-    'driver' => ScanFileDriver::class,
+    'base_path' => './',
     'bin' => 'php',
+    'driver' => ScanFileDriver::class,
     'watch' => [
         'dir' => ['app', 'config'],
         'file' => ['.env'],

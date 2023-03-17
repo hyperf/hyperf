@@ -34,10 +34,23 @@ class Process
 
     protected Ast $ast;
 
-    protected string $path = BASE_PATH . '/runtime/container/scan.cache';
+    protected string $path;
 
-    public function __construct(protected string $file)
+    protected Option $option;
+
+    public function __construct(protected string $file, protected string $configFile = '.watcher.php')
     {
+        $options = (array) include dirname(__DIR__, 2) . '/publish/watcher.php';
+
+        if (file_exists($configFile)) {
+            $options = array_replace($options, (array) include $configFile);
+            $options['config_file'] = $configFile;
+        }
+
+        /* @var Option */
+        $this->option = make(Option::class, compact('options'));
+        $this->path = $this->option->path('runtime/container/scan.cache');
+
         $this->ast = new Ast();
         $this->config = $this->initScanConfig();
         $this->reader = new AnnotationReader($this->config->getIgnoreAnnotations());
@@ -79,7 +92,7 @@ class Process
         }
 
         // Reload the proxy class.
-        $manager = new ProxyManager(array_merge($proxies, [$class => $this->file]), BASE_PATH . '/runtime/container/proxy/');
+        $manager = new ProxyManager(array_merge($proxies, [$class => $this->file]), $this->option->path('/runtime/container/proxy/'));
         $proxies = $manager->getProxies();
         $this->putCache($this->path, serialize([$data, $proxies]));
     }
@@ -146,6 +159,6 @@ class Process
 
     protected function initScanConfig(): ScanConfig
     {
-        return ScanConfig::instance(BASE_PATH . '/config/');
+        return ScanConfig::instance($this->option->path('config'));
     }
 }

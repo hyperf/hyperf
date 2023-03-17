@@ -68,7 +68,7 @@ class ScanFileDriver extends AbstractDriver
         $ext = $this->option->getExt();
         // Scan all watch dirs.
         foreach ($dir as $d) {
-            $filesObj = array_merge($filesObj, $this->filesystem->allFiles(BASE_PATH . '/' . $d));
+            $filesObj = array_merge($filesObj, $this->filesystem->allFiles($this->option->path($d)));
         }
         /** @var SplFileInfo $obj */
         foreach ($filesObj as $obj) {
@@ -81,7 +81,7 @@ class ScanFileDriver extends AbstractDriver
         }
         // Scan all watch files.
         $file = $this->option->getWatchFile();
-        $filesObj = $this->filesystem->files(BASE_PATH, true);
+        $filesObj = $this->filesystem->files($this->option->path(), true);
         /** @var SplFileInfo $obj */
         foreach ($filesObj as $obj) {
             $pathName = $obj->getPathName();
