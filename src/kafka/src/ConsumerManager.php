@@ -160,8 +160,8 @@ class ConsumerManager
                 $consumerConfig->setMemberId($this->consumer->getMemberId() ?: '');
                 $consumerConfig->setInterval($config['interval']);
                 $consumerConfig->setBootstrapServers($config['bootstrap_servers']);
-                $consumerConfig->setSocket($config['client'] ?? SwooleSocket::class);
-                $consumerConfig->setClient($config['socket'] ?? SwooleClient::class);
+                $consumerConfig->setSocket($config['socket'] ?? SwooleSocket::class);
+                $consumerConfig->setClient($config['client'] ?? SwooleClient::class);
                 $consumerConfig->setMaxWriteAttempts($config['max_write_attempts']);
                 $consumerConfig->setClientId(sprintf('%s-%s', $config['client_id'] ?: 'Hyperf', uniqid()));
                 $consumerConfig->setRecvTimeout($config['recv_timeout']);
