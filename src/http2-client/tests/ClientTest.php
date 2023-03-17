@@ -11,7 +11,6 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Http2Client;
 
-use Hyperf\Coordinator\Constants;
 use Hyperf\Coordinator\CoordinatorManager;
 use Hyperf\Engine\Http\V2\Request;
 use Hyperf\Http2Client\Client;

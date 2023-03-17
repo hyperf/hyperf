@@ -21,6 +21,7 @@ use Hyperf\Engine\Http\Stream;
 use Hyperf\Engine\Http\V2\Client as HTTP2Client;
 use Hyperf\Engine\Http\V2\Request;
 use Hyperf\Http2Client\Exception\ClientClosedException;
+use Hyperf\Http2Client\Exception\StreamLostException;
 use Hyperf\Http2Client\Exception\TimeoutException;
 use Hyperf\HttpMessage\Base\Response;
 use Hyperf\Utils\Coroutine;
@@ -67,7 +68,7 @@ class Client implements ClientInterface
         return $this;
     }
 
-    public function request(HTTP2RequestInterface $request): HTTP2ResponseInterface
+    public function send(HTTP2RequestInterface $request): int
     {
         $this->loop();
 
@@ -80,21 +81,51 @@ class Client implements ClientInterface
 
         $streamId = $this->client->send($request);
 
-        try {
-            $this->channels[$streamId] = $chan = new Channel(1);
+        $this->channels[$streamId] = new Channel(1);
 
-            $response = $chan->pop($this->settings['timeout']);
-            if ($chan->isClosing()) {
-                throw new ClientClosedException('Recv chan closed.');
-            }
+        return $streamId;
+    }
 
-            if ($chan->isTimeout()) {
-                throw new TimeoutException('Recv timeout.');
-            }
+    public function write(int $streamId, mixed $data, bool $end = false): bool
+    {
+        return $this->client->write($streamId, $data, $end);
+    }
 
-            return $response;
-        } finally {
+    public function recv(int $streamId, ?float $timeout = null): HTTP2ResponseInterface
+    {
+        $chan = $this->channels[$streamId] ?? null;
+        if (! $chan) {
+            throw new StreamLostException('The channel is lost.');
+        }
+
+        $response = $chan->pop($timeout ?? $this->settings['timeout']);
+        if ($chan->isClosing()) {
+            throw new ClientClosedException('Recv chan closed.');
+        }
+
+        if ($chan->isTimeout()) {
+            throw new TimeoutException('Recv timeout.');
+        }
+
+        return $response;
+    }
+
+    public function closeChannel(int $streamId): void
+    {
+        if ($chan = $this->channels[$streamId] ?? null) {
+            $chan->close();
             unset($this->channels[$streamId]);
+        }
+    }
+
+    public function request(HTTP2RequestInterface $request): HTTP2ResponseInterface
+    {
+        $streamId = $this->send($request);
+
+        try {
+            return $this->recv($streamId);
+        } finally {
+            $this->closeChannel($streamId);
         }
     }
 
@@ -177,7 +208,7 @@ class Client implements ClientInterface
         $host = $parsed['host'];
         $port = $parsed['port'] ?? ($ssl ? 443 : 80);
 
-        return new HTTP2Client($host, $port, $ssl);
+        return new HTTP2Client($host, $port, $ssl, $this->settings);
     }
 
     protected function getHeartbeat(): ?float
