@@ -6,6 +6,10 @@
 - [#5536](https://github.com/hyperf/hyperf/pull/5536) Added `hyperf/http2-client`.
 - [#5538](https://github.com/hyperf/hyperf/pull/5538) Support stream call for http2 client.
 
+## Optimized
+
+- [#5539](https://github.com/hyperf/hyperf/pull/5539) Optimized code for `AMQPConnection` to support the latest `php-amqplib`.
+
 # v3.0.11 - 2023-03-15
 
 ## Added
