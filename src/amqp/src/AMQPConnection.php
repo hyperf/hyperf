@@ -21,6 +21,7 @@ use Hyperf\Utils\Channel\ChannelManager;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\Exception\ChannelClosedException;
 use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Channel\Frame;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
@@ -233,8 +234,8 @@ class AMQPConnection extends AbstractConnection
         Coroutine::create(function () {
             try {
                 while (true) {
-                    [$frame_type, $channel, $payload] = $this->wait_frame(0);
-                    $this->channelManager->get($channel)->push([$frame_type, $payload], 0.001);
+                    $frame = $this->wait_frame(0);
+                    $this->channelManager->get($frame->getChannel())->push($frame, 0.001);
                 }
             } catch (Throwable $exception) {
                 if (! $this->exited) {
@@ -252,7 +253,7 @@ class AMQPConnection extends AbstractConnection
         });
     }
 
-    protected function wait_channel($channel_id, $timeout = 0)
+    protected function wait_channel($channel_id, $timeout = 0): Frame
     {
         $chan = $this->channelManager->get($channel_id);
         if ($chan === null) {
