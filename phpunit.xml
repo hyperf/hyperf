@@ -36,6 +36,7 @@
             <directory suffix=".php">./src/guzzle/src</directory>
             <directory suffix=".php">./src/http-message/src</directory>
             <directory suffix=".php">./src/http-server/src</directory>
+            <directory suffix=".php">./src/http2-client/src</directory>
             <directory suffix=".php">./src/json-rpc/src</directory>
             <directory suffix=".php">./src/kafka/src</directory>
             <directory suffix=".php">./src/logger/src</directory>
@@ -98,6 +99,7 @@
             <directory suffix="Test.php">./src/guzzle/tests</directory>
             <directory suffix="Test.php">./src/http-message/tests</directory>
             <directory suffix="Test.php">./src/http-server/tests</directory>
+            <directory suffix="Test.php">./src/http2-client/tests</directory>
             <directory suffix="Test.php">./src/json-rpc/tests</directory>
             <directory suffix="Test.php">./src/kafka/tests</directory>
             <directory suffix="Test.php">./src/logger/tests</directory>
