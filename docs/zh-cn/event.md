@@ -166,7 +166,7 @@ class UserService
 
 ## Hyperf 协程风格生命周期事件
 
-![](imgs/hyperf-coroutine-events.svg)
+![](https://raw.githubusercontent.com/hyperf/raw-storage/main/hyperf/svg/hyperf-coroutine-events.svg)
 
 ## 注意事项
 

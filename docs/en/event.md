@@ -160,4 +160,4 @@ class UserService
 
 ## Hyperf Coroutine Style Server Lifecycle events
 
-![](imgs/hyperf-coroutine-events.svg)
+![](https://raw.githubusercontent.com/hyperf/raw-storage/main/hyperf/svg/hyperf-coroutine-events.svg)
