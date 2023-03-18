@@ -15,6 +15,7 @@ use longlang\phpkafka\Socket\SwooleSocket;
 
 return [
     'default' => [
+        'enable' => true,
         'connect_timeout' => -1,
         'send_timeout' => -1,
         'recv_timeout' => -1,
