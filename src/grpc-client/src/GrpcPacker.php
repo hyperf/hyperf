@@ -11,16 +11,17 @@ declare(strict_types=1);
  */
 namespace Hyperf\GrpcClient;
 
-use Hyperf\GrpcClient\Listener\RegisterProtocolListener;
+use Hyperf\Contract\PackerInterface;
 
-class ConfigProvider
+class GrpcPacker implements PackerInterface
 {
-    public function __invoke(): array
+    public function pack($data): string
     {
-        return [
-            'listeners' => [
-                RegisterProtocolListener::class,
-            ],
-        ];
+        return serialize($data);
+    }
+
+    public function unpack(string $data)
+    {
+        return unserialize($data);
     }
 }

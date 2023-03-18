@@ -12,21 +12,28 @@ declare(strict_types=1);
 namespace HyperfTest\GrpcServer;
 
 use Closure;
+use Hyperf\Config\Config;
+use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\NormalizerInterface;
 use Hyperf\Di\ClosureDefinitionCollector;
 use Hyperf\Di\ClosureDefinitionCollectorInterface;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\MethodDefinitionCollectorInterface;
+use Hyperf\Grpc\PathGenerator;
 use Hyperf\GrpcServer\CoreMiddleware;
 use Hyperf\HttpMessage\Server\Request;
 use Hyperf\HttpMessage\Uri\Uri;
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\HttpServer\Router\DispatcherFactory;
 use Hyperf\HttpServer\Router\Handler;
+use Hyperf\Rpc\ProtocolManager;
+use Hyperf\RpcServer\Router\DispatcherFactory as RPCDispatcherFactory;
+use Hyperf\RpcServer\Router\RouteCollector;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Serializer\SimpleNormalizer;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
@@ -34,16 +41,17 @@ use Psr\Container\ContainerInterface;
  */
 class CoreMiddlewareTest extends TestCase
 {
-    public function testDispatch()
+    public function testGRPCCoreMiddlewareDispatch()
     {
         $container = $this->getContainer();
 
-        $router = $container->get(DispatcherFactory::class)->getRouter('grpc');
-        $router->addRoute('GET', '/users', function () {});
+        /** @var RouteCollector $router */
+        $router = $container->get(RPCDispatcherFactory::class . '.unit')->getRouter('grpc');
+        $router->addRoute('/users', static function () {});
 
         $middleware = new CoreMiddleware($container, 'grpc');
 
-        $request = new Request('GET', new Uri('/users'));
+        $request = new Request('POST', new Uri('/users'));
         $request = $middleware->dispatch($request);
         $dispatched = $request->getAttribute(Dispatched::class);
         $this->assertInstanceOf(Request::class, $request);
@@ -57,15 +65,21 @@ class CoreMiddlewareTest extends TestCase
     protected function getContainer()
     {
         $container = Mockery::mock(ContainerInterface::class);
+        ApplicationContext::setContainer($container);
         $container->shouldReceive('get')->with(DispatcherFactory::class)->andReturn(new DispatcherFactory());
-        $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)
-            ->andReturn(new MethodDefinitionCollector());
-        $container->shouldReceive('has')->with(ClosureDefinitionCollectorInterface::class)
-            ->andReturn(false);
-        $container->shouldReceive('get')->with(ClosureDefinitionCollectorInterface::class)
-            ->andReturn(new ClosureDefinitionCollector());
-        $container->shouldReceive('get')->with(NormalizerInterface::class)
-            ->andReturn(new SimpleNormalizer());
+        $container->shouldReceive('get')->with(MethodDefinitionCollectorInterface::class)->andReturn(new MethodDefinitionCollector());
+        $container->shouldReceive('has')->with(ClosureDefinitionCollectorInterface::class)->andReturn(false);
+        $container->shouldReceive('get')->with(ClosureDefinitionCollectorInterface::class)->andReturn(new ClosureDefinitionCollector());
+        $container->shouldReceive('get')->with(NormalizerInterface::class)->andReturn(new SimpleNormalizer());
+        $container->shouldReceive('get')->with(ProtocolManager::class)->andReturn($manager = new ProtocolManager(new Config([])));
+        $manager->registerOrAppend('grpc', [
+            'path-generator' => PathGenerator::class,
+        ]);
+        $container->shouldReceive('has')->with(PathGenerator::class)->andReturnTrue();
+        $container->shouldReceive('get')->with(PathGenerator::class)->andReturn(new PathGenerator());
+        $container->shouldReceive('get')->with(EventDispatcherInterface::class)->andReturn(Mockery::mock(EventDispatcherInterface::class));
+        $container->shouldReceive('make')->with(RPCDispatcherFactory::class)->withAnyArgs()->andReturn($dispatcher = new RPCDispatcherFactory(Mockery::mock(EventDispatcherInterface::class), new PathGenerator()));
+        $container->shouldReceive('get')->with(RPCDispatcherFactory::class . '.unit')->andReturn($dispatcher);
         return $container;
     }
 }

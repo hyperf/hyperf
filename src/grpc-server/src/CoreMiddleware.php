@@ -15,7 +15,6 @@ use Closure;
 use FastRoute\Dispatcher;
 use Google\Protobuf\Internal\Message;
 use Google\Protobuf\Internal\Message as ProtobufMessage;
-use Google\Rpc\Status;
 use Hyperf\Context\Context;
 use Hyperf\Di\MethodDefinitionCollector;
 use Hyperf\Di\ReflectionManager;
@@ -24,6 +23,9 @@ use Hyperf\Grpc\StatusCode;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\HttpServer\CoreMiddleware as HttpCoreMiddleware;
 use Hyperf\HttpServer\Router\Dispatched;
+use Hyperf\Rpc\Protocol;
+use Hyperf\Rpc\ProtocolManager;
+use Hyperf\RpcServer\Router\DispatcherFactory;
 use Hyperf\Server\Exception\ServerException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -33,6 +35,15 @@ use RuntimeException;
 
 class CoreMiddleware extends HttpCoreMiddleware
 {
+    protected Protocol $protocol;
+
+    public function __construct($container, string $serverName)
+    {
+        $this->protocol = new Protocol($container, $container->get(ProtocolManager::class), 'grpc');
+
+        parent::__construct($container, $serverName);
+    }
+
     /**
      * Process an incoming server request and return a response, optionally delegating
      * response creation to a handler.
@@ -76,6 +87,14 @@ class CoreMiddleware extends HttpCoreMiddleware
             default:
                 return $this->handleResponse(null, 200, StatusCode::NOT_FOUND, 'Route Not Found.');
         }
+    }
+
+    protected function createDispatcher(string $serverName): Dispatcher
+    {
+        $factory = make(DispatcherFactory::class, [
+            'pathGenerator' => $this->protocol->getPathGenerator(),
+        ]);
+        return $factory->getDispatcher($serverName);
     }
 
     /**
